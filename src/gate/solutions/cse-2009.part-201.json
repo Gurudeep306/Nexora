@@ -1,0 +1,2168 @@
+{
+  "paper": "cse-2009",
+  "version": 2,
+  "solutions": {
+    "cse-2009-cs-21": {
+      "approach": "Use the 0.9 ratio to get the total even probability, split it equally over 2, 4, 6, and then read P(face > 3) straight from the conditional probability.",
+      "concepts": [
+        "Conditional probability",
+        "Total probability"
+      ],
+      "steps": [
+        {
+          "title": "Even and odd totals",
+          "body": "$P(\\text{odd}) = 0.9\\,P(\\text{even})$ and $P(\\text{odd}) + P(\\text{even}) = 1$, so $1.9\\,P(\\text{even}) = 1 \\Rightarrow P(\\text{even}) = \\frac{1}{1.9} = 0.5263$."
+        },
+        {
+          "title": "Each even face",
+          "body": "The three even faces are equally likely: $P(2) = P(4) = P(6) = \\frac{0.5263}{3} = 0.1754$. So $P(4) + P(6) = 0.3509$."
+        },
+        {
+          "title": "Use the conditional",
+          "body": "$P(\\text{even} \\mid > 3) = \\dfrac{P(4) + P(6)}{P(>3)} = 0.75$, so $P(>3) = \\dfrac{0.3509}{0.75} = 0.4678 \\approx 0.468$."
+        }
+      ],
+      "answer": {
+        "value": "0.468",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "0.453 does not satisfy 0.3509 / P = 0.75."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$P(>3) = \\frac{2/(3 \\times 1.9)}{0.75} = 0.4678$, closest to 0.468."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "0.485 would make the conditional 0.3509/0.485 = 0.72, not 0.75."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "0.492 gives 0.3509/0.492 = 0.71, not 0.75."
+        }
+      ],
+      "pitfalls": [
+        "The odd faces need not be equally likely; only the even faces are, and the odd split is not needed.",
+        "Even faces greater than 3 are only 4 and 6, not 2."
+      ],
+      "verification": "Exact: $P(>3) = \\frac{2}{3 \\cdot 1.9 \\cdot 0.75} = \\frac{2}{4.275} = 0.46784$."
+    },
+    "cse-2009-cs-22": {
+      "approach": "Find the identity from the table, then compute successive powers of each element; an element generates the group of order 4 exactly when its order is 4.",
+      "concepts": [
+        "Cyclic group",
+        "Generator",
+        "Order of an element"
+      ],
+      "steps": [
+        {
+          "title": "Identity",
+          "body": "Row $a$ and column $a$ repeat the headers, so $a$ is the identity (order 1)."
+        },
+        {
+          "title": "Powers of each element",
+          "body": "- $b * b = a$, so $b$ has order 2.\n- $c^2 = c * c = b$, $c^3 = b * c = d$, $c^4 = d * c = a$: order 4.\n- $d^2 = d * d = b$, $d^3 = b * d = c$, $d^4 = c * d = a$: order 4."
+        },
+        {
+          "title": "Generators",
+          "body": "Elements of order $4 = |G|$ are generators: $c$ and $d$."
+        }
+      ],
+      "answer": {
+        "value": "c, d are generators",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$a$ is the identity and $b$ has order 2; neither generates."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$b$ has order 2, so $\\langle b \\rangle = \\{a, b\\}$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$c$ and $d$ both have order 4, so each generates $\\{a, b, c, d\\}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$a$ is the identity and generates only $\\{a\\}$."
+        }
+      ],
+      "shortcut": "A cyclic group of order 4 has $\\varphi(4) = 2$ generators, the two elements whose square is not the identity.",
+      "pitfalls": [
+        "The identity is never a generator of a non-trivial group."
+      ],
+      "verification": "$\\langle c \\rangle = \\{c, b, d, a\\}$ covers all four elements."
+    },
+    "cse-2009-cs-23": {
+      "approach": "The sentence means: anything that is a gold ornament or a silver ornament is precious. A universal statement about a class is written with an implication, and \"gold and silver\" here describes two classes, so the antecedent is a disjunction.",
+      "concepts": [
+        "First-order logic",
+        "Translation to predicate logic"
+      ],
+      "steps": [
+        {
+          "title": "Read the claim",
+          "body": "Every gold ornament is precious, and every silver ornament is precious: $\\forall x (G(x) \\to P(x)) \\wedge \\forall x (S(x) \\to P(x))$."
+        },
+        {
+          "title": "Combine",
+          "body": "$(G \\to P) \\wedge (S \\to P) \\equiv (G \\vee S) \\to P$, giving $\\forall x ((G(x) \\vee S(x)) \\to P(x))$."
+        }
+      ],
+      "answer": {
+        "value": "$\\forall x ((G(x) \\vee S(x)) \\rightarrow P(x))$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Reverses the implication: it says every precious thing is both gold and silver."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$G(x) \\wedge S(x)$ talks only about objects that are both gold and silver, which may not exist; it says nothing about ordinary gold ornaments."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "An existential with an implication is almost trivially true and does not express a universal claim."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: any gold or silver ornament is precious."
+        }
+      ],
+      "pitfalls": [
+        "The English \"and\" joining two classes becomes OR in the antecedent."
+      ],
+      "verification": "Identity used: $(A \\to C) \\wedge (B \\to C) \\equiv \\neg A \\wedge \\neg B \\vee C \\equiv (A \\vee B) \\to C$."
+    },
+    "cse-2009-cs-24": {
+      "approach": "Recognise the operator from its truth table: $P \\square Q$ is false only when $P = F, Q = T$, so $P \\square Q \\equiv Q \\to P \\equiv P \\vee \\neg Q$. Then substitute into each option.",
+      "concepts": [
+        "Propositional logic",
+        "Truth tables",
+        "Implication"
+      ],
+      "steps": [
+        {
+          "title": "Identify the operator",
+          "body": "The only F row is $P = F, Q = T$, so $P \\square Q \\equiv P \\vee \\neg Q$."
+        },
+        {
+          "title": "Evaluate the options",
+          "body": "Using $X \\square Y = X \\vee \\neg Y$:\n- (A) $\\neg Q \\square \\neg P = \\neg Q \\vee P$\n- (B) $P \\square \\neg Q = P \\vee Q$\n- (C) $\\neg P \\square Q = \\neg P \\vee \\neg Q$\n- (D) $\\neg P \\square \\neg Q = \\neg P \\vee Q$"
+        },
+        {
+          "title": "Match",
+          "body": "Only (B) equals $P \\vee Q$."
+        }
+      ],
+      "answer": {
+        "value": "$P \\square \\neg Q$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Equals $P \\vee \\neg Q$; false at $P = F, Q = T$ where $P \\vee Q$ is true."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$P \\vee \\neg(\\neg Q) = P \\vee Q$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Equals $\\neg P \\vee \\neg Q$ (NAND); false at $P = Q = T$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Equals $\\neg P \\vee Q$; false at $P = T, Q = F$."
+        }
+      ],
+      "pitfalls": [
+        "Do not read $\\square$ as $P \\to Q$; the F row has $P$ false, so it is $Q \\to P$."
+      ],
+      "verification": "Truth table of $P \\square \\neg Q$: TT gives $T \\square F = T$, TF gives $T \\square T = T$, FT gives $F \\square F = T$, FF gives $F \\square T = F$, which matches $P \\vee Q$."
+    },
+    "cse-2009-cs-25": {
+      "approach": "Rewrite the integrand as $\\tan(\\pi/4 - x)$, substitute $u = \\pi/4 - x$ and integrate $\\tan u$.",
+      "concepts": [
+        "Definite integral",
+        "Trigonometric identity"
+      ],
+      "steps": [
+        {
+          "title": "Simplify",
+          "body": "$\\dfrac{1 - \\tan x}{1 + \\tan x} = \\dfrac{\\tan\\frac{\\pi}{4} - \\tan x}{1 + \\tan\\frac{\\pi}{4}\\tan x} = \\tan\\left(\\frac{\\pi}{4} - x\\right)$."
+        },
+        {
+          "title": "Substitute",
+          "body": "With $u = \\frac{\\pi}{4} - x$ the limits $0 \\to \\frac{\\pi}{4}$ become $\\frac{\\pi}{4} \\to 0$ and $dx = -du$, so $I = \\int_0^{\\pi/4} \\tan u\\,du$."
+        },
+        {
+          "title": "Integrate",
+          "body": "$I = \\left[-\\ln \\cos u\\right]_0^{\\pi/4} = -\\ln\\frac{1}{\\sqrt 2} + \\ln 1 = \\frac{1}{2}\\ln 2$."
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{1}{2}\\ln 2$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The integrand is positive on the open interval, so the integral cannot be 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1 is far above the value $\\approx 0.347$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\ln 2 \\approx 0.693$ is twice the true value (forgets the square root)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$\\int_0^{\\pi/4}\\tan u\\,du = \\frac{1}{2}\\ln 2 \\approx 0.347$."
+        }
+      ],
+      "pitfalls": [
+        "$\\cos\\frac{\\pi}{4} = \\frac{1}{\\sqrt 2}$, so $-\\ln\\cos$ gives $\\frac{1}{2}\\ln 2$, not $\\ln 2$."
+      ],
+      "verification": "The integrand falls from 1 to 0 and is convex, so the area is below the triangle $\\frac{1}{2}\\cdot\\frac{\\pi}{4} \\approx 0.39$; $\\frac12\\ln 2 \\approx 0.347$ fits."
+    },
+    "cse-2009-cs-26": {
+      "approach": "Push each negation inside the quantifier ($\\neg\\forall \\equiv \\exists\\neg$, $\\neg\\exists \\equiv \\forall\\neg$) and compare normal forms.",
+      "concepts": [
+        "Quantifier negation",
+        "Logical equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Normalise each formula",
+          "body": "- I: $\\neg\\forall x P(x) \\equiv \\exists x \\neg P(x)$\n- II: $\\neg\\exists x P(x) \\equiv \\forall x \\neg P(x)$\n- III: $\\neg\\exists x \\neg P(x) \\equiv \\forall x P(x)$\n- IV: $\\exists x \\neg P(x)$"
+        },
+        {
+          "title": "Compare",
+          "body": "I and IV are identical; II, III are different from each other and from I."
+        }
+      ],
+      "answer": {
+        "value": "I and IV",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I says some $x$ fails $P$; III says every $x$ satisfies $P$ (they are negations of each other)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both are $\\exists x \\neg P(x)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II is $\\forall x \\neg P$, III is $\\forall x P$: opposite claims on a non-empty domain."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is $\\forall x \\neg P$, IV is $\\exists x \\neg P$: II implies IV but not conversely."
+        }
+      ],
+      "pitfalls": [
+        "Moving a negation across a quantifier flips the quantifier."
+      ],
+      "verification": "Domain $\\{1, 2\\}$ with $P(1)$ true, $P(2)$ false: I, IV true; II, III false, so I and III, II and IV etc. are separated."
+    },
+    "cse-2009-cs-27": {
+      "approach": "Output is produced on a transition, so we need the shortest input string whose last transition ends in state AB = 01 with output 1. Draw the state graph and search backwards from the only qualifying transition.",
+      "concepts": [
+        "Mealy machine",
+        "State table",
+        "Shortest path (BFS)"
+      ],
+      "given": "| State AB | x = 0 (next/out) | x = 1 (next/out) |\n|---|---|---|\n| 00 | 00 / 1 | 01 / 0 |\n| 01 | 10 / 0 | 00 / 1 |\n| 10 | 01 / 0 | 01 / 1 |\n| 11 | 10 / 0 | 00 / 1 |",
+      "steps": [
+        {
+          "title": "Qualifying transition",
+          "body": "Transitions into 01: $00 \\xrightarrow{1/0} 01$, $10 \\xrightarrow{0/0} 01$, $10 \\xrightarrow{1/1} 01$. Only $10 \\xrightarrow{1/1} 01$ has output 1, so the string must end with input 1 taken from state 10.",
+          "scene": {
+            "current": [
+              "10"
+            ],
+            "edgeTones": {
+              "10>01": "success"
+            },
+            "caption": "Only 10 --1/1--> 01 gives output 1"
+          }
+        },
+        {
+          "title": "Reach state 10 from 00",
+          "body": "From 00: input 0 stays at 00, input 1 goes to 01. From 01 input 0 goes to 10. So $00 \\xrightarrow{1} 01 \\xrightarrow{0} 10$ takes 2 inputs, and 10 is not reachable in 1 input.",
+          "scene": {
+            "current": [
+              "00"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1"
+              ],
+              "head": 0
+            },
+            "edgeTones": {},
+            "caption": "Start at 00"
+          }
+        },
+        {
+          "title": "Trace \"101\"",
+          "body": "$00 \\xrightarrow{1/0} 01 \\xrightarrow{0/0} 10 \\xrightarrow{1/1} 01$. Minimum length $= 2 + 1 = 3$.",
+          "scene": {
+            "current": [
+              "01"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "00>01": "accent",
+              "01>10": "accent",
+              "10>01": "success"
+            },
+            "caption": "After 101: state 01, last output 1"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "automaton",
+        "layout": "circle",
+        "states": [
+          {
+            "id": "00",
+            "start": true
+          },
+          {
+            "id": "01"
+          },
+          {
+            "id": "10"
+          },
+          {
+            "id": "11"
+          }
+        ],
+        "edges": [
+          {
+            "from": "00",
+            "to": "00",
+            "label": "0/1"
+          },
+          {
+            "from": "00",
+            "to": "01",
+            "label": "1/0"
+          },
+          {
+            "from": "01",
+            "to": "10",
+            "label": "0/0"
+          },
+          {
+            "from": "01",
+            "to": "00",
+            "label": "1/1"
+          },
+          {
+            "from": "10",
+            "to": "01",
+            "label": "0/0, 1/1"
+          },
+          {
+            "from": "11",
+            "to": "10",
+            "label": "0/0"
+          },
+          {
+            "from": "11",
+            "to": "00",
+            "label": "1/1"
+          }
+        ],
+        "current": [
+          "00"
+        ]
+      },
+      "answer": {
+        "value": "3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The string 101 reaches 01 with output 1 in three inputs, and no shorter string works."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A length-4 string works too (e.g. 0101) but is not minimum."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not minimum."
+        }
+      ],
+      "pitfalls": [
+        "$00 \\xrightarrow{1} 01$ reaches the state in one step but with output 0, which does not count."
+      ],
+      "verification": "Length 1: only 00 or 01 reachable, output on reaching 01 is 0. Length 2: strings 00, 01, 10, 11 end in 00, 01(out 0), 10, 00 respectively. So 3 is minimal."
+    },
+    "cse-2009-cs-28": {
+      "approach": "Schedule the 8 instruction instances (I1 to I4 twice) through the 4 stages: an instance enters a stage when it has finished the previous stage and the stage has been vacated by the previous instance. The finish time of the last instance in S4 is the answer.",
+      "concepts": [
+        "Instruction pipeline",
+        "Non-uniform stage times",
+        "Reservation table"
+      ],
+      "steps": [
+        {
+          "title": "Rule",
+          "body": "$\\text{start}(i, s) = \\max(\\text{end}(i, s-1),\\ \\text{end}(i-1, s))$, $\\text{end} = \\text{start} + \\text{cycles}(i, s)$.",
+          "scene": {
+            "upto": 0,
+            "cursor": 0,
+            "caption": "Empty pipeline at cycle 0"
+          }
+        },
+        {
+          "title": "First iteration",
+          "body": "- I1: S1 0–2, S2 2–3, S3 3–4, S4 4–5\n- I2: S1 2–3, S2 3–6, S3 6–8, S4 8–10\n- I3: S1 3–5, S2 6–7, S3 8–9, S4 10–13\n- I4: S1 5–6, S2 7–9, S3 9–11, S4 13–15",
+          "scene": {
+            "upto": 15,
+            "cursor": 15,
+            "caption": "Iteration 1: I4 leaves S4 at 15"
+          }
+        },
+        {
+          "title": "Second iteration",
+          "body": "- I1: S1 6–8, S2 9–10, S3 11–12, S4 $\\max(12, 15) = 15$–16\n- I2: S1 8–9, S2 10–13, S3 13–15, S4 16–18\n- I3: S1 9–11, S2 13–14, S3 15–16, S4 18–21\n- I4: S1 11–12, S2 14–16, S3 16–18, S4 21–23",
+          "scene": {
+            "upto": 23,
+            "cursor": 23,
+            "caption": "Last instruction completes at cycle 23"
+          }
+        },
+        {
+          "title": "Total",
+          "body": "S4 is the bottleneck (it is busy 1+2+3+2 = 8 cycles per iteration, back to back from cycle 8 on); the loop finishes at cycle **23**."
+        }
+      ],
+      "animation": {
+        "kind": "gantt",
+        "unit": "cycle",
+        "lanes": [
+          {
+            "label": "S1",
+            "bars": [
+              {
+                "start": 0,
+                "end": 2,
+                "label": "I1"
+              },
+              {
+                "start": 2,
+                "end": 3,
+                "label": "I2"
+              },
+              {
+                "start": 3,
+                "end": 5,
+                "label": "I3"
+              },
+              {
+                "start": 5,
+                "end": 6,
+                "label": "I4"
+              },
+              {
+                "start": 6,
+                "end": 8,
+                "label": "I1"
+              },
+              {
+                "start": 8,
+                "end": 9,
+                "label": "I2"
+              },
+              {
+                "start": 9,
+                "end": 11,
+                "label": "I3"
+              },
+              {
+                "start": 11,
+                "end": 12,
+                "label": "I4"
+              }
+            ]
+          },
+          {
+            "label": "S2",
+            "bars": [
+              {
+                "start": 2,
+                "end": 3,
+                "label": "I1"
+              },
+              {
+                "start": 3,
+                "end": 6,
+                "label": "I2"
+              },
+              {
+                "start": 6,
+                "end": 7,
+                "label": "I3"
+              },
+              {
+                "start": 7,
+                "end": 9,
+                "label": "I4"
+              },
+              {
+                "start": 9,
+                "end": 10,
+                "label": "I1"
+              },
+              {
+                "start": 10,
+                "end": 13,
+                "label": "I2"
+              },
+              {
+                "start": 13,
+                "end": 14,
+                "label": "I3"
+              },
+              {
+                "start": 14,
+                "end": 16,
+                "label": "I4"
+              }
+            ]
+          },
+          {
+            "label": "S3",
+            "bars": [
+              {
+                "start": 3,
+                "end": 4,
+                "label": "I1"
+              },
+              {
+                "start": 6,
+                "end": 8,
+                "label": "I2"
+              },
+              {
+                "start": 8,
+                "end": 9,
+                "label": "I3"
+              },
+              {
+                "start": 9,
+                "end": 11,
+                "label": "I4"
+              },
+              {
+                "start": 11,
+                "end": 12,
+                "label": "I1"
+              },
+              {
+                "start": 13,
+                "end": 15,
+                "label": "I2"
+              },
+              {
+                "start": 15,
+                "end": 16,
+                "label": "I3"
+              },
+              {
+                "start": 16,
+                "end": 18,
+                "label": "I4"
+              }
+            ]
+          },
+          {
+            "label": "S4",
+            "bars": [
+              {
+                "start": 4,
+                "end": 5,
+                "label": "I1"
+              },
+              {
+                "start": 8,
+                "end": 10,
+                "label": "I2"
+              },
+              {
+                "start": 10,
+                "end": 13,
+                "label": "I3"
+              },
+              {
+                "start": 13,
+                "end": 15,
+                "label": "I4"
+              },
+              {
+                "start": 15,
+                "end": 16,
+                "label": "I1"
+              },
+              {
+                "start": 16,
+                "end": 18,
+                "label": "I2"
+              },
+              {
+                "start": 18,
+                "end": 21,
+                "label": "I3"
+              },
+              {
+                "start": 21,
+                "end": 23,
+                "label": "I4"
+              }
+            ]
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      },
+      "answer": {
+        "value": "23",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Too small: S4 alone is busy 16 cycles and cannot start before cycle 4."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Scheduling each instance as early as the stage and the previous stage allow gives 23."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Over-counts: the schedule has no reason to idle S4 after cycle 8."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Over-counts: the stages overlap; this is not the overlapped pipeline time."
+        }
+      ],
+      "pitfalls": [
+        "The second-iteration I1 must wait for S4 to be free at 15 even though it finishes S3 at 12.",
+        "The standard solution assumes buffers between stages, so an instance that finishes a stage early may wait without blocking that stage."
+      ],
+      "verification": "S4 timeline is gap-free from cycle 8: 8 + (2+3+2) + (1+2+3+2) = 8 + 7 + 8 = 23."
+    },
+    "cse-2009-cs-29": {
+      "approach": "With 16 blocks and 4 ways there are 4 sets; block b maps to set b mod 4. Simulate LRU per set; only sets that overflow matter.",
+      "concepts": [
+        "Set-associative cache",
+        "LRU replacement"
+      ],
+      "steps": [
+        {
+          "title": "Map blocks to sets",
+          "body": "Set $= b \\bmod 4$:\n- Set 0: 0, 4, 8, 216, 8, 48, 32, 92\n- Set 1: 1, 133, 129, 73\n- Set 2: none\n- Set 3: 255, 3, 159, 63, 155",
+          "scene": {
+            "sets": [
+              {
+                "label": "Set 0",
+                "lines": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "label": "Set 1",
+                "lines": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "label": "Set 2",
+                "lines": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "label": "Set 3",
+                "lines": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              }
+            ],
+            "caption": "Cache initially empty"
+          }
+        },
+        {
+          "title": "Fill phase",
+          "body": "Up to the 11th request (63) every set fills without eviction. Set 0 holds 0, 4, 8, 216 and set 3 holds 255, 3, 159, 63.",
+          "scene": {
+            "sets": [
+              {
+                "label": "Set 0",
+                "lines": [
+                  {
+                    "tag": "0"
+                  },
+                  {
+                    "tag": "4"
+                  },
+                  {
+                    "tag": "8"
+                  },
+                  {
+                    "tag": "216"
+                  }
+                ]
+              },
+              {
+                "label": "Set 1",
+                "lines": [
+                  {
+                    "tag": "1"
+                  },
+                  {
+                    "tag": "133"
+                  },
+                  {
+                    "tag": "129"
+                  },
+                  null
+                ]
+              },
+              {
+                "label": "Set 2",
+                "lines": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "label": "Set 3",
+                "lines": [
+                  {
+                    "tag": "255"
+                  },
+                  {
+                    "tag": "3"
+                  },
+                  {
+                    "tag": "159"
+                  },
+                  {
+                    "tag": "63"
+                  }
+                ]
+              }
+            ],
+            "caption": "After 0, 255, 1, 4, 3, 8, 133, 159, 216, 129, 63"
+          }
+        },
+        {
+          "title": "Set 0 evictions",
+          "body": "8 hits (LRU order now 0, 4, 216, 8). 48 evicts 0, 32 evicts 4, 92 evicts 216 (LRU order 8, 48, 32, 92).",
+          "scene": {
+            "sets": [
+              {
+                "label": "Set 0",
+                "lines": [
+                  {
+                    "tag": "48",
+                    "tone": "warning"
+                  },
+                  {
+                    "tag": "32",
+                    "tone": "warning"
+                  },
+                  {
+                    "tag": "8",
+                    "tone": "success"
+                  },
+                  {
+                    "tag": "92",
+                    "tone": "warning"
+                  }
+                ]
+              },
+              {
+                "label": "Set 1",
+                "lines": [
+                  {
+                    "tag": "1"
+                  },
+                  {
+                    "tag": "133"
+                  },
+                  {
+                    "tag": "129"
+                  },
+                  {
+                    "tag": "73"
+                  }
+                ]
+              },
+              {
+                "label": "Set 2",
+                "lines": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "label": "Set 3",
+                "lines": [
+                  {
+                    "tag": "255"
+                  },
+                  {
+                    "tag": "3"
+                  },
+                  {
+                    "tag": "159"
+                  },
+                  {
+                    "tag": "63"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 0,
+              "way": 3,
+              "result": "miss"
+            },
+            "caption": "216 evicted by 92"
+          }
+        },
+        {
+          "title": "Set 3 eviction and result",
+          "body": "155 evicts 255 (LRU). Final contents: set 0 {48, 32, 8, 92}, set 1 {1, 133, 129, 73}, set 3 {155, 3, 159, 63}. Block **216** is absent; 3, 8, 129 are present.",
+          "scene": {
+            "sets": [
+              {
+                "label": "Set 0",
+                "lines": [
+                  {
+                    "tag": "48"
+                  },
+                  {
+                    "tag": "32"
+                  },
+                  {
+                    "tag": "8"
+                  },
+                  {
+                    "tag": "92"
+                  }
+                ]
+              },
+              {
+                "label": "Set 1",
+                "lines": [
+                  {
+                    "tag": "1"
+                  },
+                  {
+                    "tag": "133"
+                  },
+                  {
+                    "tag": "129",
+                    "tone": "success"
+                  },
+                  {
+                    "tag": "73"
+                  }
+                ]
+              },
+              {
+                "label": "Set 2",
+                "lines": [
+                  null,
+                  null,
+                  null,
+                  null
+                ]
+              },
+              {
+                "label": "Set 3",
+                "lines": [
+                  {
+                    "tag": "155",
+                    "tone": "warning"
+                  },
+                  {
+                    "tag": "3",
+                    "tone": "success"
+                  },
+                  {
+                    "tag": "159"
+                  },
+                  {
+                    "tag": "63"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 3,
+              "way": 0,
+              "result": "miss"
+            },
+            "caption": "Final state"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "cache",
+        "sets": [
+          {
+            "label": "Set 0",
+            "lines": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "label": "Set 1",
+            "lines": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "label": "Set 2",
+            "lines": [
+              null,
+              null,
+              null,
+              null
+            ]
+          },
+          {
+            "label": "Set 3",
+            "lines": [
+              null,
+              null,
+              null,
+              null
+            ]
+          }
+        ]
+      },
+      "answer": {
+        "value": "216",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "3 is in set 3; only 255 is evicted there."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 is re-referenced, so it becomes most recently used and survives."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "129 is in set 1, which never overflows."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "216 becomes LRU in set 0 after 8 is reused and is evicted by 92."
+        }
+      ],
+      "pitfalls": [
+        "Without the hit on 8 updating LRU order, 8 would be evicted instead of 216."
+      ],
+      "verification": "Set 0 sees 7 distinct blocks (0, 4, 8, 216, 48, 32, 92) in 4 ways; the last four distinct references after the last use of 216 are 8, 48, 32, 92, so 216 is out."
+    },
+    "cse-2009-cs-30": {
+      "approach": "Simulate the requests on a common clock, tracking free units of R1 to R4. A process whose request cannot be fully met blocks, and all its later events shift by the waiting time.",
+      "concepts": [
+        "Deadlock",
+        "Resource allocation",
+        "Simulation"
+      ],
+      "steps": [
+        {
+          "title": "Start",
+          "body": "Free units (R1, R2, R3, R4) = (3, 2, 3, 2).",
+          "scene": {
+            "reveal": 0,
+            "caption": "Free = (3, 2, 3, 2)"
+          }
+        },
+        {
+          "title": "t = 0 to 4",
+          "body": "At t = 3 P1 asks for 2 R1 but only 1 is free (P3 holds 2), so P1 waits. P2 takes the last R1 at t = 4. No cycle yet: P3 holds R1 but needs nothing until it releases at t = 5.",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "warning"
+              }
+            ],
+            "caption": "P1 blocked on R1"
+          }
+        },
+        {
+          "title": "t = 5 to 8",
+          "body": "P3 releases 2 R1 at t = 5, so P1 proceeds (its schedule shifts by 2). At t = 7 P1 frees 1 R2 which P3 takes; at t = 8 P2 finishes and P3 gets R3.",
+          "scene": {
+            "reveal": 27,
+            "hl": [
+              {
+                "r": 5,
+                "tone": "success"
+              }
+            ],
+            "caption": "P1 unblocked"
+          }
+        },
+        {
+          "title": "t = 9 to 12",
+          "body": "P3 finishes at 9, P1 gets 2 R4 at 10 (both R4 units are back) and finishes at 12. All three processes complete.",
+          "scene": {
+            "reveal": 36,
+            "hl": [
+              {
+                "r": 11,
+                "tone": "success"
+              }
+            ],
+            "caption": "All processes finish"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "t",
+          "Event",
+          "Free R1, R2, R3, R4"
+        ],
+        "rows": [
+          [
+            "0",
+            "P1 gets 2 R2; P2 gets 2 R3; P3 gets 1 R4",
+            "3, 0, 1, 1"
+          ],
+          [
+            "1",
+            "P1 gets 1 R3",
+            "3, 0, 0, 1"
+          ],
+          [
+            "2",
+            "P2 gets 1 R4; P3 gets 2 R1",
+            "1, 0, 0, 0"
+          ],
+          [
+            "3",
+            "P1 asks 2 R1, only 1 free: P1 waits",
+            "1, 0, 0, 0"
+          ],
+          [
+            "4",
+            "P2 gets 1 R1",
+            "0, 0, 0, 0"
+          ],
+          [
+            "5",
+            "P3 releases 2 R1; P1 gets 2 R1 (P1 now 2 units late)",
+            "0, 0, 0, 0"
+          ],
+          [
+            "6",
+            "P2 releases 1 R3",
+            "0, 0, 1, 0"
+          ],
+          [
+            "7",
+            "P1 releases 1 R2, 1 R1; P3 gets 1 R2",
+            "1, 0, 1, 0"
+          ],
+          [
+            "8",
+            "P2 finishes (returns 1 R1, 1 R3, 1 R4); P3 gets 1 R3",
+            "2, 0, 1, 1"
+          ],
+          [
+            "9",
+            "P3 finishes (returns R2, R3, R4); P1 releases 1 R3",
+            "2, 1, 3, 2"
+          ],
+          [
+            "10",
+            "P1 gets 2 R4",
+            "2, 1, 3, 0"
+          ],
+          [
+            "12",
+            "P1 finishes",
+            "3, 2, 3, 2"
+          ]
+        ],
+        "reveal": 0
+      },
+      "answer": {
+        "value": "All processes will finish without any deadlock.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The only wait (P1 on R1 at t = 3) is resolved when P3 releases R1 at t = 5."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "P2 never waits at all."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P3 never waits for anything P1 holds for long; P1 releases R2 at t = 7."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "P2 runs to completion without waiting."
+        }
+      ],
+      "pitfalls": [
+        "The listed times are for independent execution; once P1 waits, its later events shift.",
+        "Even if P3 asks for R2 at t = 7 just before P1 releases it, P3 only waits momentarily."
+      ],
+      "verification": "Wait-for graph has at most one edge at any time (P1 to P3 during t = 3 to 5), so no cycle can form."
+    },
+    "cse-2009-cs-31": {
+      "approach": "SSTF always moves to the pending cylinder nearest to the current head position. List the moves and add the distances; at 1 ms per cylinder the total distance is the time.",
+      "concepts": [
+        "Disk scheduling",
+        "SSTF"
+      ],
+      "steps": [
+        {
+          "title": "First move",
+          "body": "From 50 the nearest requests are 34 (distance 16) and 73 (distance 23), so go to 34.",
+          "scene": {
+            "reveal": 3,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Sweep down",
+          "body": "From 34 the nearest are 20, 19, 15, 10, 7, 6, 4, 2 in turn; every lower request is closer than 73.",
+          "scene": {
+            "reveal": 27,
+            "hl": [
+              {
+                "r": 8,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Back up to 73",
+          "body": "Finally 2 to 73 is 71 cylinders. Total $= 16 + 14 + 1 + 4 + 5 + 3 + 1 + 2 + 2 + 71 = 119$ cylinders $= 119$ ms.",
+          "scene": {
+            "reveal": 30,
+            "hl": [
+              {
+                "r": 9,
+                "tone": "warning"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "From",
+          "To",
+          "Distance"
+        ],
+        "rows": [
+          [
+            50,
+            34,
+            16
+          ],
+          [
+            34,
+            20,
+            14
+          ],
+          [
+            20,
+            19,
+            1
+          ],
+          [
+            19,
+            15,
+            4
+          ],
+          [
+            15,
+            10,
+            5
+          ],
+          [
+            10,
+            7,
+            3
+          ],
+          [
+            7,
+            6,
+            1
+          ],
+          [
+            6,
+            4,
+            2
+          ],
+          [
+            4,
+            2,
+            2
+          ],
+          [
+            2,
+            73,
+            71
+          ]
+        ],
+        "reveal": 0
+      },
+      "answer": {
+        "value": "119 ms",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "95 is too small: SSTF sweeps from 50 down to 2 ($48$) and then up to 73 ($71$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$(50 - 2) + (73 - 2) = 48 + 71 = 119$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "233 is not produced by SSTF from cylinder 50."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "276 corresponds to a poorer order such as FCFS-like zig-zags."
+        }
+      ],
+      "shortcut": "The head goes from 50 down to 2 and then up to 73: $48 + 71 = 119$.",
+      "pitfalls": [
+        "Choosing 73 first because it is \"on the way up\" is SCAN thinking, not SSTF."
+      ],
+      "verification": "Sum of the distance column is 119."
+    },
+    "cse-2009-cs-32": {
+      "approach": "Check each statement against the diagram: transition C (Running to Ready) means a running process can be preempted, and an I/O completion (E) can happen at any time while some other process runs.",
+      "concepts": [
+        "Process state diagram",
+        "Preemptive scheduling"
+      ],
+      "steps": [
+        {
+          "title": "Statement I",
+          "body": "After D (Running to Terminated) the CPU is free, so the scheduler dispatches a ready process: that is transition **B**, not A (A is process creation). I is false."
+        },
+        {
+          "title": "Statement II",
+          "body": "E (Blocked to Ready) is triggered by an I/O or event completion, which is independent of the running process. P$_2$ can do E while P$_1$ runs. II is true."
+        },
+        {
+          "title": "Statements III and IV",
+          "body": "Transition C moves a process from Running back to Ready without it blocking or ending, which is preemption. III is true, IV is false."
+        }
+      ],
+      "answer": {
+        "value": "II and III",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is false: termination causes a dispatch (B), not admission (A)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "I is false."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "II and III are both true."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "IV is false because transition C exists."
+        }
+      ],
+      "pitfalls": [
+        "Transition A is admission of a new process, unrelated to another one terminating."
+      ],
+      "verification": "Only II and III survive the check, matching option C."
+    },
+    "cse-2009-cs-33": {
+      "approach": "Test-and-set is atomic, so only one process can see X = 0 and enter; but waiting processes spin with no ordering, so nothing guarantees fairness.",
+      "concepts": [
+        "Test-and-set",
+        "Mutual exclusion",
+        "Bounded waiting"
+      ],
+      "steps": [
+        {
+          "title": "Mutual exclusion and progress",
+          "body": "test-and-set atomically returns the old X and sets X = 1. Exactly one process sees 0 and enters, so IV is false. Whenever the CS is free, some spinning process will succeed, so there is no deadlock: I is true."
+        },
+        {
+          "title": "Fairness",
+          "body": "When leave_CS sets X = 0, any spinner (or the same process again) may win the race. A process can lose forever, so the solution is not starvation-free (II false) and not FIFO (III false)."
+        }
+      ],
+      "answer": {
+        "value": "I only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Only I is true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II is false: no bounded waiting."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II and III are both false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "IV is false: the atomic instruction enforces mutual exclusion."
+        }
+      ],
+      "pitfalls": [
+        "Deadlock-freedom does not imply starvation-freedom."
+      ],
+      "verification": "Classic result: a plain TSL spin lock gives mutual exclusion and progress but not bounded waiting."
+    },
+    "cse-2009-cs-34": {
+      "approach": "A multilevel page table allocates second-level tables only for regions of the virtual address space actually used, so the page-table memory shrinks for sparse address spaces.",
+      "concepts": [
+        "Multilevel paging",
+        "Page table size"
+      ],
+      "steps": [
+        {
+          "title": "Why it exists",
+          "body": "A single-level table needs one entry for every virtual page, e.g. $2^{20}$ entries for a 32-bit space with 4 KB pages, even if most pages are unused. Splitting it lets unused inner tables be omitted."
+        },
+        {
+          "title": "Check the others",
+          "body": "More levels mean more memory accesses per translation (slower, not faster), the TLB works with any page table format, and the page-fault count depends on frames and replacement policy, not on table structure."
+        }
+      ],
+      "answer": {
+        "value": "It reduces the size of page table needed for the virtual address space.",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A multilevel walk needs more memory accesses, so access time does not drop."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: only the used parts of the table are allocated."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The TLB caches translations regardless of the table organisation."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Page faults depend on the reference string, frames and replacement policy."
+        }
+      ],
+      "pitfalls": [
+        "Multilevel paging trades extra lookups for less page-table memory."
+      ],
+      "verification": "Standard textbook motivation (Silberschatz, hierarchical paging)."
+    },
+    "cse-2009-cs-35": {
+      "approach": "Unroll the recurrence: the work forms a geometric series $cn(1 + \\frac13 + \\frac19 + \\dots)$, bounded by a constant times $n$.",
+      "concepts": [
+        "Recurrence relations",
+        "Master theorem"
+      ],
+      "steps": [
+        {
+          "title": "Unroll",
+          "body": "$T(n) = cn + c\\frac{n}{3} + c\\frac{n}{9} + \\dots + \\Theta(1) \\le cn \\cdot \\frac{1}{1 - 1/3} = \\frac{3}{2}cn$."
+        },
+        {
+          "title": "Bound",
+          "body": "Also $T(n) \\ge cn$, so $T(n) = \\Theta(n)$. (Master theorem: $a = 1$, $b = 3$, $n^{\\log_3 1} = 1$, $f(n) = cn$ dominates: case 3.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n)$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The geometric series sums to at most 1.5cn."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$n\\log n$ would need $a = b$ (e.g. $3T(n/3)$); here $a = 1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No level does quadratic work."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Far too large."
+        }
+      ],
+      "pitfalls": [
+        "Do not confuse $T(n/3) + cn$ with $3T(n/3) + cn$."
+      ],
+      "verification": "$n = 81$: $81c + 27c + 9c + 3c + 3 \\approx 120c \\approx 1.5 \\times 81c$."
+    },
+    "cse-2009-cs-36": {
+      "approach": "Insert the keys in the given order with h(k) = k mod 10; on a collision move to the next slot (wrapping) until a free one is found.",
+      "concepts": [
+        "Hashing",
+        "Open addressing",
+        "Linear probing"
+      ],
+      "steps": [
+        {
+          "title": "12, 18, 13",
+          "body": "$12 \\to 2$, $18 \\to 8$, $13 \\to 3$: all free.",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              12,
+              13,
+              null,
+              null,
+              null,
+              null,
+              18,
+              null
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  3
+                ],
+                "tone": "success"
+              }
+            ],
+            "caption": "No collisions yet"
+          }
+        },
+        {
+          "title": "2 and 3",
+          "body": "$2 \\to 2$ (taken), 3 (taken), **4**. $3 \\to 3$ (taken), 4 (taken), **5**.",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              12,
+              13,
+              2,
+              3,
+              null,
+              null,
+              18,
+              null
+            ],
+            "hl": [
+              {
+                "at": [
+                  4,
+                  5
+                ],
+                "tone": "warning"
+              }
+            ],
+            "caption": "2 lands at 4, 3 lands at 5"
+          }
+        },
+        {
+          "title": "23 and 5",
+          "body": "$23 \\to 3, 4, 5$ taken, **6**. $5 \\to 5, 6$ taken, **7**.",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              12,
+              13,
+              2,
+              3,
+              23,
+              5,
+              18,
+              null
+            ],
+            "hl": [
+              {
+                "at": [
+                  6,
+                  7
+                ],
+                "tone": "warning"
+              }
+            ],
+            "caption": "23 at 6, 5 at 7"
+          }
+        },
+        {
+          "title": "Insert 15",
+          "body": "$15 \\to 5, 6, 7, 8$ taken, **9**. Final table: 2:12, 3:13, 4:2, 5:3, 6:23, 7:5, 8:18, 9:15, which is option (C).",
+          "scene": {
+            "cells": [
+              null,
+              null,
+              12,
+              13,
+              2,
+              3,
+              23,
+              5,
+              18,
+              15
+            ],
+            "hl": [
+              {
+                "at": 9,
+                "tone": "success"
+              }
+            ],
+            "caption": "Final table"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "array",
+        "label": "T",
+        "showIndex": true,
+        "cells": [
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      "answer": {
+        "value": "Table (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Drops keys and overwrites slots (e.g. slot 2 holds 2 instead of 12); only 4 keys stored."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Shows only the first key per home slot; 2, 3, 23, 15 are missing."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Matches the linear-probing simulation exactly."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This is separate chaining, not open addressing."
+        }
+      ],
+      "pitfalls": [
+        "Probe from the home slot each time; earlier displaced keys occupy slots that later keys must skip."
+      ],
+      "verification": "All 8 keys appear exactly once in table (C) and each sits at the first free slot at or after its home."
+    },
+    "cse-2009-cs-37": {
+      "approach": "Use the minimum-node recurrence for AVL trees, $N(h) = N(h-1) + N(h-2) + 1$; the largest $h$ with $N(h) \\le 7$ is the maximum height.",
+      "concepts": [
+        "AVL tree",
+        "Minimum nodes for a height"
+      ],
+      "steps": [
+        {
+          "title": "Minimum nodes",
+          "body": "$N(0) = 1$, $N(1) = 2$, $N(2) = 2 + 1 + 1 = 4$, $N(3) = 4 + 2 + 1 = 7$, $N(4) = 7 + 4 + 1 = 12$."
+        },
+        {
+          "title": "Conclude",
+          "body": "$N(3) = 7 \\le 7 < 12 = N(4)$, so 7 nodes allow height 3 but not 4. The tree shown has height 3 and is AVL-balanced.",
+          "scene": {
+            "caption": "A 7-node AVL tree of height 3 (path 5-3-2-1)"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": 5,
+          "children": [
+            {
+              "label": 3,
+              "children": [
+                {
+                  "label": 2,
+                  "children": [
+                    {
+                      "label": 1,
+                      "tone": "accent"
+                    },
+                    null
+                  ]
+                },
+                {
+                  "label": 4
+                }
+              ]
+            },
+            {
+              "label": 6,
+              "children": [
+                null,
+                {
+                  "label": 7
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "answer": {
+        "value": "3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Height 2 is the minimum (complete tree), not the maximum."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$N(3) = 7$ exactly, so height 3 is achievable."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Height 4 needs at least $N(4) = 12$ nodes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Height 5 needs at least 20 nodes."
+        }
+      ],
+      "pitfalls": [
+        "The question asks for maximum height, not the height of the balanced complete tree."
+      ],
+      "verification": "In the drawn tree every node has balance factor in $\\{-1, 0, 1\\}$: node 2 (1 vs 0), node 3 (2 vs 1), node 6 (0 vs 1), root (3 vs 2 levels)."
+    },
+    "cse-2009-cs-38": {
+      "approach": "Kruskal adds edges in non-decreasing weight order, skipping cycle-forming ones; edges of equal weight may come in either order. A valid sequence must never put a heavier edge before a lighter one that is also accepted.",
+      "concepts": [
+        "Kruskal's algorithm",
+        "Minimum spanning tree"
+      ],
+      "steps": [
+        {
+          "title": "Sort edges",
+          "body": "Weights: $be = 2$; $ac = ef = 3$; $bc = fg = 4$; $ab = cd = eg = 5$; the rest are 6.",
+          "scene": {
+            "edgeTones": {},
+            "caption": "Sorted: be(2), ac/ef(3), bc/fg(4), ab/cd/eg(5), ..."
+          }
+        },
+        {
+          "title": "Weights 2 and 3",
+          "body": "Add $be$, then $ac$ and $ef$ in either order.",
+          "scene": {
+            "edgeTones": {
+              "b>e": "success",
+              "a>c": "success",
+              "e>f": "success"
+            },
+            "caption": "be, then {ac, ef}"
+          }
+        },
+        {
+          "title": "Weight 4",
+          "body": "Add $bc$ and $fg$ in either order (no cycles: components $\\{a, c\\}$, $\\{b, e, f\\}$, $\\{g\\}$, $\\{d\\}$).",
+          "scene": {
+            "edgeTones": {
+              "b>e": "success",
+              "a>c": "success",
+              "e>f": "success",
+              "b>c": "success",
+              "f>g": "success"
+            },
+            "caption": "then {bc, fg}"
+          }
+        },
+        {
+          "title": "Weight 5",
+          "body": "$ab$ makes a cycle (a, b already joined via c), $cd$ is added, $eg$ makes a cycle. MST weight $= 2 + 3 + 3 + 4 + 4 + 5 = 21$.",
+          "scene": {
+            "edgeTones": {
+              "b>e": "success",
+              "a>c": "success",
+              "e>f": "success",
+              "b>c": "success",
+              "f>g": "success",
+              "c>d": "success",
+              "a>b": "error",
+              "e>g": "error"
+            },
+            "caption": "cd added; ab and eg rejected"
+          }
+        },
+        {
+          "title": "Check the options",
+          "body": "Valid sequences: $be$, $\\{ac, ef\\}$, $\\{bc, fg\\}$, $cd$. Option (D) adds $bc$ (weight 4) before $ac$ (weight 3), impossible for Kruskal."
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "nodes": [
+          {
+            "id": "a",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "b",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "c",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "id": "d",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "id": "e",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "id": "f",
+            "x": 6,
+            "y": 4
+          },
+          {
+            "id": "g",
+            "x": 8,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "b",
+            "w": 5
+          },
+          {
+            "from": "a",
+            "to": "c",
+            "w": 3
+          },
+          {
+            "from": "b",
+            "to": "c",
+            "w": 4
+          },
+          {
+            "from": "b",
+            "to": "d",
+            "w": 6
+          },
+          {
+            "from": "b",
+            "to": "e",
+            "w": 2
+          },
+          {
+            "from": "d",
+            "to": "e",
+            "w": 6
+          },
+          {
+            "from": "e",
+            "to": "f",
+            "w": 3
+          },
+          {
+            "from": "d",
+            "to": "f",
+            "w": 6
+          },
+          {
+            "from": "c",
+            "to": "d",
+            "w": 5
+          },
+          {
+            "from": "c",
+            "to": "f",
+            "w": 6
+          },
+          {
+            "from": "e",
+            "to": "g",
+            "w": 5
+          },
+          {
+            "from": "f",
+            "to": "g",
+            "w": 4
+          }
+        ]
+      },
+      "answer": {
+        "value": "(b,e) (e,f) (b,c) (a,c) (f,g) (c,d)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "be, ef, ac, bc, fg, cd: weights 2, 3, 3, 4, 4, 5, valid."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "be, ef, ac, fg, bc, cd: 2, 3, 3, 4, 4, 5, valid."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "be, ac, ef, bc, fg, cd: 2, 3, 3, 4, 4, 5, valid."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "bc (4) comes before ac (3): not a Kruskal order."
+        }
+      ],
+      "pitfalls": [
+        "Ties can be broken either way, so several sequences are valid."
+      ],
+      "verification": "Weight sequence of (D) is 2, 3, 4, 3, 4, 5, which is not non-decreasing."
+    },
+    "cse-2009-cs-39": {
+      "approach": "Choosing the $(n/4)$-th smallest as pivot always splits into parts of size $n/4$ and $3n/4$, giving $T(n) = T(n/4) + T(3n/4) + \\Theta(n)$, a balanced-enough recursion.",
+      "concepts": [
+        "Quicksort",
+        "Recurrence",
+        "Recursion tree"
+      ],
+      "steps": [
+        {
+          "title": "Recurrence",
+          "body": "Pivot selection $O(n)$ + partition $O(n)$, then recursion on sizes $\\frac{n}{4}$ and $\\frac{3n}{4}$: $T(n) = T(\\frac n4) + T(\\frac{3n}{4}) + cn$."
+        },
+        {
+          "title": "Solve",
+          "body": "Each level of the recursion tree does at most $cn$ work; depth is between $\\log_4 n$ and $\\log_{4/3} n$, both $\\Theta(\\log n)$. So $T(n) = \\Theta(n \\log n)$, even in the worst case."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n \\log n)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Every level still costs Θ(n) for about log n levels."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Fixed-fraction splits give $\\Theta(n\\log n)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(n^2)$ needs unbalanced splits like $(0, n-1)$, which this pivot rule prevents."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Overestimate."
+        }
+      ],
+      "pitfalls": [
+        "The worst case of quicksort is quadratic only when the pivot can be extreme."
+      ],
+      "verification": "The deepest path shrinks by $3/4$ each level: $(3/4)^k n = 1 \\Rightarrow k = \\log_{4/3} n = \\Theta(\\log n)$."
+    },
+    "cse-2009-cs-40": {
+      "approach": "$L_2$ forces every string to be of the form $a^*b^*c^*$, so the second block $a^n b^n$ after the $c$ must be empty. The intersection collapses to $\\{a^m b^m c\\}$.",
+      "concepts": [
+        "Context-free languages",
+        "Closure under intersection with regular",
+        "Pumping lemma"
+      ],
+      "steps": [
+        {
+          "title": "Intersect",
+          "body": "A string of $L_1$ is $a^m b^m c\\, a^n b^n$. To be in $a^*b^*c^*$, nothing but $c$'s may follow the $c$, so $n = 0$. Hence $L = \\{a^m b^m c \\mid m \\ge 0\\}$."
+        },
+        {
+          "title": "Classify",
+          "body": "$L$ is generated by $S \\to Tc$, $T \\to aTb \\mid \\varepsilon$, so it is context-free. It is not regular: pumping $a^p b^p c$ inside the first $p$ symbols changes only the number of $a$'s."
+        }
+      ],
+      "answer": {
+        "value": "context-free but not regular",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Every CFL is recursive."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\{a^m b^m c\\}$ requires counting, so it is not regular."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "It is context-free."
+        }
+      ],
+      "pitfalls": [
+        "Do not assume the intersection keeps both blocks; $L_2$ kills the trailing $a^n b^n$."
+      ],
+      "verification": "CFL ∩ regular is CFL; the result is an a^m b^m language, the textbook non-regular CFL."
+    }
+  }
+}

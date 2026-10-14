@@ -1,12 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GRAPH / NETWORK</text>
-  <!-- Edges -->
-  <line x1="280.0" y1="50.0" x2="280.0" y2="50.0" stroke="#475569" stroke-width="2" />
-  <rect x="270.0" y="42.0" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="280.0" y="54.0" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
-  <!-- Vertices -->
-  <circle cx="280.0" cy="50.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="280.0" y="55.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">C</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 250" fill="none" stroke="currentColor" font-family="Arial, Helvetica, sans-serif">
+<rect x="10" y="10" width="26" height="23" stroke-width="1.2"/><rect x="36" y="10" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="26" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">0</text>
+<rect x="10" y="33" width="26" height="23" stroke-width="1.2"/><rect x="36" y="33" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="49" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">1</text>
+<rect x="10" y="56" width="26" height="23" stroke-width="1.2"/><rect x="36" y="56" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="72" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">2</text>
+<text x="44" y="72" font-size="13" fill="currentColor" stroke="none">12</text>
+<rect x="10" y="79" width="26" height="23" stroke-width="1.2"/><rect x="36" y="79" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="95" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">3</text>
+<text x="44" y="95" font-size="13" fill="currentColor" stroke="none">13</text>
+<rect x="10" y="102" width="26" height="23" stroke-width="1.2"/><rect x="36" y="102" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="118" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">4</text>
+<text x="44" y="118" font-size="13" fill="currentColor" stroke="none">2</text>
+<rect x="10" y="125" width="26" height="23" stroke-width="1.2"/><rect x="36" y="125" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="141" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">5</text>
+<text x="44" y="141" font-size="13" fill="currentColor" stroke="none">3</text>
+<rect x="10" y="148" width="26" height="23" stroke-width="1.2"/><rect x="36" y="148" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="164" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">6</text>
+<text x="44" y="164" font-size="13" fill="currentColor" stroke="none">23</text>
+<rect x="10" y="171" width="26" height="23" stroke-width="1.2"/><rect x="36" y="171" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="187" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">7</text>
+<text x="44" y="187" font-size="13" fill="currentColor" stroke="none">5</text>
+<rect x="10" y="194" width="26" height="23" stroke-width="1.2"/><rect x="36" y="194" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="210" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">8</text>
+<text x="44" y="210" font-size="13" fill="currentColor" stroke="none">18</text>
+<rect x="10" y="217" width="26" height="23" stroke-width="1.2"/><rect x="36" y="217" width="54" height="23" stroke-width="1.2"/>
+<text x="23" y="233" text-anchor="middle" font-size="13" fill="currentColor" stroke="none">9</text>
+<text x="44" y="233" font-size="13" fill="currentColor" stroke="none">15</text>
 </svg>
