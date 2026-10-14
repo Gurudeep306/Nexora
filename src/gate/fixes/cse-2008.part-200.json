@@ -1,0 +1,13 @@
+{
+  "paper": "cse-2008",
+  "fixes": [
+    {
+      "id": "cse-2008-cs-3",
+      "field": "reviewNote",
+      "before": "Question is flawed: unique solution iff alpha != 5; option D 'any real number' is the official key.",
+      "after": "Question is flawed: det = alpha - 5, so the system has a unique solution for every real alpha except 5 (alpha = 5 gives infinitely many). No option is exactly right; D ('any real number') is the closest and is kept as the key. Unverified against an official 2008 key.",
+      "reason": "Recomputed determinant; the previous note claimed an official key that could not be verified.",
+      "source": "independent solve"
+    }
+  ]
+}
