@@ -1,17 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="180" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GA SCHEMATIC</text>
-  <g transform="translate(60, 60)">
-    <rect x="0" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">Triangle</text>
-    <line x1="190" y1="24" x2="220" y2="24" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">PQR</text>
-    <rect x="0" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">at</text>
-    <line x1="190" y1="89" x2="220" y2="89" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">top</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" fill="none" font-family="Arial, Helvetica, sans-serif" font-size="15">
+  <defs>
+    <marker id="ga8ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g stroke="currentColor" stroke-width="1.5">
+    <line x1="200" y1="30" x2="60" y2="190"/>
+    <line x1="200" y1="30" x2="340" y2="190"/>
+    <line x1="60" y1="190" x2="340" y2="190"/>
+    <line x1="200" y1="30" x2="205" y2="190"/>
+    <line x1="182" y1="38" x2="52" y2="186" marker-start="url(#ga8ah)" marker-end="url(#ga8ah)"/>
+    <line x1="218" y1="38" x2="348" y2="186" marker-start="url(#ga8ah)" marker-end="url(#ga8ah)"/>
+    <line x1="62" y1="212" x2="338" y2="212" marker-start="url(#ga8ah)" marker-end="url(#ga8ah)"/>
+  </g>
+  <g fill="currentColor" stroke="none">
+    <text x="194" y="22">P</text>
+    <text x="40" y="196">Q</text>
+    <text x="348" y="200">R</text>
+    <text x="210" y="184">S</text>
+    <text x="102" y="108">r</text>
+    <text x="290" y="108">q</text>
+    <text x="196" y="234">p</text>
   </g>
 </svg>
