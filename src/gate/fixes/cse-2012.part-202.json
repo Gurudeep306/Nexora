@@ -1,0 +1,71 @@
+{
+ "paper": "cse-2012",
+ "fixes": [
+  {
+   "id": "cse-2012-cs-52",
+   "field": "text",
+   "before": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\epsilon$ is the empty string, $ indicates end of input, and, | separates alternate right hand sides of productions.\n\nS → a A b B | b A a B | ε\nA → S\nB → S\n\n| | a | b | $ |\n|---|---|---|---|\n| S | E1 | E2 | S → ε |\n| A | A → S | A → S | error |\n| B | B → S | B → S | E3 |\n\nThe FIRST and FOLLOW sets for the non-terminals A and B are",
+   "after": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\varepsilon$ is the empty string, `$` indicates end of input, and `|` separates alternate right hand sides of productions.\n\n$$\\begin{aligned} S &\\to aAbB \\mid bAaB \\mid \\varepsilon \\\\ A &\\to S \\\\ B &\\to S \\end{aligned}$$\n\n| | a | b | `$` |\n|---|---|---|---|\n| **S** | E1 | E2 | $S \\to \\varepsilon$ |\n| **A** | $A \\to S$ | $A \\to S$ | error |\n| **B** | $B \\to S$ | $B \\to S$ | E3 |\n\nThe FIRST and FOLLOW sets for the non-terminals A and B are",
+   "reason": "Unpaired $ (end-marker) broke KaTeX parsing; grammar and table typeset in KaTeX",
+   "source": "GATE 2012 CS question paper (PDF)"
+  },
+  {
+   "id": "cse-2012-cs-53",
+   "field": "text",
+   "before": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\epsilon$ is the empty string, $ indicates end of input, and, | separates alternate right hand sides of productions.\n\nS → a A b B | b A a B | ε\nA → S\nB → S\n\n| | a | b | $ |\n|---|---|---|---|\n| S | E1 | E2 | S → ε |\n| A | A → S | A → S | error |\n| B | B → S | B → S | E3 |\n\nThe appropriate entries for E1, E2, and E3 are",
+   "after": "Statement for Linked Answer Questions 52 and 53:\n\nFor the grammar below, a partial LL(1) parsing table is also presented along with the grammar. Entries that need to be filled are indicated as E1, E2, and E3. $\\varepsilon$ is the empty string, `$` indicates end of input, and `|` separates alternate right hand sides of productions.\n\n$$\\begin{aligned} S &\\to aAbB \\mid bAaB \\mid \\varepsilon \\\\ A &\\to S \\\\ B &\\to S \\end{aligned}$$\n\n| | a | b | `$` |\n|---|---|---|---|\n| **S** | E1 | E2 | $S \\to \\varepsilon$ |\n| **A** | $A \\to S$ | $A \\to S$ | error |\n| **B** | $B \\to S$ | $B \\to S$ | E3 |\n\nThe appropriate entries for E1, E2, and E3 are",
+   "reason": "Unpaired $ (end-marker) broke KaTeX parsing; grammar and table typeset in KaTeX",
+   "source": "GATE 2012 CS question paper (PDF)"
+  },
+  {
+   "id": "cse-2012-cs-52",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "FIRST(A) = {a, b, ε} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {a, b, $}"
+    },
+    {
+     "l": "B",
+     "t": "FIRST(A) = {a, b, $}\nFIRST(B) = {a, b, ε}\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {$}"
+    },
+    {
+     "l": "C",
+     "t": "FIRST(A) = {a, b, ε} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = ∅"
+    },
+    {
+     "l": "D",
+     "t": "FIRST(A) = {a, b} = FIRST(B)\nFOLLOW(A) = {a, b}\nFOLLOW(B) = {a, b}"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$\\text{FIRST}(A) = \\{a, b, \\varepsilon\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{a, b, \\$\\}$"
+    },
+    {
+     "l": "B",
+     "t": "$\\text{FIRST}(A) = \\{a, b, \\$\\}$\n$\\text{FIRST}(B) = \\{a, b, \\varepsilon\\}$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{\\$\\}$"
+    },
+    {
+     "l": "C",
+     "t": "$\\text{FIRST}(A) = \\{a, b, \\varepsilon\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\varnothing$"
+    },
+    {
+     "l": "D",
+     "t": "$\\text{FIRST}(A) = \\{a, b\\} = \\text{FIRST}(B)$\n$\\text{FOLLOW}(A) = \\{a, b\\}$\n$\\text{FOLLOW}(B) = \\{a, b\\}$"
+    }
+   ],
+   "reason": "Bare $ end-markers in options broke KaTeX; typeset sets in KaTeX",
+   "source": "GATE 2012 CS question paper (PDF)"
+  },
+  {
+   "id": "cse-2012-ga-61",
+   "field": "topic",
+   "before": "quant",
+   "after": "verbal",
+   "reason": "Inference from a passage is verbal reasoning, not quantitative",
+   "source": "GATE 2012 CS question paper (PDF)"
+  }
+ ]
+}

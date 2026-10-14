@@ -1,0 +1,1763 @@
+{
+ "paper": "cse-2012",
+ "version": 2,
+ "solutions": {
+  "cse-2012-cs-45": {
+   "approach": "Track the congestion window transmission by transmission: double in slow start up to the threshold, add 1 MSS per round in congestion avoidance, and on a timeout set threshold = cwnd/2 and restart slow start from the initial window.",
+   "concepts": [
+    "TCP slow start",
+    "Congestion avoidance (AIMD)",
+    "Timeout reaction"
+   ],
+   "given": "| Quantity | Value |\n|---|---|\n| Initial cwnd (slow start) | 2 MSS |\n| Initial threshold | 8 MSS |\n| Timeout | during transmission 5 |",
+   "steps": [
+    {
+     "title": "Slow start up to the threshold",
+     "body": "Transmission 1 uses $2$ MSS, transmission 2 uses $2\\times2=4$, transmission 3 uses $4\\times2=8$ = threshold, so slow start ends here.",
+     "scene": {
+      "bars": [
+       {
+        "label": "t1",
+        "value": 2
+       },
+       {
+        "label": "t2",
+        "value": 4
+       },
+       {
+        "label": "t3",
+        "value": 8
+       },
+       {
+        "label": "t4",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t5",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t6",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t7",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t8",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t9",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t10",
+        "value": 0,
+        "display": ""
+       }
+      ],
+      "caption": "Slow start: 2 → 4 → 8"
+     }
+    },
+    {
+     "title": "Congestion avoidance, then timeout",
+     "body": "Above the threshold the window grows linearly: transmission 4 uses $8+1=9$, transmission 5 uses $9+1=10$. The timeout during transmission 5 sets\n$$\\text{threshold}=\\frac{10}{2}=5\\text{ MSS},\\qquad \\text{cwnd}=2\\text{ MSS}.$$",
+     "scene": {
+      "bars": [
+       {
+        "label": "t1",
+        "value": 2
+       },
+       {
+        "label": "t2",
+        "value": 4
+       },
+       {
+        "label": "t3",
+        "value": 8
+       },
+       {
+        "label": "t4",
+        "value": 9
+       },
+       {
+        "label": "t5",
+        "value": 10,
+        "tone": "error"
+       },
+       {
+        "label": "t6",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t7",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t8",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t9",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t10",
+        "value": 0,
+        "display": ""
+       }
+      ],
+      "caption": "Timeout at 10 MSS → threshold 5"
+     }
+    },
+    {
+     "title": "Slow start again (capped at 5)",
+     "body": "Transmission 6 uses $2$, transmission 7 uses $2\\times2=4$, transmission 8 would double to $8$ but is capped at the threshold $5$.",
+     "scene": {
+      "bars": [
+       {
+        "label": "t1",
+        "value": 2
+       },
+       {
+        "label": "t2",
+        "value": 4
+       },
+       {
+        "label": "t3",
+        "value": 8
+       },
+       {
+        "label": "t4",
+        "value": 9
+       },
+       {
+        "label": "t5",
+        "value": 10,
+        "tone": "error"
+       },
+       {
+        "label": "t6",
+        "value": 2
+       },
+       {
+        "label": "t7",
+        "value": 4
+       },
+       {
+        "label": "t8",
+        "value": 5
+       },
+       {
+        "label": "t9",
+        "value": 0,
+        "display": ""
+       },
+       {
+        "label": "t10",
+        "value": 0,
+        "display": ""
+       }
+      ],
+      "caption": "Restart: 2 → 4 → 5 (threshold)"
+     }
+    },
+    {
+     "title": "Linear growth to transmission 10",
+     "body": "Transmission 9 uses $5+1=6$ and transmission 10 uses $6+1=7$ MSS. So the window at the tenth transmission is $7$ MSS.",
+     "scene": {
+      "bars": [
+       {
+        "label": "t1",
+        "value": 2
+       },
+       {
+        "label": "t2",
+        "value": 4
+       },
+       {
+        "label": "t3",
+        "value": 8
+       },
+       {
+        "label": "t4",
+        "value": 9
+       },
+       {
+        "label": "t5",
+        "value": 10,
+        "tone": "error"
+       },
+       {
+        "label": "t6",
+        "value": 2
+       },
+       {
+        "label": "t7",
+        "value": 4
+       },
+       {
+        "label": "t8",
+        "value": 5
+       },
+       {
+        "label": "t9",
+        "value": 6
+       },
+       {
+        "label": "t10",
+        "value": 7,
+        "tone": "success"
+       }
+      ],
+      "caption": "Tenth transmission: 7 MSS"
+     }
+    }
+   ],
+   "answer": {
+    "value": "7 MSS",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "8 MSS is the window if slow start were not capped at the new threshold, or one ACK-round beyond the tenth transmission."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "14 MSS would need the old threshold (8) to survive the timeout and keep growing; a timeout halves it."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: 2, 4, 8, 9, 10 (timeout, threshold 5), 2, 4, 5, 6, 7."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "12 MSS ignores the timeout entirely (8, 9, 10, 11, 12 …)."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting that the threshold becomes half of the window at the moment of timeout (10/2 = 5), not half of the old threshold.",
+    "Doubling past the threshold in the second slow-start phase (4 → 8 instead of 4 → 5)."
+   ],
+   "verification": "Listed all ten windows explicitly: 2, 4, 8, 9, 10, 2, 4, 5, 6, 7 — the tenth is 7, matching the stored key C.",
+   "animation": {
+    "kind": "bars",
+    "bars": [
+     {
+      "label": "t1",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t2",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t3",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t4",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t5",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t6",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t7",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t8",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t9",
+      "value": 0,
+      "display": ""
+     },
+     {
+      "label": "t10",
+      "value": 0,
+      "display": ""
+     }
+    ],
+    "max": 10,
+    "unit": "MSS",
+    "caption": "cwnd (MSS) per transmission"
+   }
+  },
+  "cse-2012-cs-46": {
+   "approach": "Each state remembers the last two symbols read (q is the dead state). On symbol $c$ from state $xy$ go to $yc$, unless $xyc$ contains three zeros. Fill in only the arcs not already drawn.",
+   "concepts": [
+    "DFA construction",
+    "Suffix-memory states",
+    "Dead (trap) state"
+   ],
+   "steps": [
+    {
+     "title": "What each state means",
+     "body": "State $xy$ = last two symbols were $x,y$. Reading $c$ moves to $yc$; the only forbidden 3-symbol window is $000$, which can only arise from state $00$ on input $0$.",
+     "scene": {
+      "caption": "Drawn arcs only",
+      "edgeTones": {
+       "e>0": "muted",
+       "e>1": "muted",
+       "0>00": "muted",
+       "0>01": "muted",
+       "1>10": "muted",
+       "1>11": "muted",
+       "01>10": "muted",
+       "10>01": "muted",
+       "11>11": "muted",
+       "q>q": "muted",
+       "00>q": "default",
+       "00>01": "default",
+       "01>11": "default",
+       "10>00": "default",
+       "11>10": "default"
+      }
+     }
+    },
+    {
+     "title": "Arcs from 00",
+     "body": "From $00$: input $0$ gives window $000$ (three zeros) → $q$; input $1$ gives suffix $01$ → state $01$. So row 00: column 01 = **1**, column q = **0**.",
+     "scene": {
+      "current": [
+       "00"
+      ],
+      "edgeTones": {
+       "00>q": "error",
+       "00>01": "success"
+      },
+      "caption": "00 –0→ q, 00 –1→ 01"
+     }
+    },
+    {
+     "title": "Arcs from 01, 10, 11",
+     "body": "- $01$ on $1$ → suffix $11$ (the $0$ arc $01\\to10$ is drawn): row 01, column 11 = **1**.\n- $10$ on $0$ → suffix $00$ (window $100$ has two zeros, fine): row 10, column 00 = **0**.\n- $11$ on $0$ → suffix $10$: row 11, column 10 = **0**.",
+     "scene": {
+      "current": [
+       "01",
+       "10",
+       "11"
+      ],
+      "edgeTones": {
+       "00>q": "error",
+       "00>01": "success",
+       "01>11": "success",
+       "10>00": "success",
+       "11>10": "success"
+      },
+      "caption": "All five missing arcs"
+     }
+    },
+    {
+     "title": "Match the table",
+     "body": "Missing arcs: $00\\xrightarrow{1}01,\\ 00\\xrightarrow{0}q,\\ 01\\xrightarrow{1}11,\\ 10\\xrightarrow{0}00,\\ 11\\xrightarrow{0}10$ — exactly table (D)."
+    }
+   ],
+   "answer": {
+    "value": "Table (D): 00→01 on 1, 00→q on 0, 01→11 on 1, 10→00 on 0, 11→10 on 0",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Puts 00 →(1) 00 and 00 →(0) 01: reading 1 cannot leave suffix 00, and 000 must go to q."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Sends 00 on 1 to q (001 is legal) and 10 on 0 to 11 (suffix would be 00)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Has 01 on 1 → 01 and 10 on 0 → 10: the new suffix after reading c must end in c (11 and 00)."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: every arc goes to the new two-symbol suffix, and only 00 on 0 goes to the dead state."
+    }
+   ],
+   "shortcut": "The destination of an arc labelled $c$ must be a state ending in $c$ (or q). Option D is the only one whose 0-labelled arcs land on 00/10/q and 1-labelled arcs on 01/11.",
+   "pitfalls": [
+    "Treating 10 on 0 as a violation — the window 100 has only two zeros.",
+    "Reading the tables as column-to-row instead of row-to-column."
+   ],
+   "verification": "Ran 100010 on the completed DFA: ε→1→10→00→q, rejected; ran 001110: ε→0→00→01→11→11→10, accepted — as the question states.",
+   "animation": {
+    "kind": "automaton",
+    "layout": "manual",
+    "states": [
+     {
+      "id": "e",
+      "label": "ε",
+      "start": true,
+      "accept": true,
+      "x": 0,
+      "y": 2
+     },
+     {
+      "id": "0",
+      "accept": true,
+      "x": 2,
+      "y": 1
+     },
+     {
+      "id": "1",
+      "accept": true,
+      "x": 2,
+      "y": 3
+     },
+     {
+      "id": "00",
+      "accept": true,
+      "x": 3,
+      "y": 0
+     },
+     {
+      "id": "01",
+      "accept": true,
+      "x": 4,
+      "y": 1
+     },
+     {
+      "id": "10",
+      "accept": true,
+      "x": 4,
+      "y": 3
+     },
+     {
+      "id": "11",
+      "accept": true,
+      "x": 3,
+      "y": 4
+     },
+     {
+      "id": "q",
+      "x": 6,
+      "y": 2
+     }
+    ],
+    "edges": [
+     {
+      "from": "e",
+      "to": "0",
+      "label": "0"
+     },
+     {
+      "from": "e",
+      "to": "1",
+      "label": "1"
+     },
+     {
+      "from": "0",
+      "to": "00",
+      "label": "0"
+     },
+     {
+      "from": "0",
+      "to": "01",
+      "label": "1"
+     },
+     {
+      "from": "1",
+      "to": "10",
+      "label": "0"
+     },
+     {
+      "from": "1",
+      "to": "11",
+      "label": "1"
+     },
+     {
+      "from": "01",
+      "to": "10",
+      "label": "0"
+     },
+     {
+      "from": "10",
+      "to": "01",
+      "label": "1"
+     },
+     {
+      "from": "11",
+      "to": "11",
+      "label": "1"
+     },
+     {
+      "from": "q",
+      "to": "q",
+      "label": "0,1"
+     },
+     {
+      "from": "00",
+      "to": "q",
+      "label": "0"
+     },
+     {
+      "from": "00",
+      "to": "01",
+      "label": "1"
+     },
+     {
+      "from": "01",
+      "to": "11",
+      "label": "1"
+     },
+     {
+      "from": "10",
+      "to": "00",
+      "label": "0"
+     },
+     {
+      "from": "11",
+      "to": "10",
+      "label": "0"
+     }
+    ]
+   }
+  },
+  "cse-2012-cs-47": {
+   "approach": "Height of a node = 1 + max(height of its children), with an empty subtree counting as −1. Specialise this to the two cases the boxes handle.",
+   "concepts": [
+    "Tree height",
+    "Recursion"
+   ],
+   "steps": [
+    {
+     "title": "Box B1: only a right child",
+     "body": "Here `n->left == NULL` and `n->right != NULL`. The longest path goes through the edge to the right child, so\n$$\\text{height}(n)=1+\\text{height}(n\\to\\text{right}).$$"
+    },
+    {
+     "title": "Box B2: both children exist",
+     "body": "`h1` and `h2` are the heights of the two subtrees; one more edge reaches each, so\n$$\\text{height}(n)=1+\\max(h_1,h_2).$$ This matches the existing line `return (1+h1)` for the left-only case."
+    }
+   ],
+   "answer": {
+    "value": "B1: 1+height(n->right), B2: 1+max(h1,h2)",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: both cases add the one edge from n to its child."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "B1 omits the edge from n to its right child, so a node with only a right leaf would get height 0 instead of 1."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Both boxes omit the +1; every internal node would report its child's height."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "B1 is right but B2 omits the +1 for nodes with two children."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting the +1 in one of the two boxes — the code is consistent only when both add 1, like `return (1+h1)`."
+   ],
+   "verification": "A root with two leaf children: h1 = h2 = 0, B2 gives 1 (one edge) — correct. A root with only a right leaf: B1 gives 1 + 0 = 1 — correct."
+  },
+  "cse-2012-cs-48": {
+   "approach": "Static locals are initialised once and keep their value between calls; each function sees its own local `a`, and `main` sees the global `b` (zero-initialised).",
+   "concepts": [
+    "Static local variables",
+    "Scope and shadowing",
+    "Pre-increment"
+   ],
+   "steps": [
+    {
+     "title": "First call of prtFun",
+     "body": "Local `b = 1`; `++b` makes $b=2$; static `a` (initially 2) becomes $2+2=4$. Prints **4 2**.",
+     "scene": {
+      "line": 14,
+      "vars": {
+       "main.a": 1,
+       "prtFun.a": 4,
+       "prtFun.b": 2
+      },
+      "output": "4 2"
+     }
+    },
+    {
+     "title": "Back in main, second call",
+     "body": "`main`'s static `a` becomes $1+1=2$. In `prtFun`, static `a` still holds 4; `b` is re-created as 1 and `++b` gives 2, so $a=4+2=6$. Prints **6 2**.",
+     "scene": {
+      "line": 15,
+      "vars": {
+       "main.a": 2,
+       "prtFun.a": 6,
+       "prtFun.b": 2
+      },
+      "output": "4 2\n6 2"
+     }
+    },
+    {
+     "title": "Final printf in main",
+     "body": "`a` here is main's static `a` = 2; `b` is the global `b`, never assigned, so 0. Prints **2 0**.",
+     "scene": {
+      "line": 8,
+      "vars": {
+       "main.a": 2,
+       "global b": 0
+      },
+      "output": "4 2\n6 2\n2 0"
+     }
+    }
+   ],
+   "answer": {
+    "value": "4 2 / 6 2 / 2 0",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Uses b++ semantics (prints b = 1) and ignores the separate static a of prtFun."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Prints b as 1, but ++b makes the printed b equal to 2; also main prints its own a = 2 and global b = 0."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: 4 2, 6 2, 2 0."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Uses post-increment and confuses the two static a variables."
+    }
+   ],
+   "pitfalls": [
+    "Thinking the static `a` in prtFun is reinitialised on every call.",
+    "Printing prtFun's local values in main — main sees its own `a` and the global `b`."
+   ],
+   "verification": "Traced both calls: prtFun.a goes 2 → 4 → 6, main.a goes 1 → 2, global b stays 0.",
+   "animation": {
+    "kind": "code",
+    "lang": "c",
+    "code": "int a, b, c = 0;\nvoid prtFun(void);\nmain( )\n{   static int a = 1;   /* Line 1 */\n    prtFun( );\n    a += 1;\n    prtFun( );\n    printf(\" \\n %d %d \", a, b);\n}\n\nvoid prtFun(void)\n{   static int a = 2;   /* Line 2 */\n    int b = 1;\n    a += ++b;\n    printf(\" \\n %d %d \", a, b);\n}",
+    "line": 5,
+    "vars": {
+     "main.a": 1
+    },
+    "output": ""
+   }
+  },
+  "cse-2012-cs-49": {
+   "approach": "With `auto`/`register` the locals are re-initialised on every entry, so both calls of prtFun start from a = 2, b = 1; storage class does not change scope.",
+   "concepts": [
+    "auto vs static storage",
+    "register variables",
+    "Scope"
+   ],
+   "steps": [
+    {
+     "title": "First call",
+     "body": "`register int a = 2`, `b = 1`; `++b` gives 2; $a = 2 + 2 = 4$. Prints **4 2**."
+    },
+    {
+     "title": "Second call",
+     "body": "main's `a` becomes $1+1=2$ (no effect on prtFun). prtFun starts afresh: $a=2$, $b=1\\to2$, $a=2+2=4$. Prints **4 2** again."
+    },
+    {
+     "title": "main prints",
+     "body": "main's auto `a` = 2 and global `b` = 0. Prints **2 0**."
+    }
+   ],
+   "answer": {
+    "value": "4 2 / 4 2 / 2 0",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Uses post-increment values for b and wrong values of a."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Keeps prtFun's a between calls (static behaviour) and prints b = 1."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "This is the static version (Q48); with register a is reset to 2 each call, so the second line is 4 2, not 6 2."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: 4 2, 4 2, 2 0."
+    }
+   ],
+   "pitfalls": [
+    "Carrying a = 4 into the second call — only static locals persist."
+   ],
+   "verification": "Both calls are identical because prtFun has no persistent state; main's line is unchanged from Q48."
+  },
+  "cse-2012-cs-50": {
+   "approach": "Form A ∪ B (duplicates removed), then count, for every pair with a C tuple, whether the theta condition A.Id > 40 ∨ C.Id < 15 holds.",
+   "concepts": [
+    "Set union",
+    "Theta join"
+   ],
+   "steps": [
+    {
+     "title": "A ∪ B",
+     "body": "A has 3 tuples, B has 4; the tuples (15, Shreya, 24) and (99, Rohit, 11) are common, so $|A\\cup B| = 3+4-2 = 5$: Ids 12, 15, 99, 25, 98.",
+     "scene": {
+      "caption": "A ∪ B × C, 5 × 2 = 10 pairs"
+     }
+    },
+    {
+     "title": "Pairs with C.Id = 10",
+     "body": "$C.Id = 10 < 15$, so the condition is true for every left tuple: **5** tuples.",
+     "scene": {
+      "hl": [
+       {
+        "c": 3,
+        "tone": "success"
+       }
+      ],
+      "caption": "C.Id = 10: all 5 qualify"
+     }
+    },
+    {
+     "title": "Pairs with C.Id = 99",
+     "body": "$C.Id=99$ fails $<15$, so we need $A.Id>40$: Ids 99 and 98 qualify → **2** tuples.\n\nTotal $= 5 + 2 = 7$.",
+     "scene": {
+      "hl": [
+       {
+        "c": 3,
+        "tone": "success"
+       },
+       {
+        "r": 2,
+        "c": 4,
+        "tone": "success"
+       },
+       {
+        "r": 4,
+        "c": 4,
+        "tone": "success"
+       }
+      ],
+      "caption": "C.Id = 99: only Ids 99, 98 → total 7"
+     }
+    }
+   ],
+   "answer": {
+    "value": "7",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: 5 (with C.Id = 10) + 2 (with C.Id = 99)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "4 would come from using A only or ignoring the C.Id < 15 disjunct."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "5 counts only the C.Id = 10 pairs (or just |A ∪ B|)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "9 overcounts: of the 5 pairs with C.Id = 99, those with Ids 12, 15 and 25 fail both disjuncts, leaving 7 of 10."
+    }
+   ],
+   "pitfalls": [
+    "Keeping duplicates in A ∪ B (relational union is a set operation)."
+   ],
+   "verification": "Checked all 10 pairs in the 5 × 2 grid: 7 satisfy the condition.",
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "Id",
+     "Name",
+     "Age",
+     "C.Id=10",
+     "C.Id=99"
+    ],
+    "rows": [
+     [
+      12,
+      "Arun",
+      60,
+      "✓",
+      "✗"
+     ],
+     [
+      15,
+      "Shreya",
+      24,
+      "✓",
+      "✗"
+     ],
+     [
+      99,
+      "Rohit",
+      11,
+      "✓",
+      "✓"
+     ],
+     [
+      25,
+      "Hari",
+      40,
+      "✓",
+      "✗"
+     ],
+     [
+      98,
+      "Rohit",
+      20,
+      "✓",
+      "✓"
+     ]
+    ],
+    "mono": true
+   }
+  },
+  "cse-2012-cs-51": {
+   "approach": "The subquery returns the ages of B-tuples named Arun — there are none. `> ALL` over an empty set is vacuously true, so every row of A is returned.",
+   "concepts": [
+    "ALL quantifier",
+    "Empty subquery"
+   ],
+   "steps": [
+    {
+     "title": "Evaluate the subquery",
+     "body": "B contains Shreya, Hari, Rohit, Rohit — no tuple with Name = 'Arun'. The subquery result is the empty set."
+    },
+    {
+     "title": "Apply > ALL",
+     "body": "$x > \\text{ALL}(\\varnothing)$ is true for every $x$ (no element to violate it). So all $3$ tuples of A (Ids 12, 15, 99) are output."
+    }
+   ],
+   "answer": {
+    "value": "3",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "4 is the size of B, not of A."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: the condition is vacuously true for all 3 rows of A."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "0 treats comparison with an empty set as false/unknown — that is the behaviour of `> ANY`, not `> ALL`."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "1 assumes Arun (age 60) is compared with himself from A; the subquery reads B, where Arun does not exist."
+    }
+   ],
+   "pitfalls": [
+    "Confusing ALL with ANY on an empty set: ALL → true, ANY → false."
+   ],
+   "verification": "ALL is a universal quantifier; ∀x∈∅ P(x) is true, so the WHERE clause accepts every row."
+  },
+  "cse-2012-cs-52": {
+   "approach": "FIRST(A) = FIRST(B) = FIRST(S) because A → S and B → S. FOLLOW(A) comes from the terminals after A; FOLLOW(B) = FOLLOW(S), which absorbs FOLLOW(A) and FOLLOW(B).",
+   "concepts": [
+    "FIRST sets",
+    "FOLLOW sets",
+    "Nullable symbols"
+   ],
+   "steps": [
+    {
+     "title": "FIRST sets",
+     "body": "Grammar: $S\\to aAbB \\mid bAaB \\mid \\varepsilon$, $A\\to S$, $B\\to S$. $\\text{FIRST}(S)=\\{a,b,\\varepsilon\\}$ (from $aAbB$, $bAaB$, $\\varepsilon$). Since $A\\to S$ and $B\\to S$, $\\text{FIRST}(A)=\\text{FIRST}(B)=\\{a,b,\\varepsilon\\}$.",
+     "scene": {
+      "reveal": 3,
+      "caption": "FIRST"
+     }
+    },
+    {
+     "title": "FOLLOW(A)",
+     "body": "A is followed by $b$ in $aAbB$ and by $a$ in $bAaB$, so $\\text{FOLLOW}(A)=\\{a,b\\}$.",
+     "scene": {
+      "reveal": 6,
+      "caption": "FOLLOW(A)"
+     }
+    },
+    {
+     "title": "FOLLOW(S) and FOLLOW(B)",
+     "body": "B ends both productions of S: $\\text{FOLLOW}(B)\\supseteq\\text{FOLLOW}(S)$. S ends the productions of A and B: $\\text{FOLLOW}(S)\\supseteq\\text{FOLLOW}(A)\\cup\\text{FOLLOW}(B)$. With $\\$\\in\\text{FOLLOW}(S)$:\n$$\\text{FOLLOW}(S)=\\text{FOLLOW}(B)=\\{\\$\\}\\cup\\{a,b\\}=\\{a,b,\\$\\}.$$",
+     "scene": {
+      "reveal": 9,
+      "caption": "FOLLOW(B) = FOLLOW(S)"
+     }
+    }
+   ],
+   "answer": {
+    "value": "FIRST(A) = FIRST(B) = {a, b, ε}; FOLLOW(A) = {a, b}; FOLLOW(B) = {a, b, \\$}",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: FIRST sets inherit from S; FOLLOW(B) = FOLLOW(S) = {a, b, \\$}."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "\\$ never belongs to a FIRST set, and FOLLOW(B) misses a and b inherited through FOLLOW(A) ⊆ FOLLOW(S)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "FOLLOW of a reachable non-terminal B cannot be empty; it contains at least \\$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Omits ε from FIRST (S, hence A and B, is nullable) and \\$ from FOLLOW(B)."
+    }
+   ],
+   "pitfalls": [
+    "Missing the cycle FOLLOW(A) ⊆ FOLLOW(S) ⊆ FOLLOW(B), which puts a and b into FOLLOW(B)."
+   ],
+   "verification": "Derivation S ⇒ aAbB ⇒ a S bB ⇒ a aAbB bB shows B followed by b; S ⇒ bAaB ⇒ b S aB ⇒ b aAbB aB shows B followed by a.",
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "S",
+     "A",
+     "B"
+    ],
+    "rowLabels": [
+     "FIRST",
+     "FOLLOW (A part)",
+     "FOLLOW"
+    ],
+    "corner": "set",
+    "rows": [
+     [
+      "{a,b,ε}",
+      "{a,b,ε}",
+      "{a,b,ε}"
+     ],
+     [
+      "—",
+      "{a,b}",
+      "—"
+     ],
+     [
+      "{a,b,\\$}",
+      "{a,b}",
+      "{a,b,\\$}"
+     ]
+    ],
+    "reveal": 0,
+    "mono": true
+   }
+  },
+  "cse-2012-cs-53": {
+   "approach": "Fill each cell with the LL(1) rule: put X → α in M[X, t] for t ∈ FIRST(α); if α is nullable also for every t ∈ FOLLOW(X). Use FOLLOW(S) = FOLLOW(B) = {a, b, \\$} from Q52.",
+   "concepts": [
+    "LL(1) table construction",
+    "FIRST/FOLLOW",
+    "LL(1) conflicts"
+   ],
+   "steps": [
+    {
+     "title": "Non-ε productions of S",
+     "body": "$S\\to aAbB$ goes in $M[S,a]$; $S\\to bAaB$ goes in $M[S,b]$.",
+     "scene": {
+      "reveal": 2,
+      "caption": "FIRST-based entries"
+     }
+    },
+    {
+     "title": "S → ε",
+     "body": "$\\text{FOLLOW}(S)=\\{a,b,\\$\\}$, so $S\\to\\varepsilon$ goes in $M[S,a]$, $M[S,b]$ and $M[S,\\$]$. Hence E1 $=\\{S\\to aAbB,\\ S\\to\\varepsilon\\}$ and E2 $=\\{S\\to bAaB,\\ S\\to\\varepsilon\\}$ (the grammar is not LL(1)).",
+     "scene": {
+      "reveal": 3,
+      "hl": [
+       {
+        "r": 0,
+        "c": 0,
+        "tone": "warning"
+       },
+       {
+        "r": 0,
+        "c": 1,
+        "tone": "warning"
+       }
+      ],
+      "caption": "Conflicts in E1, E2"
+     }
+    },
+    {
+     "title": "Entry E3",
+     "body": "$B\\to S$ with $S$ nullable, and $\\$\\in\\text{FOLLOW}(B)$, so $M[B,\\$]$ = E3 = $B\\to S$.",
+     "scene": {
+      "reveal": 9,
+      "hl": [
+       {
+        "r": 0,
+        "c": 0,
+        "tone": "warning"
+       },
+       {
+        "r": 0,
+        "c": 1,
+        "tone": "warning"
+       },
+       {
+        "r": 2,
+        "c": 2,
+        "tone": "success"
+       }
+      ],
+      "caption": "E3 = B → S"
+     }
+    }
+   ],
+   "answer": {
+    "value": "E1: S → aAbB, S → ε; E2: S → bAaB, S → ε; E3: B → S",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Row S can only hold S-productions; A → S and B → S do not belong in M[S, ·]."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "E3 is in row B, so it must be a B-production (B → S), not S → ε."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: S → ε joins both S cells because a, b ∈ FOLLOW(S); E3 = B → S."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Again puts A/B productions in row S."
+    }
+   ],
+   "pitfalls": [
+    "Writing a production of the wrong non-terminal in a row.",
+    "Forgetting S → ε in M[S,a] and M[S,b] because FOLLOW(S) contains a and b."
+   ],
+   "verification": "Consistent with the given row A: A → S appears under a and b (FIRST) but \"error\" under \\$ because \\$ ∉ FOLLOW(A) = {a, b}.",
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "a",
+     "b",
+     "$"
+    ],
+    "rowLabels": [
+     "S",
+     "A",
+     "B"
+    ],
+    "rows": [
+     [
+      "S→aAbB, S→ε",
+      "S→bAaB, S→ε",
+      "S→ε"
+     ],
+     [
+      "A→S",
+      "A→S",
+      "error"
+     ],
+     [
+      "B→S",
+      "B→S",
+      "B→S"
+     ]
+    ],
+    "reveal": 0,
+    "mono": true
+   }
+  },
+  "cse-2012-cs-54": {
+   "approach": "Split the 32-bit address into tag | set index | block offset. Sets = cache size / (block size × associativity).",
+   "concepts": [
+    "Set-associative cache",
+    "Address split"
+   ],
+   "steps": [
+    {
+     "title": "Offset and number of sets",
+     "body": "Block offset $= \\log_2 32 = 5$ bits. Blocks $= \\frac{256\\text{ KB}}{32\\text{ B}} = \\frac{2^{18}}{2^5} = 2^{13}$. Sets $= \\frac{2^{13}}{4} = 2^{11}$ → index $= 11$ bits."
+    },
+    {
+     "title": "Tag",
+     "body": "Tag $= 32 - 11 - 5 = 16$ bits."
+    }
+   ],
+   "answer": {
+    "value": "16",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "11 is the set-index width, not the tag."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "14 would be the tag of a direct-mapped cache (32 − 13 − 5)."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: 32 − 11 − 5 = 16."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "27 subtracts only the offset (32 − 5), as in a fully associative cache."
+    }
+   ],
+   "pitfalls": [
+    "Dividing by the associativity is what makes the tag 16 rather than 14."
+   ],
+   "verification": "Tag + index + offset = 16 + 11 + 5 = 32 bits.",
+   "animation": {
+    "kind": "bits",
+    "rows": [
+     {
+      "label": "32-bit address",
+      "fields": [
+       {
+        "bits": "xxxxxxxxxxxxxxxx",
+        "label": "tag (16)",
+        "tone": "accent"
+       },
+       {
+        "bits": "xxxxxxxxxxx",
+        "label": "set (11)",
+        "tone": "info"
+       },
+       {
+        "bits": "xxxxx",
+        "label": "offset (5)"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "cse-2012-cs-55": {
+   "approach": "The tag directory has one entry per cache block; each entry holds the tag plus the given status bits.",
+   "concepts": [
+    "Tag directory size",
+    "Cache metadata"
+   ],
+   "steps": [
+    {
+     "title": "Bits per entry",
+     "body": "Tag (from Q54) $16$ + valid $2$ + modified $1$ + replacement $1$ $= 20$ bits."
+    },
+    {
+     "title": "Number of entries and total",
+     "body": "Blocks $= \\frac{2^{18}}{2^{5}} = 2^{13} = 8192$. Directory $= 2^{13}\\times 20 = 163840$ bits $= \\frac{163840}{1024} = 160$ Kbits."
+    }
+   ],
+   "answer": {
+    "value": "160 Kbits",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: 8192 × 20 bits = 160 Kbits."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "136 Kbits = 8192 × 17 — uses a 13-bit tag or omits some status bits."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "40 Kbits = 2048 × 20 — counts sets instead of blocks."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "32 Kbits = 2048 × 16 — counts sets and tag bits only."
+    }
+   ],
+   "pitfalls": [
+    "Counting one entry per set instead of one per block (line)."
+   ],
+   "verification": "8192 × 20 = 163840 = 160 × 1024."
+  },
+  "cse-2012-ga-56": {
+   "approach": "Profit = revenue − cost = 50q − 5q²; set its derivative to zero.",
+   "concepts": [
+    "Profit maximisation",
+    "Maxima of a quadratic"
+   ],
+   "steps": [
+    {
+     "title": "Profit function",
+     "body": "$P(q) = 50q - 5q^2$."
+    },
+    {
+     "title": "Maximise",
+     "body": "$P'(q) = 50 - 10q = 0 \\Rightarrow q = 5$; $P''(q) = -10 < 0$, so it is a maximum ($P(5) = 250 - 125 = 125$)."
+    }
+   ],
+   "answer": {
+    "value": "5",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: q = 5 gives the maximum profit 125."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "q = 10 gives profit 500 − 500 = 0 (break-even)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "q = 15 gives 750 − 1125 = −375, a loss."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "q = 25 gives 1250 − 3125 = −1875, a loss."
+    }
+   ],
+   "verification": "Profits at 5, 10, 15, 25 are 125, 0, −375, −1875 — 5 is best."
+  },
+  "cse-2012-ga-57": {
+   "approach": "\"Despite\" signals contrast with \"succeeded\", so the blank needs a word for obstacles.",
+   "concepts": [
+    "Sentence completion",
+    "Contrast connective"
+   ],
+   "steps": [
+    {
+     "title": "Read the connective",
+     "body": "\"Despite X, the mission succeeded\" requires X to be something that works against success."
+    },
+    {
+     "title": "Pick the word",
+     "body": "Only *setbacks* (reverses, obstacles) contrasts with success."
+    }
+   ],
+   "answer": {
+    "value": "setbacks",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Attempts do not contrast with succeeding, and \"its attempt\" already appears in the sentence."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: setbacks oppose success, which \"despite\" requires."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Meetings are neutral; no contrast with success."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Delegations are neutral; no contrast with success."
+    }
+   ],
+   "verification": "Substituting each option, only \"Despite several setbacks …\" gives the concessive meaning."
+  },
+  "cse-2012-ga-58": {
+   "approach": "Mitigate means to make less severe.",
+   "concepts": [
+    "Vocabulary",
+    "Synonyms"
+   ],
+   "steps": [
+    {
+     "title": "Meaning",
+     "body": "*Mitigate* = lessen, alleviate (e.g. mitigate a risk)."
+    },
+    {
+     "title": "Match",
+     "body": "*Diminish* = make smaller/less — the closest synonym."
+    }
+   ],
+   "answer": {
+    "value": "Diminish",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: diminish = lessen."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Divulge = reveal a secret."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Dedicate = devote to a purpose."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Denote = indicate or signify."
+    }
+   ],
+   "verification": "\"Measures to diminish the damage\" keeps the meaning of \"measures to mitigate the damage\"."
+  },
+  "cse-2012-ga-59": {
+   "approach": "\"Less\" is a comparative; it cannot be intensified by \"very\" in place of \"low/little\".",
+   "concepts": [
+    "Grammar",
+    "Comparatives"
+   ],
+   "steps": [
+    {
+     "title": "Spot the error",
+     "body": "\"very less\" is incorrect — \"very\" modifies positive forms (very low, very little), not the comparative \"less\". The sentence should read \"… is very low\"."
+    },
+    {
+     "title": "Check the rest",
+     "body": "\"less the service charges\" (= minus), \"not less than\", and \"a lesser sum\" are all standard uses."
+    }
+   ],
+   "answer": {
+    "value": "This country's expenditure on educational reforms is very less.",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "\"less\" here is a preposition meaning \"minus\" — correct."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "\"not less than that of Bangladesh\" is a proper comparative — correct."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "\"a lesser sum\" is a correct comparative adjective."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Incorrect: \"very less\" — should be \"very low\"."
+    }
+   ],
+   "verification": "Only D uses a comparative without a comparison and with \"very\"."
+  },
+  "cse-2012-ga-60": {
+   "approach": "The blank introduces a defining (restrictive) relative clause about an animal; \"that\" is the standard pronoun for such clauses.",
+   "concepts": [
+    "Relative pronouns",
+    "Restrictive clauses"
+   ],
+   "steps": [
+    {
+     "title": "Subject pronoun needed",
+     "body": "The pronoun is the subject of \"was hurt\", so \"whom\" (object form) is out."
+    },
+    {
+     "title": "Restrictive clause about an animal",
+     "body": "The clause identifies *which* one (the one that was hurt) — a defining clause, for which \"that\" is preferred; \"who\" is reserved for people."
+    }
+   ],
+   "answer": {
+    "value": "that",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: subject pronoun introducing a defining relative clause."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "\"which\" is usual in non-defining clauses (after a comma); \"that\" is preferred in this defining clause."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "\"who\" refers to people, not to a dog (in standard usage)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "\"whom\" is an object form; the blank is the subject of \"was hurt\"."
+    }
+   ],
+   "verification": "\"Suresh's dog is the one that was hurt in the stampede\" reads naturally and correctly."
+  },
+  "cse-2012-ga-61": {
+   "approach": "Look only at what the advertisement states: the requirements mention education and availability, nothing about gender or nationality.",
+   "concepts": [
+    "Inference",
+    "Reading comprehension"
+   ],
+   "steps": [
+    {
+     "title": "List the requirements",
+     "body": "High-school pass; available Day, Evening and Saturday; perks: transport paid, expenses reimbursed."
+    },
+    {
+     "title": "Infer",
+     "body": "No condition restricts gender (or nationality), so the ad is *not gender-discriminatory*. The perks also show it is designed to attract applicants."
+    }
+   ],
+   "answer": {
+    "value": "Not gender-discriminatory",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Nothing in the ad mentions or implies gender."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Nothing mentions nationality or foreigners."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Paid transport and reimbursed expenses are incentives — the post is made attractive."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: the requirements are gender-neutral."
+    }
+   ],
+   "verification": "Each requirement (education, availability) applies equally to everyone."
+  },
+  "cse-2012-ga-62": {
+   "approach": "Maximise the quadratic y = 2x − 0.1x² at its vertex x = −b/(2a).",
+   "concepts": [
+    "Maxima of a quadratic"
+   ],
+   "steps": [
+    {
+     "title": "Vertex",
+     "body": "$\\frac{dy}{dx} = 2 - 0.2x = 0 \\Rightarrow x = 10$."
+    },
+    {
+     "title": "Height",
+     "body": "$y(10) = 2(10) - 0.1(10)^2 = 20 - 10 = 10$ m."
+    }
+   ],
+   "answer": {
+    "value": "10 meters",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "8 m is below the maximum (e.g. at x ≈ 5.5)."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: maximum height 10 m at x = 10."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "12 m is above the maximum; 2x − 0.1x² = 12 has no real root (discriminant 4 − 4.8 < 0)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "14 m is above the maximum; no real x reaches it."
+    }
+   ],
+   "verification": "Completing the square: y = 10 − 0.1(x − 10)² ≤ 10."
+  },
+  "cse-2012-ga-63": {
+   "approach": "Bayes' theorem: P(Y | reliable) = P(Y)·P(R|Y) / P(R).",
+   "concepts": [
+    "Bayes theorem",
+    "Total probability"
+   ],
+   "steps": [
+    {
+     "title": "Total probability of reliable",
+     "body": "$P(R) = 0.6\\times0.96 + 0.4\\times0.72 = 0.576 + 0.288 = 0.864$."
+    },
+    {
+     "title": "Bayes",
+     "body": "$P(Y\\mid R) = \\frac{0.288}{0.864} = \\frac{1}{3} \\approx 0.334$."
+    }
+   ],
+   "answer": {
+    "value": "0.334",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "0.288 is P(Y ∩ R), not the conditional probability."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: 0.288 / 0.864 = 1/3."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "0.667 is P(X | R) = 0.576 / 0.864."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "0.720 is P(R | Y), the reverse conditional."
+    }
+   ],
+   "verification": "P(X|R) + P(Y|R) = 0.667 + 0.333 = 1."
+  },
+  "cse-2012-ga-64": {
+   "approach": "A shift x → x + c moves the mean by c but leaves spread unchanged; a scaling x → kx scales both mean and standard deviation by |k|.",
+   "concepts": [
+    "Mean",
+    "Standard deviation",
+    "Linear transformation"
+   ],
+   "steps": [
+    {
+     "title": "Adding 7",
+     "body": "Mean becomes $\\mu + 7$ (P true); deviations $x_i - \\mu$ are unchanged, so SD is unchanged (Q false)."
+    },
+    {
+     "title": "Doubling",
+     "body": "Mean becomes $2\\mu$ (R true); deviations double, so SD becomes $2\\sigma$ (S false)."
+    }
+   ],
+   "answer": {
+    "value": "P, R",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Q is false: a shift does not change the SD."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Q is false."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: P and R are the only true statements."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "S is false: doubling doubles the SD."
+    }
+   ],
+   "verification": "List {1, 3}: mean 2, SD 1. Add 7 → {8, 10}: mean 9, SD 1. Double → {2, 6}: mean 4, SD 2."
+  },
+  "cse-2012-ga-65": {
+   "approach": "Convert letters to positions and look at the gaps within and between terms.",
+   "concepts": [
+    "Letter series"
+   ],
+   "steps": [
+    {
+     "title": "First letters",
+     "body": "A, C, F, J = 1, 3, 6, 10: gaps +2, +3, +4 → next +5: $10+5=15$ = **O**."
+    },
+    {
+     "title": "Second letters",
+     "body": "In each term the second letter is ahead by 3, 4, 5, 6 (A→D, C→G, F→K, J→P) → next gap 7: $15+7=22$ = **V**. Next term: **OV**."
+    }
+   ],
+   "answer": {
+    "value": "OV",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: O (15) and V (22 = 15 + 7)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "W would need a gap of 8 within the term."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "P (16) breaks the +2, +3, +4, +5 pattern of the first letters."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "P breaks the first-letter pattern."
+    }
+   ],
+   "verification": "Second letters D, G, K, P = 4, 7, 11, 16 (gaps 3, 4, 5) → next 16 + 6 = 22 = V, consistent."
+  }
+ }
+}
