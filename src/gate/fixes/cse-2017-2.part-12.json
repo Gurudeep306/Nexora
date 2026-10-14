@@ -1,7 +1,0 @@
-{
-  "paper": "cse-2017-2",
-  "fixes": [
-    { "id": "cse-2017-2-cs-31", "field": "subject", "before": "ga", "after": "prob", "reason": "CS-section question on the expectation of a discrete random variable (probability generating function), not General Aptitude.", "source": "GATE 2017 Set 2 question paper, Q31" },
-    { "id": "cse-2017-2-cs-31", "field": "topic", "before": "quant", "after": "rv", "reason": "Topic is random variables / expectation.", "source": "GATE 2017 Set 2 question paper, Q31" }
-  ]
-}

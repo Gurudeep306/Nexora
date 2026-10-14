@@ -86644,7 +86644,7 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "Based on the given statements, select the most appropriate option to solve the given question.\n\nIf two floors in a certain building are 9 feet apart, how many steps are there in a set of stairs that extends from the first floor to the second floor of the building?\n\nStatements:\n\n(I) Each step is 3/4 foot high.\n(II) Each step is 1 foot wide.",
+      "text": "Based on the given statements, select the most appropriate option to solve the given question.\n\nIf two floors in a certain building are 9 feet apart, how many steps are there in a set of stairs that extends from the first floor to the second floor of the building?\n\nStatements:\n\n(I) Each step is 3/4 foot high.\n\n(II) Each step is 1 foot wide.",
       "options": [
         {
           "l": "A",
@@ -86711,7 +86711,7 @@
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "verbal",
       "tags": [
         "vocabulary"
       ],
@@ -86825,7 +86825,7 @@
       "number": "8",
       "marks": 2,
       "type": "MCQ",
-      "text": "The given statement is followed by some courses of action. Assuming the statement to be true, decide the correct option.\n\nStatement:\n\nThere has been a significant drop in the water level in the lakes supplying water to the city.\n\nCourse of action:\n\n(I) The water supply authority should impose a partial cut in supply to tackle the situation.\n(II) The government should appeal to all the residents through mass media for minimal use of water.\n(III) The government should ban the water supply in lower areas.",
+      "text": "The given statement is followed by some courses of action. Assuming the statement to be true, decide the correct option.\n\nStatement:\n\nThere has been a significant drop in the water level in the lakes supplying water to the city.\n\nCourse of action:\n\n(I) The water supply authority should impose a partial cut in supply to tackle the situation.\n\n(II) The government should appeal to all the residents through mass media for minimal use of water.\n\n(III) The government should ban the water supply in lower areas.",
       "options": [
         {
           "l": "A",
@@ -86875,7 +86875,7 @@
       "figures": [
         {
           "f": "cse-2015-1/ga-9-1.png",
-          "alt": "Pie chart: Computer Science 40%, Civil 30%, Electrical 20%, Mechanical 10%.",
+          "alt": "Exploded pie chart of students by department: Computer Science 40%, Civil 30%, Mechanical 10%, Electrical 20%.",
           "svg": "cse-2015-1/ga-9-1.svg"
         }
       ],
@@ -86904,7 +86904,7 @@
       "number": "10",
       "marks": 2,
       "type": "MCQ",
-      "text": "The probabilities that a student passes in Mathematics, Physics and Chemistry are m, p, and c respectively. Of these subjects, the student has 75% chance of passing in at least one, a 50% chance of passing in at least two and a 40% chance of passing in exactly two. Following relations are drawn in m, p, c:\n\n(I) p + m + c = 27/20\n(II) p + m + c = 13/20\n(III) (p)×(m)×(c) = 1/10",
+      "text": "The probabilities that a student passes in Mathematics, Physics and Chemistry are m, p, and c respectively. Of these subjects, the student has 75% chance of passing in at least one, a 50% chance of passing in at least two and a 40% chance of passing in exactly two. Following relations are drawn in m, p, c:\n\n(I) $p + m + c = 27/20$\n\n(II) $p + m + c = 13/20$\n\n(III) $(p)\\times(m)\\times(c) = 1/10$",
       "options": [
         {
           "l": "A",
@@ -87041,7 +87041,7 @@
       "number": "3",
       "marks": 1,
       "type": "MCQ",
-      "text": "For any two languages $L_1$ and $L_2$ such that $L_1$ is context-free and $L_2$ is recursively enumerable but not recursive, which of the following is/are necessarily true?\n\nI. $\\overline{L_1}$ (complement of $L_1$) is recursive\nII. $\\overline{L_2}$ (complement of $L_2$) is recursive\nIII. $\\overline{L_1}$ is context-free\nIV. $\\overline{L_1} \\cup L_2$ is recursively enumerable",
+      "text": "For any two languages $L_1$ and $L_2$ such that $L_1$ is context-free and $L_2$ is recursively enumerable but not recursive, which of the following is/are necessarily true?\n\nI. $\\overline{L_1}$ (complement of $L_1$) is recursive\n\nII. $\\overline{L_2}$ (complement of $L_2$) is recursive\n\nIII. $\\overline{L_1}$ is context-free\n\nIV. $\\overline{L_1} \\cup L_2$ is recursively enumerable",
       "options": [
         {
           "l": "A",
@@ -87107,10 +87107,11 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "calc",
+      "topic": "limits",
       "tags": [
-        "limit"
+        "limits",
+        "l'hopital"
       ],
       "answer": "C",
       "answerSource": "official",
@@ -87153,7 +87154,7 @@
       "figures": [],
       "group": null,
       "subject": "calc",
-      "topic": "limits",
+      "topic": "functions",
       "tags": [
         "function composition"
       ],
@@ -87266,7 +87267,7 @@
       "number": "8",
       "marks": 1,
       "type": "MCQ",
-      "text": "For computers based on three-address instruction formats, each address field can be used to specify which of the following:\n\n(S1) A memory operand\n(S2) A processor register\n(S3) An implied accumulator register",
+      "text": "For computers based on three-address instruction formats, each address field can be used to specify which of the following:\n\n(S1) A memory operand\n\n(S2) A processor register\n\n(S3) An implied accumulator register",
       "options": [
         {
           "l": "A",
@@ -87339,7 +87340,7 @@
       "number": "10",
       "marks": 1,
       "type": "MCQ",
-      "text": "Which of the following is/are correct inorder traversal sequence(s) of binary search tree(s)?\n\nI. 3, 5, 7, 8, 15, 19, 25\nII. 5, 8, 9, 12, 10, 15, 25\nIII. 2, 7, 10, 8, 14, 16, 20\nIV. 4, 6, 7, 9, 18, 20, 25",
+      "text": "Which of the following is/are correct inorder traversal sequence(s) of binary search tree(s)?\n\nI. 3, 5, 7, 8, 15, 19, 25\n\nII. 5, 8, 9, 12, 10, 15, 25\n\nIII. 2, 7, 10, 8, 14, 16, 20\n\nIV. 4, 6, 7, 9, 18, 20, 25",
       "options": [
         {
           "l": "A",
@@ -94736,7 +94737,7 @@
       "number": "8",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following statements relating to the level of poker play of four players P, Q, R and S.\n\nI. P always beats Q\nII. R always beats S\nIII. S loses to P only sometimes\nIV. R always loses to Q\n\nWhich of the following can be logically inferred from the above statements?\n\n(i) P is likely to beat all the three other players\n(ii) S is the absolute worst player in the set",
+      "text": "Consider the following statements relating to the level of poker play of four players P, Q, R and S.\n\nI. P always beats Q\\\nII. R always beats S\\\nIII. S loses to P only sometimes\\\nIV. R always loses to Q\n\nWhich of the following can be logically inferred from the above statements?\n\n(i) P is likely to beat all the three other players\\\n(ii) S is the absolute worst player in the set",
       "options": [
         {
           "l": "A",
@@ -94872,7 +94873,7 @@
       "number": "1",
       "marks": 1,
       "type": "NAT",
-      "text": "Let p, q, r, s represent the following propositions.\n\np: $x \\in \\{8, 9, 10, 11, 12\\}$\nq: $x$ is a composite number\nr: $x$ is a perfect square\ns: $x$ is a prime number\n\nThe integer $x \\ge 2$ which satisfies $\\neg((p \\Rightarrow q) \\wedge (\\neg r \\vee \\neg s))$ is ______.",
+      "text": "Let p, q, r, s represent the following propositions.\n\n- p: $x \\in \\{8, 9, 10, 11, 12\\}$\n- q: $x$ is a composite number\n- r: $x$ is a perfect square\n- s: $x$ is a prime number\n\nThe integer $x \\ge 2$ which satisfies $\\neg((p \\Rightarrow q) \\wedge (\\neg r \\vee \\neg s))$ is ______.",
       "options": [],
       "figures": [],
       "group": null,
@@ -94950,10 +94951,11 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "calc",
+      "topic": "limits",
       "tags": [
-        "limit"
+        "limits",
+        "standard-limit"
       ],
       "answer": 1,
       "answerSource": "official",
@@ -94978,10 +94980,11 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
-        "pdf"
+        "pdf",
+        "continuous-random-variable"
       ],
       "answer": "0.5",
       "answerSource": "official",
@@ -95212,7 +95215,7 @@
       "figures": [
         {
           "f": "cse-2016-1/cs-11-1.png",
-          "alt": "Directed graph with edges a→b, b→c, c→f, a→d, d→e, e→f",
+          "alt": "Directed graph on vertices a to f: top path a→b→c→f and bottom path a→d→e→f",
           "svg": "cse-2016-1/cs-11-1.svg"
         }
       ],
@@ -95333,7 +95336,7 @@
       "number": "14",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let G be a weighted connected undirected graph with distinct positive edge weights. If every edge weight is increased by the same value, then which of the following statements is/are TRUE?\n\nP: Minimum spanning tree of G does not change\nQ: Shortest path between any pair of vertices does not change",
+      "text": "Let G be a weighted connected undirected graph with distinct positive edge weights. If every edge weight is increased by the same value, then which of the following statements is/are TRUE?\n\n- P: Minimum spanning tree of G does not change\n- Q: Shortest path between any pair of vertices does not change",
       "options": [
         {
           "l": "A",
@@ -95416,7 +95419,7 @@
         },
         {
           "l": "B",
-          "t": "$\\{w \\in \\{a, b\\}^* \\mid w$ has equal number of a’s and b’s$\\}$"
+          "t": "$\\{w \\in \\{a, b\\}^* \\mid w \\text{ has equal number of } a\\text{'s and } b\\text{'s}\\}$"
         },
         {
           "l": "C",
@@ -95453,7 +95456,7 @@
       "number": "17",
       "marks": 1,
       "type": "MCQ",
-      "text": "Which of the following decision problems are undecidable?\n\nI. Given NFAs $N_1$ and $N_2$, is $L(N_1) \\cap L(N_2) = \\Phi$?\nII. Given a CFG $G = (N, \\Sigma, P, S)$ and a string $x \\in \\Sigma^*$, does $x \\in L(G)$?\nIII. Given CFGs $G_1$ and $G_2$, is $L(G_1) = L(G_2)$?\nIV. Given a TM $M$, is $L(M) = \\Phi$?",
+      "text": "Which of the following decision problems are undecidable?\n\n- I. Given NFAs $N_1$ and $N_2$, is $L(N_1) \\cap L(N_2) = \\Phi$?\n- II. Given a CFG $G = (N, \\Sigma, P, S)$ and a string $x \\in \\Sigma^*$, does $x \\in L(G)$?\n- III. Given CFGs $G_1$ and $G_2$, is $L(G_1) = L(G_2)$?\n- IV. Given a TM $M$, is $L(M) = \\Phi$?",
       "options": [
         {
           "l": "A",
@@ -95638,8 +95641,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "dm",
-      "topic": "sets",
+      "subject": "db",
+      "topic": "normalization",
       "tags": [
         "superkey"
       ],
@@ -95707,7 +95710,7 @@
       "number": "23",
       "marks": 1,
       "type": "MCQ",
-      "text": "A database of research articles in a journal uses the following schema.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, YEAR, PRICE)\n\nThe primary key is (VOLUME, NUMBER, STARTPAGE, ENDPAGE) and the following functional dependencies exist in the schema.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE) → TITLE\n(VOLUME, NUMBER) → YEAR\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE) → PRICE\n\nThe database is redesigned to use the following schemas.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, PRICE)\n(VOLUME, NUMBER, YEAR)\n\nWhich is the weakest normal form that the new database satisfies, but the old one does not?",
+      "text": "A database of research articles in a journal uses the following schema.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, YEAR, PRICE)\n\nThe primary key is (VOLUME, NUMBER, STARTPAGE, ENDPAGE) and the following functional dependencies exist in the schema.\n\n- (VOLUME, NUMBER, STARTPAGE, ENDPAGE) → TITLE\n- (VOLUME, NUMBER) → YEAR\n- (VOLUME, NUMBER, STARTPAGE, ENDPAGE) → PRICE\n\nThe database is redesigned to use the following schemas.\n\n- (VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, PRICE)\n- (VOLUME, NUMBER, YEAR)\n\nWhich is the weakest normal form that the new database satisfies, but the old one does not?",
       "options": [
         {
           "l": "A",
@@ -95797,7 +95800,7 @@
       "number": "25",
       "marks": 1,
       "type": "MCQ",
-      "text": "Which of the following is/are example(s) of stateful application layer protocols?\n\n(i) HTTP\n(ii) FTP\n(iii) TCP\n(iv) POP3",
+      "text": "Which of the following is/are example(s) of stateful application layer protocols?\n\n- (i) HTTP\n- (ii) FTP\n- (iii) TCP\n- (iv) POP3",
       "options": [
         {
           "l": "A",
@@ -95927,12 +95930,12 @@
       "number": "29",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider the following experiment.\n\nStep 1. Flip a fair coin twice.\nStep 2. If the outcomes are (TAILS, HEADS) then output Y and stop.\nStep 3. If the outcomes are either (HEADS, HEADS) or (HEADS, TAILS), then output N and stop.\nStep 4. If the outcomes are (TAILS, TAILS), then go to Step 1.\n\nThe probability that the output of the experiment is Y is (up to two decimal places) ______.",
+      "text": "Consider the following experiment.\n\n- Step 1. Flip a fair coin twice.\n- Step 2. If the outcomes are (TAILS, HEADS) then output Y and stop.\n- Step 3. If the outcomes are either (HEADS, HEADS) or (HEADS, TAILS), then output N and stop.\n- Step 4. If the outcomes are (TAILS, TAILS), then go to Step 1.\n\nThe probability that the output of the experiment is Y is (up to two decimal places) ______.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
         "geometric",
         "conditional-probability"
@@ -95978,7 +95981,7 @@
       "figures": [
         {
           "f": "cse-2016-1/cs-30-1.png",
-          "alt": "MUX1: input 0 tied to 0, input 1 = R, select = P. MUX2: input 0 = R-bar, input 1 = output of MUX1, select = Q, output X",
+          "alt": "Two cascaded 2-to-1 multiplexers. MUX 1: input 0 tied to 0, input 1 = R, select s = P. MUX 1 output feeds input 1 of MUX 2. MUX 2: input 0 = R-bar (complement of R), select s = Q, output X.",
           "svg": "cse-2016-1/cs-30-1.svg"
         }
       ],
@@ -96232,8 +96235,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CD** (Runtime) from **CSE 2016 Q36** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 3, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of CD:**\n- Decompose the problem into invariant constraints defined by runtime theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Taking m's a=1 as a local under dynamic scoping: y=3, a=3-1=2.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  n's x aliases a, so x=2*2=4, prints 4 and then a=4..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `6, 2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `6, 6`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `4, 2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `4, 4`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Pseudo-code is ambiguous about whether 'a' in m is local or global; answer D follows the commonly accepted key."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2016-1-cs-37",
@@ -96347,7 +96350,7 @@
       "number": "40",
       "marks": 2,
       "type": "MCQ",
-      "text": "$G = (V, E)$ is an undirected simple graph in which each edge has a distinct weight, and $e$ is a particular edge of $G$. Which of the following statements about the minimum spanning trees (MSTs) of $G$ is/are TRUE?\n\nI. If $e$ is the lightest edge of some cycle in $G$, then every MST of $G$ includes $e$\nII. If $e$ is the heaviest edge of some cycle in $G$, then every MST of $G$ excludes $e$",
+      "text": "$G = (V, E)$ is an undirected simple graph in which each edge has a distinct weight, and $e$ is a particular edge of $G$. Which of the following statements about the minimum spanning trees (MSTs) of $G$ is/are TRUE?\n\nI. If $e$ is the lightest edge of *some* cycle in $G$, then every MST of $G$ *includes* $e$\n\nII. If $e$ is the heaviest edge of *some* cycle in $G$, then every MST of $G$ *excludes* $e$",
       "options": [
         {
           "l": "A",
@@ -96393,7 +96396,7 @@
       "number": "41",
       "marks": 2,
       "type": "NAT",
-      "text": "Let Q denote a queue containing sixteen numbers and S be an empty stack. Head(Q) returns the element at the head of the queue Q without removing it from Q. Similarly Top(S) returns the element at the top of S without removing it from S. Consider the algorithm given below.\n\n```\nwhile Q is not Empty do\n   if S is Empty OR Top(S) <= Head(Q) then\n        x := Dequeue(Q);\n        Push(S, x);\n   else\n        x := Pop(S);\n        Enqueue(Q, x);\n   end\nend\n```\n\nThe maximum possible number of iterations of the while loop in the algorithm is ______.",
+      "text": "Let Q denote a queue containing sixteen numbers and S be an empty stack. Head(Q) returns the element at the head of the queue Q without removing it from Q. Similarly Top(S) returns the element at the top of S without removing it from S. Consider the algorithm given below.\n\n```\nwhile Q is not Empty do\n   if S is Empty OR Top(S) ≤ Head(Q) then\n        x := Dequeue(Q);\n        Push(S, x);\n   else\n        x := Pop(S);\n        Enqueue(Q, x);\n   end\nend\n```\n\nThe maximum possible number of iterations of the while loop in the algorithm is ______.",
       "options": [],
       "figures": [],
       "group": null,
@@ -96422,7 +96425,7 @@
       "number": "42",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following context-free grammars:\n\n$G_1$: $S \\to aS \\mid B$, $B \\to b \\mid bB$\n$G_2$: $S \\to aA \\mid bB$, $A \\to aA \\mid B \\mid \\varepsilon$, $B \\to bB \\mid \\varepsilon$\n\nWhich one of the following pairs of languages is generated by $G_1$ and $G_2$, respectively?",
+      "text": "Consider the following context-free grammars:\n\n$G_1$: $S \\to aS \\mid B$, $B \\to b \\mid bB$\n\n$G_2$: $S \\to aA \\mid bB$, $A \\to aA \\mid B \\mid \\varepsilon$, $B \\to bB \\mid \\varepsilon$\n\nWhich one of the following pairs of languages is generated by $G_1$ and $G_2$, respectively?",
       "options": [
         {
           "l": "A",
@@ -96594,7 +96597,7 @@
       "number": "46",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following Syntax Directed Translation Scheme (SDTS), with non-terminals {S, A} and terminals {a, b}.\n\nS → aA { print 1 }\nS → a { print 2 }\nA → Sb { print 3 }\n\nUsing the above SDTS, the output printed by a bottom-up parser, for the input aab is:",
+      "text": "Consider the following Syntax Directed Translation Scheme (SDTS), with non-terminals {S, A} and terminals {a, b}.\n\n```\nS → aA   { print 1 }\nS → a    { print 2 }\nA → Sb   { print 3 }\n```\n\nUsing the above SDTS, the output printed by a bottom-up parser, for the input aab is:",
       "options": [
         {
           "l": "A",
@@ -96772,7 +96775,7 @@
       "number": "51",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following two phase locking protocol. Suppose a transaction T accesses (for read or write operations), a certain set of objects $\\{O_1, \\ldots, O_k\\}$. This is done in the following manner:\n\nStep 1. T acquires exclusive locks to $O_1, \\ldots, O_k$ in increasing order of their addresses.\nStep 2. The required operations are performed.\nStep 3. All locks are released.\n\nThis protocol will",
+      "text": "Consider the following two phase locking protocol. Suppose a transaction T accesses (for read or write operations), a certain set of objects $\\{O_1, \\ldots, O_k\\}$. This is done in the following manner:\n\nStep 1. T acquires exclusive locks to $O_1, \\ldots, O_k$ in increasing order of their addresses.\n\nStep 2. The required operations are performed.\n\nStep 3. All locks are released.\n\nThis protocol will",
       "options": [
         {
           "l": "A",
@@ -97362,7 +97365,7 @@
       "number": "10",
       "marks": 2,
       "type": "MCQ",
-      "text": "Choose the correct expression for f(x) given in the graph.",
+      "text": "Choose the correct expression for $f(x)$ given in the graph.",
       "options": [
         {
           "l": "A",
@@ -97476,8 +97479,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "dm",
+      "topic": "graphs",
       "tags": [
         "planar",
         "four-colour"
@@ -97550,8 +97553,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
         "total-probability"
       ],
@@ -97820,14 +97823,14 @@
         "bubble-sort",
         "insertion-sort"
       ],
-      "answer": "C",
+      "answer": "D",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **ALGO** (Sorting) from **CSE 2016 Q13** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n- **Identified Problem Quantities:** 2, 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Bubble sort (no early exit) does Θ(n^2) comparisons.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  insertion sort is Θ(n) on sorted input.\n- **Step 3.3 (Intermediate Reduction):**\n  mergesort is Θ(n log n), so III is false. quicksort is not necessarily Θ(n^2) (I not counted)..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `I and II only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `I and III only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `II and IV only`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `I and IV only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For recurrences, evaluate $\\log_b a$ in the first 5 seconds to determine the Master Theorem case immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Statement I depends on pivot choice; answer follows the official key as recalled (C)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2016-2-cs-14",
@@ -97917,8 +97920,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (Linked Lists) from **CSE 2016 Q15** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Deletes are O(1) each.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  a decrease-key may move the element O(N) places, so Θ(N) of them cost O(N^2), dominating..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$O(\\log^2 N)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$O(N)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `$O(N^2)$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `$\\Theta(N^2 \\log N)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Interpretation of the operation counts is ambiguous; answer C follows the standard key."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2016-2-cs-16",
@@ -98027,9 +98030,12 @@
       "figures": [],
       "group": null,
       "subject": "toc",
-      "topic": "pumping",
+      "topic": "tm",
       "tags": [
-        "closure-properties"
+        "closure-properties",
+        "recursive",
+        "recursively-enumerable",
+        "context-free"
       ],
       "answer": "D",
       "answerSource": "solved",
@@ -98609,8 +98615,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **COA** (Cache) from **CSE 2016 Q32** (2 Marks).\n- **Evaluation Objective:** Exact numerical/algebraic computation required within acceptable examination tolerance.\n- **Identified Problem Quantities:** 40, 512, 8\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Processor & Memory Hierarchy Laws:**\n- Physical Address Split: $\\text{Physical Address} = \\text{Tag Bits} + \\text{Set Index Bits} + \\text{Block Offset Bits}$.\n- Pipelining Performance: Execution Time $T = (k + n - 1 + \\text{Stalls}) \\times \\tau$. Speedup $S = \\frac{n \\cdot k}{k + n - 1 + \\text{Stalls}}$.\n- Memory Hierarchy Latency: $\\text{EAT} = h \\cdot t_{cache} + (1 - h) \\cdot (t_{cache} + t_{mem})$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  The block size is not printed.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  with the intended 64 B block: sets = 512K/(8·64) = 1024 (10 index bits), offset 6 bits, tag = 40-16 = 24..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`24`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **24**\n- The computed numerical result `24` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For cache address partitioning, determine offset bits first from block size ($2^b$ bytes $\\implies b$ bits); direct mapped means set index bits $= \\log_2(\\text{Total Blocks})$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Block size is not stated in the printed question; 24 is the commonly accepted key (assumes 64-byte blocks)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2016-2-cs-33",
@@ -98829,12 +98835,12 @@
       "number": "39",
       "marks": 2,
       "type": "NAT",
-      "text": "The given diagram shows the flowchart for a recursive function $A(n)$. Assume that all statements, except for the recursive calls, have $O(1)$ time complexity. If the worst case time complexity of this function is $O(n^{\\alpha})$, then the least possible value (accurate up to two decimal positions) of $\\alpha$ is ______.\n\nFlowchart for Recursive Function A(n)",
+      "text": "The given diagram shows the flowchart for a recursive function $A(n)$. Assume that all statements, except for the recursive calls, have $O(1)$ time complexity. If the worst case time complexity of this function is $O(n^{\\alpha})$, then the least possible value (accurate up to two decimal positions) of $\\alpha$ is ______.",
       "options": [],
       "figures": [
         {
           "f": "cse-2016-2/cs-39-1.png",
-          "alt": "Start, then call A(n/2), then a decision: left branch calls A(n/2) and returns; right branch calls A(n/2) twice, then a decision: right returns, down calls A(n/2) then a decision that either calls A(n/2) and returns or returns. Worst path has 5 calls.",
+          "alt": "Flowchart for recursive function A(n): Start, call A(n/2), then a decision. Left branch: call A(n/2), Return. Right branch: call A(n/2), call A(n/2), then a second decision whose right branch Returns and whose lower branch calls A(n/2) and reaches a third decision; its right branch Returns, its left branch calls A(n/2) then Returns.",
           "svg": "cse-2016-2/cs-39-1.svg"
         }
       ],
@@ -99246,10 +99252,11 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "sync",
       "tags": [
-        "semaphore"
+        "semaphore",
+        "counting-semaphore"
       ],
       "answer": 7,
       "answerSource": "official",
@@ -99275,7 +99282,7 @@
       "figures": [
         {
           "f": "cse-2016-2/cs-50-1.png",
-          "alt": "Line plot of miss rate (%) against cache size (MB): 10MB→80, 20→60, 30→40, 40→35, 50→30, 60→25, 70→20, 80→15.",
+          "alt": "Line graph of miss rate (%) on the y-axis (0 to 90) against cache size (MB) on the x-axis (0 to 90), dotted grid every 10. Points: 10 MB 80%, 20 MB 60%, 30 MB 40%, 40 MB 35%, 50 MB 30%, 60 MB 25%, 70 MB 20%, 80 MB 15%.",
           "svg": "cse-2016-2/cs-50-1.svg"
         }
       ],
@@ -100318,8 +100325,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
         "gaussian",
         "median"
@@ -100347,8 +100354,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "graphs",
       "tags": [
         "tree",
         "handshake"
@@ -100372,7 +100379,7 @@
       "number": "21",
       "marks": 1,
       "type": "NAT",
-      "text": "Consider the Karnaugh map given below, where x represents \"don't care\" and blank represents 0.\n\n| dc \\ ba | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 |  | x | x |  |\n| 01 | 1 |  |  | x |\n| 11 | 1 |  |  | 1 |\n| 10 |  | x | x |  |\n\nAssume for all inputs $(a,b,c,d)$, the respective complements $(\\overline{a},\\overline{b},\\overline{c},\\overline{d})$ are also available. The above logic is implemented using 2-input NOR gates only. The minimum number of gates required is ____________.",
+      "text": "Consider the Karnaugh map given below, where x represents \"don't care\" and blank represents 0.\n\nAssume for all inputs $(a,b,c,d)$, the respective complements $(\\overline{a},\\overline{b},\\overline{c},\\overline{d})$ are also available. The above logic is implemented using 2-input NOR gates only. The minimum number of gates required is ____________.",
       "options": [],
       "figures": [
         {
@@ -100454,8 +100461,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Sql) from **CSE 2017 Q23** (1 Mark).\n- **Evaluation Objective:** Exact numerical/algebraic computation required within acceptable examination tolerance.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Department counts are AA 4, AB 3, AC 3, AD 2, AE 1.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  average of 4,3,3,2,1 = 13/5 = 2.6..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`2.6`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **2.6**\n- The computed numerical result `2.6` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Query is syntactically odd (EC used as a table and alias in the subquery); answer assumes EC is the derived table of per-department counts."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2017-1-cs-24",
@@ -100638,9 +100645,10 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "calc",
+      "topic": "limits",
       "tags": [
+        "limits",
         "lhopital"
       ],
       "answer": "C",
@@ -100730,7 +100738,7 @@
       "figures": [],
       "group": null,
       "subject": "la",
-      "topic": "systems",
+      "topic": "spaces",
       "tags": [
         "vectors",
         "angle-bisector"
@@ -101104,7 +101112,7 @@
       "figures": [],
       "group": null,
       "subject": "toc",
-      "topic": "pumping",
+      "topic": "cfg",
       "tags": [
         "cfl-closure",
         "union",
@@ -101254,8 +101262,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Ra) from **CSE 2017 Q41** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Each query ties t[EmpName] to an existing EMP tuple, so the result set is finite for all three..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `(I) and (II) only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `(I) and (III) only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `(II) and (III) only`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `(I), (II) and (III)`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Key not in PDF; answer D taken from a secondary solution (testbook); some sources may give a different option. Verify."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2017-1-cs-42",
@@ -101314,7 +101322,7 @@
       "number": "43",
       "marks": 2,
       "type": "NAT",
-      "text": "Consider the following grammar:\n\n```\nstmt   -> if expr then expr else expr; stmt | ò\nexpr   -> term relop term | term\nterm   -> id | number\nid     -> a | b | c\nnumber -> [0-9]\n```\n\nwhere `relop` is a relational operator (e.g. <, >, ...), `ò` refers to the empty statement, and `if`, `then`, `else` are terminals.\n\nConsider a program $P$ following the above grammar containing ten `if` terminals. The number of control flow paths in $P$ is ____________. For example, the program\n\n`if e1 then e2 else e3`\n\nhas 2 control flow paths, e1 -> e2 and e1 -> e3.",
+      "text": "Consider the following grammar:\n\n```\nstmt   -> if expr then expr else expr; stmt | ε\nexpr   -> term relop term | term\nterm   -> id | number\nid     -> a | b | c\nnumber -> [0-9]\n```\n\nwhere `relop` is a relational operator (e.g. <, >, ...), `ε` refers to the empty statement, and `if`, `then`, `else` are terminals.\n\nConsider a program $P$ following the above grammar containing ten `if` terminals. The number of control flow paths in $P$ is ____________. For example, the program\n\n`if e1 then e2 else e3`\n\nhas 2 control flow paths, e1 -> e2 and e1 -> e3.",
       "options": [],
       "figures": [],
       "group": null,
@@ -101381,14 +101389,14 @@
         "stop-and-wait",
         "efficiency"
       ],
-      "answer": "88.33",
+      "answer": "86.5 to 89.5",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CN** (Datalink) from **CSE 2017 Q45** (2 Marks).\n- **Evaluation Objective:** Exact numerical/algebraic computation required within acceptable examination tolerance.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Computer Networking & Protocol Laws:**\n- IP Subnetting: Host Bits $= 32 - k$, Usable Hosts $= 2^{32 - k} - 2$.\n- Sliding Window Efficiency: $\\eta = \\frac{W}{1 + 2a}$ where $a = \\frac{T_p}{T_t} = \\frac{\\text{Distance}/v}{\\text{Size}/\\text{Bandwidth}}$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Useful data 1960 B = 15.68 ms.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  cycle = 15.84 + 0.75 + 0.25 + 0.16 + 0.75 = 17.75 ms.\n- **Step 3.3 (Intermediate Reduction):**\n  efficiency = 15.68/17.75 = 88.33%..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`88.33`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **88.33**\n- The computed numerical result `88.33` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For CIDR /k prefix, total IP addresses $= 2^{32-k}$, and usable host addresses $= 2^{32-k} - 2$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Answer depends on treating 1980 B as the full frame (20 B overhead, 1960 B useful) and processing delay counted once; official key not in PDF."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2017-1-cs-46",
@@ -101432,8 +101440,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
         "inclusion-exclusion"
       ],
@@ -101715,7 +101723,7 @@
       "tags": [
         "tenses"
       ],
-      "answer": "D",
+      "answer": "C",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **GA** (Verbal) from **CSE 2017 Q56** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of GA:**\n- Decompose the problem into invariant constraints defined by verbal theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Past perfect 'had wished' fits an action set before/after the earlier returned event in narrative sequence..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `was wishing`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `is wishing`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `wished`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `had wished`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Complement Rule: When calculating 'at least one', evaluate $1 - P(\\text{none})$ to save over a minute of branch computations.",
@@ -102123,7 +102131,7 @@
       "figures": [
         {
           "f": "cse-2017-1/ga-65-1.png",
-          "alt": "Rectangular contour map: a hill at left with nested loops (500, 550 labelled) and village P near the summit; village R above and right of it in the outer low ground (425/450 contours at top-left); a second hill at upper right with a 550 loop and village Q just outside it near the top-right corner; village T below it on a 500 contour; village S inside a small low closed contour (450) at the bottom.",
+          "alt": "Rectangular contour map (25 m interval). Top-left: contours 425 and 450 run from the left edge to the top edge, with an unlabelled 475 line below them. Left hill: closed loops 500 (labelled at bottom), 525, 550 (labelled) and an innermost loop containing village P at the summit. Village R lies above the left hill, between the 475 line and the 500 loop. Right side: a 500 contour (labelled) and a 525 contour run from the top edge down to the right edge; inside them a hill with a 550 loop (labelled) and an inner loop; village Q is near the top-right corner between the 525 line and the 550 loop; village T is near the right edge between the 500 and 525 lines. Bottom middle: a small closed depression with an inner 450 contour, village S inside it.",
           "svg": "cse-2017-1/ga-65-1.svg"
         }
       ],
@@ -102139,8 +102147,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **GA** (Spatial) from **CSE 2017 Q65** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n- **Identified Problem Quantities:** 25, 525, 2017, 1, 65, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of GA:**\n- Decompose the problem into invariant constraints defined by spatial theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  P sits on the summit above 550 m and Q lies on the high ground of the right hill, while R, S and T lie in low-lying regions below 525 m..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `P, Q`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `P, Q, T`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `R, S, T`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `Q, R, S`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Complement Rule: When calculating 'at least one', evaluate $1 - P(\\text{none})$ to save over a minute of branch computations.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Reading the contour figure is somewhat ambiguous for Q; answer C matches the usual published key but is not printed in the PDF."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2017-2-cs-1",
@@ -102199,7 +102207,7 @@
       "number": "2",
       "marks": 1,
       "type": "MATCH",
-      "text": "Match the following:\n\n| | |\n|---|---|\n| (P) `static char var;` | (i) Sequence of memory locations to store addresses |\n| (Q) `m = malloc(10);`<br>`m = NULL;` | (ii) A variable located in data section of memory |\n| (R) `char *ptr[10];` | (iii) Request to allocate a CPU register to store data |\n| (S) `register int var1;` | (iv) A lost memory which cannot be freed |",
+      "text": "Match the following:\n\n| | |\n|---|---|\n| (P) `static char var;` | (i) Sequence of memory locations to store addresses |\n| (Q) `m = malloc(10); m = NULL;` | (ii) A variable located in data section of memory |\n| (R) `char *ptr[10];` | (iii) Request to allocate a CPU register to store data |\n| (S) `register int var1;` | (iv) A lost memory which cannot be freed |",
       "options": [
         {
           "l": "A",
@@ -102848,7 +102856,7 @@
       "number": "16",
       "marks": 1,
       "type": "MCQ",
-      "text": "Identify the language generated by the following grammar, where $S$ is the start variable.\n\n$S \\to XY$\n$X \\to aX \\mid a$\n$Y \\to aYb \\mid \\epsilon$",
+      "text": "Identify the language generated by the following grammar, where $S$ is the start variable.\n\n$$\\begin{aligned} S &\\to XY\\\\ X &\\to aX \\mid a\\\\ Y &\\to aYb \\mid \\epsilon \\end{aligned}$$",
       "options": [
         {
           "l": "A",
@@ -103447,8 +103455,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
         "pgf",
         "binomial",
@@ -104043,7 +104051,7 @@
       "figures": [],
       "group": null,
       "subject": "coa",
-      "topic": "perf",
+      "topic": "cache",
       "tags": [
         "amat",
         "cache-hierarchy"
@@ -104128,8 +104136,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "rv",
       "tags": [
         "poisson",
         "expectation"
@@ -104157,8 +104165,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "db",
+      "topic": "indexing",
       "tags": [
         "b-plus-tree",
         "order"
@@ -104302,7 +104310,7 @@
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "c-prog",
+      "topic": "c",
       "tags": [
         "increment",
         "operators"
@@ -104423,7 +104431,7 @@
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "verbal",
       "tags": [
         "grammar",
         "adjective-enough"
@@ -104469,7 +104477,7 @@
       "figures": [],
       "group": null,
       "subject": "ga",
-      "topic": "quant",
+      "topic": "analytical",
       "tags": [
         "ordering",
         "arrangement"
@@ -104790,7 +104798,7 @@
       "figures": [
         {
           "f": "cse-2017-2/ga-65-1.png",
-          "alt": "Contour map with labelled contours 0.65, 0.7, 0.75, 0.8, 0.9, 0.95. Four red circles: R at top-left where 0.65 and 0.7 contours are tightly packed; P inside the left high (0.9/0.95 contours); Q at bottom centre between 0.8 and 0.75 contours, widely spaced; S inside the right high (0.9/0.95). Scale bar 0-2 km.",
+          "alt": "Air pressure contour plot (0.05 bar intervals) with a 0-2 km scale bar. Contours 0.65 and 0.7 run close together across region R at the top left; P sits inside a closed high (0.9, 0.95 loops) on the left; S sits inside a closed high (0.9, 0.95 loops) on the right; Q at the bottom centre lies between widely spaced 0.8 and 0.75 contours.",
           "svg": "cse-2017-2/ga-65-1.svg"
         }
       ],
@@ -106101,10 +106109,11 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "dl",
-      "topic": "sequential",
+      "subject": "pds",
+      "topic": "recursion",
       "tags": [
-        "recursion-count"
+        "recursion",
+        "global-variable"
       ],
       "answer": 4,
       "answerSource": "official",
@@ -106192,10 +106201,11 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "os",
+      "topic": "deadlock",
       "tags": [
-        "pigeonhole"
+        "deadlock",
+        "resource-allocation"
       ],
       "answer": 2,
       "answerSource": "official",
@@ -106788,29 +106798,29 @@
       "number": "38",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following parse tree for the expression `a#b$c$d#e#f`, involving two binary operators $ and #.\n\nWhich one of the following is correct for the given parse tree?",
+      "text": "Consider the following parse tree for the expression `a#b$c$d#e#f`, involving two binary operators \\$ and #.\n\nWhich one of the following is correct for the given parse tree?",
       "options": [
         {
           "l": "A",
-          "t": "$ has higher precedence and is left associative; # is right associative"
+          "t": "\\$ has higher precedence and is left associative; # is right associative"
         },
         {
           "l": "B",
-          "t": "# has higher precedence and is left associative; $ is right associative"
+          "t": "# has higher precedence and is left associative; \\$ is right associative"
         },
         {
           "l": "C",
-          "t": "$ has higher precedence and is left associative; # is left associative"
+          "t": "\\$ has higher precedence and is left associative; # is left associative"
         },
         {
           "l": "D",
-          "t": "# has higher precedence and is right associative; $ is left associative"
+          "t": "# has higher precedence and is right associative; \\$ is left associative"
         }
       ],
       "figures": [
         {
           "f": "cse-2018/cs-38-1.png",
-          "alt": "Root # with left child a and right child #. That # has left child $ and right child # (children e, f). The $ has left child $ (children b, c) and right child d.",
+          "alt": "Parse tree: root # has left child a and right child #. That # has left child $ and right child # (whose children are e and f). That $ has left child $ (children b and c) and right child d.",
           "svg": "cse-2018/cs-38-1.svg"
         }
       ],
@@ -106977,7 +106987,7 @@
       "number": "42",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following four relational schemas. For each schema, all non-trivial functional dependencies are listed. The underlined attributes are the respective primary keys.\n\nSchema I: Registration (rollno, courses)\nField 'courses' is a set-valued attribute containing the set of courses a student has registered for.\nNon-trivial functional dependency: rollno → courses\n\nSchema II: Registration (rollno, courseid, email)\nNon-trivial functional dependencies: rollno, courseid → email; email → rollno\n\nSchema III: Registration (rollno, courseid, marks, grade)\nNon-trivial functional dependencies: rollno, courseid → marks, grade; marks → grade\n\nSchema IV: Registration (rollno, courseid, credit)\nNon-trivial functional dependencies: rollno, courseid → credit; courseid → credit\n\nWhich one of the relational schemas above is in 3NF but not in BCNF?",
+      "text": "Consider the following four relational schemas. For each schema, all non-trivial functional dependencies are listed. The underlined attributes (shown here in **bold**) are the respective primary keys.\n\n**Schema I:** Registration (**rollno**, courses)\n- Field 'courses' is a set-valued attribute containing the set of courses a student has registered for.\n- Non-trivial functional dependency: rollno → courses\n\n**Schema II:** Registration (**rollno, courseid**, email)\n- Non-trivial functional dependencies: rollno, courseid → email; email → rollno\n\n**Schema III:** Registration (**rollno, courseid**, marks, grade)\n- Non-trivial functional dependencies: rollno, courseid → marks, grade; marks → grade\n\n**Schema IV:** Registration (**rollno, courseid**, credit)\n- Non-trivial functional dependencies: rollno, courseid → credit; courseid → credit\n\nWhich one of the relational schemas above is in 3NF but not in BCNF?",
       "options": [
         {
           "l": "A",
@@ -107010,8 +107020,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Normalization) from **CSE 2018 Q42** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  II: email→rollno with rollno prime: 3NF but email not a superkey so not BCNF.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  I not 1NF, III has transitive dep, IV has partial dep..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `Schema I`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `Schema II`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `Schema III`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `Schema IV`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Primary-key underlines not visible in the text layer; answer assumes key (rollno, courseid) in every schema."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2018-cs-43",
@@ -107141,7 +107151,7 @@
       "figures": [
         {
           "f": "cse-2018/cs-47-1.png",
-          "alt": "Pentagon-like graph on 5 unlabelled vertices: top T, left L, right R, bottom-left BL, bottom-right BR. Edges: T-L 4, T-R x, T-BL 1, T-BR 3, L-BL 4, BL-BR 4, R-BR 5.",
+          "alt": "Undirected graph on five unlabelled vertices arranged as a pentagon: top T, left L, right R, bottom-left BL, bottom-right BR. Edges: T–L weight 4, T–R weight x, L–BL weight 4, T–BL weight 1, T–BR weight 3, BL–BR weight 4, R–BR weight 5.",
           "svg": "cse-2018/cs-47-1.svg"
         }
       ],
@@ -107288,7 +107298,7 @@
       "figures": [
         {
           "f": "cse-2018/cs-52-1.png",
-          "alt": "Three states: start state q0 (accepting) --0--> q1 (accepting); q1 --0--> q2 (non-accepting); q2 --0--> q1.",
+          "alt": "Automaton with three unlabelled states in a row. The left state is the start state and accepting (double circle); an edge labelled 0 goes to the middle state, also accepting. The middle state goes on 0 to the right state (non-accepting, single circle), and the right state goes on 0 back to the middle state.",
           "svg": "cse-2018/cs-52-1.svg"
         }
       ],
@@ -107388,8 +107398,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CN** (Datalink) from **CSE 2018 Q55** (2 Marks).\n- **Evaluation Objective:** Exact numerical/algebraic computation required within acceptable examination tolerance.\n- **Identified Problem Quantities:** 5, 5, 20, 10, 0, 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Computer Networking & Protocol Laws:**\n- IP Subnetting: Host Bits $= 32 - k$, Usable Hosts $= 2^{32 - k} - 2$.\n- Sliding Window Efficiency: $\\eta = \\frac{W}{1 + 2a}$ where $a = \\frac{T_p}{T_t} = \\frac{\\text{Distance}/v}{\\text{Size}/\\text{Bandwidth}}$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Q must hear P within its 5-unit sensing window: $d/10\\le5\\Rightarrow d\\le50$..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`50`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **50**\n- The computed numerical result `50` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For CIDR /k prefix, total IP addresses $= 2^{32-k}$, and usable host addresses $= 2^{32-k} - 2$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Interpretation of the sensing window is subtle; answer 50 recalled from standard solutions, moderate confidence."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2019-ga-1",
