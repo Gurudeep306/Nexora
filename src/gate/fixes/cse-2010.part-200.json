@@ -1,0 +1,55 @@
+{
+  "paper": "cse-2010",
+  "fixes": [
+    {
+      "id": "cse-2010-cs-17",
+      "field": "text",
+      "before": "Let L1 be a recursive language. Let L2 and L3 be languages that are recursively enumerable but not recursive. Which of the following statements is not necessarily true?",
+      "after": "Let $L_1$ be a recursive language. Let $L_2$ and $L_3$ be languages that are recursively enumerable but not recursive. Which of the following statements is not necessarily true?",
+      "reason": "Typeset language names with KaTeX subscripts.",
+      "source": "GATE 2010 CS paper Q.17"
+    },
+    {
+      "id": "cse-2010-cs-17",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "L2 $-$ L1 is recursively enumerable."
+        },
+        {
+          "l": "B",
+          "t": "L1 $-$ L3 is recursively enumerable."
+        },
+        {
+          "l": "C",
+          "t": "L2 $\\cap$ L3 is recursively enumerable."
+        },
+        {
+          "l": "D",
+          "t": "L2 $\\cup$ L3 is recursively enumerable."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$L_2 - L_1$ is recursively enumerable."
+        },
+        {
+          "l": "B",
+          "t": "$L_1 - L_3$ is recursively enumerable."
+        },
+        {
+          "l": "C",
+          "t": "$L_2 \\cap L_3$ is recursively enumerable."
+        },
+        {
+          "l": "D",
+          "t": "$L_2 \\cup L_3$ is recursively enumerable."
+        }
+      ],
+      "reason": "Typeset language expressions with KaTeX subscripts.",
+      "source": "GATE 2010 CS paper Q.17"
+    }
+  ]
+}
