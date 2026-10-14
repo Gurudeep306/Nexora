@@ -1,0 +1,99 @@
+{
+ "paper": "cse-2016-1",
+ "fixes": [
+  {
+   "id": "cse-2016-1-ga-8",
+   "field": "text",
+   "before": "Consider the following statements relating to the level of poker play of four players P, Q, R and S.\n\nI. P always beats Q\nII. R always beats S\nIII. S loses to P only sometimes\nIV. R always loses to Q\n\nWhich of the following can be logically inferred from the above statements?\n\n(i) P is likely to beat all the three other players\n(ii) S is the absolute worst player in the set",
+   "after": "Consider the following statements relating to the level of poker play of four players P, Q, R and S.\n\nI. P always beats Q\\\nII. R always beats S\\\nIII. S loses to P only sometimes\\\nIV. R always loses to Q\n\nWhich of the following can be logically inferred from the above statements?\n\n(i) P is likely to beat all the three other players\\\n(ii) S is the absolute worst player in the set",
+   "reason": "Statements were joined into one paragraph by single newlines; added markdown line breaks.",
+   "source": "pdf p.2"
+  },
+  {
+   "id": "cse-2016-1-cs-1",
+   "field": "text",
+   "before": "Let p, q, r, s represent the following propositions.\n\np: $x \\in \\{8, 9, 10, 11, 12\\}$\nq: $x$ is a composite number\nr: $x$ is a perfect square\ns: $x$ is a prime number\n\nThe integer $x \\ge 2$ which satisfies $\\neg((p \\Rightarrow q) \\wedge (\\neg r \\vee \\neg s))$ is ______.",
+   "after": "Let p, q, r, s represent the following propositions.\n\n- p: $x \\in \\{8, 9, 10, 11, 12\\}$\n- q: $x$ is a composite number\n- r: $x$ is a perfect square\n- s: $x$ is a prime number\n\nThe integer $x \\ge 2$ which satisfies $\\neg((p \\Rightarrow q) \\wedge (\\neg r \\vee \\neg s))$ is ______.",
+   "reason": "Proposition definitions collapsed into one line; laid out as a list.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2016-1-cs-3",
+   "field": "subject",
+   "before": "pds",
+   "after": "calc",
+   "reason": "Limit question belongs to calculus, not programming.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2016-1-cs-3",
+   "field": "topic",
+   "before": "c-prog",
+   "after": "limits",
+   "reason": "Standard limit sin(t)/t.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2016-1-cs-3",
+   "field": "tags",
+   "before": [
+    "limit"
+   ],
+   "after": [
+    "limits",
+    "standard-limit"
+   ],
+   "reason": "Better tags.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2016-1-cs-4",
+   "field": "subject",
+   "before": "ga",
+   "after": "prob",
+   "reason": "Probability density question was filed under general aptitude.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2016-1-cs-4",
+   "field": "topic",
+   "before": "quant",
+   "after": "rv",
+   "reason": "Continuous random variable / pdf normalisation.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2016-1-cs-4",
+   "field": "tags",
+   "before": [
+    "pdf"
+   ],
+   "after": [
+    "pdf",
+    "continuous-random-variable"
+   ],
+   "reason": "Better tags.",
+   "source": "pdf p.4"
+  },
+  {
+   "id": "cse-2016-1-cs-11",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-2016-1/cs-11-1.png",
+     "alt": "Directed graph with edges a→b, b→c, c→f, a→d, d→e, e→f",
+     "svg": "cse-2016-1/cs-11-1.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-2016-1/cs-11-1.png",
+     "alt": "Directed graph on vertices a to f: top path a→b→c→f and bottom path a→d→e→f",
+     "svg": "cse-2016-1/cs-11-1.svg"
+    }
+   ],
+   "reason": "Figure SVG redrawn from the paper; alt text made more precise.",
+   "source": "pdf p.6"
+  }
+ ]
+}
