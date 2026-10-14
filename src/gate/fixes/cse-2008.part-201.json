@@ -1,0 +1,95 @@
+{
+  "paper": "cse-2008",
+  "fixes": [
+    {
+      "id": "cse-2008-cs-24",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Question is a summation identity (discrete maths), not SQL.",
+      "source": "GATE 2008 CS question paper (PDF p.5)"
+    },
+    {
+      "id": "cse-2008-cs-24",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinatorics",
+      "reason": "Summation of arithmetic series.",
+      "source": "GATE 2008 CS question paper (PDF p.5)"
+    },
+    {
+      "id": "cse-2008-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$(\\forall x\\ fsa(x))\\Rightarrow(\\exists y\\ pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "B",
+          "t": "$\\sim\\forall y\\,(\\exists x\\ fsa(x)\\Rightarrow pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "C",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(y)\\wedge pda(x)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "D",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge equivalent(x,y))$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$(\\forall x\\ fsa(x))\\Rightarrow(\\exists y\\ pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "B",
+          "t": "$\\sim\\forall y\\,(\\exists x\\ fsa(x)\\Rightarrow pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "C",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "D",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(y)\\wedge pda(x)\\wedge equivalent(x,y))$"
+        }
+      ],
+      "reason": "Options C and D were swapped relative to the PDF: (C) is fsa(x) ∧ pda(y), (D) is fsa(y) ∧ pda(x).",
+      "source": "GATE 2008 CS question paper (PDF p.6)"
+    },
+    {
+      "id": "cse-2008-cs-30",
+      "field": "reviewNote",
+      "before": "Answer chosen by elimination (A); wording of A has x free in consequent; some sources consider none fully correct. Verify against official key.",
+      "after": "Intended answer A (reading ∀x as scoping over the whole implication); strictly x is free in the consequent of A as printed, and B, C, D are clearly wrong. Verify against the official key.",
+      "reason": "Clarified review note after re-solving.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2008-cs-33",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Re-solved independently: I false (relocation uses PC-relative), II false (no extra ALU needed), III true ⇒ C.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2008-cs-33",
+      "field": "reviewNote",
+      "before": "Answer C taken from a secondary source (gateoverflow); verify.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2008-cs-34",
+      "field": "reviewNote",
+      "before": "Answer D taken from a secondary source (gateoverflow); verify.",
+      "after": "II (privileged) and III (atomic, no exception during RFE) are clearly required; I (trap instruction) is debatable. No option lists \"II and III\", so D is the only option containing both; verify against the official key.",
+      "reason": "Precise review note after re-solving.",
+      "source": "independent solution"
+    }
+  ]
+}
