@@ -1,17 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="180" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">CN SCHEMATIC</text>
-  <g transform="translate(60, 60)">
-    <rect x="0" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">Network</text>
-    <line x1="190" y1="24" x2="220" y2="24" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">nodes</text>
-    <rect x="0" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">top</text>
-    <line x1="190" y1="89" x2="220" y2="89" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">middle</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 190" role="img" aria-label="Network of seven routers: A top-left, B top-right, C mid-left, D mid-right, E bottom-left, G bottom-right, F on the bottom edge between E and G; links A-B, A-C, C-E, B-D, D-G, E-F, F-G, C-D, A-F and F-D, so F's neighbours are A, E, D and G">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="13">
+<line x1="40" y1="25" x2="320" y2="25" stroke-width="2"/>
+<line x1="40" y1="25" x2="40" y2="95" stroke-width="2"/>
+<line x1="40" y1="95" x2="40" y2="165" stroke-width="2"/>
+<line x1="320" y1="25" x2="320" y2="95" stroke-width="2"/>
+<line x1="320" y1="95" x2="320" y2="165" stroke-width="2"/>
+<line x1="40" y1="165" x2="110" y2="165" stroke-width="2"/>
+<line x1="110" y1="165" x2="320" y2="165" stroke-width="2"/>
+<line x1="40" y1="95" x2="320" y2="95" stroke-width="2"/>
+<line x1="40" y1="25" x2="110" y2="165" stroke-width="2"/>
+<line x1="110" y1="165" x2="320" y2="95" stroke-width="2"/>
+<circle cx="40" cy="25" r="3" fill="currentColor"/>
+<text x="26" y="30" fill="currentColor" stroke="none" font-size="15" text-anchor="middle" font-weight="bold">A</text>
+<circle cx="320" cy="25" r="3" fill="currentColor"/>
+<text x="334" y="30" fill="currentColor" stroke="none" font-size="15" text-anchor="middle" font-weight="bold">B</text>
+<circle cx="40" cy="95" r="3" fill="currentColor"/>
+<text x="26" y="100" fill="currentColor" stroke="none" font-size="15" text-anchor="middle" font-weight="bold">C</text>
+<circle cx="320" cy="95" r="3" fill="currentColor"/>
+<text x="334" y="100" fill="currentColor" stroke="none" font-size="15" text-anchor="middle" font-weight="bold">D</text>
+<circle cx="40" cy="165" r="3" fill="currentColor"/>
+<text x="26" y="178" fill="currentColor" stroke="none" font-size="15" text-anchor="middle" font-weight="bold">E</text>
+<circle cx="320" cy="165" r="3" fill="currentColor"/>
+<text x="334" y="178" fill="currentColor" stroke="none" font-size="15" text-anchor="middle" font-weight="bold">G</text>
+<circle cx="110" cy="165" r="3" fill="currentColor"/>
+<text x="118" y="160" fill="currentColor" stroke="none" font-size="15" text-anchor="middle" font-weight="bold">F</text>
+</g>
 </svg>
