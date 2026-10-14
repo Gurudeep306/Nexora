@@ -1,0 +1,1308 @@
+{
+  "paper": "cse-2014-3",
+  "version": 2,
+  "solutions": {
+    "cse-2014-3-ga-1": {
+      "approach": "Read the sentence as a single past-tense narrative: a completed action (fell down) must be followed by a completed result, so the progressive \"was losing\" breaks the sequence.",
+      "concepts": [
+        "Error spotting",
+        "Sequence of tenses"
+      ],
+      "steps": [
+        {
+          "title": "Check each underlined part",
+          "body": "- I \"While trying to collect\" — correct participial clause for an action in progress.\n- II \"from under the table\" — idiomatic double preposition, correct.\n- III \"fell down\" — simple past, correct.\n- IV \"was losing consciousness\" — past progressive describes an ongoing process, but the sentence narrates a completed event after the fall."
+        },
+        {
+          "title": "Correct form",
+          "body": "Two completed past actions joined by \"and\" should both be simple past: \"Mr. X fell down **and lost consciousness**.\" So part IV is inappropriate."
+        }
+      ],
+      "answer": {
+        "value": "IV",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"While trying to collect\" correctly sets the background action."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"from under the table\" is standard English for the place the envelope is taken from."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"fell down\" is the right simple-past main verb."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "\"was losing\" (progressive) clashes with the completed action \"fell down\"; it should be \"lost\"."
+        }
+      ],
+      "pitfalls": [
+        "\"from under\" looks like a double preposition error but is idiomatic."
+      ],
+      "verification": "Rewriting with \"lost consciousness\" gives a fully natural sentence; no other part needs change."
+    },
+    "cse-2014-3-ga-2": {
+      "approach": "The second blank contains \"done\", so it must be a perfect form \"… have done\": this is a third (past unreal) conditional, whose if-clause takes the past perfect.",
+      "concepts": [
+        "Conditional sentences",
+        "Third conditional"
+      ],
+      "steps": [
+        {
+          "title": "Identify the conditional type",
+          "body": "\"she ___ done the experiment\" needs a modal + have + past participle (would/could have done) — an unreal past result. That is the **third conditional**: *If + past perfect, … would/could have + V3*."
+        },
+        {
+          "title": "Fill the blanks",
+          "body": "\"If she **had known** how to calibrate the instrument, she **could have** done the experiment.\" — option C."
+        }
+      ],
+      "answer": {
+        "value": "had known, could have",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"knows … will have done\" is a future-perfect real condition; it does not fit an unreal past situation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"knew … had done\" — the result clause of a conditional needs a modal (would/could), not a bare past perfect."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Past perfect in the if-clause + \"could have done\" is the correct third conditional."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"If she should have known\" is not a valid if-clause form for the third conditional."
+        }
+      ],
+      "verification": "The sentence with C reads naturally and the tenses pair as in the standard pattern."
+    },
+    "cse-2014-3-ga-3": {
+      "approach": "\"Coherent\" means logically connected and easy to follow; the antonym is a word meaning disconnected or wandering.",
+      "concepts": [
+        "Antonyms",
+        "Vocabulary"
+      ],
+      "steps": [
+        {
+          "title": "Meaning of the word",
+          "body": "*Coherent* = logical, consistent, well-connected (a coherent argument)."
+        },
+        {
+          "title": "Pick the opposite",
+          "body": "*Rambling* = lengthy and confused, wandering from one point to another — the opposite of coherent."
+        }
+      ],
+      "answer": {
+        "value": "rambling",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"Sticky\" relates to the physical sense of cohere (stick together), not the opposite."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"Well-connected\" is a synonym, not an antonym."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "\"Rambling\" means disconnected and confused — the opposite of coherent."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"Friendly\" is unrelated in meaning."
+        }
+      ],
+      "verification": "\"a coherent speech\" vs \"a rambling speech\" are natural opposites."
+    },
+    "cse-2014-3-ga-4": {
+      "approach": "Look at the differences: 3, 5, 7, 9, 11, 13, … — consecutive odd numbers, i.e. the terms are $n^2+1$. Find the term that breaks this.",
+      "concepts": [
+        "Number series",
+        "Square numbers"
+      ],
+      "steps": [
+        {
+          "title": "Find the pattern",
+          "body": "Differences: $5-2=3$, $10-5=5$, $17-10=7$, $26-17=9$, $37-26=11$, $50-37=13$. So the terms are $n^2+1$: $1^2+1=2,\\;2^2+1=5,\\;\\dots,\\;7^2+1=50$."
+        },
+        {
+          "title": "Check the last term",
+          "body": "Next should be $50+15 = 65 = 8^2+1$, but the series has $64$. So **64** does not belong."
+        }
+      ],
+      "answer": {
+        "value": "64",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$17 = 4^2+1$ fits."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$37 = 6^2+1$ fits."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$64$ should be $8^2+1 = 65$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$26 = 5^2+1$ fits."
+        }
+      ],
+      "verification": "All other terms satisfy $n^2+1$ for $n=1..7$."
+    },
+    "cse-2014-3-ga-5": {
+      "approach": "Average = total marks scored by the class ÷ number of students. Only correct answers score (no negative/partial marks), and every row sums to the class size.",
+      "concepts": [
+        "Average",
+        "Data interpretation"
+      ],
+      "steps": [
+        {
+          "title": "Class size",
+          "body": "Each row: $21+17+6 = 44$, $15+27+2 = 44$, $23+18+3 = 44$. So there are **44 students**."
+        },
+        {
+          "title": "Total marks",
+          "body": "Q1: $21 \\times 2 = 42$; Q2: $15 \\times 3 = 45$; Q3: $23 \\times 2 = 46$.\n\nTotal $= 42+45+46 = 133$."
+        },
+        {
+          "title": "Average",
+          "body": "$\\dfrac{133}{44} = 3.0227 \\approx 3.02$."
+        }
+      ],
+      "answer": {
+        "value": "3.02",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1.34 does not correspond to 133/44; it underestimates the per-student total."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1.74 is not 133/44."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$133/44 = 3.02$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "3.91 would need about 172 total marks."
+        }
+      ],
+      "pitfalls": [
+        "Dividing by the number of attempts per question or by 3 questions instead of the 44 students."
+      ],
+      "verification": "Maximum possible average is 7 (all correct); 3.02 is plausible and the arithmetic $44 \\times 3.0227 = 133$ checks."
+    },
+    "cse-2014-3-ga-6": {
+      "approach": "Translate the requirements: participating students at 9 a.m. with a parent; everyone else by 10 a.m. Choose the option that states exactly that, nothing more or less.",
+      "concepts": [
+        "Reading comprehension",
+        "Instructions"
+      ],
+      "steps": [
+        {
+          "title": "List the requirements",
+          "body": "1. Participating students: one hour before 10 a.m. → 9 a.m.\n2. They must be accompanied by a parent.\n3. Other students and parents: in time for the 10 a.m. programme."
+        },
+        {
+          "title": "Match with the options",
+          "body": "Only option B states all three: participating students at 9 a.m. accompanied by a parent, others by 10 a.m."
+        }
+      ],
+      "answer": {
+        "value": "Participating students at 9 a.m. with a parent; others by 10 a.m.",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Asks all students to come at 9 a.m. and does not require a parent to accompany participants."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Captures all three requirements precisely."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Adds a false restriction (non-participants must not bring parents) and omits the accompanying parent."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Says \"before 9.00 a.m.\" and separates parents from students, so they are not accompanied."
+        }
+      ],
+      "verification": "Each clause of B maps to one sentence of the passage."
+    },
+    "cse-2014-3-ga-7": {
+      "approach": "An inference must follow strictly from the passage. Test each statement: only the role of experimental evidence is directly supported.",
+      "concepts": [
+        "Inference",
+        "Critical reasoning"
+      ],
+      "steps": [
+        {
+          "title": "Test each statement",
+          "body": "- (i) Understanding changed because of evidence about a star's position, not that it generally changes with star positions — over-generalisation.\n- (ii) One shift happening at the start of the 20th century does not show shifts *usually* occur at century starts.\n- (iii) The passage says nothing about the importance of stars.\n- (iv) \"the clinching evidence was provided by experimental measurements\" — directly supported."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only (iv) can be inferred → option D."
+        }
+      ],
+      "answer": {
+        "value": "(iv) only",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Includes (i) and (ii), which are unwarranted generalisations."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(iii) is not stated or implied."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Includes (i), an over-generalisation."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "(iv) is exactly what \"clinching evidence was provided by experimental measurements\" means."
+        }
+      ],
+      "verification": "Each rejected statement goes beyond the single event described."
+    },
+    "cse-2014-3-ga-8": {
+      "approach": "GDP in USD = GDP in rupees ÷ (Rs per USD). Apply the growth factor to the numerator and the exchange-rate change to the denominator.",
+      "concepts": [
+        "Percentage change",
+        "Exchange rate"
+      ],
+      "steps": [
+        {
+          "title": "Set up the ratio",
+          "body": "Let the 2012 GDP be $G$ rupees. In USD: $\\dfrac{G}{50}$ in 2012 and $\\dfrac{1.07G}{60}$ in 2013."
+        },
+        {
+          "title": "Compute the change",
+          "body": "$\\dfrac{1.07G/60}{G/50} = \\dfrac{1.07 \\times 50}{60} = \\dfrac{53.5}{60} = 0.8917$.\n\nChange $= 0.8917 - 1 = -0.1083 \\approx -11\\%$: a **decrease of about 11%**."
+        }
+      ],
+      "answer": {
+        "value": "decreased by 11%",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Ignores that a weaker rupee reduces the dollar value."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The correct factor is $1.07 \\times 50/60 = 0.892$, a fall of about 11%, not 13%."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ignores the 7% rupee growth (only the exchange-rate effect $50/60$ is a 16.7% drop anyway)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$1.07 \\times 50/60 = 0.892$, a 10.8% ≈ 11% fall."
+        }
+      ],
+      "pitfalls": [
+        "Treating the USD rate rise (20%) as a 20% fall in rupee value; $1/1.2 = 0.833$, a 16.7% fall."
+      ],
+      "verification": "With $G = 6000$: 120 USD → $6420/60 = 107$ USD, i.e. $107/120 = 0.892$."
+    },
+    "cse-2014-3-ga-9": {
+      "approach": "Read the two ratios from the graph; with equal female counts, the ratio of male counts equals the ratio of the plotted ratios.",
+      "concepts": [
+        "Data interpretation",
+        "Ratio"
+      ],
+      "steps": [
+        {
+          "title": "Read the graph",
+          "body": "Male : female ratio in 2011 $= 1$, in 2012 $= 1.5$."
+        },
+        {
+          "title": "Compare male counts",
+          "body": "Let female students be $F$ in both years. Males: $M_{2011} = 1 \\times F$, $M_{2012} = 1.5F$.\n\n$M_{2012} : M_{2011} = 1.5F : F = 1.5 : 1$."
+        }
+      ],
+      "answer": {
+        "value": "1.5:1",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would need equal ratios in both years."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "2 is the 2010 ratio, not the 2012/2011 comparison."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$1.5F / F = 1.5$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "2.5 is the 2008 ratio."
+        }
+      ],
+      "verification": "Take $F = 100$: 100 males in 2011, 150 in 2012 → 1.5 : 1."
+    },
+    "cse-2014-3-ga-10": {
+      "approach": "$Y = (7526)_8 - (4364)_8$. Subtract digit by digit in base 8, borrowing 8 instead of 10.",
+      "concepts": [
+        "Octal arithmetic",
+        "Number systems"
+      ],
+      "steps": [
+        {
+          "title": "Subtract in base 8",
+          "body": "Units: $6-4 = 2$.\n\nEights: $2-6$ needs a borrow: $2+8-6 = 4$.\n\nSixty-fours: $(5-1)-3 = 1$.\n\n512s: $7-4 = 3$.\n\nSo $Y = (3142)_8$."
+        },
+        {
+          "title": "Check in decimal",
+          "body": "$(7526)_8 = 3584+320+16+6 = 3926$; $(4364)_8 = 2048+192+48+4 = 2292$; $(3142)_8 = 1536+64+32+2 = 1634$.\n\n$3926 - 2292 = 1634$ ✓."
+        }
+      ],
+      "answer": {
+        "value": "3142",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1634 is the decimal value of $Y$, not its octal form."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(4364)_8 + (1737)_8 = (6323)_8 \\ne (7526)_8$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$(7526)_8 - (4364)_8 = (3142)_8$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(4364)_8 + (3162)_8 = (7546)_8 \\ne (7526)_8$."
+        }
+      ],
+      "pitfalls": [
+        "Borrowing 10 instead of 8."
+      ],
+      "verification": "$(3142)_8 + (4364)_8 = (7526)_8$ by octal addition."
+    },
+    "cse-2014-3-cs-1": {
+      "approach": "Formalise with $g$ = good, $c$ = cheap: $P \\equiv g \\to \\neg c$ and $Q \\equiv c \\to \\neg g$. Each is the contrapositive of the other, so they are logically equivalent.",
+      "concepts": [
+        "Implication",
+        "Contrapositive",
+        "Logical equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Translate",
+          "body": "$P$: for every phone, $g(x) \\to \\neg c(x)$.\n\n$Q$: for every phone, $c(x) \\to \\neg g(x)$."
+        },
+        {
+          "title": "Compare",
+          "body": "Contrapositive of $g \\to \\neg c$ is $\\neg\\neg c \\to \\neg g$, i.e. $c \\to \\neg g$, which is $Q$. Both also equal $\\neg(g \\wedge c)$: no phone is both good and cheap."
+        },
+        {
+          "title": "Evaluate L, M, N",
+          "body": "$P \\equiv Q$, so $P \\to Q$ (L), $Q \\to P$ (M) and $P \\leftrightarrow Q$ (N) are all TRUE."
+        }
+      ],
+      "answer": {
+        "value": "L, M and N are TRUE",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "M is also true, because the implication holds in both directions."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "L is also true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "If N (equivalence) is true, L and M must be true too, so \"only N\" is impossible."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "P and Q are contrapositives, hence equivalent."
+        }
+      ],
+      "verification": "Both reduce to $\\neg(g \\wedge c)$."
+    },
+    "cse-2014-3-cs-2": {
+      "approach": "Pre-images respect all set operations ($x \\in f^{-1}(S\\cap T) \\iff f(x)\\in S$ and $f(x) \\in T$), while images respect unions but not intersections or sizes. Kill A–C with a constant function.",
+      "concepts": [
+        "Image and preimage",
+        "Functions"
+      ],
+      "steps": [
+        {
+          "title": "Prove D",
+          "body": "$x \\in f^{-1}(S \\cap T) \\iff f(x) \\in S \\cap T \\iff f(x) \\in S \\text{ and } f(x) \\in T \\iff x \\in f^{-1}(S) \\cap f^{-1}(T)$. Always true."
+        },
+        {
+          "title": "Counterexample for A, B, C",
+          "body": "Let $X = \\{1,2\\}$, $Y = \\{a\\}$, $f(1)=f(2)=a$, $A=\\{1\\}$, $B=\\{2\\}$.\n\n- A: $|f(A\\cup B)| = 1$ but $|f(A)|+|f(B)| = 2$.\n- B: $f(A\\cap B) = f(\\emptyset) = \\emptyset$ but $f(A)\\cap f(B) = \\{a\\}$.\n- C: $|f(A\\cap B)| = 0$ but $\\min\\{1,1\\} = 1$."
+        }
+      ],
+      "answer": {
+        "value": "$f^{-1}(S \\cap T) = f^{-1}(S) \\cap f^{-1}(T)$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fails when the images of A and B overlap (constant function)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Only $f(A\\cap B) \\subseteq f(A)\\cap f(B)$ holds; equality needs $f$ injective."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Fails for disjoint A, B with a common image."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Pre-image distributes over intersection for every function."
+        }
+      ],
+      "verification": "The single constant-function example refutes A, B and C at once."
+    },
+    "cse-2014-3-cs-3": {
+      "approach": "By Lagrange's theorem the order of a subgroup divides the order of the group. The divisors of 15 are 1, 3, 5, 15.",
+      "concepts": [
+        "Lagrange's theorem",
+        "Subgroups"
+      ],
+      "steps": [
+        {
+          "title": "Possible orders",
+          "body": "$|L|$ divides $15$, so $|L| \\in \\{1, 3, 5, 15\\}$."
+        },
+        {
+          "title": "Apply the conditions",
+          "body": "$|L| \\ge 4$ removes 1 and 3; $L \\ne G$ removes 15. Hence $|L| = 5$."
+        }
+      ],
+      "answer": {
+        "value": "5",
+        "number": 5,
+        "matchesKey": true
+      },
+      "verification": "A subgroup of order 5 exists (Cauchy's theorem; in fact $G \\cong \\mathbb{Z}_{15}$), so 5 is attainable."
+    },
+    "cse-2014-3-cs-4": {
+      "approach": "For real eigenvalues, trace = sum and determinant = product of eigenvalues. A negative product forces an odd number of negative eigenvalues — at least one.",
+      "concepts": [
+        "Eigenvalues",
+        "Trace",
+        "Determinant"
+      ],
+      "steps": [
+        {
+          "title": "Key facts",
+          "body": "$\\operatorname{tr}(A) = \\sum \\lambda_i$, $\\det(A) = \\prod \\lambda_i$."
+        },
+        {
+          "title": "Check A",
+          "body": "If $\\prod \\lambda_i < 0$, not all $\\lambda_i$ can be $\\ge 0$, so at least one eigenvalue is negative. TRUE (the trace condition is irrelevant)."
+        },
+        {
+          "title": "Refute B, C, D",
+          "body": "Take $\\operatorname{diag}(-1,-1,3)$: trace $= 1 > 0$, det $= 3 > 0$, product $= 3 > 0$, yet two eigenvalues are negative. This one matrix breaks B, C and D."
+        }
+      ],
+      "answer": {
+        "value": "Trace > 0 and det < 0 ⇒ at least one negative eigenvalue",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "A negative product of real numbers needs at least one negative factor."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\operatorname{diag}(-1,-1,3)$ has positive trace but negative eigenvalues."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\operatorname{diag}(-1,-1,3)$ (or $\\operatorname{diag}(-1,-1)$) has positive determinant."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "For $\\operatorname{diag}(-1,-1,3)$, trace × det $= 3 > 0$ but eigenvalues are not all positive."
+        }
+      ],
+      "verification": "Counterexample eigenvalues: sum $1$, product $3$, two negatives."
+    },
+    "cse-2014-3-cs-5": {
+      "approach": "Use $\\dim(V_1+V_2) = \\dim V_1 + \\dim V_2 - \\dim(V_1\\cap V_2)$ with $\\dim(V_1+V_2) \\le 6$.",
+      "concepts": [
+        "Subspace dimension formula",
+        "Vector spaces"
+      ],
+      "steps": [
+        {
+          "title": "Lower bound",
+          "body": "$\\dim(V_1\\cap V_2) = 4 + 4 - \\dim(V_1+V_2) \\ge 8 - 6 = 2$."
+        },
+        {
+          "title": "Attainable",
+          "body": "In $\\mathbb{R}^6$ take $V_1 = \\operatorname{span}(e_1,e_2,e_3,e_4)$, $V_2 = \\operatorname{span}(e_3,e_4,e_5,e_6)$: $V_1\\cap V_2 = \\operatorname{span}(e_3,e_4)$, dimension 2."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "verification": "The explicit example gives $V_1+V_2 = \\mathbb{R}^6$ and intersection of dimension exactly 2."
+    },
+    "cse-2014-3-cs-6": {
+      "approach": "Split at $x = \\pi$ where $\\sin x$ changes sign, and use $\\int x\\sin x\\,dx = -x\\cos x + \\sin x$.",
+      "concepts": [
+        "Definite integrals",
+        "Integration by parts",
+        "Absolute value"
+      ],
+      "steps": [
+        {
+          "title": "Remove the absolute value",
+          "body": "On $[0,\\pi]$, $x\\sin x \\ge 0$; on $[\\pi, 2\\pi]$, $x\\sin x \\le 0$.\n\n$$I = \\int_0^{\\pi} x\\sin x\\,dx - \\int_{\\pi}^{2\\pi} x\\sin x\\,dx$$"
+        },
+        {
+          "title": "Antiderivative",
+          "body": "By parts: $\\int x\\sin x\\,dx = -x\\cos x + \\sin x$."
+        },
+        {
+          "title": "Evaluate",
+          "body": "$\\int_0^{\\pi} = (-\\pi\\cos\\pi + 0) - 0 = \\pi$.\n\n$\\int_{\\pi}^{2\\pi} = (-2\\pi\\cos 2\\pi + 0) - (-\\pi\\cos\\pi + 0) = -2\\pi - \\pi = -3\\pi$.\n\n$I = \\pi - (-3\\pi) = 4\\pi$, so $k = 4$."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "number": 4,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Dropping the absolute value gives $\\pi - 3\\pi = -2\\pi$."
+      ],
+      "verification": "Each hump of $|x\\sin x|$ on $[n\\pi,(n+1)\\pi]$ has area $(2n+1)\\pi$: $\\pi + 3\\pi = 4\\pi$."
+    },
+    "cse-2014-3-cs-7": {
+      "approach": "Plot the four required minterms 0, 5, 10, 15 and the don't-cares 2, 7, 8, 13 on a K-map; two quads (the four corners and the centre square) cover everything.",
+      "concepts": [
+        "K-map",
+        "Don't-care conditions",
+        "Minimal SOP"
+      ],
+      "given": "| Required 1s | Don't cares |\n|---|---|\n| 0, 5, 10, 15 | 2, 7, 8, 13 |",
+      "steps": [
+        {
+          "title": "Plot the map",
+          "body": "Rows $PQ$ and columns $RS$ in Gray order. 1s at 0, 5, 10, 15; X at 2, 7, 8, 13.",
+          "scene": {
+            "groups": []
+          }
+        },
+        {
+          "title": "Corner quad",
+          "body": "Cells 0, 2, 8, 10 (the four corners) have $Q = 0$ and $S = 0$: term $\\overline{Q}\\,\\overline{S}$. Covers 0 and 10.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "Q'S'"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Centre quad",
+          "body": "Cells 5, 7, 13, 15 have $Q = 1$ and $S = 1$: term $QS$. Covers 5 and 15.\n\n$$F = \\overline{Q}\\,\\overline{S} + QS$$",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "Q'S'"
+              },
+              {
+                "cells": [
+                  5,
+                  7,
+                  13,
+                  15
+                ],
+                "label": "QS"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "P",
+          "Q",
+          "R",
+          "S"
+        ],
+        "ones": [
+          0,
+          5,
+          10,
+          15
+        ],
+        "dcs": [
+          2,
+          7,
+          8,
+          13
+        ],
+        "groups": []
+      },
+      "answer": {
+        "value": "$\\overline{Q}\\,\\overline{S} + QS$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$Q\\overline{S}+\\overline{Q}S$ covers 1, 3, 4, 6, … — none of the required minterms 0, 5, 10, 15."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Two quads covering all four required 1s using the don't-cares; only 2 terms of 2 literals."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Covers the right cells but with 4 three-literal terms — not minimal."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Also correct functionally but uses 4 three-literal terms — not minimal."
+        }
+      ],
+      "verification": "$\\overline{Q}\\,\\overline{S}+QS = \\overline{Q \\oplus S}$; minterms with $Q = S$ are exactly 0,2,5,7,8,10,13,15."
+    },
+    "cse-2014-3-cs-8": {
+      "approach": "\"$y = a$ if $x = 1$ else $y = b$\" is a selection of one of two data inputs by a select line — the definition of a 2-to-1 multiplexer.",
+      "concepts": [
+        "Multiplexer",
+        "Combinational logic"
+      ],
+      "steps": [
+        {
+          "title": "Write the function",
+          "body": "$y = x\\,a + \\overline{x}\\,b$."
+        },
+        {
+          "title": "Match a block",
+          "body": "That is a 2:1 MUX with select $x$ and data inputs $a$ (for $x=1$) and $b$ (for $x=0$). It is combinational, so no memory element is needed."
+        }
+      ],
+      "answer": {
+        "value": "Multiplexor",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A full adder computes sum/carry of three bits, not a selection."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A priority encoder outputs the index of the highest active input."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A 2:1 MUX implements $y = xa + \\overline{x}b$ directly."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A flip-flop is sequential (stores state); the block is purely combinational."
+        }
+      ],
+      "verification": "Truth table of $xa+\\overline{x}b$ equals the MUX table."
+    },
+    "cse-2014-3-cs-9": {
+      "approach": "In a pipeline the clock period equals the slowest stage latency (registers have zero latency). Highest frequency = smallest maximum stage delay.",
+      "concepts": [
+        "Pipelining",
+        "Clock period"
+      ],
+      "steps": [
+        {
+          "title": "Slowest stage per processor",
+          "body": "| Processor | Max stage | Frequency |\n|---|---|---|\n| P1 | 2 ns | 0.5 GHz |\n| P2 | 1.5 ns | 0.667 GHz |\n| P3 | 1 ns | 1 GHz |\n| P4 | 1.1 ns | 0.909 GHz |"
+        },
+        {
+          "title": "Pick the maximum",
+          "body": "P3 has the shortest clock period (1 ns), so the highest peak frequency, 1 GHz."
+        }
+      ],
+      "answer": {
+        "value": "P3",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Slowest stage 2 ns → 500 MHz."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Slowest stage 1.5 ns → 667 MHz."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Slowest stage 1 ns → 1 GHz, the highest."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The 1.1 ns stage limits it to about 909 MHz."
+        }
+      ],
+      "pitfalls": [
+        "Using the sum of latencies or the average stage delay instead of the maximum."
+      ],
+      "verification": "Frequency $= 1/\\max(\\text{stage latency})$ for each processor."
+    },
+    "cse-2014-3-cs-10": {
+      "approach": "The body swaps $A[i][j]$ and $A[j][i]$ (adding then subtracting $C$ cancels). Because both loops run over all $(i,j)$, each off-diagonal pair is swapped twice, restoring the original.",
+      "concepts": [
+        "Matrix transpose",
+        "Code tracing",
+        "Swap"
+      ],
+      "steps": [
+        {
+          "title": "What one iteration does",
+          "body": "$\\text{Temp} = A[i][j] + 100$; $A[i][j] \\leftarrow A[j][i]$; $A[j][i] \\leftarrow \\text{Temp} - 100 = $ old $A[i][j]$. So it **swaps** $A[i][j]$ and $A[j][i]$; $C$ has no net effect."
+        },
+        {
+          "title": "Count swaps per pair",
+          "body": "For $i \\ne j$, the pair is swapped at iteration $(i,j)$ and again at $(j,i)$ — two swaps cancel. For $i = j$ the swap is with itself."
+        },
+        {
+          "title": "Example",
+          "body": "$A = \\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}$: $(1,2)$ swap → $\\begin{bmatrix}1&3\\\\2&4\\end{bmatrix}$; $(2,1)$ swap → $\\begin{bmatrix}1&2\\\\3&4\\end{bmatrix}$. The output is the original matrix."
+        }
+      ],
+      "answer": {
+        "value": "The matrix A itself",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Every off-diagonal pair is swapped twice, leaving A unchanged."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The transpose would need $j$ to start from $i+1$ (each pair swapped once)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The $+C$ and $-C$ cancel inside each iteration."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A definite answer (A itself) exists."
+        }
+      ],
+      "verification": "The 2×2 trace confirms the original matrix is printed."
+    },
+    "cse-2014-3-cs-11": {
+      "approach": "Rewrite with Horner-style nesting so that each operation updates the single temporary: $P(X) = X\\big(X^2(X^2+4)+6\\big)+5$. Count the multiplications and additions.",
+      "concepts": [
+        "Horner's rule",
+        "Polynomial evaluation"
+      ],
+      "steps": [
+        {
+          "title": "Factor the polynomial",
+          "body": "$X^5 + 4X^3 + 6X + 5 = X\\,(X^4 + 4X^2 + 6) + 5 = X\\big(X^2(X^2+4) + 6\\big) + 5$."
+        },
+        {
+          "title": "Program with one temporary",
+          "body": "```\nT = X * X      // X^2\nT = T + 4      // X^2 + 4\nT = T * X\nT = T * X      // X^4 + 4X^2\nT = T + 6\nT = T * X      // X^5 + 4X^3 + 6X\nT = T + 5\n```\n4 multiplications + 3 additions $= 7$ operations (the official answer)."
+        },
+        {
+          "title": "Caveat",
+          "body": "Squaring the temporary itself gives a 6-operation program: $T = X\\cdot X$; $T = T+2$; $T = T\\cdot T$ ($X^4+4X^2+4$); $T = T+2$; $T = T\\cdot X$; $T = T+5$. The accepted answer 7 assumes the standard Horner-style evaluation, so the question is arguably ambiguous."
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "number": 7,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Computing each power separately (many more operations).",
+        "Forgetting that the additions also count as arithmetic operations."
+      ],
+      "verification": "At $X = 1$: Horner program gives $((1+4)\\cdot 1 \\cdot 1 + 6)\\cdot 1 + 5 = 16 = 1+4+6+5$."
+    },
+    "cse-2014-3-cs-12": {
+      "approach": "For a general (non-binary) tree, in-order = in-order of the first (leftmost) subtree, then the node, then in-order of the remaining subtrees left to right.",
+      "concepts": [
+        "In-order traversal",
+        "General tree traversal"
+      ],
+      "given": "P → {Q, R}; Q → {S}; R → {T, U, V}; U → {W}.",
+      "steps": [
+        {
+          "title": "Left subtree of P",
+          "body": "In-order(Q): first subtree S, then Q → **S Q**.",
+          "scene": {
+            "root": {
+              "label": "P",
+              "tone": "default",
+              "children": [
+                {
+                  "label": "Q",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "label": "S",
+                      "tone": "success",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "label": "R",
+                  "tone": "default",
+                  "children": [
+                    {
+                      "label": "T",
+                      "tone": "default",
+                      "children": []
+                    },
+                    {
+                      "label": "U",
+                      "tone": "default",
+                      "children": [
+                        {
+                          "label": "W",
+                          "tone": "default",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "label": "V",
+                      "tone": "default",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Visited: S Q"
+          }
+        },
+        {
+          "title": "Visit the root",
+          "body": "After the first subtree, visit **P**.",
+          "scene": {
+            "root": {
+              "label": "P",
+              "tone": "accent",
+              "children": [
+                {
+                  "label": "Q",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "S",
+                      "tone": "success",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "label": "R",
+                  "tone": "default",
+                  "children": [
+                    {
+                      "label": "T",
+                      "tone": "default",
+                      "children": []
+                    },
+                    {
+                      "label": "U",
+                      "tone": "default",
+                      "children": [
+                        {
+                          "label": "W",
+                          "tone": "default",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "label": "V",
+                      "tone": "default",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Visited: S Q P"
+          }
+        },
+        {
+          "title": "Subtree rooted at R",
+          "body": "In-order(R): first subtree T, then R, then the remaining subtrees U and V → **T R** …",
+          "scene": {
+            "root": {
+              "label": "P",
+              "tone": "success",
+              "children": [
+                {
+                  "label": "Q",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "S",
+                      "tone": "success",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "label": "R",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "label": "T",
+                      "tone": "success",
+                      "children": []
+                    },
+                    {
+                      "label": "U",
+                      "tone": "default",
+                      "children": [
+                        {
+                          "label": "W",
+                          "tone": "default",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "label": "V",
+                      "tone": "default",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Visited: S Q P T R"
+          }
+        },
+        {
+          "title": "Remaining subtrees of R",
+          "body": "In-order(U) = W U (its only subtree W first), then V.\n\nFull order: **S Q P T R W U V**.",
+          "scene": {
+            "root": {
+              "label": "P",
+              "tone": "success",
+              "children": [
+                {
+                  "label": "Q",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "S",
+                      "tone": "success",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "label": "R",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": "T",
+                      "tone": "success",
+                      "children": []
+                    },
+                    {
+                      "label": "U",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "label": "W",
+                          "tone": "success",
+                          "children": []
+                        }
+                      ]
+                    },
+                    {
+                      "label": "V",
+                      "tone": "accent",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Visited: S Q P T R W U V"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": "P",
+          "tone": "default",
+          "children": [
+            {
+              "label": "Q",
+              "tone": "default",
+              "children": [
+                {
+                  "label": "S",
+                  "tone": "default",
+                  "children": []
+                }
+              ]
+            },
+            {
+              "label": "R",
+              "tone": "default",
+              "children": [
+                {
+                  "label": "T",
+                  "tone": "default",
+                  "children": []
+                },
+                {
+                  "label": "U",
+                  "tone": "default",
+                  "children": [
+                    {
+                      "label": "W",
+                      "tone": "default",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "label": "V",
+                  "tone": "default",
+                  "children": []
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "In-order: first subtree, node, remaining subtrees"
+      },
+      "answer": {
+        "value": "SQPTRWUV",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Matches first-subtree / node / remaining-subtrees order at every node."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Visits R after U and W, i.e. after more than its first subtree."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Puts R last (a post-order treatment of R)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Visits U before its child W; in-order needs W first."
+        }
+      ],
+      "pitfalls": [
+        "Visiting a node after all its children (post-order) instead of after the first one."
+      ],
+      "verification": "All 8 nodes appear once; each node comes right after its first subtree."
+    }
+  }
+}
