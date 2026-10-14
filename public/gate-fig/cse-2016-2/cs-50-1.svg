@@ -1,19 +1,56 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <defs>
-    <pattern id="hatch-pat-cse-2016-2-cs-50" width="8" height="8" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-      <line x1="0" y1="0" x2="0" y2="8" stroke="#38bdf8" stroke-width="2" />
-    </pattern>
-  </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">MEMORY HIERARCHY</text>
-  <rect x="60" y="100" width="440" height="50" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="2" />
-  <rect x="60" y="100" width="80" height="50" fill="url(#hatch-pat-cse-2016-2-cs-50)" stroke="#38bdf8" stroke-width="1" />
-  <text x="100.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">50 KB</text>
-  <rect x="140" y="100" width="140" height="50" fill="#1e293b" stroke="#334155" stroke-width="1" />
-  <text x="210.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">150 KB (Free)</text>
-  <rect x="280" y="100" width="100" height="50" fill="url(#hatch-pat-cse-2016-2-cs-50)" stroke="#38bdf8" stroke-width="1" />
-  <text x="330.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">300 KB</text>
-  <rect x="380" y="100" width="120" height="50" fill="#1e293b" stroke="#334155" stroke-width="1" />
-  <text x="440.0" y="170" text-anchor="middle" fill="#94a3b8" font-size="11" font-family="monospace">350 KB (Free)</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none" font-family="Arial, Helvetica, sans-serif" font-size="12">
+<g stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 3" opacity="0.6">
+<line x1="103.33333333333334" y1="240" x2="103.33333333333334" y2="40"/>
+<line x1="70" y1="217.77777777777777" x2="370" y2="217.77777777777777"/>
+<line x1="136.66666666666669" y1="240" x2="136.66666666666669" y2="40"/>
+<line x1="70" y1="195.55555555555554" x2="370" y2="195.55555555555554"/>
+<line x1="170" y1="240" x2="170" y2="40"/>
+<line x1="70" y1="173.33333333333331" x2="370" y2="173.33333333333331"/>
+<line x1="203.33333333333334" y1="240" x2="203.33333333333334" y2="40"/>
+<line x1="70" y1="151.11111111111111" x2="370" y2="151.11111111111111"/>
+<line x1="236.66666666666669" y1="240" x2="236.66666666666669" y2="40"/>
+<line x1="70" y1="128.88888888888889" x2="370" y2="128.88888888888889"/>
+<line x1="270" y1="240" x2="270" y2="40"/>
+<line x1="70" y1="106.66666666666666" x2="370" y2="106.66666666666666"/>
+<line x1="303.33333333333337" y1="240" x2="303.33333333333337" y2="40"/>
+<line x1="70" y1="84.44444444444443" x2="370" y2="84.44444444444443"/>
+<line x1="336.6666666666667" y1="240" x2="336.6666666666667" y2="40"/>
+<line x1="70" y1="62.22222222222223" x2="370" y2="62.22222222222223"/>
+<line x1="370" y1="240" x2="370" y2="40"/>
+<line x1="70" y1="40" x2="370" y2="40"/>
+</g>
+<rect x="70" y="40" width="300" height="200" stroke="currentColor" stroke-width="1"/>
+<g fill="currentColor" stroke="none">
+<text x="70" y="256" text-anchor="middle">0</text>
+<text x="62" y="244.0" text-anchor="end">0</text>
+<text x="103.33333333333334" y="256" text-anchor="middle">10</text>
+<text x="62" y="221.8" text-anchor="end">10</text>
+<text x="136.66666666666669" y="256" text-anchor="middle">20</text>
+<text x="62" y="199.6" text-anchor="end">20</text>
+<text x="170" y="256" text-anchor="middle">30</text>
+<text x="62" y="177.3" text-anchor="end">30</text>
+<text x="203.33333333333334" y="256" text-anchor="middle">40</text>
+<text x="62" y="155.1" text-anchor="end">40</text>
+<text x="236.66666666666669" y="256" text-anchor="middle">50</text>
+<text x="62" y="132.9" text-anchor="end">50</text>
+<text x="270" y="256" text-anchor="middle">60</text>
+<text x="62" y="110.7" text-anchor="end">60</text>
+<text x="303.33333333333337" y="256" text-anchor="middle">70</text>
+<text x="62" y="88.4" text-anchor="end">70</text>
+<text x="336.6666666666667" y="256" text-anchor="middle">80</text>
+<text x="62" y="66.2" text-anchor="end">80</text>
+<text x="370" y="256" text-anchor="middle">90</text>
+<text x="62" y="44.0" text-anchor="end">90</text>
+<text x="220" y="280" text-anchor="middle">Cache size (MB)</text>
+<text x="22" y="140" text-anchor="middle" transform="rotate(-90 22 140)">Miss rate (%)</text>
+<circle cx="103.3" cy="62.2" r="3"/>
+<circle cx="136.7" cy="106.7" r="3"/>
+<circle cx="170.0" cy="151.1" r="3"/>
+<circle cx="203.3" cy="162.2" r="3"/>
+<circle cx="236.7" cy="173.3" r="3"/>
+<circle cx="270.0" cy="184.4" r="3"/>
+<circle cx="303.3" cy="195.6" r="3"/>
+<circle cx="336.7" cy="206.7" r="3"/>
+</g>
+<polyline points="103.3,62.2 136.7,106.7 170.0,151.1 203.3,162.2 236.7,173.3 270.0,184.4 303.3,195.6 336.7,206.7" stroke="currentColor" stroke-width="1.6"/>
 </svg>
