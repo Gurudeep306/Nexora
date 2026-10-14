@@ -1,0 +1,6 @@
+{
+ "paper": "cse-2007",
+ "fixes": [
+  {"id": "cse-2007-cs-7", "field": "topic", "before": "pumping", "after": "regular", "reason": "Question is about closure properties of regular sets (finite subsets, unions), not the pumping lemma", "source": "GATE 2007 CS question paper Q.7"}
+ ]
+}
