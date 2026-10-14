@@ -1,0 +1,1313 @@
+{
+  "paper": "it-2007",
+  "version": 2,
+  "solutions": {
+    "it-2007-cs-1": {
+      "approach": "Total probability: condition on which coin is picked, each with probability 1/2.",
+      "concepts": [
+        "Total probability theorem"
+      ],
+      "steps": [
+        {
+          "title": "Condition on the coin",
+          "body": "$$P(H)=P(C_1)P(H\\mid C_1)+P(C_2)P(H\\mid C_2)=\\tfrac12\\cdot\\tfrac58+\\tfrac12\\cdot\\tfrac14$$"
+        },
+        {
+          "title": "Add",
+          "body": "$\\tfrac58+\\tfrac14=\\tfrac58+\\tfrac28=\\tfrac78$, so $P(H)=\\tfrac12\\cdot\\tfrac78=\\tfrac{7}{16}$."
+        }
+      ],
+      "answer": {
+        "value": "7/16",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "7/8 is the sum of the two probabilities without weighting by 1/2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1/2 assumes a fair coin."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "7/16 = average of 5/8 and 1/4 — correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "5/32 = 5/8 × 1/4 is the probability that both coins show heads, a different event."
+        }
+      ],
+      "shortcut": "With equal priors the answer is just the average: (5/8 + 2/8)/2 = 7/16.",
+      "verification": "0.625 and 0.25 average to 0.4375 = 7/16."
+    },
+    "it-2007-cs-2": {
+      "approach": "For a unit eigenvector x with eigenvalue λ, $x^TAx=\\lambda x^Tx=\\lambda$, so the answer is the largest eigenvalue.",
+      "concepts": [
+        "Eigenvalues",
+        "Quadratic form"
+      ],
+      "steps": [
+        {
+          "title": "Reduce to eigenvalues",
+          "body": "If $Ax=\\lambda x$ and $\\|x\\|=1$ then $x^TAx=\\lambda\\,x^Tx=\\lambda$."
+        },
+        {
+          "title": "Characteristic equation",
+          "body": "$\\operatorname{tr}A=3+2=5$, $\\det A=3\\cdot2-1\\cdot1=5$, so $\\lambda^2-5\\lambda+5=0$ and $\\lambda=\\dfrac{5\\pm\\sqrt{25-20}}{2}=\\dfrac{5\\pm\\sqrt5}{2}$."
+        },
+        {
+          "title": "Maximum",
+          "body": "The larger root is $\\dfrac{5+\\sqrt5}{2}\\approx3.618$."
+        }
+      ],
+      "answer": {
+        "value": "(5+√5)/2",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "5 is the trace (sum of eigenvalues), not an eigenvalue."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Largest eigenvalue — correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "3 is the diagonal entry $a_{11}$ = value for $x=e_1$, which is not an eigenvector."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This is the smaller eigenvalue — the minimum, not the maximum."
+        }
+      ],
+      "verification": "Sum of roots 5 = trace, product (25−5)/4 = 5 = det."
+    },
+    "it-2007-cs-3": {
+      "approach": "Shortest-path distances satisfy the triangle inequality along every edge: $d(v)\\le d(u)+w(u,v)$.",
+      "concepts": [
+        "Shortest paths",
+        "Edge relaxation"
+      ],
+      "steps": [
+        {
+          "title": "Triangle inequality",
+          "body": "Going s → u (cost 53) then over edge uv gives a path to v, so $65=d(v)\\le d(u)+w(u,v)=53+w(u,v)$."
+        },
+        {
+          "title": "Conclude",
+          "body": "$w(u,v)\\ge65-53=12$. Equality is possible (edge on the shortest path to v), so strict $>$ is not guaranteed."
+        }
+      ],
+      "answer": {
+        "value": "weight(u,v) ≥ 12",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "If w < 12 then d(v) ≤ 53 + w < 65, contradiction."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "w can be any value ≥ 12, e.g. 100, so ≤ 12 is not always true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "w = 12 is possible when v is reached through u, so strict > fails."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Follows from d(v) ≤ d(u) + w — always true."
+        }
+      ],
+      "pitfalls": [
+        "Choosing > 12: the bound is tight when uv lies on a shortest path."
+      ],
+      "verification": "Example: s–u weight 53, u–v weight 12 gives d(v) = 65 with w = 12."
+    },
+    "it-2007-cs-4": {
+      "approach": "Boehm's spiral model is a risk-driven process: each loop starts with identifying and resolving the highest risks.",
+      "concepts": [
+        "Spiral model",
+        "Risk analysis"
+      ],
+      "steps": [
+        {
+          "title": "Spiral quadrants",
+          "body": "Each loop: determine objectives → **evaluate alternatives, identify and resolve risks** → develop/verify → plan next iteration."
+        },
+        {
+          "title": "Determinant",
+          "body": "Which activities are done in a loop (prototype, simulation, specification…) is decided by the risks that remain — the model is explicitly risk-driven."
+        }
+      ],
+      "answer": {
+        "value": "Risk",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Iteration size is not fixed or used to choose activities."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Cost is tracked (radius of the spiral) but does not decide which activities are done."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "RUP/XP are separate process models, not the spiral model's selection criterion."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The spiral model is risk-driven — correct."
+        }
+      ],
+      "verification": "Standard SE textbooks (Pressman, Sommerville) describe the spiral model as risk-driven."
+    },
+    "it-2007-cs-5": {
+      "approach": "Pipe-and-filter suits systems that transform a stream of data through a fixed chain of independent processing stages.",
+      "concepts": [
+        "Software architecture styles",
+        "Pipe and filter"
+      ],
+      "steps": [
+        {
+          "title": "Style characteristics",
+          "body": "Filters read a data stream, transform it, and write to the next filter via pipes; no shared state."
+        },
+        {
+          "title": "Match",
+          "body": "Signal processing (sample → filter → transform → encode) is the canonical example."
+        }
+      ],
+      "answer": {
+        "value": "Signal processing",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Expert systems use a blackboard / rule-based style."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A DB repository is a repository (data-centred) style."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A flight controller is a process-control (feedback loop) style."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Stream transformation through successive stages — pipe and filter."
+        }
+      ],
+      "verification": "Shaw & Garlan list signal processing as the classic pipe-and-filter domain."
+    },
+    "it-2007-cs-6": {
+      "approach": "Asymptotic speedup = time per instruction without pipelining ÷ pipeline clock cycle, where the clock cycle equals the slowest stage.",
+      "concepts": [
+        "Pipeline speedup",
+        "Stage imbalance"
+      ],
+      "steps": [
+        {
+          "title": "Pipeline cycle",
+          "body": "Cycle time $=\\max(3,2,5,4,6,2)=6$ cycles; with many instructions one completes every 6 cycles."
+        },
+        {
+          "title": "Speedup",
+          "body": "Non-pipelined: 12 cycles per instruction (given). $S=\\dfrac{12}{6}=2$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1.83 ≈ 22/12 mixes up the stage-time sum with the given 12 cycles."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "12 / 6 = 2 — correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "3 would need a 4-cycle bottleneck stage."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "6 is the ideal speedup for 6 balanced stages, ignoring the 6-cycle bottleneck."
+        }
+      ],
+      "pitfalls": [
+        "Using the sum of stage times (22) as the non-pipelined time — the question gives 12 cycles explicitly.",
+        "Taking the number of stages as the speedup."
+      ],
+      "verification": "For n instructions: 12n vs (6+n−1)·6 ≈ 6n, ratio → 2."
+    },
+    "it-2007-cs-7": {
+      "approach": "In a NAND S̄R̄ latch, input 00 forces both outputs to 1; switching both inputs to 11 simultaneously creates a race and can make the latch oscillate.",
+      "concepts": [
+        "NAND SR latch",
+        "Race condition"
+      ],
+      "steps": [
+        {
+          "title": "Invalid state",
+          "body": "With NAND gates the inputs are active-low: $S\\!R=00$ gives $Q=\\bar Q=1$."
+        },
+        {
+          "title": "Release both",
+          "body": "Changing to $11$ (hold) at the same instant: both NANDs see 1,1 and try to go to 0 together, then both back to 1… With identical delays this repeats — oscillation (metastability)."
+        }
+      ],
+      "answer": {
+        "value": "00, 11",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "11 (hold) then 00 just forces both outputs to 1 — no race yet."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "01 then 10: a clean set/reset — stable."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "10 then 01: a clean reset/set — stable."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "00 followed by 11 releases the forbidden state simultaneously — may oscillate."
+        }
+      ],
+      "verification": "Same reasoning as the NOR latch where 11 → 00 causes the race; for NAND the roles of 0 and 1 swap."
+    },
+    "it-2007-cs-8": {
+      "approach": "A 2:1 mux computes $Y=S\\cdot I_1+\\bar S\\cdot I_0$; evaluate each option on the two cascaded muxes.",
+      "concepts": [
+        "2:1 multiplexer",
+        "Boolean simplification"
+      ],
+      "given": "| Mux | $I_1$ | $I_0$ | Select |\n|---|---|---|---|\n| 1 | a | b | X1 |\n| 2 | mux-1 output | X2 | X3 |",
+      "steps": [
+        {
+          "title": "Output expression",
+          "body": "$M_1=X_1a+\\bar X_1 b$, and $F=X_3M_1+\\bar X_3X_2$."
+        },
+        {
+          "title": "Option A",
+          "body": "$X_1=b$: $M_1=ba+\\bar b b=ab$. $X_3=a$, $X_2=0$: $F=a\\cdot ab+\\bar a\\cdot0=ab$. ✔"
+        },
+        {
+          "title": "Other options",
+          "body": "**B:** $M_1=ab$, $F=b\\cdot ab+\\bar b\\cdot1=ab+\\bar b\\ne ab$.\n\n**C:** $M_1=a\\cdot a+\\bar a b=a+b$, $F=1\\cdot(a+b)=a+b$.\n\n**D:** $M_1=a+b$, $F=b(a+b)+\\bar b\\cdot0=b$ (e.g. $a=0,b=1$ gives 1)."
+        }
+      ],
+      "answer": {
+        "value": "X1 = b, X2 = 0, X3 = a",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Gives F = ab — correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "F = ab + b̄: outputs 1 when b = 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "F = a + b (OR gate)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "F = b(a + b) = b: outputs 1 for a = 0, b = 1."
+        }
+      ],
+      "pitfalls": [
+        "Assuming option D works by symmetry: with X1 = a the first mux gives a + b, not ab."
+      ],
+      "verification": "Truth table for A: (a,b) = 00→0, 01→0, 10→0, 11→1."
+    },
+    "it-2007-cs-9": {
+      "approach": "Disambiguating a grammar changes only how strings are parsed (one tree per string), not which strings are generated.",
+      "concepts": [
+        "Ambiguous grammar",
+        "Equivalent grammars"
+      ],
+      "steps": [
+        {
+          "title": "What disambiguation means",
+          "body": "D is a grammar equivalent to G in which every string has exactly one parse tree (e.g. adding precedence levels to an expression grammar)."
+        },
+        {
+          "title": "Languages",
+          "body": "Equivalence means $L(D)=L(G)$."
+        }
+      ],
+      "answer": {
+        "value": "L(D) = L(G)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A proper subset would mean some strings were dropped — that is not disambiguation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "D cannot generate extra strings either."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Same language, unique parse trees — correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "An empty language makes no sense for a disambiguated version."
+        }
+      ],
+      "verification": "E → E+E | E*E | id and its precedence-layered version both generate all expressions over +, *, id."
+    },
+    "it-2007-cs-10": {
+      "approach": "Look for an interleaving of the non-atomic test-and-set; for deadlock check whether anyone can ever wait.",
+      "concepts": [
+        "Mutual exclusion",
+        "Race condition",
+        "Deadlock"
+      ],
+      "steps": [
+        {
+          "title": "Violating mutual exclusion",
+          "body": "P1 reads `critical_flag == FALSE` and is preempted before setting it. P2 also reads FALSE, sets TRUE and enters. P1 resumes, sets TRUE and enters → both in `critical_region` together. So (i) is **true**."
+        },
+        {
+          "title": "No deadlock",
+          "body": "There is no waiting loop: if the flag is TRUE the process simply skips the `if`. Nobody ever blocks, so deadlock is impossible. (ii) is **false**."
+        }
+      ],
+      "answer": {
+        "value": "(i) is true and (ii) is false",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(i) is true (race between test and set) and (ii) false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(i) is true."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No process ever waits, so no deadlock."
+        }
+      ],
+      "pitfalls": [
+        "Treating the `if` as a busy-wait loop — it is not, so there is no waiting at all."
+      ],
+      "verification": "Test and set are two separate steps; only an atomic TSL would prevent the interleaving."
+    },
+    "it-2007-cs-11": {
+      "approach": "Simulate FCFS service of the queue with fixed (unsplit) best-fit blocks: each job takes the smallest free block that fits; the queue head blocks those behind it.",
+      "concepts": [
+        "Best fit",
+        "Fixed partitions",
+        "FCFS queue"
+      ],
+      "given": "| Block | 4k | 8k | 20k | 2k |\n|---|---|---|---|---|",
+      "steps": [
+        {
+          "title": "t = 0",
+          "body": "J1 (2k) → 2k block until 4. J2 (14k) → 20k until 10. J3 (3k) → 4k until 2. J4 (6k) → 8k until 8. J5 (6k): only free blocks are none that fit → J5 waits at the head of the queue.",
+          "scene": {
+            "upto": 4,
+            "cursor": 0,
+            "caption": "J1, J2, J3, J4 start at t = 0"
+          }
+        },
+        {
+          "title": "t = 2, 4",
+          "body": "At 2 the 4k block frees, at 4 the 2k block frees — both too small for J5 (6k), so J5 and everyone behind it keep waiting.",
+          "scene": {
+            "upto": 4,
+            "cursor": 4
+          }
+        },
+        {
+          "title": "t = 8",
+          "body": "8k block frees → J5 runs 8–12 (4 units).",
+          "scene": {
+            "upto": 5,
+            "cursor": 8
+          }
+        },
+        {
+          "title": "t = 10, 11",
+          "body": "At 10 the 20k block frees → J6 (10k, the only fitting free block) runs 10–11. At 11 the 20k block frees again; free blocks are 4k, 2k, 20k (8k busy till 12). J7 (7k) best fit among free blocks = 20k → runs 11 to $11+8=19$.",
+          "scene": {
+            "upto": 7,
+            "cursor": 19,
+            "caption": "J7 finishes at 19"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "gantt",
+        "unit": "t",
+        "lanes": [
+          {
+            "label": "2k",
+            "bars": [
+              {
+                "start": 0,
+                "end": 4,
+                "label": "J1"
+              }
+            ]
+          },
+          {
+            "label": "4k",
+            "bars": [
+              {
+                "start": 0,
+                "end": 2,
+                "label": "J3"
+              }
+            ]
+          },
+          {
+            "label": "8k",
+            "bars": [
+              {
+                "start": 0,
+                "end": 8,
+                "label": "J4"
+              },
+              {
+                "start": 8,
+                "end": 12,
+                "label": "J5"
+              }
+            ]
+          },
+          {
+            "label": "20k",
+            "bars": [
+              {
+                "start": 0,
+                "end": 10,
+                "label": "J2"
+              },
+              {
+                "start": 10,
+                "end": 11,
+                "label": "J6"
+              },
+              {
+                "start": 11,
+                "end": 19,
+                "label": "J7"
+              }
+            ]
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      },
+      "answer": {
+        "value": "19",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "16 ignores that J5 blocks the queue until t = 8."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "J7 runs 11–19 in the 20k block — correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "20 assumes J7 waits for the 8k block (free at 12) instead of taking the free 20k block."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "37 would be a sequential (one-job-at-a-time) total."
+        }
+      ],
+      "pitfalls": [
+        "Letting J7 overtake J5/J6 — requests are served from a queue in order.",
+        "Splitting blocks: the four free blocks are allocated whole."
+      ],
+      "verification": "Busy intervals per block never overlap and each job got the smallest fitting free block at its start time."
+    },
+    "it-2007-cs-12": {
+      "approach": "One frame; on a fault at x the frame holds x … x+99 (not page-aligned). Trace each address against the currently loaded range.",
+      "concepts": [
+        "Demand paging",
+        "Page fault"
+      ],
+      "steps": [
+        {
+          "title": "First addresses",
+          "body": "0100 fault → 0100–0199. 0200 fault → 0200–0299. 0430 fault → 0430–0529; 0499 and 0510 are hits.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "Middle",
+          "body": "0530 > 0529 → fault → 0530–0629; 0560 hit. 0120 fault → 0120–0219.",
+          "scene": {
+            "reveal": 32,
+            "hl": [
+              {
+                "r": 5
+              },
+              {
+                "r": 7
+              }
+            ]
+          }
+        },
+        {
+          "title": "Last addresses",
+          "body": "0220 fault → 0220–0319; 0240, 0260 hits. 0320 > 0319 → fault → 0320–0419; 0410 hit.",
+          "scene": {
+            "reveal": 52,
+            "hl": [
+              {
+                "r": 8
+              },
+              {
+                "r": 11
+              }
+            ]
+          }
+        },
+        {
+          "title": "Count",
+          "body": "Faults at 0100, 0200, 0430, 0530, 0120, 0220, 0320 → **7**."
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "Address",
+          "Result",
+          "Loaded range",
+          "Faults"
+        ],
+        "rows": [
+          [
+            "0100",
+            "fault",
+            "0100–0199",
+            1
+          ],
+          [
+            "0200",
+            "fault",
+            "0200–0299",
+            2
+          ],
+          [
+            "0430",
+            "fault",
+            "0430–0529",
+            3
+          ],
+          [
+            "0499",
+            "hit",
+            "0430–0529",
+            3
+          ],
+          [
+            "0510",
+            "hit",
+            "0430–0529",
+            3
+          ],
+          [
+            "0530",
+            "fault",
+            "0530–0629",
+            4
+          ],
+          [
+            "0560",
+            "hit",
+            "0530–0629",
+            4
+          ],
+          [
+            "0120",
+            "fault",
+            "0120–0219",
+            5
+          ],
+          [
+            "0220",
+            "fault",
+            "0220–0319",
+            6
+          ],
+          [
+            "0240",
+            "hit",
+            "0220–0319",
+            6
+          ],
+          [
+            "0260",
+            "hit",
+            "0220–0319",
+            6
+          ],
+          [
+            "0320",
+            "fault",
+            "0320–0419",
+            7
+          ],
+          [
+            "0410",
+            "hit",
+            "0320–0419",
+            7
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      },
+      "answer": {
+        "value": "7",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true,
+        "keyNote": "Committed key was D (8), but the trace gives exactly 7 faults; an answer fix to C is included."
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The very first access must fault."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "4 would count page-aligned 100-byte pages incorrectly."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Seven faults — correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "8 overcounts: 0499, 0510 (in 0430–0529), 0560, 0240, 0260 and 0410 are all hits."
+        }
+      ],
+      "pitfalls": [
+        "Using page-aligned pages (0400–0499): the loaded range starts at the faulting address x.",
+        "Missing that 0530 is just outside 0430–0529 and 0320 is just outside 0220–0319."
+      ],
+      "verification": "Mechanical re-trace (13 references, 6 hits) gives 13 − 6 = 7 faults."
+    },
+    "it-2007-cs-13": {
+      "approach": "TCP sets RTO from a continuously updated RTT estimate (smoothed RTT plus deviation), not a one-time or propagation-based value.",
+      "concepts": [
+        "TCP retransmission timeout",
+        "RTT estimation"
+      ],
+      "steps": [
+        {
+          "title": "Statement (i)",
+          "body": "(i) False — RTT is re-measured throughout; a value from the handshake is not used for the whole connection."
+        },
+        {
+          "title": "Statements (ii) and (iii)",
+          "body": "(ii) True — Jacobson/Karn algorithms estimate RTT and set $RTO=SRTT+4\\cdot RTTVAR$.\n\n(iii) False — RTT includes queuing and processing delays, not just $2\\times$ propagation."
+        }
+      ],
+      "answer": {
+        "value": "(i) and (iii) are false, but (ii) is true",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(iii) is false."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(ii) is true and (iii) is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(ii) is true."
+        }
+      ],
+      "verification": "RFC 6298 defines adaptive RTO from SRTT and RTTVAR."
+    },
+    "it-2007-cs-14": {
+      "approach": "TCP sequence numbers count bytes, and the ACK number is the next in-order byte the receiver expects.",
+      "concepts": [
+        "TCP sequence numbers",
+        "Cumulative ACK"
+      ],
+      "steps": [
+        {
+          "title": "Data in first segment",
+          "body": "First segment starts at byte 230, the second at 290, so $X=290-230=60$ bytes."
+        },
+        {
+          "title": "ACK",
+          "body": "Segment 1 is lost, so the receiver still expects byte 230. On receiving segment 2 out of order it sends a duplicate ACK with $Y=230$."
+        }
+      ],
+      "answer": {
+        "value": "60 and 230",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "290 would acknowledge segment 1, which never arrived."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "230 is a sequence number, not a length; 291 is meaningless."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "ACK is the next expected byte 230, not 231."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "Cumulative ACK cannot pass a gap; bytes 230–289 are missing."
+    },
+    "it-2007-cs-15": {
+      "approach": "Check each property by definition: a hash compresses an unbounded domain to a fixed size; a block cipher must be invertible on its block space.",
+      "concepts": [
+        "Hash function",
+        "Block cipher",
+        "Injective / bijective map"
+      ],
+      "steps": [
+        {
+          "title": "Statement (i)",
+          "body": "A hash maps arbitrarily long messages to a fixed-length digest (e.g. 160 bits). By the pigeonhole principle collisions must exist, so it is **not injective**. False."
+        },
+        {
+          "title": "Statement (ii)",
+          "body": "For a fixed key, DES maps each 64-bit block to a 64-bit block and must be decryptable, so it is a bijection — a permutation of $\\{0,1\\}^{64}$. True."
+        }
+      ],
+      "answer": {
+        "value": "Statement (ii) is true and the other is false",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(ii) is true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed: (i) is false, (ii) true."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(i) is false — hashes have collisions."
+        }
+      ],
+      "verification": "Collision resistance is only computational; collisions exist mathematically."
+    },
+    "it-2007-cs-16": {
+      "approach": "The order of 3 mod 17 divides 16, so only test p = 1, 2, 4, 8.",
+      "concepts": [
+        "Multiplicative order",
+        "Fermat's little theorem"
+      ],
+      "steps": [
+        {
+          "title": "Candidates",
+          "body": "By Fermat $3^{16}\\equiv1\\pmod{17}$, so the order divides 16: candidates 1, 2, 4, 8, 16."
+        },
+        {
+          "title": "Test",
+          "body": "$3^2=9$, $3^4=81=4\\cdot17+13\\equiv13$, $3^8\\equiv13^2=169=9\\cdot17+16\\equiv16\\equiv-1$. None is 1, so the order is $16$."
+        }
+      ],
+      "answer": {
+        "value": "16",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "5 does not divide 16, so it cannot be an order ($3^5=243\\equiv5$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$3^8\\equiv-1\\ne1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "12 does not divide 16."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — 3 is a primitive root mod 17."
+        }
+      ],
+      "verification": "$3^{16}=(3^8)^2\\equiv(-1)^2=1$."
+    },
+    "it-2007-cs-17": {
+      "approach": "Square-and-multiply (binary exponentiation) needs one squaring per bit of n plus at most one extra multiply per bit.",
+      "concepts": [
+        "Fast modular exponentiation"
+      ],
+      "steps": [
+        {
+          "title": "Algorithm",
+          "body": "$b^n=(b^{\\lfloor n/2\\rfloor})^2\\cdot b^{n\\bmod 2}$, reducing mod m after each product."
+        },
+        {
+          "title": "Count",
+          "body": "n has $\\lfloor\\log_2 n\\rfloor+1$ bits; each bit costs ≤ 2 multiplications, so at most $2\\log_2 n+O(1)=O(\\log n)$."
+        }
+      ],
+      "answer": {
+        "value": "O(log n)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Square-and-multiply achieves this — correct and tightest."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Looser than log n."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Looser than log n."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Naive repeated multiplication — not tight."
+        }
+      ],
+      "verification": "E.g. $b^{13}$: $b\\to b^2\\to b^3\\to b^6\\to b^{12}\\to b^{13}$ uses 5 multiplications."
+    },
+    "it-2007-cs-18": {
+      "approach": "The firewall must remember which connections were opened from inside (state) but needs no unbounded counting, so a finite-state machine suffices.",
+      "concepts": [
+        "Stateful firewall",
+        "Finite automata"
+      ],
+      "steps": [
+        {
+          "title": "Why memory is needed",
+          "body": "Whether an external packet is allowed depends on whether an internal host earlier opened (or is opening) that connection. A combinational circuit has no memory, so it cannot decide this."
+        },
+        {
+          "title": "Why finite memory suffices",
+          "body": "Per connection the firewall tracks a finite set of TCP states (SYN sent, established, closed…), and the connection table is finite — a finite automaton. No stack-like nesting is required."
+        }
+      ],
+      "answer": {
+        "value": "A finite automaton",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No memory — cannot know if a connection was opened from inside."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Finite state (connection tracking) is enough — correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A stack is unnecessary; there is no nested/matching structure."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Two stacks = Turing machine power — far more than needed."
+        }
+      ],
+      "verification": "Real stateful firewalls use a finite connection-tracking table with a TCP state machine."
+    },
+    "it-2007-cs-19": {
+      "approach": "Evaluate each statement: geometry for (i), client-side image map behaviour for (ii), URL resolution for (iii), link following for (iv).",
+      "concepts": [
+        "Client-side image map",
+        "Relative URL resolution",
+        "HTTP GET"
+      ],
+      "steps": [
+        {
+          "title": "(i) Point <80, 75>",
+          "body": "Polygon (50,50),(50,100),(100,100),(75,75),(100,50) has a notch with apex at (75,75), so at $y=75$ it spans only $50\\le x\\le75$; (80,75) is outside. The circle has centre (100,75), radius 5: distance $=20>5$, outside. So the **default** area applies and fd.html is opened — the click does have an effect. (i) **false**."
+        },
+        {
+          "title": "(ii) and (iii)",
+          "body": "(ii) `usemap` is a *client-side* image map: the browser hit-tests the areas itself. **True**.\n\n(iii) The relative URL `../cgi-bin/f2.pl…` is resolved against the page URL by the browser before the request is sent. **True**."
+        },
+        {
+          "title": "(iv) and count",
+          "body": "Following a hyperlink (`href`) issues an HTTP **GET**. **True**. Correct statements: (ii), (iii), (iv) = 3."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(ii), (iii), (iv) are true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Three statements are true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Only (i) is false."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Thinking (80,75) is inside the polygon — the vertex (75,75) cuts a V-shaped notch from the right side."
+      ],
+      "verification": "Even if the misspelled `Cords` attribute is ignored, the point is still not in any area except default, so (i) stays false."
+    },
+    "it-2007-cs-20": {
+      "approach": "`*` selects all element children of the context node; the predicate `not(self::TOC)` drops those named TOC.",
+      "concepts": [
+        "XPath",
+        "Child axis",
+        "Predicates"
+      ],
+      "steps": [
+        {
+          "title": "Children of Book",
+          "body": "`*` (child axis by default) from Book gives Title, Content, TOC."
+        },
+        {
+          "title": "Apply predicate",
+          "body": "`self::TOC` is true only for TOC, so `not(...)` keeps **Title and Content**."
+        }
+      ],
+      "answer": {
+        "value": "The Title and Content elements",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Title is kept, TOC is excluded."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "TOC is excluded, Content is kept."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "TOC is excluded by the predicate."
+        }
+      ],
+      "verification": "Equivalent to `child::*[name() != \"TOC\"]`."
+    },
+    "it-2007-cs-21": {
+      "approach": "Prove A directly; refute B, C, D with tiny counter-models.",
+      "concepts": [
+        "First-order validity",
+        "Quantifier distribution",
+        "Counter-models"
+      ],
+      "steps": [
+        {
+          "title": "A is valid",
+          "body": "Assume $\\forall x(P(x)\\Rightarrow Q(x))$ and $\\forall xP(x)$. For any $a$: $P(a)$ and $P(a)\\Rightarrow Q(a)$ give $Q(a)$. Hence $\\forall xQ(x)$."
+        },
+        {
+          "title": "B and C fail",
+          "body": "**B:** domain $\\{1\\}$, $P=\\{1\\}$, $Q=\\varnothing$: $\\exists x(P(x)\\vee Q(x))$ true, $\\exists xP(x)$ true, $\\exists xQ(x)$ false, so the formula is false.\n\n**C:** domain $\\{1,2\\}$, $P=\\{1\\}$, $Q=\\{2\\}$: $\\exists x(P(x)\\wedge Q(x))$ false but $\\exists xP(x)\\wedge\\exists xQ(x)$ true, so the equivalence is false."
+        },
+        {
+          "title": "D fails",
+          "body": "Domain $\\mathbb N$, $P(x,y): y>x$. Every x has a larger y, but no y exceeds every x. LHS true, RHS false."
+        }
+      ],
+      "answer": {
+        "value": "∀x(P(x)⇒Q(x)) ⇒ ((∀xP(x)) ⇒ (∀xQ(x)))",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Valid — universal instantiation and modus ponens."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Fails when P is non-empty and Q is empty."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Only the ⇒ direction holds; P = {1}, Q = {2} breaks ⇐."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Swapping ∀∃ to ∃∀ is invalid (y > x on ℕ)."
+        }
+      ],
+      "verification": "A is the standard law ∀x(P→Q) ⊨ ∀xP → ∀xQ."
+    },
+    "it-2007-cs-22": {
+      "approach": "Use the composite trapezoidal error bound $|E|\\le\\frac{(b-a)h^2}{12}\\max|f''|$ and require it to be at most $0.5\\times10^{-7}$.",
+      "concepts": [
+        "Trapezoidal rule",
+        "Truncation error"
+      ],
+      "steps": [
+        {
+          "title": "Error bound",
+          "body": "$f(x)=e^x$, $f''=e^x\\le e$ on $[0,1]$, $b-a=1$: $|E|\\le\\dfrac{e\\,h^2}{12}\\approx0.2265\\,h^2$."
+        },
+        {
+          "title": "Requirement",
+          "body": "Seven decimal places ⇒ $|E|\\le0.5\\times10^{-7}$ ⇒ $h^2\\le\\dfrac{0.5\\times10^{-7}}{0.2265}\\approx2.2\\times10^{-7}$ ⇒ $h\\lesssim4.7\\times10^{-4}$."
+        },
+        {
+          "title": "Check each h",
+          "body": "$h=10^{-2}$: $2.3\\times10^{-5}$ ✗. $h=10^{-3}$: $2.3\\times10^{-7}$ ✗. $h=10^{-4}$: $2.3\\times10^{-9}$ ✔. $h=10^{-5}$: $2.3\\times10^{-11}$ ✔."
+        }
+      ],
+      "answer": {
+        "value": "(iii) and (iv) only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$h=10^{-4}$ also meets the bound."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$h=10^{-3}$ gives a bound $2.3\\times10^{-7}>0.5\\times10^{-7}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$h=10^{-2}$ is far too coarse."
+        }
+      ],
+      "pitfalls": [
+        "Using $10^{-7}$ instead of $0.5\\times10^{-7}$ does not change the result here, but forgetting the $h^2$ dependence does."
+      ],
+      "verification": "Actual error for h = 10⁻³ is ≈ (e−1)h²/12 ≈ 1.4×10⁻⁷, still > 0.5×10⁻⁷, confirming (ii) fails."
+    }
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "paper": "it-2007",
+  "fixes": [
+    {
+      "id": "it-2007-cs-6",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Speedup 12/6 = 2 is unambiguous from the given 12 cycles; no review needed.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-6",
+      "field": "reviewNote",
+      "before": "Sum of stage times is 22 not 12; the question states 12 cycles per instruction on the non-pipelined processor, so speedup = 12/6 = 2 (option B).",
+      "after": null,
+      "reason": "Speedup 12/6 = 2 is unambiguous from the given 12 cycles; no review needed.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-8",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Re-checked: option D gives F = b(a+b) = b, so only A implements a.b.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-8",
+      "field": "reviewNote",
+      "before": "Both option A (X1=b,X2=0,X3=a) and option D (X1=a,X2=0,X3=b) implement a.b for the drawn circuit; A chosen (believed official key).",
+      "after": null,
+      "reason": "Re-checked: option D gives F = b(a+b) = b, so only A implements a.b.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-15",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Hash not injective, DES a permutation: C is certain.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-15",
+      "field": "reviewNote",
+      "before": "Options as printed; answer C (statement ii true, i false) given by reasoning; the pdf answer key is absent.",
+      "after": null,
+      "reason": "Hash not injective, DES a permutation: C is certain.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-19",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Geometry verified: (80,75) lies outside the polygon notch and the circle, so (i) false and answer 3 (D).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-19",
+      "field": "reviewNote",
+      "before": "Statement (i) hinges on the polygon geometry; statements (ii)-(iv) judged true. Answer D (3) is per reasoning and standard key.",
+      "after": null,
+      "reason": "Geometry verified: (80,75) lies outside the polygon notch and the circle, so (i) false and answer 3 (D).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-21",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Connectives confirmed from a high-resolution render of the PDF; A is the unique valid formula.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-21",
+      "field": "reviewNote",
+      "before": "Connectives in options B and C are blurry in the scan (B taken as OR between P and Q; C's middle symbol read as equivalence); answer A is the only valid formula under either reading.",
+      "after": null,
+      "reason": "Connectives confirmed from a high-resolution render of the PDF; A is the unique valid formula.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-22",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Exponents confirmed as 10^-2..10^-5 from a high-resolution render; error bound gives (iii),(iv).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-22",
+      "field": "reviewNote",
+      "before": "Exponents of step sizes are small in the scan (read as 10^-2 .. 10^-5).",
+      "after": null,
+      "reason": "Exponents confirmed as 10^-2..10^-5 from a high-resolution render; error bound gives (iii),(iv).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-8",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-8.png",
+          "alt": "Mux 1 has data inputs a (input 1) and b (input 0) and select X1; its output feeds input 1 of mux 2; mux 2 input 0 is X2 and its select is X3; the output of mux 2 is a.b.",
+          "svg": "it-2007/cs-8.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-8.png",
+          "alt": "Two cascaded 2-to-1 multiplexers. Mux 1: input 1 = a, input 0 = b, select X1. Mux 1 output goes to input 1 of mux 2; mux 2 input 0 = X2, select X3; mux 2 output is a.b.",
+          "svg": "it-2007/cs-8.svg"
+        }
+      ],
+      "reason": "Clearer alt; SVG redrawn from the PDF (old SVG showed an unrelated 4:1 mux).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-11",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-11.png",
+          "alt": "Table: request numbers J1-J8 with sizes 2k,14k,3k,6k,6k,10K,7K,20K and usage times 4,10,2,8,4,1,8,6.",
+          "svg": "it-2007/cs-11.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure only duplicates the request table already present in the question text as a markdown table.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-12",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "Deterministic trace: faults at 0100, 0200, 0430, 0530, 0120, 0220, 0320 = 7 (option C); stored D (8) is wrong.",
+      "source": "independent solution (exact simulation)"
+    },
+    {
+      "id": "it-2007-cs-12",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "No official pre-2014 key available; answer changed by proof.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-12",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key was D (8). Trace with range x..x+99 loaded on each fault: 0100 F, 0200 F, 0430 F, 0499 H, 0510 H, 0530 F, 0560 H, 0120 F, 0220 F, 0240 H, 0260 H, 0320 F, 0410 H = 7 faults, so answer set to C. Confirm against an official key if one surfaces.",
+      "reason": "Explains the answer change.",
+      "source": "pdf + independent solution"
+    }
+  ]
+}
