@@ -1,0 +1,1136 @@
+{
+  "paper": "cse-2017-2",
+  "version": 2,
+  "solutions": {
+    "cse-2017-2-cs-1": {
+      "approach": "Expand each hex digit into 4 bits, then regroup the 16-bit string into 3-bit groups from the right; each group is one octal digit.",
+      "concepts": [
+        "Hexadecimal to binary",
+        "Binary to octal"
+      ],
+      "steps": [
+        {
+          "title": "Hex to binary",
+          "body": "$\\mathrm{B}=1011,\\ \\mathrm{C}=1100,\\ \\mathrm{A}=1010,\\ 9=1001$, so $X = 1011\\,1100\\,1010\\,1001_2$."
+        },
+        {
+          "title": "Regroup in threes from the right",
+          "body": "$1\\ 011\\ 110\\ 010\\ 101\\ 001$ (the leftmost group is the single leftover bit $1$)."
+        },
+        {
+          "title": "Read the octal digits",
+          "body": "$1,\\ 011{=}3,\\ 110{=}6,\\ 010{=}2,\\ 101{=}5,\\ 001{=}1$, so $X = 136251_8$."
+        }
+      ],
+      "answer": {
+        "value": "136251",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not the octal of BCA9; it ends in 4, but the last three bits 001 give 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Has 7 as the leading digit, but a 16-bit number has only one bit left for the leading octal digit, so it is at most 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ends in 7, but the low three bits of 9 = 1001 are 001, giving 1."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: 1 011 110 010 101 001 reads 136251."
+        }
+      ],
+      "shortcut": "A 16-bit value always has a leading octal digit of 0 or 1 (16 = 5 groups of 3 + 1 bit), and the last octal digit equals the last hex digit mod 8 (9 mod 8 = 1). Only D fits both.",
+      "pitfalls": [
+        "Grouping in threes from the left instead of from the right."
+      ],
+      "verification": "$136251_8 = 1\\cdot 8^5 + 3\\cdot 8^4 + 6\\cdot 8^3 + 2\\cdot 8^2 + 5\\cdot 8 + 1 = 32768+12288+3072+128+40+1 = 48297$, and $\\mathrm{BCA9}_{16} = 11\\cdot 4096 + 12\\cdot 256 + 10\\cdot 16 + 9 = 45056+3072+160+9 = 48297$."
+    },
+    "cse-2017-2-cs-2": {
+      "approach": "Read each declaration or statement for what it does to memory: storage class, lost pointer, array of pointers, register hint.",
+      "concepts": [
+        "Storage classes in C",
+        "Memory leak",
+        "Array of pointers"
+      ],
+      "steps": [
+        {
+          "title": "P and S: storage classes",
+          "body": "`static char var;` has static storage duration, so it lives in the data/BSS section, giving (ii). `register int var1;` asks the compiler to keep the variable in a CPU register, giving (iii)."
+        },
+        {
+          "title": "Q: the pointer is overwritten",
+          "body": "`m = malloc(10);` gets a heap block; `m = NULL;` throws away the only pointer to it, so the block can never be `free`d. That is a memory leak, (iv)."
+        },
+        {
+          "title": "R: array of pointers",
+          "body": "`char *ptr[10];` is 10 consecutive locations, each holding an address, giving (i). So P→(ii), Q→(iv), R→(i), S→(iii)."
+        }
+      ],
+      "answer": {
+        "value": "P → (ii), Q → (iv), R → (i), S → (iii)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: static is in the data section, the lost malloc block is a leak, ptr is an array of addresses, and register requests a CPU register."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Swaps Q and R: the malloc/NULL pair is not an array of addresses, and the pointer array is not lost memory."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Gives R (iii) and S (i): the pointer array is not a register request, and the register variable is not a sequence of addresses."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Gives P (iii) and S (ii): static does not request a register, and a register variable is not placed in the data section."
+        }
+      ],
+      "pitfalls": [
+        "Reading `char *ptr[10]` as a pointer to an array; without parentheses it is an array of 10 pointers."
+      ],
+      "verification": "Each of P, Q, R, S takes a different item, and every distractor contradicts at least one of the clear-cut pairs P→(ii) or S→(iii) or Q→(iv)."
+    },
+    "cse-2017-2-cs-3": {
+      "approach": "Recall the standard running time of each algorithm, then match.",
+      "concepts": [
+        "Recurrences",
+        "Asymptotic complexity"
+      ],
+      "steps": [
+        {
+          "title": "Towers of Hanoi and binary search",
+          "body": "Hanoi: $T(n) = 2T(n-1)+1$, so $T(n) = 2^n - 1 = \\Theta(2^n)$, giving (iii). Binary search halves the range each probe: $\\Theta(\\log n)$, giving (iv)."
+        },
+        {
+          "title": "Heap sort and matrix addition",
+          "body": "Heap sort: build-heap $O(n)$ plus $n$ delete-max operations at $O(\\log n)$ each, so $\\Theta(n\\log n)$ in the worst case, giving (ii). Adding two $n\\times n$ matrices touches $n^2$ entries once each: $\\Theta(n^2)$, giving (i)."
+        }
+      ],
+      "answer": {
+        "value": "P → (iii), Q → (iv), R → (ii), S → (i)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Gives heap sort $\\Theta(n^2)$ and matrix addition $\\Theta(n\\log n)$, which are swapped."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Swaps Hanoi and binary search, and also swaps heap sort and matrix addition."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct matching."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Gives Hanoi $\\Theta(\\log n)$ and binary search $\\Theta(2^n)$, which are swapped."
+        }
+      ],
+      "verification": "For $n = 3$: Hanoi takes $2^3-1 = 7$ moves, and matrix addition takes $3^2 = 9$ additions, consistent with $\\Theta(2^n)$ and $\\Theta(n^2)$."
+    },
+    "cse-2017-2-cs-4": {
+      "approach": "Use the CFL closure table: CFLs are closed under union and under intersection with a regular language, but not under complement or intersection.",
+      "concepts": [
+        "Closure properties of CFLs",
+        "CFL ∩ regular"
+      ],
+      "steps": [
+        {
+          "title": "I and III hold",
+          "body": "I: union of two CFGs is a CFG ($S \\to S_1 \\mid S_2$). III: $L_1 - R = L_1 \\cap \\overline{R}$, and $\\overline{R}$ is regular, so this is a CFL intersected with a regular language, which is context-free (product of a PDA with a DFA)."
+        },
+        {
+          "title": "II and IV fail in general",
+          "body": "IV: $\\{a^nb^nc^m\\} \\cap \\{a^mb^nc^n\\} = \\{a^nb^nc^n\\}$, which is not context-free. II: if CFLs were closed under complement, then $L_1 \\cap L_2 = \\overline{\\overline{L_1} \\cup \\overline{L_2}}$ would always be context-free, contradicting IV."
+        }
+      ],
+      "answer": {
+        "value": "I and III only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Includes II and IV, and CFLs are not closed under complement or intersection."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: only union and difference with a regular set are always context-free."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II and IV are exactly the two properties that fail."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Misses III; $L_1 - R = L_1 \\cap \\overline{R}$ is always context-free."
+        }
+      ],
+      "pitfalls": [
+        "Thinking $L_1 - R$ needs closure under difference of CFLs; here $R$ is regular, so its complement is regular too."
+      ],
+      "verification": "The counterexample $\\{a^nb^nc^n\\}$ fails the pumping lemma for CFLs, confirming IV (and hence II) is false."
+    },
+    "cse-2017-2-cs-5": {
+      "approach": "Follow the compiler pipeline and note what each phase consumes: characters, then tokens, then syntax tree, then intermediate code.",
+      "concepts": [
+        "Phases of a compiler"
+      ],
+      "steps": [
+        {
+          "title": "Pipeline",
+          "body": "Character stream → **lexical analyzer** → token stream → **syntax analyzer** → syntax tree → **semantic analyzer** → (annotated tree, then intermediate representation) → **code generator**."
+        },
+        {
+          "title": "Match inputs",
+          "body": "P syntax tree → (iii) semantic analyzer; Q character stream → (iv) lexical analyzer; R intermediate representation → (i) code generator; S token stream → (ii) syntax analyzer."
+        }
+      ],
+      "answer": {
+        "value": "P → (iii), Q → (iv), R → (i), S → (ii)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Sends the character stream to the semantic analyzer and the token stream to the code generator; both are wrong."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Sends the character stream to the code generator; it is the lexer that reads characters."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: each phase is matched with the output of the phase before it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Gives the syntax tree to the code generator and the token stream to the semantic analyzer; tokens go to the parser."
+        }
+      ],
+      "verification": "Q → (iv) is certain (only the lexer reads raw characters), and only C contains Q→(iv) together with S→(ii)."
+    },
+    "cse-2017-2-cs-6": {
+      "approach": "Recall the strict power hierarchy of bottom-up parsers: LR(0) ⊂ SLR(1) ⊂ LALR(1) ⊂ CLR(1).",
+      "concepts": [
+        "LR parser hierarchy"
+      ],
+      "steps": [
+        {
+          "title": "Hierarchy",
+          "body": "Every SLR(1) grammar is LALR(1), and every LALR(1) grammar is LR(1), each inclusion proper: $\\text{SLR} \\subset \\text{LALR} \\subset \\text{CLR}$."
+        },
+        {
+          "title": "Check statements",
+          "body": "I (CLR more powerful than SLR) is true. II (SLR more powerful than LALR) is false, since LALR uses more precise lookaheads than FOLLOW sets. III (SLR more powerful than CLR) is false."
+        }
+      ],
+      "answer": {
+        "value": "I only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: only I is true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II reverses the relation; LALR is at least as powerful as SLR."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "III reverses the relation; CLR is the most powerful of the three."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both II and III are false."
+        }
+      ],
+      "verification": "The grammar $S \\to L{=}R \\mid R,\\ L \\to {*}R \\mid \\text{id},\\ R \\to L$ is LALR(1) and CLR(1) but not SLR(1), so the inclusions are proper."
+    },
+    "cse-2017-2-cs-7": {
+      "approach": "Threads of one process share the code, data, heap, open files, that is the address space, but each needs its own execution context.",
+      "concepts": [
+        "Threads",
+        "Per-thread state"
+      ],
+      "steps": [
+        {
+          "title": "Per-thread items",
+          "body": "Each thread runs independently, so it has its own program counter, register set and stack (for its own call chain and local variables). I, II and IV are private."
+        },
+        {
+          "title": "Shared items",
+          "body": "All threads use the same address space (code, global data, heap). Only III is shared."
+        }
+      ],
+      "answer": {
+        "value": "III only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The PC and stack are private to each thread."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: only the address space is shared."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Registers are saved and restored per thread; they are not shared."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "IV (registers) is per-thread."
+        }
+      ],
+      "pitfalls": [
+        "A thread can reach another thread’s stack through a pointer because the address space is shared, but each thread still has its own stack."
+      ],
+      "verification": "This matches the thread control block contents: thread ID, PC, registers and stack pointer are kept per thread."
+    },
+    "cse-2017-2-cs-8": {
+      "approach": "External fragmentation arises only when a file needs one contiguous run of free blocks; schemes that can place blocks anywhere avoid it.",
+      "concepts": [
+        "File allocation methods",
+        "External fragmentation"
+      ],
+      "steps": [
+        {
+          "title": "Contiguous",
+          "body": "A file needs a run of consecutive free blocks, so free space breaks into holes that may be too small: external fragmentation. Not allowed."
+        },
+        {
+          "title": "Linked and indexed",
+          "body": "Linked allocation chains blocks anywhere on disk, and indexed allocation lists arbitrary block numbers in an index block. Any free block can be used, so neither has external fragmentation. II and III qualify."
+        }
+      ],
+      "answer": {
+        "value": "II and III only",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Includes contiguous allocation, which suffers from external fragmentation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses indexed allocation, which also uses any free block."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Misses linked allocation, which also uses any free block."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: linked and indexed allocation both avoid external fragmentation."
+        }
+      ],
+      "verification": "Both linked and indexed schemes only waste space inside the last block (internal fragmentation) plus pointer/index overhead, never unusable gaps between files."
+    },
+    "cse-2017-2-cs-9": {
+      "approach": "Recall each protocol’s algorithm and transport: RIP is distance vector over UDP port 520; OSPF is link state carried directly in IP (protocol 89).",
+      "concepts": [
+        "RIP",
+        "OSPF",
+        "Distance vector vs link state"
+      ],
+      "steps": [
+        {
+          "title": "RIP",
+          "body": "RIP is a distance-vector protocol (I true) and its messages go in UDP datagrams on port 520 (II true)."
+        },
+        {
+          "title": "OSPF",
+          "body": "OSPF floods link-state advertisements and runs Dijkstra (IV true). Its packets go directly inside IP with protocol number 89, not over TCP (III false)."
+        }
+      ],
+      "answer": {
+        "value": "I, II and IV only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses II; RIP does use UDP."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Includes III; OSPF does not use TCP."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: I, II and IV are true."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes III and misses I."
+        }
+      ],
+      "pitfalls": [
+        "Confusing OSPF with BGP, which is the routing protocol that runs over TCP (port 179)."
+      ],
+      "verification": "Known ports and protocol numbers: RIP UDP 520, OSPF IP protocol 89, BGP TCP 179."
+    },
+    "cse-2017-2-cs-10": {
+      "approach": "Use the derivative condition to get R and the integral condition to get S.",
+      "concepts": [
+        "Differentiation",
+        "Definite integral"
+      ],
+      "steps": [
+        {
+          "title": "Derivative condition gives R",
+          "body": "$f'(x) = \\frac{R\\pi}{2}\\cos\\frac{\\pi x}{2}$. At $x=\\frac12$: $\\frac{R\\pi}{2}\\cos\\frac{\\pi}{4} = \\frac{R\\pi}{2}\\cdot\\frac{\\sqrt2}{2} = \\frac{R\\pi\\sqrt2}{4} = \\sqrt2$, so $R = \\frac{4}{\\pi}$."
+        },
+        {
+          "title": "Integral condition gives S",
+          "body": "$\\int_0^1 R\\sin\\frac{\\pi x}{2}\\,dx = R\\left[-\\frac{2}{\\pi}\\cos\\frac{\\pi x}{2}\\right]_0^1 = R\\cdot\\frac{2}{\\pi}(1-0) = \\frac{2R}{\\pi}$, and $\\int_0^1 S\\,dx = S$. So $\\frac{2R}{\\pi} + S = \\frac{2R}{\\pi}$, giving $S = 0$."
+        }
+      ],
+      "answer": {
+        "value": "R = 4/π and S = 0",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$R = \\frac{2}{\\pi}$ gives $f'(\\frac12) = \\frac{\\sqrt2}{2}$, not $\\sqrt2$; $S \\ne 0$ also breaks the integral condition."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$S = 0$ is right but $R = \\frac{2}{\\pi}$ gives $f'(\\frac12) = \\frac{\\sqrt2}{2}$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $R = \\frac{4}{\\pi}$, $S = 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$R$ is right but $S = \\frac{16}{\\pi}$ would make the integral $\\frac{2R}{\\pi} + \\frac{16}{\\pi}$."
+        }
+      ],
+      "verification": "With $R = \\frac4\\pi$: $f'(\\frac12) = \\frac{4}{\\pi}\\cdot\\frac{\\pi}{2}\\cdot\\frac{\\sqrt2}{2} = \\sqrt2$. Correct."
+    },
+    "cse-2017-2-cs-11": {
+      "approach": "Translate clause by clause; “A only if B” means A → B.",
+      "concepts": [
+        "Propositional translation",
+        "“only if” as implication"
+      ],
+      "steps": [
+        {
+          "title": "First clause",
+          "body": "“It is not raining and it is pleasant” is $\\neg p \\wedge r$."
+        },
+        {
+          "title": "Second clause",
+          "body": "“It is not pleasant only if it is raining and it is cold”: A = not pleasant $(\\neg r)$, B = raining and cold $(p \\wedge q)$, and A only if B is $A \\to B$, so $\\neg r \\to (p \\wedge q)$."
+        },
+        {
+          "title": "Combine",
+          "body": "The two clauses are joined by “and”: $(\\neg p \\wedge r) \\wedge (\\neg r \\to (p \\wedge q))$."
+        }
+      ],
+      "answer": {
+        "value": "$(\\neg p \\wedge r) \\wedge (\\neg r \\rightarrow (p \\wedge q))$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct translation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reverses the implication and negates its conclusion: $(p\\wedge q) \\to \\neg r$ says “raining and cold only if not pleasant”."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Uses $\\vee$ between the clauses (the sentence says “and”) and has the wrong implication."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Uses $\\vee$, and $r \\to (p\\wedge q)$ drops the negation of “pleasant”."
+        }
+      ],
+      "pitfalls": [
+        "Reading “A only if B” as B → A; that is “A if B”."
+      ],
+      "verification": "Option B's implication $(p\\wedge q)\\to\\neg r$ is equivalent to $r \\to \\neg(p\\wedge q)$, a different statement from $\\neg r \\to (p\\wedge q)$ (its contrapositive is $\\neg(p\\wedge q) \\to r$)."
+    },
+    "cse-2017-2-cs-12": {
+      "approach": "Split the 32 bits into sign (1), biased exponent (8) and fraction (23), then evaluate (−1)^s × 1.f × 2^(e−127).",
+      "concepts": [
+        "IEEE-754 single precision"
+      ],
+      "given": "| Field | Bits | Value |\n|---|---|---|\n| sign | `0` | + |\n| exponent | `01111100` | 124 |\n| fraction | `11011010000000000000000` | .1101101 |",
+      "steps": [
+        {
+          "title": "Split the fields",
+          "body": "Bits: `0 | 01111100 | 1101101 0000000000000000`. Sign 0 means positive. Exponent $01111100_2 = 64+32+16+8+4 = 124$, so the true exponent is $124-127 = -3$."
+        },
+        {
+          "title": "Significand",
+          "body": "$1.1101101_2 = 1 + \\frac12 + \\frac14 + \\frac1{16} + \\frac1{32} + \\frac1{128} = 1 + 0.5 + 0.25 + 0.0625 + 0.03125 + 0.0078125 = 1.8515625$."
+        },
+        {
+          "title": "Value",
+          "body": "$1.8515625 \\times 2^{-3} = \\frac{1.8515625}{8} = 0.2314453$. The closest option is $2.27 \\times 10^{-1}$."
+        }
+      ],
+      "answer": {
+        "value": "$2.27\\times 10^{-1}$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$14.5$ would need a positive exponent; here the exponent is $-3$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$0.145$ is about $0.086$ away from $0.2314$, much farther than $0.227$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $0.2314$ is closest to $0.227$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$22.7$ would need exponent $+4$, not $-3$."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the implicit leading 1, which gives 0.8515625/8 ≈ 0.106.",
+        "Misplacing the 8-bit exponent boundary when the bit string is printed without spaces."
+      ],
+      "verification": "$|0.2314 - 0.227| = 0.0044$ against $|0.2314 - 0.145| = 0.0864$; option C is clearly nearest."
+    },
+    "cse-2017-2-cs-13": {
+      "approach": "For O(1) enqueue at REAR and dequeue at FRONT, the only extra link needed is REAR→FRONT, which makes the list circular.",
+      "concepts": [
+        "Circular linked list",
+        "Queue operations"
+      ],
+      "steps": [
+        {
+          "title": "Normal links",
+          "body": "Nodes link front to rear: FRONT → … → REAR. Dequeue moves FRONT to FRONT->next in O(1). Enqueue writes REAR->next = new node and moves REAR, also O(1)."
+        },
+        {
+          "title": "Making it circular",
+          "body": "For the list to be circular, the rear node’s next pointer must point back to the front node (II). Statement I would make the front node point to the rear, which breaks the chain FRONT → second node, so dequeue could not find the new front in O(1)."
+        }
+      ],
+      "answer": {
+        "value": "II only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "If front->next were the rear node, the second element would be lost and dequeue would break (except for queues of size 2)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: rear->next = front closes the circle and keeps both operations O(1)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "I cannot hold in general, so “both” is wrong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is required for a circular queue, so “neither” is wrong."
+        }
+      ],
+      "verification": "Queue 10, 20, 30: links 10→20→30→10. Dequeue: FRONT = 20, REAR->next = 20. Enqueue 40: 30→40, 40→20, REAR = 40. Every step is a constant number of pointer updates."
+    },
+    "cse-2017-2-cs-14": {
+      "approach": "Trace the code: ptr aliases x, so writing through *ptr changes x, while y holds a copy taken earlier.",
+      "concepts": [
+        "Pointer aliasing",
+        "Pass by value"
+      ],
+      "steps": [
+        {
+          "title": "Trace",
+          "body": "`x = 0` makes x = 0. `ptr = &x` makes ptr point to x. `y = *ptr` copies x into y, so y = 0. `*ptr = 1` sets x = 1; y is a separate variable and stays 0."
+        },
+        {
+          "title": "Output",
+          "body": "`printf` prints x, y = `1,0`. (The arguments 1, 1 are copied into the parameters and overwritten, so they do not matter.)"
+        }
+      ],
+      "answer": {
+        "value": "1,0",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Ignores the write *ptr = 1, which changes x."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Swaps x and y."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Treats y as an alias of x, but y only received a copy of the value 0."
+        }
+      ],
+      "verification": "Only x’s address is taken, so only x can change through ptr; y stays at the value copied before the write."
+    },
+    "cse-2017-2-cs-15": {
+      "approach": "In BFS, once a vertex is dequeued, all its unvisited neighbours are enqueued together and must be visited before any vertex discovered later. Test each order against this rule.",
+      "concepts": [
+        "Breadth-first search",
+        "Queue order"
+      ],
+      "given": "Edges: M–N, N–O, M–R, M–Q, N–Q, O–Q, O–P, Q–P.",
+      "steps": [
+        {
+          "title": "Start at P",
+          "body": "Option D starts at P. Neighbours of P: O, Q. Enqueue them in the order O, Q. Visited: P.",
+          "scene": {
+            "tones": {
+              "P": "success",
+              "O": "warning",
+              "Q": "warning"
+            },
+            "subs": {
+              "P": "1"
+            },
+            "caption": "Visit P; queue = [O, Q]"
+          }
+        },
+        {
+          "title": "Dequeue O, then Q",
+          "body": "O’s unvisited neighbour is N, so the queue becomes [Q, N]. Q’s unvisited neighbour is M, so the queue becomes [N, M]. Visited so far: P, O, Q.",
+          "scene": {
+            "tones": {
+              "P": "success",
+              "O": "success",
+              "Q": "success",
+              "N": "warning",
+              "M": "warning"
+            },
+            "subs": {
+              "P": "1",
+              "O": "2",
+              "Q": "3"
+            },
+            "caption": "Visit O, Q; queue = [N, M]"
+          }
+        },
+        {
+          "title": "Dequeue N, then M",
+          "body": "N adds nothing new. M adds R, which is then dequeued. The order P, O, Q, N, M, R matches option D.",
+          "scene": {
+            "tones": {
+              "P": "success",
+              "O": "success",
+              "Q": "success",
+              "N": "success",
+              "M": "success",
+              "R": "success"
+            },
+            "subs": {
+              "P": "1",
+              "O": "2",
+              "Q": "3",
+              "N": "4",
+              "M": "5",
+              "R": "6"
+            },
+            "caption": "Order: P O Q N M R"
+          }
+        },
+        {
+          "title": "Reject the others",
+          "body": "A: after M come its neighbours N, Q, R, but O comes third and O is not adjacent to M. B: after N come M, O, Q; P comes before O, yet P is not a neighbour of N. C: after Q come M, N, O, P; R comes fourth, before O and P."
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "M",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "N",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "O",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "R",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "Q",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "P",
+            "x": 4,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "M",
+            "to": "N"
+          },
+          {
+            "from": "N",
+            "to": "O"
+          },
+          {
+            "from": "M",
+            "to": "R"
+          },
+          {
+            "from": "M",
+            "to": "Q"
+          },
+          {
+            "from": "N",
+            "to": "Q"
+          },
+          {
+            "from": "O",
+            "to": "Q"
+          },
+          {
+            "from": "O",
+            "to": "P"
+          },
+          {
+            "from": "Q",
+            "to": "P"
+          }
+        ],
+        "caption": "BFS from P"
+      },
+      "answer": {
+        "value": "POQNMR",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "O is visited third, before M’s neighbours Q and R, but O is not adjacent to M."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "P is visited before O, but P is not adjacent to N (P is only discovered from O or Q)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "R is visited before O and P, but R is reached only through M, which is enqueued alongside O and P."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: a valid BFS order from P."
+        }
+      ],
+      "pitfalls": [
+        "Checking only adjacency of consecutive letters (that is a DFS-style check) instead of the layer-by-layer FIFO rule."
+      ],
+      "verification": "Layers from P: {P}, {O, Q}, {N, M}, {R}. D visits the layers in order, and the order within each layer matches the enqueue order."
+    },
+    "cse-2017-2-cs-16": {
+      "approach": "Find what each variable generates and concatenate.",
+      "concepts": [
+        "Context-free grammars",
+        "Language of a grammar"
+      ],
+      "steps": [
+        {
+          "title": "X and Y",
+          "body": "$X \\to aX \\mid a$ generates $a^k$ with $k \\ge 1$. $Y \\to aYb \\mid \\epsilon$ generates $a^n b^n$ with $n \\ge 0$."
+        },
+        {
+          "title": "Concatenate",
+          "body": "$S \\to XY$ gives $a^k a^n b^n = a^{k+n} b^n$. With $m = k+n$ and $k \\ge 1$: $m > n$, and $n \\ge 0$. So $L = \\{a^m b^n \\mid m > n,\\ n \\ge 0\\}$."
+        }
+      ],
+      "answer": {
+        "value": "$\\{a^m b^n \\mid m > n,\\ n \\ge 0\\}$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Allows $m = n$ (e.g. $ab$), but $X$ always adds at least one extra $a$; also wrongly excludes $n = 0$ (e.g. $a$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Allows $m = n$, e.g. $ab$, which cannot be generated."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Excludes $n = 0$, but $a$ (from $X \\to a$, $Y \\to \\epsilon$) is in the language."
+        }
+      ],
+      "verification": "Shortest strings: $a$ ($m=1,n=0$), $aa$, $aab$ ($m=2,n=1$). $ab$ cannot be derived, since $X$ consumes at least one $a$ and $Y$ needs one more $a$ for its $b$."
+    },
+    "cse-2017-2-cs-17": {
+      "approach": "R’s table can be folded into A’s table when each A entity is related to at most one B, that is, A is on the many side. Total participation of A means the merged foreign key column is never NULL.",
+      "concepts": [
+        "ER to relational mapping",
+        "Cardinality and participation"
+      ],
+      "steps": [
+        {
+          "title": "Cardinality",
+          "body": "If R is many-to-one from A to B, each A row relates to at most one B row, so B’s key can be stored as one column (foreign key) in A’s table. If R were one-to-many, an A entity could relate to many B’s and one column could not hold them all; the merge would have to go into B instead."
+        },
+        {
+          "title": "Participation",
+          "body": "With total participation of A, every A row has a B partner, so the foreign key column has no NULLs and the merge is clean. This is the condition the question expects: many-to-one with total participation of A."
+        }
+      ],
+      "answer": {
+        "value": "Relationship R is many-to-one and the participation of A in R is total.",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "One-to-many from A: an A entity may relate to several B’s, so R cannot be absorbed into A’s table."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same cardinality problem as A."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: A is on the many side, and total participation avoids NULL foreign keys."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The merge is possible in principle, but partial participation leaves NULL foreign keys for unrelated A rows; the standard (and expected) condition is total participation."
+        }
+      ],
+      "pitfalls": [
+        "Reading “one-to-many” from B’s side; the relation is read from A to B as written."
+      ],
+      "verification": "This matches the textbook rule: for a 1:N relationship, put the key of the “1” side into the table of the “N” side, preferring the side with total participation."
+    },
+    "cse-2017-2-cs-18": {
+      "approach": "A connected UDP socket fixes one default peer address; calling connect again just replaces (or clears) that address.",
+      "concepts": [
+        "Connected UDP sockets",
+        "connect() semantics"
+      ],
+      "steps": [
+        {
+          "title": "Statement I",
+          "body": "After `connect`, the kernel records one peer address: `send` goes only to it and datagrams from any other address are discarded. So the socket cannot talk to multiple peers at the same time. I is false."
+        },
+        {
+          "title": "Statement II",
+          "body": "Unlike TCP, a UDP socket may call `connect` again, either to set a new peer or (with family `AF_UNSPEC`) to disconnect. II is true."
+        }
+      ],
+      "answer": {
+        "value": "II only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is false: a connected UDP socket is bound to a single peer."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "I is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is true: UDP connect can be repeated."
+        }
+      ],
+      "pitfalls": [
+        "Applying TCP rules (connect may be called only once) to UDP."
+      ],
+      "verification": "This is standard Linux/BSD behaviour as documented in the connect(2) man page and in Stevens, UNP §8.11–8.12."
+    },
+    "cse-2017-2-cs-19": {
+      "approach": "Follow the referential actions: deleting a T1 row triggers T2’s ON DELETE action on rows whose S references it; only a cascade into T2 could, in turn, cascade back to T1.",
+      "concepts": [
+        "Foreign keys",
+        "ON DELETE SET NULL",
+        "ON DELETE CASCADE"
+      ],
+      "steps": [
+        {
+          "title": "Who references ⟨3, 8⟩?",
+          "body": "The row has $P = 3$. In T2, $S$ references $T1.P$; the only row with $S = 3$ is $\\langle 8, 3\\rangle$. Its rule is ON DELETE SET NULL, so it becomes $\\langle 8, \\text{NULL}\\rangle$. It is not deleted."
+        },
+        {
+          "title": "Any chain back to T1?",
+          "body": "T1 rows are deleted only when a referenced T2 row (via $Q \\to R$, ON DELETE CASCADE) is deleted. No T2 row is deleted, so no further T1 row is deleted. Answer: **0**."
+        }
+      ],
+      "answer": {
+        "value": "0",
+        "number": 0,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Assuming that deleting $\\langle 3, 8\\rangle$ cascades to T2 row $R = 8$ and then to T1 rows with $Q = 8$; the cascade direction is from the referenced table to the referencing table, and T2's action is SET NULL."
+      ],
+      "verification": "Q = 8 in T1 refers to R = 8 in T2; deleting the T1 row (a referencing row) never deletes the T2 row it points to."
+    },
+    "cse-2017-2-cs-20": {
+      "approach": "IPv4 options take at most 40 bytes; the record route option spends 3 bytes on type, length and pointer, and each address takes 4 bytes.",
+      "concepts": [
+        "IPv4 header options",
+        "Record route"
+      ],
+      "steps": [
+        {
+          "title": "Space available",
+          "body": "Max header 60 bytes minus fixed 20 bytes leaves 40 bytes for options. RR overhead: type (1) + length (1) + pointer (1) = 3 bytes, leaving $40 - 3 = 37$ bytes."
+        },
+        {
+          "title": "Number of addresses",
+          "body": "$\\lfloor 37/4 \\rfloor = 9$ addresses (using 36 bytes; 1 byte is left over)."
+        }
+      ],
+      "answer": {
+        "value": "9",
+        "number": 9,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Dividing 40 by 4 and answering 10, forgetting the 3-byte option header."
+      ],
+      "verification": "This is why traceroute-style RR (ping -R) shows at most 9 hops."
+    },
+    "cse-2017-2-cs-21": {
+      "approach": "Check whether every pair of elements already has a least upper bound and a greatest lower bound; if so, nothing needs to be added.",
+      "concepts": [
+        "Lattice",
+        "Hasse diagram",
+        "LUB and GLB"
+      ],
+      "steps": [
+        {
+          "title": "Comparable pairs",
+          "body": "$a$ is below everything and $e$ is above everything, and $a \\le b \\le c \\le e$, $a \\le d \\le e$. Any comparable pair $x \\le y$ has lub $y$ and glb $x$."
+        },
+        {
+          "title": "Incomparable pairs",
+          "body": "Incomparable pairs are $\\{b, d\\}$ and $\\{c, d\\}$. Upper bounds of $b$ and $d$: $\\{e\\}$, so lub $= e$; lower bounds: $\\{a\\}$, so glb $= a$. Upper bounds of $c$ and $d$: $\\{e\\}$, so lub $= e$; lower bounds: $\\{a\\}$, so glb $= a$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Every pair has a lub and a glb, so $(X, R)$ is already a lattice (the pentagon $N_5$). Pairs to add: **0**."
+        }
+      ],
+      "answer": {
+        "value": "0",
+        "number": 0,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Confusing “lattice” with “distributive lattice”; $N_5$ is not distributive, but it is a lattice."
+      ],
+      "verification": "A finite poset with a top element in which every pair has a glb is a lattice; here $e$ is the top and every pair has glb $a$ or the smaller element."
+    },
+    "cse-2017-2-cs-22": {
+      "approach": "Add the matrices, then check the determinant and look for two independent rows.",
+      "concepts": [
+        "Matrix rank",
+        "Determinant"
+      ],
+      "steps": [
+        {
+          "title": "Add",
+          "body": "$P + Q = \\begin{bmatrix} 0 & -1 & -2\\\\ 8 & 9 & 10\\\\ 8 & 8 & 8 \\end{bmatrix}$."
+        },
+        {
+          "title": "Determinant",
+          "body": "Expand along row 1: $0\\cdot(72-80) - (-1)(64-80) + (-2)(64-72) = 0 + (-16) + 16 = 0$. So the rank is less than 3."
+        },
+        {
+          "title": "Rank 2",
+          "body": "Rows $(0,-1,-2)$ and $(8,8,8)$ are not multiples of each other, so the rank is at least 2. Indeed $R_2 = R_3 - R_1$: $(8,8,8) - (0,-1,-2) = (8,9,10)$. Rank $= 2$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "number": 2,
+        "matchesKey": true
+      },
+      "verification": "The relation $R_2 = R_3 - R_1$ was checked entry by entry: $8-0 = 8$, $8+1 = 9$, $8+2 = 10$."
+    }
+  }
+}
