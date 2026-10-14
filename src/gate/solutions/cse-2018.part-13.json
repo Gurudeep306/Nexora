@@ -1,0 +1,1156 @@
+{
+ "paper": "cse-2018",
+ "version": 2,
+ "solutions": {
+  "cse-2018-cs-35": {
+   "approach": "Test each language for the kind of counting it needs: one running balance or two independent matched pairs fit a single stack; a three-way equality or a product does not. Use intersection with a regular language plus the pumping lemma for the non-CFL cases.",
+   "concepts": [
+    "Context-free languages",
+    "Closure under intersection with regular sets",
+    "Pumping lemma for CFLs"
+   ],
+   "steps": [
+    {
+     "title": "I is context-free",
+     "body": "Rewrite $m+p=n+q$ as a balance: each $a$ or $c$ adds $+1$, each $b$ or $d$ adds $-1$, and the total must end at $0$. A PDA keeps the signed count on its stack (push `X` for a surplus of $a/c$, push `Y` for a surplus of $b/d$, cancel opposite symbols), and checks the order $a^*b^*c^*d^*$ in its finite control. So I is a CFL."
+    },
+    {
+     "title": "II is context-free",
+     "body": "$\\{a^mb^nc^pd^q \\mid m=n,\\ p=q\\} = \\{a^mb^m\\}\\cdot\\{c^pd^p\\}$, the concatenation of two CFLs. Grammar: $S\\to AB,\\ A\\to aAb\\mid\\varepsilon,\\ B\\to cBd\\mid\\varepsilon$."
+    },
+    {
+     "title": "III is not context-free",
+     "body": "Intersect III with the regular set $a^*b^*c^+$ (forces $q=0$, so $p\\ne q$ just means $p\\ge1$): the result is $\\{a^nb^nc^n \\mid n\\ge1\\}$, which is not a CFL. CFLs are closed under intersection with regular languages, so III is not a CFL."
+    },
+    {
+     "title": "IV is not context-free",
+     "body": "Intersect IV with $a^*b^*c^*$ (forces $q=0$): $\\{a^mb^nc^{mn}\\}$. Pumping $a^Nb^Nc^{N^2}$ cannot keep $p=mn$: pumping $a$'s or $b$'s changes $mn$ by at least $N$ while at most $N$ $c$'s can be pumped together with them. So IV is not a CFL.\n\nContext-free: **I and II only**."
+    }
+   ],
+   "answer": {
+    "value": "I and II only",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "IV needs $p+q=mn$, a product of two counts, which a single stack cannot check."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "I needs one signed counter and II is a concatenation of two $a^nb^n$-type languages; both are CFLs."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "III contains $a^nb^nc^n$ after intersecting with a regular set, so it is not a CFL."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "IV is not a CFL, and I (a CFL) is left out."
+    }
+   ],
+   "shortcut": "Count how many quantities must be compared at once: one balance or two separate pairs is CFL; three equal blocks or a product is not.",
+   "pitfalls": [
+    "Thinking I is not a CFL because four counters appear; only the net balance matters.",
+    "Forgetting that $p\\ne q$ does not rescue III: the $m=n=p$ part already breaks context-freeness."
+   ],
+   "verification": "Intersections with $a^*b^*c^*$ give the classic non-CFLs $a^nb^nc^n$ and $a^mb^nc^{mn}$ for III and IV, while explicit grammars/PDAs exist for I and II."
+  },
+  "cse-2018-cs-36": {
+   "approach": "Classify each problem: membership for type-0 grammars and regularity of a TM's language are classic undecidable problems, grammar equivalence is undecidable already for CFGs, while every NFA language is regular and hence always accepted by some DPDA.",
+   "concepts": [
+    "Decidability",
+    "Rice's theorem",
+    "Regular languages and DPDAs"
+   ],
+   "steps": [
+    {
+     "title": "Problems I and II",
+     "body": "**I:** an unrestricted grammar generates exactly the recursively enumerable languages, so $w\\in L(G)$ is as hard as the halting/membership problem for TMs: **undecidable**.\n\n**II:** \"$L(M)$ is regular\" is a non-trivial property of the language of a TM, so by Rice's theorem it is **undecidable**."
+    },
+    {
+     "title": "Problem III",
+     "body": "Equivalence $L(G_1)=L(G_2)$ is undecidable even when both grammars are context-free (and so for general grammars as well): **undecidable**."
+    },
+    {
+     "title": "Problem IV",
+     "body": "$L(N)$ is regular for every NFA $N$, and every regular language is accepted by a DPDA (a DFA that never touches its stack). So the answer is always *yes*; a constant answer is trivially **decidable**.\n\nUndecidable: **only I, II and III**."
+    }
+   ],
+   "answer": {
+    "value": "Only I, II and III are undecidable",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Misses III: equivalence of grammars is undecidable (already for CFGs)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "I (membership for unrestricted grammars) and II (Rice) are also undecidable."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "IV is decidable (always yes) and I, III are undecidable."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "I, II and III are undecidable; IV is trivially decidable."
+    }
+   ],
+   "pitfalls": [
+    "Reading IV as an equivalence problem between machines; it only asks whether some DPDA exists, which is always true for a regular language."
+   ],
+   "verification": "Matches the standard table: membership is undecidable for type-0, equivalence undecidable for type-2 and above, Rice applies to II."
+  },
+  "cse-2018-cs-37": {
+   "approach": "Run maximal munch: at each position try all three patterns, take the longest prefix any of them matches, emit that token, and restart after it.",
+   "concepts": [
+    "Lexical analysis",
+    "Longest-match (maximal munch)",
+    "Regular expressions"
+   ],
+   "given": "| Token | Pattern | Shape |\n|---|---|---|\n| $T_1$ | $a?(b\\mid c)^*a$ | optional $a$, any $b/c$, ends in $a$ |\n| $T_2$ | $b?(a\\mid c)^*b$ | optional $b$, any $a/c$, ends in $b$ |\n| $T_3$ | $c?(b\\mid a)^*c$ | optional $c$, any $a/b$, ends in $c$ |",
+   "steps": [
+    {
+     "title": "Longest prefix of bbaacabc",
+     "body": "- $T_1$: skip $a?$, $(b\\mid c)^*$ eats `bb`, then `a` ⇒ `bba` (length 3).\n- $T_2$: $b?$ = `b`, $(a\\mid c)^*$ can't take the next `b`, so the `b` ends it ⇒ `bb` (length 2).\n- $T_3$: skip $c?$, $(b\\mid a)^*$ eats `bbaa`, then `c` ⇒ `bbaac` (length 5).\n\nLongest is $T_3$ with `bbaac`.",
+     "scene": {
+      "ranges": [
+       {
+        "from": 0,
+        "to": 4,
+        "label": "T3"
+       }
+      ],
+      "hl": [
+       {
+        "at": [
+         0,
+         4
+        ],
+        "tone": "accent"
+       }
+      ],
+      "caption": "First token: T3 matches bbaac (5 symbols)"
+     }
+    },
+    {
+     "title": "Longest prefix of the rest, abc",
+     "body": "- $T_1$: needs a final `a` after $(b\\mid c)^*$; only `a` itself works ⇒ length 1.\n- $T_2$: $(a\\mid c)^*$ = `a`, then `b` ⇒ `ab` (length 2).\n- $T_3$: $(b\\mid a)^*$ = `ab`, then `c` ⇒ `abc` (length 3).\n\nLongest is $T_3$ again, and the input is consumed.",
+     "scene": {
+      "ranges": [
+       {
+        "from": 0,
+        "to": 4,
+        "label": "T3"
+       },
+       {
+        "from": 5,
+        "to": 7,
+        "label": "T3"
+       }
+      ],
+      "hl": [
+       {
+        "at": [
+         5,
+         7
+        ],
+        "tone": "success"
+       }
+      ],
+      "caption": "Second token: T3 matches abc — output T3 T3"
+     }
+    },
+    {
+     "title": "Output",
+     "body": "The analyzer emits $T_3\\,T_3$."
+    }
+   ],
+   "animation": {
+    "kind": "array",
+    "label": "input",
+    "cells": [
+     "b",
+     "b",
+     "a",
+     "a",
+     "c",
+     "a",
+     "b",
+     "c"
+    ],
+    "caption": "Input string bbaacabc"
+   },
+   "answer": {
+    "value": "T3 T3",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Starting with $T_1$ (`bba`, length 3) ignores the longer $T_3$ match `bbaac` (length 5)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "`bba`·`aca`·`bc` is a valid split into $T_1T_1T_3$, but it is not longest-match: $T_3$ matches the longer prefix `bbaac` first."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$T_2$ matches only `bb` (length 2), shorter than $T_3$'s 5."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Maximal munch gives `bbaac` ($T_3$) then `abc` ($T_3$)."
+    }
+   ],
+   "pitfalls": [
+    "Treating the optional leading symbol as mandatory: $T_3$ matches `bbaac` by skipping $c?$."
+   ],
+   "verification": "Concatenating the two lexemes `bbaac`+`abc` reproduces the input exactly."
+  },
+  "cse-2018-cs-38": {
+   "approach": "In a parse tree the operator deeper in the tree binds tighter (higher precedence); a chain of the same operator growing on the left side means left associativity, growing on the right side means right associativity.",
+   "concepts": [
+    "Operator precedence",
+    "Associativity",
+    "Parse trees"
+   ],
+   "steps": [
+    {
+     "title": "Precedence",
+     "body": "The \\$ nodes sit below the # nodes: the tree groups $b\\,\\$\\,c\\,\\$\\,d$ into one subtree before any # is applied. So \\$ has **higher precedence** than #."
+    },
+    {
+     "title": "Associativity of \\$",
+     "body": "`b$c$d` is parsed as $(b\\,\\$\\,c)\\,\\$\\,d$ — the inner \\$ is the **left** child. So \\$ is **left associative**."
+    },
+    {
+     "title": "Associativity of #",
+     "body": "The # chain is $a\\,\\#\\,\\big((b\\$c\\$d)\\,\\#\\,(e\\,\\#\\,f)\\big)$ — each # has the next # as its **right** child. So # is **right associative**."
+    }
+   ],
+   "answer": {
+    "value": "\\$ has higher precedence and is left associative; # is right associative",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Matches all three observations: \\$ deeper, \\$ nests left, # nests right."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "The # operator is near the root, so it has lower precedence; \\$ nests to the left, not right."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The # operator nests to the right (e#f is the right child), so it is right associative."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "The # operator does not have higher precedence — the \\$ subtrees are below it."
+    }
+   ],
+   "pitfalls": [
+    "Confusing 'closer to root' with 'higher precedence' — it is the opposite."
+   ],
+   "verification": "Fully parenthesised: $a\\#(((b\\$c)\\$d)\\#(e\\#f))$, consistent with option A's grammar."
+  },
+  "cse-2018-cs-39": {
+   "approach": "Apply the Banker's safety algorithm: compute Need = Max − Allocation, then repeatedly pick any process whose Need fits in Work, let it finish and release its allocation.",
+   "concepts": [
+    "Banker's algorithm",
+    "Safe state",
+    "Deadlock avoidance"
+   ],
+   "given": "Available = $(E,F,G) = (3,3,0)$",
+   "steps": [
+    {
+     "title": "Need = Max − Allocation",
+     "body": "| | Need E | Need F | Need G |\n|---|---|---|---|\n| P0 | $4-1=3$ | $3-0=3$ | $1-1=0$ |\n| P1 | $2-1=1$ | $1-1=0$ | $4-2=2$ |\n| P2 | $1-1=0$ | $3-0=3$ | $3-3=0$ |\n| P3 | $5-2=3$ | $4-0=4$ | $1-0=1$ |",
+     "scene": {
+      "reveal": 12,
+      "caption": "Need matrix"
+     }
+    },
+    {
+     "title": "Run P0",
+     "body": "Work $=(3,3,0)$. P1 needs $G=2>0$, P3 needs $F=4>3$; P0 needs $(3,3,0)\\le(3,3,0)$ ✓. After P0 releases $(1,0,1)$: Work $=(4,3,1)$.",
+     "scene": {
+      "reveal": 12,
+      "hl": [
+       {
+        "r": 0,
+        "tone": "success"
+       }
+      ],
+      "vars": {
+       "Work": "(4,3,1)",
+       "order": "P0"
+      },
+      "caption": "P0 finishes"
+     }
+    },
+    {
+     "title": "Run P2",
+     "body": "P2 needs $(0,3,0)\\le(4,3,1)$ ✓. Releases $(1,0,3)$: Work $=(5,3,4)$.",
+     "scene": {
+      "hl": [
+       {
+        "r": 0,
+        "tone": "muted"
+       },
+       {
+        "r": 2,
+        "tone": "success"
+       }
+      ],
+      "vars": {
+       "Work": "(5,3,4)",
+       "order": "P0, P2"
+      },
+      "caption": "P2 finishes"
+     }
+    },
+    {
+     "title": "Run P1 then P3",
+     "body": "P1 needs $(1,0,2)\\le(5,3,4)$ ✓, releases $(1,1,2)$: Work $=(6,4,6)$.\n\nP3 needs $(3,4,1)\\le(6,4,6)$ ✓, releases $(2,0,0)$: Work $=(8,4,6)$.\n\nSafe sequence $\\langle P0, P2, P1, P3\\rangle$ exists ⇒ **safe state**.",
+     "scene": {
+      "hl": [
+       {
+        "r": 0,
+        "tone": "muted"
+       },
+       {
+        "r": 2,
+        "tone": "muted"
+       },
+       {
+        "r": 1,
+        "tone": "success"
+       },
+       {
+        "r": 3,
+        "tone": "success"
+       }
+      ],
+      "vars": {
+       "Work": "(8,4,6)",
+       "order": "P0, P2, P1, P3"
+      },
+      "caption": "All processes finish — safe"
+     }
+    }
+   ],
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "Need E",
+     "Need F",
+     "Need G"
+    ],
+    "rowLabels": [
+     "P0",
+     "P1",
+     "P2",
+     "P3"
+    ],
+    "rows": [
+     [
+      3,
+      3,
+      0
+     ],
+     [
+      1,
+      0,
+      2
+     ],
+     [
+      0,
+      3,
+      0
+     ],
+     [
+      3,
+      4,
+      1
+     ]
+    ],
+    "reveal": 0,
+    "vars": {
+     "Work": "(3,3,0)"
+    },
+    "caption": "Need = Max − Allocation"
+   },
+   "answer": {
+    "value": "The system is in safe state",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "The safe sequence P0, P2, P1, P3 exists with the current Available (3,3,0)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "The premise 'not in safe state' is false; no extra E is needed."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The state is already safe; no extra F is needed."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Although Available G is 0, P0 needs no G and frees one, so the state is safe without extra G."
+    }
+   ],
+   "pitfalls": [
+    "Stopping early because Available G is 0 — P0 needs zero G and releases one."
+   ],
+   "verification": "Final Work $(8,4,6)$ equals Available plus all allocations: $(3+5,\\,3+1,\\,0+6)$."
+  },
+  "cse-2018-cs-40": {
+   "approach": "Note the swapped names: here `full` counts free slots (initially N) and `empty` counts filled slots (initially 0). The producer must wait for a free slot and announce a filled one; the consumer does the reverse.",
+   "concepts": [
+    "Producer–consumer",
+    "Counting semaphores"
+   ],
+   "steps": [
+    {
+     "title": "Producer",
+     "body": "Before adding it needs a free slot ⇒ `wait(full)` (P = full). After adding, one more item is readable ⇒ `signal(empty)` (Q = empty)."
+    },
+    {
+     "title": "Consumer",
+     "body": "Before consuming it needs an item ⇒ `wait(empty)` (R = empty; initially 0, so the consumer blocks on an empty buffer). After consuming, one slot is free ⇒ `signal(full)` (S = full)."
+    },
+    {
+     "title": "Result",
+     "body": "P: full, Q: empty, R: empty, S: full."
+    }
+   ],
+   "answer": {
+    "value": "P: full, Q: empty, R: empty, S: full",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Producer signals `full` (free slots) after filling one, so free slots never decrease and overflow is possible; consumer never frees slots."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Producer waits on `empty` (initially 0) and consumer on `full`; consumer can read from an empty buffer."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Producer waits for a free slot and signals an item; consumer waits for an item and signals a free slot."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Producer waits on `empty` (0) and blocks forever at start; roles are reversed."
+    }
+   ],
+   "pitfalls": [
+    "Using the textbook meaning of `empty`/`full`; the question deliberately swaps them."
+   ],
+   "verification": "Initial values check: producer can proceed N times before blocking (full = N); consumer blocks at start (empty = 0)."
+  },
+  "cse-2018-cs-41": {
+   "approach": "Because r.B is a foreign key into s, every r tuple has a matching s tuple, so r LOJ s equals r ⋈ s. The only query that differs is the one that left-joins r with a *filtered* s, keeping unmatched r tuples padded with nulls.",
+   "concepts": [
+    "Natural join",
+    "Left outer join",
+    "Referential integrity"
+   ],
+   "steps": [
+    {
+     "title": "Q keeps only B < 5",
+     "body": "$Q = r\\bowtie\\sigma_{B<5}(s)$ contains exactly the r tuples with $B<5$, each joined with its s tuple."
+    },
+    {
+     "title": "Check A, B, D",
+     "body": "- **A:** $\\sigma_{B<5}(r\\bowtie s)$ — selection pushes through the join ⇒ same as Q.\n- **B:** with the foreign key, $r\\ \\text{LOJ}\\ s = r\\bowtie s$ (no dangling r tuples), then the same selection ⇒ same as Q.\n- **D:** $\\sigma_{B<5}(r)\\ \\text{LOJ}\\ s$ — every selected r tuple matches s, so this is $\\sigma_{B<5}(r)\\bowtie s$ ⇒ same as Q."
+    },
+    {
+     "title": "C differs",
+     "body": "$r\\ \\text{LOJ}\\ \\sigma_{B<5}(s)$: an r tuple with $B\\ge5$ finds no partner in the filtered s but is still kept, with $C=$ NULL. Q drops it, so **C is not equivalent**."
+    }
+   ],
+   "answer": {
+    "value": "r LOJ (σ_{B<5}(s))",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Selection on the join attribute commutes with the join; equivalent to Q."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Foreign key makes LOJ identical to the inner join; equivalent after the selection."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Keeps r tuples with $B\\ge5$ padded with NULL; Q excludes them."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Filtered r tuples all have matches in s, so the LOJ adds no NULL rows; equivalent."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting that filtering the right operand of a left outer join creates dangling left tuples."
+   ],
+   "verification": "Counter-example: r = {(1,7)}, s = {(7,x)}. Q is empty; C returns (1,7,NULL)."
+  },
+  "cse-2018-cs-42": {
+   "approach": "For each schema find the candidate keys, then test every FD X → A: BCNF needs X to be a superkey; 3NF also accepts A being a prime attribute.",
+   "concepts": [
+    "3NF",
+    "BCNF",
+    "Candidate keys",
+    "Prime attributes"
+   ],
+   "steps": [
+    {
+     "title": "Schema I",
+     "body": "`courses` is set-valued, so the relation is not even in 1NF (hence not in 3NF). Answer cannot be I."
+    },
+    {
+     "title": "Schema II",
+     "body": "Keys: {rollno, courseid} and, since email → rollno, also {email, courseid}. FD email → rollno: email is not a superkey ⇒ **violates BCNF**; but rollno is prime ⇒ **3NF holds**. Other FD has a key on the left. So II is in 3NF but not BCNF."
+    },
+    {
+     "title": "Schemas III and IV",
+     "body": "III: marks → grade, marks not a superkey, grade non-prime ⇒ transitive dependency, **not 3NF**.\n\nIV: courseid → credit, courseid is a proper part of the key and credit is non-prime ⇒ partial dependency, **not 2NF/3NF**."
+    }
+   ],
+   "answer": {
+    "value": "Schema II",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A set-valued attribute breaks 1NF, so Schema I is not in 3NF."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "email → rollno has a non-superkey LHS (fails BCNF) but a prime RHS (passes 3NF)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "marks → grade is a transitive dependency of a non-prime attribute; not 3NF."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "courseid → credit is a partial dependency; not even 2NF."
+    }
+   ],
+   "pitfalls": [
+    "Missing the second candidate key {email, courseid} in Schema II, which is what makes rollno prime."
+   ],
+   "verification": "Closure: {email, courseid}+ = {email, rollno, courseid}, confirming it is a key and rollno is prime."
+  },
+  "cse-2018-cs-43": {
+   "approach": "A permutation of 100 numbers has 99 adjacent positions to swap, giving the degree; adjacent swaps (bubble-sort moves) can turn any permutation into any other, so the graph is connected.",
+   "concepts": [
+    "Permutations",
+    "Adjacent transpositions",
+    "Connected components"
+   ],
+   "steps": [
+    {
+     "title": "Degree y",
+     "body": "Swapping positions $(i, i+1)$ for $i=1,\\dots,99$ gives 99 distinct neighbours. So $y=99$."
+    },
+    {
+     "title": "Components z",
+     "body": "Bubble sort reaches the identity from any permutation using only adjacent swaps, so every vertex is connected to the identity ⇒ $z=1$."
+    },
+    {
+     "title": "Combine",
+     "body": "$y+10z = 99 + 10\\times1 = 109$."
+    }
+   ],
+   "answer": {
+    "value": "109",
+    "number": 109,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Counting $\\binom{100}{2}$ swaps — only *adjacent* swaps are edges.",
+    "Thinking parity splits the graph into 2 components; each adjacent swap changes parity, so it links both classes."
+   ],
+   "verification": "Small case n = 3: 6 vertices, each of degree 2, forming one 6-cycle — $y=n-1$, $z=1$."
+  },
+  "cse-2018-cs-44": {
+   "approach": "Bayes' theorem: find P(H_D) by total probability over Guwahati's three states, then divide the H_G term by it.",
+   "concepts": [
+    "Total probability",
+    "Bayes' theorem"
+   ],
+   "steps": [
+    {
+     "title": "Total probability",
+     "body": "$P(H_D) = 0.2\\times0.40 + 0.5\\times0.10 + 0.3\\times0.01 = 0.080 + 0.050 + 0.003 = 0.133$"
+    },
+    {
+     "title": "Bayes",
+     "body": "$P(H_G\\mid H_D) = \\dfrac{P(H_D\\mid H_G)P(H_G)}{P(H_D)} = \\dfrac{0.080}{0.133} = 0.6015\\ldots \\approx 0.60$"
+    }
+   ],
+   "answer": {
+    "value": "0.60",
+    "number": 0.6,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering $P(H_D\\mid H_G)=0.40$ directly instead of reversing the condition."
+   ],
+   "verification": "$P(M_G\\mid H_D)=0.05/0.133\\approx0.376$, $P(L_G\\mid H_D)=0.003/0.133\\approx0.023$; the three posteriors sum to 1."
+  },
+  "cse-2018-cs-45": {
+   "approach": "For a fixed y ≠ 1, the inner recursion halves x from 1024 to 1, printing once per halving; then y drops by 1 and x resets to 1024. Multiply prints per y-value by the number of y-values.",
+   "concepts": [
+    "Recursion tracing",
+    "Logarithmic halving"
+   ],
+   "steps": [
+    {
+     "title": "Prints per value of y",
+     "body": "With $y\\ne1$, $x$ goes $1024\\to512\\to\\dots\\to2\\to1$: one `*` per halving, i.e. $\\log_2 1024 = 10$ prints. At $x=1$ the else branch sets $y=y-1$ and calls `Count(1024, y)`."
+    },
+    {
+     "title": "Number of y values",
+     "body": "The prints happen for $y = 1024, 1023, \\dots, 2$ — that is $1023$ values. When $y=1$ the function stops."
+    },
+    {
+     "title": "Total",
+     "body": "$1023 \\times 10 = 10230$."
+    }
+   ],
+   "answer": {
+    "value": "10230",
+    "number": 10230,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Counting 1024 y-values; the call with $y=1$ prints nothing.",
+    "Counting 11 prints per round (x = 1 does not print)."
+   ],
+   "verification": "Check with Count(4,3): y=3 prints 2, y=2 prints 2 ⇒ 4 = (3−1)·log₂4."
+  },
+  "cse-2018-cs-46": {
+   "approach": "A 7-node heap is a complete tree with two 3-node subtrees. The root must be 1; choose which 3 of the remaining 6 values go left, and each 3-node subtree has 2 valid heap shapes.",
+   "concepts": [
+    "Binary heap",
+    "Counting heaps",
+    "Combinations"
+   ],
+   "steps": [
+    {
+     "title": "Root and split",
+     "body": "Root = 1. The other 6 values split into left and right subtrees of 3 each: $\\binom{6}{3} = 20$ ways."
+    },
+    {
+     "title": "Each 3-node subtree",
+     "body": "Its smallest value must be the subtree root; the other two can be placed as left/right children in $2! = 2$ ways."
+    },
+    {
+     "title": "Total",
+     "body": "$20 \\times 2 \\times 2 = 80$."
+    }
+   ],
+   "answer": {
+    "value": "80",
+    "number": 80,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Forgetting that the 7-node heap shape is fixed (perfect tree), so only value placement varies."
+   ],
+   "verification": "Recurrence $H(n)=\\binom{n-1}{L}H(L)H(R)$: $H(3)=2$, $H(7)=\\binom{6}{3}\\cdot2\\cdot2=80$."
+  },
+  "cse-2018-cs-47": {
+   "approach": "Build the MST with Kruskal and look for ties: the cheap edges 1 and 3 are forced, the left vertex has two weight-4 options, and the right vertex gets two options exactly when x equals 5.",
+   "concepts": [
+    "Minimum spanning tree",
+    "Kruskal's algorithm",
+    "Counting MSTs with ties"
+   ],
+   "given": "Label the vertices T (top), L (left), R (right), BL (bottom-left), BR (bottom-right). Edges: T–BL 1, T–BR 3, T–L 4, L–BL 4, BL–BR 4, R–BR 5, T–R x.",
+   "steps": [
+    {
+     "title": "Forced cheap edges",
+     "body": "Kruskal takes T–BL (1) and T–BR (3) — every MST contains them (each is the unique lightest edge of a cut).",
+     "scene": {
+      "edgeTones": {
+       "T>BL": "success",
+       "T>BR": "success"
+      },
+      "caption": "T–BL (1) and T–BR (3) are in every MST"
+     }
+    },
+    {
+     "title": "Weight-4 edges",
+     "body": "BL–BR (4) would close the cycle T–BL–BR, so it is never used. L can be attached by T–L (4) **or** L–BL (4): **2 choices**, each giving the same weight.",
+     "scene": {
+      "edgeTones": {
+       "T>BL": "success",
+       "T>BR": "success",
+       "T>L": "warning",
+       "L>BL": "warning",
+       "BL>BR": "muted"
+      },
+      "caption": "L joins via either weight-4 edge: 2 ways"
+     }
+    },
+    {
+     "title": "Choose x",
+     "body": "R is joined by T–R ($x$) or R–BR (5).\n- $x<5$ or $x>5$: one choice (the cheaper edge).\n- $x=5$: both are minimum ⇒ **2 choices**.\n\nSo $x=5$ maximizes the count.",
+     "scene": {
+      "edgeTones": {
+       "T>BL": "success",
+       "T>BR": "success",
+       "T>L": "warning",
+       "L>BL": "warning",
+       "BL>BR": "muted",
+       "T>R": "info",
+       "R>BR": "info"
+      },
+      "caption": "With x = 5, R joins via either weight-5 edge: 2 ways"
+     }
+    },
+    {
+     "title": "Count",
+     "body": "Choices for L and R are independent: $2 \\times 2 = 4$ MWSTs (each of weight $1+3+4+5=13$)."
+    }
+   ],
+   "animation": {
+    "kind": "graph",
+    "nodes": [
+     {
+      "id": "T",
+      "x": 2,
+      "y": 0
+     },
+     {
+      "id": "L",
+      "x": 0,
+      "y": 1
+     },
+     {
+      "id": "R",
+      "x": 4,
+      "y": 1
+     },
+     {
+      "id": "BL",
+      "x": 1,
+      "y": 3
+     },
+     {
+      "id": "BR",
+      "x": 3,
+      "y": 3
+     }
+    ],
+    "edges": [
+     {
+      "from": "T",
+      "to": "L",
+      "w": 4
+     },
+     {
+      "from": "T",
+      "to": "R",
+      "w": "x"
+     },
+     {
+      "from": "L",
+      "to": "BL",
+      "w": 4
+     },
+     {
+      "from": "T",
+      "to": "BL",
+      "w": 1
+     },
+     {
+      "from": "T",
+      "to": "BR",
+      "w": 3
+     },
+     {
+      "from": "BL",
+      "to": "BR",
+      "w": 4
+     },
+     {
+      "from": "R",
+      "to": "BR",
+      "w": 5
+     }
+    ],
+    "caption": "Graph G"
+   },
+   "answer": {
+    "value": "4",
+    "number": 4,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Including BL–BR (4) as a third option for L — it does not touch L and forms a cycle with T–BL and T–BR."
+   ],
+   "verification": "Enumerated: {T-BL, T-BR} + {T-L or L-BL} + {T-R or R-BR} — exactly 4 trees, all of weight 13."
+  },
+  "cse-2018-cs-48": {
+   "approach": "Compute value/weight ratios, run the greedy fill, and find the true optimum by checking the few feasible subsets under 11 kg.",
+   "concepts": [
+    "0/1 knapsack",
+    "Greedy by ratio"
+   ],
+   "steps": [
+    {
+     "title": "Ratios",
+     "body": "Item 4: $24/2=12$, item 1: $60/10=6$, item 3: $20/4=5$, item 2: $28/7=4$. Order: 4, 1, 3, 2."
+    },
+    {
+     "title": "Greedy",
+     "body": "Take item 4 (2 kg, ₹24). Item 1 needs 10 kg, $2+10=12>11$ ⇒ skip. Item 3: $2+4=6$ kg ⇒ take (₹20). Item 2: $6+7=13>11$ ⇒ skip. $V_{greedy}=24+20=44$."
+    },
+    {
+     "title": "Optimal",
+     "body": "Feasible subsets: {1} = 60; {2,3} = 48; {2,4} = 52; {3,4} = 44; others exceed 11 kg ({1, any} ≥ 12 kg, {2,3,4} = 13 kg). $V_{opt}=60$."
+    },
+    {
+     "title": "Difference",
+     "body": "$V_{opt}-V_{greedy} = 60-44 = 16$."
+    }
+   ],
+   "answer": {
+    "value": "16",
+    "number": 16,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using fractional greedy (splitting item 1) — items cannot be split here."
+   ],
+   "verification": "DP over capacity 11 also gives 60 (item 1 alone)."
+  },
+  "cse-2018-cs-50": {
+   "approach": "With no hazards, the PO stage is the bottleneck: it is busy continuously once the first instruction arrives. Total time = cycles before the first PO + total PO cycles + the final WB.",
+   "concepts": [
+    "Instruction pipeline",
+    "Non-uniform stage latency"
+   ],
+   "steps": [
+    {
+     "title": "Before PO",
+     "body": "Instruction 1 does IF, ID, OF in cycles 1–3 and enters PO in cycle 4. The front stages (1 cycle each) always have the next instruction ready, so PO never idles."
+    },
+    {
+     "title": "PO busy time",
+     "body": "$40\\times3 + 35\\times2 + 25\\times1 = 120 + 70 + 25 = 215$ cycles, occupying cycles $4$ to $3+215=218$."
+    },
+    {
+     "title": "Last WB",
+     "body": "The last instruction writes back in cycle $219$. Total $= 3 + 215 + 1 = 219$."
+    }
+   ],
+   "answer": {
+    "value": "219",
+    "number": 219,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using $k + n - 1$ with the maximum stage time (that assumes every instruction takes 3 cycles in PO)."
+   ],
+   "verification": "Equivalently: sum of PO times + (number of other stages) $= 215 + 4 = 219$."
+  },
+  "cse-2018-cs-51": {
+   "approach": "Expanding opcode: measure the 16-bit encoding space in units of 2^10, subtract what Types 1–3 use, and divide the remainder by the 2^6 encodings each 1F instruction consumes.",
+   "concepts": [
+    "Expanding opcodes",
+    "Instruction encoding"
+   ],
+   "steps": [
+    {
+     "title": "Operand widths",
+     "body": "Integer register: $\\log_2 16 = 4$ bits; FP register: $\\log_2 64 = 6$ bits. Instruction: 16 bits ⇒ $2^{16}$ encodings."
+    },
+    {
+     "title": "Space used by Types 1–3",
+     "body": "- Type-1 (3R = 12 bits): $4\\times2^{12} = 16\\times2^{10}$\n- Type-2 (2F = 12 bits): $8\\times2^{12} = 32\\times2^{10}$\n- Type-3 (R+F = 10 bits): $14\\times2^{10}$\n\nTotal $= (16+32+14)\\times2^{10} = 62\\times2^{10}$."
+    },
+    {
+     "title": "Type-4",
+     "body": "Left: $2^{16} - 62\\times2^{10} = (64-62)\\times2^{10} = 2048$ encodings. Each 1F instruction uses $2^6 = 64$ of them: $N = 2048/64 = 32$."
+    }
+   ],
+   "answer": {
+    "value": "32",
+    "number": 32,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Giving each type a fixed-width opcode field instead of sharing the encoding space."
+   ],
+   "verification": "In opcode-bit terms: 4 bits for Type-1 leave 12 patterns; Type-2 uses 8 ⇒ 4 left; extending by 2 bits gives 16, Type-3 uses 14 ⇒ 2 left; extending by 4 bits gives $2\\times16=32$."
+  },
+  "cse-2018-cs-52": {
+   "approach": "Read L1 off the automaton (ε plus odd-length strings of 0), then compute successive powers until they stop changing.",
+   "concepts": [
+    "Language concatenation",
+    "Powers of a language",
+    "Finite automata"
+   ],
+   "steps": [
+    {
+     "title": "L1 from the automaton",
+     "body": "Start state is accepting ⇒ $\\varepsilon\\in L_1$. The second state is reached after 1, 3, 5, … zeros and is accepting; the third (after 2, 4, … zeros, except 0) is not. So $L_1 = \\{\\varepsilon\\}\\cup\\{0^{2k+1} \\mid k\\ge0\\}$."
+    },
+    {
+     "title": "Powers",
+     "body": "- $L^0 = \\{\\varepsilon\\}$\n- $L^1 = L_1 = \\{\\varepsilon, 0, 000, \\dots\\}$ — no $00$, so $L^1\\ne L^0$.\n- $L^2 = L_1L_1$: contains $L_1$ (since $\\varepsilon\\in L_1$) and odd+odd = all even lengths $\\ge2$, so $L^2 = 0^*$; $L^2\\ne L^1$.\n- $L^3 = L^2L_1 = 0^*$ since $0^*\\cdot L_1 = 0^*$."
+    },
+    {
+     "title": "Order",
+     "body": "Smallest $k$ with $L^k=L^{k+1}$ is $k=2$."
+    }
+   ],
+   "answer": {
+    "value": "2",
+    "number": 2,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Reading the automaton as accepting even lengths; the second (accepting) state is reached after an odd number of zeros."
+   ],
+   "verification": "$00\\notin L^1$ but $00 = 0\\cdot0\\in L^2$, and $L^2=0^*$ is closed under further concatenation."
+  },
+  "cse-2018-cs-53": {
+   "approach": "Only cylinder numbers matter. Run SSTF from cylinder 80, add up the cylinders travelled and count direction reversals, then convert: 20 mW per 100 cylinders and 15 mW per reversal.",
+   "concepts": [
+    "SSTF disk scheduling",
+    "Seek distance"
+   ],
+   "given": "Requested cylinders: 72, 134, 20, 86, 116, 16. Head at 80, moving up.",
+   "steps": [
+    {
+     "title": "SSTF order",
+     "body": "| From | Choice (distance) | Direction |\n|---|---|---|\n| 80 | 86 (6) vs 72 (8) → **86** | up (no reversal) |\n| 86 | 72 (14) vs 116 (30) → **72** | down — reversal 1 |\n| 72 | 116 (44) vs 20 (52) → **116** | up — reversal 2 |\n| 116 | **134** (18) | up |\n| 134 | **20** (114) | down — reversal 3 |\n| 20 | **16** (4) | down |",
+     "scene": {
+      "reveal": 24,
+      "caption": "SSTF service order"
+     }
+    },
+    {
+     "title": "Distance",
+     "body": "$6+14+44+18+114+4 = 200$ cylinders.",
+     "scene": {
+      "hl": [
+       {
+        "c": 2,
+        "tone": "accent"
+       }
+      ],
+      "caption": "Total seek = 200 cylinders"
+     }
+    },
+    {
+     "title": "Power",
+     "body": "Movement: $\\frac{200}{100}\\times20 = 40$ mW. Reversals: $3\\times15 = 45$ mW. Total $= 40+45 = 85$ mW.",
+     "scene": {
+      "hl": [
+       {
+        "c": 3,
+        "tone": "warning"
+       }
+      ],
+      "caption": "3 reversals × 15 + 40 = 85 mW"
+     }
+    }
+   ],
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "From",
+     "To",
+     "Seek",
+     "Reversal"
+    ],
+    "rows": [
+     [
+      80,
+      86,
+      6,
+      "—"
+     ],
+     [
+      86,
+      72,
+      14,
+      "yes"
+     ],
+     [
+      72,
+      116,
+      44,
+      "yes"
+     ],
+     [
+      116,
+      134,
+      18,
+      "—"
+     ],
+     [
+      134,
+      20,
+      114,
+      "yes"
+     ],
+     [
+      20,
+      16,
+      4,
+      "—"
+     ]
+    ],
+    "reveal": 0,
+    "caption": "SSTF from cylinder 80"
+   },
+   "answer": {
+    "value": "85",
+    "number": 85,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Counting the first move 80 → 86 as a reversal — the head was already moving up.",
+    "Including sector/platter switching, which the question says is negligible."
+   ],
+   "verification": "Path span check: 80→86→72→116→134→20→16: up 6, down 14, up 62, down 118 ⇒ 6+14+62+118 = 200."
+  },
+  "cse-2018-cs-54": {
+   "approach": "The TCP header is just data to IP. Each fragment can carry at most MTU − 20 bytes of data, rounded down to a multiple of 8; the offset field counts 8-byte units.",
+   "concepts": [
+    "IPv4 fragmentation",
+    "Fragment offset"
+   ],
+   "steps": [
+    {
+     "title": "Data per fragment",
+     "body": "IP payload $= 4500 - 20 = 4480$ bytes. Max data per fragment $= 600 - 20 = 580$, rounded down to a multiple of 8 ⇒ $576$ bytes."
+    },
+    {
+     "title": "Offsets",
+     "body": "Fragment 1: offset $0$. Fragment 2: $576/8 = 72$. Fragment 3: $2\\times576/8 = 1152/8 = 144$."
+    }
+   ],
+   "answer": {
+    "value": "144",
+    "number": 144,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Subtracting the 40-byte TCP header from each fragment — only the first fragment contains it, as ordinary data.",
+    "Using 580 (not a multiple of 8)."
+   ],
+   "verification": "$4480 = 7\\times576 + 448$ ⇒ 8 fragments; offsets 0, 72, 144, …, 504."
+  },
+  "cse-2018-cs-55": {
+   "approach": "Q avoids a collision only if it hears P's signal while still carrier-sensing. Q senses during t = 0 to 5, so P's signal must reach Q within 5 time units: d/10 ≤ 5.",
+   "concepts": [
+    "CSMA",
+    "Propagation delay",
+    "Carrier sensing"
+   ],
+   "steps": [
+    {
+     "title": "Timeline",
+     "body": "P starts sending at $t=0$. Q senses from $t=0$ to $t=5$ and, if it hears nothing, transmits right after. P's signal reaches Q at $t = d/10$."
+    },
+    {
+     "title": "Condition",
+     "body": "Q defers (and so avoids a collision) iff the signal arrives inside the sensing window: $\\dfrac{d}{10} \\le 5 \\Rightarrow d \\le 50$ m."
+    },
+    {
+     "title": "Answer",
+     "body": "Maximum $d = 50$ m. For larger $d$, Q finishes sensing before P's signal arrives, starts sending, and the two transmissions overlap."
+    }
+   ],
+   "answer": {
+    "value": "50",
+    "number": 50,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using the 20-unit transmission time — it does not matter for whether Q hears P in time."
+   ],
+   "verification": "At $d=50$ the signal arrives at $t=5$, the last sensing instant; at $d=60$ it arrives at $t=6$, after Q has already started."
+  }
+ }
+}
