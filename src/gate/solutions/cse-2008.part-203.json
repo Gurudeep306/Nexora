@@ -1,0 +1,1157 @@
+{
+ "paper": "cse-2008",
+ "version": 2,
+ "solutions": {
+  "cse-2008-cs-67": {
+   "approach": "Count how many bits are needed to name what each entry points to: third-level entries point to 4 KB frames, while first- and second-level entries point to page tables whose size is fixed by the 9-bit indices.",
+   "concepts": [
+    "Multilevel paging",
+    "Page table entry size",
+    "Alignment of page tables"
+   ],
+   "given": "| Item | Value |\n|---|---|\n| Physical address | 36 bits |\n| Frame | 4 KB = $2^{12}$ B |\n| PTE | 4 B |\n| Index bits L1 / L2 / L3 | 2 / 9 / 9 |",
+   "steps": [
+    {
+     "title": "Third-level entries point to frames",
+     "body": "Number of frames $=\\dfrac{2^{36}}{2^{12}}=2^{24}$, so a third-level entry needs **24 bits** of frame number."
+    },
+    {
+     "title": "Size of a second/third-level table",
+     "body": "Each such table is indexed by 9 bits: $2^{9}$ entries $\\times 4$ B $=2^{11}$ B $=2$ KB."
+    },
+    {
+     "title": "Bits to locate a 2 KB table",
+     "body": "Tables are 2 KB-aligned, so the low 11 bits of their base address are 0. The entry must hold $36-11=$ **25 bits**. This applies to first-level entries (pointing to second-level tables) and second-level entries (pointing to third-level tables)."
+    },
+    {
+     "title": "Result",
+     "body": "First, second, third level: **25, 25 and 24** bits — option (D)."
+    }
+   ],
+   "answer": {
+    "value": "25, 25 and 24",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "20 bits would address only $2^{20}$ frames of 4 KB = 4 GB, but physical memory is $2^{36}$ B = 64 GB."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "24 bits is right only for the last level; inner tables are 2 KB, not 4 KB, so they need 25 bits."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Uses 24 for inner levels (assumes 4 KB tables) and 20 for frames — both wrong."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "25 bits locate a 2 KB-aligned table in 64 GB; 24 bits name a 4 KB frame."
+    }
+   ],
+   "pitfalls": [
+    "Assuming every page table occupies a whole 4 KB frame — here the 9-bit-indexed tables are only 2 KB."
+   ],
+   "verification": "$2^{25}\\times 2^{11}=2^{36}$ and $2^{24}\\times2^{12}=2^{36}$, both covering the full physical space."
+  },
+  "cse-2008-cs-68": {
+   "approach": "Since R and S share only the key attributes P and Q, the natural join pairs tuples with equal (P, Q); compare each query with $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$.",
+   "concepts": [
+    "Natural join",
+    "Set intersection",
+    "Projection"
+   ],
+   "steps": [
+    {
+     "title": "Query I",
+     "body": "$R\\bowtie S$ joins on the common attributes $\\{P,Q\\}$, so it keeps exactly the $(P,Q)$ pairs present in both. $\\Pi_P$ gives the P of those common pairs."
+    },
+    {
+     "title": "Queries III and IV",
+     "body": "III is directly $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$. IV uses $A-(A-B)=A\\cap B$, so it is the same as III. Both equal I."
+    },
+    {
+     "title": "Query II differs",
+     "body": "$\\Pi_P(R)\\bowtie\\Pi_P(S)=\\Pi_P(R)\\cap\\Pi_P(S)$ only matches P, ignoring Q. Counter-example: R has a tuple with $(P,Q)=(1,a)$ and S one with $(1,b)$: II gives $\\{1\\}$, while I, III and IV give $\\varnothing$."
+    },
+    {
+     "title": "Result",
+     "body": "I, III and IV are equivalent — option (D)."
+    }
+   ],
+   "answer": {
+    "value": "Only I, III and IV",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "II is not equivalent to I (counter-example with same P, different Q)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Misses IV, which equals III because $A-(A-B)=A\\cap B$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Includes II, which matches on P alone."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "I, III and IV all return P of the $(P,Q)$ pairs common to R and S."
+    }
+   ],
+   "pitfalls": [
+    "Projecting to P before joining loses the Q constraint."
+   ],
+   "verification": "Checked with the two-tuple counter-example: II returns {1}, the others return the empty set."
+  },
+  "cse-2008-cs-69": {
+   "approach": "Find all candidate keys of each scheme, then test BCNF/3NF/2NF against each FD that applies.",
+   "concepts": [
+    "Candidate keys",
+    "2NF",
+    "3NF",
+    "BCNF"
+   ],
+   "steps": [
+    {
+     "title": "Keys of Book",
+     "body": "Title Author $\\to$ Catalog_no $\\to$ Publisher Year, and then FD III gives Price, so {Title, Author} is a key. Also Catalog_no $\\to$ Title Author, so {Catalog_no} is a key too. Prime attributes: Title, Author, Catalog_no."
+    },
+    {
+     "title": "Book is 2NF but not 3NF",
+     "body": "FD III: {Publisher, Title, Year} $\\to$ Price. The LHS is not a superkey and Price is non-prime, so this is a transitive dependency — **not 3NF**. It is not partial: {Publisher, Title, Year} is not a proper subset of any key. No non-prime attribute depends on part of a key, so Book is **in 2NF**."
+    },
+    {
+     "title": "Collection",
+     "body": "Collection(Title, Author, Catalog_no) has Title Author $\\to$ Catalog_no and Catalog_no $\\to$ Title Author. Both LHS are keys, so it is in **BCNF**, hence also in 3NF."
+    },
+    {
+     "title": "Pick the statement",
+     "body": "Book: 2NF (not 3NF). Collection: 3NF (in fact BCNF). Option (C) is the only true statement."
+    }
+   ],
+   "answer": {
+    "value": "Book is in 2NF and Collection is in 3NF",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Book violates BCNF (and 3NF) through Publisher Title Year → Price."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Book is not in 3NF."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Book reaches 2NF but not 3NF; Collection is in BCNF and therefore in 3NF."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Collection is in BCNF, not '2NF only'."
+    }
+   ],
+   "pitfalls": [
+    "Treating Publisher Title Year → Price as partial because Title is in the key — a partial dependency needs a proper subset of a key on the left."
+   ],
+   "verification": "Closure of {Publisher, Title, Year} is {Publisher, Title, Year, Price}, which lacks Author, so it is not a superkey."
+  },
+  "cse-2008-cs-70": {
+   "approach": "A secondary index on a key field is dense: one entry (key + block pointer) per record. Divide by the index blocking factor level by level.",
+   "concepts": [
+    "Secondary index",
+    "Multilevel index",
+    "Blocking factor"
+   ],
+   "steps": [
+    {
+     "title": "Index blocking factor",
+     "body": "Entry size $=6+10=16$ B. Entries per block $=\\lfloor 1024/16\\rfloor=64$."
+    },
+    {
+     "title": "First level (dense)",
+     "body": "16384 records give 16384 entries: $16384/64=256$ blocks."
+    },
+    {
+     "title": "Second level",
+     "body": "One entry per first-level block: $256/64=4$ blocks (a third level would have 1 block)."
+    },
+    {
+     "title": "Result",
+     "body": "256 and 4 — option (C)."
+    }
+   ],
+   "answer": {
+    "value": "256 and 4",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Indexes data blocks (sparse) and miscounts; a secondary index must be dense."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "128 would need 128 entries per block (8 B each); entries here are 16 B."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$16384/64=256$ first-level blocks, $256/64=4$ second-level blocks."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "512 would need 32 entries per block; $1024/16$ is 64."
+    }
+   ],
+   "pitfalls": [
+    "Using the data file's block count (sparse index) for a secondary index — the file is ordered on a different field, so every record needs an entry."
+   ],
+   "verification": "Data file has $1024/32=32$ records per block, i.e. 512 data blocks — irrelevant for a dense secondary index."
+  },
+  "cse-2008-cs-71": {
+   "approach": "Split the 32-bit address into tag, set index and offset, then multiply the tag width by the number of cache lines.",
+   "concepts": [
+    "Set-associative cache",
+    "Address split",
+    "Tag directory"
+   ],
+   "given": "| Item | Value |\n|---|---|\n| Cache | 64 KB, 2-way, 16 B blocks |\n| Address | 32-bit virtual |\n| ARR | 1024×1024 doubles (8 B), row major, starts at page 0xFF000 |",
+   "steps": [
+    {
+     "title": "Lines and sets",
+     "body": "Lines $=\\dfrac{64\\text{ KB}}{16\\text{ B}}=\\dfrac{2^{16}}{2^4}=2^{12}=4096$. Sets $=4096/2=2048=2^{11}$."
+    },
+    {
+     "title": "Address split",
+     "body": "Offset 4 bits, index 11 bits, tag $=32-11-4=17$ bits."
+    },
+    {
+     "title": "Tag storage",
+     "body": "$4096\\times17=69632$ bits $=\\dfrac{69632}{1024}=68$ Kbits."
+    }
+   ],
+   "answer": {
+    "value": "68 Kbits",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "32 Kbits would be e.g. 2048 × 16 bits — wrong count and width."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "2048 × 17 = 34 Kbits counts sets instead of lines."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "4096 × 16 = 64 Kbits — tag width off by one (index is 11 bits, not 12)."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "4096 lines × 17-bit tags = 68 Kbits."
+    }
+   ],
+   "pitfalls": [
+    "Using lines instead of sets for the index width — in a 2-way cache, index bits = log2(lines/2)."
+   ],
+   "verification": "$17+11+4=32$ bits."
+  },
+  "cse-2008-cs-72": {
+   "approach": "Two addresses share a cache set when they differ by a multiple of (number of sets × block size) = $2^{11}\\times16=32$ KB.",
+   "concepts": [
+    "Cache index",
+    "Row-major layout"
+   ],
+   "given": "| Item | Value |\n|---|---|\n| Cache | 64 KB, 2-way, 16 B blocks |\n| Address | 32-bit virtual |\n| ARR | 1024×1024 doubles (8 B), row major, starts at page 0xFF000 |",
+   "steps": [
+    {
+     "title": "Index period",
+     "body": "Index = address bits 4–14. Addresses map to the same set iff their difference is a multiple of $2^{15}$ B $=32$ KB."
+    },
+    {
+     "title": "Row size",
+     "body": "One row $=1024\\times8=8192$ B $=8$ KB, so ARR[i][0] is at offset $8i$ KB."
+    },
+    {
+     "title": "Find the match",
+     "body": "ARR[4][0] is at $4\\times8=32$ KB: same index as ARR[0][0]. ARR[5][0] is at 40 KB, ARR[0][4] at 32 B, ARR[0][5] at 40 B — all different sets."
+    }
+   ],
+   "answer": {
+    "value": "ARR[4][0]",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Offset 32 B is 2 blocks later: set index differs by 2."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Offset 32 KB $=2^{15}$ B, exactly one full index period."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Offset 40 B lies in block 2: different set."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Offset 40 KB is 8 KB past the period: set differs by 512."
+    }
+   ],
+   "pitfalls": [
+    "Using the cache size (64 KB) as the period; for a 2-way cache the period is cache size / 2."
+   ],
+   "verification": "The base 0xFF000000 is 32 KB-aligned, so only the relative offsets decide the set."
+  },
+  "cse-2008-cs-73": {
+   "approach": "The loop walks memory sequentially; each 16 B block holds two doubles, so every block gives one miss followed by one hit.",
+   "concepts": [
+    "Spatial locality",
+    "Hit ratio"
+   ],
+   "given": "| Item | Value |\n|---|---|\n| Cache | 64 KB, 2-way, 16 B blocks |\n| Address | 32-bit virtual |\n| ARR | 1024×1024 doubles (8 B), row major, starts at page 0xFF000 |",
+   "steps": [
+    {
+     "title": "Doubles per block",
+     "body": "$16/8=2$ doubles per block."
+    },
+    {
+     "title": "Access pattern",
+     "body": "Row-major traversal touches ARR[i][j], ARR[i][j+1], … in address order. The first access to a block misses (cold, no prefetch), the second hits. Blocks are never revisited, so conflicts do not matter."
+    },
+    {
+     "title": "Hit ratio",
+     "body": "$\\dfrac{1\\text{ hit}}{2\\text{ accesses}}=50\\%$."
+    }
+   ],
+   "answer": {
+    "value": "50%",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Would need one element per block, or eviction between a block's two uses."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Would need 4 elements per block with 3 misses, which does not happen here."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "One miss and one hit per 16 B block."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Would need 4 doubles per block (32 B blocks)."
+    }
+   ],
+   "pitfalls": [
+    "Counting conflict misses — each block is used twice in a row and never again, so replacement is irrelevant."
+   ],
+   "verification": "Accesses $=2^{20}$; misses $=2^{23}\\text{ B}/16=2^{19}$; hits $=2^{19}$: 50%."
+  },
+  "cse-2008-cs-74": {
+   "approach": "f1 recomputes subproblems with two recursive calls (Fibonacci-like call tree, exponential); f2 is a single loop (linear).",
+   "concepts": [
+    "Recurrence for running time",
+    "Exponential recursion",
+    "Iterative DP"
+   ],
+   "steps": [
+    {
+     "title": "Function f1",
+     "body": "$T(n)=T(n-1)+T(n-2)+c$, the Fibonacci recurrence, so $T(n)=\\Theta(\\varphi^n)$ with $\\varphi\\approx1.618$ — exponential. Among the options this is written $\\Theta(2^n)$ (it is $O(2^n)$)."
+    },
+    {
+     "title": "Function f2",
+     "body": "One loop from 2 to $n$ with $O(1)$ work per iteration: $\\Theta(n)$."
+    },
+    {
+     "title": "Result",
+     "body": "Exponential and linear — option (B)."
+    }
+   ],
+   "answer": {
+    "value": "$\\Theta(2^n)$ and $\\Theta(n)$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "f1 is not linear: no memoisation, two calls per level."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "f1 exponential (two-branch recursion), f2 linear loop."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Swaps the two."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "f2 does constant work per iteration."
+    }
+   ],
+   "pitfalls": [
+    "Strictly f1 is $\\Theta(1.618^n)$, not $\\Theta(2^n)$; the intended answer treats it as exponential."
+   ],
+   "verification": "Call count $C(n)=C(n-1)+C(n-2)+1$ grows like Fibonacci."
+  },
+  "cse-2008-cs-75": {
+   "approach": "Both compute $a_n=2a_{n-1}+3a_{n-2}$ with $a_0=0,a_1=1$: f2 keeps $Y[i]=2X[i]$, $Z[i]=3X[i]$, so $X[i]=2X[i-1]+3X[i-2]$. Tabulate up to $n=8$.",
+   "concepts": [
+    "Recurrence relations",
+    "Tracing code"
+   ],
+   "steps": [
+    {
+     "title": "Same recurrence",
+     "body": "f1: $f(n)=2f(n-1)+3f(n-2)$, $f(0)=0,f(1)=1$. f2: $X[i]=Y[i-1]+Z[i-2]$ with $Y[1]=2=2X[1]$, $Z[0]=0=3X[0]$ and $Y[k]=2X[k]$, $Z[k]=3X[k]$ afterwards, so $X[i]=2X[i-1]+3X[i-2]$ with $X[0]=0,X[1]=1$.",
+     "scene": {
+      "reveal": 2,
+      "caption": "Base values a0 = 0, a1 = 1"
+     }
+    },
+    {
+     "title": "Tabulate",
+     "body": "$a_2=2\\cdot1+3\\cdot0=2$, $a_3=2\\cdot2+3\\cdot1=7$, $a_4=14+6=20$, $a_5=40+21=61$, $a_6=122+60=182$, $a_7=364+183=547$, $a_8=1094+546=1640$.",
+     "scene": {
+      "reveal": 9,
+      "hl": [
+       {
+        "r": 0,
+        "c": 8,
+        "tone": "success"
+       }
+      ],
+      "caption": "a8 = 2·547 + 3·182 = 1640"
+     }
+    },
+    {
+     "title": "Closed-form check",
+     "body": "Roots of $x^2=2x+3$ are $3$ and $-1$: $a_n=\\dfrac{3^n-(-1)^n}{4}$. $a_8=\\dfrac{6561-1}{4}=1640$. Both functions return **1640** — option (C)."
+    }
+   ],
+   "answer": {
+    "value": "1640 and 1640",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "1661 is not a term of this sequence."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "59 is far too small (the sequence grows like $3^n/4$)."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Both functions compute the same recurrence; $a_8=1640$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "f2 does not differ from f1."
+    }
+   ],
+   "shortcut": "$a_n=(3^n-(-1)^n)/4$ gives $a_8=6560/4=1640$ instantly.",
+   "pitfalls": [
+    "Thinking f2's three arrays compute something different — Y and Z are just 2X and 3X."
+   ],
+   "verification": "The closed form matches every tabulated term, e.g. $a_4=(81-1)/4=20$.",
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5",
+     "6",
+     "7",
+     "8"
+    ],
+    "rowLabels": [
+     "a(n)"
+    ],
+    "rows": [
+     [
+      0,
+      1,
+      2,
+      7,
+      20,
+      61,
+      182,
+      547,
+      1640
+     ]
+    ],
+    "reveal": 0,
+    "mono": true
+   }
+  },
+  "cse-2008-cs-76": {
+   "approach": "By definition, the delay slot is the instruction placed right after the branch in memory; it always executes before control transfers.",
+   "concepts": [
+    "Delayed branch",
+    "Control hazard"
+   ],
+   "steps": [
+    {
+     "title": "Definition",
+     "body": "With delayed branching, the instruction in the slot (the next sequential instruction in memory after the branch) is always executed, whether or not the branch is taken; only then does the branch take effect."
+    },
+    {
+     "title": "Result",
+     "body": "Only the next sequential instruction in memory is guaranteed to run on both outcomes — option (A)."
+    }
+   ],
+   "answer": {
+    "value": "The instruction following the branch in memory is executed",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "This is exactly the delay-slot semantics."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "The fall-through path continues after the slot, and only when the branch is not taken."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The target instruction runs only when taken, after the slot."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "The point of delayed branching is to avoid lengthening the branch."
+    }
+   ],
+   "pitfalls": [
+    "Confusing the delay slot with branch prediction (which speculates on one path)."
+   ],
+   "verification": "Consistent with Q77: the slot must hold an instruction safe to run on both paths."
+  },
+  "cse-2008-cs-77": {
+   "approach": "An instruction can move into the delay slot (after the branch) only if neither the instructions it jumps over nor the branch itself depend on it.",
+   "concepts": [
+    "Delay slot scheduling",
+    "RAW dependence"
+   ],
+   "steps": [
+    {
+     "title": "Dependences",
+     "body": "I1 writes R2, read by I3. I2 writes R4, read by I4. I3 writes R1, read by I4 and by the branch (R1 == 0). I4 is a store: it writes memory, no register."
+    },
+    {
+     "title": "Check each candidate",
+     "body": "- I1 after the branch: I3 would read an old R2. ✗\n- I2: I4 would use an old R4. ✗\n- I3: the branch would test an old R1. ✗\n- I4: reads R1 and R4 (already computed); nothing after it depends on it, and it executes on both paths anyway. ✓"
+    },
+    {
+     "title": "Result",
+     "body": "Only **I4** — option (D)."
+    }
+   ],
+   "answer": {
+    "value": "I4",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "I3 needs R2 from I1."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "I4 needs R4 from I2."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The branch condition needs R1 from I3."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "The store has no dependants and runs regardless of the outcome."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting that the branch itself reads R1 produced by I3."
+   ],
+   "verification": "The reordered sequence I1, I2, I3, BRANCH, I4 produces identical register and memory state on both paths."
+  },
+  "cse-2008-cs-78": {
+   "approach": "Classify valid strings by their last bit: ending in 1 extends any valid string of length $n-1$; ending in 0 must end in '10', extending any valid string of length $n-2$.",
+   "concepts": [
+    "Recurrence relations",
+    "Counting strings"
+   ],
+   "steps": [
+    {
+     "title": "Ends in 1",
+     "body": "Append 1 to any valid string of length $n-1$: $x_{n-1}$ strings."
+    },
+    {
+     "title": "Ends in 0",
+     "body": "The previous bit must be 1, so the string is (valid string of length $n-2$) + '10': $x_{n-2}$ strings."
+    },
+    {
+     "title": "Result",
+     "body": "$x_n=x_{n-1}+x_{n-2}$ — option (D)."
+    }
+   ],
+   "answer": {
+    "value": "$x_n=x_{n-1}+x_{n-2}$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$2x_{n-1}$ counts all extensions, including those creating '00' ($x_3$ would be 6, not 5)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Gives logarithmic growth; $x_3$ would be $x_1+1=3$, not 5."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$x_3=x_1+3=5$ happens to fit, but $x_4=x_2+4=7\\ne8$."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Split by the last bit as shown."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting that a trailing 0 forces a 1 before it."
+   ],
+   "verification": "$x_1=2$ (0, 1), $x_2=3$ (01, 10, 11), $x_3=5$ (010, 011, 101, 110, 111) $=3+2$."
+  },
+  "cse-2008-cs-79": {
+   "approach": "Run the recurrence $x_n=x_{n-1}+x_{n-2}$ from $x_1=2$, $x_2=3$.",
+   "concepts": [
+    "Fibonacci recurrence"
+   ],
+   "steps": [
+    {
+     "title": "Base values",
+     "body": "$x_1=2$ (0, 1); $x_2=3$ (01, 10, 11)."
+    },
+    {
+     "title": "Iterate",
+     "body": "$x_3=3+2=5$, $x_4=5+3=8$, $x_5=8+5=13$."
+    },
+    {
+     "title": "Compare with options",
+     "body": "$x_5=13$ is **not among the options** (5, 7, 8, 16). The nearest listed value, 8, is $x_4$ — what an off-by-one indexing gives. Option (C) is marked only as the closest intended value."
+    }
+   ],
+   "answer": {
+    "value": "$x_5=13$ (not listed); closest option (C) 8 $=x_4$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": false,
+    "keyNote": "The stored key is \"13\", the true value, which matches no option letter. No option is actually correct; (C) is chosen only as the off-by-one value $x_4=8$. Flagged for review."
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "5 is $x_3$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "7 is not a term of the sequence 2, 3, 5, 8, 13."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Not truly correct: 8 is $x_4$; the real $x_5=13$ is missing from the options."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$16=2^4$ counts all strings of length 4, ignoring the no-'00' restriction."
+    }
+   ],
+   "pitfalls": [
+    "Starting from $x_1=1$ — both 0 and 1 are valid strings of length 1."
+   ],
+   "verification": "Direct listing for length 3 gives 010, 011, 101, 110, 111 = 5, so the sequence 2, 3, 5, 8, 13 is right."
+  },
+  "cse-2008-cs-80": {
+   "approach": "For element $a_i$, either leave it out (a subset of the first $i-1$ sums to $j$) or include it once (a subset of the first $i-1$ sums to $j-a_i$); OR the two.",
+   "concepts": [
+    "Subset-sum DP",
+    "0/1 choice"
+   ],
+   "steps": [
+    {
+     "title": "Exclude $a_i$",
+     "body": "If $a_i$ is not used, the sum $j$ must come from $a_1,\\ldots,a_{i-1}$: TRUE if $X[i-1,j]$."
+    },
+    {
+     "title": "Include $a_i$ once",
+     "body": "The remaining $j-a_i$ must be formed from $a_1,\\ldots,a_{i-1}$: $X[i-1,j-a_i]$. Using $X[i,\\cdot]$ would allow reusing $a_i$."
+    },
+    {
+     "title": "Combine",
+     "body": "Either choice suffices, so OR them: $X[i,j]=X[i-1,j]\\vee X[i-1,j-a_i]$ — option (B)."
+    }
+   ],
+   "answer": {
+    "value": "$X[i,j]=X[i-1,j]\\vee X[i-1,j-a_i]$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$X[i,j-a_i]$ lets $a_i$ be used repeatedly (unbounded version)."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Exclude or include $a_i$ exactly once."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "AND requires both choices to work, and also allows reuse."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "AND is wrong: one way of reaching $j$ is enough."
+    }
+   ],
+   "pitfalls": [
+    "Using the same row for the include case turns 0/1 subset sum into the unbounded version."
+   ],
+   "verification": "Example $S=\\{1,3\\}$, $W=6$: option A gives $X[2,6]$ TRUE via 3+3, which is wrong; option B correctly gives FALSE."
+  },
+  "cse-2008-cs-81": {
+   "approach": "$X[i,j]$ refers to the first $i$ elements and sum $j$; the question asks about all $n$ elements and sum $W$.",
+   "concepts": [
+    "DP table meaning"
+   ],
+   "steps": [
+    {
+     "title": "Read the definition",
+     "body": "$X[i,j]$ is TRUE iff some subset of $\\{a_1,\\ldots,a_i\\}$ sums to $j$."
+    },
+    {
+     "title": "Plug in",
+     "body": "Whole set: $i=n$; target: $j=W$. So $X[n,W]$ — option (C)."
+    }
+   ],
+   "answer": {
+    "value": "$X[n,W]$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Only considers $a_1$; it is not the entry that decides the problem in general."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Sum 0 is always achievable (empty set) — says nothing about W."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "All $n$ elements, target $W$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Column $n$ is target sum $n$, unrelated to $W$."
+    }
+   ],
+   "pitfalls": [
+    "Picking $X[n,0]$ — the empty subset makes it trivially TRUE."
+   ],
+   "verification": "The DP's final answer is always read at the last row, target column."
+  },
+  "cse-2008-cs-82": {
+   "approach": "Map each strong entity to a table, fold the many-to-one R1 into M, and fold the identifying relationship R2 into the weak entity N's table.",
+   "concepts": [
+    "ER to relational mapping",
+    "Weak entity",
+    "Many-to-one relationship"
+   ],
+   "steps": [
+    {
+     "title": "Read the diagram",
+     "body": "R1 has an arrow into P: each M is related to at most one P (many-to-one). N is a weak entity (double rectangle, partial key N1) identified through R2 (double diamond) by its owner P."
+    },
+    {
+     "title": "Tables",
+     "body": "- M(**M1**, M2, M3, P1) — R1 absorbed as foreign key P1.\n- P(**P1**, P2).\n- N(**P1, N1**, N2) — R2 absorbed; key = owner key + partial key."
+    },
+    {
+     "title": "Count",
+     "body": "3 tables — option (B). Fewer is impossible: P cannot merge into M (one P relates to many M) and N cannot merge into P (one P owns many N)."
+    }
+   ],
+   "answer": {
+    "value": "3",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Would require merging P with M or N, which repeats P's data across many rows."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "M (with P1), P, and N (with P1)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "A separate R1 table is unnecessary for a many-to-one relationship."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "One table per entity and relationship is the naive, not minimal, mapping."
+    }
+   ],
+   "pitfalls": [
+    "Making a separate table for the identifying relationship R2 — it is always absorbed into the weak entity's table."
+   ],
+   "verification": "Every attribute and relationship is represented: M1–M3, P1–P2, N1–N2, R1 via M.P1, R2 via N.P1."
+  },
+  "cse-2008-cs-83": {
+   "approach": "Use the three tables from Q82 and match the options against them.",
+   "concepts": [
+    "ER to relational mapping",
+    "Foreign keys"
+   ],
+   "steps": [
+    {
+     "title": "Tables from Q82",
+     "body": "M(M1, M2, M3, P1), P(P1, P2), N(P1, N1, N2)."
+    },
+    {
+     "title": "Match",
+     "body": "{M1, M2, M3, P1} is exactly table M with R1 absorbed — option (A)."
+    }
+   ],
+   "answer": {
+    "value": "{M1, M2, M3, P1}",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Table for M with foreign key P1 representing R1."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Mixes M and N; N is not related to M directly."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "No table combines M1 with N1."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A separate R1 table — not part of the 3-table minimal design."
+    }
+   ],
+   "pitfalls": [
+    "Picking the R1 relationship table {M1, P1}, which belongs to a non-minimal design."
+   ],
+   "verification": "Consistent with the count of 3 tables in Q82."
+  },
+  "cse-2008-cs-84": {
+   "approach": "Trace the loop on each case. The bug is $i=k$: once $j=i+1$, $k=i$ and if $Y[k]<x$ nothing changes, so the loop never terminates.",
+   "concepts": [
+    "Binary search",
+    "Loop termination",
+    "Code tracing"
+   ],
+   "steps": [
+    {
+     "title": "Option C trace",
+     "body": "Y all 2, $x>2$ (say 3): every test $Y[k]<x$ is true, so only $i$ moves.\n\n| $i,j$ | $k$ | update |\n|---|---|---|\n| 0, 9 | 4 | i = 4 |\n| 4, 9 | 6 | i = 6 |\n| 6, 9 | 7 | i = 7 |\n| 7, 9 | 8 | i = 8 |\n| 8, 9 | 8 | i = 8 |",
+     "scene": {
+      "pointers": [
+       {
+        "name": "i",
+        "at": 8
+       },
+       {
+        "name": "j",
+        "at": 9
+       },
+       {
+        "name": "k",
+        "at": 8
+       }
+      ],
+      "hl": [
+       {
+        "at": [
+         8,
+         8
+        ],
+        "tone": "error"
+       }
+      ],
+      "caption": "i = 8, j = 9: k = (8+9)/2 = 8 forever"
+     }
+    },
+    {
+     "title": "Infinite loop",
+     "body": "From $i=8,j=9$: $k=\\lfloor17/2\\rfloor=8$, $Y[8]=2<x$ so $i=8$ again; $i<j$ stays true and $Y[k]\\ne x$ — the loop never ends. The program **fails** on (C)."
+    },
+    {
+     "title": "Other options terminate correctly",
+     "body": "- (A) $x<10$ in 1..10: e.g. $x=9$: k = 4, 6, 7, 8 → found. Small $x$ moves $j$ down until $i=j=0$.\n- (B) $x<1$: always $j=k$, so $j$ shrinks to 0 and the loop stops, printing 'not in the array' correctly.\n- (D) every even $x$ in range is present and is found (e.g. $x=18$: k = 4, 6, 7, 8 → found)."
+    }
+   ],
+   "answer": {
+    "value": "Y = [2 2 … 2] and x > 2",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Searches move toward the target and stop (found, or $j$ reaches $i$)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Only $j$ moves; it reaches 0 and the loop stops with the correct message."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$i$ gets stuck at 8 with $j=9$: infinite loop."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "All such $x$ are present and are found before $i$ and $j$ become adjacent."
+    }
+   ],
+   "pitfalls": [
+    "The failure is non-termination, not a wrong printed message."
+   ],
+   "verification": "Any $x$ larger than every element drives $i$ toward $j=9$ and sticks at $i=8$; option A avoids this only because it restricts $x<10$.",
+   "animation": {
+    "kind": "array",
+    "label": "Y",
+    "cells": [
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2,
+     2
+    ],
+    "pointers": [
+     {
+      "name": "i",
+      "at": 0
+     },
+     {
+      "name": "j",
+      "at": 9
+     },
+     {
+      "name": "k",
+      "at": 4
+     }
+    ],
+    "caption": "Start: i = 0, j = 9, x = 3"
+   }
+  },
+  "cse-2008-cs-85": {
+   "approach": "Make every iteration shrink the interval $[i,j]$ by excluding the probed index $k$: $i=k+1$ on the right branch, $j=k-1$ on the left.",
+   "concepts": [
+    "Binary search",
+    "Loop invariants"
+   ],
+   "steps": [
+    {
+     "title": "Why the bug exists",
+     "body": "With $i=k$ the interval does not shrink when $j=i+1$ (since then $k=i$), giving the infinite loop of Q84."
+    },
+    {
+     "title": "Option A",
+     "body": "$i=k+1$ / $j=k-1$ removes $k$ every time, so $j-i$ strictly decreases and the loop terminates. Re-run Q84's case: k = 4 → i = 5, k = 7 → i = 8, k = 8 → i = 9; $i<j$ fails and it prints 'not in the array'. Correct."
+    },
+    {
+     "title": "Other options",
+     "body": "(B) moves the bounds the wrong way (the interval can grow). (C) still sets $i=k$ and hangs on the same input. (D) inverts the loop condition, so the search stops after one probe unless the target is hit immediately."
+    },
+    {
+     "title": "Result",
+     "body": "Option (A) is the intended correction."
+    }
+   ],
+   "answer": {
+    "value": "Change line 6 to `if (Y[k] < x) i = k+1; else j = k-1;`",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Strictly shrinks the interval, removing the non-termination."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$i=k-1$ / $j=k+1$ moves the bounds outward."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Still $i=k$: Y all 2 with $x>2$ still loops forever."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Exits as soon as $Y[k]\\ne x$, so most searches stop after one probe."
+    }
+   ],
+   "pitfalls": [
+    "Strictly, (A) also needs the loop test $i\\le j$: e.g. Y = 1..10, x = 1 ends with $i=j=0$ untested (k = 1) and prints 'not in the array'. It is still the intended (best) answer."
+   ],
+   "verification": "Checked termination on the Q84 failing input and the boundary case x = 1 noted in the pitfalls."
+  }
+ }
+}

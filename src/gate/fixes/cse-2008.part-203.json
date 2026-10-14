@@ -1,0 +1,21 @@
+{
+ "paper": "cse-2008",
+ "fixes": [
+  {
+   "id": "cse-2008-cs-68",
+   "field": "text",
+   "before": "Let R and S be two relations with the following schema\n\nR(<u>P</u>, <u>Q</u>, R1, R2, R3)\n\nS(<u>P</u>, <u>Q</u>, S1, S2)\n\nwhere {P,Q} is the key for both schemas. Which of the following queries are equivalent?\n\nI. $\\Pi_P(R\\bowtie S)$\n\nII. $\\Pi_P(R)\\bowtie\\Pi_P(S)$\n\nIII. $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$\n\nIV. $\\Pi_P(\\Pi_{P,Q}(R)-(\\Pi_{P,Q}(R)-\\Pi_{P,Q}(S)))$",
+   "after": "Let R and S be two relations with the following schema\n\n$R(\\underline{P},\\underline{Q},R1,R2,R3)$\n\n$S(\\underline{P},\\underline{Q},S1,S2)$\n\nwhere {P,Q} is the key for both schemas. Which of the following queries are equivalent?\n\nI. $\\Pi_P(R\\bowtie S)$\n\nII. $\\Pi_P(R)\\bowtie\\Pi_P(S)$\n\nIII. $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$\n\nIV. $\\Pi_P(\\Pi_{P,Q}(R)-(\\Pi_{P,Q}(R)-\\Pi_{P,Q}(S)))$",
+   "reason": "Replace raw HTML <u> underlines with KaTeX \\underline for key attributes.",
+   "source": "GATE2008.pdf p14"
+  },
+  {
+   "id": "cse-2008-cs-79",
+   "field": "needsReview",
+   "before": false,
+   "after": true,
+   "reason": "True value x5 = 13 is not among the options (5, 7, 8, 16); stored key '13' names no option.",
+   "source": "independent solution"
+  }
+ ]
+}
