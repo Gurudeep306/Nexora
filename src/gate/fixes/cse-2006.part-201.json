@@ -1,0 +1,71 @@
+{
+  "paper": "cse-2006",
+  "fixes": [
+    {
+      "id": "cse-2006-cs-35",
+      "field": "reviewNote",
+      "before": "Option overlines are hard to read in the scan; expressions taken from the web.",
+      "after": null,
+      "reason": "Options re-checked against a 250 dpi render of the scan; all four expressions match the stored text.",
+      "source": "GATE 2006 CS question paper Q.35 (scanned PDF, page 5)"
+    },
+    {
+      "id": "cse-2006-cs-37",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Wiring confirmed on a 500 dpi render: data -> D(q0); XOR(q0, q2 feedback) -> D(q1); q1 -> D(q2). Simulation of 100110000 gives q2q1q0 = 010, matching key C.",
+      "source": "GATE 2006 CS question paper Q.37 (scanned PDF, page 5) + independent simulation"
+    },
+    {
+      "id": "cse-2006-cs-37",
+      "field": "reviewNote",
+      "before": "Wiring read from a low-resolution figure (XOR inputs taken as q0 and q2, output to D of q1); a web summary claimed 101 but hand simulation gives 010.",
+      "after": null,
+      "reason": "Figure wiring verified at higher resolution; answer 010 confirmed by simulation.",
+      "source": "GATE 2006 CS question paper Q.37 (scanned PDF, page 5)"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "options",
+      "before": [
+        { "l": "A", "t": "$\\overline{w}xz,\\ wx\\overline{y},\\ x\\overline{y}z,\\ xyz,\\ wyz$" },
+        { "l": "B", "t": "$wxy,\\ \\overline{w}xz,\\ wyz$" },
+        { "l": "C", "t": "$wx\\overline{yz},\\ xz,\\ w\\overline{x}yz$" },
+        { "l": "D", "t": "$wzy,\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$" }
+      ],
+      "after": [
+        { "l": "A", "t": "$\\overline{w}xz,\\ wx\\overline{y},\\ x\\overline{y}z,\\ xyz,\\ wyz$" },
+        { "l": "B", "t": "$wxz,\\ \\overline{w}xy,\\ wyz$" },
+        { "l": "C", "t": "$wx\\overline{yz},\\ xz,\\ w\\overline{x}yz$" },
+        { "l": "D", "t": "$wx\\overline{y},\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$" }
+      ],
+      "reason": "Scan shows option (b) as 'wxz, w-bar xy, wyz' (letters were swapped). Option (d)'s first cube is blurred; 'wzy' would duplicate wyz and leave minterm 12 uncovered, so it is read as wx(y-bar), the standard transcription.",
+      "source": "GATE 2006 CS question paper Q.38 (scanned PDF, page 5, 500 dpi render)"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key A is provably not hazard-free: no cube of (A) contains both minterms 13 (1101) and 15 (1111). Independent solution gives D.",
+      "source": "Independent solution (adjacent-pair coverage check)"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "reviewNote",
+      "before": "Option overlines were partly illegible in the scan; option expressions taken from the web.",
+      "after": "Stored key A looks wrong: cover (A) = {5,7},{12,13},{5,13},{7,15},{11,15} has no cube containing the adjacent pair 13 (1101) / 15 (1111), so f can glitch when y changes. Option (D) (first cube read as wx y-bar; it is blurred in the scan) covers all six adjacent pairs 5-7, 5-13, 7-15, 13-15, 12-13, 11-15 and should be the answer. (B) and (C) contain false minterms 6 and 14.",
+      "reason": "Record the key disagreement and the blurred option (d) term for review.",
+      "source": "Independent solution + GATE 2006 scanned PDF"
+    },
+    {
+      "id": "cse-2006-cs-43",
+      "field": "reviewNote",
+      "before": "The mask-generation line preceding `temp <- reg & mask` is not visible in the scan; question text follows the printed lines.",
+      "after": null,
+      "reason": "The scan prints the full emulation (temp <- reg & mask; branch if temp non-zero) and the four mask options; nothing is missing.",
+      "source": "GATE 2006 CS question paper Q.43 (scanned PDF, page 6)"
+    }
+  ]
+}
