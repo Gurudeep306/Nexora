@@ -1,0 +1,1128 @@
+{
+  "paper": "cse-2009",
+  "version": 2,
+  "solutions": {
+    "cse-2009-cs-1": {
+      "approach": "Recall the four group axioms (closure, associativity, identity, inverses). Commutativity is the extra axiom that makes a group abelian, so it is not required.",
+      "concepts": [
+        "Group axioms",
+        "Abelian group"
+      ],
+      "steps": [
+        {
+          "title": "Group axioms",
+          "body": "A set $G$ with operation $*$ is a group if it is **closed**, $*$ is **associative**, there is an **identity** $e$, and every element has an **inverse**."
+        },
+        {
+          "title": "Commutativity is optional",
+          "body": "$a*b=b*a$ for all $a,b$ is only required for an **abelian** group. Counter-example: the group of invertible $2\\times 2$ real matrices under multiplication is not commutative."
+        }
+      ],
+      "answer": {
+        "value": "Commutativity",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — commutativity holds only in abelian groups; e.g. $GL_2(\\mathbb{R})$ is a non-commutative group."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Associativity is one of the group axioms, so every group has it."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Every element must have an inverse in a group — it is an axiom."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Existence of an identity element is a group axiom."
+        }
+      ],
+      "pitfalls": [
+        "Confusing a group with an abelian group."
+      ],
+      "verification": "Non-abelian groups such as $S_3$ (permutations of 3 symbols) satisfy B, C, D but not A."
+    },
+    "cse-2009-cs-2": {
+      "approach": "A graph with no odd cycle is bipartite; a connected graph with at least one edge needs at least 2 colours, and a bipartition gives exactly 2.",
+      "concepts": [
+        "Bipartite graph",
+        "Chromatic number",
+        "König's theorem"
+      ],
+      "steps": [
+        {
+          "title": "No odd cycle ⇒ bipartite",
+          "body": "A graph is bipartite iff it has no odd-length cycle. Colour the two parts with two colours — no edge joins two vertices of the same part, so $\\chi \\le 2$."
+        },
+        {
+          "title": "At least 2 colours",
+          "body": "The graph is connected with $n \\ge 2$ vertices, so it has an edge; its two endpoints need different colours, so $\\chi \\ge 2$. Hence $\\chi = 2$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — bipartite (no odd cycles) and has at least one edge, so $\\chi = 2$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Three colours are needed only when there is an odd cycle (e.g. a triangle)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n-1$ equals 2 only for $n=3$; e.g. a path on 5 vertices needs 2, not 4."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$n$ colours are needed only for $K_n$, which has triangles for $n \\ge 3$."
+        }
+      ],
+      "verification": "Example: the path $a-b-c-d$ ($n=4$) is coloured 1,2,1,2 — two colours."
+    },
+    "cse-2009-cs-3": {
+      "approach": "Pigeonhole: in a simple connected graph on n vertices every degree lies in {1, …, n−1} — only n−1 possible values for n vertices.",
+      "concepts": [
+        "Pigeonhole principle",
+        "Vertex degree"
+      ],
+      "steps": [
+        {
+          "title": "Possible degrees",
+          "body": "In a simple graph a vertex has at most $n-1$ neighbours. Connected with $n>2$ ⇒ no isolated vertex, so every degree is in $\\{1,2,\\dots,n-1\\}$: only $n-1$ values."
+        },
+        {
+          "title": "Pigeonhole",
+          "body": "$n$ vertices (pigeons) into $n-1$ degree values (holes) ⇒ at least two vertices share a degree. So (B) always holds."
+        }
+      ],
+      "answer": {
+        "value": "At least two vertices have the same degree.",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Impossible by the pigeonhole argument — some two vertices always share a degree."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — $n$ vertices, only $n-1$ possible degrees $1..n-1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not always: the path $a-b-c$ has degrees 1, 2, 1 — only two vertices share a degree."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not always: the path on 3 vertices has degrees 1, 2, 1."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that degree 0 and degree $n-1$ cannot coexist (here connectedness rules out 0 altogether)."
+      ],
+      "verification": "Checked on the path $P_3$ (degrees 1,2,1): B holds, C and D fail."
+    },
+    "cse-2009-cs-4": {
+      "approach": "Test each property with one witness pair: a pair (a,b) without (b,a) breaks symmetry; a pair with both (a,b),(b,a), a ≠ b, breaks antisymmetry.",
+      "concepts": [
+        "Symmetric relation",
+        "Antisymmetric relation"
+      ],
+      "steps": [
+        {
+          "title": "Symmetry fails",
+          "body": "$(x,y) \\in R$ but $(y,x) \\notin R$, so $R$ is **not symmetric**."
+        },
+        {
+          "title": "Antisymmetry fails",
+          "body": "$(x,z) \\in R$ and $(z,x) \\in R$ with $x \\ne z$, so $R$ is **not antisymmetric**. Hence neither."
+        }
+      ],
+      "answer": {
+        "value": "R is neither symmetric nor antisymmetric.",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not symmetric: $(x,y) \\in R$ but $(y,x) \\notin R$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not antisymmetric: both $(x,z)$ and $(z,x)$ are in $R$ with $x \\ne z$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Fails on both counts (the same two witnesses)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — $(x,y)$ breaks symmetry and $\\{(x,z),(z,x)\\}$ breaks antisymmetry."
+        }
+      ],
+      "verification": "Both witnesses read directly from $R$."
+    },
+    "cse-2009-cs-5": {
+      "approach": "Go through binary: each octal digit is 3 bits, regroup into 4-bit groups from the right to read hexadecimal.",
+      "concepts": [
+        "Base conversion",
+        "Octal",
+        "Hexadecimal"
+      ],
+      "steps": [
+        {
+          "title": "Octal → binary",
+          "body": "$1\\to001,\\;2\\to010,\\;1\\to001,\\;7\\to111$, so $(1217)_8 = 001\\,010\\,001\\,111 = (1010001111)_2$."
+        },
+        {
+          "title": "Binary → hex",
+          "body": "Group 4 bits from the right: $0010\\;1000\\;1111 = 2\\;8\\;F$, so $(1217)_8 = (28F)_{16} = (028F)_{16}$."
+        },
+        {
+          "title": "Decimal check",
+          "body": "$1\\cdot512 + 2\\cdot64 + 1\\cdot8 + 7 = 512+128+8+7 = 655$ and $2\\cdot256 + 8\\cdot16 + 15 = 512+128+15 = 655$. ✓"
+        }
+      ],
+      "answer": {
+        "value": "(028F)_16",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Same digits in a different base: $(1217)_{16} = 4631 \\ne 655$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — $(028F)_{16} = 655 = (1217)_8$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The value is $655$ in decimal, not $2297$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(0B17)_{16} = 2839 \\ne 655$."
+        }
+      ],
+      "verification": "Both sides evaluate to 655 in decimal."
+    },
+    "cse-2009-cs-6": {
+      "approach": "Rewrite AB + C in product-of-sums form, (A+C)(B+C), which maps directly onto a two-level NOR–NOR circuit; then show 2 gates are not enough.",
+      "concepts": [
+        "NOR as universal gate",
+        "POS form",
+        "NOR–NOR realisation"
+      ],
+      "steps": [
+        {
+          "title": "POS form",
+          "body": "By distributivity, $AB + C = (A + C)(B + C)$."
+        },
+        {
+          "title": "Three NOR gates",
+          "body": "$G_1 = \\overline{A+C}$, $G_2 = \\overline{B+C}$, $G_3 = \\overline{G_1 + G_2}$.\n\n$G_3 = \\overline{\\overline{A+C} + \\overline{B+C}} = (A+C)(B+C) = AB + C$ (De Morgan). So **3** gates suffice."
+        },
+        {
+          "title": "Two gates are not enough",
+          "body": "The function depends on all of $A,B,C$, so with 2 gates the output gate must take the other gate $G = \\overline{x+y}$ and one variable $z$ (the only other wirings use at most 2 variables). Output $= \\overline{\\overline{x+y} + z} = (x+y)\\,\\bar z$, which is 0 whenever $z = 1$. But $AB + C$ can be 1 with $z = 1$ whichever variable $z$ is: $z=C$: take $C=1$; $z=A$ or $B$: take $A=B=1, C=0$. So 2 gates cannot work and the minimum is **3**."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": false,
+        "keyNote": "The stored key is D (5), but $\\overline{\\overline{A+C}+\\overline{B+C}} = (A+C)(B+C) = AB+C$ uses only 3 two-input NOR gates, and 2 gates provably cannot realise the function, so the minimum is 3 (option B). Flagged for review."
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two NOR gates give at most $(x+y)\\bar z$ — never $AB + C$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — NOR–NOR realisation of $(A+C)(B+C)$ needs exactly 3 gates."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "4 gates work but are not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "5 is the count from the naive conversion (AND and OR each built from NORs), not the minimum."
+        }
+      ],
+      "shortcut": "POS form + NOR–NOR: one NOR per sum term plus one output NOR.",
+      "pitfalls": [
+        "Converting the SOP form gate-by-gate (AND → 3 NORs, OR → 2 NORs) and getting 5 without simplifying."
+      ],
+      "verification": "Truth table: for $C=1$ both sums are 1 ⇒ output 1; for $C=0$ the output is $A\\cdot B$. Matches $AB + C$ on all 8 rows."
+    },
+    "cse-2009-cs-7": {
+      "approach": "Number of chips = required bits ÷ bits per chip.",
+      "concepts": [
+        "Memory organisation",
+        "Chip count"
+      ],
+      "steps": [
+        {
+          "title": "Total bits",
+          "body": "$256\\text{ KB} = 256 \\times 1024 \\times 8 = 2^{8}\\cdot 2^{10}\\cdot 2^{3} = 2^{21}$ bits."
+        },
+        {
+          "title": "Bits per chip",
+          "body": "$32K \\times 1 = 2^{5}\\cdot 2^{10} \\cdot 1 = 2^{15}$ bits. Chips $= 2^{21}/2^{15} = 2^{6} = 64$."
+        }
+      ],
+      "answer": {
+        "value": "64",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "8 chips give only $8 \\times 32K \\times 1 = 256K$ **bits** = 32 KB."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "32 chips give 1 Mbit = 128 KB."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — $2^{21}/2^{15} = 64$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "128 chips give 512 KB."
+        }
+      ],
+      "pitfalls": [
+        "Treating 256 K-bytes as 256 K-bits."
+      ],
+      "verification": "Organisation: 8 chips in parallel make a 32K × 8 bank (32 KB); 256/32 = 8 banks; 8 × 8 = 64."
+    },
+    "cse-2009-cs-8": {
+      "approach": "Interrupts are sampled at instruction boundaries so that the interrupted program can resume from a clean, precisely defined state.",
+      "concepts": [
+        "Interrupt handling",
+        "Instruction cycle"
+      ],
+      "steps": [
+        {
+          "title": "When the CPU checks",
+          "body": "At the end of each instruction cycle (fetch–decode–execute) the CPU checks the interrupt request line/register. If an enabled interrupt is pending it saves the PC and state and jumps to the ISR."
+        },
+        {
+          "title": "Why there",
+          "body": "Stopping mid-instruction would leave partial results; at an instruction boundary the saved PC points exactly to the next instruction, so resumption is clean."
+        }
+      ],
+      "answer": {
+        "value": "by checking the interrupt register after finishing the execution of the current instruction.",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The CPU does not abandon the current instruction the moment a request arrives."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "After fetch the instruction has not executed yet — the state would be inconsistent."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — interrupts are recognised at the instruction boundary."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Checking at fixed time intervals describes polling with a timer, not interrupt handling."
+        }
+      ],
+      "verification": "Standard instruction-cycle flowchart: fetch → execute → check for interrupt."
+    },
+    "cse-2009-cs-9": {
+      "approach": "Belady's anomaly (more frames → more faults) can only happen for policies that are not stack algorithms; FIFO is the classic non-stack policy.",
+      "concepts": [
+        "Belady's anomaly",
+        "Stack algorithms",
+        "FIFO page replacement"
+      ],
+      "steps": [
+        {
+          "title": "Stack property",
+          "body": "Optimal and LRU are **stack algorithms**: the set of pages in memory with $k$ frames is always a subset of that with $k+1$ frames, so faults never increase with more frames."
+        },
+        {
+          "title": "FIFO",
+          "body": "FIFO is not a stack algorithm. Reference string $1,2,3,4,1,2,5,1,2,3,4,5$ gives **9** faults with 3 frames and **10** with 4 frames."
+        }
+      ],
+      "answer": {
+        "value": "FIFO",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — FIFO shows Belady's anomaly (9 faults with 3 frames vs 10 with 4 on the classic string)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Optimal is a stack algorithm — no anomaly."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "LRU is a stack algorithm — no anomaly."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "MRU ranks pages by recency independently of the frame count, so it is a stack algorithm — no anomaly."
+        }
+      ],
+      "verification": "Classic example string reproduces 9 vs 10 faults under FIFO."
+    },
+    "cse-2009-cs-10": {
+      "approach": "A page table is indexed by the virtual page number, so the only essential thing an entry must store is the frame number.",
+      "concepts": [
+        "Page table entry",
+        "Address translation"
+      ],
+      "steps": [
+        {
+          "title": "Indexing",
+          "body": "The virtual page number (VPN) is the **index** into the page table, so it need not be stored in the entry."
+        },
+        {
+          "title": "Essential content",
+          "body": "Translation needs the **page frame number** (PFN): physical address = PFN ∥ offset. Valid, protection, dirty bits are useful but auxiliary."
+        }
+      ],
+      "answer": {
+        "value": "page frame number.",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The VPN is the index into the table, not stored content."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — the frame number is what translation needs."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Storing the VPN is redundant (needed only in inverted page tables)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Access rights are useful extra bits, but not essential for translation."
+        }
+      ],
+      "verification": "Translation $VA = (VPN, d) \\to PA = (PT[VPN].PFN, d)$ uses only the PFN from the entry."
+    },
+    "cse-2009-cs-11": {
+      "approach": "Selection sort does at most one swap per pass (placing the minimum), and there are n−1 passes.",
+      "concepts": [
+        "Selection sort",
+        "Swap count"
+      ],
+      "steps": [
+        {
+          "title": "One swap per pass",
+          "body": "Pass $i$ finds the minimum of $A[i..n-1]$ and swaps it into position $i$ — at most **one** swap."
+        },
+        {
+          "title": "Count",
+          "body": "There are $n-1$ passes, so worst-case swaps $= n-1 = \\Theta(n)$ (comparisons are $\\Theta(n^2)$, but swaps are linear)."
+        }
+      ],
+      "answer": {
+        "value": "Θ(n)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — at most $n-1$ swaps."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$n \\log n$ is the comparison bound of merge/heap sort, not selection-sort swaps."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(n^2)$ is the number of **comparisons**, not swaps."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No standard sort does this many swaps."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up comparisons ($\\Theta(n^2)$) with swaps."
+      ],
+      "verification": "Reverse-sorted input of 4 elements: 4 3 2 1 → 1 3 2 4 → 1 2 3 4: 2 swaps ≤ $n-1 = 3$."
+    },
+    "cse-2009-cs-12": {
+      "approach": "Every derivation wraps a single middle symbol (a or b) in matching pairs, so strings are palindromes of odd length — and every odd palindrome can be built this way.",
+      "concepts": [
+        "Context-free grammar",
+        "Palindromes"
+      ],
+      "steps": [
+        {
+          "title": "What is generated",
+          "body": "Each $aSa$ / $bSb$ step adds the **same** symbol on both ends (length $+2$); derivation ends with $S \\to a$ or $S \\to b$ (length 1). So every string is a palindrome of length $2k+1$."
+        },
+        {
+          "title": "Everything odd is generated",
+          "body": "Any odd palindrome $w = c\\,w'\\,c$ with $w'$ an odd palindrome (or $w$ a single symbol) — induction gives a derivation. Even palindromes such as $aa$ or $\\varepsilon$ are not generated (no $S \\to \\varepsilon$)."
+        }
+      ],
+      "answer": {
+        "value": "all odd length palindromes.",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Even palindromes like $aa$ cannot be derived (no $\\varepsilon$ or $aa$ base)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — exactly the odd-length palindromes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$abaa$ begins and ends with $a$ but is not a palindrome, so it is not generated."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Even-length palindromes are never produced — all derived lengths are odd."
+        }
+      ],
+      "verification": "Derivation of $abbba$: $S \\Rightarrow aSa \\Rightarrow abSba \\Rightarrow abbba$."
+    },
+    "cse-2009-cs-13": {
+      "approach": "Bellman–Ford relaxes edges reachable from the source; its extra V-th pass detects only negative cycles that the source can reach.",
+      "concepts": [
+        "Bellman–Ford",
+        "Negative cycle detection"
+      ],
+      "steps": [
+        {
+          "title": "Detection test",
+          "body": "After $|V|-1$ relaxation rounds, if some edge $(u,v)$ can still be relaxed ($d[u] + w < d[v]$), a negative cycle is reachable from the source."
+        },
+        {
+          "title": "Unreachable cycles",
+          "body": "Vertices not reachable from $s$ keep $d = \\infty$, and $\\infty + w$ never improves anything, so a negative cycle in an unreachable component is **not** found. Hence P is false, Q is true."
+        }
+      ],
+      "answer": {
+        "value": "Q only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "P is false: a negative cycle unreachable from the source is never detected."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — it reports exactly whether a negative cycle is reachable from the source."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Q is true."
+        }
+      ],
+      "verification": "Graph with source $s$ alone and a separate cycle $x\\to y\\to x$ of weight $-1$: Bellman–Ford from $s$ reports no negative cycle."
+    },
+    "cse-2009-cs-14": {
+      "approach": "NP-complete = in NP and NP-hard. π_A is already in NP, so if it is also NP-hard it is NP-complete by definition.",
+      "concepts": [
+        "Class P",
+        "Class NP",
+        "NP-hard",
+        "NP-complete"
+      ],
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "A problem is NP-complete iff it is (i) in NP and (ii) NP-hard. $\\pi_A \\in NP$ is given, so NP-hard ⇒ NP-complete: (C) is true."
+        },
+        {
+          "title": "Others",
+          "body": "P ⊆ NP, so $\\pi_A$ may well be polynomial (A false, and solving it in poly time proves nothing about P = NP unless it is NP-complete — B false). Every NP problem is decidable (D false)."
+        }
+      ],
+      "answer": {
+        "value": "If π_A is NP-hard, then it is NP-complete.",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False — every problem in P is in NP and has a polynomial algorithm."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False — only for an NP-complete $\\pi_A$ would this imply P = NP; e.g. sorting is in NP and in P."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — in NP + NP-hard is the definition of NP-complete."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "False — NP problems are decidable (try all polynomial-length certificates)."
+        }
+      ],
+      "verification": "Matches the textbook definition of NP-completeness."
+    },
+    "cse-2009-cs-15": {
+      "approach": "Read the expression: two mandatory 0s with arbitrary strings before, between and after them — i.e. at least two 0s anywhere.",
+      "concepts": [
+        "Regular expressions"
+      ],
+      "steps": [
+        {
+          "title": "Read the expression",
+          "body": "$(0+1)^*\\,0\\,(0+1)^*\\,0\\,(0+1)^*$ = any string, a 0, any string, a 0, any string."
+        },
+        {
+          "title": "Characterise",
+          "body": "A string matches iff it has two 0s (not necessarily adjacent) — i.e. **at least two 0s**. E.g. $010$ matches but does not contain $00$."
+        }
+      ],
+      "answer": {
+        "value": "The set of all strings containing at least two 0's.",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$010$ is matched but has no substring $00$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$000$ is matched but has three 0s."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — exactly the strings with at least two 0s."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$1$ begins and ends with 1 but has no 0, so it is not matched."
+        }
+      ],
+      "verification": "Counter-examples above rule out A, B, D."
+    },
+    "cse-2009-cs-16": {
+      "approach": "Check each against known closure/equivalence results; DPDAs are strictly weaker than NPDAs.",
+      "concepts": [
+        "Minimal DFA",
+        "PDA",
+        "DPDA vs NPDA",
+        "Decidability of CFLs"
+      ],
+      "steps": [
+        {
+          "title": "True statements",
+          "body": "(A) Myhill–Nerode: minimal DFA is unique up to renaming. (B) An NFA is a PDA that ignores its stack. (C) CFL complement may not be a CFL, but CFL membership is decidable (CYK), so the complement is decidable — recursive."
+        },
+        {
+          "title": "False statement",
+          "body": "(D) $\\{ww^R\\}$ is accepted by an NPDA but by no DPDA, so NPDAs cannot always be determinised."
+        }
+      ],
+      "answer": {
+        "value": "Every nondeterministic PDA can be converted to an equivalent deterministic PDA.",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True — Myhill–Nerode gives a unique minimal DFA."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True — an NFA is a PDA that never uses its stack."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True — CFLs are recursive and recursive languages are closed under complement."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "False (the answer) — $\\{ww^R\\}$ needs nondeterminism."
+        }
+      ],
+      "verification": "Known hierarchy: DCFL ⊊ CFL."
+    },
+    "cse-2009-cs-17": {
+      "approach": "Map each formalism/technique to the compiler phase that uses it.",
+      "concepts": [
+        "Compiler phases"
+      ],
+      "steps": [
+        {
+          "title": "Matching",
+          "body": "| Item | Phase |\n|---|---|\n| P. Regular expression | 3. Lexical analysis (token patterns) |\n| Q. Pushdown automata | 1. Syntax analysis (parsers) |\n| R. Dataflow analysis | 4. Code optimisation |\n| S. Register allocation | 2. Code generation |"
+        },
+        {
+          "title": "Pick the option",
+          "body": "P–3, Q–1, R–4, S–2 is option (B)."
+        }
+      ],
+      "answer": {
+        "value": "P – 3, Q – 1, R – 4, S – 2",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Regular expressions are for lexical analysis, not optimisation."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — P–3, Q–1, R–4, S–2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "PDAs are parsers (syntax analysis), not optimisers."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Regular expressions do not drive code generation."
+        }
+      ],
+      "verification": "Each item has exactly one natural phase; only B has all four."
+    },
+    "cse-2009-cs-18": {
+      "approach": "Trace the recursion bottom-up: each call returns f(n) and leaves the previous value in *f_p — this is a Fibonacci iteration.",
+      "concepts": [
+        "Recursion trace",
+        "Pointers",
+        "Fibonacci"
+      ],
+      "steps": [
+        {
+          "title": "Base case",
+          "body": "$\\text{fun}(1)$: sets $*f\\_p = 1$, returns 1.",
+          "scene": {
+            "reveal": 5,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ],
+            "caption": "fun(1): *f_p = 1, return 1"
+          }
+        },
+        {
+          "title": "Unwinding",
+          "body": "For $n \\ge 2$: $t = \\text{fun}(n-1)$, $f = t + *f\\_p$, then $*f\\_p = t$.\n\n- $n=2$: $t=1$, $f = 1+1 = 2$, $*f\\_p = 1$\n- $n=3$: $t=2$, $f = 2+1 = 3$, $*f\\_p = 2$\n- $n=4$: $t=3$, $f = 3+2 = 5$, $*f\\_p = 3$",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              }
+            ],
+            "caption": "returns 2, 3, 5"
+          }
+        },
+        {
+          "title": "fun(5)",
+          "body": "$t = 5$, $f = 5 + 3 = 8$. The initial $x = 15$ is overwritten in the base case and never used. Printed value: **8**.",
+          "scene": {
+            "reveal": 25,
+            "hl": [
+              {
+                "r": 4,
+                "tone": "success"
+              }
+            ],
+            "caption": "fun(5) returns 8"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "t",
+          "*f_p before",
+          "f = t + *f_p",
+          "*f_p after",
+          "returns"
+        ],
+        "rowLabels": [
+          "fun(1)",
+          "fun(2)",
+          "fun(3)",
+          "fun(4)",
+          "fun(5)"
+        ],
+        "corner": "call",
+        "rows": [
+          [
+            "—",
+            "15",
+            "—",
+            "1",
+            "1"
+          ],
+          [
+            "1",
+            "1",
+            "2",
+            "1",
+            "2"
+          ],
+          [
+            "2",
+            "1",
+            "3",
+            "2",
+            "3"
+          ],
+          [
+            "3",
+            "2",
+            "5",
+            "3",
+            "5"
+          ],
+          [
+            "5",
+            "3",
+            "8",
+            "5",
+            "8"
+          ]
+        ],
+        "mono": true
+      },
+      "answer": {
+        "value": "8",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "6 would come from adding wrong pairs; the sequence is 1, 2, 3, 5, 8."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — fun(5) = 5 + 3 = 8."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "14 is not produced by the recurrence."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "15 is the initial value of x, which the base case overwrites."
+        }
+      ],
+      "verification": "Returns follow $f(n) = f(n-1) + f(n-2)$: 1, 2, 3, 5, 8 — Fibonacci, so fun(5) = 8."
+    },
+    "cse-2009-cs-19": {
+      "approach": "Standard coupling scale (Myers / Pressman), strongest to weakest: content, common, control, stamp, data.",
+      "concepts": [
+        "Coupling",
+        "Modular design"
+      ],
+      "steps": [
+        {
+          "title": "Ranking",
+          "body": "Content (one module touches another's internals) > Common (shared global data) > Control (passes control flags) > Stamp (passes whole data structures) > Data (passes only needed elementary data)."
+        },
+        {
+          "title": "Option",
+          "body": "I – II – III – IV – V is option (A)."
+        }
+      ],
+      "answer": {
+        "value": "I - II - III - IV - V",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — content > common > control > stamp > data."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "This is weakest → strongest (reversed order)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Data coupling is the weakest, not in the middle."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Stamp coupling is weaker than common and control coupling."
+        }
+      ],
+      "verification": "Matches the standard coupling hierarchy in software-engineering texts."
+    },
+    "cse-2009-cs-20": {
+      "approach": "Lay the cells out on a 3 × 3 grid honouring rowspan/colspan, then count distinct cells in each column and in each row.",
+      "concepts": [
+        "HTML tables",
+        "rowspan",
+        "colspan"
+      ],
+      "steps": [
+        {
+          "title": "Build the grid",
+          "body": "Row 1: ab (rows 1–2, col 1), cd (cols 2–3). Row 2: col 1 taken by ab, ef (col 2), gh (rows 2–3, col 3). Row 3: ik (cols 1–2), col 3 taken by gh.",
+          "scene": {
+            "caption": "Grid after placing every cell"
+          }
+        },
+        {
+          "title": "Rows per column",
+          "body": "Col 1: ab, ik = 2. Col 2: cd, ef, ik = 3. Col 3: cd, gh = 2. ⇒ $\\langle 2,3,2\\rangle$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 1,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Column 2 meets 3 distinct cells"
+          }
+        },
+        {
+          "title": "Columns per row",
+          "body": "Row 1: ab, cd = 2. Row 2: ab, ef, gh = 3. Row 3: ik, gh = 2. ⇒ $\\langle 2,3,2\\rangle$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ],
+            "caption": "Row 2 meets 3 distinct cells"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "col 1",
+          "col 2",
+          "col 3"
+        ],
+        "rowLabels": [
+          "row 1",
+          "row 2",
+          "row 3"
+        ],
+        "rows": [
+          [
+            "ab",
+            "cd",
+            "cd"
+          ],
+          [
+            "ab",
+            "ef",
+            "gh"
+          ],
+          [
+            "ik",
+            "ik",
+            "gh"
+          ]
+        ],
+        "mono": true
+      },
+      "answer": {
+        "value": "⟨2,3,2⟩ and ⟨2,3,2⟩",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Column 2 meets three cells (cd, ef, ik), so the first tuple is not $\\langle 2,2,3\\rangle$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both tuples are wrong — the middle column and middle row each have 3 cells."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — $\\langle 2,3,2\\rangle$ and $\\langle 2,3,2\\rangle$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Row 2 has three cells (ab, ef, gh), so the second tuple is not $\\langle 2,2,3\\rangle$."
+        }
+      ],
+      "pitfalls": [
+        "Counting only the `<td>` tags written in each `<tr>` (2, 2, 1) instead of the cells that occupy the row."
+      ],
+      "verification": "The grid is a full 3 × 3 rectangle (every slot filled exactly once), so the layout is consistent."
+    }
+  }
+}
