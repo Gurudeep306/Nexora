@@ -1,0 +1,948 @@
+{
+  "paper": "cse-2014-1",
+  "version": 2,
+  "solutions": {
+    "cse-2014-1-cs-36": {
+      "approach": "Read the language off the DFA first: every input ends in the accepting state exactly when the last symbol is 1. Then test each expression against that language, looking for a string ending in 1 that it misses.",
+      "concepts": [
+        "DFA to language",
+        "Regular expression equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Language of the DFA",
+          "body": "On 1 the DFA always goes to the accepting state (from start, and by the self-loop on the accepting state); on 0 it always goes to the start state. So the state after reading $w$ depends only on the **last symbol**: $L = \\{w : w \\text{ ends in } 1\\} = (0+1)^*1$.",
+          "scene": {
+            "caption": "Any 1 leads to the accepting state; any 0 leads back to start.",
+            "edgeTones": {
+              "A>B": "success",
+              "B>B": "success"
+            }
+          }
+        },
+        {
+          "title": "Check I: 0*1(1+00*1)*",
+          "body": "$0^*1$ reads up to the first 1. After that the remainder of a string ending in 1 splits into blocks, each block being a lone $1$ or a run of zeros followed by 1, i.e. $00^*1$. So $0^*1(1+00^*1)^*$ generates exactly the strings ending in 1. **I is correct.**"
+        },
+        {
+          "title": "Check II: 0*1*1+11*0*1",
+          "body": "Every string of $0^*1^*1$ or $11^*0^*1$ ends in 1, but the string $10101$ (ends in 1, accepted by the DFA) has the shape 1-0-1-0-1, which fits neither $0^*1^*1$ (no 0 after a 1) nor $11^*0^*1$ (only one 0-run). Even $0101$ is missed. **II is wrong.**",
+          "scene": {
+            "caption": "Trace 10101: it ends in the accepting state, but II cannot generate it.",
+            "current": [
+              "B"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1",
+                "0",
+                "1"
+              ],
+              "head": 5
+            }
+          }
+        },
+        {
+          "title": "Check III and conclude",
+          "body": "$(0+1)^*1$ is literally \"any string, then a 1\" = $L$. **III is correct.** Hence I and III only."
+        }
+      ],
+      "answer": {
+        "value": "I and III only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II is not equivalent: it misses strings such as 0101 and 10101."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "I and III both describe exactly the strings ending in 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II is wrong, and I is correct, so this pairing fails twice."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II does not generate all strings ending in 1."
+        }
+      ],
+      "shortcut": "A two-state DFA where every 1 goes to the final state and every 0 to the start state recognises \"ends in 1\".",
+      "pitfalls": [
+        "Checking only that each expression generates strings ending in 1 (soundness) and forgetting completeness — II is sound but incomplete."
+      ],
+      "verification": "Traced 0101 and 10101 through the DFA (both accepted) and confirmed neither matches either branch of II, while both match I as 0*1 · (00*1) · (00*1) style splits.",
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "A",
+            "start": true,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "B",
+            "accept": true,
+            "x": 2,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "A",
+            "to": "A",
+            "label": "0"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "1"
+          },
+          {
+            "from": "B",
+            "to": "B",
+            "label": "1"
+          },
+          {
+            "from": "B",
+            "to": "A",
+            "label": "0"
+          }
+        ],
+        "current": [
+          "A"
+        ],
+        "caption": "The given DFA (A = start, B = accepting)."
+      }
+    },
+    "cse-2014-1-cs-37": {
+      "approach": "If every coin weighed 10 gm the total would be 31 × 10 = 310 gm; the extra 13 gm comes from 1 gm per coin taken from 11 gm bags. Since the coin counts are powers of two, 13 in binary tells exactly which bags are heavy.",
+      "concepts": [
+        "Binary representation",
+        "Weighing puzzle"
+      ],
+      "steps": [
+        {
+          "title": "Excess weight",
+          "body": "Coins picked: $1+2+4+8+16 = 31$. All-10 gm weight $= 310$ gm. Excess $= 323 - 310 = 13$ gm, one gram per 11 gm coin."
+        },
+        {
+          "title": "Decode in binary",
+          "body": "$13 = 8 + 4 + 1 = 1101_2$. Counts $1, 4, 8$ come from bags $1, 3, 4$ (bag $k$ gives $2^{k-1}$ coins). The binary decomposition is unique, so bags 1, 3, 4 hold 11 gm coins."
+        },
+        {
+          "title": "Product of labels",
+          "body": "$1 \\times 3 \\times 4 = 12$."
+        }
+      ],
+      "answer": {
+        "value": "12",
+        "number": 12,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Multiplying the coin counts (1·4·8) instead of the bag labels."
+      ],
+      "verification": "Weight check: $10\\cdot31 + (1+4+8) = 310 + 13 = 323$ gm."
+    },
+    "cse-2014-1-cs-38": {
+      "approach": "Max-clique is NP-hard (its decision version is NP-complete), so a polynomial algorithm for it gives P = NP. Then every non-trivial language in NP is NP-complete, but ∅ and Σ* cannot be, so NPC is a proper subset of P = NP.",
+      "concepts": [
+        "P vs NP",
+        "NP-completeness",
+        "Clique problem"
+      ],
+      "steps": [
+        {
+          "title": "Consequence of a poly-time clique algorithm",
+          "body": "CLIQUE (decision form) is NP-complete. Computing the largest clique in polynomial time decides CLIQUE in polynomial time, so an NP-complete problem is in P $\\Rightarrow$ $P = NP$."
+        },
+        {
+          "title": "Where NPC sits",
+          "body": "If $P = NP$, any language $L \\in NP$ with $L \\ne \\emptyset, \\Sigma^*$ is NP-complete (reduce by solving the instance in poly time and outputting a fixed yes/no instance of $L$). But $\\emptyset$ and $\\Sigma^*$ have no yes/no instance to map to, so they are **not** NP-complete. Hence $NPC \\subsetneq P = NP$ — diagram (C)."
+        }
+      ],
+      "answer": {
+        "value": "P = NP with NPC a proper subset",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Shows P and NPC as different parts of a larger NP; after the discovery P = NP, so P cannot be strictly inside NP."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Overlapping but unequal P and NP contradicts P = NP."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "P = NP, and NPC is all of it except trivial languages like the empty set and Σ*."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "NPC cannot equal P: the empty language and Σ* are in P but are not NP-complete."
+        }
+      ],
+      "pitfalls": [
+        "Choosing D by assuming every language in P becomes NP-complete — trivial languages are the exception."
+      ],
+      "verification": "Checked each diagram against the two facts P = NP and NPC ≠ P (trivial languages ∅, Σ* are in P but not NP-complete); only C satisfies both."
+    },
+    "cse-2014-1-cs-39": {
+      "approach": "Process the numbers in pairs: one comparison inside the pair, then the smaller against the running min and the larger against the running max — 3 comparisons per 2 numbers. The known optimum is ⌈3n/2⌉ − 2.",
+      "concepts": [
+        "Simultaneous min-max",
+        "Comparison lower bounds"
+      ],
+      "steps": [
+        {
+          "title": "Pairwise method",
+          "body": "For even $n$: compare the first pair (1 comparison) to initialise min and max. Each of the remaining $\\frac{n-2}{2}$ pairs costs 3 comparisons. Total $= 1 + 3\\cdot\\frac{n-2}{2} = \\frac{3n}{2} - 2$."
+        },
+        {
+          "title": "Plug in n = 100",
+          "body": "$1 + 3 \\cdot \\frac{98}{2} = 1 + 147 = 148$, which matches $\\lceil 3n/2 \\rceil - 2 = 150 - 2 = 148$ and is also a proven lower bound."
+        }
+      ],
+      "answer": {
+        "value": "148",
+        "number": 148,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 198 (= 2(n−1), finding min and max separately).",
+        "Using ⌈3n/2⌉ = 150 without subtracting 2."
+      ],
+      "verification": "Small check $n=2$: formula gives $3-2=1$ comparison, which is correct."
+    },
+    "cse-2014-1-cs-40": {
+      "approach": "Compute k mod 9 for each key, count how many keys land in each of the 9 chains, then read off the maximum, minimum and the average (9 keys / 9 slots).",
+      "concepts": [
+        "Hashing with chaining",
+        "Load factor"
+      ],
+      "steps": [
+        {
+          "title": "Hash every key",
+          "body": "$5\\to5,\\ 28\\to1,\\ 19\\to1,\\ 15\\to6,\\ 20\\to2,\\ 33\\to6,\\ 12\\to3,\\ 17\\to8,\\ 10\\to1$.",
+          "scene": {
+            "reveal": 9,
+            "caption": "Each key placed at slot k mod 9."
+          }
+        },
+        {
+          "title": "Chain lengths",
+          "body": "Slot 1 holds $28, 19, 10$ (length 3); slot 6 holds $15, 33$ (2); slots 2, 3, 5, 8 hold one key each; slots 0, 4, 7 are empty.\n\nMaximum $=3$, minimum $=0$, average $= 9/9 = 1$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              },
+              {
+                "r": 7,
+                "tone": "muted"
+              }
+            ],
+            "caption": "Longest chain 3 (slot 1); empty slots 0, 4, 7."
+          }
+        }
+      ],
+      "answer": {
+        "value": "3, 0, and 1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Max 3 (slot 1), min 0 (slots 0, 4, 7), average 9/9 = 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Chains are not uniform; three slots are empty."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No slot receives 4 keys; slot 1 receives exactly 28, 19, 10."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Average is total keys / slots = 9/9 = 1, not 2."
+        }
+      ],
+      "verification": "Chain lengths 0+3+1+1+0+1+2+0+1 = 9 keys, as required.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "slot",
+          "chain",
+          "length"
+        ],
+        "rows": [
+          [
+            0,
+            "—",
+            0
+          ],
+          [
+            1,
+            "28 → 19 → 10",
+            3
+          ],
+          [
+            2,
+            "20",
+            1
+          ],
+          [
+            3,
+            "12",
+            1
+          ],
+          [
+            4,
+            "—",
+            0
+          ],
+          [
+            5,
+            "5",
+            1
+          ],
+          [
+            6,
+            "15 → 33",
+            2
+          ],
+          [
+            7,
+            "—",
+            0
+          ],
+          [
+            8,
+            "17",
+            1
+          ]
+        ],
+        "reveal": 0,
+        "mono": true,
+        "caption": "h(k) = k mod 9, chaining."
+      }
+    },
+    "cse-2014-1-cs-41": {
+      "approach": "The triple loop computes the sum of every contiguous sub-array E[i..j] and keeps the largest in Y. The initial Y is the whole-array sum, which is itself a sub-array sum, so it does not change the result.",
+      "concepts": [
+        "Code tracing",
+        "Maximum sub-array sum"
+      ],
+      "steps": [
+        {
+          "title": "First loop",
+          "body": "Sets $Y = \\sum_{i} E[i]$, the sum of the sub-array $E[0..size-1]$."
+        },
+        {
+          "title": "Nested loops",
+          "body": "For every $i \\le j$, the innermost loop computes $Z = E[i] + \\dots + E[j]$, the sum of sub-array $E[i..j]$, and $Y = \\max(Y, Z)$."
+        },
+        {
+          "title": "Result",
+          "body": "$Y$ = maximum over all contiguous sub-arrays (the initial value is one of them), i.e. the **maximum possible sub-array sum**. Example $E = [2, -5, 3]$: total $0$, best sub-array $[3]$, returns $3$."
+        }
+      ],
+      "answer": {
+        "value": "maximum possible sum of elements in any sub-array of array E",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Y ends as the maximum of all sub-array sums E[i..j]."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It adds elements (Z = Z + E[k]); it does not track a maximum element. For [2, 3] it returns 5, not 3."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Nothing sums per-sub-array maxima."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The total is only the starting value; it is replaced when some sub-array is larger, e.g. [2, −5, 3] returns 3, not 0."
+        }
+      ],
+      "verification": "Traced E = [2, −5, 3]: Y starts 0, sub-array sums 2, −3, 0, −5, −2, 3 give Y = 3."
+    },
+    "cse-2014-1-cs-42": {
+      "approach": "Count the (i, j, k) triples visited: for each j the k-loop runs n − j times and the i-loop gives j choices of i ≤ j. Summing j(n − j) gives (n − 1)n(n + 1)/6.",
+      "concepts": [
+        "Loop counting",
+        "Summation formulas"
+      ],
+      "steps": [
+        {
+          "title": "Set up the count",
+          "body": "Multiplications $= \\#\\{(i,j,k) : 1 \\le i \\le j < k \\le n\\}$. For fixed $j$: $i$ has $j$ values, $k$ has $n-j$ values, so total $= \\sum_{j=1}^{n} j(n-j)$."
+        },
+        {
+          "title": "Evaluate",
+          "body": "$\\sum_{j=1}^{n} j(n-j) = n\\cdot\\frac{n(n+1)}{2} - \\frac{n(n+1)(2n+1)}{6} = \\frac{n(n+1)}{6}\\,(3n - 2n - 1) = \\frac{(n-1)\\,n\\,(n+1)}{6}$."
+        },
+        {
+          "title": "Interpret",
+          "body": "$(n-1), n, (n+1)$ are three consecutive integers, so the count is **one-sixth of their product**. Check $n=3$: triples $(1,1,2),(1,1,3),(1,2,3),(2,2,3)$ = 4, and $\\frac{2\\cdot3\\cdot4}{6}=4$."
+        }
+      ],
+      "answer": {
+        "value": "One-sixth of the product of the 3 consecutive integers",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Half the product gives 12 for n = 3, but only 4 multiplications happen."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "One-third gives 8 for n = 3, not 4."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Count = (n−1)n(n+1)/6."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "C is correct."
+        }
+      ],
+      "shortcut": "The triples $i \\le j < k$ correspond to choosing 3 items from $n+1$ with repetition handled by shifting: count $= \\binom{n+1}{3} = \\frac{(n+1)n(n-1)}{6}$.",
+      "verification": "Brute-force count for n = 3 (4) and n = 4 (10 = 3·4·5/6) agrees."
+    },
+    "cse-2014-1-cs-43": {
+      "approach": "With balanced stages and no latch overhead, pipelined CPI = 1 + average stall cycles per instruction, and the non-pipelined time per instruction equals 6 pipeline cycles.",
+      "concepts": [
+        "Pipeline speedup",
+        "Stall cycles"
+      ],
+      "steps": [
+        {
+          "title": "Pipelined CPI",
+          "body": "$\\text{CPI} = 1 + 0.25 \\times 2 = 1.5$ cycles."
+        },
+        {
+          "title": "Speedup",
+          "body": "Non-pipelined time per instruction $= 6$ cycles (one cycle per stage). Speedup $= \\frac{6}{1.5} = 4$."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "number": 4,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using 2 stalls for every instruction (CPI 3, speedup 2)."
+      ],
+      "verification": "Ideal speedup with zero stalls would be 6; stalls raise CPI by 50 %, so 6/1.5 = 4."
+    },
+    "cse-2014-1-cs-44": {
+      "approach": "Between two uses of a block at most k other distinct blocks are touched, and an LRU cache with A ≥ k ways keeps the k most recently used blocks, so every repeat access hits. Only the first access to each of the n distinct blocks misses.",
+      "concepts": [
+        "LRU replacement",
+        "Reuse distance",
+        "Compulsory misses"
+      ],
+      "steps": [
+        {
+          "title": "Repeat accesses always hit",
+          "body": "When block $b$ is re-accessed, at most $k \\le A$ distinct blocks were used since its last access, so the intended reading is that the cache can hold $b$ together with all blocks used since — LRU then never evicts $b$ before its reuse. (Strictly, $A \\ge k+1$ ways guarantee this; the question's $A \\ge k$ intends the same \"the working set fits\" condition.)"
+        },
+        {
+          "title": "Count misses",
+          "body": "Only compulsory (first) accesses miss: $n$ misses out of $N$ accesses. Miss ratio $= n/N$."
+        }
+      ],
+      "answer": {
+        "value": "n/N",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Only the n first-time accesses miss."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would mean a single miss in the whole sequence; there are n distinct blocks, each missing once."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Associativity does not set the miss ratio once A ≥ k; misses are compulsory only."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "k bounds the reuse distance; it does not count misses, and the ratio must be over N accesses."
+        }
+      ],
+      "verification": "Example: sequence a b c a b c in one 3-way LRU set ($N=6$, $n=3$, $k=2 \\le A$): misses on the first a, b, c only, so miss ratio $3/6 = n/N$."
+    },
+    "cse-2014-1-cs-45": {
+      "approach": "Write F as the sum of minterms selected by S1S0 = PQ, then simplify the two terms that share Q.",
+      "concepts": [
+        "Multiplexer as function generator",
+        "Boolean simplification"
+      ],
+      "steps": [
+        {
+          "title": "MUX expression",
+          "body": "With $S_1 = P$, $S_0 = Q$: $F = \\overline{P}\\,\\overline{Q}\\cdot 0 + \\overline{P}Q\\cdot 1 + P\\overline{Q}\\cdot R + PQ\\cdot\\overline{R} = \\overline{P}Q + P\\overline{Q}R + PQ\\overline{R}$."
+        },
+        {
+          "title": "Simplify",
+          "body": "$\\overline{P}Q + PQ\\overline{R} = Q(\\overline{P} + P\\overline{R}) = Q(\\overline{P} + \\overline{R}) = \\overline{P}Q + Q\\overline{R}$.\n\nSo $F = \\overline{P}Q + Q\\overline{R} + P\\overline{Q}R$; the term $P\\overline{Q}R$ (minterm 5) shares no adjacent 1 and stays."
+        }
+      ],
+      "answer": {
+        "value": "$\\overline{P}Q + Q\\overline{R} + P\\overline{Q}R$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Minimal SOP of minterms {2, 3, 5, 6} (PQR order)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Equivalent but not minimal: P̄QR̄ is redundant (covered by P̄Q) and PQR̄ can be merged into QR̄."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Equivalent but not minimal: P̄QR and P̄QR̄ should merge into P̄Q."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "PQR̄ alone misses minterms 2, 3, 5 (e.g. P = 0, Q = 1 gives F = 1)."
+        }
+      ],
+      "verification": "Truth table (P,Q,R): F = 1 for 010, 011, 101, 110 = $m(2,3,5,6)$; option A covers 2,3 (P̄Q), 2,6 (QR̄), 5 (PQ̄R) and nothing else."
+    },
+    "cse-2014-1-cs-46": {
+      "approach": "Differentiate f(x) = x sin x twice and substitute into the equation.",
+      "concepts": [
+        "Product rule",
+        "Second derivative"
+      ],
+      "steps": [
+        {
+          "title": "Derivatives",
+          "body": "$f'(x) = \\sin x + x\\cos x$, $f''(x) = \\cos x + \\cos x - x\\sin x = 2\\cos x - x\\sin x$."
+        },
+        {
+          "title": "Substitute",
+          "body": "$f'' + f = 2\\cos x - x\\sin x + x\\sin x = 2\\cos x$. Then $2\\cos x + t\\cos x = 0$ for all $x$ gives $t = -2$."
+        }
+      ],
+      "answer": {
+        "value": "-2",
+        "number": -2,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Dropping one of the two cos x terms in f″ and getting t = −1."
+      ],
+      "verification": "At $x = 0$: $f''(0) = 2$, $f(0) = 0$, so $2 + 0 + t = 0 \\Rightarrow t = -2$."
+    },
+    "cse-2014-1-cs-47": {
+      "approach": "Apply the intermediate value theorem to g(y) = f(y) − f(y + 1) on [0, 1]: it changes sign, so it has a root. The other options can be broken by a suitable continuous f.",
+      "concepts": [
+        "Intermediate value theorem",
+        "Continuity"
+      ],
+      "steps": [
+        {
+          "title": "Option A via IVT",
+          "body": "Let $g(y) = f(y) - f(y+1)$, continuous on $[0,1]$. $g(0) = f(0) - f(1) = -1 - 1 = -2 < 0$ and $g(1) = f(1) - f(2) = 1 - (-1) = 2 > 0$. Hence some $y \\in (0,1)$ has $g(y) = 0$, i.e. $f(y) = f(y+1)$."
+        },
+        {
+          "title": "B and C are not forced",
+          "body": "Take the piecewise-linear $f$ through $(0,-1), (0.5, 3), (1, 1), (2, -1)$. It meets all the data, yet its maximum is $3 \\ne 1$ (C fails) and $f(0.5) = 3 \\ne f(1.5) = 0$ (B fails)."
+        },
+        {
+          "title": "A note on D",
+          "body": "The same IVT argument also works for D: $h(y) = f(y) + f(2-y)$ gives $h(0) = -1 + (-1) = -2$ and $h(1) = 1 + 1 = 2$, so $h$ has a root in $(0,1)$. So D is also guaranteed; the question intends A (the stored answer), and the record is flagged for review."
+        }
+      ],
+      "answer": {
+        "value": "There exists y in (0,1) with f(y) = f(y+1)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "g(y) = f(y) − f(y+1) goes from −2 to 2 on [0, 1], so IVT gives a root strictly inside."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Symmetry about x = 1 is not implied; an asymmetric continuous f satisfies the data."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "f may exceed 1 somewhere in (0, 2), e.g. peak 3 at x = 0.5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Mathematically also true (h(y) = f(y) + f(2−y) runs from −2 to 2 on [0, 1]), but the intended single answer is A; see the review note."
+        }
+      ],
+      "pitfalls": [
+        "Assuming f is symmetric about x = 1 just because f(0) = f(2)."
+      ],
+      "verification": "Signs g(0) = −2 and g(1) = +2 are strict, so the root lies in the open interval (0, 1); the counterexample f satisfies every given condition."
+    },
+    "cse-2014-1-cs-48": {
+      "approach": "The maximum sum is 24, so a sum of 22 means the four dice fall short of 6 by a total of 2. Count the ways to distribute a deficit of 2.",
+      "concepts": [
+        "Counting outcomes",
+        "Complementary deficit"
+      ],
+      "steps": [
+        {
+          "title": "Deficit patterns",
+          "body": "Deficit 2 over four dice: either one die is short by 2 → $(6,6,6,4)$, or two dice short by 1 → $(6,6,5,5)$."
+        },
+        {
+          "title": "Count arrangements",
+          "body": "$(6,6,6,4)$: $\\binom{4}{1} = 4$ orders. $(6,6,5,5)$: $\\binom{4}{2} = 6$ orders. Total $X = 4 + 6 = 10$, with $6^4 = 1296$ outcomes."
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "number": 10,
+        "matchesKey": true
+      },
+      "verification": "Stars and bars on deficits $d_i \\ge 0$, $\\sum d_i = 2$: $\\binom{5}{3} = 10$ (no upper bound issue since $d_i \\le 5$)."
+    },
+    "cse-2014-1-cs-49": {
+      "approach": "An n-pennant ends with 1 (then the rest is an (n−1)-pennant) or with 2 (rest is an (n−2)-pennant), so P(n) = P(n−1) + P(n−2): the Fibonacci numbers.",
+      "concepts": [
+        "Recurrence relations",
+        "Compositions into 1s and 2s"
+      ],
+      "steps": [
+        {
+          "title": "Recurrence",
+          "body": "$P(n) = P(n-1) + P(n-2)$ with $P(1) = 1$, $P(2) = 2$ (and $P(3) = 3$ as given)."
+        },
+        {
+          "title": "Iterate to n = 10",
+          "body": "$P(4)=5,\\ P(5)=8,\\ P(6)=13,\\ P(7)=21,\\ P(8)=34,\\ P(9)=55,\\ P(10)=34+55=89$."
+        }
+      ],
+      "answer": {
+        "value": "89",
+        "number": 89,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Starting with P(2) = 1 (off-by-one Fibonacci index) and getting 55."
+      ],
+      "verification": "Direct count: $\\sum_{k=0}^{5} \\binom{10-k}{k} = 1 + 9 + 28 + 35 + 15 + 1 = 89$ ($k$ = number of 2s)."
+    },
+    "cse-2014-1-cs-50": {
+      "approach": "Count functions as |codomain|^|domain| twice: first |S|, then N.",
+      "concepts": [
+        "Counting functions"
+      ],
+      "steps": [
+        {
+          "title": "Size of S",
+          "body": "$|\\{0,1\\}^4| = 16$, so $|S| = 2^{16}$."
+        },
+        {
+          "title": "N and the logs",
+          "body": "$N = 2^{|S|} = 2^{2^{16}}$. $\\log_2 N = 2^{16}$, $\\log_2 \\log_2 N = 16$."
+        }
+      ],
+      "answer": {
+        "value": "16",
+        "number": 16,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking |S| = 2^4 (confusing the domain size with the number of functions)."
+      ],
+      "verification": "Structure $N = 2^{2^{2^4}}$; two logs remove two exponent levels, leaving $2^4 = 16$."
+    },
+    "cse-2014-1-cs-51": {
+      "approach": "The graph is the 12 × 12 king’s graph. Count horizontal, vertical and the two diagonal edge families separately.",
+      "concepts": [
+        "Edge counting",
+        "Grid graphs"
+      ],
+      "steps": [
+        {
+          "title": "Axis-parallel edges",
+          "body": "Horizontal: 12 rows × 11 adjacent pairs $= 132$. Vertical: likewise $132$."
+        },
+        {
+          "title": "Diagonal edges",
+          "body": "Each $2\\times2$ block contributes 2 diagonals; there are $11 \\times 11 = 121$ blocks, so $242$."
+        },
+        {
+          "title": "Total",
+          "body": "$132 + 132 + 242 = 506$."
+        }
+      ],
+      "answer": {
+        "value": "506",
+        "number": 506,
+        "matchesKey": true
+      },
+      "verification": "Degree sum: 4 corners × 3 + 40 border × 5 + 100 interior × 8 $= 12 + 200 + 800 = 1012 = 2 \\times 506$."
+    },
+    "cse-2014-1-cs-52": {
+      "approach": "Use Havel–Hakimi, or spot that three degree-3 vertices need three neighbours each among only four non-isolated vertices.",
+      "concepts": [
+        "Degree sequences",
+        "Havel–Hakimi"
+      ],
+      "steps": [
+        {
+          "title": "Test (3,3,3,1,0,0)",
+          "body": "Two vertices have degree 0, so the three degree-3 vertices can only use the other three non-isolated vertices. Each must be adjacent to the other two degree-3 vertices **and** the degree-1 vertex, giving that vertex degree 3, not 1. Havel–Hakimi: remove 3 → $(2,2,0,0,0)$ → remove 2 → $(1,-1,0,0)$, negative. **Not graphic.**"
+        },
+        {
+          "title": "Others are graphic",
+          "body": "(A) three disjoint edges. (B) a 6-cycle. (D) Havel–Hakimi: $(3,2,1,1,1,0) \\to (1,0,0,1,0) = (1,1,0,0,0) \\to (0,0,0,0)$ ✓ — e.g. star centre $a$ joined to $b, c, d$, plus edge $b$–$e$."
+        }
+      ],
+      "answer": {
+        "value": "(3, 3, 3, 1, 0, 0)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Graphic: a perfect matching of 3 edges."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Graphic: the cycle C6."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Havel–Hakimi produces a negative degree; the degree-1 vertex would be forced to degree 3."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Graphic: a–b, a–c, a–d, b–e, f isolated."
+        }
+      ],
+      "pitfalls": [
+        "Checking only that the degree sum is even (C has sum 10, even) — parity is necessary, not sufficient."
+      ],
+      "verification": "Explicit graphs built for A, B, D; impossibility argument for C."
+    },
+    "cse-2014-1-cs-53": {
+      "approach": "Split \"exactly two true\" into the case r true (then exactly one of p, q is true, i.e. p ↔ q is false) and the case r false (then p and q are both true). Check which formula encodes exactly that.",
+      "concepts": [
+        "Propositional logic",
+        "Biconditional",
+        "Case analysis"
+      ],
+      "steps": [
+        {
+          "title": "Required formula",
+          "body": "If $r$ is true, exactly one of $p, q$ is true $\\iff \\sim(p \\leftrightarrow q)$. If $r$ is false, $p \\wedge q$. So \"exactly two true\" $\\equiv (\\sim(p\\leftrightarrow q) \\wedge r) \\vee (p \\wedge q \\wedge \\sim r)$ — option B."
+        },
+        {
+          "title": "Check the three true cases in B",
+          "body": "$(1,1,0)$: second disjunct true. $(1,0,1)$ and $(0,1,1)$: $p \\leftrightarrow q$ false, $r$ true, first disjunct true. So B is TRUE in every exactly-two case (and false for $(1,1,1)$, $(0,0,0)$, etc.)."
+        }
+      ],
+      "answer": {
+        "value": "$(\\sim(p \\leftrightarrow q) \\wedge r) \\vee (p \\wedge q \\wedge \\sim r)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "For p = 1, q = 0, r = 1: (p ↔ q) is false and p ∧ q is false, so A is false although exactly two are true."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "True for (1,1,0), (1,0,1) and (0,1,1)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "For p = 1, q = 0, r = 1: p → q is false, so C is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The conjunction needs r and ∼r at once, so D is always false."
+        }
+      ],
+      "verification": "Evaluated all three exactly-two assignments for each option."
+    },
+    "cse-2014-1-cs-54": {
+      "approach": "The inner query returns, for every department at location 1700, the pair (dept-id, latest hire-date). The outer query keeps employees whose own (dept-id, hire-date) pair is in that set — exactly the latest hires per department. Multi-column (pairwise) IN is valid SQL.",
+      "concepts": [
+        "Multi-column subquery",
+        "GROUP BY with JOIN"
+      ],
+      "steps": [
+        {
+          "title": "Inner query",
+          "body": "Joins employees with departments on dept-id, keeps location-id = 1700, groups by dept-id and returns $(\\text{dept-id}, \\max(\\text{hire-date}))$ for each such department."
+        },
+        {
+          "title": "Outer query",
+          "body": "The row-value comparison `(dept-id, hire-date) IN (...)` matches an employee only if both values equal one returned pair, i.e. the employee was hired on the latest date in a 1700-location department. It executes and gives the correct result."
+        }
+      ],
+      "answer": {
+        "value": "It executes and gives the correct result.",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Pairwise matching ties the max date to its own department, so no wrong rows appear (unlike two separate IN tests)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Pairwise IN with a grouped subquery returns precisely the latest hires per department at location 1700."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Pairwise (row-value) comparison with IN is standard SQL and supported (e.g. Oracle, from whose exam bank this question comes)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "GROUP BY may follow a join inside a subquery."
+        }
+      ],
+      "pitfalls": [
+        "Treating the hyphens in column names as a syntax error — the question uses them as identifier names."
+      ],
+      "verification": "Mentally ran the query on a toy table: two departments at location 1700 with latest hire dates d1, d2; only employees with (dept, date) = (D1, d1) or (D2, d2) are returned, which is exactly the requirement."
+    },
+    "cse-2014-1-cs-55": {
+      "approach": "Use T = IC × CPI / f with the same instruction count on both processors.",
+      "concepts": [
+        "CPU performance equation",
+        "CPI"
+      ],
+      "steps": [
+        {
+          "title": "Ratios",
+          "body": "$T_2 = 0.75\\,T_1$, $\\text{CPI}_2 = 1.2\\,\\text{CPI}_1$, same IC."
+        },
+        {
+          "title": "Solve for f2",
+          "body": "$\\frac{T_2}{T_1} = \\frac{\\text{CPI}_2}{\\text{CPI}_1}\\cdot\\frac{f_1}{f_2} \\Rightarrow 0.75 = 1.2 \\cdot \\frac{1}{f_2} \\Rightarrow f_2 = \\frac{1.2}{0.75} = 1.6$ GHz."
+        }
+      ],
+      "answer": {
+        "value": "1.6",
+        "number": 1.6,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Inverting the ratio and getting 0.625 GHz."
+      ],
+      "verification": "With IC = $10^9$, CPI$_1$ = 1: $T_1 = 1$ s; CPI$_2 = 1.2$ at 1.6 GHz gives $T_2 = 1.2/1.6 = 0.75$ s ✓."
+    }
+  }
+}
