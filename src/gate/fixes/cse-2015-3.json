@@ -136,6 +136,46 @@
       ],
       "reason": "Tags for stack-based postfix evaluation.",
       "source": "taxonomy"
+    },
+    {
+      "id": "cse-2015-3-cs-17",
+      "field": "subject",
+      "before": "pdsa",
+      "after": "pds",
+      "reason": "CSE paper question on hash tables; \"pdsa\" is the DA-paper subject.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2015-3-cs-17",
+      "field": "topic",
+      "before": "dsa",
+      "after": "hashing-ds",
+      "reason": "Load factor of a hash table belongs to the hashing topic.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2015-3-cs-38",
+      "field": "answer",
+      "before": 174,
+      "after": 158,
+      "reason": "200.10.11.144/27: 144 AND 224 = 128, so the block is .128-.159 (broadcast .159); last assignable host is .158. The stored 174 wrongly treated .144 as the network address. 158 is the official GATE 2015 Set 3 key.",
+      "source": "computed; GATE 2015 CS Set 3 official key"
+    },
+    {
+      "id": "cse-2015-3-cs-55",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Verified: V(X)=3 predicates+1=4, V(Y)=10-8+2=4, V(Z)=4+4-1=7 → option A, matching the official GATE 2015 Set 3 key.",
+      "source": "solved; GATE 2015 CS Set 3 official key"
+    },
+    {
+      "id": "cse-2015-3-cs-55",
+      "field": "reviewNote",
+      "before": "Program-X complexity depends on counting the compound AND condition once (official-style answer 4); verify against official key.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "solved"
     }
   ]
 }
