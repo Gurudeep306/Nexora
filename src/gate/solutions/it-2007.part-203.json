@@ -1,0 +1,1498 @@
+{
+  "paper": "it-2007",
+  "version": 2,
+  "solutions": {
+    "it-2007-cs-67": {
+      "approach": "Use two facts: every FD is also an MVD (X → Y ⇒ X →→ Y), but an MVD never yields an FD. Then check each implication with union/decomposition of FDs.",
+      "concepts": [
+        "Functional dependency",
+        "Multivalued dependency",
+        "Armstrong axioms"
+      ],
+      "steps": [
+        {
+          "title": "Rules needed",
+          "body": "- FD ⇒ MVD: $A \\to B \\;\\Rightarrow\\; A \\twoheadrightarrow B$.\n- FD union / decomposition: $A \\to B,\\ A \\to C \\iff A \\to BC$.\n- An MVD gives **no** FD."
+        },
+        {
+          "title": "Check each",
+          "body": "| # | Claim | Verdict |\n|---|---|---|\n| (i) | $A\\to B,\\ A \\twoheadrightarrow C \\Rightarrow A \\to BC$ | invalid — needs $A \\to C$, which an MVD cannot give |\n| (ii) | $A\\to B,\\ A\\to C \\Rightarrow A \\twoheadrightarrow BC$ | valid — union gives $A\\to BC$, then FD ⇒ MVD |\n| (iii) | $A \\twoheadrightarrow BC \\Rightarrow A\\to B,\\ A\\to C$ | invalid — MVD gives no FD |\n| (iv) | $A\\to BC \\Rightarrow A \\twoheadrightarrow B,\\ A \\twoheadrightarrow C$ | valid — decomposition, then FD ⇒ MVD |"
+        },
+        {
+          "title": "Counter-example for (i) and (iii)",
+          "body": "In $R(A,B,C)$ with tuples $(1,1,1)$ and $(1,1,2)$: $A\\to B$ holds, $A \\twoheadrightarrow C$ and $A \\twoheadrightarrow BC$ hold (with three attributes they follow from $A \\twoheadrightarrow B$ / are trivial), yet $A \\to C$ fails. So exactly **2** implications are valid."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(ii) and (iv) are valid."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses one of (ii)/(iv) — both follow from FD rules plus FD ⇒ MVD."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly (ii) and (iv) are valid."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would need (i) or (iii), both of which wrongly derive an FD from an MVD."
+        }
+      ],
+      "pitfalls": [
+        "Treating A →→ C as if it implied A → C.",
+        "Forgetting that every FD is also an MVD."
+      ],
+      "verification": "The two-tuple relation (1,1,1), (1,1,2) satisfies the premises of (i) and (iii) but violates their conclusions."
+    },
+    "it-2007-cs-68": {
+      "approach": "First discard rewrites that are not even legal (selections on attributes the relation lacks), then pick the legal plan that filters the small branch relation first and joins the large relations last.",
+      "concepts": [
+        "Selection pushdown",
+        "Join ordering",
+        "Relational algebra equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Legality check",
+          "body": "account = (a-num, b-name, bal) has **no** b-city, and depositor = (c-name, a-number) has neither b-city nor bal.\n\n- C applies $\\sigma_{b\\text{-}city}$ to account → invalid.\n- D applies $\\sigma_{b\\text{-}city \\wedge bal}$ to depositor → invalid."
+        },
+        {
+          "title": "Compare the legal plans",
+          "body": "- **A**: $\\sigma_{b\\text{-}city}(branch)$ is tiny; joining it with account keeps only Agra accounts, then $\\sigma_{bal}$ and finally the join with depositor — every intermediate result is small.\n- **B**: $\\sigma_{bal}(account) \\bowtie depositor$ joins the **two big** relations before the Agra filter can help.\n\nSo A is the most efficient equivalent query."
+        }
+      ],
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Equivalent, and the selective b-city filter on the small branch relation is applied before any join with a big relation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Equivalent but joins the two large relations (account, depositor) first."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Selects on b-city inside account, which has no such attribute — not a valid expression."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Selects on b-city and bal inside depositor and drops account entirely — invalid and not equivalent."
+        }
+      ],
+      "pitfalls": [
+        "Pushing a selection onto a relation that does not contain the attribute.",
+        "Joining the two large relations first."
+      ],
+      "verification": "Both A and B reproduce the original query by commuting selections past joins; only A keeps intermediate results proportional to Agra accounts."
+    },
+    "it-2007-cs-69": {
+      "approach": "Mark each protocol–clause pair as true or false and count matches per option; the option with the most true pairs wins.",
+      "concepts": [
+        "Application-layer protocols",
+        "Stateless vs stateful",
+        "FTP control/data ports"
+      ],
+      "steps": [
+        {
+          "title": "What each clause fits",
+          "body": "- (i) no built-in client authentication → **SMTP** (AUTH is a later extension).\n- (ii) stateless → **HTTP**, **DNS**.\n- (iii) needs more than one server → DNS (hierarchy/secondary servers), not IMAP or HTTP.\n- (iv) structured message organisation (server-side folders) → **IMAP**.\n- (v) two server ports → **FTP** (21 control, 20 data)."
+        },
+        {
+          "title": "Count per option",
+          "body": "| Option | Correct pairs | Count |\n|---|---|---|\n| A | none | 0 |\n| B | none | 0 |\n| C | DNS-(ii), IMAP-(iv) | 2 |\n| D | SMTP-(i), HTTP-(ii), FTP-(v) | 3 |"
+        }
+      ],
+      "answer": {
+        "value": "D",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "IMAP needs login, FTP keeps session state, HTTP needs one server, DNS has no message folders, POP3 uses one port: 0 matches."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "FTP authenticates users, POP3 is stateful (AUTHORIZATION/TRANSACTION/UPDATE), etc.: 0 matches."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Only DNS-(ii) and IMAP-(iv) are right: 2 matches."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "SMTP-(i), HTTP-(ii) and FTP-(v) are right: 3 matches, the maximum."
+        }
+      ],
+      "pitfalls": [
+        "Calling POP3 or SMTP stateless — both run a command/state sequence."
+      ],
+      "verification": "Recounted all 20 pairs; no option other than D reaches 3."
+    },
+    "it-2007-cs-70": {
+      "approach": "Concatenate the 32 bits, cut them into 6-bit groups (padding the last with zeros) and map each group through the Base64 alphabet.",
+      "concepts": [
+        "Base64 encoding"
+      ],
+      "steps": [
+        {
+          "title": "Split into 6-bit groups",
+          "body": "`10100011 00110111 11101001 10101011` →\n\n`101000 110011 011111 101001 101010 11`**`0000`**\n\nValues: $40, 51, 31, 41, 42, 48$."
+        },
+        {
+          "title": "Map to characters",
+          "body": "Alphabet: 0–25 → A–Z, 26–51 → a–z.\n\n$40 \\to o,\\ 51 \\to z,\\ 31 \\to f,\\ 41 \\to p,\\ 42 \\to q,\\ 48 \\to w$, then `==` padding.\n\nEncoding = **`ozfpqw==`**, which contains `fpq`."
+        }
+      ],
+      "answer": {
+        "value": "fpq",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "`zdp` does not occur; after z comes f."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "`ozfpqw==` contains `fpq`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "After `qw` comes padding `=`, not `A`."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "After `oz` comes `f`, not `e`."
+        }
+      ],
+      "pitfalls": [
+        "Encoding bytes as 8-bit ASCII instead of regrouping into 6-bit chunks.",
+        "Mapping 26–51 to A–Z (they are lowercase)."
+      ],
+      "verification": "4 bytes = 32 bits → 6 characters (the last with 4 zero bits) + \"==\" padding: length 8 as expected."
+    },
+    "it-2007-cs-71": {
+      "approach": "R = strings containing aa or bb. A correct NFA can loop anywhere before the pair, must reach the final state only by reading two equal symbols, and then loop on anything.",
+      "concepts": [
+        "NFA",
+        "Regular expression to automaton"
+      ],
+      "steps": [
+        {
+          "title": "Check A",
+          "body": "Every edge into s1 is labelled a (s0→s1, s2→s1) and the edge s1→s3 is a; every edge into s2 is b and s2→s3 is b. So s3 is entered only after reading aa or bb, while the loops on s0 and s3 allow any prefix and suffix. A accepts exactly R."
+        },
+        {
+          "title": "Reject B, C, D",
+          "body": "- B and C: the self-loop a, b on s1 lets $s_0 \\xrightarrow{a} s_1 \\xrightarrow{b} s_1 \\xrightarrow{a} s_3$ accept **aba** ∉ R. Also s0 has no loop and s3 no loop, so e.g. **aab** is rejected.\n- D: s1 is final, so **a** ∉ R is accepted."
+        }
+      ],
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "s3 is reached only through aa or bb, with free loops before and after."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Accepts aba (loop on s1) and rejects aab (no loop on s3)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Same loops as B: accepts aba, rejects aab."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "s1 is final, so the single symbol a is accepted."
+        }
+      ],
+      "pitfalls": [
+        "Overlooking a self-loop on an intermediate state, which breaks the \"two equal symbols in a row\" requirement."
+      ],
+      "verification": "Traced aa, bb, abba (accepted) and ab, aba (rejected) on A."
+    },
+    "it-2007-cs-72": {
+      "approach": "A DFA for \"contains aa or bb\" only has to remember the last symbol until a repeat is seen; after that it stays in accepting states.",
+      "concepts": [
+        "DFA",
+        "Regular languages"
+      ],
+      "steps": [
+        {
+          "title": "Design",
+          "body": "s1 = last symbol a, s2 = last symbol b (no repeat yet): a from s1 → accept, b from s1 → s2; b from s2 → accept, a from s2 → s1. Once accepted, every move stays among accepting states."
+        },
+        {
+          "title": "Match A",
+          "body": "A has exactly these moves: $s_1 \\xrightarrow{a} s_3$, $s_1 \\xrightarrow{b} s_2$, $s_2 \\xrightarrow{a} s_1$, $s_2 \\xrightarrow{b} s_4$, and s3, s4 are final and only move between themselves.",
+          "scene": {
+            "current": [
+              "s0"
+            ],
+            "caption": "Run **abb** on A"
+          }
+        },
+        {
+          "title": "Trace abb",
+          "body": "$s_0 \\xrightarrow{a} s_1 \\xrightarrow{b} s_2 \\xrightarrow{b} s_4$ → accepted.\n\n- B: $s_0 \\xrightarrow{a} s_1 \\xrightarrow{b} s_4$ accepts **ab** ∉ R.\n- C: $s_0 \\xrightarrow{a} s_1 \\xrightarrow{b} s_0 \\xrightarrow{b} s_2$ rejects **abb** ∈ R.\n- D: $s_0 \\xrightarrow{a} s_1 \\xrightarrow{b} s_3$ accepts **ab** ∉ R.",
+          "scene": {
+            "current": [
+              "s4"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b",
+                "b"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "s0>s1": "accent",
+              "s1>s2": "accent",
+              "s2>s4": "success"
+            },
+            "caption": "abb ends in final s4"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "s0",
+            "start": true,
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "s1",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "s2",
+            "x": 1,
+            "y": 2
+          },
+          {
+            "id": "s3",
+            "accept": true,
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "s4",
+            "accept": true,
+            "x": 2,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "s0",
+            "to": "s1",
+            "label": "a"
+          },
+          {
+            "from": "s0",
+            "to": "s2",
+            "label": "b"
+          },
+          {
+            "from": "s1",
+            "to": "s3",
+            "label": "a"
+          },
+          {
+            "from": "s1",
+            "to": "s2",
+            "label": "b"
+          },
+          {
+            "from": "s2",
+            "to": "s1",
+            "label": "a"
+          },
+          {
+            "from": "s2",
+            "to": "s4",
+            "label": "b"
+          },
+          {
+            "from": "s3",
+            "to": "s3",
+            "label": "a"
+          },
+          {
+            "from": "s3",
+            "to": "s4",
+            "label": "b"
+          },
+          {
+            "from": "s4",
+            "to": "s4",
+            "label": "b"
+          },
+          {
+            "from": "s4",
+            "to": "s3",
+            "label": "a"
+          }
+        ],
+        "current": [
+          "s0"
+        ],
+        "tape": {
+          "cells": [
+            "a",
+            "b",
+            "b"
+          ],
+          "head": 0
+        }
+      },
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Tracks the last symbol and accepts exactly after aa or bb."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The crossing edge s1 –b→ s4 accepts ab."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "b from s1 resets to s0, so abb is rejected."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "s1 –b→ s3 accepts ab."
+        }
+      ],
+      "pitfalls": [
+        "Resetting to the start state after a mismatch — the last symbol must be remembered."
+      ],
+      "verification": "A is complete and deterministic (two outgoing edges per state) and its final states are closed under both symbols."
+    },
+    "it-2007-cs-73": {
+      "approach": "Split every string of R at its first aa or bb: the part before it alternates, so it is a(ba)* or b(ab)*; the repeated pair then follows, and anything after.",
+      "concepts": [
+        "Regular expression equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Prefix up to the first repeat",
+          "body": "A string starting with a alternates as $a(ba)^*$ (ending in a) until the first repeat, which is either one more **a** (giving aa) or **bb** (giving abb). So $a(ba)^*(a + bb)$. Symmetrically $b(ab)^*(b + aa)$."
+        },
+        {
+          "title": "Result",
+          "body": "$$R = \\big(a(ba)^*(a+bb) + b(ab)^*(b+aa)\\big)(a+b)^*$$ which is option C. (As printed, D is the same expression wrapped over two lines.)"
+        },
+        {
+          "title": "Why A and B fail",
+          "body": "$a(ba)^* + b(ab)^*$ already covers the one-symbol strings a and b, so A is $(a+b)^+$ (accepts **ab**) and B is $(a+b)^*$ (accepts ε)."
+        }
+      ],
+      "answer": {
+        "value": "C",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Equals (a+b)+, so it accepts ab, which has no aa or bb."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Equals (a+b)*, accepting even ε."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Alternating prefix, then the first aa/bb, then anything — exactly R."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Printed identically to C (line-wrapped); C is the intended key."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that a(ba)* may be followed by bb, giving the term a(ba)*bb."
+      ],
+      "verification": "abaa = a(ba)·a, ababb = a(ba)·bb, baa = b·aa all match C; ab, aba match neither part."
+    },
+    "it-2007-cs-74": {
+      "approach": "Use the textbook token-ring utilisation with a = t_p/t_t: U = 1/(1 + a/N) when a < 1 and U = 1/(a(1 + 1/N)) when a > 1. Here a > 1.",
+      "concepts": [
+        "Token ring",
+        "Utilisation",
+        "Propagation/transmission ratio a"
+      ],
+      "steps": [
+        {
+          "title": "Compute a",
+          "body": "$$a = \\frac{t_p}{t_t} = \\frac{5}{3} \\approx 1.667 > 1$$\n\nWith a > 1 a station finishes sending before its frame returns, so it holds the medium for the full ring latency before the token moves on."
+        },
+        {
+          "title": "Utilisation",
+          "body": "$$U = \\frac{1}{a\\left(1 + \\frac1N\\right)} = \\frac{1}{\\frac53 \\times 1.1} = \\frac{1}{1.8333} = 0.545$$"
+        }
+      ],
+      "answer": {
+        "value": "0.545",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": false,
+        "keyNote": "Stored key C (0.857) is the early-token-release value N·t_t/(N·t_t + t_p) = 30/35; the standard a > 1 formula that this linked pair is built around gives 0.545. Flagged for review."
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "a = 5/3 > 1 ⇒ U = 1/(a(1 + 1/N)) = 0.545."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0.6 = t_t/t_p, ignores the token passing."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Early token release, 30/(30 + 5); not the a > 1 model the question pair targets."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The a < 1 value of Q75."
+        }
+      ],
+      "pitfalls": [
+        "Using the a < 1 formula when t_p > t_t."
+      ],
+      "verification": "Cycle per station = t_p + t_p/N = 5.5 ms for 3 ms of data: 3/5.5 = 0.545."
+    },
+    "it-2007-cs-75": {
+      "approach": "Here a = t_p/t_t < 1, so the station releases the token right after its frame and the token walks 1/N of the ring: U = 1/(1 + a/N).",
+      "concepts": [
+        "Token ring",
+        "Utilisation"
+      ],
+      "steps": [
+        {
+          "title": "Compute a",
+          "body": "$$a = \\frac{t_p}{t_t} = \\frac{3}{5} = 0.6 < 1$$"
+        },
+        {
+          "title": "Utilisation",
+          "body": "$$U = \\frac{1}{1 + a/N} = \\frac{1}{1 + 0.6/15} = \\frac{1}{1.04} = 0.9615$$"
+        }
+      ],
+      "answer": {
+        "value": "0.961",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "This is the a > 1 value of Q74."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No standard formula gives 0.655 here."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "0.9375 = N/(N+1) — ignores a."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "1/(1 + 0.04) = 0.961."
+        }
+      ],
+      "pitfalls": [
+        "Applying the a > 1 formula, which would exceed 1 here."
+      ],
+      "verification": "Per station: 5 ms frame + 3/15 = 0.2 ms token pass ⇒ 5/5.2 = 0.9615."
+    },
+    "it-2007-cs-76": {
+      "approach": "A limit L must be a fixed point of f(x) = cx² − 2, and convergence from a whole open interval needs an attracting fixed point: |f′(L)| < 1.",
+      "concepts": [
+        "Fixed-point iteration",
+        "Stability |f′| < 1"
+      ],
+      "steps": [
+        {
+          "title": "Fixed points",
+          "body": "$$L = cL^2 - 2 \\;\\Rightarrow\\; cL^2 - L - 2 = 0 \\;\\Rightarrow\\; L_\\pm = \\frac{1 \\pm \\sqrt{1+8c}}{2c}$$"
+        },
+        {
+          "title": "Stability",
+          "body": "$f'(x) = 2cx$.\n\n- $f'(L_+) = 1 + \\sqrt{1+8c} > 1$ → repelling.\n- $f'(L_-) = 1 - \\sqrt{1+8c} \\in (-1, 0)$ when $\\sqrt{1+8c} < 2$.\n\nOnly $L_-$ can attract an interval of starting values, so the limit is $\\dfrac{1 - \\sqrt{1+8c}}{2c}$."
+        }
+      ],
+      "answer": {
+        "value": "(1 − √(1+8c))/(2c)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "L₊ has f′ = 1 + √(1+8c) > 1, so it repels."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The only fixed point that can be attracting."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "2 is a fixed point only when c = 1, and then f′(2) = 4."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not a root of cL² − L − 2 = 0."
+        }
+      ],
+      "pitfalls": [
+        "Picking the positive root without checking stability."
+      ],
+      "verification": "c = 0.25: L₋ = (1 − √3)/0.5 = −1.464; f(−1.464) = 0.25·2.143 − 2 = −1.464 ✓, f′ = −0.732."
+    },
+    "it-2007-cs-77": {
+      "approach": "From Q76 the attracting fixed point needs |1 − √(1+8c)| < 1, i.e. √(1+8c) < 2, i.e. c < 3/8.",
+      "concepts": [
+        "Fixed-point stability"
+      ],
+      "steps": [
+        {
+          "title": "Condition",
+          "body": "$$|f'(L_-)| = \\sqrt{1+8c} - 1 < 1 \\iff 1 + 8c < 4 \\iff c < \\tfrac38 = 0.375$$"
+        },
+        {
+          "title": "Check the values",
+          "body": "| c | 0.25 | 0.35 | 0.45 | 0.5 |\n|---|---|---|---|---|\n| $\\sqrt{1+8c}$ | 1.732 | 1.949 | 2.145 | 2.236 |\n| converges? | yes | yes | no | no |\n\nSo (i) and (ii) only."
+        }
+      ],
+      "answer": {
+        "value": "(i) and (ii) only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "c = 0.35 < 0.375 also works."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Exactly the values below 3/8."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "c = 0.45 gives |f′(L₋)| = 1.145 > 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "c = 0.45 and 0.5 both make every fixed point repelling."
+        }
+      ],
+      "pitfalls": [
+        "Testing stability at the positive fixed point."
+      ],
+      "verification": "At c = 0.35: f′(L₋) = 1 − 1.949 = −0.949, inside (−1, 1)."
+    },
+    "it-2007-cs-78": {
+      "approach": "Plot each product term of ad̄ + āc̄ + bc̄d directly and compare with the four maps cell by cell.",
+      "concepts": [
+        "Karnaugh map",
+        "SOP"
+      ],
+      "steps": [
+        {
+          "title": "Plot the terms",
+          "body": "- $a\\bar d$: rows ab, ab̄ × columns c̄d̄, cd̄.\n- $\\bar a\\bar c$: rows āb̄, āb × columns c̄d̄, c̄d.\n- $b\\bar c d$: rows āb, ab × column c̄d."
+        },
+        {
+          "title": "Resulting map",
+          "body": "| | c̄d̄ | c̄d | cd | cd̄ |\n|---|---|---|---|---|\n| āb̄ | × | × | | |\n| āb | × | × | | |\n| ab | × | × | | × |\n| ab̄ | × | | | × |\n\nThis is map A."
+        }
+      ],
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Identical to the plotted map."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses āb·c̄d (from āc̄) and adds ab̄·c̄d."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Adds āb·cd̄, which no term covers."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Adds ab̄·cd, which no term covers."
+        }
+      ],
+      "pitfalls": [
+        "Using natural binary column order instead of Gray order (c̄d̄, c̄d, cd, cd̄)."
+      ],
+      "verification": "Map A has 9 ones: 4 (ad̄) + 4 (āc̄) + 2 (bc̄d) − 1 overlap (āb c̄d) = 9."
+    },
+    "it-2007-cs-79": {
+      "approach": "Expand each option over the 9 ones of the Q78 map (āb̄c̄d̄, āb̄c̄d, ābc̄d̄, ābc̄d, abc̄d̄, abc̄d, abcd̄, ab̄c̄d̄, ab̄cd̄) and look for a term that covers a zero.",
+      "concepts": [
+        "Karnaugh map",
+        "Boolean equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Look for an extra cell",
+          "body": "Option C contains $\\bar c d$, which covers the whole column c̄d — including $a\\bar b\\bar c d$, a **zero** of the map. So C is a different function."
+        },
+        {
+          "title": "Others match",
+          "body": "- A: c̄d̄ (column 1) + ad̄ + abc̄ + āc̄d → exactly the 9 ones.\n- B: āc̄ + c̄d̄ + ad̄ + abc̄d → exactly the 9 ones.\n- D: b̄c̄d̄ + acd̄ + āc̄ + abc̄ → exactly the 9 ones."
+        }
+      ],
+      "answer": {
+        "value": "C",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Covers exactly the ones of the map."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Covers exactly the ones of the map."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "c̄d adds ab̄c̄d, which is 0 in the map."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Covers exactly the ones of the map."
+        }
+      ],
+      "pitfalls": [
+        "Only checking that every 1 is covered and forgetting to check no 0 is covered."
+      ],
+      "verification": "Evaluated at a=1, b=0, c=0, d=1: original ad̄ + āc̄ + bc̄d = 0, option C gives c̄d = 1."
+    },
+    "it-2007-cs-80": {
+      "approach": "If a point lies strictly between Pa and Pb in x, the slope of PaPb is a weighted average of the slopes to that middle point, so one of those two lines is steeper. Hence the steepest pair must be x-adjacent.",
+      "concepts": [
+        "Slope as weighted average",
+        "Computational geometry"
+      ],
+      "steps": [
+        {
+          "title": "Middle point argument",
+          "body": "Let $x_a < x_c < x_b$. Then\n$$m_{ab} = \\frac{(x_c - x_a)\\,m_{ac} + (x_b - x_c)\\,m_{cb}}{x_b - x_a}$$ a weighted average of $m_{ac}$ and $m_{cb}$. As $P_c$ is not on $L_{ab}$, these differ, so one is strictly larger (and one smaller) than $m_{ab}$ — $L_{ab}$ cannot be the steepest."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The steepest line (largest or most negative slope) joins two points that are adjacent in x-order: option A."
+        }
+      ],
+      "answer": {
+        "value": "A",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Proved by the weighted-average argument."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Points (0,0), (1,1), (2,10), (3,11): steepest is (1,1)–(2,10), neither has the extreme y."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Points (0,0), (1,100), (1.5,100.1): the closest-in-x pair has slope 0.2, but (0,0)–(1,100) has slope 100."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A is always true."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"adjacent in x\" with \"closest in x\"."
+      ],
+      "verification": "Checked all six slopes of the B counter-example: 1, 5, 3.67, 9, 5, 1 — maximum 9 for the middle pair."
+    },
+    "it-2007-cs-81": {
+      "approach": "By Q80 only the n − 1 x-adjacent pairs matter: sort by x, then scan consecutive slopes.",
+      "concepts": [
+        "Sorting",
+        "Linear scan"
+      ],
+      "steps": [
+        {
+          "title": "Algorithm",
+          "body": "1. Sort points by x: $\\Theta(n\\log n)$.\n2. Compute the $n-1$ consecutive slopes and keep the steepest: $\\Theta(n)$.\n\nTotal $\\Theta(n \\log n)$, versus $\\Theta(n^2)$ for trying all pairs."
+        },
+        {
+          "title": "Why not faster",
+          "body": "Finding the steepest pair needs the x-order of the points in the comparison model, which costs $\\Omega(n\\log n)$ in general."
+        }
+      ],
+      "answer": {
+        "value": "Θ(n log n)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Linear time is not enough to establish x-adjacency in the comparison model."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Sort + one scan."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No extra log factor is needed."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The brute-force bound over all pairs, not the best."
+        }
+      ],
+      "pitfalls": [
+        "Answering Θ(n²) by examining all n(n−1)/2 lines."
+      ],
+      "verification": "For n = 4 points sorted by x only 3 slopes are compared instead of 6."
+    },
+    "it-2007-cs-82": {
+      "approach": "Simulate SSTF from 180 on each set; the first time the next request is on the same side (or there is a tie) the set fails.",
+      "concepts": [
+        "SSTF disk scheduling"
+      ],
+      "steps": [
+        {
+          "title": "Kill A and C",
+          "body": "A and C both contain 178 and 181 and 184: $180 \\to 181$ (distance 1), then from 181 the distances to 178 and 184 are both **3** — a tie, so the head keeps going up. Direction not changed ✗."
+        },
+        {
+          "title": "Run B",
+          "body": "| From | Down candidate | Up candidate | Go to |\n|---|---|---|---|\n| 180 | 178 (2) | 181 (1) | 181 ↑ |\n| 181 | 178 (3) | 185 (4) | 178 ↓ |\n| 178 | 170 (8) | 185 (7) | 185 ↑ |\n| 185 | 170 (15) | 201 (16) | 170 ↓ |\n| 170 | 138 (32) | 201 (31) | 201 ↑ |\n| 201 | 138 (63) | 265 (64) | 138 ↓ |\n| 138 | 10 (128) | 265 (127) | 265 ↑ |\n| 265 | 10 | — | 10 ↓ |\n\nThe direction flips after every request ✓.",
+          "scene": {
+            "points": [
+              {
+                "x": 10,
+                "label": "10",
+                "tone": "muted"
+              },
+              {
+                "x": 138,
+                "label": "138",
+                "tone": "muted"
+              },
+              {
+                "x": 170,
+                "label": "170",
+                "tone": "muted"
+              },
+              {
+                "x": 178,
+                "label": "178",
+                "tone": "muted"
+              },
+              {
+                "x": 181,
+                "label": "181",
+                "tone": "muted"
+              },
+              {
+                "x": 185,
+                "label": "185",
+                "tone": "muted"
+              },
+              {
+                "x": 201,
+                "label": "201",
+                "tone": "muted"
+              },
+              {
+                "x": 265,
+                "label": "265",
+                "tone": "muted"
+              },
+              {
+                "x": 180,
+                "label": "start",
+                "tone": "info"
+              }
+            ],
+            "caption": "B: 181 → 178 → 185 → 170 → 201 → 138 → 265 → 10"
+          }
+        },
+        {
+          "title": "Kill D",
+          "body": "D has 200 instead of 201: from 185 the distances to 170 and 200 are both 15 — a tie, so the head continues up ✗."
+        }
+      ],
+      "animation": {
+        "kind": "numberline",
+        "min": 0,
+        "max": 280,
+        "points": [
+          {
+            "x": 10,
+            "label": "10",
+            "tone": "default"
+          },
+          {
+            "x": 138,
+            "label": "138",
+            "tone": "default"
+          },
+          {
+            "x": 170,
+            "label": "170",
+            "tone": "default"
+          },
+          {
+            "x": 178,
+            "label": "178",
+            "tone": "default"
+          },
+          {
+            "x": 181,
+            "label": "181",
+            "tone": "accent"
+          },
+          {
+            "x": 185,
+            "label": "185",
+            "tone": "default"
+          },
+          {
+            "x": 201,
+            "label": "201",
+            "tone": "default"
+          },
+          {
+            "x": 265,
+            "label": "265",
+            "tone": "default"
+          },
+          {
+            "x": 180,
+            "label": "start",
+            "tone": "info"
+          }
+        ],
+        "caption": "Set B: head at 180, next = 181"
+      },
+      "answer": {
+        "value": "B",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Tie 178/184 at head 181 — no direction change."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Every SSTF choice is on the opposite side."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Same 178/184 tie as A."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Tie 170/200 at head 185."
+        }
+      ],
+      "pitfalls": [
+        "Ignoring the tie rule stated in the question."
+      ],
+      "verification": "In B each gap to the opposite side is strictly smaller than the gap to the next request on the same side."
+    },
+    "it-2007-cs-83": {
+      "approach": "Let the requests sit at distances m₁ < m₂ < … from the start, alternately right and left. Turning at every step needs m₍k+2₎ − m_k > m_k + m₍k+1₎, so the distances roughly double; count how many fit in 2048 tracks.",
+      "concepts": [
+        "SSTF",
+        "Recurrence"
+      ],
+      "steps": [
+        {
+          "title": "Condition",
+          "body": "At request $k$ (distance $m_k$ on one side) the opposite request is $m_k + m_{k+1}$ away and the next one on the same side is $m_{k+2} - m_k$ away. SSTF must pick the opposite one strictly (ties keep direction):\n$$m_{k+2} > 2m_k + m_{k+1}, \\qquad m_0 = 0$$"
+        },
+        {
+          "title": "Smallest distances",
+          "body": "$m_1 = 1,\\ m_2 = 2,\\ m_3 = 5,\\ m_4 = 10,\\ m_5 = 21,\\ m_6 = 42,\\ m_7 = 85,\\ m_8 = 170,\\ m_9 = 341,\\ m_{10} = 682,\\ m_{11} = 1365,\\ m_{12} = 2730$\n\n(e.g. $m_3 > 2\\cdot1 + 2 = 4$, $m_{11} > 2\\cdot341 + 682 = 1364$.)"
+        },
+        {
+          "title": "Fit in 2048 tracks",
+          "body": "The last two requests lie on opposite sides, so the span needed is $m_n + m_{n-1}$ and tracks 0–2047 give span ≤ 2047.\n\n- $n = 11$: $1365 + 682 = 2047$ ✓\n- $n = 12$: $2730 + 1365 = 4095$ ✗\n\nMaximum = **11**."
+        }
+      ],
+      "answer": {
+        "value": "11",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "9 requests need only span 341 + 170 = 511; more fit."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "10 requests need span 682 + 341 = 1023; one more still fits."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "11 requests need span exactly 2047 = the whole disk."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12 requests need span 4095 > 2047."
+        }
+      ],
+      "pitfalls": [
+        "Using a pure doubling 1, 2, 4, … and forgetting the head is already m_k away from the start."
+      ],
+      "verification": "Placing the start at track 682 gives requests at 683, 680, 687, 672, 703, 640, 767, 512, 1023, 0, 2047 — all within 0–2047 and each SSTF step strictly reverses."
+    },
+    "it-2007-cs-84": {
+      "approach": "Insert into the leaf, split a 3-key leaf around its middle key and push that key up; then compare the final nodes with the four candidates.",
+      "concepts": [
+        "B-tree insertion",
+        "Node split"
+      ],
+      "steps": [
+        {
+          "title": "Starting tree",
+          "body": "Root (K50); internal (K30), (K70); leaves (K10, K20), (K40), (K60), (K80). Each node holds at most 2 keys."
+        },
+        {
+          "title": "Insert K15",
+          "body": "K15 goes to leaf (K10, K20) → (K10, K15, K20) overflows. Split: (K10) | **K15** ↑ | (K20). The parent (K30) becomes (K15, K30) — still legal.",
+          "scene": {
+            "root": {
+              "id": "r",
+              "label": "K50",
+              "children": [
+                {
+                  "id": "i1",
+                  "label": [
+                    "K15",
+                    "K30"
+                  ],
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "id": "l1",
+                      "label": "K10"
+                    },
+                    {
+                      "id": "l1b",
+                      "label": "K20",
+                      "tone": "accent"
+                    },
+                    {
+                      "id": "l2",
+                      "label": "K40"
+                    }
+                  ]
+                },
+                {
+                  "id": "i2",
+                  "label": "K70",
+                  "children": [
+                    {
+                      "id": "l3",
+                      "label": "K60"
+                    },
+                    {
+                      "id": "l4",
+                      "label": "K80"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "K15 splits the leftmost leaf; K15 moves up"
+          }
+        },
+        {
+          "title": "Insert K25",
+          "body": "K15 < K25 < K30 → leaf (K20) becomes (K20, K25). No split.",
+          "scene": {
+            "root": {
+              "id": "r",
+              "label": "K50",
+              "children": [
+                {
+                  "id": "i1",
+                  "label": [
+                    "K15",
+                    "K30"
+                  ],
+                  "children": [
+                    {
+                      "id": "l1",
+                      "label": "K10"
+                    },
+                    {
+                      "id": "l1b",
+                      "label": [
+                        "K20",
+                        "K25"
+                      ],
+                      "tone": "success"
+                    },
+                    {
+                      "id": "l2",
+                      "label": "K40"
+                    }
+                  ]
+                },
+                {
+                  "id": "i2",
+                  "label": "K70",
+                  "children": [
+                    {
+                      "id": "l3",
+                      "label": "K60"
+                    },
+                    {
+                      "id": "l4",
+                      "label": "K80"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "K25 joins leaf (K20)"
+          }
+        },
+        {
+          "title": "Compare",
+          "body": "Final nodes: (K50), (K15, K30), (K70), (K10), (K20, K25), (K40), (K60), (K80).\n\nOf the candidates only **(K20, K25)** is present → **1**."
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "id": "r",
+          "label": "K50",
+          "children": [
+            {
+              "id": "i1",
+              "label": "K30",
+              "children": [
+                {
+                  "id": "l1",
+                  "label": [
+                    "K10",
+                    "K20"
+                  ]
+                },
+                {
+                  "id": "l2",
+                  "label": "K40"
+                }
+              ]
+            },
+            {
+              "id": "i2",
+              "label": "K70",
+              "children": [
+                {
+                  "id": "l3",
+                  "label": "K60"
+                },
+                {
+                  "id": "l4",
+                  "label": "K80"
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "Initial B-tree (max 2 keys per node)"
+      },
+      "answer": {
+        "value": "1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Only (K20, K25) appears."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(K15, K20) would need K15 to stay in the leaf, but the split pushes it up."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(K30, K50) and (K25, K30) never form: K50 stays alone in the root and K25 lands in a leaf."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Three of the four nodes do not occur."
+        }
+      ],
+      "pitfalls": [
+        "Splitting with K20 as the middle key instead of K15."
+      ],
+      "verification": "All nodes after both insertions hold 1–2 keys and the in-order listing is K10 K15 K20 K25 K30 K40 K50 K60 K70 K80."
+    },
+    "it-2007-cs-85": {
+      "approach": "Delete an internal key by replacing it with its in-order successor, then repair underflow by merging with a 1-key sibling or borrowing from a 2-key sibling through the parent.",
+      "concepts": [
+        "B-tree deletion",
+        "Merge and redistribution"
+      ],
+      "steps": [
+        {
+          "title": "Replace K50",
+          "body": "Tree after Q84: root (K50); (K15, K30), (K70); leaves (K10), (K20, K25), (K40), (K60), (K80).\n\nK50 is internal: replace it by its successor **K60**; leaf (K60) becomes empty.",
+          "scene": {
+            "root": {
+              "id": "r",
+              "label": "K60",
+              "tone": "accent",
+              "children": [
+                {
+                  "id": "i1",
+                  "label": [
+                    "K15",
+                    "K30"
+                  ],
+                  "children": [
+                    {
+                      "id": "l1",
+                      "label": "K10"
+                    },
+                    {
+                      "id": "l1b",
+                      "label": [
+                        "K20",
+                        "K25"
+                      ]
+                    },
+                    {
+                      "id": "l2",
+                      "label": "K40"
+                    }
+                  ]
+                },
+                {
+                  "id": "i2",
+                  "label": "K70",
+                  "children": [
+                    {
+                      "id": "l3",
+                      "label": "—",
+                      "tone": "error"
+                    },
+                    {
+                      "id": "l4",
+                      "label": "K80"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "K60 moves to the root; its leaf underflows"
+          }
+        },
+        {
+          "title": "Merge the leaf",
+          "body": "Sibling (K80) has only one key, so merge: K70 comes down → leaf (K70, K80). Now the internal node under the root has no key."
+        },
+        {
+          "title": "Borrow at the internal level",
+          "body": "Its sibling (K15, K30) has two keys: rotate — K60 moves down, **K30 moves up** to the root, and leaf (K40) moves across.\n\nResult: root (K30); (K15), (K60); leaves (K10), (K20, K25), (K40), (K70, K80).",
+          "scene": {
+            "root": {
+              "id": "r",
+              "label": "K30",
+              "tone": "accent",
+              "children": [
+                {
+                  "id": "i1",
+                  "label": "K15",
+                  "children": [
+                    {
+                      "id": "l1",
+                      "label": "K10"
+                    },
+                    {
+                      "id": "l1b",
+                      "label": [
+                        "K20",
+                        "K25"
+                      ],
+                      "tone": "success"
+                    }
+                  ]
+                },
+                {
+                  "id": "i2",
+                  "label": "K60",
+                  "children": [
+                    {
+                      "id": "l2",
+                      "label": "K40"
+                    },
+                    {
+                      "id": "l4",
+                      "label": [
+                        "K70",
+                        "K80"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Root K30; height still 3"
+          }
+        },
+        {
+          "title": "Statements",
+          "body": "(i) height 3 → 3: **true**. (ii) node (K20, K25) is present: **true**. (iii) root changed K50 → K30: **false**. → Option A."
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "id": "r",
+          "label": "K50",
+          "children": [
+            {
+              "id": "i1",
+              "label": [
+                "K15",
+                "K30"
+              ],
+              "children": [
+                {
+                  "id": "l1",
+                  "label": "K10"
+                },
+                {
+                  "id": "l1b",
+                  "label": [
+                    "K20",
+                    "K25"
+                  ],
+                  "tone": "success"
+                },
+                {
+                  "id": "l2",
+                  "label": "K40"
+                }
+              ]
+            },
+            {
+              "id": "i2",
+              "label": "K70",
+              "children": [
+                {
+                  "id": "l3",
+                  "label": "K60"
+                },
+                {
+                  "id": "l4",
+                  "label": "K80"
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "Tree after inserting K15 and K25"
+      },
+      "answer": {
+        "value": "(i) and (ii)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Height unchanged and (K20, K25) survives."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The root changes from K50 to K30."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Same: the root does not stay K50."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(i) and (ii) are true."
+        }
+      ],
+      "pitfalls": [
+        "Using the predecessor K40: borrowing from (K20, K25) then destroys that node and no option fits."
+      ],
+      "verification": "In-order listing after deletion: K10 K15 K20 K25 K30 K40 K60 K70 K80 — K50 gone, all nodes legal."
+    }
+  }
+}
