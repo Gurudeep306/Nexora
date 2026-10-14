@@ -1,0 +1,1531 @@
+{
+  "paper": "cse-2007",
+  "version": 2,
+  "solutions": {
+    "cse-2007-cs-45": {
+      "approach": "Count work per call: apart from the recursive call each call does $O(1)$ work, so $T(n)=T(\\sqrt n)+O(1)$. Substitute $n=2^m$ to turn the square root into halving.",
+      "concepts": [
+        "Recurrence relations",
+        "Variable substitution",
+        "Iterated square root"
+      ],
+      "steps": [
+        {
+          "title": "Write the recurrence",
+          "body": "The addition $+\\,n$ is a single $O(1)$ operation (it is the returned *value* that grows, not the work). Hence\n$$T(n)=T(\\lfloor\\sqrt n\\rfloor)+c,\\qquad T(n)=1 \\text{ for } n\\le 2.$$"
+        },
+        {
+          "title": "Substitute $n=2^m$",
+          "body": "Let $S(m)=T(2^m)$. Since $\\sqrt{2^m}=2^{m/2}$,\n$$S(m)=S(m/2)+c \\Rightarrow S(m)=\\Theta(\\log_2 m).$$"
+        },
+        {
+          "title": "Back-substitute",
+          "body": "$m=\\log_2 n$, so $T(n)=\\Theta(\\log_2 m)=\\Theta(\\log_2\\log_2 n)$.\n\nExample: $n=2^{16}=65536 \\to 256 \\to 16 \\to 4 \\to 2$: 4 recursive calls, and $\\log_2\\log_2 65536=\\log_2 16=4$."
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "title": "Calls for n = 65536",
+        "cols": [
+          "n",
+          "log₂ n"
+        ],
+        "rowLabels": [
+          "call 1",
+          "call 2",
+          "call 3",
+          "call 4",
+          "call 5"
+        ],
+        "rows": [
+          [
+            65536,
+            16
+          ],
+          [
+            256,
+            8
+          ],
+          [
+            16,
+            4
+          ],
+          [
+            4,
+            2
+          ],
+          [
+            2,
+            1
+          ]
+        ],
+        "mono": true,
+        "caption": "Each call halves log₂ n, so the depth is log₂ log₂ n."
+      },
+      "answer": {
+        "value": "$\\Theta(\\log_2\\log_2 n)$ — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\Theta(n^2)$ is far too large; there is no loop and only one recursive call per level."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\Theta(n\\log n)$ would need linear work per level; each level does constant work."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(\\log n)$ is the depth if the argument were halved ($n/2$); the square root halves the *exponent*, giving far fewer levels."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the depth of repeated square roots is $\\log_2\\log_2 n$, with $O(1)$ work per level."
+        }
+      ],
+      "shortcut": "$T(n)=T(\\sqrt n)+1 \\Rightarrow \\Theta(\\log\\log n)$ is a standard result worth memorising.",
+      "pitfalls": [
+        "Confusing the returned value (about $n+\\sqrt n+\\dots=\\Theta(n)$) with the running time.",
+        "Treating $\\sqrt n$ like $n/2$ and answering $\\Theta(\\log n)$."
+      ],
+      "verification": "Traced $n=65536$: argument sequence $65536,256,16,4,2$ gives 4 recursive calls $=\\log_2\\log_2 65536$."
+    },
+    "cse-2007-cs-46": {
+      "approach": "Read the recursion: a node with no children returns 1, any other node returns only the sum over its children, and NULL returns 0. That sum counts leaves.",
+      "concepts": [
+        "Tree recursion",
+        "Leaf nodes"
+      ],
+      "steps": [
+        {
+          "title": "Base cases",
+          "body": "- `ptr == NULL` → returns `value` $=0$.\n- Both children NULL (a **leaf**) → returns $1$."
+        },
+        {
+          "title": "Recursive case",
+          "body": "An internal node returns $0+\\text{GetValue(left)}+\\text{GetValue(right)}$ and adds nothing for itself. By induction, the result for any subtree is the number of leaves in it."
+        },
+        {
+          "title": "Check on a small tree",
+          "body": "Root with children $A$ and $B$, where $A$ has a single child $C$: the leaves are $C$ and $B$. GetValue(root) $=\\text{GetValue}(A)+\\text{GetValue}(B)=(\\text{GetValue}(C)+0)+1=1+1=2$ = number of leaves."
+        }
+      ],
+      "answer": {
+        "value": "The number of **leaf nodes** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Internal nodes contribute 0, so it does not count all nodes (that would need 1 + left + right)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Internal nodes are exactly the ones that are *not* counted."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: only childless nodes return 1; every other node just sums its children."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Height would need max(left, right) + 1, not a sum."
+        }
+      ],
+      "pitfalls": [
+        "Assuming an internal node adds 1 for itself — `value` starts at 0 and only a leaf sets it to 1."
+      ],
+      "verification": "Traced a 4-node tree with 2 leaves: the function returns 2."
+    },
+    "cse-2007-cs-47": {
+      "approach": "The leaf-to-root path in a heap has $\\lfloor\\log_2 n\\rfloor+1$ nodes and is already sorted, so binary search on it costs $\\log_2$ of the path length.",
+      "concepts": [
+        "Binary heap",
+        "Binary search",
+        "Heap height"
+      ],
+      "steps": [
+        {
+          "title": "Length of the path",
+          "body": "A heap with $n$ elements is a complete binary tree of height $\\lfloor\\log_2 n\\rfloor$, so the path from the new leaf to the root has $k=\\Theta(\\log_2 n)$ nodes."
+        },
+        {
+          "title": "The path is sorted",
+          "body": "In a max-heap each parent $\\ge$ child, so the keys along the leaf→root path are in non-decreasing order. Their array indices $i,\\lfloor i/2\\rfloor,\\lfloor i/4\\rfloor,\\dots$ are computable in $O(1)$, so binary search applies."
+        },
+        {
+          "title": "Count comparisons",
+          "body": "Binary search on $k$ sorted items takes $\\Theta(\\log_2 k)=\\Theta(\\log_2\\log_2 n)$ comparisons. (Shifting elements still costs $\\Theta(\\log n)$ moves, but the question asks only for comparisons.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(\\log_2\\log_2 n)$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\Theta(\\log n)$ is the comparison count of ordinary sift-up (and the number of moves here), not of binary search."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: binary search over a path of $\\Theta(\\log n)$ nodes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(n)$ would mean scanning the whole array."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\Theta(n\\log n)$ is the cost of $n$ insertions, not one."
+        }
+      ],
+      "pitfalls": [
+        "Counting data movements (shifts) instead of comparisons."
+      ],
+      "verification": "For $n=2^{16}$ the path has 17 nodes; binary search needs about $\\lceil\\log_2 17\\rceil=5$ comparisons, i.e. $\\approx\\log_2\\log_2 n$."
+    },
+    "cse-2007-cs-48": {
+      "approach": "Compare any assignment $\\tau$ with its complement $\\bar\\tau$: every clause is true under at least one of them, so one of the two satisfies at least half of the clauses.",
+      "concepts": [
+        "Conjunctive normal form",
+        "MAX-SAT",
+        "Averaging argument"
+      ],
+      "steps": [
+        {
+          "title": "Assignment vs. its complement",
+          "body": "Take a clause $C$ and any literal $\\ell$ in it. If $\\ell$ is false under $\\tau$, it is true under $\\bar\\tau$ (every variable flipped). So each clause is true under $\\tau$ **or** under $\\bar\\tau$."
+        },
+        {
+          "title": "Count",
+          "body": "With $m$ clauses, $\\text{sat}(\\tau)+\\text{sat}(\\bar\\tau)\\ge m$, so $\\max(\\text{sat}(\\tau),\\text{sat}(\\bar\\tau))\\ge \\tfrac m2$. Hence (A) holds for every formula."
+        },
+        {
+          "title": "Reject the others",
+          "body": "(B) fails for $x\\wedge\\neg x$ (unsatisfiable). (C) contradicts (A): some assignment always satisfies $\\ge \\tfrac m2>\\tfrac m4$ clauses. So (D) is also wrong."
+        }
+      ],
+      "answer": {
+        "value": "At least half the clauses can always be satisfied — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct by the complement argument (a random assignment even satisfies each $k$-literal clause with probability $1-2^{-k}\\ge\\tfrac12$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "False: $x\\wedge\\neg x$ has no satisfying assignment."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Impossible, since some assignment always satisfies at least half (more than a quarter) of the clauses."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong because (A) is true."
+        }
+      ],
+      "verification": "Checked $x\\wedge\\neg x$: each assignment satisfies exactly $1$ of the $2$ clauses, so the bound $\\tfrac m2$ is tight."
+    },
+    "cse-2007-cs-49": {
+      "approach": "Use the exchange (cycle) argument. A minimum-weight edge is in *some* MST, but with ties it need not be in *every* MST — a triangle of equal weights refutes (D).",
+      "concepts": [
+        "Minimum spanning tree",
+        "Cycle property",
+        "Exchange argument"
+      ],
+      "steps": [
+        {
+          "title": "Check (A), (B), (C)",
+          "body": "- (A) For any MST $T\\not\\ni e$, the cycle in $T+e$ has an edge $f$ with $w(f)\\ge w$; $T+e-f$ weighs $\\le w(T)$, so it is an MST containing $e$. **True.**\n- (B) If $e\\notin T$, every edge $f$ on the cycle of $T+e$ has $w(f)\\le w(e)=w$ (otherwise swapping $f$ out would lower the cost), and $w(f)\\ge w$ because $w$ is the minimum. So all equal $w$. **True.**\n- (C) If an MST $T$ had no edge of weight $w$, then $T+e-f$ for a cycle edge $f$ with $w(f)>w$ would be lighter — contradiction. **True.**"
+        },
+        {
+          "title": "Counter-example to (D)",
+          "body": "Triangle $u,v,x$ with all three edges of weight $1$ and $e=(u,v)$. The spanning tree $\\{(u,x),(x,v)\\}$ has weight $1+1=2$, the minimum possible, so it is an MST that does **not** contain $e$. Hence (D) is false."
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "title": "An MST without e",
+        "nodes": [
+          {
+            "id": "u",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "v",
+            "x": 4,
+            "y": 2
+          },
+          {
+            "id": "x",
+            "x": 2,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "u",
+            "to": "v",
+            "w": 1
+          },
+          {
+            "from": "u",
+            "to": "x",
+            "w": 1
+          },
+          {
+            "from": "x",
+            "to": "v",
+            "w": 1
+          }
+        ],
+        "edgeTones": {
+          "u>x": "success",
+          "x>v": "success",
+          "u>v": "muted"
+        },
+        "caption": "Green edges form an MST of weight 2 that omits e = (u, v)."
+      },
+      "answer": {
+        "value": "(D) \"$e$ is present in every MST\" is **false**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: the exchange argument puts e into some MST."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: cycle edges are ≤ w by optimality and ≥ w by minimality, hence all equal w."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: an MST with no weight-w edge could be improved by swapping e in."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "False (the answer): with equal-weight ties, e can be left out of an MST."
+        }
+      ],
+      "pitfalls": [
+        "Assuming edge weights are distinct — only then is the minimum edge in every MST."
+      ],
+      "verification": "In the equal-weight triangle all three 2-edge trees are MSTs, and one of them avoids e."
+    },
+    "cse-2007-cs-50": {
+      "approach": "Pair up the elements: one comparison per pair splits it into a max-candidate and a min-candidate; then find the max of the $n/2$ winners and the min of the $n/2$ losers.",
+      "concepts": [
+        "Simultaneous min–max",
+        "Comparison counting"
+      ],
+      "steps": [
+        {
+          "title": "Compare in pairs",
+          "body": "$\\tfrac n2$ pairs, one comparison each: $\\tfrac n2$ comparisons. The larger of each pair goes to group $W$, the smaller to group $L$ (each of size $\\tfrac n2$)."
+        },
+        {
+          "title": "Max of W, min of L",
+          "body": "Max of $\\tfrac n2$ items: $\\tfrac n2-1$; min of $\\tfrac n2$ items: $\\tfrac n2-1$.\n$$\\text{Total}=\\tfrac n2+\\left(\\tfrac n2-1\\right)+\\left(\\tfrac n2-1\\right)=\\tfrac{3n}{2}-2=1.5n-2.$$"
+        },
+        {
+          "title": "Compare with the options",
+          "body": "This upper bound $1.5n-2$ (also known to be optimal) makes (B) true and refutes (A) ($2n-c$ needed) and (C) ($n\\log_2 n$ needed)."
+        }
+      ],
+      "answer": {
+        "value": "At most $1.5n-2$ comparisons — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False: $1.5n-2<2n-c$ for large $n$, so $2n-c$ comparisons are not needed (that is the naive two-scan count)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the pairing method uses exactly $\\tfrac{3n}{2}-2$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "False: $n\\log n$ is a sorting bound; min and max need only linearly many comparisons."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong because (B) is true."
+        }
+      ],
+      "verification": "$n=4$: $a$ vs $b$, $c$ vs $d$ (2), max of winners (1), min of losers (1) $=4=1.5\\cdot4-2$."
+    },
+    "cse-2007-cs-51": {
+      "approach": "Find the best and worst inputs. The loop stops at the first divisor: for even $n$ it runs once; for prime $n$ it runs about $\\sqrt n$ times.",
+      "concepts": [
+        "Asymptotic notation",
+        "Best and worst case"
+      ],
+      "steps": [
+        {
+          "title": "Worst case",
+          "body": "If $n$ is prime, no $i$ divides $n$, so $i$ runs from $2$ to $\\lfloor\\sqrt n\\rfloor$: $T(n)=\\lfloor\\sqrt n\\rfloor-1$. So $T(n)=O(\\sqrt n)$ for all $n$."
+        },
+        {
+          "title": "Best case",
+          "body": "If $n$ is even (e.g. $n=1000$), $n\\,\\%\\,2=0$ at $i=2$ and the function returns after **1** iteration. So $T(n)$ is not $\\Omega(\\sqrt n)$; the only lower bound valid for all $n$ is $\\Omega(1)$."
+        }
+      ],
+      "answer": {
+        "value": "$T(n)=O(\\sqrt n)$ and $T(n)=\\Omega(1)$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\Omega(\\sqrt n)$ fails for even $n$, where the loop runs only once."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: worst case $\\approx\\sqrt n$, best case $1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$O(n)$ is true but loose, and $\\Omega(\\sqrt n)$ is false for even $n$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong because (B) is true."
+        }
+      ],
+      "pitfalls": [
+        "Treating $T(n)$ as only the worst case and choosing (A)."
+      ],
+      "verification": "$n=97$ (prime): $i=2,\\dots,9$, i.e. 8 iterations $\\approx\\sqrt{97}$; $n=98$: 1 iteration."
+    },
+    "cse-2007-cs-52": {
+      "approach": "This is the dangling-else grammar. Show two parse trees for one string (ambiguity) and confirm with the LL(1) table conflict on $S_1$ under lookahead $e$.",
+      "concepts": [
+        "LL(1) grammars",
+        "FIRST/FOLLOW sets",
+        "Ambiguity",
+        "Dangling else"
+      ],
+      "steps": [
+        {
+          "title": "Rule out (A), (B), (D)",
+          "body": "No production has the form $A\\to A\\alpha$, so it is not left recursive. Right recursion ($S_1\\to eS$, $S\\to iCtSS_1$) never prevents LL(1). Every rule has a single non-terminal on the left, so the grammar is context-free."
+        },
+        {
+          "title": "The LL(1) conflict",
+          "body": "$\\text{FIRST}(S_1)=\\{e,\\varepsilon\\}$. Because $S_1$ follows $S$ in $S\\to iCtS\\,S_1$, $\\text{FOLLOW}(S)\\supseteq\\text{FIRST}(S_1)\\setminus\\{\\varepsilon\\}=\\{e\\}$ and $\\text{FOLLOW}(S_1)=\\text{FOLLOW}(S)\\ni e$.\n\nSo the entry $M[S_1,e]$ gets both $S_1\\to eS$ and $S_1\\to\\varepsilon$."
+        },
+        {
+          "title": "Root cause: ambiguity",
+          "body": "The string $ibt\\,ibt\\,a\\,e\\,a$ has two parse trees: the $e\\,a$ can attach to the inner $i$ (inner $S_1\\to eS$, outer $S_1\\to\\varepsilon$) or to the outer $i$ (inner $S_1\\to\\varepsilon$, outer $S_1\\to eS$). An ambiguous grammar is never LL(1)."
+        }
+      ],
+      "answer": {
+        "value": "It is **ambiguous** (dangling else) — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No production starts with its own left-hand non-terminal, so there is no left recursion."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Right recursion is harmless for top-down parsing; many LL(1) grammars are right recursive."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $ibtibtaea$ has two parse trees, producing the $M[S_1,e]$ conflict."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Every production has a single non-terminal on the left — the grammar is context-free."
+        }
+      ],
+      "verification": "Built FIRST/FOLLOW: $\\text{FIRST}(S_1)\\cap\\text{FOLLOW}(S_1)=\\{e\\}\\neq\\varnothing$, confirming the conflict that the ambiguity causes."
+    },
+    "cse-2007-cs-53": {
+      "approach": "Give a regular grammar that is not LL(1) to kill P; for Q, note every regular language is deterministic context-free, and every DCFL has an LR(1) grammar.",
+      "concepts": [
+        "Regular grammars",
+        "LL(1)",
+        "LR(1)",
+        "DCFL"
+      ],
+      "steps": [
+        {
+          "title": "P is false",
+          "body": "The right-linear grammar $S\\to aS\\mid a$ generates $a^+$. Both alternatives of $S$ start with $a$, so $\\text{FIRST}(aS)\\cap\\text{FIRST}(a)=\\{a\\}$ and $M[S,a]$ has two entries — not LL(1). (Any ambiguous regular grammar, e.g. $S\\to aS\\mid aS\\mid a$, also fails.)"
+        },
+        {
+          "title": "Q is true",
+          "body": "Every regular set is accepted by a DFA, hence by a DPDA, so it is a DCFL. Every DCFL has an LR(1) grammar (Knuth). Concretely, the grammar from a DFA with rules $A\\to aB$ and $A\\to\\varepsilon$ for final states is LL(1), hence also LR(1)."
+        }
+      ],
+      "answer": {
+        "value": "P is false and Q is true — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "P is false: $S\\to aS\\mid a$ is regular but not LL(1)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Gets both wrong: P is false and Q is true."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Q is true: regular ⊂ DCFL, and every DCFL has an LR(1) grammar."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"every regular *grammar*\" (false) with \"every regular *language* has an LL(1) grammar\" (true)."
+      ],
+      "verification": "Left-factoring $S\\to aS\\mid a$ into $S\\to aS'$, $S'\\to S\\mid\\varepsilon$ gives an LL(1) grammar for the same set — so the set is fine, but the given grammar is not."
+    },
+    "cse-2007-cs-54": {
+      "approach": "Evaluate the deepest subexpression first so that each result stays in a register: compute $t_3=e-(c+d)$ in R1, $t_1$ in R2, combine with a register-register SUB, and store once. Only loads of the first operand and the final store need MOV.",
+      "concepts": [
+        "Code generation",
+        "Register allocation",
+        "Evaluation order"
+      ],
+      "steps": [
+        {
+          "title": "Lower bound",
+          "body": "Any OP leaves its result in a register, and the final value must reach memory, so at least $1$ store MOV is needed. Each of the two independent chains ($a+b$ and $e-(c+d)$) needs a first operand loaded into a register: $\\ge 2$ load MOVs. So at least $3$."
+        },
+        {
+          "title": "Code with 3 MOVs",
+          "body": "| # | Instruction | Effect |\n|---|---|---|\n| 1 | MOV c, R1 | $R1=c$ |\n| 2 | ADD d, R1 | $R1=d+c=t_2$ |\n| 3 | SUB e, R1 | $R1=e-t_2=t_3$ |\n| 4 | MOV a, R2 | $R2=a$ |\n| 5 | ADD b, R2 | $R2=b+a=t_1$ |\n| 6 | SUB R2, R1 | $R1=R2-R1=t_1-t_3=t_4$ |\n| 7 | MOV R1, m | memory $\\leftarrow t_4$ |\n\n`OP m,Ri` computes *val* OP Ri, so `SUB e, R1` gives $e-t_2$ in the right order, and `SUB R2, R1` gives $R2-R1=t_1-t_3$."
+        },
+        {
+          "title": "Count",
+          "body": "MOVs used: lines 1, 4 and 7 → $3$ MOV instructions, matching the lower bound."
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "title": "Generated code",
+        "cols": [
+          "Instruction",
+          "R1",
+          "R2"
+        ],
+        "rows": [
+          [
+            "MOV c, R1",
+            "c",
+            "—"
+          ],
+          [
+            "ADD d, R1",
+            "t2",
+            "—"
+          ],
+          [
+            "SUB e, R1",
+            "t3",
+            "—"
+          ],
+          [
+            "MOV a, R2",
+            "t3",
+            "a"
+          ],
+          [
+            "ADD b, R2",
+            "t3",
+            "t1"
+          ],
+          [
+            "SUB R2, R1",
+            "t4",
+            "t1"
+          ],
+          [
+            "MOV R1, m",
+            "t4",
+            "t1"
+          ]
+        ],
+        "mono": true,
+        "hl": [
+          {
+            "r": 0,
+            "tone": "accent"
+          },
+          {
+            "r": 3,
+            "tone": "accent"
+          },
+          {
+            "r": 6,
+            "tone": "accent"
+          }
+        ],
+        "caption": "Highlighted rows are the three MOVs."
+      },
+      "answer": {
+        "value": "**3** MOV instructions — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two MOVs cannot both load two independent chains and store the result."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: two loads plus one store."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Five MOVs come from storing intermediate temporaries; two registers suffice to keep them all."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Six MOVs is the naive load-op-store per statement count."
+        }
+      ],
+      "pitfalls": [
+        "Storing every temporary $t_1,t_2,t_3$ to memory — with two registers none of them needs to leave a register.",
+        "Missing that `OP m,Ri` computes $m$ OP $R_i$, which lets $e-t_2$ be computed without loading $e$."
+      ],
+      "verification": "Re-executed the 7 instructions symbolically: final memory value $=(a+b)-(e-(c+d))=t_4$."
+    },
+    "cse-2007-cs-55": {
+      "approach": "Draw the SRT Gantt chart, preempting only when a new arrival has a strictly shorter remaining time, then use waiting time $=$ completion $-$ arrival $-$ burst for P2.",
+      "concepts": [
+        "SRTF scheduling",
+        "Preemption",
+        "Waiting time"
+      ],
+      "given": "| Process | Burst | Arrival |\n|---|---|---|\n| P1 | 20 | 0 |\n| P2 | 25 | 15 |\n| P3 | 10 | 30 |\n| P4 | 15 | 45 |",
+      "steps": [
+        {
+          "title": "t = 0 to 20: P1",
+          "body": "P1 starts. At $t=15$ P2 arrives with $25$, while P1 has $20-15=5$ left, so P1 continues and finishes at $t=20$.",
+          "scene": {
+            "upto": 20,
+            "cursor": 20
+          }
+        },
+        {
+          "title": "t = 20 to 30: P2",
+          "body": "Only P2 is ready; it runs until P3 arrives at $t=30$. P2 remaining $=25-10=15$.",
+          "scene": {
+            "upto": 30,
+            "cursor": 30
+          }
+        },
+        {
+          "title": "t = 30 to 40: P3 preempts",
+          "body": "P3 needs $10<15$, so P3 runs $30\\to40$ and finishes.",
+          "scene": {
+            "upto": 40,
+            "cursor": 40
+          }
+        },
+        {
+          "title": "t = 40 to 55: P2 finishes",
+          "body": "P2 resumes with $15$. At $t=45$ P4 arrives with $15$ while P2 has $15-5=10$ left, so P2 continues and finishes at $t=55$. (P4 then runs $55\\to70$.)",
+          "scene": {
+            "upto": 70,
+            "cursor": 55
+          }
+        },
+        {
+          "title": "Waiting time of P2",
+          "body": "$$W_{P2}=\\text{completion}-\\text{arrival}-\\text{burst}=55-15-25=15.$$\nCheck: P2 waited $20-15=5$ (behind P1) $+\\,40-30=10$ (behind P3) $=15$."
+        }
+      ],
+      "animation": {
+        "kind": "gantt",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 20,
+                "label": "P1"
+              },
+              {
+                "start": 20,
+                "end": 30,
+                "label": "P2"
+              },
+              {
+                "start": 30,
+                "end": 40,
+                "label": "P3"
+              },
+              {
+                "start": 40,
+                "end": 55,
+                "label": "P2"
+              },
+              {
+                "start": 55,
+                "end": 70,
+                "label": "P4"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 15,
+            "label": "P2↓"
+          },
+          {
+            "t": 30,
+            "label": "P3↓"
+          },
+          {
+            "t": 45,
+            "label": "P4↓"
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      },
+      "answer": {
+        "value": "Total waiting time of P2 $=$ **15** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Counts only the wait behind P1 (20 − 15 = 5) and forgets the preemption by P3."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 5 + 10 = 15."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This is 55 − 15 = 40, the turnaround time, not the waiting time."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This is P2’s completion time, not its waiting time."
+        }
+      ],
+      "pitfalls": [
+        "Preempting P2 at t = 45 — P4 (15) is not shorter than P2’s remaining 10.",
+        "Reporting turnaround time instead of waiting time."
+      ],
+      "verification": "Sum of the two gaps P2 spent in the ready queue (15→20 and 30→40) is 5 + 10 = 15, equal to 55 − 15 − 25."
+    },
+    "cse-2007-cs-56": {
+      "approach": "Recognise P as Belady's anomaly (true for FIFO) and Q as a true fact; the anomaly comes from FIFO not being a stack algorithm, not from lack of locality.",
+      "concepts": [
+        "Belady's anomaly",
+        "FIFO page replacement",
+        "Locality of reference"
+      ],
+      "steps": [
+        {
+          "title": "P is true",
+          "body": "For the reference string $1,2,3,4,1,2,5,1,2,3,4,5$, FIFO gives $9$ faults with 3 frames but $10$ faults with 4 frames — more frames, more faults (Belady's anomaly)."
+        },
+        {
+          "title": "Q is true but not the reason",
+          "body": "Some programs (e.g. random or large-stride access) show little locality, so Q is true. But the anomaly occurs because FIFO is **not a stack algorithm**: the set of pages in memory with $k$ frames need not be a subset of the set with $k+1$ frames. LRU/OPT never show it, regardless of locality. So Q does not explain P."
+        }
+      ],
+      "animation": {
+        "kind": "paging",
+        "policy": "FIFO",
+        "frames": 4,
+        "refs": [
+          1,
+          2,
+          3,
+          4,
+          1,
+          2,
+          5,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "upto": 12,
+        "expectFaults": 10,
+        "caption": "FIFO with 4 frames: 10 faults (vs 9 with 3 frames)."
+      },
+      "answer": {
+        "value": "Both true, but Q is not the reason for P — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Both are true, but the anomaly is caused by FIFO’s non-stack property, not by missing locality."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P is true: Belady’s anomaly is a demonstrated FIFO behaviour."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both statements are true."
+        }
+      ],
+      "verification": "Simulated FIFO on $1,2,3,4,1,2,5,1,2,3,4,5$: 3 frames → 9 faults, 4 frames → 10 faults."
+    },
+    "cse-2007-cs-57": {
+      "approach": "Compute the available vector, then run the safety algorithm: repeatedly finish any process whose request fits in what is available and release its allocation.",
+      "concepts": [
+        "Banker's safety algorithm",
+        "Deadlock detection"
+      ],
+      "steps": [
+        {
+          "title": "Available vector",
+          "body": "Allocated: $X=1+2+2=5$, $Y=2+0+2=4$, $Z=1+1+1=3$.\n$$\\text{Avail}=(5,5,5)-(5,4,3)=(0,1,2).$$",
+          "scene": {
+            "hl": []
+          }
+        },
+        {
+          "title": "P1 finishes first",
+          "body": "P0 needs $(1,0,3)$: $X\\,1>0$ ✗. P2 needs $(1,2,0)$: $Y\\,2>1$ ✗. P1 needs $(0,1,2)\\le(0,1,2)$ ✓.\nP1 releases $(2,0,1)$: $\\text{Avail}=(0,1,2)+(2,0,1)=(2,1,3)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "Avail": "(2,1,3)"
+            }
+          }
+        },
+        {
+          "title": "P0 finishes next",
+          "body": "P2 needs $(1,2,0)$: $Y\\,2>1$ ✗. P0 needs $(1,0,3)\\le(2,1,3)$ ✓.\nP0 releases $(1,2,1)$: $\\text{Avail}=(2,1,3)+(1,2,1)=(3,3,4)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ],
+            "vars": {
+              "Avail": "(3,3,4)"
+            }
+          }
+        },
+        {
+          "title": "P2 finishes last",
+          "body": "P2 needs $(1,2,0)\\le(3,3,4)$ ✓. Order: P1 → P0 → P2, so the system is not deadlocked and **P2 finishes last**.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ],
+            "vars": {
+              "Avail": "(5,5,5)"
+            }
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "title": "Safety check",
+        "cols": [
+          "alloc X Y Z",
+          "request X Y Z"
+        ],
+        "rowLabels": [
+          "P0",
+          "P1",
+          "P2"
+        ],
+        "rows": [
+          [
+            "1 2 1",
+            "1 0 3"
+          ],
+          [
+            "2 0 1",
+            "0 1 2"
+          ],
+          [
+            "2 2 1",
+            "1 2 0"
+          ]
+        ],
+        "mono": true,
+        "vars": {
+          "Avail": "(0,1,2)"
+        }
+      },
+      "answer": {
+        "value": "**P2** finishes last — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "P0 finishes second, after P1 releases its resources."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "P1 is the only process that can finish first."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: order P1 → P0 → P2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A safe completion order exists, so there is no deadlock."
+        }
+      ],
+      "verification": "Final available after all three finish is (5,5,5), the total — consistent."
+    },
+    "cse-2007-cs-58": {
+      "approach": "Check each property directly: mutual exclusion by contradiction, deadlock by the interleaving where both flags are set before either loop test.",
+      "concepts": [
+        "Mutual exclusion",
+        "Deadlock",
+        "Busy waiting"
+      ],
+      "steps": [
+        {
+          "title": "Mutual exclusion holds",
+          "body": "Suppose both are in the CS. P1 entered after seeing `wants2 == false` while `wants1` was already true; P2 likewise. Whoever tested second must have seen the other's flag true (it was set before the other's test and stays true in the CS) — contradiction. So (A) is false."
+        },
+        {
+          "title": "Deadlock is possible",
+          "body": "Interleaving: P1 sets `wants1 = true`, P2 sets `wants2 = true`. Now P1 spins on `wants2` and P2 spins on `wants1` forever — neither can enter. So it does **not** prevent deadlock."
+        },
+        {
+          "title": "Other options",
+          "body": "(C) There is no turn variable: P1 can enter repeatedly while P2 stays in its remainder section, so no strict alternation. (B) Once P2 has set `wants2`, P1 can never re-enter until P2 finishes, so waiting is bounded — the defect is deadlock. Hence (D)."
+        }
+      ],
+      "answer": {
+        "value": "Ensures mutual exclusion but does not prevent deadlock — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Mutual exclusion is guaranteed: each sets its own flag before checking the other’s."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Bounded waiting is not the failure: a waiting process with its flag set blocks the other from re-entering."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No turn variable is used, so a process may enter several times in a row."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: both flags true at once leads to both spinning forever."
+        }
+      ],
+      "verification": "Enumerated the interleaving (set1, set2, test1, test2): both loops spin forever, confirming deadlock; no interleaving puts both in the CS."
+    },
+    "cse-2007-cs-59": {
+      "approach": "Read the expression inside out: (all females × all courses) − enroll leaves the (female, course) pairs that did **not** happen; projecting on courseId gives courses missing at least one female.",
+      "concepts": [
+        "Relational algebra",
+        "Cartesian product",
+        "Set difference"
+      ],
+      "steps": [
+        {
+          "title": "Inner product",
+          "body": "$\\Pi_{studId}(\\sigma_{sex=\\text{\"female\"}}(studInfo))\\times\\Pi_{courseId}(enroll)$ = every (female student, course) pair."
+        },
+        {
+          "title": "Subtract enroll",
+          "body": "Removing actual enrolments leaves pairs $(f,c)$ where female $f$ is **not** enrolled in course $c$. Projecting on courseId gives courses that at least one female has not taken."
+        },
+        {
+          "title": "Use the assumption",
+          "body": "Every course has at least one female student. So each such course has *some* but *not all* females enrolled — a proper (non-empty) subset of the female students."
+        }
+      ],
+      "answer": {
+        "value": "Courses in which a **proper subset** of female students are enrolled — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "That is the complement: courses with all females enrolled are exactly the ones removed (this is the division query)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: some female missing, and by assumption some female present."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Impossible by the assumption that every course has at least one female student."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong because (B) is exact."
+        }
+      ],
+      "pitfalls": [
+        "Mistaking this sub-expression of the division operator for division itself (option A)."
+      ],
+      "verification": "Small example: females $\\{f_1,f_2\\}$, course $c_1$ taken by $f_1,f_2$, course $c_2$ by $f_1$ only. Product $-$ enroll $=\\{(f_2,c_2)\\}$ → result $\\{c_2\\}$, a proper-subset course."
+    },
+    "cse-2007-cs-60": {
+      "approach": "Rewrite the disjunction as an implication: for every employee $x$, if $x$'s supervisor is $e$ then $x$ is male.",
+      "concepts": [
+        "Tuple relational calculus",
+        "Universal quantifier",
+        "Implication"
+      ],
+      "steps": [
+        {
+          "title": "Convert to implication",
+          "body": "$\\neg A\\vee\\neg B\\vee C\\equiv (A\\wedge B)\\Rightarrow C$, so the condition is\n$$\\forall x\\,[\\,(employee(x)\\wedge x.supervisorName=e.name)\\Rightarrow x.sex=\\text{\"male\"}\\,].$$"
+        },
+        {
+          "title": "Interpret",
+          "body": "Every immediate subordinate of $e$ is male, i.e. $e$ has **no immediate female subordinate**. (Employees with no subordinates at all also qualify, vacuously.)"
+        }
+      ],
+      "answer": {
+        "value": "Names of employees with no immediate female subordinates — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The query constrains the people e supervises, not e’s own supervisor."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It requires subordinates to be male, so it excludes female subordinates, not male ones."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: every x supervised by e must be male."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Again about e’s supervisor, which the query never looks at."
+        }
+      ],
+      "verification": "An employee with one female report fails the condition (x = that report makes all three disjuncts false); one with only male reports passes."
+    },
+    "cse-2007-cs-61": {
+      "approach": "Translate each query: Q1 says \"no one in dept 5 earns $\\ge$ e\" = e earns more than **all** of dept 5. Q2 uses $>$ ANY, which means more than **at least one**.",
+      "concepts": [
+        "Correlated subqueries",
+        "NOT EXISTS",
+        "ANY vs ALL"
+      ],
+      "steps": [
+        {
+          "title": "What Q1 computes",
+          "body": "`NOT EXISTS (… s.department = \"5\" and s.salary >= e.salary)` ⇔ for every dept-5 employee $s$, $s.salary<e.salary$ ⇔ $e.salary>\\max(\\text{dept 5})$. Exactly the requirement."
+        },
+        {
+          "title": "What Q2 computes",
+          "body": "`e.salary > ANY (dept-5 salaries)` ⇔ $e.salary>\\min(\\text{dept 5})$. With dept-5 salaries $\\{10,20\\}$, an employee earning $15$ is returned by Q2 although $15<20$. So Q2 is wrong (it would need `> ALL`)."
+        }
+      ],
+      "answer": {
+        "value": "$Q_1$ is the correct query — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: NOT EXISTS of a dept-5 salary ≥ e.salary means e beats everyone in dept 5."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "> ANY only requires beating the lowest dept-5 salary."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "They differ whenever dept 5 has two different salaries (e.g. 10 and 20 with e = 15)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Q1 is correct."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"> ANY\" as \"greater than any one you pick\", i.e. as > ALL."
+      ],
+      "verification": "Dept 5 salaries $\\{10,20\\}$, employee earning 15: Q1 excludes it (20 ≥ 15 exists), Q2 includes it (15 > 10)."
+    },
+    "cse-2007-cs-62": {
+      "approach": "Check each normal-form fact. BCNF forbids every non-trivial FD whose left side is not a superkey, so no attribute (prime or not) can be transitively dependent on a key there.",
+      "concepts": [
+        "BCNF",
+        "3NF",
+        "2NF",
+        "Transitive dependency"
+      ],
+      "steps": [
+        {
+          "title": "(A), (B), (C) are true",
+          "body": "- (A) With attributes $\\{A,B\\}$ the only possible non-trivial FDs are $A\\to B$ or $B\\to A$, and then the left side is a key. So BCNF.\n- (B) 2NF forbids a non-prime attribute depending on a *proper part* of a key; single-attribute keys have no proper part, so 2NF holds.\n- (C) 3NF allows $X\\to A$ when $A$ is prime. Example $R(A,B,C)$ with $AB\\to C$, $C\\to B$: keys $AB, AC$; $AB\\to C\\to B$ makes prime $B$ transitively dependent, yet $R$ is in 3NF."
+        },
+        {
+          "title": "(D) is false",
+          "body": "A transitive dependency key $\\to X\\to A$ with $X\\not\\to$ key needs the FD $X\\to A$ where $X$ is not a superkey — BCNF forbids exactly that. So no attribute can be transitively dependent on a key in a BCNF relation."
+        }
+      ],
+      "answer": {
+        "value": "Statement (D) is **false**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: any non-trivial FD in a two-attribute relation has a key on its left side."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: with single-attribute keys there can be no partial dependency."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: 3NF permits FDs into prime attributes, e.g. C → B above."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "False (the answer): BCNF requires every determinant to be a superkey, ruling out transitive dependencies."
+        }
+      ],
+      "verification": "$R(A,B,C)$, $\\{AB\\to C, C\\to B\\}$: in 3NF (B is prime) but not BCNF ($C$ not a superkey) — confirms (C) true and (D) false."
+    },
+    "cse-2007-cs-63": {
+      "approach": "A leaf holds $n$ (value, record-pointer) pairs plus one block pointer to the next leaf; the total must fit in one block.",
+      "concepts": [
+        "B+ tree",
+        "Leaf order",
+        "Block size"
+      ],
+      "steps": [
+        {
+          "title": "Inequality",
+          "body": "$$n(9+7)+6\\le 1024 \\Rightarrow 16n\\le 1018.$$"
+        },
+        {
+          "title": "Solve",
+          "body": "$n\\le \\tfrac{1018}{16}=63.625$, so $n=63$. Check: $63\\times16+6=1008+6=1014\\le1024$; $64\\times16+6=1030>1024$."
+        }
+      ],
+      "answer": {
+        "value": "Order of the leaf $=$ **63** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: 16·63 + 6 = 1014 ≤ 1024."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "64 pairs need 1024 bytes before the next-leaf pointer: 1030 > 1024."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "67 does not fit (16·67 = 1072)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "68 does not fit (16·68 = 1088)."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the sibling (next-leaf) block pointer, which gives 1024/16 = 64."
+      ],
+      "verification": "63 fits with 10 bytes spare; 64 overflows by 6 bytes."
+    },
+    "cse-2007-cs-64": {
+      "approach": "Draw the precedence graph of each schedule from conflicting pairs (same item, different transactions, at least one write); a cycle means not conflict serializable.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph"
+      ],
+      "steps": [
+        {
+          "title": "S1 conflicts",
+          "body": "$S_1: r_1(X)\\,r_1(Y)\\,r_2(X)\\,r_2(Y)\\,w_2(Y)\\,w_1(X)$\n- $r_1(Y)$ before $w_2(Y)$ → $T_1\\to T_2$.\n- $r_2(X)$ before $w_1(X)$ → $T_2\\to T_1$.\n\nCycle $T_1\\to T_2\\to T_1$: **not** conflict serializable.",
+          "scene": {
+            "edgeTones": {
+              "T1>T2": "error",
+              "T2>T1": "error"
+            },
+            "caption": "S1: cycle → not conflict serializable"
+          }
+        },
+        {
+          "title": "S2 conflicts",
+          "body": "$S_2: r_1(X)\\,r_2(X)\\,r_2(Y)\\,w_2(Y)\\,r_1(Y)\\,w_1(X)$\n- $r_2(X)$ before $w_1(X)$ → $T_2\\to T_1$.\n- $w_2(Y)$ before $r_1(Y)$ → $T_2\\to T_1$.\n- $r_1(X)$, $r_2(X)$ — read/read, no conflict.\n\nOnly edges $T_2\\to T_1$: acyclic, equivalent to serial $T_2,T_1$.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "title": "Precedence graph of S2",
+            "nodes": [
+              {
+                "id": "T1",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "T2",
+                "x": 4,
+                "y": 0
+              }
+            ],
+            "edges": [
+              {
+                "from": "T2",
+                "to": "T1",
+                "w": "X, Y"
+              }
+            ],
+            "edgeTones": {
+              "T2>T1": "success"
+            },
+            "caption": "S2: acyclic → serial order T2, T1"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "Precedence graph of S1",
+        "nodes": [
+          {
+            "id": "T1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "T2",
+            "x": 4,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "T1",
+            "to": "T2",
+            "w": "Y"
+          },
+          {
+            "from": "T2",
+            "to": "T1",
+            "w": "X"
+          }
+        ]
+      },
+      "answer": {
+        "value": "$S_1$ is not conflict serializable and $S_2$ is — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$S_1$ has the cycle $T_1\\to T_2\\to T_1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed: S1 is the non-serializable one."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$S_2$ is conflict-equivalent to the serial schedule $T_2,T_1$."
+        }
+      ],
+      "verification": "Reordered $S_2$ by swapping non-conflicting adjacent operations into $r_2(X)r_2(Y)w_2(Y)r_1(X)r_1(Y)w_1(X)$ — a serial $T_2T_1$ schedule."
+    },
+    "cse-2007-cs-65": {
+      "approach": "Exactly one transmitter: choose which station ($n$ ways), it transmits ($p$), the other $n-1$ stay silent ($(1-p)^{n-1}$).",
+      "concepts": [
+        "Slotted ALOHA",
+        "Binomial probability"
+      ],
+      "steps": [
+        {
+          "title": "One specific station",
+          "body": "$P(\\text{station } i \\text{ alone})=p(1-p)^{n-1}$."
+        },
+        {
+          "title": "Any one station",
+          "body": "These $n$ events are disjoint, so\n$$P=\\binom n1 p(1-p)^{n-1}=np(1-p)^{n-1}.$$"
+        }
+      ],
+      "answer": {
+        "value": "$np(1-p)^{n-1}$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: binomial probability of exactly one success in n trials."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Only says the other n − 1 are silent; it omits that one station transmits and the choice of station."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Probability that one *particular* station is the sole transmitter; misses the factor n."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Probability that at least one of n − 1 stations transmits — unrelated."
+        }
+      ],
+      "verification": "$n=2,\\ p=\\tfrac12$: exactly one of two transmits with probability $\\tfrac12$; formula (A) gives $2\\cdot\\tfrac12\\cdot\\tfrac12=\\tfrac12$."
+    },
+    "cse-2007-cs-66": {
+      "approach": "One bit time $=1/\\text{bit rate}$; the equivalent cable length is the distance the signal travels in that time.",
+      "concepts": [
+        "Token ring",
+        "Bit time",
+        "Propagation speed"
+      ],
+      "steps": [
+        {
+          "title": "Bit time",
+          "body": "$$t_{bit}=\\frac{1}{10^7\\ \\text{bps}}=10^{-7}\\ \\text{s}=0.1\\ \\mu\\text{s}.$$"
+        },
+        {
+          "title": "Distance",
+          "body": "$$d=200\\ \\tfrac{\\text{m}}{\\mu\\text{s}}\\times0.1\\ \\mu\\text{s}=20\\ \\text{m}.$$"
+        }
+      ],
+      "answer": {
+        "value": "**20 metres** of cable — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "500 m would need a 2.5 µs bit time (0.4 Mbps)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "200 m is the distance covered in 1 µs, i.e. at 1 Mbps."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 200 m/µs × 0.1 µs."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "50 m would correspond to 0.25 µs per bit (4 Mbps)."
+        }
+      ],
+      "verification": "Units: $(2\\times10^8\\ \\text{m/s})/(10^7\\ \\text{bit/s})=20$ m per bit."
+    }
+  }
+}
