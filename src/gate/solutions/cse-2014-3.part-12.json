@@ -1,0 +1,1583 @@
+{
+  "paper": "cse-2014-3",
+  "version": 2,
+  "solutions": {
+    "cse-2014-3-cs-13": {
+      "approach": "Because a vertex is visited only if it is still unvisited, the chain of active recursive calls is always a simple path. So the maximum recursion depth equals the number of vertices on the longest simple path, and a suitable start vertex and neighbour order can always realise it.",
+      "concepts": [
+        "DFS recursion stack",
+        "Longest simple path",
+        "Chessboard colouring of grids"
+      ],
+      "steps": [
+        {
+          "title": "Depth = vertices on a simple path",
+          "body": "The active calls at any moment form a root-to-node path of the DFS tree, which is a simple path in the graph. Conversely, if DFS always tries the next vertex of a chosen simple path $v_1, v_2, \\dots, v_k$ first, each $v_{i+1}$ is still unvisited when $v_i$ is processed, so depth $k$ is reached. Hence we need the longest simple path (counting vertices).",
+          "scene": {
+            "caption": "21 vertices: two 3×3 grids joined through vertex 10"
+          }
+        },
+        {
+          "title": "Structure of the graph",
+          "body": "The only link between the two $3\\times3$ grids is the cut vertex 10 on the bottom row. Vertex $p$ (above 10) and vertex 19 (right of the right grid) have degree 1, so they can only be endpoints of a path. A path that uses both grids goes left grid $\\to 10 \\to$ right grid, so it cannot contain $p$."
+        },
+        {
+          "title": "Left grid: all 9 vertices",
+          "body": "Colour a $3\\times3$ grid like a chessboard: 5 cells (corners + centre) of one colour, 4 edge-middles of the other. A path through all 9 cells must start and end on the 5-cell colour. The exit vertex 9 is a corner, so the snake $1\\to2\\to\\dots\\to9$ covers all 9 vertices and ends at the exit.",
+          "scene": {
+            "tones": {
+              "1": "accent",
+              "2": "accent",
+              "3": "accent",
+              "4": "accent",
+              "5": "accent",
+              "6": "accent",
+              "7": "accent",
+              "8": "accent",
+              "9": "accent"
+            },
+            "edgeTones": {
+              "1>2": "accent",
+              "2>3": "accent",
+              "3>4": "accent",
+              "5>4": "accent",
+              "6>5": "accent",
+              "6>7": "accent",
+              "7>8": "accent",
+              "8>9": "accent"
+            },
+            "caption": "Left grid snake: 9 vertices"
+          }
+        },
+        {
+          "title": "Right grid: at most 9 more",
+          "body": "After 10 we enter the right grid at its bottom-left corner (11). Either the path covers all 9 right-grid vertices, or it ends at the middle-right vertex (18) and steps to the pendant 19. Vertex 18 is an edge-middle (other colour from the corner 11), so a path from 11 to 18 has an even number of vertices, at most 8; with 19 that is again 9. Either way the right side adds at most 9 vertices.",
+          "scene": {
+            "tones": {
+              "1": "accent",
+              "2": "accent",
+              "3": "accent",
+              "4": "accent",
+              "5": "accent",
+              "6": "accent",
+              "7": "accent",
+              "8": "accent",
+              "9": "accent",
+              "10": "warning",
+              "11": "accent",
+              "12": "accent",
+              "13": "accent",
+              "14": "accent",
+              "15": "accent",
+              "16": "accent",
+              "17": "accent",
+              "18": "accent",
+              "19": "success",
+              "p": "muted",
+              "q": "muted"
+            },
+            "edgeTones": {
+              "1>2": "accent",
+              "2>3": "accent",
+              "3>4": "accent",
+              "5>4": "accent",
+              "6>5": "accent",
+              "6>7": "accent",
+              "7>8": "accent",
+              "8>9": "accent",
+              "9>10": "accent",
+              "10>11": "accent",
+              "11>12": "accent",
+              "13>12": "accent",
+              "14>13": "accent",
+              "15>14": "accent",
+              "15>16": "accent",
+              "16>17": "accent",
+              "17>18": "accent",
+              "18>19": "accent"
+            },
+            "caption": "Path of 19 vertices; p and q unused"
+          }
+        },
+        {
+          "title": "Total",
+          "body": "$$9 + 1 + 9 = 19$$\\nAny path starting at $p$ skips a whole grid and is shorter. Starting DFS at vertex 1 and following the path shown gives recursion depth **19**."
+        }
+      ],
+      "answer": {
+        "value": "19",
+        "number": 19,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 21 (the vertex count): both pendant vertices cannot lie on one simple path that crosses between the grids.",
+        "Ignoring the colour (parity) constraint inside each 3×3 grid."
+      ],
+      "verification": "Checked every consecutive pair on the 19-vertex path is an edge, and confirmed by the parity argument that neither side can contribute more than 9 vertices.",
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "2",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "3",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "4",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "5",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "6",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "7",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "8",
+            "x": 1,
+            "y": 2
+          },
+          {
+            "id": "9",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "10",
+            "x": 3.2,
+            "y": 2
+          },
+          {
+            "id": "11",
+            "x": 4.4,
+            "y": 2
+          },
+          {
+            "id": "12",
+            "x": 5.4,
+            "y": 2
+          },
+          {
+            "id": "13",
+            "x": 5.4,
+            "y": 1
+          },
+          {
+            "id": "14",
+            "x": 4.4,
+            "y": 1
+          },
+          {
+            "id": "15",
+            "x": 4.4,
+            "y": 0
+          },
+          {
+            "id": "16",
+            "x": 5.4,
+            "y": 0
+          },
+          {
+            "id": "17",
+            "x": 6.4,
+            "y": 0
+          },
+          {
+            "id": "18",
+            "x": 6.4,
+            "y": 1
+          },
+          {
+            "id": "19",
+            "x": 7.4,
+            "y": 1
+          },
+          {
+            "id": "p",
+            "x": 3.2,
+            "y": 1
+          },
+          {
+            "id": "q",
+            "x": 6.4,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "1",
+            "to": "2"
+          },
+          {
+            "from": "1",
+            "to": "6"
+          },
+          {
+            "from": "2",
+            "to": "3"
+          },
+          {
+            "from": "2",
+            "to": "5"
+          },
+          {
+            "from": "3",
+            "to": "4"
+          },
+          {
+            "from": "6",
+            "to": "5"
+          },
+          {
+            "from": "6",
+            "to": "7"
+          },
+          {
+            "from": "5",
+            "to": "4"
+          },
+          {
+            "from": "5",
+            "to": "8"
+          },
+          {
+            "from": "4",
+            "to": "9"
+          },
+          {
+            "from": "7",
+            "to": "8"
+          },
+          {
+            "from": "8",
+            "to": "9"
+          },
+          {
+            "from": "15",
+            "to": "16"
+          },
+          {
+            "from": "15",
+            "to": "14"
+          },
+          {
+            "from": "16",
+            "to": "17"
+          },
+          {
+            "from": "16",
+            "to": "13"
+          },
+          {
+            "from": "17",
+            "to": "18"
+          },
+          {
+            "from": "14",
+            "to": "13"
+          },
+          {
+            "from": "14",
+            "to": "11"
+          },
+          {
+            "from": "13",
+            "to": "18"
+          },
+          {
+            "from": "13",
+            "to": "12"
+          },
+          {
+            "from": "18",
+            "to": "q"
+          },
+          {
+            "from": "11",
+            "to": "12"
+          },
+          {
+            "from": "12",
+            "to": "q"
+          },
+          {
+            "from": "9",
+            "to": "10"
+          },
+          {
+            "from": "10",
+            "to": "11"
+          },
+          {
+            "from": "p",
+            "to": "10"
+          },
+          {
+            "from": "18",
+            "to": "19"
+          }
+        ],
+        "title": "Longest simple path = deepest DFS chain"
+      }
+    },
+    "cse-2014-3-cs-14": {
+      "approach": "Any fixed pivot position (first, last or middle) can be defeated by an input that makes the pivot the minimum or maximum every time, so the worst case stays the same as ordinary quicksort.",
+      "concepts": [
+        "Quicksort",
+        "Worst-case recurrence",
+        "Pivot selection"
+      ],
+      "steps": [
+        {
+          "title": "A bad input exists",
+          "body": "For any deterministic pivot rule there is an input where the central element is always the smallest (or largest) of the current sub-array, so each partition removes only one element."
+        },
+        {
+          "title": "Recurrence",
+          "body": "$$T(n) = T(n-1) + cn = c\\,(n + (n-1) + \\dots + 1) = \\frac{c\\,n(n+1)}{2} = \\Theta(n^2)$$\\nQuicksort never does worse than this, so the tightest upper bound is $O(n^2)$."
+        }
+      ],
+      "answer": {
+        "value": "O(n^2)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: an adversarial input makes every central pivot extreme, giving $\\Theta(n^2)$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$O(n\\log n)$ is the best/average case; it fails on the adversarial input."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Theta(n\\log n)$ is not an upper bound for the worst case."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$O(n^3)$ is a valid bound but not tight."
+        }
+      ],
+      "pitfalls": [
+        "Thinking the middle element is the median: it is the median position, not the median value."
+      ],
+      "verification": "The recurrence T(n)=T(n-1)+cn sums to cn(n+1)/2."
+    },
+    "cse-2014-3-cs-15": {
+      "approach": "Check strings in order of length against the structure $a^*\\,b^*\\,(ba)^*\\,a^*$; the first length at which some string fails is the answer.",
+      "concepts": [
+        "Regular expressions",
+        "String membership"
+      ],
+      "steps": [
+        {
+          "title": "Lengths 0 to 2",
+          "body": "$\\varepsilon, a, b$ come from $a^*$ or $b^*$. Length 2: $aa$ ($a^*$), $ab$ ($a^*b^*$), $bb$ ($b^*$), $ba$ ($(ba)^*$). All strings of length $\\le 2$ are in the language."
+        },
+        {
+          "title": "Length 3",
+          "body": "$aaa, aab, abb, bbb$ fit $a^*b^*$; $aba = a\\cdot b\\cdot a$, $baa = b\\cdot aa$ and $bba = bb\\cdot a$ fit $a^*b^*a^*$.\\n\\nFor $bab$: the prefix matched by $a^*b^*$ is either $\\varepsilon$ or $b$.\\n- Prefix $b$: the rest $ab$ must match $(ba)^*a^*$; it starts with $a$, so it must be all $a$s — fails.\\n- Prefix $\\varepsilon$: $bab$ must match $(ba)^*a^*$; after $ba$ the remaining $b$ is neither $ba$ nor $a$ — fails.\\n\\nSo $bab \\notin L$."
+        },
+        {
+          "title": "Answer",
+          "body": "The shortest string not in the language is $bab$, of length **3**."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "number": 3,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Missing that $ba$ is in the language via $(ba)^*$ or $b^*a^*$."
+      ],
+      "verification": "Checked all 4 strings of length 2 and all 8 of length 3; only bab fails."
+    },
+    "cse-2014-3-cs-16": {
+      "approach": "$\\Sigma^*$ can be listed by length, so it is countable; its power set is uncountable by Cantor's theorem.",
+      "concepts": [
+        "Countable sets",
+        "Cantor's theorem"
+      ],
+      "steps": [
+        {
+          "title": "Σ* is countable",
+          "body": "List strings by length, then in dictionary order: $\\varepsilon, a, b, aa, ab, \\dots$ (for $\\Sigma = \\{a, b\\}$). Every string gets a finite position, so $\\Sigma^*$ is countably infinite."
+        },
+        {
+          "title": "Its power set is uncountable",
+          "body": "By Cantor's diagonal argument, the power set of a countably infinite set has cardinality $2^{\\aleph_0}$, strictly larger than $\\aleph_0$. So $2^{\\Sigma^*}$ is uncountable."
+        }
+      ],
+      "answer": {
+        "value": "2^(Σ*) is uncountable and Σ* is countable",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^{\\Sigma^*}$ is not countable (Cantor)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed: $\\Sigma^*$ is countable and its power set is not."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\Sigma^*$ can be enumerated by length, so it is countable."
+        }
+      ],
+      "pitfalls": [
+        "Confusing infinite with uncountable: $\\Sigma^*$ is infinite but countable."
+      ],
+      "verification": "Standard results: enumeration by length, and diagonalisation."
+    },
+    "cse-2014-3-cs-17": {
+      "approach": "Intermediate code separates the front end from the back end, so a machine-independent optimiser written for the IR can be reused across source languages and target machines.",
+      "concepts": [
+        "Intermediate representation",
+        "Front end / back end"
+      ],
+      "steps": [
+        {
+          "title": "Role of IR",
+          "body": "With a common IR, $m$ front ends and $n$ back ends need $m+n$ components instead of $m\\times n$ full compilers. The optimiser that works on the IR depends on neither the source language nor the machine, so it can be reused."
+        },
+        {
+          "title": "Other options",
+          "body": "Parsing, semantic analysis and error reporting happen before the IR is generated. Register allocation depends on the machine and is done in the back end."
+        }
+      ],
+      "answer": {
+        "value": "Increase reuse of the machine-independent optimiser",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Parsing and semantic analysis come before IR generation, so IR cannot simplify them."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Error recovery and reporting are front-end (parser) concerns."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the IR-level optimiser is shared across front ends and targets."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Register allocation depends on the machine and is done in the back end."
+        }
+      ],
+      "verification": "Standard compiler-structure argument (Aho et al., Dragon book)."
+    },
+    "cse-2014-3-cs-18": {
+      "approach": "Recursion needs a fresh activation record for each active call, so purely static allocation cannot support it. A run-time stack is enough: neither a heap nor garbage collection is needed.",
+      "concepts": [
+        "Activation records",
+        "Static vs stack allocation"
+      ],
+      "steps": [
+        {
+          "title": "Check each statement",
+          "body": "1. **True**: with one fixed record per procedure, nested active calls overwrite each other's locals.\\n2. **False**: stack frames are freed on return, so no garbage collector is needed.\\n3. **True**: activation records must be created at run time (usually on a stack), one per call.\\n4. **False**: a stack alone is enough; a heap is not essential."
+        },
+        {
+          "title": "Combine",
+          "body": "The correct statements are 1 and 3."
+        }
+      ],
+      "answer": {
+        "value": "1 and 3 only",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Statement 2 is false: recursion does not need garbage collection."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Statement 2 is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Statement 4 is false: a stack alone is enough."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: statements 1 and 3."
+        }
+      ],
+      "pitfalls": [
+        "Assuming dynamic allocation means a heap; stack allocation is also dynamic."
+      ],
+      "verification": "C and Pascal implement recursion with only a run-time stack; early FORTRAN (static allocation) could not support recursion."
+    },
+    "cse-2014-3-cs-19": {
+      "approach": "Good modular design keeps each module focused (high cohesion) and keeps dependencies between modules small (low coupling).",
+      "concepts": [
+        "Cohesion",
+        "Coupling"
+      ],
+      "steps": [
+        {
+          "title": "Definitions",
+          "body": "**Cohesion**: how closely the elements inside one module belong together; we want it high.\\n\\n**Coupling**: how much modules depend on each other; we want it low, so a change stays local."
+        },
+        {
+          "title": "Answer",
+          "body": "The desirable combination is high cohesion and low coupling."
+        }
+      ],
+      "answer": {
+        "value": "High cohesion and low coupling",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "High coupling makes modules depend on each other and hard to change."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The worst combination on both counts."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Low cohesion means a module does unrelated tasks."
+        }
+      ],
+      "verification": "Standard software-engineering principle (Constantine and Yourdon)."
+    },
+    "cse-2014-3-cs-20": {
+      "approach": "Simulate LRU with 3 frames, tracking how recently each page was used; every miss is a page fault.",
+      "concepts": [
+        "LRU page replacement",
+        "Page faults"
+      ],
+      "steps": [
+        {
+          "title": "Fill the frames",
+          "body": "4, 7, 6 are misses into empty frames: 3 faults. Frames $\\{4, 7, 6\\}$.",
+          "scene": {
+            "upto": 3
+          }
+        },
+        {
+          "title": "Reference 1",
+          "body": "Miss. The least recently used page is 4, so it is replaced. Frames $\\{1, 7, 6\\}$, faults $= 4$.",
+          "scene": {
+            "upto": 4
+          }
+        },
+        {
+          "title": "7, 6, 1 are hits",
+          "body": "All three are in memory. Recency order now (oldest to newest): 7, 6, 1.",
+          "scene": {
+            "upto": 7
+          }
+        },
+        {
+          "title": "2, 7, 2",
+          "body": "2: miss, evict LRU page 7 → $\\{2, 6, 1\\}$, faults $= 5$.\\n\\n7: miss, evict LRU page 6 → $\\{2, 7, 1\\}$, faults $= 6$.\\n\\n2: hit.\\n\\nTotal page faults $=$ **6**.",
+          "scene": {
+            "upto": 10
+          }
+        }
+      ],
+      "answer": {
+        "value": "6",
+        "number": 6,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Choosing the victim in FIFO (load) order instead of by most recent use."
+      ],
+      "verification": "Misses occur at references 4, 7, 6, 1, 2, 7: six faults.",
+      "animation": {
+        "kind": "paging",
+        "policy": "LRU",
+        "frames": 3,
+        "refs": [
+          4,
+          7,
+          6,
+          1,
+          7,
+          6,
+          1,
+          2,
+          7,
+          2
+        ],
+        "upto": 0,
+        "expectFaults": 6
+      }
+    },
+    "cse-2014-3-cs-21": {
+      "approach": "Two selections in a row merge into one selection on the AND of the conditions, and two projections in a row reduce to the outer (smaller) projection.",
+      "concepts": [
+        "Relational algebra equivalences",
+        "Query optimisation"
+      ],
+      "steps": [
+        {
+          "title": "Merge the selections",
+          "body": "$$\\sigma_{F1}(\\sigma_{F2}(r)) = \\sigma_{F1 \\wedge F2}(r)$$\\nA tuple survives only if it satisfies both conditions."
+        },
+        {
+          "title": "Reduce the projections",
+          "body": "Since $A1 \\subset A2$, $\\pi_{A1}(\\pi_{A2}(E)) = \\pi_{A1}(E)$. So the expression becomes $\\pi_{A1}(\\sigma_{F1 \\wedge F2}(r))$."
+        }
+      ],
+      "answer": {
+        "value": "π_A1(σ_(F1 ∧ F2)(r))",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\vee$ would keep tuples that satisfy only one of the conditions."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Projecting on $A2$ keeps attributes that the original expression drops."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong projection and wrong connective."
+        }
+      ],
+      "verification": "Both are standard equivalences (cascade of σ and cascade of π)."
+    },
+    "cse-2014-3-cs-22": {
+      "approach": "By definition, an attribute is prime if it belongs to at least one candidate key.",
+      "concepts": [
+        "Prime attribute",
+        "Candidate key"
+      ],
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "A prime attribute belongs to **some** candidate key; a non-prime attribute belongs to none."
+        },
+        {
+          "title": "Example",
+          "body": "In $R(A, B, C)$ with candidate keys $AB$ and $AC$, all of $A$, $B$ and $C$ are prime, even though only $A$ is in every key."
+        }
+      ],
+      "answer": {
+        "value": "in some candidate key of R",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Too strict: in the example, $B$ is prime but not in key $AC$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Foreign keys have nothing to do with whether an attribute is prime."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Attributes of other candidate keys are prime too."
+        }
+      ],
+      "verification": "Matches the textbook definition used for 2NF and 3NF."
+    },
+    "cse-2014-3-cs-23": {
+      "approach": "Bit synchronisation (keeping the sender's and receiver's bit timing aligned) is a physical-layer function, not a data link layer one.",
+      "concepts": [
+        "OSI layers"
+      ],
+      "steps": [
+        {
+          "title": "Correct pairs",
+          "body": "Network layer: routing ✓. Transport layer: end-to-end process communication ✓. MAC sub-layer: channel sharing ✓."
+        },
+        {
+          "title": "Incorrect pair",
+          "body": "The data link layer does framing, error control and flow control. **Bit synchronisation belongs to the physical layer**, so pair B is incorrect."
+        }
+      ],
+      "answer": {
+        "value": "Data Link Layer and Bit synchronization",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A correct pair: routing is the network layer's job."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The incorrect pair (the answer): bit synchronisation is a physical-layer function."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A correct pair: transport gives process-to-process delivery."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A correct pair: MAC controls access to a shared channel."
+        }
+      ],
+      "verification": "Forouzan lists synchronisation of bits under the physical layer."
+    },
+    "cse-2014-3-cs-24": {
+      "approach": "Undo the stuffing: delete the 0 that follows every run of five consecutive 1s in the output.",
+      "concepts": [
+        "Bit stuffing",
+        "Framing"
+      ],
+      "steps": [
+        {
+          "title": "Find the stuffed bit",
+          "body": "Output $= 0\\,11111\\,\\underline{0}\\,0101$. After the run of five 1s, the sender inserted a 0.",
+          "scene": {
+            "caption": "Stuffed 0 after five 1s"
+          }
+        },
+        {
+          "title": "Remove it",
+          "body": "Input $= 0\\,11111\\,0101 = 0111110101$.",
+          "scene": {
+            "kind": "bits",
+            "rows": [
+              {
+                "label": "input",
+                "fields": [
+                  {
+                    "bits": "0",
+                    "label": ""
+                  },
+                  {
+                    "bits": "11111",
+                    "label": "five 1s",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "0101",
+                    "label": "rest"
+                  }
+                ]
+              }
+            ],
+            "caption": "Input = 0111110101"
+          }
+        }
+      ],
+      "answer": {
+        "value": "0111110101",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "It ends in 0100, but the output ends in 0101."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It has six 1s in a row; stuffing gives 01111101101, not the given output."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "It has nine 1s in a row; stuffing would insert a 0 inside the run, giving 01111101111, not the given output."
+        }
+      ],
+      "verification": "Stuffing 0111110101 again gives 0 11111 0 0101 = 01111100101. ✓",
+      "animation": {
+        "kind": "bits",
+        "rows": [
+          {
+            "label": "output",
+            "fields": [
+              {
+                "bits": "0",
+                "label": ""
+              },
+              {
+                "bits": "11111",
+                "label": "five 1s",
+                "tone": "accent"
+              },
+              {
+                "bits": "0",
+                "label": "stuffed",
+                "tone": "error"
+              },
+              {
+                "bits": "0101",
+                "label": "rest"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2014-3-cs-25": {
+      "approach": "Routers decrement TTL, may fragment the datagram (changing the fragment offset), and then recompute the header checksum, so all three fields can differ.",
+      "concepts": [
+        "IPv4 header",
+        "Fragmentation",
+        "TTL"
+      ],
+      "steps": [
+        {
+          "title": "Each field",
+          "body": "(i) **TTL** is decremented by every router.\\n\\n(iii) If a link on the way has a smaller MTU, D is fragmented, and a fragment that reaches B can have a non-zero **fragment offset**.\\n\\n(ii) Because the header changed, the **checksum** is recomputed at each hop."
+        },
+        {
+          "title": "Answer",
+          "body": "All three may differ: (i), (ii) and (iii)."
+        }
+      ],
+      "answer": {
+        "value": "(i), (ii) and (iii)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses the checksum, which changes whenever TTL changes."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses the fragment offset, which changes if D is fragmented on the way."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "TTL always changes (it is decremented at every hop)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Assuming no fragmentation because \"no error occurred\"; fragmentation is not an error."
+      ],
+      "verification": "Matches the official GATE 2014 key (D)."
+    },
+    "cse-2014-3-cs-26": {
+      "approach": "Longest prefix match: compare the destination with each prefix over that prefix's length. Here only the second octet decides.",
+      "concepts": [
+        "CIDR",
+        "Longest prefix match"
+      ],
+      "given": "Destination 131.23.151.76; second octet $23 = 00010111_2$.",
+      "steps": [
+        {
+          "title": "Compare the second octets",
+          "body": "| Prefix | 2nd octet | Bits compared | Match? |\\n|---|---|---|---|\\n| 131.16.0.0/12 | 00010000 | first 4: 0001 vs 0001 | yes |\\n| 131.28.0.0/14 | 00011100 | first 6: 000111 vs 000101 | no |\\n| 131.19.0.0/16 | 00010011 | all 8: 19 vs 23 | no |\\n| 131.22.0.0/15 | 00010110 | first 7: 0001011 vs 0001011 | yes |"
+        },
+        {
+          "title": "Pick the longest",
+          "body": "Matching prefixes: /12 (interface 3) and /15 (interface 1). The longer one is /15, so the packet leaves on interface **1**."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "number": 1,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking the first match (/12, interface 3) instead of the longest."
+      ],
+      "verification": "131.22.0.0/15 covers 131.22.0.0 to 131.23.255.255, which contains 131.23.151.76."
+    },
+    "cse-2014-3-cs-27": {
+      "approach": "Split the 50-bit ID into the IP address, a per-second counter and a timestamp; the size of the timestamp field fixes the wrap-around period.",
+      "concepts": [
+        "Unique ID design",
+        "Bit-field sizing"
+      ],
+      "steps": [
+        {
+          "title": "Allocate the bits",
+          "body": "IPv4 address (unique across hosts): 32 bits.\\n\\nUp to 1000 IDs per second: $\\lceil \\log_2 1000 \\rceil = 10$ bits ($2^{10} = 1024$).\\n\\nLeft for the 1-second clock: $50 - 32 - 10 = 8$ bits."
+        },
+        {
+          "title": "Wrap-around",
+          "body": "An 8-bit seconds field repeats after $2^8 = 256$ seconds."
+        }
+      ],
+      "answer": {
+        "value": "256",
+        "number": 256,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using 9 bits for the counter: $2^9 = 512 < 1000$."
+      ],
+      "verification": "32 + 10 + 8 = 50 bits, and 2^8 = 256 s."
+    },
+    "cse-2014-3-cs-28": {
+      "approach": "Each fragment carries at most $1500 - 20 = 1480$ data bytes (a multiple of 8). Split the 4384 data bytes and read off the third fragment.",
+      "concepts": [
+        "IP fragmentation",
+        "Fragment offset",
+        "MF flag"
+      ],
+      "steps": [
+        {
+          "title": "Data to send",
+          "body": "Payload $= 4404 - 20 = 4384$ bytes. Maximum data per fragment $= 1500 - 20 = 1480$ bytes, and $1480 / 8 = 185$, so it is a valid size."
+        },
+        {
+          "title": "Fragments",
+          "body": "| Fragment | Data bytes | Offset (8-byte units) | Total length | MF |\\n|---|---|---|---|---|\\n| 1 | 0–1479 (1480) | 0 | 1500 | 1 |\\n| 2 | 1480–2959 (1480) | 185 | 1500 | 1 |\\n| 3 | 2960–4383 (1424) | 370 | 1444 | 0 |"
+        },
+        {
+          "title": "Third fragment",
+          "body": "Offset $= 2960 / 8 = 370$, length $= 1424 + 20 = 1444$, MF $= 0$ because it is the last fragment."
+        }
+      ],
+      "answer": {
+        "value": "MF 0, length 1444, offset 370",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "185 is the second fragment's offset, 1424 omits the header, and MF must be 0 for the last fragment."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The third fragment is the last one and is smaller than the MTU, so MF is 0 and the length is 1444."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The offset must be in 8-byte units (370), and the length must include the 20-byte header (1444)."
+        }
+      ],
+      "verification": "1480 + 1480 + 1424 = 4384 data bytes. ✓"
+    },
+    "cse-2014-3-cs-29": {
+      "approach": "Build each schedule's precedence graph from conflicting pairs (same item, different transactions, at least one write). A schedule is conflict-serializable exactly when its graph has no cycle.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph"
+      ],
+      "steps": [
+        {
+          "title": "S1 conflicts",
+          "body": "- $r_3(X)$ before $w_1(X)$ ⇒ $T_3 \\to T_1$\\n- $r_2(Y)$ before $w_3(Y)$ ⇒ $T_2 \\to T_3$\\n- $r_2(Z), w_2(Z)$ before $r_1(Z), w_1(Z)$ ⇒ $T_2 \\to T_1$\\n\\nNo cycle, so S1 is conflict-serializable (order $T_2, T_3, T_1$).",
+          "scene": {
+            "caption": "S1: no cycle"
+          }
+        },
+        {
+          "title": "S2 conflicts",
+          "body": "- $r_1(Z)$ before $w_2(Z)$ ⇒ $T_1 \\to T_2$\\n- $r_2(Z)$ before $w_1(Z)$ ⇒ $T_2 \\to T_1$\\n- also $r_3(X)$ before $w_1(X)$ ⇒ $T_3 \\to T_1$, and $r_2(Y)$ before $w_3(Y)$ ⇒ $T_2 \\to T_3$\\n\\nThe cycle $T_1 \\to T_2 \\to T_1$ means S2 is **not** conflict-serializable.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "T1",
+                "x": 0,
+                "y": 0
+              },
+              {
+                "id": "T2",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "T3",
+                "x": 1,
+                "y": 1.6
+              }
+            ],
+            "edges": [
+              {
+                "from": "T1",
+                "to": "T2"
+              },
+              {
+                "from": "T2",
+                "to": "T1"
+              },
+              {
+                "from": "T3",
+                "to": "T1"
+              },
+              {
+                "from": "T2",
+                "to": "T3"
+              }
+            ],
+            "edgeTones": {
+              "T1>T2": "error",
+              "T2>T1": "error"
+            },
+            "caption": "S2: cycle between T1 and T2"
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only S1 is conflict-serializable."
+        }
+      ],
+      "answer": {
+        "value": "Only S1 is conflict-serializable",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "S2 has the cycle $T_1 \\leftrightarrow T_2$ on item $Z$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "S2 is not conflict-serializable."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "S1's precedence graph has no cycle."
+        }
+      ],
+      "pitfalls": [
+        "Counting read–read pairs such as $r_3(Y), r_2(Y)$ as conflicts."
+      ],
+      "verification": "Topological order T2, T3, T1 for S1; swapping adjacent non-conflicting operations of S1 reaches this serial order.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "T1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "T2",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "T3",
+            "x": 1,
+            "y": 1.6
+          }
+        ],
+        "edges": [
+          {
+            "from": "T3",
+            "to": "T1"
+          },
+          {
+            "from": "T2",
+            "to": "T3"
+          },
+          {
+            "from": "T2",
+            "to": "T1"
+          }
+        ],
+        "title": "Precedence graph"
+      }
+    },
+    "cse-2014-3-cs-30": {
+      "approach": "The subtracted part collects employees who have at least one of their own dependents as old as or older than them. Removing these leaves employees older than every one of their dependents.",
+      "concepts": [
+        "Relational algebra",
+        "Set difference",
+        "Universal quantification"
+      ],
+      "steps": [
+        {
+          "title": "Inner join",
+          "body": "$employee \\bowtie_{empId = eId \\wedge empAge \\le depAge} dependent$ pairs each employee with **their own** dependents who are at least as old. Projecting on $empId$ gives the employees who have **some** own dependent with $depAge \\ge empAge$."
+        },
+        {
+          "title": "Difference",
+          "body": "All employees minus these are the employees for whom **no** own dependent has $depAge \\ge empAge$, i.e. $empAge > depAge$ for **all** of his/her dependents."
+        }
+      ],
+      "answer": {
+        "value": "all of his/her dependents",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The condition $empId = eId$ limits the comparison to the employee's own dependents, and the difference gives \"all\", not \"some\"."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Other employees' dependents are never compared, because of $empId = eId$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "An employee older than only some of their dependents still has one with $depAge \\ge empAge$, so is removed."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "Example: an employee aged 40 with dependents aged 10 and 45 appears in the join (45 ≥ 40) and is removed; one with dependents aged 10 and 12 remains."
+    },
+    "cse-2014-3-cs-31": {
+      "approach": "Deadlock is possible only if every program can hold one unit less than it needs with nothing left. Give each program $3 - 1$ units and add one more.",
+      "concepts": [
+        "Deadlock prevention",
+        "Resource counting"
+      ],
+      "steps": [
+        {
+          "title": "Worst case",
+          "body": "Each of the 3 programs holds $3 - 1 = 2$ tape units and waits for one more: with $3 \\times 2 = 6$ units all can be stuck."
+        },
+        {
+          "title": "One more unit",
+          "body": "With $6 + 1 = 7$ units, some program always gets its third unit, finishes and releases its units, so deadlock never happens. Minimum $=$ **7**."
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "number": 7,
+        "matchesKey": true
+      },
+      "verification": "Formula: Σ(maxᵢ − 1) + 1 = 3 × 2 + 1 = 7."
+    },
+    "cse-2014-3-cs-32": {
+      "approach": "Simulate SRTF, re-checking at every arrival and completion; then waiting time = completion − arrival − burst.",
+      "concepts": [
+        "SRTF scheduling",
+        "Waiting time"
+      ],
+      "steps": [
+        {
+          "title": "0 to 6",
+          "body": "t = 0: only P1 (12) runs. t = 2: P2 (4) < P1's remaining 10, so P2 preempts. t = 3: P3 (6) > P2's remaining 3, so P2 continues and finishes at 6.",
+          "scene": {
+            "upto": 6,
+            "cursor": 6
+          }
+        },
+        {
+          "title": "6 to 12",
+          "body": "t = 6: P1 (10) vs P3 (6), so P3 runs. t = 8: P4 (5) > P3's remaining 4, so P3 continues and finishes at 12.",
+          "scene": {
+            "upto": 12,
+            "cursor": 12
+          }
+        },
+        {
+          "title": "12 to 27",
+          "body": "t = 12: P4 (5) < P1 (10), so P4 runs 12–17, then P1 runs 17–27.",
+          "scene": {
+            "upto": 27,
+            "cursor": 27
+          }
+        },
+        {
+          "title": "Waiting times",
+          "body": "| Process | Completion | WT = C − A − B |\\n|---|---|---|\\n| P1 | 27 | 27 − 0 − 12 = 15 |\\n| P2 | 6 | 6 − 2 − 4 = 0 |\\n| P3 | 12 | 12 − 3 − 6 = 3 |\\n| P4 | 17 | 17 − 8 − 5 = 4 |\\n\\nAverage $= (15 + 0 + 3 + 4) / 4 = 22 / 4 =$ **5.5** ms."
+        }
+      ],
+      "answer": {
+        "value": "5.5",
+        "number": 5.5,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Preempting P3 at t = 8, although its remaining time (4) is less than P4's burst (5)."
+      ],
+      "verification": "Total burst 12 + 4 + 6 + 5 = 27 equals the last finish time; the waits add to 22.",
+      "animation": {
+        "kind": "gantt",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 2,
+                "label": "P1"
+              },
+              {
+                "start": 2,
+                "end": 6,
+                "label": "P2"
+              },
+              {
+                "start": 6,
+                "end": 12,
+                "label": "P3"
+              },
+              {
+                "start": 12,
+                "end": 17,
+                "label": "P4"
+              },
+              {
+                "start": 17,
+                "end": 27,
+                "label": "P1"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 0,
+            "label": "P1↓"
+          },
+          {
+            "t": 2,
+            "label": "P2↓"
+          },
+          {
+            "t": 3,
+            "label": "P3↓"
+          },
+          {
+            "t": 8,
+            "label": "P4↓"
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      }
+    },
+    "cse-2014-3-cs-33": {
+      "approach": "On a TLB hit: TLB search + one memory access. On a miss: TLB search + page-table access + data access.",
+      "concepts": [
+        "TLB",
+        "Effective memory access time"
+      ],
+      "steps": [
+        {
+          "title": "Hit and miss costs",
+          "body": "Hit: $10 + 80 = 90$ ms. Miss: $10 + 80 + 80 = 170$ ms."
+        },
+        {
+          "title": "Weighted average",
+          "body": "$$\\text{EMAT} = 0.6 \\times 90 + 0.4 \\times 170 = 54 + 68 = 122 \\text{ ms}$$"
+        }
+      ],
+      "answer": {
+        "value": "122",
+        "number": 122,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Leaving out the TLB search time on a miss (gives 118)."
+      ],
+      "verification": "Equivalent form: 10 + 80 + 0.4 × 80 = 122."
+    },
+    "cse-2014-3-cs-34": {
+      "approach": "Build the DAG statement by statement: one leaf for each initial value used and one interior node for each distinct computation. No node can be reused, because no operator is ever applied to the same operands twice.",
+      "concepts": [
+        "DAG of a basic block",
+        "Common subexpressions"
+      ],
+      "steps": [
+        {
+          "title": "Leaves",
+          "body": "Initial values used: $b_0, c_0, d_0$, giving 3 leaf nodes.",
+          "scene": {
+            "tones": {
+              "b": "info",
+              "c": "info",
+              "d": "info"
+            },
+            "caption": "3 leaves: initial b, c, d"
+          }
+        },
+        {
+          "title": "Interior nodes",
+          "body": "1. $a = b_0 + c_0$ → node $n_1$\\n2. $c = n_1 + d_0$ → node $n_2$\\n3. $d = b_0 + n_2$ → node $n_3$ (uses the new $c$, so it differs from $n_1$)\\n4. $e = n_3 - b_0$ → node $n_4$\\n5. $a = n_4 + b_0$ → node $n_5$\\n\\nNo operator–operand combination repeats, so there are 5 interior nodes.",
+          "scene": {
+            "tones": {
+              "b": "info",
+              "c": "info",
+              "d": "info",
+              "a (+)": "accent",
+              "c (+)": "accent",
+              "d (+)": "accent",
+              "e (−)": "accent",
+              "a′ (+)": "accent"
+            },
+            "caption": "5 operator nodes, 2 children each"
+          }
+        },
+        {
+          "title": "Count",
+          "body": "Nodes $= 3 + 5 = 8$. Each binary operator node has 2 edges, so edges $= 5 \\times 2 = 10$."
+        }
+      ],
+      "answer": {
+        "value": "8 nodes and 10 edges",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Too few: the 5 operations and 3 leaves are all distinct nodes."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Adds an extra operator node, e.g. by not noticing a node is shared or by treating a leaf as a computation; only 5 operators exist, so only 10 edges."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Far too few: the 5 distinct operations alone need 5 nodes."
+        }
+      ],
+      "pitfalls": [
+        "Merging $d = b + c$ with $a = b + c$: $c$ was redefined in between, so the operands differ."
+      ],
+      "verification": "Each of the 5 statements creates exactly one new node with two children; together with 3 leaves this gives 8 nodes and 10 edges.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "b",
+            "x": 0,
+            "y": 4
+          },
+          {
+            "id": "c",
+            "x": 2,
+            "y": 4
+          },
+          {
+            "id": "d",
+            "x": 4,
+            "y": 4
+          },
+          {
+            "id": "a (+)",
+            "x": 1,
+            "y": 3
+          },
+          {
+            "id": "c (+)",
+            "x": 3,
+            "y": 2.5
+          },
+          {
+            "id": "d (+)",
+            "x": 2,
+            "y": 1.8
+          },
+          {
+            "id": "e (−)",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "a′ (+)",
+            "x": 0,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "a (+)",
+            "to": "b"
+          },
+          {
+            "from": "a (+)",
+            "to": "c"
+          },
+          {
+            "from": "c (+)",
+            "to": "a (+)"
+          },
+          {
+            "from": "c (+)",
+            "to": "d"
+          },
+          {
+            "from": "d (+)",
+            "to": "b"
+          },
+          {
+            "from": "d (+)",
+            "to": "c (+)"
+          },
+          {
+            "from": "e (−)",
+            "to": "d (+)"
+          },
+          {
+            "from": "e (−)",
+            "to": "b"
+          },
+          {
+            "from": "a′ (+)",
+            "to": "e (−)"
+          },
+          {
+            "from": "a′ (+)",
+            "to": "b"
+          }
+        ],
+        "title": "DAG of the basic block"
+      }
+    }
+  }
+}
