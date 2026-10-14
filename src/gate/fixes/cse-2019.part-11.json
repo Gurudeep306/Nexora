@@ -1,0 +1,190 @@
+{
+  "paper": "cse-2019",
+  "fixes": [
+    {
+      "id": "cse-2019-ga-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Sentence-completion (verbal) question was filed under quant.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2019-ga-2",
+      "field": "tags",
+      "before": [
+        "idiom"
+      ],
+      "after": [
+        "vocabulary",
+        "sentence completion"
+      ],
+      "reason": "Better tags for a word-choice question.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2019-ga-6",
+      "field": "text",
+      "before": "The police arrested four criminals – P, Q, R and S. The criminals knew each other. They made the following statements:\nP says “Q committed the crime.”\nQ says “S committed the crime.”\nR says “I did not do it.”\nS says “What Q said about me is false.”\nAssume only one of the arrested four committed the crime and only one of the statements made above is true. Who committed the crime?",
+      "after": "The police arrested four criminals – P, Q, R and S. The criminals knew each other. They made the following statements:\n\n- P says “Q committed the crime.”\n- Q says “S committed the crime.”\n- R says “I did not do it.”\n- S says “What Q said about me is false.”\n\nAssume only one of the arrested four committed the crime and only one of the statements made above is true. Who committed the crime?",
+      "reason": "Statements collapsed into one paragraph by single newlines; laid out as a list.",
+      "source": "pdf p.1"
+    },
+    {
+      "id": "cse-2019-ga-7",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2019/ga-7-1.png",
+          "alt": "Triangle (Teachers) containing 70 and 10, rectangle (Administrators) containing 10, 20, 20, circle (Researchers) overlapping rectangle bottom with 20 in the overlap and 40 in circle only.",
+          "svg": "cse-2019/ga-7-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2019/ga-7-1.png",
+          "alt": "Venn-style diagram: a triangle labelled Teachers containing 70; a vertical rectangle labelled Administrators overlapping the right corner of the triangle (10 in triangle∩rectangle, 20 in rectangle only); a circle labelled Researchers overlapping the bottom of the rectangle (20 in rectangle∩circle, 40 in circle only).",
+          "svg": "cse-2019/ga-7-1.svg"
+        }
+      ],
+      "reason": "Placeholder SVG redrawn from the paper; precise alt.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2019-ga-10",
+      "field": "text",
+      "before": "Three of the five students allocated to a hostel put in special requests to the warden. Given the floor plan of the vacant rooms, select the allocation plan that will accommodate all their requests.\nRequest by X: Due to pollen allergy, I want to avoid a wing next to the garden.\nRequest by Y: I want to live as far from the washrooms as possible, since I am very sensitive to smell.\nRequest by Z: I believe in Vaastu and so want to stay in the South-west wing.\nThe shaded rooms are already occupied. WR is washroom.",
+      "after": "Three of the five students allocated to a hostel put in special requests to the warden. Given the floor plan of the vacant rooms, select the allocation plan that will accommodate all their requests.\n\n- Request by X: Due to pollen allergy, I want to avoid a wing next to the garden.\n- Request by Y: I want to live as far from the washrooms as possible, since I am very sensitive to smell.\n- Request by Z: I believe in Vaastu and so want to stay in the South-west wing.\n\nThe shaded rooms are already occupied. WR is washroom.",
+      "reason": "Requests collapsed by single newlines; laid out as a list.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2019-ga-10",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2019/ga-10-A.png",
+          "alt": "Hostel floor plan, option A: square ring of rooms around central N/E/S/W compass, WR washrooms at corners, gardens on east side, entrance east, shaded rooms occupied, with X, Y, Z placements.",
+          "svg": "cse-2019/ga-10-A.svg"
+        },
+        {
+          "f": "cse-2019/ga-10-B.png",
+          "alt": "Hostel floor plan, option B: square ring of rooms around central N/E/S/W compass, WR washrooms at corners, gardens on east side, entrance east, shaded rooms occupied, with X, Y, Z placements.",
+          "svg": "cse-2019/ga-10-B.svg"
+        },
+        {
+          "f": "cse-2019/ga-10-C.png",
+          "alt": "Hostel floor plan, option C: square ring of rooms around central N/E/S/W compass, WR washrooms at corners, gardens on east side, entrance east, shaded rooms occupied, with X, Y, Z placements.",
+          "svg": "cse-2019/ga-10-C.svg"
+        },
+        {
+          "f": "cse-2019/ga-10-D.png",
+          "alt": "Hostel floor plan, option D: square ring of rooms around central N/E/S/W compass, WR washrooms at corners, gardens on east side, entrance east, shaded rooms occupied, with X, Y, Z placements.",
+          "svg": "cse-2019/ga-10-D.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2019/ga-10-A.png",
+          "alt": "Option A floor plan: ring of rooms round a central block whose compass has N at upper-left, E upper-right, S lower-right, W lower-left. WR at the top-left and bottom-left corners; gardens beside the right wing above and below the Entrance. Z in the middle room of the left wing; X in the bottom wing next to the bottom-left WR; Y in the bottom wing, fourth room from the left.",
+          "svg": "cse-2019/ga-10-A.svg"
+        },
+        {
+          "f": "cse-2019/ga-10-B.png",
+          "alt": "Option B floor plan (same layout: N upper-left, E upper-right, S lower-right, W lower-left; WR at top-left and bottom-left corners; gardens on the right). X in the top-right room next to the upper garden; Z in the middle room of the left wing; Y in the right-wing room just below the Entrance, next to the lower garden.",
+          "svg": "cse-2019/ga-10-B.svg"
+        },
+        {
+          "f": "cse-2019/ga-10-C.png",
+          "alt": "Option C floor plan (same layout: N upper-left, E upper-right, S lower-right, W lower-left; WR at top-left and bottom-left corners; gardens on the right). Z in the top-right room next to the upper garden; Y in the right-wing room just below the Entrance; X in the bottom wing next to the bottom-left WR.",
+          "svg": "cse-2019/ga-10-C.svg"
+        },
+        {
+          "f": "cse-2019/ga-10-D.png",
+          "alt": "Option D floor plan (same layout: N upper-left, E upper-right, S lower-right, W lower-left; WR at top-left and bottom-left corners; gardens on the right). Y in the right-wing room just below the Entrance; X in the bottom wing next to the bottom-left WR; Z in the bottom wing, fourth room from the left.",
+          "svg": "cse-2019/ga-10-D.svg"
+        }
+      ],
+      "reason": "Placeholder SVGs redrawn from the paper; precise alts.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2019-ga-10",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/cse-2019/ga-10-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/cse-2019/ga-10-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/cse-2019/ga-10-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/cse-2019/ga-10-D.svg)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "![Option A floor plan](/gate-fig/cse-2019/ga-10-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![Option B floor plan](/gate-fig/cse-2019/ga-10-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![Option C floor plan](/gate-fig/cse-2019/ga-10-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![Option D floor plan](/gate-fig/cse-2019/ga-10-D.svg)"
+        }
+      ],
+      "reason": "Image alt text added to option images.",
+      "source": "pdf p.3"
+    },
+    {
+      "id": "cse-2019-ga-10",
+      "field": "answer",
+      "before": "A",
+      "after": "D",
+      "reason": "Stored key A puts Z in the left wing, which lies between the N and W pointers (north-west). Only option D puts Z in the bottom wing between W and S (south-west); D also keeps Y farthest from both WRs and X off the garden-side wing. A, B and C each put Z outside the south-west wing.",
+      "source": "pdf p.3 (analysis)"
+    },
+    {
+      "id": "cse-2019-ga-10",
+      "field": "reviewNote",
+      "before": "Spatial floor-plan question; answer reasoned from images, not verified against official key.",
+      "after": "Key changed from the unverified solved key A to D by direct analysis of the floor plans (only D places Z in the south-west wing); official 2019 key not fetched (sources unreachable).",
+      "reason": "Record why the key changed.",
+      "source": "analysis"
+    },
+    {
+      "id": "cse-2019-cs-2",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2019/cs-2-1.png",
+          "alt": "5-input AND gate with inputs A15, A14, A13 (inverted), A12 (inverted), A11 and output CS.",
+          "svg": "cse-2019/cs-2-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2019/cs-2-1.png",
+          "alt": "Chip-select logic: a 5-input AND gate with inputs A15, A14, A13 (bubbled/inverted), A12 (bubbled/inverted) and A11; its output is CS.",
+          "svg": "cse-2019/cs-2-1.svg"
+        }
+      ],
+      "reason": "Placeholder SVG (wrong two-AND/OR circuit) redrawn from the paper.",
+      "source": "pdf p.4"
+    }
+  ]
+}
