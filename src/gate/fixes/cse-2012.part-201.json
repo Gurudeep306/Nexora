@@ -1,0 +1,66 @@
+{
+  "paper": "cse-2012",
+  "fixes": [
+    {
+      "id": "cse-2012-cs-22",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "Transport-layer protocol for e-mail is a computer-networks question, not C programming.",
+      "source": "GATE 2012 CS Q.22 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-22",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "transport",
+      "reason": "Question asks for the transport-layer protocol (TCP) used by SMTP.",
+      "source": "GATE 2012 CS Q.22 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-22",
+      "field": "tags",
+      "before": [
+        "email",
+        "SMTP"
+      ],
+      "after": [
+        "email",
+        "SMTP",
+        "TCP"
+      ],
+      "reason": "Add the protocol the answer rests on.",
+      "source": "analysis"
+    },
+    {
+      "id": "cse-2012-cs-37",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Counting onto functions is discrete mathematics, not databases.",
+      "source": "GATE 2012 CS Q.37 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-37",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinatorics",
+      "reason": "Counting surjections is a combinatorics question.",
+      "source": "GATE 2012 CS Q.37 (PDF)"
+    },
+    {
+      "id": "cse-2012-cs-37",
+      "field": "tags",
+      "before": [
+        "surjective"
+      ],
+      "after": [
+        "surjective",
+        "functions",
+        "counting"
+      ],
+      "reason": "More precise tags.",
+      "source": "analysis"
+    }
+  ]
+}
