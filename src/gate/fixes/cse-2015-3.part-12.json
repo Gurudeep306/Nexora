@@ -1,0 +1,21 @@
+{
+  "paper": "cse-2015-3",
+  "fixes": [
+    {
+      "id": "cse-2015-3-cs-17",
+      "field": "subject",
+      "before": "pdsa",
+      "after": "pds",
+      "reason": "CSE paper question on hash tables; \"pdsa\" is the DA-paper subject.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2015-3-cs-17",
+      "field": "topic",
+      "before": "dsa",
+      "after": "hashing-ds",
+      "reason": "Load factor of a hash table belongs to the hashing topic.",
+      "source": "question content"
+    }
+  ]
+}
