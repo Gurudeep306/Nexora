@@ -102,6 +102,66 @@
       "after": null,
       "reason": "Review resolved; see needsReview fix.",
       "source": "solved"
+    },
+    {
+      "id": "cse-2020-cs-37",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2020/cs-37-1.png",
+          "alt": "Time order: RA(T1), RB(T2), WB(T2), RC(T1), RD(T2), WD(T1), WC(T2), WB(T1), Commit(T1), Commit(T2).",
+          "svg": "cse-2020/cs-37-1.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-a.png",
+          "alt": "T2: RB WB RD; T1: RA RC WD WB; T2: WC; Commit T1; Commit T2.",
+          "svg": "cse-2020/cs-37-a.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-b.png",
+          "alt": "T1: RA RC WD WB; then T2: RB WB RD WC; Commit T1; Commit T2.",
+          "svg": "cse-2020/cs-37-b.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-c.png",
+          "alt": "T1: RA RC WD; T2: RB WB RD; T1: WB; T2: WC; Commit T1; Commit T2.",
+          "svg": "cse-2020/cs-37-c.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-d.png",
+          "alt": "T2: RB WB RD WC; T1: RA RC WD WB; Commit T1; Commit T2.",
+          "svg": "cse-2020/cs-37-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2020/cs-37-1.png",
+          "alt": "Two-row schedule table, time left to right. T1 row: RA, -, -, RC, -, WD, -, WB, Commit, -. T2 row: -, RB, WB, -, RD, -, WC, -, -, Commit. Order: R1(A), R2(B), W2(B), R1(C), R2(D), W1(D), W2(C), W1(B), commit T1, commit T2.",
+          "svg": "cse-2020/cs-37-1.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-a.png",
+          "alt": "Option A schedule table. T1 row: -, -, -, RA, RC, WD, WB, -, Commit, -. T2 row: RB, WB, RD, -, -, -, -, WC, -, Commit. Order: R2(B), W2(B), R2(D), R1(A), R1(C), W1(D), W1(B), W2(C), commit T1, commit T2.",
+          "svg": "cse-2020/cs-37-a.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-b.png",
+          "alt": "Option B schedule table. T1 row: RA, RC, WD, WB, -, -, -, -, Commit, -. T2 row: -, -, -, -, RB, WB, RD, WC, -, Commit. Order: all of T1 (RA, RC, WD, WB), then all of T2 (RB, WB, RD, WC), commit T1, commit T2.",
+          "svg": "cse-2020/cs-37-b.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-c.png",
+          "alt": "Option C schedule table. T1 row: RA, RC, WD, -, -, -, WB, -, Commit, -. T2 row: -, -, -, RB, WB, RD, -, WC, -, Commit. Order: R1(A), R1(C), W1(D), R2(B), W2(B), R2(D), W1(B), W2(C), commit T1, commit T2.",
+          "svg": "cse-2020/cs-37-c.svg"
+        },
+        {
+          "f": "cse-2020/cs-37-d.png",
+          "alt": "Option D schedule table. T1 row: -, -, -, -, RA, RC, WD, WB, Commit, -. T2 row: RB, WB, RD, WC, -, -, -, -, -, Commit. Order: all of T2 (RB, WB, RD, WC), then all of T1 (RA, RC, WD, WB), commit T1, commit T2.",
+          "svg": "cse-2020/cs-37-d.svg"
+        }
+      ],
+      "reason": "Redrew the schedule and option figures as faithful two-row schedule tables (previous SVGs were generic placeholder boxes) and made the alt text describe each table cell by cell.",
+      "source": "GATE CS 2020 question paper, Q37 (page 13)"
     }
   ]
 }
