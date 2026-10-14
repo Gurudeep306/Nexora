@@ -1,0 +1,45 @@
+{
+  "paper": "cse-2007",
+  "fixes": [
+    {
+      "id": "cse-2007-cs-71",
+      "field": "text",
+      "before": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 <- M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 <- M[R3] | 1 |\n| ADD R2, R1 | R2 <- R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] <- R2 | 1 |\n| INC R3 | R3 <- R3 + 1 | 1 |\n| DEC R1 | R1 <- R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. The number of memory references for accessing the data in executing the program completely is",
+      "after": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 ← M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 ← M[R3] | 1 |\n| ADD R2, R1 | R2 ← R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] ← R2 | 1 |\n| INC R3 | R3 ← R3 + 1 | 1 |\n| DEC R1 | R1 ← R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. The number of memory references for accessing the data in executing the program completely is",
+      "reason": "Use a proper left-arrow (←) for the register-transfer operations instead of ASCII \"<-\".",
+      "source": "GATE2007.pdf p.18"
+    },
+    {
+      "id": "cse-2007-cs-72",
+      "field": "text",
+      "before": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 <- M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 <- M[R3] | 1 |\n| ADD R2, R1 | R2 <- R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] <- R2 | 1 |\n| INC R3 | R3 <- R3 + 1 | 1 |\n| DEC R1 | R1 <- R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. After the execution of this program, the content of memory location 2010 is",
+      "after": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 ← M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 ← M[R3] | 1 |\n| ADD R2, R1 | R2 ← R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] ← R2 | 1 |\n| INC R3 | R3 ← R3 + 1 | 1 |\n| DEC R1 | R1 ← R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is word addressable. After the execution of this program, the content of memory location 2010 is",
+      "reason": "Use a proper left-arrow (←) for the register-transfer operations instead of ASCII \"<-\".",
+      "source": "GATE2007.pdf p.18"
+    },
+    {
+      "id": "cse-2007-cs-73",
+      "field": "text",
+      "before": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 <- M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 <- M[R3] | 1 |\n| ADD R2, R1 | R2 <- R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] <- R2 | 1 |\n| INC R3 | R3 <- R3 + 1 | 1 |\n| DEC R1 | R1 <- R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is byte addressable and the word size is 32 bits. If an interrupt occurs during the execution of the instruction \"INC R3\", what return address will be pushed on to the stack?",
+      "after": "Consider the following program segment. Here R1, R2 and R3 are the general purpose registers.\n\n| Instruction | Operation | Instruction size (no. of words) |\n|---|---|---|\n| MOV R1, (3000) | R1 ← M[3000] | 2 |\n| LOOP: MOV R2, (R3) | R2 ← M[R3] | 1 |\n| ADD R2, R1 | R2 ← R1 + R2 | 1 |\n| MOV (R3), R2 | M[R3] ← R2 | 1 |\n| INC R3 | R3 ← R3 + 1 | 1 |\n| DEC R1 | R1 ← R1 - 1 | 1 |\n| BNZ LOOP | Branch on not zero | 2 |\n| HALT | Stop | 1 |\n\nAssume that the content of memory location 3000 is 10 and the content of the register R3 is 2000. The content of each of the memory locations from 2000 to 2010 is 100. The program is loaded from the memory location 1000. All the numbers are in decimal.\n\nAssume that the memory is byte addressable and the word size is 32 bits. If an interrupt occurs during the execution of the instruction \"INC R3\", what return address will be pushed on to the stack?",
+      "reason": "Use a proper left-arrow (←) for the register-transfer operations instead of ASCII \"<-\".",
+      "source": "GATE2007.pdf p.18"
+    },
+    {
+      "id": "cse-2007-cs-78",
+      "field": "text",
+      "before": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n$S\\to aB$  $S\\to bA$\n\n$B\\to b$  $A\\to a$\n\n$B\\to bS$  $A\\to aS$\n\n$B\\to aBB$  $A\\to bAA$\n\nWhich of the following strings is generated by the grammar?",
+      "after": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n| | |\n|---|---|\n| $S\\to aB$ | $S\\to bA$ |\n| $B\\to b$ | $A\\to a$ |\n| $B\\to bS$ | $A\\to aS$ |\n| $B\\to aBB$ | $A\\to bAA$ |\n\nWhich of the following strings is generated by the grammar?",
+      "reason": "Lay out the production rules as a two-column table as in the paper (the run-together inline layout was hard to read).",
+      "source": "GATE2007.pdf p.20"
+    },
+    {
+      "id": "cse-2007-cs-79",
+      "field": "text",
+      "before": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n$S\\to aB$  $S\\to bA$\n\n$B\\to b$  $A\\to a$\n\n$B\\to bS$  $A\\to aS$\n\n$B\\to aBB$  $A\\to bAA$\n\nFor the correct answer string to Q.78, how many derivation trees are there?",
+      "after": "Consider the CFG with $\\{S,A,B\\}$ as the non-terminal alphabet, $\\{a,b\\}$ as the terminal alphabet, S as the start symbol and the following set of production rules:\n\n| | |\n|---|---|\n| $S\\to aB$ | $S\\to bA$ |\n| $B\\to b$ | $A\\to a$ |\n| $B\\to bS$ | $A\\to aS$ |\n| $B\\to aBB$ | $A\\to bAA$ |\n\nFor the correct answer string to Q.78, how many derivation trees are there?",
+      "reason": "Lay out the production rules as a two-column table as in the paper (the run-together inline layout was hard to read).",
+      "source": "GATE2007.pdf p.20"
+    }
+  ]
+}
