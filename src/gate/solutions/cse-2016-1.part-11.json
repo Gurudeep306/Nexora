@@ -1,0 +1,999 @@
+{
+ "paper": "cse-2016-1",
+ "version": 2,
+ "solutions": {
+  "cse-2016-1-ga-1": {
+   "approach": "\"Until\" already means \"up to the time that … not\", so the clause after it must be affirmative; then the third-person singular subject needs a singular verb.",
+   "concepts": [
+    "Conjunction \"until\"",
+    "Subject–verb agreement"
+   ],
+   "steps": [
+    {
+     "title": "Negation is built into \"until\"",
+     "body": "\"I will not leave **until** X happens\" already contains the negative idea. Adding \"does not / doesn't\" after *until* creates a double negative, so A and B are wrong."
+    },
+    {
+     "title": "Agreement",
+     "body": "The subject *the minister* is third-person singular, so the present-tense verb is **meets**, not *meet*. C fails; D is correct."
+    }
+   ],
+   "answer": {
+    "value": "I will not leave the place until the minister meets me.",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Double negative: \"not … until … does not meet\" is illogical."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Same double negative, only contracted to \"doesn't\"."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Singular subject \"the minister\" takes \"meets\", not \"meet\"."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Affirmative clause after \"until\" with a correctly agreeing singular verb."
+    }
+   ],
+   "pitfalls": [
+    "Copying the negative from the main clause into the \"until\" clause."
+   ],
+   "verification": "Read D aloud: \"I will not leave until the minister meets me\" — natural, single negation, correct agreement."
+  },
+  "cse-2016-1-ga-2": {
+   "approach": "Recall the meanings of the four \"para-\" words; only one means restating something in other words.",
+   "concepts": [
+    "Vocabulary"
+   ],
+   "steps": [
+    {
+     "title": "Meanings",
+     "body": "- **paraphrase**: a rewording of a text or speech\n- **paradox**: a self-contradictory but possibly true statement\n- **paradigm**: a model or pattern\n- **paraffin**: a waxy hydrocarbon / kerosene"
+    },
+    {
+     "title": "Pick",
+     "body": "A rewording of something written or spoken is a **paraphrase**."
+    }
+   ],
+   "answer": {
+    "value": "paraphrase",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Paraphrase means restating in different words."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "A paradox is a seemingly contradictory statement, not a rewording."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "A paradigm is a model or framework."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Paraffin is a chemical substance."
+    }
+   ],
+   "verification": "Dictionary definition of paraphrase: \"express the meaning using different words\"."
+  },
+  "cse-2016-1-ga-3": {
+   "approach": "No lever can literally move the world; the statement exaggerates to make a point about leverage, so it is figurative.",
+   "concepts": [
+    "Figurative vs literal language"
+   ],
+   "steps": [
+    {
+     "title": "Literal reading fails",
+     "body": "There is no lever long enough and no place to set a fulcrum outside the world, so the claim cannot be meant literally."
+    },
+    {
+     "title": "Classify",
+     "body": "It is a hyperbole illustrating the power of a lever, i.e. a **figurative** statement."
+    }
+   ],
+   "answer": {
+    "value": "figurative",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Figurative: uses exaggeration/metaphor rather than literal meaning."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Collateral means secondary or security for a loan — irrelevant."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Literal would mean it is meant to be taken at face value, which is impossible here."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A figurine is a small statue — a distractor that merely sounds like \"figurative\"."
+    }
+   ],
+   "verification": "The quotation is the textbook example of hyperbole about mechanical advantage."
+  },
+  "cse-2016-1-ga-4": {
+   "approach": "Split each coded word into the common part for \"care\" and the part for the modifier, then note the order the code uses.",
+   "concepts": [
+    "Coding–decoding"
+   ],
+   "steps": [
+    {
+     "title": "Common root",
+     "body": "carefree = relf**taga**, careful = o**taga**, careless = fer**taga** → **taga = care**, and relf = free, o = ful, fer = less."
+    },
+    {
+     "title": "Order is reversed",
+     "body": "In English the modifier follows \"care\" (care-free), but in the code it comes **before** taga. So in \"aftercare\", where \"after\" comes before \"care\", the code for \"after\" must come **after** taga."
+    },
+    {
+     "title": "Match",
+     "body": "Only **tagazen** has taga first followed by a new code (zen) for \"after\"."
+    }
+   ],
+   "answer": {
+    "value": "tagazen",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "zentaga keeps taga at the end, which would correspond to \"care…\" + suffix, e.g. \"care-after\"."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "tagafer uses fer = \"less\"; it would mean \"lesscare\"."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "taga (care) followed by a new code for \"after\" — the reversed order the code uses."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "relffer has no taga at all (free + less)."
+    }
+   ],
+   "pitfalls": [
+    "Assuming the code keeps English word order."
+   ],
+   "verification": "Applying the same reversal to carefree gives relf+taga, which matches the given code."
+  },
+  "cse-2016-1-ga-5": {
+   "approach": "Track faces: removing a corner unit cube takes away 3 exposed unit squares but uncovers 3 new unit squares, so the area is unchanged.",
+   "concepts": [
+    "Surface area",
+    "Unit cubes"
+   ],
+   "steps": [
+    {
+     "title": "Original area",
+     "body": "$64 = 4^3$, so the cube has side 4: area $= 6 \\times 4^2 = 6 \\times 16 = 96$."
+    },
+    {
+     "title": "Effect of one corner",
+     "body": "A corner block shows 3 faces on the surface. Removing it deletes those 3 unit squares and exposes the 3 faces of the neighbouring blocks that touched it: change $= -3 + 3 = 0$."
+    },
+    {
+     "title": "All 8 corners",
+     "body": "Each of the 8 corners changes the area by 0, so the area stays $96$."
+    }
+   ],
+   "answer": {
+    "value": "96",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "56 subtracts $8 \\times 5 = 40$ — treating each removal as a pure loss of area."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "64 is the number of blocks (volume), not the area."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "72 subtracts $8 \\times 3 = 24$, forgetting the 3 newly exposed faces."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Area is unchanged at $6 \\times 16 = 96$."
+    }
+   ],
+   "shortcut": "Cutting a corner cube out of a box never changes surface area (3 faces lost, 3 gained).",
+   "verification": "Per corner: the removed block has 6 faces; 3 were on the surface and 3 touched neighbours, which now become surface."
+  },
+  "cse-2016-1-ga-6": {
+   "approach": "Revenue share is proportional to (yearly units × price); compute the four yearly revenues and compare.",
+   "concepts": [
+    "Data interpretation"
+   ],
+   "steps": [
+    {
+     "title": "Yearly units",
+     "body": "- Elegance: $27300+25222+28976+21012 = 102510$\n- Smooth: $20009+19392+22429+18229 = 80059$\n- Soft: $17602+18445+19544+16595 = 72186$\n- Executive: $9999+8942+10234+10109 = 39284$"
+    },
+    {
+     "title": "Revenue",
+     "body": "- Elegance: $102510 \\times 48 = 4{,}920{,}480$\n- Smooth: $80059 \\times 63 = 5{,}043{,}717$\n- Soft: $72186 \\times 78 = 5{,}630{,}508$\n- Executive: $39284 \\times 173 = 6{,}796{,}132$"
+    },
+    {
+     "title": "Largest",
+     "body": "Executive has the highest revenue (≈ Rs. 68 lakh), so it contributes the greatest fraction."
+    }
+   ],
+   "answer": {
+    "value": "Executive",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Most units sold, but at Rs. 48 the revenue is only ≈ Rs. 49.2 lakh."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Highest revenue ≈ Rs. 68.0 lakh."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "≈ Rs. 50.4 lakh."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "≈ Rs. 56.3 lakh, second highest."
+    }
+   ],
+   "shortcut": "Approximate: 1.03 lakh × 48 ≈ 49 L, 0.80 × 63 ≈ 50 L, 0.72 × 78 ≈ 56 L, 0.39 × 173 ≈ 68 L.",
+   "pitfalls": [
+    "Comparing unit sales instead of revenue."
+   ],
+   "verification": "Rough estimates in the shortcut give the same ranking as the exact products."
+  },
+  "cse-2016-1-ga-7": {
+   "approach": "\"If this is not an indication of diversity, nothing else is\" asserts that the many languages on the notes are a strong sign of diversity — no more, no less.",
+   "concepts": [
+    "Logical inference"
+   ],
+   "steps": [
+    {
+     "title": "What the passage claims",
+     "body": "Multiple languages (at least 17) on currency is presented as a very strong indicator of India's diversity."
+    },
+    {
+     "title": "Test options",
+     "body": "\"At least seventeen\" does not mean exactly seventeen (A). The passage never says language is the *only* indicator (B) or talks about space on notes (C). D restates the claim."
+    }
+   ],
+   "answer": {
+    "value": "Linguistic pluralism is strong evidence of India’s diversity.",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "\"At least seventeen\" on notes says nothing about exactly how many languages India has."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Overreach: being a strong indicator is not being the only indicator."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The passage is silent on whether all Indian languages fit on the notes."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Directly follows from \"if this is not an indication of diversity, nothing else is\"."
+    }
+   ],
+   "verification": "D is the only option that adds no information beyond the passage."
+  },
+  "cse-2016-1-ga-8": {
+   "approach": "Chain the \"always beats\" relations to rank the players; then check whether each conclusion is supported or overreaches.",
+   "concepts": [
+    "Logical deduction",
+    "Ordering"
+   ],
+   "steps": [
+    {
+     "title": "Chain",
+     "body": "I: P > Q (always); IV: Q > R (always); II: R > S (always). So the strength order is $P > Q > R > S$, with III adding that P beats S most of the time."
+    },
+    {
+     "title": "Statement (i)",
+     "body": "P always beats Q, and is above R and S in the chain (beats S at least usually), so P is **likely** to beat all three — inferable."
+    },
+    {
+     "title": "Statement (ii)",
+     "body": "S loses only *sometimes* to P (so S sometimes beats P, the strongest player), and S's record against Q is never given. Calling S the **absolute** worst cannot be inferred."
+    }
+   ],
+   "answer": {
+    "value": "(i) only",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "(i) follows from the chain P > Q > R > S; (ii) does not."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "(ii) cannot be inferred: S sometimes beats P and S vs Q is not stated."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Includes (ii), which is not supported."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(i) is supported by the hedged word \"likely\"."
+    }
+   ],
+   "pitfalls": [
+    "Treating \"likely\" in (i) and \"absolute\" in (ii) as equally strong claims."
+   ],
+   "verification": "Re-checked each statement against the four premises: (i) is backed by the chain and the hedge \"likely\"; (ii) needs S vs Q, which is never given."
+  },
+  "cse-2016-1-ga-9": {
+   "approach": "Factor theorem: $(x-a)$ is a factor iff $f(a)=0$. Test each root quickly.",
+   "concepts": [
+    "Factor theorem"
+   ],
+   "steps": [
+    {
+     "title": "Test x − 1",
+     "body": "$f(1) = 2(1)^7 + 3(1) - 5 = 2 + 3 - 5 = 0$, so $(x-1)$ is a factor."
+    },
+    {
+     "title": "Reject the others",
+     "body": "$f(-1) = -2 - 3 - 5 = -10 \\ne 0$. $f(5/2) = 2(2.5)^7 + 7.5 - 5 > 0$. For $x^3+8$, its real root $x=-2$ gives $f(-2) = 2(-128) - 6 - 5 = -267 \\ne 0$."
+    }
+   ],
+   "answer": {
+    "value": "(x-1)",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$x = -2$ is a root of $x^3+8$ but $f(-2) = -267 \\ne 0$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$f(1) = 0$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$f(2.5) = 2(2.5)^7 + 2.5 > 0$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$f(-1) = -10 \\ne 0$."
+    }
+   ],
+   "shortcut": "Coefficients sum to $2+3-5=0$, so $x=1$ is a root.",
+   "verification": "Sum of coefficients is zero, confirming $(x-1)$."
+  },
+  "cse-2016-1-ga-10": {
+   "approach": "Model $N = A e^{-kL}$; the two data points fix $k$, then solve for the load giving 5000 cycles relative to the 40-unit point.",
+   "concepts": [
+    "Exponential decay",
+    "Logarithms"
+   ],
+   "steps": [
+    {
+     "title": "Find k",
+     "body": "$\\dfrac{N(40)}{N(80)} = e^{40k} = \\dfrac{10000}{100} = 100 \\Rightarrow k = \\dfrac{\\ln 100}{40} = \\dfrac{4.6052}{40} = 0.11513$."
+    },
+    {
+     "title": "Halve the cycles",
+     "body": "Going from 10000 to 5000 cycles: $e^{-k\\Delta L} = \\tfrac12 \\Rightarrow \\Delta L = \\dfrac{\\ln 2}{k} = \\dfrac{0.6931}{0.11513} = 6.02$."
+    },
+    {
+     "title": "Load",
+     "body": "$L = 40 + 6.02 = 46.02$ units."
+    }
+   ],
+   "answer": {
+    "value": "46.02",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "40 units gives 10000 cycles, not 5000."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$40 + \\ln 2 / k = 46.02$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "60 is the linear midpoint between 40 and 80 — wrong model."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Above 80 units, cycles would be below 100."
+    }
+   ],
+   "shortcut": "$\\Delta L = 40 \\cdot \\dfrac{\\log 2}{\\log 100} = 40 \\times \\dfrac{0.301}{2} = 6.02$.",
+   "verification": "$N(46.02) = 10000\\,e^{-0.11513 \\times 6.02} = 10000 \\times 0.5 = 5000$."
+  },
+  "cse-2016-1-cs-1": {
+   "approach": "Push the negation inside: $\\neg((p\\Rightarrow q)\\wedge(\\neg r\\vee\\neg s)) \\equiv (p\\wedge\\neg q)\\vee(r\\wedge s)$, then check which integer satisfies it.",
+   "concepts": [
+    "De Morgan's laws",
+    "Implication"
+   ],
+   "steps": [
+    {
+     "title": "Simplify",
+     "body": "$\\neg(A\\wedge B) = \\neg A \\vee \\neg B$. Here $\\neg(p\\Rightarrow q) = p\\wedge\\neg q$ and $\\neg(\\neg r\\vee\\neg s) = r\\wedge s$. So we need $(p\\wedge\\neg q)\\vee(r\\wedge s)$."
+    },
+    {
+     "title": "r ∧ s is impossible",
+     "body": "A prime ($s$) has exactly two divisors, while a perfect square $>1$ ($r$) has an odd number of divisors, so no $x$ is both."
+    },
+    {
+     "title": "p ∧ ¬q",
+     "body": "$x \\in \\{8,9,10,11,12\\}$ and **not** composite. Since $x \\ge 2$, not composite means prime: 8, 9, 10, 12 are composite; **11** is prime."
+    }
+   ],
+   "answer": {
+    "value": "11",
+    "number": 11,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Forgetting that $\\neg(p\\Rightarrow q)$ is $p\\wedge\\neg q$, not $\\neg p\\Rightarrow\\neg q$."
+   ],
+   "verification": "For $x=11$: $p$ true, $q$ false so $p\\Rightarrow q$ is false, making the conjunction false and its negation true."
+  },
+  "cse-2016-1-cs-2": {
+   "approach": "Classify valid strings by their last bit: ending in 0 extends any valid $(n-1)$-string; ending in 1 forces the previous bit to be 0.",
+   "concepts": [
+    "Recurrence relations",
+    "Counting strings"
+   ],
+   "steps": [
+    {
+     "title": "Last bit 0",
+     "body": "Append 0 to any valid string of length $n-1$: $a_{n-1}$ strings."
+    },
+    {
+     "title": "Last bit 1",
+     "body": "The bit before must be 0, so the string is (valid string of length $n-2$) + \"01\": $a_{n-2}$ strings."
+    },
+    {
+     "title": "Recurrence",
+     "body": "$a_n = a_{n-1} + a_{n-2}$ (Fibonacci). Check: $a_1 = 2$ (0, 1), $a_2 = 3$ (00, 01, 10), $a_3 = 3 + 2 = 5$ (000, 001, 010, 100, 101)."
+    }
+   ],
+   "answer": {
+    "value": "$a_n = a_{n-1} + a_{n-2}$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Gives $a_3 = 3 + 2\\cdot2 = 7$, but only 5 strings of length 3 are valid."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Matches the last-bit split; $a_3 = 5$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Gives $a_3 = 2\\cdot3 + 2 = 8$ — all strings, no restriction."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Gives $a_3 = 6 + 4 = 10$, more than $2^3$."
+    }
+   ],
+   "verification": "Listing length-3 strings without \"11\": 000, 001, 010, 100, 101 — 5, as B predicts."
+  },
+  "cse-2016-1-cs-3": {
+   "approach": "Substitute $t = x-4$; as $x\\to4$, $t\\to0$, giving the standard limit $\\lim_{t\\to0}\\sin t / t = 1$.",
+   "concepts": [
+    "Standard limits"
+   ],
+   "steps": [
+    {
+     "title": "Substitute",
+     "body": "Let $t = x-4$. Then $x\\to4 \\iff t\\to0$ and the limit becomes $\\displaystyle\\lim_{t\\to0}\\frac{\\sin t}{t}$."
+    },
+    {
+     "title": "Evaluate",
+     "body": "This standard limit equals $1$ (or by L'Hôpital: $\\cos t/1 \\to 1$)."
+    }
+   ],
+   "answer": {
+    "value": "1",
+    "number": 1,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Plugging in $x=4$ directly gives $0/0$ — an indeterminate form, not 0."
+   ],
+   "verification": "L'Hôpital: $\\dfrac{\\cos(x-4)}{1}$ at $x=4$ is $\\cos 0 = 1$."
+  },
+  "cse-2016-1-cs-4": {
+   "approach": "A pdf must integrate to 1 over its support: solve $\\int_a^1 x^{-2}\\,dx = 1$.",
+   "concepts": [
+    "Probability density function",
+    "Normalisation"
+   ],
+   "steps": [
+    {
+     "title": "Integrate",
+     "body": "$\\displaystyle\\int_a^1 \\frac{1}{x^2}\\,dx = \\left[-\\frac1x\\right]_a^1 = -1 + \\frac1a = \\frac1a - 1$."
+    },
+    {
+     "title": "Normalise",
+     "body": "$\\dfrac1a - 1 = 1 \\Rightarrow \\dfrac1a = 2 \\Rightarrow a = 0.5$."
+    }
+   ],
+   "answer": {
+    "value": "0.5",
+    "number": 0.5,
+    "matchesKey": true
+   },
+   "verification": "$\\int_{0.5}^1 x^{-2}dx = 2 - 1 = 1$, and $1/x^2 > 0$ on $[0.5,1]$, so it is a valid pdf."
+  },
+  "cse-2016-1-cs-5": {
+   "approach": "Non-real eigenvalues of a real matrix come in conjugate pairs, so the third eigenvalue is $2-i$; the determinant is the product of eigenvalues.",
+   "concepts": [
+    "Eigenvalues",
+    "Determinant = product of eigenvalues"
+   ],
+   "steps": [
+    {
+     "title": "Third eigenvalue",
+     "body": "The characteristic polynomial has real coefficients, so $2+i$ forces $2-i$. Eigenvalues: $2+i,\\ 2-i,\\ 3$."
+    },
+    {
+     "title": "Determinant",
+     "body": "$\\det P = (2+i)(2-i)\\cdot 3 = (4 - i^2)\\cdot3 = (4+1)\\cdot3 = 15$."
+    }
+   ],
+   "answer": {
+    "value": "15",
+    "number": 15,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Taking the third eigenvalue as 3 again or forgetting $i^2=-1$ (giving $3\\cdot3=9$)."
+   ],
+   "verification": "A real 3×3 matrix with eigenvalues $2\\pm i$, 3 has a real determinant, as 15 is."
+  },
+  "cse-2016-1-cs-6": {
+   "approach": "Read the given identities as a truth table for $x \\# y$ and match it against the options.",
+   "concepts": [
+    "Boolean algebra",
+    "XOR"
+   ],
+   "steps": [
+    {
+     "title": "Truth table",
+     "body": "$x\\#0 = x$: $(0,0)\\to0$, $(1,0)\\to1$. $x\\#1 = \\bar x$: $(0,1)\\to1$, $(1,1)\\to0$. So output is 1 exactly when $x \\ne y$."
+    },
+    {
+     "title": "Identify",
+     "body": "That is XOR: $x\\#y = x\\bar y + \\bar x y$. It also satisfies $x\\#x = 0$ and $x\\#\\bar x = 1$."
+    }
+   ],
+   "answer": {
+    "value": "$x\\bar{y} + \\bar{x}y$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "XOR — matches all four identities."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$x\\bar y + \\bar x\\bar y = \\bar y$; then $x\\#0 = 1 \\ne x$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$\\bar x y + xy = y$; then $x\\#0 = 0 \\ne x$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "XNOR; gives $x\\#x = 1$, not 0."
+    }
+   ],
+   "verification": "Check A: $x\\cdot1 + \\bar x\\cdot0 = x$ for $y=0$; $0 + \\bar x = \\bar x$ for $y=1$."
+  },
+  "cse-2016-1-cs-7": {
+   "approach": "The MSB is 1, so the number is negative; its magnitude is the 2's complement (invert and add 1).",
+   "concepts": [
+    "2's complement"
+   ],
+   "steps": [
+    {
+     "title": "Invert",
+     "body": "$1111\\,1111\\,1111\\,0101 \\to 0000\\,0000\\,0000\\,1010 = 10$."
+    },
+    {
+     "title": "Add 1",
+     "body": "$10 + 1 = 11$, so the value is $-11$."
+    }
+   ],
+   "answer": {
+    "value": "-11",
+    "number": -11,
+    "matchesKey": true
+   },
+   "shortcut": "Weighted sum: $-2^{15} + (2^{15} - 1 - 10) = -11$, i.e. value $= -(\\text{inverted} + 1)$.",
+   "verification": "$+11 = 0000\\,0000\\,0000\\,1011$; invert $\\to 1111\\,1111\\,1111\\,0100$; add 1 $\\to 1111\\,1111\\,1111\\,0101$ ✓."
+  },
+  "cse-2016-1-cs-8": {
+   "approach": "The output 0 occurs three times with three different successors (1, 2, 3), so the counter needs 6 distinct internal states.",
+   "concepts": [
+    "Synchronous counter design",
+    "State count"
+   ],
+   "steps": [
+    {
+     "title": "Count states",
+     "body": "Sequence 0 → 1 → 0 → 2 → 0 → 3 → (repeat). Each 0 must \"remember\" what comes next, so all 6 positions are distinct states."
+    },
+    {
+     "title": "Flip-flops",
+     "body": "$n$ flip-flops give $2^n$ states: $2^2 = 4 < 6 \\le 8 = 2^3$, so **3** J-K flip-flops; the 2-bit output 0–3 is produced by combinational logic from the state."
+    }
+   ],
+   "answer": {
+    "value": "3",
+    "number": 3,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering 2 because the largest output value is 3 — a 2-bit state cannot tell the three 0s apart."
+   ],
+   "verification": "Example encoding: states 000,001,010,011,100,101 mapped to outputs 0,1,0,2,0,3 works with 3 flip-flops."
+  },
+  "cse-2016-1-cs-9": {
+   "approach": "Address bits = $\\log_2$(number of addressable units); with 2-byte words, count words, not bytes.",
+   "concepts": [
+    "Word addressing",
+    "Address bus width"
+   ],
+   "steps": [
+    {
+     "title": "Words",
+     "body": "$4\\text{ GB} = 2^{32}$ bytes; words $= 2^{32}/2^1 = 2^{31}$."
+    },
+    {
+     "title": "Bits",
+     "body": "Distinct addresses needed $= 2^{31}$, so the address bus needs at least $\\log_2 2^{31} = 31$ bits."
+    }
+   ],
+   "answer": {
+    "value": "31",
+    "number": 31,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering 32 by counting bytes in a word-addressable memory."
+   ],
+   "verification": "$2^{31}$ words × 2 bytes $= 2^{32}$ bytes $= 4$ GB ✓."
+  },
+  "cse-2016-1-cs-10": {
+   "approach": "A circular array keeps front and rear indices that wrap around modulo the capacity, so neither operation moves elements.",
+   "concepts": [
+    "Circular queue"
+   ],
+   "steps": [
+    {
+     "title": "Circular buffer",
+     "body": "ENQUEUE: `A[rear] = x; rear = (rear+1) % N`. DEQUEUE: `x = A[front]; front = (front+1) % N`."
+    },
+    {
+     "title": "Cost",
+     "body": "Each is a constant number of operations, so both run in $O(1)$ worst case."
+    }
+   ],
+   "answer": {
+    "value": "Both operations can be performed in $O(1)$ time",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Circular array gives O(1) for both."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Only true for a naive array that shifts elements on dequeue."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Neither operation needs to touch all n elements."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "No logarithmic structure is involved; both are constant time."
+    }
+   ],
+   "verification": "Standard circular-queue implementation uses no loops in either operation."
+  },
+  "cse-2016-1-cs-11": {
+   "approach": "a is the only source and f the only sink, so they are fixed at the ends; the middle is an interleaving of two independent chains b→c and d→e.",
+   "concepts": [
+    "Topological sort",
+    "Interleaving chains"
+   ],
+   "given": "| Edge set |\n|---|\n| a→b, b→c, c→f |\n| a→d, d→e, e→f |",
+   "steps": [
+    {
+     "title": "Fix the ends",
+     "body": "a has no incoming edges and every other vertex is reachable from it, so a is first. f has no outgoing edges and is reached from c and e, so f is last.",
+     "scene": {
+      "tones": {
+       "a": "success",
+       "f": "error"
+      },
+      "caption": "a must be first, f must be last"
+     }
+    },
+    {
+     "title": "Two chains in the middle",
+     "body": "Remaining vertices b, c, d, e form two chains: b before c, and d before e, with no edges between the chains.",
+     "scene": {
+      "tones": {
+       "a": "success",
+       "f": "error",
+       "b": "cat1",
+       "c": "cat1",
+       "d": "cat2",
+       "e": "cat2"
+      },
+      "edgeTones": {
+       "b>c": "accent",
+       "d>e": "accent"
+      },
+      "caption": "chain 1: b→c, chain 2: d→e"
+     }
+    },
+    {
+     "title": "Count interleavings",
+     "body": "Choose which 2 of the 4 middle positions hold b and c (they then appear in order b, c); d and e fill the rest: $\\binom{4}{2} = \\dfrac{4!}{2!\\,2!} = 6$.\n\nThe six orders: abcdef, abdcef, abdecf, adbcef, adbecf, adebcf.",
+     "scene": {
+      "caption": "$\\binom{4}{2} = 6$ orderings"
+     }
+    }
+   ],
+   "answer": {
+    "value": "6",
+    "number": 6,
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "graph",
+    "directed": true,
+    "nodes": [
+     {
+      "id": "a",
+      "x": 0,
+      "y": 1
+     },
+     {
+      "id": "b",
+      "x": 1,
+      "y": 0
+     },
+     {
+      "id": "c",
+      "x": 2,
+      "y": 0
+     },
+     {
+      "id": "f",
+      "x": 3,
+      "y": 1
+     },
+     {
+      "id": "d",
+      "x": 1,
+      "y": 2
+     },
+     {
+      "id": "e",
+      "x": 2,
+      "y": 2
+     }
+    ],
+    "edges": [
+     {
+      "from": "a",
+      "to": "b"
+     },
+     {
+      "from": "b",
+      "to": "c"
+     },
+     {
+      "from": "c",
+      "to": "f"
+     },
+     {
+      "from": "a",
+      "to": "d"
+     },
+     {
+      "from": "d",
+      "to": "e"
+     },
+     {
+      "from": "e",
+      "to": "f"
+     }
+    ],
+    "caption": "The given DAG"
+   },
+   "pitfalls": [
+    "Counting $4! = 24$ by ignoring the order constraints inside each chain."
+   ],
+   "verification": "Explicit enumeration lists exactly the 6 orderings shown."
+  },
+  "cse-2016-1-cs-12": {
+   "approach": "Check each call against the prototype `void f(int, short)`: unary `*` needs a pointer operand, and a `void` result cannot be assigned.",
+   "concepts": [
+    "C type checking",
+    "Pointer dereference"
+   ],
+   "steps": [
+    {
+     "title": "Dereferencing s",
+     "body": "`s` is a `short`, not a pointer, so `*s` is a type error — eliminates A and C."
+    },
+    {
+     "title": "Using a void result",
+     "body": "`f` returns `void`; `i = f(i,s)` assigns a void value to an int — type error (B)."
+    },
+    {
+     "title": "Valid call",
+     "body": "`p` is `short *`, so `*p` is a `short`; `f(i, *p)` passes `(int, short)` exactly as declared (D)."
+    }
+   ],
+   "answer": {
+    "value": "f(i,*p)",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "`*s` dereferences a non-pointer."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Assigns the result of a `void` function."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "`*s` again dereferences a non-pointer."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "`*p` is a `short`; argument types match the prototype."
+    }
+   ],
+   "verification": "Compiling the four variants with a C compiler, only D compiles cleanly."
+  }
+ }
+}
