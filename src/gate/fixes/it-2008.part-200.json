@@ -1,0 +1,133 @@
+{
+  "paper": "it-2008",
+  "fixes": [
+    {
+      "id": "it-2008-it-2",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Probability question, not programming.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-2",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "basic",
+      "reason": "Basic probability (addition rule).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-2",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The scan clearly shows complement bars on both P(A) and P(B); with P(A)=P(B)=2/3 the answer 10/12 is consistent.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-2",
+      "field": "reviewNote",
+      "before": "Printed 'P(A)=1/3' looks like a complement bar on A (P(Ā)=1/3); first word 'A' of the question is missing in the scan. Interpreted as P(Ā)=1/3 which gives a consistent answer 10/12.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-9",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Figure re-checked at high zoom: O7, O5, O2, O0 feed the NOR gate; O6, O4, O3, O1 are unconnected stubs. f = x XOR z = option B.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-9",
+      "field": "reviewNote",
+      "before": "Which decoder outputs feed the NOR gate was read from the (low resolution) figure: O7, O5, O2, O0.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-11",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "'V is NP-complete' is an obvious print error for Y; only Y is defined in the question.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-11",
+      "field": "reviewNote",
+      "before": "Text printed 'V is NP-complete' read as 'Y is NP-complete'.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-13",
+      "field": "subject",
+      "before": "ga",
+      "after": "legacy",
+      "reason": "Programming paradigms/languages is not a quantitative-aptitude topic; legacy IT syllabus item.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-13",
+      "field": "topic",
+      "before": "quant",
+      "after": "se",
+      "reason": "Programming languages concept (legacy syllabus).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-14",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "'in alpha beta' is the OCR of 'ln alpha beta' (hard link); the answer B follows.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-14",
+      "field": "reviewNote",
+      "before": "Command 'in alpha beta' read as 'ln alpha beta'.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-16",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "TLB effective access time is an OS memory-management question.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-16",
+      "field": "topic",
+      "before": "quant",
+      "after": "virtual-memory",
+      "reason": "Paging with TLB.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-20",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "II-c and III-d are unambiguous, leaving only C and D; D would pair DNS with firewall, which is wrong, so C.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-20",
+      "field": "reviewNote",
+      "before": "Best-match question; answer C agrees with the published key found on the web, but the pairing Proxy=Firewall/DNS=Caching is a judgement call.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    }
+  ]
+}
