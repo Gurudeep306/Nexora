@@ -1,0 +1,289 @@
+{
+  "paper": "cse-2016-1",
+  "fixes": [
+    {
+      "id": "cse-2016-1-ga-8",
+      "field": "text",
+      "before": "Consider the following statements relating to the level of poker play of four players P, Q, R and S.\n\nI. P always beats Q\nII. R always beats S\nIII. S loses to P only sometimes\nIV. R always loses to Q\n\nWhich of the following can be logically inferred from the above statements?\n\n(i) P is likely to beat all the three other players\n(ii) S is the absolute worst player in the set",
+      "after": "Consider the following statements relating to the level of poker play of four players P, Q, R and S.\n\nI. P always beats Q\\\nII. R always beats S\\\nIII. S loses to P only sometimes\\\nIV. R always loses to Q\n\nWhich of the following can be logically inferred from the above statements?\n\n(i) P is likely to beat all the three other players\\\n(ii) S is the absolute worst player in the set",
+      "reason": "Statements were joined into one paragraph by single newlines; added markdown line breaks.",
+      "source": "pdf p.2"
+    },
+    {
+      "id": "cse-2016-1-cs-1",
+      "field": "text",
+      "before": "Let p, q, r, s represent the following propositions.\n\np: $x \\in \\{8, 9, 10, 11, 12\\}$\nq: $x$ is a composite number\nr: $x$ is a perfect square\ns: $x$ is a prime number\n\nThe integer $x \\ge 2$ which satisfies $\\neg((p \\Rightarrow q) \\wedge (\\neg r \\vee \\neg s))$ is ______.",
+      "after": "Let p, q, r, s represent the following propositions.\n\n- p: $x \\in \\{8, 9, 10, 11, 12\\}$\n- q: $x$ is a composite number\n- r: $x$ is a perfect square\n- s: $x$ is a prime number\n\nThe integer $x \\ge 2$ which satisfies $\\neg((p \\Rightarrow q) \\wedge (\\neg r \\vee \\neg s))$ is ______.",
+      "reason": "Proposition definitions collapsed into one line; laid out as a list.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2016-1-cs-3",
+      "field": "subject",
+      "before": "pds",
+      "after": "calc",
+      "reason": "Limit question belongs to calculus, not programming.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2016-1-cs-3",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "limits",
+      "reason": "Standard limit sin(t)/t.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2016-1-cs-3",
+      "field": "tags",
+      "before": [
+        "limit"
+      ],
+      "after": [
+        "limits",
+        "standard-limit"
+      ],
+      "reason": "Better tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2016-1-cs-4",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability density question was filed under general aptitude.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2016-1-cs-4",
+      "field": "topic",
+      "before": "quant",
+      "after": "rv",
+      "reason": "Continuous random variable / pdf normalisation.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2016-1-cs-4",
+      "field": "tags",
+      "before": [
+        "pdf"
+      ],
+      "after": [
+        "pdf",
+        "continuous-random-variable"
+      ],
+      "reason": "Better tags.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2016-1-cs-11",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2016-1/cs-11-1.png",
+          "alt": "Directed graph with edges a→b, b→c, c→f, a→d, d→e, e→f",
+          "svg": "cse-2016-1/cs-11-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2016-1/cs-11-1.png",
+          "alt": "Directed graph on vertices a to f: top path a→b→c→f and bottom path a→d→e→f",
+          "svg": "cse-2016-1/cs-11-1.svg"
+        }
+      ],
+      "reason": "Figure SVG redrawn from the paper; alt text made more precise.",
+      "source": "pdf p.6"
+    },
+    {
+      "id": "cse-2016-1-cs-14",
+      "field": "text",
+      "before": "Let G be a weighted connected undirected graph with distinct positive edge weights. If every edge weight is increased by the same value, then which of the following statements is/are TRUE?\n\nP: Minimum spanning tree of G does not change\nQ: Shortest path between any pair of vertices does not change",
+      "after": "Let G be a weighted connected undirected graph with distinct positive edge weights. If every edge weight is increased by the same value, then which of the following statements is/are TRUE?\n\n- P: Minimum spanning tree of G does not change\n- Q: Shortest path between any pair of vertices does not change",
+      "reason": "Single-newline statements collapse into one paragraph in markdown; listed P and Q separately.",
+      "source": "GATE 2016 CS Set 1 question paper PDF"
+    },
+    {
+      "id": "cse-2016-1-cs-16",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\{a^n b^m \\mid n, m \\ge 0\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\{w \\in \\{a, b\\}^* \\mid w$ has equal number of a’s and b’s$\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\{a^n \\mid n \\ge 0\\} \\cup \\{b^n \\mid n \\ge 0\\} \\cup \\{a^n b^n \\mid n \\ge 0\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\{a, b\\}^*$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\{a^n b^m \\mid n, m \\ge 0\\}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\{w \\in \\{a, b\\}^* \\mid w \\text{ has equal number of } a\\text{'s and } b\\text{'s}\\}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\{a^n \\mid n \\ge 0\\} \\cup \\{b^n \\mid n \\ge 0\\} \\cup \\{a^n b^n \\mid n \\ge 0\\}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\{a, b\\}^*$"
+        }
+      ],
+      "reason": "Option B mixed text and math across separate $…$ spans; rewritten as one KaTeX expression with \\text{}.",
+      "source": "GATE 2016 CS Set 1 question paper PDF"
+    },
+    {
+      "id": "cse-2016-1-cs-17",
+      "field": "text",
+      "before": "Which of the following decision problems are undecidable?\n\nI. Given NFAs $N_1$ and $N_2$, is $L(N_1) \\cap L(N_2) = \\Phi$?\nII. Given a CFG $G = (N, \\Sigma, P, S)$ and a string $x \\in \\Sigma^*$, does $x \\in L(G)$?\nIII. Given CFGs $G_1$ and $G_2$, is $L(G_1) = L(G_2)$?\nIV. Given a TM $M$, is $L(M) = \\Phi$?",
+      "after": "Which of the following decision problems are undecidable?\n\n- I. Given NFAs $N_1$ and $N_2$, is $L(N_1) \\cap L(N_2) = \\Phi$?\n- II. Given a CFG $G = (N, \\Sigma, P, S)$ and a string $x \\in \\Sigma^*$, does $x \\in L(G)$?\n- III. Given CFGs $G_1$ and $G_2$, is $L(G_1) = L(G_2)$?\n- IV. Given a TM $M$, is $L(M) = \\Phi$?",
+      "reason": "Statements I–IV were joined by single newlines and rendered as one paragraph; made a list.",
+      "source": "GATE 2016 CS Set 1 question paper PDF"
+    },
+    {
+      "id": "cse-2016-1-cs-21",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "Superkeys/primary keys belong to Databases, not Discrete Mathematics.",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2016-1-cs-21",
+      "field": "topic",
+      "before": "sets",
+      "after": "normalization",
+      "reason": "Keys are covered under the databases normalization topic.",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2016-1-cs-23",
+      "field": "text",
+      "before": "A database of research articles in a journal uses the following schema.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, YEAR, PRICE)\n\nThe primary key is (VOLUME, NUMBER, STARTPAGE, ENDPAGE) and the following functional dependencies exist in the schema.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE) → TITLE\n(VOLUME, NUMBER) → YEAR\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE) → PRICE\n\nThe database is redesigned to use the following schemas.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, PRICE)\n(VOLUME, NUMBER, YEAR)\n\nWhich is the weakest normal form that the new database satisfies, but the old one does not?",
+      "after": "A database of research articles in a journal uses the following schema.\n\n(VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, YEAR, PRICE)\n\nThe primary key is (VOLUME, NUMBER, STARTPAGE, ENDPAGE) and the following functional dependencies exist in the schema.\n\n- (VOLUME, NUMBER, STARTPAGE, ENDPAGE) → TITLE\n- (VOLUME, NUMBER) → YEAR\n- (VOLUME, NUMBER, STARTPAGE, ENDPAGE) → PRICE\n\nThe database is redesigned to use the following schemas.\n\n- (VOLUME, NUMBER, STARTPAGE, ENDPAGE, TITLE, PRICE)\n- (VOLUME, NUMBER, YEAR)\n\nWhich is the weakest normal form that the new database satisfies, but the old one does not?",
+      "reason": "FD lines and new schemas were joined by single newlines (rendered as one paragraph); made lists.",
+      "source": "GATE 2016 CS Set 1 question paper PDF"
+    },
+    {
+      "id": "cse-2016-1-cs-25",
+      "field": "text",
+      "before": "Which of the following is/are example(s) of stateful application layer protocols?\n\n(i) HTTP\n(ii) FTP\n(iii) TCP\n(iv) POP3",
+      "after": "Which of the following is/are example(s) of stateful application layer protocols?\n\n- (i) HTTP\n- (ii) FTP\n- (iii) TCP\n- (iv) POP3",
+      "reason": "Items (i)–(iv) collapsed into one line in markdown; made a list.",
+      "source": "GATE 2016 CS Set 1 question paper PDF"
+    },
+    {
+      "id": "cse-2016-1-cs-29",
+      "field": "text",
+      "before": "Consider the following experiment.\n\nStep 1. Flip a fair coin twice.\nStep 2. If the outcomes are (TAILS, HEADS) then output Y and stop.\nStep 3. If the outcomes are either (HEADS, HEADS) or (HEADS, TAILS), then output N and stop.\nStep 4. If the outcomes are (TAILS, TAILS), then go to Step 1.\n\nThe probability that the output of the experiment is Y is (up to two decimal places) ______.",
+      "after": "Consider the following experiment.\n\n- Step 1. Flip a fair coin twice.\n- Step 2. If the outcomes are (TAILS, HEADS) then output Y and stop.\n- Step 3. If the outcomes are either (HEADS, HEADS) or (HEADS, TAILS), then output N and stop.\n- Step 4. If the outcomes are (TAILS, TAILS), then go to Step 1.\n\nThe probability that the output of the experiment is Y is (up to two decimal places) ______.",
+      "reason": "Steps 1–4 collapsed into one paragraph in markdown; made a list.",
+      "source": "GATE 2016 CS Set 1 question paper PDF"
+    },
+    {
+      "id": "cse-2016-1-cs-29",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability question in the CS section, not General Aptitude.",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2016-1-cs-29",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Basic probability (geometric repetition).",
+      "source": "taxonomy"
+    },
+    {
+      "id": "cse-2016-1-cs-30",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2016-1/cs-30-1.png",
+          "alt": "MUX1: input 0 tied to 0, input 1 = R, select = P. MUX2: input 0 = R-bar, input 1 = output of MUX1, select = Q, output X",
+          "svg": "cse-2016-1/cs-30-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2016-1/cs-30-1.png",
+          "alt": "Two cascaded 2-to-1 multiplexers. MUX 1: input 0 tied to 0, input 1 = R, select s = P. MUX 1 output feeds input 1 of MUX 2. MUX 2: input 0 = R-bar (complement of R), select s = Q, output X.",
+          "svg": "cse-2016-1/cs-30-1.svg"
+        }
+      ],
+      "reason": "Redrew the figure faithfully as SVG (two cascaded 2-to-1 MUXes; old SVG showed an unrelated 4:1 MUX) and refined alt text.",
+      "source": "GATE 2016 CS Set 1 question paper PDF"
+    },
+    {
+      "id": "cse-2016-1-cs-40",
+      "field": "text",
+      "before": "$G = (V, E)$ is an undirected simple graph in which each edge has a distinct weight, and $e$ is a particular edge of $G$. Which of the following statements about the minimum spanning trees (MSTs) of $G$ is/are TRUE?\n\nI. If $e$ is the lightest edge of some cycle in $G$, then every MST of $G$ includes $e$\nII. If $e$ is the heaviest edge of some cycle in $G$, then every MST of $G$ excludes $e$",
+      "after": "$G = (V, E)$ is an undirected simple graph in which each edge has a distinct weight, and $e$ is a particular edge of $G$. Which of the following statements about the minimum spanning trees (MSTs) of $G$ is/are TRUE?\n\nI. If $e$ is the lightest edge of *some* cycle in $G$, then every MST of $G$ *includes* $e$\n\nII. If $e$ is the heaviest edge of *some* cycle in $G$, then every MST of $G$ *excludes* $e$",
+      "reason": "Statements I and II rendered on one line (single newline); separated and emphasis restored as in the paper.",
+      "source": "GATE 2016 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2016-1-cs-41",
+      "field": "text",
+      "before": "Let Q denote a queue containing sixteen numbers and S be an empty stack. Head(Q) returns the element at the head of the queue Q without removing it from Q. Similarly Top(S) returns the element at the top of S without removing it from S. Consider the algorithm given below.\n\n```\nwhile Q is not Empty do\n   if S is Empty OR Top(S) <= Head(Q) then\n        x := Dequeue(Q);\n        Push(S, x);\n   else\n        x := Pop(S);\n        Enqueue(Q, x);\n   end\nend\n```\n\nThe maximum possible number of iterations of the while loop in the algorithm is ______.",
+      "after": "Let Q denote a queue containing sixteen numbers and S be an empty stack. Head(Q) returns the element at the head of the queue Q without removing it from Q. Similarly Top(S) returns the element at the top of S without removing it from S. Consider the algorithm given below.\n\n```\nwhile Q is not Empty do\n   if S is Empty OR Top(S) ≤ Head(Q) then\n        x := Dequeue(Q);\n        Push(S, x);\n   else\n        x := Pop(S);\n        Enqueue(Q, x);\n   end\nend\n```\n\nThe maximum possible number of iterations of the while loop in the algorithm is ______.",
+      "reason": "Paper uses ≤ in the pseudo-code.",
+      "source": "GATE 2016 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2016-1-cs-42",
+      "field": "text",
+      "before": "Consider the following context-free grammars:\n\n$G_1$: $S \\to aS \\mid B$, $B \\to b \\mid bB$\n$G_2$: $S \\to aA \\mid bB$, $A \\to aA \\mid B \\mid \\varepsilon$, $B \\to bB \\mid \\varepsilon$\n\nWhich one of the following pairs of languages is generated by $G_1$ and $G_2$, respectively?",
+      "after": "Consider the following context-free grammars:\n\n$G_1$: $S \\to aS \\mid B$, $B \\to b \\mid bB$\n\n$G_2$: $S \\to aA \\mid bB$, $A \\to aA \\mid B \\mid \\varepsilon$, $B \\to bB \\mid \\varepsilon$\n\nWhich one of the following pairs of languages is generated by $G_1$ and $G_2$, respectively?",
+      "reason": "G1 and G2 were merged into one line; put them on separate lines.",
+      "source": "GATE 2016 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2016-1-cs-46",
+      "field": "text",
+      "before": "Consider the following Syntax Directed Translation Scheme (SDTS), with non-terminals {S, A} and terminals {a, b}.\n\nS → aA { print 1 }\nS → a { print 2 }\nA → Sb { print 3 }\n\nUsing the above SDTS, the output printed by a bottom-up parser, for the input aab is:",
+      "after": "Consider the following Syntax Directed Translation Scheme (SDTS), with non-terminals {S, A} and terminals {a, b}.\n\n```\nS → aA   { print 1 }\nS → a    { print 2 }\nA → Sb   { print 3 }\n```\n\nUsing the above SDTS, the output printed by a bottom-up parser, for the input aab is:",
+      "reason": "Productions collapsed into one paragraph; shown as a code block, one per line.",
+      "source": "GATE 2016 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2016-1-cs-51",
+      "field": "text",
+      "before": "Consider the following two phase locking protocol. Suppose a transaction T accesses (for read or write operations), a certain set of objects $\\{O_1, \\ldots, O_k\\}$. This is done in the following manner:\n\nStep 1. T acquires exclusive locks to $O_1, \\ldots, O_k$ in increasing order of their addresses.\nStep 2. The required operations are performed.\nStep 3. All locks are released.\n\nThis protocol will",
+      "after": "Consider the following two phase locking protocol. Suppose a transaction T accesses (for read or write operations), a certain set of objects $\\{O_1, \\ldots, O_k\\}$. This is done in the following manner:\n\nStep 1. T acquires exclusive locks to $O_1, \\ldots, O_k$ in increasing order of their addresses.\n\nStep 2. The required operations are performed.\n\nStep 3. All locks are released.\n\nThis protocol will",
+      "reason": "The three steps rendered as one paragraph; separated as in the paper.",
+      "source": "GATE 2016 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2016-1-cs-36",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Answer D agrees with the official GATE 2016 key and with the trace where m declares its own a; the ambiguity is explained in the solution.",
+      "source": "GATE 2016 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2016-1-cs-36",
+      "field": "reviewNote",
+      "before": "Pseudo-code is ambiguous about whether 'a' in m is local or global; answer D follows the commonly accepted key.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "GATE 2016 Set 1 question paper (PDF)"
+    }
+  ]
+}

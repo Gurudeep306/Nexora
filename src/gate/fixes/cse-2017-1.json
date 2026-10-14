@@ -1,0 +1,214 @@
+{
+  "paper": "cse-2017-1",
+  "fixes": [
+    {
+      "id": "cse-2017-1-cs-19",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability question (Gaussian median), not General Aptitude",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-19",
+      "field": "topic",
+      "before": "quant",
+      "after": "rv",
+      "reason": "Random variables and distributions",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-20",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Graph theory (trees, handshake lemma), not General Aptitude",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-20",
+      "field": "topic",
+      "before": "quant",
+      "after": "graphs",
+      "reason": "Graph theory topic",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-21",
+      "field": "text",
+      "before": "Consider the Karnaugh map given below, where x represents \"don't care\" and blank represents 0.\n\n| dc \\ ba | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 |  | x | x |  |\n| 01 | 1 |  |  | x |\n| 11 | 1 |  |  | 1 |\n| 10 |  | x | x |  |\n\nAssume for all inputs $(a,b,c,d)$, the respective complements $(\\overline{a},\\overline{b},\\overline{c},\\overline{d})$ are also available. The above logic is implemented using 2-input NOR gates only. The minimum number of gates required is ____________.",
+      "after": "Consider the Karnaugh map given below, where x represents \"don't care\" and blank represents 0.\n\nAssume for all inputs $(a,b,c,d)$, the respective complements $(\\overline{a},\\overline{b},\\overline{c},\\overline{d})$ are also available. The above logic is implemented using 2-input NOR gates only. The minimum number of gates required is ____________.",
+      "reason": "K-map is shown in the (redrawn) figure; remove the duplicate markdown table",
+      "source": "GATE 2017 Set 1 question paper (PDF)"
+    },
+    {
+      "id": "cse-2017-1-cs-23",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Query reading (EC = derived per-department counts) gives 2.6, which equals the official key.",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-23",
+      "field": "reviewNote",
+      "before": "Query is syntactically odd (EC used as a table and alias in the subquery); answer assumes EC is the derived table of per-department counts.",
+      "after": null,
+      "reason": "Review resolved by the official key (2.6).",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-28",
+      "field": "subject",
+      "before": "coa",
+      "after": "calc",
+      "reason": "Limit / L'Hôpital question belongs to calculus, not COA.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-28",
+      "field": "topic",
+      "before": "isa",
+      "after": "limits",
+      "reason": "Question evaluates a limit.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-28",
+      "field": "tags",
+      "before": [
+        "lhopital"
+      ],
+      "after": [
+        "limits",
+        "lhopital"
+      ],
+      "reason": "Add the topic tag.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-30",
+      "field": "topic",
+      "before": "systems",
+      "after": "spaces",
+      "reason": "Question is about vectors in R² (angle bisector), not linear systems.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-38",
+      "field": "topic",
+      "before": "pumping",
+      "after": "cfg",
+      "reason": "Question tests CFL closure under union/intersection, not the pumping lemma.",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-41",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Official key confirms D.",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-41",
+      "field": "reviewNote",
+      "before": "Key not in PDF; answer D taken from a secondary solution (testbook); some sources may give a different option. Verify.",
+      "after": null,
+      "reason": "Review resolved by the official key (D).",
+      "source": "Official GATE 2017 Set-1 answer key (via trygateai.com official-key page)"
+    },
+    {
+      "id": "cse-2017-1-cs-43",
+      "field": "text",
+      "before": "Consider the following grammar:\n\n```\nstmt   -> if expr then expr else expr; stmt | ò\nexpr   -> term relop term | term\nterm   -> id | number\nid     -> a | b | c\nnumber -> [0-9]\n```\n\nwhere `relop` is a relational operator (e.g. <, >, ...), `ò` refers to the empty statement, and `if`, `then`, `else` are terminals.\n\nConsider a program $P$ following the above grammar containing ten `if` terminals. The number of control flow paths in $P$ is ____________. For example, the program\n\n`if e1 then e2 else e3`\n\nhas 2 control flow paths, e1 -> e2 and e1 -> e3.",
+      "after": "Consider the following grammar:\n\n```\nstmt   -> if expr then expr else expr; stmt | ε\nexpr   -> term relop term | term\nterm   -> id | number\nid     -> a | b | c\nnumber -> [0-9]\n```\n\nwhere `relop` is a relational operator (e.g. <, >, ...), `ε` refers to the empty statement, and `if`, `then`, `else` are terminals.\n\nConsider a program $P$ following the above grammar containing ten `if` terminals. The number of control flow paths in $P$ is ____________. For example, the program\n\n`if e1 then e2 else e3`\n\nhas 2 control flow paths, e1 -> e2 and e1 -> e3.",
+      "reason": "The paper's \"ò\" is a font glitch for ε (empty statement).",
+      "source": "GATE 2017 Set-1 question paper"
+    },
+    {
+      "id": "cse-2017-1-cs-45",
+      "field": "answer",
+      "before": "88.33",
+      "after": "86.5 to 89.5",
+      "reason": "Official key accepts the range 86.5 to 89.5 (convention-dependent); stored single value 88.33 replaced by the official range.",
+      "source": "Official GATE 2017 CS Set 1 answer key (IIT Roorkee), as reproduced at https://www.trygateai.com/pyq/computer-networks/data-link-layer/gate-cse-2017-set-1-q45"
+    },
+    {
+      "id": "cse-2017-1-cs-45",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Official key range found; solved value 87.11 lies inside it.",
+      "source": "Official GATE 2017 CS Set 1 answer key (IIT Roorkee), as reproduced at https://www.trygateai.com/pyq/computer-networks/data-link-layer/gate-cse-2017-set-1-q45"
+    },
+    {
+      "id": "cse-2017-1-cs-45",
+      "field": "reviewNote",
+      "before": "Answer depends on treating 1980 B as the full frame (20 B overhead, 1960 B useful) and processing delay counted once; official key not in PDF.",
+      "after": null,
+      "reason": "Review resolved by the official key range.",
+      "source": "Official GATE 2017 CS Set 1 answer key (IIT Roorkee), as reproduced at https://www.trygateai.com/pyq/computer-networks/data-link-layer/gate-cse-2017-set-1-q45"
+    },
+    {
+      "id": "cse-2017-1-cs-47",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Counting by inclusion–exclusion is discrete mathematics, not C programming.",
+      "source": "paper content"
+    },
+    {
+      "id": "cse-2017-1-cs-47",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "combinatorics",
+      "reason": "Inclusion–exclusion counting belongs to combinatorics.",
+      "source": "paper content"
+    },
+    {
+      "id": "cse-2017-1-ga-56",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "Official key is (C) wished; stored D (had wished) contradicts the sequence “After … returned”.",
+      "source": "Official GATE 2017 CS Set 1 answer key (IIT Roorkee), as reproduced at https://www.trygateai.com/pyq/general-aptitude/verbal-aptitude/gate-cse-2017-set-1-q56"
+    },
+    {
+      "id": "cse-2017-1-ga-65",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Official key (C) R, S, T confirmed; figure redrawn faithfully.",
+      "source": "Official GATE 2017 CS Set 1 answer key (IIT Roorkee), as reproduced at https://www.trygateai.com/pyq/general-aptitude/spatial-aptitude/gate-cse-2017-set-1-q65"
+    },
+    {
+      "id": "cse-2017-1-ga-65",
+      "field": "reviewNote",
+      "before": "Reading the contour figure is somewhat ambiguous for Q; answer C matches the usual published key but is not printed in the PDF.",
+      "after": null,
+      "reason": "Review resolved by the official key.",
+      "source": "Official GATE 2017 CS Set 1 answer key (IIT Roorkee), as reproduced at https://www.trygateai.com/pyq/general-aptitude/spatial-aptitude/gate-cse-2017-set-1-q65"
+    },
+    {
+      "id": "cse-2017-1-ga-65",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2017-1/ga-65-1.png",
+          "alt": "Rectangular contour map: a hill at left with nested loops (500, 550 labelled) and village P near the summit; village R above and right of it in the outer low ground (425/450 contours at top-left); a second hill at upper right with a 550 loop and village Q just outside it near the top-right corner; village T below it on a 500 contour; village S inside a small low closed contour (450) at the bottom.",
+          "svg": "cse-2017-1/ga-65-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2017-1/ga-65-1.png",
+          "alt": "Rectangular contour map (25 m interval). Top-left: contours 425 and 450 run from the left edge to the top edge, with an unlabelled 475 line below them. Left hill: closed loops 500 (labelled at bottom), 525, 550 (labelled) and an innermost loop containing village P at the summit. Village R lies above the left hill, between the 475 line and the 500 loop. Right side: a 500 contour (labelled) and a 525 contour run from the top edge down to the right edge; inside them a hill with a 550 loop (labelled) and an inner loop; village Q is near the top-right corner between the 525 line and the 550 loop; village T is near the right edge between the 500 and 525 lines. Bottom middle: a small closed depression with an inner 450 contour, village S inside it.",
+          "svg": "cse-2017-1/ga-65-1.svg"
+        }
+      ],
+      "reason": "Old SVG was a generic placeholder schematic; redrawn as a faithful contour map and alt text made precise.",
+      "source": "paper PDF page 27"
+    }
+  ]
+}

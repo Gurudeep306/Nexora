@@ -1,17 +1,54 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="180" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GA SCHEMATIC</text>
-  <g transform="translate(60, 60)">
-    <rect x="0" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">Rectangular</text>
-    <line x1="190" y1="24" x2="220" y2="24" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">contour</text>
-    <rect x="0" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">map</text>
-    <line x1="190" y1="89" x2="220" y2="89" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">hill</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1064 620" fill="none" font-family="Arial, Helvetica, sans-serif">
+  <title>Contour plot with villages P, Q, R, S, T</title>
+  <g stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="22" y="32" width="1020" height="563" stroke-width="5"/>
+    <!-- 425 -->
+    <path d="M22,98 L88,97"/>
+    <path d="M168,62 Q180,48 186,32"/>
+    <!-- 450 -->
+    <path d="M22,172 L62,162"/>
+    <path d="M160,124 C230,96 330,60 440,32"/>
+    <!-- 475 (unlabelled, between 450 and 500) -->
+    <path d="M670,32 C640,55 600,80 540,80 C460,78 380,70 330,72 C270,75 250,90 240,120 C225,150 140,170 90,195 C45,220 30,260 35,300 C40,360 60,430 90,500 C105,540 115,570 120,595"/>
+    <!-- 500 loop around hill P -->
+    <path d="M258,551 C215,560 175,545 165,520 C140,450 115,380 115,285 C130,210 220,140 300,118 C340,108 370,112 400,130 C460,170 560,280 630,400 C660,450 650,500 600,505 L362,515"/>
+    <!-- 525 loop around hill P -->
+    <path d="M140,375 C125,320 140,290 175,250 C220,200 290,155 340,150 C390,148 430,190 460,240 C490,290 520,380 500,410 C470,430 330,420 260,430 C200,440 155,410 140,375 Z"/>
+    <!-- 550 loop around hill P -->
+    <path d="M318,371 C270,376 222,372 208,355 C195,330 195,290 220,270 C250,250 280,225 305,225 C340,230 380,260 410,300 C430,330 432,356 412,362"/>
+    <!-- 575 loop (summit P) -->
+    <path d="M230,332 C240,300 250,285 275,275 C285,265 300,262 312,268 C332,280 345,295 335,310 C320,325 260,330 230,332 Z"/>
+    <!-- 500 contour on the right -->
+    <path d="M840,32 C780,60 700,80 650,110 C615,140 615,200 640,260 C660,320 670,380 720,420 C750,440 775,450 790,456"/>
+    <path d="M882,484 C940,480 1000,465 1042,447"/>
+    <!-- 525 contour on the right -->
+    <path d="M965,32 C900,60 820,90 760,120 C720,150 720,200 730,250 C745,300 800,330 860,360 C930,385 1000,385 1042,383"/>
+    <!-- 550 loop around hill Q -->
+    <path d="M920,150 C975,136 1025,125 1030,160 C1035,210 1015,270 990,300 C960,325 900,300 860,275 C830,250 815,210 828,178"/>
+    <!-- 575 loop (summit of right hill) -->
+    <path d="M900,195 C930,185 960,178 980,178 C990,200 985,240 970,262 C950,250 920,240 898,238 C890,220 892,205 900,195 Z"/>
+    <!-- 475 closed loop around the depression near S -->
+    <path d="M660,552 C680,520 700,495 740,488 C790,482 830,505 870,525 C905,545 905,575 870,585 C820,592 760,575 700,565 C680,562 660,560 660,552 Z"/>
+    <!-- 450 inner depression contour -->
+    <path d="M722,508 L705,537 C740,540 780,548 800,545 C805,530 795,522 785,520"/>
+  </g>
+  <g fill="currentColor" font-size="30">
+    <text x="128" y="96" text-anchor="middle" transform="rotate(-18 128 86)">425</text>
+    <text x="112" y="158" text-anchor="middle" transform="rotate(-18 112 148)">450</text>
+    <text x="310" y="545" text-anchor="middle" transform="rotate(-14 310 535)">500</text>
+    <text x="365" y="377" text-anchor="middle">550</text>
+    <text x="836" y="482" text-anchor="middle" transform="rotate(16 836 472)">500</text>
+    <text x="874" y="170" text-anchor="middle">550</text>
+    <text x="750" y="510" text-anchor="middle" font-size="20" transform="rotate(18 750 504)">450</text>
+    <circle cx="293" cy="282" r="9"/>
+    <text x="262" y="306" text-anchor="middle">P</text>
+    <circle cx="498" cy="120" r="9"/>
+    <text x="512" y="131">R</text>
+    <circle cx="988" cy="88" r="9"/>
+    <text x="1002" y="99">Q</text>
+    <circle cx="1005" cy="418" r="9"/>
+    <text x="968" y="429">T</text>
+    <circle cx="825" cy="548" r="9"/>
+    <text x="842" y="559">S</text>
   </g>
 </svg>
