@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 290" fill="none" stroke="currentColor" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/></marker></defs>
+<circle cx="90" cy="150" r="22" stroke-width="1.6"/>
+<circle cx="300" cy="60" r="22" stroke-width="1.6"/><circle cx="300" cy="60" r="17" stroke-width="1.4"/>
+<circle cx="300" cy="240" r="22" stroke-width="1.6"/><circle cx="300" cy="240" r="17" stroke-width="1.4"/>
+<line x1="20" y1="150" x2="66" y2="150" stroke-width="1.6" marker-end="url(#ah)"/>
+<path d="M100,130 Q150,40 276,55" stroke-width="1.6" marker-end="url(#ah)"/><text x="160" y="62" font-size="17" text-anchor="middle" fill="currentColor" stroke="none" font-style="italic">a</text>
+<path d="M285,77 Q210,140 114,146" stroke-width="1.6" marker-end="url(#ah)"/><text x="215" y="135" font-size="17" text-anchor="middle" fill="currentColor" stroke="none" font-style="italic">b</text>
+<path d="M283,223 Q210,160 114,155" stroke-width="1.6" marker-end="url(#ah)"/><text x="215" y="180" font-size="17" text-anchor="middle" fill="currentColor" stroke="none" font-style="italic">a</text>
+<path d="M100,170 Q150,260 276,246" stroke-width="1.6" marker-end="url(#ah)"/><text x="160" y="250" font-size="17" text-anchor="middle" fill="currentColor" stroke="none" font-style="italic">b</text>
+<path d="M316,44 C350,10 375,60 322,68" stroke-width="1.6" marker-end="url(#ah)"/><text x="372" y="40" font-size="17" text-anchor="middle" fill="currentColor" stroke="none" font-style="italic">b</text>
+<path d="M316,224 C350,190 375,240 322,248" stroke-width="1.6" marker-end="url(#ah)"/><text x="372" y="220" font-size="17" text-anchor="middle" fill="currentColor" stroke="none" font-style="italic">a</text>
+</svg>
