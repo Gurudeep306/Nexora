@@ -1,38 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 230" fill="none" stroke="currentColor" font-family="Arial, Helvetica, sans-serif" role="img" aria-label="NPDA state diagram: start state q0 with self-loop labelled 1, Z to 1Z and 0, Z to 0Z; q0 to q1 on 0/1/epsilon, Z to Z; q1 self-loop labelled 0, 1Z to Z and 1, 0Z to Z; q1 to accepting state q2 on epsilon, bottom to epsilon">
   <defs>
-    <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38bdf8" />
-    </marker>
-    <marker id="arr-emerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#34d399" />
-    </marker>
-    <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#f59e0b" />
+    <marker id="a51" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor" stroke="none"/>
     </marker>
   </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <!-- Header / Badge -->
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">FINITE AUTOMATON</text>
-  <line x1="20" y1="130" x2="42" y2="130" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arr-blue)" />
-  <text x="24" y="122" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">Start</text>
-  <path d="M 95.0 120 C 110.0 90, 250.0 90, 265.0 120" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-blue)" />
-  <text x="180.0" y="85" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <path d="M 315.0 120 C 330.0 90, 470.0 90, 485.0 120" fill="none" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-blue)" />
-  <text x="400.0" y="85" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <path d="M 485.0 140 C 470.0 175, 330.0 175, 315.0 140" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="3 3" marker-end="url(#arr-amber)" />
-  <text x="400.0" y="182" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold" font-family="monospace">0</text>
-  <path d="M 58.0 106 C 42.0 65, 98.0 65, 82.0 106" fill="none" stroke="#818cf8" stroke-width="1.8" marker-end="url(#arr-blue)" />
-  <text x="70.0" y="62" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="bold" font-family="monospace">0</text>
-  <circle cx="70.0" cy="130" r="27" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5" />
-  <text x="70.0" y="135" text-anchor="middle" fill="#f8fafc" font-size="15" font-weight="bold" font-family="system-ui">q0</text>
-  <path d="M 278.0 106 C 262.0 65, 318.0 65, 302.0 106" fill="none" stroke="#818cf8" stroke-width="1.8" marker-end="url(#arr-blue)" />
-  <text x="290.0" y="62" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="bold" font-family="monospace">1</text>
-  <circle cx="290.0" cy="130" r="27" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5" />
-  <text x="290.0" y="135" text-anchor="middle" fill="#f8fafc" font-size="15" font-weight="bold" font-family="system-ui">q1</text>
-  <path d="M 498.0 106 C 482.0 65, 538.0 65, 522.0 106" fill="none" stroke="#818cf8" stroke-width="1.8" marker-end="url(#arr-blue)" />
-  <text x="510.0" y="62" text-anchor="middle" fill="#818cf8" font-size="12" font-weight="bold" font-family="monospace">1</text>
-  <circle cx="510.0" cy="130" r="27" fill="#064e3b" stroke="#34d399" stroke-width="2.5" />
-  <circle cx="510.0" cy="130" r="21" fill="none" stroke="#34d399" stroke-width="1.8" />
-  <text x="510.0" y="135" text-anchor="middle" fill="#f8fafc" font-size="15" font-weight="bold" font-family="system-ui">q2</text>
+  <g stroke-width="1.6">
+    <line x1="20" y1="120" x2="57" y2="120" marker-end="url(#a51)"/>
+    <circle cx="85" cy="120" r="26"/>
+    <circle cx="285" cy="120" r="26"/>
+    <circle cx="485" cy="120" r="26"/>
+    <circle cx="485" cy="120" r="20"/>
+    <path d="M70 99 C 45 50, 125 50, 100 99" marker-end="url(#a51)"/>
+    <path d="M270 99 C 245 50, 325 50, 300 99" marker-end="url(#a51)"/>
+    <path d="M100 141 C 150 200, 220 200, 270 141" marker-end="url(#a51)"/>
+    <path d="M300 141 C 350 200, 420 200, 470 141" marker-end="url(#a51)"/>
+  </g>
+  <g fill="currentColor" stroke="none" font-size="16" font-style="italic" text-anchor="middle">
+    <text x="85" y="125">q<tspan font-size="11" dy="4">0</tspan></text>
+    <text x="285" y="125">q<tspan font-size="11" dy="4">1</tspan></text>
+    <text x="485" y="125">q<tspan font-size="11" dy="4">2</tspan></text>
+  </g>
+  <g fill="currentColor" stroke="none" font-size="15">
+    <text x="118" y="44">1, Z → 1Z</text>
+    <text x="118" y="66">0, Z → 0Z</text>
+    <text x="318" y="44">0, 1Z → Z</text>
+    <text x="318" y="66">1, 0Z → Z</text>
+    <text x="185" y="220" text-anchor="middle">0/1/ε, Z → Z</text>
+    <text x="385" y="220" text-anchor="middle">ε, ⊥ → ε</text>
+  </g>
 </svg>
