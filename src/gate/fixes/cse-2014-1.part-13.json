@@ -1,0 +1,37 @@
+{
+  "paper": "cse-2014-1",
+  "fixes": [
+    {
+      "id": "cse-2014-1-cs-43",
+      "field": "subject",
+      "before": "ga",
+      "after": "coa",
+      "reason": "Pipeline speedup question is Computer Organization, not General Aptitude.",
+      "source": "pdf p.17 (Q.43)"
+    },
+    {
+      "id": "cse-2014-1-cs-43",
+      "field": "topic",
+      "before": "quant",
+      "after": "pipeline",
+      "reason": "Instruction pipeline speedup with stall cycles.",
+      "source": "pdf p.17 (Q.43)"
+    },
+    {
+      "id": "cse-2014-1-cs-47",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Option D is also provably true, so the MCQ has two correct statements.",
+      "source": "independent solution (IVT); pdf p.18 (Q.47)"
+    },
+    {
+      "id": "cse-2014-1-cs-47",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Option D is also guaranteed: h(y) = f(y) + f(2-y) has h(0) = -2 and h(1) = 2, so by IVT h has a root in (0,1). Stored key A is also true (g(y) = f(y) - f(y+1) goes from -2 to 2). Confirm against the official GATE 2014 key whether D was also accepted.",
+      "reason": "Explain why the record is flagged: two options are mathematically guaranteed.",
+      "source": "independent solution (IVT); pdf p.18 (Q.47)"
+    }
+  ]
+}
