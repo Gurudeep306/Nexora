@@ -1,0 +1,1193 @@
+{
+  "paper": "cse-2017-1",
+  "version": 2,
+  "solutions": {
+    "cse-2017-1-cs-1": {
+      "approach": "Rewrite every implication as a disjunction ($A \\Rightarrow B \\equiv \\neg A \\vee B$) and compare the resulting clauses.",
+      "concepts": [
+        "Implication as disjunction",
+        "Contrapositive",
+        "Logical equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite the given statement",
+          "body": "$$(\\neg p) \\Rightarrow (\\neg q) \\equiv \\neg(\\neg p) \\vee \\neg q \\equiv p \\vee \\neg q$$"
+        },
+        {
+          "title": "Rewrite each candidate",
+          "body": "- I: $p \\Rightarrow q \\equiv \\neg p \\vee q$ — different.\n- II: $q \\Rightarrow p \\equiv \\neg q \\vee p$ — **same**.\n- III: $(\\neg q) \\vee p$ — **same**.\n- IV: $(\\neg p) \\vee q$ — same as I, different."
+        },
+        {
+          "title": "Conclude",
+          "body": "Statements II and III are equivalent to $(\\neg p) \\Rightarrow (\\neg q)$ (II is its contrapositive)."
+        }
+      ],
+      "answer": {
+        "value": "II and III only",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I is $\\neg p \\vee q$; with $p=0,q=1$ the given statement is false but I is true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "I and IV are the same formula $\\neg p \\vee q$, which is the converse, not the given statement."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II is equivalent, but III ($\\neg q \\vee p$) is also equivalent, so \"II only\" is incomplete."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Both II ($\\neg q \\vee p$) and III ($\\neg q \\vee p$) equal $p \\vee \\neg q$."
+        }
+      ],
+      "shortcut": "The contrapositive of $\\neg p \\Rightarrow \\neg q$ is $q \\Rightarrow p$; any option containing the converse $p \\Rightarrow q$ is out.",
+      "pitfalls": [
+        "Confusing the converse ($p \\Rightarrow q$) with the contrapositive ($q \\Rightarrow p$)."
+      ],
+      "verification": "Truth table check at $p=0,q=1$: given statement is $1 \\Rightarrow 0 = 0$; II gives $1 \\Rightarrow 0 = 0$, III gives $0 \\vee 0 = 0$, while I and IV give 1."
+    },
+    "cse-2017-1-cs-2": {
+      "approach": "Take each sentence and ask whether every model of $\\forall x\\,\\exists y\\,R(x,y)$ satisfies it; a small counter-model kills the non-implied ones.",
+      "concepts": [
+        "Quantifier order",
+        "De Morgan for quantifiers",
+        "Counter-models"
+      ],
+      "steps": [
+        {
+          "title": "I is implied",
+          "body": "The domain is non-empty, so pick any $x_0$. $F$ gives a $y_0$ with $R(x_0,y_0)$, hence $\\exists y\\,\\exists x\\,R(x,y)$."
+        },
+        {
+          "title": "IV is implied",
+          "body": "Push the negation inside: $$\\neg\\exists x\\,\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\neg\\forall y\\,\\neg R(x,y) \\equiv \\forall x\\,\\exists y\\,R(x,y) = F.$$"
+        },
+        {
+          "title": "II and III are not implied",
+          "body": "Domain $\\{1,2\\}$, $R=\\{(1,1),(2,2)\\}$ (equality). $F$ holds (each $x$ relates to itself).\n\n- II needs one $y$ related to **every** $x$: $y=1$ fails for $x=2$, $y=2$ fails for $x=1$.\n\nFor III take domain $\\{1,2\\}$, $R=\\{(1,1),(2,1)\\}$: $F$ holds, but $y=2$ has no $x$ with $R(x,2)$, so III fails."
+        }
+      ],
+      "answer": {
+        "value": "I and IV only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "IV is implied, but I is also implied, so \"IV only\" is incomplete."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "I follows from non-emptiness; IV is logically identical to $F$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "II swaps $\\forall\\exists$ to $\\exists\\forall$, which is strictly stronger; the equality relation is a counter-model."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Neither II nor III is implied (counter-models in step 3), and the true ones I, IV are missing."
+        }
+      ],
+      "pitfalls": [
+        "$\\forall x\\,\\exists y$ does not imply $\\exists y\\,\\forall x$ — the witness $y$ may depend on $x$.",
+        "III swaps the roles of the variables; it is a different statement, not a rewriting."
+      ],
+      "verification": "IV was reduced to $F$ by two quantifier De Morgan steps; I and the counter-models were checked element by element."
+    },
+    "cse-2017-1-cs-3": {
+      "approach": "Notice $b = A\\mathbf{1}$, so the system is consistent; the non-trivial dependency $\\sum c_i a_i=0$ makes $A$ singular, so the solution is not unique.",
+      "concepts": [
+        "Consistency of $Ax=b$",
+        "Null space",
+        "Linear dependence"
+      ],
+      "steps": [
+        {
+          "title": "A solution exists",
+          "body": "With $J_n=(1,\\ldots,1)^T$: $$AJ_n = \\sum_{i=1}^{n} 1\\cdot a_i = b,$$ so $x=J_n$ solves the system."
+        },
+        {
+          "title": "The null space is non-trivial",
+          "body": "Let $c=(c_1,\\ldots,c_n)^T \\ne 0$. Then $Ac=\\sum c_i a_i = 0$, so $c$ is in the null space."
+        },
+        {
+          "title": "Infinitely many solutions",
+          "body": "For every real $t$: $A(J_n + t c) = b + t\\cdot 0 = b$. Distinct $t$ give distinct vectors (since $c\\ne 0$), so there are infinitely many solutions."
+        }
+      ],
+      "answer": {
+        "value": "infinitely many solutions",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$J_n$ is a solution, but not the only one: $J_n + tc$ also works."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x=J_n$ is an explicit solution, so the system is consistent."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Consistent system with a non-zero null-space vector $\\Rightarrow$ a whole line of solutions."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A real linear system has 0, 1 or infinitely many solutions — never \"finitely many\" more than one."
+        }
+      ],
+      "verification": "Rank view: columns dependent $\\Rightarrow \\operatorname{rank}A<n$; $b$ is in the column space $\\Rightarrow$ consistent; $n-\\operatorname{rank}A\\ge1$ free variables."
+    },
+    "cse-2017-1-cs-4": {
+      "approach": "Classify each function: decreasing ($100/n \\to 0$), constant (10), then the standard chain $\\log n \\ll \\sqrt n \\ll n$.",
+      "concepts": [
+        "Asymptotic growth",
+        "Big-O ordering"
+      ],
+      "steps": [
+        {
+          "title": "Bottom of the order",
+          "body": "$\\dfrac{100}{n}\\to 0$ as $n\\to\\infty$, so it is $o(1)$ and below the constant $10 = \\Theta(1)$."
+        },
+        {
+          "title": "Growing functions",
+          "body": "$\\log_2 n \\to\\infty$, so $10 = o(\\log_2 n)$. Also $\\log_2 n = o(n^{1/2})$ and $\\sqrt n = o(n)$."
+        },
+        {
+          "title": "Order",
+          "body": "$$\\frac{100}{n} \\prec 10 \\prec \\log_2 n \\prec \\sqrt n \\prec n$$"
+        }
+      ],
+      "answer": {
+        "value": "100/n, 10, log₂n, √n, n",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Puts $\\log_2 n$ below $100/n$ and 10, but $\\log_2 n$ grows without bound."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Matches the derived order."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Puts 10 below $100/n$ and $\\sqrt n$ below $\\log_2 n$ — both wrong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Puts $\\log_2 n$ below the constant 10; asymptotically $\\log_2 n$ eventually exceeds 10 (for $n>1024$)."
+        }
+      ],
+      "pitfalls": [
+        "Comparing values at small $n$ (e.g. $\\log_2 n < 10$ for $n<1024$) instead of the limit behaviour."
+      ],
+      "verification": "At $n=2^{20}$: $100/n\\approx 10^{-4}$, $10$, $\\log_2 n=20$, $\\sqrt n=1024$, $n\\approx10^6$ — increasing as in B."
+    },
+    "cse-2017-1-cs-5": {
+      "approach": "Recall the textbook paradigm of each algorithm: Kruskal picks the cheapest safe edge (greedy), Quicksort partitions and recurses (divide and conquer), Floyd–Warshall fills a table over intermediate vertices (DP).",
+      "concepts": [
+        "Greedy",
+        "Divide and conquer",
+        "Dynamic programming"
+      ],
+      "steps": [
+        {
+          "title": "Kruskal → Greedy",
+          "body": "Edges are taken in increasing weight order and an edge is kept whenever it does not form a cycle — a locally optimal choice never revisited: **(P)–(ii)**."
+        },
+        {
+          "title": "Quicksort → Divide and conquer",
+          "body": "Partition around a pivot, then sort the two parts recursively: **(Q)–(i)**."
+        },
+        {
+          "title": "Floyd–Warshall → DP",
+          "body": "$d^{(k)}_{ij}=\\min\\big(d^{(k-1)}_{ij},\\ d^{(k-1)}_{ik}+d^{(k-1)}_{kj}\\big)$ reuses overlapping sub-problems: **(R)–(iii)**."
+        }
+      ],
+      "answer": {
+        "value": "(P)–(ii), (Q)–(i), (R)–(iii)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Quicksort is not DP and Floyd–Warshall is not divide and conquer."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Kruskal is greedy, not DP; Floyd–Warshall is DP, not greedy."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Greedy / divide and conquer / DP — all three correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Kruskal is not divide and conquer and Quicksort is not greedy."
+        }
+      ],
+      "verification": "Each pairing is the standard classification in CLRS (chapters 23, 7 and 25)."
+    },
+    "cse-2017-1-cs-6": {
+      "approach": "Minimum height comes from a perfect (complete) tree, maximum from a degenerate chain.",
+      "concepts": [
+        "BST height",
+        "Perfect binary tree",
+        "Skewed tree"
+      ],
+      "steps": [
+        {
+          "title": "Minimum height",
+          "body": "A binary tree of height $h$ holds at most $2^{h+1}-1$ nodes. $2^{h+1}-1\\ge 15 \\Rightarrow h\\ge 3$, and $h=3$ is reached by the perfect tree with exactly $2^4-1=15$ nodes."
+        },
+        {
+          "title": "Maximum height",
+          "body": "Insert 15 keys in sorted order: every node has one child, a chain of 15 nodes has $15-1 = 14$ edges, so height 14."
+        }
+      ],
+      "answer": {
+        "value": "3 and 14",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Uses heights counted in nodes (4, 15), but a single node has height 0 here."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Perfect tree gives 3; chain gives 14."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Minimum 4 counts levels, not edges."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Maximum 15 counts nodes in the chain, not edges."
+        }
+      ],
+      "pitfalls": [
+        "The note fixes height(single node) = 0, i.e. height counts edges."
+      ],
+      "verification": "Levels 0–3 of a perfect tree hold $1+2+4+8=15$ nodes; a chain of $n$ nodes has height $n-1$."
+    },
+    "cse-2017-1-cs-7": {
+      "approach": "With $i$ integer bits and $f$ fraction bits, the smallest value is all zeros and the largest is all ones.",
+      "concepts": [
+        "Fixed-point representation",
+        "Unsigned range"
+      ],
+      "steps": [
+        {
+          "title": "Smallest value",
+          "body": "All $n$ bits 0 gives $X=0$."
+        },
+        {
+          "title": "Largest value",
+          "body": "All bits 1: integer part $2^i-1$, fraction part $\\sum_{k=1}^{f}2^{-k}=1-2^{-f}$. Total $$X_{\\max}=(2^i-1)+(1-2^{-f})=2^i-2^{-f}.$$"
+        }
+      ],
+      "answer": {
+        "value": "0 to (2^i − 2^{−f})",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Unsigned fixed point can represent 0, and $2^i$ needs an extra integer bit."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The lower end is 0, not $2^{-f}$ (the all-zero pattern is valid)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$2^i$ itself is not representable; the maximum falls short by one LSB, $2^{-f}$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Range $[0,\\ 2^i-2^{-f}]$ in steps of $2^{-f}$."
+        }
+      ],
+      "verification": "Example $i=2,f=1$: patterns $00.0$ to $11.1 = 3.5 = 2^2-2^{-1}$."
+    },
+    "cse-2017-1-cs-8": {
+      "approach": "Trace `join` on the edge case where the list `n` is empty.",
+      "concepts": [
+        "Linked-list traversal",
+        "NULL pointer dereference"
+      ],
+      "steps": [
+        {
+          "title": "Normal case",
+          "body": "If `n` is non-empty, `p` walks to the last node of `n` and `p->next = m` appends list `m` after list `n`."
+        },
+        {
+          "title": "Empty `n`",
+          "body": "A valid NULL-terminated list may be empty, i.e. `n == NULL`. Then `p = NULL` and the very first test `p->next` dereferences NULL."
+        },
+        {
+          "title": "Conclude",
+          "body": "Depending on the input, `join` either crashes (empty `n`) or appends `m` to the end of `n`."
+        }
+      ],
+      "answer": {
+        "value": "either cause a null pointer dereference or append list m to the end of list n",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fails when `n` is empty — the loop condition dereferences NULL."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Covers both behaviours: crash when `n == NULL`, otherwise append `m` after `n`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "For any non-empty `n` the function works, so not \"for all inputs\"."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The code walks `n` and attaches `m` at its end — the opposite direction."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the empty list (NULL) is a valid NULL-terminated list."
+      ],
+      "verification": "Trace with `n = 1→NULL`, `m = 2→NULL`: loop does not run, `p->next = m`, result `1→2→NULL`."
+    },
+    "cse-2017-1-cs-9": {
+      "approach": "In 2's complement, overflow happens exactly when two operands of the same sign give a sum of the opposite sign; write that as a Boolean expression on the sign bits.",
+      "concepts": [
+        "2's complement overflow",
+        "Sign bits",
+        "Ripple-carry adder"
+      ],
+      "steps": [
+        {
+          "title": "Overflow rule",
+          "body": "Adding a positive and a negative number can never overflow. Overflow occurs iff both are positive and the sum is negative, or both are negative and the sum is non-negative."
+        },
+        {
+          "title": "Translate to sign bits",
+          "body": "- Both negative, sum positive: $A_7 B_7 \\overline{S_7}$.\n- Both positive, sum negative: $\\overline{A_7}\\,\\overline{B_7} S_7$.\n\nOverflow $= A_7 B_7 \\overline{S_7} + \\overline{A_7}\\,\\overline{B_7} S_7$, which is option C."
+        }
+      ],
+      "answer": {
+        "value": "A7·B7·S7′ + A7′·B7′·S7 is 1",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Carry-out alone is not overflow: $(-1)+(1)$ gives $C_7=1$ with the correct result 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "All carries 1 is neither necessary nor sufficient, e.g. $11111111+00000001$ sets all carries but $-1+1=0$ is correct."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly the \"same-sign operands, different-sign result\" condition on bit 7."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Uses the least significant bits, which carry no sign information."
+        }
+      ],
+      "shortcut": "Equivalent form: overflow $= c_{\\text{in},7} \\oplus c_{\\text{out},7}$.",
+      "verification": "$01111111+00000001=10000000$: $A_7=B_7=0,S_7=1$ → C gives 1 (127+1 overflows)."
+    },
+    "cse-2017-1-cs-10": {
+      "approach": "Expand the recursion of $S$: each application adds one $ab$ on the left and one $cT$ on the right, and each $T$ independently derives $b^m$, $m\\ge1$.",
+      "concepts": [
+        "CFG derivations",
+        "Language of a grammar"
+      ],
+      "steps": [
+        {
+          "title": "What $T$ derives",
+          "body": "$T\\to bT\\mid b$ gives $T \\Rightarrow^* b^m$ for any $m\\ge1$."
+        },
+        {
+          "title": "Unroll $S$",
+          "body": "Using $S\\to abScT$ $(n-1)$ times and then $S\\to abcT$: $$S\\Rightarrow^* (ab)^{n}\\,(cT)^{n},\\quad n\\ge1.$$ (The $cT$ blocks pile up in nesting order; all are alike.)"
+        },
+        {
+          "title": "Independent $T$s",
+          "body": "Each $T$ is expanded separately, so the string is $(ab)^n\\, c b^{m_1} c b^{m_2}\\cdots c b^{m_n}$ with all $m_k\\ge1$ independent."
+        }
+      ],
+      "answer": {
+        "value": "{(ab)^n c b^{m1} c b^{m2} … c b^{mn} | n, m1, …, mn ≥ 1}",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Forces every $T$ to derive a single $b$; $ab\\,cbb$ is generated but not in A."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Exactly the derived language: $n$ copies of $ab$, then $n$ blocks $cb^{m_k}$ with independent $m_k\\ge1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Forces all blocks to have the same length $m$; $abab\\,cb\\,cbb$ is generated but not in C."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Ties the block length to $n$ and the block count to an independent $m$; $ab\\,cbb$ ($n=1$, block length 2) is generated but not in D."
+        }
+      ],
+      "verification": "Derivation of $abab\\,cb\\,cbb$: $S\\Rightarrow abScT\\Rightarrow ab\\,abcT\\,cT\\Rightarrow abab\\,cb\\,cbb$ — in B, outside A, C and D."
+    },
+    "cse-2017-1-cs-11": {
+      "approach": "`grade` sits at a fixed, compile-time-known offset from the struct base, which is exactly what base + displacement (index) addressing does in one access without modifying R1.",
+      "concepts": [
+        "Addressing modes",
+        "Struct field offset"
+      ],
+      "steps": [
+        {
+          "title": "Offset of `grade`",
+          "body": "`grade` follows `int marks[100]`, so its offset is $100\\times\\text{sizeof(int)}$ (e.g. $400$ bytes with 4-byte ints) — a constant."
+        },
+        {
+          "title": "Pick the mode",
+          "body": "Effective address $= R1 + X$ with $X = 400$ is index (displacement) mode `X(R1)`; a 16-bit 2's complement offset easily holds 400."
+        }
+      ],
+      "answer": {
+        "value": "Index addressing mode, X(R1)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "`(R1)+` accesses the byte at R1 (i.e. `marks[0]`) and then bumps R1; reaching `grade` would need many steps."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`-(R1)` moves backwards before the struct base — away from `grade`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Register direct uses the contents of R1 itself as the operand, not memory at an offset."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "One instruction: EA = R1 + 400 reaches `student.grade` directly."
+        }
+      ],
+      "verification": "Range check: a 16-bit signed offset covers $-32768\\ldots32767$, which contains 400."
+    },
+    "cse-2017-1-cs-12": {
+      "approach": "In SSA every variable is assigned exactly once and every use refers to the most recent definition by its new name. Check both rules for each option.",
+      "concepts": [
+        "Static single assignment",
+        "Three-address code"
+      ],
+      "steps": [
+        {
+          "title": "Correct SSA shape",
+          "body": "Rename each definition: $p_a = a-b$, $q_a = p_a * c$, $p_b = u*v$, $q_b = p_b + q_a$. Two distinct names each for $p$ and $q$, uses pointing to the latest version."
+        },
+        {
+          "title": "Match with B",
+          "body": "B: $p_3=a-b$, $q_4=p_3*c$, $p_4=u*v$, $q_5=p_4+q_4$ — four distinct targets, each use is the latest definition. The subscript numbers themselves are arbitrary."
+        }
+      ],
+      "answer": {
+        "value": "p3 = a − b; q4 = p3 * c; p4 = u * v; q5 = p4 + q4",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$p_1$ and $q_1$ are each assigned twice — violates single assignment."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Every variable is assigned once and every use refers to its reaching definition."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Uses $p_2$, $p_4$, $q_3$ that are never defined."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Uses the un-renamed $p$ and $q$, so it is not clear which definition is meant."
+        }
+      ],
+      "verification": "Data-flow: final $q_5 = (u v) + (a-b)c$, same as the original $q = uv + (a-b)c$."
+    },
+    "cse-2017-1-cs-13": {
+      "approach": "Follow the pointer `x`: the first heap block is overwritten by the second `malloc` without being freed.",
+      "concepts": [
+        "Dynamic memory",
+        "Memory leak",
+        "Dangling pointer"
+      ],
+      "steps": [
+        {
+          "title": "Compilation",
+          "body": "In C, `void *` converts implicitly to `int *`, so no cast is needed; `NULL == x` is a legal comparison. It compiles (at most a warning for `malloc`/`void main` without `<stdlib.h>`)."
+        },
+        {
+          "title": "Execution",
+          "body": "`x` → block 1, set to 0; `x` is non-NULL so the `if` body runs: `x = malloc(...)` → block 2. Block 1 is now unreachable and never freed."
+        },
+        {
+          "title": "Free at the end",
+          "body": "`free(x)` frees block 2 only. Block 1 leaks; no pointer is used after being freed, so nothing dangles."
+        }
+      ],
+      "answer": {
+        "value": "compiles successfully but execution may result in memory leak",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "C allows implicit conversion from `void *`; no cast required."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`NULL == x` and `x == NULL` are equivalent; the reversed form is a common defensive style."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No pointer is dereferenced after `free`; `printf` happens before `free(x)`."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The first allocated block loses its only reference when `x` is reassigned."
+        }
+      ],
+      "verification": "Count allocations vs frees: 2 `malloc`s, 1 `free` along the normal path."
+    },
+    "cse-2017-1-cs-14": {
+      "approach": "Walk the active-close side of the TCP state machine: ESTABLISHED → FIN-WAIT-1 (FIN sent) → FIN-WAIT-2 (ACK of FIN received) → TIME-WAIT (peer FIN received).",
+      "concepts": [
+        "TCP connection termination",
+        "TCP state diagram"
+      ],
+      "steps": [
+        {
+          "title": "Client sends FIN",
+          "body": "`close` causes ESTABLISHED → **FIN-WAIT-1**."
+        },
+        {
+          "title": "Client receives ACK",
+          "body": "The ACK for its FIN moves the client to **FIN-WAIT-2**, where it waits for the server's FIN."
+        },
+        {
+          "title": "Later",
+          "body": "On the server's FIN, the client ACKs and enters TIME-WAIT."
+        }
+      ],
+      "answer": {
+        "value": "FIN-WAIT-2",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LAST-ACK is on the passive-close (server) side, after it sends its own FIN."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "TIME-WAIT is entered only after the server's FIN has arrived."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "FIN-WAIT-1 is left as soon as the ACK of the client's FIN is received."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "After FIN sent and ACKed, the client waits for the peer's FIN in FIN-WAIT-2."
+        }
+      ],
+      "verification": "RFC 793 figure 6: FIN-WAIT-1 —rcv ACK of FIN→ FIN-WAIT-2 —rcv FIN, snd ACK→ TIME-WAIT."
+    },
+    "cse-2017-1-cs-15": {
+      "approach": "A birthday attack finds *some* pair of messages with the same hash; only someone who controls which message gets signed — the signer S — can exploit such a pair.",
+      "concepts": [
+        "Birthday attack",
+        "Digital signature",
+        "Hash collision vs second pre-image"
+      ],
+      "steps": [
+        {
+          "title": "What a birthday attack gives",
+          "body": "About $2^{k/2}$ work for a $k$-bit hash yields two messages $m, m'$ with $H(m)=H(m')$ — but the attacker cannot choose one of them to be a fixed, already-signed message."
+        },
+        {
+          "title": "S can use it",
+          "body": "S prepares a colliding pair, signs $m$, and later claims (or substitutes) $m'$ — the signature verifies for both. Violation (I) is possible."
+        },
+        {
+          "title": "Third party and R cannot",
+          "body": "They see a message $m$ already signed by S. To substitute, they need $m'$ with $H(m')=H(m)$ for that **given** $m$ — a second pre-image problem ($\\approx 2^k$ work), not a birthday attack. So (II) and (III) are not birthday-attack violations."
+        }
+      ],
+      "answer": {
+        "value": "(I) only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A third party faces a fixed signed message, so it needs a second pre-image, not a birthday collision."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Only the signer chooses which message of a colliding pair gets signed."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The third party cannot pre-arrange a collision with a message it did not author."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Neither R nor a third party can mount a birthday attack against a message they did not choose."
+        }
+      ],
+      "pitfalls": [
+        "Treating any hash-substitution as a birthday attack — the birthday bound applies only when the attacker generates both colliding messages."
+      ],
+      "verification": "Matches the official GATE 2017 key (B)."
+    },
+    "cse-2017-1-cs-16": {
+      "approach": "Compute a minimal (irreducible) cover: split right sides, remove extraneous left-side attributes, then drop redundant FDs.",
+      "concepts": [
+        "Canonical cover",
+        "Extraneous attribute",
+        "Attribute closure"
+      ],
+      "steps": [
+        {
+          "title": "Singleton right sides",
+          "body": "$V\\to W$, $VW\\to X$, $Y\\to V$, $Y\\to X$, $Y\\to Z$."
+        },
+        {
+          "title": "Reduce left sides",
+          "body": "In $VW\\to X$: $V^+ \\supseteq \\{V,W\\}$ (via $V\\to W$) $\\Rightarrow$ $V\\to X$ already holds, so $W$ is extraneous. Replace with $V\\to X$."
+        },
+        {
+          "title": "Drop redundant FDs",
+          "body": "$Y\\to X$: without it, $Y^+=\\{Y,V,Z,W,X\\}\\ni X$ (via $Y\\to V\\to X$) — redundant, remove.\n\nThe others are needed: $V\\to W$ and $V\\to X$ are the only ways to get $W$, $X$ from $V$; $Y\\to V$, $Y\\to Z$ are the only FDs producing $V$, $Z$."
+        },
+        {
+          "title": "Result",
+          "body": "$\\{V\\to W,\\ V\\to X,\\ Y\\to V,\\ Y\\to Z\\}$ = option A."
+        }
+      ],
+      "answer": {
+        "value": "V→W, V→X, Y→V, Y→Z",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the minimal cover derived above."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$W\\to X$ is not implied: $W^+=\\{W\\}$ in the original set."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Equivalent but not irreducible: $Y\\to X$ is redundant ($Y\\to V\\to X$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Contains $W\\to X$, which is not implied, and the redundant $Y\\to X$."
+        }
+      ],
+      "verification": "Closures match the original set: $V^+=\\{V,W,X\\}$, $Y^+=\\{Y,V,W,X,Z\\}$ in both."
+    },
+    "cse-2017-1-cs-17": {
+      "approach": "FOLLOW($Q$) = FIRST of what follows $Q$ in $P\\to xQRS$; since $R$ is nullable, include FIRST($S$) too.",
+      "concepts": [
+        "FIRST and FOLLOW sets",
+        "Nullable symbols"
+      ],
+      "steps": [
+        {
+          "title": "Where $Q$ appears",
+          "body": "Only in $P\\to x\\,Q\\,R\\,S$, so FOLLOW($Q$) $=$ FIRST($RS$)."
+        },
+        {
+          "title": "Compute FIRST($RS$)",
+          "body": "FIRST($R$) $=\\{w,\\varepsilon\\}$; $R$ is nullable so add FIRST($S$) $=\\{y\\}$. $S$ is not nullable, so stop: $$\\text{FOLLOW}(Q)=\\{w, y\\}.$$"
+        }
+      ],
+      "answer": {
+        "value": "{w, y}",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "FOLLOW sets contain terminals (and \\$), never non-terminals like $R$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses $y$, which follows $Q$ when $R\\to\\varepsilon$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Terminals $w$ (from $R$) and $y$ (from $S$ when $R$ is empty)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\\$ would need $RS$ to be nullable, but $S\\to y$ always produces $y$."
+        }
+      ],
+      "verification": "Strings: $xzwy$ (Q followed by $w$) and $xzy$ (Q followed by $y$) are both derivable."
+    },
+    "cse-2017-1-cs-18": {
+      "approach": "Threads of one process share its address space (code, data/globals, heap, open files); each has its own stack and registers.",
+      "concepts": [
+        "Threads",
+        "Process address space"
+      ],
+      "steps": [
+        {
+          "title": "Shared vs private",
+          "body": "| Shared by threads | Private per thread |\n|---|---|\n| code, global/static data, heap, open files | stack, registers, PC |"
+        },
+        {
+          "title": "Conclude",
+          "body": "Both global variables and the heap are shared."
+        }
+      ],
+      "answer": {
+        "value": "both heap and global variables",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The heap is part of the shared address space too."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Global variables live in the shared data segment."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both are shared; only stacks and registers are private."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Globals and heap are in the process's single address space, visible to all its threads."
+        }
+      ],
+      "verification": "This is why `malloc`ed objects and globals need locks when accessed by multiple threads."
+    },
+    "cse-2017-1-cs-19": {
+      "approach": "$Y=\\max(X,0)$ puts all the mass of $X\\le 0$ (probability 1/2) at $Y=0$; check the median definition at 0.",
+      "concepts": [
+        "Median of a distribution",
+        "Symmetry of the normal distribution",
+        "Mixed random variable"
+      ],
+      "steps": [
+        {
+          "title": "Distribution of $Y$",
+          "body": "By symmetry $P(X\\le0)=\\tfrac12$. So $P(Y=0)=\\tfrac12$, and for $y>0$, $P(Y\\le y)=P(X\\le y)>\\tfrac12$."
+        },
+        {
+          "title": "Median",
+          "body": "$m$ is a median if $P(Y\\le m)\\ge\\tfrac12$ and $P(Y\\ge m)\\ge\\tfrac12$. At $m=0$: $P(Y\\le0)=\\tfrac12$ and $P(Y\\ge0)=1$. For any $m>0$, $P(Y\\ge m)=P(X\\ge m)<\\tfrac12$. Hence the median is $0$."
+        }
+      ],
+      "answer": {
+        "value": "0",
+        "number": 0,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Treating $Y$ as the half-normal $|X|$; here the negative half collapses to the single point 0."
+      ],
+      "verification": "CDF of $Y$ jumps from 0 to $\\tfrac12$ at $y=0$, so the smallest $y$ with $F_Y(y)\\ge\\tfrac12$ is 0."
+    },
+    "cse-2017-1-cs-20": {
+      "approach": "A tree on $n$ vertices has $n-1$ edges, and by the handshake lemma the degree sum is twice the number of edges.",
+      "concepts": [
+        "Trees",
+        "Handshake lemma"
+      ],
+      "steps": [
+        {
+          "title": "Edges",
+          "body": "$|E| = n-1 = 10-1 = 9$."
+        },
+        {
+          "title": "Degree sum",
+          "body": "$\\sum \\deg(v) = 2|E| = 2\\times 9 = 18$."
+        }
+      ],
+      "answer": {
+        "value": "18",
+        "number": 18,
+        "matchesKey": true
+      },
+      "verification": "A path on 10 vertices: two ends of degree 1 and eight inner vertices of degree 2: $2+16=18$."
+    },
+    "cse-2017-1-cs-21": {
+      "approach": "Use the don't-cares to form one quad, giving $f = c\\,\\bar a$; a single 2-input NOR with inputs $\\bar c$ and $a$ realises it.",
+      "concepts": [
+        "K-map minimisation",
+        "Don't-care conditions",
+        "NOR realisation",
+        "De Morgan"
+      ],
+      "given": "| Cell | $d\\,c\\,b\\,a$ | Value |\n|---|---|---|\n| row 01, col 00 | 0100 | 1 |\n| row 11, col 00 | 1100 | 1 |\n| row 11, col 10 | 1110 | 1 |\n| row 01, col 10 | 0110 | x |\n| rows 00, 10, cols 01, 11 | 0001, 0011, 1001, 1011 | x |",
+      "steps": [
+        {
+          "title": "Read the 1s",
+          "body": "The 1s are at $dcba = 0100, 1100, 1110$. All have $c=1,\\ a=0$.",
+          "scene": {
+            "hl": [
+              {
+                "cell": 4
+              },
+              {
+                "cell": 12
+              },
+              {
+                "cell": 14
+              }
+            ],
+            "caption": "Three 1-cells, all with c = 1 and a = 0"
+          }
+        },
+        {
+          "title": "Group with a don't-care",
+          "body": "The cell $0110$ (row 01, col 10) is a don't-care. Rows 01, 11 are adjacent and columns 00, 10 wrap around, so $\\{0100, 0110, 1100, 1110\\}$ is a quad: $c=1$, $a=0$, $b$ and $d$ free. $$f = c\\,\\bar a$$",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  4,
+                  6,
+                  12,
+                  14
+                ],
+                "label": "c·a′"
+              }
+            ],
+            "hl": [],
+            "caption": "Quad (wrap-around columns 00 and 10) → f = c·a′"
+          }
+        },
+        {
+          "title": "Map to NOR",
+          "body": "By De Morgan, $c\\,\\bar a = \\overline{\\bar c + a} = \\text{NOR}(\\bar c, a)$. Complements are available, so this needs **one** 2-input NOR gate."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "number": 1,
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "d",
+          "c",
+          "b",
+          "a"
+        ],
+        "ones": [
+          4,
+          12,
+          14
+        ],
+        "dcs": [
+          1,
+          3,
+          6,
+          9,
+          11
+        ],
+        "groups": [],
+        "caption": "K-map (rows dc, columns ba)"
+      },
+      "pitfalls": [
+        "Reading the map with rows/columns as $ab/cd$ — here rows are $dc$ and columns are $ba$.",
+        "Ignoring the don't-care at 0110 leaves $c\\bar a\\bar b + d c\\bar a$, which needs several gates."
+      ],
+      "verification": "Check every cell: $c\\bar a$ is 1 exactly on 0100, 0110, 1100, 1110 — the three 1s plus a don't-care; all 0-cells have $c=0$ or $a=1$."
+    },
+    "cse-2017-1-cs-22": {
+      "approach": "$L$ = strings whose second-last symbol is $b$. A DFA must remember the last two symbols, and all four 2-symbol suffixes are pairwise distinguishable, so the minimum is $2^2=4$.",
+      "concepts": [
+        "Minimal DFA",
+        "Myhill–Nerode",
+        "k-th symbol from the end"
+      ],
+      "steps": [
+        {
+          "title": "Language",
+          "body": "$(a+b)^*\\,b\\,(a+b)$ = all strings of length $\\ge2$ whose second-last symbol is $b$."
+        },
+        {
+          "title": "States = last two symbols",
+          "body": "Track the last two symbols: $aa$ (start; also stands for \"fewer than two read\", which behaves like $aa$), $ab$, $ba$, $bb$. Reading $s$ from state $xy$ goes to $ys$. Accept $ba$ and $bb$.",
+          "scene": {
+            "current": [
+              "aa"
+            ],
+            "caption": "States remember the last two symbols; accept when the second-last is b"
+          }
+        },
+        {
+          "title": "Trace $abba$",
+          "body": "$aa \\xrightarrow{a} aa \\xrightarrow{b} ab \\xrightarrow{b} bb \\xrightarrow{a} ba$ — accept (second-last symbol $b$).",
+          "scene": {
+            "current": [
+              "ba"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b",
+                "b",
+                "a"
+              ],
+              "head": 4
+            },
+            "caption": "abba ends in ba → accepted"
+          }
+        },
+        {
+          "title": "All four are distinct",
+          "body": "Distinguishing suffixes: $\\varepsilon$ separates $\\{ba,bb\\}$ from $\\{aa,ab\\}$; suffix $a$ separates $ab$ (→ $ba$, accept) from $aa$ (→ $aa$, reject) and $bb$ (→ $ba$, accept) from $ba$ (→ $aa$, reject). So no two states merge: **4** states."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "number": 4,
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "automaton",
+        "layout": "circle",
+        "states": [
+          {
+            "id": "aa",
+            "start": true
+          },
+          {
+            "id": "ab"
+          },
+          {
+            "id": "bb",
+            "accept": true
+          },
+          {
+            "id": "ba",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "aa",
+            "to": "aa",
+            "label": "a"
+          },
+          {
+            "from": "aa",
+            "to": "ab",
+            "label": "b"
+          },
+          {
+            "from": "ab",
+            "to": "ba",
+            "label": "a"
+          },
+          {
+            "from": "ab",
+            "to": "bb",
+            "label": "b"
+          },
+          {
+            "from": "bb",
+            "to": "ba",
+            "label": "a"
+          },
+          {
+            "from": "bb",
+            "to": "bb",
+            "label": "b"
+          },
+          {
+            "from": "ba",
+            "to": "aa",
+            "label": "a"
+          },
+          {
+            "from": "ba",
+            "to": "ab",
+            "label": "b"
+          }
+        ],
+        "current": [],
+        "tape": {
+          "cells": [
+            "a",
+            "b",
+            "b",
+            "a"
+          ],
+          "head": 0
+        }
+      },
+      "shortcut": "For \"the $k$-th symbol from the end is $b$\", the minimal DFA has $2^k$ states.",
+      "verification": "Myhill–Nerode: four pairwise-distinguishable classes and a 4-state DFA exists, so 4 is exact."
+    }
+  }
+}
