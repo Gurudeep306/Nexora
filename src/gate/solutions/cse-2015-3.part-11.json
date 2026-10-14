@@ -1,0 +1,1172 @@
+{
+  "paper": "cse-2015-3",
+  "version": 2,
+  "solutions": {
+    "cse-2015-3-ga-1": {
+      "approach": "Find the shift applied to each letter of ROAD to get URDG, then apply the same shift to SWAN.",
+      "concepts": [
+        "Letter coding",
+        "Alphabet shift"
+      ],
+      "steps": [
+        {
+          "title": "Find the rule",
+          "body": "R→U, O→R, A→D, D→G: every letter moves **+3** places in the alphabet."
+        },
+        {
+          "title": "Apply it to SWAN",
+          "body": "S+3 = V, W+3 = Z, A+3 = D, N+3 = Q, so SWAN → **VZDQ**."
+        }
+      ],
+      "answer": {
+        "value": "VZDQ",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "VXDQ: W+3 is Z, not X."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Every letter shifted by +3."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "VZDP: N+3 is Q, not P."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "UXDQ: S+3 is V, not U, and W+3 is Z."
+        }
+      ],
+      "shortcut": "Check one distinctive letter: W+3 = Z leaves only B and C; N+3 = Q picks B.",
+      "verification": "Re-applied the +3 shift to ROAD: R,O,A,D → U,R,D,G matches."
+    },
+    "cse-2015-3-ga-2": {
+      "approach": "Fill each blank with the grammatically required word: the article before a \"starrer\" film name, past passive \"was cleared\", past \"found\" to match \"last week\", and \"on this Friday\".",
+      "concepts": [
+        "Articles",
+        "Tense agreement",
+        "Prepositions"
+      ],
+      "steps": [
+        {
+          "title": "Blank 1: article",
+          "body": "\"The Tamil version of ___ John Abraham-starrer *Madras Cafe*\" refers to one specific film, so the definite article **the** fits. \"Mr.\" cannot precede \"John Abraham-starrer\" (it qualifies the film, not the actor), and \"a\" is wrong for a named, specific film."
+        },
+        {
+          "title": "Blanks 2 and 3: tense",
+          "body": "\"cleared ... last week\" needs the past passive **was** cleared; the distributors **found** no takers (past, parallel to \"last week\"). \"being\" and \"find\" break the tense."
+        },
+        {
+          "title": "Blank 4: preposition",
+          "body": "A release **on** this Friday (we use *on* with days). So the answer is **the, was, found, on**."
+        }
+      ],
+      "answer": {
+        "value": "the, was, found, on",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"Mr.\" does not fit before \"John Abraham-starrer\", which describes the film."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"a\" is wrong for a specific named film, and \"at this Friday\" is unidiomatic."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct article, tense and preposition in every blank."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"being\" and \"find\" break the past tense, and \"at this Friday\" is wrong."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"Mr.\" as a title for John Abraham: the blank qualifies the whole compound \"John Abraham-starrer\", a noun for the film."
+      ],
+      "verification": "Read the completed sentence aloud: \"The Tamil version of the John Abraham-starrer Madras Cafe was cleared ... found no takers ... on this Friday.\""
+    },
+    "cse-2015-3-ga-3": {
+      "approach": "The sentence says students shut out anything that is NOT relevant to the exam, so the blank needs a word meaning \"irrelevant / not belonging\".",
+      "concepts": [
+        "Vocabulary in context"
+      ],
+      "steps": [
+        {
+          "title": "Read the logic",
+          "body": "Students focused only on the syllabus close their minds to things **unrelated** to exam requirements."
+        },
+        {
+          "title": "Pick the word",
+          "body": "*Extraneous* means \"irrelevant or unrelated to the subject\" and takes the preposition *to*: \"anything **extraneous** to the requirements of the exam\"."
+        }
+      ],
+      "answer": {
+        "value": "extraneous",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"related\" reverses the meaning: they would not close their minds to exam-related material."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "\"extraneous to\" = irrelevant to; matches the sense and the preposition."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"outside to\" is ungrammatical (it would be \"outside\")."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "\"useful to the requirements\" contradicts the idea of shutting it out."
+        }
+      ],
+      "verification": "Only B both carries the \"irrelevant\" sense and collocates with \"to\"."
+    },
+    "cse-2015-3-ga-4": {
+      "approach": "Identify the relation: a pediatrician is the doctor for a particular group of people (children). Find the pair that is \"group of people : doctor who treats that group\".",
+      "concepts": [
+        "Analogy",
+        "Relationship type"
+      ],
+      "steps": [
+        {
+          "title": "Name the relation",
+          "body": "Children : Pediatrician = **a class of patients (by age) : specialist who treats that class of people**. It is not \"body part : specialist\"."
+        },
+        {
+          "title": "Test each pair",
+          "body": "Females : Gynaecologist is also a class of people : the specialist who treats them. Kidney : Nephrologist and Skin : Dermatologist are **organ : specialist**. Adult : Orthopaedist fails because an orthopaedist treats bones, not adults as a group."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The closest parallel is **Females : Gynaecologist** (B). C and D are organ-based pairs and do not match."
+        }
+      ],
+      "answer": {
+        "value": "Females : Gynaecologist",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "An orthopaedist treats bones/joints, not \"adults\" as a patient group."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Females are a group of people and the gynaecologist is the specialist for that group, as children are for the pediatrician."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Kidney is an organ; the relation is organ : specialist, not people-group : specialist."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Skin is an organ; same organ : specialist relation as C."
+        }
+      ],
+      "pitfalls": [
+        "Choosing any \"specialist\" pair without checking whether the first term is a group of people or a body part."
+      ],
+      "verification": "Classified the first term of each pair: Children and Females are people groups; Kidney and Skin are organs; Adult does not match Orthopaedist."
+    },
+    "cse-2015-3-ga-5": {
+      "approach": "A linear function has constant slope: find it from the two given points and extend to x = 5.",
+      "concepts": [
+        "Linear function",
+        "Slope"
+      ],
+      "steps": [
+        {
+          "title": "Slope",
+          "body": "$$m=\\frac{39-29}{3-(-2)}=\\frac{10}{5}=2$$"
+        },
+        {
+          "title": "Extend to x = 5",
+          "body": "$$f(5)=f(3)+m(5-3)=39+2\\times 2=43$$"
+        }
+      ],
+      "answer": {
+        "value": "43",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "59 would need slope 10, i.e. using 10 per unit instead of 10 per 5 units."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "45 corresponds to slope 3."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "39 + 2·2 = 43."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "35 would need a decreasing function, but f rises from 29 to 39."
+        }
+      ],
+      "verification": "$f(x)=2x+33$: $f(-2)=29$, $f(3)=39$, $f(5)=43$."
+    },
+    "cse-2015-3-ga-6": {
+      "approach": "\"Since he had conquered Persia\" gives the conquest of Persia as the reason for turning to India; the only safe inference is the counterfactual that without that reason he would not have turned to India.",
+      "concepts": [
+        "Logical inference",
+        "Cause and effect"
+      ],
+      "steps": [
+        {
+          "title": "Read the claim",
+          "body": "\"Alexander turned towards India **since** he had conquered Persia\" states that conquering Persia was the cause/precondition of turning to India."
+        },
+        {
+          "title": "Infer only what is stated",
+          "body": "If Persia was the reason, then had he not conquered Persia he would not have turned to India: option **A**. B, C and D add facts (ambition, army control, kingdom borders) that the sentence never mentions."
+        }
+      ],
+      "answer": {
+        "value": "Alexander would not have turned his attention towards India had he not conquered Persia.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Restates the causal \"since\": conquest of Persia was the reason."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"Not ready to rest on his laurels\" is an assumption about his attitude, not in the sentence."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Nothing is said about control of his army."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Kingdom borders reaching India is extra information not given."
+        }
+      ],
+      "verification": "Each of B, C, D introduces a new fact; only A uses nothing beyond the sentence."
+    },
+    "cse-2015-3-ga-7": {
+      "approach": "Check each distribution against the four conditions; eliminate as soon as one is broken.",
+      "concepts": [
+        "Constraint checking",
+        "Elimination"
+      ],
+      "given": "| Condition | Meaning |\n|---|---|\n| C1 | S has a portfolio ⇒ U has none |\n| C2 | R gets Home, Finance or nothing |\n| C3 | S gets Power or Telecom ⇒ Q gets the other one |\n| C4 | P has a portfolio ⇒ T has one |",
+      "steps": [
+        {
+          "title": "Eliminate A, C, D",
+          "body": "(A) R-Defense breaks C2. (C) S and U both get portfolios, breaking C1. (D) R-Telecom breaks C2."
+        },
+        {
+          "title": "Verify B",
+          "body": "R-Home (C2 ✓); S-Power with Q-Telecom (C3 ✓); U gets nothing (C1 ✓); P-Defense with T-Finance (C4 ✓). **B** is valid."
+        }
+      ],
+      "answer": {
+        "value": "R-Home, S-Power, P-Defense, Q-Telecom, T-Finance",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "R gets Defense, but R accepts only Home or Finance."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Satisfies all four conditions."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "U gets Finance while S has Telecom; U refuses any portfolio if S gets one."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "R gets Telecom, violating R's condition."
+        }
+      ],
+      "verification": "Re-checked all four conditions on B one by one."
+    },
+    "cse-2015-3-ga-8": {
+      "approach": "Read the thick graph piecewise: for y ≥ 0 it lies on the y-axis (x = 0); for y < 0 it is the line through (0,0) and (2,−1), i.e. x = −2y. Test each option on both halves.",
+      "concepts": [
+        "Absolute value",
+        "Piecewise functions",
+        "Reading graphs"
+      ],
+      "steps": [
+        {
+          "title": "Equation of each piece",
+          "body": "Upper piece: the thick arrow runs up the $y$-axis, so $x=0$ for $y\\ge 0$. Lower piece: through $(0,0)$ and $(2,-1)$, so $x=-2y$ for $y<0$."
+        },
+        {
+          "title": "Test option B",
+          "body": "$x=-(y-|y|)$. For $y\\ge0$: $|y|=y$, so $x=-(y-y)=0$ ✓. For $y<0$: $|y|=-y$, so $x=-(y+y)=-2y$ ✓ (e.g. $y=-1\\Rightarrow x=2$)."
+        },
+        {
+          "title": "Reject the others",
+          "body": "A gives $x=2y<0$ for $y<0$ (wrong side). C gives $x=2y>0$ for $y>0$ (not on the axis). D gives $x=-2y<0$ for $y>0$."
+        }
+      ],
+      "answer": {
+        "value": "$x=-(y-|y|)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "For y < 0 gives x = 2y, a line through (−2, −1), on the left side."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "x = 0 for y ≥ 0 and x = −2y for y < 0, passing through (2, −1)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "For y > 0 gives x = 2y, not the y-axis; for y < 0 gives x = 0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "For y > 0 gives x = −2y, not the y-axis; for y < 0 gives x = 0."
+        }
+      ],
+      "shortcut": "Plug the marked point (2, −1): only B gives x = 2 at y = −1, and B gives 0 for any positive y.",
+      "verification": "Checked (2, −1) and (0, 5) in B: x = −(−1−1) = 2 and x = −(5−5) = 0."
+    },
+    "cse-2015-3-ga-9": {
+      "approach": "Test each statement against the passage: only conclusions directly supported (temperament must improve; he wastes good starts) are valid.",
+      "concepts": [
+        "Inference",
+        "Reading comprehension"
+      ],
+      "steps": [
+        {
+          "title": "Check each statement",
+          "body": "- (i) False: \"success at the highest level will continue to elude him\" — he is **not yet** successful.\n- (ii) Valid: lack of temperament is why he is unlikely to reach the highest order; critics say he must address it.\n- (iii) Valid: \"throwing away his wicket ... after working hard to lay a strong foundation\" = failing to convert good starts.\n- (iv) False: he already has all the technical skills; the problem is temperament."
+        },
+        {
+          "title": "Combine",
+          "body": "Valid statements: (ii) and (iii) → option **B**."
+        }
+      ],
+      "answer": {
+        "value": "(ii) and (iii)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(iv) contradicts the passage: technical skill is not his problem."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both (ii) and (iii) follow directly from the passage."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(i) is false: success at the highest level still eludes him."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Misses (iii), which the passage states explicitly."
+        }
+      ],
+      "verification": "Matched each valid statement to a phrase in the passage."
+    },
+    "cse-2015-3-ga-10": {
+      "approach": "For each year compute the percentage increase over the previous year for exports and for imports, add them, and pick the largest sum.",
+      "concepts": [
+        "Percentage change",
+        "Data interpretation"
+      ],
+      "given": "| Year | 2000 | 2001 | 2002 | 2003 | 2004 | 2005 | 2006 | 2007 |\n|---|---|---|---|---|---|---|---|---|\n| Exports | 50 | 60 | 70 | 60 | 70 | 70 | 100 | 110 |\n| Imports | 40 | 50 | 60 | 70 | 80 | 90 | 120 | 120 |",
+      "steps": [
+        {
+          "title": "Year-on-year increases",
+          "body": "| Year | Exports % | Imports % | Sum % |\n|---|---|---|---|\n| 2001 | 10/50 = 20.0 | 10/40 = 25.0 | 45.0 |\n| 2002 | 10/60 = 16.7 | 10/50 = 20.0 | 36.7 |\n| 2003 | −10/70 = −14.3 | 10/60 = 16.7 | 2.4 |\n| 2004 | 10/60 = 16.7 | 10/70 = 14.3 | 31.0 |\n| 2005 | 0/70 = 0 | 10/80 = 12.5 | 12.5 |\n| 2006 | 30/70 = 42.9 | 30/90 = 33.3 | **76.2** |\n| 2007 | 10/100 = 10.0 | 0/120 = 0 | 10.0 |"
+        },
+        {
+          "title": "Pick the maximum",
+          "body": "The largest combined increase is in **2006** (about 76.2%)."
+        }
+      ],
+      "answer": {
+        "value": "2006",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Comparing absolute increases instead of percentages; here both point to 2006, but in general they need not."
+      ],
+      "verification": "Using the combined total instead (exports + imports): 2006 goes 160 → 220, a 37.5% rise, still the highest (2001 is 90 → 110 = 22.2%)."
+    },
+    "cse-2015-3-cs-1": {
+      "approach": "The number of CPUs bounds how many processes can be Running, not Ready; the ready queue can hold any number of processes.",
+      "concepts": [
+        "Process states",
+        "Ready queue"
+      ],
+      "steps": [
+        {
+          "title": "Running vs Ready",
+          "body": "With $n$ CPUs at most $n$ processes are **Running**. A Ready process is one waiting for a CPU; the ready queue has no limit tied to $n$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The maximum number of Ready processes is limited only by memory/OS tables, so it is **independent of $n$**."
+        }
+      ],
+      "answer": {
+        "value": "Independent of $n$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n bounds the Running processes, not the Ready ones."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No relation n² exists between CPUs and ready processes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No relation 2ⁿ exists either."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Any number of processes can wait in the ready queue."
+        }
+      ],
+      "pitfalls": [
+        "Confusing Ready with Running."
+      ],
+      "verification": "Even a single-CPU system can have hundreds of processes in the ready queue."
+    },
+    "cse-2015-3-cs-2": {
+      "approach": "$X\\#Y=X'+Y'=(XY)'$ is NAND. NAND is commutative but not associative; confirm associativity fails with one assignment.",
+      "concepts": [
+        "NAND gate",
+        "Commutativity",
+        "Associativity"
+      ],
+      "steps": [
+        {
+          "title": "Recognise NAND",
+          "body": "$X\\#Y=X'+Y'=(XY)'$ by De Morgan. Since $XY=YX$, $Q\\#R=R\\#Q$, so **S2 is true**."
+        },
+        {
+          "title": "Test S1 with P=0, Q=0, R=1",
+          "body": "$(P\\#Q)\\#R=(0\\#0)\\#1=1\\#1=0$. $P\\#(Q\\#R)=0\\#(0\\#1)=0\\#1=1$. Since $0\\ne1$, **S1 is false**."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only S2 holds → **B**."
+        }
+      ],
+      "answer": {
+        "value": "Only S2 is true",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "S1 (associativity) fails for P=0, Q=0, R=1."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "NAND is commutative but not associative."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "S1 is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "S2 is true since X′+Y′ = Y′+X′."
+        }
+      ],
+      "verification": "Symbolically $(P\\#Q)\\#R=PQ+R'$ while $P\\#(Q\\#R)=P'+QR$; they differ at $P=0,Q=0,R=1$."
+    },
+    "cse-2015-3-cs-3": {
+      "approach": "A theatre has maximum capacity exactly when its capacity is ≥ every capacity in the table; that is \">= ALL\" over the capacity column.",
+      "concepts": [
+        "SQL ALL/ANY",
+        "Nested subqueries"
+      ],
+      "steps": [
+        {
+          "title": "Meaning of the condition",
+          "body": "`P1.capacity >= ALL (SELECT P2.capacity FROM Cinema P2)` keeps a row only if its capacity is at least every capacity, i.e. equal to the maximum. Ties are all returned."
+        },
+        {
+          "title": "Why the others fail",
+          "body": "- `>= ANY` is true for every row (each row is ≥ the minimum, or at least itself).\n- `> ALL (SELECT max(...))` needs capacity strictly greater than the max: no row qualifies.\n- `> ANY (SELECT max(...))` is the same as `> max`: again empty."
+        }
+      ],
+      "answer": {
+        "value": "WHERE P1.capacity >= All (select P2.capacity from Cinema P2)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "≥ every capacity ⇔ capacity is the maximum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "≥ ANY returns all theatres (every row is ≥ the smallest)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Strictly greater than the maximum: returns nothing."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The subquery has one value (the max); > it returns nothing."
+        }
+      ],
+      "pitfalls": [
+        "Using > instead of >=: a row is never strictly greater than itself."
+      ],
+      "verification": "With capacities {100, 200, 200}: A returns both 200-rows, B returns all three, C and D return none."
+    },
+    "cse-2015-3-cs-4": {
+      "approach": "Compute $\\sum i^3$ in closed form: it is $\\Theta(n^4)$. Then check which bounds a $\\Theta(n^4)$ function satisfies.",
+      "concepts": [
+        "Asymptotic notation",
+        "Sum of cubes"
+      ],
+      "steps": [
+        {
+          "title": "Closed form",
+          "body": "$$\\sum_{i=0}^{n} i^3=\\left(\\frac{n(n+1)}{2}\\right)^2=\\frac{n^4}{4}+\\frac{n^3}{2}+\\frac{n^2}{4}=\\Theta(n^4)$$"
+        },
+        {
+          "title": "Check each choice",
+          "body": "- I. $\\Theta(n^4)$ ✓\n- II. $\\Theta(n^5)$ ✗ (it grows only like $n^4$, so it is not $\\Omega(n^5)$)\n- III. $O(n^5)$ ✓ ($n^4\\le n^5$)\n- IV. $\\Omega(n^3)$ ✓ ($n^4\\ge n^3$)"
+        },
+        {
+          "title": "Conclusion",
+          "body": "I or III or IV, but not II → **C**."
+        }
+      ],
+      "answer": {
+        "value": "I or III or IV but not II",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "III and IV are also correct (looser upper and lower bounds)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II is false: the sum is not Ω(n⁵)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Θ(n⁴) is also O(n⁵) and Ω(n³), but not Θ(n⁵)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes the false II and excludes the true I."
+        }
+      ],
+      "verification": "$\\frac{\\sum i^3}{n^4}\\to\\frac14$, a positive constant, confirming $\\Theta(n^4)$."
+    },
+    "cse-2015-3-cs-5": {
+      "approach": "A non-decreasing 4-digit string over {1,2,3} is fixed by how many 1s, 2s and 3s it contains, so count multisets of size 4 from 3 symbols (stars and bars).",
+      "concepts": [
+        "Combinations with repetition",
+        "Stars and bars"
+      ],
+      "steps": [
+        {
+          "title": "Reduce to counts",
+          "body": "Let $a,b,c$ be the number of 1s, 2s, 3s. The digits in non-decreasing order are then fixed, so we need the number of solutions of $a+b+c=4$, $a,b,c\\ge0$."
+        },
+        {
+          "title": "Stars and bars",
+          "body": "$$\\binom{4+3-1}{3-1}=\\binom{6}{2}=15$$"
+        }
+      ],
+      "answer": {
+        "value": "15",
+        "number": 15,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting arrangements (3⁴ = 81) instead of multisets: the order is forced."
+      ],
+      "verification": "Listing by number of 1s: 4 ones → 1; 3 → 2; 2 → 3; 1 → 4; 0 → 5; total 1+2+3+4+5 = 15."
+    },
+    "cse-2015-3-cs-6": {
+      "approach": "In CSMA/CD the minimum frame must last at least one round-trip time: L/B = 2d/v. Solve for v.",
+      "concepts": [
+        "CSMA/CD",
+        "Minimum frame size",
+        "Propagation delay"
+      ],
+      "steps": [
+        {
+          "title": "Transmission time of the minimum frame",
+          "body": "$$T=\\frac{1250\\times 8\\text{ bits}}{10^8\\text{ bps}}=\\frac{10^4}{10^8}=10^{-4}\\text{ s}$$"
+        },
+        {
+          "title": "Equate to round-trip time",
+          "body": "$$T=\\frac{2d}{v}\\Rightarrow v=\\frac{2\\times 1\\text{ km}}{10^{-4}\\text{ s}}=20000\\text{ km/s}$$"
+        }
+      ],
+      "answer": {
+        "value": "20000",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "8000 km/s does not satisfy 2d/v = 10⁻⁴ s."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "10000 km/s comes from using one-way delay d/v instead of the round trip 2d/v."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "16000 km/s does not satisfy 2d/v = 10⁻⁴ s."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "v = 2·1 km / 10⁻⁴ s = 20000 km/s."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the factor 2 (round trip), which gives 10000."
+      ],
+      "verification": "Check: $2\\times1/20000=10^{-4}$ s $=10^4$ bits at 100 Mbps $=1250$ bytes ✓."
+    },
+    "cse-2015-3-cs-7": {
+      "approach": "Track the array contents: p points to s1[2], which is overwritten with the character '0' (not the NUL terminator), so the string just changes one digit.",
+      "concepts": [
+        "C strings",
+        "Pointer arithmetic"
+      ],
+      "steps": [
+        {
+          "title": "Initial array",
+          "body": "`char s1[7] = \"1234\"` stores `'1','2','3','4','\\0','\\0','\\0'`.",
+          "scene": {
+            "caption": "s1 after initialisation",
+            "cells": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "\\0",
+              "\\0",
+              "\\0"
+            ],
+            "pointers": [],
+            "hl": []
+          }
+        },
+        {
+          "title": "p = s1 + 2; *p = '0'",
+          "body": "`p` points to `s1[2]` (the `'3'`). Writing the **character** `'0'` (ASCII 48, not `'\\0'`) replaces it: `'1','2','0','4','\\0',...`.",
+          "scene": {
+            "caption": "*p = '0' overwrites s1[2]",
+            "cells": [
+              "1",
+              "2",
+              {
+                "v": "0",
+                "tone": "warning"
+              },
+              "4",
+              "\\0",
+              "\\0",
+              "\\0"
+            ],
+            "pointers": [
+              {
+                "name": "p",
+                "at": 2
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  2
+                ],
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "printf(\"%s\", s1)",
+          "body": "Printing stops at the first `'\\0'` (index 4), so the output is **1204**.",
+          "scene": {
+            "caption": "printf prints up to the first \\0: 1204",
+            "hl": [
+              {
+                "at": [
+                  0,
+                  3
+                ],
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "1204",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "12 would require writing '\\0' (NUL), but the code writes the digit character '0'."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "printf stops at the first NUL; trailing bytes are not printed as zeros."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Only s1[2] changes from '3' to '0'."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1034 would overwrite s1[1], but p = s1 + 2 points to s1[2]."
+        }
+      ],
+      "pitfalls": [
+        "Confusing the character '0' with the null character '\\0'."
+      ],
+      "verification": "s1 = {1,2,0,4,\\0}: printed characters are 1,2,0,4.",
+      "animation": {
+        "kind": "array",
+        "title": "char s1[7]",
+        "label": "s1",
+        "cells": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "\\0",
+          "\\0",
+          "\\0"
+        ]
+      }
+    },
+    "cse-2015-3-cs-8": {
+      "approach": "The HTML `<base href>` element sets the base URL against which all relative URLs in the page are resolved; it takes only an href.",
+      "concepts": [
+        "HTML base element",
+        "Relative URLs"
+      ],
+      "steps": [
+        {
+          "title": "What is needed",
+          "body": "W1 is opened locally, so relative links like `2.html` would resolve against the local folder. We need every relative URL resolved against `http://www.yourname.com/`."
+        },
+        {
+          "title": "The base element",
+          "body": "`<base href=\"http://www.yourname.com/\">` in the head does exactly this: `2.html` becomes `http://www.yourname.com/2.html`. So the answer is **B**."
+        }
+      ],
+      "answer": {
+        "value": "<base href: \"http://www.yourname.com/\">",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "An anchor (a) creates one link; it does not change how other relative URLs resolve, and two href attributes are invalid."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "base href sets the base URL for all relative URLs in the document."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "An anchor only creates a single hyperlink; it does not affect other links."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "base has no \"range\" attribute; the href alone already covers all relative URLs."
+        }
+      ],
+      "verification": "The base element is the only HTML mechanism that changes resolution of every relative URL in a document."
+    },
+    "cse-2015-3-cs-9": {
+      "approach": "Take logarithms: the exponent e^{−x} decays far faster than ln(1+x²) grows, so the log tends to 0 and the limit is e⁰ = 1.",
+      "concepts": [
+        "Limits",
+        "Indeterminate form ∞⁰",
+        "Logarithms"
+      ],
+      "steps": [
+        {
+          "title": "Take log",
+          "body": "Let $L=\\lim(1+x^2)^{e^{-x}}$. Then $\\ln L=\\lim_{x\\to\\infty} e^{-x}\\ln(1+x^2)=\\lim_{x\\to\\infty}\\frac{\\ln(1+x^2)}{e^x}$ (form $\\infty/\\infty$)."
+        },
+        {
+          "title": "L'Hôpital",
+          "body": "$$\\lim_{x\\to\\infty}\\frac{\\frac{2x}{1+x^2}}{e^x}=\\lim_{x\\to\\infty}\\frac{2x}{(1+x^2)e^x}=0$$"
+        },
+        {
+          "title": "Exponentiate",
+          "body": "$\\ln L=0\\Rightarrow L=e^0=1$."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The base grows, it never makes the power go to 0; the exponent → 0 sends the value to 1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No step produces 1/2."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "ln L = 0, so L = 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The exponent e^{-x} shrinks faster than ln(1+x²) grows."
+        }
+      ],
+      "verification": "At $x=20$: $e^{-20}\\ln 401\\approx 2.06\\times10^{-9}\\times 6.0\\approx 1.2\\times10^{-8}$, so the value is $\\approx 1$."
+    },
+    "cse-2015-3-cs-10": {
+      "approach": "Find an interleaving that puts both processes in the critical section (breaks mutual exclusion), then note that neither process ever blocks: each loop just re-runs, so deadlock cannot occur.",
+      "concepts": [
+        "Mutual exclusion",
+        "Deadlock",
+        "Interleaving"
+      ],
+      "steps": [
+        {
+          "title": "How a process enters",
+          "body": "X enters its critical section **only while `varQ == true`** (the CS is the body of the inner while loop); Y enters only while `varP == true`. If the condition is false, the process simply goes round the outer `while(true)` again; it never waits."
+        },
+        {
+          "title": "Mutual exclusion fails",
+          "body": "Interleaving from varP = varQ = false:\n\n| # | Action | varP | varQ |\n|---|---|---|---|\n| 1 | X: varP = true | T | F |\n| 2 | Y: varQ = true | T | T |\n| 3 | X: tests varQ == true → **enters CS** | T | T |\n| 4 | Y: tests varP == true → **enters CS** | T | T |\n\nBoth are in the critical section at once."
+        },
+        {
+          "title": "No deadlock",
+          "body": "There is no blocking wait: when the inner condition is false a process leaves the inner loop and continues. Both can never be stuck waiting for each other, so deadlock is prevented. Hence **A**."
+        }
+      ],
+      "answer": {
+        "value": "The proposed solution prevents deadlock but fails to guarantee mutual exclusion",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The interleaving above puts both in the CS; no process ever blocks, so no deadlock."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Mutual exclusion is not guaranteed (both can enter together)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Mutual exclusion fails."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Deadlock cannot occur because nobody waits."
+        }
+      ],
+      "pitfalls": [
+        "Reading the inner while as a busy-wait \"while (other wants) wait\": here the critical section is the body of that loop, so the logic is inverted."
+      ],
+      "verification": "Official key (IIT Kanpur) for 2015 Set 3 Q10 is A."
+    },
+    "cse-2015-3-cs-11": {
+      "approach": "Fault seeding: the fraction of seeded faults found estimates the fraction of real faults found. Scale real faults found by that fraction to get total real faults, then subtract those found.",
+      "concepts": [
+        "Fault seeding",
+        "Software testing estimate"
+      ],
+      "steps": [
+        {
+          "title": "Split the detected faults",
+          "body": "Seeded found = 75 of 100 (75%). Real found = $159-75=84$."
+        },
+        {
+          "title": "Estimate total real faults",
+          "body": "$$N_{real}=\\frac{84}{75/100}=\\frac{84\\times100}{75}=112$$"
+        },
+        {
+          "title": "Undetected real faults",
+          "body": "Undetected real faults = estimated total − detected real $=112-84=28$."
+        }
+      ],
+      "answer": {
+        "value": "28",
+        "number": 28,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 112 (total real faults) instead of the undetected ones.",
+        "Using 159/0.75 (mixing seeded and real faults)."
+      ],
+      "verification": "Undetected seeded = 25 out of 100 (25%); 25% of 112 = 28 ✓."
+    },
+    "cse-2015-3-cs-12": {
+      "approach": "Scan left to right with a stack: push operands; on an operator pop two (right then left), apply, push the result.",
+      "concepts": [
+        "Postfix evaluation",
+        "Stack"
+      ],
+      "steps": [
+        {
+          "title": "10 5 +",
+          "body": "Push 10, push 5; `+` pops 5 and 10 and pushes $10+5=15$.",
+          "scene": {
+            "items": [
+              "15"
+            ],
+            "popped": "+",
+            "caption": "10 5 + → 15",
+            "vars": {
+              "token": "+"
+            }
+          }
+        },
+        {
+          "title": "60 6 /",
+          "body": "Push 60, push 6; `/` pops 6 and 60 and pushes $60/6=10$. Stack: 15, 10.",
+          "scene": {
+            "items": [
+              "15",
+              "10"
+            ],
+            "popped": "/",
+            "caption": "60 6 / → 10",
+            "vars": {
+              "token": "/"
+            }
+          }
+        },
+        {
+          "title": "Apply *",
+          "body": "`*` pops 10 and 15 and pushes $15\\times10=150$.",
+          "scene": {
+            "items": [
+              "150"
+            ],
+            "popped": "*",
+            "caption": "15 × 10 = 150",
+            "vars": {
+              "token": "*"
+            }
+          }
+        },
+        {
+          "title": "8 −",
+          "body": "Push 8; `−` pops 8 and 150 and pushes $150-8=$ **142**.",
+          "scene": {
+            "items": [
+              "142"
+            ],
+            "popped": "−",
+            "caption": "150 − 8 = 142 (final)",
+            "vars": {
+              "token": "−"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "142",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "284 = 2 × 142; no operation doubles the result."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "213 does not arise from the expression."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "((10 + 5) × (60 / 6)) − 8 = 150 − 8 = 142."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "71 = 142 / 2; no division by 2 occurs."
+        }
+      ],
+      "shortcut": "Convert to infix: (10 + 5) * (60 / 6) − 8 = 15 × 10 − 8 = 142.",
+      "verification": "Infix conversion gives the same value 142.",
+      "animation": {
+        "kind": "stack",
+        "title": "Operand stack",
+        "items": [],
+        "caption": "Scan: 10 5 + 60 6 / * 8 −",
+        "vars": {
+          "token": "—"
+        }
+      }
+    }
+  }
+}
