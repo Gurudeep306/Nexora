@@ -1,0 +1,1206 @@
+{
+  "paper": "it-2008",
+  "version": 2,
+  "solutions": {
+    "it-2008-it-23": {
+      "approach": "Use the complement: \"at least three share a birthday\" fails exactly when either all $r$ birthdays are distinct or exactly one pair shares a day and everyone else is distinct. Subtract both from 1.",
+      "concepts": [
+        "Complement rule",
+        "Birthday problem",
+        "Counting with ordered choices"
+      ],
+      "steps": [
+        {
+          "title": "Complement of the event",
+          "body": "\"At least three people share a birthday\" is false exactly when no day is used by 3 or more people, i.e. every day is used by at most 2 people. Since the options only allow one shared pair, the complement is split as:\n\n- $E_0$: all $r$ birthdays distinct;\n- $E_1$: exactly one pair shares a birthday, all others distinct.\n\n(Cases with two or more separate pairs are ignored by every option — the intended model is the textbook one below.)"
+        },
+        {
+          "title": "All distinct",
+          "body": "Total outcomes $=365^r$. Ordered distinct choices: $365\\cdot364\\cdots(365-r+1)$, so\n$$P(E_0)=\\frac{365\\cdot364\\cdots(365-r+1)}{365^r}.$$"
+        },
+        {
+          "title": "Exactly one pair",
+          "body": "Choose the pair: $\\,{}^rC_2$. Give the pair a day: $365$ ways. The remaining $r-2$ people get distinct days different from that one: $364\\cdot363\\cdots(364-(r-2)+1)$ ways. So\n$$P(E_1)={}^rC_2\\cdot365\\cdot\\frac{364\\cdot363\\cdots(364-(r-2)+1)}{365^r}.$$"
+        },
+        {
+          "title": "Subtract",
+          "body": "$$P(\\text{at least three})=1-P(E_0)-P(E_1),$$ which is option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "$1-P(\\text{all distinct})-P(\\text{exactly one pair})$ — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "This is $1-P(\\text{all distinct})$ = P(at least two share), not at least three."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "This is $P(E_0)+P(E_1)$ — the probability of the complement, not of the event."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Removes both \"all distinct\" and \"exactly one pair\" from 1 — the required probability."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This is just $P(\\text{all distinct})$."
+        }
+      ],
+      "pitfalls": [
+        "Stopping at $1-P(\\text{all distinct})$ — that answers \"at least two\".",
+        "Forgetting the factor $\\,{}^rC_2$ for choosing which two people share."
+      ],
+      "verification": "For $r=3$: $P(\\text{all three same})=\\frac{365}{365^3}$. Formula (C): $1-\\frac{365\\cdot364\\cdot363}{365^3}-3\\cdot\\frac{365\\cdot364}{365^3}=\\frac{365^3-365\\cdot364\\cdot363-3\\cdot365\\cdot364}{365^3}$; numerator $=365(365^2-364\\cdot363-1092)=365(133225-132132-1092)=365\\cdot1$. ✓"
+    },
+    "it-2008-it-24": {
+      "approach": "Legendre's formula: the exponent of a prime $p$ in $n!$ is $\\sum_{k\\ge1}\\lfloor n/p^k\\rfloor$.",
+      "concepts": [
+        "Legendre's formula",
+        "Prime factorization of factorials"
+      ],
+      "steps": [
+        {
+          "title": "Multiples of 11 and 121",
+          "body": "$\\lfloor 300/11\\rfloor=27$ (since $11\\cdot27=297$), $\\lfloor 300/121\\rfloor=2$ (since $121\\cdot2=242$), $\\lfloor300/1331\\rfloor=0$."
+        },
+        {
+          "title": "Add",
+          "body": "Exponent $=27+2=29$."
+        }
+      ],
+      "answer": {
+        "value": "**29** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Counts only the multiples of 11 and misses the extra factor from $121$ and $242$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Adds only one extra factor for multiples of 121 (there are two: 121 and 242)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$27+2=29$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Over-count; $11^3=1331>300$ contributes nothing."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the $p^2$ term: 121 and 242 each contribute a second factor of 11."
+      ],
+      "verification": "Direct count: 27 multiples of 11 each give one 11; among them $121=11^2$ and $242=2\\cdot11^2$ give one more each → $27+2=29$."
+    },
+    "it-2008-it-25": {
+      "approach": "Balls of the same colour are identical and boxes are distinct, so each colour is an independent stars-and-bars count; multiply the two.",
+      "concepts": [
+        "Stars and bars",
+        "Product rule"
+      ],
+      "steps": [
+        {
+          "title": "Blue balls",
+          "body": "Distributing $b$ identical balls into $n$ distinct boxes: $\\binom{n+b-1}{b}=\\frac{(n+b-1)!}{(n-1)!\\,b!}$."
+        },
+        {
+          "title": "Red balls",
+          "body": "Similarly $\\binom{n+r-1}{r}=\\frac{(n+r-1)!}{(n-1)!\\,r!}$."
+        },
+        {
+          "title": "Combine",
+          "body": "The two distributions are independent, so the total is the product\n$$\\frac{(n+b-1)!\\,(n+r-1)!}{(n-1)!\\,b!\\,(n-1)!\\,r!}$$ — option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "$\\binom{n+b-1}{b}\\binom{n+r-1}{r}$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Product of the two independent stars-and-bars counts."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Mixes the formulas incorrectly: treats all $b+r$ balls as one pool and still divides by two $(n-1)!$ terms — not a valid count."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Counts arrangements of the balls in a row (multinomial), unrelated to boxes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Stars-and-bars for $b+r$ identical balls with wrong denominators; it also ignores the colour distinction."
+        }
+      ],
+      "pitfalls": [
+        "Treating blue and red balls as one identical pool loses the colour information."
+      ],
+      "verification": "$n=2,b=1,r=1$: each ball picks a box → $2\\cdot2=4$. (A): $\\frac{2!\\,2!}{1!\\,1!\\,1!\\,1!}=4$. ✓"
+    },
+    "it-2008-it-26": {
+      "approach": "A subfield must contain 0 and 1 and be closed under $+,-,\\times$ and division by non-zero elements. Check each set.",
+      "concepts": [
+        "Field",
+        "Subfield test"
+      ],
+      "steps": [
+        {
+          "title": "S1 and S2",
+          "body": "- $\\mathbb{R}$ is a field inside $\\mathbb{C}$ → subfield.\n- $\\mathbb{Q}(i)=\\{a+ib: a,b\\in\\mathbb{Q}\\}$: sums, differences and products stay rational; for $a+ib\\ne0$, $\\frac{1}{a+ib}=\\frac{a}{a^2+b^2}-i\\frac{b}{a^2+b^2}$ has rational parts → subfield."
+        },
+        {
+          "title": "S3 fails",
+          "body": "The closed unit disc is not closed under addition: $1+1=2$ with $|2|^2=4>1$. (Inverses also fail: $\\frac12$ is in it but $2$ is not.) Not a subfield."
+        }
+      ],
+      "answer": {
+        "value": "S1 and S2 — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "S2 ($\\mathbb{Q}(i)$) is also a subfield."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "S3 is not closed under addition."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "S3 fails; S1 is missing."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Both the reals and the Gaussian rationals are subfields."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting to check closure under inverses for S2 — it does hold after rationalising the denominator."
+      ],
+      "verification": "Counter-example for S3: $\\tfrac{1}{2}\\cdot$ inverse $=2\\notin$ S3; for S2, $\\frac{1}{1+2i}=\\frac{1-2i}{5}$ has rational parts."
+    },
+    "it-2008-it-27": {
+      "approach": "Handshake lemma: a graph has an even number of odd-degree vertices, so the new vertex gets even degree and every old odd vertex becomes even.",
+      "concepts": [
+        "Handshake lemma",
+        "Eulerian graph"
+      ],
+      "steps": [
+        {
+          "title": "Degree of the new vertex",
+          "body": "$\\sum \\deg = 2|E|$ is even, so the number $k$ of odd-degree vertices is even. $v$ is joined to exactly these $k$ vertices, so $\\deg(v)=k$ is even."
+        },
+        {
+          "title": "Old vertices",
+          "body": "Each odd-degree vertex gains exactly one edge → becomes even. Even-degree vertices are untouched. So **every** vertex has even degree, which is the Euler condition (the intended answer; connectivity is assumed)."
+        }
+      ],
+      "answer": {
+        "value": "All degrees become even → **Euler** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Degrees can still differ (e.g. 2 and 4), so not necessarily regular."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Only edges to odd vertices are added; the graph need not be complete."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "All-even degrees do not guarantee a Hamiltonian cycle."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Every vertex, including $v$, has even degree."
+        }
+      ],
+      "pitfalls": [
+        "Worrying that $\\deg(v)$ might be odd — the handshake lemma rules this out."
+      ],
+      "verification": "Path $a-b-c$: odd vertices $a,c$; add $v$ adjacent to both → cycle $a b c v$, all degrees 2, Eulerian. ✓"
+    },
+    "it-2008-it-28": {
+      "approach": "A poset is a lattice iff every pair has a least upper bound and a greatest lower bound. Look for a pair with two incomparable minimal upper (or maximal lower) bounds.",
+      "concepts": [
+        "Lattice",
+        "Hasse diagram",
+        "LUB / GLB"
+      ],
+      "steps": [
+        {
+          "title": "(i) and (iv)",
+          "body": "(i) is the diamond $M_2=\\{0,a,b,1\\}$: $a\\vee b=1$, $a\\wedge b=0$ → lattice.\n\n(iv) is the pentagon $N_5$ (top, a 2-chain on the left, one element on the right, bottom): every pair has a unique join and meet → lattice (not distributive, but still a lattice)."
+        },
+        {
+          "title": "(ii) fails",
+          "body": "Let the two middle elements be $a,b$. Both the inner node $c$ and the bottom node $d$ lie below $a$ and $b$, and $c,d$ are incomparable (no edge between them). So $\\{a,b\\}$ has two maximal lower bounds → no GLB → not a lattice."
+        },
+        {
+          "title": "(iii) fails",
+          "body": "Upper-middle $a,b$ are both above each lower-middle $c,d$ (all four cross edges). Lower bounds of $\\{a,b\\}$: $c$, $d$, bottom — $c$ and $d$ are incomparable maximal ones → no GLB. Not a lattice."
+        }
+      ],
+      "answer": {
+        "value": "(i) and (iv) only — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the diamond and the pentagon are lattices."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both (ii) and (iii) have a pair without a GLB."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(iii) is not a lattice: the upper-middle pair has two incomparable maximal lower bounds."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(ii) is not a lattice — its two middle elements have no greatest lower bound."
+        }
+      ],
+      "pitfalls": [
+        "Rejecting $N_5$ because it is non-distributive — it is still a lattice.",
+        "In (ii) the bottom point is not below the inner point, so there is no least element."
+      ],
+      "verification": "(ii) also has no least element at all (two minimal elements), and a finite lattice must have one — consistent."
+    },
+    "it-2008-it-29": {
+      "approach": "$\\det M=0$ means rank $<n$: rows are linearly dependent, columns are linearly dependent (row rank = column rank, $\\det M^T=\\det M$), $MX=0$ has a non-trivial solution, and $M^{-1}$ does not exist.",
+      "concepts": [
+        "Determinant and rank",
+        "Linear dependence",
+        "Homogeneous systems"
+      ],
+      "steps": [
+        {
+          "title": "S3 and S4",
+          "body": "$\\det M=0\\iff M$ is singular: $MX=0$ has a non-zero solution (**S3 true**) and $M$ has no inverse (**S4 false**)."
+        },
+        {
+          "title": "S1 and S2 are equivalent",
+          "body": "$\\det M=0$ makes the rows linearly dependent, so some row is a combination of the others (the intended reading of S1). Because $\\det M^T=\\det M=0$, exactly the same holds for the columns. Hence S1 and S2 stand or fall together: any option that accepts S1 must accept S2.\n\n(Read literally — \"**each** row\" — neither holds, e.g. $\\begin{pmatrix}1&0\\\\0&0\\end{pmatrix}$: row 1 is not a multiple of the zero row. Under that strict reading only S3 holds and no option fits.)"
+        },
+        {
+          "title": "Pick the consistent option",
+          "body": "Under the intended (dependence) reading, S1, S2 and S3 are true → option **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "S1, S2 and S3 — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": false,
+        "keyNote": "Stored key is C (S1 and S3), taken from a web key. S1 and S2 are equivalent statements because $\\det M^T=\\det M$, so an option with S1 but not S2 is inconsistent; D is the only consistent choice. Flagged for review."
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Omits S1, which is equivalent to S2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "S4 is false — a matrix with zero determinant has no inverse."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Accepts row dependence but rejects the identical statement for columns; inconsistent since $\\det M^T=\\det M$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Rows dependent, columns dependent, and a non-trivial null space — all follow from $det M=0$."
+        }
+      ],
+      "pitfalls": [
+        "Treating rows and columns differently — row rank always equals column rank.",
+        "S4 is the classic trap: $\\det=0$ means **no** inverse."
+      ],
+      "verification": "$M=\\begin{pmatrix}1&2\\\\2&4\\end{pmatrix}$: row2 $=2\\cdot$row1, col2 $=2\\cdot$col1, $X=(2,-1)^T$ solves $MX=0$, no inverse — S1, S2, S3 hold, S4 fails."
+    },
+    "it-2008-it-30": {
+      "approach": "Apply $x_{n+1}=x_n-\\dfrac{f(x_n)}{f'(x_n)}$ twice with $f'(x)=2x-2$.",
+      "concepts": [
+        "Newton-Raphson method"
+      ],
+      "steps": [
+        {
+          "title": "First iteration",
+          "body": "$f(2)=4-4-1=-1$, $f'(2)=4-2=2$. $x_1=2-\\frac{-1}{2}=2.5$."
+        },
+        {
+          "title": "Second iteration",
+          "body": "$f(2.5)=6.25-5-1=0.25$, $f'(2.5)=5-2=3$. $x_2=2.5-\\frac{0.25}{3}=2.5-0.08333=2.41667\\approx2.417$."
+        }
+      ],
+      "answer": {
+        "value": "$x_2\\approx$ **2.417** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$2.5-0.25/3=2.41667\\to2.417$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Does not follow from the iteration (rounding error)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Does not follow from the iteration."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would need a correction of $0.075$; the actual one is $0.0833$."
+        }
+      ],
+      "pitfalls": [
+        "Using $f'(x)=2x$ (forgetting the $-2x$ term's derivative)."
+      ],
+      "verification": "True root $1+\\sqrt2=2.41421$; $x_2=2.41667$ approaches it from above as Newton does for a convex $f$. ✓"
+    },
+    "it-2008-it-31": {
+      "approach": "Find the minimum of each piece on its sub-interval, noting whether the endpoint at $x=\\tfrac32$ belongs to the piece.",
+      "concepts": [
+        "Piecewise functions",
+        "Monotonicity",
+        "Minimum vs infimum"
+      ],
+      "steps": [
+        {
+          "title": "First piece $(0,\tfrac32]$",
+          "body": "$\\frac{25}{8x}$ is decreasing, so its minimum is at $x=\\frac32$: $\\frac{25}{8\\cdot1.5}=\\frac{25}{12}=2\\frac1{12}$ (attained)."
+        },
+        {
+          "title": "Second piece $(\tfrac32,2]$",
+          "body": "$x+\\frac1x$ has derivative $1-\\frac1{x^2}>0$ for $x>1$, so it increases; values lie in $\\left(\\frac32+\\frac23,\\,2+\\frac12\\right]=\\left(2\\frac16,\\,2\\frac12\\right]$."
+        },
+        {
+          "title": "Compare",
+          "body": "$2\\frac1{12}<2\\frac16$, so the minimum of $f$ is $\\frac{25}{12}=2\\frac{1}{12}$."
+        }
+      ],
+      "answer": {
+        "value": "$\\min f=\\frac{25}{12}=2\\frac1{12}$ — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2$ is the minimum of $x+\\frac1x$ at $x=1$, but there $f=\\frac{25}{8}$ (first piece applies)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$f(\\tfrac32)=\\frac{25}{12}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$2\\frac16$ is the infimum of the second piece, not attained and larger than $2\\frac1{12}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2\\frac12=f(2)$, the maximum of the second piece."
+        }
+      ],
+      "pitfalls": [
+        "Applying AM-GM ($x+\\frac1x\\ge2$) without checking which piece is active at $x=1$."
+      ],
+      "verification": "Sample: $f(1.4)=\\frac{25}{11.2}=2.232$, $f(1.5)=2.083$, $f(1.6)=2.225$ — minimum near $1.5$."
+    },
+    "it-2008-it-32": {
+      "approach": "Identify the language of the given DFA (strings ending in $ab$); swapping final and non-final states of a complete DFA accepts the complement.",
+      "concepts": [
+        "DFA",
+        "Complement of a regular language"
+      ],
+      "given": "| state | a | b |\n|---|---|---|\n| →q0 | q1 | q0 |\n| q1 | q1 | q2 |\n| *q2 | q1 | q0 |",
+      "steps": [
+        {
+          "title": "What the states remember",
+          "body": "q1 = \"last symbol was $a$\", q2 = \"last two symbols were $ab$\", q0 = otherwise (empty or ends in $b$ not preceded by $a$). From q2, $a$ → q1 and $b$ → q0 (ends in $bb$). So the DFA accepts exactly the strings **ending in $ab$**."
+        },
+        {
+          "title": "Swap final states",
+          "body": "The DFA is complete, so interchanging final/non-final states accepts $\\Sigma^*-L$: all strings that **do not end with $ab$** (including $\\varepsilon$)."
+        }
+      ],
+      "answer": {
+        "value": "Strings that do not end with $ab$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Complement of \"ends with ab\"."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Excludes $\\varepsilon$, which the new DFA accepts (q0 becomes final); also accepts \"ab\" which the new DFA rejects."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"aba\" contains $ab$ (but does not end with it) and the new DFA accepts it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$b^*aa^*(ba)^*b^*$ does not contain $\\varepsilon$ yet the new DFA accepts it."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"does not end with ab\" with \"does not contain ab\"."
+      ],
+      "verification": "Trace \"aba\": q0→q1→q2→q1; q1 is final after swapping → accepted; \"aba\" does not end with $ab$ ✓."
+    },
+    "it-2008-it-33": {
+      "approach": "$L_1=\\{a^nb^nc^k: k\\ge1\\}$ and $L_2=\\{a^ib^{2i}\\}$ are both deterministic CFLs; every $L_1$ string has a $c$ while no $L_2$ string does.",
+      "concepts": [
+        "Context-free languages",
+        "Closure under union",
+        "DPDA"
+      ],
+      "steps": [
+        {
+          "title": "Classify each language",
+          "body": "$L_1$: push $a$'s, pop on $b$'s, then read $c^+$ → DCFL, and non-regular (pumping on $a^nb^n$). $L_2$: push two symbols per $a$ (or one per $a$, pop one per $bb$) → DCFL, non-regular."
+        },
+        {
+          "title": "Intersection",
+          "body": "Every word in $L_1$ contains at least one $c$ ($k\\ge1$); no word of $L_2$ contains $c$. So $L_1\\cap L_2=\\phi$. Together with \"$L_1$ is non-regular\", statement **(B)** is true."
+        }
+      ],
+      "answer": {
+        "value": "$L_1\\cap L_2=\\phi$ and $L_1$ is non-regular — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$L_1$ is a CFL (even a DCFL)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both parts are true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "CFLs are closed under union, so $L_1\\cup L_2$ is a CFL."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$L_2$ is accepted by a DPDA."
+        }
+      ],
+      "pitfalls": [
+        "Overlooking that $k\\ge1$ forces a $c$ in every $L_1$ word."
+      ],
+      "verification": "$\\varepsilon\\in L_2$ ($i=0$) but $\\varepsilon\\notin L_1$ since $k\\ge1$ — no common word, confirming the empty intersection."
+    },
+    "it-2008-it-34": {
+      "approach": "Find the language of each non-terminal: $A$ gives $0^*10^*$, so $AA$ gives two 1's with arbitrary 0's around them; $B$ gives $0^n10^{2n}$.",
+      "concepts": [
+        "Context-free grammars",
+        "Language of a grammar"
+      ],
+      "steps": [
+        {
+          "title": "Language of A",
+          "body": "$A\\to0A\\mid A0\\mid1$ adds 0's on either side of a single 1: $L(A)=\\{0^i10^j: i,j\\ge0\\}$. Hence $L(AA)=\\{0^i10^j10^k: i,j,k\\ge0\\}$."
+        },
+        {
+          "title": "Language of B",
+          "body": "$B\\to0B00\\mid1$: each use adds one 0 on the left and two on the right, so $L(B)=\\{0^n10^{2n}: n\\ge0\\}$."
+        },
+        {
+          "title": "Union",
+          "body": "$L(S)=\\{0^i10^j10^k\\}\\cup\\{0^n10^{2n}\\}$, which matches option **(B)** (the $n=0$ string \"1\" is the only nuance; B is clearly intended)."
+        }
+      ],
+      "answer": {
+        "value": "$\\{0^i10^j10^k\\}\\cup\\{0^n10^{2n}\\}$ — option **(B)**",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only the $B$ part; misses all strings with two 1's."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both parts of the language."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\{0^i10^j: i=j\\}$ is not generated — $A$ alone is never derived from $S$, and $AA$ always has two 1's."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Strings like \"00\" (no 1) are not generated; every generated string has one or two 1's."
+        }
+      ],
+      "pitfalls": [
+        "Thinking $A\\to0A\\mid A0$ keeps the 0's balanced — the two rules are applied independently."
+      ],
+      "verification": "\"0110\" $=A A$ with $A\\Rightarrow01$, $A\\Rightarrow10$ ✓; \"0010000\" from $B\\Rightarrow0B00\\Rightarrow00B0000\\Rightarrow0010000$ ✓."
+    },
+    "it-2008-it-35": {
+      "approach": "Finite languages are regular; parity counting needs only a 4-state DFA; palindromes need unbounded memory.",
+      "concepts": [
+        "Regular languages",
+        "Pumping lemma",
+        "Finite languages"
+      ],
+      "steps": [
+        {
+          "title": "L1 and L3 are regular",
+          "body": "$L_1$ has $n\\le10000$, so it is **finite** → regular. $L_3$ is recognised by a 4-state DFA tracking (parity of 0's, parity of 1's) → regular."
+        },
+        {
+          "title": "L2 is not regular",
+          "body": "For palindromes take $w=0^p10^p$; pumping $y=0^k$ in the first block gives $0^{p+k}10^p$, not a palindrome. So $L_2$ is non-regular."
+        }
+      ],
+      "answer": {
+        "value": "Only $L_2$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$L_3$ is regular (parity DFA)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$L_1$ is finite, hence regular."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$L_3$ is regular; $L_2$ is not."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Palindromes are the only non-regular language here."
+        }
+      ],
+      "pitfalls": [
+        "Seeing $0^m1^n$ with $m\\le n$ and calling it non-regular — the bound 10000 makes it finite."
+      ],
+      "verification": "Myhill-Nerode for $L_2$: the strings $0^i1$ are pairwise distinguishable by suffix $0^i$, giving infinitely many classes."
+    },
+    "it-2008-it-36": {
+      "approach": "Describe both machines: each accepts exactly the binary strings that contain the substring $11$.",
+      "concepts": [
+        "DFA/NFA language",
+        "Language equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Machine M1",
+          "body": "q0 loops on 0; on 1 go to q1. From q1, a 0 sends back to q0 (the run of 1's broke), a 1 reaches q2, which is final and loops on both symbols. So $L_1=$ strings containing $11$: $(0+1)^*11(0+1)^*$."
+        },
+        {
+          "title": "Machine M2",
+          "body": "NFA: p0 loops on $0,1$ (guess where 11 starts), then $1,1$ to p2, which loops on $0,1$. So $L_2=(0+1)^*11(0+1)^*$."
+        },
+        {
+          "title": "Compare",
+          "body": "$L_1=L_2$ — option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "$L_1=L_2=(0+1)^*11(0+1)^*$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both are \"contains 11\"."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not a proper subset — the languages are equal."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "They share e.g. \"11\"."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$L_1\\cup L_2=L_1$ since $L_2=L_1$."
+        }
+      ],
+      "pitfalls": [
+        "Reading M1's back edge as going to q1 instead of q0."
+      ],
+      "verification": "\"101\": M1 q0→q1→q0→q1 reject; M2 cannot read two consecutive 1's → reject. \"0110\": both accept."
+    },
+    "it-2008-it-37": {
+      "approach": "Read off when the state toggles vs holds, then use the JK rules: hold ⇔ $J=K=0$, toggle ⇔ $J=K=1$.",
+      "concepts": [
+        "JK flip-flop",
+        "Excitation table",
+        "XOR"
+      ],
+      "given": "| $xy$ | next state |\n|---|---|\n| 00, 11 | $Q$ (hold) |\n| 01, 10 | $\\overline{Q}$ (toggle) |",
+      "steps": [
+        {
+          "title": "Transitions",
+          "body": "From the diagram, both states keep their value on $xy\\in\\{00,11\\}$ and flip on $xy\\in\\{01,10\\}$. So $Q^+=Q\\oplus(x\\oplus y)$ — a toggle when $x\\oplus y=1$."
+        },
+        {
+          "title": "Choose J and K",
+          "body": "A JK flip-flop holds with $J=K=0$ and toggles with $J=K=1$. Hence $J=K=x\\oplus y$ (independent of $Q$)."
+        }
+      ],
+      "answer": {
+        "value": "$J=x\\oplus y$, $K=x\\oplus y$ — option **(D)**",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "XNOR would toggle on $00,11$ — the opposite behaviour."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$J\\ne K$ makes it set/reset, not toggle; e.g. $xy=00$, $Q=0$ gives $J=1,K=0\\Rightarrow Q^+=1$, wrong."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$xy=01$, $Q=1$: $J=1,K=0\\Rightarrow Q^+=1$, but it should toggle to 0."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Toggles exactly when $x\\ne y$."
+        }
+      ],
+      "pitfalls": [
+        "Using a different J/K for each state is allowed (don't-cares), but the given options must work in both states."
+      ],
+      "verification": "Check $J=K=x\\oplus y$ via $Q^+=J\\overline Q+\\overline K Q$: if $x\\oplus y=1$, $Q^+=\\overline Q$; if 0, $Q^+=Q$. ✓"
+    },
+    "it-2008-it-38": {
+      "approach": "With X pointing at the top element of an upward-growing stack, the source should read the top and then move X down (post-decrement), so the destination is the second element, which receives the sum.",
+      "concepts": [
+        "Addressing modes",
+        "Stack operations",
+        "Auto-increment / auto-decrement"
+      ],
+      "steps": [
+        {
+          "title": "ADD (X)-, (X)",
+          "body": "Source $(X)-$: operand $=M[X]$ (top), then $X\\leftarrow X-1$. Destination $(X)$: now $M[X]$ is the second element. $M[X]\\leftarrow \\text{top}+\\text{second}$, and X points to it. Two items popped, the sum pushed — exactly what is needed."
+        },
+        {
+          "title": "Why the others fail",
+          "body": "- (B) $(X),(X)-$: both operands read the same location (top), giving $2\\cdot\\text{top}$.\n- (C) $-(X),(X)+$: source is the element below top, destination is that same location, then X moves up — adds one element to itself.\n- (D) $-(X),(X)$: again both operands are the same location after the pre-decrement."
+        }
+      ],
+      "answer": {
+        "value": "**ADD (X)-, (X)** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Reads top, moves X down, adds into the second element — correct pop-pop-push."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Source and destination are the same location (top) — computes 2·top."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Source and destination coincide after the pre-decrement; X then moves up."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Source and destination coincide after the pre-decrement."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the side effect of the source operand happens before the destination address is formed."
+      ],
+      "verification": "Stack (bottom→top) 5, 7 with X at 7: source 7, X→5's slot, $M\\leftarrow7+5=12$; stack now 12 with X on it ✓."
+    },
+    "it-2008-it-39": {
+      "approach": "Horizontal microcode: one bit per control signal, plus a next-address field wide enough to address every micro-instruction in the control memory.",
+      "concepts": [
+        "Horizontal microprogramming",
+        "Control memory addressing"
+      ],
+      "steps": [
+        {
+          "title": "Control memory size",
+          "body": "Micro-instructions $=140\\times7=980$. Address bits $=\\lceil\\log_2 980\\rceil=10$ ($2^{9}=512<980\\le1024=2^{10}$). So the control address register is **10 bits**."
+        },
+        {
+          "title": "Control word",
+          "body": "Horizontal format: 125 signal bits + 10-bit next-address field $=135$ bits."
+        }
+      ],
+      "answer": {
+        "value": "Control word **135** bits, CAR **10** bits — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Omits the address field and under-sizes the CAR (7 bits address only 128 words)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits the 10-bit address field from the control word."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "9 bits address only 512 < 980 micro-instructions."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$125+10=135$ and $\\lceil\\log_2980\\rceil=10$."
+        }
+      ],
+      "pitfalls": [
+        "Using $\\log_2 140$ or $\\log_2 7$ instead of $\\log_2(140\\cdot7)$."
+      ],
+      "verification": "$2^{10}=1024\\ge980$ and $2^9=512<980$ ✓."
+    },
+    "it-2008-it-40": {
+      "approach": "Speedup $=\\dfrac{\\text{non-pipelined time per instruction}}{\\text{pipeline cycle time}}$ for many instructions; cycle time $=$ slowest stage $+$ latch delay.",
+      "concepts": [
+        "Pipeline speedup",
+        "Clock period with latch overhead"
+      ],
+      "steps": [
+        {
+          "title": "Times",
+          "body": "Non-pipelined: $\\frac{1}{100\\text{ MHz}}=10$ ns per instruction. Pipeline cycle $=\\max(2.5,1.5,2,1.5,2.5)+0.5=3$ ns."
+        },
+        {
+          "title": "Speedup",
+          "body": "$\\frac{10}{3}=3.33$."
+        }
+      ],
+      "answer": {
+        "value": "**3.33** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would need a $10/4.5=2.22$ ns cycle, shorter than even the slowest stage."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\frac{10}{2.5}=4$ ignores the 0.5 ns latch delay."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\frac{10}{3}=3.33$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would need a $3.33$ ns cycle; the actual cycle is $2.5+0.5=3$ ns."
+        }
+      ],
+      "pitfalls": [
+        "Using the sum of stage delays (10 ns) as the pipeline cycle.",
+        "Forgetting the latch delay."
+      ],
+      "verification": "For $N$ instructions: $\\frac{10N}{3(N+4)}\\to\\frac{10}{3}$ as $N\\to\\infty$ ✓."
+    },
+    "it-2008-it-41": {
+      "approach": "Convert each address to a page number ($\\lfloor a/16\\rfloor$), then simulate LRU with 4 frames.",
+      "concepts": [
+        "LRU page replacement",
+        "Page number from virtual address"
+      ],
+      "given": "| addresses | 0,4,8 | 20,24 | 36,44 | 12 | 68,72 | 80,84 | 28 | 32 | 88,92 |\n|---|---|---|---|---|---|---|---|---|---|\n| page | 0,0,0 | 1,1 | 2,2 | 0 | 4,4 | 5,5 | 1 | 2 | 5,5 |",
+      "steps": [
+        {
+          "title": "Page numbers",
+          "body": "Page size 16 B, so page $=\\lfloor a/16\\rfloor$: e.g. $44/16\\to2$, $68/16\\to4$, $84/16\\to5$, $28/16\\to1$, $32/16\\to2$. Reference string: $0,0,0,1,1,2,2,0,4,4,5,5,1,2,5,5$.",
+          "scene": {
+            "upto": 0
+          }
+        },
+        {
+          "title": "Fill the frames",
+          "body": "$0$ F, $1$ F, $2$ F, $0$ hit, $4$ F → frames $\\{0,1,2,4\\}$, 4 faults.",
+          "scene": {
+            "upto": 10
+          }
+        },
+        {
+          "title": "First replacement",
+          "body": "Page $5$: least recently used is $1$ (last used at ref 5) → evict 1. Frames $\\{0,2,4,5\\}$, 5 faults.",
+          "scene": {
+            "upto": 12
+          }
+        },
+        {
+          "title": "Pages 1 and 2 come back",
+          "body": "$1$: LRU is $2$ (ref 7) → evict 2, frames $\\{0,1,4,5\\}$ (6 faults). $2$: LRU is $0$ (ref 8) → evict 0, frames $\\{1,2,4,5\\}$ (7 faults).",
+          "scene": {
+            "upto": 14
+          }
+        },
+        {
+          "title": "Finish",
+          "body": "$5,5$ are hits. Total **7 faults**, final pages **1, 2, 4, 5**.",
+          "scene": {
+            "upto": 16
+          }
+        }
+      ],
+      "answer": {
+        "value": "**7** faults; pages **1, 2, 4, 5** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Page 3 is never referenced, so it cannot be in memory."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "7 faults, final set {1, 2, 4, 5}."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Right final set but one fault too many (often from treating address 12 as a new page)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Page 3 is never referenced; fault count too high."
+        }
+      ],
+      "pitfalls": [
+        "Simulating on raw addresses instead of page numbers.",
+        "Address 12 is on page 0 (not 1) — it is a hit."
+      ],
+      "verification": "Distinct pages: 0,1,2,4,5 (5 compulsory faults) + 2 re-loads (pages 1 and 2) = 7 ✓.",
+      "animation": {
+        "kind": "paging",
+        "policy": "LRU",
+        "frames": 4,
+        "refs": [
+          0,
+          0,
+          0,
+          1,
+          1,
+          2,
+          2,
+          0,
+          4,
+          4,
+          5,
+          5,
+          1,
+          2,
+          5,
+          5
+        ],
+        "upto": 0,
+        "expectFaults": 7
+      }
+    },
+    "it-2008-it-42": {
+      "approach": "Append $Q_{-1}=0$ to the multiplier and scan bit pairs $(Q_i,Q_{i-1})$: $10$ ⇒ subtract, $01$ ⇒ add, $00/11$ ⇒ shift only. The count of operations equals the number of bit transitions.",
+      "concepts": [
+        "Booth's algorithm",
+        "Bit-pair recoding"
+      ],
+      "steps": [
+        {
+          "title": "Write the pairs",
+          "body": "Multiplier $0111\\,0111\\,1011\\,1101$ with $Q_{-1}=0$:\n\n| bit $i$ | 0 | 1 | 2 | 3–5 | 6 | 7 | 8–10 | 11 | 12 | 13–14 | 15 |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n| $(Q_i,Q_{i-1})$ | 10 | 01 | 10 | 11 | 01 | 10 | 11 | 01 | 10 | 11 | 01 |\n| op | sub | add | sub | – | add | sub | – | add | sub | – | add |"
+        },
+        {
+          "title": "Count",
+          "body": "Subtractions at $i=0,2,7,12$ (4); additions at $i=1,6,11,15$ (4). Total $4+4=8$."
+        }
+      ],
+      "answer": {
+        "value": "**8** additions/subtractions — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Undercounts: misses the transitions next to the isolated 0 bits."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "4 subtractions + 4 additions = 8 transitions."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Overcounts; Booth performs one operation per bit transition, and there are only 8."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12 is the number of 1 bits — the additions of plain shift-and-add, not Booth."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the implicit $Q_{-1}=0$ (it makes the LSB pair $10$ a subtraction)."
+      ],
+      "verification": "Recoding: $Q=2^{15}-2^{12}+2^{11}-2^7+2^6-2^2+2^1-2^0=32768-4096+2048-128+64-4+2-1=30653$, and $0111011110111101_2=30653$ ✓ (8 non-zero digits)."
+    },
+    "it-2008-it-43": {
+      "approach": "Radix sort costs $\\Theta(d\\,(n+b))$ for $d$ digits in base $b$. With a fixed base, an integer up to $n^k$ has $d=\\Theta(\\log n^k)=\\Theta(k\\log n)=\\Theta(\\log n)$ digits.",
+      "concepts": [
+        "Radix sort",
+        "Number of digits"
+      ],
+      "steps": [
+        {
+          "title": "Number of digits",
+          "body": "Values lie in $(n^{k/2},n^k]$, so each has $\\Theta(\\log_b n^k)=\\Theta(k\\log n)$ digits in a constant base $b$ — and at least $\\Theta(\\tfrac{k}{2}\\log n)$, so the lower range bound prevents fewer digits."
+        },
+        {
+          "title": "Total time",
+          "body": "Each pass is counting sort: $\\Theta(n+b)=\\Theta(n)$. Total $\\Theta(k\\log n)\\cdot\\Theta(n)=\\Theta(n\\log n)$ since $k$ is a constant."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n\\log n)$ — option **(C)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Requires a base of order $n$; with the standard fixed-base radix sort this is not the cost."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same as (A) since $k$ is constant; would need base $\\Theta(n)$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\Theta(\\log n)$ passes of $\\Theta(n)$ each."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Far too large; no quadratic step exists."
+        }
+      ],
+      "pitfalls": [
+        "If the base is chosen as $n$, then $d=k$ and the time is $\\Theta(kn)=\\Theta(n)$ — the question's intended model uses a fixed base, which is why $\\Theta(n)$ and $\\Theta(kn)$ (identical for constant $k$) are not the answer."
+      ],
+      "verification": "Sanity: options A and B are the same class for constant $k$, so neither can be the unique answer — consistent with C."
+    },
+    "it-2008-it-44": {
+      "approach": "Unroll the recurrence: each level contributes exactly $\\sqrt n$, there are $\\log n$ levels, and the leaves contribute $\\sqrt n\\,T(1)$.",
+      "concepts": [
+        "Recurrence unrolling",
+        "Master theorem (case 2)"
+      ],
+      "steps": [
+        {
+          "title": "Level cost",
+          "body": "At depth $i$ there is a factor $(\\sqrt2)^i$ and the term $\\sqrt{n/2^i}$: $(\\sqrt2)^i\\cdot\\frac{\\sqrt n}{(\\sqrt2)^i}=\\sqrt n$."
+        },
+        {
+          "title": "Sum",
+          "body": "With $n=2^m$: $T(n)=\\sum_{i=0}^{m-1}\\sqrt n+(\\sqrt2)^mT(1)=m\\sqrt n+\\sqrt n=\\sqrt n(\\log n+1)$."
+        }
+      ],
+      "answer": {
+        "value": "$T(n)=\\sqrt n(\\log n+1)$ — option **(A)**",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exact closed form."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Drops the leaf term $(\\sqrt2)^{\\log n}T(1)=\\sqrt n$; fails at $n=1$ ($0\\ne1$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Off by a factor of 2 in the log term and missing the leaf term."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong power of $n$."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the base case contribution $(\\sqrt2)^{\\log n}=\\sqrt n$."
+      ],
+      "verification": "$n=2$: $T(2)=\\sqrt2\\cdot1+\\sqrt2=2\\sqrt2$; formula $\\sqrt2(1+1)=2\\sqrt2$ ✓. $n=4$: $T(4)=\\sqrt2\\cdot2\\sqrt2+2=6$; formula $2(2+1)=6$ ✓."
+    }
+  }
+}
