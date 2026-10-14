@@ -1,0 +1,101 @@
+{
+  "paper": "it-2005",
+  "fixes": [
+    {
+      "id": "it-2005-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "By progressively querying routers about the next router on the path to B using ICMP packets, starting with the first router"
+        },
+        {
+          "l": "B",
+          "t": "By requiring each router to append the address to the ICMP packet as it is forwarded to B. The list of all routers en-route to B is returned by 13 in an ICMP reply packet"
+        },
+        {
+          "l": "C",
+          "t": "By ensuring that an ICMP reply packet is returned to A by each router en-route to B, in the ascending order of their hop distance from A"
+        },
+        {
+          "l": "D",
+          "t": "By locally computing the shortest path from A to B"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "By progressively querying routers about the next router on the path to B using ICMP packets, starting with the first router"
+        },
+        {
+          "l": "B",
+          "t": "By requiring each router to append the address to the ICMP packet as it is forwarded to B. The list of all routers en-route to B is returned by B in an ICMP reply packet"
+        },
+        {
+          "l": "C",
+          "t": "By ensuring that an ICMP reply packet is returned to A by each router en-route to B, in the ascending order of their hop distance from A"
+        },
+        {
+          "l": "D",
+          "t": "By locally computing the shortest path from A to B"
+        }
+      ],
+      "reason": "OCR misprint: \"13\" is \"B\".",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-26",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "Traceroute sends probes with TTL 1, 2, 3, ...; each router en route returns ICMP Time Exceeded to A, in ascending hop order (option C). Previous key A (routers queried about the next router) does not describe traceroute. Previous key was solver-derived, not official.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-26",
+      "field": "reviewNote",
+      "before": "Option B text 'returned by 13' is a misprint of 'returned by B'. A vs C debated; official key taken as A.",
+      "after": "Key changed A -> C on a technical argument: traceroute uses increasing TTL so each router returns ICMP Time Exceeded in ascending hop order (C); A (\"querying routers about the next router\") is not how it works. No reliable official 2005 IT key located; some sources give A. Verify.",
+      "reason": "Updated after independent solution.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-43",
+      "field": "reviewNote",
+      "before": "Figure is blurred; circuit read as D flip-flops with the connections in alt. Answer depends on interpreting 'end of the third cycle' as the state after the clock edges of the first two cycles; option tables read column-wise per cycle.",
+      "after": "Figure redrawn from scan. Options are read row-per-cycle; the unique answer A follows only if z is read during cycle 3 (after the clock edges of cycles 1 and 2); after the third edge every option gives z = 0.",
+      "reason": "Corrected description of how options are read.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-45",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2005/cs-45-1.png",
+          "alt": "Table with rows I1-I4 and columns T1-T5 listing the control signals generated in each step.",
+          "svg": "it-2005/cs-45-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure is just the scanned table, which is already reproduced as a markdown table in the text.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-46",
+      "field": "subject",
+      "before": "ga",
+      "after": "dl",
+      "reason": "Digital-logic fault model, not general aptitude.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-46",
+      "field": "topic",
+      "before": "quant",
+      "after": "combinational",
+      "reason": "Stuck-at faults in logic circuits.",
+      "source": "pdf"
+    }
+  ]
+}
