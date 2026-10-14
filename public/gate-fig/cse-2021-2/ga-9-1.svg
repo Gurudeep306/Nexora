@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 400" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="currentColor" stroke="none">
+<text x="52" y="335.0" text-anchor="end">0</text>
+<text x="52" y="292.1" text-anchor="end">50</text>
+<text x="52" y="249.3" text-anchor="end">100</text>
+<text x="52" y="206.4" text-anchor="end">150</text>
+<text x="52" y="163.6" text-anchor="end">200</text>
+<text x="52" y="120.7" text-anchor="end">250</text>
+<text x="52" y="77.9" text-anchor="end">300</text>
+<text x="52" y="35.0" text-anchor="end">350</text>
+</g>
+<defs><pattern id="ga9h" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" stroke="currentColor" stroke-width="2.5"/></pattern></defs>
+<rect x="60" y="30.0" width="480" height="300" stroke-width="1.5"/>
+<rect x="80" y="244.3" width="58" height="85.7" fill="url(#ga9h)" stroke-width="1.5"/>
+<rect x="138" y="124.3" width="58" height="205.7" fill="currentColor" stroke-width="1.5"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="currentColor" stroke="none" text-anchor="middle"><text x="109" y="237.3">100</text><text x="167" y="117.3">240</text><text x="140" y="354" font-size="16">Year 1</text></g>
+<rect x="240" y="158.6" width="58" height="171.4" fill="url(#ga9h)" stroke-width="1.5"/>
+<rect x="298" y="76.3" width="58" height="253.7" fill="currentColor" stroke-width="1.5"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="currentColor" stroke="none" text-anchor="middle"><text x="269" y="151.6">200</text><text x="327" y="69.3">296</text><text x="300" y="354" font-size="16">Year 2</text></g>
+<rect x="400" y="72.9" width="58" height="257.1" fill="url(#ga9h)" stroke-width="1.5"/>
+<rect x="458" y="150.0" width="58" height="180.0" fill="currentColor" stroke-width="1.5"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="14" fill="currentColor" stroke="none" text-anchor="middle"><text x="429" y="65.9">300</text><text x="487" y="143.0">210</text><text x="460" y="354" font-size="16">Year 3</text></g>
+<rect x="170" y="372" width="14" height="14" fill="url(#ga9h)" stroke-width="1.2"/><rect x="345" y="372" width="14" height="14" fill="currentColor" stroke-width="1.2"/>
+<g font-family="Arial, Helvetica, sans-serif" font-size="15" fill="currentColor" stroke="none"><text x="190" y="384">Number of units</text><text x="365" y="384">Net Profit (₹)</text></g>
+</svg>
