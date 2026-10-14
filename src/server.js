@@ -39,6 +39,7 @@ const { createAuthRouter } = require("./routes/auth");
 const { createLearningRouter } = require("./routes/learning");
 const { createLearnRouter } = require("./routes/learn");
 const { createGateRouter } = require("./routes/gate");
+const { createGateMeRouter } = require("./routes/gate-me");
 const { createStudioRouter } = require("./routes/studio");
 const { createAgentRouter } = require("./routes/agent");
 const { weaknessAnalysis } = require("./ai/data");
@@ -2527,7 +2528,7 @@ async function calcStreak(username = me()) {
       [username],
     ),
     all(
-      "SELECT date FROM daily_activity WHERE username=? AND problems_solved > 0 AND date >= date('now','-400 days') ORDER BY date DESC",
+      "SELECT date FROM daily_activity WHERE username=? AND (problems_solved > 0 OR COALESCE(gate_attempts,0) > 0) AND date >= date('now','-400 days') ORDER BY date DESC",
       [username],
     ),
   ]);
@@ -2588,7 +2589,7 @@ async function streaksFor(usernames) {
     const rows = await all(
       `SELECT username, date FROM daily_activity
        WHERE username IN (${chunk.map(() => "?").join(",")})
-         AND problems_solved > 0 AND date >= date('now','-400 days')
+         AND (problems_solved > 0 OR COALESCE(gate_attempts,0) > 0) AND date >= date('now','-400 days')
        ORDER BY username, date DESC`,
       chunk,
     );
@@ -5682,6 +5683,8 @@ app.use(createLearnRouter({ get, all, run }));
 
 // GATE CSE / IT / DA past-year question bank
 app.use(createGateRouter());
+// GATE learning platform: attempts, progress, review, tests, plan, leaderboard
+app.use(createGateMeRouter());
 
 // ForgeBuilder routes
 app.use("/api/forge", createForgeRouter({ all, get, run }));
