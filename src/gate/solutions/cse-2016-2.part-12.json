@@ -1,0 +1,1169 @@
+{
+  "paper": "cse-2016-2",
+  "version": 2,
+  "solutions": {
+    "cse-2016-2-cs-13": {
+      "approach": "Evaluate each algorithm on already-sorted input with its standard textbook implementation, then pick the option whose set of true statements matches.",
+      "concepts": [
+        "Quicksort worst case",
+        "Insertion sort best case",
+        "Merge sort"
+      ],
+      "steps": [
+        {
+          "title": "Quicksort (I)",
+          "body": "With the standard first/last-element pivot, sorted input makes every partition maximally unbalanced: sizes $n-1$ and $0$. So $T(n)=T(n-1)+\\Theta(n)=\\Theta(n^2)$. **I is true.**"
+        },
+        {
+          "title": "Merge sort (III)",
+          "body": "Merge sort always splits in half and merges every level: $T(n)=2T(n/2)+\\Theta(n)=\\Theta(n\\log n)$ regardless of input order. **III is false.**"
+        },
+        {
+          "title": "Insertion sort (IV)",
+          "body": "Each new element is compared once with its left neighbour and stays put: $n-1$ comparisons, $\\Theta(n)$. **IV is true.**"
+        },
+        {
+          "title": "Bubble sort (II) and the option",
+          "body": "Bubble sort with the usual \"no swaps in a pass ⇒ stop\" check finishes after one pass, $\\Theta(n)$, so II is not claimed. The true set is $\\{\\text{I},\\text{IV}\\}$ → option **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "**I and IV only** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II assumes the unoptimised bubble sort; with the early-exit flag it is $\\Theta(n)$ on sorted input."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III is false: merge sort is $\\Theta(n\\log n)$ on every input."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Drops I, which is true (end-pivot quicksort is $\\Theta(n^2)$ on sorted input), and keeps II, which fails for bubble sort with the early-exit check."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "I (unbalanced partitions) and IV (one comparison per element) are both true."
+        }
+      ],
+      "pitfalls": [
+        "Thinking merge sort adapts to sorted input — it does not.",
+        "Forgetting that sorted input is the worst case for end-pivot quicksort."
+      ],
+      "verification": "Matches the GATE 2016 (Set 2) answer key, which lists (D); the stored key (C) was corrected."
+    },
+    "cse-2016-2-cs-14": {
+      "approach": "Floyd-Warshall fills a table $d^{(k)}[i][j]$ from $d^{(k-1)}$ using optimal substructure and overlapping subproblems — the defining traits of dynamic programming.",
+      "concepts": [
+        "Floyd-Warshall",
+        "Dynamic programming"
+      ],
+      "steps": [
+        {
+          "title": "The recurrence",
+          "body": "$d^{(k)}_{ij}=\\min\\left(d^{(k-1)}_{ij},\\ d^{(k-1)}_{ik}+d^{(k-1)}_{kj}\\right)$: the best path using intermediates $\\{1,\\dots,k\\}$ is built from best paths using $\\{1,\\dots,k-1\\}$."
+        },
+        {
+          "title": "Classify it",
+          "body": "Subproblem answers are stored and reused $\\Theta(n)$ times each, filled bottom-up in $\\Theta(n^3)$ — this is **dynamic programming**, option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "**Dynamic Programming** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No locally-optimal irreversible choice is made (that is Dijkstra/Prim style)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Subproblems overlap heavily; they are not independent halves combined once."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Tabulated recurrence over intermediate vertex sets — DP."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "It clearly fits DP, so \"none\" is wrong."
+        }
+      ],
+      "verification": "Standard classification (CLRS ch. 25 presents it as a DP algorithm)."
+    },
+    "cse-2016-2-cs-15": {
+      "approach": "Cost each operation on a sorted doubly linked list (no random access), multiply by how many times it is done, and add; the decrease-key term dominates.",
+      "concepts": [
+        "Doubly linked list",
+        "Sorted list operations",
+        "Aggregate complexity"
+      ],
+      "given": "| Operation | Count | Cost each | Total |\n|---|---|---|---|\n| delete (pointer given) | $\\Theta(N)$ | $O(1)$ | $O(N)$ |\n| insert | $O(\\log N)$ | $O(N)$ | $O(N\\log N)$ |\n| find | $O(\\log N)$ | $O(N)$ | $O(N\\log N)$ |\n| decrease-key (pointer given) | $\\Theta(N)$ | $O(N)$ | $O(N^2)$ |",
+      "steps": [
+        {
+          "title": "Per-operation cost",
+          "body": "- **delete** with a pointer: relink prev/next, $O(1)$.\n- **insert** into a sorted list: walk to the position, $O(N)$ (no binary search on a list).\n- **find**: linear scan, $O(N)$.\n- **decrease-key** with a pointer: the key shrinks, so the node may have to move left past up to $N$ nodes to keep the list sorted, $O(N)$."
+        },
+        {
+          "title": "Add up",
+          "body": "$$O(N)\\cdot 1+O(\\log N)\\cdot O(N)+O(\\log N)\\cdot O(N)+\\Theta(N)\\cdot O(N)=O(N)+O(N\\log N)+O(N^2)=O(N^2).$$ Option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "$O(N^2)$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Ignores that a single find or decrease-key on a list is already linear."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would need decrease-key in $O(1)$, but the node must be repositioned to keep the list sorted."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The $\\Theta(N)$ decrease-keys at $O(N)$ each dominate: $O(N^2)$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Over-counts: no term contributes $N^2\\log N$."
+        }
+      ],
+      "pitfalls": [
+        "Assuming binary search works on a sorted linked list.",
+        "Treating decrease-key as $O(1)$ because a pointer is given — the pointer saves the search, not the re-positioning."
+      ],
+      "verification": "Dominant term check: $N\\cdot N=N^2$ exceeds $N\\log N$ for large $N$."
+    },
+    "cse-2016-2-cs-16": {
+      "approach": "Simplify the regular expression first: it denotes every string of length at least 1, which needs exactly two DFA states.",
+      "concepts": [
+        "Regular expression simplification",
+        "DFA minimisation"
+      ],
+      "steps": [
+        {
+          "title": "Simplify",
+          "body": "$(0+1)^*(0+1)(0+1)^*$ requires one symbol in the middle with anything around it, so it is $(0+1)^+$: all **non-empty** strings over $\\{0,1\\}$."
+        },
+        {
+          "title": "Build and minimise the DFA",
+          "body": "State $q_0$ (start, non-accepting, \"nothing read\") goes to $q_1$ on 0 or 1; $q_1$ (accepting) loops on 0,1. $\\varepsilon$ is rejected and every other string accepted, so $q_0\\not\\equiv q_1$ — they cannot merge, and one state cannot do it. Minimum = **2**."
+        }
+      ],
+      "answer": {
+        "value": "Minimum DFA has **2** states",
+        "number": 2,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting the three factors of the expression as three states.",
+        "Forgetting that the language excludes $\\varepsilon$, so the start state cannot accept."
+      ],
+      "verification": "Myhill–Nerode: classes are $\\{\\varepsilon\\}$ and all non-empty strings — exactly two."
+    },
+    "cse-2016-2-cs-17": {
+      "approach": "Write each language explicitly: $L_1=\\{a^nb^n\\}$ needs unbounded counting (not regular), while $L_2=(ab)^*$ is plainly regular.",
+      "concepts": [
+        "Regular languages",
+        "Pumping lemma",
+        "Context-free grammars"
+      ],
+      "steps": [
+        {
+          "title": "Identify the languages",
+          "body": "$S_1\\to aS_1b\\mid\\varepsilon$ gives $L_1=\\{a^nb^n: n\\ge 0\\}$. $S_2\\to abS_2\\mid\\varepsilon$ gives $L_2=\\{(ab)^n: n\\ge0\\}=(ab)^*$."
+        },
+        {
+          "title": "Decide regularity",
+          "body": "$L_1$: pump $a^pb^p$ — any $y$ inside the first $p$ symbols is all $a$'s, so $xy^2z$ has more $a$'s than $b$'s. Not regular, **P false**. $L_2=(ab)^*$ is a regular expression (also a right-linear grammar), **Q true**. Option **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "**P false, Q true** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$L_1=a^nb^n$ is the classic non-regular language."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed: it is $L_1$ that is non-regular and $L_2$ that is regular."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "P is false, Q is true."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$L_2=(ab)^*$ is regular; the grammar is right-linear."
+        }
+      ],
+      "verification": "$S_2\\to abS_2$ is right-linear, which always generates a regular language."
+    },
+    "cse-2016-2-cs-18": {
+      "approach": "Use two facts per statement: what class the complemented language falls in, and what that class is closed under.",
+      "concepts": [
+        "Closure properties",
+        "Recursive / RE languages",
+        "CFL decidability"
+      ],
+      "steps": [
+        {
+          "title": "I and II",
+          "body": "**I:** recursive languages are closed under complement, so $\\overline{L_3}$ is recursive ⊆ RE; RE is closed under union ⇒ $\\overline{L_3}\\cup L_4$ is RE. **True.**\n\n**II:** every CFL is recursive (membership is decidable, e.g. CYK), so $\\overline{L_2}$ is recursive; recursive ∪ recursive is recursive. **True.**"
+        },
+        {
+          "title": "III and IV",
+          "body": "**III:** $L_1^*$ is regular (closure under star); CFL ∩ regular is a CFL. **True.**\n\n**IV:** CFLs are not closed under complement, so $\\overline{L_2}$ need not be context-free; e.g. $L_1=\\varnothing$ and $L_2=\\overline{\\{a^nb^nc^n\\}}$ (a CFL) give $L_1\\cup\\overline{L_2}=\\{a^nb^nc^n\\}$, not a CFL. **False.**"
+        },
+        {
+          "title": "Pick the option",
+          "body": "True set $=\\{\\text{I},\\text{II},\\text{III}\\}$ → option **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "**I, II and III only** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses II and III, both of which follow from standard closure facts."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses II: a CFL’s complement is still recursive."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "IV is false — CFLs are not closed under complement."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Exactly I, II and III hold."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"complement of a CFL is not always CFL\" with \"not decidable\" — it is always recursive."
+      ],
+      "verification": "Counterexample for IV checked: $\\overline{\\{a^nb^nc^n\\}}$ is a known CFL, and its complement is not."
+    },
+    "cse-2016-2-cs-19": {
+      "approach": "Map each compiler phase to the tool or artefact it is built on.",
+      "concepts": [
+        "Compiler phases"
+      ],
+      "steps": [
+        {
+          "title": "Front-end phases",
+          "body": "- **Lexical analysis** — tokens are specified by **regular expressions** (iii).\n- **Top-down parsing** — traces a **leftmost derivation** (i)."
+        },
+        {
+          "title": "Later phases and the option",
+          "body": "- **Semantic analysis** — performs **type checking** (ii).\n- **Runtime environment** — manages **activation records** (iv).\n\nP–iii, Q–i, R–ii, S–iv → option **(B)**."
+        }
+      ],
+      "answer": {
+        "value": "P–iii, Q–i, R–ii, S–iv — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Lexical analysis does not use leftmost derivations, and semantic analysis does not manage activation records."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "All four pairs are correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Type checking is semantic, not lexical; top-down parsing is not regular-expression matching."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Lexical analysis is not about activation records; runtime environments are not regular expressions."
+        }
+      ],
+      "verification": "Only (B) has Q–i and R–ii together with P–iii."
+    },
+    "cse-2016-2-cs-20": {
+      "approach": "Increasing frames can increase faults (Belady’s anomaly) only for algorithms that are not stack algorithms; FIFO is the classic one.",
+      "concepts": [
+        "Belady's anomaly",
+        "Stack algorithms"
+      ],
+      "steps": [
+        {
+          "title": "Stack algorithms are safe",
+          "body": "LRU and OPT are **stack algorithms**: the set of pages held with $k$ frames is always a subset of those held with $k+1$ frames, so faults can never rise with more frames."
+        },
+        {
+          "title": "FIFO shows the anomaly",
+          "body": "On $1,2,3,4,1,2,5,1,2,3,4,5$ FIFO gives **9** faults with 3 frames but **10** with 4 frames. Option **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "**FIFO** — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LRU is a stack algorithm — immune to Belady’s anomaly."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "OPT is a stack algorithm and optimal for every frame count."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "MRU is also a stack algorithm (priority by recency), so it does not suffer the anomaly; FIFO is the intended answer."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "FIFO exhibits Belady’s anomaly."
+        }
+      ],
+      "verification": "Counted the classic reference string: 9 faults (3 frames) vs 10 faults (4 frames)."
+    },
+    "cse-2016-2-cs-21": {
+      "approach": "A B+ tree grows and shrinks only at the root, so every leaf is always at the same depth — that is what \"balanced\" means for it.",
+      "concepts": [
+        "B+ tree"
+      ],
+      "steps": [
+        {
+          "title": "How the height changes",
+          "body": "Insertions split full nodes and push a key **up**; only when the root splits is a new root created, deepening every leaf by one together. Deletions merge nodes and remove a level only at the root."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Height changes only at the root, hence all root-to-leaf paths have **equal** length → option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "All root-to-leaf paths are equal — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the B+ tree invariant: every leaf is at the same depth."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That is the AVL-style height-balance idea, not the B+ tree property."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Fan-out of siblings can differ widely (anything between ⌈m/2⌉ and m)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Leaf occupancy can differ widely too (half-full to full)."
+        }
+      ],
+      "verification": "Insertion/deletion only change height at the root, so depths remain identical."
+    },
+    "cse-2016-2-cs-22": {
+      "approach": "An edge $T_i\\to T_j$ means $T_i$ must precede $T_j$; for an acyclic graph a topological order respects every such edge, giving an equivalent serial schedule.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph",
+        "Topological sort"
+      ],
+      "steps": [
+        {
+          "title": "What the edges mean",
+          "body": "A conflict edge $T_i\\to T_j$ says some operation of $T_i$ conflicts with and comes before one of $T_j$, so $T_i$ must come first in any equivalent serial order."
+        },
+        {
+          "title": "Order the vertices",
+          "body": "$S$ serializable ⇒ graph is acyclic ⇒ a topological order exists and puts every $T_i$ before each $T_j$ it points to. Option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "**Topological order** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Respects every precedence edge."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A DFS visiting order can list a vertex before its predecessor (only reverse post-order is safe)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "BFS order from a vertex can also violate edges, e.g. reaching $T_j$ before another predecessor $T_k$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Indices carry no information about conflicts."
+        }
+      ],
+      "verification": "Example: edges $T_2\\to T_1$ — ascending index order $T_1,T_2$ would be wrong; topological order gives $T_2,T_1$."
+    },
+    "cse-2016-2-cs-23": {
+      "approach": "A signature is created with the signer’s private key, so anyone verifies it with the signer’s public key.",
+      "concepts": [
+        "Digital signature",
+        "Public-key cryptography"
+      ],
+      "steps": [
+        {
+          "title": "Signing",
+          "body": "Anarkali signs with her **private** key: $\\sigma=\\text{Sign}(K^{-}_{A},\\ h(m))$; only she can produce it."
+        },
+        {
+          "title": "Verifying",
+          "body": "Salim checks $\\text{Verify}(K^{+}_{A},\\ \\sigma)=h(m)$ — he needs **Anarkali's public key**. Option **(A)**."
+        }
+      ],
+      "answer": {
+        "value": "**Anarkali's public key** — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The signer’s public key undoes the private-key signing."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Salim’s public key is for encrypting messages to Salim, not for verifying Anarkali."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Salim’s private key decrypts messages sent to him; it plays no role in her signature."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Anarkali’s private key is secret — only she has it, and it is used to sign."
+        }
+      ],
+      "verification": "Signature verification must be possible for anyone, so it can only need a public key — the sender’s."
+    },
+    "cse-2016-2-cs-24": {
+      "approach": "Check each statement against CSMA/CD as used in classic Ethernet.",
+      "concepts": [
+        "CSMA/CD",
+        "Binary exponential backoff"
+      ],
+      "steps": [
+        {
+          "title": "Test each statement",
+          "body": "- (A) A station keeps sensing while sending — that is how it detects collisions. False.\n- (B) The jam signal tells all stations a collision occurred; padding is done by the PAD field. False.\n- (C) On detecting a collision the station aborts, sends a jam signal and backs off. False."
+        },
+        {
+          "title": "Check D",
+          "body": "(D) After the $n$-th collision a wait of $K\\cdot 51.2\\,\\mu s$ with $K\\in\\{0,\\dots,2^{\\min(n,10)}-1\\}$ is chosen at random; the growing range makes repeat collisions less likely. **True** → **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "Exponential backoff reduces repeat collisions — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Carrier sensing continues during transmission for collision detection."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Jamming announces a collision; short frames are padded by the PAD field."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The station stops transmitting once a collision is detected."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Random waits drawn from a doubling range spread retransmissions apart."
+        }
+      ],
+      "verification": "Each false statement contradicts a defining CSMA/CD rule."
+    },
+    "cse-2016-2-cs-25": {
+      "approach": "Follow what a freshly booted host must do: resolve the name, open the TCP connection, then send the HTTP request.",
+      "concepts": [
+        "DNS",
+        "TCP handshake",
+        "HTTP"
+      ],
+      "steps": [
+        {
+          "title": "Name resolution first",
+          "body": "After a restart the DNS cache is empty, so the host first sends a **DNS query** for the server's IP address."
+        },
+        {
+          "title": "Connect, then request",
+          "body": "1. With the IP, open a TCP connection: **TCP SYN** (three-way handshake).\n2. On the established connection send the **HTTP GET**.\n\nOption **(C)**."
+        }
+      ],
+      "answer": {
+        "value": "DNS query, TCP SYN, HTTP GET — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "HTTP needs an open TCP connection and an IP address first."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The HTTP GET cannot go before the TCP SYN."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Resolve, connect, request — correct order."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "SYN needs the destination IP, which DNS supplies."
+        }
+      ],
+      "pitfalls": [
+        "ARP for the gateway also happens, but it is not among the listed packets."
+      ],
+      "verification": "Each step depends on the previous one’s result (IP address, then connection)."
+    },
+    "cse-2016-2-cs-26": {
+      "approach": "Reflexivity is immediate ($a\\le a$); for transitivity find a chain where the \"or\" is satisfied by different coordinates in each link.",
+      "concepts": [
+        "Relations",
+        "Reflexive",
+        "Transitive"
+      ],
+      "steps": [
+        {
+          "title": "P: reflexive",
+          "body": "$(a,b)R(a,b)$ since $a\\le a$. **P true.**"
+        },
+        {
+          "title": "Q: transitive? — counterexample",
+          "body": "$(3,2)R(1,3)$ because $2\\le 3$; $(1,3)R(2,1)$ because $1\\le 2$. But $(3,2)R(2,1)$ needs $3\\le 2$ or $2\\le 1$ — both false. **Q false.** Option **(B)**."
+        }
+      ],
+      "answer": {
+        "value": "P true, Q false — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Q fails on the chain $(3,2),(1,3),(2,1)$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Reflexive holds and transitivity fails."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P is true, not false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "P is true."
+        }
+      ],
+      "pitfalls": [
+        "With \"and\" instead of \"or\" the relation would be transitive (product order) — the \"or\" breaks it."
+      ],
+      "verification": "Re-checked each link of the counterexample numerically."
+    },
+    "cse-2016-2-cs-27": {
+      "approach": "Test each formula with the standard quantifier laws; a two-element domain where $p$ and $q$ split the elements kills (D).",
+      "concepts": [
+        "Predicate logic",
+        "Quantifier distribution",
+        "Validity"
+      ],
+      "steps": [
+        {
+          "title": "A, B, C are valid",
+          "body": "- (A) $\\forall x\\,p\\Rightarrow\\forall x\\,q\\equiv\\neg\\forall x\\,p\\vee\\forall x\\,q\\equiv\\exists x\\,\\neg p\\vee\\forall x\\,q$ — an implication between equivalent formulas: valid.\n- (B) $\\exists x\\,p\\vee\\exists x\\,q\\equiv\\exists x(p\\vee q)$: valid.\n- (C) A witness of $p\\wedge q$ is a witness for each: valid."
+        },
+        {
+          "title": "D fails",
+          "body": "Domain $\\{1,2\\}$, $p=\\{1\\}$, $q=\\{2\\}$: $\\forall x(p\\vee q)$ is true, but $\\forall x\\,p$ and $\\forall x\\,q$ are both false. So (D) is **not valid** → option **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "Option (D) is not valid",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Valid: the consequent is just a rewriting of the antecedent."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Valid: $\\exists$ distributes over $\\vee$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Valid: one witness satisfies both conjuncts."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$\\forall$ does not distribute over $\\vee$ — counterexample above."
+        }
+      ],
+      "verification": "The counter-model makes the antecedent of D true and its consequent false."
+    },
+    "cse-2016-2-cs-28": {
+      "approach": "Model compounds as vertices and reactions as edges; the handshake lemma forces the degree sum in $U\\setminus S$ to be odd.",
+      "concepts": [
+        "Handshaking lemma",
+        "Degree parity"
+      ],
+      "steps": [
+        {
+          "title": "Degree sum",
+          "body": "Sum of all degrees $=2|E|$ is even. Vertices in $S$ contribute $9\\times 3=27$ (odd)."
+        },
+        {
+          "title": "Parity of the rest",
+          "body": "So $\\sum_{v\\in U\\setminus S}\\deg v=\\text{even}-27=\\text{odd}$. An odd sum needs at least one odd term ⇒ **II always true**. I and III are not forced (the 14 vertices may have a mix of parities, e.g. one odd and the rest even, or three odd). Option **(B)**."
+        }
+      ],
+      "answer": {
+        "value": "Only II — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only the number of odd-degree vertices is forced to be odd, not all of them."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The odd degree-sum forces at least one odd vertex."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Impossible: all even would make the sum even."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is always true."
+        }
+      ],
+      "verification": "Number of odd-degree vertices overall is even: 9 in $S$ ⇒ an odd number in $U\\setminus S$, hence ≥ 1."
+    },
+    "cse-2016-2-cs-29": {
+      "approach": "Use $13\\equiv -4\\pmod{17}$; its powers cycle quickly ($(-4)^2=16\\equiv-1$), so reduce the exponent mod 4.",
+      "concepts": [
+        "Modular exponentiation",
+        "Order of an element"
+      ],
+      "steps": [
+        {
+          "title": "Find the cycle",
+          "body": "$13\\equiv-4$. $(-4)^2=16\\equiv-1$, so $(-4)^4\\equiv 1\\pmod{17}$."
+        },
+        {
+          "title": "Reduce the exponent",
+          "body": "$99=4\\cdot 24+3$, so $13^{99}\\equiv(-4)^3=-64$. $-64+4\\cdot17=-64+68=4$. Answer **4**."
+        }
+      ],
+      "answer": {
+        "value": "$13^{99}\\bmod 17=$ **4**",
+        "number": 4,
+        "matchesKey": true
+      },
+      "shortcut": "Fermat gives exponent mod 16 ($99\\equiv3$): $13^3=2197=17\\cdot129+4$.",
+      "verification": "Fermat route: $13^{99}\\equiv13^{3}\\pmod{17}$ and $2197-2193=4$."
+    },
+    "cse-2016-2-cs-30": {
+      "approach": "Feed the $F$ units as early as possible: the two $U_G$ units produce two results every 3 ns, faster than the two $U_F$ units consume them (two every 5 ns), so $F$ is the bottleneck and only the first $G$ delay is exposed.",
+      "concepts": [
+        "Functional-unit scheduling",
+        "Bottleneck analysis"
+      ],
+      "given": "| Unit | Time | Copies | Jobs |\n|---|---|---|---|\n| $U_G$ | 3 ns | 2 | 10 |\n| $U_F$ | 5 ns | 2 | 10 |",
+      "steps": [
+        {
+          "title": "Schedule the G computations",
+          "body": "Two at a time: $G$ pairs finish at $3,6,9,12,15$ ns.",
+          "scene": {
+            "upto": 15,
+            "cursor": 15,
+            "caption": "G results ready in pairs at 3, 6, 9, 12, 15 ns"
+          }
+        },
+        {
+          "title": "Schedule the F computations",
+          "body": "Each $U_F$ takes 5 jobs back to back. First pair starts at 3 (inputs ready), then $8,13,18,23$ — every input is ready well before (latest needed at 23, ready at 15). Last pair ends at $23+5=28$ ns.",
+          "scene": {
+            "upto": 28,
+            "cursor": 28,
+            "caption": "F units busy from 3 to 28 ns without idling"
+          }
+        },
+        {
+          "title": "Lower bound confirms it",
+          "body": "No $F$ can start before $3$ ns, and the $U_F$ units need $10\\times5/2=25$ ns of work each pair-wise: $3+25=28$. Minimum time **28 ns**."
+        }
+      ],
+      "answer": {
+        "value": "Minimum time **28 ns**",
+        "number": 28,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Adding $3+5$ per item and dividing by 2 ($40$ ns) ignores overlap of G and F.",
+        "Using $15+5=20$ forgets that F is the slower stage."
+      ],
+      "verification": "Lower bound $3+25=28$ is achieved by the schedule, so it is optimal.",
+      "animation": {
+        "kind": "gantt",
+        "unit": "ns",
+        "lanes": [
+          {
+            "label": "UG1",
+            "bars": [
+              {
+                "start": 0,
+                "end": 3,
+                "label": "G1"
+              },
+              {
+                "start": 3,
+                "end": 6,
+                "label": "G3"
+              },
+              {
+                "start": 6,
+                "end": 9,
+                "label": "G5"
+              },
+              {
+                "start": 9,
+                "end": 12,
+                "label": "G7"
+              },
+              {
+                "start": 12,
+                "end": 15,
+                "label": "G9"
+              }
+            ]
+          },
+          {
+            "label": "UG2",
+            "bars": [
+              {
+                "start": 0,
+                "end": 3,
+                "label": "G2"
+              },
+              {
+                "start": 3,
+                "end": 6,
+                "label": "G4"
+              },
+              {
+                "start": 6,
+                "end": 9,
+                "label": "G6"
+              },
+              {
+                "start": 9,
+                "end": 12,
+                "label": "G8"
+              },
+              {
+                "start": 12,
+                "end": 15,
+                "label": "G10"
+              }
+            ]
+          },
+          {
+            "label": "UF1",
+            "bars": [
+              {
+                "start": 3,
+                "end": 8,
+                "label": "F1"
+              },
+              {
+                "start": 8,
+                "end": 13,
+                "label": "F3"
+              },
+              {
+                "start": 13,
+                "end": 18,
+                "label": "F5"
+              },
+              {
+                "start": 18,
+                "end": 23,
+                "label": "F7"
+              },
+              {
+                "start": 23,
+                "end": 28,
+                "label": "F9"
+              }
+            ]
+          },
+          {
+            "label": "UF2",
+            "bars": [
+              {
+                "start": 3,
+                "end": 8,
+                "label": "F2"
+              },
+              {
+                "start": 8,
+                "end": 13,
+                "label": "F4"
+              },
+              {
+                "start": 13,
+                "end": 18,
+                "label": "F6"
+              },
+              {
+                "start": 18,
+                "end": 23,
+                "label": "F8"
+              },
+              {
+                "start": 23,
+                "end": 28,
+                "label": "F10"
+              }
+            ]
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      }
+    },
+    "cse-2016-2-cs-31": {
+      "approach": "Add the bit widths of all fields, round up to whole bytes, multiply by 100.",
+      "concepts": [
+        "Instruction format",
+        "Byte alignment"
+      ],
+      "steps": [
+        {
+          "title": "Field widths",
+          "body": "Opcode: $\\lceil\\log_2 12\\rceil=4$ bits. Each register id: $\\log_2 64=6$ bits, three of them $=18$. Immediate $=12$. Total $=4+18+12=34$ bits."
+        },
+        {
+          "title": "Byte-align and multiply",
+          "body": "$\\lceil 34/8\\rceil=5$ bytes per instruction, so $100\\times5=$ **500** bytes."
+        }
+      ],
+      "answer": {
+        "value": "**500** bytes",
+        "number": 500,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $34/8=4.25$ bytes ⇒ 425 — byte alignment forces 5 bytes."
+      ],
+      "verification": "4 bytes = 32 bits < 34 ≤ 40 bits = 5 bytes."
+    },
+    "cse-2016-2-cs-32": {
+      "approach": "Index + offset bits always equal $\\log_2(\\text{cache size}/\\text{associativity})$, so the block size cancels and tag = address bits minus that.",
+      "concepts": [
+        "Set-associative cache",
+        "Address split"
+      ],
+      "steps": [
+        {
+          "title": "Index + offset",
+          "body": "Let block $=2^b$ bytes. Sets $=\\dfrac{2^{19}}{8\\cdot 2^b}=2^{16-b}$ ⇒ index $=16-b$, offset $=b$, so index + offset $=16$ bits for **any** block size."
+        },
+        {
+          "title": "Tag",
+          "body": "Tag $=40-16=$ **24** bits."
+        }
+      ],
+      "answer": {
+        "value": "Tag field = **24** bits",
+        "number": 24,
+        "matchesKey": true
+      },
+      "shortcut": "$\\log_2(512\\text{K}/8)=\\log_2 64\\text{K}=16$; $40-16=24$.",
+      "verification": "With 64 B blocks: offset 6, sets $2^{19}/(8\\cdot64)=1024$ ⇒ index 10; $40-10-6=24$ ✓."
+    },
+    "cse-2016-2-cs-33": {
+      "approach": "Express all stage delays with one unit, use the 3 GHz clock to fix the unit, split the longest stage and take the new maximum.",
+      "concepts": [
+        "Pipeline clock period",
+        "Stage balancing"
+      ],
+      "steps": [
+        {
+          "title": "Ratio of stages",
+          "body": "$\\tau_1=\\tfrac34\\tau_2=2\\tau_3$. Put $\\tau_1=6$: $\\tau_2=8$, $\\tau_3=3$. Longest stage $\\tau_2=8$ units."
+        },
+        {
+          "title": "Fix the unit from 3 GHz",
+          "body": "Clock period $=1/3$ ns $=8$ units ⇒ 1 unit $=\\tfrac{1}{24}$ ns."
+        },
+        {
+          "title": "Split and recompute",
+          "body": "$\\tau_2\\to4+4$. New stages $6,4,4,3$; max $=6$ units $=\\tfrac{6}{24}=0.25$ ns ⇒ $f=1/0.25=$ **4 GHz**."
+        }
+      ],
+      "answer": {
+        "value": "New frequency **4 GHz**",
+        "number": 4,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Splitting $\\tau_1$ (looks first in the equation) instead of the largest stage $\\tau_2$.",
+        "Doubling the frequency to 6 GHz — the new bottleneck is $\\tau_1$, not half of $\\tau_2$."
+      ],
+      "verification": "$f_{new}/f_{old}=8/6=4/3$, and $3\\times\\tfrac43=4$."
+    },
+    "cse-2016-2-cs-34": {
+      "approach": "In a min-heap every ancestor of 9 is smaller than 9, so at most 8 ancestors fit: depth ≤ 8; and a chain $1\\to2\\to\\dots\\to9$ achieves it since the heap has depths 0–9.",
+      "concepts": [
+        "Min-heap property",
+        "Complete binary tree height"
+      ],
+      "steps": [
+        {
+          "title": "Upper bound",
+          "body": "Heap order: every ancestor of 9 holds a smaller key. Only $1,\\dots,8$ are smaller, so 9 has at most 8 ancestors ⇒ depth $\\le 8$.",
+          "scene": {
+            "caption": "Ancestors of 9 must come from {1,…,8}"
+          }
+        },
+        {
+          "title": "It is achievable",
+          "body": "$1023=2^{10}-1$ nodes ⇒ a perfect tree with depths $0..9$. Place $1,2,\\dots,8$ down one path and 9 as the child of 8 (depth 8); fill every other slot with $10,\\dots,1023$ in heap order. All heap conditions hold. Maximum depth = **8**.",
+          "scene": {
+            "caption": "1→2→…→8→9: 9 sits at depth 8"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Maximum depth of 9 = **8**",
+        "number": 8,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 9 (the tree height) — 9 would then need 9 smaller ancestors."
+      ],
+      "verification": "Depth 8 < height 9, so the chain fits; depth 9 would need 9 keys below 9 — impossible.",
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": 1,
+          "children": [
+            {
+              "label": 2,
+              "children": [
+                {
+                  "label": 3,
+                  "children": [
+                    {
+                      "label": 4,
+                      "children": [
+                        {
+                          "label": 5,
+                          "children": [
+                            {
+                              "label": 6,
+                              "children": [
+                                {
+                                  "label": 7,
+                                  "children": [
+                                    {
+                                      "label": 8,
+                                      "children": [
+                                        {
+                                          "label": 9,
+                                          "tone": "accent"
+                                        },
+                                        {
+                                          "label": "≥10",
+                                          "id": "b8",
+                                          "tone": "muted"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "label": "≥10",
+                                      "id": "b7",
+                                      "tone": "muted"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "label": "≥10",
+                                  "id": "b6",
+                                  "tone": "muted"
+                                }
+                              ]
+                            },
+                            {
+                              "label": "≥10",
+                              "id": "b5",
+                              "tone": "muted"
+                            }
+                          ]
+                        },
+                        {
+                          "label": "≥10",
+                          "id": "b4",
+                          "tone": "muted"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "≥10",
+                      "id": "b3",
+                      "tone": "muted"
+                    }
+                  ]
+                },
+                {
+                  "label": "≥10",
+                  "id": "b2",
+                  "tone": "muted"
+                }
+              ]
+            },
+            {
+              "label": "≥10",
+              "id": "b1",
+              "tone": "muted"
+            }
+          ]
+        },
+        "caption": "Ancestors of 9 must come from {1,…,8}"
+      }
+    }
+  }
+}
