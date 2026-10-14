@@ -1,0 +1,1472 @@
+{
+  "paper": "cse-2011",
+  "version": 2,
+  "solutions": {
+    "cse-2011-cs-23": {
+      "approach": "Check the max-heap property (parent ≥ each child) together with the heap shape (complete binary tree, last level filled left to right) for every option.",
+      "concepts": [
+        "Max-heap property",
+        "Complete binary tree"
+      ],
+      "steps": [
+        {
+          "title": "Two conditions",
+          "body": "A binary max-heap must be (1) a **complete** binary tree and (2) satisfy $\\text{parent} \\ge \\text{child}$ for every edge."
+        },
+        {
+          "title": "Test each tree",
+          "body": "- (A): order holds ($10\\ge8,6$; $8\\ge4$; $6\\ge5,2$; $5\\ge1$) but node 8 has no right child while level 3 continues under 5 — **not complete**.\n- (B): complete; $10\\ge 8,6$; $8\\ge4,5$; $6\\ge1,2$ — **valid**.\n- (C): $5 < 8$ (child) — violates order.\n- (D): root $5 < 8$ and $8 < 10$ — this is a min-heap-like layout, not a max-heap."
+        }
+      ],
+      "answer": {
+        "value": "Tree (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Values are ordered correctly but the shape is not complete (a level-3 node exists while 8 lacks a right child)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Complete tree and every parent ≥ its children."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Node 5 has child 8 > 5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Root 5 < child 8, and 8 < child 10."
+        }
+      ],
+      "pitfalls": [
+        "Checking only the ordering and forgetting the heap must be a complete binary tree."
+      ],
+      "verification": "Checked all 6 parent–child edges of (B): 10≥8, 10≥6, 8≥4, 8≥5, 6≥1, 6≥2."
+    },
+    "cse-2011-cs-24": {
+      "approach": "Regular languages are closed under complement, so $\\Sigma^*-P$ is always regular; the given example breaks every other option.",
+      "concepts": [
+        "Closure of regular languages",
+        "Complement"
+      ],
+      "steps": [
+        {
+          "title": "Complement of P",
+          "body": "$P$ is regular and regular languages are closed under complement, so $\\Sigma^*-P$ is **always** regular."
+        },
+        {
+          "title": "Use the example for the rest",
+          "body": "With $P=p^*q^*$, $Q=\\{p^nq^n\\}$:\n- $P\\cap Q = Q$ — not regular.\n- $P-Q=\\{p^iq^j: i\\ne j\\}$ — not regular.\n- $\\Sigma^*-Q$ — complement of a non-regular language is non-regular."
+        }
+      ],
+      "answer": {
+        "value": "$\\Sigma^*-P$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Equals $Q$ when $Q\\subseteq P$; $\\{p^nq^n\\}$ is not regular."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\{p^iq^j\\mid i\\ne j\\}$ is not regular (its complement within $p^*q^*$ is $p^nq^n$)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Complement of a regular language is regular."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "If $\\Sigma^*-Q$ were regular then $Q$ would be regular too."
+        }
+      ],
+      "pitfalls": [
+        "Assuming a subset of a regular language is regular."
+      ],
+      "verification": "Each non-C option is falsified by the provided example."
+    },
+    "cse-2011-cs-25": {
+      "approach": "Each $L_i$ is computed once from the already-computed $L_{i+1}$ — an optimal-substructure recurrence filled bottom-up, i.e. dynamic programming.",
+      "concepts": [
+        "Dynamic programming",
+        "Optimal substructure"
+      ],
+      "steps": [
+        {
+          "title": "Recognise the recurrence",
+          "body": "$L_i$ depends only on $L_{i+1}$, which is stored and reused. Solving subproblems from $i=n-1$ down to $0$ and reusing them is **dynamic programming**."
+        },
+        {
+          "title": "Complexity",
+          "body": "One pass computing $L_i$ plus one pass for the max: $O(n)$ — linear. There is no bounding/pruning (branch and bound) and no splitting into independent halves (divide and conquer)."
+        }
+      ],
+      "answer": {
+        "value": "Dynamic programming",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Bottom-up recurrence with stored subproblem results — DP."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Complexity is linear, but there is no branch-and-bound search."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Complexity is linear, not non-linear, and no branch and bound."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Problem is not split into independent subproblems that are combined."
+        }
+      ],
+      "pitfalls": [
+        "Calling it greedy/divide-and-conquer because the loop is simple."
+      ],
+      "verification": "For $A=[1,3,2,4,5]$: $L=[2,1,3,2,1]$, max $3$ (run 2,4,5) — the table reuse is clear."
+    },
+    "cse-2011-cs-26": {
+      "approach": "$L_1=0^*1^*$ is regular, $L_2=0^n1^n$ is CFL, $L_3=0^n1^n0^n$ is not context-free — so the claim \"all three are CFL\" is false.",
+      "concepts": [
+        "Chomsky hierarchy",
+        "Pumping lemma for CFL"
+      ],
+      "steps": [
+        {
+          "title": "Classify each language",
+          "body": "- $L_1=0^*1^*$: regular.\n- $L_2=\\{0^n1^n\\}$: context-free (PDA pushes 0s, pops on 1s), not regular.\n- $L_3=\\{0^n1^n0^n\\}$: needs two equalities; by the CFL pumping lemma a pumped window of length $\\le p$ touches at most two of the three blocks, unbalancing them — **not context-free**, but decidable by a TM."
+        },
+        {
+          "title": "Check the statements",
+          "body": "(A) true (regular ⊂ CFL), (B) true, (D) true (TM recognises every CSL). (C) is false because of $L_3$."
+        }
+      ],
+      "answer": {
+        "value": "All the three languages are context free",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: $L_1$ is regular and $L_2$ is CFL, both accepted by PDAs."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: $L_1 = 0^*1^*$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "NOT true: $L_3$ is not context-free."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True: all three are decidable."
+        }
+      ],
+      "pitfalls": [
+        "Thinking a PDA can match three equal counts."
+      ],
+      "verification": "Pumping $0^p1^p0^p$: $vxy$ spans ≤ 2 blocks, so pumping changes at most two counts."
+    },
+    "cse-2011-cs-27": {
+      "approach": "Higher-precedence $\\uparrow$ binds first and groups right-to-left; then the lower $\\downarrow$ groups left-to-right: $(7\\downarrow(3\\uparrow(4\\uparrow3)))\\downarrow 2$.",
+      "concepts": [
+        "Operator precedence",
+        "Associativity",
+        "Parse tree"
+      ],
+      "steps": [
+        {
+          "title": "Group the ↑ chain",
+          "body": "$\\uparrow$ has higher precedence, so $3\\uparrow4\\uparrow3$ forms one operand. Right associativity: $3\\uparrow(4\\uparrow3)$."
+        },
+        {
+          "title": "Group the ↓ operators",
+          "body": "Now $7\\downarrow X\\downarrow 2$ with $X=3\\uparrow(4\\uparrow3)$. Left associativity: $(7\\downarrow X)\\downarrow 2$."
+        },
+        {
+          "title": "Read the tree",
+          "body": "Root $\\downarrow$ with right child $2$ and left child $\\downarrow(7,\\ \\uparrow(3,\\uparrow(4,3)))$ — this is tree (B)."
+        }
+      ],
+      "answer": {
+        "value": "$(7\\downarrow(3\\uparrow(4\\uparrow 3)))\\downarrow 2$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Makes $\\downarrow$ bind tighter than $\\uparrow$ (3↓2 at the bottom) and groups ↓ to the right."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct precedence and both associativities."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Groups ↑ left-associatively, $(3\\uparrow4)\\uparrow3$, and ↓ to the right."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Evaluates $7\\downarrow3$ first, giving ↓ higher precedence."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up which operator is right associative."
+      ],
+      "verification": "Fully parenthesised string of tree (B) reproduces the input order 7↓3↑4↑3↓2."
+    },
+    "cse-2011-cs-28": {
+      "approach": "Count cycles of the program-driven loop (init + 500 iterations) and divide by the DMA cost (20 + 2 cycles/byte).",
+      "concepts": [
+        "Programmed I/O",
+        "DMA",
+        "Speedup"
+      ],
+      "steps": [
+        {
+          "title": "Program-driven cost",
+          "body": "Initialisation: $1+1=2$ cycles.\nPer iteration: load $2$ + store $2$ + increment $1$ + decrement $1$ + branch $1 = 7$ cycles.\nTotal $=2+500\\times7=2+3500=3502$ cycles."
+        },
+        {
+          "title": "DMA cost",
+          "body": "$20+500\\times2=20+1000=1020$ cycles."
+        },
+        {
+          "title": "Speedup",
+          "body": "$$\\frac{3502}{1020}\\approx 3.43$$"
+        }
+      ],
+      "answer": {
+        "value": "≈ 3.4",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$3502/1020\\approx3.43$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would need ≈4488 program cycles; overcounts the loop."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Does not match any consistent cycle count."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would correspond to ignoring the DMA per-byte cost structure."
+        }
+      ],
+      "pitfalls": [
+        "Treating load/store as 1 cycle (gives 2502/1020 ≈ 2.45)."
+      ],
+      "verification": "$1020\\times3.4=3468\\approx3502$."
+    },
+    "cse-2011-cs-29": {
+      "approach": "An in-order traversal of a BST lists keys in sorted order; the tree shape fixes the in-order position of every node, so the assignment is unique.",
+      "concepts": [
+        "BST",
+        "Inorder traversal"
+      ],
+      "steps": [
+        {
+          "title": "Inorder fixes positions",
+          "body": "Traverse the unlabeled tree in-order: this gives a fixed sequence of the $n$ nodes $v_1,\\ldots,v_n$."
+        },
+        {
+          "title": "Assign sorted keys",
+          "body": "The tree is a BST iff in-order yields sorted keys, so $v_k$ must receive the $k$-th smallest element. Exactly **one** way."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The sorted assignment always works, so it is never 0."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Unique assignment via in-order order."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n!$ counts all labelings, most violate BST order."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Catalan number counts tree shapes, not labelings of a given shape."
+        }
+      ],
+      "pitfalls": [
+        "Confusing the count of BST shapes (Catalan) with labelings of one shape."
+      ],
+      "verification": "For $n=3$ path-shaped tree: only one assignment of {1,2,3} works."
+    },
+    "cse-2011-cs-30": {
+      "approach": "Read the formula: $x\\ne1$ and every divisor $y$ of $x$ is either 1 or $x$ — the definition of a prime.",
+      "concepts": [
+        "Predicate logic",
+        "Prime numbers"
+      ],
+      "steps": [
+        {
+          "title": "Translate",
+          "body": "$\\exists z\\,(x=y*z)$ means \"$y$ divides $x$\". So $\\forall y\\,(y\\mid x \\Rightarrow y=x \\lor y=1)$: the only divisors are 1 and $x$."
+        },
+        {
+          "title": "Add $\\neg(x=1)$",
+          "body": "A number $>1$ whose only divisors are 1 and itself is **prime**."
+        }
+      ],
+      "answer": {
+        "value": "$x$ is prime",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the definition of a prime."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Too weak: $x=4$ is not 1 but $P(4)$ is false ($y=2$)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$P(1)$ and $P(4)$ are false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Primes have no factors other than 1 and $x$."
+        }
+      ],
+      "pitfalls": [
+        "Ignoring the $\\neg(x=1)$ conjunct."
+      ],
+      "verification": "$P(7)$ true, $P(6)$ false ($y=2$), $P(1)$ false."
+    },
+    "cse-2011-cs-31": {
+      "approach": "Write numerator and denominator in Euler form: the integrand is $e^{ix}/e^{-ix}=e^{2ix}$, which integrates directly.",
+      "concepts": [
+        "Euler's formula",
+        "Complex exponential integral"
+      ],
+      "steps": [
+        {
+          "title": "Simplify",
+          "body": "$\\cos x+i\\sin x=e^{ix}$, $\\cos x-i\\sin x=e^{-ix}$, so the integrand is $e^{2ix}$."
+        },
+        {
+          "title": "Integrate",
+          "body": "$$\\int_0^{\\pi/2}e^{2ix}dx=\\left[\\frac{e^{2ix}}{2i}\\right]_0^{\\pi/2}=\\frac{e^{i\\pi}-1}{2i}=\\frac{-1-1}{2i}=\\frac{-1}{i}=i$$"
+        }
+      ],
+      "answer": {
+        "value": "$i$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The integral is $i$, not 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Real part $\\int_0^{\\pi/2}\\cos2x\\,dx=0$, so it cannot be 2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Sign error: $-1/i=+i$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Writing $-1/i=-i$ (actually $1/i=-i$, so $-1/i=i$)."
+      ],
+      "verification": "Real part $\\int\\cos2x=0$; imaginary part $\\int_0^{\\pi/2}\\sin2x\\,dx=1$ ⇒ $0+1\\cdot i$."
+    },
+    "cse-2011-cs-32": {
+      "approach": "Each insert has $X$ one larger and $Y=2Y_{\\text{prev}}+1$, so $Y=2^X-1$; at $X=7$, $Y=127$.",
+      "concepts": [
+        "SQL SELECT",
+        "Recurrence"
+      ],
+      "steps": [
+        {
+          "title": "List the rows",
+          "body": "| X | 1 | 2 | 3 | 4 | 5 | 6 | 7 |\n|---|---|---|---|---|---|---|---|\n| Y | 1 | 3 | 7 | 15 | 31 | 63 | 127 |"
+        },
+        {
+          "title": "Closed form",
+          "body": "$Y_X=2Y_{X-1}+1$, $Y_1=1$ ⇒ $Y_X=2^X-1$, so $Y_7=2^7-1=127$. Exactly one row has $X=7$."
+        }
+      ],
+      "answer": {
+        "value": "127",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$2^7-1=127$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$255=2^8-1$ is the row with $X=8$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$129$ does not fit $2^X-1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$257$ does not fit $2^X-1$."
+        }
+      ],
+      "pitfalls": [
+        "Off-by-one: confusing $X=7$ with the 7th insertion (which creates $X=8$)."
+      ],
+      "verification": "Table built row by row matches the closed form."
+    },
+    "cse-2011-cs-33": {
+      "approach": "A positive linear map $y=ax+b$ preserves order and positions, shifts the mean by $a\\mu+b$, but scales the standard deviation by $a$ only — $b$ does not affect spread.",
+      "concepts": [
+        "Linear transformation of data",
+        "Mean",
+        "Standard deviation"
+      ],
+      "steps": [
+        {
+          "title": "Mean and SD",
+          "body": "$\\mu_y=\\frac1n\\sum(ax_i+b)=a\\mu_x+b$.\n$\\sigma_y^2=\\frac1n\\sum(ax_i+b-a\\mu_x-b)^2=a^2\\sigma_x^2$ ⇒ $\\sigma_y=a\\sigma_x$ (not $+b$)."
+        },
+        {
+          "title": "Mode and median",
+          "body": "The map is one-to-one and increasing ($a>0$), so equal values stay equal and order is preserved: the mode and median sit at the same index positions."
+        }
+      ],
+      "answer": {
+        "value": "$\\sigma_y=a\\sigma_x+b$ is incorrect",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Correct: injective map keeps equal values equal."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Correct: increasing map keeps the order."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Correct by linearity of the mean."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "INCORRECT: $\\sigma_y=a\\sigma_x$; adding $b$ does not change spread."
+        }
+      ],
+      "pitfalls": [
+        "Adding the shift $b$ to the standard deviation."
+      ],
+      "verification": "$X=[1,3]$, $a=2,b=5$: $Y=[7,11]$, $\\sigma_x=1$, $\\sigma_y=2=a\\sigma_x\\ne 7$."
+    },
+    "cse-2011-cs-34": {
+      "approach": "Count ordered draws: 20 equally likely ordered pairs, of which 4 have first = second + 1.",
+      "concepts": [
+        "Classical probability",
+        "Ordered sampling without replacement"
+      ],
+      "steps": [
+        {
+          "title": "Sample space",
+          "body": "Ordered pairs of distinct cards: $5\\times4=20$."
+        },
+        {
+          "title": "Favourable",
+          "body": "$(2,1),(3,2),(4,3),(5,4)$ — 4 pairs. Probability $=\\dfrac{4}{20}=\\dfrac15$."
+        }
+      ],
+      "answer": {
+        "value": "1/5",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$4/20=1/5$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$4/25$ wrongly allows drawing the same card twice."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$1/4$ fixes the first card wrongly / uses 16 outcomes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2/5$ counts both orders (difference 1 either way)."
+        }
+      ],
+      "pitfalls": [
+        "Counting $|a-b|=1$ instead of first exactly one higher."
+      ],
+      "verification": "Condition on first card: $P=\\frac15\\cdot(0+\\frac14\\cdot4)=\\frac15$."
+    },
+    "cse-2011-cs-35": {
+      "approach": "Simulate pre-emptive SJF (SRTF) at each arrival/completion, then waiting = completion − arrival − burst.",
+      "concepts": [
+        "SRTF scheduling",
+        "Waiting time"
+      ],
+      "given": "| Process | Arrival | Burst |\n|---|---|---|\n| P0 | 0 | 9 |\n| P1 | 1 | 4 |\n| P2 | 2 | 9 |",
+      "steps": [
+        {
+          "title": "t = 0",
+          "body": "Only P0 is present; it runs.",
+          "scene": {
+            "upto": 0,
+            "cursor": 0,
+            "caption": "P0 starts"
+          }
+        },
+        {
+          "title": "t = 1: P1 arrives",
+          "body": "P0 has $9-1=8$ left; P1 needs 4 < 8, so P1 pre-empts.",
+          "scene": {
+            "upto": 1,
+            "cursor": 1,
+            "caption": "P1 pre-empts P0"
+          }
+        },
+        {
+          "title": "t = 2: P2 arrives",
+          "body": "P1 has $3$ left < P2’s 9 — P1 continues to completion at $t=5$.",
+          "scene": {
+            "upto": 2,
+            "cursor": 5,
+            "caption": "P1 completes at 5"
+          }
+        },
+        {
+          "title": "t = 5 onwards",
+          "body": "P0 (8 left) < P2 (9): P0 runs 5–13, then P2 runs 13–22.",
+          "scene": {
+            "upto": 22,
+            "cursor": 22,
+            "caption": "P0 then P2"
+          }
+        },
+        {
+          "title": "Waiting times",
+          "body": "- P0: $13-0-9=4$\n- P1: $5-1-4=0$\n- P2: $22-2-9=11$\n\nAverage $=\\dfrac{4+0+11}{3}=\\dfrac{15}{3}=5.0$ ms."
+        }
+      ],
+      "answer": {
+        "value": "5.0 ms",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Average of 4, 0, 11 is 5.0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "13/3 ms does not arise from any valid schedule of these bursts."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "19/3 ms is non-pre-emptive SJF/FCFS (waits 0, 8, 11)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "22/3 ms overcounts, e.g. measuring P2 wait from t = 0."
+        }
+      ],
+      "pitfalls": [
+        "Letting P2 pre-empt at t = 5 although its burst (9) exceeds P0’s remaining 8."
+      ],
+      "verification": "Sum of turnaround times $13+4+20=37$ minus bursts $22$ gives $15$.",
+      "animation": {
+        "kind": "gantt",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 1,
+                "label": "P0"
+              },
+              {
+                "start": 1,
+                "end": 5,
+                "label": "P1"
+              },
+              {
+                "start": 5,
+                "end": 13,
+                "label": "P0"
+              },
+              {
+                "start": 13,
+                "end": 22,
+                "label": "P2"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 1,
+            "label": "P1↓"
+          },
+          {
+            "t": 2,
+            "label": "P2↓"
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      }
+    },
+    "cse-2011-cs-36": {
+      "approach": "Use Sethi–Ullman labelling (every leaf needs a register on a load-store machine) and evaluate the more demanding subtree first.",
+      "concepts": [
+        "Sethi–Ullman numbering",
+        "Register allocation",
+        "Load-store architecture"
+      ],
+      "steps": [
+        {
+          "title": "Label the tree",
+          "body": "Leaves need 1 register each (must be loaded). For a node with child labels $l,r$: label $=\\max(l,r)$ if $l\\ne r$, else $l+1$.\n- $c+d$: $1=1$ ⇒ 2\n- $e-(c+d)$: $1\\ne2$ ⇒ 2\n- $a-b$: ⇒ 2\n- root: $2=2$ ⇒ **3**",
+          "scene": {
+            "caption": "Labels: (c+d)=2, e−(…)=2, a−b=2, root=3"
+          }
+        },
+        {
+          "title": "Evaluate right subtree (2 regs)",
+          "body": "`LD R1,c; LD R2,d; ADD R1,R1,R2; LD R2,e; SUB R1,R2,R1` — result in R1, R2 free.",
+          "scene": {
+            "root": {
+              "id": "r",
+              "label": "+",
+              "children": [
+                {
+                  "id": "m1",
+                  "label": "−",
+                  "children": [
+                    {
+                      "id": "a",
+                      "label": "a"
+                    },
+                    {
+                      "id": "b",
+                      "label": "b"
+                    }
+                  ]
+                },
+                {
+                  "id": "m2",
+                  "label": "−",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "e",
+                      "label": "e",
+                      "tone": "accent"
+                    },
+                    {
+                      "id": "p",
+                      "label": "+",
+                      "tone": "accent",
+                      "children": [
+                        {
+                          "id": "c",
+                          "label": "c",
+                          "tone": "accent"
+                        },
+                        {
+                          "id": "d",
+                          "label": "d",
+                          "tone": "accent"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "R1 = e − (c + d)"
+          }
+        },
+        {
+          "title": "Evaluate left subtree while R1 is held",
+          "body": "`LD R2,a; LD R3,b; SUB R2,R2,R3; ADD R1,R1,R2` — needs R1 plus two more: **3 registers**.",
+          "scene": {
+            "root": {
+              "id": "r",
+              "label": "+",
+              "tone": "warning",
+              "children": [
+                {
+                  "id": "m1",
+                  "label": "−",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "a",
+                      "label": "a",
+                      "tone": "accent"
+                    },
+                    {
+                      "id": "b",
+                      "label": "b",
+                      "tone": "accent"
+                    }
+                  ]
+                },
+                {
+                  "id": "m2",
+                  "label": "−",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "id": "e",
+                      "label": "e",
+                      "tone": "muted"
+                    },
+                    {
+                      "id": "p",
+                      "label": "+",
+                      "tone": "muted",
+                      "children": [
+                        {
+                          "id": "c",
+                          "label": "c",
+                          "tone": "muted"
+                        },
+                        {
+                          "id": "d",
+                          "label": "d",
+                          "tone": "muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "R1 held, a and b in R2, R3"
+          }
+        },
+        {
+          "title": "Why not 2",
+          "body": "Whichever subtree goes first, its result occupies one register while the other subtree (label 2) needs two more, and nothing may be spilled. So 3 is the minimum."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two registers fail: one holds a subtree result while the other subtree needs two."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 is far more than needed."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 is one per leaf; registers can be reused."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Minimum by Sethi–Ullman."
+        }
+      ],
+      "pitfalls": [
+        "Using the \"right leaf needs 0 registers\" rule, which assumes memory operands — not allowed here."
+      ],
+      "verification": "Explicit 3-register code given above; Sethi–Ullman label of the root is 3.",
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "id": "r",
+          "label": "+",
+          "children": [
+            {
+              "id": "m1",
+              "label": "−",
+              "children": [
+                {
+                  "id": "a",
+                  "label": "a"
+                },
+                {
+                  "id": "b",
+                  "label": "b"
+                }
+              ]
+            },
+            {
+              "id": "m2",
+              "label": "−",
+              "children": [
+                {
+                  "id": "e",
+                  "label": "e"
+                },
+                {
+                  "id": "p",
+                  "label": "+",
+                  "children": [
+                    {
+                      "id": "c",
+                      "label": "c"
+                    },
+                    {
+                      "id": "d",
+                      "label": "d"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "caption": "Expression tree"
+      }
+    },
+    "cse-2011-cs-37": {
+      "approach": "Compare logs (or exponents): $n\\log n < n^{1.5} < n^{\\log n} < 2^n$.",
+      "concepts": [
+        "Asymptotic growth",
+        "Log comparison"
+      ],
+      "steps": [
+        {
+          "title": "Polynomial-ish terms",
+          "body": "$f_3=n\\log n$ vs $f_2=n^{1.5}$: divide by $n$: $\\log n < n^{0.5}$ ⇒ $f_3 < f_2$."
+        },
+        {
+          "title": "Super-polynomial terms",
+          "body": "Take $\\log_2$: $\\log f_4=(\\log n)^2$, $\\log f_1=n$. Since $(\\log n)^2 = o(n)$, $f_4 < f_1$; and $(\\log n)^2 > 1.5\\log n$ ⇒ $f_2 < f_4$."
+        },
+        {
+          "title": "Order",
+          "body": "$f_3 < f_2 < f_4 < f_1$."
+        }
+      ],
+      "answer": {
+        "value": "$f_3, f_2, f_4, f_1$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct order."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Places $2^n$ below $n^{\\log n}$, but $n > (\\log n)^2$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Places $n^{1.5}$ below $n\\log n$ and $2^n$ below $n^{\\log n}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Places $n^{1.5}$ below $n\\log n$."
+        }
+      ],
+      "pitfalls": [
+        "Treating $n^{\\log n}$ as exponential; it is quasi-polynomial."
+      ],
+      "verification": "At $n=2^{16}$: logs are $\\approx 20,\\ 24,\\ 256,\\ 65536$."
+    },
+    "cse-2011-cs-38": {
+      "approach": "Matrix-chain DP on dimensions $\\langle10,100,20,5,80\\rangle$: fill $m[i][j]$ for chain lengths 2, 3, 4.",
+      "concepts": [
+        "Matrix chain multiplication",
+        "Dynamic programming"
+      ],
+      "given": "Dimensions $d=\\langle 10,100,20,5,80\\rangle$, $M_i$ is $d_{i-1}\\times d_i$.",
+      "steps": [
+        {
+          "title": "Length 2",
+          "body": "$m_{12}=10\\cdot100\\cdot20=20000$, $m_{23}=100\\cdot20\\cdot5=10000$, $m_{34}=20\\cdot5\\cdot80=8000$.",
+          "scene": {
+            "reveal": 7,
+            "hl": [
+              {
+                "r": 0,
+                "c": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Chains of length 2"
+          }
+        },
+        {
+          "title": "Length 3",
+          "body": "$m_{13}=\\min(m_{12}+10\\cdot20\\cdot5,\\ m_{23}+10\\cdot100\\cdot5)=\\min(21000,15000)=15000$.\n$m_{24}=\\min(m_{23}+100\\cdot5\\cdot80,\\ m_{34}+100\\cdot20\\cdot80)=\\min(50000,168000)=50000$.",
+          "scene": {
+            "reveal": 7,
+            "hl": [
+              {
+                "r": 0,
+                "c": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 3,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Chains of length 3"
+          }
+        },
+        {
+          "title": "Length 4",
+          "body": "$m_{14}=\\min\\begin{cases}m_{24}+10\\cdot100\\cdot80=50000+80000=130000\\\\ m_{12}+m_{34}+10\\cdot20\\cdot80=20000+8000+16000=44000\\\\ m_{13}+10\\cdot5\\cdot80=15000+4000=19000\\end{cases}=19000$",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "r": 0,
+                "c": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "Optimal: (M1(M2M3))M4 = 19000"
+          }
+        }
+      ],
+      "answer": {
+        "value": "19000",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "248000 is a poor parenthesisation, far above the optimum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "44000 is $((M_1M_2)(M_3M_4))$, not optimal."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Optimum via $(M_1(M_2M_3))M_4$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "25000 matches no split of the DP."
+        }
+      ],
+      "shortcut": "Shrink the big dimension 100 early: $M_2M_3$ collapses to $100\\times5$, then multiply by $M_1$ and $M_4$.",
+      "pitfalls": [
+        "Stopping at the two example parenthesisations given in the question."
+      ],
+      "verification": "$(M_1(M_2M_3))M_4$: $10000+5000+4000=19000$.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "j=1",
+          "j=2",
+          "j=3",
+          "j=4"
+        ],
+        "rowLabels": [
+          "i=1",
+          "i=2",
+          "i=3",
+          "i=4"
+        ],
+        "corner": "m[i][j]",
+        "rows": [
+          [
+            0,
+            20000,
+            15000,
+            19000
+          ],
+          [
+            "",
+            0,
+            10000,
+            50000
+          ],
+          [
+            "",
+            "",
+            0,
+            8000
+          ],
+          [
+            "",
+            "",
+            "",
+            0
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-2011-cs-39": {
+      "approach": "Hashing gives ~O(1) equality lookup but cannot exploit order; an ordered index (B+ tree) handles range scans efficiently.",
+      "concepts": [
+        "Hash index",
+        "Ordered (B+ tree) index",
+        "Range query"
+      ],
+      "steps": [
+        {
+          "title": "Q1 — equality",
+          "body": "$A_p=c$: hashing jumps straight to the bucket (≈1 access); an ordered index needs a root-to-leaf traversal. Hashing is better."
+        },
+        {
+          "title": "Q2 — range",
+          "body": "$c_1\\le A_p\\le c_2$: hash values are unordered, so the range cannot be located; an ordered index finds $c_1$ and scans leaves sequentially. Ordered indexing is better."
+        }
+      ],
+      "answer": {
+        "value": "Hashing better on Q1, not on Q2",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Ordered index loses to hashing on point queries."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Hashing is poor for range queries."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Reversed."
+        }
+      ],
+      "pitfalls": [
+        "Assuming hashing is always faster."
+      ],
+      "verification": "Standard textbook trade-off (Silberschatz, ordered vs hash indices)."
+    },
+    "cse-2011-cs-40": {
+      "approach": "The matrix is upper triangular, so its eigenvalues are the diagonal entries.",
+      "concepts": [
+        "Eigenvalues of triangular matrices"
+      ],
+      "steps": [
+        {
+          "title": "Characteristic polynomial",
+          "body": "$\\det(A-\\lambda I)=(1-\\lambda)(4-\\lambda)(3-\\lambda)$ because $A-\\lambda I$ stays upper triangular."
+        },
+        {
+          "title": "Eigenvalues",
+          "body": "Setting each factor to zero: $\\lambda_1=1$, $\\lambda_2=4$, $\\lambda_3=3$."
+        }
+      ],
+      "answer": {
+        "value": "1, 4, 3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Diagonal entries."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Sum $13\\ne$ trace $8$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Sum $12\\ne8$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Product $6\\ne\\det=12$."
+        }
+      ],
+      "pitfalls": [
+        "Reading off-diagonal entries."
+      ],
+      "verification": "Trace $1+4+3=8$, determinant $1\\cdot4\\cdot3=12$ both match."
+    },
+    "cse-2011-cs-41": {
+      "approach": "Non-pipelined time = sum of stage delays; pipelined cycle = slowest stage + register delay; speedup is their ratio.",
+      "concepts": [
+        "Pipeline speedup",
+        "Clock period"
+      ],
+      "steps": [
+        {
+          "title": "Non-pipelined",
+          "body": "$5+6+11+8=30$ ns per instruction (no pipeline registers)."
+        },
+        {
+          "title": "Pipelined",
+          "body": "Cycle $=\\max(5,6,11,8)+1=11+1=12$ ns; in steady state one instruction completes per cycle."
+        },
+        {
+          "title": "Speedup",
+          "body": "Speedup $=\\dfrac{30\\text{ ns}}{12\\text{ ns}}=2.5$ (ideal, ignoring fill time)."
+        }
+      ],
+      "answer": {
+        "value": "2.5",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4.0 assumes ideal equal stages (number of stages)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: $30/12$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "1.1 has no basis in the delays."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "3.0 would need a 10 ns cycle; the slowest stage plus register is 12 ns."
+        }
+      ],
+      "pitfalls": [
+        "Adding register delays to the non-pipelined time (it has no pipeline registers)."
+      ],
+      "verification": "Even including 1 ns in the non-pipelined path gives $31/12\\approx2.6$, still closest to 2.5."
+    },
+    "cse-2011-cs-42": {
+      "approach": "L is the set of non-empty strings whose length is a multiple of n: track length mod n, plus a separate start state because ε is not accepted.",
+      "concepts": [
+        "DFA minimisation",
+        "Myhill–Nerode"
+      ],
+      "steps": [
+        {
+          "title": "Construction",
+          "body": "States $q_0$ (start, length 0) and $r_1,\\ldots,r_n$ where $r_j$ means length $\\equiv j \\pmod n$ with length $\\ge1$ ($r_n$ accepting). $q_0\\to r_1\\to\\cdots\\to r_n\\to r_1$. Total $n+1$ states."
+        },
+        {
+          "title": "Minimality",
+          "body": "$a^0,a^1,\\ldots,a^{n-1}$ are pairwise distinguishable (different residues), and $\\varepsilon$ vs $a^n$ is distinguished by suffix $\\varepsilon$ (only $a^n$ accepted). So $n+1$ classes are needed."
+        }
+      ],
+      "answer": {
+        "value": "$n+1$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$k$ is a free variable, not a fixed parameter of L."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Exponential count is unnecessary (unary DFA)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Depends on $k$, which ranges over all positive integers."
+        }
+      ],
+      "pitfalls": [
+        "Answering $n$ by forgetting that ε is excluded ($k>0$)."
+      ],
+      "verification": "$n=1$: $L=a^+$ needs 2 states $=n+1$."
+    },
+    "cse-2011-cs-43": {
+      "approach": "Find tag bits from the address split, add valid + modified bits, multiply by the number of cache lines.",
+      "concepts": [
+        "Direct-mapped cache",
+        "Tag bits",
+        "Write-back dirty bit"
+      ],
+      "steps": [
+        {
+          "title": "Address split",
+          "body": "Lines $=8\\text{ KB}/32\\text{ B}=2^{13}/2^5=2^8=256$ ⇒ index 8 bits; offset $\\log_2 32=5$ bits; tag $=32-8-5=19$ bits."
+        },
+        {
+          "title": "Metadata per line",
+          "body": "$19+1\\ (\\text{valid})+1\\ (\\text{modified})=21$ bits."
+        },
+        {
+          "title": "Total",
+          "body": "$256\\times21=5376$ bits."
+        }
+      ],
+      "answer": {
+        "value": "5376 bits",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4864 = 256×19: tag only, omits the two status bits."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "6144 = 256×24: a wrong tag width (e.g. 22-bit tag + 2 bits)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "6656 = 256×26: a 24-bit tag (32 − 8, offset bits not removed) plus 2 status bits."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: 256×21."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the index bits need not be stored in the tag."
+      ],
+      "verification": "$256\\times20=5120$, $+256=5376$."
+    },
+    "cse-2011-cs-44": {
+      "approach": "Each random access costs seek + average rotational latency (half a rotation); multiply by 100.",
+      "concepts": [
+        "Disk access time",
+        "Rotational latency"
+      ],
+      "steps": [
+        {
+          "title": "Rotational latency",
+          "body": "$6000$ rpm $=100$ rotations/s ⇒ one rotation $=10$ ms; average latency $=10/2=5$ ms."
+        },
+        {
+          "title": "Total",
+          "body": "Per library $10+5=15$ ms; for 100 libraries $100\\times15=1500$ ms $=1.50$ s."
+        }
+      ],
+      "answer": {
+        "value": "1.50 s",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "0.50 s counts only rotational latency."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "1.25 s has no consistent derivation."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1.00 s counts only seek time."
+        }
+      ],
+      "pitfalls": [
+        "Using a full rotation (10 ms) instead of half for average latency (gives 2.0 s)."
+      ],
+      "verification": "$100\\times(10+5)\\text{ ms}=1.5$ s."
+    }
+  }
+}
