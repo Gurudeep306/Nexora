@@ -1,0 +1,21 @@
+{
+  "paper": "cse-2014-3",
+  "fixes": [
+    {
+      "id": "cse-2014-3-cs-5",
+      "field": "subject",
+      "before": "pds",
+      "after": "la",
+      "reason": "Vector-space dimension question belongs to linear algebra.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2014-3-cs-5",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "spaces",
+      "reason": "Subspace intersection dimension is a vector-spaces topic.",
+      "source": "pdf"
+    }
+  ]
+}
