@@ -1,0 +1,1324 @@
+{
+ "paper": "cse-2014-3",
+ "version": 2,
+ "solutions": {
+  "cse-2014-3-cs-35": {
+   "approach": "Recall the standard decidability results for CFGs: membership, emptiness and finiteness all have algorithms; ambiguity does not (it reduces from the Post Correspondence Problem).",
+   "concepts": [
+    "Decidability",
+    "CFG ambiguity",
+    "Post Correspondence Problem"
+   ],
+   "steps": [
+    {
+     "title": "Decidable CFG problems",
+     "body": "- **Membership** $w \\in L(G)$: CYK algorithm, $O(|w|^3)$.\n- **Emptiness**: mark useful (generating) variables; $L(G)=\\emptyset$ iff $S$ is not generating.\n- **Finiteness**: convert to CNF, remove useless symbols, and check the variable-dependency graph for a cycle."
+    },
+    {
+     "title": "Undecidable problem",
+     "body": "Given a PCP instance one can build a grammar $G$ that is ambiguous **iff** the PCP instance has a solution. Since PCP is undecidable, so is CFG ambiguity."
+    }
+   ],
+   "answer": {
+    "value": "Deciding whether a CFG is ambiguous",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct — ambiguity of CFGs is undecidable (reduction from PCP)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Decidable — CYK decides membership in $O(n^3)$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Decidable — check whether the start symbol derives some terminal string."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Decidable — after cleaning the grammar, $L(G)$ is infinite iff the dependency graph has a cycle."
+    }
+   ],
+   "pitfalls": [
+    "Equivalence and universality ($L(G)=\\Sigma^*$) of CFGs are also undecidable, but finiteness is decidable."
+   ],
+   "verification": "Standard table of CFL decision properties: membership, emptiness, finiteness decidable; ambiguity undecidable."
+  },
+  "cse-2014-3-cs-36": {
+   "approach": "Ask whether a DPDA can know when to switch from pushing to popping. With an explicit marker (block of 1s, or the centre symbol c) it can; for $ww^r$ the middle must be guessed, which needs nondeterminism.",
+   "concepts": [
+    "DCFL",
+    "DPDA",
+    "Palindromes"
+   ],
+   "steps": [
+    {
+     "title": "$L_1=\\{0^n1^n\\}$",
+     "body": "Push for every 0; on the first 1 start popping one per 1; accept on reaching the bottom marker. The 0→1 boundary is visible, so the PDA is deterministic. **DCFL.**"
+    },
+    {
+     "title": "$L_2=\\{wcw^r\\}$",
+     "body": "Push every symbol of $w$; on reading $c$ switch to matching mode and pop-compare each symbol of $w^r$. The centre marker $c$ tells the machine exactly when to switch. **DCFL.**"
+    },
+    {
+     "title": "$L_3=\\{ww^r\\}$",
+     "body": "Even-length palindromes over $\\{0,1\\}$ have no marker for the middle; the PDA must guess it. $L_3$ is a CFL but **not** a DCFL (classic result: after reading $0^n110^n$ a DPDA would have to both accept and still be able to continue correctly on $0^n110^n0^n110^n$)."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Only $L_1$ and $L_2$ are deterministic CFLs."
+    }
+   ],
+   "answer": {
+    "value": "Only $L_1$ and $L_2$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — $L_1$ and $L_2$ both have DPDAs."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — $L_2$ is also deterministic thanks to the centre marker $c$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct — $L_1$, $L_2$ are DCFLs; $L_3$ needs a nondeterministic guess of the middle."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — $ww^r$ is not a DCFL."
+    }
+   ],
+   "pitfalls": [
+    "Confusing $wcw^r$ (marked palindrome, DCFL) with $ww^r$ (unmarked, non-deterministic CFL)."
+   ],
+   "verification": "Standard examples: $wcw^R$ is the textbook DCFL, $ww^R$ the textbook CFL that is not a DCFL."
+  },
+  "cse-2014-3-cs-37": {
+   "approach": "From 9 there are exactly two possible first moves: a unit step to 10 or the shortcut to 15. So $T(9)=1+\\min(T(10),T(15))$.",
+   "concepts": [
+    "Recurrence",
+    "Shortest path / DP"
+   ],
+   "steps": [
+    {
+     "title": "Moves available from 9",
+     "body": "In one step from position 9 you can go to $9+1=10$ (unit move) or to $15$ (the shortcut $9\\to15$). At most one shortcut involves 9, so there is no other option."
+    },
+    {
+     "title": "Recurrence",
+     "body": "$$T(9)=1+\\min\\big(T(10),\\,T(15)\\big)$$ so $\\{y,z\\}=\\{10,15\\}$."
+    },
+    {
+     "title": "Product",
+     "body": "$yz = 10 \\times 15 = 150$."
+    }
+   ],
+   "answer": {
+    "value": "$yz = 150$",
+    "number": 150,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using 16 or 9 instead of 10 — the unit move lands on $9+1=10$."
+   ],
+   "verification": "The order of $y,z$ does not matter for the product: $15\\times10=150$."
+  },
+  "cse-2014-3-cs-38": {
+   "approach": "2-SAT is in P: build the implication graph (each clause $a\\vee b$ gives $\\bar a\\to b$ and $\\bar b\\to a$); the formula is unsatisfiable iff some $x$ and $\\bar x$ reach each other — a reachability question.",
+   "concepts": [
+    "2-SAT",
+    "Implication graph",
+    "Strongly connected components"
+   ],
+   "steps": [
+    {
+     "title": "Implication graph",
+     "body": "Vertices: $x_i$ and $\\overline{x_i}$ for each variable. Clause $(a\\vee b)$ is equivalent to $\\bar a\\Rightarrow b$ and $\\bar b\\Rightarrow a$; add both edges."
+    },
+    {
+     "title": "Satisfiability test",
+     "body": "$\\Phi$ is unsatisfiable $\\iff$ for some $i$, $x_i$ reaches $\\overline{x_i}$ **and** $\\overline{x_i}$ reaches $x_i$. This is directed-graph reachability (or one SCC computation): polynomial, in fact linear."
+    },
+    {
+     "title": "Conclusion",
+     "body": "2CNFSAT $\\in$ P, solved by reduction to directed-graph reachability."
+    }
+   ],
+   "answer": {
+    "value": "Polynomial time via directed graph reachability",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — 3-SAT is NP-complete, but 2-SAT is in P (NP-completeness would imply P = NP)."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct — implication graph + reachability/SCC decides it in polynomial time."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — not every 2-CNF is satisfiable, e.g. $(x\\vee y)(x\\vee\\bar y)(\\bar x\\vee y)(\\bar x\\vee\\bar y)$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — it is in P, so NP-hardness would imply P = NP; and an NP-hard problem in NP would be NP-complete anyway."
+    }
+   ],
+   "pitfalls": [
+    "Generalising the NP-completeness of 3-SAT to 2-SAT."
+   ],
+   "verification": "Aspvall–Plass–Tarjan (1979) gives a linear-time SCC algorithm for 2-SAT."
+  },
+  "cse-2014-3-cs-39": {
+   "approach": "Find the boundaries $L$ and $H$ in $O(\\log n)$, then walk the $m$ in-range keys (in-order between them) in $O(m)$. Total $O(\\log n + m)$, i.e. $a=0,b=1,c=1,d=0$.",
+   "concepts": [
+    "Balanced BST",
+    "Range query",
+    "In-order traversal"
+   ],
+   "steps": [
+    {
+     "title": "Search cost",
+     "body": "In a balanced BST of height $O(\\log n)$, following the search paths for $L$ and $H$ takes $O(\\log n)$."
+    },
+    {
+     "title": "Reporting cost",
+     "body": "The $m$ keys in $[L,H]$ lie on those paths or in subtrees hanging entirely between them; an in-order walk of those subtrees touches $O(m)$ nodes, adding each to the sum: $O(m)$."
+    },
+    {
+     "title": "Match the form",
+     "body": "$$O(n^a\\log^b n + m^c\\log^d n) = O(n^0\\log^1 n + m^1\\log^0 n)$$ so $a=0,\\ b=1,\\ c=1,\\ d=0$."
+    },
+    {
+     "title": "Compute",
+     "body": "$a+10b+100c+1000d = 0+10\\cdot1+100\\cdot1+1000\\cdot0 = 110$."
+    }
+   ],
+   "answer": {
+    "value": "110",
+    "number": 110,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Writing $O(m\\log n)$ (searching each key separately) — not tight.",
+    "Writing $O(n)$ by traversing the whole tree."
+   ],
+   "verification": "Lower bound: any algorithm must at least read the $m$ answers and needs $\\Omega(\\log n)$ comparisons to locate $L$, so $\\log n + m$ is tight."
+  },
+  "cse-2014-3-cs-40": {
+   "approach": "Each insertion independently lands in one of 100 slots uniformly. For slots 1–3 to stay empty, every key must land in one of the other 97 slots.",
+   "concepts": [
+    "Simple uniform hashing",
+    "Independent events"
+   ],
+   "steps": [
+    {
+     "title": "One insertion",
+     "body": "$P(\\text{key avoids slots }1,2,3)=\\dfrac{97}{100}$. With chaining, earlier keys do not block slots, so this is the same for every insertion."
+    },
+    {
+     "title": "Three independent insertions",
+     "body": "$$P=\\frac{97}{100}\\times\\frac{97}{100}\\times\\frac{97}{100}=\\frac{97\\times97\\times97}{100^3}$$"
+    }
+   ],
+   "answer": {
+    "value": "$(97\\times97\\times97)/100^3$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct — three independent choices, each avoiding 3 of 100 slots."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — this is the probability that 3 keys go to three distinct slots (birthday-type count)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — assumes each key must pick a fresh slot (sampling without replacement), which chaining does not require."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — dividing by $3!$ has no basis; it is not even the right \"without replacement\" count."
+    }
+   ],
+   "pitfalls": [
+    "Treating chaining like open addressing, where occupied slots cannot be chosen again."
+   ],
+   "verification": "Complement view: each key independently has a 3/100 chance to hit a forbidden slot; survival $=(0.97)^3\\approx0.9127$."
+  },
+  "cse-2014-3-cs-41": {
+   "approach": "Read the recursion: a node with no leftmost child (a leaf) contributes 1; an internal node contributes only what its child list contributes; the rightSibling call sums over all siblings. So the function counts leaves.",
+   "concepts": [
+    "Left-child right-sibling representation",
+    "Recursion"
+   ],
+   "steps": [
+    {
+     "title": "What each call adds",
+     "body": "For a non-null node:\n- no child (`leftMostChild == NULL`) → it is a **leaf**, contributes $1$;\n- otherwise contributes `DoSomething(leftMostChild)`, i.e. the count for its children list, and **not** 1 for itself.\n\nThen `+ DoSomething(rightSibling)` adds the same count for the remaining siblings.",
+     "scene": {
+      "root": {
+       "label": "A",
+       "children": [
+        {
+         "label": "B",
+         "children": [
+          {
+           "label": "E"
+          },
+          {
+           "label": "F"
+          }
+         ]
+        },
+        {
+         "label": "C"
+        },
+        {
+         "label": "D"
+        }
+       ]
+      },
+      "caption": "Example tree: A has children B, C, D; B has children E, F."
+     }
+    },
+    {
+     "title": "Trace on an example",
+     "body": "$\\text{DS}(A)=\\text{DS}(B)+\\text{DS}(\\text{null})$\n\n$\\text{DS}(B)=\\text{DS}(E)+\\text{DS}(C)$, $\\text{DS}(E)=1+\\text{DS}(F)=1+1=2$, $\\text{DS}(C)=1+\\text{DS}(D)=1+1=2$.\n\nSo $\\text{DS}(A)=2+2=4$ = number of leaves $\\{E,F,C,D\\}$.",
+     "scene": {
+      "root": {
+       "label": "A",
+       "tone": "muted",
+       "children": [
+        {
+         "label": "B",
+         "tone": "muted",
+         "children": [
+          {
+           "label": "E",
+           "tone": "success"
+          },
+          {
+           "label": "F",
+           "tone": "success"
+          }
+         ]
+        },
+        {
+         "label": "C",
+         "tone": "success"
+        },
+        {
+         "label": "D",
+         "tone": "success"
+        }
+       ]
+      },
+      "caption": "Leaves (green) each add 1; internal nodes (grey) add 0 → 4"
+     }
+    },
+    {
+     "title": "Conclusion",
+     "body": "Every leaf adds exactly 1 and internal nodes add 0, so the value is the number of leaf nodes."
+    }
+   ],
+   "answer": {
+    "value": "Number of leaf nodes in the tree",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — internal nodes are exactly the ones that do **not** add 1."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — the recursion sums over siblings; it never takes a max over depths."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — in the example, nodes without a right sibling are A, F, D (3), but the function returns 4."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct — 1 is added only when `leftMostChild == NULL`, i.e. at a leaf."
+    }
+   ],
+   "pitfalls": [
+    "Thinking the root's own call adds 1 — internal nodes contribute only through their children."
+   ],
+   "verification": "Single-node tree: returns 1 (one leaf). Root with 3 leaf children: $1+1+1=3$ leaves.",
+   "animation": {
+    "kind": "tree",
+    "root": {
+     "label": "A",
+     "children": [
+      {
+       "label": "B",
+       "children": [
+        {
+         "label": "E"
+        },
+        {
+         "label": "F"
+        }
+       ]
+      },
+      {
+       "label": "C"
+      },
+      {
+       "label": "D"
+      }
+     ]
+    }
+   }
+  },
+  "cse-2014-3-cs-42": {
+   "approach": "Trace it: each iteration narrows $[i,j]$ around the middle $k$; when $x=\\text{listA}[k]$ both ifs fire and the loop exits with $k$ at the match. This is binary search.",
+   "concepts": [
+    "Binary search",
+    "Loop invariant",
+    "Code tracing"
+   ],
+   "given": "| listA | x |\n|---|---|\n| [10, 20, 30, 40, 50] | 40 (example) |",
+   "steps": [
+    {
+     "title": "Iteration 1",
+     "body": "$i=0,j=4$: $k=2$, listA[2]=30. $40\\le30$? no. $30\\le40$? yes → $i=3$.",
+     "scene": {
+      "pointers": [
+       {
+        "name": "i",
+        "at": 0
+       },
+       {
+        "name": "j",
+        "at": 4
+       },
+       {
+        "name": "k",
+        "at": 2
+       }
+      ],
+      "hl": [
+       {
+        "at": 2,
+        "tone": "warning"
+       }
+      ],
+      "caption": "k = (0+4)/2 = 2 → i = 3"
+     }
+    },
+    {
+     "title": "Iteration 2",
+     "body": "$i=3,j=4$: $k=3$, listA[3]=40. $40\\le40$ → $j=2$; $40\\le40$ → $i=4$. Now $i>j$, loop ends; listA[3]=40 = x → returns 3.",
+     "scene": {
+      "pointers": [
+       {
+        "name": "j",
+        "at": 2
+       },
+       {
+        "name": "k",
+        "at": 3
+       },
+       {
+        "name": "i",
+        "at": 4
+       }
+      ],
+      "hl": [
+       {
+        "at": 3,
+        "tone": "success"
+       }
+      ],
+      "caption": "match: both ifs fire, loop exits, return k = 3"
+     }
+    },
+    {
+     "title": "Termination and absent keys",
+     "body": "Every iteration sets $j=k-1<k$ or $i=k+1>k$ (or both), so $j-i$ strictly decreases — no infinite loop. If $x$ is absent (say $x=35$), the loop ends with listA[$k$] $\\ne x$ and $-1$ is returned. If $x$ is present, the probe that hits it makes $i>j$ immediately, so $k$ points at $x$."
+    },
+    {
+     "title": "Conclusion",
+     "body": "The function is a (correct) binary search."
+    }
+   ],
+   "answer": {
+    "value": "It is an implementation of binary search",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — the interval $[i,j]$ shrinks every iteration, so the loop always terminates."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct — halving the search interval around $k=(i+j)/2$ in a sorted array is binary search."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — it searches for $x$, not the maximum; e.g. $x=10$ returns index 0."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — when $x$ is found both updates fire, the loop exits with $k$ on $x$, and $k$ is returned."
+    }
+   ],
+   "pitfalls": [
+    "Missing that when listA[k]==x both if-statements execute, forcing $i=k+1>j=k-1$ and exiting with $k$ correct."
+   ],
+   "verification": "Also checked $n=1$ (k=0, exit after one iteration) and $x=50$: $k=2\\to i=3$; $k=3\\to i=4$; $k=4$, match → returns 4.",
+   "animation": {
+    "kind": "array",
+    "label": "listA",
+    "cells": [
+     10,
+     20,
+     30,
+     40,
+     50
+    ],
+    "pointers": [
+     {
+      "name": "i",
+      "at": 0
+     },
+     {
+      "name": "j",
+      "at": 4
+     }
+    ],
+    "caption": "x = 40"
+   }
+  },
+  "cse-2014-3-cs-43": {
+   "approach": "Execution time per instruction = (average CPI) × (clock period). Clock period = slowest stage; a branch stalls IF for (index of the resolving stage) − 1 cycles.",
+   "concepts": [
+    "Pipeline clock period",
+    "Branch penalty",
+    "Average CPI"
+   ],
+   "given": "| | Old | New |\n|---|---|---|\n| Stages | 5 | 8 |\n| Clock period | 2.2 ns | 1 ns |\n| Branch resolved at end of | EX (stage 3) | EX2 (stage 6) |\n| Branch fraction | 20% | 20% |",
+   "steps": [
+    {
+     "title": "Clock periods",
+     "body": "Old: $\\max(1,2.2,2,1,0.75)=2.2$ ns.\n\nNew: $\\max(1,\\tfrac{2.2}{3},\\tfrac{2.2}{3},\\tfrac{2.2}{3},1,1,1,0.75)=1$ ns."
+    },
+    {
+     "title": "Old branch penalty",
+     "body": "The branch produces the next PC at the end of stage 3 (cycle 3); the next IF can only happen in cycle 4. IF idles in cycles 2–3 → **2 stall cycles**.\n\n$\\text{CPI}_{old}=1+0.2\\times2=1.4$",
+     "scene": {
+      "kind": "pipeline",
+      "rows": [
+       {
+        "label": "Branch",
+        "start": 1,
+        "cells": [
+         "IF",
+         "ID/RF",
+         "EX",
+         "MEM",
+         "WB"
+        ]
+       },
+       {
+        "label": "Next",
+        "start": 2,
+        "cells": [
+         "-",
+         "-",
+         "IF",
+         "ID/RF",
+         "EX",
+         "MEM",
+         "WB"
+        ]
+       }
+      ],
+      "caption": "Old design: next fetch waits for EX → 2 stalls"
+     }
+    },
+    {
+     "title": "New branch penalty",
+     "body": "Resolved at the end of EX2 = stage 6 (cycle 6); next IF in cycle 7 → **5 stall cycles**.\n\n$\\text{CPI}_{new}=1+0.2\\times5=2.0$",
+     "scene": {
+      "kind": "pipeline",
+      "rows": [
+       {
+        "label": "Branch",
+        "start": 1,
+        "cells": [
+         "IF",
+         "ID",
+         "RF1",
+         "RF2",
+         "EX1",
+         "EX2",
+         "MEM",
+         "WB"
+        ]
+       },
+       {
+        "label": "Next",
+        "start": 2,
+        "cells": [
+         "-",
+         "-",
+         "-",
+         "-",
+         "-",
+         "IF",
+         "ID",
+         "RF1",
+         "RF2",
+         "EX1",
+         "EX2",
+         "MEM",
+         "WB"
+        ]
+       }
+      ],
+      "caption": "New design: next fetch waits for EX2 → 5 stalls"
+     }
+    },
+    {
+     "title": "Ratio",
+     "body": "For $N$ instructions: $P=N\\times1.4\\times2.2=3.08N$ ns and $Q=N\\times2.0\\times1=2N$ ns.\n\n$$\\frac{P}{Q}=\\frac{3.08}{2}=1.54$$"
+    }
+   ],
+   "answer": {
+    "value": "$P/Q = 1.54$",
+    "number": 1.54,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using 3 stalls (old) / 6 stalls (new) by counting the resolving stage itself.",
+    "Forgetting that the new clock is set by the 1 ns stages, not 2.2/3 ns."
+   ],
+   "verification": "Pipeline fill time is negligible for a long program; per instruction $3.08/2=1.54$.",
+   "animation": {
+    "kind": "pipeline",
+    "rows": [
+     {
+      "label": "Branch",
+      "start": 1,
+      "cells": [
+       "IF",
+       "ID/RF",
+       "EX",
+       "MEM",
+       "WB"
+      ]
+     },
+     {
+      "label": "Next",
+      "start": 2,
+      "cells": [
+       "-",
+       "-",
+       "IF",
+       "ID/RF",
+       "EX",
+       "MEM",
+       "WB"
+      ]
+     }
+    ]
+   }
+  },
+  "cse-2014-3-cs-44": {
+   "approach": "Instruction fetches are reads. Compute the average read time and average write time with hit ratio 0.9, then take the weighted average over all 200 accesses.",
+   "concepts": [
+    "Average memory access time",
+    "Weighted average"
+   ],
+   "given": "| Operation | Hit | Miss | Count |\n|---|---|---|---|\n| Read (fetch + operand) | 1 ns | 5 ns | 100 + 60 = 160 |\n| Write | 2 ns | 10 ns | 40 |",
+   "steps": [
+    {
+     "title": "Average per type",
+     "body": "Read: $0.9\\times1+0.1\\times5=0.9+0.5=1.4$ ns.\n\nWrite: $0.9\\times2+0.1\\times10=1.8+1.0=2.8$ ns."
+    },
+    {
+     "title": "Total time",
+     "body": "$160\\times1.4+40\\times2.8=224+112=336$ ns."
+    },
+    {
+     "title": "Average",
+     "body": "$$\\text{AMAT}=\\frac{336}{200}=1.68\\ \\text{ns}$$"
+    }
+   ],
+   "answer": {
+    "value": "1.68 ns",
+    "number": 1.68,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Leaving out the 100 instruction fetches (they are read operations)."
+   ],
+   "verification": "Read fraction $0.8$, write fraction $0.2$: $0.8\\times1.4+0.2\\times2.8=1.12+0.56=1.68$."
+  },
+  "cse-2014-3-cs-45": {
+   "approach": "Read the excitation from the figure, then apply the JK rules (00 hold, 01 reset, 10 set, 11 toggle) to all three flip-flops simultaneously, three times from 000.",
+   "concepts": [
+    "JK flip-flop",
+    "Synchronous counter",
+    "State table"
+   ],
+   "given": "| Flip-flop | J | K |\n|---|---|---|\n| FF2 | $\\overline{Q_1}$ | $Q_0$ |\n| FF1 | $Q_2$ | $\\overline{Q_2}$ |\n| FF0 | $Q_1$ | $\\overline{Q_0}$ |",
+   "steps": [
+    {
+     "title": "Wiring from the figure",
+     "body": "$J_2=\\overline{Q_1}$ (long bottom wire), $K_2=Q_0$ (top wire); $J_1=Q_2,\\ K_1=\\overline{Q_2}$; $J_0=Q_1,\\ K_0=\\overline{Q_0}$ (local loop).\n\nFF1 is a D flip-flop in disguise: $Q_1^+=Q_2$.",
+     "scene": {
+      "reveal": 0,
+      "caption": "JK: 00 hold · 01 reset · 10 set · 11 toggle"
+     }
+    },
+    {
+     "title": "Clock 1: 000 → 100",
+     "body": "$J_2K_2=10\\Rightarrow Q_2=1$; $J_1K_1=01\\Rightarrow Q_1=0$; $J_0K_0=01\\Rightarrow Q_0=0$.",
+     "scene": {
+      "reveal": 9,
+      "hl": [
+       {
+        "r": 0,
+        "c": 8,
+        "tone": "success"
+       }
+      ]
+     }
+    },
+    {
+     "title": "Clock 2: 100 → 110",
+     "body": "$J_2K_2=10\\Rightarrow1$; $J_1K_1=10\\Rightarrow1$; $J_0K_0=01\\Rightarrow0$.",
+     "scene": {
+      "reveal": 18,
+      "hl": [
+       {
+        "r": 1,
+        "c": 8,
+        "tone": "success"
+       }
+      ]
+     }
+    },
+    {
+     "title": "Clock 3: 110 → 111",
+     "body": "$J_2K_2=00\\Rightarrow$ hold $1$; $J_1K_1=10\\Rightarrow1$; $J_0K_0=11\\Rightarrow$ toggle $0\\to1$.\n\nSequence: **100, 110, 111**.",
+     "scene": {
+      "reveal": 27,
+      "hl": [
+       {
+        "r": 2,
+        "c": 8,
+        "tone": "success"
+       }
+      ]
+     }
+    }
+   ],
+   "answer": {
+    "value": "100, 110, 111",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — from 000, $J_2=\\overline{Q_1}=1,K_2=0$ sets $Q_2$, so the first state has $Q_2=1$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — first state would need $Q_1=Q_0=1$, but $J_1=Q_2=0$ resets $Q_1$ and $J_0=Q_1=0$ resets $Q_0$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct — 000 → 100 → 110 → 111."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — first state 100 is right, but next $Q_1^+=Q_2=1$ and $Q_0$ stays 0, giving 110, not 011."
+    }
+   ],
+   "pitfalls": [
+    "Mis-reading the crossed wires: $J_2$ comes from $\\overline{Q_1}$ (bottom) and $K_2$ from $Q_0$ (top).",
+    "Updating flip-flops one after another instead of simultaneously."
+   ],
+   "verification": "Shortcut check: $Q_1^+=Q_2$ (JK with $K=\\bar J$ acts as D), so $Q_1$ goes 0, 0, 1, 1 — consistent with 000, 100, 110, 111.",
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "Clock",
+     "Q2Q1Q0",
+     "J2=Q1′",
+     "K2=Q0",
+     "J1=Q2",
+     "K1=Q2′",
+     "J0=Q1",
+     "K0=Q0′",
+     "Next"
+    ],
+    "rows": [
+     [
+      "1",
+      "000",
+      "1",
+      "0",
+      "0",
+      "1",
+      "0",
+      "1",
+      "100"
+     ],
+     [
+      "2",
+      "100",
+      "1",
+      "0",
+      "1",
+      "0",
+      "0",
+      "1",
+      "110"
+     ],
+     [
+      "3",
+      "110",
+      "0",
+      "0",
+      "1",
+      "0",
+      "1",
+      "1",
+      "111"
+     ]
+    ],
+    "reveal": 0,
+    "mono": true
+   }
+  },
+  "cse-2014-3-cs-46": {
+   "approach": "$x^2$ is convex, so every trapezoid chord lies above the curve (overestimate). Simpson's rule is exact for all polynomials up to degree 3, hence exact for $x^2$.",
+   "concepts": [
+    "Trapezoidal rule error",
+    "Simpson's rule exactness",
+    "Convexity"
+   ],
+   "steps": [
+    {
+     "title": "Statement I",
+     "body": "Trapezoidal error: exact − approx $=-\\dfrac{(b-a)h^2}{12}f''(\\xi)$. Here $f''(x)=2>0$, so exact − approx $\\le0$, i.e. the trapezoidal value is $\\ge$ exact. Geometrically: chords of a convex curve lie above it. **True.**"
+    },
+    {
+     "title": "Statement II",
+     "body": "Simpson error: $-\\dfrac{(b-a)h^4}{180}f^{(4)}(\\xi)$, and $f^{(4)}=0$ for $x^2$. So Simpson gives the exact value. Check with one panel: $\\frac{b-a}{6}\\big(a^2+4(\\tfrac{a+b}{2})^2+b^2\\big)=\\frac{b-a}{6}(2a^2+2ab+2b^2)=\\frac{b^3-a^3}{3}$. **True.**"
+    }
+   ],
+   "answer": {
+    "value": "Both I and II",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — II is also true (Simpson is exact for quadratics)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — I is also true ($f''>0$ ⇒ trapezoid overestimates)."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct — both statements hold for $f(x)=x^2$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — both statements are true."
+    }
+   ],
+   "pitfalls": [
+    "Thinking \"always greater or equal\" fails when $a<0<b$: $x^2$ is convex on the whole line, so the trapezoid still overestimates."
+   ],
+   "verification": "Example $a=0,b=1$: trapezoid $=\\tfrac12(0+1)=0.5\\ge\\tfrac13$; Simpson $=\\tfrac16(0+4\\cdot\\tfrac14+1)=\\tfrac13$."
+  },
+  "cse-2014-3-cs-47": {
+   "approach": "Integrate by parts twice (tabular method): $\\int x^2\\cos x\\,dx = x^2\\sin x + 2x\\cos x - 2\\sin x$.",
+   "concepts": [
+    "Integration by parts",
+    "Tabular integration"
+   ],
+   "steps": [
+    {
+     "title": "Antiderivative",
+     "body": "Tabular: derivatives $x^2, 2x, 2, 0$; successive integrals of $\\cos x$: $\\sin x, -\\cos x, -\\sin x$; signs $+,-,+$:\n$$\\int x^2\\cos x\\,dx = x^2\\sin x + 2x\\cos x - 2\\sin x + C$$"
+    },
+    {
+     "title": "Evaluate",
+     "body": "At $\\pi$: $\\pi^2\\cdot0+2\\pi(-1)-2\\cdot0=-2\\pi$.\n\nAt $0$: $0+0-0=0$.\n\n$$\\int_0^{\\pi}x^2\\cos x\\,dx=-2\\pi-0=-2\\pi$$"
+    }
+   ],
+   "answer": {
+    "value": "$-2\\pi$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct — $[x^2\\sin x+2x\\cos x-2\\sin x]_0^{\\pi}=-2\\pi$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — sign and factor both off."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — misses the factor 2 from differentiating $x^2$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — sign error on the $2x\\cos x$ term ($\\cos\\pi=-1$)."
+    }
+   ],
+   "pitfalls": [
+    "Sign slips in the alternating tabular signs or forgetting $\\cos\\pi=-1$."
+   ],
+   "verification": "Differentiate: $(x^2\\sin x+2x\\cos x-2\\sin x)'=2x\\sin x+x^2\\cos x+2\\cos x-2x\\sin x-2\\cos x=x^2\\cos x$. Numerically $\\approx-6.283$."
+  },
+  "cse-2014-3-cs-48": {
+   "approach": "Mutually exclusive and exhaustive ⇒ $P(A)+P(B)=1$. Maximise $p(1-p)$: the maximum is at $p=\\tfrac12$.",
+   "concepts": [
+    "Mutually exclusive events",
+    "AM–GM inequality"
+   ],
+   "steps": [
+    {
+     "title": "Sum constraint",
+     "body": "$A\\cap B=\\emptyset$ and $A\\cup B=S$ ⇒ $P(A)+P(B)=P(S)=1$. Let $P(A)=p$, $P(B)=1-p$."
+    },
+    {
+     "title": "Maximise",
+     "body": "$p(1-p)=\\tfrac14-(p-\\tfrac12)^2\\le\\tfrac14$, with equality at $p=\\tfrac12$.\n\nMaximum $=0.5\\times0.5=0.25$."
+    }
+   ],
+   "answer": {
+    "value": "0.25",
+    "number": 0.25,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Ignoring the exhaustive condition and thinking $P(A)$ and $P(B)$ can be chosen independently."
+   ],
+   "verification": "Try $p=0.4$: $0.24<0.25$; $p=0.6$: $0.24<0.25$."
+  },
+  "cse-2014-3-cs-49": {
+   "approach": "$f\\circ f=\\text{id}$ makes $f$ an involution: a bijection whose cycles have length 1 or 2. The domain has 2015 (odd) elements, so pairs cannot cover everything — some point is fixed.",
+   "concepts": [
+    "Involution",
+    "Bijection",
+    "Parity argument"
+   ],
+   "steps": [
+    {
+     "title": "R: onto",
+     "body": "For any $i$, $f(f(i))=i$ shows $i$ is the image of $f(i)$. So $f$ is onto (and one-one, since $f(a)=f(b)\\Rightarrow a=f(f(a))=f(f(b))=b$). **R true.**"
+    },
+    {
+     "title": "Q: some fixed point",
+     "body": "Non-fixed points come in pairs $\\{i,f(i)\\}$ with $f(i)\\ne i$. The set $\\{0,\\ldots,2014\\}$ has $2015$ elements (odd), so not all can be paired: at least one $i$ has $f(i)=i$. **Q true.**"
+    },
+    {
+     "title": "P: identity?",
+     "body": "Counterexample: swap $0\\leftrightarrow1$ and fix all others. Then $f(f(i))=i$ but $f(0)=1\\ne0$. **P false.**"
+    }
+   ],
+   "answer": {
+    "value": "Only Q and R are true",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — P fails: $f$ swapping 0 and 1 is an involution that is not the identity."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct — Q holds by parity (2015 is odd), R holds since $f$ is its own inverse."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — P is false, and R is true."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — Q is also true because the domain size 2015 is odd."
+    }
+   ],
+   "pitfalls": [
+    "Counting the domain as 2014 elements (even) — it has 2015, which is what forces a fixed point."
+   ],
+   "verification": "On $\\{0,1,2\\}$ (3 elements), all involutions — identity and the three transpositions — have a fixed point and are bijections."
+  },
+  "cse-2014-3-cs-50": {
+   "approach": "$x^2=y^2=e$ and $(xy)^2=e$ force $xy=yx$, so the group is abelian and generated by two elements of order ≤ 2: at most $\\{e,x,y,xy\\}$ (the Klein four-group).",
+   "concepts": [
+    "Group presentation",
+    "Klein four-group",
+    "Abelian groups"
+   ],
+   "steps": [
+    {
+     "title": "x and y commute",
+     "body": "$xyxy=e$ ⇒ $xy=(xy)^{-1}=y^{-1}x^{-1}=yx$ (since $x^{-1}=x$, $y^{-1}=y$)."
+    },
+    {
+     "title": "Every word collapses",
+     "body": "Any product of $x$'s and $y$'s can be reordered to $x^a y^b$, and with $x^2=y^2=e$ only $a,b\\in\\{0,1\\}$ matter. So $G\\subseteq\\{e,x,y,xy\\}$ ⇒ $|G|\\le4$."
+    },
+    {
+     "title": "Maximum attained",
+     "body": "$\\mathbb Z_2\\times\\mathbb Z_2$ with $x=(1,0)$, $y=(0,1)$ satisfies all relations and has 4 distinct elements. Maximum $=4$."
+    }
+   ],
+   "answer": {
+    "value": "4",
+    "number": 4,
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Counting words ($e,x,y,xy,yx,xyx,\\ldots$) as distinct without using the relations."
+   ],
+   "verification": "Cayley table of $\\{e,x,y,xy\\}$ closes: $x\\cdot xy=y$, $y\\cdot xy=x$, $xy\\cdot xy=e$."
+  },
+  "cse-2014-3-cs-51": {
+   "approach": "Each component of a forest is a tree; a tree on $n_i$ vertices has $n_i-1$ edges. Sum over the $k$ trees.",
+   "concepts": [
+    "Forest",
+    "Tree edge count"
+   ],
+   "steps": [
+    {
+     "title": "Sum over components",
+     "body": "$$|E|=\\sum_{i=1}^{k}(n_i-1)=\\Big(\\sum n_i\\Big)-k=n-k$$"
+    },
+    {
+     "title": "Sanity check",
+     "body": "One tree ($k=1$): $n-1$ edges. No edges ($k=n$ isolated vertices): $n-n=0$."
+    }
+   ],
+   "answer": {
+    "value": "$n-k$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — e.g. $n=4,k=1$ (a path) has 3 edges, not $\\lfloor4/1\\rfloor=4$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — same counterexample gives $\\lceil 4/1\\rceil=4\\ne3$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct — $\\sum(n_i-1)=n-k$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — $n-k+1$ gives $n$ edges for a single tree, which would force a cycle."
+    }
+   ],
+   "verification": "Forest of a 3-vertex path plus 2 isolated vertices: $n=5,k=3$, edges $=2=5-3$."
+  },
+  "cse-2014-3-cs-52": {
+   "approach": "Euler: $f=e-n+2$ for a connected planar graph. With $\\delta\\ge3$, the handshake lemma gives $2e\\ge3n$, so $f\\ge\\tfrac{3n}{2}-n+2=\\tfrac n2+2$ in every embedding.",
+   "concepts": [
+    "Euler's formula",
+    "Handshake lemma"
+   ],
+   "steps": [
+    {
+     "title": "Edge lower bound",
+     "body": "$2e=\\sum\\deg(v)\\ge\\delta n\\ge3n$ ⇒ $e\\ge\\dfrac{3n}{2}$."
+    },
+    {
+     "title": "Faces",
+     "body": "Euler's formula holds for every planar embedding of a connected planar graph: $f=e-n+2\\ge\\dfrac{3n}{2}-n+2=\\dfrac n2+2$. (With $c$ components, $f=e-n+1+c$, which is even larger.)"
+    },
+    {
+     "title": "Conclusion",
+     "body": "In any planar embedding, $f\\ge\\dfrac n2+2$ — option A."
+    }
+   ],
+   "answer": {
+    "value": "In any planar embedding, faces $\\ge n/2+2$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct — follows from $e\\ge 3n/2$ and Euler's formula, independent of the embedding."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — contradicts the bound; e.g. $K_4$: $n=4$, $f=4=\\tfrac42+2$, not less."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — the face count is fixed by $n$ and $e$ in every embedding, and it is always $\\ge n/2+2$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Wrong — $K_4$ has $f=4$ but $\\tfrac{n}{\\delta+1}=\\tfrac44=1$."
+    }
+   ],
+   "pitfalls": [
+    "Thinking different embeddings change the number of faces — Euler's formula fixes it."
+   ],
+   "verification": "$K_4$ ($n=4$, $e=6$, $\\delta=3$): $f=6-4+2=4\\ge4$. Cube graph ($n=8,e=12$): $f=6\\ge6$ (tight for 3-regular graphs)."
+  },
+  "cse-2014-3-cs-53": {
+   "approach": "\"Not all rainy days are cold\" $=\\neg\\forall d\\,(R(d)\\to C(d))\\equiv\\exists d\\,(R(d)\\wedge\\neg C(d))$: some day is rainy and not cold.",
+   "concepts": [
+    "Quantifier negation",
+    "Implication negation"
+   ],
+   "steps": [
+    {
+     "title": "Formalise \"all rainy days are cold\"",
+     "body": "$\\forall d\\,(Rainy(d)\\to Cold(d))$."
+    },
+    {
+     "title": "Negate",
+     "body": "$\\neg\\forall d\\,(R\\to C)\\equiv\\exists d\\,\\neg(R\\to C)\\equiv\\exists d\\,\\neg(\\neg R\\vee C)\\equiv\\exists d\\,(R(d)\\wedge\\neg C(d))$."
+    }
+   ],
+   "answer": {
+    "value": "$\\exists d\\,(Rainy(d)\\wedge\\sim Cold(d))$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — says every day is rainy and not cold (far too strong)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — says every non-rainy day is cold; unrelated to the sentence."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — $\\exists d(\\neg R\\to C)\\equiv\\exists d(R\\vee C)$: some day is rainy or cold — not the meaning."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct — some rainy day is not cold."
+    }
+   ],
+   "pitfalls": [
+    "Negating $\\forall$ to $\\exists$ but keeping the implication — the negation of $R\\to C$ is $R\\wedge\\neg C$."
+   ],
+   "verification": "A world where every day is rainy and cold makes the sentence false and D false; adding one warm rainy day makes both true."
+  },
+  "cse-2014-3-cs-54": {
+   "approach": "NOT EXISTS (customer of E whose rating ≠ GOOD) means E has no non-GOOD customer, i.e. every customer of E is GOOD (a \"for all\" written as \"not exists … not\").",
+   "concepts": [
+    "Correlated subquery",
+    "NOT EXISTS (universal quantification)"
+   ],
+   "steps": [
+    {
+     "title": "Inner query",
+     "body": "For employee $E$, the subquery returns $E$'s customers whose rating is **not** 'GOOD'."
+    },
+    {
+     "title": "NOT EXISTS",
+     "body": "$E$ is output iff that set is empty: $\\neg\\exists c\\,(\\text{rep}(c)=E\\wedge \\text{rating}(c)\\ne\\text{GOOD})\\equiv\\forall c\\,(\\text{rep}(c)=E\\to\\text{rating}(c)=\\text{GOOD})$.\n\nSince each employee has at least one customer, this is \"all (≥ 1) of their customers are GOOD\"."
+    }
+   ],
+   "answer": {
+    "value": "Employees with all their customers rated GOOD",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — an employee with one GOOD and one BAD customer is excluded by the query."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — an employee with 3 GOOD customers (and no others) is returned, though they have more than one GOOD customer."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — an employee whose customers are all non-GOOD has a non-empty subquery, so is excluded."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct — no non-GOOD customer ⇔ all customers GOOD."
+    }
+   ],
+   "pitfalls": [
+    "Missing the double negation (NOT EXISTS + `<>`) that turns into \"all\".",
+    "NULL ratings: `NULL <> 'GOOD'` is unknown, so such customers do not block the employee; the options ignore this edge case."
+   ],
+   "verification": "Tiny instance: E1 → {GOOD, GOOD}, E2 → {GOOD, BAD}. Subquery empty for E1 only → returns E1, matching D."
+  },
+  "cse-2014-3-cs-55": {
+   "approach": "XOR is associative and commutative with $a\\oplus a=0$, $a\\oplus0=a$. Flatten the expression and cancel pairs.",
+   "concepts": [
+    "XOR algebra",
+    "XNOR"
+   ],
+   "steps": [
+    {
+     "title": "Flatten",
+     "body": "$F=1\\oplus P\\oplus P\\oplus Q\\oplus P\\oplus Q\\oplus Q\\oplus0$.\n\n$P$ occurs 3 times, $Q$ occurs 3 times."
+    },
+    {
+     "title": "Cancel pairs",
+     "body": "$P\\oplus P=0$, $Q\\oplus Q=0$, so $F=1\\oplus P\\oplus Q\\oplus0=1\\oplus(P\\oplus Q)=\\overline{P\\oplus Q}$."
+    }
+   ],
+   "answer": {
+    "value": "$\\overline{P\\oplus Q}$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Wrong — at $P=1,Q=0$: $F=0$ while $P+Q=1$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Wrong — at $P=Q=1$, $\\overline{P+Q}=0$ but $F=1$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Wrong — it is the complement: at $P=Q=0$, $F=1$ but $P\\oplus Q=0$."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct — $F=1\\oplus P\\oplus Q$ = XNOR."
+    }
+   ],
+   "verification": "Direct: $P=Q=0$: $(1\\oplus0)\\oplus(0\\oplus0)\\oplus((0\\oplus0)\\oplus(0\\oplus0))=1$ = XNOR(0,0); $P=1,Q=0$: $(0\\oplus1)\\oplus(1\\oplus0)=1\\oplus1=0$ = XNOR(1,0)."
+  }
+ }
+}
