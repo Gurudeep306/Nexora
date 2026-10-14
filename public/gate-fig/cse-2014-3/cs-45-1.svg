@@ -1,33 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <defs>
-    <linearGradient id="gate-grad-cse-2014-3-cs-45" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#1e293b" />
-      <stop offset="100%" stopColor="#0f172a" />
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LOGIC CIRCUIT</text>
-  <rect x="80" y="70" width="80" height="90" rx="8" fill="url(#gate-grad-cse-2014-3-cs-45)" stroke="#38bdf8" stroke-width="2" />
-  <text x="120" y="100" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">FF₀</text>
-  <text x="92" y="125" fill="#94a3b8" font-size="11" font-family="monospace">CLK</text>
-  <text x="142" y="125" fill="#34d399" font-size="12" font-weight="bold" font-family="monospace">Q</text>
-  <text x="142" y="148" fill="#f43f5e" font-size="12" font-weight="bold" font-family="monospace">Q̄</text>
-  <line x1="160" y1="120" x2="230" y2="120" stroke="#34d399" stroke-width="2" />
-  <rect x="230" y="70" width="80" height="90" rx="8" fill="url(#gate-grad-cse-2014-3-cs-45)" stroke="#38bdf8" stroke-width="2" />
-  <text x="270" y="100" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">FF₁</text>
-  <text x="242" y="125" fill="#94a3b8" font-size="11" font-family="monospace">CLK</text>
-  <text x="292" y="125" fill="#34d399" font-size="12" font-weight="bold" font-family="monospace">Q</text>
-  <text x="292" y="148" fill="#f43f5e" font-size="12" font-weight="bold" font-family="monospace">Q̄</text>
-  <line x1="310" y1="120" x2="380" y2="120" stroke="#34d399" stroke-width="2" />
-  <rect x="380" y="70" width="80" height="90" rx="8" fill="url(#gate-grad-cse-2014-3-cs-45)" stroke="#38bdf8" stroke-width="2" />
-  <text x="420" y="100" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">FF₂</text>
-  <text x="392" y="125" fill="#94a3b8" font-size="11" font-family="monospace">CLK</text>
-  <text x="442" y="125" fill="#34d399" font-size="12" font-weight="bold" font-family="monospace">Q</text>
-  <text x="442" y="148" fill="#f43f5e" font-size="12" font-weight="bold" font-family="monospace">Q̄</text>
-  <path d="M 40 180 L 460 180" stroke="#f59e0b" stroke-width="2" />
-  <text x="40" y="170" fill="#f59e0b" font-size="11" font-weight="bold" font-family="monospace">CLK BUS</text>
-  <line x1="100" y1="180" x2="100" y2="160" stroke="#f59e0b" stroke-width="2" />
-  <line x1="250" y1="180" x2="250" y2="160" stroke="#f59e0b" stroke-width="2" />
-  <line x1="400" y1="180" x2="400" y2="160" stroke="#f59e0b" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 690 290" font-family="Arial, Helvetica, sans-serif" font-size="16" fill="none" stroke="currentColor" stroke-width="1.8">
+<rect x="150" y="70" width="90" height="110" stroke-width="2.5"/>
+<text x="158" y="100" stroke="none" fill="currentColor">J</text>
+<text x="158" y="160" stroke="none" fill="currentColor">K</text>
+<path d="M 150 118 L 159 125 L 150 132" fill="none"/>
+<text x="122" y="130" stroke="none" fill="currentColor">C</text>
+<line x1="136" y1="125" x2="150" y2="125"/>
+<path d="M 142 121 L 150 125 L 142 129" fill="none"/>
+<text x="206" y="100" stroke="none" fill="currentColor" font-style="italic">Q<tspan font-size="11" dy="4" font-style="normal">2</tspan></text>
+<text x="206" y="160" stroke="none" fill="currentColor" font-style="italic">Q<tspan font-size="11" dy="4" font-style="normal">2</tspan></text>
+<line x1="205" y1="141" x2="218" y2="141" stroke-width="1.3"/>
+<rect x="340" y="70" width="90" height="110" stroke-width="2.5"/>
+<text x="348" y="100" stroke="none" fill="currentColor">J</text>
+<text x="348" y="160" stroke="none" fill="currentColor">K</text>
+<path d="M 340 118 L 349 125 L 340 132" fill="none"/>
+<text x="312" y="130" stroke="none" fill="currentColor">C</text>
+<line x1="326" y1="125" x2="340" y2="125"/>
+<path d="M 332 121 L 340 125 L 332 129" fill="none"/>
+<text x="396" y="100" stroke="none" fill="currentColor" font-style="italic">Q<tspan font-size="11" dy="4" font-style="normal">1</tspan></text>
+<text x="396" y="160" stroke="none" fill="currentColor" font-style="italic">Q<tspan font-size="11" dy="4" font-style="normal">1</tspan></text>
+<line x1="395" y1="141" x2="408" y2="141" stroke-width="1.3"/>
+<rect x="540" y="70" width="90" height="110" stroke-width="2.5"/>
+<text x="548" y="100" stroke="none" fill="currentColor">J</text>
+<text x="548" y="160" stroke="none" fill="currentColor">K</text>
+<path d="M 540 118 L 549 125 L 540 132" fill="none"/>
+<text x="512" y="130" stroke="none" fill="currentColor">C</text>
+<line x1="526" y1="125" x2="540" y2="125"/>
+<path d="M 532 121 L 540 125 L 532 129" fill="none"/>
+<text x="596" y="100" stroke="none" fill="currentColor" font-style="italic">Q<tspan font-size="11" dy="4" font-style="normal">0</tspan></text>
+<text x="596" y="160" stroke="none" fill="currentColor" font-style="italic">Q<tspan font-size="11" dy="4" font-style="normal">0</tspan></text>
+<line x1="595" y1="141" x2="608" y2="141" stroke-width="1.3"/>
+<line x1="240" y1="95" x2="340" y2="95"/>
+<path d="M 332 91 L 340 95 L 332 99" fill="none"/>
+<line x1="240" y1="155" x2="340" y2="155"/>
+<path d="M 332 151 L 340 155 L 332 159" fill="none"/>
+<line x1="430" y1="95" x2="540" y2="95"/>
+<path d="M 532 91 L 540 95 L 532 99" fill="none"/>
+<path d="M 430 155 L 480 155 L 480 270 L 20 270 L 20 95 L 95 95 A 10 10 0 0 1 115 95 L 150 95" fill="none"/>
+<path d="M 142 91 L 150 95 L 142 99" fill="none"/>
+<path d="M 630 95 L 665 95 L 665 20 L 105 20 L 105 155 L 150 155" fill="none"/>
+<path d="M 142 151 L 150 155 L 142 159" fill="none"/>
+<path d="M 630 155 L 650 155 L 650 230 L 498 230 L 498 155 L 540 155" fill="none"/>
+<path d="M 532 151 L 540 155 L 532 159" fill="none"/>
 </svg>
