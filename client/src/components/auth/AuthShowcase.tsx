@@ -48,7 +48,7 @@ export function AuthShowcase() {
 
       <div className="relative">
         <Link to="/" className="flex w-fit items-center gap-3">
-          <LogoMark size={44} className="drop-shadow-[0_8px_22px_rgb(255_153_51/0.35)]" />
+          <LogoMark size={44} />
           <Wordmark className="text-xl" />
         </Link>
         <motion.h1
