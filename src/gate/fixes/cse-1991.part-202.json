@@ -1,0 +1,61 @@
+{
+  "paper": "cse-1991",
+  "fixes": [
+    {
+      "id": "cse-1991-b-8-b",
+      "field": "reviewNote",
+      "before": "Signal names in Fig. 6 are hard to read in the scan; verify the labels.",
+      "after": null,
+      "reason": "Labels read from the scan (PORT-DATA OUTPUT, WR of PORT 40H, INTERRUPT, BUFFULL, STROBE INPUT FROM DEVICE) and Fig. 6 redrawn as SVG.",
+      "source": "GATE1991.pdf p.6"
+    },
+    {
+      "id": "cse-1991-b-10-b",
+      "field": "answer",
+      "before": "Yes; e.g. F → id | (E − T) | (T / F)",
+      "after": "Yes. E → E − T | T / F | id; T → T / F | (E − T) | id; F → (E − T) | (T / F) | id",
+      "reason": "Old grammar (with E → T, T → F) still derives (id/id) and id − (id/id), the very examples in the question; new grammar allows parentheses only where they change the parse.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-10-b",
+      "field": "reviewNote",
+      "before": "Proposed grammar still allows some redundant parentheses (e.g. around a whole expression, or (id/id) as the right operand of −); a fully correct minimal answer needs checking.",
+      "after": "Answer changes only the right-hand sides of the three existing rules (no new nonterminal); if 'at most one more production' counts alternatives rather than rules, no exactly non-redundant grammar fits that budget — verify the intended reading.",
+      "reason": "Replace stale note with the remaining interpretation question.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-10-c",
+      "field": "answer",
+      "before": "E → T E′; E′ → − T E′ | ε; T → F T′; T′ → / F T′ | ε; F rules unchanged",
+      "after": "E → T / F E′ | id E′; E′ → − T E′ | ε; T → (E − T) T′ | id T′; T′ → / F T′ | ε; F → (E − T) | (T / F) | id",
+      "reason": "Part (c) asks to convert the grammar from (b), not the original one.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-12-b",
+      "field": "answer",
+      "before": "(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SUPPLIER.CITY \\ne PROJECTS.CITY}(SUPPLIER \\bowtie SPPR \\bowtie PROJECTS))$",
+      "after": "(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SCITY \\ne PCITY}(\\rho_{(SCODE,SNAME,SCITY)}(SUPPLIER) \\bowtie SPPR \\bowtie \\rho_{(PRCODE,PRNAME,PCITY)}(PROJECTS)))$",
+      "reason": "The natural join SUPPLIER ⋈ SPPR ⋈ PROJECTS also equates the shared attribute CITY, so the old expression always returns an empty result; rename the CITY columns first.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-15-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Formula checked on the 300-dpi scan; irreflexivity is implied by the asymmetry conjunct anyway, so the answer does not depend on the blurred last conjunct.",
+      "source": "GATE1991.pdf p.8"
+    },
+    {
+      "id": "cse-1991-b-15-b",
+      "field": "reviewNote",
+      "before": "Formula is blurred in the scan; the last conjunct is read as (∀x)¬R(x,x); verify.",
+      "after": null,
+      "reason": "Resolved (see needsReview fix).",
+      "source": "GATE1991.pdf p.8"
+    }
+  ]
+}
