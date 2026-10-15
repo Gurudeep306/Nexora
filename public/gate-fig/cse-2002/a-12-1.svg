@@ -1,47 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">KARNAUGH MAP (K-MAP)</text>
-  <text x="145" y="58" fill="#818cf8" font-size="12" font-weight="bold" font-family="monospace">AB \ CD</text>
-  <text x="203.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">00</text>
-  <text x="249.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">01</text>
-  <text x="295.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">11</text>
-  <text x="341.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">10</text>
-  <text x="168" y="97.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">00</text>
-  <rect x="180" y="70" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="97.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="226" y="70" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="97.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="272" y="70" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="97.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="318" y="70" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="97.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <text x="168" y="143.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">01</text>
-  <rect x="180" y="116" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="143.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="226" y="116" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="143.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="272" y="116" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="143.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="318" y="116" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="143.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <text x="168" y="189.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">11</text>
-  <rect x="180" y="162" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="189.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="226" y="162" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="189.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="272" y="162" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="189.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="318" y="162" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="189.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <text x="168" y="235.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">10</text>
-  <rect x="180" y="208" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="235.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="226" y="208" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="235.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="272" y="208" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="235.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="318" y="208" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="235.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="222" y="112" width="100" height="54" rx="8" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250" fill="none" font-family="Arial, Helvetica, sans-serif">
+  <title>K-map of f(w,x,y,z): columns wx = 00,01,11,10; rows yz = 00,01,11,10. Row 00: 0 1 1 0; row 01: x 0 0 1; row 11: x 0 0 1; row 10: 0 1 1 x (x = don't care)</title>
+  <g stroke="currentColor" stroke-width="1.5">
+    <line x1="30" y1="20" x2="80" y2="60"/>
+    <rect x="80" y="60" width="200" height="176" stroke-width="2"/>
+    <line x1="130" y1="60" x2="130" y2="236"/>
+    <line x1="180" y1="60" x2="180" y2="236"/>
+    <line x1="230" y1="60" x2="230" y2="236"/>
+    <line x1="80" y1="104" x2="280" y2="104"/>
+    <line x1="80" y1="148" x2="280" y2="148"/>
+    <line x1="80" y1="192" x2="280" y2="192"/>
+  </g>
+  <g fill="currentColor" font-size="15" text-anchor="middle">
+    <text x="62" y="28" font-style="italic">wx</text>
+    <text x="30" y="58" font-style="italic">yz</text>
+    <text x="105" y="50">00</text><text x="155" y="50">01</text><text x="205" y="50">11</text><text x="255" y="50">10</text>
+    <text x="60" y="87">00</text><text x="60" y="131">01</text><text x="60" y="175">11</text><text x="60" y="219">10</text>
+  </g>
+  <g fill="currentColor" font-size="18" text-anchor="middle">
+    <text x="105" y="88">0</text><text x="155" y="88">1</text><text x="205" y="88">1</text><text x="255" y="88">0</text>
+    <text x="105" y="132">x</text><text x="155" y="132">0</text><text x="205" y="132">0</text><text x="255" y="132">1</text>
+    <text x="105" y="176">x</text><text x="155" y="176">0</text><text x="205" y="176">0</text><text x="255" y="176">1</text>
+    <text x="105" y="220">0</text><text x="155" y="220">1</text><text x="205" y="220">1</text><text x="255" y="220">x</text>
+  </g>
 </svg>
