@@ -24,6 +24,7 @@ const { run, get, all, initDb, dbInfo, migratePerUser } = require("./db");
 const { getCatalog, topicPool } = require("./problem-catalog");
 const { requestContext, me, meSql, runAs, queryCount } = require("./context");
 const { DbSessionStore } = require("./session-store");
+const { isSetAvatar, normalizeAvatar } = require("./avatar-set");
 const { restoreUploads } = require("./upload-store");
 const { authz } = require("./middleware/authz");
 const {
@@ -860,6 +861,11 @@ async function finishOAuth(req, res, next, provider) {
       req.session.regenerate((err) => (err ? reject(err) : resolve())),
     );
     if (linked) {
+      // Lazy avatar migration (see /api/user/login).
+      if (!isSetAvatar(linked.avatar)) {
+        linked.avatar = normalizeAvatar(linked.avatar, linked.username);
+        await run("UPDATE users SET avatar=? WHERE username=?", [linked.avatar, linked.username]).catch(() => {});
+      }
       persistSessionUser(req, linked);
       return req.session.save(() => res.redirect(publicRedirect(DEPLOY, `/?auth=${provider}&linked=1`)));
     }
@@ -5916,7 +5922,7 @@ io.on("connection", (socket) => {
         username: me,
         content: sanitized,
         display_name: user?.display_name || me,
-        avatar: user?.avatar || "coder",
+        avatar: normalizeAvatar(user?.avatar, me),
         created_at: new Date().toISOString(),
       });
     } catch {}
