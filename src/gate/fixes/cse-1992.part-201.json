@@ -1,0 +1,140 @@
+{
+  "paper": "cse-1992",
+  "fixes": [
+    {
+      "id": "cse-1992-a-2-xi",
+      "field": "text",
+      "before": "Choose the correct alternatives (more than one may be correct) and write the corresponding letters only:\n\nA computer system has 6 tape drives, with n process completing for them. Each process may need 3 tape drives. The maximum value of n for which the system is guaranteed to be deadlock free is:",
+      "after": "Choose the correct alternatives (more than one may be correct) and write the corresponding letters only:\n\nA computer system has 6 tape drives, with n processes competing for them. Each process may need 3 tape drives. The maximum value of n for which the system is guaranteed to be deadlock free is:",
+      "reason": "Typo cleanup (\"process completing\" → \"processes competing\").",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-a-2-xiii",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "FOLLOW(A) and FOLLOW (A) may be different."
+        },
+        {
+          "l": "B",
+          "t": "FOLLOW(A) and FOLLOW (A) are always the same."
+        },
+        {
+          "l": "C",
+          "t": "All the three sets are identical."
+        },
+        {
+          "l": "D",
+          "t": "All the three sets are different."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "FOLLOW(A) and LFOLLOW(A) may be different."
+        },
+        {
+          "l": "B",
+          "t": "FOLLOW(A) and RFOLLOW(A) are always the same."
+        },
+        {
+          "l": "C",
+          "t": "All the three sets are identical."
+        },
+        {
+          "l": "D",
+          "t": "All the three sets are different."
+        }
+      ],
+      "reason": "Scan drops the L/R prefixes; options (a)/(b) restored as FOLLOW vs LFOLLOW and FOLLOW vs RFOLLOW (the only reading consistent with the stem).",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-a-2-xiii",
+      "field": "answer",
+      "before": [
+        "C"
+      ],
+      "after": [
+        "A",
+        "B"
+      ],
+      "reason": "Proved: S→AB, A→c, B→b gives FOLLOW(A)=RFOLLOW(A)={b} but LFOLLOW(A)=∅ (A is only ever followed by the non-terminal B in left-sentential forms), so (c) is false; RFOLLOW always equals FOLLOW for a reduced grammar.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1992-a-2-xiii",
+      "field": "reviewNote",
+      "before": "Options (a)/(b) are printed as 'FOLLOW(A) and FOLLOW (A)'; the original presumably read LFOLLOW(A)/RFOLLOW(A). If (b) is 'FOLLOW and RFOLLOW always the same' it is also true.",
+      "after": "Options (a)/(b) were garbled in the scan (both read \"FOLLOW(A) and FOLLOW (A)\") and were restored to LFOLLOW/RFOLLOW; no official key exists for 1992. Proof: S→AB, A→c, B→b has FOLLOW(A)=RFOLLOW(A)={b}, LFOLLOW(A)=∅, so (c) \"all identical\" is false and the answer is (a),(b).",
+      "reason": "Restored options; key changed from C to A,B by proof — flagged for review.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1992-a-3-i",
+      "field": "text",
+      "before": "Write short answers to the following:\n\nWhich of the following macros can put a macro assembler into an infinite loop?\n\n```\n.MACRI M1,X            .MACRO M2, X\n..IF EQ,X               .IF EQ, X\nM1 X+1                  M2X\n.ENDC                   .ENDC\n.IF NE, X               .IF NE, X\nWORD X                  .WORD X + 1\n.ENDC                   .ENDC\n.ENDM                   .ENDM\n```\n\nGive an example of a call that does so.",
+      "after": "Write short answers to the following:\n\nWhich of the following macros can put a macro assembler into an infinite loop?\n\n```\n.MACRO M1, X            .MACRO M2, X\n.IF EQ, X               .IF EQ, X\nM1 X+1                  M2 X\n.ENDC                   .ENDC\n.IF NE, X               .IF NE, X\n.WORD X                 .WORD X+1\n.ENDC                   .ENDC\n.ENDM                   .ENDM\n```\n\nGive an example of a call that does so.",
+      "reason": "OCR typos in the macro listing (\".MACRI\", \"..IF\", \"WORD\", \"M2X\") corrected to .MACRO / .IF / .WORD / M2 X.",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-a-3-i",
+      "field": "subject",
+      "before": "ga",
+      "after": "legacy",
+      "reason": "Macro assemblers are systems programming, not general aptitude.",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-a-3-i",
+      "field": "topic",
+      "before": "verbal",
+      "after": "other",
+      "reason": "Systems programming (macro processor) → legacy/other.",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-a-3-ii",
+      "field": "subject",
+      "before": "ga",
+      "after": "legacy",
+      "reason": "Two-pass assemblers are systems programming, not quantitative aptitude.",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-a-3-ii",
+      "field": "topic",
+      "before": "quant",
+      "after": "other",
+      "reason": "Systems programming (assembler) → legacy/other.",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-b-4-a",
+      "field": "text",
+      "before": "Consider addition in two's complement arithmetic. A carry from the most significant but does not always correspond to an overflow. Explain what is the condition for overflow in two's complement arithmetic.",
+      "after": "Consider addition in two's complement arithmetic. A carry from the most significant bit does not always correspond to an overflow. Explain what is the condition for overflow in two's complement arithmetic.",
+      "reason": "Typo \"but\" → \"bit\".",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-b-5-b",
+      "field": "text",
+      "before": "Three devices A, B and C are corrected to the bus of a computer, input/output transfers for all three devices use interrupt control. Three interrupt request lines INTR1, INTR2 and INTR3 are available with priority of $\\text{INTR}_1 >$ priority of $\\text{INTR}_2 >$ priority of $\\text{INTR}_3$.\n\nDraw a schematic of the priority logic, using an interrupt mask register, in which Priority of A > Priority of B > Priority of C.",
+      "after": "Three devices A, B and C are connected to the bus of a computer, input/output transfers for all three devices use interrupt control. Three interrupt request lines INTR1, INTR2 and INTR3 are available with priority of $\\text{INTR}_1 >$ priority of $\\text{INTR}_2 >$ priority of $\\text{INTR}_3$.\n\nDraw a schematic of the priority logic, using an interrupt mask register, in which Priority of A > Priority of B > Priority of C.",
+      "reason": "Typo \"corrected\" → \"connected\".",
+      "source": "GATE1992.pdf"
+    },
+    {
+      "id": "cse-1992-b-5-b",
+      "field": "answer",
+      "before": "Daisy-chain priority resolution: Device A has highest priority, followed by B, then C",
+      "after": "Parallel priority logic: A, B, C drive INTR1, INTR2, INTR3; each request is ANDed with its mask-register bit ($I_k = R_k M_k$), then priority gating gives $G_A = I_1$, $G_B = \\overline{I_1}I_2$, $G_C = \\overline{I_1}\\,\\overline{I_2}I_3$, and INT to the CPU $= \\text{IEN}\\cdot(I_1 + I_2 + I_3)$; the grant/encoder output selects the vector of the highest-priority unmasked device",
+      "reason": "The stored \"daisy chain\" answer ignores the interrupt mask register and the three separate INTR lines the question specifies; the intended design is mask-register gating + priority logic.",
+      "source": "solved"
+    }
+  ]
+}
