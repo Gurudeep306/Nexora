@@ -10,6 +10,7 @@ import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
 import { api, apiUrl, ApiError } from '@/lib/api'
 import { useSite } from '@/context/SiteContext'
+import { avatarName, defaultAvatarId, resolveAvatarId } from '@/lib/avatar'
 import { cn } from '@/lib/utils'
 
 type Mode = 'login' | 'register'
@@ -330,8 +331,9 @@ export default function AuthPage() {
         await login(username.trim(), password)
         toast.success('Welcome back', 'Picking up right where you left off.')
       } else {
-        await register(username.trim(), email.trim(), password)
-        toast.success('Welcome to NexoraGuru', 'Your account and avatar are ready. Change the avatar any time in Settings.')
+        const u = await register(username.trim(), email.trim(), password)
+        const you = avatarName(resolveAvatarId(u?.avatar, u?.username ?? username.trim()))
+        toast.success('Welcome to NexoraGuru', `Your account is ready and ${you} is your avatar. Pick another any time in Settings.`)
       }
       if (!oauthPending) writeLast('password')
       setSuccess(true)
@@ -471,7 +473,7 @@ export default function AuthPage() {
                     exit={{ opacity: 0, scale: 0.6 }}
                     transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
                     className="shrink-0"
-                    title="Your avatar"
+                    title={`Your avatar: ${avatarName(defaultAvatarId(previewName))}`}
                   >
                     <Avatar seed={previewName} name={previewName} size="lg" />
                   </motion.div>
