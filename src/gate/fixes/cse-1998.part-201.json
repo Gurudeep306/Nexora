@@ -1,0 +1,69 @@
+{
+  "paper": "cse-1998",
+  "fixes": [
+    {
+      "id": "cse-1998-a-23",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Counting substrings of a string is a combinatorics question, not algorithm complexity.",
+      "source": "GATE 1998 paper Q23"
+    },
+    {
+      "id": "cse-1998-a-23",
+      "field": "topic",
+      "before": "complexity",
+      "after": "combinatorics",
+      "reason": "Counting substrings is combinatorics.",
+      "source": "GATE 1998 paper Q23"
+    },
+    {
+      "id": "cse-1998-a-26",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Power of SLR/LALR/CLR parsers is compiler design, not C programming.",
+      "source": "GATE 1998 paper Q26"
+    },
+    {
+      "id": "cse-1998-a-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "parsing",
+      "reason": "LR-parser power comparison is parsing.",
+      "source": "GATE 1998 paper Q26"
+    },
+    {
+      "id": "cse-1998-a-31",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "Counting semaphore P/V operations is operating systems, not quantitative aptitude.",
+      "source": "GATE 1998 paper Q31"
+    },
+    {
+      "id": "cse-1998-a-31",
+      "field": "topic",
+      "before": "quant",
+      "after": "sync",
+      "reason": "Semaphores are process synchronisation.",
+      "source": "GATE 1998 paper Q31"
+    },
+    {
+      "id": "cse-1998-a-39",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Inclusion–exclusion counting is discrete mathematics, not C programming.",
+      "source": "GATE 1998 paper Q39"
+    },
+    {
+      "id": "cse-1998-a-39",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "combinatorics",
+      "reason": "Inclusion–exclusion is combinatorics.",
+      "source": "GATE 1998 paper Q39"
+    }
+  ]
+}
