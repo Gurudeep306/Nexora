@@ -100,7 +100,7 @@ export function getCategoryBannerImage(category: string, systemId: string): stri
 
 /**
  * Builds an exhaustive, textbook-grade 10-Chapter System Design Analysis Dossier
- * for any system in Nexora.
+ * for any system in NexoraGuru.
  */
 export function getSystemDossier(systemId: string): SystemDossier | null {
   const sys = getSystemById(systemId)

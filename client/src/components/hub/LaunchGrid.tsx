@@ -80,7 +80,7 @@ function TileBody({ item }: { item: DockItem }) {
 }
 
 /**
- * The home launchpad: every destination in Nexora as one glowing tile,
+ * The home launchpad: every destination in NexoraGuru as one glowing tile,
  * with category filters and instant keyboard access.
  */
 export function LaunchGrid() {
@@ -94,10 +94,10 @@ export function LaunchGrid() {
   }, [allItems, selectedCat])
 
   return (
-    <section aria-label="Explore Nexora" className="space-y-3.5">
+    <section aria-label="Explore NexoraGuru" className="space-y-3.5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex items-baseline gap-3">
-          <h2 className="mb-0 !text-[19px] font-semibold text-text-primary">Explore Nexora</h2>
+          <h2 className="mb-0 !text-[19px] font-semibold text-text-primary">Explore NexoraGuru</h2>
           <p className="mb-0 hidden text-[13px] text-text-muted sm:block">Every part of the platform, one click away.</p>
         </div>
 

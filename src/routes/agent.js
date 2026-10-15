@@ -1,4 +1,4 @@
-/* HTTP surface of the Nexora AI agent (src/ai/agent.js). Everything needs a
+/* HTTP surface of the NexoraGuru AI agent (src/ai/agent.js). Everything needs a
    signed-in account; the user is always the session user.
 
    POST   /api/agent/chat                  → text/event-stream

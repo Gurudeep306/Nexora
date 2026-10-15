@@ -306,8 +306,8 @@ export function AgentPanel() {
           onPointerCancel={onBubbleUp}
           onClick={onBubbleClick}
           onKeyDown={onBubbleKey}
-          aria-label={`Open Nexora AI assistant (${summary.label}). Drag or use arrow keys to move.`}
-          title="Nexora AI — ⌘J"
+          aria-label={`Open NexoraGuru AI assistant (${summary.label}). Drag or use arrow keys to move.`}
+          title="NexoraGuru AI — ⌘J"
         >
           <Sparkles aria-hidden="true" />
           {(busy || unread) && <span className="ai-fab-dot" data-busy={busy ? '' : undefined} aria-hidden="true" />}
@@ -353,7 +353,7 @@ export function AgentPanel() {
               </span>
               <div className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
                 <p id={titleId} className="text-sm leading-tight font-semibold text-foreground">
-                  Nexora AI
+                  NexoraGuru AI
                 </p>
                 {pill}
               </div>
@@ -446,7 +446,7 @@ export function AgentPanel() {
                       submit()
                     }
                   }}
-                  placeholder={summary.examActive ? 'Ask about a concept…' : 'Ask Nexora AI…'}
+                  placeholder={summary.examActive ? 'Ask about a concept…' : 'Ask NexoraGuru AI…'}
                   aria-label="Message the AI assistant"
                   rows={2}
                   className="min-h-11 flex-1 resize-none text-sm"

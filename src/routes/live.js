@@ -1,5 +1,5 @@
 /**
- * Nexora LiveClass API Routes
+ * NexoraGuru LiveClass API Routes
  * Live streaming and recording system
  */
 

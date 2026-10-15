@@ -144,7 +144,7 @@ function adaptCustom(res: CustomProblemResponse): { detail: ProblemDetailRespons
       memLimit: p.memory_limit ?? '',
       samples,
       platform: p.learn ? 'learn' : 'custom',
-      source: p.learn ? `Nexora Learn · ${p.learn.topic}` : p.creator ? `workshop · @${p.creator}` : 'workshop',
+      source: p.learn ? `NexoraGuru Learn · ${p.learn.topic}` : p.creator ? `workshop · @${p.creator}` : 'workshop',
     },
   }
 }
@@ -160,7 +160,7 @@ const sampleKey = (input: string, expected: string) =>
   `${input.replace(/\r\n?/g, '\n').trim()}\u0000${expected.replace(/\r\n?/g, '\n').trim()}`
 
 /**
- * The IDE. `custom` opens a Workshop problem and `learn` a Nexora Learn
+ * The IDE. `custom` opens a Workshop problem and `learn` a NexoraGuru Learn
  * problem; both are judged on the problem's own tests without platform XP.
  */
 export default function SolvePage({ custom: customProp = false, learn = false }: { custom?: boolean; learn?: boolean }) {

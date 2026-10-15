@@ -37,7 +37,7 @@ export function LivePreview({ look, mode, className }: { look: Look; mode: Theme
         <aside className="hidden w-[118px] shrink-0 flex-col gap-0.5 border-r border-border bg-bg-surface p-2.5 sm:flex">
           <div className="mb-3 flex items-center gap-1.5 px-1.5 pt-0.5">
             <span className="size-4 rounded-[5px] bg-gradient-to-br from-accent-brand to-accent-brand-hover" />
-            <span className="font-display text-[13px] font-semibold tracking-tight">Nexora</span>
+            <span className="font-display text-[13px] font-semibold tracking-tight">NexoraGuru</span>
           </div>
           {NAV.map((n, i) => (
             <span
