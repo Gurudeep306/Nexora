@@ -1,0 +1,233 @@
+// Per-request access control, run on EVERY request after the session:
+//
+//   1. Loads the signed-in user's effective role + permissions + active ban
+//      (one query, usually read in the same round trip as the session — see
+//      DbSessionStore.takeUserRow) and attaches them as req.access.
+//   2. Banned / suspended users are signed out; their API calls get 403
+//      `account_banned`.
+//   3. Private mode: everyone except the owner, admins and early_access
+//      holders gets the coming-soon page (pages) or 403 `site_private` (API).
+//      Health, sign-in, OAuth and static assets stay reachable.
+//   4. Feature flags: a switched-off section's API answers 403
+//      `feature_disabled` (the owner keeps access to everything).
+const { get, run } = require("../db");
+const { comingSoonHtml } = require("./coming-soon");
+const {
+  ACCESS_COLUMNS,
+  attachAccess,
+  buildAccess,
+  mayEnterPrivateSite,
+} = require("./permissions");
+const { envOwner, getSettings, privateModeActive, setSetting, DEFAULT_PRIVATE_MESSAGE } = require("./site-settings");
+
+const USER_ACCESS_SQL = `SELECT ${ACCESS_COLUMNS} FROM users u WHERE u.username = ?`;
+
+async function loadUserAccess(username) {
+  const row = await get(USER_ACCESS_SQL, [username]);
+  return row ? buildAccess(username, row) : null;
+}
+
+// Reachable by anyone, even while the site is private.
+const PUBLIC_API = new Set([
+  "/api/health",
+  "/api/auth/status",
+  "/api/auth/providers",
+  "/api/auth/logout",
+  "/api/user/login",
+  "/api/user/register",
+  "/api/user/check-username",
+  "/api/site/status",
+]);
+const isApi = (p) => p.startsWith("/api/");
+function isPublicPath(p) {
+  if (isApi(p)) return PUBLIC_API.has(p);
+  if (p === "/auth" || p.startsWith("/auth/")) return true; // sign-in page + OAuth
+  if (p.startsWith("/uploads/")) return false;
+  // Static assets (scripts, styles, fonts, images, manifest) — not pages.
+  return /\.(js|mjs|css|map|woff2?|ttf|otf|eot|svg|png|jpe?g|gif|webp|avif|ico|webmanifest|json|txt|wasm)$/i.test(p);
+}
+
+// Section → API paths switched off with it.
+const FEATURE_ROUTES = [
+  ["gate", /^\/api\/gate(\/|$)/],
+  ["contests", /^\/api\/(contests|live)(\/|$)/],
+  ["social", /^\/api\/(friends|messages|rooms|feed)(\/|$)/],
+  ["ai_tutor", /^\/api\/(agent|ai)(\/|$)/],
+  ["practice", /^\/api\/(problems|problem-statement)(\/|$)/],
+];
+function featureFor(p) {
+  for (const [flag, re] of FEATURE_ROUTES) if (re.test(p)) return flag;
+  return null;
+}
+
+/* ── DAU tracking: one INSERT OR IGNORE per user per day per process ── */
+const seenToday = new Set();
+let seenDay = "";
+function markActive(username) {
+  const day = new Date().toISOString().slice(0, 10);
+  if (day !== seenDay) {
+    seenDay = day;
+    seenToday.clear();
+  }
+  if (seenToday.has(username)) return;
+  seenToday.add(username);
+  run("INSERT OR IGNORE INTO user_daily_active(username, day) VALUES(?,?)", [username, day]).catch(() => {
+    seenToday.delete(username);
+  });
+}
+
+/* ── Server errors in the last 24 h (admin overview) ── */
+const errorTimes = [];
+function recordServerError() {
+  errorTimes.push(Date.now());
+  if (errorTimes.length > 5000) errorTimes.splice(0, errorTimes.length - 5000);
+}
+function errorCount(windowMs = 24 * 60 * 60 * 1000) {
+  const cutoff = Date.now() - windowMs;
+  while (errorTimes.length && errorTimes[0] < cutoff) errorTimes.shift();
+  return errorTimes.length;
+}
+
+function banPayload(ban) {
+  const until = ban.expires_at ? new Date(Number(ban.expires_at)).toISOString() : null;
+  return {
+    ok: false,
+    code: "account_banned",
+    error: until
+      ? `Your account is suspended until ${until.slice(0, 16).replace("T", " ")} UTC${ban.reason ? ` — ${ban.reason}` : ""}`
+      : `Your account has been banned${ban.reason ? ` — ${ban.reason}` : ""}`,
+    ban: { kind: ban.kind, reason: ban.reason || "", until },
+  };
+}
+
+function privatePayload(settings) {
+  return {
+    ok: false,
+    code: "site_private",
+    error: "NexoraGuru is private right now",
+    message: settings.private_mode.message,
+  };
+}
+
+function wantsHtml(req) {
+  return req.method === "GET" && /text\/html/.test(req.headers.accept || "");
+}
+
+function createAccessControl() {
+  return async (req, res, next) => {
+    res.on("finish", () => {
+      if (res.statusCode >= 500) recordServerError();
+    });
+    let settings;
+    try {
+      settings = await getSettings();
+      const cached = req.session?.user;
+      if (cached?.username) {
+        // Usually read with the session in the same round trip.
+        const pre = req.sessionStore?.takeUserRow?.(req.sessionID, cached.username);
+        const access =
+          pre !== undefined && (pre === null || "perms" in pre)
+            ? pre && buildAccess(cached.username, pre)
+            : await loadUserAccess(cached.username);
+        if (!access) {
+          delete req.session.user; // account deleted
+        } else if (access.ban) {
+          delete req.session.user;
+          req.accountBan = access.ban;
+        } else {
+          if (cached.role !== access.role) req.session.user = { ...cached, role: access.role };
+          attachAccess(req, access);
+          markActive(cached.username);
+        }
+      }
+      req.accessResolved = true;
+    } catch (e) {
+      return next(e); // fail closed rather than trust a stale role
+    }
+
+    const p = req.path;
+    if (req.accountBan && isApi(p) && !PUBLIC_API.has(p)) {
+      return res.status(403).json(banPayload(req.accountBan));
+    }
+
+    if (privateModeActive(settings) && !mayEnterPrivateSite(req) && !isPublicPath(p)) {
+      res.set("Cache-Control", "no-store");
+      if (isApi(p)) return res.status(403).json(privatePayload(settings));
+      if (wantsHtml(req)) {
+        return res.status(403).type("html").send(comingSoonHtml({ message: settings.private_mode.message }));
+      }
+      return res.status(403).type("text").send("NexoraGuru is private right now");
+    }
+
+    const flag = isApi(p) && featureFor(p);
+    if (flag && !settings.feature_flags[flag] && req.access?.role !== "owner") {
+      return res.status(403).json({
+        ok: false,
+        code: "feature_disabled",
+        feature: flag,
+        error: "This section is switched off right now",
+      });
+    }
+    next();
+  };
+}
+
+/** May this user open a realtime socket? (ban + private mode) */
+async function socketAccess(username) {
+  const settings = await getSettings();
+  const access = await loadUserAccess(username);
+  if (!access) return { ok: false, reason: "Authentication required" };
+  if (access.ban) return { ok: false, reason: "Account banned" };
+  if (privateModeActive(settings) && !mayEnterPrivateSite(access)) return { ok: false, reason: "Site is private" };
+  return { ok: true, access };
+}
+
+/**
+ * Boot: make the configured owner the (only) 'owner' row, and turn private
+ * mode on the first time an owner exists. Without an owner, warn loudly and
+ * leave the site public so nobody is locked out.
+ */
+async function initAdminSystem() {
+  const env = envOwner();
+  if (env) await setSetting("owner_username", env, "env:OWNER_USERNAME");
+  const settings = await getSettings();
+  const owner = settings.owner_username;
+  if (!owner) {
+    console.warn(
+      "\n⚠️  ─────────────────────────────────────────────────────────────\n" +
+        "⚠️  OWNER_USERNAME is not set — there is no site owner.\n" +
+        "⚠️  Private mode stays OFF so nobody gets locked out.\n" +
+        "⚠️  Set OWNER_USERNAME (or run: node scripts/admin/set-owner.mjs <username>).\n" +
+        "⚠️  ─────────────────────────────────────────────────────────────\n",
+    );
+    return settings;
+  }
+  await run("UPDATE users SET role='admin' WHERE role='owner' AND username <> ? COLLATE NOCASE", [owner]);
+  const r = await run("UPDATE users SET role='owner' WHERE username = ? COLLATE NOCASE", [owner]);
+  if (!r.changes) {
+    console.warn(`⚠️  Owner "${owner}" has no account yet — sign up with that exact username to claim it.`);
+  }
+  const row = await get("SELECT value FROM site_settings WHERE key='private_mode'");
+  if (!row) {
+    await setSetting("private_mode", { enabled: true, message: DEFAULT_PRIVATE_MESSAGE }, "system:first-boot");
+    console.log(`🔒 Private mode is ON (first boot with an owner). Only ${owner}, admins and early-access users can get in.`);
+  } else {
+    const s = await getSettings();
+    console.log(`🔐 Owner: ${owner} · private mode ${s.private_mode.enabled ? "ON" : "off"}`);
+  }
+  return getSettings();
+}
+
+module.exports = {
+  PUBLIC_API,
+  USER_ACCESS_SQL,
+  banPayload,
+  createAccessControl,
+  errorCount,
+  featureFor,
+  initAdminSystem,
+  isPublicPath,
+  loadUserAccess,
+  privatePayload,
+  socketAccess,
+};

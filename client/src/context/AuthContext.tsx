@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
-import { api } from '@/lib/api'
+import { api, SITE_ACCESS_EVENT } from '@/lib/api'
 import { setApiCacheScope } from '@/hooks/useApi'
 
 export interface User {
@@ -78,9 +78,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refresh = useCallback(async () => {
     try {
-      const res = await api.get<{ authenticated?: boolean; user?: User; oauthPending?: OAuthPending | null }>(
-        '/api/auth/status',
-      )
+      const res = await api.get<{
+        authenticated?: boolean
+        user?: User
+        oauthPending?: OAuthPending | null
+        banned?: { kind: string; reason: string; until: string | null }
+      }>('/api/auth/status')
+      // This session's account was banned (the server just signed it out).
+      if (res.banned) {
+        window.dispatchEvent(new CustomEvent(SITE_ACCESS_EVENT, { detail: { code: 'account_banned', ban: res.banned } }))
+      }
       setUser(res.authenticated && res.user ? res.user : null)
       setOauthPending(res.authenticated ? null : (res.oauthPending ?? null))
       setRevision((value) => value + 1)

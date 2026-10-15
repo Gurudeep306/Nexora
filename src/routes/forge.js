@@ -7,16 +7,15 @@ const express = require('express');
 const { errMessage } = require("../http-error");
 const { run, get, all } = require('../db');
 const { initForgeDb } = require('../forge-db');
-const { requireAdmin } = require('../middleware/auth');
+const { can } = require('../authz/permissions');
 
 function createForgeRouter(deps = {}) {
   const router = express.Router();
-  const { requireAdmin: adminCheck } = deps;
 
-  // Middleware to check admin role
+  // ForgeBuilder edits site pages: content.feature (admins and the owner by default).
   const isAdmin = (req, res, next) => {
     if (!req.session?.user) return res.status(401).json({ ok: false, error: 'Unauthorized' });
-    if (req.session.user.role !== 'admin') return res.status(403).json({ ok: false, error: 'Admin only' });
+    if (!can(req, 'content.feature')) return res.status(403).json({ ok: false, error: 'Admin only' });
     next();
   };
 
