@@ -659,8 +659,10 @@ async function _runLangLocal(code, input, lang = 'cpp') {
    In production we default to remote-only unless an operator explicitly opts
    into local execution (JUDGE_MODE=local) — host RCE is not a safe default. */
 const IS_PROD = process.env.NODE_ENV === 'production';
+// JUDGE_MODE=piston is remote-only too: code runs on the self-hosted Piston
+// container (see piston.js), never directly on the API host.
 const REMOTE_ONLY = process.env.JUDGE_MODE
-  ? process.env.JUDGE_MODE === 'remote'
+  ? process.env.JUDGE_MODE === 'remote' || process.env.JUDGE_MODE === 'piston'
   : IS_PROD;
 const remoteUnavailable = (lang) => ({
   verdict: 'CE',

@@ -24,6 +24,7 @@
  */
 const https = require('https');
 const crypto = require('crypto');
+const { usesPiston, runPiston } = require('./piston');
 
 /* ────────────────────────── configuration ────────────────────────── */
 
@@ -90,12 +91,21 @@ const GODBOLT_MAP = {
   objectivec: { id: 'objcg650',              lang: 'objc',    args: '-std=gnu11 -O2' },
 };
 
-/** Which backend owns a language, or null when nothing can run it remotely. */
-function engineFor(lang) {
+/** The public sandbox for a language (Piston's fallback), or null. */
+function publicEngineFor(lang) {
   if (WANDBOX_MAP[lang]) return 'wandbox';
   if (lang === 'kotlin') return 'kotlin';
   if (GODBOLT_MAP[lang]) return 'godbolt';
   return null;
+}
+
+/**
+ * Which backend owns a language, or null when nothing can run it remotely.
+ * JUDGE_MODE=piston puts the self-hosted Piston first (see piston.js).
+ */
+function engineFor(lang) {
+  if (usesPiston(lang)) return 'piston';
+  return publicEngineFor(lang);
 }
 
 /** Languages that can run with no local toolchain at all. */
@@ -424,6 +434,15 @@ function remoteLoad() {
 }
 
 async function dispatch(code, input, lang, engine) {
+  if (engine === 'piston') {
+    const r = await runPiston(code, input, lang);
+    if (!r._pistonFailed) return r;
+    // Piston is down / lacks the runtime: answer from the public sandbox.
+    const fallback = publicEngineFor(lang);
+    if (!fallback) { delete r._pistonFailed; return r; }
+    console.warn(`[judge] ${r.stderr} — falling back to ${fallback} for ${lang}`);
+    return dispatch(code, input, lang, fallback);
+  }
   if (engine === 'wandbox') return runWandbox(code, input, lang);
   if (engine === 'godbolt') return runGodbolt(code, input, lang);
   return runKotlin(code, input);
@@ -494,6 +513,7 @@ module.exports = {
   classifyGodbolt,
   hasRemote,
   engineFor,
+  publicEngineFor,
   clearCache,
   remoteLoad,
   MAX_REMOTE_CONCURRENT,
