@@ -1,0 +1,33 @@
+# Piston — the self-hosted code runner, reachable only from this VM
+# (127.0.0.1:2000). Started by deploy/oracle/setup.sh:
+#   docker compose -f /opt/nexora/deploy/oracle/piston-compose.yml up -d
+#
+# PISTON_IMAGE is set by setup.sh: the official image when it has an arm64
+# build, otherwise "nexora/piston:local" built from the Piston source.
+services:
+  piston:
+    image: ${PISTON_IMAGE:-ghcr.io/engineer-man/piston}
+    container_name: piston
+    restart: unless-stopped
+    # Piston's sandbox (isolate) needs this to create its cgroups/namespaces.
+    privileged: true
+    ports:
+      - "127.0.0.1:2000:2000"
+    volumes:
+      - /opt/piston/packages:/piston/packages
+    tmpfs:
+      - /tmp:exec
+    environment:
+      # Limits per run. The app asks for ≤ these (PISTON_*_TIMEOUT_MS in .env).
+      - PISTON_RUN_TIMEOUT=15000
+      - PISTON_COMPILE_TIMEOUT=45000
+      - PISTON_RUN_CPU_TIME=15000
+      - PISTON_COMPILE_CPU_TIME=45000
+      - PISTON_RUN_MEMORY_LIMIT=536870912
+      - PISTON_COMPILE_MEMORY_LIMIT=1073741824
+      # Default is 1024 characters — far too small for judge output.
+      - PISTON_OUTPUT_MAX_SIZE=4194304
+      - PISTON_MAX_PROCESS_COUNT=128
+      - PISTON_MAX_CONCURRENT_JOBS=8
+      - PISTON_DISABLE_NETWORKING=true
+      - PISTON_LOG_LEVEL=WARN

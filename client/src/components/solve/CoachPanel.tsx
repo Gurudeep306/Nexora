@@ -15,7 +15,7 @@ function ago(t: number | null) {
 }
 
 /**
- * Nexora Coach — watches the code (live or on demand) and explains what you're
+ * NexoraGuru Coach — watches the code (live or on demand) and explains what you're
  * doing, the complexity, risky lines and edge cases; generates tricky tests;
  * explains failing verdicts; answers questions. Hints only, never solutions.
  */
@@ -57,7 +57,7 @@ export function CoachPanel({
       {/* header */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="flex items-center gap-1.5 font-semibold text-foreground">
-          <Bot className="size-4 text-primary-bright" /> Nexora Coach
+          <Bot className="size-4 text-primary-bright" /> NexoraGuru Coach
         </span>
         <Tooltip label={live ? 'Live: re-checks your code when you pause typing' : 'Live analysis is off'}>
           <button

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NexoraGuru logo concepts</title>
+<meta name="description" content="Four interactive NG logo concepts for NexoraGuru, built from CS ideas.">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/geist@5.2.8/index.css">
+<style>
+:root{--bg:#08090d;--panel:#0f1117;--panel-2:#131620;--line:#1d2130;--text:#ececf2;--muted:#8a8fa6;
+  --color-text-primary:#ececf2;--color-accent-brand:#4f7cff;color-scheme:dark}
+:root[data-theme="light"]{--bg:#f5f6fa;--panel:#ffffff;--panel-2:#f9fafc;--line:#e2e5ee;--text:#11131a;--muted:#5d6377;
+  --color-text-primary:#11131a;--color-accent-brand:#2f5bea;color-scheme:light}
+.on-dark{--color-text-primary:#ececf2;--color-accent-brand:#4f7cff;--tone-bg:#0c0d12;--tone-line:#1f2230;--tone-text:#ececf2;--tone-muted:#7d8297}
+.on-light{--color-text-primary:#11131a;--color-accent-brand:#2f5bea;--tone-bg:#ffffff;--tone-line:#e2e5ee;--tone-text:#11131a;--tone-muted:#6a6f82}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Geist Variable',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;min-height:100vh;
+  background-image:radial-gradient(900px 480px at 12% -8%,color-mix(in oklab,#4f7cff 16%,transparent),transparent 70%),
+    radial-gradient(700px 420px at 92% 0%,color-mix(in oklab,#8b5cf6 14%,transparent),transparent 70%),
+    radial-gradient(800px 500px at 60% 110%,color-mix(in oklab,#2dd4bf 9%,transparent),transparent 70%);
+  background-attachment:fixed}
+.wrap{max-width:1240px;margin:0 auto;padding:40px 24px 72px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:20px;justify-content:space-between;margin-bottom:28px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:500}
+h1{margin:8px 0 6px;font-size:clamp(28px,4vw,40px);font-weight:600;letter-spacing:-.03em;line-height:1.05}
+h1 .wm b{font-weight:600}
+.lede{margin:0;color:var(--muted);max-width:620px;line-height:1.55;font-size:15px}
+.controls{display:flex;gap:10px;align-items:center}
+.seg{display:inline-flex;padding:3px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.seg button,.btn{font:inherit;font-size:13px;font-weight:500;color:var(--text);background:transparent;border:0;border-radius:7px;padding:7px 12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--panel-2);box-shadow:0 0 0 1px var(--line) inset}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 14px}
+.btn:hover,.seg button:hover{color:var(--color-accent-brand)}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:18px;background:color-mix(in oklab,var(--panel) 88%,transparent);overflow:hidden;
+  backdrop-filter:blur(8px)}
+.stage{position:relative;height:300px;display:grid;place-items:center;border-bottom:1px solid var(--line);
+  background-image:radial-gradient(circle at 50% 45%,color-mix(in oklab,var(--color-accent-brand) 10%,transparent),transparent 60%),
+    radial-gradient(color-mix(in oklab,var(--text) 10%,transparent) 1px,transparent 1.2px);background-size:auto,18px 18px}
+.body{padding:20px 22px 22px}
+.title{display:flex;align-items:baseline;gap:10px}
+.idx{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;color:var(--muted)}
+h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.02em}
+.body p{margin:8px 0 12px;color:var(--muted);line-height:1.55;font-size:14px}
+.hints{list-style:none;margin:0 0 16px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.hints li{font-size:12px;padding:4px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px;font-weight:500}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sizes{display:flex;align-items:flex-end;gap:18px;padding:14px 16px;border-radius:12px;background:var(--tone-bg);border:1px solid var(--tone-line)}
+.sizes figure{margin:0;display:grid;justify-items:center;gap:6px}
+.sizes figcaption{font-size:11px;color:var(--tone-muted);font-variant-numeric:tabular-nums}
+.bar{display:flex;align-items:center;gap:10px;height:54px;padding:0 16px;border-radius:12px;margin-top:8px;
+  background:var(--tone-bg);border:1px solid var(--tone-line);color:var(--tone-text)}
+.wm{font-size:17px;font-weight:400;letter-spacing:-.025em;white-space:nowrap}
+.wm b{font-weight:560;background:linear-gradient(100deg,var(--color-accent-brand),#8b5cf6 55%,#2dd4bf);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1 .wm{font-size:inherit}
+.crumb{margin-left:14px;font-size:13px;color:var(--tone-muted)}
+.crumb i{font-style:normal;margin:0 4px}
+.search{margin-left:auto;font-size:12.5px;color:var(--tone-muted);border:1px solid var(--tone-line);border-radius:8px;padding:6px 12px;min-width:150px}
+@media (max-width:560px){.crumb,.search{display:none}.pair{grid-template-columns:1fr}}
+footer{margin-top:28px;color:var(--muted);font-size:13px;line-height:1.6}
+code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;padding:1px 5px;border-radius:5px;background:var(--panel-2);border:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Identity · round 3</div>
+      <h1><span class="wm">Nexora<b>Guru</b></span> logo concepts</h1>
+      <p class="lede">Four NG monograms, each built from a computer-science idea so the mark tells the product’s story: <em>learn computer science by watching it run</em>. Every mark is live, so hover, move and click to try it. Below each one are its static small sizes and the header lockup on dark and light.</p>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Page theme">
+        <button type="button" data-set-theme="dark" aria-pressed="true">Dark</button>
+        <button type="button" data-set-theme="light" aria-pressed="false">Light</button>
+      </div>
+      <button type="button" class="btn" id="replay-all">Replay all</button>
+    </div>
+  </header>
+  <main class="grid">
+  <article class="card">
+    <div class="stage"><span data-ng="traversal" data-size="232"></span></div>
+    <div class="body">
+      <div class="title"><span class="idx">01</span><h2>Traversal</h2></div>
+      <p>N and G are one graph. A breadth-first search runs from the first node and splits at the junction, so the letters draw themselves the way an algorithm visits a graph.</p>
+      <ul class="hints"><li>Hover: send a signal</li><li>Click: re-run the search</li><li>Idle: a quiet pulse</li></ul>
+      <div class="label">Static, 16 · 32 · 64 px</div>
+      <div class="pair">
+  <div class="sizes on-dark">
+    <figure><span data-ng="traversal" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="traversal" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="traversal" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div>
+  <div class="sizes on-light">
+    <figure><span data-ng="traversal" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="traversal" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="traversal" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div></div>
+      <div class="label">Header lockup</div>
+      
+  <div class="bar on-dark">
+    <span data-ng="traversal" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+  <div class="bar on-light">
+    <span data-ng="traversal" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+    </div>
+  </article>
+  <article class="card">
+    <div class="stage"><span data-ng="build" data-size="232"></span></div>
+    <div class="body">
+      <div class="title"><span class="idx">02</span><h2>Build</h2></div>
+      <p>The letters are an array of cells pushed in order, column by column, like a stack being filled. Hover sends a ripple through the cells, and an idle scan walks the index.</p>
+      <ul class="hints"><li>Hover: ripple the cells</li><li>Click: pop and rebuild</li><li>Idle: an index scan</li></ul>
+      <div class="label">Static, 16 · 32 · 64 px</div>
+      <div class="pair">
+  <div class="sizes on-dark">
+    <figure><span data-ng="build" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="build" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="build" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div>
+  <div class="sizes on-light">
+    <figure><span data-ng="build" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="build" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="build" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div></div>
+      <div class="label">Header lockup</div>
+      
+  <div class="bar on-dark">
+    <span data-ng="build" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+  <div class="bar on-light">
+    <span data-ng="build" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+    </div>
+  </article>
+  <article class="card">
+    <div class="stage"><span data-ng="caret" data-size="232"></span></div>
+    <div class="body">
+      <div class="title"><span class="idx">03</span><h2>Caret</h2></div>
+      <p>The mark types itself in. The cursor waits, types N, moves on, types G, then settles in as the G’s crossbar and keeps blinking. Hover selects the text.</p>
+      <ul class="hints"><li>Hover: select the text</li><li>Click: retype</li><li>Idle: the caret blinks</li></ul>
+      <div class="label">Static, 16 · 32 · 64 px</div>
+      <div class="pair">
+  <div class="sizes on-dark">
+    <figure><span data-ng="caret" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="caret" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="caret" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div>
+  <div class="sizes on-light">
+    <figure><span data-ng="caret" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="caret" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="caret" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div></div>
+      <div class="label">Header lockup</div>
+      
+  <div class="bar on-dark">
+    <span data-ng="caret" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+  <div class="bar on-light">
+    <span data-ng="caret" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+    </div>
+  </article>
+  <article class="card">
+    <div class="stage"><span data-ng="depth" data-size="232"></span></div>
+    <div class="body">
+      <div class="title"><span class="idx">04</span><h2>Depth</h2></div>
+      <p>A glass NG ligature where N’s right stem is G’s spine. It is extruded in real CSS 3D, tilts toward the pointer while the highlight follows it, and spins when clicked.</p>
+      <ul class="hints"><li>Hover: tilt and catch the light</li><li>Click: spin</li><li>Idle: a slow float</li></ul>
+      <div class="label">Static, 16 · 32 · 64 px</div>
+      <div class="pair">
+  <div class="sizes on-dark">
+    <figure><span data-ng="depth" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="depth" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="depth" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div>
+  <div class="sizes on-light">
+    <figure><span data-ng="depth" data-size="16" data-animate="false"></span><figcaption>16</figcaption></figure><figure><span data-ng="depth" data-size="32" data-animate="false"></span><figcaption>32</figcaption></figure><figure><span data-ng="depth" data-size="64" data-animate="false"></span><figcaption>64</figcaption></figure>
+  </div></div>
+      <div class="label">Header lockup</div>
+      
+  <div class="bar on-dark">
+    <span data-ng="depth" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+  <div class="bar on-light">
+    <span data-ng="depth" data-size="28" data-animate="true"></span><span class="wm">Nexora<b>Guru</b></span>
+    <span class="crumb">Play <i>›</i> Home</span><span class="search">Search problems…</span>
+  </div>
+    </div>
+  </article></main>
+  <footer>
+    With <code>prefers-reduced-motion</code> on, every mark renders its static form. Colours come from theme tokens (<code>--color-accent-brand</code>, <code>--color-text-primary</code>), so in the app the marks follow the active palette. Archived: Traversal was chosen and ships as <code>client/src/components/brand/Logo.tsx</code>; this page is kept for reference.
+  </footer>
+</div>
+<script>(function(){let e=0;function t(e){if(e.getElementById(`ng-mark-styles`))return;let t=e.createElement(`style`);t.id=`ng-mark-styles`,t.textContent=`
+.ng-mark{--ng-c1:var(--color-accent-brand,#4f7cff);--ng-c2:#8b5cf6;--ng-c3:#2dd4bf;--ng-ink:var(--color-text-primary,#e9e9ef);
+  display:inline-block;position:relative;line-height:0;vertical-align:middle;-webkit-tap-highlight-color:transparent}
+.ng-mark svg{display:block;overflow:visible}
+.ng-mark .ng-dim{stroke:color-mix(in oklab,var(--ng-ink) 16%,transparent)}
+.ng-mark .ng-cell,.ng-mark .ng-fx{transform-box:fill-box;transform-origin:center}
+.ng-mark .ng-cell{transition:transform .14s ease-out}
+.ng-mark .ng-sel{transition:opacity .18s ease}
+.ng-mark .ng-blink{animation:ng-blink 1.15s steps(2,jump-none) infinite}
+.ng-mark.ng-hot .ng-blink{animation-duration:.5s}
+@keyframes ng-blink{0%,55%{opacity:1}56%,100%{opacity:.18}}
+.ng-mark .ng3d-scene{position:absolute;inset:0}
+.ng-mark .ng3d-obj{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+.ng-mark .ng3d-obj svg{position:absolute;inset:0;width:100%;height:100%;backface-visibility:visible}
+.ng-mark .ng3d-shadow{position:absolute;left:18%;right:18%;bottom:2%;height:12%;border-radius:50%;
+  background:radial-gradient(closest-side,color-mix(in oklab,var(--ng-c2) 40%,transparent),transparent);filter:blur(6px);opacity:.7}
+`,e.head.appendChild(t)}let n=()=>typeof matchMedia==`function`&&matchMedia(`(prefers-reduced-motion: reduce)`).matches;function r(e,t={},n){let r=document.createElementNS(`http://www.w3.org/2000/svg`,e);for(let[e,n]of Object.entries(t))r.setAttribute(e,String(n));return n&&n.appendChild(r),r}function i(e,t){return r(`svg`,{viewBox:`0 0 32 32`,width:e,height:e,"aria-hidden":`true`,focusable:`false`},t)}function a(e,t,n=4,i=27,a=28,o=5){let s=r(`linearGradient`,{id:t,gradientUnits:`userSpaceOnUse`,x1:n,y1:i,x2:a,y2:o},e);return[[`0`,`--ng-c1`],[`.55`,`--ng-c2`],[`1`,`--ng-c3`]].forEach(([e,t])=>{r(`stop`,{offset:e,style:`stop-color:var(${t})`},s)}),`url(#${t})`}function o(e,t,n=1.1){let i=r(`filter`,{id:t,x:`-200%`,y:`-200%`,width:`500%`,height:`500%`},e);return r(`feGaussianBlur`,{stdDeviation:n},i),`url(#${t})`}let s={intro(){},replay(){},idle(){},move(){},enter(){},leave(){}},c={A:[7,25],B:[7,7],C:[15,25],D:[15,7],E:[25,7],F:[25,25],H:[25,17],I:[20,17]},l=[[`A`,`B`,`C`,`D`,`E`],[`A`,`B`,`C`,`F`,`H`,`I`]],u=[[`A`,`B`],[`B`,`C`],[`C`,`D`],[`D`,`E`],[`C`,`F`],[`F`,`H`],[`H`,`I`]],d=[`A`,`C`,`E`,`I`],f=(e,t)=>Math.hypot(t[0]-e[0],t[1]-e[1]);function p(t,n,s){let p=`ngt${++e}`,m=i(n,t),h=r(`defs`,{},m),g=a(h,`${p}g`),_=o(h,`${p}f`),v=n<=24?3.2:2.6,y={A:0};for(let e of l)for(let t=1;t<e.length;t++)y[e[t]]=y[e[t-1]]+f(c[e[t-1]],c[e[t]]);s&&r(`path`,{d:`M7 25V7L15 25V7H25M15 25H25V17H20`,class:`ng-dim`,fill:`none`,"stroke-width":v,"stroke-linecap":`round`,"stroke-linejoin":`round`},m);let b=u.map(([e,t])=>({a:e,b:t,el:r(`path`,{d:`M${c[e].join(` `)}L${c[t].join(` `)}`,pathLength:1,fill:`none`,stroke:g,"stroke-width":v,"stroke-linecap":`round`},m)})),x=d.map(e=>({k:e,el:r(`circle`,{cx:c[e][0],cy:c[e][1],r:2.15,fill:g,class:`ng-fx`},m)})),S=l.map(()=>{let e=r(`g`,{opacity:0},m);return r(`circle`,{r:3.2,fill:`var(--ng-c3)`,filter:_,opacity:.9},e),r(`circle`,{r:1.25,fill:`#fff`},e),e}),C=0,w=!1;function T(e,t=1){if(w)return;w=!0;let n=Math.max(...l.map(e=>y[e[e.length-1]])),r=performance.now(),i=a=>{let o=(a-r)/1e3*e;l.forEach((e,n)=>{let r=y[e[e.length-1]],i=Math.min(o,r),a=1;for(;a<e.length-1&&y[e[a]]<i;)a++;let s=c[e[a-1]],l=c[e[a]],u=Math.min(1,Math.max(0,(i-y[e[a-1]])/(y[e[a]]-y[e[a-1]]))),d=o>r?Math.max(0,1-(o-r)/6):Math.min(1,o/3);S[n].setAttribute(`transform`,`translate(${s[0]+(l[0]-s[0])*u} ${s[1]+(l[1]-s[1])*u})`),S[n].setAttribute(`opacity`,String(t*d))}),o<n+6?C=requestAnimationFrame(i):w=!1};C=requestAnimationFrame(i)}return{intro(){for(let e of b)e.el.animate([{strokeDasharray:`1 1`,strokeDashoffset:1},{strokeDasharray:`1 1`,strokeDashoffset:0}],{delay:y[e.a]/46*1e3,duration:f(c[e.a],c[e.b])/46*1e3,fill:`backwards`,easing:`linear`});for(let e of x)e.el.animate([{transform:`scale(0)`},{transform:`scale(1.5)`,offset:.6},{transform:`scale(1)`}],{delay:y[e.k]/46*1e3,duration:380,fill:`backwards`,easing:`ease-out`});cancelAnimationFrame(C),w=!1,T(46)},replay(){this.intro()},idle(){T(34,.65)},enter(){T(70)},move(){},leave(){},destroy(){cancelAnimationFrame(C)}}}let m=[`X..X..XXX`,`XX.X.X...`,`X.XX.X.XX`,`X..X.X..X`,`X..X..XXX`];function h(t,n,o){let c=`ngb${++e}`,l=i(n,t),u=a(r(`defs`,{},l),`${c}g`),d=3.15,f=n<=24?.35:.55,p=m[0].length,h=m.length,g=(32-p*d)/2,_=(32-h*d)/2,v=[];for(let e=0;e<p;e++)for(let t=h-1;t>=0;t--){if(m[t][e]!==`X`)continue;let n=g+e*d+f/2,i=_+t*d+f/2,a=d-f,o=r(`rect`,{x:n,y:i,width:a,height:a,rx:a*.28,fill:u,class:`ng-cell`},l),s=r(`rect`,{x:n,y:i,width:a,height:a,rx:a*.28,fill:`#fff`,opacity:0,class:`ng-fx`,"pointer-events":`none`},l);v.push({el:o,fx:s,cx:n+a/2,cy:i+a/2})}if(!o)return{...s,destroy(){}};let y=0;function b(){v.forEach((e,t)=>{e.el.animate([{transform:`translateY(-9px) scale(.55)`,opacity:0},{transform:`translateY(0) scale(1)`,opacity:1}],{delay:t*34,duration:460,fill:`backwards`,easing:`cubic-bezier(.34,1.56,.64,1)`}),e.fx.animate([{transform:`translateY(-9px) scale(.55)`,opacity:0},{transform:`translateY(-1px) scale(.95)`,opacity:.9,offset:.35},{transform:`translateY(0) scale(1)`,opacity:0}],{delay:t*34,duration:520,easing:`ease-out`})})}return{intro:b,replay(){clearTimeout(y);let e=v.length;v.forEach((t,n)=>t.el.animate([{transform:`scale(1)`,opacity:1},{transform:`scale(0)`,opacity:0}],{delay:(e-1-n)*10,duration:170,fill:`forwards`,easing:`ease-in`})),y=window.setTimeout(()=>{v.forEach(e=>e.el.getAnimations().forEach(e=>e.cancel())),b()},e*10+190)},idle(){v.forEach((e,t)=>e.fx.animate([{opacity:0},{opacity:.4},{opacity:0}],{delay:t*45,duration:360,easing:`ease-in-out`}))},move(e,t){let n=e*32,r=t*32;for(let e of v){let t=(e.cx-n)**2+(e.cy-r)**2,i=Math.exp(-t/22);e.el.style.transform=`translate(${((e.cx-n)*i*.12).toFixed(2)}px, ${((e.cy-r)*i*.12).toFixed(2)}px) scale(${(1+.32*i).toFixed(3)})`}},enter(){},leave(){for(let e of v)e.el.style.transform=``},destroy(){clearTimeout(y)}}}function g(t,n,o){let c=`ngc${++e}`,l=i(n,t),u=a(r(`defs`,{},l),`${c}g`,21,18,30,14),d=n<=24?3.2:2.8,f=r(`g`,{transform:`translate(-.75 0)`},l),p=r(`rect`,{x:2,y:6.2,width:29.5,height:19.6,rx:3,fill:`var(--ng-c1)`,opacity:0,class:`ng-sel`},f),m=7.5,h=-40*Math.PI/180,g=r(`path`,{d:`M4.5 23.5V8.5L11.5 23.5V8.5`,pathLength:1,fill:`none`,stroke:`var(--ng-ink)`,"stroke-width":d,"stroke-linecap":`round`,"stroke-linejoin":`round`},f),_=r(`path`,{d:`M${(21.5+m*Math.cos(h)).toFixed(2)} ${(16+m*Math.sin(h)).toFixed(2)}A${m} ${m} 0 1 0 29 16`,pathLength:1,fill:`none`,stroke:`var(--ng-ink)`,"stroke-width":d,"stroke-linecap":`round`},f),v=r(`rect`,{x:22,y:16-d/2,width:7.5+d/2,height:d,rx:d/2,fill:u,class:`ng-fx`},f);if(!o)return{...s,destroy(){}};let y=(e,t,n,r=!1)=>e.animate([{strokeDasharray:`1 1`,strokeDashoffset:+!r},{strokeDasharray:`1 1`,strokeDashoffset:+!!r}],{delay:t,duration:n,fill:r?`forwards`:`backwards`,easing:`cubic-bezier(.5,0,.3,1)`}),b=0;function x(){v.classList.remove(`ng-blink`);for(let e of[g,_,v])e.getAnimations().forEach(e=>e.cancel());y(g,560,300),y(_,1e3,420),v.animate([{transform:`translate(-17.6px,8.2px)`,offset:0},{transform:`translate(-17.6px,8.2px)`,offset:.36},{transform:`translate(-8.4px,8.2px)`,offset:.5,easing:`cubic-bezier(.5,0,.2,1)`},{transform:`translate(-8.4px,8.2px)`,offset:.8},{transform:`translate(0,0)`,offset:1}],{duration:1650,fill:`backwards`,easing:`cubic-bezier(.5,0,.2,1)`}),v.animate([{opacity:1},{opacity:.15},{opacity:1},{opacity:.15},{opacity:1}],{duration:560,easing:`steps(1)`}),clearTimeout(b),b=window.setTimeout(()=>v.classList.add(`ng-blink`),1700)}return{intro:x,replay(){clearTimeout(b),v.classList.remove(`ng-blink`),y(_,0,200,!0),y(g,180,200,!0),b=window.setTimeout(x,440)},idle(){},move(){},enter(){t.classList.add(`ng-hot`),p.setAttribute(`opacity`,`.16`)},leave(){t.classList.remove(`ng-hot`),p.setAttribute(`opacity`,`0`)},destroy(){clearTimeout(b)}}}let _=`M6 24V8L14.5 24M26 8H18.5Q14.5 8 14.5 12V24H22Q26 24 26 20V17H20.5`;function v(t,n,o){let c=`ngd${++e}`,l=4.2;if(!o){let e=i(n,t),o=a(r(`defs`,{},e),`${c}g`);if(n>24)for(let t of[2,1])r(`path`,{d:_,transform:`translate(${.45*t} ${.6*t})`,fill:`none`,stroke:`color-mix(in oklab,var(--ng-c2) ${55-t*12}%,#05060c)`,"stroke-width":l,"stroke-linecap":`round`,"stroke-linejoin":`round`},e);return r(`path`,{d:_,fill:`none`,stroke:o,"stroke-width":n<=24?4.4:l,"stroke-linecap":`round`,"stroke-linejoin":`round`},e),{...s,destroy(){}}}t.style.width=t.style.height=`${n}px`;let u=document.createElement(`div`);u.className=`ng3d-shadow`;let d=document.createElement(`div`);d.className=`ng3d-scene`,d.style.perspective=`${n*3.2}px`;let f=document.createElement(`div`);f.className=`ng3d-obj`,t.append(u,d),d.appendChild(f);let p=n>=120?12:7,m=n*.085,h=[];for(let e=p;e>=1;e--){let t=i(n,f);r(`path`,{d:_,fill:`none`,stroke:`color-mix(in oklab,var(--ng-c2) ${Math.round(62-e/p*34)}%,#04050b)`,"stroke-width":l,"stroke-linecap":`round`,"stroke-linejoin":`round`},t),t.dataset.k=String(e),h.push(t)}let g=i(n,f),v=r(`defs`,{},g),y=a(v,`${c}g`),b=r(`radialGradient`,{id:`${c}s`,gradientUnits:`userSpaceOnUse`,cx:10,cy:8,r:11},v);r(`stop`,{offset:0,"stop-color":`#fff`,"stop-opacity":.75},b),r(`stop`,{offset:1,"stop-color":`#fff`,"stop-opacity":0},b);let x={fill:`none`,"stroke-linecap":`round`,"stroke-linejoin":`round`};r(`path`,{d:_,...x,stroke:y,"stroke-width":l,opacity:.94},g),r(`path`,{d:_,...x,stroke:`url(#${c}s)`,"stroke-width":l},g),r(`path`,{d:_,...x,stroke:`#fff`,"stroke-opacity":.4,"stroke-width":.7,transform:`translate(-.55 -.75)`},g);let S={rx:0,ry:0,hover:!1,tx:0,ty:0,introT:1,spinT:1},C=0,w=typeof IntersectionObserver!=`function`,T=w,E=performance.now(),D=e=>1-(1-e)**3,O=0,k=0,A=!1;function j(e){if(C=requestAnimationFrame(j),!w){!T&&A&&(O=e);return}T=!0;let t=(e-E)/1e3;S.introT=Math.min(1,(e-O)/1300),S.spinT=Math.min(1,(e-k)/950);let n=D(S.introT),r=Math.cos(t*.55)*6,i=Math.sin(t*.7)*9,a=S.hover?S.ty*-26:r,o=S.hover?S.tx*34:i;S.rx+=(a-S.rx)*.12,S.ry+=(o-S.ry)*.12;let s=S.rx*n+(1-n)*68,c=S.spinT<1?360*D(S.spinT):0,l=S.ry*n+(1-n)*-28+c,d=.75+.25*n;f.style.transform=`rotateX(${s.toFixed(2)}deg) rotateY(${l.toFixed(2)}deg) scale(${d.toFixed(3)})`,f.style.opacity=String(Math.min(1,n*1.6));let g=n;for(let e of h)e.style.transform=`translateZ(${(-Number(e.dataset.k)*(m/p)*g).toFixed(2)}px)`;u.style.transform=`translate(${(-l*.25).toFixed(1)}px, 0) scaleX(${(1-Math.abs(s)/160).toFixed(3)})`,u.style.opacity=String(.7*n);let _=S.hover?(S.tx+.5)*32:16+Math.sin(t*.7)*9,v=S.hover?(S.ty+.5)*32:9+Math.cos(t*.55)*3;b.setAttribute(`cx`,_.toFixed(2)),b.setAttribute(`cy`,v.toFixed(2))}let M=typeof IntersectionObserver==`function`?new IntersectionObserver(([e])=>{w=e.isIntersecting}):null;return M?.observe(t),C=requestAnimationFrame(j),{intro(){A=!0,O=performance.now()},replay(){k=performance.now()},idle(){},move(e,t){S.tx=e-.5,S.ty=t-.5},enter(){S.hover=!0},leave(){S.hover=!1},destroy(){cancelAnimationFrame(C),M?.disconnect()}}}let y={traversal:p,build:h,caret:g,depth:v};function b(e,r,i){t(e.ownerDocument),e.classList.add(`ng-mark`),e.replaceChildren();let a=(i.animate??i.size>24)&&!n(),o=y[r](e,i.size,a);if(!a)return()=>{o.destroy(),e.replaceChildren()};let s=t=>{let n=e.getBoundingClientRect();return[(t.clientX-n.left)/n.width,(t.clientY-n.top)/n.height]},c=()=>o.enter(),l=e=>{let[t,n]=s(e);o.move(t,n)},u=()=>o.leave(),d=()=>o.replay();e.addEventListener(`pointerenter`,c),e.addEventListener(`pointermove`,l),e.addEventListener(`pointerleave`,u),e.addEventListener(`click`,d),e.style.cursor=`pointer`,i.intro!==!1&&o.intro();let f=0,p=()=>{f=window.setTimeout(()=>{!document.hidden&&!e.matches(`:hover`)&&o.idle(),p()},6e3+Math.random()*3e3)};return p(),()=>{clearTimeout(f),e.removeEventListener(`pointerenter`,c),e.removeEventListener(`pointermove`,l),e.removeEventListener(`pointerleave`,u),e.removeEventListener(`click`,d),e.style.cursor=``,o.destroy(),e.replaceChildren()}}function x(){document.querySelectorAll(`[data-ng]`).forEach(e=>{let t=Number(e.dataset.size),n=e.dataset.animate===`false`?!1:e.dataset.animate===`true`||void 0;e.style.width=e.style.height=`${t}px`,b(e,e.dataset.ng,{size:t,animate:n})})}function S(e){document.documentElement.dataset.theme=e,document.querySelectorAll(`[data-set-theme]`).forEach(t=>t.setAttribute(`aria-pressed`,String(t.dataset.setTheme===e)))}document.addEventListener(`DOMContentLoaded`,()=>{x(),document.querySelectorAll(`[data-set-theme]`).forEach(e=>e.addEventListener(`click`,()=>S(e.dataset.setTheme))),document.getElementById(`replay-all`)?.addEventListener(`click`,()=>{document.querySelectorAll(`.stage [data-ng], .bar [data-ng]`).forEach(e=>e.click())})})})();</script>
+</body>
+</html>

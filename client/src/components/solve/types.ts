@@ -151,7 +151,7 @@ export interface CustomProblemDetail {
   time_limit?: string
   memory_limit?: string
   creator?: string | null
-  /** Set on Nexora Learn problems: the lesson this problem belongs to. */
+  /** Set on NexoraGuru Learn problems: the lesson this problem belongs to. */
   learn?: {
     topic: string
     page: string

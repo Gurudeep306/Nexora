@@ -1,77 +1,126 @@
-import { useId } from 'react'
+import { useEffect, useId, useMemo, useRef } from 'react'
 import { cn } from '@/lib/utils'
+import { traversalSvg } from './traversal'
 
 /**
- * The Nexora mark: an app-icon squircle holding an N drawn as a path through
- * four nodes — a graph walk, which is what competitive programming mostly is.
- * The walk starts at the open teal node (bottom left), and ends at the lit
- * pink node (top right): from first problem to mastery.
+ * NexoraGuru brand components.
  *
- * The same artwork is public/nexora.svg (favicon) and apple-touch-icon.png.
+ *   <Logo />                                   the mark, static
+ *   <Logo interactive />                       + intro, hover signal, idle pulse
+ *   <Logo variant="lockup" size={28} />        mark + "NexoraGuru" wordmark
+ *
+ * The mark is "Traversal" (see ./traversal.ts): N and G as one graph, drawn the
+ * way a breadth-first search visits it. The static SVG is rendered inline, so it
+ * paints with the page at a fixed size (no layout shift). With `interactive`,
+ * the motion code (./traversalFx.ts, ~3 KB) is lazy-loaded and takes over the
+ * same box. Reduced motion means static, always.
+ *
+ * Colours follow the theme mode: the ramp is set by `.ng-mark` in index.css
+ * (deeper on light palettes, brighter on dark ones); the faint "unvisited"
+ * graph uses the theme's text colour.
  */
-export function LogoMark({ size = 32, className }: { size?: number; className?: string }) {
-  const id = useId().replace(/:/g, '')
-  const u = (k: string) => `url(#${id}${k})`
+
+let introPlayed = false // the intro plays once per page load, not on every remount
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+
+export function LogoMark({
+  size = 32,
+  interactive = false,
+  intro = true,
+  replayOnClick = false,
+  className,
+}: {
+  size?: number
+  /** Lazy-load the motion: intro, hover signal and a subtle idle pulse. */
+  interactive?: boolean
+  /** Play the intro (once per page load) when interactive. */
+  intro?: boolean
+  /** Replay the intro on click (leave off when the logo is a link). */
+  replayOnClick?: boolean
+  className?: string
+}) {
+  const id = useId().replace(/[^a-zA-Z0-9]/g, '')
+  const small = size <= 24
+  const html = useMemo(
+    () => traversalSvg({ id: `ng${id}`, small, size, colors: ['var(--ng-c1)', 'var(--ng-c2)', 'var(--ng-c3)'] }),
+    [id, small, size],
+  )
+  const ref = useRef<HTMLSpanElement>(null)
+
+  useEffect(() => {
+    const host = ref.current
+    if (!interactive || !host || prefersReducedMotion()) return
+    let cleanup: (() => void) | undefined
+    let cancelled = false
+    void import('./traversalFx').then(({ mountTraversal }) => {
+      if (cancelled) return
+      const play = intro && !introPlayed
+      if (play) introPlayed = true
+      cleanup = mountTraversal(host, { size, intro: play, replayOnClick })
+    })
+    return () => {
+      cancelled = true
+      cleanup?.()
+      // hand the box back to the static mark
+      if (host.isConnected) host.innerHTML = html
+    }
+  }, [interactive, intro, replayOnClick, size, html])
+
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" className={cn('shrink-0', className)} aria-hidden="true">
-      <defs>
-        <linearGradient id={`${id}bg`} x1="0.15" y1="0" x2="0.85" y2="1">
-          <stop offset="0" stopColor="#2a1f7a" />
-          <stop offset="0.55" stopColor="#130f3d" />
-          <stop offset="1" stopColor="#0a0820" />
-        </linearGradient>
-        <radialGradient id={`${id}g1`} cx="0.28" cy="0.18" r="0.75">
-          <stop offset="0" stopColor="#7c5cff" stopOpacity="0.75" />
-          <stop offset="0.6" stopColor="#7c5cff" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id={`${id}g2`} cx="0.85" cy="0.95" r="0.6">
-          <stop offset="0" stopColor="#ff4f9a" stopOpacity="0.45" />
-          <stop offset="1" stopColor="#ff4f9a" stopOpacity="0" />
-        </radialGradient>
-        <linearGradient id={`${id}rim`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#fff" stopOpacity="0.45" />
-          <stop offset="0.35" stopColor="#fff" stopOpacity="0.06" />
-          <stop offset="1" stopColor="#fff" stopOpacity="0.12" />
-        </linearGradient>
-        <linearGradient id={`${id}n`} x1="0.1" y1="0.9" x2="0.9" y2="0.1">
-          <stop offset="0" stopColor="#5eead4" />
-          <stop offset="0.5" stopColor="#a78bfa" />
-          <stop offset="1" stopColor="#ff7ab6" />
-        </linearGradient>
-        <filter id={`${id}b`} x="-30%" y="-30%" width="160%" height="160%">
-          <feGaussianBlur stdDeviation="2.4" />
-        </filter>
-        <clipPath id={`${id}sq`}>
-          <rect x="2" y="2" width="60" height="60" rx="15" />
-        </clipPath>
-      </defs>
-      <g clipPath={u('sq')}>
-        <rect width="64" height="64" fill={u('bg')} />
-        <rect width="64" height="64" fill={u('g1')} />
-        <rect width="64" height="64" fill={u('g2')} />
-        <ellipse cx="26" cy="4" rx="34" ry="13" fill="#fff" opacity="0.06" />
-      </g>
-      <rect x="2.6" y="2.6" width="58.8" height="58.8" rx="14.4" fill="none" stroke={u('rim')} strokeWidth="1.2" />
-      <path d="M20 45V19l24 26V19" fill="none" stroke={u('n')} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" opacity="0.55" filter={u('b')} />
-      <path d="M20 45V19l24 26V19" fill="none" stroke={u('n')} strokeWidth="4.6" strokeLinecap="round" strokeLinejoin="round" />
-      <circle cx="20" cy="45" r="4.4" fill="#0c0a24" stroke="#5eead4" strokeWidth="2.4" />
-      <circle cx="20" cy="19" r="3.2" fill="#fff" />
-      <circle cx="44" cy="45" r="3.2" fill="#fff" />
-      <circle cx="44" cy="19" r="5.2" fill="#ff7ab6" opacity="0.5" filter={u('b')} />
-      <circle cx="44" cy="19" r="4.4" fill="#fff" stroke="#ff7ab6" strokeWidth="2.4" />
-    </svg>
+    <span
+      ref={ref}
+      aria-hidden="true"
+      className={cn('ng-mark inline-block shrink-0 align-middle leading-[0] [&_svg]:overflow-visible', className)}
+      style={{ width: size, height: size }}
+      // Static, trusted markup generated from constants in ./traversal.ts.
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   )
 }
 
+/** "NexoraGuru": "Nexora" regular in the theme's ink, "Guru" medium in the brand gradient (Geist). */
 export function Wordmark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        'font-[family-name:var(--font-brand)] text-[16px] font-semibold tracking-[0.22em] text-text-primary',
+        'font-[family-name:var(--font-brand)] text-[16px] font-normal tracking-[-0.025em] whitespace-nowrap text-text-primary',
         className,
       )}
     >
-      NEXORA
+      Nexora
+      <span className="bg-gradient-to-r from-[#2f5bea] via-[#7c3aed] to-[#0d9488] bg-clip-text font-medium text-transparent dark:from-[#6f95ff] dark:via-[#a78bfa] dark:to-[#2dd4bf]">
+        Guru
+      </span>
+    </span>
+  )
+}
+
+/** The production logo. `variant="lockup"` adds the wordmark beside the mark. */
+export function Logo({
+  variant = 'mark',
+  size = 28,
+  interactive = false,
+  intro = true,
+  replayOnClick = false,
+  className,
+  wordmarkClassName,
+}: {
+  variant?: 'mark' | 'lockup'
+  size?: number
+  interactive?: boolean
+  intro?: boolean
+  replayOnClick?: boolean
+  className?: string
+  wordmarkClassName?: string
+}) {
+  const mark = <LogoMark size={size} interactive={interactive} intro={intro} replayOnClick={replayOnClick} />
+  if (variant === 'mark') return <span className={cn('inline-flex', className)}>{mark}</span>
+  return (
+    <span className={cn('inline-flex items-center gap-2.5', className)}>
+      {mark}
+      <Wordmark className={wordmarkClassName} />
     </span>
   )
 }

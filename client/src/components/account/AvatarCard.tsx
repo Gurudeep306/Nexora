@@ -99,7 +99,7 @@ export function AvatarCard({ user }: { user: ProfileUser }) {
         avatarUrl: '',
       })
       await refresh()
-      toast.success('Avatar updated', 'Your new look is live across Nexora.')
+      toast.success('Avatar updated', 'Your new look is live across NexoraGuru.')
     } catch (err) {
       toast.error('Could not save avatar', err instanceof Error ? err.message : undefined)
     } finally {

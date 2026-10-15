@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { io, type Socket } from 'socket.io-client'
 import { useAuth } from '@/context/AuthContext'
+import { API_BASE } from '@/lib/api'
 
 const SocketContext = createContext<Socket | null>(null)
 
@@ -11,10 +12,12 @@ export function SocketProvider({ children, enabled = true }: { children: React.R
 
   useEffect(() => {
     if (!enabled || !username) return
-    // Same-origin (Vite proxies /socket.io in dev) so the session cookie rides
-    // along on the handshake; the server derives who we are from it and
-    // registers presence on connect — no username is sent.
-    const connection = io({ transports: ['websocket', 'polling'], withCredentials: true })
+    // Same origin by default (Vite proxies /socket.io in dev); on the split
+    // deploy VITE_API_URL points at the API host. Either way the session cookie
+    // rides along on the handshake (withCredentials); the server derives who we
+    // are from it and registers presence on connect — no username is sent.
+    const opts = { transports: ['websocket', 'polling'], withCredentials: true }
+    const connection = API_BASE ? io(API_BASE, opts) : io(opts)
     connection.on('connect', () => setSocket(connection))
     connection.on('disconnect', () => setSocket(null))
     return () => {
