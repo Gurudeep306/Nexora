@@ -1,0 +1,1152 @@
+{
+  "paper": "cse-1993",
+  "version": 2,
+  "solutions": {
+    "cse-1993-ii-a-6-5": {
+      "approach": "Convert the binary fraction by positional weights, and the decimal integer to hex by repeated division by 16.",
+      "concepts": [
+        "Positional number systems",
+        "Base conversion"
+      ],
+      "steps": [
+        {
+          "title": "Binary to decimal",
+          "body": "$(110.101)_2 = 4+2+0 + \\tfrac12 + 0 + \\tfrac18 = 6 + 0.5 + 0.125 = 6.625$, so $x = 6.625$."
+        },
+        {
+          "title": "Decimal to hexadecimal",
+          "body": "$1118 \\div 16 = 69$ r $14$ (E); $69 \\div 16 = 4$ r $5$; $4 \\div 16 = 0$ r $4$.\n\nReading remainders upward: $(1118)_{10} = (45\\text{E})_{16}$."
+        }
+      ],
+      "answer": {
+        "value": "x = 6.625; y = 45E",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading remainders top-down gives E54, which is wrong."
+      ],
+      "verification": "$4\\cdot256 + 5\\cdot16 + 14 = 1024 + 80 + 14 = 1118$."
+    },
+    "cse-1993-ii-a-6-6": {
+      "approach": "A ROM truth table has one word per input combination and one output bit per product bit.",
+      "concepts": [
+        "ROM as combinational logic",
+        "Binary multiplication"
+      ],
+      "steps": [
+        {
+          "title": "Words (address lines)",
+          "body": "Inputs = two 4-bit numbers = $8$ address bits, so $M = 2^8 = 256$ words."
+        },
+        {
+          "title": "Bits per word",
+          "body": "Largest product: $15 \\times 15 = 225 < 2^8 = 256$, so the product needs $4+4 = 8$ bits. $N = 8$."
+        }
+      ],
+      "answer": {
+        "value": "M = 256, N = 8",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using 16 words (only 4 address bits) or 16 output bits."
+      ],
+      "verification": "$225 = (11100001)_2$ fits in 8 bits; $2^8$ combinations cover every operand pair."
+    },
+    "cse-1993-ii-a-6-7": {
+      "approach": "Average rotational latency is half a revolution; one track passes under the head per revolution, so transfer rate = track capacity × revolutions per second.",
+      "concepts": [
+        "Rotational latency",
+        "Disk transfer rate"
+      ],
+      "steps": [
+        {
+          "title": "Revolution time",
+          "body": "$2400$ rpm $= 2400/60 = 40$ rev/s, so one revolution takes $1/40$ s $= 25$ ms."
+        },
+        {
+          "title": "Average latency",
+          "body": "$P = \\tfrac12 \\times 25 = 12.5$ ms."
+        },
+        {
+          "title": "Transfer rate",
+          "body": "$Q = 62{,}500 \\times 40 = 2{,}500{,}000 = 2.5\\times10^6$ bits/s."
+        }
+      ],
+      "answer": {
+        "value": "P = 12.5, Q = 2.5×10^6",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking a full revolution (25 ms) as the average latency.",
+        "The number of tracks (200) is irrelevant here."
+      ],
+      "verification": "Units: bits/rev × rev/s = bits/s."
+    },
+    "cse-1993-ii-a-6-8": {
+      "approach": "In every 1 ms period the CPU loses only the save + service + restore time; the first 10 µs after arrival is still main-program execution.",
+      "concepts": [
+        "Interrupt overhead",
+        "CPU utilisation"
+      ],
+      "given": "| Phase | Time |\n|---|---|\n| Main program continues after arrival | 10 µs |\n| Save CPU state | 10 µs |\n| Interrupt service | 80 µs |\n| Restore CPU state | 10 µs |\n| Interrupt period | 1 ms = 1000 µs |",
+      "steps": [
+        {
+          "title": "Time lost per interrupt",
+          "body": "$10 + 80 + 10 = 100\\ \\mu s$ (the low part of the waveform)."
+        },
+        {
+          "title": "Fraction for the main program",
+          "body": "$\\dfrac{1000 - 100}{1000} = \\dfrac{900}{1000} = 90\\%$."
+        }
+      ],
+      "answer": {
+        "value": "90%",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting the 10 µs before the state is saved as overhead gives 89%, but the figure shows the main program still running then."
+      ],
+      "verification": "Overhead $100/1000 = 10\\%$; $100\\% - 10\\% = 90\\%$."
+    },
+    "cse-1993-ii-a-7-1": {
+      "approach": "Both formals of P are var parameters bound to the same global m, so x := y+1 writes 0+1 into global m; P's local m is a different variable.",
+      "concepts": [
+        "Call by reference",
+        "Aliasing",
+        "Scope"
+      ],
+      "steps": [
+        {
+          "title": "Binding",
+          "body": "`P(m, m)`: `x` and `y` are both references (aliases) to the global `m`, which is $0$."
+        },
+        {
+          "title": "Body of P",
+          "body": "`m := 1` sets P's **local** `m` only. `x := y + 1` reads global $m = 0$ through `y` and stores $1$ into global `m` through `x`."
+        },
+        {
+          "title": "Output",
+          "body": "`write(m)` prints $1$."
+        }
+      ],
+      "answer": {
+        "value": "1 — x and y are references to m, which P modifies",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The local m of P shadows the global and is a different variable; it is not what is printed."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The value printed is 1, not 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "y is 0 when read, but the assignment through x changes m to 1."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "x and y alias m; x := y + 1 sets m to 1."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(d) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Thinking P's local m := 1 is the reason the output is 1."
+      ],
+      "verification": "Trace: m=0 → x:=y+1 → m=0+1=1."
+    },
+    "cse-1993-ii-a-7-2": {
+      "approach": "n*1 is an expression passed by value to x, and n is passed by reference to y; Q only assigns to its local copy x, so n is unchanged.",
+      "concepts": [
+        "Call by value",
+        "Call by reference"
+      ],
+      "steps": [
+        {
+          "title": "Binding",
+          "body": "`Q(n*1, n)`: `x` gets a copy of the value $0$; `y` is a reference to `n`."
+        },
+        {
+          "title": "Body of Q",
+          "body": "`x := y + 1` writes $1$ into the local copy `x` only; `n` (through `y`) is only read."
+        },
+        {
+          "title": "Output",
+          "body": "`write(n)` prints $0$."
+        }
+      ],
+      "answer": {
+        "value": "0 — n is bound to y, which is only read",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n is not the actual parameter for x; the expression n*1 is."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "n is bound to the var parameter y, which Q never assigns, so n stays 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Output is 0, not 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Output is 0; y is only read."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Treating n*1 as a reference to n."
+      ],
+      "verification": "Only x (a value copy) is assigned in Q."
+    },
+    "cse-1993-ii-a-7-3": {
+      "approach": "A global name is visible in every nested block except those that redeclare it; P declares its own m, Q does not.",
+      "concepts": [
+        "Static scope",
+        "Name hiding"
+      ],
+      "steps": [
+        {
+          "title": "Where m is redeclared",
+          "body": "P has `var m : integer;`, so inside P the name `m` means P's local and the global `m` is hidden."
+        },
+        {
+          "title": "Scope",
+          "body": "Q declares no `m`, so the global `m` is visible in the main program PARAM and in Q: scope = PARAM, Q."
+        }
+      ],
+      "answer": {
+        "value": "PARAM, Q",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Inside P the global m is hidden by the local m."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Includes P (hidden there) and omits Q."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Visible in PARAM and Q, hidden in P."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Omits the main program and includes P."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Confusing aliasing (P can modify global m through x) with scope (the name m in P is the local one)."
+      ],
+      "verification": "Name lookup in P finds P's own m first."
+    },
+    "cse-1993-ii-a-7-4": {
+      "approach": "This is the classic swap without a temporary: trace with symbolic values a = A, b = B.",
+      "concepts": [
+        "Arithmetic swap"
+      ],
+      "steps": [
+        {
+          "title": "Trace",
+          "body": "`a := a + b` → $a = A+B$\n\n`b := a - b` → $b = (A+B) - B = A$\n\n`a := a - b` → $a = (A+B) - A = B$"
+        },
+        {
+          "title": "Result",
+          "body": "Now $a = B$, $b = A$: the values are exchanged (ignoring overflow)."
+        }
+      ],
+      "answer": {
+        "value": "exchanges a and b",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Trace gives a = B, b = A."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "b ends as A, not 2A."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "a ends as B, not 2B."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both change unless A = B."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(a) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Overflow of a + b can break the swap on fixed-width integers, but that is not what is asked."
+      ],
+      "verification": "Example a=3, b=5: a=8, b=3, a=5."
+    },
+    "cse-1993-ii-a-7-5": {
+      "approach": "After ptr := nil the next statement dereferences nil, which is detected only when the program runs.",
+      "concepts": [
+        "Pointers in Pascal",
+        "Nil dereference"
+      ],
+      "steps": [
+        {
+          "title": "Trace",
+          "body": "`new(ptr)` allocates a record; `ptr := nil` throws that address away (a memory leak)."
+        },
+        {
+          "title": "Dereference",
+          "body": "`ptr^.d := 5.2` accesses the record pointed to by `nil`. Type-checking passes (ptr^ is a data record and d is real), so the failure is a **run-time** error, specifically a nil-pointer dereference."
+        },
+        {
+          "title": "Conclusion",
+          "body": "(b) and (d) are true; 5.2 is never printed."
+        }
+      ],
+      "answer": {
+        "value": "(b) and (d)",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The dereference is well-typed; nil-ness is only known at run time (see the pitfall about writeln)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Dereferencing nil fails during execution."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Execution never reaches the output."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The run-time error is exactly a nil pointer dereference."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) and (d) are true."
+        }
+      ],
+      "pitfalls": [
+        "Strictly, standard Pascal cannot write a pointer, so writeln(ptr) is a compile error; the intended point of the question is the nil dereference."
+      ],
+      "verification": "ptr is nil at the assignment, so ptr^ has no storage."
+    },
+    "cse-1993-ii-a-7-6": {
+      "approach": "Pass 1 of a two-pass assembler only defines things (location counter, symbol and literal tables); pass 2 generates code.",
+      "concepts": [
+        "Two-pass assembler",
+        "Symbol table",
+        "Literal table"
+      ],
+      "steps": [
+        {
+          "title": "Pass 1",
+          "body": "Advances the location counter over every statement, enters labels with their addresses into the symbol table, collects literals and assigns them addresses (at LTORG/END), and ends knowing the program length."
+        },
+        {
+          "title": "Pass 2",
+          "body": "Uses those tables to generate machine code for all instructions, including loads and stores."
+        }
+      ],
+      "answer": {
+        "value": "(a), (b), (c)",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Literals are given addresses in pass 1."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The final location counter gives the program length."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Building the symbol table is the main job of pass 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Code is generated in pass 2, when forward references are known."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(a), (b), (c) are true."
+        }
+      ],
+      "verification": "Forward references can only be resolved after pass 1, so code generation must be in pass 2."
+    },
+    "cse-1993-ii-a-7-7": {
+      "approach": "The loader is what brings every other program into memory, so it must itself already be resident.",
+      "concepts": [
+        "Loader",
+        "System software"
+      ],
+      "steps": [
+        {
+          "title": "Reason",
+          "body": "Editors, assemblers and linkers are ordinary programs that are loaded only when needed. Loading any of them requires the loader, so the loader (at least its bootstrap part) must always be in main memory."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Of the listed programs only the loader must always be resident."
+        }
+      ],
+      "answer": {
+        "value": "loader",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Loaded on demand."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Loaded on demand."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Linking can be done in advance; the linker is loaded on demand."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Needed to load everything else."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(d) is correct."
+        }
+      ],
+      "verification": "Without a resident loader no other program could be brought into memory."
+    },
+    "cse-1993-ii-a-7-8": {
+      "approach": "The file system must find the root directory without any other directory, so it has to be at a known, fixed location on the disk.",
+      "concepts": [
+        "File system layout",
+        "Root directory"
+      ],
+      "steps": [
+        {
+          "title": "Reason",
+          "body": "Every path lookup starts at the root. Nothing points to the root, so its location must be fixed and known in advance on each disk (for example just after the boot block or superblock)."
+        },
+        {
+          "title": "Not main memory",
+          "body": "Main memory is volatile, so the root directory cannot live only there; and \"anywhere\" would make it impossible to find."
+        }
+      ],
+      "answer": {
+        "value": "at a fixed location on the disk",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Memory is volatile; the directory must be on disk."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A fixed location lets it be found without any lookup."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It could not be found."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Every disk with a file system has its own root directory, not only the system disk."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "It could not be found."
+        }
+      ],
+      "verification": "Matches real layouts (e.g. the FAT root directory at a fixed sector after the FATs)."
+    },
+    "cse-1993-ii-a-7-9": {
+      "approach": "Worst case: each process holds one less than its peak; one extra unit then guarantees someone can finish.",
+      "concepts": [
+        "Deadlock avoidance",
+        "Resource counting"
+      ],
+      "steps": [
+        {
+          "title": "Worst case",
+          "body": "Maximum held without anyone finishing: $(3-1)+(4-1)+(6-1) = 2+3+5 = 10$."
+        },
+        {
+          "title": "Condition",
+          "body": "Deadlock is impossible iff $m \\ge 10 + 1 = 11$."
+        },
+        {
+          "title": "Options",
+          "body": "$7, 9, 10 < 11$ (deadlock possible); $13, 15 \\ge 11$ (deadlock-free)."
+        }
+      ],
+      "answer": {
+        "value": "13 and 15",
+        "choice": [
+          "D",
+          "E"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "7 < 11: e.g. A holds 2, B 3, C 2, all waiting."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 < 11."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "With 10, holdings 2, 3, 5 leave none free: deadlock."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "13 ≥ 11."
+        },
+        {
+          "option": "E",
+          "correct": true,
+          "reason": "15 ≥ 11."
+        }
+      ],
+      "pitfalls": [
+        "Choosing 10 — the sum of (need − 1) still deadlocks; one more is required."
+      ],
+      "verification": "With 11, holdings 2+3+5 leave 1 free, enough for some process to reach its peak."
+    },
+    "cse-1993-ii-a-7-10": {
+      "approach": "Simulate round robin with quantum 1 from the ready order p, q, r, s, t.",
+      "concepts": [
+        "Round robin scheduling",
+        "Completion time"
+      ],
+      "given": "| Job | p | q | r | s | t |\n|---|---|---|---|---|---|\n| Burst | 4 | 1 | 8 | 1 | 2 |",
+      "animation": {
+        "kind": "gantt",
+        "unit": "",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 1,
+                "label": "p"
+              },
+              {
+                "start": 1,
+                "end": 2,
+                "label": "q"
+              },
+              {
+                "start": 2,
+                "end": 3,
+                "label": "r"
+              },
+              {
+                "start": 3,
+                "end": 4,
+                "label": "s"
+              },
+              {
+                "start": 4,
+                "end": 5,
+                "label": "t"
+              },
+              {
+                "start": 5,
+                "end": 6,
+                "label": "p"
+              },
+              {
+                "start": 6,
+                "end": 7,
+                "label": "r"
+              },
+              {
+                "start": 7,
+                "end": 8,
+                "label": "t"
+              },
+              {
+                "start": 8,
+                "end": 9,
+                "label": "p"
+              },
+              {
+                "start": 9,
+                "end": 10,
+                "label": "r"
+              },
+              {
+                "start": 10,
+                "end": 11,
+                "label": "p"
+              },
+              {
+                "start": 11,
+                "end": 16,
+                "label": "r"
+              }
+            ]
+          }
+        ],
+        "upto": 5,
+        "cursor": 5
+      },
+      "steps": [
+        {
+          "title": "Round 1",
+          "body": "0–1 p (3 left), 1–2 q (done at 2), 2–3 r (7 left), 3–4 s (done at 4), 4–5 t (1 left).",
+          "scene": {
+            "upto": 5,
+            "cursor": 5,
+            "caption": "q and s finish in the first round"
+          }
+        },
+        {
+          "title": "Round 2",
+          "body": "Queue: p, r, t. 5–6 p (2 left), 6–7 r (6 left), 7–8 t (done at 8).",
+          "scene": {
+            "upto": 8,
+            "cursor": 8,
+            "caption": "t finishes at 8"
+          }
+        },
+        {
+          "title": "Round 3",
+          "body": "Queue: p, r. 8–9 p (1 left), 9–10 r (5 left), 10–11 p (done at **11**).",
+          "scene": {
+            "upto": 11,
+            "cursor": 11,
+            "caption": "p completes at 11"
+          }
+        },
+        {
+          "title": "Rest",
+          "body": "Only r remains and runs 11–16. Completion time of p = $11$.",
+          "scene": {
+            "upto": 12,
+            "cursor": 16,
+            "caption": "r finishes at 16"
+          }
+        }
+      ],
+      "answer": {
+        "value": "11",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4 is p's burst, its finish time under FCFS."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "At 10 p still has 1 unit left (r ran 9–10)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "p's fourth slice is 10–11."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Too late by one slot."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c) is correct."
+        }
+      ],
+      "shortcut": "Up to p's last slice the CPU runs p 4 times, q and s once, t twice and r 3 times: 4 + 1 + 1 + 2 + 3 = 11.",
+      "verification": "Total burst 16 = r's finish time, consistent with the schedule."
+    },
+    "cse-1993-ii-a-8-1": {
+      "approach": "A connected graph with n vertices needs n−1 edges to be a tree; one extra edge creates exactly one cycle.",
+      "concepts": [
+        "Trees",
+        "Cycles",
+        "Connectivity"
+      ],
+      "steps": [
+        {
+          "title": "Structure",
+          "body": "Connected with $n$ edges $= (n-1)+1$: a spanning tree plus one edge, so $G$ has **exactly one** cycle."
+        },
+        {
+          "title": "Removing edges",
+          "body": "Removing a cycle edge leaves a connected tree, so (b) fails. Removing any two edges leaves $n-2 < n-1$ edges, which can never connect $n$ vertices, so (d) holds."
+        }
+      ],
+      "answer": {
+        "value": "(c) and (d)",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n edges on n connected vertices force a cycle."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Removing an edge on the cycle keeps G connected."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly one cycle."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "n − 2 edges cannot connect n vertices."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c), (d) are true."
+        }
+      ],
+      "verification": "Example: cycle $C_4$ (4 vertices, 4 edges): has a cycle, stays connected after removing one edge, disconnected after removing two."
+    },
+    "cse-1993-ii-a-8-2": {
+      "approach": "Distribute ∧ over ∨ and drop the contradiction.",
+      "concepts": [
+        "Propositional equivalence",
+        "Distributive law"
+      ],
+      "steps": [
+        {
+          "title": "Distribute",
+          "body": "$p \\wedge (\\sim p \\vee q) \\equiv (p \\wedge \\sim p) \\vee (p \\wedge q)$."
+        },
+        {
+          "title": "Simplify",
+          "body": "$p \\wedge \\sim p \\equiv F$, so the expression is $F \\vee (p \\wedge q) \\equiv p \\wedge q$."
+        }
+      ],
+      "answer": {
+        "value": "equivalent to p ∧ q",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False when p is false."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Shown by the distributive law."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "p = F, q = T makes p ∨ q true but the proposition false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True when p = q = T."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) is correct."
+        }
+      ],
+      "verification": "Truth table: only p = T, q = T makes it true, same as p ∧ q."
+    },
+    "cse-1993-ii-a-8-3": {
+      "approach": "A finite union of finite sets is finite, so an infinite set split into finitely many pieces must have an infinite piece.",
+      "concepts": [
+        "Finite and infinite sets"
+      ],
+      "steps": [
+        {
+          "title": "Contrapositive",
+          "body": "If every $S_i$ were finite, $|S| \\le |S_1| + \\dots + |S_n|$ would be finite — contradiction. So at least one $S_i$ is infinite."
+        },
+        {
+          "title": "Other options",
+          "body": "Take $S = \\mathbb N$, $n = 2$, $S_1 = S_2 = \\mathbb N$: no $S_i$ is finite and two are infinite, refuting (a) and (d). Take $S_1 = \\{1\\}, S_2 = \\{2\\}, S_3 = \\mathbb N$: two finite sets, refuting (b)."
+        }
+      ],
+      "answer": {
+        "value": "at least one S_i is infinite",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "All S_i may be infinite."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Many S_i may be finite."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Otherwise S would be finite."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Several S_i may be infinite."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c) is correct."
+        }
+      ],
+      "verification": "Counter-examples given for every other option."
+    },
+    "cse-1993-ii-a-8-4": {
+      "approach": "|A × A| = n², and a set of size k has 2^k subsets.",
+      "concepts": [
+        "Cartesian product",
+        "Power set"
+      ],
+      "steps": [
+        {
+          "title": "Size of A × A",
+          "body": "$|A\\times A| = n \\cdot n = n^2$."
+        },
+        {
+          "title": "Power set",
+          "body": "$|\\mathcal P(A\\times A)| = 2^{n^2}$."
+        }
+      ],
+      "answer": {
+        "value": "2^{n^2}",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^{2^n}$ is the size of the power set of the power set of A."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2^{n^2}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(2^n)^2 = 2^{2n}$, equal to $2^{n^2}$ only for n = 0, 2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(2^2)^n = 2^{2n}$, same issue."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) is correct."
+        }
+      ],
+      "verification": "n = 3: $2^9 = 512$, while (c), (d) give $2^6 = 64$ and (a) gives $2^8 = 256$."
+    },
+    "cse-1993-ii-a-8-5": {
+      "approach": "A partial order must be reflexive, antisymmetric and transitive; < is irreflexive, so it fails — then check each option's stated reason.",
+      "concepts": [
+        "Partial order",
+        "Relation properties"
+      ],
+      "steps": [
+        {
+          "title": "Properties of <",
+          "body": "Irreflexive ($a<a$ never holds), asymmetric (hence also antisymmetric), transitive."
+        },
+        {
+          "title": "Verdict",
+          "body": "Not reflexive ⇒ **not** a partial order (it is a strict order)."
+        },
+        {
+          "title": "Reasons in the options",
+          "body": "(a), (b) wrongly call it a partial order. (c) says it is not asymmetric — false. (d) says it is not antisymmetric — false. So no option gives a correct reason: (e)."
+        }
+      ],
+      "answer": {
+        "value": "none of the above",
+        "choice": [
+          "E"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "< is not reflexive, so not a partial order."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same: not reflexive."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "< is asymmetric, so the reason is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "< is antisymmetric (vacuously), so \"not antisymmetric\" is false; read as \"not (antisymmetric and reflexive)\" it would be acceptable."
+        },
+        {
+          "option": "E",
+          "correct": true,
+          "reason": "No option gives both a correct verdict and a correct reason."
+        }
+      ],
+      "pitfalls": [
+        "Asymmetric implies antisymmetric; < has both."
+      ],
+      "verification": "1 < 1 is false, so reflexivity fails; the other two properties hold."
+    },
+    "cse-1993-ii-a-8-6": {
+      "approach": "Map the m elements of A one by one to distinct elements of B.",
+      "concepts": [
+        "Injections",
+        "Permutations"
+      ],
+      "steps": [
+        {
+          "title": "Choices",
+          "body": "First element: $n$ choices, second $n-1$, …, $m$-th $n-m+1$."
+        },
+        {
+          "title": "Total",
+          "body": "$n(n-1)\\cdots(n-m+1) = \\dfrac{n!}{(n-m)!} = {}^nP_m$."
+        }
+      ],
+      "answer": {
+        "value": "ⁿP_m",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$m^n$ counts all functions from B to A."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$n!/(n-m)!$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "${}^mC_n = 0$ when m < n."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "${}^nC_m$ only chooses the image set; it ignores the m! orderings."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "${}^mP_n = 0$ when m < n."
+        }
+      ],
+      "verification": "m = 2, n = 3: 3·2 = 6 injections = ${}^3P_2$."
+    },
+    "cse-1993-ii-a-8-7": {
+      "approach": "n terms, each at most c·n, sum to at most c·n²; constant factors inside O do not matter.",
+      "concepts": [
+        "Big-O notation",
+        "Summations"
+      ],
+      "steps": [
+        {
+          "title": "Bound",
+          "body": "$\\sum_{k=1}^{n} O(n) \\le \\sum_{k=1}^{n} c\\,n = c\\,n^2$, so the sum is $O(n^2)$."
+        },
+        {
+          "title": "Equivalent forms",
+          "body": "$O(3n^2) = O(1.5n^2) = O(n^2)$, and every $O(n^2)$ function is also $O(n^3)$ (a valid, loose upper bound). It is not $O(n)$ in general."
+        }
+      ],
+      "answer": {
+        "value": "(b), (c), (d), (e)",
+        "choice": [
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n terms of size ~n give ~n², not O(n)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Tight bound."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Valid (loose) upper bound since n² ≤ n³."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Same class as O(n²)."
+        },
+        {
+          "option": "E",
+          "correct": true,
+          "reason": "Same class as O(n²)."
+        }
+      ],
+      "pitfalls": [
+        "If only tight bounds are wanted, (c) would be excluded; big-O is an upper bound, so it is formally correct."
+      ],
+      "verification": "Each term = n gives exactly n², which is in every class (b)–(e) but not O(n)."
+    }
+  }
+}
