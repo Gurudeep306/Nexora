@@ -9,6 +9,7 @@ import { AlgoTheater } from '@/components/showcase/AlgoTheater'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
 import { api, apiUrl, ApiError } from '@/lib/api'
+import { useSite } from '@/context/SiteContext'
 import { cn } from '@/lib/utils'
 
 type Mode = 'login' | 'register'
@@ -224,6 +225,7 @@ export default function AuthPage() {
   const [lastUsed] = useState(readLast)
   const { login, register, user, oauthPending } = useAuth()
   const navigate = useNavigate()
+  const site = useSite()
   const location = useLocation()
   const toast = useToast()
   const reduce = useReducedMotion()
@@ -368,8 +370,12 @@ export default function AuthPage() {
   const subtitle = oauthPending
     ? `Connected with ${oauthPending.provider === 'google' ? 'Google' : 'GitHub'} — pick a username to finish.`
     : mode === 'login'
-      ? 'Pick up right where you left off.'
-      : 'Free forever. Takes ten seconds.'
+      ? site.status?.private
+        ? 'NexoraGuru is private for now — invited members only.'
+        : 'Pick up right where you left off.'
+      : site.status && !site.status.registrationsOpen
+        ? 'Sign-ups are invite-only right now — use the name or email you were invited with.'
+        : 'Free forever. Takes ten seconds.'
   const previewName = username.trim() || 'nexora'
   const pwTooShort = mode === 'register' && needsPassword && pwTouched && password.length > 0 && password.length < 6
   const hasOAuth = !oauthPending && providers && (providers.github || providers.google)

@@ -4,8 +4,10 @@ import { ChevronRight } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
 import { iconComponent } from '@/components/icon/iconComponent'
 import { useAuth } from '@/context/AuthContext'
+import { useSite } from '@/context/SiteContext'
+import { featureForPath } from '@/lib/site'
 import { AnimatedNumber, Avatar, BackButton, Kbd, RotatingText, SearchCombobox, Tooltip, type ComboboxItem } from '@/components/ui'
-import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS, navMeta } from '@/config/nav'
+import { ACCOUNT_ITEMS, ADMIN_ITEM, CREATE_SECTION, NAV_SECTIONS, navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
 import { LookPopover } from '@/components/look/LookPopover'
 import { openCommandPalette } from './CommandPalette'
@@ -20,6 +22,7 @@ const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(naviga
 
 export function Topbar() {
   const { user } = useAuth()
+  const { can, featureOn, isStaff } = useSite()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const meta = navMeta(pathname)
@@ -52,9 +55,11 @@ export function Topbar() {
   const items = useMemo<ComboboxItem[]>(() => {
     const q = query.trim().toLowerCase()
     const pages: ComboboxItem[] = [
-      ...NAV_SECTIONS.flatMap((s) => s.items),
-      ...CREATE_SECTION.items.filter((i) => !i.adminOnly || user?.role === 'admin'),
+      ...NAV_SECTIONS.flatMap((s) => s.items).filter((i) => featureOn(featureForPath(i.to))),
+      // Creator tools follow the problems.manage permission (admins by default).
+      ...CREATE_SECTION.items.filter((i) => !i.adminOnly || can('problems.manage')),
       ...ACCOUNT_ITEMS,
+      ...(isStaff ? [ADMIN_ITEM] : []),
     ]
       .filter((n) => !q || n.label.toLowerCase().includes(q) || n.to.toLowerCase().includes(q))
       .map((n) => ({
@@ -86,7 +91,7 @@ export function Topbar() {
           ]
         : []
     return [...pages, ...problems, ...tail]
-  }, [query, results, user?.role, navigate])
+  }, [query, results, can, featureOn, isStaff, navigate])
 
   const handleUniversalBack = useCallback(() => {
     // If browser history has a previous entry in this session, navigate back
@@ -208,15 +213,17 @@ export function Topbar() {
             </Link>
           </Tooltip>
         )}
-        <Tooltip label="NexoraGuru AI (⌘J)" side="bottom">
-          <button
-            onClick={() => openAssistantEvent()}
-            aria-label="Open AI assistant"
-            className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
-          >
-            <Icon name="sparkles" className="size-[17px]" />
-          </button>
-        </Tooltip>
+        {featureOn('ai_tutor') && (
+          <Tooltip label="NexoraGuru AI (⌘J)" side="bottom">
+            <button
+              onClick={() => openAssistantEvent()}
+              aria-label="Open AI assistant"
+              className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
+            >
+              <Icon name="sparkles" className="size-[17px]" />
+            </button>
+          </Tooltip>
+        )}
         <LookPopover />
         <Notifications />
         {user && (
