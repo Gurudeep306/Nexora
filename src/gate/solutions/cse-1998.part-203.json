@@ -1,0 +1,792 @@
+{
+  "paper": "cse-1998",
+  "version": 2,
+  "solutions": {
+    "cse-1998-a-58-a": {
+      "approach": "Shift away the constant: the fixed point of $x = 2x - 1$ is $x = 1$, so $y_n = x_n - 1$ satisfies a pure doubling recurrence.",
+      "concepts": [
+        "Linear recurrence",
+        "Fixed point substitution"
+      ],
+      "steps": [
+        {
+          "title": "Remove the constant",
+          "body": "Put $y_n = x_n - 1$. Then $y_n + 1 = 2(y_{n-1}+1) - 1 = 2y_{n-1} + 1$, so $y_n = 2y_{n-1}$ with $y_1 = x_1 - 1 = 2 - 1 = 1$."
+        },
+        {
+          "title": "Solve and substitute back",
+          "body": "$y_n = 2^{n-1}y_1 = 2^{n-1}$, hence $$x_n = 2^{n-1} + 1.$$"
+        },
+        {
+          "title": "Check",
+          "body": "$x_1 = 2^0 + 1 = 2$ ✓; $x_2 = 2\\cdot 2 - 1 = 3 = 2^1 + 1$ ✓; $x_3 = 2\\cdot 3 - 1 = 5 = 2^2+1$ ✓."
+        }
+      ],
+      "answer": {
+        "value": "$x_n = 2^{n-1} + 1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $2^n + 1$ — that gives $x_1 = 3$, not 2."
+      ],
+      "verification": "Checked $n = 1, 2, 3$ against the recurrence directly."
+    },
+    "cse-1998-a-58-b": {
+      "approach": "The recursion is indirect ($S \\Rightarrow Aa$, $A \\Rightarrow Sd$), so first substitute $S$ into the $A$-rule to expose immediate left recursion, then apply the standard $A \\to A\\alpha \\mid \\beta$ rewrite.",
+      "concepts": [
+        "Indirect left recursion",
+        "Left-recursion elimination"
+      ],
+      "steps": [
+        {
+          "title": "Expose the recursion",
+          "body": "Replace $S$ in $A \\to Sd$ by its alternatives $Aa \\mid b$:\n$$A \\to Ac \\mid Aad \\mid bd \\mid \\epsilon$$\nNow every left recursion is immediate: $\\alpha_1 = c,\\ \\alpha_2 = ad$; non-recursive $\\beta_1 = bd,\\ \\beta_2 = \\epsilon$."
+        },
+        {
+          "title": "Apply the $A \\to \\beta A'$ rewrite",
+          "body": "For $A \\to A\\alpha_1 \\mid A\\alpha_2 \\mid \\beta_1 \\mid \\beta_2$:\n$$A \\to bdA' \\mid A'\\qquad A' \\to cA' \\mid adA' \\mid \\epsilon$$\n($\\beta_2 = \\epsilon$ gives $A \\to A'$.)"
+        },
+        {
+          "title": "Final grammar",
+          "body": "$$S \\to Aa \\mid b$$\n$$A \\to bdA' \\mid A'$$\n$$A' \\to cA' \\mid adA' \\mid \\epsilon$$\nBoth describe $A = (bd \\mid \\epsilon)(c \\mid ad)^*$, so the language is unchanged, and no non-terminal derives itself as a leftmost symbol."
+        }
+      ],
+      "answer": {
+        "value": "$S \\to Aa \\mid b;\\ A \\to bdA' \\mid A';\\ A' \\to cA' \\mid adA' \\mid \\epsilon$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Only removing $A \\to Ac$ and leaving $A \\to Sd$: $A \\Rightarrow Sd \\Rightarrow Aad$ is still left recursive.",
+        "Forgetting the $\\epsilon$ alternative of $A$, which becomes $A \\to A'$."
+      ],
+      "verification": "Both grammars give $A = (bd\\mid\\epsilon)(c\\mid ad)^*$ and $S = Aa \\mid b$."
+    },
+    "cse-1998-a-59-a": {
+      "approach": "Join the three relations so that the parlor matches (FREQUENTS–SERVES) and both the student and the ice-cream match (SERVES–LIKES, FREQUENTS–LIKES); project the student with DISTINCT.",
+      "concepts": [
+        "SQL join",
+        "Projection with DISTINCT"
+      ],
+      "steps": [
+        {
+          "title": "Condition to express",
+          "body": "Student $s$ qualifies if there exist $p, i$ with $(s,p) \\in$ FREQUENTS, $(p,i) \\in$ SERVES and $(s,i) \\in$ LIKES."
+        },
+        {
+          "title": "SQL",
+          "body": "Hyphenated names are written with underscores (or quoted):\n```sql\nSELECT DISTINCT F.student\nFROM   FREQUENTS F, SERVES S, LIKES L\nWHERE  F.parlor     = S.parlor\n  AND  S.ice_cream  = L.ice_cream\n  AND  F.student    = L.student;\n```"
+        },
+        {
+          "title": "Why DISTINCT",
+          "body": "A student may match through several parlors or ice-creams; DISTINCT prints each student once. An equivalent form uses `WHERE EXISTS (SELECT * FROM SERVES S, LIKES L WHERE ...)`."
+        }
+      ],
+      "answer": {
+        "value": "SELECT DISTINCT F.student FROM FREQUENTS F, SERVES S, LIKES L WHERE F.parlor = S.parlor AND S.ice_cream = L.ice_cream AND F.student = L.student",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Dropping $F.student = L.student$ — that would list students whose parlor serves an ice-cream liked by *someone*."
+      ],
+      "verification": "Each WHERE conjunct corresponds to one membership in the existential condition of step 1."
+    },
+    "cse-1998-a-59-b": {
+      "approach": "Simulate the fixed partitions over time: at each instant, take waiting jobs in arrival order and give each the smallest free partition that fits (best fit). The 20K job can only use the 20K partition, so just track that partition.",
+      "concepts": [
+        "Best-fit allocation",
+        "Fixed (static) partitions"
+      ],
+      "given": "| Job | J1 | J2 | J3 | J4 | J5 | J6 | J7 | J8 |\n|---|---|---|---|---|---|---|---|---|\n| Size | 2K | 14K | 3K | 6K | 6K | 10K | 20K | 2K |\n| Time | 4 | 10 | 2 | 1 | 4 | 1 | 8 | 6 |\n\nPartitions: P1 = 4K, P2 = 8K, P3 = 20K, P4 = 2K.",
+      "steps": [
+        {
+          "title": "At t = 0",
+          "body": "J1 (2K) → P4 (2K), runs 0–4. J2 (14K) → P3 (20K, the only one ≥ 14K), runs 0–10. J3 (3K) → P1 (4K), runs 0–2. J4 (6K) → P2 (8K), runs 0–1. J5 waits.",
+          "scene": {
+            "upto": 1,
+            "cursor": 1,
+            "caption": "t = 0: J1, J2, J3, J4 placed by best fit"
+          }
+        },
+        {
+          "title": "Small jobs in P1, P2",
+          "body": "t = 1: P2 frees → J5 (6K) → P2, runs 1–5. t = 2: P1 (4K) frees, but the next job J6 (10K) needs ≥ 10K — only P3 qualifies.",
+          "scene": {
+            "upto": 5,
+            "cursor": 5,
+            "caption": "J5 takes P2 at t = 1; J6 must wait for P3"
+          }
+        },
+        {
+          "title": "The 20K partition",
+          "body": "P3 is busy with J2 until $t = 10$. Then J6 (10K) runs $10 \\to 10 + 1 = 11$, and J7 (20K) gets P3 at 11 and runs $11 \\to 11 + 8 = 19$.",
+          "scene": {
+            "upto": 19,
+            "cursor": 19,
+            "caption": "J7 (20K) finishes at t = 19"
+          }
+        },
+        {
+          "title": "Where J8 goes does not matter",
+          "body": "J8 (2K) never needs P3 (it best-fits into P4 or P1). Whether it runs early (P1 at t = 2) or after J7 is placed (P4 at 11–17), the 20K job still completes at **19**."
+        }
+      ],
+      "answer": {
+        "value": "At time 19",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "gantt",
+        "unit": "time units",
+        "lanes": [
+          {
+            "label": "P1 4K",
+            "bars": [
+              {
+                "start": 0,
+                "end": 2,
+                "label": "J3"
+              }
+            ]
+          },
+          {
+            "label": "P2 8K",
+            "bars": [
+              {
+                "start": 0,
+                "end": 1,
+                "label": "J4"
+              },
+              {
+                "start": 1,
+                "end": 5,
+                "label": "J5"
+              }
+            ]
+          },
+          {
+            "label": "P3 20K",
+            "bars": [
+              {
+                "start": 0,
+                "end": 10,
+                "label": "J2"
+              },
+              {
+                "start": 10,
+                "end": 11,
+                "label": "J6"
+              },
+              {
+                "start": 11,
+                "end": 19,
+                "label": "J7"
+              }
+            ]
+          },
+          {
+            "label": "P4 2K",
+            "bars": [
+              {
+                "start": 0,
+                "end": 4,
+                "label": "J1"
+              },
+              {
+                "start": 11,
+                "end": 17,
+                "label": "J8"
+              }
+            ]
+          }
+        ],
+        "upto": 0,
+        "cursor": 0
+      },
+      "pitfalls": [
+        "Treating memory as variable partitions (holes merge) — here the partitions are fixed.",
+        "Letting the 10K job use the 8K partition."
+      ],
+      "verification": "Both 10K and 20K jobs fit only in P3, so the completion of J7 is $10 + 1 + 8 = 19$ regardless of the other jobs."
+    },
+    "cse-1998-b-60-a": {
+      "approach": "Set $f'(x) = 0$, then classify each critical point with the sign of $f''$.",
+      "concepts": [
+        "Critical points",
+        "Second-derivative test"
+      ],
+      "steps": [
+        {
+          "title": "Critical points",
+          "body": "$f'(x) = 3x^2 - 12x + 9 = 3(x^2 - 4x + 3) = 3(x-1)(x-3)$, so $x = 1$ and $x = 3$, both in $[0, 6]$."
+        },
+        {
+          "title": "Classify",
+          "body": "$f''(x) = 6x - 12$. At $x = 1$: $f'' = -6 < 0$ ⇒ local maximum, $f(1) = 1 - 6 + 9 + 15 = 19$. At $x = 3$: $f'' = 6 > 0$ ⇒ local minimum, $f(3) = 27 - 54 + 27 + 15 = 15$."
+        },
+        {
+          "title": "Endpoints for context",
+          "body": "$f(0) = 15$, $f(6) = 216 - 216 + 54 + 15 = 69$. So on $[0,6]$ the global maximum is 69 at $x = 6$; the interior local extrema are at $x = 1$ and $x = 3$."
+        }
+      ],
+      "answer": {
+        "value": "Local maximum at $x = 1$ ($f = 19$), local minimum at $x = 3$ ($f = 15$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading the printed $-6x + 9x$ literally gives $x^3 + 3x + 15$, which is increasing and has no extrema — the square was lost in printing."
+      ],
+      "verification": "Sign of $f'$: positive on $(0,1)$, negative on $(1,3)$, positive on $(3,6)$ — max then min."
+    },
+    "cse-1998-b-60-b": {
+      "approach": "The integrand $x\\cos x$ is odd (odd × even) and the interval is symmetric, so the integral is 0; integration by parts confirms it.",
+      "concepts": [
+        "Odd function",
+        "Integration by parts"
+      ],
+      "steps": [
+        {
+          "title": "Symmetry",
+          "body": "$g(x) = x\\cos x$ gives $g(-x) = (-x)\\cos(-x) = -x\\cos x = -g(x)$, so $\\int_{-\\pi}^{\\pi} g = 0$."
+        },
+        {
+          "title": "By parts",
+          "body": "$\\int x\\cos x\\,dx = x\\sin x + \\cos x$. So $[x\\sin x + \\cos x]_{-\\pi}^{\\pi} = (0 + (-1)) - (0 + (-1)) = 0$."
+        }
+      ],
+      "answer": {
+        "value": "$0$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "If the limits were $0$ to $\\pi$ the value would be $(0-1) - (0+1) = -2$; the symmetric limits give 0."
+      ],
+      "verification": "Symmetry argument and the antiderivative agree."
+    },
+    "cse-1998-b-61": {
+      "approach": "Count the work per pivot column in forward elimination (a multiplier per lower row, then an update of the rest of that row and its right-hand side), sum over pivots, then add back substitution.",
+      "concepts": [
+        "Gaussian elimination",
+        "Operation count",
+        "Back substitution"
+      ],
+      "steps": [
+        {
+          "title": "Elimination, pivot $k$",
+          "body": "Rows $k+1..n$ ($n-k$ rows) each need 1 division for the multiplier $m = a_{ik}/a_{kk}$, then $(n-k)$ coefficients plus 1 right-hand side updated: $n-k+1$ multiply-adds. Pivot $k$ costs $(n-k)(n-k+1)$ multiply-adds and $n-k$ divisions."
+        },
+        {
+          "title": "Sum over $k = 1..n-1$",
+          "body": "With $j = n-k$:\n$$\\sum_{j=1}^{n-1} j(j+1) = \\frac{(n-1)n(2n-1)}{6} + \\frac{(n-1)n}{2} = \\frac{(n-1)n(n+1)}{3} = \\frac{n^3 - n}{3}$$\nmultiply-adds, and $\\sum_{j=1}^{n-1} j = \\frac{n(n-1)}{2}$ divisions."
+        },
+        {
+          "title": "Back substitution",
+          "body": "$x_i = (b_i - \\sum_{j>i} a_{ij}x_j)/a_{ii}$ needs $n-i$ multiply-adds and 1 division: $\\sum_{i=1}^{n}(n-i) = \\frac{n(n-1)}{2}$ multiply-adds and $n$ divisions."
+        },
+        {
+          "title": "Total",
+          "body": "Multiply-adds: $\\frac{n^3-n}{3} + \\frac{n(n-1)}{2}$. Counting divisions as operations too:\n$$\\frac{n^3-n}{3} + \\frac{n(n-1)}{2} + \\frac{n(n-1)}{2} + n = \\frac{n^3}{3} + n^2 - \\frac{n}{3}$$\nwhich is $\\approx n^3/3 = O(n^3)$."
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{n^3}{3} + n^2 - \\frac{n}{3}$ operations: elimination $\\frac{n^3-n}{3}$ multiply-adds + $\\frac{n(n-1)}{2}$ divisions; back substitution $\\frac{n(n-1)}{2}$ multiply-adds + $n$ divisions; $O(n^3)$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the right-hand-side column in each row update (it adds the \"+1\" in $n-k+1$)."
+      ],
+      "verification": "$n = 2$: elimination 2 multiply-adds + 1 division, back substitution 1 multiply-add + 2 divisions = 6; formula $8/3 + 4 - 2/3 = 6$ ✓."
+    },
+    "cse-1998-b-62-a": {
+      "approach": "Induct on $n \\ge 3$; build an $(n+1)$-gon from an $n$-gon by inserting one new vertex on a side and count exactly which diagonals appear.",
+      "concepts": [
+        "Mathematical induction",
+        "Counting diagonals"
+      ],
+      "steps": [
+        {
+          "title": "Base case",
+          "body": "$n = 3$: a triangle has no diagonals, and $\\frac{3(3-3)}{2} = 0$ ✓."
+        },
+        {
+          "title": "Inductive step",
+          "body": "Assume an $n$-gon has $\\frac{n(n-3)}{2}$ diagonals. Insert a new vertex $v$ between adjacent vertices $u, w$. New diagonals:\n- from $v$ to the $n - 2$ old vertices other than $u, w$;\n- the old side $uw$, which is now a diagonal.\nOld diagonals stay diagonals, so the count rises by $(n-2) + 1 = n - 1$."
+        },
+        {
+          "title": "Algebra",
+          "body": "$$\\frac{n(n-3)}{2} + (n-1) = \\frac{n^2 - 3n + 2n - 2}{2} = \\frac{n^2 - n - 2}{2} = \\frac{(n+1)(n-2)}{2} = \\frac{(n+1)((n+1)-3)}{2}$$\nwhich is the formula for $n+1$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "Base $n=3$: $0$ diagonals. Step: a new vertex adds $(n-2)+1 = n-1$ diagonals, and $\\frac{n(n-3)}{2} + n - 1 = \\frac{(n+1)(n-2)}{2}$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting that the old side $uw$ becomes a diagonal (gives $n-2$ instead of $n-1$)."
+      ],
+      "verification": "Square: $4\\cdot1/2 = 2$; pentagon: $5\\cdot 2/2 = 5$; hexagon: $6\\cdot 3/2 = 9$ — all correct."
+    },
+    "cse-1998-b-62-b": {
+      "approach": "In a functional digraph made of disjoint cycles, $R^k$ moves each element $k$ steps along its cycle, so the powers repeat with period $\\operatorname{lcm}$ of the cycle lengths.",
+      "concepts": [
+        "Composition of relations",
+        "Cycles",
+        "LCM"
+      ],
+      "steps": [
+        {
+          "title": "Read the digraph",
+          "body": "Component 1: $a \\to b \\to c \\to a$ (length 3). Component 2: $d \\to e \\to f \\to g \\to h \\to d$ (length 5). Each vertex has exactly one out-arc, so $R$ is a permutation."
+        },
+        {
+          "title": "Powers",
+          "body": "$R^k$ sends $x$ to the vertex $k$ steps ahead. On the triangle $R^m = R^n \\iff m \\equiv n \\pmod 3$; on the pentagon $\\iff m \\equiv n \\pmod 5$. Both hold iff $15 \\mid (n - m)$."
+        },
+        {
+          "title": "Smallest pair",
+          "body": "With $m \\ge 1$ the smallest choice is $m = 1$, $n = 1 + 15 = 16$: $R = R^{16}$. (If $R^0 = I_A$ were allowed, $R^0 = R^{15}$.)"
+        }
+      ],
+      "answer": {
+        "value": "$m = 1,\\ n = 16$ (since $\\operatorname{lcm}(3,5) = 15$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Adding the cycle lengths ($3 + 5 = 8$) instead of taking their lcm."
+      ],
+      "verification": "$R^{15}$ fixes every vertex (15 is a multiple of 3 and 5), so $R^{16} = R^{15}\\circ R = R$; no smaller gap works since 15 is the least common multiple."
+    },
+    "cse-1998-b-63-a": {
+      "approach": "An equivalence relation induced by a partition relates two elements exactly when they lie in the same block: take $B \\times B$ for each block and union them.",
+      "concepts": [
+        "Partition",
+        "Equivalence relation"
+      ],
+      "steps": [
+        {
+          "title": "Block $\\{a,b,c\\}$",
+          "body": "$\\{a,b,c\\}^2$ gives $3^2 = 9$ pairs: $(a,a),(a,b),(a,c),(b,a),(b,b),(b,c),(c,a),(c,b),(c,c)$."
+        },
+        {
+          "title": "Block $\\{d\\}$ and union",
+          "body": "$\\{d\\}^2 = \\{(d,d)\\}$. Total $9 + 1 = 10$ ordered pairs."
+        }
+      ],
+      "answer": {
+        "value": "$\\{(a,a),(a,b),(a,c),(b,a),(b,b),(b,c),(c,a),(c,b),(c,c),(d,d)\\}$",
+        "matchesKey": true
+      },
+      "verification": "Count $= \\sum |B|^2 = 9 + 1 = 10$."
+    },
+    "cse-1998-b-63-b": {
+      "approach": "Draw one vertex per element and one arc per ordered pair from part (a): loops for $(x,x)$, two opposite arcs for each symmetric pair.",
+      "concepts": [
+        "Digraph of a relation",
+        "Equivalence classes"
+      ],
+      "steps": [
+        {
+          "title": "Arcs from the 10 pairs",
+          "body": "Loops at $a, b, c, d$ (4 arcs). Opposite arcs $a \\leftrightarrow b$, $a \\leftrightarrow c$, $b \\leftrightarrow c$ (6 arcs). Nothing joins $d$ to the others.",
+          "scene": {
+            "edgeTones": {
+              "a>b": "accent",
+              "b>a": "accent",
+              "a>c": "accent",
+              "c>a": "accent",
+              "b>c": "accent",
+              "c>b": "accent"
+            },
+            "caption": "Six arcs inside the block {a, b, c}"
+          }
+        },
+        {
+          "title": "Shape",
+          "body": "The graph has two components, one per block: a complete symmetric cluster on $\\{a,b,c\\}$ with loops, and the single looped vertex $d$ — the picture of the partition $\\Pi_1$.",
+          "scene": {
+            "tones": {
+              "a": "cat1",
+              "b": "cat1",
+              "c": "cat1",
+              "d": "cat2"
+            },
+            "caption": "One component per block of Π₁"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Loops at $a, b, c, d$; arcs both ways between each pair of $a, b, c$; $d$ joined to nothing else (10 arcs, two components $\\{a,b,c\\}$ and $\\{d\\}$).",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "a",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "b",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "c",
+            "x": 1,
+            "y": 1.7
+          },
+          {
+            "id": "d",
+            "x": 4,
+            "y": 0.85
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "a"
+          },
+          {
+            "from": "b",
+            "to": "b"
+          },
+          {
+            "from": "c",
+            "to": "c"
+          },
+          {
+            "from": "d",
+            "to": "d"
+          },
+          {
+            "from": "a",
+            "to": "b"
+          },
+          {
+            "from": "b",
+            "to": "a"
+          },
+          {
+            "from": "a",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "a"
+          },
+          {
+            "from": "b",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "b"
+          }
+        ],
+        "caption": "Digraph of the equivalence relation induced by Π₁"
+      },
+      "verification": "Arc count 10 matches the 10 ordered pairs of part (a)."
+    },
+    "cse-1998-b-63-c": {
+      "approach": "Partition $P$ refines $Q$ when every block of $P$ lies inside a block of $Q$. Check each pair; the finest partition is the bottom and the one-block partition is the top.",
+      "concepts": [
+        "Partition refinement",
+        "Hasse diagram"
+      ],
+      "steps": [
+        {
+          "title": "Extremes",
+          "body": "$\\Pi_2$ (all singletons) refines every partition; every partition refines $\\Pi_3 = \\{\\{a,b,c,d\\}\\}$."
+        },
+        {
+          "title": "$\\Pi_1$ vs $\\Pi_4$",
+          "body": "$\\Pi_1 = \\{\\{a,b,c\\},\\{d\\}\\}$, $\\Pi_4 = \\{\\{a,b\\},\\{c,d\\}\\}$. $\\{a,b,c\\}$ is in no block of $\\Pi_4$, and $\\{c,d\\}$ is in no block of $\\Pi_1$, so they are incomparable."
+        },
+        {
+          "title": "Hasse diagram",
+          "body": "Edges (covering pairs only): $\\Pi_2 - \\Pi_1$, $\\Pi_2 - \\Pi_4$, $\\Pi_1 - \\Pi_3$, $\\Pi_4 - \\Pi_3$ — a diamond with $\\Pi_2$ at the bottom and $\\Pi_3$ at the top.",
+          "scene": {
+            "tones": {
+              "Π2": "success",
+              "Π3": "accent"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$\\Pi_2$ at the bottom, $\\Pi_1$ and $\\Pi_4$ (incomparable) above it, $\\Pi_3$ at the top",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "Π2",
+            "x": 1,
+            "y": 2
+          },
+          {
+            "id": "Π1",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "Π4",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "Π3",
+            "x": 1,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "Π2",
+            "to": "Π1"
+          },
+          {
+            "from": "Π2",
+            "to": "Π4"
+          },
+          {
+            "from": "Π1",
+            "to": "Π3"
+          },
+          {
+            "from": "Π4",
+            "to": "Π3"
+          }
+        ],
+        "caption": "Hasse diagram of the refinement order"
+      },
+      "verification": "No transitive edge $\\Pi_2 - \\Pi_3$ is drawn, as a Hasse diagram requires."
+    },
+    "cse-1998-b-64-a": {
+      "approach": "Use the contrapositive of the hypothesis — two elements that commute must be equal — and find two expressions that commute by associativity alone.",
+      "concepts": [
+        "Semigroup",
+        "Associativity",
+        "Contrapositive"
+      ],
+      "steps": [
+        {
+          "title": "Restate the hypothesis",
+          "body": "Hypothesis $(\\ast)$: if $x * y = y * x$ then $x = y$ (contrapositive of the given condition)."
+        },
+        {
+          "title": "Find a commuting pair",
+          "body": "Take $x = a$, $y = a * a$. By associativity $a * (a * a) = (a * a) * a$, i.e. $x * y = y * x$."
+        },
+        {
+          "title": "Conclude",
+          "body": "By $(\\ast)$, $a = a * a$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "$a*(a*a) = (a*a)*a$, so $a$ and $a*a$ commute and therefore $a*a = a$.",
+        "matchesKey": true
+      },
+      "verification": "Only associativity and $(\\ast)$ were used."
+    },
+    "cse-1998-b-64-b": {
+      "approach": "Show $a*b*a$ commutes with $a$ using idempotence from (a); the hypothesis then forces $a*b*a = a$.",
+      "concepts": [
+        "Semigroup",
+        "Idempotence"
+      ],
+      "steps": [
+        {
+          "title": "Restate the hypothesis",
+          "body": "Hypothesis $(\\ast)$: if $x * y = y * x$ then $x = y$ (contrapositive of the given condition)."
+        },
+        {
+          "title": "Commute with $a$",
+          "body": "Let $x = a*b*a$. Using $a*a = a$:\n$a * x = (a*a)*b*a = a*b*a = x$ and $x * a = a*b*(a*a) = a*b*a = x$. So $a*x = x*a$."
+        },
+        {
+          "title": "Conclude",
+          "body": "By $(\\ast)$, $x = a$, i.e. $a*b*a = a$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "With $x = a*b*a$: $a*x = x = x*a$ (using $a*a=a$), so $x = a$.",
+        "matchesKey": true
+      },
+      "verification": "Both products reduce to $a*b*a$ in one use of (a)."
+    },
+    "cse-1998-b-64-c": {
+      "approach": "Show $y = a*b*c$ and $z = a*c$ commute; part (b) collapses the middle of each product. Then $(\\ast)$ gives $y = z$.",
+      "concepts": [
+        "Semigroup",
+        "Absorption law"
+      ],
+      "steps": [
+        {
+          "title": "Restate the hypothesis",
+          "body": "Hypothesis $(\\ast)$: if $x * y = y * x$ then $x = y$ (contrapositive of the given condition). Part (b) gives $x*y*x = x$ for all $x, y$."
+        },
+        {
+          "title": "$y * z$",
+          "body": "$y*z = a*b*c*a*c = a*b*(c*a*c) = a*b*c$, since $c*a*c = c$ by (b)."
+        },
+        {
+          "title": "$z * y$",
+          "body": "$z*y = a*c*a*b*c = (a*c*a)*b*c = a*b*c$, since $a*c*a = a$ by (b)."
+        },
+        {
+          "title": "Conclude",
+          "body": "$y*z = a*b*c = z*y$, so by $(\\ast)$ $y = z$: $a*b*c = a*c$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "$(a*b*c)*(a*c) = a*b*(c*a*c) = a*b*c$ and $(a*c)*(a*b*c) = (a*c*a)*b*c = a*b*c$, so they commute and $a*b*c = a*c$.",
+        "matchesKey": true
+      },
+      "verification": "Each product uses (b) once and associativity only."
+    },
+    "cse-1998-b-65-a": {
+      "approach": "Trace which configurations can empty the stack. As printed, the 0-move needs $z_0$ on top and the 1-moves in $q_0$ never pop, so almost nothing is accepted; with the evidently intended rule $\\delta(q_0,0,X)$ the PDA matches blocks $1^n0\\,1^n0$.",
+      "concepts": [
+        "PDA",
+        "Acceptance by empty store"
+      ],
+      "steps": [
+        {
+          "title": "As printed",
+          "body": "From $(q_0, z_0)$: the $\\epsilon$-move pops $z_0$ ⇒ $\\epsilon$ accepted. Reading 0: $(q_1, X)$; then 1 pops $X$ ⇒ empty, so $01$ accepted. Reading 1 first pushes $X$; with $X$ on top $q_0$ has only $1$-moves that push, and the $\\epsilon$-pop needs $z_0$, so the stack never empties. Hence $L = \\{\\epsilon, 01\\}$."
+        },
+        {
+          "title": "Intended fifth rule",
+          "body": "With $\\delta(q_0, 0, X) = \\{(q_1, X)\\}$: in $q_0$ each 1 pushes an $X$ (n ≥ 1 needed so that $X$ is on top at the 0); the 0 moves to $q_1$; each 1 in $q_1$ pops an $X$; when $z_0$ reappears, a 0 returns to $(q_0, z_0)$, where the PDA can start a new block or pop $z_0$."
+        },
+        {
+          "title": "Language",
+          "body": "Each block is $1^n 0\\,1^n 0$ with its own $n \\ge 1$, repeated any number of times:\n$$L = \\{1^n 0\\, 1^n 0 \\mid n \\ge 1\\}^*$$\ne.g. $\\epsilon$, $1010$, $110110$, $1010110110$ are accepted; $10110$ is not."
+        }
+      ],
+      "answer": {
+        "value": "As printed: $\\{\\epsilon, 01\\}$. With the intended rule $\\delta(q_0,0,X)=\\{(q_1,X)\\}$: $L = \\{1^n0\\,1^n0 \\mid n \\ge 1\\}^*$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering $0^n1^n$: no move pushes on 0, so 0s cannot be counted.",
+        "Forgetting $\\epsilon$: the $\\epsilon$-move pops $z_0$ immediately."
+      ],
+      "verification": "Traced $1010$: $(q_0,z_0) \\xrightarrow{1} (q_0,Xz_0) \\xrightarrow{0} (q_1,Xz_0) \\xrightarrow{1} (q_1,z_0) \\xrightarrow{0} (q_0,z_0) \\xrightarrow{\\epsilon} (q_0,\\epsilon)$ — accepted."
+    },
+    "cse-1998-b-65-b": {
+      "approach": "Describe the role of each state and stack symbol: $q_0$ counts 1s, $q_1$ uncounts them, $z_0$ marks the block boundary.",
+      "concepts": [
+        "PDA",
+        "Stack as counter"
+      ],
+      "steps": [
+        {
+          "title": "Counting phase ($q_0$)",
+          "body": "Each 1 pushes one $X$ ($\\delta(q_0,1,z_0)$, $\\delta(q_0,1,X)$), so after $1^n$ the stack is $X^n z_0$."
+        },
+        {
+          "title": "Matching phase ($q_1$)",
+          "body": "The 0 switches to $q_1$ (intended rule $\\delta(q_0,0,X)=\\{(q_1,X)\\}$); each 1 pops one $X$. A 0 is allowed only when $z_0$ is exposed, i.e. after exactly $n$ ones, and it returns to $q_0$ to start the next block."
+        },
+        {
+          "title": "Acceptance",
+          "body": "In $q_0$ with $z_0$ on top the $\\epsilon$-move pops $z_0$, emptying the store; so input is accepted iff it is a sequence of complete blocks $1^n0\\,1^n0$. With the rule as printed only $\\epsilon$ and $01$ empty the stack."
+        }
+      ],
+      "answer": {
+        "value": "$q_0$ pushes an $X$ per 1; the 0 moves to $q_1$, which pops an $X$ per 1; a 0 with $z_0$ exposed returns to $q_0$; popping $z_0$ by the $\\epsilon$-move accepts — so it checks blocks $1^n0\\,1^n0$ (as printed only $\\epsilon$ and $01$).",
+        "matchesKey": true
+      },
+      "verification": "Consistent with the traces in part (a)."
+    },
+    "cse-1998-b-66-a": {
+      "approach": "Read the grammar as nested pairs: $S_1$ wraps matching $a\\ldots b$ around a core that has either extra $b$s ($B$) or extra $a$s ($A$).",
+      "concepts": [
+        "CFG language",
+        "Unequal counts"
+      ],
+      "steps": [
+        {
+          "title": "Helpers",
+          "body": "$B \\to Bb \\mid b$ gives $B = b^+$; $A \\to aA \\mid a$ gives $A = a^+$."
+        },
+        {
+          "title": "Unfold $S_1$",
+          "body": "Using $S_1 \\to aS_1b$ $k \\ge 0$ times: $S_1 \\Rightarrow a^k\\,(aBb \\text{ or } aAb)\\,b^k$.\n- $aBb$: $a^{k+1} b^{p} b^{k+1}$, $p \\ge 1$ ⇒ $a^i b^j$ with $j > i \\ge 1$.\n- $aAb$: $a^{k+1} a^{p} b^{k+1}$ ⇒ $a^i b^j$ with $i > j \\ge 1$."
+        },
+        {
+          "title": "Language",
+          "body": "$$L(G_1) = \\{a^i b^j \\mid i, j \\ge 1,\\ i \\ne j\\}$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\{a^ib^j \\mid i\\ne j,\\ i,j\\ge 1\\}$",
+        "matchesKey": true
+      },
+      "verification": "$ab$ is not derivable (every core adds an extra letter); $aab$ and $abb$ are."
+    },
+    "cse-1998-b-66-b": {
+      "approach": "Split $L_2$ by which halves are balanced: both, only the first, or only the second. $G_1$ supplies the unbalanced half; one new non-terminal $E$ supplies $a^nb^n$.",
+      "concepts": [
+        "CFG construction",
+        "Union by cases"
+      ],
+      "steps": [
+        {
+          "title": "Balanced block",
+          "body": "$E \\to aEb \\mid ab$ generates $\\{a^nb^n \\mid n \\ge 1\\}$ (2 rules)."
+        },
+        {
+          "title": "Cases",
+          "body": "A string $a^ib^ja^kb^l$ has $i = j$ or $k = l$:\n- $i=j,\\ k=l$: $EE$;\n- $i=j,\\ k\\ne l$: $ES_1$;\n- $i\\ne j,\\ k=l$: $S_1E$.\nNew start $S \\to EE \\mid ES_1 \\mid S_1E$ (3 rules)."
+        },
+        {
+          "title": "Grammar",
+          "body": "$$S \\to ES_1 \\mid S_1E \\mid EE,\\qquad E \\to aEb \\mid ab$$\nplus the productions of $G_1$ — exactly 5 new rules."
+        }
+      ],
+      "answer": {
+        "value": "$S \\to ES_1 \\mid S_1E \\mid EE;\\ E \\to aEb \\mid ab$ (with $G_1$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $S \\to EX \\mid XE$ with $X$ for all $a^kb^l$ needs extra rules for $X$ and makes the grammar ambiguous."
+      ],
+      "verification": "The three cases are exhaustive for \"$i=j$ or $k=l$\", and each is generated by its production."
+    },
+    "cse-1998-b-66-c": {
+      "approach": "A language is inherently ambiguous only if every grammar for it is ambiguous; the grammar of (b) is unambiguous, so the answer is no.",
+      "concepts": [
+        "Inherent ambiguity",
+        "Unambiguous grammar"
+      ],
+      "steps": [
+        {
+          "title": "The halves split uniquely",
+          "body": "In $a^ib^ja^kb^l$ the only $b \\to a$ boundary separates the two halves, so any derivation from $S$ must cut the string there."
+        },
+        {
+          "title": "The three alternatives are disjoint",
+          "body": "$EE$: $i=j,\\ k=l$; $ES_1$: $i=j,\\ k\\ne l$; $S_1E$: $i\\ne j,\\ k=l$. A string satisfies exactly one, so only one $S$-production applies."
+        },
+        {
+          "title": "Parts are unambiguous",
+          "body": "$E \\to aEb \\mid ab$ has one derivation per $a^nb^n$. In $G_1$, $i > j$ forces $aAb$ with $k = j - 1$ wraps, $i < j$ forces $aBb$ with $k = i - 1$; $A$ and $B$ are linear. So every string of $L_2$ has one parse tree ⇒ $L_2$ is **not** inherently ambiguous."
+        }
+      ],
+      "answer": {
+        "value": "No — the grammar of part (b) is an unambiguous grammar for $L_2$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Confusing $L_2$ with $\\{a^ib^jc^k \\mid i=j \\text{ or } j=k\\}$, which *is* inherently ambiguous because the two conditions share the $b$ block; here the conditions involve disjoint blocks."
+      ],
+      "verification": "Checked the disjointness of the three cases and the unique cut point; the stored \"Yes\" is wrong and has been flagged for review."
+    }
+  }
+}
