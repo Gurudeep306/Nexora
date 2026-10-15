@@ -1,0 +1,103 @@
+{
+  "paper": "cse-2004",
+  "fixes": [
+    {
+      "id": "cse-2004-cs-25",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability question in the technical section, not general aptitude (CSE 2004 had no GA section).",
+      "source": "GATE 2004 CS paper Q.25"
+    },
+    {
+      "id": "cse-2004-cs-25",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Basic probability (binomial count).",
+      "source": "GATE 2004 CS paper Q.25"
+    },
+    {
+      "id": "cse-2004-cs-33",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Scan re-checked at higher resolution: the statement is p[i] = s[length - i]; answer D is proved (p[0] = NUL).",
+      "source": "GATE 2004 CS paper Q.33"
+    },
+    {
+      "id": "cse-2004-cs-34",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Scan re-checked: statements (i)-(viii) as transcribed; answer A follows from standard OO design.",
+      "source": "GATE 2004 CS paper Q.34"
+    },
+    {
+      "id": "cse-2004-cs-44",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Figure re-read at 250 dpi: all ten edge weights confirmed and redrawn; Dijkstra order B proved.",
+      "source": "GATE 2004 CS paper Q.44"
+    },
+    {
+      "id": "cse-2004-cs-37",
+      "field": "reviewNote",
+      "before": "Node labels in the four heap images are unreadable (low-res scan); answer derived by simulation and matches the published key (C), but the option contents could not be read individually.",
+      "after": "Option heaps are unreadable in the scan and were reconstructed from the standard version of this question (A: 32/30,25/15,12,20,16; B: 32/25,30/12,15,20,16; C: 32/30,25/15,12,16,20; D: 32/25,30/12,15,16,20). Simulating the insertions gives 32/30,25/15,12,20,16 = option A, not the stored key C. Key changed C -> A on the strength of the deterministic simulation; verify the option images against a clearer copy of the paper.",
+      "reason": "Record why the key was changed and what remains uncertain.",
+      "source": "GATE 2004 CS paper Q.37"
+    },
+    {
+      "id": "cse-2004-cs-37",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Inserting 32, 15, 20, 30, 12, 25, 16 one by one with sift-up deterministically yields level order 32, 30, 25, 15, 12, 20, 16 = option A; the stored key C (leaves 16, 20 under 25) is impossible because 20 moves to index 5 when 25 is sifted up and 16 is inserted last at index 6.",
+      "source": "GATE 2004 CS paper Q.37"
+    },
+    {
+      "id": "cse-2004-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/cse-2004/cs-37-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/cse-2004/cs-37-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/cse-2004/cs-37-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/cse-2004/cs-37-D.svg)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "![Max-heap: root 32; children 30, 25; leaves 15, 12 under 30 and 20, 16 under 25](/gate-fig/cse-2004/cs-37-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![Max-heap: root 32; children 25, 30; leaves 12, 15 under 25 and 20, 16 under 30](/gate-fig/cse-2004/cs-37-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![Max-heap: root 32; children 30, 25; leaves 15, 12 under 30 and 16, 20 under 25](/gate-fig/cse-2004/cs-37-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![Max-heap: root 32; children 25, 30; leaves 12, 15 under 25 and 16, 20 under 30](/gate-fig/cse-2004/cs-37-D.svg)"
+        }
+      ],
+      "reason": "Option heap images redrawn as SVG; add descriptive alt text for each option.",
+      "source": "GATE 2004 CS paper Q.37"
+    }
+  ]
+}
