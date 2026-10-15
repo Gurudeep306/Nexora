@@ -1,0 +1,1146 @@
+{
+  "paper": "cse-2002",
+  "version": 2,
+  "solutions": {
+    "cse-2002-b-51-a": {
+      "approach": "A binary relation on $A$ is any subset of $A\\times A$, so count the subsets of a set of $n^2$ ordered pairs.",
+      "concepts": [
+        "Binary relation",
+        "Cartesian product",
+        "Power set"
+      ],
+      "steps": [
+        {
+          "title": "Size of A × A",
+          "body": "A binary relation on $A$ is a subset of $A\\times A$, and $|A\\times A| = n\\cdot n = n^2$."
+        },
+        {
+          "title": "Count subsets",
+          "body": "Each of the $n^2$ ordered pairs is either in the relation or not: $2$ choices per pair, so\n$$N_r = \\underbrace{2\\cdot 2\\cdots 2}_{n^2} = 2^{n^2}.$$"
+        }
+      ],
+      "answer": {
+        "value": "$N_r = 2^{n^2}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $2^{2n}$ or $2^n$ — the relation chooses among $n^2$ pairs, not $n$ or $2n$ elements."
+      ],
+      "verification": "$n=1$: $A\\times A$ has one pair, relations are $\\emptyset$ and $\\{(1,1)\\}$, i.e. $2 = 2^{1}$. $n=2$: $2^4 = 16$ subsets of the 4 pairs."
+    },
+    "cse-2002-b-51-b": {
+      "approach": "A function $A\\to A$ picks exactly one image for each of the $n$ elements; apply the product rule.",
+      "concepts": [
+        "Function",
+        "Product rule"
+      ],
+      "steps": [
+        {
+          "title": "Choices per element",
+          "body": "Each element $x\\in A$ must be mapped to exactly one of the $n$ elements of $A$: $n$ choices."
+        },
+        {
+          "title": "Product rule",
+          "body": "The $n$ choices are independent, so\n$$N_f = \\underbrace{n\\cdot n\\cdots n}_{n} = n^n.$$"
+        }
+      ],
+      "answer": {
+        "value": "$N_f = n^n$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting only bijections ($n!$) — functions need not be one-one or onto."
+      ],
+      "verification": "$n=2$, $A=\\{1,2\\}$: the maps $(1\\mapsto1,2\\mapsto1),(1\\mapsto1,2\\mapsto2),(1\\mapsto2,2\\mapsto1),(1\\mapsto2,2\\mapsto2)$ are $4 = 2^2$."
+    },
+    "cse-2002-b-51-c": {
+      "approach": "Every function is itself a relation (its graph), and for $n\\ge1$ there are relations that are not functions, so $N_r > N_f$; algebraically $2^{n^2} = (2^n)^n > n^n$.",
+      "concepts": [
+        "Relations vs functions",
+        "Exponential growth"
+      ],
+      "steps": [
+        {
+          "title": "Compare the formulas",
+          "body": "$N_r = 2^{n^2} = (2^n)^n$ and $N_f = n^n$. Since $2^n > n$ for every $n\\ge 1$, raising both positive sides to the power $n$ gives $(2^n)^n > n^n$."
+        },
+        {
+          "title": "Set-inclusion view",
+          "body": "Each function $f$ is the relation $\\{(x, f(x))\\}$, so functions are a subset of relations; the empty relation is not a function, so the inclusion is strict and $N_r > N_f$."
+        }
+      ],
+      "answer": {
+        "value": "$N_r$ is larger for every $n \\ge 1$",
+        "matchesKey": true
+      },
+      "verification": "$n=1$: $2 > 1$; $n=2$: $16 > 4$; $n=3$: $512 > 27$."
+    },
+    "cse-2002-b-52-a": {
+      "approach": "Check the diagonal for irreflexivity, then add the fewest pairs needed for reflexivity, symmetry and transitivity.",
+      "concepts": [
+        "Irreflexive relation",
+        "Equivalence relation",
+        "Closure"
+      ],
+      "steps": [
+        {
+          "title": "Irreflexive?",
+          "body": "A relation is irreflexive when no $(x,x)$ belongs to it. $S$ contains only $\\langle1,2\\rangle$ and $\\langle2,1\\rangle$, so none of $\\langle1,1\\rangle,\\langle2,2\\rangle,\\langle3,3\\rangle$ is present: **$S$ is irreflexive**."
+        },
+        {
+          "title": "Reflexive closure",
+          "body": "An equivalence relation on $A=\\{1,2,3\\}$ must contain every $\\langle x,x\\rangle$, so add $\\langle1,1\\rangle,\\langle2,2\\rangle,\\langle3,3\\rangle$ (3 pairs — unavoidable)."
+        },
+        {
+          "title": "Symmetry and transitivity",
+          "body": "Symmetric: $\\langle1,2\\rangle$ and $\\langle2,1\\rangle$ both present. Transitive: $\\langle1,2\\rangle,\\langle2,1\\rangle$ give $\\langle1,1\\rangle$ and $\\langle2,1\\rangle,\\langle1,2\\rangle$ give $\\langle2,2\\rangle$, both already added. Nothing more is needed; the classes are $\\{1,2\\}$ and $\\{3\\}$."
+        }
+      ],
+      "answer": {
+        "value": "Yes, $S$ is irreflexive. Add $\\langle1,1\\rangle,\\langle2,2\\rangle,\\langle3,3\\rangle$: $S=\\{\\langle1,1\\rangle,\\langle2,2\\rangle,\\langle3,3\\rangle,\\langle1,2\\rangle,\\langle2,1\\rangle\\}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting $\\langle3,3\\rangle$ — reflexivity is required for every element of $A$, even one not mentioned in $S$.",
+        "Confusing irreflexive with \"not reflexive\"."
+      ],
+      "verification": "The result is the partition $\\{\\{1,2\\},\\{3\\}\\}$, which needs exactly $2^2+1^2 = 5$ pairs; $S$ had 2, so 3 is the minimum to add."
+    },
+    "cse-2002-b-52-b": {
+      "approach": "List the four subsets, keep only the covering relations of $\\subseteq$ (no reflexive or transitive edges), and draw larger sets higher.",
+      "concepts": [
+        "Hasse diagram",
+        "Power set lattice",
+        "Covering relation"
+      ],
+      "steps": [
+        {
+          "title": "Elements",
+          "body": "$\\mathcal{P}(S) = \\{\\emptyset, \\{a\\}, \\{b\\}, \\{a,b\\}\\}$."
+        },
+        {
+          "title": "Covering pairs",
+          "body": "$\\emptyset \\subset \\{a\\}$, $\\emptyset \\subset \\{b\\}$, $\\{a\\} \\subset \\{a,b\\}$, $\\{b\\} \\subset \\{a,b\\}$ are covers (nothing lies strictly between). $\\emptyset \\subset \\{a,b\\}$ follows by transitivity, so it is **not** drawn; $\\{a\\}$ and $\\{b\\}$ are incomparable.",
+          "scene": {
+            "edgeTones": {
+              "e>a": "accent",
+              "e>b": "accent",
+              "a>ab": "accent",
+              "b>ab": "accent"
+            },
+            "caption": "Only covering edges are drawn"
+          }
+        },
+        {
+          "title": "Diagram",
+          "body": "The result is a diamond: $\\emptyset$ at the bottom (least element), $\\{a\\}$ and $\\{b\\}$ in the middle, $\\{a,b\\}$ at the top (greatest element). Meet $=\\cap$, join $=\\cup$.",
+          "scene": {
+            "tones": {
+              "e": "success",
+              "ab": "success"
+            },
+            "edgeTones": {},
+            "caption": "Diamond lattice $(\\mathcal{P}(S),\\subseteq)$"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "ab",
+            "label": "{a,b}",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "a",
+            "label": "{a}",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "b",
+            "label": "{b}",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "e",
+            "label": "∅",
+            "x": 1,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "e",
+            "to": "a"
+          },
+          {
+            "from": "e",
+            "to": "b"
+          },
+          {
+            "from": "a",
+            "to": "ab"
+          },
+          {
+            "from": "b",
+            "to": "ab"
+          }
+        ],
+        "caption": "Hasse diagram of $(\\mathcal{P}(\\{a,b\\}),\\subseteq)$"
+      },
+      "answer": {
+        "value": "A diamond: $\\emptyset$ at the bottom, $\\{a\\}$ and $\\{b\\}$ in the middle, $\\{a,b\\}$ at the top, with edges $\\emptyset$–$\\{a\\}$, $\\emptyset$–$\\{b\\}$, $\\{a\\}$–$\\{a,b\\}$, $\\{b\\}$–$\\{a,b\\}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Drawing the edge $\\emptyset$–$\\{a,b\\}$ (implied by transitivity) or self-loops."
+      ],
+      "verification": "4 elements and 4 cover edges; it is the Boolean lattice $B_2$, isomorphic to $\\{0,1\\}^2$."
+    },
+    "cse-2002-b-53-a": {
+      "approach": "The matrix is upper triangular, so its eigenvalues are its diagonal entries.",
+      "concepts": [
+        "Eigenvalues",
+        "Triangular matrix",
+        "Characteristic polynomial"
+      ],
+      "steps": [
+        {
+          "title": "Triangular structure",
+          "body": "All entries below the main diagonal are $0$, so $A-\\lambda I$ is also upper triangular and its determinant is the product of its diagonal entries."
+        },
+        {
+          "title": "Characteristic polynomial",
+          "body": "$$\\det(A-\\lambda I) = (1-\\lambda)(2-\\lambda)(-2-\\lambda)(-1-\\lambda) = 0$$\nso $\\lambda = 1, 2, -2, -1$."
+        }
+      ],
+      "answer": {
+        "value": "$\\lambda = 1,\\ 2,\\ -2,\\ -1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Getting distracted by the large off-diagonal entries (34, 49, 43, 94, 104) — they do not affect the eigenvalues."
+      ],
+      "verification": "Sum $= 1+2-2-1 = 0 = \\operatorname{trace}(A) = 1+2+(-2)+(-1)$; product $= 1\\cdot2\\cdot(-2)\\cdot(-1) = 4 = \\det A$."
+    },
+    "cse-2002-b-53-b": {
+      "approach": "Simplify each formula with idempotence/absorption/De Morgan, falling back on a single assignment to show \"neither\".",
+      "concepts": [
+        "Tautology",
+        "Contradiction",
+        "De Morgan’s law"
+      ],
+      "steps": [
+        {
+          "title": "(i) A ↔ (A ∨ A)",
+          "body": "Idempotence: $A\\vee A \\equiv A$, so the formula is $A\\leftrightarrow A$, true for both values of $A$: **tautology**."
+        },
+        {
+          "title": "(ii) (A ∨ B) → B",
+          "body": "$A=1,B=0$: $(1\\vee0)\\rightarrow0 = 1\\rightarrow0 = 0$ (false).\n$A=0,B=1$: $1\\rightarrow1 = 1$ (true).\nIt is sometimes true and sometimes false: **neither**. (It simplifies to $\\neg A\\vee B$, i.e. $A\\rightarrow B$.)"
+        },
+        {
+          "title": "(iii) A ∧ ¬(A ∨ B)",
+          "body": "De Morgan: $\\neg(A\\vee B) \\equiv \\neg A\\wedge\\neg B$, so the formula is $A\\wedge\\neg A\\wedge\\neg B \\equiv 0\\wedge\\neg B \\equiv 0$: **contradiction**."
+        }
+      ],
+      "answer": {
+        "value": "(i) tautology; (ii) neither; (iii) contradiction",
+        "matchesKey": true
+      },
+      "verification": "Truth table over $(A,B)\\in\\{00,01,10,11\\}$: (i) $1,1,1,1$; (ii) $1,1,0,1$; (iii) $0,0,0,0$."
+    },
+    "cse-2002-b-54": {
+      "approach": "Preorder visits the root first, so C is the root and B, A (in that order) must be the preorder of C’s subtrees; enumerate where B and A can sit.",
+      "concepts": [
+        "Preorder traversal",
+        "Binary tree shapes"
+      ],
+      "steps": [
+        {
+          "title": "Root is C",
+          "body": "Preorder is root, left, right, so the first symbol $C$ is the root. The remaining sequence $B, A$ is the preorder of $C$’s left subtree followed by its right subtree."
+        },
+        {
+          "title": "Case 1: B, A both in the left subtree",
+          "body": "The left subtree has preorder $B,A$, so $B$ is its root and $A$ is a child of $B$ — left or right. This gives 2 trees. Tree 1: $A$ is the left child of $B$.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                {
+                  "label": "B",
+                  "children": [
+                    {
+                      "label": "A"
+                    },
+                    null
+                  ]
+                },
+                null
+              ]
+            },
+            "caption": "Tree 1"
+          }
+        },
+        {
+          "title": "Case 1, second tree",
+          "body": "Tree 2: $A$ is the right child of $B$, $B$ the left child of $C$. Preorder: $C, B, A$.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                {
+                  "label": "B",
+                  "children": [
+                    null,
+                    {
+                      "label": "A"
+                    }
+                  ]
+                },
+                null
+              ]
+            },
+            "caption": "Tree 2"
+          }
+        },
+        {
+          "title": "Case 2: B, A both in the right subtree",
+          "body": "Symmetrically, $B$ is the right child of $C$ and $A$ is the left (tree 3) or right (tree 4) child of $B$.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                null,
+                {
+                  "label": "B",
+                  "children": [
+                    {
+                      "label": "A"
+                    },
+                    null
+                  ]
+                }
+              ]
+            },
+            "caption": "Tree 3"
+          }
+        },
+        {
+          "title": "Case 2, second tree",
+          "body": "Tree 4: the right-going chain $C \\to B \\to A$. Preorder: $C, B, A$.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                null,
+                {
+                  "label": "B",
+                  "children": [
+                    null,
+                    {
+                      "label": "A"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "Tree 4"
+          }
+        },
+        {
+          "title": "Case 3: split between subtrees",
+          "body": "Left subtree $=\\{B\\}$, right subtree $=\\{A\\}$ (the order $B$ before $A$ forces $B$ to the left). Tree 5. The split $A$ left, $B$ right would give $C,A,B$, so it is excluded. Total $2+2+1 = 5$ trees.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                {
+                  "label": "B"
+                },
+                {
+                  "label": "A"
+                }
+              ]
+            },
+            "caption": "Tree 5"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": "C"
+        },
+        "caption": "Root C"
+      },
+      "answer": {
+        "value": "5 binary trees: C with left child B (A left or right of B); C with right child B (A left or right of B); C with left child B and right child A",
+        "matchesKey": true
+      },
+      "shortcut": "For a fixed preorder of $n$ distinct labels, the number of binary trees equals the number of shapes, the Catalan number $C_n$; $C_3 = \\frac{1}{4}\\binom{6}{3} = 5$.",
+      "pitfalls": [
+        "Missing the trees where $A$ is a left child of $B$ — preorder does not distinguish left from right when the other side is empty."
+      ],
+      "verification": "Catalan number $C_3 = 5$ matches the enumeration, and each tree’s preorder was checked to be $C, B, A$."
+    },
+    "cse-2002-b-55-a": {
+      "approach": "Add the consensus term $xz'$ so the sum of products factors as $(x+y)(y'+z')$; then De Morgan turns $y'+z'$ into a single complement $(yz)'$.",
+      "concepts": [
+        "Consensus theorem",
+        "De Morgan’s law",
+        "Factoring"
+      ],
+      "steps": [
+        {
+          "title": "Add the consensus term",
+          "body": "In $xy' + yz'$ the variable $y$ appears complemented in one term and uncomplemented in the other, so the consensus term is $x\\cdot z'$:\n$$f = xy' + yz' + xz'.$$"
+        },
+        {
+          "title": "Factor",
+          "body": "Expand $(x+y)(y'+z') = xy' + xz' + yy' + yz' = xy' + xz' + 0 + yz'$, which equals $f$. Hence $f = (x+y)(y'+z')$."
+        },
+        {
+          "title": "One complement",
+          "body": "De Morgan: $y'+z' = (yz)'$, so\n$$f = (x+y)\\cdot(yz)'.$$\nCircuit: OR gate on $x,y$; AND gate on $y,z$ followed by the single NOT gate; a final AND gate combines the two.",
+          "scene": {
+            "caption": "f = (x + y)·(yz)′ with one NOT gate"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "circuit",
+        "inputs": [
+          {
+            "id": "x"
+          },
+          {
+            "id": "y"
+          },
+          {
+            "id": "z"
+          }
+        ],
+        "gates": [
+          {
+            "id": "g1",
+            "type": "OR",
+            "in": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "id": "g2",
+            "type": "AND",
+            "in": [
+              "y",
+              "z"
+            ]
+          },
+          {
+            "id": "g3",
+            "type": "NOT",
+            "in": [
+              "g2"
+            ]
+          },
+          {
+            "id": "g4",
+            "type": "AND",
+            "in": [
+              "g1",
+              "g3"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "f",
+            "from": "g4"
+          }
+        ]
+      },
+      "answer": {
+        "value": "$f = (x+y)\\,(yz)'$ — OR($x,y$) AND NOT(AND($y,z$))",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $f = x(yz)' + \\dots$ with two complements, or forgetting that the factorisation only works after adding the consensus term."
+      ],
+      "verification": "Truth table over $xyz = 000\\ldots111$: $f = 0,0,1,0,1,1,1,0$ for both $xy'+yz'$ and $(x+y)(yz)'$."
+    },
+    "cse-2002-b-55-b": {
+      "approach": "AND–OR becomes NAND–NAND, but the circuit has two cascaded OR levels; insert one NAND used as an inverter so the second OR level is again a NAND fed by complemented inputs.",
+      "concepts": [
+        "NAND-only realisation",
+        "Bubble pushing",
+        "De Morgan’s law"
+      ],
+      "steps": [
+        {
+          "title": "First AND–OR level",
+          "body": "Label the inputs $a,b$; $c,d$; $e,f$. By bubble pushing, AND gates feeding an OR gate become NAND gates feeding a NAND gate:\n$N_1 = \\overline{ab}$, $N_2 = \\overline{cd}$, $N_3 = \\text{NAND}(N_1,N_2)$, which equals the first OR output ($ab + cd$)."
+        },
+        {
+          "title": "Second OR level",
+          "body": "The second OR needs complemented inputs to become a NAND. The third AND gives $N_5 = \\overline{ef}$ (already complemented). The first OR output must be inverted: $N_4 = \\text{NAND}(N_3,N_3)$ (a NAND with its inputs tied acts as NOT)."
+        },
+        {
+          "title": "Output gate",
+          "body": "$N_6 = \\text{NAND}(N_4, N_5)$ — this replaces the second OR gate. Gate count: $N_1\\ldots N_6 = 6$ two-input NAND gates.",
+          "scene": {
+            "caption": "Six 2-input NAND gates (N4 is a NAND used as an inverter)"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "circuit",
+        "inputs": [
+          {
+            "id": "a"
+          },
+          {
+            "id": "b"
+          },
+          {
+            "id": "c"
+          },
+          {
+            "id": "d"
+          },
+          {
+            "id": "e"
+          },
+          {
+            "id": "f"
+          }
+        ],
+        "gates": [
+          {
+            "id": "N1",
+            "type": "NAND",
+            "in": [
+              "a",
+              "b"
+            ]
+          },
+          {
+            "id": "N2",
+            "type": "NAND",
+            "in": [
+              "c",
+              "d"
+            ]
+          },
+          {
+            "id": "N3",
+            "type": "NAND",
+            "in": [
+              "N1",
+              "N2"
+            ]
+          },
+          {
+            "id": "N4",
+            "type": "NAND",
+            "in": [
+              "N3",
+              "N3"
+            ]
+          },
+          {
+            "id": "N5",
+            "type": "NAND",
+            "in": [
+              "e",
+              "f"
+            ]
+          },
+          {
+            "id": "N6",
+            "type": "NAND",
+            "in": [
+              "N4",
+              "N5"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "out",
+            "from": "N6"
+          }
+        ]
+      },
+      "answer": {
+        "value": "$N_1=\\text{NAND}(a,b)$, $N_2=\\text{NAND}(c,d)$, $N_3=\\text{NAND}(N_1,N_2)$, $N_4=\\text{NAND}(N_3,N_3)$, $N_5=\\text{NAND}(e,f)$, output $=\\text{NAND}(N_4,N_5)$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Feeding $N_3$ straight into the last NAND — $N_3$ is uncomplemented, so the output would be wrong without the inverter $N_4$."
+      ],
+      "verification": "Bubble check: $N_3 = \\overline{\\overline{ab}\\cdot\\overline{cd}} = ab+cd$; $N_6 = \\overline{\\overline{N_3}\\cdot\\overline{ef}} = N_3 + ef = ab + cd + ef$, the original circuit."
+    },
+    "cse-2002-b-56-a": {
+      "approach": "Each falling edge shifts the data one stage down: R0 takes the new inputs, R1 the first-stage result of R0, R2 the second-stage result of R1. So after clock $k$, R2 holds pair $k-2$ and $Z$ (from the last full adder) is $A_{k-2}+B_{k-2}$.",
+      "concepts": [
+        "Pipelining",
+        "Ripple-carry adder",
+        "Edge-triggered registers"
+      ],
+      "given": "| Pair | 1 | 2 | 3 | 4 | 5–8 |\n|---|---|---|---|---|---|\n| A | 110 (6) | 011 (3) | 111 (7) | 101 (5) | 000 |\n| B | 101 (5) | 101 (5) | 011 (3) | 110 (6) | 000 |",
+      "steps": [
+        {
+          "title": "Stage timing",
+          "body": "Stage 1 (FA under R0) adds $a_0+b_0$ into R1; stage 2 adds $a_1+b_1+c_1$ into R2; stage 3 (FA under R2) is combinational and drives $z_3z_2$, with $z_1=s_1$, $z_0=s_0$ taken from R2. Hence $Z$ after clock $k$ is the sum of the pair loaded at clock $k-2$.",
+          "scene": {
+            "reveal": 0
+          }
+        },
+        {
+          "title": "Clocks 1–2: pipeline filling",
+          "body": "After clocks 1 and 2, R2 still holds its initial zeros, so $Z = 0+0 = 0000$ both times.",
+          "scene": {
+            "reveal": 10,
+            "hl": [
+              {
+                "r": 0,
+                "c": 4,
+                "tone": "muted"
+              },
+              {
+                "r": 1,
+                "c": 4,
+                "tone": "muted"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clock 3: pair 1",
+          "body": "$110+101$: $s_0 = 0\\oplus1 = 1$, $c_1=0$; $s_1 = 1\\oplus0\\oplus0 = 1$, $c_2=0$; $1+1+0$ gives $z_2=0$, $z_3=1$. $Z = 1011$ ($6+5=11$).",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 2,
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clock 4: pair 2",
+          "body": "$011+101$: $1+1 \\Rightarrow s_0=0,c_1=1$; $1+0+1 \\Rightarrow s_1=0,c_2=1$; $0+1+1 \\Rightarrow z_2=0,z_3=1$. $Z = 1000$ ($3+5=8$).",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 3,
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clock 5: pair 3",
+          "body": "$111+011$: $1+1 \\Rightarrow s_0=0,c_1=1$; $1+1+1 \\Rightarrow s_1=1,c_2=1$; $1+0+1 \\Rightarrow z_2=0,z_3=1$. $Z = 1010$ ($7+3=10$).",
+          "scene": {
+            "reveal": 25,
+            "hl": [
+              {
+                "r": 4,
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clock 6: pair 4",
+          "body": "$101+110$: $1+0 \\Rightarrow s_0=1,c_1=0$; $0+1+0 \\Rightarrow s_1=1,c_2=0$; $1+1+0 \\Rightarrow z_2=0,z_3=1$. $Z = 1011$ ($5+6=11$).",
+          "scene": {
+            "reveal": 30,
+            "hl": [
+              {
+                "r": 5,
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Clocks 7–8",
+          "body": "R2 now holds pairs 5 and 6, both $000+000$, so $Z = 0000$ after clocks 7 and 8.",
+          "scene": {
+            "reveal": 40,
+            "hl": [
+              {
+                "c": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "Clock",
+          "R0 holds",
+          "R1 holds",
+          "R2 holds",
+          "Z"
+        ],
+        "rows": [
+          [
+            "1",
+            "#1 (110, 101)",
+            "zeros",
+            "zeros",
+            "0000"
+          ],
+          [
+            "2",
+            "#2 (011, 101)",
+            "#1 (110, 101)",
+            "zeros",
+            "0000"
+          ],
+          [
+            "3",
+            "#3 (111, 011)",
+            "#2 (011, 101)",
+            "#1 (110, 101)",
+            "1011"
+          ],
+          [
+            "4",
+            "#4 (101, 110)",
+            "#3 (111, 011)",
+            "#2 (011, 101)",
+            "1000"
+          ],
+          [
+            "5",
+            "#5 (000, 000)",
+            "#4 (101, 110)",
+            "#3 (111, 011)",
+            "1010"
+          ],
+          [
+            "6",
+            "#6 (000, 000)",
+            "#5 (000, 000)",
+            "#4 (101, 110)",
+            "1011"
+          ],
+          [
+            "7",
+            "#7 (000, 000)",
+            "#6 (000, 000)",
+            "#5 (000, 000)",
+            "0000"
+          ],
+          [
+            "8",
+            "#8 (000, 000)",
+            "#7 (000, 000)",
+            "#6 (000, 000)",
+            "0000"
+          ]
+        ],
+        "reveal": 0,
+        "mono": true,
+        "caption": "Contents after each falling edge (pair # loaded at that clock)"
+      },
+      "answer": {
+        "value": "After clocks 1–8: $Z = 0000,\\ 0000,\\ 1011,\\ 1000,\\ 1010,\\ 1011,\\ 0000,\\ 0000$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Producing $1011$ already after clock 1 — the result needs two more edges to reach R2.",
+        "Treating stage 3 as registered — $Z$ comes from a combinational full adder after R2."
+      ],
+      "verification": "Decimal check: $6+5=11=1011_2$, $3+5=8=1000_2$, $7+3=10=1010_2$, $5+6=11=1011_2$."
+    },
+    "cse-2002-b-56-b": {
+      "approach": "Read the data path: one full adder per bit position, carries passed down through registers, unused bits delayed alongside — a ripple-carry adder cut into stages by registers.",
+      "concepts": [
+        "Pipelining",
+        "Ripple-carry adder"
+      ],
+      "steps": [
+        {
+          "title": "Per-stage work",
+          "body": "Stage 1 adds bit 0 ($a_0+b_0+0$), stage 2 adds bit 1 with the carry from stage 1, stage 3 adds bit 2 with the carry from stage 2 and outputs the final carry $z_3$. Each carry travels to the next stage through a register."
+        },
+        {
+          "title": "Why the extra register bits",
+          "body": "The higher bits ($a_2,b_2,a_1,b_1$) and the already computed sum bits ($s_0$, later $s_1$) are copied down unchanged so they stay aligned with their own operation. A new addition can start every clock; each result appears 2 clocks after its inputs are loaded (Z = 1011 after clock 3 for the pair loaded at clock 1)."
+        }
+      ],
+      "answer": {
+        "value": "A 3-stage pipelined 3-bit (ripple-carry) binary adder: $Z = A + B$ (4-bit result), one addition per clock with a latency of 2 clocks",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Calling it a serial adder — all three bit-additions of different operand pairs are in progress simultaneously."
+      ],
+      "verification": "Part (a) gives $Z = A+B$ for every input pair, two clocks after loading."
+    },
+    "cse-2002-b-57-a": {
+      "approach": "Write $7.5$ as a base-16 fraction with a non-zero leading hex digit, bias the exponent by 64, then pack sign | fraction | exponent and read the 32 bits in hex.",
+      "concepts": [
+        "Floating point",
+        "Base-16 normalisation",
+        "Excess-64 exponent"
+      ],
+      "steps": [
+        {
+          "title": "Normalise in base 16",
+          "body": "$7.5 = 7.8_{16} = 0.78_{16}\\times16^1$. The leading hex digit $7 \\ne 0$, so it is normalised. Fraction bits: $0111\\,1000$ followed by 16 zeros, i.e. $780000_{16}$."
+        },
+        {
+          "title": "Sign and exponent",
+          "body": "Negative, so sign $=1$. Exponent $=1+64 = 65 = 1000001_2 = 41_{16}$ (7 bits)."
+        },
+        {
+          "title": "Pack the word",
+          "body": "$$\\underbrace{1}_{\\text{sign}}\\ \\underbrace{0111\\,1000\\,0000\\,0000\\,0000\\,0000}_{\\text{fraction}}\\ \\underbrace{100\\,0001}_{\\text{exponent}}$$\nRegroup into nibbles: $1011\\ 1100\\ 0000\\ 0000\\ 0000\\ 0000\\ 0100\\ 0001 = \\text{BC000041}_{16}$."
+        }
+      ],
+      "answer": {
+        "value": "Sign $=1$, fraction $=780000_{16}$, exponent $=41_{16}$ (65); word $=\\text{BC000041}_{16}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Normalising in base 2 ($0.1111\\times2^3$) — the base is 16, so only the leading hex digit must be non-zero.",
+        "Forgetting that the 4-bit nibbles straddle the field boundaries when converting the whole word to hex."
+      ],
+      "verification": "Decode: sign 1, exponent $41_{16}-64 = 1$, fraction $0.78_{16} = 7/16+8/256 = 0.46875$; $-0.46875\\times16 = -7.5$."
+    },
+    "cse-2002-b-57-b": {
+      "approach": "Largest value = largest fraction × $16^{\\text{largest exponent}}$; convert to a power of 10 with logarithms.",
+      "concepts": [
+        "Floating point range",
+        "Excess-64 exponent",
+        "Logarithms"
+      ],
+      "steps": [
+        {
+          "title": "Extreme fields",
+          "body": "Largest fraction $=0.\\text{FFFFFF}_{16} = 1-16^{-6} = 1-2^{-24}\\approx1$. Largest exponent field $=127$, so the exponent is $127-64 = 63$."
+        },
+        {
+          "title": "Convert",
+          "body": "Max $\\approx16^{63} = 2^{252}$. $\\log_{10}2^{252} = 252\\times0.30103 = 75.86$, so the value is $\\approx 10^{75.86}\\approx 7.2\\times10^{75}$, nearest power of ten $10^{76}$."
+        }
+      ],
+      "answer": {
+        "value": "$(1-2^{-24})\\times16^{63}\\approx 7.2\\times10^{75}\\approx 10^{76}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using exponent $+64$ (field 127 means $127-64=63$)."
+      ],
+      "verification": "$10^{75.86}$ lies between $10^{75.5}$ and $10^{76}$, so $10^{76}$ is the nearest power of 10."
+    },
+    "cse-2002-b-58-a": {
+      "approach": "Map each element to its cache line: line $=\\lfloor\\text{address}/16\\rfloor \\bmod 512$. Two elements conflict only if they map to the same line but lie in different memory blocks.",
+      "concepts": [
+        "Direct-mapped cache",
+        "Cache conflict",
+        "Address mapping"
+      ],
+      "steps": [
+        {
+          "title": "Cache geometry",
+          "body": "Lines $= 8\\,\\text{KB}/16\\,\\text{B} = 8192/16 = 512$. Element $A[i]$ is at byte address $4i$, in memory block $\\lfloor4i/16\\rfloor = \\lfloor i/4\\rfloor$ and cache line $\\lfloor i/4\\rfloor \\bmod 512$."
+        },
+        {
+          "title": "Who maps to line 0?",
+          "body": "$A[0]$ is in block 0, line 0. Another block maps to line 0 only if its block number is a multiple of 512, i.e. byte address $\\ge 512\\times16 = 8192$, i.e. $i \\ge 2048$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The array is $2048\\times4 = 8192$ bytes — exactly the cache size, so indices $0..2047$ occupy blocks $0..511$, each on its own line. **No element conflicts with $A[0]$.** $A[1], A[2], A[3]$ share line 0 with $A[0]$ but are in the same block, so they are brought in together rather than evicting it."
+        }
+      ],
+      "answer": {
+        "value": "None — the 8 KB array fits exactly in the 8 KB cache (blocks 0–511 map to distinct lines); $A[1..3]$ share $A[0]$’s block, so they do not conflict",
+        "matchesKey": false,
+        "keyNote": "The stored key (\"Base address + 4 * 2048 = 8192 bytes = 2 pages of 4 KB each\") does not name any conflicting element and talks about pages, which are irrelevant to cache mapping. The first element that would map to line 0 from a different block is at byte 8192, i.e. $A[2048]$, outside the array; so no element of the array conflicts with $A[0]$."
+      },
+      "pitfalls": [
+        "Calling $A[1..3]$ conflicts — same block means same tag, so they hit together.",
+        "Mixing pages (virtual memory) with cache lines."
+      ],
+      "verification": "Total blocks in the array $= 8192/16 = 512 =$ number of cache lines, so the block-to-line map $b\\mapsto b \\bmod 512$ is one-to-one on the array."
+    },
+    "cse-2002-b-58-b": {
+      "approach": "In a reverse sweep each 16-byte block (4 floats) misses once on its first-touched element; since the whole array fits in the cache without conflicts, nothing is evicted.",
+      "concepts": [
+        "Direct-mapped cache",
+        "Compulsory misses",
+        "Spatial locality"
+      ],
+      "steps": [
+        {
+          "title": "Blocks touched",
+          "body": "Elements per block $=16/4 = 4$. Blocks in the array $= 2048/4 = 512$."
+        },
+        {
+          "title": "Misses per block",
+          "body": "Going from $A[2047]$ down, the first access to a block (e.g. $A[2047]$ for block 511) misses and loads $A[2044..2047]$; the next 3 accesses hit. No eviction can occur because the 512 blocks map to 512 distinct lines (part a)."
+        },
+        {
+          "title": "Total",
+          "body": "Misses $= 512\\text{ blocks}\\times1 = 512$ (all compulsory); hits $= 2048-512 = 1536$."
+        }
+      ],
+      "answer": {
+        "value": "512 misses (one compulsory miss per 16-byte block; no conflict misses)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 2048 — that ignores that a 16-byte line brings in 4 elements at once."
+      ],
+      "verification": "Direction does not matter for compulsory misses: forward order also gives $2048/4 = 512$."
+    },
+    "cse-2002-b-59": {
+      "approach": "Read the parameters as move($n$, source, auxiliary, destination): the printf moves disk $n$ from A to C, so first park $n-1$ disks on B (using C), then bring them from B to C (using A).",
+      "concepts": [
+        "Recursion",
+        "Towers of Hanoi"
+      ],
+      "steps": [
+        {
+          "title": "Base condition",
+          "body": "The body must run only while disks remain: `if (n > 0)`. For $n=0$ nothing is printed."
+        },
+        {
+          "title": "First recursive call",
+          "body": "Before disk $n$ can go from A to C, the top $n-1$ disks must move from A to B using C as the spare: `move(n-1, A, C, B)` (source A, auxiliary C, destination B)."
+        },
+        {
+          "title": "Second recursive call",
+          "body": "After the printf moves disk $n$ to C, move the $n-1$ disks from B to C using A: `move(n-1, B, A, C)`.\n```c\nvoid move(int n, char A, char B, char C)\n{\n    if (n > 0) {\n        move(n-1, A, C, B);\n        printf(\"Move disk %d from pole %c to pole %c\\n\", n, A, C);\n        move(n-1, B, A, C);\n    }\n}\n```"
+        }
+      ],
+      "answer": {
+        "value": "`if (n > 0)`, `move(n-1, A, C, B)`, `move(n-1, B, A, C)`",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Swapping the roles in the first call (`move(n-1, A, B, C)`) — that would put the $n-1$ disks on C, blocking disk $n$."
+      ],
+      "verification": "$n=2$: prints \"disk 1 A→B\", \"disk 2 A→C\", \"disk 1 B→C\" — a valid 3-move solution ($2^2-1$)."
+    },
+    "cse-2002-b-60-a": {
+      "approach": "With unit edge weights, a direct edge gives path length 1 and a missing edge must start as \"no path known\", i.e. $\\infty$, so that min() ignores it.",
+      "concepts": [
+        "Floyd–Warshall",
+        "All-pairs shortest paths",
+        "Initialisation"
+      ],
+      "steps": [
+        {
+          "title": "No edge",
+          "body": "If $A[i,j]=0$ there is no direct path, so $P[i,j]$ must be $\\infty$ (a value larger than any real path length, e.g. $n$ or more); using $0$ would make min() pick a non-existent path."
+        },
+        {
+          "title": "Edge",
+          "body": "If $A[i,j]=1$ the direct edge is a path of length 1, so $P[i,j] = 1$ (equivalently $A[i,j]$)."
+        }
+      ],
+      "answer": {
+        "value": "`If A[i,j] = 0 then P[i,j] = ∞ else P[i,j] = 1;`",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Initialising missing edges to 0."
+      ],
+      "verification": "After the algorithm, $P[i,j]$ is the minimum number of edges on an $i\\to j$ path, and stays $\\infty$ exactly when $j$ is unreachable from $i$."
+    },
+    "cse-2002-b-60-b": {
+      "approach": "The outermost loop variable $i$ must be the intermediate vertex (Floyd–Warshall’s phase), so relax every pair $(j,k)$ through $i$.",
+      "concepts": [
+        "Floyd–Warshall",
+        "Dynamic programming",
+        "Loop order"
+      ],
+      "steps": [
+        {
+          "title": "Identify the intermediate vertex",
+          "body": "Floyd–Warshall’s invariant: after phase $i$, $P[j,k]$ is the shortest $j\\to k$ path using only intermediates from $\\{1,\\dots,i\\}$. The phase variable must be the **outermost** loop, which here is $i$."
+        },
+        {
+          "title": "Relaxation line",
+          "body": "Inside, update every pair through vertex $i$:\n$$P[j,k] = \\min\\{P[j,k],\\ P[j,i] + P[i,k]\\}$$"
+        }
+      ],
+      "answer": {
+        "value": "`P[j,k] = min{P[j,k], P[j,i] + P[i,k]};`",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $P[i,j] = \\min\\{P[i,j], P[i,k]+P[k,j]\\}$ — with $k$ innermost this is not Floyd–Warshall and gives wrong results."
+      ],
+      "verification": "Path $1\\to2\\to3$ (edges 1→2, 2→3): in phase $i=2$, $P[1,3] = \\min(\\infty, P[1,2]+P[2,3]) = 2$."
+    },
+    "cse-2002-b-60-c": {
+      "approach": "Three nested loops of $n$ iterations each with constant work inside.",
+      "concepts": [
+        "Time complexity",
+        "Floyd–Warshall"
+      ],
+      "steps": [
+        {
+          "title": "Count iterations",
+          "body": "Loops over $i$, $j$, $k$ each run $n$ times, so the min() line runs $n\\cdot n\\cdot n = n^3$ times; each execution is $O(1)$."
+        },
+        {
+          "title": "Initialisation",
+          "body": "The initialisation is $n^2$ steps, dominated by $n^3$. Total: $O(n^3)$."
+        }
+      ],
+      "answer": {
+        "value": "$O(n^3)$",
+        "matchesKey": true
+      },
+      "verification": "Matches the standard Floyd–Warshall bound $\\Theta(n^3)$."
+    },
+    "cse-2002-b-61-a": {
+      "approach": "An ordered sum $n = x_1 + x_2$ is fixed once $x_1$ is chosen from $1..n-1$.",
+      "concepts": [
+        "Compositions",
+        "Counting"
+      ],
+      "steps": [
+        {
+          "title": "Choose the first part",
+          "body": "$x_1 \\ge 1$ and $x_2 = n - x_1 \\ge 1 \\Rightarrow 1 \\le x_1 \\le n-1$: $n-1$ choices, each giving a different ordered pair."
+        },
+        {
+          "title": "Check",
+          "body": "$n=3$: $x_1\\in\\{1,2\\}$ gives $1+2, 2+1$ — 2 ways, matching the example."
+        }
+      ],
+      "answer": {
+        "value": "$n-1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting unordered sums ($\\lfloor n/2\\rfloor$) — the example counts $1+2$ and $2+1$ separately."
+      ],
+      "verification": "Equals $\\binom{n-1}{1}$, the $k=2$ case of part (c)."
+    },
+    "cse-2002-b-61-b": {
+      "approach": "Stars and bars: place 2 dividers in the $n-1$ gaps between $n$ ones.",
+      "concepts": [
+        "Compositions",
+        "Stars and bars"
+      ],
+      "steps": [
+        {
+          "title": "Model",
+          "body": "Write $n$ as $1+1+\\dots+1$; there are $n-1$ gaps between the ones. Choosing 2 distinct gaps for dividers splits them into 3 positive ordered parts, and every composition arises exactly once."
+        },
+        {
+          "title": "Count",
+          "body": "$$\\binom{n-1}{2} = \\frac{(n-1)(n-2)}{2}.$$\n$n=4$: $\\binom{3}{2} = 3$, matching $1+1+2, 1+2+1, 2+1+1$."
+        }
+      ],
+      "answer": {
+        "value": "$\\binom{n-1}{2} = \\dfrac{(n-1)(n-2)}{2}$",
+        "matchesKey": true
+      },
+      "verification": "$n=5$: $\\binom42 = 6$ — $113,131,311,122,212,221$."
+    },
+    "cse-2002-b-61-c": {
+      "approach": "Generalise stars and bars: $k$ positive parts need $k-1$ dividers in the $n-1$ gaps.",
+      "concepts": [
+        "Compositions",
+        "Stars and bars"
+      ],
+      "steps": [
+        {
+          "title": "Dividers",
+          "body": "Among the $n-1$ gaps between $n$ ones, choose $k-1$ for dividers; this yields $k$ non-empty ordered groups, i.e. $x_1+\\dots+x_k = n$ with each $x_i\\ge1$."
+        },
+        {
+          "title": "Count",
+          "body": "$$\\binom{n-1}{k-1}$$\nChecks: $k=2$ gives $n-1$ (part a); $k=3$ gives $\\binom{n-1}{2}$ (part b)."
+        }
+      ],
+      "answer": {
+        "value": "$\\dbinom{n-1}{k-1}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $\\binom{n+k-1}{k-1}$, which counts non-negative parts."
+      ],
+      "verification": "Substituting $y_i = x_i-1\\ge0$: $\\sum y_i = n-k$, with $\\binom{(n-k)+k-1}{k-1} = \\binom{n-1}{k-1}$ solutions."
+    },
+    "cse-2002-b-62-a": {
+      "approach": "Build $M$ (from $\\langle M',x\\rangle$) so its input is irrelevant: it discards $w$ and runs $M'$ on the hard-wired $x$.",
+      "concepts": [
+        "Reduction",
+        "Halting problem",
+        "Undecidability"
+      ],
+      "steps": [
+        {
+          "title": "Construction",
+          "body": "$M$ has $M'$ and $x$ built into its states. On input $w$, it first **erases $w$, writes $x$ on the tape and simulates $M'$ on $x$**."
+        },
+        {
+          "title": "Why ignore w",
+          "body": "The target language demands \"halts and outputs 1 **irrespective of the input**\"; making $M$’s behaviour independent of $w$ turns that \"for all inputs\" condition into a single question: does $M'$ halt on $x$?"
+        }
+      ],
+      "answer": {
+        "value": "Ignore (erase) $w$, write $x$ on the tape and simulate $M'$ on $x$",
+        "matchesKey": true
+      },
+      "verification": "This is the standard reduction from HALT; the map $\\langle M',x\\rangle\\mapsto M$ is computable since it only writes out a fixed program around $M'$ and $x$."
+    },
+    "cse-2002-b-62-b": {
+      "approach": "If the simulation finishes, output 1 and halt; if it never finishes, $M$ never halts.",
+      "concepts": [
+        "Reduction",
+        "Halting problem",
+        "Undecidability"
+      ],
+      "steps": [
+        {
+          "title": "Second step",
+          "body": "If the simulation of $M'$ on $x$ halts (whatever $M'$ outputs), $M$ **writes 1 on its tape and halts**. If $M'$ runs forever on $x$, the simulation never ends and $M$ never halts."
+        },
+        {
+          "title": "Resulting property",
+          "body": "So $M$ halts with output 1 on every $w$ $\\iff$ $M'$ halts on $x$. A decider for the target language would decide HALT, which is impossible — hence the language is undecidable."
+        }
+      ],
+      "answer": {
+        "value": "If the simulation of $M'$ on $x$ halts, $M$ outputs 1 and halts (otherwise it runs forever)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Outputting $M'$’s own result — it must be 1 regardless of what $M'$ outputs."
+      ],
+      "verification": "Both directions: $M'$ halts on $x$ ⇒ $M$ outputs 1 on all $w$; $M'$ loops on $x$ ⇒ $M$ halts on no $w$."
+    }
+  }
+}

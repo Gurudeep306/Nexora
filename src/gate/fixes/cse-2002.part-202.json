@@ -1,0 +1,77 @@
+{
+  "paper": "cse-2002",
+  "fixes": [
+    {
+      "id": "cse-2002-b-56-a",
+      "field": "text",
+      "before": "Consider the following circuits. $A = a_2a_1a_0$ and $B = b_2b_1b_0$ are three bit binary numbers input to the circuit. The output is $Z = z_3z_2z_1z_0$. R0, R1 and R2 are registers with loading clock shown. The registers are loaded with their input data with the falling edge of a clock pulse (signal CLOCK shown) and appear as shown. The bits of input numbers A, B, and the full adders are as shown in the circuit. Assume Clock period is greater than the settling time of all circuits.\n\nFor 8 clocks pulses on the CLOCK terminal and the inputs A, B as shown, obtain the output Z (sequence of 4-bit values of Z). Assume initial contents of R0, R1 and R2 as all zeros.\n\n| | | | | | | | | |\n|---|---|---|---|---|---|---|---|---|\n| A | 110 | 011 | 111 | 101 | 000 | 000 | 000 | 000 |\n| B | 101 | 101 | 011 | 110 | 000 | 000 | 000 | 000 |\n| Clock No | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |",
+      "after": "Consider the following circuits. $A = a_2a_1a_0$ and $B = b_2b_1b_0$ are three bit binary numbers input to the circuit. The output is $Z = z_3z_2z_1z_0$. R0, R1 and R2 are registers with loading clock shown. The registers are loaded with their input data with the falling edge of a clock pulse (signal CLOCK shown) and appear as shown. The bits of input numbers A, B, and the full adders are as shown in the circuit. Assume Clock period is greater than the settling time of all circuits.\n\nFor 8 clocks pulses on the CLOCK terminal and the inputs A, B as shown, obtain the output Z (sequence of 4-bit values of Z). Assume initial contents of R0, R1 and R2 as all zeros.\n\n| Clock No | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|---|---|---|---|---|---|---|---|---|\n| A | 110 | 011 | 111 | 101 | 000 | 000 | 000 | 000 |\n| B | 101 | 101 | 011 | 110 | 000 | 000 | 000 | 000 |",
+      "reason": "Replace the empty header row of the input table with the Clock No row as the header.",
+      "source": "GATE 2002 question paper (PDF)"
+    },
+    {
+      "id": "cse-2002-b-58-a",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key does not answer the question; provable answer is that no element conflicts with A[0].",
+      "source": "Independent derivation"
+    },
+    {
+      "id": "cse-2002-b-58-a",
+      "field": "reviewNote",
+      "before": "The PDF prints 'size S Kbytes' (typo for 8 Kbytes in the original paper).",
+      "after": "The PDF prints 'size S Kbytes' (typo for 8 Kbytes in the original paper). Stored key ('Base address + 4 * 2048 = 8192 bytes = 2 pages of 4 KB each') names no element; derivation: 512 lines of 16 B, A[i] is in block floor(i/4) -> line floor(i/4) mod 512; the array spans exactly blocks 0-511, so NO element conflicts with A[0] (A[1..3] share its block). Proposed key: 'None (array size = cache size; A[1]-A[3] share A[0]'s block)'.",
+      "reason": "Stored key is not an answer; flag for review",
+      "source": "Independent derivation"
+    },
+    {
+      "id": "cse-2002-b-61-a",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Counting compositions is discrete-maths combinatorics (as in part b), not general aptitude.",
+      "source": "GATE 2002 question paper (PDF)"
+    },
+    {
+      "id": "cse-2002-b-61-a",
+      "field": "topic",
+      "before": "quant",
+      "after": "combinatorics",
+      "reason": "Same topic as part 61(b).",
+      "source": "GATE 2002 question paper (PDF)"
+    },
+    {
+      "id": "cse-2002-b-61-c",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Counting compositions is discrete-maths combinatorics (as in part b), not general aptitude.",
+      "source": "GATE 2002 question paper (PDF)"
+    },
+    {
+      "id": "cse-2002-b-61-c",
+      "field": "topic",
+      "before": "quant",
+      "after": "combinatorics",
+      "reason": "Same topic as part 61(b).",
+      "source": "GATE 2002 question paper (PDF)"
+    },
+    {
+      "id": "cse-2002-b-62-b",
+      "field": "subject",
+      "before": "db",
+      "after": "toc",
+      "reason": "A Turing-machine reduction for undecidability is theory of computation, not databases.",
+      "source": "GATE 2002 question paper (PDF)"
+    },
+    {
+      "id": "cse-2002-b-62-b",
+      "field": "topic",
+      "before": "sql",
+      "after": "tm",
+      "reason": "Same topic as part 62(a).",
+      "source": "GATE 2002 question paper (PDF)"
+    }
+  ]
+}
