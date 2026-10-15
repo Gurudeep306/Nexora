@@ -72,7 +72,7 @@ export function summarizePage(path: string, ctx: Partial<AgentPage> | null): Pag
   // A mock paper opened from /gate/cbt behaves like /gate/cbt/<paper>.
   const kind: PageKind = routeKind === 'gate' && (examActive || c.examReview) ? 'gate-exam' : routeKind
   const seg = path.split('/')[1] ?? ''
-  const section = SECTION_NAMES[seg] ?? (seg ? titleCase(seg) : 'Nexora')
+  const section = SECTION_NAMES[seg] ?? (seg ? titleCase(seg) : 'NexoraGuru')
   let label: string
   if (c.label) label = c.label
   else if (kind === 'solve') label = c.title || 'Problem'

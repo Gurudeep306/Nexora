@@ -58,13 +58,13 @@ interface ThemeDef {
   colors: Record<string, string>
 }
 
-/* The two default themes (Nexora Dark and the light one) have a transparent
+/* The two default themes (NexoraGuru Dark and the light one) have a transparent
    background, so the code sits directly on the pane's glass and the editor
    reads as part of the window rather than a dark slab dropped into it. The
    named themes (Monokai, Dracula…) keep their own backgrounds on purpose. */
 const THEMES: Record<string, ThemeDef> = {
   'nexora-dark': {
-    label: 'Nexora Dark',
+    label: 'NexoraGuru Dark',
     base: 'vs-dark',
     rules: [
       { token: 'comment', foreground: '64748b', fontStyle: 'italic' },

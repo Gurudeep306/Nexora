@@ -16,7 +16,7 @@ export function CourseOverview() {
       <div className="card overflow-hidden p-0">
         <div className="grid gap-6 p-6 md:grid-cols-[1.4fr_1fr] md:p-8">
           <div>
-            <p className="mb-2 text-[11px] font-bold tracking-[0.14em] text-accent-brand uppercase">Nexora Learn · Course</p>
+            <p className="mb-2 text-[11px] font-bold tracking-[0.14em] text-accent-brand uppercase">NexoraGuru Learn · Course</p>
             <h2 className="mb-3 !text-[28px] font-bold tracking-tight text-text-primary sm:!text-[32px]">Data Structures & Algorithms</h2>
             <p className="mb-5 text-[15px] leading-relaxed text-text-secondary">
               Every topic is taught page by page, with an animation for each algorithm that shows the data structure changing while the matching line of code lights up — in pseudocode, C++, Java, Python, JavaScript and C. Each page ends with questions, and each topic has a problem set judged in the editor.

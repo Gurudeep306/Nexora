@@ -267,7 +267,9 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   --font-display: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  --font-brand: var(--font-display);
+  /* The NexoraGuru wordmark is always Geist 600 (always loaded, see main.tsx),
+     matching the outlined lockups in public/brand/ whatever UI font is picked. */
+  --font-brand: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   /* ── Legacy names ──
      Most components were written against an older vocabulary — text-foreground,

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><title>NexoraGuru</title><defs>
+<linearGradient id="fbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211c5f"/><stop offset="1" stop-color="#0d0b2c"/></linearGradient>
+<linearGradient id="fau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdd85"/><stop offset="1" stop-color="#eaa93a"/></linearGradient>
+</defs>
+<rect width="32" height="32" rx="7" fill="url(#fbg)"/>
+<g fill="url(#fau)"><path d="M4 10H28V12H4Z"/><path d="M6 10H8V26H6Z"/><path d="M12 10H14V26H12Z"/><path d="M6 11H8.6L14 23.4V26H11.4L6 13.6Z"/><path d="M18 10V22.6Q18 26 21.4 26H22.6Q26 26 26 22.6V17H22V19H24V22.6Q24 24 22.6 24H21.4Q20 24 20 22.6V10Z"/></g>
+<path d="M16.2 3.6C16.584 5.392 17.92 6.288 17.92 8.08A1.92 1.92 0 0 1 14.08 8.08C14.08 6.416 15.72 5.52 16.2 3.6Z" fill="#ff9a2e"/>
+<path d="M16.1 6.2C16.31 7.18 17.05 7.67 17.05 8.65A1.05 1.05 0 0 1 14.95 8.65C14.95 7.74 15.838 7.25 16.1 6.2Z" fill="#ffe7a3"/></svg>

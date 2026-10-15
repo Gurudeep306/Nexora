@@ -74,7 +74,7 @@ export const UI_FONTS: UiFont[] = [
   { id: 'plex', label: 'IBM Plex Sans', family: 'IBM Plex Sans Variable', kind: 'humanist', fallback: A(101.2, 101.3, 27.2),
     note: 'Engineered grotesk with humanist details — a quiet classic.' },
   { id: 'space-grotesk', label: 'Space Grotesk', family: 'Space Grotesk Variable', kind: 'grotesk', fallback: A(109.7, 89.7, 26.6),
-    note: 'Quirky, technical shapes from Space Mono; the previous Nexora face.' },
+    note: 'Quirky, technical shapes from Space Mono; the previous NexoraGuru face.' },
   { id: 'bricolage', label: 'Bricolage Grotesque', family: 'Bricolage Grotesque Variable', kind: 'grotesk', fallback: A(105.4, 88.2, 25.6), headingTracking: '-0.035em',
     note: 'Expressive, optical-size grotesk — punchy headlines, calm body.' },
   { id: 'lexend', label: 'Lexend', family: 'Lexend Variable', kind: 'geometric', fallback: A(109.9, 91, 22.7),

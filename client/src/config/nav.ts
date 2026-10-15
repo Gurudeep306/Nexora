@@ -72,7 +72,7 @@ export function navMeta(pathname: string): { section?: string; label: string } {
     const hit = sec.items.find((i) => pathname === i.to || pathname.startsWith(`${i.to}/`))
     if (hit) return { section: sec.title, label: hit.label }
   }
-  return { label: 'Nexora' }
+  return { label: 'NexoraGuru' }
 }
 
 /** Keyboard "g then x" shortcuts. */

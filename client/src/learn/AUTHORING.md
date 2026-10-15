@@ -1,6 +1,6 @@
 # Writing a DSA course topic
 
-This is the contract for every topic in the Nexora DSA course. The goal is the
+This is the contract for every topic in the NexoraGuru DSA course. The goal is the
 best DSA course anywhere: a student who works through it end to end should be
 able to clear the coding rounds at any company. That means **depth** (every
 idea derived and proved, not asserted), **sight** (every algorithm animated

@@ -1,6 +1,6 @@
 /**
- * Nexora ForgeBuilder API Routes
- * No-code admin builder for Nexora platform
+ * NexoraGuru ForgeBuilder API Routes
+ * No-code admin builder for NexoraGuru platform
  */
 
 const express = require('express');
