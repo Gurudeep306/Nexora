@@ -7,7 +7,7 @@ import type { Lang } from '@/learn/engine/types'
 const seenKey = (slug: string) => `nexora:learn-solution:${slug}`
 
 /**
- * The written solution of a Nexora Learn problem: the editorial (intuition,
+ * The written solution of a NexoraGuru Learn problem: the editorial (intuition,
  * approach, proof, complexity, pitfalls) and verified code in every language.
  * Hidden behind a deliberate click so a student tries first.
  */

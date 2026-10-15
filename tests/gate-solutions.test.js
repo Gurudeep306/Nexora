@@ -77,8 +77,9 @@ test('API: lazy solutions, no legacy blob in lists, no answers in CBT papers', a
     const v2 = await (await fetch(`${base}/api/gate/questions/cse-2012-cs-40/solution`)).json();
     assert.equal(v2.format, 'v2');
     assert.ok(v2.solution.steps.length >= 2);
-    const legacy = await (await fetch(`${base}/api/gate/questions/cse-1992-b-4-a/solution`)).json();
-    assert.equal(legacy.format, 'legacy');
+    // Every question in the bank now has a v2 solution, old papers included.
+    const old = await (await fetch(`${base}/api/gate/questions/cse-1992-b-4-a/solution`)).json();
+    assert.equal(old.format, 'v2');
     assert.equal((await fetch(`${base}/api/gate/questions/nope/solution`)).status, 404);
     const list = await (await fetch(`${base}/api/gate/questions?limit=5`)).json();
     assert.ok(list.questions.every((q) => !('solution' in q)));

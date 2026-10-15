@@ -1,13 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">TIMING WAVEFORM</text>
-  <text x="100" y="82" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">PORT-</text>
-  <path d="M 120 88 L 180 88 L 180 70 L 240 70 L 240 88 L 320 88 L 320 70 L 400 70 L 400 88 L 480 88" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="124" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">DATA</text>
-  <path d="M 120 130 L 180 130 L 180 112 L 240 112 L 240 130 L 320 130 L 320 112 L 400 112 L 400 130 L 480 130" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="166" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">OUTPUT</text>
-  <path d="M 120 172 L 180 172 L 180 154 L 240 154 L 240 172 L 320 172 L 320 154 L 400 154 L 400 172 L 480 172" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="208" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">WR</text>
-  <path d="M 120 214 L 180 214 L 180 196 L 240 196 L 240 214 L 320 214 L 320 196 L 400 196 L 400 214 L 480 214" fill="none" stroke="#38bdf8" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 330" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
+  </defs>
+  <g fill="currentColor" font-size="12" font-weight="bold">
+    <text x="10" y="40">PORT-DATA</text>
+    <text x="10" y="54">OUTPUT</text>
+    <text x="10" y="94">WR of</text>
+    <text x="10" y="108">PORT 40H</text>
+    <text x="10" y="160">INTERRUPT</text>
+    <text x="10" y="214">BUFFULL</text>
+    <text x="10" y="262">STROBE</text>
+    <text x="10" y="276">INPUT FROM</text>
+    <text x="10" y="290">DEVICE</text>
+  </g>
+  <line x1="10" y1="80" x2="30" y2="80" stroke="currentColor" stroke-width="1.2"/>
+  <g stroke="currentColor" stroke-width="2" fill="none">
+    <path d="M110 30 H245 L255 50 H600"/>
+    <path d="M110 50 H245 L255 30 H600"/>
+    <path d="M110 80 H150 L158 110 H232 L240 80 H600"/>
+    <path d="M110 140 H170 L178 170 H500 L508 140 H600"/>
+    <path d="M110 225 H250 L258 195 H420 L428 225 H600"/>
+    <path d="M110 250 H400 L408 285 H470 L478 250 H600"/>
+  </g>
+  <g stroke="currentColor" stroke-width="1.3" fill="none" stroke-dasharray="4 3" marker-end="url(#ah)">
+    <path d="M156 102 C 162 125, 168 145, 174 160"/>
+    <path d="M238 92 C 244 140, 250 175, 254 205"/>
+    <path d="M406 270 C 410 250, 418 232, 423 215"/>
+    <path d="M476 262 C 486 220, 496 180, 503 152"/>
+  </g>
+  <text x="310" y="320" fill="currentColor" font-size="13" text-anchor="middle">Fig. 6</text>
 </svg>

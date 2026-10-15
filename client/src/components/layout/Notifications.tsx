@@ -37,7 +37,7 @@ export function Notifications() {
 
   const total = data?.total ?? 0
 
-  // Mirror the unread count onto the browser tab title, e.g. "(3) Nexora — …".
+  // Mirror the unread count onto the browser tab title, e.g. "(3) NexoraGuru — …".
   useEffect(() => setFaviconBadge(total), [total])
   useEffect(() => () => setFaviconBadge(0), [])
 

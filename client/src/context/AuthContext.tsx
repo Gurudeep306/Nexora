@@ -26,7 +26,7 @@ export interface OAuthPending {
 
 interface AuthContextValue {
   user: User | null
-  /** GitHub/Google login waiting for the user to choose a Nexora username */
+  /** GitHub/Google login waiting for the user to choose a NexoraGuru username */
   oauthPending: OAuthPending | null
   loading: boolean
   refresh: () => Promise<void>

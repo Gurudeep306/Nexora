@@ -1,5 +1,5 @@
 /**
- * Nexora ForgeBuilder Database Schema
+ * NexoraGuru ForgeBuilder Database Schema
  * Creates tables for no-code builder system
  */
 

@@ -1,5 +1,5 @@
 /* ========== Groq client (OpenAI-compatible chat completions) ==========
-   The only model provider Nexora uses. Plain fetch — no SDK.
+   The only model provider NexoraGuru uses. Plain fetch — no SDK.
 
    - chat(): one-shot completion → { content, toolCalls, usage, model }
    - chatStream(): async generator over the SSE stream → events

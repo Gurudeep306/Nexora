@@ -1,5 +1,7 @@
 # Deploying Nexora for free
 
+> **Own domain (nexoraguru.in) on Cloudflare Pages + an Oracle VM:** see [docs/deploy/LAUNCH_RUNBOOK.md](docs/deploy/LAUNCH_RUNBOOK.md). Render below stays as staging and the rollback target.
+
 The live site runs on **Render** (free web service). Data is stored in **Turso** (free cloud SQLite). Updates ship from **GitHub**: `git push` → CI tests → auto-deploy.
 
 ```
