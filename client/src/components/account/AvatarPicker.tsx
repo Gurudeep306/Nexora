@@ -44,7 +44,7 @@ export function AvatarPicker({
   }
 
   return (
-    <div role="radiogroup" aria-label="Choose your avatar" className={cn('grid grid-cols-4 gap-3 sm:grid-cols-8', className)}>
+    <div role="radiogroup" aria-label="Choose your avatar" className={cn('grid max-w-2xl grid-cols-4 gap-3 sm:grid-cols-8', className)}>
       {AVATAR_SET.map((a, i) => {
         const selected = a.id === value
         return (
