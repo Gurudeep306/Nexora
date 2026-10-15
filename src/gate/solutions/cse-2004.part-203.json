@@ -1,0 +1,1451 @@
+{
+  "paper": "cse-2004",
+  "version": 2,
+  "solutions": {
+    "cse-2004-cs-70": {
+      "approach": "An implication is false only when its antecedent is true and its consequent false. Find one falsifying and one satisfying assignment.",
+      "concepts": [
+        "implication",
+        "satisfiability",
+        "validity"
+      ],
+      "steps": [
+        {
+          "title": "Try to falsify",
+          "body": "Need $(P\\vee Q)\\to R$ false: $P\\vee Q = T$, $R = F$. Take $P=F,\\ Q=T,\\ R=F$.\n\nThen $P\\to(Q\\vee R) = F\\to T = T$, so the whole formula is $T\\to F = F$. **Not valid.**"
+        },
+        {
+          "title": "Find a model",
+          "body": "With $R=T$: $(P\\vee Q)\\to T = T$, so the formula is $(\\ldots)\\to T = T$. **Satisfiable.**"
+        },
+        {
+          "title": "Conclude",
+          "body": "True for some assignments, false for others: satisfiable but not valid."
+        }
+      ],
+      "answer": {
+        "value": "satisfiable but not valid",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "True at $R=T$, false at $P=F,Q=T,R=F$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$P=F,Q=T,R=F$ makes it false, so it is not a tautology."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Any assignment with $R=T$ makes it true."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A describes it exactly."
+        }
+      ],
+      "pitfalls": [
+        "Reading $\\to$ as associative: the main connective is the middle arrow."
+      ],
+      "verification": "Checked both assignments by direct evaluation."
+    },
+    "cse-2004-cs-71": {
+      "approach": "Solve two equations, then test the third. A consistent overdetermined 3×2 system with independent columns has exactly one solution.",
+      "concepts": [
+        "linear systems",
+        "consistency",
+        "rank"
+      ],
+      "steps": [
+        {
+          "title": "Solve the last two",
+          "body": "$x - y = 2 \\Rightarrow x = y + 2$. Substituting into $x + 3y = 3$: $y + 2 + 3y = 3 \\Rightarrow 4y = 1 \\Rightarrow y = \\tfrac14$, $x = \\tfrac94$."
+        },
+        {
+          "title": "Check the first",
+          "body": "$-x + 5y = -\\tfrac94 + \\tfrac54 = -\\tfrac44 = -1$ ✓."
+        },
+        {
+          "title": "Count solutions",
+          "body": "The coefficient matrix has rank 2 (rows $(1,-1)$ and $(1,3)$ are independent) and the system is consistent, so the solution $(\\tfrac94, \\tfrac14)$ is **unique**."
+        }
+      ],
+      "answer": {
+        "value": "unique",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Infinite solutions need rank < 2; here rank = 2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A linear system never has exactly two solutions."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Consistent with rank 2 = number of unknowns."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(9/4, 1/4)$ satisfies all three equations."
+        }
+      ],
+      "pitfalls": [
+        "The scan seems to print the first right-hand side as $1$; with $+1$ the third equation fails and the answer would be \"none\". The standard version has $-1$."
+      ],
+      "verification": "Substituted $(9/4, 1/4)$ into all three equations."
+    },
+    "cse-2004-cs-72": {
+      "approach": "Row a shows a·a = b, a·b = c, a·c = e, so a generates the group: b = a², c = a³, e = a⁴. Multiply exponents mod 4.",
+      "concepts": [
+        "cyclic group",
+        "group table"
+      ],
+      "steps": [
+        {
+          "title": "Read off the generator",
+          "body": "From row $a$: $a^2 = b$, $a^3 = a\\cdot b = c$, $a^4 = a\\cdot c = e$. So $G = \\langle a \\rangle \\cong \\mathbb{Z}_4$ with $e,a,b,c = a^0,a^1,a^2,a^3$."
+        },
+        {
+          "title": "Compute row c",
+          "body": "| $c\\cdot x$ | exponent | result |\n|---|---|---|\n| $c\\cdot e$ | $3+0=3$ | $c$ |\n| $c\\cdot a$ | $3+1=4\\equiv0$ | $e$ |\n| $c\\cdot b$ | $3+2=5\\equiv1$ | $a$ |\n| $c\\cdot c$ | $3+3=6\\equiv2$ | $b$ |\n\nLast row: **c e a b**."
+        }
+      ],
+      "answer": {
+        "value": "c e a b",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$c\\cdot a = a^4 = e$, not $a$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$c\\cdot a = e$, not $b$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$c\\cdot a = e$, not $b$; $c\\cdot c = b$, not $a$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Matches $a^{3+k \\bmod 4}$."
+        }
+      ],
+      "shortcut": "Each row of a group table is a permutation and $c\\cdot a$ must be $e$ (since $a\\cdot c = e$ and inverses commute) — only D has $e$ in the second slot.",
+      "verification": "Row c is a permutation of {e,a,b,c} and agrees with column c of row a (c·a = a·c = e in an abelian group)."
+    },
+    "cse-2004-cs-73": {
+      "approach": "A finite poset is a complete lattice iff it has a bottom and a top and every pair has a meet and join. Find what is missing.",
+      "concepts": [
+        "complete lattice",
+        "meet and join",
+        "set containment order"
+      ],
+      "steps": [
+        {
+          "title": "Top exists, bottom does not",
+          "body": "Every set is contained in $\\{1,2,3,4,5\\}$, so that is the top. But $\\{1,2\\}$ and $\\{1,3,5\\}$ have no common lower bound in $S$ (neither contains the other, nothing smaller exists). So **something below them is needed**; the only option-common candidate is $\\{1\\}$."
+        },
+        {
+          "title": "Add {1} and check every pair",
+          "body": "In $S\\cup\\{\\{1\\}\\}$:\n\n| pair | meet | join |\n|---|---|---|\n| $\\{1,2\\},\\{1,3,5\\}$ | $\\{1\\}$ | $\\{1,2,3,4,5\\}$ |\n| $\\{1,2,3\\},\\{1,3,5\\}$ | $\\{1\\}$ | $\\{1,2,3,4,5\\}$ |\n| $\\{1,2,3\\},\\{1,2,4\\}$ | $\\{1,2\\}$ | $\\{1,2,3,4,5\\}$ |\n| $\\{1,3,5\\},\\{1,2,4\\}$ | $\\{1\\}$ | $\\{1,2,3,4,5\\}$ |\n\nComparable pairs trivially have meet/join. For $\\{1,2,3\\},\\{1,3,5\\}$ the only common lower bound present is $\\{1\\}$, so it is the meet — $\\{1,3\\}$ is not required."
+        },
+        {
+          "title": "Conclude",
+          "body": "A finite lattice is complete, so adding $\\{1\\}$ alone is **necessary and sufficient**."
+        }
+      ],
+      "answer": {
+        "value": "{1}",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$\\{1\\}$ supplies the missing bottom and all meets/joins then exist."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\{2,3\\}$ is unnecessary (and is not even below most elements)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Sufficient but not necessary: the meet of $\\{1,2,3\\}$ and $\\{1,3,5\\}$ is already $\\{1\\}$ without $\\{1,3\\}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Adds three unnecessary sets."
+        }
+      ],
+      "pitfalls": [
+        "Confusing the meet with set intersection: in a sub-poset the meet is the greatest common lower bound that is present, which need not be $A\\cap B$."
+      ],
+      "verification": "Checked all 6 incomparable pairs of the 6-element poset for a greatest lower and least upper bound."
+    },
+    "cse-2004-cs-74": {
+      "approach": "Linearity of expectation: expected marks per question × 150 × 1000.",
+      "concepts": [
+        "expectation",
+        "linearity of expectation",
+        "negative marking"
+      ],
+      "steps": [
+        {
+          "title": "One question",
+          "body": "$E = \\tfrac14(1) + \\tfrac34(-0.25) = 0.25 - 0.1875 = 0.0625$."
+        },
+        {
+          "title": "Scale up",
+          "body": "$0.0625 \\times 150 = 9.375$ per student; $9.375 \\times 1000 = 9375$."
+        }
+      ],
+      "answer": {
+        "value": "9375",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Zero would need a penalty of $-1/3$ per wrong answer."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not $150000 \\times 0.0625$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not $150000 \\times 0.0625$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$150000 \\times 0.0625 = 9375$."
+        }
+      ],
+      "verification": "$150 \\times 1000 = 150000$ attempts, each worth $1/16$ in expectation: $150000/16 = 9375$."
+    },
+    "cse-2004-cs-75": {
+      "approach": "Each letter gets an unordered colour pair, repetition allowed. Number of such pairs from k colours is C(k,2) + k = k(k+1)/2; need at least 26.",
+      "concepts": [
+        "multisets",
+        "combinations with repetition"
+      ],
+      "steps": [
+        {
+          "title": "Count colour pairs",
+          "body": "Pairs of distinct colours: $\\binom{k}{2}$; same colour twice: $k$. Total $\\binom{k}{2} + k = \\dfrac{k(k+1)}{2}$."
+        },
+        {
+          "title": "Smallest k with ≥ 26",
+          "body": "$k = 6$: $\\tfrac{6\\cdot7}{2} = 21 < 26$. $k = 7$: $\\tfrac{7\\cdot8}{2} = 28 \\geq 26$. So $k_{\\min} = 7$."
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Works (45 pairs) but is not minimal."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Works (36 pairs) but is not minimal."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "28 ≥ 26 while 6 colours give only 21."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Only 21 distinct pairs for 26 letters."
+        }
+      ],
+      "pitfalls": [
+        "Using ordered pairs ($k^2$ gives 6): the two prints of a letter are interchangeable, so the pair is unordered."
+      ],
+      "verification": "Multiset formula $\\binom{k+1}{2}$ gives the same 21 and 28."
+    },
+    "cse-2004-cs-76": {
+      "approach": "Entries with no two in a common row or column form a matching; every chosen entry needs its own covering line (König–Egerváry), so the count is at most the number of covering lines a + b.",
+      "concepts": [
+        "König–Egerváry theorem",
+        "line cover",
+        "bipartite matching"
+      ],
+      "steps": [
+        {
+          "title": "Model",
+          "body": "Rows and columns are the two sides of a bipartite graph; each non-zero entry $(i,j)$ is an edge. Entries with no two sharing a row or column form a **matching**. The $a$ rows and $b$ columns that cover all non-zero entries form a **vertex cover** of size $a+b$."
+        },
+        {
+          "title": "Bound",
+          "body": "Each line (row or column) of the cover can contain at most one entry of the matching, and every matching entry lies in some covering line. So the matching has at most $a + b$ entries (König: max matching = min line cover)."
+        },
+        {
+          "title": "Why the others fail",
+          "body": "Example: $a = b = 1$, non-zeros in row 1 and column 1 (a cross). Entries $(1,2)$ and $(2,1)$ are independent: 2 entries $> \\max\\{1,1\\} = \\min\\{1,1\\} = 1$."
+        }
+      ],
+      "answer": {
+        "value": "≤ a + b",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Each independent entry consumes a distinct covering line."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The cross example gives 2 > max{1,1}."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$M-a$, $N-b$ count uncovered lines, which hold no non-zeros; unrelated bound."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Fails for the cross example; it would hold only if the non-zeros sat inside an a×b submatrix."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"covered in a rows and b columns\" as \"inside the a×b intersection\" gives min{a,b}; the covering (union) reading is the König setting."
+      ],
+      "verification": "Cross example ($a=b=1$, 2 independent entries) confirms A is the only bound valid for every cover."
+    },
+    "cse-2004-cs-77": {
+      "approach": "Triangles force ≥ 3 colours. Starting from triangle T-a-b, every further colour is forced along a chain of triangles and ends in a clash, so 3 is impossible; then exhibit a 4-colouring.",
+      "concepts": [
+        "chromatic number",
+        "forced colouring",
+        "triangles"
+      ],
+      "given": "Label: $T$ top, $B$ bottom, $L$ left, $R$ right, inner square $a$ (top-left), $b$ (top-right), $c$ (bottom-left), $d$ (bottom-right). Edges: $L$–$T,B,a,c$; $R$–$T,B,b,d$; $T$–$a,b$; $B$–$c,d$; square $a$–$b$–$d$–$c$–$a$.",
+      "steps": [
+        {
+          "title": "At least 3",
+          "body": "$T, a, b$ form a triangle, so $\\chi \\geq 3$.",
+          "scene": {
+            "tones": {
+              "T": "cat1",
+              "a": "cat2",
+              "b": "cat3"
+            },
+            "edgeTones": {
+              "T>a": "accent",
+              "T>b": "accent",
+              "a>b": "accent"
+            },
+            "caption": "Triangle T-a-b"
+          }
+        },
+        {
+          "title": "Try 3 colours: everything is forced",
+          "body": "Colour $T=1, a=2, b=3$.\n- Triangle $T,L,a$: $L = 3$.\n- Triangle $L,a,c$: $c = 1$.\n- Triangle $L,c,B$: $B = 2$.\n- Triangle $B,c,d$: $d = 3$ — but $d$ is adjacent to $b = 3$. **Clash.**\n\nSince each step was forced (up to renaming colours), no 3-colouring exists: $\\chi \\geq 4$.",
+          "scene": {
+            "tones": {
+              "T": "cat1",
+              "a": "cat2",
+              "b": "cat3",
+              "L": "cat3",
+              "c": "cat1",
+              "B": "cat2",
+              "d": "error"
+            },
+            "edgeTones": {
+              "b>d": "error"
+            },
+            "caption": "d is forced to colour 3 = colour of b"
+          }
+        },
+        {
+          "title": "A 4-colouring",
+          "body": "Colour the square with 2 colours: $a = d = 1$, $b = c = 2$. Then $T = B = 3$ ($T,B$ are not adjacent) and $L = R = 4$ ($L$ sees $T,B,a,c$ = colours 3,3,1,2; $R$ sees 3,3,2,1). All 16 edges are proper, so $\\chi = 4$.",
+          "scene": {
+            "tones": {
+              "a": "cat1",
+              "d": "cat1",
+              "b": "cat2",
+              "c": "cat2",
+              "T": "cat3",
+              "B": "cat3",
+              "L": "warning",
+              "R": "warning"
+            },
+            "subs": {
+              "a": "1",
+              "d": "1",
+              "b": "2",
+              "c": "2",
+              "T": "3",
+              "B": "3",
+              "L": "4",
+              "R": "4"
+            },
+            "edgeTones": {},
+            "caption": "Proper 4-colouring"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "graph",
+        "nodes": [
+          {
+            "id": "L",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "T",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "R",
+            "x": 8,
+            "y": 2
+          },
+          {
+            "id": "B",
+            "x": 4,
+            "y": 4
+          },
+          {
+            "id": "a",
+            "x": 3,
+            "y": 1.3
+          },
+          {
+            "id": "b",
+            "x": 5,
+            "y": 1.3
+          },
+          {
+            "id": "c",
+            "x": 3,
+            "y": 2.7
+          },
+          {
+            "id": "d",
+            "x": 5,
+            "y": 2.7
+          }
+        ],
+        "edges": [
+          {
+            "from": "L",
+            "to": "T"
+          },
+          {
+            "from": "L",
+            "to": "B"
+          },
+          {
+            "from": "L",
+            "to": "a"
+          },
+          {
+            "from": "L",
+            "to": "c"
+          },
+          {
+            "from": "R",
+            "to": "T"
+          },
+          {
+            "from": "R",
+            "to": "B"
+          },
+          {
+            "from": "R",
+            "to": "b"
+          },
+          {
+            "from": "R",
+            "to": "d"
+          },
+          {
+            "from": "T",
+            "to": "a"
+          },
+          {
+            "from": "T",
+            "to": "b"
+          },
+          {
+            "from": "B",
+            "to": "c"
+          },
+          {
+            "from": "B",
+            "to": "d"
+          },
+          {
+            "from": "a",
+            "to": "b"
+          },
+          {
+            "from": "b",
+            "to": "d"
+          },
+          {
+            "from": "d",
+            "to": "c"
+          },
+          {
+            "from": "c",
+            "to": "a"
+          }
+        ],
+        "caption": "T/B = top/bottom, L/R = left/right, a b / c d = inner square"
+      },
+      "answer": {
+        "value": "4",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The graph has triangles (e.g. T-a-b), so it is not bipartite."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A 3-colouring is forced into a clash on edge b–d."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Lower bound 4 by forcing, and an explicit 4-colouring exists."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A proper 4-colouring is exhibited."
+        }
+      ],
+      "pitfalls": [
+        "Stopping at \"there is a triangle, so 3\": a triangle gives only a lower bound."
+      ],
+      "verification": "Checked all 16 edges against the 4-colouring; every vertex has degree 4."
+    },
+    "cse-2004-cs-78": {
+      "approach": "Fix S1; S2 is uniform, so the event is “S2 differs from S1 in exactly d chosen positions”: C(n,d) favourable strings out of 2^n.",
+      "concepts": [
+        "Hamming distance",
+        "binomial counting"
+      ],
+      "steps": [
+        {
+          "title": "Count",
+          "body": "For a fixed $S_1$, choose the $d$ positions where $S_2$ differs: $\\binom{n}{d}$ strings $S_2$. Over all pairs: $2^n\\binom{n}{d}$ favourable pairs out of $2^n\\cdot 2^n$."
+        },
+        {
+          "title": "Probability",
+          "body": "$P = \\dfrac{2^n\\binom{n}{d}}{4^n} = \\dfrac{\\binom{n}{d}}{2^n}$."
+        }
+      ],
+      "answer": {
+        "value": "ⁿC_d / 2ⁿ",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Binomial: each bit differs independently with probability 1/2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Sums over d to more than 1 for n ≥ 2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Gives 0 for d = 0, but $P(S_1=S_2) = 1/2^n$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Ignores both the choice of positions and the other $n-d$ bits."
+        }
+      ],
+      "verification": "$\\sum_d \\binom{n}{d}/2^n = 1$; for $n=1$: $P(d=0)=P(d=1)=1/2$ ✓."
+    },
+    "cse-2004-cs-79": {
+      "approach": "With N = (n²−n)/2 possible edges, “at least N − n edges” means choosing at most n edges to leave out.",
+      "concepts": [
+        "labelled graphs",
+        "binomial sums",
+        "complement counting"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite the threshold",
+          "body": "Possible edges $N = \\binom{n}{2} = \\dfrac{n^2-n}{2}$. Then $\\dfrac{n^2-3n}{2} = \\dfrac{n^2-n}{2} - n = N - n$."
+        },
+        {
+          "title": "Count by missing edges",
+          "body": "A graph with $\\geq N-n$ edges omits $k \\leq n$ edges; choose them in $\\binom{N}{k}$ ways:\n$$\\sum_{k=0}^{n} \\binom{(n^2-n)/2}{k}.$$"
+        }
+      ],
+      "answer": {
+        "value": "∑_{k=0}^{n} C((n²−n)/2, k)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Counts graphs with exactly $N-n$ edges only."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Counts graphs with at most $N-n$ edges."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Counts graphs with exactly $n$ missing edges only."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$\\binom{N}{N-k} = \\binom{N}{k}$ summed over $k = 0..n$ missing edges."
+        }
+      ],
+      "verification": "$n = 3$: $N = 3$, threshold 0, so all $2^3 = 8$ graphs; D gives $1+3+3+1 = 8$ ✓."
+    },
+    "cse-2004-cs-80": {
+      "approach": "p² = x² + y² with x ~ U(0,1), y ~ U(0,2) independent; use E[U²] = L²/3 for U ~ U(0,L).",
+      "concepts": [
+        "expectation",
+        "uniform distribution"
+      ],
+      "steps": [
+        {
+          "title": "Each coordinate",
+          "body": "$E[x^2] = \\int_0^1 x^2\\,dx = \\tfrac13$. $E[y^2] = \\tfrac12\\int_0^2 y^2\\,dy = \\tfrac12\\cdot\\tfrac83 = \\tfrac43$."
+        },
+        {
+          "title": "Add",
+          "body": "$E[p^2] = \\tfrac13 + \\tfrac43 = \\tfrac53$."
+        }
+      ],
+      "answer": {
+        "value": "5/3",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would need $E[y^2] = 1/3$ (a 1×1 square counted twice)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not $1/3 + 4/3$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "That is $E[y^2]$ alone."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$1/3 + 4/3 = 5/3$."
+        }
+      ],
+      "pitfalls": [
+        "Using $(E[p])^2$ instead of $E[p^2]$."
+      ],
+      "verification": "Direct double integral $\\tfrac12\\int_0^1\\!\\int_0^2 (x^2+y^2)\\,dy\\,dx = \\tfrac12(\\tfrac23 + \\tfrac83) = \\tfrac53$ ✓."
+    },
+    "cse-2004-cs-81": {
+      "approach": "Contrapositive: if G1 ∪ G2 had no cycle it would be a spanning tree, forcing G1 = G2 = that tree and a connected intersection.",
+      "concepts": [
+        "spanning tree",
+        "connectivity",
+        "cycles"
+      ],
+      "steps": [
+        {
+          "title": "Assume no cycle",
+          "body": "$G_1 \\cup G_2$ is connected (it contains $G_1$). If it were acyclic it would be a tree $T$ with exactly $|V|-1$ edges."
+        },
+        {
+          "title": "Derive a contradiction",
+          "body": "$G_1$ and $G_2$ are connected spanning subgraphs of the tree $T$, so each needs $\\geq |V|-1$ edges, hence $G_1 = G_2 = T$. Then $G_1 \\cap G_2 = T$ is connected — contradiction. So $G_1 \\cup G_2$ **must have a cycle**."
+        },
+        {
+          "title": "Kill the other options",
+          "body": "On $V = \\{1,2,3\\}$ take $G_1 = \\{12, 23\\}$, $G_2 = \\{13, 23\\}$: the intersection $\\{23\\}$ leaves vertex 1 isolated. The union is a triangle — it has no bridge (kills C). Adding a pendant vertex 4 joined to 3 in both graphs makes 3 a cut vertex (kills A). Two different spanning paths of a 4-cycle give a 2-colourable union (kills D)."
+        }
+      ],
+      "answer": {
+        "value": "must have a cycle",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Add a pendant vertex 4 joined to 3 in both graphs: the intersection is still disconnected and 3 is a cut vertex of the union."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "An acyclic union would force $G_1 = G_2$, making the intersection connected."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The triangle example has no bridge."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Take a 4-cycle as the union of two different paths: all three graphs are 2-colourable."
+        }
+      ],
+      "verification": "Triangle example: $G_1=\\{12,23\\}$, $G_2=\\{13,23\\}$, intersection $\\{23\\}$ disconnected, union has a cycle ✓."
+    },
+    "cse-2004-cs-82": {
+      "approach": "Aggregate (amortised) analysis: the counter grows by 1 per 1-bit and is reset after each call, so the arguments passed to f sum to at most n.",
+      "concepts": [
+        "amortised analysis",
+        "aggregate method"
+      ],
+      "steps": [
+        {
+          "title": "Loop overhead",
+          "body": "The for loop runs $n$ times with $O(1)$ work besides the calls: $\\Theta(n)$."
+        },
+        {
+          "title": "Total cost of the calls",
+          "body": "Each call $f(\\text{counter})$ costs $\\Theta(\\text{counter})$, and counter equals the length of the run of 1s just before that 0. The runs are disjoint, so $\\sum \\text{counter} \\leq n$ (number of 1s). Calls with counter $=0$ still cost $O(1)$ each, at most $n$ of them."
+        },
+        {
+          "title": "Total",
+          "body": "$\\Theta(n) + O(n) = \\Theta(n)$ for every input."
+        }
+      ],
+      "answer": {
+        "value": "Θ(n)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Assumes each call can cost $n$; but the counts are disjoint runs."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No input reaches $n\\log n$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Tight: at least the $n$ loop iterations, at most $2n$ units of work."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True but not tight; $\\Theta(n)$ is the precise answer."
+        }
+      ],
+      "verification": "All 1s: no calls, $n$ iterations. Alternating 1,0: $n/2$ calls of cost 1. Both linear."
+    },
+    "cse-2004-cs-83": {
+      "approach": "Two recursive calls on n−1 with O(1) extra work: T(n) = 2T(n−1) + c, which is Θ(2ⁿ).",
+      "concepts": [
+        "recurrence relations",
+        "recursion tree"
+      ],
+      "steps": [
+        {
+          "title": "Recurrence",
+          "body": "$T(1) = c$, $T(n) = 2T(n-1) + c$."
+        },
+        {
+          "title": "Unroll",
+          "body": "$T(n) = c(1 + 2 + 4 + \\cdots + 2^{n-1}) = c(2^n - 1) = \\Theta(2^n)$. The recursion tree is a full binary tree of depth $n-1$."
+        }
+      ],
+      "answer": {
+        "value": "O(2ⁿ)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True only if a single call were made per level."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That is $2T(n/2)+n$, not halving here."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Polynomial bound fails: $2^n$ calls."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$2^n - 1$ calls in total."
+        }
+      ],
+      "pitfalls": [
+        "The two calls are identical but not memoised, so both execute."
+      ],
+      "verification": "n = 1, 2, 3, 4 give 1, 3, 7, 15 calls = $2^n - 1$."
+    },
+    "cse-2004-cs-84": {
+      "approach": "Plug small n into the recurrence and test the options; confirm by unrolling.",
+      "concepts": [
+        "recurrence relations",
+        "unrolling"
+      ],
+      "steps": [
+        {
+          "title": "Small values",
+          "body": "$T(1) = 1$, $T(2) = 2(1) + 2 = 4$, $T(3) = 2(4) + 3 = 11$, $T(4) = 2(11) + 4 = 26$."
+        },
+        {
+          "title": "Test A",
+          "body": "$2^{n+1} - n - 2$: $n=1$: $4-3 = 1$; $n=2$: $8-4 = 4$; $n=3$: $16-5 = 11$; $n=4$: $32-6 = 26$ ✓."
+        },
+        {
+          "title": "Prove by induction",
+          "body": "$2T(n-1) + n = 2(2^{n} - (n-1) - 2) + n = 2^{n+1} - 2n - 2 + n = 2^{n+1} - n - 2$ ✓."
+        }
+      ],
+      "answer": {
+        "value": "2^{n+1} − n − 2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Matches all values and the induction step."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$n=2$: $4-2 = 2 \\neq 4$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n=1$: $4-4 = 0 \\neq 1$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$n=1$: $2+1 = 3 \\neq 1$."
+        }
+      ],
+      "verification": "Induction step checked algebraically; base $n=1$ holds."
+    },
+    "cse-2004-cs-85": {
+      "approach": "In a balanced tree each node splits its leaves roughly in half, so its cost is about half its leaf count; the nodes on one level partition the n leaves, giving Θ(n) per level over Θ(log n) levels.",
+      "concepts": [
+        "recurrence relations",
+        "master theorem",
+        "balanced BST"
+      ],
+      "steps": [
+        {
+          "title": "Cost at a node",
+          "body": "If node $x$ has $m$ leaves below it, balance gives $\\approx m/2$ on each side, so $g(x)$ costs $\\min \\approx m/2$."
+        },
+        {
+          "title": "Recurrence",
+          "body": "$C(n) = 2C(n/2) + \\tfrac{n}{2}$. Master theorem case 2 ($a = 2, b = 2$, $f(n) = \\Theta(n)$): $C(n) = \\Theta(n \\log n)$."
+        },
+        {
+          "title": "Level view",
+          "body": "Nodes on one level have disjoint leaf sets covering all $n$ leaves, so the level costs $\\approx n/2$; there are $\\log_2 n$ levels: $\\tfrac n2 \\log_2 n = \\Theta(n\\log n)$."
+        }
+      ],
+      "answer": {
+        "value": "Θ(n log n)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Each of the $\\log n$ levels already costs $\\Theta(n)$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2C(n/2) + n/2 = \\Theta(n\\log n)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Would need $\\Theta(n)$ cost at $\\Theta(n)$ nodes; only $O(1)$ nodes per level are big."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Even larger overestimate."
+        }
+      ],
+      "pitfalls": [
+        "Charging every node the full $n$ (giving $n^2$): a node only pays for the leaves below it, and the min halves that."
+      ],
+      "verification": "$n = 8$: levels cost $4, 2+2, 1\\cdot4 = 4$ each over 3 levels: $12 = \\tfrac82\\log_2 8$ ✓."
+    },
+    "cse-2004-cs-86": {
+      "approach": "Read the DFA as a product: 1s move along a row in a 3-cycle (count of 1s mod 3), 0s flip between the two rows (parity of 0s). The only accepting state is the start state (0, even).",
+      "concepts": [
+        "DFA",
+        "product automaton",
+        "modular counting"
+      ],
+      "steps": [
+        {
+          "title": "Meaning of the states",
+          "body": "Name the top row $q_0,q_1,q_2$ and bottom row $p_0,p_1,p_2$. Input 1 moves one column right (cyclically): column = $\\#1 \\bmod 3$. Input 0 moves between rows in the same column: top = even $\\#0$, bottom = odd.",
+          "scene": {
+            "caption": "Start in q0: (0 ones mod 3, even zeros)"
+          }
+        },
+        {
+          "title": "Trace 10110",
+          "body": "$q_0 \\xrightarrow{1} q_1 \\xrightarrow{0} p_1 \\xrightarrow{1} p_2 \\xrightarrow{1} p_0 \\xrightarrow{0} q_0$: three 1s and two 0s, accepted.",
+          "scene": {
+            "current": [
+              "q0"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "0",
+                "1",
+                "1",
+                "0"
+              ],
+              "head": 5
+            },
+            "edgeTones": {
+              "q0>q1": "accent",
+              "q1>p1": "accent",
+              "p1>p2": "accent",
+              "p2>p0": "accent",
+              "p0>q0": "success"
+            },
+            "caption": "10110 ends in q0: accepted"
+          }
+        },
+        {
+          "title": "Conclude",
+          "body": "Accept iff $\\#1 \\equiv 0 \\pmod 3$ and $\\#0 \\equiv 0 \\pmod 2$: number of 1s divisible by 3 and of 0s divisible by 2."
+        }
+      ],
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "q0",
+            "x": 0,
+            "y": 0,
+            "start": true,
+            "accept": true
+          },
+          {
+            "id": "q1",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "q2",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "p0",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "p1",
+            "x": 2,
+            "y": 2
+          },
+          {
+            "id": "p2",
+            "x": 4,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "1"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "1"
+          },
+          {
+            "from": "q2",
+            "to": "q0",
+            "label": "1"
+          },
+          {
+            "from": "p0",
+            "to": "p1",
+            "label": "1"
+          },
+          {
+            "from": "p1",
+            "to": "p2",
+            "label": "1"
+          },
+          {
+            "from": "p2",
+            "to": "p0",
+            "label": "1"
+          },
+          {
+            "from": "q0",
+            "to": "p0",
+            "label": "0"
+          },
+          {
+            "from": "p0",
+            "to": "q0",
+            "label": "0"
+          },
+          {
+            "from": "q1",
+            "to": "p1",
+            "label": "0"
+          },
+          {
+            "from": "p1",
+            "to": "q1",
+            "label": "0"
+          },
+          {
+            "from": "q2",
+            "to": "p2",
+            "label": "0"
+          },
+          {
+            "from": "p2",
+            "to": "q2",
+            "label": "0"
+          }
+        ],
+        "current": [
+          "q0"
+        ],
+        "tape": {
+          "cells": [
+            "1",
+            "0",
+            "1",
+            "1",
+            "0"
+          ],
+          "head": 0
+        },
+        "caption": "Column = (#1s mod 3), row = (#0s mod 2)"
+      },
+      "answer": {
+        "value": "divisible by 3 and 2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "1s are counted mod 3, 0s mod 2, and only (0,0) accepts."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"1\" (one 1, no 0s) ends in $q_1$ and is rejected, while \"111\" is accepted — the condition is about 1s mod 3, not their parity."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "\"0\" (one 0, odd) ends in $p_0$ and is rejected."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Swaps the roles: \"11\" (two 1s) ends in $q_2$ and is rejected."
+        }
+      ],
+      "verification": "Checked ε, 111, 00, 10110 (accepted) and 1, 0, 11 (rejected) on the figure."
+    },
+    "cse-2004-cs-87": {
+      "approach": "One stack suffices: push for a and b, pop for c. Pumping shows it is not regular.",
+      "concepts": [
+        "context-free languages",
+        "pumping lemma",
+        "PDA"
+      ],
+      "steps": [
+        {
+          "title": "Context-free",
+          "body": "Grammar: $S \\to aSc \\mid aXc$, $X \\to bXc \\mid bc$. It generates $a^m b^n c^n c^m = a^m b^n c^{m+n}$ with $m, n \\geq 1$."
+        },
+        {
+          "title": "Not regular",
+          "body": "Pump $a^p b c^{p+1}$ with $|xy| \\leq p$: $y = a^k$, $k \\geq 1$. Then $xy^2z = a^{p+k} b c^{p+1}$ needs $p+k+1 = p+1$, false. So it is not regular."
+        }
+      ],
+      "answer": {
+        "value": "context-free but not regular",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Needs unbounded counting; fails the pumping lemma."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "CFG given; not regular by pumping."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It is context-free."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Every CFL is context-sensitive."
+        }
+      ],
+      "verification": "Derivation for $m=1,n=2$: $S \\Rightarrow aXc \\Rightarrow abXcc \\Rightarrow abbccc$ = $a^1b^2c^3$ ✓."
+    },
+    "cse-2004-cs-88": {
+      "approach": "The grammar is right-linear: S, A, B track the number of a’s mod 3 (0, 1, 2); b never changes state. Words end only by S → b (a-count ≡ 0) or B → a (2 + 1 ≡ 0).",
+      "concepts": [
+        "right-linear grammar",
+        "NFA",
+        "modular counting"
+      ],
+      "steps": [
+        {
+          "title": "Nonterminals as counters",
+          "body": "$S \\xrightarrow{a} A \\xrightarrow{a} B \\xrightarrow{a} S$, and every $b$ keeps the nonterminal. So $S, A, B$ mean “a’s so far $\\equiv 0, 1, 2 \\pmod 3$”."
+        },
+        {
+          "title": "Termination",
+          "body": "$S \\to b$ ends with a-count $\\equiv 0$; $B \\to a$ ends with $2 + 1 \\equiv 0$. $A$ has no terminating rule. Hence $N_a(w) \\equiv 0 \\pmod 3$ for every $w \\in L(G)$."
+        },
+        {
+          "title": "Every such nonempty word is generated",
+          "body": "If the word ends in $b$, follow the counter and finish with $S \\to b$; if it ends in $a$, the state before it is $B$, finish with $B \\to a$. E.g. $aaa$: $S \\Rightarrow aA \\Rightarrow aaB \\Rightarrow aaa$; $bab$ is not generated (one $a$). So $L(G) = \\{w \\mid N_a(w) = 3k\\}$ (nonempty $w$)."
+        }
+      ],
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "S",
+            "start": true
+          },
+          {
+            "id": "A"
+          },
+          {
+            "id": "B"
+          },
+          {
+            "id": "F",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "S",
+            "to": "S",
+            "label": "b"
+          },
+          {
+            "from": "S",
+            "to": "A",
+            "label": "a"
+          },
+          {
+            "from": "S",
+            "to": "F",
+            "label": "b"
+          },
+          {
+            "from": "A",
+            "to": "A",
+            "label": "b"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "a"
+          },
+          {
+            "from": "B",
+            "to": "B",
+            "label": "b"
+          },
+          {
+            "from": "B",
+            "to": "S",
+            "label": "a"
+          },
+          {
+            "from": "B",
+            "to": "F",
+            "label": "a"
+          }
+        ],
+        "layout": "circle",
+        "caption": "Right-linear grammar as an NFA (F = final)"
+      },
+      "answer": {
+        "value": "{w | N_a(w) = 3k}",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$b \\in L(G)$ but $0 > 3$ is false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$aaa \\in L(G)$ but $0 > 9$ is false."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "S/A/B count a’s mod 3 and only count 0 terminates."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$b \\in L(G)$ has $N_b = 1$."
+        }
+      ],
+      "verification": "Derived $b$, $aaa$, $abaa$ (3 a’s); $a$, $ab$ cannot terminate."
+    },
+    "cse-2004-cs-89": {
+      "approach": "S1: decide membership of both halves, then run the enumerator until both appear and compare positions. S2: use the first enumerated word w1 as a probe: w ∈ L1 iff w = w1 or w1#w ∈ L2.",
+      "concepts": [
+        "recursive languages",
+        "recursively enumerable languages",
+        "reductions"
+      ],
+      "steps": [
+        {
+          "title": "S1 is true",
+          "body": "Given $x\\#y$: decide $x \\in L_1$ and $y \\in L_1$ (possible, $L_1$ recursive). If either fails, reject. Otherwise both appear in the enumeration, so run $A$ until both have appeared — this halts — and accept iff $x$ appears before $y$."
+        },
+        {
+          "title": "S2 is true",
+          "body": "If $L_1 = \\emptyset$ it is recursive. Otherwise get $w_1$ by running $A$ for one output. To decide $w$: if $w = w_1$ accept; else accept iff $w_1\\#w \\in L_2$ (decidable). Correct because any $w = w_j \\neq w_1$ in $L_1$ has $1 < j$."
+        },
+        {
+          "title": "Conclude",
+          "body": "Both implications hold: option A."
+        }
+      ],
+      "answer": {
+        "value": "Both S1 and S2 are true",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both deciders above always halt."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "S2 also holds via the probe $w_1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "S1 holds: the enumeration search halts once membership is known."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both are true."
+        }
+      ],
+      "pitfalls": [
+        "In S1, searching the enumeration without first deciding membership could run forever — the recursiveness of $L_1$ is what makes it halt."
+      ],
+      "verification": "Each decider only waits for words already known to be in $L_1$, so every loop terminates."
+    },
+    "cse-2004-cs-90": {
+      "approach": "Recall the defining feature of each paradigm: functional = side-effect-free expressions, logic = clauses and resolution, OO = abstract data types, imperative = commands/procedures.",
+      "concepts": [
+        "programming paradigms"
+      ],
+      "steps": [
+        {
+          "title": "Match",
+          "body": "| Style | Characteristic |\n|---|---|\n| P. Functional | 3. side-effect free, declarative, expression evaluation |\n| Q. Logic | 4. declarative, clausal representation, theorem proving |\n| R. Object-oriented | 2. imperative, abstract data types |\n| S. Imperative | 1. command-based, procedural |"
+        },
+        {
+          "title": "Pick the option",
+          "body": "P-3, Q-4, R-2, S-1 is option D."
+        }
+      ],
+      "answer": {
+        "value": "P-3, Q-4, R-2, S-1",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Functional is not about ADTs; logic is not side-effect-free expression evaluation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Clausal theorem proving is logic programming, not functional."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Swaps OO and imperative."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Every pair matches its defining feature."
+        }
+      ],
+      "verification": "Haskell/Lisp (3), Prolog (4), C++/Java classes (2), C/Pascal (1)."
+    }
+  }
+}
