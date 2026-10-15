@@ -1,29 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <defs>
-    <linearGradient id="gate-grad-it-2005-cs-10" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#1e293b" />
-      <stop offset="100%" stopColor="#0f172a" />
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LOGIC CIRCUIT</text>
-  <rect x="110" y="50" width="70" height="45" rx="6" fill="url(#gate-grad-it-2005-cs-10)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="78" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">AND₁</text>
-  <line x1="50" y1="62" x2="110" y2="62" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="82" x2="110" y2="82" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="66" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">A</text>
-  <text x="40" y="86" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">B</text>
-  <rect x="110" y="130" width="70" height="45" rx="6" fill="url(#gate-grad-it-2005-cs-10)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="158" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">AND₂</text>
-  <line x1="50" y1="142" x2="110" y2="142" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="162" x2="110" y2="162" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="146" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">C</text>
-  <text x="40" y="166" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">D</text>
-  <path d="M 180 72 L 260 72 L 280 105" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <path d="M 180 152 L 260 152 L 280 120" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <rect x="280" y="90" width="80" height="45" rx="6" fill="url(#gate-grad-it-2005-cs-10)" stroke="#34d399" stroke-width="2" />
-  <text x="320" y="118" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">OR₁</text>
-  <line x1="360" y1="112" x2="440" y2="112" stroke="#34d399" stroke-width="3" />
-  <text x="455" y="117" fill="#34d399" font-size="16" font-weight="bold" font-family="monospace">OUT</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 250" fill="none" stroke="currentColor" stroke-width="2" font-family="Arial, Helvetica, sans-serif">
+  <!-- Switch S1 -->
+  <circle cx="120" cy="90" r="45"/>
+  <line x1="75" y1="90" x2="112" y2="90"/>
+  <line x1="140" y1="62" x2="118" y2="82"/>
+  <line x1="140" y1="118" x2="118" y2="98"/>
+  <!-- Switch S2 -->
+  <circle cx="400" cy="90" r="45"/>
+  <line x1="445" y1="90" x2="408" y2="90"/>
+  <line x1="380" y1="62" x2="402" y2="82"/>
+  <line x1="380" y1="118" x2="402" y2="98"/>
+  <!-- b-b and c-c wires -->
+  <polyline points="140,62 165,46 355,46 380,62"/>
+  <polyline points="140,118 165,134 355,134 380,118"/>
+  <!-- outer loop with bulb and battery -->
+  <polyline points="75,90 30,90 30,215 198,215"/>
+  <circle cx="220" cy="215" r="22"/>
+  <polyline points="242,215 330,215"/>
+  <line x1="330" y1="198" x2="330" y2="232"/>
+  <line x1="342" y1="205" x2="342" y2="225" stroke-width="4"/>
+  <polyline points="342,215 490,215 490,90 445,90"/>
+  <g fill="currentColor" stroke="none" font-size="14">
+    <text x="62" y="82">a</text>
+    <text x="136" y="40">b</text>
+    <text x="136" y="152">c</text>
+    <text x="452" y="82">a</text>
+    <text x="376" y="40">b</text>
+    <text x="376" y="152">c</text>
+    <text x="120" y="172" text-anchor="middle">Switch S1</text>
+    <text x="400" y="172" text-anchor="middle">Switch S2</text>
+    <text x="220" y="219" text-anchor="middle" font-size="12">Bulb</text>
+  </g>
 </svg>

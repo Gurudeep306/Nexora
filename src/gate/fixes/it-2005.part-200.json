@@ -1,0 +1,53 @@
+{
+ "paper": "it-2005",
+ "fixes": [
+  {
+   "id": "it-2005-cs-2",
+   "field": "text",
+   "before": "If the trapezoidal method is used to evaluate the integral then the value obtained",
+   "after": "If the trapezoidal method is used to evaluate the integral $\\int_0^1 x^2\\,dx$, then the value obtained",
+   "reason": "The reprint (and the stored text) drops the integral; restored from the original GATE IT 2005 Q2 so the question is answerable.",
+   "source": "GATE2005IT.pdf"
+  },
+  {
+   "id": "it-2005-cs-2",
+   "field": "reviewNote",
+   "before": "The reprint omits the integral itself; the original GATE IT 2005 Q2 reads 'evaluate the integral $\\int_0^1 x^2 dx$'. Answer assumes that integral.",
+   "after": "The reprint omits the integral; the text restores $\\int_0^1 x^2\\,dx$ from the original GATE IT 2005 Q2. Confirm against an original copy.",
+   "reason": "Note updated to reflect the restored integral.",
+   "source": "GATE2005IT.pdf"
+  },
+  {
+   "id": "it-2005-cs-4",
+   "field": "text",
+   "before": "Let L be a regular language and M be a context-free language, both over the alphabet $\\Sigma$. Let $L^C$ and $M^C$ denote the complements of L and M respectively. Which of the following statements about the language if $L^C \\cup M^C$ is TRUE?",
+   "after": "Let L be a regular language and M be a context-free language, both over the alphabet $\\Sigma$. Let $L^C$ and $M^C$ denote the complements of L and M respectively. Which of the following statements about the language $L^C \\cup M^C$ is TRUE?",
+   "reason": "Removed the stray word \"if\" (typo in the reprint).",
+   "source": "GATE2005IT.pdf"
+  },
+  {
+   "id": "it-2005-cs-13",
+   "field": "subject",
+   "before": "db",
+   "after": "pds",
+   "reason": "Question is about a recursively defined function on stacks, not SQL.",
+   "source": "GATE2005IT.pdf"
+  },
+  {
+   "id": "it-2005-cs-13",
+   "field": "topic",
+   "before": "sql",
+   "after": "stacks-queues",
+   "reason": "Question is about a recursively defined function on stacks, not SQL.",
+   "source": "GATE2005IT.pdf"
+  },
+  {
+   "id": "it-2005-cs-18",
+   "field": "reviewNote",
+   "before": null,
+   "after": "`find . -name passwd -print` is recursive, so it would also list any file named passwd in subdirectories of /etc, while `ls passwd` lists only /etc/passwd. (A) is the intended answer (only option that reports the file name rather than its contents/matching lines).",
+   "reason": "needsReview was set without a note; documented the recursion caveat.",
+   "source": "GATE2005IT.pdf"
+  }
+ ]
+}
