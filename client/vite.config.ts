@@ -1,11 +1,13 @@
-import { defineConfig, type Plugin } from 'vite'
+import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import fs from 'node:fs'
 import path from 'node:path'
 import { LOOK_TABLES, sanitizeLookWith } from './src/theme/look.ts'
 import { PALETTES } from './src/theme/palettes.ts'
 import { oklchToHex } from './src/theme/color.ts'
 import { buildThemeCss } from './src/theme/themeCss.ts'
+import { pagesHeaders, pagesRedirects } from './pages-files.ts'
 
 const THEME_CSS = 'virtual:nexora-theme.css'
 const RESOLVED_THEME_CSS = '\0' + THEME_CSS
@@ -36,8 +38,24 @@ function themeLayer(): Plugin {
   }
 }
 
-export default defineConfig({
-  plugins: [react(), tailwindcss(), themeLayer()],
+/**
+ * Cloudflare Pages control files (_redirects, _headers) for the split deploy —
+ * see pages-files.ts. GATE figures come from public/gate-fig, a symlink to
+ * the repo's root public/gate-fig that Vite copies (dereferenced) into dist/.
+ */
+function pagesFiles(apiUrl: string | undefined): Plugin {
+  return {
+    name: 'nexora-pages-files',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: '_redirects', source: pagesRedirects(apiUrl) })
+      this.emitFile({ type: 'asset', fileName: '_headers', source: pagesHeaders(apiUrl) })
+    },
+  }
+}
+
+export default defineConfig(({ mode }) => ({
+  plugins: [react(), tailwindcss(), themeLayer(), pagesFiles(loadEnv(mode, process.cwd(), 'VITE_').VITE_API_URL)],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -50,7 +68,11 @@ export default defineConfig({
       '/auth/github': { target: 'http://localhost:3000', changeOrigin: true },
       '/auth/google': { target: 'http://localhost:3000', changeOrigin: true },
       '/uploads': { target: 'http://localhost:3000', changeOrigin: true },
-      '/gate-fig': { target: 'http://localhost:3000', changeOrigin: true },
+      // GATE figures come from public/gate-fig (a symlink to the repo's
+      // public/gate-fig); proxy only if that link is missing in this checkout.
+      ...(fs.existsSync(path.resolve(__dirname, 'public/gate-fig'))
+        ? {}
+        : { '/gate-fig': { target: 'http://localhost:3000', changeOrigin: true } }),
       '/socket.io': { target: 'http://localhost:3000', ws: true },
     },
   },
@@ -58,4 +80,4 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: false,
   },
-})
+}))
