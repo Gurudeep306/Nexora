@@ -1,0 +1,2011 @@
+{
+  "paper": "it-2005",
+  "version": 2,
+  "solutions": {
+    "it-2005-cs-47": {
+      "approach": "Convert both octal numbers to decimal, multiply, and convert the product back to octal; then compare with each option.",
+      "concepts": [
+        "Octal fractions",
+        "Base conversion"
+      ],
+      "steps": [
+        {
+          "title": "Convert to decimal",
+          "body": "$(33.4)_8 = 3\\cdot 8 + 3 + \\tfrac{4}{8} = 24 + 3 + 0.5 = 27.5$\n\n$(23.4)_8 = 2\\cdot 8 + 3 + \\tfrac{4}{8} = 16 + 3 + 0.5 = 19.5$"
+        },
+        {
+          "title": "Multiply",
+          "body": "$27.5 \\times 19.5 = 27.5 \\times 20 - 27.5 \\times 0.5 = 550 - 13.75 = 536.25$"
+        },
+        {
+          "title": "Back to octal",
+          "body": "Integer part: $536 = 1\\cdot 512 + 0\\cdot 64 + 3\\cdot 8 + 0 \\Rightarrow (1030)_8$.\n\nFraction: $0.25 \\times 8 = 2.0 \\Rightarrow (.2)_8$.\n\nProduct $= (1030.2)_8$, which is none of A, B, C."
+        }
+      ],
+      "answer": {
+        "value": "None of these — the product is $(1030.2)_8$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$(1053.6)_8 = 512 + 40 + 3 + 0.75 = 555.75$, not $536.25$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(1053.2)_8 = 555.25$, not $536.25$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(1024.2)_8 = 512 + 16 + 4 + 0.25 = 532.25$, not $536.25$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: the true product $(1030.2)_8$ is not listed."
+        }
+      ],
+      "pitfalls": [
+        "Treating the octal digits as decimal and multiplying 33.4 × 23.4 directly.",
+        "Forgetting that one octal fractional digit is worth eighths, not tenths."
+      ],
+      "verification": "$(1030.2)_8 = 512 + 24 + 0.25 = 536.25 = 27.5 \\times 19.5$. ✓"
+    },
+    "it-2005-cs-48": {
+      "approach": "The second MUX outputs x when its select is 1 and y when it is 0. Make the first MUX produce A + B on that select line, then choose x and y so the output is the complement.",
+      "concepts": [
+        "2:1 multiplexer",
+        "NOR gate",
+        "MUX-based logic"
+      ],
+      "steps": [
+        {
+          "title": "What the output MUX needs",
+          "body": "$C = s\\,x + \\bar s\\,y$ with $s$ = output of MUX 1. If $s = A + B$, then $x = 0$ and $y = 1$ give $C = \\overline{A+B}$."
+        },
+        {
+          "title": "Make MUX 1 output A + B",
+          "body": "MUX 1 gives $z\\,A + \\bar z\\,B$. Take $z = A$:\n\n$A\\cdot A + \\bar A\\,B = A + \\bar A B = A + B$."
+        },
+        {
+          "title": "Check all inputs",
+          "body": "| A | B | $s$ | C |\n|---|---|---|---|\n| 0 | 0 | B = 0 | y = 1 |\n| 0 | 1 | B = 1 | x = 0 |\n| 1 | 0 | A = 1 | x = 0 |\n| 1 | 1 | A = 1 | x = 0 |\n\nThis is NOR, so $x, y, z = 0, 1, A$."
+        }
+      ],
+      "answer": {
+        "value": "x = 0, y = 1, z = A",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$x = 1, y = 0$ makes $C = s$ — an OR or AND gate, not NOR."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x = 1, y = 0$ with $z = A$ gives $C = A + B$ (OR), not NOR."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$z = B$ makes $s = B\\,A + \\bar B\\,B = AB$, so $C = \\overline{AB}$ (NAND)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: $s = A + B$ and the output MUX inverts it."
+        }
+      ],
+      "pitfalls": [
+        "Choosing z = B, which gives AB on the select line and builds NAND."
+      ],
+      "verification": "All four input rows were checked against the NOR truth table."
+    },
+    "it-2005-cs-49": {
+      "approach": "Horizontal microcode uses one bit per signal. Vertical microcode encodes each mutually exclusive group in ⌈log₂ n⌉ bits. The saving is the difference.",
+      "concepts": [
+        "Horizontal microprogramming",
+        "Vertical microprogramming",
+        "Encoded control fields"
+      ],
+      "steps": [
+        {
+          "title": "Horizontal width",
+          "body": "One bit per signal: $20 + 70 + 2 + 10 + 23 = 125$ bits."
+        },
+        {
+          "title": "Vertical width",
+          "body": "$\\lceil\\log_2 20\\rceil + \\lceil\\log_2 70\\rceil + \\lceil\\log_2 2\\rceil + \\lceil\\log_2 10\\rceil + \\lceil\\log_2 23\\rceil = 5 + 7 + 1 + 4 + 5 = 22$ bits."
+        },
+        {
+          "title": "Saving",
+          "body": "$125 - 22 = 103$ bits."
+        }
+      ],
+      "answer": {
+        "value": "103 bits",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Encoding the groups always shrinks the control word here, so the saving is not 0."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 125 − 22 = 103."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "22 is the vertical word width, not the saving."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "55 does not come from any standard counting of these groups."
+        }
+      ],
+      "pitfalls": [
+        "Giving the vertical width (22) as the answer.",
+        "Adding an extra \"no-op\" code per group: that gives 23 bits and a saving of 102, which is not an option."
+      ],
+      "verification": "$2^5 = 32 \\ge 20$, $2^7 = 128 \\ge 70$, $2^1 = 2$, $2^4 = 16 \\ge 10$, $2^5 = 32 \\ge 23$, and each width is the smallest that fits."
+    },
+    "it-2005-cs-50": {
+      "approach": "Build the sparsest tree of height h. Put a minimum tree of height h−1 on one side and as few nodes as the balance rule allows on the other, then solve the recurrence.",
+      "concepts": [
+        "Binary tree height",
+        "Recurrences",
+        "Balance condition"
+      ],
+      "steps": [
+        {
+          "title": "Recurrence",
+          "body": "Let $N(h)$ be the minimum number of nodes for height $h$ (edges on the longest root-to-leaf path). One subtree has height $h-1$ and at least $N(h-1)$ nodes. The other subtree may have up to 2 fewer nodes:\n\n$$N(h) = 1 + N(h-1) + \\max(0,\\ N(h-1) - 2)$$"
+        },
+        {
+          "title": "Small values",
+          "body": "$N(0) = 1$, $N(1) = 1 + 1 + 0 = 2$, $N(2) = 1 + 2 + 0 = 3$, $N(3) = 1 + 3 + 1 = 5$, $N(4) = 1 + 5 + 3 = 9$, $N(5) = 1 + 9 + 7 = 17$."
+        },
+        {
+          "title": "Closed form",
+          "body": "For $h \\ge 2$, $N(h) = 2N(h-1) - 1$, so $N(h) - 1 = 2\\,(N(h-1) - 1)$. With $N(1) - 1 = 1$ this gives $N(h) = 2^{h-1} + 1$. It also holds at $h = 1$: $2^0 + 1 = 2$."
+        }
+      ],
+      "answer": {
+        "value": "$2^{h-1}+1$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^h - 1$ is the size of a complete tree. For $h = 3$ it gives 7, but 5 nodes are enough."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: matches $N(h)$ for $h = 1, 2, 3, 4$ (2, 3, 5, 9)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Same as A (the reprint prints $2^h - 1$ twice), so it is too large."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2^h$ gives 8 for $h = 3$, but 5 nodes are enough."
+        }
+      ],
+      "pitfalls": [
+        "Measuring height in levels instead of edges.",
+        "Using the AVL height condition when the rule here limits node counts."
+      ],
+      "verification": "For $h = 3$: the root's left child has a chain of 2 below it (3 nodes) and the root's right child is a single node. The root's subtrees have 3 and 1 nodes (difference 2), total 5 = $2^2 + 1$."
+    },
+    "it-2005-cs-51": {
+      "approach": "Master theorem: $a = 2$, $b = 2$, so $n^{\\log_b a} = n$. Since $f(n) = \\sqrt n$ is polynomially smaller, the leaves dominate.",
+      "concepts": [
+        "Master theorem",
+        "Recurrence relations"
+      ],
+      "steps": [
+        {
+          "title": "Compare f(n) with n^{log_b a}",
+          "body": "$n^{\\log_2 2} = n$ and $f(n) = n^{1/2} = O(n^{1-\\epsilon})$ with $\\epsilon = \\tfrac12$."
+        },
+        {
+          "title": "Case 1",
+          "body": "Case 1 of the master theorem applies, so $T(n) = \\Theta(n)$."
+        }
+      ],
+      "answer": {
+        "value": "$T(n)=\\Theta(n)$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$T(n) \\ge 2T(n/2)$ already forces linear growth, so $\\Theta(\\log n)$ is too small."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\sqrt n$ is only the cost of the root. The $n$ leaves cost $\\Theta(n)$ on their own."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct (master theorem, case 1)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\Theta(n\\log n)$ needs $f(n) = \\Theta(n)$ (case 2). Here $f$ is smaller."
+        }
+      ],
+      "pitfalls": [
+        "Treating it like merge sort and answering n log n."
+      ],
+      "verification": "Level $k$ costs $2^k\\sqrt{n/2^k} = \\sqrt n\\,2^{k/2}$, a geometric series dominated by the last level: $\\approx \\sqrt n \\cdot \\sqrt n = n$."
+    },
+    "it-2005-cs-52": {
+      "approach": "Use the cut property. Removing e from the MST splits the vertices into two sides, and e must be a lightest edge across that cut. Because e also has the maximum weight, every edge across the cut has maximum weight.",
+      "concepts": [
+        "Minimum spanning tree",
+        "Cut property",
+        "Cutset"
+      ],
+      "steps": [
+        {
+          "title": "Cut defined by e",
+          "body": "Delete $e$ from the MST $T$. This splits $V$ into $X$ and $V - X$, and $e$ crosses that cut."
+        },
+        {
+          "title": "e is lightest on that cut",
+          "body": "If some edge $f$ across the cut had $w(f) < w(e)$, then $T - e + f$ would be a lighter spanning tree, which is impossible. So every crossing edge has $w \\ge w(e)$."
+        },
+        {
+          "title": "Combine with maximality",
+          "body": "$w(e)$ is the maximum weight in $G$, so every crossing edge has weight exactly $w(e)$. That cutset consists only of maximum-weight edges."
+        }
+      ],
+      "answer": {
+        "value": "There exists a cutset in G having all edges of maximum weight.",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: the cut formed by removing e from the MST works."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "If e is a bridge (for example a pendant edge), it lies on no cycle, so this need not hold."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "e can lie on a cycle whose other edges have the same maximum weight, so C is not always true."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A tree with weights 1 and 5 has its weight-5 edge in its unique MST, yet the weights differ."
+        }
+      ],
+      "pitfalls": [
+        "Confusing the cut property (always true) with the cycle property, which says a strictly heaviest edge on a cycle is excluded."
+      ],
+      "verification": "Path a–b (1), b–c (5): the MST contains the weight-5 edge, and the cut {a,b} | {c} contains only that edge. A holds while B and D fail."
+    },
+    "it-2005-cs-53": {
+      "approach": "Count characters of a up and characters of b down at the same index, then advance j exactly once per iteration. All counters end at 0 exactly when the two strings are anagrams.",
+      "concepts": [
+        "Counting array",
+        "C post-increment",
+        "Anagram check"
+      ],
+      "steps": [
+        {
+          "title": "What the loop must do",
+          "body": "For each position $j$: `count[a[j]]++` and `count[b[j]]--`, both with the **same** $j$, then `j++`."
+        },
+        {
+          "title": "Place the increment",
+          "body": "Writing `B : count[b[j++]]--` uses `b[j]` and then advances j, after A has already used `a[j]`. This is option D."
+        }
+      ],
+      "answer": {
+        "value": "A : count[a[j]]++ and B : count[b[j++]]--",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "j never changes, so the while loop never ends for non-empty strings."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both strings increment the counts (and j never advances), so the counters cannot cancel."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A advances j first, so B decrements b[j+1]. The strings are compared out of step."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: same index for both, then one advance."
+        }
+      ],
+      "pitfalls": [
+        "Missing that j must advance after both statements use it."
+      ],
+      "verification": "a = \"ab\", b = \"ba\": counts go a:+1, b:−1, then b:+1, a:−1, all zero, and the function returns 1."
+    },
+    "it-2005-cs-54": {
+      "approach": "Trace the loop: it swaps the values of nodes (1st, 2nd), then jumps two nodes ahead and swaps (3rd, 4th), and so on. A leftover last node stays where it is.",
+      "concepts": [
+        "Linked list traversal",
+        "Pairwise swap",
+        "Code trace"
+      ],
+      "steps": [
+        {
+          "title": "Swap 1 ↔ 2",
+          "body": "p = node1, q = node2: the values are swapped, giving 2, 1, 3, 4, 5, 6, 7. Then p = node3, q = node4.",
+          "scene": {
+            "cells": [
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 5,
+                "id": "n5"
+              },
+              {
+                "v": 6,
+                "id": "n6"
+              },
+              {
+                "v": 7,
+                "id": "n7"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  0,
+                  1
+                ],
+                "tone": "success"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "p",
+                "at": 2
+              },
+              {
+                "name": "q",
+                "at": 3
+              }
+            ]
+          }
+        },
+        {
+          "title": "Swap 3 ↔ 4",
+          "body": "This gives 2, 1, 4, 3, 5, 6, 7. Then p = node5, q = node6.",
+          "scene": {
+            "cells": [
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 5,
+                "id": "n5"
+              },
+              {
+                "v": 6,
+                "id": "n6"
+              },
+              {
+                "v": 7,
+                "id": "n7"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  3
+                ],
+                "tone": "success"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "p",
+                "at": 4
+              },
+              {
+                "name": "q",
+                "at": 5
+              }
+            ]
+          }
+        },
+        {
+          "title": "Swap 5 ↔ 6, then stop",
+          "body": "This gives 2, 1, 4, 3, 6, 5, 7. Now p = node7 and q = p->next = NULL, so the loop ends and 7 stays in place.",
+          "scene": {
+            "cells": [
+              {
+                "v": 2,
+                "id": "n2"
+              },
+              {
+                "v": 1,
+                "id": "n1"
+              },
+              {
+                "v": 4,
+                "id": "n4"
+              },
+              {
+                "v": 3,
+                "id": "n3"
+              },
+              {
+                "v": 6,
+                "id": "n6"
+              },
+              {
+                "v": 5,
+                "id": "n5"
+              },
+              {
+                "v": 7,
+                "id": "n7"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  4,
+                  5
+                ],
+                "tone": "success"
+              },
+              {
+                "at": [
+                  6,
+                  6
+                ],
+                "tone": "muted"
+              }
+            ],
+            "pointers": [
+              {
+                "name": "p",
+                "at": 6
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "2, 1, 4, 3, 6, 5, 7",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The function does swap values, so the list changes."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: adjacent pairs are swapped and the odd last node is left alone."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This would need the pairs to start at the 2nd node, but p starts at the head."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This is a left rotation, which the code does not perform."
+        }
+      ],
+      "pitfalls": [
+        "Advancing p to q instead of q->next, which would swap overlapping pairs."
+      ],
+      "verification": "The loop runs 3 times (7 nodes give 3 full pairs), and the 7th node has no partner.",
+      "animation": {
+        "kind": "array",
+        "variant": "linked",
+        "label": "list",
+        "cells": [
+          {
+            "v": 1,
+            "id": "n1"
+          },
+          {
+            "v": 2,
+            "id": "n2"
+          },
+          {
+            "v": 3,
+            "id": "n3"
+          },
+          {
+            "v": 4,
+            "id": "n4"
+          },
+          {
+            "v": 5,
+            "id": "n5"
+          },
+          {
+            "v": 6,
+            "id": "n6"
+          },
+          {
+            "v": 7,
+            "id": "n7"
+          }
+        ],
+        "pointers": [
+          {
+            "name": "p",
+            "at": 0
+          },
+          {
+            "name": "q",
+            "at": 1
+          }
+        ]
+      }
+    },
+    "it-2005-cs-55": {
+      "approach": "In a BST the in-order sequence is the sorted list. Rebuild the tree from the pre-order sequence (the root comes first, then the smaller keys, then the larger keys) and read the post-order.",
+      "concepts": [
+        "Binary search tree",
+        "Pre-order traversal",
+        "Post-order traversal"
+      ],
+      "steps": [
+        {
+          "title": "Split around the root",
+          "body": "Pre-order 5, 3, 1, 2, 4, 6, 8, 7: the root is 5, the left subtree is {3, 1, 2, 4} and the right subtree is {6, 8, 7}.",
+          "scene": {
+            "root": {
+              "label": 5,
+              "id": "n5",
+              "tone": "accent",
+              "children": [
+                {
+                  "label": 3,
+                  "id": "n3",
+                  "children": [
+                    {
+                      "label": 1,
+                      "id": "n1",
+                      "children": [
+                        null,
+                        {
+                          "label": 2,
+                          "id": "n2"
+                        }
+                      ]
+                    },
+                    {
+                      "label": 4,
+                      "id": "n4"
+                    }
+                  ]
+                },
+                {
+                  "label": 6,
+                  "id": "n6",
+                  "children": [
+                    null,
+                    {
+                      "label": 8,
+                      "id": "n8",
+                      "children": [
+                        {
+                          "label": 7,
+                          "id": "n7"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Left subtree",
+          "body": "Root 3, then 1 (left) and 4 (right). 2 > 1, so 2 is the right child of 1.",
+          "scene": {
+            "root": {
+              "label": 5,
+              "id": "n5",
+              "children": [
+                {
+                  "label": 3,
+                  "id": "n3",
+                  "tone": "accent",
+                  "children": [
+                    {
+                      "label": 1,
+                      "id": "n1",
+                      "tone": "info",
+                      "children": [
+                        null,
+                        {
+                          "label": 2,
+                          "id": "n2",
+                          "tone": "info"
+                        }
+                      ]
+                    },
+                    {
+                      "label": 4,
+                      "id": "n4",
+                      "tone": "info"
+                    }
+                  ]
+                },
+                {
+                  "label": 6,
+                  "id": "n6",
+                  "children": [
+                    null,
+                    {
+                      "label": 8,
+                      "id": "n8",
+                      "children": [
+                        {
+                          "label": 7,
+                          "id": "n7"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Right subtree",
+          "body": "6 has no left child. 8 is its right child and 7 is the left child of 8.",
+          "scene": {
+            "root": {
+              "label": 5,
+              "id": "n5",
+              "children": [
+                {
+                  "label": 3,
+                  "id": "n3",
+                  "children": [
+                    {
+                      "label": 1,
+                      "id": "n1",
+                      "children": [
+                        null,
+                        {
+                          "label": 2,
+                          "id": "n2"
+                        }
+                      ]
+                    },
+                    {
+                      "label": 4,
+                      "id": "n4"
+                    }
+                  ]
+                },
+                {
+                  "label": 6,
+                  "id": "n6",
+                  "tone": "accent",
+                  "children": [
+                    null,
+                    {
+                      "label": 8,
+                      "id": "n8",
+                      "tone": "info",
+                      "children": [
+                        {
+                          "label": 7,
+                          "id": "n7",
+                          "tone": "info"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Post-order",
+          "body": "Left, right, root: (2, 1, 4, 3), then (7, 8, 6), then 5, giving **2, 1, 4, 3, 7, 8, 6, 5**.",
+          "scene": {
+            "root": {
+              "label": 5,
+              "id": "n5",
+              "tone": "success",
+              "children": [
+                {
+                  "label": 3,
+                  "id": "n3",
+                  "tone": "success",
+                  "children": [
+                    {
+                      "label": 1,
+                      "id": "n1",
+                      "tone": "success",
+                      "children": [
+                        null,
+                        {
+                          "label": 2,
+                          "id": "n2",
+                          "tone": "success"
+                        }
+                      ]
+                    },
+                    {
+                      "label": 4,
+                      "id": "n4",
+                      "tone": "success"
+                    }
+                  ]
+                },
+                {
+                  "label": 6,
+                  "id": "n6",
+                  "tone": "success",
+                  "children": [
+                    null,
+                    {
+                      "label": 8,
+                      "id": "n8",
+                      "tone": "success",
+                      "children": [
+                        {
+                          "label": 7,
+                          "id": "n7",
+                          "tone": "success"
+                        },
+                        null
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "2, 1, 4, 3, 7, 8, 6, 5",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Descending order is a reverse in-order traversal, not post-order."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It begins 1, 2, but 2 is the child of 1, so it must come before 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It lists 6 before 7 and 8, but 6 is their ancestor and must come after them."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Putting 2 as the left child of 3 instead of the right child of 1."
+      ],
+      "verification": "Pre-order of the rebuilt tree is 5, 3, 1, 2, 4, 6, 8, 7, which matches the given sequence.",
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": 5,
+          "id": "n5",
+          "children": [
+            {
+              "label": 3,
+              "id": "n3",
+              "children": [
+                {
+                  "label": 1,
+                  "id": "n1",
+                  "children": [
+                    null,
+                    {
+                      "label": 2,
+                      "id": "n2"
+                    }
+                  ]
+                },
+                {
+                  "label": 4,
+                  "id": "n4"
+                }
+              ]
+            },
+            {
+              "label": 6,
+              "id": "n6",
+              "children": [
+                null,
+                {
+                  "label": 8,
+                  "id": "n8",
+                  "children": [
+                    {
+                      "label": 7,
+                      "id": "n7"
+                    },
+                    null
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "it-2005-cs-56": {
+      "approach": "Work backwards from 100. Only vertices divisible by 3 have a ×3 predecessor, so divide by 3 whenever possible and otherwise step down by 1. Then show that fewer edges cannot reach 100.",
+      "concepts": [
+        "Shortest path (unweighted)",
+        "BFS",
+        "Greedy backward reasoning"
+      ],
+      "steps": [
+        {
+          "title": "Backward walk",
+          "body": "$100 \\leftarrow 99 \\leftarrow 33 \\leftarrow 11 \\leftarrow 10 \\leftarrow 9 \\leftarrow 3 \\leftarrow 1$\n\nForward: $1 \\xrightarrow{\\times3} 3 \\xrightarrow{\\times3} 9 \\xrightarrow{+1} 10 \\xrightarrow{+1} 11 \\xrightarrow{\\times3} 33 \\xrightarrow{\\times3} 99 \\xrightarrow{+1} 100$, which is **7 edges**."
+        },
+        {
+          "title": "Why not fewer",
+          "body": "100 is not a multiple of 3, so the last edge is $99 \\to 100$. Reaching 99 needs at least 6 edges: with 5 edges the reachable vertices are at most $3^5 = 243$, but a BFS over 1…100 shows 99 is first reached at distance 6 (via 33 at distance 5)."
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "With 4 edges the largest reachable vertex is $3^4 = 81 < 100$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the BFS distance is 7."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "23 is a valid path length but not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Using only +1 edges gives 99, which is far from minimal."
+        }
+      ],
+      "pitfalls": [
+        "Going forward greedily (×3 as long as possible: 1, 3, 9, 27, 81, then +1 nineteen times) gives a long path."
+      ],
+      "verification": "A full BFS from vertex 1 over vertices 1…100 gives distance 7 to vertex 100."
+    },
+    "it-2005-cs-57": {
+      "approach": "Unwind the recursion: n halves each call and k doubles. Collect +k for odd n and −k for even n, and the base case returns 0.",
+      "concepts": [
+        "Recursion trace",
+        "Integer division"
+      ],
+      "steps": [
+        {
+          "title": "Calls going down",
+          "body": "| call | n odd? | contributes |\n|---|---|---|\n| f(20, 1) | no | −1 |\n| f(10, 2) | no | −2 |\n| f(5, 4) | yes | +4 |\n| f(2, 8) | no | −8 |\n| f(1, 16) | yes | +16 |\n| f(0, 32) | — | 0 |"
+        },
+        {
+          "title": "Returns going up",
+          "body": "$f(1,16) = 0 + 16 = 16$, $f(2,8) = 16 - 8 = 8$, $f(5,4) = 8 + 4 = 12$, $f(10,2) = 12 - 2 = 10$, $f(20,1) = 10 - 1 = 9$."
+        }
+      ],
+      "answer": {
+        "value": "9",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "5 would come from dropping one of the terms."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 is f(2, 8), an intermediate value."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: −1 − 2 + 4 − 8 + 16 = 9."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "20 is just the input n."
+        }
+      ],
+      "pitfalls": [
+        "Pairing k with the wrong level: k doubles on every call, starting from 1."
+      ],
+      "verification": "Sum check: $-1 - 2 + 4 - 8 + 16 = 9$."
+    },
+    "it-2005-cs-58": {
+      "approach": "Two pointers on a sorted array. If the current difference is too small, move j right to grow it. If it is too large, move i right to shrink it. So E must test \"difference < S\".",
+      "concepts": [
+        "Two-pointer technique",
+        "Sorted arrays"
+      ],
+      "steps": [
+        {
+          "title": "Monotonicity",
+          "body": "Increasing $j$ increases $a[j] - a[i]$, and increasing $i$ decreases it."
+        },
+        {
+          "title": "Fill in E",
+          "body": "When $a[j] - a[i] < S$ we need a larger difference, so `j++`. Otherwise the code tests equality and, if the difference is larger, does `i++`. So E is `a[j] - a[i] < S`."
+        }
+      ],
+      "answer": {
+        "value": "a[j] - a[i] < S",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "This moves j when the difference is already too big, making it bigger still and skipping valid pairs."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$a[i] - a[j] \\le 0 < S$ is always true, so j just runs to n and the answer is always \"no\"."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$a[i] - a[j] > S$ is never true, so j never moves while i keeps increasing."
+        }
+      ],
+      "pitfalls": [
+        "Reversing the roles of i and j."
+      ],
+      "verification": "a = [1, 3, 6], S = 5: diff 2 < 5 so j = 2; diff 5 = S so break; prints \"yes\"."
+    },
+    "it-2005-cs-59": {
+      "approach": "$c[2i]$ is the $(2i+1)$-th smallest element of the merged array. Count how many elements are guaranteed to be ≤ $a[i]$ and how many can be < $b[i]$ when $a[i] \\ge b[i]$.",
+      "concepts": [
+        "Merging sorted arrays",
+        "Order statistics",
+        "Counting argument"
+      ],
+      "steps": [
+        {
+          "title": "III is true: c[2i] ≤ a[i]",
+          "body": "$a[0..i]$ ($i+1$ elements) and $b[0..i]$ ($i+1$ elements, each $\\le b[i] \\le a[i]$) are all $\\le a[i]$. That makes at least $2i+2$ elements $\\le a[i]$, so $c[2i+1] \\le a[i]$ and therefore $c[2i] \\le a[i]$."
+        },
+        {
+          "title": "II is true: c[2i] ≥ b[i]",
+          "body": "Elements strictly below $b[i]$ can only be among $b[0..i-1]$ (at most $i$) and $a[0..i-1]$ (at most $i$, because $a[i] \\ge b[i]$). That is at most $2i$ elements, so the $(2i+1)$-th smallest $c[2i]$ is $\\ge b[i]$."
+        },
+        {
+          "title": "I and IV fail",
+          "body": "a = [5], b = [1], i = 0: c = [1, 5], $c[0] = 1 < a[0] = 5$, so I fails.\n\na = [5, 6], b = [1, 2], i = 1: c = [1, 2, 5, 6], $c[2] = 5 > b[1] = 2$, so IV fails."
+        }
+      ],
+      "answer": {
+        "value": "only II and III",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I fails (a = [5], b = [1])."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "I and IV both fail."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: II and III hold."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "IV fails (a = [5, 6], b = [1, 2], i = 1)."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up \"the (2i+1)-th smallest\" with c[2i+1]."
+      ],
+      "verification": "Random checks on small arrays agree: whenever a[i] ≥ b[i], b[i] ≤ c[2i] ≤ a[i]."
+    },
+    "it-2005-cs-60": {
+      "approach": "Draw both Gantt charts. In preemptive mode each higher-priority arrival takes the CPU at once. In non-preemptive mode P3 finishes first, then the highest-priority waiting process runs.",
+      "concepts": [
+        "Priority scheduling",
+        "Preemption",
+        "Turnaround time"
+      ],
+      "given": "| Process | Priority | Burst | Arrival |\n|---|---|---|---|\n| P1 | 10 (highest) | 20 | 5 |\n| P2 | 9 | 10 | 3 |\n| P3 | 8 (lowest) | 15 | 0 |",
+      "steps": [
+        {
+          "title": "Preemptive",
+          "body": "P3 runs 0–3. P2 arrives at 3 and preempts. P1 arrives at 5 and preempts P2 (P2 has 8 s left). P1 runs 5–25, P2 runs 25–33, P3 runs 33–45.",
+          "scene": {
+            "upto": 45,
+            "cursor": 33,
+            "lanes": [
+              {
+                "label": "Preemptive",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 3,
+                    "label": "P3"
+                  },
+                  {
+                    "start": 3,
+                    "end": 5,
+                    "label": "P2"
+                  },
+                  {
+                    "start": 5,
+                    "end": 25,
+                    "label": "P1"
+                  },
+                  {
+                    "start": 25,
+                    "end": 33,
+                    "label": "P2"
+                  },
+                  {
+                    "start": 33,
+                    "end": 45,
+                    "label": "P3"
+                  }
+                ]
+              }
+            ],
+            "caption": "P2 finishes at 33"
+          }
+        },
+        {
+          "title": "P2 turnaround (preemptive)",
+          "body": "P2 arrived at 3 s and completes at 33 s, so its turnaround is $33 - 3 = 30$ s."
+        },
+        {
+          "title": "Non-preemptive",
+          "body": "P3 runs 0–15. At 15, P1 and P2 are waiting, and P1 has higher priority, so it runs 15–35. P2 runs 35–45.",
+          "scene": {
+            "upto": 45,
+            "cursor": 45,
+            "lanes": [
+              {
+                "label": "Preemptive",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 3,
+                    "label": "P3"
+                  },
+                  {
+                    "start": 3,
+                    "end": 5,
+                    "label": "P2"
+                  },
+                  {
+                    "start": 5,
+                    "end": 25,
+                    "label": "P1"
+                  },
+                  {
+                    "start": 25,
+                    "end": 33,
+                    "label": "P2"
+                  },
+                  {
+                    "start": 33,
+                    "end": 45,
+                    "label": "P3"
+                  }
+                ]
+              },
+              {
+                "label": "Non-preemptive",
+                "bars": [
+                  {
+                    "start": 0,
+                    "end": 15,
+                    "label": "P3"
+                  },
+                  {
+                    "start": 15,
+                    "end": 35,
+                    "label": "P1"
+                  },
+                  {
+                    "start": 35,
+                    "end": 45,
+                    "label": "P2"
+                  }
+                ]
+              }
+            ],
+            "caption": "P2 finishes at 45 without preemption"
+          }
+        },
+        {
+          "title": "P2 turnaround (non-preemptive)",
+          "body": "P2 arrived at 3 s and completes at 45 s, so its turnaround is $45 - 3 = 42$ s. The pair is (30 s, 42 s)."
+        }
+      ],
+      "answer": {
+        "value": "30 sec, 42 sec",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The non-preemptive value is 42, because P2 also waits behind P1."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "10 s is only P2's burst. It ignores all waiting."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Preemptive turnaround is 30, not 42."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that P1 also overtakes P2 in the non-preemptive case, because both are waiting at t = 15."
+      ],
+      "verification": "Total CPU time 45 s matches the end of both charts, and P2 gets 2 + 8 = 10 s in the preemptive chart.",
+      "animation": {
+        "kind": "gantt",
+        "unit": "s",
+        "lanes": [
+          {
+            "label": "Preemptive",
+            "bars": [
+              {
+                "start": 0,
+                "end": 3,
+                "label": "P3"
+              },
+              {
+                "start": 3,
+                "end": 5,
+                "label": "P2"
+              },
+              {
+                "start": 5,
+                "end": 25,
+                "label": "P1"
+              },
+              {
+                "start": 25,
+                "end": 33,
+                "label": "P2"
+              },
+              {
+                "start": 33,
+                "end": 45,
+                "label": "P3"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 0,
+            "label": "P3↓"
+          },
+          {
+            "t": 3,
+            "label": "P2↓"
+          },
+          {
+            "t": 5,
+            "label": "P1↓"
+          }
+        ],
+        "upto": 5,
+        "cursor": 5
+      }
+    },
+    "it-2005-cs-61": {
+      "approach": "Map each block to set (block mod 4), give each set 2 ways, and replace the least recently used block in a full set.",
+      "concepts": [
+        "Set-associative cache",
+        "LRU replacement",
+        "Set index = block mod sets"
+      ],
+      "steps": [
+        {
+          "title": "Set of each reference",
+          "body": "| Block | 0 | 5 | 3 | 9 | 7 | 0 | 16 | 55 |\n|---|---|---|---|---|---|---|---|---|\n| mod 4 | 0 | 1 | 3 | 1 | 3 | 0 | 0 | 3 |"
+        },
+        {
+          "title": "0, 5, 3, 9, 7",
+          "body": "All five miss and fill free ways: set 0 = {0}, set 1 = {5, 9}, set 3 = {3, 7}.",
+          "scene": {
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "0"
+                  },
+                  null
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "5"
+                  },
+                  {
+                    "tag": "9"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "3"
+                  },
+                  {
+                    "tag": "7"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 3,
+              "way": 1,
+              "result": "miss"
+            },
+            "caption": "after 0 5 3 9 7"
+          }
+        },
+        {
+          "title": "0 hits, 16 fills set 0",
+          "body": "0 is a hit (set 0). 16 misses and takes the free way: set 0 = {0, 16}.",
+          "scene": {
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "0"
+                  },
+                  {
+                    "tag": "16"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "5"
+                  },
+                  {
+                    "tag": "9"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "3"
+                  },
+                  {
+                    "tag": "7"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 0,
+              "way": 1,
+              "result": "miss"
+            },
+            "caption": "after 0 (hit) and 16"
+          }
+        },
+        {
+          "title": "55 evicts 3",
+          "body": "Set 3 is full. 3 was used before 7, so 3 is the LRU block and 55 replaces it. Final contents: **0, 5, 7, 9, 16, 55**.",
+          "scene": {
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "0"
+                  },
+                  {
+                    "tag": "16"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "5"
+                  },
+                  {
+                    "tag": "9"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "lines": [
+                  {
+                    "tag": "55"
+                  },
+                  {
+                    "tag": "7"
+                  }
+                ]
+              }
+            ],
+            "access": {
+              "set": 3,
+              "way": 0,
+              "result": "miss"
+            },
+            "caption": "55 replaces LRU block 3"
+          }
+        }
+      ],
+      "answer": {
+        "value": "0 5 7 9 16 55",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "9 is missing and 3 is wrongly kept. 3 is evicted by 55."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It keeps 3, but 3 is the LRU block in set 3 when 55 arrives."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "It drops 0, but 0 was hit just before and set 0 never overflows."
+        }
+      ],
+      "pitfalls": [
+        "Using fully associative LRU instead of per-set LRU.",
+        "Evicting 7 because it arrived later."
+      ],
+      "verification": "8 references: 7 misses + 1 hit. Six distinct blocks remain, which fits 3 used sets of 2 ways.",
+      "animation": {
+        "kind": "cache",
+        "sets": [
+          {
+            "lines": [
+              null,
+              null
+            ]
+          },
+          {
+            "lines": [
+              null,
+              null
+            ]
+          },
+          {
+            "lines": [
+              null,
+              null
+            ]
+          },
+          {
+            "lines": [
+              null,
+              null
+            ]
+          }
+        ],
+        "caption": "4 sets × 2 ways, initially empty"
+      }
+    },
+    "it-2005-cs-62": {
+      "approach": "Deadlock needs a circular wait in which neither process can snatch the resource it is waiting for. If one process has higher priority on both resources, it can always take what it needs, so the cycle cannot persist.",
+      "concepts": [
+        "Deadlock",
+        "Preemption of resources",
+        "Circular wait"
+      ],
+      "steps": [
+        {
+          "title": "When deadlock is possible",
+          "body": "Deadlock: P1 holds R1 and waits for R2 while P2 holds R2 and waits for R1 (or the mirror case). It persists only if P1 cannot snatch R2 ($T_{12} < T_{22}$) **and** P2 cannot snatch R1 ($T_{21} < T_{11}$). That is exactly (I) and (IV). The mirror case is (II) and (III)."
+        },
+        {
+          "title": "Check (I) and (II)",
+          "body": "With $T_{11} > T_{21}$ and $T_{12} > T_{22}$, P1 can snatch either resource from P2, so P1 never blocks. P1 finishes and releases both resources, then P2 proceeds. No deadlock."
+        }
+      ],
+      "answer": {
+        "value": "(I) and (II)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(I) and (IV) are exactly the conditions under which the circular wait cannot be broken."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(II) and (III) give the mirror-image deadlock."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: P1 dominates on both resources."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "C works, so \"None of the above\" is wrong."
+        }
+      ],
+      "pitfalls": [
+        "Reading \"snatch\" backwards."
+      ],
+      "verification": "All four combinations were checked: only the mixed-priority pairs (A, B) allow a stable circular wait."
+    },
+    "it-2005-cs-63": {
+      "approach": "For each file and each block size: data blocks = ⌈size / B⌉, bookkeeping = 4 × data blocks bytes, which needs ⌈that / B⌉ more blocks. Sum the blocks and multiply by B.",
+      "concepts": [
+        "Disk block allocation",
+        "Internal fragmentation",
+        "Ceiling arithmetic"
+      ],
+      "steps": [
+        {
+          "title": "100-byte blocks",
+          "body": "| File | data blocks | bookkeeping | bk blocks | total |\n|---|---|---|---|---|\n| 11050 | 111 | 444 B | 5 | 116 |\n| 4990 | 50 | 200 B | 2 | 52 |\n| 5170 | 52 | 208 B | 3 | 55 |\n| 12640 | 127 | 508 B | 6 | 133 |\n\n$116 + 52 + 55 + 133 = 356$ blocks, and $356 \\times 100 = 35600$ bytes."
+        },
+        {
+          "title": "200-byte blocks",
+          "body": "| File | data blocks | bookkeeping | bk blocks | total |\n|---|---|---|---|---|\n| 11050 | 56 | 224 B | 2 | 58 |\n| 4990 | 25 | 100 B | 1 | 26 |\n| 5170 | 26 | 104 B | 1 | 27 |\n| 12640 | 64 | 256 B | 2 | 66 |\n\n$58 + 26 + 27 + 66 = 177$ blocks, and $177 \\times 200 = 35400$ bytes."
+        }
+      ],
+      "answer": {
+        "value": "35600 and 35400 bytes",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Neither value matches: 35400 is the 200-byte total, not the 100-byte total."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "35800 does not appear for either block size."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The two totals are in the wrong order."
+        }
+      ],
+      "pitfalls": [
+        "Pooling bookkeeping across files. Bookkeeping is stored per file, since a block holds bookkeeping or data of one file.",
+        "Forgetting to round the bookkeeping bytes up to whole blocks."
+      ],
+      "verification": "For example $12640/100 = 126.4 \\to 127$ blocks, and $127 \\times 4 = 508 > 500$, so 6 bookkeeping blocks are needed."
+    },
+    "it-2005-cs-64": {
+      "approach": "Use availability = MTBF / (MTBF + MTTR). Solve for the old MTTR, add 5 days, then solve for the MTBF that gives 95%.",
+      "concepts": [
+        "Availability",
+        "MTBF",
+        "MTTR"
+      ],
+      "steps": [
+        {
+          "title": "Old MTTR",
+          "body": "$0.9 = \\dfrac{200}{200 + m} \\Rightarrow 200 + m = 222.2 \\Rightarrow m \\approx 22.2$ days."
+        },
+        {
+          "title": "New MTBF",
+          "body": "New MTTR $= 22.2 + 5 = 27.2$ days.\n\n$0.95 = \\dfrac{M}{M + 27.2} \\Rightarrow M = \\dfrac{0.95}{0.05} \\times 27.2 = 19 \\times 27.2 \\approx 517$ days."
+        },
+        {
+          "title": "Pick the option",
+          "body": "About 517 days. The closest option is 500 days."
+        }
+      ],
+      "answer": {
+        "value": "500 days (≈ 517 days)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "205 days would give availability 205 / 232.2 ≈ 88%, below even the original 90%."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "300 days gives 300 / 327.2 ≈ 91.7%."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Closest: 500 / 527.2 ≈ 94.8% ≈ 95%."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "700 days gives 700 / 727.2 ≈ 96.3%, overshooting 95%."
+        }
+      ],
+      "pitfalls": [
+        "Treating MTBF as uptime + repair time. Here availability = MTBF / (MTBF + MTTR)."
+      ],
+      "verification": "Each option was substituted into the availability formula, and 500 days gives the value closest to 95%."
+    },
+    "it-2005-cs-65": {
+      "approach": "Cyclomatic complexity V(G) = number of binary decisions + 1. It can also be counted as E − N + 2 or as the number of regions.",
+      "concepts": [
+        "Cyclomatic complexity",
+        "Basis path testing",
+        "Control flow graph"
+      ],
+      "steps": [
+        {
+          "title": "Count predicates",
+          "body": "The flow chart has two decision diamonds: the loop test (D1) and the inner if (D2). So V(G) = 2 + 1 = 3."
+        },
+        {
+          "title": "Cross-check with E − N + 2",
+          "body": "Nodes: Start, Init, D1, D2, S1, S2, S3, Incr, Print, so $N = 9$.\n\nEdges: Start→Init, Init→D1, D1→D2, D1→Print, D2→S1, D2→S3, S1→S2, S2→Incr, S3→Incr, Incr→D1, so $E = 10$.\n\n$V = 10 - 9 + 2 = 3$."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "That would need four decisions."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That would need three decisions. Only two diamonds are present."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "This counts only one decision (it ignores the inner if or the loop)."
+        }
+      ],
+      "pitfalls": [
+        "Counting process boxes instead of decisions."
+      ],
+      "verification": "Regions: the loop region, the if/else region and the outer region give 3."
+    },
+    "it-2005-cs-66": {
+      "approach": "In transaction mapping (Pressman), the top-level transaction controller first calls the incoming (reception) path, which here is p1. It then calls the transaction center p2, which dispatches to one of the action paths p3, p4 or p5.",
+      "concepts": [
+        "Transaction flow",
+        "Transaction mapping",
+        "Structured design"
+      ],
+      "steps": [
+        {
+          "title": "Identify the parts",
+          "body": "Incoming flow: p1. Transaction center (dispatch): p2. Action paths: p3, p4, p5."
+        },
+        {
+          "title": "Map to modules",
+          "body": "A new controller Tc sits at the top. It invokes the reception part (p1) and then the dispatcher p2, and p2 invokes exactly one of p3, p4, p5. This is option C."
+        }
+      ],
+      "answer": {
+        "value": "Tc invokes p1, then p2; p2 invokes p3 or p4 or p5",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "No controlling module is introduced, and p1 should not call the dispatcher."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The transaction center does not call the reception path. Data flows from p1 into p2."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: this is the standard transaction-mapping structure."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "p2 should not call p1. The reception part comes before the dispatch."
+        }
+      ],
+      "pitfalls": [
+        "Confusing transaction mapping with transform mapping (input, transform, output controllers)."
+      ],
+      "verification": "This agrees with Pressman's transaction-mapping steps: a transaction controller over the incoming path and the dispatch branch."
+    },
+    "it-2005-cs-67": {
+      "approach": "Each update moves salaries upward, which can push a row into a higher slab. Run the highest slab first, so a row raised by a later script never meets a script that has not run yet.",
+      "concepts": [
+        "Transaction ordering",
+        "Update anomalies",
+        "Concurrency"
+      ],
+      "steps": [
+        {
+          "title": "Why ascending order fails",
+          "body": "A commission of 49,500 becomes $49{,}500 \\times 1.02 = 50{,}490$ in T1. T2 then raises it again by 4%, so it is enhanced twice."
+        },
+        {
+          "title": "Descending order works",
+          "body": "T3 first: rows above 100,000 grow but are never looked at again. T2 next: its rows may move above 100,000, but T3 has already run. T1 last: its rows may move above 50,000, but T2 has already run. Each row is enhanced exactly once."
+        }
+      ],
+      "answer": {
+        "value": "T3 followed by T2 followed by T1",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Rows raised by T1 (or T2) into the next slab are enhanced again."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "T1 running concurrently can raise a row that T2 or T3 then picks up again."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The same concurrency problem applies: a row T1 raises above 50,000 can be raised again by T2."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Assuming separate transactions are automatically isolated from slab migration. The problem is the order, not atomicity."
+      ],
+      "verification": "Values 49,500, 99,000 and 150,000 each get exactly one enhancement under order D."
+    },
+    "it-2005-cs-68": {
+      "approach": "Count the joined rows for the SQL query (bag semantics, so duplicates stay) and the distinct hostels for the relational-algebra projection (set semantics), then subtract.",
+      "concepts": [
+        "Natural join",
+        "Bag vs set semantics",
+        "Projection"
+      ],
+      "steps": [
+        {
+          "title": "Qualifying students",
+          "body": "Roll between 2000 and 3000 with marks ≥ 75 (none has exactly 75, so > 75 gives the same set): 2369 (h7), 2581 (h6), 2643 (h5), 2872 (h5), 2926 (h5), 2959 (h7)."
+        },
+        {
+          "title": "SQL rows (duplicates kept)",
+          "body": "Hobby rows: 2369 → 1, 2581 → 1, 2643 → 2 (chess, hockey), 2872 → 1, 2926 → 1, 2959 → 1. Total **7 rows**."
+        },
+        {
+          "title": "S' tuples (set semantics)",
+          "body": "$S'$ projects hostel from the same join, so its values are $\\{7, 6, 5\\}$, which is **3 tuples**."
+        },
+        {
+          "title": "Difference",
+          "body": "Number of SQL rows minus number of $S'$ tuples: $7 - 3 = 4$."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "6 would need S' to have only 1 tuple, but there are 3 hostels."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 7 SQL rows − 3 distinct hostels."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Getting 2 would need the SQL to drop duplicate rows, which it does not do without DISTINCT."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "0 assumes both use the same (bag or set) semantics."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that student 2643 has two hobbies.",
+        "Treating the SQL result as a set."
+      ],
+      "verification": "Per hostel: SQL rows are h5 × 4, h6 × 1, h7 × 2 = 7, and S' = {5, 6, 7}."
+    },
+    "it-2005-cs-69": {
+      "approach": "For a fixed supplier, the subquery returns that supplier's id once for every item it supplies that is stocked in Nagpur. NOT UNIQUE is true exactly when that list has a duplicate, which means at least two such items.",
+      "concepts": [
+        "Correlated subquery",
+        "UNIQUE predicate",
+        "SQL semantics"
+      ],
+      "steps": [
+        {
+          "title": "What the subquery returns",
+          "body": "For supplier s it returns one copy of s for each (item supplied by s) × (Nagpur inventory row of that item)."
+        },
+        {
+          "title": "Apply NOT UNIQUE",
+          "body": "UNIQUE is true for 0 or 1 rows. NOT UNIQUE needs at least 2 rows, so the supplier supplies two or more items kept at Nagpur."
+        }
+      ],
+      "answer": {
+        "value": "supply two or more items",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "An empty subquery result is unique, so NOT UNIQUE is false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A single row is unique, so these suppliers are excluded."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It wrongly includes suppliers with exactly one item."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Reading NOT UNIQUE as NOT EXISTS."
+      ],
+      "verification": "Supplier with items {i1, i2} both at Nagpur: the subquery gives (s, s), so it is not unique and the supplier is selected."
+    }
+  }
+}
