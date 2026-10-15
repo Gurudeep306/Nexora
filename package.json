@@ -44,6 +44,6 @@
     "node": ">=22.13.0 <25"
   },
   "optionalDependencies": {
-    "puppeteer": "^24.43.1"
+    "puppeteer": "^25.13.0"
   }
 }
