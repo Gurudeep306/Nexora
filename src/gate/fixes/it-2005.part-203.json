@@ -1,0 +1,21 @@
+{
+  "paper": "it-2005",
+  "fixes": [
+    {
+      "id": "it-2005-cs-81-2",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Recomputed: seek 3.5 ms + rotational wait 5.5 ms (11 sectors) + transfer 1 ms = 10 ms with the natural sector numbering; matches key B.",
+      "source": "independent solution"
+    },
+    {
+      "id": "it-2005-cs-81-2",
+      "field": "reviewNote",
+      "before": "Timing depends on sector-numbering convention; 10 ms (option B) follows from 1-based sectors and 0.5 MB per sector.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "independent solution"
+    }
+  ]
+}
