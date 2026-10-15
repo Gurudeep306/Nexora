@@ -1,0 +1,591 @@
+{
+  "paper": "cse-2005",
+  "fixes": [
+    {
+      "id": "cse-2005-cs-2",
+      "field": "subject",
+      "before": "pds",
+      "after": "legacy",
+      "reason": "ADT/data abstraction is a programming-language/software-design concept, not trees.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-2",
+      "field": "topic",
+      "before": "trees",
+      "after": "se",
+      "reason": "ADT/data abstraction is a programming-language/software-design concept, not trees.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-3",
+      "field": "subject",
+      "before": "ga",
+      "after": "legacy",
+      "reason": "Programming paradigms question; not general aptitude/quant.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-3",
+      "field": "topic",
+      "before": "quant",
+      "after": "se",
+      "reason": "Programming paradigms question; not general aptitude/quant.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-4",
+      "field": "subject",
+      "before": "pds",
+      "after": "legacy",
+      "reason": "Object-oriented language features; consistent with other OOP questions (legacy/se).",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-4",
+      "field": "topic",
+      "before": "trees",
+      "after": "se",
+      "reason": "Object-oriented language features; consistent with other OOP questions (legacy/se).",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Graph C has no minimum spanning tree (MST)"
+        },
+        {
+          "l": "B",
+          "t": "Graph G has a unique MST of cost n-1"
+        },
+        {
+          "l": "C",
+          "t": "Graph G has multiple distinct MSTs, each of cost n-1"
+        },
+        {
+          "l": "D",
+          "t": "Graph G has multiple spanning trees of different costs"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Graph C has no minimum spanning tree (MST)"
+        },
+        {
+          "l": "B",
+          "t": "Graph G has a unique MST of cost $n-1$"
+        },
+        {
+          "l": "C",
+          "t": "Graph G has multiple distinct MSTs, each of cost $n-1$"
+        },
+        {
+          "l": "D",
+          "t": "Graph G has multiple spanning trees of different costs"
+        }
+      ],
+      "reason": "KaTeX for n-1.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-6",
+      "field": "text",
+      "before": "An undirected graph G has n nodes. Its adjacency matrix is given by an n × n square matrix whose (i) diagonal elements are 0's, and (ii) non-diagonal elements are 1's. Which one of the following is TRUE?",
+      "after": "An undirected graph G has $n$ nodes. Its adjacency matrix is given by an $n \\times n$ square matrix whose (i) diagonal elements are 0's, and (ii) non-diagonal elements are 1's. Which one of the following is TRUE?",
+      "reason": "KaTeX for n and n × n.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-8",
+      "field": "text",
+      "before": "Let A, B and C be non-empty sets and let\n\nX = (A - B) - C and Y = (A - C) - (B - C)\n\nWhich one of the following is TRUE?",
+      "after": "Let $A$, $B$ and $C$ be non-empty sets and let\n\n$$X = (A - B) - C \\quad\\text{and}\\quad Y = (A - C) - (B - C)$$\n\nWhich one of the following is TRUE?",
+      "reason": "KaTeX for set expressions.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-9",
+      "field": "text",
+      "before": "The following is the Hasse diagram of the poset [{a, b, c, d, e}, ≤]\n\nThe poset is:",
+      "after": "The following is the Hasse diagram of the poset $[\\{a, b, c, d, e\\}, \\le]$\n\nThe poset is:",
+      "reason": "KaTeX for the poset.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-9",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Transcription verified against the diagram; answer B (M3 diamond, non-distributive) is certain.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-9",
+      "field": "reviewNote",
+      "before": "Printed poset set reads '{a, & c, ci, e}' (typo in the reprint); transcribed as {a, b, c, d, e} from the diagram.",
+      "after": null,
+      "reason": "Review note concerned only a print typo in the set, already resolved from the diagram.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-12",
+      "field": "text",
+      "before": "Let f(x) be the continuous probability density function of a random variable X. The probability that $a < X \\le b$, is:",
+      "after": "Let $f(x)$ be the continuous probability density function of a random variable $X$. The probability that $a < X \\le b$, is:",
+      "reason": "KaTeX for symbols.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-13",
+      "field": "text",
+      "before": "The set {1, 2, 4, 7, 8, 11, 13, 14} is a group under multiplication modulo 15. The inverses of 4 and 7 are respectively:",
+      "after": "The set $\\{1, 2, 4, 7, 8, 11, 13, 14\\}$ is a group under multiplication modulo 15. The inverses of 4 and 7 are respectively:",
+      "reason": "KaTeX for the set.",
+      "source": "GATE 2005 CS question paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2005-cs-40",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The scan OCR shows K for X (scan artefact); the question clearly defines X, transcription is correct and the key B is verified by truth table.",
+      "source": "GATE 2005 CS paper Q.40 + independent solution"
+    },
+    {
+      "id": "cse-2005-cs-40",
+      "field": "reviewNote",
+      "before": "The reprint prints 'Let K denote (P ∨ Q) → R' — typo for X; transcribed as X.",
+      "after": null,
+      "reason": "Transcription issue resolved; nothing left to review.",
+      "source": "GATE 2005 CS paper Q.40"
+    },
+    {
+      "id": "cse-2005-cs-43",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "OCR artefact & for g in options (a) and (d); transcription as g is correct and key B is proved (f must be onto, counter-example for g).",
+      "source": "GATE 2005 CS paper Q.43 + independent solution"
+    },
+    {
+      "id": "cse-2005-cs-43",
+      "field": "reviewNote",
+      "before": "Reprint prints '&' for g in options (a) and (d); transcribed as g.",
+      "after": null,
+      "reason": "Transcription issue resolved; nothing left to review.",
+      "source": "GATE 2005 CS paper Q.43"
+    },
+    {
+      "id": "cse-2005-cs-47",
+      "field": "text",
+      "before": "Which one of the following graphs is NOT planar?\n\nG1: G2: G3: G4:",
+      "after": "Which one of the following graphs is NOT planar? (Graphs $G_1$, $G_2$, $G_3$, $G_4$ are shown in the figures, in that order.)",
+      "reason": "Removed stray 'G1: G2: G3: G4:' label junk from the figure area",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-47",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "G1"
+        },
+        {
+          "l": "B",
+          "t": "G2"
+        },
+        {
+          "l": "C",
+          "t": "G3"
+        },
+        {
+          "l": "D",
+          "t": "G4"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$G_1$"
+        },
+        {
+          "l": "B",
+          "t": "$G_2$"
+        },
+        {
+          "l": "C",
+          "t": "$G_3$"
+        },
+        {
+          "l": "D",
+          "t": "$G_4$"
+        }
+      ],
+      "reason": "KaTeX subscripts for graph names",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-47",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2005/cs-47-1.png",
+          "alt": "Six vertices on a hexagon (top-left, top-right, right, bottom-right, bottom-left, left) with the six hexagon edges, plus an arc joining left and right vertices, and two crossing chords top-left–bottom-right and top-right–bottom-left; 3-regular graph isomorphic to K3,3.",
+          "svg": "cse-2005/cs-47-1.svg"
+        },
+        {
+          "f": "cse-2005/cs-47-2.png",
+          "alt": "Six vertices on a hexagon (top, upper-right, lower-right, bottom, lower-left, upper-left) with hexagon edges plus chords: upper-left–upper-right (horizontal), lower-left–lower-right (horizontal), top–bottom (vertical), top–lower-left, upper-right–bottom.",
+          "svg": "cse-2005/cs-47-2.svg"
+        },
+        {
+          "f": "cse-2005/cs-47-3.png",
+          "alt": "Five vertices as a pentagon (top, upper-right, lower-right, lower-left, upper-left) with pentagon edges, plus chords upper-left–upper-right (horizontal), upper-left–lower-right and upper-right–lower-left (crossing).",
+          "svg": "cse-2005/cs-47-3.svg"
+        },
+        {
+          "f": "cse-2005/cs-47-4.png",
+          "alt": "Five vertices as a pentagon with all pentagon edges and chords top–lower-left, top–lower-right, upper-left–lower-right, upper-right–lower-left (four of the five pentagram chords; upper-left–upper-right chord absent), i.e. K5 minus one edge.",
+          "svg": "cse-2005/cs-47-4.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2005/cs-47-1.png",
+          "alt": "G1: six vertices on a hexagon (top-left, top-right, right, bottom-right, bottom-left, left) with the six hexagon edges, an arc joining the left and right vertices, and two crossing chords top-left to bottom-right and top-right to bottom-left (3-regular, 9 edges).",
+          "svg": "cse-2005/cs-47-1.svg"
+        },
+        {
+          "f": "cse-2005/cs-47-2.png",
+          "alt": "G2: six vertices (top, upper-right, lower-right, bottom, lower-left, upper-left) with the six hexagon edges plus chords upper-left to upper-right, lower-left to lower-right, top to bottom, top to lower-left and upper-right to bottom (11 edges).",
+          "svg": "cse-2005/cs-47-2.svg"
+        },
+        {
+          "f": "cse-2005/cs-47-3.png",
+          "alt": "G3: five vertices as a pentagon (top, upper-right, lower-right, lower-left, upper-left) with the five pentagon edges plus chords upper-left to upper-right, upper-left to lower-right and upper-right to lower-left (8 edges).",
+          "svg": "cse-2005/cs-47-3.svg"
+        },
+        {
+          "f": "cse-2005/cs-47-4.png",
+          "alt": "G4: five vertices as a pentagon with the five pentagon edges plus chords top to lower-left, top to lower-right, upper-left to lower-right and upper-right to lower-left (9 edges; only the upper-left to upper-right chord is missing).",
+          "svg": "cse-2005/cs-47-4.svg"
+        }
+      ],
+      "reason": "Redrew all four graphs as clean SVGs (previous SVGs were placeholder junk); alt text names each graph",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-50",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "1 (illegible)"
+        },
+        {
+          "l": "B",
+          "t": "i (illegible)"
+        },
+        {
+          "l": "C",
+          "t": "$i+1$"
+        },
+        {
+          "l": "D",
+          "t": "$2i$"
+        },
+        {
+          "l": "E",
+          "t": "$2^i$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$1$ (illegible in source)"
+        },
+        {
+          "l": "B",
+          "t": "$i$ (illegible in source)"
+        },
+        {
+          "l": "C",
+          "t": "$i+1$"
+        },
+        {
+          "l": "D",
+          "t": "$2i$"
+        },
+        {
+          "l": "E",
+          "t": "$2^i$"
+        }
+      ],
+      "reason": "KaTeX formatting of options; labels kept as in this reprint",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-53",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2005/cs-53-1.png",
+          "alt": "DFA with five states: start state q0 (non-final) with self-loop on b; q0 --a--> q1; q1 --b--> q2; q2 --b--> q3 (final, double circle) with self-loop on b; q3 --a--> q1 (curved arc on top); q1 --a--> dead state and q2 --a--> dead state (bottom); dead state has self-loop on a,b. Transition labels are barely legible in this reprint.",
+          "svg": "cse-2005/cs-53-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2005/cs-53-1.png",
+          "alt": "DFA M with states q0 to q4: start state q0 (non-final) with a self-loop on b; q0 --a--> q1; q1 --b--> q2; q2 --b--> q3; q3 is final with a self-loop on b; q3 --a--> q1 (arc over the top); q1 --a--> q4 and q2 --a--> q4; q4 is a dead state with a self-loop on a, b. State names are added for reference.",
+          "svg": "cse-2005/cs-53-1.svg"
+        }
+      ],
+      "reason": "Redrew the DFA as SVG (previous SVG was placeholder junk) and named the states for reference",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-55",
+      "field": "topic",
+      "before": "pumping",
+      "after": "cfg",
+      "reason": "Question is about closure properties of CFLs (intersection/union), not the pumping lemma",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-61",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "fro is a valid identifier and fro(I=0, I<N, I++); is a lexically and syntactically valid call (commas separate arguments) to an implicitly declared function, so the object module is produced without compilation errors (only linking fails). The stored key C was solver-derived (answerSource 'solved'), not official.",
+      "source": "Independent analysis of the C lexical grammar and expression-statement syntax; no official 2005 key available"
+    },
+    {
+      "id": "cse-2005-cs-61",
+      "field": "reviewNote",
+      "before": "Disputed question: in C the line parses as a call to an undeclared function fro(), so strictly no compile error arises; key commonly given as (c).",
+      "after": "Disputed question. Previous (solver-derived) key was C, reading 'fro' as a mistyped 'for'. A C compiler sees a valid call to an implicitly declared function fro(), so neither lexical nor syntactic errors arise and the object module compiles (C89; link fails later). Key changed to A on that basis; verify against an authoritative source if one becomes available.",
+      "reason": "Independent analysis of C lexical/syntax rules",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-62",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2005/cs-62-1.png",
+          "alt": "Inputs A and X feed a 2-input AND gate; X is also inverted (NOT gate) and ANDed with the flip-flop's Q' output (fed back from the D flip-flop). The two AND outputs go to an OR gate whose output drives D of a positive-edge-triggered D flip-flop clocked by Clk; its Q output is Y.",
+          "svg": "cse-2005/cs-62-1.svg"
+        },
+        {
+          "f": "cse-2005/cs-62-2.png",
+          "alt": "Clock waveform with six periods numbered 0 to 5 (each starting at a rising edge); X is high during periods 0 and 1, low during period 2, high during periods 3 and 4, and low during period 5.",
+          "svg": "cse-2005/cs-62-2.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2005/cs-62-1.png",
+          "alt": "Circuit: inputs A and X feed a 2-input AND gate; X also passes through a NOT gate into a second AND gate whose other input is the flip-flop's Q' output fed back. Both AND outputs go to an OR gate whose output drives D of a positive-edge-triggered D flip-flop clocked by Clk; its Q output is Y. So D = A·X + X'·Q'.",
+          "svg": "cse-2005/cs-62-1.svg"
+        },
+        {
+          "f": "cse-2005/cs-62-2.png",
+          "alt": "Timing diagram: clock with rising edges marking the start of periods 1 to 5 (period 0 precedes the first rising edge). X is high during periods 0 and 1, low during period 2, high during periods 3 and 4, and low during period 5.",
+          "svg": "cse-2005/cs-62-2.svg"
+        }
+      ],
+      "reason": "Redrew circuit and timing diagram as SVGs (previous SVGs were placeholder junk)",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-63",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2005/cs-63-1.png",
+          "alt": "Mealy machine with two states: start state Q0 with self-loop labelled 0/0; transition Q0 to Q1 labelled 1/1; state Q1 with self-loops labelled 0/1 and 1/0.",
+          "svg": "cse-2005/cs-63-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2005/cs-63-1.png",
+          "alt": "Mealy machine with two states: start state Q0 with a self-loop labelled 0/0; transition Q0 to Q1 labelled 1/1; state Q1 with a self-loop labelled 0/1, 1/0.",
+          "svg": "cse-2005/cs-63-1.svg"
+        }
+      ],
+      "reason": "Redrew the Mealy machine as SVG (previous SVG was placeholder junk)",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-64",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2005/cs-64-1.png",
+          "alt": "Two positive-edge-triggered D flip-flops sharing clk. The first flip-flop's Q0' output is fed back to its own D0 input. An XOR gate takes Q0 and Q1' (fed back from the second flip-flop) and drives D1 of the second flip-flop, whose outputs are Q1 and Q1'.",
+          "svg": "cse-2005/cs-64-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2005/cs-64-1.png",
+          "alt": "Two positive-edge-triggered D flip-flops sharing clk. The first flip-flop's Q0' output is fed back to its own input D0. An XOR gate takes Q0 and Q1' (fed back from the second flip-flop) and drives D1 of the second flip-flop, whose outputs are Q1 and Q1'. So D0 = Q0', D1 = Q0 XOR Q1'.",
+          "svg": "cse-2005/cs-64-1.svg"
+        }
+      ],
+      "reason": "Redrew the circuit as SVG (previous SVG was placeholder junk)",
+      "source": "GATE 2005 CS question paper (GATE2005.pdf, pages 6-9)"
+    },
+    {
+      "id": "cse-2005-cs-71",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\forall i,\\ s_i < m$"
+        },
+        {
+          "l": "B",
+          "t": "$\\forall i,\\ s_i < m$"
+        },
+        {
+          "l": "C",
+          "t": "$\\sum_{i=1}^{n} s_i < (m+n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\sum_{i=1}^{n} s_i < (m*n)$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\forall i,\\ s_i < m$"
+        },
+        {
+          "l": "B",
+          "t": "$\\forall i,\\ s_i < n$"
+        },
+        {
+          "l": "C",
+          "t": "$\\sum_{i=1}^{n} s_i < (m+n)$"
+        },
+        {
+          "l": "D",
+          "t": "$\\sum_{i=1}^{n} s_i < (m*n)$"
+        }
+      ],
+      "reason": "Option (b) is misprinted in the reprint as a copy of (a); the original GATE 2005 Q71 option (b) is ∀i, s_i < n.",
+      "source": "GATE 2005 CS paper Q71 (original wording)"
+    },
+    {
+      "id": "cse-2005-cs-71",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Duplicate option corrected; answer C proven independently.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2005-cs-71",
+      "field": "reviewNote",
+      "before": "Options (a) and (b) are printed identically ('∀i, s_i < m') in the reprint; the original paper's (b) is ∀i, s_i < n.",
+      "after": null,
+      "reason": "Review note no longer applies after the option fix.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2005-cs-82a",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "(blank in the reprint)"
+        },
+        {
+          "l": "B",
+          "t": "the minimum weighted spanning tree of G"
+        },
+        {
+          "l": "C",
+          "t": "the weighted shortest path from s to t"
+        },
+        {
+          "l": "D",
+          "t": "each path from s to t"
+        },
+        {
+          "l": "E",
+          "t": "the weighted longest path from s to t"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "the minimum weighted spanning tree of G"
+        },
+        {
+          "l": "B",
+          "t": "the weighted shortest path from s to t"
+        },
+        {
+          "l": "C",
+          "t": "each path from s to t"
+        },
+        {
+          "l": "D",
+          "t": "the weighted longest path from s to t"
+        }
+      ],
+      "reason": "Reprint shows a blank (a) and shifts the four real options to (b)–(e); restored the original four options A–D.",
+      "source": "GATE 2005 CS paper Q82a (original paper labelling)"
+    },
+    {
+      "id": "cse-2005-cs-82a",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Relabelling only: the stored key B pointed at \"the minimum weighted spanning tree\" in the reprint labelling, which is option A after restoring the original options; proven by the cut property.",
+      "source": "GATE 2005 CS paper Q82a + cut property"
+    },
+    {
+      "id": "cse-2005-cs-82a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Option labelling restored; answer proven.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2005-cs-82a",
+      "field": "reviewNote",
+      "before": "Reprint prints five options with (a) blank and (b) 'the minimum weighted spanning tree of C' (G); answer letter B refers to this reprint's labelling (it is A in the original paper). Statement typos ('x and r', 'G = (V, S)', '[X, 19') normalised to s, t, G = (V, E), [X, Y].",
+      "after": null,
+      "reason": "Review note no longer applies after the option fix.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2005-cs-85b",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Question is flawed: no option is a fully consistent hidden-bit encoding.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2005-cs-85b",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Flawed question: with an implicit leading 1, 0.239×2^13 = 1.1101×2^10 encodes as 0 1001010 11010000 = 4AD0, which is not an option. Option D (4AE8) keeps the 3-bit-shifted field 11101000 as the mantissa and is the intended/commonly accepted answer; stored key D kept.",
+      "reason": "Explain the flaw.",
+      "source": "Independent solution"
+    }
+  ]
+}

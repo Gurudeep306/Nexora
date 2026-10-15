@@ -1,17 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="180" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">DB SCHEMATIC</text>
-  <g transform="translate(60, 60)">
-    <rect x="0" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">Entity</text>
-    <line x1="190" y1="24" x2="220" y2="24" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">attributes</text>
-    <rect x="0" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">M1</text>
-    <line x1="190" y1="89" x2="220" y2="89" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">key</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 170" fill="none" stroke="currentColor" stroke-width="1.5" font-family="Arial, Helvetica, sans-serif" font-size="15">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/>
+    </marker>
+  </defs>
+  <!-- attribute links -->
+  <line x1="60" y1="46" x2="90" y2="110"/>
+  <line x1="120" y1="46" x2="112" y2="110"/>
+  <line x1="180" y1="46" x2="140" y2="110"/>
+  <line x1="340" y1="46" x2="355" y2="110"/>
+  <line x1="410" y1="46" x2="385" y2="110"/>
+  <line x1="590" y1="46" x2="596" y2="110"/>
+  <line x1="650" y1="46" x2="625" y2="110"/>
+  <!-- attributes -->
+  <ellipse cx="60" cy="30" rx="26" ry="16"/>
+  <ellipse cx="120" cy="30" rx="26" ry="16"/>
+  <ellipse cx="180" cy="30" rx="26" ry="16"/>
+  <ellipse cx="340" cy="30" rx="26" ry="16"/>
+  <ellipse cx="410" cy="30" rx="26" ry="16"/>
+  <ellipse cx="590" cy="30" rx="26" ry="16"/>
+  <ellipse cx="650" cy="30" rx="26" ry="16"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="60" y="35">M1</text>
+    <text x="120" y="35">M2</text>
+    <text x="180" y="35">M3</text>
+    <text x="340" y="35">P1</text>
+    <text x="410" y="35">P2</text>
+    <text x="590" y="35">N1</text>
+    <text x="650" y="35">N2</text>
+  </g>
+  <line x1="49" y1="38" x2="71" y2="38" stroke-width="1.2"/>
+  <line x1="329" y1="38" x2="351" y2="38" stroke-width="1.2"/>
+  <line x1="579" y1="38" x2="601" y2="38" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <!-- entities -->
+  <rect x="60" y="110" width="100" height="34"/>
+  <rect x="320" y="110" width="90" height="34"/>
+  <rect x="570" y="110" width="70" height="34"/>
+  <rect x="574" y="114" width="62" height="26"/>
+  <!-- relationships -->
+  <polygon points="200,127 240,107 280,127 240,147"/>
+  <polygon points="445,127 490,105 535,127 490,149"/>
+  <polygon points="453,127 490,109 527,127 490,145"/>
+  <!-- connectors -->
+  <line x1="160" y1="127" x2="200" y2="127"/>
+  <line x1="280" y1="127" x2="320" y2="127" marker-end="url(#ah)"/>
+  <line x1="445" y1="127" x2="410" y2="127" marker-end="url(#ah)"/>
+  <line x1="535" y1="124" x2="570" y2="124"/>
+  <line x1="535" y1="130" x2="570" y2="130"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="110" y="132">M</text>
+    <text x="240" y="132">R1</text>
+    <text x="365" y="132">P</text>
+    <text x="490" y="132">R2</text>
+    <text x="605" y="132">N</text>
   </g>
 </svg>

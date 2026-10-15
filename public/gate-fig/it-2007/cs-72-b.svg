@@ -1,12 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GRAPH / NETWORK</text>
-  <!-- Edges -->
-  <line x1="280.0" y1="50.0" x2="280.0" y2="50.0" stroke="#475569" stroke-width="2" />
-  <rect x="270.0" y="42.0" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="280.0" y="54.0" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
-  <!-- Vertices -->
-  <circle cx="280.0" cy="50.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="280.0" y="55.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">A</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 270" fill="none">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/></marker></defs>
+<circle cx="70" cy="130" r="18" stroke="currentColor" stroke-width="2"/>
+<text x="70" y="135" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle">s<tspan font-size="10" dy="3">0</tspan></text>
+<line x1="18" y1="130" x2="51" y2="130" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<circle cx="170" cy="70" r="18" stroke="currentColor" stroke-width="2"/>
+<text x="170" y="75" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle">s<tspan font-size="10" dy="3">1</tspan></text>
+<circle cx="170" cy="190" r="18" stroke="currentColor" stroke-width="2"/>
+<text x="170" y="195" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle">s<tspan font-size="10" dy="3">2</tspan></text>
+<circle cx="290" cy="70" r="18" stroke="currentColor" stroke-width="2"/>
+<circle cx="290" cy="70" r="14" stroke="currentColor" stroke-width="1.6"/>
+<text x="290" y="75" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle">s<tspan font-size="10" dy="3">3</tspan></text>
+<circle cx="290" cy="190" r="18" stroke="currentColor" stroke-width="2"/>
+<circle cx="290" cy="190" r="14" stroke="currentColor" stroke-width="1.6"/>
+<text x="290" y="195" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="14" text-anchor="middle">s<tspan font-size="10" dy="3">4</tspan></text>
+<path d="M85.4,120.7 L154.6,79.3" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="113.8" y="94.7" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">a</text>
+<path d="M85.4,139.3 L154.6,180.7" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="113.8" y="175.3" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">b</text>
+<path d="M188.0,70.0 L272.0,70.0" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="230.0" y="63.0" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">a</text>
+<path d="M188.0,190.0 L272.0,190.0" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="230.0" y="207.0" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">b</text>
+<path d="M306.2,62.2 C345.1,23.6 345.1,116.4 306.2,77.8" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="358.0" y="75.0" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">a</text>
+<path d="M306.2,182.2 C345.1,143.6 345.1,236.4 306.2,197.8" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="358.0" y="195.0" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">b</text>
+<path d="M182.7,82.7 L277.3,177.3" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="212.1" y="100.1" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">b</text>
+<path d="M182.7,177.3 L277.3,82.7" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="212.1" y="169.9" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">a</text>
+<path d="M282.4,173.7 Q262.0,130.0 282.4,86.3" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="262.0" y="135.0" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">a</text>
+<path d="M297.6,86.3 Q318.0,130.0 297.6,173.7" stroke="currentColor" stroke-width="2" marker-end="url(#ah)"/>
+<text x="318.0" y="135.0" fill="currentColor" stroke="none" font-family="Arial, Helvetica, sans-serif" font-size="15" text-anchor="middle">b</text>
 </svg>

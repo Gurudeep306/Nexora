@@ -1,17 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="180" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LEGACY SCHEMATIC</text>
-  <g transform="translate(60, 60)">
-    <rect x="0" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">Nodes</text>
-    <line x1="190" y1="24" x2="220" y2="24" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="0" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="28" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">A..K</text>
-    <rect x="0" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="95" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">Arcs</text>
-    <line x1="190" y1="89" x2="220" y2="89" stroke="#34d399" stroke-width="2" />
-    <rect x="220" y="65" width="190" height="48" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.8" />
-    <text x="315" y="93" text-anchor="middle" fill="#e2e8f0" font-size="13" font-weight="bold" font-family="monospace">T1</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 410" role="img" aria-label="CPM chart: A to B T1:180; from B T2:14 to C, T3:1 to D, T4:7 to E and T9:40 to F; E to G T5:40, E to H T6:20; G to I T7:5; I to J T8:1; J to K T10:1; dashed zero-time dependencies C to I, D to G, H to I and F to J">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="13">
+<circle cx="35" cy="175" r="13"/>
+<text x="35" y="179.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">A</text>
+<circle cx="110" cy="175" r="13"/>
+<text x="110" y="179.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">B</text>
+<circle cx="220" cy="35" r="13"/>
+<text x="220" y="39.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">C</text>
+<circle cx="240" cy="105" r="13"/>
+<text x="240" y="109.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">D</text>
+<circle cx="200" cy="240" r="13"/>
+<text x="200" y="244.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">E</text>
+<circle cx="300" cy="180" r="13"/>
+<text x="300" y="184.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">G</text>
+<circle cx="300" cy="280" r="13"/>
+<text x="300" y="284.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">H</text>
+<circle cx="200" cy="390" r="13"/>
+<text x="200" y="394.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">F</text>
+<circle cx="420" cy="215" r="13"/>
+<text x="420" y="219.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">I</text>
+<circle cx="510" cy="215" r="13"/>
+<text x="510" y="219.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">J</text>
+<circle cx="595" cy="215" r="13"/>
+<text x="595" y="219.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">K</text>
+<polyline points="48,175 97,175" marker-end="url(#ah)"/>
+<text x="72" y="196" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T1: 180</text>
+<polyline points="110,162 110,35 207,35" marker-end="url(#ah)"/>
+<text x="160" y="27" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T2: 14</text>
+<polyline points="121,168 228,111" marker-end="url(#ah)"/>
+<text x="165" y="128" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T3: 1</text>
+<polyline points="119,185 190,230" marker-end="url(#ah)"/>
+<text x="172" y="200" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T4: 7</text>
+<polyline points="213,240 250,240 250,180 287,180" marker-end="url(#ah)"/>
+<text x="270" y="232" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T5: 40</text>
+<polyline points="200,253 200,280 287,280" marker-end="url(#ah)"/>
+<text x="245" y="302" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T6: 20</text>
+<polyline points="313,180 350,180 350,215 407,215" marker-end="url(#ah)"/>
+<text x="352" y="170" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T7: 5</text>
+<polyline points="433,215 497,215" marker-end="url(#ah)"/>
+<text x="465" y="206" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T8: 1</text>
+<polyline points="523,215 582,215" marker-end="url(#ah)"/>
+<text x="552" y="206" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T10: 1</text>
+<polyline points="114,188 196,377" marker-end="url(#ah)"/>
+<text x="128" y="300" fill="currentColor" stroke="none" font-size="11" text-anchor="middle" font-weight="bold">T9: 40</text>
+<polyline points="233,35 420,35 420,202" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+<polyline points="253,105 300,105 300,167" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+<polyline points="313,278 409,223" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+<polyline points="213,390 510,390 510,228" stroke-dasharray="4 3" marker-end="url(#ah)"/>
+</g>
 </svg>

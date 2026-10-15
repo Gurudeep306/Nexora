@@ -1,48 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GRAPH / NETWORK</text>
-  <!-- Edges -->
-  <line x1="280.0" y1="50.0" x2="336.5685424949238" y2="73.4314575050762" stroke="#475569" stroke-width="2" />
-  <rect x="298.2842712474619" y="53.7157287525381" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="308.2842712474619" y="65.7157287525381" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
-  <line x1="336.5685424949238" y1="73.4314575050762" x2="360.0" y2="130.0" stroke="#475569" stroke-width="2" />
-  <rect x="338.2842712474619" y="93.7157287525381" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="348.2842712474619" y="105.7157287525381" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">3</text>
-  <line x1="360.0" y1="130.0" x2="336.5685424949238" y2="186.5685424949238" stroke="#475569" stroke-width="2" />
-  <rect x="338.2842712474619" y="150.2842712474619" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="348.2842712474619" y="162.2842712474619" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">5</text>
-  <line x1="336.5685424949238" y1="186.5685424949238" x2="280.0" y2="210.0" stroke="#475569" stroke-width="2" />
-  <rect x="298.2842712474619" y="190.2842712474619" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="308.2842712474619" y="202.2842712474619" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">7</text>
-  <line x1="280.0" y1="210.0" x2="223.4314575050762" y2="186.5685424949238" stroke="#475569" stroke-width="2" />
-  <rect x="241.7157287525381" y="190.2842712474619" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="251.7157287525381" y="202.2842712474619" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">4</text>
-  <line x1="223.4314575050762" y1="186.5685424949238" x2="200.0" y2="130.0" stroke="#475569" stroke-width="2" />
-  <rect x="201.7157287525381" y="150.2842712474619" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="211.7157287525381" y="162.2842712474619" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
-  <line x1="200.0" y1="130.0" x2="223.4314575050762" y2="73.4314575050762" stroke="#475569" stroke-width="2" />
-  <rect x="201.7157287525381" y="93.7157287525381" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="211.7157287525381" y="105.7157287525381" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">3</text>
-  <line x1="223.4314575050762" y1="73.4314575050762" x2="280.0" y2="50.0" stroke="#475569" stroke-width="2" />
-  <rect x="241.7157287525381" y="53.7157287525381" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="251.7157287525381" y="65.7157287525381" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">5</text>
-  <line x1="280.0" y1="50.0" x2="360.0" y2="130.0" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4 2" />
-  <!-- Vertices -->
-  <circle cx="280.0" cy="50.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="280.0" y="55.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">a</text>
-  <circle cx="336.5685424949238" cy="73.4314575050762" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="336.5685424949238" y="78.4314575050762" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">b</text>
-  <circle cx="360.0" cy="130.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="360.0" y="135.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">c</text>
-  <circle cx="336.5685424949238" cy="186.5685424949238" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="336.5685424949238" y="191.5685424949238" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">d</text>
-  <circle cx="280.0" cy="210.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="280.0" y="215.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">e</text>
-  <circle cx="223.4314575050762" cy="186.5685424949238" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="223.4314575050762" y="191.5685424949238" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">f</text>
-  <circle cx="200.0" cy="130.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="200.0" y="135.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">g</text>
-  <circle cx="223.4314575050762" cy="73.4314575050762" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="223.4314575050762" y="78.4314575050762" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">h</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 260" role="img" aria-label="Undirected weighted graph on vertices a to i. Edges and weights: a-b 1, a-d 5, a-c 6, b-c 8, d-g 10, d-f 2, g-i 3, g-h 7, c-f 3, f-h 8, i-h 8, c-e 7, e-h 12.">
+<title>Undirected weighted graph on vertices a to i. Edges and weights: a-b 1, a-d 5, a-c 6, b-c 8, d-g 10, d-f 2, g-i 3, g-h 7, c-f 3, f-h 8, i-h 8, c-e 7, e-h 12.</title>
+<g fill="none" stroke="currentColor" stroke-width="2">
+<line x1="90.4" y1="62.8" x2="49.6" y2="117.2"/>
+<line x1="116.0" y1="50.0" x2="234.0" y2="50.0"/>
+<line x1="100.0" y1="66.0" x2="100.0" y2="204.0"/>
+<line x1="48.9" y1="143.3" x2="91.1" y2="206.7"/>
+<line x1="266.0" y1="50.0" x2="384.0" y2="50.0"/>
+<line x1="261.3" y1="61.3" x2="318.7" y2="118.7"/>
+<line x1="409.6" y1="62.8" x2="450.4" y2="117.2"/>
+<line x1="400.0" y1="66.0" x2="400.0" y2="204.0"/>
+<line x1="114.9" y1="214.2" x2="315.1" y2="135.8"/>
+<line x1="339.8" y1="142.6" x2="390.2" y2="207.4"/>
+<line x1="451.1" y1="143.3" x2="408.9" y2="206.7"/>
+<line x1="116.0" y1="220.0" x2="234.0" y2="220.0"/>
+<line x1="266.0" y1="220.0" x2="384.0" y2="220.0"/>
+</g>
+<circle cx="100" cy="50" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="100" y="50" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">a</text>
+<circle cx="250" cy="50" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="250" y="50" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">d</text>
+<circle cx="400" cy="50" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="400" y="50" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">g</text>
+<circle cx="40" cy="130" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="40" y="130" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">b</text>
+<circle cx="330" cy="130" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="330" y="130" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">f</text>
+<circle cx="460" cy="130" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="460" y="130" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">i</text>
+<circle cx="100" cy="220" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="100" y="220" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">c</text>
+<circle cx="250" cy="220" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="250" y="220" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">e</text>
+<circle cx="400" cy="220" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="400" y="220" text-anchor="middle" dominant-baseline="central" font-size="15" font-family="Arial, Helvetica, sans-serif" fill="currentColor">h</text>
+<text x="58" y="82" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">1</text>
+<text x="175" y="38" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">5</text>
+<text x="112" y="135" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">6</text>
+<text x="58" y="183" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">8</text>
+<text x="325" y="38" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">10</text>
+<text x="278" y="96" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">2</text>
+<text x="444" y="84" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">3</text>
+<text x="388" y="115" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">7</text>
+<text x="215" y="161" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">3</text>
+<text x="351" y="181" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">8</text>
+<text x="444" y="181" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">8</text>
+<text x="175" y="234" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">7</text>
+<text x="325" y="234" text-anchor="middle" dominant-baseline="central" font-size="15" font-weight="bold" font-family="Arial, Helvetica, sans-serif" fill="currentColor">12</text>
 </svg>
