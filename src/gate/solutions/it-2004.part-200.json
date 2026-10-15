@@ -1,0 +1,1139 @@
+{
+ "paper": "it-2004",
+ "version": 2,
+ "solutions": {
+  "it-2004-it-1": {
+   "approach": "Count children, not families: weight each family type by its number of children, then take the share of children living in two-child families.",
+   "concepts": [
+    "Weighted counting",
+    "Classical probability"
+   ],
+   "given": "| Family type | Share of families | Children per family |\n|---|---|---|\n| 3 children | 50% | 3 |\n| 2 children | 30% | 2 |\n| 1 child | 20% | 1 |",
+   "steps": [
+    {
+     "title": "Children in each family type",
+     "body": "Three-child families: $0.5N\\times 3 = 1.5N$.\n\nTwo-child families: $0.3N\\times 2 = 0.6N$.\n\nOne-child families: $0.2N\\times 1 = 0.2N$."
+    },
+    {
+     "title": "Total children",
+     "body": "$1.5N + 0.6N + 0.2N = 2.3N$."
+    },
+    {
+     "title": "Probability",
+     "body": "$$P = \\frac{0.6N}{2.3N} = \\frac{6}{23}$$"
+    }
+   ],
+   "answer": {
+    "value": "6/23",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "3/23 is half the right value; it uses 0.3 children per family instead of 0.3 × 2."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "0.6N children out of 2.3N in total gives 6/23."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "3/10 is the share of families with two children, not the share of children."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "3/5 has no basis in the counts; it does not use the children per family at all."
+    }
+   ],
+   "pitfalls": [
+    "A randomly picked child is not the same as a randomly picked family. Larger families contribute more children."
+   ],
+   "verification": "Take N = 10: 15 + 6 + 2 = 23 children, of whom 6 are in two-child families, so 6/23."
+  },
+  "it-2004-it-2": {
+   "approach": "Use inclusion–exclusion for three sets to count students in at least one course, then subtract from 200.",
+   "concepts": [
+    "Inclusion–exclusion principle"
+   ],
+   "steps": [
+    {
+     "title": "Union of the three courses",
+     "body": "$$|P\\cup D\\cup C| = 125 + 85 + 65 - 50 - 35 - 30 + 15$$\n$125 + 85 + 65 = 275$; $50 + 35 + 30 = 115$; $275 - 115 + 15 = 175$."
+    },
+    {
+     "title": "Students with none",
+     "body": "$200 - 175 = 25$."
+    }
+   ],
+   "answer": {
+    "value": "25",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "15 is the count taking all three courses, not none."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "20 does not come out of inclusion–exclusion with these numbers."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "200 − 175 = 25."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "35 would need 165 students in the union; inclusion–exclusion gives 175."
+    }
+   ],
+   "pitfalls": [
+    "The triple intersection is added back, not subtracted."
+   ],
+   "verification": "Regions: only P = 125−50−35+15 = 55, only D = 85−50−30+15 = 20, only C = 65−35−30+15 = 15, P∩D only = 35, P∩C only = 20, D∩C only = 15, all = 15; sum = 175."
+  },
+  "it-2004-it-3": {
+   "approach": "Write the statement as a double negation and push the inner negation through the quantifiers; ¬(p ∧ ¬q) is p → q.",
+   "concepts": [
+    "Quantifier negation",
+    "Implication equivalence"
+   ],
+   "steps": [
+    {
+     "title": "Double negation",
+     "body": "$$(\\exists x)(\\forall y)[(a\\wedge b)\\wedge\\neg c] \\equiv \\neg\\,\\neg(\\exists x)(\\forall y)[(a\\wedge b)\\wedge\\neg c]$$"
+    },
+    {
+     "title": "Push the inner ¬ inwards",
+     "body": "$\\neg\\exists x\\,\\forall y\\,\\varphi \\equiv \\forall x\\,\\exists y\\,\\neg\\varphi$, so the formula is $\\neg(\\forall x)(\\exists y)\\,\\neg[(a\\wedge b)\\wedge\\neg c]$."
+    },
+    {
+     "title": "Simplify the body",
+     "body": "$\\neg[(a\\wedge b)\\wedge\\neg c] \\equiv \\neg(a\\wedge b)\\vee c \\equiv (a\\wedge b)\\rightarrow c$.\n\nResult: $\\neg\\big[(\\forall x)(\\exists y)[(a\\wedge b)\\rightarrow c]\\big]$, which is option C."
+    }
+   ],
+   "answer": {
+    "value": "¬[(∀x)(∃y)[(a(x,y) ∧ b(x,y)) → c(x,y)]]",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "This is the negation of the given statement, but with ∨ in place of ∧, and the outer ¬ is missing."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Uses a ∨ b instead of a ∧ b. a ∨ b is weaker, so B is implied by the original but not equivalent to it."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Exactly the double-negation form derived above."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Gives ∃x∀y[(a ∨ b) ∧ ¬c], which is option B and not equivalent to the original."
+    }
+   ],
+   "pitfalls": [
+    "¬(p → q) is p ∧ ¬q. Do not change ∧ into ∨ inside the antecedent."
+   ],
+   "verification": "Expand C directly: ¬∀x∃y[(a∧b)→c] = ∃x∀y¬[¬(a∧b)∨c] = ∃x∀y[(a∧b)∧¬c], which is the given statement."
+  },
+  "it-2004-it-4": {
+   "approach": "List R₁ and R₂ explicitly. (x, z) is in R₁R₂ when some y has x R₁ y and y R₂ z.",
+   "concepts": [
+    "Relations",
+    "Composition of relations"
+   ],
+   "steps": [
+    {
+     "title": "R₁ (x + y divisible by 3)",
+     "body": "$1+2=3$, $1+8=9$, $3+6=9$, $5+4=9$, $7+2=9$, $7+8=15$.\n\n$R_1=\\{(1,2),(1,8),(3,6),(5,4),(7,2),(7,8)\\}$."
+    },
+    {
+     "title": "R₂ (x + y even, not divisible by 3)",
+     "body": "x is even, so y must be even: y ∈ {2, 4}.\n\n$2+2=4$ ✓, $2+4=6$ ✗; $4+2=6$ ✗, $4+4=8$ ✓; $6+2=8$ ✓, $6+4=10$ ✓; $8+2=10$ ✓, $8+4=12$ ✗.\n\n$R_2=\\{(2,2),(4,4),(6,2),(6,4),(8,2)\\}$."
+    },
+    {
+     "title": "Compose",
+     "body": "| x | via y | z |\n|---|---|---|\n| 1 | 2, 8 | 2 |\n| 3 | 6 | 2, 4 |\n| 5 | 4 | 4 |\n| 7 | 2, 8 | 2 |\n\n$R_1R_2=\\{(1,2),(3,2),(3,4),(5,4),(7,2)\\}$, which is option C."
+    }
+   ],
+   "answer": {
+    "value": "{(1,2), (3,2), (3,4), (5,4), (7,2)}",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Contains (1,4), (3,3) and (7,3). The odd z = 3 is impossible because R₂ needs an even sum with an even y."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Contains (1,3), (5,2) and (7,3). 5 reaches only y = 4, and 4 relates only to 4."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Matches the computed composition exactly."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Contains odd z values (1, 3), which cannot occur, and misses (1,2)."
+    }
+   ],
+   "pitfalls": [
+    "R₂ only produces even z, because y ∈ B is even and y + z must be even."
+   ],
+   "verification": "Every pair in C traced back: (1,2) via 2, (3,2) and (3,4) via 6, (5,4) via 4, (7,2) via 2."
+  },
+  "it-2004-it-5": {
+   "approach": "An acyclic undirected graph is a forest. A forest with n vertices and k components has n − k edges, which is largest (n − 1) when it is a single tree.",
+   "concepts": [
+    "Forest",
+    "Tree edge count"
+   ],
+   "steps": [
+    {
+     "title": "Edges of a forest",
+     "body": "A tree on $n_i$ vertices has $n_i-1$ edges, so a forest with $k$ trees has $\\sum(n_i-1)=n-k$ edges."
+    },
+    {
+     "title": "Maximise",
+     "body": "$k\\ge 1$, so the maximum is $n-1$ (a spanning tree). Adding one more edge to a tree always creates a cycle."
+    }
+   ],
+   "answer": {
+    "value": "n − 1",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "A spanning tree has n − 1 edges and is maximal acyclic."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "n edges on n vertices always contain a cycle."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "n + 1 edges contain at least two independent cycles."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "2n − 2 is the sum of degrees of a tree, not its edge count."
+    }
+   ],
+   "verification": "n = 3: the path a–b–c has 2 edges, and adding the third edge forms a triangle."
+  },
+  "it-2004-it-6": {
+   "approach": "With a unique solution guaranteed (det ≠ 0), substitute each option into the three equations. Only one satisfies all three.",
+   "concepts": [
+    "Linear systems",
+    "Substitution check"
+   ],
+   "steps": [
+    {
+     "title": "Unique solution",
+     "body": "$\\det = 1(9-8) - 2(3-8) + 3(2-6) = 1 + 10 - 12 = -1 \\ne 0$."
+    },
+    {
+     "title": "Test option C: (6, 6, −4)",
+     "body": "$6 + 12 - 12 = 6$ ✓\n\n$6 + 18 - 16 = 8$ ✓\n\n$12 + 12 - 12 = 12$ ✓"
+    },
+    {
+     "title": "Solve directly to confirm",
+     "body": "Row 2 − Row 1: $y + z = 2$. Row 3 − 2·Row 1: $-2y - 3z = 0$, so $y = -\\tfrac{3}{2}z$. Then $-\\tfrac{3}{2}z + z = 2$ gives $z=-4$ and $y=6$. Finally $x = 6 - 12 + 12 = 6$."
+    }
+   ],
+   "answer": {
+    "value": "x = 6, y = 6, z = −4",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Eq. 1: 6 + 6 + 6 = 18 ≠ 6."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Eq. 2: 12 + 9 − 16 = 5 ≠ 8."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Satisfies all three equations."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Eq. 2: 12 − 9 + 0 = 3 ≠ 8."
+    }
+   ],
+   "verification": "Elimination gives the same (6, 6, −4) as the substitution check."
+  },
+  "it-2004-it-7": {
+   "approach": "Find the option that cannot generate a short string such as \"a\". Every other option includes a*, b* and c* as sub-terms under a star, so it generates all of (a + b + c)*.",
+   "concepts": [
+    "Regular expression equivalence",
+    "Kleene star"
+   ],
+   "steps": [
+    {
+     "title": "Options that generate everything",
+     "body": "A: $(a^*+b^*+c^*)^*$ contains $a$, $b$, $c$ under a star, so it denotes all strings.\n\nB: $(a^*b^*c^*)^*$: each single letter is an instance of $a^*b^*c^*$, so it denotes all strings.\n\nD: $(a^*b^*+c^*)^*$: $a$, $b$ (from $a^*b^*$) and $c$ are all available, so it denotes all strings."
+    },
+    {
+     "title": "The odd one out",
+     "body": "C: $((ab)^*+c^*)^*$. Every piece is either $(ab)^k$ or $c^k$, so an $a$ is always followed directly by $b$. The string \"a\" (or \"b\", or \"ba\") cannot be generated, so C is NOT equivalent."
+    }
+   ],
+   "answer": {
+    "value": "((ab)* + c*)*",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Equivalent to (a+b+c)*, since a, b and c are each generated by one starred term."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Equivalent: any string splits into single letters, each matching a*b*c*."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Cannot generate \"a\" or \"b\" alone, so it is not equivalent."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Equivalent: a and b come from a*b*, and c from c*."
+    }
+   ],
+   "pitfalls": [
+    "(ab)* is not a*b*. It forces a and b to appear as adjacent \"ab\" pairs."
+   ],
+   "verification": "Counterexample: \"a\" ∈ (a+b+c)* but \"a\" ∉ ((ab)*+c*)*."
+  },
+  "it-2004-it-8": {
+   "approach": "Use the standard 4-NAND XOR: a shared NAND of A and B feeds two NANDs, and a final NAND combines them. Three gates are not enough.",
+   "concepts": [
+    "NAND universality",
+    "XOR realisation"
+   ],
+   "steps": [
+    {
+     "title": "Construction",
+     "body": "$G_1 = \\overline{AB}$, $G_2 = \\overline{A\\,G_1}$, $G_3 = \\overline{B\\,G_1}$, $Y = \\overline{G_2G_3}$.\n\n$Y = A\\overline{AB} + B\\overline{AB} = A\\overline{B} + \\overline{A}B = A\\oplus B$."
+    },
+    {
+     "title": "Minimality",
+     "body": "XOR is not unate, and no 3-NAND network of two inputs realises it (the known minimum for XOR in NANDs is 4)."
+    }
+   ],
+   "answer": {
+    "value": "4",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Three NAND gates cannot produce XOR."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "The classic 4-gate circuit above is minimal."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Five gates work (e.g. with explicit inverters), but five is not the minimum."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Not minimal."
+    }
+   ],
+   "pitfalls": [
+    "The 5-gate SOP version (two inverters + 3 NANDs) works but is not minimal. Sharing $\\overline{AB}$ saves a gate."
+   ],
+   "verification": "Truth table: AB = 00 → G1 = 1, G2 = 1, G3 = 1, Y = 0. 01 → G1 = 1, G2 = 1, G3 = 0, Y = 1. 10 → Y = 1 (by symmetry). 11 → G1 = 0, G2 = G3 = 1, Y = 0."
+  },
+  "it-2004-it-9": {
+   "approach": "Check each statement against standard facts. DPDAs accept only the deterministic CFLs, a proper subset of the CFLs that NPDAs accept.",
+   "concepts": [
+    "DPDA vs NPDA",
+    "Inherent ambiguity",
+    "Regular languages"
+   ],
+   "steps": [
+    {
+     "title": "True statements",
+     "body": "A: inherently ambiguous CFLs exist (e.g. $\\{a^ib^jc^k : i=j \\text{ or } j=k\\}$).\n\nB: an unambiguous grammar has exactly one parse tree, equivalently one leftmost derivation, per string.\n\nD: every finite language is regular, because it is a finite union of single strings."
+    },
+    {
+     "title": "The false one",
+     "body": "C: NPDAs accept all CFLs, but DPDAs cannot accept, e.g., $\\{ww^R\\}$. Their language classes differ, so C is FALSE."
+    }
+   ],
+   "answer": {
+    "value": "Both DPDA and NPDA accept the same set of languages — false",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True: inherently ambiguous context-free languages exist."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True: this is the definition of an unambiguous grammar."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "False: DCFL ⊊ CFL, so DPDAs are strictly weaker than NPDAs."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "True: finite languages are regular."
+    }
+   ],
+   "verification": "{ww^R} needs a guess for the middle of the string, so no DPDA accepts it, while an NPDA does."
+  },
+  "it-2004-it-10": {
+   "approach": "The ROM address is the two 8-bit operands together (16 bits), and the word is the product (at most 16 bits).",
+   "concepts": [
+    "ROM sizing",
+    "Truth-table lookup"
+   ],
+   "steps": [
+    {
+     "title": "Address lines",
+     "body": "$8 + 8 = 16$ input bits, so $2^{16} = 64\\text{K}$ words."
+    },
+    {
+     "title": "Word width",
+     "body": "Maximum product $255\\times255 = 65025 < 2^{16}$, so 16 output bits.\n\nSize: $64\\text{K}\\times16$ bits."
+    }
+   ],
+   "answer": {
+    "value": "64 K × 16 bits",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "32K words gives only 15 address bits, but 16 are needed."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "2^16 words × 16-bit product."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Too few words, and the word is wider than needed."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "32-bit words are twice the width needed for a 16-bit product."
+    }
+   ],
+   "verification": "n × n bit multiplier → 2^(2n) × 2n ROM; n = 8 gives 2^16 × 16."
+  },
+  "it-2004-it-11": {
+   "approach": "Characters are drawn only during the active part of the sweep (sweep time − retrace). Bit rate = bits per line ÷ active time.",
+   "concepts": [
+    "Video terminal timing",
+    "Bit rate"
+   ],
+   "given": "| Quantity | Value |\n|---|---|\n| Characters/line | 80 |\n| Bits/character | 8 |\n| Horizontal sweep | 100 µs |\n| Retrace | 20 µs |",
+   "steps": [
+    {
+     "title": "Bits per line",
+     "body": "$80 \\times 8 = 640$ bits."
+    },
+    {
+     "title": "Active time",
+     "body": "$100 - 20 = 80\\ \\mu\\text{s}$."
+    },
+    {
+     "title": "Bit rate",
+     "body": "$$\\frac{640}{80\\times10^{-6}} = 8\\times10^{6}\\ \\text{bps} = 8\\ \\text{Mbps}$$"
+    }
+   ],
+   "answer": {
+    "value": "8 Mbps",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "640 bits in 80 µs = 8 Mbps."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "6.4 Mbps uses the full 100 µs, wrongly including the retrace time."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Off by a factor of 16; no consistent calculation gives it."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "0.64 Mbps is 10× too small (640 bits per ms)."
+    }
+   ],
+   "pitfalls": [
+    "No data is sent during retrace, so exclude it.",
+    "The reprint's \"50 characters/line\" gives 5 Mbps (not an option); the original paper has 80."
+   ],
+   "verification": "1 bit every 80 µs / 640 = 0.125 µs, i.e. 8 MHz."
+  },
+  "it-2004-it-12": {
+   "approach": "Hierarchical access: an L1 miss goes to L2, and an L2 miss goes to memory. Weight each path's time by its probability.",
+   "concepts": [
+    "Multilevel cache",
+    "Average memory access time"
+   ],
+   "given": "| Level | Access time | Hit rate |\n|---|---|---|\n| L1 | 1 ns | 0.8 |\n| L2 | 10 ns | 0.9 |\n| Main memory | 500 ns | — |",
+   "steps": [
+    {
+     "title": "Model",
+     "body": "Search time within a cache is ignored, so each request costs only the access time of the level that serves it:\n$$T = h_1t_1 + (1-h_1)\\big[h_2t_2 + (1-h_2)t_m\\big]$$"
+    },
+    {
+     "title": "Substitute",
+     "body": "$h_2t_2 + (1-h_2)t_m = 0.9(10) + 0.1(500) = 9 + 50 = 59$ ns.\n\n$T = 0.8(1) + 0.2(59) = 0.8 + 11.8 = 12.6$ ns."
+    }
+   ],
+   "answer": {
+    "value": "12.6 ns",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "13.0 ns does not follow from any standard model with these figures."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "12.5 ns would need a different L2 contribution; it is not what the given values produce."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "0.8 + 0.2 × 59 = 12.6 ns."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "12.4 ns is a near-miss distractor; it does not follow from the given data."
+    }
+   ],
+   "pitfalls": [
+    "The reprint prints an L1 hit rate of 0.5, which gives 0.5 + 0.5 × 59 = 30 ns (no option). The original paper has 0.8."
+   ],
+   "verification": "Contributions: L1 0.8 ns, L2 0.2 × 0.9 × 10 = 1.8 ns, memory 0.2 × 0.1 × 500 = 10 ns; total 12.6 ns."
+  },
+  "it-2004-it-13": {
+   "approach": "Deleting node x itself means relinking its predecessor. In a singly linked list that needs a traversal from the head, which is O(n) in the worst case.",
+   "concepts": [
+    "Singly linked list",
+    "Deletion"
+   ],
+   "steps": [
+    {
+     "title": "What deletion needs",
+     "body": "To unlink x, set pred(x).next = x.next. Only the head pointer and Q (pointing to x) are known, so finding pred(x) means walking from the head: up to n − 1 steps."
+    },
+    {
+     "title": "About the O(1) trick",
+     "body": "Copying x.next's data into x and then deleting x.next runs in O(1), but it frees the successor node, not x. Any outside pointer to the successor becomes dangling, and it cannot work for the last node. The intended answer for deleting x itself is $O(n)$."
+    }
+   ],
+   "answer": {
+    "value": "O(n)",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Finding the predecessor needs a linear scan."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "No logarithmic structure exists in a linked list."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "No binary-search style access exists in a linked list."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Only possible with the copy-successor trick, which deletes a different node; this is the disputed alternative."
+    }
+   ],
+   "pitfalls": [
+    "The question is commonly debated; some keys give O(1) using the copy trick since x is not the last node."
+   ],
+   "verification": "Worst case: x is near the tail, so the scan visits about n nodes."
+  },
+  "it-2004-it-14": {
+   "approach": "Threads share the process's resources (address space, open files, IPC objects) but each needs its own execution context: registers, program counter and stack.",
+   "concepts": [
+    "Threads",
+    "Per-thread state"
+   ],
+   "steps": [
+    {
+     "title": "Shared",
+     "body": "Address space (code, data, heap), the file descriptor table and message queues all belong to the process."
+    },
+    {
+     "title": "Private",
+     "body": "Each thread has its own call stack (plus registers and PC), since threads execute independently."
+    }
+   ],
+   "answer": {
+    "value": "Stack",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Each thread has a private stack."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "All threads of a process share one address space."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Open files are per-process and shared by the threads."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "IPC objects such as message queues are per-process resources."
+    }
+   ],
+   "verification": "POSIX: pthread_create allocates a new stack per thread, and other resources are inherited from the process."
+  },
+  "it-2004-it-15": {
+   "approach": "The statement toggles x between 0 and 1. Test each option on both values.",
+   "concepts": [
+    "C expressions",
+    "Toggle"
+   ],
+   "steps": [
+    {
+     "title": "Required mapping",
+     "body": "$0 \\mapsto 1$ and $1 \\mapsto 0$."
+    },
+    {
+     "title": "Check $x = 1 - x$",
+     "body": "$x=0$: $1-0=1$ ✓. $x=1$: $1-1=0$ ✓."
+    }
+   ],
+   "answer": {
+    "value": "x = 1 - x;",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "1 + x maps 1 to 2."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "1 − x maps 0 to 1 and 1 to 0."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "x − 1 maps 0 to −1."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "1 % x divides by zero when x = 0 (undefined behaviour)."
+    }
+   ],
+   "shortcut": "x ^ 1 or !x would also work.",
+   "verification": "Both input values checked."
+  },
+  "it-2004-it-16": {
+   "approach": "Renaming means y ends up with x's contents and x no longer exists. In Unix this is `mv x y`, or copy then remove: `cp x y; rm x`.",
+   "concepts": [
+    "Unix mv / cp / rm"
+   ],
+   "steps": [
+    {
+     "title": "Each sequence",
+     "body": "I: `mv y x` renames y to x, the wrong direction.\n\nII: `mv x y` renames x to y ✓.\n\nIII: `cp y x; rm x` copies y onto x and then deletes x, so nothing is renamed.\n\nIV: `cp x y; rm x` gives y the contents of x and removes x ✓."
+    },
+    {
+     "title": "Match",
+     "body": "II or IV, which is option B."
+    }
+   ],
+   "answer": {
+    "value": "(II) or (IV)",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "III copies y to x and deletes x, so y is never created from x."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Both II and IV rename x to y."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "I and III work in the wrong direction."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "IV also achieves the rename (contents-wise)."
+    }
+   ],
+   "pitfalls": [
+    "Argument order is source then destination: `mv src dst`, `cp src dst`. The commas in the question are misprints of spaces."
+   ],
+   "verification": "After II or IV, `ls` shows y with x's data and no x."
+  },
+  "it-2004-it-17": {
+   "approach": "COCOMO takes estimated size (KLOC) as input and outputs effort (person-months) and development time.",
+   "concepts": [
+    "COCOMO"
+   ],
+   "steps": [
+    {
+     "title": "Model",
+     "body": "$E = a\\,(\\text{KLOC})^b$ person-months, and $D = c\\,E^d$ months."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Effort and duration are estimated from size, which is option A."
+    }
+   ],
+   "answer": {
+    "value": "effort and duration based on the size of the software",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Size → effort → duration."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Size is the input, not the output."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Duration is an output, not the basis."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Cost is not the input; size is."
+    }
+   ],
+   "verification": "Boehm's basic COCOMO equations take KLOC as their only input."
+  },
+  "it-2004-it-18": {
+   "approach": "In UML, use-case diagrams capture functional requirements: actors and the services they use.",
+   "concepts": [
+    "UML",
+    "Use case diagram"
+   ],
+   "steps": [
+    {
+     "title": "Purpose",
+     "body": "Use-case diagrams show actors and use cases, i.e. what the system must do for its users."
+    },
+    {
+     "title": "Others",
+     "body": "ER and DFD are not UML diagrams, and a deployment diagram models hardware nodes."
+    }
+   ],
+   "answer": {
+    "value": "Use Case Diagram",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "ER diagrams model data and are not part of UML."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Deployment/development diagrams describe the physical architecture, not user requirements."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "DFDs come from structured analysis, not UML."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Use-case diagrams represent user requirements."
+    }
+   ],
+   "verification": "Standard UML requirements modelling starts with use cases."
+  },
+  "it-2004-it-19": {
+   "approach": "The SEI CMM Level 5 (Optimizing) key process areas are Defect Prevention, Technology Change Management and Process Change Management.",
+   "concepts": [
+    "SEI CMM",
+    "Key process areas"
+   ],
+   "steps": [
+    {
+     "title": "Level 5 KPAs",
+     "body": "Defect Prevention, Technology Change Management and Process Change Management."
+    },
+    {
+     "title": "Missing one",
+     "body": "The question already lists the other two, so the answer is Defect Prevention."
+    }
+   ],
+   "answer": {
+    "value": "Defect Prevention",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Defect detection is not a separate Level 5 KPA; it is part of earlier peer reviews and QA."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Defect Prevention is the third Level 5 KPA."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Not a CMM KPA."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Not a CMM KPA."
+    }
+   ],
+   "verification": "CMM v1.1 lists exactly these three KPAs at Level 5."
+  },
+  "it-2004-it-20": {
+   "approach": "Software configuration management controls versions and changes of configuration items. Schedule tracking and staffing are project-management tasks.",
+   "concepts": [
+    "Software configuration management",
+    "Version control"
+   ],
+   "steps": [
+    {
+     "title": "What SCM does",
+     "body": "Identification, version control, change control, status accounting and audit of configuration items."
+    },
+    {
+     "title": "Match",
+     "body": "Maintaining different versions of configurable items, which is option B. A and C are project management, so D is wrong."
+    }
+   ],
+   "answer": {
+    "value": "Maintaining different versions of the configurable items",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Milestone and schedule tracking is project management."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Version maintenance is the core SCM function."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Manpower allocation is project management."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A and C are not SCM functions."
+    }
+   ],
+   "verification": "Tools such as Git and SVN are SCM tools; they track versions, not schedules."
+  },
+  "it-2004-it-21": {
+   "approach": "Finer lock granularity lets more transactions hold non-conflicting locks at once. Row locks are the finest of the three options.",
+   "concepts": [
+    "Lock granularity",
+    "Concurrency"
+   ],
+   "steps": [
+    {
+     "title": "Granularity order",
+     "body": "Table ⊃ page ⊃ row. A coarse lock blocks transactions that touch unrelated rows in the same page or table."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Row-level locking gives the highest concurrency, at the cost of more lock overhead."
+    }
+   ],
+   "answer": {
+    "value": "Row",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A page lock blocks the other rows on that page."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "A table lock blocks the whole table, giving the least concurrency."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Finest granularity, most concurrency."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "The granularities differ, so the concurrency differs."
+    }
+   ],
+   "verification": "Two transactions updating different rows of the same page can both proceed only with row locks."
+  },
+  "it-2004-it-22": {
+   "approach": "In packet switching, packets queue at routers, so delay varies (jitter). A circuit has fixed reserved capacity and roughly constant delay. So B is false.",
+   "concepts": [
+    "Packet vs circuit switching"
+   ],
+   "steps": [
+    {
+     "title": "True properties",
+     "body": "Statistical multiplexing makes better use of bandwidth (A). Per-packet header processing and routing are needed (C). Packets can take different paths and be reordered (D)."
+    },
+    {
+     "title": "False one",
+     "body": "Queueing delays vary from packet to packet, so packet switching has more delay variation, not less. B is FALSE."
+    }
+   ],
+   "answer": {
+    "value": "Packet switching results in less variation in delay — false",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True: idle reserved capacity is avoided."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "False: packet switching has more jitter."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "True: each packet is processed (routed) separately."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "True: datagrams can arrive out of order."
+    }
+   ],
+   "verification": "This is why VoIP over packet networks needs jitter buffers."
+  },
+  "it-2004-it-23": {
+   "approach": "TCP is best-effort in throughput: it guarantees reliable, ordered delivery but no minimum rate, because congestion control can cut the rate arbitrarily low.",
+   "concepts": [
+    "TCP services",
+    "Congestion control"
+   ],
+   "steps": [
+    {
+     "title": "True statements",
+     "body": "In-order delivery (B), shrinking the window on congestion (C) and retransmission of lost segments (D) are all TCP features."
+    },
+    {
+     "title": "False one",
+     "body": "TCP provides no bandwidth or rate guarantee, so A is FALSE."
+    }
+   ],
+   "answer": {
+    "value": "TCP guarantees a minimum communication rate — false",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "False: TCP gives no throughput or QoS guarantee."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True: sequence numbers ensure in-order delivery."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "True: the congestion window is reduced on loss."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "True: lost segments are retransmitted."
+    }
+   ],
+   "verification": "Under heavy congestion TCP throughput can approach zero, so no minimum rate is guaranteed."
+  }
+ }
+}
