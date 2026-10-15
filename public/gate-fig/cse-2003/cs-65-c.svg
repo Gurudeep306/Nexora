@@ -1,11 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 160" width="100%" height="100%">
-  <rect width="100%" height="100%" fill="#0b1329" rx="8"/>
-  <rect x="130" y="15" width="90" height="30" fill="#1e293b" stroke="#ef4444" stroke-width="1.5" rx="4"/>
-  <text x="175" y="35" fill="#f87171" font-family="monospace" font-size="12" font-weight="bold" text-anchor="middle">[ L | U ]</text>
-  <line x1="150" y1="45" x2="90" y2="90" stroke="#64748b" stroke-width="1.5"/>
-  <line x1="200" y1="45" x2="260" y2="90" stroke="#64748b" stroke-width="1.5"/>
-  <rect x="40" y="90" width="100" height="28" fill="#1e293b" stroke="#64748b" stroke-width="1.5" rx="4"/>
-  <text x="90" y="108" fill="#cbd5e1" font-family="monospace" font-size="11" text-anchor="middle">[ B | H ]</text>
-  <rect x="210" y="90" width="100" height="28" fill="#1e293b" stroke="#64748b" stroke-width="1.5" rx="4"/>
-  <text x="260" y="108" fill="#cbd5e1" font-family="monospace" font-size="11" text-anchor="middle">[ P | T ]</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 130" fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="14">
+<rect x="160.0" y="10" width="80" height="30" rx="15"/>
+<text x="178.0" y="30.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">I</text>
+<text x="200.0" y="30.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">P</text>
+<text x="222.0" y="30.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">U</text>
+<rect x="10.0" y="90" width="80" height="30" rx="15"/>
+<text x="28.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">B</text>
+<text x="50.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">G</text>
+<text x="72.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">H</text>
+<path d="M200,40 L50,90"/>
+<rect x="121.0" y="90" width="58" height="30" rx="15"/>
+<text x="139.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">L</text>
+<text x="161.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">N</text>
+<path d="M200,40 L150,90"/>
+<rect x="221.0" y="90" width="58" height="30" rx="15"/>
+<text x="239.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">Q</text>
+<text x="261.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">T</text>
+<path d="M200,40 L250,90"/>
+<rect x="310.0" y="90" width="80" height="30" rx="15"/>
+<text x="328.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">V</text>
+<text x="350.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">X</text>
+<text x="372.0" y="110.0" text-anchor="middle" fill="currentColor" stroke="none" font-size="15">Z</text>
+<path d="M200,40 L350,90"/>
 </svg>
