@@ -1,4 +1,4 @@
-/* ========== The Nexora AI agent ==========
+/* ========== The NexoraGuru AI agent ==========
    One server-side agent, powered only by Groq, behind every AI feature.
 
    runChat()  — streaming tutor/assistant chat with tools, per-user history.

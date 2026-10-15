@@ -164,7 +164,7 @@ export function ContestFormModal({ open, me, problems, onClose, onCreated }: Pro
             <Input type="text" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="rift2026" />
           </Field>
           <Field label="Org tag" hint="Optional">
-            <Input value={orgTag} onChange={(e) => setOrgTag(e.target.value)} placeholder="NEXORA" maxLength={20} />
+            <Input value={orgTag} onChange={(e) => setOrgTag(e.target.value)} placeholder="NEXORAGURU" maxLength={20} />
           </Field>
         </div>
 

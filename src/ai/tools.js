@@ -93,13 +93,13 @@ const DEFINITIONS = [
   ),
   fn(
     "get_learn_content",
-    "A Nexora Learn course coding problem by slug: title, topic, difficulty and statement (no solutions).",
+    "A NexoraGuru Learn course coding problem by slug: title, topic, difficulty and statement (no solutions).",
     { slug: { type: "string" } },
     ["slug"],
   ),
   fn(
     "suggest_navigation",
-    "Offer the student a button that opens a Nexora page, e.g. /solve/123, /learn/dsa/arrays, /gate, /gate/practice?subject=os, /gate/tests?focus=mistakes, /gate/review, /analytics. Only real Nexora paths.",
+    "Offer the student a button that opens a NexoraGuru page, e.g. /solve/123, /learn/dsa/arrays, /gate, /gate/practice?subject=os, /gate/tests?focus=mistakes, /gate/review, /analytics. Only real NexoraGuru paths.",
     { path: { type: "string" }, label: { type: "string", description: "short button text" } },
     ["path", "label"],
   ),
@@ -151,7 +151,7 @@ const HANDLERS = {
   },
   suggest_navigation: (a) => {
     const path = validNavPath(a.path);
-    if (!path) return { error: `"${String(a.path).slice(0, 80)}" is not a Nexora page; do not suggest it.` };
+    if (!path) return { error: `"${String(a.path).slice(0, 80)}" is not a NexoraGuru page; do not suggest it.` };
     return { ok: true, action: { type: "navigate", path, label: String(a.label || "Open").slice(0, 60) } };
   },
 };

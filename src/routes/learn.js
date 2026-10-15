@@ -5,7 +5,7 @@ const path = require('path');
 const { me } = require('../context');
 
 /*
- * Nexora Learn — the coding questions of the course and each learner's
+ * NexoraGuru Learn — the coding questions of the course and each learner's
  * progress through lessons and the question bank.
  *
 

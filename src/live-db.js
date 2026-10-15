@@ -1,5 +1,5 @@
 /**
- * Nexora LiveClass Database Schema
+ * NexoraGuru LiveClass Database Schema
  * Creates tables for live streaming and recording system
  */
 

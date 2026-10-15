@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { cn } from '@/lib/utils'
+import { assetUrl } from '@/lib/api'
 import { avatarDataUrl, parseAvatar } from '@/lib/avatar'
 
 const SIZES = {
@@ -40,7 +41,7 @@ export function Avatar({
   // `avatar` column stores preset keys ("coder", "bolt", …); only real URLs render as uploaded images.
   // If an uploaded photo fails to load (deleted file, offline CDN) fall back to the generated one.
   const [failed, setFailed] = useState<string | null>(null)
-  const imgSrc = src && /^(https?:|data:|\/)/.test(src) && failed !== src ? src : null
+  const imgSrc = src && /^(https?:|data:|\/)/.test(src) && failed !== src ? assetUrl(src) : null
   const key = seed || name || '?'
   const generated = useMemo(
     () => (imgSrc ? null : avatarDataUrl(key, parseAvatar(avatar, key))),
@@ -53,7 +54,7 @@ export function Avatar({
         <img
           src={imgSrc}
           alt={name ?? 'avatar'}
-          onError={() => setFailed(imgSrc)}
+          onError={() => setFailed(src ?? null)}
           className={cn(
             SIZES[size],
             'rounded-full object-cover border border-border',

@@ -24,7 +24,7 @@ interface Props {
   importedSampleCount: number
   /** Workshop problems have no decomposition notes or translation */
   custom?: boolean
-  /** Nexora Learn problems: the written solution, shown in its own tab. */
+  /** NexoraGuru Learn problems: the written solution, shown in its own tab. */
   learnSolution?: { slug: string; editorial: string | null; solutions: Partial<Record<Lang, string>> }
 }
 
