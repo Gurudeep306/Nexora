@@ -1,0 +1,2819 @@
+{
+  "paper": "cse-1992",
+  "version": 2,
+  "solutions": {
+    "cse-1992-a-1-i": {
+      "approach": "Read the entered-variable map cell by cell to get the canonical expression in $A,B,C$, then merge minterms that differ in one variable.",
+      "concepts": [
+        "Entered-variable K-map",
+        "Minimal SOP"
+      ],
+      "given": "| $B\\backslash C$ | 0 | 1 |\n|---|---|---|\n| 0 | 1 | 0 |\n| 1 | $\\overline{A}$ | $A$ |",
+      "steps": [
+        {
+          "title": "Read each cell",
+          "body": "Cell $(B,C)=(0,0)$ is 1 for any $A$: term $\\overline{B}\\,\\overline{C}$. Cell $(1,0)$ holds $\\overline{A}$: term $\\overline{A}B\\overline{C}$. Cell $(1,1)$ holds $A$: term $ABC$. Cell $(0,1)$ is 0.\n\n$$f=\\overline{B}\\,\\overline{C}+\\overline{A}B\\overline{C}+ABC$$\nIn minterms of $(A,B,C)$: $\\overline{B}\\,\\overline{C}=m_0+m_4$, $\\overline{A}B\\overline{C}=m_2$, $ABC=m_7$, so $f=\\sum m(0,2,4,7)$."
+        },
+        {
+          "title": "Merge adjacent minterms",
+          "body": "$m_0+m_4=\\overline{B}\\,\\overline{C}$ and $m_0+m_2=\\overline{A}\\,\\overline{C}$ (pair $000,010$). $m_7=111$ has no neighbour among $\\{011,101,110\\}$ in $f$, so it stays $ABC$."
+        },
+        {
+          "title": "Minimal SOP",
+          "body": "$$f=\\overline{B}\\,\\overline{C}+\\overline{A}\\,\\overline{C}+ABC$$\n(7 literals; the unmerged form $\\overline{B}\\,\\overline{C}+\\overline{A}B\\overline{C}+ABC$ is equivalent but uses 8.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C} + ABC$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Treating the $\\overline{A}$ and $A$ cells as don't-cares or as 1s.",
+        "Missing that $m_2$ can pair with $m_0$ to drop a literal."
+      ],
+      "verification": "Truth table of the answer gives 1 exactly at $ABC=000,010,100,111$, i.e. $\\sum m(0,2,4,7)$, matching the map."
+    },
+    "cse-1992-a-1-ii": {
+      "approach": "Count Hamming check bits for single-error correction on 4 data bits, then add the overall parity bit that raises the minimum distance to 4, since detecting $t$ errors needs $d_{min}\\ge t+1$.",
+      "concepts": [
+        "Hamming code",
+        "Minimum distance",
+        "SEC-DED"
+      ],
+      "steps": [
+        {
+          "title": "Bits for 1-bit correction",
+          "body": "Need $2^p\\ge m+p+1$ with $m=4$: $p=2$ gives $4\\ge7$ (no), $p=3$ gives $8\\ge8$ (yes). So Hamming(7,4) has 3 check bits and $d_{min}=3$."
+        },
+        {
+          "title": "Raise distance for 3-bit detection",
+          "body": "Detecting $t$ errors requires $d_{min}\\ge t+1$, so 3-bit detection needs $d_{min}=4$. Adding one overall parity bit to Hamming(7,4) gives the extended (8,4) code with $d_{min}=4$.\n\nExtra parity bits $=3+1=4$; minimum distance $=4$."
+        },
+        {
+          "title": "Note on the wording",
+          "body": "A distance-4 code can correct 1 error **or** detect 3 errors (or correct 1 and detect 2 at once). Correcting 1 and detecting 3 simultaneously would need $d_{min}\\ge 1+3+1=5$; the intended answer is the standard extended Hamming code."
+        }
+      ],
+      "answer": {
+        "value": "4 parity bits; minimum distance 4",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Stopping at 3 check bits, which only gives $d_{min}=3$ (detects 2).",
+        "Using $d\\ge 2t+1$ (the correction bound) for detection."
+      ],
+      "verification": "Extended Hamming (8,4): every nonzero codeword has weight 4 or 8, so $d_{min}=4\\ge3+1$."
+    },
+    "cse-1992-a-1-iii": {
+      "approach": "A minimum clock frequency exists only when the chip stores state dynamically; stored charge must be refreshed by clocking before it leaks away.",
+      "concepts": [
+        "Dynamic MOS logic",
+        "Charge leakage"
+      ],
+      "steps": [
+        {
+          "title": "Where state is kept",
+          "body": "Many microprocessors (e.g. NMOS designs like the 8085) use dynamic circuits: internal registers and latches hold bits as charge on tiny gate/node capacitances instead of in static flip-flops."
+        },
+        {
+          "title": "Why a lower limit",
+          "body": "That charge leaks through junctions in a few milliseconds or less. The clock periodically re-drives (refreshes) these nodes; if the clock is slower than the specified minimum, charge decays between edges and stored bits are lost."
+        }
+      ],
+      "answer": {
+        "value": "they use dynamic (MOS) circuits that store information as charge on capacitances, which leaks away if the clock is too slow",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Confusing this with the upper limit, which is set by propagation delays."
+      ],
+      "verification": "Fully static CMOS designs (e.g. 80C85, many microcontrollers) are specified down to DC clock, consistent with the reason."
+    },
+    "cse-1992-a-1-iv": {
+      "approach": "Prefetching is a simple two-stage pipeline: the bus fetches upcoming instructions while the CPU executes the current one.",
+      "concepts": [
+        "Instruction prefetch",
+        "Fetch-execute overlap"
+      ],
+      "steps": [
+        {
+          "title": "Without prefetch",
+          "body": "Each instruction is fetched from (slow) memory and only then executed, so the CPU idles during every fetch."
+        },
+        {
+          "title": "With a prefetch queue",
+          "body": "While the execution unit works on the current instruction, the bus unit fills the buffer with the next instructions (e.g. the 8086 6-byte queue). The next instruction is usually already on-chip, so fetch time is hidden behind execution time."
+        }
+      ],
+      "answer": {
+        "value": "fetching of the next instructions is overlapped with the execution of the current instruction (fetch–execute pipelining), so the CPU need not wait for memory",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "A taken branch flushes the buffer, so the gain is not perfect."
+      ],
+      "verification": "Matches the BIU/EU split of the 8086, the classic example of instruction prefetch."
+    },
+    "cse-1992-a-1-ix": {
+      "approach": "With edges already sorted, Kruskal is just $m$ union-find operations; with union by rank and path compression this is near-linear.",
+      "concepts": [
+        "Kruskal's algorithm",
+        "Union-find"
+      ],
+      "steps": [
+        {
+          "title": "Remaining work",
+          "body": "Sorting ($O(m\\log m)$) is skipped. For each of the $m$ edges do two FINDs and at most one UNION ($n-1$ unions in total)."
+        },
+        {
+          "title": "Cost",
+          "body": "With union by rank and path compression, $O(m)$ operations on $n$ elements cost $O(m\\,\\alpha(m,n))$, where $\\alpha$ is the inverse Ackermann function ($\\le4$ in practice). So the time is $O(m\\,\\alpha(m,n))$, effectively $O(m)$."
+        }
+      ],
+      "answer": {
+        "value": "$O(m\\,\\alpha(m,n))$, i.e. practically $O(m)$ (union–find with path compression)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Quoting $O(m\\log m)$, which includes the sorting the question removes.",
+        "With union by rank only (no path compression) it is $O(m\\log n)$."
+      ],
+      "verification": "Tarjan's bound for $m$ union-find operations is $\\Theta(m\\,\\alpha(m,n))$."
+    },
+    "cse-1992-a-1-v": {
+      "approach": "Handshaking makes every transfer acknowledged: the sender does not move on until the receiver confirms it took the data.",
+      "concepts": [
+        "Handshake protocol",
+        "Asynchronous data transfer"
+      ],
+      "steps": [
+        {
+          "title": "Sequence",
+          "body": "Transmitter places data and raises *data valid* (strobe). Receiver latches it and raises *data accepted* (acknowledge). Transmitter removes data/strobe; receiver drops acknowledge. Only then is the next item sent."
+        },
+        {
+          "title": "Why reliable",
+          "body": "Because each item gets an explicit acknowledgement, the sender never overwrites unread data and adapts to the speed of the receiver."
+        }
+      ],
+      "answer": {
+        "value": "the receiver sends back an acknowledgement, and the transmitter waits for it before sending the next item",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Strobe-only (one-way) control gives no confirmation, which is the problem handshaking solves."
+      ],
+      "verification": "Standard two-wire (request/acknowledge) handshake as in parallel I/O interfaces."
+    },
+    "cse-1992-a-1-vi": {
+      "approach": "Expanding opcodes: unused opcode patterns at each level are extended with the next address field. Count leftover patterns level by level.",
+      "concepts": [
+        "Expanding opcode",
+        "Instruction format"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Word | 11 bits |\n| Address field | 4 bits |\n| Two-address instr. | 5 |\n| One-address instr. (intended) | 32 |",
+      "steps": [
+        {
+          "title": "Two-address level",
+          "body": "Opcode $=11-2\\times4=3$ bits $\\Rightarrow 2^3=8$ patterns. Used 5, free $8-5=3$."
+        },
+        {
+          "title": "One-address level",
+          "body": "Each free pattern extends by 4 bits: $3\\times2^4=48$ patterns. Used 32, free $48-32=16$."
+        },
+        {
+          "title": "Zero-address level",
+          "body": "Each free pattern extends by the last 4 bits: $16\\times2^4=256$."
+        }
+      ],
+      "answer": {
+        "value": "256",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The paper prints \"32 two-address\" twice; 32 two-address instructions are impossible with 8 patterns, so it must be 32 one-address instructions."
+      ],
+      "verification": "Total check: $5\\cdot2^8+32\\cdot2^4+256=1280+512+256=2048=2^{11}$."
+    },
+    "cse-1992-a-1-vii": {
+      "approach": "Pass one must know the size of every statement to assign addresses; macro calls only reveal their size once expanded.",
+      "concepts": [
+        "Two-pass assembler",
+        "Macro expansion",
+        "Location counter"
+      ],
+      "steps": [
+        {
+          "title": "What pass one does",
+          "body": "Pass one advances the location counter by the length of each statement and enters every label with its address in the symbol table."
+        },
+        {
+          "title": "Why expand there",
+          "body": "A macro call stands for an unknown number of statements, possibly containing labels. Until it is expanded, pass one cannot advance the location counter correctly or define those labels, so all later addresses would be wrong. Hence expansion must happen in pass one."
+        }
+      ],
+      "answer": {
+        "value": "the expanded code generates statements (and labels) whose sizes and addresses must be known in pass one to build the symbol table and advance the location counter",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Expanding in pass two would leave pass-one addresses and the symbol table inconsistent."
+      ],
+      "verification": "Same reason a one-pass macro processor must see a definition before its call."
+    },
+    "cse-1992-a-1-viii": {
+      "approach": "The location counter (LC) is the assembler's running address: it tells where the current statement will be placed.",
+      "concepts": [
+        "Location counter",
+        "Symbol table"
+      ],
+      "steps": [
+        {
+          "title": "Role",
+          "body": "LC is initialised (by ORG/START) and incremented by each instruction or data length. Its current value is the address of the statement being processed."
+        },
+        {
+          "title": "Use",
+          "body": "When a label is encountered, it is entered in the symbol table with the current LC value; generated code and data are placed at LC addresses."
+        }
+      ],
+      "answer": {
+        "value": "to keep track of the address of the current instruction/data so that addresses can be assigned to labels (symbol table) and to the generated code",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "It is not the run-time program counter; it exists only during assembly."
+      ],
+      "verification": "Matches the pass-one algorithm of a standard two-pass assembler."
+    },
+    "cse-1992-a-1-x": {
+      "approach": "Use Euler's formula with the fact that, in a simple planar graph, every face is bounded by at least 3 edges.",
+      "concepts": [
+        "Euler's formula",
+        "Planar graphs"
+      ],
+      "steps": [
+        {
+          "title": "Face count bound",
+          "body": "Each face has at least 3 edges on its boundary and each edge borders at most 2 faces: $3f\\le2e$."
+        },
+        {
+          "title": "Combine with Euler",
+          "body": "$n-e+f=2\\Rightarrow f=2-n+e$. Then $3(2-n+e)\\le2e\\Rightarrow e\\le3n-6$ (for $n\\ge3$). Triangulations attain it."
+        }
+      ],
+      "answer": {
+        "value": "$3n-6$ (for $n \\ge 3$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "For bipartite (triangle-free) planar graphs the bound is $2n-4$."
+      ],
+      "verification": "$K_4$: $n=4$, $e=6=3\\cdot4-6$; $K_5$ has $10>9$ edges, so it is non-planar."
+    },
+    "cse-1992-a-2-i": {
+      "approach": "All four are commutative; test associativity with a small counterexample.",
+      "concepts": [
+        "Commutativity",
+        "Associativity",
+        "NAND"
+      ],
+      "steps": [
+        {
+          "title": "AND, OR, XOR",
+          "body": "All three are both commutative and associative ($(a\\oplus b)\\oplus c=a\\oplus(b\\oplus c)$ = parity of the three)."
+        },
+        {
+          "title": "NAND",
+          "body": "Commutative: $\\overline{ab}=\\overline{ba}$. Take $a=0,b=0,c=1$: $(a\\uparrow b)\\uparrow c=1\\uparrow1=0$ but $a\\uparrow(b\\uparrow c)=0\\uparrow1=1$. Not associative."
+        }
+      ],
+      "answer": {
+        "value": "(d) NAND",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "AND is associative."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "OR is associative."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "XOR is associative (result is the parity of all inputs)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Commutative, but $(0\\uparrow0)\\uparrow1=0\\ne1=0\\uparrow(0\\uparrow1)$."
+        }
+      ],
+      "pitfalls": [
+        "NOR fails associativity the same way."
+      ],
+      "verification": "Counterexample computed both ways above."
+    },
+    "cse-1992-a-2-ii": {
+      "approach": "A component is universal if it can build NOT and AND, given the constants 0 and 1.",
+      "concepts": [
+        "Functional completeness",
+        "Multiplexer",
+        "Half adder"
+      ],
+      "steps": [
+        {
+          "title": "Multiplexer",
+          "body": "A 2:1 MUX $y=\\overline{s}a+sb$: with $a=1,b=0$ it gives $\\overline{s}$; with $a=0$ it gives $sb$ (AND). NOT+AND is complete."
+        },
+        {
+          "title": "Half adder",
+          "body": "Outputs $S=x\\oplus y$, $C=xy$. $S$ with $y=1$ gives $\\overline{x}$; $C$ is AND. Complete."
+        },
+        {
+          "title": "XOR only, OR only",
+          "body": "XOR gates (even with constants) only produce affine functions $c\\oplus x_1\\oplus\\dots$, so no AND. OR gates are monotone, so no NOT."
+        }
+      ],
+      "answer": {
+        "value": "(b) Multiplexers and (c) Half adders",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "XOR circuits are linear (affine); they cannot form $xy$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A 2:1 MUX yields NOT and AND with constant inputs."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Sum output gives NOT (XOR with 1), carry gives AND."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "OR is monotone; it cannot invert."
+        }
+      ],
+      "pitfalls": [
+        "Both B and C assume constant 0/1 inputs are available, which is standard."
+      ],
+      "verification": "Post's criteria: XOR is linear, OR is monotone; MUX and HA escape all five classes."
+    },
+    "cse-1992-a-2-iii": {
+      "approach": "A bit-slice chip (e.g. AMD 2901) is a 4-bit slice of a CPU's data path (ALU + register file + shifter); word length comes from cascading slices, control comes from a separate microprogram sequencer.",
+      "concepts": [
+        "Bit-slice processor",
+        "Data path",
+        "Microprogrammed control"
+      ],
+      "steps": [
+        {
+          "title": "Cascading",
+          "body": "Slices are connected side by side, carry/shift lines chained, to get 8, 16, 32 … bit processors: (a) true."
+        },
+        {
+          "title": "Speed vs word length",
+          "body": "Carry ripples through more slices as width grows (lookahead units reduce but do not remove this), so speed depends on the configured width: (b) false."
+        },
+        {
+          "title": "What a slice contains",
+          "body": "A slice has only the data path; control (sequencer such as the 2909/2910 and microprogram memory) is external: (d) true. Statement (c) is not accepted: a program counter can be kept in the slice's register file and the sequencer itself has a microprogram counter."
+        }
+      ],
+      "answer": {
+        "value": "(a) and (d)",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Designed to be cascaded to any multiple of the slice width."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Carry propagation across slices makes wider words slower."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A PC can be held in the slice registers, and the companion sequencer has a (micro)program counter; not a valid characterisation."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "A slice is the ALU/register/shifter data path only; control is external."
+        }
+      ],
+      "pitfalls": [
+        "(c) and (d) look similar; (d) states the architecture, (c) overreaches."
+      ],
+      "verification": "Consistent with the AMD 2900 family organisation (2901 data path, 2909/2910 sequencer)."
+    },
+    "cse-1992-a-2-iv": {
+      "approach": "PCHL jumps to an address computed at run time, which is exactly what a jump table for a multi-way branch needs.",
+      "concepts": [
+        "8085 PCHL",
+        "Jump table",
+        "Indirect jump"
+      ],
+      "steps": [
+        {
+          "title": "What PCHL gives",
+          "body": "An indirect jump: PC $\\leftarrow$ HL, where HL can be computed (e.g. table base + 2·index, then load the stored address)."
+        },
+        {
+          "title": "Match to constructs",
+          "body": "A **case** statement selects one of many targets by a value, implemented as a jump table indexed by that value followed by PCHL. If-then-else and while need only conditional jumps to fixed targets; a call must also push a return address, which PCHL does not do."
+        }
+      ],
+      "answer": {
+        "value": "(c) case construct",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two fixed targets: a conditional jump (JZ/JNZ) suffices."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A loop uses a conditional jump back to a fixed label."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Multi-way branch through a jump table needs a computed jump: PCHL."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "CALL must save the return address; PCHL does not push anything."
+        }
+      ],
+      "pitfalls": [
+        "Indirect calls need an extra push of the return address, so PCHL alone is not a call."
+      ],
+      "verification": "Standard 8085 idiom: index into table, load address into HL, PCHL."
+    },
+    "cse-1992-a-2-ix": {
+      "approach": "Comparison sorts need $\\Omega(n\\log n)$; radix sort with base $n$ handles keys up to $n^3$ in a constant number of linear passes.",
+      "concepts": [
+        "Radix sort",
+        "Counting sort",
+        "Comparison-sort lower bound"
+      ],
+      "steps": [
+        {
+          "title": "Comparison sorts",
+          "body": "Heapsort, quicksort and mergesort are comparison-based: $\\Omega(n\\log n)$ in the worst case."
+        },
+        {
+          "title": "Radix sort in base $n$",
+          "body": "Write each key minus 1 (range $0..n^3-1$) in base $n$: exactly 3 digits. Each pass is a counting sort over $n$ digit values: $O(n+n)=O(n)$. Total $3\\cdot O(n)=O(n)$."
+        }
+      ],
+      "answer": {
+        "value": "(d) Radixsort",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Comparison sort: $\\Theta(n\\log n)$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Comparison sort: $O(n^2)$ worst, $O(n\\log n)$ average."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Comparison sort: $\\Theta(n\\log n)$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Base-$n$ radix sort: 3 passes of $O(n)$ counting sort."
+        }
+      ],
+      "pitfalls": [
+        "Plain counting sort over $[1..n^3]$ costs $O(n^3)$; base-$n$ digits are the key.",
+        "Radix sort in base 2 or 10 would need $O(\\log n)$ passes."
+      ],
+      "verification": "CLRS: $n$ keys of $b$ bits sort in $O((b/\\log n)\\,n)$; here $b=3\\log n$ gives $O(n)$."
+    },
+    "cse-1992-a-2-v": {
+      "approach": "In asynchronous serial framing the start bit tells the receiver when a character begins and the stop bit marks its end.",
+      "concepts": [
+        "Asynchronous serial communication",
+        "Framing"
+      ],
+      "steps": [
+        {
+          "title": "Start bit",
+          "body": "The idle line is 1; the 1→0 start-bit edge lets the receiver align its sampling clock to the character (sample at bit centres)."
+        },
+        {
+          "title": "Stop bit",
+          "body": "Returns the line to 1, giving a guaranteed edge for the next start bit. Both serve **synchronization** of each character."
+        }
+      ],
+      "answer": {
+        "value": "(c) Synchronization",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Error detection is done by the parity bit, not start/stop bits."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "They carry no redundancy for correction."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "They frame each character so the receiver can synchronise."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The overhead slowing transfer is a side effect, not the purpose."
+        }
+      ],
+      "pitfalls": [
+        "A missing stop bit raises a framing error, but that is a by-product, not error detection in the coding sense."
+      ],
+      "verification": "UART framing: start + 5–8 data + optional parity + stop."
+    },
+    "cse-1992-a-2-vi": {
+      "approach": "Pick the option that has a polynomial algorithm; the others are classic NP-complete problems.",
+      "concepts": [
+        "NP-hardness",
+        "Biconnected components",
+        "DFS"
+      ],
+      "steps": [
+        {
+          "title": "NP-hard ones",
+          "body": "Hamiltonian circuit, 0/1 knapsack (decision version) and graph colouring ($k\\ge3$) are NP-complete, hence NP-hard."
+        },
+        {
+          "title": "Polynomial one",
+          "body": "Biconnected components are found by one DFS computing discovery times and low values (Hopcroft–Tarjan) in $O(V+E)$. A problem in P is not NP-hard unless $P=NP$."
+        }
+      ],
+      "answer": {
+        "value": "(c) Finding bi-connected components of a graph",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Hamiltonian circuit is NP-complete."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0/1 knapsack is NP-complete (pseudo-polynomial DP only)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Solvable in $O(V+E)$ with DFS low-links."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Graph $k$-colouring is NP-complete for $k\\ge3$."
+        }
+      ],
+      "pitfalls": [
+        "The $O(nW)$ knapsack DP is not polynomial in the input size."
+      ],
+      "verification": "Standard results (Karp 1972; Hopcroft–Tarjan 1973)."
+    },
+    "cse-1992-a-2-vii": {
+      "approach": "Build the tree bottom-up: group the 9 leaves into parents of 2 or 3 children, then group those parents, until one root remains. All leaves are at the same depth, so each level is grouped as a whole.",
+      "concepts": [
+        "2-3 tree",
+        "Counting internal nodes"
+      ],
+      "steps": [
+        {
+          "title": "Parents of the leaves",
+          "body": "$k$ parents need $2k\\le9\\le3k$, so $k=3$ (3+3+3) or $k=4$ (3+2+2+2)."
+        },
+        {
+          "title": "Case $k=3$",
+          "body": "3 nodes need $k'$ parents with $2k'\\le3\\le3k'$: $k'=1$, the root. Internal nodes $=3+1=4$."
+        },
+        {
+          "title": "Case $k=4$",
+          "body": "4 nodes: $2k'\\le4\\le3k'$ gives $k'=2$; then 2 nodes have the root. Internal nodes $=4+2+1=7$."
+        },
+        {
+          "title": "Result",
+          "body": "Possible counts are $\\{4,7\\}$, so (a) and (d)."
+        }
+      ],
+      "answer": {
+        "value": "(a) 4 and (d) 7",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Root with 3 children, each with 3 leaves: $1+3=4$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No level structure gives 5 internal nodes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No level structure gives 6 internal nodes."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Leaves 3+2+2+2 under 4 nodes, under 2 nodes, under the root: $4+2+1=7$."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the equal-depth rule: leaves and internal nodes cannot be mixed at one level."
+      ],
+      "verification": "Case 4: $3\\cdot3=9$ leaves. Case 7: $3+2+2+2=9$ leaves with level sizes $1,2,4$."
+    },
+    "cse-1992-a-2-viii": {
+      "approach": "By Kuratowski, the smallest non-planar graphs are $K_5$ and $K_{3,3}$; the one with fewest vertices is $K_5$.",
+      "concepts": [
+        "Kuratowski's theorem",
+        "Planarity"
+      ],
+      "steps": [
+        {
+          "title": "Up to 4 vertices",
+          "body": "Every graph on $\\le4$ vertices is a subgraph of $K_4$, which is planar."
+        },
+        {
+          "title": "5 vertices",
+          "body": "Planar on 5 vertices allows $e\\le3\\cdot5-6=9$ edges, and $K_5$ minus an edge (9 edges) is planar. So the only non-planar 5-vertex graph is $K_5$: 5 vertices, $\\binom52=10$ edges."
+        }
+      ],
+      "answer": {
+        "value": "(c) 10 edges, 5 vertices",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$K_{3,3}$ is non-planar but has 6 vertices, not the minimum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$K_4$ (6 edges, 4 vertices) is planar."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$K_5$: minimum vertex count for non-planarity."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$K_5-e$ (9 edges, 5 vertices) is planar."
+        }
+      ],
+      "pitfalls": [
+        "Choosing $K_{3,3}$ because it has fewer edges; the question minimises vertices."
+      ],
+      "verification": "$K_5$ violates $e\\le3n-6$: $10>9$."
+    },
+    "cse-1992-a-2-x": {
+      "approach": "Each P (wait) decrements the counting semaphore and each V (signal) increments it, so only the net count matters.",
+      "concepts": [
+        "Counting semaphore",
+        "P and V operations"
+      ],
+      "steps": [
+        {
+          "title": "Net change",
+          "body": "$S=7-20+15=2$."
+        },
+        {
+          "title": "Interpretation",
+          "body": "The value is positive, so 2 more P operations can proceed without blocking."
+        }
+      ],
+      "answer": {
+        "value": "(b) 2",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$7+20+15$: treats P as an increment."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$7-20+15=2$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ignores the net $-5$ change."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$7-15+20$: swaps P and V."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up P (decrement) with V (increment)."
+      ],
+      "verification": "Order does not matter for the final value: $7+15-20=2$."
+    },
+    "cse-1992-a-2-xi": {
+      "approach": "Deadlock is impossible when, even with every process holding one drive less than its maximum, at least one drive is still free: $n(k-1)+1 \\le R$.",
+      "concepts": [
+        "Deadlock freedom",
+        "Resource allocation bound"
+      ],
+      "steps": [
+        {
+          "title": "Worst case allocation",
+          "body": "Each process needs $k = 3$ drives. The worst state is every process holding $k-1 = 2$ drives and waiting for one more. That uses $2n$ drives."
+        },
+        {
+          "title": "Condition",
+          "body": "If one more drive is free, some process finishes and releases its drives, so no deadlock:\n$$2n + 1 \\le 6 \\;\\Rightarrow\\; n \\le 2.5 \\;\\Rightarrow\\; n_{\\max} = 2$$"
+        },
+        {
+          "title": "Check $n = 3$",
+          "body": "With $n = 3$ each process can hold $2$ drives: $3 \\times 2 = 6$ drives are used, none is free and all three wait forever, so deadlock is possible."
+        }
+      ],
+      "answer": {
+        "value": "$n = 2$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$2 \\times 2 + 1 = 5 \\le 6$: always deadlock free, and it is the largest such $n$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$3 \\times 2 = 6$: all drives can be held with every process still waiting, so deadlock is possible."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Even worse than 3: $4$ processes can each hold one or two drives and block."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$n = 1$ is deadlock free but it is not the **maximum** value."
+        }
+      ],
+      "shortcut": "$n_{\\max} = \\left\\lfloor \\frac{R-1}{k-1} \\right\\rfloor = \\left\\lfloor \\frac{5}{2} \\right\\rfloor = 2$.",
+      "pitfalls": [
+        "Dividing $6/3 = 2$ gives the right number here by coincidence; the correct test is $n(k-1)+1 \\le R$."
+      ],
+      "verification": "For $n = 2$ the worst case uses $4$ drives and leaves $2$ free, so one process can always complete."
+    },
+    "cse-1992-a-2-xii": {
+      "approach": "SPOOL = Simultaneous Peripheral Operations On-Line: output of many jobs is buffered on disk and fed to a slow, non-shareable device one job at a time. The classic example is a line printer.",
+      "concepts": [
+        "Spooling",
+        "Dedicated devices"
+      ],
+      "steps": [
+        {
+          "title": "What spooling needs",
+          "body": "A slow device that can serve only one job at a time, while many jobs produce data for it. Jobs write to a disk spool area and a spooler process feeds the device sequentially."
+        },
+        {
+          "title": "Match the options",
+          "body": "A line printer shared by many jobs fits exactly: each job’s output is spooled to disk and printed in turn. A terminal is interactive and the paging disk is used directly by the VM system, so neither is spooled."
+        }
+      ],
+      "answer": {
+        "value": "A line printer printing the output of several jobs",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "An interactive terminal used for program input must respond in real time; it is not spooled."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The paging device in virtual memory is the backing store itself, accessed on demand, not a spooled device."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The textbook spooled device: output from many jobs is queued on disk and printed one job at a time."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option C is correct, so “none of the above” is false."
+        }
+      ],
+      "verification": "Standard OS texts (Silberschatz, Tanenbaum) all use the printer as the spooling example."
+    },
+    "cse-1992-a-2-xiii": {
+      "approach": "Test the three definitions on a tiny grammar, then argue generally: a rightmost derivation can always stop with $A$ as the rightmost non-terminal and terminals after it, but a leftmost derivation cannot expand anything to the right of an unexpanded $A$.",
+      "concepts": [
+        "FOLLOW set",
+        "Leftmost / rightmost sentential forms"
+      ],
+      "steps": [
+        {
+          "title": "A small grammar",
+          "body": "Take $S \\to AB,\\; A \\to c,\\; B \\to b$. $\\text{FOLLOW}(A) = \\{b\\}$ because $S \\Rightarrow AB \\Rightarrow Ab$ is a sentential form."
+        },
+        {
+          "title": "Left-sentential forms",
+          "body": "Leftmost derivation: $S \\Rightarrow AB \\Rightarrow cB \\Rightarrow cb$. The only form containing $A$ is $AB$, where $A$ is followed by the non-terminal $B$, so $\\text{LFOLLOW}(A) = \\varnothing \\ne \\text{FOLLOW}(A)$. Hence (a) is true and (c) is false."
+        },
+        {
+          "title": "Right-sentential forms",
+          "body": "Rightmost derivation: $S \\Rightarrow AB \\Rightarrow Ab \\Rightarrow cb$, so $\\text{RFOLLOW}(A) = \\{b\\}$.\n\nIn general, if $\\alpha A a \\beta$ is a sentential form, replace $\\beta$ by a terminal string $y$ it derives; build the parse tree and expand its nodes right-to-left, stopping when $A$ is reached. Every expansion is of the rightmost non-terminal, and the form reached is $\\gamma A a y$ — a right-sentential form. So every $a \\in \\text{FOLLOW}(A)$ is in $\\text{RFOLLOW}(A)$ (and trivially conversely): (b) is true."
+        },
+        {
+          "title": "Conclusion",
+          "body": "$\\text{RFOLLOW} = \\text{FOLLOW}$ always, while $\\text{LFOLLOW}$ may differ. True statements: (a) and (b)."
+        }
+      ],
+      "answer": {
+        "value": "(a) and (b)",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The grammar $S \\to AB$ gives $\\text{LFOLLOW}(A) = \\varnothing$ but $\\text{FOLLOW}(A) = \\{b\\}$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A rightmost derivation can expand everything right of $A$ to terminals first, so every follower of $A$ appears in some right-sentential form."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contradicted by the same example: LFOLLOW differs."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "FOLLOW and RFOLLOW are always equal, so the three can never all be different."
+        }
+      ],
+      "pitfalls": [
+        "Assuming leftmost and rightmost derivations reach the same sentential forms — they reach the same **sentences**, not the same intermediate forms."
+      ],
+      "verification": "Checked the example by listing every leftmost and rightmost form of $S \\to AB,\\, A \\to c,\\, B \\to b$."
+    },
+    "cse-1992-a-2-xiv": {
+      "approach": "SLR(1) and LALR(1) are built on the same LR(0) item-set cores (LALR merges LR(1) states with equal cores), so the state machine — shifts and gotos — is identical. Only the look-aheads used for reductions differ: FOLLOW sets for SLR, propagated look-aheads for LALR.",
+      "concepts": [
+        "SLR(1)",
+        "LALR(1)",
+        "LR(0) cores"
+      ],
+      "steps": [
+        {
+          "title": "Same states",
+          "body": "LALR(1) states = LR(1) states merged by core = the LR(0) collection used by SLR(1). Same states and same transitions, so **shift** entries and the **goto** part are identical."
+        },
+        {
+          "title": "Different reduce look-aheads",
+          "body": "SLR puts reduce $A \\to \\alpha$ on every terminal in $\\text{FOLLOW}(A)$; LALR only on its look-ahead set, which is a subset of $\\text{FOLLOW}(A)$. So some reduce entries in SLR are blank (error) in LALR: **reduce** and **error** entries may differ."
+        }
+      ],
+      "answer": {
+        "value": "(b), (c) and (d)",
+        "choice": [
+          "B",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Goto entries come from the transitions of the LR(0) automaton, which both tables share."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Shift entries are also transitions of the same automaton, hence identical."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "LALR look-aheads $\\subseteq$ FOLLOW, so SLR may have extra reduce entries."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Where SLR reduces and LALR does not, LALR has an error entry — error entries differ."
+        }
+      ],
+      "pitfalls": [
+        "Thinking LALR has more states than SLR — that is canonical LR(1), not LALR."
+      ],
+      "verification": "Classic grammar $S \\to L{=}R \\mid R,\\; L \\to {*}R \\mid id,\\; R \\to L$: SLR reduces $R \\to L$ on ‘=’ (conflict), LALR does not — the reduce/error entries differ while shifts match."
+    },
+    "cse-1992-a-2-xix": {
+      "approach": "Recall the closure table for CFLs: union, concatenation and star are closed (grammar constructions); intersection and complement are not.",
+      "concepts": [
+        "CFL closure properties"
+      ],
+      "steps": [
+        {
+          "title": "Closed operations",
+          "body": "- Union: $S \\to S_1 \\mid S_2$.\n- Kleene star: $S \\to S S_1 \\mid \\varepsilon$."
+        },
+        {
+          "title": "Not closed",
+          "body": "Intersection: $\\{a^nb^nc^m\\} \\cap \\{a^mb^nc^n\\} = \\{a^nb^nc^n\\}$, which is not context-free. Complement: $L_1 \\cap L_2 = \\overline{\\overline{L_1} \\cup \\overline{L_2}}$, so closure under complement plus union would give closure under intersection — contradiction."
+        }
+      ],
+      "answer": {
+        "value": "Closed under union and Kleene closure",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$S \\to S_1 \\mid S_2$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not closed: would imply closure under intersection via De Morgan."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\{a^nb^nc^m\\} \\cap \\{a^mb^nc^n\\} = \\{a^nb^nc^n\\}$ is not a CFL."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$S \\to S S_1 \\mid \\varepsilon$."
+        }
+      ],
+      "verification": "$a^nb^nc^n$ fails the pumping lemma for CFLs, confirming the intersection counterexample."
+    },
+    "cse-1992-a-2-xv": {
+      "approach": "Check each implication: try to prove it in general, otherwise build a two-element counter-model.",
+      "concepts": [
+        "Quantifier distribution",
+        "Validity"
+      ],
+      "steps": [
+        {
+          "title": "(a) is valid",
+          "body": "If $\\forall x\\,P(x)$ holds, then every $x$ satisfies $P(x) \\lor Q(x)$; likewise if $\\forall x\\,Q(x)$ holds. Either way $\\forall x\\,\\{P(x) \\lor Q(x)\\}$."
+        },
+        {
+          "title": "Counter-models for (b), (c)",
+          "body": "Domain $\\{1, 2\\}$, $P = \\{1\\}$, $Q = \\{2\\}$.\n\n- (b): $\\exists P$ and $\\exists Q$ are true, but no element has both, so $\\exists(P \\land Q)$ is false.\n- (c): every element is in $P$ or $Q$, so $\\forall(P \\lor Q)$ is true, but neither $\\forall P$ nor $\\forall Q$ holds."
+        },
+        {
+          "title": "Counter-model for (d)",
+          "body": "$P$ true everywhere, $Q$ false everywhere: $\\exists x\\{P \\lor Q\\}$ is true, $\\sim\\forall x P(x)$ is false and $\\exists x Q(x)$ is false, so the implication fails."
+        }
+      ],
+      "answer": {
+        "value": "Only (a)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$\\forall$ distributes over $\\lor$ in this direction."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\exists$ does not distribute over $\\land$: $P = \\{1\\},\\, Q = \\{2\\}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Converse of (a) fails with the same model."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$P \\equiv$ true, $Q \\equiv$ false makes the antecedent true and the consequent false."
+        }
+      ],
+      "verification": "Each invalid option has an explicit finite counter-model; (a) has a direct proof."
+    },
+    "cse-1992-a-2-xvi": {
+      "approach": "An implication is a tautology iff it can never have a true antecedent and a false consequent; try to falsify each one.",
+      "concepts": [
+        "Tautology",
+        "Implication"
+      ],
+      "steps": [
+        {
+          "title": "(b) cannot be falsified",
+          "body": "To falsify $a \\land b \\to b \\lor c$ we need $a \\land b = 1$, so $b = 1$; but then $b \\lor c = 1$. Impossible — tautology."
+        },
+        {
+          "title": "Falsify the others",
+          "body": "- (a) $a = 1, b = 0$: $a \\lor b = 1$, $b \\land c = 0$ → false.\n- (c) $a = b = 1, c = 0$: $1 \\to (1 \\to 0) = 1 \\to 0 = 0$.\n- (d) $a = b = 1, c = 0$: either grouping gives $0$ — right-associated $1 \\to (1 \\to 0) = 0$; left-associated $(1 \\to 1) \\to (1 \\to 0) = 1 \\to 0 = 0$."
+        }
+      ],
+      "answer": {
+        "value": "Only (b)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$a = 1, b = 0$ falsifies it."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "True antecedent forces $b = 1$, which makes the consequent true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$a = b = 1, c = 0$ falsifies it."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$a = b = 1, c = 0$ falsifies it under either bracketing."
+        }
+      ],
+      "verification": "Each non-tautology has a falsifying assignment; (b) was checked by contradiction."
+    },
+    "cse-1992-a-2-xvii": {
+      "approach": "Read (a) and (b) as the standard identities $(r^*)^* = r^*$ and $(r^*s^*)^* = (r+s)^*$ (the scan lost the outer star), then test each with small strings.",
+      "concepts": [
+        "Regular expression identities",
+        "Kleene star"
+      ],
+      "steps": [
+        {
+          "title": "(a) and (b) are true",
+          "body": "- $(r^*)^* = r^*$: concatenating strings of $r^*$ gives a string of $r^*$.\n- $(r^*s^*)^* = (r+s)^*$: $r^*s^* \\supseteq \\{r, s\\}$, so its star contains every string over $r, s$; conversely every piece is in $(r+s)^*$."
+        },
+        {
+          "title": "(c) and (d) are false",
+          "body": "Take $r = a$, $s = b$. The string $ab$ is in $(a+b)^*$ and in $a^*b^*$ but not in $a^* + b^*$, so (c) and (d) both fail. Also $ba \\in (a+b)^*$ but $ba \\notin a^*b^*$, which is why (b) needs the outer star."
+        }
+      ],
+      "answer": {
+        "value": "(a) and (b), read as $(r^*)^* = r^*$ and $(r^*s^*)^* = (r+s)^*$",
+        "choice": [
+          "A",
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$(r^*)^* = r^*$ — idempotence of star."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "With the outer star, $(r^*s^*)^* = (r+s)^*$. Without it (as scanned), $ba$ would be a counterexample."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$ab \\in (a+b)^*$ but $ab \\notin a^* + b^*$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$ab \\in a^*b^*$ but $ab \\notin a^* + b^*$."
+        }
+      ],
+      "pitfalls": [
+        "Taking (b) literally: $r^*s^* \\ne (r+s)^*$ because $ba$ is missing."
+      ],
+      "verification": "Checked each identity with r = a, s = b on strings of length ≤ 2."
+    },
+    "cse-1992-a-2-xviii": {
+      "approach": "In CNF every rule is $A \\to BC$ (adds one symbol) or $A \\to a$ (turns a variable into a terminal). Count how many of each are needed for a string of length $l$.",
+      "concepts": [
+        "Chomsky normal form",
+        "Derivation length"
+      ],
+      "steps": [
+        {
+          "title": "Grow to $l$ variables",
+          "body": "Start with $1$ symbol ($S$). Each $A \\to BC$ step increases the length by $1$, so reaching $l$ symbols takes $l - 1$ steps."
+        },
+        {
+          "title": "Turn them into terminals",
+          "body": "Each of the $l$ variables needs one $A \\to a$ step: $l$ steps.\n$$(l - 1) + l = 2l - 1$$"
+        }
+      ],
+      "answer": {
+        "value": "$2l - 1$ steps",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2l$ over-counts by one: only $l - 1$ binary steps are needed."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$2l + 1$ over-counts by two."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$(l - 1)$ binary rules $+$ $l$ terminal rules."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$l$ counts only the terminal rules."
+        }
+      ],
+      "verification": "$l = 1$: $S \\to a$ is $1 = 2(1) - 1$ step. $l = 2$: $S \\to AB \\to aB \\to ab$ is $3 = 2(2) - 1$ steps."
+    },
+    "cse-1992-a-2-xx": {
+      "approach": "Recall which machine classes lose power when made deterministic: finite automata and Turing machines do not; pushdown automata do.",
+      "concepts": [
+        "Subset construction",
+        "DPDA vs NPDA",
+        "Deterministic simulation of NTM"
+      ],
+      "steps": [
+        {
+          "title": "NFA and NTM",
+          "body": "NFA → DFA by the subset construction (at most $2^n$ states). An NTM is simulated by a DTM that explores its computation tree breadth-first, accepting the same language."
+        },
+        {
+          "title": "NPDA",
+          "body": "$\\{ww^R\\}$ is accepted by an NPDA (guess the middle) but by no DPDA, since a DPDA cannot know where the middle is. Deterministic CFLs are a proper subset of CFLs."
+        }
+      ],
+      "answer": {
+        "value": "For NFA and NTM",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Subset construction gives an equivalent DFA."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$ww^R$ is an NPDA language with no equivalent DPDA."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Breadth-first simulation of the computation tree gives an equivalent DTM."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The statement holds for (a) and (c)."
+        }
+      ],
+      "verification": "Matches the standard hierarchy: DFA = NFA, DPDA ⊊ NPDA, DTM = NTM."
+    },
+    "cse-1992-a-3-i": {
+      "approach": "Trace each macro for the value of X that triggers its recursive call (X = 0) and see whether the argument of the recursive call changes.",
+      "concepts": [
+        "Recursive macros",
+        "Conditional assembly"
+      ],
+      "steps": [
+        {
+          "title": "Trace M1 0",
+          "body": "$X = 0$: \\`.IF EQ\\` is true → expands \\`M1 1\\`. Now $X = 1$: \\`.IF EQ\\` false, \\`.IF NE\\` true → emits \\`.WORD 1\\` and stops. M1 always terminates (at most one recursive level)."
+        },
+        {
+          "title": "Trace M2 0",
+          "body": "$X = 0$: \\`.IF EQ\\` true → expands \\`M2 X\\` with the **same** $X = 0$, which again takes the same branch → \\`M2 0\\` → … forever. Any call with a non-zero argument just emits \\`.WORD X+1\\`."
+        }
+      ],
+      "answer": {
+        "value": "M2 — e.g. the call `M2 0` recurses forever",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "M1 also calls itself when X = 0, but with X+1, so the recursion ends after one level."
+      ],
+      "verification": "Only an argument equal to zero triggers recursion; M1 changes it, M2 does not."
+    },
+    "cse-1992-a-3-ii": {
+      "approach": "Pass 1 defines symbols (location counter, symbol and literal tables); pass 2 uses those tables to generate code and the listing.",
+      "concepts": [
+        "Two-pass assembler",
+        "Symbol and literal tables"
+      ],
+      "steps": [
+        {
+          "title": "Pass 1 work",
+          "body": "Scans the source, advances the location counter, enters labels in the symbol table and literals in the literal table, assigning them addresses. So (b) literals → pass 1, and (d) the addresses of local symbols are determined in pass 1."
+        },
+        {
+          "title": "Pass 2 work",
+          "body": "Re-reads the source, looks every symbol up, assembles the object code and prints the listing (which shows the object code). So (a) → pass 2 and (c) → pass 2."
+        }
+      ],
+      "answer": {
+        "value": "(a) 2; (b) 1; (c) 2; (d) 1",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "(d) is sometimes read as “substituting addresses into instructions”, which happens in pass 2; the address values themselves are fixed in pass 1."
+      ],
+      "verification": "Consistent with the classic two-pass design (Beck, Dhamdhere)."
+    },
+    "cse-1992-a-3-iii": {
+      "approach": "Each component is a tree; a tree on $n_i$ vertices has $n_i - 1$ edges. Sum over the $p$ components.",
+      "concepts": [
+        "Forest",
+        "Tree edge count"
+      ],
+      "steps": [
+        {
+          "title": "Per component",
+          "body": "Component $i$ is a tree with $n_i$ vertices, so it has $n_i - 1$ edges, where $n_1 + \\dots + n_p = n$."
+        },
+        {
+          "title": "Sum",
+          "body": "$$\\sum_{i=1}^{p}(n_i - 1) = n - p$$"
+        }
+      ],
+      "answer": {
+        "value": "$n - p$ edges",
+        "matchesKey": true
+      },
+      "verification": "$p = 1$ gives a tree with $n - 1$ edges; $p = n$ (isolated vertices) gives $0$ edges."
+    },
+    "cse-1992-a-3-iv": {
+      "approach": "Quicksort is worst when every partition is maximally unbalanced (sizes $k-1$ and $0$). With the last element as pivot this happens when the pivot is always the largest (or smallest) remaining element — i.e. sorted or reverse-sorted input.",
+      "concepts": [
+        "Quicksort",
+        "Worst case partition"
+      ],
+      "steps": [
+        {
+          "title": "Sorted input",
+          "body": "Input $1, 2, \\dots, n$. Pivot $= n$ (largest): all others go left, right part empty. Recursion on $1, \\dots, n-1$ again picks the largest, and so on.",
+          "scene": {
+            "kind": "array",
+            "label": "A",
+            "cells": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "hl": [
+              {
+                "at": [
+                  4,
+                  4
+                ],
+                "tone": "accent"
+              }
+            ],
+            "caption": "Pass 1: pivot 5 — left part {1..4}, right part empty"
+          }
+        },
+        {
+          "title": "Next passes",
+          "body": "Each pass removes only the pivot.",
+          "scene": {
+            "cells": [
+              1,
+              2,
+              3,
+              4,
+              {
+                "v": 5,
+                "tone": "success"
+              }
+            ],
+            "hl": [
+              {
+                "at": [
+                  3,
+                  3
+                ],
+                "tone": "accent"
+              }
+            ],
+            "ranges": [
+              {
+                "from": 0,
+                "to": 3,
+                "label": "still unsorted"
+              }
+            ],
+            "caption": "Pass 2: pivot 4 — again one-sided"
+          }
+        },
+        {
+          "title": "Cost",
+          "body": "Comparisons $= (n-1) + (n-2) + \\dots + 1 = \\dfrac{n(n-1)}{2} = \\Theta(n^2)$, the maximum. Reverse order $n, \\dots, 1$ also gives pivot $=$ smallest every time and the same cost."
+        }
+      ],
+      "answer": {
+        "value": "Already sorted input $1, 2, \\dots, n$ (reverse order $n, \\dots, 1$ works too)",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "array",
+        "label": "A",
+        "cells": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "pitfalls": [
+        "Random-looking input usually gives balanced splits; the worst case comes from (reverse) sorted data with a fixed-position pivot."
+      ],
+      "verification": "For $n = 5$: $4 + 3 + 2 + 1 = 10 = \\frac{5 \\cdot 4}{2}$ comparisons."
+    },
+    "cse-1992-a-3-v": {
+      "approach": "This is Belady’s anomaly, which only non-stack algorithms show; FIFO is the classic example.",
+      "concepts": [
+        "Belady’s anomaly",
+        "FIFO replacement"
+      ],
+      "steps": [
+        {
+          "title": "Example",
+          "body": "Reference string $1,2,3,4,1,2,5,1,2,3,4,5$ under FIFO: $9$ faults with $3$ frames but $10$ faults with $4$ frames."
+        },
+        {
+          "title": "Why not LRU / OPT",
+          "body": "LRU and optimal are stack algorithms: the pages held with k frames are always a subset of those held with k+1 frames, so faults can never increase."
+        }
+      ],
+      "answer": {
+        "value": "FIFO (Belady’s anomaly)",
+        "matchesKey": true
+      },
+      "verification": "The 12-reference string above is Belady’s original counterexample."
+    },
+    "cse-1992-b-4-a": {
+      "approach": "Overflow happens when the true sum does not fit the signed range, which shows up as the carry into the sign bit differing from the carry out of it.",
+      "concepts": [
+        "Two's complement",
+        "Overflow detection"
+      ],
+      "steps": [
+        {
+          "title": "Carry out is not overflow",
+          "body": "4-bit: $-1 + 1 = 1111 + 0001 = 1\\,0000$. There is a carry out, but the result $0000 = 0$ is correct — no overflow."
+        },
+        {
+          "title": "Overflow without carry out",
+          "body": "$7 + 1 = 0111 + 0001 = 1000 = -8$: wrong sign. Carry **into** the MSB is $1$, carry **out** is $0$."
+        },
+        {
+          "title": "Condition",
+          "body": "$$V = C_{n-1} \\oplus C_n$$ where $C_{n-1}$ is the carry into the MSB and $C_n$ the carry out. Equivalently: both operands have the same sign and the result has the opposite sign. Adding numbers of opposite signs can never overflow."
+        }
+      ],
+      "answer": {
+        "value": "Overflow iff carry into MSB $\\ne$ carry out of MSB ($V = C_{n-1} \\oplus C_n$), i.e. same-sign operands give a result of the other sign",
+        "matchesKey": true
+      },
+      "verification": "$-8 + (-1) = 1000 + 1111 = 1\\,0111$: $C_n = 1$, $C_{n-1} = 0$ → overflow (result $+7$), as the rule says."
+    },
+    "cse-1992-b-4-b": {
+      "approach": "Assign codes A → 11, B → 10, C → 01, none → 00, write $X_1, X_0$ as functions of A, B, C, then use A, B as the select lines of two 4:1 MUXes with data inputs from {0, 1, C}.",
+      "concepts": [
+        "Priority encoder",
+        "MUX-based function implementation"
+      ],
+      "given": "| Active (highest) | $X_1X_0$ |\n|---|---|\n| A | 11 |\n| B (A = 0) | 10 |\n| C (A = B = 0) | 01 |\n| none | 00 |",
+      "steps": [
+        {
+          "title": "Output functions",
+          "body": "$X_1 = 1$ when A or B is active: $X_1 = A + B$.\n$X_0 = 1$ for A, or for C with A, B inactive: $X_0 = A + \\overline{A}\\,\\overline{B}\\,C = A + \\overline{B}C$."
+        },
+        {
+          "title": "MUX data inputs",
+          "body": "Select lines $S_1S_0 = AB$; each data input is the function with A, B fixed:\n\n| $AB$ | $X_1$ MUX input | $X_0$ MUX input |\n|---|---|---|\n| 00 | 0 | $C$ |\n| 01 | 1 | 0 |\n| 10 | 1 | 1 |\n| 11 | 1 | 1 |",
+          "scene": {
+            "kind": "table",
+            "cols": [
+              "AB",
+              "I (X1)",
+              "I (X0)"
+            ],
+            "rows": [
+              [
+                "00",
+                "0",
+                "C"
+              ],
+              [
+                "01",
+                "1",
+                "0"
+              ],
+              [
+                "10",
+                "1",
+                "1"
+              ],
+              [
+                "11",
+                "1",
+                "1"
+              ]
+            ],
+            "mono": true
+          }
+        },
+        {
+          "title": "Circuit",
+          "body": "Two 4:1 MUXes share selects $S_1 = A$, $S_0 = B$. MUX 1 inputs $(I_0..I_3) = (0, 1, 1, 1)$ gives $X_1$; MUX 2 inputs $(C, 0, 1, 1)$ gives $X_0$. No other gates are needed."
+        }
+      ],
+      "answer": {
+        "value": "$X_1 = A + B$, $X_0 = A + \\overline{B}C$; with $S_1S_0 = AB$: $X_1$ MUX inputs $0,1,1,1$ and $X_0$ MUX inputs $C,0,1,1$ (codes A = 11, B = 10, C = 01)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The paper does not fix the output codes; any one-to-one assignment with none → 00 works, but the MUX inputs change accordingly."
+      ],
+      "verification": "ABC = 011: B wins → $X_1 = 1$, $X_0 = 0 + 0 = 0$ → 10 ✓. ABC = 001 → $X_1X_0 = 01$ ✓. ABC = 000 → 00 ✓."
+    },
+    "cse-1992-b-4-c": {
+      "approach": "A counter where only one flip-flop changes per clock is a Gray-code counter. For D flip-flops $D_i = Q_i^{+}$, so read each next-state bit off the state table and minimise with a K-map.",
+      "concepts": [
+        "Gray code",
+        "D flip-flop excitation",
+        "K-map minimisation"
+      ],
+      "steps": [
+        {
+          "title": "State table",
+          "body": "3-bit Gray sequence $000 \\to 001 \\to 011 \\to 010 \\to 110 \\to 111 \\to 101 \\to 100 \\to 000$. Since $D = Q^{+}$, the D columns equal the next state.",
+          "scene": {
+            "kind": "table",
+            "cols": [
+              "Q2Q1Q0",
+              "next = D2D1D0"
+            ],
+            "rows": [
+              [
+                "000",
+                "001"
+              ],
+              [
+                "001",
+                "011"
+              ],
+              [
+                "011",
+                "010"
+              ],
+              [
+                "010",
+                "110"
+              ],
+              [
+                "110",
+                "111"
+              ],
+              [
+                "111",
+                "101"
+              ],
+              [
+                "101",
+                "100"
+              ],
+              [
+                "100",
+                "000"
+              ]
+            ],
+            "mono": true
+          }
+        },
+        {
+          "title": "Minimise D2",
+          "body": "$D_2 = 1$ for present states $010, 110, 111, 101$ = $m(2, 5, 6, 7)$:\n$$D_2 = Q_1\\overline{Q_0} + Q_2Q_0$$",
+          "scene": {
+            "kind": "kmap",
+            "variables": [
+              "Q2",
+              "Q1",
+              "Q0"
+            ],
+            "ones": [
+              2,
+              5,
+              6,
+              7
+            ],
+            "groups": [
+              {
+                "cells": [
+                  2,
+                  6
+                ],
+                "label": "Q1Q0'"
+              },
+              {
+                "cells": [
+                  5,
+                  7
+                ],
+                "label": "Q2Q0"
+              }
+            ],
+            "caption": "D2 = Σm(2,5,6,7)"
+          }
+        },
+        {
+          "title": "Minimise D1",
+          "body": "$D_1 = 1$ for $001, 011, 010, 110$ = $m(1, 2, 3, 6)$:\n$$D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}$$",
+          "scene": {
+            "ones": [
+              1,
+              2,
+              3,
+              6
+            ],
+            "groups": [
+              {
+                "cells": [
+                  1,
+                  3
+                ],
+                "label": "Q2'Q0"
+              },
+              {
+                "cells": [
+                  2,
+                  6
+                ],
+                "label": "Q1Q0'"
+              }
+            ],
+            "caption": "D1 = Σm(1,2,3,6)"
+          }
+        },
+        {
+          "title": "Minimise D0",
+          "body": "$D_0 = 1$ for $000, 001, 110, 111$ = $m(0, 1, 6, 7)$:\n$$D_0 = \\overline{Q_2}\\,\\overline{Q_1} + Q_2Q_1 = \\overline{Q_2 \\oplus Q_1}$$",
+          "scene": {
+            "ones": [
+              0,
+              1,
+              6,
+              7
+            ],
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  1
+                ],
+                "label": "Q2'Q1'"
+              },
+              {
+                "cells": [
+                  6,
+                  7
+                ],
+                "label": "Q2Q1"
+              }
+            ],
+            "caption": "D0 = Σm(0,1,6,7)"
+          }
+        },
+        {
+          "title": "Circuit",
+          "body": "Three D flip-flops on a common clock with the inputs above (two AND-OR networks and one XNOR). Each transition flips exactly one bit, including the wrap-around $100 \\to 000$."
+        }
+      ],
+      "answer": {
+        "value": "Gray-code counter $000\\to001\\to011\\to010\\to110\\to111\\to101\\to100\\to000$ with $D_2 = Q_1\\overline{Q_0} + Q_2Q_0$, $D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}$, $D_0 = \\overline{Q_2 \\oplus Q_1}$",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "Q2",
+          "Q1",
+          "Q0"
+        ],
+        "ones": [],
+        "groups": [],
+        "caption": ""
+      },
+      "pitfalls": [
+        "A binary counter fails: 011 → 100 changes all three bits."
+      ],
+      "verification": "State $011$: $D_2 = 1\\cdot0 + 0 = 0$, $D_1 = 1\\cdot1 + 0 = 1$, $D_0 = \\overline{0 \\oplus 1} = 0$ → $010$ ✓. State $100$: $D_2 = 0$, $D_1 = 0$, $D_0 = \\overline{1 \\oplus 0} = 0$ → $000$ ✓."
+    },
+    "cse-1992-b-5-a": {
+      "approach": "Weight reads and writes separately: a read hits the cache (50 ns) with probability 0.9 and otherwise goes to main memory (500 ns); with write-through every write costs a main-memory access (500 ns).",
+      "concepts": [
+        "Write-through cache",
+        "Average access time"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| $t_m$ | 500 ns |\n| $t_c$ | 50 ns |\n| reads / writes | 80% / 20% |\n| read hit ratio | 0.9 |",
+      "steps": [
+        {
+          "title": "Average read time",
+          "body": "$$t_r = 0.9 \\times 50 + 0.1 \\times 500 = 45 + 50 = 95 \\text{ ns}$$"
+        },
+        {
+          "title": "Write time",
+          "body": "Write-through updates cache and memory simultaneously, so a write takes the memory time: $t_w = 500$ ns."
+        },
+        {
+          "title": "Weighted average",
+          "body": "$$t_{avg} = 0.8 \\times 95 + 0.2 \\times 500 = 76 + 100 = 176 \\text{ ns}$$"
+        }
+      ],
+      "answer": {
+        "value": "176 ns",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "If a read miss is charged as cache look-up + memory ($550$ ns), $t_r = 45 + 55 = 100$ and $t_{avg} = 80 + 100 = 180$ ns — state the assumption."
+      ],
+      "verification": "Bounds: all-cache would be 50 ns, all-memory 500 ns; $176$ lies between and is pulled up by the 20% writes ($100$ ns of it)."
+    },
+    "cse-1992-b-5-b": {
+      "approach": "Connect the highest-priority device to the highest-priority line (A→INTR1, B→INTR2, C→INTR3). Gate each request with a bit of the interrupt mask register, then let a priority network pass only the highest unmasked request and raise INT to the CPU.",
+      "concepts": [
+        "Parallel priority interrupt",
+        "Interrupt mask register",
+        "Priority encoder"
+      ],
+      "steps": [
+        {
+          "title": "Line assignment",
+          "body": "Priority of A > B > C must follow the line priorities, so A drives INTR1, B drives INTR2 and C drives INTR3."
+        },
+        {
+          "title": "Masking",
+          "body": "Mask register bits $M_1, M_2, M_3$ (set by software). Effective requests: $I_1 = R_A M_1$, $I_2 = R_B M_2$, $I_3 = R_C M_3$. A masked device cannot interrupt even if it requests."
+        },
+        {
+          "title": "Priority logic",
+          "body": "$$G_A = I_1,\\quad G_B = \\overline{I_1}\\,I_2,\\quad G_C = \\overline{I_1}\\,\\overline{I_2}\\,I_3$$\n$$\\text{INT} = \\text{IEN}\\cdot(I_1 + I_2 + I_3)$$\nThe grants (or a priority encoder with outputs $x y$) form the vector address placed on the bus when the CPU acknowledges.",
+          "scene": {
+            "kind": "circuit",
+            "inputs": [
+              {
+                "id": "RA",
+                "value": 0
+              },
+              {
+                "id": "M1",
+                "value": 1
+              },
+              {
+                "id": "RB",
+                "value": 1
+              },
+              {
+                "id": "M2",
+                "value": 1
+              },
+              {
+                "id": "RC",
+                "value": 1
+              },
+              {
+                "id": "M3",
+                "value": 1
+              },
+              {
+                "id": "IEN",
+                "value": 1
+              }
+            ],
+            "gates": [
+              {
+                "id": "I1",
+                "type": "AND",
+                "in": [
+                  "RA",
+                  "M1"
+                ]
+              },
+              {
+                "id": "I2",
+                "type": "AND",
+                "in": [
+                  "RB",
+                  "M2"
+                ]
+              },
+              {
+                "id": "I3",
+                "type": "AND",
+                "in": [
+                  "RC",
+                  "M3"
+                ]
+              },
+              {
+                "id": "n1",
+                "type": "NOT",
+                "in": [
+                  "I1"
+                ]
+              },
+              {
+                "id": "n2",
+                "type": "NOT",
+                "in": [
+                  "I2"
+                ]
+              },
+              {
+                "id": "gB",
+                "type": "AND",
+                "in": [
+                  "n1",
+                  "I2"
+                ]
+              },
+              {
+                "id": "gC",
+                "type": "AND",
+                "in": [
+                  "n1",
+                  "n2",
+                  "I3"
+                ]
+              },
+              {
+                "id": "any",
+                "type": "OR",
+                "in": [
+                  "I1",
+                  "I2",
+                  "I3"
+                ]
+              },
+              {
+                "id": "int",
+                "type": "AND",
+                "in": [
+                  "IEN",
+                  "any"
+                ]
+              }
+            ],
+            "outputs": [
+              {
+                "id": "GA",
+                "from": "I1"
+              },
+              {
+                "id": "GB",
+                "from": "gB"
+              },
+              {
+                "id": "GC",
+                "from": "gC"
+              },
+              {
+                "id": "INT",
+                "from": "int"
+              }
+            ],
+            "caption": "B and C request, A idle: only GB = 1 and INT = 1"
+          }
+        },
+        {
+          "title": "Example",
+          "body": "B and C request with all masks set: $I_1 = 0$, $I_2 = I_3 = 1$, so $G_B = 1$, $G_C = 0$ and INT $= 1$ — B is serviced. Clearing $M_2$ would make $G_C = 1$ instead."
+        }
+      ],
+      "answer": {
+        "value": "Parallel priority logic: A, B, C drive INTR1, INTR2, INTR3; each request is ANDed with its mask-register bit ($I_k = R_k M_k$), then priority gating gives $G_A = I_1$, $G_B = \\overline{I_1}I_2$, $G_C = \\overline{I_1}\\,\\overline{I_2}I_3$, and INT to the CPU $= \\text{IEN}\\cdot(I_1 + I_2 + I_3)$; the grant/encoder output selects the vector of the highest-priority unmasked device",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "A daisy chain uses one shared request line and no mask register — not what the question describes."
+      ],
+      "verification": "Checked all three single-request cases: each sets only its own grant; with two requests the higher-priority grant wins."
+    },
+    "cse-1992-b-6-a": {
+      "approach": "Split the 1 MB space into four 256 KB quadrants with $A_{19}A_{18}$ — each big device (256 KB EPROM, 256 KB RAM) then needs exactly one decoder output, and the small EERAM and I/O share one quadrant with partial decoding. This minimises decoding logic.",
+      "concepts": [
+        "Memory map",
+        "Address decoding",
+        "Partial decoding",
+        "Memory-mapped I/O"
+      ],
+      "given": "| Need | Chip | Chips | Address lines on chip |\n|---|---|---|---|\n| 256 KB EPROM | 256K×8 | 1 | $A_{17}$–$A_0$ |\n| 256 KB RAM | 64K×8 | 4 | $A_{15}$–$A_0$ |\n| 1 KB EERAM | 256×8 | 4 | $A_7$–$A_0$ |\n| 16 I/O ports | — | 16 | $A_3$–$A_0$ (select) |",
+      "steps": [
+        {
+          "title": "Count the chips",
+          "body": "$\\frac{256\\text{K}}{256\\text{K}} = 1$ EPROM, $\\frac{256\\text{K}}{64\\text{K}} = 4$ RAM chips, $\\frac{1\\text{K}}{256} = 4$ EERAM chips. The printed \"6 K × 8\" must be 64 K × 8 ($256/6$ is not an integer and 6 K is not a power of two)."
+        },
+        {
+          "title": "Quadrants from A19 A18",
+          "body": "$2^{20} = 1\\text{M}$ and $256\\text{K} = 2^{18}$, so $A_{19}A_{18}$ picks a quadrant through one 2-to-4 decoder (enabled only for memory cycles, $IO/\\overline{M}=0$):\n\n| $A_{19}A_{18}$ | Range | Device |\n|---|---|---|\n| 00 | 00000–3FFFF | EPROM (reset address 0 lies in ROM, as on an 8085) |\n| 01 | 40000–7FFFF | RAM |\n| 10 | 80000–BFFFF | EERAM + I/O |\n| 11 | C0000–FFFFF | free |\n\n$Y_0$ drives the EPROM $\\overline{CS}$ directly."
+        },
+        {
+          "title": "RAM bank select",
+          "body": "$Y_1$ enables a second 2-to-4 decoder on $A_{17}A_{16}$:\nRAM0 40000–4FFFF, RAM1 50000–5FFFF, RAM2 60000–6FFFF, RAM3 70000–7FFFF. Each chip gets $A_{15}$–$A_0$ and $D_7$–$D_0$."
+        },
+        {
+          "title": "EERAM and I/O share quadrant 10",
+          "body": "Use $A_{17}$ to split $Y_2$:\n\n- $Y_2\\cdot\\overline{A_{17}}$ enables a 2-to-4 decoder on $A_9A_8$ → EERAM0–3 at 80000–800FF, 80100–801FF, 80200–802FF, 80300–803FF (chips get $A_7$–$A_0$).\n- $Y_2\\cdot A_{17}$ enables a 4-to-16 decoder on $A_3$–$A_0$ → I/O devices 0–15 at A0000–A000F.\n\nLines $A_{16}$, $A_{15}$–$A_{10}$ (EERAM) and $A_{16}$–$A_4$ (I/O) are left undecoded: the devices simply repeat (fold back) inside their region, which is harmless since that region holds nothing else."
+        },
+        {
+          "title": "Total decoding logic",
+          "body": "Three 2-to-4 decoders, one 4-to-16 decoder and two AND/inverter gates for $A_{17}$ — no comparator on the high address lines is needed because every boundary falls on a $2^{k}$ boundary."
+        }
+      ],
+      "answer": {
+        "value": "EPROM 00000–3FFFF, RAM 40000–7FFFF (4 × 64K×8), EERAM 80000–803FF (4 × 256×8), I/O A0000–A000F; one 2-to-4 decoder on A19A18, a 2-to-4 on A17A16 for RAM, a 2-to-4 on A9A8 for EERAM (A17 = 0) and a 4-to-16 on A3–A0 for I/O (A17 = 1)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Fully decoding the 1 KB EERAM and 16 I/O addresses on all 20 lines — legal but needs far more logic than the question wants.",
+        "Taking the RAM chip literally as 6 K × 8."
+      ],
+      "verification": "Sizes check: quadrant 01 holds $4\\times 2^{16} = 2^{18}$ bytes = 256 KB; EERAM $4\\times 2^{8} = 2^{10}$ = 1 KB; I/O $2^4 = 16$ ports; no two chip selects can be active at once because each is gated by a distinct decoder output."
+    },
+    "cse-1992-b-6-b": {
+      "approach": "Compare the access time the CPU gives (two clock cycles) with the EERAM read and write times, then stretch only EERAM cycles by pulling the 8085-style READY line low for the required number of wait states, counted by a small counter.",
+      "concepts": [
+        "Wait states",
+        "READY signal",
+        "Access time",
+        "8085 bus cycle"
+      ],
+      "steps": [
+        {
+          "title": "Time the CPU provides",
+          "body": "$T = \\frac{1}{12.5\\ \\text{MHz}} = 80\\ \\text{ns}$, so a normal access gets $2T = 160\\ \\text{ns}$.\nRAM (140 ns) and EPROM (150 ns) fit; EERAM (500 ns read, 3 µs write) does not."
+        },
+        {
+          "title": "Wait states needed",
+          "body": "Each wait state adds one $T$.\n\n- Read: $\\lceil (500-160)/80 \\rceil = \\lceil 4.25 \\rceil = 5$ → $7 \\times 80 = 560\\ \\text{ns} \\ge 500$.\n- Write: $\\lceil (3000-160)/80 \\rceil = \\lceil 35.5 \\rceil = 36$ → $38 \\times 80 = 3040\\ \\text{ns} \\ge 3000$."
+        },
+        {
+          "title": "Extra logic",
+          "body": "- A 6-bit synchronous counter clocked by CLK, held cleared while $\\overline{CS}_{EERAM}$ (the $Y_2\\cdot\\overline{A_{17}}$ decoder output of part (a)) is inactive.\n- When an EERAM cycle starts (CS active with $\\overline{RD}$ or $\\overline{WR}$ low) the counter counts clock cycles.\n- $READY = \\overline{CS_{EERAM}} + \\overline{RD}{=}0 \\cdot (\\text{count} \\ge 5) + \\overline{WR}{=}0 \\cdot (\\text{count} \\ge 36)$, i.e. READY stays low (CPU inserts $T_W$ states) until the count reaches 5 for a read or 36 for a write; then READY goes high and the cycle completes.\n- All other devices leave READY high, so they run with no wait states."
+        }
+      ],
+      "answer": {
+        "value": "Clock period 80 ns, so 160 ns is available; EERAM needs 5 wait states for a read (7 × 80 = 560 ns ≥ 500 ns) and 36 for a write (38 × 80 = 3040 ns ≥ 3 µs), produced by a counter that holds READY low while the EERAM chip select is active",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Adding wait states for every access — only EERAM needs them.",
+        "Using the read count for writes: the 3 µs write dominates."
+      ],
+      "verification": "560 ns ≥ 500 ns but 6 cycles (480 ns) is too short, so 5 read wait states is minimal; 3040 ns ≥ 3000 ns but 37 cycles (2960 ns) is too short, so 36 write wait states is minimal."
+    },
+    "cse-1992-b-7-a": {
+      "approach": "Trace one call: the inner loop just counts up to $F(n-1)$, so $C = F(n-1)$, and the outer loop multiplies $F1$ by that value $n$ times.",
+      "concepts": [
+        "Recurrence relation",
+        "Loop tracing"
+      ],
+      "steps": [
+        {
+          "title": "Base case",
+          "body": "For $n = 1$ the function returns $F = 3$, so $F(1) = 3$."
+        },
+        {
+          "title": "Inner loop",
+          "body": "For a fixed $i$: $C$ starts at 0 and is incremented once per iteration of $j = 1 \\ldots F(n-1)$, so after the loop $C = F(n-1)$."
+        },
+        {
+          "title": "Outer loop",
+          "body": "$F1$ starts at 1 and is multiplied by $C = F(n-1)$ for each $i = 1 \\ldots n$:\n$$F1 = \\underbrace{F(n-1)\\cdot F(n-1)\\cdots F(n-1)}_{n\\ \\text{times}} = F(n-1)^{n}.$$\nHence\n$$F(1)=3,\\qquad F(n) = F(n-1)^{\\,n}\\ \\ (n > 1).$$"
+        }
+      ],
+      "answer": {
+        "value": "$F(1) = 3$; $F(n) = F(n-1)^n$ for $n > 1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $F(n) = n\\cdot F(n-1)$ — the loop multiplies by $C$, not adds."
+      ],
+      "verification": "$n = 2$: two outer passes, each $C = F(1) = 3$, $F1 = 3\\cdot 3 = 9 = 3^2$ ✓."
+    },
+    "cse-1992-b-7-b": {
+      "approach": "Take logarithms base 3: the exponent $e(n) = \\log_3 F(n)$ satisfies $e(n) = n\\,e(n-1)$ with $e(1) = 1$, which is the factorial.",
+      "concepts": [
+        "Recurrence solving",
+        "Unrolling",
+        "Factorial"
+      ],
+      "steps": [
+        {
+          "title": "Write F as a power of 3",
+          "body": "Let $F(n) = 3^{e(n)}$. Then $F(n) = F(n-1)^n$ gives $3^{e(n)} = 3^{n\\,e(n-1)}$, so $e(n) = n\\,e(n-1)$ with $e(1) = 1$."
+        },
+        {
+          "title": "Unroll",
+          "body": "$e(n) = n\\,(n-1)\\,e(n-2) = \\cdots = n(n-1)\\cdots 2\\cdot e(1) = n!$"
+        },
+        {
+          "title": "Closed form",
+          "body": "Substituting $e(n) = n!$ back into $F(n) = 3^{e(n)}$:\n$$F(n) = 3^{\\,n!}$$"
+        }
+      ],
+      "answer": {
+        "value": "$F(n) = 3^{n!}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering $3^n$ or $3^{n^2}$ — the exponent multiplies, it does not add."
+      ],
+      "verification": "$F(2) = 3^2 = 9 = 3^{2!}$; $F(3) = 9^3 = 729 = 3^6 = 3^{3!}$ ✓."
+    },
+    "cse-1992-b-8": {
+      "approach": "In a DFS of an undirected graph every non-tree edge is a back edge, so one endpoint is an ancestor of the other and the cycle is that tree path plus $(u,v)$. Since we do not know which endpoint is the ancestor, climb from both in lock-step; whichever climb hits the other endpoint first has taken exactly the path length $d$ steps, so the work is $O(d)$.",
+      "concepts": [
+        "DFS tree",
+        "Back edge",
+        "Parent array",
+        "Lock-step search"
+      ],
+      "steps": [
+        {
+          "title": "Shape of the cycle",
+          "body": "Undirected DFS has no cross edges: for $(u,v) \\in G - T$, either $v$ is an ancestor of $u$ or vice versa. Adding $(u,v)$ closes the cycle (descendant → parent → … → ancestor → descendant)."
+        },
+        {
+          "title": "Find the ancestor in O(d)",
+          "body": "Set $x := u$, $y := v$ and repeat $x := P[x]$, $y := P[y]$ until $x = v$ or $y = u$. If $v$ is $d$ levels above $u$, $x$ reaches $v$ after $d$ steps; $y$ climbs at most $d$ steps too (stopping harmlessly at the root since $P[root] = root$). So both loops cost $O(d)$ and $d + 1$ is the cycle length."
+        },
+        {
+          "title": "Algorithm",
+          "body": "```\nprocedure PrintCycle(u, v);\nvar x, y, low, high : vertex;\nbegin\n  x := u; y := v;\n  while (x <> v) and (y <> u) do\n  begin x := P[x]; y := P[y] end;\n  if x = v then begin low := u; high := v end\n           else begin low := v; high := u end;\n  { low is the descendant, high the ancestor }\n  x := low;\n  while x <> high do\n  begin write(x); x := P[x] end;\n  write(high); writeln(low)   { edge (high, low) closes the cycle }\nend;\n```"
+        },
+        {
+          "title": "Cost",
+          "body": "Both while-loops run at most $d$ times where $d$ = depth difference of $u$ and $v$; the cycle has $d+1$ edges, so time is $\\Theta(\\text{cycle length})$."
+        }
+      ],
+      "answer": {
+        "value": "In a DFS tree a non-tree edge joins an ancestor and a descendant: follow P[] from the descendant up to the ancestor, printing each vertex, then close with the edge back (climb from u and v in lock-step to find which is the descendant; O(cycle length))",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Climbing only from $u$ to the root and checking for $v$ — if $u$ is the ancestor this walks to the root, not $O(\\text{cycle})$.",
+        "Using depth arrays or marking — not given and may cost more than the cycle."
+      ],
+      "verification": "Example: tree path r–a–b–c with back edge (c, a): x climbs c→b→a = v after 2 steps; y climbs a→r→r; printed cycle c b a c has 3 edges = d + 1."
+    },
+    "cse-1992-b-9": {
+      "approach": "Use the classic sparse-set: a dense array of members with a count, plus a position array indexed by value. Membership is a two-way cross-check, so even the position array may hold garbage — only the count needs initialising.",
+      "concepts": [
+        "Sparse set",
+        "Direct addressing",
+        "Swap-with-last deletion"
+      ],
+      "steps": [
+        {
+          "title": "Structure and initialisation",
+          "body": "- $E[1..n]$: the members of $S$ stored compactly in $E[1..k]$.\n- $pos[1..n]$: $pos[x]$ = index of $x$ in $E$ (meaningful only if $x \\in S$).\n- $k$: current size.\n\nAssumption: only $k := 0$ is initialised; $E$ and $pos$ may contain arbitrary values."
+        },
+        {
+          "title": "Picture",
+          "body": "$n = 8$, $S = \\{6, 2, 7\\}$ (inserted in that order), $k = 3$:\n\n| index | 1 | 2 | 3 | 4..8 |\n|---|---|---|---|---|\n| $E$ | 6 | 2 | 7 | garbage |\n\n$pos[6] = 1$, $pos[2] = 2$, $pos[7] = 3$, all other $pos[\\cdot]$ garbage."
+        },
+        {
+          "title": "Routines (all O(1))",
+          "body": "```\nMEMBER(x):  p := pos[x];\n            return (1 <= p) and (p <= k) and (E[p] = x)\nFIND-ONE(S): if k = 0 then report 'empty' else return E[k]\nADD(x):     if not MEMBER(x) then\n              begin k := k + 1; E[k] := x; pos[x] := k end\nDELETE(x):  if MEMBER(x) then\n              begin p := pos[x]; y := E[k];\n                    E[p] := y; pos[y] := p; k := k - 1 end\n```"
+        },
+        {
+          "title": "Why it is correct",
+          "body": "A garbage $pos[x]$ cannot fake membership: if $x \\notin S$, any $p$ in $1..k$ has $E[p]$ = some member $\\ne x$. DELETE moves the last member into the hole, keeping $E[1..k]$ dense. Example: DELETE(6) → $E = [7, 2]$, $pos[7] = 1$, $k = 2$."
+        }
+      ],
+      "answer": {
+        "value": "Two arrays: dense list E[1..n] of members with a count k, and pos[1..n] giving each member's index in E; delete swaps the last element into the vacated slot",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "A plain bit vector gives MEMBER/ADD/DELETE in O(1) but FIND-ONE needs a scan.",
+        "Forgetting to update $pos$ of the moved element on delete."
+      ],
+      "verification": "Each routine performs a fixed number of array accesses independent of |S| and n; the invariant pos[E[i]] = i for 1 ≤ i ≤ k is preserved by ADD and DELETE."
+    },
+    "cse-1992-b-10-a": {
+      "approach": "Copy in at entry, work on a local copy, copy back at exit — that is copy-restore (call-by-value-result). The flaw is that step 4 re-evaluates the l-value $A[i]$ at exit, so if $i$ changes inside $P$ the result is written to the wrong element.",
+      "concepts": [
+        "Call-by-value-result",
+        "L-value evaluation time",
+        "Aliasing"
+      ],
+      "steps": [
+        {
+          "title": "Identify the mechanism",
+          "body": "Steps 1–2 copy the actual's value into a local ($z := A[i]$), step 3 uses only the copy, step 4 copies the value back. That is **call-by-value-result** (copy-in/copy-out)."
+        },
+        {
+          "title": "What goes wrong",
+          "body": "In value-result the address of the actual parameter is fixed **at call time**. Step 4 evaluates $A[i]$ again **at return**. If $P$ modifies the global $i$ (e.g. $i := i + 1$), $z$ is stored into $A[i_{new}]$, not into the element that was passed. Example: $i = 1$, $P$ sets $z := 5$ and $i := 2$ ⇒ the given code changes $A[2]$; value-result should change $A[1]$."
+        },
+        {
+          "title": "Minimal correction",
+          "body": "Save the address (or index) at entry and use it at exit:\n\n1. Create local $z$ (and $j$ / pointer $p$).\n2. $j := i$ (or $p := \\&A[i]$); $z := A[j]$.\n3. Execute $P$ using $z$ for the parameter.\n4. $A[j] := z$ (or $*p := z$)."
+        }
+      ],
+      "answer": {
+        "value": "Call-by-value-result; incorrect if i changes inside P — the address of A[i] must be computed once at call time (e.g. j := i or a pointer) and step 4 must store z into that saved location",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Calling it call-by-name: call-by-name would re-evaluate $A[i]$ at every use, not copy into $z$."
+      ],
+      "verification": "If i is never changed inside P both versions behave identically, which confirms the only difference is the time of l-value evaluation."
+    },
+    "cse-1992-b-10-b": {
+      "approach": "Resolve each call by static scope (the inner A declared in B shadows the outer A inside B), then stack activation records in call order; the display entry $d[k]$ points to the latest activation at static nesting depth $k$.",
+      "concepts": [
+        "Activation record",
+        "Display",
+        "Static scoping",
+        "Nesting depth"
+      ],
+      "given": "| Procedure | Declared in | Nesting depth |\n|---|---|---|\n| Test | — | 1 |\n| A (outer) | Test | 2 |\n| B | A (outer) | 3 |\n| A (inner) | B | 4 |",
+      "steps": [
+        {
+          "title": "Which A is called",
+          "body": "At $x$ (body of Test) only the outer A is visible → **A(outer)**. A(outer)'s body calls B. At $y$ (body of B) the inner A declared inside B shadows the outer one → **A(inner)**."
+        },
+        {
+          "title": "Just after the call at x",
+          "body": "Stack (bottom → top): **Test**, **A(outer)**.\nDisplay: $d[1] \\to$ Test, $d[2] \\to$ A(outer). The AR of A(outer) saves the previous $d[2]$ (undefined).",
+          "scene": {
+            "items": [
+              "Test",
+              "A (outer)"
+            ],
+            "caption": "At x: display d[1]=Test, d[2]=A(outer)"
+          }
+        },
+        {
+          "title": "Just after the call at y",
+          "body": "Call chain Test → A(outer) → B → A(inner). Stack: **Test**, **A(outer)**, **B**, **A(inner)**.\nDisplay: $d[1] \\to$ Test, $d[2] \\to$ A(outer), $d[3] \\to$ B, $d[4] \\to$ A(inner). Each AR holds the saved old $d[k]$ for its level, the return address/control link and its locals.",
+          "scene": {
+            "items": [
+              "Test",
+              "A (outer)",
+              "B",
+              "A (inner)"
+            ],
+            "caption": "At y: d[1..4] = Test, A(outer), B, A(inner)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "At x: stack Test, A(outer); display d[1]=Test, d[2]=A(outer). At y: stack Test, A(outer), B, A(inner); display d[1]=Test, d[2]=A(outer), d[3]=B, d[4]=A(inner)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking the call at y as a recursive call of the outer A — it refers to the inner A (depth 4)."
+      ],
+      "verification": "The display length equals the nesting depth of the running procedure: 2 at x (A outer), 4 at y (A inner).",
+      "animation": {
+        "kind": "stack",
+        "title": "Run-time stack",
+        "items": [
+          "Test",
+          "A (outer)"
+        ],
+        "caption": "After the call at x"
+      }
+    },
+    "cse-1992-b-11-a": {
+      "approach": "With rules allowed only at production ends, the type of $T$ cannot be passed down into $L$ (that would need an inherited attribute before $L$). So collect the identifiers into a synthesized list in $L$ and do all the symbol-table updates at the end of $D \\to T L;$, where both $T.type$ and $L.list$ are available.",
+      "concepts": [
+        "Syntax-directed definition",
+        "Synthesized attributes",
+        "Symbol table"
+      ],
+      "steps": [
+        {
+          "title": "Attributes",
+          "body": "$T.type$ (synthesized), $L.list$ (synthesized list of symbol-table entries), $id.entry$ (from the lexer). $addtype(e, t)$ records type $t$ in entry $e$."
+        },
+        {
+          "title": "Semantic rules",
+          "body": "| Production | Rule |\n|---|---|\n| $D \\rightarrow T\\,L\\,;$ | for each $e$ in $L.list$: $addtype(e, T.type)$ |\n| $T \\rightarrow \\text{int}$ | $T.type := integer$ |\n| $T \\rightarrow \\text{real}$ | $T.type := real$ |\n| $L \\rightarrow L_1 , \\text{id}$ | $L.list := append(L_1.list, id.entry)$ |\n| $L \\rightarrow \\text{id}$ | $L.list := [\\,id.entry\\,]$ |"
+        },
+        {
+          "title": "Example",
+          "body": "For \"real x, y;\" : $L.list = [x, y]$, $T.type = real$, and the rule at the end of $D$ calls $addtype(x, real)$, $addtype(y, real)$."
+        }
+      ],
+      "answer": {
+        "value": "T → int {T.type := integer}; T → real {T.type := real}; L → id {L.list := [id.entry]}; L → L1 , id {L.list := L1.list + [id.entry]}; D → T L ; {for each e in L.list: addtype(e, T.type)}",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $L.in := T.type$ — that is an inherited attribute evaluated in the middle of $D \\to TL;$, which the question forbids."
+      ],
+      "verification": "Every rule uses only attributes of the production's right side and is placed at its end, so it is S-attributed and fits a bottom-up parse."
+    },
+    "cse-1992-b-11-b": {
+      "approach": "Parenthesise by precedence (arithmetic > relational > and > or), then emit quadruples in post-order, left operand first; with no short-circuit, every comparison is computed as a value.",
+      "concepts": [
+        "Three-address code",
+        "Quadruples",
+        "Operator precedence"
+      ],
+      "steps": [
+        {
+          "title": "Parse",
+          "body": "Precedence: $+$ above relational ops, relational above **and**, **and** above **or**:\n$$\\big((a+b) > (c+d)\\big)\\ \\textbf{or}\\ \\big((a>c)\\ \\textbf{and}\\ (b<d)\\big)$$"
+        },
+        {
+          "title": "Quadruples",
+          "body": "| # | op | arg1 | arg2 | result |\n|---|---|---|---|---|\n| 1 | + | a | b | t1 |\n| 2 | + | c | d | t2 |\n| 3 | > | t1 | t2 | t3 |\n| 4 | > | a | c | t4 |\n| 5 | $\\lt$ | b | d | t5 |\n| 6 | and | t4 | t5 | t6 |\n| 7 | or | t3 | t6 | t7 |"
+        }
+      ],
+      "answer": {
+        "value": "t1 = a + b; t2 = c + d; t3 = t1 > t2; t4 = a > c; t5 = b < d; t6 = t4 and t5; t7 = t3 or t6",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Generating jumps (short-circuit code) — the question forbids partial evaluation.",
+        "Grouping as $(\\ldots \\textbf{ or } a>c) \\textbf{ and } b<d$ — and binds tighter than or."
+      ],
+      "verification": "Seven operators in the expression ⇒ seven quadruples, each temporary used exactly once afterwards."
+    },
+    "cse-1992-b-12-a": {
+      "approach": "Translate structurally: statements in sequence give a chain; a parbegin fans out from the statement before it to the first statement of every branch and fans in from the last statement of every branch to the statement after parend.",
+      "concepts": [
+        "Precedence graph",
+        "parbegin/parend",
+        "Concurrency"
+      ],
+      "steps": [
+        {
+          "title": "Outer structure",
+          "body": "$S_1$; parbegin [ $S_2;S_4$ ] ‖ [ $S_3$; parbegin $S_5$ ‖ [ $S_6;S_8$ ] parend ] ‖ $S_7$ parend; $S_9$.\nSo $S_1 \\to S_2, S_3, S_7$.",
+          "scene": {
+            "tones": {
+              "S1": "accent",
+              "S2": "warning",
+              "S3": "warning",
+              "S7": "warning"
+            },
+            "edgeTones": {
+              "S1>S2": "accent",
+              "S1>S3": "accent",
+              "S1>S7": "accent"
+            }
+          }
+        },
+        {
+          "title": "Inside the branches",
+          "body": "Branch 1: $S_2 \\to S_4$. Branch 2: $S_3 \\to S_5$ and $S_3 \\to S_6$ (inner parbegin), $S_6 \\to S_8$. Branch 3: just $S_7$.",
+          "scene": {
+            "tones": {
+              "S3": "accent",
+              "S5": "warning",
+              "S6": "warning",
+              "S4": "warning",
+              "S8": "warning"
+            },
+            "edgeTones": {
+              "S2>S4": "accent",
+              "S3>S5": "accent",
+              "S3>S6": "accent",
+              "S6>S8": "accent"
+            }
+          }
+        },
+        {
+          "title": "Join",
+          "body": "The outer parend waits for the last statement of each branch — $S_4$, $S_5$, $S_8$ (end of the inner parend) and $S_7$ — so $S_4, S_5, S_8, S_7 \\to S_9$.\n\nEdges: $S_1S_2, S_1S_3, S_1S_7, S_2S_4, S_3S_5, S_3S_6, S_6S_8, S_4S_9, S_5S_9, S_8S_9, S_7S_9$.",
+          "scene": {
+            "tones": {
+              "S9": "success"
+            },
+            "edgeTones": {
+              "S4>S9": "success",
+              "S5>S9": "success",
+              "S8>S9": "success",
+              "S7>S9": "success"
+            },
+            "caption": "Complete precedence graph"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Edges: S1→S2, S1→S3, S1→S7; S2→S4; S3→S5, S3→S6; S6→S8; S4→S9, S5→S9, S8→S9, S7→S9",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading \"S2:S4\" as parallel — the colon is a misprinted \";\" inside begin…end, i.e. sequence.",
+        "Adding an edge S5 → S8: S5 and S6;S8 are parallel branches of the inner parbegin."
+      ],
+      "verification": "Every statement except S1 has at least one predecessor and every statement except S9 at least one successor; 9 nodes, 11 edges.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "title": "Precedence graph",
+        "nodes": [
+          {
+            "id": "S1",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "S2",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "S3",
+            "x": 2,
+            "y": 1
+          },
+          {
+            "id": "S7",
+            "x": 4,
+            "y": 1
+          },
+          {
+            "id": "S4",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "S5",
+            "x": 1.5,
+            "y": 2
+          },
+          {
+            "id": "S6",
+            "x": 2.5,
+            "y": 2
+          },
+          {
+            "id": "S8",
+            "x": 2.5,
+            "y": 3
+          },
+          {
+            "id": "S9",
+            "x": 2,
+            "y": 4
+          }
+        ],
+        "edges": [
+          {
+            "from": "S1",
+            "to": "S2"
+          },
+          {
+            "from": "S1",
+            "to": "S3"
+          },
+          {
+            "from": "S1",
+            "to": "S7"
+          },
+          {
+            "from": "S2",
+            "to": "S4"
+          },
+          {
+            "from": "S3",
+            "to": "S5"
+          },
+          {
+            "from": "S3",
+            "to": "S6"
+          },
+          {
+            "from": "S6",
+            "to": "S8"
+          },
+          {
+            "from": "S4",
+            "to": "S9"
+          },
+          {
+            "from": "S5",
+            "to": "S9"
+          },
+          {
+            "from": "S8",
+            "to": "S9"
+          },
+          {
+            "from": "S7",
+            "to": "S9"
+          }
+        ]
+      }
+    },
+    "cse-1992-b-12-b": {
+      "approach": "With window $\\Delta = 4$ the working set after reference $t$ is the set of distinct pages among references $t-3 \\ldots t$; a reference faults if its page is not in the working set just before it. Tabulate all ten references.",
+      "concepts": [
+        "Working-set model",
+        "Page fault",
+        "Window size"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| References $t = 1..10$ | c c d b c e c e a d |\n| Earlier references | $t=-2$: e, $t=-1$: d, $t=0$: a |\n| Window $\\Delta$ | 4 |",
+      "steps": [
+        {
+          "title": "Rule",
+          "body": "$W(t) = \\{$pages referenced at $t-3, t-2, t-1, t\\}$. Reference at $t$ faults iff its page $\\notin W(t-1)$. $W(0) = \\{a, d, e\\}$.",
+          "scene": {
+            "reveal": 0,
+            "caption": "W(0) = {a, d, e}"
+          }
+        },
+        {
+          "title": "References 1–5",
+          "body": "- $t=1$ c ∉ {a,d,e} → **fault**; window e d a c → {a,c,d,e}, size 4\n- $t=2$ c → hit; d a c c → {a,c,d}, 3\n- $t=3$ d → hit; a c c d → {a,c,d}, 3\n- $t=4$ b → **fault**; c c d b → {b,c,d}, 3\n- $t=5$ c → hit; c d b c → {b,c,d}, 3",
+          "scene": {
+            "reveal": 30,
+            "hl": [
+              {
+                "r": 0,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ],
+            "caption": "2 faults so far"
+          }
+        },
+        {
+          "title": "References 6–10",
+          "body": "- $t=6$ e → **fault**; d b c e → {b,c,d,e}, 4\n- $t=7$ c → hit; b c e c → {b,c,e}, 3\n- $t=8$ e → hit; c e c e → {c,e}, 2\n- $t=9$ a → **fault**; e c e a → {a,c,e}, 3\n- $t=10$ d → **fault**; c e a d → {a,c,d,e}, 4",
+          "scene": {
+            "reveal": 60,
+            "hl": [
+              {
+                "r": 5,
+                "tone": "error"
+              },
+              {
+                "r": 8,
+                "tone": "error"
+              },
+              {
+                "r": 9,
+                "tone": "error"
+              }
+            ],
+            "caption": "5 faults in total"
+          }
+        },
+        {
+          "title": "Totals",
+          "body": "Faults at $t = 1, 4, 6, 9, 10$ → **5 page faults**.\nAverage frames $= \\frac{4+3+3+3+3+4+3+2+3+4}{10} = \\frac{32}{10} = 3.2$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 5,
+                "tone": "success"
+              }
+            ],
+            "caption": "Sizes sum to 32 → average 3.2 frames"
+          }
+        }
+      ],
+      "answer": {
+        "value": "5 page faults; average 3.2 frames",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting the window as the last 4 distinct pages instead of the last 4 references.",
+        "Forgetting that a, d, e from $t \\le 0$ are still in the window for the first references."
+      ],
+      "verification": "Recomputed programmatically from the reference string with Δ = 4: 5 faults, sizes summing to 32.",
+      "animation": {
+        "kind": "table",
+        "title": "Working set, Δ = 4",
+        "cols": [
+          "t",
+          "ref",
+          "result",
+          "window",
+          "W(t)",
+          "|W|"
+        ],
+        "rows": [
+          [
+            1,
+            "c",
+            "fault",
+            "e d a c",
+            "{a,c,d,e}",
+            4
+          ],
+          [
+            2,
+            "c",
+            "hit",
+            "d a c c",
+            "{a,c,d}",
+            3
+          ],
+          [
+            3,
+            "d",
+            "hit",
+            "a c c d",
+            "{a,c,d}",
+            3
+          ],
+          [
+            4,
+            "b",
+            "fault",
+            "c c d b",
+            "{b,c,d}",
+            3
+          ],
+          [
+            5,
+            "c",
+            "hit",
+            "c d b c",
+            "{b,c,d}",
+            3
+          ],
+          [
+            6,
+            "e",
+            "fault",
+            "d b c e",
+            "{b,c,d,e}",
+            4
+          ],
+          [
+            7,
+            "c",
+            "hit",
+            "b c e c",
+            "{b,c,e}",
+            3
+          ],
+          [
+            8,
+            "e",
+            "hit",
+            "c e c e",
+            "{c,e}",
+            2
+          ],
+          [
+            9,
+            "a",
+            "fault",
+            "e c e a",
+            "{a,c,e}",
+            3
+          ],
+          [
+            10,
+            "d",
+            "fault",
+            "c e a d",
+            "{a,c,d,e}",
+            4
+          ]
+        ],
+        "reveal": 0,
+        "mono": true
+      }
+    },
+    "cse-1992-b-13-a": {
+      "approach": "Each model avoids storing a record twice in its own way: hierarchical via virtual (pointer) records, network via shared owner–member sets, relational via normalization.",
+      "concepts": [
+        "Hierarchical model",
+        "Network model",
+        "Relational model",
+        "Normalization"
+      ],
+      "steps": [
+        {
+          "title": "Hierarchical",
+          "body": "A child with two parents would be duplicated in two trees; instead a **virtual record / logical pointer** to a single physical copy is stored (IMS logical relationships)."
+        },
+        {
+          "title": "Network",
+          "body": "Records form a graph: a member record is stored **once** and linked to several owners through **set (owner–member) pointers**, so many-to-many links need no copies."
+        },
+        {
+          "title": "Relational",
+          "body": "Redundancy is removed by **normalization** — decomposing relations (2NF, 3NF, BCNF, …) using functional dependencies, linked by keys/foreign keys."
+        }
+      ],
+      "answer": {
+        "value": "(i) virtual records / logical parent–child pointers instead of duplicate segments; (ii) each record stored once and shared through owner–member set links (pointers); (iii) normalization (decomposition into normal forms)",
+        "matchesKey": true
+      },
+      "verification": "Each answer names the mechanism by which a single fact is stored in exactly one place in that model."
+    },
+    "cse-1992-b-13-b": {
+      "approach": "Select Rama's liked snacks from LIKES, keep only the SNACKS column, join with SERVES on SNACKS, and project HOTEL. FREQUENTS is not needed.",
+      "concepts": [
+        "Selection",
+        "Projection",
+        "Natural join"
+      ],
+      "steps": [
+        {
+          "title": "Rama's snacks",
+          "body": "$R_1 = \\pi_{SNACKS}\\big(\\sigma_{CUSTOMER = 'Rama'}(LIKES)\\big)$"
+        },
+        {
+          "title": "Hotels serving them",
+          "body": "$$\\pi_{HOTEL}\\big(SERVES \\bowtie R_1\\big) = \\pi_{HOTEL}\\Big(SERVES \\bowtie \\pi_{SNACKS}\\big(\\sigma_{CUSTOMER='Rama'}(LIKES)\\big)\\Big)$$\nThe join is on the common attribute SNACKS."
+        }
+      ],
+      "answer": {
+        "value": "$\\pi_{HOTEL}(SERVES \\bowtie \\pi_{SNACKS}(\\sigma_{CUSTOMER='Rama'}(LIKES)))$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Joining LIKES directly without projecting away CUSTOMER first is still correct here, but joining FREQUENTS would wrongly restrict to hotels Rama visits."
+      ],
+      "verification": "Each output hotel h has a tuple (h, s) in SERVES with (Rama, s) in LIKES, and every such h appears — exactly the query."
+    },
+    "cse-1992-b-14-a": {
+      "approach": "Pair every element with its inverse. Elements that are not self-inverse come in pairs, so the number of self-inverse elements has the same parity as $|G|$, i.e. even; since $e$ is one of them, there is another.",
+      "concepts": [
+        "Group",
+        "Inverse pairing",
+        "Parity argument"
+      ],
+      "steps": [
+        {
+          "title": "Partition G",
+          "body": "Let $A = \\{x \\in G : x = x^{-1}\\}$ (equivalently $x^2 = e$) and $B = G - A$. For $x \\in B$, $x^{-1} \\in B$ and $x^{-1} \\ne x$, and $(x^{-1})^{-1} = x$, so $B$ splits into disjoint pairs $\\{x, x^{-1}\\}$ — $|B|$ is even."
+        },
+        {
+          "title": "Count",
+          "body": "$|A| = |G| - |B|$ = even − even = even. $e \\in A$ since $e^2 = e$, so $|A| \\ge 1$, hence $|A| \\ge 2$: there is $a \\in A$ with $a \\ne e$ and $a^2 = e$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "Proved by involution pairing: non-identity elements pair with inverses, leaving at least one element of order 2",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using Cauchy's theorem without proof — valid but the pairing argument is what is expected."
+      ],
+      "verification": "$\\mathbb{Z}_4 = \\{0,1,2,3\\}$: $1 \\leftrightarrow 3$ pair up, self-inverse elements are $0$ and $2$; $2 + 2 = 0$ ✓."
+    },
+    "cse-1992-b-14-b": {
+      "approach": "The set is the divisor set of 24, closed under LCM and GCD, and these act as join and meet — the defining operations of a lattice. Group/ring/field fail because LCM has no inverses.",
+      "concepts": [
+        "Lattice",
+        "Divisor lattice",
+        "Group axioms"
+      ],
+      "steps": [
+        {
+          "title": "Lattice",
+          "body": "$\\{1,2,3,4,6,8,12,24\\}$ are exactly the divisors of 24. For divisors $a, b$ of 24, $\\gcd(a,b)$ and $\\operatorname{lcm}(a,b)$ also divide 24 (closure). Both are commutative, associative, idempotent and satisfy absorption ($\\operatorname{lcm}(a, \\gcd(a,b)) = a$), so $(D_{24}, \\operatorname{lcm}, \\gcd)$ is a **lattice** (join = lcm, meet = gcd under divisibility)."
+        },
+        {
+          "title": "Not a group, ring or field",
+          "body": "Identity for lcm is 1, but $\\operatorname{lcm}(2, x) = 1$ has no solution — no inverses, so not a group. A ring needs an abelian group under its first operation, so it is not a ring and hence not a field."
+        }
+      ],
+      "answer": {
+        "value": "(iv) lattice",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Calling it a Boolean algebra: 2 has no complement in $D_{24}$ (24 is not square-free)."
+      ],
+      "verification": "Spot check: $\\gcd(8, 6) = 2 \\in D_{24}$, $\\operatorname{lcm}(8, 6) = 24 \\in D_{24}$; absorption $\\gcd(8, \\operatorname{lcm}(8,6)) = 8$ ✓."
+    },
+    "cse-1992-b-15-a": {
+      "approach": "Convert to clauses and resolve with the substitution $x = a,\\ y = a$: get $R(a)$ from (2),(3), then $P(a)$ from (1), which clashes with $\\sim P(a)$.",
+      "concepts": [
+        "Resolution",
+        "Modus ponens",
+        "Unification"
+      ],
+      "steps": [
+        {
+          "title": "Clauses",
+          "body": "(1) $\\sim Q(x) \\lor P(x) \\lor \\sim R(a)$ (2) $R(a) \\lor \\sim Q(a)$ (3) $Q(a)$ (4) $\\sim P(y)$"
+        },
+        {
+          "title": "Resolve",
+          "body": "- (2) + (3): $R(a)$ … (5)\n- (1) with $x = a$ + (3): $P(a) \\lor \\sim R(a)$ … (6)\n- (6) + (5): $P(a)$ … (7)\n- (7) + (4) with $y = a$: $\\square$ (empty clause)\n\nThe empty clause shows the set is **inconsistent**. In modus-ponens form: $Q(a)$ and $Q(a) \\rightarrow R(a)$ give $R(a)$; $Q(a)$ and (1) give $P(a) \\lor \\sim R(a)$, i.e. $R(a) \\rightarrow P(a)$, so $P(a)$, contradicting $\\forall y\\, \\sim P(y)$."
+        }
+      ],
+      "answer": {
+        "value": "Derive R(a) from (2),(3); instantiate (1) with x = a to get P(a) ∨ ~R(a), hence P(a); this contradicts ~P(a) from (4) with y = a",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting to instantiate the universally quantified $y$ in (4) with $a$."
+      ],
+      "verification": "Even if (2) were read as R(a) ∧ ~Q(a), ~Q(a) clashes with (3) directly, so the set is inconsistent under either reading."
+    },
+    "cse-1992-b-15-b": {
+      "approach": "Check reflexive, symmetric and transitive directly from \"$n$ divides $a-b$\"; the classes are the residues mod 5.",
+      "concepts": [
+        "Equivalence relation",
+        "Congruence modulo n",
+        "Equivalence classes"
+      ],
+      "steps": [
+        {
+          "title": "Equivalence",
+          "body": "- Reflexive: $a - a = 0 = 0\\cdot n$.\n- Symmetric: $a - b = kn \\Rightarrow b - a = (-k)n$.\n- Transitive: $a - b = kn,\\ b - c = ln \\Rightarrow a - c = (k+l)n$."
+        },
+        {
+          "title": "Classes for n = 5",
+          "body": "Every integer is $5k + r$ with $r \\in \\{0,1,2,3,4\\}$, and two integers are related iff they have the same $r$:\n$[r] = \\{\\ldots, r-10, r-5, r, r+5, r+10, \\ldots\\}$ for $r = 0,1,2,3,4$ — five classes, e.g. $[0] = \\{\\ldots,-5,0,5,10,\\ldots\\}$, $[1] = \\{\\ldots,-4,1,6,\\ldots\\}$."
+        }
+      ],
+      "answer": {
+        "value": "Five classes: [0], [1], [2], [3], [4] where [r] = {5k + r : k ∈ ℤ}",
+        "matchesKey": true
+      },
+      "verification": "The five classes are disjoint and cover ℤ (division algorithm), as an equivalence relation's classes must."
+    },
+    "cse-1992-b-16": {
+      "approach": "(i) Run the two deciders one after the other. (ii) Pump a prime-length string to a composite length. (iii) Any language is an infinite union of singleton (regular) languages, so closure would make every language regular.",
+      "concepts": [
+        "Recursive languages",
+        "Pumping lemma",
+        "Closure properties"
+      ],
+      "steps": [
+        {
+          "title": "(i) True",
+          "body": "Let $M_1, M_2$ be deciders (always halt) for $L_1, L_2$. On input $w$: run $M_1$; if it accepts, accept; else run $M_2$ and answer as it does. Both halt, so this decides $L_1 \\cup L_2$."
+        },
+        {
+          "title": "(ii) True",
+          "body": "Suppose $L = \\{0^p : p \\text{ prime}\\}$ is regular with pumping length $m$. Pick a prime $p \\ge m + 2$, $w = 0^p = xyz$ with $|xy| \\le m$, $|y| = k \\ge 1$. Pump $i = p - k$: length $= p - k + (p-k)k = (p-k)(k+1)$. Here $k+1 \\ge 2$ and $p - k \\ge p - m \\ge 2$, so the length is composite and $xy^{p-k}z \\notin L$ — contradiction."
+        },
+        {
+          "title": "(iii) False",
+          "body": "Each singleton $\\{0^n1^n\\}$ is finite, hence regular, but $\\bigcup_{n \\ge 0}\\{0^n1^n\\} = \\{0^n1^n : n \\ge 0\\}$ is not regular. (Closure holds only for finite unions.)"
+        }
+      ],
+      "answer": {
+        "value": "(i) true; (ii) true; (iii) false",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Generalising finite-union closure to infinite unions.",
+        "In (ii) choosing $i = 0$ or $2$ — that need not give a composite length."
+      ],
+      "verification": "Concrete check of (ii) with m = 3, p = 5, k = 1: pumped length (5−1)(1+1) = 8, not prime ✓."
+    }
+  }
+}
