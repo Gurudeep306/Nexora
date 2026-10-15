@@ -1,29 +1,68 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 400" role="img" aria-label="Three-stage pipelined adder: REG R0 (6-bit: b2 a2 b1 a1 b0 a0) loaded from A and B; a full adder adds a0, b0 and carry-in 0 into R1 (6-bit: b2 a2 b1 a1 c1 s0); a second full adder adds a1, b1, c1 into R2 (5-bit: b2 a2 c2 s1 s0); a third full adder adds a2, b2, c2 giving z3 and z2, while z1 = s1 and z0 = s0. All registers are clocked by CLOCK." font-family="Arial, Helvetica, sans-serif" font-size="13" fill="none" stroke="currentColor" stroke-width="1.5">
   <defs>
-    <linearGradient id="gate-grad-cse-2002-b-56-b" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#1e293b" />
-      <stop offset="100%" stopColor="#0f172a" />
-    </linearGradient>
+    <marker id="ar56" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="currentColor" stroke="none"/></marker>
   </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LOGIC CIRCUIT</text>
-  <rect x="110" y="50" width="70" height="45" rx="6" fill="url(#gate-grad-cse-2002-b-56-b)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="78" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">AND₁</text>
-  <line x1="50" y1="62" x2="110" y2="62" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="82" x2="110" y2="82" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="66" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">A</text>
-  <text x="40" y="86" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">B</text>
-  <rect x="110" y="130" width="70" height="45" rx="6" fill="url(#gate-grad-cse-2002-b-56-b)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="158" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">AND₂</text>
-  <line x1="50" y1="142" x2="110" y2="142" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="162" x2="110" y2="162" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="146" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">C</text>
-  <text x="40" y="166" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">D</text>
-  <path d="M 180 72 L 260 72 L 280 105" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <path d="M 180 152 L 260 152 L 280 120" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <rect x="280" y="90" width="80" height="45" rx="6" fill="url(#gate-grad-cse-2002-b-56-b)" stroke="#34d399" stroke-width="2" />
-  <text x="320" y="118" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">OR₁</text>
-  <line x1="360" y1="112" x2="440" y2="112" stroke="#34d399" stroke-width="3" />
-  <text x="455" y="117" fill="#34d399" font-size="16" font-weight="bold" font-family="monospace">OUT</text>
+  <!-- inputs -->
+  <path d="M135,22 V50" marker-end="url(#ar56)"/>
+  <path d="M345,22 V50" marker-end="url(#ar56)"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle" font-weight="bold">
+    <text x="135" y="16">A</text><text x="345" y="16">B</text><text x="470" y="16">CLOCK</text>
+  </g>
+  <!-- clock line -->
+  <path d="M470,24 V265"/>
+  <path d="M470,65 H400" marker-end="url(#ar56)"/>
+  <path d="M470,165 H400" marker-end="url(#ar56)"/>
+  <path d="M470,265 H390" marker-end="url(#ar56)"/>
+  <!-- registers -->
+  <rect x="100" y="50" width="300" height="30"/>
+  <rect x="100" y="150" width="300" height="30"/>
+  <rect x="100" y="250" width="290" height="30"/>
+  <g fill="currentColor" stroke="none" text-anchor="end" font-size="12">
+    <text x="92" y="62">REG R0</text><text x="92" y="76">(6-bit)</text>
+    <text x="92" y="162">REG R1</text><text x="92" y="176">(6-bit)</text>
+    <text x="92" y="262">REG R2</text><text x="92" y="276">(5-bit)</text>
+  </g>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="120" y="70">b₂</text><text x="150" y="70">a₂</text><text x="230" y="70">b₁</text><text x="260" y="70">a₁</text><text x="330" y="70">b₀</text><text x="360" y="70">a₀</text>
+    <text x="120" y="170">b₂</text><text x="150" y="170">a₂</text><text x="230" y="170">b₁</text><text x="260" y="170">a₁</text><text x="330" y="170">c₁</text><text x="360" y="170">s₀</text>
+    <text x="120" y="270">b₂</text><text x="150" y="270">a₂</text><text x="230" y="270">c₂</text><text x="260" y="270">s₁</text><text x="360" y="270">s₀</text>
+  </g>
+  <!-- stage 0 -->
+  <path d="M120,80 V150" marker-end="url(#ar56)"/>
+  <path d="M150,80 V150" marker-end="url(#ar56)"/>
+  <path d="M230,80 V150" marker-end="url(#ar56)"/>
+  <path d="M260,80 V150" marker-end="url(#ar56)"/>
+  <path d="M330,80 V100" marker-end="url(#ar56)"/>
+  <path d="M360,80 V100" marker-end="url(#ar56)"/>
+  <rect x="315" y="100" width="65" height="25"/>
+  <path d="M420,112 H380" marker-end="url(#ar56)"/>
+  <path d="M330,125 V150" marker-end="url(#ar56)"/>
+  <path d="M360,125 V150" marker-end="url(#ar56)"/>
+  <!-- stage 1 -->
+  <path d="M120,180 V250" marker-end="url(#ar56)"/>
+  <path d="M150,180 V250" marker-end="url(#ar56)"/>
+  <path d="M360,180 V250" marker-end="url(#ar56)"/>
+  <path d="M230,180 V200" marker-end="url(#ar56)"/>
+  <path d="M260,180 V200" marker-end="url(#ar56)"/>
+  <path d="M330,180 V212 H300" marker-end="url(#ar56)"/>
+  <rect x="215" y="200" width="85" height="25"/>
+  <path d="M230,225 V250" marker-end="url(#ar56)"/>
+  <path d="M260,225 V250" marker-end="url(#ar56)"/>
+  <!-- stage 2 -->
+  <path d="M120,280 V300" marker-end="url(#ar56)"/>
+  <path d="M150,280 V300" marker-end="url(#ar56)"/>
+  <path d="M230,280 V312 H190" marker-end="url(#ar56)"/>
+  <rect x="105" y="300" width="85" height="25"/>
+  <path d="M120,325 V355" marker-end="url(#ar56)"/>
+  <path d="M150,325 V355" marker-end="url(#ar56)"/>
+  <path d="M260,280 V355" marker-end="url(#ar56)"/>
+  <path d="M360,280 V355" marker-end="url(#ar56)"/>
+  <g fill="currentColor" stroke="none" text-anchor="middle">
+    <text x="347" y="117" font-size="12">FA</text>
+    <text x="275" y="217" font-size="12">FA</text>
+    <text x="165" y="317" font-size="12">FA</text>
+    <text x="430" y="117">0</text>
+    <text x="85" y="375" text-anchor="end">Z =</text>
+    <text x="120" y="375">z₃</text><text x="150" y="375">z₂</text><text x="260" y="375">z₁</text><text x="360" y="375">z₀</text>
+  </g>
 </svg>
