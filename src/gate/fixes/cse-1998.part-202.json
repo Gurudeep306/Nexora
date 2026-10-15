@@ -1,0 +1,53 @@
+{
+  "paper": "cse-1998",
+  "fixes": [
+    {
+      "id": "cse-1998-a-41",
+      "field": "topic",
+      "before": "pumping",
+      "after": "regular",
+      "reason": "Closure properties of regular sets, not the pumping lemma.",
+      "source": "GATE 1998 paper Q41"
+    },
+    {
+      "id": "cse-1998-a-45",
+      "field": "subject",
+      "before": "pds",
+      "after": "legacy",
+      "reason": "8086 address space is a microprocessor question, not programming.",
+      "source": "GATE 1998 paper Q45"
+    },
+    {
+      "id": "cse-1998-a-45",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "microprocessor",
+      "reason": "8086 microprocessor.",
+      "source": "GATE 1998 paper Q45"
+    },
+    {
+      "id": "cse-1998-a-49",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "arrays",
+      "reason": "Row-major array address calculation.",
+      "source": "GATE 1998 paper Q49"
+    },
+    {
+      "id": "cse-1998-a-57-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "A constant 0 is provably necessary: IMP is 1-preserving (1→1=1) but XOR(1,1)=0, so no IMP-only circuit on x,y alone can realise f; the solution explains this.",
+      "source": "Independent proof"
+    },
+    {
+      "id": "cse-1998-a-57-a",
+      "field": "reviewNote",
+      "before": "Solution uses a constant 0 input; confirm this is allowed.",
+      "after": null,
+      "reason": "Resolved (see needsReview fix).",
+      "source": "Independent proof"
+    }
+  ]
+}
