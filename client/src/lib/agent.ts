@@ -5,7 +5,7 @@
  *
  * The model's text is untrusted: render it with <AiMarkdown> (react-markdown,
  * no raw HTML), never as HTML, and pass any HTML it produces through sanitizeHtml. */
-import { api, ApiError } from './api'
+import { api, apiUrl, ApiError } from './api'
 
 export const AI_NOT_CONFIGURED = 'AI is not configured'
 
@@ -125,7 +125,7 @@ export function parseSseBlock(block: string): { event: string; data: unknown } |
 export async function streamChat(body: ChatBody, h: ChatHandlers, signal?: AbortSignal): Promise<void> {
   let res: Response
   try {
-    res = await fetch('/api/agent/chat', {
+    res = await fetch(apiUrl('/api/agent/chat'), {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },

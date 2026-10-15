@@ -1,4 +1,5 @@
 import type { IconName } from '@/components/icon/names'
+import { apiUrl } from '@/lib/api'
 
 export interface NavItem {
   to: string
@@ -53,8 +54,8 @@ export const NAV_SECTIONS: NavSection[] = [
 export const CREATE_SECTION: NavSection = {
   title: 'Create',
   items: [
-    { to: '/studio', label: 'Creator Studio', icon: 'studio', external: true, adminOnly: true },
-    { to: '/forgebuilder', label: 'ForgeBuilder', icon: 'builder', external: true, adminOnly: true },
+    { to: apiUrl('/studio'), label: 'Creator Studio', icon: 'studio', external: true, adminOnly: true },
+    { to: apiUrl('/forgebuilder'), label: 'ForgeBuilder', icon: 'builder', external: true, adminOnly: true },
   ],
 }
 
