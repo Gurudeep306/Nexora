@@ -115,7 +115,7 @@ export function AgentThread({
             </span>
             <div className="min-w-0 flex-1">
               <div className="mb-1 flex items-center gap-2 text-[11px]">
-                <span className="font-semibold text-foreground">Nexora AI</span>
+                <span className="font-semibold text-foreground">NexoraGuru AI</span>
                 {m.createdAt && <span className="text-foreground-faint tabular-nums">{time(m.createdAt)}</span>}
               </div>
 

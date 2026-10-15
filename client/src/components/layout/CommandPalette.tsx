@@ -169,7 +169,7 @@ export function CommandPalette() {
       {
         id: 'act:assistant',
         group: 'Actions',
-        label: q.length >= 2 ? `Ask Nexora AI: “${query.trim()}”` : 'Ask Nexora AI',
+        label: q.length >= 2 ? `Ask NexoraGuru AI: “${query.trim()}”` : 'Ask NexoraGuru AI',
         hint: '⌘J',
         icon: iconComponent('sparkles'),
         run: () => {

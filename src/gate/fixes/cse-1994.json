@@ -1,0 +1,397 @@
+{
+  "paper": "cse-1994",
+  "fixes": [
+    {
+      "id": "cse-1994-a-1",
+      "field": "text",
+      "before": "Choose one of the alternatives for the following questions\n\nFORTRAN implementations do not permit recursion because",
+      "after": "FORTRAN implementations do not permit recursion because",
+      "reason": "Removed the section instruction preamble ('Choose one of the alternatives...') from the stem",
+      "source": "GATE1994.pdf p1"
+    },
+    {
+      "id": "cse-1994-a-21",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Macro definitions cannot appear within other macro definitions in assembly language"
+        },
+        {
+          "l": "B",
+          "t": "Overlaying is used to run a program which is longer than the address space of a computer"
+        },
+        {
+          "l": "C",
+          "t": "Virtual memory can be used to accommodate a program which is longer than the of a computer"
+        },
+        {
+          "l": "D",
+          "t": "It is not possible to write interrupt service routines in a high level language."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Macro definitions cannot appear within other macro definitions in assembly language"
+        },
+        {
+          "l": "B",
+          "t": "Overlaying is used to run a program which is longer than the address space of a computer"
+        },
+        {
+          "l": "C",
+          "t": "Virtual memory can be used to accommodate a program which is longer than the [word missing in source] of a computer"
+        },
+        {
+          "l": "D",
+          "t": "It is not possible to write interrupt service routines in a high level language."
+        }
+      ],
+      "reason": "Option C is missing a word in the source paper; mark the gap explicitly instead of the garbled 'the of a computer'",
+      "source": "GATE1994.pdf p3"
+    },
+    {
+      "id": "cse-1994-a-21",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key C disagrees with independent solution B",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-1994-a-21",
+      "field": "reviewNote",
+      "before": "Option (b) prints 'compare' (for 'computer'), corrected. Option (c) as printed is missing a word ('longer than the [physical memory] of a computer'); kept as printed.",
+      "after": "Stored key C (solved, not official). Option C is missing a word in the source ('longer than the ... of a computer'). Overlays let a program exceed the address space (B true as printed); virtual memory exceeds physical memory but not the virtual address space, so C is true only if the missing word is 'physical memory'. Solution answers B; verify against an authoritative key.",
+      "reason": "Key disagreement",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-1994-a-2-5",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Handshaking-lemma graph theory question, not general aptitude.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-1994-a-2-5",
+      "field": "topic",
+      "before": "verbal",
+      "after": "graphs",
+      "reason": "Topic is graph theory (regular graph edge count).",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-1994-a-2-8",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability of independent events, not general aptitude.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-1994-a-2-8",
+      "field": "topic",
+      "before": "verbal",
+      "after": "basic",
+      "reason": "Basic probability (complement rule with independent events).",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-1994-a-28",
+      "field": "text",
+      "before": "A 3-ary tree is a tree in which every internal node has exactly three children.\n\nUse induction to prove that the number of leaves in a 3-ary tree with n internal nodes is 2(n-1)",
+      "after": "A 3-ary tree is a tree in which every internal node has exactly three children.\n\nUse induction to prove that the number of leaves in a 3-ary tree with n internal nodes is $2(n-1)+3$",
+      "reason": "The scan prints '2(n-1)', which is false (n = 1 gives 3 leaves); the intended claim is 2(n-1)+3 = 2n+1, as in the standard GATE 1994 Q28 wording.",
+      "source": "GATE 1994 paper (scan), Q28"
+    },
+    {
+      "id": "cse-1994-a-28",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Statement corrected to the provable claim 2(n-1)+3; answer 2n+1 proved by induction in the solution.",
+      "source": "GATE 1994 paper (scan), Q28"
+    },
+    {
+      "id": "cse-1994-a-28",
+      "field": "reviewNote",
+      "before": "Printed claim '2(n-1)' is false for a 3-ary tree (n=1 has 3 leaves); the original reads '2(n−1)+3'. Also 'interval nodes' is a typo for 'internal nodes'.",
+      "after": "Scan prints '2(n-1)' and 'interval nodes'; corrected to '2(n-1)+3' (= 2n+1, true for every 3-ary tree) and 'internal nodes'.",
+      "reason": "Record the corrections made to the printed statement.",
+      "source": "GATE 1994 paper (scan), Q28"
+    },
+    {
+      "id": "cse-1994-b-36-a",
+      "field": "text",
+      "before": "Consider the following relational schema:\n\nCOURSES (<u>cno</u>, cname)\n\nSTUDENTS (<u>rollno</u>, sname, age, year)\n\nREGISTERED FOR (<u>cno, rollno</u>)\n\nThe underlined attributes indicate the primary keys for the relations. The 'year' attribute for the STUDENTS relation indicates the year in which the student is currently studying (First year, Second year etc.).\n\n(a) Write a relational algebra query to Print the roll number of students who have not registered for cno 322.",
+      "after": "Consider the following relational schema:\n\nCOURSES ($\\underline{\\text{cno}}$, cname)\n\nSTUDENTS ($\\underline{\\text{rollno}}$, sname, age, year)\n\nREGISTERED\\_FOR ($\\underline{\\text{cno}}$, $\\underline{\\text{rollno}}$)\n\nThe underlined attributes indicate the primary keys for the relations. The 'year' attribute for the STUDENTS relation indicates the year in which the student is currently studying (First year, Second year etc.).\n\n(a) Write a relational algebra query to Print the roll number of students who have not registered for cno 322.",
+      "reason": "Raw HTML <u> underline replaced with KaTeX \\underline; relation name written REGISTERED_FOR as used in the queries.",
+      "source": "GATE 1994 paper (scan), Q36(a)"
+    },
+    {
+      "id": "cse-1994-b-36-b",
+      "field": "text",
+      "before": "Consider the following relational schema:\n\nCOURSES (<u>cno</u>, cname)\n\nSTUDENTS (<u>rollno</u>, sname, age, year)\n\nREGISTERED FOR (<u>cno, rollno</u>)\n\nThe underlined attributes indicate the primary keys for the relations. The 'year' attribute for the STUDENTS relation indicates the year in which the student is currently studying (First year, Second year etc.).\n\n(b) Write a SQL query to Print the age and year of the youngest student in each year.",
+      "after": "Consider the following relational schema:\n\nCOURSES ($\\underline{\\text{cno}}$, cname)\n\nSTUDENTS ($\\underline{\\text{rollno}}$, sname, age, year)\n\nREGISTERED\\_FOR ($\\underline{\\text{cno}}$, $\\underline{\\text{rollno}}$)\n\nThe underlined attributes indicate the primary keys for the relations. The 'year' attribute for the STUDENTS relation indicates the year in which the student is currently studying (First year, Second year etc.).\n\n(b) Write a SQL query to Print the age and year of the youngest student in each year.",
+      "reason": "Raw HTML <u> underline replaced with KaTeX \\underline; relation name written REGISTERED_FOR as used in the queries.",
+      "source": "GATE 1994 paper (scan), Q36(b)"
+    },
+    {
+      "id": "cse-1994-b-36-a",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "Relational algebra query over a relational schema is a Databases question, not discrete-math sets.",
+      "source": "GATE 1994 paper (scan), Q36(a)"
+    },
+    {
+      "id": "cse-1994-b-36-a",
+      "field": "topic",
+      "before": "sets",
+      "after": "ra",
+      "reason": "Relational algebra.",
+      "source": "GATE 1994 paper (scan), Q36(a)"
+    },
+    {
+      "id": "cse-1994-b-37-a",
+      "field": "answer",
+      "before": "Minimum keys = d-1 (non-root), maximum keys = 2d-1; height h = ceil(log_d((N+1)/2))",
+      "after": "Insert 100 into the last (full, 2d = 4 keys) leaf; it overflows and splits (copy the middle key up); the root (already 4 keys) overflows and splits too, pushing its middle key into a new root, so the tree grows from 2 to 3 levels.",
+      "reason": "Stored answer described min/max keys and height, which answers a different question; replaced with the insertion outcome derivable from the figure structure (d = 2, root with 4 keys, last leaf full).",
+      "source": "GATE 1994 paper (scan), Q37(a)"
+    },
+    {
+      "id": "cse-1994-b-37-a",
+      "field": "reviewNote",
+      "before": "Key values in Fig. 7 are illegible in the 96-dpi scan and could not be recovered from the web; answer left null.",
+      "after": "Key values in Fig. 7 are illegible in the 96-dpi scan; the answer assumes 100 is larger than every key (it lands in the full last leaf). The exact key values in the new nodes cannot be stated.",
+      "reason": "Explain what remains unverified.",
+      "source": "GATE 1994 paper (scan), Q37(a)"
+    },
+    {
+      "id": "cse-1994-b-37-a",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Figure key values illegible; exact resulting tree cannot be verified.",
+      "source": "GATE 1994 paper (scan), Q37(a)"
+    },
+    {
+      "id": "cse-1994-b-37-a",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1994/b-37-a-1.png",
+          "alt": "B+-tree with one root node (about four key slots) and five leaf nodes linked left to right in a chain; the root has five child pointers. Key values are illegible in the scan.",
+          "svg": "cse-1994/b-37-a-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-1994/b-37-a-1.png",
+          "alt": "B+-tree of order d = 2: one root node holding 4 keys with 5 child pointers to 5 leaves, which hold 2, 2, 3, 4 and 4 keys and are chained left to right. Key values are illegible in the source scan.",
+          "svg": "cse-1994/b-37-a-1.svg"
+        }
+      ],
+      "reason": "Alt text now states the node occupancy readable from the scan (root 4 keys; leaves 2, 2, 3, 4, 4 keys); SVG redrawn.",
+      "source": "GATE 1994 paper (scan), Q37(a)"
+    },
+    {
+      "id": "cse-1994-b-37-c",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1994/b-37-c-1.png",
+          "alt": "Square dot patterns: 1 dot, then 4 dots, then 9 dots, then more — each square of side k+1 formed by adding an L-shaped border of 2k+1 dots to the previous k×k square.",
+          "svg": "cse-1994/b-37-c-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-1994/b-37-c-1.png",
+          "alt": "Dot patterns labelled 1, 4 and 9 followed by an ellipsis: a single dot, a 2×2 square and a 3×3 square; each square is the previous one plus an L-shaped border of 2k+1 dots.",
+          "svg": "cse-1994/b-37-c-1.svg"
+        }
+      ],
+      "reason": "Alt text matches the printed pattern (1, 4, 9, …); SVG redrawn.",
+      "source": "GATE 1994 paper (scan), Q37(c)"
+    },
+    {
+      "id": "cse-1994-b-37-d",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1994/b-37-c-1.png",
+          "alt": "Square dot patterns: 1 dot, then 4 dots, then 9 dots, then more — each square of side k+1 formed by adding an L-shaped border of 2k+1 dots to the previous k×k square.",
+          "svg": "cse-1994/b-37-c-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-1994/b-37-c-1.png",
+          "alt": "Dot patterns labelled 1, 4 and 9 followed by an ellipsis: a single dot, a 2×2 square and a 3×3 square; each square is the previous one plus an L-shaped border of 2k+1 dots.",
+          "svg": "cse-1994/b-37-c-1.svg"
+        }
+      ],
+      "reason": "Alt text matches the printed pattern (1, 4, 9, …); SVG redrawn.",
+      "source": "GATE 1994 paper (scan), Q37(d)"
+    },
+    {
+      "id": "cse-1994-b-37-d",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Summation proof is discrete mathematics, not general-aptitude spatial reasoning.",
+      "source": "GATE 1994 paper (scan), Q37(d)"
+    },
+    {
+      "id": "cse-1994-b-37-d",
+      "field": "topic",
+      "before": "spatial",
+      "after": "combinatorics",
+      "reason": "Same topic as its part (a), cse-1994-b-37-c.",
+      "source": "GATE 1994 paper (scan), Q37(d)"
+    },
+    {
+      "id": "cse-1994-b-41-a",
+      "field": "options",
+      "before": [
+        {
+          "l": "i",
+          "t": "S is regular"
+        },
+        {
+          "l": "ii",
+          "t": "S is recursively enumerable."
+        },
+        {
+          "l": "iii",
+          "t": "S is not recursively enumerable."
+        },
+        {
+          "l": "iv",
+          "t": "S is recursive."
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "S is regular"
+        },
+        {
+          "l": "B",
+          "t": "S is recursively enumerable."
+        },
+        {
+          "l": "C",
+          "t": "S is not recursively enumerable."
+        },
+        {
+          "l": "D",
+          "t": "S is recursive."
+        }
+      ],
+      "reason": "Paper numbers the options (i)-(iv); relabelled A-D so the answer engine can read the key (A=(i), B=(ii), C=(iii), D=(iv)).",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-41-a",
+      "field": "answer",
+      "before": "i",
+      "after": "B",
+      "reason": "Only (ii) is provable: S is r.e. (scan the digits of pi and output every maximal block length found). Regularity/recursiveness of S are not provable with the maximal-block condition, and since regular => recursive => r.e., (i) being the single correct option of an MCQ is impossible. Previous key \"i\" was a solved (not official) answer copied from GATE Overflow.",
+      "source": "Independent proof; GATE 1994 paper"
+    },
+    {
+      "id": "cse-1994-b-41-a",
+      "field": "reviewNote",
+      "before": "Accepted GATE Overflow answer is (i) 'S is regular', but its argument ignores the 'maximal block' condition; only (ii) is provable outright. Printed 'with respect to 5?' corrected to 'S'.",
+      "after": "Key changed from (i) to (ii) [now B]: (ii) is the only statement provable for maximal x-blocks, and (i) would also make (ii) and (iv) true. GATE Overflow's accepted answer (i) treats x-blocks as non-maximal. Options relabelled (i)-(iv) -> A-D.",
+      "reason": "Record the disagreement with the GATE Overflow answer.",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-49-a",
+      "field": "text",
+      "before": "(a) Draw a precedence graph for the following sequential code. The statements are numbered from $S_1$ to $S_6$.\n\n| | |\n|---|---|\n| $S_1$ | read n |\n| $S_2$ | i := 1 |\n| $S_3$ | if i > n goto next |\n| $S_4$ | a(i) := i + 1 |\n| $S_5$ | i := i + 1 |\n| $S_6$ | next : write a(i) |\n\n",
+      "after": "(a) Draw a precedence graph for the following sequential code. The statements are numbered from $S_1$ to $S_6$.\n\n| | |\n|---|---|\n| $S_1$ | read n |\n| $S_2$ | i := 1 |\n| $S_3$ | if i > n goto next |\n| $S_4$ | a(i) := i + 1 |\n| $S_5$ | i := i + 1 |\n| $S_6$ | next : write a(i) |",
+      "reason": "Trailing blank lines removed.",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-50-a",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1994/b-50-1.png",
+          "alt": "Resource allocation graph with three resource boxes T1 (r1, 2 instances), T2 (r2, 3 instances), T3 (r3, 2 instances) at top-left, top-right and bottom, and four process circles in a row between them (labels faint: p1, p2, p3, p4 left to right). Arrows between process circles and resource boxes denote assignment (resource instance → process) and request (process → resource) edges; per GATE Overflow: allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0); requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+          "svg": "cse-1994/b-50-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-1994/b-50-1.png",
+          "alt": "Resource allocation graph. Resource boxes: T1 (top left, 2 instances), T2 (top right, 3 instances), T3 (bottom centre, 2 instances); process circles left to right p1, p0, p2, p3. Assignment edges (instance -> process): T1->p1, T1->p0, T2->p1, T2->p2, T2->p3, T3->p0. Request edges (process -> resource): p1->T1, p3->T1, p0->T2, p3->T2 (two edges), p0->T3, p2->T3.",
+          "svg": "cse-1994/b-50-1.svg"
+        }
+      ],
+      "reason": "Alt text rewritten from the enlarged scan (labels p1, p0, p2, p3 left to right; every edge direction listed); SVG redrawn faithfully.",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-50-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Edge directions and labels verified on the enlarged scan; they give exactly allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0) and requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-50-a",
+      "field": "reviewNote",
+      "before": "Edge directions and process labels are faint in the scan; interpretation follows GATE Overflow. Printed 'deadlook' corrected to 'deadlock'.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-50-b",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1994/b-50-1.png",
+          "alt": "Resource allocation graph with three resource boxes T1 (r1, 2 instances), T2 (r2, 3 instances), T3 (r3, 2 instances) at top-left, top-right and bottom, and four process circles in a row between them (labels faint: p1, p2, p3, p4 left to right). Arrows between process circles and resource boxes denote assignment (resource instance → process) and request (process → resource) edges; per GATE Overflow: allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0); requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+          "svg": "cse-1994/b-50-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-1994/b-50-1.png",
+          "alt": "Resource allocation graph. Resource boxes: T1 (top left, 2 instances), T2 (top right, 3 instances), T3 (bottom centre, 2 instances); process circles left to right p1, p0, p2, p3. Assignment edges (instance -> process): T1->p1, T1->p0, T2->p1, T2->p2, T2->p3, T3->p0. Request edges (process -> resource): p1->T1, p3->T1, p0->T2, p3->T2 (two edges), p0->T3, p2->T3.",
+          "svg": "cse-1994/b-50-1.svg"
+        }
+      ],
+      "reason": "Alt text rewritten from the enlarged scan (labels p1, p0, p2, p3 left to right; every edge direction listed); SVG redrawn faithfully.",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-50-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Edge directions and labels verified on the enlarged scan; they give exactly allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0) and requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+      "source": "GATE 1994 question paper (PDF scan)"
+    },
+    {
+      "id": "cse-1994-b-50-b",
+      "field": "reviewNote",
+      "before": "Process labels in the scan look like p1–p4; safe sequence given in GATE Overflow's P0–P3 labelling.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "GATE 1994 question paper (PDF scan)"
+    }
+  ]
+}

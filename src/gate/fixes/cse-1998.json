@@ -1,0 +1,403 @@
+{
+  "paper": "cse-1998",
+  "fixes": [
+    {
+      "id": "cse-1998-a-1",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Dice/binomial probability in the 1998 CSE paper is engineering-maths probability, not general aptitude.",
+      "source": "GATE 1998 paper Q1.1"
+    },
+    {
+      "id": "cse-1998-a-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Basic probability.",
+      "source": "GATE 1998 paper Q1.1"
+    },
+    {
+      "id": "cse-1998-a-14",
+      "field": "subject",
+      "before": "db",
+      "after": "dl",
+      "reason": "Multiplexer question is digital logic, not databases.",
+      "source": "GATE 1998 paper Q1.14"
+    },
+    {
+      "id": "cse-1998-a-14",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinational",
+      "reason": "Multiplexers are combinational circuits.",
+      "source": "GATE 1998 paper Q1.14"
+    },
+    {
+      "id": "cse-1998-a-23",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Counting substrings of a string is a combinatorics question, not algorithm complexity.",
+      "source": "GATE 1998 paper Q23"
+    },
+    {
+      "id": "cse-1998-a-23",
+      "field": "topic",
+      "before": "complexity",
+      "after": "combinatorics",
+      "reason": "Counting substrings is combinatorics.",
+      "source": "GATE 1998 paper Q23"
+    },
+    {
+      "id": "cse-1998-a-26",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Power of SLR/LALR/CLR parsers is compiler design, not C programming.",
+      "source": "GATE 1998 paper Q26"
+    },
+    {
+      "id": "cse-1998-a-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "parsing",
+      "reason": "LR-parser power comparison is parsing.",
+      "source": "GATE 1998 paper Q26"
+    },
+    {
+      "id": "cse-1998-a-31",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "Counting semaphore P/V operations is operating systems, not quantitative aptitude.",
+      "source": "GATE 1998 paper Q31"
+    },
+    {
+      "id": "cse-1998-a-31",
+      "field": "topic",
+      "before": "quant",
+      "after": "sync",
+      "reason": "Semaphores are process synchronisation.",
+      "source": "GATE 1998 paper Q31"
+    },
+    {
+      "id": "cse-1998-a-39",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Inclusion–exclusion counting is discrete mathematics, not C programming.",
+      "source": "GATE 1998 paper Q39"
+    },
+    {
+      "id": "cse-1998-a-39",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "combinatorics",
+      "reason": "Inclusion–exclusion is combinatorics.",
+      "source": "GATE 1998 paper Q39"
+    },
+    {
+      "id": "cse-1998-a-41",
+      "field": "topic",
+      "before": "pumping",
+      "after": "regular",
+      "reason": "Closure properties of regular sets, not the pumping lemma.",
+      "source": "GATE 1998 paper Q41"
+    },
+    {
+      "id": "cse-1998-a-45",
+      "field": "subject",
+      "before": "pds",
+      "after": "legacy",
+      "reason": "8086 address space is a microprocessor question, not programming.",
+      "source": "GATE 1998 paper Q45"
+    },
+    {
+      "id": "cse-1998-a-45",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "microprocessor",
+      "reason": "8086 microprocessor.",
+      "source": "GATE 1998 paper Q45"
+    },
+    {
+      "id": "cse-1998-a-49",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "arrays",
+      "reason": "Row-major array address calculation.",
+      "source": "GATE 1998 paper Q49"
+    },
+    {
+      "id": "cse-1998-a-57-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "A constant 0 is provably necessary: IMP is 1-preserving (1→1=1) but XOR(1,1)=0, so no IMP-only circuit on x,y alone can realise f; the solution explains this.",
+      "source": "Independent proof"
+    },
+    {
+      "id": "cse-1998-a-57-a",
+      "field": "reviewNote",
+      "before": "Solution uses a constant 0 input; confirm this is allowed.",
+      "after": null,
+      "reason": "Resolved (see needsReview fix).",
+      "source": "Independent proof"
+    },
+    {
+      "id": "cse-1998-a-59-b",
+      "field": "text",
+      "before": "In a computer system where the 'best-fit' algorithm is used for allocating 'jobs' to 'memory partitions', the following situation was encountered:\n\n| | |\n|---|---|\n| Partitions sizes in KB | 4K 8K 20K 2K |\n| Jobs sizes in KB | 2K 14K 3K 6K 6K 10K 20K 2K |\n| Time for execution | 4 10 2 1 4 1 8 6 |\n\nWhen will the 20K job complete?",
+      "after": "In a computer system where the 'best-fit' algorithm is used for allocating 'jobs' to 'memory partitions', the following situation was encountered:\n\n| Item | Values |\n|---|---|\n| Partition sizes in KB | 4K, 8K, 20K, 2K |\n| Job sizes in KB | 2K, 14K, 3K, 6K, 6K, 10K, 20K, 2K |\n| Time for execution | 4, 10, 2, 1, 4, 1, 8, 6 |\n\nWhen will the 20K job complete?",
+      "reason": "Give the table a proper header row and comma-separated values.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-a-59-b",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1998/a-59-b-1.png",
+          "alt": "Table with three rows: partition sizes in KB (4K, 8K, 20K, 2K); job sizes in KB (2K, 14K, 3K, 6K, 6K, 10K, 20K, 2K); time for execution (4, 10, 2, 1, 4, 1, 8, 6). Heavily blurred in the scan.",
+          "svg": "cse-1998/a-59-b-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure only duplicated the table that is already in the question text (and the old SVG was a placeholder).",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-a-59-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Re-read the table on a 300 dpi render of the scan: 4K 8K 20K 2K / 2K 14K 3K 6K 6K 10K 20K 2K / 4 10 2 1 4 1 8 6 — matches the stored values.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-a-59-b",
+      "field": "reviewNote",
+      "before": "Table is nearly illegible in the scan; values taken from GATE Overflow.",
+      "after": null,
+      "reason": "Table values confirmed from the scan; nothing left to review.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-b-60-a",
+      "field": "text",
+      "before": "Answer the following:\n\nFind the points of local maxima and minima, if any, of the following function defined in $0\\le x\\le 6$.\n\n$x^3-6x+9x+15$",
+      "after": "Answer the following:\n\nFind the points of local maxima and minima, if any, of the following function defined in $0\\le x\\le 6$.\n\n$$f(x)=x^3-6x^2+9x+15$$",
+      "reason": "The scan prints \"x³−6x+9x+15\"; the exponent on 6x² is lost in printing (−6x+9x would be written 3x). Restored the intended cubic.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-b-60-a",
+      "field": "reviewNote",
+      "before": "Printed as x³−6x+9x+15 (the square on 6x² appears lost in the scan); solved as x³−6x²+9x+15.",
+      "after": "The scan prints x³−6x+9x+15 (square on 6x² lost; the sign of the constant is also faint). Text restored as x³−6x²+9x+15; the extremum locations x = 1 and x = 3 do not depend on the constant.",
+      "reason": "Record the reconstruction precisely.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-b-61",
+      "field": "answer",
+      "before": "≈ n³/3 + n² − n/3 (i.e. (n³−n)/3 for elimination + n(n+1)/2 for back substitution); O(n³)",
+      "after": "n³/3 + n² − n/3 operations (counting each division as one operation): elimination (n³−n)/3 multiply-adds + n(n−1)/2 divisions; back substitution n(n−1)/2 multiply-adds + n divisions; O(n³)",
+      "reason": "The stored breakdown ((n³−n)/3 + n(n+1)/2) does not add up to the stored total; corrected the itemised count (total unchanged).",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-b-62-a",
+      "field": "answer",
+      "before": "Proved by structural induction on arithmetic expression parse trees",
+      "after": "Base n = 3: a triangle has 0 = 3·0/2 diagonals. Step: inserting a vertex v between adjacent vertices u, w of an n-gon adds n − 2 diagonals from v plus the old side uw, i.e. n − 1 new diagonals, and n(n−3)/2 + (n−1) = (n+1)(n−2)/2.",
+      "reason": "Stored answer (\"structural induction on arithmetic expression parse trees\") is unrelated to the question; replaced with the actual induction proof.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 6"
+    },
+    {
+      "id": "cse-1998-b-63-b",
+      "field": "answer",
+      "before": "R = {(x,y) | x and y belong to the same block in Pi_1}; R is reflexive, symmetric, and transitive",
+      "after": "Digraph on a, b, c, d with a self-loop at every vertex, arcs in both directions between every pair of a, b, c (a complete symmetric cluster), and d isolated apart from its self-loop — 10 arcs in all.",
+      "reason": "Stored answer only restates the definition of R; the question asks for the graph.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-64-a",
+      "field": "answer",
+      "before": "Left/right cancellation holds under group completion",
+      "after": "By associativity a*(a*a) = (a*a)*a, so a and a*a commute; the hypothesis (distinct elements never commute) forces a*a = a.",
+      "reason": "Stored answer (\"cancellation under group completion\") is unrelated to the question.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-64-b",
+      "field": "answer",
+      "before": "Associativity preserves unique identity if idempotent elements exist",
+      "after": "Let x = a*b*a. Using (a): a*x = a*a*b*a = a*b*a and x*a = a*b*a*a = a*b*a, so a*x = x*a, hence x = a.",
+      "reason": "Stored answer (\"identity if idempotent elements exist\") is unrelated to the question.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-64-c",
+      "field": "answer",
+      "before": "Finite cancellative semigroup is a group",
+      "after": "Let y = a*b*c, z = a*c. Using (b): y*z = a*b*(c*a*c) = a*b*c and z*y = (a*c*a)*b*c = a*b*c, so y and z commute, hence a*b*c = a*c.",
+      "reason": "Stored answer (\"finite cancellative semigroup is a group\") is unrelated to the question.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-65-a",
+      "field": "answer",
+      "before": "Accepts language L = {0^n 1^n | n >= 1} by empty stack",
+      "after": "As printed: {ε, 01}. With the evidently intended fifth rule δ(q0, 0, X) = {(q1, X)}: L = {1ⁿ0 1ⁿ0 : n ≥ 1}* (any number of blocks, each block with its own n)",
+      "reason": "Stored answer {0ⁿ1ⁿ} is wrong for the printed transitions and for the intended ones (no rule pushes on 0).",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-65-a",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The printed fifth rule makes the PDA nearly trivial; the intended rule is probably different.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-65-a",
+      "field": "reviewNote",
+      "before": "Transitions as printed make the PDA almost trivial ({ε, 01}); the fifth rule is probably δ(q0,0,X) in the original. Answer left open.",
+      "after": "The scan prints δ(q0, 0, z0) = {(q1, X)}, which gives L = {ε, 01}. The question is presumably δ(q0, 0, X) = {(q1, X)}, giving L = {1ⁿ0 1ⁿ0 : n ≥ 1}*. Both are given; confirm which one the paper intends.",
+      "reason": "Explain the two readings precisely.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-65-b",
+      "field": "answer",
+      "before": "Instantaneous description sequence yields final accepting state q1",
+      "after": "Intended PDA: in q0 it pushes one X per 1; the first 0 switches to q1; in q1 it pops one X per 1; when z0 is exposed a 0 returns to q0, and in q0 with z0 on top it may pop z0 (empty store) — so it checks blocks 1ⁿ0 1ⁿ0. As printed, only ε and 01 empty the stack.",
+      "reason": "Stored answer (\"final accepting state q1\") is wrong: acceptance is by empty store and q1 is not special.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-65-b",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Depends on which fifth transition is intended (see 65(a)).",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-66-c",
+      "field": "answer",
+      "before": "Yes",
+      "after": "No",
+      "reason": "The grammar of part (b) (S → ES₁ | S₁E | EE, E → aEb | ab with G₁) is unambiguous, so L₂ is not inherently ambiguous.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-66-c",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored \"Yes\" overturned by proof without an official key.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-66-c",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key said \"Yes\". The three alternatives EE (i=j, k=l), ES₁ (i=j, k≠l) and S₁E (i≠j, k=l) cover disjoint sets, the split between the two halves is the unique b→a boundary, and E and G₁ are unambiguous, so L₂ has an unambiguous grammar and is NOT inherently ambiguous. Changed to \"No\"; confirm.",
+      "reason": "Document the proof behind the key change.",
+      "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-69",
+      "field": "answer",
+      "before": "20.73 ms (Seek time 12 ms + rotational latency 4.17 ms + transfer time 4.56 ms)",
+      "after": "≈ 991 ms: 100 ms average initial rotational latency + 35 × 25 ms = 875 ms of reading + 2 track steps × 8 ms = 16 ms (sectors: 6 on track 10 side 0, 8 on track 10 side 1, 16 on track 11, 5 on track 12). If sector 1 of the next track is not skewed, each step costs a full revolution instead: 100 + 875 + 2 × 200 = 1375 ms.",
+      "reason": "Stored key (20.73 ms) is impossible: one revolution at 300 RPM is 200 ms, so 35 sectors at 25 ms each already need 875 ms.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-69",
+      "field": "reviewNote",
+      "before": "Answer depends on unstated assumptions (side switching, rotational latency, 1-sector buffer effect); not solved.",
+      "after": "Answer depends on unstated assumptions (initial latency taken as half a revolution, side switching free, consecutive sectors readable with the 1-sector buffer, track skew); 991 ms under these assumptions, 1375 ms if each step loses a revolution.",
+      "reason": "Record the assumptions behind the new answer.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-70",
+      "field": "answer",
+      "before": "Tag bits = 8, Set Index bits = 7, Block Offset bits = 5",
+      "after": "The loop (n = km blocks ≤ kl blocks) fits in the cache: only the first pass misses, so h = (100n − n)/(100n) = 0.99 per block reference (1 − 1/(100b) per word). For l = 1 the cache holds only k blocks but the loop has mk > k blocks, so with LRU/FIFO every block reference misses: h = 0 (1 − 1/b per word, from spatial locality only).",
+      "reason": "Stored key (tag/index/offset bit counts) does not answer the question asked (a hit ratio).",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-70",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Intended unit of reference (block vs word) and replacement policy are not stated.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-70",
+      "field": "reviewNote",
+      "before": "Problem statement is under-specified (mapping/replacement policy); answer not derived.",
+      "after": "Hit ratio derived assuming block i maps to set i mod l and LRU/FIFO replacement; 0.99 counting block references (1 − 1/(100b) counting words); 0 for l = 1. Original key was bit-field counts, unrelated to the question.",
+      "reason": "Record the assumptions behind the new answer.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-71-a",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "linked-lists",
+      "reason": "Pointer manipulation on a singly linked list belongs to linked-lists.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-71-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The PDF prints no figure, but the statement is fully answerable with p pointing to any node followed by at least two nodes; the key (swap of the two nodes after p) is verified.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-71-a",
+      "field": "reviewNote",
+      "before": "The question refers to a figure that is not printed in this PDF.",
+      "after": null,
+      "reason": "Question resolved; see needsReview fix.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-74-b",
+      "field": "text",
+      "before": "Build and LL(1) parsing table for the language defined by the LL(1) grammar with productions\n\nProgram → begin d semi X end\n\nX → d semi X | sY\n\nY → semi s Y | ε",
+      "after": "Build an LL(1) parsing table for the language defined by the LL(1) grammar with productions\n\nProgram → begin d semi X end\n\nX → d semi X | sY\n\nY → semi s Y | ε",
+      "reason": "Typo: \"and\" → \"an\" (PDF reads \"Build an LL(1) parsing table\").",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-75",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The text already reads S → L.L | L; the example 101.101 → 5.625 confirms the binary point; key verified.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-75",
+      "field": "reviewNote",
+      "before": "The scan prints 'S → LL | L'; the binary point in 'L.L' is implied by the example 101.101.",
+      "after": null,
+      "reason": "Question resolved; see needsReview fix.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    }
+  ]
+}
