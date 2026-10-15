@@ -1,0 +1,1187 @@
+{
+  "paper": "cse-2002",
+  "version": 2,
+  "solutions": {
+    "cse-2002-b-62-c": {
+      "approach": "Reduce HALT $\\le$ L: from $\\langle M',x\\rangle$ build $M$ that ignores its own input $w$, runs $M'$ on the hard-wired $x$, and prints 1 if that run halts. Then $M$'s behaviour is the same on every $w$, and it is \"halt and output 1\" exactly when $M'$ halts on $x$.",
+      "concepts": [
+        "Many-one reduction",
+        "Halting problem",
+        "Undecidability"
+      ],
+      "steps": [
+        {
+          "title": "Construction of M (parts a, b)",
+          "body": "Given $\\langle M', x\\rangle$, the reduction outputs a machine $M$ that, on input $w$:\\n\\n1. erases $w$ and writes the fixed string $x$ on its tape (step a);\\n2. simulates $M'$ on $x$; if the simulation halts, $M$ erases the tape, writes $1$ and halts (step b).\\n\\nThis is a purely syntactic transformation of $\\langle M', x\\rangle$, so it is computable (and always terminates)."
+        },
+        {
+          "title": "Key property (part c)",
+          "body": "Because $M$ discards $w$, its run is identical for every $w$:\\n\\n- if $M'$ halts on $x$ $\\Rightarrow$ $M$ halts with output $1$ on **every** $w$, so $\\langle M\\rangle \\in L$;\\n- if $M'$ does not halt on $x$ $\\Rightarrow$ $M$ runs forever on **every** $w$, so $\\langle M\\rangle \\notin L$.\\n\\nHence $\\langle M\\rangle \\in L \\iff M'$ halts on $x$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "If $L$ were decidable, deciding $\\langle M\\rangle \\in L$ would decide whether $M'$ halts on $x$ — the halting problem, which is undecidable. So $L$ is undecidable."
+        }
+      ],
+      "answer": {
+        "value": "$M$ halts and outputs 1 on every input $w$ **iff** $M'$ halts on $x$ (and $M$ behaves identically on all $w$, since it ignores $w$).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Letting $M$ actually use $w$ — then its behaviour can depend on the input and the \"irrespective of input\" property breaks.",
+        "Reducing in the wrong direction (L to HALT proves nothing about L)."
+      ],
+      "verification": "Checked both cases: halting run gives output 1 for all $w$; non-halting run gives no output for any $w$."
+    },
+    "cse-2002-b-63-a-i": {
+      "approach": "Take the roll numbers that appear in INTERVIEW, subtract those that appear in OFFER, then join with STUDENT to pick up the names.",
+      "concepts": [
+        "Set difference",
+        "Projection",
+        "Natural join"
+      ],
+      "given": "| Relation | Key |\n|---|---|\n| STUDENT(srollno, sname, sdegree) | srollno |\n| INTERVIEW(cname, srollno, idate) | (cname, srollno) |\n| OFFER(cname, srollno, osalary) | (cname, srollno) |",
+      "steps": [
+        {
+          "title": "Interviewed students",
+          "body": "$\\pi_{srollno}(\\text{INTERVIEW})$ = roll numbers of students who attended at least one interview."
+        },
+        {
+          "title": "Remove those with an offer",
+          "body": "$\\pi_{srollno}(\\text{INTERVIEW}) - \\pi_{srollno}(\\text{OFFER})$ keeps exactly the roll numbers that have **no** tuple in OFFER, i.e. no job offer at all. Both operands are single-column on srollno, so the difference is union-compatible."
+        },
+        {
+          "title": "Attach names",
+          "body": "Join with STUDENT on srollno and project:\\n\\n$$\\pi_{srollno,\\,sname}\\big(\\text{STUDENT} \\bowtie (\\pi_{srollno}(\\text{INTERVIEW}) - \\pi_{srollno}(\\text{OFFER}))\\big)$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\pi_{srollno,\\,sname}\\big(\\text{STUDENT} \\bowtie (\\pi_{srollno}(\\text{INTERVIEW}) - \\pi_{srollno}(\\text{OFFER}))\\big)$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Subtracting before projecting: $\\text{INTERVIEW} - \\text{OFFER}$ is not union-compatible (idate vs osalary).",
+        "Using STUDENT − OFFER also returns students who never interviewed."
+      ],
+      "verification": "A student with interviews but zero offers survives the difference; any student with one or more offers is removed."
+    },
+    "cse-2002-b-63-a-ii": {
+      "approach": "\"Offer from every company interviewed with\" = interviewed and **no** (company, student) interview pair is missing from OFFER. Find the missing pairs with a difference on (cname, srollno), and remove those students.",
+      "concepts": [
+        "Set difference",
+        "Universal quantification in RA",
+        "Natural join"
+      ],
+      "given": "| Relation | Key |\n|---|---|\n| STUDENT(srollno, sname, sdegree) | srollno |\n| INTERVIEW(cname, srollno, idate) | (cname, srollno) |\n| OFFER(cname, srollno, osalary) | (cname, srollno) |",
+      "steps": [
+        {
+          "title": "Interviews without an offer",
+          "body": "$X = \\pi_{cname,srollno}(\\text{INTERVIEW}) - \\pi_{cname,srollno}(\\text{OFFER})$ lists every (company, student) interview that did **not** produce an offer."
+        },
+        {
+          "title": "Students with no such pair",
+          "body": "$\\pi_{srollno}(\\text{INTERVIEW}) - \\pi_{srollno}(X)$ = students who interviewed and for whom every interview yielded an offer."
+        },
+        {
+          "title": "Attach names",
+          "body": "$$\\pi_{srollno,\\,sname}\\Big(\\text{STUDENT} \\bowtie \\big(\\pi_{srollno}(\\text{INTERVIEW}) - \\pi_{srollno}(\\pi_{cname,srollno}(\\text{INTERVIEW}) - \\pi_{cname,srollno}(\\text{OFFER}))\\big)\\Big)$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\pi_{srollno,\\,sname}\\Big(\\text{STUDENT} \\bowtie \\big(\\pi_{srollno}(\\text{INTERVIEW}) - \\pi_{srollno}(\\pi_{cname,srollno}(\\text{INTERVIEW}) - \\pi_{cname,srollno}(\\text{OFFER}))\\big)\\Big)$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Starting from STUDENT instead of INTERVIEW would include students who never interviewed (vacuously \"every company\").",
+        "Division by all companies is wrong — only the companies the student interviewed with matter."
+      ],
+      "verification": "Student interviewed by C1, C2 with offers from both: no pair in X, kept. Offer only from C1: (C2, s) in X, removed."
+    },
+    "cse-2002-b-63-b": {
+      "approach": "Join STUDENT with OFFER, group by degree, keep groups with more than five distinct offered students, and output the degree with AVG(osalary).",
+      "concepts": [
+        "GROUP BY",
+        "HAVING",
+        "COUNT(DISTINCT)",
+        "AVG"
+      ],
+      "steps": [
+        {
+          "title": "Join offers to degrees",
+          "body": "OFFER has no degree, so join `STUDENT S, OFFER O WHERE S.srollno = O.srollno`; each row is one offer with the student's degree."
+        },
+        {
+          "title": "Group and filter",
+          "body": "`GROUP BY S.sdegree` forms one group per degree. A student can hold several offers, so count students with `COUNT(DISTINCT S.srollno) > 5` in `HAVING` (a WHERE clause cannot use aggregates)."
+        },
+        {
+          "title": "Query",
+          "body": "```sql\nSELECT S.sdegree, AVG(O.osalary)\nFROM STUDENT S, OFFER O\nWHERE S.srollno = O.srollno\nGROUP BY S.sdegree\nHAVING COUNT(DISTINCT S.srollno) > 5;\n```"
+        }
+      ],
+      "answer": {
+        "value": "`SELECT S.sdegree, AVG(O.osalary) FROM STUDENT S, OFFER O WHERE S.srollno = O.srollno GROUP BY S.sdegree HAVING COUNT(DISTINCT S.srollno) > 5`",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "`COUNT(*) > 5` counts offers, not students — a student with two offers would be counted twice.",
+        "Putting the count condition in WHERE is illegal; aggregates go in HAVING."
+      ],
+      "verification": "Degree with 6 students holding 9 offers passes (6 > 5); degree with 3 students holding 8 offers is rejected, which COUNT(*) would wrongly accept."
+    },
+    "cse-2002-b-64-a": {
+      "approach": "Binary decomposition test: lossless iff $R_1\\cap R_2$ is a superkey of $R_1$ or of $R_2$.",
+      "concepts": [
+        "Lossless-join decomposition",
+        "Attribute closure"
+      ],
+      "given": "$R(L,M,N,O,P)$, $F=\\{M\\to O,\\ NO\\to P,\\ P\\to L,\\ L\\to MN\\}$, $R_1=(L,M,N,P)$, $R_2=(M,O)$.",
+      "steps": [
+        {
+          "title": "Common attributes",
+          "body": "$R_1 \\cap R_2 = \\{L,M,N,P\\}\\cap\\{M,O\\} = \\{M\\}$."
+        },
+        {
+          "title": "Closure of M",
+          "body": "$M^+$: start $\\{M\\}$; $M\\to O$ adds $O$ $\\Rightarrow \\{M,O\\}$; no other FD has its left side inside $\\{M,O\\}$. So $M^+=\\{M,O\\}\\supseteq R_2$, i.e. $M$ is a key of $R_2$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Since $R_1\\cap R_2 \\to R_2$, the decomposition is **lossless**: $R_1 \\bowtie R_2 = R$ for every legal instance."
+        }
+      ],
+      "answer": {
+        "value": "**Yes** — $R_1\\cap R_2=\\{M\\}$ and $M\\to O$ makes $M$ a key of $R_2$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Checking whether $M$ is a key of the whole $R$ — it only needs to be a superkey of one of the two parts."
+      ],
+      "verification": "Chase/tableau: the row for $R_1$ has $M$ and gets $O$ from $M\\to O$, becoming all-distinguished."
+    },
+    "cse-2002-b-64-b": {
+      "approach": "An FD is preserved if it follows from the FDs that hold inside $R_1$ and $R_2$. $NO\\to P$ is the only FD spanning both parts; check whether the projected FDs imply it.",
+      "concepts": [
+        "Dependency preservation",
+        "Projection of FDs",
+        "Attribute closure"
+      ],
+      "given": "$R(L,M,N,O,P)$, $F=\\{M\\to O,\\ NO\\to P,\\ P\\to L,\\ L\\to MN\\}$, $R_1=(L,M,N,P)$, $R_2=(M,O)$.",
+      "steps": [
+        {
+          "title": "Closures in R",
+          "body": "$L^+ = \\{L,M,N,O,P\\}$ ($L\\to MN$, $M\\to O$, $NO\\to P$). $P^+$ = all ($P\\to L$). $(MN)^+$ = all ($M\\to O$, $NO\\to P$, $P\\to L$). $M^+=\\{M,O\\}$, $N^+=\\{N\\}$."
+        },
+        {
+          "title": "Projected FDs",
+          "body": "On $R_1=(L,M,N,P)$: $L\\to MNP$, $P\\to LMN$, $MN\\to LP$. On $R_2=(M,O)$: $M\\to O$. So $M\\to O$, $P\\to L$, $L\\to MN$ are preserved directly."
+        },
+        {
+          "title": "Test NO → P",
+          "body": "$NO$ is not inside either relation ($O\\notin R_1$). Closure of $NO$ under the projected FDs $G$: start $\\{N,O\\}$; no FD of $G$ has its left side in $\\{N,O\\}$ (they need $L$, $P$, $M$ or $MN$). So $(NO)^+_G=\\{N,O\\}\\not\\ni P$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Not dependency-preserving; the lost dependency is $NO\\to P$ (and anything that needs it, e.g. $NO\\to L$)."
+        }
+      ],
+      "answer": {
+        "value": "**No** — $NO\\to P$ is not preserved; the other three FDs are.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Declaring an FD lost just because its attributes are split, without computing the closure under projected FDs."
+      ],
+      "verification": "Recomputed $(NO)^+$ under $G=\\{M\\to O, L\\to MNP, P\\to LMN, MN\\to LP\\}$: stays $\\{N,O\\}$."
+    },
+    "cse-2002-b-64-c": {
+      "approach": "Find the FDs and keys inside each component; if every non-trivial FD's left side is a superkey in its component, both are in BCNF.",
+      "concepts": [
+        "BCNF",
+        "Candidate keys",
+        "Projection of FDs"
+      ],
+      "given": "$R(L,M,N,O,P)$, $F=\\{M\\to O,\\ NO\\to P,\\ P\\to L,\\ L\\to MN\\}$, $R_1=(L,M,N,P)$, $R_2=(M,O)$.",
+      "steps": [
+        {
+          "title": "R2 = (M, O)",
+          "body": "Only $M\\to O$ holds; $M$ is its key. Any two-attribute relation is in BCNF."
+        },
+        {
+          "title": "R1 = (L, M, N, P)",
+          "body": "Projected FDs: $L\\to MNP$, $P\\to LMN$, $MN\\to LP$ (from $L^+$, $P^+$, $(MN)^+$ = all of $R$). Candidate keys of $R_1$: $L$, $P$, $MN$ ($M^+\\cap R_1=\\{M\\}$, $N^+=\\{N\\}$, so $MN$ is minimal)."
+        },
+        {
+          "title": "BCNF check",
+          "body": "Every non-trivial FD in $R_1$ has a key ($L$, $P$ or $MN$) on its left, and in $R_2$ the left side $M$ is the key. So both components are in **BCNF**."
+        }
+      ],
+      "answer": {
+        "value": "**BCNF** (both $R_1$ and $R_2$ are in BCNF).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Confusing normal form with dependency preservation — losing $NO\\to P$ does not lower the normal form of the components.",
+        "Testing $M\\to O$ against $R_1$: $O\\notin R_1$, so it does not apply there."
+      ],
+      "verification": "No subset of $R_1$ other than supersets of $L$, $P$ or $MN$ determines a new attribute of $R_1$."
+    },
+    "cse-2002-b-65-a": {
+      "approach": "In a B-tree keys live in internal nodes too, so a hit can stop at any level; a miss always reaches a leaf. In a B+-tree every search, hit or miss, goes root-to-leaf, and all leaves are at the same depth.",
+      "concepts": [
+        "B-tree",
+        "B+-tree",
+        "Balanced height"
+      ],
+      "steps": [
+        {
+          "title": "B-tree",
+          "body": "Successful: the key may be found at the root, an internal node or a leaf, so the number of levels visited depends on the key — $X_1$ = **Variable**. Unsuccessful: the search must descend to a leaf (height $h$, same for all leaves) before failing — $X_2$ = **Constant**."
+        },
+        {
+          "title": "B+-tree",
+          "body": "Internal nodes hold only routing copies; records/keys are in the leaves. Every search follows one root-to-leaf path of length $h$, whether or not it finds the key — $X_3$ = $X_4$ = **Constant**."
+        }
+      ],
+      "answer": {
+        "value": "$X_1$ = Variable, $X_2$ = Constant, $X_3$ = Constant, $X_4$ = Constant",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Treating a match against a B+-tree routing key in an internal node as a successful search — the data is only at the leaf."
+      ],
+      "verification": "B-tree of height 3 with key k at root: 1 node read; key in a leaf: 3 reads. Missing key: always 3. B+-tree: always 3."
+    },
+    "cse-2002-b-65-b-i": {
+      "approach": "$V$ is the composition $R\\circ R$: for each tuple $(a,b)$, pair it with every tuple whose $A$ equals $b$ and output $(a, \\text{that tuple's } B)$.",
+      "concepts": [
+        "Self-join",
+        "Views",
+        "Relation composition"
+      ],
+      "steps": [
+        {
+          "title": "Tuple (1,2)",
+          "body": "$R_1=(1,2)$: tuples with $A=2$ are $(2,3)$ and $(2,4)$ $\\Rightarrow$ output $(1,3)$, $(1,4)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              }
+            ],
+            "caption": "R1.B = 2 matches R2.A = 2"
+          }
+        },
+        {
+          "title": "Tuple (2,4)",
+          "body": "$R_1=(2,3)$: no tuple has $A=3$. $R_1=(2,4)$: tuple $(4,5)$ has $A=4$ $\\Rightarrow$ output $(2,5)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ],
+            "caption": "R1.B = 4 matches R2.A = 4"
+          }
+        },
+        {
+          "title": "Remaining tuples",
+          "body": "$(4,5)$, $(6,7)$, $(6,8)$, $(9,10)$ have $B\\in\\{5,7,8,10\\}$, and no tuple has $A\\in\\{5,7,8,10\\}$ — no output.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "muted"
+              },
+              {
+                "r": 4,
+                "tone": "muted"
+              },
+              {
+                "r": 5,
+                "tone": "muted"
+              },
+              {
+                "r": 6,
+                "tone": "muted"
+              }
+            ],
+            "caption": "B values 5, 7, 8, 10 never appear in column A"
+          }
+        },
+        {
+          "title": "Contents of V",
+          "body": "| A | B |\\n|---|---|\\n| 1 | 3 |\\n| 1 | 4 |\\n| 2 | 5 |"
+        }
+      ],
+      "answer": {
+        "value": "$V=\\{(1,3),\\ (1,4),\\ (2,5)\\}$",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "A",
+          "B"
+        ],
+        "rows": [
+          [
+            1,
+            2
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            4
+          ],
+          [
+            4,
+            5
+          ],
+          [
+            6,
+            7
+          ],
+          [
+            6,
+            8
+          ],
+          [
+            9,
+            10
+          ]
+        ],
+        "mono": true
+      },
+      "pitfalls": [
+        "Outputting R2.A instead of R2.B, or joining on R1.A = R2.B (the reverse direction)."
+      ],
+      "verification": "Values of B that also occur in A: only 2 and 4; they give 2 + 1 = 3 output rows."
+    },
+    "cse-2002-b-65-b-ii": {
+      "approach": "New view rows must use at least one new tuple, either as $R_1$ (its $B$ links to some $A$) or as $R_2$ (some $B$ equals its $A$). Check both roles for $(2,11)$ and $(11,6)$.",
+      "concepts": [
+        "Self-join",
+        "Incremental view maintenance"
+      ],
+      "steps": [
+        {
+          "title": "New tuples as R1",
+          "body": "$(2,11)$: tuples with $A=11$ — the new $(11,6)$ $\\Rightarrow (2,6)$.\\n\\n$(11,6)$: tuples with $A=6$ — $(6,7)$, $(6,8)$ $\\Rightarrow (11,7)$, $(11,8)$."
+        },
+        {
+          "title": "New tuples as R2",
+          "body": "$(2,11)$ has $A=2$; tuples with $B=2$: $(1,2)$ $\\Rightarrow (1,11)$.\\n\\n$(11,6)$ has $A=11$; tuples with $B=11$: only $(2,11)$ $\\Rightarrow (2,6)$ (already found)."
+        },
+        {
+          "title": "Additional tuples",
+          "body": "None of these was already in $V=\\{(1,3),(1,4),(2,5)\\}$, so the additions are $(1,11)$, $(2,6)$, $(11,7)$, $(11,8)$."
+        }
+      ],
+      "answer": {
+        "value": "$(1,11),\\ (2,6),\\ (11,7),\\ (11,8)$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the case where both joined tuples are new: (2,11) with (11,6) gives (2,6).",
+        "Missing old-to-new links such as (1,2) with (2,11)."
+      ],
+      "verification": "Recomputed $V$ on the full 9-tuple $R$: $\\{(1,3),(1,4),(1,11),(2,5),(2,6),(11,7),(11,8)\\}$ — 7 rows, 4 more than before."
+    },
+    "cse-2002-b-66-a": {
+      "approach": "With non-preemptive scheduling a running process leaves the CPU only by blocking or exiting, so the usual running → ready (time-out / preemption) arc is absent.",
+      "concepts": [
+        "Process state diagram",
+        "Non-preemptive scheduling"
+      ],
+      "steps": [
+        {
+          "title": "Transitions",
+          "body": "| From | To | Label |\n|---|---|---|\n| created | ready | admitted |\n| ready | running | dispatched by scheduler |\n| running | blocked | waits for I/O / event |\n| blocked | ready | I/O / event completes |\n| running | terminated | exit |"
+        },
+        {
+          "title": "Missing arc",
+          "body": "There is **no running → ready** edge: no timer interrupt or higher-priority arrival can take the CPU away. Also blocked → running is not allowed (a woken process must be dispatched from ready)."
+        }
+      ],
+      "answer": {
+        "value": "created →(admit) ready →(dispatch) running; running →(I/O or event wait) blocked →(event completion) ready; running →(exit) terminated; no running → ready transition.",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "created",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "ready",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "running",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "terminated",
+            "x": 6,
+            "y": 0
+          },
+          {
+            "id": "blocked",
+            "x": 3,
+            "y": 2
+          }
+        ],
+        "edges": [
+          {
+            "from": "created",
+            "to": "ready",
+            "w": "admit"
+          },
+          {
+            "from": "ready",
+            "to": "running",
+            "w": "dispatch"
+          },
+          {
+            "from": "running",
+            "to": "terminated",
+            "w": "exit"
+          },
+          {
+            "from": "running",
+            "to": "blocked",
+            "w": "I/O wait"
+          },
+          {
+            "from": "blocked",
+            "to": "ready",
+            "w": "I/O done"
+          }
+        ]
+      },
+      "pitfalls": [
+        "Drawing a running → ready (time-slice expiry) arc — that only exists with preemption."
+      ],
+      "verification": "Every exit from running is voluntary (block or terminate), which is exactly non-preemptive behaviour."
+    },
+    "cse-2002-b-66-b-i": {
+      "approach": "TEST-AND-SET returns the old value and sets the lock to 1. Spin while the old value was 1 (someone inside); release by writing 0.",
+      "concepts": [
+        "Test-and-set",
+        "Spinlock"
+      ],
+      "steps": [
+        {
+          "title": "Entry",
+          "body": "If mutex was 0, TEST-AND-SET returns 0 and atomically sets mutex = 1: the loop exits and the caller owns the lock. If mutex was 1 it returns 1 and the caller keeps spinning.\\n\\n```c\nint mutex = 0;\nvoid enter_cs() { while (TEST-AND-SET(&mutex)); }\nvoid leave_cs() { mutex = 0; }\n```"
+        },
+        {
+          "title": "Exit",
+          "body": "Setting `mutex = 0` lets exactly one spinning process see 0 on its next TEST-AND-SET."
+        }
+      ],
+      "answer": {
+        "value": "`while (TEST-AND-SET(&mutex));` in enter-cs and `mutex = 0;` in leave-cs.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing `while (!TEST-AND-SET(&mutex))` — that spins exactly when the lock is free."
+      ],
+      "verification": "Two processes: first gets 0 and enters, the second gets 1 until the first writes 0."
+    },
+    "cse-2002-b-66-b-ii": {
+      "approach": "Check progress (some waiter always gets in) and bounded waiting (each waiter eventually gets in) for the plain TAS spinlock.",
+      "concepts": [
+        "Deadlock freedom",
+        "Starvation",
+        "Bounded waiting"
+      ],
+      "steps": [
+        {
+          "title": "Deadlock-free: yes",
+          "body": "When the CS is free, mutex = 0, so the first TEST-AND-SET executed by any waiting process returns 0 and that process enters. Processes can never all wait forever with the lock free."
+        },
+        {
+          "title": "Starvation-free: no",
+          "body": "There is no ordering among spinners. When P1 leaves and sets mutex = 0, P2 may grab it before P3 every single time; P3 can lose the race indefinitely. No bounded-waiting guarantee."
+        }
+      ],
+      "answer": {
+        "value": "**Deadlock-free: yes; starvation-free: no.**",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Assuming mutual exclusion + progress implies bounded waiting."
+      ],
+      "verification": "Schedule P2 → P3(fails) → P2 exit → P2 re-enter → P3(fails)… repeats forever with P3 never entering."
+    },
+    "cse-2002-b-66-b-iii": {
+      "approach": "Interleave two processes between A1 (read) and A2 (write) while mutex = 0: both read 0 before either writes 1.",
+      "concepts": [
+        "Atomicity",
+        "Race condition",
+        "Mutual exclusion"
+      ],
+      "steps": [
+        {
+          "title": "Interleaving",
+          "body": "Initially mutex = 0.\n\n| Time | P1 | P2 | mutex |\n|---|---|---|---|\n| 1 | A1: y = 0 |  | 0 |\n| 2 |  | A1: y = 0 | 0 |\n| 3 | A2: *x = 1 |  | 1 |\n| 4 |  | A2: *x = 1 | 1 |\n| 5 | A3: return 0 |  | 1 |\n| 6 |  | A3: return 0 | 1 |"
+        },
+        {
+          "title": "Result",
+          "body": "Both calls return 0, so both `while` loops exit and P1 and P2 are inside the critical section together — mutual exclusion is violated."
+        }
+      ],
+      "answer": {
+        "value": "P1 executes A1 (y = 0), then P2 executes A1 (y = 0) before P1 executes A2; both then execute A2 and A3, both return 0 and both enter the critical section.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Interleaving after A2 of the first process — then the second process reads 1 and the race does not occur."
+      ],
+      "verification": "The bad window is exactly between A1 and A2 of a process; the example places P2's A1 inside it."
+    },
+    "cse-2002-b-67-a": {
+      "approach": "Offset = $\\log_2 4096 = 12$ bits; the remaining 20 page-number bits split equally, 10 + 10. Each level indexes a 1024-entry table that fits exactly in one page.",
+      "concepts": [
+        "Two-level paging",
+        "Address translation"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Virtual / physical address | 32 bits / 32 bits |\n| Page size | 4 KB |\n| PTE size | 4 bytes |\n| Levels | 2, equal index bits |",
+      "steps": [
+        {
+          "title": "Address split",
+          "body": "Offset: $4\\text{ KB}=2^{12}$ B $\\Rightarrow 12$ bits. Page number: $32-12=20$ bits $\\Rightarrow$ $p_1$ = 10 bits, $p_2$ = 10 bits."
+        },
+        {
+          "title": "Translation path",
+          "body": "1. Page-table base register (PTBR) $+\\ 4\\cdot p_1$ $\\to$ level-1 entry, which holds the frame of the level-2 table.\\n2. That frame base $+\\ 4\\cdot p_2$ $\\to$ level-2 entry, which holds the 20-bit frame number $f$.\\n3. Physical address = $f$ (20 bits) concatenated with the 12-bit offset $d$: $PA = f\\cdot 2^{12}+d$."
+        },
+        {
+          "title": "Why 10 bits fit",
+          "body": "$2^{10}$ entries $\\times 4$ B $= 4096$ B $=$ one page, so every page table (outer or inner) occupies exactly one frame."
+        }
+      ],
+      "answer": {
+        "value": "VA = $p_1$ (10 bits) | $p_2$ (10 bits) | $d$ (12 bits). PTBR + $p_1$ selects the level-1 entry → base of a level-2 table; + $p_2$ selects the level-2 entry → 20-bit frame number $f$; PA = $f$ ∥ $d$.",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "bits",
+        "rows": [
+          {
+            "label": "virtual",
+            "fields": [
+              {
+                "bits": "xxxxxxxxxx",
+                "label": "p1: L1 index (10)",
+                "tone": "accent"
+              },
+              {
+                "bits": "xxxxxxxxxx",
+                "label": "p2: L2 index (10)",
+                "tone": "info"
+              },
+              {
+                "bits": "xxxxxxxxxxxx",
+                "label": "offset (12)",
+                "tone": "success"
+              }
+            ]
+          },
+          {
+            "label": "physical",
+            "fields": [
+              {
+                "bits": "xxxxxxxxxxxxxxxxxxxx",
+                "label": "frame no. from L2 entry (20)",
+                "tone": "warning"
+              },
+              {
+                "bits": "xxxxxxxxxxxx",
+                "label": "offset (12)",
+                "tone": "success"
+              }
+            ]
+          }
+        ]
+      },
+      "pitfalls": [
+        "Translating the offset — it is copied unchanged into the physical address."
+      ],
+      "verification": "$10+10+12=32$ bits for VA; $20+12=32$ bits for PA."
+    },
+    "cse-2002-b-67-b": {
+      "approach": "Entries per page = page size ÷ PTE size.",
+      "concepts": [
+        "Page table entry",
+        "Page size"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Virtual / physical address | 32 bits / 32 bits |\n| Page size | 4 KB |\n| PTE size | 4 bytes |\n| Levels | 2, equal index bits |",
+      "steps": [
+        {
+          "title": "Divide",
+          "body": "$\\dfrac{4\\text{ KB}}{4\\text{ B}} = \\dfrac{4096}{4} = 1024 = 2^{10}$ entries."
+        },
+        {
+          "title": "Consistency",
+          "body": "This matches the 10-bit index used at each level, so each page table occupies exactly one page."
+        }
+      ],
+      "answer": {
+        "value": "**1024** page-table entries per page",
+        "number": 1024,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using 4 bits instead of 4 bytes for the entry size."
+      ],
+      "verification": "$2^{12}/2^{2}=2^{10}$."
+    },
+    "cse-2002-b-67-c": {
+      "approach": "A PTE must hold a frame number; whatever is left of its 32 bits is free for protection, valid, dirty and similar bits.",
+      "concepts": [
+        "Page table entry",
+        "Frame number"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Virtual / physical address | 32 bits / 32 bits |\n| Page size | 4 KB |\n| PTE size | 4 bytes |\n| Levels | 2, equal index bits |",
+      "steps": [
+        {
+          "title": "Frame number width",
+          "body": "Frames $=\\dfrac{2^{32}}{2^{12}}=2^{20}$ $\\Rightarrow$ frame number = 20 bits. (Page tables themselves are page-aligned, so level-1 entries also need only 20 bits.)"
+        },
+        {
+          "title": "Spare bits",
+          "body": "PTE = 4 B = 32 bits $\\Rightarrow 32-20=12$ bits for protection and other information."
+        }
+      ],
+      "answer": {
+        "value": "**12** bits",
+        "number": 12,
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Subtracting the 10-bit index instead of the 20-bit frame number."
+      ],
+      "verification": "$20+12=32$ bits per entry."
+    },
+    "cse-2002-b-68-a": {
+      "approach": "b_empty counts free slots (initially BUFFSIZE), b_full counts filled slots (initially 0). Wait on the resource you need, signal the one you create.",
+      "concepts": [
+        "Counting semaphores",
+        "Bounded buffer"
+      ],
+      "steps": [
+        {
+          "title": "Producer",
+          "body": "Before writing it needs a free slot: `p1: P(b_empty);`. After writing it has created a full slot: `p2: V(b_full);`."
+        },
+        {
+          "title": "Consumer",
+          "body": "Before reading it needs a full slot: `c1: P(b_full);`. After removing the item it has freed a slot: `c2: V(b_empty);`."
+        },
+        {
+          "title": "Check",
+          "body": "With b_full = 0 the consumer blocks on an empty buffer; after 100 puts b_empty = 0 and the producer blocks on a full buffer."
+        }
+      ],
+      "answer": {
+        "value": "`p1: P(b_empty);` `p2: V(b_full);` `c1: P(b_full);` `c2: V(b_empty);`",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Swapping the semaphores (P(b_full) in the producer) — the producer would block forever at start since b_full = 0."
+      ],
+      "verification": "Invariant b_full + b_empty = BUFFSIZE holds between operations."
+    },
+    "cse-2002-b-68-b": {
+      "approach": "With several producers (consumers), two can update `first` (`last`) concurrently. Wrap the buffer access and index update in a binary semaphore, taken after the counting wait so no one sleeps while holding it.",
+      "concepts": [
+        "Mutual exclusion",
+        "Binary semaphore",
+        "Bounded buffer"
+      ],
+      "steps": [
+        {
+          "title": "Race to fix",
+          "body": "Two producers can both write `buf[first]` before either increments `first`, overwriting an item; likewise two consumers can read the same `buf[last]`."
+        },
+        {
+          "title": "Placement",
+          "body": "Declare `semaphore mutex = 1;`. Insert `P(mutex);` right after p1/c1 and `V(mutex);` right before p2/c2:\n\n```c\nsemaphore mutex = 1;\n/* producer */\np1: P(b_empty);\n    P(mutex);\n    put the item into buf[first];\n    first = (first+1)%BUFFSIZE;\n    V(mutex);\np2: V(b_full);\n/* consumer */\nc1: P(b_full);\n    P(mutex);\n    take the item from buf[last];\n    last = (last+1)%BUFFSIZE;\n    V(mutex);\nc2: V(b_empty);\n```"
+        },
+        {
+          "title": "Why this order",
+          "body": "P(mutex) comes **after** P(b_empty)/P(b_full). If a producer took mutex first and then blocked on a full buffer, no consumer could get mutex to free a slot — deadlock."
+        }
+      ],
+      "answer": {
+        "value": "`semaphore mutex = 1;` — `P(mutex);` immediately after p1 and c1, `V(mutex);` immediately before p2 and c2.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Putting P(mutex) before P(b_empty) — deadlock when the buffer is full."
+      ],
+      "verification": "At most one process is between P(mutex) and V(mutex), so index updates are serialised; counting semaphores still bound the buffer."
+    },
+    "cse-2002-b-69-a": {
+      "approach": "Loop on $(a|b)^*$ at the start state, then nondeterministically guess where the final $abb$ begins and walk a chain of three transitions.",
+      "concepts": [
+        "NFA",
+        "Regular expressions"
+      ],
+      "steps": [
+        {
+          "title": "States",
+          "body": "$q_0$: still in $(a|b)^*$; $q_1$: just read the $a$ of the suffix; $q_2$: read $ab$; $q_3$: read $abb$ (accepting)."
+        },
+        {
+          "title": "Transitions",
+          "body": "| State | a | b |\\n|---|---|---|\\n| $\\to q_0$ | $\\{q_0,q_1\\}$ | $\\{q_0\\}$ |\\n| $q_1$ | $\\varnothing$ | $\\{q_2\\}$ |\\n| $q_2$ | $\\varnothing$ | $\\{q_3\\}$ |\\n| $*q_3$ | $\\varnothing$ | $\\varnothing$ |"
+        },
+        {
+          "title": "Check",
+          "body": "$babb$: $q_0\\xrightarrow{b}q_0\\xrightarrow{a}q_1\\xrightarrow{b}q_2\\xrightarrow{b}q_3$ — accepted. $abba$ cannot end in $q_3$ since $q_3$ has no outgoing moves."
+        }
+      ],
+      "answer": {
+        "value": "States $q_0$ (start), $q_1$, $q_2$, $q_3$ (final): $q_0\\xrightarrow{a,b}q_0$, $q_0\\xrightarrow{a}q_1$, $q_1\\xrightarrow{b}q_2$, $q_2\\xrightarrow{b}q_3$.",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "q0",
+            "start": true
+          },
+          {
+            "id": "q1"
+          },
+          {
+            "id": "q2"
+          },
+          {
+            "id": "q3",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "a,b"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "a"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "b"
+          },
+          {
+            "from": "q2",
+            "to": "q3",
+            "label": "b"
+          }
+        ]
+      },
+      "pitfalls": [
+        "Adding a self-loop on q3 — that would accept strings like abba."
+      ],
+      "verification": "Accepted strings are exactly those whose last three symbols are a, b, b."
+    },
+    "cse-2002-b-69-b": {
+      "approach": "Each DFA state records the longest suffix of the input that is a prefix of $abb$ ($\\varepsilon$, $a$, $ab$, $abb$). On each symbol move to the longest such suffix — same as subset construction on the NFA.",
+      "concepts": [
+        "DFA",
+        "Subset construction",
+        "Suffix–prefix matching"
+      ],
+      "steps": [
+        {
+          "title": "States",
+          "body": "$q_0=\\{q_0\\}$ (matched $\\varepsilon$), $q_1=\\{q_0,q_1\\}$ (matched $a$), $q_2=\\{q_0,q_2\\}$ (matched $ab$), $q_3=\\{q_0,q_3\\}$ (matched $abb$, accepting)."
+        },
+        {
+          "title": "Transitions",
+          "body": "| State | a | b |\\n|---|---|---|\\n| $\\to q_0$ | $q_1$ | $q_0$ |\\n| $q_1$ | $q_1$ | $q_2$ |\\n| $q_2$ | $q_1$ | $q_3$ |\\n| $*q_3$ | $q_1$ | $q_0$ |\\n\\nAn $a$ always restarts a match ($\\to q_1$); a $b$ from $q_3$ leaves suffix $\\ldots bbb$, which matches nothing ($\\to q_0$)."
+        },
+        {
+          "title": "Run on ababb",
+          "body": "$q_0\\xrightarrow{a}q_1\\xrightarrow{b}q_2$",
+          "scene": {
+            "current": [
+              "q2"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b",
+                "a",
+                "b",
+                "b"
+              ],
+              "head": 2
+            },
+            "edgeTones": {
+              "q0>q1": "accent",
+              "q1>q2": "accent"
+            }
+          }
+        },
+        {
+          "title": "Mismatch recovery",
+          "body": "$q_2\\xrightarrow{a}q_1$: the third symbol $a$ breaks the partial match $ab$ but starts a new match.",
+          "scene": {
+            "current": [
+              "q1"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b",
+                "a",
+                "b",
+                "b"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "q2>q1": "warning"
+            }
+          }
+        },
+        {
+          "title": "Accept",
+          "body": "$q_1\\xrightarrow{b}q_2\\xrightarrow{b}q_3$ — input consumed in the accepting state, so $ababb$ is accepted.",
+          "scene": {
+            "current": [
+              "q3"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b",
+                "a",
+                "b",
+                "b"
+              ],
+              "head": 5
+            },
+            "edgeTones": {
+              "q1>q2": "success",
+              "q2>q3": "success"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "$q_0$: $a\\to q_1$, $b\\to q_0$; $q_1$: $a\\to q_1$, $b\\to q_2$; $q_2$: $a\\to q_1$, $b\\to q_3$; $q_3$: $a\\to q_1$, $b\\to q_0$. Start $q_0$, final $q_3$.",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "q0",
+            "start": true
+          },
+          {
+            "id": "q1"
+          },
+          {
+            "id": "q2"
+          },
+          {
+            "id": "q3",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "b"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "a"
+          },
+          {
+            "from": "q1",
+            "to": "q1",
+            "label": "a"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "b"
+          },
+          {
+            "from": "q2",
+            "to": "q1",
+            "label": "a"
+          },
+          {
+            "from": "q2",
+            "to": "q3",
+            "label": "b"
+          },
+          {
+            "from": "q3",
+            "to": "q1",
+            "label": "a"
+          },
+          {
+            "from": "q3",
+            "to": "q0",
+            "label": "b"
+          }
+        ],
+        "current": [
+          "q0"
+        ],
+        "tape": {
+          "cells": [
+            "a",
+            "b",
+            "a",
+            "b",
+            "b"
+          ],
+          "head": 0
+        }
+      },
+      "pitfalls": [
+        "Sending $q_2\\xrightarrow{a}$ to $q_0$ — loses the fresh $a$ (would reject $ababb$).",
+        "Sending $q_3\\xrightarrow{b}$ to $q_2$ — $\\ldots abbb$ does not end in $ab$."
+      ],
+      "verification": "Subset construction from the NFA gives exactly the four reachable subsets $\\{q_0\\},\\{q_0,q_1\\},\\{q_0,q_2\\},\\{q_0,q_3\\}$."
+    },
+    "cse-2002-b-70-a": {
+      "approach": "The root production is either $E\\to E+E$ or $E\\to E*E$; each choice forces the rest of the tree, giving exactly two parse trees.",
+      "concepts": [
+        "Ambiguous grammar",
+        "Parse tree",
+        "Leftmost derivation"
+      ],
+      "steps": [
+        {
+          "title": "Root E → E + E",
+          "body": "Left $E\\Rightarrow i$; right $E\\Rightarrow E*E\\Rightarrow j*k$. Tree groups as $i+(j*k)$.\\n\\nLeftmost derivation: $E\\Rightarrow E+E\\Rightarrow i+E\\Rightarrow i+E*E\\Rightarrow i+j*E\\Rightarrow i+j*k$."
+        },
+        {
+          "title": "Root E → E * E",
+          "body": "Left $E\\Rightarrow E+E\\Rightarrow i+j$; right $E\\Rightarrow k$. Tree groups as $(i+j)*k$.\\n\\nLeftmost derivation: $E\\Rightarrow E*E\\Rightarrow E+E*E\\Rightarrow i+E*E\\Rightarrow i+j*E\\Rightarrow i+j*k$."
+        },
+        {
+          "title": "No others",
+          "body": "The root must split the string at one of the two operators, and each remaining part ($i$, $j*k$, $i+j$, $k$) has a unique tree. So there are exactly **2** parse trees."
+        }
+      ],
+      "answer": {
+        "value": "Two trees: $E\\to E+E$ with the right $E\\to E*E$, i.e. $i+(j*k)$; and $E\\to E*E$ with the left $E\\to E+E$, i.e. $(i+j)*k$.",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "panels",
+        "panels": [
+          {
+            "kind": "tree",
+            "root": {
+              "label": "E",
+              "children": [
+                {
+                  "label": "E",
+                  "id": "a1",
+                  "children": [
+                    {
+                      "label": "i",
+                      "id": "a2"
+                    }
+                  ]
+                },
+                {
+                  "label": "+",
+                  "id": "a3"
+                },
+                {
+                  "label": "E",
+                  "id": "a4",
+                  "children": [
+                    {
+                      "label": "E",
+                      "id": "a5",
+                      "children": [
+                        {
+                          "label": "j",
+                          "id": "a6"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "*",
+                      "id": "a7"
+                    },
+                    {
+                      "label": "E",
+                      "id": "a8",
+                      "children": [
+                        {
+                          "label": "k",
+                          "id": "a9"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "i + (j * k)"
+          },
+          {
+            "kind": "tree",
+            "root": {
+              "label": "E",
+              "children": [
+                {
+                  "label": "E",
+                  "id": "b1",
+                  "children": [
+                    {
+                      "label": "E",
+                      "id": "b2",
+                      "children": [
+                        {
+                          "label": "i",
+                          "id": "b3"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "+",
+                      "id": "b4"
+                    },
+                    {
+                      "label": "E",
+                      "id": "b5",
+                      "children": [
+                        {
+                          "label": "j",
+                          "id": "b6"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "label": "*",
+                  "id": "b7"
+                },
+                {
+                  "label": "E",
+                  "id": "b8",
+                  "children": [
+                    {
+                      "label": "k",
+                      "id": "b9"
+                    }
+                  ]
+                }
+              ]
+            },
+            "caption": "(i + j) * k"
+          }
+        ]
+      },
+      "pitfalls": [
+        "Writing the leaves as $id$ only — the question asks for the trees of $i+j*k$ (each leaf is $id$ with lexeme $i$, $j$, $k$)."
+      ],
+      "verification": "Two distinct leftmost derivations confirm the grammar is ambiguous for this string."
+    },
+    "cse-2002-b-70-b": {
+      "approach": "Precedence is encoded by grammar levels (higher-precedence operators derived deeper). Here both operators come from the same non-terminal at the same level.",
+      "concepts": [
+        "Operator precedence",
+        "Ambiguous grammar"
+      ],
+      "steps": [
+        {
+          "title": "Same level",
+          "body": "Both $E\\to E+E$ and $E\\to E*E$ have the same left side and the same shape, so the grammar does not force $*$ below $+$ (or vice versa) in a parse tree."
+        },
+        {
+          "title": "Consequence",
+          "body": "As part (a) shows, $i+j*k$ can be grouped as $i+(j*k)$ or $(i+j)*k$: **no precedence is defined** — effectively both operators have equal precedence, and associativity is also unspecified."
+        }
+      ],
+      "answer": {
+        "value": "No precedence is defined by the grammar — both `*` and `+` are at the same level (effectively equal precedence), which is why it is ambiguous.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering \"* is higher\" from arithmetic convention — the grammar itself does not enforce it."
+      ],
+      "verification": "Both parse trees from part (a) are valid, so neither operator is forced to bind tighter."
+    },
+    "cse-2002-b-70-c": {
+      "approach": "Stratify the grammar: one non-terminal per precedence level, with left recursion for left associativity. The result is unambiguous and LALR(1).",
+      "concepts": [
+        "Grammar disambiguation",
+        "Precedence and associativity",
+        "LALR(1)"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite",
+          "body": "$$E\\to E+T \\mid T \\qquad T\\to T*F \\mid F \\qquad F\\to id$$\\n\\n$*$ is generated deeper ($T$ level), so it binds tighter than $+$; left recursion makes both left-associative."
+        },
+        {
+          "title": "Effect on i + j * k",
+          "body": "Only one tree: $E\\Rightarrow E+T$, $E\\Rightarrow T\\Rightarrow F\\Rightarrow i$, $T\\Rightarrow T*F\\Rightarrow j*k$ — the grouping $i+(j*k)$."
+        },
+        {
+          "title": "Alternative",
+          "body": "Keep the ambiguous grammar but give the LALR generator precedence declarations (e.g. yacc `%left '+'` then `%left '*'`), which resolve the shift/reduce conflicts the same way."
+        }
+      ],
+      "answer": {
+        "value": "Use $E\\to E+T\\mid T,\\ T\\to T*F\\mid F,\\ F\\to id$ (or declare `%left '+'` then `%left '*'` so $*$ has higher precedence and both are left-associative).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Right-recursive rules ($E\\to T+E$) are also unambiguous but make $+$ right-associative."
+      ],
+      "verification": "The LALR(1) table for the layered grammar has no conflicts (standard expression grammar)."
+    }
+  }
+}
