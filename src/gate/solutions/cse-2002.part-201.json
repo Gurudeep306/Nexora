@@ -1,0 +1,1334 @@
+{
+  "paper": "cse-2002",
+  "version": 2,
+  "solutions": {
+    "cse-2002-a-26": {
+      "approach": "Read the circuit as a Boolean expression and simplify with De Morgan: NAND of a NAND output and an inverted input collapses to an AND-OR form.",
+      "concepts": [
+        "NAND gate",
+        "De Morgan's law",
+        "Minterm intersection"
+      ],
+      "steps": [
+        {
+          "title": "Write the output",
+          "body": "First NAND gives $(f_1 f_2)'$. The second NAND has inputs $(f_1f_2)'$ and $f_3'$:\n$$f = \\big((f_1f_2)'\\cdot f_3'\\big)' = f_1f_2 + f_3$$"
+        },
+        {
+          "title": "Evaluate $f_1 f_2$",
+          "body": "AND of two functions = intersection of their minterm sets: $\\{0,1,3,5\\}\\cap\\{6,7\\} = \\varnothing$, so $f_1f_2 = 0$."
+        },
+        {
+          "title": "Solve for $f_3$",
+          "body": "$f = 0 + f_3 = f_3$, hence $f_3 = f = \\Sigma(1,4,5)$."
+        }
+      ],
+      "answer": {
+        "value": "$f_3 = \\Sigma(1,4,5)$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Since $f_1f_2=0$, $f = f_3$, so $f_3 = \\Sigma(1,4,5)$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\Sigma(6,7)$ is $f_2$; with it $f = \\Sigma(6,7) \\ne \\Sigma(1,4,5)$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\Sigma(0,1,3,5)$ is $f_1$; it would give $f = \\Sigma(0,1,3,5)$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A valid answer exists (option A), so \"none\" is wrong."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the inverter on $f_3$ and getting $f = f_1f_2 + f_3'$.",
+        "Treating the product of two functions as a union of minterms instead of an intersection."
+      ],
+      "verification": "Minterm 4: $f_1(4)=0, f_2(4)=0, f_3(4)=1$ ⇒ first NAND = 1, NOT = 0, second NAND = $(1\\cdot0)'=1 = f(4)$ ✓."
+    },
+    "cse-2002-a-27": {
+      "approach": "Decode the wiring: EN is driven by z', A1A0 = y'z, so the MUX is active only for z = 0 and then picks I0 (=x) or I2 (=y) depending on y.",
+      "concepts": [
+        "4-to-1 multiplexer",
+        "Enable input",
+        "Select-line decoding"
+      ],
+      "given": "| Pin | Signal |\n|---|---|\n| I0, I1 | $x$ |\n| I2 | $y$ |\n| I3, A1 | $y'$ |\n| A0 | $z$ |\n| EN | $z'$ |",
+      "steps": [
+        {
+          "title": "Enable condition",
+          "body": "EN $= z'$ (active high), so output is 0 whenever $z = 1$. Only $z=0$ matters, and then $A_0 = z = 0$."
+        },
+        {
+          "title": "Case analysis on $y$ (with $z=0$)",
+          "body": "- $y = 1$: $A_1A_0 = y'z = 00$ → selects $I_0 = x$.\n- $y = 0$: $A_1A_0 = 10$ → selects $I_2 = y = 0$."
+        },
+        {
+          "title": "Combine",
+          "body": "Output is $x$ only when $y=1, z=0$, else 0: $f = x\\,y\\,z'$."
+        }
+      ],
+      "answer": {
+        "value": "$f = xyz'$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the derived $xyz'$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$xy + z$ would be 1 for $z=1$, but EN $=z'=0$ disables the MUX then."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$x + y$ would be 1 for $x=0,y=1,z=0$, but then $I_0 = x = 0$ is selected."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option (A) is correct, so \"none\" is wrong."
+        }
+      ],
+      "pitfalls": [
+        "Missing that $y'$ also drives $A_1$, not just $I_3$.",
+        "Ignoring the enable line (it is $z'$, which kills every $z=1$ row)."
+      ],
+      "verification": "Truth check: $(x,y,z)=(1,1,0)$: EN=1, select 00 → $x=1$ ✓; $(1,0,0)$: select 10 → $y=0$ ✓; any $z=1$ → 0 ✓."
+    },
+    "cse-2002-a-28": {
+      "approach": "Apply the definition f(A,B) = A' + B from the inside out and simplify with absorption and De Morgan.",
+      "concepts": [
+        "Boolean algebra",
+        "Absorption law",
+        "De Morgan's law"
+      ],
+      "steps": [
+        {
+          "title": "Inner call",
+          "body": "$f(x+y,\\,y) = (x+y)' + y = x'y' + y = x' + y$ (absorption $x'y' + y = x' + y$)."
+        },
+        {
+          "title": "Outer call",
+          "body": "$f(x'+y,\\,z) = (x'+y)' + z = x\\,y' + z$."
+        }
+      ],
+      "answer": {
+        "value": "$xy' + z$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$x' + z$ comes from wrongly simplifying the inner call to $x'$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$xyz$ has no basis; e.g. $x=0,y=0,z=1$ gives $f=1$ but $xyz=0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Matches $xy' + z$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option (C) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting to complement the first argument in the outer call."
+      ],
+      "verification": "$x=1,y=0,z=0$: inner $=(1)'+0=0$; outer $=0'+0=1$; $xy'+z = 1$ ✓."
+    },
+    "cse-2002-a-29": {
+      "approach": "Add 5DH and 6BH in binary; AC is the carry out of bit 3 (low nibble), CY the carry out of bit 7.",
+      "concepts": [
+        "8085 ADD",
+        "Auxiliary carry flag",
+        "Carry flag"
+      ],
+      "steps": [
+        {
+          "title": "What the program does",
+          "body": "H = 5DH, L = 6BH, A ← H = 5DH, then ADD L: A ← 5DH + 6BH."
+        },
+        {
+          "title": "Low nibble → AC",
+          "body": "$D + B = 13 + 11 = 24 > 15$ ⇒ carry out of bit 3 ⇒ **AC = 1** (low nibble 24 − 16 = 8)."
+        },
+        {
+          "title": "Full byte → CY",
+          "body": "$5DH + 6BH = 93 + 107 = 200 = C8H \\le 255$ ⇒ no carry out of bit 7 ⇒ **CY = 0**."
+        }
+      ],
+      "answer": {
+        "value": "AC = 1, CY = 0 — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "AC is 1 because D + B overflows the low nibble."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "CY is 0: the sum C8H fits in 8 bits."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "AC = 1 and CY = 0, as computed."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same as (A) in the paper (printing duplicate); wrong for the same reason."
+        }
+      ],
+      "pitfalls": [
+        "Confusing AC (bit 3→4 carry) with CY (bit 7 carry)."
+      ],
+      "verification": "Binary: 0101 1101 + 0110 1011 = 1100 1000 (C8H); nibble sum 1101+1011 = 1 1000 → carry into bit 4 ✓."
+    },
+    "cse-2002-a-30": {
+      "approach": "Interpret each state as \"previous input bit\" (A = 0/start, B and C = 1) and check that every output equals previous bit + current bit as a 2-bit number.",
+      "concepts": [
+        "Mealy machine",
+        "State meaning",
+        "Binary addition"
+      ],
+      "steps": [
+        {
+          "title": "Meaning of the states",
+          "body": "Every 0-input goes to A and every 1-input goes to B or C. So A ⇔ previous bit 0 (also the start, previous bit taken as 0), B/C ⇔ previous bit 1.",
+          "scene": {
+            "current": [
+              "A"
+            ],
+            "caption": "Start in A (previous bit = 0)"
+          }
+        },
+        {
+          "title": "Check all six arcs",
+          "body": "| From (prev) | Input | Output | prev + input |\n|---|---|---|---|\n| A (0) | 0 | 00 | 0 |\n| A (0) | 1 | 01 | 1 |\n| B (1) | 0 | 01 | 1 |\n| B (1) | 1 | 10 | 2 |\n| C (1) | 0 | 01 | 1 |\n| C (1) | 1 | 10 | 2 |\n\nEvery output is the 2-bit sum.",
+          "scene": {
+            "edgeTones": {
+              "A>B": "success",
+              "B>C": "success",
+              "C>C": "success",
+              "B>A": "success",
+              "C>A": "success",
+              "A>A": "success"
+            },
+            "caption": "All arcs agree with prev + current"
+          }
+        },
+        {
+          "title": "Trace input 1101",
+          "body": "A –1/01→ B –1/10→ C –0/01→ A –1/01→ B: outputs 01, 10, 01, 01 = $0{+}1,\\,1{+}1,\\,1{+}0,\\,0{+}1$ ✓.",
+          "scene": {
+            "current": [
+              "B"
+            ],
+            "tape": {
+              "cells": [
+                "1",
+                "1",
+                "0",
+                "1"
+              ],
+              "head": 4
+            },
+            "vars": {
+              "outputs": "01 10 01 01"
+            },
+            "caption": "Trace of 1101"
+          }
+        }
+      ],
+      "answer": {
+        "value": "It outputs the sum of the present and previous input bits — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Verified on all six transitions."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "For input 11 the second output is 10, not 01."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "For input 10 the output on the 0 is 01, not 00."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option (A) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Reading outputs as \"pattern detected\" flags instead of numeric sums."
+      ],
+      "verification": "Re-traced 1101 and 0110 (outputs 00, 01, 10, 01) — both match prev + current.",
+      "animation": {
+        "kind": "automaton",
+        "title": "FSM from the figure",
+        "states": [
+          {
+            "id": "A",
+            "start": true,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "B",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "C",
+            "x": 2,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "A",
+            "to": "A",
+            "label": "0/00"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "1/01"
+          },
+          {
+            "from": "B",
+            "to": "A",
+            "label": "0/01"
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "1/10"
+          },
+          {
+            "from": "C",
+            "to": "C",
+            "label": "1/10"
+          },
+          {
+            "from": "C",
+            "to": "A",
+            "label": "0/01"
+          }
+        ],
+        "current": [
+          "A"
+        ]
+      }
+    },
+    "cse-2002-a-31": {
+      "approach": "Each listed condition causes a classic pipeline problem: unequal stage delays stretch the clock, dependences cause data hazards, shared hardware causes structural hazards.",
+      "concepts": [
+        "Pipeline clock period",
+        "Data hazard",
+        "Structural hazard"
+      ],
+      "steps": [
+        {
+          "title": "Check each condition",
+          "body": "- Different stage delays: cycle time = slowest stage, so faster stages idle.\n- Dependent consecutive instructions: data hazards → stalls.\n- Shared hardware: structural hazards → stalls."
+        },
+        {
+          "title": "Conclusion",
+          "body": "All three degrade performance ⇒ (D)."
+        }
+      ],
+      "answer": {
+        "value": "All of the above — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True, but not the only cause."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True (data hazards), but not the only cause."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True (structural hazards), but not the only cause."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "All three are valid reasons."
+        }
+      ],
+      "verification": "Matches the three standard sources of pipeline inefficiency (imbalance, data hazards, structural hazards)."
+    },
+    "cse-2002-a-32": {
+      "approach": "Horizontal microcode dedicates one bit per control signal, so it needs no decoding but makes microinstructions wide.",
+      "concepts": [
+        "Horizontal microprogramming",
+        "Vertical microprogramming"
+      ],
+      "steps": [
+        {
+          "title": "Properties",
+          "body": "Horizontal: one bit per control signal (C), so the bits drive control lines directly — no decoders (A) — and the word is much wider than vertical (encoded) microcode (B)."
+        },
+        {
+          "title": "Conclusion",
+          "body": "All three statements are true ⇒ (D)."
+        }
+      ],
+      "answer": {
+        "value": "All of the above — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True, but (B) and (C) also hold."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True, but (A) and (C) also hold."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True, but (A) and (B) also hold."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "All three are properties of horizontal microprogramming."
+        }
+      ],
+      "verification": "Contrast: vertical microcode encodes signals in fields (needs decoders, shorter words)."
+    },
+    "cse-2002-a-33": {
+      "approach": "C stores arrays in row-major order: address = base + (i × columns + j) × element size.",
+      "concepts": [
+        "Row-major order",
+        "Address calculation"
+      ],
+      "steps": [
+        {
+          "title": "Formula",
+          "body": "$\\text{addr}(a[i][j]) = 0 + (i\\cdot 100 + j)\\cdot 1$ (char = 1 byte)."
+        },
+        {
+          "title": "Substitute",
+          "body": "$40\\cdot 100 + 50 = 4000 + 50 = 4050$."
+        }
+      ],
+      "answer": {
+        "value": "**4050** — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4040 uses j = 40 by mistake."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct row-major address."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Column-major: 50 × 100 + 40 = 5040."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "5050 swaps the row index."
+        }
+      ],
+      "pitfalls": [
+        "Using column-major order (that is Fortran, not C)."
+      ],
+      "verification": "Row 40 starts at 40 × 100 = 4000; element 50 of that row is at 4050."
+    },
+    "cse-2002-a-34": {
+      "approach": "Count nodes two ways: n = I + L, and every node except the root is a child, so n − 1 = 3I.",
+      "concepts": [
+        "Full m-ary tree",
+        "Counting edges"
+      ],
+      "steps": [
+        {
+          "title": "Internal nodes",
+          "body": "Each internal node has 3 children: $n - 1 = 3I \\Rightarrow I = \\dfrac{n-1}{3}$."
+        },
+        {
+          "title": "Leaves",
+          "body": "$L = n - I = n - \\dfrac{n-1}{3} = \\dfrac{3n - n + 1}{3} = \\dfrac{2n+1}{3}$."
+        }
+      ],
+      "answer": {
+        "value": "$(2n+1)/3$ — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$n/2$ is not even an integer for $n = 4$ (root + 3 leaves, $L=3$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(n-1)/3$ is the number of **internal** nodes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(n-1)/2$ is the internal-node count of a full **binary** tree; for $n=4$ it gives $1.5$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$n=4$: $(8+1)/3 = 3$ ✓."
+        }
+      ],
+      "verification": "$n = 7$ (root, 3 children, one of them with 3 children): leaves = 5 = $(14+1)/3$ ✓."
+    },
+    "cse-2002-a-35": {
+      "approach": "Each iteration is an independent trial succeeding with probability 1/n, so the number of comparisons is geometric with mean 1/p.",
+      "concepts": [
+        "Geometric distribution",
+        "Expectation"
+      ],
+      "steps": [
+        {
+          "title": "Success probability",
+          "body": "Exactly one of the $n$ distinct values equals $x$, so each pick succeeds with $p = 1/n$, independently."
+        },
+        {
+          "title": "Expected trials",
+          "body": "$E = \\sum_{k\\ge1} k(1-p)^{k-1}p = \\dfrac{1}{p} = n$."
+        }
+      ],
+      "answer": {
+        "value": "$n$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Mean of a geometric distribution with p = 1/n."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "n − 1 counts only failures, but the final successful comparison also counts."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "2n has no basis."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "n/2 is the average for a linear scan without replacement, not random sampling with replacement."
+        }
+      ],
+      "verification": "Recurrence: $E = 1 + (1 - 1/n)E \\Rightarrow E/n = 1 \\Rightarrow E = n$ ✓."
+    },
+    "cse-2002-a-36": {
+      "approach": "Each call does O(1) work and replaces n by about √n; count how many square roots bring n down to 2.",
+      "concepts": [
+        "Recurrence",
+        "Repeated square root"
+      ],
+      "steps": [
+        {
+          "title": "Recurrence",
+          "body": "$T(n) = T(\\lceil\\sqrt n\\rceil) + O(1)$."
+        },
+        {
+          "title": "Substitute $n = 2^{2^k}$",
+          "body": "After $i$ calls the argument is $2^{2^{k-i}}$; it reaches 2 when $i = k = \\log_2\\log_2 n$. So $T(n) = O(\\log\\log n)$."
+        }
+      ],
+      "answer": {
+        "value": "$O(\\log\\log n)$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "O(n) would need n calls; far too pessimistic."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "O(log n) is the bound for halving n, not taking square roots."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Number of square roots to reach a constant is $\\log\\log n$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The depth grows with n, so it is not O(1)."
+        }
+      ],
+      "verification": "$n = 65536 = 2^{16}$: 65536 → 256 → 16 → 4 → 2, i.e. 4 calls = $\\log_2\\log_2 65536 = \\log_2 16 = 4$ ✓."
+    },
+    "cse-2002-a-37": {
+      "approach": "Left ≥ half and ≤ twice the right means each subtree holds at most 2/3 of the nodes; height is maximised when every step keeps the 2/3 share.",
+      "concepts": [
+        "Weight-balanced tree",
+        "Height recurrence"
+      ],
+      "steps": [
+        {
+          "title": "Size of a subtree",
+          "body": "If $L \\le 2R$ and $L + R = n - 1$, then $L \\le \\tfrac{2}{3}(n-1)$ (and similarly $R \\le \\tfrac23(n-1)$)."
+        },
+        {
+          "title": "Height recurrence",
+          "body": "$h(n) \\le 1 + h\\!\\left(\\tfrac{2}{3}n\\right)$, so the subtree size shrinks by a factor $3/2$ per level: $h(n) = \\log_{3/2} n + O(1)$."
+        }
+      ],
+      "answer": {
+        "value": "$\\log_{3/2} n$ — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\log_2 n$ is the perfectly balanced height; the 1:2 split allows taller trees."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\log_{4/3} n$ would need a 3:1 split, which violates \"at most twice\"."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\log_3 n$ is even smaller than $\\log_2 n$ — impossible for a binary tree."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Heavy side always $2/3$ of the nodes ⇒ $\\log_{3/2} n$."
+        }
+      ],
+      "verification": "Tightness: splitting every node 2:1 toward one side is allowed and gives height $\\approx \\log_{3/2} n$; no allowed split shrinks the heavy side by less than a factor $3/2$, so it is also an upper bound."
+    },
+    "cse-2002-a-38": {
+      "approach": "The machine only needs to remember length mod 3, giving 3 states, and the three residues are pairwise distinguishable.",
+      "concepts": [
+        "DFA minimisation",
+        "Modular counting"
+      ],
+      "steps": [
+        {
+          "title": "Construction",
+          "body": "States $q_0,q_1,q_2$ = length mod 3; every symbol moves $q_i \\to q_{(i+1) \\bmod 3}$; $q_0$ is start and accepting."
+        },
+        {
+          "title": "Minimality",
+          "body": "From $q_0$ the empty string is accepted; from $q_1$ only strings of length $\\equiv 2$, from $q_2$ only $\\equiv 1$. All pairs are distinguishable, so 3 states are needed."
+        }
+      ],
+      "answer": {
+        "value": "3 states — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two states cannot distinguish the three residues mod 3."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Exactly the mod-3 counter."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A fourth state would be redundant (or a useless dead state)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Five states is not minimal."
+        }
+      ],
+      "verification": "Myhill–Nerode: the classes are the three residues of |x| mod 3."
+    },
+    "cse-2002-a-39": {
+      "approach": "Use closure properties: recursive languages are closed under complement; RE and CFL are not.",
+      "concepts": [
+        "Recursive languages",
+        "Recursively enumerable languages",
+        "Closure under complement"
+      ],
+      "steps": [
+        {
+          "title": "Recursive",
+          "body": "A decider for L that always halts can swap accept/reject, deciding the complement ⇒ (A) true."
+        },
+        {
+          "title": "Others",
+          "body": "If RE were closed under complement, every RE language would be recursive — false (e.g. halting problem). CFLs are not closed under complement (else closure under intersection by De Morgan)."
+        }
+      ],
+      "answer": {
+        "value": "The complement of a recursive language is recursive — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Swap the halting decider's answers."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Complement of $HALT$ is not RE."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Although technically true (recursive ⊂ RE), it is weaker and follows from (A); the most precise true statement is (A)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "CFLs are not closed under complement (e.g. complement of $\\{ww\\}$ is CFL but $\\{ww\\}$ is not)."
+        }
+      ],
+      "pitfalls": [
+        "Choosing (C) — it is trivially implied by (A), and the intended single answer is (A)."
+      ],
+      "verification": "Standard closure table: recursive closed under complement; RE and CFL not."
+    },
+    "cse-2002-a-40": {
+      "approach": "Match the iteration with the Newton–Raphson form x − f(x)/f'(x) for each candidate equation.",
+      "concepts": [
+        "Newton–Raphson method"
+      ],
+      "steps": [
+        {
+          "title": "Try $f(X) = X^2 - 3$",
+          "body": "$X - \\dfrac{X^2-3}{2X} = \\dfrac{2X^2 - X^2 + 3}{2X} = \\dfrac{X}{2} + \\dfrac{3}{2X}$ — exactly the given iteration."
+        },
+        {
+          "title": "Rule out the rest",
+          "body": "For $X^n = c$: $X - \\dfrac{X^n - c}{nX^{n-1}} = \\dfrac{(n-1)X}{n} + \\dfrac{c}{nX^{n-1}}$. The coefficient $\\tfrac12$ forces $n = 2$, and $\\tfrac{c}{2X} = \\tfrac{3}{2X}$ forces $c = 3$."
+        }
+      ],
+      "answer": {
+        "value": "$X^2 = 3$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Gives exactly X/2 + 3/(2X)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$X^3 = 3$ gives $X - \\frac{X^3-3}{3X^2} = \\frac{2X}{3} + \\frac{1}{X^2}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$X^2 = 2$ gives $\\frac{X}{2} + \\frac{1}{X}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$X^3 = 2$ gives $\\frac{2X}{3} + \\frac{2}{3X^2}$."
+        }
+      ],
+      "verification": "Fixed point: $X = X/2 + 3/(2X) \\Rightarrow X^2 = 3$ ✓."
+    },
+    "cse-2002-a-41": {
+      "approach": "Complement: the only outcomes without both a head and a tail are all-heads and all-tails.",
+      "concepts": [
+        "Complement rule",
+        "Equally likely outcomes"
+      ],
+      "steps": [
+        {
+          "title": "Bad outcomes",
+          "body": "HHHH and TTTT: $2$ of $2^4 = 16$ outcomes."
+        },
+        {
+          "title": "Probability",
+          "body": "$1 - \\dfrac{2}{16} = \\dfrac{14}{16} = \\dfrac{7}{8}$."
+        }
+      ],
+      "answer": {
+        "value": "**7/8** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1/16 is the probability of all heads only."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1/8 = 2/16 is the probability of the bad event (all same)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Complement of all-same."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "15/16 subtracts only one of the two bad outcomes."
+        }
+      ],
+      "verification": "Direct count: outcomes with 1, 2 or 3 heads = $4 + 6 + 4 = 14$ of 16 ✓."
+    },
+    "cse-2002-a-42": {
+      "approach": "Check each property on the empty relation: universal conditions with no pairs are vacuously true, but reflexivity requires pairs.",
+      "concepts": [
+        "Reflexive",
+        "Symmetric",
+        "Transitive",
+        "Vacuous truth"
+      ],
+      "steps": [
+        {
+          "title": "Reflexive?",
+          "body": "Needs $(1,1),(2,2),(3,3) \\in S$; $S = \\varnothing$ ⇒ **not reflexive**."
+        },
+        {
+          "title": "Symmetric / transitive?",
+          "body": "Both are \"if $(a,b)\\in S$ then …\" conditions; no pair exists, so both hold vacuously."
+        }
+      ],
+      "answer": {
+        "value": "Transitive and symmetric — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "It is symmetric (vacuously)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It is not reflexive on a non-empty set."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It is not reflexive."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Both hold vacuously."
+        }
+      ],
+      "verification": "Empty relation on a non-empty set: irreflexive, symmetric, antisymmetric, transitive."
+    },
+    "cse-2002-a-43": {
+      "approach": "C's syntax is given by a CFG, but full validity (declare-before-use, type matching) needs context, so C as a language of valid programs is context-sensitive.",
+      "concepts": [
+        "Chomsky hierarchy",
+        "Context-sensitive constraints"
+      ],
+      "steps": [
+        {
+          "title": "Grammar vs. language",
+          "body": "The C grammar is context-free, but it accepts programs that use undeclared identifiers or mismatch function argument counts."
+        },
+        {
+          "title": "Context conditions",
+          "body": "Checking \"every identifier is declared before use\" resembles $\\{wcw\\}$, which is not context-free but is context-sensitive (an LBA can check it). So the set of valid C programs is context-sensitive."
+        }
+      ],
+      "answer": {
+        "value": "A context-sensitive language — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only the syntax (superset of valid programs) is context-free."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Declaration/use matching makes it context-sensitive."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Nested parentheses alone already make it non-regular."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A linear-bounded automaton suffices; no full Turing machine is needed."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"C has a CFG for parsing\" with \"the language of valid C programs is a CFL\"."
+      ],
+      "verification": "Standard argument (also used for Java/Pascal): declaration-before-use is a copy-language constraint."
+    },
+    "cse-2002-a-44": {
+      "approach": "Convert to postfix (or use a single stack directly on the postfix form): one stack is enough to evaluate any expression without function calls.",
+      "concepts": [
+        "Postfix evaluation",
+        "Stack"
+      ],
+      "steps": [
+        {
+          "title": "Postfix evaluation",
+          "body": "Once in postfix, scan left to right: push operands; on an operator pop two, apply, push result — one stack."
+        },
+        {
+          "title": "Conversion",
+          "body": "Infix → postfix also needs just one (operator) stack, and it can be done before evaluation reusing the same stack, so one stack suffices."
+        }
+      ],
+      "answer": {
+        "value": "One stack is enough — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Postfix evaluation uses a single stack."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Two stacks give a direct infix evaluator, but they are not *needed*."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The stack depth (not the number of stacks) grows with tree height."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Expression evaluation is context-free work; a PDA-like stack machine suffices."
+        }
+      ],
+      "pitfalls": [
+        "Confusing stack depth with the number of stacks."
+      ],
+      "verification": "Example $2\\,3\\,4\\,*\\,+$: push 2, 3, 4; * → 12; + → 14 using one stack ✓."
+    },
+    "cse-2002-a-45": {
+      "approach": "With dynamic linking the actual library loaded is resolved at run time through a search path, which an attacker may manipulate.",
+      "concepts": [
+        "Dynamic linking",
+        "Library search path"
+      ],
+      "steps": [
+        {
+          "title": "Why it is risky",
+          "body": "The library is located at load/run time using a search path (e.g. LD_LIBRARY_PATH). A malicious library placed earlier in that path is loaded instead of the genuine one."
+        },
+        {
+          "title": "Eliminate the others",
+          "body": "Static linking fixes the library at build time, so the risk is specifically the run-time resolution in (B); (A), (C), (D) are not real reasons."
+        }
+      ],
+      "answer": {
+        "value": "The search path for dynamic libraries is not known till runtime — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Meaningless statement."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: run-time library resolution can be hijacked."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Linking itself is not inherently insecure (static linking is fine)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Signing of dynamic libraries is possible; this is not the reason."
+        }
+      ],
+      "verification": "DLL/shared-library hijacking attacks exploit exactly this."
+    },
+    "cse-2002-a-46": {
+      "approach": "Multiprogramming means several programs in memory and the CPU switched to another one when the running one blocks (for I/O).",
+      "concepts": [
+        "Multiprogramming",
+        "CPU utilisation"
+      ],
+      "steps": [
+        {
+          "title": "Essential features",
+          "body": "(a) Several programs resident in memory, and (b) when one waits for I/O another is scheduled — this is what keeps the CPU busy."
+        },
+        {
+          "title": "Feature (c)",
+          "body": "Scheduling another job on termination is also true of a simple batch system, so it does not characterise multiprogramming."
+        }
+      ],
+      "answer": {
+        "value": "(a) and (b) — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(a) alone: programs in memory but no switching on I/O wait gives no overlap."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Both defining features."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(c) is batch processing, not multiprogramming; (b) is missing."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(c) is not needed; (a) and (b) already suffice."
+        }
+      ],
+      "verification": "Definition: multiprogramming overlaps CPU of one job with I/O of another."
+    },
+    "cse-2002-a-47": {
+      "approach": "Max file size = (number of block addresses the index can hold) × block size, and the index capacity depends on index blocks, block size and address size.",
+      "concepts": [
+        "Indexed allocation",
+        "Maximum file size"
+      ],
+      "steps": [
+        {
+          "title": "Formula",
+          "body": "Pointers in the index $= \\dfrac{\\text{index blocks} \\times \\text{block size}}{\\text{address size}}$; max file size $=$ pointers $\\times$ block size."
+        },
+        {
+          "title": "Dependence",
+          "body": "All three quantities appear ⇒ (C)."
+        }
+      ],
+      "answer": {
+        "value": "Block size, number of index blocks and address size — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses the number of index blocks."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses the address size."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "All three determine the maximum size."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option (C) is correct."
+        }
+      ],
+      "verification": "E.g. 1 index block of 512 B, 4 B addresses: $128$ pointers × 512 B = 64 KB; changing any one of the three changes the result."
+    },
+    "cse-2002-a-48": {
+      "approach": "A B+-tree node with p pointers holds p − 1 keys; choose the largest p with p·4 + (p − 1)·8 ≤ 512.",
+      "concepts": [
+        "B+-tree order",
+        "Node size constraint"
+      ],
+      "steps": [
+        {
+          "title": "Inequality",
+          "body": "$4p + 8(p-1) \\le 512 \\Rightarrow 12p - 8 \\le 512 \\Rightarrow 12p \\le 520 \\Rightarrow p \\le 43.33$."
+        },
+        {
+          "title": "Degree",
+          "body": "Largest integer $p = 43$: $43\\cdot4 + 42\\cdot8 = 172 + 336 = 508 \\le 512$."
+        }
+      ],
+      "answer": {
+        "value": "**43** — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "16 wastes most of the block."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "42 fits but is not the largest."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Largest degree that fits: 508 bytes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$44\\cdot4 + 43\\cdot8 = 176 + 344 = 520 > 512$."
+        }
+      ],
+      "pitfalls": [
+        "Using p keys instead of p − 1 (gives 512/12 = 42)."
+      ],
+      "verification": "43 uses 508 B, 44 needs 520 B > 512."
+    },
+    "cse-2002-a-49": {
+      "approach": "Every BCNF decomposition is also in 3NF, so only the stricter BCNF test can tell the two apart.",
+      "concepts": [
+        "BCNF",
+        "3NF",
+        "Normal-form hierarchy"
+      ],
+      "steps": [
+        {
+          "title": "Why not 3NF",
+          "body": "Both decompositions are in 3NF (BCNF ⊂ 3NF), so the 3NF test passes for both."
+        },
+        {
+          "title": "BCNF test",
+          "body": "Apply the BCNF definition: the one that passes is BCNF; the other fails (it is 3NF but not BCNF)."
+        }
+      ],
+      "answer": {
+        "value": "BCNF definition — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Both may or may not preserve dependencies; not decisive."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both standard decompositions are lossless; not decisive."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Only the BCNF one passes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both pass the 3NF test."
+        }
+      ],
+      "verification": "Hierarchy BCNF ⊂ 3NF: a test distinguishing them must be the stricter one."
+    },
+    "cse-2002-a-50": {
+      "approach": "An instance can only refute an FD (two tuples agreeing on the left side but differing on the right); it can never prove an FD holds for the schema.",
+      "concepts": [
+        "Functional dependency",
+        "Instance vs. schema"
+      ],
+      "steps": [
+        {
+          "title": "Test B → C",
+          "body": "Rows $(1,1,1)$ and $(1,1,0)$: same $B=1$, different $C$ ⇒ $B \\to C$ is **violated**, so B does not determine C."
+        },
+        {
+          "title": "Test A → B",
+          "body": "Here A=1 → B=1 and A=2 → B=3, so the instance satisfies $A \\to B$, but a single instance cannot prove that it holds for the schema."
+        }
+      ],
+      "answer": {
+        "value": "B does not functionally determine C — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$B \\to C$ is violated."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Asserts $A \\to B$, which cannot be concluded from one instance."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The only safe conclusion."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The instance does not violate $A \\to B$, so \"A does not determine B\" is unsupported."
+        }
+      ],
+      "pitfalls": [
+        "Concluding an FD holds just because the instance does not violate it."
+      ],
+      "verification": "Only violated FDs can be inferred from an instance."
+    }
+  }
+}
