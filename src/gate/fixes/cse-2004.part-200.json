@@ -1,0 +1,45 @@
+{
+  "paper": "cse-2004",
+  "fixes": [
+    {
+      "id": "cse-2004-cs-13",
+      "field": "text",
+      "before": "Let $R_1(A,B,C)$ and $R_2(D,E)$ be two relation schema, where the primary keys are shown underlined (A for $R_1$, D for $R_2$), and let C be a foreign key in $R_1$ referring to $R_2$. Suppose there is no violation of the above referential integrity constraint in the corresponding relation instances $r_1$ and $r_2$. Which one of the following relational algebra expressions would necessarily produce an empty relation?",
+      "after": "Let $R_1(\\underline{A},B,C)$ and $R_2(\\underline{D},E)$ be two relation schema, where the primary keys are shown underlined, and let C be a foreign key in $R_1$ referring to $R_2$. Suppose there is no violation of the above referential integrity constraint in the corresponding relation instances $r_1$ and $r_2$. Which one of the following relational algebra expressions would necessarily produce an empty relation?",
+      "reason": "Show the underlined primary keys directly with KaTeX, as printed.",
+      "source": "GATE 2004 CS paper Q.13"
+    },
+    {
+      "id": "cse-2004-cs-14",
+      "field": "text",
+      "before": "Consider the following relation schema pertaining to a students database:\n\nStudent (<u>rollno</u>, name, address)\n\nEnroll (<u>rollno, courseno</u>, coursename)\n\nwhere the primary keys are shown underlined. The number of tuples in the Student and Enroll tables are 120 and 8 respectively. What are the maximum and minimum number of tuples that can be present in (Student * Enroll), where '*' denotes natural join?",
+      "after": "Consider the following relation schema pertaining to a students database:\n\nStudent $(\\underline{\\text{rollno}}, \\text{name}, \\text{address})$\n\nEnroll $(\\underline{\\text{rollno}, \\text{courseno}}, \\text{coursename})$\n\nwhere the primary keys are shown underlined. The number of tuples in the Student and Enroll tables are 120 and 8 respectively. What are the maximum and minimum number of tuples that can be present in (Student * Enroll), where '*' denotes natural join?",
+      "reason": "Replace raw HTML <u> with KaTeX underline.",
+      "source": "GATE 2004 CS paper Q.14"
+    },
+    {
+      "id": "cse-2004-cs-17",
+      "field": "topic",
+      "before": "combinational",
+      "after": "boolean",
+      "reason": "Pure Boolean-algebra simplification, not a combinational circuit question.",
+      "source": "GATE 2004 CS paper Q.17"
+    },
+    {
+      "id": "cse-2004-cs-19",
+      "field": "subject",
+      "before": "coa",
+      "after": "dl",
+      "reason": "Number-system conversion belongs to digital logic.",
+      "source": "GATE 2004 CS paper Q.19"
+    },
+    {
+      "id": "cse-2004-cs-19",
+      "field": "topic",
+      "before": "isa",
+      "after": "number",
+      "reason": "Number-system conversion belongs to digital logic (number systems).",
+      "source": "GATE 2004 CS paper Q.19"
+    }
+  ]
+}

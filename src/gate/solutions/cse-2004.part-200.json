@@ -1,0 +1,1189 @@
+{
+  "paper": "cse-2004",
+  "version": 2,
+  "solutions": {
+    "cse-2004-cs-1": {
+      "approach": "Structured programming restricts control flow to sequence, selection and iteration blocks with single entry and single exit, so that the flow of control can be read directly from the program text.",
+      "concepts": [
+        "Structured programming",
+        "Single-entry single-exit constructs"
+      ],
+      "steps": [
+        {
+          "title": "What the discipline imposes",
+          "body": "Programs are built only from **sequence**, **if/else** and **loops** (Böhm–Jacopini), each with one entry and one exit, nested properly."
+        },
+        {
+          "title": "Why",
+          "body": "With properly nested blocks, the static layout of the source mirrors the dynamic execution order: a reader can infer the flow of control **from the program text** alone. Avoiding `goto` is a *means* to this goal, not the goal itself."
+        }
+      ],
+      "answer": {
+        "value": "be able to infer the flow of control from the program text",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Indentation is cosmetic; a badly structured program can still be well indented."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Compiled code is machine code full of jumps; structured programming is about the source."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — the stated aim is that the control flow is evident from the source text."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Avoiding GOTO is a consequence/technique used to achieve readability, not the goal itself."
+        }
+      ],
+      "pitfalls": [
+        "Confusing the means (no GOTO) with the goal (control flow readable from the text)."
+      ],
+      "verification": "Dijkstra's argument: the textual structure should correspond to the process structure — exactly option C."
+    },
+    "cse-2004-cs-2": {
+      "approach": "C passes arguments by value; swap works on copies a and b, so the caller's x and y never change.",
+      "concepts": [
+        "Call by value",
+        "Pointers in C"
+      ],
+      "steps": [
+        {
+          "title": "Trace swap(x, y)",
+          "body": "Copies of x and y are placed in `a` and `b`; the function exchanges the copies and returns. The caller's `x`, `y` are untouched."
+        },
+        {
+          "title": "Check swap(&x, &y)",
+          "body": "The parameters are `int`, not `int *`; passing addresses only swaps two address values (and is a type mismatch). To work, swap would need `int *a, int *b` and `*a`, `*b`."
+        }
+      ],
+      "answer": {
+        "value": "swap(x, y) cannot be used as the parameters are passed by value",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only the local copies get exchanged."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The function body uses a and b as ints, so passing addresses does not swap x and y (and does not even type-check cleanly)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A function need not return a value to have an effect (it could use pointers); the return type is not the problem."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — call by value means changes to a and b are not visible to the caller."
+        }
+      ],
+      "pitfalls": [
+        "Thinking that passing &x fixes it without changing the parameter types and body."
+      ],
+      "verification": "With x=1, y=2, after swap(x, y) we still have x=1, y=2."
+    },
+    "cse-2004-cs-3": {
+      "approach": "Stack 1 grows upward from index 1, stack 2 downward from MAXSIZE. All space is used only when the two tops are adjacent.",
+      "concepts": [
+        "Two stacks in one array"
+      ],
+      "steps": [
+        {
+          "title": "Layout",
+          "body": "Push on stack 1: `top1++`; push on stack 2: `top2--`. Free cells are exactly indices $top1+1,\\dots,top2-1$, i.e. $top2-top1-1$ cells."
+        },
+        {
+          "title": "Full condition",
+          "body": "No free cell $\\iff top2-top1-1=0 \\iff top1 = top2-1$."
+        }
+      ],
+      "answer": {
+        "value": "top1 = top2 - 1",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Splitting the array in halves wastes space when one stack is small and the other large."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "top1 + top2 = MAXSIZE holds e.g. when both stacks are empty-ish in a symmetric way; not a fullness test."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Declares full when either stack reaches a fixed limit — inefficient use of space."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — the stacks have met; no free cell remains."
+        }
+      ],
+      "verification": "MAXSIZE=4: push 3 on stack 1 (top1=3) and 1 on stack 2 (top2=4): 3 = 4-1, array full."
+    },
+    "cse-2004-cs-4": {
+      "approach": "Insert the keys one by one into the BST and measure the longest root-to-leaf path in edges.",
+      "concepts": [
+        "Binary search tree insertion",
+        "Tree height"
+      ],
+      "steps": [
+        {
+          "title": "Insert 10, 1, 3, 5",
+          "body": "10 is the root; 1 < 10 goes left; 3 goes left of 10 then right of 1; 5 goes right of 3. This forms the chain 10 → 1 → 3 → 5.",
+          "scene": {
+            "caption": "After 10, 1, 3, 5",
+            "root": {
+              "label": 10,
+              "children": [
+                {
+                  "label": 1,
+                  "children": [
+                    null,
+                    {
+                      "label": 3,
+                      "children": [
+                        null,
+                        {
+                          "label": 5,
+                          "tone": "accent"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                null
+              ]
+            }
+          }
+        },
+        {
+          "title": "Insert 15, 12, 16",
+          "body": "15 > 10 goes right; 12 is left of 15; 16 is right of 15.",
+          "scene": {
+            "caption": "Final BST",
+            "root": {
+              "label": 10,
+              "children": [
+                {
+                  "label": 1,
+                  "children": [
+                    null,
+                    {
+                      "label": 3,
+                      "children": [
+                        null,
+                        {
+                          "label": 5,
+                          "tone": "accent"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "label": 15,
+                  "children": [
+                    {
+                      "label": 12
+                    },
+                    {
+                      "label": 16
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Height",
+          "body": "Longest path: 10 → 1 → 3 → 5 has 3 edges; the right side has only 2. Height $=3$."
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": 10
+        },
+        "caption": "Empty tree → root 10"
+      },
+      "answer": {
+        "value": "3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2 is the height of the right subtree path 10 → 15 → 12/16 only."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — the path 10-1-3-5 has 3 edges."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "4 counts nodes on the longest path, not edges."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "6 would be a degenerate chain of all 7 keys."
+        }
+      ],
+      "pitfalls": [
+        "Counting nodes instead of edges."
+      ],
+      "verification": "Depth of 5 is 3, every other leaf (12, 16) is at depth 2."
+    },
+    "cse-2004-cs-5": {
+      "approach": "Matching parentheses follow last-opened-first-closed order — exactly LIFO, so a stack is the natural structure.",
+      "concepts": [
+        "Stack",
+        "Parenthesis matching"
+      ],
+      "steps": [
+        {
+          "title": "Algorithm",
+          "body": "Scan left to right: push on `(`, pop on `)` (fail if empty). Balanced iff the stack is empty at the end."
+        },
+        {
+          "title": "Why LIFO",
+          "body": "Each `)` must close the most recent unmatched `(` — the top of the stack."
+        }
+      ],
+      "answer": {
+        "value": "stack",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A queue gives FIFO, matching the earliest open bracket — wrong order."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — LIFO matches nesting."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A tree can represent the expression but is not the simplest structure for the check."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A generic list has no inherent access discipline; used as a stack it is just a stack."
+        }
+      ],
+      "verification": "For \"(()\" the stack ends with one \"(\" left → unbalanced, as expected."
+    },
+    "cse-2004-cs-6": {
+      "approach": "Level order visits nodes depth by depth, which is exactly the order in which breadth-first search dequeues them.",
+      "concepts": [
+        "Level-order traversal",
+        "Breadth-first search"
+      ],
+      "steps": [
+        {
+          "title": "BFS from the root",
+          "body": "Enqueue the root; repeatedly dequeue a node, visit it and enqueue its children. Nodes at depth $d$ all come out before any node at depth $d+1$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "This is level-order traversal."
+        }
+      ],
+      "answer": {
+        "value": "breadth first search",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Preorder goes deep into the left subtree before finishing a level."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Inorder is defined for binary trees and is not level-by-level."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "DFS explores depth-first, not level-wise."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — BFS with a queue yields level order."
+        }
+      ],
+      "verification": "For root A with children B, C and grandchild D under B: BFS gives A B C D = level order; preorder gives A B D C."
+    },
+    "cse-2004-cs-7": {
+      "approach": "With h(x) = x mod 10, each key hashes to its last digit; read off the last digits.",
+      "concepts": [
+        "Hash function",
+        "Collisions"
+      ],
+      "given": "| Key | 4322 | 1334 | 1471 | 9679 | 1989 | 6171 | 6173 | 4199 |\n|---|---|---|---|---|---|---|---|---|\n| h(x) | 2 | 4 | 1 | 9 | 9 | 1 | 3 | 9 |",
+      "steps": [
+        {
+          "title": "Compute hashes",
+          "body": "Last digits: 2, 4, 1, 9, 9, 1, 3, 9."
+        },
+        {
+          "title": "Check statements",
+          "body": "1: 9679, 1989, 4199 → 9, 9, 9 ✓. 2: 1471, 6171 → 1, 1 ✓. 3: false (values 1, 2, 3, 4, 9 occur). 4: false (collisions exist)."
+        }
+      ],
+      "answer": {
+        "value": "1 and 2 only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Statement 2 is also true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Statement 1 is also true."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — both 1 and 2 hold; 3 and 4 fail."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Neither 3 nor 4 is true."
+        }
+      ],
+      "verification": "Recounted the last digit of each key."
+    },
+    "cse-2004-cs-8": {
+      "approach": "An operator grammar has no ε-productions and no right-hand side with two adjacent non-terminals; test each rule.",
+      "concepts": [
+        "Operator grammar",
+        "Operator-precedence parsing"
+      ],
+      "steps": [
+        {
+          "title": "Rules",
+          "body": "Operator grammar: (a) no $A \\to \\varepsilon$, (b) no two consecutive non-terminals on any RHS."
+        },
+        {
+          "title": "Check each",
+          "body": "(i) $P\\to QR$: Q and R adjacent ✗. (ii) $P\\to QsR$: separated by terminal s ✓. (iii) $P\\to\\varepsilon$ ✗. (iv) $P\\to QtRr$: Q, t, R, r — no adjacent non-terminals ✓."
+        }
+      ],
+      "answer": {
+        "value": "(i) and (iii) only",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(iii) is an ε-production, which also violates the definition."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — (i) has adjacent non-terminals and (iii) is an ε-rule."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "(ii) is fine: a terminal separates Q and R."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(iv) is fine; (i) is missing."
+        }
+      ],
+      "verification": "In (iv) the symbol sequence alternates N T N T, so it is valid."
+    },
+    "cse-2004-cs-9": {
+      "approach": "Each module is compiled separately, so a cross-module reference stays unresolved in the object file until the linker combines the modules.",
+      "concepts": [
+        "Separate compilation",
+        "Linking",
+        "External symbols"
+      ],
+      "steps": [
+        {
+          "title": "Compile",
+          "body": "Compiling $M_1$ alone, the compiler sees only a declaration of the $M_2$ function and records it as an **external symbol** in $M_1$'s object file."
+        },
+        {
+          "title": "Link",
+          "body": "The linker merges the object files, finds the definition in $M_2$ and patches the reference — resolution happens at **link time**."
+        }
+      ],
+      "answer": {
+        "value": "Link-time",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Nothing is resolved while editing source text."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The compiler handles one module at a time and does not see $M_2$'s definition."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — the linker resolves external references between object modules."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The loader relocates addresses; symbol resolution between modules was already done by the linker (static linking assumed)."
+        }
+      ],
+      "verification": "Classic \"undefined reference\" errors are reported by the linker, confirming where resolution happens."
+    },
+    "cse-2004-cs-10": {
+      "approach": "With one register, whichever operand is computed first must be spilled to memory while the other is computed. Evaluate $E_2$ first so that $E_1$ ends in the register, as subtraction needs.",
+      "concepts": [
+        "Code generation",
+        "Evaluation order",
+        "Register spilling"
+      ],
+      "steps": [
+        {
+          "title": "Order E1 then E2",
+          "body": "Compute $E_1$ into R, store R to temp $t$, compute $E_2$ into R, then we need $E_1$ in R: store $E_2$ to $t_2$, load $t$, `SUB t2` — extra moves."
+        },
+        {
+          "title": "Order E2 then E1",
+          "body": "Compute $E_2$ into R, store to $t$, compute $E_1$ into R, `SUB t` → $R = E_1 - E_2$. Only one store, no reload."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Evaluating $E_2$ first gives the shorter code."
+        }
+      ],
+      "answer": {
+        "value": "E2 should be evaluated first",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "E1 first leaves E1 in memory when R holds E2, needing extra load/store to put E1 back in R."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — E1 is computed last and is already in the register for SUB."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Interleaving is not needed and would cost more spills with one register."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Order matters because the operation is not commutative and the first operand must be in the register."
+        }
+      ],
+      "verification": "Instruction count: E2-first needs code(E2)+code(E1)+2 (ST, SUB); E1-first needs at least one more load/store."
+    },
+    "cse-2004-cs-11": {
+      "approach": "Evaluate each statement from how user-level threads (managed by a library, invisible to the kernel) differ from kernel threads.",
+      "concepts": [
+        "User-level threads",
+        "Kernel-level threads"
+      ],
+      "steps": [
+        {
+          "title": "Statements 1 and 2",
+          "body": "1: Kernel-thread switches need a trap into the kernel, so they are **slower**, not faster — false. 2: The kernel sees only one process; a blocking system call blocks all its user threads — true."
+        },
+        {
+          "title": "Statements 3 and 4",
+          "body": "3: The kernel schedules each kernel thread separately (even on different CPUs) — true. 4: User threads are implemented entirely in user space; the kernel is unaware of them (transparent) — true."
+        }
+      ],
+      "answer": {
+        "value": "2, 3 and 4 only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — 2, 3, 4 true; 1 false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits statement 4, which is also true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Statement 1 is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Statement 1 is false."
+        }
+      ],
+      "verification": "Standard trade-off: user threads switch fast but block together; kernel threads switch slower but are scheduled independently."
+    },
+    "cse-2004-cs-12": {
+      "approach": "With only one sequential process, there is at most one outstanding disk request at a time, so every scheduling algorithm serves the same single request.",
+      "concepts": [
+        "Disk scheduling",
+        "SSTF",
+        "FCFS"
+      ],
+      "steps": [
+        {
+          "title": "Queue length",
+          "body": "A single sequential process issues a request and waits for it to finish before issuing the next. The disk queue never holds more than one request."
+        },
+        {
+          "title": "Effect of SSTF",
+          "body": "SSTF can only reorder a queue with several requests; with one request it picks the same one as FCFS. Improvement $=0\\%$."
+        }
+      ],
+      "answer": {
+        "value": "0%",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The vendor figure comes from a multi-request benchmark; it does not apply here."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No reordering is possible, so no gain."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No reordering is possible, so no gain."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — with one request at a time all algorithms behave identically."
+        }
+      ],
+      "verification": "For any request sequence r1, r2, … served one by one, FCFS and SSTF produce the same seek sequence."
+    },
+    "cse-2004-cs-13": {
+      "approach": "Referential integrity says every C value in $r_1$ appears as a D value in $r_2$, i.e. $\\Pi_C(r_1) \\subseteq \\Pi_D(r_2)$. The difference in that direction is always empty.",
+      "concepts": [
+        "Foreign key",
+        "Referential integrity",
+        "Set difference"
+      ],
+      "steps": [
+        {
+          "title": "Translate the constraint",
+          "body": "C is a foreign key referencing D: $\\Pi_C(r_1)\\subseteq\\Pi_D(r_2)$ (ignoring nulls)."
+        },
+        {
+          "title": "Apply",
+          "body": "Hence $\\Pi_C(r_1)-\\Pi_D(r_2)=\\varnothing$ always. The other expressions can be non-empty, e.g. a D value nobody references."
+        }
+      ],
+      "answer": {
+        "value": "Π_C(r1) − Π_D(r2)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Non-empty whenever some $r_2$ tuple is not referenced by any $r_1$ tuple."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — every C value exists in D, so the difference is empty."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Non-empty if $r_2$ has two distinct D values: each $r_1$ tuple then pairs with a D different from its C."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Non-empty whenever $r_1$ is non-empty: each tuple joins with its referenced D."
+        }
+      ],
+      "verification": "r1 = {(1,x,5)}, r2 = {(5,a),(6,b)}: A gives {6}, B gives ∅, C gives {6}, D gives {5}."
+    },
+    "cse-2004-cs-14": {
+      "approach": "The natural join is on rollno, which is the key of Student. Each Enroll tuple can match at most one Student tuple, so the join size is at most 8; with rollno in Enroll referencing Student, each matches exactly one.",
+      "concepts": [
+        "Natural join",
+        "Keys and foreign keys"
+      ],
+      "steps": [
+        {
+          "title": "Upper bound",
+          "body": "Common attribute: rollno. Since rollno is the primary key of Student, each of the 8 Enroll tuples joins with **at most one** Student tuple ⇒ at most $8$ result tuples."
+        },
+        {
+          "title": "Lower bound",
+          "body": "Enroll.rollno refers to existing students (the intended foreign key), so every Enroll tuple finds its student ⇒ at least $8$."
+        },
+        {
+          "title": "Answer",
+          "body": "Maximum $=$ minimum $=8$."
+        }
+      ],
+      "answer": {
+        "value": "8, 8",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — each Enroll tuple matches exactly one Student tuple."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "120 would require Student tuples to appear without a matching Enroll tuple, which a natural join drops."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "960 = 120 × 8 is the Cartesian product size, impossible because rollno is a key of Student."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both bounds wrong for the same reasons."
+        }
+      ],
+      "pitfalls": [
+        "Using the Cartesian-product size 120 × 8 as the maximum.",
+        "Without the implied foreign key the minimum would be 0, which is not among the options."
+      ],
+      "verification": "Example: 8 enrollments of 3 students among 120 → join has exactly 8 rows."
+    },
+    "cse-2004-cs-15": {
+      "approach": "Map each layer to its defining function: data link = reliable hop-by-hop link, network = routing between nodes, transport = process-to-process end-to-end delivery.",
+      "concepts": [
+        "OSI layers"
+      ],
+      "steps": [
+        {
+          "title": "Match each layer",
+          "body": "P (data link) → 1 reliable transport over a point-to-point physical link. Q (network) → 4 routes data node to node. R (transport) → 3 end-to-end communication between processes."
+        },
+        {
+          "title": "Leftover item",
+          "body": "Item 2 (encoding/decoding for physical transmission) is the physical layer's job, so it matches none of P, Q, R. Result: P-1, Q-4, R-3."
+        }
+      ],
+      "answer": {
+        "value": "P-1, Q-4, R-3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — each layer matched to its role."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Encoding is the physical layer's job; transport is end-to-end, not per link."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Network layer routes; it does not provide process-to-process communication."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Network layer is not end-to-end process communication, and transport does not encode bits."
+        }
+      ],
+      "verification": "Item 2 describes the physical layer, which is not in Group 1, so it must be the leftover."
+    },
+    "cse-2004-cs-16": {
+      "approach": "A transparent bridge works at layer 2 (MAC addresses) and a router at layer 3 (IP addresses); option B swaps them.",
+      "concepts": [
+        "Transparent bridge",
+        "Router"
+      ],
+      "steps": [
+        {
+          "title": "Check each statement",
+          "body": "Both filter/forward selectively (A true). Bridges learn MAC tables by inspecting source addresses of incoming frames (C true). Routers interconnect LANs and WANs (D true)."
+        },
+        {
+          "title": "The false one",
+          "body": "B says a bridge uses IP and a router uses MAC — reversed. Bridge → MAC, router → IP."
+        }
+      ],
+      "answer": {
+        "value": "A bridge uses IP addresses while a router uses MAC addresses",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: bridges filter frames by destination MAC; routers forward by routing table."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct (NOT true) — the roles are reversed."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: backward learning from source MAC addresses of incoming frames."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True: routers connect heterogeneous networks, e.g. a LAN to a WAN."
+        }
+      ],
+      "verification": "Layer 2 device ↔ MAC, layer 3 device ↔ IP."
+    },
+    "cse-2004-cs-17": {
+      "approach": "Factor $x'$ out of the terms that contain it and apply absorption.",
+      "concepts": [
+        "Boolean algebra",
+        "Absorption law"
+      ],
+      "steps": [
+        {
+          "title": "Group",
+          "body": "$$x'y' + x'y + xy = x'(y'+y) + xy = x' + xy$$"
+        },
+        {
+          "title": "Absorb",
+          "body": "$$x' + xy = (x'+x)(x'+y) = x' + y$$"
+        }
+      ],
+      "answer": {
+        "value": "x' + y",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$x'+y'$ is 1 at $x=1,y=0$, but the function is 0 there."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x+y$ is 0 at $x=0,y=0$, but the function ($x'y'$ term) is 1 there."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$x+y'$ is 1 at $x=1,y=0$, where the function is 0."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — the only 0 of the function is at $x=1, y=0$, matching $x'+y$."
+        }
+      ],
+      "verification": "Truth table: the minterms present are 00, 01, 11; the missing one is 10, so $f=(x'+y)$."
+    },
+    "cse-2004-cs-18": {
+      "approach": "For a cross-coupled NAND latch, any 0 input forces that gate's output to 1. With S = R = 0 both gates have a 0 input.",
+      "concepts": [
+        "SR latch",
+        "NAND gate"
+      ],
+      "steps": [
+        {
+          "title": "NAND property",
+          "body": "A NAND output is 1 whenever any input is 0."
+        },
+        {
+          "title": "Apply",
+          "body": "S = 0 feeds the Q gate ⇒ Q = 1; R = 0 feeds the Q' gate ⇒ Q' = 1, regardless of the feedback inputs. So Q = Q' = 1 (the \"forbidden\" state, since the outputs are no longer complements)."
+        }
+      ],
+      "answer": {
+        "value": "Q = 1, Q' = 1",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "That is the reset state (R active alone)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That is the set state (S active alone)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — both NAND outputs are forced high while both inputs are 0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The state is determinate while S = R = 0 (both 1); it becomes unpredictable only when both inputs return to 1 together."
+        }
+      ],
+      "pitfalls": [
+        "Calling it \"indeterminate\": the outputs are well defined while the inputs are held at 0."
+      ],
+      "verification": "NAND(0, anything) = 1 for both gates."
+    },
+    "cse-2004-cs-19": {
+      "approach": "Write both numerals in decimal and test the options: $7x+3 = 5y+4$, i.e. $7x = 5y+1$, with $x>7$ and $y>5$.",
+      "concepts": [
+        "Positional number systems"
+      ],
+      "steps": [
+        {
+          "title": "Equation",
+          "body": "$73_x = 7x+3$, $54_y = 5y+4$, so $7x+3 = 5y+4 \\Rightarrow 7x = 5y+1$."
+        },
+        {
+          "title": "Test options",
+          "body": "(8,16): $56$ vs $81$ ✗. (10,12): $70$ vs $61$ ✗. (9,13): $63$ vs $66$ ✗. (8,11): $56$ vs $56$ ✓."
+        }
+      ],
+      "answer": {
+        "value": "x = 8, y = 11",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$73_8=59$, $54_{16}=84$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$73_{10}=73$, $54_{12}=64$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$73_9=66$, $54_{13}=69$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — $73_8 = 59 = 54_{11}$."
+        }
+      ],
+      "verification": "$7\\cdot8+3=59$ and $5\\cdot11+4=59$; digits 7 < 8 and 5 < 11 are valid."
+    },
+    "cse-2004-cs-20": {
+      "approach": "Code is relocatable at run time if its addresses are computed relative to something that moves with the program: a base register or the PC.",
+      "concepts": [
+        "Addressing modes",
+        "Relocation"
+      ],
+      "steps": [
+        {
+          "title": "Relocatable modes",
+          "body": "**Based**: EA = base register + offset — on relocation only the base register is reloaded. **Relative**: EA = PC + offset — moves automatically with the code."
+        },
+        {
+          "title": "Non-relocatable modes",
+          "body": "**Absolute** addresses are fixed in the instruction. **Indirect** addresses are fixed pointers stored in memory; both need patching after moving the program."
+        }
+      ],
+      "answer": {
+        "value": "(ii) and (iii)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Absolute and indirect both embed fixed addresses."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Absolute addressing breaks when the program moves."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct — based and PC-relative addressing are position independent."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes absolute and indirect."
+        }
+      ],
+      "verification": "Moving a program by Δ: based/relative effective addresses shift by Δ automatically; absolute/indirect ones do not."
+    },
+    "cse-2004-cs-21": {
+      "approach": "A process must have enough frames to hold every page a single instruction can touch, otherwise that instruction can never complete. That number depends on the instruction set.",
+      "concepts": [
+        "Frame allocation",
+        "Minimum frames"
+      ],
+      "steps": [
+        {
+          "title": "Why there is a minimum",
+          "body": "If an instruction faults part-way, it is restarted. All pages it references (instruction bytes, operands, indirect pointers) must be resident simultaneously."
+        },
+        {
+          "title": "What fixes it",
+          "body": "The maximum number of pages one instruction can reference is a property of the **instruction set architecture** (instruction length, operand count, levels of indirection)."
+        }
+      ],
+      "answer": {
+        "value": "the instruction set architecture",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct — the worst-case pages referenced by one instruction set the minimum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Page size affects how many pages an instruction spans only through the ISA's access pattern; it is not the determining factor."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Physical memory size bounds the maximum allocation, not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Number of processes affects how frames are shared, not the per-process minimum."
+        }
+      ],
+      "verification": "Silberschatz: \"the minimum number of frames is defined by the computer architecture\"."
+    },
+    "cse-2004-cs-22": {
+      "approach": "Count bits per framed character, then divide the line rate by it (1 baud = 1 bit/s for a binary link).",
+      "concepts": [
+        "Asynchronous transmission",
+        "Framing overhead"
+      ],
+      "steps": [
+        {
+          "title": "Bits per character",
+          "body": "$1$ start $+ 8$ data $+ 1$ parity $+ 2$ stop $= 12$ bits."
+        },
+        {
+          "title": "Characters per second",
+          "body": "$$\\frac{9600}{12} = 800$$"
+        }
+      ],
+      "answer": {
+        "value": "800",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "600 = 9600/16, too many bits per character."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct — 9600/12 = 800."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "876 = 9600/11 (forgetting one overhead bit)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1200 = 9600/8, ignores start, stop and parity bits."
+        }
+      ],
+      "verification": "800 × 12 = 9600 bits/s."
+    },
+    "cse-2004-cs-23": {
+      "approach": "\"Some boys …\" is existential, so use $\\exists x\\,(\\text{boy}(x) \\wedge \\dots)$. \"taller than all the girls\" is universal, so use $\\forall y\\,(\\text{girl}(y) \\rightarrow \\text{taller}(x,y))$.",
+      "concepts": [
+        "First-order logic",
+        "Quantifier translation"
+      ],
+      "steps": [
+        {
+          "title": "Outer part",
+          "body": "$\\exists$ pairs with $\\wedge$: there is an $x$ that is a boy **and** has the property. ($\\exists x(\\text{boy}(x)\\to\\dots)$ is trivially true if any non-boy exists.)"
+        },
+        {
+          "title": "Inner part",
+          "body": "$\\forall$ pairs with $\\to$: for every $y$, **if** $y$ is a girl **then** $x$ is taller than $y$. Using $\\wedge$ would claim everything is a girl."
+        },
+        {
+          "title": "Combine",
+          "body": "$$(\\exists x)(\\text{boy}(x)\\wedge(\\forall y)(\\text{girl}(y)\\rightarrow\\text{taller}(x,y)))$$"
+        }
+      ],
+      "answer": {
+        "value": "(∃x)(boy(x) ∧ (∀y)(girl(y) → taller(x, y)))",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Both connectives wrong: $\\exists$ with $\\to$ and $\\forall$ with $\\wedge$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Inner $\\forall y(\\text{girl}(y)\\wedge\\dots)$ says every object is a girl."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\exists x(\\text{boy}(x)\\to\\dots)$ is satisfied by any $x$ that is not a boy."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct — $\\exists$ with $\\wedge$, $\\forall$ with $\\to$."
+        }
+      ],
+      "shortcut": "Rule of thumb: ∃ goes with ∧, ∀ goes with →.",
+      "verification": "In a class with a teacher (not a boy): C becomes true via the teacher even if no boy is taller than all girls; D correctly stays false."
+    }
+  }
+}
