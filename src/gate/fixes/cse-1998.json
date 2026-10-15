@@ -2,6 +2,150 @@
   "paper": "cse-1998",
   "fixes": [
     {
+      "id": "cse-1998-a-1",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Dice/binomial probability in the 1998 CSE paper is engineering-maths probability, not general aptitude.",
+      "source": "GATE 1998 paper Q1.1"
+    },
+    {
+      "id": "cse-1998-a-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Basic probability.",
+      "source": "GATE 1998 paper Q1.1"
+    },
+    {
+      "id": "cse-1998-a-14",
+      "field": "subject",
+      "before": "db",
+      "after": "dl",
+      "reason": "Multiplexer question is digital logic, not databases.",
+      "source": "GATE 1998 paper Q1.14"
+    },
+    {
+      "id": "cse-1998-a-14",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinational",
+      "reason": "Multiplexers are combinational circuits.",
+      "source": "GATE 1998 paper Q1.14"
+    },
+    {
+      "id": "cse-1998-a-23",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Counting substrings of a string is a combinatorics question, not algorithm complexity.",
+      "source": "GATE 1998 paper Q23"
+    },
+    {
+      "id": "cse-1998-a-23",
+      "field": "topic",
+      "before": "complexity",
+      "after": "combinatorics",
+      "reason": "Counting substrings is combinatorics.",
+      "source": "GATE 1998 paper Q23"
+    },
+    {
+      "id": "cse-1998-a-26",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Power of SLR/LALR/CLR parsers is compiler design, not C programming.",
+      "source": "GATE 1998 paper Q26"
+    },
+    {
+      "id": "cse-1998-a-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "parsing",
+      "reason": "LR-parser power comparison is parsing.",
+      "source": "GATE 1998 paper Q26"
+    },
+    {
+      "id": "cse-1998-a-31",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "Counting semaphore P/V operations is operating systems, not quantitative aptitude.",
+      "source": "GATE 1998 paper Q31"
+    },
+    {
+      "id": "cse-1998-a-31",
+      "field": "topic",
+      "before": "quant",
+      "after": "sync",
+      "reason": "Semaphores are process synchronisation.",
+      "source": "GATE 1998 paper Q31"
+    },
+    {
+      "id": "cse-1998-a-39",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Inclusion–exclusion counting is discrete mathematics, not C programming.",
+      "source": "GATE 1998 paper Q39"
+    },
+    {
+      "id": "cse-1998-a-39",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "combinatorics",
+      "reason": "Inclusion–exclusion is combinatorics.",
+      "source": "GATE 1998 paper Q39"
+    },
+    {
+      "id": "cse-1998-a-41",
+      "field": "topic",
+      "before": "pumping",
+      "after": "regular",
+      "reason": "Closure properties of regular sets, not the pumping lemma.",
+      "source": "GATE 1998 paper Q41"
+    },
+    {
+      "id": "cse-1998-a-45",
+      "field": "subject",
+      "before": "pds",
+      "after": "legacy",
+      "reason": "8086 address space is a microprocessor question, not programming.",
+      "source": "GATE 1998 paper Q45"
+    },
+    {
+      "id": "cse-1998-a-45",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "microprocessor",
+      "reason": "8086 microprocessor.",
+      "source": "GATE 1998 paper Q45"
+    },
+    {
+      "id": "cse-1998-a-49",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "arrays",
+      "reason": "Row-major array address calculation.",
+      "source": "GATE 1998 paper Q49"
+    },
+    {
+      "id": "cse-1998-a-57-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "A constant 0 is provably necessary: IMP is 1-preserving (1→1=1) but XOR(1,1)=0, so no IMP-only circuit on x,y alone can realise f; the solution explains this.",
+      "source": "Independent proof"
+    },
+    {
+      "id": "cse-1998-a-57-a",
+      "field": "reviewNote",
+      "before": "Solution uses a constant 0 input; confirm this is allowed.",
+      "after": null,
+      "reason": "Resolved (see needsReview fix).",
+      "source": "Independent proof"
+    },
+    {
       "id": "cse-1998-a-59-b",
       "field": "text",
       "before": "In a computer system where the 'best-fit' algorithm is used for allocating 'jobs' to 'memory partitions', the following situation was encountered:\n\n| | |\n|---|---|\n| Partitions sizes in KB | 4K 8K 20K 2K |\n| Jobs sizes in KB | 2K 14K 3K 6K 6K 10K 20K 2K |\n| Time for execution | 4 10 2 1 4 1 8 6 |\n\nWhen will the 20K job complete?",
@@ -166,6 +310,94 @@
       "after": "Stored key said \"Yes\". The three alternatives EE (i=j, k=l), ES₁ (i=j, k≠l) and S₁E (i≠j, k=l) cover disjoint sets, the split between the two halves is the unique b→a boundary, and E and G₁ are unambiguous, so L₂ has an unambiguous grammar and is NOT inherently ambiguous. Changed to \"No\"; confirm.",
       "reason": "Document the proof behind the key change.",
       "source": "GATE 1998 CSE question paper (PDF), scanned page 7"
+    },
+    {
+      "id": "cse-1998-b-69",
+      "field": "answer",
+      "before": "20.73 ms (Seek time 12 ms + rotational latency 4.17 ms + transfer time 4.56 ms)",
+      "after": "≈ 991 ms: 100 ms average initial rotational latency + 35 × 25 ms = 875 ms of reading + 2 track steps × 8 ms = 16 ms (sectors: 6 on track 10 side 0, 8 on track 10 side 1, 16 on track 11, 5 on track 12). If sector 1 of the next track is not skewed, each step costs a full revolution instead: 100 + 875 + 2 × 200 = 1375 ms.",
+      "reason": "Stored key (20.73 ms) is impossible: one revolution at 300 RPM is 200 ms, so 35 sectors at 25 ms each already need 875 ms.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-69",
+      "field": "reviewNote",
+      "before": "Answer depends on unstated assumptions (side switching, rotational latency, 1-sector buffer effect); not solved.",
+      "after": "Answer depends on unstated assumptions (initial latency taken as half a revolution, side switching free, consecutive sectors readable with the 1-sector buffer, track skew); 991 ms under these assumptions, 1375 ms if each step loses a revolution.",
+      "reason": "Record the assumptions behind the new answer.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-70",
+      "field": "answer",
+      "before": "Tag bits = 8, Set Index bits = 7, Block Offset bits = 5",
+      "after": "The loop (n = km blocks ≤ kl blocks) fits in the cache: only the first pass misses, so h = (100n − n)/(100n) = 0.99 per block reference (1 − 1/(100b) per word). For l = 1 the cache holds only k blocks but the loop has mk > k blocks, so with LRU/FIFO every block reference misses: h = 0 (1 − 1/b per word, from spatial locality only).",
+      "reason": "Stored key (tag/index/offset bit counts) does not answer the question asked (a hit ratio).",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-70",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Intended unit of reference (block vs word) and replacement policy are not stated.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-70",
+      "field": "reviewNote",
+      "before": "Problem statement is under-specified (mapping/replacement policy); answer not derived.",
+      "after": "Hit ratio derived assuming block i maps to set i mod l and LRU/FIFO replacement; 0.99 counting block references (1 − 1/(100b) counting words); 0 for l = 1. Original key was bit-field counts, unrelated to the question.",
+      "reason": "Record the assumptions behind the new answer.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-71-a",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "linked-lists",
+      "reason": "Pointer manipulation on a singly linked list belongs to linked-lists.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-71-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The PDF prints no figure, but the statement is fully answerable with p pointing to any node followed by at least two nodes; the key (swap of the two nodes after p) is verified.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-71-a",
+      "field": "reviewNote",
+      "before": "The question refers to a figure that is not printed in this PDF.",
+      "after": null,
+      "reason": "Question resolved; see needsReview fix.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-74-b",
+      "field": "text",
+      "before": "Build and LL(1) parsing table for the language defined by the LL(1) grammar with productions\n\nProgram → begin d semi X end\n\nX → d semi X | sY\n\nY → semi s Y | ε",
+      "after": "Build an LL(1) parsing table for the language defined by the LL(1) grammar with productions\n\nProgram → begin d semi X end\n\nX → d semi X | sY\n\nY → semi s Y | ε",
+      "reason": "Typo: \"and\" → \"an\" (PDF reads \"Build an LL(1) parsing table\").",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-75",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The text already reads S → L.L | L; the example 101.101 → 5.625 confirms the binary point; key verified.",
+      "source": "GATE1998.pdf p.8 + independent solution"
+    },
+    {
+      "id": "cse-1998-b-75",
+      "field": "reviewNote",
+      "before": "The scan prints 'S → LL | L'; the binary point in 'L.L' is implied by the example 101.101.",
+      "after": null,
+      "reason": "Question resolved; see needsReview fix.",
+      "source": "GATE1998.pdf p.8 + independent solution"
     }
   ]
 }

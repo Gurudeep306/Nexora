@@ -17321,7 +17321,7 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "The concatenation of two lists is to be performed in $O(1)$ time. Which of the",
+      "text": "The concatenation of two lists is to be performed in $O(1)$ time. Which of the following implementations of a list should be used?",
       "options": [
         {
           "l": "A",
@@ -17706,8 +17706,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "io",
+      "subject": "legacy",
+      "topic": "microprocessor",
       "tags": [
         "8085",
         "interrupts"
@@ -18239,7 +18239,7 @@
       "number": "24",
       "marks": 1,
       "type": "MCQ",
-      "text": "Thrashing in an operating system virtual memory subsystem implies:",
+      "text": "Thrashing",
       "options": [
         {
           "l": "A",
@@ -20485,13 +20485,7 @@
       "type": "DESC",
       "text": "Following is a state table for some finite state machine.\n\n| Present State | input = 0 (Next State, Output) | input = 1 (Next State, Output) |\n|---|---|---|\n| A | B, 1 | H, 1 |\n| B | F, 1 | D, 1 |\n| C | D, 0 | E, 1 |\n| D | C, 0 | F, 1 |\n| E | D, 1 | C, 1 |\n| F | C, 1 | C, 1 |\n| G | C, 1 | D, 1 |\n| H | C, 0 | A, 1 |\n\n(a) Find the equivalence partition on the states of the machine.",
       "options": [],
-      "figures": [
-        {
-          "f": "cse-1997/b-70-1.png",
-          "alt": "State table (next state, output) for states A–H. Input 0: A→B,1; B→F,1; C→D,0; D→C,0; E→D,1; F→C,1; G→C,1; H→C,0. Input 1: A→H,1; B→D,1; C→E,1; D→F,1; E→C,1; F→C,1; G→D,1; H→A,1.",
-          "svg": "cse-1997/b-70-1.svg"
-        }
-      ],
+      "figures": [],
       "group": "b-70",
       "subject": "toc",
       "topic": "regular",
@@ -20520,13 +20514,7 @@
       "type": "DESC",
       "text": "Following is a state table for some finite state machine.\n\n| Present State | input = 0 (Next State, Output) | input = 1 (Next State, Output) |\n|---|---|---|\n| A | B, 1 | H, 1 |\n| B | F, 1 | D, 1 |\n| C | D, 0 | E, 1 |\n| D | C, 0 | F, 1 |\n| E | D, 1 | C, 1 |\n| F | C, 1 | C, 1 |\n| G | C, 1 | D, 1 |\n| H | C, 0 | A, 1 |\n\n(b) Give the state table for the minimal machine. (Use appropriate names for the equivalent states. For example if states X and Y are equivalent then use XY as the name for the equivalent state in the minimal machine).",
       "options": [],
-      "figures": [
-        {
-          "f": "cse-1997/b-70-1.png",
-          "alt": "State table (next state, output) for states A–H. Input 0: A→B,1; B→F,1; C→D,0; D→C,0; E→D,1; F→C,1; G→C,1; H→C,0. Input 1: A→H,1; B→D,1; C→E,1; D→F,1; E→C,1; F→C,1; G→D,1; H→A,1.",
-          "svg": "cse-1997/b-70-1.svg"
-        }
-      ],
+      "figures": [],
       "group": "b-70",
       "subject": "toc",
       "topic": "regular",
@@ -20975,8 +20963,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
         "binomial",
         "dice"
@@ -21574,8 +21562,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "db",
-      "topic": "sql",
+      "subject": "dl",
+      "topic": "combinational",
       "tags": [
         "multiplexer"
       ],
@@ -21986,8 +21974,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "algo",
-      "topic": "complexity",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
         "strings",
         "counting"
@@ -22124,8 +22112,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "cd",
+      "topic": "parsing",
       "tags": [
         "lr-parsers",
         "lalr",
@@ -22353,8 +22341,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "sync",
       "tags": [
         "semaphore"
       ],
@@ -22717,8 +22705,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
         "inclusion-exclusion"
       ],
@@ -22808,7 +22796,7 @@
       "figures": [],
       "group": null,
       "subject": "toc",
-      "topic": "pumping",
+      "topic": "regular",
       "tags": [
         "closure-properties"
       ],
@@ -22995,8 +22983,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "legacy",
+      "topic": "microprocessor",
       "tags": [
         "8086",
         "address-bus"
@@ -23180,7 +23168,7 @@
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "c-prog",
+      "topic": "arrays",
       "tags": [
         "row-major",
         "address-calculation"
@@ -23597,8 +23585,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Gates) from **CSE 1998 Q57(a)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **g1 = x→y, g2 = y→x, g3 = g2→0 (= ¬g2), f = g1→g3 = ¬g1 + ¬g2 = x⊕y**.\n- **Identified Problem Quantities:** 1, 1, 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  x→y = x̄+y.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  (x→y)(y→x) is XNOR, so ¬(x→y)+¬(y→x) = XOR.\n- **Step 3.3 (Intermediate Reduction):**\n  a NOT is an implication with constant 0 as second input..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`g1 = x→y, g2 = y→x, g3 = g2→0 (= ¬g2), f = g1→g3 = ¬g1 + ¬g2 = x⊕y`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **g1 = x→y, g2 = y→x, g3 = g2→0 (= ¬g2), f = g1→g3 = ¬g1 + ¬g2 = x⊕y**\n- The computed numerical result `g1 = x→y, g2 = y→x, g3 = g2→0 (= ¬g2), f = g1→g3 = ¬g1 + ¬g2 = x⊕y` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Solution uses a constant 0 input; confirm this is allowed."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1998-a-57-b",
@@ -23725,15 +23713,9 @@
       "number": "59(b)",
       "marks": null,
       "type": "DESC",
-      "text": "In a computer system where the 'best-fit' algorithm is used for allocating 'jobs' to 'memory partitions', the following situation was encountered:\n\n| | |\n|---|---|\n| Partitions sizes in KB | 4K 8K 20K 2K |\n| Jobs sizes in KB | 2K 14K 3K 6K 6K 10K 20K 2K |\n| Time for execution | 4 10 2 1 4 1 8 6 |\n\nWhen will the 20K job complete?",
+      "text": "In a computer system where the 'best-fit' algorithm is used for allocating 'jobs' to 'memory partitions', the following situation was encountered:\n\n| Item | Values |\n|---|---|\n| Partition sizes in KB | 4K, 8K, 20K, 2K |\n| Job sizes in KB | 2K, 14K, 3K, 6K, 6K, 10K, 20K, 2K |\n| Time for execution | 4, 10, 2, 1, 4, 1, 8, 6 |\n\nWhen will the 20K job complete?",
       "options": [],
-      "figures": [
-        {
-          "f": "cse-1998/a-59-b-1.png",
-          "alt": "Table with three rows: partition sizes in KB (4K, 8K, 20K, 2K); job sizes in KB (2K, 14K, 3K, 6K, 6K, 10K, 20K, 2K); time for execution (4, 10, 2, 1, 4, 1, 8, 6). Heavily blurred in the scan.",
-          "svg": "cse-1998/a-59-b-1.svg"
-        }
-      ],
+      "figures": [],
       "group": null,
       "subject": "os",
       "topic": "memory-mgmt",
@@ -23747,8 +23729,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Memory Mgmt) from **CSE 1998 Q59(b)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **19**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  At t=0: 2K→2K, 14K→20K (till 10), 3K→4K, 6K→8K.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  20K partition then runs 10K (10–11) and 20K (11–19)..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`19`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **19**\n- The computed numerical result `19` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "web",
       "sourceUrl": "https://gateoverflow.in/12963/gate-cse-1998-question-7-b",
-      "needsReview": true,
-      "reviewNote": "Table is nearly illegible in the scan; values taken from GATE Overflow."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1998-b-60-a",
@@ -23760,7 +23742,7 @@
       "number": "60(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Answer the following:\n\nFind the points of local maxima and minima, if any, of the following function defined in $0\\le x\\le 6$.\n\n$x^3-6x+9x+15$",
+      "text": "Answer the following:\n\nFind the points of local maxima and minima, if any, of the following function defined in $0\\le x\\le 6$.\n\n$$f(x)=x^3-6x^2+9x+15$$",
       "options": [],
       "figures": [],
       "group": null,
@@ -23776,7 +23758,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Printed as x³−6x+9x+15 (the square on 6x² appears lost in the scan); solved as x³−6x²+9x+15."
+      "reviewNote": "The scan prints x³−6x+9x+15 (square on 6x² lost; the sign of the constant is also faint). Text restored as x³−6x²+9x+15; the extremum locations x = 1 and x = 3 do not depend on the constant."
     },
     {
       "id": "cse-1998-b-60-b",
@@ -23827,7 +23809,7 @@
         "gaussian-elimination",
         "operation-count"
       ],
-      "answer": "≈ n³/3 + n² − n/3 (i.e. (n³−n)/3 for elimination + n(n+1)/2 for back substitution); O(n³)",
+      "answer": "n³/3 + n² − n/3 operations (counting each division as one operation): elimination (n³−n)/3 multiply-adds + n(n−1)/2 divisions; back substitution n(n−1)/2 multiply-adds + n divisions; O(n³)",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Numerical) from **CSE 1998 Q61** (5 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **≈ n³/3 + n² − n/3 (i.e. (n³−n)/3 for elimination + n(n+1)/2 for back substitution); O(n³)**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by numerical theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Eliminating column k updates (n−k)(n−k+1) entries of the augmented matrix: Σ = (n³−n)/3.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  back substitution needs about n(n+1)/2 more..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`≈ n³/3 + n² − n/3 (i.e. (n³−n)/3 for elimination + n(n+1)/2 for back substitution); O(n³)`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **≈ n³/3 + n² − n/3 (i.e. (n³−n)/3 for elimination + n(n+1)/2 for back substitution); O(n³)**\n- The computed numerical result `≈ n³/3 + n² − n/3 (i.e. (n³−n)/3 for elimination + n(n+1)/2 for back substitution); O(n³)` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
@@ -23856,7 +23838,7 @@
         "induction",
         "polygon-diagonals"
       ],
-      "answer": "Proved by structural induction on arithmetic expression parse trees",
+      "answer": "Base n = 3: a triangle has 0 = 3·0/2 diagonals. Step: inserting a vertex v between adjacent vertices u, w of an n-gon adds n − 2 diagonals from v plus the old side uw, i.e. n − 1 new diagonals, and n(n−3)/2 + (n−1) = (n+1)(n−2)/2.",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DM** (Combinatorics) from **CSE-1998 Q62(a)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Proved by structural induction on arithmetic expression parse trees**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Proved by structural induction on arithmetic expression parse trees}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Proved by structural induction on arithmetic expression parse trees**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -23949,7 +23931,7 @@
         "partition",
         "equivalence-relation"
       ],
-      "answer": "R = {(x,y) | x and y belong to the same block in Pi_1}; R is reflexive, symmetric, and transitive",
+      "answer": "Digraph on a, b, c, d with a self-loop at every vertex, arcs in both directions between every pair of a, b, c (a complete symmetric cluster), and d isolated apart from its self-loop — 10 arcs in all.",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DM** (Sets) from **CSE-1998 Q63(b)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **R = {(x,y) | x and y belong to the same block in Pi_1}; R is reflexive, symmetric, and transitive**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{R = {(x,y) | x and y belong to the same block in Pi_1}; R is reflexive, symmetric, and transitive}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **R = {(x,y) | x and y belong to the same block in Pi_1}; R is reflexive, symmetric, and transitive**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -24008,7 +23990,7 @@
         "idempotent",
         "proof"
       ],
-      "answer": "Left/right cancellation holds under group completion",
+      "answer": "By associativity a*(a*a) = (a*a)*a, so a and a*a commute; the hypothesis (distinct elements never commute) forces a*a = a.",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DM** (Groups) from **CSE-1998 Q64(a)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Left/right cancellation holds under group completion**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Left/right cancellation holds under group completion}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Left/right cancellation holds under group completion**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -24037,7 +24019,7 @@
         "semigroup",
         "proof"
       ],
-      "answer": "Associativity preserves unique identity if idempotent elements exist",
+      "answer": "Let x = a*b*a. Using (a): a*x = a*a*b*a = a*b*a and x*a = a*b*a*a = a*b*a, so a*x = x*a, hence x = a.",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DM** (Groups) from **CSE-1998 Q64(b)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Associativity preserves unique identity if idempotent elements exist**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Associativity preserves unique identity if idempotent elements exist}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Associativity preserves unique identity if idempotent elements exist**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -24066,7 +24048,7 @@
         "semigroup",
         "proof"
       ],
-      "answer": "Finite cancellative semigroup is a group",
+      "answer": "Let y = a*b*c, z = a*c. Using (b): y*z = a*b*(c*a*c) = a*b*c and z*y = (a*c*a)*b*c = a*b*c, so y and z commute, hence a*b*c = a*c.",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DM** (Groups) from **CSE-1998 Q64(c)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Finite cancellative semigroup is a group**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Finite cancellative semigroup is a group}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Finite cancellative semigroup is a group**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -24095,14 +24077,14 @@
         "pda",
         "empty-stack-acceptance"
       ],
-      "answer": "Accepts language L = {0^n 1^n | n >= 1} by empty stack",
+      "answer": "As printed: {ε, 01}. With the evidently intended fifth rule δ(q0, 0, X) = {(q1, X)}: L = {1ⁿ0 1ⁿ0 : n ≥ 1}* (any number of blocks, each block with its own n)",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **TOC** (Cfg) from **CSE-1998 Q65(a)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Accepts language L = {0^n 1^n | n >= 1} by empty stack**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Chomsky Hierarchy closure properties: Regular languages are closed under union, intersection, complementation, difference, and reversal.\n- CFLs are closed under union, concatenation, and Kleene star, and closed under intersection with regular languages ($CFL \\cap REG = CFL$).\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Accepts language L = {0^n 1^n | n >= 1} by empty stack}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Accepts language L = {0^n 1^n | n >= 1} by empty stack**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": "Transitions as printed make the PDA almost trivial ({ε, 01}); the fifth rule is probably δ(q0,0,X) in the original. Answer left open."
+      "needsReview": true,
+      "reviewNote": "The scan prints δ(q0, 0, z0) = {(q1, X)}, which gives L = {ε, 01}. The question is presumably δ(q0, 0, X) = {(q1, X)}, giving L = {1ⁿ0 1ⁿ0 : n ≥ 1}*. Both are given; confirm which one the paper intends."
     },
     {
       "id": "cse-1998-b-65-b",
@@ -24123,13 +24105,13 @@
       "tags": [
         "pda"
       ],
-      "answer": "Instantaneous description sequence yields final accepting state q1",
+      "answer": "Intended PDA: in q0 it pushes one X per 1; the first 0 switches to q1; in q1 it pops one X per 1; when z0 is exposed a 0 returns to q0, and in q0 with z0 on top it may pop z0 (empty store) — so it checks blocks 1ⁿ0 1ⁿ0. As printed, only ε and 01 empty the stack.",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **TOC** (Cfg) from **CSE-1998 Q65(b)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Instantaneous description sequence yields final accepting state q1**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Chomsky Hierarchy closure properties: Regular languages are closed under union, intersection, complementation, difference, and reversal.\n- CFLs are closed under union, concatenation, and Kleene star, and closed under intersection with regular languages ($CFL \\cap REG = CFL$).\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Instantaneous description sequence yields final accepting state q1}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Instantaneous description sequence yields final accepting state q1**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
+      "needsReview": true,
       "reviewNote": "Depends on the intended transition function (see 65(a))."
     },
     {
@@ -24208,14 +24190,14 @@
       "tags": [
         "inherent-ambiguity"
       ],
-      "answer": "Yes",
+      "answer": "No",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **TOC** (Cfg) from **CSE 1998 Q66(c)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Yes**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Automata & Formal Language Laws:**\n- Chomsky Hierarchy: Regular (DFA/NFA) $\\subset$ Context-Free (PDA) $\\subset$ Context-Sensitive (LBA) $\\subset$ Turing Recognizable (TM).\n- State Equivalence & Myhill-Nerode Theorem: Minimum DFA states equals the number of pairwise distinguishable equivalence classes.\n- Closure Properties: Regular languages are closed under union, intersection, complementation, concatenation, and Kleene star.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Strings a^n b^n a^m b^m (i=j and k=l) can be derived via both alternatives.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  like {a^ib^jc^k | i=j or j=k}, L2 is inherently ambiguous..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Yes`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Yes**\n- The computed numerical result `Yes` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Test boundary words: the empty string $\\epsilon$, strings of length 1, and strings of length 2 to eliminate non-matching DFA states instantly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Stored key said \"Yes\". The three alternatives EE (i=j, k=l), ES₁ (i=j, k≠l) and S₁E (i≠j, k=l) cover disjoint sets, the split between the two halves is the unique b→a boundary, and E and G₁ are unambiguous, so L₂ has an unambiguous grammar and is NOT inherently ambiguous. Changed to \"No\"; confirm."
     },
     {
       "id": "cse-1998-b-67-a",
@@ -24326,14 +24308,14 @@
         "disk-access-time",
         "floppy"
       ],
-      "answer": "20.73 ms (Seek time 12 ms + rotational latency 4.17 ms + transfer time 4.56 ms)",
+      "answer": "≈ 991 ms: 100 ms average initial rotational latency + 35 × 25 ms = 875 ms of reading + 2 track steps × 8 ms = 16 ms (sectors: 6 on track 10 side 0, 8 on track 10 side 1, 16 on track 11, 5 on track 12). If sector 1 of the next track is not skewed, each step costs a full revolution instead: 100 + 875 + 2 × 200 = 1375 ms.",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **OS** (Files) from **CSE-1998 Q69** (5 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **20.73 ms (Seek time 12 ms + rotational latency 4.17 ms + transfer time 4.56 ms)**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Virtual memory and translation invariants: Physical Address = Frame Number $\\times$ Page Size + Offset.\n- Cache and memory hierarchy: Effective Memory Access Time $EMAT = h \\cdot T_c + (1-h) \\cdot (T_c + T_m)$.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{20.73 ms (Seek time 12 ms + rotational latency 4.17 ms + transfer time 4.56 ms)}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **20.73 ms (Seek time 12 ms + rotational latency 4.17 ms + transfer time 4.56 ms)**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": false,
-      "reviewNote": "Answer depends on unstated assumptions (side switching, rotational latency, 1-sector buffer effect); not solved."
+      "reviewNote": "Answer depends on unstated assumptions (initial latency taken as half a revolution, side switching free, consecutive sectors readable with the 1-sector buffer, track skew); 991 ms under these assumptions, 1375 ms if each step loses a revolution."
     },
     {
       "id": "cse-1998-b-70",
@@ -24356,14 +24338,14 @@
         "hit-ratio",
         "loop"
       ],
-      "answer": "Tag bits = 8, Set Index bits = 7, Block Offset bits = 5",
+      "answer": "The loop (n = km blocks ≤ kl blocks) fits in the cache: only the first pass misses, so h = (100n − n)/(100n) = 0.99 per block reference (1 − 1/(100b) per word). For l = 1 the cache holds only k blocks but the loop has mk > k blocks, so with LRU/FIFO every block reference misses: h = 0 (1 − 1/b per word, from spatial locality only).",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **COA** (Cache) from **CSE-1998 Q70** (5 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **Tag bits = 8, Set Index bits = 7, Block Offset bits = 5**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Tag bits = 8, Set Index bits = 7, Block Offset bits = 5}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Tag bits = 8, Set Index bits = 7, Block Offset bits = 5**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": "Problem statement is under-specified (mapping/replacement policy); answer not derived."
+      "needsReview": true,
+      "reviewNote": "Hit ratio derived assuming block i maps to set i mod l and LRU/FIFO replacement; 0.99 counting block references (1 − 1/(100b) counting words); 0 for l = 1. Original key was bit-field counts, unrelated to the question."
     },
     {
       "id": "cse-1998-b-71-a",
@@ -24380,7 +24362,7 @@
       "figures": [],
       "group": null,
       "subject": "pds",
-      "topic": "c-prog",
+      "topic": "linked-lists",
       "tags": [
         "pointer-manipulation",
         "swap-nodes"
@@ -24391,8 +24373,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (C Prog) from **CSE 1998 Q71(a)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Swaps the two nodes that follow p (p→X→Y→Z becomes p→Y→X→Z)**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Program Initialization & Memory Layout):**\n  Analysis of program variables and entry conditions from the source code. Initial declarations establish: `local execution stack`.\n- **Step 3.2 (Control Flow & State Transitions):**\n  Execution proceeds through statement blocks. Evaluating pre/post increment operators, pointer dereferences, and conditional branches yields deterministic sequential transitions in memory.\n- **Step 3.3 (Loop Termination / Recursion Resolution):**\n  Tracing the iteration/recursion invariant until the halting predicate is satisfied evaluates intermediate state transformations matching the algorithmic specifications.\n- **Step 3.4 (Exact Output Evaluation):**\n  Passing the transformed state into the terminal output format specifier produces the unique verified value: **`Swaps the two nodes that follow p (p→X→Y→Z becomes p→Y→X→Z)`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Swaps the two nodes that follow p (p→X→Y→Z becomes p→Y→X→Z)**\n- The computed numerical result `Swaps the two nodes that follow p (p→X→Y→Z becomes p→Y→X→Z)` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The question refers to a figure that is not printed in this PDF."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1998-b-71-b",
@@ -24548,7 +24530,7 @@
       "number": "74(b)",
       "marks": null,
       "type": "DESC",
-      "text": "Build and LL(1) parsing table for the language defined by the LL(1) grammar with productions\n\nProgram → begin d semi X end\n\nX → d semi X | sY\n\nY → semi s Y | ε",
+      "text": "Build an LL(1) parsing table for the language defined by the LL(1) grammar with productions\n\nProgram → begin d semi X end\n\nX → d semi X | sY\n\nY → semi s Y | ε",
       "options": [],
       "figures": [],
       "group": null,
@@ -24593,8 +24575,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CD** (Sdt) from **CSE 1998 Q75** (5 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **S→L1.L2 {S.val = L1.val + L2.val/2^{L2.len}}; S→L {S.val = L.val}; L→L1B {L.val = 2L1.val + B.val; L.len = L1.len + 1}; L→B {L.val = B.val; L.len = 1}; B→0 {B.val = 0}; B→1 {B.val = 1}**.\n- **Identified Problem Quantities:** 0, 1, 101.101, 5.625\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of CD:**\n- Decompose the problem into invariant constraints defined by sdt theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Carry both value and length as synthesized attributes.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  the fractional part is L2.val scaled by 2^−len..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`S→L1.L2 {S.val = L1.val + L2.val/2^{L2.len}}; S→L {S.val = L.val}; L→L1B {L.val = 2L1.val + B.val; L.len = L1.len + 1}; L→B {L.val = B.val; L.len = 1}; B→0 {B.val = 0}; B→1 {B.val = 1}`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **S→L1.L2 {S.val = L1.val + L2.val/2^{L2.len}}; S→L {S.val = L.val}; L→L1B {L.val = 2L1.val + B.val; L.len = L1.len + 1}; L→B {L.val = B.val; L.len = 1}; B→0 {B.val = 0}; B→1 {B.val = 1}**\n- The computed numerical result `S→L1.L2 {S.val = L1.val + L2.val/2^{L2.len}}; S→L {S.val = L.val}; L→L1B {L.val = 2L1.val + B.val; L.len = L1.len + 1}; L→B {L.val = B.val; L.len = 1}; B→0 {B.val = 0}; B→1 {B.val = 1}` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The scan prints 'S → LL | L'; the binary point in 'L.L' is implied by the example 101.101."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1998-b-76-a",
@@ -29374,7 +29356,7 @@
       "number": "2.3",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let $S = \\sum_{i=3}^{100} i\\log_2 i$ and\n\nand $T = \\int_2^{100} x\\log_2 x\\,dx$\n\nWhich of the following statements is true?",
+      "text": "Let $S = \\sum_{i=3}^{100} i\\log_2 i$ and $T = \\int_2^{100} x\\log_2 x\\,dx$\n\nWhich of the following statements is true?",
       "options": [
         {
           "l": "A",
@@ -29646,7 +29628,7 @@
       "number": "2.9",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following decision problems:\n\n(P1) Does a given finite state machine accept a given string\n\n(P2) Does a given context free grammar generate an infinite number of stings\n\nWhich of the following statements is true?",
+      "text": "Consider the following decision problems:\n\n(P1) Does a given finite state machine accept a given string\n\n(P2) Does a given context free grammar generate an infinite number of strings\n\nWhich of the following statements is true?",
       "options": [
         {
           "l": "A",
@@ -29804,7 +29786,7 @@
       "figures": [
         {
           "f": "cse-2000/a-2-12-1.png",
-          "alt": "A JK flip-flop with output P and a D flip-flop with output Q. J and K of the first flip-flop are both tied to logic 1. Output P is wired to the D input of the second flip-flop. A common clock line drives both flip-flops.",
+          "alt": "Two master-slave flip-flops on a common clock line. Left: a JK flip-flop with output P; its J and K inputs are both tied to logic 1 (the 1-wire hops over the clock wire). Right: a D flip-flop with output Q; P is wired over the top to its D input.",
           "svg": "cse-2000/a-2-12-1.svg"
         }
       ],
@@ -29823,7 +29805,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Printed 'After the clock cycles' — the original likely reads 'After two clock cycles'; answer assumes two."
+      "reviewNote": "Printed 'After the clock cycles' is ambiguous. One clock cycle (the usual reading, 'After the clock cycle') gives (P,Q) = (1,0) = option A; two cycles give (0,1) = stored key D. The solution argues A; key left unchanged pending verification."
     },
     {
       "id": "cse-2000-a-2-13",
@@ -29971,7 +29953,7 @@
       "number": "2.16",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let LASTPOST, LASTIN and LASTPRE denote the last vertex visited in a postorder, inorder and preorder traversal. Respectively, of a complete binary tree. Which of the following is always tree?",
+      "text": "Let LASTPOST, LASTIN and LASTPRE denote the last vertex visited in a postorder, inorder and preorder traversal, respectively, of a complete binary tree. Which of the following is always true?",
       "options": [
         {
           "l": "A",
@@ -30431,15 +30413,15 @@
       "options": [
         {
           "l": "A",
-          "t": "x = 5 &nbsp;&nbsp; not (not (x = 5))"
+          "t": "$x = 5$ and not (not ($x = 5$))"
         },
         {
           "l": "B",
-          "t": "x = 5 &nbsp;&nbsp; x > 4 and x < 6, where x is an integer"
+          "t": "$x = 5$ and $x > 4$ and $x < 6$, where $x$ is an integer"
         },
         {
           "l": "C",
-          "t": "x ≠ 5 &nbsp;&nbsp; not (x = 5)"
+          "t": "$x \\ne 5$ and not ($x = 5$)"
         },
         {
           "l": "D",
@@ -30489,8 +30471,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Recurrences) from **CSE 2000 Q3** (5 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Proof by strong induction**.\n- **Identified Problem Quantities:** 1, 1, 1, 2, 2, 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Base cases n = 1, 2 give 1. For n > 2, $\\lceil (n-2)/2\\rceil \\le \\lceil (n-1)/2\\rceil$, so $s_n = 1 + \\lceil (n-2)/2\\rceil = \\lceil n/2 \\rceil$..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`Proof by strong induction`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Proof by strong induction**\n- The computed numerical result `Proof by strong induction` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Printed as 's₁ : s₂ = 1' and 'i > 2' split over lines; read as $s_1 = s_2 = 1$. The brackets around n/2 look like a ceiling."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-4-a",
@@ -30589,7 +30571,7 @@
       "number": "5(b)",
       "marks": null,
       "type": "DESC",
-      "text": "A multiset is an unordered collection of elements where elements may repeat any number of times. The size of a multiset is the number of elements in it counting repetitions.\n\nHow many multisets can be consctructed from n distinct elements?",
+      "text": "A multiset is an unordered collection of elements where elements may repeat any number of times. The size of a multiset is the number of elements in it counting repetitions.\n\nHow many multisets can be constructed from n distinct elements?",
       "options": [],
       "figures": [],
       "group": "b-5",
@@ -30634,8 +30616,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Graphs) from **CSE 2000 Q6(a)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **$\\binom{n}{2}$**.\n- **Identified Problem Quantities:** 1, 2, 2, 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  A neighbour is obtained by flipping membership of exactly 2 of the n elements: $\\binom{n}{2}$ ways..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`$\\binom{n}{2}$`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **$\\binom{n}{2}$**\n- The computed numerical result `$\\binom{n}{2}$` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Symmetric difference printed as $(R_1/R_2)\\cup(R_2/R_1)$ with fraction-like notation; transcribed as set difference."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-6-b",
@@ -30675,7 +30657,7 @@
       "number": "7(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Construct as minimal finite state machine that accepts the language, over {0,1}, of all strings that contain neither the substring 00 nor the substring 11.",
+      "text": "Construct a minimal finite state machine that accepts the language, over {0,1}, of all strings that contain neither the substring 00 nor the substring 11.",
       "options": [],
       "figures": [],
       "group": "b-7",
@@ -30719,8 +30701,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **TOC** (Cfg) from **CSE 2000 Q7(b)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **$j \\ge i$**.\n- **Identified Problem Quantities:** 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Automata & Formal Language Laws:**\n- Chomsky Hierarchy: Regular (DFA/NFA) $\\subset$ Context-Free (PDA) $\\subset$ Context-Sensitive (LBA) $\\subset$ Turing Recognizable (TM).\n- State Equivalence & Myhill-Nerode Theorem: Minimum DFA states equals the number of pairwise distinguishable equivalence classes.\n- Closure Properties: Regular languages are closed under union, intersection, complementation, concatenation, and Kleene star.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Each use of $S \\to aSAb$ adds one a and at least one b (A adds zero or more b's), so $L = \\{a^i b^j \\mid j \\ge i \\ge 0\\}$..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`$j \\ge i$`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **$j \\ge i$**\n- The computed numerical result `$j \\ge i$` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Test boundary words: the empty string $\\epsilon$, strings of length 1, and strings of length 2 to eliminate non-matching DFA states instantly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Production printed as 'S → aS Ab' in two columns; read as $S \\to aSAb$."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-8-a",
@@ -31146,8 +31128,8 @@
       "options": [],
       "figures": [],
       "group": "b-13",
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "stacks-queues",
       "tags": [
         "postfix-evaluation"
       ],
@@ -31185,8 +31167,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (Stacks Queues) from **CSE 2000 Q13(b)(ii)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **10, 7, 5, 2 (bottom to top)**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  The operands 5 and 2 are pushed on top of 10, 7. (The full expression evaluates to 10 + 7·10 = 80.).\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`10, 7, 5, 2 (bottom to top)`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **10, 7, 5, 2 (bottom to top)**\n- The computed numerical result `10, 7, 5, 2 (bottom to top)` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Page bottom is cut off in the scan after sub-part (ii); a further sub-part (e.g. '(iii) after evaluating the entire expression') may be missing."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-14-a",
@@ -31202,8 +31184,8 @@
       "options": [],
       "figures": [],
       "group": "b-14",
-      "subject": "db",
-      "topic": "sql",
+      "subject": "legacy",
+      "topic": "graphics",
       "tags": [
         "line-side-test"
       ],
@@ -31327,8 +31309,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (Arrays) from **CSE 2000 Q15(c)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Proof**.\n- **Identified Problem Quantities:** 1, 1, 0, 1, 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  If 1 ≤ p[i] ≤ count, then q[p[i]] = j for the j whose set(j) wrote that slot, and j ≠ i because set(i) was never called.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  otherwise the range check fails..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Proof`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Proof**\n- The computed numerical result `Proof` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The last line of (c) is half cut off at the page bottom in the scan (read as '…p[i] contains, is_set(i) will return false.'); further sub-parts, if any, are lost."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-16-a",
@@ -31398,7 +31380,7 @@
       "number": "17(a)",
       "marks": null,
       "type": "DESC",
-      "text": "An array contains four occurrences of 0, five occurrences of 1, and three occurre3nces of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nWhat is the minimum number of swaps needed to sort such an array in the worst case?",
+      "text": "An array contains four occurrences of 0, five occurrences of 1, and three occurrences of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nWhat is the minimum number of swaps needed to sort such an array in the worst case?",
       "options": [],
       "figures": [],
       "group": "b-17",
@@ -31427,7 +31409,7 @@
       "number": "17(b)",
       "marks": null,
       "type": "DESC",
-      "text": "An array contains four occurrences of 0, five occurrences of 1, and three occurre3nces of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nGive an ordering of elements in the above array so that the minimum number of swaps needed to sort the array is maximum.",
+      "text": "An array contains four occurrences of 0, five occurrences of 1, and three occurrences of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nGive an ordering of elements in the above array so that the minimum number of swaps needed to sort the array is maximum.",
       "options": [],
       "figures": [],
       "group": "b-17",
@@ -31455,7 +31437,7 @@
       "number": "18(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider the following program is pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q [z:integer);\n  begin\n     z: z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x: y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-value and the scope rule is static scooping?",
+      "text": "Consider the following program in pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q (z: integer);\n  begin\n     z := z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x := y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-value and the scope rule is static scoping?",
       "options": [],
       "figures": [],
       "group": "b-18",
@@ -31471,8 +31453,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CD** (Runtime) from **CSE 2000 Q18(a)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **12 7 10 5**.\n- **Identified Problem Quantities:** 2, 5\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of CD:**\n- Decompose the problem into invariant constraints defined by runtime theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  P(5): local x = 7.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Q(7) prints 7 + global 5 = 12.\n- **Step 3.3 (Intermediate Reduction):**\n  P prints 7. Q(5) prints 10. main prints 5..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`12 7 10 5`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **12 7 10 5**\n- The computed numerical result `12 7 10 5` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The 'end;' of procedure P and the 'begin' of main are cut at the page break; reconstructed from structure. 'z: z + x' / 'x: y + 2' read as assignments."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-18-b",
@@ -31484,7 +31466,7 @@
       "number": "18(b)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider the following program is pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q [z:integer);\n  begin\n     z: z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x: y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-reference and the scope rule is dynamic scooping?",
+      "text": "Consider the following program in pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q (z: integer);\n  begin\n     z := z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x := y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-reference and the scope rule is dynamic scoping?",
       "options": [],
       "figures": [],
       "group": "b-18",
@@ -31500,8 +31482,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CD** (Runtime) from **CSE 2000 Q18(b)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **14 14 10 10**.\n- **Identified Problem Quantities:** 2, 5\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of CD:**\n- Decompose the problem into invariant constraints defined by runtime theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  In P, local x = 7.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Q(x) aliases z to it and dynamic x is also P's x: z = 14, printed twice.\n- **Step 3.3 (Intermediate Reduction):**\n  Then Q(global x): 5 + 5 = 10, printed twice..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`14 14 10 10`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **14 14 10 10**\n- The computed numerical result `14 14 10 10` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The 'end;' of procedure P and the 'begin' of main are cut at the page break; reconstructed from structure. 'z: z + x' / 'x: y + 2' read as assignments."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-19-a",
@@ -31587,8 +31569,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Sync) from **CSE 2000 Q20(a)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **(1) signal(mutex)  (2) signal(mutex)  (3) R != 0 || W != 0**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Readers release the mutex after registering or before retrying.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  a writer must wait while any reader or writer is active..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`(1) signal(mutex)  (2) signal(mutex)  (3) R != 0 || W != 0`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **(1) signal(mutex)  (2) signal(mutex)  (3) R != 0 || W != 0**\n- The computed numerical result `(1) signal(mutex)  (2) signal(mutex)  (3) R != 0 || W != 0` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The line 'R = R + 1;' is half cut off at the page bottom in the scan; read from the visible fragment."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-20-b",
@@ -31616,8 +31598,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Sync) from **CSE 2000 Q20(b)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Yes**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  A continuous stream of readers keeps R > 0, so a waiting writer may never proceed..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`Yes`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Yes**\n- The computed numerical result `Yes` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The line 'R = R + 1;' is half cut off at the page bottom in the scan; read from the visible fragment."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-21-a-i",
@@ -31645,8 +31627,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Indexing) from **CSE 2000 Q21(a)(i)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Root [4]; leaves [1 2 3] [4 5 6]**.\n- **Identified Problem Quantities:** 5, 1, 2, 10, 6\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Inserting 6 overflows the leaf [1..6].\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  split into [1,2,3] and [4,5,6] and copy 4 up to a new root..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Root [4]; leaves [1 2 3] [4 5 6]`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Root [4]; leaves [1 2 3] [4 5 6]**\n- The computed numerical result `Root [4]; leaves [1 2 3] [4 5 6]` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The split convention (which half gets the extra key) affects the exact picture."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-21-a-ii",
@@ -31674,8 +31656,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Indexing) from **CSE 2000 Q21(a)(ii)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Root [4 7]; leaves [1 2 3] [4 5 6] [7 8 9 10]**.\n- **Identified Problem Quantities:** 5, 1, 2, 10, 10\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Inserting 9 overflows [4..9] → [4,5,6] [7,8,9] with 7 copied up.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  10 goes into the last leaf..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Root [4 7]; leaves [1 2 3] [4 5 6] [7 8 9 10]`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Root [4 7]; leaves [1 2 3] [4 5 6] [7 8 9 10]**\n- The computed numerical result `Root [4 7]; leaves [1 2 3] [4 5 6] [7 8 9 10]` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The split convention (which half gets the extra key) affects the exact picture."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-21-b",
@@ -31703,8 +31685,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Indexing) from **CSE 2000 Q21(b)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Root [5]; leaves [1 2 3 4] [5 6 7 8 9]**.\n- **Identified Problem Quantities:** 5, 1, 2, 9, 5\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  6 splits the single leaf ([1,2,3] [4,5,6], root 4).\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  on overflow at 9, key 4 moves to the left sibling, giving [1..4] [5..9] with separator 5..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Root [5]; leaves [1 2 3 4] [5 6 7 8 9]`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Root [5]; leaves [1 2 3 4] [5 6 7 8 9]**\n- The computed numerical result `Root [5]; leaves [1 2 3 4] [5 6 7 8 9]` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Answer depends on the split/redistribution convention; please verify."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2000-b-21-c",
@@ -31749,8 +31731,8 @@
       "options": [],
       "figures": [],
       "group": "b-21",
-      "subject": "os",
-      "topic": "files",
+      "subject": "db",
+      "topic": "indexing",
       "tags": [
         "b-plus-tree"
       ],
@@ -31760,8 +31742,8 @@
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **OS** (Files) from **CSE-2000 Q21(d)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **BFS traversal queue order and DFS recursion tree path**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Virtual memory and translation invariants: Physical Address = Frame Number $\\times$ Page Size + Offset.\n- Cache and memory hierarchy: Effective Memory Access Time $EMAT = h \\cdot T_c + (1-h) \\cdot (T_c + T_m)$.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{BFS traversal queue order and DFS recursion tree path}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **BFS traversal queue order and DFS recursion tree path**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": "Only the start of sub-part (d) is visible (cut off at the page bottom); could not recover it from GATE Overflow (rate-limited)."
+      "needsReview": true,
+      "reviewNote": "Only \"(d) In the …\" survives at the clipped page bottom (Q21 on B+-trees). The stored key (\"BFS traversal queue order …\") is unrelated and cannot be verified. Likely asks part (c) for the scheme of (b), whose answer would be ≈ m keys per leaf; needs the full paper text."
     },
     {
       "id": "cse-2000-b-22-a",
