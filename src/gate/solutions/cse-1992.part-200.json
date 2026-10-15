@@ -1,0 +1,801 @@
+{
+  "paper": "cse-1992",
+  "version": 2,
+  "solutions": {
+    "cse-1992-a-1-i": {
+      "approach": "Read the entered-variable map cell by cell to get the canonical expression in $A,B,C$, then merge minterms that differ in one variable.",
+      "concepts": [
+        "Entered-variable K-map",
+        "Minimal SOP"
+      ],
+      "given": "| $B\\backslash C$ | 0 | 1 |\n|---|---|---|\n| 0 | 1 | 0 |\n| 1 | $\\overline{A}$ | $A$ |",
+      "steps": [
+        {
+          "title": "Read each cell",
+          "body": "Cell $(B,C)=(0,0)$ is 1 for any $A$: term $\\overline{B}\\,\\overline{C}$. Cell $(1,0)$ holds $\\overline{A}$: term $\\overline{A}B\\overline{C}$. Cell $(1,1)$ holds $A$: term $ABC$. Cell $(0,1)$ is 0.\n\n$$f=\\overline{B}\\,\\overline{C}+\\overline{A}B\\overline{C}+ABC$$\nIn minterms of $(A,B,C)$: $\\overline{B}\\,\\overline{C}=m_0+m_4$, $\\overline{A}B\\overline{C}=m_2$, $ABC=m_7$, so $f=\\sum m(0,2,4,7)$."
+        },
+        {
+          "title": "Merge adjacent minterms",
+          "body": "$m_0+m_4=\\overline{B}\\,\\overline{C}$ and $m_0+m_2=\\overline{A}\\,\\overline{C}$ (pair $000,010$). $m_7=111$ has no neighbour among $\\{011,101,110\\}$ in $f$, so it stays $ABC$."
+        },
+        {
+          "title": "Minimal SOP",
+          "body": "$$f=\\overline{B}\\,\\overline{C}+\\overline{A}\\,\\overline{C}+ABC$$\n(7 literals; the unmerged form $\\overline{B}\\,\\overline{C}+\\overline{A}B\\overline{C}+ABC$ is equivalent but uses 8.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C} + ABC$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Treating the $\\overline{A}$ and $A$ cells as don't-cares or as 1s.",
+        "Missing that $m_2$ can pair with $m_0$ to drop a literal."
+      ],
+      "verification": "Truth table of the answer gives 1 exactly at $ABC=000,010,100,111$, i.e. $\\sum m(0,2,4,7)$, matching the map."
+    },
+    "cse-1992-a-1-ii": {
+      "approach": "Count Hamming check bits for single-error correction on 4 data bits, then add the overall parity bit that raises the minimum distance to 4, since detecting $t$ errors needs $d_{min}\\ge t+1$.",
+      "concepts": [
+        "Hamming code",
+        "Minimum distance",
+        "SEC-DED"
+      ],
+      "steps": [
+        {
+          "title": "Bits for 1-bit correction",
+          "body": "Need $2^p\\ge m+p+1$ with $m=4$: $p=2$ gives $4\\ge7$ (no), $p=3$ gives $8\\ge8$ (yes). So Hamming(7,4) has 3 check bits and $d_{min}=3$."
+        },
+        {
+          "title": "Raise distance for 3-bit detection",
+          "body": "Detecting $t$ errors requires $d_{min}\\ge t+1$, so 3-bit detection needs $d_{min}=4$. Adding one overall parity bit to Hamming(7,4) gives the extended (8,4) code with $d_{min}=4$.\n\nExtra parity bits $=3+1=4$; minimum distance $=4$."
+        },
+        {
+          "title": "Note on the wording",
+          "body": "A distance-4 code can correct 1 error **or** detect 3 errors (or correct 1 and detect 2 at once). Correcting 1 and detecting 3 simultaneously would need $d_{min}\\ge 1+3+1=5$; the intended answer is the standard extended Hamming code."
+        }
+      ],
+      "answer": {
+        "value": "4 parity bits; minimum distance 4",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Stopping at 3 check bits, which only gives $d_{min}=3$ (detects 2).",
+        "Using $d\\ge 2t+1$ (the correction bound) for detection."
+      ],
+      "verification": "Extended Hamming (8,4): every nonzero codeword has weight 4 or 8, so $d_{min}=4\\ge3+1$."
+    },
+    "cse-1992-a-1-iii": {
+      "approach": "A minimum clock frequency exists only when the chip stores state dynamically; stored charge must be refreshed by clocking before it leaks away.",
+      "concepts": [
+        "Dynamic MOS logic",
+        "Charge leakage"
+      ],
+      "steps": [
+        {
+          "title": "Where state is kept",
+          "body": "Many microprocessors (e.g. NMOS designs like the 8085) use dynamic circuits: internal registers and latches hold bits as charge on tiny gate/node capacitances instead of in static flip-flops."
+        },
+        {
+          "title": "Why a lower limit",
+          "body": "That charge leaks through junctions in a few milliseconds or less. The clock periodically re-drives (refreshes) these nodes; if the clock is slower than the specified minimum, charge decays between edges and stored bits are lost."
+        }
+      ],
+      "answer": {
+        "value": "they use dynamic (MOS) circuits that store information as charge on capacitances, which leaks away if the clock is too slow",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Confusing this with the upper limit, which is set by propagation delays."
+      ],
+      "verification": "Fully static CMOS designs (e.g. 80C85, many microcontrollers) are specified down to DC clock, consistent with the reason."
+    },
+    "cse-1992-a-1-iv": {
+      "approach": "Prefetching is a simple two-stage pipeline: the bus fetches upcoming instructions while the CPU executes the current one.",
+      "concepts": [
+        "Instruction prefetch",
+        "Fetch-execute overlap"
+      ],
+      "steps": [
+        {
+          "title": "Without prefetch",
+          "body": "Each instruction is fetched from (slow) memory and only then executed, so the CPU idles during every fetch."
+        },
+        {
+          "title": "With a prefetch queue",
+          "body": "While the execution unit works on the current instruction, the bus unit fills the buffer with the next instructions (e.g. the 8086 6-byte queue). The next instruction is usually already on-chip, so fetch time is hidden behind execution time."
+        }
+      ],
+      "answer": {
+        "value": "fetching of the next instructions is overlapped with the execution of the current instruction (fetch–execute pipelining), so the CPU need not wait for memory",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "A taken branch flushes the buffer, so the gain is not perfect."
+      ],
+      "verification": "Matches the BIU/EU split of the 8086, the classic example of instruction prefetch."
+    },
+    "cse-1992-a-1-v": {
+      "approach": "Handshaking makes every transfer acknowledged: the sender does not move on until the receiver confirms it took the data.",
+      "concepts": [
+        "Handshake protocol",
+        "Asynchronous data transfer"
+      ],
+      "steps": [
+        {
+          "title": "Sequence",
+          "body": "Transmitter places data and raises *data valid* (strobe). Receiver latches it and raises *data accepted* (acknowledge). Transmitter removes data/strobe; receiver drops acknowledge. Only then is the next item sent."
+        },
+        {
+          "title": "Why reliable",
+          "body": "Because each item gets an explicit acknowledgement, the sender never overwrites unread data and adapts to the speed of the receiver."
+        }
+      ],
+      "answer": {
+        "value": "the receiver sends back an acknowledgement, and the transmitter waits for it before sending the next item",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Strobe-only (one-way) control gives no confirmation, which is the problem handshaking solves."
+      ],
+      "verification": "Standard two-wire (request/acknowledge) handshake as in parallel I/O interfaces."
+    },
+    "cse-1992-a-1-vi": {
+      "approach": "Expanding opcodes: unused opcode patterns at each level are extended with the next address field. Count leftover patterns level by level.",
+      "concepts": [
+        "Expanding opcode",
+        "Instruction format"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Word | 11 bits |\n| Address field | 4 bits |\n| Two-address instr. | 5 |\n| One-address instr. (intended) | 32 |",
+      "steps": [
+        {
+          "title": "Two-address level",
+          "body": "Opcode $=11-2\\times4=3$ bits $\\Rightarrow 2^3=8$ patterns. Used 5, free $8-5=3$."
+        },
+        {
+          "title": "One-address level",
+          "body": "Each free pattern extends by 4 bits: $3\\times2^4=48$ patterns. Used 32, free $48-32=16$."
+        },
+        {
+          "title": "Zero-address level",
+          "body": "Each free pattern extends by the last 4 bits: $16\\times2^4=256$."
+        }
+      ],
+      "answer": {
+        "value": "256",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The paper prints \"32 two-address\" twice; 32 two-address instructions are impossible with 8 patterns, so it must be 32 one-address instructions."
+      ],
+      "verification": "Total check: $5\\cdot2^8+32\\cdot2^4+256=1280+512+256=2048=2^{11}$."
+    },
+    "cse-1992-a-1-vii": {
+      "approach": "Pass one must know the size of every statement to assign addresses; macro calls only reveal their size once expanded.",
+      "concepts": [
+        "Two-pass assembler",
+        "Macro expansion",
+        "Location counter"
+      ],
+      "steps": [
+        {
+          "title": "What pass one does",
+          "body": "Pass one advances the location counter by the length of each statement and enters every label with its address in the symbol table."
+        },
+        {
+          "title": "Why expand there",
+          "body": "A macro call stands for an unknown number of statements, possibly containing labels. Until it is expanded, pass one cannot advance the location counter correctly or define those labels, so all later addresses would be wrong. Hence expansion must happen in pass one."
+        }
+      ],
+      "answer": {
+        "value": "the expanded code generates statements (and labels) whose sizes and addresses must be known in pass one to build the symbol table and advance the location counter",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Expanding in pass two would leave pass-one addresses and the symbol table inconsistent."
+      ],
+      "verification": "Same reason a one-pass macro processor must see a definition before its call."
+    },
+    "cse-1992-a-1-viii": {
+      "approach": "The location counter (LC) is the assembler's running address: it tells where the current statement will be placed.",
+      "concepts": [
+        "Location counter",
+        "Symbol table"
+      ],
+      "steps": [
+        {
+          "title": "Role",
+          "body": "LC is initialised (by ORG/START) and incremented by each instruction or data length. Its current value is the address of the statement being processed."
+        },
+        {
+          "title": "Use",
+          "body": "When a label is encountered, it is entered in the symbol table with the current LC value; generated code and data are placed at LC addresses."
+        }
+      ],
+      "answer": {
+        "value": "to keep track of the address of the current instruction/data so that addresses can be assigned to labels (symbol table) and to the generated code",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "It is not the run-time program counter; it exists only during assembly."
+      ],
+      "verification": "Matches the pass-one algorithm of a standard two-pass assembler."
+    },
+    "cse-1992-a-1-ix": {
+      "approach": "With edges already sorted, Kruskal is just $m$ union-find operations; with union by rank and path compression this is near-linear.",
+      "concepts": [
+        "Kruskal's algorithm",
+        "Union-find"
+      ],
+      "steps": [
+        {
+          "title": "Remaining work",
+          "body": "Sorting ($O(m\\log m)$) is skipped. For each of the $m$ edges do two FINDs and at most one UNION ($n-1$ unions in total)."
+        },
+        {
+          "title": "Cost",
+          "body": "With union by rank and path compression, $O(m)$ operations on $n$ elements cost $O(m\\,\\alpha(m,n))$, where $\\alpha$ is the inverse Ackermann function ($\\le4$ in practice). So the time is $O(m\\,\\alpha(m,n))$, effectively $O(m)$."
+        }
+      ],
+      "answer": {
+        "value": "$O(m\\,\\alpha(m,n))$, i.e. practically $O(m)$ (union–find with path compression)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Quoting $O(m\\log m)$, which includes the sorting the question removes.",
+        "With union by rank only (no path compression) it is $O(m\\log n)$."
+      ],
+      "verification": "Tarjan's bound for $m$ union-find operations is $\\Theta(m\\,\\alpha(m,n))$."
+    },
+    "cse-1992-a-1-x": {
+      "approach": "Use Euler's formula with the fact that, in a simple planar graph, every face is bounded by at least 3 edges.",
+      "concepts": [
+        "Euler's formula",
+        "Planar graphs"
+      ],
+      "steps": [
+        {
+          "title": "Face count bound",
+          "body": "Each face has at least 3 edges on its boundary and each edge borders at most 2 faces: $3f\\le2e$."
+        },
+        {
+          "title": "Combine with Euler",
+          "body": "$n-e+f=2\\Rightarrow f=2-n+e$. Then $3(2-n+e)\\le2e\\Rightarrow e\\le3n-6$ (for $n\\ge3$). Triangulations attain it."
+        }
+      ],
+      "answer": {
+        "value": "$3n-6$ (for $n \\ge 3$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "For bipartite (triangle-free) planar graphs the bound is $2n-4$."
+      ],
+      "verification": "$K_4$: $n=4$, $e=6=3\\cdot4-6$; $K_5$ has $10>9$ edges, so it is non-planar."
+    },
+    "cse-1992-a-2-i": {
+      "approach": "All four are commutative; test associativity with a small counterexample.",
+      "concepts": [
+        "Commutativity",
+        "Associativity",
+        "NAND"
+      ],
+      "steps": [
+        {
+          "title": "AND, OR, XOR",
+          "body": "All three are both commutative and associative ($(a\\oplus b)\\oplus c=a\\oplus(b\\oplus c)$ = parity of the three)."
+        },
+        {
+          "title": "NAND",
+          "body": "Commutative: $\\overline{ab}=\\overline{ba}$. Take $a=0,b=0,c=1$: $(a\\uparrow b)\\uparrow c=1\\uparrow1=0$ but $a\\uparrow(b\\uparrow c)=0\\uparrow1=1$. Not associative."
+        }
+      ],
+      "answer": {
+        "value": "(d) NAND",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "AND is associative."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "OR is associative."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "XOR is associative (result is the parity of all inputs)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Commutative, but $(0\\uparrow0)\\uparrow1=0\\ne1=0\\uparrow(0\\uparrow1)$."
+        }
+      ],
+      "pitfalls": [
+        "NOR fails associativity the same way."
+      ],
+      "verification": "Counterexample computed both ways above."
+    },
+    "cse-1992-a-2-ii": {
+      "approach": "A component is universal if it can build NOT and AND, given the constants 0 and 1.",
+      "concepts": [
+        "Functional completeness",
+        "Multiplexer",
+        "Half adder"
+      ],
+      "steps": [
+        {
+          "title": "Multiplexer",
+          "body": "A 2:1 MUX $y=\\overline{s}a+sb$: with $a=1,b=0$ it gives $\\overline{s}$; with $a=0$ it gives $sb$ (AND). NOT+AND is complete."
+        },
+        {
+          "title": "Half adder",
+          "body": "Outputs $S=x\\oplus y$, $C=xy$. $S$ with $y=1$ gives $\\overline{x}$; $C$ is AND. Complete."
+        },
+        {
+          "title": "XOR only, OR only",
+          "body": "XOR gates (even with constants) only produce affine functions $c\\oplus x_1\\oplus\\dots$, so no AND. OR gates are monotone, so no NOT."
+        }
+      ],
+      "answer": {
+        "value": "(b) Multiplexers and (c) Half adders",
+        "choice": [
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "XOR circuits are linear (affine); they cannot form $xy$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A 2:1 MUX yields NOT and AND with constant inputs."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Sum output gives NOT (XOR with 1), carry gives AND."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "OR is monotone; it cannot invert."
+        }
+      ],
+      "pitfalls": [
+        "Both B and C assume constant 0/1 inputs are available, which is standard."
+      ],
+      "verification": "Post's criteria: XOR is linear, OR is monotone; MUX and HA escape all five classes."
+    },
+    "cse-1992-a-2-iii": {
+      "approach": "A bit-slice chip (e.g. AMD 2901) is a 4-bit slice of a CPU's data path (ALU + register file + shifter); word length comes from cascading slices, control comes from a separate microprogram sequencer.",
+      "concepts": [
+        "Bit-slice processor",
+        "Data path",
+        "Microprogrammed control"
+      ],
+      "steps": [
+        {
+          "title": "Cascading",
+          "body": "Slices are connected side by side, carry/shift lines chained, to get 8, 16, 32 … bit processors: (a) true."
+        },
+        {
+          "title": "Speed vs word length",
+          "body": "Carry ripples through more slices as width grows (lookahead units reduce but do not remove this), so speed depends on the configured width: (b) false."
+        },
+        {
+          "title": "What a slice contains",
+          "body": "A slice has only the data path; control (sequencer such as the 2909/2910 and microprogram memory) is external: (d) true. Statement (c) is not accepted: a program counter can be kept in the slice's register file and the sequencer itself has a microprogram counter."
+        }
+      ],
+      "answer": {
+        "value": "(a) and (d)",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Designed to be cascaded to any multiple of the slice width."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Carry propagation across slices makes wider words slower."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A PC can be held in the slice registers, and the companion sequencer has a (micro)program counter; not a valid characterisation."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "A slice is the ALU/register/shifter data path only; control is external."
+        }
+      ],
+      "pitfalls": [
+        "(c) and (d) look similar; (d) states the architecture, (c) overreaches."
+      ],
+      "verification": "Consistent with the AMD 2900 family organisation (2901 data path, 2909/2910 sequencer)."
+    },
+    "cse-1992-a-2-iv": {
+      "approach": "PCHL jumps to an address computed at run time, which is exactly what a jump table for a multi-way branch needs.",
+      "concepts": [
+        "8085 PCHL",
+        "Jump table",
+        "Indirect jump"
+      ],
+      "steps": [
+        {
+          "title": "What PCHL gives",
+          "body": "An indirect jump: PC $\\leftarrow$ HL, where HL can be computed (e.g. table base + 2·index, then load the stored address)."
+        },
+        {
+          "title": "Match to constructs",
+          "body": "A **case** statement selects one of many targets by a value, implemented as a jump table indexed by that value followed by PCHL. If-then-else and while need only conditional jumps to fixed targets; a call must also push a return address, which PCHL does not do."
+        }
+      ],
+      "answer": {
+        "value": "(c) case construct",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two fixed targets: a conditional jump (JZ/JNZ) suffices."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A loop uses a conditional jump back to a fixed label."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Multi-way branch through a jump table needs a computed jump: PCHL."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "CALL must save the return address; PCHL does not push anything."
+        }
+      ],
+      "pitfalls": [
+        "Indirect calls need an extra push of the return address, so PCHL alone is not a call."
+      ],
+      "verification": "Standard 8085 idiom: index into table, load address into HL, PCHL."
+    },
+    "cse-1992-a-2-v": {
+      "approach": "In asynchronous serial framing the start bit tells the receiver when a character begins and the stop bit marks its end.",
+      "concepts": [
+        "Asynchronous serial communication",
+        "Framing"
+      ],
+      "steps": [
+        {
+          "title": "Start bit",
+          "body": "The idle line is 1; the 1→0 start-bit edge lets the receiver align its sampling clock to the character (sample at bit centres)."
+        },
+        {
+          "title": "Stop bit",
+          "body": "Returns the line to 1, giving a guaranteed edge for the next start bit. Both serve **synchronization** of each character."
+        }
+      ],
+      "answer": {
+        "value": "(c) Synchronization",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Error detection is done by the parity bit, not start/stop bits."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "They carry no redundancy for correction."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "They frame each character so the receiver can synchronise."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The overhead slowing transfer is a side effect, not the purpose."
+        }
+      ],
+      "pitfalls": [
+        "A missing stop bit raises a framing error, but that is a by-product, not error detection in the coding sense."
+      ],
+      "verification": "UART framing: start + 5–8 data + optional parity + stop."
+    },
+    "cse-1992-a-2-vi": {
+      "approach": "Pick the option that has a polynomial algorithm; the others are classic NP-complete problems.",
+      "concepts": [
+        "NP-hardness",
+        "Biconnected components",
+        "DFS"
+      ],
+      "steps": [
+        {
+          "title": "NP-hard ones",
+          "body": "Hamiltonian circuit, 0/1 knapsack (decision version) and graph colouring ($k\\ge3$) are NP-complete, hence NP-hard."
+        },
+        {
+          "title": "Polynomial one",
+          "body": "Biconnected components are found by one DFS computing discovery times and low values (Hopcroft–Tarjan) in $O(V+E)$. A problem in P is not NP-hard unless $P=NP$."
+        }
+      ],
+      "answer": {
+        "value": "(c) Finding bi-connected components of a graph",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Hamiltonian circuit is NP-complete."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0/1 knapsack is NP-complete (pseudo-polynomial DP only)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Solvable in $O(V+E)$ with DFS low-links."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Graph $k$-colouring is NP-complete for $k\\ge3$."
+        }
+      ],
+      "pitfalls": [
+        "The $O(nW)$ knapsack DP is not polynomial in the input size."
+      ],
+      "verification": "Standard results (Karp 1972; Hopcroft–Tarjan 1973)."
+    },
+    "cse-1992-a-2-vii": {
+      "approach": "Build the tree bottom-up: group the 9 leaves into parents of 2 or 3 children, then group those parents, until one root remains. All leaves are at the same depth, so each level is grouped as a whole.",
+      "concepts": [
+        "2-3 tree",
+        "Counting internal nodes"
+      ],
+      "steps": [
+        {
+          "title": "Parents of the leaves",
+          "body": "$k$ parents need $2k\\le9\\le3k$, so $k=3$ (3+3+3) or $k=4$ (3+2+2+2)."
+        },
+        {
+          "title": "Case $k=3$",
+          "body": "3 nodes need $k'$ parents with $2k'\\le3\\le3k'$: $k'=1$, the root. Internal nodes $=3+1=4$."
+        },
+        {
+          "title": "Case $k=4$",
+          "body": "4 nodes: $2k'\\le4\\le3k'$ gives $k'=2$; then 2 nodes have the root. Internal nodes $=4+2+1=7$."
+        },
+        {
+          "title": "Result",
+          "body": "Possible counts are $\\{4,7\\}$, so (a) and (d)."
+        }
+      ],
+      "answer": {
+        "value": "(a) 4 and (d) 7",
+        "choice": [
+          "A",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Root with 3 children, each with 3 leaves: $1+3=4$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No level structure gives 5 internal nodes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No level structure gives 6 internal nodes."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Leaves 3+2+2+2 under 4 nodes, under 2 nodes, under the root: $4+2+1=7$."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the equal-depth rule: leaves and internal nodes cannot be mixed at one level."
+      ],
+      "verification": "Case 4: $3\\cdot3=9$ leaves. Case 7: $3+2+2+2=9$ leaves with level sizes $1,2,4$."
+    },
+    "cse-1992-a-2-viii": {
+      "approach": "By Kuratowski, the smallest non-planar graphs are $K_5$ and $K_{3,3}$; the one with fewest vertices is $K_5$.",
+      "concepts": [
+        "Kuratowski's theorem",
+        "Planarity"
+      ],
+      "steps": [
+        {
+          "title": "Up to 4 vertices",
+          "body": "Every graph on $\\le4$ vertices is a subgraph of $K_4$, which is planar."
+        },
+        {
+          "title": "5 vertices",
+          "body": "Planar on 5 vertices allows $e\\le3\\cdot5-6=9$ edges, and $K_5$ minus an edge (9 edges) is planar. So the only non-planar 5-vertex graph is $K_5$: 5 vertices, $\\binom52=10$ edges."
+        }
+      ],
+      "answer": {
+        "value": "(c) 10 edges, 5 vertices",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$K_{3,3}$ is non-planar but has 6 vertices, not the minimum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$K_4$ (6 edges, 4 vertices) is planar."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$K_5$: minimum vertex count for non-planarity."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$K_5-e$ (9 edges, 5 vertices) is planar."
+        }
+      ],
+      "pitfalls": [
+        "Choosing $K_{3,3}$ because it has fewer edges; the question minimises vertices."
+      ],
+      "verification": "$K_5$ violates $e\\le3n-6$: $10>9$."
+    },
+    "cse-1992-a-2-ix": {
+      "approach": "Comparison sorts need $\\Omega(n\\log n)$; radix sort with base $n$ handles keys up to $n^3$ in a constant number of linear passes.",
+      "concepts": [
+        "Radix sort",
+        "Counting sort",
+        "Comparison-sort lower bound"
+      ],
+      "steps": [
+        {
+          "title": "Comparison sorts",
+          "body": "Heapsort, quicksort and mergesort are comparison-based: $\\Omega(n\\log n)$ in the worst case."
+        },
+        {
+          "title": "Radix sort in base $n$",
+          "body": "Write each key minus 1 (range $0..n^3-1$) in base $n$: exactly 3 digits. Each pass is a counting sort over $n$ digit values: $O(n+n)=O(n)$. Total $3\\cdot O(n)=O(n)$."
+        }
+      ],
+      "answer": {
+        "value": "(d) Radixsort",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Comparison sort: $\\Theta(n\\log n)$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Comparison sort: $O(n^2)$ worst, $O(n\\log n)$ average."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Comparison sort: $\\Theta(n\\log n)$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Base-$n$ radix sort: 3 passes of $O(n)$ counting sort."
+        }
+      ],
+      "pitfalls": [
+        "Plain counting sort over $[1..n^3]$ costs $O(n^3)$; base-$n$ digits are the key.",
+        "Radix sort in base 2 or 10 would need $O(\\log n)$ passes."
+      ],
+      "verification": "CLRS: $n$ keys of $b$ bits sort in $O((b/\\log n)\\,n)$; here $b=3\\log n$ gives $O(n)$."
+    },
+    "cse-1992-a-2-x": {
+      "approach": "Each P (wait) decrements the counting semaphore and each V (signal) increments it, so only the net count matters.",
+      "concepts": [
+        "Counting semaphore",
+        "P and V operations"
+      ],
+      "steps": [
+        {
+          "title": "Net change",
+          "body": "$S=7-20+15=2$."
+        },
+        {
+          "title": "Interpretation",
+          "body": "The value is positive, so 2 more P operations can proceed without blocking."
+        }
+      ],
+      "answer": {
+        "value": "(b) 2",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$7+20+15$: treats P as an increment."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$7-20+15=2$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ignores the net $-5$ change."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$7-15+20$: swaps P and V."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up P (decrement) with V (increment)."
+      ],
+      "verification": "Order does not matter for the final value: $7+15-20=2$."
+    }
+  }
+}
