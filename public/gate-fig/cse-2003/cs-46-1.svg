@@ -1,29 +1,44 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" fill="none" font-family="Arial, Helvetica, sans-serif" font-size="14">
   <defs>
-    <linearGradient id="gate-grad-cse-2003-cs-46" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#1e293b" />
-      <stop offset="100%" stopColor="#0f172a" />
-    </linearGradient>
+    <marker id="cs46-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
+    </marker>
   </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LOGIC CIRCUIT</text>
-  <rect x="110" y="50" width="70" height="45" rx="6" fill="url(#gate-grad-cse-2003-cs-46)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="78" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">AND₁</text>
-  <line x1="50" y1="62" x2="110" y2="62" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="82" x2="110" y2="82" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="66" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">A</text>
-  <text x="40" y="86" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">B</text>
-  <rect x="110" y="130" width="70" height="45" rx="6" fill="url(#gate-grad-cse-2003-cs-46)" stroke="#38bdf8" stroke-width="2" />
-  <text x="145" y="158" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">AND₂</text>
-  <line x1="50" y1="142" x2="110" y2="142" stroke="#38bdf8" stroke-width="2" />
-  <line x1="50" y1="162" x2="110" y2="162" stroke="#38bdf8" stroke-width="2" />
-  <text x="40" y="146" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">C</text>
-  <text x="40" y="166" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">D</text>
-  <path d="M 180 72 L 260 72 L 280 105" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <path d="M 180 152 L 260 152 L 280 120" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <rect x="280" y="90" width="80" height="45" rx="6" fill="url(#gate-grad-cse-2003-cs-46)" stroke="#34d399" stroke-width="2" />
-  <text x="320" y="118" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">OR₁</text>
-  <line x1="360" y1="112" x2="440" y2="112" stroke="#34d399" stroke-width="3" />
-  <text x="455" y="117" fill="#34d399" font-size="16" font-weight="bold" font-family="monospace">OUT</text>
+  <g stroke="currentColor" stroke-width="1.5">
+    <polyline points="40,30 340,30 340,80" marker-end="url(#cs46-arr)"/>
+    <polyline points="150,30 150,80" marker-end="url(#cs46-arr)"/>
+    <polyline points="175,45 175,80" marker-end="url(#cs46-arr)"/>
+    <polyline points="365,45 365,80" marker-end="url(#cs46-arr)"/>
+    <polyline points="225,45 225,150" marker-end="url(#cs46-arr)"/>
+    <polyline points="415,45 415,150" marker-end="url(#cs46-arr)"/>
+    <path d="M140 84 Q162 96 185 84 Q182 110 162 124 Q142 110 140 84 Z"/>
+    <path d="M140 78 Q162 90 185 78"/>
+    <path d="M330 84 Q352 96 375 84 Q372 110 352 124 Q332 110 330 84 Z"/>
+    <path d="M330 78 Q352 90 375 78"/>
+    <polyline points="162,124 162,150" marker-end="url(#cs46-arr)"/>
+    <polyline points="352,124 352,150" marker-end="url(#cs46-arr)"/>
+    <rect x="135" y="152" width="110" height="70"/>
+    <rect x="325" y="152" width="110" height="70"/>
+    <polyline points="510,187 437,187" marker-end="url(#cs46-arr)"/>
+    <polyline points="325,187 247,187" marker-end="url(#cs46-arr)"/>
+    <polyline points="135,187 70,187" marker-end="url(#cs46-arr)"/>
+    <polyline points="190,222 190,262" marker-end="url(#cs46-arr)"/>
+    <polyline points="380,222 380,262" marker-end="url(#cs46-arr)"/>
+  </g>
+  <g fill="currentColor">
+    <text x="22" y="35" font-weight="bold">K</text>
+    <text x="180" y="48">B₁</text>
+    <text x="230" y="48">A₁</text>
+    <text x="370" y="48">B₀</text>
+    <text x="420" y="48">A₀</text>
+    <text x="190" y="183" text-anchor="middle">Full</text>
+    <text x="190" y="201" text-anchor="middle">Adder</text>
+    <text x="380" y="183" text-anchor="middle">Full</text>
+    <text x="380" y="201" text-anchor="middle">Adder</text>
+    <text x="286" y="179" text-anchor="middle">C₁</text>
+    <text x="478" y="179" text-anchor="middle">C₀</text>
+    <text x="40" y="192" font-weight="bold">…</text>
+    <text x="190" y="282" text-anchor="middle">S₁</text>
+    <text x="380" y="282" text-anchor="middle">S₀</text>
+  </g>
 </svg>
