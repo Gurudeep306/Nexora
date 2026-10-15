@@ -1,0 +1,133 @@
+{
+  "paper": "cse-1991",
+  "fixes": [
+    {
+      "id": "cse-1991-a-1-xi",
+      "field": "reviewNote",
+      "before": "Answer depends on interpretation (whether the result must be stored to memory); verify.",
+      "after": "Assuming only the operand reads of a–f count: 2 registers and 6 accesses (proved minimal). If the final result must also be stored to memory the count becomes 7; confirm the intended convention.",
+      "reason": "More precise review note after independent solution.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-a-3-iii",
+      "field": "reviewNote",
+      "before": "Answer is debated (A vs B); verify.",
+      "after": "Stored key A (address length bounds the virtual address space) is kept and proved here; some solvers also accept B (secondary storage bounds the usable space). Confirm against an authoritative key.",
+      "reason": "More precise review note after independent solution.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-a-3-ix",
+      "field": "subject",
+      "before": "cn",
+      "after": "cd",
+      "reason": "Link editors are system software (compilers/linking), not computer networks.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-a-3-ix",
+      "field": "topic",
+      "before": "ip",
+      "after": "runtime",
+      "reason": "Linking / external symbol resolution belongs with compiler runtime topics.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-5-c",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Fig. 5 checked: the third AND gate only drives the carry output, so the critical path is FF + 2 AND = 30 ns.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-5-c",
+      "field": "reviewNote",
+      "before": "Whether the last AND gate (carry out) is counted changes the answer to 40 ns / 25 MHz; verify.",
+      "after": null,
+      "reason": "Resolved; see needsReview fix.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-6-a",
+      "field": "answer",
+      "before": "4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})",
+      "after": "3 D flip-flops Q_A, Q_B, Q_C with 2-to-1 AND-OR steering: D_A = L·A + L′·S, D_B = L·B + L′·Q_A, D_C = L·C + L′·Q_B (L = LOAD/SHIFT′); serial output Q_C",
+      "reason": "Three parallel inputs A, B, C need 3 flip-flops (not 4); stored steering equation was inconsistent with LOAD/SHIFT′.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-6-b",
+      "field": "answer",
+      "before": "Cascade of 1024 1-bit D flip-flop stages with common shift clock",
+      "after": "Mod-1024 (10-bit) counter drives the RAM address; on each shift pulse read M[ctr] into an output D flip-flop (D_out), then write D_in into M[ctr] (READ/WRITE′ = 0), then increment the counter — the output is the input delayed by 1024 shifts",
+      "reason": "The question requires a RAM-based design; stored answer described a flip-flop cascade.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-7-a",
+      "field": "answer",
+      "before": "FSM controller with state register, decoder, and combinational control logic matrix",
+      "after": "T0: MAR ← PC; T1: MBR ← M[MAR], PC ← PC + 1; T2: IR ← MBR; T3: MAR ← IR[7..0] (+ X if indexed) — effective address formed in the fetch cycle",
+      "reason": "Part (a) asks for the register transfer sequence; stored answer described the controller hardware.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-8-b",
+      "field": "reviewNote",
+      "before": "Signal names in Fig. 6 are hard to read in the scan; verify the labels.",
+      "after": null,
+      "reason": "Labels read from the scan (PORT-DATA OUTPUT, WR of PORT 40H, INTERRUPT, BUFFULL, STROBE INPUT FROM DEVICE) and Fig. 6 redrawn as SVG.",
+      "source": "GATE1991.pdf p.6"
+    },
+    {
+      "id": "cse-1991-b-10-b",
+      "field": "answer",
+      "before": "Yes; e.g. F → id | (E − T) | (T / F)",
+      "after": "Yes. E → E − T | T / F | id; T → T / F | (E − T) | id; F → (E − T) | (T / F) | id",
+      "reason": "Old grammar (with E → T, T → F) still derives (id/id) and id − (id/id), the very examples in the question; new grammar allows parentheses only where they change the parse.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-10-b",
+      "field": "reviewNote",
+      "before": "Proposed grammar still allows some redundant parentheses (e.g. around a whole expression, or (id/id) as the right operand of −); a fully correct minimal answer needs checking.",
+      "after": "Answer changes only the right-hand sides of the three existing rules (no new nonterminal); if 'at most one more production' counts alternatives rather than rules, no exactly non-redundant grammar fits that budget — verify the intended reading.",
+      "reason": "Replace stale note with the remaining interpretation question.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-10-c",
+      "field": "answer",
+      "before": "E → T E′; E′ → − T E′ | ε; T → F T′; T′ → / F T′ | ε; F rules unchanged",
+      "after": "E → T / F E′ | id E′; E′ → − T E′ | ε; T → (E − T) T′ | id T′; T′ → / F T′ | ε; F → (E − T) | (T / F) | id",
+      "reason": "Part (c) asks to convert the grammar from (b), not the original one.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-12-b",
+      "field": "answer",
+      "before": "(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SUPPLIER.CITY \\ne PROJECTS.CITY}(SUPPLIER \\bowtie SPPR \\bowtie PROJECTS))$",
+      "after": "(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SCITY \\ne PCITY}(\\rho_{(SCODE,SNAME,SCITY)}(SUPPLIER) \\bowtie SPPR \\bowtie \\rho_{(PRCODE,PRNAME,PCITY)}(PROJECTS)))$",
+      "reason": "The natural join SUPPLIER ⋈ SPPR ⋈ PROJECTS also equates the shared attribute CITY, so the old expression always returns an empty result; rename the CITY columns first.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-1991-b-15-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Formula checked on the 300-dpi scan; irreflexivity is implied by the asymmetry conjunct anyway, so the answer does not depend on the blurred last conjunct.",
+      "source": "GATE1991.pdf p.8"
+    },
+    {
+      "id": "cse-1991-b-15-b",
+      "field": "reviewNote",
+      "before": "Formula is blurred in the scan; the last conjunct is read as (∀x)¬R(x,x); verify.",
+      "after": null,
+      "reason": "Resolved (see needsReview fix).",
+      "source": "GATE1991.pdf p.8"
+    }
+  ]
+}

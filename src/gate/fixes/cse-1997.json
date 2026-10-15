@@ -1,0 +1,97 @@
+{
+  "paper": "cse-1997",
+  "fixes": [
+    {
+      "id": "cse-1997-a-4",
+      "field": "text",
+      "before": "The concatenation of two lists is to be performed in $O(1)$ time. Which of the",
+      "after": "The concatenation of two lists is to be performed in $O(1)$ time. Which of the following implementations of a list should be used?",
+      "reason": "Question stem is cut off mid-sentence (the scanned paper also truncates it); completed with the standard GATE 1997 wording.",
+      "source": "GATE 1997 paper Q4"
+    },
+    {
+      "id": "cse-1997-a-12",
+      "field": "subject",
+      "before": "coa",
+      "after": "legacy",
+      "reason": "8085 RST vector question is microprocessor-specific; consistent with other 8085 questions.",
+      "source": "GATE 1997 paper Q12"
+    },
+    {
+      "id": "cse-1997-a-12",
+      "field": "topic",
+      "before": "io",
+      "after": "microprocessor",
+      "reason": "8085 interrupt vector location.",
+      "source": "GATE 1997 paper Q12"
+    },
+    {
+      "id": "cse-1997-a-24",
+      "field": "text",
+      "before": "Thrashing in an operating system virtual memory subsystem implies:",
+      "after": "Thrashing",
+      "reason": "Stem in the 1997 paper is just \"Thrashing\"; the options complete the sentence (the record added wording that clashes with option C \"implies…\").",
+      "source": "GATE1997.pdf p.3 Q24"
+    },
+    {
+      "id": "cse-1997-b-70-a",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1997/b-70-1.png",
+          "alt": "State table (next state, output) for states A–H. Input 0: A→B,1; B→F,1; C→D,0; D→C,0; E→D,1; F→C,1; G→C,1; H→C,0. Input 1: A→H,1; B→D,1; C→E,1; D→F,1; E→C,1; F→C,1; G→D,1; H→A,1.",
+          "svg": "cse-1997/b-70-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The linked SVG is an unrelated generic automaton drawing, not the paper figure; the paper figure is only the state table, which the question text already reproduces exactly as a markdown table.",
+      "source": "GATE 1997 paper Q70 (page 10)"
+    },
+    {
+      "id": "cse-1997-b-70-b",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1997/b-70-1.png",
+          "alt": "State table (next state, output) for states A–H. Input 0: A→B,1; B→F,1; C→D,0; D→C,0; E→D,1; F→C,1; G→C,1; H→C,0. Input 1: A→H,1; B→D,1; C→E,1; D→F,1; E→C,1; F→C,1; G→D,1; H→A,1.",
+          "svg": "cse-1997/b-70-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The linked SVG is an unrelated generic automaton drawing, not the paper figure; the paper figure is only the state table, which the question text already reproduces exactly as a markdown table.",
+      "source": "GATE 1997 paper Q70 (page 10)"
+    },
+    {
+      "id": "cse-1997-a-54-b",
+      "field": "topic",
+      "before": "c",
+      "after": "recursion",
+      "reason": "Same recursion-trace program as parts (a)(i)/(a)(ii), which are tagged recursion.",
+      "source": "GATE1997.pdf p.7 Q54"
+    },
+    {
+      "id": "cse-1997-b-57-a",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Counting one-to-one functions is discrete mathematics (combinatorics), not databases.",
+      "source": "GATE 1997 paper Q57"
+    },
+    {
+      "id": "cse-1997-b-57-a",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinatorics",
+      "reason": "Topic should match its sibling sub-parts 57(b), 57(c): combinatorics.",
+      "source": "GATE 1997 paper Q57"
+    },
+    {
+      "id": "cse-1997-b-66",
+      "field": "topic",
+      "before": "pumping",
+      "after": "regular",
+      "reason": "The question proves closure of regular languages under prefix and reversal by construction; no pumping lemma is involved.",
+      "source": "GATE 1997 paper Q66"
+    }
+  ]
+}
