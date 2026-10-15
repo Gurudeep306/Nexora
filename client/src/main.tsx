@@ -13,7 +13,9 @@ import { ToastProvider } from './components/ui'
 import { SocketProvider } from './lib/socket'
 import { ThemeProvider } from './context/ThemeContext'
 import { initFaviconFx } from './lib/faviconFx'
+import { initSentry } from './lib/sentry'
 
+initSentry()
 // The first-paint script has already put the chosen fonts on <html>; start
 // fetching them now, before React renders, so the swap is as early as it can be.
 void loadUiFont(document.documentElement.dataset.font ?? '')

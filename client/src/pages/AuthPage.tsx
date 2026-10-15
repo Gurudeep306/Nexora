@@ -20,7 +20,7 @@ import { AuthShowcase } from '@/components/auth/AuthShowcase'
 import { AlgoTheater } from '@/components/showcase/AlgoTheater'
 import { LogoMark, Wordmark } from '@/components/brand/Logo'
 import { takeOAuthResult, useAuth } from '@/context/AuthContext'
-import { api, ApiError } from '@/lib/api'
+import { api, apiUrl, ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 
 type Mode = 'login' | 'register'
@@ -331,12 +331,12 @@ export default function AuthPage() {
             <>
               <div className={cn('mt-6 grid gap-3', providers.github && providers.google ? 'grid-cols-2' : 'grid-cols-1')}>
                 {providers.github && (
-                  <Button variant="subtle" size="lg" className="h-11" onClick={() => (window.location.href = '/auth/github')}>
+                  <Button variant="subtle" size="lg" className="h-11" onClick={() => (window.location.href = apiUrl('/auth/github'))}>
                     <GitHubIcon /> GitHub
                   </Button>
                 )}
                 {providers.google && (
-                  <Button variant="subtle" size="lg" className="h-11" onClick={() => (window.location.href = '/auth/google')}>
+                  <Button variant="subtle" size="lg" className="h-11" onClick={() => (window.location.href = apiUrl('/auth/google'))}>
                     <GoogleIcon /> Google
                   </Button>
                 )}
