@@ -1,0 +1,1331 @@
+{
+ "paper": "it-2005",
+ "version": 2,
+ "solutions": {
+  "it-2005-cs-1": {
+   "approach": "Draws are independent (with replacement). \"No two the same\" with 3 draws and 3 colours means one of each colour, in any of $3!$ orders.",
+   "concepts": [
+    "Independent events",
+    "Multiplication rule",
+    "Permutations"
+   ],
+   "steps": [
+    {
+     "title": "Single-draw probabilities",
+     "body": "Total $=10+20+30=60$.\n\n$P(B)=\\frac{10}{60}=\\frac16,\\quad P(G)=\\frac{20}{60}=\\frac13,\\quad P(R)=\\frac{30}{60}=\\frac12$"
+    },
+    {
+     "title": "One specific order",
+     "body": "$P(B,G,R)=\\frac16\\cdot\\frac13\\cdot\\frac12=\\frac{1}{36}$"
+    },
+    {
+     "title": "All orders",
+     "body": "The three colours can appear in $3!=6$ orders, each with the same probability:\n\n$$6\\times\\frac{1}{36}=\\frac16$$"
+    }
+   ],
+   "answer": {
+    "value": "$\\frac16$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$1/36$ is the probability of one particular order only; it ignores the $3!$ orderings."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$3!\\cdot\\frac16\\cdot\\frac13\\cdot\\frac12=\\frac16$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Does not correspond to any correct count of the favourable outcomes."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$1/3$ is just $P(\\text{green})$ for a single draw."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting to multiply by the $3!$ orderings.",
+    "Treating colours as equally likely ($3!/27=2/9$)."
+   ],
+   "verification": "Sum over permutations: $6\\times\\frac{10\\cdot20\\cdot30}{60^3}=6\\times\\frac{6000}{216000}=\\frac{1}{6}$."
+  },
+  "it-2005-cs-2": {
+   "approach": "The trapezoidal rule replaces the curve by chords. For a convex function ($f''>0$) every chord lies above the curve, so the estimate always exceeds the exact value $\\int_0^1x^2dx=\\frac13$.",
+   "concepts": [
+    "Trapezoidal rule",
+    "Convexity",
+    "Error term of trapezoidal rule"
+   ],
+   "steps": [
+    {
+     "title": "Exact value",
+     "body": "$\\int_0^1 x^2\\,dx=\\left[\\frac{x^3}{3}\\right]_0^1=\\frac13$"
+    },
+    {
+     "title": "Sign of the error",
+     "body": "Error $E=-\\frac{(b-a)h^2}{12}f''(\\xi)$ with $f''(x)=2>0$, so $E<0$: exact $<$ trapezoidal value, for any step size $h$."
+    },
+    {
+     "title": "Check with one interval",
+     "body": "$h=1$: $\\frac{h}{2}[f(0)+f(1)]=\\frac12(0+1)=\\frac12>\\frac13$. With $h=\\frac12$: $\\frac14[0+2\\cdot\\frac14+1]=\\frac38>\\frac13$."
+    }
+   ],
+   "answer": {
+    "value": "Always greater than $1/3$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "$x^2$ is convex, so every chord lies above the curve and the trapezoidal sum overestimates."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Underestimation happens only for concave integrands ($f''<0$)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Exact only for linear integrands; $x^2$ has $f''\\ne0$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Since $f''$ has a constant sign, the error sign never changes."
+    }
+   ],
+   "pitfalls": [
+    "Confusing the trapezoidal rule with Simpson's rule, which is exact for $x^2$."
+   ],
+   "verification": "Explicit sums for $h=1$ ($0.5$) and $h=0.5$ ($0.375$) both exceed $0.333$."
+  },
+  "it-2005-cs-3": {
+   "approach": "Column 3 has a single non-zero entry (row 2), so expand along column 3; the $3\\times3$ minor is then expanded along its first column.",
+   "concepts": [
+    "Determinant",
+    "Cofactor expansion"
+   ],
+   "steps": [
+    {
+     "title": "Expand along column 3",
+     "body": "Only $a_{23}=1$ is non-zero, cofactor sign $(-1)^{2+3}=-1$:\n\n$$\\det A=-1\\cdot\\det\\begin{bmatrix}0&1&2\\\\0&0&1\\\\1&-2&1\\end{bmatrix}$$"
+    },
+    {
+     "title": "Minor",
+     "body": "Expand along column 1 (only the entry $1$ in row 3, sign $(-1)^{3+1}=+1$):\n\n$$1\\cdot\\det\\begin{bmatrix}1&2\\\\0&1\\end{bmatrix}=1\\cdot(1\\cdot1-2\\cdot0)=1$$"
+    },
+    {
+     "title": "Result",
+     "body": "$\\det A=-1\\times1=-1$"
+    }
+   ],
+   "answer": {
+    "value": "$-1$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Cofactor expansion gives $-1\\cdot1=-1$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "No two rows/columns are dependent; the determinant is non-zero."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Misses the $(-1)^{2+3}$ cofactor sign."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Not obtainable from any expansion of this matrix."
+    }
+   ],
+   "pitfalls": [
+    "Dropping the checkerboard sign $(-1)^{i+j}$."
+   ],
+   "verification": "Full expansion of the minor along row 1: $0-1(0\\cdot1-1\\cdot1)+2(0-0)=1$; times $-1$ gives $-1$."
+  },
+  "it-2005-cs-4": {
+   "approach": "$L^C$ is regular, but $M^C$ can be anything that is the complement of a CFL — even non-context-free. Pick extreme choices of $L$ to see that nothing is guaranteed.",
+   "concepts": [
+    "Closure properties",
+    "Complement of CFL",
+    "Union"
+   ],
+   "steps": [
+    {
+     "title": "Make the union equal to $M^C$",
+     "body": "Take $L=\\Sigma^*$, so $L^C=\\emptyset$ and $L^C\\cup M^C=M^C$. CFLs are not closed under complement, so $M^C$ may be non-context-free (e.g. $M=\\overline{\\{a^nb^nc^n\\}}$, a CFL, gives $M^C=\\{a^nb^nc^n\\}$). Hence (A) and (B) fail."
+    },
+    {
+     "title": "Make the union regular",
+     "body": "Take $L=\\emptyset$, so $L^C=\\Sigma^*$ and the union is $\\Sigma^*$, which is regular. Hence (C) fails."
+    }
+   ],
+   "answer": {
+    "value": "None of the above",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "With $L=\\Sigma^*$ the union is $M^C$, which can be non-regular (even non-CFL)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$M^C$ can be non-context-free, e.g. $\\{a^nb^nc^n\\}$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "With $L=\\emptyset$ the union is $\\Sigma^*$, which is regular."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Each of (A)–(C) has a counterexample."
+    }
+   ],
+   "pitfalls": [
+    "Assuming CFLs are closed under complement."
+   ],
+   "verification": "$\\overline{\\{a^nb^nc^n\\}}$ is a CFL (union of CFLs for each way to violate the pattern), and its complement is the classic non-CFL."
+  },
+  "it-2005-cs-5": {
+   "approach": "$01^*0$ is a 0, then any number of 1s, then a 0: infinitely many choices for the number of 1s, but every individual string is finite.",
+   "concepts": [
+    "Regular expressions",
+    "Kleene star"
+   ],
+   "steps": [
+    {
+     "title": "Language",
+     "body": "$L(01^*0)=\\{00,010,0110,\\dots\\}=\\{01^k0\\mid k\\ge0\\}$"
+    },
+    {
+     "title": "Classify",
+     "body": "One string for every $k\\ge0$ ⇒ infinite set; each string has length $k+2<\\infty$ ⇒ finite strings."
+    }
+   ],
+   "answer": {
+    "value": "An infinite set of finite strings",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "The star allows unboundedly many 1s, so the set is infinite."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Infinitely many strings $01^k0$, each of finite length $k+2$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Regular expressions denote finite strings only, and the set is not finite."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Strings generated by a regular expression are always finite."
+    }
+   ],
+   "verification": "Kleene star is a union of finite concatenations, so every member has finite length."
+  },
+  "it-2005-cs-6": {
+   "approach": "The bound $n\\le10^6$ makes the language finite, and every finite language is regular.",
+   "concepts": [
+    "Finite languages",
+    "Chomsky hierarchy"
+   ],
+   "steps": [
+    {
+     "title": "Count the strings",
+     "body": "Exactly one string per $n\\in\\{1,\\dots,10^6\\}$, so $|L|=10^6$ — finite."
+    },
+    {
+     "title": "Conclude",
+     "body": "A finite language is the union of finitely many single strings, each regular, so $L$ is regular (and hence also context-free)."
+    }
+   ],
+   "answer": {
+    "value": "Regular",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Finite ⇒ regular."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "It is regular, so \"not regular\" is false."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The complement of a regular language is regular, hence context-free."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Only the unbounded $\\{0^n1^n2^n\\mid n\\ge1\\}$ is non-CFL."
+    }
+   ],
+   "pitfalls": [
+    "Reacting to the $0^n1^n2^n$ pattern and ignoring the upper bound."
+   ],
+   "verification": "A DFA with enough states (about $3\\cdot10^6$ plus a trap) recognises it."
+  },
+  "it-2005-cs-7": {
+   "approach": "$(A\\oplus B)\\oplus C$ is the odd-parity function: 1 exactly on minterms with an odd number of 1s ($001,010,100,111$). List the minterms covered by each option.",
+   "concepts": [
+    "XOR",
+    "Parity function",
+    "Minterms"
+   ],
+   "steps": [
+    {
+     "title": "Target minterms",
+     "body": "$(A\\oplus B)\\oplus C=1$ for $ABC\\in\\{001,010,100,111\\}$."
+    },
+    {
+     "title": "Option C term by term",
+     "body": "- $ABC$: $111$\n- $\\overline A(B\\oplus C)$: $A=0$, $B\\ne C$: $010,001$\n- $\\overline B(A\\oplus C)$: $B=0$, $A\\ne C$: $100,001$\n\nUnion $=\\{001,010,100,111\\}$ — exactly the target."
+    },
+    {
+     "title": "Options A, B",
+     "body": "(A) is 0 only for $000$ and $111$ → 6 minterms. (B) is 0 only for $000$ and $110$ → 6 minterms. Neither is parity."
+    }
+   ],
+   "answer": {
+    "value": "$ABC+\\overline{A}(B\\oplus C)+\\overline{B}(A\\oplus C)$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True on $011,101,110$ too (anything except all-equal inputs)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True on 6 minterms, including $011$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Covers exactly $001,010,100,111$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(C) is equivalent."
+    }
+   ],
+   "verification": "Check $011$: target 0; C gives $0+0+0=0$ ✓. Check $100$: target 1; C gives $\\overline B(A\\oplus C)=1\\cdot1=1$ ✓."
+  },
+  "it-2005-cs-8": {
+   "approach": "Write $-57$ in 8-bit two's complement, append $b_{-1}=0$, and recode each bit as $b_{i-1}-b_i$ (Booth: 10 → −1, 01 → +1, 00/11 → 0).",
+   "concepts": [
+    "Booth recoding",
+    "Two's complement"
+   ],
+   "given": "| Quantity | Value |\n|---|---|\n| $+57$ | $00111001$ |\n| $-57$ | $11000111$ |",
+   "steps": [
+    {
+     "title": "Two's complement",
+     "body": "$57=00111001_2$. Invert: $11000110$; add 1: $11000111$."
+    },
+    {
+     "title": "Recode right to left",
+     "body": "| $i$ | $b_i$ | $b_{i-1}$ | $b_{i-1}-b_i$ |\n|---|---|---|---|\n| 0 | 1 | 0 | $-1$ |\n| 1 | 1 | 1 | 0 |\n| 2 | 1 | 1 | 0 |\n| 3 | 0 | 1 | $+1$ |\n| 4 | 0 | 0 | 0 |\n| 5 | 0 | 0 | 0 |\n| 6 | 1 | 0 | $-1$ |\n| 7 | 1 | 1 | 0 |"
+    },
+    {
+     "title": "Read MSB → LSB",
+     "body": "$0\\;{-1}\\;0\\;0\\;1\\;0\\;0\\;{-1}$"
+    }
+   ],
+   "answer": {
+    "value": "0 −1 0 0 1 0 0 −1",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Matches the recoding; value $-64+8-1=-57$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "That is the plain two's-complement pattern, not the Booth recoding."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Value $-64+8=-56$; misses the $-1$ at bit 0 (forgot $b_{-1}=0$)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Value $64-8+1=+57$ — the recoding of $+57$."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting the implicit $b_{-1}=0$, which loses the LSB digit."
+   ],
+   "verification": "Weights: $-1\\cdot2^6+1\\cdot2^3-1\\cdot2^0=-64+8-1=-57$."
+  },
+  "it-2005-cs-9": {
+   "approach": "Compare total refresh time with elapsed time over one millisecond.",
+   "concepts": [
+    "DRAM refresh overhead"
+   ],
+   "steps": [
+    {
+     "title": "Refresh time per ms",
+     "body": "$100\\times100\\text{ ns}=10^4\\text{ ns}=10\\,\\mu\\text{s}$"
+    },
+    {
+     "title": "Fraction",
+     "body": "$\\frac{10\\,\\mu\\text{s}}{1\\text{ ms}}=\\frac{10}{1000}=1\\%$"
+    }
+   ],
+   "answer": {
+    "value": "1%",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Off by a factor of 10."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Mixes in the 64 ns cycle time, which is irrelevant to the fraction of time."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$10\\,\\mu$s of every 1 ms $=1\\%$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Again uses the 64 ns cycle time incorrectly."
+    }
+   ],
+   "pitfalls": [
+    "Using the 64 ns cycle time — it does not affect the refresh fraction."
+   ],
+   "verification": "Units: $10^4$ ns / $10^6$ ns $=10^{-2}$."
+  },
+  "it-2005-cs-10": {
+   "approach": "Trace the loop: from terminal a of S1 current must reach terminal a of S2. The only paths are via the b–b wire (both ON) or the c–c wire (both OFF), so the bulb lights iff S1 = S2.",
+   "concepts": [
+    "Two-way (staircase) switch",
+    "XNOR"
+   ],
+   "steps": [
+    {
+     "title": "Possible paths",
+     "body": "S1 = 1 connects a→b; then S2 must also connect b→a, i.e. S2 = 1. S1 = 0 connects a→c; then S2 = 0 is needed."
+    },
+    {
+     "title": "Truth table",
+     "body": "| S1 | S2 | Bulb |\n|---|---|---|\n| 0 | 0 | ON |\n| 0 | 1 | OFF |\n| 1 | 0 | OFF |\n| 1 | 1 | ON |\n\nThis is $\\overline{S1\\oplus S2}$ (XNOR)."
+    }
+   ],
+   "answer": {
+    "value": "$\\overline{S1\\oplus S2}$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$S1=1,S2=0$ leaves the circuit open (b of S1 meets an unconnected b of S2)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True for $(0,1)$ and $(1,0)$, where the circuit is open."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Bulb is ON exactly when both switches are in the same position."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "XOR is the complement — exactly the OFF cases."
+    }
+   ],
+   "verification": "This is the classic staircase-switch wiring: toggling either switch toggles the bulb, consistent with XNOR."
+  },
+  "it-2005-cs-11": {
+   "approach": "An up-counter increments by 1 per pulse and wraps from 255 to 0; count up to 255, wrap, then up to the target.",
+   "concepts": [
+    "Binary counter",
+    "Modulo arithmetic"
+   ],
+   "steps": [
+    {
+     "title": "Convert",
+     "body": "$10101100_2=128+32+8+4=172$\n\n$00100111_2=32+4+2+1=39$"
+    },
+    {
+     "title": "Pulses",
+     "body": "Since $39<172$ the counter must wrap: $(39-172)\\bmod256=256-172+39=123$."
+    }
+   ],
+   "answer": {
+    "value": "123",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Off by 11; not the wrap-around distance."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Off by 10."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Off by one: counts $172\\to39$ inclusive of the start."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "$256-172+39=123$."
+    }
+   ],
+   "pitfalls": [
+    "Counting $256-172+39+1$ (an off-by-one)."
+   ],
+   "verification": "$172+123=295=256+39$ ✓."
+  },
+  "it-2005-cs-12": {
+   "approach": "The first key inserted becomes the root. In a BST of $\\{1,\\dots,n\\}$ the right subtree of root $r$ holds exactly the keys $r+1,\\dots,n$.",
+   "concepts": [
+    "BST insertion",
+    "BST property"
+   ],
+   "steps": [
+    {
+     "title": "Count the right subtree",
+     "body": "Right subtree of root $r$ = keys greater than $r$: $n-r$ of them."
+    },
+    {
+     "title": "Solve",
+     "body": "$n-r=p\\Rightarrow r=n-p$."
+    }
+   ],
+   "answer": {
+    "value": "$n-p$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Would give $n-p$ nodes on the right, not $p$ (unless $n=2p$)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Gives $n-p-1$ keys on the right."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Root $n-p$ leaves exactly $p$ larger keys."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Gives $p-1$ keys on the right."
+    }
+   ],
+   "verification": "$n=5,p=2$: root 3, right subtree $\\{4,5\\}$ ✓."
+  },
+  "it-2005-cs-13": {
+   "approach": "Apply the definition push by push from the bottom of the stack, carrying $f$ along — like a running \"max-with-zero\" prefix sum.",
+   "concepts": [
+    "Stack",
+    "Recursive definition"
+   ],
+   "steps": [
+    {
+     "title": "Push 2",
+     "body": "Previous value carried in, clipped at 0, plus the pushed integer: $f=\\max(0,0)+2=2$",
+     "scene": {
+      "items": [
+       "2"
+      ],
+      "caption": "push 2 → f = 2"
+     }
+    },
+    {
+     "title": "Push −3",
+     "body": "Previous value carried in, clipped at 0, plus the pushed integer: $f=\\max(2,0)-3=-1$",
+     "scene": {
+      "items": [
+       "2",
+       "-3"
+      ],
+      "caption": "push −3 → f = −1"
+     }
+    },
+    {
+     "title": "Push 2",
+     "body": "Previous value carried in, clipped at 0, plus the pushed integer: $f=\\max(-1,0)+2=2$",
+     "scene": {
+      "items": [
+       "2",
+       "-3",
+       "2"
+      ],
+      "caption": "push 2 → f = 2 (negative f reset to 0)"
+     }
+    },
+    {
+     "title": "Push −1",
+     "body": "Previous value carried in, clipped at 0, plus the pushed integer: $f=\\max(2,0)-1=1$",
+     "scene": {
+      "items": [
+       "2",
+       "-3",
+       "2",
+       "-1"
+      ],
+      "caption": "push −1 → f = 1"
+     }
+    },
+    {
+     "title": "Push 2",
+     "body": "Previous value carried in, clipped at 0, plus the pushed integer: $f=\\max(1,0)+2=3$",
+     "scene": {
+      "items": [
+       "2",
+       "-3",
+       "2",
+       "-1",
+       "2"
+      ],
+      "caption": "push 2 → f(S) = 3"
+     }
+    }
+   ],
+   "animation": {
+    "kind": "stack",
+    "items": [],
+    "caption": "f(∅) = 0"
+   },
+   "answer": {
+    "value": "3",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Would require never adding the negatives ($2+2+2$)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "No faithful evaluation of the recurrence produces 4; the running values are $2,-1,2,1,3$."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Step-by-step evaluation gives 3."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "That is the plain sum, ignoring the $\\max(\\cdot,0)$ reset at $f=-1$."
+    }
+   ],
+   "pitfalls": [
+    "Summing all elements (gives 2) and forgetting the reset to 0."
+   ],
+   "verification": "This is the maximum suffix-sum recurrence (Kadane); the best suffix is $2,-1,2$ with sum 3."
+  },
+  "it-2005-cs-14": {
+   "approach": "A DFS forest of a graph with $c$ components consists of $c$ trees; a forest of $c$ trees on $n$ vertices has $n-c$ edges.",
+   "concepts": [
+    "DFS forest",
+    "Connected components"
+   ],
+   "steps": [
+    {
+     "title": "Edges in a forest",
+     "body": "Each component yields one DFS tree; a tree on $n_i$ vertices has $n_i-1$ edges."
+    },
+    {
+     "title": "Sum",
+     "body": "$k=\\sum_{i=1}^{c}(n_i-1)=n-c\\Rightarrow c=n-k$."
+    }
+   ],
+   "answer": {
+    "value": "$n-k$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$k$ is the number of tree edges, not components."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "No relation; e.g. a connected graph has $k=n-1$, giving $n$ components."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Off by one: $n-k-1=0$ for a connected graph."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "$c=n-k$."
+    }
+   ],
+   "verification": "Connected graph: $k=n-1\\Rightarrow c=1$ ✓; no edges: $k=0\\Rightarrow c=n$ ✓."
+  },
+  "it-2005-cs-15": {
+   "approach": "Recall the standard bounds with $n$ vertices and $m$ edges.",
+   "concepts": [
+    "Bellman-Ford",
+    "Kruskal",
+    "Floyd-Warshall",
+    "Topological sort"
+   ],
+   "steps": [
+    {
+     "title": "Standard complexities",
+     "body": "| Algorithm | Complexity |\n|---|---|\n| Bellman-Ford | $O(nm)$ — $n-1$ rounds relaxing $m$ edges |\n| Kruskal | $O(m\\log n)$ — sorting edges dominates |\n| Floyd-Warshall | $O(n^3)$ — triple loop |\n| Topological sort | $O(n+m)$ — one DFS/BFS |"
+    },
+    {
+     "title": "Match",
+     "body": "$1\\to C,\\;2\\to A,\\;3\\to B,\\;4\\to D$"
+    }
+   ],
+   "answer": {
+    "value": "1→C, 2→A, 3→B, 4→D",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "All four pairs correct."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Bellman-Ford is not $O(n^3)$ in general, and topological sort is linear."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Floyd-Warshall is $O(n^3)$, not $O(m\\log n)$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Bellman-Ford and Floyd-Warshall are swapped."
+    }
+   ],
+   "verification": "Bellman-Ford is the only one with the $nm$ product; topological sort is the only linear-time algorithm."
+  },
+  "it-2005-cs-16": {
+   "approach": "Insert in order with $h(k)=k\\bmod10$; on a collision step to the next slot until an empty one is found.",
+   "concepts": [
+    "Hashing",
+    "Linear probing"
+   ],
+   "steps": [
+    {
+     "title": "Insert 43, 165, 62",
+     "body": "$43\\to3$, $165\\to5$, $62\\to2$ — no collisions.",
+     "scene": {
+      "cells": [
+       "",
+       "",
+       "62",
+       "43",
+       "",
+       "165",
+       "",
+       "",
+       "",
+       ""
+      ],
+      "hl": [
+       {
+        "at": [
+         2,
+         3
+        ],
+        "tone": "success"
+       },
+       {
+        "at": [
+         5,
+         5
+        ],
+        "tone": "success"
+       }
+      ],
+      "caption": "43→3, 165→5, 62→2"
+     }
+    },
+    {
+     "title": "Insert 123",
+     "body": "$h(123)=3$ occupied → probe 4: empty, store at 4.",
+     "scene": {
+      "cells": [
+       "",
+       "",
+       "62",
+       "43",
+       "123",
+       "165",
+       "",
+       "",
+       "",
+       ""
+      ],
+      "hl": [
+       {
+        "at": [
+         3,
+         3
+        ],
+        "tone": "error"
+       },
+       {
+        "at": [
+         4,
+         4
+        ],
+        "tone": "success"
+       }
+      ],
+      "caption": "123: slot 3 busy → slot 4"
+     }
+    },
+    {
+     "title": "Insert 142",
+     "body": "$h(142)=2$ occupied → 3 occupied → 4 occupied → 5 occupied → 6 empty. Store at **6**.",
+     "scene": {
+      "cells": [
+       "",
+       "",
+       "62",
+       "43",
+       "123",
+       "165",
+       "142",
+       "",
+       "",
+       ""
+      ],
+      "hl": [
+       {
+        "at": [
+         2,
+         5
+        ],
+        "tone": "error"
+       },
+       {
+        "at": [
+         6,
+         6
+        ],
+        "tone": "success"
+       }
+      ],
+      "caption": "142: probes 2,3,4,5 → slot 6"
+     }
+    }
+   ],
+   "animation": {
+    "kind": "array",
+    "label": "table",
+    "cells": [
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    "caption": "10 empty buckets"
+   },
+   "answer": {
+    "value": "6",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Home slot 2 already holds 62."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Slot 3 holds 43."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Slot 4 was taken by 123 (which collided at 3)."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "First free slot after 2,3,4,5."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting that 123 already moved into slot 4."
+   ],
+   "verification": "Final table: 2:62, 3:43, 4:123, 5:165, 6:142."
+  },
+  "it-2005-cs-17": {
+   "approach": "The intended reading: each `ln -s` replaces the target name with a symbolic link, so the original contents of file2 and file3 are lost, while file1 survives.",
+   "concepts": [
+    "Symbolic links",
+    "Unix file system"
+   ],
+   "steps": [
+    {
+     "title": "First command",
+     "body": "`ln -s file1 file2` makes file2 a symlink to file1 → file2's data (friends) is gone."
+    },
+    {
+     "title": "Second command",
+     "body": "`ln -s file2 file3` makes file3 a symlink to file2 (→ file1) → file3's data (courses) is gone. file1 (hobbies) is untouched."
+    },
+    {
+     "title": "Caveat",
+     "body": "Real `ln -s` without `-f` refuses with \"File exists\", so strictly nothing is lost; the question intends overwriting."
+    }
+   ],
+   "answer": {
+    "value": "(II) and (III) only",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "file1 (hobbies) is only the link target; it is never overwritten."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "file2 and file3 are replaced by links, losing friends and courses."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The second command also replaces file3."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "file1 is not modified."
+    }
+   ],
+   "pitfalls": [
+    "Thinking the link target (file1) is affected."
+   ],
+   "verification": "After the commands, reading file3 or file2 shows file1's hobbies; only hobbies data remains."
+  },
+  "it-2005-cs-18": {
+   "approach": "`find . -name passwd -print` only prints path names of files called passwd; among the options, only `ls passwd` reports a file name rather than file contents.",
+   "concepts": [
+    "find",
+    "ls",
+    "grep",
+    "cat"
+   ],
+   "steps": [
+    {
+     "title": "What find prints",
+     "body": "In /etc it prints `./passwd` (the name, not the contents)."
+    },
+    {
+     "title": "Compare options",
+     "body": "`ls passwd` prints `passwd` — the same information. `cat` prints contents; the `grep` commands print lines of /etc/passwd containing \"name\"/\"print\"."
+    }
+   ],
+   "answer": {
+    "value": "ls passwd",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Lists the file name, as find does (ignoring find's recursion into subdirectories)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Prints the file's contents."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Searches the contents of passwd for the string \"name\"."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Searches the contents of passwd for the string \"print\"."
+    }
+   ],
+   "pitfalls": [
+    "Reading `-name` and `-print` as search strings for grep."
+   ],
+   "verification": "Strictly find is recursive and could list more files; (A) is still the only option that reports names."
+  },
+  "it-2005-cs-19": {
+   "approach": "Signals are delivered by the kernel, but a user-installed handler is ordinary user code: the kernel sets up a frame and returns to user mode to run it.",
+   "concepts": [
+    "Signals",
+    "User vs kernel mode"
+   ],
+   "steps": [
+    {
+     "title": "Delivery",
+     "body": "Ctrl-C makes the kernel post SIGINT. On return to the process, the kernel arranges the user stack so execution resumes in the handler."
+    },
+    {
+     "title": "Execution mode",
+     "body": "The handler is part of the process's own code, so it runs in **user mode** (and returns via a `sigreturn` system call)."
+    }
+   ],
+   "answer": {
+    "value": "User mode",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Running user code in kernel mode would be a security hole."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "\"Super user\" is a privilege level of a user id, not a CPU mode; the process need not be root."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Privileged mode is kernel mode."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "User handlers execute in user mode."
+    }
+   ],
+   "verification": "Handlers can call any user library function and can crash only their own process — characteristic of user mode."
+  },
+  "it-2005-cs-20": {
+   "approach": "LOC is routinely estimated from FP via language-specific \"backfiring\" factors, so FP and LOC are related; the other statements follow from those factors.",
+   "concepts": [
+    "Function points",
+    "LOC estimation"
+   ],
+   "steps": [
+    {
+     "title": "Backfiring factors",
+     "body": "Typical LOC per FP: assembly ≈ 320, COBOL ≈ 106, FORTRAN ≈ 106, C++ ≈ 64."
+    },
+    {
+     "title": "Check statements",
+     "body": "(A) true: factor depends on language. (B) true: $320>106$. (C) true: $106/64\\approx1.66\\approx1.6$. (D) contradicts the very use of FP to estimate LOC → FALSE."
+    }
+   ],
+   "answer": {
+    "value": "FP and LOC are not related to each other",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True: LOC/FP depends on the language."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True: assembly needs more LOC per FP than COBOL."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "True: $106/64\\approx1.6$."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "False — they are related through language-specific conversion factors."
+    }
+   ],
+   "verification": "The question itself states FP is used to estimate LOC, which already rules out (D)."
+  },
+  "it-2005-cs-21": {
+   "approach": "Rent depends on a particular person staying in a particular room, i.e. on the pair (room, person) — an attribute of the many-to-many relationship.",
+   "concepts": [
+    "ER model",
+    "Relationship attributes"
+   ],
+   "steps": [
+    {
+     "title": "Dependency",
+     "body": "One person can lodge in many rooms and one room can host many persons, so rent is neither a property of a person alone nor of a room alone."
+    },
+    {
+     "title": "Place",
+     "body": "An attribute determined by the combination belongs on the relationship **Lodging** (in the relational schema it goes in the Lodging table keyed by (room, person))."
+    }
+   ],
+   "answer": {
+    "value": "Lodging",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A person may pay for several rooms; one value per person cannot capture that."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "A room is occupied by several persons, each with their own payment."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Rent depends on the (room, person) pair."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Lodging is the right place."
+    }
+   ],
+   "verification": "For M:N relationships, attributes cannot migrate to either entity without losing information."
+  },
+  "it-2005-cs-22": {
+   "approach": "Find the key, then look for partial dependencies (a non-prime attribute depending on part of the key).",
+   "concepts": [
+    "Candidate key",
+    "Partial dependency",
+    "2NF"
+   ],
+   "steps": [
+    {
+     "title": "Key",
+     "body": "$\\{F1,F2\\}^+=\\{F1,F2,F3,F4,F5\\}$; neither $F1$ nor $F2$ alone is a key. Key $=(F1,F2)$."
+    },
+    {
+     "title": "Partial dependencies",
+     "body": "$F1\\to F3$ and $F2\\to F4$: non-prime attributes depend on a proper subset of the key ⇒ violates 2NF. Atomic fields ⇒ 1NF."
+    }
+   ],
+   "answer": {
+    "value": "1NF",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "In 1NF but not 2NF due to partial dependencies."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$F1\\to F3$ is a partial dependency."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "3NF requires 2NF."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "The table (atomic fields) is in 1NF."
+    }
+   ],
+   "verification": "Decomposing into (F1,F3), (F2,F4), (F1,F2,F5) would be needed for 2NF."
+  },
+  "it-2005-cs-23": {
+   "approach": "Worst case: the insertion causes a split at every level (each split creates one new node), and the root split also creates a new root.",
+   "concepts": [
+    "B-tree insertion",
+    "Node splitting"
+   ],
+   "steps": [
+    {
+     "title": "Splits",
+     "body": "Leaf full → split (1 new node), pushes a key up; each of the 3 ancestors likewise full → split. 4 levels ⇒ 4 new nodes."
+    },
+    {
+     "title": "New root",
+     "body": "Splitting the root creates a new root above it: $4+1=5$ new nodes (tree grows to 5 levels)."
+    }
+   ],
+   "answer": {
+    "value": "5",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "4 splits + 1 new root."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Forgets the new root created when the root splits."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Undercounts the cascade."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Counts only a leaf split plus one more node."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting the new root node."
+   ],
+   "verification": "Each split adds exactly one node; the root split adds two (sibling + new root)."
+  }
+ }
+}
