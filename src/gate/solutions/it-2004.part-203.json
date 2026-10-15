@@ -1,0 +1,1213 @@
+{
+  "paper": "it-2004",
+  "version": 2,
+  "solutions": {
+    "it-2004-it-70": {
+      "approach": "The lines of code $L$ are fixed, so $E^{1/3}t^{4/3}$ must stay constant. Cubing gives $E\\,t^4=$ constant, so halving the duration multiplies effort by $2^4=16$.",
+      "concepts": [
+        "Putnam (SLIM) software equation",
+        "Effort–duration trade-off"
+      ],
+      "steps": [
+        {
+          "title": "What stays constant",
+          "body": "$L=P\\,(E/B)^{1/3}\\,t^{4/3}$ with $L,P,B$ fixed $\\Rightarrow E^{1/3}t^{4/3}=\\text{const}$.\n\nCube both sides: $E\\,t^{4}=\\text{const}$."
+        },
+        {
+          "title": "Scale the effort",
+          "body": "$E_2=E_1\\left(\\dfrac{t_1}{t_2}\\right)^4=20\\times\\left(\\dfrac{8}{4}\\right)^4=20\\times16=320$ person-months."
+        }
+      ],
+      "answer": {
+        "value": "320 person-months",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "10 assumes effort scales with duration ($E\\propto t$); compressing the schedule increases effort."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "40 treats $E\\propto 1/t$ (only a factor 2)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "160 uses $(8/4)^3=8$; after cubing, the exponent of $t$ is 4."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$20\\times 2^4=320$."
+        }
+      ],
+      "pitfalls": [
+        "Cubing $t^{4/3}$ gives $t^4$, not $t^3$."
+      ],
+      "verification": "Check: $320\\cdot4^4=320\\cdot256=81920$ and $20\\cdot8^4=20\\cdot4096=81920$ — equal, so $L$ is unchanged."
+    },
+    "it-2004-it-71": {
+      "approach": "Error seeding assumes the test suite finds native errors at the same rate as seeded ones. The detection ratio $16/20$ scales the 200 found native errors up to an estimated total; the undetected count is the difference.",
+      "concepts": [
+        "Error seeding (Mills' method)",
+        "Defect estimation"
+      ],
+      "steps": [
+        {
+          "title": "Detection rate",
+          "body": "Seeded errors found $=\\dfrac{16}{20}=0.8$ of those present."
+        },
+        {
+          "title": "Estimated native total",
+          "body": "$N=\\dfrac{200}{0.8}=\\dfrac{200\\times20}{16}=250$."
+        },
+        {
+          "title": "Undetected native errors",
+          "body": "$250-200=50$.\n\nThe value 50 is not printed; option (b) reads 500, which is taken as a misprint of 50 (the stored key is (b))."
+        }
+      ],
+      "answer": {
+        "value": "50 (printed as 500 in option B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4 is the number of undetected *seeded* errors ($20-16$), not native ones."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Intended value 50; printed as 500 (misprint). No other option equals 50."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "200 is the number of native errors already detected."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "250 is the estimated *total* number of native errors, not the undetected ones."
+        }
+      ],
+      "pitfalls": [
+        "Do not report the estimated total (250) as the undetected count.",
+        "Undetected seeded errors (4) are irrelevant to the question."
+      ],
+      "verification": "Ratio check: $200/250=0.8=16/20$, so the estimate is consistent; $250-200=50$."
+    },
+    "it-2004-it-72": {
+      "approach": "Steady-state availability is the fraction of time the system is up: $A=\\dfrac{MTBF}{MTBF+MTTR}$, with both in the same unit.",
+      "concepts": [
+        "Availability",
+        "MTBF",
+        "MTTR"
+      ],
+      "steps": [
+        {
+          "title": "Same units",
+          "body": "$MTBF=25\\text{ days}=25\\times24=600$ h; $MTTR=6$ h."
+        },
+        {
+          "title": "Availability",
+          "body": "$A=\\dfrac{600}{600+6}=\\dfrac{600}{606}=0.990099\\ldots\\approx99.009\\%$."
+        }
+      ],
+      "answer": {
+        "value": "≈ 99.009%",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "About 1% is the *unavailability*, not the availability."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "24% comes from mixing days and hours (6/25)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "99% is only a rounding; $600/606=99.0099\\%$ matches (d) exactly."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$600/606\\approx99.009\\%$."
+        }
+      ],
+      "pitfalls": [
+        "Convert days to hours before combining."
+      ],
+      "verification": "$1-A=6/606\\approx0.99\\%$, so $A\\approx99.01\\%$."
+    },
+    "it-2004-it-73": {
+      "approach": "Map each entity to a table, absorb the 1:m relationship into the many side as a foreign key, and give the multivalued attribute its own table — the standard minimum mapping that stays in 3NF.",
+      "concepts": [
+        "ER-to-relational mapping",
+        "1:m relationship",
+        "Multivalued attribute",
+        "3NF"
+      ],
+      "steps": [
+        {
+          "title": "Entity E1",
+          "body": "$E1(\\underline{A11}, A12, A13)$ — one table."
+        },
+        {
+          "title": "Entity E2 with R absorbed",
+          "body": "R is 1:m with E1 on the '1' side, so put $A11$ as a foreign key in E2: $E2(\\underline{A21}, A22, A11)$. R needs no table of its own (it has no attributes)."
+        },
+        {
+          "title": "Multivalued A23",
+          "body": "A23 cannot stay in E2 (it would break 1NF), so it gets $E2\\_A23(\\underline{A21, A23})$."
+        },
+        {
+          "title": "Count",
+          "body": "$E1,\\ E2,\\ E2\\_A23\\Rightarrow 3$ tables, each in 3NF."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2 tables would keep the multivalued A23 inside E2, breaking 1NF (hence 3NF)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "E1, E2 (with FK A11) and one table for multivalued A23."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "4 makes a separate table for R, which is unnecessary for a 1:m relationship."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "5 over-splits; no further decomposition is needed."
+        }
+      ],
+      "pitfalls": [
+        "A 1:m relationship without attributes needs no table of its own."
+      ],
+      "verification": "E1: $A11\\to A12,A13$; E2: $A21\\to A22,A11$; E2_A23 is all-key — every table is in 3NF."
+    },
+    "it-2004-it-74": {
+      "approach": "A comma-separated FROM list with no WHERE clause is a Cartesian product: rows multiply, columns add.",
+      "concepts": [
+        "Cartesian product",
+        "SELECT *"
+      ],
+      "steps": [
+        {
+          "title": "Table sizes",
+          "body": "student: 3 rows (all three inserts succeeded; dept_id is NULL where not given), 3 columns (roll_no, name, dept_id).\n\ndepartment: 2 rows, 2 columns (dept_id, dept_name)."
+        },
+        {
+          "title": "Cross product",
+          "body": "Rows $=3\\times2=6$; columns $=3+2=5$ (both dept_id columns are kept)."
+        }
+      ],
+      "answer": {
+        "value": "6 rows and 5 columns",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A Cartesian product of two non-empty tables is non-empty."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "3 rows and 4 columns looks like a join that merges dept_id; there is no join here."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "5 columns is right, but 3 rows assumes a join; with no WHERE clause every pair is kept."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$3\\times2=6$ rows, $3+2=5$ columns."
+        }
+      ],
+      "pitfalls": [
+        "SELECT * keeps both dept_id columns — there is no natural-join merging."
+      ],
+      "verification": "Rows with NULL dept_id still pair with every department row: $3\\cdot2=6$."
+    },
+    "it-2004-it-75": {
+      "approach": "Find the candidate key, then look for partial and transitive dependencies. The only key is empcode, and pincode → city, state is a dependency between non-key attributes.",
+      "concepts": [
+        "Functional dependency",
+        "2NF",
+        "3NF",
+        "Transitive dependency"
+      ],
+      "steps": [
+        {
+          "title": "FDs and key",
+          "body": "$empcode\\to$ all attributes; $pincode\\to city, state$; $street, city, state\\to pincode$.\n\nempcode is unique and appears on no right-hand side, so it is the only candidate key."
+        },
+        {
+          "title": "2NF",
+          "body": "The key is a single attribute, so no partial dependency can exist ⇒ 2NF."
+        },
+        {
+          "title": "3NF fails",
+          "body": "$empcode\\to pincode\\to city, state$: city and state are non-prime and depend on the non-key pincode (transitive). So not 3NF."
+        }
+      ],
+      "answer": {
+        "value": "2NF (and 1NF), not 3NF",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A single-attribute key rules out partial dependencies, so it is at least 2NF."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "In 2NF; pincode → city, state is transitive, so not 3NF."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$pincode\\to city$ has a non-superkey LHS and a non-prime RHS — violates 3NF."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "BCNF is stronger than 3NF, which already fails."
+        }
+      ],
+      "pitfalls": [
+        "{street, city, state} and pincode are not keys — they don't determine empcode or name."
+      ],
+      "verification": "$pincode^+=\\{pincode, city, state\\}$ — not a superkey, and the RHS is non-prime ⇒ 3NF violation."
+    },
+    "it-2004-it-76": {
+      "approach": "Arithmetic on NULL stays NULL, and AVG ignores NULLs in both the sum and the count.",
+      "concepts": [
+        "NULL semantics",
+        "Aggregate functions"
+      ],
+      "steps": [
+        {
+          "title": "After the update",
+          "body": "marks become $15, 25, 35, \\text{NULL}$ ($\\text{NULL}+5=\\text{NULL}$)."
+        },
+        {
+          "title": "AVG skips NULL",
+          "body": "$\\dfrac{15+25+35}{3}=\\dfrac{75}{3}=25$."
+        }
+      ],
+      "answer": {
+        "value": "25",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "18.75 $=75/4$ wrongly counts the NULL row."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "20 is the average before the update."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$75/3=25$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "AVG returns NULL only if every value is NULL."
+        }
+      ],
+      "pitfalls": [
+        "COUNT(*) counts NULL rows, but AVG uses only the non-NULL values."
+      ],
+      "verification": "The old average over non-NULL rows is 20; adding 5 to each gives 25."
+    },
+    "it-2004-it-77": {
+      "approach": "Build the precedence graph from conflicting pairs. A cycle rules out conflict serializability; a quick view check (who reads what, final writers) confirms that neither serial order is equivalent.",
+      "concepts": [
+        "Conflict serializability",
+        "Precedence graph",
+        "View serializability"
+      ],
+      "steps": [
+        {
+          "title": "Conflicts on A",
+          "body": "$R_1(A)$ before $W_2(A)$ ⇒ $T1\\to T2$.\n\n$W_2(A)$ before $W_1(A)$ ⇒ $T2\\to T1$.",
+          "scene": {
+            "edges": [
+              {
+                "from": "T1",
+                "to": "T2",
+                "w": "R1(A)→W2(A)"
+              },
+              {
+                "from": "T2",
+                "to": "T1",
+                "w": "W2(A)→W1(A)"
+              }
+            ],
+            "edgeTones": {
+              "T1>T2": "accent",
+              "T2>T1": "warning"
+            },
+            "caption": "Two opposite edges from item A"
+          }
+        },
+        {
+          "title": "Cycle",
+          "body": "$T1\\to T2\\to T1$ is a cycle ⇒ S is not conflict serializable.",
+          "scene": {
+            "edgeTones": {
+              "T1>T2": "error",
+              "T2>T1": "error"
+            },
+            "tones": {
+              "T1": "error",
+              "T2": "error"
+            },
+            "caption": "Cycle ⇒ not conflict serializable"
+          }
+        },
+        {
+          "title": "View check",
+          "body": "In S both transactions read the initial A; the final writer of A is T1 and of B is T2.\n\n- Serial $T1,T2$: T2 would read the A written by T1 — differs.\n- Serial $T2,T1$: T1 would read the A written by T2 — differs.\n\nSo S matches neither order (T2's update of A is lost)."
+        }
+      ],
+      "answer": {
+        "value": "Not serializable",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Edge $T2\\to T1$ (and T2 reading the initial A) contradicts T1 running first."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Edge $T1\\to T2$ (T1 reads the initial A) contradicts T2 running first."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A schedule whose precedence graph has a cycle cannot match both orders."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Cycle in the precedence graph, and the view test fails for both orders."
+        }
+      ],
+      "pitfalls": [
+        "Only conflicting operations (same item, at least one write, different transactions) create edges."
+      ],
+      "verification": "Lost update: T1 overwrites A with a value computed from the old A, discarding T2's write — impossible in any serial run.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "T1",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "T2",
+            "x": 3,
+            "y": 0
+          }
+        ],
+        "edges": [],
+        "caption": "Precedence graph of S"
+      }
+    },
+    "it-2004-it-78": {
+      "approach": "A foreign-key column may be NULL (unless declared NOT NULL); a primary-key column may never be NULL.",
+      "concepts": [
+        "Primary key",
+        "Foreign key",
+        "Entity integrity",
+        "Referential integrity"
+      ],
+      "steps": [
+        {
+          "title": "Statement (i)",
+          "body": "Student.Dept_id is a foreign key; NULL means 'no department' and violates no constraint ⇒ succeeds."
+        },
+        {
+          "title": "Statement (ii)",
+          "body": "Department.Dept_id is the primary key; entity integrity forbids NULL (and Student rows still reference 1) ⇒ fails."
+        }
+      ],
+      "answer": {
+        "value": "(i) succeeds, (ii) fails",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(i) is legal: foreign-key columns may hold NULL."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed — the primary-key update is the one that fails."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "A foreign key may be NULL; a primary key may not."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(ii) sets a primary key to NULL, which is rejected."
+        }
+      ],
+      "pitfalls": [
+        "Referential integrity checks only non-NULL foreign-key values."
+      ],
+      "verification": "Entity integrity: no primary-key attribute is NULL; referential integrity: every non-NULL foreign key matches a primary key."
+    },
+    "it-2004-it-79": {
+      "approach": "A B-tree node of order p holds p block pointers, $p-1$ keys and $p-1$ data pointers; make the total fit in 512 bytes.",
+      "concepts": [
+        "B-tree node layout",
+        "Order of a B-tree"
+      ],
+      "steps": [
+        {
+          "title": "Node size",
+          "body": "$p\\cdot P_B+(p-1)(K+P_D)\\le 512$\n\n$5p+(p-1)(10+8)\\le512$"
+        },
+        {
+          "title": "Solve",
+          "body": "$5p+18p-18\\le512\\Rightarrow23p\\le530\\Rightarrow p\\le23.04$\n\nSo $p_{\\max}=23$."
+        }
+      ],
+      "answer": {
+        "value": "23",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "20 fits but is not the maximum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "22 fits, but $p=23$ also fits ($23\\cdot5+22\\cdot18=511$)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$115+396=511\\le512$, while $p=24$ needs 534 bytes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$p=32$ needs $160+31\\cdot18=718>512$ bytes."
+        }
+      ],
+      "pitfalls": [
+        "In a B-tree (unlike a B$^+$-tree) every key in a node carries a data pointer."
+      ],
+      "verification": "$p=23$: 511 bytes; $p=24$: $120+414=534>512$."
+    },
+    "it-2004-it-80": {
+      "approach": "With flag 0111, the data must never contain 0111, so the transmitter stuffs a 0 after every '011' in the data stream.",
+      "concepts": [
+        "Bit stuffing",
+        "Frame delimiting"
+      ],
+      "steps": [
+        {
+          "title": "Stuffing rule",
+          "body": "Flag $=0111$. Insert a 0 whenever the data shows $011$, so $0111$ can never appear inside the frame."
+        },
+        {
+          "title": "Scan 01110110",
+          "body": "- bits 1–3: $011$ → send $011\\,\\mathbf{0}$\n- bit 4: $1$\n- bits 5–7: $011$ → send $011\\,\\mathbf{0}$\n- bit 8: $0$\n\nOutput: $011\\,0\\,1\\,011\\,0\\,0=0110101100$.",
+          "scene": {
+            "rows": [
+              {
+                "label": "data",
+                "fields": [
+                  {
+                    "bits": "011",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "1"
+                  },
+                  {
+                    "bits": "011",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "0"
+                  }
+                ]
+              },
+              {
+                "label": "sent",
+                "fields": [
+                  {
+                    "bits": "011",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "0",
+                    "label": "stuffed",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "1"
+                  },
+                  {
+                    "bits": "011",
+                    "tone": "accent"
+                  },
+                  {
+                    "bits": "0",
+                    "label": "stuffed",
+                    "tone": "warning"
+                  },
+                  {
+                    "bits": "0"
+                  }
+                ],
+                "value": "0110101100"
+              }
+            ],
+            "caption": "A 0 is stuffed after each 011"
+          }
+        }
+      ],
+      "answer": {
+        "value": "0110101100",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only 8 bits — a stuffed frame must be longer than the data."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 bits: stuffs only once, but the second $011$ also needs a stuffed 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contains $0111$, the flag itself."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Both stuffed 0s inserted; no $0111$ inside."
+        }
+      ],
+      "pitfalls": [
+        "The 0 at data position 5 starts a second $011$ pattern that also needs stuffing."
+      ],
+      "verification": "The receiver deletes the 0 after each $011$: $0110\\,1\\,0110\\,0\\to011\\,1\\,011\\,0=01110110$.",
+      "animation": {
+        "kind": "bits",
+        "rows": [
+          {
+            "label": "data",
+            "fields": [
+              {
+                "bits": "01110110"
+              }
+            ]
+          }
+        ],
+        "caption": "Data to send"
+      }
+    },
+    "it-2004-it-81": {
+      "approach": "To keep old and new frames distinguishable, the sender's outstanding window and the receiver's acceptance window must never overlap in sequence space, so at least $N+M$ numbers are needed.",
+      "concepts": [
+        "Sliding window ARQ",
+        "Sequence number space"
+      ],
+      "steps": [
+        {
+          "title": "Worst case",
+          "body": "The sender sends N frames, all received, but every ACK is lost. The receiver has advanced its window by N and now accepts M new numbers, while the sender retransmits the old N."
+        },
+        {
+          "title": "No overlap",
+          "body": "The old numbers (N) and the receiver's new window (M) must be disjoint ⇒ at least $N+M$ distinct sequence numbers."
+        }
+      ],
+      "answer": {
+        "value": "M + N",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "min(M,N) cannot even cover the sender's outstanding frames."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "max(M,N) lets a retransmission fall inside the receiver's new window."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$N+M$ keeps the two windows disjoint."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$MN$ works but is not the minimum."
+        }
+      ],
+      "pitfalls": [
+        "Special cases: Go-Back-N ($M=1$) needs $N+1$; Selective Repeat ($M=N$) needs $2N$ — both equal $M+N$."
+      ],
+      "verification": "Agrees with the known Go-Back-N and Selective Repeat bounds."
+    },
+    "it-2004-it-82": {
+      "approach": "With a single sender, each frame cycle = transmit the frame, wait for its last bit to come back round the ring (removal), then release the token, which must travel round the ring once to come back.",
+      "concepts": [
+        "Token ring",
+        "Release after removal",
+        "Effective throughput"
+      ],
+      "steps": [
+        {
+          "title": "Transmission time",
+          "body": "$T_t=\\dfrac{1000\\times8}{10\\times10^6}=800\\,\\mu s$."
+        },
+        {
+          "title": "Cycle per frame",
+          "body": "Frame sent and fully circulated: $800+400=1200\\,\\mu s$; the released token circulates back: $+400\\,\\mu s$.\n\nCycle $=1600\\,\\mu s$."
+        },
+        {
+          "title": "Effective rate",
+          "body": "$\\dfrac{8000\\text{ bits}}{1600\\,\\mu s}=5$ Mbps."
+        }
+      ],
+      "answer": {
+        "value": "5 Mbps",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1 Mbps would need an 8 ms cycle."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "2 Mbps would need a 4 ms cycle."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$8000/1600\\,\\mu s=5$ Mbps."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Ignoring the token's trip gives $8000/1200\\,\\mu s\\approx6.67$ Mbps — not 6, and it drops a real delay."
+        }
+      ],
+      "pitfalls": [
+        "The token must return to the only active host before its next frame."
+      ],
+      "verification": "Utilisation $=800/1600=0.5$ of 10 Mbps $=5$ Mbps."
+    },
+    "it-2004-it-83": {
+      "approach": "Go-back-N sends a window of n frames per cycle of (frame time + round trip). Throughput = (window × frame bits) / cycle, capped at the link rate.",
+      "concepts": [
+        "Go-back-N",
+        "Link utilisation"
+      ],
+      "steps": [
+        {
+          "title": "Times",
+          "body": "$T_t=\\dfrac{100\\times8}{20\\,000}=40$ ms; $RTT=2\\times400=800$ ms."
+        },
+        {
+          "title": "Cycle",
+          "body": "The first ACK returns at $40+800=840$ ms; in that time only 10 frames (400 ms of sending) can go out."
+        },
+        {
+          "title": "Rate",
+          "body": "$\\dfrac{10\\times800\\text{ bits}}{0.84\\text{ s}}\\approx9524\\text{ bps}\\approx10$ Kbps."
+        }
+      ],
+      "answer": {
+        "value": "≈ 10 Kbps",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "5 Kbps would correspond to a window of about 5 frames."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$8000/0.84\\approx9.5$ Kbps $\\approx10$ Kbps."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "15 Kbps would need about 16 frames outstanding."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The full 20 Kbps needs $n\\ge 840/40=21$ frames."
+        }
+      ],
+      "pitfalls": [
+        "Use the round trip (twice the propagation delay) in the cycle."
+      ],
+      "verification": "Efficiency $=10\\cdot40/840=0.476$; $0.476\\times20=9.52$ Kbps."
+    },
+    "it-2004-it-84": {
+      "approach": "A parity-check code is linear: the XOR of any codewords is a codeword. With 3 data bits there are exactly $2^3=8$ codewords, all generated from the three given ones.",
+      "concepts": [
+        "Linear block codes",
+        "Closure under XOR"
+      ],
+      "steps": [
+        {
+          "title": "Generate all codewords",
+          "body": "$c_1=0101011,\\ c_2=1001101,\\ c_3=1110001$\n\n$c_1\\oplus c_2=1100110$, $c_1\\oplus c_3=1011010$, $c_2\\oplus c_3=0111100$, $c_1\\oplus c_2\\oplus c_3=0010111$, plus $0000000$."
+        },
+        {
+          "title": "Check the candidates",
+          "body": "1. $0010111$ ✓ ($c_1\\oplus c_2\\oplus c_3$)\n2. $0110110$ ✗\n3. $1011010$ ✓ ($c_1\\oplus c_3$)\n4. $0111010$ ✗"
+        }
+      ],
+      "answer": {
+        "value": "1 and 3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Only 1 and 3 are among the 8 codewords."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "0110110 is not an XOR combination of the given words."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Neither 2 nor 4 is a codeword."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Only 8 codewords exist, and 2 and 4 are not among them."
+        }
+      ],
+      "pitfalls": [
+        "The three given words are linearly independent, so their 8 combinations are the whole code."
+      ],
+      "verification": "The 8 words listed are distinct, so they are exactly the $2^3$ codewords; 0110110 and 0111010 differ from all of them."
+    },
+    "it-2004-it-85": {
+      "approach": "A host succeeds in a slot only if it transmits and every other host stays silent: $p(1-p)^{n-1}$. Find the largest n keeping this ≥ 0.16 with $p=0.2$.",
+      "concepts": [
+        "Slotted access",
+        "Per-host throughput"
+      ],
+      "steps": [
+        {
+          "title": "Per-host throughput",
+          "body": "$S(n)=p(1-p)^{n-1}=0.2\\times0.8^{\\,n-1}$ (the '0.2m' in the text is a misprint of 0.2)."
+        },
+        {
+          "title": "Try n",
+          "body": "$n=1$: $0.2$; $n=2$: $0.2\\times0.8=0.16$ ✓; $n=3$: $0.2\\times0.64=0.128$ ✗."
+        },
+        {
+          "title": "Answer",
+          "body": "Maximum $n=2$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "1 host works, but 2 hosts still get 0.16 each."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$0.2\\times0.8=0.16$ exactly."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$0.2\\times0.8^2=0.128<0.16$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$0.2\\times0.8^3=0.1024<0.16$."
+        }
+      ],
+      "pitfalls": [
+        "The constraint is on per-host throughput, not total channel throughput."
+      ],
+      "verification": "$S(n)$ decreases with n, so the first failure ($n=3$) bounds the answer."
+    },
+    "it-2004-it-86": {
+      "approach": "Port numbers identify processes and live in the transport (TCP/UDP) header; the IP header carries addressing and fragmentation fields.",
+      "concepts": [
+        "IPv4 header",
+        "Layering"
+      ],
+      "steps": [
+        {
+          "title": "IP header fields",
+          "body": "Includes identification, flags, **fragment offset**, TTL, protocol, checksum, **source** and **destination IP addresses**."
+        },
+        {
+          "title": "Ports",
+          "body": "Source and destination **port numbers** are in the TCP/UDP header, not the IP header."
+        }
+      ],
+      "answer": {
+        "value": "Destination port number",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fragment offset is an IPv4 header field."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The source address is in the IP header."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The destination address is in the IP header."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Ports belong to the transport-layer header."
+        }
+      ],
+      "verification": "The IPv4 header layout (RFC 791) has no port field."
+    },
+    "it-2004-it-87": {
+      "approach": "The intended reasoning counts the IP packets carrying the 2100-byte message over the 400-byte network: each holds $400-20=380$ data bytes, so $\\lceil2100/380\\rceil=6$ packets × 20 bytes.",
+      "concepts": [
+        "IP fragmentation",
+        "Header overhead"
+      ],
+      "steps": [
+        {
+          "title": "Data per packet on network 2",
+          "body": "Payload limit 400 bytes, IP header 20 bytes ⇒ 380 data bytes per packet."
+        },
+        {
+          "title": "Packets (intended)",
+          "body": "$\\lceil2100/380\\rceil=\\lceil5.53\\rceil=6$ packets ⇒ overhead $6\\times20=120$ bytes."
+        },
+        {
+          "title": "Caveat: hop-by-hop",
+          "body": "Strictly, network 1 first creates fragments carrying $1180$ and $920$ data bytes; refragmenting them gives $\\lceil1180/380\\rceil+\\lceil920/380\\rceil=4+3=7$ fragments ⇒ 140 bytes (8-byte-aligned 376-byte pieces also give 4 + 3). 140 is not an option, so the intended answer is 120."
+        }
+      ],
+      "answer": {
+        "value": "120 bytes",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "40 bytes = 2 packets, as if network 1's packets crossed network 2 unfragmented."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "80 bytes = 4 packets, too few for 2100 bytes at 380 bytes each."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "6 packets × 20 bytes (intended reading)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "160 bytes = 8 packets, more than either count."
+        }
+      ],
+      "pitfalls": [
+        "Each fragment carries its own 20-byte IP header."
+      ],
+      "verification": "$5\\times380=1900<2100\\le6\\times380=2280$, so 6 packets is the minimum."
+    },
+    "it-2004-it-88": {
+      "approach": "In slow start the congestion window grows by one segment (MSS) for every ACK received, capped by the maximum window.",
+      "concepts": [
+        "TCP slow start",
+        "Congestion window"
+      ],
+      "steps": [
+        {
+          "title": "Each ACK adds one segment",
+          "body": "Current window $=4000$ B $=2$ segments of 2000 B."
+        },
+        {
+          "title": "Two ACKs",
+          "body": "$4000+2\\times2000=8000$ bytes, below the 12000-byte cap."
+        }
+      ],
+      "answer": {
+        "value": "8000 bytes",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The window grows on every ACK in slow start."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$4000+2\\times2000=8000$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "10000 would need three ACKs."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12000 is only the maximum cap."
+        }
+      ],
+      "pitfalls": [
+        "+1 segment per ACK is what makes the window double once per round trip; don't double it per ACK."
+      ],
+      "verification": "2 segments outstanding → 2 ACKs → 4 segments = 8000 B."
+    },
+    "it-2004-it-89": {
+      "approach": "Check well-formedness (syntax: one root, properly nested and closed tags) and validity (structure matches the DTD).",
+      "concepts": [
+        "Well-formed XML",
+        "DTD validation"
+      ],
+      "steps": [
+        {
+          "title": "Well-formed",
+          "body": "Single root `myMessage`, `message` properly nested and closed, valid XML declaration ⇒ well-formed."
+        },
+        {
+          "title": "Valid",
+          "body": "The DTD says `myMessage` contains exactly one `message`, and `message` holds `#PCDATA`. The document has exactly that ⇒ valid."
+        }
+      ],
+      "answer": {
+        "value": "Well-formed and validated",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The syntax is correct and the structure matches the DTD."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Nothing in the document violates the DTD."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A document must be well-formed before it can be valid."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "It is both well-formed and valid."
+        }
+      ],
+      "pitfalls": [
+        "'Valid but not well-formed' is impossible by definition."
+      ],
+      "verification": "Element names and content model match exactly (`myMessage` → `message` → text)."
+    },
+    "it-2004-it-90": {
+      "approach": "HREF accepts any URL reference: absolute, root-relative, document-relative, and one with a `#fragment`.",
+      "concepts": [
+        "HTML anchor tag",
+        "Absolute and relative URLs",
+        "Fragment identifiers"
+      ],
+      "steps": [
+        {
+          "title": "Each usage",
+          "body": "I: absolute URL ✓\n\nII: root-relative path `/BASIC/testpage.html` ✓\n\nIII: document-relative path ✓\n\nIV: relative path with fragment `#test` ✓"
+        },
+        {
+          "title": "Conclusion",
+          "body": "All four are valid ⇒ option (d), I, II, III and IV."
+        }
+      ],
+      "answer": {
+        "value": "I, II, III and IV",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Omits the valid relative forms III and IV."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits II and IV."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Omits IV; fragments are allowed in HREF."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "All four are valid URL references."
+        }
+      ],
+      "verification": "Every form is a URI reference under RFC 3986, which HREF accepts."
+    }
+  }
+}
