@@ -65,7 +65,7 @@ export interface AccentOverride {
 }
 
 export const CATEGORIES: { id: ThemeCategory; label: string; hint: string }[] = [
-  { id: 'signature', label: 'Signature', hint: 'Original Nexora themes' },
+  { id: 'signature', label: 'Signature', hint: 'Original NexoraGuru themes' },
   { id: 'editor', label: 'Editor classics', hint: 'Faithful takes on beloved open-source palettes' },
   { id: 'vivid', label: 'Vivid', hint: 'Neon and saturated, still readable' },
   { id: 'minimal', label: 'Minimal', hint: 'Monochrome, ink and paper' },
@@ -79,7 +79,7 @@ export const PALETTES: Palette[] = [
     id: 'midnight',
     name: 'Midnight',
     category: 'signature',
-    blurb: 'Blue-black ink with a calm cobalt accent — the Nexora default.',
+    blurb: 'Blue-black ink with a calm cobalt accent — the NexoraGuru default.',
     dark: {
       bg: ['0.165 0.007 265', '0.2 0.008 265', '0.235 0.009 265', '0.27 0.009 265', '0.31 0.01 265'],
       fg: ['0.965 0.003 265', '0.8 0.003 265', '0.68 0.003 265'],

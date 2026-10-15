@@ -61,6 +61,14 @@ const {
 } = require("./sync");
 const { judge, quickRun, LANG_CONFIG, hasRemote, REMOTE_ONLY } = require("./judge");
 const { createAiAssistRouter } = require("./ai-assist");
+const {
+  deployConfig,
+  corsOrigin,
+  isOriginAllowed,
+  sessionCookie,
+  publicRedirect,
+} = require("./deploy-config");
+const sentry = require("./sentry");
 
 const IS_PROD = process.env.NODE_ENV === "production";
 const APP_URL =
@@ -68,6 +76,8 @@ const APP_URL =
   // Render sets RENDER_EXTERNAL_URL (e.g. https://nexora.onrender.com) automatically.
   process.env.RENDER_EXTERNAL_URL ||
   `http://localhost:${process.env.PORT || 3000}`;
+// Split deploy (site and API on different hosts) — see src/deploy-config.js.
+const DEPLOY = deployConfig();
 
 /* ========== Lightweight HTTP Scrapers (fast, no browser) ========== */
 const SCRAPE_UA =
@@ -608,8 +618,10 @@ async function _scrapeAC(page, problem) {
 
 const app = express();
 
-/* ── Trust proxy (for Nginx / Cloudflare / Railway / Render) ── */
-if (IS_PROD) app.set("trust proxy", 1);
+/* ── Trust proxy (for Caddy / Nginx / Cloudflare / Railway / Render) ── */
+// Default: 1 hop in production (Render's proxy, or Caddy on the VM — Caddy
+// rewrites X-Forwarded-For to the real visitor IP). TRUST_PROXY overrides.
+if (DEPLOY.trustProxy !== false) app.set("trust proxy", DEPLOY.trustProxy);
 
 /* ── Compression ── */
 app.use(compression());
@@ -657,6 +669,11 @@ app.use(
       },
     },
     crossOriginEmbedderPolicy: false, // Monaco CDN workers
+    // The split deploy shows /uploads images from the API host on pages of the
+    // site host (same-site: api.nexoraguru.in → nexoraguru.in).
+    crossOriginResourcePolicy: {
+      policy: DEPLOY.publicUrl || process.env.CLIENT_ORIGINS ? "same-site" : "same-origin",
+    },
     hsts: IS_PROD
       ? { maxAge: 31536000, includeSubDomains: true, preload: true }
       : false,
@@ -664,13 +681,12 @@ app.use(
 );
 
 /* ── CORS ── */
-const allowedOrigins = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(",").map((o) => o.trim())
-  : [APP_URL, "http://localhost:3000", "http://127.0.0.1:3000"];
-
+// CLIENT_ORIGINS (comma-separated) lists the sites allowed to call the API with
+// cookies, e.g. https://nexoraguru.in,https://www.nexoraguru.in. Unset keeps
+// the old behaviour (any origin in dev; APP_URL + localhost:3000 in prod).
 app.use(
   cors({
-    origin: IS_PROD ? allowedOrigins : true,
+    origin: corsOrigin(DEPLOY),
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -750,14 +766,8 @@ const sessionMiddleware = session({
   resave: false,
   saveUninitialized: false,
   name: "nx.sid",
-  cookie: {
-    secure: IS_PROD, // HTTPS only in production
-    httpOnly: true, // Not accessible via JS
-    // "lax" (not "strict") so the session cookie is sent when GitHub/Google
-    // redirect back to /auth/*/callback — strict drops it on that hop.
-    sameSite: "lax",
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  },
+  // secure in production, httpOnly, sameSite lax, optional COOKIE_DOMAIN.
+  cookie: sessionCookie(DEPLOY),
 });
 app.use(sessionMiddleware);
 app.use(passport.initialize());
@@ -788,7 +798,7 @@ if (process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET) {
       {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: `${APP_URL}/auth/github/callback`,
+        callbackURL: `${DEPLOY.apiUrl}/auth/github/callback`,
         scope: ["user:email"],
       },
       (accessToken, refreshToken, profile, done) => {
@@ -814,7 +824,7 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: `${APP_URL}/auth/google/callback`,
+        callbackURL: `${DEPLOY.apiUrl}/auth/google/callback`,
         scope: ["profile", "email"],
       },
       (accessToken, refreshToken, profile, done) => {
@@ -851,17 +861,17 @@ async function finishOAuth(req, res, next, provider) {
     );
     if (linked) {
       persistSessionUser(req, linked);
-      return req.session.save(() => res.redirect(`/?auth=${provider}&linked=1`));
+      return req.session.save(() => res.redirect(publicRedirect(DEPLOY, `/?auth=${provider}&linked=1`)));
     }
     req.session.oauthUser = o;
-    req.session.save(() => res.redirect(`/?auth=${provider}`));
+    req.session.save(() => res.redirect(publicRedirect(DEPLOY, `/?auth=${provider}`)));
   } catch (e) {
     next(e);
   }
 }
 app.get("/auth/github", authLimiter, (req, res, next) => {
   if (!process.env.GITHUB_CLIENT_ID)
-    return res.redirect("/?auth_error=github_not_configured");
+    return res.redirect(publicRedirect(DEPLOY, "/?auth_error=github_not_configured"));
   passport.authenticate("github", { scope: ["user:email"] })(req, res, next);
 });
 app.get(
@@ -870,16 +880,16 @@ app.get(
   // strategy" and the caller gets a raw 500 instead of a readable message.
   (req, res, next) => {
     if (!process.env.GITHUB_CLIENT_ID) {
-      return res.redirect("/?auth_error=github_not_configured");
+      return res.redirect(publicRedirect(DEPLOY, "/?auth_error=github_not_configured"));
     }
-    passport.authenticate("github", { failureRedirect: "/?auth_error=github_failed" })(req, res, next);
+    passport.authenticate("github", { failureRedirect: publicRedirect(DEPLOY, "/?auth_error=github_failed") })(req, res, next);
   },
   (req, res, next) => finishOAuth(req, res, next, "github"),
 );
 
 app.get("/auth/google", authLimiter, (req, res, next) => {
   if (!process.env.GOOGLE_CLIENT_ID)
-    return res.redirect("/?auth_error=google_not_configured");
+    return res.redirect(publicRedirect(DEPLOY, "/?auth_error=google_not_configured"));
   passport.authenticate("google", { scope: ["profile", "email"] })(
     req,
     res,
@@ -892,9 +902,9 @@ app.get(
   // strategy" and the caller gets a raw 500 instead of a readable message.
   (req, res, next) => {
     if (!process.env.GOOGLE_CLIENT_ID) {
-      return res.redirect("/?auth_error=google_not_configured");
+      return res.redirect(publicRedirect(DEPLOY, "/?auth_error=google_not_configured"));
     }
-    passport.authenticate("google", { failureRedirect: "/?auth_error=google_failed" })(req, res, next);
+    passport.authenticate("google", { failureRedirect: publicRedirect(DEPLOY, "/?auth_error=google_failed") })(req, res, next);
   },
   (req, res, next) => finishOAuth(req, res, next, "google"),
 );
@@ -5700,7 +5710,8 @@ const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 const io = new SocketServer(server, {
   cors: {
-    origin: IS_PROD ? allowedOrigins : "*",
+    // Same allowlist as the HTTP API (CLIENT_ORIGINS).
+    origin: corsOrigin(DEPLOY),
     credentials: true,
   },
   pingTimeout: 60000,
@@ -5733,8 +5744,8 @@ function isAllowedSocketOrigin(req) {
   const origin = req.headers.origin;
   // Browsers always send Origin on websocket/XHR; non-browser clients have no
   // ambient cookies to abuse. In dev the Vite proxy forwards from localhost.
-  if (!IS_PROD || !origin) return true;
-  if (allowedOrigins.includes(origin)) return true;
+  if (!DEPLOY.enforceOrigins || !origin) return true;
+  if (isOriginAllowed(DEPLOY, origin)) return true;
   try {
     return new URL(origin).host === req.headers.host;
   } catch {
@@ -6156,6 +6167,7 @@ io.on("connection", (socket) => {
   app.use((err, req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const isDev = !IS_PROD;
+    if (status >= 500) sentry.captureException(err, { method: req.method, path: req.path });
     console.error(
       `[${new Date().toISOString()}] ${req.method} ${req.path} → ${status}:`,
       err.message,
@@ -6168,7 +6180,7 @@ io.on("connection", (socket) => {
   });
 
   server.listen(PORT, () => {
-    console.log(`\n🚀 Nexora running on ${APP_URL}`);
+    console.log(`\n🚀 NexoraGuru running on ${APP_URL}`);
     console.log(`   NODE_ENV : ${process.env.NODE_ENV || "development"}`);
     console.log(`   Port     : ${PORT}`);
     console.log(
@@ -6199,10 +6211,12 @@ io.on("connection", (socket) => {
   process.on("SIGINT", () => shutdown("SIGINT"));
   process.on("uncaughtException", (err) => {
     console.error("[uncaughtException]", err);
+    sentry.captureException(err);
     if (IS_PROD) shutdown("uncaughtException");
   });
   process.on("unhandledRejection", (reason) => {
     console.error("[unhandledRejection]", reason);
+    sentry.captureException(reason);
   });
 
   // Background pre-scraper: silently scrape un-cached statements

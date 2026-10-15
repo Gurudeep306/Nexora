@@ -46,7 +46,7 @@ export default function ContestsPage() {
       <PageHeader
         icon="contests"
         title="Contest Arena"
-        subtitle="Live Codeforces & CodeChef feeds plus password-gated Nexora custom contests."
+        subtitle="Live Codeforces & CodeChef feeds plus password-gated NexoraGuru custom contests."
         actions={
           <Button variant="outline" size="sm" onClick={contestsApi.refetch} aria-label="Refresh contests">
             <RefreshCw /> Refresh
@@ -100,7 +100,7 @@ export default function ContestsPage() {
             <EmptyState
               icon="trophy"
               title="Custom contests need an identity"
-              description="Sign in to join Nexora-hosted contests with a code and password."
+              description="Sign in to join NexoraGuru-hosted contests with a code and password."
             />
           </Card>
         </section>

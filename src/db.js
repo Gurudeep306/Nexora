@@ -1097,7 +1097,7 @@ async function initGateTables() {
 // ─────────────────────────────────────────────────────────────────────────────
 // Per-user data migration (idempotent).
 //
-// Nexora started as a single-user app, so progress, submissions, XP, streaks,
+// NexoraGuru started as a single-user app, so progress, submissions, XP, streaks,
 // notes and settings had no owner column — every account saw the same data.
 // This adds a `username` to each of those tables (rebuilding tables whose
 // UNIQUE keys must now include the user) and assigns all existing rows to

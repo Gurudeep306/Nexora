@@ -1,4 +1,8 @@
-# Nexora - The Ultimate Competitive Programming Learning Platform
+<p align="center"><img src="client/public/brand/lockup-on-light.png" alt="NexoraGuru" width="420"></p>
+
+# NexoraGuru - The Ultimate Competitive Programming Learning Platform
+
+**Live at [nexoraguru.in](https://nexoraguru.in)**
 
 > A gamified, AI-powered competitive programming platform with real-time collaboration, skill progression, and comprehensive learning resources.
 
@@ -63,7 +67,7 @@ Support for 30+ programming languages with verdicts: AC, WA, TLE, RE, CE, MLE
 
 ### 🤖 **AI Integration**
 One server-side AI agent (`src/ai/`), powered only by **Groq**, behind every AI feature:
-- **Nexora AI assistant** - a slide-over on every page (⌘J / Ctrl+J) that sees the page you're on, streams answers, can look up your stats, weak topics, problems, submissions, GATE questions and course content, and suggest pages to open
+- **NexoraGuru AI assistant** - a slide-over on every page (⌘J / Ctrl+J) that sees the page you're on, streams answers, can look up your stats, weak topics, problems, submissions, GATE questions and course content, and suggest pages to open
 - **Tutor pedagogy** - graded hints (nudge → approach → pseudocode) on problems you haven't solved; full solutions only once you have
 - **Coach, code completion, AI fix** - live code insight, tricky tests and verdict explanations; inline ghost text; minimal syntax fixes
 - **Translation, AI problem finder, Studio drafts, GATE debrief** and the assistant's 3D algorithm animator
@@ -321,6 +325,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Made with ❤️ by the Nexora team**
+**Made with ❤️ by the NexoraGuru team**
 
 Start your competitive programming journey today! 🚀

@@ -130,7 +130,7 @@ export function CustomContestsSection({ me }: { me: string }) {
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 id="custom-contests-heading" className="font-display text-lg tracking-wide text-foreground glow-text">
-            Nexora Custom Contests
+            NexoraGuru Custom Contests
           </h2>
           <p className="mt-0.5 text-xs text-foreground-dim">
             Password-gated contests hosted by players. Join with a contest code — or forge your own in the Workshop.
@@ -157,7 +157,7 @@ export function CustomContestsSection({ me }: { me: string }) {
           <EmptyState
             icon="trophy"
             title="No custom contests yet"
-            description="You haven't joined or hosted any Nexora contests. Join one with its NX-XXXXXX code, or build one in the Workshop."
+            description="You haven't joined or hosted any NexoraGuru contests. Join one with its NX-XXXXXX code, or build one in the Workshop."
             action={
               <Button variant="accent" size="sm" onClick={() => setJoinOpen(true)}>
                 <LogIn /> Join a contest

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 const COPY: Record<AiErrorKind, { title: string; body: string; icon: typeof TriangleAlert; tone: 'warn' | 'error' | 'info' }> = {
   unavailable: {
     title: 'AI isn’t set up on this server',
-    body: 'Everything else on Nexora works as usual. An admin can turn AI on by adding a GROQ_API_KEY.',
+    body: 'Everything else on NexoraGuru works as usual. An admin can turn AI on by adding a GROQ_API_KEY.',
     icon: PlugZap,
     tone: 'info',
   },

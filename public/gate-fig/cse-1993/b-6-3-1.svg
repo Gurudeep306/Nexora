@@ -1,33 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <defs>
-    <linearGradient id="gate-grad-cse-1993-ii-a-6-3" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#1e293b" />
-      <stop offset="100%" stopColor="#0f172a" />
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LOGIC CIRCUIT</text>
-  <rect x="80" y="70" width="80" height="90" rx="8" fill="url(#gate-grad-cse-1993-ii-a-6-3)" stroke="#38bdf8" stroke-width="2" />
-  <text x="120" y="100" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">FF₀</text>
-  <text x="92" y="125" fill="#94a3b8" font-size="11" font-family="monospace">CLK</text>
-  <text x="142" y="125" fill="#34d399" font-size="12" font-weight="bold" font-family="monospace">Q</text>
-  <text x="142" y="148" fill="#f43f5e" font-size="12" font-weight="bold" font-family="monospace">Q̄</text>
-  <line x1="160" y1="120" x2="230" y2="120" stroke="#34d399" stroke-width="2" />
-  <rect x="230" y="70" width="80" height="90" rx="8" fill="url(#gate-grad-cse-1993-ii-a-6-3)" stroke="#38bdf8" stroke-width="2" />
-  <text x="270" y="100" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">FF₁</text>
-  <text x="242" y="125" fill="#94a3b8" font-size="11" font-family="monospace">CLK</text>
-  <text x="292" y="125" fill="#34d399" font-size="12" font-weight="bold" font-family="monospace">Q</text>
-  <text x="292" y="148" fill="#f43f5e" font-size="12" font-weight="bold" font-family="monospace">Q̄</text>
-  <line x1="310" y1="120" x2="380" y2="120" stroke="#34d399" stroke-width="2" />
-  <rect x="380" y="70" width="80" height="90" rx="8" fill="url(#gate-grad-cse-1993-ii-a-6-3)" stroke="#38bdf8" stroke-width="2" />
-  <text x="420" y="100" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold" font-family="monospace">FF₂</text>
-  <text x="392" y="125" fill="#94a3b8" font-size="11" font-family="monospace">CLK</text>
-  <text x="442" y="125" fill="#34d399" font-size="12" font-weight="bold" font-family="monospace">Q</text>
-  <text x="442" y="148" fill="#f43f5e" font-size="12" font-weight="bold" font-family="monospace">Q̄</text>
-  <path d="M 40 180 L 460 180" stroke="#f59e0b" stroke-width="2" />
-  <text x="40" y="170" fill="#f59e0b" font-size="11" font-weight="bold" font-family="monospace">CLK BUS</text>
-  <line x1="100" y1="180" x2="100" y2="160" stroke="#f59e0b" stroke-width="2" />
-  <line x1="250" y1="180" x2="250" y2="160" stroke="#f59e0b" stroke-width="2" />
-  <line x1="400" y1="180" x2="400" y2="160" stroke="#f59e0b" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 230" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" font-family="Arial, Helvetica, sans-serif" role="img"><title>Three J-K flip-flops with a common clock. FF1 Q to FF2 J and FF1 Q-bar to FF2 K; FF2 Q (Q2) to FF3 J and FF2 Q-bar to FF3 K; FF3 Q-bar fed back over the top to FF1 J; FF3 Q fed back along the bottom to FF1 K</title>
+<defs><marker id="ah63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" stroke="none"/></marker></defs>
+<rect x="90" y="50" width="110" height="80"/>
+<text x="104" y="76" fill="currentColor" stroke="none" font-size="14" text-anchor="start" >J</text>
+<text x="104" y="116" fill="currentColor" stroke="none" font-size="14" text-anchor="start" >K</text>
+<text x="182" y="76" fill="currentColor" stroke="none" font-size="14" text-anchor="middle" >Q</text>
+<text x="182" y="116" fill="currentColor" stroke="none" font-size="14" text-anchor="middle" >Q</text>
+<line x1="177" y1="102" x2="187" y2="102" stroke-width="1.5"/>
+<rect x="280" y="50" width="110" height="80"/>
+<text x="294" y="76" fill="currentColor" stroke="none" font-size="14" text-anchor="start" >J</text>
+<text x="294" y="116" fill="currentColor" stroke="none" font-size="14" text-anchor="start" >K</text>
+<text x="372" y="76" fill="currentColor" stroke="none" font-size="14" text-anchor="middle" >Q<tspan font-size="10" dy="4">2</tspan></text>
+<text x="372" y="116" fill="currentColor" stroke="none" font-size="14" text-anchor="middle" >Q</text>
+<line x1="367" y1="102" x2="377" y2="102" stroke-width="1.5"/>
+<rect x="470" y="50" width="110" height="80"/>
+<text x="484" y="76" fill="currentColor" stroke="none" font-size="14" text-anchor="start" >J</text>
+<text x="484" y="116" fill="currentColor" stroke="none" font-size="14" text-anchor="start" >K</text>
+<text x="562" y="76" fill="currentColor" stroke="none" font-size="14" text-anchor="middle" >Q</text>
+<text x="562" y="116" fill="currentColor" stroke="none" font-size="14" text-anchor="middle" >Q</text>
+<line x1="557" y1="102" x2="567" y2="102" stroke-width="1.5"/>
+<polyline points="200,70 280,70" marker-end="url(#ah63)"/>
+<polyline points="200,110 280,110" marker-end="url(#ah63)"/>
+<polyline points="390,70 470,70" marker-end="url(#ah63)"/>
+<polyline points="390,110 470,110" marker-end="url(#ah63)"/>
+<polyline points="580,110 630,110 630,25 65,25 65,70 90,70" marker-end="url(#ah63)"/>
+<polyline points="580,70 610,70 610,150 55,150 55,110 90,110" marker-end="url(#ah63)"/>
+<polyline points="15,200 525,200" />
+<text x="15" y="190" fill="currentColor" stroke="none" font-size="13" text-anchor="start" >Clock</text>
+<polyline points="145,200 145,130" marker-end="url(#ah63)"/>
+<polyline points="335,200 335,130" marker-end="url(#ah63)"/>
+<polyline points="525,200 525,130" marker-end="url(#ah63)"/>
+<circle cx="145" cy="200" r="3.5" fill="currentColor" stroke="none"/>
+<circle cx="335" cy="200" r="3.5" fill="currentColor" stroke="none"/>
 </svg>

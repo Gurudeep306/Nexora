@@ -1,0 +1,3401 @@
+{
+  "paper": "cse-1993",
+  "version": 2,
+  "solutions": {
+    "cse-1993-a-1-1": {
+      "approach": "The matrix is strictly upper triangular, so its only eigenvalue is 0; the eigenvectors are exactly the non-zero vectors of its null space. Test each option against $A\\mathbf v=\\mathbf 0$.",
+      "concepts": [
+        "Eigenvalues of a triangular matrix",
+        "Null space",
+        "Nilpotent matrix"
+      ],
+      "steps": [
+        {
+          "title": "Only eigenvalue is 0",
+          "body": "The matrix is triangular with diagonal $0,0,0$, so $\\det(A-\\lambda I)=-\\lambda^3$ and $\\lambda=0$ (multiplicity 3)."
+        },
+        {
+          "title": "Solve $A\\mathbf v=\\mathbf 0$",
+          "body": "For $\\mathbf v=(v_1,v_2,v_3)$: $A\\mathbf v=(\\alpha v_3,\\,0,\\,0)$. With $\\alpha\\neq0$ this forces $v_3=0$, while $v_1,v_2$ are free. Eigenvectors: all non-zero $(v_1,v_2,0)$."
+        },
+        {
+          "title": "Check the options",
+          "body": "$(\\alpha,0,0)$ and $(0,\\alpha,0)$ have $v_3=0$ and are non-zero (since $\\alpha\\neq0$) — eigenvectors. $(0,0,\\alpha)$ and $(0,0,1)$ have $v_3\\neq0$; e.g. $A(0,0,1)^T=(\\alpha,0,0)^T\\neq\\lambda(0,0,1)^T$ for any $\\lambda$."
+        }
+      ],
+      "answer": {
+        "value": "(b) $(\\alpha,0,0)$ and (d) $(0,\\alpha,0)$",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$A(0,0,\\alpha)^T=(\\alpha^2,0,0)^T$, not a multiple of $(0,0,\\alpha)$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$A(\\alpha,0,0)^T=\\mathbf 0=0\\cdot(\\alpha,0,0)^T$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$A(0,0,1)^T=(\\alpha,0,0)^T$, not a multiple of $(0,0,1)$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$A(0,\\alpha,0)^T=\\mathbf 0$, so it is an eigenvector for $\\lambda=0$."
+        }
+      ],
+      "pitfalls": [
+        "Picking the column that contains $\\alpha$ — the eigenvectors are in the null space, which kills the third coordinate."
+      ],
+      "verification": "Direct multiplication of each option by $A$."
+    },
+    "cse-1993-a-1-2": {
+      "approach": "Linearity requires $y$ and its derivatives to appear only to the first power with coefficients depending on $x$ alone; the $\\sin y$ term breaks this.",
+      "concepts": [
+        "Linear vs non-linear ODE",
+        "Order and degree of an ODE"
+      ],
+      "steps": [
+        {
+          "title": "Spot the non-linear term",
+          "body": "$\\sin y = y-\\frac{y^3}{6}+\\dots$ is not of the form $a(x)\\,y$, so the equation $y''+y'+\\sin y=0$ is **non-linear**."
+        },
+        {
+          "title": "Order and degree",
+          "body": "The highest derivative is $y''$, appearing to the first power: order 2, degree 1 — not degree two."
+        },
+        {
+          "title": "Homogeneous?",
+          "body": "The words homogeneous / non-homogeneous classify **linear** equations ($L[y]=0$ vs $L[y]=g(x)$). For this non-linear equation the classification does not apply, so (c) is not the intended answer."
+        }
+      ],
+      "answer": {
+        "value": "(b) non-linear",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\sin y$ is a non-linear function of $y$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Because of the $\\sin y$ term."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Homogeneity in this sense is defined for linear ODEs only; some keys accept it because there is no forcing term, which is why the item is flagged."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The highest derivative $y''$ occurs to power 1, so the degree is 1 (the order is 2)."
+        }
+      ],
+      "pitfalls": [
+        "Confusing order (2) with degree (1)."
+      ],
+      "verification": "The sum of two solutions is not a solution because $\\sin(y_1+y_2)\\neq\\sin y_1+\\sin y_2$ — linearity fails."
+    },
+    "cse-1993-a-1-3": {
+      "approach": "Simpson's 1/3 rule integrates exactly every polynomial of degree $\\le 3$ (its error term contains $f^{(4)}$), so degrees 1, 2 and 3 are all exact.",
+      "concepts": [
+        "Simpson's 1/3 rule",
+        "Degree of precision",
+        "Error term"
+      ],
+      "steps": [
+        {
+          "title": "Error term",
+          "body": "For one panel of width $2h$: $E=-\\frac{h^5}{90}f^{(4)}(\\xi)$. If $f$ is a polynomial of degree $\\le3$, $f^{(4)}\\equiv0$ so $E=0$."
+        },
+        {
+          "title": "Check degree 3 and 4 on $[-1,1]$",
+          "body": "$h=1$: rule gives $\\frac13[f(-1)+4f(0)+f(1)]$. For $x^3$: $\\frac13[-1+0+1]=0=\\int_{-1}^1x^3dx$ ✓. For $x^4$: $\\frac13[1+0+1]=\\frac23$ but $\\int_{-1}^1x^4dx=\\frac25$ ✗."
+        }
+      ],
+      "answer": {
+        "value": "(a), (b), (c) — degrees 1, 2 and 3",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Degree 1 has $f^{(4)}=0$ — exact."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Degree 2: the rule is built by fitting a parabola — exact."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Degree 3: exact by symmetry (bonus degree), as checked with $x^3$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$x^4$ gives $2/3$ instead of $2/5$."
+        }
+      ],
+      "pitfalls": [
+        "Marking only (b) or (c): the question allows multiple correct alternatives and every degree up to 3 is exact."
+      ],
+      "verification": "Tested $x^3$ and $x^4$ explicitly on $[-1,1]$."
+    },
+    "cse-1993-a-1-4": {
+      "approach": "FORTRAN 77 has no reserved words and ignores blanks, so a statement that looks like a keyword but has the form `name = expression` is simply an assignment to a variable (name of up to 6 characters starting with a letter).",
+      "concepts": [
+        "FORTRAN 77 lexical rules",
+        "Blanks are insignificant",
+        "No reserved words"
+      ],
+      "steps": [
+        {
+          "title": "Remove the blanks",
+          "body": "(a) `DO13I=1` (b) `A=DIM***7` (c) `READ=15.0` (d) `GOTO3=10`."
+        },
+        {
+          "title": "Classify each",
+          "body": "(a) No comma after `1`, so it is not a DO loop but an assignment to variable `DO13I` (5 characters) — valid.\n\n(b) `DIM***7` = `DIM ** *7`: two operators in a row (unary `*` does not exist) — invalid.\n\n(c) `READ` is not reserved, so `READ=15.0` assigns to the variable `READ` — valid.\n\n(d) Assignment to variable `GOTO3` — valid."
+        }
+      ],
+      "answer": {
+        "value": "(a), (c), (d)",
+        "choice": [
+          "A",
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "`DO13I = 1` — assignment (a real DO statement would need `DO 13 I = 1, n`)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`***` puts two operators side by side — syntax error."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Assignment to the variable `READ`."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Assignment to the variable `GOTO3`."
+        }
+      ],
+      "pitfalls": [
+        "Assuming DO, READ and GO TO are reserved words — in FORTRAN they are not."
+      ],
+      "verification": "Each valid name has at most 6 alphanumeric characters and begins with a letter, as FORTRAN 77 requires."
+    },
+    "cse-1993-a-1-5": {
+      "approach": "At $x=\\pi$ the function jumps, so the Fourier series converges to the average $\\tfrac12[f(\\pi^-)+f(-\\pi^+)]=\\pi/2$; substituting $x=\\pi$ leaves only the odd-$n$ cosine terms.",
+      "concepts": [
+        "Fourier series",
+        "Dirichlet convergence at a jump",
+        "Series of odd reciprocals squared"
+      ],
+      "steps": [
+        {
+          "title": "Value of the series at $x=\\pi$",
+          "body": "$f(\\pi^-)=\\pi$ and, by $2\\pi$-periodicity, $f(\\pi^+)=f(-\\pi^+)=0$. So the series converges to $\\frac{\\pi+0}{2}=\\frac{\\pi}{2}$."
+        },
+        {
+          "title": "Substitute $x=\\pi$",
+          "body": "$\\sin n\\pi=0$ and $\\cos n\\pi\\cdot\\cos n\\pi=1$, so each term is $\\frac{1}{\\pi n^2}(1-(-1)^n)$, which is $\\frac{2}{\\pi n^2}$ for odd $n$ and $0$ for even $n$:\n$$\\frac{\\pi}{2}=\\frac{\\pi}{4}+\\frac{2}{\\pi}\\left(1+\\frac1{3^2}+\\frac1{5^2}+\\dots\\right)$$"
+        },
+        {
+          "title": "Solve",
+          "body": "$\\frac{2}{\\pi}S=\\frac{\\pi}{2}-\\frac{\\pi}{4}=\\frac{\\pi}{4}\\Rightarrow S=\\frac{\\pi^2}{8}$."
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{\\pi^2}{8}$ — (c)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\pi^2/4$ is twice the correct sum $\\pi^2/8$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\pi^2/6=\\sum 1/n^2$ over **all** $n$, not just odd $n$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Derived above."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\pi^2/12=\\sum(-1)^{n+1}/n^2$, the alternating series."
+        }
+      ],
+      "shortcut": "$\\sum_{\\text{odd}}\\frac1{n^2}=\\sum\\frac1{n^2}-\\frac14\\sum\\frac1{n^2}=\\frac34\\cdot\\frac{\\pi^2}{6}=\\frac{\\pi^2}{8}$.",
+      "pitfalls": [
+        "Setting the series equal to $f(\\pi)=\\pi$ instead of the average $\\pi/2$ at the discontinuity."
+      ],
+      "verification": "Matches the known identity $\\sum_{n\\text{ odd}}1/n^2=\\pi^2/8$ (shortcut)."
+    },
+    "cse-1993-a-1-6": {
+      "approach": "Compare each integrand with a power of $x$ near its trouble point (0 or $\\infty$): $\\int_0 x^{-p}$ converges iff $p<1$, $\\int^\\infty x^{-p}$ iff $p>1$; oscillating $\\cos x/(1+x)$ converges by Dirichlet's test.",
+      "concepts": [
+        "Improper integrals",
+        "Limit comparison test",
+        "Dirichlet's test"
+      ],
+      "steps": [
+        {
+          "title": "(a) near $x=0$",
+          "body": "$1-\\cos x\\approx \\frac{x^2}{2}$, $\\sin x\\approx x$, so $\\frac{\\sin x}{1-\\cos x}\\approx\\frac{2}{x}$: $p=1$ ⇒ **diverges** (indeed the antiderivative is $\\ln(1-\\cos x)\\to-\\infty$)."
+        },
+        {
+          "title": "(b) on $[0,\\infty)$",
+          "body": "$\\int_0^X\\cos x\\,dx$ is bounded and $\\frac1{1+x}\\downarrow0$, so by Dirichlet's test the integral **converges** (conditionally)."
+        },
+        {
+          "title": "(c) at $\\infty$",
+          "body": "$\\frac{x}{1+x^2}\\approx\\frac1x$: $p=1$ ⇒ **diverges** ($\\frac12\\ln(1+x^2)\\to\\infty$)."
+        },
+        {
+          "title": "(d) near $x=0$",
+          "body": "$\\frac{1-\\cos x}{x^{5/2}}\\approx\\frac{x^2/2}{x^{5/2}}=\\frac{1}{2x^{1/2}}$: $p=\\tfrac12<1$ ⇒ **converges**."
+        }
+      ],
+      "answer": {
+        "value": "(b) and (d)",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Behaves like $2/x$ at 0 — logarithmic divergence."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Dirichlet: bounded oscillating integral times a decreasing factor tending to 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Behaves like $1/x$ at infinity."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Behaves like $\\tfrac12x^{-1/2}$ at 0, which is integrable."
+        }
+      ],
+      "pitfalls": [
+        "Reading (d) as $(1-\\cos x)/x^5$ (then it would diverge) — the scan prints $x^{5/2}$ awkwardly."
+      ],
+      "verification": "Closed-form antiderivatives confirm (a) and (c) diverge."
+    },
+    "cse-1993-a-1-7": {
+      "approach": "Find the critical points from $f_x=f_y=0$ and apply the second-derivative test $D=f_{xx}f_{yy}-f_{xy}^2$.",
+      "concepts": [
+        "Critical points",
+        "Hessian test",
+        "Saddle point"
+      ],
+      "steps": [
+        {
+          "title": "Partial derivatives",
+          "body": "$f_x=2xy-3y+1$, $f_y=x^2-3x+2=(x-1)(x-2)$."
+        },
+        {
+          "title": "Critical points",
+          "body": "$x=1$: $2y-3y+1=0\\Rightarrow y=1$ → $(1,1)$. $x=2$: $4y-3y+1=0\\Rightarrow y=-1$ → $(2,-1)$."
+        },
+        {
+          "title": "Second-derivative test",
+          "body": "$f_{xx}=2y$, $f_{yy}=0$, $f_{xy}=2x-3$. $D=2y\\cdot0-(2x-3)^2$.\n\nAt $(1,1)$: $D=-(-1)^2=-1<0$. At $(2,-1)$: $D=-(1)^2=-1<0$. Both are saddle points."
+        }
+      ],
+      "answer": {
+        "value": "(a) no local extremum",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both critical points are saddles ($D<0$)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No point has $D>0$, so no minimum."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No point has $D>0$, so no maximum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same reason — both critical points are saddles."
+        }
+      ],
+      "shortcut": "Since $f_{yy}=0$ everywhere, $D=-f_{xy}^2\\le0$; it is $<0$ unless $x=3/2$, which is not a critical point — so no extremum is possible.",
+      "pitfalls": [
+        "Stopping after finding two critical points and assuming one max and one min."
+      ],
+      "verification": "Shortcut argument via $f_{yy}\\equiv0$."
+    },
+    "cse-1993-a-2-1": {
+      "approach": "Expand numerator and denominator in Maclaurin series up to $x^3$; the lowest-order terms decide the limit.",
+      "concepts": [
+        "Maclaurin series",
+        "Limits of indeterminate forms"
+      ],
+      "steps": [
+        {
+          "title": "Numerator",
+          "body": "$x(e^x-1)=x^2+\\frac{x^3}{2}+\\frac{x^4}{6}+\\dots$ and $2(\\cos x-1)=-x^2+\\frac{x^4}{12}-\\dots$. Sum $=\\frac{x^3}{2}+\\frac{x^4}{4}+\\dots$"
+        },
+        {
+          "title": "Denominator",
+          "body": "$x(1-\\cos x)=x\\left(\\frac{x^2}{2}-\\frac{x^4}{24}+\\dots\\right)=\\frac{x^3}{2}-\\dots$"
+        },
+        {
+          "title": "Limit",
+          "body": "$\\dfrac{\\frac{x^3}{2}+O(x^4)}{\\frac{x^3}{2}+O(x^5)}\\to1$."
+        }
+      ],
+      "answer": {
+        "value": "$1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Applying L'Hôpital only once or twice — the form stays $0/0$ until the third derivative."
+      ],
+      "verification": "Numerically at $x=0.01$: numerator $\\approx5.0250\\times10^{-7}$, denominator $\\approx4.99996\\times10^{-7}$, ratio $\\approx1.005\\to1$."
+    },
+    "cse-1993-a-2-10": {
+      "approach": "For a function of period $T=2\\pi$, $\\mathcal L\\{f\\}=\\frac{1}{1-e^{-2\\pi s}}\\int_0^{2\\pi}e^{-st}f(t)\\,dt$; only $[\\pi,2\\pi]$ contributes.",
+      "concepts": [
+        "Laplace transform of periodic functions",
+        "Integral of $e^{-st}\\sin t$"
+      ],
+      "steps": [
+        {
+          "title": "One period",
+          "body": "$f=0$ on $[0,\\pi]$ and $f=\\sin t$ (negative) on $[\\pi,2\\pi]$, so we need $I=\\int_\\pi^{2\\pi}e^{-st}\\sin t\\,dt$."
+        },
+        {
+          "title": "Evaluate $I$",
+          "body": "Using $\\int e^{-st}\\sin t\\,dt=-\\dfrac{e^{-st}(s\\sin t+\\cos t)}{s^2+1}$:\n\nat $2\\pi$: $-\\dfrac{e^{-2\\pi s}}{s^2+1}$; at $\\pi$: $+\\dfrac{e^{-\\pi s}}{s^2+1}$.\n\n$I=-\\dfrac{e^{-2\\pi s}+e^{-\\pi s}}{s^2+1}=-\\dfrac{e^{-\\pi s}(1+e^{-\\pi s})}{s^2+1}$."
+        },
+        {
+          "title": "Divide by $1-e^{-2\\pi s}$",
+          "body": "$1-e^{-2\\pi s}=(1-e^{-\\pi s})(1+e^{-\\pi s})$, so\n$$F(s)=-\\frac{e^{-\\pi s}}{(s^2+1)(1-e^{-\\pi s})}=\\frac{-1}{(s^2+1)(e^{\\pi s}-1)}.$$"
+        }
+      ],
+      "answer": {
+        "value": "$F(s)=\\dfrac{-1}{(s^2+1)(e^{\\pi s}-1)}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the sign: $\\sin t<0$ on $(\\pi,2\\pi)$, matching the downward lobes in the figure."
+      ],
+      "verification": "As $s\\to0$, $sF(s)\\to-\\frac{1}{\\pi}$, which equals the average of $f$ over a period: $\\frac{1}{2\\pi}\\int_\\pi^{2\\pi}\\sin t\\,dt=\\frac{-2}{2\\pi}=-\\frac1\\pi$ ✓."
+    },
+    "cse-1993-a-2-2": {
+      "approach": "Use the ratio test on consecutive terms; the series is in powers of $x^3$, so the condition comes out on $|x|^3$.",
+      "concepts": [
+        "Radius of convergence",
+        "Ratio test"
+      ],
+      "steps": [
+        {
+          "title": "Ratio of coefficients",
+          "body": "$\\frac{a_{m+1}}{a_m}=\\frac{(3m+3)!}{(3m)!}\\cdot\\frac{(m!)^3}{((m+1)!)^3}=\\frac{(3m+3)(3m+2)(3m+1)}{(m+1)^3}\\to27$."
+        },
+        {
+          "title": "Apply the ratio test",
+          "body": "Term ratio $\\to27|x|^3<1\\iff|x|<\\frac{1}{\\sqrt[3]{27}}=\\frac13$."
+        }
+      ],
+      "answer": {
+        "value": "$\\frac13$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering $1/27$ by forgetting the series is in $x^{3m}$, not $x^m$."
+      ],
+      "verification": "Stirling: $\\frac{(3m)!}{(m!)^3}\\sim\\frac{27^m\\sqrt3}{2\\pi m}$, so terms behave like $(27x^3)^m$ — same radius."
+    },
+    "cse-1993-a-2-3": {
+      "approach": "For a rigid-body-like velocity field the angular velocity is half the curl: $\\vec\\omega=\\tfrac12\\nabla\\times\\vec V$. Compute the curl and evaluate at $(1,1,-1)$.",
+      "concepts": [
+        "Curl",
+        "Angular velocity of a velocity field"
+      ],
+      "steps": [
+        {
+          "title": "Curl",
+          "body": "With $V=(x^2y,\\;xyz,\\;-yz^2)$:\n$$\\nabla\\times\\vec V=\\left(\\frac{\\partial(-yz^2)}{\\partial y}-\\frac{\\partial(xyz)}{\\partial z}\\right)\\hat i+\\left(\\frac{\\partial(x^2y)}{\\partial z}-\\frac{\\partial(-yz^2)}{\\partial x}\\right)\\hat j+\\left(\\frac{\\partial(xyz)}{\\partial x}-\\frac{\\partial(x^2y)}{\\partial y}\\right)\\hat k$$\n$=(-z^2-xy)\\hat i+0\\,\\hat j+(yz-x^2)\\hat k$."
+        },
+        {
+          "title": "At $(1,1,-1)$",
+          "body": "$\\hat i$: $-1-1=-2$; $\\hat k$: $(1)(-1)-1=-2$. So $\\nabla\\times\\vec V=-2\\hat i-2\\hat k$."
+        },
+        {
+          "title": "Angular velocity",
+          "body": "$\\vec\\omega=\\tfrac12(-2\\hat i-2\\hat k)=-\\hat i-\\hat k$."
+        }
+      ],
+      "answer": {
+        "value": "$\\vec\\omega=-\\hat i-\\hat k$ (curl $=-2\\hat i-2\\hat k$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reporting the curl itself ($-2\\hat i-2\\hat k$) as the angular velocity — the factor $\\tfrac12$ matters."
+      ],
+      "verification": "For $\\vec V=\\vec\\omega\\times\\vec r$ one has $\\nabla\\times\\vec V=2\\vec\\omega$, which justifies the factor $\\tfrac12$."
+    },
+    "cse-1993-a-2-4": {
+      "approach": "Apply one step of second-order Runge–Kutta (Heun) with $h=0.1$ to $f(x,y)=x-y$ from $(0,0)$.",
+      "concepts": [
+        "Runge–Kutta 2nd order",
+        "Heun's method"
+      ],
+      "steps": [
+        {
+          "title": "Slopes",
+          "body": "$k_1=h\\,f(0,0)=0.1(0-0)=0$.\n\n$k_2=h\\,f(0+h,\\;0+k_1)=0.1(0.1-0)=0.01$."
+        },
+        {
+          "title": "Update",
+          "body": "$y(0.1)=y_0+\\tfrac12(k_1+k_2)=0+\\tfrac12(0+0.01)=0.005$."
+        }
+      ],
+      "answer": {
+        "value": "$y(0.1)\\approx0.005$",
+        "matchesKey": true
+      },
+      "shortcut": "The midpoint form gives the same: $k_2=0.1\\,f(0.05,0)=0.005$, $y=0.005$.",
+      "pitfalls": [
+        "Using Euler ($k_1$ only) and getting 0."
+      ],
+      "verification": "Exact solution $y=x-1+e^{-x}$ gives $y(0.1)=0.1-1+0.904837=0.004837\\approx0.005$."
+    },
+    "cse-1993-a-2-5": {
+      "approach": "Evaluate with FORTRAN rules: `**` first (unary minus binds looser than `**`), then `*` and `/` left to right, integer division truncates, and assigning to the implicitly INTEGER variable `I` truncates.",
+      "concepts": [
+        "FORTRAN operator precedence",
+        "Integer division",
+        "Implicit typing (I–N are INTEGER)"
+      ],
+      "steps": [
+        {
+          "title": "Exponent and unary minus",
+          "body": "`-2**2` $=-(2^2)=-4$ (integer)."
+        },
+        {
+          "title": "Left-to-right `*` and `/`",
+          "body": "`5.0*X/X*3` with $X=4.0$: $5.0\\times4.0=20.0$, $20.0/4.0=5.0$, $5.0\\times3=15.0$."
+        },
+        {
+          "title": "Integer division and the sum",
+          "body": "`3/4` is integer division $=0$. Sum: $-4+15.0+0=11.0$; storing into INTEGER `I` gives $I=11$."
+        }
+      ],
+      "answer": {
+        "value": "$I=11$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading `5.0*X/X*3` as $\\frac{5.0X}{3X}$ — FORTRAN evaluates `/` and `*` strictly left to right (that reading would give $I=-2$).",
+        "Treating `3/4` as 0.75 — both operands are integers."
+      ],
+      "verification": "Re-evaluated with explicit parentheses: $(-(2^2))+(((5.0\\cdot4.0)/4.0)\\cdot3)+(3\\,\\text{div}\\,4)=-4+15+0=11$."
+    },
+    "cse-1993-a-2-6": {
+      "approach": "Integrate the inner variable $y$ from 0 to $1/x$ (giving $\\arctan(1/x)$), then use $\\arctan(1/x)=\\frac{\\pi}{2}-\\arctan x$ for $x>0$ and integrate by parts.",
+      "concepts": [
+        "Double integrals",
+        "Integration by parts",
+        "Arctangent identity"
+      ],
+      "steps": [
+        {
+          "title": "Inner integral (in $y$)",
+          "body": "$\\int_0^{1/x}\\frac{x}{1+y^2}dy=x\\arctan\\frac1x=x\\left(\\frac{\\pi}{2}-\\arctan x\\right)$."
+        },
+        {
+          "title": "Outer integral",
+          "body": "$\\int_0^1\\frac{\\pi}{2}x\\,dx=\\frac{\\pi}{4}$. By parts, $\\int_0^1x\\arctan x\\,dx=\\left[\\frac{x^2}{2}\\arctan x\\right]_0^1-\\frac12\\int_0^1\\frac{x^2}{1+x^2}dx=\\frac{\\pi}{8}-\\frac12\\left(1-\\frac{\\pi}{4}\\right)=\\frac{\\pi}{4}-\\frac12$."
+        },
+        {
+          "title": "Combine",
+          "body": "$\\frac{\\pi}{4}-\\left(\\frac{\\pi}{4}-\\frac12\\right)=\\frac12$."
+        }
+      ],
+      "answer": {
+        "value": "$\\frac12$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Integrating in $x$ first — the upper limit $1/x$ depends on $x$, so $y$ must be the inner variable."
+      ],
+      "verification": "Numerically $\\int_0^1x\\arctan(1/x)dx\\approx0.5000$."
+    },
+    "cse-1993-a-2-7": {
+      "approach": "A is upper triangular with distinct eigenvalues $1,-1,i,-i$; its characteristic polynomial is $\\lambda^4-1$, so Cayley–Hamilton gives $A^4=I$ immediately.",
+      "concepts": [
+        "Cayley–Hamilton theorem",
+        "Eigenvalues of triangular matrices"
+      ],
+      "steps": [
+        {
+          "title": "Characteristic polynomial",
+          "body": "Diagonal entries $1,-1,i,-i$: $p(\\lambda)=(\\lambda-1)(\\lambda+1)(\\lambda-i)(\\lambda+i)=(\\lambda^2-1)(\\lambda^2+1)=\\lambda^4-1$."
+        },
+        {
+          "title": "Cayley–Hamilton",
+          "body": "$p(A)=A^4-I=0\\Rightarrow A^4=I_4$."
+        }
+      ],
+      "answer": {
+        "value": "$A^4=I_4$ (the $4\\times4$ identity)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Multiplying $A$ out four times — correct but slow and error-prone with complex entries."
+      ],
+      "verification": "A has 4 distinct eigenvalues, each a 4th root of unity, so it is diagonalizable and $A^4=PD^4P^{-1}=PIP^{-1}=I$."
+    },
+    "cse-1993-a-2-8": {
+      "approach": "Use the divergence theorem: the flux through the closed cube surface equals $\\iiint\\nabla\\cdot\\vec V\\,dV$.",
+      "concepts": [
+        "Divergence theorem",
+        "Divergence"
+      ],
+      "steps": [
+        {
+          "title": "Divergence",
+          "body": "$\\nabla\\cdot\\vec V=\\frac{\\partial}{\\partial x}(x\\cos^2y)+\\frac{\\partial}{\\partial y}(x^2e^z)+\\frac{\\partial}{\\partial z}(z\\sin^2y)=\\cos^2y+0+\\sin^2y=1$."
+        },
+        {
+          "title": "Volume integral",
+          "body": "$\\iint_S\\vec V\\cdot\\hat n\\,dS=\\iiint_{\\text{cube}}1\\,dV=1^3=1$."
+        }
+      ],
+      "answer": {
+        "value": "$1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Computing six surface integrals by hand — the divergence collapses to 1."
+      ],
+      "verification": "Direct faces: $x=1$ face gives $\\int_0^1\\cos^2y\\,dy=\\frac12+\\frac{\\sin2}{4}$; $z=1$ face gives $\\int_0^1\\sin^2y\\,dy=\\frac12-\\frac{\\sin2}{4}$; the $y$-faces cancel. Total $=1$."
+    },
+    "cse-1993-a-2-9": {
+      "approach": "Write the general solution $y=A\\cos x+B\\sin x$ and impose the two boundary conditions; a non-trivial solution needs $\\sin\\lambda=0$.",
+      "concepts": [
+        "Boundary value problem",
+        "Eigenvalue problem for ODEs"
+      ],
+      "steps": [
+        {
+          "title": "General solution",
+          "body": "Auxiliary equation $m^2+1=0\\Rightarrow m=\\pm i$, so $y=A\\cos x+B\\sin x$."
+        },
+        {
+          "title": "Apply the conditions",
+          "body": "$y(0)=A=0$. Then $y(\\lambda)=B\\sin\\lambda=0$. A non-trivial solution needs $B\\neq0$, hence $\\sin\\lambda=0\\Rightarrow\\lambda=n\\pi$, $n$ an integer."
+        }
+      ],
+      "answer": {
+        "value": "$\\lambda=n\\pi$ ($n$ an integer)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $\\lambda=n\\pi/2$ — that would come from a condition on $y'$, not $y$."
+      ],
+      "verification": "For $\\lambda=\\pi$: $y=\\sin x$ satisfies $y''+y=0$, $y(0)=0$, $y(\\pi)=0$."
+    },
+    "cse-1993-ii-a-6-1": {
+      "approach": "Write each NOR output in terms of $x,y$: the inner gate gives $\\overline{x+y}$, the two middle gates give $\\bar x y$ and $x\\bar y$, and the last NOR complements their sum.",
+      "concepts": [
+        "NOR gate",
+        "XOR / XNOR from universal gates",
+        "De Morgan"
+      ],
+      "steps": [
+        {
+          "title": "Gate 1",
+          "body": "$G_1=\\overline{x+y}$."
+        },
+        {
+          "title": "Middle gates",
+          "body": "Top: $G_2=\\overline{x+G_1}=\\bar x\\cdot\\overline{G_1}=\\bar x(x+y)=\\bar xy$.\n\nBottom: $G_3=\\overline{G_1+y}=\\overline{G_1}\\cdot\\bar y=(x+y)\\bar y=x\\bar y$."
+        },
+        {
+          "title": "Output gate A",
+          "body": "$f=\\overline{G_2+G_3}=\\overline{\\bar xy+x\\bar y}=\\overline{x\\oplus y}=x\\odot y$ — exclusive NOR."
+        }
+      ],
+      "answer": {
+        "value": "(b) exclusive NOR",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The middle gates produce XOR, but gate A inverts it."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$f=\\overline{x\\oplus y}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "NAND is 1 at $x=y=0$ and at mixed inputs; here $f(0,1)=0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "NOR is 0 at $x=y=1$, but $f(1,1)=1$."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "Option (b) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Stopping at $G_2+G_3$ (XOR) and forgetting the bubble on gate A."
+      ],
+      "verification": "Truth table: $(0,0)$: $G_1=1,G_2=0,G_3=0,f=1$; $(0,1)$: $G_1=0,G_2=1,G_3=0,f=0$; $(1,0)$: $f=0$; $(1,1)$: $G_1=0,G_2=0,G_3=0,f=1$ — XNOR."
+    },
+    "cse-1993-ii-a-6-2": {
+      "approach": "The figure is missing from this paper copy. In the commonly reproduced version the \"state machine\" is a NOR gate whose output is fed back to one of its own inputs, the other inputs being $a$ and $b$: $Q^+=\\overline{a+b+Q}$. A stable state exists only when the feedback is masked, i.e. $a+b=1$.",
+      "concepts": [
+        "Feedback / asynchronous circuits",
+        "Stable state",
+        "Oscillation in a NOR loop"
+      ],
+      "steps": [
+        {
+          "title": "Loop equation",
+          "body": "With feedback, the next output is $Q^+=\\overline{a+b+Q}$. A state is stable when $Q^+=Q$."
+        },
+        {
+          "title": "Case $a+b=1$",
+          "body": "$Q^+=\\overline{1}=0$ regardless of $Q$; $Q=0$ then reproduces itself — stable."
+        },
+        {
+          "title": "Case $a+b=0$",
+          "body": "$Q^+=\\bar Q$: the output keeps toggling (oscillates) — no stable state. Hence the restriction is $a+b=1$."
+        }
+      ],
+      "answer": {
+        "value": "(b) $a+b=1$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$a\\cdot b=1$ is sufficient but too strong — $a=1,b=0$ is also stable, so it is not the required restriction."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Exactly the condition that masks the feedback."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\bar a+\\bar b=0\\iff a\\cdot b=1$ — same as (a), too strong."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\overline{a\\cdot b}=1$ allows $a=b=0$, where the loop oscillates."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "$\\overline{a+b}=1$ means $a=b=0$ — precisely the oscillating case."
+        }
+      ],
+      "pitfalls": [
+        "Choosing (a)/(c): they guarantee stability but are not the general restriction."
+      ],
+      "verification": "Checked all four input combinations of the assumed NOR-feedback loop; the figure is missing, so the item stays flagged for review."
+    },
+    "cse-1993-ii-a-6-3": {
+      "approach": "Each J-K stage with $J=Q_{prev}$, $K=\\bar Q_{prev}$ acts as a D flip-flop, so the chain is a shift register; the last stage feeds $\\bar Q_3$ back to $J_1$ (twisted ring), giving a Johnson counter with $2n=6$ states.",
+      "concepts": [
+        "J-K flip-flop as D flip-flop",
+        "Johnson (twisted-ring) counter",
+        "Shift register"
+      ],
+      "steps": [
+        {
+          "title": "Next-state equations",
+          "body": "With $J=D$, $K=\\bar D$ a J-K flip-flop gives $Q^+=D$. Here $Q_1^+=\\bar Q_3$, $Q_2^+=Q_1$, $Q_3^+=Q_2$ — a shift register with inverted feedback.",
+          "scene": {
+            "reveal": 5,
+            "caption": "Start in 000"
+          }
+        },
+        {
+          "title": "Fill phase",
+          "body": "$000\\to100\\to110\\to111$: ones shift in while $\\bar Q_3=1$.",
+          "scene": {
+            "reveal": 20,
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              }
+            ],
+            "caption": "Ones enter from the left"
+          }
+        },
+        {
+          "title": "Empty phase",
+          "body": "Now $\\bar Q_3=0$: $111\\to011\\to001\\to000$.",
+          "scene": {
+            "reveal": 35,
+            "hl": [
+              {
+                "r": 6,
+                "tone": "success"
+              }
+            ],
+            "caption": "Back to 000 after 6 clocks"
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "Six distinct states repeat — a mod-6 (Johnson) counter, built as a shift register with twisted feedback."
+        }
+      ],
+      "answer": {
+        "value": "(c) Mod-6 counter (a twisted-ring shift register, so (a) is also marked)",
+        "choice": [
+          "A",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Structurally the circuit is a shift register (data moves one stage per clock); accepted alongside (c)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "There are 6 states, not 3."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Sequence 000→100→110→111→011→001→000 has 6 states."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Each flip-flop output has period 6, not 2."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c) (and (a)) apply."
+        }
+      ],
+      "pitfalls": [
+        "Treating it as a plain ring counter: with the inverted feedback, 000 does not get stuck — it counts 6 states."
+      ],
+      "verification": "A Johnson counter with $n$ flip-flops has $2n$ states; $n=3\\Rightarrow6$.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "Clock",
+          "Q1",
+          "Q2",
+          "Q3",
+          "J1 = Q̄3, K1 = Q3"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0,
+            "J1=1, K1=0"
+          ],
+          [
+            1,
+            1,
+            0,
+            0,
+            "J1=1, K1=0"
+          ],
+          [
+            2,
+            1,
+            1,
+            0,
+            "J1=1, K1=0"
+          ],
+          [
+            3,
+            1,
+            1,
+            1,
+            "J1=0, K1=1"
+          ],
+          [
+            4,
+            0,
+            1,
+            1,
+            "J1=0, K1=1"
+          ],
+          [
+            5,
+            0,
+            0,
+            1,
+            "J1=0, K1=1"
+          ],
+          [
+            6,
+            0,
+            0,
+            0,
+            "back to start"
+          ]
+        ],
+        "reveal": 5,
+        "mono": true
+      }
+    },
+    "cse-1993-ii-a-6-4": {
+      "approach": "In asynchronous transmission each character is framed by 1 start bit and the stop bits, so bits per character $=1+8+2=11$; characters per second $=\\lfloor2400/11\\rfloor$ (taking 1 baud = 1 bit/s).",
+      "concepts": [
+        "Asynchronous serial framing",
+        "Baud rate"
+      ],
+      "steps": [
+        {
+          "title": "Frame size",
+          "body": "$1$ start $+8$ data $+2$ stop $=11$ bits per character."
+        },
+        {
+          "title": "Characters per second",
+          "body": "$\\frac{2400}{11}=218.18\\ldots\\Rightarrow218$ complete characters per second."
+        }
+      ],
+      "answer": {
+        "value": "(c) 218",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$109\\approx2400/22$ — counts each bit twice."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$216$ does not correspond to any consistent frame size."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\lfloor2400/11\\rfloor=218$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$219$ rounds 218.18 up — a partial character cannot be sent."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "$240=2400/10$ — uses only one stop bit."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the start bit (giving $2400/10=240$)."
+      ],
+      "verification": "$218\\times11=2398\\le2400<219\\times11=2409$."
+    },
+    "cse-1993-ii-a-6-5": {
+      "approach": "Convert the binary fraction by positional weights, and the decimal integer to hex by repeated division by 16.",
+      "concepts": [
+        "Positional number systems",
+        "Base conversion"
+      ],
+      "steps": [
+        {
+          "title": "Binary to decimal",
+          "body": "$(110.101)_2 = 4+2+0 + \\tfrac12 + 0 + \\tfrac18 = 6 + 0.5 + 0.125 = 6.625$, so $x = 6.625$."
+        },
+        {
+          "title": "Decimal to hexadecimal",
+          "body": "$1118 \\div 16 = 69$ r $14$ (E); $69 \\div 16 = 4$ r $5$; $4 \\div 16 = 0$ r $4$.\n\nReading remainders upward: $(1118)_{10} = (45\\text{E})_{16}$."
+        }
+      ],
+      "answer": {
+        "value": "x = 6.625; y = 45E",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading remainders top-down gives E54, which is wrong."
+      ],
+      "verification": "$4\\cdot256 + 5\\cdot16 + 14 = 1024 + 80 + 14 = 1118$."
+    },
+    "cse-1993-ii-a-6-6": {
+      "approach": "A ROM truth table has one word per input combination and one output bit per product bit.",
+      "concepts": [
+        "ROM as combinational logic",
+        "Binary multiplication"
+      ],
+      "steps": [
+        {
+          "title": "Words (address lines)",
+          "body": "Inputs = two 4-bit numbers = $8$ address bits, so $M = 2^8 = 256$ words."
+        },
+        {
+          "title": "Bits per word",
+          "body": "Largest product: $15 \\times 15 = 225 < 2^8 = 256$, so the product needs $4+4 = 8$ bits. $N = 8$."
+        }
+      ],
+      "answer": {
+        "value": "M = 256, N = 8",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using 16 words (only 4 address bits) or 16 output bits."
+      ],
+      "verification": "$225 = (11100001)_2$ fits in 8 bits; $2^8$ combinations cover every operand pair."
+    },
+    "cse-1993-ii-a-6-7": {
+      "approach": "Average rotational latency is half a revolution; one track passes under the head per revolution, so transfer rate = track capacity × revolutions per second.",
+      "concepts": [
+        "Rotational latency",
+        "Disk transfer rate"
+      ],
+      "steps": [
+        {
+          "title": "Revolution time",
+          "body": "$2400$ rpm $= 2400/60 = 40$ rev/s, so one revolution takes $1/40$ s $= 25$ ms."
+        },
+        {
+          "title": "Average latency",
+          "body": "$P = \\tfrac12 \\times 25 = 12.5$ ms."
+        },
+        {
+          "title": "Transfer rate",
+          "body": "$Q = 62{,}500 \\times 40 = 2{,}500{,}000 = 2.5\\times10^6$ bits/s."
+        }
+      ],
+      "answer": {
+        "value": "P = 12.5, Q = 2.5×10^6",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking a full revolution (25 ms) as the average latency.",
+        "The number of tracks (200) is irrelevant here."
+      ],
+      "verification": "Units: bits/rev × rev/s = bits/s."
+    },
+    "cse-1993-ii-a-6-8": {
+      "approach": "In every 1 ms period the CPU loses only the save + service + restore time; the first 10 µs after arrival is still main-program execution.",
+      "concepts": [
+        "Interrupt overhead",
+        "CPU utilisation"
+      ],
+      "given": "| Phase | Time |\n|---|---|\n| Main program continues after arrival | 10 µs |\n| Save CPU state | 10 µs |\n| Interrupt service | 80 µs |\n| Restore CPU state | 10 µs |\n| Interrupt period | 1 ms = 1000 µs |",
+      "steps": [
+        {
+          "title": "Time lost per interrupt",
+          "body": "$10 + 80 + 10 = 100\\ \\mu s$ (the low part of the waveform)."
+        },
+        {
+          "title": "Fraction for the main program",
+          "body": "$\\dfrac{1000 - 100}{1000} = \\dfrac{900}{1000} = 90\\%$."
+        }
+      ],
+      "answer": {
+        "value": "90%",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting the 10 µs before the state is saved as overhead gives 89%, but the figure shows the main program still running then."
+      ],
+      "verification": "Overhead $100/1000 = 10\\%$; $100\\% - 10\\% = 90\\%$."
+    },
+    "cse-1993-ii-a-7-1": {
+      "approach": "Both formals of P are var parameters bound to the same global m, so x := y+1 writes 0+1 into global m; P's local m is a different variable.",
+      "concepts": [
+        "Call by reference",
+        "Aliasing",
+        "Scope"
+      ],
+      "steps": [
+        {
+          "title": "Binding",
+          "body": "`P(m, m)`: `x` and `y` are both references (aliases) to the global `m`, which is $0$."
+        },
+        {
+          "title": "Body of P",
+          "body": "`m := 1` sets P's **local** `m` only. `x := y + 1` reads global $m = 0$ through `y` and stores $1$ into global `m` through `x`."
+        },
+        {
+          "title": "Output",
+          "body": "`write(m)` prints $1$."
+        }
+      ],
+      "answer": {
+        "value": "1 — x and y are references to m, which P modifies",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The local m of P shadows the global and is a different variable; it is not what is printed."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The value printed is 1, not 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "y is 0 when read, but the assignment through x changes m to 1."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "x and y alias m; x := y + 1 sets m to 1."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(d) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Thinking P's local m := 1 is the reason the output is 1."
+      ],
+      "verification": "Trace: m=0 → x:=y+1 → m=0+1=1."
+    },
+    "cse-1993-ii-a-7-10": {
+      "approach": "Simulate round robin with quantum 1 from the ready order p, q, r, s, t.",
+      "concepts": [
+        "Round robin scheduling",
+        "Completion time"
+      ],
+      "given": "| Job | p | q | r | s | t |\n|---|---|---|---|---|---|\n| Burst | 4 | 1 | 8 | 1 | 2 |",
+      "animation": {
+        "kind": "gantt",
+        "unit": "",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 1,
+                "label": "p"
+              },
+              {
+                "start": 1,
+                "end": 2,
+                "label": "q"
+              },
+              {
+                "start": 2,
+                "end": 3,
+                "label": "r"
+              },
+              {
+                "start": 3,
+                "end": 4,
+                "label": "s"
+              },
+              {
+                "start": 4,
+                "end": 5,
+                "label": "t"
+              },
+              {
+                "start": 5,
+                "end": 6,
+                "label": "p"
+              },
+              {
+                "start": 6,
+                "end": 7,
+                "label": "r"
+              },
+              {
+                "start": 7,
+                "end": 8,
+                "label": "t"
+              },
+              {
+                "start": 8,
+                "end": 9,
+                "label": "p"
+              },
+              {
+                "start": 9,
+                "end": 10,
+                "label": "r"
+              },
+              {
+                "start": 10,
+                "end": 11,
+                "label": "p"
+              },
+              {
+                "start": 11,
+                "end": 16,
+                "label": "r"
+              }
+            ]
+          }
+        ],
+        "upto": 5,
+        "cursor": 5
+      },
+      "steps": [
+        {
+          "title": "Round 1",
+          "body": "0–1 p (3 left), 1–2 q (done at 2), 2–3 r (7 left), 3–4 s (done at 4), 4–5 t (1 left).",
+          "scene": {
+            "upto": 5,
+            "cursor": 5,
+            "caption": "q and s finish in the first round"
+          }
+        },
+        {
+          "title": "Round 2",
+          "body": "Queue: p, r, t. 5–6 p (2 left), 6–7 r (6 left), 7–8 t (done at 8).",
+          "scene": {
+            "upto": 8,
+            "cursor": 8,
+            "caption": "t finishes at 8"
+          }
+        },
+        {
+          "title": "Round 3",
+          "body": "Queue: p, r. 8–9 p (1 left), 9–10 r (5 left), 10–11 p (done at **11**).",
+          "scene": {
+            "upto": 11,
+            "cursor": 11,
+            "caption": "p completes at 11"
+          }
+        },
+        {
+          "title": "Rest",
+          "body": "Only r remains and runs 11–16. Completion time of p = $11$.",
+          "scene": {
+            "upto": 12,
+            "cursor": 16,
+            "caption": "r finishes at 16"
+          }
+        }
+      ],
+      "answer": {
+        "value": "11",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4 is p's burst, its finish time under FCFS."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "At 10 p still has 1 unit left (r ran 9–10)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "p's fourth slice is 10–11."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Too late by one slot."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c) is correct."
+        }
+      ],
+      "shortcut": "Up to p's last slice the CPU runs p 4 times, q and s once, t twice and r 3 times: 4 + 1 + 1 + 2 + 3 = 11.",
+      "verification": "Total burst 16 = r's finish time, consistent with the schedule."
+    },
+    "cse-1993-ii-a-7-2": {
+      "approach": "n*1 is an expression passed by value to x, and n is passed by reference to y; Q only assigns to its local copy x, so n is unchanged.",
+      "concepts": [
+        "Call by value",
+        "Call by reference"
+      ],
+      "steps": [
+        {
+          "title": "Binding",
+          "body": "`Q(n*1, n)`: `x` gets a copy of the value $0$; `y` is a reference to `n`."
+        },
+        {
+          "title": "Body of Q",
+          "body": "`x := y + 1` writes $1$ into the local copy `x` only; `n` (through `y`) is only read."
+        },
+        {
+          "title": "Output",
+          "body": "`write(n)` prints $0$."
+        }
+      ],
+      "answer": {
+        "value": "0 — n is bound to y, which is only read",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n is not the actual parameter for x; the expression n*1 is."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "n is bound to the var parameter y, which Q never assigns, so n stays 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Output is 0, not 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Output is 0; y is only read."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Treating n*1 as a reference to n."
+      ],
+      "verification": "Only x (a value copy) is assigned in Q."
+    },
+    "cse-1993-ii-a-7-3": {
+      "approach": "A global name is visible in every nested block except those that redeclare it; P declares its own m, Q does not.",
+      "concepts": [
+        "Static scope",
+        "Name hiding"
+      ],
+      "steps": [
+        {
+          "title": "Where m is redeclared",
+          "body": "P has `var m : integer;`, so inside P the name `m` means P's local and the global `m` is hidden."
+        },
+        {
+          "title": "Scope",
+          "body": "Q declares no `m`, so the global `m` is visible in the main program PARAM and in Q: scope = PARAM, Q."
+        }
+      ],
+      "answer": {
+        "value": "PARAM, Q",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Inside P the global m is hidden by the local m."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Includes P (hidden there) and omits Q."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Visible in PARAM and Q, hidden in P."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Omits the main program and includes P."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Confusing aliasing (P can modify global m through x) with scope (the name m in P is the local one)."
+      ],
+      "verification": "Name lookup in P finds P's own m first."
+    },
+    "cse-1993-ii-a-7-4": {
+      "approach": "This is the classic swap without a temporary: trace with symbolic values a = A, b = B.",
+      "concepts": [
+        "Arithmetic swap"
+      ],
+      "steps": [
+        {
+          "title": "Trace",
+          "body": "`a := a + b` → $a = A+B$\n\n`b := a - b` → $b = (A+B) - B = A$\n\n`a := a - b` → $a = (A+B) - A = B$"
+        },
+        {
+          "title": "Result",
+          "body": "Now $a = B$, $b = A$: the values are exchanged (ignoring overflow)."
+        }
+      ],
+      "answer": {
+        "value": "exchanges a and b",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Trace gives a = B, b = A."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "b ends as A, not 2A."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "a ends as B, not 2B."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both change unless A = B."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(a) is correct."
+        }
+      ],
+      "pitfalls": [
+        "Overflow of a + b can break the swap on fixed-width integers, but that is not what is asked."
+      ],
+      "verification": "Example a=3, b=5: a=8, b=3, a=5."
+    },
+    "cse-1993-ii-a-7-5": {
+      "approach": "After ptr := nil the next statement dereferences nil, which is detected only when the program runs.",
+      "concepts": [
+        "Pointers in Pascal",
+        "Nil dereference"
+      ],
+      "steps": [
+        {
+          "title": "Trace",
+          "body": "`new(ptr)` allocates a record; `ptr := nil` throws that address away (a memory leak)."
+        },
+        {
+          "title": "Dereference",
+          "body": "`ptr^.d := 5.2` accesses the record pointed to by `nil`. Type-checking passes (ptr^ is a data record and d is real), so the failure is a **run-time** error, specifically a nil-pointer dereference."
+        },
+        {
+          "title": "Conclusion",
+          "body": "(b) and (d) are true; 5.2 is never printed."
+        }
+      ],
+      "answer": {
+        "value": "(b) and (d)",
+        "choice": [
+          "B",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The dereference is well-typed; nil-ness is only known at run time (see the pitfall about writeln)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Dereferencing nil fails during execution."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Execution never reaches the output."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "The run-time error is exactly a nil pointer dereference."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) and (d) are true."
+        }
+      ],
+      "pitfalls": [
+        "Strictly, standard Pascal cannot write a pointer, so writeln(ptr) is a compile error; the intended point of the question is the nil dereference."
+      ],
+      "verification": "ptr is nil at the assignment, so ptr^ has no storage."
+    },
+    "cse-1993-ii-a-7-6": {
+      "approach": "Pass 1 of a two-pass assembler only defines things (location counter, symbol and literal tables); pass 2 generates code.",
+      "concepts": [
+        "Two-pass assembler",
+        "Symbol table",
+        "Literal table"
+      ],
+      "steps": [
+        {
+          "title": "Pass 1",
+          "body": "Advances the location counter over every statement, enters labels with their addresses into the symbol table, collects literals and assigns them addresses (at LTORG/END), and ends knowing the program length."
+        },
+        {
+          "title": "Pass 2",
+          "body": "Uses those tables to generate machine code for all instructions, including loads and stores."
+        }
+      ],
+      "answer": {
+        "value": "(a), (b), (c)",
+        "choice": [
+          "A",
+          "B",
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Literals are given addresses in pass 1."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The final location counter gives the program length."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Building the symbol table is the main job of pass 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Code is generated in pass 2, when forward references are known."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(a), (b), (c) are true."
+        }
+      ],
+      "verification": "Forward references can only be resolved after pass 1, so code generation must be in pass 2."
+    },
+    "cse-1993-ii-a-7-7": {
+      "approach": "The loader is what brings every other program into memory, so it must itself already be resident.",
+      "concepts": [
+        "Loader",
+        "System software"
+      ],
+      "steps": [
+        {
+          "title": "Reason",
+          "body": "Editors, assemblers and linkers are ordinary programs that are loaded only when needed. Loading any of them requires the loader, so the loader (at least its bootstrap part) must always be in main memory."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Of the listed programs only the loader must always be resident."
+        }
+      ],
+      "answer": {
+        "value": "loader",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Loaded on demand."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Loaded on demand."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Linking can be done in advance; the linker is loaded on demand."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Needed to load everything else."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(d) is correct."
+        }
+      ],
+      "verification": "Without a resident loader no other program could be brought into memory."
+    },
+    "cse-1993-ii-a-7-8": {
+      "approach": "The file system must find the root directory without any other directory, so it has to be at a known, fixed location on the disk.",
+      "concepts": [
+        "File system layout",
+        "Root directory"
+      ],
+      "steps": [
+        {
+          "title": "Reason",
+          "body": "Every path lookup starts at the root. Nothing points to the root, so its location must be fixed and known in advance on each disk (for example just after the boot block or superblock)."
+        },
+        {
+          "title": "Not main memory",
+          "body": "Main memory is volatile, so the root directory cannot live only there; and \"anywhere\" would make it impossible to find."
+        }
+      ],
+      "answer": {
+        "value": "at a fixed location on the disk",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Memory is volatile; the directory must be on disk."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A fixed location lets it be found without any lookup."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It could not be found."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Every disk with a file system has its own root directory, not only the system disk."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "It could not be found."
+        }
+      ],
+      "verification": "Matches real layouts (e.g. the FAT root directory at a fixed sector after the FATs)."
+    },
+    "cse-1993-ii-a-7-9": {
+      "approach": "Worst case: each process holds one less than its peak; one extra unit then guarantees someone can finish.",
+      "concepts": [
+        "Deadlock avoidance",
+        "Resource counting"
+      ],
+      "steps": [
+        {
+          "title": "Worst case",
+          "body": "Maximum held without anyone finishing: $(3-1)+(4-1)+(6-1) = 2+3+5 = 10$."
+        },
+        {
+          "title": "Condition",
+          "body": "Deadlock is impossible iff $m \\ge 10 + 1 = 11$."
+        },
+        {
+          "title": "Options",
+          "body": "$7, 9, 10 < 11$ (deadlock possible); $13, 15 \\ge 11$ (deadlock-free)."
+        }
+      ],
+      "answer": {
+        "value": "13 and 15",
+        "choice": [
+          "D",
+          "E"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "7 < 11: e.g. A holds 2, B 3, C 2, all waiting."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 < 11."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "With 10, holdings 2, 3, 5 leave none free: deadlock."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "13 ≥ 11."
+        },
+        {
+          "option": "E",
+          "correct": true,
+          "reason": "15 ≥ 11."
+        }
+      ],
+      "pitfalls": [
+        "Choosing 10 — the sum of (need − 1) still deadlocks; one more is required."
+      ],
+      "verification": "With 11, holdings 2+3+5 leave 1 free, enough for some process to reach its peak."
+    },
+    "cse-1993-ii-a-8-1": {
+      "approach": "A connected graph with n vertices needs n−1 edges to be a tree; one extra edge creates exactly one cycle.",
+      "concepts": [
+        "Trees",
+        "Cycles",
+        "Connectivity"
+      ],
+      "steps": [
+        {
+          "title": "Structure",
+          "body": "Connected with $n$ edges $= (n-1)+1$: a spanning tree plus one edge, so $G$ has **exactly one** cycle."
+        },
+        {
+          "title": "Removing edges",
+          "body": "Removing a cycle edge leaves a connected tree, so (b) fails. Removing any two edges leaves $n-2 < n-1$ edges, which can never connect $n$ vertices, so (d) holds."
+        }
+      ],
+      "answer": {
+        "value": "(c) and (d)",
+        "choice": [
+          "C",
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n edges on n connected vertices force a cycle."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Removing an edge on the cycle keeps G connected."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Exactly one cycle."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "n − 2 edges cannot connect n vertices."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c), (d) are true."
+        }
+      ],
+      "verification": "Example: cycle $C_4$ (4 vertices, 4 edges): has a cycle, stays connected after removing one edge, disconnected after removing two."
+    },
+    "cse-1993-ii-a-8-2": {
+      "approach": "Distribute ∧ over ∨ and drop the contradiction.",
+      "concepts": [
+        "Propositional equivalence",
+        "Distributive law"
+      ],
+      "steps": [
+        {
+          "title": "Distribute",
+          "body": "$p \\wedge (\\sim p \\vee q) \\equiv (p \\wedge \\sim p) \\vee (p \\wedge q)$."
+        },
+        {
+          "title": "Simplify",
+          "body": "$p \\wedge \\sim p \\equiv F$, so the expression is $F \\vee (p \\wedge q) \\equiv p \\wedge q$."
+        }
+      ],
+      "answer": {
+        "value": "equivalent to p ∧ q",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "False when p is false."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Shown by the distributive law."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "p = F, q = T makes p ∨ q true but the proposition false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "True when p = q = T."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) is correct."
+        }
+      ],
+      "verification": "Truth table: only p = T, q = T makes it true, same as p ∧ q."
+    },
+    "cse-1993-ii-a-8-3": {
+      "approach": "A finite union of finite sets is finite, so an infinite set split into finitely many pieces must have an infinite piece.",
+      "concepts": [
+        "Finite and infinite sets"
+      ],
+      "steps": [
+        {
+          "title": "Contrapositive",
+          "body": "If every $S_i$ were finite, $|S| \\le |S_1| + \\dots + |S_n|$ would be finite — contradiction. So at least one $S_i$ is infinite."
+        },
+        {
+          "title": "Other options",
+          "body": "Take $S = \\mathbb N$, $n = 2$, $S_1 = S_2 = \\mathbb N$: no $S_i$ is finite and two are infinite, refuting (a) and (d). Take $S_1 = \\{1\\}, S_2 = \\{2\\}, S_3 = \\mathbb N$: two finite sets, refuting (b)."
+        }
+      ],
+      "answer": {
+        "value": "at least one S_i is infinite",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "All S_i may be infinite."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Many S_i may be finite."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Otherwise S would be finite."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Several S_i may be infinite."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(c) is correct."
+        }
+      ],
+      "verification": "Counter-examples given for every other option."
+    },
+    "cse-1993-ii-a-8-4": {
+      "approach": "|A × A| = n², and a set of size k has 2^k subsets.",
+      "concepts": [
+        "Cartesian product",
+        "Power set"
+      ],
+      "steps": [
+        {
+          "title": "Size of A × A",
+          "body": "$|A\\times A| = n \\cdot n = n^2$."
+        },
+        {
+          "title": "Power set",
+          "body": "$|\\mathcal P(A\\times A)| = 2^{n^2}$."
+        }
+      ],
+      "answer": {
+        "value": "2^{n^2}",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^{2^n}$ is the size of the power set of the power set of A."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$2^{n^2}$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(2^n)^2 = 2^{2n}$, equal to $2^{n^2}$ only for n = 0, 2."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(2^2)^n = 2^{2n}$, same issue."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "(b) is correct."
+        }
+      ],
+      "verification": "n = 3: $2^9 = 512$, while (c), (d) give $2^6 = 64$ and (a) gives $2^8 = 256$."
+    },
+    "cse-1993-ii-a-8-5": {
+      "approach": "A partial order must be reflexive, antisymmetric and transitive; < is irreflexive, so it fails — then check each option's stated reason.",
+      "concepts": [
+        "Partial order",
+        "Relation properties"
+      ],
+      "steps": [
+        {
+          "title": "Properties of <",
+          "body": "Irreflexive ($a<a$ never holds), asymmetric (hence also antisymmetric), transitive."
+        },
+        {
+          "title": "Verdict",
+          "body": "Not reflexive ⇒ **not** a partial order (it is a strict order)."
+        },
+        {
+          "title": "Reasons in the options",
+          "body": "(a), (b) wrongly call it a partial order. (c) says it is not asymmetric — false. (d) says it is not antisymmetric — false. So no option gives a correct reason: (e)."
+        }
+      ],
+      "answer": {
+        "value": "none of the above",
+        "choice": [
+          "E"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "< is not reflexive, so not a partial order."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same: not reflexive."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "< is asymmetric, so the reason is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "< is antisymmetric (vacuously), so \"not antisymmetric\" is false; read as \"not (antisymmetric and reflexive)\" it would be acceptable."
+        },
+        {
+          "option": "E",
+          "correct": true,
+          "reason": "No option gives both a correct verdict and a correct reason."
+        }
+      ],
+      "pitfalls": [
+        "Asymmetric implies antisymmetric; < has both."
+      ],
+      "verification": "1 < 1 is false, so reflexivity fails; the other two properties hold."
+    },
+    "cse-1993-ii-a-8-6": {
+      "approach": "Map the m elements of A one by one to distinct elements of B.",
+      "concepts": [
+        "Injections",
+        "Permutations"
+      ],
+      "steps": [
+        {
+          "title": "Choices",
+          "body": "First element: $n$ choices, second $n-1$, …, $m$-th $n-m+1$."
+        },
+        {
+          "title": "Total",
+          "body": "$n(n-1)\\cdots(n-m+1) = \\dfrac{n!}{(n-m)!} = {}^nP_m$."
+        }
+      ],
+      "answer": {
+        "value": "ⁿP_m",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$m^n$ counts all functions from B to A."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$n!/(n-m)!$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "${}^mC_n = 0$ when m < n."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "${}^nC_m$ only chooses the image set; it ignores the m! orderings."
+        },
+        {
+          "option": "E",
+          "correct": false,
+          "reason": "${}^mP_n = 0$ when m < n."
+        }
+      ],
+      "verification": "m = 2, n = 3: 3·2 = 6 injections = ${}^3P_2$."
+    },
+    "cse-1993-ii-a-8-7": {
+      "approach": "n terms, each at most c·n, sum to at most c·n²; constant factors inside O do not matter.",
+      "concepts": [
+        "Big-O notation",
+        "Summations"
+      ],
+      "steps": [
+        {
+          "title": "Bound",
+          "body": "$\\sum_{k=1}^{n} O(n) \\le \\sum_{k=1}^{n} c\\,n = c\\,n^2$, so the sum is $O(n^2)$."
+        },
+        {
+          "title": "Equivalent forms",
+          "body": "$O(3n^2) = O(1.5n^2) = O(n^2)$, and every $O(n^2)$ function is also $O(n^3)$ (a valid, loose upper bound). It is not $O(n)$ in general."
+        }
+      ],
+      "answer": {
+        "value": "(b), (c), (d), (e)",
+        "choice": [
+          "B",
+          "C",
+          "D",
+          "E"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "n terms of size ~n give ~n², not O(n)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Tight bound."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Valid (loose) upper bound since n² ≤ n³."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Same class as O(n²)."
+        },
+        {
+          "option": "E",
+          "correct": true,
+          "reason": "Same class as O(n²)."
+        }
+      ],
+      "pitfalls": [
+        "If only tight bounds are wanted, (c) would be excluded; big-O is an upper bound, so it is formally correct."
+      ],
+      "verification": "Each term = n gives exactly n², which is in every class (b)–(e) but not O(n)."
+    },
+    "cse-1993-ii-b-9": {
+      "approach": "A half adder gives $S=x\\oplus y$ and $C=xy$. Tie one input to logic 1 and the sum output becomes NOT; the carry output is AND. Since $\\{\\text{AND},\\text{NOT}\\}$ is functionally complete, half adders alone realise any Boolean function.",
+      "concepts": [
+        "Half adder",
+        "Functional completeness",
+        "XOR with constant"
+      ],
+      "steps": [
+        {
+          "title": "Outputs of one half adder",
+          "body": "For inputs $x,y$: $$S=x\\oplus y,\\qquad C=x\\cdot y$$ So the carry output is already a 2-input **AND** gate."
+        },
+        {
+          "title": "NOT from the sum output",
+          "body": "Fix $y=1$: $$S=x\\oplus 1=\\overline{x}$$ (if $x=0$, $S=1$; if $x=1$, $S=0$). So the sum output of a half adder with one input tied to 1 is an **inverter**."
+        },
+        {
+          "title": "OR also follows",
+          "body": "By De Morgan, $x+y=\\overline{\\overline{x}\\cdot\\overline{y}}$: two half adders as inverters, one as AND (carry), one more as inverter. (Also $x+y=(x\\oplus y)\\oplus(xy)$ using one half adder's $S$ and $C$ fed into a second half adder's inputs: its sum output is $x\\oplus y\\oplus xy=x+y$.)"
+        },
+        {
+          "title": "Conclusion",
+          "body": "AND and NOT (hence also OR) can be built only from half adders. Every Boolean function has a sum-of-products form using only AND, OR, NOT, so **every Boolean function can be implemented with half adders alone**."
+        }
+      ],
+      "answer": {
+        "value": "Carry $=xy$ gives AND; sum with one input tied to 1 gives $x\\oplus1=\\overline{x}$ (NOT). $\\{\\text{AND},\\text{NOT}\\}$ is functionally complete, so any Boolean function can be built from half adders.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting that a constant 1 input is allowed — without it, XOR and AND alone cannot produce NOT (they map all-zero inputs to 0)."
+      ],
+      "verification": "Checked $x\\oplus1$ on both values of $x$, and $(x\\oplus y)\\oplus xy$ on all four input pairs: 0,1,1,1 = OR."
+    },
+    "cse-1993-ii-b-10": {
+      "approach": "Mode 2 is autoincrement register-indirect with RegR = PC. After fetching the one-word instruction at 2000 the PC already holds 2001, so the operand is taken from 2001 and the autoincrement then moves PC to 2002.",
+      "concepts": [
+        "Autoincrement addressing",
+        "PC-relative operand",
+        "Instruction fetch cycle"
+      ],
+      "steps": [
+        {
+          "title": "PC after instruction fetch",
+          "body": "The instruction occupies one word at address 2000. During fetch the PC is incremented: $$PC = 2000+1 = 2001$$"
+        },
+        {
+          "title": "Operand address",
+          "body": "Mode 2: RegR (here PC) contains the address of the operand, so the operand address $= PC = \\mathbf{2001}$. (This is effectively an immediate operand stored in the word after the instruction.)"
+        },
+        {
+          "title": "PC after execution",
+          "body": "After fetching the operand, RegR is incremented by 1: $$PC = 2001+1=\\mathbf{2002}$$ Being a non-jump instruction, nothing else changes PC, so the next instruction is fetched from 2002."
+        }
+      ],
+      "answer": {
+        "value": "(a) 2001  (b) 2002",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Taking the operand address as 2000 — the PC was already incremented by the instruction fetch.",
+        "Answering 2001 for (b) and forgetting the mode-2 post-increment."
+      ],
+      "verification": "Memory layout: 2000 = instruction, 2001 = operand (consumed via PC), 2002 = next instruction — consistent with a 2-word immediate instruction."
+    },
+    "cse-1993-ii-b-11": {
+      "approach": "A word is always read from $M_1$. A request that refers to $M_2$ first costs a page transfer $T_1$ into $M_1$; a request that refers to $M_3$ costs $T_2$ (into $M_2$) and $T_1$ (into $M_1$). Weight each case by its probability.",
+      "concepts": [
+        "Memory hierarchy",
+        "Average access time",
+        "Page transfer penalty"
+      ],
+      "given": "| Level | $t_i$ (s) | $p_i$ | $T_i$ (s) |\n|---|---|---|---|\n| $M_1$ | $10^{-6}$ | 0.99000 | 0.001 |\n| $M_2$ | $10^{-5}$ | 0.00998 | 0.1 |\n| $M_3$ | $10^{-4}$ | 0.00002 | — |",
+      "steps": [
+        {
+          "title": "Model",
+          "body": "$$t_A = p_1t_1 + p_2(T_1+t_1) + p_3(T_2+T_1+t_1)$$ A hit in $M_1$ costs $t_1$; a reference to $M_2$ means a page swap $M_2\\to M_1$ ($T_1$) and then the read from $M_1$; a reference to $M_3$ needs $M_3\\to M_2$ ($T_2$) and $M_2\\to M_1$ ($T_1$) first."
+        },
+        {
+          "title": "Each term",
+          "body": "$p_1t_1 = 0.99\\times10^{-6} = 0.99\\,\\mu s$\\n\\n$p_2(T_1+t_1) = 0.00998\\times(0.001+0.000001) = 0.00998\\times0.001001 = 9.98998\\,\\mu s$\\n\\n$p_3(T_2+T_1+t_1)=0.00002\\times(0.1+0.001+0.000001)=0.00002\\times0.101001=2.02002\\,\\mu s$"
+        },
+        {
+          "title": "Sum",
+          "body": "$$t_A = 0.99+9.98998+2.02002 = 13.00000\\,\\mu s = 1.3\\times10^{-5}\\ \\text{s}$$"
+        }
+      ],
+      "answer": {
+        "value": "$t_A\\approx 1.3\\times10^{-5}$ s (13 µs)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using only $\\sum p_it_i$ (≈ 1.1 µs) — this ignores the page-transfer times, which dominate.",
+        "The transfer times are in seconds while access times are microseconds — keep the units consistent."
+      ],
+      "verification": "Alternative model reading the word at the level where it lives, $p_1t_1+p_2(t_2+T_1)+p_3(t_3+T_2+T_1)$, gives $0.99+10.08+2.02\\approx13.09\\,\\mu s$ — also $\\approx1.3\\times10^{-5}$ s, so the result is robust; the exact 13.000 µs suggests the first model is the intended one."
+    },
+    "cse-1993-ii-b-12": {
+      "approach": "Treat the single loop as a row-major walk over the $n\\times n$ array: advance $j$ along a row, and at the last column reset $j$ and move to the next row; stop when $i$ runs past the last row.",
+      "concepts": [
+        "Row-major traversal",
+        "Loop invariant",
+        "Running maximum"
+      ],
+      "steps": [
+        {
+          "title": "[A]: initial max",
+          "body": "max must start at an actual array element (any initial constant could be larger than every element). Start at the first cell: **[A] = A[0,0]**.",
+          "scene": {
+            "kind": "code",
+            "lang": "pseudo",
+            "code": "max := A[0,0]; i := 0; j := 0;\nwhile i < n do\nbegin\n  if A[i,j] > max then max := A[i,j];\n  if j < n-1 then j := j+1\n  else begin j := 0; i := i+1 end\nend",
+            "line": 1,
+            "hl": [
+              1
+            ],
+            "vars": {
+              "i": "0",
+              "j": "0"
+            }
+          }
+        },
+        {
+          "title": "[C], [D]: moving to the next cell",
+          "body": "Within a row, $j$ goes $0,1,\\dots,n-1$. While $j<n-1$ we can still step right: **[C] = j < n-1**. At $j=n-1$ the else-branch sets $j:=0$ and must go to the next row: **[D] = i+1**.",
+          "scene": {
+            "line": 5,
+            "hl": [
+              5,
+              6
+            ]
+          }
+        },
+        {
+          "title": "[B]: loop condition",
+          "body": "Rows are $0\\dots n-1$. After the last cell $(n-1,n-1)$ the else-branch makes $i=n$, so loop while **[B] = i < n** (equivalently $i\\le n-1$).",
+          "scene": {
+            "line": 2,
+            "hl": [
+              2
+            ]
+          }
+        },
+        {
+          "title": "Check on n = 2",
+          "body": "Cells visited: $(0,0)\\to(0,1)\\to(1,0)\\to(1,1)\\to$ then $j=0,i=2$ and the loop stops. All $n^2=4$ cells are compared exactly once."
+        }
+      ],
+      "answer": {
+        "value": "[A] = A[0,0]; [B] = i < n; [C] = j < n−1; [D] = i+1",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Initialising max to 0 fails when all elements are negative.",
+        "Using [C] = j < n would let j reach n — out of bounds."
+      ],
+      "verification": "Traced n = 1 (one comparison, then i = 1 ends the loop) and n = 2 (four cells in row-major order)."
+    },
+    "cse-1993-ii-b-13": {
+      "approach": "Without a header (or a pointer to the predecessor) we cannot link a node before X. Instead insert Y after X and swap the data of X and Y — the classic O(1) 'insert before' trick.",
+      "concepts": [
+        "Singly linked list",
+        "Insert before a node",
+        "Data swap trick"
+      ],
+      "steps": [
+        {
+          "title": "Intended result",
+          "body": "The printed target omits $d$; the intended list is $d_1,\\dots,d_{j-1},\\,d,\\,d_j,\\dots,d_n$ — i.e. insert $d$ **before** the node X holding $d_j$. Its predecessor is not reachable from X."
+        },
+        {
+          "title": "Splice Y after X",
+          "body": "```\nY->next = X->next;\nX->next = Y;\n```\nNow the list is $d_1,\\dots,d_{j-1},d_j,d,d_{j+1},\\dots$ — order of $d_j$ and $d$ is wrong.",
+          "scene": {
+            "kind": "array",
+            "variant": "linked",
+            "cells": [
+              "d(j-1)",
+              "dj",
+              "d",
+              "d(j+1)"
+            ],
+            "hl": [
+              {
+                "at": [
+                  2,
+                  2
+                ],
+                "tone": "accent"
+              }
+            ],
+            "caption": "Y linked after X"
+          }
+        },
+        {
+          "title": "Swap the data",
+          "body": "```\ntemp = X->data;\nX->data = Y->data;   /* X now holds d  */\nY->data = temp;      /* Y now holds dj */\n```\nResult: $d_1,\\dots,d_{j-1},d,d_j,d_{j+1},\\dots,d_n$ — done in $O(1)$ without any header or traversal.",
+          "scene": {
+            "cells": [
+              "d(j-1)",
+              "d",
+              "dj",
+              "d(j+1)"
+            ],
+            "hl": [
+              {
+                "at": [
+                  1,
+                  2
+                ],
+                "tone": "success"
+              }
+            ],
+            "caption": "data of X and Y swapped"
+          }
+        },
+        {
+          "title": "Edge case j = n",
+          "body": "If X is the last node, $X\\to next$ is NULL; the same code works (Y becomes last, holding $d_n$)."
+        }
+      ],
+      "answer": {
+        "value": "Y→next := X→next; X→next := Y; swap(X→data, Y→data). Gives $d_1,\\dots,d_{j-1},d,d_j,\\dots,d_n$ in O(1).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Setting X->next = Y before saving X->next loses the rest of the list.",
+        "Trying to find the predecessor — impossible without the head pointer."
+      ],
+      "verification": "Checked j = 1 (new data becomes first item) and j = n (old last item moves into Y, which becomes the tail)."
+    },
+    "cse-1993-ii-b-14": {
+      "approach": "Count records per block for the data area, then build the index bottom-up: one (key, block-pointer) entry per block of the level below, until a level fits in a single block.",
+      "concepts": [
+        "ISAM",
+        "Blocking factor",
+        "Multilevel index"
+      ],
+      "steps": [
+        {
+          "title": "Data area",
+          "body": "Records per block $=512/64=8$. Records $=16\\text{K}=16384$. $$\\text{data blocks}=16384/8=\\mathbf{2048}$$"
+        },
+        {
+          "title": "Index entry size",
+          "body": "Entry = key + block address $=14+2=16$ bytes, so index blocking factor $=512/16=32$ entries per block."
+        },
+        {
+          "title": "Index levels",
+          "body": "Level 1: one entry per data block → $2048/32=64$ blocks.\\n\\nLevel 2: one entry per level-1 block → $\\lceil 64/32\\rceil=2$ blocks.\\n\\nLevel 3: $\\lceil 2/32\\rceil = 1$ block (root).\\n\\nIndex area $=64+2+1=\\mathbf{67}$ blocks in **3 levels**."
+        }
+      ],
+      "answer": {
+        "value": "Data area = 2048 blocks; index area = 64 + 2 + 1 = 67 blocks; 3 index levels",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Indexing every record (16384 entries) instead of every data block — ISAM's index is sparse.",
+        "Forgetting the 2-byte pointer in the index entry size."
+      ],
+      "verification": "$2048\\times8=16384$ records; $64\\times32=2048$ pointers; $2\\times32\\ge64$; one root block."
+    },
+    "cse-1993-ii-b-15": {
+      "approach": "Each call runs its for-loop $n-1$ times (one if-test per pass) and then recurses on $n-1$; unroll the recurrence.",
+      "concepts": [
+        "Recurrence relation",
+        "Bubble sort",
+        "Arithmetic series"
+      ],
+      "steps": [
+        {
+          "title": "Recurrence",
+          "body": "With argument $n$ the loop executes the if-statement for $i=1,\\dots,n-1$, i.e. $n-1$ times, then calls bubblesort$(n-1)$: $$a_n=a_{n-1}+(n-1),\\qquad a_1=0$$ (for $n=1$ the loop `for i:=1 to 0` runs zero times; the code has no explicit base case, so we take the recursion to stop there.)"
+        },
+        {
+          "title": "Unroll",
+          "body": "$$a_n=(n-1)+(n-2)+\\dots+1+a_1=\\sum_{k=1}^{n-1}k$$"
+        },
+        {
+          "title": "Closed form",
+          "body": "$$a_n=\\frac{n(n-1)}{2}$$ e.g. $a_4=3+2+1=6=\\frac{4\\cdot3}{2}$."
+        }
+      ],
+      "answer": {
+        "value": "$a_n=a_{n-1}+(n-1)$, $a_1=0$; $a_n=\\dfrac{n(n-1)}{2}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $a_n=a_{n-1}+n$ — the loop runs to $n-1$.",
+        "The comparison count is independent of the input order (no early exit)."
+      ],
+      "verification": "$a_2=1$, $a_3=1+2=3$; formula gives $1$ and $3$."
+    },
+    "cse-1993-ii-b-16": {
+      "approach": "Induct on the number of non-leaf (internal) nodes $I$, showing leaves $L=I+1$. Replacing a leaf by an internal node with two leaf children adds one internal node and one net leaf.",
+      "concepts": [
+        "Mathematical induction",
+        "Full binary tree",
+        "Leaves vs internal nodes"
+      ],
+      "steps": [
+        {
+          "title": "Statement and base",
+          "body": "Claim: every binary tree in which each non-leaf has exactly 2 children satisfies $L=I+1$.\\n\\nBase $I=0$: the tree is a single node, which is a leaf: $L=1=0+1$. ✓"
+        },
+        {
+          "title": "Inductive hypothesis",
+          "body": "Assume $L=I+1$ for every such tree with $k\\ge0$ internal nodes."
+        },
+        {
+          "title": "Inductive step",
+          "body": "Take a tree $T$ with $k+1$ internal nodes. Some internal node $v$ has two leaf children (pick a deepest internal node). Delete both children: $v$ becomes a leaf, giving a full tree $T'$ with $I'=k$ internal nodes and $L'=L-2+1=L-1$ leaves. By hypothesis $L'=k+1$, so $$L=L'+1=k+2=(k+1)+1=I+1.$$ ✓",
+          "scene": {
+            "kind": "tree",
+            "root": {
+              "label": "v",
+              "tone": "accent",
+              "children": [
+                {
+                  "label": "leaf",
+                  "id": "l1",
+                  "tone": "muted"
+                },
+                {
+                  "label": "leaf",
+                  "id": "l2",
+                  "tone": "muted"
+                }
+              ]
+            },
+            "caption": "remove the two leaf children of v: I drops by 1, L drops by 1"
+          }
+        },
+        {
+          "title": "Conclusion",
+          "body": "By induction, in every binary tree where each non-leaf node has 2 descendants, the number of leaves is one more than the number of non-leaf nodes."
+        }
+      ],
+      "answer": {
+        "value": "Induction on internal nodes $I$: base $I=0\\Rightarrow L=1$; removing the two leaf children of a deepest internal node reduces both $I$ and $L$ by 1, so $L=I+1$ holds for all such trees.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Inducting on total nodes without showing that a node with two leaf children exists.",
+        "The result fails for trees where some node has only one child."
+      ],
+      "verification": "Root with two leaves: $I=1,L=2$. Complete tree of height 2: $I=3,L=4$."
+    },
+    "cse-1993-ii-b-17": {
+      "approach": "Use a Venn diagram with unknown exactly-two regions $x,y,z$. Inclusion–exclusion shows the data are inconsistent if everyone eats something, and otherwise only bound the answer between 5 and 10.",
+      "concepts": [
+        "Inclusion–exclusion",
+        "Venn regions",
+        "Consistency of data"
+      ],
+      "given": "| Total | V | F | E | V∩F∩E |\n|---|---|---|---|---|\n| 21 | 9 | 10 | 7 | 5 |",
+      "steps": [
+        {
+          "title": "Regions",
+          "body": "Let $x=$ exactly V,F; $y=$ exactly V,E; $z=$ exactly F,E (all $\\ge0$). Then only-V $=9-5-x-y=4-x-y$, only-F $=10-5-x-z=5-x-z$, only-E $=7-5-y-z=2-y-z$; all must be $\\ge0$.",
+          "scene": {
+            "kind": "venn",
+            "sets": [
+              {
+                "id": "A",
+                "label": "V"
+              },
+              {
+                "id": "B",
+                "label": "F"
+              },
+              {
+                "id": "C",
+                "label": "E"
+              }
+            ],
+            "regions": {
+              "A": "4−x−y",
+              "B": "5−x−z",
+              "C": "2−y−z",
+              "AB": "x",
+              "AC": "y",
+              "BC": "z",
+              "ABC": "5"
+            }
+          }
+        },
+        {
+          "title": "If everyone eats a dish",
+          "body": "$|V\\cup F\\cup E|=21$ would need $$21=(9+10+7)-(5+x+5+y+5+z)+5=16-(x+y+z)$$ i.e. $x+y+z=-5<0$: **impossible**. The data cannot be consistent if all 21 eat at least one dish; at most 16 persons eat anything."
+        },
+        {
+          "title": "At least two dishes",
+          "body": "At least two $=x+y+z+5$. From $x+y\\le4$, $x+z\\le5$, $y+z\\le2$: $2(x+y+z)\\le11\\Rightarrow x+y+z\\le5$ (attained by $x=4,z=1,y=0$). Minimum is $x=y=z=0$. Hence $$5\\le\\text{at least two}\\le10$$ and the value is **not uniquely determined**."
+        },
+        {
+          "title": "Takeaway",
+          "body": "At least the 5 who eat all three eat two or more, so the stored answer 3 is impossible. With the most natural extra assumption (nobody eats exactly two dishes) the answer is **5**, and then $21-11=10$ persons eat none."
+        }
+      ],
+      "answer": {
+        "value": "Not uniquely determined: at least two dishes is between 5 and 10 (it is ≥ 5 because 5 eat all three). If no one eats exactly two, the answer is 5. The data are inconsistent if every person eats at least one dish.",
+        "matchesKey": false,
+        "keyNote": "The committed key '3' is impossible: the 5 people who eat all three dishes already eat at least two. The printed data do not fix a unique value; corrected and flagged for review."
+      },
+      "pitfalls": [
+        "Assuming all 21 eat at least one dish — it leads to a negative region count.",
+        "Answering below 5 ignores the 5 who eat all three."
+      ],
+      "verification": "Example $x=4,y=0,z=1$: regions only-V 0, only-F 0, only-E 1, union $=16-5=11$; at least two $=10$. Example $x=y=z=0$: union 16, at least two 5. Both satisfy every given count."
+    },
+    "cse-1993-ii-b-18": {
+      "approach": "C is a logical consequence of $F$ iff every row where $F$ is true also has $C$ true. Build the 8-row truth table of $F=A\\wedge(A\\to(B\\vee C))\\wedge(B\\to\\sim A)$.",
+      "concepts": [
+        "Logical consequence",
+        "Truth table",
+        "Implication"
+      ],
+      "steps": [
+        {
+          "title": "Truth table",
+          "body": "$F$ is a conjunction, so it needs $A=1$; then $B\\to\\sim A$ forces $B=0$; then $A\\to(B\\vee C)$ forces $C=1$.",
+          "scene": {
+            "kind": "table",
+            "cols": [
+              "A",
+              "B",
+              "C",
+              "F"
+            ],
+            "rows": [
+              [
+                0,
+                0,
+                0,
+                0
+              ],
+              [
+                0,
+                0,
+                1,
+                0
+              ],
+              [
+                0,
+                1,
+                0,
+                0
+              ],
+              [
+                0,
+                1,
+                1,
+                0
+              ],
+              [
+                1,
+                0,
+                0,
+                0
+              ],
+              [
+                1,
+                0,
+                1,
+                1
+              ],
+              [
+                1,
+                1,
+                0,
+                0
+              ],
+              [
+                1,
+                1,
+                1,
+                0
+              ]
+            ],
+            "reveal": 32,
+            "hl": [
+              {
+                "r": 5,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Rows where F is true",
+          "body": "Only the row $A=1,B=0,C=1$ gives $F=1$: $1\\wedge(1\\to(0\\vee1))\\wedge(0\\to0)=1\\wedge1\\wedge1=1$. In that row $C=1$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Every row with $F=1$ has $C=1$, so $F\\to C$ is a tautology and $C$ is a logical consequence of $F$."
+        }
+      ],
+      "answer": {
+        "value": "F is true only for A = 1, B = 0, C = 1, where C is true; hence $F\\Rightarrow C$ (C is a logical consequence).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Checking only that F and C can be simultaneously true — consequence needs C true in **every** model of F."
+      ],
+      "verification": "Resolution check: from A and B→¬A get ¬B; from A and A→(B∨C) get B∨C; with ¬B, C."
+    },
+    "cse-1993-ii-c-19": {
+      "approach": "A two-level NAND–NAND network is a sum of products. Read the product terms off the first-level gates to get $D_A$ and $D_B$; for D flip-flops $A^+=D_A$, $B^+=D_B$, then tabulate all 8 combinations of $A,B,P$.",
+      "concepts": [
+        "NAND–NAND = SOP",
+        "D flip-flop",
+        "State transition table"
+      ],
+      "steps": [
+        {
+          "title": "Read the circuit",
+          "body": "First-level gate inputs: $(\\overline{A},B)$ and $(\\overline{A},\\overline{P})$ feed the $D_A$ gate; $(P,\\overline{B})$ and $(\\overline{P},A)$ feed the $D_B$ gate."
+        },
+        {
+          "title": "Next-state equations",
+          "body": "$$D_A=\\overline{\\overline{\\overline{A}B}\\cdot\\overline{\\overline{A}\\,\\overline{P}}}=\\overline{A}B+\\overline{A}\\,\\overline{P}=\\overline{A}(B+\\overline{P})$$ $$D_B=\\overline{\\overline{P\\overline{B}}\\cdot\\overline{\\overline{P}A}}=P\\overline{B}+\\overline{P}A$$ With D flip-flops, $A^+=D_A$ and $B^+=D_B$."
+        },
+        {
+          "title": "Evaluate each row",
+          "body": "$A^+=1$ only when $A=0$ and ($B=1$ or $P=0$). $B^+=1$ when ($P=1,B=0$) or ($P=0,A=1$).",
+          "scene": {
+            "kind": "table",
+            "cols": [
+              "AB",
+              "P",
+              "D_A = A⁺",
+              "D_B = B⁺",
+              "A⁺B⁺"
+            ],
+            "rows": [
+              [
+                "00",
+                "0",
+                "1",
+                "0",
+                "10"
+              ],
+              [
+                "00",
+                "1",
+                "0",
+                "1",
+                "01"
+              ],
+              [
+                "01",
+                "0",
+                "1",
+                "0",
+                "10"
+              ],
+              [
+                "01",
+                "1",
+                "1",
+                "0",
+                "10"
+              ],
+              [
+                "10",
+                "0",
+                "0",
+                "1",
+                "01"
+              ],
+              [
+                "10",
+                "1",
+                "0",
+                "1",
+                "01"
+              ],
+              [
+                "11",
+                "0",
+                "0",
+                "1",
+                "01"
+              ],
+              [
+                "11",
+                "1",
+                "0",
+                "0",
+                "00"
+              ]
+            ],
+            "reveal": 0,
+            "mono": true
+          }
+        },
+        {
+          "title": "State transition table",
+          "body": "Present state $AB$, input $P$ → next state:\\n\\n| AB | P = 0 | P = 1 |\\n|---|---|---|\\n| 00 | 10 | 01 |\\n| 01 | 10 | 10 |\\n| 10 | 01 | 01 |\\n| 11 | 01 | 00 |",
+          "scene": {
+            "reveal": 40
+          }
+        }
+      ],
+      "answer": {
+        "value": "$D_A=\\overline{A}B+\\overline{A}\\,\\overline{P}$, $D_B=P\\overline{B}+\\overline{P}A$. AB → A⁺B⁺ for P = 0 / P = 1: 00 → 10 / 01; 01 → 10 / 10; 10 → 01 / 01; 11 → 01 / 00.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Treating the gates as AND–OR without the double inversion — NAND–NAND equals AND–OR, not NOR.",
+        "Mixing up which feedback line is $A$ and which is $\\overline{A}$."
+      ],
+      "verification": "Row 11, P = 1: $D_A=0\\cdot(1+0)=0$, $D_B=1\\cdot0+0\\cdot1=0$ → 00. Row 00, P = 0: $D_A=1\\cdot(0+1)=1$, $D_B=0+1\\cdot0=0$ → 10."
+    },
+    "cse-1993-ii-c-20": {
+      "approach": "Trace the loop: HL is a pointer loaded indirectly from 5000H, B is a down-counter of 5, and each iteration reads input port 20H into A and stores it at the pointer.",
+      "concepts": [
+        "8085 LHLD",
+        "Memory pointer HL",
+        "Counted loop",
+        "I/O-mapped input"
+      ],
+      "steps": [
+        {
+          "title": "Set-up",
+          "body": "`LHLD 5000` loads L from 5000H and H from 5001H, so HL = the 16-bit address stored at 5000H–5001H (a pointer to a buffer). `MVI B,5` sets the loop counter to 5.",
+          "scene": {
+            "kind": "code",
+            "lang": "pseudo",
+            "code": "      LHLD 5000   ; L <- [5000H], H <- [5001H]\n      MVI  B, 5   ; counter = 5\nGET:  IN   20     ; A <- port 20H\n      MOV  M, A   ; [HL] <- A\n      INX  H      ; HL <- HL + 1\n      DCR  B      ; B <- B - 1, sets Z\n      JNZ  GET    ; repeat while B != 0",
+            "line": 1,
+            "hl": [
+              1,
+              2
+            ],
+            "vars": {
+              "B": "5",
+              "HL": "[5001H][5000H]"
+            }
+          }
+        },
+        {
+          "title": "Loop body",
+          "body": "`IN 20` reads a byte from input port 20H into A; `MOV M,A` stores it at the address in HL; `INX H` advances the pointer; `DCR B` decrements the counter and sets Z; `JNZ GET` repeats until B = 0.",
+          "scene": {
+            "line": 3,
+            "hl": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          }
+        },
+        {
+          "title": "Function and roles",
+          "body": "**(a)** Reads **5 bytes** from input port **20H** and stores them in **5 consecutive memory locations** starting at the address held in 5000H/5001H.\\n\\n**(b)** A: receives the input byte; H,L: memory pointer (destination address, incremented); B: byte counter (5 → 0); flags: Z from DCR ends the loop. Addresses: 5000H/5001H (pointer), port 20H (input device), and the 5-byte buffer pointed to by HL."
+        }
+      ],
+      "answer": {
+        "value": "Inputs 5 bytes from port 20H into consecutive memory locations starting at the address stored at 5000H (low) / 5001H (high). A = data byte, HL = memory pointer, B = counter, Z flag terminates the loop.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading LHLD 5000 as HL ← 5000H — LHLD loads HL from memory 5000H/5001H (direct addressing).",
+        "INX H does not affect flags; the Z flag comes from DCR B."
+      ],
+      "verification": "B takes values 5,4,3,2,1 at IN — five reads; after the fifth DCR, B = 0 and JNZ falls through."
+    },
+    "cse-1993-ii-c-21": {
+      "approach": "Simulate both policies with 4 frames, starting empty. LRU evicts the page whose last use is oldest; FIFO evicts the page loaded earliest.",
+      "concepts": [
+        "Demand paging",
+        "LRU",
+        "FIFO",
+        "Page faults"
+      ],
+      "steps": [
+        {
+          "title": "LRU: cold start",
+          "body": "References 1–4 (pages 1,2,3,4) fault and fill the 4 frames. Pages 1 and 3 (refs 5,6) hit.",
+          "scene": {
+            "kind": "paging",
+            "policy": "LRU",
+            "frames": 4,
+            "refs": [
+              1,
+              2,
+              3,
+              4,
+              1,
+              3,
+              5,
+              2,
+              1,
+              5,
+              4,
+              3,
+              2,
+              3
+            ],
+            "upto": 6,
+            "expectFaults": 9
+          }
+        },
+        {
+          "title": "LRU: replacements",
+          "body": "Ref 7 (page 5): last uses 1@5, 2@2, 3@6, 4@4 → evict 2. Ref 8 (page 2): evict 4 (last used @4). Refs 9, 10 (1, 5) hit. Ref 11 (page 4): last uses 1@9, 3@6, 5@10, 2@8 → evict 3. Ref 12 (page 3): evict 2 (@8). Ref 13 (page 2): evict 1 (@9). Ref 14 (page 3) hits.",
+          "scene": {
+            "upto": 14
+          }
+        },
+        {
+          "title": "LRU result",
+          "body": "Faults at references **1, 2, 3, 4, 7, 8, 11, 12, 13** (pages 1,2,3,4,5,2,4,3,2) — **9 faults**."
+        },
+        {
+          "title": "FIFO",
+          "body": "Load order 1,2,3,4. Refs 5,6 hit. Ref 7 (5): evict 1 → queue 2,3,4,5. Ref 8 (2) hit. Ref 9 (1): evict 2 → 3,4,5,1. Refs 10–12 (5,4,3) hit. Ref 13 (2): evict 3 → 4,5,1,2. Ref 14 (3): evict 4 → 5,1,2,3.",
+          "scene": {
+            "kind": "paging",
+            "policy": "FIFO",
+            "frames": 4,
+            "refs": [
+              1,
+              2,
+              3,
+              4,
+              1,
+              3,
+              5,
+              2,
+              1,
+              5,
+              4,
+              3,
+              2,
+              3
+            ],
+            "upto": 14,
+            "expectFaults": 8
+          }
+        },
+        {
+          "title": "FIFO result",
+          "body": "Faults at references **1, 2, 3, 4, 7, 9, 13, 14** (pages 1,2,3,4,5,1,2,3) — **8 faults**. Here FIFO happens to beat LRU."
+        }
+      ],
+      "answer": {
+        "value": "(a) LRU: faults at references 1, 2, 3, 4, 7, 8, 11, 12, 13 (pages 1,2,3,4,5,2,4,3,2) — 9 faults. (b) FIFO: faults at references 1, 2, 3, 4, 7, 9, 13, 14 (pages 1,2,3,4,5,1,2,3) — 8 faults.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "In FIFO a hit does not refresh a page's position in the queue.",
+        "Counting the four cold-start faults is required — memory is initially empty."
+      ],
+      "verification": "Both simulations re-run step by step; the page-simulator canvas confirms 9 (LRU) and 8 (FIFO) faults."
+    },
+    "cse-1993-ii-c-22": {
+      "approach": "Give every edge $S_i\\to S_j$ of the precedence graph its own semaphore initialised to 0: $S_i$ does V on it when it finishes, $S_j$ does P on it before it starts. Run one process per statement inside parbegin–parend.",
+      "concepts": [
+        "Precedence graph",
+        "Semaphores",
+        "parbegin–parend"
+      ],
+      "steps": [
+        {
+          "title": "Edges",
+          "body": "From the graph: $S_1\\to S_2$ (a), $S_1\\to S_3$ (b), $S_2\\to S_4$ (c), $S_2\\to S_5$ (d), $S_3\\to S_5$ (e), $S_6\\to S_4$ (f), $S_6\\to S_5$ (g) — 7 semaphores, all initially 0.",
+          "scene": {
+            "kind": "graph",
+            "directed": true,
+            "nodes": [
+              {
+                "id": "S1",
+                "x": 2,
+                "y": 0
+              },
+              {
+                "id": "S2",
+                "x": 0,
+                "y": 1
+              },
+              {
+                "id": "S3",
+                "x": 4,
+                "y": 1
+              },
+              {
+                "id": "S4",
+                "x": 0,
+                "y": 2
+              },
+              {
+                "id": "S5",
+                "x": 4,
+                "y": 2
+              },
+              {
+                "id": "S6",
+                "x": 2,
+                "y": 3
+              }
+            ],
+            "edges": [
+              {
+                "from": "S1",
+                "to": "S2",
+                "w": "a"
+              },
+              {
+                "from": "S1",
+                "to": "S3",
+                "w": "b"
+              },
+              {
+                "from": "S2",
+                "to": "S4",
+                "w": "c"
+              },
+              {
+                "from": "S2",
+                "to": "S5",
+                "w": "d"
+              },
+              {
+                "from": "S3",
+                "to": "S5",
+                "w": "e"
+              },
+              {
+                "from": "S6",
+                "to": "S4",
+                "w": "f"
+              },
+              {
+                "from": "S6",
+                "to": "S5",
+                "w": "g"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Program",
+          "body": "```pascal\nvar a,b,c,d,e,f,g : semaphore := 0;\nparbegin\n  begin S1; V(a); V(b) end;\n  begin P(a); S2; V(c); V(d) end;\n  begin P(b); S3; V(e) end;\n  begin P(c); P(f); S4 end;\n  begin P(d); P(e); P(g); S5 end;\n  begin S6; V(f); V(g) end\nparend\n```\n$S_1$ and $S_6$ have no predecessors so they start at once; $S_4$ waits for $S_2$ and $S_6$; $S_5$ waits for $S_2$, $S_3$ and $S_6$."
+        },
+        {
+          "title": "Why it is correct",
+          "body": "Each P blocks until the matching V has been done, i.e. until the predecessor statement has completed. Every semaphore receives exactly one V and one P, so no process blocks forever and no extra ordering is introduced."
+        }
+      ],
+      "answer": {
+        "value": "Semaphores a–g := 0; parbegin [S1; V(a); V(b)] [P(a); S2; V(c); V(d)] [P(b); S3; V(e)] [P(c); P(f); S4] [P(d); P(e); P(g); S5] [S6; V(f); V(g)] parend",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Sharing one semaphore for S5's three predecessors without counting — a single V would release S5 too early.",
+        "Forgetting that S6 is an independent source node."
+      ],
+      "verification": "Checked every edge has one V (at its tail) and one P (at its head); in-degree of S4 = 2 and S5 = 3 match the P counts."
+    },
+    "cse-1993-ii-c-23": {
+      "approach": "Join enroll with teach on cno to get the teacher of each enrolled course, filter grade = 'A' and tname = 'Ramesh', join Students for the name, and use DISTINCT since a student may qualify through several courses.",
+      "concepts": [
+        "SQL join",
+        "DISTINCT",
+        "Selection"
+      ],
+      "steps": [
+        {
+          "title": "Join path",
+          "body": "Students —(rollno)— enroll —(cno)— teach. (The schema prints `cao` in teach; it is the course number `cno`.)"
+        },
+        {
+          "title": "Query",
+          "body": "```sql\nSELECT DISTINCT s.rollno, s.sname\nFROM   Students s, enroll e, teach t\nWHERE  s.rollno = e.rollno\n  AND  e.cno    = t.cno\n  AND  t.tname  = 'Ramesh'\n  AND  e.grade  = 'A';\n```"
+        },
+        {
+          "title": "Why DISTINCT",
+          "body": "A student with grade A in two of Ramesh's courses (or a course with two teachers both named Ramesh) would otherwise appear twice; 'at least one' asks for each student once."
+        }
+      ],
+      "answer": {
+        "value": "SELECT DISTINCT s.rollno, s.sname FROM Students s, enroll e, teach t WHERE s.rollno = e.rollno AND e.cno = t.cno AND t.tname = 'Ramesh' AND e.grade = 'A'",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Omitting the e.cno = t.cno join gives students with an A in any course whenever Ramesh teaches anything."
+      ],
+      "verification": "Equivalent nested form: rollno IN (SELECT rollno FROM enroll WHERE grade='A' AND cno IN (SELECT cno FROM teach WHERE tname='Ramesh'))."
+    },
+    "cse-1993-ii-c-24": {
+      "approach": "Check each relation against its key. teach(tno, tname, cno) has key (tno, cno) but tno → tname depends on part of the key, so it is not even 2NF; split it out.",
+      "concepts": [
+        "3NF",
+        "Partial dependency",
+        "Lossless decomposition"
+      ],
+      "steps": [
+        {
+          "title": "Relations with single-attribute determinants",
+          "body": "Students: rollno → sname, saddr with key rollno — 3NF (BCNF). courses: cno → cname, key cno — 3NF. enroll: (rollno, cno) → grade, key (rollno, cno) — 3NF. (`sdaddr` in the FD list is a misprint of saddr.)"
+        },
+        {
+          "title": "teach violates 3NF",
+          "body": "teach(tno\\*, tname, cno\\*) has key (tno, cno), but $$\\text{tno}\\to\\text{tname}$$ is a partial dependency of a non-prime attribute on part of the key. So teach is not in 2NF, hence **the database is not in 3NF**."
+        },
+        {
+          "title": "Normalise",
+          "body": "Decompose teach into\\n\\n- teacher(**tno**, tname)\\n- teach(**tno, cno**)\\n\\nThe common attribute tno is the key of teacher, so the split is lossless and preserves tno → tname. Final schema: Students(rollno, sname, saddr), courses(cno, cname), enroll(rollno, cno, grade), teacher(tno, tname), teach(tno, cno) — all in 3NF."
+        }
+      ],
+      "answer": {
+        "value": "(a) No. (b) teach(tno, tname, cno) with key (tno, cno) has the partial dependency tno → tname. Decompose into teacher(tno, tname) and teach(tno, cno); the other relations are already in 3NF.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Declaring 3NF because every FD has a key on the left in *some* relation — tname lives in teach, whose key is (tno, cno)."
+      ],
+      "verification": "Closure check: $\\{\\text{tno},\\text{cno}\\}^+$ covers teach, but $\\{\\text{tno}\\}^+\\ni\\text{tname}$ with tno a proper subset of the key."
+    },
+    "cse-1993-ii-c-25": {
+      "approach": "One nonterminal S for statements with one production per statement form, and a left-recursive list L of statements separated by ';' for the begin–end block (no EBNF braces or *). Then derive the given statement top-down.",
+      "concepts": [
+        "Context-free grammar",
+        "Statement list",
+        "Parse tree"
+      ],
+      "steps": [
+        {
+          "title": "Grammar",
+          "body": "$$\\begin{aligned}S &\\to \\mathbf{id}\\ {:=}\\ E\\\\ S &\\to \\mathbf{for}\\ \\mathbf{id}\\ {:=}\\ E\\ \\mathbf{to}\\ E\\ \\mathbf{do}\\ S\\\\ S &\\to \\mathbf{begin}\\ L\\ \\mathbf{end}\\\\ L &\\to L\\ ;\\ S \\ \\mid\\ S\\end{aligned}$$ $E$ (expression) is assumed defined; **id** is an identifier token."
+        },
+        {
+          "title": "Derivation",
+          "body": "$S\\Rightarrow$ for id := E to E do $S$ (j, 2, 10); inner $S\\Rightarrow$ begin $L$ end; $L\\Rightarrow L\\,;\\,S\\Rightarrow S\\,;\\,S$; the two $S$ become x := expr1 and y := expr2."
+        },
+        {
+          "title": "Parse tree",
+          "body": "Root $S$ uses the for-production; its last child $S$ uses begin $L$ end; $L$ splits as $L\\ ;\\ S$ with the inner $L\\to S$.",
+          "scene": {
+            "kind": "tree",
+            "root": {
+              "label": "S",
+              "id": "s0",
+              "children": [
+                {
+                  "label": "for",
+                  "id": "for"
+                },
+                {
+                  "label": "id(j)",
+                  "id": "j"
+                },
+                {
+                  "label": ":=",
+                  "id": "as0"
+                },
+                {
+                  "label": "E(2)",
+                  "id": "e2"
+                },
+                {
+                  "label": "to",
+                  "id": "to"
+                },
+                {
+                  "label": "E(10)",
+                  "id": "e10"
+                },
+                {
+                  "label": "do",
+                  "id": "do"
+                },
+                {
+                  "label": "S",
+                  "id": "s1",
+                  "children": [
+                    {
+                      "label": "begin",
+                      "id": "bg"
+                    },
+                    {
+                      "label": "L",
+                      "id": "L0",
+                      "children": [
+                        {
+                          "label": "L",
+                          "id": "L1",
+                          "children": [
+                            {
+                              "label": "S",
+                              "id": "s2",
+                              "children": [
+                                {
+                                  "label": "id(x)",
+                                  "id": "x"
+                                },
+                                {
+                                  "label": ":=",
+                                  "id": "as1"
+                                },
+                                {
+                                  "label": "expr1",
+                                  "id": "ex1"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "label": ";",
+                          "id": "semi"
+                        },
+                        {
+                          "label": "S",
+                          "id": "s3",
+                          "children": [
+                            {
+                              "label": "id(y)",
+                              "id": "y"
+                            },
+                            {
+                              "label": ":=",
+                              "id": "as2"
+                            },
+                            {
+                              "label": "expr2",
+                              "id": "ex2"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "label": "end",
+                      "id": "end"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "S → id := E | for id := E to E do S | begin L end;  L → L ; S | S. Parse tree: S(for, j, :=, E(2), to, E(10), do, S(begin, L(L(S(x := expr1)), ;, S(y := expr2)), end)).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Putting ';' after the last statement — the example has none before end, so ';' is a separator, not a terminator.",
+        "Using $L\\to S\\{;S\\}$ or $S^*$, which the question forbids."
+      ],
+      "verification": "Yield of the tree reads: for j := 2 to 10 do begin x := expr1 ; y := expr2 end — exactly the given statement."
+    },
+    "cse-1993-ii-c-26": {
+      "approach": "x is a var (call-by-reference) parameter and y is a value parameter. So the caller pushes the address of a and the value of b; inside P, x needs one extra indirection.",
+      "concepts": [
+        "Call by reference",
+        "Call by value",
+        "Activation record"
+      ],
+      "steps": [
+        {
+          "title": "What is pushed",
+          "body": "For **var x** the caller pushes the **address (l-value) of a**; for **y** it pushes a **copy of the value (r-value) of b**."
+        },
+        {
+          "title": "Addressing inside P",
+          "body": "Both live at fixed offsets in P's activation record. **y** is accessed **directly**: its stack slot holds the value, e.g. `M[fp + off_y]`. **x** is accessed **indirectly**: its slot holds a pointer, so every use is `M[M[fp + off_x]]` — and assignments to x change a in the caller."
+        }
+      ],
+      "answer": {
+        "value": "(a) The address of a and the value of b are pushed. (b) y is addressed directly at its stack offset; x is addressed indirectly through the address stored at its offset (one extra level of indirection).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Saying both are pushed by value — the var keyword makes x a reference parameter."
+      ],
+      "verification": "If P executes x := x + y, the generated code loads M[M[fp+off_x]] and M[fp+off_y] and stores to M[M[fp+off_x]], updating a."
+    },
+    "cse-1993-ii-c-27": {
+      "approach": "Track how many consecutive b's end the input so far (0, 1, 2); a third b goes to a trap state. An a always resets the count.",
+      "concepts": [
+        "DFA construction",
+        "Counting suffix",
+        "Dead state"
+      ],
+      "animation": {
+        "kind": "automaton",
+        "layout": "row",
+        "states": [
+          {
+            "id": "q0",
+            "start": true,
+            "accept": true
+          },
+          {
+            "id": "q1",
+            "accept": true
+          },
+          {
+            "id": "q2",
+            "accept": true
+          },
+          {
+            "id": "q3"
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "a"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "b"
+          },
+          {
+            "from": "q1",
+            "to": "q0",
+            "label": "a"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "b"
+          },
+          {
+            "from": "q2",
+            "to": "q0",
+            "label": "a"
+          },
+          {
+            "from": "q2",
+            "to": "q3",
+            "label": "b"
+          },
+          {
+            "from": "q3",
+            "to": "q3",
+            "label": "a,b"
+          }
+        ],
+        "current": [
+          "q0"
+        ],
+        "tape": {
+          "cells": [
+            "b",
+            "b",
+            "a",
+            "b",
+            "b",
+            "b"
+          ],
+          "head": 0
+        }
+      },
+      "steps": [
+        {
+          "title": "States",
+          "body": "$q_0$: no trailing b (start); $q_1$: one trailing b; $q_2$: two trailing b's; $q_3$: bbb has occurred (dead). $q_0,q_1,q_2$ are accepting."
+        },
+        {
+          "title": "Transitions",
+          "body": "On $b$: $q_0\\to q_1\\to q_2\\to q_3$. On $a$: $q_0,q_1,q_2\\to q_0$. $q_3$ loops on $a,b$."
+        },
+        {
+          "title": "Run on bba",
+          "body": "$q_0\\xrightarrow{b}q_1\\xrightarrow{b}q_2\\xrightarrow{a}q_0$ — the a resets the count; accepted so far.",
+          "scene": {
+            "current": [
+              "q0"
+            ],
+            "tape": {
+              "cells": [
+                "b",
+                "b",
+                "a",
+                "b",
+                "b",
+                "b"
+              ],
+              "head": 3
+            },
+            "edgeTones": {
+              "q2>q0": "accent"
+            }
+          }
+        },
+        {
+          "title": "Then bbb",
+          "body": "$q_0\\xrightarrow{b}q_1\\xrightarrow{b}q_2\\xrightarrow{b}q_3$: three consecutive b's reach the dead state, so **bbabbb is rejected**; prefixes like bbabb are accepted.",
+          "scene": {
+            "current": [
+              "q3"
+            ],
+            "tape": {
+              "cells": [
+                "b",
+                "b",
+                "a",
+                "b",
+                "b",
+                "b"
+              ],
+              "head": 6
+            },
+            "edgeTones": {
+              "q2>q3": "error"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "4-state DFA: $q_0$ (start), $q_1$, $q_2$ accepting, $q_3$ dead. b: $q_0\\to q_1\\to q_2\\to q_3$; a: $q_0,q_1,q_2\\to q_0$; $q_3$ loops on a, b.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Making only $q_0$ accepting — strings ending in b or bb are valid.",
+        "Omitting the dead state; a DFA needs a transition on every symbol."
+      ],
+      "verification": "Minimal: q0, q1, q2 differ by how many more b's are allowed (bb, b, none), and q3 is the only non-accepting state."
+    },
+    "cse-1993-ii-c-28": {
+      "approach": "Only associativity is available. Write $q=p*p$ and move brackets for (a); for (b) split on the two possible values of $p*q$.",
+      "concepts": [
+        "Semigroup",
+        "Associativity",
+        "Case analysis"
+      ],
+      "steps": [
+        {
+          "title": "(a) p*q = q*p",
+          "body": "$$p*q=p*(p*p)=(p*p)*p=q*p$$ using associativity in the middle step."
+        },
+        {
+          "title": "(b) Case p*q = p",
+          "body": "$$q*q=(p*p)*q=p*(p*q)=p*p=q$$"
+        },
+        {
+          "title": "(b) Case p*q = q",
+          "body": "$$q*q=(p*p)*q=p*(p*q)=p*q=q$$ The set has only two elements, so these are the only cases; in both, $q*q=q$."
+        }
+      ],
+      "answer": {
+        "value": "(a) $p*q=p*(p*p)=(p*p)*p=q*p$. (b) $q*q=(p*p)*q=p*(p*q)$, which is $p*p=q$ if $p*q=p$ and $p*q=q$ if $p*q=q$; so $q*q=q$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Assuming commutativity — a semigroup need not be commutative; (a) must be derived."
+      ],
+      "verification": "Model check: the constant semigroup where every product equals q is associative, has p*p = q, and indeed p*q = q*p = q and q*q = q."
+    }
+  }
+}

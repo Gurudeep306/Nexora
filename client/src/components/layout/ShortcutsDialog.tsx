@@ -61,7 +61,7 @@ export function ShortcutsDialog() {
   }, [navigate])
 
   return (
-    <Modal open={open} onClose={() => setOpen(false)} title="Keyboard shortcuts" description="Move around Nexora without touching the mouse." size="md">
+    <Modal open={open} onClose={() => setOpen(false)} title="Keyboard shortcuts" description="Move around NexoraGuru without touching the mouse." size="md">
       <div className="grid gap-6 sm:grid-cols-2">
         <section>
           <h3 className="mb-2 text-[11px] font-semibold tracking-[0.1em] text-text-secondary uppercase">General</h3>

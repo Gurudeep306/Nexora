@@ -58,7 +58,7 @@ function rememberConversation(id: string | null) {
 }
 
 /**
- * One conversation with the Nexora AI agent: streaming replies, tool chips,
+ * One conversation with the NexoraGuru AI agent: streaming replies, tool chips,
  * navigation suggestions and animations. The thread lives on the server
  * (per user); this tab remembers which conversation it is on.
  */

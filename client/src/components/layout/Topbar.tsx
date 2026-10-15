@@ -13,6 +13,7 @@ import { openAssistantEvent } from '@/context/AgentContext'
 import { UserMenu } from './UserMenu'
 import { api } from '@/lib/api'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
+import { LogoMark } from '@/components/brand/Logo'
 import type { Problem, ProblemsResponse } from '@/components/problems/types'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
@@ -113,6 +114,16 @@ export function Topbar() {
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 titlebar px-3 md:px-6 animate-fade-in">
+      <Tooltip label="NexoraGuru home" side="bottom">
+        <Link
+          to="/hub"
+          aria-label="NexoraGuru home"
+          className="hidden shrink-0 rounded-lg transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-brand md:block"
+        >
+          <LogoMark size={28} interactive />
+        </Link>
+      </Tooltip>
+
       {/* Contextual / History-aware back button */}
       {pathname !== '/hub' && (
         <BackButton
@@ -197,7 +208,7 @@ export function Topbar() {
             </Link>
           </Tooltip>
         )}
-        <Tooltip label="Nexora AI (⌘J)" side="bottom">
+        <Tooltip label="NexoraGuru AI (⌘J)" side="bottom">
           <button
             onClick={() => openAssistantEvent()}
             aria-label="Open AI assistant"
