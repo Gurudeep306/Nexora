@@ -28524,8 +28524,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "legacy",
+      "topic": "microprocessor",
       "tags": [
         "8085",
         "wait-state",
@@ -29032,8 +29032,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "cd",
+      "topic": "lexical",
       "tags": [
         "tokens"
       ],
@@ -32547,8 +32547,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "algo",
+      "topic": "complexity",
       "tags": [
         "asymptotic-notation"
       ],
@@ -33327,12 +33327,12 @@
       "figures": [
         {
           "f": "cse-2001/a-33-1.png",
-          "alt": "Two positive-edge D flip-flops sharing clock C. Input X drives D0 of the first flip-flop and one input of a 2-input AND gate; the other AND input is Q0-bar of the first flip-flop. The AND output drives D1 of the second flip-flop, whose output Q1 is Y.",
+          "alt": "Two positive-edge-triggered D flip-flops sharing clock C. Input X drives D0 of the first flip-flop and the upper input of a 2-input AND gate; the lower AND input is Q0-bar of the first flip-flop. The AND output drives D1 of the second flip-flop, whose output Q1 is Y.",
           "svg": "cse-2001/a-33-1.svg"
         },
         {
           "f": "cse-2001/a-33-2.png",
-          "alt": "Clock C with several rising edges marked by vertical lines; X goes high at the first marked rising edge, stays high for about five clock periods, and goes low at the last marked edge.",
+          "alt": "Timing diagram of clock C (six rising edges) and input X. Dashed markers at the 1st, 2nd, 3rd and 6th rising edges. X goes high exactly at the 1st rising edge and goes low just before the 6th rising edge.",
           "svg": "cse-2001/a-33-2.svg"
         }
       ],
@@ -33579,7 +33579,7 @@
       "figures": [
         {
           "f": "cse-2001/a-38-1.png",
-          "alt": "Single 8-bit bus. ALU fed by registers A1 and A2 (both loaded from the bus), ALU output back to the bus. Registers B and A connected to the bus. SP (with a decrement input) connected through an 8x(2:1) MUX to the bus; an 8x(1:2) DEMUX from the bus loads the two bytes of MAR. MDR connected to the bus. Small labels are barely legible in the scan.",
+          "alt": "Single 8-bit bus. Registers A1 and A2 load from the bus and feed the ALU, whose output returns to the bus. Registers B and A each load from and drive the bus. The 16-bit SP (with a local Dec input) feeds an 8x(2:1) MUX that drives one byte onto the bus; an 8x(1:2) DEMUX takes a byte from the bus into either half of the 16-bit MAR. MDR loads from and drives the bus. The MUX and DEMUX share a select line.",
           "svg": "cse-2001/a-38-1.svg"
         }
       ],
@@ -33598,7 +33598,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Datapath labels are barely legible; answer (3 cycles, per GATE Overflow) depends on how SP reaches MAR."
+      "reviewNote": "Stored key B (3) disputed: with an 8-bit bus the 16-bit SP needs two byte transfers into MAR (via the 8x(2:1) MUX / 8x(1:2) DEMUX), MDR <- r needs a third bus cycle, and the memory write takes 2 cycles; SP decrement is local and overlaps. Independent solution gives 5 (D). An earlier note cited GATE Overflow for 3 (not re-verifiable: site behind Cloudflare); no official 2001 key. Verify before changing the answer."
     },
     {
       "id": "cse-2001-a-39",
@@ -34364,8 +34364,8 @@
       "options": [],
       "figures": [],
       "group": "b-55",
-      "subject": "ga",
-      "topic": "verbal",
+      "subject": "toc",
+      "topic": "tm",
       "tags": [
         "undecidability",
         "halting-problem"
@@ -34422,8 +34422,8 @@
       "options": [],
       "figures": [],
       "group": "b-56",
-      "subject": "ga",
-      "topic": "spatial",
+      "subject": "os",
+      "topic": "files",
       "tags": [
         "disk-capacity"
       ],
@@ -34710,7 +34710,7 @@
       "figures": [
         {
           "f": "cse-2001/b-58-1.png",
-          "alt": "Block labelled 'Excess 3 To BCD' with four inputs e4, e3, e2, e1 on the left (e4 at top) and four outputs b4, b3, b2, b1 on the right. Subscripts are blurred in the scan.",
+          "alt": "Block labelled \"Excess 3 To BCD\" with four inputs e8, e4, e2, e1 on the left (top to bottom) and four outputs b8, b4, b2, b1 on the right (top to bottom). Subscripts read as 8-4-2-1 weights; the scan is blurred.",
           "svg": "cse-2001/b-58-1.svg"
         }
       ],
@@ -34722,14 +34722,14 @@
         "bcd",
         "pos"
       ],
-      "answer": "$b_4 = e_4(e_3 + e_2)(e_3 + e_1)$ (for the MSB output)",
+      "answer": "$b_4 = (\\bar e_4 + e_2)(\\bar e_4 + e_1)(e_4 + \\bar e_2 + \\bar e_1)$ for the weight-4 output (labels 8-4-2-1); if $b_4$ is the MSB: $b_4 = e_4(e_3 + e_2)(e_3 + e_1)$",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Minimization) from **CSE 2001 Q58(b)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **$b_4 = e_4(e_3 + e_2)(e_3 + e_1)$ (for the MSB output)**.\n- **Identified Problem Quantities:** 3\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  MSB of BCD is 1 only for digits 8, 9 i.e. excess-3 inputs 1011, 1100.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  codes 0000–0010 and 1101–1111 are don't-cares..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`$b_4 = e_4(e_3 + e_2)(e_3 + e_1)$ (for the MSB output)`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **$b_4 = e_4(e_3 + e_2)(e_3 + e_1)$ (for the MSB output)**\n- The computed numerical result `$b_4 = e_4(e_3 + e_2)(e_3 + e_1)$ (for the MSB output)` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Output subscript in the question (and figure labels) is illegible in the scan; answered assuming the MSB output b4."
+      "reviewNote": "Figure subscripts are blurred in the scan. Read as e8,e4,e2,e1 / b8,b4,b2,b1 (weights), b4 is the weight-4 BCD bit: (e4'+e2)(e4'+e1)(e4+e2'+e1'). If the labels are b4..b1 with b4 the MSB, the answer is e4(e3+e2)(e3+e1). Confirm the labels from a clearer copy."
     },
     {
       "id": "cse-2001-b-59-a",
@@ -34918,8 +34918,8 @@
       "options": [],
       "figures": [],
       "group": "b-61",
-      "subject": "dm",
-      "topic": "combinatorics",
+      "subject": "pds",
+      "topic": "recursion",
       "tags": [
         "recurrence"
       ],
@@ -34946,10 +34946,11 @@
       "options": [],
       "figures": [],
       "group": "b-62",
-      "subject": "dl",
-      "topic": "number",
+      "subject": "pds",
+      "topic": "bst",
       "tags": [
-        "bst-insertion"
+        "bst-insertion",
+        "binary-search-tree"
       ],
       "answer": "Root 15; 15.left = 9 (9.left = 3 with 3.left = 1, 9.right = 12); 15.right = 32 (32.left = 20, 20.right = 25).",
       "answerSource": "official",
@@ -35002,8 +35003,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "dl",
-      "topic": "number",
+      "subject": "pds",
+      "topic": "trees",
       "tags": [
         "tree-depth",
         "recursion"
@@ -35027,7 +35028,7 @@
       "number": "63(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nList the edges of a minimum spanning tree of the graph.",
+      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nList the edges of a minimum spanning tree of the graph.",
       "options": [],
       "figures": [],
       "group": "b-63",
@@ -35055,7 +35056,7 @@
       "number": "63(b)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nHow many distinct minimum spanning trees does this graph have?",
+      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nHow many distinct minimum spanning trees does this graph have?",
       "options": [],
       "figures": [],
       "group": "b-63",
@@ -35083,7 +35084,7 @@
       "number": "63(c)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the minimum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
+      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the minimum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
       "options": [],
       "figures": [],
       "group": "b-63",
@@ -35111,7 +35112,7 @@
       "number": "63(d)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the maximum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
+      "text": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the maximum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
       "options": [],
       "figures": [],
       "group": "b-63",
@@ -35139,7 +35140,7 @@
       "number": "64(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol B. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the FIRST and FOLLOW sets for E and A.",
+      "text": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol E. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the FIRST and FOLLOW sets for E and A.",
       "options": [],
       "figures": [],
       "group": "b-64",
@@ -35167,7 +35168,7 @@
       "number": "64(b)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol B. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the LL(1) parse table for the grammar.",
+      "text": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol E. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the LL(1) parse table for the grammar.",
       "options": [],
       "figures": [],
       "group": "b-64",
@@ -35195,7 +35196,7 @@
       "number": "65",
       "marks": 5,
       "type": "DESC",
-      "text": "The syntax of the repeat-until statement is given by the following grammar\n\n$S \\to \\text{repeat } S_1 \\text{ until } E$\n\nwhere E stands for expressions, S and $S_1$ stand for statements. The non-terminals S and $S_1$ have an attribute code that represents generated code. The non-terminal B has two attributes. The attribute code represents generated code to evaluate the expression and store its truth value in a distinct variable, and the attribute varName contains the name of the variable in which the truth value is stored. The truth value stored in the variable is 1 if E is true, 0 if E is false.\n\nGive a syntax-directed definition to generate three-address code for the repeat-until statement. Assume that you can call a function newlabel() that returns a distinct label for a statement. Use the operator '||' to concatenate two strings and the function gen(s) to generate a line containing the string s.",
+      "text": "The syntax of the repeat-until statement is given by the following grammar\n\n$S \\to \\text{repeat } S_1 \\text{ until } E$\n\nwhere E stands for expressions, S and $S_1$ stand for statements. The non-terminals S and $S_1$ have an attribute code that represents generated code. The non-terminal E has two attributes. The attribute code represents generated code to evaluate the expression and store its truth value in a distinct variable, and the attribute varName contains the name of the variable in which the truth value is stored. The truth value stored in the variable is 1 if E is true, 0 if E is false.\n\nGive a syntax-directed definition to generate three-address code for the repeat-until statement. Assume that you can call a function newlabel() that returns a distinct label for a statement. Use the operator '||' to concatenate two strings and the function gen(s) to generate a line containing the string s.",
       "options": [],
       "figures": [],
       "group": null,
@@ -35460,8 +35461,8 @@
       "options": [],
       "figures": [],
       "group": "b-69",
-      "subject": "dm",
-      "topic": "sets",
+      "subject": "db",
+      "topic": "sql",
       "tags": [
         "subquery",
         "aggregate"
@@ -35489,8 +35490,8 @@
       "options": [],
       "figures": [],
       "group": "b-69",
-      "subject": "dm",
-      "topic": "sets",
+      "subject": "db",
+      "topic": "sql",
       "tags": [
         "join"
       ],
@@ -37081,8 +37082,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "arrays",
       "tags": [
         "row-major",
         "address-calculation"
@@ -37448,8 +37449,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
         "coins",
         "complement"
@@ -37793,7 +37794,7 @@
       "number": "49",
       "marks": 2,
       "type": "MCQ",
-      "text": "Relation R is decomposed using a set of functional dependencies, F, and relation S is decomposed using another set of functional dependencies, G. One decomposition is definitely **BCNF**, the other is definitely **3NF**, but it is not known which is which. To make a <u>guaranteed</u> identification, which one of the following tests should be used on the decompositions? (Assume that the closures of F and G are available).",
+      "text": "Relation R is decomposed using a set of functional dependencies, F, and relation S is decomposed using another set of functional dependencies, G. One decomposition is definitely **BCNF**, the other is definitely **3NF**, but it is not known which is which. To make a *guaranteed* identification, which one of the following tests should be used on the decompositions? (Assume that the closures of F and G are available).",
       "options": [
         {
           "l": "A",
@@ -38183,7 +38184,7 @@
       "number": "56(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider the following circuits. $A = a_2a_1a_0$ and $B = b_2b_1b_0$ are three bit binary numbers input to the circuit. The output is $Z = z_3z_2z_1z_0$. R0, R1 and R2 are registers with loading clock shown. The registers are loaded with their input data with the falling edge of a clock pulse (signal CLOCK shown) and appear as shown. The bits of input numbers A, B, and the full adders are as shown in the circuit. Assume Clock period is greater than the settling time of all circuits.\n\nFor 8 clocks pulses on the CLOCK terminal and the inputs A, B as shown, obtain the output Z (sequence of 4-bit values of Z). Assume initial contents of R0, R1 and R2 as all zeros.\n\n| | | | | | | | | |\n|---|---|---|---|---|---|---|---|---|\n| A | 110 | 011 | 111 | 101 | 000 | 000 | 000 | 000 |\n| B | 101 | 101 | 011 | 110 | 000 | 000 | 000 | 000 |\n| Clock No | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |",
+      "text": "Consider the following circuits. $A = a_2a_1a_0$ and $B = b_2b_1b_0$ are three bit binary numbers input to the circuit. The output is $Z = z_3z_2z_1z_0$. R0, R1 and R2 are registers with loading clock shown. The registers are loaded with their input data with the falling edge of a clock pulse (signal CLOCK shown) and appear as shown. The bits of input numbers A, B, and the full adders are as shown in the circuit. Assume Clock period is greater than the settling time of all circuits.\n\nFor 8 clocks pulses on the CLOCK terminal and the inputs A, B as shown, obtain the output Z (sequence of 4-bit values of Z). Assume initial contents of R0, R1 and R2 as all zeros.\n\n| Clock No | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |\n|---|---|---|---|---|---|---|---|---|\n| A | 110 | 011 | 111 | 101 | 000 | 000 | 000 | 000 |\n| B | 101 | 101 | 011 | 110 | 000 | 000 | 000 | 000 |",
       "options": [],
       "figures": [
         {
@@ -38338,8 +38339,8 @@
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **COA** (Cache) from **CSE-2002 Q58(a)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Base address + 4 * 2048 = 8192 bytes = 2 pages of 4 KB each**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Base address + 4 * 2048 = 8192 bytes = 2 pages of 4 KB each}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Base address + 4 * 2048 = 8192 bytes = 2 pages of 4 KB each**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": "The PDF prints 'size S Kbytes' (typo for 8 Kbytes in the original paper)."
+      "needsReview": true,
+      "reviewNote": "The PDF prints 'size S Kbytes' (typo for 8 Kbytes in the original paper). Stored key ('Base address + 4 * 2048 = 8192 bytes = 2 pages of 4 KB each') names no element; derivation: 512 lines of 16 B, A[i] is in block floor(i/4) -> line floor(i/4) mod 512; the array spans exactly blocks 0-511, so NO element conflicts with A[0] (A[1..3] share its block). Proposed key: 'None (array size = cache size; A[1]-A[3] share A[0]'s block)'."
     },
     {
       "id": "cse-2002-b-58-b",
@@ -38497,8 +38498,8 @@
       "options": [],
       "figures": [],
       "group": "b-61",
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
         "compositions"
       ],
@@ -38554,8 +38555,8 @@
       "options": [],
       "figures": [],
       "group": "b-61",
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "dm",
+      "topic": "combinatorics",
       "tags": [
         "compositions",
         "stars-and-bars"
@@ -38612,8 +38613,8 @@
       "options": [],
       "figures": [],
       "group": "b-62",
-      "subject": "db",
-      "topic": "sql",
+      "subject": "toc",
+      "topic": "tm",
       "tags": [
         "reduction",
         "undecidability"
@@ -41482,12 +41483,12 @@
       "figures": [
         {
           "f": "cse-2003/cs-47-1.png",
-          "alt": "Input A feeds XOR gate 1 directly and through a non-inverting buffer with delay δ1 = 2 ns; the output of XOR 1 feeds XOR gate 2 directly and through a buffer with delay δ2 = 4 ns; XOR 2 output is B.",
+          "alt": "Circuit: input A feeds XOR gate 1 directly and through a non-inverting buffer with delay δ1 = 2 ns; the output of XOR 1 feeds XOR gate 2 directly and through a non-inverting buffer with delay δ2 = 4 ns; the output of XOR 2 is B.",
           "svg": "cse-2003/cs-47-1.svg"
         },
         {
           "f": "cse-2003/cs-47-2.png",
-          "alt": "A is 0 from time 0 to 1 ns, then rises to logic 1 at 1 ns and stays at 1 through 11 ns. Time axis marked 0 to 11 ns. Answer options (A) 1, (B) 2, (C) 3, (D) 4 printed below.",
+          "alt": "Waveform of input A against time 0 to 11 ns: A is at logic 0 from 0 to 1 ns, rises to logic 1 at 1 ns and stays at logic 1 up to 11 ns.",
           "svg": "cse-2003/cs-47-2.svg"
         }
       ],
@@ -41632,7 +41633,7 @@
       "figures": [
         {
           "f": "cse-2003/cs-50-1.png",
-          "alt": "Four states q0 (start, self-loop on 1) →0→ q1; q1 →1→ q0; q1 →0→ q2; q2 self-loop on 0; q2 →1→ q3 (accepting, self-loop on 0,1). Accepts strings containing 001.",
+          "alt": "DFA with states q0 (start), q1, q2, q3 (accepting). q0 loops on 1 and goes to q1 on 0; q1 goes to q2 on 0 and back to q0 on 1; q2 loops on 0 and goes to q3 on 1; q3 loops on 0,1. It accepts exactly the strings containing 001.",
           "svg": "cse-2003/cs-50-1.svg"
         }
       ],
@@ -41869,7 +41870,7 @@
       "figures": [
         {
           "f": "cse-2003/cs-55-1.png",
-          "alt": "Three states: start state p (left), state q (right) with self-loop on 0,1, and accepting state r (bottom). Transitions: p →0,1→ q; q →0→ p; p →1→ r; q →0→ r. r has no outgoing transitions.",
+          "alt": "NFA with three unlabelled states, called p, q, r here: p is the start state (left), q (right) has a self-loop on 0,1, r (bottom) is the only accepting state. Edges: p to q on 0,1; q to p on 0; p to r on 1; q to r on 0. r has no outgoing edges.",
           "svg": "cse-2003/cs-55-1.svg"
         }
       ],
@@ -42313,7 +42314,7 @@
       "number": "65",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following 2-3-4 tree (i.e., B-tree with a minimum degree of two) in which each data item is a letter. The usual alphabetical ordering of letters is used in constructing the tree.",
+      "text": "Consider the following 2-3-4 tree (i.e., B-tree with a minimum degree of two) in which each data item is a letter. The usual alphabetical ordering of letters is used in constructing the tree.\n\nWhat is the result of inserting G in the above tree?",
       "options": [
         {
           "l": "A",
@@ -42353,8 +42354,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (Bst) from **CSE 2003 Q65** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n- **Identified Problem Quantities:** 2, 3, 4, 2003, 65, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Inserting G overflows leaf BHI into B G H I.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  splitting pushes H up, the root L P U + H overflows and splits with P as new root: P / (H L: BG, I, N), (U: QT, VXZ)..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `![](/gate-fig/cse-2003/cs-65-a.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `![](/gate-fig/cse-2003/cs-65-b.png)`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `![](/gate-fig/cse-2003/cs-65-c.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `None of the above`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": "https://gateoverflow.in/952/gate2003-65",
-      "needsReview": true,
-      "reviewNote": "The reprint omits the question sentence ('What is the result of inserting G in the above tree?' per the original paper; see https://gateoverflow.in/952/gate2003-65). Option figures: (A) root P; children GL (leaves B, HI, N) and U (QT, VXZ). (B) root P; children HL (leaves BG, I, N) and U (QT, VXZ). (C) root IPU with leaves BGH, LN, QT, VXZ."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2003-cs-66",
@@ -42480,7 +42481,7 @@
       "figures": [
         {
           "f": "cse-2003/cs-68-1.png",
-          "alt": "Undirected weighted graph on 10 vertices a–j. Edges (weights as printed, some illegible in the scan): a-b 6, a-c 1, a-d 2, c-d 2, b-d 3, b-h 2, h-j 19, h-g 8, h-i 14, j-i 5, d-g 15, g-i 4, g-f 4, f-i 9, e-g 8, e-f 11, e-i 2 or 3, a-e 4 or 8.",
+          "alt": "Undirected weighted graph on vertices a to j. Edges with weights as read from the scan: a-b 6, a-c 1, a-d 2, c-d 2, b-d 3, b-h 2, h-j 19, h-g 8, h-i 14, j-i 5, d-g 15, g-i 4, g-f 4, f-i 9, e-g 8, e-f 11, e-i 2, a-e 8.",
           "svg": "cse-2003/cs-68-1.svg"
         }
       ],
@@ -42498,7 +42499,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Several edge weights in the scanned figure are illegible (a-e, e-i, f-g, e-g); answer follows the standard key 31 (https://gateoverflow.in/955/gate2003-68). Verify weights against the original figure."
+      "reviewNote": "Edge labels in the scanned figure are blurry; read as a-d 2 (could be 7), e-i 2, a-e 8, e-g 8, f-i 9. With these the MST weight is 1+2+2+2+3+4+4+5+8 = 31, matching the stored key; the a-d reading does not affect the total. Verify the labels against a clean copy of the paper."
     },
     {
       "id": "cse-2003-cs-69",
@@ -42544,7 +42545,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Subscripts in the scanned list are hard to read (the reprint appears to drop/garble $c_e$); transcribed per the original paper's sequence."
+      "reviewNote": "The scanned reprint lists only 15 events and omits c_e (with C never ending the answer would be 5). The text follows the original GATE 2003 sequence with c_e after d_s, which gives a peak overlap of 4 (key B)."
     },
     {
       "id": "cse-2003-cs-70",
