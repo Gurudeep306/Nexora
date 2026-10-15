@@ -1,0 +1,1278 @@
+{
+ "paper": "cse-2002",
+ "version": 2,
+ "solutions": {
+  "cse-2002-a-1": {
+   "approach": "Row-reduce mentally: the rank is the number of linearly independent (non-zero, after elimination) rows.",
+   "concepts": [
+    "Matrix rank",
+    "Linear independence"
+   ],
+   "steps": [
+    {
+     "title": "Count independent rows",
+     "body": "Row 1 is $(1,1)\\neq 0$; row 2 is $(0,0)$, the zero row. So exactly one independent row."
+    },
+    {
+     "title": "Check with the determinant",
+     "body": "$\\det = 1\\cdot 0 - 1\\cdot 0 = 0$, so the rank is below 2; a non-zero entry exists, so rank $\\ge 1$. Rank $=1$."
+    }
+   ],
+   "answer": {
+    "value": "1",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A $2\\times2$ matrix has rank at most 2; 4 is impossible."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Rank 2 needs $\\det\\neq0$, but the determinant is 0."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: one non-zero row, the other is zero."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Only the zero matrix has rank 0; this matrix has non-zero entries."
+    }
+   ],
+   "verification": "Columns $(1,0)^T$ and $(1,0)^T$ are equal, so the column rank is also 1."
+  },
+  "cse-2002-a-2": {
+   "approach": "The trapezoidal rule approximates the integrand by a straight line on each interval, so it is exact exactly when the integrand itself is a polynomial of degree at most 1.",
+   "concepts": [
+    "Trapezoidal rule",
+    "Degree of precision"
+   ],
+   "steps": [
+    {
+     "title": "Check degree 0 and 1",
+     "body": "For $f(x)=a+bx$ on $[p,q]$: rule gives $\\frac{q-p}{2}\\big(2a+b(p+q)\\big)=a(q-p)+\\frac{b}{2}(q^2-p^2)$, which equals $\\int_p^q (a+bx)\\,dx$. Exact for constants ($b=0$) and for lines."
+    },
+    {
+     "title": "Fails at degree 2",
+     "body": "For $f(x)=x^2$ on $[0,1]$: rule gives $\\frac{1}{2}(0+1)=\\frac12$, but $\\int_0^1x^2\\,dx=\\frac13$. The error term $-\\frac{(q-p)^3}{12}f''(\\xi)$ vanishes only when $f''=0$."
+    }
+   ],
+   "answer": {
+    "value": "0 or 1",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "It is also exact for degree-1 (linear) integrands."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "It is also exact for constants (degree 0)."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: the error is proportional to $f''$, which is zero for degree $\\le 1$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Not exact for $x^2$: gives $1/2$ instead of $1/3$ on $[0,1]$."
+    }
+   ],
+   "verification": "Error formula $E=-\\frac{h^3}{12}f''(\\xi)$ is zero iff $f''\\equiv0$."
+  },
+  "cse-2002-a-3": {
+   "approach": "Write $a_k=T(2^k)$; then $a_k=3a_{k-1}+1$ with $a_0=1$, a linear recurrence solved by unrolling into a geometric series.",
+   "concepts": [
+    "Recurrence relations",
+    "Geometric series"
+   ],
+   "steps": [
+    {
+     "title": "Unroll",
+     "body": "$a_k = 3a_{k-1}+1 = 3^2a_{k-2}+3+1 = \\dots = 3^k a_0 + (3^{k-1}+\\dots+3+1)$."
+    },
+    {
+     "title": "Sum",
+     "body": "$a_k = 3^k + \\frac{3^k-1}{2} = \\frac{2\\cdot3^k+3^k-1}{2} = \\frac{3^{k+1}-1}{2}$."
+    },
+    {
+     "title": "Check small values",
+     "body": "$k=0$: $\\frac{3-1}{2}=1$ ✓. $k=1$: recurrence gives $3\\cdot1+1=4$, formula gives $\\frac{9-1}{2}=4$ ✓."
+    }
+   ],
+   "answer": {
+    "value": "$(3^{k+1}-1)/2$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$2^1=2\\neq4=T(2)$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: matches $T(1)=1$, $T(2)=4$, $T(4)=13$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "At $k=1$: $3^{\\log_2 1}=3^0=1\\neq4$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "At $k=1$: $2^{\\log_3 1}=1\\neq4$."
+    }
+   ],
+   "verification": "$k=2$: $3\\cdot4+1=13$ and $(27-1)/2=13$ ✓."
+  },
+  "cse-2002-a-4": {
+   "approach": "A cycle is 2-colourable iff it has even length (bipartite); an odd cycle needs 3. The expression in D evaluates to exactly that.",
+   "concepts": [
+    "Chromatic number",
+    "Bipartite graphs"
+   ],
+   "steps": [
+    {
+     "title": "Even vs odd cycle",
+     "body": "Even $n$: alternate two colours around the cycle, $\\chi=2$. Odd $n$: alternating forces the first and last vertex (which are adjacent) to share a colour, so $\\chi=3$."
+    },
+    {
+     "title": "Evaluate option D",
+     "body": "$n-2\\lfloor n/2\\rfloor = n \\bmod 2$. Even $n$: $0+2=2$. Odd $n$: $1+2=3$. This matches $\\chi(C_n)$ for all $n$."
+    }
+   ],
+   "answer": {
+    "value": "$n-2\\lfloor n/2\\rfloor+2$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Fails for odd cycles, e.g. the triangle $C_3$ needs 3."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Fails for even cycles, which need only 2."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Never needed: every cycle is 3-colourable."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: equals 2 for even $n$ and 3 for odd $n$."
+    }
+   ],
+   "verification": "$C_4$: $4-4+2=2$; $C_5$: $5-4+2=3$ ✓."
+  },
+  "cse-2002-a-5": {
+   "approach": "A singly linked list allows only sequential access, so in the worst case (element last or absent) every node is compared.",
+   "concepts": [
+    "Linear search",
+    "Linked lists"
+   ],
+   "steps": [
+    {
+     "title": "No random access",
+     "body": "Binary search needs $O(1)$ access to the middle element; a linked list must be walked node by node."
+    },
+    {
+     "title": "Worst case",
+     "body": "If the element is at the tail (or not present), all $n$ nodes are compared: $n$ comparisons."
+    }
+   ],
+   "answer": {
+    "value": "$n$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$\\log_2 n$ needs binary search, impossible without random access."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$n/2$ is roughly the average for a successful search, not the worst case."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Same binary-search assumption as A."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: every node may have to be checked."
+    }
+   ],
+   "verification": "A list of length 1 needs 1 comparison, matching $n$."
+  },
+  "cse-2002-a-6": {
+   "approach": "Test the group axioms (closure, identity, inverses, associativity) on each set.",
+   "concepts": [
+    "Group axioms",
+    "Invertible matrices"
+   ],
+   "steps": [
+    {
+     "title": "Negative rationals",
+     "body": "$(-1)(-2)=2$ is not negative: closure fails (and the identity 1 is not in the set)."
+    },
+    {
+     "title": "Non-singular matrices",
+     "body": "For $n\\times n$ matrices: $\\det(AB)=\\det A\\det B\\neq0$ (closure), $I$ is the identity, $A^{-1}$ exists and is non-singular, and multiplication is associative. It is the group $GL_n$."
+    },
+    {
+     "title": "All matrices",
+     "body": "The zero matrix (indeed any singular matrix) has no inverse, so all matrices do not form a group."
+    }
+   ],
+   "answer": {
+    "value": "The set of all non-singular matrices forms a group under multiplication",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Not closed: the product of two negatives is positive."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: closure, identity, inverses and associativity all hold."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Singular matrices have no inverse."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "C is false, so 'both' is false."
+    }
+   ],
+   "verification": "Each axiom checked; only B passes all four."
+  },
+  "cse-2002-a-7": {
+   "approach": "A stack bounded by 10 items has only finitely many possible contents, so the stack contents can be folded into the finite control: the machine is a finite automaton.",
+   "concepts": [
+    "Pushdown automata",
+    "Finite automata"
+   ],
+   "steps": [
+    {
+     "title": "Count configurations",
+     "body": "With stack alphabet $\\Gamma$, the number of stack contents of height $\\le 10$ is $\\sum_{i=0}^{10}|\\Gamma|^i$, which is finite."
+    },
+    {
+     "title": "Simulate with a finite automaton",
+     "body": "New state = (old state, stack contents): finitely many states, so the language is regular. Every regular language is accepted by such a PDA (just ignore the stack), so 'regular' is the exact description."
+    }
+   ],
+   "answer": {
+    "value": "Regular",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True but not the best description: CFL is a proper superclass."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: a bounded stack is finite memory."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "DCFL is also a strict superclass of what is accepted; regular is tighter."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Every regular language is recursive, but that is far too loose."
+    }
+   ],
+   "verification": "$a^nb^n$ needs an unbounded stack and is not accepted with a 10-item limit, consistent with regularity."
+  },
+  "cse-2002-a-8": {
+   "approach": "\"$P$ unless $Z$\" means \"if not $Z$ then $P$\". Here $P$ is \"if X then Y\", so the statement is $\\neg Z\\to(X\\to Y)$, which exports to $(X\\wedge\\neg Z)\\to Y$.",
+   "concepts": [
+    "Propositional logic",
+    "Exportation law"
+   ],
+   "steps": [
+    {
+     "title": "Translate 'unless'",
+     "body": "\"$P$ unless $Z$\" $\\equiv \\neg Z \\rightarrow P$, with $P = X\\rightarrow Y$: $\\;\\neg Z\\rightarrow(X\\rightarrow Y)$."
+    },
+    {
+     "title": "Export",
+     "body": "$A\\to(B\\to C)\\equiv(A\\wedge B)\\to C$, so $\\neg Z\\to(X\\to Y)\\equiv(X\\wedge\\neg Z)\\to Y$, which is option A."
+    }
+   ],
+   "answer": {
+    "value": "$(X\\wedge\\neg Z)\\rightarrow Y$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: Y is promised only when X holds and Z does not."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Says X and Y together force not-Z; Y is no longer the consequence."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Forces $\\neg Z$ whenever X holds, but 'unless Z' makes no claim about Z."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Asserts $\\neg Z$ unconditionally, so it is false whenever Z is true."
+    }
+   ],
+   "verification": "With $Z$ true the sentence says nothing, so it must be true: A is true for $Z=1$ (antecedent false), while C and D can be false there."
+  },
+  "cse-2002-a-9": {
+   "approach": "In the 8085 interrupt cycle the CPU acknowledges INTR by asserting $\\overline{\\text{INTA}}$; the device places the RST/CALL opcode on the data bus while that acknowledge is active.",
+   "concepts": [
+    "8085 interrupts",
+    "INTR/INTA handshake"
+   ],
+   "steps": [
+    {
+     "title": "INTR handshake",
+     "body": "The device raises INTR; the 8085 finishes the current instruction and, if interrupts are enabled, asserts $\\overline{\\text{INTA}}$ (active low) instead of $\\overline{\\text{RD}}$ in the next opcode fetch."
+    },
+    {
+     "title": "Opcode supply",
+     "body": "While $\\overline{\\text{INTA}}$ is low the device puts the CALL opcode on the data bus; for a 3-byte CALL, two more $\\overline{\\text{INTA}}$ pulses read the two address bytes."
+    }
+   ],
+   "answer": {
+    "value": "$\\overline{\\text{INTA}}$ is active",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: the opcode is read from the bus during interrupt acknowledge."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "HOLD is a DMA request; the CPU floats its buses instead of fetching an opcode."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "READY only stretches bus cycles for slow devices."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A is correct."
+    }
+   ],
+   "verification": "8085 datasheet: INTA is used instead of RD during the instruction cycle after INTR is accepted, to gate RST or CALL onto the bus."
+  },
+  "cse-2002-a-10": {
+   "approach": "Every instruction fetch increments the program counter, so every instruction modifies PC; jumps, calls and PCHL additionally load a new value.",
+   "concepts": [
+    "8085 program counter",
+    "Instruction fetch"
+   ],
+   "steps": [
+    {
+     "title": "Fetch cycle",
+     "body": "During each opcode (and operand) fetch, PC $\\leftarrow$ PC $+1$ for every byte read. This happens for ADD, MOV, NOP, everything."
+    },
+    {
+     "title": "Branches",
+     "body": "PCHL, JMP, CALL, RET additionally overwrite PC. So the set of instructions that modify PC is all instructions."
+    }
+   ],
+   "answer": {
+    "value": "All instructions",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "PCHL loads PC from HL, but it is not the only one."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "ADD changes PC only via the fetch increment, as every instruction does."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "JMP and CALL load PC, but other instructions increment it too."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: every instruction advances PC during its fetch."
+    }
+   ],
+   "verification": "Even HLT is fetched, incrementing PC before the processor halts."
+  },
+  "cse-2002-a-11": {
+   "approach": "In asynchronous (start-stop) transmission the leading 0 is the start bit and the trailing 1s are stop bits; they let the receiver re-synchronise on every byte.",
+   "concepts": [
+    "Asynchronous transmission",
+    "Start/stop bits"
+   ],
+   "steps": [
+    {
+     "title": "Idle line and start bit",
+     "body": "The idle line is held at 1; the 1→0 edge of the start bit tells the receiver a byte is beginning and starts its bit-timing clock."
+    },
+    {
+     "title": "Stop bits",
+     "body": "The 1 or 2 stop bits return the line to idle so the next start edge is detectable. Purpose: byte-level synchronisation."
+    }
+   ],
+   "answer": {
+    "value": "Receiver is to be synchronized for byte reception",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: the framing bits synchronise the receiver for each byte."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Start/stop bits carry no error-recovery information."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Parity is a separate optional bit; framing bits have fixed values."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A is correct."
+    }
+   ],
+   "verification": "Standard UART framing: 1 start bit (0), 5–8 data bits, optional parity, 1–2 stop bits (1)."
+  },
+  "cse-2002-a-12": {
+   "approach": "Group the 1s with the help of the don't-cares: the 1s sit exactly where $x\\neq z$, giving two quads $xz'$ and $x'z$.",
+   "concepts": [
+    "K-map minimisation",
+    "Don't-care conditions"
+   ],
+   "given": "| $yz$ (rows) / $wx$ (cols) | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 | 0 | 1 | 1 | 0 |\n| 01 | x | 0 | 0 | 1 |\n| 11 | x | 0 | 0 | 1 |\n| 10 | 0 | 1 | 1 | x |",
+   "steps": [
+    {
+     "title": "List the cells",
+     "body": "With $m=8w+4x+2y+z$: 1s at $m_4,m_6,m_{12},m_{14}$ (where $x=1,z=0$) and $m_9,m_{11}$ (where $x=0,z=1$); don't-cares at $m_1,m_3,m_{10}$. The animation draws rows $wx$ and columns $yz$ (the transpose of the paper's layout; same cells).",
+     "scene": {
+      "caption": "Map plotted: six 1s, three don't-cares"
+     }
+    },
+    {
+     "title": "Quad $xz'$",
+     "body": "$x=1,z=0$: cells $m_4,m_6,m_{12},m_{14}$, all 1s; columns $yz=00$ and $10$ are adjacent by wrap-around. Term $xz'$.",
+     "scene": {
+      "groups": [
+       {
+        "cells": [
+         4,
+         6,
+         12,
+         14
+        ],
+        "label": "xz′"
+       }
+      ],
+      "caption": "Quad 1: xz′"
+     }
+    },
+    {
+     "title": "Quad $x'z$",
+     "body": "$x=0,z=1$: cells $m_1,m_3,m_9,m_{11}$ = two don't-cares + two 1s; rows $wx=00$ and $10$ wrap. Term $x'z$. Using $m_{10}$ as a 1 would add a term, so it is taken as 0.",
+     "scene": {
+      "groups": [
+       {
+        "cells": [
+         4,
+         6,
+         12,
+         14
+        ],
+        "label": "xz′"
+       },
+       {
+        "cells": [
+         1,
+         3,
+         9,
+         11
+        ],
+        "label": "x′z"
+       }
+      ],
+      "caption": "Quad 2: x′z (uses don't-cares m1, m3)"
+     }
+    },
+    {
+     "title": "Result",
+     "body": "$f = xz' + x'z = x\\oplus z$: two 2-literal terms; no single term covers both groups, so this is minimal."
+    }
+   ],
+   "animation": {
+    "kind": "kmap",
+    "variables": [
+     "w",
+     "x",
+     "y",
+     "z"
+    ],
+    "ones": [
+     4,
+     6,
+     9,
+     11,
+     12,
+     14
+    ],
+    "dcs": [
+     1,
+     3,
+     10
+    ],
+    "groups": []
+   },
+   "answer": {
+    "value": "$xz'+zx'$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$xz$ covers $m_5,m_7,m_{13},m_{15}$, which are all 0s."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: two quads cover all six 1s and no 0."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$x'y$ covers $m_2$ ($w=0,x=0,y=1,z=0$), a 0 cell."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "B is a valid minimum SOP, so D is wrong."
+    }
+   ],
+   "pitfalls": [
+    "Reading the map with the wrong variable order on rows/columns.",
+    "Forgetting wrap-around adjacency of the outer columns/rows."
+   ],
+   "verification": "Checked all 16 cells: $x\\oplus z$ is 1 exactly on the six 1s and on don't-cares $m_1,m_3$, and 0 on every 0 cell (and on don't-care $m_{10}$)."
+  },
+  "cse-2002-a-13": {
+   "approach": "Memory means a storage element; an opcode is a field of an instruction (information), not a storage device.",
+   "concepts": [
+    "Memory hierarchy",
+    "Registers and caches"
+   ],
+   "steps": [
+    {
+     "title": "Classify each",
+     "body": "Instruction cache: fast memory holding instructions. Instruction register: a register (storage) holding the current instruction. TLB: a small associative cache of page-table entries. Opcode: the bit field that specifies the operation."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Only the opcode is not a form of memory."
+    }
+   ],
+   "answer": {
+    "value": "instruction opcode",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "A cache is memory."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "A register is the fastest level of storage."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: an opcode is information stored in memory, not memory itself."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "A TLB is a specialised cache, hence memory."
+    }
+   ],
+   "verification": "Each of A, B, D can store and return bits; C cannot."
+  },
+  "cse-2002-a-14": {
+   "approach": "Convert the fraction by repeated doubling, or note $0.25=2^{-2}$.",
+   "concepts": [
+    "Binary fractions"
+   ],
+   "steps": [
+    {
+     "title": "Repeated doubling",
+     "body": "$0.25\\times2=0.5$ → bit 0; $0.5\\times2=1.0$ → bit 1; remainder 0, stop. So $0.25_{10}=0.01_2$."
+    },
+    {
+     "title": "Check",
+     "body": "$0.01_2 = 0\\cdot2^{-1}+1\\cdot2^{-2}=0.25$ ✓, exact."
+    }
+   ],
+   "answer": {
+    "value": "is equivalent to the binary value 0.01",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$0.1_2 = 0.5$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: $2^{-2}=0.25$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$0.00111\\ldots_2 = 2^{-3}+2^{-4}+\\dots = 0.25$ only as an infinite limit (like $0.0999\\ldots$); the exact finite form is $0.01$, the intended answer."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$0.25$ is a power of 2, so it is exact in binary."
+    }
+   ],
+   "pitfalls": [
+    "Thinking every decimal fraction is inexact in binary; only those whose reduced denominator has a factor other than 2 are."
+   ],
+   "verification": "$1/4 = 2^{-2}$ is a terminating binary fraction."
+  },
+  "cse-2002-a-15": {
+   "approach": "Take the shortest width that holds $-15$: 5 bits (range $-16..15$). Invert $+15$ and add 1.",
+   "concepts": [
+    "2's complement"
+   ],
+   "steps": [
+    {
+     "title": "Write +15 in 5 bits",
+     "body": "$15 = 8+4+2+1$, so $+15 = 01111$ in 5 bits (a leading 0 for the sign)."
+    },
+    {
+     "title": "Invert and add 1",
+     "body": "$\\overline{01111}=10000$; $10000+1=10001$."
+    },
+    {
+     "title": "Check",
+     "body": "$10001 = -16+1 = -15$ ✓."
+    }
+   ],
+   "answer": {
+    "value": "10001",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$1111$ in 4 bits $=-1$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$11111 = -1$ in 5 bits."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$111111 = -1$ in 6 bits."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: $-16+1=-15$."
+    }
+   ],
+   "verification": "$10001 + 01111 = 100000$, i.e. 0 once the carry is discarded."
+  },
+  "cse-2002-a-16": {
+   "approach": "Sign extension copies the sign bit into the new high-order bits so a signed value keeps its value when it is widened.",
+   "concepts": [
+    "Sign extension",
+    "2's complement"
+   ],
+   "steps": [
+    {
+     "title": "What it does",
+     "body": "Widening 8-bit $11111011$ ($-5$) to 16 bits gives $1111\\,1111\\,1111\\,1011$, still $-5$; zero-filling would give $251$."
+    },
+    {
+     "title": "Where it is used",
+     "body": "Exactly when converting a signed integer from one size to another (e.g. `char` to `int`, or a 16-bit immediate into a 32-bit register)."
+    }
+   ],
+   "answer": {
+    "value": "converting a signed integer from one size to another",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Floating-point multiplication multiplies significands and adds exponents; no signed-integer widening."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Adding two 16-bit signed integers of the same width needs no extension."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Arithmetic left shift fills zeros on the right; it is right shift that replicates the sign."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: this is the definition of sign extension."
+    }
+   ],
+   "verification": "In 2's complement, $1\\,x_{n-2}\\ldots x_0$ and $11\\,x_{n-2}\\ldots x_0$ have the same value, which is why copying the sign bit is safe."
+  },
+  "cse-2002-a-17": {
+   "approach": "C allocates a new activation record on the single runtime stack for every call, so the number of records between main and the current function depends on the dynamic call chain.",
+   "concepts": [
+    "Activation records",
+    "Runtime stack"
+   ],
+   "steps": [
+    {
+     "title": "Dynamic call chain",
+     "body": "If main → f → g → h, there are 2 records (f, g) between h and main; with recursion the count can be arbitrary. So B."
+    },
+    {
+     "title": "Reject the rest",
+     "body": "Globals in C are statically scoped (C false). Recursive calls use the same stack (D false). A would forbid nested calls."
+    }
+   ],
+   "answer": {
+    "value": "The number of activation records between the current one and main depends on the actual function calling sequence",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Any chain main → f → g → h already has 2 records in between."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: the depth equals the length of the dynamic call chain."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "C uses lexical (static) scope; global visibility does not depend on who called whom."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Recursive calls push onto the same runtime stack."
+    }
+   ],
+   "verification": "A recursive factorial(5) called from main has 4 records between the deepest call and main."
+  },
+  "cse-2002-a-18": {
+   "approach": "Value-result copies the actual in at entry and back at normal return; reference works on the actual directly. They agree on normal termination without aliasing, but if an exception aborts the callee, value-result never copies back while reference changes are already visible.",
+   "concepts": [
+    "Parameter passing",
+    "Call by value-result",
+    "Call by reference"
+   ],
+   "steps": [
+    {
+     "title": "Normal return, no aliasing",
+     "body": "Both end with the actual holding the formal's final value: identical results."
+    },
+    {
+     "title": "Exceptions",
+     "body": "Callee does `x = 5; raise E;`. By reference, the actual is already 5. By value-result, the copy-back is skipped and the actual keeps its old value. So the results may differ."
+    },
+    {
+     "title": "Other options",
+     "body": "Loops by themselves create no difference, and the mechanisms certainly do not differ in all cases."
+    }
+   ],
+   "answer": {
+    "value": "May differ in the presence of exceptions",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "They can differ (with exceptions, and also with aliasing)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Loops alone do not distinguish the two mechanisms."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "For ordinary calls without aliasing they give identical results."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct among the options: an exception skips value-result's copy-back."
+    }
+   ],
+   "pitfalls": [
+    "Aliasing (the same variable passed twice, or a global also passed as a parameter) is the other classical source of difference, but it is not offered as an option."
+   ],
+   "verification": "Traced `x = 5; raise` under both mechanisms: actual becomes 5 by reference, stays unchanged by value-result."
+  },
+  "cse-2002-a-19": {
+   "approach": "BCNF requires every non-trivial FD's left side to be a superkey, so no FD can force a value to be repeated across tuples: FD-induced redundancy is zero.",
+   "concepts": [
+    "BCNF",
+    "FD-based redundancy"
+   ],
+   "steps": [
+    {
+     "title": "Source of redundancy",
+     "body": "Redundancy arises when $X\\to A$ holds but $X$ is not a superkey: many tuples share the same $X$-value, so the same $A$-value is stored repeatedly."
+    },
+    {
+     "title": "In BCNF",
+     "body": "Every non-trivial $X\\to A$ has $X$ a superkey, so at most one tuple per $X$-value: no FD-caused repetition. Redundancy from FDs $=0$."
+    }
+   ],
+   "answer": {
+    "value": "Zero",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: BCNF eliminates all FD-based redundancy."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "BCNF has no FD redundancy at all, not merely less than 3NF."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Not tied to $|F^+|$; it is zero."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "It is determinate: zero."
+    }
+   ],
+   "pitfalls": [
+    "BCNF can still have redundancy due to multivalued dependencies, but the question restricts to redundancy arising from FDs."
+   ],
+   "verification": "Textbook result (Silberschatz; Ramakrishnan–Gehrke): BCNF ensures no redundancy detectable using FDs alone."
+  },
+  "cse-2002-a-20": {
+   "approach": "Codd's theorem: relational algebra and safe (domain-independent) relational calculus are equally expressive; unrestricted calculus can also express unsafe, infinite queries.",
+   "concepts": [
+    "Codd's theorem",
+    "Safe relational calculus"
+   ],
+   "steps": [
+    {
+     "title": "Unsafe queries",
+     "body": "$\\{t \\mid \\neg R(t)\\}$ is a calculus expression with an infinite answer; no algebra expression produces it. So algebra is not equal to unrestricted calculus."
+    },
+    {
+     "title": "Safe calculus",
+     "body": "Restricting to safe expressions gives exactly the power of relational algebra (translations exist in both directions)."
+    }
+   ],
+   "answer": {
+    "value": "Relational algebra has the same power as safe relational calculus",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Algebra is not more powerful; every algebra query has a safe calculus equivalent."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Unrestricted calculus includes unsafe queries, so this statement is not precise."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: Codd's theorem."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "C is true."
+    }
+   ],
+   "verification": "Standard result (Codd 1972), stated in all database textbooks."
+  },
+  "cse-2002-a-21": {
+   "approach": "Overflow means the true sum lies outside the representable range. Adding numbers of opposite sign gives a result between them, so it always fits.",
+   "concepts": [
+    "2's complement overflow"
+   ],
+   "steps": [
+    {
+     "title": "Opposite signs",
+     "body": "If $a\\ge0>b$ then $b\\le a+b<a$, so $a+b$ lies inside the representable range: no overflow."
+    },
+    {
+     "title": "Test A and C",
+     "body": "4-bit: $0111+1111$ ($7+(-1)$) $=1\\,0110$: carry out of the sign bit, yet the result $6$ is correct, so A is wrong. Overflow is flagged when the carry into and out of the sign bit differ (not match), so C is wrong."
+    }
+   ],
+   "answer": {
+    "value": "cannot occur when a positive value is added to a negative value",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Carry-out alone is not overflow: $7+(-1)$ produces a carry but the result 6 is correct."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: the sum of opposite-sign numbers lies between them."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Overflow $=c_{n}\\oplus c_{n-1}$: flagged when the carries differ."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "B is true."
+    }
+   ],
+   "verification": "Exhaustive over 4-bit pairs of opposite sign: every sum lies in $[-8,7]$."
+  },
+  "cse-2002-a-22": {
+   "approach": "A scheduler is non-preemptive if a running process keeps the CPU until it blocks or ends; FIFO (FCFS) is the only such one listed.",
+   "concepts": [
+    "CPU scheduling",
+    "Preemption"
+   ],
+   "steps": [
+    {
+     "title": "FCFS",
+     "body": "FIFO runs each process until it finishes or blocks, in arrival order: it never preempts."
+    },
+    {
+     "title": "Others",
+     "body": "Round Robin preempts on quantum expiry; multilevel queues (with or without feedback) preempt lower-priority queues when higher queues get work."
+    }
+   ],
+   "answer": {
+    "value": "First-In First-Out",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Round Robin preempts at every time quantum."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: FCFS never takes the CPU away."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Higher-priority queues preempt lower ones (and usually use RR within queues)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Feedback queues preempt and demote processes on quantum expiry."
+    }
+   ],
+   "verification": "Standard OS textbooks list FCFS as non-preemptive by definition."
+  },
+  "cse-2002-a-23": {
+   "approach": "Belady's optimal (OPT/MIN) algorithm evicts the page whose next use is farthest in the future.",
+   "concepts": [
+    "Optimal page replacement"
+   ],
+   "steps": [
+    {
+     "title": "Definition",
+     "body": "OPT looks ahead in the reference string and replaces the page that will not be used for the longest time (or never again). It gives the minimum possible number of faults."
+    },
+    {
+     "title": "Contrast",
+     "body": "Longest unused in the past is LRU; least or most used counts are LFU/MFU."
+    }
+   ],
+   "answer": {
+    "value": "Will not be used for the longest time in the future",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "That is LRU."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: Belady's OPT."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "That is LFU."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "That is MFU."
+    }
+   ],
+   "verification": "OPT is the benchmark algorithm that needs future knowledge, matching B."
+  },
+  "cse-2002-a-24": {
+   "approach": "Absolute (direct) addressing places the operand's memory address itself in the instruction.",
+   "concepts": [
+    "Addressing modes"
+   ],
+   "steps": [
+    {
+     "title": "Match the modes",
+     "body": "Operand in the instruction: immediate. Address in the instruction: absolute/direct (e.g. `LDA 2050H`). Register holding the address: register indirect. Implicit location: implied mode."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Absolute mode is option B."
+    }
+   ],
+   "answer": {
+    "value": "the address of the operand is inside the instruction",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "That is immediate addressing."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: absolute = direct addressing."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "That is register indirect addressing."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "That is implied (implicit) addressing."
+    }
+   ],
+   "verification": "8085 `LDA 2050H` is the textbook direct (absolute) example: the 16-bit address is part of the instruction."
+  },
+  "cse-2002-a-25": {
+   "approach": "Without self loops (and parallel edges), each unordered pair of distinct vertices gives at most one edge.",
+   "concepts": [
+    "Complete graph",
+    "Combinations"
+   ],
+   "steps": [
+    {
+     "title": "Count pairs",
+     "body": "Max edges $=\\binom{n}{2}=\\frac{n(n-1)}{2}$, attained by $K_n$."
+    },
+    {
+     "title": "Check",
+     "body": "$n=3$: the triangle has 3 edges $=\\frac{3\\cdot2}{2}$ ✓."
+    }
+   ],
+   "answer": {
+    "value": "$n(n-1)/2$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$n^2$ counts ordered pairs including loops."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: $\\binom n2$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$n-1$ is the edge count of a tree (minimally connected)."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$n(n+1)/2$ would also count a self loop at every vertex."
+    }
+   ],
+   "verification": "$n=4$: $K_4$ has 6 edges $=\\frac{4\\cdot3}{2}$ ✓."
+  }
+ }
+}

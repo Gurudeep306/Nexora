@@ -1,0 +1,21 @@
+{
+ "paper": "cse-2002",
+ "fixes": [
+  {
+   "id": "cse-2002-a-14",
+   "field": "subject",
+   "before": "coa",
+   "after": "dl",
+   "reason": "Decimal-to-binary fraction conversion is number representation (digital logic), like Q1.15.",
+   "source": "GATE 2002 paper Q1.14"
+  },
+  {
+   "id": "cse-2002-a-14",
+   "field": "topic",
+   "before": "isa",
+   "after": "number",
+   "reason": "The question is about the binary representation of 0.25, not instruction-set architecture.",
+   "source": "GATE 2002 paper Q1.14"
+  }
+ ]
+}
