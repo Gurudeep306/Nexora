@@ -1,0 +1,476 @@
+{
+  "paper": "cse-2013",
+  "fixes": [
+    {
+      "id": "cse-2013-cs-2",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Poisson probability question in the CS technical section, not General Aptitude.",
+      "source": "GATE 2013 CS paper Q.2"
+    },
+    {
+      "id": "cse-2013-cs-2",
+      "field": "topic",
+      "before": "quant",
+      "after": "rv",
+      "reason": "Poisson random variable.",
+      "source": "GATE 2013 CS paper Q.2"
+    },
+    {
+      "id": "cse-2013-cs-3",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key D disagrees with the provable answer A; no official 2013 key available.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2013-cs-3",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key D is likely wrong. Option D has rows R1+R2, R2+R3, R3 of the original (row additions keep the determinant), whereas option A reduces via C3-C1 then C2-C3 to columns 1, x^2, x, i.e. the negative of the given determinant. Numeric check x=0,y=1,z=2: original 2, A = -2, D = 2. Answer should be A.",
+      "reason": "Document the key disagreement.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2013-cs-8",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Formal languages question (empty language, Kleene star), not C programming.",
+      "source": "GATE 2013 CS paper Q.8"
+    },
+    {
+      "id": "cse-2013-cs-8",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "regular",
+      "reason": "Regular language operations.",
+      "source": "GATE 2013 CS paper Q.8"
+    },
+    {
+      "id": "cse-2013-cs-8",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "kleene star",
+        "empty language"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper Q.8"
+    },
+    {
+      "id": "cse-2013-cs-15",
+      "field": "subject",
+      "before": "pds",
+      "after": "db",
+      "reason": "Database indexing question, not C programming.",
+      "source": "GATE 2013 CS paper Q.15"
+    },
+    {
+      "id": "cse-2013-cs-15",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "indexing",
+      "reason": "Clustered index definition.",
+      "source": "GATE 2013 CS paper Q.15"
+    },
+    {
+      "id": "cse-2013-cs-15",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "clustered index"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper Q.15"
+    },
+    {
+      "id": "cse-2013-cs-19",
+      "field": "topic",
+      "before": "graphs",
+      "after": "shortest-paths",
+      "reason": "Bellman-Ford is a shortest-path algorithm; use the standard topic.",
+      "source": "GATE 2013 CS paper Q.19"
+    },
+    {
+      "id": "cse-2013-cs-21",
+      "field": "topic",
+      "before": "combinational",
+      "after": "boolean",
+      "reason": "XOR/XNOR Boolean identity question.",
+      "source": "GATE 2013 CS paper Q.21"
+    },
+    {
+      "id": "cse-2013-cs-22",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "All four definitions verified against the rendered PDF page 5; D is printed only for x != 3 in the original, as transcribed.",
+      "source": "GATE2013.pdf p.5 (rendered)"
+    },
+    {
+      "id": "cse-2013-cs-22",
+      "field": "reviewNote",
+      "before": "Piecewise definitions transcribed from text layer/image; D's definition at x=3 not shown in the print.",
+      "after": null,
+      "reason": "Review resolved: transcription matches the printed paper.",
+      "source": "GATE2013.pdf p.5 (rendered)"
+    },
+    {
+      "id": "cse-2013-cs-14",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2013/cs-14-1.png",
+          "alt": "Four nodes in a line joined by links: square S, circle R, circle R, square D.",
+          "svg": "cse-2013/cs-14-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2013/cs-14-1.png",
+          "alt": "Network path drawn left to right: square S linked to circle R, linked to a second circle R, linked to square D (three links, two intermediate routers).",
+          "svg": "cse-2013/cs-14-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn faithfully (old SVG showed placeholder text boxes); alt made precise.",
+      "source": "GATE2013.pdf p.4 (rendered)"
+    },
+    {
+      "id": "cse-2013-cs-4",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "two's complement"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-9",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "bottom-up parsing",
+        "reductions"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-10",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "round robin",
+        "aging"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-11",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "SOA",
+        "XML",
+        "BPMN"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-12",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "TCP",
+        "UDP"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-13",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "digital signature",
+        "public key"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-14",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "router",
+        "layers"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-16",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "deadlock",
+        "semaphore"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-17",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "closure properties",
+        "recursively enumerable"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-18",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "P",
+        "NP"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-19",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "Bellman-Ford"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-20",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "set associative"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-21",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "XNOR"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-22",
+      "field": "tags",
+      "before": [],
+      "after": [
+        "continuity"
+      ],
+      "reason": "Add tags.",
+      "source": "GATE 2013 CS paper"
+    },
+    {
+      "id": "cse-2013-cs-23",
+      "field": "subject",
+      "before": "coa",
+      "after": "legacy",
+      "reason": "Trapezoidal rule is numerical methods, not COA.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-23",
+      "field": "topic",
+      "before": "isa",
+      "after": "numerical",
+      "reason": "Trapezoidal rule is numerical methods.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-25",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Handshaking lemma is graph theory.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-25",
+      "field": "topic",
+      "before": "quant",
+      "after": "graphs",
+      "reason": "Handshaking lemma is graph theory.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-27",
+      "field": "subject",
+      "before": "ga",
+      "after": "dm",
+      "reason": "Predicate logic translation.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-27",
+      "field": "topic",
+      "before": "quant",
+      "after": "logic",
+      "reason": "Predicate logic translation.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-35",
+      "field": "subject",
+      "before": "ga",
+      "after": "db",
+      "reason": "SQL / relational algebra / calculus question.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-35",
+      "field": "topic",
+      "before": "quant",
+      "after": "ra",
+      "reason": "Relational algebra and calculus equivalence.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-26",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Previous key B (P and R) is provably wrong: the planar star K_{1,5} has line graph K_5 (non-planar), so R is false; Q fails for K_4 and S for K_{1,3}. Only P is true.",
+      "source": "proof"
+    },
+    {
+      "id": "cse-2013-cs-26",
+      "field": "reviewNote",
+      "before": "R (line graph of planar graph planar) is false in general (degree>=5 vertices); answer follows the official key B.",
+      "after": "Key changed B -> A by counterexample (L(K_{1,5}) = K_5 is non-planar, so R is false); no official 2013 key was available to cross-check.",
+      "reason": "solved",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-38",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Previous key B contradicts the figure: m accesses 2 attributes of M1 and 2 of M2, so moving it keeps 2 inter-module edges (coupling unchanged) and swaps intra-edge counts 8/6 -> 6/8 with every module at density 0.5 (cohesion unchanged).",
+      "source": "proof"
+    },
+    {
+      "id": "cse-2013-cs-38",
+      "field": "reviewNote",
+      "before": "Answer follows the standard key (B); reasoning about cohesion metric is not fully verified.",
+      "after": "Key changed B -> A by counting the access-graph edges (coupling 2 -> 2, per-module cohesion 0.5 -> 0.5); no official 2013 key was available to cross-check.",
+      "reason": "solved",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-32",
+      "field": "text",
+      "before": "Consider the following languages.\n\n$L_1 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0\\}$\n$L_2 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0,\\ p \\ne r\\}$\n\nWhich one of the following statements is FALSE?",
+      "after": "Consider the following languages.\n\n$$L_1 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0\\}$$\n\n$$L_2 = \\{0^p 1^q 0^r \\mid p, q, r \\ge 0,\\ p \\ne r\\}$$\n\nWhich one of the following statements is FALSE?",
+      "reason": "Put each language definition on its own line.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-35",
+      "field": "text",
+      "before": "Consider the following relational schema.\n\nStudents(rollno: integer, sname: string)\nCourses(courseno: integer, cname: string)\nRegistration(rollno: integer, courseno: integer, percent: real)\n\nWhich of the following queries are equivalent to this query in English?\n\"Find the distinct names of all students who score more than 90% in the course numbered 107\"\n\n(I) ```SELECT DISTINCT S.sname FROM Students as S, Registration as R WHERE R.rollno=S.rollno AND R.courseno=107 AND R.percent >90```\n\n(II) $\\Pi_{sname}(\\sigma_{courseno=107 \\wedge percent>90}(Registration \\bowtie Students))$\n\n(III) $\\{T \\mid \\exists S\\in Students, \\exists R\\in Registration (S.rollno=R.rollno \\wedge R.courseno=107 \\wedge R.percent>90 \\wedge T.sname=S.sname)\\}$\n\n(IV) $\\{\\langle S_N\\rangle \\mid \\exists S_R \\exists R_P (\\langle S_R, S_N\\rangle \\in Students \\wedge \\langle S_R, 107, R_P\\rangle \\in Registration \\wedge R_P>90)\\}$",
+      "after": "Consider the following relational schema.\n\n- Students(rollno: integer, sname: string)\n- Courses(courseno: integer, cname: string)\n- Registration(rollno: integer, courseno: integer, percent: real)\n\nWhich of the following queries are equivalent to this query in English?\n\n\"Find the distinct names of all students who score more than 90% in the course numbered 107\"\n\n(I)\n\n```sql\nSELECT DISTINCT S.sname\nFROM Students as S, Registration as R\nWHERE R.rollno=S.rollno AND R.courseno=107 AND R.percent >90\n```\n\n(II) $\\Pi_{sname}(\\sigma_{courseno=107 \\wedge percent>90}(Registration \\bowtie Students))$\n\n(III) $\\{T \\mid \\exists S\\in Students, \\exists R\\in Registration (S.rollno=R.rollno \\wedge R.courseno=107 \\wedge R.percent>90 \\wedge T.sname=S.sname)\\}$\n\n(IV) $\\{\\langle S_N\\rangle \\mid \\exists S_R \\exists R_P (\\langle S_R, S_N\\rangle \\in Students \\wedge \\langle S_R, 107, R_P\\rangle \\in Registration \\wedge R_P>90)\\}$",
+      "reason": "SQL query as a fenced code block; schema as a list.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-33",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2013/cs-33-1.png",
+          "alt": "Three states: start state q0 --1--> q1 (q1 loops on 1); q0 --0--> q2 and q1 --0--> q2; q2 is accepting with a self-loop on 0,1.",
+          "svg": "cse-2013/cs-33-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2013/cs-33-1.png",
+          "alt": "DFA with three states. Start state q0 goes to q1 on 1 and to q2 on 0. q1 loops on 1 and goes to q2 on 0. q2 is the only accepting state and loops on 0,1.",
+          "svg": "cse-2013/cs-33-1.svg"
+        }
+      ],
+      "reason": "Redrawn SVG; precise alt.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-38",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2013/cs-38-1.png",
+          "alt": "Module M1 has 4 methods (filled) and 4 attributes (unfilled) with within-module edges; method m (rightmost in M1) also points to two attributes in M2. Module M2 has 3 methods and 4 attributes with internal edges.",
+          "svg": "cse-2013/cs-38-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2013/cs-38-1.png",
+          "alt": "Two boxes, Module M1 and Module M2, each with a top row of unfilled attribute circles and a bottom row of filled method circles; arrows go from methods to the attributes they access. M1 has attributes a1-a4 and methods p1, p2, p3, m: p1 accesses a1, a3; p2 accesses a1, a2; p3 accesses a3, a4; m accesses a2, a4 and also the first two attributes b1, b2 of M2. M2 has attributes b1-b4 and methods q1, q2, q3: q1 accesses b3, b4; q2 accesses b1, b4; q3 accesses b2, b3.",
+          "svg": "cse-2013/cs-38-1.svg"
+        }
+      ],
+      "reason": "Redrawn SVG; alt lists every access edge.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2013-cs-50",
+      "field": "text",
+      "before": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\nThe procedure is tested with the following four test cases.\n(1) oldc = \"abc\", newc = \"dab\"  (2) oldc = \"cde\", newc = \"bcd\"  (3) oldc = \"bca\", newc = \"cda\"  (4) oldc = \"abc\", newc = \"bac\"\n\nThe tester now tests the program on all input strings of length five consisting of characters 'a', 'b', 'c', 'd' and 'e' with duplicates allowed. If the tester carries out this testing with the four test cases given above, how many test cases will be able to capture the flaw?",
+      "after": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\n\nThe procedure is tested with the following four test cases.\n\n1. oldc = \"abc\", newc = \"dab\"\n2. oldc = \"cde\", newc = \"bcd\"\n3. oldc = \"bca\", newc = \"cda\"\n4. oldc = \"abc\", newc = \"bac\"\n\nThe tester now tests the program on all input strings of length five consisting of characters 'a', 'b', 'c', 'd' and 'e' with duplicates allowed. If the tester carries out this testing with the four test cases given above, how many test cases will be able to capture the flaw?",
+      "reason": "Put the four test cases on separate list lines as in the paper.",
+      "source": "GATE 2013 CS paper (PDF)"
+    },
+    {
+      "id": "cse-2013-cs-51",
+      "field": "text",
+      "before": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\nThe procedure is tested with the following four test cases.\n(1) oldc = \"abc\", newc = \"dab\"  (2) oldc = \"cde\", newc = \"bcd\"  (3) oldc = \"bca\", newc = \"cda\"  (4) oldc = \"abc\", newc = \"bac\"\n\nIf array A is made to hold the string \"abcde\", which of the above four test cases will be successful in exposing the flaw in this procedure?",
+      "after": "Common data for Questions 50 and 51: The procedure given below is required to find and replace certain characters inside an input character string supplied in array A. The characters to be replaced are supplied in array oldc, while their respective replacement characters are supplied in array newc. Array A has a fixed length of five characters, while arrays oldc and newc contain three characters each. However, the procedure is flawed.\n\n```c\nvoid find_and_replace (char *A, char *oldc, char *newc) {\n    for (int i=0; i<5; i++)\n        for (int j=0; j<3; j++)\n            if (A[i] == oldc[j]) A[i] = newc[j];\n}\n```\n\nThe procedure is tested with the following four test cases.\n\n1. oldc = \"abc\", newc = \"dab\"\n2. oldc = \"cde\", newc = \"bcd\"\n3. oldc = \"bca\", newc = \"cda\"\n4. oldc = \"abc\", newc = \"bac\"\n\nIf array A is made to hold the string \"abcde\", which of the above four test cases will be successful in exposing the flaw in this procedure?",
+      "reason": "Put the four test cases on separate list lines as in the paper.",
+      "source": "GATE 2013 CS paper (PDF)"
+    },
+    {
+      "id": "cse-2013-ga-59",
+      "field": "topic",
+      "before": "quant",
+      "after": "verbal",
+      "reason": "Sentence completion (subjunctive mood) is verbal ability, not quantitative.",
+      "source": "GATE 2013 CS paper (PDF)"
+    },
+    {
+      "id": "cse-2013-cs-47",
+      "field": "reviewNote",
+      "before": "By my analysis option A (Q∨P) is also not equivalent; the web-sourced key says D. Verify.",
+      "after": "Question is flawed: with P = ∀y(α), Q = ∀z(β) the given formula is ∀x(¬P ∨ ¬Q). Option A is ∀x(¬Q → P) = ∀x(Q ∨ P) and option D is ∀x(¬P → ¬Q) = ∀x(P ∨ ¬Q); NEITHER is equivalent (B and C are). Stored key D is kept (it is a correct NOT-equivalent option); confirm against the official 2013 key whether A, D or both were accepted.",
+      "reason": "Precise statement of why both A and D are not equivalent.",
+      "source": "Independent solution"
+    }
+  ]
+}

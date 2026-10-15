@@ -1,33 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GRAPH / NETWORK</text>
-  <!-- Edges -->
-  <line x1="280.0" y1="50.0" x2="356.0845213036123" y2="105.2786404500042" stroke="#475569" stroke-width="2" />
-  <rect x="308.04226065180615" y="69.63932022500211" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="318.04226065180615" y="81.63932022500211" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
-  <line x1="356.0845213036123" y1="105.2786404500042" x2="327.02282018339787" y2="194.72135954999578" stroke="#475569" stroke-width="2" />
-  <rect x="331.5536707435051" y="142.0" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="341.5536707435051" y="154.0" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">3</text>
-  <line x1="327.02282018339787" y1="194.72135954999578" x2="232.97717981660216" y2="194.72135954999578" stroke="#475569" stroke-width="2" />
-  <rect x="270.0" y="186.72135954999578" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="280.0" y="198.72135954999578" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">5</text>
-  <line x1="232.97717981660216" y1="194.72135954999578" x2="203.9154786963877" y2="105.27864045000422" stroke="#475569" stroke-width="2" />
-  <rect x="208.44632925649495" y="142.0" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="218.44632925649495" y="154.0" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">7</text>
-  <line x1="203.9154786963877" y1="105.27864045000422" x2="280.0" y2="50.0" stroke="#475569" stroke-width="2" />
-  <rect x="231.95773934819385" y="69.63932022500211" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="241.95773934819385" y="81.63932022500211" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">4</text>
-  <line x1="280.0" y1="50.0" x2="327.02282018339787" y2="194.72135954999578" stroke="#10b981" stroke-width="2.5" stroke-dasharray="4 2" />
-  <!-- Vertices -->
-  <circle cx="280.0" cy="50.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="280.0" y="55.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">A</text>
-  <circle cx="356.0845213036123" cy="105.2786404500042" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="356.0845213036123" y="110.2786404500042" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">B</text>
-  <circle cx="327.02282018339787" cy="194.72135954999578" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="327.02282018339787" y="199.72135954999578" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">C</text>
-  <circle cx="232.97717981660216" cy="194.72135954999578" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="232.97717981660216" y="199.72135954999578" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">D</text>
-  <circle cx="203.9154786963877" cy="105.27864045000422" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="203.9154786963877" y="110.27864045000422" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">E</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 280" role="img" aria-label="DFA with states s0 (start), s1 (final), s2, s3 (final); s0 and s1 linked both ways on x, s1 and s2 both ways on y, s2 and s3 both ways on x, s3 and s0 both ways on y">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="13">
+<line x1="10" y1="140" x2="49" y2="140" marker-end="url(#ah)" stroke-width="2.2"/>
+<circle cx="70" cy="140" r="19"/>
+<text x="70" y="144.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">s0</text>
+<circle cx="170" cy="45" r="19"/>
+<circle cx="170" cy="45" r="15"/>
+<text x="170" y="49.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">s1</text>
+<circle cx="270" cy="140" r="19"/>
+<text x="270" y="144.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">s2</text>
+<circle cx="170" cy="235" r="19"/>
+<circle cx="170" cy="235" r="15"/>
+<text x="170" y="239.5" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">s3</text>
+<path d="M75.4,121.8 Q92.5,63.5 151.5,49.4" marker-end="url(#ah)"/>
+<text x="96.1" y="71.3" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">x</text>
+<path d="M159.1,60.6 Q129.6,102.6 86.1,129.9" marker-end="url(#ah)"/>
+<text x="133.0" y="110.2" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">x</text>
+<path d="M188.5,49.4 Q247.5,63.5 264.6,121.8" marker-end="url(#ah)"/>
+<text x="243.9" y="71.3" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">y</text>
+<path d="M253.9,129.9 Q210.4,102.6 180.9,60.6" marker-end="url(#ah)"/>
+<text x="207.0" y="110.2" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">y</text>
+<path d="M264.6,158.2 Q247.5,216.5 188.5,230.6" marker-end="url(#ah)"/>
+<text x="243.9" y="216.7" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">x</text>
+<path d="M180.9,219.4 Q210.4,177.4 253.9,150.1" marker-end="url(#ah)"/>
+<text x="207.0" y="177.8" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">x</text>
+<path d="M151.5,230.6 Q92.5,216.5 75.4,158.2" marker-end="url(#ah)"/>
+<text x="96.1" y="216.7" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">y</text>
+<path d="M86.1,150.1 Q129.6,177.4 159.1,219.4" marker-end="url(#ah)"/>
+<text x="133.0" y="177.8" fill="currentColor" stroke="none" font-size="12" text-anchor="middle">y</text>
+</g>
 </svg>

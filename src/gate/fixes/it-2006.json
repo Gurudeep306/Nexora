@@ -1,0 +1,351 @@
+{
+  "paper": "it-2006",
+  "fixes": [
+    {
+      "id": "it-2006-cs-1",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Conditional/total probability question in the technical section, not general aptitude",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.1"
+    },
+    {
+      "id": "it-2006-cs-1",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Total probability theorem",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.1"
+    },
+    {
+      "id": "it-2006-cs-9",
+      "field": "subject",
+      "before": "dl",
+      "after": "pds",
+      "reason": "Binary tree node-count property belongs to data structures, not digital logic",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.9"
+    },
+    {
+      "id": "it-2006-cs-9",
+      "field": "topic",
+      "before": "number",
+      "after": "trees",
+      "reason": "Binary tree leaf count",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.9"
+    },
+    {
+      "id": "it-2006-cs-17",
+      "field": "subject",
+      "before": "dm",
+      "after": "legacy",
+      "reason": "Cyclomatic complexity is a software-engineering (testing) topic",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.17"
+    },
+    {
+      "id": "it-2006-cs-17",
+      "field": "topic",
+      "before": "logic",
+      "after": "se",
+      "reason": "Software testing / cyclomatic complexity",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.17"
+    },
+    {
+      "id": "it-2006-cs-17",
+      "field": "text",
+      "before": "With respect to software testing, consider a flow graph G with one connected component. Let E be the number of edges, N be the number of nodes, and P be the number of predicate nodes of G. Let the following four expressions:\n\n1. $E - N + P$\n2. $E - N + 2$\n3. $P + 2$\n4. $P + 1$\n\nThe cyclomatic complexity of G is given by",
+      "after": "With respect to software testing, consider a flow graph G with one connected component. Let E be the number of edges, N be the number of nodes, and P be the number of predicate nodes of G. Consider the following four expressions:\n\n1. $E - N + P$\n2. $E - N + 2$\n3. $P + 2$\n4. $P + 1$\n\nThe cyclomatic complexity of G is given by",
+      "reason": "Paper reads \"Consider the following four expressions\"",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.17"
+    },
+    {
+      "id": "it-2006-cs-18",
+      "field": "subject",
+      "before": "db",
+      "after": "cn",
+      "reason": "HELO/PORT are application-layer protocol commands (SMTP/FTP), not databases",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.18"
+    },
+    {
+      "id": "it-2006-cs-18",
+      "field": "topic",
+      "before": "sql",
+      "after": "application",
+      "reason": "Application-layer protocols",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.18"
+    },
+    {
+      "id": "it-2006-cs-5",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2006/cs-5-1.png",
+          "alt": "Linear NFA with four states: first state has a self-loop on a,b; edge labelled a to second state; edge labelled a,b to third state; edge labelled b to fourth state (final, double circle).",
+          "svg": "it-2006/cs-5-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2006/cs-5-1.png",
+          "alt": "NFA with four states in a row. Start state has a self-loop on a,b; edge a from state 1 to state 2; edge a,b from state 2 to state 3; edge b from state 3 to state 4, the only final state (double circle).",
+          "svg": "it-2006/cs-5-1.svg"
+        }
+      ],
+      "reason": "Precise alt text for the redrawn SVG",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.5"
+    },
+    {
+      "id": "it-2006-cs-13",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2006/cs-13-1.png",
+          "alt": "States Start, Ready, Running, Terminated, Blocked. Start -> Ready (create a new process); Ready -> Running (Schedule); Running -> Terminated (label blurred, probably Exit); Running -> Blocked (wait for I/O completion or resource); Blocked -> Ready (I/O complete or resource released).",
+          "svg": "it-2006/cs-13-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2006/cs-13-1.png",
+          "alt": "Process state diagram: Start -> Ready (Create a new process); Ready -> Running (Schedule); Running -> Terminated (Exit); Running -> Blocked (Wait for I/O completion or resource); Blocked -> Ready (I/O complete or resource released). There is no Running -> Ready edge.",
+          "svg": "it-2006/cs-13-1.svg"
+        }
+      ],
+      "reason": "Exit label read from the paper; alt states the missing Running -> Ready edge",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.13"
+    },
+    {
+      "id": "it-2006-cs-3",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2006/cs-3-1.png",
+          "alt": "DFA with states s (start), t (final, double circle) and r. Edges: s -b-> t, t -b-> s, t -a-> t (self-loop), s -a-> r, r -a-> s, r -b-> r (self-loop).",
+          "svg": "it-2006/cs-3-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2006/cs-3-1.png",
+          "alt": "DFA with states s (start), t (only final, double circle) and r. Transitions: s -b-> t, t -b-> s, t -a-> t (self-loop), s -a-> r, r -a-> s, r -b-> r (self-loop).",
+          "svg": "it-2006/cs-3-1.svg"
+        }
+      ],
+      "reason": "Alt text tidied for the redrawn SVG",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf) Q.3"
+    },
+    {
+      "id": "it-2006-cs-24",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Counting integers not divisible by 2, 3 or 5 is inclusion–exclusion (discrete maths), not C programming",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-24",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "combinatorics",
+      "reason": "Inclusion–exclusion counting belongs to dm/combinatorics",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-28",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "The integral as printed equals sqrt(5*pi), which is none of the options; stored key is not an option letter",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-28",
+      "field": "reviewNote",
+      "before": "Integrand and limits are blurred in the scan; recovered from gateoverflow (https://gateoverflow.in/3567/gate-it-2006-question-28). The correct value sqrt(5*pi) matches none of the options (likely a printing/typo issue in the paper), so answer left null.",
+      "after": "As printed, the integral equals $\\sqrt{5\\pi} \\approx 3.96$, matching no option (stored key holds this value, not a letter). Option A (1/2) is correct only if the normalising factor $1/\\sqrt{20\\pi}$ of the $N(0,10)$ density was dropped from the paper; the solution proves $\\sqrt{5\\pi}$ and selects A under that reading. Needs an authoritative key.",
+      "reason": "Solved independently; PDF Q.28 checked",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-36",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2006/cs-36-1.png",
+          "alt": "Inputs x and y (vertical lines; labels partly blurred) and z. Each of x and y feeds both boxes P and Q. Output of P goes to input 1 of a 2:1 multiplexer, output of Q to input 0; select line of the mux is z; mux output is f.",
+          "svg": "it-2006/cs-36-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2006/cs-36-1.png",
+          "alt": "Circuit: vertical input lines x and y each feed both box P and box Q. Output of P goes to input 1 of a 2:1 multiplexer and output of Q to input 0; the select line of the multiplexer is z; the multiplexer output is f.",
+          "svg": "it-2006/cs-36-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as SVG from the paper; alt text no longer says labels are blurred",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-46",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key A disagrees with the figure: the S–T edge points T→S, making {P,Q,R,S,T,V},{U} (B) the decomposition.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-46",
+      "field": "reviewNote",
+      "before": "Direction of the S-T edge is hard to read in the scan; answer follows the standard key (P,Q,R,S cycle; T,U,V singletons).",
+      "after": "Zoomed scan shows the long edge between S and T has its arrowhead at S (T→S). Then T (Q→T, T→S→P) and V (Q→V→T) join the P,Q,R,S cycle and the answer is B, not the stored A. Confirm against an authoritative key and switch the answer to B.",
+      "reason": "Explain the key disagreement precisely.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-46",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2006/cs-46-1.png",
+          "alt": "Vertices P,Q,R,S,T,U,V. Edges: P->Q, P->R (dashed), Q->R, Q->V, Q->T, R->T, R->S, S->P, S->T (or T->S line between S and T), S->U, T->U, V->T.",
+          "svg": "it-2006/cs-46-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2006/cs-46-1.png",
+          "alt": "Directed graph on P, Q, R, S, T, U, V. Edges: P→Q, P→R, Q→R, Q→V, Q→T, V→T, R→T, R→S, S→P, T→S, T→U, S→U.",
+          "svg": "it-2006/cs-46-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn from the scan; alt now lists the exact edge directions (T→S, not ambiguous).",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-53",
+      "field": "subject",
+      "before": "cn",
+      "after": "legacy",
+      "reason": "C++ OOP terminology question, not computer networks.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-53",
+      "field": "topic",
+      "before": "ip",
+      "after": "se",
+      "reason": "Object-oriented concepts are filed under legacy/se in this bank.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-59",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2006/cs-59-1.png",
+          "alt": "Structure chart: F1 calls F2 and F3; F2 calls two boxes F4 (left and middle); F3 calls the middle F4 and F6. Arcs are labelled with variables A1..A9; data couples are drawn as open circles and control flags as filled circles (small and blurred).",
+          "svg": "it-2006/cs-59-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2006/cs-59-1.png",
+          "alt": "Structure chart: F1 calls F2 and F3; F2 calls F4 (left) and F4 (middle); F3 calls F4 (middle) and F6. Couples (open circle = data, filled = control flag): F1→F2 A2 (flag), A1 (data); F2→F1 A5 (data); F1→F3 A3 (data); F3→F1 A4 (flag); F2→F4 A1 (data) and A6 (data); F3→F4 A7 (flag); F6→F3 A8 (data). F2 has a loop arrow labelled A1 with a diamond; F3 has a diamond labelled A9. Symbols are read from a blurred scan.",
+          "svg": "it-2006/cs-59-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn from the scan; alt lists each couple as read.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-59",
+      "field": "reviewNote",
+      "before": "Symbols on the chart are too small/blurred to derive the answer independently; answer taken from published key (gateoverflow 3603), confidence low.",
+      "after": "Couple symbols in the scan are tiny. As redrawn, A4 is a filled (control) couple returned from F3 to F1, which arguably makes statement 3 true (option A); the stored key B (1 and 4) follows the published gateoverflow key (3603). Verify against an authoritative key.",
+      "reason": "More precise note after redrawing the chart.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-64",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$1 - N/i$"
+        },
+        {
+          "l": "B",
+          "t": "$i/(N+i)$"
+        },
+        {
+          "l": "C",
+          "t": "$1$"
+        },
+        {
+          "l": "D",
+          "t": "$1 - e^{-(i/N)}$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$1 - N/i$"
+        },
+        {
+          "l": "B",
+          "t": "$i/(N+i)$"
+        },
+        {
+          "l": "C",
+          "t": "$1$"
+        },
+        {
+          "l": "D",
+          "t": "$1 - e^{(i/N)}$"
+        }
+      ],
+      "reason": "High-resolution render of the PDF shows option (d) as 1 - e^{(i/N)} with no minus sign in the exponent.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-64",
+      "field": "reviewNote",
+      "before": "Option D exponent sign is unreadable in the scan; assumed 1 - e^{-(i/N)}.",
+      "after": null,
+      "reason": "Exponent of option D is now read from the high-resolution scan; the note is obsolete.",
+      "source": "pdf (GATE2006IT.pdf, rendered at 300-800 dpi) + independent solution"
+    },
+    {
+      "id": "it-2006-cs-85",
+      "field": "text",
+      "before": "Consider a database with three relation instances shown below. The primary keys for the Drivers and Cars relation are did and cid respectively and the records are stored in ascending order of these primary keys as given in the tables. No indexing is available in the database.\n\nD: Drivers relation\n\n| did | dname | rating | age |\n|---|---|---|---|\n| 22 | Karthikeyan | 7 | 25 |\n| 29 | Salman | 1 | 33 |\n| 31 | Boris | 8 | 55 |\n| 32 | Amoldt | 8 | 25 |\n| 58 | Schumacher | 10 | 35 |\n| 64 | Sachin | 7 | 35 |\n| 71 | Senna | 10 | 16 |\n| 74 | Sachin | 9 | 35 |\n| 85 | Rahul | 3 | 25 |\n| 95 | Ralph | 3 | 53 |\n\nR: Reserves relation\n\n| did | cid | day |\n|---|---|---|\n| 22 | 101 | 10/10/06 |\n| 22 | 102 | 10/10/06 |\n| 22 | 103 | 8/10/06 |\n| 22 | 104 | 7/10/06 |\n| 31 | 102 | 10/11/06 |\n| 31 | 103 | 6/11/06 |\n| 31 | 104 | 12/11/06 |\n| 64 | 101 | 5/9/06 |\n| 64 | 102 | 8/9/06 |\n| 74 | 103 | 8/9/06 |\n\nC: Cars relation\n\n| cid | cname | color |\n|---|---|---|\n| 101 | Renault | blue |\n| 102 | Renault | red |\n| 103 | Ferrari | green |\n| 104 | Jaguar | red |\n\nLet n be the number of comparisons performed when the above SQL query is optimally executed. If linear search is used to locate a tuple in a relation using primary key, then n lies in the range\n\n```sql\nselect D.dname\nfrom Drivers D\nwhere D.did in (\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'red'\n    intersect\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'green'\n)\n```\n\n",
+      "after": "Consider a database with three relation instances shown below. The primary keys for the Drivers and Cars relation are did and cid respectively and the records are stored in ascending order of these primary keys as given in the tables. No indexing is available in the database.\n\nD: Drivers relation\n\n| did | dname | rating | age |\n|---|---|---|---|\n| 22 | Karthikeyan | 7 | 25 |\n| 29 | Salman | 1 | 33 |\n| 31 | Boris | 8 | 55 |\n| 32 | Amoldt | 8 | 25 |\n| 58 | Schumacher | 10 | 35 |\n| 64 | Sachin | 7 | 35 |\n| 71 | Senna | 10 | 16 |\n| 74 | Sachin | 9 | 35 |\n| 85 | Rahul | 3 | 25 |\n| 95 | Ralph | 3 | 53 |\n\nR: Reserves relation\n\n| did | cid | day |\n|---|---|---|\n| 22 | 101 | 10/10/06 |\n| 22 | 102 | 10/10/06 |\n| 22 | 103 | 8/10/06 |\n| 22 | 104 | 7/10/06 |\n| 31 | 102 | 10/11/06 |\n| 31 | 103 | 6/11/06 |\n| 31 | 104 | 12/11/06 |\n| 64 | 101 | 5/9/06 |\n| 64 | 102 | 8/9/06 |\n| 74 | 103 | 8/9/06 |\n\nC: Cars relation\n\n| cid | cname | color |\n|---|---|---|\n| 101 | Renault | blue |\n| 102 | Renault | red |\n| 103 | Ferrari | green |\n| 104 | Jaguar | red |\n\nConsider the SQL query of the previous question:\n\n```sql\nselect D.dname\nfrom Drivers D\nwhere D.did in (\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'red'\n    intersect\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'green'\n)\n```\n\nLet n be the number of comparisons performed when the above SQL query is optimally executed. If linear search is used to locate a tuple in a relation using primary key, then n lies in the range",
+      "reason": "The query appeared after the question sentence; moved it before \"Let n be ...\" so the text reads as in the paper (the query belongs to Q84).",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-80",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key A (Both I and IV) contradicts the standard closure result that half(L) is regular whenever L is regular; only repeat(L) can be non-regular, so the provable answer is B (Only I).",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-80",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key A claims half(L) can be non-regular, but half(L) is always regular for regular L (DFA on pairs (state, set of states reaching F in |u| steps)); prefix and suffix are also closed. Only repeat(L) can be non-regular (repeat((a+b)*) = {ww}). Provable answer: B (Only I). Key not changed because no official key is available.",
+      "reason": "Explain the disagreement with the stored key.",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-76",
+      "field": "reviewNote",
+      "before": "First equation is printed 'x + 3/2 = 9' (blurred); read as x + y/2 = 9 following the published version of the question. Direct computation on this matrix does not give any option; answer D taken from the published key.",
+      "after": "First equation is printed 'x + 3/2 = 9' (blurred); read as x + y/2 = 9 following the published version. The question does not say which matrix: the Jacobi iteration matrix of the reordered system (3x + y = 10 first) has Frobenius norm sqrt(1/9 + 4) = 2.03 (key D), while the Gauss-Seidel matrix of the same system gives sqrt(5)/3 = 0.745 (option A). Kept the published key D.",
+      "reason": "More precise note on the ambiguity.",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    }
+  ]
+}

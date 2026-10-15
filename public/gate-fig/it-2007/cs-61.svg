@@ -1,13 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">TIMING WAVEFORM</text>
-  <text x="100" y="82" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">CLK</text>
-  <path d="M 120 88 L 180 88 L 180 70 L 240 70 L 240 88 L 320 88 L 320 70 L 400 70 L 400 88 L 480 88" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="124" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">WR#</text>
-  <path d="M 120 130 L 180 130 L 180 112 L 240 112 L 240 130 L 320 130 L 320 112 L 400 112 L 400 130 L 480 130" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="166" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">INTR</text>
-  <path d="M 120 172 L 180 172 L 180 154 L 240 154 L 240 172 L 320 172 L 320 154 L 400 154 L 400 172 L 480 172" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="208" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">STROBE</text>
-  <path d="M 120 214 L 180 214 L 180 196 L 240 196 L 240 214 L 320 214 L 320 196 L 400 196 L 400 214 L 480 214" fill="none" stroke="#38bdf8" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 185" role="img" aria-label="Two waveforms over 11 bit cells separated by dotted lines. (a) Manchester, a transition in the middle of every cell: high-to-low in cells 1, 6, 8, 9, 10, 11 and low-to-high in cells 2, 3, 4, 5, 7. (b) a transition in the middle of every cell plus an extra transition at the start of cells 2, 3, 4, 5 and 7 only">
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g fill="none" stroke="currentColor" stroke-width="1.6" font-family="Arial, Helvetica, sans-serif" font-size="13">
+<line x1="20" y1="22" x2="20" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="60" y1="22" x2="60" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="100" y1="22" x2="100" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="140" y1="22" x2="140" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="180" y1="22" x2="180" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="220" y1="22" x2="220" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="260" y1="22" x2="260" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="300" y1="22" x2="300" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="340" y1="22" x2="340" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="380" y1="22" x2="380" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="420" y1="22" x2="420" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="460" y1="22" x2="460" y2="172" stroke-width="1" stroke-dasharray="2 3"/>
+<polyline stroke-width="2" points="20,40 40,40 40,75 60,75 60,75 80,75 80,40 100,40 100,75 120,75 120,40 140,40 140,75 160,75 160,40 180,40 180,75 200,75 200,40 220,40 220,40 240,40 240,75 260,75 260,75 280,75 280,40 300,40 300,40 320,40 320,75 340,75 340,40 360,40 360,75 380,75 380,40 400,40 400,75 420,75 420,40 440,40 440,75 460,75"/>
+<polyline stroke-width="2" points="20,115 40,115 40,150 60,150 60,115 80,115 80,150 100,150 100,115 120,115 120,150 140,150 140,115 160,115 160,150 180,150 180,115 200,115 200,150 220,150 220,150 240,150 240,115 260,115 260,150 280,150 280,115 300,115 300,115 320,115 320,150 340,150 340,150 360,150 360,115 380,115 380,115 400,115 400,150 420,150 420,150 440,150 440,115 460,115"/>
+<text x="484" y="62" fill="currentColor" stroke="none" font-size="13" text-anchor="middle">(a)</text>
+<text x="484" y="137" fill="currentColor" stroke="none" font-size="13" text-anchor="middle">(b)</text>
+</g>
 </svg>

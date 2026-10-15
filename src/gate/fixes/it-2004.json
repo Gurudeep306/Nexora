@@ -1,0 +1,507 @@
+{
+  "paper": "it-2004",
+  "fixes": [
+    {
+      "id": "it-2004-it-2",
+      "field": "text",
+      "before": "In a class of 200 students, 125 students have taken Programming Language course, 85 students have taken Data Structures course, 65 students have taken Computer Organization course; 50 students have taken both Programming Language and Data Structures, 35 students have taken both Programming Language and Computer Organization, 30 students have taken both Data Structures ad Computer Organization; 15 students have taken all the three courses. How many students have not taken any of the three courses?",
+      "after": "In a class of 200 students, 125 students have taken Programming Language course, 85 students have taken Data Structures course, 65 students have taken Computer Organization course; 50 students have taken both Programming Language and Data Structures, 35 students have taken both Programming Language and Computer Organization, 30 students have taken both Data Structures and Computer Organization; 15 students have taken all the three courses. How many students have not taken any of the three courses?",
+      "reason": "Typo \"ad\" -> \"and\".",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-4",
+      "field": "text",
+      "before": "Let $R_1$ be a relation from A = {1, 3, 5, 7} to B = {2, 4, 6, 8} and $R_2$ be another relation from B to C {1, 2, 3, 4} as defined below:\n\n1. An element x in A is related to an element y in B (under $R_1$) if x + y is divisible by 3\n2. An element x in B is related to an element y in C (under $R_2$) if x + y is even but not divisible by 3\n\nWhat is the composite relation $R_1R_2$ from A to C?",
+      "after": "Let $R_1$ be a relation from $A = \\{1, 3, 5, 7\\}$ to $B = \\{2, 4, 6, 8\\}$ and $R_2$ be another relation from B to $C = \\{1, 2, 3, 4\\}$ as defined below:\n\n1. An element x in A is related to an element y in B (under $R_1$) if x + y is divisible by 3\n2. An element x in B is related to an element y in C (under $R_2$) if x + y is even but not divisible by 3\n\nWhat is the composite relation $R_1R_2$ from A to C?",
+      "reason": "Missing \"=\" before set C; sets written in KaTeX.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-4",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$R_1R_2$ = {((1, 2), (1, 4), (3, 3), (5, 4), (7, 3)}"
+        },
+        {
+          "l": "B",
+          "t": "$R_1R_2$ = {(1, 2), (1, 3), (3, 2), (5, 2), (7, 3)}"
+        },
+        {
+          "l": "C",
+          "t": "$R_1R_2$ = {(1, 2), (3, 2), (3, 4), (5, 4), (7, 2)}"
+        },
+        {
+          "l": "D",
+          "t": "$R_1R_2$ = {(3, 2), (3, 4), (5, 1), (5, 3), (7, 1)}"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$R_1R_2$ = {(1, 2), (1, 4), (3, 3), (5, 4), (7, 3)}"
+        },
+        {
+          "l": "B",
+          "t": "$R_1R_2$ = {(1, 2), (1, 3), (3, 2), (5, 2), (7, 3)}"
+        },
+        {
+          "l": "C",
+          "t": "$R_1R_2$ = {(1, 2), (3, 2), (3, 4), (5, 4), (7, 2)}"
+        },
+        {
+          "l": "D",
+          "t": "$R_1R_2$ = {(3, 2), (3, 4), (5, 1), (5, 3), (7, 1)}"
+        }
+      ],
+      "reason": "Stray extra \"(\" in option A removed.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-7",
+      "field": "text",
+      "before": "Which one of the following regular expression (a + b + c)*?",
+      "after": "Which one of the following regular expressions is NOT equivalent to the regular expression (a + b + c)*?",
+      "reason": "Stem truncated in the reprint (\"...regular expression (a + b + c)*?\"); restored the words \"is NOT equivalent to\", the only reading under which exactly one option is correct (A, B, D all denote all strings over {a,b,c}).",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-7",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Stem restored; with it the answer is unambiguous (only C cannot generate the string \"a\").",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-7",
+      "field": "reviewNote",
+      "before": "Question stem is truncated in the reprint; the original asks which regular expression is NOT equivalent to (a + b + c)*. Answer assumes that wording.",
+      "after": null,
+      "reason": "Note no longer applies after restoring the stem.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-8",
+      "field": "text",
+      "before": "What is the minimum number of NAD gates required to implement a 2-input EXCLUSIVE-OR function without using any other logic gate?",
+      "after": "What is the minimum number of NAND gates required to implement a 2-input EXCLUSIVE-OR function without using any other logic gate?",
+      "reason": "Typo \"NAD\" -> \"NAND\" (reprint misprint).",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-11",
+      "field": "text",
+      "before": "What is the hit rate of a video terminal unit with 50 characters/line, 8 bits/character and horizontal sweep time of 100 $\\mu$v (including 20 $\\mu$s of retrace time)?",
+      "after": "What is the bit rate of a video terminal unit with 80 characters/line, 8 bits/character and horizontal sweep time of 100 $\\mu$s (including 20 $\\mu$s of retrace time)?",
+      "reason": "Reprint misprints: \"hit rate\" -> bit rate, \"100 µv\" -> 100 µs; \"50 characters/line\" restored to 80 as in the original GATE IT 2004 Q11 (with 50, no option is obtainable: 400 bits / 80 µs = 5 Mbps).",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-11",
+      "field": "subject",
+      "before": "la",
+      "after": "coa",
+      "reason": "Video-terminal bit rate is a computer organization (I/O) question, not linear algebra.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-11",
+      "field": "topic",
+      "before": "eigen",
+      "after": "io",
+      "reason": "Video-terminal bit rate belongs to I/O, not eigenvalues.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-11",
+      "field": "reviewNote",
+      "before": "Reprint typos: 'hit rate' = bit rate, '100 µv' = 100 µs, and '50 characters/line' appears to be 80 in the original paper; with 50 no option is correct. Answer A assumes 80 chars/line.",
+      "after": "The reprint PDF prints 50 characters/line (no option fits: 400 bits / 80 µs = 5 Mbps); text uses 80 per the original GATE IT 2004 paper, giving 640 bits / 80 µs = 8 Mbps (A). Confirm against an original copy.",
+      "reason": "Note updated after restoring the text.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-12",
+      "field": "text",
+      "before": "Consider a system with 2 level cache. Access times of Level 1 cache, Level 2 cache and main memory are 1 ns, 10 ns and 500 ns, respectively. The hit rates of Level 1and Level 2 caches are 0.5 and 0.9, respectively. What is the average access time of the system ignoring the search time within the cache?",
+      "after": "Consider a system with 2 level cache. Access times of Level 1 cache, Level 2 cache and main memory are 1 ns, 10 ns and 500 ns, respectively. The hit rates of Level 1 and Level 2 caches are 0.8 and 0.9, respectively. What is the average access time of the system ignoring the search time within the cache?",
+      "reason": "Reprint prints L1 hit rate 0.5 (gives 30 ns, no option); the original GATE IT 2004 Q12 has 0.8, which gives 12.6 ns. Also spacing \"Level 1and\".",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-12",
+      "field": "reviewNote",
+      "before": "Reprint prints L1 hit rate 0.5, which gives 30 ns (no option); the original GATE IT 2004 paper has 0.8, giving 12.6 ns (C).",
+      "after": "The reprint PDF prints L1 hit rate 0.5 (gives 30 ns, no option); text uses 0.8 per the original GATE IT 2004 paper, giving 0.8(1) + 0.2[0.9(10) + 0.1(500)] = 12.6 ns (C). Confirm against an original copy.",
+      "reason": "Note updated after restoring the text.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-15",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "C expression question belongs to programming.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-15",
+      "field": "topic",
+      "before": "isa",
+      "after": "c-prog",
+      "reason": "C expression question belongs to programming, not ISA.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-16",
+      "field": "subject",
+      "before": "pds",
+      "after": "os",
+      "reason": "Unix shell commands are an OS/files topic, not C programming.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-16",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "files",
+      "reason": "Unix shell commands are an OS/files topic, not C programming.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-19",
+      "field": "text",
+      "before": "A software organization has been assessed at SEI CMM Level 4. Which of the following does the organization need to practice besides Process Chance Management and Technology Change Management in order to achieve level 5?",
+      "after": "A software organization has been assessed at SEI CMM Level 4. Which of the following does the organization need to practice besides Process Change Management and Technology Change Management in order to achieve level 5?",
+      "reason": "Typo \"Chance\" -> \"Change\" (CMM level-5 KPA is Process Change Management).",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-19",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Defect Detection"
+        },
+        {
+          "l": "B",
+          "t": "Defect Prevention"
+        },
+        {
+          "l": "C",
+          "t": "Defect Isolation"
+        },
+        {
+          "l": "D",
+          "t": "Detect Propagation"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Defect Detection"
+        },
+        {
+          "l": "B",
+          "t": "Defect Prevention"
+        },
+        {
+          "l": "C",
+          "t": "Defect Isolation"
+        },
+        {
+          "l": "D",
+          "t": "Defect Propagation"
+        }
+      ],
+      "reason": "Typo \"Detect\" -> \"Defect\".",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-21",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Page"
+        },
+        {
+          "l": "B",
+          "t": "Table"
+        },
+        {
+          "l": "C",
+          "t": "Row"
+        },
+        {
+          "l": "D",
+          "t": "Page table and row level looking allow the same degree of concurrency"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Page"
+        },
+        {
+          "l": "B",
+          "t": "Table"
+        },
+        {
+          "l": "C",
+          "t": "Row"
+        },
+        {
+          "l": "D",
+          "t": "Page, table and row level locking allow the same degree of concurrency"
+        }
+      ],
+      "reason": "Typo \"looking\" -> \"locking\", missing comma.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-24",
+      "field": "subject",
+      "before": "pds",
+      "after": "cn",
+      "reason": "HTTP question is Computer Networks, not programming.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-24",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "application",
+      "reason": "HTTP is an application-layer protocol.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-26",
+      "field": "subject",
+      "before": "calc",
+      "after": "cn",
+      "reason": "Subnet-mask host count is Computer Networks.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-26",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "ip",
+      "reason": "Subnetting belongs to IP addressing.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-47",
+      "field": "text",
+      "before": "Consider a pipeline processor with 4 stages S1 to S4. We want to execute the following loop:\n\n```c\nFor (i = 1; i <= 1000; i++)\n    {I1, I2, I3, I4}\n```\n\nwhere the time taken (in ns) by instructions I1 to I4 for stages S1 to S4 are given below:\n\n| | S1 | S2 | S3 | S4 |\n|---|---|---|---|---|\n| I1: | 1 | 2 | 1 | 2 |\n| I2: | 2 | 1 | 2 | 1 |\n| I3: | 1 | 1 | 2 | 1 |\n| I4: | 2 | 1 | 2 | 1 |\n\nThe output of I1 for i = 2 will be available after",
+      "after": "Consider a pipeline processor with 4 stages S1 to S4. We want to execute the following loop:\n\n```c\nfor (i = 1; i <= 1000; i++)\n    {I1, I2, I3, I4}\n```\n\nwhere the time taken (in ns) by instructions I1 to I4 for stages S1 to S4 are given below:\n\n| | S1 | S2 | S3 | S4 |\n|---|---|---|---|---|\n| I1: | 1 | 2 | 1 | 2 |\n| I2: | 2 | 1 | 2 | 1 |\n| I3: | 1 | 1 | 2 | 1 |\n| I4: | 2 | 1 | 2 | 1 |\n\nThe output of I1 for i = 2 will be available after",
+      "reason": "C keyword is lowercase.",
+      "source": "GATE 2004 IT question paper (scan)"
+    },
+    {
+      "id": "it-2004-it-57",
+      "field": "text",
+      "before": "Consider a list of recursive algorithms and a list of recurrence relations as shown below. Each recurrence relation corresponds to exactly one algorithm and is used to derive the time complexity of the algorithm.\n\n| Recursive Algorithm | Recurrence Relation |\n|---|---|\n| P. Binary search | I. T(n) = T(n - k) + T(k) + cn |\n| Q. Merge suit | II. T(n) = 2T(n - 1) + 1 |\n| R. Quick sort | III. T(n) = 2T(n/2) + cn |\n| S. Tower of Hanoi | IV. T(n) = T(n/2) + 1 |\n\nWhich of the following is the correct match between the algorithms and their recurrence relations?",
+      "after": "Consider a list of recursive algorithms and a list of recurrence relations as shown below. Each recurrence relation corresponds to exactly one algorithm and is used to derive the time complexity of the algorithm.\n\n| Recursive Algorithm | Recurrence Relation |\n|---|---|\n| P. Binary search | I. T(n) = T(n - k) + T(k) + cn |\n| Q. Merge sort | II. T(n) = 2T(n - 1) + 1 |\n| R. Quick sort | III. T(n) = 2T(n/2) + cn |\n| S. Tower of Hanoi | IV. T(n) = T(n/2) + 1 |\n\nWhich of the following is the correct match between the algorithms and their recurrence relations?",
+      "reason": "Typo: \"Merge suit\" → \"Merge sort\".",
+      "source": "GATE 2004 IT question paper (scan)"
+    },
+    {
+      "id": "it-2004-it-65",
+      "field": "text",
+      "before": "The semaphore variables full, empty and mutex are initialized to 0, n and 1 respectively. Process $P_1$ repeatedly adds one items at a time to time a buffer of size n, and process $P_2$ repeatedly removes one item at a time from the same buffer using the programs given below. In the programs, K, L, M and N are unspecified statements.\n\n```\nP1: while (1) {\n        K; P(mutex);\n        Add an item to the buffer;\n        V(mutex); L;\n    }\n\nP2: while (1) {\n        M; P(mutex);\n        Remove an item from the buffer;\n        V(mutex); N;\n    }\n```\n\nThe statements K, L, M and N are respectively",
+      "after": "The semaphore variables full, empty and mutex are initialized to 0, n and 1 respectively. Process $P_1$ repeatedly adds one item at a time to a buffer of size n, and process $P_2$ repeatedly removes one item at a time from the same buffer using the programs given below. In the programs, K, L, M and N are unspecified statements.\n\n```\nP1: while (1) {\n        K; P(mutex);\n        Add an item to the buffer;\n        V(mutex); L;\n    }\n\nP2: while (1) {\n        M; P(mutex);\n        Remove an item from the buffer;\n        V(mutex); N;\n    }\n```\n\nThe statements K, L, M and N are respectively",
+      "reason": "Typo cleanup from the scan.",
+      "source": "GATE 2004 IT question paper (scan)"
+    },
+    {
+      "id": "it-2004-it-55",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The ≠ signs are legible in the scan (stem g(n) ≠ O(f(n)); options C and D), and the answer D was verified independently.",
+      "source": "GATE 2004 IT question paper (scan)"
+    },
+    {
+      "id": "it-2004-it-55",
+      "field": "reviewNote",
+      "before": "The ≠ signs are faint in the scan (stem 'g(n) ≠ O(f(n))' and option c); read as ≠, consistent with the original paper.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2004 IT question paper (scan)"
+    },
+    {
+      "id": "it-2004-it-56",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2004/it-56-1.png",
+          "alt": "Undirected weighted graph on vertices A-G. Edges (weights as legible): A-B 10, A-C 22, A-D (small, illegible), B-C 30, B-E 49, C-E 16 (blurred), C-D 26, C-F 4, D-F 22, E-G 2, F-G 5.",
+          "svg": "it-2004/it-56-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2004/it-56-1.png",
+          "alt": "Undirected weighted graph on vertices A to G. Edges: A–B 10, A–C 22, A–D 5, B–C 30, B–E 49, C–E 16, C–D 26, C–F 4, D–F 22, E–G 2, F–G 5.",
+          "svg": "it-2004/it-56-1.svg"
+        }
+      ],
+      "reason": "Redrew the figure as a clean SVG and gave the full edge list in the alt text.",
+      "source": "GATE 2004 IT question paper (scan)"
+    },
+    {
+      "id": "it-2004-it-56",
+      "field": "reviewNote",
+      "before": "Edge weights in the scan are blurry; F-G weight 5 (and C-F 4) confirmed from gateoverflow.in. The other weights in the alt text are best-effort readings.",
+      "after": "Edge weights in the scan are blurry; A–D 5, C–E 16 and F–G 5 are best readings (F–G could be 3, C–E could be 10). The answer D is the same under every reading.",
+      "reason": "Clarified that the answer does not depend on the uncertain weights.",
+      "source": "GATE 2004 IT question paper (scan)"
+    },
+    {
+      "id": "it-2004-it-70",
+      "field": "subject",
+      "before": "ga",
+      "after": "legacy",
+      "reason": "Software cost/effort estimation is software engineering, not general aptitude.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-70",
+      "field": "topic",
+      "before": "quant",
+      "after": "se",
+      "reason": "Matches the software-engineering subject.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-74",
+      "field": "text",
+      "before": "A relational database contains two tables has columns roll_no, name and dept_id and department table has columns dept_id and dept_name. The following insert statements were executed successfully to populate the empty tables:\n\n```sql\nInsert into department values (1, 'Mathematics')\nInsert into department values (2, 'Physics')\nInsert into student values (1, 'Nvin')\nInsert into student values (2, 'Mukesh')\nInsert into student values (3, 'Gita', 1)\n```\n\nHow many rows and columns will be retrieved by the following SQL statement?\n\n```sql\nSelect * from student, department\n```",
+      "after": "A relational database contains two tables, student and department, in which the student table has columns roll_no, name and dept_id and the department table has columns dept_id and dept_name. The following insert statements were executed successfully to populate the empty tables:\n\n```sql\nInsert into department values (1, 'Mathematics')\nInsert into department values (2, 'Physics')\nInsert into student values (1, 'Nvin')\nInsert into student values (2, 'Mukesh')\nInsert into student values (3, 'Gita', 1)\n```\n\nHow many rows and columns will be retrieved by the following SQL statement?\n\n```sql\nSelect * from student, department\n```",
+      "reason": "The reprint drops the table names; restored so the question reads correctly.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-79",
+      "field": "subject",
+      "before": "calc",
+      "after": "db",
+      "reason": "B-tree index node sizing is a database indexing question, not calculus.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-79",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "indexing",
+      "reason": "Matches the database indexing topic.",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-83",
+      "field": "text",
+      "before": "A 20 Kbps satellite Link has a propagation delay of 400 ms. The transmitter employs the \"go back it ARQ\" scheme with n set to 10. Assuming that each frame is 100 bytes long, what is the maximum data rate possible?",
+      "after": "A 20 Kbps satellite Link has a propagation delay of 400 ms. The transmitter employs the \"go back n ARQ\" scheme with n set to 10. Assuming that each frame is 100 bytes long, what is the maximum data rate possible?",
+      "reason": "OCR/print typo: \"go back it\" should be \"go back n\".",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-83",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "5 Kbps"
+        },
+        {
+          "l": "B",
+          "t": "10 Kbp"
+        },
+        {
+          "l": "C",
+          "t": "15 Kbps"
+        },
+        {
+          "l": "D",
+          "t": "20 Kbps"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "5 Kbps"
+        },
+        {
+          "l": "B",
+          "t": "10 Kbps"
+        },
+        {
+          "l": "C",
+          "t": "15 Kbps"
+        },
+        {
+          "l": "D",
+          "t": "20 Kbps"
+        }
+      ],
+      "reason": "Option (b) unit typo \"Kbp\" → \"Kbps\".",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-87",
+      "field": "text",
+      "before": "A TCP message consisting of 2100 bytes is passed to IP for delivery across two networks. The first network can carry a maximum payload of 1200 bytes per frame and the second network can carry a maximum payload of 400 bytes per frame, excluding network overhead. Assume that IP overhead per packet is 20 bytes. What is the total I? Overhead in the second network for this transmission?",
+      "after": "A TCP message consisting of 2100 bytes is passed to IP for delivery across two networks. The first network can carry a maximum payload of 1200 bytes per frame and the second network can carry a maximum payload of 400 bytes per frame, excluding network overhead. Assume that IP overhead per packet is 20 bytes. What is the total IP overhead in the second network for this transmission?",
+      "reason": "Typo \"I?\" in the reprint means \"IP\".",
+      "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-90",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "I and II only"
+        },
+        {
+          "l": "B",
+          "t": "I and III only"
+        },
+        {
+          "l": "C",
+          "t": "I, II and III only"
+        },
+        {
+          "l": "D",
+          "t": "I, II, II and IV"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "I and II only"
+        },
+        {
+          "l": "B",
+          "t": "I and III only"
+        },
+        {
+          "l": "C",
+          "t": "I, II and III only"
+        },
+        {
+          "l": "D",
+          "t": "I, II, III and IV"
+        }
+      ],
+      "reason": "Option (d) is misprinted as \"I, II, II and IV\"; it lists all four usages.",
+      "source": "GATE2004IT.pdf"
+    }
+  ]
+}
