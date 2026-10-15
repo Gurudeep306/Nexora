@@ -1,0 +1,229 @@
+{
+  "paper": "cse-2000",
+  "fixes": [
+    {
+      "id": "cse-2000-b-13-b-ii",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The next scan page starts with Q14, so sub-part (ii) is the last part of Q13; nothing is missing.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-13-b-ii",
+      "field": "reviewNote",
+      "before": "Page bottom is cut off in the scan after sub-part (ii); a further sub-part (e.g. '(iii) after evaluating the entire expression') may be missing.",
+      "after": null,
+      "reason": "The next scan page starts with Q14, so sub-part (ii) is the last part of Q13; nothing is missing.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-14-a",
+      "field": "subject",
+      "before": "db",
+      "after": "legacy",
+      "reason": "Point/line side test is computational geometry (graphics), not SQL.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-14-a",
+      "field": "topic",
+      "before": "sql",
+      "after": "graphics",
+      "reason": "Point/line side test is computational geometry (graphics), not SQL.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-15-c",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Only the last line of (c) is clipped and it is legible; the next page starts with Q16, so no sub-part is lost.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-15-c",
+      "field": "reviewNote",
+      "before": "The last line of (c) is half cut off at the page bottom in the scan (read as '…p[i] contains, is_set(i) will return false.'); further sub-parts, if any, are lost.",
+      "after": null,
+      "reason": "Only the last line of (c) is clipped and it is legible; the next page starts with Q16, so no sub-part is lost.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-17-a",
+      "field": "text",
+      "before": "An array contains four occurrences of 0, five occurrences of 1, and three occurre3nces of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nWhat is the minimum number of swaps needed to sort such an array in the worst case?",
+      "after": "An array contains four occurrences of 0, five occurrences of 1, and three occurrences of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nWhat is the minimum number of swaps needed to sort such an array in the worst case?",
+      "reason": "Typo from the scan.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-17-b",
+      "field": "text",
+      "before": "An array contains four occurrences of 0, five occurrences of 1, and three occurre3nces of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nGive an ordering of elements in the above array so that the minimum number of swaps needed to sort the array is maximum.",
+      "after": "An array contains four occurrences of 0, five occurrences of 1, and three occurrences of 2 in any order. The array is to be sorted using swap operations (elements that are swapped need to be adjacent).\n\nGive an ordering of elements in the above array so that the minimum number of swaps needed to sort the array is maximum.",
+      "reason": "Typo from the scan.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-18-a",
+      "field": "text",
+      "before": "Consider the following program is pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q [z:integer);\n  begin\n     z: z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x: y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-value and the scope rule is static scooping?",
+      "after": "Consider the following program in pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q (z: integer);\n  begin\n     z := z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x := y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-value and the scope rule is static scoping?",
+      "reason": "Typos: assignments use :=, Q's parameter list uses parentheses, \"scoping\".",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-18-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Only the \"end;\" of P is clipped at the page break and the program structure is unambiguous; the answer does not depend on the reconstruction.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-18-a",
+      "field": "reviewNote",
+      "before": "The 'end;' of procedure P and the 'begin' of main are cut at the page break; reconstructed from structure. 'z: z + x' / 'x: y + 2' read as assignments.",
+      "after": null,
+      "reason": "Only the \"end;\" of P is clipped at the page break and the program structure is unambiguous; the answer does not depend on the reconstruction.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-18-b",
+      "field": "text",
+      "before": "Consider the following program is pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q [z:integer);\n  begin\n     z: z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x: y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-reference and the scope rule is dynamic scooping?",
+      "after": "Consider the following program in pseudo-Pascal syntax.\n\n```pascal\nprogram main;\n  var x: integer;\n  procedure Q (z: integer);\n  begin\n     z := z + x;\n     writeln(z)\n  end;\n procedure P (y:integer);\n     var x: integer;\n  begin\n     x := y + 2;\n     Q(x);\n     writeln(x)\n  end;\nbegin\n     x:=5;\n     P(x);\n     Q(x);\n     writeln(x)\n  end.\n```\n\nWhat is the output of the program, when\n\nThe parameter passing mechanism is call-by-reference and the scope rule is dynamic scoping?",
+      "reason": "Typos: assignments use :=, Q's parameter list uses parentheses, \"scoping\".",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-18-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Only the \"end;\" of P is clipped at the page break and the program structure is unambiguous; the answer does not depend on the reconstruction.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-18-b",
+      "field": "reviewNote",
+      "before": "The 'end;' of procedure P and the 'begin' of main are cut at the page break; reconstructed from structure. 'z: z + x' / 'x: y + 2' read as assignments.",
+      "after": null,
+      "reason": "Only the \"end;\" of P is clipped at the page break and the program structure is unambiguous; the answer does not depend on the reconstruction.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-20-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "\"R = R + 1;\" is clipped but legible and is the only sensible statement there; the answer does not depend on it.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-20-a",
+      "field": "reviewNote",
+      "before": "The line 'R = R + 1;' is half cut off at the page bottom in the scan; read from the visible fragment.",
+      "after": null,
+      "reason": "\"R = R + 1;\" is clipped but legible and is the only sensible statement there; the answer does not depend on it.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-20-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "\"R = R + 1;\" is clipped but legible and is the only sensible statement there; the answer does not depend on it.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-20-b",
+      "field": "reviewNote",
+      "before": "The line 'R = R + 1;' is half cut off at the page bottom in the scan; read from the visible fragment.",
+      "after": null,
+      "reason": "\"R = R + 1;\" is clipped but legible and is the only sensible statement there; the answer does not depend on it.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-a-i",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Every split here is of 6 keys into 3 + 3, so no split convention matters; the answer is unambiguous.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-a-i",
+      "field": "reviewNote",
+      "before": "The split convention (which half gets the extra key) affects the exact picture.",
+      "after": null,
+      "reason": "Every split here is of 6 keys into 3 + 3, so no split convention matters; the answer is unambiguous.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-a-ii",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Every split here is of 6 keys into 3 + 3, so no split convention matters; the answer is unambiguous.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-a-ii",
+      "field": "reviewNote",
+      "before": "The split convention (which half gets the extra key) affects the exact picture.",
+      "after": null,
+      "reason": "Every split here is of 6 keys into 3 + 3, so no split convention matters; the answer is unambiguous.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Every split here is of 6 keys into 3 + 3, so no split convention matters; the answer is unambiguous.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-b",
+      "field": "reviewNote",
+      "before": "Answer depends on the split/redistribution convention; please verify.",
+      "after": null,
+      "reason": "Every split here is of 6 keys into 3 + 3, so no split convention matters; the answer is unambiguous.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-d",
+      "field": "subject",
+      "before": "os",
+      "after": "db",
+      "reason": "The fragment is sub-part (d) of the B+-tree question 21.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-d",
+      "field": "topic",
+      "before": "files",
+      "after": "indexing",
+      "reason": "The fragment is sub-part (d) of the B+-tree question 21.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-d",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Question text is lost in the scan; the stored key is unrelated to B+-trees.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-b-21-d",
+      "field": "reviewNote",
+      "before": "Only the start of sub-part (d) is visible (cut off at the page bottom); could not recover it from GATE Overflow (rate-limited).",
+      "after": "Only \"(d) In the …\" survives at the clipped page bottom (Q21 on B+-trees). The stored key (\"BFS traversal queue order …\") is unrelated and cannot be verified. Likely asks part (c) for the scheme of (b), whose answer would be ≈ m keys per leaf; needs the full paper text.",
+      "reason": "Question text is lost in the scan; the stored key is unrelated to B+-trees.",
+      "source": "GATE 2000 CSE paper (scanned PDF)"
+    }
+  ]
+}
