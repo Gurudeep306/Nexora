@@ -1,0 +1,73 @@
+{
+  "paper": "cse-2001",
+  "fixes": [
+    {
+      "id": "cse-2001-b-55-a",
+      "field": "subject",
+      "before": "ga",
+      "after": "toc",
+      "reason": "Turing-machine decidability question, not general aptitude.",
+      "source": "GATE2001.pdf p.8"
+    },
+    {
+      "id": "cse-2001-b-55-a",
+      "field": "topic",
+      "before": "verbal",
+      "after": "tm",
+      "reason": "Halting problem / decidability.",
+      "source": "GATE2001.pdf p.8"
+    },
+    {
+      "id": "cse-2001-b-56-a",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "Disk capacity question, same subject as its sibling parts 56(b)-(d).",
+      "source": "GATE2001.pdf p.8"
+    },
+    {
+      "id": "cse-2001-b-56-a",
+      "field": "topic",
+      "before": "spatial",
+      "after": "files",
+      "reason": "Disk geometry, same topic as sibling parts.",
+      "source": "GATE2001.pdf p.8"
+    },
+    {
+      "id": "cse-2001-b-58-b",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2001/b-58-1.png",
+          "alt": "Block labelled 'Excess 3 To BCD' with four inputs e4, e3, e2, e1 on the left (e4 at top) and four outputs b4, b3, b2, b1 on the right. Subscripts are blurred in the scan.",
+          "svg": "cse-2001/b-58-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2001/b-58-1.png",
+          "alt": "Block labelled \"Excess 3 To BCD\" with four inputs e8, e4, e2, e1 on the left (top to bottom) and four outputs b8, b4, b2, b1 on the right (top to bottom). Subscripts read as 8-4-2-1 weights; the scan is blurred.",
+          "svg": "cse-2001/b-58-1.svg"
+        }
+      ],
+      "reason": "Redrew the figure (old SVG was an unrelated AND/OR circuit) and corrected the alt text.",
+      "source": "GATE2001.pdf p.8"
+    },
+    {
+      "id": "cse-2001-b-58-b",
+      "field": "answer",
+      "before": "$b_4 = e_4(e_3 + e_2)(e_3 + e_1)$ (for the MSB output)",
+      "after": "$b_4 = (\\bar e_4 + e_2)(\\bar e_4 + e_1)(e_4 + \\bar e_2 + \\bar e_1)$ for the weight-4 output (labels 8-4-2-1); if $b_4$ is the MSB: $b_4 = e_4(e_3 + e_2)(e_3 + e_1)$",
+      "reason": "Stored key assumed b4 is the MSB; the figure labels look like 8-4-2-1 weights, so give the weight-4 output and keep the MSB alternative.",
+      "source": "GATE2001.pdf p.8"
+    },
+    {
+      "id": "cse-2001-b-58-b",
+      "field": "reviewNote",
+      "before": "Output subscript in the question (and figure labels) is illegible in the scan; answered assuming the MSB output b4.",
+      "after": "Figure subscripts are blurred in the scan. Read as e8,e4,e2,e1 / b8,b4,b2,b1 (weights), b4 is the weight-4 BCD bit: (e4'+e2)(e4'+e1)(e4+e2'+e1'). If the labels are b4..b1 with b4 the MSB, the answer is e4(e3+e2)(e3+e1). Confirm the labels from a clearer copy.",
+      "reason": "Precise description of the label ambiguity.",
+      "source": "GATE2001.pdf p.8"
+    }
+  ]
+}

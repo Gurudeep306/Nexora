@@ -1,0 +1,1150 @@
+{
+  "paper": "cse-2001",
+  "version": 2,
+  "solutions": {
+    "cse-2001-b-51-a": {
+      "approach": "Prove set equality by a chain of equivalences on an arbitrary set $X$: membership in a powerset is just the subset relation, and \"subset of an intersection\" splits into two subset conditions.",
+      "concepts": [
+        "Powerset",
+        "Subset",
+        "Set equality"
+      ],
+      "steps": [
+        {
+          "title": "Unfold the definitions",
+          "body": "For any set $X$: $X \\in \\mathcal{P}(S) \\iff X \\subseteq S$. So we must show $X \\subseteq A \\cap B \\iff (X \\subseteq A \\text{ and } X \\subseteq B)$."
+        },
+        {
+          "title": "Chain of equivalences",
+          "body": "$$X \\in \\mathcal{P}(A\\cap B) \\iff X \\subseteq A \\cap B \\iff \\forall x\\,(x \\in X \\Rightarrow x \\in A \\wedge x \\in B)$$\n$$\\iff (\\forall x\\,(x\\in X \\Rightarrow x\\in A)) \\wedge (\\forall x\\,(x\\in X \\Rightarrow x \\in B)) \\iff X \\subseteq A \\wedge X \\subseteq B$$\n$$\\iff X \\in \\mathcal{P}(A) \\wedge X \\in \\mathcal{P}(B) \\iff X \\in \\mathcal{P}(A) \\cap \\mathcal{P}(B).$$"
+        },
+        {
+          "title": "Conclude",
+          "body": "Since every set $X$ belongs to the left side exactly when it belongs to the right side, $\\mathcal{P}(A\\cap B) = \\mathcal{P}(A) \\cap \\mathcal{P}(B)$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "$X \\in \\mathcal{P}(A\\cap B) \\iff X \\subseteq A\\cap B \\iff X\\subseteq A \\wedge X \\subseteq B \\iff X \\in \\mathcal{P}(A)\\cap\\mathcal{P}(B)$, so the two sets are equal.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The analogous statement for union is false: $\\mathcal{P}(A\\cup B) \\supseteq \\mathcal{P}(A)\\cup\\mathcal{P}(B)$ only (e.g. $A=\\{1\\}, B=\\{2\\}$: $\\{1,2\\}$ is in the left side only)."
+      ],
+      "verification": "Example $A=\\{1,2\\}, B=\\{2,3\\}$: $\\mathcal{P}(A\\cap B)=\\{\\emptyset,\\{2\\}\\}$ and $\\mathcal{P}(A)\\cap\\mathcal{P}(B)=\\{\\emptyset,\\{2\\}\\}$."
+    },
+    "cse-2001-b-51-b": {
+      "approach": "Fix $m$ and induct on $n$. The only fact needed is the recursive definition $\\text{sum}(k+1) = \\text{sum}(k) + (k+1)$.",
+      "concepts": [
+        "Mathematical induction",
+        "Arithmetic series"
+      ],
+      "steps": [
+        {
+          "title": "Statement and base case",
+          "body": "Let $P(n)$: $\\text{sum}(m+n) = \\text{sum}(m) + \\text{sum}(n) + mn$ for a fixed arbitrary $m$.\n\nBase $n = 0$: LHS $= \\text{sum}(m)$; RHS $= \\text{sum}(m) + \\text{sum}(0) + m\\cdot 0 = \\text{sum}(m) + 0 + 0$. Equal."
+        },
+        {
+          "title": "Inductive step",
+          "body": "Assume $P(n)$. Then\n$$\\text{sum}(m+n+1) = \\text{sum}(m+n) + (m+n+1)$$\n$$= \\text{sum}(m) + \\text{sum}(n) + mn + m + n + 1 \\quad (\\text{by } P(n))$$\n$$= \\text{sum}(m) + [\\text{sum}(n) + (n+1)] + m(n+1) = \\text{sum}(m) + \\text{sum}(n+1) + m(n+1).$$\nThis is exactly $P(n+1)$."
+        },
+        {
+          "title": "Conclude",
+          "body": "By induction $P(n)$ holds for all $n \\in \\mathbb{N}$; since $m$ was arbitrary, the identity holds for all natural $m, n$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "Induct on $n$: base $n=0$ gives $\\text{sum}(m)=\\text{sum}(m)+0+0$; step: $\\text{sum}(m+n+1)=\\text{sum}(m)+\\text{sum}(n)+mn+(m+n+1)=\\text{sum}(m)+\\text{sum}(n+1)+m(n+1)$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Regroup $mn + m + n + 1$ as $(n+1) + m(n+1)$ — the $(n+1)$ completes $\\text{sum}(n+1)$, the rest is $m(n+1)$."
+      ],
+      "verification": "Closed form check: $\\frac{(m+n)(m+n+1)}{2} - \\frac{m(m+1)}{2} - \\frac{n(n+1)}{2} = \\frac{2mn}{2} = mn$. Numerically $m=2,n=3$: $\\text{sum}(5)=15 = 3+6+6$."
+    },
+    "cse-2001-b-52-a": {
+      "approach": "Use unique factorisation of a positive integer into (power of 2) × (odd number): equal outputs force equal powers of 2 and then equal odd parts.",
+      "concepts": [
+        "Injective function",
+        "Highest power of 2 dividing an integer"
+      ],
+      "steps": [
+        {
+          "title": "Assume equal images",
+          "body": "Suppose $h(a,b) = h(c,d)$. Adding 1: $(2a+1)2^b = (2c+1)2^d$."
+        },
+        {
+          "title": "Compare powers of 2",
+          "body": "$2a+1$ and $2c+1$ are odd, so the exact power of 2 dividing the left side is $2^b$ and the right side $2^d$. Equal numbers have the same exact power of 2, so $b = d$."
+        },
+        {
+          "title": "Compare odd parts",
+          "body": "Dividing by $2^b = 2^d$: $2a+1 = 2c+1 \\Rightarrow a = c$. Hence $(a,b) = (c,d)$ and $h$ is one-one. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "$(2a+1)2^b=(2c+1)2^d$ ⇒ $b=d$ (exact power of 2 dividing the number) ⇒ $2a+1=2c+1$ ⇒ $a=c$; so $h$ is injective.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Do not divide without justifying $b=d$ first; the argument rests on the odd factor having no factor 2."
+      ],
+      "verification": "Small values are all distinct: $h(0,0)=0, h(1,0)=2, h(0,1)=1, h(1,1)=5, h(0,2)=3, h(2,0)=4$."
+    },
+    "cse-2001-b-52-b": {
+      "approach": "Given any $n$, factor $n+1 \\ge 1$ as $2^b \\times$ odd; the odd part is $2a+1$ for a unique $a \\ge 0$, which gives the preimage.",
+      "concepts": [
+        "Surjective function",
+        "Factorisation into power of 2 and odd part"
+      ],
+      "steps": [
+        {
+          "title": "Target equation",
+          "body": "For $n \\in N$ we need $a,b \\in N$ with $(2a+1)2^b - 1 = n$, i.e. $(2a+1)2^b = n+1$."
+        },
+        {
+          "title": "Construct the preimage",
+          "body": "Since $n + 1 \\ge 1$, let $b$ be the largest integer with $2^b \\mid n+1$ (exists, $b \\ge 0$). Then $k = (n+1)/2^b$ is odd and $k \\ge 1$, so $k = 2a+1$ with $a = (k-1)/2 \\in N$."
+        },
+        {
+          "title": "Check",
+          "body": "$h(a,b) = (2a+1)2^b - 1 = k\\cdot 2^b - 1 = (n+1) - 1 = n$. Every $n$ has a preimage, so $h$ is onto; with part (a), $h$ is a bijection $N\\times N \\to N$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "For any $n$, write $n+1 = 2^b(2a+1)$ (strip all factors of 2); then $h(a,b) = n$, so $h$ is onto.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The \"$-1$\" in $h$ is what makes $0$ reachable: $h(0,0)=0$. Without it, $0$ would have no preimage."
+      ],
+      "verification": "$n=11$: $n+1=12=2^2\\cdot 3$, so $b=2, a=1$: $h(1,2)=3\\cdot4-1=11$. $n=6$: $7=2^0\\cdot 7$, $a=3,b=0$: $h=7-1=6$."
+    },
+    "cse-2001-b-53-a": {
+      "approach": "Pattern-matching (KMP-style) DFA: state $q_i$ = length of the longest prefix of $baab$ that is a suffix of the input read so far; $q_4$ is a trap-accept state.",
+      "concepts": [
+        "DFA construction",
+        "Substring automaton",
+        "Failure transitions"
+      ],
+      "steps": [
+        {
+          "title": "States",
+          "body": "$q_0$: no progress, $q_1$: seen $b$, $q_2$: seen $ba$, $q_3$: seen $baa$, $q_4$: seen $baab$ (accepting, stays there).",
+          "scene": {
+            "edgeTones": {
+              "q0>q1": "accent",
+              "q1>q2": "accent",
+              "q2>q3": "accent",
+              "q3>q4": "accent"
+            },
+            "caption": "Spine of the pattern b·a·a·b"
+          }
+        },
+        {
+          "title": "Mismatch transitions",
+          "body": "For each wrong symbol take the longest prefix of $baab$ that is a suffix of the new string:\n\n| state | read | string | goes to |\n|---|---|---|---|\n| $q_0$ | a | a | $q_0$ |\n| $q_1$ | b | bb | $q_1$ (\"b\") |\n| $q_2$ | b | bab | $q_1$ (\"b\") |\n| $q_3$ | a | baaa | $q_0$ |\n| $q_4$ | a,b | — | $q_4$ |",
+          "scene": {
+            "edgeTones": {
+              "q0>q0": "warning",
+              "q1>q1": "warning",
+              "q2>q1": "warning",
+              "q3>q0": "warning",
+              "q4>q4": "success"
+            },
+            "caption": "Fall-back edges"
+          }
+        },
+        {
+          "title": "Trace a string",
+          "body": "Input $abbaab$: $q_0 \\xrightarrow{a} q_0 \\xrightarrow{b} q_1 \\xrightarrow{b} q_1 \\xrightarrow{a} q_2 \\xrightarrow{a} q_3 \\xrightarrow{b} q_4$ — accepted. Input $babaa$ ends in $q_3$ — rejected.",
+          "scene": {
+            "current": [
+              "q4"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b",
+                "b",
+                "a",
+                "a",
+                "b"
+              ],
+              "head": 6
+            },
+            "caption": "abbaab accepted"
+          }
+        }
+      ],
+      "answer": {
+        "value": "5-state DFA, start $q_0$, accept $q_4$: $q_0$: a→$q_0$, b→$q_1$; $q_1$: a→$q_2$, b→$q_1$; $q_2$: a→$q_3$, b→$q_1$; $q_3$: a→$q_0$, b→$q_4$; $q_4$: a,b→$q_4$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "From $q_2$ (\"ba\") on b the string ends in \"b\", so go to $q_1$, not $q_0$.",
+        "From $q_3$ (\"baa\") on a no suffix of \"baaa\" is a prefix of baab, so go to $q_0$."
+      ],
+      "verification": "Minimal: states $q_0..q_3$ are distinguished by the shortest completing suffix ($baab, aab, ab, b$), and $q_4$ is the only accepting state — 5 states are necessary.",
+      "animation": {
+        "kind": "automaton",
+        "layout": "row",
+        "states": [
+          {
+            "id": "q0",
+            "start": true
+          },
+          {
+            "id": "q1"
+          },
+          {
+            "id": "q2"
+          },
+          {
+            "id": "q3"
+          },
+          {
+            "id": "q4",
+            "accept": true
+          }
+        ],
+        "edges": [
+          {
+            "from": "q0",
+            "to": "q0",
+            "label": "a"
+          },
+          {
+            "from": "q0",
+            "to": "q1",
+            "label": "b"
+          },
+          {
+            "from": "q1",
+            "to": "q1",
+            "label": "b"
+          },
+          {
+            "from": "q1",
+            "to": "q2",
+            "label": "a"
+          },
+          {
+            "from": "q2",
+            "to": "q3",
+            "label": "a"
+          },
+          {
+            "from": "q2",
+            "to": "q1",
+            "label": "b"
+          },
+          {
+            "from": "q3",
+            "to": "q4",
+            "label": "b"
+          },
+          {
+            "from": "q3",
+            "to": "q0",
+            "label": "a"
+          },
+          {
+            "from": "q4",
+            "to": "q4",
+            "label": "a,b"
+          }
+        ],
+        "current": [
+          "q0"
+        ]
+      }
+    },
+    "cse-2001-b-53-b": {
+      "approach": "Track two independent parities. Product of two 2-state parity DFAs gives 4 states; accept only when both counts are odd.",
+      "concepts": [
+        "DFA construction",
+        "Product automaton",
+        "Parity counting"
+      ],
+      "steps": [
+        {
+          "title": "States",
+          "body": "State = (parity of #a, parity of #b): $EE, EO, OE, OO$. Start $EE$ (empty string has 0 a's and 0 b's), accept $OO$."
+        },
+        {
+          "title": "Transitions",
+          "body": "Reading $a$ flips the first letter, reading $b$ flips the second:\n\n| state | a | b |\n|---|---|---|\n| $\\to EE$ | $OE$ | $EO$ |\n| $EO$ | $OO$ | $EE$ |\n| $OE$ | $EE$ | $OO$ |\n| $*OO$ | $EO$ | $OE$ |"
+        },
+        {
+          "title": "Check",
+          "body": "$ab$: $EE \\xrightarrow{a} OE \\xrightarrow{b} OO$ — accepted (1 a, 1 b). $aab$: $EE\\to OE\\to EE\\to EO$ — rejected (2 a's)."
+        }
+      ],
+      "answer": {
+        "value": "4 states (a-parity, b-parity) $=EE,EO,OE,OO$; a toggles the first, b the second; start $EE$, accept $OO$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "A 3-state answer is impossible: all four parity combinations are pairwise distinguishable."
+      ],
+      "verification": "Each pair of states is distinguished by one of $\\varepsilon, a, b, ab$, so the 4-state DFA is minimal.",
+      "animation": {
+        "kind": "automaton",
+        "layout": "circle",
+        "states": [
+          {
+            "id": "EE",
+            "start": true
+          },
+          {
+            "id": "OE"
+          },
+          {
+            "id": "OO",
+            "accept": true
+          },
+          {
+            "id": "EO"
+          }
+        ],
+        "edges": [
+          {
+            "from": "EE",
+            "to": "OE",
+            "label": "a"
+          },
+          {
+            "from": "OE",
+            "to": "EE",
+            "label": "a"
+          },
+          {
+            "from": "EO",
+            "to": "OO",
+            "label": "a"
+          },
+          {
+            "from": "OO",
+            "to": "EO",
+            "label": "a"
+          },
+          {
+            "from": "EE",
+            "to": "EO",
+            "label": "b"
+          },
+          {
+            "from": "EO",
+            "to": "EE",
+            "label": "b"
+          },
+          {
+            "from": "OE",
+            "to": "OO",
+            "label": "b"
+          },
+          {
+            "from": "OO",
+            "to": "OE",
+            "label": "b"
+          }
+        ],
+        "current": [
+          "EE"
+        ]
+      }
+    },
+    "cse-2001-b-54": {
+      "approach": "Push two symbols per $a$, switch state on $c$, pop one symbol per $b$; when the bottom marker reappears, move to the final state by an $\\varepsilon$-move. Every move is forced, so the PDA is deterministic.",
+      "concepts": [
+        "Deterministic PDA",
+        "Acceptance by final state"
+      ],
+      "steps": [
+        {
+          "title": "Idea",
+          "body": "Each $a$ must be matched by two $b$'s, so push $XX$ for every $a$; after $c$ pop one $X$ per $b$. $n \\ge 1$ means $c$ must be read with an $X$ (not $Z_0$) on top."
+        },
+        {
+          "title": "Transition function",
+          "body": "$P = (\\{q_0,q_1,q_f\\}, \\{a,b,c\\}, \\{X, Z_0\\}, \\delta, q_0, Z_0, \\{q_f\\})$:\n\n| move | result |\n|---|---|\n| $\\delta(q_0, a, Z_0)$ | $(q_0, XXZ_0)$ |\n| $\\delta(q_0, a, X)$ | $(q_0, XXX)$ |\n| $\\delta(q_0, c, X)$ | $(q_1, X)$ |\n| $\\delta(q_1, b, X)$ | $(q_1, \\varepsilon)$ |\n| $\\delta(q_1, \\varepsilon, Z_0)$ | $(q_f, Z_0)$ |\n\nAll other moves undefined (reject). Acceptance state: $q_f$ (acceptance by final state)."
+        },
+        {
+          "title": "Determinism",
+          "body": "For every (state, top) pair at most one move applies; the only $\\varepsilon$-move is on $(q_1, Z_0)$, and $q_1$ has no input move on $Z_0$. So it is a DPDA."
+        },
+        {
+          "title": "Trace acbb",
+          "body": "$(q_0, acbb, Z_0) \\vdash (q_0, cbb, XXZ_0) \\vdash (q_1, bb, XXZ_0) \\vdash (q_1, b, XZ_0) \\vdash (q_1, \\varepsilon, Z_0) \\vdash (q_f, \\varepsilon, Z_0)$ — accepted. $acb$ stops in $q_1$ with $X$ on top — rejected; $cbb$ has no move on $(q_0,c,Z_0)$ — rejected."
+        }
+      ],
+      "answer": {
+        "value": "$\\delta(q_0,a,Z_0)=(q_0,XXZ_0)$; $\\delta(q_0,a,X)=(q_0,XXX)$; $\\delta(q_0,c,X)=(q_1,X)$; $\\delta(q_1,b,X)=(q_1,\\varepsilon)$; $\\delta(q_1,\\varepsilon,Z_0)=(q_f,Z_0)$; accept by final state $q_f$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Defining $\\delta(q_0,c,Z_0)$ would wrongly accept $c$ ($n=0$).",
+        "Extra $b$'s: in $q_f$ there are no moves, so $acbbb$ is rejected."
+      ],
+      "verification": "Traced $aacbbbb$: after $aa$ the stack is $XXXXZ_0$, four $b$'s pop it to $Z_0$, then $\\varepsilon$ to $q_f$ — accepted; $aacbbb$ ends with $X$ on top — rejected."
+    },
+    "cse-2001-b-55-a": {
+      "approach": "X is (on valid inputs) exactly the complement of the halting problem HALT. Decidable languages are closed under complement, so a decider for X would yield a decider for HALT.",
+      "concepts": [
+        "Halting problem",
+        "Undecidability",
+        "Closure under complement"
+      ],
+      "steps": [
+        {
+          "title": "Relate X to HALT",
+          "body": "HALT $= \\{\\langle M, w\\rangle : M \\text{ halts on } w\\}$. $M$ loops forever on $w$ iff $M$ does not halt on $w$, so $X = \\overline{\\text{HALT}}$ (over well-formed encodings)."
+        },
+        {
+          "title": "Reduction",
+          "body": "Suppose a TM $D$ decides $X$. Build $D'$: on $\\langle M,w\\rangle$ run $D$ and output the opposite answer. $D'$ always halts and accepts exactly HALT — so HALT would be decidable."
+        },
+        {
+          "title": "Contradiction",
+          "body": "HALT is undecidable (given), so no such $D$ exists: X is undecidable. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "$X$ is the complement of HALT; a decider for $X$ with its answer flipped would decide HALT, contradiction — so $X$ is undecidable.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Malformed encodings are a fixed decidable set and do not affect the argument."
+      ],
+      "verification": "Consistent with part (b): X is co-RE (its complement HALT is RE) but neither recursive nor RE."
+    },
+    "cse-2001-b-55-b": {
+      "approach": "Use the theorem: if a language and its complement are both partially decidable (RE), it is decidable. HALT is RE but undecidable, so its complement X cannot be RE.",
+      "concepts": [
+        "Recursively enumerable languages",
+        "Complement theorem",
+        "Halting problem"
+      ],
+      "steps": [
+        {
+          "title": "Theorem",
+          "body": "If $L$ and $\\overline{L}$ are both RE, run their recognisers in parallel (alternating steps) on input $x$; exactly one accepts, so the combined machine always halts and decides $L$."
+        },
+        {
+          "title": "Apply to X",
+          "body": "HALT is partially decidable (given: simulate $M$ on $w$, accept if it halts). If $X = \\overline{\\text{HALT}}$ were also partially decidable, the theorem would make HALT decidable."
+        },
+        {
+          "title": "Conclude",
+          "body": "HALT is undecidable, so X is not partially decidable (not RE). $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "If $X$ were partially decidable, HALT and its complement $X$ would both be RE, making HALT decidable — contradiction; so $X$ is not even partially decidable.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Just running $M$ on $w$ cannot confirm looping: the simulation never gives a \"yes, it loops\" answer in finite time."
+      ],
+      "verification": "Standard classification: HALT is RE but not recursive, so its complement is co-RE, not recursive and not RE."
+    },
+    "cse-2001-b-56-a": {
+      "approach": "Capacity is simply the product of surfaces, tracks, sectors and sector size.",
+      "concepts": [
+        "Disk geometry",
+        "Disk capacity"
+      ],
+      "given": "| item | value |\n|---|---|\n| surfaces | 20 |\n| tracks/surface | 1000 |\n| sectors/track | 16 |\n| sector size | 1 KB |\n| speed | 3000 rpm |",
+      "steps": [
+        {
+          "title": "Multiply",
+          "body": "$$20 \\times 1000 \\times 16 \\times 1\\text{ KB} = 320\\,000\\text{ KB}$$"
+        },
+        {
+          "title": "Convert",
+          "body": "$320\\,000\\text{ KB} = 320\\,000/1024\\text{ MB} = 312.5\\text{ MB}$ ($= 327\\,680\\,000$ bytes)."
+        }
+      ],
+      "answer": {
+        "value": "$20 \\times 1000 \\times 16 \\times 1\\text{ KB} = 320\\,000$ KB $= 312.5$ MB",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Tracks/surface is per surface: multiply by all 20 surfaces."
+      ],
+      "verification": "$20\\times1000 = 20\\,000$ tracks; $20\\,000\\times 16 = 320\\,000$ sectors of 1 KB each."
+    },
+    "cse-2001-b-56-b": {
+      "approach": "One full track passes under the head per revolution, so transfer rate = (bytes per track) × (revolutions per second).",
+      "concepts": [
+        "Disk transfer rate",
+        "Rotational speed"
+      ],
+      "given": "| item | value |\n|---|---|\n| surfaces | 20 |\n| tracks/surface | 1000 |\n| sectors/track | 16 |\n| sector size | 1 KB |\n| speed | 3000 rpm |",
+      "steps": [
+        {
+          "title": "Revolutions per second",
+          "body": "$3000\\text{ rpm} = 3000/60 = 50$ rev/s (one revolution = 20 ms)."
+        },
+        {
+          "title": "Rate",
+          "body": "Track capacity $= 16 \\times 1\\text{ KB} = 16$ KB. Rate $= 16\\text{ KB} \\times 50 = 800$ KB/s $= 800 \\times 1024 = 819\\,200$ bytes/s."
+        }
+      ],
+      "answer": {
+        "value": "$16\\text{ KB/rev} \\times 50\\text{ rev/s} = 800$ KB/s ($819\\,200$ B/s)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Number of surfaces does not affect the rate: only one head transfers at a time."
+      ],
+      "verification": "One sector takes $20/16 = 1.25$ ms, i.e. 1 KB per 1.25 ms $= 800$ KB/s."
+    },
+    "cse-2001-b-56-c": {
+      "approach": "A byte arrives every $1/(\\text{rate})$ seconds; for each byte the CPU spends interrupt overhead + one memory write. CPU share = (CPU time per byte) / (byte arrival time).",
+      "concepts": [
+        "Interrupt-driven I/O",
+        "CPU utilisation for I/O"
+      ],
+      "given": "| item | value |\n|---|---|\n| transfer rate | 800 KB/s |\n| memory read/write | 0.1 µs/byte |\n| interrupt overhead | 0.4 µs |",
+      "steps": [
+        {
+          "title": "Time per byte from disk",
+          "body": "$$t_{byte} = \\frac{1}{800 \\times 1024}\\text{ s} = \\frac{10^6}{819\\,200}\\ \\mu s \\approx 1.2207\\ \\mu s$$"
+        },
+        {
+          "title": "CPU time per byte",
+          "body": "Each byte raises an interrupt: $0.4\\ \\mu s$ overhead $+ 0.1\\ \\mu s$ to move the byte to memory $= 0.5\\ \\mu s$."
+        },
+        {
+          "title": "Percentage",
+          "body": "$$\\frac{0.5}{1.2207} \\times 100 \\approx 40.96\\% \\approx 41\\%$$\n(With 1 KB = 1000 B, $t_{byte}=1.25\\ \\mu s$ and the share is $40\\%$.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\approx 41\\%$ ($0.5\\ \\mu s$ CPU per byte out of $\\approx 1.22\\ \\mu s$ per byte)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Include the 0.1 µs memory transfer as well as the 0.4 µs interrupt overhead — in interrupt-driven I/O the CPU does the transfer itself."
+      ],
+      "verification": "Per sector: 1024 bytes × 0.5 µs = 512 µs of CPU in a 1.25 ms sector time → $512/1250 = 40.96\\%$."
+    },
+    "cse-2001-b-56-d": {
+      "approach": "In cycle-stealing DMA the CPU is blocked only for the memory cycle stolen per byte; set-up overhead is negligible. Share = stolen time per byte / byte time.",
+      "concepts": [
+        "DMA",
+        "Cycle stealing"
+      ],
+      "steps": [
+        {
+          "title": "Stolen time per byte",
+          "body": "The DMA controller steals one memory cycle per byte: $0.1\\ \\mu s$. Initialisation/termination overhead is negligible (given)."
+        },
+        {
+          "title": "Percentage",
+          "body": "Byte time $= 1.2207\\ \\mu s$ (part c):\n$$\\frac{0.1}{1.2207}\\times 100 \\approx 8.19\\% \\approx 8.2\\%$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\approx 8.2\\%$ ($0.1\\ \\mu s$ stolen per $\\approx 1.22\\ \\mu s$ byte time)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The interrupt overhead does not apply per byte under DMA — at most one interrupt per sector, which is negligible."
+      ],
+      "verification": "Per sector: $1024 \\times 0.1 = 102.4\\ \\mu s$ out of $1250\\ \\mu s$ → $8.19\\%$; it is the maximum because DMA requests are always granted."
+    },
+    "cse-2001-b-57-a": {
+      "approach": "Sets = cache size / (block size × ways).",
+      "concepts": [
+        "Set-associative cache",
+        "Address split"
+      ],
+      "given": "| item | value |\n|---|---|\n| address | 32 bits |\n| cache | 256 KB $=2^{18}$ B |\n| block | 16 B $=2^4$ |\n| associativity | 4-way |",
+      "steps": [
+        {
+          "title": "Blocks",
+          "body": "$2^{18} / 2^4 = 2^{14} = 16384$ blocks (lines)."
+        },
+        {
+          "title": "Sets",
+          "body": "$2^{14} / 4 = 2^{12} = 4096$ sets."
+        }
+      ],
+      "answer": {
+        "value": "$4096$ sets ($2^{12}$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Dividing by the block size only gives the number of lines (16384), not sets."
+      ],
+      "verification": "$4096 \\times 4 \\times 16\\text{ B} = 262\\,144\\text{ B} = 256$ KB."
+    },
+    "cse-2001-b-57-b": {
+      "approach": "Tag = address bits − set-index bits − offset bits.",
+      "concepts": [
+        "Set-associative cache",
+        "Tag bits"
+      ],
+      "given": "| item | value |\n|---|---|\n| address | 32 bits |\n| cache | 256 KB $=2^{18}$ B |\n| block | 16 B $=2^4$ |\n| associativity | 4-way |",
+      "steps": [
+        {
+          "title": "Index and offset",
+          "body": "Offset $= \\log_2 16 = 4$ bits; set index $= \\log_2 4096 = 12$ bits."
+        },
+        {
+          "title": "Tag",
+          "body": "$32 - 12 - 4 = 16$ bits. Address split (tag, set, offset) $= 16 + 12 + 4$ bits."
+        }
+      ],
+      "answer": {
+        "value": "16 bits",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using the line count ($2^{14}$, 14 bits) as the index gives the direct-mapped tag (14 bits) instead."
+      ],
+      "verification": "$16 + 12 + 4 = 32$ ✓."
+    },
+    "cse-2001-b-57-c": {
+      "approach": "All ways of the selected set are searched in parallel: one comparator per way, each as wide as the tag.",
+      "concepts": [
+        "Set-associative lookup",
+        "Tag comparators"
+      ],
+      "given": "| item | value |\n|---|---|\n| address | 32 bits |\n| cache | 256 KB $=2^{18}$ B |\n| block | 16 B $=2^4$ |\n| associativity | 4-way |",
+      "steps": [
+        {
+          "title": "Number",
+          "body": "The set index selects one set of 4 lines; their tags are compared simultaneously → 4 comparators."
+        },
+        {
+          "title": "Width",
+          "body": "Each compares the 16-bit tag (part b) → 16-bit comparators."
+        }
+      ],
+      "answer": {
+        "value": "4 comparators, each 16 bits wide",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Not 4096 × 4: comparators are shared across sets, only the selected set is compared."
+      ],
+      "verification": "k-way associative ⇒ k comparators of tag width; here $k=4$, tag $=16$."
+    },
+    "cse-2001-b-57-d": {
+      "approach": "Byte offset bits = $\\log_2(\\text{block size})$.",
+      "concepts": [
+        "Block offset"
+      ],
+      "steps": [
+        {
+          "title": "Compute",
+          "body": "Block $= 16 = 2^4$ bytes, so $\\log_2 16 = 4$ bits select a byte within the block."
+        },
+        {
+          "title": "Place in the address",
+          "body": "Address split (tag, set, offset) $= 16 + 12 + 4$ bits."
+        }
+      ],
+      "answer": {
+        "value": "4 bits",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Associativity does not change the offset width."
+      ],
+      "verification": "4 bits address offsets 0–15, exactly the 16 bytes of a block."
+    },
+    "cse-2001-b-57-e": {
+      "approach": "Tag storage = (number of lines) × (tag bits per line).",
+      "concepts": [
+        "Tag memory overhead"
+      ],
+      "given": "| item | value |\n|---|---|\n| address | 32 bits |\n| cache | 256 KB $=2^{18}$ B |\n| block | 16 B $=2^4$ |\n| associativity | 4-way |",
+      "steps": [
+        {
+          "title": "Lines",
+          "body": "$2^{18}/2^4 = 2^{14} = 16384$ lines."
+        },
+        {
+          "title": "Tag bits",
+          "body": "$2^{14} \\times 16 = 2^{18}$ bits $= 2^{18}/8 = 2^{15} = 32768$ bytes $= 32$ KB."
+        }
+      ],
+      "answer": {
+        "value": "$2^{14} \\times 16$ bits $= 32768$ bytes ($32$ KB)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Valid/dirty bits are not asked — only tag bits."
+      ],
+      "verification": "Equivalently 4096 sets × 4 ways × 2 bytes per tag $= 32768$ bytes."
+    },
+    "cse-2001-b-58-a": {
+      "approach": "A 3-variable function is self-dual iff $f(\\bar x) = \\overline{f(x)}$, i.e. of every complementary minterm pair $(m, 7-m)$ exactly one is a minterm.",
+      "concepts": [
+        "Self-dual function",
+        "Duality"
+      ],
+      "steps": [
+        {
+          "title": "Pair the minterms",
+          "body": "Complementary pairs: $(0,7), (1,6), (2,5), (3,4)$. $f = \\Sigma(0,1,2,4)$ contains $0$ (not 7), $1$ (not 6), $2$ (not 5), $4$ (not 3)."
+        },
+        {
+          "title": "Verdict",
+          "body": "Every pair contributes exactly one minterm, so $f(\\bar a, \\bar b, \\bar c) = \\overline{f(a,b,c)}$ for all inputs, i.e. $f^d = f$. **Yes, $f$ is self-dual.**\n\nIndeed $f = 1$ iff at most one variable is 1, i.e. $f = \\bar a\\bar b + \\bar b \\bar c + \\bar a \\bar c = \\text{MAJ}(\\bar a, \\bar b, \\bar c)$, and majority is self-dual."
+        }
+      ],
+      "answer": {
+        "value": "Yes — of each complementary pair $(0,7),(1,6),(2,5),(3,4)$ exactly one is a minterm, so $f^d(a,b,c) = \\overline{f(\\bar a,\\bar b,\\bar c)} = f$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "A self-dual function of $n$ variables must have exactly $2^{n-1}$ minterms (here 4); having 4 is necessary but the pair test is what proves it."
+      ],
+      "verification": "Dual of $\\bar a\\bar b + \\bar b\\bar c + \\bar a\\bar c$ is $(\\bar a+\\bar b)(\\bar b+\\bar c)(\\bar a+\\bar c)$, which expands back to $\\bar a\\bar b + \\bar b\\bar c + \\bar a\\bar c$."
+    },
+    "cse-2001-b-58-b": {
+      "approach": "Tabulate the 10 valid excess-3 codes (3–12) with the codes 0, 1, 2, 13, 14, 15 as don't-cares, then group the 0s of the $b_4$ column on a K-map.",
+      "concepts": [
+        "Excess-3 code",
+        "BCD",
+        "POS minimisation with don't-cares"
+      ],
+      "steps": [
+        {
+          "title": "Truth table",
+          "body": "Input $e_8e_4e_2e_1$ = digit + 3, output $b_8b_4b_2b_1$ = digit:\n\n| E (dec) | $e_8e_4e_2e_1$ | digit | $b_4$ |\n|---|---|---|---|\n| 3 | 0011 | 0 | 0 |\n| 4 | 0100 | 1 | 0 |\n| 5 | 0101 | 2 | 0 |\n| 6 | 0110 | 3 | 0 |\n| 7 | 0111 | 4 | 1 |\n| 8 | 1000 | 5 | 1 |\n| 9 | 1001 | 6 | 1 |\n| 10 | 1010 | 7 | 1 |\n| 11 | 1011 | 8 | 0 |\n| 12 | 1100 | 9 | 0 |\n\nDon't-cares: $0, 1, 2, 13, 14, 15$."
+        },
+        {
+          "title": "Group the zeros",
+          "body": "Zeros at $3,4,5,6,11,12$.\n- $\\{4,5,12,13\\}$: $e_4=1, e_2=0$ → $(\\bar e_4 + e_2)$\n- $\\{4,6,12,14\\}$: $e_4=1, e_1=0$ → $(\\bar e_4 + e_1)$\n- $\\{3,11\\}$: $e_4=0,e_2=1,e_1=1$ → $(e_4 + \\bar e_2 + \\bar e_1)$ (no quad: 7, 9, 10 are 1s)"
+        },
+        {
+          "title": "Minimal POS",
+          "body": "$$b_4 = (\\bar e_4 + e_2)(\\bar e_4 + e_1)(e_4 + \\bar e_2 + \\bar e_1)$$\nThree sum terms are necessary (3 cannot share a term with 4/5/6/12). Equivalently $b_4 = \\overline{e_4 \\oplus e_2e_1}$."
+        },
+        {
+          "title": "If b4 means the MSB",
+          "body": "The scan's subscripts are blurred. If the outputs were labelled $b_4b_3b_2b_1$ with $b_4$ the MSB (digit 8, 9 ⇒ E = 11, 12), the same method gives $b_{4} = e_{4}(e_3 + e_2)(e_3 + e_1)$ with inputs $e_4e_3e_2e_1$ (zeros 3–10, don't-cares as above)."
+        }
+      ],
+      "answer": {
+        "value": "$b_4 = (\\bar e_4 + e_2)(\\bar e_4 + e_1)(e_4 + \\bar e_2 + \\bar e_1)$ (weight-4 output; labels read as 8-4-2-1). If $b_4$ is instead the MSB (labels $e_4..e_1$): $b_4 = e_4(e_3+e_2)(e_3+e_1)$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the six unused codes as don't-cares gives a much larger expression.",
+        "BCD bit $b_4$ is 1 for digits 4–7, i.e. excess-3 inputs 7–10."
+      ],
+      "verification": "Checked all 10 valid inputs against $\\overline{e_4 \\oplus e_2 e_1}$: E=7 → $e_4=1, e_2e_1=1$ → 1; E=8,9,10 → $e_4=0, e_2e_1=0$ → 1; E=3,11 → $e_4=0,e_2e_1=1$ → 0; E=4,5,6,12 → $e_4=1, e_2e_1=0$ → 0."
+    },
+    "cse-2001-b-59-a": {
+      "approach": "Mealy machine with two modes (copy / complement), each split by whether the last input already starts the switching pair. The bit that completes \"00\" is still copied; the bit that completes \"11\" is still complemented.",
+      "concepts": [
+        "Mealy machine",
+        "State diagram",
+        "Sequence detection"
+      ],
+      "steps": [
+        {
+          "title": "States",
+          "body": "| state | mode | remembers |\n|---|---|---|\n| A | copy | last input not 0 (or start) |\n| B | copy | last input 0 |\n| C | complement | last input not 1 |\n| D | complement | last input 1 |"
+        },
+        {
+          "title": "Transitions (input/output)",
+          "body": "- A: 1/1 → A, 0/0 → B\n- B: 1/1 → A, 0/0 → C (second 0: copied, then switch)\n- C: 0/1 → C, 1/0 → D\n- D: 0/1 → C, 1/0 → A (second 1: complemented, then switch back)",
+          "scene": {
+            "edgeTones": {
+              "B>C": "warning",
+              "D>A": "warning"
+            },
+            "caption": "Mode switches on 00 and 11"
+          }
+        },
+        {
+          "title": "Check against the example",
+          "body": "Input 101100: A→A→B→A→A→B→C, output 101100. Input 01001011 from C: C→C→D→C→C→D→C→D→A, output 10110100. Input 011 from A: output 011. All match the given streams.",
+          "scene": {
+            "current": [
+              "A"
+            ],
+            "caption": "Example reproduced"
+          }
+        }
+      ],
+      "answer": {
+        "value": "4-state Mealy machine: A (copy), B (copy, last 0), C (complement), D (complement, last 1). A: 0/0→B, 1/1→A; B: 0/0→C, 1/1→A; C: 0/1→C, 1/0→D; D: 0/1→C, 1/0→A.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The second 0 is output as 0 (copied); complementing starts with the next bit — check this against the example stream."
+      ],
+      "verification": "Replayed the full 17-bit example stream through the diagram; every output bit matches.",
+      "animation": {
+        "kind": "automaton",
+        "layout": "manual",
+        "states": [
+          {
+            "id": "A",
+            "start": true,
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "B",
+            "x": 1,
+            "y": 0
+          },
+          {
+            "id": "C",
+            "x": 1,
+            "y": 1
+          },
+          {
+            "id": "D",
+            "x": 0,
+            "y": 1
+          }
+        ],
+        "edges": [
+          {
+            "from": "A",
+            "to": "A",
+            "label": "1/1"
+          },
+          {
+            "from": "A",
+            "to": "B",
+            "label": "0/0"
+          },
+          {
+            "from": "B",
+            "to": "A",
+            "label": "1/1"
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "label": "0/0"
+          },
+          {
+            "from": "C",
+            "to": "C",
+            "label": "0/1"
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "label": "1/0"
+          },
+          {
+            "from": "D",
+            "to": "C",
+            "label": "0/1"
+          },
+          {
+            "from": "D",
+            "to": "A",
+            "label": "1/0"
+          }
+        ],
+        "current": [
+          "A"
+        ]
+      }
+    },
+    "cse-2001-b-59-b": {
+      "approach": "Encode A=00, B=01, C=10, D=11 ($Q_1$ = mode, $Q_0$ = \"last bit could start the switch\"), build the next-state table, then read J/K from the JK excitation table.",
+      "concepts": [
+        "JK flip-flop excitation",
+        "State assignment",
+        "K-map minimisation"
+      ],
+      "steps": [
+        {
+          "title": "State table",
+          "body": "| $Q_1Q_0$ | $x$ | $Q_1^+Q_0^+$ | $z$ |\n|---|---|---|---|\n| 00 | 0 | 01 | 0 |\n| 00 | 1 | 00 | 1 |\n| 01 | 0 | 10 | 0 |\n| 01 | 1 | 00 | 1 |\n| 10 | 0 | 10 | 1 |\n| 10 | 1 | 11 | 0 |\n| 11 | 0 | 10 | 1 |\n| 11 | 1 | 00 | 0 |"
+        },
+        {
+          "title": "Flip-flop Q1",
+          "body": "JK excitation: $0\\to0$: J=0,K=x; $0\\to1$: J=1,K=x; $1\\to0$: J=x,K=1; $1\\to1$: J=x,K=0.\n\n$Q_1=0$ rows: $Q_1^+=1$ only at $Q_0=1,x=0$ ⇒ $J_1 = Q_0\\bar x$.\n\n$Q_1=1$ rows: $Q_1^+=0$ only at $Q_0=1,x=1$ ⇒ $K_1 = Q_0 x$."
+        },
+        {
+          "title": "Flip-flop Q0 and output",
+          "body": "$Q_0=0$ rows (00, 10): $Q_0^+=1$ at $(Q_1,x)=(0,0)$ and $(1,1)$ ⇒ $J_0 = \\bar Q_1 \\bar x + Q_1 x$.\n\n$Q_0=1$ rows (01, 11): $Q_0^+ = 0$ always ⇒ $K_0 = 1$.\n\nOutput: $z = x$ in copy mode, $\\bar x$ in complement mode ⇒ $z = x \\oplus Q_1$."
+        }
+      ],
+      "answer": {
+        "value": "With A=00, B=01, C=10, D=11 ($Q_1$ = mode): $J_1 = Q_0\\bar x$, $K_1 = Q_0 x$; $J_0 = Q_1 x + \\bar Q_1 \\bar x$, $K_0 = 1$; output $z = x \\oplus Q_1$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The expressions depend on the state assignment; any consistent assignment is acceptable, but the J/K must match its own table.",
+        "\"S-K\" in the question is the J-K master-slave flip-flop."
+      ],
+      "verification": "Checked $Q^+ = J\\bar Q + \\bar K Q$ on all 8 rows, e.g. state 11, $x=1$: $Q_1^+ = 0\\cdot 0 + \\overline{1}\\cdot 1 = 0$, $Q_0^+ = J_0\\cdot 0 + \\bar 1 \\cdot 1 = 0$ → 00 ✓."
+    },
+    "cse-2001-b-60-a": {
+      "approach": "List each instruction's destination and sources, then check every earlier→later pair for RAW (write then read), WAR (read then write) and WAW (write then write) on the same register.",
+      "concepts": [
+        "Data dependence",
+        "RAW / WAR / WAW"
+      ],
+      "given": "| instr | writes | reads |\n|---|---|---|\n| I1 | r2 | r3, r4 |\n| I2 | r4 | r2, r3 |\n| I3 | memory | r2, r1 |\n| I4 | r3 | r4, r2 |",
+      "steps": [
+        {
+          "title": "RAW (true) dependencies",
+          "body": "- I1 → I2 on r2\n- I1 → I3 on r2\n- I1 → I4 on r2\n- I2 → I4 on r4"
+        },
+        {
+          "title": "WAR (anti) dependencies",
+          "body": "- I1 → I2 on r4 (I1 reads r4, I2 writes it)\n- I1 → I4 on r3 (I1 reads r3, I4 writes it)\n- I2 → I4 on r3 (I2 reads r3, I4 writes it)"
+        },
+        {
+          "title": "WAW (output)",
+          "body": "Destinations r2, r4, memory, r3 are all different — no WAW. I3 writes only memory and nothing later touches memory."
+        }
+      ],
+      "answer": {
+        "value": "RAW: I1→I2 (r2), I1→I3 (r2), I1→I4 (r2), I2→I4 (r4). WAR: I1→I2 (r4), I1→I4 (r3), I2→I4 (r3). No WAW.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "sw has no destination register; r2 is a source (the value stored) together with r1."
+      ],
+      "verification": "Checked all 6 ordered pairs (I1,I2), (I1,I3), (I1,I4), (I2,I3), (I2,I4), (I3,I4); (I2,I3) and (I3,I4) share no written register."
+    },
+    "cse-2001-b-60-b": {
+      "approach": "Only RAW dependencies can become hazards in an in-order 5-stage pipeline. With write in the first half and read in the second half of a cycle, a RAW is a hazard only if the consumer's ID comes before the producer's WB cycle.",
+      "concepts": [
+        "Data hazard",
+        "Split-cycle register file",
+        "5-stage pipeline"
+      ],
+      "steps": [
+        {
+          "title": "Timing without stalls",
+          "body": "I1 WB in cycle 5, I2 WB in cycle 6. Register reads happen in ID: I2 in cycle 3, I3 in cycle 4, I4 in cycle 5.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "c": 5,
+                "tone": "accent"
+              },
+              {
+                "r": 1,
+                "c": 6,
+                "tone": "accent"
+              }
+            ],
+            "caption": "WB cycles of the producers"
+          }
+        },
+        {
+          "title": "Check each RAW",
+          "body": "| RAW | producer WB | consumer ID | hazard? |\n|---|---|---|---|\n| I1→I2 (r2) | 5 | 3 | yes |\n| I1→I3 (r2) | 5 | 4 | yes |\n| I1→I4 (r2) | 5 | 5 | no (write 1st half, read 2nd half) |\n| I2→I4 (r4) | 6 | 5 | yes |",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "c": 3,
+                "tone": "error"
+              },
+              {
+                "r": 2,
+                "c": 4,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "c": 5,
+                "tone": "error"
+              },
+              {
+                "r": 0,
+                "c": 5,
+                "tone": "success"
+              }
+            ],
+            "caption": "Red: register read too early"
+          }
+        },
+        {
+          "title": "WAR / WAW",
+          "body": "In this in-order pipeline every read (ID) precedes later instructions' writes (WB), and writes complete in program order, so WAR and WAW never become hazards."
+        }
+      ],
+      "answer": {
+        "value": "RAW hazards I1→I2 (r2), I1→I3 (r2) and I2→I4 (r4); I1→I4 is not a hazard (split-cycle register file); WAR/WAW cannot occur in this in-order pipeline.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "I1→I4 is resolved by the write-first-half / read-second-half register file — do not count it."
+      ],
+      "verification": "A RAW is safe without forwarding only when the producer is at least 3 instructions ahead; the three hazards have distances 1, 2 and 2, while I1→I4 has distance 3.",
+      "animation": {
+        "kind": "pipeline",
+        "rows": [
+          {
+            "label": "I1 sub r2",
+            "start": 1,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "I2 sub r4",
+            "start": 2,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "I3 sw r2",
+            "start": 3,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "I4 sub r3",
+            "start": 4,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2001-b-60-c": {
+      "approach": "Every producer is an ALU instruction (sub), so its result exists at the end of EX; forwarding from the EX/MEM and MEM/WB latches reaches each consumer in time. Only a load-use RAW would need a stall, and there is none.",
+      "concepts": [
+        "Operand forwarding",
+        "Load-use hazard"
+      ],
+      "steps": [
+        {
+          "title": "Forwarding paths",
+          "body": "- I1→I2 (r2): I1 result ready end of cycle 3, I2 EX in cycle 4 → EX/MEM → EX forward.\n- I1→I3 (r2): I3 EX in cycle 5 (and it needs the store data only in MEM, cycle 6) → MEM/WB → EX forward.\n- I2→I4 (r4): I2 result end of cycle 4, I4 EX in cycle 6 → MEM/WB → EX forward.",
+          "scene": {
+            "forwards": [
+              {
+                "from": [
+                  0,
+                  3
+                ],
+                "to": [
+                  1,
+                  4
+                ]
+              },
+              {
+                "from": [
+                  0,
+                  4
+                ],
+                "to": [
+                  2,
+                  5
+                ]
+              },
+              {
+                "from": [
+                  1,
+                  5
+                ],
+                "to": [
+                  3,
+                  6
+                ]
+              }
+            ],
+            "caption": "All three hazards forwarded, no stalls"
+          }
+        },
+        {
+          "title": "Verdict",
+          "body": "No instruction is a load, so no value is produced later than the end of EX; all hazards are removed by forwarding with zero stalls. **Yes.**"
+        }
+      ],
+      "answer": {
+        "value": "Yes — all producers are ALU (sub) instructions, so their results can be forwarded to the dependent instructions' EX stage; no load-use hazard exists, hence no stalls.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forwarding fails only for a load followed immediately by a use; sw is a store, not a load."
+      ],
+      "verification": "Total time with forwarding = $5 + 3 = 8$ cycles, the ideal for 4 instructions in a 5-stage pipeline.",
+      "animation": {
+        "kind": "pipeline",
+        "rows": [
+          {
+            "label": "I1 sub r2",
+            "start": 1,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "I2 sub r4",
+            "start": 2,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "I3 sw r2",
+            "start": 3,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          },
+          {
+            "label": "I4 sub r3",
+            "start": 4,
+            "cells": [
+              "IF",
+              "ID",
+              "EX",
+              "MEM",
+              "WB"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
