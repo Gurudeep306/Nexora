@@ -272,7 +272,6 @@ export function CommandPalette() {
             exit={{ opacity: 0, y: -6, scale: 0.98, transition: { duration: 0.1 } }}
             transition={{ type: 'spring', stiffness: 520, damping: 36 }}
           >
-            <span aria-hidden="true" className="hairline-top pointer-events-none absolute inset-x-0 top-0 h-px" />
             <div className="flex items-center gap-3 border-b border-border/10 px-4">
               <Search className="size-4 shrink-0 text-accent-brand" aria-hidden="true" />
               <input
