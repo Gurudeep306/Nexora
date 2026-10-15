@@ -1,0 +1,71 @@
+{
+ "paper": "cse-1994",
+ "fixes": [
+  {
+   "id": "cse-1994-a-1",
+   "field": "text",
+   "before": "Choose one of the alternatives for the following questions\n\nFORTRAN implementations do not permit recursion because",
+   "after": "FORTRAN implementations do not permit recursion because",
+   "reason": "Removed the section instruction preamble ('Choose one of the alternatives...') from the stem",
+   "source": "GATE1994.pdf p1"
+  },
+  {
+   "id": "cse-1994-a-21",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "Macro definitions cannot appear within other macro definitions in assembly language"
+    },
+    {
+     "l": "B",
+     "t": "Overlaying is used to run a program which is longer than the address space of a computer"
+    },
+    {
+     "l": "C",
+     "t": "Virtual memory can be used to accommodate a program which is longer than the of a computer"
+    },
+    {
+     "l": "D",
+     "t": "It is not possible to write interrupt service routines in a high level language."
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "Macro definitions cannot appear within other macro definitions in assembly language"
+    },
+    {
+     "l": "B",
+     "t": "Overlaying is used to run a program which is longer than the address space of a computer"
+    },
+    {
+     "l": "C",
+     "t": "Virtual memory can be used to accommodate a program which is longer than the [word missing in source] of a computer"
+    },
+    {
+     "l": "D",
+     "t": "It is not possible to write interrupt service routines in a high level language."
+    }
+   ],
+   "reason": "Option C is missing a word in the source paper; mark the gap explicitly instead of the garbled 'the of a computer'",
+   "source": "GATE1994.pdf p3"
+  },
+  {
+   "id": "cse-1994-a-21",
+   "field": "needsReview",
+   "before": false,
+   "after": true,
+   "reason": "Stored key C disagrees with independent solution B",
+   "source": "independent solution"
+  },
+  {
+   "id": "cse-1994-a-21",
+   "field": "reviewNote",
+   "before": "Option (b) prints 'compare' (for 'computer'), corrected. Option (c) as printed is missing a word ('longer than the [physical memory] of a computer'); kept as printed.",
+   "after": "Stored key C (solved, not official). Option C is missing a word in the source ('longer than the ... of a computer'). Overlays let a program exceed the address space (B true as printed); virtual memory exceeds physical memory but not the virtual address space, so C is true only if the missing word is 'physical memory'. Solution answers B; verify against an authoritative key.",
+   "reason": "Key disagreement",
+   "source": "independent solution"
+  }
+ ]
+}
