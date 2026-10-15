@@ -1,0 +1,870 @@
+{
+  "paper": "cse-1997",
+  "version": 2,
+  "solutions": {
+    "cse-1997-b-69": {
+      "approach": "Enumerate the only call chains the program allows. C makes no calls, so a chain through C stops at 4 records; the only way to have 5 records is Main → A → B → A → B. Then set each static link by lexical nesting and each dynamic link to the caller.",
+      "concepts": [
+        "Activation record",
+        "Static (access) link",
+        "Dynamic (control) link",
+        "Lexical scoping"
+      ],
+      "steps": [
+        {
+          "title": "Possible call chains",
+          "body": "Calls that exist: Main→A, A→B, B→C, B→A. C calls nothing.\n\n- Main, A, B, C — only **4** records, and C cannot extend it.\n- Main, A, B, A, B — **5** records.\n\nSo the stack (bottom → top) is **Main, A, B, A, B**; the top is the second activation of B.",
+          "scene": {
+            "items": [
+              "Main  [X]"
+            ],
+            "caption": "Main starts"
+          }
+        },
+        {
+          "title": "Main calls A, A calls B",
+          "body": "Push A (local $Y$) and then B (local $Z$). A is nested directly in Main, so A's static link → Main; B is nested in A, so B's static link → the A that called it.",
+          "scene": {
+            "items": [
+              "Main  [X]",
+              "A₁  [Y]",
+              "B₁  [Z]"
+            ],
+            "caption": "Main → A → B"
+          }
+        },
+        {
+          "title": "B calls A, A calls B",
+          "body": "B calls A (recursion through B). A is declared in Main, so the new A's static link → **Main**, while its dynamic link → **B₁** (the caller). A₂ then calls B: B₂'s static and dynamic links both → **A₂**.",
+          "scene": {
+            "items": [
+              "Main  [X]",
+              "A₁  [Y]",
+              "B₁  [Z]",
+              "A₂  [Y]",
+              "B₂  [Z]  ← top"
+            ],
+            "caption": "Five records: Main, A, B, A, B"
+          }
+        },
+        {
+          "title": "Run-time stack",
+          "body": "| Record (bottom → top) | Locals | Static link | Dynamic link |\n|---|---|---|---|\n| Main | X | — | — |\n| A₁ | Y | Main | Main |\n| B₁ | Z | A₁ | A₁ |\n| A₂ | Y | Main | B₁ |\n| B₂ (**top**) | Z | A₂ | A₂ |\n\nC's own $Z$ never appears because C is not active."
+        }
+      ],
+      "answer": {
+        "value": "Bottom→top: Main(X); A(Y) [SL→Main, DL→Main]; B(Z) [SL→A₁, DL→A₁]; A(Y) [SL→Main, DL→B₁]; B(Z) [SL→A₂, DL→A₂] = top.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Setting A₂'s static link to B₁ — static links follow declaration nesting, not the caller.",
+        "Including C: a chain through C has only 4 records and C calls nothing."
+      ],
+      "verification": "Checked every chain: through C the depth is capped at 4, so Main-A-B-A-B is the unique 5-record stack.",
+      "animation": {
+        "kind": "stack",
+        "title": "Run-time stack (bottom → top)",
+        "items": [
+          "Main  [X]"
+        ]
+      }
+    },
+    "cse-1997-b-70-a": {
+      "approach": "Mealy-machine minimisation by partition refinement: start with blocks of equal output pairs (P₁), then repeatedly split blocks whose members go to different blocks on some input, until nothing changes.",
+      "concepts": [
+        "State equivalence",
+        "Partition refinement",
+        "Mealy machine"
+      ],
+      "steps": [
+        {
+          "title": "Split by outputs",
+          "body": "Output pairs (input 0, input 1): A, B, E, F, G give $(1,1)$; C, D, H give $(0,1)$.\n\n$P_1=\\{A,B,E,F,G\\},\\ \\{C,D,H\\}$",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "accent"
+              }
+            ],
+            "reveal": 16,
+            "caption": "$P_1$: by output pair"
+          }
+        },
+        {
+          "title": "Refine to P₂",
+          "body": "Next-state blocks (input 0, input 1) under $P_1$ (1 = ABEFG, 2 = CDH):\n\n- A: B, H → (1, 2); B: F, D → (1, 2)\n- E: D, C → (2, 2); F: C, C → (2, 2); G: C, D → (2, 2)\n- C: D, E → (2, 1); D: C, F → (2, 1); H: C, A → (2, 1)\n\n$P_2=\\{A,B\\},\\{E,F,G\\},\\{C,D,H\\}$",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "accent"
+              }
+            ],
+            "reveal": 24,
+            "caption": "$P_2$"
+          }
+        },
+        {
+          "title": "Refine to P₃",
+          "body": "Under $P_2$:\n\n- A: B → AB, H → CDH; B: F → EFG, D → CDH ⇒ A, B split.\n- E, F, G all go to (CDH, CDH) ⇒ stay.\n- C: D → CDH, E → EFG; D: C → CDH, F → EFG; H: C → CDH, A → AB ⇒ H splits off.\n\n$P_3=\\{A\\},\\{B\\},\\{C,D\\},\\{E,F,G\\},\\{H\\}$",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "accent"
+              }
+            ],
+            "reveal": 32,
+            "caption": "$P_3$"
+          }
+        },
+        {
+          "title": "Check stability",
+          "body": "Under $P_3$: C → (D, E) = (CD, EFG), D → (C, F) = (CD, EFG) — same. E → (D, C), F → (C, C), G → (C, D) all = (CD, CD) — same. No block splits, so $P_4=P_3$ is the equivalence partition:\n\n$$\\{A\\},\\ \\{B\\},\\ \\{C,D\\},\\ \\{E,F,G\\},\\ \\{H\\}$$",
+          "scene": {
+            "hl": [
+              {
+                "r": 4,
+                "tone": "success"
+              }
+            ],
+            "reveal": 40,
+            "caption": "Stable: $P_4=P_3$"
+          }
+        }
+      ],
+      "answer": {
+        "value": "{A}, {B}, {C, D}, {E, F, G}, {H}",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Stopping after the output split — A and B have the same outputs but are not equivalent.",
+        "Merging H with C, D: H goes to A on input 1, which is in a different block."
+      ],
+      "verification": "One more refinement pass under the final partition produced no split.",
+      "animation": {
+        "kind": "table",
+        "title": "Partition refinement",
+        "cols": [
+          "A",
+          "B",
+          "C",
+          "D",
+          "E",
+          "F",
+          "G",
+          "H"
+        ],
+        "rowLabels": [
+          "Outputs",
+          "P₁",
+          "P₂",
+          "P₃",
+          "P₄"
+        ],
+        "corner": "Partition",
+        "rows": [
+          [
+            "1,1",
+            "1,1",
+            "0,1",
+            "0,1",
+            "1,1",
+            "1,1",
+            "1,1",
+            "0,1"
+          ],
+          [
+            "1",
+            "1",
+            "2",
+            "2",
+            "1",
+            "1",
+            "1",
+            "2"
+          ],
+          [
+            "AB",
+            "AB",
+            "CDH",
+            "CDH",
+            "EFG",
+            "EFG",
+            "EFG",
+            "CDH"
+          ],
+          [
+            "A",
+            "B",
+            "CD",
+            "CD",
+            "EFG",
+            "EFG",
+            "EFG",
+            "H"
+          ],
+          [
+            "A",
+            "B",
+            "CD",
+            "CD",
+            "EFG",
+            "EFG",
+            "EFG",
+            "H"
+          ]
+        ],
+        "reveal": 8,
+        "mono": true
+      }
+    },
+    "cse-1997-b-70-b": {
+      "approach": "Use the equivalence classes from (a) — {A}, {B}, {CD}, {EFG}, {H} — as the new states; for each class take any member's row and replace every next state by its class.",
+      "concepts": [
+        "State minimisation",
+        "Equivalence classes",
+        "Mealy machine"
+      ],
+      "steps": [
+        {
+          "title": "Classes from (a)",
+          "body": "Equivalent classes: $A$, $B$, $CD$, $EFG$, $H$. Class map: C, D → CD; E, F, G → EFG."
+        },
+        {
+          "title": "Rewrite each row",
+          "body": "- A: 0 → B/1, 1 → H/1\n- B: 0 → F = **EFG**/1, 1 → D = **CD**/1\n- CD (from C): 0 → D = **CD**/0, 1 → E = **EFG**/1 (D gives C, F → same classes)\n- EFG (from E): 0 → D = **CD**/1, 1 → C = **CD**/1\n- H: 0 → C = **CD**/0, 1 → A/1"
+        },
+        {
+          "title": "Minimal machine",
+          "body": "| Present state | input = 0 | input = 1 |\n|---|---|---|\n| A | B, 1 | H, 1 |\n| B | EFG, 1 | CD, 1 |\n| CD | CD, 0 | EFG, 1 |\n| EFG | CD, 1 | CD, 1 |\n| H | CD, 0 | A, 1 |\n\n5 states instead of 8."
+        }
+      ],
+      "answer": {
+        "value": "A: 0→B/1, 1→H/1; B: 0→EFG/1, 1→CD/1; CD: 0→CD/0, 1→EFG/1; EFG: 0→CD/1, 1→CD/1; H: 0→CD/0, 1→A/1",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting to rename next states (e.g. leaving B → F instead of B → EFG)."
+      ],
+      "verification": "Each member of a class gives the same row after renaming (C and D; E, F and G), confirming consistency."
+    },
+    "cse-1997-b-71-a": {
+      "approach": "Pair the clauses with the distributive law $(a+b)(a+c)=a+bc$: the $w$-clauses and the $x$-clauses each collapse, and the middle clause is then absorbed.",
+      "concepts": [
+        "Distributive law",
+        "Absorption",
+        "K-map"
+      ],
+      "steps": [
+        {
+          "title": "Collapse clause pairs",
+          "body": "$(\\overline{w}+y)(\\overline{w}+z)=\\overline{w}+yz$ and $(\\overline{x}+y)(\\overline{x}+z)=\\overline{x}+yz$.\n\nSo $f=(\\overline{w}+yz)(\\overline{x}+yz)(w+\\overline{x}+z)=(\\overline{w}\\,\\overline{x}+yz)(w+\\overline{x}+z)$."
+        },
+        {
+          "title": "Absorb the last clause",
+          "body": "$\\overline{w}\\,\\overline{x}\\cdot(w+\\overline{x}+z)=\\overline{w}\\,\\overline{x}$ (contains $\\overline{x}$) and $yz\\cdot(w+\\overline{x}+z)=yz$ (contains $z$).\n\n$$f=\\overline{w}\\,\\overline{x}+yz$$",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "label": "w′x′"
+              },
+              {
+                "cells": [
+                  3,
+                  7,
+                  11,
+                  15
+                ],
+                "label": "yz"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Minimality",
+          "body": "On the K-map the 1s are $m_0,m_1,m_2,m_3,m_7,m_{11},m_{15}$. Both quads are essential prime implicants and together cover all 7 ones, so $f=\\overline{w}\\,\\overline{x}+yz$ is the minimal SOP."
+        }
+      ],
+      "answer": {
+        "value": "$f=\\overline{w}\\,\\overline{x}+yz$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Multiplying out all five clauses blindly — the distributive law gives the answer in two lines."
+      ],
+      "verification": "Truth check: $w=1,x=0,y=0,z=0$ — clause $(\\overline{w}+y)=0$ so $f=0$; formula gives $0+0=0$. ✓",
+      "animation": {
+        "kind": "kmap",
+        "title": "f(w,x,y,z)",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          0,
+          1,
+          2,
+          3,
+          7,
+          11,
+          15
+        ]
+      }
+    },
+    "cse-1997-b-71-b": {
+      "approach": "A stuck-at-0 output is wrong exactly where f should be 1, so count the minterms of f = w′x′ + yz by inclusion–exclusion.",
+      "concepts": [
+        "Stuck-at fault",
+        "Minterm counting",
+        "Inclusion–exclusion"
+      ],
+      "steps": [
+        {
+          "title": "When is the output wrong?",
+          "body": "Output stuck at 0 ⇒ correct whenever $f=0$, wrong whenever $f=1$. Count the 1s of $f=\\overline{w}\\,\\overline{x}+yz$ (from (a))."
+        },
+        {
+          "title": "Count",
+          "body": "$|\\overline{w}\\,\\overline{x}|=2^2=4$, $|yz|=2^2=4$, overlap $\\overline{w}\\,\\overline{x}yz$: $1$.\n\n$4+4-1=7$ input combinations.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "label": "w′x′: 4"
+              },
+              {
+                "cells": [
+                  3,
+                  7,
+                  11,
+                  15
+                ],
+                "label": "yz: 4"
+              }
+            ],
+            "hl": [
+              {
+                "cell": 3,
+                "tone": "warning"
+              }
+            ],
+            "caption": "Overlap m3 counted once: 4 + 4 − 1 = 7"
+          }
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Adding 4 + 4 = 8 and double counting w′x′yz."
+      ],
+      "verification": "K-map 1-cells: m0, m1, m2, m3, m7, m11, m15 — seven cells.",
+      "animation": {
+        "kind": "kmap",
+        "title": "Cells where f = 1 (wrong when stuck at 0)",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          0,
+          1,
+          2,
+          3,
+          7,
+          11,
+          15
+        ]
+      }
+    },
+    "cse-1997-b-72-a": {
+      "approach": "Convert to binary, normalise to 0.1xxxx × 2^e, keep 5 magnitude bits (truncating the rest) and write the exponent in 4-bit sign-magnitude.",
+      "concepts": [
+        "Normalised floating point",
+        "Sign-magnitude",
+        "Truncation"
+      ],
+      "given": "| Field | Bits | Form |\n|---|---|---|\n| $f$ (mantissa) | 6 = sign + 5 | sign-magnitude fraction $0.b_1\\dots b_5$ |\n| $e$ (exponent) | 4 = sign + 3 | sign-magnitude integer |",
+      "steps": [
+        {
+          "title": "A = 54.75",
+          "body": "$54.75=110110.11_2=0.11011011\\times2^6$. Keep 5 bits: $0.11011$.\n\n$f=0\\,11011$, $e=+6=0\\,110$. Stored value $0.11011_2\\times2^6=110110_2=54$."
+        },
+        {
+          "title": "B = 9.75",
+          "body": "$9.75=1001.11_2=0.100111\\times2^4$. Keep 5 bits: $0.10011$.\n\n$f=0\\,10011$, $e=+4=0\\,100$. Stored value $1001.1_2=9.5$."
+        }
+      ],
+      "answer": {
+        "value": "A: f = 0 11011, e = 0 110 (0.11011 × 2^6 = 54); B: f = 0 10011, e = 0 100 (0.10011 × 2^4 = 9.5)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using an unnormalised mantissa (e.g. 0.01101 × 2^7) and losing a significant bit.",
+        "Rounding instead of truncating — the question's error part (c) assumes the bits are simply dropped."
+      ],
+      "verification": "0.11011 × 64 = 0.84375 × 64 = 54; 0.10011 × 16 = 0.59375 × 16 = 9.5."
+    },
+    "cse-1997-b-72-b": {
+      "approach": "Standard FP addition: equalise exponents by shifting the smaller operand's mantissa right, add mantissas, then normalise.",
+      "concepts": [
+        "Floating-point addition",
+        "Exponent alignment",
+        "Normalisation"
+      ],
+      "given": "| Field | Bits | Form |\n|---|---|---|\n| $f$ (mantissa) | 6 = sign + 5 | sign-magnitude fraction $0.b_1\\dots b_5$ |\n| $e$ (exponent) | 4 = sign + 3 | sign-magnitude integer |",
+      "steps": [
+        {
+          "title": "Compare exponents",
+          "body": "$e_A=6$, $e_B=4$; difference $6-4=2$, so shift B's mantissa right by 2."
+        },
+        {
+          "title": "Align B",
+          "body": "$0.10011\\times2^4\\to0.0010011\\times2^6\\to0.00100\\times2^6$ (5 bits kept; the shifted-out $11$ is lost)."
+        },
+        {
+          "title": "Add and normalise",
+          "body": "$0.11011+0.00100=0.11111$; no overflow, leading bit 1 ⇒ already normalised.\n\nResult $f=0\\,11111$, $e=0\\,110$: $0.11111_2\\times2^6=111110_2=62$."
+        }
+      ],
+      "answer": {
+        "value": "Align B to exponent 6: 0.10011×2^4 → 0.00100×2^6; add mantissas 0.11011 + 0.00100 = 0.11111; result 0.11111 × 2^6 = 62 (f = 0 11111, e = 0 110), already normalized.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Shifting the larger operand left instead of the smaller one right."
+      ],
+      "verification": "54 + 8 = 62, where 8 is the aligned value 0.001 × 2^6 of B."
+    },
+    "cse-1997-b-72-c": {
+      "approach": "Compare the computed sum 62 with the true sum 54.75 + 9.75 = 64.5.",
+      "concepts": [
+        "Relative error",
+        "Truncation error"
+      ],
+      "steps": [
+        {
+          "title": "True and computed sums",
+          "body": "True: $54.75+9.75=64.5$. Computed in (b): $62$."
+        },
+        {
+          "title": "Percentage error",
+          "body": "$\\dfrac{64.5-62}{64.5}\\times100=\\dfrac{2.5}{64.5}\\times100=3.876\\ldots\\approx3.9\\%$"
+        }
+      ],
+      "answer": {
+        "value": "3.9%",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Dividing by the computed value 62 (gives 4.0%) — relative error uses the true value."
+      ],
+      "verification": "2.5/64.5 = 0.03876 → 3.9 % to one decimal place."
+    },
+    "cse-1997-b-73": {
+      "approach": "request_R either grants R immediately or records the request. release_R, inside the mutex, hands R directly to the highest-priority recorded requester (V on its semaphore) and keeps busy = true; only if nobody waits does it set busy = false.",
+      "concepts": [
+        "Semaphores",
+        "Mutual exclusion",
+        "Priority-based allocation",
+        "Baton passing"
+      ],
+      "steps": [
+        {
+          "title": "What release_R must do",
+          "body": "Waiting processes are blocked on $P(\\text{proceed}[p])$ with $R\\_requested[p]=\\text{true}$. On release, scan priorities $3,2,1$; wake the first requester and clear its flag. The resource passes directly, so **busy stays true**. If no flag is set, set busy := false."
+        },
+        {
+          "title": "Pseudo code",
+          "body": "\\`\\`\\`\nprocedure release_R (priority);\n  P (mutex);\n  if R_requested[3] then\n    begin R_requested[3] := false; V (proceed[3]) end\n  else if R_requested[2] then\n    begin R_requested[2] := false; V (proceed[2]) end\n  else if R_requested[1] then\n    begin R_requested[1] := false; V (proceed[1]) end\n  else\n    busy := false;\n  V (mutex);\n\\`\\`\\`"
+        },
+        {
+          "title": "Why it is correct",
+          "body": "All tests of busy and the flags are inside $P(\\text{mutex})\\dots V(\\text{mutex})$, so a request cannot slip in between the scan and the update. Because busy is never set false while someone is waiting, a newly arriving low-priority process cannot grab R ahead of a waiter, and each waiter is woken in priority order. Priorities are unique, so at most one process waits on each $\\text{proceed}[p]$."
+        }
+      ],
+      "answer": {
+        "value": "procedure release_R(priority); P(mutex); if R_requested[3] then begin R_requested[3] := false; V(proceed[3]) end else if R_requested[2] then begin R_requested[2] := false; V(proceed[2]) end else if R_requested[1] then begin R_requested[1] := false; V(proceed[1]) end else busy := false; V(mutex);",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Setting busy := false before waking a waiter — a new request could then take R out of priority order.",
+        "Forgetting to reset R_requested[p], which would hand R to the same process twice.",
+        "Doing the scan outside the mutex (race with request_R)."
+      ],
+      "verification": "Traced: P1 holds R, P2 and P3 request (flags set). On release, P3 is woken, busy stays true; P2 gets R on P3's release; then busy := false."
+    },
+    "cse-1997-b-74-a": {
+      "approach": "Without buffering nothing overlaps: each record costs access + transfer + processing in sequence.",
+      "concepts": [
+        "I/O time",
+        "Unbuffered I/O"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Records | 1000 × 3200 B |\n| Access time | 10 ms |\n| Transfer of one record | $3200/(800\\times10^3)$ s $=4$ ms |\n| CPU per record | 3 ms |",
+      "steps": [
+        {
+          "title": "Time per record",
+          "body": "Read: $10+4=14$ ms; process: $3$ ms; total $14+3=17$ ms.",
+          "scene": {
+            "upto": 34,
+            "cursor": 34
+          }
+        },
+        {
+          "title": "All 1000 records",
+          "body": "$1000\\times17\\text{ ms}=17000\\text{ ms}=17$ s."
+        }
+      ],
+      "answer": {
+        "value": "17 seconds",
+        "matchesKey": true
+      },
+      "verification": "Gantt of the first two records: read 0–14, CPU 14–17, read 17–31, CPU 31–34 — 17 ms per record.",
+      "animation": {
+        "kind": "gantt",
+        "title": "No buffering (first 2 records)",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "Disk",
+            "bars": [
+              {
+                "start": 0,
+                "end": 14,
+                "label": "read R1"
+              },
+              {
+                "start": 17,
+                "end": 31,
+                "label": "read R2"
+              }
+            ]
+          },
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 14,
+                "end": 17,
+                "label": "P1"
+              },
+              {
+                "start": 31,
+                "end": 34,
+                "label": "P2"
+              }
+            ]
+          }
+        ],
+        "upto": 34
+      }
+    },
+    "cse-1997-b-74-b": {
+      "approach": "With one read-ahead buffer, reading record i+1 overlaps processing record i. Reading (14 ms) is slower than processing (3 ms), so the disk is the bottleneck: 1000 reads back to back plus the processing of the last record.",
+      "concepts": [
+        "Single buffering",
+        "I/O–CPU overlap",
+        "Bottleneck stage"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Records | 1000 × 3200 B |\n| Access time | 10 ms |\n| Transfer of one record | $3200/(800\\times10^3)$ s $=4$ ms |\n| CPU per record | 3 ms |",
+      "steps": [
+        {
+          "title": "Overlap pattern",
+          "body": "When R1 arrives at 14 ms it is moved to P's variable (negligible time) and the read of R2 starts at once, while the CPU processes R1 (14–17 ms). The CPU then idles until R2 arrives at 28 ms.",
+          "scene": {
+            "upto": 45,
+            "cursor": 45
+          }
+        },
+        {
+          "title": "Total",
+          "body": "Disk busy continuously: $1000\\times14=14000$ ms. The last record is processed after its read: $+3$ ms.\n\n$$14000+3=14003\\text{ ms}=14.003\\text{ s}\\approx14\\text{ s}$$"
+        }
+      ],
+      "answer": {
+        "value": "14.003 seconds (≈ 14 s)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Adding CPU time for every record (17 s) — processing hides behind the next read."
+      ],
+      "verification": "Gantt: reads end at 14, 28, 42 ms …; record k is processed in [14k, 14k+3]; last ends at 14000 + 3.",
+      "animation": {
+        "kind": "gantt",
+        "title": "One buffer, read-ahead (first 3 records)",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "Disk",
+            "bars": [
+              {
+                "start": 0,
+                "end": 14,
+                "label": "read R1"
+              },
+              {
+                "start": 14,
+                "end": 28,
+                "label": "read R2"
+              },
+              {
+                "start": 28,
+                "end": 42,
+                "label": "read R3"
+              }
+            ]
+          },
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 14,
+                "end": 17,
+                "label": "P1"
+              },
+              {
+                "start": 28,
+                "end": 31,
+                "label": "P2"
+              },
+              {
+                "start": 42,
+                "end": 45,
+                "label": "P3"
+              }
+            ]
+          }
+        ],
+        "upto": 17
+      }
+    },
+    "cse-1997-b-74-c": {
+      "approach": "Blocking factor 2 halves the number of accesses: 500 block reads of 10 + 8 = 18 ms each, overlapped with processing of the previous block (6 ms), plus processing of the last block.",
+      "concepts": [
+        "Blocking factor",
+        "Single buffering",
+        "I/O–CPU overlap"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Records | 1000 × 3200 B |\n| Access time | 10 ms |\n| Transfer of one record | $3200/(800\\times10^3)$ s $=4$ ms |\n| CPU per record | 3 ms |",
+      "steps": [
+        {
+          "title": "One block",
+          "body": "Block = 2 records = 6400 B. Read: $10+\\dfrac{6400}{800\\times10^3}\\text{ s}=10+8=18$ ms. Processing a block: $2\\times3=6$ ms $<18$ ms, so the disk is the bottleneck.",
+          "scene": {
+            "upto": 60,
+            "cursor": 60
+          }
+        },
+        {
+          "title": "Total",
+          "body": "$1000/2=500$ blocks: $500\\times18=9000$ ms, plus processing of the last block $6$ ms.\n\n$$9000+6=9006\\text{ ms}=9.006\\text{ s}\\approx9\\text{ s}$$"
+        }
+      ],
+      "answer": {
+        "value": "9.006 seconds (≈ 9 s)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Paying the 10 ms access per record instead of per block.",
+        "Adding only 3 ms at the end — the whole last block (2 records) is processed after the final read."
+      ],
+      "verification": "Reads end at 18, 36, 54 … 9000 ms; the last block is processed 9000–9006 ms.",
+      "animation": {
+        "kind": "gantt",
+        "title": "Blocking factor 2, one buffer (first 3 blocks)",
+        "unit": "ms",
+        "lanes": [
+          {
+            "label": "Disk",
+            "bars": [
+              {
+                "start": 0,
+                "end": 18,
+                "label": "read B1"
+              },
+              {
+                "start": 18,
+                "end": 36,
+                "label": "read B2"
+              },
+              {
+                "start": 36,
+                "end": 54,
+                "label": "read B3"
+              }
+            ]
+          },
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 18,
+                "end": 24,
+                "label": "B1"
+              },
+              {
+                "start": 36,
+                "end": 42,
+                "label": "B2"
+              },
+              {
+                "start": 54,
+                "end": 60,
+                "label": "B3"
+              }
+            ]
+          }
+        ],
+        "upto": 24
+      }
+    },
+    "cse-1997-b-75-a": {
+      "approach": "This is the wound–wait scheme. Show that every wait-for edge goes from a younger process (larger TS) to an older one (smaller TS); timestamps are a strict order, so the wait-for graph can never contain a cycle.",
+      "concepts": [
+        "Wound–wait",
+        "Wait-for graph",
+        "Deadlock prevention"
+      ],
+      "steps": [
+        {
+          "title": "Direction of every wait",
+          "body": "A process P waits only in rule (ii), i.e. when the holder Q has $TS(Q)<TS(P)$. In rule (iii) an older requester never waits — it takes the resource. When a holder releases, the resource goes to the waiter with the smallest TS, so every remaining waiter is younger than the new holder and keeps waiting for an **older** process."
+        },
+        {
+          "title": "No cycle",
+          "body": "So every edge $P\\to Q$ of the wait-for graph satisfies $TS(P)>TS(Q)$. A cycle $P_1\\to P_2\\to\\dots\\to P_1$ would need $TS(P_1)>TS(P_2)>\\dots>TS(P_1)$ — impossible since timestamps are unique and totally ordered. Hence **deadlock can never arise**."
+        }
+      ],
+      "answer": {
+        "value": "No",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Confusing with wait–die: here the older process preempts (wounds) the younger holder."
+      ],
+      "verification": "Example: P(TS 1) holds R1, Q(TS 2) holds R2. Q requests R1 → waits (older holder). P requests R2 → Q is restarted, P gets R2. No cycle forms."
+    },
+    "cse-1997-b-75-b": {
+      "approach": "A restarted process keeps its timestamp, and new processes get larger timestamps. So a process only ever has finitely many older processes, and once it is the oldest it can never wait or be restarted.",
+      "concepts": [
+        "Starvation",
+        "Wound–wait",
+        "Timestamp ordering"
+      ],
+      "steps": [
+        {
+          "title": "The oldest process always finishes",
+          "body": "Let P have the smallest timestamp in the system. It never waits (no holder is older) and is never restarted (only an older requester can restart it). Since there is no deadlock (part a), it obtains every resource it requests and finishes in finite time."
+        },
+        {
+          "title": "Every process becomes the oldest",
+          "body": "Timestamps are kept on restart and later arrivals get larger timestamps, so the set of processes older than P is finite and never grows. Each of them finishes in finite time (by induction on timestamp order), after which P is the oldest and finishes too. Hence **no process starves**."
+        }
+      ],
+      "answer": {
+        "value": "No",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Assuming a restarted process gets a fresh (larger) timestamp — then it could be wounded forever; keeping the old timestamp is exactly what prevents starvation."
+      ],
+      "verification": "A process can be restarted only by strictly older processes, of which there are finitely many, so it can be restarted only finitely often."
+    },
+    "cse-1997-b-76-a": {
+      "approach": "Translate SQL directly: FROM → Cartesian product, WHERE → selection, SELECT → projection.",
+      "concepts": [
+        "SQL to relational algebra",
+        "Selection",
+        "Projection",
+        "Cartesian product"
+      ],
+      "steps": [
+        {
+          "title": "Map each clause",
+          "body": "FROM EMP, INVOLVED $\\to EMP\\times INVOLVED$; WHERE $\\to\\sigma_{EMP.eno=INVOLVED.eno\\,\\wedge\\,INVOLVED.pno=3}$; SELECT eno $\\to\\pi_{eno}$."
+        },
+        {
+          "title": "Expression",
+          "body": "$$\\pi_{eno}\\big(\\sigma_{EMP.eno=INVOLVED.eno\\ \\wedge\\ INVOLVED.pno=3}(EMP\\times INVOLVED)\\big)$$\n(Equivalently $\\pi_{eno}(\\sigma_{pno=3}(INVOLVED))$, since every eno in INVOLVED is also in EMP.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\pi_{eno}(\\sigma_{EMP.eno=INVOLVED.eno \\wedge INVOLVED.pno=3}(EMP\\times INVOLVED))$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using natural join ⋈ — it is not in the allowed operator set {σ, π, ×, ∪, −}."
+      ],
+      "verification": "Each row of the product that survives the selection pairs an employee with one of his rows having pno = 3; projecting eno gives exactly the SQL result."
+    },
+    "cse-1997-b-76-b-i": {
+      "approach": "Recognise the standard division pattern: (all employees × all projects) − actual pairs gives the missing pairs; employees with a missing pair are removed.",
+      "concepts": [
+        "Relational division",
+        "Set difference"
+      ],
+      "steps": [
+        {
+          "title": "Inner part",
+          "body": "$\\pi_{eno}(INVOLVED)\\times\\pi_{pno}(PROJ)$ = every (employee, project) combination. Subtracting INVOLVED leaves the pairs where the employee is **not** in that project. $\\pi_{eno}$ of that = employees missing at least one project."
+        },
+        {
+          "title": "Outer difference",
+          "body": "$\\pi_{eno}(INVOLVED)$ minus those = employees involved in **every** project, i.e. $INVOLVED\\div\\pi_{pno}(PROJ)$."
+        }
+      ],
+      "answer": {
+        "value": "Employees (eno) who are involved in every project",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading it as \"employees not in any project\" — the subtraction removes only those who miss some project."
+      ],
+      "verification": "Example: projects {1, 2}; INVOLVED = {(e1,1),(e1,2),(e2,1)}. Missing pairs {(e2,2)} → result {e1}, the only employee in all projects."
+    },
+    "cse-1997-b-76-b-ii": {
+      "approach": "Read the second term as $\\pi_{E.age}(\\sigma_{E.age<EMP.age}(\\rho_E(EMP)\\times EMP))$: the ages that are smaller than some other age. Subtracting them from all ages leaves the largest age.",
+      "concepts": [
+        "Rename operator",
+        "Self-join",
+        "Maximum via set difference"
+      ],
+      "steps": [
+        {
+          "title": "Interpret the printed expression",
+          "body": "The subscript $E.age<EMP.age$ is a selection condition on $\\rho_E(EMP)\\times EMP$ (the paper merges $\\sigma$ into $\\pi$). The pairs kept are those where the copy's age is less than some employee's age; the projected ages are therefore the **non-maximum** ages."
+        },
+        {
+          "title": "Difference",
+          "body": "$\\pi_{age}(EMP)$ − (ages that are less than some other age) = ages not less than any age = the **maximum age**, i.e. the age of the oldest employee(s)."
+        }
+      ],
+      "answer": {
+        "value": "The maximum age among employees (age of the oldest employee)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Projecting EMP.age instead of E.age would remove the non-minimum ages and give the minimum — the projected attribute is E.age."
+      ],
+      "verification": "Ages {25, 30, 40}: ages smaller than some other = {25, 30}; difference = {40}, the maximum."
+    }
+  }
+}
