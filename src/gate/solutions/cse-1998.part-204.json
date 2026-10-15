@@ -1,0 +1,921 @@
+{
+  "paper": "cse-1998",
+  "version": 2,
+  "solutions": {
+    "cse-1998-b-68": {
+      "approach": "Encode the states in binary (Q2Q1Q0), write the present-state/next-state table, treat the four unused states as don't-cares and read each D input directly from the table (D flip-flops: D = next state).",
+      "concepts": [
+        "synchronous counter",
+        "D flip-flop excitation",
+        "don't-care minimisation",
+        "self-starting check"
+      ],
+      "steps": [
+        {
+          "title": "State table",
+          "body": "| Present $Q_2Q_1Q_0$ | Next $Q_2Q_1Q_0$ = $D_2D_1D_0$ |\n|---|---|\n| 001 (1) | 100 (4) |\n| 100 (4) | 010 (2) |\n| 010 (2) | 011 (3) |\n| 011 (3) | 001 (1) |\n| 000, 101, 110, 111 | don't care |",
+          "scene": {
+            "reveal": 8
+          }
+        },
+        {
+          "title": "Minimise each D",
+          "body": "- $D_2 = 1$ only for 001; with don't-care 101: $D_2 = \\overline{Q_1}\\,Q_0$ (100 gives 0, 010/011 give 0).\n- $D_1 = 1$ for 100 and 010, $0$ for 001 and 011: $D_1 = \\overline{Q_0}$.\n- $D_0 = 1$ for 010 and 011, $0$ for 001 and 100: $D_0 = Q_1$.",
+          "scene": {
+            "reveal": 16,
+            "hl": [
+              {
+                "c": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Circuit",
+          "body": "Three D flip-flops on a common clock: $D_2 = \\overline{Q_1}Q_0$ (one AND gate with $\\overline{Q_1}$), $D_1 = \\overline{Q_0}$, $D_0 = Q_1$. Initialise to 001 (preset $Q_0$)."
+        },
+        {
+          "title": "Self-starting check",
+          "body": "Unused states: $000 \\to 010$, $101 \\to 100$, $110 \\to 011$, $111 \\to 001$ — every one enters the main cycle $1\\to4\\to2\\to3$ in one clock, so the counter is self-starting.",
+          "scene": {
+            "reveal": 32,
+            "hl": [
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "D flip-flops (Q2Q1Q0): D2 = Q̄1·Q0, D1 = Q̄0, D0 = Q1 (001→100→010→011→001; self-starting)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Mixing the bit order of the state code between the table and the equations.",
+        "Not checking unused states — a counter can lock up in an unused loop."
+      ],
+      "verification": "Applied the equations to each used state: 001 gives D2 = 1, D1 = 0, D0 = 0 → 100 ✓; 100 → 010 ✓; 010 → 011 ✓; 011 → 001 ✓.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "Q2Q1Q0",
+          "D2D1D0 (next)",
+          "D2",
+          "D1 D0"
+        ],
+        "rows": [
+          [
+            "001",
+            "100",
+            "1",
+            "00"
+          ],
+          [
+            "100",
+            "010",
+            "0",
+            "10"
+          ],
+          [
+            "010",
+            "011",
+            "0",
+            "11"
+          ],
+          [
+            "011",
+            "001",
+            "0",
+            "01"
+          ],
+          [
+            "000",
+            "010*",
+            "0",
+            "10"
+          ],
+          [
+            "101",
+            "100*",
+            "1",
+            "00"
+          ],
+          [
+            "110",
+            "011*",
+            "0",
+            "11"
+          ],
+          [
+            "111",
+            "001*",
+            "0",
+            "01"
+          ]
+        ],
+        "reveal": 0,
+        "mono": true,
+        "caption": "* = forced by the chosen equations (don't-care rows)"
+      }
+    },
+    "cse-1998-b-69": {
+      "approach": "Work out which tracks/sides the 35 sectors occupy, then add initial rotational latency, the reading time (25 ms per sector at 300 RPM) and the track-to-track steps. The question leaves several assumptions open, so state them.",
+      "concepts": [
+        "rotational latency",
+        "transfer time",
+        "seek (step) time",
+        "double-sided floppy"
+      ],
+      "given": "| Quantity | Value |\n|---|---|\n| Sectors / track | 8 |\n| Sides | 2 |\n| Speed | 300 RPM |\n| Step time | 8 ms |\n| Start | track 10, sector 3 (head already on track 10) |",
+      "steps": [
+        {
+          "title": "Rotation figures",
+          "body": "$300$ RPM $\\Rightarrow$ one revolution $= 60/300 = 0.2\\,s = 200$ ms; one sector $= 200/8 = 25$ ms."
+        },
+        {
+          "title": "Where the 35 sectors are",
+          "body": "Sectors 3–8 of track 10, side 0: $6$; track 10, side 1: $8$ (total $14$); track 11, both sides: $16$ (total $30$); track 12, side 0: $5$ (total $35$). Switching sides is electronic (no seek), so only **2 steps** are needed ($10\\to11$, $11\\to12$)."
+        },
+        {
+          "title": "Add up (assumptions stated)",
+          "body": "Assume: average initial latency of half a revolution $=100$ ms; the 1-sector buffer is emptied during the inter-sector gap, so consecutive sectors are read back-to-back; tracks are skewed so the first sector of the next track arrives just after the 8 ms step.\n\n$$T = 100 + 35\\times 25 + 2\\times 8 = 100 + 875 + 16 = 991\\text{ ms}$$"
+        },
+        {
+          "title": "Without track skew",
+          "body": "If sector 1 of the new track is aligned with sector 1 of the old one, it has already passed when the 8 ms step completes, so each step costs a full revolution (200 ms):\n\n$$T = 100 + 875 + 2\\times 200 = 1375\\text{ ms}$$"
+        }
+      ],
+      "answer": {
+        "value": "≈ 991 ms: 100 ms average initial rotational latency + 35 × 25 ms = 875 ms of reading + 2 track steps × 8 ms = 16 ms (sectors: 6 on track 10 side 0, 8 on track 10 side 1, 16 on track 11, 5 on track 12). If sector 1 of the next track is not skewed, each step costs a full revolution instead: 100 + 875 + 2 × 200 = 1375 ms.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the second side: a cylinder (track 10) holds 16 sectors, not 8.",
+        "Answers of a few tens of ms are impossible — 35 sectors need at least 35 × 25 = 875 ms of reading alone."
+      ],
+      "verification": "6 + 8 + 16 + 5 = 35 sectors; lower bound 875 ms confirms the order of magnitude."
+    },
+    "cse-1998-b-70": {
+      "approach": "Map the loop's n = km consecutive blocks onto the l sets (block i → set i mod l) and check whether every set can hold its share; if yes only the first pass misses. For l = 1 the loop exceeds the k-block cache and a cyclic access pattern defeats LRU/FIFO.",
+      "concepts": [
+        "set-associative mapping",
+        "compulsory misses",
+        "LRU thrashing on cyclic access",
+        "hit ratio"
+      ],
+      "steps": [
+        {
+          "title": "Does the loop fit?",
+          "body": "Cache capacity $= l$ sets $\\times k$ blocks $= kl$ blocks. Loop size $= n = km$ blocks with $m \\le l$, so $km \\le kl$. Consecutive blocks spread over the sets cyclically, so each set receives at most $\\lceil km/l \\rceil \\le k$ blocks — every set can hold all of its loop blocks."
+        },
+        {
+          "title": "Hit ratio for 1 < m ≤ l",
+          "body": "Pass 1: each of the $n$ blocks misses once (compulsory). Passes 2–100: all hits.\n\n$$h = \\frac{100n - n}{100n} = \\frac{99}{100} = 0.99$$\n\nCounting individual word references ($b$ words per block): $h = 1 - \\dfrac{n}{100\\,n\\,b} = 1 - \\dfrac{1}{100b}$.\n\nAverage access time $t_{avg} = h\\,t_c + (1-h)\\,t_m$."
+        },
+        {
+          "title": "Case l = 1",
+          "body": "One set of $k$ blocks (fully associative), but the loop has $mk > k$ blocks (since $m > 1$). With LRU (or FIFO) and a cyclic reference string longer than the cache, the block needed next is always the one just evicted, so **every block reference misses**: $h = 0$ (per word only the spatial-locality hits remain: $h = 1 - 1/b$)."
+        }
+      ],
+      "answer": {
+        "value": "The loop (n = km blocks ≤ kl blocks) fits in the cache: only the first pass misses, so h = (100n − n)/(100n) = 0.99 per block reference (1 − 1/(100b) per word). For l = 1 the cache holds only k blocks but the loop has mk > k blocks, so with LRU/FIFO every block reference misses: h = 0 (1 − 1/b per word, from spatial locality only).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Assuming a set-associative cache can conflict even though each set receives at most k loop blocks.",
+        "Applying the 1 < m ≤ l formula to l = 1, where that range is empty and the loop no longer fits."
+      ],
+      "verification": "Example: k = 2, l = 4, m = 3 → 6 blocks over 4 sets (2,2,1,1 per set ≤ 2) → 6 misses in 600 references → 0.99. With l = 1, k = 2, 4 blocks A B C D cycling under LRU: every access misses."
+    },
+    "cse-1998-b-72": {
+      "approach": "Last postorder element is the root; split the inorder sequence around it and recurse on each side with the matching postorder segment.",
+      "concepts": [
+        "tree reconstruction",
+        "inorder",
+        "postorder"
+      ],
+      "steps": [
+        {
+          "title": "Root",
+          "body": "Postorder ends with **b** → root $= b$. Inorder `a f | b | c d g e`: left $\\{a,f\\}$, right $\\{c,d,g,e\\}$. Postorder splits the same way: `a f | c g e d | b`.",
+          "scene": {
+            "root": {
+              "label": "b",
+              "children": [
+                {
+                  "label": "?",
+                  "id": "L",
+                  "tone": "muted"
+                },
+                {
+                  "label": "?",
+                  "id": "R",
+                  "tone": "muted"
+                }
+              ],
+              "tone": "accent"
+            }
+          }
+        },
+        {
+          "title": "Left subtree",
+          "body": "Postorder `a f` → root **f**; inorder `a f` → a is f's left child.",
+          "scene": {
+            "root": {
+              "label": "b",
+              "children": [
+                {
+                  "label": "f",
+                  "children": [
+                    {
+                      "label": "a"
+                    },
+                    null
+                  ],
+                  "tone": "accent"
+                },
+                {
+                  "label": "?",
+                  "tone": "muted"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Right subtree",
+          "body": "Postorder `c g e d` → root **d**; inorder `c | d | g e` → left child c, right part $\\{g,e\\}$ with postorder `g e` → root **e**, inorder `g e` → g is e's left child.",
+          "scene": {
+            "root": {
+              "label": "b",
+              "children": [
+                {
+                  "label": "f",
+                  "children": [
+                    {
+                      "label": "a"
+                    },
+                    null
+                  ]
+                },
+                {
+                  "label": "d",
+                  "children": [
+                    {
+                      "label": "c"
+                    },
+                    {
+                      "label": "e",
+                      "children": [
+                        {
+                          "label": "g"
+                        },
+                        null
+                      ],
+                      "tone": "accent"
+                    }
+                  ],
+                  "tone": "accent"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Root b; left subtree f with left child a; right subtree d with left child c and right child e, where e has left child g",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using the first postorder element as root (that is preorder's rule)."
+      ],
+      "verification": "Inorder of the built tree: a f b c d g e ✓; postorder: a f c g e d b ✓.",
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": "b"
+        },
+        "caption": "Rebuilding from inorder + postorder"
+      }
+    },
+    "cse-1998-b-75": {
+      "approach": "Synthesise for each L both its integer value and its length; the fractional part is L2.val / 2^{L2.len}.",
+      "concepts": [
+        "S-attributed definition",
+        "synthesized attributes",
+        "binary fractions"
+      ],
+      "steps": [
+        {
+          "title": "Attributes",
+          "body": "`L.val` (value of the bit string as an integer), `L.len` (number of bits), `B.val`, `S.val` — all synthesized."
+        },
+        {
+          "title": "Translation scheme",
+          "body": "| Production | Semantic rule |\n|---|---|\n| $S \\to L_1 . L_2$ | $S.val = L_1.val + L_2.val / 2^{L_2.len}$ |\n| $S \\to L$ | $S.val = L.val$ |\n| $L \\to L_1 B$ | $L.val = 2 L_1.val + B.val$; $L.len = L_1.len + 1$ |\n| $L \\to B$ | $L.val = B.val$; $L.len = 1$ |\n| $B \\to 0$ | $B.val = 0$ |\n| $B \\to 1$ | $B.val = 1$ |"
+        },
+        {
+          "title": "Check on 101.101",
+          "body": "Integer part: $1 \\to 2+0 = 2 \\to 4+1 = 5$. Fraction part: val $=5$, len $=3$, so $5/2^3 = 0.625$. $S.val = 5 + 0.625 = 5.625$ ✓."
+        }
+      ],
+      "answer": {
+        "value": "S→L1.L2 {S.val = L1.val + L2.val/2^{L2.len}}; S→L {S.val = L.val}; L→L1B {L.val = 2L1.val + B.val; L.len = L1.len + 1}; L→B {L.val = B.val; L.len = 1}; B→0 {B.val = 0}; B→1 {B.val = 1}",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using an inherited position/weight attribute for the fraction — the question demands synthesized attributes only, hence the length attribute."
+      ],
+      "verification": "Reproduces the given example 101.101 → 5.625."
+    },
+    "cse-1998-b-79": {
+      "approach": "Find courses having at least one prerequisite the student has NOT completed, and subtract them from all courses (division via set difference).",
+      "concepts": [
+        "relational algebra",
+        "set difference",
+        "division"
+      ],
+      "steps": [
+        {
+          "title": "Courses done by 2310",
+          "body": "$T \\leftarrow \\rho_{T(\\text{pre-Cno})}\\big(\\pi_{Cno}(\\sigma_{\\text{student no}=2310}(\\text{COMPLETED}))\\big)$"
+        },
+        {
+          "title": "Missing prerequisites",
+          "body": "$\\text{PRE-REQ} - (\\pi_{Cno}(\\text{PRE-REQ}) \\times T)$ keeps exactly the pairs (Cno, pre-Cno) whose pre-Cno is not in $T$."
+        },
+        {
+          "title": "Result",
+          "body": "$$\\pi_{Cno}(\\text{COURSES}) - \\pi_{Cno}\\big(\\text{PRE-REQ} - (\\pi_{Cno}(\\text{PRE-REQ}) \\times T)\\big)$$\n\nCourses with no prerequisites are included (vacuously all completed)."
+        }
+      ],
+      "answer": {
+        "value": "T ← ρ_{pre-Cno}(π_Cno(σ_{student no=2310}(COMPLETED))); result = π_Cno(COURSES) − π_Cno(PRE-REQ − (π_Cno(PRE-REQ) × T))",
+        "matchesKey": true
+      },
+      "shortcut": "Equivalently π_Cno(COURSES) − π_Cno(PRE-REQ ▷ T) (anti-join on pre-Cno).",
+      "pitfalls": [
+        "Using PRE-REQ ÷ T — that returns courses whose prerequisites include ALL of the student's completed courses, the reverse condition."
+      ],
+      "verification": "Example: PRE-REQ = {(C3,C1),(C3,C2),(C4,C1)}, T = {C1}: missing pairs = {(C3,C2)} → result = all courses except C3 ✓."
+    },
+    "cse-1998-b-67-a": {
+      "approach": "Feed the TTL pulse to a single input line the 8085 can sample in software — the SID pin (read with RIM) or one bit of an 8155/8255 port — and time it by counting a fixed-length polling loop (or gate an 8155/8253 timer with it).",
+      "concepts": [
+        "8085 SID / RIM",
+        "I/O port interfacing",
+        "software timing loop"
+      ],
+      "steps": [
+        {
+          "title": "Minimum system",
+          "body": "- **8085 CPU** with a crystal (e.g. 6 MHz → 3 MHz clock, $T = 0.333\\,\\mu s$).\n- Address latch **74LS373** on $AD_0$–$AD_7$ driven by **ALE** to demultiplex the low address byte.\n- **EPROM 2732/2764** for the program, **RAM 6116** (or an 8155, which gives 256 B RAM + ports + a 14-bit timer) for the count.\n- Address decoder (**74LS138**) on $A_{15}$–$A_{11}$ produces the chip selects; $\\overline{RD}$, $\\overline{WR}$, $IO/\\overline{M}$ give the read/write strobes."
+        },
+        {
+          "title": "Connecting the pulse",
+          "body": "The source is TTL compatible, so no level shifting is needed. Connect the pulse (through a 74LS14 Schmitt buffer for clean edges) to\n\n- the **SID** pin (pin 5) — read by `RIM` into bit $D_7$ of A, **or**\n- one input bit (say $PA_0$) of an **8155/8255** port configured as input.\n\nOptionally connect it also to the **GATE** of an 8155/8253 counter so the hardware counts clock pulses only while the pulse is HIGH."
+        },
+        {
+          "title": "Display / output",
+          "body": "The measured count (pulse width $= \\text{count} \\times \\text{loop time}$) is stored in RAM or sent to an output port / seven-segment display driven by the second port of the 8155/8255."
+        }
+      ],
+      "answer": {
+        "value": "8085 + latch + EPROM/RAM (or 8155) + decoder; TTL pulse wired to SID (read with RIM) or to an input bit of an 8155/8255 port (optionally to a timer GATE); width = loop count × loop time",
+        "matchesKey": true
+      },
+      "shortcut": "SID needs no extra chip: one wire plus RIM is the cheapest pulse input on the 8085.",
+      "pitfalls": [
+        "Forgetting the address latch (ALE) needed to demultiplex AD0–AD7.",
+        "Starting the count in the middle of a pulse — the software must first wait for a rising edge."
+      ],
+      "verification": "Checked that every block of the schematic (clock, demultiplexing, memory, decoding, input line) is required for the program in part (b) to run."
+    },
+    "cse-1998-b-67-b": {
+      "approach": "Poll the input bit: wait for LOW (so we do not start inside a pulse), wait for the rising edge, then increment a 16-bit counter in a loop of known T-states until the line falls. Width = count × loop T-states × clock period.",
+      "concepts": [
+        "RIM / SID",
+        "polling loop",
+        "T-state timing"
+      ],
+      "steps": [
+        {
+          "title": "Assumptions",
+          "body": "- Pulse on **SID**; `RIM` copies it into bit $D_7$ of A.\n- 3 MHz clock ($T = 0.333\\,\\mu s$), no interrupts during measurement.\n- Pulse shorter than $65535$ loop passes (16-bit counter in HL).\n- Result stored at 2050H–2051H."
+        },
+        {
+          "title": "Program",
+          "body": "```asm\n        LXI  H,0000H   ; HL = counter\nWAITL:  RIM            ; A7 = SID\n        ANI  80H\n        JNZ  WAITL     ; wait while HIGH (skip a pulse already in progress)\nWAITH:  RIM\n        ANI  80H\n        JZ   WAITH     ; wait for the rising edge\nCOUNT:  INX  H         ; 6 T\n        RIM            ; 4 T\n        ANI  80H       ; 7 T\n        JNZ  COUNT     ; 10 T (taken) - loop while HIGH\n        SHLD 2050H     ; save count\n        HLT\n```",
+          "scene": {
+            "line": 8
+          }
+        },
+        {
+          "title": "Converting the count",
+          "body": "One pass of the `COUNT` loop takes $6+4+7+10 = 27$ T-states $= 27 \\times 0.333\\,\\mu s = 9\\,\\mu s$.\n\n$$\\text{Width} \\approx \\text{count} \\times 9\\,\\mu s$$\n\nResolution is $9\\,\\mu s$; the maximum measurable width is $65535 \\times 9\\,\\mu s \\approx 0.59\\,s$.",
+          "scene": {
+            "line": 11,
+            "vars": {
+              "loop T-states": 27,
+              "time/loop": "9 µs"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "Wait for LOW, wait for rising edge, then loop {INX H; RIM; ANI 80H; JNZ} until the line goes LOW; width = count × 27 T-states (9 µs at 3 MHz)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "INX H does not affect flags, so overflow of HL must be bounded by an assumption (or checked separately).",
+        "Using the T-states of the not-taken JNZ (7) for the loop — the loop repeats on the taken branch (10)."
+      ],
+      "verification": "8085 T-states: INX rp = 6, RIM = 4, ANI = 7, JNZ taken = 10 → 27 per pass; 27 × 1/3 µs = 9 µs.",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "LXI  H,0000H\nWAITL: RIM\nANI  80H\nJNZ  WAITL\nWAITH: RIM\nANI  80H\nJZ   WAITH\nCOUNT: INX  H\nRIM\nANI  80H\nJNZ  COUNT\nSHLD 2050H\nHLT",
+        "line": 1,
+        "caption": "Pulse-width measurement by polling SID"
+      }
+    },
+    "cse-1998-b-71-a": {
+      "approach": "Trace the four assignments on a concrete list p → X → Y → Z.",
+      "concepts": [
+        "singly linked list",
+        "pointer manipulation"
+      ],
+      "steps": [
+        {
+          "title": "Name the nodes",
+          "body": "Let p point to node P with $P \\to X \\to Y \\to Z$.",
+          "scene": {
+            "caption": "Initial list"
+          }
+        },
+        {
+          "title": "Trace",
+          "body": "1. `q := p->next` → $q = X$.\n2. `p->next := q->next` → $P \\to Y$.\n3. `q->next := (q->next)->next` → $X$'s next was $Y$, so $X \\to Z$.\n4. `(p->next)->next := q` → $Y \\to X$.",
+          "scene": {
+            "edges": [
+              {
+                "from": "P",
+                "to": "Y"
+              },
+              {
+                "from": "Y",
+                "to": "X"
+              },
+              {
+                "from": "X",
+                "to": "Z"
+              }
+            ],
+            "edgeTones": {
+              "P>Y": "accent",
+              "Y>X": "accent",
+              "X>Z": "accent"
+            },
+            "caption": "After the four assignments"
+          }
+        },
+        {
+          "title": "Result",
+          "body": "List is now $P \\to Y \\to X \\to Z$: the **two nodes following p are swapped** (by relinking, not by copying data)."
+        }
+      ],
+      "answer": {
+        "value": "Swaps the two nodes that follow p (p→X→Y→Z becomes p→Y→X→Z)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Step 3 uses q->next before it is overwritten — it reads the old link X → Y."
+      ],
+      "verification": "Walk from P after the trace: P → Y → X → Z, every node reached exactly once, no cycle.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "P",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "X",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "Y",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "Z",
+            "x": 6,
+            "y": 0
+          }
+        ],
+        "edges": [
+          {
+            "from": "P",
+            "to": "X"
+          },
+          {
+            "from": "X",
+            "to": "Y"
+          },
+          {
+            "from": "Y",
+            "to": "Z"
+          }
+        ],
+        "tones": {
+          "P": "info"
+        }
+      }
+    },
+    "cse-1998-b-71-b": {
+      "approach": "Use precedence: function application binds tightest, then * and /, then −; left-to-right for equal precedence.",
+      "concepts": [
+        "infix to postfix",
+        "operator precedence"
+      ],
+      "steps": [
+        {
+          "title": "Parenthesise",
+          "body": "$\\big(3 * \\log(x+1)\\big) - (a/2)$"
+        },
+        {
+          "title": "Convert inner parts",
+          "body": "$x+1 \\to$ `x 1 +`; $\\log(x+1) \\to$ `x 1 + log`; $3*\\log(x+1) \\to$ `3 x 1 + log *`; $a/2 \\to$ `a 2 /`."
+        },
+        {
+          "title": "Combine",
+          "body": "Postfix: `3 x 1 + log * a 2 / -`"
+        }
+      ],
+      "answer": {
+        "value": "3 x 1 + log * a 2 / -",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Placing log before its argument (prefix style) — in postfix the unary operator follows its operand."
+      ],
+      "verification": "Evaluating the postfix with a stack: push 3, x, 1; + → x+1; log → log(x+1); * → 3·log(x+1); push a, 2; / → a/2; − → original expression."
+    },
+    "cse-1998-b-73-a": {
+      "approach": "The sparsest AVL tree of height h has one subtree of height h−1 and the other of height h−2 (the most unbalanced allowed), each itself minimal.",
+      "concepts": [
+        "AVL tree",
+        "minimum nodes",
+        "recurrence"
+      ],
+      "steps": [
+        {
+          "title": "Structure",
+          "body": "Root + minimal AVL tree of height $h-1$ + minimal AVL tree of height $h-2$ (heights may differ by at most 1)."
+        },
+        {
+          "title": "Recurrence",
+          "body": "Height = edges on the longest root–leaf path (single node has height 0):\n\n$$N(h) = N(h-1) + N(h-2) + 1,\\quad N(0) = 1,\\ N(1) = 2$$\n\nThis gives $N(h) = F_{h+3} - 1$ (Fibonacci)."
+        }
+      ],
+      "answer": {
+        "value": "N(h) = N(h−1) + N(h−2) + 1, N(0) = 1, N(1) = 2",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "If height counts levels (single node = height 1) the base cases shift to N(1) = 1, N(2) = 2."
+      ],
+      "verification": "N(2) = 2 + 1 + 1 = 4: root, a 2-node child and a leaf — the smallest AVL tree of height 2."
+    },
+    "cse-1998-b-73-b": {
+      "approach": "Unroll N(h) = N(h−1) + N(h−2) + 1 from N(0) = 1, N(1) = 2.",
+      "concepts": [
+        "AVL tree",
+        "Fibonacci recurrence"
+      ],
+      "steps": [
+        {
+          "title": "Iterate",
+          "body": "$N(2) = 2+1+1 = 4$\n\n$N(3) = 4+2+1 = 7$\n\n$N(4) = 7+4+1 = 12$\n\n$N(5) = 12+7+1 = 20$\n\n$N(6) = 20+12+1 = 33$\n\n$N(7) = 33+20+1 = 54$\n\n$N(8) = 54+33+1 = 88$"
+        },
+        {
+          "title": "Answer",
+          "body": "Smallest AVL tree of height 8 has **88** nodes (height in edges). With height counted in levels it would be $N(8) = 54$."
+        }
+      ],
+      "answer": {
+        "value": "88",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Mixing the two height conventions — check N(0)/N(1) before iterating."
+      ],
+      "verification": "N(h) = F(h+3) − 1: F(11) = 89 → 88 ✓."
+    },
+    "cse-1998-b-74-a": {
+      "approach": "One mandatory letter followed by 0 to 5 letters or digits.",
+      "concepts": [
+        "regular expression",
+        "bounded repetition"
+      ],
+      "steps": [
+        {
+          "title": "Build",
+          "body": "Let $L = (a+b+\\dots+z+A+\\dots+Z)$, $D = (0+1+\\dots+9)$. First character: $L$. Remaining $0$–$5$ characters, each $L$ or $D$: $(L+D+\\epsilon)^5$."
+        },
+        {
+          "title": "Expression",
+          "body": "$$L\\,(L+D+\\epsilon)^5 \\;=\\; L\\big(\\epsilon + (L+D) + (L+D)^2 + \\dots + (L+D)^5\\big)$$"
+        }
+      ],
+      "answer": {
+        "value": "$L(L+D+\\epsilon)^5$ where L = letter, D = digit",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing L(L+D)* — that allows identifiers longer than six characters."
+      ],
+      "verification": "Lengths produced: 1 (all ε) up to 6 (no ε) — exactly \"up to six\", first symbol always a letter."
+    },
+    "cse-1998-b-74-b": {
+      "approach": "Compute FIRST of each right-hand side and FOLLOW for the ε-producing Y; place A → α under FIRST(α), and Y → ε under FOLLOW(Y).",
+      "concepts": [
+        "FIRST/FOLLOW",
+        "LL(1) parsing table"
+      ],
+      "steps": [
+        {
+          "title": "FIRST and FOLLOW",
+          "body": "| Non-terminal | FIRST | FOLLOW |\n|---|---|---|\n| Program | begin | \\$ |\n| X | d, s | end |\n| Y | semi, ε | end |\n\nFOLLOW(X) = {end} (from Program), FOLLOW(Y) = FOLLOW(X) = {end} (Y ends X → sY)."
+        },
+        {
+          "title": "Table",
+          "body": "| | begin | d | s | semi | end |\n|---|---|---|---|---|---|\n| Program | Program → begin d semi X end | | | | |\n| X | | X → d semi X | X → sY | | |\n| Y | | | | Y → semi s Y | Y → ε |\n\nNo cell has two entries, confirming the grammar is LL(1)."
+        }
+      ],
+      "answer": {
+        "value": "M[Program, begin] = Program → begin d semi X end; M[X, d] = X → d semi X; M[X, s] = X → sY; M[Y, semi] = Y → semi s Y; M[Y, end] = Y → ε",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Putting Y → ε under semi — it goes under FOLLOW(Y) = {end}."
+      ],
+      "verification": "Parsed \"begin d semi s semi s end\": Program → begin d semi X end; X → sY; Y → semi s Y; Y → ε on end ✓."
+    },
+    "cse-1998-b-76-a": {
+      "approach": "Average response (turnaround) time is minimised by Shortest Job First; place x according to its size.",
+      "concepts": [
+        "SJF optimality",
+        "average turnaround time"
+      ],
+      "steps": [
+        {
+          "title": "Why SJF",
+          "body": "With jobs run back-to-back, the $i$-th job's completion adds its run time to every later job, so the total is $\\sum (n-i+1)\\,t_i$; it is minimised by running the shortest job first (exchange argument)."
+        },
+        {
+          "title": "Order",
+          "body": "- $x \\le 3$: $x, 3, 5, 6$\n- $3 < x \\le 5$: $3, x, 5, 6$\n- $5 < x \\le 6$: $3, 5, x, 6$\n- $x > 6$: $3, 5, 6, x$"
+        }
+      ],
+      "answer": {
+        "value": "Shortest job first: x ≤ 3: x,3,5,6; 3 < x ≤ 5: 3,x,5,6; 5 < x ≤ 6: 3,5,x,6; x > 6: 3,5,6,x",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Giving one fixed order — the position of x depends on its value."
+      ],
+      "verification": "Swapping any adjacent pair with the longer job first increases the total by (longer − shorter) > 0."
+    },
+    "cse-1998-b-76-b": {
+      "approach": "Read the graph: after S1, two independent branches run concurrently — S3 alone and the chain S2 → S4 — and S5 waits for both. The direct edges S1→S4 and S1→S5 are implied by the others.",
+      "concepts": [
+        "precedence graph",
+        "parbegin–parend",
+        "transitive edges"
+      ],
+      "steps": [
+        {
+          "title": "Dependencies",
+          "body": "Edges: $S_1\\to S_2, S_1\\to S_3, S_1\\to S_4, S_1\\to S_5, S_2\\to S_4, S_3\\to S_5, S_4\\to S_5$. $S_1\\to S_4$ follows from $S_1\\to S_2\\to S_4$ and $S_1\\to S_5$ from $S_1\\to S_3\\to S_5$, so they need no extra code.",
+          "scene": {
+            "edgeTones": {
+              "S1>S4": "muted",
+              "S1>S5": "muted"
+            }
+          }
+        },
+        {
+          "title": "Program",
+          "body": "```\nbegin\n  S1;\n  parbegin\n    S3;\n    begin S2; S4 end;\n  parend;\n  S5;\nend\n```",
+          "scene": {
+            "tones": {
+              "S3": "cat1",
+              "S2": "cat2",
+              "S4": "cat2"
+            },
+            "edgeTones": {
+              "S1>S4": "muted",
+              "S1>S5": "muted"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "S1; parbegin S3; begin S2; S4 end parend; S5",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Putting S2, S3 and S4 all in one parbegin — S4 must wait for S2."
+      ],
+      "verification": "Every edge is respected: S1 precedes the parbegin, S2 precedes S4 inside the sequential block, and S5 starts only after parend (both S3 and S4 done).",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "nodes": [
+          {
+            "id": "S1",
+            "x": 2,
+            "y": 0
+          },
+          {
+            "id": "S2",
+            "x": 0,
+            "y": 1
+          },
+          {
+            "id": "S3",
+            "x": 4,
+            "y": 1.1
+          },
+          {
+            "id": "S4",
+            "x": 0,
+            "y": 2
+          },
+          {
+            "id": "S5",
+            "x": 2,
+            "y": 3
+          }
+        ],
+        "edges": [
+          {
+            "from": "S1",
+            "to": "S2"
+          },
+          {
+            "from": "S1",
+            "to": "S3"
+          },
+          {
+            "from": "S1",
+            "to": "S4"
+          },
+          {
+            "from": "S1",
+            "to": "S5"
+          },
+          {
+            "from": "S2",
+            "to": "S4"
+          },
+          {
+            "from": "S3",
+            "to": "S5"
+          },
+          {
+            "from": "S4",
+            "to": "S5"
+          }
+        ]
+      }
+    },
+    "cse-1998-b-77-a": {
+      "approach": "Compare the sizes: a free list stores one D-bit address per free block; a bit map stores one bit per block.",
+      "concepts": [
+        "free-space management",
+        "bit map",
+        "free list"
+      ],
+      "steps": [
+        {
+          "title": "Sizes",
+          "body": "Free list: $F \\cdot D$ bits. Bit map: one bit per block $= 13$ bits (in general $B$ bits for $B$ blocks)."
+        },
+        {
+          "title": "Condition",
+          "body": "Free list is smaller when $F\\cdot D < 13$ (generally $F \\cdot D < B$, i.e. $F/B < 1/D$)."
+        }
+      ],
+      "answer": {
+        "value": "F·D < 13 (in general F·D < B for B blocks)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Comparing with the number of free blocks instead of the total number of blocks for the bit map."
+      ],
+      "verification": "With D = 16 and B = 13 the free list wins only when F = 0 — consistent with bit maps being preferred on small disks."
+    },
+    "cse-1998-b-77-b": {
+      "approach": "Since a record is exactly one sector, convert the start address to a linear sector number, add n, and convert back with division and remainders.",
+      "concepts": [
+        "CHS addressing",
+        "linear block address"
+      ],
+      "steps": [
+        {
+          "title": "Linearise the start",
+          "body": "Number cylinders, tracks and sectors from 0. Sectors per cylinder $= t\\cdot s$. Start: $N_0 = (c_L\\, t + t_L)\\, s + s_L$."
+        },
+        {
+          "title": "Record n",
+          "body": "With $r_l = s_l$, record $n$ (first record $n=0$) occupies sector $N = N_0 + n$."
+        },
+        {
+          "title": "Back to CHS",
+          "body": "$$\\text{cylinder} = \\left\\lfloor \\frac{N}{t\\,s} \\right\\rfloor,\\quad \\text{track} = \\left\\lfloor \\frac{N \\bmod (t\\,s)}{s} \\right\\rfloor,\\quad \\text{sector} = N \\bmod s$$\n\n(If records are numbered from 1, use $n-1$; if sectors are numbered from 1, add 1 to the sector.)"
+        }
+      ],
+      "answer": {
+        "value": "With N = (c_L·t + t_L)·s + s_L + n (records numbered from 0): cylinder = ⌊N/(t·s)⌋, track = ⌊(N mod t·s)/s⌋, sector = N mod s",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting that a contiguous file wraps from the last sector of a track to the next track and then the next cylinder."
+      ],
+      "verification": "t = 2, s = 4, start (0,1,3), n = 1: N = (0+1)·4 + 3 + 1 = 8 → cylinder 1, track 0, sector 0 — the sector right after (0,1,3) ✓."
+    },
+    "cse-1998-b-78-a": {
+      "approach": "List the FDs implied by the meaning, then test 2NF (partial dependency) and 3NF (transitive dependency).",
+      "concepts": [
+        "2NF",
+        "3NF",
+        "transitive dependency"
+      ],
+      "steps": [
+        {
+          "title": "FDs",
+          "body": "Book-id → Subject-Category, Name-of-Author; Name-of-Author → Nationality-of-Author."
+        },
+        {
+          "title": "Test",
+          "body": "Key is the single attribute Book-id, so no partial dependency → **2NF**. But Book-id → Name-of-Author → Nationality-of-Author is transitive (Nationality is non-prime and Author is not a superkey) → not 3NF."
+        }
+      ],
+      "answer": {
+        "value": "2NF",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Calling it 3NF because the key is a single attribute — that only guarantees 2NF."
+      ],
+      "verification": "Decomposing into (Book-id, Subject, Author) and (Author, Nationality) removes the transitive dependency, confirming 3NF was violated."
+    },
+    "cse-1998-b-78-b": {
+      "approach": "With the composite key (Name-of-Author, Book-title), attributes depending on Name-of-Author alone are partial dependencies.",
+      "concepts": [
+        "partial dependency",
+        "1NF",
+        "2NF"
+      ],
+      "steps": [
+        {
+          "title": "FDs",
+          "body": "Name-of-Author → Nationality-of-Author, Author-address (author facts); (Name-of-Author, Book-title) → Book-id, Subject-Category."
+        },
+        {
+          "title": "Test",
+          "body": "Nationality and Author-address are non-prime and depend on **part** of the key (Name-of-Author) → partial dependency → not 2NF. Attributes are atomic → **1NF**."
+        }
+      ],
+      "answer": {
+        "value": "1NF",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Overlooking that Name-of-Author is only part of the new key."
+      ],
+      "verification": "Any non-prime attribute determined by a proper subset of a candidate key violates 2NF — Nationality is such an attribute."
+    }
+  }
+}
