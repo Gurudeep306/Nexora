@@ -1,47 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">KARNAUGH MAP (K-MAP)</text>
-  <text x="145" y="58" fill="#818cf8" font-size="12" font-weight="bold" font-family="monospace">AB \ CD</text>
-  <text x="203.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">00</text>
-  <text x="249.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">01</text>
-  <text x="295.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">11</text>
-  <text x="341.0" y="60" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">10</text>
-  <text x="168" y="97.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">00</text>
-  <rect x="180" y="70" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="97.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="226" y="70" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="97.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="272" y="70" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="97.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="318" y="70" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="97.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <text x="168" y="143.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">01</text>
-  <rect x="180" y="116" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="143.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="226" y="116" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="143.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="272" y="116" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="143.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="318" y="116" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="143.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <text x="168" y="189.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">11</text>
-  <rect x="180" y="162" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="189.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="226" y="162" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="189.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="272" y="162" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="189.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="318" y="162" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="189.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <text x="168" y="235.0" text-anchor="end" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">10</text>
-  <rect x="180" y="208" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="203.0" y="235.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="226" y="208" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="249.0" y="235.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="272" y="208" width="46" height="46" fill="#1e293b" stroke="#334155" stroke-width="1.2" />
-  <text x="295.0" y="235.0" text-anchor="middle" fill="#64748b" font-size="13" font-weight="bold" font-family="monospace">0</text>
-  <rect x="318" y="208" width="46" height="46" fill="#064e3b" stroke="#334155" stroke-width="1.2" />
-  <text x="341.0" y="235.0" text-anchor="middle" fill="#34d399" font-size="13" font-weight="bold" font-family="monospace">1</text>
-  <rect x="222" y="112" width="100" height="54" rx="8" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 240" fill="none">
+<line x1="30" y1="14" x2="70" y2="50" stroke="currentColor" stroke-width="1.2"/>
+<text x="52" y="24" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">AB</text>
+<text x="22" y="46" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">CD</text>
+<text x="92" y="42" text-anchor="middle" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">00</text>
+<text x="136" y="42" text-anchor="middle" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">01</text>
+<text x="180" y="42" text-anchor="middle" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">11</text>
+<text x="224" y="42" text-anchor="middle" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">10</text>
+<text x="62" y="77" text-anchor="end" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">00</text>
+<rect x="70" y="50" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="92" y="78" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
+<rect x="114" y="50" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<rect x="158" y="50" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<rect x="202" y="50" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="224" y="78" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
+<text x="62" y="121" text-anchor="end" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">01</text>
+<rect x="70" y="94" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<rect x="114" y="94" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="136" y="122" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
+<rect x="158" y="94" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="180" y="122" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
+<rect x="202" y="94" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="62" y="165" text-anchor="end" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">11</text>
+<rect x="70" y="138" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<rect x="114" y="138" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="136" y="166" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
+<rect x="158" y="138" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="180" y="166" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
+<rect x="202" y="138" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="62" y="209" text-anchor="end" fill="currentColor" font-size="13" font-family="Arial, Helvetica, sans-serif">10</text>
+<rect x="70" y="182" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="92" y="210" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
+<rect x="114" y="182" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<rect x="158" y="182" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<rect x="202" y="182" width="44" height="44" stroke="currentColor" stroke-width="1.2"/>
+<text x="224" y="210" text-anchor="middle" fill="currentColor" font-size="16" font-family="Arial, Helvetica, sans-serif">1</text>
 </svg>
