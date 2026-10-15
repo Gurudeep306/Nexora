@@ -1,0 +1,267 @@
+{
+ "paper": "it-2004",
+ "fixes": [
+  {
+   "id": "it-2004-it-2",
+   "field": "text",
+   "before": "In a class of 200 students, 125 students have taken Programming Language course, 85 students have taken Data Structures course, 65 students have taken Computer Organization course; 50 students have taken both Programming Language and Data Structures, 35 students have taken both Programming Language and Computer Organization, 30 students have taken both Data Structures ad Computer Organization; 15 students have taken all the three courses. How many students have not taken any of the three courses?",
+   "after": "In a class of 200 students, 125 students have taken Programming Language course, 85 students have taken Data Structures course, 65 students have taken Computer Organization course; 50 students have taken both Programming Language and Data Structures, 35 students have taken both Programming Language and Computer Organization, 30 students have taken both Data Structures and Computer Organization; 15 students have taken all the three courses. How many students have not taken any of the three courses?",
+   "reason": "Typo \"ad\" -> \"and\".",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-4",
+   "field": "text",
+   "before": "Let $R_1$ be a relation from A = {1, 3, 5, 7} to B = {2, 4, 6, 8} and $R_2$ be another relation from B to C {1, 2, 3, 4} as defined below:\n\n1. An element x in A is related to an element y in B (under $R_1$) if x + y is divisible by 3\n2. An element x in B is related to an element y in C (under $R_2$) if x + y is even but not divisible by 3\n\nWhat is the composite relation $R_1R_2$ from A to C?",
+   "after": "Let $R_1$ be a relation from $A = \\{1, 3, 5, 7\\}$ to $B = \\{2, 4, 6, 8\\}$ and $R_2$ be another relation from B to $C = \\{1, 2, 3, 4\\}$ as defined below:\n\n1. An element x in A is related to an element y in B (under $R_1$) if x + y is divisible by 3\n2. An element x in B is related to an element y in C (under $R_2$) if x + y is even but not divisible by 3\n\nWhat is the composite relation $R_1R_2$ from A to C?",
+   "reason": "Missing \"=\" before set C; sets written in KaTeX.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-4",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "$R_1R_2$ = {((1, 2), (1, 4), (3, 3), (5, 4), (7, 3)}"
+    },
+    {
+     "l": "B",
+     "t": "$R_1R_2$ = {(1, 2), (1, 3), (3, 2), (5, 2), (7, 3)}"
+    },
+    {
+     "l": "C",
+     "t": "$R_1R_2$ = {(1, 2), (3, 2), (3, 4), (5, 4), (7, 2)}"
+    },
+    {
+     "l": "D",
+     "t": "$R_1R_2$ = {(3, 2), (3, 4), (5, 1), (5, 3), (7, 1)}"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "$R_1R_2$ = {(1, 2), (1, 4), (3, 3), (5, 4), (7, 3)}"
+    },
+    {
+     "l": "B",
+     "t": "$R_1R_2$ = {(1, 2), (1, 3), (3, 2), (5, 2), (7, 3)}"
+    },
+    {
+     "l": "C",
+     "t": "$R_1R_2$ = {(1, 2), (3, 2), (3, 4), (5, 4), (7, 2)}"
+    },
+    {
+     "l": "D",
+     "t": "$R_1R_2$ = {(3, 2), (3, 4), (5, 1), (5, 3), (7, 1)}"
+    }
+   ],
+   "reason": "Stray extra \"(\" in option A removed.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-7",
+   "field": "text",
+   "before": "Which one of the following regular expression (a + b + c)*?",
+   "after": "Which one of the following regular expressions is NOT equivalent to the regular expression (a + b + c)*?",
+   "reason": "Stem truncated in the reprint (\"...regular expression (a + b + c)*?\"); restored the words \"is NOT equivalent to\", the only reading under which exactly one option is correct (A, B, D all denote all strings over {a,b,c}).",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-7",
+   "field": "needsReview",
+   "before": true,
+   "after": false,
+   "reason": "Stem restored; with it the answer is unambiguous (only C cannot generate the string \"a\").",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-7",
+   "field": "reviewNote",
+   "before": "Question stem is truncated in the reprint; the original asks which regular expression is NOT equivalent to (a + b + c)*. Answer assumes that wording.",
+   "after": null,
+   "reason": "Note no longer applies after restoring the stem.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-8",
+   "field": "text",
+   "before": "What is the minimum number of NAD gates required to implement a 2-input EXCLUSIVE-OR function without using any other logic gate?",
+   "after": "What is the minimum number of NAND gates required to implement a 2-input EXCLUSIVE-OR function without using any other logic gate?",
+   "reason": "Typo \"NAD\" -> \"NAND\" (reprint misprint).",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-11",
+   "field": "text",
+   "before": "What is the hit rate of a video terminal unit with 50 characters/line, 8 bits/character and horizontal sweep time of 100 $\\mu$v (including 20 $\\mu$s of retrace time)?",
+   "after": "What is the bit rate of a video terminal unit with 80 characters/line, 8 bits/character and horizontal sweep time of 100 $\\mu$s (including 20 $\\mu$s of retrace time)?",
+   "reason": "Reprint misprints: \"hit rate\" -> bit rate, \"100 µv\" -> 100 µs; \"50 characters/line\" restored to 80 as in the original GATE IT 2004 Q11 (with 50, no option is obtainable: 400 bits / 80 µs = 5 Mbps).",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-11",
+   "field": "subject",
+   "before": "la",
+   "after": "coa",
+   "reason": "Video-terminal bit rate is a computer organization (I/O) question, not linear algebra.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-11",
+   "field": "topic",
+   "before": "eigen",
+   "after": "io",
+   "reason": "Video-terminal bit rate belongs to I/O, not eigenvalues.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-11",
+   "field": "reviewNote",
+   "before": "Reprint typos: 'hit rate' = bit rate, '100 µv' = 100 µs, and '50 characters/line' appears to be 80 in the original paper; with 50 no option is correct. Answer A assumes 80 chars/line.",
+   "after": "The reprint PDF prints 50 characters/line (no option fits: 400 bits / 80 µs = 5 Mbps); text uses 80 per the original GATE IT 2004 paper, giving 640 bits / 80 µs = 8 Mbps (A). Confirm against an original copy.",
+   "reason": "Note updated after restoring the text.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-12",
+   "field": "text",
+   "before": "Consider a system with 2 level cache. Access times of Level 1 cache, Level 2 cache and main memory are 1 ns, 10 ns and 500 ns, respectively. The hit rates of Level 1and Level 2 caches are 0.5 and 0.9, respectively. What is the average access time of the system ignoring the search time within the cache?",
+   "after": "Consider a system with 2 level cache. Access times of Level 1 cache, Level 2 cache and main memory are 1 ns, 10 ns and 500 ns, respectively. The hit rates of Level 1 and Level 2 caches are 0.8 and 0.9, respectively. What is the average access time of the system ignoring the search time within the cache?",
+   "reason": "Reprint prints L1 hit rate 0.5 (gives 30 ns, no option); the original GATE IT 2004 Q12 has 0.8, which gives 12.6 ns. Also spacing \"Level 1and\".",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-12",
+   "field": "reviewNote",
+   "before": "Reprint prints L1 hit rate 0.5, which gives 30 ns (no option); the original GATE IT 2004 paper has 0.8, giving 12.6 ns (C).",
+   "after": "The reprint PDF prints L1 hit rate 0.5 (gives 30 ns, no option); text uses 0.8 per the original GATE IT 2004 paper, giving 0.8(1) + 0.2[0.9(10) + 0.1(500)] = 12.6 ns (C). Confirm against an original copy.",
+   "reason": "Note updated after restoring the text.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-15",
+   "field": "subject",
+   "before": "coa",
+   "after": "pds",
+   "reason": "C expression question belongs to programming.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-15",
+   "field": "topic",
+   "before": "isa",
+   "after": "c-prog",
+   "reason": "C expression question belongs to programming, not ISA.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-16",
+   "field": "subject",
+   "before": "pds",
+   "after": "os",
+   "reason": "Unix shell commands are an OS/files topic, not C programming.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-16",
+   "field": "topic",
+   "before": "c-prog",
+   "after": "files",
+   "reason": "Unix shell commands are an OS/files topic, not C programming.",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-19",
+   "field": "text",
+   "before": "A software organization has been assessed at SEI CMM Level 4. Which of the following does the organization need to practice besides Process Chance Management and Technology Change Management in order to achieve level 5?",
+   "after": "A software organization has been assessed at SEI CMM Level 4. Which of the following does the organization need to practice besides Process Change Management and Technology Change Management in order to achieve level 5?",
+   "reason": "Typo \"Chance\" -> \"Change\" (CMM level-5 KPA is Process Change Management).",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-19",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "Defect Detection"
+    },
+    {
+     "l": "B",
+     "t": "Defect Prevention"
+    },
+    {
+     "l": "C",
+     "t": "Defect Isolation"
+    },
+    {
+     "l": "D",
+     "t": "Detect Propagation"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "Defect Detection"
+    },
+    {
+     "l": "B",
+     "t": "Defect Prevention"
+    },
+    {
+     "l": "C",
+     "t": "Defect Isolation"
+    },
+    {
+     "l": "D",
+     "t": "Defect Propagation"
+    }
+   ],
+   "reason": "Typo \"Detect\" -> \"Defect\".",
+   "source": "GATE2004IT.pdf"
+  },
+  {
+   "id": "it-2004-it-21",
+   "field": "options",
+   "before": [
+    {
+     "l": "A",
+     "t": "Page"
+    },
+    {
+     "l": "B",
+     "t": "Table"
+    },
+    {
+     "l": "C",
+     "t": "Row"
+    },
+    {
+     "l": "D",
+     "t": "Page table and row level looking allow the same degree of concurrency"
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "Page"
+    },
+    {
+     "l": "B",
+     "t": "Table"
+    },
+    {
+     "l": "C",
+     "t": "Row"
+    },
+    {
+     "l": "D",
+     "t": "Page, table and row level locking allow the same degree of concurrency"
+    }
+   ],
+   "reason": "Typo \"looking\" -> \"locking\", missing comma.",
+   "source": "GATE2004IT.pdf"
+  }
+ ]
+}
