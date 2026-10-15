@@ -1,0 +1,1306 @@
+{
+  "paper": "it-2005",
+  "version": 2,
+  "solutions": {
+    "it-2005-cs-24": {
+      "approach": "Recall the definition of durability: once a transaction commits, its effects must survive every later failure; logging and stable storage exist precisely for this.",
+      "concepts": [
+        "ACID properties",
+        "Durability",
+        "Recovery"
+      ],
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "Durability: after a transaction **commits**, its changes are permanent and must not be lost because of any subsequent failure (power loss, OS crash, disk crash)."
+        },
+        {
+          "title": "How it is achieved",
+          "body": "Write-ahead logging on stable storage (for media failure: log/archive copies on other disks) lets the recovery manager redo committed work after **any** failure, so no failure type is excluded."
+        }
+      ],
+      "answer": {
+        "value": "Always, even if there is a failure of any kind",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "OS crashes are exactly what redo logging handles; durability is not waived for them."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Disk crashes are handled by stable storage / archived logs; durability still applies."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Power failure is the textbook failure that durability must survive."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: committed changes persist regardless of the failure type."
+        }
+      ],
+      "verification": "Matches the standard definition (Silberschatz: changes persist even if there are system failures)."
+    },
+    "it-2005-cs-25": {
+      "approach": "Match each command to the protocol whose command set contains it: PROMPT is an FTP client command, HEAD an HTTP method, RCPT (RCPT TO) an SMTP command.",
+      "concepts": [
+        "FTP",
+        "HTTP",
+        "SMTP"
+      ],
+      "steps": [
+        {
+          "title": "Identify each command",
+          "body": "- **PROMPT** — FTP client command that toggles interactive prompting during `mget`/`mput`.\n- **HEAD** — HTTP method: like GET but returns only the headers.\n- **RCPT** — SMTP `RCPT TO:` names a mail recipient."
+        },
+        {
+          "title": "Read off the order",
+          "body": "PROMPT, HEAD, RCPT $\\to$ FTP, HTTP, SMTP."
+        }
+      ],
+      "answer": {
+        "value": "FTP, HTTP, SMTP",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "PROMPT is not an HTTP method and HEAD is not an SMTP command."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: FTP, HTTP, SMTP."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "HEAD is HTTP, not FTP; PROMPT is not HTTP."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "PROMPT is not SMTP and RCPT is not FTP."
+        }
+      ],
+      "verification": "RCPT and HEAD are unambiguous (SMTP, HTTP), which already forces option B."
+    },
+    "it-2005-cs-26": {
+      "approach": "Traceroute sends probes with TTL = 1, 2, 3, …; the router at hop $k$ discards the probe when its TTL expires and returns an ICMP Time Exceeded message, so replies arrive hop by hop in ascending distance from A.",
+      "concepts": [
+        "Traceroute",
+        "TTL",
+        "ICMP Time Exceeded"
+      ],
+      "steps": [
+        {
+          "title": "Mechanism",
+          "body": "A sends a probe with TTL $=1$: the first router decrements it to 0, drops it and sends **ICMP Time Exceeded** back to A, revealing its address. Then TTL $=2$ reveals the second router, and so on until B itself replies (ICMP Port Unreachable / Echo Reply)."
+        },
+        {
+          "title": "Match with options",
+          "body": "So every router en route is made to return an ICMP packet to A, in increasing order of hop count — exactly option C. No router is *asked about the next router* (A), nothing is appended to a packet (B) and nothing is computed locally (D)."
+        }
+      ],
+      "answer": {
+        "value": "By ensuring an ICMP reply is returned to A by each router en route, in ascending order of hop distance",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Routers are never asked about their next hop; each router only reveals itself when the probe’s TTL expires there."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That is the IP Record Route option, not traceroute (and it is limited to 9 addresses)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: increasing TTL makes routers at hop 1, 2, 3, … each return an ICMP Time Exceeded message to A."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Traceroute discovers the actual path empirically; it does not compute a shortest path."
+        }
+      ],
+      "pitfalls": [
+        "Reading “starting with the first router” in A as the TTL technique — A still says routers are *queried about the next router*."
+      ],
+      "verification": "Checked against RFC 1393 / standard traceroute description (TTL expiry → ICMP Time Exceeded from each hop)."
+    },
+    "it-2005-cs-27": {
+      "approach": "Test each statement against facts about CSMA/CD: it relies on detecting a collision while still transmitting, which needs propagation delay small relative to frame time.",
+      "concepts": [
+        "CSMA/CD",
+        "Propagation delay",
+        "Ethernet"
+      ],
+      "steps": [
+        {
+          "title": "Why long delay breaks CSMA/CD",
+          "body": "Collision detection needs $T_{frame} \\ge 2\\,T_{prop}$. A geostationary satellite link has $T_{prop}\\approx 270$ ms, so frames would have to be enormous; carrier sensing is also meaningless because the channel state seen locally is a quarter-second old. Hence CSMA/CD is unsuitable — statement C."
+        },
+        {
+          "title": "Other statements",
+          "body": "802.11 uses CSMA/**CA**; classic Ethernet *is* CSMA/CD; CSMA/CD is a contention protocol by design."
+        }
+      ],
+      "answer": {
+        "value": "CSMA/CD is not suitable for a high propagation delay network like satellite network",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "IEEE 802.11 uses CSMA/CA (a radio cannot listen while transmitting)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Ethernet (IEEE 802.3) is the canonical CSMA/CD network."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the $2T_{prop}$ requirement and stale carrier sense make it unsuitable."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Stations contend for the medium; collisions are the result of contention."
+        }
+      ],
+      "verification": "Each false option contradicts a standard fact."
+    },
+    "it-2005-cs-28": {
+      "approach": "A bridge is a layer-2 device that splits collision domains but forwards broadcast frames to all ports, so it does not split the broadcast domain.",
+      "concepts": [
+        "Bridge",
+        "Collision domain",
+        "Broadcast domain"
+      ],
+      "steps": [
+        {
+          "title": "What a bridge does",
+          "body": "It filters/forwards frames by MAC address between LAN segments; each port is a separate collision domain."
+        },
+        {
+          "title": "Broadcasts",
+          "body": "Frames to `FF:FF:FF:FF:FF:FF` are flooded on every port, so all segments stay in one broadcast domain. Only a router (layer 3) or VLAN splits it. Statement D is the false one."
+        }
+      ],
+      "answer": {
+        "value": "Bridge reduces broadcast domain",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: a bridge works at the data-link layer."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: each bridge port is a separate collision domain."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: connecting LAN segments is its purpose."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "False (the answer): broadcasts are flooded, so the broadcast domain is unchanged."
+        }
+      ],
+      "verification": "Contrast with a router, which is the device that bounds broadcast domains."
+    },
+    "it-2005-cs-29": {
+      "approach": "Count-to-infinity arises when routers only exchange distance estimates with neighbours (Bellman–Ford), so bad news about a failed link propagates slowly.",
+      "concepts": [
+        "Distance vector routing",
+        "Count to infinity"
+      ],
+      "steps": [
+        {
+          "title": "Cause",
+          "body": "If link to destination D fails, router A may adopt neighbour B’s stale route (which went through A), then B adopts A’s, each raising the metric by 1 per exchange: $2,3,4,\\dots$ up to “infinity” (16 in RIP)."
+        },
+        {
+          "title": "Which protocol",
+          "body": "This only happens with distance-vector protocols; link-state routers flood the topology and each computes Dijkstra on the full map."
+        }
+      ],
+      "answer": {
+        "value": "Distance vector routing protocol",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Link-state routers know the whole topology, so they do not count to infinity."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: classic distance-vector problem (mitigated by split horizon, poison reverse)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "DNS resolution has no such metric-increment behaviour."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "TCP congestion control (slow start, AIMD) is unrelated."
+        }
+      ],
+      "verification": "Standard textbook association (Tanenbaum, Kurose)."
+    },
+    "it-2005-cs-30": {
+      "approach": "Both GET and POST can carry form fields to the server; the question explicitly removes security from consideration, so neither method is ruled out.",
+      "concepts": [
+        "HTML forms",
+        "HTTP GET",
+        "HTTP POST"
+      ],
+      "steps": [
+        {
+          "title": "Both can submit form data",
+          "body": "With `method=\"get\"` the fields go in the URL query string; with `method=\"post\"` they go in the request body. Either delivers the checked items and card fields to the server."
+        },
+        {
+          "title": "Role of the assumption",
+          "body": "The usual reason to insist on POST here is that card details would appear in the URL/history. The question says security is handled transparently to the form design, which neutralises that argument, so either method is appropriate."
+        }
+      ],
+      "answer": {
+        "value": "Either of GET or POST",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "GET works, but nothing forbids POST."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "POST is best practice, but with security assumed away GET also works, so “only POST” is too strong."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct under the stated assumption."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Forms submit only via GET or POST, so “neither” is impossible."
+        }
+      ],
+      "pitfalls": [
+        "Ignoring the explicit “security is handled transparently” clause and choosing “Only POST”."
+      ],
+      "verification": "Both methods are valid values of the form `method` attribute and transfer the same name=value pairs."
+    },
+    "it-2005-cs-31": {
+      "approach": "Since $h = g\\circ f$, every value of $h$ is a value of $g$; so if $h$ covers $C$, $g$ must too. Small counterexamples kill the other options.",
+      "concepts": [
+        "Function composition",
+        "Onto functions"
+      ],
+      "steps": [
+        {
+          "title": "Prove C",
+          "body": "Let $h$ be onto and $c\\in C$. Then $c = h(a) = g(f(a))$ for some $a$, so $c$ is the image of $b = f(a)\\in B$ under $g$. Hence $g$ is onto."
+        },
+        {
+          "title": "Counterexample for A, B, D",
+          "body": "$A=\\{1\\}$, $B=\\{x,y\\}$, $C=\\{c\\}$, $f(1)=x$, $g(x)=g(y)=c$. Then $h$ and $g$ are onto but $f$ is not (misses $y$): B and D fail. For A, take $A=\\{1\\}$, $B=C=\\{x,y\\}$, $g=\\text{id}$, $f(1)=x$: $g$ onto, $h$ not onto."
+        }
+      ],
+      "answer": {
+        "value": "h is onto ⇒ g is onto",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$g$ onto with $f$ not onto can leave $h$ not onto (counterexample above)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$f$ may miss elements of $B$ that $g$ maps to values already reached."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: the range of $h$ is contained in the range of $g$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Fails because $f$ need not be onto."
+        }
+      ],
+      "verification": "Proof for C plus explicit counterexamples for the rest."
+    },
+    "it-2005-cs-32": {
+      "approach": "C must be a chain under strict inclusion; along a chain the sizes strictly increase, so at most one subset of each size $0,1,\\dots,n$.",
+      "concepts": [
+        "Chains in the subset lattice",
+        "Power set"
+      ],
+      "steps": [
+        {
+          "title": "Upper bound",
+          "body": "In a chain $S_1\\subset S_2\\subset\\cdots$ cardinalities strictly increase, and they lie in $\\{0,1,\\dots,n\\}$: at most $n+1$ sets."
+        },
+        {
+          "title": "Achieved",
+          "body": "For $A=\\{a_1,\\dots,a_n\\}$: $\\emptyset\\subset\\{a_1\\}\\subset\\{a_1,a_2\\}\\subset\\cdots\\subset A$ gives $n+1$ sets."
+        }
+      ],
+      "answer": {
+        "value": "n+1",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses one set (e.g. forgets $\\emptyset$)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: maximal chain $\\emptyset$ to $A$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A chain can contain only one set of each size; $2^{n-1}+1$ exceeds $n+1$ for $n\\ge 3$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Far exceeds the $n+1$ possible sizes."
+        }
+      ],
+      "verification": "$n=2$: $\\emptyset\\subset\\{1\\}\\subset\\{1,2\\}$ — 3 sets, and $\\{1\\},\\{2\\}$ cannot both be in C."
+    },
+    "it-2005-cs-33": {
+      "approach": "After the first toss, each further toss independently matches the previous one with probability 1/2, so the extra tosses are geometric with mean 2.",
+      "concepts": [
+        "Geometric distribution",
+        "Expectation"
+      ],
+      "steps": [
+        {
+          "title": "Model",
+          "body": "Toss 1 sets a reference. Each later toss ends the process iff it equals the previous toss: probability $\\tfrac12$, independent each time. Number of tosses after the first $\\sim$ Geometric$(p=\\tfrac12)$, mean $\\tfrac1p = 2$."
+        },
+        {
+          "title": "Total",
+          "body": "$E[N] = 1 + 2 = 3$."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $1 + 1/(1/2) = 3$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would be the answer if every pair started fresh (two tosses per attempt)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No derivation gives 5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Expected tosses for two consecutive *heads*, a different problem."
+        }
+      ],
+      "verification": "Series check: $P(N=k)=(1/2)^{k-1}$ for $k\\ge2$; $\\sum_{k\\ge2} k(1/2)^{k-1} = 3$."
+    },
+    "it-2005-cs-34": {
+      "approach": "The count is Euler’s totient $\\varphi(n)$, which is multiplicative: $\\varphi(p^2q)=\\varphi(p^2)\\varphi(q)$.",
+      "concepts": [
+        "Euler totient function"
+      ],
+      "steps": [
+        {
+          "title": "Compute",
+          "body": "$\\varphi(p^2) = p^2 - p = p(p-1)$, $\\varphi(q) = q-1$, so $\\varphi(p^2q) = p(p-1)(q-1)$."
+        },
+        {
+          "title": "Check",
+          "body": "$p=2,q=3$: $n=12$; coprime numbers $1,5,7,11$ → 4, and $2\\cdot1\\cdot2 = 4$. ✓"
+        }
+      ],
+      "answer": {
+        "value": "p(p−1)(q−1)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$n=12$: $2\\cdot 2 = 4$ also equals 4 here, but for $p=3,q=2$ ($n=18$, $\\varphi=6$) it gives 3."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$n=12$ gives 6, wrong."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(p^2-1)(q-1)$: $n=12$ gives 6, wrong."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: $\\varphi(p^2)\\varphi(q)$."
+        }
+      ],
+      "verification": "$n=18$: coprimes 1,5,7,11,13,17 → 6 $= 3\\cdot2\\cdot1$."
+    },
+    "it-2005-cs-35": {
+      "approach": "Shift $u = x-\\pi$ to centre the interval; the integrand becomes an odd function on $[-\\pi,\\pi]$.",
+      "concepts": [
+        "Odd function symmetry",
+        "Substitution"
+      ],
+      "steps": [
+        {
+          "title": "Substitute",
+          "body": "$u = x-\\pi$: $\\sin x = \\sin(u+\\pi) = -\\sin u$, limits $-\\pi$ to $\\pi$:\n$$I = -\\int_{-\\pi}^{\\pi} u^2 \\sin u\\, du$$"
+        },
+        {
+          "title": "Odd integrand",
+          "body": "$u^2\\sin u$ is odd (even × odd), so its integral over a symmetric interval is $0$. $I = 0$."
+        }
+      ],
+      "answer": {
+        "value": "0",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Integral is 0."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Integral is 0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Integral is 0."
+        }
+      ],
+      "verification": "Parts: $\\int u^2\\sin u = -u^2\\cos u + 2u\\sin u + 2\\cos u$; at $\\pm\\pi$ both give $\\pi^2 - 2$, difference 0."
+    },
+    "it-2005-cs-36": {
+      "approach": "Check B directly (it is a valid inference) and give small-domain counterexamples to the other three.",
+      "concepts": [
+        "Quantifiers",
+        "Validity",
+        "Counterexamples"
+      ],
+      "steps": [
+        {
+          "title": "B is valid",
+          "body": "Assume $\\forall x(P\\Rightarrow Q)$ and $\\forall x P$. For any $x$, $P(x)$ holds, so $Q(x)$ holds by modus ponens; hence $\\forall x Q$."
+        },
+        {
+          "title": "Counterexamples",
+          "body": "Domain $\\{1,2\\}$, $P=\\{1\\}$, $Q=\\{2\\}$ (true sets).\n- A: $\\forall x(P\\vee Q)$ true, but $\\forall P$, $\\forall Q$ both false.\n- C: $\\forall P$ false so antecedent true; $\\forall x(P\\Rightarrow Q)$ false at $x=1$.\n- D: $\\forall P \\Leftrightarrow \\forall Q$ (both false) true; $\\forall x(P\\Leftrightarrow Q)$ false."
+        }
+      ],
+      "answer": {
+        "value": "(∀x(P(x)⇒Q(x))) ⇒ ((∀x P(x)) ⇒ (∀x Q(x)))",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "∀ does not distribute over ∨: counterexample above."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: valid by universal instantiation and modus ponens."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Antecedent can be vacuously true while $P\\Rightarrow Q$ fails pointwise."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both universals false makes the antecedent true, yet $P$ and $Q$ differ pointwise."
+        }
+      ],
+      "verification": "A single interpretation refutes A, C and D simultaneously."
+    },
+    "it-2005-cs-37": {
+      "approach": "Run the subset construction from {X}. If every reachable subset that contains Y also contains Z (and vice versa), then the two acceptance choices accept exactly the same strings.",
+      "concepts": [
+        "NFA",
+        "Subset construction",
+        "Language equality"
+      ],
+      "given": "| State | on 0 | on 1 |\n|---|---|---|\n| X | {Y, Z} | {X} |\n| Y | {Y, Z} | ∅ |\n| Z | {X} | {Y, Z} |",
+      "steps": [
+        {
+          "title": "Transition table",
+          "body": "From the figure: X —0→ Y, Z; X —1→ X. Y —0→ Y, Z. Z —0→ X; Z —1→ Z, Y.",
+          "scene": {
+            "caption": "NFA from the figure",
+            "current": [
+              "X"
+            ]
+          }
+        },
+        {
+          "title": "Start {X}",
+          "body": "$\\{X\\}\\xrightarrow{0}\\{Y,Z\\}$, $\\{X\\}\\xrightarrow{1}\\{X\\}$.",
+          "scene": {
+            "current": [
+              "Y",
+              "Z"
+            ],
+            "caption": "{X} on 0 → {Y,Z}"
+          }
+        },
+        {
+          "title": "From {Y,Z}",
+          "body": "On 0: $Y\\to\\{Y,Z\\}$, $Z\\to\\{X\\}$ ⇒ $\\{X,Y,Z\\}$. On 1: $Y\\to\\emptyset$, $Z\\to\\{Y,Z\\}$ ⇒ $\\{Y,Z\\}$.",
+          "scene": {
+            "current": [
+              "X",
+              "Y",
+              "Z"
+            ],
+            "caption": "{Y,Z} on 0 → {X,Y,Z}; on 1 → {Y,Z}"
+          }
+        },
+        {
+          "title": "From {X,Y,Z}",
+          "body": "On 0: $\\{Y,Z\\}\\cup\\{Y,Z\\}\\cup\\{X\\} = \\{X,Y,Z\\}$. On 1: $\\{X\\}\\cup\\emptyset\\cup\\{Y,Z\\}=\\{X,Y,Z\\}$. No new subsets.",
+          "scene": {
+            "caption": "{X,Y,Z} is closed under 0 and 1"
+          }
+        },
+        {
+          "title": "Compare",
+          "body": "Reachable subsets: $\\{X\\}, \\{Y,Z\\}, \\{X,Y,Z\\}$. Y and Z always appear together, so a string reaches Y iff it reaches Z: $L_1 = L_2$ (= strings containing at least one 0)."
+        }
+      ],
+      "answer": {
+        "value": "L1 = L2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: Y and Z are always in the same reachable subsets."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not proper: every string in L2 is also in L1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not proper: the sets are equal."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A is true."
+        }
+      ],
+      "verification": "Both languages equal $1^*0(0+1)^*$: before the first 0 only X is active; the first 0 activates {Y,Z} and the set never loses Y or Z afterwards.",
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "X",
+            "start": true,
+            "x": 0.2,
+            "y": 0.5
+          },
+          {
+            "id": "Y",
+            "x": 0.75,
+            "y": 0.15
+          },
+          {
+            "id": "Z",
+            "x": 0.75,
+            "y": 0.85
+          }
+        ],
+        "edges": [
+          {
+            "from": "X",
+            "to": "X",
+            "label": "1"
+          },
+          {
+            "from": "X",
+            "to": "Y",
+            "label": "0"
+          },
+          {
+            "from": "X",
+            "to": "Z",
+            "label": "0"
+          },
+          {
+            "from": "Y",
+            "to": "Y",
+            "label": "0"
+          },
+          {
+            "from": "Y",
+            "to": "Z",
+            "label": "0"
+          },
+          {
+            "from": "Z",
+            "to": "Z",
+            "label": "1"
+          },
+          {
+            "from": "Z",
+            "to": "X",
+            "label": "0"
+          },
+          {
+            "from": "Z",
+            "to": "Y",
+            "label": "1"
+          }
+        ],
+        "current": [
+          "X"
+        ]
+      }
+    },
+    "it-2005-cs-38": {
+      "approach": "With one state and one stack symbol, the PDA’s behaviour is decided entirely by which transitions exist; nothing forces a transition for every input symbol, so neither acceptance mode must give $\\Sigma^*$.",
+      "concepts": [
+        "NPDA",
+        "Acceptance by final state",
+        "Acceptance by empty stack"
+      ],
+      "steps": [
+        {
+          "title": "L(P) need not be Σ*",
+          "body": "Take $\\Sigma=\\{a\\}$ and **no** transitions at all. Then $\\varepsilon$ is accepted (q is accepting) but the PDA cannot read $a$, so $L(P)=\\{\\varepsilon\\}\\ne\\Sigma^*$. Being in an accepting state does not help if the input cannot be consumed."
+        },
+        {
+          "title": "N(P) need not be Σ*",
+          "body": "In the same PDA the stack never empties, so $N(P)=\\emptyset$. (Alternatively, with only $\\delta(q,a,Z)=\\{(q,ZZ)\\}$, $N(P)=\\emptyset$ while $L(P)=a^*$.)"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Neither language is necessarily $\\Sigma^*$."
+        }
+      ],
+      "answer": {
+        "value": "Neither L(P) nor N(P) are necessarily Σ*",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "L(P) can be $\\{\\varepsilon\\}$ when transitions are missing; the accepting state alone does not accept unread input."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "N(P) can be $\\emptyset$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both fail by the same counterexample."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Assuming that because q is accepting, every input is accepted — the PDA must actually consume the whole input."
+      ],
+      "verification": "The transition-free PDA gives $L(P)=\\{\\varepsilon\\}$, $N(P)=\\emptyset$."
+    },
+    "it-2005-cs-39": {
+      "approach": "Solve the grammar as language equations over the single letter a; the language turns out to be a length condition mod 3, whose minimal DFA is a 3-cycle.",
+      "concepts": [
+        "Regular grammar",
+        "Unary languages",
+        "DFA minimisation"
+      ],
+      "steps": [
+        {
+          "title": "Substitute",
+          "body": "$Z = Sa + \\varepsilon$, $X = Za = Saa + a$, $W = Sa$, $Y = Wa = Saa$.\n$$S = Xa + Ya = (Saaa + aa) + Saaa = Saaa + aa$$"
+        },
+        {
+          "title": "Solve",
+          "body": "By Arden: $S = aa(aaa)^*$ — all strings $a^n$ with $n \\equiv 2 \\pmod 3$."
+        },
+        {
+          "title": "Minimal DFA",
+          "body": "States track $n \\bmod 3$: $q_0\\to q_1\\to q_2\\to q_0$ on $a$, accept $q_2$. The three residues are pairwise distinguishable ($a^0$, $a^1$, $a^2$ need $aa$, $a$, $\\varepsilon$ to reach acceptance), and every string has a residue, so no dead state: **3 states**."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Two states cannot count length mod 3."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: 3-cycle on lengths mod 3."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A 4th (dead) state is unnecessary: no string is rejected forever."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Too many; the grammar’s 5 non-terminals do not mean 5 DFA states."
+        }
+      ],
+      "verification": "Shortest strings derivable: $S\\Rightarrow Xa \\Rightarrow Zaa \\Rightarrow aa$; next $a^5$ via $Z\\to Sa$; matches $2,5,8,\\dots$."
+    },
+    "it-2005-cs-40": {
+      "approach": "Pumping lemmas are necessary conditions only; some non-regular (even non-context-free) languages satisfy them, so nothing about L follows.",
+      "concepts": [
+        "Pumping lemma",
+        "Necessary vs sufficient conditions"
+      ],
+      "steps": [
+        {
+          "title": "One direction only",
+          "body": "Regular ⇒ satisfies regular pumping lemma; CFL ⇒ satisfies CFL pumping lemma. The converses are false."
+        },
+        {
+          "title": "Example",
+          "body": "$L = \\{a^i b^j c^k d^l : i = 0 \\text{ or } j = k = l\\}$ is not context-free, yet with pumping length $p=1$ both lemmas hold: if $i\\ge1$ pump the first $a$ (removing it lands in the unrestricted $i=0$ part or keeps $i\\ge1$); if $i=0$ pump the first letter, which stays in $b^*c^*d^*$. Also every regular language satisfies both lemmas. So L may be regular or not, context-free or not."
+        }
+      ],
+      "answer": {
+        "value": "None of the above",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Non-regular languages can satisfy the regular pumping lemma."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Non-CFLs can satisfy the CFL pumping lemma (and the regular one)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Every regular language satisfies both lemmas, so L may be regular."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: neither lemma is a sufficient condition."
+        }
+      ],
+      "verification": "C is refuted by any regular L (e.g. $a^*$); A and B by the standard counterexamples."
+    },
+    "it-2005-cs-41": {
+      "approach": "Look for a schedule in which one process is always beaten to X. With a non-fair (weak/busy-waiting) semaphore both processes can lose the race forever, so both can starve.",
+      "concepts": [
+        "Semaphores",
+        "Starvation",
+        "Weak vs strong semaphores"
+      ],
+      "steps": [
+        {
+          "title": "P2 can starve",
+          "body": "$X=0$, P2 waits in $P(X)$. P1 loops: $V(X)$ ($X=1$), Compute, $P(X)$ ($X=0$). If the semaphore is not fair, P1 can always re-take X before P2 is scheduled to take it, so P2 waits forever."
+        },
+        {
+          "title": "P1 can starve",
+          "body": "After P1’s first $V(X)$, P2 does $P(X)$, computes and does $V(X)$, then immediately $P(X)$ again. If P1 is waiting in $P(X)$ and P2 keeps winning the race each round, P1 never proceeds."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Nothing in the program prevents either scenario, so both I and II are possible."
+        }
+      ],
+      "answer": {
+        "value": "Both I and II are true",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: each process can repeatedly win the race on X."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "P2 can also starve (P1 can monopolise X)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P1 can also starve (P2 can monopolise X)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Only true for a strictly FIFO (strong) semaphore, which the question does not assume."
+        }
+      ],
+      "pitfalls": [
+        "Assuming FIFO wake-up: with strong semaphores neither starves, but the standard P/V definition gives no fairness guarantee."
+      ],
+      "verification": "The two scenarios are symmetric: each process’s loop both releases and re-acquires X."
+    },
+    "it-2005-cs-42": {
+      "approach": "Model each constraint as a signal from one process to the other; constraints in the same direction can share one binary semaphore if their signals can never overlap. One semaphore alone fails because a process could consume its own signal.",
+      "concepts": [
+        "Binary semaphores",
+        "Process synchronisation"
+      ],
+      "steps": [
+        {
+          "title": "Directions",
+          "body": "R1, R3: P2 → P1 (P1 waits). R2, R4: P1 → P2 (P2 waits). Use $S$ for P2→P1 and $T$ for P1→P2, both initialised to 0."
+        },
+        {
+          "title": "Solution with 2",
+          "body": "```\nP1: Compute; P(S); R1; R2; V(T); P(S); R3; R4; V(T);\nP2: Compute; R1; V(S); P(T); R2; R3; V(S); P(T); R4;\n```\nP2’s second $V(S)$ comes after $P(T)$, i.e. after P1 already consumed the first $S$; similarly for $T$. So no signal is lost on a binary semaphore."
+        },
+        {
+          "title": "One is not enough",
+          "body": "With a single semaphore, P2 would need $V(S)$ after R1 and then wait before R2 on the same semaphore; it can take back its own signal before P1 does and enter R2 before P1 uses R2, violating the second constraint. Hence minimum = 2."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A single semaphore lets a process consume its own signal."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: one semaphore per direction, each reused twice."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Three is sufficient but not minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "One semaphore per constraint works but is not minimum."
+        }
+      ],
+      "verification": "Traced the ordering: P2 R1 → P1 R1,R2 → P2 R2,R3 → P1 R3,R4 → P2 R4 is the only order allowed, and the 2-semaphore code forces it."
+    },
+    "it-2005-cs-43": {
+      "approach": "Write the next-state equations: $Q_1^+ = A\\oplus B$, $Q_2^+ = \\overline{Q_1}\\,C$, $z = Q_1Q_2$. The output during cycle 3 depends only on inputs of cycles 1 and 2, so test each option.",
+      "concepts": [
+        "D flip-flop",
+        "Next-state equations",
+        "Sequential circuit timing"
+      ],
+      "steps": [
+        {
+          "title": "Equations",
+          "body": "$Q_1^+ = A\\oplus B$, $Q_2^+ = \\overline{Q_1}\\cdot C$, $z = Q_1 Q_2$.\nIn cycle 3: $Q_1 = A_2\\oplus B_2$ and $Q_2 = \\overline{Q_1}^{(2)} C_2 = \\overline{A_1\\oplus B_1}\\,C_2$.\nSo $z=1$ needs $A_1 = B_1$, $A_2\\ne B_2$, $C_2 = 1$ — independent of the unknown initial state."
+        },
+        {
+          "title": "Option A",
+          "body": "Cycle 1: $A=B=0$ ⇒ $Q_1=0$ in cycle 2. Cycle 2: $1\\oplus0 = 1$ ⇒ $Q_1=1$; $\\overline{0}\\cdot 1 = 1$ ⇒ $Q_2=1$. $z = 1$. ✓",
+          "scene": {
+            "hl": [
+              {
+                "r": 0
+              }
+            ]
+          }
+        },
+        {
+          "title": "Options B, C, D",
+          "body": "B: $A_1\\oplus B_1 = 1$ ⇒ $Q_2 = 0$. C: $0\\oplus 1 = 1$ ⇒ $Q_2=0$. D: $A_2\\oplus B_2 = 1\\oplus1 = 0$ ⇒ $Q_1 = 0$. All give $z = 0$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1
+              },
+              {
+                "r": 2
+              },
+              {
+                "r": 3
+              }
+            ]
+          }
+        }
+      ],
+      "answer": {
+        "value": "Option A (A,B,C = 000, 101, 111)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: $A_1=B_1$, $A_2\\ne B_2$, $C_2=1$ ⇒ $Q_1=Q_2=1$ in cycle 3."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Cycle 1 has $A\\ne B$, so $\\overline{Q_1}=0$ and $Q_2=0$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Cycle 1 has $A\\ne B$, so $Q_2=0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Cycle 2 has $A=B$, so $Q_1=0$."
+        }
+      ],
+      "pitfalls": [
+        "If “end of the third cycle” is read as after the third clock edge, $Q_1 = A_3\\oplus B_3 = 0$ for every option; only the during-cycle-3 reading gives a unique answer."
+      ],
+      "verification": "Only option A satisfies all three conditions; the answer does not depend on the initial flip-flop states.",
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "$A_1\\oplus B_1$",
+          "$\\overline{Q_1}C_2 = Q_2$",
+          "$A_2\\oplus B_2 = Q_1$",
+          "z"
+        ],
+        "rowLabels": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "rows": [
+          [
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ]
+        ],
+        "mono": true
+      }
+    },
+    "it-2005-cs-44": {
+      "approach": "A synchronous pipeline’s clock equals its slowest stage; $n$ instructions on $k$ stages take $(k+n-1)$ cycles.",
+      "concepts": [
+        "Pipeline cycle time",
+        "Pipeline throughput"
+      ],
+      "steps": [
+        {
+          "title": "Design D1",
+          "body": "Cycle $=\\max(3,2,4,2,3)=4$ ns. Time $=(5+100-1)\\times 4 = 104\\times 4 = 416$ ns."
+        },
+        {
+          "title": "Design D2",
+          "body": "Cycle $=2$ ns. Time $=(8+100-1)\\times 2 = 107\\times 2 = 214$ ns."
+        },
+        {
+          "title": "Saving",
+          "body": "$416 - 214 = 202$ ns."
+        }
+      ],
+      "answer": {
+        "value": "202 nsec",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "214 ns is D2’s total time, not the saving."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Results from using a wrong D1 cycle time."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Negative saving would mean D2 is slower; it is faster."
+        }
+      ],
+      "verification": "$416 - 214 = 202$."
+    },
+    "it-2005-cs-45": {
+      "approach": "Read the column of the table for each signal: list every (instruction, step) where it appears, then group by step.",
+      "concepts": [
+        "Hardwired control unit",
+        "Control signal generation"
+      ],
+      "steps": [
+        {
+          "title": "Signal S5",
+          "body": "T1: all four instructions → $T_1$. T3: I2 (S5, S6, S7) and I4 (S5, S10) → $(I_2+I_4)T_3$.\n$S_5 = T_1 + (I_2+I_4)T_3$."
+        },
+        {
+          "title": "Signal S10",
+          "body": "T2: I2 (S8, S9, S10), I3 (S7, S8, S10) → $(I_2+I_3)T_2$. T3: I4 → $I_4T_3$. T4: I1, I3 → $(I_1+I_3)T_4$. T5: I2, I4 → $(I_2+I_4)T_5$.\n$S_{10} = (I_2+I_3)T_2 + I_4T_3 + (I_1+I_3)T_4 + (I_2+I_4)T_5$."
+        },
+        {
+          "title": "Match",
+          "body": "Only option D has both expressions."
+        }
+      ],
+      "answer": {
+        "value": "S5 = T1 + (I2+I4).T3 & S10 = (I2+I3).T2 + I4.T3 + (I1+I3).T4 + (I2+I4).T5",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "S5 misses I4 at T3; S10 misses the T2 and T3 terms."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "S5 is right, but S10 misses the T2 and T3 terms."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "S10 wrongly includes I4 at T2 and misses $I_4T_3$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "Counted S10 occurrences in the table: 7 (I1T4, I2T2, I2T5, I3T2, I3T4, I4T3, I4T5) — all covered by D’s terms."
+    },
+    "it-2005-cs-46": {
+      "approach": "Each line independently is fault-free, stuck-at-0 or stuck-at-1; count all $3^N$ combinations and remove the single all-fault-free one.",
+      "concepts": [
+        "Stuck-at fault model",
+        "Counting"
+      ],
+      "steps": [
+        {
+          "title": "Count",
+          "body": "3 choices per line ⇒ $3^N$ assignments. A multiple stuck-at fault needs at least one faulty line, so exclude the assignment with every line fault-free: $3^N - 1$."
+        },
+        {
+          "title": "Check",
+          "body": "$N=1$: faults {s-a-0, s-a-1} = 2 = $3^1-1$. ✓"
+        }
+      ],
+      "answer": {
+        "value": "$3^N-1$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Includes the fault-free circuit."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Counts only which lines are faulty, ignoring 0 vs 1."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same mistake as C, plus the empty case."
+        }
+      ],
+      "verification": "$N=2$: 8 multiple faults ($3^2-1$) — 4 single + 4 double."
+    }
+  }
+}
