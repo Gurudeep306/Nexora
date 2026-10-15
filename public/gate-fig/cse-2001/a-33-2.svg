@@ -1,12 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">GRAPH / NETWORK</text>
-  <!-- Edges -->
-  <line x1="280.0" y1="50.0" x2="280.0" y2="50.0" stroke="#475569" stroke-width="2" />
-  <rect x="270.0" y="42.0" width="20" height="16" rx="4" fill="#0f172a" stroke="#64748b" stroke-width="1" />
-  <text x="280.0" y="54.0" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="monospace">2</text>
-  <!-- Vertices -->
-  <circle cx="280.0" cy="50.0" r="18" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
-  <text x="280.0" y="55.0" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold" font-family="monospace">C</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 110" fill="none" stroke="currentColor" stroke-width="2" font-family="Arial, Helvetica, sans-serif">
+  <line x1="80" y1="5" x2="80" y2="95" stroke-width="1.2" stroke-dasharray="4 3"/><line x1="160" y1="5" x2="160" y2="95" stroke-width="1.2" stroke-dasharray="4 3"/><line x1="240" y1="5" x2="240" y2="95" stroke-width="1.2" stroke-dasharray="4 3"/><line x1="480" y1="5" x2="480" y2="95" stroke-width="1.2" stroke-dasharray="4 3"/>
+  <path d="M40 40 H80 V15 H120 V40 H160 V15 H200 V40 H240 V15 H280 V40 H320 V15 H360 V40 H400 V15 H440 V40 H480 V15 H520 V40 H540"/>
+  <path d="M40 85 H80 V60 H470 V85 H540"/>
+  <g fill="currentColor" stroke="none" font-size="15"><text x="10" y="35">C</text><text x="10" y="80">X</text></g>
 </svg>
