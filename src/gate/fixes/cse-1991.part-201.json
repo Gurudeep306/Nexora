@@ -1,0 +1,61 @@
+{
+  "paper": "cse-1991",
+  "fixes": [
+    {
+      "id": "cse-1991-a-3-ix",
+      "field": "subject",
+      "before": "cn",
+      "after": "cd",
+      "reason": "Link editors are system software (compilers/linking), not computer networks.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-a-3-ix",
+      "field": "topic",
+      "before": "ip",
+      "after": "runtime",
+      "reason": "Linking / external symbol resolution belongs with compiler runtime topics.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-5-c",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Fig. 5 checked: the third AND gate only drives the carry output, so the critical path is FF + 2 AND = 30 ns.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-5-c",
+      "field": "reviewNote",
+      "before": "Whether the last AND gate (carry out) is counted changes the answer to 40 ns / 25 MHz; verify.",
+      "after": null,
+      "reason": "Resolved; see needsReview fix.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-6-a",
+      "field": "answer",
+      "before": "4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})",
+      "after": "3 D flip-flops Q_A, Q_B, Q_C with 2-to-1 AND-OR steering: D_A = L·A + L′·S, D_B = L·B + L′·Q_A, D_C = L·C + L′·Q_B (L = LOAD/SHIFT′); serial output Q_C",
+      "reason": "Three parallel inputs A, B, C need 3 flip-flops (not 4); stored steering equation was inconsistent with LOAD/SHIFT′.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-6-b",
+      "field": "answer",
+      "before": "Cascade of 1024 1-bit D flip-flop stages with common shift clock",
+      "after": "Mod-1024 (10-bit) counter drives the RAM address; on each shift pulse read M[ctr] into an output D flip-flop (D_out), then write D_in into M[ctr] (READ/WRITE′ = 0), then increment the counter — the output is the input delayed by 1024 shifts",
+      "reason": "The question requires a RAM-based design; stored answer described a flip-flop cascade.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    },
+    {
+      "id": "cse-1991-b-7-a",
+      "field": "answer",
+      "before": "FSM controller with state register, decoder, and combinational control logic matrix",
+      "after": "T0: MAR ← PC; T1: MBR ← M[MAR], PC ← PC + 1; T2: IR ← MBR; T3: MAR ← IR[7..0] (+ X if indexed) — effective address formed in the fetch cycle",
+      "reason": "Part (a) asks for the register transfer sequence; stored answer described the controller hardware.",
+      "source": "GATE 1991 CSE paper (GATE1991.pdf) + independent solution"
+    }
+  ]
+}
