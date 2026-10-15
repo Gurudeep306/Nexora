@@ -1,0 +1,37 @@
+{
+  "paper": "cse-2000",
+  "fixes": [
+    {
+      "id": "cse-2000-a-1-7",
+      "field": "subject",
+      "before": "pds",
+      "after": "legacy",
+      "reason": "The 8085 READY/wait-state question is about the 8085 microprocessor, not C programming.",
+      "source": "GATE 2000 paper Q1.7"
+    },
+    {
+      "id": "cse-2000-a-1-7",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "microprocessor",
+      "reason": "Same as Q1.9 (8085 microprocessor).",
+      "source": "GATE 2000 paper Q1.7"
+    },
+    {
+      "id": "cse-2000-a-1-18",
+      "field": "subject",
+      "before": "pds",
+      "after": "cd",
+      "reason": "Counting tokens is lexical analysis (compiler design).",
+      "source": "GATE 2000 paper Q1.18"
+    },
+    {
+      "id": "cse-2000-a-1-18",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "lexical",
+      "reason": "Counting tokens is lexical analysis.",
+      "source": "GATE 2000 paper Q1.18"
+    }
+  ]
+}
