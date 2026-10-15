@@ -2,6 +2,7 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 const { errMessage } = require("../http-error");
 const { persistUpload } = require("../upload-store");
+const { isSetAvatar, normalizeAvatar } = require("../avatar-set");
 const { regenerateSession, sanitizeSessionUser } = require("../middleware/auth");
 
 // Columns that must never leave the server, whoever is asking.
@@ -195,7 +196,7 @@ function createAuthRouter(deps) {
         [
           clean,
           display_name || clean,
-          avatar || "coder",
+          normalizeAvatar(avatar, clean),
           bio || "",
           "online",
           role,
@@ -249,6 +250,13 @@ function createAuthRouter(deps) {
       const valid = await verifyPassword(password, user.password_hash);
       if (!valid)
         return res.status(401).json({ ok: false, error: LOGIN_FAILED });
+
+      // Lazy migration: accounts from before the avatar set still hold an old
+      // generated/preset value; store their default set avatar on sign-in.
+      if (!isSetAvatar(user.avatar)) {
+        user.avatar = normalizeAvatar(user.avatar, user.username);
+        await run("UPDATE users SET avatar=? WHERE username=?", [user.avatar, user.username]).catch(() => {});
+      }
 
       // New session id on sign-in (prevents session fixation).
       await regenerateSession(req);
@@ -374,8 +382,8 @@ function createAuthRouter(deps) {
           finalUsername = cleanNew;
         }
 
-        // Avatar: generated ("gen:<style>:<variant>") or a legacy preset key.
-        if (avatar !== undefined && (typeof avatar !== "string" || !/^[a-z0-9:_-]{1,40}$/i.test(avatar))) {
+        // Avatar: one of the avatar set ("set:<id>"); "" leaves it unchanged.
+        if (avatar !== undefined && avatar !== "" && !isSetAvatar(avatar)) {
           return res.status(400).json({ ok: false, error: "Invalid avatar" });
         }
         if (

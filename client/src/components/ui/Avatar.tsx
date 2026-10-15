@@ -1,21 +1,22 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import { assetUrl } from '@/lib/api'
-import { avatarDataUrl, parseAvatar } from '@/lib/avatar'
+import { avatarName, avatarSetUrl, isImageUrl, resolveAvatarId } from '@/lib/avatar'
 
 const SIZES = {
-  xs: 'h-6 w-6 text-[10px]',
-  sm: 'h-8 w-8 text-xs',
-  md: 'h-10 w-10 text-sm',
-  lg: 'h-12 w-12 text-lg',
-  xl: 'h-14 w-14 text-2xl',
-  '2xl': 'h-16 w-16 text-3xl',
+  xs: 'h-6 w-6',
+  sm: 'h-8 w-8',
+  md: 'h-10 w-10',
+  lg: 'h-12 w-12',
+  xl: 'h-14 w-14',
+  '2xl': 'h-16 w-16',
+  '3xl': 'h-24 w-24',
 }
 
 /**
- * User picture. Priority: uploaded photo (`src`) → generated avatar from the
- * user's `avatar` setting ("gen:<style>:<n>") → generated default from the
- * username (`seed`). Everyone always has a unique picture, never blank initials.
+ * User picture. Priority: uploaded photo (`src`, or an image URL passed as
+ * `avatar`) → the user's chosen set avatar ("set:<id>") → the default set
+ * avatar for their username (`seed`). Everyone always has a picture.
  */
 export function Avatar({
   src,
@@ -29,24 +30,20 @@ export function Avatar({
 }: {
   src?: string | null
   name?: string | null
-  /** Stable identity used to generate the picture — pass the username. */
+  /** Stable identity the default avatar is picked from — pass the username. */
   seed?: string | null
-  /** users.avatar value (generated spec or legacy preset key). */
+  /** users.avatar value ("set:<id>"; anything else falls back to the default). */
   avatar?: string | null
   size?: keyof typeof SIZES
   className?: string
   ring?: boolean
   online?: boolean
 }) {
-  // `avatar` column stores preset keys ("coder", "bolt", …); only real URLs render as uploaded images.
-  // If an uploaded photo fails to load (deleted file, offline CDN) fall back to the generated one.
+  // If an uploaded photo fails to load (deleted file, offline CDN) fall back to the set avatar.
   const [failed, setFailed] = useState<string | null>(null)
-  const imgSrc = src && /^(https?:|data:|\/)/.test(src) && failed !== src ? assetUrl(src) : null
-  const key = seed || name || '?'
-  const generated = useMemo(
-    () => (imgSrc ? null : avatarDataUrl(key, parseAvatar(avatar, key))),
-    [imgSrc, key, avatar],
-  )
+  const photo = isImageUrl(src) ? src : isImageUrl(avatar) ? avatar : null
+  const imgSrc = photo && failed !== photo ? assetUrl(photo) : null
+  const id = resolveAvatarId(avatar, seed || name || '')
 
   return (
     <span className={cn('relative inline-flex shrink-0', className)}>
@@ -54,7 +51,7 @@ export function Avatar({
         <img
           src={imgSrc}
           alt={name ?? 'avatar'}
-          onError={() => setFailed(src ?? null)}
+          onError={() => setFailed(photo)}
           className={cn(
             SIZES[size],
             'rounded-full object-cover border border-border',
@@ -63,10 +60,11 @@ export function Avatar({
         />
       ) : (
         <img
-          src={generated ?? undefined}
-          alt={name ? `${name}'s avatar` : 'avatar'}
-          className={cn(SIZES[size], 'rounded-full bg-bg-surface-2', ring && 'ring-2 ring-accent-brand/20')}
+          src={avatarSetUrl(id)}
+          alt={name ? `${name}'s avatar` : `${avatarName(id)} avatar`}
+          decoding="async"
           draggable={false}
+          className={cn(SIZES[size], 'rounded-full bg-bg-surface-2 select-none', ring && 'ring-2 ring-accent-brand/20')}
         />
       )}
       {online != null && (
