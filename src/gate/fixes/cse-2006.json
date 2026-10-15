@@ -1,0 +1,251 @@
+{
+  "paper": "cse-2006",
+  "fixes": [
+    {
+      "id": "cse-2006-cs-8",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Independent timing analysis confirms C: posedge-then-negedge sampling delays f by one clock period = 180° of f; A/D race on the negative edge, B inverts.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2006-cs-8",
+      "field": "reviewNote",
+      "before": "Answer C taken from the accepted answer on gateoverflow (Q8); the option figures are simple but the timing argument is subtle.",
+      "after": null,
+      "reason": "Review resolved by independent solution.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2006-cs-18",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Independent derivation: P(min = 2^i) = 2^-i, so E = sum of n ones = n, confirming D.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2006-cs-18",
+      "field": "reviewNote",
+      "before": "Answer derived by hand ($E=n$); web summaries disagreed, empty-sample case ignored.",
+      "after": null,
+      "reason": "Review resolved by independent solution.",
+      "source": "solved"
+    },
+    {
+      "id": "cse-2006-cs-8",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2006/cs-8-a.png",
+          "alt": "f passes through a NOT gate into D of FF1; FF1 clock is clk through an inverter; FF1 output Qbar feeds D of FF2; FF2 clocked directly by clk; output is Q of FF2.",
+          "svg": "cse-2006/cs-8-a.svg"
+        },
+        {
+          "f": "cse-2006/cs-8-b.png",
+          "alt": "f through a NOT gate into D of FF1; FF1 clocked by clk; Q of FF1 to D of FF2; FF2 clocked by clk through a NOT gate; output Q of FF2.",
+          "svg": "cse-2006/cs-8-b.svg"
+        },
+        {
+          "f": "cse-2006/cs-8-c.png",
+          "alt": "f directly to D of FF1; FF1 clocked by clk; Q of FF1 to D of FF2; FF2 clocked by clk through a NOT gate; output Q of FF2.",
+          "svg": "cse-2006/cs-8-c.svg"
+        },
+        {
+          "f": "cse-2006/cs-8-d.png",
+          "alt": "f directly to D of FF1; FF1 clocked by inverted clk; Qbar of FF1 to D of FF2; FF2 clocked directly by clk; output Q of FF2.",
+          "svg": "cse-2006/cs-8-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2006/cs-8-a.png",
+          "alt": "Option A: f passes through a NOT gate into D of flip-flop 1, which is clocked by clk through an inverter; the Q-bar output of flip-flop 1 drives D of flip-flop 2, which is clocked directly by clk; output is Q of flip-flop 2.",
+          "svg": "cse-2006/cs-8-a.svg"
+        },
+        {
+          "f": "cse-2006/cs-8-b.png",
+          "alt": "Option B: f passes through a NOT gate into D of flip-flop 1, clocked directly by clk; Q of flip-flop 1 drives D of flip-flop 2, which is clocked by clk through a NOT gate; output is Q of flip-flop 2.",
+          "svg": "cse-2006/cs-8-b.svg"
+        },
+        {
+          "f": "cse-2006/cs-8-c.png",
+          "alt": "Option C: f goes directly into D of flip-flop 1, clocked directly by clk; Q of flip-flop 1 drives D of flip-flop 2, which is clocked by clk through a NOT gate; output is Q of flip-flop 2.",
+          "svg": "cse-2006/cs-8-c.svg"
+        },
+        {
+          "f": "cse-2006/cs-8-d.png",
+          "alt": "Option D: f goes directly into D of flip-flop 1, which is clocked by clk through an inverter; the Q-bar output of flip-flop 1 drives D of flip-flop 2, which is clocked directly by clk; output is Q of flip-flop 2.",
+          "svg": "cse-2006/cs-8-d.svg"
+        }
+      ],
+      "reason": "Option circuit SVGs redrawn faithfully from the paper (previous SVGs were unrelated placeholders); alt text made precise.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2006-cs-35",
+      "field": "reviewNote",
+      "before": "Option overlines are hard to read in the scan; expressions taken from the web.",
+      "after": null,
+      "reason": "Options re-checked against a 250 dpi render of the scan; all four expressions match the stored text.",
+      "source": "GATE 2006 CS question paper Q.35 (scanned PDF, page 5)"
+    },
+    {
+      "id": "cse-2006-cs-37",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Wiring confirmed on a 500 dpi render: data -> D(q0); XOR(q0, q2 feedback) -> D(q1); q1 -> D(q2). Simulation of 100110000 gives q2q1q0 = 010, matching key C.",
+      "source": "GATE 2006 CS question paper Q.37 (scanned PDF, page 5) + independent simulation"
+    },
+    {
+      "id": "cse-2006-cs-37",
+      "field": "reviewNote",
+      "before": "Wiring read from a low-resolution figure (XOR inputs taken as q0 and q2, output to D of q1); a web summary claimed 101 but hand simulation gives 010.",
+      "after": null,
+      "reason": "Figure wiring verified at higher resolution; answer 010 confirmed by simulation.",
+      "source": "GATE 2006 CS question paper Q.37 (scanned PDF, page 5)"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$\\overline{w}xz,\\ wx\\overline{y},\\ x\\overline{y}z,\\ xyz,\\ wyz$"
+        },
+        {
+          "l": "B",
+          "t": "$wxy,\\ \\overline{w}xz,\\ wyz$"
+        },
+        {
+          "l": "C",
+          "t": "$wx\\overline{yz},\\ xz,\\ w\\overline{x}yz$"
+        },
+        {
+          "l": "D",
+          "t": "$wzy,\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\overline{w}xz,\\ wx\\overline{y},\\ x\\overline{y}z,\\ xyz,\\ wyz$"
+        },
+        {
+          "l": "B",
+          "t": "$wxz,\\ \\overline{w}xy,\\ wyz$"
+        },
+        {
+          "l": "C",
+          "t": "$wx\\overline{yz},\\ xz,\\ w\\overline{x}yz$"
+        },
+        {
+          "l": "D",
+          "t": "$wx\\overline{y},\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$"
+        }
+      ],
+      "reason": "Scan shows option (b) as 'wxz, w-bar xy, wyz' (letters were swapped). Option (d)'s first cube is blurred; 'wzy' would duplicate wyz and leave minterm 12 uncovered, so it is read as wx(y-bar), the standard transcription.",
+      "source": "GATE 2006 CS question paper Q.38 (scanned PDF, page 5, 500 dpi render)"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key A is provably not hazard-free: no cube of (A) contains both minterms 13 (1101) and 15 (1111). Independent solution gives D.",
+      "source": "Independent solution (adjacent-pair coverage check)"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "reviewNote",
+      "before": "Option overlines were partly illegible in the scan; option expressions taken from the web.",
+      "after": "Stored key A looks wrong: cover (A) = {5,7},{12,13},{5,13},{7,15},{11,15} has no cube containing the adjacent pair 13 (1101) / 15 (1111), so f can glitch when y changes. Option (D) (first cube read as wx y-bar; it is blurred in the scan) covers all six adjacent pairs 5-7, 5-13, 7-15, 13-15, 12-13, 11-15 and should be the answer. (B) and (C) contain false minterms 6 and 14.",
+      "reason": "Record the key disagreement and the blurred option (d) term for review.",
+      "source": "Independent solution + GATE 2006 scanned PDF"
+    },
+    {
+      "id": "cse-2006-cs-43",
+      "field": "reviewNote",
+      "before": "The mask-generation line preceding `temp <- reg & mask` is not visible in the scan; question text follows the printed lines.",
+      "after": null,
+      "reason": "The scan prints the full emulation (temp <- reg & mask; branch if temp non-zero) and the four mask options; nothing is missing.",
+      "source": "GATE 2006 CS question paper Q.43 (scanned PDF, page 6)"
+    },
+    {
+      "id": "cse-2006-cs-54",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "Takes $O(3n)$ and $\\Omega(2n)$ time if hashing is permitted"
+        },
+        {
+          "l": "B",
+          "t": "Takes $O(n^3)$ and $\\Omega(n^{2.5})$ time in the key comparison model"
+        },
+        {
+          "l": "C",
+          "t": "Takes $\\Theta(n)$ time and space"
+        },
+        {
+          "l": "D",
+          "t": "Takes $O(\\sqrt{n})$ time only if the sum of the $2n$ elements is an even number"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "Takes $O(3^n)$ and $\\Omega(2^n)$ time if hashing is permitted"
+        },
+        {
+          "l": "B",
+          "t": "Takes $O(n^3)$ and $\\Omega(n^{2.5})$ time in the key comparison model"
+        },
+        {
+          "l": "C",
+          "t": "Takes $\\Theta(n)$ time and space"
+        },
+        {
+          "l": "D",
+          "t": "Takes $O(\\sqrt{n})$ time only if the sum of the $2n$ elements is an even number"
+        }
+      ],
+      "reason": "Option (a) in the scan reads O(3^n) and Omega(2^n) (exponents), not O(3n) and Omega(2n).",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-54",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Options re-read from a high-resolution render of the scan; answer C proved independently (prefix differences, Theta(n)).",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-54",
+      "field": "reviewNote",
+      "before": "Option exponents in the scan are blurred (options a and b).",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-53",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Code and statements verified against a high-resolution render of the scan; invariant k = i + j proves answer D.",
+      "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-53",
+      "field": "reviewNote",
+      "before": "Code and statements partly blurred; web text used. Answer derived by hand (k = i + j); a web summary listed 'either (i) or (ii)'.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "GATE 2006 question paper scan"
+    }
+  ]
+}
