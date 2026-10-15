@@ -18,6 +18,7 @@ import { api, ApiError } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { timeAgo } from '@/lib/utils'
 import type { Friend, FriendRequest, SearchResultUser } from './types'
+import { UserBadges } from '@/components/shared/UserBadges'
 import { avatarSrc } from './types'
 
 interface Props {
@@ -201,6 +202,7 @@ export function FriendsTab({ me, socket }: Props) {
                             className="block cursor-pointer truncate text-sm font-semibold text-foreground transition-colors hover:text-primary-bright"
                           >
                             {f.display_name || f.username}
+                            <UserBadges username={f.username} className="ml-1.5" />
                           </Link>
                           <p className="truncate text-xs text-foreground-faint">
                             @{f.username}
