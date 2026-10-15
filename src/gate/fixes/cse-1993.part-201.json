@@ -1,0 +1,45 @@
+{
+  "paper": "cse-1993",
+  "fixes": [
+    {
+      "id": "cse-1993-ii-a-7-1",
+      "field": "text",
+      "before": "Note: For sub-questions 7.1 to 7.3, refer to the PASCAL program shown below.\n\n```pascal\nProgram PARAM (input, output);\nvar m, n : integer;\nprocedure P (var, x, y : integer);\n    var m : integer;\n    begin\n        m : = 1;\n        x : = y + 1\n    end;\nprocedure Q (x:integer; vary : integer);\n    begin\n        x:=y+1;\n    end;\nbegin\n    m:=0; P(m,m); write (m);\n    n:=0; Q(n*1,n); write (n)\nend\n```\n\nThe value of m, output by the program PARAM is:",
+      "after": "Note: For sub-questions 7.1 to 7.3, refer to the PASCAL program shown below.\n\n```pascal\nProgram PARAM (input, output);\nvar m, n : integer;\nprocedure P (var x, y : integer);\n    var m : integer;\n    begin\n        m := 1;\n        x := y + 1\n    end;\nprocedure Q (x : integer; var y : integer);\n    begin\n        x := y + 1;\n    end;\nbegin\n    m := 0; P(m, m); write (m);\n    n := 0; Q(n*1, n); write (n)\nend\n```\n\nThe value of m, output by the program PARAM is:",
+      "reason": "Clean OCR artefacts in the Pascal code: \"var, x, y\" -> \"var x, y\", \"vary\" -> \"var y\", \"m : = 1\" -> \"m := 1\".",
+      "source": "GATE 1993 paper PDF"
+    },
+    {
+      "id": "cse-1993-ii-a-7-2",
+      "field": "text",
+      "before": "Note: For sub-questions 7.1 to 7.3, refer to the PASCAL program shown below.\n\n```pascal\nProgram PARAM (input, output);\nvar m, n : integer;\nprocedure P (var, x, y : integer);\n    var m : integer;\n    begin\n        m : = 1;\n        x : = y + 1\n    end;\nprocedure Q (x:integer; vary : integer);\n    begin\n        x:=y+1;\n    end;\nbegin\n    m:=0; P(m,m); write (m);\n    n:=0; Q(n*1,n); write (n)\nend\n```\n\nThe value of n, output by the program PARAM is:",
+      "after": "Note: For sub-questions 7.1 to 7.3, refer to the PASCAL program shown below.\n\n```pascal\nProgram PARAM (input, output);\nvar m, n : integer;\nprocedure P (var x, y : integer);\n    var m : integer;\n    begin\n        m := 1;\n        x := y + 1\n    end;\nprocedure Q (x : integer; var y : integer);\n    begin\n        x := y + 1;\n    end;\nbegin\n    m := 0; P(m, m); write (m);\n    n := 0; Q(n*1, n); write (n)\nend\n```\n\nThe value of n, output by the program PARAM is:",
+      "reason": "Clean OCR artefacts in the Pascal code: \"var, x, y\" -> \"var x, y\", \"vary\" -> \"var y\", \"m : = 1\" -> \"m := 1\".",
+      "source": "GATE 1993 paper PDF"
+    },
+    {
+      "id": "cse-1993-ii-a-7-3",
+      "field": "text",
+      "before": "Note: For sub-questions 7.1 to 7.3, refer to the PASCAL program shown below.\n\n```pascal\nProgram PARAM (input, output);\nvar m, n : integer;\nprocedure P (var, x, y : integer);\n    var m : integer;\n    begin\n        m : = 1;\n        x : = y + 1\n    end;\nprocedure Q (x:integer; vary : integer);\n    begin\n        x:=y+1;\n    end;\nbegin\n    m:=0; P(m,m); write (m);\n    n:=0; Q(n*1,n); write (n)\nend\n```\n\nWhat is the scope of m declared in the main program?",
+      "after": "Note: For sub-questions 7.1 to 7.3, refer to the PASCAL program shown below.\n\n```pascal\nProgram PARAM (input, output);\nvar m, n : integer;\nprocedure P (var x, y : integer);\n    var m : integer;\n    begin\n        m := 1;\n        x := y + 1\n    end;\nprocedure Q (x : integer; var y : integer);\n    begin\n        x := y + 1;\n    end;\nbegin\n    m := 0; P(m, m); write (m);\n    n := 0; Q(n*1, n); write (n)\nend\n```\n\nWhat is the scope of m declared in the main program?",
+      "reason": "Clean OCR artefacts in the Pascal code: \"var, x, y\" -> \"var x, y\", \"vary\" -> \"var y\", \"m : = 1\" -> \"m := 1\".",
+      "source": "GATE 1993 paper PDF"
+    },
+    {
+      "id": "cse-1993-ii-a-7-5",
+      "field": "text",
+      "before": "For the program segment given below, which of the following are true?\n\n```pascal\nprogram main (output);\ntype link = ^data;\n    data = record\n        d : real;\n        n : link\n        end;\nvar ptr : link;\nbegin\n    new (ptr);\n    ptr:=nil;\n    .ptr^.d:=5.2;\n    write ln(ptr)\nend.\n```",
+      "after": "For the program segment given below, which of the following are true?\n\n```pascal\nprogram main (output);\ntype link = ^data;\n    data = record\n        d : real;\n        n : link\n        end;\nvar ptr : link;\nbegin\n    new (ptr);\n    ptr:=nil;\n    ptr^.d:=5.2;\n    writeln(ptr)\nend.\n```",
+      "reason": "Remove the stray \".\" before ptr^ and join \"write ln\" (scan artefacts).",
+      "source": "GATE 1993 paper PDF"
+    },
+    {
+      "id": "cse-1993-ii-a-7-5",
+      "field": "reviewNote",
+      "before": "The stray '.' before ptr^ and 'write ln(ptr)' (writing a pointer is illegal in standard Pascal) could arguably make (a) correct; answer assumes these are transcription artefacts.",
+      "after": "Key (b),(d) assumes the intended error is the nil dereference. Strictly, standard Pascal cannot write a pointer value, so writeln(ptr) would be a compile-time error and (a) could also be argued.",
+      "reason": "Re-worded after removing scan artefacts from the code.",
+      "source": "GATE 1993 paper PDF"
+    }
+  ]
+}
