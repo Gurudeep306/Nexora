@@ -1,0 +1,9 @@
+{
+  "paper": "cse-1994",
+  "fixes": [
+    { "id": "cse-1994-a-2-5", "field": "subject", "before": "ga", "after": "dm", "reason": "Handshaking-lemma graph theory question, not general aptitude.", "source": "pdf" },
+    { "id": "cse-1994-a-2-5", "field": "topic", "before": "verbal", "after": "graphs", "reason": "Topic is graph theory (regular graph edge count).", "source": "pdf" },
+    { "id": "cse-1994-a-2-8", "field": "subject", "before": "ga", "after": "prob", "reason": "Probability of independent events, not general aptitude.", "source": "pdf" },
+    { "id": "cse-1994-a-2-8", "field": "topic", "before": "verbal", "after": "basic", "reason": "Basic probability (complement rule with independent events).", "source": "pdf" }
+  ]
+}
