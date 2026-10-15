@@ -1,0 +1,37 @@
+{
+  "paper": "it-2006",
+  "fixes": [
+    {
+      "id": "it-2006-cs-85",
+      "field": "text",
+      "before": "Consider a database with three relation instances shown below. The primary keys for the Drivers and Cars relation are did and cid respectively and the records are stored in ascending order of these primary keys as given in the tables. No indexing is available in the database.\n\nD: Drivers relation\n\n| did | dname | rating | age |\n|---|---|---|---|\n| 22 | Karthikeyan | 7 | 25 |\n| 29 | Salman | 1 | 33 |\n| 31 | Boris | 8 | 55 |\n| 32 | Amoldt | 8 | 25 |\n| 58 | Schumacher | 10 | 35 |\n| 64 | Sachin | 7 | 35 |\n| 71 | Senna | 10 | 16 |\n| 74 | Sachin | 9 | 35 |\n| 85 | Rahul | 3 | 25 |\n| 95 | Ralph | 3 | 53 |\n\nR: Reserves relation\n\n| did | cid | day |\n|---|---|---|\n| 22 | 101 | 10/10/06 |\n| 22 | 102 | 10/10/06 |\n| 22 | 103 | 8/10/06 |\n| 22 | 104 | 7/10/06 |\n| 31 | 102 | 10/11/06 |\n| 31 | 103 | 6/11/06 |\n| 31 | 104 | 12/11/06 |\n| 64 | 101 | 5/9/06 |\n| 64 | 102 | 8/9/06 |\n| 74 | 103 | 8/9/06 |\n\nC: Cars relation\n\n| cid | cname | color |\n|---|---|---|\n| 101 | Renault | blue |\n| 102 | Renault | red |\n| 103 | Ferrari | green |\n| 104 | Jaguar | red |\n\nLet n be the number of comparisons performed when the above SQL query is optimally executed. If linear search is used to locate a tuple in a relation using primary key, then n lies in the range\n\n```sql\nselect D.dname\nfrom Drivers D\nwhere D.did in (\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'red'\n    intersect\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'green'\n)\n```\n\n",
+      "after": "Consider a database with three relation instances shown below. The primary keys for the Drivers and Cars relation are did and cid respectively and the records are stored in ascending order of these primary keys as given in the tables. No indexing is available in the database.\n\nD: Drivers relation\n\n| did | dname | rating | age |\n|---|---|---|---|\n| 22 | Karthikeyan | 7 | 25 |\n| 29 | Salman | 1 | 33 |\n| 31 | Boris | 8 | 55 |\n| 32 | Amoldt | 8 | 25 |\n| 58 | Schumacher | 10 | 35 |\n| 64 | Sachin | 7 | 35 |\n| 71 | Senna | 10 | 16 |\n| 74 | Sachin | 9 | 35 |\n| 85 | Rahul | 3 | 25 |\n| 95 | Ralph | 3 | 53 |\n\nR: Reserves relation\n\n| did | cid | day |\n|---|---|---|\n| 22 | 101 | 10/10/06 |\n| 22 | 102 | 10/10/06 |\n| 22 | 103 | 8/10/06 |\n| 22 | 104 | 7/10/06 |\n| 31 | 102 | 10/11/06 |\n| 31 | 103 | 6/11/06 |\n| 31 | 104 | 12/11/06 |\n| 64 | 101 | 5/9/06 |\n| 64 | 102 | 8/9/06 |\n| 74 | 103 | 8/9/06 |\n\nC: Cars relation\n\n| cid | cname | color |\n|---|---|---|\n| 101 | Renault | blue |\n| 102 | Renault | red |\n| 103 | Ferrari | green |\n| 104 | Jaguar | red |\n\nConsider the SQL query of the previous question:\n\n```sql\nselect D.dname\nfrom Drivers D\nwhere D.did in (\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'red'\n    intersect\n    select R.did\n    from Cars C, Reserves R\n    where R.cid = C.cid and C.color = 'green'\n)\n```\n\nLet n be the number of comparisons performed when the above SQL query is optimally executed. If linear search is used to locate a tuple in a relation using primary key, then n lies in the range",
+      "reason": "The query appeared after the question sentence; moved it before \"Let n be ...\" so the text reads as in the paper (the query belongs to Q84).",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-80",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key A (Both I and IV) contradicts the standard closure result that half(L) is regular whenever L is regular; only repeat(L) can be non-regular, so the provable answer is B (Only I).",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-80",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key A claims half(L) can be non-regular, but half(L) is always regular for regular L (DFA on pairs (state, set of states reaching F in |u| steps)); prefix and suffix are also closed. Only repeat(L) can be non-regular (repeat((a+b)*) = {ww}). Provable answer: B (Only I). Key not changed because no official key is available.",
+      "reason": "Explain the disagreement with the stored key.",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    },
+    {
+      "id": "it-2006-cs-76",
+      "field": "reviewNote",
+      "before": "First equation is printed 'x + 3/2 = 9' (blurred); read as x + y/2 = 9 following the published version of the question. Direct computation on this matrix does not give any option; answer D taken from the published key.",
+      "after": "First equation is printed 'x + 3/2 = 9' (blurred); read as x + y/2 = 9 following the published version. The question does not say which matrix: the Jacobi iteration matrix of the reordered system (3x + y = 10 first) has Frobenius norm sqrt(1/9 + 4) = 2.03 (key D), while the Gauss-Seidel matrix of the same system gives sqrt(5)/3 = 0.745 (option A). Kept the published key D.",
+      "reason": "More precise note on the ambiguity.",
+      "source": "GATE 2006 IT question paper (GATE2006IT.pdf)"
+    }
+  ]
+}
