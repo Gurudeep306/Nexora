@@ -57,7 +57,18 @@ function traceOf(algo: Algorithm) {
   }
 }
 
-export function AlgoTheater({ compact = false, className }: { compact?: boolean; className?: string }) {
+export function AlgoTheater({
+  compact = false,
+  className,
+  driven = false,
+  nudge = 0,
+}: {
+  compact?: boolean
+  className?: string
+  /** Hold the autoplay; each change of `nudge` advances one step instead. */
+  driven?: boolean
+  nudge?: number
+}) {
   const reduce = useReducedMotion()
   const [act, setAct] = useState(0)
   const [at, setAt] = useState(0)
@@ -73,7 +84,7 @@ export function AlgoTheater({ compact = false, className }: { compact?: boolean;
   const frames = useMemo(() => traceOf(algo), [algo])
   const last = Math.max(0, frames.length - 1)
   const frame = frames[Math.min(at, last)]
-  const playing = !reduce && !userPaused && !hovered && visible
+  const playing = !reduce && !userPaused && !hovered && visible && !driven
 
   // Advance one step at a time; hold on the last step, then roll to the next act.
   useEffect(() => {
@@ -90,6 +101,23 @@ export function AlgoTheater({ compact = false, className }: { compact?: boolean;
     )
     return () => window.clearTimeout(t)
   }, [playing, at, last, frames.length])
+
+  // Driven mode: one step per nudge (the sign-in page sends one per keystroke).
+  const cursor = useRef({ at, last })
+  useEffect(() => {
+    cursor.current = { at, last }
+  }, [at, last])
+  const lastNudge = useRef(nudge)
+  useEffect(() => {
+    if (lastNudge.current === nudge) return
+    lastNudge.current = nudge
+    const { at: a, last: l } = cursor.current
+    if (a < l) setAt(a + 1)
+    else {
+      setAct((x) => (x + 1) % PLAYLIST.length)
+      setAt(0)
+    }
+  }, [nudge])
 
   // Pause when scrolled away or the tab is hidden — no point animating unseen.
   useEffect(() => {
