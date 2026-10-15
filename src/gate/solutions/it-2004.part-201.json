@@ -1,0 +1,1392 @@
+{
+ "paper": "it-2004",
+ "version": 2,
+ "solutions": {
+  "it-2004-it-24": {
+   "approach": "Check each statement against what HTTP actually does: it is an application-layer request/response protocol over TCP; page structure is the job of HTML.",
+   "concepts": [
+    "HTTP",
+    "HTML vs HTTP",
+    "URL query string"
+   ],
+   "steps": [
+    {
+     "title": "What HTTP is",
+     "body": "HTTP is a stateless request/response protocol that transfers resources between client and server; it normally runs over a TCP connection (port 80)."
+    },
+    {
+     "title": "Find the false statement",
+     "body": "The *structure* of a web page (headings, paragraphs, links) is described by **HTML**, a markup language. HTTP only carries the page; it says nothing about its layout. So statement B is false."
+    }
+   ],
+   "answer": {
+    "value": "HTTP describes the structure of web page — false (that is HTML)",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True: HTTP uses a reliable TCP connection."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "False — this is the answer. Page structure is described by HTML, not HTTP."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "True: GET requests carry data in the URL query string (e.g. `?id=5`), so information can be stored in a URL."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "True: methods such as HEAD let a client check whether a hypertext link (resource) is valid without fetching the body."
+    }
+   ],
+   "pitfalls": [
+    "Confusing HTTP (transfer protocol) with HTML (markup language)."
+   ],
+   "verification": "Each of A, C, D describes a real HTTP feature (TCP transport, query strings, HEAD/status codes); only B attributes HTML's role to HTTP."
+  },
+  "it-2004-it-25": {
+   "approach": "For confidentiality in public-key cryptography the message must be encrypted with a key only the receiver can undo: the receiver's public key.",
+   "concepts": [
+    "Public-key cryptography",
+    "Confidentiality"
+   ],
+   "steps": [
+    {
+     "title": "Who can decrypt?",
+     "body": "Only the receiver holds the receiver's private key. A message encrypted with the receiver's **public** key can be decrypted only with that private key."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Sender encrypts with the receiver's public key; receiver decrypts with his own **private** key. Statement A is true."
+    }
+   ],
+   "answer": {
+    "value": "Sender encrypts using receiver's public key",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "True: this guarantees that only the receiver (private-key holder) can read the message."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "False: something encrypted with the sender's public key can only be opened with the sender's private key, which the receiver lacks."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "False: the sender's public key is used to verify the sender's signatures, not to decrypt secret messages."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "False: the receiver decrypts with his own *private* key; the public key is known to everyone and would give no secrecy."
+    }
+   ],
+   "pitfalls": [
+    "Mixing up the signing direction (sender's private key) with the secrecy direction (receiver's public key)."
+   ],
+   "verification": "Secrecy requires that only the receiver can decrypt; only the receiver's private key is secret to him, so encryption must use the matching public key."
+  },
+  "it-2004-it-26": {
+   "approach": "Count the zero bits in the mask to get the host bits $h$; usable hosts $=2^h-2$.",
+   "concepts": [
+    "Subnet mask",
+    "Host count"
+   ],
+   "steps": [
+    {
+     "title": "Host bits",
+     "body": "Last octet $192 = 11000000_2$, so the mask has $24+2=26$ one-bits and $32-26=6$ host bits."
+    },
+    {
+     "title": "Usable hosts",
+     "body": "$2^6-2 = 64-2 = 62$ (all-zeros = network address, all-ones = broadcast)."
+    }
+   ],
+   "answer": {
+    "value": "62",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "14 = $2^4-2$ would need mask 255.255.255.240."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "30 = $2^5-2$ would need mask 255.255.255.224."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: 6 host bits give $2^6-2=62$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "126 = $2^7-2$ would need mask 255.255.255.128."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting to subtract the network and broadcast addresses (64 is not an option, but it is a common slip)."
+   ],
+   "verification": "/26 block = 64 addresses, e.g. x.x.x.0–x.x.x.63; hosts .1–.62 → 62."
+  },
+  "it-2004-it-27": {
+   "approach": "An Ethernet (MAC) address is burned in by the manufacturer from an IEEE-assigned OUI block, so it is globally unique.",
+   "concepts": [
+    "MAC address",
+    "IEEE OUI"
+   ],
+   "steps": [
+    {
+     "title": "How MAC addresses are assigned",
+     "body": "A 48-bit MAC = 24-bit OUI (given to the vendor by IEEE) + 24-bit serial chosen by the vendor. No two NICs get the same address anywhere in the world."
+    },
+    {
+     "title": "Largest network",
+     "body": "So the address is unique not just in the subnet, department or university, but in the whole **Internet**."
+    }
+   ],
+   "answer": {
+    "value": "the Internet",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Unique in the subnet, but this is not the largest such network."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Unique in the department network too, but uniqueness extends further."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Unique in the university network too, but uniqueness extends further."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: MAC addresses are globally unique, hence unique across the Internet."
+    }
+   ],
+   "pitfalls": [
+    "Confusing MAC addresses with private IP addresses, which are only unique within a site."
+   ],
+   "verification": "The IEEE OUI scheme is designed to make every factory-assigned MAC globally unique."
+  },
+  "it-2004-it-28": {
+   "approach": "TCP is a byte-stream protocol: sequence numbers count bytes, and a segment's sequence number is that of its first byte.",
+   "concepts": [
+    "TCP byte stream",
+    "Sequence numbers"
+   ],
+   "steps": [
+    {
+     "title": "Byte numbering",
+     "body": "TCP numbers every byte of the stream. A segment carrying bytes 1001–1500 has sequence number 1001, and the next segment starts at 1501."
+    },
+    {
+     "title": "Conclusion",
+     "body": "The unique sequence number is assigned to each **byte**."
+    }
+   ],
+   "answer": {
+    "value": "byte",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: TCP sequence numbers count bytes."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "TCP has no notion of words."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "A segment's number is only the number of its first byte; segments are not numbered 1, 2, 3, …."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "TCP does not preserve message boundaries, so messages are not numbered."
+    }
+   ],
+   "pitfalls": [
+    "Thinking segments get consecutive numbers as in stop-and-wait or sliding-window frame numbering."
+   ],
+   "verification": "ACK numbers are \"next expected byte\", consistent with byte numbering."
+  },
+  "it-2004-it-29": {
+   "approach": "JSP provides implicit objects (request, response, session, out, application, config, pageContext, page, exception) that can be used in scriptlets and expressions without declaration.",
+   "concepts": [
+    "JSP implicit objects"
+   ],
+   "steps": [
+    {
+     "title": "Implicit objects",
+     "body": "The JSP container declares `request`, `response`, `out`, `session`, `application`, `config`, `pageContext`, `page` (and `exception` on error pages) for every page."
+    },
+    {
+     "title": "Conclusion",
+     "body": "`session`, `request` and `response` are all implicit, so all three can be used directly."
+    }
+   ],
+   "answer": {
+    "value": "session, request and response",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Incomplete: `response` is also implicit."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Incomplete: `session` is also implicit (unless the page sets `session=\"false\"`)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Incomplete: `request` is also implicit."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: all three are implicit objects."
+    }
+   ],
+   "pitfalls": [
+    "Thinking `session` needs explicit creation — it is implicit by default."
+   ],
+   "verification": "The JSP specification lists all nine implicit objects, including these three."
+  },
+  "it-2004-it-30": {
+   "approach": "Check each statement separately; all three are standard facts (the paper's \"EJH\" is a misprint for EJB).",
+   "concepts": [
+    "Application layer",
+    "J2EE / EJB",
+    ".NET CLS"
+   ],
+   "steps": [
+    {
+     "title": "Statement 1",
+     "body": "telnet, FTP and HTTP are all application-layer protocols (running over TCP). **True.**"
+    },
+    {
+     "title": "Statement 2",
+     "body": "Enterprise Java Beans are server-side components deployed in the EJB container of a J2EE application server. **True.**"
+    },
+    {
+     "title": "Statement 3",
+     "body": "The CLS guarantees cross-language interoperability in .NET: a class written in one CLS-compliant language (e.g. C#) can be inherited in another (e.g. VB.NET). **True.**"
+    }
+   ],
+   "answer": {
+    "value": "1, 2 and 3",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Omits statement 3, which is true."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Omits statement 1, which is true."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Omits statement 2, which is true."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: all three statements are true."
+    }
+   ],
+   "pitfalls": [
+    "Being put off by the misprint \"EJH\" — it means EJB (Enterprise Java Beans)."
+   ],
+   "verification": "Each statement is a textbook property of its technology; none contains a false qualifier."
+  },
+  "it-2004-it-31": {
+   "approach": "An argument $P\\rightarrow C$ is valid iff no assignment makes all premises true and the conclusion false. Try to build such a counterexample for each.",
+   "concepts": [
+    "Validity",
+    "Counterexample search",
+    "Resolution"
+   ],
+   "steps": [
+    {
+     "title": "Argument 1",
+     "body": "To falsify $\\neg s\\rightarrow q$ need $s=F, q=F$. Then $\\neg p\\vee q$ forces $p=F$; $r\\rightarrow s$ forces $r=F$; but then $p\\vee r=F$. Premises cannot all hold ⇒ **valid**."
+    },
+    {
+     "title": "Argument 2",
+     "body": "Take $p=F, q=T, r=T$: $\\neg p\\wedge q=T$, $p\\rightarrow r=T$ so $q\\rightarrow(p\\rightarrow r)=T$; conclusion $\\neg r=F$ ⇒ **invalid**."
+    },
+    {
+     "title": "Argument 3",
+     "body": "Take $q=F, p=T, r=F$: $(q\\wedge r)\\rightarrow p=T$, $\\neg q\\wedge p=T$; conclusion $r=F$ ⇒ **invalid**."
+    },
+    {
+     "title": "Argument 4",
+     "body": "$p$ and $p\\rightarrow r$ give $r$ (modus ponens); $q\\vee\\neg r$ with $r$ gives $q$ (disjunctive syllogism) ⇒ **valid**."
+    }
+   ],
+   "answer": {
+    "value": "1 and 4",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Argument 2 is invalid ($p=F,q=T,r=T$)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Argument 3 is invalid ($p=T,q=F,r=F$)."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: only 1 and 4 are valid."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Arguments 2 and 3 have counterexamples."
+    }
+   ],
+   "pitfalls": [
+    "Checking only one assignment and calling an argument valid; validity needs *every* assignment."
+   ],
+   "verification": "Counterexamples for 2 and 3 were substituted explicitly; 1 and 4 were shown to force a contradiction / derive the conclusion."
+  },
+  "it-2004-it-32": {
+   "approach": "Expand along the first row to get the recurrence $D_n=3D_{n-1}-D_{n-2}$, then test the options at $n=1,2$ instead of solving fully.",
+   "concepts": [
+    "Tridiagonal determinant",
+    "Linear recurrence"
+   ],
+   "steps": [
+    {
+     "title": "Recurrence",
+     "body": "Expanding along row 1: $D_n = 3D_{n-1} - 1\\cdot1\\cdot D_{n-2}$, with $D_1=3$, $D_2=3\\cdot3-1=8$."
+    },
+    {
+     "title": "Characteristic roots",
+     "body": "$x^2-3x+1=0 \\Rightarrow x=\\frac{3\\pm\\sqrt5}{2}$. Only option D uses these roots."
+    },
+    {
+     "title": "Check D at $n=1$",
+     "body": "$\\frac{3\\sqrt5+7}{2\\sqrt5}+\\frac{3\\sqrt5-7}{2\\sqrt5}=\\frac{6\\sqrt5}{2\\sqrt5}=3=D_1$ ✓"
+    },
+    {
+     "title": "Check D at $n=2$",
+     "body": "$(3+\\sqrt5)(3\\sqrt5+7)=36+16\\sqrt5$ and $(3-\\sqrt5)(3\\sqrt5-7)=16\\sqrt5-36$. Sum $=32\\sqrt5$; divide by $2\\cdot2\\sqrt5=4\\sqrt5$: $8=D_2$ ✓"
+    }
+   ],
+   "answer": {
+    "value": "$\\left(\\frac{3+\\sqrt5}{2}\\right)^{n-1}\\frac{3\\sqrt5+7}{2\\sqrt5}+\\left(\\frac{3-\\sqrt5}{2}\\right)^{n-1}\\frac{3\\sqrt5-7}{2\\sqrt5}$",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Roots $\\frac{5\\pm\\sqrt3}{2}$ solve $x^2-5x+\\frac{11}{2}=0$, not $x^2-3x+1=0$; at $n=1$ it gives $5\\ne3$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Roots $\\frac{7\\pm\\sqrt5}{2}$ belong to $x^2-7x+11=0$; wrong recurrence."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Roots $\\frac{3\\pm\\sqrt7}{2}$ belong to $x^2-3x+\\frac12=0$; at $n=1$ it gives 3 but at $n=2$ gives $\\frac{(3+\\sqrt7)(3\\sqrt7+5)+(3-\\sqrt7)(3\\sqrt7-5)}{4\\sqrt7}=\\frac{28\\sqrt7}{4\\sqrt7}=7\\ne8$."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: right roots and matches $D_1=3$, $D_2=8$."
+    }
+   ],
+   "shortcut": "The roots of the recurrence alone ($\\frac{3\\pm\\sqrt5}{2}$) single out D.",
+   "pitfalls": [
+    "Writing the recurrence as $D_n=3D_{n-1}+D_{n-2}$ (the off-diagonal product enters with a minus sign)."
+   ],
+   "verification": "$D_3=3\\cdot8-3=21$; option D with $r^2$ terms: $r_1^2=\\frac{7+3\\sqrt5}{2}$, giving $\\frac{(7+3\\sqrt5)(3\\sqrt5+7)+(7-3\\sqrt5)(3\\sqrt5-7)}{4\\sqrt5}=\\frac{84\\sqrt5}{4\\sqrt5}=21$ ✓"
+  },
+  "it-2004-it-33": {
+   "approach": "The minimum of independent exponentials is exponential with rate equal to the sum of the rates.",
+   "concepts": [
+    "Exponential distribution",
+    "Minimum of independent RVs"
+   ],
+   "steps": [
+    {
+     "title": "Rates",
+     "body": "Mean $\\alpha$ ⇒ rate $\\frac1\\alpha$; mean $\\beta$ ⇒ rate $\\frac1\\beta$."
+    },
+    {
+     "title": "Survival of Z",
+     "body": "$P(Z>t)=P(X>t)P(Y>t)=e^{-t/\\alpha}e^{-t/\\beta}=e^{-t\\left(\\frac1\\alpha+\\frac1\\beta\\right)}$, so $Z$ is exponential with rate $\\frac{\\alpha+\\beta}{\\alpha\\beta}$."
+    },
+    {
+     "title": "Mean",
+     "body": "$E[Z]=\\frac{1}{\\frac1\\alpha+\\frac1\\beta}=\\frac{\\alpha\\beta}{\\alpha+\\beta}$."
+    }
+   ],
+   "answer": {
+    "value": "$\\frac{\\alpha\\beta}{\\alpha+\\beta}$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$\\frac{1}{\\alpha+\\beta}$ would be right only if $\\alpha,\\beta$ were rates, but they are means."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "The minimum is strictly smaller in expectation than either mean, so $\\min(\\alpha,\\beta)$ is too large."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$\\alpha+\\beta$ is the mean of $X+Y$, not of $\\min(X,Y)$."
+    }
+   ],
+   "pitfalls": [
+    "Treating the given means as rate parameters."
+   ],
+   "verification": "With $\\alpha=\\beta=1$: two rate-1 exponentials, min has rate 2, mean $\\frac12=\\frac{1\\cdot1}{1+1}$ ✓"
+  },
+  "it-2004-it-34": {
+   "approach": "Swap the order of summation: each $\\frac1k$ appears in $H_k,\\dots,H_n$, i.e. $n-k+1$ times.",
+   "concepts": [
+    "Harmonic numbers",
+    "Exchanging summation order"
+   ],
+   "steps": [
+    {
+     "title": "Swap sums",
+     "body": "$\\sum_{j=1}^{n}H_j=\\sum_{j=1}^{n}\\sum_{k=1}^{j}\\frac1k=\\sum_{k=1}^{n}\\frac{n-k+1}{k}$."
+    },
+    {
+     "title": "Split",
+     "body": "$=\\sum_{k=1}^{n}\\frac{n+1}{k}-\\sum_{k=1}^{n}1=(n+1)H_n-n$."
+    },
+    {
+     "title": "Note on the printed options",
+     "body": "B and C are printed identically, and D is the same expression in disguise: $(n+1)H_{n+1}-(n+1)=(n+1)\\left(H_n+\\frac1{n+1}\\right)-n-1=(n+1)H_n-n$. Option B is the intended form."
+    }
+   ],
+   "answer": {
+    "value": "$(n+1)H_n-n$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true,
+    "keyNote": "As printed, B, C and D all equal (n+1)H_n − n (C duplicates B; D is algebraically equal). Kept the stored key B; question flagged for review."
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "At $n=1$: $1\\cdot H_2-2=1.5-2=-0.5\\ne H_1=1$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: $(n+1)H_n-n$; at $n=1$: $2\\cdot1-1=1$ ✓."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Printed identically to B in this paper (a misprint; the original option differs), so it is also numerically correct as printed."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Algebraically equal to B: $(n+1)H_{n+1}-(n+1)=(n+1)H_n-n$; at $n=1$: $2\\cdot1.5-2=1$ ✓."
+    }
+   ],
+   "pitfalls": [
+    "Not noticing that D simplifies to the same expression as B."
+   ],
+   "verification": "$n=2$: $H_1+H_2=1+1.5=2.5$ and $3\\cdot1.5-2=2.5$ ✓"
+  },
+  "it-2004-it-35": {
+   "approach": "Each ball goes to a distinct cell with no ball in its own cell: this is the number of derangements $D_5$.",
+   "concepts": [
+    "Derangements",
+    "Inclusion–exclusion"
+   ],
+   "steps": [
+    {
+     "title": "Formula",
+     "body": "$D_n=n!\\sum_{k=0}^{n}\\frac{(-1)^k}{k!}$."
+    },
+    {
+     "title": "Compute $D_5$",
+     "body": "$D_5=120\\left(1-1+\\frac12-\\frac16+\\frac1{24}-\\frac1{120}\\right)=60-20+5-1=44$."
+    }
+   ],
+   "answer": {
+    "value": "44",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: $D_5=44$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "96 has no such interpretation here (it is $120-24$, subtracting only permutations that fix $B_1$)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "120 = $5!$ counts all permutations, ignoring the restriction."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "3125 = $5^5$ ignores both the restriction and \"exactly one ball per cell\"."
+    }
+   ],
+   "shortcut": "$D_n=(n-1)(D_{n-1}+D_{n-2})$: $D_1=0, D_2=1, D_3=2, D_4=9, D_5=4(9+2)=44$.",
+   "pitfalls": [
+    "Subtracting only single fixed points instead of using full inclusion–exclusion."
+   ],
+   "verification": "The recurrence and the inclusion–exclusion formula both give 44."
+  },
+  "it-2004-it-36": {
+   "approach": "Rearrange the given matrix equation into $X\\cdot(\\text{something})=I$; that something is $X^{-1}$.",
+   "concepts": [
+    "Matrix inverse",
+    "Matrix polynomial"
+   ],
+   "steps": [
+    {
+     "title": "Rearrange",
+     "body": "$X^2-X+I=O \\Rightarrow X-X^2=I \\Rightarrow X(I-X)=I$, so $X^{-1}=I-X$."
+    },
+    {
+     "title": "Compute $I-X$",
+     "body": "$I-X=\\begin{bmatrix}1-a&-1\\\\a^2-a+1&1-(1-a)\\end{bmatrix}=\\begin{bmatrix}1-a&-1\\\\a^2-a+1&a\\end{bmatrix}$."
+    }
+   ],
+   "answer": {
+    "value": "$\\begin{bmatrix}1-a&-1\\\\a^2-a+1&a\\end{bmatrix}$",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Bottom-left should be $a^2-a+1$, not $a^2$."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: equals $I-X$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "This is $-X$ with sign errors; $-X$ would be the inverse only if $X^2=-I$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Not $I-X$; e.g. its top-left entry $a^2-a+1\\ne1-a$ in general."
+    }
+   ],
+   "pitfalls": [
+    "Writing $X^{-1}=X-I$ (sign slip)."
+   ],
+   "verification": "Check with $a=0$: $X=\\begin{bmatrix}0&1\\\\-1&1\\end{bmatrix}$, $I-X=\\begin{bmatrix}1&-1\\\\1&0\\end{bmatrix}$; product $X(I-X)=\\begin{bmatrix}1&0\\\\0&1\\end{bmatrix}$ ✓"
+  },
+  "it-2004-it-37": {
+   "approach": "Handshaking lemma: the sum of degrees is twice the number of edges.",
+   "concepts": [
+    "Handshaking lemma"
+   ],
+   "steps": [
+    {
+     "title": "Degree sum",
+     "body": "$\\sum\\deg=2\\cdot27=54$."
+    },
+    {
+     "title": "Solve",
+     "body": "Let $k$ vertices have degree 3: $6\\cdot2+3\\cdot4+3k=54 \\Rightarrow 12+12+3k=54 \\Rightarrow k=10$."
+    },
+    {
+     "title": "Total",
+     "body": "$6+3+10=19$ vertices."
+    }
+   ],
+   "answer": {
+    "value": "19",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "10 is only the number of degree-3 vertices."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "11 does not satisfy the degree sum."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "18 would give degree sum $24+3\\cdot9=51\\ne54$."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Correct: $24+30=54$."
+    }
+   ],
+   "pitfalls": [
+    "Reporting $k=10$ instead of the total vertex count."
+   ],
+   "verification": "$12+12+30=54=2\\times27$ ✓"
+  },
+  "it-2004-it-38": {
+   "approach": "Evaluate the three Lagrange basis polynomials at $x=3$ and form the weighted sum.",
+   "concepts": [
+    "Lagrange interpolation"
+   ],
+   "steps": [
+    {
+     "title": "Basis values at x = 3",
+     "body": "$L_1=\\frac{(3-2)(3-4)}{(1-2)(1-4)}=\\frac{-1}{3}$, $L_2=\\frac{(3-1)(3-4)}{(2-1)(2-4)}=\\frac{-2}{-2}=1$, $L_4=\\frac{(3-1)(3-2)}{(4-1)(4-2)}=\\frac{2}{6}=\\frac13$."
+    },
+    {
+     "title": "Combine",
+     "body": "$f(3)=2\\left(-\\frac13\\right)+4(1)+16\\left(\\frac13\\right)=-\\frac23+4+\\frac{16}{3}=4+\\frac{14}{3}=\\frac{26}{3}=8\\frac23$."
+    }
+   ],
+   "answer": {
+    "value": "$8\\frac{2}{3}$",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "8 is $2^3$ (assuming $f(x)=2^x$), not the interpolated value."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$8\\frac13$ comes from a sign/arithmetic slip in a basis weight."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: $\\frac{26}{3}$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "9 is not produced by the quadratic through the three points."
+    }
+   ],
+   "pitfalls": [
+    "Answering $2^3=8$ by guessing the function instead of interpolating."
+   ],
+   "verification": "Basis values sum to $-\\frac13+1+\\frac13=1$ ✓. Newton form: $f[1,2]=2$, $f[2,4]=6$, $f[1,2,4]=\\frac{6-2}{4-1}=\\frac43$, so $f(3)=2+2\\cdot2+\\frac43\\cdot2\\cdot1=8\\frac23$ ✓"
+  },
+  "it-2004-it-39": {
+   "approach": "Recall the standard convergence orders: Newton 2, secant ≈1.618, regula falsi linear but bracketed (guaranteed), fixed-point iteration linear without guarantee.",
+   "concepts": [
+    "Order of convergence",
+    "Bracketing vs open methods"
+   ],
+   "steps": [
+    {
+     "title": "Each method",
+     "body": "| Method | Property |\n|---|---|\n| Q. False position | linear, root stays bracketed ⇒ guaranteed (III) |\n| R. Newton–Raphson | quadratic, order 2 (II) |\n| S. Secant | order $\\frac{1+\\sqrt5}{2}\\approx1.62$ (I) |\n| T. Successive approximation | linear, converges only if $\\lvert g'(x)\\rvert<1$ ⇒ no guarantee (IV) |"
+    },
+    {
+     "title": "Match",
+     "body": "Q-III, R-II, S-I, T-IV."
+    }
+   ],
+   "answer": {
+    "value": "Q-III, R-II, S-I, T-IV",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Gives order 2 to false position and secant; both are wrong."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Newton is order 2, not 1.62; secant is 1.62."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "False position is linear (III), not 1.62; Newton is order 2, not IV."
+    }
+   ],
+   "pitfalls": [
+    "Swapping secant (1.62) and Newton (2)."
+   ],
+   "verification": "The four properties are used once each in B, consistent with the standard results."
+  },
+  "it-2004-it-40": {
+   "approach": "Read the PDA: in $s$ it pushes one $a$ per input symbol, switches to $f$ on an $a$ without pushing, then pops one $a$ per symbol. So $L(M)=\\{xay : |x|=|y|\\}$ — odd-length strings whose middle symbol is $a$.",
+   "concepts": [
+    "Pushdown automaton",
+    "Acceptance by final state and empty stack"
+   ],
+   "given": "| Transition | Meaning |\n|---|---|\n| $((s,a,\\varepsilon),(s,a))$, $((s,b,\\varepsilon),(s,a))$ | in $s$: read any symbol, push $a$ |\n| $((s,a,\\varepsilon),(f,\\varepsilon))$ | read the middle $a$, go to $f$ |\n| $((f,a,a),(f,\\varepsilon))$, $((f,b,a),(f,\\varepsilon))$ | in $f$: read any symbol, pop $a$ |",
+   "steps": [
+    {
+     "title": "Language",
+     "body": "Accepting needs state $f$ and an empty stack, so the number of symbols read after the switch equals the number before it, and the switch symbol is $a$: $L(M)=\\{xay\\mid x,y\\in\\{a,b\\}^*,|x|=|y|\\}$.",
+     "scene": {
+      "current": [
+       "s"
+      ],
+      "caption": "L(M): odd length, middle symbol a"
+     }
+    },
+    {
+     "title": "Check the strings",
+     "body": "| String | Length | Middle | In $L$? |\n|---|---|---|---|\n| aaa | 3 | a | yes |\n| aabab | 5 | **b** | **no** |\n| baaba | 5 | a | yes |\n| bab | 3 | a | yes |"
+    },
+    {
+     "title": "Trace aabab",
+     "body": "Push for \"aa\" (stack $aa$), then the middle symbol is $b$ — the only way to $f$ needs input $a$. Switching earlier (at position 1 or 2) or later leaves unread input with an empty stack or a non-empty stack at the end. No accepting run.",
+     "scene": {
+      "current": [
+       "s"
+      ],
+      "tape": {
+       "cells": [
+        "a",
+        "a",
+        "b",
+        "a",
+        "b"
+       ],
+       "head": 2
+      },
+      "stack": [
+       "a",
+       "a"
+      ],
+      "caption": "middle symbol is b: cannot move to f"
+     }
+    },
+    {
+     "title": "Trace baaba (accepted)",
+     "body": "Push for \"ba\", read middle $a$ → $f$, pop for \"b\",\"a\": stack empty in $f$ ⇒ accept.",
+     "scene": {
+      "current": [
+       "f"
+      ],
+      "tape": {
+       "cells": [
+        "b",
+        "a",
+        "a",
+        "b",
+        "a"
+       ],
+       "head": 5
+      },
+      "stack": [],
+      "caption": "baaba accepted"
+     }
+    }
+   ],
+   "answer": {
+    "value": "aabab",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "aaa = a·a·a with middle a: push, switch, pop ⇒ accepted."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: middle symbol of aabab is b, so it is not in L(M)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "baaba: middle (3rd) symbol is a ⇒ accepted."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "bab: middle symbol a ⇒ accepted."
+    }
+   ],
+   "pitfalls": [
+    "Thinking only palindromes are accepted — the PDA pushes $a$ for any symbol, so only lengths and the middle symbol matter."
+   ],
+   "verification": "For each string, the unique candidate switching position is the middle; only aabab has $b$ there.",
+   "animation": {
+    "kind": "automaton",
+    "layout": "row",
+    "states": [
+     {
+      "id": "s",
+      "start": true
+     },
+     {
+      "id": "f",
+      "accept": true
+     }
+    ],
+    "edges": [
+     {
+      "from": "s",
+      "to": "s",
+      "label": "a,ε→a; b,ε→a"
+     },
+     {
+      "from": "s",
+      "to": "f",
+      "label": "a,ε→ε"
+     },
+     {
+      "from": "f",
+      "to": "f",
+      "label": "a,a→ε; b,a→ε"
+     }
+    ],
+    "current": [
+     "s"
+    ],
+    "tape": {
+     "cells": [
+      "a",
+      "a",
+      "b",
+      "a",
+      "b"
+     ],
+     "head": 0
+    },
+    "stack": []
+   }
+  },
+  "it-2004-it-41": {
+   "approach": "Convert the DFA to a right-linear grammar: each transition $\\delta(X,c)=Y$ becomes $X\\to cY$, and each final state $X$ gets $X\\to\\varepsilon$.",
+   "concepts": [
+    "DFA to regular grammar",
+    "Right-linear grammar"
+   ],
+   "steps": [
+    {
+     "title": "Read the transitions",
+     "body": "The paper prints $\\delta(B,a)$ twice; with two input symbols one of them must be $\\delta(B,b)$. The intended DFA is $\\delta(A,a)=A$, $\\delta(A,b)=B$, $\\delta(B,b)=B$, $\\delta(B,a)=A$ (B = \"last symbol was b\")."
+    },
+    {
+     "title": "Productions",
+     "body": "$A\\to aA$, $A\\to bB$, $B\\to bB$, $B\\to aA$, and since $B\\in F$: $B\\to\\varepsilon$."
+    },
+    {
+     "title": "Match",
+     "body": "That is exactly option B. (Under the other reading, $\\delta(B,a)=B$, $\\delta(B,b)=A$, we would need $B\\to aB$ and $B\\to bA$ together with $A\\to aA$, $A\\to bB$ — no option has that set either, so B is the only consistent choice.)"
+    }
+   ],
+   "answer": {
+    "value": "{A→aA, A→bB, B→bB, B→aA, B→ε}",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$A\\to aB$ and $A\\to bA$ swap the transitions out of A."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: one production per transition plus $B\\to\\varepsilon$ for the final state."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$A\\to\\varepsilon$ would make the non-final start state accepting (ε ∈ L(G) but ε ∉ L(M)), and $A\\to aB$ is wrong."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$A\\to bA$ and $A\\to\\varepsilon$ are wrong; B is the final state, not A."
+    }
+   ],
+   "pitfalls": [
+    "Adding $\\varepsilon$-productions to the start state instead of to the final state."
+   ],
+   "verification": "Only B gives $\\varepsilon$ to the final state and $A\\to aA$, $A\\to bB$ from $\\delta(A,\\cdot)$; the string \"b\" is derived as $A\\Rightarrow bB\\Rightarrow b$ and is accepted by M ✓"
+  },
+  "it-2004-it-42": {
+   "approach": "In 2's complement, overflow happens only when two operands of the same sign give a result of the opposite sign (equivalently, carry into MSB ≠ carry out).",
+   "concepts": [
+    "2's complement",
+    "Overflow detection"
+   ],
+   "steps": [
+    {
+     "title": "1. 1100 + 1100",
+     "body": "$-4+(-4)=-8$; $1100+1100=1\\,1000$ → result $1000=-8$, representable (range $-8\\ldots7$). **No overflow.**"
+    },
+    {
+     "title": "2. 0011 + 0111",
+     "body": "$3+7=10>7$; $0011+0111=1010$, a negative result from two positives. **Overflow.**"
+    },
+    {
+     "title": "3. 1111 + 0111",
+     "body": "$-1+7=6$; $1111+0111=1\\,0110$ → $0110=6$. Opposite signs never overflow. **No overflow.**"
+    }
+   ],
+   "answer": {
+    "value": "2 only",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "1100+1100 = −8 fits in 4 bits; the discarded carry-out is not overflow."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Correct: only 3+7 = 10 exceeds +7."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Operands of opposite sign cannot overflow."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Neither 1 nor 3 overflows."
+    }
+   ],
+   "pitfalls": [
+    "Treating the carry-out of the MSB as overflow."
+   ],
+   "verification": "Carry into MSB vs carry out: (1) 1 vs 1, (2) 1 vs 0 ⇒ overflow, (3) 1 vs 1 ✓"
+  },
+  "it-2004-it-43": {
+   "approach": "Expand each octal digit to 3 bits, then regroup the bits into 4s (hex) and 2s (base 4).",
+   "concepts": [
+    "Base conversion via binary"
+   ],
+   "steps": [
+    {
+     "title": "Octal → binary",
+     "body": "$1\\,2\\,3\\,4\\,5\\,6 \\to 001\\,010\\,011\\,100\\,101\\,110 = 1010011100101110_2$."
+    },
+    {
+     "title": "Binary → hex",
+     "body": "$1010\\,0111\\,0010\\,1110 = A\\,7\\,2\\,E$ ⇒ $(A72E)_{16}$."
+    },
+    {
+     "title": "Binary → base 4",
+     "body": "$10\\,10\\,01\\,11\\,00\\,10\\,11\\,10 = 2\\,2\\,1\\,3\\,0\\,2\\,3\\,2$ ⇒ $(22130232)_4$."
+    }
+   ],
+   "answer": {
+    "value": "$(A72E)_{16}$ and $(22130232)_4$",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Correct: both conversions match."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Hex right, but the base-4 tail should be 0232 (bits 00 10 11 10), not 1122."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Third hex digit is 2 (0010), not 3."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Second hex digit is 7 (0111), not 6; base-4 digit 4 is 3, not 2."
+    }
+   ],
+   "pitfalls": [
+    "Grouping bits from the left instead of the right."
+   ],
+   "verification": "Decimal: $123456_8=42798$; $A72E_{16}=10\\cdot4096+7\\cdot256+2\\cdot16+14=40960+1792+32+14=42798$ ✓"
+  },
+  "it-2004-it-44": {
+   "approach": "Convert the terms to minterms and minimise on a K-map; then compare with the options. The printed function has a misprint, so check which single correction makes an option fit.",
+   "concepts": [
+    "K-map minimisation",
+    "Minterms"
+   ],
+   "steps": [
+    {
+     "title": "Minterms as printed",
+     "body": "$AB'C=5$, $A'BC=3$, $ABC'=6$, $A'B'C=1$, $AB'C=5$ (repeated). Function $=\\sum m(1,3,5,6)=A'C+B'C+ABC'$. As printed, **no option** equals this (option A covers 1,3,4,6,7; C covers 2,3,4,5,6; D covers 2,3,4,5,7).",
+     "scene": {
+      "ones": [
+       1,
+       3,
+       5,
+       6
+      ],
+      "groups": [
+       {
+        "cells": [
+         1,
+         3
+        ],
+        "label": "A′C"
+       },
+       {
+        "cells": [
+         1,
+         5
+        ],
+        "label": "B′C"
+       },
+       {
+        "cells": [
+         6
+        ],
+        "label": "ABC′"
+       }
+      ],
+      "caption": "as printed: Σm(1,3,5,6)"
+     }
+    },
+    {
+     "title": "Intended function",
+     "body": "The duplicated term is a misprint for $AB'C'=4$. Then $F=\\sum m(1,3,4,5,6)$.",
+     "scene": {
+      "ones": [
+       1,
+       3,
+       4,
+       5,
+       6
+      ],
+      "groups": [],
+      "caption": "intended: Σm(1,3,4,5,6)"
+     }
+    },
+    {
+     "title": "Minimise",
+     "body": "Groups: $A'C=\\{1,3\\}$, $AC'=\\{4,6\\}$, $AB'=\\{4,5\\}$. So $F=AB'+AC'+A'C$ — option B, whose printed form \"$AB'AC'+A'C$\" has just lost a $+$.",
+     "scene": {
+      "groups": [
+       {
+        "cells": [
+         1,
+         3
+        ],
+        "label": "A′C"
+       },
+       {
+        "cells": [
+         4,
+         6
+        ],
+        "label": "AC′"
+       },
+       {
+        "cells": [
+         4,
+         5
+        ],
+        "label": "AB′"
+       }
+      ],
+      "caption": "F = AB′ + AC′ + A′C"
+     }
+    }
+   ],
+   "answer": {
+    "value": "$A\\overline{B}+A\\overline{C}+\\overline{A}C$ (option B, read with the missing '+')",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true,
+    "keyNote": "Matches the stored key only under the evident misprints (last term AB′C′; option B missing a +). As printed, no option is equivalent; question stays flagged for review."
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$AC'+AB+A'C=\\sum m(1,3,4,6,7)$: includes 7 and misses 5."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Intended $AB'+AC'+A'C=\\sum m(1,3,4,5,6)$ — matches the corrected function."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$A'B+AC'+AB'=\\sum m(2,3,4,5,6)$: includes 2 and misses 1."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$A'B+AC+AB'=\\sum m(2,3,4,5,7)$: includes 2, 7 and misses 1, 6."
+    }
+   ],
+   "pitfalls": [
+    "Not expanding each option into minterms — it is the fastest way to compare."
+   ],
+   "verification": "Option B (with +) evaluated at all 8 inputs is 1 exactly at 1,3,4,5,6, which is the printed function with the one duplicated term corrected.",
+   "animation": {
+    "kind": "kmap",
+    "variables": [
+     "A",
+     "B",
+     "C"
+    ],
+    "ones": [
+     1,
+     3,
+     5,
+     6
+    ],
+    "groups": []
+   }
+  },
+  "it-2004-it-45": {
+   "approach": "Divide the bit rate by the bits needed per information character, including overhead.",
+   "concepts": [
+    "Asynchronous vs synchronous framing",
+    "Effective throughput"
+   ],
+   "steps": [
+    {
+     "title": "T1 (asynchronous)",
+     "body": "Bits per character $=8+2+1+1=12$. Rate $=\\frac{1200}{12}=100$ characters/s."
+    },
+    {
+     "title": "T2 (synchronous)",
+     "body": "Frame $=(3+30)\\times8=264$ bits carrying 30 information characters. Frames/s $=\\frac{1200}{264}$; characters/s $=\\frac{1200\\times30}{264}=\\frac{36000}{264}\\approx136.4\\approx136$."
+    }
+   ],
+   "answer": {
+    "value": "100 characters/sec, 136 characters/sec",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "T1 is right, but T2 delivers 30 information characters per 264 bits, i.e. ≈136/s, not 153."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "80 would need 15 bits per character; T1 uses 12."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Correct: 100 and ≈136."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "80 needs 15 bits per character and 153 overstates T2; both wrong."
+    }
+   ],
+   "pitfalls": [
+    "Counting the sync characters as information characters (giving 150)."
+   ],
+   "verification": "$136.36\\times264/30=1200$ bits/s ✓; $100\\times12=1200$ ✓"
+  },
+  "it-2004-it-46": {
+   "approach": "With forwarding, the value of R1 is sent straight to R2 and R3 instead of being read back from memory; the store to M[100] still happens. Compare each option's final state with the original sequence.",
+   "concepts": [
+    "Internal data forwarding",
+    "Store-to-load forwarding"
+   ],
+   "steps": [
+    {
+     "title": "Effect of the original sequence",
+     "body": "After $R1\\to M[100]$, $M[100]\\to R2$, $M[100]\\to R3$: $M[100]=R2=R3=R1$."
+    },
+    {
+     "title": "Forwarded version",
+     "body": "The two memory reads can be replaced by register moves: $R1\\to R2$, $R1\\to R3$, plus the store (either $R1\\to M[100]$ or, equivalently, $R2\\to M[100]$ after $R2$ holds R1)."
+    },
+    {
+     "title": "Compare with options",
+     "body": "Option D, $R1\\to R3;\\ R1\\to R3;\\ R2\\to M[100]$, repeats $R1\\to R3$; with the first move read as $R1\\to R2$ it is exactly the forwarded sequence (R2 = R3 = M[100] = R1). Every other option leaves some destination with a wrong value, so D is the intended answer."
+    }
+   ],
+   "answer": {
+    "value": "R1 → R2; R1 → R3; R2 → M[100] (option D, with its misprinted first move)",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true,
+    "keyNote": "As printed, option D repeats R1→R3 and never loads R2; it is correct only with the evident misprint fixed. Question remains flagged for review."
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "R2 is never loaded and M[100] gets the *old* R2 instead of R1."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Final R2 = R3 = R1, but M[100] is never written (and it still does a memory read), so the memory state differs."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Keeps the store, but R2 is never loaded, so R3 gets the old R2 instead of R1."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Intended answer: forwards R1 to the registers and stores to M[100] (first move should read R1 → R2)."
+    }
+   ],
+   "pitfalls": [
+    "Choosing C because it keeps the store — it still fails to give R2 the value of R1."
+   ],
+   "verification": "Tracked the final values of R2, R3 and M[100] for every option; only D (corrected) gives all three equal to R1."
+  }
+ }
+}
