@@ -1,26 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <defs>
-    <linearGradient id="gate-grad-cse-2001-a-38" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stopColor="#1e293b" />
-      <stop offset="100%" stopColor="#0f172a" />
-    </linearGradient>
-  </defs>
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">LOGIC CIRCUIT</text>
-  <polygon points="180,60 280,80 280,160 180,180" fill="url(#gate-grad-cse-2001-a-38)" stroke="#38bdf8" stroke-width="2" />
-  <text x="220" y="125" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold" font-family="monospace">4:1 MUX</text>
-  <line x1="120" y1="78" x2="180" y2="78" stroke="#38bdf8" stroke-width="2" />
-  <text x="110" y="82" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">I₀</text>
-  <line x1="120" y1="104" x2="180" y2="104" stroke="#38bdf8" stroke-width="2" />
-  <text x="110" y="108" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">I₁</text>
-  <line x1="120" y1="130" x2="180" y2="130" stroke="#38bdf8" stroke-width="2" />
-  <text x="110" y="134" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">I₂</text>
-  <line x1="120" y1="156" x2="180" y2="156" stroke="#38bdf8" stroke-width="2" />
-  <text x="110" y="160" text-anchor="end" fill="#94a3b8" font-size="12" font-family="monospace">I₃</text>
-  <line x1="210" y1="210" x2="210" y2="174" stroke="#f59e0b" stroke-width="2" />
-  <line x1="250" y1="210" x2="250" y2="166" stroke="#f59e0b" stroke-width="2" />
-  <text x="230" y="225" text-anchor="middle" fill="#f59e0b" font-size="12" font-family="monospace">S₁ S₀</text>
-  <line x1="280" y1="120" x2="380" y2="120" stroke="#34d399" stroke-width="3" />
-  <text x="395" y="125" fill="#34d399" font-size="16" font-weight="bold" font-family="monospace">F</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 650 285" fill="none" stroke="currentColor" stroke-width="2" font-family="Arial, Helvetica, sans-serif">
+  <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor" stroke="none"/></marker></defs>
+  <line x1="15" y1="30" x2="635" y2="30" stroke-width="3"/><rect x="30" y="70" width="44" height="30"/><rect x="104" y="70" width="44" height="30"/><line x1="52" y1="30" x2="52" y2="70" marker-end="url(#ah)"/><line x1="126" y1="30" x2="126" y2="70" marker-end="url(#ah)"/><line x1="52" y1="100" x2="52" y2="128" marker-end="url(#ah)"/><line x1="126" y1="100" x2="126" y2="128" marker-end="url(#ah)"/><path d="M28 128 H76 L89 146 L102 128 H150 L126 182 H52 Z"/><path d="M89 182 V205 H175 V32" marker-end="url(#ah)"/><rect x="205" y="85" width="40" height="30"/><line x1="217" y1="30" x2="217" y2="85" marker-end="url(#ah)"/><line x1="233" y1="85" x2="233" y2="32" marker-end="url(#ah)"/><rect x="265" y="85" width="40" height="30"/><line x1="277" y1="30" x2="277" y2="85" marker-end="url(#ah)"/><line x1="293" y1="85" x2="293" y2="32" marker-end="url(#ah)"/><rect x="320" y="80" width="80" height="44"/><line x1="360" y1="80" x2="360" y2="32" marker-end="url(#ah)"/><rect x="330" y="185" width="60" height="30"/><line x1="347" y1="185" x2="347" y2="124" marker-end="url(#ah)"/><line x1="373" y1="185" x2="373" y2="124" marker-end="url(#ah)"/><line x1="285" y1="200" x2="330" y2="200" marker-end="url(#ah)"/><rect x="435" y="80" width="90" height="44"/><line x1="480" y1="30" x2="480" y2="80" marker-end="url(#ah)"/><rect x="445" y="185" width="70" height="30"/><line x1="467" y1="124" x2="467" y2="185" marker-end="url(#ah)"/><line x1="493" y1="124" x2="493" y2="185" marker-end="url(#ah)"/><rect x="560" y="185" width="60" height="30"/><line x1="578" y1="30" x2="578" y2="185" marker-end="url(#ah)"/><line x1="602" y1="185" x2="602" y2="32" marker-end="url(#ah)"/><path d="M400 102 H418 V240 H540 V102 H525"/><line x1="479" y1="262" x2="479" y2="240"/>
+  <g fill="currentColor" stroke="none" font-size="13"><text x="52" y="90" text-anchor="middle">A₁</text><text x="126" y="90" text-anchor="middle">A₂</text><text x="89" y="160" text-anchor="middle">ALU</text><text x="225" y="105" text-anchor="middle">B</text><text x="285" y="105" text-anchor="middle">A</text><text x="360" y="98" text-anchor="middle">MUX</text><text x="360" y="116" text-anchor="middle">8×(2:1)</text><text x="360" y="205" text-anchor="middle">SP</text><text x="480" y="98" text-anchor="middle">DEMUX</text><text x="480" y="116" text-anchor="middle">8×(1:2)</text><text x="480" y="205" text-anchor="middle">MAR</text><text x="590" y="205" text-anchor="middle">MDR</text><text x="265" y="204" text-anchor="middle">Dec</text><text x="479" y="276" text-anchor="middle">MUX/DEMUX select</text><text x="600" y="22" text-anchor="middle">Bus</text></g>
 </svg>
