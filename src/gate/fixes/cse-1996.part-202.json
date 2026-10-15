@@ -1,0 +1,57 @@
+{
+  "paper": "cse-1996",
+  "fixes": [
+    {
+      "id": "cse-1996-b-57",
+      "field": "answer",
+      "before": "f_n = (phi^n - psi^n) / sqrt(5) where phi = (1 + sqrt(5))/2 (Binet's formula)",
+      "after": "Base: $f_3=2$ is even. Step: $f_{3k+3}=f_{3k+2}+f_{3k+1}=2f_{3k+1}+f_{3k}$, so if $f_{3k}$ is even then $f_{3k+3}$ is even. Hence every third term $f_{3k}$ is even.",
+      "reason": "Stored answer was Binet's formula, which does not answer the question (prove every third Fibonacci term is even).",
+      "source": "GATE 1996 paper Q57"
+    },
+    {
+      "id": "cse-1996-b-62",
+      "field": "text",
+      "before": "A two dimensional array $A[1..n][1..n]$ of integers is partially sorted if\n\n$$\\forall i,j\\in[1..n-1],\\quad A[i][j]<A[i][j+1] \\text{ and } A[i][j]<A[i+1][j]$$\n\nFill in the blanks:\n\n(a) The smallest item in the array is at $A[i][j]$ where i = ___ and j = ___.\n\n(b) The smallest item is deleted. Complete the following O(n) procedure to insert item x (which is guaranteed to be smaller than any item in the last row or column) still keeping A partially sorted.\n\n```pascal\nprocedure insert (x: integer);\nvar i,j: integer;\nbegin\n(1)  i := 1; j := 1; A[i][j] := x;\n(2)  while (x > ______ or x > ______) do\n(3)      if A[i+1][j] < A[i][j] ______ then begin\n(4)          A[i][j] := A[i+1][j]; i := i+1\n(5)      end\n(6)      else begin\n(7)          ______\n(8)      end\n(9)  A[i][j] := ______\nend\n```",
+      "after": "A two dimensional array $A[1..n][1..n]$ of integers is partially sorted if\n\n$$\\forall i,j\\in[1..n-1],\\quad A[i][j]<A[i][j+1] \\text{ and } A[i][j]<A[i+1][j]$$\n\nFill in the blanks:\n\n(a) The smallest item in the array is at $A[i][j]$ where i = ___ and j = ___.\n\n(b) The smallest item is deleted. Complete the following O(n) procedure to insert item x (which is guaranteed to be smaller than any item in the last row or column) still keeping A partially sorted.\n\n```pascal\nprocedure insert (x: integer);\nvar i,j: integer;\nbegin\n(1)  i := 1; j := 1; A[i][j] := x;\n(2)  while (x > ______ or x > ______) do\n(3)      if A[i+1][j] < A[i][j] then begin\n(4)          A[i][j] := A[i+1][j]; i := i+1\n(5)      end\n(6)      else begin\n(7)          ______\n(8)      end\n(9)  A[i][j] := ______\nend\n```",
+      "reason": "Line (3) has no blank in the paper (printed \"if A[i+1][j] < A[i][j] then begin\"); removed the invented blank.",
+      "source": "GATE 1996 paper Q62"
+    },
+    {
+      "id": "cse-1996-b-65",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1996/b-65-1.png",
+          "alt": "Directed weighted graph on vertices A, B, C, D, E, F. Edge labels are faint in the scan; the edges used by the known solution are A→B (6), A→C (90), A→F (70), B→D (41), D→C (12), C→F (10), F→E (15). Other drawn edges include C→B (12), F→B (22), F→D, A→E and C→E (weights not legible).",
+          "svg": "cse-1996/b-65-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-1996/b-65-1.png",
+          "alt": "Directed weighted graph on A, B, C, D, E, F. Edges: A→B 6, A→C 90, A→F 70, C→B 12, D→C 12, C→F 10, F→E 15, B→D 41 (arc), F→B 22 (arc); F→D, A→E and C→E are drawn with weights illegible in the scan (shown as ?). Several weights follow the GATE Overflow reading of the faint figure.",
+          "svg": "cse-1996/b-65-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as a clean SVG; alt text now lists every edge and marks the illegible weights.",
+      "source": "GATE 1996 paper Q65"
+    },
+    {
+      "id": "cse-1996-b-66",
+      "field": "answer",
+      "before": "It loops forever whenever the range shrinks to j = i+1 with a[i] < x and a[i] ≠ x, e.g. when x ≥ a[N] (x = a[N] or x larger than all elements) or x is absent and lies between two elements",
+      "after": "Infinite loop whenever the range shrinks to j = i+1 with a[i] < x (then k = i and i := k makes no progress); this happens whenever x > a[1] and x is not hit at a probe — x absent and greater than a[1], or x = a[N] > a[1] (e.g. a = (1,2), x = 2). Fix: i := k+1.",
+      "reason": "Made the failure condition precise: the old text omitted that x = a[N] (present) also hangs and that x ≤ a[1] never fails.",
+      "source": "GATE 1996 paper Q66"
+    },
+    {
+      "id": "cse-1996-b-75",
+      "field": "reviewNote",
+      "before": "The tables are illegible in the scan; values come from GATE Overflow. 'Minimum sizes' is ambiguous: 16M + 4M gives 80 ns with a smaller total size (20M vs 72M), so the intended answer is uncertain.",
+      "after": "The tables are illegible in the scan; values come from GATE Overflow. \"Minimum sizes\" is ambiguous: with T = t1 + (1−h1)(t2 + (1−h2)t3), 8M + 64M gives 95 ns but 16M + 4M gives 80 ns with less total memory; with the non-cumulative model h1t1 + (1−h1)h2t2 + … even 8M + 4M gives 99.2 ns.",
+      "reason": "Review note extended with the alternative access-time model.",
+      "source": "GATE 1996 paper Q75"
+    }
+  ]
+}
