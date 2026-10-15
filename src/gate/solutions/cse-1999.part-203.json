@@ -1,0 +1,886 @@
+{
+ "paper": "cse-1999",
+ "version": 2,
+ "solutions": {
+  "cse-1999-b-59-b": {
+   "approach": "You cannot reach p's predecessor in O(1), so insert the new node *after* p and swap the data: the new node takes p's old data and p takes D. In list order D now sits just before the old contents of p.",
+   "concepts": [
+    "Singly linked list",
+    "Constant-time insertion",
+    "Data swap trick"
+   ],
+   "steps": [
+    {
+     "title": "Why the obvious way fails",
+     "body": "Inserting before $p$ normally needs the predecessor of $p$, and finding it means walking from the head — $O(n)$. A singly linked list has no back pointer."
+    },
+    {
+     "title": "Insert after p, then swap data",
+     "body": "```c\nvoid insert_before(Node *p, int D) {\n    Node *q = malloc(sizeof(Node));\n    q->data = p->data;   /* new node gets p's old data */\n    q->next = p->next;   /* splice q in right after p  */\n    p->next = q;\n    p->data = D;         /* p now holds D              */\n}\n```\nList before: $\\ldots \\to [x] \\to \\ldots$ (where $p$ holds $x$). After: $\\ldots \\to [D] \\to [x] \\to \\ldots$ — D is right before $x$."
+    },
+    {
+     "title": "Cost",
+     "body": "One allocation and four assignments, no traversal, so the time is $O(1)$ whatever the list length."
+    }
+   ],
+   "answer": {
+    "value": "Allocate q; q→data = p→data; q→next = p→next; p→next = q; p→data = D. This puts D just before the old contents of p in O(1).",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Searching for the predecessor makes it O(n).",
+    "Forgetting to copy p's old data into the new node loses that value.",
+    "If other pointers refer to p's node (not just its data), they now see D — the trick moves data, not nodes."
+   ],
+   "verification": "Traced on the list 1 → 5 → 9 with p at 5 and D = 7: after the code the list reads 1 → 7 → 5 → 9."
+  },
+  "cse-1999-b-60-a": {
+   "approach": "Strong induction on the height h. Split on the root: no child, one child, two children. A one-child root adds nothing to either count; a two-child root adds one full node and the leaf counts of both subtrees add.",
+   "concepts": [
+    "Binary tree",
+    "Full node",
+    "Strong induction"
+   ],
+   "steps": [
+    {
+     "title": "Claim and notation",
+     "body": "For a non-empty binary tree $T$ let $F(T)$ = number of full nodes (2 children) and $L(T)$ = number of leaves. Claim: $F(T)+1 = L(T)$. Induct on the height $h$."
+    },
+    {
+     "title": "Base case h = 0",
+     "body": "The tree is a single node: it is a leaf and not full, so $F=0$, $L=1$, and $0+1=1$. ✓"
+    },
+    {
+     "title": "Root with one child",
+     "body": "Assume the claim for all trees of height $< h$, and let $T$ have height $h \\ge 1$. If the root has one child, its subtree $T_1$ has height $h-1$. The root is neither full nor a leaf, so\n$$F(T)+1 = F(T_1)+1 = L(T_1) = L(T).$$"
+    },
+    {
+     "title": "Root with two children",
+     "body": "Subtrees $T_1, T_2$ have height $\\le h-1$, so $F(T_i)+1 = L(T_i)$. The root is full, so\n$$F(T)+1 = \\big(F(T_1)+F(T_2)+1\\big)+1 = \\big(F(T_1)+1\\big)+\\big(F(T_2)+1\\big) = L(T_1)+L(T_2) = L(T).$$\nBy induction the claim holds for every height. $\\blacksquare$"
+    }
+   ],
+   "answer": {
+    "value": "By induction on height: base h = 0 gives 0 + 1 = 1; a one-child root changes neither count; a two-child root gives F + 1 = (F1 + 1) + (F2 + 1) = L1 + L2 = L. So full nodes + 1 = leaves.",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Forgetting the one-child case — binary trees need not be full.",
+    "Using ordinary induction on h−1 only: one subtree of a two-child root can be shorter than h−1, so use strong induction (heights ≤ h−1)."
+   ],
+   "verification": "Checked on a 5-node tree whose root has 2 children, one of which has 2 leaf children: F = 2, L = 3."
+  },
+  "cse-1999-b-60-b": {
+   "approach": "Insert each key at the next free leaf position and bubble it up while it is smaller than its parent. To delete the root, move the last leaf to the root and sift it down, always swapping with the smaller child.",
+   "concepts": [
+    "Min-heap",
+    "Sift-up",
+    "Sift-down",
+    "Delete-min"
+   ],
+   "steps": [
+    {
+     "title": "Insert 7, 6, 5",
+     "body": "- 7 → $[7]$\n- 6 goes under 7; $6<7$, swap → $[6,7]$\n- 5 goes under 6 (right); $5<6$, swap → $[5,7,6]$",
+     "scene": {
+      "root": {
+       "label": 5,
+       "id": "h5",
+       "children": [
+        {
+         "label": 7,
+         "id": "h7"
+        },
+        {
+         "label": 6,
+         "id": "h6"
+        }
+       ]
+      },
+      "caption": "after 7, 6, 5"
+     }
+    },
+    {
+     "title": "Insert 4 and 2",
+     "body": "- 4 goes under 7; $4<7$ swap, $4<5$ swap → $[4,5,6,7]$\n- 2 goes under 5; $2<5$ swap, $2<4$ swap → $[2,4,6,7,5]$",
+     "scene": {
+      "root": {
+       "label": 2,
+       "id": "h2",
+       "tone": "accent",
+       "children": [
+        {
+         "label": 4,
+         "id": "h4",
+         "children": [
+          {
+           "label": 7,
+           "id": "h7"
+          },
+          {
+           "label": 5,
+           "id": "h5"
+          }
+         ]
+        },
+        {
+         "label": 6,
+         "id": "h6"
+        }
+       ]
+      },
+      "caption": "after 4, 2"
+     }
+    },
+    {
+     "title": "Insert 3 and 1",
+     "body": "- 3 goes under 6; $3<6$ swap, $3>2$ stop → $[2,4,3,7,5,6]$\n- 1 goes under 3; $1<3$ swap, $1<2$ swap → $[1,4,2,7,5,6,3]$\n\nFinal heap (level order): $1;\\ 4, 2;\\ 7, 5, 6, 3$.",
+     "scene": {
+      "root": {
+       "label": 1,
+       "id": "h1",
+       "tone": "success",
+       "children": [
+        {
+         "label": 4,
+         "id": "h4",
+         "children": [
+          {
+           "label": 7,
+           "id": "h7"
+          },
+          {
+           "label": 5,
+           "id": "h5"
+          }
+         ]
+        },
+        {
+         "label": 2,
+         "id": "h2",
+         "children": [
+          {
+           "label": 6,
+           "id": "h6"
+          },
+          {
+           "label": 3,
+           "id": "h3"
+          }
+         ]
+        }
+       ]
+      },
+      "caption": "heap after all insertions"
+     }
+    },
+    {
+     "title": "Delete the root",
+     "body": "Remove 1 and move the last leaf 3 to the root: $[3,4,2,7,5,6]$. Children of 3 are 4 and 2; the smaller is 2 and $3>2$, swap → $[2,4,3,7,5,6]$. Now 3's only child is 6 and $3<6$, stop.\n\nResult (level order): $2;\\ 4, 3;\\ 7, 5, 6$.",
+     "scene": {
+      "root": {
+       "label": 2,
+       "id": "h2",
+       "tone": "success",
+       "children": [
+        {
+         "label": 4,
+         "id": "h4",
+         "children": [
+          {
+           "label": 7,
+           "id": "h7"
+          },
+          {
+           "label": 5,
+           "id": "h5"
+          }
+         ]
+        },
+        {
+         "label": 3,
+         "id": "h3",
+         "tone": "warning",
+         "children": [
+          {
+           "label": 6,
+           "id": "h6"
+          },
+          null
+         ]
+        }
+       ]
+      },
+      "caption": "after deleting the root"
+     }
+    }
+   ],
+   "answer": {
+    "value": "After insertions: [1, 4, 2, 7, 5, 6, 3]; after deleting the root: [2, 4, 3, 7, 5, 6] (level order).",
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "tree",
+    "root": {
+     "label": 7,
+     "id": "h7"
+    },
+    "caption": "empty heap, insert 7"
+   },
+   "pitfalls": [
+    "Building the heap with bottom-up heapify gives a different (also valid) heap — the question asks for successive insertions.",
+    "When sifting down, swap with the smaller child, not always the left one."
+   ],
+   "verification": "Every parent ≤ its children in both final arrays: 1≤4,2; 4≤7,5; 2≤6,3 and 2≤4,3; 4≤7,5; 3≤6."
+  },
+  "cse-1999-b-61": {
+   "approach": "Fill a space-time table: an instruction enters a stage once it has finished the previous stage and the previous instruction has left that stage. Writing finish times as $t_{i,s} = \\max(t_{i,s-1}, t_{i-1,s}) + c_{i,s}$, the answer is the W finish time of I5.",
+   "concepts": [
+    "Instruction pipeline",
+    "Unequal stage latency",
+    "Space-time diagram"
+   ],
+   "given": "| Instr | F | D | E | W |\n|---|---|---|---|---|\n| 1 | 1 | 2 | 1 | 1 |\n| 2 | 1 | 2 | 2 | 1 |\n| 3 | 2 | 1 | 3 | 2 |\n| 4 | 1 | 3 | 2 | 1 |\n| 5 | 1 | 2 | 1 | 2 |",
+   "steps": [
+    {
+     "title": "Rule",
+     "body": "Let $t_{i,s}$ be the cycle at which instruction $i$ finishes stage $s$ and $c_{i,s}$ its cycle count. Then\n$$t_{i,s} = \\max(t_{i,s-1},\\ t_{i-1,s}) + c_{i,s}$$\n(start after your own previous stage and after the previous instruction frees the stage).",
+     "scene": {
+      "upto": 2
+     }
+    },
+    {
+     "title": "Fetch and Decode",
+     "body": "F: $t_1=1,\\ t_2=2,\\ t_3=2+2=4,\\ t_4=5,\\ t_5=6$.\n\nD: $I1: 1+2=3$; $I2: \\max(2,3)+2=5$; $I3: \\max(4,5)+1=6$; $I4: \\max(5,6)+3=9$; $I5: \\max(6,9)+2=11$.",
+     "scene": {
+      "upto": 9
+     }
+    },
+    {
+     "title": "Execute",
+     "body": "$I1: 3+1=4$; $I2: \\max(5,4)+2=7$; $I3: \\max(6,7)+3=10$; $I4: \\max(9,10)+2=12$; $I5: \\max(11,12)+1=13$.",
+     "scene": {
+      "upto": 13
+     }
+    },
+    {
+     "title": "Write",
+     "body": "$I1: 4+1=5$; $I2: \\max(7,5)+1=8$; $I3: \\max(10,8)+2=12$; $I4: \\max(12,12)+1=13$; $I5: \\max(13,13)+2=15$.\n\nAll 5 instructions finish at the end of cycle **15**.",
+     "scene": {
+      "upto": 15,
+      "hl": [
+       {
+        "r": 4,
+        "c": 15,
+        "tone": "success"
+       }
+      ]
+     }
+    }
+   ],
+   "answer": {
+    "value": "15",
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "pipeline",
+    "rows": [
+     {
+      "label": "I1",
+      "start": 1,
+      "cells": [
+       "F",
+       "D",
+       "D",
+       "E",
+       "W"
+      ]
+     },
+     {
+      "label": "I2",
+      "start": 2,
+      "cells": [
+       "F",
+       "-",
+       "D",
+       "D",
+       "E",
+       "E",
+       "W"
+      ]
+     },
+     {
+      "label": "I3",
+      "start": 3,
+      "cells": [
+       "F",
+       "F",
+       "-",
+       "D",
+       "-",
+       "E",
+       "E",
+       "E",
+       "W",
+       "W"
+      ]
+     },
+     {
+      "label": "I4",
+      "start": 5,
+      "cells": [
+       "F",
+       "-",
+       "D",
+       "D",
+       "D",
+       "-",
+       "E",
+       "E",
+       "W"
+      ]
+     },
+     {
+      "label": "I5",
+      "start": 6,
+      "cells": [
+       "F",
+       "-",
+       "-",
+       "-",
+       "D",
+       "D",
+       "-",
+       "E",
+       "W",
+       "W"
+      ]
+     }
+    ],
+    "upto": 1
+   },
+   "pitfalls": [
+    "Using (k + n − 1) × max stage time = 8 × 3 = 24 assumes a synchronous pipeline clocked by the slowest stage; here each instruction's per-stage cycle counts are given.",
+    "Adding all cycle counts (sequential execution) gives 36, not the pipelined time."
+   ],
+   "verification": "Re-ran the schedule with no inter-stage buffers (an instruction holds its stage until the next one is free): I4 waits in D until 10, I5 decodes 10–12, executes 13 and writes 14–15 — still 15 cycles. The '-' cells in the diagram are waiting cycles."
+  },
+  "cse-1999-b-62-a": {
+   "approach": "An implication is false only when its premise is true and its conclusion false. Make $q \\Rightarrow p$ false ($q=T, p=F$) and check that the premise $\\sim p \\vee q$ is then true.",
+   "concepts": [
+    "Tautology",
+    "Implication",
+    "Counterexample"
+   ],
+   "steps": [
+    {
+     "title": "Falsify the conclusion",
+     "body": "$q \\Rightarrow p$ is false only for $q = T,\\ p = F$."
+    },
+    {
+     "title": "Check the premise",
+     "body": "With $p=F$: $\\sim p = T$, so $\\sim p \\vee q = T$. The formula becomes $T \\Rightarrow F = F$."
+    },
+    {
+     "title": "Conclusion",
+     "body": "An assignment ($p=F, q=T$) makes the formula false, so it is not a tautology."
+    }
+   ],
+   "answer": {
+    "value": "p = F, q = T: (∼p ∨ q) = T and (q ⇒ p) = F, so the formula is F; hence not a tautology.",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Checking only rows with p = T, where the conclusion q ⇒ p is always true."
+   ],
+   "verification": "Full truth table (p,q): TT→T, TF→T, FT→F, FF→T; exactly one false row."
+  },
+  "cse-1999-b-62-b": {
+   "approach": "A tautology is true under every truth assignment, and a disjunction is true as soon as one disjunct is true. So $A \\vee B$ is true under every assignment.",
+   "concepts": [
+    "Tautology",
+    "Disjunction",
+    "Truth assignment"
+   ],
+   "steps": [
+    {
+     "title": "Take any assignment",
+     "body": "Let $v$ be any truth assignment to the variables of $A$ and $B$. Since $A$ is a tautology, $v(A) = T$ (values of variables outside $A$ do not matter)."
+    },
+    {
+     "title": "Disjunction",
+     "body": "$v(A \\vee B) = v(A) \\vee v(B) = T \\vee v(B) = T$. As $v$ was arbitrary, $A \\vee B$ is true under every assignment, i.e. a tautology. $\\blacksquare$"
+    }
+   ],
+   "answer": {
+    "value": "Under every assignment v, v(A) = T, so v(A ∨ B) = T ∨ v(B) = T; therefore A ∨ B is a tautology.",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Trying to reason about B's truth value — it is irrelevant."
+   ],
+   "verification": "Equivalently A ≡ T, and T ∨ B ≡ T by the domination law."
+  },
+  "cse-1999-b-63": {
+   "approach": "Trace the body y := y+1; z := z+x for each mechanism. Under reference, y and z are both aliases of a; under copy-restore they are separate copies written back to a on return, so the last write-back wins.",
+   "concepts": [
+    "Call by value",
+    "Call by reference",
+    "Call by copy-restore",
+    "Aliasing"
+   ],
+   "steps": [
+    {
+     "title": "Call by value",
+     "body": "$x=5,\\ y=2,\\ z=2$ are local copies. $y=3,\\ z=2+5=7$, but nothing goes back to $a$. **print(a) → 2**."
+    },
+    {
+     "title": "Call by reference",
+     "body": "$x$ refers to a temporary holding $a+b=5$; $y$ and $z$ both refer to $a$.\n\n- $y := y+1$ → $a = 2+1 = 3$\n- $z := z+x$ → $a = 3+5 = 8$\n\n**print(a) → 8**."
+    },
+    {
+     "title": "Call by copy-restore",
+     "body": "Copy in: $x=5,\\ y=2,\\ z=2$. Body: $y=3$, $z=2+5=7$. Copy out left to right: $a := y = 3$, then $a := z = 7$. **print(a) → 7**.\n\n(If results were copied back right to left, $a$ would end as 3; the usual left-to-right convention gives 7.)"
+    }
+   ],
+   "answer": {
+    "value": "(i) 2 (ii) 8 (iii) 7",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Under reference, z sees the updated a (3), not the original 2.",
+    "Under copy-restore, z works on its own copy (2), so z = 7, not 8.",
+    "a+b is an expression: by reference it binds to a temporary, so no write reaches b."
+   ],
+   "verification": "Re-traced each case with a memory table for a, b and the formals; b stays 3 in every case."
+  },
+  "cse-1999-b-64": {
+   "approach": "An access link points to the most recent activation of the procedure that *lexically* encloses the callee. readarray, exchange and qsort are nested in sort and partition is nested in qsort, so only partition's link points to a qsort frame.",
+   "concepts": [
+    "Activation record",
+    "Access link",
+    "Static scoping",
+    "Nesting depth"
+   ],
+   "steps": [
+    {
+     "title": "Nesting depths",
+     "body": "| Procedure | Declared in | Depth |\n|---|---|---|\n| sort | — | 1 |\n| readarray, exchange, qsort | sort | 2 |\n| partition | qsort | 3 |\n\nAccess link of a frame = frame of the innermost enclosing procedure (its most recent activation). Snapshot 1: only sort, with no access link.",
+     "scene": {
+      "items": [
+       "sort"
+      ],
+      "caption": "sort activated: outermost, no access link"
+     }
+    },
+    {
+     "title": "qsort(1,9) and qsort(1,3)",
+     "body": "sort calls qsort(1,9): qsort is declared in sort → link to **sort**.\n\nqsort(1,9) calls qsort(1,3) (recursive): qsort's enclosing procedure is still sort → link to **sort**, not to qsort(1,9).",
+     "scene": {
+      "items": [
+       "sort",
+       "qsort(1,9) · AL→sort",
+       "qsort(1,3) · AL→sort"
+      ],
+      "caption": "both qsort frames link to sort"
+     }
+    },
+    {
+     "title": "partition(1,3)",
+     "body": "qsort(1,3) calls partition: partition is declared inside qsort → link to the most recent qsort frame, **qsort(1,3)**. Through it partition reaches v (in qsort) and, one more hop, a (in sort).",
+     "scene": {
+      "items": [
+       "sort",
+       "qsort(1,9) · AL→sort",
+       "qsort(1,3) · AL→sort",
+       "partition(1,3) · AL→qsort(1,3)"
+      ],
+      "caption": "partition → qsort(1,3)"
+     }
+    },
+    {
+     "title": "exchange(1,3)",
+     "body": "partition calls exchange: exchange is declared in sort (depth 2) and the caller is at depth 3, so follow $3-2+1 = 2$ links from partition: partition → qsort(1,3) → **sort**. exchange's link points to sort, where a and x live.",
+     "scene": {
+      "items": [
+       "sort",
+       "qsort(1,9) · AL→sort",
+       "qsort(1,3) · AL→sort",
+       "partition(1,3) · AL→qsort(1,3)",
+       "exchange(1,3) · AL→sort"
+      ],
+      "caption": "exchange → sort"
+     }
+    }
+   ],
+   "answer": {
+    "value": "Snapshots (bottom→top): sort; + qsort(1,9) [AL→sort]; + qsort(1,3) [AL→sort]; + partition(1,3) [AL→qsort(1,3)]; + exchange(1,3) [AL→sort].",
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "stack",
+    "items": [
+     "sort"
+    ]
+   },
+   "pitfalls": [
+    "Confusing the access (static) link with the control (dynamic) link — exchange's caller is partition, but its access link goes to sort.",
+    "Linking the recursive qsort(1,3) to qsort(1,9): qsort is nested in sort, not in itself."
+   ],
+   "verification": "Every non-local name resolves correctly: partition finds v one hop up (qsort(1,3)) and a two hops up (sort); exchange finds a and x one hop up (sort)."
+  },
+  "cse-1999-b-65-a": {
+   "approach": "SHR then SHL clears the lowest bit, so comparing with the saved copy tests whether the LSB was 1; R3 is incremented in that case, and the extra SHR at Y moves to the next bit. Trace with R1 = 5 = 101₂.",
+   "concepts": [
+    "Assembly trace",
+    "Shift operations",
+    "Bit testing"
+   ],
+   "steps": [
+    {
+     "title": "What one iteration does",
+     "body": "R2 := R1; R1 := (R1 >> 1) << 1 (LSB cleared). If R2 ≠ R1 the LSB was 1 → R3++. Then at Y, R1 := R1 >> 1, i.e. the original R1 shifted right by one.",
+     "scene": {
+      "reveal": 5
+     }
+    },
+    {
+     "title": "Trace",
+     "body": "- R1 = 5: R2 = 5, R1 → 4, $5 \\ne 4$ → R3 = 1, R1 → 2\n- R1 = 2: R2 = 2, R1 → 2, equal → skip INC, R1 → 1\n- R1 = 1: R2 = 1, R1 → 0, $1 \\ne 0$ → R3 = 2, R1 → 0\n- R1 = 0: JZ Z\n\nFinal: **R1 = 0, R3 = 2**.",
+     "scene": {
+      "reveal": 20,
+      "hl": [
+       {
+        "r": 3,
+        "tone": "success"
+       }
+      ]
+     }
+    }
+   ],
+   "answer": {
+    "value": "R1 = 0, R3 = 2",
+    "matchesKey": true
+   },
+   "animation": {
+    "kind": "table",
+    "cols": [
+     "Iter",
+     "R1 after Y",
+     "R2",
+     "R3",
+     "Test"
+    ],
+    "rows": [
+     [
+      "start",
+      "5 (101)",
+      "0",
+      "0",
+      "—"
+     ],
+     [
+      "1",
+      "2",
+      "5",
+      "1",
+      "5 ≠ 4 → INC"
+     ],
+     [
+      "2",
+      "1",
+      "2",
+      "1",
+      "2 = 2 → skip INC"
+     ],
+     [
+      "3",
+      "0",
+      "1",
+      "2",
+      "1 ≠ 0 → INC"
+     ]
+    ],
+    "reveal": 0,
+    "mono": true
+   },
+   "pitfalls": [
+    "Forgetting the SHR at Y, which runs on both paths.",
+    "Reporting R2 — the question asks for R1 and R3."
+   ],
+   "verification": "5 = 101₂ has two 1-bits, matching R3 = 2; the loop exits only when R1 = 0."
+  },
+  "cse-1999-b-65-b": {
+   "approach": "Each iteration examines the current least significant bit (SHR/SHL clears it; inequality means it was 1), increments R3 for a 1, and shifts R1 right. The loop stops when R1 = 0, so R3 counts the 1-bits of n.",
+   "concepts": [
+    "Population count",
+    "Shift operations",
+    "Loop invariant"
+   ],
+   "steps": [
+    {
+     "title": "One iteration",
+     "body": "With $R1 = r$: $R2 = r$, $R1 = 2\\lfloor r/2 \\rfloor$. $R2 \\ne R1$ iff $r$ is odd (LSB = 1), and then R3 increases by 1. At Y, $R1 = \\lfloor r/2 \\rfloor$."
+    },
+    {
+     "title": "Invariant",
+     "body": "$R3 + (\\text{number of 1s in } R1) = \\text{number of 1s in } n$ holds initially ($R3=0, R1=n$) and is preserved by every iteration. When the loop ends $R1 = 0$, so R3 = number of 1s in the binary representation of $n$."
+    }
+   ],
+   "answer": {
+    "value": "The number of 1s in the binary representation of n.",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Answering ⌊log₂ n⌋ + 1 (the number of bits) — iterations with a 0 bit skip the INC.",
+    "This assumes logical shifts (n treated as unsigned)."
+   ],
+   "verification": "n = 5 (101₂) gives 2, as in part (a); n = 7 gives 3; n = 8 gives 1."
+  },
+  "cse-1999-b-66": {
+   "approach": "Two 1K×4 chips side by side make a 1K×8 bank (one supplies D0–D3, the other D4–D7); two banks give 2K×8. A0–A9 go to every chip, A10 picks the bank, and A15–A11 = 00010 with IO/M̄ = 0 enables the block.",
+   "concepts": [
+    "Memory interfacing",
+    "Address decoding",
+    "8085 bus",
+    "Word-width expansion"
+   ],
+   "steps": [
+    {
+     "title": "Address map",
+     "body": "| Range | A15 A14 A13 A12 A11 | A10 | A9–A0 |\n|---|---|---|---|\n| 1000H–13FFH | 0 0 0 1 0 | 0 | 000H–3FFH |\n| 1400H–17FFH | 0 0 0 1 0 | 1 | 000H–3FFH |\n\nSo A15–A11 = 00010 is fixed, A10 selects the 1K bank, and A9–A0 address a location inside a chip."
+    },
+    {
+     "title": "Chip organisation",
+     "body": "| Chip | Data lines | Addresses |\n|---|---|---|\n| C1 | D0–D3 | 1000H–13FFH (bank 0) |\n| C2 | D4–D7 | 1000H–13FFH (bank 0) |\n| C3 | D0–D3 | 1400H–17FFH (bank 1) |\n| C4 | D4–D7 | 1400H–17FFH (bank 1) |\n\nAll four chips: $A_0$–$A_9$ from the 8085 address bus (low byte demultiplexed from AD0–AD7 by a latch strobed by ALE); chip $\\overline{RD}$, $\\overline{WR}$ wired to the 8085's $\\overline{RD}$, $\\overline{WR}$."
+    },
+    {
+     "title": "Chip-select logic",
+     "body": "$$\\overline{CS}_{0} = \\overline{\\overline{A_{15}}\\,\\overline{A_{14}}\\,\\overline{A_{13}}\\,A_{12}\\,\\overline{A_{11}}\\,\\overline{A_{10}}\\,\\overline{IO/\\overline{M}}}, \\qquad \\overline{CS}_{1} = \\overline{\\overline{A_{15}}\\,\\overline{A_{14}}\\,\\overline{A_{13}}\\,A_{12}\\,\\overline{A_{11}}\\,A_{10}\\,\\overline{IO/\\overline{M}}}$$\nC1 and C2 share $\\overline{CS}_{0}$; C3 and C4 share $\\overline{CS}_{1}$.\n\nWith a 74138 3-to-8 decoder: select inputs $C\\,B\\,A = A_{12}\\,A_{11}\\,A_{10}$, $G_1 = 1$, $\\overline{G_{2A}} = A_{15}+A_{14}$, $\\overline{G_{2B}} = A_{13}+IO/\\overline{M}$; output $\\overline{Y_4}$ (100) → bank 0, $\\overline{Y_5}$ (101) → bank 1."
+    }
+   ],
+   "answer": {
+    "value": "Two banks of two 1K×4 chips (low/high nibble); A0–A9 to all chips; bank 0 at 1000–13FF (A10=0), bank 1 at 1400–17FF (A10=1); decode A15–A11 = 00010 with IO/M̄ = 0 to form the CS̄ signals.",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Putting both chips of a bank on the same data nibble — they must split D0–D3 and D4–D7.",
+    "Leaving IO/M̄ out of the decode lets I/O cycles enable the memory.",
+    "Partial decoding (ignoring A13–A15) creates mirror images of the block elsewhere in the address space."
+   ],
+   "verification": "1000H → A15–A10 = 000100 → bank 0, offset 000H; 17FFH → 000101 → bank 1, offset 3FFH; 1800H → A11 = 1 → no chip selected."
+  },
+  "cse-1999-b-67-a": {
+   "approach": "Each segment is $2^{16}/8 = 2^{13}$ bytes. With page size $2^p$, a segment's page table has $2^{13-p}$ two-byte entries, i.e. $2^{14-p}$ bytes; require this to fit in one page.",
+   "concepts": [
+    "Segmented paging",
+    "Page table size"
+   ],
+   "steps": [
+    {
+     "title": "Segment size",
+     "body": "$2^{16}/8 = 2^{13}$ bytes per segment."
+    },
+    {
+     "title": "Page-table size vs page size",
+     "body": "Page size $2^p$ ⇒ $2^{13-p}$ pages per segment ⇒ page table $= 2^{13-p} \\times 2 = 2^{14-p}$ bytes.\n$$2^{14-p} \\le 2^p \\iff 14 \\le 2p \\iff p \\ge 7.$$\nMinimum page size $= 2^7 = 128$ bytes."
+    }
+   ],
+   "answer": {
+    "value": "128 bytes",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Using the whole 2¹⁶ address space instead of one segment: 2^{17−p} ≤ 2^p gives p ≥ 9 (512 bytes) — but the page table is per segment."
+   ],
+   "verification": "p = 7: 2⁶ entries × 2 B = 128 B = one page ✓; p = 6: 2⁷ × 2 = 256 B > 64 B ✗."
+  },
+  "cse-1999-b-67-b": {
+   "approach": "The TLB is indexed by the virtual page number (segment + page). With 512-byte pages the VPN has 16 − 9 = 7 bits; 16 direct-mapped entries use 4 index bits, leaving 3 tag bits.",
+   "concepts": [
+    "TLB",
+    "Direct mapping",
+    "Virtual page number"
+   ],
+   "steps": [
+    {
+     "title": "Virtual page number",
+     "body": "Offset $= \\log_2 512 = 9$ bits, so VPN $= 16-9 = 7$ bits (3 segment bits + 4 page bits)."
+    },
+    {
+     "title": "Split for a direct-mapped TLB",
+     "body": "16 entries ⇒ index $= \\log_2 16 = 4$ bits. Tag $= 7 - 4 = 3$ bits."
+    }
+   ],
+   "answer": {
+    "value": "3",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Subtracting the index from the full 16-bit address (giving 12) — the page offset is never looked up in the TLB."
+   ],
+   "verification": "7 VPN bits = 3 tag + 4 index; 2³ × 2⁴ = 128 virtual pages = 2¹⁶ / 2⁹ ✓."
+  },
+  "cse-1999-b-67-c": {
+   "approach": "A 2-byte PTE has 16 bits. The frame number needs 16 − 9 = 7 bits (physical space 2¹⁶, pages of 512 B); valid, protection and dirty take 1 + 3 + 1 = 5; the rest is free for aging.",
+   "concepts": [
+    "Page table entry",
+    "Frame number"
+   ],
+   "steps": [
+    {
+     "title": "Frame number",
+     "body": "Frames $= 2^{16}/2^9 = 2^7$, so 7 bits."
+    },
+    {
+     "title": "Remaining bits",
+     "body": "$16 - 7 - (1+3+1) = 16 - 7 - 5 = 4$ bits for aging."
+    }
+   ],
+   "answer": {
+    "value": "4",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Forgetting the frame-number field and answering 11."
+   ],
+   "verification": "7 + 1 + 3 + 1 + 4 = 16 bits = 2 bytes ✓."
+  },
+  "cse-1999-b-68-a": {
+   "approach": "Spin until TSET returns 0 (the flag was free; TSET has already set it to 1, so we own the lock). On exit simply clear the flag.",
+   "concepts": [
+    "Test-and-set",
+    "Spinlock",
+    "Mutual exclusion"
+   ],
+   "steps": [
+    {
+     "title": "Entry code",
+     "body": "```\nENTRY: TSET R, flag     ; R := flag, flag := 1 (atomic)\n       CMP  R, 0\n       JNZ  ENTRY       ; flag was 1 -> someone inside, retry\n       ; critical region\n```"
+    },
+    {
+     "title": "Exit code",
+     "body": "```\nEXIT:  MOV  flag, 0      ; release the lock\n```\nflag starts at 0. Because TSET reads and sets in one atomic step, only one process can see R = 0 while flag goes 0 → 1."
+    }
+   ],
+   "answer": {
+    "value": "Entry: L: TSET R, flag; if R ≠ 0 goto L. Exit: flag := 0.",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Reading flag and setting it in two separate instructions — that loses atomicity.",
+    "Looping while R = 0 (inverted test)."
+   ],
+   "verification": "Two processes racing: the first TSET returns 0 and sets flag = 1; the second gets 1 and spins until the exit code stores 0."
+  },
+  "cse-1999-b-68-b": {
+   "approach": "The test of count and the sleep are not one atomic step. A wakeup sent between a process's test and its sleep is lost, after which each process waits for the other.",
+   "concepts": [
+    "Producer–consumer",
+    "Lost wakeup",
+    "Race condition"
+   ],
+   "steps": [
+    {
+     "title": "Interleaving",
+     "body": "| # | Consumer | Producer | count |\n|---|---|---|---|\n| 1 | tests count = 0, decides to sleep; preempted before sleeping | | 0 |\n| 2 | | produces; count ≠ 1, places item | 0 |\n| 3 | | count := 1; wakeup(Consumer) — consumer not yet asleep, **wakeup lost** | 1 |\n| 4 | | produces next item; count = 1 → sleep | 1 |\n| 5 | resumes and executes sleep | | 1 |"
+    },
+    {
+     "title": "Result",
+     "body": "The producer sleeps waiting for the consumer to empty the buffer, and the consumer sleeps waiting for a wakeup that already happened. Neither will ever wake the other, so both sleep forever."
+    }
+   ],
+   "answer": {
+    "value": "Lost wakeup: consumer tests count = 0, is preempted before sleeping; producer fills buffer, sets count = 1, wakeup is lost; consumer sleeps; producer then finds count = 1 and sleeps.",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Making the test of count atomic does not help — the test and the sleep together must be atomic (semaphores fix this by remembering wakeups)."
+   ],
+   "verification": "In the final state count = 1 (an item is waiting) yet both processes are blocked — a deadlock."
+  },
+  "cse-1999-b-69": {
+   "approach": "Count leaves first: the fullest tree has every node with 2m−1 children; the sparsest has a root with 2 children and every other internal node with m. Each leaf holds between m−1 and 2m−2 records (a node with c children holds c−1 keys), so multiply.",
+   "concepts": [
+    "B-tree",
+    "Minimum/maximum fan-out",
+    "Height bounds"
+   ],
+   "steps": [
+    {
+     "title": "Number of leaves",
+     "body": "Leaves are at depth $h$.\n\n- Maximum: every node has $2m-1$ children ⇒ $(2m-1)^h$ leaves.\n- Minimum: the root has 2 children and every other internal node $m$ ⇒ $2\\,m^{h-1}$ leaves."
+    },
+    {
+     "title": "Records per leaf",
+     "body": "A node with $c$ children holds $c-1$ keys and $m \\le c \\le 2m-1$, so a non-root node (leaves included) holds between $m-1$ and $2m-2$ records."
+    },
+    {
+     "title": "Records in the leaf level",
+     "body": "$$\\max = (2m-1)^h\\,(2m-2), \\qquad \\min = 2\\,m^{h-1}\\,(m-1).$$\nIf 'records in the leaf nodes' is read as the number of leaf nodes, the bounds are $(2m-1)^h$ and $2m^{h-1}$."
+    }
+   ],
+   "answer": {
+    "value": "Leaf nodes: max (2m−1)^h, min 2m^{h−1}; with m−1 … 2m−2 keys per leaf, records: max (2m−1)^h(2m−2), min 2m^{h−1}(m−1).",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Giving the root m children in the minimum case — the root only needs 2.",
+    "Counting keys in internal nodes when the question asks about leaves."
+   ],
+   "verification": "m = 2 (a 2-3 tree), h = 1: leaves between 2 and 3, records between 2·1 = 2 and 3·2 = 6 — consistent with a 2-3 tree of height 1."
+  },
+  "cse-1999-b-70-a": {
+   "approach": "Join EMP and DEPT on Dept-no, then filter on Location and Salary and project the name.",
+   "concepts": [
+    "SQL join",
+    "WHERE clause"
+   ],
+   "steps": [
+    {
+     "title": "Query",
+     "body": "```sql\nSELECT E.\"Employee-name\"\nFROM   EMP E, DEPT D\nWHERE  E.\"Dept-no\" = D.\"Dept-no\"\n  AND  D.Location = 'Calcutta'\n  AND  E.Salary > 50000;\n```\n(Hyphenated column names are quoted so they are not parsed as subtraction.)"
+    },
+    {
+     "title": "Why it works",
+     "body": "The join pairs each employee with their department; the two conditions keep only Calcutta departments and salaries above 50,000."
+    }
+   ],
+   "answer": {
+    "value": "SELECT E.Employee-name FROM EMP E, DEPT D WHERE E.Dept-no = D.Dept-no AND D.Location = 'Calcutta' AND E.Salary > 50000;",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "Omitting the join condition gives a Cartesian product.",
+    "Using ≥ instead of > for 'greater than'."
+   ],
+   "verification": "The nested form WHERE Dept-no IN (SELECT Dept-no FROM DEPT WHERE Location = 'Calcutta') AND Salary > 50000 returns the same names."
+  },
+  "cse-1999-b-70-b": {
+   "approach": "Filter rows with WHERE before grouping, then GROUP BY Dept-no and COUNT.",
+   "concepts": [
+    "GROUP BY",
+    "COUNT aggregate",
+    "WHERE vs HAVING"
+   ],
+   "steps": [
+    {
+     "title": "Query",
+     "body": "```sql\nSELECT \"Dept-no\", COUNT(*)\nFROM   EMP\nWHERE  Salary > 100000\nGROUP BY \"Dept-no\";\n```"
+    },
+    {
+     "title": "Why WHERE, not HAVING",
+     "body": "The condition is on each employee's salary, so it filters rows before grouping. HAVING filters whole groups."
+    }
+   ],
+   "answer": {
+    "value": "SELECT Dept-no, COUNT(*) FROM EMP WHERE Salary > 100000 GROUP BY Dept-no;",
+    "matchesKey": true
+   },
+   "pitfalls": [
+    "HAVING Salary > 100000 is invalid (Salary is not grouped).",
+    "Departments with no such employee are omitted; listing them with 0 needs an outer join with DEPT."
+   ],
+   "verification": "Each group's COUNT(*) counts only rows that passed the salary filter."
+  }
+ }
+}
