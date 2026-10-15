@@ -10,6 +10,8 @@ export interface ProfileUser {
   bio: string | null
   status: 'online' | 'offline' | string
   role: 'member' | 'admin' | 'teacher' | string
+  /** Verified badge (admin panel). */
+  verified?: number | boolean
   auth_provider: string | null
   email?: string | null
   last_seen: string | null

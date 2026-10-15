@@ -5,6 +5,7 @@ import { AppLayout } from '@/components/layout/AppLayout'
 import { LoadingBlock } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { idlePrefetchCommonRoutes, pageLoaders } from '@/routes'
+import { SiteGate } from '@/components/site/SiteGate'
 
 const AuthPage = lazy(pageLoaders.AuthPage)
 const LandingPage = lazy(pageLoaders.LandingPage)
@@ -39,6 +40,7 @@ const ProfilePage = lazy(pageLoaders.ProfilePage)
 const SettingsPage = lazy(pageLoaders.SettingsPage)
 const ThemeCentrePage = lazy(pageLoaders.ThemeCentrePage)
 const NotFoundPage = lazy(pageLoaders.NotFoundPage)
+const AdminPage = lazy(pageLoaders.AdminPage)
 const VizLab = import.meta.env.DEV ? lazy(() => import('@/learn/ui/VizLab')) : null
 
 function PageLoader() {
@@ -74,6 +76,7 @@ function RequireAuth({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <SiteGate>
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
@@ -117,10 +120,12 @@ export default function App() {
             <Route path="/profile/:username" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsRoute />} />
             <Route path="/theme" element={<ThemeCentrePage />} />
+            <Route path="/admin" element={<AdminPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>
       </Suspense>
+      </SiteGate>
     </BrowserRouter>
   )
 }

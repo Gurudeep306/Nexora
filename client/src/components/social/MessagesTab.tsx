@@ -18,6 +18,7 @@ import { api, ApiError } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { cn, timeAgo } from '@/lib/utils'
 import type { Friend, Message, Reactions, UnreadCount } from './types'
+import { UserBadges } from '@/components/shared/UserBadges'
 import { avatarSrc } from './types'
 
 interface Props {
@@ -291,8 +292,9 @@ export function MessagesTab({ me, socket }: Props) {
                       online={f.status === 'online'}
                     />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-foreground">
-                        {f.display_name || f.username}
+                      <span className="flex items-center gap-1.5 truncate text-sm font-semibold text-foreground">
+                        <span className="truncate">{f.display_name || f.username}</span>
+                        <UserBadges username={f.username} />
                       </span>
                       <span className="block truncate text-xs text-foreground-faint">
                         @{f.username}
@@ -335,8 +337,9 @@ export function MessagesTab({ me, socket }: Props) {
               </Button>
               <Avatar seed={peer} name={peer} size="sm" />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-sm tracking-wider text-foreground">
+                <p className="flex items-center gap-1.5 truncate font-display text-sm tracking-wider text-foreground">
                   @{peer}
+                  <UserBadges username={peer} />
                 </p>
                 <p className="text-[11px] text-foreground-faint">
                   {peerTyping ? 'typing…' : socket?.connected ? 'realtime channel open' : 'offline mode — REST fallback'}

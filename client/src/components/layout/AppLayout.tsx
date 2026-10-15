@@ -13,11 +13,19 @@ import { DockSync } from './DockSync'
 import { AgentPanel } from './AgentPanel'
 import { AgentProvider } from '@/context/AgentContext'
 import { cn } from '@/lib/utils'
+import { useSite } from '@/context/SiteContext'
+import { featureForPath } from '@/lib/site'
+import { SiteBanners } from '@/components/site/SiteBanners'
+import { SectionOff } from '@/components/site/SectionOff'
 
 export function AppLayout() {
   const location = useLocation()
   // Workspace pages (the solver) use the full width; everything else sits in a centred column.
   const wide = location.pathname.startsWith('/solve')
+  // Sections an admin switched off (feature flags) render a notice instead.
+  const { featureOn } = useSite()
+  const flag = featureForPath(location.pathname)
+  const sectionOff = flag && !featureOn(flag) ? flag : null
 
   // Start every page at the top.
   useEffect(() => {
@@ -41,6 +49,7 @@ export function AppLayout() {
       <ShortcutsDialog />
 
       <div className="relative z-10 flex min-h-dvh flex-col">
+        <SiteBanners />
         <Topbar />
         <main
           id="main-content"
@@ -63,7 +72,7 @@ export function AppLayout() {
                 transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
               >
                 <PageErrorBoundary key={location.pathname}>
-                  <Outlet />
+                  {sectionOff ? <SectionOff flag={sectionOff} /> : <Outlet />}
                 </PageErrorBoundary>
               </motion.div>
             </AnimatePresence>
@@ -72,7 +81,7 @@ export function AppLayout() {
       </div>
       <MobileTabBar />
       <Deck />
-      <AgentPanel />
+      {featureOn('ai_tutor') && <AgentPanel />}
     </div>
     </AgentProvider>
   )
