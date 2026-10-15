@@ -1,0 +1,121 @@
+# Deploys the API to the Oracle VM after CI passes on main.
+#
+#   push to main → CI (tests + client build) → this workflow → SSH to the VM:
+#     git checkout <the tested commit> · npm ci --omit=dev · pm2 reload
+#   → health check (on the VM, then https://api.nexoraguru.in/api/health).
+#   If the new version doesn't come up healthy on the VM it is rolled back.
+#
+# Repository secrets (Settings → Secrets and variables → Actions → Secrets):
+#   ORACLE_HOST         the VM's public IP address
+#   ORACLE_USER         deploy
+#   ORACLE_SSH_KEY      the PRIVATE key whose .pub is in /home/deploy/.ssh/authorized_keys
+#   ORACLE_KNOWN_HOSTS  (optional) output of `ssh-keyscan <ip>`; without it the
+#                       host key is trusted on first use
+# Repository variable (… → Variables), optional:
+#   API_HEALTH_URL      default https://api.nexoraguru.in/api/health
+#
+# Without the secrets the job is skipped (green), so forks and the Render-only
+# setup are unaffected. The website itself is deployed by Cloudflare Pages.
+name: Deploy API (Oracle)
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-api
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      ORACLE_HOST: ${{ secrets.ORACLE_HOST }}
+      ORACLE_USER: ${{ secrets.ORACLE_USER }}
+      ORACLE_SSH_KEY: ${{ secrets.ORACLE_SSH_KEY }}
+      ORACLE_KNOWN_HOSTS: ${{ secrets.ORACLE_KNOWN_HOSTS }}
+      SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      HEALTH_URL: ${{ vars.API_HEALTH_URL || 'https://api.nexoraguru.in/api/health' }}
+    steps:
+      - name: Skip when the Oracle secrets are not configured
+        id: check
+        run: |
+          if [ -z "$ORACLE_HOST" ] || [ -z "$ORACLE_USER" ] || [ -z "$ORACLE_SSH_KEY" ]; then
+            echo "ORACLE_HOST / ORACLE_USER / ORACLE_SSH_KEY not set — skipping the API deploy."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: SSH key
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$ORACLE_SSH_KEY" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          if [ -n "$ORACLE_KNOWN_HOSTS" ]; then
+            printf '%s\n' "$ORACLE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+            echo "STRICT=yes" >> "$GITHUB_ENV"
+          else
+            echo "STRICT=accept-new" >> "$GITHUB_ENV"
+          fi
+
+      - name: Deploy ${{ env.SHA }}
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          ssh -i ~/.ssh/id_deploy -o StrictHostKeyChecking="$STRICT" -o ConnectTimeout=20 \
+              -o ServerAliveInterval=15 "$ORACLE_USER@$ORACLE_HOST" \
+              "SHA=$SHA bash -s" <<'REMOTE'
+          set -euo pipefail
+          cd /opt/nexora
+          PREV="$(git rev-parse HEAD)"
+          echo "current: $PREV  →  deploying: $SHA"
+
+          healthy() {
+            for _ in $(seq 1 30); do
+              if curl -fsS http://127.0.0.1:3000/api/health | grep -q "\"commit\":\"${1:0:7}\""; then return 0; fi
+              sleep 2
+            done
+            return 1
+          }
+          release() {
+            git fetch --quiet origin
+            git checkout --quiet --force "$1"
+            PUPPETEER_SKIP_DOWNLOAD=1 npm ci --omit=dev --no-audit --no-fund
+            GIT_COMMIT="$1" pm2 reload deploy/oracle/ecosystem.config.cjs --update-env
+            pm2 save >/dev/null
+          }
+
+          release "$SHA"
+          if healthy "$SHA"; then
+            echo "✓ $SHA is healthy on the VM"
+          else
+            echo "✗ $SHA did not become healthy — rolling back to $PREV"
+            pm2 logs nexora --lines 60 --nostream || true
+            release "$PREV"
+            healthy "$PREV" && echo "rolled back to $PREV" || echo "rollback ALSO unhealthy — check the VM"
+            exit 1
+          fi
+          REMOTE
+
+      - name: Public health check
+        if: steps.check.outputs.skip != 'true'
+        run: |
+          for i in $(seq 1 20); do
+            if body="$(curl -fsS --max-time 10 "$HEALTH_URL")"; then
+              echo "$body"
+              echo "$body" | grep -q "\"commit\":\"${SHA:0:7}\"" && exit 0
+              echo "health OK but not the new commit yet…"
+            fi
+            sleep 6
+          done
+          echo "✗ $HEALTH_URL did not report commit ${SHA:0:7}"
+          exit 1
