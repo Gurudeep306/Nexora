@@ -1,0 +1,65 @@
+{
+  "paper": "cse-2000",
+  "fixes": [
+    {
+      "id": "cse-2000-a-2-3",
+      "field": "text",
+      "before": "Let $S = \\sum_{i=3}^{100} i\\log_2 i$ and\n\nand $T = \\int_2^{100} x\\log_2 x\\,dx$\n\nWhich of the following statements is true?",
+      "after": "Let $S = \\sum_{i=3}^{100} i\\log_2 i$ and $T = \\int_2^{100} x\\log_2 x\\,dx$\n\nWhich of the following statements is true?",
+      "reason": "Remove the duplicated \"and\" from the scan.",
+      "source": "GATE 2000 CS paper Q2.3"
+    },
+    {
+      "id": "cse-2000-a-2-9",
+      "field": "text",
+      "before": "Consider the following decision problems:\n\n(P1) Does a given finite state machine accept a given string\n\n(P2) Does a given context free grammar generate an infinite number of stings\n\nWhich of the following statements is true?",
+      "after": "Consider the following decision problems:\n\n(P1) Does a given finite state machine accept a given string\n\n(P2) Does a given context free grammar generate an infinite number of strings\n\nWhich of the following statements is true?",
+      "reason": "Typo \"stings\" -> \"strings\".",
+      "source": "GATE 2000 CS paper Q2.9"
+    },
+    {
+      "id": "cse-2000-a-2-16",
+      "field": "text",
+      "before": "Let LASTPOST, LASTIN and LASTPRE denote the last vertex visited in a postorder, inorder and preorder traversal. Respectively, of a complete binary tree. Which of the following is always tree?",
+      "after": "Let LASTPOST, LASTIN and LASTPRE denote the last vertex visited in a postorder, inorder and preorder traversal, respectively, of a complete binary tree. Which of the following is always true?",
+      "reason": "Fix scan typos (\"Respectively\", \"always tree\").",
+      "source": "GATE 2000 CS paper Q2.16"
+    },
+    {
+      "id": "cse-2000-a-2-12",
+      "field": "needsReview",
+      "before": true,
+      "after": true,
+      "reason": "Keeps the existing review flag (committed value already true): the independent solution (one clock cycle -> (1,0), option A) disagrees with the stored key D. Recorded so the key disagreement is explicitly flagged.",
+      "source": "GATE 2000 CS paper Q2.12"
+    },
+    {
+      "id": "cse-2000-a-2-12",
+      "field": "reviewNote",
+      "before": "Printed 'After the clock cycles' — the original likely reads 'After two clock cycles'; answer assumes two.",
+      "after": "Printed 'After the clock cycles' is ambiguous. One clock cycle (the usual reading, 'After the clock cycle') gives (P,Q) = (1,0) = option A; two cycles give (0,1) = stored key D. The solution argues A; key left unchanged pending verification.",
+      "reason": "Precise note on the key disagreement.",
+      "source": "GATE 2000 CS paper Q2.12"
+    },
+    {
+      "id": "cse-2000-a-2-12",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2000/a-2-12-1.png",
+          "alt": "A JK flip-flop with output P and a D flip-flop with output Q. J and K of the first flip-flop are both tied to logic 1. Output P is wired to the D input of the second flip-flop. A common clock line drives both flip-flops.",
+          "svg": "cse-2000/a-2-12-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2000/a-2-12-1.png",
+          "alt": "Two master-slave flip-flops on a common clock line. Left: a JK flip-flop with output P; its J and K inputs are both tied to logic 1 (the 1-wire hops over the clock wire). Right: a D flip-flop with output Q; P is wired over the top to its D input.",
+          "svg": "cse-2000/a-2-12-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as SVG; alt text describes the wiring precisely.",
+      "source": "GATE 2000 CS paper Q2.12"
+    }
+  ]
+}
