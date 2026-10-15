@@ -201,7 +201,6 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
               panelClassName,
             )}
           >
-            <span aria-hidden="true" className="hairline-top pointer-events-none absolute inset-x-0 top-0 h-px" />
             <div className="max-h-[min(20rem,60vh)] overflow-y-auto overscroll-contain">
               {loading && items.length === 0 && (
                 <div className="space-y-1.5 p-1.5">
