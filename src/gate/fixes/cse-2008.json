@@ -1,0 +1,188 @@
+{
+  "paper": "cse-2008",
+  "fixes": [
+    {
+      "id": "cse-2008-cs-3",
+      "field": "reviewNote",
+      "before": "Question is flawed: unique solution iff alpha != 5; option D 'any real number' is the official key.",
+      "after": "Question is flawed: det = alpha - 5, so the system has a unique solution for every real alpha except 5 (alpha = 5 gives infinitely many). No option is exactly right; D ('any real number') is the closest and is kept as the key. Unverified against an official 2008 key.",
+      "reason": "Recomputed determinant; the previous note claimed an official key that could not be verified.",
+      "source": "independent solve"
+    },
+    {
+      "id": "cse-2008-cs-24",
+      "field": "subject",
+      "before": "db",
+      "after": "dm",
+      "reason": "Question is a summation identity (discrete maths), not SQL.",
+      "source": "GATE 2008 CS question paper (PDF p.5)"
+    },
+    {
+      "id": "cse-2008-cs-24",
+      "field": "topic",
+      "before": "sql",
+      "after": "combinatorics",
+      "reason": "Summation of arithmetic series.",
+      "source": "GATE 2008 CS question paper (PDF p.5)"
+    },
+    {
+      "id": "cse-2008-cs-30",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$(\\forall x\\ fsa(x))\\Rightarrow(\\exists y\\ pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "B",
+          "t": "$\\sim\\forall y\\,(\\exists x\\ fsa(x)\\Rightarrow pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "C",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(y)\\wedge pda(x)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "D",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge equivalent(x,y))$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$(\\forall x\\ fsa(x))\\Rightarrow(\\exists y\\ pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "B",
+          "t": "$\\sim\\forall y\\,(\\exists x\\ fsa(x)\\Rightarrow pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "C",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(x)\\wedge pda(y)\\wedge equivalent(x,y))$"
+        },
+        {
+          "l": "D",
+          "t": "$\\forall x\\,\\exists y\\,(fsa(y)\\wedge pda(x)\\wedge equivalent(x,y))$"
+        }
+      ],
+      "reason": "Options C and D were swapped relative to the PDF: (C) is fsa(x) ∧ pda(y), (D) is fsa(y) ∧ pda(x).",
+      "source": "GATE 2008 CS question paper (PDF p.6)"
+    },
+    {
+      "id": "cse-2008-cs-30",
+      "field": "reviewNote",
+      "before": "Answer chosen by elimination (A); wording of A has x free in consequent; some sources consider none fully correct. Verify against official key.",
+      "after": "Intended answer A (reading ∀x as scoping over the whole implication); strictly x is free in the consequent of A as printed, and B, C, D are clearly wrong. Verify against the official key.",
+      "reason": "Clarified review note after re-solving.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2008-cs-33",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Re-solved independently: I false (relocation uses PC-relative), II false (no extra ALU needed), III true ⇒ C.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2008-cs-33",
+      "field": "reviewNote",
+      "before": "Answer C taken from a secondary source (gateoverflow); verify.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2008-cs-34",
+      "field": "reviewNote",
+      "before": "Answer D taken from a secondary source (gateoverflow); verify.",
+      "after": "II (privileged) and III (atomic, no exception during RFE) are clearly required; I (trap instruction) is debatable. No option lists \"II and III\", so D is the only option containing both; verify against the official key.",
+      "reason": "Precise review note after re-solving.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2008-cs-48",
+      "field": "tags",
+      "before": [
+        "RE",
+        "closure"
+      ],
+      "after": [
+        "recursive vs RE",
+        "NFA to DFA",
+        "Chomsky hierarchy"
+      ],
+      "reason": "Tags described the wrong concepts; the question is about decidability classes and automata equivalences.",
+      "source": "GATE 2008 CS paper Q.48"
+    },
+    {
+      "id": "cse-2008-cs-49",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2008/cs-49-1.png",
+          "alt": "Transition tables: Y: 1: a->1,b->2; 2(F): a->2,b->1. Z: 1: a->2,b->2; 2(F): a->1,b->1.",
+          "svg": "cse-2008/cs-49-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The transition tables of Y and Z are already in the question text; the figure only duplicated them (and its SVG was an unrelated placeholder automaton).",
+      "source": "GATE 2008 CS paper Q.49"
+    },
+    {
+      "id": "cse-2008-cs-49",
+      "field": "reviewNote",
+      "before": "Printed option tables do not exactly match a hand-computed product for state S; answer A per gateoverflow.",
+      "after": "Correct product (states (z,y)): P=(1,1): a->(2,1), b->(2,2); Q=(1,2): a->(2,2), b->(2,1); R=(2,2) final: a->(1,2), b->(1,1); S=(2,1): a->(1,1), b->(1,2). Option A matches rows P, Q, R exactly but prints S as a->Q, b->P (should be a->P, b->Q); A is the only option with P -b-> R and is the accepted answer. Paper misprint.",
+      "reason": "Precise description of the option-table discrepancy.",
+      "source": "GATE 2008 CS paper Q.49"
+    },
+    {
+      "id": "cse-2008-cs-57",
+      "field": "subject",
+      "before": "calc",
+      "after": "cn",
+      "reason": "Subnetting is Computer Networks, not Calculus.",
+      "source": "GATE 2008 CS paper Q.57"
+    },
+    {
+      "id": "cse-2008-cs-57",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "ip",
+      "reason": "IP addressing / subnetting.",
+      "source": "GATE 2008 CS paper Q.57"
+    },
+    {
+      "id": "cse-2008-cs-58",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Token-bucket traffic shaping is a Computer Networks question in the CS technical section.",
+      "source": "GATE 2008 CS paper Q.58"
+    },
+    {
+      "id": "cse-2008-cs-58",
+      "field": "topic",
+      "before": "quant",
+      "after": "transport",
+      "reason": "Congestion control / traffic shaping (same classification as cse-2016-1-cs-54).",
+      "source": "GATE 2008 CS paper Q.58"
+    },
+    {
+      "id": "cse-2008-cs-68",
+      "field": "text",
+      "before": "Let R and S be two relations with the following schema\n\nR(<u>P</u>, <u>Q</u>, R1, R2, R3)\n\nS(<u>P</u>, <u>Q</u>, S1, S2)\n\nwhere {P,Q} is the key for both schemas. Which of the following queries are equivalent?\n\nI. $\\Pi_P(R\\bowtie S)$\n\nII. $\\Pi_P(R)\\bowtie\\Pi_P(S)$\n\nIII. $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$\n\nIV. $\\Pi_P(\\Pi_{P,Q}(R)-(\\Pi_{P,Q}(R)-\\Pi_{P,Q}(S)))$",
+      "after": "Let R and S be two relations with the following schema\n\n$R(\\underline{P},\\underline{Q},R1,R2,R3)$\n\n$S(\\underline{P},\\underline{Q},S1,S2)$\n\nwhere {P,Q} is the key for both schemas. Which of the following queries are equivalent?\n\nI. $\\Pi_P(R\\bowtie S)$\n\nII. $\\Pi_P(R)\\bowtie\\Pi_P(S)$\n\nIII. $\\Pi_P(\\Pi_{P,Q}(R)\\cap\\Pi_{P,Q}(S))$\n\nIV. $\\Pi_P(\\Pi_{P,Q}(R)-(\\Pi_{P,Q}(R)-\\Pi_{P,Q}(S)))$",
+      "reason": "Replace raw HTML <u> underlines with KaTeX \\underline for key attributes.",
+      "source": "GATE2008.pdf p14"
+    },
+    {
+      "id": "cse-2008-cs-79",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "True value x5 = 13 is not among the options (5, 7, 8, 16); stored key '13' names no option.",
+      "source": "independent solution"
+    }
+  ]
+}
