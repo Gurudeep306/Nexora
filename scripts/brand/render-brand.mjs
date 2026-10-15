@@ -5,7 +5,7 @@
  *
  *   node scripts/brand/build-brand.mjs && node scripts/brand/render-brand.mjs
  */
-import { readFileSync, writeFileSync, copyFileSync } from 'node:fs'
+import { copyFileSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import puppeteer from 'puppeteer'
@@ -14,7 +14,6 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(HERE, '..', '..')
 const PUB = join(ROOT, 'client', 'public')
 const OUT = join(PUB, 'brand')
-const CONCEPTS = join(ROOT, 'docs', 'brand', 'concepts')
 const GEIST = join(ROOT, 'client/node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2')
 
 const b64 = (f) => readFileSync(f).toString('base64')
@@ -41,10 +40,8 @@ async function shot(html, w, h, file, { transparent = true } = {}) {
 const icon = (svgFile, size, out) =>
   shot(`<img src="${dataSvg(svgFile)}" width="${size}" height="${size}">`, size, size, out)
 
+// Favicons (small cut on a dark tile) + ICO
 const flat = join(OUT, 'ngmark-flat.svg')
-const master = join(OUT, 'ngmark.svg')
-
-// Favicons (flat, hinted) + ICO
 const ico = []
 for (const s of [16, 32, 48]) ico.push([s, await icon(flat, s, join(OUT, `favicon-${s}.png`))])
 const header = Buffer.alloc(6 + 16 * ico.length)
@@ -60,59 +57,45 @@ ico.forEach(([s, png], i) => {
 writeFileSync(join(OUT, 'favicon.ico'), Buffer.concat([header, ...ico.map(([, p]) => p)]))
 copyFileSync(join(OUT, 'favicon.ico'), join(PUB, 'favicon.ico'))
 
-// Home-screen / PWA icons (3D master)
+// Home-screen / PWA icons
 await icon(join(OUT, 'ngmark-apple.svg'), 180, join(OUT, 'apple-touch-icon.png'))
 copyFileSync(join(OUT, 'apple-touch-icon.png'), join(PUB, 'apple-touch-icon.png'))
-await icon(master, 192, join(OUT, 'icon-192.png'))
-await icon(master, 512, join(OUT, 'icon-512.png'))
+await icon(join(OUT, 'ngmark-tile.svg'), 192, join(OUT, 'icon-192.png'))
+await icon(join(OUT, 'ngmark-tile.svg'), 512, join(OUT, 'icon-512.png'))
 await icon(join(OUT, 'ngmark-maskable.svg'), 192, join(OUT, 'icon-maskable-192.png'))
 await icon(join(OUT, 'ngmark-maskable.svg'), 512, join(OUT, 'icon-maskable-512.png'))
 
-// Lockups (2x for crisp docs/README use)
+// Lockups at 2x (README, docs, press)
 for (const v of ['on-dark', 'on-light']) {
   const f = join(OUT, `lockup-${v}.svg`)
-  const m = readFileSync(f, 'utf8').match(/viewBox="0 0 (\d+) (\d+)"/)
+  const m = readFileSync(f, 'utf8').match(/width="(\d+)" height="(\d+)"/)
   const [w, h] = [+m[1] * 2, +m[2] * 2]
   await shot(`<img src="${dataSvg(f)}" width="${w}" height="${h}">`, w, h, join(OUT, `lockup-${v}.png`))
 }
 
-// Open Graph card
-const lock = readFileSync(join(OUT, 'lockup-on-dark.svg'), 'utf8')
-const lw = +lock.match(/viewBox="0 0 (\d+)/)[1]
+// Open Graph card: the graph large on the right, the lockup and the line on the left
+const lockSvg = join(OUT, 'lockup-on-dark.svg')
+const lm = readFileSync(lockSvg, 'utf8').match(/width="(\d+)" height="(\d+)"/)
+const lockH = 92
+const lockW = Math.round((+lm[1] / +lm[2]) * lockH)
 await shot(
-  `<div style="position:relative;width:1200px;height:630px;overflow:hidden;font-family:Geist;
-      background:radial-gradient(900px 520px at 18% 30%,rgba(255,153,51,.16),transparent 60%),
-                 radial-gradient(700px 500px at 100% 100%,rgba(20,184,166,.14),transparent 60%),
-                 linear-gradient(135deg,#1d1958 0%,#100d34 50%,#07061a 100%)">
-    <svg width="1200" height="630" style="position:absolute;inset:0;opacity:.07" viewBox="0 0 1200 630">
-      <g fill="none" stroke="#f6d27a" stroke-width="1.4">
-        ${[120, 180, 240, 300, 360].map((r) => `<circle cx="1010" cy="315" r="${r}"/>`).join('')}
-        ${Array.from({ length: 24 }, (_, i) => `<path transform="rotate(${i * 15} 1010 315)" d="M1010 15Q1040 75 1010 135Q980 75 1010 15Z"/>`).join('')}
-      </g></svg>
-    <div style="position:absolute;left:96px;top:150px">
-      <img src="${dataSvg(join(OUT, 'lockup-on-dark.svg'))}" width="${Math.round(lw * 1.25)}" height="160">
-    </div>
-    <div style="position:absolute;left:100px;top:350px;width:820px;color:#f6f1e4;font-size:44px;font-weight:600;letter-spacing:-.01em;line-height:1.15">
-      Learn computer science, step by step.</div>
-    <div style="position:absolute;left:100px;top:418px;width:900px;color:#c9c3e6;font-size:26px;font-weight:400;line-height:1.4">
-      DSA practice, interactive lessons, GATE CSE &amp; DA prep, contests and an AI tutor — from first step to exam day.</div>
-    <div style="position:absolute;left:100px;bottom:62px;display:flex;align-items:center;gap:14px;color:#efbd52;font-size:24px;font-weight:600;letter-spacing:.02em">
-      <span style="display:inline-block;width:40px;height:3px;border-radius:2px;background:linear-gradient(90deg,#fde9ad,#c98a26)"></span>nexoraguru.in</div>
+  `<div style="position:relative;width:1200px;height:630px;overflow:hidden;font-family:Geist;background:#07080d">
+    <div style="position:absolute;inset:0;background:
+      radial-gradient(620px 420px at 78% 42%,rgba(91,140,255,.22),transparent 70%),
+      radial-gradient(520px 380px at 96% 92%,rgba(45,212,191,.14),transparent 70%),
+      radial-gradient(560px 380px at 8% 0%,rgba(155,107,255,.16),transparent 70%)"></div>
+    <div style="position:absolute;inset:0;opacity:.5;background-image:radial-gradient(rgba(255,255,255,.12) 1px,transparent 1.3px);background-size:24px 24px;
+      -webkit-mask-image:radial-gradient(700px 520px at 75% 45%,#000,transparent 75%)"></div>
+    <img src="${dataSvg(join(OUT, 'ngmark-on-dark.svg'))}" width="520" height="520"
+      style="position:absolute;right:40px;top:40px;filter:drop-shadow(0 0 40px rgba(91,140,255,.35))">
+    <div style="position:absolute;left:84px;top:104px"><img src="${dataSvg(lockSvg)}" width="${lockW}" height="${lockH}"></div>
+    <div style="position:absolute;left:92px;top:268px;width:640px;color:#f2f2f7;font-size:64px;font-weight:600;letter-spacing:-.035em;line-height:1.02">
+      Learn by watching<br><span style="background:linear-gradient(100deg,#6f95ff,#a78bfa 55%,#2dd4bf);-webkit-background-clip:text;background-clip:text;color:transparent">it run.</span></div>
+    <div style="position:absolute;left:94px;top:430px;width:600px;color:#9aa0b8;font-size:24px;line-height:1.45">
+      Algorithm visualisations, a real code judge, an AI tutor and GATE prep. Free.</div>
+    <div style="position:absolute;left:94px;bottom:58px;color:#c9cdf0;font-size:22px;font-weight:500;letter-spacing:.01em">nexoraguru.in</div>
   </div>`,
   1200, 630, join(OUT, 'og-image.png'), { transparent: false },
-)
-
-// Concept renders + a size sheet comparing all three
-const concepts = ['concept-a-diya-shirorekha', 'concept-b-lotus-seal', 'concept-c-gopuram-gate']
-for (const c of concepts) await icon(join(CONCEPTS, `${c}.svg`), 512, join(CONCEPTS, `${c}.png`))
-const sizes = [16, 32, 64, 128, 256]
-const row = (c, bg, fg) =>
-  `<div style="display:flex;align-items:flex-end;gap:28px;padding:22px 28px;background:${bg};color:${fg}">
-     <div style="width:210px;font:600 15px Geist">${c.replace('concept-', '').replace(/-/g, ' ')}</div>
-     ${sizes.map((s) => `<img src="${dataSvg(join(CONCEPTS, `${c}.svg`))}" width="${s}" height="${s}">`).join('')}</div>`
-await shot(
-  `<div>${concepts.map((c) => row(c, '#f4f1ea', '#1a1747') + row(c, '#0d0d12', '#eee')).join('')}</div>`,
-  1000, 6 * 300, join(CONCEPTS, 'concepts-sheet.png'), { transparent: false },
 )
 
 await browser.close()

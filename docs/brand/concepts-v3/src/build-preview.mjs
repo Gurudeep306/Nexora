@@ -5,7 +5,7 @@
  * the React component lazy-loads (client/src/components/brand/concepts/engine.ts),
  * bundled to an inline IIFE with rolldown (already a client devDependency via Vite).
  *
- *   node scripts/brand/build-preview-v3.mjs
+ *   node docs/brand/concepts-v3/src/build-preview.mjs  (archived round-3 concepts; Traversal shipped)
  */
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
@@ -13,12 +13,12 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const HERE = dirname(fileURLToPath(import.meta.url))
-const ROOT = join(HERE, '..', '..')
-const OUT = join(ROOT, 'docs', 'brand', 'concepts-v3')
+const ROOT = join(HERE, '..', '..', '..', '..')
+const OUT = join(HERE, '..')
 const { rolldown } = createRequire(join(ROOT, 'client', 'package.json'))('rolldown')
-const { NG_CONCEPTS } = await import(join(ROOT, 'client/src/components/brand/concepts/engine.ts'))
+const { NG_CONCEPTS } = await import(join(HERE, 'engine.ts'))
 
-const bundle = await rolldown({ input: join(HERE, 'preview-v3', 'entry.ts'), logLevel: 'warn' })
+const bundle = await rolldown({ input: join(HERE, 'entry.ts'), logLevel: 'warn' })
 const { output } = await bundle.generate({ format: 'iife', minify: true })
 const js = output[0].code.replace(/<\/script/gi, '<\\/script')
 
@@ -139,7 +139,7 @@ code{font-family:ui-monospace,'SF Mono',Menlo,monospace;font-size:12px;padding:1
   </header>
   <main class="grid">${cards}</main>
   <footer>
-    With <code>prefers-reduced-motion</code> on, every mark renders its static form. Colours come from theme tokens (<code>--color-accent-brand</code>, <code>--color-text-primary</code>), so in the app the marks follow the active palette. Source: <code>client/src/components/brand/concepts/engine.ts</code> and the React wrapper <code>NgConceptMark.tsx</code>. Not wired into the app yet.
+    With <code>prefers-reduced-motion</code> on, every mark renders its static form. Colours come from theme tokens (<code>--color-accent-brand</code>, <code>--color-text-primary</code>), so in the app the marks follow the active palette. Archived: Traversal was chosen and ships as <code>client/src/components/brand/Logo.tsx</code>; this page is kept for reference.
   </footer>
 </div>
 <script>${js}</script>

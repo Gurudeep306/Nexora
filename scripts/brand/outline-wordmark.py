@@ -1,5 +1,6 @@
 """Outline the "NexoraGuru" wordmark from Geist (SIL OFL, already shipped via
-@fontsource-variable/geist) into SVG path data, so the lockup SVGs need no font.
+@fontsource-variable/geist) into SVG path data, so the lockup SVGs need no font:
+"Nexora" in Geist 400, "Guru" in Geist 500.
 
 One-off:  python3 -m pip install fonttools brotli
           python3 scripts/brand/outline-wordmark.py
@@ -17,21 +18,20 @@ from fontTools.varLib.instancer import instantiateVariableFont
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
 SRC = os.path.join(ROOT, 'client/node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2')
-WEIGHT = 600
-TRACK = -0.012  # em; a touch tighter than default for a display setting
-
-font = instantiateVariableFont(TTFont(SRC), {'wght': WEIGHT})
-font.flavor = None
-buf = io.BytesIO()
-font.save(buf)
-font = TTFont(io.BytesIO(buf.getvalue()))
-upm = font['head'].unitsPerEm
-cmap = font.getBestCmap()
-gs = font.getGlyphSet()
-hmtx = font['hmtx']
+TRACK = -0.025  # em, matches the in-app wordmark (tracking-[-0.025em])
 
 
-def outline(text, x0):
+def instance(weight):
+    font = instantiateVariableFont(TTFont(SRC), {'wght': weight})
+    font.flavor = None
+    buf = io.BytesIO()
+    font.save(buf)
+    return TTFont(io.BytesIO(buf.getvalue()))
+
+
+def outline(font, text, x0):
+    upm = font['head'].unitsPerEm
+    cmap, gs, hmtx = font.getBestCmap(), font.getGlyphSet(), font['hmtx']
     pen = SVGPathPen(gs)
     x = x0
     for ch in text:
@@ -41,17 +41,18 @@ def outline(text, x0):
     return pen.getCommands(), x
 
 
-nexora, x = outline('Nexora', 0)
-guru, end = outline('Guru', x)
-os2 = font['OS/2']
+regular, medium = instance(400), instance(500)
+upm = regular['head'].unitsPerEm
+nexora, x = outline(regular, 'Nexora', 0)
+guru, end = outline(medium, 'Guru', x)
 with open(os.path.join(HERE, 'wordmark-paths.json'), 'w') as f:
     json.dump({
-        'font': 'Geist %d (SIL OFL 1.1)' % WEIGHT,
+        'font': 'Geist 400 + 500 (SIL OFL 1.1)',
         'unitsPerEm': upm,
-        'capHeight': os2.sCapHeight,
+        'capHeight': regular['OS/2'].sCapHeight,
         'advance': end - TRACK * upm,
         'guruX': x,
         'nexora': nexora,
         'guru': guru,
     }, f)
-print('ok', upm, os2.sCapHeight, end)
+print('ok', upm, end)
