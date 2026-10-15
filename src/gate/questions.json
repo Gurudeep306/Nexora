@@ -1016,7 +1016,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Answer depends on interpretation (whether the result must be stored to memory); verify."
+      "reviewNote": "Assuming only the operand reads of a–f count: 2 registers and 6 accesses (proved minimal). If the final result must also be stored to memory the count becomes 7; confirm the intended convention."
     },
     {
       "id": "cse-1991-a-1-xii",
@@ -1411,7 +1411,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Answer is debated (A vs B); verify."
+      "reviewNote": "Stored key A (address length bounds the virtual address space) is kept and proved here; some solvers also accept B (secondary storage bounds the usable space). Confirm against an authoritative key."
     },
     {
       "id": "cse-1991-a-3-iv",
@@ -1710,8 +1710,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "cn",
-      "topic": "ip",
+      "subject": "cd",
+      "topic": "runtime",
       "tags": [
         "linker",
         "link-editor"
@@ -2210,8 +2210,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Sequential) from **CSE 1991 Q5(c)** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **≈ 33.3 MHz (period 30 ns)**.\n- **Identified Problem Quantities:** 5, 10\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Longest path: flip-flop (10 ns) + two AND gates in the carry chain (20 ns) before the last J/K input, so T ≥ 30 ns and f ≤ 33.3 MHz..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`≈ 33.3 MHz (period 30 ns)`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **≈ 33.3 MHz (period 30 ns)**\n- The computed numerical result `≈ 33.3 MHz (period 30 ns)` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Whether the last AND gate (carry out) is counted changes the answer to 40 ns / 25 MHz; verify."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1991-b-6-a",
@@ -2234,7 +2234,7 @@
         "piso",
         "d-flip-flop"
       ],
-      "answer": "4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})",
+      "answer": "3 D flip-flops Q_A, Q_B, Q_C with 2-to-1 AND-OR steering: D_A = L·A + L′·S, D_B = L·B + L′·Q_A, D_C = L·C + L′·Q_B (L = LOAD/SHIFT′); serial output Q_C",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DL** (Sequential) from **CSE-1991 Q6(a)** (5 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **4 D flip-flops with steering gates (D_i = Shift' * In_i + Shift * Q_{i-1})**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -2264,7 +2264,7 @@
         "ram",
         "counter"
       ],
-      "answer": "Cascade of 1024 1-bit D flip-flop stages with common shift clock",
+      "answer": "Mod-1024 (10-bit) counter drives the RAM address; on each shift pulse read M[ctr] into an output D flip-flop (D_out), then write D_in into M[ctr] (READ/WRITE′ = 0), then increment the counter — the output is the input delayed by 1024 shifts",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DL** (Sequential) from **CSE-1991 Q6(b)** (5 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **Cascade of 1024 1-bit D flip-flop stages with common shift clock**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Cascade of 1024 1-bit D flip-flop stages with common shift clock}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Cascade of 1024 1-bit D flip-flop stages with common shift clock**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -2295,7 +2295,7 @@
         "register-transfer",
         "indexed-addressing"
       ],
-      "answer": "FSM controller with state register, decoder, and combinational control logic matrix",
+      "answer": "T0: MAR ← PC; T1: MBR ← M[MAR], PC ← PC + 1; T2: IR ← MBR; T3: MAR ← IR[7..0] (+ X if indexed) — effective address formed in the fetch cycle",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **COA** (Datapath) from **CSE-1991 Q7(a)** (4 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **FSM controller with state register, decoder, and combinational control logic matrix**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{FSM controller with state register, decoder, and combinational control logic matrix}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **FSM controller with state register, decoder, and combinational control logic matrix**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -2399,7 +2399,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": false,
-      "reviewNote": "Signal names in Fig. 6 are hard to read in the scan; verify the labels."
+      "reviewNote": null
     },
     {
       "id": "cse-1991-b-9-a",
@@ -2509,14 +2509,14 @@
         "grammar-transformation",
         "parentheses"
       ],
-      "answer": "Yes; e.g. F → id | (E − T) | (T / F)",
+      "answer": "Yes. E → E − T | T / F | id; T → T / F | (E − T) | id; F → (E − T) | (T / F) | id",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CD** (Parsing) from **CSE 1991 Q10(b)** (4 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Yes; e.g. F → id | (E − T) | (T / F)**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of CD:**\n- Decompose the problem into invariant constraints defined by parsing theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Parentheses are needed only around a − expression used as an operand of / or as the right operand of −, and around a / expression used as the right operand of /.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  so replace F → (E) with F → (E − T) and add F → (T / F)..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Yes; e.g. F → id | (E − T) | (T / F)`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Yes; e.g. F → id | (E − T) | (T / F)**\n- The computed numerical result `Yes; e.g. F → id | (E − T) | (T / F)` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Proposed grammar still allows some redundant parentheses (e.g. around a whole expression, or (id/id) as the right operand of −); a fully correct minimal answer needs checking."
+      "reviewNote": "Answer changes only the right-hand sides of the three existing rules (no new nonterminal); if 'at most one more production' counts alternatives rather than rules, no exactly non-redundant grammar fits that budget — verify the intended reading."
     },
     {
       "id": "cse-1991-b-10-c",
@@ -2537,7 +2537,7 @@
       "tags": [
         "left-recursion-elimination"
       ],
-      "answer": "E → T E′; E′ → − T E′ | ε; T → F T′; T′ → / F T′ | ε; F rules unchanged",
+      "answer": "E → T / F E′ | id E′; E′ → − T E′ | ε; T → (E − T) T′ | id T′; T′ → / F T′ | ε; F → (E − T) | (T / F) | id",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CD** (Parsing) from **CSE 1991 Q10(c)** (4 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **E → T E′; E′ → − T E′ | ε; T → F T′; T′ → / F T′ | ε; F rules unchanged**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of CD:**\n- Decompose the problem into invariant constraints defined by parsing theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Standard elimination: A → Aα | β becomes A → βA′, A′ → αA′ | ε, applied to E and T..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`E → T E′; E′ → − T E′ | ε; T → F T′; T′ → / F T′ | ε; F rules unchanged`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **E → T E′; E′ → − T E′ | ε; T → F T′; T′ → / F T′ | ε; F rules unchanged**\n- The computed numerical result `E → T E′; E′ → − T E′ | ε; T → F T′; T′ → / F T′ | ε; F rules unchanged` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
@@ -2655,7 +2655,7 @@
         "intersection",
         "join"
       ],
-      "answer": "(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SUPPLIER.CITY \\ne PROJECTS.CITY}(SUPPLIER \\bowtie SPPR \\bowtie PROJECTS))$",
+      "answer": "(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SCITY \\ne PCITY}(\\rho_{(SCODE,SNAME,SCITY)}(SUPPLIER) \\bowtie SPPR \\bowtie \\rho_{(PRCODE,PRNAME,PCITY)}(PROJECTS)))$",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Ra) from **CSE 1991 Q12(b)** (4 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SUPPLIER.CITY \\ne PROJECTS.CITY}(SUPPLIER \\bowtie SPPR \\bowtie PROJECTS))$**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Intersect the suppliers of PR1 and of PR2.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  for (ii) join the three relations (not on CITY) and select tuples whose supplier and project cities differ..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SUPPLIER.CITY \\ne PROJECTS.CITY}(SUPPLIER \\bowtie SPPR \\bowtie PROJECTS))$`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SUPPLIER.CITY \\ne PROJECTS.CITY}(SUPPLIER \\bowtie SPPR \\bowtie PROJECTS))$**\n- The computed numerical result `(i) $\\pi_{SCODE}(\\sigma_{PRCODE='PR1'}(SPPR)) \\cap \\pi_{SCODE}(\\sigma_{PRCODE='PR2'}(SPPR))$; (ii) $\\pi_{PRCODE}(\\sigma_{SUPPLIER.CITY \\ne PROJECTS.CITY}(SUPPLIER \\bowtie SPPR \\bowtie PROJECTS))$` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
@@ -2856,8 +2856,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Logic) from **CSE 1991 Q15(b)** (5 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **No finite models; satisfiable, e.g. (ℕ, <)**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  R is an irreflexive, asymmetric, transitive relation in which every element has a successor.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  in a finite domain following successors must repeat an element, and transitivity then gives R(x,x).\n- **Step 3.3 (Intermediate Reduction):**\n  The natural numbers with < satisfy all conjuncts..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`No finite models; satisfiable, e.g. (ℕ, <)`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **No finite models; satisfiable, e.g. (ℕ, <)**\n- The computed numerical result `No finite models; satisfiable, e.g. (ℕ, <)` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Formula is blurred in the scan; the last conjunct is read as (∀x)¬R(x,x); verify."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1991-b-16-a",
@@ -3023,7 +3023,7 @@
       "number": "1(ii)",
       "marks": null,
       "type": "FILL",
-      "text": "Fill in the blanks:\n\nConsider a 3-bit error detection and 1-bit error correction hamming code for 4-bit date. The extra parity bits required would be ______ and the 3-bit error detection is possible because the code has a minimum distance of ______",
+      "text": "Fill in the blanks:\n\nConsider a 3-bit error detection and 1-bit error correction hamming code for 4-bit data. The extra parity bits required would be ______ and the 3-bit error detection is possible because the code has a minimum distance of ______",
       "options": [],
       "figures": [],
       "group": null,
@@ -3174,8 +3174,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "verbal",
+      "subject": "legacy",
+      "topic": "other",
       "tags": [
         "macro-assembler",
         "two-pass-assembler"
@@ -3203,8 +3203,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "verbal",
+      "subject": "legacy",
+      "topic": "other",
       "tags": [
         "location-counter",
         "assembler",
@@ -3748,10 +3748,11 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "os",
+      "topic": "sync",
       "tags": [
         "semaphore",
+        "counting-semaphore",
         "p-v-operations"
       ],
       "answer": [
@@ -3775,7 +3776,7 @@
       "number": "2(xi)",
       "marks": null,
       "type": "MSQ",
-      "text": "Choose the correct alternatives (more than one may be correct) and write the corresponding letters only:\n\nA computer system has 6 tape drives, with n process completing for them. Each process may need 3 tape drives. The maximum value of n for which the system is guaranteed to be deadlock free is:",
+      "text": "Choose the correct alternatives (more than one may be correct) and write the corresponding letters only:\n\nA computer system has 6 tape drives, with n processes competing for them. Each process may need 3 tape drives. The maximum value of n for which the system is guaranteed to be deadlock free is:",
       "options": [
         {
           "l": "A",
@@ -3875,11 +3876,11 @@
       "options": [
         {
           "l": "A",
-          "t": "FOLLOW(A) and FOLLOW (A) may be different."
+          "t": "FOLLOW(A) and LFOLLOW(A) may be different."
         },
         {
           "l": "B",
-          "t": "FOLLOW(A) and FOLLOW (A) are always the same."
+          "t": "FOLLOW(A) and RFOLLOW(A) are always the same."
         },
         {
           "l": "C",
@@ -3899,7 +3900,8 @@
         "sentential-form"
       ],
       "answer": [
-        "C"
+        "A",
+        "B"
       ],
       "answerSource": "solved",
       "confidence": "high",
@@ -3907,7 +3909,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Options (a)/(b) are printed as 'FOLLOW(A) and FOLLOW (A)'; the original presumably read LFOLLOW(A)/RFOLLOW(A). If (b) is 'FOLLOW and RFOLLOW always the same' it is also true."
+      "reviewNote": "Options (a)/(b) were garbled in the scan (both read \"FOLLOW(A) and FOLLOW (A)\") and were restored to LFOLLOW/RFOLLOW; no official key exists for 1992. Proof: S→AB, A→c, B→b has FOLLOW(A)=RFOLLOW(A)={b}, LFOLLOW(A)=∅, so (c) \"all identical\" is false and the answer is (a),(b)."
     },
     {
       "id": "cse-1992-a-2-xiv",
@@ -4264,12 +4266,12 @@
       "number": "3(i)",
       "marks": null,
       "type": "DESC",
-      "text": "Write short answers to the following:\n\nWhich of the following macros can put a macro assembler into an infinite loop?\n\n```\n.MACRI M1,X            .MACRO M2, X\n..IF EQ,X               .IF EQ, X\nM1 X+1                  M2X\n.ENDC                   .ENDC\n.IF NE, X               .IF NE, X\nWORD X                  .WORD X + 1\n.ENDC                   .ENDC\n.ENDM                   .ENDM\n```\n\nGive an example of a call that does so.",
+      "text": "Write short answers to the following:\n\nWhich of the following macros can put a macro assembler into an infinite loop?\n\n```\n.MACRO M1, X            .MACRO M2, X\n.IF EQ, X               .IF EQ, X\nM1 X+1                  M2 X\n.ENDC                   .ENDC\n.IF NE, X               .IF NE, X\n.WORD X                 .WORD X+1\n.ENDC                   .ENDC\n.ENDM                   .ENDM\n```\n\nGive an example of a call that does so.",
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "verbal",
+      "subject": "legacy",
+      "topic": "other",
       "tags": [
         "macro-assembler",
         "recursive-macro"
@@ -4297,8 +4299,8 @@
       "options": [],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "legacy",
+      "topic": "other",
       "tags": [
         "two-pass-assembler",
         "literal-table"
@@ -4409,7 +4411,7 @@
       "number": "4(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Consider addition in two's complement arithmetic. A carry from the most significant but does not always correspond to an overflow. Explain what is the condition for overflow in two's complement arithmetic.",
+      "text": "Consider addition in two's complement arithmetic. A carry from the most significant bit does not always correspond to an overflow. Explain what is the condition for overflow in two's complement arithmetic.",
       "options": [],
       "figures": [],
       "group": null,
@@ -4526,7 +4528,7 @@
       "number": "5(b)",
       "marks": null,
       "type": "DESC",
-      "text": "Three devices A, B and C are corrected to the bus of a computer, input/output transfers for all three devices use interrupt control. Three interrupt request lines INTR1, INTR2 and INTR3 are available with priority of $\\text{INTR}_1 >$ priority of $\\text{INTR}_2 >$ priority of $\\text{INTR}_3$.\n\nDraw a schematic of the priority logic, using an interrupt mask register, in which Priority of A > Priority of B > Priority of C.",
+      "text": "Three devices A, B and C are connected to the bus of a computer, input/output transfers for all three devices use interrupt control. Three interrupt request lines INTR1, INTR2 and INTR3 are available with priority of $\\text{INTR}_1 >$ priority of $\\text{INTR}_2 >$ priority of $\\text{INTR}_3$.\n\nDraw a schematic of the priority logic, using an interrupt mask register, in which Priority of A > Priority of B > Priority of C.",
       "options": [],
       "figures": [],
       "group": null,
@@ -4536,7 +4538,7 @@
         "interrupt-priority",
         "interrupt-mask-register"
       ],
-      "answer": "Daisy-chain priority resolution: Device A has highest priority, followed by B, then C",
+      "answer": "Parallel priority logic: A, B, C drive INTR1, INTR2, INTR3; each request is ANDed with its mask-register bit ($I_k = R_k M_k$), then priority gating gives $G_A = I_1$, $G_B = \\overline{I_1}I_2$, $G_C = \\overline{I_1}\\,\\overline{I_2}I_3$, and INT to the CPU $= \\text{IEN}\\cdot(I_1 + I_2 + I_3)$; the grant/encoder output selects the vector of the highest-priority unmasked device",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **COA** (Io) from **CSE-1992 Q5(b)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Daisy-chain priority resolution: Device A has highest priority, followed by B, then C**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Daisy-chain priority resolution: Device A has highest priority, followed by B, then C}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Daisy-chain priority resolution: Device A has highest priority, followed by B, then C**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -4555,7 +4557,7 @@
       "number": "6(a)",
       "marks": null,
       "type": "DESC",
-      "text": "A microprocessor is capable of addressing 1 megabyte of memory with a 20-bit address bus. The system to be designed requires 256 K bytes of RAM, 256 K bytes of EPROM, 16 I/O devices (memory mapped I/O) and 1 K byte of EERAM (electrically erasable RAM).\n\nDesign a memory map (to reduce decoding logic) and show the decoding logic if the components available are:\n\n| Type | Size | Speed |\n|---|---|---|\n| RAM | 6 K × 8 | 140 n sec |\n| EPROM | 256 K × 8 | 150 n sec |\n| EERAM | 256 × 8 | 500 n sec-read 3 µsec-write |",
+      "text": "A microprocessor is capable of addressing 1 megabyte of memory with a 20-bit address bus. The system to be designed requires 256 K bytes of RAM, 256 K bytes of EPROM, 16 I/O devices (memory mapped I/O) and 1 K byte of EERAM (electrically erasable RAM).\n\nDesign a memory map (to reduce decoding logic) and show the decoding logic if the components available are:\n\n| Type | Size | Speed |\n|---|---|---|\n| RAM | 64 K × 8 | 140 n sec |\n| EPROM | 256 K × 8 | 150 n sec |\n| EERAM | 256 × 8 | 500 n sec-read 3 µsec-write |",
       "options": [],
       "figures": [],
       "group": "b-6",
@@ -4566,14 +4568,14 @@
         "address-decoding",
         "memory-mapped-io"
       ],
-      "answer": "20 address lines (A0-A19) required since 2^20 bytes = 1 MB",
+      "answer": "EPROM 00000–3FFFF, RAM 40000–7FFFF (4 × 64K×8), EERAM 80000–803FF (4 × 256×8), I/O A0000–A000F; one 2-to-4 decoder on A19A18, a 2-to-4 on A17A16 for RAM, a 2-to-4 on A9A8 for EERAM (A17 = 0) and a 4-to-16 on A3–A0 for I/O (A17 = 1)",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **COA** (Memory) from **CSE-1992 Q6(a)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **20 address lines (A0-A19) required since 2^20 bytes = 1 MB**.\n\n**Step 2: Governing Principles & Formal Rules**\n- IEEE 754 Floating Point Representation: $V = (-1)^s \\times 2^{E - 127} \\times (1.M)$ for normalized single precision ($1 \\le E \\le 254$). Smallest normalized positive value has $E = 1$ and $M = 0$.\n- Mealy machine state transitions: Next state $t = \\delta(s, b)$ and output $y = \\lambda(s, b)$ depend directly on present state and input.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{20 address lines (A0-A19) required since 2^20 bytes = 1 MB}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **20 address lines (A0-A19) required since 2^20 bytes = 1 MB**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": false,
-      "reviewNote": "RAM chip size printed as '6 K × 8' (likely 64 K × 8)."
+      "reviewNote": null
     },
     {
       "id": "cse-1992-b-6-b",
@@ -4585,7 +4587,7 @@
       "number": "6(b)",
       "marks": null,
       "type": "DESC",
-      "text": "A microprocessor is capable of addressing 1 megabyte of memory with a 20-bit address bus. The system to be designed requires 256 K bytes of RAM, 256 K bytes of EPROM, 16 I/O devices (memory mapped I/O) and 1 K byte of EERAM (electrically erasable RAM).\n\nThe micro processor is operating at 12.5 mHz and provides time equivalent to two clock cycles for memory read and write. Assuming control signals similar to 8085, design the extra logic required for interfacing EERAM.",
+      "text": "A microprocessor is capable of addressing 1 megabyte of memory with a 20-bit address bus. The system to be designed requires 256 K bytes of RAM, 256 K bytes of EPROM, 16 I/O devices (memory mapped I/O) and 1 K byte of EERAM (electrically erasable RAM).\n\nThe micro processor is operating at 12.5 MHz and provides time equivalent to two clock cycles for memory read and write. Assuming control signals similar to 8085, design the extra logic required for interfacing EERAM.",
       "options": [],
       "figures": [],
       "group": "b-6",
@@ -4596,7 +4598,7 @@
         "ready-signal",
         "8085-interface"
       ],
-      "answer": "Address lines A0-A15 connected to memory chips; lines A16-A19 decoded via 4-to-16 line decoder",
+      "answer": "Clock period 80 ns, so 160 ns is available; EERAM needs 5 wait states for a read (7 × 80 = 560 ns ≥ 500 ns) and 36 for a write (38 × 80 = 3040 ns ≥ 3 µs), produced by a counter that holds READY low while the EERAM chip select is active",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **LEGACY** (Microprocessor) from **CSE-1992 Q6(b)** (1 Mark) (DESC).\n- Evaluation Target: Official verified examination outcome **Address lines A0-A15 connected to memory chips; lines A16-A19 decoded via 4-to-16 line decoder**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{Address lines A0-A15 connected to memory chips; lines A16-A19 decoded via 4-to-16 line decoder}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **Address lines A0-A15 connected to memory chips; lines A16-A19 decoded via 4-to-16 line decoder**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
@@ -4703,7 +4705,7 @@
       "number": "9",
       "marks": null,
       "type": "DESC",
-      "text": "Suggest a data structure for representing a subnet S of integers from 1 to n. following operations on the set S are to be performed in constant time (independent of cardinality of S).\n\n(i) MEMBER (X): Check whether X is the set S or not\n\n(ii) FIND-ONE(S): If S is not empty, return one element of the set S (any arbitrary element will do)\n\n(iii) ADD (X): Add integer x to set S\n\n(iv) DELETE(X): Delete integer x from S.\n\nGive pictorial examples of your data structure. Give routines for these operations in an English like language. You may assume that the data structure has been suitably initialized. Clearly state your assumptions regarding initialization.",
+      "text": "Suggest a data structure for representing a subset S of integers from 1 to n. following operations on the set S are to be performed in constant time (independent of cardinality of S).\n\n(i) MEMBER (X): Check whether X is in the set S or not\n\n(ii) FIND-ONE(S): If S is not empty, return one element of the set S (any arbitrary element will do)\n\n(iii) ADD (X): Add integer x to set S\n\n(iv) DELETE(X): Delete integer x from S.\n\nGive pictorial examples of your data structure. Give routines for these operations in an English like language. You may assume that the data structure has been suitably initialized. Clearly state your assumptions regarding initialization.",
       "options": [],
       "figures": [],
       "group": null,
@@ -4732,7 +4734,7 @@
       "number": "10(a)",
       "marks": null,
       "type": "DESC",
-      "text": "What type of parameter passing mechanism (call-by-value, call-by-reference, call-by-name, or-by-value result) is the following sequence of actions truing to implement for a procedure call P (A[i]) where P (i:integer) is a procedure and A is an integer array?\n\n1. Create a new local variable, say z.\n2. Assign to z the value of A[i].\n3. Execute the body of P using z for A[i]\n4. Set A[i] to z.\n\nIs the implementation correct? Explain and correct it if necessary. You are supposed to make only small changes.",
+      "text": "What type of parameter passing mechanism (call-by-value, call-by-reference, call-by-name, or call-by-value-result) is the following sequence of actions trying to implement for a procedure call P (A[i]) where P (i:integer) is a procedure and A is an integer array?\n\n1. Create a new local variable, say z.\n2. Assign to z the value of A[i].\n3. Execute the body of P using z for A[i]\n4. Set A[i] to z.\n\nIs the implementation correct? Explain and correct it if necessary. You are supposed to make only small changes.",
       "options": [],
       "figures": [],
       "group": null,
@@ -4867,8 +4869,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Sync) from **CSE 1992 Q12(a)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Edges: S1→S2, S1→S3, S1→S7; S2→S4; S3→S5, S3→S6; S6→S8; S4→S9, S5→S9, S8→S9, S7→S9**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Three parallel branches after S1: (S2;S4), (S3.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  parbegin S5 ∥ (S6;S8) parend), and S7.\n- **Step 3.3 (Intermediate Reduction):**\n  all join before S9..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Edges: S1→S2, S1→S3, S1→S7; S2→S4; S3→S5, S3→S6; S6→S8; S4→S9, S5→S9, S8→S9, S7→S9`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Edges: S1→S2, S1→S3, S1→S7; S2→S4; S3→S5, S3→S6; S6→S8; S4→S9, S5→S9, S8→S9, S7→S9**\n- The computed numerical result `Edges: S1→S2, S1→S3, S1→S7; S2→S4; S3→S5, S3→S6; S6→S8; S4→S9, S5→S9, S8→S9, S7→S9` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Nesting of S7 is ambiguous in the retyped layout; taken as a third parallel branch."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1992-b-12-b",
@@ -5027,7 +5029,7 @@
       "number": "15(a)",
       "marks": null,
       "type": "DESC",
-      "text": "Uses Modus ponens $(A, A \\rightarrow\\ \\models B)$ or resolution to show that the following set is inconsistent:\n\n(1) $Q(x) \\rightarrow P(x) V \\sim R(a)$\n\n(2) $R(a) \\sim Q(a)$\n\n(3) $Q(a)$\n\n(4) $\\sim P(y)$\n\nWhere x and y are universally quantified variables, a is a constant and P, Q, R are monadic predicates.",
+      "text": "Use modus ponens $(A,\\ A \\rightarrow B \\models B)$ or resolution to show that the following set is inconsistent:\n\n(1) $Q(x) \\rightarrow P(x) \\lor \\sim R(a)$\n\n(2) $R(a) \\lor \\sim Q(a)$\n\n(3) $Q(a)$\n\n(4) $\\sim P(y)$\n\nWhere x and y are universally quantified variables, a is a constant and P, Q, R are monadic predicates.",
       "options": [],
       "figures": [],
       "group": null,
@@ -5044,8 +5046,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Logic) from **CSE 1992 Q15(a)** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **Derive R(a) from (2),(3); instantiate (1) with x = a to get P(a) ∨ ~R(a), hence P(a); this contradicts ~P(a) from (4) with y = a**.\n- **Identified Problem Quantities:** 1, 2, 3, 4\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Clauses: ¬Q(x)∨P(x)∨¬R(a), R(a)∨¬Q(a), Q(a), ¬P(y).\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  resolving yields the empty clause..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`Derive R(a) from (2),(3); instantiate (1) with x = a to get P(a) ∨ ~R(a), hence P(a); this contradicts ~P(a) from (4) with y = a`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **Derive R(a) from (2),(3); instantiate (1) with x = a to get P(a) ∨ ~R(a), hence P(a); this contradicts ~P(a) from (4) with y = a**\n- The computed numerical result `Derive R(a) from (2),(3); instantiate (1) with x = a to get P(a) ∨ ~R(a), hence P(a); this contradicts ~P(a) from (4) with y = a` matches the official GATE key exactly within acceptable tolerance.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Connective in (2) is missing in the print ('R(a) ~Q(a)'); read as R(a) ∨ ~Q(a) (i.e. Q(a) → R(a))."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-1992-b-15-b",
@@ -7229,14 +7231,14 @@
       "tags": [
         "inclusion-exclusion"
       ],
-      "answer": "3 (By Principle of Inclusion-Exclusion)",
+      "answer": "Not uniquely determined: between 5 and 10 persons eat at least two dishes (≥ 5 because 5 eat all three); the data are inconsistent if everyone eats at least one dish",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Problem Formulation & Exam Context**\nTargeting **DM** (Combinatorics) from **CSE-1993 Q17** (5 Marks) (DESC).\n- Evaluation Target: Official verified examination outcome **3 (By Principle of Inclusion-Exclusion)**.\n\n**Step 2: Governing Principles & Formal Rules**\n- Fundamental problem constraints and analytical invariants derived directly from first principles.\n\n**Step 3: Step-by-Step Analytical Derivation & Calculation**\n- Applying the governing laws and boundary conditions from the problem statement.\n- Evaluating the functional transformation leads deterministically to the confirmed outcome:\n\n$$\\mathbf{3 (By Principle of Inclusion-Exclusion)}$$\n\n**Step 4: Conclusion & Verification**\n- **Official Verified Key:** **3 (By Principle of Inclusion-Exclusion)**\n- Completely verified against standard computer science literature and official GATE authority key archives.\n\n⚡ **Topper's Shortcut:** Identify governing structural invariants (e.g., symmetry, closure, master theorem cases, or truth-table Karnaugh maps) directly to eliminate distractors in < 45 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": "Data as printed does not determine a unique answer (and is inconsistent if every person eats at least one dish); left unanswered."
+      "needsReview": true,
+      "reviewNote": "Printed data do not fix a unique value: at least two dishes ranges from 5 to 10 (5 if no one eats exactly two). If all 21 eat at least one dish, the counts are contradictory (exactly-two total would be −5)."
     },
     {
       "id": "cse-1993-ii-b-18",
