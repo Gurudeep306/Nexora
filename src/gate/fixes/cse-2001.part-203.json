@@ -1,0 +1,154 @@
+{
+  "paper": "cse-2001",
+  "fixes": [
+    {
+      "id": "cse-2001-b-61-b",
+      "field": "subject",
+      "before": "dm",
+      "after": "pds",
+      "reason": "Counting the output of a recursive C function is a programming/recursion question, like part (a).",
+      "source": "GATE 2001 paper Q61(b)"
+    },
+    {
+      "id": "cse-2001-b-61-b",
+      "field": "topic",
+      "before": "combinatorics",
+      "after": "recursion",
+      "reason": "Same topic as part (a): recursion in C.",
+      "source": "GATE 2001 paper Q61(b)"
+    },
+    {
+      "id": "cse-2001-b-62-a",
+      "field": "subject",
+      "before": "dl",
+      "after": "pds",
+      "reason": "BST insertion is a data-structures question, not digital logic.",
+      "source": "GATE 2001 paper Q62(a)"
+    },
+    {
+      "id": "cse-2001-b-62-a",
+      "field": "topic",
+      "before": "number",
+      "after": "bst",
+      "reason": "The question is BST insertion.",
+      "source": "GATE 2001 paper Q62(a)"
+    },
+    {
+      "id": "cse-2001-b-62-a",
+      "field": "tags",
+      "before": [
+        "bst-insertion"
+      ],
+      "after": [
+        "bst-insertion",
+        "binary-search-tree"
+      ],
+      "reason": "Add a general BST tag.",
+      "source": "GATE 2001 paper Q62(a)"
+    },
+    {
+      "id": "cse-2001-b-62-c",
+      "field": "subject",
+      "before": "dl",
+      "after": "pds",
+      "reason": "Computing the depth of a binary tree recursively is a data-structures question, not digital logic.",
+      "source": "GATE 2001 paper Q62(c)"
+    },
+    {
+      "id": "cse-2001-b-62-c",
+      "field": "topic",
+      "before": "number",
+      "after": "trees",
+      "reason": "Binary tree depth.",
+      "source": "GATE 2001 paper Q62(c)"
+    },
+    {
+      "id": "cse-2001-b-63-a",
+      "field": "text",
+      "before": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nList the edges of a minimum spanning tree of the graph.",
+      "after": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nList the edges of a minimum spanning tree of the graph.",
+      "reason": "The paper misprints vertex n5 as \"p5\" in V; every edge uses n5.",
+      "source": "GATE 2001 paper Q63(a)"
+    },
+    {
+      "id": "cse-2001-b-63-b",
+      "field": "text",
+      "before": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nHow many distinct minimum spanning trees does this graph have?",
+      "after": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nHow many distinct minimum spanning trees does this graph have?",
+      "reason": "The paper misprints vertex n5 as \"p5\" in V; every edge uses n5.",
+      "source": "GATE 2001 paper Q63(b)"
+    },
+    {
+      "id": "cse-2001-b-63-c",
+      "field": "text",
+      "before": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the minimum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
+      "after": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the minimum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
+      "reason": "The paper misprints vertex n5 as \"p5\" in V; every edge uses n5.",
+      "source": "GATE 2001 paper Q63(c)"
+    },
+    {
+      "id": "cse-2001-b-63-d",
+      "field": "text",
+      "before": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, p5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the maximum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
+      "after": "Consider a weighted undirected graph with vertex set V = {n1, n2, n3, n4, n5, n6} and edge set E = {(n1, n2, 2), (n1, n3, 8), (n1, n6, 3), (n2, n4, 4), (n2, n5, 12), (n3, n4, 7), (n4, n5, 9), (n4, n6, 4)}. The third value in each tuple represents the weight of the edge specified in the tuple.\n\nIs the maximum among the edge weights of a minimum spanning tree unique over all possible minimum spanning trees of a graph?",
+      "reason": "The paper misprints vertex n5 as \"p5\" in V; every edge uses n5.",
+      "source": "GATE 2001 paper Q63(d)"
+    },
+    {
+      "id": "cse-2001-b-64-a",
+      "field": "text",
+      "before": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol B. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the FIRST and FOLLOW sets for E and A.",
+      "after": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol E. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the FIRST and FOLLOW sets for E and A.",
+      "reason": "The paper misprints the start symbol as B; the grammar has only E and A, and E is the start symbol.",
+      "source": "GATE 2001 paper Q64(a)"
+    },
+    {
+      "id": "cse-2001-b-64-b",
+      "field": "text",
+      "before": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol B. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the LL(1) parse table for the grammar.",
+      "after": "Consider the following grammar with terminal alphabet $\\Sigma = \\{a, (, ), +, *\\}$ and start symbol E. The production rules of the grammar are:\n\n$E \\to aA$\n\n$E \\to (E)$\n\n$A \\to +E$\n\n$A \\to *E$\n\n$A \\to \\varepsilon$\n\nCompute the LL(1) parse table for the grammar.",
+      "reason": "The paper misprints the start symbol as B; the grammar has only E and A, and E is the start symbol.",
+      "source": "GATE 2001 paper Q64(b)"
+    },
+    {
+      "id": "cse-2001-b-65",
+      "field": "text",
+      "before": "The syntax of the repeat-until statement is given by the following grammar\n\n$S \\to \\text{repeat } S_1 \\text{ until } E$\n\nwhere E stands for expressions, S and $S_1$ stand for statements. The non-terminals S and $S_1$ have an attribute code that represents generated code. The non-terminal B has two attributes. The attribute code represents generated code to evaluate the expression and store its truth value in a distinct variable, and the attribute varName contains the name of the variable in which the truth value is stored. The truth value stored in the variable is 1 if E is true, 0 if E is false.\n\nGive a syntax-directed definition to generate three-address code for the repeat-until statement. Assume that you can call a function newlabel() that returns a distinct label for a statement. Use the operator '||' to concatenate two strings and the function gen(s) to generate a line containing the string s.",
+      "after": "The syntax of the repeat-until statement is given by the following grammar\n\n$S \\to \\text{repeat } S_1 \\text{ until } E$\n\nwhere E stands for expressions, S and $S_1$ stand for statements. The non-terminals S and $S_1$ have an attribute code that represents generated code. The non-terminal E has two attributes. The attribute code represents generated code to evaluate the expression and store its truth value in a distinct variable, and the attribute varName contains the name of the variable in which the truth value is stored. The truth value stored in the variable is 1 if E is true, 0 if E is false.\n\nGive a syntax-directed definition to generate three-address code for the repeat-until statement. Assume that you can call a function newlabel() that returns a distinct label for a statement. Use the operator '||' to concatenate two strings and the function gen(s) to generate a line containing the string s.",
+      "reason": "The paper misprints E as B; the expression non-terminal is E.",
+      "source": "GATE 2001 paper Q65"
+    },
+    {
+      "id": "cse-2001-b-69-b",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "An SQL query on the examinee relation is a databases question.",
+      "source": "GATE 2001 paper Q69(b)"
+    },
+    {
+      "id": "cse-2001-b-69-b",
+      "field": "topic",
+      "before": "sets",
+      "after": "sql",
+      "reason": "Writing an SQL query with an aggregate subquery.",
+      "source": "GATE 2001 paper Q69(b)"
+    },
+    {
+      "id": "cse-2001-b-69-c",
+      "field": "subject",
+      "before": "dm",
+      "after": "db",
+      "reason": "An SQL join query is a databases question.",
+      "source": "GATE 2001 paper Q69(c)"
+    },
+    {
+      "id": "cse-2001-b-69-c",
+      "field": "topic",
+      "before": "sets",
+      "after": "sql",
+      "reason": "Writing an SQL join query.",
+      "source": "GATE 2001 paper Q69(c)"
+    }
+  ]
+}
