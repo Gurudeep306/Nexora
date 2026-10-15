@@ -1,0 +1,1086 @@
+{
+  "paper": "it-2007",
+  "fixes": [
+    {
+      "id": "it-2007-cs-6",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Speedup 12/6 = 2 is unambiguous from the given 12 cycles; no review needed.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-6",
+      "field": "reviewNote",
+      "before": "Sum of stage times is 22 not 12; the question states 12 cycles per instruction on the non-pipelined processor, so speedup = 12/6 = 2 (option B).",
+      "after": null,
+      "reason": "Speedup 12/6 = 2 is unambiguous from the given 12 cycles; no review needed.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-8",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Re-checked: option D gives F = b(a+b) = b, so only A implements a.b.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-8",
+      "field": "reviewNote",
+      "before": "Both option A (X1=b,X2=0,X3=a) and option D (X1=a,X2=0,X3=b) implement a.b for the drawn circuit; A chosen (believed official key).",
+      "after": null,
+      "reason": "Re-checked: option D gives F = b(a+b) = b, so only A implements a.b.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-15",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Hash not injective, DES a permutation: C is certain.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-15",
+      "field": "reviewNote",
+      "before": "Options as printed; answer C (statement ii true, i false) given by reasoning; the pdf answer key is absent.",
+      "after": null,
+      "reason": "Hash not injective, DES a permutation: C is certain.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-19",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Geometry verified: (80,75) lies outside the polygon notch and the circle, so (i) false and answer 3 (D).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-19",
+      "field": "reviewNote",
+      "before": "Statement (i) hinges on the polygon geometry; statements (ii)-(iv) judged true. Answer D (3) is per reasoning and standard key.",
+      "after": null,
+      "reason": "Geometry verified: (80,75) lies outside the polygon notch and the circle, so (i) false and answer 3 (D).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-21",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Connectives confirmed from a high-resolution render of the PDF; A is the unique valid formula.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-21",
+      "field": "reviewNote",
+      "before": "Connectives in options B and C are blurry in the scan (B taken as OR between P and Q; C's middle symbol read as equivalence); answer A is the only valid formula under either reading.",
+      "after": null,
+      "reason": "Connectives confirmed from a high-resolution render of the PDF; A is the unique valid formula.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-22",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Exponents confirmed as 10^-2..10^-5 from a high-resolution render; error bound gives (iii),(iv).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-22",
+      "field": "reviewNote",
+      "before": "Exponents of step sizes are small in the scan (read as 10^-2 .. 10^-5).",
+      "after": null,
+      "reason": "Exponents confirmed as 10^-2..10^-5 from a high-resolution render; error bound gives (iii),(iv).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-8",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-8.png",
+          "alt": "Mux 1 has data inputs a (input 1) and b (input 0) and select X1; its output feeds input 1 of mux 2; mux 2 input 0 is X2 and its select is X3; the output of mux 2 is a.b.",
+          "svg": "it-2007/cs-8.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-8.png",
+          "alt": "Two cascaded 2-to-1 multiplexers. Mux 1: input 1 = a, input 0 = b, select X1. Mux 1 output goes to input 1 of mux 2; mux 2 input 0 = X2, select X3; mux 2 output is a.b.",
+          "svg": "it-2007/cs-8.svg"
+        }
+      ],
+      "reason": "Clearer alt; SVG redrawn from the PDF (old SVG showed an unrelated 4:1 mux).",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-11",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-11.png",
+          "alt": "Table: request numbers J1-J8 with sizes 2k,14k,3k,6k,6k,10K,7K,20K and usage times 4,10,2,8,4,1,8,6.",
+          "svg": "it-2007/cs-11.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure only duplicates the request table already present in the question text as a markdown table.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-12",
+      "field": "answer",
+      "before": "D",
+      "after": "C",
+      "reason": "Deterministic trace: faults at 0100, 0200, 0430, 0530, 0120, 0220, 0320 = 7 (option C); stored D (8) is wrong.",
+      "source": "independent solution (exact simulation)"
+    },
+    {
+      "id": "it-2007-cs-12",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "No official pre-2014 key available; answer changed by proof.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-12",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key was D (8). Trace with range x..x+99 loaded on each fault: 0100 F, 0200 F, 0430 F, 0499 H, 0510 H, 0530 F, 0560 H, 0120 F, 0220 F, 0240 H, 0260 H, 0320 F, 0410 H = 7 faults, so answer set to C. Confirm against an official key if one surfaces.",
+      "reason": "Explains the answer change.",
+      "source": "pdf + independent solution"
+    },
+    {
+      "id": "it-2007-cs-32",
+      "field": "answer",
+      "before": "15",
+      "after": "B",
+      "reason": "Stored key \"15\" is not an option letter; the postfix expression 5 2 * 3 3 2 + * + evaluates to 25 = option B (intended answer).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-32",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Literal C semantics differ from every option; flag for review.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-32",
+      "field": "reviewNote",
+      "before": "Printed code pushes the character c (not c-'0') and prints with %c; none of the options is literally produced (prints 'y'). Intended answer is probably 25 (B); one web source claims 150 (D). Left unanswered.",
+      "after": "Key set to B (25), the value of the postfix expression with digit values. Literally the code pushes ASCII codes and prints with %c (output would be the character y, 7801 mod 256 = 121), which matches no option.",
+      "reason": "Explain the remaining ambiguity.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-28",
+      "field": "reviewNote",
+      "before": "Strictly k/20 > 0.5 needs k=11 which is not offered; option D (10) is the intended answer.",
+      "after": "Per-new-key reading: P = k/20 reaches 0.5 at k = 10 (option D, intended; strictly exceeding needs 11). Birthday reading (some collision among k keys) first exceeds 0.5 at k = 6 (option B). Kept D.",
+      "reason": "Record both interpretations.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-27",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "PDF clearly prints f(3n-1); the 5 -> 14 -> 7 -> 20 -> 10 -> 5 cycle proves answer D.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-27",
+      "field": "reviewNote",
+      "before": "Printed call is f(3n-1); analysis uses that.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-36",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Rendered PDF reads D, D1, D2 as in the record; computed 0.92t < 1.2t < 1.32t gives B.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-36",
+      "field": "reviewNote",
+      "before": "Design names in the scan are blurry ('design 0.02' read as D2, 'design 0' as D).",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-40",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Rendered figure clearly shows initial contents 0110; simulation gives 0110 (A).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-40",
+      "field": "reviewNote",
+      "before": "Initial register contents (0110) are blurry in the scan; the input 101101 is a palindrome so bit order does not matter.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-41",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Cycle-by-cycle trace gives 13 under the stated latencies (C).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-41",
+      "field": "reviewNote",
+      "before": "Stall counting convention (latency = idle cycles, in-order issue) assumed; matches the standard key 13.",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-42",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Bases H, B and 8 confirmed; exact computation gives (135103.412)_8 (A).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-42",
+      "field": "reviewNote",
+      "before": "Subscript bases are blurry in the scan (H, B, and octal answer base read from context).",
+      "after": null,
+      "reason": "Review resolved.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-40",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-40.png",
+          "alt": "Four-cell shift register initially 0 1 1 0; the last (rightmost) cell output is fed back to one input of an XOR gate whose other input is the serial input 101101; the XOR output feeds the first cell.",
+          "svg": "it-2007/cs-40.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-40.png",
+          "alt": "Linear feedback shift register: the serial input 101101 enters one input of an XOR gate; the XOR output feeds the leftmost cell of a 4-cell register holding 0 1 1 0; the rightmost cell output is fed back over the top to the other XOR input.",
+          "svg": "it-2007/cs-40.svg"
+        }
+      ],
+      "reason": "Redrawn SVG (old one showed an unrelated AND/OR circuit); precise alt text.",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-41",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-41.png",
+          "alt": "Latency table: ALU->ALU 2, ALU->Store 2, Load->ALU 1, Load->Store 0.",
+          "svg": "it-2007/cs-41.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure only duplicated the latency table already in the text (and its SVG was an unrelated waveform).",
+      "source": "GATE 2007 IT paper (PDF) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-45",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Answer is independent of the NAND wiring: X4 = 1 both activates and masks the fault; verified independently.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-45",
+      "field": "reviewNote",
+      "before": "Wiring read from a blurry scan (NAND inputs X1,X2,X3; AND inputs X3,X4).",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-49",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Verified independently: both languages have explicit regular expressions.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-49",
+      "field": "reviewNote",
+      "before": "Parentheses in 'WHILE (expr)' treated as literal terminal symbols; answer C per standard key.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-52",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Independent count (n1≈14, n2=7) gives N̂≈73, nearest 80 for any reasonable count.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-52",
+      "field": "reviewNote",
+      "before": "Operator/operand count is judgement-based; the code is also slightly garbled in the scan (e.g. 'TEMP = X[i]'). 80 is the nearest option.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-53",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Shading re-read from a 220-dpi render: 3 of 8 branches executed; verified.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-53",
+      "field": "reviewNote",
+      "before": "Shading read from a low-resolution scan.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-54",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Labels re-read (T6:20, T9:40); forward pass confirms critical path T1,T4,T5,T7,T8,T10.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-54",
+      "field": "reviewNote",
+      "before": "Some arc labels are blurry (E->H task label read as T6:20; B->F as T9:40).",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-55",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "McCabe counts each simple predicate; V = E − N + 2 = 3 verified.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-55",
+      "field": "reviewNote",
+      "before": "Answer depends on counting a compound condition as two predicates (3); counting the IF once would give 2.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-59",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Script re-read from the scan; join output verified independently.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-59",
+      "field": "reviewNote",
+      "before": "Shell script is garbled in the scan; reconstructed as an awk join on field 1 (quote characters and awk field variables approximate).",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-61",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Waveforms traced from a 220-dpi render: (a) decodes to 1000010111 (high→low = 1) and (b)'s boundary transitions occur exactly at the 0 bits, which confirms differential Manchester.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-61",
+      "field": "reviewNote",
+      "before": "Bit polarity convention and waveform reading are from a blurry scan; answer A believed to match the official key.",
+      "after": null,
+      "reason": "Review cleared after independent verification.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-50",
+      "field": "reviewNote",
+      "before": "The automata are illegible in the low-resolution scan (edge labels unreadable). Answer A taken from the gateoverflow accepted answer.",
+      "after": "Automata P and Q are illegible in the 96-dpi scan (edge labels unreadable), so the product construction could not be redone. The option automata were redrawn from the scan; the arrow directions of the long arcs are hard to see (drawn left-to-right except option D's c-arc into r0). Answer A is from the gateoverflow accepted answer.",
+      "reason": "More precise review note after redrawing the option figures.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-58",
+      "field": "reviewNote",
+      "before": "Solving 300p^2+100p-2=0 gives p≈0.0189 (≈0.0194 in the official key); the scan prints 0.194 so option A is a misprint-level match.",
+      "after": "Solving 3 = (1−p) + 100p(1−p) + 300p² gives 200p² + 99p − 2 = 0, so p ≈ 0.0194 (≈0.0191 if the dirty case costs 100 + 300). The printed option 0.194 is ten times this value, a misprinted decimal point; option A is the intended answer.",
+      "reason": "Corrected the equation in the review note.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-66",
+      "field": "reviewNote",
+      "before": "Answer C taken from the gateoverflow accepted answer; as transcribed from the blurry scan, option C's S2 appears to release lockX(A) before commit, so the printed order of unlock/commit lines in options B-D is uncertain.",
+      "after": "As printed in the scan, option C's S2 is '…write(A); unlock(A); commit; unlock(B)', which releases the exclusive lock on A before commit and so is not strict 2PL. The intended S2 (mirroring S1) is 'unlock(B); commit; unlock(A)'. Answer C is kept as the intended/gateoverflow answer.",
+      "reason": "More precise description of the printed option.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-59",
+      "field": "subject",
+      "before": "cn",
+      "after": "os",
+      "reason": "Shell scripting (awk, pipelines) is not networking; classified with the other Unix shell questions.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-59",
+      "field": "topic",
+      "before": "ip",
+      "after": "files",
+      "reason": "Shell scripting questions in the bank use os/files.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-59",
+      "field": "text",
+      "before": "The contents of the text file t1.txt containing four lines are as follows:\n\n```\na1 b1\na2 b2\na3 b2\na4 b1\n```\n\nThe contents of the text file t2.txt containing five lines are as follows:\n\n```\na1 c1\na2 c2\na3 c3\na4 c3\na5 c4\n```\n\nConsider the following Bourne shell script:\n\n```sh\nawk -F' ' '{ print $1, $2 }' t1.txt |\nwhile read a b ; do\n    awk -v aV=$a -v bV=$b -F' ' '$1==aV { print aV, bV, $2 }' t2.txt\ndone\n```\n\nWhich one of the following strings will NOT be present in the output generated when the above script is run? (Note that the given strings may be substrings of a printed line.)",
+      "after": "The contents of the text file t1.txt containing four lines are as follows:\n\n```\na1 b1\na2 b2\na3 b2\na4 b1\n```\n\nThe contents of the text file t2.txt containing five lines are as follows:\n\n```\na1 c1\na2 c2\na3 c3\na4 c3\na5 c4\n```\n\nConsider the following Bourne shell script:\n\n```sh\nawk -F' ' '{ print $1, $2 }' t1.txt |\nwhile read a b ; do\n    awk -v aV=$a -v bV=$b -F' ' 'aV==$1 { print aV, bV, $2 }' t2.txt\ndone\n```\n\nWhich one of the following strings will NOT be present in the output generated when the above script is run? (Note that the given strings may be substrings of a printed line.)",
+      "reason": "Condition written as in the paper (aV==$1).",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-60",
+      "field": "text",
+      "before": "For the network given in the figure below, the routing tables of the four nodes A, E, D and G are shown. Suppose that F has estimated its delay to its neighbors, A, E, D and G as 8, 10, 12 and 6 msecs respectively and updates its routing table using distance vector routing technique.\n\nWhich one of the following options represents the updated routing table of F?",
+      "after": "For the network given in the figure below, the routing tables of the four nodes A, E, D and G are shown. Suppose that F has estimated its delay to its neighbors, A, E, D and G as 8, 10, 12 and 6 msecs respectively and updates its routing table using distance vector routing technique.\n\n| Destination | Table of A | Table of E | Table of D | Table of G |\n|---|---|---|---|---|\n| A | 0 | 24 | 20 | 21 |\n| B | 40 | 27 | 8 | 24 |\n| C | 14 | 7 | 30 | 22 |\n| D | 17 | 20 | 0 | 19 |\n| E | 21 | 0 | 14 | 22 |\n| F | 9 | 11 | 7 | 10 |\n| G | 24 | 22 | 22 | 0 |\n\nWhich one of the following options represents the updated routing table of F?",
+      "reason": "Routing tables of A, E, D, G transcribed from the paper as a markdown table (replaces a picture-only figure).",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-60",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/it-2007/cs-60-a.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/it-2007/cs-60-b.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/it-2007/cs-60-c.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/it-2007/cs-60-d.svg)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "A: 8, B: 20, C: 17, D: 12, E: 10, F: 0, G: 6"
+        },
+        {
+          "l": "B",
+          "t": "A: 21, B: 8, C: 7, D: 19, E: 14, F: 0, G: 22"
+        },
+        {
+          "l": "C",
+          "t": "A: 8, B: 20, C: 17, D: 12, E: 10, F: 16, G: 6"
+        },
+        {
+          "l": "D",
+          "t": "A: 8, B: 8, C: 7, D: 12, E: 10, F: 0, G: 6"
+        }
+      ],
+      "reason": "Option tables transcribed as text from the paper (the referenced option SVGs were template placeholders).",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-60",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-60.png",
+          "alt": "Network with nodes A, B (top), C, D (middle), E, G (bottom) and F near the bottom; F is connected to A, E, D and G.",
+          "svg": "it-2007/cs-60.svg"
+        },
+        {
+          "f": "it-2007/cs-60-tables.png",
+          "alt": "Routing tables of A: A0,B40,C14,D17,E21,F9,G24; of E: A24,B27,C7,D20,E0,F11,G22; of D: A20,B8,C30,D0,E14,F7,G22; of G: A21,B24,C22,D19,E22,F10,G0.",
+          "svg": "it-2007/cs-60-tables.svg"
+        },
+        {
+          "f": "it-2007/cs-60-a.png",
+          "alt": "A 8, B 20, C 17, D 12, E 10, F 0, G 6",
+          "svg": "it-2007/cs-60-a.svg"
+        },
+        {
+          "f": "it-2007/cs-60-b.png",
+          "alt": "A 21, B 8, C 7, D 19, E 14, F 0, G 22",
+          "svg": "it-2007/cs-60-b.svg"
+        },
+        {
+          "f": "it-2007/cs-60-c.png",
+          "alt": "A 8, B 20, C 17, D 12, E 10, F 16, G 6",
+          "svg": "it-2007/cs-60-c.svg"
+        },
+        {
+          "f": "it-2007/cs-60-d.png",
+          "alt": "A 8, B 8, C 7, D 12, E 10, F 0, G 6",
+          "svg": "it-2007/cs-60-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-60.png",
+          "alt": "Network of seven routers: A top-left, B top-right, C mid-left, D mid-right, E bottom-left, G bottom-right, F on the bottom edge between E and G; links A-B, A-C, C-E, B-D, D-G, E-F, F-G, C-D, A-F and F-D, so F's neighbours are A, E, D and G.",
+          "svg": "it-2007/cs-60.svg"
+        }
+      ],
+      "reason": "Network redrawn as SVG; routing tables and options moved into text/options, so their image figures are dropped.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-61",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-61.png",
+          "alt": "Two square waveforms over 10 bit intervals marked by dotted lines: (a) Manchester encoded (mid-bit transitions), (b) a differently encoded version with a transition at each bit boundary.",
+          "svg": "it-2007/cs-61.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-61.png",
+          "alt": "Two waveforms over 11 bit cells separated by dotted lines. (a) Manchester, a transition in the middle of every cell: high-to-low in cells 1, 6, 8, 9, 10, 11 and low-to-high in cells 2, 3, 4, 5, 7. (b) a transition in the middle of every cell plus an extra transition at the start of cells 2, 3, 4, 5 and 7 only.",
+          "svg": "it-2007/cs-61.svg"
+        }
+      ],
+      "reason": "Figure redrawn as SVG from a 220-dpi render; alt text made precise.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-53",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-53.png",
+          "alt": "Flowchart: entry box, then a decision with left branch (executed) and right branch (not executed); left branch leads to a decision whose left box is not executed and right box is executed; right branch leads to a decision whose two boxes are both not executed; both sides join, then a decision at the bottom with left box not executed and right box executed, then exit.",
+          "svg": "it-2007/cs-53.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-53.png",
+          "alt": "Flowchart, filled boxes executed and hollow boxes not executed: filled entry box; at the first fork the left side has a filled box, then a fork whose left box is hollow and right box filled, then a filled box; the right side has a hollow box, a fork with two hollow boxes, then a hollow box; both sides join at a filled box, then a filled box, a fork whose left box is hollow and right box filled, a filled box and the exit.",
+          "svg": "it-2007/cs-53.svg"
+        }
+      ],
+      "reason": "Figure redrawn as SVG; alt text made precise.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-50",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-50.png",
+          "alt": "Two 4-state automata P (states p0..p3) and Q (q0..q3) over {a,b,c}, all states drawn as double circles; edges are too blurry to read reliably in the scan.",
+          "svg": "it-2007/cs-50.svg"
+        },
+        {
+          "f": "it-2007/cs-50-a.png",
+          "alt": "Four states r0..r3 (all double circles): r0-a->r1, r1-b->r2, r2-a->r1, r2-c->r3, r0-b->r2 (long arc), r0 to r3 via a top arc a; bottom arc labelled b.",
+          "svg": "it-2007/cs-50-a.svg"
+        },
+        {
+          "f": "it-2007/cs-50-b.png",
+          "alt": "Four states r0..r3, r0-a->r1, r1-b->r2, r2-a->r1, r2-c->r3, arcs labelled b over the top r0->r2 and b along the bottom r1->r3.",
+          "svg": "it-2007/cs-50-b.svg"
+        },
+        {
+          "f": "it-2007/cs-50-c.png",
+          "alt": "Four states r0..r3 with a-edge r0->r1, b/a between r1 and r2, b/c between r2 and r3, arcs on top labelled a and bottom labelled a.",
+          "svg": "it-2007/cs-50-c.svg"
+        },
+        {
+          "f": "it-2007/cs-50-d.png",
+          "alt": "Four states r0..r3 with a r0->r1, b/a between r1 and r2, b/c between r2 and r3, top arc c from r2 to r0 and bottom arc b.",
+          "svg": "it-2007/cs-50-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-50.png",
+          "alt": "Two automata P (p0..p3) and Q (q0..q3) over {a,b,c}, every state a double circle. P: chain p0-p1-p2-p3 with arcs both ways between p1-p2 and p2-p3, an upper arc p0 to p2 and a lower arc p1 to p3. Q: chain q0-q1-q2-q3 with an upper arc q1 to q3 and a lower arc q0 to q2. The edge labels are illegible in the scan.",
+          "svg": "it-2007/cs-50.svg"
+        },
+        {
+          "f": "it-2007/cs-50-a.png",
+          "alt": "Option A: four final states r0 (start) to r3; r0 to r1 on a, r1 to r2 on b, r2 to r1 on a, r3 to r2 on c, upper arc r1 to r3 on a, lower arc r0 to r2 on b.",
+          "svg": "it-2007/cs-50-a.svg"
+        },
+        {
+          "f": "it-2007/cs-50-b.png",
+          "alt": "Option B: four final states r0 (start) to r3; r0 to r1 on a, r1 to r2 on b, r2 to r1 on a, r3 to r2 on c, upper arc r0 to r2 on b, lower arc r1 to r3 on b.",
+          "svg": "it-2007/cs-50-b.svg"
+        },
+        {
+          "f": "it-2007/cs-50-c.png",
+          "alt": "Option C: four final states r0 (start) to r3; r0 to r1 on a, r1 to r2 on b, r2 to r1 on a, r2 to r3 on b, r3 to r2 on c, upper arc r0 to r2 on b, lower arc r1 to r3 on a.",
+          "svg": "it-2007/cs-50-c.svg"
+        },
+        {
+          "f": "it-2007/cs-50-d.png",
+          "alt": "Option D: four final states r0 (start) to r3; r0 to r1 on a, r1 to r2 on b, r2 to r1 on a, r2 to r3 on b, r3 to r2 on c, upper arc r2 back to r0 on c, lower arc r1 to r3 on b.",
+          "svg": "it-2007/cs-50-d.svg"
+        }
+      ],
+      "reason": "Option automata redrawn as SVG; alt texts updated to the redrawn edges.",
+      "source": "pdf (GATE2007IT.pdf) + independent solution"
+    },
+    {
+      "id": "it-2007-cs-67",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Arrows are readable at 300 dpi: (i) A→B, A→→C; (ii) A→B, A→C; (iii) A→→BC; (iv) A→BC. Count = 2 is certain.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-67",
+      "field": "reviewNote",
+      "before": "Arrow types (→ vs →→) are blurry in the scan.",
+      "after": null,
+      "reason": "Arrows are readable at 300 dpi: (i) A→B, A→→C; (ii) A→B, A→C; (iii) A→→BC; (iv) A→BC. Count = 2 is certain.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-68",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Previous solved key C is not a legal expression (account has no b-city attribute; D likewise selects b-city/bal on depositor). Among the legal rewrites A filters the small branch relation before joining the large ones; B joins account and depositor first.",
+      "source": "Schema check + independent solution"
+    },
+    {
+      "id": "it-2007-cs-68",
+      "field": "reviewNote",
+      "before": "Option text is small/blurry in the scan; the balance predicate is printed 'bal < 0' in some options (read as bal = 0). Options B and A have garbled join structure; C is the standard key.",
+      "after": "Key changed C → A without an official key. Option C applies σ_{b-city} to account and option D applies σ_{b-city ∧ bal} to depositor, but neither schema has those attributes. Pushing selections down gives A (filter branch first, join the small result with account, then depositor) as the most efficient valid rewrite; B joins the two big relations first. Kept for review because the scan's balance predicate reads 'bal = 0' in the query/A/B and 'bal < 0' in C/D.",
+      "reason": "Stored key fails schema check; independent solution gives A.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-69",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Option text is clean in the record (HTTP etc.). D scores 3 matches (SMTP-i, HTTP-ii, FTP-v), C scores 2, A and B score 0 — D is unambiguous.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-69",
+      "field": "reviewNote",
+      "before": "Option text has OCR noise (e.g. 'FITI P' for HTTP) and the choice depends on protocol-property judgements.",
+      "after": null,
+      "reason": "Option text is clean in the record (HTTP etc.). D scores 3 matches (SMTP-i, HTTP-ii, FTP-v), C scores 2, A and B score 0 — D is unambiguous.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-71",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-71-a.png",
+          "alt": "States s0 (start), s1, s2, s3 (final). s0 has loop a,b; s0-a->s1; s0-b->s2; s1-a->s3; s2-b->s3; s1 and s2 joined by edges labelled b (s1->s2) and a (s2->s1); s3 has loop a,b.",
+          "svg": "it-2007/cs-71-a.svg"
+        },
+        {
+          "f": "it-2007/cs-71-b.png",
+          "alt": "States s0 (start), s1, s2, s3 (final); s1 and s2 each have a loop a,b; s0-a->s1, s0-b->s2, s1-a->s3, s2-b->s3, edges a and b between s1 and s2.",
+          "svg": "it-2007/cs-71-b.svg"
+        },
+        {
+          "f": "it-2007/cs-71-c.png",
+          "alt": "Like B with loops a,b on s1 and s2 but different labels on the s1/s2 cross edges.",
+          "svg": "it-2007/cs-71-c.svg"
+        },
+        {
+          "f": "it-2007/cs-71-d.png",
+          "alt": "Like B but with s1 (rather than s3) drawn as a final state.",
+          "svg": "it-2007/cs-71-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-71-a.png",
+          "alt": "Option A NFA: start state s0 with a self-loop on a, b; s0 –a→ s1 and s0 –b→ s2; s1 –b→ s2 and s2 –a→ s1; s1 –a→ s3 and s2 –b→ s3; s3 is the only final state and has a self-loop on a, b.",
+          "svg": "it-2007/cs-71-a.svg"
+        },
+        {
+          "f": "it-2007/cs-71-b.png",
+          "alt": "Option B NFA: start state s0 with no self-loop; s0 –a→ s1 and s0 –b→ s2; s1 and s2 each have a self-loop on a, b; s1 –a→ s2 and s2 –b→ s1; s1 –a→ s3 and s2 –b→ s3; s3 is the only final state and has no self-loop.",
+          "svg": "it-2007/cs-71-b.svg"
+        },
+        {
+          "f": "it-2007/cs-71-c.png",
+          "alt": "Option C NFA: start state s0 with no self-loop; s0 –a→ s1 and s0 –b→ s2; s1 and s2 each have a self-loop on a, b; s1 –b→ s2 and s2 –a→ s1; s1 –a→ s3 and s2 –b→ s3; s3 is the only final state and has no self-loop.",
+          "svg": "it-2007/cs-71-c.svg"
+        },
+        {
+          "f": "it-2007/cs-71-d.png",
+          "alt": "Option D NFA: same edges as option C (no loop on s0, loops a, b on s1 and s2, s1 –b→ s2, s2 –a→ s1, s1 –a→ s3, s2 –b→ s3) but both s1 and s3 are final states.",
+          "svg": "it-2007/cs-71-d.svg"
+        }
+      ],
+      "reason": "Redrew all four NFAs as clean SVGs (the old SVGs were generic placeholders) with precise alt text.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-71",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Edge labels are readable at 300 dpi; only A has a loop on s0 and s3 with no loops on s1/s2, and only A recognises R.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-71",
+      "field": "reviewNote",
+      "before": "NFA edge labels are small/blurry in the scan.",
+      "after": null,
+      "reason": "Edge labels are readable at 300 dpi; only A has a loop on s0 and s3 with no loops on s1/s2, and only A recognises R.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-72",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-72-a.png",
+          "alt": "s0 start; s0-a->s1, s0-b->s2; s1-a->s3, s1-b->s2; s2-a->s1, s2-b->s4; s3 (final) loops a, s3-b->s4; s4 (final) loops b, s4-a->s3.",
+          "svg": "it-2007/cs-72-a.svg"
+        },
+        {
+          "f": "it-2007/cs-72-b.png",
+          "alt": "Like A with crossing edges between s1,s2 and s3,s4 that do not track the last symbol correctly.",
+          "svg": "it-2007/cs-72-b.svg"
+        },
+        {
+          "f": "it-2007/cs-72-c.png",
+          "alt": "s0 start with a-edge to s1 and b-edge to s2, a/b edges back to s0, final state s3 with loop a,b.",
+          "svg": "it-2007/cs-72-c.svg"
+        },
+        {
+          "f": "it-2007/cs-72-d.png",
+          "alt": "s0 start with a to s1, b to s2, return edges, final state s3 with loop a,b.",
+          "svg": "it-2007/cs-72-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-72-a.png",
+          "alt": "Option A DFA: start s0; s0 –a→ s1, s0 –b→ s2; s1 –a→ s3, s1 –b→ s2; s2 –a→ s1, s2 –b→ s4; final s3 loops on a and goes to s4 on b; final s4 loops on b and goes to s3 on a.",
+          "svg": "it-2007/cs-72-a.svg"
+        },
+        {
+          "f": "it-2007/cs-72-b.png",
+          "alt": "Option B DFA: start s0; s0 –a→ s1, s0 –b→ s2; s1 –a→ s3 and s1 –b→ s4 (crossing edge); s2 –b→ s4 and s2 –a→ s3 (crossing edge); final s3 loops on a and goes to s4 on b; final s4 loops on b and goes to s3 on a.",
+          "svg": "it-2007/cs-72-b.svg"
+        },
+        {
+          "f": "it-2007/cs-72-c.png",
+          "alt": "Option C DFA: start s0; s0 –a→ s1, s1 –b→ s0, s0 –b→ s2, s2 –a→ s0; s1 –a→ s3, s2 –b→ s3; s3 is final with a self-loop on a, b.",
+          "svg": "it-2007/cs-72-c.svg"
+        },
+        {
+          "f": "it-2007/cs-72-d.png",
+          "alt": "Option D DFA: start s0; s0 –a→ s1, s1 –a→ s0, s0 –b→ s2, s2 –b→ s0; s1 –b→ s3, s2 –a→ s3; s3 is final with a self-loop on a, b.",
+          "svg": "it-2007/cs-72-d.svg"
+        }
+      ],
+      "reason": "Redrew all four DFAs as clean SVGs (the old SVGs were generic placeholders) with precise alt text.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-72",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Labels readable at 300 dpi; A is the standard \"remember the last symbol\" DFA, B accepts ab, C rejects abb, D accepts ab.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-72",
+      "field": "reviewNote",
+      "before": "DFA edge labels are small/blurry in the scan.",
+      "after": null,
+      "reason": "Labels readable at 300 dpi; A is the standard \"remember the last symbol\" DFA, B accepts ab, C rejects abb, D accepts ab.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-73",
+      "field": "reviewNote",
+      "before": "Options C and D look identical in the scan (stars/brackets unreadable); C chosen as the standard key.",
+      "after": "As printed, options C and D are the same expression (D merely wraps onto a second line), and both describe R. C is kept as the key; if the original D differs (e.g. a misplaced star) C is still the intended answer.",
+      "reason": "Re-read options at 300 dpi.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-74",
+      "field": "text",
+      "before": "Consider a token ring topology with N stations (numbered 1 to N) running token ring protocol where the stations are equally spaced. When a station gets the token it is allowed to send one frame of fixed size. Ring latency is t_p, while the transmission time of a frame is t_t. All other latencies can be neglected.\n\nThe maximum utilization of the token ring when t_t = 3 ms, t_p = 5 ms, N = 10 is",
+      "after": "Consider a token ring topology with N stations (numbered 1 to N) running token ring protocol where the stations are equally spaced. When a station gets the token it is allowed to send one frame of fixed size. Ring latency is $t_p$, while the transmission time of a frame is $t_t$. All other latencies can be neglected.\n\nThe maximum utilization of the token ring when $t_t = 3$ ms, $t_p = 5$ ms, $N = 10$ is",
+      "reason": "KaTeX for subscripts.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-74",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Answer depends on the token-release model; the paired Q74/Q75 (a > 1 vs a < 1) point to the textbook formula, which gives A, not the stored C.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-74",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key C (0.857) is the early-token-release value N·t_t/(N·t_t + t_p). The question pair is built on the standard (Stallings) token-ring formula with a = t_p/t_t: U = 1/(1 + a/N) for a < 1 and U = 1/(a(1 + 1/N)) for a > 1. Here a = 5/3 > 1, so U = 1/((5/3)(1.1)) = 0.545 (A); Q75 (a = 0.6 < 1) gives 0.961 with either model. Believed answer A.",
+      "reason": "Independent solution with the standard formula.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-75",
+      "field": "text",
+      "before": "Consider a token ring topology with N stations (numbered 1 to N) running token ring protocol where the stations are equally spaced. When a station gets the token it is allowed to send one frame of fixed size. Ring latency is t_p, while the transmission time of a frame is t_t. All other latencies can be neglected.\n\nThe maximum utilization of the token ring when t_t = 5 ms, t_p = 3 ms, N = 15 is",
+      "after": "Consider a token ring topology with N stations (numbered 1 to N) running token ring protocol where the stations are equally spaced. When a station gets the token it is allowed to send one frame of fixed size. Ring latency is $t_p$, while the transmission time of a frame is $t_t$. All other latencies can be neglected.\n\nThe maximum utilization of the token ring when $t_t = 5$ ms, $t_p = 3$ ms, $N = 15$ is",
+      "reason": "KaTeX for subscripts.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-75",
+      "field": "subject",
+      "before": "ga",
+      "after": "cn",
+      "reason": "Token ring is computer networks, not general aptitude.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-75",
+      "field": "topic",
+      "before": "quant",
+      "after": "datalink",
+      "reason": "Same topic as its linked question Q74.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-76",
+      "field": "text",
+      "before": "Consider the sequence {x_n}, n ≥ 0, defined by the recurrence relation $x_{n+1} = c\\,x_n^2 - 2$, where c > 0.\n\nSuppose there exists a non-empty open interval (a, b) such that for all x_0 satisfying a < x_0 < b, the sequence converges to a limit. The sequence converges to the value",
+      "after": "Consider the sequence $\\{x_n\\}_{n \\ge 0}$ defined by the recurrence relation $x_{n+1} = c\\,x_n^2 - 2$, where $c > 0$.\n\nSuppose there exists a non-empty open interval (a, b) such that for all $x_0$ satisfying $a < x_0 < b$, the sequence converges to a limit. The sequence converges to the value",
+      "reason": "KaTeX for the sequence notation.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-77",
+      "field": "text",
+      "before": "Consider the sequence {x_n}, n ≥ 0, defined by the recurrence relation $x_{n+1} = c\\,x_n^2 - 2$, where c > 0.\n\nFor which of the following values of c, does there exist a non-empty open interval (a, b) such that the sequence x_n converges for all x_0 satisfying a < x_0 < b?\n(i) 0.25\n(ii) 0.35\n(iii) 0.45\n(iv) 0.5",
+      "after": "Consider the sequence $\\{x_n\\}_{n \\ge 0}$ defined by the recurrence relation $x_{n+1} = c\\,x_n^2 - 2$, where $c > 0$.\n\nFor which of the following values of c, does there exist a non-empty open interval (a, b) such that the sequence $x_n$ converges for all $x_0$ satisfying $a < x_0 < b$?\n(i) 0.25\n(ii) 0.35\n(iii) 0.45\n(iv) 0.5",
+      "reason": "KaTeX for the sequence notation.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-78",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-78-a.png",
+          "alt": "Rows ā b̄, ā b, a b, a b̄; columns c̄d̄, c̄d, cd, cd̄. Marked: row 1: c̄d̄, c̄d; row 2: c̄d̄, c̄d; row 3: c̄d̄, c̄d, cd̄; row 4: c̄d̄, cd̄.",
+          "svg": "it-2007/cs-78-a.svg"
+        },
+        {
+          "f": "it-2007/cs-78-b.png",
+          "alt": "Marked: row ā b̄: c̄d̄, c̄d; row ā b: c̄d̄ only; row a b: c̄d̄, c̄d, cd̄; row a b̄: c̄d̄, c̄d, cd̄.",
+          "svg": "it-2007/cs-78-b.svg"
+        },
+        {
+          "f": "it-2007/cs-78-c.png",
+          "alt": "Marked: row ā b̄: c̄d̄, c̄d; row ā b: c̄d̄, c̄d, cd̄; row a b: c̄d̄, c̄d, cd̄; row a b̄: c̄d̄, cd̄.",
+          "svg": "it-2007/cs-78-c.svg"
+        },
+        {
+          "f": "it-2007/cs-78-d.png",
+          "alt": "Marked: row ā b̄: c̄d̄, c̄d; row ā b: c̄d̄, c̄d; row a b: c̄d̄, c̄d, cd̄; row a b̄: c̄d̄, cd, cd̄.",
+          "svg": "it-2007/cs-78-d.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-78-a.png",
+          "alt": "Option A K-map, rows ā b̄, ā b, a b, a b̄; columns c̄d̄, c̄d, cd, cd̄. Crosses: ā b̄ → c̄d̄, c̄d; ā b → c̄d̄, c̄d; a b → c̄d̄, c̄d, cd̄; a b̄ → c̄d̄, cd̄.",
+          "svg": "it-2007/cs-78-a.svg"
+        },
+        {
+          "f": "it-2007/cs-78-b.png",
+          "alt": "Option B K-map, rows ā b̄, ā b, a b, a b̄; columns c̄d̄, c̄d, cd, cd̄. Crosses: ā b̄ → c̄d̄, c̄d; ā b → c̄d̄ only; a b → c̄d̄, c̄d, cd̄; a b̄ → c̄d̄, c̄d, cd̄.",
+          "svg": "it-2007/cs-78-b.svg"
+        },
+        {
+          "f": "it-2007/cs-78-c.png",
+          "alt": "Option C K-map, rows ā b̄, ā b, a b, a b̄; columns c̄d̄, c̄d, cd, cd̄. Crosses: ā b̄ → c̄d̄, c̄d; ā b → c̄d̄, c̄d, cd̄; a b → c̄d̄, c̄d, cd̄; a b̄ → c̄d̄, cd̄.",
+          "svg": "it-2007/cs-78-c.svg"
+        },
+        {
+          "f": "it-2007/cs-78-d.png",
+          "alt": "Option D K-map, rows ā b̄, ā b, a b, a b̄; columns c̄d̄, c̄d, cd, cd̄. Crosses: ā b̄ → c̄d̄, c̄d; ā b → c̄d̄, c̄d; a b → c̄d̄, c̄d, cd̄; a b̄ → c̄d̄, cd, cd̄.",
+          "svg": "it-2007/cs-78-d.svg"
+        }
+      ],
+      "reason": "Redrew the four K-maps as SVG tables (old SVGs were generic placeholders).",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-78",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Crosses are legible at 300 dpi; only map A equals ad̄ + āc̄ + bc̄d cell for cell.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-78",
+      "field": "reviewNote",
+      "before": "Marked K-map cells read from a low-resolution scan; A matches the expression exactly.",
+      "after": null,
+      "reason": "Crosses are legible at 300 dpi; only map A equals ad̄ + āc̄ + bc̄d cell for cell.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-79",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Overbars read cleanly at 300 dpi; only C (its c̄d term adds ab̄c̄d) disagrees with the map.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-79",
+      "field": "reviewNote",
+      "before": "Overbars in the options are hard to read in the scan; the option that fails is identified by checking each reading against the map.",
+      "after": null,
+      "reason": "Overbars read cleanly at 300 dpi; only C (its c̄d term adds ab̄c̄d) disagrees with the map.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-84",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-84.png",
+          "alt": "Three-level tree: root with one key; two internal nodes each with one key; four leaves, the leftmost with two keys and the other three with one key each (the key labels are unreadable in the scan).",
+          "svg": "it-2007/cs-84.svg"
+        },
+        {
+          "f": "it-2007/cs-84-opts.png",
+          "alt": "Four nodes: (K30, K50), (K20, K25), (K25, K30), (K15, K20).",
+          "svg": "it-2007/cs-84-opts.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-84.png",
+          "alt": "B-tree (each node holds at most two keys and three links): root (K50); its children (K30) and (K70); leaves under (K30) are (K10, K20) and (K40); leaves under (K70) are (K60) and (K80). Key labels are reconstructed — they are illegible in the scan.",
+          "svg": "it-2007/cs-84.svg"
+        },
+        {
+          "f": "it-2007/cs-84-opts.png",
+          "alt": "The four candidate nodes: (K30, K50), (K25, K30), (K20, K25), (K15, K20).",
+          "svg": "it-2007/cs-84-opts.svg"
+        }
+      ],
+      "reason": "Redrew the B-tree and the candidate nodes as SVGs (old SVGs were generic placeholders).",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-84",
+      "field": "reviewNote",
+      "before": "Key labels inside the tree figure are illegible in the scan; answer A taken from the gateoverflow accepted answer (only node (K20,K25) present).",
+      "after": "Key labels inside the tree are illegible in the scan; the figure uses the widely reproduced version (root K50; K30, K70; leaves (K10,K20), K40, K60, K80), which is consistent with the four candidate nodes and gives exactly one, (K20, K25).",
+      "reason": "Re-read scan; keys reconstructed.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-85",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2007/cs-84.png",
+          "alt": "Three-level tree: root with one key; two internal nodes each with one key; four leaves, the leftmost with two keys and the other three with one key each (the key labels are unreadable in the scan).",
+          "svg": "it-2007/cs-84.svg"
+        },
+        {
+          "f": "it-2007/cs-84-opts.png",
+          "alt": "Four nodes: (K30, K50), (K20, K25), (K25, K30), (K15, K20).",
+          "svg": "it-2007/cs-84-opts.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2007/cs-84.png",
+          "alt": "B-tree (each node holds at most two keys and three links): root (K50); its children (K30) and (K70); leaves under (K30) are (K10, K20) and (K40); leaves under (K70) are (K60) and (K80). Key labels are reconstructed — they are illegible in the scan.",
+          "svg": "it-2007/cs-84.svg"
+        },
+        {
+          "f": "it-2007/cs-84-opts.png",
+          "alt": "The four candidate nodes: (K30, K50), (K25, K30), (K20, K25), (K15, K20).",
+          "svg": "it-2007/cs-84-opts.svg"
+        }
+      ],
+      "reason": "Same redrawn figures as Q84.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    },
+    {
+      "id": "it-2007-cs-85",
+      "field": "reviewNote",
+      "before": "The tree keys are illegible and statement (ii) does not say which node ('The node ... is present'; the node figure is missing in the scan). Answer A taken from the gateoverflow accepted answer.",
+      "after": "Tree keys are illegible in the scan and statement (ii) omits the node (the standard version names (K20, K25)). With K50 replaced by its in-order successor K60, the leaves (K70,K80) merge and K30 rotates to the root: height unchanged, (K20,K25) present, root changed ⇒ A. Using the predecessor K40 instead would make (ii) false and match no option.",
+      "reason": "Independent solution on the reconstructed tree.",
+      "source": "GATE2007IT.pdf scan + independent solution"
+    }
+  ]
+}

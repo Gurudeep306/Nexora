@@ -1,13 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">TIMING WAVEFORM</text>
-  <text x="100" y="82" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">S1</text>
-  <path d="M 120 88 L 180 88 L 180 70 L 240 70 L 240 88 L 320 88 L 320 70 L 400 70 L 400 88 L 480 88" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="124" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">S2</text>
-  <path d="M 120 130 L 180 130 L 180 112 L 240 112 L 240 130 L 320 130 L 320 112 L 400 112 L 400 130 L 480 130" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="166" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">S3</text>
-  <path d="M 120 172 L 180 172 L 180 154 L 240 154 L 240 172 L 320 172 L 320 154 L 400 154 L 400 172 L 480 172" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="208" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">S4</text>
-  <path d="M 120 214 L 180 214 L 180 196 L 240 196 L 240 214 L 320 214 L 320 196 L 400 196 L 400 214 L 480 214" fill="none" stroke="#38bdf8" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 652 224" role="img"><title>Four-stage pipeline: S1 5 ns, S2 6 ns, S3 11 ns, S4 8 ns, each followed by a pipeline register of delay 1 ns</title>
+<g fill="none" stroke="currentColor" stroke-width="1.6">
+<rect x="12" y="48" width="84" height="120"/>
+<path d="M96 108 H118 M111 101 L120 108 L111 115"/>
+<rect x="120" y="12" width="26" height="200"/>
+<path d="M146 108 H168 M161 101 L170 108 L161 115"/>
+<rect x="170" y="48" width="84" height="120"/>
+<path d="M254 108 H276 M269 101 L278 108 L269 115"/>
+<rect x="278" y="12" width="26" height="200"/>
+<path d="M304 108 H326 M319 101 L328 108 L319 115"/>
+<rect x="328" y="48" width="84" height="120"/>
+<path d="M412 108 H434 M427 101 L436 108 L427 115"/>
+<rect x="436" y="12" width="26" height="200"/>
+<path d="M462 108 H484 M477 101 L486 108 L477 115"/>
+<rect x="486" y="48" width="84" height="120"/>
+<path d="M570 108 H592 M585 101 L594 108 L585 115"/>
+<rect x="594" y="12" width="26" height="200"/>
+<path d="M620 108 H642 M635 101 L644 108 L635 115"/>
+</g>
+<g fill="currentColor" font-family="Arial, Helvetica, sans-serif" font-size="13" text-anchor="middle">
+<text x="54" y="84">Stage</text><text x="54" y="102">S1</text><text x="54" y="120">Delay</text><text x="54" y="138">5ns</text>
+<text transform="translate(137 112) rotate(-90)" font-size="12">Pipeline Register (Delay 1ns)</text>
+<text x="212" y="84">Stage</text><text x="212" y="102">S2</text><text x="212" y="120">Delay</text><text x="212" y="138">6ns</text>
+<text transform="translate(295 112) rotate(-90)" font-size="12">Pipeline Register (Delay 1ns)</text>
+<text x="370" y="84">Stage</text><text x="370" y="102">S3</text><text x="370" y="120">Delay</text><text x="370" y="138">11ns</text>
+<text transform="translate(453 112) rotate(-90)" font-size="12">Pipeline Register (Delay 1ns)</text>
+<text x="528" y="84">Stage</text><text x="528" y="102">S4</text><text x="528" y="120">Delay</text><text x="528" y="138">8ns</text>
+<text transform="translate(611 112) rotate(-90)" font-size="12">Pipeline Register (Delay 1ns)</text>
+</g>
 </svg>

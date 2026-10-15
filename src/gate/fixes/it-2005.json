@@ -1,0 +1,257 @@
+{
+  "paper": "it-2005",
+  "fixes": [
+    {
+      "id": "it-2005-cs-2",
+      "field": "text",
+      "before": "If the trapezoidal method is used to evaluate the integral then the value obtained",
+      "after": "If the trapezoidal method is used to evaluate the integral $\\int_0^1 x^2\\,dx$, then the value obtained",
+      "reason": "The reprint (and the stored text) drops the integral; restored from the original GATE IT 2005 Q2 so the question is answerable.",
+      "source": "GATE2005IT.pdf"
+    },
+    {
+      "id": "it-2005-cs-2",
+      "field": "reviewNote",
+      "before": "The reprint omits the integral itself; the original GATE IT 2005 Q2 reads 'evaluate the integral $\\int_0^1 x^2 dx$'. Answer assumes that integral.",
+      "after": "The reprint omits the integral; the text restores $\\int_0^1 x^2\\,dx$ from the original GATE IT 2005 Q2. Confirm against an original copy.",
+      "reason": "Note updated to reflect the restored integral.",
+      "source": "GATE2005IT.pdf"
+    },
+    {
+      "id": "it-2005-cs-4",
+      "field": "text",
+      "before": "Let L be a regular language and M be a context-free language, both over the alphabet $\\Sigma$. Let $L^C$ and $M^C$ denote the complements of L and M respectively. Which of the following statements about the language if $L^C \\cup M^C$ is TRUE?",
+      "after": "Let L be a regular language and M be a context-free language, both over the alphabet $\\Sigma$. Let $L^C$ and $M^C$ denote the complements of L and M respectively. Which of the following statements about the language $L^C \\cup M^C$ is TRUE?",
+      "reason": "Removed the stray word \"if\" (typo in the reprint).",
+      "source": "GATE2005IT.pdf"
+    },
+    {
+      "id": "it-2005-cs-13",
+      "field": "subject",
+      "before": "db",
+      "after": "pds",
+      "reason": "Question is about a recursively defined function on stacks, not SQL.",
+      "source": "GATE2005IT.pdf"
+    },
+    {
+      "id": "it-2005-cs-13",
+      "field": "topic",
+      "before": "sql",
+      "after": "stacks-queues",
+      "reason": "Question is about a recursively defined function on stacks, not SQL.",
+      "source": "GATE2005IT.pdf"
+    },
+    {
+      "id": "it-2005-cs-18",
+      "field": "reviewNote",
+      "before": null,
+      "after": "`find . -name passwd -print` is recursive, so it would also list any file named passwd in subdirectories of /etc, while `ls passwd` lists only /etc/passwd. (A) is the intended answer (only option that reports the file name rather than its contents/matching lines).",
+      "reason": "needsReview was set without a note; documented the recursion caveat.",
+      "source": "GATE2005IT.pdf"
+    },
+    {
+      "id": "it-2005-cs-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "By progressively querying routers about the next router on the path to B using ICMP packets, starting with the first router"
+        },
+        {
+          "l": "B",
+          "t": "By requiring each router to append the address to the ICMP packet as it is forwarded to B. The list of all routers en-route to B is returned by 13 in an ICMP reply packet"
+        },
+        {
+          "l": "C",
+          "t": "By ensuring that an ICMP reply packet is returned to A by each router en-route to B, in the ascending order of their hop distance from A"
+        },
+        {
+          "l": "D",
+          "t": "By locally computing the shortest path from A to B"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "By progressively querying routers about the next router on the path to B using ICMP packets, starting with the first router"
+        },
+        {
+          "l": "B",
+          "t": "By requiring each router to append the address to the ICMP packet as it is forwarded to B. The list of all routers en-route to B is returned by B in an ICMP reply packet"
+        },
+        {
+          "l": "C",
+          "t": "By ensuring that an ICMP reply packet is returned to A by each router en-route to B, in the ascending order of their hop distance from A"
+        },
+        {
+          "l": "D",
+          "t": "By locally computing the shortest path from A to B"
+        }
+      ],
+      "reason": "OCR misprint: \"13\" is \"B\".",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-26",
+      "field": "answer",
+      "before": "A",
+      "after": "C",
+      "reason": "Traceroute sends probes with TTL 1, 2, 3, ...; each router en route returns ICMP Time Exceeded to A, in ascending hop order (option C). Previous key A (routers queried about the next router) does not describe traceroute. Previous key was solver-derived, not official.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-26",
+      "field": "reviewNote",
+      "before": "Option B text 'returned by 13' is a misprint of 'returned by B'. A vs C debated; official key taken as A.",
+      "after": "Key changed A -> C on a technical argument: traceroute uses increasing TTL so each router returns ICMP Time Exceeded in ascending hop order (C); A (\"querying routers about the next router\") is not how it works. No reliable official 2005 IT key located; some sources give A. Verify.",
+      "reason": "Updated after independent solution.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-43",
+      "field": "reviewNote",
+      "before": "Figure is blurred; circuit read as D flip-flops with the connections in alt. Answer depends on interpreting 'end of the third cycle' as the state after the clock edges of the first two cycles; option tables read column-wise per cycle.",
+      "after": "Figure redrawn from scan. Options are read row-per-cycle; the unique answer A follows only if z is read during cycle 3 (after the clock edges of cycles 1 and 2); after the third edge every option gives z = 0.",
+      "reason": "Corrected description of how options are read.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-45",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2005/cs-45-1.png",
+          "alt": "Table with rows I1-I4 and columns T1-T5 listing the control signals generated in each step.",
+          "svg": "it-2005/cs-45-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure is just the scanned table, which is already reproduced as a markdown table in the text.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-46",
+      "field": "subject",
+      "before": "ga",
+      "after": "dl",
+      "reason": "Digital-logic fault model, not general aptitude.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-46",
+      "field": "topic",
+      "before": "quant",
+      "after": "combinational",
+      "reason": "Stuck-at faults in logic circuits.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2005-cs-81-2",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Recomputed: seek 3.5 ms + rotational wait 5.5 ms (11 sectors) + transfer 1 ms = 10 ms with the natural sector numbering; matches key B.",
+      "source": "independent solution"
+    },
+    {
+      "id": "it-2005-cs-81-2",
+      "field": "reviewNote",
+      "before": "Timing depends on sector-numbering convention; 10 ms (option B) follows from 1-based sectors and 0.5 MB per sector.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "independent solution"
+    },
+    {
+      "id": "it-2005-cs-56",
+      "field": "subject",
+      "before": "calc",
+      "after": "algo",
+      "reason": "Graph shortest-path question, not calculus.",
+      "source": "review"
+    },
+    {
+      "id": "it-2005-cs-56",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "shortest-paths",
+      "reason": "Graph shortest-path question.",
+      "source": "review"
+    },
+    {
+      "id": "it-2005-cs-59",
+      "field": "text",
+      "before": "Let a and b be two sorted arrays containing n integers each, in non-decreasing order. Let c be a sorted array containing 2n integers obtained by merging the two arrays a and b. Assuming the arrays are indexed starting from 0, consider the following four statements.\n\nI  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge a[i]$\n\nII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge b[i]$\n\nIII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge a[i]$\n\nIV  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge b[i]$\n\nWhich of the following is TRUE",
+      "after": "Let a and b be two sorted arrays containing n integers each, in non-decreasing order. Let c be a sorted array containing 2n integers obtained by merging the two arrays a and b. Assuming the arrays are indexed starting from 0, consider the following four statements.\n\nI  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge a[i]$\n\nII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge b[i]$\n\nIII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\le a[i]$\n\nIV  $a[i]\\ge b[i]\\Rightarrow c[2i]\\le b[i]$\n\nWhich of the following is TRUE",
+      "reason": "The scan prints III and IV as copies of I and II, which leaves no option correct. Restored the original GATE IT 2005 statements III and IV with ≤.",
+      "source": "original paper"
+    },
+    {
+      "id": "it-2005-cs-59",
+      "field": "reviewNote",
+      "before": "Scanned statements I-IV are identical in pairs (I=III, II=IV) and use only '>='; the original paper has III and IV with a[i] <= b[i]. Transcribed as printed. Answer C follows the original paper's intended statements, not the misprinted ones.",
+      "after": "Statements III and IV were restored with ≤ (the reprint repeats I and II with ≥). Answer C (II and III) is proved in the solution. Confirm the restored wording against an original copy.",
+      "reason": "Updated after restoring the statements.",
+      "source": "review"
+    },
+    {
+      "id": "it-2005-cs-61",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "\"S\" in the scan is an OCR slip for 8. 4 sets × 2 ways = 8 blocks, so the text is consistent.",
+      "source": "review"
+    },
+    {
+      "id": "it-2005-cs-61",
+      "field": "reviewNote",
+      "before": "The question says 'total S cache blocks (0-7)'; taken as 8 blocks.",
+      "after": null,
+      "reason": "Resolved: the text already says 8 blocks, matching 4 sets × 2 ways.",
+      "source": "review"
+    },
+    {
+      "id": "it-2005-cs-68",
+      "field": "text",
+      "before": "A table 'student' with schema (roll, name, hostel, marks) and another table 'hobby' with schema (roll, hobbyname) contains records as shown below:\n\nTable student\n\n| Roll | Name | Hostel | Marks |\n|---|---|---|---|\n| 1798 | Manoj Rathod | 7 | 95 |\n| 2154 | Soumie Banerjee | 5 | 68 |\n| 2369 | Gumma Reddy | 7 | 86 |\n| 2581 | Pradeep Pendse | 6 | 92 |\n| 2643 | Suhas Kulkarni | 5 | 78 |\n| 2711 | Nitin Kadam | 8 | 72 |\n| 2872 | Kiran Vora | 5 | 92 |\n| 2926 | Manoj Kunkalikar | 5 | 94 |\n| 2959 | Hemant Karkhanis | 7 | 88 |\n| 3125 | Rajesh Doshi | 5 | 82 |\n\nTable hobby\n\n| Roll | hobbyname |\n|---|---|\n| 1798 | chess |\n| 1798 | music |\n| 2154 | music |\n| 2369 | swimming |\n| 2581 | cricket |\n| 2613 | chess |\n| 2643 | hockey |\n| 2711 | volleyball |\n| 2872 | football |\n| 2926 | cricket |\n| 2959 | photography |\n| 3125 | music |\n| 3125 | chess |\n\nThe following SQL query is executed on the above tables:\n\n```sql\nselect hostel\nfrom student natural join hobby\nwhere marks >= 75 and roll between 2000 and 3000;\n```\n\nRelations S and H with the same schema as those of these two tables respectively contain the same information as tuples. A new relation S' is obtained by the following relational algebra operation:\n\n$S' = \\Pi_{hostel}((\\sigma_{S.roll = H.roll}(\\sigma_{marks > 75 \\text{ and } roll > 2000 \\text{ and } roll < 3000}(S))) \\times (H))$\n\nThe difference between the number of rows output by the SQL statement and the number of tuples in S' is",
+      "after": "A table 'student' with schema (roll, name, hostel, marks) and another table 'hobby' with schema (roll, hobbyname) contains records as shown below:\n\nTable student\n\n| Roll | Name | Hostel | Marks |\n|---|---|---|---|\n| 1798 | Manoj Rathod | 7 | 95 |\n| 2154 | Soumie Banerjee | 5 | 68 |\n| 2369 | Gumma Reddy | 7 | 86 |\n| 2581 | Pradeep Pendse | 6 | 92 |\n| 2643 | Suhas Kulkarni | 5 | 78 |\n| 2711 | Nitin Kadam | 8 | 72 |\n| 2872 | Kiran Vora | 5 | 92 |\n| 2926 | Manoj Kunkalikar | 5 | 94 |\n| 2959 | Hemant Karkhanis | 7 | 88 |\n| 3125 | Rajesh Doshi | 5 | 82 |\n\nTable hobby\n\n| Roll | hobbyname |\n|---|---|\n| 1798 | chess |\n| 1798 | music |\n| 2154 | music |\n| 2369 | swimming |\n| 2581 | cricket |\n| 2643 | chess |\n| 2643 | hockey |\n| 2711 | volleyball |\n| 2872 | football |\n| 2926 | cricket |\n| 2959 | photography |\n| 3125 | music |\n| 3125 | chess |\n\nThe following SQL query is executed on the above tables:\n\n```sql\nselect hostel\nfrom student natural join hobby\nwhere marks >= 75 and roll between 2000 and 3000;\n```\n\nRelations S and H with the same schema as those of these two tables respectively contain the same information as tuples. A new relation S' is obtained by the following relational algebra operation:\n\n$S' = \\Pi_{hostel}((\\sigma_{S.roll = H.roll}(\\sigma_{marks > 75 \\text{ and } roll > 2000 \\text{ and } roll < 3000}(S))) \\times (H))$\n\nThe difference between the number of rows output by the SQL statement and the number of tuples in S' is",
+      "reason": "Hobby roll 2613 matches no student; it is a misprint of 2643 (the original paper lists 2643 with chess and hockey).",
+      "source": "original paper"
+    },
+    {
+      "id": "it-2005-cs-68",
+      "field": "answer",
+      "before": "C",
+      "after": "B",
+      "reason": "With 2643 having two hobbies, SQL returns 7 rows and S' has 3 tuples (hostels 5, 6, 7), so the difference is 4. The stored C (2) is not reachable from either reading (the printed data gives 3).",
+      "source": "solved"
+    },
+    {
+      "id": "it-2005-cs-68",
+      "field": "reviewNote",
+      "before": "Computed on the data exactly as printed in this reprint the SQL gives 6 rows and S' gives 3 tuples (difference 3, not an option); the reprint has a data typo (roll 2613 in hobby vs 2643 in student). Answer C is the likely key, not derivable cleanly from the printed data. Student names/hostels read from a blurred scan.",
+      "after": "Hobby row 2613 corrected to 2643 (typo in the reprint). The SQL gives 7 rows and S' gives 3 distinct hostels, so the answer is 4 (B). On the uncorrected data it would be 6 − 3 = 3, which is not an option. No official key for 2005.",
+      "reason": "Updated after the data and answer fix.",
+      "source": "review"
+    },
+    {
+      "id": "it-2005-cs-65",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2005/cs-65-1.png",
+          "alt": "Flow chart: start block, initialisation block, then loop-test diamond (exit branch goes right and down to the final block), then a second decision diamond splitting into two assignment paths (left path with two blocks, right path with one) that rejoin at an increment block, which loops back to the loop test; the exit branch leads to the final print block.",
+          "svg": "it-2005/cs-65-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2005/cs-65-1.png",
+          "alt": "Flow chart: Start, then Init, then decision D1 (loop test). D1's exit branch goes right and down to the Print block. Its other branch leads to decision D2, which splits into a left path of two blocks (S1, then S2) and a right path of one block (S3). Both paths rejoin at the Incr block, which loops back to D1. Box texts in the scan are illegible, so they are labelled generically.",
+          "svg": "it-2005/cs-65-1.svg"
+        }
+      ],
+      "reason": "SVG redrawn faithfully from the scan, with a precise alt.",
+      "source": "pdf"
+    }
+  ]
+}

@@ -1,0 +1,251 @@
+{
+  "paper": "cse-2011",
+  "fixes": [
+    {
+      "id": "cse-2011-cs-3",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Conditional probability question in the CS section, not General Aptitude.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-3",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Elementary conditional probability.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-20",
+      "field": "subject",
+      "before": "pds",
+      "after": "os",
+      "reason": "Page-fault effective access time is an operating-systems (virtual memory) question, not C programming.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-20",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "virtual-memory",
+      "reason": "Page-fault service time and effective memory access time.",
+      "source": "question content"
+    },
+    {
+      "id": "cse-2011-cs-13",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Circuit D re-read from a 300 dpi render and redrawn: it computes A XOR B, confirming key D.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2011-cs-13",
+      "field": "reviewNote",
+      "before": "Option D gate-level circuit is hard to read at this scan quality; answer D matches recalled official key.",
+      "after": null,
+      "reason": "Resolved: circuit D verified algebraically from the redrawn figure.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2011-cs-13",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2011/cs-13-A.png",
+          "alt": "XOR gate followed by an inverter (NOT): output = XNOR",
+          "svg": "cse-2011/cs-13-A.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-B.png",
+          "alt": "Each input passes through an inverter, then an XOR gate, then an inverter at the output",
+          "svg": "cse-2011/cs-13-B.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-C.png",
+          "alt": "One input passes through an inverter, then an XOR gate with the other input directly",
+          "svg": "cse-2011/cs-13-C.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-D.png",
+          "alt": "Two inputs A and B; an AND gate and an OR gate combined with inverters and a final AND gate followed by an inverter (NAND-like network)",
+          "svg": "cse-2011/cs-13-D.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2011/cs-13-A.png",
+          "alt": "Option A: inputs A and B feed a 2-input XOR gate whose output goes through a NOT gate to give F",
+          "svg": "cse-2011/cs-13-A.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-B.png",
+          "alt": "Option B: input A goes through a NOT gate and input B goes through a NOT gate; the two inverted signals feed a 2-input XOR gate whose output goes through a NOT gate to give F",
+          "svg": "cse-2011/cs-13-B.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-C.png",
+          "alt": "Option C: input A goes through a NOT gate; the inverted A and the uninverted input B feed a 2-input XOR gate whose output is F (no output inverter)",
+          "svg": "cse-2011/cs-13-C.svg"
+        },
+        {
+          "f": "cse-2011/cs-13-D.png",
+          "alt": "Option D: input A feeds the top input of AND gate G1 and, through a wire that hops over the B line, the bottom input of OR gate G2. Input B goes through a NOT gate; the inverted B feeds the bottom input of G1 and the top input of G2. The output of G1 goes through a NOT gate; that signal and the output of G2 feed AND gate G3, whose output goes through a final NOT gate to give F",
+          "svg": "cse-2011/cs-13-D.svg"
+        }
+      ],
+      "reason": "Option circuits redrawn faithfully from the paper (previous SVGs showed unrelated NOR/AND/NAND block diagrams); alt texts describe the actual circuits.",
+      "source": "pdf p.4"
+    },
+    {
+      "id": "cse-2011-cs-17",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2011/cs-17-1.png",
+          "alt": "Two graphs: K4 drawn as a square with both diagonals, and Q3 drawn as a cube (two nested squares joined at corners)",
+          "svg": "cse-2011/cs-17-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2011/cs-17-1.png",
+          "alt": "Two graphs. K4: four vertices at the corners of a square, joined by the four sides and both diagonals (6 edges). Q3: a cube drawn as two offset squares of four vertices each, with each corner of one square joined to the corresponding corner of the other (8 vertices, 12 edges)",
+          "svg": "cse-2011/cs-17-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn from the paper (previous SVG showed an unrelated weighted 5-vertex graph); alt text made precise.",
+      "source": "pdf p.5"
+    },
+    {
+      "id": "cse-2011-cs-26",
+      "field": "subject",
+      "before": "pds",
+      "after": "toc",
+      "reason": "Question classifies regular/CFL/non-CFL languages — Theory of Computation.",
+      "source": "GATE 2011 paper Q.26"
+    },
+    {
+      "id": "cse-2011-cs-26",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "cfg",
+      "reason": "Topic is context-free languages, not C programming.",
+      "source": "GATE 2011 paper Q.26"
+    },
+    {
+      "id": "cse-2011-cs-32",
+      "field": "subject",
+      "before": "calc",
+      "after": "db",
+      "reason": "SQL query on a table — Databases.",
+      "source": "GATE 2011 paper Q.32"
+    },
+    {
+      "id": "cse-2011-cs-32",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "sql",
+      "reason": "Question is an SQL SELECT.",
+      "source": "GATE 2011 paper Q.32"
+    },
+    {
+      "id": "cse-2011-cs-48",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Recursive C function trace belongs to Programming & Data Structures.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2011-cs-48",
+      "field": "topic",
+      "before": "isa",
+      "after": "recursion",
+      "reason": "Question traces a recursive function.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2011-cs-49",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Recursive C function trace belongs to Programming & Data Structures.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2011-cs-49",
+      "field": "topic",
+      "before": "isa",
+      "after": "recursion",
+      "reason": "Question traces a recursive function.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2011-cs-51",
+      "field": "subject",
+      "before": "ga",
+      "after": "dl",
+      "reason": "D flip-flop counter question (common data with Q50) is Digital Logic, not aptitude.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2011-cs-51",
+      "field": "topic",
+      "before": "quant",
+      "after": "sequential",
+      "reason": "Counter state sequence is a sequential-circuit topic.",
+      "source": "pdf p.14"
+    },
+    {
+      "id": "cse-2011-cs-55",
+      "field": "subject",
+      "before": "db",
+      "after": "algo",
+      "reason": "MST path question (linked with Q54) is Algorithms.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2011-cs-55",
+      "field": "topic",
+      "before": "sql",
+      "after": "mst",
+      "reason": "Question is about the minimum spanning tree.",
+      "source": "pdf p.15"
+    },
+    {
+      "id": "cse-2011-cs-54",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Stored key C (6n-11) is disproved by Kruskal for n=5 (MST = 21 = n^2-n+1; 6n-11 = 19).",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2011-cs-54",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Stored key C (6n-11) fits only n=3,4. Kruskal: MST = v1v2 + all (v_i,v_{i+2}) edges = 3 + sum_{i=1}^{n-2}(2i+2) = n^2-n+1 (n=5: 21, n=6: 31; 6n-11 gives 19, 25). Correct answer is B; key should be changed to B.",
+      "reason": "Document the key disagreement.",
+      "source": "independent solution"
+    },
+    {
+      "id": "cse-2011-ga-62",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Bubble chart redrawn from the PDF; danger index potency*d^2/y gives S = 1.6 as the clear maximum (P 1.25, Q 1.33, R 1.2), and S stays maximal even with d instead of d^2. Key D confirmed.",
+      "source": "pdf p.17"
+    },
+    {
+      "id": "cse-2011-ga-62",
+      "field": "reviewNote",
+      "before": "Interpretation of toxicity axis (lower value = more toxic) assumed; matches recalled official key D.",
+      "after": null,
+      "reason": "Review resolved (see needsReview fix).",
+      "source": "pdf p.17"
+    }
+  ]
+}

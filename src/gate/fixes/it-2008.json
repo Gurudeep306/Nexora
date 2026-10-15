@@ -1,0 +1,315 @@
+{
+  "paper": "it-2008",
+  "fixes": [
+    {
+      "id": "it-2008-it-2",
+      "field": "subject",
+      "before": "pds",
+      "after": "prob",
+      "reason": "Probability question, not programming.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-2",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "basic",
+      "reason": "Basic probability (addition rule).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-2",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The scan clearly shows complement bars on both P(A) and P(B); with P(A)=P(B)=2/3 the answer 10/12 is consistent.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-2",
+      "field": "reviewNote",
+      "before": "Printed 'P(A)=1/3' looks like a complement bar on A (P(Ā)=1/3); first word 'A' of the question is missing in the scan. Interpreted as P(Ā)=1/3 which gives a consistent answer 10/12.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-9",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Figure re-checked at high zoom: O7, O5, O2, O0 feed the NOR gate; O6, O4, O3, O1 are unconnected stubs. f = x XOR z = option B.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-9",
+      "field": "reviewNote",
+      "before": "Which decoder outputs feed the NOR gate was read from the (low resolution) figure: O7, O5, O2, O0.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-11",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "'V is NP-complete' is an obvious print error for Y; only Y is defined in the question.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-11",
+      "field": "reviewNote",
+      "before": "Text printed 'V is NP-complete' read as 'Y is NP-complete'.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-13",
+      "field": "subject",
+      "before": "ga",
+      "after": "legacy",
+      "reason": "Programming paradigms/languages is not a quantitative-aptitude topic; legacy IT syllabus item.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-13",
+      "field": "topic",
+      "before": "quant",
+      "after": "se",
+      "reason": "Programming languages concept (legacy syllabus).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-14",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "'in alpha beta' is the OCR of 'ln alpha beta' (hard link); the answer B follows.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-14",
+      "field": "reviewNote",
+      "before": "Command 'in alpha beta' read as 'ln alpha beta'.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-16",
+      "field": "subject",
+      "before": "ga",
+      "after": "os",
+      "reason": "TLB effective access time is an OS memory-management question.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-16",
+      "field": "topic",
+      "before": "quant",
+      "after": "virtual-memory",
+      "reason": "Paging with TLB.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-20",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "II-c and III-d are unambiguous, leaving only C and D; D would pair DNS with firewall, which is wrong, so C.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-20",
+      "field": "reviewNote",
+      "before": "Best-match question; answer C agrees with the published key found on the web, but the pairing Proxy=Firewall/DNS=Caching is a judgement call.",
+      "after": null,
+      "reason": "Review resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-24",
+      "field": "subject",
+      "before": "algo",
+      "after": "dm",
+      "reason": "Legendre-formula question belongs to discrete maths (combinatorics/number theory), not algorithms.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    },
+    {
+      "id": "it-2008-it-24",
+      "field": "topic",
+      "before": "graphs",
+      "after": "combinatorics",
+      "reason": "Exponent of a prime in n! — combinatorics/number theory, not graph algorithms.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    },
+    {
+      "id": "it-2008-it-29",
+      "field": "needsReview",
+      "before": true,
+      "after": true,
+      "reason": "Solution (D) disagrees with the stored web key C; keep flagged (already true) so the validator links the disagreement to this review.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    },
+    {
+      "id": "it-2008-it-29",
+      "field": "reviewNote",
+      "before": "Strictly, 'each' row/column being a combination of the others is not implied by det=0; answer C follows the published key found on the web (geeksforgeeks). Text 'PS' in the scan read as M.",
+      "after": "Stored key C (S1 and S3) comes from a web key, but S1 and S2 are equivalent (row rank = column rank, det M^T = det M): if 'some row is a combination of the others' is accepted for rows it must be accepted for columns, which gives D (S1, S2 and S3). Read literally ('each' row/column) neither S1 nor S2 holds and no option fits. Solution argues D; needs an authoritative key. Text 'PS' in the scan read as M.",
+      "reason": "Solution disagrees with stored key; explain the conflict precisely.",
+      "source": "GATE 2008 IT question paper (scan) + independent solution"
+    },
+    {
+      "id": "it-2008-it-45",
+      "field": "figures",
+      "before": [
+        {
+          "f": "it-2008/it-45-1.png",
+          "alt": "Vertices a,b,c,d,e,f,g,h,i. Edges with weights: a-b 1, a-d 5, a-c 6, b-c 8, c-f 3, c-e 7, d-f 2, d-g 10, e-h 12, f-h 8 (blurred, 6 or 8), g-h 7, g-i 3, i-h 8",
+          "svg": "it-2008/it-45-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "it-2008/it-45-1.png",
+          "alt": "Undirected weighted graph on vertices a to i. Edges and weights: a-b 1, a-d 5, a-c 6, b-c 8, d-g 10, d-f 2, g-i 3, g-h 7, c-f 3, f-h 8, i-h 8, c-e 7, e-h 12.",
+          "svg": "it-2008/it-45-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as SVG from the paper; alt states the edge weights as read.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-45",
+      "field": "reviewNote",
+      "before": "Several edge weights are blurred in the scan (b-c, f-h, i-h, a-c); the answer is decided by structure and by weights that are legible.",
+      "after": "Weight labels of f-h and b-c are blurred in the scan (read as 8). The key C holds for any w(f,h) >= 7 and w(a,c) >= 5; with w(f,h) < 7 no option would be a valid Prim run.",
+      "reason": "Made the review note precise about which readings the answer depends on.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-52",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "a b / c d / e f"
+        },
+        {
+          "l": "B",
+          "t": "a d / b e / c f"
+        },
+        {
+          "l": "C",
+          "t": "a c / e b / d f"
+        },
+        {
+          "l": "D",
+          "t": "a e / d c / b f"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\begin{bmatrix}a & b \\\\ c & d \\\\ e & f\\end{bmatrix}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\begin{bmatrix}a & d \\\\ b & e \\\\ c & f\\end{bmatrix}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\begin{bmatrix}a & c \\\\ e & b \\\\ d & f\\end{bmatrix}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\begin{bmatrix}a & e \\\\ d & c \\\\ b & f\\end{bmatrix}$"
+        }
+      ],
+      "reason": "Options are 3x2 matrices in the paper; render them as matrices.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-52",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The enlarged scan confirms *(p + 2*j + i) = a[i][j] and the option matrices.",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-52",
+      "field": "reviewNote",
+      "before": "Code is very small/blurred in the scan (the index expression read as *(p + 2*j + i)); options are 3x2 matrices, written here row by row with ' / ' between rows.",
+      "after": null,
+      "reason": "Resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-60",
+      "field": "answer",
+      "before": "B",
+      "after": "A",
+      "reason": "Independent solution: S2 (\"reasonable performance\") and S1 (\"any operation\") have no objective pass/fail test, while S3 (named platforms) and S4 (fits a standard screen) do, so the validatable pair is S4 and S3 (A). The old key B was recalled, not derived.",
+      "source": "solved"
+    },
+    {
+      "id": "it-2008-it-60",
+      "field": "reviewNote",
+      "before": "Answer recalled/judged, not derived; verify against the official key.",
+      "after": "Key changed from B to A by independent solution; solution gives A (S4 and S3): S2 (\"reasonable performance\") and S1 (\"any operation\") are not objectively verifiable, while S3 and S4 are. Previous key B relied on S2. No official 2008 key available; verify.",
+      "reason": "Record the key change for review.",
+      "source": "solved"
+    },
+    {
+      "id": "it-2008-it-64",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The link joins two ground stations via the satellite, so the path is up and down (2 x altitude); 960 bits = 120 bytes exactly, matching A.",
+      "source": "solved"
+    },
+    {
+      "id": "it-2008-it-64",
+      "field": "reviewNote",
+      "before": "Depends on taking the path as two hops (ground-satellite-ground); with one hop the result would be 60 bytes.",
+      "after": null,
+      "reason": "Resolved (see needsReview).",
+      "source": "solved"
+    },
+    {
+      "id": "it-2008-it-66",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Table digits re-checked against an enlarged render of the scan; they match and give exactly answer C (3).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-66",
+      "field": "reviewNote",
+      "before": "Table digits read from a blurred scan.",
+      "after": null,
+      "reason": "Resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "it-2008-it-73",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Question counts distinct BSTs on 3 keys (data structures), not computer organisation.",
+      "source": "GATE2008IT.pdf p10 Q73"
+    },
+    {
+      "id": "it-2008-it-73",
+      "field": "topic",
+      "before": "isa",
+      "after": "bst",
+      "reason": "Topic is BST counting (Catalan number), not ISA.",
+      "source": "GATE2008IT.pdf p10 Q73"
+    }
+  ]
+}
