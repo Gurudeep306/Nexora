@@ -109,7 +109,7 @@ export default function GateDailyPage() {
   const last7 = useMemo(() => Array.from({ length: 7 }, (_, k) => addDays(todayISO(), k - 6)), [])
 
   const shareText = today
-    ? `Nexora GATE Daily · ${new Date(`${date}T00:00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}\n${today.outcome === 'correct' ? `Solved in ${fmtDuration(today.timeMs)}` : 'Attempted — tomorrow’s mine'} · ${Math.max(1, current)}-day streak\n${typeof location !== 'undefined' ? location.origin : ''}${GATE_ROUTES.daily}`
+    ? `NexoraGuru GATE Daily · ${new Date(`${date}T00:00:00`).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}\n${today.outcome === 'correct' ? `Solved in ${fmtDuration(today.timeMs)}` : 'Attempted — tomorrow’s mine'} · ${Math.max(1, current)}-day streak\n${typeof location !== 'undefined' ? location.origin : ''}${GATE_ROUTES.daily}`
     : ''
 
   const share = async () => {

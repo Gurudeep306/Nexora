@@ -74,7 +74,7 @@ function createAuthRouter(deps) {
     if (sessionUser?.username) {
       return res.json({ ok: true, authenticated: true, user: sessionUser });
     }
-    // A GitHub/Google login waiting for the user to pick a Nexora username.
+    // A GitHub/Google login waiting for the user to pick a NexoraGuru username.
     const o = req.session?.oauthUser;
     const oauthPending = o
       ? {

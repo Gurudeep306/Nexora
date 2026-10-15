@@ -1,5 +1,5 @@
 // ============================================================
-//  TUTORIAL DATA — Comprehensive study material for Nexora
+//  TUTORIAL DATA — Comprehensive study material for NexoraGuru
 //  Format: [category, topic, title, description, difficulty,
 //           order_index, estimated_time, content_html, topics_json]
 // ============================================================

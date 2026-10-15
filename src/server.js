@@ -6168,7 +6168,7 @@ io.on("connection", (socket) => {
   });
 
   server.listen(PORT, () => {
-    console.log(`\n🚀 Nexora running on ${APP_URL}`);
+    console.log(`\n🚀 NexoraGuru running on ${APP_URL}`);
     console.log(`   NODE_ENV : ${process.env.NODE_ENV || "development"}`);
     console.log(`   Port     : ${PORT}`);
     console.log(

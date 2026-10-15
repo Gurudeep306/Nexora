@@ -1,59 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="60 60 380 380">
-<defs>
-  <radialGradient id="cg" cx="250" cy="250" r="40" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#fff"/><stop offset="40%" stop-color="#e0f2fe" stop-opacity="0.9"/>
-    <stop offset="70%" stop-color="#7dd3fc" stop-opacity="0.5"/><stop offset="100%" stop-color="#0284c7" stop-opacity="0"/>
-  </radialGradient>
-  <linearGradient id="b1" x1="250" y1="250" x2="120" y2="80" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#93c5fd"/><stop offset="40%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1e3a8a"/>
-  </linearGradient>
-  <linearGradient id="b2" x1="250" y1="250" x2="100" y2="200" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#60a5fa"/><stop offset="50%" stop-color="#2563eb"/><stop offset="100%" stop-color="#1e3a8a"/>
-  </linearGradient>
-  <linearGradient id="b3" x1="250" y1="250" x2="140" y2="380" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#60a5fa"/><stop offset="50%" stop-color="#1d4ed8"/><stop offset="100%" stop-color="#172554"/>
-  </linearGradient>
-  <linearGradient id="bd" x1="250" y1="250" x2="200" y2="440" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#3b82f6"/><stop offset="40%" stop-color="#1e40af"/><stop offset="100%" stop-color="#0f1d45"/>
-  </linearGradient>
-  <linearGradient id="o1" x1="250" y1="250" x2="340" y2="80" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#fde68a"/><stop offset="30%" stop-color="#f59e0b"/><stop offset="70%" stop-color="#ea580c"/><stop offset="100%" stop-color="#c2410c"/>
-  </linearGradient>
-  <linearGradient id="o2" x1="250" y1="250" x2="420" y2="200" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#fbbf24"/><stop offset="50%" stop-color="#ea580c"/><stop offset="100%" stop-color="#9a3412"/>
-  </linearGradient>
-  <linearGradient id="o3" x1="250" y1="250" x2="380" y2="380" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#fed7aa"/><stop offset="40%" stop-color="#f97316"/><stop offset="100%" stop-color="#9a3412"/>
-  </linearGradient>
-  <linearGradient id="fb" x1="220" y1="200" x2="200" y2="60" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#60a5fa"/><stop offset="100%" stop-color="#1d4ed8"/>
-  </linearGradient>
-  <linearGradient id="fo" x1="270" y1="190" x2="300" y2="55" gradientUnits="userSpaceOnUse">
-    <stop offset="0%" stop-color="#fbbf24"/><stop offset="100%" stop-color="#ea580c"/>
-  </linearGradient>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><title>NexoraGuru</title><defs>
+<linearGradient id="fbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#211c5f"/><stop offset="1" stop-color="#0d0b2c"/></linearGradient>
+<linearGradient id="fau" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffdd85"/><stop offset="1" stop-color="#eaa93a"/></linearGradient>
 </defs>
-<!-- Blue blades -->
-<path d="M240,230 Q200,180 130,120 Q110,105 95,100 Q108,95 140,100 Q200,130 245,210Z" fill="url(#b1)" opacity="0.9"/>
-<path d="M230,245 Q170,230 100,225 Q75,222 65,230 Q75,240 100,242 Q170,248 228,250Z" fill="url(#b2)" opacity="0.85"/>
-<path d="M235,262 Q195,310 155,370 Q145,390 140,400 Q152,392 168,370 Q210,310 242,268Z" fill="url(#b3)" opacity="0.85"/>
-<path d="M245,265 Q240,330 225,400 Q222,420 228,435 Q235,425 238,400 Q248,330 252,270Z" fill="url(#bd)" opacity="0.9"/>
-<!-- Orange blades -->
-<path d="M270,242 Q340,225 400,218 Q420,216 435,222 Q422,230 400,234 Q335,245 272,250Z" fill="url(#o2)" opacity="0.85"/>
-<path d="M262,265 Q310,315 355,370 Q365,382 368,390 Q358,380 345,365 Q300,308 258,262Z" fill="url(#o3)" opacity="0.8"/>
-<path d="M265,232 Q310,180 365,130 Q385,115 400,108 Q388,118 370,140 Q315,195 260,238Z" fill="url(#o1)" opacity="0.85"/>
-<path d="M400,108 L418,98 L405,118Z" fill="#ea580c" opacity="0.8"/>
-<!-- Flames top -->
-<path d="M232,220 Q215,160 208,110 Q205,85 195,65 Q200,80 210,105 Q225,160 240,215Z" fill="url(#fb)" opacity="0.8"/>
-<path d="M185,58 Q175,42 165,42 Q172,36 182,45Z" fill="#3b82f6" opacity="0.5"/>
-<path d="M268,215 Q280,150 290,100 Q295,75 305,55 Q298,72 290,98 Q275,155 262,218Z" fill="url(#fo)" opacity="0.8"/>
-<path d="M305,55 Q312,38 322,35 Q315,42 308,52Z" fill="#fbbf24" opacity="0.7"/>
-<!-- Circuits -->
-<g stroke="#f97316" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6">
-  <path d="M280,225 L340,185 L370,160"/><path d="M285,235 L360,200 L410,180"/>
-  <path d="M280,248 L350,240 L430,215"/><path d="M280,260 L345,275 L390,295"/>
-</g>
-<g fill="#f97316"><circle cx="370" cy="160" r="4" opacity="0.7"/><circle cx="410" cy="180" r="3" opacity="0.6"/>
-  <circle cx="430" cy="215" r="3" opacity="0.5"/><circle cx="390" cy="295" r="3.5" opacity="0.6"/></g>
-<!-- Center -->
-<circle cx="250" cy="250" r="28" fill="url(#cg)"/><circle cx="250" cy="250" r="12" fill="#fff" opacity="0.95"/><circle cx="250" cy="250" r="8" fill="#fff"/>
-</svg>
+<rect width="32" height="32" rx="7" fill="url(#fbg)"/>
+<g fill="url(#fau)"><path d="M4 10H28V12H4Z"/><path d="M6 10H8V26H6Z"/><path d="M12 10H14V26H12Z"/><path d="M6 11H8.6L14 23.4V26H11.4L6 13.6Z"/><path d="M18 10V22.6Q18 26 21.4 26H22.6Q26 26 26 22.6V17H22V19H24V22.6Q24 24 22.6 24H21.4Q20 24 20 22.6V10Z"/></g>
+<path d="M16.2 3.6C16.584 5.392 17.92 6.288 17.92 8.08A1.92 1.92 0 0 1 14.08 8.08C14.08 6.416 15.72 5.52 16.2 3.6Z" fill="#ff9a2e"/>
+<path d="M16.1 6.2C16.31 7.18 17.05 7.67 17.05 8.65A1.05 1.05 0 0 1 14.95 8.65C14.95 7.74 15.838 7.25 16.1 6.2Z" fill="#ffe7a3"/></svg>

@@ -78,10 +78,10 @@ export function DangerZone({ settings }: { settings: Record<string, string> }) {
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
       a.href = url
-      a.download = 'nexora-progress.json'
+      a.download = 'nexoraguru-progress.json'
       a.click()
       URL.revokeObjectURL(url)
-      toast.success('Export downloaded', 'nexora-progress.json')
+      toast.success('Export downloaded', 'nexoraguru-progress.json')
     } catch (err) {
       toast.error('Export failed', err instanceof Error ? err.message : undefined)
     }
@@ -94,7 +94,7 @@ export function DangerZone({ settings }: { settings: Record<string, string> }) {
           <CardContent className="py-5">
             <SettingsSection
               title="Data & sync"
-              description="Move your progress in and out of Nexora."
+              description="Move your progress in and out of NexoraGuru."
               icon={<Download />}
             >
               <div className="flex flex-wrap gap-2">

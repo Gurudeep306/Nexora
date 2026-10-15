@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 
 /**
- * What Nexora teaches, grouped the way a CS degree is. Mirrors the lesson
+ * What NexoraGuru teaches, grouped the way a CS degree is. Mirrors the lesson
  * categories in src/tutorial-data.js, the DSA course syllabus and the Forge
  * career roadmaps on the server — keep in step when
  * those grow.

@@ -154,7 +154,7 @@ export function AlgoTheater({ compact = false, className }: { compact?: boolean;
         <span className="size-2.5 rounded-full bg-[#febc2e]" />
         <span className="size-2.5 rounded-full bg-[#28c840]" />
         <span className="mx-auto hidden truncate rounded-md bg-hairline/[0.05] px-3 py-0.5 font-mono text-[11px] text-foreground-faint sm:block">
-          nexora / learn / dsa / arrays
+          nexoraguru / learn / dsa / arrays
         </span>
         <span className="ml-auto flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-success uppercase sm:ml-0">
           <span className={cn('size-1.5 rounded-full bg-success', playing && 'animate-pulse')} />

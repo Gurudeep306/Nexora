@@ -168,7 +168,7 @@ export const SystemDesignStudio: React.FC = () => {
               <div className="flex items-center gap-2 mb-2">
                 <span className="flex size-2 rounded-full bg-accent-brand animate-ping" />
                 <span className="text-[11px] font-bold tracking-widest text-accent-brand uppercase font-mono">
-                  Nexora Distributed Systems Masterclass
+                  NexoraGuru Distributed Systems Masterclass
                 </span>
               </div>
               <h1 className="!text-[28px] sm:!text-[34px] font-extrabold tracking-tight text-text-primary">

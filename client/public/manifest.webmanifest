@@ -1,0 +1,18 @@
+{
+  "name": "NexoraGuru — Learn computer science, step by step",
+  "short_name": "NexoraGuru",
+  "description": "Learn computer science step by step: DSA practice, interactive lessons, GATE CSE & DA prep, contests and an AI tutor.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0b0a24",
+  "theme_color": "#15123f",
+  "icons": [
+    { "src": "/brand/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/brand/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "/brand/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/brand/ngmark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

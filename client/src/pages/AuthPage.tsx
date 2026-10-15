@@ -235,7 +235,7 @@ export default function AuthPage() {
         toast.success('Welcome back', 'Picking up right where you left off.')
       } else {
         await register(username.trim(), email.trim(), password)
-        toast.success('Welcome to Nexora', 'Your account and avatar are ready. Change the avatar any time in Settings.')
+        toast.success('Welcome to NexoraGuru', 'Your account and avatar are ready. Change the avatar any time in Settings.')
       }
       navigate(from, { replace: true })
     } catch (err) {
@@ -247,7 +247,7 @@ export default function AuthPage() {
 
   const title = oauthPending ? 'Claim your handle' : mode === 'login' ? 'Welcome back' : 'Create your account'
   const subtitle = oauthPending
-    ? `Connected with ${oauthPending.provider === 'google' ? 'Google' : 'GitHub'}${oauthPending.displayName ? ` as ${oauthPending.displayName}` : ''} — pick your Nexora username to finish.`
+    ? `Connected with ${oauthPending.provider === 'google' ? 'Google' : 'GitHub'}${oauthPending.displayName ? ` as ${oauthPending.displayName}` : ''} — pick your NexoraGuru username to finish.`
     : mode === 'login'
       ? 'Sign in to continue your courses, practice and streak.'
       : 'Free forever. Courses, practice, an AI tutor and your progress in one place.'
@@ -258,7 +258,7 @@ export default function AuthPage() {
       {/* Showcase (desktop) */}
       <aside
         className="glass-thin relative z-10 hidden min-w-0 !border-y-0 !border-l-0 lg:block"
-        aria-label="About Nexora"
+        aria-label="About NexoraGuru"
       >
         <div className="sticky top-0 h-dvh">
           <AuthShowcase />
@@ -276,7 +276,7 @@ export default function AuthPage() {
         >
           {/* Mobile brand */}
           <div className="mb-8 flex items-center gap-2.5 lg:hidden">
-            <LogoMark size={36} />
+            <LogoMark size={40} />
             <Wordmark className="text-lg" />
           </div>
 
@@ -500,7 +500,7 @@ export default function AuthPage() {
               </button>
             ) : mode === 'login' ? (
               <>
-                New to Nexora?{' '}
+                New to NexoraGuru?{' '}
                 <button onClick={() => switchMode('register')} className="cursor-pointer font-semibold text-primary-bright hover:underline">
                   Create an account
                 </button>
@@ -519,7 +519,7 @@ export default function AuthPage() {
             <ShieldCheck className="size-3.5" aria-hidden="true" /> Passwords are salted & hashed (scrypt). We never see them.
           </p>
           <p className="sr-only">
-            <UserRound /> Nexora sign in
+            <UserRound /> NexoraGuru sign in
           </p>
         </motion.div>
 

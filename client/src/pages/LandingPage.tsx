@@ -134,8 +134,8 @@ export default function LandingPage() {
       {/* ── Nav ── */}
       <header className="fixed inset-x-0 top-0 z-50">
         <div className="glass mx-3 mt-3 flex h-14 max-w-6xl items-center gap-6 rounded-2xl px-4 sm:mx-auto sm:px-5">
-          <Link to="/" className="flex items-center gap-2.5" aria-label="Nexora home">
-            <LogoMark size={28} />
+          <Link to="/" className="flex items-center gap-2.5" aria-label="NexoraGuru home">
+            <LogoMark size={32} />
             <Wordmark className="text-[15px]" />
           </Link>
           <nav className="hidden items-center gap-6 text-[13px] text-foreground-dim md:flex" aria-label="Sections">
@@ -270,7 +270,7 @@ export default function LandingPage() {
         <SectionHead
           eyebrow="How it works"
           title="Learn it. See it. Do it. Own it."
-          sub="Most platforms give you either reading or problems. Nexora closes the loop, so every concept turns into a skill you can prove."
+          sub="Most platforms give you either reading or problems. NexoraGuru closes the loop, so every concept turns into a skill you can prove."
         />
         <div data-loop className="relative">
           <div className="absolute top-[30px] right-[12%] left-[12%] hidden h-px bg-hairline/[0.08] md:block" aria-hidden="true">
@@ -501,8 +501,8 @@ export default function LandingPage() {
 
       <footer className="border-t border-hairline/[0.05]">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-4 px-5 py-8 text-xs text-foreground-faint">
-          <LogoMark size={20} />
-          <span>© {new Date().getFullYear()} Nexora · computer science, end to end</span>
+          <LogoMark size={22} />
+          <span>© {new Date().getFullYear()} NexoraGuru · computer science, end to end</span>
           <nav className="ml-auto flex gap-5" aria-label="Footer">
             <a href="#curriculum" className="hover:text-foreground">Curriculum</a>
             <Link to="/auth" className="hover:text-foreground">Sign in</Link>
