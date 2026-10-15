@@ -1,0 +1,29 @@
+{
+ "paper": "cse-1997",
+ "fixes": [
+  {
+   "id": "cse-1997-a-4",
+   "field": "text",
+   "before": "The concatenation of two lists is to be performed in $O(1)$ time. Which of the",
+   "after": "The concatenation of two lists is to be performed in $O(1)$ time. Which of the following implementations of a list should be used?",
+   "reason": "Question stem is cut off mid-sentence (the scanned paper also truncates it); completed with the standard GATE 1997 wording.",
+   "source": "GATE 1997 paper Q4"
+  },
+  {
+   "id": "cse-1997-a-12",
+   "field": "subject",
+   "before": "coa",
+   "after": "legacy",
+   "reason": "8085 RST vector question is microprocessor-specific; consistent with other 8085 questions.",
+   "source": "GATE 1997 paper Q12"
+  },
+  {
+   "id": "cse-1997-a-12",
+   "field": "topic",
+   "before": "io",
+   "after": "microprocessor",
+   "reason": "8085 interrupt vector location.",
+   "source": "GATE 1997 paper Q12"
+  }
+ ]
+}
