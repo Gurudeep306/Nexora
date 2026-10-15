@@ -1,0 +1,143 @@
+{
+ "paper": "cse-1994",
+ "fixes": [
+  {
+   "id": "cse-1994-b-41-a",
+   "field": "options",
+   "before": [
+    {
+     "l": "i",
+     "t": "S is regular"
+    },
+    {
+     "l": "ii",
+     "t": "S is recursively enumerable."
+    },
+    {
+     "l": "iii",
+     "t": "S is not recursively enumerable."
+    },
+    {
+     "l": "iv",
+     "t": "S is recursive."
+    }
+   ],
+   "after": [
+    {
+     "l": "A",
+     "t": "S is regular"
+    },
+    {
+     "l": "B",
+     "t": "S is recursively enumerable."
+    },
+    {
+     "l": "C",
+     "t": "S is not recursively enumerable."
+    },
+    {
+     "l": "D",
+     "t": "S is recursive."
+    }
+   ],
+   "reason": "Paper numbers the options (i)-(iv); relabelled A-D so the answer engine can read the key (A=(i), B=(ii), C=(iii), D=(iv)).",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-41-a",
+   "field": "answer",
+   "before": "i",
+   "after": "B",
+   "reason": "Only (ii) is provable: S is r.e. (scan the digits of pi and output every maximal block length found). Regularity/recursiveness of S are not provable with the maximal-block condition, and since regular => recursive => r.e., (i) being the single correct option of an MCQ is impossible. Previous key \"i\" was a solved (not official) answer copied from GATE Overflow.",
+   "source": "Independent proof; GATE 1994 paper"
+  },
+  {
+   "id": "cse-1994-b-41-a",
+   "field": "reviewNote",
+   "before": "Accepted GATE Overflow answer is (i) 'S is regular', but its argument ignores the 'maximal block' condition; only (ii) is provable outright. Printed 'with respect to 5?' corrected to 'S'.",
+   "after": "Key changed from (i) to (ii) [now B]: (ii) is the only statement provable for maximal x-blocks, and (i) would also make (ii) and (iv) true. GATE Overflow's accepted answer (i) treats x-blocks as non-maximal. Options relabelled (i)-(iv) -> A-D.",
+   "reason": "Record the disagreement with the GATE Overflow answer.",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-49-a",
+   "field": "text",
+   "before": "(a) Draw a precedence graph for the following sequential code. The statements are numbered from $S_1$ to $S_6$.\n\n| | |\n|---|---|\n| $S_1$ | read n |\n| $S_2$ | i := 1 |\n| $S_3$ | if i > n goto next |\n| $S_4$ | a(i) := i + 1 |\n| $S_5$ | i := i + 1 |\n| $S_6$ | next : write a(i) |\n\n",
+   "after": "(a) Draw a precedence graph for the following sequential code. The statements are numbered from $S_1$ to $S_6$.\n\n| | |\n|---|---|\n| $S_1$ | read n |\n| $S_2$ | i := 1 |\n| $S_3$ | if i > n goto next |\n| $S_4$ | a(i) := i + 1 |\n| $S_5$ | i := i + 1 |\n| $S_6$ | next : write a(i) |",
+   "reason": "Trailing blank lines removed.",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-50-a",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-1994/b-50-1.png",
+     "alt": "Resource allocation graph with three resource boxes T1 (r1, 2 instances), T2 (r2, 3 instances), T3 (r3, 2 instances) at top-left, top-right and bottom, and four process circles in a row between them (labels faint: p1, p2, p3, p4 left to right). Arrows between process circles and resource boxes denote assignment (resource instance → process) and request (process → resource) edges; per GATE Overflow: allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0); requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+     "svg": "cse-1994/b-50-1.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-1994/b-50-1.png",
+     "alt": "Resource allocation graph. Resource boxes: T1 (top left, 2 instances), T2 (top right, 3 instances), T3 (bottom centre, 2 instances); process circles left to right p1, p0, p2, p3. Assignment edges (instance -> process): T1->p1, T1->p0, T2->p1, T2->p2, T2->p3, T3->p0. Request edges (process -> resource): p1->T1, p3->T1, p0->T2, p3->T2 (two edges), p0->T3, p2->T3.",
+     "svg": "cse-1994/b-50-1.svg"
+    }
+   ],
+   "reason": "Alt text rewritten from the enlarged scan (labels p1, p0, p2, p3 left to right; every edge direction listed); SVG redrawn faithfully.",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-50-a",
+   "field": "needsReview",
+   "before": true,
+   "after": false,
+   "reason": "Edge directions and labels verified on the enlarged scan; they give exactly allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0) and requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-50-a",
+   "field": "reviewNote",
+   "before": "Edge directions and process labels are faint in the scan; interpretation follows GATE Overflow. Printed 'deadlook' corrected to 'deadlock'.",
+   "after": null,
+   "reason": "Review resolved (see needsReview fix).",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-50-b",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-1994/b-50-1.png",
+     "alt": "Resource allocation graph with three resource boxes T1 (r1, 2 instances), T2 (r2, 3 instances), T3 (r3, 2 instances) at top-left, top-right and bottom, and four process circles in a row between them (labels faint: p1, p2, p3, p4 left to right). Arrows between process circles and resource boxes denote assignment (resource instance → process) and request (process → resource) edges; per GATE Overflow: allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0); requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+     "svg": "cse-1994/b-50-1.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-1994/b-50-1.png",
+     "alt": "Resource allocation graph. Resource boxes: T1 (top left, 2 instances), T2 (top right, 3 instances), T3 (bottom centre, 2 instances); process circles left to right p1, p0, p2, p3. Assignment edges (instance -> process): T1->p1, T1->p0, T2->p1, T2->p2, T2->p3, T3->p0. Request edges (process -> resource): p1->T1, p3->T1, p0->T2, p3->T2 (two edges), p0->T3, p2->T3.",
+     "svg": "cse-1994/b-50-1.svg"
+    }
+   ],
+   "reason": "Alt text rewritten from the enlarged scan (labels p1, p0, p2, p3 left to right; every edge direction listed); SVG redrawn faithfully.",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-50-b",
+   "field": "needsReview",
+   "before": true,
+   "after": false,
+   "reason": "Edge directions and labels verified on the enlarged scan; they give exactly allocation P0(1,0,1), P1(1,1,0), P2(0,1,0), P3(0,1,0) and requests P0(0,1,1), P1(1,0,0), P2(0,0,1), P3(1,2,0).",
+   "source": "GATE 1994 question paper (PDF scan)"
+  },
+  {
+   "id": "cse-1994-b-50-b",
+   "field": "reviewNote",
+   "before": "Process labels in the scan look like p1–p4; safe sequence given in GATE Overflow's P0–P3 labelling.",
+   "after": null,
+   "reason": "Review resolved (see needsReview fix).",
+   "source": "GATE 1994 question paper (PDF scan)"
+  }
+ ]
+}
