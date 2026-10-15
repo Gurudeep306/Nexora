@@ -1,3 +1,5 @@
+const { normalizeAvatar } = require('../avatar-set');
+
 function sanitizeSessionUser(user) {
   if (!user) return null;
   return {
@@ -5,7 +7,8 @@ function sanitizeSessionUser(user) {
     display_name: user.display_name || user.displayName || user.username || '',
     role: user.role || 'member',
     auth_provider: user.auth_provider || user.provider || 'manual',
-    avatar: user.avatar || 'coder',
+    // Old generated/preset values read as the username's default set avatar.
+    avatar: normalizeAvatar(user.avatar, user.username),
     avatar_url: user.avatar_url || user.avatarUrl || null,
     email: user.email || null,
   };
