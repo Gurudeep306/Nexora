@@ -1,0 +1,1259 @@
+{
+  "paper": "cse-1995",
+  "version": 2,
+  "solutions": {
+    "cse-1995-a-24": {
+      "approach": "All $n+1$ rows are identical and non-zero, so the row space is spanned by one vector: rank 1 for every real $a$.",
+      "concepts": [
+        "Rank of a matrix",
+        "Row reduction"
+      ],
+      "steps": [
+        {
+          "title": "Reduce the rows",
+          "body": "Subtract row 1 from every other row: $R_i \\leftarrow R_i - R_1$ for $i = 2,\\dots,n+1$. Every such row becomes $[0\\ 0\\ \\cdots\\ 0]$."
+        },
+        {
+          "title": "Count non-zero rows",
+          "body": "Only $R_1 = [1\\ a\\ a^2\\ \\cdots\\ a^n]$ remains, and it is non-zero because its first entry is $1$ (even when $a = 0$). Hence $\\text{rank} = 1$."
+        }
+      ],
+      "answer": {
+        "value": "Rank is 1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: one independent non-zero row."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Rank 2 would need two independent rows; all rows are equal."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Rank $n$ would need $n$ independent rows; there is only one distinct row."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The first entry is always $1$, so the row never vanishes; the rank does not depend on $a$."
+        }
+      ],
+      "pitfalls": [
+        "Thinking $a = 0$ makes the matrix zero: the first column is still all 1s."
+      ],
+      "verification": "Every $2\\times 2$ minor uses two equal rows and is $0$, while the $1\\times1$ minor $1 \\ne 0$, so rank is exactly 1."
+    },
+    "cse-1995-a-25": {
+      "approach": "A connected graph needs at least $n-1$ edges (a tree), and a tree is acyclic; adding one edge to a spanning tree creates exactly one cycle, so the minimum is $n$.",
+      "concepts": [
+        "Trees",
+        "Cycles in graphs"
+      ],
+      "steps": [
+        {
+          "title": "Lower bound",
+          "body": "A connected graph on $n$ vertices with exactly $n-1$ edges is a tree, which has no cycle. So a connected **cyclic** graph needs at least $(n-1)+1 = n$ edges."
+        },
+        {
+          "title": "Achievable",
+          "body": "The cycle $C_n$ is connected, has a cycle and has exactly $n$ edges. So the minimum is $n$."
+        }
+      ],
+      "answer": {
+        "value": "n",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "With $n-1$ edges a connected graph is a tree, hence acyclic."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the cycle $C_n$ attains it and fewer is impossible."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n+1$ edges work but are not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option B is correct."
+        }
+      ],
+      "verification": "For $n = 3$: a triangle has 3 edges and is the smallest connected cyclic graph on 3 vertices."
+    },
+    "cse-1995-a-26": {
+      "approach": "Move DE into HL with XCHG, then DAD H adds HL to itself, i.e. HL = 2·DE.",
+      "concepts": [
+        "8085 XCHG",
+        "8085 DAD"
+      ],
+      "steps": [
+        {
+          "title": "XCHG",
+          "body": "XCHG swaps HL $\\leftrightarrow$ DE, so HL now holds the original DE value."
+        },
+        {
+          "title": "DAD H",
+          "body": "DAD rp does $HL \\leftarrow HL + rp$. With rp = H: $HL \\leftarrow HL + HL = 2\\cdot DE$. The product is in HL as required."
+        }
+      ],
+      "answer": {
+        "value": "XCHG and DAD H",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "DAD B adds BC, giving DE + BC, not 2·DE."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "XTHL swaps HL with the top of the stack, not with DE."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "PCHL loads PC from HL, i.e. it jumps; it does not move DE."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: HL = DE, then HL = HL + HL."
+        }
+      ],
+      "verification": "Example: DE = 1234H. After XCHG, HL = 1234H; DAD H gives HL = 2468H = 2·1234H."
+    },
+    "cse-1995-a-27": {
+      "approach": "Words = $4\\text{K} = 2^{12}$ need 12 address lines; each word is 16 bits, so 16 data lines.",
+      "concepts": [
+        "Memory organisation",
+        "Address lines"
+      ],
+      "steps": [
+        {
+          "title": "Address lines",
+          "body": "$4\\text{K} = 4 \\times 1024 = 2^2 \\cdot 2^{10} = 2^{12}$ words, so $\\log_2 2^{12} = 12$ address lines."
+        },
+        {
+          "title": "Data lines",
+          "body": "Word size is 16 bits, so 16 data lines."
+        }
+      ],
+      "answer": {
+        "value": "12 address, 16 data lines",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "10 address lines address only $2^{10} = 1$K words."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "11 lines address 2K words, and 8 data lines carry only half a word."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $2^{12}$ words of 16 bits."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Data lines must equal the word width, 16, not 12."
+        }
+      ],
+      "verification": "$2^{12} \\times 16 = 65536$ bits $= 4\\text{K} \\times 16$."
+    },
+    "cse-1995-a-28": {
+      "approach": "This is the subtraction form of Euclid's algorithm: replacing the larger number by (larger − smaller) keeps the GCD unchanged until both are equal.",
+      "concepts": [
+        "Euclid's algorithm",
+        "GCD"
+      ],
+      "steps": [
+        {
+          "title": "Invariant",
+          "body": "If $X > Y$ then $\\gcd(X, Y) = \\gcd(X - Y, Y)$, because any common divisor of $X$ and $Y$ also divides $X - Y$ and vice versa. So $\\gcd$ is preserved each iteration."
+        },
+        {
+          "title": "Termination",
+          "body": "Both stay positive and their sum strictly decreases, so the loop ends with $X = Y$, and then $\\gcd(X, X) = X$ is printed."
+        },
+        {
+          "title": "Trace X = 12, Y = 18",
+          "body": "$(12,18) \\to (12,6) \\to (6,6)$; prints $6 = \\gcd(12,18)$."
+        }
+      ],
+      "answer": {
+        "value": "Computes the GCD",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LCM(12,18) = 36, but the trace prints 6."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It does not divide: 18/12 is not 6."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: subtraction-based Euclid."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option C is correct."
+        }
+      ],
+      "verification": "Second trace: (9, 4) → (5,4) → (1,4) → (1,3) → (1,2) → (1,1), prints 1 = gcd(9,4)."
+    },
+    "cse-1995-a-29": {
+      "approach": "FIND takes X as a value parameter; its formal X is a local real copy, so changing it does not change the global integer X, which prints 2.",
+      "concepts": [
+        "Call by value",
+        "Scope"
+      ],
+      "steps": [
+        {
+          "title": "Parameter mode",
+          "body": "In \\`procedure FIND (X : real)\\` there is no \\`var\\`, so it is **call by value**. The integer argument 2 is converted to the real 2.0 and copied into a new local X."
+        },
+        {
+          "title": "Effect",
+          "body": "\\`X := sqrt(X)\\` assigns $\\sqrt{2}$ only to the local copy, which disappears when FIND returns. The global integer X is still 2, so \\`writeln(X)\\` prints 2."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: value parameter, global X unchanged."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\sqrt{2}$ would need a `var` (by reference) parameter, and even then a real could not be stored in an integer."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Passing an integer to a real value parameter is a legal conversion; nothing fails at run time."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option A is correct."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the formal X and the global X are the same variable because they share a name."
+      ],
+      "verification": "Had it been `var X : real`, the call would be a compile-time type error (integer actual for a real var parameter), so value semantics is the only valid reading."
+    },
+    "cse-1995-a-30": {
+      "approach": "Solve the equations in order: the first forces A and B, the second then forces C, the third then forces D.",
+      "concepts": [
+        "Boolean algebra"
+      ],
+      "steps": [
+        {
+          "title": "First equation",
+          "body": "$\\overline{A} + AB = 0$ needs both terms 0: $\\overline{A} = 0 \\Rightarrow A = 1$, and $AB = 0 \\Rightarrow B = 0$."
+        },
+        {
+          "title": "Second equation",
+          "body": "$AB = AC$: left $= 1\\cdot 0 = 0$, so $1\\cdot C = 0 \\Rightarrow C = 0$."
+        },
+        {
+          "title": "Third equation",
+          "body": "$AB + A\\overline{C} + CD = 0 + 1\\cdot 1 + 0 = 1$, and $\\overline{C}D = 1\\cdot D = D$. So $D = 1$."
+        }
+      ],
+      "answer": {
+        "value": "A=1, B=0, C=0, D=1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: satisfies all three equations."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$B = 1$ makes $AB = 1$, violating the first equation."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$C = 1$ makes $AC = 1 \\ne AB = 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$D = 0$ makes the third equation $1 = 0$."
+        }
+      ],
+      "verification": "Substituting (1,0,0,1): $0 + 0 = 0$; $0 = 0$; $0 + 1 + 0 = 1 = 1\\cdot 1$."
+    },
+    "cse-1995-a-31": {
+      "approach": "Optimal (minimum mean turnaround) non-preemptive scheduling may deliberately keep the CPU idle: waiting until job 3 (burst 1) arrives at t = 1 and then running shortest-first beats starting the 9-unit job at t = 0.",
+      "concepts": [
+        "Non-preemptive scheduling",
+        "SJF",
+        "Turnaround time"
+      ],
+      "given": "| Job | Arrival | Burst |\n|---|---|---|\n| 1 | 0.0 | 9 |\n| 2 | 0.6 | 5 |\n| 3 | 1.0 | 1 |",
+      "steps": [
+        {
+          "title": "Idle until t = 1, then 3, 2, 1",
+          "body": "Idle $[0,1)$. Job 3: $1 \\to 2$; job 2: $2 \\to 7$; job 1: $7 \\to 16$.\nTurnaround $= (2-1) + (7-0.6) + (16-0) = 1 + 6.4 + 16 = 23.4$, mean $7.8$.",
+          "scene": {
+            "upto": 16,
+            "cursor": 16,
+            "caption": "Idle 1 unit, then shortest first"
+          }
+        },
+        {
+          "title": "Compare with no idling",
+          "body": "Start job 1 at 0: $0 \\to 9$, then job 3: $9 \\to 10$, job 2: $10 \\to 15$.\nTurnaround $= 9 + (10-1) + (15-0.6) = 9 + 9 + 14.4 = 32.4$, mean $10.8$. Order $2,1,3$ cannot start before $0.6$ and gives $(5.6-0.6)+(14.6-0)+(15.6-1) = 5 + 14.6 + 14.6 = 34.2$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The best sequence is $\\{3,2,1\\}$ with the CPU idle for **1** unit."
+        }
+      ],
+      "answer": {
+        "value": "{3,2,1}, 1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: idle $[0,1)$, then SJF order, mean turnaround 7.8."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Job 2 cannot start at 0 (arrives 0.6), and this order gives a larger total turnaround (34.2)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Running job 3 first is impossible without idling, since it arrives at 1.0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Order 1,2,3 has no idle time at all, and its turnaround is worse."
+        }
+      ],
+      "pitfalls": [
+        "Assuming a non-preemptive scheduler must start whatever job is ready at t = 0."
+      ],
+      "verification": "All 6 orders checked by turnaround; {3,2,1} after 1 unit idle is minimal (23.4).",
+      "animation": {
+        "kind": "gantt",
+        "unit": "unit",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 1,
+                "label": "idle"
+              },
+              {
+                "start": 1,
+                "end": 2,
+                "label": "J3"
+              },
+              {
+                "start": 2,
+                "end": 7,
+                "label": "J2"
+              },
+              {
+                "start": 7,
+                "end": 16,
+                "label": "J1"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 0,
+            "label": "J1↓"
+          },
+          {
+            "t": 0.6,
+            "label": "J2↓"
+          },
+          {
+            "t": 1,
+            "label": "J3↓"
+          }
+        ],
+        "upto": 16,
+        "cursor": 16
+      }
+    },
+    "cse-1995-a-32": {
+      "approach": "Convert each address to a page number (address div 100) and count changes of page: with one frame, every reference to a page other than the resident one is a fault.",
+      "concepts": [
+        "Demand paging",
+        "Page faults"
+      ],
+      "steps": [
+        {
+          "title": "Page numbers",
+          "body": "Page $= \\lfloor \\text{addr}/100 \\rfloor$:\n0100→1, 0200→2, 0430→4, 0499→4, 0510→5, 0530→5, 0560→5, 0120→1, 0220→2, 0240→2, 0260→2, 0320→3, 0370→3.\n\nReference string: 1, 2, 4, 4, 5, 5, 5, 1, 2, 2, 2, 3, 3.",
+          "scene": {
+            "upto": 0
+          }
+        },
+        {
+          "title": "Simulate one frame",
+          "body": "A fault occurs whenever the page differs from the previous one: 1, 2, 4, 5, 1, 2, 3 → **7** faults.",
+          "scene": {
+            "upto": 13
+          }
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "13 counts every reference as a fault, ignoring repeated pages."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 counts one extra fault (e.g. treating 0499 and 0430 as different pages)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 7 page changes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "10 miscounts the runs of the same page."
+        }
+      ],
+      "verification": "Runs of equal pages: [1][2][4,4][5,5,5][1][2,2,2][3,3] = 7 runs = 7 faults.",
+      "animation": {
+        "kind": "paging",
+        "policy": "FIFO",
+        "frames": 1,
+        "refs": [
+          1,
+          2,
+          4,
+          4,
+          5,
+          5,
+          5,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3
+        ],
+        "upto": 0,
+        "expectFaults": 7
+      }
+    },
+    "cse-1995-a-33": {
+      "approach": "Write $(x-1)^3 = -8 = (-2)^3$; the three cube roots of $(-2)^3$ are $-2, -2\\omega, -2\\omega^2$.",
+      "concepts": [
+        "Cube roots of unity"
+      ],
+      "steps": [
+        {
+          "title": "Isolate the cube",
+          "body": "$(x-1)^3 = -8 \\Rightarrow \\left(\\frac{x-1}{-2}\\right)^3 = 1 \\Rightarrow \\frac{x-1}{-2} \\in \\{1, \\omega, \\omega^2\\}$."
+        },
+        {
+          "title": "Solve",
+          "body": "$x - 1 = -2, -2\\omega, -2\\omega^2 \\Rightarrow x = -1,\\ 1 - 2\\omega,\\ 1 - 2\\omega^2$."
+        }
+      ],
+      "answer": {
+        "value": "-1, 1-2ω, 1-2ω²",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$1 + 2\\omega$ gives $(x-1)^3 = 8\\omega^3 = 8$, not $-8$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x = 1$ gives $(0)^3 + 8 = 8 \\ne 0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$x = -1 + 2\\omega$ gives $x - 1 = -2 + 2\\omega$, whose cube is not $-8$."
+        }
+      ],
+      "verification": "Check $x = 1 - 2\\omega$: $(x-1)^3 = (-2\\omega)^3 = -8\\omega^3 = -8$. ✓"
+    },
+    "cse-1995-a-34": {
+      "approach": "Evaluate inside out on s = acbc.",
+      "concepts": [
+        "String operations"
+      ],
+      "steps": [
+        {
+          "title": "Inner calls",
+          "body": "head(s) = a. tail(s) = cbc, tail(tail(s)) = bc, head(bc) = b."
+        },
+        {
+          "title": "Concatenate",
+          "body": "concat(a, b) = **ab**."
+        }
+      ],
+      "answer": {
+        "value": "ab",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "ac uses head(tail(s)) = c, i.e. only one tail."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "bc is tail(tail(s)) itself, not the concatenation."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "cc would need both heads to be c."
+        }
+      ],
+      "verification": "acbc: positions 1,2,3 are a,c,b; head of two tails is position 3 = b."
+    },
+    "cse-1995-a-35": {
+      "approach": "Find the rightmost derivation of xxxxyzz and list the reductions in the order a shift-reduce parser performs them (reverse of the rightmost derivation), printing each rule's number.",
+      "concepts": [
+        "Shift-reduce parsing",
+        "Syntax-directed translation"
+      ],
+      "steps": [
+        {
+          "title": "Derivation",
+          "body": "$S \\Rightarrow xxW \\Rightarrow xxSz \\Rightarrow xx\\,xxW\\,z \\Rightarrow xx\\,xxSz\\,z \\Rightarrow xxxxyzz$."
+        },
+        {
+          "title": "Reduce y",
+          "body": "Shift x x x x y; reduce $y \\to S$: print **2**. Stack: xxxxS.",
+          "scene": {
+            "items": [
+              "x",
+              "x",
+              "x",
+              "x",
+              "S"
+            ],
+            "caption": "S → y: print 2 (output 2)"
+          }
+        },
+        {
+          "title": "Inner Sz and xxW",
+          "body": "Shift z; reduce $Sz \\to W$: print **3**. Reduce $xxW \\to S$: print **1**. Stack: xxS.",
+          "scene": {
+            "items": [
+              "x",
+              "x",
+              "S"
+            ],
+            "caption": "W → Sz (3), S → xxW (1): output 231"
+          }
+        },
+        {
+          "title": "Outer Sz and xxW",
+          "body": "Shift z; reduce $Sz \\to W$: print **3**; reduce $xxW \\to S$: print **1**. Accept. Output: **23131**.",
+          "scene": {
+            "items": [
+              "S"
+            ],
+            "caption": "Output 23131"
+          }
+        }
+      ],
+      "answer": {
+        "value": "23131",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: reductions in order y, Sz, xxW, Sz, xxW."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "11233 is not a valid reduction order: the first reduction must be $y \\to S$ (print 2)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "11231 also starts with 1, which is impossible before y is reduced."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "33211 is roughly the reverse order (top-down), not bottom-up."
+        }
+      ],
+      "verification": "Count check: one y gives one \"2\"; two W and two S→xxW reductions give two \"3\"s and two \"1\"s, total 5 symbols = 23131.",
+      "animation": {
+        "kind": "stack",
+        "items": [
+          "x",
+          "x",
+          "x",
+          "x",
+          "y"
+        ],
+        "caption": "After shifting xxxxy"
+      }
+    },
+    "cse-1995-a-36": {
+      "approach": "Variant fields share the same storage (like a union), so a record needs the fixed part plus the largest variant.",
+      "concepts": [
+        "Variant records",
+        "Memory layout"
+      ],
+      "steps": [
+        {
+          "title": "Size of one record",
+          "body": "Fixed part: number = 4 bytes. Variant var1: $2 \\times 4 = 8$ bytes; var2: $2 \\times 8 = 16$ bytes. Record $= 4 + \\max(8, 16) = 20$ bytes."
+        },
+        {
+          "title": "Array",
+          "body": "$100 \\times 20 = 2000$ bytes."
+        }
+      ],
+      "answer": {
+        "value": "2000",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2800 $= 100\\times(4+8+16)$ allocates both variants separately."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "2400 $= 100 \\times 24$ has no valid layout behind it (e.g. 8 + 16 with no tag field counted)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $100 \\times (4 + 16)$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1200 $= 100 \\times (4 + 8)$ uses the smaller variant, which cannot hold two reals."
+        }
+      ],
+      "verification": "The largest variant (two reals, 16 B) must fit, so 20 B per record is the minimum."
+    },
+    "cse-1995-a-37": {
+      "approach": "The expression is a hex number: $3\\cdot16^3 + 15\\cdot16^2 + 5\\cdot16 + 3 = (3F53)_{16}$; count 1s per hex digit.",
+      "concepts": [
+        "Hexadecimal",
+        "Binary"
+      ],
+      "steps": [
+        {
+          "title": "Read as hex",
+          "body": "$4096 = 16^3$, $256 = 16^2$, so the value is $(3\\,F\\,5\\,3)_{16}$."
+        },
+        {
+          "title": "Count 1s",
+          "body": "$3 = 0011$ (2), $F = 1111$ (4), $5 = 0101$ (2), $3 = 0011$ (2). Total $= 2 + 4 + 2 + 2 = 10$."
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "8 misses two 1s (e.g. counting 15 as 2 bits)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 miscounts one digit."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 0011 1111 0101 0011."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12 overcounts."
+        }
+      ],
+      "verification": "Decimal value $12288 + 3840 + 80 + 3 = 16211 = 0011\\,1111\\,0101\\,0011_2$, ten 1s."
+    },
+    "cse-1995-a-38": {
+      "approach": "Compute $a \\times b$ (perpendicular to both) and normalise it.",
+      "concepts": [
+        "Cross product",
+        "Unit vector"
+      ],
+      "steps": [
+        {
+          "title": "Cross product",
+          "body": "$$a\\times b = \\begin{vmatrix} i & j & k\\\\ 2 & -3 & 1\\\\ 1 & 1 & -2\\end{vmatrix}$$\n$i:\\ (-3)(-2) - (1)(1) = 6 - 1 = 5$; $j:\\ -[(2)(-2) - (1)(1)] = -(-5) = 5$; $k:\\ (2)(1) - (-3)(1) = 2 + 3 = 5$.\nSo $a \\times b = 5i + 5j + 5k$."
+        },
+        {
+          "title": "Normalise",
+          "body": "$|a\\times b| = 5\\sqrt{3}$, unit vector $= \\frac{1}{\\sqrt{3}}(i + j + k)$."
+        }
+      ],
+      "answer": {
+        "value": "(i+j+k)/√3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not a unit vector ($|i+j-k|/3 = \\sqrt3/3$), and $a\\cdot(i+j-k) = 2-3-1 = -2 \\ne 0$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$a\\cdot(i-j-k) = 2+3-1 = 4 \\ne 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$a\\cdot(i+j-k) = -2 \\ne 0$."
+        }
+      ],
+      "verification": "$a\\cdot(1,1,1) = 2-3+1 = 0$ and $b\\cdot(1,1,1) = 1+1-2 = 0$."
+    },
+    "cse-1995-a-39": {
+      "approach": "Two orders (WB or BW) without replacement: $2\\cdot\\frac{10}{25}\\cdot\\frac{15}{24}$.",
+      "concepts": [
+        "Probability without replacement"
+      ],
+      "steps": [
+        {
+          "title": "Both orders",
+          "body": "$P(WB) = \\frac{10}{25}\\cdot\\frac{15}{24} = \\frac{150}{600}$, $P(BW) = \\frac{15}{25}\\cdot\\frac{10}{24} = \\frac{150}{600}$."
+        },
+        {
+          "title": "Add",
+          "body": "The two orders are disjoint: $\\frac{150}{600} + \\frac{150}{600} = \\frac{300}{600} = \\frac12$."
+        }
+      ],
+      "answer": {
+        "value": "1/2",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2/3 is not obtained by any valid count."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "4/5 is not obtained by any valid count."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1/3 is not obtained by any valid count; one order alone gives 1/4."
+        }
+      ],
+      "verification": "Combinations: $\\frac{10\\cdot15}{\\binom{25}{2}} = \\frac{150}{300} = \\frac12$."
+    },
+    "cse-1995-a-40": {
+      "approach": "Apply Newton–Raphson to $f(x) = x^2 - b$.",
+      "concepts": [
+        "Newton–Raphson method"
+      ],
+      "steps": [
+        {
+          "title": "Set up f",
+          "body": "$\\sqrt b$ is the positive root of $f(x) = x^2 - b$, with $f'(x) = 2x$."
+        },
+        {
+          "title": "Iteration",
+          "body": "$x_{k+1} = x_k - \\frac{x_k^2 - b}{2x_k} = \\frac{2x_k^2 - x_k^2 + b}{2x_k} = \\frac{x_k^2 + b}{2x_k}$."
+        }
+      ],
+      "answer": {
+        "value": "(x_k² + b)/2x_k",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The factor 3 and the missing square are wrong; its fixed point is not $\\sqrt b$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not of the form $x - f/f'$ for $f = x^2 - b$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option B is correct."
+        }
+      ],
+      "verification": "b = 4, $x_0 = 1$: $x_1 = 5/2 = 2.5$, $x_2 = (6.25+4)/5 = 2.05$, converging to 2."
+    },
+    "cse-1995-a-41": {
+      "approach": "Virtual memory exists to give a CPU address space larger than RAM, and the full virtual image must be kept on the backing store, which must therefore be larger.",
+      "concepts": [
+        "Virtual memory"
+      ],
+      "steps": [
+        {
+          "title": "Versus physical memory",
+          "body": "If the address space were not larger than physical memory, virtual memory would be unnecessary; so it is **larger**."
+        },
+        {
+          "title": "Versus secondary storage",
+          "body": "Pages not in RAM live on disk, so the whole virtual address space must fit on secondary storage: **smaller** than it."
+        }
+      ],
+      "answer": {
+        "value": "larger, smaller",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A space smaller than RAM defeats the purpose of virtual memory."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Smaller than RAM and larger than disk is backwards on both counts."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Larger than disk: pages would have nowhere to be stored."
+        }
+      ],
+      "verification": "Typical: 32-bit (4 GB) address space, 1 GB RAM, 100 GB disk."
+    },
+    "cse-1995-a-42": {
+      "approach": "Check group axioms for invertible $n\\times n$ real matrices under multiplication, then commutativity.",
+      "concepts": [
+        "Groups",
+        "General linear group"
+      ],
+      "steps": [
+        {
+          "title": "Group axioms",
+          "body": "Closure: $\\det(AB) = \\det A \\det B \\ne 0$. Associativity: matrix multiplication is associative. Identity: $I$ is nonsingular. Inverse: $A^{-1}$ exists and is nonsingular. So $\\langle A, *\\rangle$ is a group."
+        },
+        {
+          "title": "Not abelian",
+          "body": "$\\begin{bmatrix}1&1\\\\0&1\\end{bmatrix}\\begin{bmatrix}1&0\\\\1&1\\end{bmatrix} = \\begin{bmatrix}2&1\\\\1&1\\end{bmatrix}$ but the reverse product is $\\begin{bmatrix}1&1\\\\1&2\\end{bmatrix}$."
+        }
+      ],
+      "answer": {
+        "value": "Group, not abelian",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Associativity holds, so it is a semigroup."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$I$ is an identity, so it is a monoid."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Every element has an inverse, so it is a group."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "This is $GL_n(\\mathbb R)$, the standard non-abelian group for $n \\ge 2$."
+    },
+    "cse-1995-a-43": {
+      "approach": "Solve the characteristic equation $r^2 + 3r + 2 = 0$.",
+      "concepts": [
+        "Linear ODE with constant coefficients"
+      ],
+      "steps": [
+        {
+          "title": "Roots",
+          "body": "$r^2 + 3r + 2 = (r+1)(r+2) = 0 \\Rightarrow r = -1, -2$."
+        },
+        {
+          "title": "Solution",
+          "body": "$y = c_1e^{-x} + c_2e^{-2x}$."
+        }
+      ],
+      "answer": {
+        "value": "c₁e^{-x} + c₂e^{-2x}",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Roots $1, 2$ solve $r^2 - 3r + 2 = 0$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Roots $-1, 3$ solve $r^2 - 2r - 3 = 0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2^{-x}$ is $e^{-x\\ln 2}$, root $-\\ln 2$, not $-1$."
+        }
+      ],
+      "verification": "$y = e^{-2x}$: $4e^{-2x} - 6e^{-2x} + 2e^{-2x} = 0$. ✓"
+    },
+    "cse-1995-a-44": {
+      "approach": "Simplify: $\\neg p \\vee (p \\Rightarrow q) \\equiv \\neg p \\vee q$; knowing only $p \\vee q$ is true does not fix its value.",
+      "concepts": [
+        "Propositional logic",
+        "Implication"
+      ],
+      "steps": [
+        {
+          "title": "Simplify",
+          "body": "$\\neg p \\Rightarrow q \\equiv p \\vee q$. $\\neg p \\vee (p \\Rightarrow q) \\equiv \\neg p \\vee \\neg p \\vee q \\equiv \\neg p \\vee q$."
+        },
+        {
+          "title": "Check the cases with $p \\vee q$ true",
+          "body": "$p = T, q = F$: $\\neg p \\vee q = F$. $p = F, q = T$: $T$. Both satisfy the premise, so the value **cannot be determined**."
+        }
+      ],
+      "answer": {
+        "value": "Cannot be determined",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fails for $p = T, q = F$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A proposition has one truth value under an assignment; \"multiple-valued\" is not a classical truth value."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Fails for $p = F, q = T$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "Truth table over the three rows where $p\\vee q = T$: values F, T, T — not constant."
+    },
+    "cse-1995-a-45": {
+      "approach": "Test each definition against $L = \\{x^ny^n : n \\ge 1\\}$: I is the standard grammar for it, II and III cannot enforce equal counts.",
+      "concepts": [
+        "Context-free grammars",
+        "Regular expressions"
+      ],
+      "steps": [
+        {
+          "title": "Definition I",
+          "body": "$E \\to xEy \\mid xy$: each step adds one x and one y around the middle, ending with xy, so it derives exactly $x^ny^n$, $n \\ge 1$."
+        },
+        {
+          "title": "Definition II",
+          "body": "$xy \\mid x^+xyy^+$ gives xy or $x^iy^j$ with $i, j \\ge 2$; it contains $xxyyy \\notin L$."
+        },
+        {
+          "title": "Definition III",
+          "body": "$x^+y^+$ contains $xyy \\notin L$. So only I generates $L$."
+        }
+      ],
+      "answer": {
+        "value": "I only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II generates $xxyyy$, which is not in $L$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both II and III generate strings with unequal counts."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is regular and $L$ is not, so they differ."
+        }
+      ],
+      "verification": "$L$ is not regular (pumping lemma), while II and III are regular expressions, so neither can equal $L$."
+    },
+    "cse-1995-a-46": {
+      "approach": "Convert with operator precedence: $A + ((B*(C+D))/F) + (D*E)$. Strict left-to-right gives ABCD+*F/+DE*+, which is not listed; option B is the equivalent form $A + (\\,B(C+D)/F + DE\\,)$, valid because + is associative.",
+      "concepts": [
+        "Infix to postfix",
+        "Operator precedence"
+      ],
+      "steps": [
+        {
+          "title": "Parenthesise",
+          "body": "$*$ and $/$ bind tighter and are left-associative: $A + \\big((B*(C+D))/F\\big) + (D*E)$."
+        },
+        {
+          "title": "Postfix of the pieces",
+          "body": "$B*(C+D) \\to BCD{+}{*}$; $/F \\to BCD{+}{*}F{/}$; $D*E \\to DE{*}$.",
+          "scene": {
+            "items": [
+              "A",
+              "BCD+*F/"
+            ],
+            "caption": "Operands built so far"
+          }
+        },
+        {
+          "title": "Combine the additions",
+          "body": "Left-to-right: $A\\ BCD{+}{*}F{/}\\ {+}\\ DE{*}\\ {+}$ = ABCD+*F/+DE*+ (not an option).\nGrouping the right sum first: $A + (X + Y)$ with $X = BCD{+}{*}F{/}$, $Y = DE{*}$ gives $A\\,X\\,Y{+}{+}$ = **ABCD+*F/DE*++**, which is option B and evaluates to the same value.",
+          "scene": {
+            "items": [
+              "A",
+              "BCD+*F/",
+              "DE*"
+            ],
+            "caption": "A X Y + +  →  ABCD+*F/DE*++"
+          }
+        }
+      ],
+      "answer": {
+        "value": "ABCD+*F/DE*++",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "AB+ adds A and B first, ignoring that * binds tighter than +."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct (equivalent grouping of the two additions)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contains infix-style operator placement (A*B+...), not valid postfix of this expression."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Starts with A+*, which is not valid postfix (an operator needs two operands on the stack)."
+        }
+      ],
+      "pitfalls": [
+        "Expecting the strictly left-associative form; it is not among the options."
+      ],
+      "verification": "Evaluate with A=1,B=2,C=3,D=4,F=7,E=5: infix $1 + 2\\cdot7/7 + 20 = 23$; option B: CD+ = 7, B* = 14, F/ = 2, DE* = 20, + = 22, + = 23. ✓",
+      "animation": {
+        "kind": "stack",
+        "items": [
+          "A"
+        ],
+        "caption": "Postfix pieces (bottom → top)"
+      }
+    }
+  }
+}
