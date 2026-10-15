@@ -1,13 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 240" width="100%" height="100%">
-  <rect width="100%" height="100%" rx="16" fill="#0b1329" stroke="#1e293b" stroke-width="1.5" />
-  <rect x="20" y="16" width="160" height="24" rx="6" fill="#1e293b" />
-  <text x="30" y="32" fill="#38bdf8" font-size="11" font-weight="bold" font-family="monospace">TIMING WAVEFORM</text>
-  <text x="100" y="82" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">T1</text>
-  <path d="M 120 88 L 180 88 L 180 70 L 240 70 L 240 88 L 320 88 L 320 70 L 400 70 L 400 88 L 480 88" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="124" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">T9</text>
-  <path d="M 120 130 L 180 130 L 180 112 L 240 112 L 240 130 L 320 130 L 320 112 L 400 112 L 400 130 L 480 130" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="166" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">TA</text>
-  <path d="M 120 172 L 180 172 L 180 154 L 240 154 L 240 172 L 320 172 L 320 154 L 400 154 L 400 172 L 480 172" fill="none" stroke="#38bdf8" stroke-width="2" />
-  <text x="100" y="208" text-anchor="end" fill="#94a3b8" font-size="11" font-weight="bold" font-family="monospace">A15</text>
-  <path d="M 120 214 L 180 214 L 180 196 L 240 196 L 240 214 L 320 214 L 320 196 L 400 196 L 400 214 L 480 214" fill="none" stroke="#38bdf8" stroke-width="2" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 300" fill="none" stroke="currentColor" stroke-width="1.5" font-family="Arial, Helvetica, sans-serif">
+  <text x="248" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₁</text>
+  <text x="307" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₂</text>
+  <text x="370" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₃</text>
+  <text x="433" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₄</text>
+  <text x="509" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₅</text>
+  <text x="572" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₆</text>
+  <text x="631" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₇</text>
+  <text x="703" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₈</text>
+  <text x="779" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">T₉</text>
+  <text x="847" y="24" text-anchor="middle" font-size="14" fill="currentColor" stroke="none">TA</text>
+  <text x="95" y="75" text-anchor="end" font-size="15" fill="currentColor" stroke="none">A<tspan font-size="11" dy="4">15</tspan><tspan dy="-4">–A</tspan><tspan font-size="11" dy="4">8</tspan></text>
+  <path d="M 140 56 L 221 56 M 140 84 L 221 84"/>
+  <path d="M 221 56 L 257 84 M 221 84 L 257 56"/>
+  <path d="M 257 56 L 415 56 M 257 84 L 415 84"/>
+  <path d="M 415 56 L 451 84 M 415 84 L 451 56"/>
+  <path d="M 451 56 L 518 56 M 451 84 L 518 84"/>
+  <path d="M 518 56 L 545 84 M 518 84 L 545 56"/>
+  <path d="M 545 56 L 685 56 M 545 84 L 685 84"/>
+  <path d="M 685 56 L 721 84 M 685 84 L 721 56"/>
+  <path d="M 721 56 L 869 56 M 721 84 L 869 84"/>
+  <text x="309" y="75" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">30H</text>
+  <text x="595" y="75" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">30H</text>
+  <rect x="759" y="58" width="52" height="24"/>
+  <text x="785" y="75" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">C</text>
+  <text x="95" y="155" text-anchor="end" font-size="15" fill="currentColor" stroke="none">AD<tspan font-size="11" dy="4">7</tspan><tspan dy="-4"> – AD</tspan><tspan font-size="11" dy="4">0</tspan></text>
+  <path d="M 140 134 L 221 134 M 140 166 L 221 166 M 221 134 L 257 166 M 221 166 L 257 134"/>
+  <path d="M 239 150 L 257 134 L 313 134 L 325 150 L 313 166 L 257 166 Z"/>
+  <text x="284" y="155" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">50H</text>
+  <line x1="325" y1="150" x2="361" y2="150" stroke-width="1" stroke-dasharray="2 3"/>
+  <path d="M 361 150 L 373 134 L 430 134 L 442 150 L 430 166 L 373 166 Z"/>
+  <rect x="381.5" y="139" width="40" height="22"/>
+  <text x="401.5" y="155" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">A</text>
+  <line x1="442" y1="150" x2="536" y2="150" stroke-width="1" stroke-dasharray="2 3"/>
+  <path d="M 536 150 L 548 134 L 605 134 L 617 150 L 605 166 L 548 166 Z"/>
+  <rect x="556.5" y="139" width="40" height="22"/>
+  <text x="576.5" y="155" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">D</text>
+  <line x1="617" y1="150" x2="649" y2="150" stroke-width="1" stroke-dasharray="2 3"/>
+  <path d="M 649 150 L 661 134 L 713 134 L 725 150 L 713 166 L 661 166 Z"/>
+  <rect x="667" y="139" width="40" height="22"/>
+  <text x="687" y="155" text-anchor="middle" font-size="15" fill="currentColor" stroke="none">B</text>
+  <line x1="725" y1="150" x2="770" y2="150" stroke-width="1" stroke-dasharray="2 3"/>
+  <path d="M 770 150 L 782 134 L 839 134 L 851 150 L 839 166 L 782 166 Z"/>
+  <line x1="851" y1="150" x2="878" y2="150" stroke-width="1" stroke-dasharray="2 3"/>
+  <path d="M 878 150 L 890 134 L 947 134 L 959 150 L 947 166 L 890 166 Z"/>
+  <text x="95" y="235" text-anchor="end" font-size="15" fill="currentColor" stroke="none">IO/M</text>
+  <line x1="82" y1="220" x2="95" y2="220" stroke-width="1.2"/>
+  <path d="M 110 215 L 208 215 L 221 265 L 815 265 L 842 215 L 923 215"/>
 </svg>
