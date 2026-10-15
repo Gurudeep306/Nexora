@@ -1,0 +1,13 @@
+{
+  "paper": "cse-1997",
+  "fixes": [
+    {
+      "id": "cse-1997-a-24",
+      "field": "text",
+      "before": "Thrashing in an operating system virtual memory subsystem implies:",
+      "after": "Thrashing",
+      "reason": "Stem in the 1997 paper is just \"Thrashing\"; the options complete the sentence (the record added wording that clashes with option C \"implies…\").",
+      "source": "GATE1997.pdf p.3 Q24"
+    }
+  ]
+}
