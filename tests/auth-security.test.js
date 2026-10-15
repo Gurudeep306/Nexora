@@ -100,7 +100,7 @@ test('renaming to a case variant of someone else is rejected', async () => {
 test('a role read from the database applies immediately (demotion)', async () => {
   assert.equal((await call('GET', '/api/admin/users', admin.cookie)).status, 200);
   sql("UPDATE users SET role='member' WHERE username=?", ADMIN);
-  assert.equal((await call('GET', '/api/admin/users', admin.cookie)).status, 403, 'demoted admin loses rights');
+  assert.equal((await call('GET', '/api/admin/users', admin.cookie)).status, 404, 'demoted admin loses rights (the admin API 404s)');
   sql("UPDATE users SET role='admin' WHERE username=?", ADMIN);
   assert.equal((await call('GET', '/api/admin/users', admin.cookie)).status, 200);
 });

@@ -16,7 +16,7 @@ const content = require("../authz/content");
 const { defaultAvatar } = require("../avatar-set");
 const {
   FEATURE_FLAGS,
-  envOwner,
+  ownerSource,
   getSettings,
   privateModeActive,
   setSetting,
@@ -171,6 +171,7 @@ function createAdminRouter(deps) {
   }
 
   /* ── guards for every /api/admin call ── */
+  const notFound = (res) => res.status(404).json({ ok: false, error: "API endpoint not found" });
   const adminLimiter = rateLimit({
     windowMs: 60 * 1000,
     limit: 240,
@@ -186,10 +187,13 @@ function createAdminRouter(deps) {
     skip: (req) => req.method === "GET",
     message: { ok: false, error: "Too many admin changes — slow down a moment." },
   });
+  // To anyone without an admin permission (signed out included) the admin
+  // API doesn't exist: the same 404 as any unknown endpoint.
+  router.use("/api/admin", (req, res, next) => {
+    if (!getSessionUser(req)?.username || !P.hasAnyAdminPerm(req)) return notFound(res);
+    next();
+  });
   router.use("/api/admin", adminLimiter, writeLimiter, (req, res, next) => {
-    const user = getSessionUser(req);
-    if (!user?.username) return res.status(401).json({ ok: false, error: "Please sign in first" });
-    if (!P.hasAnyAdminPerm(req)) return res.status(403).json({ ok: false, error: "Admin access required", code: "forbidden" });
     if (req.method !== "GET" && req.method !== "HEAD") {
       // CSRF: changes must come as JSON (no cross-site form posts) from a
       // trusted origin.
@@ -806,7 +810,7 @@ function createAdminRouter(deps) {
         ok: true,
         settings: s,
         privateActive: privateModeActive(s),
-        ownerFromEnv: !!envOwner(),
+        ownerSource: ownerSource(),
         allowlist,
         earlyAccess: early,
       });

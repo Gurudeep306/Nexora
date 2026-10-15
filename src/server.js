@@ -28,7 +28,7 @@ const { isSetAvatar, normalizeAvatar } = require("./avatar-set");
 const { restoreUploads } = require("./upload-store");
 const { authz } = require("./middleware/authz");
 const { createAccessControl, initAdminSystem, socketAccess } = require("./authz/access");
-const { can } = require("./authz/permissions");
+const { can, hasAnyAdminPerm } = require("./authz/permissions");
 const { createAdminRouter } = require("./routes/admin");
 const {
   clearSessionUser,
@@ -1945,7 +1945,12 @@ app.get("/api/languages", (req, res) => {
 /* Admin: run a tiny program in every language through the real judge.
    GET /api/admin/judge-selftest?langs=cpp,python  (all languages when omitted) */
 app.get("/api/admin/judge-selftest", (req, res, next) =>
-  can(req, "problems.manage") ? next() : res.status(403).json({ ok: false, error: "Admin access required" }),
+  can(req, "problems.manage")
+    ? next()
+    : // Non-admins get the same 404 as any unknown endpoint (see routes/admin.js).
+      hasAnyAdminPerm(req)
+      ? res.status(403).json({ ok: false, error: "Admin access required" })
+      : res.status(404).json({ ok: false, error: "API endpoint not found" }),
 async (req, res) => {
   try {
     const { selfTest } = require("./judge-selftest");

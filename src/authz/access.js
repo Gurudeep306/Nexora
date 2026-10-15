@@ -18,7 +18,7 @@ const {
   buildAccess,
   mayEnterPrivateSite,
 } = require("./permissions");
-const { envOwner, getSettings, privateModeActive, setSetting, DEFAULT_PRIVATE_MESSAGE } = require("./site-settings");
+const { getSettings, ownerSource, privateModeActive, setSetting, DEFAULT_PRIVATE_MESSAGE } = require("./site-settings");
 
 const USER_ACCESS_SQL = `SELECT ${ACCESS_COLUMNS} FROM users u WHERE u.username = ?`;
 
@@ -183,19 +183,18 @@ async function socketAccess(username) {
 }
 
 /**
- * Boot: make the configured owner the (only) 'owner' row, and turn private
- * mode on the first time an owner exists. Without an owner, warn loudly and
- * leave the site public so nobody is locked out.
+ * Boot: make the configured owner (OWNER_USERNAME > CLI setting >
+ * config/site.json) the only 'owner' row, and turn private mode on at the
+ * first boot where that owner's account exists. Without an owner account,
+ * warn loudly and leave the site public so nobody is locked out.
  */
 async function initAdminSystem() {
-  const env = envOwner();
-  if (env) await setSetting("owner_username", env, "env:OWNER_USERNAME");
   const settings = await getSettings();
   const owner = settings.owner_username;
   if (!owner) {
     console.warn(
       "\n⚠️  ─────────────────────────────────────────────────────────────\n" +
-        "⚠️  OWNER_USERNAME is not set — there is no site owner.\n" +
+        "⚠️  No site owner is configured (OWNER_USERNAME / config/site.json).\n" +
         "⚠️  Private mode stays OFF so nobody gets locked out.\n" +
         "⚠️  Set OWNER_USERNAME (or run: node scripts/admin/set-owner.mjs <username>).\n" +
         "⚠️  ─────────────────────────────────────────────────────────────\n",
@@ -204,16 +203,21 @@ async function initAdminSystem() {
   }
   await run("UPDATE users SET role='admin' WHERE role='owner' AND username <> ? COLLATE NOCASE", [owner]);
   const r = await run("UPDATE users SET role='owner' WHERE username = ? COLLATE NOCASE", [owner]);
-  if (!r.changes) {
-    console.warn(`⚠️  Owner "${owner}" has no account yet — sign up with that exact username to claim it.`);
-  }
+  const exists = r.changes > 0 || !!(await get("SELECT 1 AS x FROM users WHERE username = ? COLLATE NOCASE", [owner]));
   const row = await get("SELECT value FROM site_settings WHERE key='private_mode'");
+  if (!exists) {
+    console.warn(
+      `\n⚠️  Owner "${owner}" (from ${ownerSource()}) has no account yet — private mode stays ${row ? "as set" : "OFF"}.\n` +
+        "⚠️  Sign up with that exact username; private mode turns on at the next boot.\n",
+    );
+    return getSettings();
+  }
   if (!row) {
     await setSetting("private_mode", { enabled: true, message: DEFAULT_PRIVATE_MESSAGE }, "system:first-boot");
-    console.log(`🔒 Private mode is ON (first boot with an owner). Only ${owner}, admins and early-access users can get in.`);
+    console.log(`🔒 Private mode is ON (first boot with the owner's account). Only ${owner}, admins and early-access users can get in.`);
   } else {
     const s = await getSettings();
-    console.log(`🔐 Owner: ${owner} · private mode ${s.private_mode.enabled ? "ON" : "off"}`);
+    console.log(`🔐 Owner: ${owner} (${ownerSource()}) · private mode ${s.private_mode.enabled ? "ON" : "off"}`);
   }
   return getSettings();
 }

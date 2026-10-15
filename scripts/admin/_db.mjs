@@ -37,6 +37,11 @@ export async function setSetting(key, value, by) {
   );
 }
 
+/** The committed default owner (config/site.json). */
+export function configOwner() {
+  return require(path.join(root, "src", "authz", "site-settings.js")).configOwner();
+}
+
 export async function audit(action, target, after) {
   await run(
     `INSERT INTO audit_log(actor, actor_role, action, target_type, target, after, ip, created_at)
