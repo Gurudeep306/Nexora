@@ -1,0 +1,1178 @@
+{
+  "paper": "it-2006",
+  "version": 2,
+  "solutions": {
+    "it-2006-cs-1": {
+      "approach": "Apply the total probability theorem over the two equally likely temperature cases and solve for the unknown conditional probability.",
+      "concepts": [
+        "Total probability theorem",
+        "Conditional probability"
+      ],
+      "steps": [
+        {
+          "title": "Set up total probability",
+          "body": "Let $H$ = temperature above $25^\\circ$C, $L$ = at/below. $P(H)=P(L)=0.5$, $P(R\\mid L)=0.4$, $P(R)=0.6$.\n\n$$P(R)=P(R\\mid L)P(L)+P(R\\mid H)P(H)$$"
+        },
+        {
+          "title": "Solve",
+          "body": "$$0.6 = 0.4\\times0.5 + 0.5\\,P(R\\mid H) = 0.2 + 0.5\\,P(R\\mid H)$$\n$$P(R\\mid H)=\\frac{0.6-0.2}{0.5}=\\frac{0.4}{0.5}=0.8$$"
+        }
+      ],
+      "answer": {
+        "value": "0.8",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "0.4 is the probability for the cooler case, not the warmer one."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "This is the overall probability $P(R)$, not the conditional one."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $0.6 = 0.2 + 0.5p \\Rightarrow p = 0.8$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Would give $P(R)=0.2+0.45=0.65\\neq0.6$."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting to weight each case by $0.5$."
+      ],
+      "verification": "Check: $0.5\\times0.4+0.5\\times0.8=0.2+0.4=0.6$ ✓."
+    },
+    "it-2006-cs-2": {
+      "approach": "For each operation look for a $z$ with $f(a,z)=a=f(z,a)$ for every $a$; a single counterexample kills a candidate.",
+      "concepts": [
+        "Identity element",
+        "Binary operation"
+      ],
+      "steps": [
+        {
+          "title": "f(x,y) = x + y − 3",
+          "body": "$f(a,z)=a+z-3=a \\iff z=3$, and $f(3,a)=3+a-3=a$. Since $3\\in N$, **$z=3$ is an identity**."
+        },
+        {
+          "title": "f(x,y) = max(x,y)",
+          "body": "Take $z$ = the least natural number (1, or 0 if $0\\in N$). Then $\\max(a,z)=a=\\max(z,a)$ for all $a$. **Identity exists.**"
+        },
+        {
+          "title": "f(x,y) = x^y",
+          "body": "Right identity needs $a^z=a$ for all $a$, forcing $z=1$. But $f(1,a)=1^a=1\\neq a$ for $a=2$. So no two-sided identity.\n\nHence operations **1 and 2** only."
+        }
+      ],
+      "answer": {
+        "value": "1 and 2 only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: 3 is the identity for 1, the least natural number for 2."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Exponentiation has only a right identity (1), not a left one."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Exponentiation fails, and max does have an identity."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Operations 1 and 2 do have identities."
+        }
+      ],
+      "pitfalls": [
+        "Accepting $z=1$ for $x^y$ after checking only one side: $1^a=1$."
+      ],
+      "verification": "Spot checks: $f(5,3)=5$, $f(3,5)=5$; $\\max(7,1)=7$; $1^2=1\\ne2$."
+    },
+    "it-2006-cs-3": {
+      "approach": "Trace each string through the DFA. Observing that $a$ toggles s/r and $b$ toggles s/t makes the trace mechanical.",
+      "concepts": [
+        "DFA simulation",
+        "String acceptance"
+      ],
+      "steps": [
+        {
+          "title": "Trace u = abbaba",
+          "body": "$s\\xrightarrow{a}r\\xrightarrow{b}r\\xrightarrow{b}r\\xrightarrow{a}s\\xrightarrow{b}t\\xrightarrow{a}t$. Ends in $t$ (final) — **accepted**.",
+          "scene": {
+            "current": [
+              "t"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "b",
+                "b",
+                "a",
+                "b",
+                "a"
+              ],
+              "head": 6
+            },
+            "caption": "u = abbaba ends in t: accept"
+          }
+        },
+        {
+          "title": "Trace v = bab",
+          "body": "$s\\xrightarrow{b}t\\xrightarrow{a}t\\xrightarrow{b}s$. Ends in $s$ — **rejected**.",
+          "scene": {
+            "current": [
+              "s"
+            ],
+            "tape": {
+              "cells": [
+                "b",
+                "a",
+                "b"
+              ],
+              "head": 3
+            },
+            "caption": "v = bab ends in s: reject"
+          }
+        },
+        {
+          "title": "Trace w = aabb",
+          "body": "$s\\xrightarrow{a}r\\xrightarrow{a}s\\xrightarrow{b}t\\xrightarrow{b}s$. Ends in $s$ — **rejected**.\n\nSo the automaton accepts $u$ only.",
+          "scene": {
+            "current": [
+              "s"
+            ],
+            "tape": {
+              "cells": [
+                "a",
+                "a",
+                "b",
+                "b"
+              ],
+              "head": 4
+            },
+            "caption": "w = aabb ends in s: reject"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Accepts u, rejects v and w",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$v$ ends in $s$, so it is rejected."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$v$ and $w$ are rejected."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$u$ is accepted (ends in $t$)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: only $u$ ends in the final state $t$."
+        }
+      ],
+      "pitfalls": [
+        "Reading the $a$ arcs between s and r as going only one way — both directions carry $a$."
+      ],
+      "verification": "Re-traced each string; final states t, s, s respectively.",
+      "animation": {
+        "kind": "automaton",
+        "layout": "manual",
+        "states": [
+          {
+            "id": "s",
+            "x": 0,
+            "y": 0,
+            "start": true
+          },
+          {
+            "id": "t",
+            "x": 3,
+            "y": 0,
+            "accept": true
+          },
+          {
+            "id": "r",
+            "x": 0,
+            "y": 2.5
+          }
+        ],
+        "edges": [
+          {
+            "from": "s",
+            "to": "t",
+            "label": "b"
+          },
+          {
+            "from": "t",
+            "to": "s",
+            "label": "b"
+          },
+          {
+            "from": "t",
+            "to": "t",
+            "label": "a"
+          },
+          {
+            "from": "s",
+            "to": "r",
+            "label": "a"
+          },
+          {
+            "from": "r",
+            "to": "s",
+            "label": "a"
+          },
+          {
+            "from": "r",
+            "to": "r",
+            "label": "b"
+          }
+        ],
+        "current": [
+          "s"
+        ],
+        "tape": {
+          "cells": [
+            "a",
+            "b",
+            "b",
+            "a",
+            "b",
+            "a"
+          ],
+          "head": 0
+        },
+        "caption": "u = abbaba"
+      }
+    },
+    "it-2006-cs-4": {
+      "approach": "Every production wraps the string symmetrically (aSa, bSb) around a centre of a, b or ε, so the grammar generates exactly the palindromes over {a,b}. Pick the non-palindrome.",
+      "concepts": [
+        "Context-free grammar",
+        "Palindromes"
+      ],
+      "steps": [
+        {
+          "title": "Language of the grammar",
+          "body": "$S\\to aSa\\mid bSb$ adds the same symbol at both ends; $S\\to a\\mid b\\mid\\varepsilon$ gives odd/even centres. So $L(G)=\\{w : w=w^R\\}$."
+        },
+        {
+          "title": "Test the options",
+          "body": "| String | Reverse | Palindrome? |\n|---|---|---|\n| aaaa | aaaa | yes |\n| baba | abab | **no** |\n| abba | abba | yes |\n| babaaabab | babaaabab | yes |\n\nSo **baba** is not generated."
+        }
+      ],
+      "answer": {
+        "value": "baba",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$S\\Rightarrow aSa\\Rightarrow aaSaa\\Rightarrow aaaa$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: baba is not a palindrome."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$S\\Rightarrow aSa\\Rightarrow abSba\\Rightarrow abba$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Odd palindrome with centre a: $bab\\,a\\,a\\,a\\,bab$ reads the same both ways."
+        }
+      ],
+      "verification": "Derivation of babaaabab: $bSb\\to baSab\\to babSbab\\to babaSabab\\to babaaabab$."
+    },
+    "it-2006-cs-5": {
+      "approach": "Read the NFA left to right: any prefix (self-loop), then a, then any one symbol, then b at the end.",
+      "concepts": [
+        "NFA",
+        "Regular expressions"
+      ],
+      "steps": [
+        {
+          "title": "Read the path",
+          "body": "Start state loops on $a,b$ → $(a+b)^*$. Then $a$, then $a,b$ → $(a+b)$, then $b$ into the final state, which has no outgoing edges."
+        },
+        {
+          "title": "Expression",
+          "body": "$$(a+b)^*\\,a\\,(a+b)\\,b$$ — strings whose third-last symbol is $a$ and last symbol is $b$."
+        }
+      ],
+      "answer": {
+        "value": "(a+b)* a(a+b)b",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: matches the single path through the NFA."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Excludes e.g. $baab$, which the NFA accepts."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Allows arbitrary gaps, e.g. $ab$, which the NFA rejects (needs ≥ 3 symbols)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Accepts everything, including $\\varepsilon$, which the NFA rejects."
+        }
+      ],
+      "verification": "$aab$: loop 0 times, $a$, $a$, $b$ ✓; $ab$ cannot reach the final state ✓."
+    },
+    "it-2006-cs-6": {
+      "approach": "Recognise Shannon expansion: $f = x_i'f|_{x_i=0} + x_i f|_{x_i=1}$. A, B and C are valid identities; D drops the literals.",
+      "concepts": [
+        "Shannon expansion",
+        "Boolean algebra"
+      ],
+      "steps": [
+        {
+          "title": "Check A, B, C",
+          "body": "A and B: $x'f + xf = (x'+x)f = f$ ✓. C is the Shannon expansion on $x_n$ ✓."
+        },
+        {
+          "title": "Counterexample for D",
+          "body": "Take $f=x_1$. Then $f(0,\\ldots)+f(1,\\ldots)=0+1=1$, but $f=x_1$ is $0$ when $x_1=0$. So D is **not** true in general."
+        }
+      ],
+      "answer": {
+        "value": "D",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: $x_1'f+x_1f=f$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: same identity with $x_2$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: Shannon expansion about $x_n$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct (NOT true): the cofactors are summed without $x_1'$, $x_1$; fails for $f=x_1$."
+        }
+      ],
+      "verification": "For $f=x_1$: RHS of D is the constant 1, LHS is $x_1$."
+    },
+    "it-2006-cs-7": {
+      "approach": "Add the bit patterns, then use the sign rule: overflow only when two same-sign operands give a result of opposite sign.",
+      "concepts": [
+        "Two's complement",
+        "Overflow"
+      ],
+      "steps": [
+        {
+          "title": "Add",
+          "body": "$1101 + 0100 = 1\\,0001$; drop the carry-out → $0001$.\n\nIn decimal: $1101=-3$, $0100=+4$, $-3+4=+1=0001$ ✓."
+        },
+        {
+          "title": "Overflow?",
+          "body": "Operands have opposite signs, so overflow is impossible (carry into MSB = carry out = 1). Result: **0001, no overflow**."
+        }
+      ],
+      "answer": {
+        "value": "0001 and no overflow",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The carry-out is discarded; it is not overflow in two's complement."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$1001=-7$ is wrong."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Wrong sum and no overflow."
+        }
+      ],
+      "pitfalls": [
+        "Treating the carry-out bit as overflow."
+      ],
+      "verification": "$-3+4=1$, within range $[-8,7]$."
+    },
+    "it-2006-cs-8": {
+      "approach": "Bandwidth is maximised when the DMA controller keeps the bus for a whole block and the CPU services the completion interrupt fastest.",
+      "concepts": [
+        "DMA modes",
+        "Vectored interrupts"
+      ],
+      "steps": [
+        {
+          "title": "DMA mode",
+          "body": "Block (burst) transfer moves the whole block in one bus grant; cycle stealing and transparent DMA move one word at a time when the bus is free, so they are slower."
+        },
+        {
+          "title": "Interrupt mechanism",
+          "body": "Vectored interrupts jump directly to the handler; polling wastes time identifying the device. Best: **block transfer + vectored interrupts**."
+        }
+      ],
+      "answer": {
+        "value": "Block transfer and Vectored interrupts",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Transparent DMA uses only idle cycles — lowest DMA throughput; polling is slow."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Cycle stealing transfers one word per stolen cycle."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Polling adds device-identification overhead."
+        }
+      ],
+      "verification": "Standard textbook ranking (Hamacher): burst > cycle stealing > transparent; vectored faster than polled."
+    },
+    "it-2006-cs-9": {
+      "approach": "In any binary tree, leaves = (nodes of degree 2) + 1; degree-1 nodes do not matter.",
+      "concepts": [
+        "Binary tree properties",
+        "Edge counting"
+      ],
+      "steps": [
+        {
+          "title": "Count edges two ways",
+          "body": "Let $n_0,n_1,n_2$ be the numbers of nodes with 0, 1, 2 children. Edges $= n-1 = n_0+n_1+n_2-1$ and also $= n_1+2n_2$. Hence $n_0=n_2+1$."
+        },
+        {
+          "title": "Substitute",
+          "body": "With $n_2 = 10$ internal nodes of degree 2 (and $n_1=5$ irrelevant): $$n_0 = n_2 + 1 = 10 + 1 = 11$$"
+        }
+      ],
+      "answer": {
+        "value": "11",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Equals $n_2$, off by one."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: $n_2+1=11$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "No justification."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Adds $n_1$ to $n_2$ — degree-1 nodes do not create leaves."
+        }
+      ],
+      "verification": "Total $n=11+5+10=26$, edges $=25=5+2\\cdot10$ ✓."
+    },
+    "it-2006-cs-10": {
+      "approach": "NP-complete = in NP and NP-hard. To be NP-hard it suffices that a known NP-complete problem (3-SAT) reduces to it in polynomial time.",
+      "concepts": [
+        "NP-completeness",
+        "Polynomial reduction"
+      ],
+      "steps": [
+        {
+          "title": "Direction of reduction",
+          "body": "If $3\\text{-SAT}\\le_p X$ and $X\\in NP$, every NP problem reduces to 3-SAT and hence to $X$, so $X$ is NP-complete."
+        },
+        {
+          "title": "Reject the others",
+          "body": "Reducing $X$ to 3-SAT only shows $X\\in NP$. \"Some problem in NP reduces to it\" holds for every problem (e.g. trivial ones)."
+        }
+      ],
+      "answer": {
+        "value": "3-SAT reduces to it",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Wrong direction: this holds for every NP problem."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Wrong direction; says nothing about hardness."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Too weak: any problem in P satisfies it."
+        }
+      ],
+      "verification": "Matches the Cook–Levin based definition used by Karp reductions."
+    },
+    "it-2006-cs-11": {
+      "approach": "A minimum-weight connected spanning edge set cannot contain a cycle when weights are positive, so it is a (spanning) tree.",
+      "concepts": [
+        "Minimum spanning tree"
+      ],
+      "steps": [
+        {
+          "title": "No cycles",
+          "body": "If the subset had a cycle, removing any cycle edge keeps all vertices connected and lowers the total weight (weights $>0$), contradicting minimality."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Connected + acyclic = **tree** (an MST)."
+        }
+      ],
+      "answer": {
+        "value": "tree",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A Hamiltonian cycle contains a cycle; dropping an edge is cheaper."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A grid has cycles."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A hypercube has cycles."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "With zero-weight edges a cycle might survive; positivity rules that out."
+    },
+    "it-2006-cs-12": {
+      "approach": "The working-set model keeps $D=\\sum WSS_i$ against the frame count $m$: admit a new process when there is slack, suspend one when $D>m$.",
+      "concepts": [
+        "Working-set model",
+        "Thrashing"
+      ],
+      "steps": [
+        {
+          "title": "Working-set policy",
+          "body": "If $D<m$ with enough spare frames, the OS can start another process (statement 1). If $D>m$, the OS suspends a process and frees its frames (statement 2)."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Both actions are part of the strategy."
+        }
+      ],
+      "answer": {
+        "value": "Both 1 and 2",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Omits the suspension rule."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits the admission rule."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both are done."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "Silberschatz, Operating System Concepts, working-set model."
+    },
+    "it-2006-cs-13": {
+      "approach": "Look for the Running → Ready edge. Preemption needs it (timer interrupt sends the running process back to ready); the diagram has none.",
+      "concepts": [
+        "Process state diagram",
+        "Preemptive scheduling"
+      ],
+      "steps": [
+        {
+          "title": "Read the diagram",
+          "body": "Edges: Start→Ready, Ready→Running, Running→Terminated, Running→Blocked, Blocked→Ready. A running process leaves the CPU only by exiting or blocking."
+        },
+        {
+          "title": "Judge the options",
+          "body": "No Running→Ready transition ⇒ scheduling cannot be preemptive. Multiprogramming and multi-user operation are possible (many processes in Ready/Blocked). So **\"uses preemptive scheduling\" must be FALSE**."
+        }
+      ],
+      "answer": {
+        "value": "It uses preemptive scheduling",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Possible: several processes can be in Ready/Blocked."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: impossible without a Running→Ready edge."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: the CPU is released only voluntarily."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Possible: nothing in the diagram forbids multiple users."
+        }
+      ],
+      "verification": "Preemption ⇔ an involuntary Running→Ready transition."
+    },
+    "it-2006-cs-14": {
+      "approach": "The natural join is on R, which is the primary key of $r_2$, so each $r_1$ tuple matches at most one $r_2$ tuple.",
+      "concepts": [
+        "Natural join",
+        "Primary key"
+      ],
+      "steps": [
+        {
+          "title": "Common attribute",
+          "body": "$r_1(P,Q,R)\\bowtie r_2(R,S,T)$ joins on $R$, the key of $r_2$: each $R$ value occurs at most once in $r_2$."
+        },
+        {
+          "title": "Bound",
+          "body": "Each of the 2000 $r_1$ tuples joins with ≤ 1 tuple, so $|r_1\\bowtie r_2|\\le 2000$, achieved when every $r_1.R$ appears in $r_2$."
+        }
+      ],
+      "answer": {
+        "value": "2000",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Would need some $r_1$ tuple to match several $r_2$ tuples — impossible since R is a key of $r_2$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Sum of sizes; joins do not add."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No basis."
+        }
+      ],
+      "verification": "Example: $r_2$ holds R = 1..2500, every $r_1$ tuple has R in 1..2500 ⇒ 2000 rows."
+    },
+    "it-2006-cs-15": {
+      "approach": "Codd's theorem: relational algebra, safe tuple calculus and safe domain calculus are equally expressive.",
+      "concepts": [
+        "Codd's theorem",
+        "Relational calculus"
+      ],
+      "steps": [
+        {
+          "title": "Equivalence",
+          "body": "Every RA expression has an equivalent safe TRC and safe DRC expression and vice versa (Codd's theorem)."
+        },
+        {
+          "title": "Conclusion",
+          "body": "All three — **1, 2 and 3** — have the same power."
+        }
+      ],
+      "answer": {
+        "value": "1, 2 and 3",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "RA is also equivalent."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Safe DRC is also equivalent."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Safe TRC is also equivalent."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "Unrestricted (unsafe) calculus is more expressive (can give infinite answers); safety is what makes them equal."
+      ],
+      "verification": "Korth/Silberschatz, Database System Concepts, ch. on relational calculus."
+    },
+    "it-2006-cs-16": {
+      "approach": "Cyclomatic complexity = number of linearly independent paths; a basis-path test set of that size is sufficient (never more needed) for executing every statement at least once.",
+      "concepts": [
+        "Cyclomatic complexity",
+        "Basis path testing"
+      ],
+      "steps": [
+        {
+          "title": "Meaning",
+          "body": "$V(G)$ counts independent paths. Testing all basis paths covers every statement and branch, so $V(G)$ tests always suffice."
+        },
+        {
+          "title": "Upper bound, at least once",
+          "body": "Fewer tests may achieve statement coverage, so $V(G)$ is an **upper bound** on the tests needed to execute every statement **at least once**."
+        }
+      ],
+      "answer": {
+        "value": "Upper bound, at least once",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "\"At most once\" is not a coverage goal."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same flaw; also not a lower bound."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not a lower bound: statement coverage often needs fewer tests."
+        }
+      ],
+      "verification": "Pressman, Software Engineering: \"upper bound for the number of tests … executed at least once\"."
+    },
+    "it-2006-cs-17": {
+      "approach": "Recall the McCabe formulas for a single connected component: $V(G)=E-N+2=P+1$.",
+      "concepts": [
+        "Cyclomatic complexity"
+      ],
+      "steps": [
+        {
+          "title": "Formulas",
+          "body": "$V(G)=E-N+2p$ with $p=1$ component ⇒ $E-N+2$. Also $V(G)=P+1$ for binary predicate nodes."
+        },
+        {
+          "title": "Match",
+          "body": "Expressions **2 and 4**."
+        }
+      ],
+      "answer": {
+        "value": "2 or 4",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$E-N+P$ and $P+2$ are not McCabe formulas."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$P+2$ is off by one."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$E-N+P$ is wrong."
+        }
+      ],
+      "verification": "If/else graph: $N=4$, $E=4$, $P=1$ ⇒ $E-N+2=2=P+1$ ✓."
+    },
+    "it-2006-cs-18": {
+      "approach": "Recall protocol commands: HELO opens an SMTP session; PORT tells an FTP server where to open the data connection.",
+      "concepts": [
+        "SMTP",
+        "FTP"
+      ],
+      "steps": [
+        {
+          "title": "HELO",
+          "body": "SMTP client greeting: `HELO client.example.com`."
+        },
+        {
+          "title": "PORT",
+          "body": "FTP active-mode command giving the client IP and port for the data channel. Hence **SMTP and FTP**."
+        }
+      ],
+      "answer": {
+        "value": "SMTP and FTP",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "HELO is not an FTP command; HTTP has no PORT command."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Telnet and POP3 use neither."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "HTTP has no HELO."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "RFC 5321 (SMTP HELO) and RFC 959 (FTP PORT)."
+    },
+    "it-2006-cs-19": {
+      "approach": "Ethernet trailer has a 32-bit CRC (FCS); the IPv4 header has a 16-bit ones-complement header checksum.",
+      "concepts": [
+        "Ethernet frame",
+        "IPv4 header"
+      ],
+      "steps": [
+        {
+          "title": "Ethernet",
+          "body": "Frame ends with the 4-byte Frame Check Sequence, a CRC-32."
+        },
+        {
+          "title": "IPv4 header",
+          "body": "IPv4 header has a 16-bit header checksum (ones-complement sum), not a CRC."
+        }
+      ],
+      "answer": {
+        "value": "Ethernet CRC, IP checksum",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Ethernet uses a CRC, not a checksum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Reversed."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "IP does not use a CRC."
+        }
+      ],
+      "verification": "IEEE 802.3 FCS; RFC 791 header checksum."
+    },
+    "it-2006-cs-20": {
+      "approach": "A hash maps arbitrary-length input to a fixed-length digest; because the domain is larger than the range, collisions must exist.",
+      "concepts": [
+        "Hash function",
+        "Collisions"
+      ],
+      "steps": [
+        {
+          "title": "Statements 1 and 2",
+          "body": "1 is the definition of a hash function (true). 2 reverses it (false)."
+        },
+        {
+          "title": "Statement 3",
+          "body": "Pigeonhole principle: infinitely many messages, finitely many digests ⇒ distinct messages can share a hash (true). So **1 and 3**."
+        }
+      ],
+      "answer": {
+        "value": "1 and 3 only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses statement 3."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Statement 2 is false."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Statement 2 is false."
+        }
+      ],
+      "verification": "E.g. SHA-256 always outputs 256 bits regardless of input length."
+    },
+    "it-2006-cs-21": {
+      "approach": "The formula says R is symmetric. Find one model where R is symmetric and one where it is not.",
+      "concepts": [
+        "First-order logic",
+        "Satisfiability",
+        "Validity"
+      ],
+      "steps": [
+        {
+          "title": "Satisfiable",
+          "body": "Take $R=\\emptyset$ (or equality): the implication holds vacuously, so the formula is satisfiable."
+        },
+        {
+          "title": "Negation satisfiable",
+          "body": "Domain $\\{1,2\\}$, $R=\\{(1,2)\\}$: $R(1,2)$ true, $R(2,1)$ false, so the formula is false and its negation is true. Hence the formula is not valid, and both it and its negation are satisfiable."
+        }
+      ],
+      "answer": {
+        "value": "satisfiable and so is its negation",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not valid: $R=\\{(1,2)\\}$ falsifies it."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "It is satisfiable ($R=\\emptyset$)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The negation is satisfiable ($R=\\{(1,2)\\}$)."
+        }
+      ],
+      "verification": "Two explicit models given, one for each."
+    },
+    "it-2006-cs-22": {
+      "approach": "N is geometric with success probability p; its mean is 1/p.",
+      "concepts": [
+        "Geometric distribution",
+        "Expectation"
+      ],
+      "steps": [
+        {
+          "title": "Distribution",
+          "body": "$P(N=k)=(1-p)^{k-1}p$, $k\\ge1$."
+        },
+        {
+          "title": "Expectation via recursion",
+          "body": "First toss: Head (prob $p$) ⇒ $N=1$; Tail ⇒ start over after 1 toss.\n$$E=p\\cdot1+(1-p)(1+E)\\Rightarrow E=1+(1-p)E\\Rightarrow pE=1\\Rightarrow E=\\frac1p$$"
+        }
+      ],
+      "answer": {
+        "value": "1/p",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That is the expected tosses until the first Tail."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not the geometric mean."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No basis."
+        }
+      ],
+      "verification": "$p=\\tfrac12$ gives $E=2$, the familiar answer for a fair coin."
+    }
+  }
+}
