@@ -2147,6 +2147,1801 @@
       ],
       "verification": "From $v\\le88$ use $v\\to v+12\\to v+4$; from $v>88$ (so $v+4\\le100$, $v\\ge9$) use $v\\to v-8\\to v+4$ — every class is a path-connected chain of 25 vertices."
     },
+    "cse-1997-a-43": {
+      "approach": "Equivalence relations on a set correspond one-to-one with its partitions, so count the partitions of a 4-element set (the Bell number $B_4$).",
+      "concepts": [
+        "Equivalence relation",
+        "Set partition",
+        "Bell number",
+        "Stirling numbers of the second kind"
+      ],
+      "steps": [
+        {
+          "title": "Relations ↔ partitions",
+          "body": "Every equivalence relation splits $\\{1,2,3,4\\}$ into equivalence classes (a partition), and every partition defines exactly one equivalence relation. So the answer is the number of partitions $B_4$."
+        },
+        {
+          "title": "Count by number of blocks",
+          "body": "Using $S(4,k)$ = partitions into $k$ non-empty blocks:\n\n| $k$ | shape | $S(4,k)$ |\n|---|---|---|\n| 1 | $\\{1234\\}$ | 1 |\n| 2 | $3+1$ or $2+2$ | $4+3=7$ |\n| 3 | $2+1+1$ | $\\binom42=6$ |\n| 4 | $1+1+1+1$ | 1 |\n\nFor $k=2$: choosing the singleton gives $4$; splitting into two pairs gives $\\binom42/2=3$."
+        },
+        {
+          "title": "Add up",
+          "body": "$$B_4 = 1+7+6+1 = 15$$"
+        }
+      ],
+      "answer": {
+        "value": "15",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$B_4=15$ partitions, hence 15 equivalence relations."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "16 is $2^4$, the number of subsets — not partitions."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "24 is $4!$, the number of permutations."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "4 counts only the possible numbers of blocks $k=1..4$."
+        }
+      ],
+      "shortcut": "Bell numbers: $1,1,2,5,15,52$ for $n=0..5$ — recall $B_4=15$ directly.",
+      "pitfalls": [
+        "Counting reflexive/symmetric relations instead of partitions.",
+        "For the $2+2$ split, forgetting to divide $\\binom42$ by 2."
+      ],
+      "verification": "Bell triangle: rows 1; 1 2; 2 3 5; 5 7 10 15 — last entry 15."
+    },
+    "cse-1997-a-44": {
+      "approach": "A string avoids 100 exactly when no two 0s follow a 1. After the leading 0s, the string is built only from the blocks 1 and 10.",
+      "concepts": [
+        "Regular expressions",
+        "Forbidden substring"
+      ],
+      "steps": [
+        {
+          "title": "Structure of valid strings",
+          "body": "Before the first 1, any number of 0s is harmless: $0^*$. After the first 1, two consecutive 0s would form $100$ (with the last 1 before them). So every 0 after that point comes alone, right after a 1. The rest of the string is therefore a sequence of the blocks $1$ and $10$: $(1+10)^*$."
+        },
+        {
+          "title": "Match with options",
+          "body": "That is $0^*(10+1)^*$ = option D. It allows strings like $1010$, $110$ and a trailing $10$, but no block sequence can produce $00$ after a 1."
+        },
+        {
+          "title": "Reject the others",
+          "body": "- A: $(1^*0)(1^*0)$ with $1^*=1$ then $1^*=\\varepsilon$ gives $10\\cdot0 = 100$, so A contains a forbidden string.\n- B: $0^*1010^*$ contains $10100$, which has $100$, and misses $1$.\n- C: $0^*1^*01^*$ needs exactly one 0 after the 1s, so it misses $\\varepsilon$ and $1$."
+        }
+      ],
+      "answer": {
+        "value": "$0^*(10+1)^*$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Generates $100$ (as $(10)(0)$), so it does not avoid the substring."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Generates $10100$, which contains $100$; also misses valid strings such as $1$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Every string has a 0 right after the block of 1s; misses $\\varepsilon$, $1$ and $1010$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "After the leading 0s, only the blocks $1$ and $10$, so $00$ never follows a 1."
+        }
+      ],
+      "pitfalls": [
+        "Checking only that an option avoids $100$ — it must also generate every valid string."
+      ],
+      "verification": "Listed all strings of length ≤ 3 without 100 (all except 100 itself): each is $0^*$ followed by blocks 1/10, e.g. 010 = 0·10, 110 = 1·10."
+    },
+    "cse-1997-a-45": {
+      "approach": "Check each problem against standard results: bounded simulation and emptiness of FA/CFG are decidable; equivalence of Turing machines is undecidable (Rice's theorem).",
+      "concepts": [
+        "Decidability",
+        "Rice's theorem",
+        "Emptiness problem"
+      ],
+      "steps": [
+        {
+          "title": "Decidable ones",
+          "body": "- A: simulate $M$ on $s$ for at most $k$ steps — always halts.\n- C: FSM emptiness — check whether a final state is reachable from the start state.\n- D: CFG emptiness — mark generating variables iteratively and check whether $S$ is generating."
+        },
+        {
+          "title": "Undecidable one",
+          "body": "B: $\\{\\langle M_1,M_2\\rangle : L(M_1)=L(M_2)\\}$ is undecidable. Even \"$L(M)=\\emptyset$\" is undecidable (Rice's theorem), and emptiness reduces to equivalence with a machine that rejects everything."
+        }
+      ],
+      "answer": {
+        "value": "Equivalence of two Turing machines",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Bounded by $k$ steps, so direct simulation decides it."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "TM equivalence is undecidable (not even semi-decidable)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Reachability of a final state in a finite graph — decidable."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The generating-symbol algorithm decides CFG emptiness."
+        }
+      ],
+      "pitfalls": [
+        "Confusing A with the halting problem — the step bound $k$ makes it decidable."
+      ],
+      "verification": "Reduction $E_{TM}\\le EQ_{TM}$: compare $M$ with a machine that rejects every input."
+    },
+    "cse-1997-a-46": {
+      "approach": "A DPDA must know where the middle of the string is. The centre marker $c$ gives exactly that in option A; the other languages lack it or are not context-free.",
+      "concepts": [
+        "Deterministic PDA",
+        "Palindromes",
+        "Context-free languages"
+      ],
+      "steps": [
+        {
+          "title": "Option A is deterministic",
+          "body": "Push each $a/b$ until $c$ is read; after $c$ pop and match each symbol; accept when the stack is back to the bottom marker at the end of input. Every move is forced, so a DPDA accepts $\\{wcw^R\\}$."
+        },
+        {
+          "title": "Why the rest fail",
+          "body": "- B ($ww^R$) and D (all palindromes) need a guess of the middle: they are CFLs that no DPDA accepts.\n- C ($a^nb^nc^n$) is not even context-free (pumping lemma)."
+        }
+      ],
+      "answer": {
+        "value": "$\\{wcw^R \\mid w\\in\\{a,b\\}^*\\}$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "The marker $c$ tells the machine when to switch from pushing to popping."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Even-length palindromes — the middle must be guessed; not a DCFL."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not context-free at all."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Palindromes over $\\{a,b,c\\}$ — here $c$ is an ordinary symbol, not a marker, so the middle must still be guessed."
+        }
+      ],
+      "pitfalls": [
+        "In D the symbol $c$ can appear anywhere, so it does not act as a centre marker."
+      ],
+      "verification": "Traced the DPDA for A on $abcba$: push a, b; read c; pop b, a — accepts."
+    },
+    "cse-1997-a-47": {
+      "approach": "Worst case: each process holds one unit less than it needs. If one more unit exists, some process can finish. So the minimum is $n(k-1)+1$.",
+      "concepts": [
+        "Deadlock avoidance",
+        "Resource counting"
+      ],
+      "steps": [
+        {
+          "title": "Deadlock with 3 units",
+          "body": "With 3 units, each of the 3 processes can hold 1 unit and wait for its second — circular wait, deadlock."
+        },
+        {
+          "title": "Add one unit",
+          "body": "$$n(k-1)+1 = 3(2-1)+1 = 4$$ With 4 units, even when each process holds 1, one unit is free; some process gets its 2nd unit, finishes and releases both."
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Each process can hold 1 unit and wait forever — deadlock is possible."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Deadlock-free, but not the minimum."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$3\\cdot1+1=4$ is the smallest deadlock-free count."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Enough for all at once, but more than needed."
+        }
+      ],
+      "pitfalls": [
+        "Answering $n\\cdot k=6$ (no waiting at all) instead of the minimum."
+      ],
+      "verification": "With 3 units the state (1,1,1) is a deadlock; with 4 units every maximal holding state leaves a free unit."
+    },
+    "cse-1997-a-48": {
+      "approach": "Look for the worst interleaving. $P_{10}$ performs V instead of P, so each pass of $P_{10}$ adds to mutex instead of taking it. It can let every other process in.",
+      "concepts": [
+        "Semaphores",
+        "Mutual exclusion",
+        "Critical section"
+      ],
+      "steps": [
+        {
+          "title": "Effect of $P_{10}$",
+          "body": "mutex starts at 1. $P_{10}$ executes `V(mutex)` (mutex $+1$), enters the CS without blocking, does `V(mutex)` again on exit ($+1$), and loops. Each round adds 2 to mutex."
+        },
+        {
+          "title": "Build the worst case",
+          "body": "$P_1$ enters (mutex $1\\to0$). $P_{10}$ enters with V (mutex $0\\to1$), so $P_2$ can enter (mutex $1\\to0$). $P_{10}$ leaves with V (mutex $0\\to1$), so $P_3$ enters. $P_{10}$ loops and does V again, and so on. In this way $P_1,\\dots,P_9$ all get inside, and $P_{10}$ itself can be inside too."
+        },
+        {
+          "title": "Count",
+          "body": "Up to all $10$ processes can be in the critical section at once. That is not 1, 2 or 3, so the answer is \"none of above\"."
+        }
+      ],
+      "answer": {
+        "value": "10 (none of the above)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only true if every process used P before entering."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Assumes $P_{10}$ lets in just one extra process; it can do V again and again."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Counts only one extra pass of $P_{10}$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "All 10 processes can be inside together."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that $P_{10}$ loops forever, so it can do V many times."
+      ],
+      "verification": "Tracked mutex through the sequence above: it never goes below 0 when a new process enters, so nobody blocks."
+    },
+    "cse-1997-a-49": {
+      "approach": "Find the candidate key, then check for partial dependencies of non-prime attributes on part of the key.",
+      "concepts": [
+        "Candidate key",
+        "Partial dependency",
+        "2NF"
+      ],
+      "steps": [
+        {
+          "title": "Key",
+          "body": "$a$ and $b$ never appear on a right side, so both are in every key. $\\{a,b\\}^+ = \\{a,b,c,d\\}$, so the only candidate key is $ab$. Prime: $a,b$; non-prime: $c,d$."
+        },
+        {
+          "title": "Check 2NF",
+          "body": "$a\\to c$: the non-prime attribute $c$ depends on a proper subset of the key. That is a partial dependency, so 2NF is violated (likewise $b\\to d$)."
+        },
+        {
+          "title": "Conclusion",
+          "body": "All domains are atomic, so $R$ is in 1NF but not in 2NF."
+        }
+      ],
+      "answer": {
+        "value": "1NF but not 2NF",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Atomic values give 1NF; $a\\to c$ is a partial dependency."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not in 2NF because of the partial dependencies."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "3NF implies 2NF, which fails."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option A describes it correctly."
+        }
+      ],
+      "pitfalls": [
+        "Treating $a$ alone as a key — $a^+=\\{a,c\\}$ only."
+      ],
+      "verification": "$a^+=\\{a,c\\}$, $b^+=\\{b,d\\}$, $(ab)^+$ = all attributes — so $ab$ is the only key."
+    },
+    "cse-1997-a-50": {
+      "approach": "Referential integrity breaks only when a foreign-key value in S has no matching key in R. Ask which operation can create such a dangling reference.",
+      "concepts": [
+        "Foreign key",
+        "Referential integrity"
+      ],
+      "steps": [
+        {
+          "title": "Operations on S (referencing)",
+          "body": "- Insert into S: the new tuple's $d$ may not exist in R, so it **can** violate.\n- Delete from S: removing a referencing tuple never leaves anything dangling."
+        },
+        {
+          "title": "Operations on R (referenced)",
+          "body": "- Insert into R: adds a new key, so no reference can break.\n- Delete from R: tuples of S that refer to the deleted key become dangling, so it **can** violate."
+        },
+        {
+          "title": "Result",
+          "body": "Only (2) and (3) can cause a violation."
+        }
+      ],
+      "answer": {
+        "value": "(2) and (3)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(2) and (3) can violate it."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(1) and (4) can never violate it."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "These are exactly the two safe operations."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Insert into the referencing table, delete from the referenced table."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up the referencing table (S) and the referenced table (R)."
+      ],
+      "verification": "For each operation, checked whether some S tuple can end up with a $d$ value missing from R."
+    },
+    "cse-1997-a-51-a": {
+      "approach": "Decode the I/O write cycle to port FFH with one NAND gate: all 8 address bits, $IO/\\overline{M}$, and an active-high write strobe (the NOT gate inverts $\\overline{WR}$). The NAND output clocks the D flip-flop with $D_3$ on D, and the 8085 reset drives the clear.",
+      "concepts": [
+        "8085 I/O-mapped output",
+        "Address decoding",
+        "D flip-flop latch"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Port | FFH (I/O mapped, `OUT FFH`) |\n| Data bit | $D_3$ |\n| Parts | 1 NAND (10 inputs), 1 NOT, 1 D flip-flop |\n| Clear | on power ON |",
+      "steps": [
+        {
+          "title": "Which signals identify the cycle",
+          "body": "For `OUT FFH` the 8085 puts the port address on $A_7$–$A_0$ (copied on $A_{15}$–$A_8$). During the I/O write machine cycle $IO/\\overline{M}=1$ and $\\overline{WR}=0$. So a write to port FFH means $A_7=\\dots=A_0=1$, $IO/\\overline{M}=1$ and $WR=1$."
+        },
+        {
+          "title": "Decoder: NAND + NOT",
+          "body": "NOT gate: $WR=\\overline{\\overline{WR}}$. NAND inputs (10): $A_0,\\dots,A_7$, $IO/\\overline{M}$, $WR$.\n\n$$\\text{CLK}=\\overline{A_7A_6\\cdots A_0\\cdot IO/\\overline{M}\\cdot WR}$$\n\nCLK is low only while the CPU writes to port FFH."
+        },
+        {
+          "title": "Latch the data",
+          "body": "Connect $D_3$ to the D input and the NAND output to CLK. At the end of the write, $\\overline{WR}$ rises, so CLK has a rising edge while $D_3$ is still valid. The flip-flop stores $D_3$, and Q is the 1-bit output port."
+        },
+        {
+          "title": "Clear on power ON",
+          "body": "Connect the 8085 reset to the flip-flop's clear: RESET OUT (active high) to an active-high CLR, or $\\overline{\\text{RESET IN}}$ (the power-on RC signal, active low) to an active-low $\\overline{\\text{CLR}}$. Then Q = 0 after power ON."
+        }
+      ],
+      "answer": {
+        "value": "NAND inputs: $A_0$–$A_7$, $IO/\\overline{M}$ and $WR$ (= NOT of $\\overline{WR}$). The NAND output clocks the D flip-flop (rising edge at the end of the OUT write cycle). D input = $D_3$. The clear input comes from the 8085 reset (RESET OUT, or $\\overline{\\text{RESET IN}}$ to an active-low clear), so the flip-flop is cleared at power ON.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Leaving out $IO/\\overline{M}$ — a memory write to an address xxFFH would then also clock the port.",
+        "Clocking on the falling edge of $\\overline{WR}$ — the data is surely stable only at the rising edge."
+      ],
+      "verification": "Counted NAND inputs: 8 address + $IO/\\overline{M}$ + $WR$ = 10, matching the fan-in. The NOT gate is used once, for $\\overline{WR}$."
+    },
+    "cse-1997-a-51-b": {
+      "approach": "Write D3 with `OUT`, flip all bits of A with `CMA`, and jump back. `OUT` (3 machine cycles) + `CMA` (1) + `JMP` (3) = 7 bus cycles between two writes, so ON and OFF each last 7 bus cycles.",
+      "concepts": [
+        "8085 machine cycles",
+        "Software square wave",
+        "OUT instruction"
+      ],
+      "steps": [
+        {
+          "title": "Program",
+          "body": "```\n      MVI A, 00H   ; D3 = 0 (any start value)\nLOOP: OUT FFH      ; latch D3 into the flip-flop\n      CMA          ; complement A, so D3 toggles\n      JMP LOOP\n```"
+        },
+        {
+          "title": "Bus (machine) cycles per loop",
+          "body": "| Instruction | Machine cycles |\n|---|---|\n| `OUT FFH` | opcode fetch, memory read (port no.), I/O write = 3 |\n| `CMA` | opcode fetch = 1 |\n| `JMP LOOP` | opcode fetch, 2 memory reads = 3 |\n| **Total** | $3+1+3=7$ |"
+        },
+        {
+          "title": "Time between output changes",
+          "body": "The output changes only in the I/O write cycle of `OUT`. From one I/O write to the next: CMA (1) + JMP (3) + OUT fetch and read (2) + the new I/O write (1) $= 7$ bus cycles. So each ON and each OFF level lasts 7 bus cycles."
+        }
+      ],
+      "answer": {
+        "value": "`MVI A,00H` ; `LOOP: OUT FFH` ; `CMA` ; `JMP LOOP` — 3 + 1 + 3 = 7 bus cycles per half-period.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting T-states instead of bus (machine) cycles.",
+        "Putting `MVI` inside the loop — it adds 2 cycles and stops the toggling."
+      ],
+      "verification": "Cycles from write to write: CMA 1, JMP 3, OUT fetch 1, OUT read 1, write 1 → 7."
+    },
+    "cse-1997-a-52": {
+      "approach": "Recursive pairwise swap: for nodes $p$ (1st) and $q$ (2nd), $q$ becomes the head, $q$ points to $p$, and $p$ points to the swapped rest of the list starting at $t=q\\uparrow.next$.",
+      "concepts": [
+        "Linked list",
+        "Recursion",
+        "Pairwise swap"
+      ],
+      "steps": [
+        {
+          "title": "Base cases (lines 4–5)",
+          "body": "Empty list: return `p` (nil). One node: nothing to swap, so the line 5 box is **`p`**."
+        },
+        {
+          "title": "Name the pieces (lines 7, 9)",
+          "body": "`q := p↑.next` is the 2nd node; `t := q↑.next` is the rest of the list, starting at node 3.",
+          "scene": {
+            "caption": "p = a1, q = a2, t = a3",
+            "pointers": [
+              {
+                "name": "p",
+                "at": 0
+              },
+              {
+                "name": "q",
+                "at": 1
+              },
+              {
+                "name": "t",
+                "at": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "New head (line 8)",
+          "body": "After the swap $a_2$ comes first, so line 8 is **`change := q`**. In Pascal the function result may be assigned before the end.",
+          "scene": {
+            "caption": "change := q (a2 becomes the head)",
+            "hl": [
+              {
+                "at": [
+                  1,
+                  1
+                ],
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Relink (lines 10–11)",
+          "body": "Line 10: **`q↑.next := p`** ($a_2\\to a_1$). Line 11: **`p↑.next := change(t)`** ($a_1\\to$ the swapped remainder). `t` was saved on line 9 before line 10 overwrote `q↑.next`.",
+          "scene": {
+            "cells": [
+              {
+                "v": "a2",
+                "id": "n2"
+              },
+              {
+                "v": "a1",
+                "id": "n1"
+              },
+              {
+                "v": "a4",
+                "id": "n4"
+              },
+              {
+                "v": "a3",
+                "id": "n3"
+              },
+              {
+                "v": "a5",
+                "id": "n5"
+              }
+            ],
+            "pointers": [],
+            "hl": [
+              {
+                "at": [
+                  0,
+                  1
+                ],
+                "tone": "success"
+              },
+              {
+                "at": [
+                  2,
+                  3
+                ],
+                "tone": "info"
+              }
+            ],
+            "caption": "Result for n = 5: a2 a1 a4 a3 a5"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Line 5: `p`; Line 8: `change`; Line 10: `q↑.next`; Line 11: `p↑.next`",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "array",
+        "variant": "linked",
+        "label": "L",
+        "cells": [
+          {
+            "v": "a1",
+            "id": "n1"
+          },
+          {
+            "v": "a2",
+            "id": "n2"
+          },
+          {
+            "v": "a3",
+            "id": "n3"
+          },
+          {
+            "v": "a4",
+            "id": "n4"
+          },
+          {
+            "v": "a5",
+            "id": "n5"
+          }
+        ],
+        "caption": "Input list, n = 5"
+      },
+      "pitfalls": [
+        "Writing `change := t` on line 8 — the new head must be $a_2$.",
+        "Overwriting `q↑.next` before saving `t` — the rest of the list would be lost (the given line order avoids this)."
+      ],
+      "verification": "Traced $n=1$ (returns $a_1$), $n=2$ ($a_2,a_1$) and $n=3$ ($a_2,a_1,a_3$)."
+    },
+    "cse-1997-a-53-a": {
+      "approach": "There are $n^2$ vertices, so a spanning tree has $n^2-1$ edges. Every edge weighs $1$ (horizontal or vertical) or $\\sqrt2$ (diagonal). The unit edges alone connect the grid, so the MST uses only weight-1 edges.",
+      "concepts": [
+        "Minimum spanning tree",
+        "Grid graph"
+      ],
+      "steps": [
+        {
+          "title": "Edge weights",
+          "body": "Adjacent points differ by at most 1 in each coordinate: horizontal and vertical edges weigh $1$, diagonal edges weigh $\\sqrt2$."
+        },
+        {
+          "title": "Lower bound and construction",
+          "body": "Any spanning tree has $n^2-1$ edges, each of weight $\\ge1$, so its weight is $\\ge n^2-1$. A \"comb\" of unit edges (each row joined horizontally, plus the first column joined vertically) is a spanning tree with exactly $n^2-1$ unit edges."
+        },
+        {
+          "title": "Answer",
+          "body": "$$w_{\\min} = n^2-1$$"
+        }
+      ],
+      "answer": {
+        "value": "$n^2-1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting $n^2$ edges instead of $n^2-1$."
+      ],
+      "verification": "$n=2$: 4 vertices, 3 unit edges → weight 3 = $2^2-1$."
+    },
+    "cse-1997-a-53-b": {
+      "approach": "Use as many $\\sqrt2$ (diagonal) edges as possible. A diagonal step keeps the parity of $x+y$, so diagonal edges form two classes (the two checkerboard colours). A tree on each class uses $n^2-2$ diagonals, and one unit edge joins the two.",
+      "concepts": [
+        "Maximum spanning tree",
+        "Parity (checkerboard) argument"
+      ],
+      "steps": [
+        {
+          "title": "Diagonals keep the colour",
+          "body": "A diagonal step changes both $x$ and $y$ by $\\pm1$, so $x+y$ keeps its parity. Diagonal edges never join an \"even\" point to an \"odd\" one. So a spanning tree contains at most $n^2-2$ diagonals and at least one unit edge between the two classes."
+        },
+        {
+          "title": "Both classes are diagonal-connected",
+          "body": "For $n\\ge2$, each colour class is connected by diagonal moves (for $n=2$: $(1,1)-(2,2)$ and $(1,2)-(2,1)$; larger boards work the same way). So each class has a spanning tree of diagonals: $(\\#\\text{even}-1)+(\\#\\text{odd}-1)=n^2-2$ edges."
+        },
+        {
+          "title": "Join and total",
+          "body": "One unit edge joins the two trees, giving $n^2-1$ edges in all:\n$$w_{\\max}=(n^2-2)\\sqrt2+1$$"
+        }
+      ],
+      "answer": {
+        "value": "$(n^2-2)\\sqrt{2}+1$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering $(n^2-1)\\sqrt2$ — diagonal edges alone cannot join the two colour classes."
+      ],
+      "verification": "$n=2$: two diagonals + one side gives $2\\sqrt2+1 = (4-2)\\sqrt2+1$."
+    },
+    "cse-1997-a-54-a-i": {
+      "approach": "Trace the recursion. With call by value $z$ stays 10 on the way down; the assignments $z:=x+10$ run on the way back, innermost first, so the outermost frame writes last.",
+      "concepts": [
+        "Call by value",
+        "Recursion trace",
+        "Global variable"
+      ],
+      "steps": [
+        {
+          "title": "Going down (z stays 10)",
+          "body": "With call by value each call has its own $x$. $z$ changes only on the way back, so on the way down every call adds $z=10$:\n\n| call | $x$ on entry | $x\\le40$? | $x:=x+z$ |\n|---|---|---|---|\n| 1 | 10 | yes | 20 |\n| 2 | 20 | yes | 30 |\n| 3 | 30 | yes | 40 |\n| 4 | 40 | yes | 50 |\n| 5 | 50 | no | — |",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "z": 10
+            },
+            "callStack": [
+              {
+                "name": "recur#1",
+                "vars": {
+                  "x": 20
+                }
+              },
+              {
+                "name": "recur#2",
+                "vars": {
+                  "x": 30
+                }
+              },
+              {
+                "name": "recur#3",
+                "vars": {
+                  "x": 40
+                }
+              },
+              {
+                "name": "recur#4",
+                "vars": {
+                  "x": 50
+                }
+              },
+              {
+                "name": "recur#5",
+                "vars": {
+                  "x": 50
+                }
+              }
+            ],
+            "caption": "5th call: 50 > 40, returns at once"
+          }
+        },
+        {
+          "title": "Coming back (z overwritten)",
+          "body": "Each frame sets $z:=x+10$ with its **own** $x$, from the innermost frame outwards:\n- call 4: $z=50+10=60$\n- call 3: $z=40+10=50$\n- call 2: $z=30+10=40$\n- call 1: $z=20+10=30$\n\nThe outermost call writes last, so $z=30$.",
+          "scene": {
+            "line": 7,
+            "vars": {
+              "z": 30
+            },
+            "callStack": [
+              {
+                "name": "recur#1",
+                "vars": {
+                  "x": 20
+                }
+              }
+            ],
+            "caption": "Outermost frame: z := 20 + 10 = 30"
+          }
+        },
+        {
+          "title": "Result",
+          "body": "Printed value $= 30$. (`recur` is called 5 times, with arguments 10, 20, 30, 40, 50.)",
+          "scene": {
+            "line": 13,
+            "callStack": [],
+            "vars": {
+              "z": 30
+            },
+            "output": "30",
+            "caption": "writeln(z) prints 30"
+          }
+        }
+      ],
+      "answer": {
+        "value": "30",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "program what;\nvar z : integer;\nprocedure recur(x);\nbegin if x <= 40 then\n  begin x := x + z;\n    recur(x);\n    z := x + 10\n  end\nend;\nbegin\n  z := 10;\n  recur(z);\n  writeln(z)\nend",
+        "line": 12,
+        "vars": {
+          "z": 10
+        },
+        "callStack": [],
+        "output": "",
+        "caption": "z := 10, then recur(z)"
+      },
+      "pitfalls": [
+        "Taking the innermost assignment ($z=60$) as final — the outer frames write after it."
+      ],
+      "verification": "Frame $x$ values after the update are 20, 30, 40, 50; the last assignment made is $20+10=30$."
+    },
+    "cse-1997-a-54-a-ii": {
+      "approach": "Count calls in the same call-by-value trace: the argument goes $10\\to20\\to30\\to40\\to50$, and the call with 50 fails the test and stops.",
+      "concepts": [
+        "Call by value",
+        "Recursion depth"
+      ],
+      "steps": [
+        {
+          "title": "Arguments of successive calls",
+          "body": "$z=10$ during the descent, so each call passes $x+10$ to the next: arguments $10, 20, 30, 40, 50$."
+        },
+        {
+          "title": "Stopping call",
+          "body": "The call with $x=50$ fails $x\\le40$ and returns without recursing. Total calls $=5$, counting this last call."
+        }
+      ],
+      "answer": {
+        "value": "5",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering 4 by leaving out the last call, which fails the test but is still a call."
+      ],
+      "verification": "Same table as part (i): calls 1–5, of which the first four recurse."
+    },
+    "cse-1997-a-54-b": {
+      "approach": "With call by reference, $x$ is another name for the global $z$, so every update of $x$ changes $z$ immediately. Trace the one shared value.",
+      "concepts": [
+        "Call by reference",
+        "Aliasing",
+        "Recursion trace"
+      ],
+      "steps": [
+        {
+          "title": "Going down",
+          "body": "$x\\equiv z$, so $x:=x+z$ doubles $z$:\n- call 1: $10\\le40$, $z=10+10=20$\n- call 2: $20\\le40$, $z=20+20=40$\n- call 3: $40\\le40$, $z=40+40=80$\n- call 4: $80>40$, return",
+          "scene": {
+            "line": 6,
+            "vars": {
+              "z (= x)": 80
+            },
+            "callStack": [
+              {
+                "name": "recur#1",
+                "vars": {
+                  "x": "&z"
+                }
+              },
+              {
+                "name": "recur#2",
+                "vars": {
+                  "x": "&z"
+                }
+              },
+              {
+                "name": "recur#3",
+                "vars": {
+                  "x": "&z"
+                }
+              },
+              {
+                "name": "recur#4",
+                "vars": {
+                  "x": "&z"
+                }
+              }
+            ],
+            "caption": "x aliases z; z doubled to 80"
+          }
+        },
+        {
+          "title": "Coming back",
+          "body": "Each of calls 3, 2, 1 does $z:=x+10$ with $x=z$:\n- call 3: $z=80+10=90$\n- call 2: $z=90+10=100$\n- call 1: $z=100+10=110$",
+          "scene": {
+            "line": 7,
+            "vars": {
+              "z (= x)": 110
+            },
+            "callStack": [
+              {
+                "name": "recur#1",
+                "vars": {
+                  "x": "&z"
+                }
+              }
+            ],
+            "caption": "Three returns add 10 each: 110"
+          }
+        },
+        {
+          "title": "Result",
+          "body": "`writeln(z)` prints $110$.",
+          "scene": {
+            "line": 13,
+            "callStack": [],
+            "vars": {
+              "z": 110
+            },
+            "output": "110",
+            "caption": "prints 110"
+          }
+        }
+      ],
+      "answer": {
+        "value": "110",
+        "matchesKey": true
+      },
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "program what;\nvar z : integer;\nprocedure recur(x);\nbegin if x <= 40 then\n  begin x := x + z;\n    recur(x);\n    z := x + 10\n  end\nend;\nbegin\n  z := 10;\n  recur(z);\n  writeln(z)\nend",
+        "line": 12,
+        "vars": {
+          "z": 10
+        },
+        "callStack": [],
+        "output": "",
+        "caption": "z := 10, then recur(z)"
+      },
+      "pitfalls": [
+        "Forgetting that $x:=x+z$ doubles $z$ when $x$ and $z$ are the same variable."
+      ],
+      "verification": "Values: 10 → 20 → 40 → 80 (stop) → 90 → 100 → 110."
+    },
+    "cse-1997-a-55-a": {
+      "approach": "Count the letters each production adds. With $a$ uses of $S\\to bSe$ and $p,q,r$ uses of the recursive rules of $P,Q,R$, the string is $b^{a+p}c^{p+q}d^{q+r}e^{r+a}$. Then eliminate the parameters.",
+      "concepts": [
+        "CFG language",
+        "Counting derivations"
+      ],
+      "steps": [
+        {
+          "title": "Shape of every string",
+          "body": "$S\\Rightarrow^* b^aSe^a\\Rightarrow b^aPQRe^a$, with $P\\Rightarrow^* b^pc^p$, $Q\\Rightarrow^*c^qd^q$, $R\\Rightarrow^*d^re^r$. So\n$$i=a+p,\\; j=p+q,\\; k=q+r,\\; m=r+a.$$"
+        },
+        {
+          "title": "Eliminate the parameters",
+          "body": "$i+k=a+p+q+r=j+m$. So every generated string has $i+k=j+m$."
+        },
+        {
+          "title": "Every such string is generated",
+          "body": "Given $i+k=j+m$, take $a=\\max(0,i-j)$, $p=i-a$, $q=j-p$, $r=k-q$. All are $\\ge0$, and $r+a=k-j+i=m$. So the condition is also sufficient."
+        }
+      ],
+      "answer": {
+        "value": "$i+k=j+m$ (with $i,j,k,m\\ge0$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering $i=m$ and $j=k$ — that misses strings such as $bccd$ ($i=1,j=2,k=1,m=0$)."
+      ],
+      "verification": "$bccd$: $a=0,p=1,q=1,r=0$ derives it, and $1+1=2+0$ ✓. $bbccdd$ ($i=j=k=2$, $m=0$): $4\\ne2$, and it cannot be derived."
+    },
+    "cse-1997-a-55-b": {
+      "approach": "Two parse trees exist when the same $(i,j,k,m)$ comes from two parameter tuples $(a,p,q,r)$. Find the smallest string for which two values of $a$ are possible.",
+      "concepts": [
+        "Ambiguity",
+        "Parse trees"
+      ],
+      "steps": [
+        {
+          "title": "When two trees exist",
+          "body": "From $p=i-a$, $q=j-i+a$, $r=m-a$, each value of $a$ fixes the whole derivation. Two values of $a$ are possible iff $\\max(0,i-j)<\\min(i,m)$. This needs $i\\ge1$, $m\\ge1$ and $j\\ge1$ (if $j=0$ then $i-j=i$, so the range is empty)."
+        },
+        {
+          "title": "Smallest choice",
+          "body": "$i=j=m=1$ gives $k=j+m-i=1$: the string $bcde$ (length 4). Shorter strings ($\\varepsilon$, $be$, $bc$, $cd$, $de$) have only one possible $a$."
+        },
+        {
+          "title": "The two trees",
+          "body": "1. $S\\Rightarrow bSe\\Rightarrow bPQRe\\Rightarrow b\\,(cQd)\\,e\\Rightarrow bcde$ ($a=1$, $q=1$).\n2. $S\\Rightarrow PQR\\Rightarrow (bPc)(\\varepsilon)(dRe)\\Rightarrow bcde$ ($a=0$, $p=r=1$)."
+        }
+      ],
+      "answer": {
+        "value": "$bcde$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Proposing $be$ — it has only the derivation $S\\Rightarrow bSe$ with $PQR\\Rightarrow\\varepsilon$."
+      ],
+      "verification": "Checked every string of length ≤ 2 in the language: each has exactly one parameter tuple."
+    },
+    "cse-1997-b-56-a": {
+      "approach": "Each insertion misses bucket 1 with probability $(n-1)/n$, independently of the others.",
+      "concepts": [
+        "Independent events",
+        "Uniform hashing"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Buckets | $n$, each with probability $1/n$ |\n| Insertions | $K$ distinct keys, independent |",
+      "steps": [
+        {
+          "title": "One insertion",
+          "body": "$P(\\text{key avoids bucket 1}) = 1-\\frac1n = \\frac{n-1}{n}$."
+        },
+        {
+          "title": "All K insertions",
+          "body": "$$P = \\left(\\frac{n-1}{n}\\right)^K$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\left(\\frac{n-1}{n}\\right)^K$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $1-K/n$, which treats the events as disjoint."
+      ],
+      "verification": "$K=1$: $(n-1)/n$ ✓; $n=1$: probability 0 for $K\\ge1$ ✓."
+    },
+    "cse-1997-b-56-b": {
+      "approach": "No collision means all $K$ keys land in distinct buckets (the birthday problem). The $i$-th key must avoid the $i-1$ buckets already used.",
+      "concepts": [
+        "Birthday problem",
+        "Multiplication rule"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Buckets | $n$, each with probability $1/n$ |\n| Insertions | $K$ distinct keys, independent |",
+      "steps": [
+        {
+          "title": "Key by key",
+          "body": "Key $i$ avoids the $i-1$ occupied buckets with probability $\\frac{n-i+1}{n}$."
+        },
+        {
+          "title": "Multiply",
+          "body": "$$P=\\prod_{i=1}^{K}\\frac{n-i+1}{n}=\\frac{n(n-1)\\cdots(n-K+1)}{n^K}=\\frac{n!}{(n-K)!\\,n^K}$$ For $K>n$ a collision is certain, so $P=0$ (the product contains the factor $0$)."
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{n(n-1)\\cdots(n-K+1)}{n^K}$ (0 if $K>n$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing $\\binom nK/n^K$ — the order of insertions matters."
+      ],
+      "verification": "$n=2,K=2$: outcomes 11, 12, 21, 22; no collision in 2 of 4 = $\\frac{2\\cdot1}{4}$ ✓."
+    },
+    "cse-1997-b-56-c": {
+      "approach": "The first collision is at insertion $K$ when the first $K-1$ keys go to distinct buckets and the $K$-th key hits one of those $K-1$ occupied buckets.",
+      "concepts": [
+        "Birthday problem",
+        "Conditional probability"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Buckets | $n$, each with probability $1/n$ |\n| Insertions | $K$ distinct keys, independent |",
+      "steps": [
+        {
+          "title": "First K−1 distinct",
+          "body": "Part (b) with $K-1$ keys: $\\frac{n(n-1)\\cdots(n-K+2)}{n^{K-1}}$."
+        },
+        {
+          "title": "K-th key collides",
+          "body": "Exactly $K-1$ buckets are occupied, so $P(\\text{hit}) = \\frac{K-1}{n}$. Multiply:\n$$P=\\frac{n(n-1)\\cdots(n-K+2)}{n^{K-1}}\\cdot\\frac{K-1}{n}$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{n(n-1)\\cdots(n-K+2)}{n^{K-1}}\\cdot\\frac{K-1}{n}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $1-P(\\text{no collision in }K)$ — that is \"at least one collision by $K$\", not \"first collision at $K$\"."
+      ],
+      "verification": "Equals $P_{\\text{none}}(K-1)-P_{\\text{none}}(K)$; for $n=2,K=2$: $1-\\frac12=\\frac12$, and the formula gives $\\frac{2}{2}\\cdot\\frac12=\\frac12$ ✓. $K=1$ gives 0 ✓."
+    },
+    "cse-1997-b-57-a": {
+      "approach": "A one-to-one function picks a distinct image for each of the n domain elements in order, so count ordered selections of n out of m values: the falling factorial $m^{\\underline n}$.",
+      "concepts": [
+        "Injective functions",
+        "Permutations $P(m,n)$"
+      ],
+      "steps": [
+        {
+          "title": "Assign images in order",
+          "body": "$f(1)$ has $m$ choices, $f(2)$ has $m-1$ (must differ from $f(1)$), …, $f(n)$ has $m-n+1$ choices."
+        },
+        {
+          "title": "Multiply",
+          "body": "$$|F| = m(m-1)(m-2)\\cdots(m-n+1)=\\frac{m!}{(m-n)!}$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\dfrac{m!}{(m-n)!}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "$m^n$ counts all functions, not just one-to-one ones.",
+        "$\\binom{m}{n}$ ignores which domain element gets which image (that is part (c))."
+      ],
+      "verification": "Check $m=3,n=2$: injective maps $\\{1,2\\}\\to\\{1,2,3\\}$ are the 6 ordered pairs of distinct values, and $3!/1!=6$."
+    },
+    "cse-1997-b-57-b": {
+      "approach": "Since $f$ is one-to-one, at most one $i$ maps to 1. Choose that $i$, then map the remaining $n-1$ elements injectively into the remaining $m-1$ values.",
+      "concepts": [
+        "Injective functions",
+        "Product rule"
+      ],
+      "steps": [
+        {
+          "title": "Pick the preimage of 1",
+          "body": "Exactly one $i$ has $f(i)=1$ (injectivity forbids two). There are $n$ choices for $i$."
+        },
+        {
+          "title": "Map the rest",
+          "body": "The other $n-1$ domain elements go one-to-one into $\\{2,\\dots,m\\}$ ($m-1$ values):\n$$\\frac{(m-1)!}{\\big((m-1)-(n-1)\\big)!}=\\frac{(m-1)!}{(m-n)!}$$"
+        },
+        {
+          "title": "Multiply",
+          "body": "$$n\\cdot\\frac{(m-1)!}{(m-n)!}$$\nEquivalently, total minus those avoiding 1: $\\frac{m!}{(m-n)!}-\\frac{(m-1)!}{(m-1-n)!}$ (for $m>n$)."
+        }
+      ],
+      "answer": {
+        "value": "$n\\cdot\\dfrac{(m-1)!}{(m-n)!}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Do not multiply by more than $n$ — no two elements can both map to 1."
+      ],
+      "verification": "$m=3,n=2$: maps hitting 1 are (1,2),(1,3),(2,1),(3,1) = 4, and $2\\cdot 2!/1! = 4$."
+    },
+    "cse-1997-b-57-c": {
+      "approach": "A strictly increasing function is determined completely by its image set: any $n$-element subset of $\\{1..m\\}$, listed in increasing order, gives exactly one such $f$.",
+      "concepts": [
+        "Strictly increasing functions",
+        "Combinations"
+      ],
+      "steps": [
+        {
+          "title": "Bijection with subsets",
+          "body": "If $f(1)<f(2)<\\dots<f(n)$, the image is an $n$-subset of $\\{1,\\dots,m\\}$. Conversely each $n$-subset, sorted, defines exactly one increasing $f$."
+        },
+        {
+          "title": "Count subsets",
+          "body": "$$\\binom{m}{n}=\\frac{m!}{n!\\,(m-n)!}$$\n(Equivalently: each image set appears in $n!$ injective functions, and exactly one of those orders is increasing: $\\frac{m!/(m-n)!}{n!}$.)"
+        }
+      ],
+      "answer": {
+        "value": "$\\dbinom{m}{n}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering $m!/(m-n)!$ counts all orders of the chosen images, not only the increasing one."
+      ],
+      "verification": "$m=3,n=2$: increasing maps are (1,2),(1,3),(2,3) = 3 = $\\binom32$."
+    },
+    "cse-1997-b-58-a": {
+      "approach": "Check reflexivity, symmetry and transitivity of $E$ directly, each one inherited from a property of $R$ (reflexive, the symmetric definition of $E$, transitive).",
+      "concepts": [
+        "Equivalence relation",
+        "Reflexive and transitive relations"
+      ],
+      "steps": [
+        {
+          "title": "Reflexive",
+          "body": "For every $a\\in A$, $(a,a)\\in R$ since $R$ is reflexive. Both conditions of $E$ hold with $b=a$, so $(a,a)\\in E$."
+        },
+        {
+          "title": "Symmetric",
+          "body": "If $(a,b)\\in E$ then $(a,b)\\in R$ and $(b,a)\\in R$. The same two facts read in the other order say $(b,a)\\in E$."
+        },
+        {
+          "title": "Transitive",
+          "body": "Let $(a,b)\\in E$ and $(b,c)\\in E$. Then $(a,b),(b,c)\\in R\\Rightarrow(a,c)\\in R$ and $(c,b),(b,a)\\in R\\Rightarrow(c,a)\\in R$ by transitivity of $R$. Hence $(a,c)\\in E$."
+        },
+        {
+          "title": "Conclude",
+          "body": "$E$ is reflexive, symmetric and transitive, so it is an equivalence relation on $A$. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "Proof: $E$ is reflexive (from $R$ reflexive), symmetric (its definition is symmetric in $a,b$) and transitive (apply transitivity of $R$ in both directions).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Transitivity must be shown for both $(a,c)$ and $(c,a)$ — it needs transitivity of $R$ twice."
+      ],
+      "verification": "Example: $R=\\le$ on integers gives $E$ = equality, an equivalence relation, as expected."
+    },
+    "cse-1997-b-58-b": {
+      "approach": "First show the relation does not depend on the chosen representatives (so $E_1\\le E_2$ iff $(a,b)\\in R$ for ALL $a\\in E_1,b\\in E_2$), then reflexivity and transitivity come from $R$ and antisymmetry from the definition of $E$.",
+      "concepts": [
+        "Partial order",
+        "Quotient by an equivalence relation",
+        "Preorder"
+      ],
+      "steps": [
+        {
+          "title": "Representatives do not matter",
+          "body": "Suppose $(a,b)\\in R$ with $a\\in E_1,b\\in E_2$, and take any $a'\\in E_1,b'\\in E_2$. Then $(a',a)\\in R$ and $(b,b')\\in R$ (definition of $E$), so by transitivity $(a',a),(a,b),(b,b')\\in R\\Rightarrow (a',b')\\in R$."
+        },
+        {
+          "title": "Reflexive",
+          "body": "For a class $E_1$ pick $a\\in E_1$; $(a,a)\\in R$, so $E_1\\le E_1$."
+        },
+        {
+          "title": "Antisymmetric",
+          "body": "Let $E_1\\le E_2$ and $E_2\\le E_1$. Take $a\\in E_1,b\\in E_2$; by the first step $(a,b)\\in R$ and $(b,a)\\in R$, so $(a,b)\\in E$: $a$ and $b$ are in the same class, i.e. $E_1=E_2$."
+        },
+        {
+          "title": "Transitive",
+          "body": "Let $E_1\\le E_2$, $E_2\\le E_3$. Fix $a\\in E_1,b\\in E_2,c\\in E_3$; by the first step $(a,b),(b,c)\\in R$, so $(a,c)\\in R$, giving $E_1\\le E_3$."
+        },
+        {
+          "title": "Conclude",
+          "body": "$\\le$ is reflexive, antisymmetric and transitive on the equivalence classes of $E$: a partial order. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "Proof: $\\le$ is well defined independent of representatives; reflexive from $R$ reflexive, transitive from $R$ transitive, and antisymmetric because mutual $R$-relation puts elements in the same $E$-class.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Without the representative-independence step, transitivity fails: the witnesses $b$ for $E_1\\le E_2$ and $E_2\\le E_3$ may differ.",
+        "Antisymmetry needs $E_1=E_2$ as classes, not $a=b$ as elements."
+      ],
+      "verification": "Collapsing the cycles of a preorder (e.g. reachability in a directed graph → its condensation DAG) gives exactly this partial order."
+    },
+    "cse-1997-b-59-a": {
+      "approach": "$F$ counts monotone lattice paths: $F(n,m)=\\binom{n+m}{n}$, which satisfies both the base case and Pascal's rule. Put $m=2$.",
+      "concepts": [
+        "Pascal's rule",
+        "Recurrence solving by guess-and-verify"
+      ],
+      "steps": [
+        {
+          "title": "Guess the closed form",
+          "body": "Try $G(n,m)=\\binom{n+m}{n}$. Base: if $n=0$ or $m=0$, $G=\\binom{m}{0}$ or $\\binom{n}{n}=1$ ✓."
+        },
+        {
+          "title": "Check the recurrence",
+          "body": "With $N=n+m$, $k=n$: $\\binom{N}{n}=\\binom{N-1}{n}+\\binom{N-1}{n-1}=G(n,m-1)+G(n-1,m)$ ✓. So $F=G$."
+        },
+        {
+          "title": "Substitute m = 2",
+          "body": "$$F(n,2)=\\binom{n+2}{2}=\\frac{(n+2)(n+1)}{2}$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\dbinom{n+2}{2}=\\dfrac{(n+1)(n+2)}{2}$",
+        "matchesKey": true
+      },
+      "verification": "Direct: $F(1,1)=F(0,1)+F(1,0)=2$, $F(1,2)=F(0,2)+F(1,1)=3=\\binom32$, $F(2,2)=F(1,2)+F(2,1)=3+3=6=\\binom42$ ✓."
+    },
+    "cse-1997-b-59-b": {
+      "approach": "Match the recurrence to Pascal's rule: $\\binom{n+m}{n}$ equals 1 when either argument is 0 and splits exactly as $F$ does.",
+      "concepts": [
+        "Pascal's rule",
+        "Lattice paths"
+      ],
+      "steps": [
+        {
+          "title": "Base case",
+          "body": "$n=0$: $\\binom{m}{0}=1$; $m=0$: $\\binom{n}{n}=1$ — same as $F$."
+        },
+        {
+          "title": "Recursive case",
+          "body": "$$\\binom{n+m}{n}=\\binom{n+m-1}{n}+\\binom{n+m-1}{n-1}=\\binom{n+(m-1)}{n}+\\binom{(n-1)+m}{n-1}$$\nwhich is $F(n,m-1)+F(n-1,m)$."
+        },
+        {
+          "title": "Result",
+          "body": "$$F(n,m)=\\binom{n+m}{n}=\\frac{(n+m)!}{n!\\,m!}$$"
+        }
+      ],
+      "answer": {
+        "value": "$\\dbinom{n+m}{n}$",
+        "matchesKey": true
+      },
+      "shortcut": "$F(n,m)$ counts paths from $(n,m)$ to an axis taking unit steps left/down — the classic $\\binom{n+m}{n}$ grid-path count.",
+      "verification": "$F(2,1)=F(1,1)+F(2,0)=2+1=3=\\binom31$ ✓; $F(2,2)=6=\\binom42$ ✓."
+    },
+    "cse-1997-b-59-c": {
+      "approach": "Write the call-count recurrence $C(n,m)=1+C(n-1,m)+C(n,m-1)$ with $C=1$ at the base, and notice $C=2F-1$ satisfies it (a full binary recursion tree with $F$ leaves has $2F-1$ nodes).",
+      "concepts": [
+        "Recursion tree",
+        "Full binary tree: leaves vs nodes"
+      ],
+      "steps": [
+        {
+          "title": "Call-count recurrence",
+          "body": "Base ($n\\le0$ or $m\\le0$): $C=1$. Otherwise $C(n,m)=1+C(n-1,m)+C(n,m-1)$."
+        },
+        {
+          "title": "Try C = 2F − 1",
+          "body": "Base: $2\\cdot1-1=1$ ✓. Recursive: $1+(2F(n-1,m)-1)+(2F(n,m-1)-1)=2\\big(F(n-1,m)+F(n,m-1)\\big)-1=2F(n,m)-1$ ✓."
+        },
+        {
+          "title": "Result",
+          "body": "$$C(n,m)=2\\binom{n+m}{n}-1$$"
+        }
+      ],
+      "answer": {
+        "value": "$2\\dbinom{n+m}{n}-1$",
+        "matchesKey": true
+      },
+      "shortcut": "Every non-base call has exactly 2 children, so the recursion tree is a full binary tree; its leaves each return 1, so #leaves $=F(n,m)$ and #nodes $=2F-1$.",
+      "pitfalls": [
+        "Counting only the leaves ($F$) or forgetting the original call."
+      ],
+      "verification": "$F(1,1)$: calls $F(1,1),F(0,1),F(1,0)$ = 3 = $2\\cdot2-1$ ✓."
+    },
+    "cse-1997-b-60-a": {
+      "approach": "Strong induction on $h$: a tree of height $h$ has one subtree of height $h-1$ (≥ $2^{h-1}$ nodes); the balance condition forces the other subtree to have at least $2^{h-1}-1$ nodes.",
+      "concepts": [
+        "Mathematical induction",
+        "Size-balanced binary tree"
+      ],
+      "steps": [
+        {
+          "title": "Base h = 0",
+          "body": "A tree of height 0 is a single node: $1=2^0$ nodes ✓."
+        },
+        {
+          "title": "Hypothesis",
+          "body": "Assume every size-balanced tree of height $h-1$ has at least $2^{h-1}$ nodes ($h\\ge1$). Every subtree of a size-balanced tree is itself size-balanced."
+        },
+        {
+          "title": "Inductive step",
+          "body": "A tree $T$ of height $h$ has a subtree $T_1$ of height exactly $h-1$, so $|T_1|\\ge2^{h-1}$. The other subtree $T_2$ satisfies $\\big||T_1|-|T_2|\\big|\\le1$, so $|T_2|\\ge2^{h-1}-1$.\n$$|T|=1+|T_1|+|T_2|\\ge1+2^{h-1}+2^{h-1}-1=2^h$$"
+        },
+        {
+          "title": "Conclude",
+          "body": "By induction every size-balanced binary tree of height $h$ has at least $2^h$ nodes. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "Proof by induction: base $h=0$ gives 1 node; for height $h$, one subtree has ≥ $2^{h-1}$ nodes and the other ≥ $2^{h-1}-1$, so total ≥ $1+2^{h-1}+2^{h-1}-1=2^h$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The second subtree may have height less than $h-1$ — bound it through the size condition, not its height."
+      ],
+      "verification": "The bound is tight: a perfect tree of height $h-1$ plus one extra leaf has $2^h$ nodes and is size-balanced."
+    },
+    "cse-1997-b-60-b": {
+      "approach": "A size-balanced tree is complete except possibly the last level, so level $h-1$ is full: $2^{h-1}$ nodes.",
+      "concepts": [
+        "Size-balanced binary tree",
+        "Nodes per level"
+      ],
+      "steps": [
+        {
+          "title": "Levels above the last are full",
+          "body": "By induction: the subtrees of the root have sizes $k$ and $k$ or $k+1$. If their heights differ, the shorter one (height $h-2$, < $2^{h-1}$ nodes) and taller one (≥ $2^{h-1}$ nodes, part (a)) differ in size by 1, which forces sizes $2^{h-1}-1$ and $2^{h-1}$ — the shorter is perfect. So in every case all levels $0..h-1$ are full."
+        },
+        {
+          "title": "Count level h − 1",
+          "body": "A full level at distance $h-1$ in a binary tree has $2^{h-1}$ nodes."
+        }
+      ],
+      "answer": {
+        "value": "$2^{h-1}$",
+        "matchesKey": true
+      },
+      "verification": "$h=1$: root plus 1 or 2 children; distance 0 has $1=2^0$ node ✓. $h=2$ with 4 nodes: both root children exist → $2=2^1$ ✓."
+    },
+    "cse-1997-b-61": {
+      "approach": "This is the two-pointer sliding window over positive numbers: keep $sum=A[i]+\\dots+A[j]$; extend $j$ while $sum<M$, shrink from $i$ (recording the length) once $sum\\ge M$.",
+      "concepts": [
+        "Sliding window",
+        "Two pointers",
+        "Loop invariant"
+      ],
+      "steps": [
+        {
+          "title": "Invariant",
+          "body": "Window is $A[i..j]$ and $sum=\\sum_{k=i}^{j}A[k]$. Initially $i=j=1$, so **line 3:** `Sum := A[1]`."
+        },
+        {
+          "title": "Decide: grow or shrink",
+          "body": "Lines 7–11 extend the window (advance $j$), which is needed only when the window is too small. So **line 6:** `If sum < M then`. The else-branch (lines 15–17) runs when $sum\\ge M$: it records length $j-i+1$ via $min=j-i$ and drops $A[i]$."
+        },
+        {
+          "title": "Maintain the sum",
+          "body": "After `j := j + 1` the new element enters the window: **line 11:** `sum := sum + A[j]`."
+        },
+        {
+          "title": "Why it is correct",
+          "body": "Because all $A[k]>0$, shrinking a window with $sum\\ge M$ is the only way to find a shorter one, and growing is the only way to reach $M$. If no window ever reaches $M$, $min$ stays $n$ and $n+1$ is printed."
+        }
+      ],
+      "answer": {
+        "value": "Line 3: `A[1]`; Line 6: `sum < M`; Line 11: `sum + A[j]`",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Line 6 as `sum >= M` swaps the meaning of the two branches.",
+        "Line 11 must add $A[j]$ after $j$ is incremented, not $A[j+1]$."
+      ],
+      "verification": "Trace $A=[1,4,2],M=5$: sum=1<5 → j=2,sum=5 ≥5 → min=1, sum=4,i=2 → <5 → j=3,sum=6 → min stays 1, sum=2,i=3 → <5, j=n → finish; prints 2 (window [1,4] or [4,2]) ✓."
+    },
+    "cse-1997-b-63-a": {
+      "approach": "S1 runs once per iteration of the while loop, and $t_2$ walks from the 2nd node to past the last node exactly once.",
+      "concepts": [
+        "Linked-list traversal",
+        "Loop counting"
+      ],
+      "steps": [
+        {
+          "title": "Loop range",
+          "body": "$t_2$ starts at node 2 and moves one node per iteration (`t2 = t2->next` is unconditional) until it becomes NULL after node $n$."
+        },
+        {
+          "title": "Count",
+          "body": "Iterations for nodes $2,3,\\dots,n$: $n-1$. S1 is evaluated once per iteration, so $n-1$ comparisons. Note: the printed code writes `t1.val`/`t2.val`; read them as `t1->val`/`t2->val`."
+        }
+      ],
+      "answer": {
+        "value": "$n-1$",
+        "matchesKey": true
+      },
+      "verification": "$n=2$: one iteration ($t_2$ = node 2), one comparison ✓."
+    },
+    "cse-1997-b-63-b": {
+      "approach": "S2 executes once for every new distinct value met after the first node, so it ranges from 0 (all equal) to $n-1$ (all distinct).",
+      "concepts": [
+        "Remove duplicates from sorted list",
+        "Best/worst case"
+      ],
+      "steps": [
+        {
+          "title": "When S2 runs",
+          "body": "S2 runs exactly when $t_2$ holds a value different from the last kept node $t_1$ — i.e. at each position where the sorted list changes value."
+        },
+        {
+          "title": "Minimum",
+          "body": "All $n$ elements equal: S1 is false every time → S2 runs **0** times."
+        },
+        {
+          "title": "Maximum",
+          "body": "All elements distinct: S1 is true in all $n-1$ iterations → S2 runs **$n-1$** times."
+        }
+      ],
+      "answer": {
+        "value": "Minimum 0, maximum $n-1$",
+        "matchesKey": true
+      },
+      "verification": "Lists [5,5,5] → 0 executions; [1,2,3] → 2 = $n-1$ executions ✓."
+    },
+    "cse-1997-b-63-c": {
+      "approach": "`*j` starts at 1 for the head and is incremented once per S2 (each new distinct value kept), so it ends as the number of distinct elements — the length of the de-duplicated list.",
+      "concepts": [
+        "Loop invariant",
+        "Remove duplicates from sorted list"
+      ],
+      "steps": [
+        {
+          "title": "Invariant",
+          "body": "After `*j = 1`, `*j` equals the number of nodes kept so far (head, then every node linked by `t1->next = t2`)."
+        },
+        {
+          "title": "At the end",
+          "body": "Kept nodes = one per distinct value, so `*j` = number of distinct elements = length of the resulting list (0 for an empty list, 1 for a single node)."
+        }
+      ],
+      "answer": {
+        "value": "Number of distinct elements in the list (length of the resulting list)",
+        "matchesKey": true
+      },
+      "verification": "[1,1,2,3,3]: *j goes 1 → 2 (at 2) → 3 (at 3) = 3 distinct values ✓."
+    },
+    "cse-1997-b-64-a": {
+      "approach": "Count child pointers two ways: every node except the root is someone's child, and a node with $M$ keys has $M+1$ children.",
+      "concepts": [
+        "B+-tree structure",
+        "Double counting"
+      ],
+      "steps": [
+        {
+          "title": "Children total",
+          "body": "Let $I$ = number of internal nodes. Every node except the root is a child of an internal node: total children $=(I+l)-1$."
+        },
+        {
+          "title": "Keys total",
+          "body": "Node $x$ with $M_x$ keys has $M_x+1$ children, so $\\sum M_x=\\sum(\\text{children}_x)-I=(I+l-1)-I=l-1$."
+        }
+      ],
+      "answer": {
+        "value": "$l-1$",
+        "matchesKey": true
+      },
+      "verification": "A root with 1 key and 2 leaves: $l=2$, keys $=1=l-1$ ✓."
+    },
+    "cse-1997-b-64-b": {
+      "approach": "To maximise internal nodes, give every node the minimum fan-out: non-root internal nodes need ≥ 4 keys = 5 children, root ≥ 2 children. Build level by level from the 52 leaves.",
+      "concepts": [
+        "B+-tree occupancy bounds",
+        "Minimum fan-out"
+      ],
+      "given": "| Node | Keys | Children |\n|---|---|---|\n| non-root internal | 4 – 8 | 5 – 9 |\n| root | 1 – 8 | 2 – 9 |",
+      "steps": [
+        {
+          "title": "Parents of the leaves",
+          "body": "Each needs 5–9 children. Max nodes $=\\lfloor52/5\\rfloor=10$ (e.g. eight with 5 children, two with 6: $40+12=52$)."
+        },
+        {
+          "title": "Can the root sit on top?",
+          "body": "10 children need 9 keys > $2d=8$, so no. Add a level: $\\lfloor10/5\\rfloor=2$ nodes of 5 children each."
+        },
+        {
+          "title": "Root",
+          "body": "2 children (1 key) is allowed for the root.\n$$10+2+1=13$$"
+        }
+      ],
+      "answer": {
+        "value": "13",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $\\lceil52/5\\rceil=11$ — 11 nodes would need ≥ 55 leaves.",
+        "Forgetting the root may have as few as 2 children."
+      ],
+      "verification": "Any other split has ≤ 10 nodes above the leaves and then ≤ 2 above them, so 13 is the maximum."
+    },
+    "cse-1997-b-64-c": {
+      "approach": "Minimise fan-out at every level: the root has at least 2 children and every other internal node at least $d+1$ children; leaves are all at depth $h$.",
+      "concepts": [
+        "B+-tree occupancy bounds",
+        "Height vs. number of leaves"
+      ],
+      "steps": [
+        {
+          "title": "Level counts",
+          "body": "Depth 0: 1 root. Depth 1: ≥ 2 nodes. Each internal node at depth $1..h-1$ has ≥ $d+1$ children, so depth $k$ has ≥ $2(d+1)^{k-1}$ nodes."
+        },
+        {
+          "title": "Leaves at depth h",
+          "body": "$$l_{\\min}=2(d+1)^{h-1}$$"
+        }
+      ],
+      "answer": {
+        "value": "$2(d+1)^{h-1}$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using $d$ (keys) instead of $d+1$ (children) as the minimum fan-out.",
+        "Giving the root $d+1$ children — it may have only 2."
+      ],
+      "verification": "$h=1$: root with 2 leaves → $2(d+1)^0=2$ ✓. Cross-check with (b): $d=4,h=3$ minimum leaves $=2\\cdot25=50\\le52$, consistent with the 3-level tree found there."
+    },
+    "cse-1997-b-65": {
+      "approach": "Track two counters at once: $\\#a \\bmod 2$ and $\\#b \\bmod 3$. The product of a 2-state and a 3-state DFA gives 6 states, and all 6 are pairwise distinguishable, so 6 is minimum.",
+      "concepts": [
+        "Product construction",
+        "Modulo-counting DFA",
+        "Myhill–Nerode distinguishability"
+      ],
+      "steps": [
+        {
+          "title": "States",
+          "body": "State $(i,j)$ means $\\#a\\equiv i \\pmod 2$, $\\#b\\equiv j\\pmod 3$: six states $(0,0),(0,1),(0,2),(1,0),(1,1),(1,2)$. Start = final = $(0,0)$.",
+          "scene": {
+            "current": [
+              "q00"
+            ],
+            "caption": "Start state (0,0) is also the only accepting state."
+          }
+        },
+        {
+          "title": "Transitions",
+          "body": "| | on a | on b |\n|---|---|---|\n| $(i,j)$ | $(1-i,\\,j)$ | $(i,\\,(j+1)\\bmod 3)$ |\nThe a-edges flip the row; the b-edges cycle along a row.",
+          "scene": {
+            "edgeTones": {
+              "q00>q10": "accent",
+              "q10>q00": "accent",
+              "q01>q11": "accent",
+              "q11>q01": "accent",
+              "q02>q12": "accent",
+              "q12>q02": "accent",
+              "q00>q01": "info",
+              "q01>q02": "info",
+              "q02>q00": "info",
+              "q10>q11": "info",
+              "q11>q12": "info",
+              "q12>q10": "info"
+            },
+            "caption": "a toggles the a-parity (vertical), b advances the b-count mod 3 (horizontal cycle)."
+          }
+        },
+        {
+          "title": "Minimality",
+          "body": "Two different states $(i,j)\\ne(i',j')$ are distinguished by the suffix $a^{(2-i)\\bmod2}b^{(3-j)\\bmod3}$, which takes $(i,j)$ to $(0,0)$ (accept) but $(i',j')$ elsewhere (reject). So no two states merge: **6 states** is minimum.",
+          "scene": {
+            "current": [
+              "q00"
+            ],
+            "caption": "All 6 states are pairwise distinguishable."
+          }
+        }
+      ],
+      "animation": {
+        "kind": "automaton",
+        "states": [
+          {
+            "id": "q00",
+            "label": "0,0",
+            "x": 120,
+            "y": 80,
+            "start": true,
+            "accept": true
+          },
+          {
+            "id": "q01",
+            "label": "0,1",
+            "x": 320,
+            "y": 80
+          },
+          {
+            "id": "q02",
+            "label": "0,2",
+            "x": 520,
+            "y": 80
+          },
+          {
+            "id": "q10",
+            "label": "1,0",
+            "x": 120,
+            "y": 280
+          },
+          {
+            "id": "q11",
+            "label": "1,1",
+            "x": 320,
+            "y": 280
+          },
+          {
+            "id": "q12",
+            "label": "1,2",
+            "x": 520,
+            "y": 280
+          }
+        ],
+        "edges": [
+          {
+            "from": "q00",
+            "to": "q10",
+            "label": "a"
+          },
+          {
+            "from": "q10",
+            "to": "q00",
+            "label": "a"
+          },
+          {
+            "from": "q01",
+            "to": "q11",
+            "label": "a"
+          },
+          {
+            "from": "q11",
+            "to": "q01",
+            "label": "a"
+          },
+          {
+            "from": "q02",
+            "to": "q12",
+            "label": "a"
+          },
+          {
+            "from": "q12",
+            "to": "q02",
+            "label": "a"
+          },
+          {
+            "from": "q00",
+            "to": "q01",
+            "label": "b"
+          },
+          {
+            "from": "q01",
+            "to": "q02",
+            "label": "b"
+          },
+          {
+            "from": "q02",
+            "to": "q00",
+            "label": "b"
+          },
+          {
+            "from": "q10",
+            "to": "q11",
+            "label": "b"
+          },
+          {
+            "from": "q11",
+            "to": "q12",
+            "label": "b"
+          },
+          {
+            "from": "q12",
+            "to": "q10",
+            "label": "b"
+          }
+        ],
+        "caption": "Product DFA: (#a mod 2, #b mod 3)"
+      },
+      "answer": {
+        "value": "6-state DFA: states $(i,j)$ with $i=\\#a \\bmod 2$, $j=\\#b \\bmod 3$; start and only final state $(0,0)$; on a: $(i,j)\\to(1-i,j)$; on b: $(i,j)\\to(i,(j+1)\\bmod 3)$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Building the two machines in sequence (concatenation) instead of in parallel (product).",
+        "Using 5 states (2+3) — that cannot remember both counts."
+      ],
+      "verification": "\"aabbb\": $(0,0)\\to(1,0)\\to(0,0)\\to(0,1)\\to(0,2)\\to(0,0)$ accept ✓; \"ab\": ends at $(1,1)$ reject ✓."
+    },
+    "cse-1997-b-66": {
+      "approach": "Modify a DFA $M=(Q,\\Sigma,\\delta,q_0,F)$ for $L$. For prefixes, accept wherever an accepting state is still reachable; for reversal, flip every edge and swap start/final roles, giving an NFA.",
+      "concepts": [
+        "Closure of regular languages",
+        "Prefix (init) operation",
+        "Reversal",
+        "NFA–DFA equivalence"
+      ],
+      "steps": [
+        {
+          "title": "L^P: construction",
+          "body": "Let $F'=\\{q\\in Q : \\exists w,\\ \\hat\\delta(q,w)\\in F\\}$ (states that can still reach $F$). $M^P=(Q,\\Sigma,\\delta,q_0,F')$."
+        },
+        {
+          "title": "L^P: correctness",
+          "body": "$s\\in L(M^P)\\iff \\hat\\delta(q_0,s)\\in F'\\iff\\exists s'\\,:\\,\\hat\\delta(q_0,ss')\\in F\\iff \\exists s'\\,:\\,ss'\\in L\\iff s\\in L^P$. $F'$ is computable by graph reachability, so $M^P$ is a finite automaton."
+        },
+        {
+          "title": "L^R: construction",
+          "body": "Build NFA $N$: same states plus a new start $p_0$; for each $\\delta(q,a)=r$ add the reversed edge $r\\xrightarrow{a}q$; add $p_0\\xrightarrow{\\varepsilon}f$ for every $f\\in F$; the only final state is $q_0$."
+        },
+        {
+          "title": "L^R: correctness",
+          "body": "$N$ has a path from $f\\in F$ to $q_0$ labelled $a_k\\cdots a_1$ exactly when $M$ has a path $q_0\\to f$ labelled $a_1\\cdots a_k$. So $N$ accepts $w^R$ iff $M$ accepts $w$, i.e. $L(N)=L^R$. By subset construction an NFA has an equivalent DFA, so $L^R$ is accepted by a finite state machine. $\\blacksquare$"
+        }
+      ],
+      "answer": {
+        "value": "For $L^P$: in the DFA for $L$, make final every state from which some final state is reachable. For $L^R$: reverse all transitions, make the old start state the only final state, and add a new start state with ε-moves to the old final states (an NFA, hence convertible to a DFA).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Making every state final for $L^P$ — dead states must stay non-final.",
+        "Reversing edges of a DFA gives an NFA in general; you must invoke subset construction (or NFA acceptance) to finish."
+      ],
+      "verification": "$L=\\{ab\\}$: $L^P=\\{\\varepsilon,a,ab\\}$ (states before the dead state become final) and $L^R=\\{ba\\}$ from the reversed path ✓."
+    },
+    "cse-1997-b-67": {
+      "approach": "Encode precedence and associativity in the grammar levels: statements on top, `<` (lowest precedence, non-associative) above `+` (left-associative) above operands, and a left-recursive statement list for `begin … end`.",
+      "concepts": [
+        "Unambiguous grammar",
+        "Operator precedence by grammar layering",
+        "Associativity via left recursion"
+      ],
+      "steps": [
+        {
+          "title": "Statements",
+          "body": "```\nS  → id := E\n   | while E do S\n   | begin SL end\nSL → SL ; S | S\n```\nEach statement starts with a distinct token (`id`, `while`, `begin`), and `while … do S` has no `else`, so there is no dangling ambiguity."
+        },
+        {
+          "title": "Expressions",
+          "body": "```\nE → T < T | T\nT → T + F | F\nF → id | num | ( E )\n```\n`<` sits at the lowest level (non-associative as in Pascal; `E → E < T | T` would also be unambiguous). `T → T + F` makes `+` left-associative and binds tighter than `<`."
+        },
+        {
+          "title": "Why unambiguous",
+          "body": "Every expression has a unique split: the (at most one) top-level `<`, then the last top-level `+` in each side. Statement lists split only at `;` with left recursion, so each string has exactly one parse tree."
+        }
+      ],
+      "answer": {
+        "value": "S → id := E | while E do S | begin SL end;  SL → SL ; S | S;  E → T < T | T (or E → E < T | T);  T → T + F | F;  F → id | num | ( E )",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing `E → E + E | E < E | id` is ambiguous (both precedence and associativity).",
+        "`SL → S ; SL | S ; SL` style rules with an empty alternative can create ambiguity with trailing `;`."
+      ],
+      "verification": "`a + b < c + d` has the unique tree $(a+b) < (c+d)$; `a + b + c` parses only as $(a+b)+c$."
+    },
+    "cse-1997-b-68": {
+      "approach": "Use synthesized attributes `code` (postfix string) and `type` (i or r) on every non-terminal; an operator node is integer only if both operands are integer, and emits its type-specific operator after its operands.",
+      "concepts": [
+        "Syntax-directed translation",
+        "Synthesized attributes",
+        "Postfix code generation",
+        "Type coercion"
+      ],
+      "steps": [
+        {
+          "title": "Leaves",
+          "body": "```\nV → id      { V.code := give-name(id); V.type := give-type(id) }\nV → ( E )   { V.code := E.code; V.type := E.type }\nLHS → id    { LHS.code := give-name(id); LHS.type := give-type(id) }\n```\n(The question lists `give-type`/`give-name` after \"name and type\" — the functions obviously return type and name as their names say.)"
+        },
+        {
+          "title": "Multiplication and addition",
+          "body": "```\nT → T1 * V  { T.type := if T1.type = i and V.type = i then i else r;\n              T.code := T1.code || V.code || '(*,' || T.type || ')' }\nT → V       { T.code := V.code; T.type := V.type }\nE → E1 + T  { E.type := if E1.type = i and T.type = i then i else r;\n              E.code := E1.code || T.code || '(+,' || E.type || ')' }\nE → T       { E.code := T.code; E.type := T.type }\n```"
+        },
+        {
+          "title": "Assignment",
+          "body": "```\nassign-stmt → LHS := E\n   { assign.code := LHS.code || E.code || '(:=,' || LHS.type || ')' }\n```\nThe assignment operator is typed by the target variable."
+        },
+        {
+          "title": "Example",
+          "body": "With `x:real, a,b:int`, `x := a + b * x` gives\n`x a b x (*,r) (+,r) (:=,r)` — `b*x` is real because `x` is real, so the sum is real too."
+        }
+      ],
+      "answer": {
+        "value": "Synthesized attributes .code and .type: V→id {code=give-name(id); type=give-type(id)}; V→(E) copy; T→T1*V {type = i if both i else r; code = T1.code‖V.code‖(*,type)}; E→E1+T likewise with (+,type); unit rules copy; assign→LHS:=E {code = LHS.code‖E.code‖(:=,LHS.type)}.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Emitting the operator before the operands (prefix) instead of after.",
+        "Typing the assignment by the expression instead of the target variable."
+      ],
+      "verification": "All-integer `i := j + k` yields `i j k (+,i) (:=,i)`, matching left-to-right postfix order."
+    },
     "cse-1997-b-69": {
       "approach": "Enumerate the only call chains the program allows. C makes no calls, so a chain through C stops at 4 records; the only way to have 5 records is Main → A → B → A → B. Then set each static link by lexical nesting and each dynamic link to the caller.",
       "concepts": [
@@ -2393,7 +4188,7 @@
       "pitfalls": [
         "Forgetting to rename next states (e.g. leaving B → F instead of B → EFG)."
       ],
-      "verification": "Each member of a class gives the same row after renaming (C and D; E, F and G), confirming consistency."
+      "verification": "Each member of a class gives the same renamed row: C → (CD/0, EFG/1) and D → (CD/0, EFG/1); E, F, G → (CD/1, CD/1). Partition from (a) is stable, so the 5-state machine is minimal."
     },
     "cse-1997-b-71-a": {
       "approach": "Pair the clauses with the distributive law $(a+b)(a+c)=a+bc$: the $w$-clauses and the $x$-clauses each collapse, and the middle clause is then absorbed.",
@@ -2639,7 +4434,7 @@
         },
         {
           "title": "Pseudo code",
-          "body": "\\`\\`\\`\nprocedure release_R (priority);\n  P (mutex);\n  if R_requested[3] then\n    begin R_requested[3] := false; V (proceed[3]) end\n  else if R_requested[2] then\n    begin R_requested[2] := false; V (proceed[2]) end\n  else if R_requested[1] then\n    begin R_requested[1] := false; V (proceed[1]) end\n  else\n    busy := false;\n  V (mutex);\n\\`\\`\\`"
+          "body": "```\nprocedure release_R (priority);\n  P (mutex);\n  if R_requested[3] then\n    begin R_requested[3] := false; V (proceed[3]) end\n  else if R_requested[2] then\n    begin R_requested[2] := false; V (proceed[2]) end\n  else if R_requested[1] then\n    begin R_requested[1] := false; V (proceed[1]) end\n  else\n    busy := false;\n  V (mutex);\n```"
         },
         {
           "title": "Why it is correct",
@@ -2655,7 +4450,7 @@
         "Forgetting to reset R_requested[p], which would hand R to the same process twice.",
         "Doing the scan outside the mutex (race with request_R)."
       ],
-      "verification": "Traced: P1 holds R, P2 and P3 request (flags set). On release, P3 is woken, busy stays true; P2 gets R on P3's release; then busy := false."
+      "verification": "Traced: P1 holds R, P2 and P3 request (flags set, both blocked). On P1 release, P3 is woken and busy stays true; on P3 release P2 is woken; on P2 release no flag is set, so busy := false."
     },
     "cse-1997-b-74-a": {
       "approach": "Without buffering nothing overlaps: each record costs access + transfer + processing in sequence.",
@@ -2720,7 +4515,11 @@
           }
         ],
         "upto": 34
-      }
+      },
+      "pitfalls": [
+        "Converting the transfer rate wrongly: 3200 B at 800 000 B/s is 4 ms, not 0.4 ms.",
+        "Overlapping I/O with processing — without a buffer the program reads, then processes, strictly in sequence."
+      ]
     },
     "cse-1997-b-74-b": {
       "approach": "With one read-ahead buffer, reading record i+1 overlaps processing record i. Reading (14 ms) is slower than processing (3 ms), so the disk is the bottleneck: 1000 reads back to back plus the processing of the last record.",

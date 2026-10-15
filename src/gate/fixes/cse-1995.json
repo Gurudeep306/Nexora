@@ -1,0 +1,143 @@
+{
+  "paper": "cse-1995",
+  "fixes": [
+    {
+      "id": "cse-1995-a-35",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Standard reading (W → Sz, input xxxxyzz) verified: the bottom-up reduction order yields 23131, exactly option A; the reading is self-consistent with the options.",
+      "source": "GATE 1995 paper Q35, independent derivation"
+    },
+    {
+      "id": "cse-1995-a-43",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$c_1e^{x} + c_2e^{2x}$"
+        },
+        {
+          "l": "B",
+          "t": "$c_1e^{-x} + c_2e^{3x}$"
+        },
+        {
+          "l": "C",
+          "t": "$c_1e^{-x} + c_2e^{-2x}$"
+        },
+        {
+          "l": "D",
+          "t": "$c_1e^{-2x} + c_22^{-x}$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$c_1e^{x} + c_2e^{2x}$"
+        },
+        {
+          "l": "B",
+          "t": "$c_1e^{-x} + c_2e^{3x}$"
+        },
+        {
+          "l": "C",
+          "t": "$c_1e^{-x} + c_2e^{-2x}$"
+        },
+        {
+          "l": "D",
+          "t": "$c_1e^{-2x} + c_2\\,2^{-x}$"
+        }
+      ],
+      "reason": "Option D markup c_22^{-x} renders ambiguously; separate the coefficient from the base 2 as printed in the paper (c₂ 2^{-x}).",
+      "source": "GATE 1995 paper Q43"
+    },
+    {
+      "id": "cse-1995-b-57-b",
+      "field": "answer",
+      "before": "A grammar has cycles iff there exists nonterminal A such that A =>+ A; eliminate unit and epsilon productions",
+      "after": "If $A \\Rightarrow^+ A$ and $A \\Rightarrow^* w$, then $w$ has two parse trees from A (with and without the cycle inserted), so the grammar is ambiguous; every LL(1) grammar is unambiguous, so a grammar with cycles cannot be LL(1).",
+      "reason": "Stored answer only restated the definition of a cycle and named an unrelated transformation; replaced with the required proof outline (cycle ⇒ ambiguity ⇒ not LL(1)).",
+      "source": "Standard result (Aho, Sethi, Ullman); proof in solution"
+    },
+    {
+      "id": "cse-1995-b-59",
+      "field": "answer",
+      "before": "L* is closed under concatenation and Kleene star; regularity preserved if L is regular",
+      "after": "Certificate for $x \\in L^C$ ($|x| = n$): a string $y$ with $|y| = n$, $y \\ne x$, plus an NP certificate that $y \\in L$. Since L has exactly one string of each length, such a $y$ exists iff $x \\notin L$, and checking it takes polynomial time, so $L^C \\in$ NP.",
+      "reason": "Stored answer talked about L* and closure under concatenation, which does not address the question; replaced with the NP-certificate argument for L^C.",
+      "source": "Proof in solution"
+    },
+    {
+      "id": "cse-1995-b-58-a",
+      "field": "subject",
+      "before": "ga",
+      "after": "cd",
+      "reason": "Pascal scope rules for with-statements are a compiler/programming-language topic, not quantitative aptitude.",
+      "source": "GATE 1995 question paper"
+    },
+    {
+      "id": "cse-1995-b-58-a",
+      "field": "topic",
+      "before": "quant",
+      "after": "runtime",
+      "reason": "Scope and name binding belong under compiler runtime environments.",
+      "source": "GATE 1995 question paper"
+    },
+    {
+      "id": "cse-1995-b-63-b",
+      "field": "text",
+      "before": "(b) What is the equivalent minimal boolean expression (in sum of products form) for the Karnaugh map given on the next page?",
+      "after": "(b) What is the equivalent minimal boolean expression (in sum of products form) for the Karnaugh map given below?",
+      "reason": "In this bank the K-map is shown with the question, so \"on the next page\" (a paper-layout reference) is wrong.",
+      "source": "GATE 1995 question paper (GATE_PYQ/GATE1995.pdf, p.7–8)"
+    },
+    {
+      "id": "cse-1995-b-64-b",
+      "field": "text",
+      "before": "The following is an 8085 assembly language program:\n\n```asm\n      MVI B, 0AH\n      MVI A, 05H\n      LXI H, 1C40H\n      CALL SUB\n      HLT\nSUB:  CMP M\n      RZ\n      INX H\n      DCR B\n      JNZ SUB\n      RET\n```\n\n(b) What are the contents of registers A and U initially?",
+      "after": "The following is an 8085 assembly language program:\n\n```asm\n      MVI B, 0AH\n      MVI A, 05H\n      LXI H, 1C40H\n      CALL SUB\n      HLT\nSUB:  CMP M\n      RZ\n      INX H\n      DCR B\n      JNZ SUB\n      RET\n```\n\n(b) What are the contents of registers A and B initially?",
+      "reason": "Paper prints 'A and U' — a misprint for A and B (the program only loads A and B); reviewNote keeps the printed wording.",
+      "source": "GATE 1995 question paper (GATE_PYQ/GATE1995.pdf, p.7–8)"
+    },
+    {
+      "id": "cse-1995-b-64-b",
+      "field": "subject",
+      "before": "coa",
+      "after": "legacy",
+      "reason": "8085 assembly question — same as its sibling parts 64(a) and 64(c).",
+      "source": "GATE 1995 question paper (GATE_PYQ/GATE1995.pdf, p.7–8)"
+    },
+    {
+      "id": "cse-1995-b-64-b",
+      "field": "topic",
+      "before": "isa",
+      "after": "microprocessor",
+      "reason": "8085 assembly question — same as its sibling parts 64(a) and 64(c).",
+      "source": "GATE 1995 question paper (GATE_PYQ/GATE1995.pdf, p.7–8)"
+    },
+    {
+      "id": "cse-1995-b-68",
+      "field": "topic",
+      "before": "scheduling",
+      "after": "files",
+      "reason": "Disk-scheduling questions are filed under os/files (disk management) in this bank, not CPU scheduling.",
+      "source": "GATE 1995 question paper (GATE_PYQ/GATE1995.pdf, p.7–8)"
+    },
+    {
+      "id": "cse-1995-b-75-a",
+      "field": "subject",
+      "before": "ga",
+      "after": "db",
+      "reason": "Relational-algebra query on a database schema, not general aptitude.",
+      "source": "GATE 1995 question paper (GATE_PYQ/GATE1995.pdf, p.7–8)"
+    },
+    {
+      "id": "cse-1995-b-75-a",
+      "field": "topic",
+      "before": "quant",
+      "after": "ra",
+      "reason": "Relational-algebra query (PROJECT), same as parts 75(b) and 75(c).",
+      "source": "GATE 1995 question paper (GATE_PYQ/GATE1995.pdf, p.7–8)"
+    }
+  ]
+}

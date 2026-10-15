@@ -1,0 +1,4620 @@
+{
+  "paper": "cse-1995",
+  "version": 2,
+  "solutions": {
+    "cse-1995-a-1": {
+      "approach": "To clear chosen bits, AND with a mask that has 0s in those positions and 1s elsewhere; ANI does that with an immediate byte.",
+      "concepts": [
+        "Bit masking",
+        "8085 logical instructions"
+      ],
+      "steps": [
+        {
+          "title": "Choose the mask",
+          "body": "Lower nibble must become 0, upper nibble must be kept: mask $= 1111\\,0000_2 = \\text{F0H}$."
+        },
+        {
+          "title": "Choose the operation",
+          "body": "$x \\land 0 = 0$ clears a bit, $x \\land 1 = x$ keeps it. So `ANI F0H` gives $A \\leftarrow A \\land \\text{F0H}$: lower four bits cleared, upper four unchanged."
+        }
+      ],
+      "answer": {
+        "value": "ANI F0H",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "`XRI 0FH` complements (toggles) the lower four bits instead of clearing them."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "AND with F0H forces bits 0–3 to 0 and keeps bits 4–7. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "`XRI F0H` toggles the upper four bits and leaves the lower ones unchanged."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "`ANI 0FH` clears the upper four bits and keeps the lower ones — the opposite."
+        }
+      ],
+      "shortcut": "Clear → AND with 0s; set → OR with 1s; toggle → XOR with 1s.",
+      "pitfalls": [
+        "Writing the mask for the bits you want to keep vs. clear the wrong way round (0FH vs F0H)."
+      ],
+      "verification": "Example: A = 3CH = 0011 1100; 3CH AND F0H = 30H = 0011 0000 — lower nibble cleared."
+    },
+    "cse-1995-a-2": {
+      "approach": "Check each statement against the basic definitions of ROM, program counter, stack and flags.",
+      "concepts": [
+        "Stack (LIFO)",
+        "Program counter",
+        "ROM"
+      ],
+      "steps": [
+        {
+          "title": "Test each claim",
+          "body": "- ROM is read-only in normal operation.\n- PC holds the address of the **next** instruction to fetch.\n- A stack pushes and pops at the same end — Last In, First Out.\n- Many instructions (data transfer such as MOV, LXI; jumps) leave the flags unchanged."
+        },
+        {
+          "title": "Conclude",
+          "body": "Only \"Stack works on the principle of LIFO\" is true."
+        }
+      ],
+      "answer": {
+        "value": "Stack works on the principle of LIFO",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "ROM is Read-Only Memory; it is not written during normal operation."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "PC points to the next instruction to be executed, not the last one executed."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Push and pop work at the top only, so the last item pushed is the first popped (LIFO). Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Data-transfer and branch instructions (e.g. MOV, MVI, JMP in 8085) do not affect flags."
+        }
+      ],
+      "pitfalls": [
+        "Confusing \"PC = next instruction\" with \"PC = current/last instruction\"."
+      ],
+      "verification": "In 8085, MOV A,B leaves all flags unchanged, so D is false; the other two are false by definition."
+    },
+    "cse-1995-a-3": {
+      "approach": "Vectored means the device itself supplies the vector (address or number) that tells the CPU where its service routine is.",
+      "concepts": [
+        "Vectored interrupt",
+        "Interrupt vector"
+      ],
+      "steps": [
+        {
+          "title": "Definition",
+          "body": "In a **vectored** interrupt the interrupting device supplies an interrupt vector (an address, or an index into a vector table), so the CPU knows which service routine to run without polling."
+        },
+        {
+          "title": "Compare",
+          "body": "A branch to one fixed memory location for every source is a **non-vectored** interrupt — the CPU then has to poll to find the source."
+        }
+      ],
+      "answer": {
+        "value": "The interrupting source supplies the branch information through an interrupt vector",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A single fixed branch location describes a non-vectored interrupt."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The source supplies the vector that gives the branch target. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The branch address does not come from a CPU register; it comes from the device or a vector table indexed by the device."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "B is correct, so \"None of the above\" is wrong."
+        }
+      ],
+      "pitfalls": [
+        "8085 RST 5.5/6.5/7.5 branch to fixed addresses but each line has its own address — still not option A's \"single fixed location for all\"."
+      ],
+      "verification": "8086 INTR: the device puts a type number on the bus during INTA, and the CPU reads the vector table at type × 4 — the source supplies the branch information."
+    },
+    "cse-1995-a-4": {
+      "approach": "Resolve the dangling else: the else belongs to the nearest unmatched if (the inner one). Then the outer test is false, so nothing runs.",
+      "concepts": [
+        "Dangling else",
+        "Pascal if-then-else"
+      ],
+      "steps": [
+        {
+          "title": "Parse",
+          "body": "The else binds to the inner `if`:\n```pascal\nif X > Y then\n   begin\n     if X < 0 then X := abs(X) else X := 2*X\n   end;\n```"
+        },
+        {
+          "title": "Evaluate",
+          "body": "$X = -10,\\ Y = 20$: $X > Y$ is $-10 > 20$ = false. The whole inner `if–else` is skipped, so $X$ stays $-10$."
+        }
+      ],
+      "answer": {
+        "value": "-10",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "10 = abs(X) would need both $X > Y$ and $X < 0$; $X > Y$ is false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "−20 = 2·X would only happen if the else were attached to the outer `if` (wrong binding)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Outer condition false and the else belongs to the inner if, so X is unchanged at −10. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "C is correct."
+        }
+      ],
+      "pitfalls": [
+        "Matching the else with the outer if — that gives −20 (option B)."
+      ],
+      "verification": "Same rule as C/Java: an else always pairs with the closest preceding unmatched if."
+    },
+    "cse-1995-a-5": {
+      "approach": "Merge sort splits the array into halves, sorts each recursively and merges — the textbook divide-and-conquer pattern.",
+      "concepts": [
+        "Merge sort",
+        "Divide and conquer"
+      ],
+      "steps": [
+        {
+          "title": "Structure",
+          "body": "Divide: split into two halves. Conquer: sort each half recursively. Combine: merge the two sorted halves in $O(n)$."
+        },
+        {
+          "title": "Recurrence",
+          "body": "$T(n) = 2T(n/2) + O(n) = O(n\\log n)$ — a divide-and-conquer recurrence."
+        }
+      ],
+      "answer": {
+        "value": "Divide and conquer strategy",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Split, solve sub-problems, merge — divide and conquer. Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Backtracking explores and undoes choices (e.g. N-queens); merge sort never backtracks."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Heuristic search (e.g. A*) uses estimates to guide search; sorting is deterministic."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Greedy algorithms make one locally best choice per step (e.g. Kruskal); merge sort does not."
+        }
+      ],
+      "verification": "Quick sort and binary search follow the same divide-and-conquer pattern."
+    },
+    "cse-1995-a-6": {
+      "approach": "Locality means a program reuses recently used data (temporal) and nearby addresses (spatial); a small fast cache holding those blocks exploits this.",
+      "concepts": [
+        "Locality of reference",
+        "Cache memory"
+      ],
+      "steps": [
+        {
+          "title": "Locality",
+          "body": "Temporal: a word used now is likely used again soon. Spatial: words near it are likely used soon."
+        },
+        {
+          "title": "Who exploits it",
+          "body": "A cache keeps recently used blocks (temporal) and loads whole blocks (spatial), so most accesses hit in fast memory. Without locality a cache would give no benefit."
+        }
+      ],
+      "answer": {
+        "value": "Cache Memory",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Interrupts are about asynchronous event handling, not memory access patterns."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "DMA transfers I/O data without the CPU; it is not justified by locality."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Polling is a way of checking device status."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Caches work because of temporal and spatial locality. Correct."
+        }
+      ],
+      "verification": "Virtual memory/paging is the other mechanism that relies on locality; none of the other options do."
+    },
+    "cse-1995-a-7": {
+      "approach": "In paged segmentation each segment is paged; if the segment table itself is larger than one page it too must be paged, which needs a page table for it.",
+      "concepts": [
+        "Paged segmentation",
+        "Multilevel tables"
+      ],
+      "steps": [
+        {
+          "title": "Why page any table",
+          "body": "A table must sit in memory. If it is larger than one page/frame, it cannot be placed contiguously in a single frame, so it is split over pages — and then a page table is needed to find those pages."
+        },
+        {
+          "title": "Apply",
+          "body": "So the segment table needs its own page table exactly when it is too large to fit in one page (as in MULTICS, where segment tables can be huge)."
+        }
+      ],
+      "answer": {
+        "value": "The segment table is often too large to fit in one page",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "A large segment table spills over several pages, so it must itself be paged. Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Segments spread over pages explains why each **segment** needs a page table, not the segment table."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True of paged segmentation in general, but it does not explain why the segment table itself is paged."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Where the base register points is a consequence of paging the segment table, not the reason for it."
+        }
+      ],
+      "pitfalls": [
+        "Choosing B: that is the reason segments have page tables, not the reason the segment table does."
+      ],
+      "verification": "Same reasoning as multilevel paging: a page table bigger than one page is itself paged."
+    },
+    "cse-1995-a-8": {
+      "approach": "Belady's anomaly (more frames causing more faults) only happens in algorithms that are not stack algorithms; FIFO is the classic example.",
+      "concepts": [
+        "Belady's anomaly",
+        "Stack algorithms",
+        "FIFO replacement"
+      ],
+      "steps": [
+        {
+          "title": "Stack property",
+          "body": "For OPT and LRU, the pages in memory with $k$ frames are always a subset of those with $k+1$ frames, so adding frames can never add faults."
+        },
+        {
+          "title": "FIFO counter-example",
+          "body": "Reference string 1 2 3 4 1 2 5 1 2 3 4 5: FIFO gives **9** faults with 3 frames but **10** faults with 4 frames."
+        }
+      ],
+      "answer": {
+        "value": "FIFO",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Optimal is a stack algorithm; it never shows the anomaly."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "LRU is a stack algorithm; it never shows the anomaly."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "FIFO is not a stack algorithm and has the known 9 → 10 fault example. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Includes Optimal, which does not show the anomaly."
+        }
+      ],
+      "verification": "Count FIFO on 1 2 3 4 1 2 5 1 2 3 4 5: 9 faults with 3 frames, 10 with 4."
+    },
+    "cse-1995-a-9": {
+      "approach": "Write the definition directly: one letter, followed by zero or more symbols each of which is a letter or a digit.",
+      "concepts": [
+        "Regular expressions",
+        "Lexical tokens"
+      ],
+      "steps": [
+        {
+          "title": "Translate",
+          "body": "\"a letter\" $\\to L$; \"followed by any number of letters or digits\" $\\to (L \\cup D)^*$. Concatenate: $L.(L \\cup D)^*$."
+        },
+        {
+          "title": "Check the others",
+          "body": "Each wrong option either allows a leading digit or forces letters and digits to alternate."
+        }
+      ],
+      "answer": {
+        "value": "$L.(L \\cup D)^*$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$(L\\cup D)^+$ accepts strings starting with a digit, e.g. \"9a\"."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "First symbol a letter, then any mix of letters and digits. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(L.D)^*$ accepts the empty string and forces letter-digit pairs, so it rejects \"ab\"."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$L.(L.D)^*$ forces strict alternation after the first letter, so it rejects \"ab\" and \"a12\"."
+        }
+      ],
+      "verification": "Test \"x\", \"ab\", \"a1b2c\": only B accepts all three and rejects \"1a\"."
+    },
+    "cse-1995-a-10": {
+      "approach": "Classify by the most general rule form. A rule with more than one symbol on the left rules out context-free; then check whether every rule is non-contracting.",
+      "concepts": [
+        "Chomsky hierarchy",
+        "Context-sensitive grammar"
+      ],
+      "given": "| Rule | LHS length | RHS length |\n|---|---|---|\n| $S \\to a\\alpha b \\mid b\\alpha c \\mid aB$ | 1 | 3, 3, 2 |\n| $S \\to aS \\mid b$ | 1 | 2, 1 |\n| $S \\to \\alpha bb \\mid ab$ | 1 | 3, 2 |\n| $b\\alpha \\to bdb \\mid b$ | 2 | 3, 1 |",
+      "steps": [
+        {
+          "title": "Not context-free",
+          "body": "The rule $b\\alpha \\to bdb$ has two symbols on the left: $\\alpha$ is rewritten only when it follows $b$. So the grammar is not context-free, hence also not regular and not LR(k) (LR(k) grammars are context-free)."
+        },
+        {
+          "title": "Context-sensitive",
+          "body": "Rules of the form $b\\alpha \\to bdb$ rewrite $\\alpha$ in the context $b\\_\\,$, which is the context-sensitive form. Among the options the intended answer is **context sensitive**."
+        },
+        {
+          "title": "Caveat",
+          "body": "$b\\alpha \\to b$ shrinks the string ($|b\\alpha| = 2 > |b| = 1$). Strictly, a contracting rule makes the grammar unrestricted (type 0). No such option exists, so the accepted answer is context sensitive."
+        }
+      ],
+      "answer": {
+        "value": "Context sensitive",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A context-free grammar has a single non-terminal on the left; $b\\alpha \\to \\dots$ has two symbols."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Regular grammars are a subset of CFGs, so it cannot be regular either."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "The rewriting of $\\alpha$ depends on the context $b$ — context-sensitive form. Accepted answer."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "LR(k) grammars are context-free, which this grammar is not."
+        }
+      ],
+      "pitfalls": [
+        "Looking only at the $S$-rules (all CFG-like) and missing the $b\\alpha$ rule."
+      ],
+      "verification": "Each of A, B, D requires a single non-terminal on every LHS, so all three fail on the $b\\alpha$ rules. C is the only option left and matches the stored key; the type-0 caveat is in the review note."
+    },
+    "cse-1995-a-11": {
+      "approach": "Names in a macro (or procedure) definition header are placeholders; the values substituted at each call are the actual parameters.",
+      "concepts": [
+        "Macro processor",
+        "Formal vs actual parameters"
+      ],
+      "steps": [
+        {
+          "title": "Definition vs call",
+          "body": "In `macro Add x,y`, the names `x` and `y` appear in the **definition** and stand for whatever is passed in."
+        },
+        {
+          "title": "Expansion",
+          "body": "A call such as `Add A,B` substitutes the actual parameters `A`, `B` for `x`, `y` in the body (`Load B / Mul A / Store B`). So `x`, `y` are formal parameters."
+        }
+      ],
+      "answer": {
+        "value": "Formal parameters",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "They are not storage locations; they are replaced textually during expansion."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Too general — every name is an identifier; it does not describe their role."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Actual parameters are the arguments supplied at the call/expansion, not the names in the definition."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Placeholders in the definition header are formal parameters. Correct."
+        }
+      ],
+      "verification": "Same terminology as procedures: parameters in the declaration are formal, arguments at the call are actual."
+    },
+    "cse-1995-a-12": {
+      "approach": "The distance of a code is the minimum Hamming distance over all pairs of distinct codewords; one pair at distance 2 already fixes it once no pair is at distance 1.",
+      "concepts": [
+        "Hamming distance",
+        "Minimum distance of a code"
+      ],
+      "given": "| Codeword | 000000 | 010101 | 101010 | 000111 | 011001 | 111111 |\n|---|---|---|---|---|---|---|\n| weight | 0 | 3 | 3 | 3 | 3 | 6 |",
+      "steps": [
+        {
+          "title": "Distances from 000000",
+          "body": "Equal to the weights: 3, 3, 3, 3, 6."
+        },
+        {
+          "title": "Find a smaller pair",
+          "body": "$010101 \\oplus 011001 = 001100$ → distance 2.\n\n$010101 \\oplus 000111 = 010010$ → distance 2."
+        },
+        {
+          "title": "No pair at distance 1",
+          "body": "All other pairs: $101010\\oplus000111 = 101101$ (4), $101010\\oplus011001 = 110011$ (4), $000111\\oplus011001 = 011110$ (4), $010101\\oplus101010$ (6), $111111$ vs weight-3 words (3). Minimum $= 2$."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Minimum pairwise distance is 2 (e.g. 010101 and 011001). Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "3 is only the minimum distance from 000000; other pairs are closer."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "4 is the distance of some pairs, not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "No two codewords differ in exactly one bit."
+        }
+      ],
+      "pitfalls": [
+        "Comparing every word only with 000000 (gives 3)."
+      ],
+      "verification": "All 15 pairs checked; the smallest XOR weight is 2."
+    },
+    "cse-1995-a-13": {
+      "approach": "A string is a complete token without lookahead only if no longer token can start with it. Keywords can be prefixes of identifiers; \"<>\" cannot be extended.",
+      "concepts": [
+        "Lexical analysis",
+        "Longest match",
+        "Lookahead"
+      ],
+      "steps": [
+        {
+          "title": "Keywords",
+          "body": "`begin` could be the start of an identifier such as `beginner`; `program` could start `programs`. The lexer must read the next character to know whether the keyword has ended."
+        },
+        {
+          "title": "The <> operator",
+          "body": "In Pascal no token is longer than `<>` and begins with `<>`, so once `<>` is read it is definitely the not-equal token."
+        }
+      ],
+      "answer": {
+        "value": "III only",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "`begin` may be a prefix of an identifier (e.g. `beginning`), so lookahead is needed."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`program` may be a prefix of an identifier (e.g. `programX`), so lookahead is needed."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "`<>` cannot be extended to a longer token. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "I and II need lookahead."
+        }
+      ],
+      "pitfalls": [
+        "Note that `<` alone does need lookahead (could be `<=` or `<>`), but `<>` does not."
+      ],
+      "verification": "Pascal operators starting with `<` are `<`, `<=`, `<>` — none extends `<>`."
+    },
+    "cse-1995-a-14": {
+      "approach": "Separately compiled modules are relocated by the linker, so final absolute addresses of internal symbols are not known at compile time and are not stored.",
+      "concepts": [
+        "Linker",
+        "Relocation",
+        "Object module"
+      ],
+      "steps": [
+        {
+          "title": "What a linker needs",
+          "body": "The object code itself, relocation information (which address fields to adjust), and the symbol table of externally visible definitions and external references, so modules can be joined."
+        },
+        {
+          "title": "What it does not need",
+          "body": "Internal symbols are addressed relative to the module start; absolute addresses are only fixed after the linker/loader places the module, so they are not part of the object module."
+        }
+      ],
+      "answer": {
+        "value": "Absolute addresses of internal symbols",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The object code is the main content of the module."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Relocation bits tell the linker which fields to adjust when the module is moved."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Defined external (public) symbols are needed to resolve references from other modules."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Absolute addresses are not known before linking; internal symbols need only relative addresses. Correct."
+        }
+      ],
+      "verification": "In ELF/COFF files a .o has .text, relocation entries and a symbol table, but all addresses are section-relative."
+    },
+    "cse-1995-a-15": {
+      "approach": "Time sharing needs every user to get a response quickly, which round robin gives by handing each process a fixed time quantum in turn.",
+      "concepts": [
+        "Round robin scheduling",
+        "Time-sharing systems"
+      ],
+      "steps": [
+        {
+          "title": "Requirement",
+          "body": "Interactive users share the CPU; each must get the CPU regularly so that response time is bounded."
+        },
+        {
+          "title": "Round robin",
+          "body": "With $n$ ready processes and quantum $q$, each waits at most $(n-1)q$ before running again — preemptive and fair, exactly what time sharing needs."
+        }
+      ],
+      "answer": {
+        "value": "Round Robin",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "SJF needs burst lengths in advance and can starve long jobs."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Round robin preempts after a time quantum, giving every user regular turns. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "FCFS is non-preemptive; one long job blocks everyone (convoy effect)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Elevator (SCAN) is a disk-scheduling algorithm, not CPU scheduling."
+        }
+      ],
+      "verification": "Classic time-sharing systems (e.g. CTSS, UNIX) are built on quantum-based round robin variants."
+    },
+    "cse-1995-a-16": {
+      "approach": "In the standard merge, each comparison outputs one element, so at most m + n − 1 comparisons are made.",
+      "concepts": [
+        "Merging sorted lists",
+        "Asymptotic complexity"
+      ],
+      "steps": [
+        {
+          "title": "Count comparisons",
+          "body": "Each comparison places one element into the output. When one list empties, the rest of the other is copied with no comparisons. So at most $m + n - 1$ comparisons."
+        },
+        {
+          "title": "Order",
+          "body": "Worst case, e.g. when the lists interleave: $m+n-1 = \\Theta(m+n)$, so $O(m+n)$."
+        }
+      ],
+      "answer": {
+        "value": "$O(m+n)$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$O(m)$ ignores the $n$ elements; it fails when $n \\gg m$ with interleaving values."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$O(n)$ ignores the $m$ elements, for the same reason."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "At most $m+n-1$ comparisons. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Logarithmic comparisons cannot place $m+n$ elements in order."
+        }
+      ],
+      "verification": "m = n = 2: [1,3] and [2,4] need 3 = m + n − 1 comparisons."
+    },
+    "cse-1995-a-17": {
+      "approach": "Count edges two ways: each node except the root has one parent edge, and each node contributes edges equal to its number of children.",
+      "concepts": [
+        "Binary tree properties",
+        "Handshake counting"
+      ],
+      "steps": [
+        {
+          "title": "Set up",
+          "body": "Let $n_0, n_1, n_2$ = number of nodes with 0, 1, 2 children. Total nodes $N = n_0 + n_1 + n_2$; edges $E = N - 1$."
+        },
+        {
+          "title": "Count edges by children",
+          "body": "$E = n_1 + 2n_2$. So $n_0 + n_1 + n_2 - 1 = n_1 + 2n_2 \\Rightarrow n_2 = n_0 - 1$."
+        },
+        {
+          "title": "Substitute",
+          "body": "With $n_0 = n$ leaves: $n_2 = n - 1$."
+        }
+      ],
+      "answer": {
+        "value": "$n-1$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\log_2 n$ is roughly the height of a balanced tree with $n$ leaves, not the count of degree-2 nodes."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Edge counting gives $n_2 = n_0 - 1 = n - 1$. Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n$ is one too many (off by one)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2^n$ is far too large; a tree with $n$ leaves has fewer than $2n$ nodes."
+        }
+      ],
+      "pitfalls": [
+        "\"Degree\" here means number of children; a node with one child does not affect the result."
+      ],
+      "verification": "Three-node full tree: 2 leaves, 1 node with two children = 2 − 1."
+    },
+    "cse-1995-a-18": {
+      "approach": "Count three-digit numbers with no 7 digit by digit and divide by the 900 three-digit numbers.",
+      "concepts": [
+        "Counting principle",
+        "Classical probability"
+      ],
+      "steps": [
+        {
+          "title": "Total",
+          "body": "Numbers 100 to 999: $999 - 100 + 1 = 900$."
+        },
+        {
+          "title": "Favourable",
+          "body": "Hundreds digit: 1–9 without 7 → 8 choices. Tens and units: 0–9 without 7 → 9 choices each. Count $= 8 \\times 9 \\times 9 = 648$."
+        },
+        {
+          "title": "Probability",
+          "body": "$\\dfrac{648}{900} = \\dfrac{72}{100} = \\dfrac{18}{25}$."
+        }
+      ],
+      "answer": {
+        "value": "18/25",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$16/25 = 0.64$ does not match $648/900 = 0.72$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$(9/10)^3 = 0.729$ treats the hundreds digit as having 10 choices, including 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$27/75 = 0.36$ does not match."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$648/900 = 18/25$. Correct."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the hundreds digit cannot be 0 (leads to $(9/10)^3$)."
+      ],
+      "verification": "Complement: numbers with at least one 7 = 900 − 648 = 252; 252/900 = 7/25, and 7/25 + 18/25 = 1."
+    },
+    "cse-1995-a-19": {
+      "approach": "A symmetric and transitive relation is reflexive only on elements that are related to something; an isolated element breaks reflexivity, while the full relation is reflexive — so neither A, B nor C always holds.",
+      "concepts": [
+        "Equivalence relations",
+        "Reflexive, symmetric, transitive"
+      ],
+      "steps": [
+        {
+          "title": "Not necessarily reflexive",
+          "body": "$A = \\{1,2\\}$, $R = \\{(1,1)\\}$: symmetric and transitive, but $(2,2) \\notin R$, so not reflexive. So A and B are false."
+        },
+        {
+          "title": "Not necessarily non-reflexive",
+          "body": "$R = A \\times A$ is symmetric, transitive **and** reflexive (an equivalence relation). So C (\"R is not reflexive\") is also false in general."
+        },
+        {
+          "title": "Conclude",
+          "body": "None of A, B, C holds for every such $R$ → D."
+        }
+      ],
+      "answer": {
+        "value": "None of the above",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$R = \\{(1,1)\\}$ on $\\{1,2\\}$ is symmetric and transitive but not reflexive."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Same counter-example; also a partial order needs antisymmetry, which is not given."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$R = A \\times A$ is symmetric, transitive and reflexive, so \"not reflexive\" fails."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "No one of the statements is always true. Correct."
+        }
+      ],
+      "pitfalls": [
+        "The \"proof\" $aRb \\wedge bRa \\Rightarrow aRa$ needs some $b$ with $aRb$; it fails for isolated elements."
+      ],
+      "verification": "Both counter-examples checked against the definitions."
+    },
+    "cse-1995-a-20": {
+      "approach": "Count the elements of S (treating each set element as one element), then $|P(S)| = 2^{|S|}$.",
+      "concepts": [
+        "Power set",
+        "Cardinality"
+      ],
+      "steps": [
+        {
+          "title": "Elements of S",
+          "body": "$S = \\{\\{\\phi\\},\\ 1,\\ \\{2,3\\}\\}$ has three elements: the set $\\{\\phi\\}$, the number 1, and the set $\\{2,3\\}$. So $|S| = 3$."
+        },
+        {
+          "title": "Power set",
+          "body": "Each element is either in or out of a subset, so $|P(S)| = 2^{|S|} = 2^3 = 8$."
+        }
+      ],
+      "answer": {
+        "value": "8",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2 would mean $|S| = 1$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "4 would mean $|S| = 2$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$2^3 = 8$. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "C is correct."
+        }
+      ],
+      "pitfalls": [
+        "Unpacking $\\{2,3\\}$ into two elements (giving $|S| = 4$ and 16) or treating $\\{\\phi\\}$ as empty."
+      ],
+      "verification": "List: {}, {{φ}}, {1}, {{2,3}}, {{φ},1}, {{φ},{2,3}}, {1,{2,3}}, S — 8 subsets."
+    },
+    "cse-1995-a-21": {
+      "approach": "Let $f(x) = x - \\cos x$. It changes sign on $[0,\\pi]$ and is increasing, so it has exactly one root.",
+      "concepts": [
+        "Intermediate value theorem",
+        "Monotonic functions"
+      ],
+      "steps": [
+        {
+          "title": "Sign change",
+          "body": "$f(0) = 0 - 1 = -1 < 0$; $f(\\pi) = \\pi - (-1) = \\pi + 1 > 0$. By the IVT there is at least one root."
+        },
+        {
+          "title": "Monotonic",
+          "body": "$f'(x) = 1 + \\sin x \\ge 0$ on $[0,\\pi]$ (it equals 1 at the ends and is > 1 inside). So $f$ is strictly increasing and has at most one root."
+        }
+      ],
+      "answer": {
+        "value": "Exactly one solution",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "IVT gives at least one root since $f$ goes from $-1$ to $\\pi+1$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "At least one (IVT) and at most one (strictly increasing). Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A strictly increasing function cannot have two roots."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Same reason — at most one root."
+        }
+      ],
+      "verification": "The root is $x \\approx 0.739$ (the Dottie number), inside $[0,\\pi]$."
+    },
+    "cse-1995-a-22": {
+      "approach": "Write the slope condition as a differential equation, separate variables and integrate.",
+      "concepts": [
+        "Separable differential equations",
+        "Conic sections"
+      ],
+      "steps": [
+        {
+          "title": "Equation",
+          "body": "$\\dfrac{dy}{dx} = -\\dfrac{2x}{y} \\Rightarrow y\\,dy = -2x\\,dx$."
+        },
+        {
+          "title": "Integrate",
+          "body": "$\\dfrac{y^2}{2} = -x^2 + c \\Rightarrow 2x^2 + y^2 = 2c = C$."
+        },
+        {
+          "title": "Identify",
+          "body": "$2x^2 + y^2 = C$ ($C > 0$) has unequal positive coefficients on $x^2$ and $y^2$: an ellipse, $\\dfrac{x^2}{C/2} + \\dfrac{y^2}{C} = 1$."
+        }
+      ],
+      "answer": {
+        "value": "An ellipse",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A straight line has constant slope; here the slope varies with $x$ and $y$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A parabola has only one squared term; here both $x^2$ and $y^2$ appear."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A circle needs equal coefficients; here they are 2 and 1. (Slope $-x/y$ would give a circle.)"
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "$2x^2 + y^2 = C$ is an ellipse. Correct."
+        }
+      ],
+      "verification": "Differentiate $2x^2 + y^2 = C$: $4x + 2yy' = 0 \\Rightarrow y' = -2x/y$."
+    },
+    "cse-1995-a-23": {
+      "approach": "$ax^2 + 2hxy + by^2 = 0$ is a pair of real lines through the origin iff $h^2 \\ge ab$. Find which k breaks this.",
+      "concepts": [
+        "Pair of straight lines",
+        "Discriminant"
+      ],
+      "steps": [
+        {
+          "title": "Match coefficients",
+          "body": "$a = 4$, $2h = -8 \\Rightarrow h = -4$, $b = k$."
+        },
+        {
+          "title": "Condition",
+          "body": "Real lines need $h^2 \\ge ab$: $16 \\ge 4k \\Rightarrow k \\le 4$."
+        },
+        {
+          "title": "Check options",
+          "body": "$k = 0, 2, 3$ satisfy $k \\le 4$; $k = 9$ gives $16 - 36 = -20 < 0$, so only the origin satisfies the equation — no real lines."
+        }
+      ],
+      "answer": {
+        "value": "9",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$k = 0$: $4x(x - 2y) = 0$, the lines $x = 0$ and $x = 2y$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$k = 2$: $h^2 - ab = 16 - 8 = 8 > 0$, two real lines."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$k = 9$: $16 - 36 < 0$, no real lines. Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$k = 3$: $16 - 12 = 4 > 0$; $4x^2 - 8xy + 3y^2 = (2x - y)(2x - 3y)$, two real lines."
+        }
+      ],
+      "verification": "For $k = 9$, as a quadratic in $x/y$: $4t^2 - 8t + 9 = 0$ has discriminant $64 - 144 < 0$."
+    },
+    "cse-1995-a-24": {
+      "approach": "All $n+1$ rows are identical and non-zero, so the row space is spanned by one vector: rank 1 for every real $a$.",
+      "concepts": [
+        "Rank of a matrix",
+        "Row reduction"
+      ],
+      "steps": [
+        {
+          "title": "Reduce the rows",
+          "body": "Subtract row 1 from every other row: $R_i \\leftarrow R_i - R_1$ for $i = 2,\\dots,n+1$. Every such row becomes $[0\\ 0\\ \\cdots\\ 0]$."
+        },
+        {
+          "title": "Count non-zero rows",
+          "body": "Only $R_1 = [1\\ a\\ a^2\\ \\cdots\\ a^n]$ remains, and it is non-zero because its first entry is $1$ (even when $a = 0$). Hence $\\text{rank} = 1$."
+        }
+      ],
+      "answer": {
+        "value": "Rank is 1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: one independent non-zero row."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Rank 2 would need two independent rows; all rows are equal."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Rank $n$ would need $n$ independent rows; there is only one distinct row."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The first entry is always $1$, so the row never vanishes; the rank does not depend on $a$."
+        }
+      ],
+      "pitfalls": [
+        "Thinking $a = 0$ makes the matrix zero: the first column is still all 1s."
+      ],
+      "verification": "Every $2\\times 2$ minor uses two equal rows and is $0$, while the $1\\times1$ minor $1 \\ne 0$, so rank is exactly 1."
+    },
+    "cse-1995-a-25": {
+      "approach": "A connected graph needs at least $n-1$ edges (a tree), and a tree is acyclic; adding one edge to a spanning tree creates exactly one cycle, so the minimum is $n$.",
+      "concepts": [
+        "Trees",
+        "Cycles in graphs"
+      ],
+      "steps": [
+        {
+          "title": "Lower bound",
+          "body": "A connected graph on $n$ vertices with exactly $n-1$ edges is a tree, which has no cycle. So a connected **cyclic** graph needs at least $(n-1)+1 = n$ edges."
+        },
+        {
+          "title": "Achievable",
+          "body": "The cycle $C_n$ is connected, has a cycle and has exactly $n$ edges. So the minimum is $n$."
+        }
+      ],
+      "answer": {
+        "value": "n",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "With $n-1$ edges a connected graph is a tree, hence acyclic."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the cycle $C_n$ attains it and fewer is impossible."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n+1$ edges work but are not the minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option B is correct."
+        }
+      ],
+      "verification": "For $n = 3$: a triangle has 3 edges and is the smallest connected cyclic graph on 3 vertices."
+    },
+    "cse-1995-a-26": {
+      "approach": "Move DE into HL with XCHG, then DAD H adds HL to itself, i.e. HL = 2·DE.",
+      "concepts": [
+        "8085 XCHG",
+        "8085 DAD"
+      ],
+      "steps": [
+        {
+          "title": "XCHG",
+          "body": "XCHG swaps HL $\\leftrightarrow$ DE, so HL now holds the original DE value."
+        },
+        {
+          "title": "DAD H",
+          "body": "DAD rp does $HL \\leftarrow HL + rp$. With rp = H: $HL \\leftarrow HL + HL = 2\\cdot DE$. The product is in HL as required."
+        }
+      ],
+      "answer": {
+        "value": "XCHG and DAD H",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "DAD B adds BC, giving DE + BC, not 2·DE."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "XTHL swaps HL with the top of the stack, not with DE."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "PCHL loads PC from HL, i.e. it jumps; it does not move DE."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: HL = DE, then HL = HL + HL."
+        }
+      ],
+      "verification": "Example: DE = 1234H. After XCHG, HL = 1234H; DAD H gives HL = 2468H = 2·1234H."
+    },
+    "cse-1995-a-27": {
+      "approach": "Words = $4\\text{K} = 2^{12}$ need 12 address lines; each word is 16 bits, so 16 data lines.",
+      "concepts": [
+        "Memory organisation",
+        "Address lines"
+      ],
+      "steps": [
+        {
+          "title": "Address lines",
+          "body": "$4\\text{K} = 4 \\times 1024 = 2^2 \\cdot 2^{10} = 2^{12}$ words, so $\\log_2 2^{12} = 12$ address lines."
+        },
+        {
+          "title": "Data lines",
+          "body": "Word size is 16 bits, so 16 data lines."
+        }
+      ],
+      "answer": {
+        "value": "12 address, 16 data lines",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "10 address lines address only $2^{10} = 1$K words."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "11 lines address 2K words, and 8 data lines carry only half a word."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $2^{12}$ words of 16 bits."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Data lines must equal the word width, 16, not 12."
+        }
+      ],
+      "verification": "$2^{12} \\times 16 = 65536$ bits $= 4\\text{K} \\times 16$."
+    },
+    "cse-1995-a-28": {
+      "approach": "This is the subtraction form of Euclid's algorithm: replacing the larger number by (larger − smaller) keeps the GCD unchanged until both are equal.",
+      "concepts": [
+        "Euclid's algorithm",
+        "GCD"
+      ],
+      "steps": [
+        {
+          "title": "Invariant",
+          "body": "If $X > Y$ then $\\gcd(X, Y) = \\gcd(X - Y, Y)$, because any common divisor of $X$ and $Y$ also divides $X - Y$ and vice versa. So $\\gcd$ is preserved each iteration."
+        },
+        {
+          "title": "Termination",
+          "body": "Both stay positive and their sum strictly decreases, so the loop ends with $X = Y$, and then $\\gcd(X, X) = X$ is printed."
+        },
+        {
+          "title": "Trace X = 12, Y = 18",
+          "body": "$(12,18) \\to (12,6) \\to (6,6)$; prints $6 = \\gcd(12,18)$."
+        }
+      ],
+      "answer": {
+        "value": "Computes the GCD",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "LCM(12,18) = 36, but the trace prints 6."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It does not divide: 18/12 is not 6."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: subtraction-based Euclid."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option C is correct."
+        }
+      ],
+      "verification": "Second trace: (9, 4) → (5,4) → (1,4) → (1,3) → (1,2) → (1,1), prints 1 = gcd(9,4)."
+    },
+    "cse-1995-a-29": {
+      "approach": "FIND takes X as a value parameter; its formal X is a local real copy, so changing it does not change the global integer X, which prints 2.",
+      "concepts": [
+        "Call by value",
+        "Scope"
+      ],
+      "steps": [
+        {
+          "title": "Parameter mode",
+          "body": "In \\`procedure FIND (X : real)\\` there is no \\`var\\`, so it is **call by value**. The integer argument 2 is converted to the real 2.0 and copied into a new local X."
+        },
+        {
+          "title": "Effect",
+          "body": "\\`X := sqrt(X)\\` assigns $\\sqrt{2}$ only to the local copy, which disappears when FIND returns. The global integer X is still 2, so \\`writeln(X)\\` prints 2."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: value parameter, global X unchanged."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\sqrt{2}$ would need a `var` (by reference) parameter, and even then a real could not be stored in an integer."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Passing an integer to a real value parameter is a legal conversion; nothing fails at run time."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option A is correct."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the formal X and the global X are the same variable because they share a name."
+      ],
+      "verification": "Had it been `var X : real`, the call would be a compile-time type error (integer actual for a real var parameter), so value semantics is the only valid reading."
+    },
+    "cse-1995-a-30": {
+      "approach": "Solve the equations in order: the first forces A and B, the second then forces C, the third then forces D.",
+      "concepts": [
+        "Boolean algebra"
+      ],
+      "steps": [
+        {
+          "title": "First equation",
+          "body": "$\\overline{A} + AB = 0$ needs both terms 0: $\\overline{A} = 0 \\Rightarrow A = 1$, and $AB = 0 \\Rightarrow B = 0$."
+        },
+        {
+          "title": "Second equation",
+          "body": "$AB = AC$: left $= 1\\cdot 0 = 0$, so $1\\cdot C = 0 \\Rightarrow C = 0$."
+        },
+        {
+          "title": "Third equation",
+          "body": "$AB + A\\overline{C} + CD = 0 + 1\\cdot 1 + 0 = 1$, and $\\overline{C}D = 1\\cdot D = D$. So $D = 1$."
+        }
+      ],
+      "answer": {
+        "value": "A=1, B=0, C=0, D=1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: satisfies all three equations."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$B = 1$ makes $AB = 1$, violating the first equation."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$C = 1$ makes $AC = 1 \\ne AB = 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$D = 0$ makes the third equation $1 = 0$."
+        }
+      ],
+      "verification": "Substituting (1,0,0,1): $0 + 0 = 0$; $0 = 0$; $0 + 1 + 0 = 1 = 1\\cdot 1$."
+    },
+    "cse-1995-a-31": {
+      "approach": "Optimal (minimum mean turnaround) non-preemptive scheduling may deliberately keep the CPU idle: waiting until job 3 (burst 1) arrives at t = 1 and then running shortest-first beats starting the 9-unit job at t = 0.",
+      "concepts": [
+        "Non-preemptive scheduling",
+        "SJF",
+        "Turnaround time"
+      ],
+      "given": "| Job | Arrival | Burst |\n|---|---|---|\n| 1 | 0.0 | 9 |\n| 2 | 0.6 | 5 |\n| 3 | 1.0 | 1 |",
+      "steps": [
+        {
+          "title": "Idle until t = 1, then 3, 2, 1",
+          "body": "Idle $[0,1)$. Job 3: $1 \\to 2$; job 2: $2 \\to 7$; job 1: $7 \\to 16$.\nTurnaround $= (2-1) + (7-0.6) + (16-0) = 1 + 6.4 + 16 = 23.4$, mean $7.8$.",
+          "scene": {
+            "upto": 16,
+            "cursor": 16,
+            "caption": "Idle 1 unit, then shortest first"
+          }
+        },
+        {
+          "title": "Compare with no idling",
+          "body": "Start job 1 at 0: $0 \\to 9$, then job 3: $9 \\to 10$, job 2: $10 \\to 15$.\nTurnaround $= 9 + (10-1) + (15-0.6) = 9 + 9 + 14.4 = 32.4$, mean $10.8$. Order $2,1,3$ cannot start before $0.6$ and gives $(5.6-0.6)+(14.6-0)+(15.6-1) = 5 + 14.6 + 14.6 = 34.2$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The best sequence is $\\{3,2,1\\}$ with the CPU idle for **1** unit."
+        }
+      ],
+      "answer": {
+        "value": "{3,2,1}, 1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: idle $[0,1)$, then SJF order, mean turnaround 7.8."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Job 2 cannot start at 0 (arrives 0.6), and this order gives a larger total turnaround (34.2)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Running job 3 first is impossible without idling, since it arrives at 1.0."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Order 1,2,3 has no idle time at all, and its turnaround is worse."
+        }
+      ],
+      "pitfalls": [
+        "Assuming a non-preemptive scheduler must start whatever job is ready at t = 0."
+      ],
+      "verification": "All 6 orders checked by turnaround; {3,2,1} after 1 unit idle is minimal (23.4).",
+      "animation": {
+        "kind": "gantt",
+        "unit": "unit",
+        "lanes": [
+          {
+            "label": "CPU",
+            "bars": [
+              {
+                "start": 0,
+                "end": 1,
+                "label": "idle"
+              },
+              {
+                "start": 1,
+                "end": 2,
+                "label": "J3"
+              },
+              {
+                "start": 2,
+                "end": 7,
+                "label": "J2"
+              },
+              {
+                "start": 7,
+                "end": 16,
+                "label": "J1"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 0,
+            "label": "J1↓"
+          },
+          {
+            "t": 0.6,
+            "label": "J2↓"
+          },
+          {
+            "t": 1,
+            "label": "J3↓"
+          }
+        ],
+        "upto": 16,
+        "cursor": 16
+      }
+    },
+    "cse-1995-a-32": {
+      "approach": "Convert each address to a page number (address div 100) and count changes of page: with one frame, every reference to a page other than the resident one is a fault.",
+      "concepts": [
+        "Demand paging",
+        "Page faults"
+      ],
+      "steps": [
+        {
+          "title": "Page numbers",
+          "body": "Page $= \\lfloor \\text{addr}/100 \\rfloor$:\n0100→1, 0200→2, 0430→4, 0499→4, 0510→5, 0530→5, 0560→5, 0120→1, 0220→2, 0240→2, 0260→2, 0320→3, 0370→3.\n\nReference string: 1, 2, 4, 4, 5, 5, 5, 1, 2, 2, 2, 3, 3.",
+          "scene": {
+            "upto": 0
+          }
+        },
+        {
+          "title": "Simulate one frame",
+          "body": "A fault occurs whenever the page differs from the previous one: 1, 2, 4, 5, 1, 2, 3 → **7** faults.",
+          "scene": {
+            "upto": 13
+          }
+        }
+      ],
+      "answer": {
+        "value": "7",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "13 counts every reference as a fault, ignoring repeated pages."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "8 counts one extra fault (e.g. treating 0499 and 0430 as different pages)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 7 page changes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "10 miscounts the runs of the same page."
+        }
+      ],
+      "verification": "Runs of equal pages: [1][2][4,4][5,5,5][1][2,2,2][3,3] = 7 runs = 7 faults.",
+      "animation": {
+        "kind": "paging",
+        "policy": "FIFO",
+        "frames": 1,
+        "refs": [
+          1,
+          2,
+          4,
+          4,
+          5,
+          5,
+          5,
+          1,
+          2,
+          2,
+          2,
+          3,
+          3
+        ],
+        "upto": 0,
+        "expectFaults": 7
+      }
+    },
+    "cse-1995-a-33": {
+      "approach": "Write $(x-1)^3 = -8 = (-2)^3$; the three cube roots of $(-2)^3$ are $-2, -2\\omega, -2\\omega^2$.",
+      "concepts": [
+        "Cube roots of unity"
+      ],
+      "steps": [
+        {
+          "title": "Isolate the cube",
+          "body": "$(x-1)^3 = -8 \\Rightarrow \\left(\\frac{x-1}{-2}\\right)^3 = 1 \\Rightarrow \\frac{x-1}{-2} \\in \\{1, \\omega, \\omega^2\\}$."
+        },
+        {
+          "title": "Solve",
+          "body": "$x - 1 = -2, -2\\omega, -2\\omega^2 \\Rightarrow x = -1,\\ 1 - 2\\omega,\\ 1 - 2\\omega^2$."
+        }
+      ],
+      "answer": {
+        "value": "-1, 1-2ω, 1-2ω²",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$1 + 2\\omega$ gives $(x-1)^3 = 8\\omega^3 = 8$, not $-8$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$x = 1$ gives $(0)^3 + 8 = 8 \\ne 0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$x = -1 + 2\\omega$ gives $x - 1 = -2 + 2\\omega$, whose cube is not $-8$."
+        }
+      ],
+      "verification": "Check $x = 1 - 2\\omega$: $(x-1)^3 = (-2\\omega)^3 = -8\\omega^3 = -8$. ✓"
+    },
+    "cse-1995-a-34": {
+      "approach": "Evaluate inside out on s = acbc.",
+      "concepts": [
+        "String operations"
+      ],
+      "steps": [
+        {
+          "title": "Inner calls",
+          "body": "head(s) = a. tail(s) = cbc, tail(tail(s)) = bc, head(bc) = b."
+        },
+        {
+          "title": "Concatenate",
+          "body": "concat(a, b) = **ab**."
+        }
+      ],
+      "answer": {
+        "value": "ab",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "ac uses head(tail(s)) = c, i.e. only one tail."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "bc is tail(tail(s)) itself, not the concatenation."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "cc would need both heads to be c."
+        }
+      ],
+      "verification": "acbc: positions 1,2,3 are a,c,b; head of two tails is position 3 = b."
+    },
+    "cse-1995-a-35": {
+      "approach": "Find the rightmost derivation of xxxxyzz and list the reductions in the order a shift-reduce parser performs them (reverse of the rightmost derivation), printing each rule's number.",
+      "concepts": [
+        "Shift-reduce parsing",
+        "Syntax-directed translation"
+      ],
+      "steps": [
+        {
+          "title": "Derivation",
+          "body": "$S \\Rightarrow xxW \\Rightarrow xxSz \\Rightarrow xx\\,xxW\\,z \\Rightarrow xx\\,xxSz\\,z \\Rightarrow xxxxyzz$."
+        },
+        {
+          "title": "Reduce y",
+          "body": "Shift x x x x y; reduce $y \\to S$: print **2**. Stack: xxxxS.",
+          "scene": {
+            "items": [
+              "x",
+              "x",
+              "x",
+              "x",
+              "S"
+            ],
+            "caption": "S → y: print 2 (output 2)"
+          }
+        },
+        {
+          "title": "Inner Sz and xxW",
+          "body": "Shift z; reduce $Sz \\to W$: print **3**. Reduce $xxW \\to S$: print **1**. Stack: xxS.",
+          "scene": {
+            "items": [
+              "x",
+              "x",
+              "S"
+            ],
+            "caption": "W → Sz (3), S → xxW (1): output 231"
+          }
+        },
+        {
+          "title": "Outer Sz and xxW",
+          "body": "Shift z; reduce $Sz \\to W$: print **3**; reduce $xxW \\to S$: print **1**. Accept. Output: **23131**.",
+          "scene": {
+            "items": [
+              "S"
+            ],
+            "caption": "Output 23131"
+          }
+        }
+      ],
+      "answer": {
+        "value": "23131",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: reductions in order y, Sz, xxW, Sz, xxW."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "11233 is not a valid reduction order: the first reduction must be $y \\to S$ (print 2)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "11231 also starts with 1, which is impossible before y is reduced."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "33211 is roughly the reverse order (top-down), not bottom-up."
+        }
+      ],
+      "verification": "Count check: one y gives one \"2\"; two W and two S→xxW reductions give two \"3\"s and two \"1\"s, total 5 symbols = 23131.",
+      "animation": {
+        "kind": "stack",
+        "items": [
+          "x",
+          "x",
+          "x",
+          "x",
+          "y"
+        ],
+        "caption": "After shifting xxxxy"
+      }
+    },
+    "cse-1995-a-36": {
+      "approach": "Variant fields share the same storage (like a union), so a record needs the fixed part plus the largest variant.",
+      "concepts": [
+        "Variant records",
+        "Memory layout"
+      ],
+      "steps": [
+        {
+          "title": "Size of one record",
+          "body": "Fixed part: number = 4 bytes. Variant var1: $2 \\times 4 = 8$ bytes; var2: $2 \\times 8 = 16$ bytes. Record $= 4 + \\max(8, 16) = 20$ bytes."
+        },
+        {
+          "title": "Array",
+          "body": "$100 \\times 20 = 2000$ bytes."
+        }
+      ],
+      "answer": {
+        "value": "2000",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2800 $= 100\\times(4+8+16)$ allocates both variants separately."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "2400 $= 100 \\times 24$ has no valid layout behind it (e.g. 8 + 16 with no tag field counted)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $100 \\times (4 + 16)$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1200 $= 100 \\times (4 + 8)$ uses the smaller variant, which cannot hold two reals."
+        }
+      ],
+      "verification": "The largest variant (two reals, 16 B) must fit, so 20 B per record is the minimum."
+    },
+    "cse-1995-a-37": {
+      "approach": "The expression is a hex number: $3\\cdot16^3 + 15\\cdot16^2 + 5\\cdot16 + 3 = (3F53)_{16}$; count 1s per hex digit.",
+      "concepts": [
+        "Hexadecimal",
+        "Binary"
+      ],
+      "steps": [
+        {
+          "title": "Read as hex",
+          "body": "$4096 = 16^3$, $256 = 16^2$, so the value is $(3\\,F\\,5\\,3)_{16}$."
+        },
+        {
+          "title": "Count 1s",
+          "body": "$3 = 0011$ (2), $F = 1111$ (4), $5 = 0101$ (2), $3 = 0011$ (2). Total $= 2 + 4 + 2 + 2 = 10$."
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "8 misses two 1s (e.g. counting 15 as 2 bits)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "9 miscounts one digit."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: 0011 1111 0101 0011."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "12 overcounts."
+        }
+      ],
+      "verification": "Decimal value $12288 + 3840 + 80 + 3 = 16211 = 0011\\,1111\\,0101\\,0011_2$, ten 1s."
+    },
+    "cse-1995-a-38": {
+      "approach": "Compute $a \\times b$ (perpendicular to both) and normalise it.",
+      "concepts": [
+        "Cross product",
+        "Unit vector"
+      ],
+      "steps": [
+        {
+          "title": "Cross product",
+          "body": "$$a\\times b = \\begin{vmatrix} i & j & k\\\\ 2 & -3 & 1\\\\ 1 & 1 & -2\\end{vmatrix}$$\n$i:\\ (-3)(-2) - (1)(1) = 6 - 1 = 5$; $j:\\ -[(2)(-2) - (1)(1)] = -(-5) = 5$; $k:\\ (2)(1) - (-3)(1) = 2 + 3 = 5$.\nSo $a \\times b = 5i + 5j + 5k$."
+        },
+        {
+          "title": "Normalise",
+          "body": "$|a\\times b| = 5\\sqrt{3}$, unit vector $= \\frac{1}{\\sqrt{3}}(i + j + k)$."
+        }
+      ],
+      "answer": {
+        "value": "(i+j+k)/√3",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Not a unit vector ($|i+j-k|/3 = \\sqrt3/3$), and $a\\cdot(i+j-k) = 2-3-1 = -2 \\ne 0$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$a\\cdot(i-j-k) = 2+3-1 = 4 \\ne 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$a\\cdot(i+j-k) = -2 \\ne 0$."
+        }
+      ],
+      "verification": "$a\\cdot(1,1,1) = 2-3+1 = 0$ and $b\\cdot(1,1,1) = 1+1-2 = 0$."
+    },
+    "cse-1995-a-39": {
+      "approach": "Two orders (WB or BW) without replacement: $2\\cdot\\frac{10}{25}\\cdot\\frac{15}{24}$.",
+      "concepts": [
+        "Probability without replacement"
+      ],
+      "steps": [
+        {
+          "title": "Both orders",
+          "body": "$P(WB) = \\frac{10}{25}\\cdot\\frac{15}{24} = \\frac{150}{600}$, $P(BW) = \\frac{15}{25}\\cdot\\frac{10}{24} = \\frac{150}{600}$."
+        },
+        {
+          "title": "Add",
+          "body": "The two orders are disjoint: $\\frac{150}{600} + \\frac{150}{600} = \\frac{300}{600} = \\frac12$."
+        }
+      ],
+      "answer": {
+        "value": "1/2",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2/3 is not obtained by any valid count."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "4/5 is not obtained by any valid count."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "1/3 is not obtained by any valid count; one order alone gives 1/4."
+        }
+      ],
+      "verification": "Combinations: $\\frac{10\\cdot15}{\\binom{25}{2}} = \\frac{150}{300} = \\frac12$."
+    },
+    "cse-1995-a-40": {
+      "approach": "Apply Newton–Raphson to $f(x) = x^2 - b$.",
+      "concepts": [
+        "Newton–Raphson method"
+      ],
+      "steps": [
+        {
+          "title": "Set up f",
+          "body": "$\\sqrt b$ is the positive root of $f(x) = x^2 - b$, with $f'(x) = 2x$."
+        },
+        {
+          "title": "Iteration",
+          "body": "$x_{k+1} = x_k - \\frac{x_k^2 - b}{2x_k} = \\frac{2x_k^2 - x_k^2 + b}{2x_k} = \\frac{x_k^2 + b}{2x_k}$."
+        }
+      ],
+      "answer": {
+        "value": "(x_k² + b)/2x_k",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The factor 3 and the missing square are wrong; its fixed point is not $\\sqrt b$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Not of the form $x - f/f'$ for $f = x^2 - b$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option B is correct."
+        }
+      ],
+      "verification": "b = 4, $x_0 = 1$: $x_1 = 5/2 = 2.5$, $x_2 = (6.25+4)/5 = 2.05$, converging to 2."
+    },
+    "cse-1995-a-41": {
+      "approach": "Virtual memory exists to give a CPU address space larger than RAM, and the full virtual image must be kept on the backing store, which must therefore be larger.",
+      "concepts": [
+        "Virtual memory"
+      ],
+      "steps": [
+        {
+          "title": "Versus physical memory",
+          "body": "If the address space were not larger than physical memory, virtual memory would be unnecessary; so it is **larger**."
+        },
+        {
+          "title": "Versus secondary storage",
+          "body": "Pages not in RAM live on disk, so the whole virtual address space must fit on secondary storage: **smaller** than it."
+        }
+      ],
+      "answer": {
+        "value": "larger, smaller",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "A space smaller than RAM defeats the purpose of virtual memory."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Smaller than RAM and larger than disk is backwards on both counts."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Larger than disk: pages would have nowhere to be stored."
+        }
+      ],
+      "verification": "Typical: 32-bit (4 GB) address space, 1 GB RAM, 100 GB disk."
+    },
+    "cse-1995-a-42": {
+      "approach": "Check group axioms for invertible $n\\times n$ real matrices under multiplication, then commutativity.",
+      "concepts": [
+        "Groups",
+        "General linear group"
+      ],
+      "steps": [
+        {
+          "title": "Group axioms",
+          "body": "Closure: $\\det(AB) = \\det A \\det B \\ne 0$. Associativity: matrix multiplication is associative. Identity: $I$ is nonsingular. Inverse: $A^{-1}$ exists and is nonsingular. So $\\langle A, *\\rangle$ is a group."
+        },
+        {
+          "title": "Not abelian",
+          "body": "$\\begin{bmatrix}1&1\\\\0&1\\end{bmatrix}\\begin{bmatrix}1&0\\\\1&1\\end{bmatrix} = \\begin{bmatrix}2&1\\\\1&1\\end{bmatrix}$ but the reverse product is $\\begin{bmatrix}1&1\\\\1&2\\end{bmatrix}$."
+        }
+      ],
+      "answer": {
+        "value": "Group, not abelian",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Associativity holds, so it is a semigroup."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$I$ is an identity, so it is a monoid."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Every element has an inverse, so it is a group."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "This is $GL_n(\\mathbb R)$, the standard non-abelian group for $n \\ge 2$."
+    },
+    "cse-1995-a-43": {
+      "approach": "Solve the characteristic equation $r^2 + 3r + 2 = 0$.",
+      "concepts": [
+        "Linear ODE with constant coefficients"
+      ],
+      "steps": [
+        {
+          "title": "Roots",
+          "body": "$r^2 + 3r + 2 = (r+1)(r+2) = 0 \\Rightarrow r = -1, -2$."
+        },
+        {
+          "title": "Solution",
+          "body": "$y = c_1e^{-x} + c_2e^{-2x}$."
+        }
+      ],
+      "answer": {
+        "value": "c₁e^{-x} + c₂e^{-2x}",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Roots $1, 2$ solve $r^2 - 3r + 2 = 0$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Roots $-1, 3$ solve $r^2 - 2r - 3 = 0$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2^{-x}$ is $e^{-x\\ln 2}$, root $-\\ln 2$, not $-1$."
+        }
+      ],
+      "verification": "$y = e^{-2x}$: $4e^{-2x} - 6e^{-2x} + 2e^{-2x} = 0$. ✓"
+    },
+    "cse-1995-a-44": {
+      "approach": "Simplify: $\\neg p \\vee (p \\Rightarrow q) \\equiv \\neg p \\vee q$; knowing only $p \\vee q$ is true does not fix its value.",
+      "concepts": [
+        "Propositional logic",
+        "Implication"
+      ],
+      "steps": [
+        {
+          "title": "Simplify",
+          "body": "$\\neg p \\Rightarrow q \\equiv p \\vee q$. $\\neg p \\vee (p \\Rightarrow q) \\equiv \\neg p \\vee \\neg p \\vee q \\equiv \\neg p \\vee q$."
+        },
+        {
+          "title": "Check the cases with $p \\vee q$ true",
+          "body": "$p = T, q = F$: $\\neg p \\vee q = F$. $p = F, q = T$: $T$. Both satisfy the premise, so the value **cannot be determined**."
+        }
+      ],
+      "answer": {
+        "value": "Cannot be determined",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fails for $p = T, q = F$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A proposition has one truth value under an assignment; \"multiple-valued\" is not a classical truth value."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Fails for $p = F, q = T$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "verification": "Truth table over the three rows where $p\\vee q = T$: values F, T, T — not constant."
+    },
+    "cse-1995-a-45": {
+      "approach": "Test each definition against $L = \\{x^ny^n : n \\ge 1\\}$: I is the standard grammar for it, II and III cannot enforce equal counts.",
+      "concepts": [
+        "Context-free grammars",
+        "Regular expressions"
+      ],
+      "steps": [
+        {
+          "title": "Definition I",
+          "body": "$E \\to xEy \\mid xy$: each step adds one x and one y around the middle, ending with xy, so it derives exactly $x^ny^n$, $n \\ge 1$."
+        },
+        {
+          "title": "Definition II",
+          "body": "$xy \\mid x^+xyy^+$ gives xy or $x^iy^j$ with $i, j \\ge 2$; it contains $xxyyy \\notin L$."
+        },
+        {
+          "title": "Definition III",
+          "body": "$x^+y^+$ contains $xyy \\notin L$. So only I generates $L$."
+        }
+      ],
+      "answer": {
+        "value": "I only",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II generates $xxyyy$, which is not in $L$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both II and III generate strings with unequal counts."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "II is regular and $L$ is not, so they differ."
+        }
+      ],
+      "verification": "$L$ is not regular (pumping lemma), while II and III are regular expressions, so neither can equal $L$."
+    },
+    "cse-1995-a-46": {
+      "approach": "Convert with operator precedence: $A + ((B*(C+D))/F) + (D*E)$. Strict left-to-right gives ABCD+*F/+DE*+, which is not listed; option B is the equivalent form $A + (\\,B(C+D)/F + DE\\,)$, valid because + is associative.",
+      "concepts": [
+        "Infix to postfix",
+        "Operator precedence"
+      ],
+      "steps": [
+        {
+          "title": "Parenthesise",
+          "body": "$*$ and $/$ bind tighter and are left-associative: $A + \\big((B*(C+D))/F\\big) + (D*E)$."
+        },
+        {
+          "title": "Postfix of the pieces",
+          "body": "$B*(C+D) \\to BCD{+}{*}$; $/F \\to BCD{+}{*}F{/}$; $D*E \\to DE{*}$.",
+          "scene": {
+            "items": [
+              "A",
+              "BCD+*F/"
+            ],
+            "caption": "Operands built so far"
+          }
+        },
+        {
+          "title": "Combine the additions",
+          "body": "Left-to-right: $A\\ BCD{+}{*}F{/}\\ {+}\\ DE{*}\\ {+}$ = ABCD+*F/+DE*+ (not an option).\nGrouping the right sum first: $A + (X + Y)$ with $X = BCD{+}{*}F{/}$, $Y = DE{*}$ gives $A\\,X\\,Y{+}{+}$ = **ABCD+*F/DE*++**, which is option B and evaluates to the same value.",
+          "scene": {
+            "items": [
+              "A",
+              "BCD+*F/",
+              "DE*"
+            ],
+            "caption": "A X Y + +  →  ABCD+*F/DE*++"
+          }
+        }
+      ],
+      "answer": {
+        "value": "ABCD+*F/DE*++",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "AB+ adds A and B first, ignoring that * binds tighter than +."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct (equivalent grouping of the two additions)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Contains infix-style operator placement (A*B+...), not valid postfix of this expression."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Starts with A+*, which is not valid postfix (an operator needs two operands on the stack)."
+        }
+      ],
+      "pitfalls": [
+        "Expecting the strictly left-associative form; it is not among the options."
+      ],
+      "verification": "Evaluate with A=1,B=2,C=3,D=4,F=7,E=5: infix $1 + 2\\cdot7/7 + 20 = 23$; option B: CD+ = 7, B* = 14, F/ = 2, DE* = 20, + = 22, + = 23. ✓",
+      "animation": {
+        "kind": "stack",
+        "items": [
+          "A"
+        ],
+        "caption": "Postfix pieces (bottom → top)"
+      }
+    },
+    "cse-1995-a-47": {
+      "approach": "Judge each statement on its own, then pick the option listing exactly the true ones.",
+      "concepts": [
+        "Hashing collisions",
+        "Quicksort worst case",
+        "Binary search on linked lists"
+      ],
+      "steps": [
+        {
+          "title": "Statements I and II",
+          "body": "**I** — with a fixed table size, more keys means a higher load factor $\\alpha = n/m$, so collisions increase: **true**.\n\n**II** — recursion adds call/return overhead and stack space; recursive programs are not inherently efficient: **false**."
+        },
+        {
+          "title": "Statements III and IV",
+          "body": "**III** — quicksort on already-sorted input with a first/last-element pivot gives partitions of sizes $n-1$ and $0$: $T(n)=T(n-1)+O(n)=O(n^2)$: **true**.\n\n**IV** — a linked list has no $O(1)$ access to the middle element, so each probe costs $O(n)$ traversal; binary search loses its advantage: **false**."
+        },
+        {
+          "title": "Pick the option",
+          "body": "True statements: I and III → option **D**."
+        }
+      ],
+      "answer": {
+        "value": "I and III",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "II is false — recursion carries call overhead."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "II is false, even though III is true."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "IV is false — finding the middle of a linked list takes linear time."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "I and III are both true."
+        }
+      ],
+      "pitfalls": [
+        "Thinking binary search is $O(\\log n)$ on any sorted structure — it needs random access."
+      ],
+      "verification": "Quicksort on 1,2,…,n with first-element pivot does $(n-1)+(n-2)+\\dots+1 = n(n-1)/2$ comparisons, confirming III."
+    },
+    "cse-1995-a-48": {
+      "approach": "We need a synchronizing sequence that ends in C from every start state: track the set of possible current states as each input is applied.",
+      "concepts": [
+        "Finite state machine",
+        "Synchronizing sequence",
+        "State-set tracking"
+      ],
+      "given": "| state | x = 1 | x = 0 |\n|---|---|---|\n| A | D, 0 | B, 0 |\n| B | B, 1 | C, 1 |\n| C | B, 0 | D, 1 |\n| D | B, 1 | C, 0 |",
+      "steps": [
+        {
+          "title": "Length-1 inputs",
+          "body": "Start set $\\{A,B,C,D\\}$.\n\n- input 1: $A\\to D, B\\to B, C\\to B, D\\to B$ → $\\{B,D\\}$\n- input 0: $A\\to B, B\\to C, C\\to D, D\\to C$ → $\\{B,C,D\\}$\n\nNeither is $\\{C\\}$, so no single input works."
+        },
+        {
+          "title": "Try 10",
+          "body": "After 1: $\\{B,D\\}$. Apply 0: $B\\to C$, $D\\to C$ → $\\{C\\}$. Every start state ends in C."
+        },
+        {
+          "title": "Check 01",
+          "body": "After 0: $\\{B,C,D\\}$. Apply 1: $B\\to B, C\\to B, D\\to B$ → $\\{B\\}$, not C. So **10** is the shortest sequence."
+        }
+      ],
+      "answer": {
+        "value": "10",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "01 always ends in B, not C."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "1 takes every state to {B, D}; 0 then takes both to C."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "101 ends in {B} (10 gives C, then 1 gives B), and it is longer anyway."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "110: 1→{B,D}, 1→{B}, 0→{C} works but has length 3, not the shortest."
+        }
+      ],
+      "pitfalls": [
+        "Reading the columns in the wrong order — the x = 1 column comes first in the table."
+      ],
+      "verification": "Traced 10 from each start state separately: A→D→C, B→B→C, C→B→C, D→B→C."
+    },
+    "cse-1995-a-49": {
+      "approach": "Union with $\\Sigma^*$ gives $\\Sigma^*$ itself; $0^n1^n$ is the textbook non-regular language.",
+      "concepts": [
+        "Regular languages",
+        "Pumping lemma"
+      ],
+      "steps": [
+        {
+          "title": "L ∪ R",
+          "body": "$R \\subseteq \\Sigma^* = L$, so $L\\cup R = \\Sigma^*$, which is regular (accepted by a 1-state DFA)."
+        },
+        {
+          "title": "The language R",
+          "body": "$R=\\{0^n1^n : n>0\\}$ needs unbounded counting. Pumping lemma: for $w=0^p1^p$, any split with $|xy|\\le p$ puts $y$ inside the 0s, and $xy^2z = 0^{p+|y|}1^p \\notin R$. So R is **not regular**."
+        }
+      ],
+      "answer": {
+        "value": "Regular, Not Regular",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "R is not regular."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$L\\cup R=\\Sigma^*$ is regular, and R is not."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\Sigma^*$ is regular; $0^n1^n$ is not."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A union can be regular even when one part is not — here it is $\\Sigma^*$."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the union of a regular and a non-regular language must be non-regular."
+      ],
+      "verification": "Known result: a superset of a non-regular language can be regular, and $\\Sigma^*$ is a superset of every language over $\\Sigma$."
+    },
+    "cse-1995-a-50": {
+      "approach": "WORD bits come from the block size; SET bits come from the number of sets, which is the cache size divided by (block size × associativity).",
+      "concepts": [
+        "Set-associative cache",
+        "Address format"
+      ],
+      "steps": [
+        {
+          "title": "WORD field",
+          "body": "64 words per block → $\\log_2 64 = 6$ bits."
+        },
+        {
+          "title": "SET field",
+          "body": "Blocks in cache $= 4096/64 = 64$. Sets $= 64/4 = 16$ → $\\log_2 16 = 4$ bits."
+        }
+      ],
+      "answer": {
+        "value": "SET = 4, WORD = 6",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "15 bits for SET would mean 32K sets — far more than the cache holds."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "6 is the WORD field width (or the number of block bits); SET is 4."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "7 and 2 match no part of the calculation."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "16 sets → 4 bits; 64 words/block → 6 bits."
+        }
+      ],
+      "pitfalls": [
+        "Using the number of blocks (64 → 6 bits) instead of the number of sets."
+      ],
+      "verification": "$2^4 \\text{ sets} \\times 4 \\text{ ways} \\times 2^6 \\text{ words} = 4096$ words = 4K. ✓"
+    },
+    "cse-1995-a-51": {
+      "approach": "Convert to decimal, do each operation, then wrap the result to the width of the destination (8 bits for bytes, 16 bits for Z) and flag any value that does not fit.",
+      "concepts": [
+        "Unsigned arithmetic",
+        "Overflow and underflow",
+        "Hexadecimal"
+      ],
+      "given": "| variable | hex | decimal |\n|---|---|---|\n| A | 5CH | 92 |\n| B | 92H | 146 |",
+      "steps": [
+        {
+          "title": "X := A + B",
+          "body": "$92 + 146 = 238 \\le 255$ → fits in a byte. $238 = 14\\cdot16+14$ → **X = EEH**, no error."
+        },
+        {
+          "title": "Y := abs(A − B)",
+          "body": "$|92 - 146| = 54 = 3\\cdot16+6$ → **Y = 36H**, no error."
+        },
+        {
+          "title": "W := A − B",
+          "body": "$92 - 146 = -54$, which cannot be stored in an unsigned byte → **underflow / range error**. The bits stored (two's-complement wrap) are $256-54 = 202 = 12\\cdot16+10$ → **W = CAH**."
+        },
+        {
+          "title": "Z := A * B",
+          "body": "$92 \\times 146 = 13432 \\le 65535$ → fits in two bytes. $13432 = 3\\cdot4096 + 4\\cdot256 + 7\\cdot16 + 8$ → **Z = 3478H**, no error."
+        }
+      ],
+      "answer": {
+        "value": "X = EEH, Y = 36H, W = CAH (A − B is negative: underflow for an unsigned byte), Z = 3478H",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting that W is unsigned: −54 is out of range, so only W raises an error condition.",
+        "Assuming A*B overflows — Z is a 2-byte integer, and 13432 fits."
+      ],
+      "verification": "Check in hex: $5C + 92 = EE$; $92 - 5C = 36$; $5C - 92 = -36 \\equiv CA \\pmod{100H}$; $5C\\times92 = 3478$."
+    },
+    "cse-1995-a-52-a": {
+      "approach": "GET follows Pascal's rule $C(A,B)=C(A-1,B)+C(A-1,B-1)$ with $C(\\cdot,0)=1$ and $C(A,B)=0$ for $A<B$, so GET(A, B) $=\\binom{A}{B}$. Expanding the calls confirms it.",
+      "concepts": [
+        "Recursion",
+        "Binomial coefficient"
+      ],
+      "steps": [
+        {
+          "title": "Expand GET(3, 2)",
+          "body": "$GET(3,2) = GET(2,2) + GET(2,1)$"
+        },
+        {
+          "title": "GET(2, 2)",
+          "body": "$GET(2,2) = GET(1,2) + GET(1,1)$.\n\n$GET(1,2) = 0$ (since $1<2$). $GET(1,1) = GET(0,1)+GET(0,0) = 0 + 1 = 1$.\n\nSo $GET(2,2) = 0 + 1 = 1$."
+        },
+        {
+          "title": "GET(2, 1) and total",
+          "body": "$GET(2,1) = GET(1,1) + GET(1,0) = 1 + 1 = 2$.\n\n$GET(3,2) = 1 + 2 = 3 = \\binom{3}{2}$."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "matchesKey": true
+      },
+      "shortcut": "Recognise Pascal's triangle: $GET(3,2)=\\binom{3}{2}=3$.",
+      "pitfalls": [
+        "Missing the base case $A<B$, which returns 0 before B = 0 is reached."
+      ],
+      "verification": "Pascal's identity with the same boundary values gives $\\binom{A}{B}$; $\\binom{3}{2}=3$ matches the trace."
+    },
+    "cse-1995-a-52-b": {
+      "approach": "A transpose must swap each off-diagonal pair once. With J running over 1..N, every pair (I, J) and (J, I) is swapped twice, which puts it back where it started.",
+      "concepts": [
+        "Matrix transpose",
+        "Loop bounds"
+      ],
+      "steps": [
+        {
+          "title": "What the code does",
+          "body": "Take $N=2$: I runs 1..1 and J runs 1..2.\n\n- $J=1$: swaps $A[1,1]$ with itself.\n- $J=2$: swaps $A[1,2]$ and $A[2,1]$.\n\nFor $N\\ge3$, a pair with $I<J\\le N-1$ is swapped at $(I,J)$ and again at $(J,I)$, so it is restored. A pair in column N is swapped only once. The result is not the transpose."
+        },
+        {
+          "title": "Correction",
+          "body": "Only swap above the diagonal:\n\n```pascal\nfor I := 1 to N-1 do\n  for J := I+1 to N do\n    begin\n      TMP := A[I,J];\n      A[I,J] := A[J,I];\n      A[J,I] := TMP\n    end\n```\nEach pair $(I,J)$ with $I<J$ is now swapped exactly once."
+        }
+      ],
+      "answer": {
+        "value": "The inner loop should be `for J := I+1 to N do`",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Changing only the outer bound — the double swap comes from the inner loop starting at 1."
+      ],
+      "verification": "For $N=3$ with the fix: the swaps are (1,2), (1,3), (2,3), which are the three off-diagonal pairs, each swapped once."
+    },
+    "cse-1995-a-53-a": {
+      "approach": "Simulate both policies on the hole list. After Job 1 leaves, the holes are 0–200k (200k) and 850–1000k (150k); First Fit takes the lowest-address hole that fits, Best Fit takes the smallest hole that fits.",
+      "concepts": [
+        "Contiguous allocation",
+        "First fit",
+        "Best fit",
+        "External fragmentation"
+      ],
+      "steps": [
+        {
+          "title": "Common start",
+          "body": "J1 → 0–200k, J2 → 200–550k, J3 → 550–850k, free 850–1000k.\n\nJ1 finishes → holes: **0–200k (200k)**, **850–1000k (150k)**.",
+          "scene": {
+            "reveal": 6
+          }
+        },
+        {
+          "title": "First Fit",
+          "body": "- J4 (120k): first hole 0–200k → **0–120k**; holes 120–200k (80k), 850–1000k (150k).\n- J5 (150k): 80k too small → **850–1000k**; hole 120–200k (80k).\n- J6 (80k): → **120–200k**. All jobs placed.\n\n| region | First Fit |\n|---|---|\n| 0–120k | J4 |\n| 120–200k | J6 |\n| 200–550k | J2 |\n| 550–850k | J3 |\n| 850–1000k | J5 |",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 4,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Best Fit",
+          "body": "- J4 (120k): smallest hole ≥ 120k is 150k → **850–970k**; holes 0–200k (200k), 970–1000k (30k).\n- J5 (150k): only 200k fits → **0–150k**; holes 150–200k (50k), 970–1000k (30k).\n- J6 (80k): holes 50k and 30k are too small → **cannot be allocated** (80k free in total, but split up).\n\n| region | Best Fit |\n|---|---|\n| 0–150k | J5 |\n| 150–200k | free (50k) |\n| 200–550k | J2 |\n| 550–850k | J3 |\n| 850–970k | J4 |\n| 970–1000k | free (30k) |",
+          "scene": {
+            "reveal": 15,
+            "hl": [
+              {
+                "r": 4,
+                "c": 2,
+                "tone": "error"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "cols": [
+          "Event",
+          "First Fit holes",
+          "Best Fit holes"
+        ],
+        "rows": [
+          [
+            "J1, J2, J3 load",
+            "850–1000 (150)",
+            "850–1000 (150)"
+          ],
+          [
+            "J1 finishes",
+            "0–200 (200), 850–1000 (150)",
+            "0–200 (200), 850–1000 (150)"
+          ],
+          [
+            "J4 120k",
+            "120–200 (80), 850–1000 (150)",
+            "0–200 (200), 970–1000 (30)"
+          ],
+          [
+            "J5 150k",
+            "120–200 (80)",
+            "150–200 (50), 970–1000 (30)"
+          ],
+          [
+            "J6 80k",
+            "none — J6 at 120–200",
+            "J6 fails: 50 and 30 too small"
+          ]
+        ],
+        "reveal": 6,
+        "caption": "Free holes (k) after each event"
+      },
+      "answer": {
+        "value": "First fit: J4 at 0-120k, J5 at 850-1000k, J6 at 120-200k (all fit). Best fit: J4 at 850-970k, J5 at 0-150k, J6 cannot be allocated (holes of 50k and 30k).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Letting Best Fit put J4 into the 200k hole — the 150k hole is the tighter fit."
+      ],
+      "verification": "Memory accounting: First Fit uses 120+80+350+300+150 = 1000k exactly; Best Fit uses 920k with 80k free but split into 50k + 30k."
+    },
+    "cse-1995-a-53-b": {
+      "approach": "Compare the outcomes from part (a): the better algorithm here is the one that places every job.",
+      "concepts": [
+        "First fit",
+        "Best fit",
+        "External fragmentation"
+      ],
+      "steps": [
+        {
+          "title": "Outcomes from part (a)",
+          "body": "**First Fit** places J4, J5 and J6; memory ends 100% used.\n\n**Best Fit** places J4 and J5 but J6 (80k) fails, although 80k is free in total — it is split into 50k + 30k holes."
+        },
+        {
+          "title": "Verdict",
+          "body": "For this sequence **First Fit** performs better. Best Fit's tight placement of J4 into the 150k hole left the 200k hole for J5, which created two unusable fragments."
+        }
+      ],
+      "answer": {
+        "value": "First Fit",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Assuming Best Fit is always better — it tends to leave tiny unusable holes."
+      ],
+      "verification": "Re-checked the hole lists in part (a): First Fit ends with no free memory; Best Fit ends with holes of 50k and 30k and J6 waiting."
+    },
+    "cse-1995-a-54": {
+      "approach": "In postorder the root comes last, so C is the root for every tree. For a fixed shape, the postorder sequence fixes the labels uniquely, so the count equals the number of binary-tree shapes with 3 nodes: the Catalan number $C_3 = 5$.",
+      "concepts": [
+        "Postorder traversal",
+        "Catalan numbers"
+      ],
+      "steps": [
+        {
+          "title": "Count the shapes",
+          "body": "Number of binary trees with $n$ nodes $= \\frac{1}{n+1}\\binom{2n}{n}$. For $n=3$: $\\frac{1}{4}\\binom{6}{3} = \\frac{20}{4} = 5$.\n\nEach shape gets exactly one labelling: fill its nodes in postorder with A, B, C."
+        },
+        {
+          "title": "Tree 1: left chain",
+          "body": "C has left child B; B has left child A. Postorder: A, B, C.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                {
+                  "label": "B",
+                  "children": [
+                    {
+                      "label": "A"
+                    },
+                    null
+                  ]
+                },
+                null
+              ]
+            }
+          }
+        },
+        {
+          "title": "Tree 2: left, then right",
+          "body": "C has left child B; B has right child A. Postorder: A, B, C.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                {
+                  "label": "B",
+                  "children": [
+                    null,
+                    {
+                      "label": "A"
+                    }
+                  ]
+                },
+                null
+              ]
+            }
+          }
+        },
+        {
+          "title": "Tree 3: balanced",
+          "body": "C has left child A and right child B. Postorder: A, B, C.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                {
+                  "label": "A"
+                },
+                {
+                  "label": "B"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Tree 4: right, then left",
+          "body": "C has right child B; B has left child A. Postorder: A, B, C.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                null,
+                {
+                  "label": "B",
+                  "children": [
+                    {
+                      "label": "A"
+                    },
+                    null
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Tree 5: right chain",
+          "body": "C has right child B; B has right child A. Postorder: A, B, C.",
+          "scene": {
+            "root": {
+              "label": "C",
+              "children": [
+                null,
+                {
+                  "label": "B",
+                  "children": [
+                    null,
+                    {
+                      "label": "A"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": "C",
+          "children": [
+            {
+              "label": "B",
+              "children": [
+                {
+                  "label": "A"
+                },
+                null
+              ]
+            },
+            null
+          ]
+        }
+      },
+      "answer": {
+        "value": "5",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Only counting trees with A and B as children of C (option 3) — the chains also give postorder A, B, C."
+      ],
+      "verification": "Postorder of each drawn tree: chains visit the deepest node first, then its parent, then C; the balanced tree visits left A, right B, then C. All five give A, B, C, and the five shapes are distinct."
+    },
+    "cse-1995-a-55-a": {
+      "approach": "Factorise into primes; a divisor picks each prime exponent independently, so the count is the product of (exponent + 1).",
+      "concepts": [
+        "Prime factorisation",
+        "Divisor-count function"
+      ],
+      "steps": [
+        {
+          "title": "Factorise",
+          "body": "$600 = 6 \\times 100 = (2\\cdot3)(2^2\\cdot5^2) = 2^3\\cdot3^1\\cdot5^2$."
+        },
+        {
+          "title": "Count",
+          "body": "$d(600) = (3+1)(1+1)(2+1) = 4\\cdot2\\cdot3 = 24$."
+        }
+      ],
+      "answer": {
+        "value": "24",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting the $+1$ for the zero exponent (which accounts for divisors such as 1 and 3)."
+      ],
+      "verification": "Divisors pair up as $d \\cdot (600/d)$ with $\\sqrt{600}\\approx24.5$; the divisors ≤ 24 are 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 24 — 12 of them — so there are $2\\times12=24$."
+    },
+    "cse-1995-a-55-b": {
+      "approach": "Use the geometric inequality $\\sin x < x < \\tan x$ for $0<x<\\pi/2$ (areas of a triangle, sector and triangle in the unit circle) and the squeeze theorem.",
+      "concepts": [
+        "Squeeze theorem",
+        "Unit-circle area comparison"
+      ],
+      "steps": [
+        {
+          "title": "Area inequality",
+          "body": "In the unit circle with angle $x\\in(0,\\pi/2)$:\n\n$$\\underbrace{\\tfrac12\\sin x}_{\\text{inner triangle}} < \\underbrace{\\tfrac12 x}_{\\text{sector}} < \\underbrace{\\tfrac12\\tan x}_{\\text{outer triangle}}$$\n\nso $\\sin x < x < \\tan x$."
+        },
+        {
+          "title": "Rearrange",
+          "body": "Divide by $\\sin x>0$: $1 < \\dfrac{x}{\\sin x} < \\dfrac{1}{\\cos x}$, so\n\n$$\\cos x < \\frac{\\sin x}{x} < 1.$$\n\nAll three terms are even functions, so this also holds for $-\\pi/2<x<0$."
+        },
+        {
+          "title": "Squeeze",
+          "body": "$\\lim_{x\\to0}\\cos x = 1$ and the upper bound is 1, so $\\lim_{x\\to0}\\dfrac{\\sin x}{x} = 1$."
+        }
+      ],
+      "answer": {
+        "value": "1",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using L'Hôpital's rule — it needs the derivative of $\\sin x$, which is itself proved from this limit (circular)."
+      ],
+      "verification": "Numerically: $\\sin(0.01)/0.01 \\approx 0.99998$."
+    },
+    "cse-1995-b-56": {
+      "approach": "Compute FIRST and FOLLOW, then put each production $X\\to\\alpha$ under FIRST($\\alpha$), and under FOLLOW($X$) when $\\alpha$ can be λ.",
+      "concepts": [
+        "FIRST sets",
+        "FOLLOW sets",
+        "LL(1) parsing table"
+      ],
+      "steps": [
+        {
+          "title": "FIRST sets",
+          "body": "- FIRST(Var) = {id} (rule 6)\n- FIRST(Expr) = {\\_, (, id} (rules 1, 2, 3 via Var)\n- FIRST(ExprTail) = {\\_, λ} (rules 4, 5)\n- FIRST(VarTail) = {(, λ} (rules 7, 8)\n- FIRST(Goal) = FIRST(Expr) = {\\_, (, id}"
+        },
+        {
+          "title": "FOLLOW sets",
+          "body": "- Rule 9: \\$ ∈ FOLLOW(Expr). Rules 2 and 7: ) ∈ FOLLOW(Expr).\n- Rules 1 and 4: Expr ends Expr and ExprTail, and rule 3: ExprTail ends Expr, so FOLLOW(Expr) = FOLLOW(ExprTail) = {\\$, )}.\n- Rule 3: FOLLOW(Var) = (FIRST(ExprTail) − λ) ∪ FOLLOW(Expr) = {\\_, \\$, )}.\n- Rule 6: FOLLOW(VarTail) = FOLLOW(Var) = {\\_, \\$, )}."
+        },
+        {
+          "title": "Fill rows from FIRST",
+          "body": "Expr: \\_ → 1, ( → 2, id → 3. ExprTail: \\_ → 4. Var: id → 6. VarTail: ( → 7. Goal: \\_, (, id → 9.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "λ-rules from FOLLOW",
+          "body": "Rule 5 (ExprTail → λ) goes under FOLLOW(ExprTail) = {), \\$}. Rule 8 (VarTail → λ) goes under FOLLOW(VarTail) = {\\_, ), \\$}.\n\nNo cell holds two rules, so the grammar is LL(1).",
+          "scene": {
+            "rows": [
+              [
+                "1",
+                "2",
+                "",
+                "3",
+                ""
+              ],
+              [
+                "4",
+                "",
+                "5",
+                "",
+                "5"
+              ],
+              [
+                "",
+                "",
+                "",
+                "6",
+                ""
+              ],
+              [
+                "8",
+                "7",
+                "8",
+                "",
+                "8"
+              ],
+              [
+                "9",
+                "9",
+                "",
+                "9",
+                ""
+              ]
+            ],
+            "hl": [
+              {
+                "r": 1,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 1,
+                "c": 4,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 0,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "c": 4,
+                "tone": "success"
+              }
+            ]
+          }
+        }
+      ],
+      "animation": {
+        "kind": "table",
+        "corner": "NT \\ input",
+        "cols": [
+          "_",
+          "(",
+          ")",
+          "id",
+          "$"
+        ],
+        "rowLabels": [
+          "Expr",
+          "ExprTail",
+          "Var",
+          "VarTail",
+          "Goal"
+        ],
+        "rows": [
+          [
+            "1",
+            "2",
+            "",
+            "3",
+            ""
+          ],
+          [
+            "4",
+            "",
+            "",
+            "",
+            ""
+          ],
+          [
+            "",
+            "",
+            "",
+            "6",
+            ""
+          ],
+          [
+            "",
+            "7",
+            "",
+            "",
+            ""
+          ],
+          [
+            "9",
+            "9",
+            "",
+            "9",
+            ""
+          ]
+        ],
+        "mono": true
+      },
+      "answer": {
+        "value": "Expr: \\_→1, (→2, id→3; ExprTail: \\_→4, )→5, \\$→5; Var: id→6; VarTail: (→7, \\_→8, )→8, \\$→8; Goal: \\_, (, id→9",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting that _ ∈ FOLLOW(VarTail) (via FIRST(ExprTail)), which puts rule 8 under _.",
+        "Leaving ) out of FOLLOW(Expr) — it comes from rules 2 and 7."
+      ],
+      "verification": "Parsed the input id ( id ) \\$ with the table: Goal→9, Expr→3, Var→6, match id, VarTail→7, … every lookup hit exactly one rule and the input was accepted."
+    },
+    "cse-1995-b-57-a": {
+      "approach": "Unary minus binds tighter than *, and the parentheses group b+c first, so the tree is * over a and uminus(+(b, c)).",
+      "concepts": [
+        "Syntax tree",
+        "Operator precedence",
+        "Unary minus"
+      ],
+      "steps": [
+        {
+          "title": "Parse structure",
+          "body": "$a * -(b+c)$ = $a * (\\text{uminus}(b+c))$: the operand of * on the right is the negated parenthesised sum."
+        },
+        {
+          "title": "Tree",
+          "body": "Root `*`; left child `a`; right child `uminus`, whose single child is `+` with children `b` and `c`."
+        }
+      ],
+      "animation": {
+        "kind": "tree",
+        "root": {
+          "label": "*",
+          "children": [
+            {
+              "label": "a"
+            },
+            {
+              "label": "uminus",
+              "children": [
+                {
+                  "label": "+",
+                  "children": [
+                    {
+                      "label": "b"
+                    },
+                    {
+                      "label": "c"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "answer": {
+        "value": "Root *, left child a, right child unary minus whose child is + with children b and c",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Treating the minus as binary subtraction — there is no left operand, so it is a unary operator node with one child."
+      ],
+      "verification": "Postorder of the tree is `a b c + uminus *`, which evaluates to $a\\cdot(-(b+c))$."
+    },
+    "cse-1995-b-57-b": {
+      "approach": "Show that a cycle makes the grammar ambiguous: one parse tree for a string can be extended by inserting the cycle, giving a second tree. Ambiguous grammars are never LL(1).",
+      "concepts": [
+        "Cycles in grammars",
+        "Ambiguity",
+        "LL(1)"
+      ],
+      "steps": [
+        {
+          "title": "Set-up",
+          "body": "Let $A \\Rightarrow^+ A$, with A a useful nonterminal (reachable from the start symbol and deriving some terminal string $w$, so $A\\Rightarrow^* w$). Take a parse tree $T$ of $w$ rooted at A."
+        },
+        {
+          "title": "Two parse trees",
+          "body": "The derivation $A\\Rightarrow^+ A$ gives a partial tree $C$ whose root is A and whose only nonterminal leaf is A; its other leaves derive λ. Plugging $T$ into that leaf gives a tree $T'$ for the same $w$ (the λ leaves add nothing). $T'$ has more nodes than $T$, so the two trees are different. Embedding both under a derivation from the start symbol gives two parse trees for one sentence: the grammar is **ambiguous**."
+        },
+        {
+          "title": "Not LL(1)",
+          "body": "An LL(1) table gives at most one production per (nonterminal, lookahead) pair, so a predictive parser builds at most one leftmost derivation per sentence. LL(1) grammars are therefore unambiguous. A grammar with a cycle is ambiguous, so it **cannot be LL(1)**.\n\nDirectly: when A is on the stack with lookahead $a$ = first symbol of $w$, both the production that starts the cycle and the one that starts $T$ predict $a$ (or they coincide, and the parser loops for ever), so the table cell $M[A,a]$ has a conflict."
+        }
+      ],
+      "answer": {
+        "value": "If $A \\Rightarrow^+ A$ and $A \\Rightarrow^* w$, then $w$ has two parse trees from A (with and without the cycle inserted), so the grammar is ambiguous; every LL(1) grammar is unambiguous, so a grammar with cycles cannot be LL(1).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Arguing only from left recursion — a cycle such as $A\\to B$, $B\\to A$ is not immediately left recursive, but the ambiguity argument still applies."
+      ],
+      "verification": "Example: $S\\to S \\mid a$. The string $a$ has trees $S\\to a$ and $S\\to S\\to a$, and $M[S,a]$ holds both productions."
+    },
+    "cse-1995-b-58-a": {
+      "approach": "In Pascal, `with R do` opens the field names of record R as the innermost scope, so they hide the outer variables of the same name inside the with-body. The name after `with` itself is resolved in the enclosing scope.",
+      "concepts": [
+        "Static scope",
+        "Pascal with-statement",
+        "Name hiding"
+      ],
+      "steps": [
+        {
+          "title": "Declarations available",
+          "body": "Inside T: parameters U, V, X, Y; local variable **A** (record with fields A, B) and local variable **B** (record with fields B, A)."
+        },
+        {
+          "title": "First with-statement",
+          "body": "`with A do`: the `A` after `with` is the local record variable A. Inside the body, the fields of A hide the outer names:\n\n- `A := 4` → field **A.A**\n- `B := V` → field **A.B** (V is the parameter)"
+        },
+        {
+          "title": "Second with-statement",
+          "body": "`with B do`: the `B` after `with` is the local record variable B (the with-scope of A has closed). Inside:\n\n- `A := X` → field **B.A**\n- `B := Y` → field **B.B**\n\n(X and Y are the parameters.)"
+        }
+      ],
+      "answer": {
+        "value": "In `with A do`, A and B denote the fields A.A and A.B of record variable A; in `with B do`, A and B denote the fields B.A and B.B of record variable B; the names after `with` refer to the local record variables.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading `B := V` inside `with A do` as the record variable B — the field A.B hides it."
+      ],
+      "verification": "Type check: every assignment puts an integer into an integer field, which is only valid with this resolution (assigning an integer to a whole record variable would be a type error)."
+    },
+    "cse-1995-b-58-b": {
+      "approach": "A lexical error is a character sequence that cannot form any token. Split the statement into lexemes and check each one; misplaced but valid tokens are syntax errors, not lexical errors.",
+      "concepts": [
+        "Lexical analysis",
+        "Tokens vs syntax errors"
+      ],
+      "steps": [
+        {
+          "title": "Tokenise",
+          "body": "`if` `A` `>` `1` `,` `then` `B` `=` `2.5` `A` `else` `read` `(` `C` `)` `;`\n\nEach is a valid Pascal token (keyword, identifier, relational operator, integer, comma, real number, parentheses, semicolon)."
+        },
+        {
+          "title": "Classify the mistakes",
+          "body": "- `,` before `then` — valid token in the wrong place → **syntax** error.\n- `=` instead of `:=` — `=` is a valid relational token → **syntax** error.\n- `2.5A` — a scanner reads the longest real `2.5`, then the identifier `A`; the token pair is the problem → **syntax** error. (A strict reading of the Pascal standard, which requires a separator between a number and an identifier, would call this the one lexical error.)"
+        },
+        {
+          "title": "Conclusion",
+          "body": "No lexeme is malformed, so there are **no lexical errors**; all the mistakes are caught by the parser."
+        }
+      ],
+      "answer": {
+        "value": "No lexical error: every lexeme (if, A, >, 1, ',', then, B, =, 2.5, A, else, read, (, C, ), ;) is a valid Pascal token; the mistakes (',' before then, '=' instead of ':=', 2.5A) are syntax errors.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Calling every visible mistake a lexical error — the scanner only rejects character sequences that form no token."
+      ],
+      "verification": "Matched each lexeme against the Pascal token classes (keywords, identifiers, unsigned numbers, special symbols); all match."
+    },
+    "cse-1995-b-59": {
+      "approach": "Build a nondeterministic poly-time machine for $L^C$: on input x of length n, guess the unique string y of length n in L together with an NP certificate that $y\\in L$, verify it, and accept iff $y\\ne x$.",
+      "concepts": [
+        "NP",
+        "Certificates / verifiers",
+        "Complement"
+      ],
+      "steps": [
+        {
+          "title": "Key observation",
+          "body": "Exactly one string $y_n$ of length n lies in L. So for $|x| = n$:\n\n$$x \\in L^C \\iff x \\ne y_n \\iff \\exists y\\,\\big(|y| = n \\wedge y\\in L \\wedge y \\ne x\\big).$$"
+        },
+        {
+          "title": "Verifier for L^C",
+          "body": "Since $L\\in NP$ it has a poly-time verifier $V(y,c)$ with certificates of length $\\le p(|y|)$. A certificate for $x\\in L^C$ is a pair $(y, c)$ with $|y| = |x|$. Check:\n\n1. $|y| = |x|$ and $y \\ne x$ — $O(n)$;\n2. $V(y, c)$ accepts — polynomial in $n$.\n\nThe certificate length is $n + p(n)$, a polynomial."
+        },
+        {
+          "title": "Correctness",
+          "body": "- If $x\\notin L$: take $y = y_n$ (it is in L and $\\ne x$) with its certificate; the check accepts.\n- If $x\\in L$: then $x = y_n$ is the only length-n string in L, so any $y$ with $|y|=n$ and $y\\in L$ equals x; check 1 fails. No certificate is accepted.\n\nHence $L^C$ has a poly-time verifier, so $L^C\\in NP$."
+        }
+      ],
+      "answer": {
+        "value": "Certificate for $x \\in L^C$ ($|x| = n$): a string $y$ with $|y| = n$, $y \\ne x$, plus an NP certificate that $y \\in L$. Since L has exactly one string of each length, such a $y$ exists iff $x \\notin L$, and checking it takes polynomial time, so $L^C \\in$ NP.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Trying to negate the NP verifier for L directly — NP is not known to be closed under complement; the \"exactly one string per length\" condition is what makes this work."
+      ],
+      "verification": "Example: $L=\\{0^n\\}$ (in P ⊆ NP). For $x = 0010$ the certificate $y = 0000$ works; for $x = 0000$ no $y \\ne x$ of length 4 is in L."
+    },
+    "cse-1995-b-60": {
+      "approach": "Each bubble-sort pass compares adjacent pairs left to right and swaps out-of-order ones, so the largest remaining element moves to the end. Trace the five passes.",
+      "concepts": [
+        "Bubble sort",
+        "Passes"
+      ],
+      "steps": [
+        {
+          "title": "Pass 1",
+          "body": "92>37 swap, 92>52 swap, 92>12 swap, 92>11 swap, 92>25 swap → **37, 52, 12, 11, 25, 92**",
+          "scene": {
+            "cells": [
+              37,
+              52,
+              12,
+              11,
+              25,
+              {
+                "v": 92,
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 1"
+          }
+        },
+        {
+          "title": "Pass 2",
+          "body": "37<52 keep, 52>12 swap, 52>11 swap, 52>25 swap → **37, 12, 11, 25, 52, 92**",
+          "scene": {
+            "cells": [
+              37,
+              12,
+              11,
+              25,
+              {
+                "v": 52,
+                "tone": "success"
+              },
+              {
+                "v": 92,
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 2"
+          }
+        },
+        {
+          "title": "Pass 3",
+          "body": "37>12 swap, 37>11 swap, 37>25 swap → **12, 11, 25, 37, 52, 92**",
+          "scene": {
+            "cells": [
+              12,
+              11,
+              25,
+              {
+                "v": 37,
+                "tone": "success"
+              },
+              {
+                "v": 52,
+                "tone": "success"
+              },
+              {
+                "v": 92,
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 3"
+          }
+        },
+        {
+          "title": "Pass 4",
+          "body": "12>11 swap, 12<25 keep → **11, 12, 25, 37, 52, 92**",
+          "scene": {
+            "cells": [
+              11,
+              12,
+              {
+                "v": 25,
+                "tone": "success"
+              },
+              {
+                "v": 37,
+                "tone": "success"
+              },
+              {
+                "v": 52,
+                "tone": "success"
+              },
+              {
+                "v": 92,
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 4"
+          }
+        },
+        {
+          "title": "Pass 5",
+          "body": "11<12 keep → **11, 12, 25, 37, 52, 92** (no swaps; sorted).",
+          "scene": {
+            "cells": [
+              {
+                "v": 11,
+                "tone": "success"
+              },
+              {
+                "v": 12,
+                "tone": "success"
+              },
+              {
+                "v": 25,
+                "tone": "success"
+              },
+              {
+                "v": 37,
+                "tone": "success"
+              },
+              {
+                "v": 52,
+                "tone": "success"
+              },
+              {
+                "v": 92,
+                "tone": "success"
+              }
+            ],
+            "caption": "After pass 5"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "array",
+        "cells": [
+          92,
+          37,
+          52,
+          12,
+          11,
+          25
+        ],
+        "caption": "Initial sequence"
+      },
+      "answer": {
+        "value": "Pass 1: 37,52,12,11,25,92; Pass 2: 37,12,11,25,52,92; Pass 3: 12,11,25,37,52,92; Pass 4: 11,12,25,37,52,92; Pass 5: 11,12,25,37,52,92",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Doing only one swap per pass — a pass carries the larger element all the way along."
+      ],
+      "verification": "After pass k the last k elements are the k largest in order: pass 3 ends with 37, 52, 92. ✓"
+    },
+    "cse-1995-b-61": {
+      "approach": "Build the truth table; the principal CNF is the AND of one maxterm per row where the formula is false (a variable appears plain if it is 0 in that row, negated if it is 1).",
+      "concepts": [
+        "Principal conjunctive normal form",
+        "Maxterms",
+        "Truth table"
+      ],
+      "steps": [
+        {
+          "title": "Where the formula is true",
+          "body": "$(p\\wedge q)$ is true for $pqr = 110, 111$; $(\\neg q\\wedge r)$ is true for $pqr = 001, 101$. So $f=1$ on rows 001, 101, 110, 111 and $f = 0$ on **000, 010, 011, 100**."
+        },
+        {
+          "title": "Maxterms for the false rows",
+          "body": "| $pqr$ | maxterm |\n|---|---|\n| 000 | $p\\vee q\\vee r$ |\n| 010 | $p\\vee\\neg q\\vee r$ |\n| 011 | $p\\vee\\neg q\\vee\\neg r$ |\n| 100 | $\\neg p\\vee q\\vee r$ |"
+        },
+        {
+          "title": "Principal CNF",
+          "body": "$$(p\\vee q\\vee r)\\wedge(p\\vee\\neg q\\vee r)\\wedge(p\\vee\\neg q\\vee\\neg r)\\wedge(\\neg p\\vee q\\vee r)$$\ni.e. $\\prod M(0,2,3,4)$."
+        }
+      ],
+      "answer": {
+        "value": "$(p\\vee q\\vee r)\\wedge(p\\vee\\neg q\\vee r)\\wedge(p\\vee\\neg q\\vee\\neg r)\\wedge(\\neg p\\vee q\\vee r)$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Writing the literal un-negated when the variable is 1 in the false row — maxterms use the opposite polarity to minterms."
+      ],
+      "verification": "The minterms are {1, 5, 6, 7} and the maxterms {0, 2, 3, 4}; together they cover all 8 rows with no overlap."
+    },
+    "cse-1995-b-62-a": {
+      "approach": "Tracks per surface = radial band width / track pitch. Unformatted capacity = surfaces × tracks × sectors × 4000 bytes; formatting takes 96 bytes of each sector.",
+      "concepts": [
+        "Disk geometry",
+        "Formatting overhead"
+      ],
+      "steps": [
+        {
+          "title": "Tracks per surface",
+          "body": "Radial band $= (12 - 4)/2 = 4\\text{ cm} = 40\\text{ mm}$. Tracks $= 40 / 0.1 = 400$."
+        },
+        {
+          "title": "Unformatted capacity",
+          "body": "$8 \\times 400 \\times 20 \\times 4000 = 64{,}000 \\times 4000 = 256{,}000{,}000$ bytes (≈ 256 MB)."
+        },
+        {
+          "title": "Formatted capacity (for reference)",
+          "body": "Usable bytes per sector $= 4000 - 96 = 3904$; $64{,}000\\times3904 = 249{,}856{,}000$ bytes."
+        }
+      ],
+      "answer": {
+        "value": "256,000,000 bytes (formatted capacity 249,856,000 bytes)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using the full diameter difference (8 cm) as the band width — the tracks span the radius difference (4 cm) on each surface."
+      ],
+      "verification": "Total sectors $= 8\\times400\\times20 = 64{,}000$; $64{,}000 \\times 96 = 6{,}144{,}000$ bytes of overhead, and $256{,}000{,}000 - 6{,}144{,}000 = 249{,}856{,}000$. ✓"
+    },
+    "cse-1995-b-62-b": {
+      "approach": "In one revolution the head passes one whole track. Effective (data) rate = formatted data bytes per track × revolutions per second.",
+      "concepts": [
+        "Disk transfer rate",
+        "Formatting overhead"
+      ],
+      "steps": [
+        {
+          "title": "Revolutions per second",
+          "body": "$3600\\text{ rpm} / 60 = 60$ revolutions per second."
+        },
+        {
+          "title": "Data per track",
+          "body": "$20 \\text{ sectors} \\times (4000-96) = 20\\times3904 = 78{,}080$ bytes."
+        },
+        {
+          "title": "Effective rate",
+          "body": "$78{,}080 \\times 60 = 4{,}684{,}800$ bytes/s (≈ 4.68 MB/s). The raw rate, counting overhead, would be $20\\times4000\\times60 = 4{,}800{,}000$ bytes/s."
+        }
+      ],
+      "answer": {
+        "value": "4,684,800 bytes/s",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting the 96 overhead bytes as transferred data — only the 3904 data bytes reach memory."
+      ],
+      "verification": "$4{,}684{,}800 / 4{,}800{,}000 = 0.976 = 3904/4000$. ✓"
+    },
+    "cse-1995-b-63-a": {
+      "approach": "Use De Morgan: $\\overline{A}+\\overline{B}+C = \\overline{A\\cdot B\\cdot\\overline{C}}$, which is a 3-input NAND of A, B and $\\overline{C}$; the inverter supplies $\\overline{C}$.",
+      "concepts": [
+        "De Morgan's law",
+        "NAND implementation"
+      ],
+      "steps": [
+        {
+          "title": "Rewrite",
+          "body": "$C = \\overline{\\overline{C}}$, so $Z = \\overline{A}+\\overline{B}+\\overline{\\overline{C}} = \\overline{A\\cdot B\\cdot \\overline{C}}$ (De Morgan)."
+        },
+        {
+          "title": "Circuit",
+          "body": "Feed C through the inverter; feed A, B and $\\overline{C}$ into a 3-input NAND gate. Its output is Z. With $A=1, B=1, C=0$ the NAND inputs are all 1, so $Z=0$ — the only input that makes $\\overline{A}+\\overline{B}+C$ false."
+        }
+      ],
+      "animation": {
+        "kind": "circuit",
+        "inputs": [
+          {
+            "id": "A",
+            "value": 1
+          },
+          {
+            "id": "B",
+            "value": 1
+          },
+          {
+            "id": "C",
+            "value": 0
+          }
+        ],
+        "gates": [
+          {
+            "id": "n1",
+            "type": "NOT",
+            "in": [
+              "C"
+            ]
+          },
+          {
+            "id": "g1",
+            "type": "NAND",
+            "in": [
+              "A",
+              "B",
+              "n1"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "Z",
+            "from": "g1"
+          }
+        ]
+      },
+      "answer": {
+        "value": "Invert C, then Z = NAND(A, B, $\\overline{C}$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Inverting A and B instead — that needs three inverters and an OR, not one inverter and a NAND."
+      ],
+      "verification": "Truth check: Z = 0 only for $A=B=1, C=0$ in both $\\overline{A}+\\overline{B}+C$ and NAND(A, B, $\\overline{C}$)."
+    },
+    "cse-1995-b-63-b": {
+      "approach": "Read the 1s off the map and look for the largest wrap-around groups: the four corners form one quad and the four centre cells form another. Two quads cover all eight 1s, so the SOP has two terms.",
+      "concepts": [
+        "Karnaugh map",
+        "Wrap-around grouping",
+        "Sum of products"
+      ],
+      "steps": [
+        {
+          "title": "List the 1-cells",
+          "body": "| CD \\ AB | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 | 1 | | | 1 |\n| 01 | | 1 | 1 | |\n| 11 | | 1 | 1 | |\n| 10 | 1 | | | 1 |\n\nEight 1s: the four corners and the central $2\\times2$ block.",
+          "scene": {
+            "caption": "Eight 1s on the map"
+          }
+        },
+        {
+          "title": "Corner quad",
+          "body": "Corners: $AB\\in\\{00,10\\}$ and $CD\\in\\{00,10\\}$. They are adjacent by wrap-around. Constant variables: $B=0$, $D=0$ ($A$, $C$ vary) $\\Rightarrow \\overline{B}\\,\\overline{D}$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "B′D′"
+              }
+            ],
+            "caption": "Corners → B′D′"
+          }
+        },
+        {
+          "title": "Centre quad",
+          "body": "Centre: $AB\\in\\{01,11\\}$, $CD\\in\\{01,11\\}$. Constant: $B=1$, $D=1$ $\\Rightarrow BD$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "B′D′"
+              },
+              {
+                "cells": [
+                  5,
+                  7,
+                  13,
+                  15
+                ],
+                "label": "BD"
+              }
+            ],
+            "caption": "Centre → BD"
+          }
+        },
+        {
+          "title": "Minimal SOP",
+          "body": "All 1s are covered by two essential prime implicants, so\n$$F = BD + \\overline{B}\\,\\overline{D} \\;(= \\overline{B \\oplus D})$$"
+        }
+      ],
+      "answer": {
+        "value": "$F = BD + \\overline{B}\\,\\overline{D}$ (i.e. $B \\odot D$)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Missing the corner wrap-around and writing four 2-cell terms instead of one quad.",
+        "Reading the map with rows/columns swapped — here columns are AB and rows CD."
+      ],
+      "verification": "F = 1 exactly when B = D; every listed 1-cell has B = D and every blank cell has B ≠ D.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "C",
+          "D",
+          "A",
+          "B"
+        ],
+        "ones": [
+          0,
+          2,
+          8,
+          10,
+          5,
+          7,
+          13,
+          15
+        ],
+        "caption": "K-map (rows CD, columns AB)"
+      }
+    },
+    "cse-1995-b-64-a": {
+      "approach": "Trace the registers: B is a count (10), A the search key (05H), HL a pointer (1C40H). The subroutine compares A with memory at HL and returns as soon as they are equal — a linear search.",
+      "concepts": [
+        "8085 CMP M",
+        "Conditional return RZ",
+        "Counter loop with DCR/JNZ",
+        "Linear search"
+      ],
+      "steps": [
+        {
+          "title": "Set-up",
+          "body": "`MVI B,0AH` → counter $B=10$; `MVI A,05H` → key $A=05H$; `LXI H,1C40H` → pointer $HL=1C40H$; then `CALL SUB`.",
+          "scene": {
+            "line": 4,
+            "vars": {
+              "A": "05H",
+              "B": "0AH",
+              "HL": "1C40H"
+            }
+          }
+        },
+        {
+          "title": "Loop body",
+          "body": "`CMP M` computes $A-M[HL]$ and sets Z if they are equal. `RZ` returns immediately on a match. Otherwise `INX H` moves to the next byte, `DCR B` decrements the count, and `JNZ SUB` repeats while $B\\ne0$.",
+          "scene": {
+            "line": 7,
+            "hl": [
+              6,
+              7,
+              8,
+              9,
+              10
+            ]
+          }
+        },
+        {
+          "title": "What it does",
+          "body": "It searches the 10 bytes at $1C40H$–$1C49H$ for the value $05H$. On a match it returns with HL pointing at the first location holding 05H; if no location matches it returns after 10 comparisons (via `RET`) and the program halts.",
+          "scene": {
+            "line": 5,
+            "hl": [],
+            "caption": "Return to HLT"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Linear search: looks for the byte 05H in the 10 locations 1C40H–1C49H; stops with HL pointing to the first location containing 05H (or after all 10 if none does).",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "CMP M does not change A — it only sets flags.",
+        "RZ returns from SUB to the instruction after CALL (HLT), not to the start."
+      ],
+      "verification": "Counted iterations: B = 0AH = 10 gives addresses 1C40H…1C49H before DCR B reaches 0.",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "MVI B, 0AH\nMVI A, 05H\nLXI H, 1C40H\nCALL SUB\nHLT\nSUB: CMP M\nRZ\nINX H\nDCR B\nJNZ SUB\nRET",
+        "line": 1,
+        "vars": {}
+      }
+    },
+    "cse-1995-b-64-b": {
+      "approach": "The first two instructions are immediate loads, so the initial register contents are just their operands. The printed \"U\" is a misprint for B — the only other register the program loads.",
+      "concepts": [
+        "8085 MVI (move immediate)"
+      ],
+      "steps": [
+        {
+          "title": "Immediate loads",
+          "body": "`MVI B,0AH` puts $0AH$ ($=10$) in B; `MVI A,05H` puts $05H$ in A."
+        },
+        {
+          "title": "Roles",
+          "body": "A holds the byte being searched for and B is the loop counter (10 locations)."
+        }
+      ],
+      "answer": {
+        "value": "A = 05H (search key), B = 0AH = 10 (counter)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reading 0AH as decimal 0A or as the letter O; it is hexadecimal 0A = 10."
+      ],
+      "verification": "Matches the loop: 10 decrements of B take it from 0AH to 0."
+    },
+    "cse-1995-b-64-c": {
+      "approach": "HL is advanced by INX H only after a failed comparison, and RZ returns before that increment on a match. So HL ends at the matching address, or one past the last searched address if nothing matched.",
+      "concepts": [
+        "8085 RZ",
+        "INX H",
+        "Loop exit conditions"
+      ],
+      "steps": [
+        {
+          "title": "Match case",
+          "body": "If $M[1C40H+k]=05H$ for the first time at $k$ ($0\\le k\\le9$), `CMP M` sets Z and `RZ` returns before `INX H`. So $HL = 1C40H + k$, the address of the first 05H."
+        },
+        {
+          "title": "No-match case",
+          "body": "Each failed pass does `INX H`. After 10 passes $B=0$, `JNZ` falls through to `RET` and\n$$HL = 1C40H + 0AH = 1C4AH.$$"
+        }
+      ],
+      "answer": {
+        "value": "HL = address of the first location in 1C40H–1C49H that contains 05H; HL = 1C4AH if none of them does.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Saying 1C49H for the no-match case — INX H runs once more after the last comparison."
+      ],
+      "verification": "Traced with no match: HL takes 1C40H…1C49H at the 10 compares and is incremented 10 times in total → 1C4AH."
+    },
+    "cse-1995-b-65-a-i": {
+      "approach": "A start-stop frame is: start bit 0, the data bits, the parity bit, then the stop bit 1. Odd parity makes the total count of 1s (data + parity) odd.",
+      "concepts": [
+        "Asynchronous (start-stop) framing",
+        "Odd parity"
+      ],
+      "steps": [
+        {
+          "title": "Parity bit",
+          "body": "Data `0110101` has $0+1+1+0+1+0+1 = 4$ ones (even). For odd parity the parity bit must be **1** (total 5)."
+        },
+        {
+          "title": "Assemble the frame",
+          "body": "| start | data (7) | parity | stop |\n|---|---|---|---|\n| 0 | 0110101 | 1 | 1 |\n\nBit stream: **0 0110101 1 1** — 10 bits per character."
+        }
+      ],
+      "answer": {
+        "value": "0 0110101 1 1 (start 0, data 0110101, odd-parity bit 1, stop 1) — 10 bits",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using even parity (would give parity 0).",
+        "Forgetting the start bit — the frame is 10 bits, not 9."
+      ],
+      "verification": "Ones in data + parity = 4 + 1 = 5, which is odd."
+    },
+    "cse-1995-b-65-a-ii": {
+      "approach": "Each character occupies a full 10-bit frame (1 start + 7 data + 1 parity + 1 stop), so divide the line rate by 10.",
+      "concepts": [
+        "Frame overhead",
+        "Bit rate"
+      ],
+      "steps": [
+        {
+          "title": "Bits per string",
+          "body": "$1 + 7 + 1 + 1 = 10$ bits."
+        },
+        {
+          "title": "Strings per second",
+          "body": "$$\\frac{1200\\ \\text{bits/s}}{10\\ \\text{bits/string}} = 120\\ \\text{strings/s}$$"
+        }
+      ],
+      "answer": {
+        "value": "120 strings per second",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Dividing by 7 (data bits only) gives 171, ignoring the framing bits."
+      ],
+      "verification": "120 × 10 = 1200 bits/s, exactly the line rate."
+    },
+    "cse-1995-b-65-b": {
+      "approach": "In graphics mode the buffer stores one bit per pixel, so find the pixel resolution from the text format and the character cell size.",
+      "concepts": [
+        "Frame buffer size",
+        "Character cell"
+      ],
+      "steps": [
+        {
+          "title": "Resolution",
+          "body": "Width $= 80 \\times 9 = 720$ pixels; height $= 25 \\times 12 = 300$ pixels."
+        },
+        {
+          "title": "Buffer size",
+          "body": "$$720 \\times 300 \\times 1\\ \\text{bit} = 216000\\ \\text{bits} = \\frac{216000}{8} = 27000\\ \\text{bytes} \\approx 26.4\\ \\text{KB}$$"
+        }
+      ],
+      "answer": {
+        "value": "216000 bits = 27000 bytes (≈ 26.4 KB)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Giving the text-mode size (80 × 25 = 2000 characters) instead of the graphics-mode pixel count."
+      ],
+      "verification": "9 × 12 = 108 pixels per cell × 2000 cells = 216000 pixels."
+    },
+    "cse-1995-b-66": {
+      "approach": "The range −8…+7 is exactly 4-bit two's complement, whose pattern for negative N equals the unsigned value N + 2⁴. After that the loop is the usual repeated-division conversion, writing each remainder as a decimal digit.",
+      "concepts": [
+        "4-bit two's complement",
+        "Repeated division by 2",
+        "Digits built in base 10"
+      ],
+      "steps": [
+        {
+          "title": "Expression A",
+          "body": "For $-8\\le N\\le -1$, the 4-bit two's complement code of $N$ is the unsigned number $2^4+N$. So $A = N + 16$ (giving $8\\ldots15$, i.e. `1000`…`1111`)."
+        },
+        {
+          "title": "Expressions B and C",
+          "body": "Each pass takes the lowest bit `REM := N mod 2`, places it at the current decimal position: $B = \\text{REM}$, then drops that bit: $C = N \\text{ div } 2$."
+        },
+        {
+          "title": "Trace N = −3",
+          "body": "$N := -3+16 = 13$.\n\n| N | REM | BINARY | EXPONENT after |\n|---|---|---|---|\n| 13 | 1 | 1 | 10 |\n| 6 | 0 | 1 | 100 |\n| 3 | 1 | 101 | 1000 |\n| 1 | 1 | 1101 | 10000 |\n\nResult 1101 $= -3$ in 4-bit two's complement. ✓",
+          "scene": {
+            "caption": "N = −3 → 13 → 1101"
+          }
+        }
+      ],
+      "answer": {
+        "value": "A = N + 16, B = REM, C = N div 2",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using A = −N or abs(N) gives the magnitude, not the two's complement code.",
+        "Writing C = N / 2 — Pascal \"/\" is real division; integer division is div."
+      ],
+      "verification": "N = −8 → 8 → 1000 and N = −1 → 15 → 1111, both correct 4-bit codes; positive N skips A.",
+      "animation": {
+        "kind": "code",
+        "lang": "pseudo",
+        "code": "if N < 0 then N := [A];\nBINARY := 0; EXPONENT := 1;\nwhile N <> 0 do begin\n  REM := N mod 2;\n  BINARY := BINARY + [B]*EXPONENT;\n  EXPONENT := EXPONENT*10;\n  N := [C]\nend",
+        "line": 1,
+        "caption": "Completed loop"
+      }
+    },
+    "cse-1995-b-67": {
+      "approach": "Each semaphore starts at 0 and is used by exactly one V and one P, so V(x) after Si and P(x) before Sj means Si must precede Sj: one edge per semaphore.",
+      "concepts": [
+        "Semaphores for ordering",
+        "Precedence graph",
+        "cobegin/coend"
+      ],
+      "steps": [
+        {
+          "title": "Edge rule",
+          "body": "A semaphore initialised to 0 makes `P(x)` wait until some process does `V(x)`. So \"Si; V(x)\" in one block and \"P(x); Sj\" in another gives the edge $S_i \\to S_j$."
+        },
+        {
+          "title": "Read each semaphore",
+          "body": "| sem | V after | P before | edge |\n|---|---|---|---|\n| a | S1 | S2 | S1→S2 |\n| b | S1 | S3 | S1→S3 |\n| c | S2 | S4 | S2→S4 |\n| d | S2 | S5 | S2→S5 |\n| e | S4 | S7 | S4→S7 |\n| f | S5 | S7 | S5→S7 |\n| g | S3 | S6 | S3→S6 |\n| h | S3 | S8 | S3→S8 |\n| i | S6 | S8 | S6→S8 |\n| j | S8 | S9 | S8→S9 |\n| k | S7 | S9 | S7→S9 |",
+          "scene": {
+            "edgeTones": {
+              "S1>S2": "accent",
+              "S1>S3": "accent",
+              "S2>S4": "accent",
+              "S2>S5": "accent",
+              "S3>S6": "accent",
+              "S3>S8": "accent"
+            },
+            "caption": "Edges out of S1, S2, S3"
+          }
+        },
+        {
+          "title": "Precedence graph",
+          "body": "S1 forks into the S2 branch (S2 → S4, S5 → join at S7) and the S3 branch (S3 → S6 → S8, plus S3 → S8 directly). S7 and S8 both feed S9.",
+          "scene": {
+            "edgeTones": {},
+            "tones": {
+              "S1": "success",
+              "S9": "success"
+            },
+            "caption": "11 edges, S1 source, S9 sink"
+          }
+        }
+      ],
+      "answer": {
+        "value": "Edges: S1→S2, S1→S3, S2→S4, S2→S5, S4→S7, S5→S7, S3→S6, S3→S8, S6→S8, S7→S9, S8→S9",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Omitting S3→S8 (semaphore h) because S3 already reaches S8 through S6 — the graph drawn from the code has it."
+      ],
+      "verification": "Eleven semaphores a–k used, eleven edges drawn; every Si except S1 has at least one incoming edge.",
+      "animation": {
+        "kind": "graph",
+        "directed": true,
+        "layout": "layered",
+        "nodes": [
+          {
+            "id": "S1"
+          },
+          {
+            "id": "S2"
+          },
+          {
+            "id": "S3"
+          },
+          {
+            "id": "S4"
+          },
+          {
+            "id": "S5"
+          },
+          {
+            "id": "S6"
+          },
+          {
+            "id": "S7"
+          },
+          {
+            "id": "S8"
+          },
+          {
+            "id": "S9"
+          }
+        ],
+        "edges": [
+          {
+            "from": "S1",
+            "to": "S2",
+            "w": "a"
+          },
+          {
+            "from": "S1",
+            "to": "S3",
+            "w": "b"
+          },
+          {
+            "from": "S2",
+            "to": "S4",
+            "w": "c"
+          },
+          {
+            "from": "S2",
+            "to": "S5",
+            "w": "d"
+          },
+          {
+            "from": "S4",
+            "to": "S7",
+            "w": "e"
+          },
+          {
+            "from": "S5",
+            "to": "S7",
+            "w": "f"
+          },
+          {
+            "from": "S3",
+            "to": "S6",
+            "w": "g"
+          },
+          {
+            "from": "S3",
+            "to": "S8",
+            "w": "h"
+          },
+          {
+            "from": "S6",
+            "to": "S8",
+            "w": "i"
+          },
+          {
+            "from": "S8",
+            "to": "S9",
+            "w": "j"
+          },
+          {
+            "from": "S7",
+            "to": "S9",
+            "w": "k"
+          }
+        ]
+      }
+    },
+    "cse-1995-b-68": {
+      "approach": "Add up |current − next| for the order each algorithm visits. FCFS keeps the queue order; SSTF always moves to the nearest pending track.",
+      "concepts": [
+        "FCFS disk scheduling",
+        "SSTF disk scheduling",
+        "Seek distance"
+      ],
+      "steps": [
+        {
+          "title": "FCFS",
+          "body": "Order 55 → 10 → 70 → 75 → 23 → 65:\n$$45 + 60 + 5 + 52 + 42 = 204$$",
+          "scene": {
+            "points": [
+              {
+                "x": 55,
+                "label": "55"
+              },
+              {
+                "x": 10,
+                "label": "10"
+              },
+              {
+                "x": 70,
+                "label": "70"
+              },
+              {
+                "x": 75,
+                "label": "75"
+              },
+              {
+                "x": 23,
+                "label": "23"
+              },
+              {
+                "x": 65,
+                "label": "65"
+              }
+            ],
+            "caption": "FCFS: 55→10→70→75→23→65 = 204"
+          }
+        },
+        {
+          "title": "SSTF",
+          "body": "From 55 the distances are 65:10, 70:15, 75:20, 23:32, 10:45 → go to 65. Then 70 (5), 75 (5), then 23 (52), then 10 (13):\n$$10 + 5 + 5 + 52 + 13 = 85$$",
+          "scene": {
+            "caption": "SSTF: 55→65→70→75→23→10 = 85"
+          }
+        },
+        {
+          "title": "Compare",
+          "body": "SSTF needs 85 tracks against 204 for FCFS, so **SSTF** requires less head movement."
+        }
+      ],
+      "answer": {
+        "value": "SSTF needs less: FCFS = 204 tracks, SSTF = 85 tracks",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "From 75, SSTF goes to 23 (distance 52) before 10 (65), not the other way."
+      ],
+      "verification": "SSTF path spans 55→75 (20) then 75→10 (65): 20 + 65 = 85 ✓.",
+      "animation": {
+        "kind": "numberline",
+        "min": 0,
+        "max": 99,
+        "points": [
+          {
+            "x": 55,
+            "label": "55"
+          }
+        ],
+        "caption": "Head at 55"
+      }
+    },
+    "cse-1995-b-69-a": {
+      "approach": "Use the one-step subgroup test: a non-empty subset H is a subgroup if a, b ∈ H implies ab⁻¹ ∈ H. Both G₁ and G₂ pass it, so their intersection does too.",
+      "concepts": [
+        "Subgroup test",
+        "Intersection of subgroups"
+      ],
+      "steps": [
+        {
+          "title": "Non-empty",
+          "body": "The identity $e$ of $G$ lies in every subgroup, so $e \\in G_1 \\cap G_2$."
+        },
+        {
+          "title": "Closure under $ab^{-1}$",
+          "body": "Let $a, b \\in G_1 \\cap G_2$. Since $G_1$ is a subgroup, $ab^{-1} \\in G_1$; since $G_2$ is a subgroup, $ab^{-1} \\in G_2$. Hence $ab^{-1} \\in G_1 \\cap G_2$."
+        },
+        {
+          "title": "Conclude",
+          "body": "By the one-step test, $G_1 \\cap G_2$ is a subgroup of $G$. (The same argument works for any family of subgroups.)"
+        }
+      ],
+      "answer": {
+        "value": "$G_1 \\cap G_2$ is a subgroup: it contains $e$, and $a,b \\in G_1\\cap G_2 \\Rightarrow ab^{-1} \\in G_1$ and $\\in G_2$.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting to show the set is non-empty."
+      ],
+      "verification": "Example: in ℤ, 4ℤ ∩ 6ℤ = 12ℤ, a subgroup."
+    },
+    "cse-1995-b-69-b": {
+      "approach": "Give a counterexample. G₁ ∪ G₂ is a subgroup only when one subgroup contains the other; two subgroups of ℤ like 2ℤ and 3ℤ break closure.",
+      "concepts": [
+        "Union of subgroups",
+        "Counterexample"
+      ],
+      "steps": [
+        {
+          "title": "Counterexample",
+          "body": "In $(\\mathbb{Z}, +)$ take $G_1 = 2\\mathbb{Z}$, $G_2 = 3\\mathbb{Z}$. Then $2, 3 \\in G_1 \\cup G_2$ but $2 + 3 = 5$ is divisible by neither 2 nor 3, so $5 \\notin G_1 \\cup G_2$. Closure fails."
+        },
+        {
+          "title": "General fact",
+          "body": "If $a \\in G_1\\setminus G_2$ and $b \\in G_2 \\setminus G_1$, then $ab \\in G_1$ would give $b = a^{-1}(ab) \\in G_1$, and $ab \\in G_2$ would give $a \\in G_2$ — both false. So $G_1 \\cup G_2$ is a subgroup **iff** $G_1 \\subseteq G_2$ or $G_2 \\subseteq G_1$."
+        }
+      ],
+      "answer": {
+        "value": "No. E.g. 2ℤ ∪ 3ℤ in (ℤ,+): 2 + 3 = 5 is not in the union. It is a subgroup only when one of G₁, G₂ contains the other.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Answering \"never\" — it is a subgroup when one contains the other (e.g. G₁ = G₂)."
+      ],
+      "verification": "5 mod 2 = 1 and 5 mod 3 = 2, so 5 ∉ 2ℤ ∪ 3ℤ."
+    },
+    "cse-1995-b-70": {
+      "approach": "Run Kruskal's algorithm and watch for ties: a tie between edges that could both be the next safe edge gives alternative MSTs. Here the only tie that matters is the two weight-4 edges into D.",
+      "concepts": [
+        "Kruskal's algorithm",
+        "Ties and MST uniqueness",
+        "Cut property"
+      ],
+      "given": "| Edge | AB | AE | BC | BD | CD | ED |\n|---|---|---|---|---|---|---|\n| Weight | 2 | 3 | 3 | 4 | 4 | 5 |",
+      "steps": [
+        {
+          "title": "Forced edges",
+          "body": "Sorted: AB 2, AE 3, BC 3, BD 4, CD 4, ED 5. Take AB (2), AE (3), BC (3) — no cycles. Every MST must contain them: they are the strictly lightest ways to attach E and C.",
+          "scene": {
+            "edgeTones": {
+              "A>B": "success",
+              "A>E": "success",
+              "B>C": "success"
+            },
+            "caption": "AB, AE, BC taken (weight 8)"
+          }
+        },
+        {
+          "title": "Connect D",
+          "body": "Component {A,B,C,E}; D is reached by BD (4), CD (4) or ED (5). The minimum is 4, achieved by **two** edges, and adding either closes no cycle. ED (5) is never chosen.",
+          "scene": {
+            "edgeTones": {
+              "A>B": "success",
+              "A>E": "success",
+              "B>C": "success",
+              "B>D": "warning",
+              "C>D": "warning"
+            },
+            "caption": "Tie: BD = CD = 4"
+          }
+        },
+        {
+          "title": "The two MSTs",
+          "body": "- **T₁** = {AB, AE, BC, BD}, weight $2+3+3+4 = 12$\n- **T₂** = {AB, AE, BC, CD}, weight $2+3+3+4 = 12$\n\nSo the graph has **2** minimum spanning trees.",
+          "scene": {
+            "edgeTones": {
+              "A>B": "success",
+              "A>E": "success",
+              "B>C": "success",
+              "B>D": "success"
+            },
+            "caption": "T₁ (T₂ uses CD instead of BD)"
+          }
+        }
+      ],
+      "answer": {
+        "value": "2 MSTs, each of weight 12: {AB, AE, BC, BD} and {AB, AE, BC, CD}",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Counting the tie AE = BC = 3 as extra MSTs — both are needed, so it creates no alternative."
+      ],
+      "verification": "Spanning trees avoiding both BD and CD must use ED (5) and weigh ≥ 13 > 12, so only these two achieve 12.",
+      "animation": {
+        "kind": "graph",
+        "directed": false,
+        "nodes": [
+          {
+            "id": "A",
+            "x": 0,
+            "y": 0
+          },
+          {
+            "id": "B",
+            "x": 4,
+            "y": 0
+          },
+          {
+            "id": "C",
+            "x": 5.6,
+            "y": 1.4
+          },
+          {
+            "id": "D",
+            "x": 4,
+            "y": 2.8
+          },
+          {
+            "id": "E",
+            "x": 0,
+            "y": 2.8
+          }
+        ],
+        "edges": [
+          {
+            "from": "A",
+            "to": "B",
+            "w": 2
+          },
+          {
+            "from": "A",
+            "to": "E",
+            "w": 3
+          },
+          {
+            "from": "E",
+            "to": "D",
+            "w": 5
+          },
+          {
+            "from": "B",
+            "to": "D",
+            "w": 4
+          },
+          {
+            "from": "B",
+            "to": "C",
+            "w": 3
+          },
+          {
+            "from": "C",
+            "to": "D",
+            "w": 4
+          }
+        ]
+      }
+    },
+    "cse-1995-b-71": {
+      "approach": "Standard induction: check n = 5, then show 2^{k+1} = 2·2^k > 2k² and that 2k² ≥ (k+1)² once k ≥ 3.",
+      "concepts": [
+        "Mathematical induction",
+        "Polynomial vs exponential growth"
+      ],
+      "steps": [
+        {
+          "title": "Base case",
+          "body": "$n = 5$: $2^5 = 32 > 25 = 5^2$. ✓"
+        },
+        {
+          "title": "Inductive step",
+          "body": "Assume $2^k > k^2$ for some $k \\ge 5$. Then\n$$2^{k+1} = 2\\cdot 2^k > 2k^2.$$\nAlso $2k^2 - (k+1)^2 = k^2 - 2k - 1 = (k-1)^2 - 2 \\ge 16 - 2 > 0$ for $k \\ge 5$. Hence $2^{k+1} > 2k^2 > (k+1)^2$."
+        },
+        {
+          "title": "Conclude",
+          "body": "By induction, $2^n > n^2$ for all integers $n \\ge 5$."
+        }
+      ],
+      "answer": {
+        "value": "Base n = 5: 32 > 25. If 2^k > k² (k ≥ 5) then 2^{k+1} > 2k² = (k+1)² + (k−1)² − 2 > (k+1)². Hence 2^n > n² for all n ≥ 5.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "The claim fails for n = 2, 3, 4 (4 = 4, 8 < 9, 16 = 16), so the base case must be 5."
+      ],
+      "verification": "n = 6: 64 > 36; n = 7: 128 > 49."
+    },
+    "cse-1995-b-72": {
+      "approach": "Use the handshaking lemma: the degree sum is 2|E|, an even number. Split it into even-degree and odd-degree vertices; the odd part must be even, which needs an even number of odd terms.",
+      "concepts": [
+        "Handshaking lemma",
+        "Parity argument"
+      ],
+      "steps": [
+        {
+          "title": "Handshaking lemma",
+          "body": "Each edge adds 1 to the degree of each endpoint (a loop adds 2 to one vertex), so $\\sum_{v} \\deg(v) = 2|E|$, which is even."
+        },
+        {
+          "title": "Split the sum",
+          "body": "Let $V_e$, $V_o$ be the even- and odd-degree vertices:\n$$\\sum_{v\\in V_o}\\deg(v) = 2|E| - \\sum_{v\\in V_e}\\deg(v).$$\nThe right side is even minus even, so it is even."
+        },
+        {
+          "title": "Count odd terms",
+          "body": "A sum of odd numbers is even only if it has an even number of terms. Hence $|V_o|$ is even."
+        }
+      ],
+      "answer": {
+        "value": "Σdeg(v) = 2|E| is even; the even-degree vertices contribute an even amount, so the odd degrees sum to an even number, which forces an even count of odd-degree vertices.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Asserting the conclusion without the \"sum of odd numbers\" parity step."
+      ],
+      "verification": "Path P₃ (degrees 1, 2, 1): two odd-degree vertices."
+    },
+    "cse-1995-b-73-a": {
+      "approach": "Complete the square (or set the derivative to zero): the quadratic opens upward, so its vertex gives the minimum.",
+      "concepts": [
+        "Completing the square",
+        "Vertex of a parabola"
+      ],
+      "steps": [
+        {
+          "title": "Complete the square",
+          "body": "$$2x^2 - 4x + 3 = 2(x^2 - 2x) + 3 = 2(x-1)^2 - 2 + 3 = 2(x-1)^2 + 1$$"
+        },
+        {
+          "title": "Minimum",
+          "body": "$2(x-1)^2 \\ge 0$, with equality at $x = 1$, so the minimum value is **1**. (Check: $f'(x) = 4x - 4 = 0 \\Rightarrow x=1$, $f''=4>0$.)"
+        }
+      ],
+      "answer": {
+        "value": "1 (at x = 1)",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Reporting x = 1 (the minimiser) instead of the minimum value 1 — here they coincide numerically, but the question asks for the value."
+      ],
+      "verification": "f(1) = 3 − 4 + 2 = 1; f(0) = 3 and f(2) = 3 are larger."
+    },
+    "cse-1995-b-73-b": {
+      "approach": "720 is divisible by 2, 3 and 5, so the count of integers coprime to 30 is exact: 720·(1−1/2)(1−1/3)(1−1/5). Inclusion–exclusion gives the same number.",
+      "concepts": [
+        "Inclusion–exclusion",
+        "Euler-product counting"
+      ],
+      "steps": [
+        {
+          "title": "Inclusion–exclusion",
+          "body": "$|A_2|=360$, $|A_3|=240$, $|A_5|=144$; $|A_6|=120$, $|A_{10}|=72$, $|A_{15}|=48$; $|A_{30}|=24$.\n$$|A_2\\cup A_3\\cup A_5| = 360+240+144-120-72-48+24 = 528$$"
+        },
+        {
+          "title": "Complement",
+          "body": "$$720 - 528 = 192$$\nCheck: $720\\cdot\\tfrac12\\cdot\\tfrac23\\cdot\\tfrac45 = 192$."
+        }
+      ],
+      "answer": {
+        "value": "192",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Forgetting to add back |A₃₀| = 24."
+      ],
+      "verification": "Per block of 30 there are φ(30) = 8 such numbers; 720/30 = 24 blocks × 8 = 192."
+    },
+    "cse-1995-b-74-a": {
+      "approach": "Find the candidate keys first (B never appears on a right side, so it is in every key). Then 3NF holds because the only non-key determinant C determines a prime attribute A, while BCNF fails because C is not a superkey.",
+      "concepts": [
+        "Candidate key",
+        "Prime attribute",
+        "3NF",
+        "BCNF"
+      ],
+      "steps": [
+        {
+          "title": "Keys",
+          "body": "$(AB)^+ = \\{A,B,C\\}$ and $(BC)^+ = \\{B,C,A\\}$; no single attribute is a key ($A^+=A$, $B^+=B$, $C^+=CA$). So the keys are $AB$ and $BC$, and **every** attribute is prime."
+        },
+        {
+          "title": "3NF",
+          "body": "For each FD $X\\to Y$, 3NF needs $X$ a superkey **or** $Y$ prime. $AB\\to C$: $AB$ is a key ✓. $C \\to A$: $A$ is prime ✓. So R is in 3NF."
+        },
+        {
+          "title": "Not BCNF",
+          "body": "BCNF needs every non-trivial determinant to be a superkey. $C^+ = \\{C, A\\} \\ne R$, so $C\\to A$ violates BCNF."
+        }
+      ],
+      "answer": {
+        "value": "Keys AB, BC ⇒ all attributes prime ⇒ 3NF; C → A has non-superkey C ⇒ not BCNF.",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Claiming C → A violates 3NF — it does not, because A is prime."
+      ],
+      "verification": "Classic example (e.g. Street, City → Zip; Zip → City) of 3NF-but-not-BCNF."
+    },
+    "cse-1995-b-74-b": {
+      "approach": "B appears on no right side, so B is in every key; try B with one more attribute and check closures.",
+      "concepts": [
+        "Attribute closure",
+        "Candidate key"
+      ],
+      "steps": [
+        {
+          "title": "B is mandatory",
+          "body": "No FD derives $B$, so every key contains $B$. $B^+ = \\{B\\}$ alone is not a key."
+        },
+        {
+          "title": "Two-attribute keys",
+          "body": "$(AB)^+$: $AB\\to C$ gives $\\{A,B,C\\}$ ✓. $(BC)^+$: $C\\to A$ gives $\\{A,B,C\\}$ ✓. Both are minimal because $A^+ = \\{A\\}$, $B^+=\\{B\\}$, $C^+ = \\{A,C\\}$."
+        }
+      ],
+      "answer": {
+        "value": "AB and BC",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Listing only AB and missing BC."
+      ],
+      "verification": "ABC is the only other superkey and it is not minimal."
+    },
+    "cse-1995-b-75-a": {
+      "approach": "All publishers are stored in PUBLISHER, so just project its PNAME column.",
+      "concepts": [
+        "Projection"
+      ],
+      "steps": [
+        {
+          "title": "Project",
+          "body": "$$\\pi_{\\text{PNAME}}(\\text{PUBLISHER})$$"
+        },
+        {
+          "title": "Why PUBLISHER",
+          "body": "Projecting BOOK would miss publishers that have not published any book yet."
+        }
+      ],
+      "answer": {
+        "value": "$\\pi_{PNAME}(PUBLISHER)$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Using π_PNAME(BOOK), which lists only publishers with at least one book."
+      ],
+      "verification": "PNAME is the key of PUBLISHER, so the result has one row per publisher."
+    },
+    "cse-1995-b-75-b": {
+      "approach": "Select the books of TECHNICAL PUBLISHERS, natural-join with AUTHOR on ANAME, and project back to the AUTHOR attributes.",
+      "concepts": [
+        "Selection",
+        "Natural join",
+        "Projection"
+      ],
+      "steps": [
+        {
+          "title": "Books of the publisher",
+          "body": "$\\sigma_{\\text{PNAME}='\\text{TECHNICAL PUBLISHERS}'}(\\text{BOOK})$"
+        },
+        {
+          "title": "Join and project",
+          "body": "$$\\pi_{\\text{ANAME, INSTITUTION, ACITY, AGE}}\\big(\\text{AUTHOR} \\bowtie \\sigma_{\\text{PNAME}='\\text{TECHNICAL PUBLISHERS}'}(\\text{BOOK})\\big)$$\nThe join is on the common attribute ANAME; projection removes TITLE and PNAME and duplicate rows."
+        }
+      ],
+      "answer": {
+        "value": "$\\pi_{ANAME, INSTITUTION, ACITY, AGE}(AUTHOR \\bowtie \\sigma_{PNAME='TECHNICAL\\ PUBLISHERS'}(BOOK))$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Skipping the final projection returns TITLE and PNAME too, and repeats an author once per book."
+      ],
+      "verification": "Equivalent: AUTHOR ⋉ σ(BOOK) (semijoin) gives the same tuples."
+    },
+    "cse-1995-b-75-c": {
+      "approach": "Select publishers located in Madras, join with BOOK on PNAME to get their books, and project the author names.",
+      "concepts": [
+        "Selection",
+        "Natural join",
+        "Projection"
+      ],
+      "steps": [
+        {
+          "title": "Madras publishers",
+          "body": "$\\sigma_{\\text{PCITY}='\\text{Madras}'}(\\text{PUBLISHER})$"
+        },
+        {
+          "title": "Join and project",
+          "body": "$$\\pi_{\\text{ANAME}}\\big(\\text{BOOK} \\bowtie \\sigma_{\\text{PCITY}='\\text{Madras}'}(\\text{PUBLISHER})\\big)$$\nThe join is on PNAME; projection keeps each author once."
+        }
+      ],
+      "answer": {
+        "value": "$\\pi_{ANAME}(BOOK \\bowtie \\sigma_{PCITY='Madras'}(PUBLISHER))$",
+        "matchesKey": true
+      },
+      "pitfalls": [
+        "Selecting on ACITY = 'Madras' (the author's city) instead of the publisher's city PCITY."
+      ],
+      "verification": "AUTHOR is not needed: ANAME is already in BOOK."
+    }
+  }
+}
