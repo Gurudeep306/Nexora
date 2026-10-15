@@ -1,0 +1,87 @@
+{
+ "paper": "cse-2006",
+ "fixes": [
+  {
+   "id": "cse-2006-cs-8",
+   "field": "needsReview",
+   "before": true,
+   "after": false,
+   "reason": "Independent timing analysis confirms C: posedge-then-negedge sampling delays f by one clock period = 180° of f; A/D race on the negative edge, B inverts.",
+   "source": "solved"
+  },
+  {
+   "id": "cse-2006-cs-8",
+   "field": "reviewNote",
+   "before": "Answer C taken from the accepted answer on gateoverflow (Q8); the option figures are simple but the timing argument is subtle.",
+   "after": null,
+   "reason": "Review resolved by independent solution.",
+   "source": "solved"
+  },
+  {
+   "id": "cse-2006-cs-18",
+   "field": "needsReview",
+   "before": true,
+   "after": false,
+   "reason": "Independent derivation: P(min = 2^i) = 2^-i, so E = sum of n ones = n, confirming D.",
+   "source": "solved"
+  },
+  {
+   "id": "cse-2006-cs-18",
+   "field": "reviewNote",
+   "before": "Answer derived by hand ($E=n$); web summaries disagreed, empty-sample case ignored.",
+   "after": null,
+   "reason": "Review resolved by independent solution.",
+   "source": "solved"
+  },
+  {
+   "id": "cse-2006-cs-8",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-2006/cs-8-a.png",
+     "alt": "f passes through a NOT gate into D of FF1; FF1 clock is clk through an inverter; FF1 output Qbar feeds D of FF2; FF2 clocked directly by clk; output is Q of FF2.",
+     "svg": "cse-2006/cs-8-a.svg"
+    },
+    {
+     "f": "cse-2006/cs-8-b.png",
+     "alt": "f through a NOT gate into D of FF1; FF1 clocked by clk; Q of FF1 to D of FF2; FF2 clocked by clk through a NOT gate; output Q of FF2.",
+     "svg": "cse-2006/cs-8-b.svg"
+    },
+    {
+     "f": "cse-2006/cs-8-c.png",
+     "alt": "f directly to D of FF1; FF1 clocked by clk; Q of FF1 to D of FF2; FF2 clocked by clk through a NOT gate; output Q of FF2.",
+     "svg": "cse-2006/cs-8-c.svg"
+    },
+    {
+     "f": "cse-2006/cs-8-d.png",
+     "alt": "f directly to D of FF1; FF1 clocked by inverted clk; Qbar of FF1 to D of FF2; FF2 clocked directly by clk; output Q of FF2.",
+     "svg": "cse-2006/cs-8-d.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-2006/cs-8-a.png",
+     "alt": "Option A: f passes through a NOT gate into D of flip-flop 1, which is clocked by clk through an inverter; the Q-bar output of flip-flop 1 drives D of flip-flop 2, which is clocked directly by clk; output is Q of flip-flop 2.",
+     "svg": "cse-2006/cs-8-a.svg"
+    },
+    {
+     "f": "cse-2006/cs-8-b.png",
+     "alt": "Option B: f passes through a NOT gate into D of flip-flop 1, clocked directly by clk; Q of flip-flop 1 drives D of flip-flop 2, which is clocked by clk through a NOT gate; output is Q of flip-flop 2.",
+     "svg": "cse-2006/cs-8-b.svg"
+    },
+    {
+     "f": "cse-2006/cs-8-c.png",
+     "alt": "Option C: f goes directly into D of flip-flop 1, clocked directly by clk; Q of flip-flop 1 drives D of flip-flop 2, which is clocked by clk through a NOT gate; output is Q of flip-flop 2.",
+     "svg": "cse-2006/cs-8-c.svg"
+    },
+    {
+     "f": "cse-2006/cs-8-d.png",
+     "alt": "Option D: f goes directly into D of flip-flop 1, which is clocked by clk through an inverter; the Q-bar output of flip-flop 1 drives D of flip-flop 2, which is clocked directly by clk; output is Q of flip-flop 2.",
+     "svg": "cse-2006/cs-8-d.svg"
+    }
+   ],
+   "reason": "Option circuit SVGs redrawn faithfully from the paper (previous SVGs were unrelated placeholders); alt text made precise.",
+   "source": "pdf"
+  }
+ ]
+}
