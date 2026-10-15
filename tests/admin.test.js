@@ -53,7 +53,7 @@ const settle = () => new Promise((r) => setTimeout(r, 50));
 
 const c = {}; // cookies by user
 
-test.before(async () => {
+async function startServer() {
   const port = 26000 + Math.floor(Math.random() * 1000);
   base = `http://127.0.0.1:${port}`;
   proc = spawn(process.execPath, ['src/server.js'], {
@@ -72,16 +72,46 @@ test.before(async () => {
   proc.stdout.on('data', (d) => { serverLog += d; });
   proc.stderr.on('data', (d) => { serverLog += d; });
   await waitFor(`${base}/api/health`);
-});
-test.after(async () => {
+}
+async function stopServer() {
   if (!proc) return;
   const done = new Promise((r) => proc.once('exit', r));
   proc.kill('SIGKILL');
   await done;
+  proc = null;
+}
+
+test.before(startServer);
+test.after(async () => {
+  await stopServer();
   fs.rmSync(tmp, { recursive: true, force: true });
 });
 
-test('private mode is ON by default once an owner is configured', async () => {
+test('the owner comes from OWNER_USERNAME, else config/site.json', () => {
+  const { execFileSync } = require('node:child_process');
+  const probe = (env) =>
+    execFileSync(process.execPath, ['-e', "process.stdout.write(String(require('./src/authz/site-settings').peekSettings().owner_username))"], {
+      cwd: path.join(__dirname, '..'),
+      env: { ...process.env, NODE_ENV: 'test', DB_PATH: ':memory:', ...env },
+    }).toString();
+  const cfg = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'config', 'site.json'), 'utf8'));
+  assert.equal(cfg.owner, 'Gurudeep306');
+  assert.equal(probe({ OWNER_USERNAME: '' }), 'Gurudeep306', 'committed default');
+  assert.equal(probe({ OWNER_USERNAME: 'someone_else' }), 'someone_else', 'env overrides');
+});
+
+test('private mode stays OFF until the owner account exists', async () => {
+  assert.equal((await call('GET', '/api/problems')).status, 200, 'public: no owner account yet');
+  assert.match(serverLog, /has no account yet/);
+  const owner = await register(OWNER);
+  assert.equal(owner.status, 200, JSON.stringify(owner.body));
+  assert.equal(owner.body.user.role, 'owner', 'the owner name is reserved for the owner');
+  c.owner = owner.cookie;
+});
+
+test('private mode turns ON at the first boot with the owner account', async () => {
+  await stopServer();
+  await startServer(); // same database, sessions survive
   assert.equal((await call('GET', '/api/health')).status, 200, 'health stays reachable');
   const api = await call('GET', '/api/problems');
   assert.equal(api.status, 403);
@@ -96,17 +126,13 @@ test('private mode is ON by default once an owner is configured', async () => {
   assert.equal(status.status, 200);
   assert.equal(status.body.private, true);
   assert.equal(status.body.allowed, false);
+  assert.equal((await call('GET', '/api/problems', c.owner)).status, 200, 'the owner gets in');
 });
 
-test('registration is closed while private — except for the owner', async () => {
+test('registration is closed while private', async () => {
   const r = await register(ALICE);
   assert.equal(r.status, 403);
   assert.equal(r.body.code, 'site_private');
-  const owner = await register(OWNER);
-  assert.equal(owner.status, 200, JSON.stringify(owner.body));
-  assert.equal(owner.body.user.role, 'owner');
-  c.owner = owner.cookie;
-  assert.equal((await call('GET', '/api/problems', c.owner)).status, 200, 'the owner gets in');
 });
 
 test('an invite (allowlist entry) lets someone register and enter while private', async () => {
@@ -179,8 +205,8 @@ test('permission matrix: roles, rank and owner-only grants', async () => {
   assert.equal((await call('POST', `/api/admin/users/${BOB}/role`, c[BOB], { role: 'member' })).status, 403, 'not on yourself either');
 
   // Members have no admin access at all.
-  assert.equal((await call('GET', '/api/admin/me', c.erin)).status, 403);
-  assert.equal((await call('GET', '/api/admin/users', c.erin)).status, 403);
+  assert.equal((await call('GET', '/api/admin/me', c.erin)).status, 404);
+  assert.equal((await call('GET', '/api/admin/users', c.erin)).status, 404);
 
   // Granular grants override the role: the owner gives Bob site.settings.
   const g = await call('PUT', `/api/admin/users/${BOB}/permissions`, c.owner, { grants: { 'site.settings': true } });
@@ -195,7 +221,7 @@ test('permission matrix: roles, rank and owner-only grants', async () => {
 
   // Existing admin-only routes now follow permissions (admins keep them).
   assert.notEqual((await call('GET', '/api/admin/judge-selftest?langs=none', c[BOB])).status, 403);
-  assert.equal((await call('GET', '/api/admin/judge-selftest?langs=none', c.erin)).status, 403);
+  assert.equal((await call('GET', '/api/admin/judge-selftest?langs=none', c.erin)).status, 404);
 });
 
 test('the owner cannot be demoted, banned, signed out or deleted by anyone', async () => {
@@ -281,7 +307,7 @@ test('reports queue: report, remove, restore', async () => {
   assert.ok(report);
   assert.equal(report.target_user, DAVE);
   assert.equal(report.snapshot, 'rude words');
-  assert.equal((await call('GET', '/api/admin/reports', c.erin)).status, 403);
+  assert.equal((await call('GET', '/api/admin/reports', c.erin)).status, 404);
 
   const res = await call('POST', `/api/admin/reports/${report.id}/resolve`, c[CARL], { action: 'remove', note: 'abusive' });
   assert.equal(res.status, 200, JSON.stringify(res.body));
@@ -368,4 +394,51 @@ test('only the owner deletes accounts, with type-to-confirm', async () => {
   assert.equal((await call('DELETE', `/api/admin/users/${ERIN}`, c.owner, { confirm: ERIN })).status, 200);
   assert.equal((await call('GET', `/api/admin/users/${ERIN}`, c.owner)).status, 404);
   assert.equal((await call('GET', '/api/auth/status', c.erin)).body.authenticated, false);
+});
+
+test('the admin API does not exist (404) for anyone without an admin permission', async () => {
+  const probes = [
+    ['GET', '/api/admin/me'],
+    ['GET', '/api/admin/overview'],
+    ['GET', '/api/admin/users'],
+    ['GET', `/api/admin/users/${OWNER}`],
+    ['GET', '/api/admin/audit'],
+    ['GET', '/api/admin/site'],
+    ['POST', `/api/admin/users/${OWNER}/ban`, { kind: 'ban', reason: 'probe' }],
+    ['POST', '/api/admin/set-role', { targetUser: ALICE, role: 'admin' }],
+    ['PUT', '/api/admin/site/private-mode', { enabled: false }],
+    ['GET', '/api/admin/nonexistent'],
+  ];
+  for (const [m, p, body] of probes) {
+    for (const [who, cookie] of [['anonymous', null], ['member', c[DAVE]]]) {
+      const r = await call(m, p, cookie, body);
+      assert.equal(r.status, 404, `${who} ${m} ${p}`);
+      assert.equal(r.body.error, 'API endpoint not found');
+    }
+  }
+  // Same answer as a route that really doesn't exist.
+  assert.deepEqual((await call('GET', '/api/admin/me', c[DAVE])).body, (await call('GET', '/api/nope-nope')).body);
+  // Staff missing one permission get a plain 403 instead.
+  assert.equal((await call('GET', '/api/admin/site', c[CARL])).status, 403);
+  assert.equal((await call('GET', '/api/admin/me', c[CARL])).status, 200);
+});
+
+test('client: /admin is gated before its chunk loads, and admin UI is staff-only', () => {
+  const read = (p) => fs.readFileSync(path.join(__dirname, '..', 'client', 'src', p), 'utf8');
+  const app = read('App.tsx');
+  // AdminPage is only ever rendered inside AdminRoute, which checks staff
+  // permissions first — so the lazy import never runs for members.
+  assert.match(app, /<Route path="\/admin" element={<AdminRoute \/>} \/>/);
+  const gate = read('components/admin/AdminRoute.tsx');
+  assert.match(gate, /isStaff/);
+  assert.match(gate, /NotFoundPage/);
+  assert.ok(gate.indexOf('if (!isStaff)') < gate.indexOf('<AdminPage'), 'permission check before the lazy page');
+  // Not prefetched for everyone.
+  const routes = read('routes.ts');
+  const common = routes.match(/COMMON_ROUTES = \[([^\]]*)\]/)[1];
+  assert.doesNotMatch(common, /admin/);
+  // Menu / palette entries require staff (and disappear in "view as member").
+  assert.match(read('components/layout/UserMenu.tsx'), /isStaff &&/);
+  assert.match(read('components/layout/CommandPalette.tsx'), /isStaff \? \[ADMIN_ITEM\]/);
+  assert.match(read('context/SiteContext.tsx'), /isStaff: !preview/);
 });

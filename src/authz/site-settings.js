@@ -18,6 +18,26 @@ function envOwner() {
   return v || null;
 }
 
+/** The committed default owner (config/site.json), used when OWNER_USERNAME is unset. */
+function configOwner() {
+  try {
+    // eslint-disable-next-line global-require
+    const cfg = require("../../config/site.json");
+    const v = typeof cfg.owner === "string" ? cfg.owner.trim() : "";
+    return v || null;
+  } catch {
+    return null;
+  }
+}
+
+/** Where the owner comes from: env > CLI (DB setting) > config/site.json. */
+function ownerSource(raw = cache?.raw || {}) {
+  if (envOwner()) return "env";
+  if (typeof raw.owner_username === "string" && raw.owner_username.trim()) return "cli";
+  if (configOwner()) return "config";
+  return null;
+}
+
 let cache = null; // { at, raw: {key: value} }
 let loading = null;
 let generation = 0;
@@ -46,13 +66,13 @@ const objectAt = (raw, k) => (raw[k] && typeof raw[k] === "object" && !Array.isA
 
 function build(raw) {
   const stored = typeof raw.owner_username === "string" ? raw.owner_username.trim() : "";
-  const owner = envOwner() || stored || null;
+  const owner = envOwner() || stored || configOwner() || null;
   const flagsRaw = objectAt(raw, "feature_flags");
   const flags = {};
   for (const f of FEATURE_FLAGS) flags[f] = flagsRaw[f] !== false;
-  // No row yet: private when an owner exists (they can always get in), public
-  // otherwise so nobody is locked out. initSiteSettings() writes the row.
-  const pm = "private_mode" in raw ? objectAt(raw, "private_mode") : { enabled: !!owner };
+  // No row yet: public. initAdminSystem() turns it on at the first boot where
+  // the owner's account exists (so nobody is ever locked out).
+  const pm = "private_mode" in raw ? objectAt(raw, "private_mode") : { enabled: false };
   const maint = objectAt(raw, "maintenance");
   return {
     owner_username: owner,
@@ -94,7 +114,9 @@ module.exports = {
   CACHE_TTL_MS,
   DEFAULT_PRIVATE_MESSAGE,
   FEATURE_FLAGS,
+  configOwner,
   envOwner,
+  ownerSource,
   getSettings,
   peekSettings,
   privateModeActive,

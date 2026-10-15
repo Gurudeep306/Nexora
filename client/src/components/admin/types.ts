@@ -109,7 +109,7 @@ export interface SiteAdmin {
     maintenance: { enabled: boolean; message: string }
   }
   privateActive: boolean
-  ownerFromEnv: boolean
+  ownerSource: 'env' | 'cli' | 'config' | null
   allowlist: { entry: string; note: string; created_by: string; created_at: number }[]
   earlyAccess: (AdminUserRow & { granted_by: string; created_at: number })[]
 }

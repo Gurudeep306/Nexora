@@ -7,7 +7,7 @@
  *
  * A running server picks the change up within a few seconds.
  */
-import { args, audit, get, positional, ready, setSetting, where } from "./_db.mjs";
+import { args, audit, configOwner, get, positional, ready, setSetting, where } from "./_db.mjs";
 
 const cmd = (positional[0] || "").toLowerCase();
 if (!["on", "off", "status"].includes(cmd)) {
@@ -24,8 +24,8 @@ try {
 
 if (cmd === "status") {
   const owner = await get("SELECT value FROM site_settings WHERE key = 'owner_username'");
-  console.log(`Private mode (${where}): ${row ? (current.enabled ? "ON" : "off") : "not set (ON on next boot when an owner exists)"}`);
-  console.log(`Owner: ${process.env.OWNER_USERNAME || (owner ? JSON.parse(owner.value) : "— none —")}`);
+  console.log(`Private mode (${where}): ${row ? (current.enabled ? "ON" : "off") : "not set (turns ON at the first boot where the owner account exists)"}`);
+  console.log(`Owner: ${process.env.OWNER_USERNAME || (owner ? JSON.parse(owner.value) : null) || `${configOwner() || "— none —"} (config/site.json)`}`);
   process.exit(0);
 }
 
@@ -36,7 +36,7 @@ await setSetting("private_mode", next, "cli:private-mode");
 await audit("site.private_mode", "private_mode", next);
 console.log(`✓ Private mode ${next.enabled ? "ON" : "OFF"} in the ${where} database.`);
 if (next.enabled) {
-  const owner = process.env.OWNER_USERNAME || (await get("SELECT value FROM site_settings WHERE key = 'owner_username'"));
+  const owner = process.env.OWNER_USERNAME || (await get("SELECT value FROM site_settings WHERE key = 'owner_username'")) || configOwner();
   if (!owner) console.log("  ⚠ No owner is configured, so the server keeps the site public. Run set-owner.mjs first.");
 }
 process.exit(0);
