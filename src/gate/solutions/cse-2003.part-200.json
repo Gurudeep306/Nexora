@@ -1,0 +1,1308 @@
+{
+  "paper": "cse-2003",
+  "version": 2,
+  "solutions": {
+    "cse-2003-cs-1": {
+      "approach": "Track what $p$ holds after each iteration: it builds the next Taylor term of $e^x$, and $s$ accumulates those terms.",
+      "concepts": [
+        "Loop invariant",
+        "Taylor series of e^x"
+      ],
+      "steps": [
+        {
+          "title": "Invariant for p",
+          "body": "Initially $p = 1$. In iteration $i$, $p \\leftarrow p\\cdot\\frac{x}{i}$, so after iterations $i = 1, 2, \\dots, k$:\n$$p = \\frac{x}{1}\\cdot\\frac{x}{2}\\cdots\\frac{x}{k} = \\frac{x^k}{k!}$$"
+        },
+        {
+          "title": "Invariant for s",
+          "body": "$s$ starts at $1 = \\frac{x^0}{0!}$ and each iteration adds the new $p$. The loop runs for $i = 1, \\dots, y-1$, so\n$$s = \\sum_{k=0}^{y-1} \\frac{x^k}{k!}$$"
+        },
+        {
+          "title": "Large y",
+          "body": "As $y \\to \\infty$ this is the Maclaurin series $\\sum_{k\\ge 0} \\frac{x^k}{k!} = e^x$."
+        }
+      ],
+      "answer": {
+        "value": "$e^x$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$x^y$ would need $p$ multiplied by $x$ only; here it is also divided by $i$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "The partial sums $\\sum_{k<y} x^k/k!$ converge to $e^x$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\ln(1+x)$ has terms $(-1)^{k+1}x^k/k$ — alternating signs and no factorial."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$x^x$ does not depend on the loop structure at all; no such series is formed."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that $s$ already includes the $k=0$ term (initial value 1)."
+      ],
+      "verification": "For $x = 1$, $y = 6$: $s = 1 + 1 + 0.5 + 0.1667 + 0.0417 + 0.0083 = 2.7167 \\approx e$."
+    },
+    "cse-2003-cs-2": {
+      "approach": "An expression can be assigned to only if it is a modifiable lvalue; an array name (or a row of a 2-D array) is not.",
+      "concepts": [
+        "Lvalues",
+        "Arrays vs pointers in C"
+      ],
+      "steps": [
+        {
+          "title": "Types of each expression",
+          "body": "| Expr | Type | Assignable? |\n|---|---|---|\n| `A[2]` | `int *` | yes — a pointer variable |\n| `A[2][3]` | `int` | yes — `*(A[2]+3)` is an int object |\n| `B[1]` | `int[10]` | **no** — array type is not a modifiable lvalue |\n| `B[2][3]` | `int` | yes |"
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only `B[1]` causes a compile-time error, so I, II and IV are valid left-hand sides."
+        }
+      ],
+      "answer": {
+        "value": "I, II and IV only — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Exactly the three modifiable lvalues."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Includes III (`B[1]`, an array) and omits the valid `A[2]`."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Omits `A[2]`, which is a pointer and can be assigned."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Omits `A[2]` and `A[2][3]`, both valid."
+        }
+      ],
+      "pitfalls": [
+        "`A[2][3]` compiles even though `A[2]` may be uninitialised — that is a run-time issue, not a compile-time error."
+      ],
+      "verification": "Compiling `B[1] = 0;` with gcc gives \"assignment to expression with array type\"; the other three compile."
+    },
+    "cse-2003-cs-3": {
+      "approach": "Use the definition $P(X\\mid Y) = P(X\\cap Y)/P(Y)$ and the fact that an event of probability 1 contains (almost surely) every other event.",
+      "concepts": [
+        "Conditional probability"
+      ],
+      "steps": [
+        {
+          "title": "Intersection",
+          "body": "$P(A \\cap B) = P(B) - P(B \\cap A^c)$ and $P(B\\cap A^c) \\le P(A^c) = 1 - 1 = 0$, so $P(A\\cap B) = P(B) = \\frac12$."
+        },
+        {
+          "title": "Both conditionals",
+          "body": "$$P(A\\mid B) = \\frac{P(A\\cap B)}{P(B)} = \\frac{1/2}{1/2} = 1, \\qquad P(B\\mid A) = \\frac{P(A\\cap B)}{P(A)} = \\frac{1/2}{1} = \\frac12$$"
+        }
+      ],
+      "answer": {
+        "value": "$1, \\frac12$ — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Neither conditional equals $\\frac14$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Swaps and halves the values; $P(A\\mid B)$ is 1, not $\\frac12$."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Reversed order: $P(A\\mid B) = 1$ and $P(B\\mid A) = \\frac12$."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Matches the computation in the asked order."
+        }
+      ],
+      "verification": "$A$ and $B$ are independent here ($P(A\\cap B) = \\frac12 = 1\\cdot\\frac12$), so $P(A\\mid B) = P(A) = 1$ and $P(B\\mid A) = P(B) = \\frac12$."
+    },
+    "cse-2003-cs-4": {
+      "approach": "Since B and C must each be sorted and merge to A, the pair is fixed once we choose which 3 of the 8 elements go to C.",
+      "concepts": [
+        "Combinations",
+        "Merging sorted sequences"
+      ],
+      "steps": [
+        {
+          "title": "Bijection with subsets",
+          "body": "Any 3-element subset of A, written in ascending order, is a valid C; the remaining 5 in ascending order form B, and merging gives A back. Conversely every valid pair defines such a subset."
+        },
+        {
+          "title": "Count",
+          "body": "$$\\binom{8}{3} = \\frac{8\\cdot7\\cdot6}{3\\cdot2\\cdot1} = 56$$"
+        }
+      ],
+      "answer": {
+        "value": "56 — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "2 ignores the choice of which elements go where."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "30 has no combinatorial meaning here."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\binom{8}{3} = 56$ ways to choose C."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$256 = 2^8$ counts all subsets, not only those of size 3."
+        }
+      ],
+      "verification": "Equivalently $\\binom{8}{5} = 56$ choices for B."
+    },
+    "cse-2003-cs-5": {
+      "approach": "Decide independently for each couple which configurations are allowed; multiply.",
+      "concepts": [
+        "Product rule"
+      ],
+      "steps": [
+        {
+          "title": "Options per couple",
+          "body": "A husband cannot come alone. Allowed: nobody, wife only, both — **3** options (husband-only is forbidden)."
+        },
+        {
+          "title": "All couples",
+          "body": "Couples are independent, so the number of gatherings is $3 \\cdot 3 \\cdots 3 = 3^n$."
+        }
+      ],
+      "answer": {
+        "value": "$3^n$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Counts choosing $n$ of $2n$ people then $2^n$ more choices — unrelated to the constraint."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "3 independent choices per couple."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$(2n)!/2^n$ counts orderings, not subsets of guests."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\binom{2n}{n}$ counts gatherings of exactly $n$ people with no constraint."
+        }
+      ],
+      "verification": "$n = 1$: gatherings $\\{\\}, \\{W\\}, \\{H, W\\}$ — 3 = $3^1$."
+    },
+    "cse-2003-cs-6": {
+      "approach": "Choose the root as the k-th smallest element; the left subtree gets the $k-1$ smaller keys and the right subtree the $n-k$ larger keys.",
+      "concepts": [
+        "BST counting",
+        "Catalan recurrence"
+      ],
+      "steps": [
+        {
+          "title": "Split by root",
+          "body": "With the $k$-th smallest as root, keys $1..k-1$ form the left BST ($T(k-1)$ shapes) and keys $k+1..n$ form the right BST — that is $n - k$ keys, $T(n-k)$ shapes."
+        },
+        {
+          "title": "Recurrence",
+          "body": "$$T(n) = \\sum_{k=1}^{n} T(k-1)\\,T(n-k), \\quad T(0) = 1$$ so $x = n - k$."
+        }
+      ],
+      "answer": {
+        "value": "$x = n - k$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$n - k + 1$ would count the root in the right subtree too."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Total $(k-1) + (n-k) + 1 = n$ nodes."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$n-k-1$ loses one key."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$n-k-2$ loses two keys."
+        }
+      ],
+      "verification": "$T(3) = T(0)T(2) + T(1)T(1) + T(2)T(0) = 2 + 1 + 2 = 5$, the Catalan number $C_3$."
+    },
+    "cse-2003-cs-7": {
+      "approach": "Check the group axioms for $(\\Sigma^*, \\cdot)$: it is a monoid, but non-empty strings have no inverse.",
+      "concepts": [
+        "Monoid",
+        "Group axioms"
+      ],
+      "steps": [
+        {
+          "title": "Axioms that hold",
+          "body": "Closure and associativity hold; the empty string $\\varepsilon$ is a two-sided identity ($w\\varepsilon = \\varepsilon w = w$)."
+        },
+        {
+          "title": "Inverse fails",
+          "body": "For $w = 0$, no $v$ gives $0v = \\varepsilon$ because concatenation never shortens a string ($|0v| \\ge 1$). So it is a monoid, **not a group**."
+        }
+      ],
+      "answer": {
+        "value": "It does not form a group — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Inverses are missing, so not a group."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "It is non-commutative, but it is not a group at all."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\varepsilon$ is a right (and left) identity."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Removing $\\varepsilon$ removes the identity; still no inverses — not even a monoid."
+        }
+      ],
+      "verification": "Length is additive under concatenation, so only $\\varepsilon$ (length 0) can have an inverse."
+    },
+    "cse-2003-cs-8": {
+      "approach": "Look at the two extreme effects of deleting one vertex: deleting an isolated vertex, and deleting the centre of a star.",
+      "concepts": [
+        "Connected components",
+        "Cut vertex"
+      ],
+      "steps": [
+        {
+          "title": "Lower bound",
+          "body": "If the removed vertex is isolated, its component disappears: $k - 1$ components. Removing a vertex never merges components, so fewer is impossible."
+        },
+        {
+          "title": "Upper bound",
+          "body": "Only $n - 1$ vertices remain, so at most $n - 1$ components. This is reached e.g. by removing the centre of a star $K_{1,n-1}$ ($k = 1$), leaving $n - 1$ isolated vertices."
+        }
+      ],
+      "answer": {
+        "value": "Between $k-1$ and $n-1$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fails at both ends: $k-1$ is possible and $n$ is impossible."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Star centre removal gives $n-1 \\gg k+1$ components."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Both bounds are attained and cannot be exceeded."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Removing an isolated vertex gives $k - 1 < k + 1$."
+        }
+      ],
+      "verification": "Path $a - b - c$ ($n=3, k=1$): remove $b$ → 2 = $n-1$; three isolated vertices ($k=3$): remove one → 2 = $k-1$."
+    },
+    "cse-2003-cs-9": {
+      "approach": "Convert every 8-bit 2's-complement value to decimal and test divisibility by the divisor's value.",
+      "concepts": [
+        "2's complement"
+      ],
+      "steps": [
+        {
+          "title": "Divisor",
+          "body": "$11111011_2 = 251$, and $251 - 256 = -5$."
+        },
+        {
+          "title": "Options",
+          "body": "| Option | Unsigned | Signed | ÷ 5? |\n|---|---|---|---|\n| 11100111 | 231 | $-25$ | yes |\n| 11100100 | 228 | $-28$ | no |\n| 11010111 | 215 | $-41$ | no |\n| 11011011 | 219 | $-37$ | no |"
+        }
+      ],
+      "answer": {
+        "value": "$11100111 = -25$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$-25 = (-5)\\cdot 5$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$-28$ is not a multiple of 5."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$-41$ is not a multiple of 5."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$-37$ is not a multiple of 5."
+        }
+      ],
+      "verification": "Negate (A): invert $11100111$ → $00011000$, add 1 → $00011001 = 25$; negate divisor → $00000101 = 5$; $25 = 5 \\cdot 5$."
+    },
+    "cse-2003-cs-10": {
+      "approach": "Classify each situation into the three hazard types: data, control, structural.",
+      "concepts": [
+        "Pipeline hazards"
+      ],
+      "steps": [
+        {
+          "title": "Classify",
+          "body": "- I: RAW dependence between consecutive instructions → **data hazard**.\n- II: the next instruction to fetch is unknown until the branch resolves → **control hazard**.\n- III: two instructions need the single ALU in the same cycle → **structural hazard**."
+        },
+        {
+          "title": "Conclusion",
+          "body": "All three can cause a hazard."
+        }
+      ],
+      "answer": {
+        "value": "All the three — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Misses the structural hazard III."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses the data hazard I."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Misses I and II."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Data, control and structural hazards respectively."
+        }
+      ],
+      "verification": "These are exactly the three textbook hazard classes (Hennessy–Patterson)."
+    },
+    "cse-2003-cs-11": {
+      "approach": "An $n\\times n$ array multiplier forms partial products in one gate level and adds them with a grid of adders whose critical path runs diagonally across the array.",
+      "concepts": [
+        "Array multiplier",
+        "Critical path"
+      ],
+      "steps": [
+        {
+          "title": "Structure",
+          "body": "All $n^2$ AND gates work in parallel (delay 1). The $n-1$ rows of adders form a grid; the carry/sum critical path goes down the rows and across the final row, about $2n$ adder delays."
+        },
+        {
+          "title": "Delay",
+          "body": "Each full adder is a constant number of gates, so total delay $= c_1 + c_2 \\cdot 2n = \\Theta(n)$ (while the gate count is $\\Theta(n^2)$)."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(n)$ — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Constant delay is impossible: the top bit depends on all $2n$ input bits through bounded fan-in gates."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\Theta(\\log n)$ needs a Wallace tree with fast final adder, not an array multiplier."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Critical path crosses $O(n)$ adders."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$\\Theta(n^2)$ is the area (number of gates), not the delay."
+        }
+      ],
+      "pitfalls": [
+        "Confusing hardware size $\\Theta(n^2)$ with delay."
+      ],
+      "verification": "Standard result: a carry-save array multiplier with ripple final stage has delay $\\approx (2n-2)$ full-adder delays."
+    },
+    "cse-2003-cs-12": {
+      "approach": "A reduction from a known NP-complete problem to Π shows NP-hardness; a reduction from Π to a problem in NP shows Π ∈ NP.",
+      "concepts": [
+        "Polynomial reductions",
+        "NP-completeness"
+      ],
+      "steps": [
+        {
+          "title": "Ram: 3-SAT ≤p Π",
+          "body": "3-SAT is NP-complete, so every NP problem reduces to 3-SAT and then to Π: **Π is NP-hard**."
+        },
+        {
+          "title": "Shyam: Π ≤p 3-SAT",
+          "body": "3-SAT ∈ NP and NP is closed under polynomial reductions, so **Π ∈ NP**."
+        },
+        {
+          "title": "Combine",
+          "body": "NP-hard and in NP ⇒ Π is NP-complete."
+        }
+      ],
+      "answer": {
+        "value": "Π is NP-complete — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Shyam's reduction places Π in NP, so it is NP-complete."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Ram's reduction makes Π NP-hard, hence NP-complete."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Both conditions of NP-completeness are shown."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Contradicts both reductions."
+        }
+      ],
+      "verification": "Direction check: \"A ≤p B\" transfers hardness from A to B and membership from B to A."
+    },
+    "cse-2003-cs-13": {
+      "approach": "Whatever the truth of P = NP, L is one of two fixed languages, both of which are decidable.",
+      "concepts": [
+        "Decidability",
+        "Non-constructive existence"
+      ],
+      "steps": [
+        {
+          "title": "Both cases",
+          "body": "If $P = NP$, $L = (0+1)^*$, decided by a TM that always accepts. Otherwise $L = \\phi$, decided by a TM that always rejects."
+        },
+        {
+          "title": "Conclusion",
+          "body": "In either case a decider exists, so $L$ is recursive — even though we do not know *which* decider is the right one."
+        }
+      ],
+      "answer": {
+        "value": "L is recursive — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Both candidate languages are recursive."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both candidates are recursive, so \"not recursive\" is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both candidates are even regular, hence r.e."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Recursiveness is already settled; only the specific decider is unknown."
+        }
+      ],
+      "pitfalls": [
+        "Decidability asks whether a decider *exists*, not whether we can identify it."
+      ],
+      "verification": "Both $\\Sigma^*$ and $\\phi$ are regular, and regular ⊂ recursive."
+    },
+    "cse-2003-cs-14": {
+      "approach": "Show $0^*(10^*)^*$ generates every binary string, then find the option that also generates every string.",
+      "concepts": [
+        "Regular expression equivalence"
+      ],
+      "steps": [
+        {
+          "title": "Given expression = (0+1)*",
+          "body": "Any string is a (possibly empty) run of 0s followed by blocks that each start with a 1 followed by 0s: $w = 0^{a}\\,(1\\,0^{b_1})(1\\,0^{b_2})\\cdots$. So $0^*(10^*)^* = (0+1)^*$."
+        },
+        {
+          "title": "Check options",
+          "body": "- (A) $(1^*0)^*1^*$: any string is blocks each ending in a 0, followed by trailing 1s — also $(0+1)^*$. ✓\n- (B) $0 + (0+10)^*$ cannot produce `1` (every 1 is followed by 0).\n- (C) $(0+1)^*10(0+1)^*$ requires substring `10`, so misses $\\varepsilon$."
+        }
+      ],
+      "answer": {
+        "value": "$(1^*0)^*1^*$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Also denotes all binary strings."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Misses `1`, `11`, `01`, … (strings ending in 1)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Misses $\\varepsilon$, `0`, `1`, `01`, … (strings without `10`)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Option (A) is correct, so \"none\" is false."
+        }
+      ],
+      "verification": "Test `1`: given expr ($0^0$, one block `1`) ✓; (A) ($(1^*0)^0$, $1^1$) ✓; (B) ✗."
+    },
+    "cse-2003-cs-15": {
+      "approach": "An enumerator in lexicographic (canonical) order gives a decider: run it until it prints $w$ or a string after $w$ in that order.",
+      "concepts": [
+        "Enumerators",
+        "Recursive languages"
+      ],
+      "steps": [
+        {
+          "title": "Decider from the enumerator",
+          "body": "To decide $w$: run the enumerator. If it prints $w$, accept. If it prints a string that comes after $w$ in the order, reject (it can never come back to $w$). If L is finite, it is regular and trivially decidable. So L is **recursive**."
+        },
+        {
+          "title": "Not necessarily CFL",
+          "body": "$\\{a^n b^n c^n\\}$ is recursive, not context-free, and can be enumerated in order. Hence \"recursive but not necessarily context-free\"."
+        }
+      ],
+      "answer": {
+        "value": "L is recursive but not necessarily context free — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$a^*$ is infinite and easily enumerated in order."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$\\{a^nb^n\\}$ is enumerable in order and not regular."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$\\{a^nb^nc^n\\}$ is enumerable in order and not context-free."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Ordered enumeration ⇔ recursive (standard theorem)."
+        }
+      ],
+      "pitfalls": [
+        "\"Lexicographic\" here means canonical (shortlex) order; plain dictionary order on infinite sets would not give a terminating decider."
+      ],
+      "verification": "Converse also holds: a decider lets us enumerate $\\Sigma^*$ in shortlex order and print members, so this characterises recursive languages."
+    },
+    "cse-2003-cs-16": {
+      "approach": "Removing left recursion and left factoring are necessary transformations but cannot fix ambiguity or inherent non-LL(1)-ness.",
+      "concepts": [
+        "LL(1) grammars",
+        "Ambiguity"
+      ],
+      "steps": [
+        {
+          "title": "Why the transformations are not enough",
+          "body": "An ambiguous grammar is never LL(1), and some context-free languages (e.g. inherently ambiguous ones, or $\\{a^n b^n\\} \\cup \\{a^n c^n\\}$) have **no** LL(1) grammar at all. No transformation can produce one."
+        },
+        {
+          "title": "Conclusion",
+          "body": "None of (A)–(C) suffices for an arbitrary CFG."
+        }
+      ],
+      "answer": {
+        "value": "None of the above — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Left factoring and ambiguity issues remain."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Left recursion and ambiguity remain."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Ambiguous grammars stay ambiguous; some languages have no LL(1) grammar."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "No mechanical transformation always succeeds."
+        }
+      ],
+      "verification": "`S → aS | a` after factoring is LL(1), but the dangling-else grammar stays non-LL(1) after both transformations because it is ambiguous."
+    },
+    "cse-2003-cs-17": {
+      "approach": "SLR uses the LR(0) item collection; LALR merges LR(1) states with identical cores, which gives exactly the LR(0) collection again.",
+      "concepts": [
+        "SLR",
+        "LALR",
+        "LR(0) items"
+      ],
+      "steps": [
+        {
+          "title": "Same cores",
+          "body": "SLR states = canonical LR(0) item sets. Merging canonical LR(1) states with equal cores yields one LALR state per LR(0) item set."
+        },
+        {
+          "title": "Result",
+          "body": "Only the lookaheads differ, so $n_1 = n_2$ always."
+        }
+      ],
+      "answer": {
+        "value": "$n_1 = n_2$ — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "They are never different."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Same LR(0) cores, same count."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "They are never different."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The relationship is fixed: equality."
+        }
+      ],
+      "verification": "For the expression grammar $E \\to E+T \\mid T$, … both SLR and LALR tables have 12 states."
+    },
+    "cse-2003-cs-18": {
+      "approach": "During bottom-up (LR) parsing, inherited attributes can be handled only when they depend on information to the left — i.e. for L-attributed definitions, using marker non-terminals and the value stack.",
+      "concepts": [
+        "L-attributed SDD",
+        "Bottom-up evaluation"
+      ],
+      "steps": [
+        {
+          "title": "What bottom-up evaluation sees",
+          "body": "When a node is reduced, only the values of symbols to its **left** are on the parser stack. An inherited attribute that depends on a right sibling cannot be computed in time."
+        },
+        {
+          "title": "L-attributed case",
+          "body": "If every inherited attribute depends only on the parent's inherited attributes and left siblings (L-attributed), marker non-terminals can copy those values onto the stack, so they can be evaluated during the bottom-up parse."
+        }
+      ],
+      "answer": {
+        "value": "Only if the definition is L-attributed — option (B)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Not always: inherited attributes depending on right siblings cannot be evaluated bottom-up."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "L-attributed definitions are the class handled via markers on the stack."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Having synthesized attributes says nothing about how inherited ones depend."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "They can be evaluated in the L-attributed case."
+        }
+      ],
+      "verification": "Aho–Sethi–Ullman §5.6 (\"Bottom-up evaluation of inherited attributes\") applies the technique to L-attributed definitions."
+    },
+    "cse-2003-cs-19": {
+      "approach": "In-order traversal of any BST visits the keys in ascending order, whatever the insertion order.",
+      "concepts": [
+        "BST property",
+        "In-order traversal"
+      ],
+      "steps": [
+        {
+          "title": "Key fact",
+          "body": "In-order = left subtree, root, right subtree. By the BST property every left key < root < every right key, so by induction the output is sorted."
+        },
+        {
+          "title": "Apply",
+          "body": "Sorted order of $\\{7,5,1,8,3,6,0,9,4,2\\}$ is $0\\,1\\,2\\,3\\,4\\,5\\,6\\,7\\,8\\,9$."
+        }
+      ],
+      "answer": {
+        "value": "0 1 2 3 4 5 6 7 8 9 — option (C)",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "That is the pre-order traversal of the tree."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "That is the post-order traversal."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Sorted order = in-order traversal of a BST."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not sorted; not a traversal of this tree."
+        }
+      ],
+      "verification": "Building the tree: root 7; 7.left = 5, 7.right = 8; 5.left = 1, 5.right = 6; 1.left = 0, 1.right = 3; 3.left = 2, 3.right = 4; 8.right = 9. Pre-order is 7 5 1 0 3 2 4 6 8 9 (option A), confirming the tree."
+    },
+    "cse-2003-cs-20": {
+      "approach": "Compare each pair by the ratio of the two functions as $n \\to \\infty$.",
+      "concepts": [
+        "Asymptotic notation"
+      ],
+      "steps": [
+        {
+          "title": "Claim I",
+          "body": "$\\frac{(n+k)^m}{n^m} = (1 + \\frac{k}{n})^m \\to 1$, a positive constant, so $(n+k)^m = \\Theta(n^m)$. True."
+        },
+        {
+          "title": "Claim II",
+          "body": "$2^{n+1} = 2\\cdot 2^n \\le 2\\cdot 2^n$, so $O(2^n)$ with $c = 2$. True."
+        },
+        {
+          "title": "Claim III",
+          "body": "$\\frac{2^{2n}}{2^n} = 2^n \\to \\infty$, so no constant bounds it: $2^{2n} \\ne O(2^n)$. False."
+        }
+      ],
+      "answer": {
+        "value": "I and II — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "I and II are true, III is false."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "III is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "III is false."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "III is false."
+        }
+      ],
+      "pitfalls": [
+        "A constant added to an exponent is a constant factor; a constant multiplying the exponent is not."
+      ],
+      "verification": "$n = 10$: $2^{20}/2^{10} = 1024$, and the ratio doubles with each increase of $n$."
+    },
+    "cse-2003-cs-21": {
+      "approach": "Simulate DFS with a stack of the current path: each next vertex must be an unvisited neighbour of the deepest vertex on the path that still has unvisited neighbours.",
+      "concepts": [
+        "Depth-first search",
+        "Backtracking"
+      ],
+      "given": "| Vertex | Neighbours |\n|---|---|\n| a | b, e, f |\n| b | a, e, f, h |\n| e | a, b, g |\n| f | a, b, g, h |\n| g | e, f, h |\n| h | b, f, g |",
+      "steps": [
+        {
+          "title": "I: a b e g h f — valid",
+          "body": "a→b (edge a–b), b→e (b–e), e→g (e–g), g→h (g–h), h→f (h–f). Every move goes from the current vertex to an unvisited neighbour.",
+          "scene": {
+            "tones": {
+              "a": "success",
+              "b": "success",
+              "e": "success",
+              "g": "success",
+              "h": "success",
+              "f": "success"
+            },
+            "subs": {
+              "a": "1",
+              "b": "2",
+              "e": "3",
+              "g": "4",
+              "h": "5",
+              "f": "6"
+            },
+            "edgeTones": {
+              "a>b": "success",
+              "b>e": "success",
+              "e>g": "success",
+              "g>h": "success",
+              "h>f": "success"
+            },
+            "caption": "I: tree edges a–b, b–e, e–g, g–h, h–f"
+          }
+        },
+        {
+          "title": "II: a b f e h g — invalid",
+          "body": "After a→b→f, vertex f still has unvisited neighbours **g** and **h**, so DFS must go to one of them. But the sequence goes to e, which is not adjacent to f — a jump allowed only after f is exhausted.",
+          "scene": {
+            "tones": {
+              "a": "success",
+              "b": "success",
+              "f": "success",
+              "e": "error",
+              "g": "warning",
+              "h": "warning"
+            },
+            "subs": {
+              "a": "1",
+              "b": "2",
+              "f": "3",
+              "e": "4?"
+            },
+            "edgeTones": {
+              "a>b": "success",
+              "b>f": "success"
+            },
+            "caption": "II fails: f still has unvisited g, h but the next vertex is e"
+          }
+        },
+        {
+          "title": "III: a b f h g e — valid",
+          "body": "a→b (a–b), b→f (b–f), f→h (f–h), h→g (h–g), g→e (g–e). All consecutive moves are edges from the current vertex.",
+          "scene": {
+            "tones": {
+              "a": "success",
+              "b": "success",
+              "f": "success",
+              "h": "success",
+              "g": "success",
+              "e": "success"
+            },
+            "subs": {
+              "a": "1",
+              "b": "2",
+              "f": "3",
+              "h": "4",
+              "g": "5",
+              "e": "6"
+            },
+            "edgeTones": {
+              "a>b": "success",
+              "b>f": "success",
+              "f>h": "success",
+              "h>g": "success",
+              "g>e": "success"
+            },
+            "caption": "III: tree edges a–b, b–f, f–h, h–g, g–e"
+          }
+        },
+        {
+          "title": "IV: a f g h b e — valid",
+          "body": "a→f (a–f), f→g (f–g), g→h (g–h), h→b (h–b), b→e (b–e). Valid.",
+          "scene": {
+            "tones": {
+              "a": "success",
+              "f": "success",
+              "g": "success",
+              "h": "success",
+              "b": "success",
+              "e": "success"
+            },
+            "subs": {
+              "a": "1",
+              "f": "2",
+              "g": "3",
+              "h": "4",
+              "b": "5",
+              "e": "6"
+            },
+            "edgeTones": {
+              "a>f": "success",
+              "f>g": "success",
+              "g>h": "success",
+              "h>b": "success",
+              "b>e": "success"
+            },
+            "caption": "IV: tree edges a–f, f–g, g–h, h–b, b–e"
+          }
+        }
+      ],
+      "answer": {
+        "value": "I, III and IV only — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Includes II, which is invalid."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Omits III, which is a valid DFS."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Includes II and omits I."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Exactly the valid sequences."
+        }
+      ],
+      "shortcut": "Each of I, III, IV is a Hamiltonian path where every vertex follows its predecessor directly, so they are trivially valid DFS orders; only II has a non-adjacent step (f→e) taken too early.",
+      "pitfalls": [
+        "A non-adjacent step is allowed only after backtracking, i.e. when the current vertex has no unvisited neighbours."
+      ],
+      "verification": "Edges read off the figure: a–b, a–e, a–f, b–e, b–f, b–h, e–g, f–g, f–h, g–h (10 edges); every consecutive pair in I, III and IV is among them.",
+      "animation": {
+        "kind": "graph",
+        "nodes": [
+          {
+            "id": "a",
+            "x": 268,
+            "y": 50
+          },
+          {
+            "id": "e",
+            "x": 80,
+            "y": 150
+          },
+          {
+            "id": "b",
+            "x": 290,
+            "y": 180
+          },
+          {
+            "id": "f",
+            "x": 540,
+            "y": 215
+          },
+          {
+            "id": "h",
+            "x": 330,
+            "y": 272
+          },
+          {
+            "id": "g",
+            "x": 298,
+            "y": 370
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "e"
+          },
+          {
+            "from": "a",
+            "to": "b"
+          },
+          {
+            "from": "a",
+            "to": "f"
+          },
+          {
+            "from": "e",
+            "to": "b"
+          },
+          {
+            "from": "e",
+            "to": "g"
+          },
+          {
+            "from": "b",
+            "to": "f"
+          },
+          {
+            "from": "b",
+            "to": "h"
+          },
+          {
+            "from": "h",
+            "to": "f"
+          },
+          {
+            "from": "h",
+            "to": "g"
+          },
+          {
+            "from": "g",
+            "to": "f"
+          }
+        ],
+        "caption": "Adjacency: a{b,e,f} · b{a,e,f,h} · e{a,b,g} · f{a,b,g,h} · g{e,f,h} · h{b,f,g}"
+      }
+    },
+    "cse-2003-cs-22": {
+      "approach": "Binary search only reduces comparisons; inserting still requires shifting up to $i$ elements to make room.",
+      "concepts": [
+        "Insertion sort",
+        "Binary insertion sort"
+      ],
+      "steps": [
+        {
+          "title": "Comparisons",
+          "body": "Finding the position in the sorted prefix of length $i$ takes $O(\\log i)$ comparisons, $\\sum_i \\log i = \\Theta(n\\log n)$ total."
+        },
+        {
+          "title": "Moves",
+          "body": "For a reverse-sorted array every element is inserted at index 0, shifting $i$ elements: $\\sum_{i=1}^{n-1} i = \\frac{n(n-1)}{2} = \\Theta(n^2)$ moves."
+        },
+        {
+          "title": "Worst case",
+          "body": "$\\Theta(n\\log n) + \\Theta(n^2) = \\Theta(n^2)$."
+        }
+      ],
+      "answer": {
+        "value": "Remains $\\Theta(n^2)$ — option (A)",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Shifting dominates."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "No step costs $(\\log n)^2$ per element."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Only the comparisons become $\\Theta(n\\log n)$; shifts stay quadratic."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Even comparisons alone are $\\Theta(n\\log n)$."
+        }
+      ],
+      "verification": "Reverse-sorted input of size $n$ needs $n(n-1)/2$ element shifts regardless of how the position is found."
+    },
+    "cse-2003-cs-23": {
+      "approach": "In a min-heap the k-th smallest element lies within the top $k$ levels, so for fixed $k = 7$ only a constant number of nodes need to be examined.",
+      "concepts": [
+        "Min-heap property"
+      ],
+      "steps": [
+        {
+          "title": "Depth bound",
+          "body": "An element at depth $d$ has $d$ strictly smaller ancestors. The 7th smallest has at most 6 smaller elements, so its depth is $\\le 6$."
+        },
+        {
+          "title": "Constant work",
+          "body": "Levels 0–6 contain at most $2^7 - 1 = 127$ nodes. Selecting the 7th smallest among them (e.g. sort them, or extract-min 7 times from an auxiliary heap of candidates) costs a constant independent of $n$: $\\Theta(1)$."
+        }
+      ],
+      "answer": {
+        "value": "$\\Theta(1)$ — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Far more than needed; that is sorting the whole heap."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Linear scan is unnecessary — only the top 127 nodes matter."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "7 extract-min operations on the real heap would cost $\\Theta(\\log n)$, but the candidate-region method avoids it."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Constant-size region (≤ 127 nodes) for fixed $k = 7$."
+        }
+      ],
+      "pitfalls": [
+        "The answer is $\\Theta(1)$ because 7 is a constant; for general $k$ it would be $O(k\\log k)$."
+      ],
+      "verification": "Best-first search from the root with a small auxiliary heap pops 7 times and pushes ≤ 2 children each: ≤ 15 heap ops on a heap of ≤ 15 items — constant."
+    }
+  }
+}
