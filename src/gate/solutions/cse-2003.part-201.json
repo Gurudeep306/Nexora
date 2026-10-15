@@ -1,0 +1,1367 @@
+{
+  "paper": "cse-2003",
+  "version": 2,
+  "solutions": {
+    "cse-2003-cs-24": {
+      "approach": "Recall the textbook definitions: static typing fixes a variable's type at compile time; dynamic typing attaches types to values at run time; untyped languages have no types at all. Then test each sentence against them.",
+      "concepts": [
+        "Static typing",
+        "Dynamic typing",
+        "Untyped languages"
+      ],
+      "steps": [
+        {
+          "title": "Definitions",
+          "body": "- **Statically typed**: every variable has one declared/inferred type, fixed for the whole program.\n- **Dynamically typed**: values carry types; a variable may hold values of different types over time — its type is the type of whatever value it currently holds.\n- **Untyped** (e.g. assembly, BCPL): values are raw bit patterns with no types."
+        },
+        {
+          "title": "Check each statement",
+          "body": "(A) true by definition. (B) true by definition. (D) is the usual reading of static typing — a variable holds values of its single type. (C) says variables in dynamically typed languages have *no* types; in fact they do have types, they are simply bound at run time (the type of the current value). So (C) is the FALSE statement."
+        }
+      ],
+      "answer": {
+        "value": "(C) — in dynamically typed languages variables do have types, determined at run time",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: static typing means each variable has a fixed type."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: in an untyped language values are just bit patterns with no type."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "False: a variable in a dynamically typed language has a type at every moment (that of its current value); the type is merely bound dynamically."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Accepted as true in the standard key: a statically typed variable holds values of its declared type only (subtype polymorphism is the debatable corner case)."
+        }
+      ],
+      "pitfalls": [
+        "Reading (D) with subtype polymorphism in mind makes it look false too — the question intends the classical definition, under which (D) holds."
+      ],
+      "verification": "Matches the commonly accepted key (C); the D-vs-C debate is already recorded in the question's review note."
+    },
+    "cse-2003-cs-25": {
+      "approach": "Bigger blocks mean fewer seeks/transfers per byte (throughput up) but more wasted space in each file's last, partly filled block (utilisation down).",
+      "concepts": [
+        "Block size",
+        "Internal fragmentation",
+        "Disk throughput"
+      ],
+      "steps": [
+        {
+          "title": "Throughput",
+          "body": "Each block access pays seek + rotational latency. With larger blocks a file needs fewer accesses, and each transfer moves more data, so effective **throughput improves**."
+        },
+        {
+          "title": "Space utilisation",
+          "body": "A file of size $F$ occupies $\\lceil F/b \\rceil$ blocks; on average about $b/2$ bytes of the last block are wasted (internal fragmentation). Larger $b$ ⇒ more waste ⇒ **poorer space utilisation**, especially with many small files."
+        }
+      ],
+      "answer": {
+        "value": "Better throughput, poorer space utilisation",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: fewer, larger transfers raise throughput; internal fragmentation grows."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Space utilisation gets worse, not better, as block size grows."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both directions are reversed."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Throughput improves with larger blocks."
+        }
+      ],
+      "verification": "Extreme check: one huge block per file gives one transfer per file (fast) but wastes almost a block for every small file."
+    },
+    "cse-2003-cs-26": {
+      "approach": "Count the page-table entries: a one-level table needs one entry per virtual page, i.e. $2^{32}/2^{10}=2^{22}$ entries per process — a huge memory overhead.",
+      "concepts": [
+        "Paging",
+        "Page table size",
+        "Multi-level paging"
+      ],
+      "steps": [
+        {
+          "title": "Number of entries",
+          "body": "Pages $= \\dfrac{2^{32}}{2^{10}} = 2^{22} \\approx 4\\text{ M}$ entries."
+        },
+        {
+          "title": "Table size",
+          "body": "At 4 bytes per entry: $2^{22}\\times 4 = 2^{24}$ B $= 16$ MB **per process**, mostly for unused pages. That memory overhead is why multi-level (or inverted/hashed) tables are used."
+        }
+      ],
+      "answer": {
+        "value": "The large memory overhead of maintaining page tables",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Internal fragmentation is at most part of the last page of a segment — it depends on page size, not on the page-table depth."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Paging has no external fragmentation."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct: $2^{22}$ entries ≈ 16 MB per process."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "One-level translation is the fastest (one memory lookup); computation overhead is not the problem."
+        }
+      ],
+      "verification": "$32-10=22$ bits of page number ⇒ $2^{22}$ entries — confirmed."
+    },
+    "cse-2003-cs-27": {
+      "approach": "Check each claim against IP features: multihoming, datagram (per-packet) routing, TTL, and the source-route options.",
+      "concepts": [
+        "IP addressing",
+        "Datagram routing",
+        "TTL",
+        "Source routing"
+      ],
+      "steps": [
+        {
+          "title": "True statements",
+          "body": "- (A) A host with several interfaces (or aliases) has several IP addresses — true.\n- (B) IP is connectionless; each datagram is routed independently — true.\n- (C) The TTL field is decremented at each hop and the packet is dropped at 0 — true."
+        },
+        {
+          "title": "The false one",
+          "body": "(D) IP has **Strict and Loose Source Route options**, so the source *can* specify (part of) the route — the claim that the route is determined *only* by routing tables is false."
+        }
+      ],
+      "answer": {
+        "value": "(D) is false — IP source-routing options let the source fix the route",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "True: multihomed hosts/routers have one address per interface."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "True: datagrams are routed independently and may take different paths."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "True: TTL bounds the number of hops."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "False: the source-route options (strict/loose) let the sender set the route."
+        }
+      ],
+      "verification": "RFC 791 defines options type 131 (LSRR) and 137 (SSRR)."
+    },
+    "cse-2003-cs-28": {
+      "approach": "Ask what every transport protocol — including bare UDP — must add over IP. UDP skips loss recovery, duplicate detection and ordering, but still delivers end to end between processes (ports).",
+      "concepts": [
+        "Transport layer",
+        "TCP vs UDP",
+        "Process-to-process delivery"
+      ],
+      "steps": [
+        {
+          "title": "Optional features",
+          "body": "Loss recovery, duplicate detection and in-order delivery are provided by TCP but **not** by UDP — so they are not *mandatory* for a transport protocol."
+        },
+        {
+          "title": "Mandatory feature",
+          "body": "IP delivers host to host; the transport layer must at least provide end-to-end (process-to-process) connectivity via ports/multiplexing. Even UDP does this. Answer **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "End-to-end connectivity",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "UDP does not recover lost packets — not mandatory."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "UDP does not detect duplicates — not mandatory."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "UDP does not guarantee ordering — not mandatory."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: every transport protocol provides end-to-end (process-level) delivery."
+        }
+      ],
+      "verification": "UDP is a valid transport protocol and has only (D)."
+    },
+    "cse-2003-cs-29": {
+      "approach": "Irrecoverability comes from a dirty read: if T2 reads T1's uncommitted write and commits before T1 aborts, T2 cannot be rolled back.",
+      "concepts": [
+        "Recoverable schedules",
+        "Dirty read",
+        "Cascading rollback"
+      ],
+      "steps": [
+        {
+          "title": "Recoverability condition",
+          "body": "A schedule is recoverable if whenever $T_j$ reads a value written by $T_i$, $T_i$ commits before $T_j$. A violation requires $T_j$ to read data **written by an uncommitted** $T_i$."
+        },
+        {
+          "title": "Match the scenario",
+          "body": "Only (D) — reading an item written by an uncommitted transaction — creates such a dependency. If the reader commits and the writer later aborts, the database is in an irrecoverable state."
+        }
+      ],
+      "answer": {
+        "value": "Reading an item written by an uncommitted transaction",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Write-after-read is a conflict for serializability but creates no read-from dependency; it cannot make the schedule unrecoverable."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Read-after-read never conflicts."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Reading committed data is always safe."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: a dirty read can lead to an irrecoverable schedule if the reader commits first."
+        }
+      ],
+      "verification": "Example: $W_1(X), R_2(X), C_2, A_1$ — $T_2$ committed on a value that never existed."
+    },
+    "cse-2003-cs-30": {
+      "approach": "Translate clause by clause: FROM = Cartesian product, WHERE = selection, SELECT DISTINCT = projection (which removes duplicates in RA).",
+      "concepts": [
+        "SQL to relational algebra",
+        "Cartesian product",
+        "Projection"
+      ],
+      "steps": [
+        {
+          "title": "Map the clauses",
+          "body": "`from r1, …, rm` → $r_1 \\times r_2 \\times \\cdots \\times r_m$; `where P` → $\\sigma_P$; `select distinct a1,…,an` → $\\Pi_{a_1,\\ldots,a_n}$ (set semantics, so DISTINCT matches)."
+        },
+        {
+          "title": "Result",
+          "body": "$$\\Pi_{a_1,\\ldots,a_n}\\,\\sigma_P\\,(r_1\\times r_2\\times\\cdots\\times r_m)$$ — option (A)."
+        }
+      ],
+      "answer": {
+        "value": "$\\Pi_{a_1,\\ldots,a_n}\\sigma_P(r_1\\times\\cdots\\times r_m)$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: comma in FROM is a Cartesian product."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Natural join additionally equates common attributes, which the SQL query does not do."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Union needs union-compatible relations and is not what FROM means."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Intersection is likewise unrelated to the FROM list."
+        }
+      ],
+      "verification": "With no common attribute names, ⋈ equals ×, but in general they differ — so only (A) is always equivalent."
+    },
+    "cse-2003-cs-31": {
+      "approach": "P is upward closed (true at x ⇒ true at every y ≥ x). Since a ≤ c (c is the maximum), P(c) must be True — test which option forces P(c) false.",
+      "concepts": [
+        "Partial orders",
+        "Maximum element",
+        "Upward-closed predicates"
+      ],
+      "steps": [
+        {
+          "title": "P(c) is forced",
+          "body": "c is the maximum, so $a \\le c$. From $P(a)=\\text{True}$ and $P(a)\\Rightarrow P(c)$: $P(c)=\\text{True}$."
+        },
+        {
+          "title": "Check (D)",
+          "body": "The set $\\{x : a\\le x \\wedge b\\le x\\}$ contains $c$. (D) requires $P(c)=\\text{False}$ — contradiction. So (D) can never hold."
+        },
+        {
+          "title": "Others are possible",
+          "body": "Take $S=\\{a,b,c\\}$ with $a,b<c$ and $P=\\{a\\mapsto T, b\\mapsto F, c\\mapsto T\\}$ (upward closed). Then (A) holds (all except b true), (B) holds (no x other than a, c), (C) holds (only $x=b$ qualifies and $P(b)=F$)."
+        }
+      ],
+      "answer": {
+        "value": "(D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Possible: the example makes every x ≠ b true."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Possible: in the 3-element example the only element other than a and c is b, which is false."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Possible: the elements ≥ b other than c can all be false (P(b)=F is consistent)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Impossible: c satisfies a ≤ c and b ≤ c yet P(c) must be True."
+        }
+      ],
+      "verification": "The 3-element model satisfies all hypotheses and A, B, C simultaneously; D fails in every model because P(c) is forced True."
+    },
+    "cse-2003-cs-32": {
+      "approach": "Distribution of ∀ over → is valid: if α→β holds everywhere and α holds everywhere, β holds everywhere. Break each other option with a 2-element domain.",
+      "concepts": [
+        "First-order validity",
+        "Quantifier distribution",
+        "Countermodels"
+      ],
+      "steps": [
+        {
+          "title": "Prove (D)",
+          "body": "Assume $\\forall x[\\alpha\\Rightarrow\\beta]$ and $\\forall x[\\alpha]$. For any $x$: $\\alpha(x)$ and $\\alpha(x)\\Rightarrow\\beta(x)$ give $\\beta(x)$. Hence $\\forall x[\\beta]$. Valid."
+        },
+        {
+          "title": "Countermodels",
+          "body": "Domain $\\{1,2\\}$:\n- (A) $\\alpha=\\{1\\}$, $\\beta=\\varnothing$: $\\forall\\alpha$ is false so the premise is true, but $\\alpha(1)\\Rightarrow\\beta(1)$ fails.\n- (B) $\\alpha$ everywhere, $\\beta=\\varnothing$: $\\exists x[\\alpha\\wedge\\beta]$ false.\n- (C) $\\alpha=\\beta=\\varnothing$: $\\forall[\\alpha\\vee\\beta]$ false ⇒ premise true, but $\\forall\\alpha$ false."
+        }
+      ],
+      "answer": {
+        "value": "$(\\forall x)[\\alpha\\Rightarrow\\beta]\\Rightarrow((\\forall x)[\\alpha]\\Rightarrow(\\forall x)[\\beta])$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Invalid: the converse of the valid law; fails with α true only somewhere and β nowhere."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Invalid: β may be false everywhere."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Invalid: with α, β false everywhere the premise is vacuously true but the conclusion false."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Valid: ∀ distributes over implication in this direction."
+        }
+      ],
+      "verification": "Each countermodel was evaluated term by term; (D) has a direct proof."
+    },
+    "cse-2003-cs-33": {
+      "approach": "Instantiate the inner ∀y at y = x: $Q_{xx}\\Leftrightarrow\\neg Q_{xx}$ is a contradiction, so the bracket is false for every x, making the antecedent say ∀x ¬P_x — exactly the consequent. α is true in every interpretation.",
+      "concepts": [
+        "First-order semantics",
+        "Russell-style diagonal argument",
+        "Satisfaction"
+      ],
+      "steps": [
+        {
+          "title": "Inner formula is always false",
+          "body": "Let $\\varphi(x) = (\\forall y)[Q_{xy}\\Leftrightarrow\\neg Q_{yy}]$. Taking $y=x$ gives $Q_{xx}\\Leftrightarrow\\neg Q_{xx}$, which is false. So $\\varphi(x)$ is false for **every** $x$, whatever $Q$ means."
+        },
+        {
+          "title": "Simplify α",
+          "body": "Then $P_x\\Leftrightarrow\\varphi(x)$ is $P_x\\Leftrightarrow\\text{False} \\equiv \\neg P_x$. So α becomes $(\\forall x)[\\neg P_x]\\Rightarrow(\\forall x)[\\neg P_x]$ — a tautology."
+        },
+        {
+          "title": "Conclusion",
+          "body": "α is true under any interpretation, in particular both $I_1$ (primes) and $I_2$ (composites). Answer **(D)**."
+        }
+      ],
+      "answer": {
+        "value": "Both $I_1$ and $I_2$ satisfy α",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "I₂ also satisfies α (α is valid)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "I₁ also satisfies α."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Both satisfy α."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct: α is valid, so every interpretation satisfies it."
+        }
+      ],
+      "pitfalls": [
+        "Trying to evaluate \"prime\" vs \"composite\" is unnecessary — the meaning of P never matters."
+      ],
+      "verification": "Directly in I₁: $Q_{yy}$ (y divides y) is true, so the bracket asks that no y divides x — false since x | x; antecedent = \"no x is prime\", which is false, so the implication is true. Same for I₂."
+    },
+    "cse-2003-cs-34": {
+      "approach": "Pre-place k balls in each bag, then distribute the remaining m − kn identical balls freely by stars and bars.",
+      "concepts": [
+        "Stars and bars",
+        "Distributions with lower bounds"
+      ],
+      "steps": [
+        {
+          "title": "Remove the lower bound",
+          "body": "Put $k$ balls in each of the $n$ bags: $kn$ balls used (possible since $m\\ge kn$). Remaining balls: $m-kn$, with no restriction."
+        },
+        {
+          "title": "Stars and bars",
+          "body": "Distributing $r=m-kn$ identical balls into $n$ distinct bags: $\\dbinom{r+n-1}{n-1} = \\dbinom{m-kn+n-1}{n-1}$."
+        }
+      ],
+      "answer": {
+        "value": "$\\binom{m-kn+n-1}{n-1}$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Missing the $+n-1$ of stars and bars: $m=5$, $n=2$, $k=2$ gives $\\binom{1}{1}=1\\ne2$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$m=5$, $n=2$, $k=2$: $\\binom{4}{0}=1\\ne2$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$m=5$, $n=2$, $k=2$: $\\binom{3}{0}=1\\ne2$."
+        }
+      ],
+      "verification": "$m=5$, $n=2$, $k=2$: valid splits (2,3),(3,2) ⇒ 2; option B gives $\\binom{5-4+1}{1}=2$."
+    },
+    "cse-2003-cs-35": {
+      "approach": "Unroll: $T(n)=\\sum_{i=1}^{n}\\lfloor\\sqrt i\\rfloor$. Group the i by the value j of $\\lfloor\\sqrt i\\rfloor$: j occurs $2j+1$ times for $j<m$, and once (i = m²) for j = m.",
+      "concepts": [
+        "Recurrence unrolling",
+        "Floor sums",
+        "Sum of squares"
+      ],
+      "steps": [
+        {
+          "title": "Unroll",
+          "body": "$T(1)=1=\\lfloor\\sqrt1\\rfloor$, so $T(m^2)=\\sum_{i=1}^{m^2}\\lfloor\\sqrt i\\rfloor$."
+        },
+        {
+          "title": "Group by value",
+          "body": "$\\lfloor\\sqrt i\\rfloor=j$ for $j^2\\le i\\le (j+1)^2-1$: that is $2j+1$ values. So\n$$T(m^2)=\\sum_{j=1}^{m-1}j(2j+1)+m = 2\\sum_{j=1}^{m-1}j^2+\\sum_{j=1}^{m-1}j+m.$$"
+        },
+        {
+          "title": "Evaluate",
+          "body": "$2\\cdot\\frac{(m-1)m(2m-1)}{6}+\\frac{(m-1)m}{2}+m = \\frac{m}{6}\\left[2(2m^2-3m+1)+3(m-1)+6\\right] = \\frac{m}{6}(4m^2-3m+5).$"
+        }
+      ],
+      "answer": {
+        "value": "$\\frac{m}{6}(4m^2-3m+5)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Agrees for m = 1, 2, 3 (1, 5, 16) but m = 4 gives $\\frac{4}{6}(84-39)+4=34\\ne 38$."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: gives 1, 5, 16, 38 for m = 1, 2, 3, 4."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Non-integer exponent $m^{2.5}$; $m=1$: $\\frac12(3-11+20)-5=1$ but $m=2$: $(3\\cdot 5.66-22+20)-5\\approx 9.97\\ne5$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$m=1$: $\\frac16(5-34+137-104)+\\frac56=\\frac46+\\frac56=1.5\\ne1$."
+        }
+      ],
+      "verification": "Direct sums: T(4) = 1+1+1+2 = 5; T(9) = T(4) + (2+2+2+2) + 3 = 16 (i = 5..8 give 2, i = 9 gives 3); T(16) = T(9) + 3·6 + 4 = 38. Option B gives $\\frac{2}{6}\\cdot15=5$, $\\frac{3}{6}\\cdot32=16$, $\\frac{4}{6}\\cdot57=38$ ✓.",
+      "pitfalls": [
+        "Checking only small m is not enough here: option A matches for m = 1, 2, 3 and first fails at m = 4."
+      ]
+    },
+    "cse-2003-cs-36": {
+      "approach": "Pair vertex by vertex: the first unmatched vertex has 5 choices of partner, the next unmatched one 3, then 1.",
+      "concepts": [
+        "Perfect matching",
+        "Complete graph",
+        "Double factorial"
+      ],
+      "steps": [
+        {
+          "title": "Count",
+          "body": "Number of perfect matchings of $K_{2n}$ is $(2n-1)!! = (2n-1)(2n-3)\\cdots1$. For 6 vertices: $5\\times3\\times1 = 15$."
+        },
+        {
+          "title": "Cross-check",
+          "body": "$\\dfrac{6!}{2^3\\cdot 3!} = \\dfrac{720}{48} = 15$ (divide by order within pairs and order of pairs)."
+        }
+      ],
+      "answer": {
+        "value": "15",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: 5·3·1 = 15."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "24 = 4! has no meaning here."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "30 counts each matching twice (e.g. forgetting the 1/3! for pair order partially)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "60 = 6!/12 over-counts."
+        }
+      ],
+      "verification": "Both counting methods give 15."
+    },
+    "cse-2003-cs-37": {
+      "approach": "h is the preimage and g the image map, so g(h(D)) = f(f⁻¹(D)) = D ∩ f(A), always a subset of D.",
+      "concepts": [
+        "Image and preimage",
+        "Injective functions",
+        "Power sets"
+      ],
+      "steps": [
+        {
+          "title": "Compute g(h(D))",
+          "body": "$h(D)=f^{-1}(D)=\\{x\\in A: f(x)\\in D\\}$. Then $g(h(D))=\\{f(x): f(x)\\in D\\}=D\\cap f(A)\\subseteq D$."
+        },
+        {
+          "title": "Why not equality",
+          "body": "If some $d\\in D$ is not in the range of $f$, it is lost: e.g. $A=\\{1\\}$, $B=\\{p,q\\}$, $f(1)=p$, $D=\\{q\\}$ gives $g(h(D))=\\varnothing\\subsetneq D$."
+        }
+      ],
+      "answer": {
+        "value": "$g(h(D))\\subseteq D$",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: always $D\\cap f(A)\\subseteq D$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Fails when D has elements outside the range of f (example above)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Fails when $D\\cap f(A)\\neq\\varnothing$, e.g. $D=\\{p\\}$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$g(h(D))\\subseteq D$, so its intersection with $B-D$ is always empty."
+        }
+      ],
+      "verification": "Injectivity is not even needed for (A); the counterexamples use an injective f."
+    },
+    "cse-2003-cs-38": {
+      "approach": "Note a × y = y (row a of × is the identity), so the first equation is x + y = c. List its solutions from the + table and test each in the second equation.",
+      "concepts": [
+        "Operation tables",
+        "Systems over finite structures"
+      ],
+      "steps": [
+        {
+          "title": "First equation",
+          "body": "Row $a$ of × is $a,b,c$, so $a\\times x=x$, $a\\times y=y$: equation 1 is $x+y=c$. From the + table (row = left operand): $a+c=c$, $b+c=c$, $c+b=c$. Candidates: $(a,c),(b,c),(c,b)$."
+        },
+        {
+          "title": "Second equation $(b\\times x)+(c\\times y)=c$",
+          "body": "| (x, y) | b×x | c×y | sum |\n|---|---|---|---|\n| (a, c) | b | b | b+b = b ✗ |\n| (b, c) | c | b | c+b = c ✓ |\n| (c, b) | a | c | a+c = c ✓ |"
+        },
+        {
+          "title": "Count",
+          "body": "Two pairs, $(b,c)$ and $(c,b)$, satisfy both equations."
+        }
+      ],
+      "answer": {
+        "value": "2",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Solutions exist, e.g. (b, c)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Both (b, c) and (c, b) work."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(a, c) fails the second equation (gives b)."
+        }
+      ],
+      "pitfalls": [
+        "The operations are not commutative ($a+c=c$ but $c+a=a$) — always read row = left operand."
+      ],
+      "verification": "Re-read all 6 table lookups against the given examples ($a+c=c$, $c+a=a$, $c\\times b=c$, $b\\times c=a$)."
+    },
+    "cse-2003-cs-39": {
+      "approach": "Every exponent in h must itself be an f-value: $f(s)=2^{g(a_1)}3^{g(a_2)}\\cdots$ is even, with odd exponents ≥ 3 on consecutive primes. Only 8 = 2³ qualifies.",
+      "concepts": [
+        "Gödel numbering",
+        "Prime factorisation"
+      ],
+      "steps": [
+        {
+          "title": "Shape of f(s)",
+          "body": "$f(s)=\\prod p_i^{g(a_i)}$ with $g(a_i)\\in\\{3,5,7,9,11\\}$. So $f(s)$ is divisible by $2^3$, and the exponent of 2 is odd."
+        },
+        {
+          "title": "Shape of h",
+          "body": "$h=\\prod_{i=1}^{n}p_i^{f(s_i)}$ uses consecutive primes $2,3,5,\\ldots$ and each exponent must be a valid $f$-value."
+        },
+        {
+          "title": "Test options",
+          "body": "- 7, 9: odd, not of the form $2^{g}\\cdots$ ✗\n- 8 $=2^3=f(\\text{\"a\"})$ ✓ → $h(\\langle a,a,a\\rangle)=2^8 3^8 5^8$.\n- (D) skips prime 3 and $10=2^1\\cdot5$ has exponent 1 on 2 ✗"
+        }
+      ],
+      "answer": {
+        "value": "$2^8 3^8 5^8$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "7 is odd; every f-value is a multiple of 8."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: the encoding of ⟨a, a, a⟩."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "9 is odd."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Exponent of 3 is 0 (primes not consecutive) and $10=2\\cdot5$ is not an f-value."
+        }
+      ],
+      "verification": "$f(a)=2^{g(a)}=2^3=8$ ✓."
+    },
+    "cse-2003-cs-40": {
+      "approach": "Handshake lemma: if every vertex had degree ≥ 6, then 2|E| ≥ 6|V|, contradicting |E| ≤ 3|V| − 6.",
+      "concepts": [
+        "Handshake lemma",
+        "Planar graph edge bound"
+      ],
+      "steps": [
+        {
+          "title": "Degree sum bound",
+          "body": "$\\sum_v \\deg(v)=2|E|\\le 6|V|-12 < 6|V|$."
+        },
+        {
+          "title": "Conclude",
+          "body": "If min-degree were $\\ge 6$, the sum would be $\\ge 6|V|$ — contradiction. So min-degree $\\le 5$; it cannot be 6."
+        }
+      ],
+      "answer": {
+        "value": "6",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Possible: e.g. $K_4$ (|E| = 6 = 3·4 − 6), min-degree 3."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Possible: the octahedron (6 vertices, 12 edges = 3·6 − 6), min-degree 4."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Possible: the icosahedron (12 vertices, 30 edges = 3·12 − 6), min-degree 5."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Impossible by the degree-sum argument."
+        }
+      ],
+      "verification": "Examples realise 3, 4 and 5 with equality in the bound."
+    },
+    "cse-2003-cs-41": {
+      "approach": "Because column 3 = −4 × column 2, set w = y − 4z. The system becomes 3 equations in (x, w); it is consistent for exactly one α, and then z is free ⇒ infinitely many solutions.",
+      "concepts": [
+        "Rank",
+        "Consistency of linear systems",
+        "Column dependence"
+      ],
+      "steps": [
+        {
+          "title": "Reduce",
+          "body": "Column 3 $=-4\\times$ column 2, so with $w=y-4z$:\n$$2x+w=\\alpha,\\quad 4x+3w=5,\\quad x+2w=7.$$"
+        },
+        {
+          "title": "Solve the last two",
+          "body": "$x=7-2w \\Rightarrow 4(7-2w)+3w=5 \\Rightarrow 28-5w=5 \\Rightarrow w=\\tfrac{23}{5}$, $x=7-\\tfrac{46}{5}=-\\tfrac{11}{5}$."
+        },
+        {
+          "title": "Consistency",
+          "body": "Need $\\alpha=2x+w=-\\tfrac{22}{5}+\\tfrac{23}{5}=\\tfrac15$. For $\\alpha=\\tfrac15$ the system is consistent with rank 2 < 3 unknowns ⇒ infinitely many solutions ($z$ free, $y=w+4z$). For any other α: no solution. So exactly **one** value."
+        }
+      ],
+      "answer": {
+        "value": "1 (α = 1/5)",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "α = 1/5 does give infinitely many solutions."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Correct: only α = 1/5."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Consistency is a single linear condition on α, so it cannot hold for exactly two values."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "For α ≠ 1/5 the system is inconsistent."
+        }
+      ],
+      "verification": "Check α = 1/5, z = 0: x = −11/5, y = 23/5 → row 1: −22/5 + 23/5 = 1/5 ✓, row 2: −44/5 + 69/5 = 5 ✓, row 3: −11/5 + 46/5 = 7 ✓."
+    },
+    "cse-2003-cs-42": {
+      "approach": "For a piecewise-linear f, Newton–Raphson from a point on a segment jumps to where that segment's extension meets the x-axis. Trace each start.",
+      "concepts": [
+        "Newton–Raphson method",
+        "Piecewise linear functions"
+      ],
+      "given": "| Segment | Line | x-intercept of the extension |\n|---|---|---|\n| (0,1)–(0.5,0.5) | $f=1-x$ | 1.0 |\n| (0.5,0.5)–(1.0,−0.8) | slope −2.6 | root ≈ 0.6 |\n| (1.0,−0.8)–(1.55,0.5) | slope ≈ 2.36 | root ≈ 1.3 |\n| (1.55,0.5)–(2.05,1.0) | $f=x-1.05$ | 1.05 |",
+      "steps": [
+        {
+          "title": "x₁ (between 0.6 and 1.0)",
+          "body": "x₁ lies on the steep segment that itself crosses the axis, so one Newton step lands exactly on the root **0.6**."
+        },
+        {
+          "title": "x₂ (between 1.55 and 2.05)",
+          "body": "Tangent $f=x-1.05$ hits the axis at $x=1.05$, which lies on the rising segment (1.0, −0.8)–(1.55, 0.5). The next step follows that segment to its root **1.3**."
+        },
+        {
+          "title": "x₀ (near 0.2)",
+          "body": "Tangent $f=1-x$ hits the axis at $x=1.0$, the bottom vertex. From there the iteration proceeds along the rising branch (the curve turns upward to the right) and converges to **1.3**."
+        },
+        {
+          "title": "Match",
+          "body": "Roots: 1.3, 0.6, 1.3 → option (D)."
+        }
+      ],
+      "answer": {
+        "value": "1.3, 0.6 and 1.3",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "x₂ cannot reach 0.6: its tangent lands at 1.05 on the rising branch."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "x₀ does not go to 0.6; its tangent overshoots to x = 1.0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "x₁ is on the segment through 0.6, so it gives 0.6 in one step, not 1.3."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Correct."
+        }
+      ],
+      "pitfalls": [
+        "At x = 1.0 exactly f is not differentiable; the intended reading (and accepted key) uses the right-hand branch. Even ignoring x₀, only B and D have x₁ → 0.6 and x₂ → 1.3."
+      ],
+      "verification": "x₂ → 1.05 → $1.05-\\frac{f(1.05)}{2.364}$ with $f(1.05)=-0.8+0.05\\cdot2.364=-0.682$ gives $1.05+0.289=1.339\\approx1.3$ ✓."
+    },
+    "cse-2003-cs-43": {
+      "approach": "The gap between consecutive numbers is one mantissa ulp times the scale: $2^{-9}\\cdot2^{e-31}$. It is largest for the largest usable exponent, e = 111110₂ = 62.",
+      "concepts": [
+        "Floating point",
+        "ULP",
+        "Biased exponent"
+      ],
+      "steps": [
+        {
+          "title": "Gap at exponent e",
+          "body": "Consecutive mantissas differ by 1, so the values differ by $2^{-9}\\cdot2^{e-31}$."
+        },
+        {
+          "title": "Largest valid exponent",
+          "body": "$e=111111_2$ is reserved for 0, so $e_{\\max}=111110_2=62$."
+        },
+        {
+          "title": "Maximum gap",
+          "body": "$2^{-9}\\cdot2^{62-31}=2^{-9}\\cdot2^{31}=2^{22}$."
+        }
+      ],
+      "answer": {
+        "value": "$2^{22}$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^{-40}=2^{-9}\\cdot2^{0-31}$ is the *minimum* gap (e = 0)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$2^{-9}$ is the gap only for e = 31."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2^{31}$ is the scale factor, not the gap (forgets the $2^{-9}$ ulp)."
+        }
+      ],
+      "verification": "Bits: 6 exponent bits (14–9), 9 mantissa bits (8–0) as in the figure."
+    },
+    "cse-2003-cs-44": {
+      "approach": "The circuit only needs to remember the running difference d = zₖ − nₖ while |d| < 2, plus two absorbing states for the two outcomes: d ∈ {−1, 0, +1} and \"saw +2\", \"saw −2\" — 5 states.",
+      "concepts": [
+        "State minimisation",
+        "Mealy/Moore machines",
+        "Counting difference"
+      ],
+      "steps": [
+        {
+          "title": "What must be remembered",
+          "body": "Before termination $|z_k-n_k|\\le1$, so the difference $d\\in\\{-1,0,+1\\}$ — three distinguishable states (from d = +1 one more 0 ends with 10; from d = −1 one more 1 ends with 01; from 0 neither)."
+        },
+        {
+          "title": "Absorbing states",
+          "body": "Once $d=+2$ the output is 10 forever; once $d=-2$ it is 01 forever. These are two further states, distinct from each other and from the counting states."
+        },
+        {
+          "title": "Total",
+          "body": "$3+2=5$ states, and no two are equivalent.",
+          "scene": {
+            "current": [
+              "D0",
+              "P1",
+              "M1",
+              "Z",
+              "O"
+            ],
+            "caption": "5 states: d = 0, +1, −1 and two absorbing outcomes"
+          }
+        }
+      ],
+      "animation": {
+        "kind": "automaton",
+        "layout": "row",
+        "states": [
+          {
+            "id": "Z",
+            "label": "10"
+          },
+          {
+            "id": "P1",
+            "label": "d=+1"
+          },
+          {
+            "id": "D0",
+            "label": "d=0",
+            "start": true
+          },
+          {
+            "id": "M1",
+            "label": "d=−1"
+          },
+          {
+            "id": "O",
+            "label": "01"
+          }
+        ],
+        "edges": [
+          {
+            "from": "D0",
+            "to": "P1",
+            "label": "0"
+          },
+          {
+            "from": "D0",
+            "to": "M1",
+            "label": "1"
+          },
+          {
+            "from": "P1",
+            "to": "Z",
+            "label": "0"
+          },
+          {
+            "from": "P1",
+            "to": "D0",
+            "label": "1"
+          },
+          {
+            "from": "M1",
+            "to": "D0",
+            "label": "0"
+          },
+          {
+            "from": "M1",
+            "to": "O",
+            "label": "1"
+          },
+          {
+            "from": "Z",
+            "to": "Z",
+            "label": "0,1"
+          },
+          {
+            "from": "O",
+            "to": "O",
+            "label": "0,1"
+          }
+        ],
+        "current": [
+          "D0"
+        ]
+      },
+      "answer": {
+        "value": "5",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct: d ∈ {−1, 0, +1} plus two absorbing states."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A sixth state would be equivalent to one of these five."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Over-counts (e.g. separate states for different k with the same d)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Over-counts."
+        }
+      ],
+      "verification": "Input 00 → d: +1, +2 → output 10 at k = 2 ✓; input 0101… stays within {0, +1} and outputs 00 ✓."
+    },
+    "cse-2003-cs-45": {
+      "approach": "Find the minimal SOP over the 1-cells and the minimal POS over the 0-cells, using don't-cares freely. The minimal SOP has 8 literals and the minimal POS 9, so no option is exactly right; the accepted key (C) (9, 10) agrees on the POS count.",
+      "concepts": [
+        "Karnaugh maps",
+        "Minimal SOP/POS",
+        "Literal count"
+      ],
+      "given": "| Cells | Minterms (xyzw) |\n|---|---|\n| 1s | 1, 2, 5, 12 |\n| don't-cares | 0, 7, 8, 10, 13, 15 |\n| 0s | 3, 4, 6, 9, 11, 14 |",
+      "steps": [
+        {
+          "title": "Minimal SOP",
+          "body": "- $m_2$: quad $\\{0,2,8,10\\}=y'w'$ (2 literals).\n- $m_1$: no valid quad ($m_3,m_4,m_9$ are 0) ⇒ pair $\\{1,5\\}=x'z'w$ (3), also covering $m_5$.\n- $m_{12}$: neighbours $m_4,m_{14}$ are 0, every quad hits a 0 ⇒ pair $\\{12,13\\}=xyz'$ (3).\n\n$f=y'w'+x'z'w+xyz'$: $2+3+3=$ **8 literals**. Three terms are needed (no term covers two of $m_1,m_2,m_{12}$), so 8 is minimal.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "y′w′"
+              },
+              {
+                "cells": [
+                  1,
+                  5
+                ],
+                "label": "x′z′w"
+              },
+              {
+                "cells": [
+                  12,
+                  13
+                ],
+                "label": "xyz′"
+              }
+            ],
+            "caption": "Minimal SOP: 8 literals"
+          }
+        },
+        {
+          "title": "Minimal POS",
+          "body": "Group the 0s (with don't-cares):\n- $\\{3,7,11,15\\}$ → $(z'+w')$ (2)\n- $\\{6,7,14,15\\}$ → $(y'+z')$ (2)\n- $\\{9,11,13,15\\}$ → $(x'+w')$ (2)\n- $m_4$: every quad containing it hits a 1 ⇒ pair $\\{0,4\\}$ → $(x+z+w)$ (3)\n\nTotal $2+2+2+3=$ **9 literals**; four sums are unavoidable ($m_3$, $m_4$, $m_9$, and one of $m_6/m_{14}$ need separate terms).",
+          "scene": {
+            "kind": "kmap",
+            "variables": [
+              "x",
+              "y",
+              "z",
+              "w"
+            ],
+            "ones": [
+              3,
+              4,
+              6,
+              9,
+              11,
+              14
+            ],
+            "dcs": [
+              0,
+              7,
+              8,
+              10,
+              13,
+              15
+            ],
+            "groups": [
+              {
+                "cells": [
+                  3,
+                  7,
+                  11,
+                  15
+                ],
+                "label": "z′+w′"
+              },
+              {
+                "cells": [
+                  6,
+                  7,
+                  14,
+                  15
+                ],
+                "label": "y′+z′"
+              },
+              {
+                "cells": [
+                  9,
+                  11,
+                  13,
+                  15
+                ],
+                "label": "x′+w′"
+              },
+              {
+                "cells": [
+                  0,
+                  4
+                ],
+                "label": "x+z+w"
+              }
+            ],
+            "caption": "Zeros of f (cells of f′): minimal POS = 9 literals"
+          }
+        },
+        {
+          "title": "Compare with options",
+          "body": "True minimum: (POS, SOP) = (9, 8). No option lists this; (C) (9, 10) — the accepted official key — has the correct POS count. The question is flagged for review."
+        }
+      ],
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "x",
+          "y",
+          "z",
+          "w"
+        ],
+        "ones": [
+          1,
+          2,
+          5,
+          12
+        ],
+        "dcs": [
+          0,
+          7,
+          8,
+          10,
+          13,
+          15
+        ],
+        "groups": [],
+        "caption": "f: 1s and don't-cares"
+      },
+      "answer": {
+        "value": "(C) (9, 10) per the official key — though the true minimum is (9, 8): POS 9 literals, SOP 8 literals",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "POS cannot need 11 literals — 9 suffice."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "SOP needs only 8 literals, not 13."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Official key; POS = 9 is right, but SOP can be done in 8 (y′w′ + x′z′w + xyz′), so 10 is not the true minimum."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Both counts exceed the minima (9, 8)."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that the don't-care quad {0, 2, 8, 10} covers m₂ with only 2 literals inflates the SOP count."
+      ],
+      "verification": "Checked y′w′ + x′z′w + xyz′ cell by cell: it is 1 on 1, 2, 5, 12, and 0 on 3, 4, 6, 9, 11, 14 (covers only don't-cares otherwise). The POS product is 0 on every 0-cell and 1 on every 1-cell."
+    },
+    "cse-2003-cs-46": {
+      "approach": "Each B bit passes through XOR with K, so K = 0 feeds B and K = 1 feeds B̅; C₀ adds 0 or 1. Thus only A + B + C₀ or A + B̅ + C₀ can be formed.",
+      "concepts": [
+        "Adder/subtractor",
+        "2's complement",
+        "XOR as controlled inverter"
+      ],
+      "steps": [
+        {
+          "title": "Settings",
+          "body": "| K | C₀ | Result |\n|---|---|---|\n| 0 | 0 | $A+B$ |\n| 0 | 1 | $A+B+1$ |\n| 1 | 1 | $A+\\overline{B}+1=A-B$ |\n| 1 | 0 | $A+\\overline{B}=A-B-1$ |"
+        },
+        {
+          "title": "A + 1?",
+          "body": "$A+1$ needs the second adder input to be 0, but it is always $B$ or $\\overline B$ — K and C₀ cannot zero it. So $A+B$ and $A-B$ are possible, $A+1$ is not."
+        }
+      ],
+      "answer": {
+        "value": "A + B and A − B, but not A + 1",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Correct."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "A − B is possible with K = 1, C₀ = 1; A + 1 is not."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "A − B is possible."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "A + 1 would need B forced to 0."
+        }
+      ],
+      "verification": "2's complement: $-B=\\overline B+1$, exactly what K = 1, C₀ = 1 supplies."
+    }
+  }
+}
