@@ -1,0 +1,37 @@
+{
+  "paper": "cse-1995",
+  "fixes": [
+    {
+      "id": "cse-1995-b-57-b",
+      "field": "answer",
+      "before": "A grammar has cycles iff there exists nonterminal A such that A =>+ A; eliminate unit and epsilon productions",
+      "after": "If $A \\Rightarrow^+ A$ and $A \\Rightarrow^* w$, then $w$ has two parse trees from A (with and without the cycle inserted), so the grammar is ambiguous; every LL(1) grammar is unambiguous, so a grammar with cycles cannot be LL(1).",
+      "reason": "Stored answer only restated the definition of a cycle and named an unrelated transformation; replaced with the required proof outline (cycle ⇒ ambiguity ⇒ not LL(1)).",
+      "source": "Standard result (Aho, Sethi, Ullman); proof in solution"
+    },
+    {
+      "id": "cse-1995-b-59",
+      "field": "answer",
+      "before": "L* is closed under concatenation and Kleene star; regularity preserved if L is regular",
+      "after": "Certificate for $x \\in L^C$ ($|x| = n$): a string $y$ with $|y| = n$, $y \\ne x$, plus an NP certificate that $y \\in L$. Since L has exactly one string of each length, such a $y$ exists iff $x \\notin L$, and checking it takes polynomial time, so $L^C \\in$ NP.",
+      "reason": "Stored answer talked about L* and closure under concatenation, which does not address the question; replaced with the NP-certificate argument for L^C.",
+      "source": "Proof in solution"
+    },
+    {
+      "id": "cse-1995-b-58-a",
+      "field": "subject",
+      "before": "ga",
+      "after": "cd",
+      "reason": "Pascal scope rules for with-statements are a compiler/programming-language topic, not quantitative aptitude.",
+      "source": "GATE 1995 question paper"
+    },
+    {
+      "id": "cse-1995-b-58-a",
+      "field": "topic",
+      "before": "quant",
+      "after": "runtime",
+      "reason": "Scope and name binding belong under compiler runtime environments.",
+      "source": "GATE 1995 question paper"
+    }
+  ]
+}
