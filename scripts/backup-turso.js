@@ -5,7 +5,7 @@
  *   npm run db:backup                 → backups/nexora-YYYY-MM-DD.db
  *   npm run db:backup -- out/file.db  → custom path
  *
- * Used by the nightly GitHub Action (.github/workflows/backup.yml), and handy
+ * Used by the nightly GitHub Action (.github/workflows/backup-turso.yml), and handy
  * for pulling live data down to your Mac. To restore a backup into the cloud:
  *   npm run db:push-to-cloud -- backups/nexora-YYYY-MM-DD.db --force
  */
