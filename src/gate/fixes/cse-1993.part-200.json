@@ -1,0 +1,69 @@
+{
+  "paper": "cse-1993",
+  "fixes": [
+    {
+      "id": "cse-1993-a-1-5",
+      "field": "text",
+      "before": "In questions 1.1 to 1.7 below, one or more of the alternatives are correct. Write the code letter(s) a, b, c, d corresponding to the correct alternative(s) in the answer book. Marks will be given only if all the correct alternatives have been selected and no incorrect alternative is picked up.\n\nFourier series of the periodic function (period $2\\pi$) defined by\n\n$$f(x)=\\begin{cases}0, & -p<x<\\\\ x, & 0<x<p\\end{cases}$$\n\nis\n\n$$\\frac{p}{4}+\\sum\\left[\\frac{1}{\\pi n^2}(\\cos n\\pi-1)\\cos nx-\\frac{1}{n}\\cos n\\pi\\sin nx\\right]$$\n\nBut putting $x=\\pi$, we get the sum of the series.\n\n$$1+\\frac{1}{3^2}+\\frac{1}{5^2}+\\frac{1}{7^2}+\\dots$$ is",
+      "after": "In questions 1.1 to 1.7 below, one or more of the alternatives are correct. Write the code letter(s) a, b, c, d corresponding to the correct alternative(s) in the answer book. Marks will be given only if all the correct alternatives have been selected and no incorrect alternative is picked up.\n\nFourier series of the periodic function (period $2\\pi$) defined by\n\n$$f(x)=\\begin{cases}0, & -\\pi<x<0\\\\ x, & 0<x<\\pi\\end{cases}$$\n\nis\n\n$$\\frac{\\pi}{4}+\\sum_{n=1}^{\\infty}\\left[\\frac{1}{\\pi n^2}(\\cos n\\pi-1)\\cos nx-\\frac{1}{n}\\cos n\\pi\\sin nx\\right]$$\n\nBut putting $x=\\pi$, we get the sum of the series.\n\n$$1+\\frac{1}{3^2}+\\frac{1}{5^2}+\\frac{1}{7^2}+\\dots$$ is",
+      "reason": "Retyped scan prints 'p' for π and drops the upper limit 0 of the first interval; restored the evident original (−π<x<0, 0<x<π, π/4 constant term, which the stated series requires).",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    },
+    {
+      "id": "cse-1993-a-1-5",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Text corrected; the answer π²/8 is proved independently.",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    },
+    {
+      "id": "cse-1993-a-1-5",
+      "field": "reviewNote",
+      "before": "Printed as retyped: 'p' stands for $\\pi$ and the first interval reads '$-p<x<$' (upper limit 0 missing).",
+      "after": null,
+      "reason": "Review issue (p for π, missing 0) resolved by the text fix.",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    },
+    {
+      "id": "cse-1993-a-2-5",
+      "field": "text",
+      "before": "In questions 2.1 to 2.10 below, each blank (\\_\\_\\_\\_\\_\\_) is to be suitably filled in. In the answer book write the question number and the answer only. Do not copy the question. Also, no explanations for the answers are to be given.\n\nFor $X=4.0$, the value of I in the FORTRAN 77 statement\n\n$$I=-2**2+\\frac{5.0*X}{X*3}+\\frac{3}{4}$$ is \\_\\_\\_\\_\\_\\_",
+      "after": "In questions 2.1 to 2.10 below, each blank (\\_\\_\\_\\_\\_\\_) is to be suitably filled in. In the answer book write the question number and the answer only. Do not copy the question. Also, no explanations for the answers are to be given.\n\nFor $X=4.0$, the value of `I` in the FORTRAN 77 statement\n\n```fortran\nI = -2**2 + 5.0*X/X*3 + 3/4\n```\n\nis \\_\\_\\_\\_\\_\\_",
+      "reason": "A FORTRAN statement is a single line; the retyped scan renders it as stacked fractions (and prints \"1=\" for \"I=\"). Shown as code so the stored answer 11 (left-to-right evaluation) is consistent with the text.",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    },
+    {
+      "id": "cse-1993-a-2-5",
+      "field": "subject",
+      "before": "coa",
+      "after": "pds",
+      "reason": "Expression evaluation / precedence in a programming language, not machine ISA.",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    },
+    {
+      "id": "cse-1993-a-2-5",
+      "field": "topic",
+      "before": "isa",
+      "after": "c",
+      "reason": "Closest taxonomy topic: output of code / programming semantics.",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    },
+    {
+      "id": "cse-1993-a-1-4",
+      "field": "subject",
+      "before": "cn",
+      "after": "cd",
+      "reason": "Validity of FORTRAN statements hinges on lexical rules (blanks ignored, no reserved words), not computer networks.",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    },
+    {
+      "id": "cse-1993-a-1-4",
+      "field": "topic",
+      "before": "ip",
+      "after": "lexical",
+      "reason": "Lexical analysis (same filing as other FORTRAN lexical questions, e.g. cse-1999-a-39).",
+      "source": "GATE 1993 PDF (examrace retype) + independent solution"
+    }
+  ]
+}
