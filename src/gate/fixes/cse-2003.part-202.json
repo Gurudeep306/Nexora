@@ -1,0 +1,135 @@
+{
+ "paper": "cse-2003",
+ "fixes": [
+  {
+   "id": "cse-2003-cs-47",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-2003/cs-47-1.png",
+     "alt": "Input A feeds XOR gate 1 directly and through a non-inverting buffer with delay δ1 = 2 ns; the output of XOR 1 feeds XOR gate 2 directly and through a buffer with delay δ2 = 4 ns; XOR 2 output is B.",
+     "svg": "cse-2003/cs-47-1.svg"
+    },
+    {
+     "f": "cse-2003/cs-47-2.png",
+     "alt": "A is 0 from time 0 to 1 ns, then rises to logic 1 at 1 ns and stays at 1 through 11 ns. Time axis marked 0 to 11 ns. Answer options (A) 1, (B) 2, (C) 3, (D) 4 printed below.",
+     "svg": "cse-2003/cs-47-2.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-2003/cs-47-1.png",
+     "alt": "Circuit: input A feeds XOR gate 1 directly and through a non-inverting buffer with delay δ1 = 2 ns; the output of XOR 1 feeds XOR gate 2 directly and through a non-inverting buffer with delay δ2 = 4 ns; the output of XOR 2 is B.",
+     "svg": "cse-2003/cs-47-1.svg"
+    },
+    {
+     "f": "cse-2003/cs-47-2.png",
+     "alt": "Waveform of input A against time 0 to 11 ns: A is at logic 0 from 0 to 1 ns, rises to logic 1 at 1 ns and stays at logic 1 up to 11 ns.",
+     "svg": "cse-2003/cs-47-2.svg"
+    }
+   ],
+   "reason": "Placeholder SVGs replaced by faithful redraws of the circuit and waveform; waveform alt no longer mentions the answer options.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  },
+  {
+   "id": "cse-2003-cs-50",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-2003/cs-50-1.png",
+     "alt": "Four states q0 (start, self-loop on 1) →0→ q1; q1 →1→ q0; q1 →0→ q2; q2 self-loop on 0; q2 →1→ q3 (accepting, self-loop on 0,1). Accepts strings containing 001.",
+     "svg": "cse-2003/cs-50-1.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-2003/cs-50-1.png",
+     "alt": "DFA with states q0 (start), q1, q2, q3 (accepting). q0 loops on 1 and goes to q1 on 0; q1 goes to q2 on 0 and back to q0 on 1; q2 loops on 0 and goes to q3 on 1; q3 loops on 0,1. It accepts exactly the strings containing 001.",
+     "svg": "cse-2003/cs-50-1.svg"
+    }
+   ],
+   "reason": "Placeholder SVG replaced by a faithful redraw of the DFA; alt made precise.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  },
+  {
+   "id": "cse-2003-cs-55",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-2003/cs-55-1.png",
+     "alt": "Three states: start state p (left), state q (right) with self-loop on 0,1, and accepting state r (bottom). Transitions: p →0,1→ q; q →0→ p; p →1→ r; q →0→ r. r has no outgoing transitions.",
+     "svg": "cse-2003/cs-55-1.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-2003/cs-55-1.png",
+     "alt": "NFA with three unlabelled states, called p, q, r here: p is the start state (left), q (right) has a self-loop on 0,1, r (bottom) is the only accepting state. Edges: p to q on 0,1; q to p on 0; p to r on 1; q to r on 0. r has no outgoing edges.",
+     "svg": "cse-2003/cs-55-1.svg"
+    }
+   ],
+   "reason": "Placeholder SVG replaced by a faithful redraw of the NFA; alt notes that the state names are added for reference.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  },
+  {
+   "id": "cse-2003-cs-65",
+   "field": "text",
+   "before": "Consider the following 2-3-4 tree (i.e., B-tree with a minimum degree of two) in which each data item is a letter. The usual alphabetical ordering of letters is used in constructing the tree.",
+   "after": "Consider the following 2-3-4 tree (i.e., B-tree with a minimum degree of two) in which each data item is a letter. The usual alphabetical ordering of letters is used in constructing the tree.\n\nWhat is the result of inserting G in the above tree?",
+   "reason": "The reprint drops the question sentence; restored from the original GATE 2003 Q65 (insertion of G).",
+   "source": "Original GATE 2003 paper Q65 (gateoverflow.in/952)"
+  },
+  {
+   "id": "cse-2003-cs-65",
+   "field": "needsReview",
+   "before": true,
+   "after": false,
+   "reason": "Question sentence restored; answer (B) verified independently by top-down B-tree insertion.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  },
+  {
+   "id": "cse-2003-cs-65",
+   "field": "reviewNote",
+   "before": "The reprint omits the question sentence ('What is the result of inserting G in the above tree?' per the original paper; see https://gateoverflow.in/952/gate2003-65). Option figures: (A) root P; children GL (leaves B, HI, N) and U (QT, VXZ). (B) root P; children HL (leaves BG, I, N) and U (QT, VXZ). (C) root IPU with leaves BGH, LN, QT, VXZ.",
+   "after": null,
+   "reason": "Review issue resolved by the text fix.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  },
+  {
+   "id": "cse-2003-cs-68",
+   "field": "figures",
+   "before": [
+    {
+     "f": "cse-2003/cs-68-1.png",
+     "alt": "Undirected weighted graph on 10 vertices a–j. Edges (weights as printed, some illegible in the scan): a-b 6, a-c 1, a-d 2, c-d 2, b-d 3, b-h 2, h-j 19, h-g 8, h-i 14, j-i 5, d-g 15, g-i 4, g-f 4, f-i 9, e-g 8, e-f 11, e-i 2 or 3, a-e 4 or 8.",
+     "svg": "cse-2003/cs-68-1.svg"
+    }
+   ],
+   "after": [
+    {
+     "f": "cse-2003/cs-68-1.png",
+     "alt": "Undirected weighted graph on vertices a to j. Edges with weights as read from the scan: a-b 6, a-c 1, a-d 2, c-d 2, b-d 3, b-h 2, h-j 19, h-g 8, h-i 14, j-i 5, d-g 15, g-i 4, g-f 4, f-i 9, e-g 8, e-f 11, e-i 2, a-e 8.",
+     "svg": "cse-2003/cs-68-1.svg"
+    }
+   ],
+   "reason": "Placeholder SVG replaced by a redraw of the graph from the 600-dpi scan; alt lists the weights as read.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  },
+  {
+   "id": "cse-2003-cs-68",
+   "field": "reviewNote",
+   "before": "Several edge weights in the scanned figure are illegible (a-e, e-i, f-g, e-g); answer follows the standard key 31 (https://gateoverflow.in/955/gate2003-68). Verify weights against the original figure.",
+   "after": "Edge labels in the scanned figure are blurry; read as a-d 2 (could be 7), e-i 2, a-e 8, e-g 8, f-i 9. With these the MST weight is 1+2+2+2+3+4+4+5+8 = 31, matching the stored key; the a-d reading does not affect the total. Verify the labels against a clean copy of the paper.",
+   "reason": "Precise note on which labels were uncertain and how they were read.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  },
+  {
+   "id": "cse-2003-cs-69",
+   "field": "reviewNote",
+   "before": "Subscripts in the scanned list are hard to read (the reprint appears to drop/garble $c_e$); transcribed per the original paper's sequence.",
+   "after": "The scanned reprint lists only 15 events and omits c_e (with C never ending the answer would be 5). The text follows the original GATE 2003 sequence with c_e after d_s, which gives a peak overlap of 4 (key B).",
+   "reason": "Precise note on the reprint discrepancy.",
+   "source": "GATE2003.pdf p.6-10 (scanned reprint), redrawn/verified"
+  }
+ ]
+}
