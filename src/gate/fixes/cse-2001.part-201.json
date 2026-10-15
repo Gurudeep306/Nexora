@@ -1,0 +1,71 @@
+{
+  "paper": "cse-2001",
+  "fixes": [
+    {
+      "id": "cse-2001-a-33",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2001/a-33-1.png",
+          "alt": "Two positive-edge D flip-flops sharing clock C. Input X drives D0 of the first flip-flop and one input of a 2-input AND gate; the other AND input is Q0-bar of the first flip-flop. The AND output drives D1 of the second flip-flop, whose output Q1 is Y.",
+          "svg": "cse-2001/a-33-1.svg"
+        },
+        {
+          "f": "cse-2001/a-33-2.png",
+          "alt": "Clock C with several rising edges marked by vertical lines; X goes high at the first marked rising edge, stays high for about five clock periods, and goes low at the last marked edge.",
+          "svg": "cse-2001/a-33-2.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2001/a-33-1.png",
+          "alt": "Two positive-edge-triggered D flip-flops sharing clock C. Input X drives D0 of the first flip-flop and the upper input of a 2-input AND gate; the lower AND input is Q0-bar of the first flip-flop. The AND output drives D1 of the second flip-flop, whose output Q1 is Y.",
+          "svg": "cse-2001/a-33-1.svg"
+        },
+        {
+          "f": "cse-2001/a-33-2.png",
+          "alt": "Timing diagram of clock C (six rising edges) and input X. Dashed markers at the 1st, 2nd, 3rd and 6th rising edges. X goes high exactly at the 1st rising edge and goes low just before the 6th rising edge.",
+          "svg": "cse-2001/a-33-2.svg"
+        }
+      ],
+      "reason": "Old SVGs were placeholder graphs unrelated to the circuit; redrawn from the paper with precise alt text. Option SVGs (a-33-a..d) also redrawn: Y high between markers 2–3 (a), 1–3 (b), 1–2 (c), 3–6 (d).",
+      "source": "GATE 2001 paper PDF, Q2.8"
+    },
+    {
+      "id": "cse-2001-a-38",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2001/a-38-1.png",
+          "alt": "Single 8-bit bus. ALU fed by registers A1 and A2 (both loaded from the bus), ALU output back to the bus. Registers B and A connected to the bus. SP (with a decrement input) connected through an 8x(2:1) MUX to the bus; an 8x(1:2) DEMUX from the bus loads the two bytes of MAR. MDR connected to the bus. Small labels are barely legible in the scan.",
+          "svg": "cse-2001/a-38-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2001/a-38-1.png",
+          "alt": "Single 8-bit bus. Registers A1 and A2 load from the bus and feed the ALU, whose output returns to the bus. Registers B and A each load from and drive the bus. The 16-bit SP (with a local Dec input) feeds an 8x(2:1) MUX that drives one byte onto the bus; an 8x(1:2) DEMUX takes a byte from the bus into either half of the 16-bit MAR. MDR loads from and drives the bus. The MUX and DEMUX share a select line.",
+          "svg": "cse-2001/a-38-1.svg"
+        }
+      ],
+      "reason": "Old SVG was a generic 4:1 MUX placeholder; redrawn the datapath from the paper.",
+      "source": "GATE 2001 paper PDF, Q2.13"
+    },
+    {
+      "id": "cse-2001-a-38",
+      "field": "reviewNote",
+      "before": "Datapath labels are barely legible; answer (3 cycles, per GATE Overflow) depends on how SP reaches MAR.",
+      "after": "Stored key B (3) disputed: with an 8-bit bus the 16-bit SP needs two byte transfers into MAR (via the 8x(2:1) MUX / 8x(1:2) DEMUX), MDR <- r needs a third bus cycle, and the memory write takes 2 cycles; SP decrement is local and overlaps. Independent solution gives 5 (D). An earlier note cited GATE Overflow for 3 (not re-verifiable: site behind Cloudflare); no official 2001 key. Verify before changing the answer.",
+      "reason": "Independent solution disagrees with stored key; precise review note.",
+      "source": "Independent solution"
+    },
+    {
+      "id": "cse-2001-a-38",
+      "field": "needsReview",
+      "before": true,
+      "after": true,
+      "reason": "Keeps the existing review flag: the independent solution (5 cycles, D) disagrees with the stored key B. Recorded so the key disagreement is explicitly flagged; the committed value is already true.",
+      "source": "Independent solution"
+    }
+  ]
+}
