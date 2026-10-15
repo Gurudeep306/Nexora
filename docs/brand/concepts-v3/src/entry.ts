@@ -1,5 +1,5 @@
-// Browser entry for docs/brand/concepts-v3/preview.html (bundled by build-preview-v3.mjs).
-import { mountNgMark, type NgConcept } from '../../../client/src/components/brand/concepts/engine'
+// Browser entry for docs/brand/concepts-v3/preview.html (bundled by build-preview.mjs).
+import { mountNgMark, type NgConcept } from './engine'
 
 function mountAll() {
   document.querySelectorAll<HTMLElement>('[data-ng]').forEach((el) => {

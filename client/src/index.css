@@ -267,7 +267,7 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   --font-display: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-body: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono Fallback', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
-  /* The NexoraGuru wordmark is always Geist 600 (always loaded, see main.tsx),
+  /* The NexoraGuru wordmark is always Geist (always loaded, see main.tsx),
      matching the outlined lockups in public/brand/ whatever UI font is picked. */
   --font-brand: 'Geist Variable', 'Geist Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
 
@@ -1193,4 +1193,19 @@ input[type='search']::-webkit-search-results-decoration {
 .group:focus-visible > div > .dock-label {
   opacity: 1;
   translate: -50% 0;
+}
+
+/* ── NexoraGuru mark (components/brand/Logo.tsx) ──
+   Brand ramp blue → violet → teal: deeper on light palettes, brighter on dark;
+   the "unvisited" graph is a whisper of the theme's text colour. */
+.ng-mark {
+  --ng-c1: #2f5bea;
+  --ng-c2: #7c3aed;
+  --ng-c3: #0d9488;
+  --ng-dim: color-mix(in oklab, var(--color-text-primary) 14%, transparent);
+}
+[data-mode='dark'] .ng-mark {
+  --ng-c1: #5b8cff;
+  --ng-c2: #9b6bff;
+  --ng-c3: #2dd4bf;
 }

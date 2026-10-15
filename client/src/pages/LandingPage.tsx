@@ -135,7 +135,7 @@ export default function LandingPage() {
       <header className="fixed inset-x-0 top-0 z-50">
         <div className="glass mx-3 mt-3 flex h-14 max-w-6xl items-center gap-6 rounded-2xl px-4 sm:mx-auto sm:px-5">
           <Link to="/" className="flex items-center gap-2.5" aria-label="NexoraGuru home">
-            <LogoMark size={32} />
+            <LogoMark size={30} interactive intro={false} />
             <Wordmark className="text-[15px]" />
           </Link>
           <nav className="hidden items-center gap-6 text-[13px] text-foreground-dim md:flex" aria-label="Sections">
@@ -167,6 +167,14 @@ export default function LandingPage() {
         </div>
         <div className="absolute inset-x-0 bottom-0 -z-10 h-64 bg-gradient-to-b from-transparent to-background" aria-hidden="true" />
         <div className="mx-auto max-w-6xl px-5 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="mx-auto mb-7 flex w-fit"
+          >
+            <LogoMark size={76} interactive replayOnClick className="drop-shadow-[0_10px_30px_rgb(91_140_255/0.25)]" />
+          </motion.div>
           <motion.a
             href="#curriculum"
             initial={{ opacity: 0, y: 10 }}

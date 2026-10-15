@@ -120,7 +120,7 @@ export function Topbar() {
           aria-label="NexoraGuru home"
           className="hidden shrink-0 rounded-lg transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-brand md:block"
         >
-          <LogoMark size={28} />
+          <LogoMark size={28} interactive />
         </Link>
       </Tooltip>
 
