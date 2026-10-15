@@ -1,0 +1,1168 @@
+{
+ "paper": "cse-1999",
+ "version": 2,
+ "solutions": {
+  "cse-1999-a-23": {
+   "approach": "Newton–Raphson is only locally convergent: it needs a good starting point and a well-behaved derivative, so none of the stated conditions guarantees convergence.",
+   "concepts": [
+    "Newton–Raphson iteration",
+    "Local convergence"
+   ],
+   "steps": [
+    {
+     "title": "Iteration",
+     "body": "$x_{n+1} = x_n - \\dfrac{f(x_n)}{f'(x_n)}$. Convergence (quadratic) is guaranteed only when $x_0$ is close enough to a simple root and $f'$ does not vanish nearby."
+    },
+    {
+     "title": "Counter-examples",
+     "body": "- $f(x)=x^3-2x+2$ (a polynomial) with $x_0=0$: $f(0)=2$, $f'(0)=-2$, so $x_1 = 0-\\frac{2}{-2}=1$; $f(1)=1$, $f'(1)=1$, so $x_2 = 1-\\frac{1}{1}=0$ — it cycles $0,1,0,1,\\dots$ forever.\n- $f(x)=x^{1/3}$: $x_{n+1}=x_n-\\frac{x_n^{1/3}}{\\frac13 x_n^{-2/3}}=x_n-3x_n=-2x_n$, which diverges from every $x_0\\ne 0$.\n\nSo it does not always converge, being a polynomial is not enough, and the sign of $f(x_0)$ is irrelevant."
+    }
+   ],
+   "answer": {
+    "value": "None of the above",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "It can cycle or diverge (e.g. $x^{1/3}$, or $x^3-2x+2$ from $x_0=0$)."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$x^3-2x+2$ is a polynomial and still cycles between 0 and 1."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "The sign of $f(x_0)$ has nothing to do with convergence; replacing $f$ by $-f$ gives the same iterates."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Convergence is only local, so none of the given conditions is sufficient."
+    }
+   ],
+   "verification": "Iterated $x^3-2x+2$ from 0 by hand: $0\\to1\\to0$, confirming the cycle."
+  },
+  "cse-1999-a-24": {
+   "approach": "Compute the attribute closure of each option; a key must determine all six attributes.",
+   "concepts": [
+    "Attribute closure",
+    "Candidate key"
+   ],
+   "steps": [
+    {
+     "title": "Closure of EC",
+     "body": "$\\{E,C\\}$ → $E\\to A$ adds $A$ → $A\\to B$ adds $B$ → $C\\to F$ adds $F$ → $EC\\to D$ adds $D$. So $(EC)^+ = \\{A,B,C,D,E,F\\}$."
+    },
+    {
+     "title": "Minimality and others",
+     "body": "$E^+=\\{E,A,B\\}$, $C^+=\\{C,F\\}$, so EC is minimal. No FD has $E$ or $C$ on the right, so every key must contain both $E$ and $C$ — CD, AE, AC all fail."
+    }
+   ],
+   "answer": {
+    "value": "EC",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$(CD)^+=\\{C,D,F\\}$ — misses $E$ (never derivable)."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "$(EC)^+$ is all of $R$ and neither $E$ nor $C$ alone suffices."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$(AE)^+=\\{A,B,E\\}$ — misses $C$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$(AC)^+=\\{A,B,C,F\\}$ — misses $E$ and $D$."
+    }
+   ],
+   "shortcut": "Attributes never on any right-hand side ($E$, $C$) must be in every key; check if they alone suffice.",
+   "verification": "Re-derived each closure attribute-by-attribute."
+  },
+  "cse-1999-a-25": {
+   "approach": "B+ trees keep all records in linked leaves, so a range query finds the start once and scans sideways; that is the defining advantage over B-trees.",
+   "concepts": [
+    "B-tree",
+    "B+ tree",
+    "Range query"
+   ],
+   "steps": [
+    {
+     "title": "Range queries",
+     "body": "In a B+ tree all keys are in the leaves, which are chained left-to-right. A range $[a,b]$ needs one root-to-leaf search for $a$ plus a sequential leaf scan. In a B-tree the keys are spread over internal nodes, so an in-order traversal up and down the tree is needed."
+    },
+    {
+     "title": "Other claims",
+     "body": "Both structures are disk-oriented; either can serve as primary or secondary index; height grows as $\\Theta(\\log_m n)$ with the number of records $n$."
+    }
+   ],
+   "answer": {
+    "value": "Range queries are faster on B+ trees",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Both B-trees and B+ trees are designed for disk blocks."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Linked leaves make range scans sequential."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Either can be used for primary or secondary indexes."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Height is about $\\log_m n$ — it depends on the number of records."
+    }
+   ],
+   "verification": "Standard DBMS textbook property of B+ tree leaf chaining."
+  },
+  "cse-1999-a-26": {
+   "approach": "Check each statement with the inclusion–exclusion formula, the product test for independence and the conditional-probability definition.",
+   "concepts": [
+    "Inclusion–exclusion",
+    "Independence",
+    "Conditional probability"
+   ],
+   "given": "| Quantity | Value |\n|---|---|\n| $P(E_1)$ | $1/2$ |\n| $P(E_2)$ | $1/3$ |\n| $P(E_1\\cap E_2)$ | $1/5$ |",
+   "steps": [
+    {
+     "title": "Union",
+     "body": "$P(E_1\\cup E_2)=\\frac12+\\frac13-\\frac15=\\frac{15+10-6}{30}=\\frac{19}{30}\\ne\\frac23$."
+    },
+    {
+     "title": "Independence",
+     "body": "$P(E_1)P(E_2)=\\frac12\\cdot\\frac13=\\frac16\\ne\\frac15=P(E_1\\cap E_2)$, so the events are **not** independent."
+    },
+    {
+     "title": "Conditional",
+     "body": "$P(E_1\\mid E_2)=\\dfrac{1/5}{1/3}=\\frac35\\ne\\frac45$."
+    }
+   ],
+   "answer": {
+    "value": "Only (C)",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Union is $19/30$, not $2/3=20/30$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$1/6\\ne1/5$, so not independent."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$P(E_1)P(E_2)=1/6\\ne1/5$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "$P(E_1\\mid E_2)=3/5$."
+    }
+   ],
+   "pitfalls": [
+    "Forgetting to subtract the intersection in the union, which gives $5/6$."
+   ],
+   "verification": "All fractions recomputed over denominator 30."
+  },
+  "cse-1999-a-27": {
+   "approach": "Flowers of one kind are identical, so for each kind only the count given to the first girl matters; multiply the choices.",
+   "concepts": [
+    "Multiplication principle",
+    "Identical objects"
+   ],
+   "steps": [
+    {
+     "title": "Choices per kind",
+     "body": "The first girl can take $0..10$ roses (11 ways), $0..15$ sunflowers (16 ways), $0..14$ daffodils (15 ways); the second girl gets the rest."
+    },
+    {
+     "title": "Multiply",
+     "body": "$11\\times16\\times15 = 176\\times15 = 2640$."
+    }
+   ],
+   "answer": {
+    "value": "2640",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "1638 does not arise from $(10+1)(15+1)(14+1)$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "2100 is not the product 2640."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "$11\\cdot16\\cdot15=2640$."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(C) is correct."
+    }
+   ],
+   "pitfalls": [
+    "Treating flowers as distinct ($2^{39}$ ways) — same-kind flowers are identical."
+   ],
+   "verification": "$11\\cdot16=176$, $176\\cdot15=1760+880=2640$."
+  },
+  "cse-1999-a-28": {
+   "approach": "Reflexive + antisymmetric + transitive is exactly a partial order; a poset in which every pair has a lub and a glb is by definition a lattice. Boolean algebra needs more.",
+   "concepts": [
+    "Partial order",
+    "Lattice",
+    "Boolean algebra"
+   ],
+   "steps": [
+    {
+     "title": "Poset and lattice",
+     "body": "The three properties make $(L,R)$ a poset. Existence of $lub(a,b)$ and $glb(a,b)$ for every pair is the definition of a lattice."
+    },
+    {
+     "title": "Not necessarily Boolean",
+     "body": "A Boolean algebra also needs a bounded, distributive, complemented lattice. The chain $\\{1,2,3\\}$ under $\\le$ is a lattice but $2$ has no complement, so it is not Boolean."
+    }
+   ],
+   "answer": {
+    "value": "(A) and (C)",
+    "choice": [
+     "A",
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Reflexive, antisymmetric, transitive = partial order."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Complements/distributivity are not given; a 3-element chain is a counter-example."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Every pair has lub and glb — definition of a lattice."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(A) and (C) hold."
+    }
+   ],
+   "verification": "Checked the 3-chain: lattice, but no element $x$ with $2\\wedge x=1$ and $2\\vee x=3$."
+  },
+  "cse-1999-a-29": {
+   "approach": "Use closure properties: CFLs are closed under intersection with regular sets but not under complement; regular languages are closed under complement.",
+   "concepts": [
+    "CFL closure",
+    "Regular closure"
+   ],
+   "steps": [
+    {
+     "title": "Check each statement",
+     "body": "- (A) $L_1-L_2=L_1\\cap\\overline{L_2}$; $\\overline{L_2}$ is regular, so this is always context-free. The claim \"not context free\" is **false**.\n- (B) CFL $\\cap$ regular is CFL — **true**.\n- (C) CFLs are not closed under complement (the complement of $\\{ww\\}$ is a CFL but $\\{ww\\}$ is not), so \"$\\sim L_1$ is context free\" is **false** in general.\n- (D) Regular languages are closed under complement — **true**."
+    },
+    {
+     "title": "Pick the false ones",
+     "body": "The question asks which are **false**: (A) and (C)."
+    }
+   ],
+   "answer": {
+    "value": "(A) and (C) are false",
+    "choice": [
+     "A",
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "It is false: $L_1\\cap\\overline{L_2}$ is always context-free."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "True statement (closure under intersection with regular)."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "It is false in general: CFLs are not closed under complement."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "True statement: regular sets are closed under complement."
+    }
+   ],
+   "pitfalls": [
+    "The question asks for the **false** statements."
+   ],
+   "verification": "Product construction PDA × DFA justifies (A) and (B)."
+  },
+  "cse-1999-a-30": {
+   "approach": "The halting function can only be written in a language whose programs all halt (otherwise diagonalisation applies). So drop every construct that allows unbounded iteration: arbitrary goto, recursion and repeat (while-type) loops.",
+   "concepts": [
+    "Halting problem",
+    "LOOP programs"
+   ],
+   "steps": [
+    {
+     "title": "Why",
+     "body": "If the language were Turing-complete, a program for terminates() would contradict the undecidability of halting. If every program in the language halts, terminates() is just \"return true\", which is programmable."
+    },
+    {
+     "title": "Which constructs give unbounded computation",
+     "body": "- (v) arbitrary goto — backward jumps form unbounded loops.\n- (vii) recursive calls — unbounded recursion.\n- (viii) repeat loop — runs until a condition, unbounded.\n\nAssignment, if-then-else, forward goto, non-recursive calls and bounded for-loops (loop variable cannot be changed) always terminate."
+    }
+   ],
+   "answer": {
+    "value": "(v), (vii), (viii)",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Bounded for, if-then-else and forward goto all terminate — no need to remove them."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Exactly the constructs allowing unbounded execution."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Non-recursive calls (vi) are harmless, and arbitrary goto (v) is missing."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "if-then-else is harmless, and arbitrary goto (v) is missing."
+    }
+   ],
+   "verification": "The remaining constructs form a LOOP-like language in which every program halts."
+  },
+  "cse-1999-a-31": {
+   "approach": "Draw the precedence (conflict) graph; a cycle means not conflict-serialisable. Then check view equivalence against both serial orders, and recall that 2PL only yields conflict-serialisable schedules.",
+   "concepts": [
+    "Conflict serialisability",
+    "Precedence graph",
+    "Two-phase locking"
+   ],
+   "steps": [
+    {
+     "title": "Conflict on A",
+     "body": "Step 3 $W_1(A)$ precedes step 4 $R_2(A)$ (and step 5 $W_2(A)$) ⇒ edge $T_1\\to T_2$.",
+     "scene": {
+      "edgeTones": {
+       "T1>T2": "warning"
+      },
+      "caption": "W1(A) before R2(A): T1 → T2"
+     }
+    },
+    {
+     "title": "Conflict on B",
+     "body": "Step 2 $R_2(B)$ precedes step 8 $W_1(B)$ ⇒ edge $T_2\\to T_1$ (also step 6 $W_2(B)$ before step 7 $R_1(B)$).",
+     "scene": {
+      "edgeTones": {
+       "T1>T2": "error",
+       "T2>T1": "error"
+      },
+      "caption": "R2(B) before W1(B): T2 → T1 — cycle"
+     }
+    },
+    {
+     "title": "Not view-serialisable either",
+     "body": "In the schedule $T_2$ reads the **initial** $B$ but reads $A$ **written by $T_1$**. Serial $T_1T_2$ would make $T_2$ read $B$ from $T_1$; serial $T_2T_1$ would make $T_2$ read the initial $A$. Neither matches, so the schedule is not serialisable."
+    },
+    {
+     "title": "2PL",
+     "body": "Every 2PL schedule is conflict-serialisable (equivalent to the order of lock points). Since this one has a cycle, it cannot occur under 2PL."
+    }
+   ],
+   "animation": {
+    "kind": "graph",
+    "directed": true,
+    "nodes": [
+     {
+      "id": "T1",
+      "x": 0,
+      "y": 0
+     },
+     {
+      "id": "T2",
+      "x": 3,
+      "y": 0
+     }
+    ],
+    "edges": [
+     {
+      "from": "T1",
+      "to": "T2",
+      "w": "A"
+     },
+     {
+      "from": "T2",
+      "to": "T1",
+      "w": "B"
+     }
+    ],
+    "edgeTones": {},
+    "caption": "Precedence graph"
+   },
+   "answer": {
+    "value": "Not serialisable and cannot occur under 2PL",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Cycle $T_1\\to T_2\\to T_1$ — not serialisable."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Not serialisable (neither conflict nor view)."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "2PL schedules are always conflict-serialisable, so a cyclic one cannot arise."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Cyclic precedence graph and fails view equivalence with both serial orders."
+    }
+   ],
+   "verification": "Re-listed every pair of conflicting operations on A and B from the table."
+  },
+  "cse-1999-a-32": {
+   "approach": "The FDs form a cycle S→T→U→V→S, so every single attribute is a candidate key; every attribute is prime, so any decomposition is in 3NF (hence 2NF).",
+   "concepts": [
+    "Candidate key",
+    "Prime attribute",
+    "2NF",
+    "3NF"
+   ],
+   "steps": [
+    {
+     "title": "Keys",
+     "body": "$S^+ = \\{S,T,U,V\\}$ by following the cycle; likewise $T^+,U^+,V^+$. So $S$, $T$, $U$, $V$ are all keys."
+    },
+    {
+     "title": "Projected relations",
+     "body": "In any $R_i\\subseteq\\{S,T,U,V\\}$ every attribute still determines all of $R_i$ (through the cycle), so every attribute is a key there. No non-prime attribute exists, so there is no partial or transitive dependency of a non-prime attribute: each $R_i$ is in 3NF (indeed BCNF) and therefore also in 2NF."
+    }
+   ],
+   "answer": {
+    "value": "In both 2NF and 3NF",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "No non-prime attributes, so 2NF cannot be violated."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "It is in 3NF as well."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "3NF implies 2NF; this combination is impossible."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "All attributes are prime in every component."
+    }
+   ],
+   "verification": "Example $R_1=(S,T,U)$, $R_2=(U,V)$: each attribute of $R_1$ determines the others through the cycle."
+  },
+  "cse-1999-a-33": {
+   "approach": "The output is the AND of everything feeding the chain, so Y = 1 forces every AND gate output to 1, which forces every external input to 1.",
+   "concepts": [
+    "AND gate",
+    "Feedback / latch",
+    "Steady state"
+   ],
+   "steps": [
+    {
+     "title": "Write the loop equation",
+     "body": "Gate 1: $g_1=A\\cdot Y$. Gate 2: $g_2=g_1\\cdot B$. Gate 3: $Y=g_2\\cdot C = A\\,B\\,C\\,Y$."
+    },
+    {
+     "title": "Impose Y = 1",
+     "body": "$1 = A\\cdot B\\cdot C\\cdot 1$ needs $A=B=C=1$. Conversely with $A=B=C=1$, $Y=1$ is self-consistent (the loop holds the 1). Any input 0 forces $Y=0$."
+    }
+   ],
+   "answer": {
+    "value": "A = 1, B = 1, C = 1",
+    "choice": [
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "$A=0$ (and $B=0$) forces $Y=0$."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$A=0$ makes gate 1 output 0, so $Y=0$."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "$B=0$ makes gate 2 output 0, so $Y=0$."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Only $A=B=C=1$ keeps $Y=1$ stable."
+    }
+   ],
+   "pitfalls": [
+    "With $A=B=C=1$ the circuit can also rest at $Y=0$ — it is a latch; the question only asks which inputs allow $Y=1$."
+   ],
+   "verification": "Checked all four options in $Y=ABCY$ with $Y=1$."
+  },
+  "cse-1999-a-34": {
+   "approach": "With constants 0/1 available, a set is functionally complete iff it can build NOT and AND (or OR). Sets producing only affine (XOR/NOT) or only monotone functions are not complete.",
+   "concepts": [
+    "Functional completeness",
+    "Multiplexer",
+    "Post’s criteria"
+   ],
+   "steps": [
+    {
+     "title": "Complete sets",
+     "body": "- 2:1 MUX $Y=\\bar S I_0 + S I_1$: with $I_0=1,I_1=0$ it gives $\\bar S$; with $I_0=0$ it gives $S\\cdot I_1$ (AND). AND + NOT is complete.\n- AND, XOR: $x\\oplus1=\\bar x$, and AND + NOT is complete."
+    },
+    {
+     "title": "Incomplete sets",
+     "body": "- XOR, NOT: every output is an affine function $c\\oplus x_{i_1}\\oplus\\dots$; AND ($xy$) is not affine.\n- $(A\\cdot B)+C$: monotone (no inversion possible), so NOT cannot be built."
+    }
+   ],
+   "answer": {
+    "value": "(B) and (C)",
+    "choice": [
+     "B",
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Only affine (XOR-type) functions result; AND cannot be built."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "A MUX builds NOT and AND from constants."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "XOR with 1 gives NOT; with AND that is complete."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "The gate is monotone; no NOT is possible."
+    }
+   ],
+   "pitfalls": [
+    "(C) relies on constant 1 being available, which is the usual GATE assumption."
+   ],
+   "verification": "Built NOT and AND explicitly for (B) and (C)."
+  },
+  "cse-1999-a-35": {
+   "approach": "A multi-user, multiprogramming OS must protect processes and itself from user programs: that needs a privileged (kernel) mode and hardware memory protection through address translation/relocation. DMA and demand paging are only performance features.",
+   "concepts": [
+    "Dual-mode operation",
+    "Memory protection",
+    "Address translation"
+   ],
+   "steps": [
+    {
+     "title": "Needed",
+     "body": "- Privileged vs user mode: otherwise any user program can execute I/O, halt, or reprogram the timer — no protection.\n- Address translation (at least base/limit relocation): otherwise a process can read or overwrite other processes and the kernel, and processes cannot be relocated in memory."
+    },
+    {
+     "title": "Not needed",
+     "body": "- DMA: the CPU can do programmed I/O, just slower.\n- Demand paging: many multi-user systems ran with swapping or plain segmentation."
+    }
+   ],
+   "answer": {
+    "value": "(A) and (C)",
+    "choice": [
+     "A",
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Required for memory protection and relocation between processes."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Programmed I/O works without DMA."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Without a privileged mode user code could execute protected instructions."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Demand paging is an optimisation; swapping/segmentation suffice."
+    }
+   ],
+   "verification": "Standard protection requirements for multiprogrammed systems."
+  },
+  "cse-1999-a-36": {
+   "approach": "Virtual memory maps per-process virtual addresses to physical frames on demand; this gives isolation and lets programs exceed RAM, but adds translation overhead.",
+   "concepts": [
+    "Virtual memory",
+    "Address-space protection"
+   ],
+   "steps": [
+    {
+     "title": "Advantages",
+     "body": "- Each process has its own page table, so address spaces are protected from each other (B).\n- Only needed pages are resident, so a program larger than physical memory can run (D)."
+    },
+    {
+     "title": "Not advantages",
+     "body": "- Access is *slower* on average (page-table/TLB lookup, page faults), so (A) is false.\n- Load-position-independent linking is provided by dynamic relocation in general (a base register does it too); it is not the characteristic advantage of virtual memory, and the accepted key lists only (B) and (D)."
+    }
+   ],
+   "answer": {
+    "value": "(B) and (D)",
+    "choice": [
+     "B",
+     "D"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Translation and page faults make access slower, not faster."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Per-process page tables isolate address spaces."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Relocation independence comes from any dynamic relocation (e.g. a base register), not specifically from virtual memory."
+    },
+    {
+     "option": "D",
+     "correct": true,
+     "reason": "Demand paging lets programs exceed physical memory."
+    }
+   ],
+   "verification": "Compared with the textbook list of virtual-memory benefits (protection, larger-than-RAM programs, sharing)."
+  },
+  "cse-1999-a-37": {
+   "approach": "A context switch saves/restores CPU state and switches the memory map; swapping the whole process to disk is a medium-term scheduling decision, not part of a normal switch.",
+   "concepts": [
+    "Context switch",
+    "TLB",
+    "Swapping"
+   ],
+   "steps": [
+    {
+     "title": "What a context switch does",
+     "body": "Save A’s registers/PC into its PCB and load B’s (A); switch the page-table base register (B); flush/invalidate the TLB unless entries are tagged with an ASID (D)."
+    },
+    {
+     "title": "What it does not do",
+     "body": "Writing A’s memory image to disk (C) happens only when the medium-term scheduler swaps a process out under memory pressure."
+    }
+   ],
+   "answer": {
+    "value": "(C)",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Register save/restore is the core of every context switch."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "B needs its own address translation tables."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Swapping out is not typically done on a context switch."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "The TLB holds A’s translations and is typically invalidated."
+    }
+   ],
+   "verification": "Cross-checked with the PCB save/restore sequence in standard OS texts."
+  },
+  "cse-1999-a-38": {
+   "approach": "Under dynamic scoping a free variable resolves to the most recent active binding on the call stack, so show prints whichever x is nearest on the stack at call time.",
+   "concepts": [
+    "Dynamic scoping",
+    "Activation stack"
+   ],
+   "steps": [
+    {
+     "title": "First call: show from main",
+     "body": "Stack: main (global x = 0.25) → show. The most recent x is the global one, so it prints **0.25**.",
+     "scene": {
+      "items": [
+       "main: x=0.25",
+       "show"
+      ],
+      "caption": "show looks down the stack: x = 0.25"
+     }
+    },
+    {
+     "title": "Second call: show from small",
+     "body": "small declares its own x and sets it to 0.125, then calls show. Stack: main → small (x = 0.125) → show. The nearest x is small’s, so it prints **0.125**.",
+     "scene": {
+      "items": [
+       "main: x=0.25",
+       "small: x=0.125",
+       "show"
+      ],
+      "caption": "nearest binding: small’s x = 0.125"
+     }
+    },
+    {
+     "title": "Output",
+     "body": "`0.25 0.125`. (With static scoping it would be `0.25 0.25`.)"
+    }
+   ],
+   "animation": {
+    "kind": "stack",
+    "items": [
+     "main: x=0.25"
+    ],
+    "caption": "Call stack"
+   },
+   "answer": {
+    "value": "0.25 0.125",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "The first show is called from main, where only the global x = 0.25 exists."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "That is the static-scoping output."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Dynamic binding: 0.25 from main, 0.125 from inside small."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Order reversed — main calls show before small."
+    }
+   ],
+   "verification": "Traced the call stack for each call of show."
+  },
+  "cse-1999-a-39": {
+   "approach": "Fortran ignores blanks, and `DO 10 I = 1.25` has a period, not a comma, so it is not a DO loop but the assignment `DO10I = 1.25`.",
+   "concepts": [
+    "Lexical analysis",
+    "Fortran blank insensitivity",
+    "Lookahead"
+   ],
+   "steps": [
+    {
+     "title": "Remove blanks",
+     "body": "The statement becomes `DO10I=1.25`. A DO statement needs a comma after the initial value (`DO 10 I = 1,25`); here there is a decimal point."
+    },
+    {
+     "title": "Tokens",
+     "body": "It is an assignment to the variable `DO10I`: tokens `DO10I`, `=`, `1.25` → **3**."
+    }
+   ],
+   "answer": {
+    "value": "3",
+    "choice": [
+     "A"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Identifier DO10I, =, real constant 1.25."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "Would need splitting DO10I, which only happens for a DO loop."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Counts DO, 10, I, =, 1.25 as if it were a loop header — but there is no comma."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(A) is correct."
+    }
+   ],
+   "pitfalls": [
+    "This is the classic Fortran lookahead example: the lexer must scan to the comma/period to decide."
+   ],
+   "verification": "Matches the textbook (Dragon Book) example `DO 5 I = 1.25`."
+  },
+  "cse-1999-a-40": {
+   "approach": "If a non-terminal is useful and both left and right recursive, some string has two parse trees; but if the grammar may contain useless symbols, a left-and-right recursive non-terminal can generate nothing, so ambiguity cannot be decided from that fact alone.",
+   "concepts": [
+    "Ambiguous grammar",
+    "Left/right recursion",
+    "Useless symbols"
+   ],
+   "steps": [
+    {
+     "title": "Useful case → ambiguous",
+     "body": "Suppose $A\\Rightarrow^+ A\\alpha$, $A\\Rightarrow^+\\beta A$ and $A\\Rightarrow^* w$. Then $\\beta w\\alpha$ has a tree whose top expansion is the left-recursive one and another whose top is the right-recursive one; e.g. $S\\to Sa\\mid aS\\mid b$ gives two trees for $aba$."
+    },
+    {
+     "title": "Useless case → nothing to parse",
+     "body": "$S\\to SaS$ is both left and right recursive but derives no terminal string; its language is empty and no string has two parse trees, so it is not ambiguous."
+    },
+    {
+     "title": "Conclusion",
+     "body": "Because the question does not say the grammar is reduced, the property alone does not decide ambiguity — (C), as in the stored key. (If useless symbols are excluded, the answer would be (A).)"
+    }
+   ],
+   "answer": {
+    "value": "Information is not sufficient",
+    "choice": [
+     "C"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "True only for reduced grammars; $S\\to SaS$ is a counter-example."
+    },
+    {
+     "option": "B",
+     "correct": false,
+     "reason": "$S\\to Sa\\mid aS\\mid b$ is left and right recursive and ambiguous."
+    },
+    {
+     "option": "C",
+     "correct": true,
+     "reason": "Examples of both kinds exist when useless symbols are allowed."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(C) describes the situation."
+    }
+   ],
+   "verification": "Built the two parse trees for $aba$ in $S\\to Sa\\mid aS\\mid b$, and checked that $S\\to SaS$ derives no terminal string."
+  },
+  "cse-1999-a-41": {
+   "approach": "In a ripple-carry adder the LSB has no carry-in, so it needs a half-adder; every other bit adds two bits plus a carry and needs a full-adder.",
+   "concepts": [
+    "Ripple-carry adder",
+    "Half adder",
+    "Full adder"
+   ],
+   "steps": [
+    {
+     "title": "LSB",
+     "body": "Bit 0 adds $a_0+b_0$ with no carry-in → 1 half-adder."
+    },
+    {
+     "title": "Remaining bits",
+     "body": "Bits 1–15 add $a_i+b_i+c_i$ → $16-1=15$ full-adders."
+    }
+   ],
+   "answer": {
+    "value": "1 half-adder, 15 full-adders",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Bits 1–15 all have a carry-in, so only one HA is possible."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "1 HA for the LSB, 15 FAs for the rest."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Half-adders cannot accept the incoming carry."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "Only the LSB lacks a carry-in."
+    }
+   ],
+   "verification": "$1+15=16$ adder cells for 16 bits."
+  },
+  "cse-1999-a-42": {
+   "approach": "Write zero in 4-bit form in each representation and see whether a negative-zero pattern exists.",
+   "concepts": [
+    "Sign-magnitude",
+    "1’s complement",
+    "2’s complement"
+   ],
+   "steps": [
+    {
+     "title": "Sign-magnitude and 1’s complement",
+     "body": "- Sign-magnitude: $+0=0000$, $-0=1000$ → two zeros.\n- 1’s complement: $+0=0000$, $-0=\\overline{0000}=1111$ → two zeros."
+    },
+    {
+     "title": "2’s complement",
+     "body": "$-0 = 1111+1 = 1\\,0000 \\to 0000$ (carry dropped) → one zero."
+    }
+   ],
+   "answer": {
+    "value": "Sign magnitude and 1’s complement",
+    "choice": [
+     "A",
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "0000 and 1000."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "0000 and 1111."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Negating 0 gives 0 again; unique zero."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(A) and (B) are correct."
+    }
+   ],
+   "verification": "Consistent with the ranges: SM/1’s $[-(2^{n-1}-1),\\,2^{n-1}-1]$ vs 2’s $[-2^{n-1},\\,2^{n-1}-1]$."
+  },
+  "cse-1999-a-43": {
+   "approach": "RAID combines striping (parallel transfers, speed) with mirroring/parity (redundancy, fault tolerance); it never stores more bits per platter.",
+   "concepts": [
+    "RAID",
+    "Striping",
+    "Redundancy"
+   ],
+   "steps": [
+    {
+     "title": "What RAID gives",
+     "body": "- Fault tolerance: mirroring (RAID 1) or parity (RAID 3/5) survive a disk failure.\n- High speed: striping (RAID 0, 5) reads/writes several disks in parallel."
+    },
+    {
+     "title": "What it does not give",
+     "body": "Data density is a property of the individual disk’s recording; redundancy actually lowers usable capacity."
+    }
+   ],
+   "answer": {
+    "value": "Fault-tolerance and high speed",
+    "choice": [
+     "A",
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": true,
+     "reason": "Mirroring/parity tolerate disk failure."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Striping gives parallel I/O."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Density is per-disk; RAID redundancy even reduces usable space."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "(A) and (B) hold."
+    }
+   ],
+   "verification": "Matches the purpose of the RAID levels in standard OS/COA texts."
+  },
+  "cse-1999-a-44": {
+   "approach": "Hardwired control generates signals directly from gates (fastest). Horizontal microcode stores control signals unencoded, so no decoding; vertical microcode must decode encoded fields (slowest).",
+   "concepts": [
+    "Hardwired control",
+    "Horizontal microprogramming",
+    "Vertical microprogramming"
+   ],
+   "steps": [
+    {
+     "title": "Compare",
+     "body": "- Hardwired: combinational logic, no control-memory access.\n- Horizontal: one control-memory access per micro-op, bits used directly.\n- Vertical: control-memory access **plus** decoders for the encoded fields, and fewer parallel micro-ops per word."
+    },
+    {
+     "title": "Order",
+     "body": "Hardwired > horizontal > vertical."
+    }
+   ],
+   "answer": {
+    "value": "Hardwired, horizontal, vertical",
+    "choice": [
+     "B"
+    ],
+    "matchesKey": true
+   },
+   "optionAnalysis": [
+    {
+     "option": "A",
+     "correct": false,
+     "reason": "Vertical needs decoding and is slower than horizontal."
+    },
+    {
+     "option": "B",
+     "correct": true,
+     "reason": "Hardwired > horizontal > vertical."
+    },
+    {
+     "option": "C",
+     "correct": false,
+     "reason": "Hardwired is the fastest, not the slowest."
+    },
+    {
+     "option": "D",
+     "correct": false,
+     "reason": "This is the reverse (increasing) order."
+    }
+   ],
+   "verification": "Standard trade-off: speed decreases as encoding increases."
+  }
+ }
+}
