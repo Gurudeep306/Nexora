@@ -311,7 +311,15 @@ export default function AuthPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!canSubmit || submitting || success) return
+    if (submitting || success) return
+    // The button is never greyed out; an incomplete form shakes and says what's missing.
+    if (!canSubmit) {
+      if (!username.trim()) fail('Enter your username.')
+      else if (mode === 'register' && availability === 'taken') fail('That username is taken. Try another.')
+      else if (mode === 'register' && availability === 'invalid') fail('Usernames are 2–20 letters, numbers or underscores.')
+      else fail(mode === 'register' ? 'Use a password of at least 6 characters.' : 'Enter your password.')
+      return
+    }
     setError(null)
     setSubmitting(true)
     setHolding(true)
@@ -675,7 +683,7 @@ export default function AuthPage() {
               </AnimatePresence>
 
               <div className="pt-1">
-                <MagneticCta type="submit" disabled={!canSubmit || submitting || success} aria-busy={submitting || undefined}>
+                <MagneticCta type="submit" disabled={submitting || success} aria-busy={submitting || undefined}>
                   {submitting && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
                   {oauthPending ? 'Finish sign-up' : mode === 'login' ? 'Continue learning' : 'Start learning'}
                   {!submitting && (
