@@ -7,13 +7,16 @@
 // database's monthly write quota for real data.
 const session = require("express-session");
 const { run, get } = require("./db");
+const { ACCESS_COLUMNS } = require("./authz/permissions");
 
 const TOUCH_INTERVAL_MS = 60 * 60 * 1000; // 1 hour
 const PRUNE_INTERVAL_MS = 6 * 60 * 60 * 1000; // 6 hours
 const USER_ROW_MAX_AGE_MS = 5000;
+// The user's role, permission overrides and any active ban come along too
+// (see src/authz/access.js), so access control costs no extra round trip.
 const SESSION_WITH_USER_SQL = `SELECT s.sess, s.expires,
     json_extract(s.sess, '$.user.username') AS sess_user,
-    u.role AS user_role, (u.username IS NOT NULL) AS user_found
+    ${ACCESS_COLUMNS}, (u.username IS NOT NULL) AS user_found
   FROM sessions s
   LEFT JOIN users u ON u.username = json_extract(s.sess, '$.user.username')
   WHERE s.sid=?`;
@@ -61,7 +64,9 @@ class DbSessionStore extends session.Store {
         if (row.sess_user != null) {
           this.userRows.set(sid, {
             username: row.sess_user,
-            row: row.user_found ? { role: row.user_role } : null,
+            row: row.user_found
+              ? { role: row.role, verified: row.verified, perms: row.perms, ban: row.ban }
+              : null,
             at: Date.now(),
           });
         }
@@ -71,8 +76,8 @@ class DbSessionStore extends session.Store {
   }
 
   /**
-   * The `users` row (just `{ role }`, or null when the account no longer
-   * exists) read alongside this request's session, if it was for `username`
+   * The `users` access row (`{ role, verified, perms, ban }`, or null when
+   * the account no longer exists) read alongside this request's session, if it was for `username`
    * and is only moments old. Consumed on read; undefined when unavailable.
    */
   takeUserRow(sid, username) {

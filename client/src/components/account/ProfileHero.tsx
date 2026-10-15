@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
-import { CalendarDays, Check, Clock, Link2, MessageSquare, ShieldCheck, UserCog, UserPlus, Users } from 'lucide-react'
+import { CalendarDays, Check, Clock, Link2, MessageSquare, UserCog, UserPlus, Users } from 'lucide-react'
 import { Avatar, Badge, Button, RankGlyph, useToast } from '@/components/ui'
 import { api, ApiError } from '@/lib/api'
 import { useSocket } from '@/lib/socket'
 import { formatDate } from '@/lib/utils'
 import type { ProfileResponse } from './types'
+import { UserBadges } from '@/components/shared/UserBadges'
 
 export function ProfileHero({
   profile,
@@ -20,7 +21,7 @@ export function ProfileHero({
 }) {
   const { user } = profile
   const isSelf = !viewer || viewer === user.username
-  const isAdmin = user.role === 'admin'
+  const isAdmin = user.role === 'admin' || user.role === 'owner'
   const name = user.display_name || user.username
   const toast = useToast()
   const share = async () => {
@@ -62,11 +63,7 @@ export function ProfileHero({
             >
               {name}
             </h2>
-            {isAdmin && (
-              <Badge variant="gold">
-                <ShieldCheck aria-hidden="true" /> Admin
-              </Badge>
-            )}
+            <UserBadges username={user.username} role={user.role} verified={user.verified} variant="full" />
             {profile.level && (
               <Badge variant="primary">
                 LVL {profile.level.level} · {profile.level.name}

@@ -4,6 +4,9 @@ const { errMessage } = require("../http-error");
 const { persistUpload } = require("../upload-store");
 const { isSetAvatar, normalizeAvatar } = require("../avatar-set");
 const { regenerateSession, sanitizeSessionUser } = require("../middleware/auth");
+const { isOwnerName, mayEnterPrivateSite } = require("../authz/permissions");
+const { getSettings, privateModeActive } = require("../authz/site-settings");
+const { banPayload, loadUserAccess, privatePayload } = require("../authz/access");
 
 // Columns that must never leave the server, whoever is asking.
 const SECRET_USER_FIELDS = ["password_hash", "provider_id"];
@@ -27,7 +30,6 @@ function createAuthRouter(deps) {
     getSessionUser,
     hashPassword,
     persistSessionUser,
-    requireAdmin,
     requireAuthenticatedUser,
     requireSelfOrAdmin,
     run,
@@ -87,7 +89,13 @@ function createAuthRouter(deps) {
             .slice(0, 20),
         }
       : null;
-    res.json({ ok: true, authenticated: false, oauthPending });
+    res.json({
+      ok: true,
+      authenticated: false,
+      oauthPending,
+      // Set when this session belonged to a banned account (just signed out).
+      ...(req.accountBan ? { banned: banPayload(req.accountBan).ban } : {}),
+    });
   });
 
   router.get("/api/auth/providers", (_req, res) => {
@@ -158,10 +166,35 @@ function createAuthRouter(deps) {
           });
       }
 
-      // New accounts are always members. Admin comes only from the stored
-      // role (granted with /api/admin/set-role), never from the chosen name.
-      const role = "member";
+      // New accounts are members. Admin comes only from the stored role
+      // (granted in the admin panel), never from the chosen name — except
+      // the configured owner (OWNER_USERNAME), whose name is reserved.
+      const role = isOwnerName(clean) ? "owner" : "member";
       const existing = await findUsernameNoCase(clean);
+
+      // While the site is private (or sign-ups are closed) only the owner and
+      // invited people (access_allowlist: username or email) may register.
+      const site = await getSettings();
+      const isPrivate = privateModeActive(site);
+      let invited = false;
+      if (!existing && role !== "owner" && (isPrivate || !site.registrations.open)) {
+        const oauthEmail = req.session?.oauthUser?.email || null;
+        const candidates = [clean, email, oauthEmail].filter((v) => typeof v === "string" && v);
+        const hit = candidates.length
+          ? await get(
+              `SELECT entry FROM access_allowlist WHERE entry IN (${candidates.map(() => "?").join(",")}) COLLATE NOCASE LIMIT 1`,
+              candidates,
+            )
+          : null;
+        if (!hit) {
+          return res.status(403).json(
+            isPrivate
+              ? { ok: false, code: "site_private", error: "NexoraGuru is invite-only right now" }
+              : { ok: false, code: "registrations_closed", error: "Sign-ups are closed right now" },
+          );
+        }
+        invited = true;
+      }
 
       // Registering never touches an existing account (this used to overwrite
       // it and sign the caller in as that user — an account takeover).
@@ -211,6 +244,15 @@ function createAuthRouter(deps) {
         ],
       );
 
+      if (invited) {
+        // An invite comes with early access to the private site.
+        await run(
+          `INSERT OR IGNORE INTO user_permissions(username, perm, granted, granted_by, created_at)
+           VALUES(?, 'early_access', 1, 'invite', ?)`,
+          [clean, Date.now()],
+        );
+      }
+
       const user = await get("SELECT * FROM users WHERE username=?", [clean]);
       clearSessionUser(req);
       // New session id on sign-in (prevents session fixation).
@@ -256,6 +298,16 @@ function createAuthRouter(deps) {
       if (!isSetAvatar(user.avatar)) {
         user.avatar = normalizeAvatar(user.avatar, user.username);
         await run("UPDATE users SET avatar=? WHERE username=?", [user.avatar, user.username]).catch(() => {});
+      }
+
+      // Banned / suspended accounts, and everyone without access while the
+      // site is private, are turned away after the password check (so the
+      // answer reveals nothing to someone who doesn't know the password).
+      const access = await loadUserAccess(user.username);
+      if (access?.ban) return res.status(403).json(banPayload(access.ban));
+      const site = await getSettings();
+      if (privateModeActive(site) && !mayEnterPrivateSite(access)) {
+        return res.status(403).json(privatePayload(site));
       }
 
       // New session id on sign-in (prevents session fixation).
@@ -567,26 +619,8 @@ function createAuthRouter(deps) {
     }
   });
 
-  router.post("/api/admin/set-role", requireAdmin, async (req, res) => {
-    try {
-      const { targetUser, role } = req.body;
-      await run("UPDATE users SET role=? WHERE username=?", [role, targetUser]);
-      res.json({ ok: true });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
-
-  router.get("/api/admin/users", requireAdmin, async (_req, res) => {
-    try {
-      const users = await deps.all(
-        "SELECT username, display_name, avatar, bio, role, status, last_seen, created_at FROM users ORDER BY created_at DESC",
-      );
-      res.json({ ok: true, users });
-    } catch (e) {
-      res.status(500).json({ ok: false, error: errMessage(e) });
-    }
-  });
+  // Role changes and the user list live in src/routes/admin.js
+  // (/api/admin/set-role and /api/admin/users keep working there).
 
   return router;
 }

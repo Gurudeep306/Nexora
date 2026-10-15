@@ -8,6 +8,8 @@ import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { useSocket } from '@/lib/socket'
 import { setFaviconBadge } from '@/lib/faviconFx'
+import { useSite } from '@/context/SiteContext'
+import { Icon } from '@/components/icon/Icon'
 import type { FriendRequest, UnreadCount } from '@/components/social/types'
 
 /** Bell + inbox popover: friend requests and unread DMs, live over the socket. */
@@ -35,7 +37,15 @@ export function Notifications() {
     }
   }, [socket, refetch])
 
-  const total = data?.total ?? 0
+  // Broadcasts from the admins: unread until the inbox is opened.
+  const { status, dismissed, dismiss } = useSite()
+  const broadcasts = status?.broadcasts ?? []
+  const unseen = broadcasts.filter((b) => !dismissed.has(`b:${b.id}`))
+  useEffect(() => {
+    if (open) for (const b of unseen) dismiss(`b:${b.id}`)
+  }, [open, unseen, dismiss])
+
+  const total = (data?.total ?? 0) + unseen.length
 
   // Mirror the unread count onto the browser tab title, e.g. "(3) NexoraGuru — …".
   useEffect(() => setFaviconBadge(total), [total])
@@ -76,7 +86,7 @@ export function Notifications() {
             </div>
           ) : error ? (
             <ErrorState message={error} onRetry={refetch} />
-          ) : !total ? (
+          ) : !total && !broadcasts.length ? (
             <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
               <span className="flex size-10 items-center justify-center rounded-full bg-state-success/10 text-state-success">
                 <CheckCheck className="size-5" />
@@ -86,7 +96,23 @@ export function Notifications() {
             </div>
           ) : (
             <>
-              {data!.requests.map((r) => (
+              {broadcasts.map((b) => (
+                <Link
+                  key={`b${b.id}`}
+                  to={b.link && b.link.startsWith('/') ? b.link : location.pathname}
+                  onClick={() => setOpen(false)}
+                  className="flex items-start gap-3 rounded-lg px-2.5 py-2.5 text-[13px] transition-colors hover:bg-bg-app/5"
+                >
+                  <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full bg-state-gold/12 text-state-gold">
+                    <Icon name="bell" className="size-4" />
+                  </span>
+                  <span className="min-w-0 text-text-secondary">
+                    {b.title && <strong className="block font-semibold text-text-primary">{b.title}</strong>}
+                    {b.body}
+                  </span>
+                </Link>
+              ))}
+              {(data?.requests ?? []).map((r) => (
                 <Link
                   key={r.id}
                   to="/social?tab=friends"
@@ -101,7 +127,7 @@ export function Notifications() {
                   </span>
                 </Link>
               ))}
-              {data!.messages.map((m) => (
+              {(data?.messages ?? []).map((m) => (
                 <Link
                   key={m.from_user}
                   to={`/social?tab=messages&peer=${encodeURIComponent(m.from_user)}`}

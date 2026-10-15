@@ -22,6 +22,7 @@ import { api } from '@/lib/api'
 import { useApi } from '@/hooks/useApi'
 import { cn, formatNumber } from '@/lib/utils'
 import type { LeaderboardRow, LeaderboardType } from './types'
+import { UserBadges } from '@/components/shared/UserBadges'
 import { avatarSrc } from './types'
 
 const TYPE_META: Record<LeaderboardType, { label: string; value: (r: LeaderboardRow) => number; unit: string }> = {
@@ -137,7 +138,7 @@ export function LeaderboardTab({ me }: { me: string }) {
                       </span>
                     </p>
                     <div className="flex gap-1.5">
-                      {row.role === 'admin' && <Badge variant="gold">Admin</Badge>}
+                      <UserBadges username={row.username} role={row.role} />
                       {isMe && <Badge variant="primary">You</Badge>}
                     </div>
                   </Card>
@@ -188,7 +189,7 @@ export function LeaderboardTab({ me }: { me: string }) {
                             </p>
                           </div>
                           <RankGlyph level={r.level ?? 1} size={24} animated={false} className="ml-auto" />
-                          {r.role === 'admin' && <Badge variant="gold">Admin</Badge>}
+                          <UserBadges username={r.username} role={r.role} />
                         </div>
                       </TD>
                       <TD className="text-right font-mono text-foreground tabular-nums">
