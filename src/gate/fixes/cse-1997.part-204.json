@@ -1,0 +1,33 @@
+{
+  "paper": "cse-1997",
+  "fixes": [
+    {
+      "id": "cse-1997-b-70-a",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1997/b-70-1.png",
+          "alt": "State table (next state, output) for states A–H. Input 0: A→B,1; B→F,1; C→D,0; D→C,0; E→D,1; F→C,1; G→C,1; H→C,0. Input 1: A→H,1; B→D,1; C→E,1; D→F,1; E→C,1; F→C,1; G→D,1; H→A,1.",
+          "svg": "cse-1997/b-70-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The linked SVG is an unrelated generic automaton drawing, not the paper figure; the paper figure is only the state table, which the question text already reproduces exactly as a markdown table.",
+      "source": "GATE 1997 paper Q70 (page 10)"
+    },
+    {
+      "id": "cse-1997-b-70-b",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-1997/b-70-1.png",
+          "alt": "State table (next state, output) for states A–H. Input 0: A→B,1; B→F,1; C→D,0; D→C,0; E→D,1; F→C,1; G→C,1; H→C,0. Input 1: A→H,1; B→D,1; C→E,1; D→F,1; E→C,1; F→C,1; G→D,1; H→A,1.",
+          "svg": "cse-1997/b-70-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The linked SVG is an unrelated generic automaton drawing, not the paper figure; the paper figure is only the state table, which the question text already reproduces exactly as a markdown table.",
+      "source": "GATE 1997 paper Q70 (page 10)"
+    }
+  ]
+}
