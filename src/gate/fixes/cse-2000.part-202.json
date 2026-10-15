@@ -1,0 +1,127 @@
+{
+  "paper": "cse-2000",
+  "fixes": [
+    {
+      "id": "cse-2000-a-2-26",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "x = 5 &nbsp;&nbsp; not (not (x = 5))"
+        },
+        {
+          "l": "B",
+          "t": "x = 5 &nbsp;&nbsp; x > 4 and x < 6, where x is an integer"
+        },
+        {
+          "l": "C",
+          "t": "x ≠ 5 &nbsp;&nbsp; not (x = 5)"
+        },
+        {
+          "l": "D",
+          "t": "None of the above"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$x = 5$ and not (not ($x = 5$))"
+        },
+        {
+          "l": "B",
+          "t": "$x = 5$ and $x > 4$ and $x < 6$, where $x$ is an integer"
+        },
+        {
+          "l": "C",
+          "t": "$x \\ne 5$ and not ($x = 5$)"
+        },
+        {
+          "l": "D",
+          "t": "None of the above"
+        }
+      ],
+      "reason": "Remove raw HTML &nbsp; separators; each option is a pair of expressions.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-3",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Reading s1 = s2 = 1 with a ceiling is confirmed by the data: a floor would give s1 = 0.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-3",
+      "field": "reviewNote",
+      "before": "Printed as 's₁ : s₂ = 1' and 'i > 2' split over lines; read as $s_1 = s_2 = 1$. The brackets around n/2 look like a ceiling.",
+      "after": null,
+      "reason": "Resolved (see needsReview).",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-5-b",
+      "field": "text",
+      "before": "A multiset is an unordered collection of elements where elements may repeat any number of times. The size of a multiset is the number of elements in it counting repetitions.\n\nHow many multisets can be consctructed from n distinct elements?",
+      "after": "A multiset is an unordered collection of elements where elements may repeat any number of times. The size of a multiset is the number of elements in it counting repetitions.\n\nHow many multisets can be constructed from n distinct elements?",
+      "reason": "Typo in source.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-6-a",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The fraction-like notation in the scan is set difference R1 \\ R2; the transcription is correct.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-6-a",
+      "field": "reviewNote",
+      "before": "Symmetric difference printed as $(R_1/R_2)\\cup(R_2/R_1)$ with fraction-like notation; transcribed as set difference.",
+      "after": null,
+      "reason": "Resolved.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-7-a",
+      "field": "text",
+      "before": "Construct as minimal finite state machine that accepts the language, over {0,1}, of all strings that contain neither the substring 00 nor the substring 11.",
+      "after": "Construct a minimal finite state machine that accepts the language, over {0,1}, of all strings that contain neither the substring 00 nor the substring 11.",
+      "reason": "Typo in source.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-7-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The two-column layout \"S → aS Ab\" is the single production S → aSAb, consistent with the stated a^i b^j form.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-7-b",
+      "field": "reviewNote",
+      "before": "Production printed as 'S → aS Ab' in two columns; read as $S \\to aSAb$.",
+      "after": null,
+      "reason": "Resolved.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-13-b-i",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "Postfix evaluation with a stack is data structures, not aptitude.",
+      "source": "pdf"
+    },
+    {
+      "id": "cse-2000-b-13-b-i",
+      "field": "topic",
+      "before": "quant",
+      "after": "stacks-queues",
+      "reason": "Same as sibling 13(a).",
+      "source": "pdf"
+    }
+  ]
+}
