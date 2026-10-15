@@ -92,7 +92,7 @@ export function AvatarCard({ user }: { user: ProfileUser }) {
       })
       await refresh()
       setPicked(false)
-      toast.success('Avatar updated', `${avatarName(draft)} is now you, everywhere on NexoraGuru.`)
+      toast.success('Avatar updated', `You're ${avatarName(draft)} now, everywhere on NexoraGuru.`)
     } catch (err) {
       toast.error('Could not save avatar', err instanceof Error ? err.message : undefined)
     } finally {
