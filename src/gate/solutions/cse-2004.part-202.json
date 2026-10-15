@@ -1,0 +1,1394 @@
+{
+  "paper": "cse-2004",
+  "version": 2,
+  "solutions": {
+    "cse-2004-cs-47": {
+      "approach": "Average instruction time = CPU time + 2 × (effective memory access time) + (page-fault service time amortised per instruction). Compute the three parts separately.",
+      "concepts": [
+        "Effective access time",
+        "TLB",
+        "Page fault rate"
+      ],
+      "given": "| Item | Value |\n|---|---|\n| Memory access | 150 ns |\n| Page-fault service | 8 ms |\n| CPU time / instruction | 100 ns |\n| Memory accesses / instruction | 2 |\n| TLB hit ratio | 0.9 |\n| Page faults | 1 per 10 000 instructions |",
+      "steps": [
+        {
+          "title": "Page-fault cost per instruction",
+          "body": "$$\\frac{8\\text{ ms}}{10\\,000} = \\frac{8\\times10^{6}\\text{ ns}}{10^{4}} = 800\\text{ ns}$$"
+        },
+        {
+          "title": "Effective memory access time",
+          "body": "TLB hit: one access, $150$ ns. On a TLB miss the key's model charges one extra page-table access: $150+150 = 300$ ns.\n$$\\text{EMAT} = 0.9(150) + 0.1(300) = 135 + 30 = 165\\text{ ns}$$"
+        },
+        {
+          "title": "Total per instruction",
+          "body": "$$100 + 2(165) + 800 = 100 + 330 + 800 = 1230\\text{ ns}$$"
+        },
+        {
+          "title": "Strict two-level check",
+          "body": "If a TLB miss walks both page-table levels (3 accesses = 450 ns): $\\text{EMAT} = 0.9(150)+0.1(450) = 180$ ns, total $100+360+800 = 1260$ ns — not an option. The nearest listed value, and the accepted key, is **1230 ns**."
+        }
+      ],
+      "answer": {
+        "value": "1230 nanoseconds",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Below the floor 100 + 2×150 + 800 = 1200 ns (CPU + two plain accesses + fault share) — impossible."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Also below the 1200 ns floor, so it undercounts memory or fault time."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "1215 ns implies EMAT = 157.5 ns, i.e. only 7.5 ns TLB-miss overhead per access — too little for a 10% miss rate costing ≥ 150 ns each."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "100 + 2 × 165 + 800 = 1230 ns."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting to amortise the 8 ms fault over 10 000 instructions.",
+        "Counting only one memory access per instruction."
+      ],
+      "verification": "Recomputed with the strict two-level model (1260 ns, not offered); D is the only option within the plausible 1230–1260 range."
+    },
+    "cse-2004-cs-48": {
+      "approach": "Deadlock (circular wait) is impossible if both processes acquire the two semaphores in the same global order. Pick the option where L1,L2 and L3,L4 lock in the same order and never lock the same semaphore twice.",
+      "concepts": [
+        "Semaphores",
+        "Circular wait",
+        "Lock ordering"
+      ],
+      "steps": [
+        {
+          "title": "Both semaphores are needed",
+          "body": "Each process updates both X and Y, so each must hold $S_x$ and $S_y$ before the critical section."
+        },
+        {
+          "title": "Same order ⇒ no circular wait",
+          "body": "With $P_1$: P($S_x$), P($S_y$) and $P_2$: P($S_x$), P($S_y$), whoever gets $S_x$ first also gets $S_y$; the other blocks on $S_x$ while holding nothing. No cycle is possible. The order of the V operations does not matter for deadlock."
+        },
+        {
+          "title": "Check the rest",
+          "body": "Opposite orders (A, B) allow $P_1$ to hold one semaphore while $P_2$ holds the other ⇒ deadlock. In C, P($S_x$) twice blocks a process on itself."
+        }
+      ],
+      "answer": {
+        "value": "P(Sx), P(Sy); P(Sx), P(Sy)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "P1 locks Sy then Sx, P2 locks Sx then Sy — opposite orders, circular wait possible."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "P1: Sx then Sy, P2: Sy then Sx — opposite orders, deadlock possible."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "P(Sx) twice in P1 (and P(Sy) twice in P2): the second P blocks forever on a binary semaphore."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Both acquire Sx before Sy — a global lock order, so no circular wait."
+        }
+      ],
+      "pitfalls": [
+        "Trying to match the P order to the V order — release order is irrelevant to deadlock."
+      ],
+      "verification": "Interleaving check: in D, after P1 takes Sx, P2 blocks at P(Sx) holding nothing; P1 completes and releases both."
+    },
+    "cse-2004-cs-49": {
+      "approach": "Count data blocks reachable from the i-node: pointers per block = block size / address size; the triple-indirect term dominates.",
+      "concepts": [
+        "i-node",
+        "Indirect blocks",
+        "Maximum file size"
+      ],
+      "steps": [
+        {
+          "title": "Pointers per block",
+          "body": "$$\\frac{1\\text{ KB}}{32\\text{ bits}} = \\frac{2^{10}}{2^{2}} = 2^{8} = 256$$"
+        },
+        {
+          "title": "Blocks addressable",
+          "body": "$$10 + 2^{8} + 2^{16} + 2^{24} \\approx 2^{24}\\text{ blocks}$$"
+        },
+        {
+          "title": "Bytes",
+          "body": "$$2^{24} \\times 2^{10} = 2^{34}\\text{ bytes (slightly more)}$$\nThe 48-bit integers (file offsets) allow up to $2^{48}$, and 32-bit block addresses allow $2^{32}$ blocks, so neither is the limiting factor."
+        }
+      ],
+      "answer": {
+        "value": "$2^{34}$ bytes",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$2^{24}$ is the number of blocks, not bytes."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$2^{32}$ ignores that each block is $2^{10}$ bytes (or confuses with 32-bit addresses)."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\approx 2^{24}$ blocks × $2^{10}$ bytes = $2^{34}$ bytes."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$2^{48}$ is only the limit of the integer size; the i-node structure caps the file far below it."
+        }
+      ],
+      "pitfalls": [
+        "Using 48 bits as the pointer size.",
+        "Forgetting to multiply blocks by block size."
+      ],
+      "verification": "Exact total $(10+256+65536+16777216)\\times1024 = 17\\,247\\,252\\,480 \\approx 1.004\\times2^{34}$ bytes."
+    },
+    "cse-2004-cs-50": {
+      "approach": "Find the candidate keys, then test BCNF (every determinant a superkey) and 3NF (or RHS prime).",
+      "concepts": [
+        "Candidate keys",
+        "3NF",
+        "BCNF"
+      ],
+      "steps": [
+        {
+          "title": "Candidate keys",
+          "body": "courseNo appears on no RHS, so it is in every key. $\\{name, courseNo\\}^+$ = all attributes (name → rollNo, then grade); likewise $\\{rollNo, courseNo\\}^+$. Keys: **{name, courseNo}**, **{rollNo, courseNo}**. Prime attributes: name, rollNo, courseNo."
+        },
+        {
+          "title": "BCNF test",
+          "body": "name → rollNo: name is not a superkey ⇒ **not BCNF**."
+        },
+        {
+          "title": "3NF test",
+          "body": "The two grade FDs have key LHS. For name → rollNo and rollNo → name, the RHS is prime. Every FD satisfies 3NF ⇒ highest form is **3NF**."
+        }
+      ],
+      "answer": {
+        "value": "3NF",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "It satisfies 2NF, but also the stronger 3NF."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "All FDs either have a key LHS or a prime RHS."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "name → rollNo has a non-superkey determinant."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "4NF needs BCNF first."
+        }
+      ],
+      "pitfalls": [
+        "Missing the second candidate key and calling rollNo non-prime (would give 2NF)."
+      ],
+      "verification": "Closure of {name} alone is {name, rollNo} — not a key, confirming the BCNF violation."
+    },
+    "cse-2004-cs-51": {
+      "approach": "The join pairs each girl with every boy who has at least as many marks; projecting those girls and subtracting them from all girls leaves girls who beat every boy.",
+      "concepts": [
+        "Theta join",
+        "Rename",
+        "Set difference (for-all pattern)"
+      ],
+      "steps": [
+        {
+          "title": "The join",
+          "body": "After renaming, the copy has attributes $(n, x, m)$. The condition keeps pairs (girl $g$, boy $b$) with $marks_g \\le m_b$ — i.e. girls for whom **some** boy has marks $\\ge$ hers."
+        },
+        {
+          "title": "The difference",
+          "body": "All girls minus those girls = girls for whom **no** boy has marks $\\ge$ hers, i.e. girls with **more marks than all the boys**."
+        }
+      ],
+      "answer": {
+        "value": "names of girl students with more marks than all the boy students",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Highest among girls is not tested — the comparison is only against boys."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "\"More than some boy\" would be a plain join result, not a difference."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "This describes (roughly) the subtracted part, not the result."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Difference removes every girl who is matched or beaten by some boy."
+        }
+      ],
+      "pitfalls": [
+        "Reading the subtracted set as the answer."
+      ],
+      "verification": "Example: boys 50, 70; girls 60, 80 → girl 60 joins boy 70 and is removed; only girl 80 (> all boys) remains."
+    },
+    "cse-2004-cs-52": {
+      "approach": "An internal node of order $p$ holds $p$ child pointers and $p-1$ keys; take the largest $p$ that fits in one block.",
+      "concepts": [
+        "B+ tree",
+        "Node order"
+      ],
+      "steps": [
+        {
+          "title": "Inequality",
+          "body": "$$6p + 14(p-1) \\le 512 \\;\\Rightarrow\\; 20p - 14 \\le 512 \\;\\Rightarrow\\; 20p \\le 526$$"
+        },
+        {
+          "title": "Solve",
+          "body": "$$p \\le 26.3 \\;\\Rightarrow\\; p = 26$$ Check: $26\\times6 + 25\\times14 = 156 + 350 = 506 \\le 512$; $p=27$ needs $162+364 = 526 > 512$."
+        }
+      ],
+      "answer": {
+        "value": "26",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Fits, but 25 and 26 also fit — not maximum."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Uses $p(6+14) \\le 512$, i.e. $p$ keys instead of $p-1$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "506 bytes ≤ 512."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Needs 526 bytes > 512."
+        }
+      ],
+      "pitfalls": [
+        "Counting p keys instead of p − 1."
+      ],
+      "verification": "Direct byte count for 26 and 27 shown above."
+    },
+    "cse-2004-cs-53": {
+      "approach": "Trace the query clauses in order: WHERE filters to male rows before grouping, so the HAVING average is over male employees per department, while the subquery has no filter.",
+      "concepts": [
+        "GROUP BY / HAVING",
+        "Uncorrelated subquery"
+      ],
+      "steps": [
+        {
+          "title": "Outer query",
+          "body": "`where sex = 'M'` keeps only male employees; `group by deptName` then `avg(salary)` = average salary of **male employees of that department**."
+        },
+        {
+          "title": "Subquery",
+          "body": "`select avg(salary) from Employee` has no WHERE: average salary of **all employees in the company**."
+        },
+        {
+          "title": "Result",
+          "body": "Departments where male average > company-wide average."
+        }
+      ],
+      "answer": {
+        "value": "the average salary of male employees is more than the average salary in the company",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "The group average is over male employees only, not the whole department."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The subquery is not restricted to males."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "The subquery is not correlated with the department."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Male per-department average vs. overall company average."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the WHERE clause also applies to the subquery."
+      ],
+      "verification": "The subquery has its own FROM with no WHERE and no reference to the outer row."
+    },
+    "cse-2004-cs-54": {
+      "approach": "In binary exponential backoff, after its k-th collision a station picks uniformly from $\\{0,\\dots,2^k-1\\}$. A succeeded, so its counter resets (1st collision: {0,1}); B is on its 2nd collision ({0,1,2,3}). A wins if its slot is strictly smaller.",
+      "concepts": [
+        "CSMA/CD",
+        "Binary exponential backoff"
+      ],
+      "steps": [
+        {
+          "title": "Choices",
+          "body": "A: $K_A \\in \\{0,1\\}$; B: $K_B \\in \\{0,1,2,3\\}$, all equally likely — $2\\times4 = 8$ outcomes."
+        },
+        {
+          "title": "Winning outcomes",
+          "body": "$K_A=0$: B ∈ {1,2,3} → 3 outcomes. $K_A=1$: B ∈ {2,3} → 2 outcomes. Total $3+2 = 5$."
+        },
+        {
+          "title": "Probability",
+          "body": "$$P = \\frac{5}{8} = 0.625$$"
+        }
+      ],
+      "answer": {
+        "value": "0.625",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Would hold only if both picked from the same range."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "5 of 8 equally likely pairs."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "0.75 is the probability only given $K_A = 0$."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "B can still win (e.g. $K_B=0, K_A=1$)."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting that A's backoff counter resets after its successful transmission.",
+        "Counting ties as wins."
+      ],
+      "verification": "Enumerated all 8 (K_A, K_B) pairs: wins (0,1),(0,2),(0,3),(1,2),(1,3)."
+    },
+    "cse-2004-cs-55": {
+      "approach": "Longest-prefix match: among entries whose (destination AND mask) matches, choose the most specific mask; otherwise default.",
+      "concepts": [
+        "Longest prefix match",
+        "Subnet mask"
+      ],
+      "steps": [
+        {
+          "title": "128.75.43.16",
+          "body": "With /24: network 128.75.43.0 ✓. With /25 (mask .128): $16 \\,\\&\\, 128 = 0$ → 128.75.43.0 ✓. Longest match is /25 → **Eth1**."
+        },
+        {
+          "title": "192.12.17.10",
+          "body": "The /32 entry matches only 192.12.17.5, not .10. No other entry matches → **default → Eth2**."
+        }
+      ],
+      "answer": {
+        "value": "Eth1 and Eth2",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "/25 beats /24 for the first; default for the second."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Eth0 is the shorter /24 match."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Eth0 is shorter, and the /32 host route does not match .10."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Eth3 is a host route for 192.12.17.5 only."
+        }
+      ],
+      "pitfalls": [
+        "Treating the /32 host route as covering the whole 192.12.17.x network."
+      ],
+      "verification": "16 < 128, so .16 lies in the lower half (0–127) covered by the /25 entry."
+    },
+    "cse-2004-cs-56": {
+      "approach": "TCP segment = 180 + 20 = 200 bytes. Network B allows 100 − 20 = 80 bytes of IP payload per fragment (a multiple of 8), so the segment is split into 80 + 80 + 40, each with its own 20-byte IP header; they are not reassembled until the destination.",
+      "concepts": [
+        "IP fragmentation",
+        "MTU"
+      ],
+      "steps": [
+        {
+          "title": "Packet leaving A",
+          "body": "IP datagram = 20 (IP) + 20 (TCP) + 180 = 220 bytes ≤ 1000, so no fragmentation in A."
+        },
+        {
+          "title": "Entering B (MTU 100)",
+          "body": "Payload per fragment ≤ $100 - 20 = 80$ bytes (80 is a multiple of 8). The 200-byte IP payload becomes $80 + 80 + 40$ → **3 fragments**."
+        },
+        {
+          "title": "Bytes at destination IP layer",
+          "body": "Routers do not reassemble, so C receives the 3 fragments: $$(80+20) + (80+20) + (40+20) = 100 + 100 + 60 = 260\\text{ bytes}$$"
+        }
+      ],
+      "answer": {
+        "value": "260",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "200 bytes is the TCP segment without any IP header."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "220 bytes would be the unfragmented datagram — but B forces fragmentation and routers do not reassemble."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "240 bytes counts only 2 IP headers; 200 bytes of payload need 3 fragments of ≤ 80."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "3 fragments × 20-byte headers + 200 bytes = 260."
+        }
+      ],
+      "pitfalls": [
+        "Assuming the router into C reassembles the fragments.",
+        "Using 100 bytes of payload per fragment (forgetting the IP header)."
+      ],
+      "verification": "$\\lceil 200/80 \\rceil = 3$ fragments; $200 + 3\\times20 = 260$."
+    },
+    "cse-2004-cs-57": {
+      "approach": "The bottleneck is the 512 Kbps B–C link. Every 180 bytes of application data travel on it as 260 bytes of fragments (Q.56), so the useful-data rate is 512 Kbps × 180/260.",
+      "concepts": [
+        "Throughput",
+        "Protocol overhead",
+        "IP fragmentation"
+      ],
+      "steps": [
+        {
+          "title": "Bottleneck link",
+          "body": "A–B (1 Mbps) carries 220 bytes per message; B–C (512 Kbps) carries 260 bytes per message. Time per message on B–C: $\\frac{260\\times8}{512\\,000}$ s vs. $\\frac{220\\times8}{10^6}$ s on A–B, so B–C limits the rate."
+        },
+        {
+          "title": "Application data rate",
+          "body": "$$512 \\times \\frac{180}{260} = \\frac{92\\,160}{260} \\approx 354.46\\text{ Kbps} \\approx 354.5\\text{ Kbps}$$"
+        },
+        {
+          "title": "About the stored key",
+          "body": "409.6 Kbps $= 512 \\times \\frac{160}{200}$ does not correspond to the fragment sizes actually sent; with the 260 bytes established in Q.56 the rate is 354.5 Kbps."
+        }
+      ],
+      "answer": {
+        "value": "354.5 Kbps",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": false,
+        "keyNote": "Stored key C (409.6 Kbps) is an unofficial solved key; with 260 bytes on the 512 Kbps link per 180-byte message the rate is 512 × 180/260 ≈ 354.5 Kbps (B). Flagged needsReview."
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "325.5 Kbps would mean about 283 bytes on the link per 180-byte message, which matches no fragment/header count."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "512 × 180/260 ≈ 354.5 Kbps."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "409.6 = 512 × 0.8 — an 80% efficiency that does not match the 180/260 data fraction on the bottleneck link."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Ignores all header overhead."
+        }
+      ],
+      "pitfalls": [
+        "Using the unfragmented 220-byte datagram for the B–C link.",
+        "Taking the 1 Mbps link as the bottleneck."
+      ],
+      "verification": "$180/260 = 0.6923$; $0.6923 \\times 512 = 354.46$."
+    },
+    "cse-2004-cs-58": {
+      "approach": "Write the function on a K-map with codes 10–15 as don't cares; the minimal SOP is $A + BD + BC = A + B(C + D)$, realised with 3 two-input gates.",
+      "concepts": [
+        "K-map",
+        "Don't-care conditions",
+        "Gate count"
+      ],
+      "steps": [
+        {
+          "title": "Function",
+          "body": "Inputs $ABCD$ (A = MSB). $f = \\Sigma m(5,6,7,8,9) + d(10,\\dots,15)$."
+        },
+        {
+          "title": "Minimise",
+          "body": "Using don't cares: $A$ covers 8–15; $BD$ covers 5,7,13,15; $BC$ covers 6,7,14,15. $$f = A + BD + BC = A + B(C + D)$$"
+        },
+        {
+          "title": "Count gates",
+          "body": "OR($C,D$) → AND with $B$ → OR with $A$: **3 gates**, no NOT needed."
+        }
+      ],
+      "answer": {
+        "value": "3",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Three distinct product/sum operations are needed; 2 two-input gates cannot combine A, B, C, D this way."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "A + B(C + D) uses one OR, one AND, one OR."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Direct SOP A + BD + BC uses 2 ANDs + 1 three-input OR = 3 too, so 4 is not minimal."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Not minimal."
+        }
+      ],
+      "pitfalls": [
+        "Ignoring the don't cares 10–15, which yields a larger expression."
+      ],
+      "verification": "Check 5 (0101): B·D = 1 ✓; 4 (0100): A=0, C+D=0 → 0 ✓; 8: A = 1 ✓."
+    },
+    "cse-2004-cs-59": {
+      "approach": "Expand to minterms, list all prime implicants, and mark those that alone cover some minterm.",
+      "concepts": [
+        "Prime implicants",
+        "Essential prime implicants"
+      ],
+      "steps": [
+        {
+          "title": "Minterms",
+          "body": "$a'c$ → 1, 3; $ac'$ → 4, 6; $b'c$ → 1, 5. So $f = \\Sigma m(1,3,4,5,6)$."
+        },
+        {
+          "title": "Prime implicants",
+          "body": "$a'c$ (1,3), $ac'$ (4,6), $b'c$ (1,5), $ab'$ (4,5)."
+        },
+        {
+          "title": "Essential ones",
+          "body": "m3 is covered only by $a'c$; m6 only by $ac'$. m1, m4, m5 each have two covers. Essential PIs: **$a'c$ and $ac'$**."
+        }
+      ],
+      "answer": {
+        "value": "a'c and ac'",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Each uniquely covers m3 / m6."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "b'c is a PI but not essential (m1 via a'c, m5 via ab')."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Misses ac', the only cover of m6."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "bc' (2,6) is not even an implicant: m2 is 0."
+        }
+      ],
+      "pitfalls": [
+        "Treating every term of the given expression as essential."
+      ],
+      "verification": "Minimal cover a'c + ac' + (b'c or ab') confirms two choices for the third term — hence b'c is not essential."
+    },
+    "cse-2004-cs-60": {
+      "approach": "The mux computes $f = Z'X + ZY$. Choose connections so that this equals $T + R$.",
+      "concepts": [
+        "2:1 multiplexer",
+        "Shannon expansion"
+      ],
+      "steps": [
+        {
+          "title": "Expand on T",
+          "body": "$T + R = T'\\cdot R + T\\cdot 1$."
+        },
+        {
+          "title": "Match",
+          "body": "Compare with $Z'X + ZY$: $Z = T$, $X = R$, $Y = 1$."
+        }
+      ],
+      "answer": {
+        "value": "R to X, 1 to Y, T to Z",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$T'R + T = T + R$."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$T'T + TR = TR$ (AND)."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Z = 0 always selects X = T, so f = T."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$T'R + T\\cdot0 = T'R$."
+        }
+      ],
+      "pitfalls": [
+        "Mixing up which data input Z = 0 selects."
+      ],
+      "verification": "Truth table: T=0 → output R; T=1 → output 1, which is T + R."
+    },
+    "cse-2004-cs-61": {
+      "approach": "For each transition of the sequence 0→2→3→1→0, a T flip-flop needs T = 1 exactly when its bit changes. Derive $T_1$ (= X) from the table.",
+      "concepts": [
+        "T flip-flop excitation",
+        "Counter design"
+      ],
+      "given": "Sequence (Q2 Q1): 00 → 10 → 11 → 01 → 00",
+      "steps": [
+        {
+          "title": "Excitation table",
+          "body": "| $Q_2Q_1$ | next | $T_2$ | $T_1 = X$ |\n|---|---|---|---|\n| 00 | 10 | 1 | 0 |\n| 10 | 11 | 0 | 1 |\n| 11 | 01 | 1 | 0 |\n| 01 | 00 | 0 | 1 |"
+        },
+        {
+          "title": "Check the given gate",
+          "body": "$T_2 = 1$ for 00 and 11 ⇒ $T_2 = (Q_1 \\oplus Q_2)'$ — the XNOR in the figure ✓."
+        },
+        {
+          "title": "Derive X",
+          "body": "$T_1 = 1$ for 10 and 01 ⇒ $X = Q_1 \\oplus Q_2$."
+        }
+      ],
+      "answer": {
+        "value": "$Q_1 \\oplus Q_2$",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$Q_2'$ is 1 at state 00, where Q1 must not toggle."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "OR is 1 at state 11, where Q1 must stay 1."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "XNOR is the T2 input, not T1 (it would toggle Q1 at 00 and 11)."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Matches the T1 column: 0,1,0,1."
+        }
+      ],
+      "pitfalls": [
+        "Reading the sequence states as Q1Q2 instead of Q2Q1 (Q2 is the MSB)."
+      ],
+      "verification": "Simulate from 00 with T2 = XNOR, T1 = XOR: 00→10→11→01→00 ✓."
+    },
+    "cse-2004-cs-62": {
+      "approach": "Add the gate levels along the critical path: generate P, G → two-level carry network → sum XOR. XOR is not an allowed gate, so each XOR costs two levels (AND-OR with complemented inputs available).",
+      "concepts": [
+        "Carry look-ahead adder",
+        "Gate delay"
+      ],
+      "steps": [
+        {
+          "title": "P and G",
+          "body": "$G_i = A_iB_i$: 1 level. $P_i = A_i \\oplus B_i = A_iB_i' + A_i'B_i$: **2 levels**. Ready at time 2."
+        },
+        {
+          "title": "Carries",
+          "body": "$C_{i+1} = G_i + P_iG_{i-1} + \\dots + P_i\\cdots P_0C_0$ as two-level AND-OR: $2 + 2 = 4$."
+        },
+        {
+          "title": "Sum",
+          "body": "$S_i = P_i \\oplus C_i$ needs the complement of $C_i$ too; realised as a two-level AND-OR ($P_iC_i' + P_i'C_i$, the complements being produced in parallel at the same levels): 2 more levels ⇒ $4 + 2 = 6$ time units."
+        }
+      ],
+      "answer": {
+        "value": "6 time units",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "4 is when the carries are ready, before the sum stage."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "2 (P) + 2 (carry) + 2 (sum XOR) = 6."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Overcounts — would correspond to ripple-like carry propagation."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Overcounts further."
+        }
+      ],
+      "pitfalls": [
+        "Counting XOR as a single gate when XOR is not in the allowed set."
+      ],
+      "verification": "Standard CLA delay with 2-level XOR: 2 + 2 + 2 = 6."
+    },
+    "cse-2004-cs-63": {
+      "approach": "Lay out the instructions from address 1000 with 4-byte words. After HALT is executed, PC points past it; that PC is the return address pushed on interrupt.",
+      "concepts": [
+        "Program counter",
+        "Interrupt return address",
+        "Byte addressing"
+      ],
+      "steps": [
+        {
+          "title": "Address layout",
+          "body": "| Instruction | Words | Bytes | Addresses |\n|---|---|---|---|\n| MOV R1,5000 | 2 | 8 | 1000–1007 |\n| MOV R2,(R1) | 1 | 4 | 1008–1011 |\n| ADD R2,R3 | 1 | 4 | 1012–1015 |\n| MOV 6000,R2 | 2 | 8 | 1016–1023 |\n| HALT | 1 | 4 | 1024–1027 |"
+        },
+        {
+          "title": "Return address",
+          "body": "HALT has been executed, so PC = $1024 + 4 = 1028$. The interrupt saves **1028**."
+        }
+      ],
+      "answer": {
+        "value": "1028",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Counts words as bytes (1000 + 7)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "1020 is inside MOV 6000,R2."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "1024 is the address of HALT itself — it has already been executed."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Address of the byte after HALT."
+        }
+      ],
+      "pitfalls": [
+        "Treating the memory as word addressable."
+      ],
+      "verification": "Total program size 7 words = 28 bytes; 1000 + 28 = 1028."
+    },
+    "cse-2004-cs-64": {
+      "approach": "Total = fetch/decode cycles (2 per word) + execution cycles (3 per memory transfer, 1 for a register ADD).",
+      "concepts": [
+        "Instruction cycle",
+        "Clock cycle counting"
+      ],
+      "steps": [
+        {
+          "title": "Fetch and decode",
+          "body": "Program size $2+1+1+2+1 = 7$ words ⇒ $7 \\times 2 = 14$ cycles."
+        },
+        {
+          "title": "Execute",
+          "body": "| Instruction | Execute cycles |\n|---|---|\n| MOV R1,5000 (memory read) | 3 |\n| MOV R2,(R1) (memory read) | 3 |\n| ADD R2,R3 | 1 |\n| MOV 6000,R2 (memory write) | 3 |\n| HALT | 0 |\n\nSum $= 3+3+1+3+0 = 10$."
+        },
+        {
+          "title": "Total",
+          "body": "$14 + 10 = 24$ clock cycles."
+        }
+      ],
+      "answer": {
+        "value": "24",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Overcounts (e.g. extra memory transfer for HALT/operands)."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "14 + 10 = 24."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Off by one (e.g. ADD counted as 0)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Undercounts execution transfers."
+        }
+      ],
+      "pitfalls": [
+        "Charging fetch per instruction instead of per word."
+      ],
+      "verification": "Recount per instruction: 7, 5, 3, 7, 2 → 24."
+    },
+    "cse-2004-cs-65": {
+      "approach": "4 blocks, 2-way ⇒ 2 sets; set = block mod 2. All of 8, 12, 0 are even, so they compete for the 2 ways of set 0 under LRU.",
+      "concepts": [
+        "Set-associative mapping",
+        "LRU replacement"
+      ],
+      "steps": [
+        {
+          "title": "Mapping",
+          "body": "Sets $= 4/2 = 2$. $8 \\bmod 2 = 12 \\bmod 2 = 0 \\bmod 2 = 0$ → all go to **set 0**.",
+          "scene": {
+            "caption": "Empty cache: 2 sets × 2 ways",
+            "sets": [
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "title": "Access 8, 12",
+          "body": "8: miss (way 0). 12: miss (way 1). Misses = 2.",
+          "scene": {
+            "caption": "8 miss, 12 miss",
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "8"
+                  },
+                  {
+                    "tag": "12"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              }
+            ],
+            "access": {
+              "set": 0,
+              "way": 1,
+              "result": "miss"
+            }
+          }
+        },
+        {
+          "title": "Access 0",
+          "body": "Miss; LRU of set 0 is 8 → replace 8 with 0. Misses = 3.",
+          "scene": {
+            "caption": "0 miss, evicts LRU 8",
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "0"
+                  },
+                  {
+                    "tag": "12"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              }
+            ],
+            "access": {
+              "set": 0,
+              "way": 0,
+              "result": "miss"
+            }
+          }
+        },
+        {
+          "title": "Access 12",
+          "body": "Hit. Now 0 is LRU.",
+          "scene": {
+            "caption": "12 hit",
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "0"
+                  },
+                  {
+                    "tag": "12"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              }
+            ],
+            "access": {
+              "set": 0,
+              "way": 1,
+              "result": "hit"
+            }
+          }
+        },
+        {
+          "title": "Access 8",
+          "body": "Miss; replace LRU 0. Total misses $= 4$.",
+          "scene": {
+            "caption": "8 miss, evicts LRU 0 — 4 misses",
+            "sets": [
+              {
+                "lines": [
+                  {
+                    "tag": "8"
+                  },
+                  {
+                    "tag": "12"
+                  }
+                ]
+              },
+              {
+                "lines": [
+                  null,
+                  null
+                ]
+              }
+            ],
+            "access": {
+              "set": 0,
+              "way": 0,
+              "result": "miss"
+            }
+          }
+        }
+      ],
+      "answer": {
+        "value": "4",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Only the compulsory misses for two blocks; ignores the conflict in set 0."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Counts the compulsory misses (8, 12, 0) but misses the conflict miss on the final 8."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Misses on 8, 12, 0, 8; only 12 hits."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "The second access to 12 is a hit."
+        }
+      ],
+      "pitfalls": [
+        "Using block mod 4 (direct mapping) instead of mod number of sets."
+      ],
+      "verification": "Sequence outcome: M M M H M → 4 misses.",
+      "animation": {
+        "kind": "cache",
+        "sets": [
+          {
+            "lines": [
+              null,
+              null
+            ]
+          },
+          {
+            "lines": [
+              null,
+              null
+            ]
+          }
+        ]
+      }
+    },
+    "cse-2004-cs-66": {
+      "approach": "Convert to decimal, multiply, and write the product back in 8-bit 2's complement.",
+      "concepts": [
+        "2's complement",
+        "Signed multiplication"
+      ],
+      "steps": [
+        {
+          "title": "Decode",
+          "body": "$A = 11111010$: negative; magnitude $= 00000110 = 6$, so $A = -6$. $B = 00001010 = 10$."
+        },
+        {
+          "title": "Multiply",
+          "body": "$-6 \\times 10 = -60$."
+        },
+        {
+          "title": "Encode −60",
+          "body": "$60 = 00111100$; invert → $11000011$; add 1 → **11000100** ($= 196 = 256 - 60$)."
+        }
+      ],
+      "answer": {
+        "value": "11000100",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "$-60$ in 8-bit 2's complement."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "10011100 = −100."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "10100101 = −91."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "11010101 = −43."
+        }
+      ],
+      "pitfalls": [
+        "Multiplying the raw unsigned patterns (250 × 10)."
+      ],
+      "verification": "11000100 → invert 00111011 + 1 = 00111100 = 60 ⇒ −60 ✓."
+    },
+    "cse-2004-cs-67": {
+      "approach": "Y must select one of the 8 status bits ⇒ $\\log_2 8$ bits; X takes the remaining bits of the 26-bit word and addresses the control memory.",
+      "concepts": [
+        "Microprogrammed control",
+        "Next-address field"
+      ],
+      "steps": [
+        {
+          "title": "Y field",
+          "body": "8 MUX inputs ⇒ $Y = \\log_2 8 = 3$ bits."
+        },
+        {
+          "title": "X field",
+          "body": "$X = 26 - 13 - 3 = 10$ bits."
+        },
+        {
+          "title": "Control memory",
+          "body": "X addresses it ⇒ $2^{10} = 1024$ words."
+        }
+      ],
+      "answer": {
+        "value": "10, 3, 1024",
+        "choice": [
+          "A"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Y = 3, X = 10, $2^{10}$ = 1024 words."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Y needs only $\\log_2 8 = 3$ bits, not 5; and with Y = 3 the next-address field is 10 bits, not 8."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "X = 5 cannot address 2048 words."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "10 address bits give 1024, not 512, words."
+        }
+      ],
+      "pitfalls": [
+        "Using 8 bits for Y (one per status bit) instead of an encoded select."
+      ],
+      "verification": "13 + 10 + 3 = 26 ✓."
+    },
+    "cse-2004-cs-68": {
+      "approach": "Per block, the CPU spends 300 + 900 cycles; the block itself takes block size / transfer rate. Ratio = CPU time / transfer time.",
+      "concepts": [
+        "DMA",
+        "CPU overhead"
+      ],
+      "steps": [
+        {
+          "title": "CPU time per transfer",
+          "body": "$$\\frac{300 + 900}{600\\times10^{6}} = \\frac{1200}{6\\times10^{8}} = 2\\times10^{-6}\\text{ s} = 2\\ \\mu s$$"
+        },
+        {
+          "title": "Transfer time",
+          "body": "$$\\frac{20\\text{ KB}}{10\\text{ MB/s}} = 2\\times10^{-3}\\text{ s} = 2\\text{ ms}$$"
+        },
+        {
+          "title": "Percentage",
+          "body": "$$\\frac{2\\ \\mu s}{2\\text{ ms}} \\times 100 = 0.1\\%$$"
+        }
+      ],
+      "answer": {
+        "value": "0.1 %",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "50× too large."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Off by a factor of 10."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "0.5% would need 10 µs of CPU per transfer, five times the 1200 cycles at 600 MHz."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "2 µs of CPU per 2 ms of transfer."
+        }
+      ],
+      "pitfalls": [
+        "Mixing µs and ms."
+      ],
+      "verification": "With binary K/M: 20·2¹⁰ / (10·2²⁰) = 1.95 ms → 0.102% ≈ 0.1%."
+    },
+    "cse-2004-cs-69": {
+      "approach": "Constant clock ⇒ cycle = slowest stage + register delay. Time for n items on k stages = (k + n − 1) cycles.",
+      "concepts": [
+        "Pipeline clock period",
+        "Pipeline fill time"
+      ],
+      "steps": [
+        {
+          "title": "Cycle time",
+          "body": "$\\max(150,120,160,140) + 5 = 165$ ns."
+        },
+        {
+          "title": "Cycles",
+          "body": "$k + n - 1 = 4 + 1000 - 1 = 1003$."
+        },
+        {
+          "title": "Total time",
+          "body": "$1003 \\times 165 = 165\\,495$ ns $\\approx 165.5\\ \\mu s$."
+        }
+      ],
+      "answer": {
+        "value": "165.5 microseconds",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "Uses the fastest stage (120 ns)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Uses 160 ns without the 5 ns register delay."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "1003 × 165 ns."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Non-pipelined: 1000 × 590 ns."
+        }
+      ],
+      "pitfalls": [
+        "Forgetting the latch delay or the k − 1 fill cycles."
+      ],
+      "verification": "1000 × 165 = 165 µs plus 3 × 165 ns = 0.495 µs → 165.495 µs."
+    }
+  }
+}
