@@ -13,6 +13,7 @@ const { getSessionUser } = require("../middleware/auth");
 const P = require("../authz/permissions");
 const { errorCount } = require("../authz/access");
 const content = require("../authz/content");
+const { defaultAvatar } = require("../avatar-set");
 const {
   FEATURE_FLAGS,
   envOwner,
@@ -678,9 +679,13 @@ function createAdminRouter(deps) {
       if (!fields.length) bad("fields must include avatar and/or bio");
       if (!guardTarget(req, res, t, { allowOwnerSelf: true })) return;
       const sets = [];
-      if (fields.includes("avatar")) sets.push("avatar = 'coder'", "avatar_url = NULL");
+      const args = [];
+      if (fields.includes("avatar")) {
+        sets.push("avatar = ?", "avatar_url = NULL");
+        args.push(defaultAvatar(t.username)); // the user's default from the avatar set
+      }
       if (fields.includes("bio")) sets.push("bio = ''");
-      await run(`UPDATE users SET ${sets.join(", ")} WHERE username = ?`, [t.username]);
+      await run(`UPDATE users SET ${sets.join(", ")} WHERE username = ?`, [...args, t.username]);
       await audit(req, "user.reset", {
         targetType: "user",
         target: t.username,
