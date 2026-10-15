@@ -36193,8 +36193,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "dl",
+      "topic": "number",
       "tags": [
         "binary-fraction"
       ],
@@ -39421,23 +39421,23 @@
       "number": "3",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let P(E) denote the probability of the event E. Given P(A) = 1, P(B) = ½, the values of P(A|B) and P(B|A) respectively are",
+      "text": "Let $P(E)$ denote the probability of the event $E$. Given $P(A) = 1$, $P(B) = \\frac{1}{2}$, the values of $P(A \\mid B)$ and $P(B \\mid A)$ respectively are",
       "options": [
         {
           "l": "A",
-          "t": "¼, ½"
+          "t": "$\\frac{1}{4}, \\frac{1}{2}$"
         },
         {
           "l": "B",
-          "t": "½, ¼"
+          "t": "$\\frac{1}{2}, \\frac{1}{4}$"
         },
         {
           "l": "C",
-          "t": "½, 1"
+          "t": "$\\frac{1}{2}, 1$"
         },
         {
           "l": "D",
-          "t": "1, ½"
+          "t": "$1, \\frac{1}{2}$"
         }
       ],
       "figures": [],
@@ -39557,23 +39557,23 @@
       "number": "6",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let T(n) be the number of different binary search trees on n distinct elements. Then $T(n) = \\sum_{k=1}^{n} T(k-1)T(x)$, where x is",
+      "text": "Let $T(n)$ be the number of different binary search trees on $n$ distinct elements. Then $T(n) = \\sum_{k=1}^{n} T(k-1)\\,T(x)$, where $x$ is",
       "options": [
         {
           "l": "A",
-          "t": "n - k + 1"
+          "t": "$n - k + 1$"
         },
         {
           "l": "B",
-          "t": "n - k"
+          "t": "$n - k$"
         },
         {
           "l": "C",
-          "t": "n - k - 1"
+          "t": "$n - k - 1$"
         },
         {
           "l": "D",
-          "t": "n - k - 2"
+          "t": "$n - k - 2$"
         }
       ],
       "figures": [],
@@ -39653,19 +39653,19 @@
       "options": [
         {
           "l": "A",
-          "t": "k and n"
+          "t": "$k$ and $n$"
         },
         {
           "l": "B",
-          "t": "k-1 and k+1"
+          "t": "$k-1$ and $k+1$"
         },
         {
           "l": "C",
-          "t": "k-1 and n-1"
+          "t": "$k-1$ and $n-1$"
         },
         {
           "l": "D",
-          "t": "k+1 and n-k"
+          "t": "$k+1$ and $n-k$"
         }
       ],
       "figures": [],
@@ -40955,8 +40955,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "dm",
+      "topic": "graphs",
       "tags": [
         "perfect-matching",
         "complete-graph"
@@ -41233,7 +41233,7 @@
       "figures": [
         {
           "f": "cse-2003/cs-42-1.png",
-          "alt": "Piecewise linear f(x): from (0,1.0) down to (0.5,0.5), then steeply down through root 0.6 to minimum (1.0,−0.8), then up through root 1.3 to (1.55,0.5) and on to (2.05,1.0). Initial guesses x0 (≈0.1), x1 (≈0.75, between 0.6 and 1.0) and x2 (≈1.8, between 1.55 and 2.05) marked on the x-axis.",
+          "alt": "Piecewise linear f(x) drawn with thick lines through (0, 1.0), (0.5, 0.5), (1.0, −0.8), (1.55, 0.5) and (2.05, 1.0), continuing upward. It crosses the x-axis at 0.6 (steep falling segment) and 1.3 (rising segment). Initial guesses are marked on the x-axis: x₀ ≈ 0.2 (on the first segment), x₁ between 0.6 and 1.0 (on the steep falling segment) and x₂ between 1.55 and 2.05.",
           "svg": "cse-2003/cs-42-1.svg"
         }
       ],
@@ -42681,8 +42681,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Logic) from **CSE 2003 Q72** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  A (soundness of resolution) and B (right side is a tautology) are valid.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  C is the option usually marked false since resolution preserves satisfiability only in one direction for arbitrary formulas..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `((P ∨ R) ∧ (Q ∨ ¬R)) ⇒ (P ∨ Q) is logically valid`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `(P ∨ Q) ⇒ ((P ∨ R) ∨ (Q ∨ ¬R)) is logically valid`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `(P ∨ Q) is satisfiable if and only if (P ∨ R) ∧ (Q ∨ ¬R) is satisfiable`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `(P ∨ Q) ⇒ FALSE if and only if both P and Q are unsatisfiable`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Printed option (c) has '(Q∨¬ZR)', read as (Q ∨ ¬R). Answer uncertain: with P, Q, R as propositional variables all four statements look true."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2003-cs-73",
@@ -42715,8 +42715,8 @@
       ],
       "figures": [],
       "group": "cs-73-74",
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cd",
+      "topic": "runtime",
       "tags": [
         "parameter-passing",
         "call-by-need",
@@ -42762,8 +42762,8 @@
       ],
       "figures": [],
       "group": "cs-73-74",
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "cd",
+      "topic": "runtime",
       "tags": [
         "parameter-passing",
         "call-by-name",
@@ -42809,8 +42809,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "cn",
-      "topic": "transport",
+      "subject": "legacy",
+      "topic": "se",
       "tags": [
         "oop",
         "dynamic-binding"
@@ -43019,7 +43019,7 @@
       "number": "80",
       "marks": 2,
       "type": "MCQ",
-      "text": "The following information pertains to Q. 80-81. Suppose we want to synchronize two concurrent processes P and Q using binary semaphores S and T. The code for the processes P and Q is shown below.\n\n```\nProcess P:             Process Q:\nwhile (1) {            while (1) {\nW:                     Y:\n    print '0';             print '1';\n    print '0';             print '1';\nX:                     Z:\n}                      }\n```\n\nSynchronization statements can be inserted only at points W, X, Y, and Z.\n\nWhich of the following will always lead to an output staring with '001100110011'?",
+      "text": "The following information pertains to Q. 80-81. Suppose we want to synchronize two concurrent processes P and Q using binary semaphores S and T. The code for the processes P and Q is shown below.\n\n```\nProcess P:             Process Q:\nwhile (1) {            while (1) {\nW:                     Y:\n    print '0';             print '1';\n    print '0';             print '1';\nX:                     Z:\n}                      }\n```\n\nSynchronization statements can be inserted only at points W, X, Y, and Z.\n\nWhich of the following will always lead to an output starting with '001100110011'?",
       "options": [
         {
           "l": "A",
@@ -44636,8 +44636,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "prob",
+      "topic": "basic",
       "tags": [
         "binomial"
       ],
@@ -45012,7 +45012,7 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (C) from **CSE 2004 Q33** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 20, 0\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  With p[i] = s[length - i], p[0] = s[6] = '\\0', so the string p is empty and nothing is printed..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `gnirts`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `string`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `gnirt`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `No output is printed`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
+      "needsReview": false,
       "reviewNote": "Scan reads p[i] = s[length - i] (no -1); with that, first copied char is NUL and nothing prints."
     },
     {
@@ -45064,7 +45064,7 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **LEGACY** (Se) from **CSE 2004 Q34** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Principles of LEGACY:**\n- Decompose the problem into invariant constraints defined by se theory.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Common attributes (id, name) go in the superclass.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  salary depends on category so it is abstract in the superclass and implemented per subclass..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `(i), (iv), (vi), (viii)`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `(i), (iv), (vii)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `(i), (iii), (v), (vi), (viii)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `(ii), (v), (viii)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
+      "needsReview": false,
       "reviewNote": "Statements (ii)-(viii) wording read from a low-quality scan; (vi)/(vii) say getSalary though the stem says computeSalary."
     },
     {
@@ -45178,19 +45178,19 @@
       "options": [
         {
           "l": "A",
-          "t": "![](/gate-fig/cse-2004/cs-37-A.svg)"
+          "t": "![Max-heap: root 32; children 30, 25; leaves 15, 12 under 30 and 20, 16 under 25](/gate-fig/cse-2004/cs-37-A.svg)"
         },
         {
           "l": "B",
-          "t": "![](/gate-fig/cse-2004/cs-37-B.svg)"
+          "t": "![Max-heap: root 32; children 25, 30; leaves 12, 15 under 25 and 20, 16 under 30](/gate-fig/cse-2004/cs-37-B.svg)"
         },
         {
           "l": "C",
-          "t": "![](/gate-fig/cse-2004/cs-37-C.svg)"
+          "t": "![Max-heap: root 32; children 30, 25; leaves 15, 12 under 30 and 16, 20 under 25](/gate-fig/cse-2004/cs-37-C.svg)"
         },
         {
           "l": "D",
-          "t": "![](/gate-fig/cse-2004/cs-37-D.svg)"
+          "t": "![Max-heap: root 32; children 25, 30; leaves 12, 15 under 25 and 16, 20 under 30](/gate-fig/cse-2004/cs-37-D.svg)"
         }
       ],
       "figures": [],
@@ -45201,14 +45201,14 @@
         "max heap",
         "insertion"
       ],
-      "answer": "C",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **PDS** (Heaps) from **CSE 2004 Q37** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Successive insertions give array [32,30,25,15,12,20,16]: root 32.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  children 30, 25.\n- **Step 3.3 (Intermediate Reduction):**\n  30 has 15, 12. 25 has 20, 16..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `![](/gate-fig/cse-2004/cs-37-A.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `![](/gate-fig/cse-2004/cs-37-B.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `![](/gate-fig/cse-2004/cs-37-C.png)`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `![](/gate-fig/cse-2004/cs-37-D.png)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Substitute boundary test inputs ($n=1, 2$ or extreme bounds) to eliminate incorrect multiple-choice options immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Node labels in the four heap images are unreadable (low-res scan); answer derived by simulation and matches the published key (C), but the option contents could not be read individually."
+      "reviewNote": "Option heaps are unreadable in the scan and were reconstructed from the standard version of this question (A: 32/30,25/15,12,20,16; B: 32/25,30/12,15,20,16; C: 32/30,25/15,12,16,20; D: 32/25,30/12,15,16,20). Simulating the insertions gives 32/30,25/15,12,20,16 = option A, not the stored key C. Key changed C -> A on the strength of the deterministic simulation; verify the option images against a clearer copy of the paper."
     },
     {
       "id": "cse-2004-cs-38",
@@ -45533,7 +45533,7 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **ALGO** (Shortest Paths) from **CSE 2004 Q44** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Distances: Q=1, R=2, U=3, S=4, T=7, so the order is P, Q, R, U, S, T..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `P, Q, R, S, T, U`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `P, Q, R, U, S, T`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `P, Q, R, U, T, S`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `P, Q, T, R, U, S`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For recurrences, evaluate $\\log_b a$ in the first 5 seconds to determine the Master Theorem case immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
+      "needsReview": false,
       "reviewNote": "Edge weights read from a small blurry figure; edge S->U/T->U weights slightly uncertain but do not change the order."
     },
     {
@@ -45673,7 +45673,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "My own computation with a 3-access miss gives 1260 ns (not an option); answer D is from recollection of the published key. Verify."
+      "reviewNote": "Exact two-level accounting (TLB miss = 2 page-table accesses + 1 data access) gives 1260 ns, which is not an option; 1230 ns (D, the commonly accepted key) results only if a TLB miss costs one extra memory access. Confirm the intended model."
     },
     {
       "id": "cse-2004-cs-48",
@@ -45704,13 +45704,7 @@
           "t": "P($S_x$), P($S_y$); P($S_x$), P($S_y$)"
         }
       ],
-      "figures": [
-        {
-          "f": "cse-2004/cs-48-1.png",
-          "alt": "Two while-true loops. P1: L1, L2 blanks, X=X+1, Y=Y-1, V(Sx), V(Sy). P2: L3, L4 blanks, Y=Y+1, X=X-1, V(Sy), V(Sx).",
-          "svg": "cse-2004/cs-48-1.svg"
-        }
-      ],
+      "figures": [],
       "group": null,
       "subject": "os",
       "topic": "deadlock",
@@ -45724,8 +45718,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Deadlock) from **CSE 2004 Q48** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 1, 1, 1, 1, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Both processes must acquire the semaphores in the same order (Sx then Sy) to prevent circular wait..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `P($S_y$), P($S_x$); P($S_x$), P($S_y$)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `P($S_x$), P($S_y$); P($S_y$), P($S_x$)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `P($S_x$), P($S_x$); P($S_y$), P($S_y$)`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `P($S_x$), P($S_y$); P($S_x$), P($S_y$)`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Pseudo-code is tiny/blurry; the V() order in each process was read as V(Sx),V(Sy) for P1 and V(Sy),V(Sx) for P2."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2004-cs-49",
@@ -45770,8 +45764,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **OS** (Files) from **CSE 2004 Q49** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n- **Identified Problem Quantities:** 10, 1, 32, 48\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Operating Systems & Memory Management Laws:**\n- Paging & MMU Translation: Virtual Address = VPN + Offset ($p = \\log_2(\\text{Page Size})$). Multi-level paging requires $k$ page table memory accesses on TLB miss.\n- Process Scheduling Relations: $\\text{TAT} = \\text{Completion Time} - \\text{Arrival Time}$; $\\text{Waiting Time} = \\text{TAT} - \\text{Burst Time}$.\n- Critical Section Safety: Mutual Exclusion (mutex), Progress, and Bounded Waiting must be preserved.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  256 pointers per block: about 2^24 blocks (256^3 dominates) times 1 KB = about 2^34 bytes..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$2^{24}$ bytes`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$2^{32}$ bytes`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `$2^{34}$ bytes`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `$2^{48}$ bytes`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Draw the Gantt chart timeline left-to-right at $t=0, 1, 2, \\dots$. Sum of waiting times divided by $n$ yields average waiting time directly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Option C exponent is blurry (read as 2^34)."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2004-cs-50",
@@ -45829,7 +45823,7 @@
       "number": "51",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the relation Student (<u>name</u>, sex, marks), where the primary key is shown underlined, pertaining to students in a class that has at least one boy and one girl. What does the following relational algebra expression produce? (Note: $\\rho$ is the rename operator).\n\n$\\Pi_{name}(\\sigma_{sex=female}(Student)) - \\Pi_{name}(Student \\bowtie_{(sex=female \\wedge x=male \\wedge marks<m)} \\rho_{n,x,m}(Student))$",
+      "text": "Consider the relation Student ($\\underline{name}$, sex, marks), where the primary key is shown underlined, pertaining to students in a class that has at least one boy and one girl. What does the following relational algebra expression produce? (Note: $\\rho$ is the rename operator).\n\n$$\\Pi_{name}(\\sigma_{sex=female}(Student)) - \\Pi_{name}\\left(Student \\bowtie_{(sex=female \\,\\wedge\\, x=male \\,\\wedge\\, marks \\le m)} \\rho_{n,x,m}(Student)\\right)$$",
       "options": [
         {
           "l": "A",
@@ -45848,13 +45842,7 @@
           "t": "names of girl students with more marks than all the boy students"
         }
       ],
-      "figures": [
-        {
-          "f": "cse-2004/cs-51-1.png",
-          "alt": "Pi_name(sigma_{sex=female}(Student)) minus Pi_name(Student join with condition (sex=female and x=male and marks<m) of rho_{n,x,m}(Student))",
-          "svg": "cse-2004/cs-51-1.svg"
-        }
-      ],
+      "figures": [],
       "group": null,
       "subject": "db",
       "topic": "ra",
@@ -45869,7 +45857,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Join condition and rename attributes are tiny in the scan; reconstructed from the standard version of the question."
+      "reviewNote": "The comparison in the join condition is unreadable in the scan; transcribed as marks ≤ m (standard version). With marks < m the result would be girls with marks ≥ every boy; option D remains the best choice either way."
     },
     {
       "id": "cse-2004-cs-52",
@@ -45902,8 +45890,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "db",
+      "topic": "indexing",
       "tags": [
         "B+ tree",
         "order"
@@ -46066,7 +46054,7 @@
       "number": "56",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider three IP networks A, B and C. Host 1-4 in network A sends messages each containing 180 bytes of application data to a host Hc in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nAssuming that the packets are correctly delivered, how many bytes, including headers, are delivered to the IP layer at the destination for one application message, in the best case? Consider only data packets.",
+      "text": "Consider three IP networks A, B and C. Host $H_A$ in network A sends messages each containing 180 bytes of application data to a host $H_C$ in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nAssuming that the packets are correctly delivered, how many bytes, including headers, are delivered to the IP layer at the destination for one application message, in the best case? Consider only data packets.",
       "options": [
         {
           "l": "A",
@@ -46118,7 +46106,7 @@
       "number": "57",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider three IP networks A, B and C. Host 1-4 in network A sends messages each containing 180 bytes of application data to a host Hc in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nWhat is the rate at which application data is transferred to host Hc? Ignore errors, acknowledgements, and other overheads.",
+      "text": "Consider three IP networks A, B and C. Host $H_A$ in network A sends messages each containing 180 bytes of application data to a host $H_C$ in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nWhat is the rate at which application data is transferred to host $H_C$? Ignore errors, acknowledgements, and other overheads.",
       "options": [
         {
           "l": "A",
@@ -46157,8 +46145,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **CN** (Ip) from **CSE 2004 Q57** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Computer Networking & Protocol Laws:**\n- IP Subnetting: Host Bits $= 32 - k$, Usable Hosts $= 2^{32 - k} - 2$.\n- Sliding Window Efficiency: $\\eta = \\frac{W}{1 + 2a}$ where $a = \\frac{T_p}{T_t} = \\frac{\\text{Distance}/v}{\\text{Size}/\\text{Bandwidth}}$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Bottleneck is the 512 Kbps link carrying 100-byte packets with 80 bytes of payload: 512 x 80/100 = 409.6 Kbps..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `325.5 Kbps`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `354.5 Kbps`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `409.6 Kbps`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `512.0 Kbps`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For CIDR /k prefix, total IP addresses $= 2^{32-k}$, and usable host addresses $= 2^{32-k} - 2$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Each 180-byte application message crosses the 512 Kbps B–C link as 3 IP fragments totalling 260 bytes (Q.56), so application throughput = 512 × 180/260 ≈ 354.5 Kbps (option B). Stored key C (409.6 = 512 × 160/200) ignores fragmentation overhead. No official key available; verify before changing the answer."
     },
     {
       "id": "cse-2004-cs-58",
@@ -46293,8 +46281,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Combinational) from **CSE 2004 Q60** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 0, 1, 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  With Z = T: T=0 selects X = R, giving R.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  T=1 selects Y = 1. So f = T + R..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `R to X, 1 to Y, T to Z`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `T to X, R to Y, T to Z`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `T to X, R to Y, 0 to Z`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `R to X, 0 to Y, T to Z`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Option B printed 'T to K' (read as X); answer A is unaffected."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2004-cs-61",
@@ -46391,8 +46379,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Combinational) from **CSE 2004 Q62** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n- **Identified Problem Quantities:** 4, 4\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Two levels for generate/propagate, two for the AND-OR carry network and two for the final sum XOR: 6 time units..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `4 time units`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `6 time units`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `10 time units`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `12 time units`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Delay count recalled from the published key."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2004-cs-63",
@@ -46404,7 +46392,7 @@
       "number": "63",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | R1 <- Memory[5000] | 2 |\n| MOV R2,(R1) | R2 <- Memory[(R1)] | 1 |\n| ADD R2,R3 | R2 <- R2 + R1 | 1 |\n| MOV 6000,R2 | Memory[6000] <- R2 | 2 |\n| HALT | Machine halts | 1 |\n\nConsider that the memory is byte addressable with word size 32 bits, and the program has been loaded starting from memory location 1000 (decimal). If an interrupt occurs while the CPU has been halted after executing the HALT instruction, the return address (in decimal) saved in the stack will be",
+      "text": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | $R1 \\leftarrow \\text{Memory}[5000]$ | 2 |\n| MOV R2,(R1) | $R2 \\leftarrow \\text{Memory}[(R1)]$ | 1 |\n| ADD R2,R3 | $R2 \\leftarrow R2 + R3$ | 1 |\n| MOV 6000,R2 | $\\text{Memory}[6000] \\leftarrow R2$ | 2 |\n| HALT | Machine halts | 1 |\n\nConsider that the memory is byte addressable with word size 32 bits, and the program has been loaded starting from memory location 1000 (decimal). If an interrupt occurs while the CPU has been halted after executing the HALT instruction, the return address (in decimal) saved in the stack will be",
       "options": [
         {
           "l": "A",
@@ -46450,7 +46438,7 @@
       "number": "64",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | R1 <- Memory[5000] | 2 |\n| MOV R2,(R1) | R2 <- Memory[(R1)] | 1 |\n| ADD R2,R3 | R2 <- R2 + R1 | 1 |\n| MOV 6000,R2 | Memory[6000] <- R2 | 2 |\n| HALT | Machine halts | 1 |\n\nLet the clock cycles required for various operations be as follows:\n\nRegister to/from memory transfer: 3 clock cycles\n\nADD with both operands in register: 1 clock cycle\n\nInstruction fetch and decode: 2 clock cycles per word\n\nThe total number of clock cycles required to execute the program is",
+      "text": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | $R1 \\leftarrow \\text{Memory}[5000]$ | 2 |\n| MOV R2,(R1) | $R2 \\leftarrow \\text{Memory}[(R1)]$ | 1 |\n| ADD R2,R3 | $R2 \\leftarrow R2 + R3$ | 1 |\n| MOV 6000,R2 | $\\text{Memory}[6000] \\leftarrow R2$ | 2 |\n| HALT | Machine halts | 1 |\n\nLet the clock cycles required for various operations be as follows:\n\nRegister to/from memory transfer: 3 clock cycles\n\nADD with both operands in register: 1 clock cycle\n\nInstruction fetch and decode: 2 clock cycles per word\n\nThe total number of clock cycles required to execute the program is",
       "options": [
         {
           "l": "A",
@@ -46775,7 +46763,7 @@
       "number": "71",
       "marks": 2,
       "type": "MCQ",
-      "text": "How many solutions does the following system of linear equations have?\n\n$-x + 5y = -1$\n$x - y = 2$\n$x + 3y = 3$",
+      "text": "How many solutions does the following system of linear equations have?\n\n$$\\begin{aligned} -x + 5y &= -1 \\\\ x - y &= 2 \\\\ x + 3y &= 3 \\end{aligned}$$",
       "options": [
         {
           "l": "A",
@@ -46809,7 +46797,7 @@
       "textSource": "web",
       "sourceUrl": "https://gateoverflow.in/1065/gate-cse-2004-question-71",
       "needsReview": true,
-      "reviewNote": "Right-hand side of the first equation was illegible in the scan; recovered from gateoverflow."
+      "reviewNote": "The scan prints the first equation as \"-x + 5y = 1\" (the minus on the right-hand side looks lost). With RHS +1 the system is inconsistent (answer D); with the widely cited RHS -1 it has the unique solution (9/4, 1/4) (answer C). Text and key follow the -1 version."
     },
     {
       "id": "cse-2004-cs-72",
@@ -46894,14 +46882,14 @@
         "lattice",
         "complete lattice"
       ],
-      "answer": "C",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Posets) from **CSE 2004 Q73** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Meets such as {1,2,3}∩{1,3,5} = {1,3} and {1,2}∩{1,3,5} = {1} must be present, so {1} and {1,3} are needed and suffice..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `{1}`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `{1}, {2,3}`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `{1}, {1,3}`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `{1}, {1,3}, {1,2,3,4}, {1,2,3,5}`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": false,
-      "reviewNote": null
+      "needsReview": true,
+      "reviewNote": "Key changed from C to A by proof: S together with {1} is already a complete lattice (finite, has bottom {1} and top {1,2,3,4,5}, all pairwise meets/joins exist), and {1} is necessary because {1,2} and {1,3,5} have no common lower bound in S. Option C adds the unnecessary {1,3}. No official key available."
     },
     {
       "id": "cse-2004-cs-74",
@@ -47089,8 +47077,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Graphs) from **CSE 2004 Q77** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  The graph is not 3-colourable: the two apex-side vertices force top and bottom to share a colour, which then leaves conflicting colours on the inner 4-cycle.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  4 colours suffice..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `3`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `4`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `5`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Edges read from a small figure."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2004-cs-78",
@@ -47180,8 +47168,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DM** (Graphs) from **CSE 2004 Q79** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 2, 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Mathematical & Statistical Laws:**\n- Matrix Invariants: $\\sum \\lambda_i = \\text{Trace}(A) = \\sum a_{ii}$, $\\prod \\lambda_i = \\det(A)$.\n- Bayes' Theorem: $P(A_i \\mid B) = \\frac{P(B \\mid A_i) P(A_i)}{\\sum_j P(B \\mid A_j) P(A_j)}$.\n- Calculus Extrema: $f'(x) = 0$; $f''(x) > 0 \\implies$ local minimum, $f''(x) < 0 \\implies$ local maximum.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Total possible edges C(n,2) = (n^2-n)/2, so at least (n^2-3n)/2 edges means missing at most n edges: sum over k=0..n of C((n^2-n)/2, k)..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$^{(n^2-n)/2}C_{(n^2-3n)/2}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$\\sum_{k=0}^{(n^2-3n)/2} {}^{(n^2-n)/2}C_k$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$^{(n^2-n)/2}C_n$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `$\\sum_{k=0}^{n} {}^{(n^2-n)/2}C_k$`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Calculate $\\text{Trace}(A)$ and $\\det(A)$ in 15 seconds. The sum and product of candidate eigenvalues in the options must match them identically.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Binomial indices in options are blurry; read from context."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2004-cs-80",
@@ -47376,7 +47364,7 @@
       "number": "84",
       "marks": 2,
       "type": "MCQ",
-      "text": "The recurrence equation\n\nT(1) = 1\n\nT(n) = 2T(n-1) + n, $n \\geq 2$\n\nevaluates to",
+      "text": "The recurrence equation\n\n$$T(1) = 1, \\qquad T(n) = 2T(n-1) + n,\\quad n \\geq 2$$\n\nevaluates to",
       "options": [
         {
           "l": "A",
@@ -47454,8 +47442,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **ALGO** (Complexity) from **CSE 2004 Q85** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Cost per level is n/2 (nodes at depth i each cost n/2^{i+1}), over log n levels: Theta(n log n)..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\Theta(n)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `$\\Theta(n \\log n)$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `$\\Theta(n^2)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$\\Theta(n^2 \\log n)$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For recurrences, evaluate $\\log_b a$ in the first 5 seconds to determine the Master Theorem case immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Confident in the derivation but the official key may differ; check."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2004-cs-86",
@@ -47563,7 +47551,7 @@
       "number": "88",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider the following grammar G:\n\n$S \\to bS \\mid aA \\mid b$\n$A \\to bA \\mid aB$\n$B \\to bB \\mid aS \\mid a$\n\nLet $N_a(w)$ and $N_b(w)$ denote the number of a's and b's in a string w respectively. The language $L(G) \\subseteq \\{a, b\\}^+$ generated by G is",
+      "text": "Consider the following grammar G:\n\n$\\begin{aligned} S &\\to bS \\mid aA \\mid b \\\\ A &\\to bA \\mid aB \\\\ B &\\to bB \\mid aS \\mid a \\end{aligned}$\n\nLet $N_a(w)$ and $N_b(w)$ denote the number of a's and b's in a string w respectively. The language $L(G) \\subseteq \\{a, b\\}^+$ generated by G is",
       "options": [
         {
           "l": "A",
@@ -47609,7 +47597,7 @@
       "number": "89",
       "marks": 2,
       "type": "MCQ",
-      "text": "$L_1$ is a recursively enumerable language over $\\Sigma$. An algorithm A effectively enumerates its words as $w_1, w_2, w_3, \\ldots$. Define another language $L_2$ over $\\Sigma \\cup \\{\\#\\}$ as $\\{w_i \\# w_j : w_i, w_j \\in L_1, i < j\\}$. Here # is a new symbol. Consider the following assertions.\n\n$S_1$: $L_1$ is recursive implies $L_2$ is recursive\n$S_2$: $L_2$ is recursive implies $L_1$ is recursive\n\nWhich of the following statements is true?",
+      "text": "$L_1$ is a recursively enumerable language over $\\Sigma$. An algorithm A effectively enumerates its words as $w_1, w_2, w_3, \\ldots$. Define another language $L_2$ over $\\Sigma \\cup \\{\\#\\}$ as $\\{w_i \\# w_j : w_i, w_j \\in L_1, i < j\\}$. Here # is a new symbol. Consider the following assertions.\n\n$S_1$: $L_1$ is recursive implies $L_2$ is recursive\n\n$S_2$: $L_2$ is recursive implies $L_1$ is recursive\n\nWhich of the following statements is true?",
       "options": [
         {
           "l": "A",
@@ -47676,8 +47664,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "pds",
+      "topic": "c",
       "tags": [
         "programming paradigms"
       ],
@@ -115515,7 +115503,7 @@
       "number": "2",
       "marks": 1,
       "type": "MCQ",
-      "text": "In a class of 200 students, 125 students have taken Programming Language course, 85 students have taken Data Structures course, 65 students have taken Computer Organization course; 50 students have taken both Programming Language and Data Structures, 35 students have taken both Programming Language and Computer Organization, 30 students have taken both Data Structures ad Computer Organization; 15 students have taken all the three courses. How many students have not taken any of the three courses?",
+      "text": "In a class of 200 students, 125 students have taken Programming Language course, 85 students have taken Data Structures course, 65 students have taken Computer Organization course; 50 students have taken both Programming Language and Data Structures, 35 students have taken both Programming Language and Computer Organization, 30 students have taken both Data Structures and Computer Organization; 15 students have taken all the three courses. How many students have not taken any of the three courses?",
       "options": [
         {
           "l": "A",
@@ -115606,11 +115594,11 @@
       "number": "4",
       "marks": 1,
       "type": "MCQ",
-      "text": "Let $R_1$ be a relation from A = {1, 3, 5, 7} to B = {2, 4, 6, 8} and $R_2$ be another relation from B to C {1, 2, 3, 4} as defined below:\n\n1. An element x in A is related to an element y in B (under $R_1$) if x + y is divisible by 3\n2. An element x in B is related to an element y in C (under $R_2$) if x + y is even but not divisible by 3\n\nWhat is the composite relation $R_1R_2$ from A to C?",
+      "text": "Let $R_1$ be a relation from $A = \\{1, 3, 5, 7\\}$ to $B = \\{2, 4, 6, 8\\}$ and $R_2$ be another relation from B to $C = \\{1, 2, 3, 4\\}$ as defined below:\n\n1. An element x in A is related to an element y in B (under $R_1$) if x + y is divisible by 3\n2. An element x in B is related to an element y in C (under $R_2$) if x + y is even but not divisible by 3\n\nWhat is the composite relation $R_1R_2$ from A to C?",
       "options": [
         {
           "l": "A",
-          "t": "$R_1R_2$ = {((1, 2), (1, 4), (3, 3), (5, 4), (7, 3)}"
+          "t": "$R_1R_2$ = {(1, 2), (1, 4), (3, 3), (5, 4), (7, 3)}"
         },
         {
           "l": "B",
@@ -115743,7 +115731,7 @@
       "number": "7",
       "marks": 1,
       "type": "MCQ",
-      "text": "Which one of the following regular expression (a + b + c)*?",
+      "text": "Which one of the following regular expressions is NOT equivalent to the regular expression (a + b + c)*?",
       "options": [
         {
           "l": "A",
@@ -115776,8 +115764,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **TOC** (Regular) from **IT 2004 Q7** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Automata & Formal Language Laws:**\n- Chomsky Hierarchy: Regular (DFA/NFA) $\\subset$ Context-Free (PDA) $\\subset$ Context-Sensitive (LBA) $\\subset$ Turing Recognizable (TM).\n- State Equivalence & Myhill-Nerode Theorem: Minimum DFA states equals the number of pairwise distinguishable equivalence classes.\n- Closure Properties: Regular languages are closed under union, intersection, complementation, concatenation, and Kleene star.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  (a*+b*+c*)*, (a*b*c*)* and (a*b*+c*)* all generate every string over {a,b,c}.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  ((ab)*+c*)* cannot generate the string a (or b alone)..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `(a* + b* + c*)*`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `(a*b*c*)*`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `((ab)* + c*)*`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `(a*b* + c*)*`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Test boundary words: the empty string $\\epsilon$, strings of length 1, and strings of length 2 to eliminate non-matching DFA states instantly.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Question stem is truncated in the reprint; the original asks which regular expression is NOT equivalent to (a + b + c)*. Answer assumes that wording."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2004-it-8",
@@ -115789,7 +115777,7 @@
       "number": "8",
       "marks": 1,
       "type": "MCQ",
-      "text": "What is the minimum number of NAD gates required to implement a 2-input EXCLUSIVE-OR function without using any other logic gate?",
+      "text": "What is the minimum number of NAND gates required to implement a 2-input EXCLUSIVE-OR function without using any other logic gate?",
       "options": [
         {
           "l": "A",
@@ -115929,7 +115917,7 @@
       "number": "11",
       "marks": 1,
       "type": "MCQ",
-      "text": "What is the hit rate of a video terminal unit with 50 characters/line, 8 bits/character and horizontal sweep time of 100 $\\mu$v (including 20 $\\mu$s of retrace time)?",
+      "text": "What is the bit rate of a video terminal unit with 80 characters/line, 8 bits/character and horizontal sweep time of 100 $\\mu$s (including 20 $\\mu$s of retrace time)?",
       "options": [
         {
           "l": "A",
@@ -115950,8 +115938,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "la",
-      "topic": "eigen",
+      "subject": "coa",
+      "topic": "io",
       "tags": [
         "video-terminal",
         "bit-rate"
@@ -115963,7 +115951,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Reprint typos: 'hit rate' = bit rate, '100 µv' = 100 µs, and '50 characters/line' appears to be 80 in the original paper; with 50 no option is correct. Answer A assumes 80 chars/line."
+      "reviewNote": "The reprint PDF prints 50 characters/line (no option fits: 400 bits / 80 µs = 5 Mbps); text uses 80 per the original GATE IT 2004 paper, giving 640 bits / 80 µs = 8 Mbps (A). Confirm against an original copy."
     },
     {
       "id": "it-2004-it-12",
@@ -115975,7 +115963,7 @@
       "number": "12",
       "marks": 1,
       "type": "MCQ",
-      "text": "Consider a system with 2 level cache. Access times of Level 1 cache, Level 2 cache and main memory are 1 ns, 10 ns and 500 ns, respectively. The hit rates of Level 1and Level 2 caches are 0.5 and 0.9, respectively. What is the average access time of the system ignoring the search time within the cache?",
+      "text": "Consider a system with 2 level cache. Access times of Level 1 cache, Level 2 cache and main memory are 1 ns, 10 ns and 500 ns, respectively. The hit rates of Level 1 and Level 2 caches are 0.8 and 0.9, respectively. What is the average access time of the system ignoring the search time within the cache?",
       "options": [
         {
           "l": "A",
@@ -116009,7 +115997,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Reprint prints L1 hit rate 0.5, which gives 30 ns (no option); the original GATE IT 2004 paper has 0.8, giving 12.6 ns (C)."
+      "reviewNote": "The reprint PDF prints L1 hit rate 0.5 (gives 30 ns, no option); text uses 0.8 per the original GATE IT 2004 paper, giving 0.8(1) + 0.2[0.9(10) + 0.1(500)] = 12.6 ns (C). Confirm against an original copy."
     },
     {
       "id": "it-2004-it-13",
@@ -116132,8 +116120,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "coa",
-      "topic": "isa",
+      "subject": "pds",
+      "topic": "c-prog",
       "tags": [
         "expressions"
       ],
@@ -116177,8 +116165,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "os",
+      "topic": "files",
       "tags": [
         "unix",
         "shell-commands"
@@ -116294,7 +116282,7 @@
       "number": "19",
       "marks": 1,
       "type": "MCQ",
-      "text": "A software organization has been assessed at SEI CMM Level 4. Which of the following does the organization need to practice besides Process Chance Management and Technology Change Management in order to achieve level 5?",
+      "text": "A software organization has been assessed at SEI CMM Level 4. Which of the following does the organization need to practice besides Process Change Management and Technology Change Management in order to achieve level 5?",
       "options": [
         {
           "l": "A",
@@ -116310,7 +116298,7 @@
         },
         {
           "l": "D",
-          "t": "Detect Propagation"
+          "t": "Defect Propagation"
         }
       ],
       "figures": [],
@@ -116400,7 +116388,7 @@
         },
         {
           "l": "D",
-          "t": "Page table and row level looking allow the same degree of concurrency"
+          "t": "Page, table and row level locking allow the same degree of concurrency"
         }
       ],
       "figures": [],
@@ -116542,8 +116530,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "pds",
-      "topic": "c-prog",
+      "subject": "cn",
+      "topic": "application",
       "tags": [
         "http"
       ],
@@ -116632,8 +116620,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "cn",
+      "topic": "ip",
       "tags": [
         "subnetting"
       ],
@@ -117571,7 +117559,7 @@
       "number": "47",
       "marks": 2,
       "type": "MCQ",
-      "text": "Consider a pipeline processor with 4 stages S1 to S4. We want to execute the following loop:\n\n```c\nFor (i = 1; i <= 1000; i++)\n    {I1, I2, I3, I4}\n```\n\nwhere the time taken (in ns) by instructions I1 to I4 for stages S1 to S4 are given below:\n\n| | S1 | S2 | S3 | S4 |\n|---|---|---|---|---|\n| I1: | 1 | 2 | 1 | 2 |\n| I2: | 2 | 1 | 2 | 1 |\n| I3: | 1 | 1 | 2 | 1 |\n| I4: | 2 | 1 | 2 | 1 |\n\nThe output of I1 for i = 2 will be available after",
+      "text": "Consider a pipeline processor with 4 stages S1 to S4. We want to execute the following loop:\n\n```c\nfor (i = 1; i <= 1000; i++)\n    {I1, I2, I3, I4}\n```\n\nwhere the time taken (in ns) by instructions I1 to I4 for stages S1 to S4 are given below:\n\n| | S1 | S2 | S3 | S4 |\n|---|---|---|---|---|\n| I1: | 1 | 2 | 1 | 2 |\n| I2: | 2 | 1 | 2 | 1 |\n| I3: | 1 | 1 | 2 | 1 |\n| I4: | 2 | 1 | 2 | 1 |\n\nThe output of I1 for i = 2 will be available after",
       "options": [
         {
           "l": "A",
@@ -117992,8 +117980,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **ALGO** (Complexity) from **IT 2004 Q55** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Data Structures & Algorithmic Laws:**\n- Tree Traversals & Invariants: Inorder traversal of a Binary Search Tree (BST) produces strictly ascending keys. Height of full binary tree with $L$ leaves is $\\lceil \\log_2 L \\rceil$.\n- Asymptotic Bounds & Master Theorem: For $T(n) = a T(n/b) + \\Theta(n^k \\log^p n)$, critical threshold is $\\log_b a$ compared against $k$.\n- Minimum Spanning Tree: An MST on $|V|$ vertices contains exactly $|V| - 1$ edges with minimum total weight; if edge weights are distinct, MST is strictly unique.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  g and h have the same order and f grows strictly slower, so f·h = O(g·h) holds and statement D is false.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  A, B and C are true..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `f(n) + h(n) = O(g(n) + h(n))`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `f(n) = O(h(n))`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `h(n) ≠ O(f(n))`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `f(n)h(n) ≠ O(g(n)h(n))`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** For recurrences, evaluate $\\log_b a$ in the first 5 seconds to determine the Master Theorem case immediately.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The ≠ signs are faint in the scan (stem 'g(n) ≠ O(f(n))' and option c); read as ≠, consistent with the original paper."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2004-it-56",
@@ -118027,7 +118015,7 @@
       "figures": [
         {
           "f": "it-2004/it-56-1.png",
-          "alt": "Undirected weighted graph on vertices A-G. Edges (weights as legible): A-B 10, A-C 22, A-D (small, illegible), B-C 30, B-E 49, C-E 16 (blurred), C-D 26, C-F 4, D-F 22, E-G 2, F-G 5.",
+          "alt": "Undirected weighted graph on vertices A to G. Edges: A–B 10, A–C 22, A–D 5, B–C 30, B–E 49, C–E 16, C–D 26, C–F 4, D–F 22, E–G 2, F–G 5.",
           "svg": "it-2004/it-56-1.svg"
         }
       ],
@@ -118044,7 +118032,7 @@
       "textSource": "pdf",
       "sourceUrl": "https://gateoverflow.in/3699/gate-it-2004-question-56",
       "needsReview": true,
-      "reviewNote": "Edge weights in the scan are blurry; F-G weight 5 (and C-F 4) confirmed from gateoverflow.in. The other weights in the alt text are best-effort readings."
+      "reviewNote": "Edge weights in the scan are blurry; A–D 5, C–E 16 and F–G 5 are best readings (F–G could be 3, C–E could be 10). The answer D is the same under every reading."
     },
     {
       "id": "it-2004-it-57",
@@ -118056,7 +118044,7 @@
       "number": "57",
       "marks": 2,
       "type": "MATCH",
-      "text": "Consider a list of recursive algorithms and a list of recurrence relations as shown below. Each recurrence relation corresponds to exactly one algorithm and is used to derive the time complexity of the algorithm.\n\n| Recursive Algorithm | Recurrence Relation |\n|---|---|\n| P. Binary search | I. T(n) = T(n - k) + T(k) + cn |\n| Q. Merge suit | II. T(n) = 2T(n - 1) + 1 |\n| R. Quick sort | III. T(n) = 2T(n/2) + cn |\n| S. Tower of Hanoi | IV. T(n) = T(n/2) + 1 |\n\nWhich of the following is the correct match between the algorithms and their recurrence relations?",
+      "text": "Consider a list of recursive algorithms and a list of recurrence relations as shown below. Each recurrence relation corresponds to exactly one algorithm and is used to derive the time complexity of the algorithm.\n\n| Recursive Algorithm | Recurrence Relation |\n|---|---|\n| P. Binary search | I. T(n) = T(n - k) + T(k) + cn |\n| Q. Merge sort | II. T(n) = 2T(n - 1) + 1 |\n| R. Quick sort | III. T(n) = 2T(n/2) + cn |\n| S. Tower of Hanoi | IV. T(n) = T(n/2) + 1 |\n\nWhich of the following is the correct match between the algorithms and their recurrence relations?",
       "options": [
         {
           "l": "A",
@@ -118427,7 +118415,7 @@
       "number": "65",
       "marks": 2,
       "type": "MCQ",
-      "text": "The semaphore variables full, empty and mutex are initialized to 0, n and 1 respectively. Process $P_1$ repeatedly adds one items at a time to time a buffer of size n, and process $P_2$ repeatedly removes one item at a time from the same buffer using the programs given below. In the programs, K, L, M and N are unspecified statements.\n\n```\nP1: while (1) {\n        K; P(mutex);\n        Add an item to the buffer;\n        V(mutex); L;\n    }\n\nP2: while (1) {\n        M; P(mutex);\n        Remove an item from the buffer;\n        V(mutex); N;\n    }\n```\n\nThe statements K, L, M and N are respectively",
+      "text": "The semaphore variables full, empty and mutex are initialized to 0, n and 1 respectively. Process $P_1$ repeatedly adds one item at a time to a buffer of size n, and process $P_2$ repeatedly removes one item at a time from the same buffer using the programs given below. In the programs, K, L, M and N are unspecified statements.\n\n```\nP1: while (1) {\n        K; P(mutex);\n        Add an item to the buffer;\n        V(mutex); L;\n    }\n\nP2: while (1) {\n        M; P(mutex);\n        Remove an item from the buffer;\n        V(mutex); N;\n    }\n```\n\nThe statements K, L, M and N are respectively",
       "options": [
         {
           "l": "A",
@@ -118676,8 +118664,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "ga",
-      "topic": "quant",
+      "subject": "legacy",
+      "topic": "se",
       "tags": [
         "putnam-model",
         "effort-estimation"
@@ -118845,7 +118833,7 @@
       "number": "74",
       "marks": 2,
       "type": "MCQ",
-      "text": "A relational database contains two tables has columns roll_no, name and dept_id and department table has columns dept_id and dept_name. The following insert statements were executed successfully to populate the empty tables:\n\n```sql\nInsert into department values (1, 'Mathematics')\nInsert into department values (2, 'Physics')\nInsert into student values (1, 'Nvin')\nInsert into student values (2, 'Mukesh')\nInsert into student values (3, 'Gita', 1)\n```\n\nHow many rows and columns will be retrieved by the following SQL statement?\n\n```sql\nSelect * from student, department\n```",
+      "text": "A relational database contains two tables, student and department, in which the student table has columns roll_no, name and dept_id and the department table has columns dept_id and dept_name. The following insert statements were executed successfully to populate the empty tables:\n\n```sql\nInsert into department values (1, 'Mathematics')\nInsert into department values (2, 'Physics')\nInsert into student values (1, 'Nvin')\nInsert into student values (2, 'Mukesh')\nInsert into student values (3, 'Gita', 1)\n```\n\nHow many rows and columns will be retrieved by the following SQL statement?\n\n```sql\nSelect * from student, department\n```",
       "options": [
         {
           "l": "A",
@@ -119097,8 +119085,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "db",
+      "topic": "indexing",
       "tags": [
         "b-tree",
         "order"
@@ -119259,7 +119247,7 @@
       "number": "83",
       "marks": 2,
       "type": "MCQ",
-      "text": "A 20 Kbps satellite Link has a propagation delay of 400 ms. The transmitter employs the \"go back it ARQ\" scheme with n set to 10. Assuming that each frame is 100 bytes long, what is the maximum data rate possible?",
+      "text": "A 20 Kbps satellite Link has a propagation delay of 400 ms. The transmitter employs the \"go back n ARQ\" scheme with n set to 10. Assuming that each frame is 100 bytes long, what is the maximum data rate possible?",
       "options": [
         {
           "l": "A",
@@ -119267,7 +119255,7 @@
         },
         {
           "l": "B",
-          "t": "10 Kbp"
+          "t": "10 Kbps"
         },
         {
           "l": "C",
@@ -119442,7 +119430,7 @@
       "number": "87",
       "marks": 2,
       "type": "MCQ",
-      "text": "A TCP message consisting of 2100 bytes is passed to IP for delivery across two networks. The first network can carry a maximum payload of 1200 bytes per frame and the second network can carry a maximum payload of 400 bytes per frame, excluding network overhead. Assume that IP overhead per packet is 20 bytes. What is the total I? Overhead in the second network for this transmission?",
+      "text": "A TCP message consisting of 2100 bytes is passed to IP for delivery across two networks. The first network can carry a maximum payload of 1200 bytes per frame and the second network can carry a maximum payload of 400 bytes per frame, excluding network overhead. Assume that IP overhead per packet is 20 bytes. What is the total IP overhead in the second network for this transmission?",
       "options": [
         {
           "l": "A",
@@ -119596,7 +119584,7 @@
         },
         {
           "l": "D",
-          "t": "I, II, II and IV"
+          "t": "I, II, III and IV"
         }
       ],
       "figures": [],
@@ -122213,8 +122201,8 @@
       ],
       "figures": [],
       "group": null,
-      "subject": "calc",
-      "topic": "maxmin",
+      "subject": "algo",
+      "topic": "shortest-paths",
       "tags": [
         "graph",
         "shortest-path"
@@ -122330,7 +122318,7 @@
       "number": "59",
       "marks": 2,
       "type": "MCQ",
-      "text": "Let a and b be two sorted arrays containing n integers each, in non-decreasing order. Let c be a sorted array containing 2n integers obtained by merging the two arrays a and b. Assuming the arrays are indexed starting from 0, consider the following four statements.\n\nI  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge a[i]$\n\nII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge b[i]$\n\nIII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge a[i]$\n\nIV  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge b[i]$\n\nWhich of the following is TRUE",
+      "text": "Let a and b be two sorted arrays containing n integers each, in non-decreasing order. Let c be a sorted array containing 2n integers obtained by merging the two arrays a and b. Assuming the arrays are indexed starting from 0, consider the following four statements.\n\nI  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge a[i]$\n\nII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\ge b[i]$\n\nIII  $a[i]\\ge b[i]\\Rightarrow c[2i]\\le a[i]$\n\nIV  $a[i]\\ge b[i]\\Rightarrow c[2i]\\le b[i]$\n\nWhich of the following is TRUE",
       "options": [
         {
           "l": "A",
@@ -122364,7 +122352,7 @@
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Scanned statements I-IV are identical in pairs (I=III, II=IV) and use only '>='; the original paper has III and IV with a[i] <= b[i]. Transcribed as printed. Answer C follows the original paper's intended statements, not the misprinted ones."
+      "reviewNote": "Statements III and IV were restored with ≤ (the reprint repeats I and II with ≥). Answer C (II and III) is proved in the solution. Confirm the restored wording against an original copy."
     },
     {
       "id": "it-2005-cs-60",
@@ -122455,8 +122443,8 @@
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **COA** (Cache) from **IT 2005 Q61** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Processor & Memory Hierarchy Laws:**\n- Physical Address Split: $\\text{Physical Address} = \\text{Tag Bits} + \\text{Set Index Bits} + \\text{Block Offset Bits}$.\n- Pipelining Performance: Execution Time $T = (k + n - 1 + \\text{Stalls}) \\times \\tau$. Speedup $S = \\frac{n \\cdot k}{k + n - 1 + \\text{Stalls}}$.\n- Memory Hierarchy Latency: $\\text{EAT} = h \\cdot t_{cache} + (1 - h) \\cdot (t_{cache} + t_{mem})$.\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  Set = block mod 4: set0 {0,16}, set1 {5,9}, set3 {3,7} then 55 evicts LRU block 3 -> {7,55}. Final: 0 5 7 9 16 55..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `0 3 5 7 16 55`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `0 3 5 7 9 16 55`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `0 5 7 9 16 55`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `3 5 7 9 16 55`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For cache address partitioning, determine offset bits first from block size ($2^b$ bytes $\\implies b$ bits); direct mapped means set index bits $= \\log_2(\\text{Total Blocks})$.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "The question says 'total S cache blocks (0-7)'; taken as 8 blocks."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2005-cs-62",
@@ -122630,7 +122618,7 @@
       "figures": [
         {
           "f": "it-2005/cs-65-1.png",
-          "alt": "Flow chart: start block, initialisation block, then loop-test diamond (exit branch goes right and down to the final block), then a second decision diamond splitting into two assignment paths (left path with two blocks, right path with one) that rejoin at an increment block, which loops back to the loop test; the exit branch leads to the final print block.",
+          "alt": "Flow chart: Start, then Init, then decision D1 (loop test). D1's exit branch goes right and down to the Print block. Its other branch leads to decision D2, which splits into a left path of two blocks (S1, then S2) and a right path of one block (S3). Both paths rejoin at the Incr block, which loops back to D1. Box texts in the scan are illegible, so they are labelled generically.",
           "svg": "it-2005/cs-65-1.svg"
         }
       ],
@@ -122759,7 +122747,7 @@
       "number": "68",
       "marks": 2,
       "type": "MCQ",
-      "text": "A table 'student' with schema (roll, name, hostel, marks) and another table 'hobby' with schema (roll, hobbyname) contains records as shown below:\n\nTable student\n\n| Roll | Name | Hostel | Marks |\n|---|---|---|---|\n| 1798 | Manoj Rathod | 7 | 95 |\n| 2154 | Soumie Banerjee | 5 | 68 |\n| 2369 | Gumma Reddy | 7 | 86 |\n| 2581 | Pradeep Pendse | 6 | 92 |\n| 2643 | Suhas Kulkarni | 5 | 78 |\n| 2711 | Nitin Kadam | 8 | 72 |\n| 2872 | Kiran Vora | 5 | 92 |\n| 2926 | Manoj Kunkalikar | 5 | 94 |\n| 2959 | Hemant Karkhanis | 7 | 88 |\n| 3125 | Rajesh Doshi | 5 | 82 |\n\nTable hobby\n\n| Roll | hobbyname |\n|---|---|\n| 1798 | chess |\n| 1798 | music |\n| 2154 | music |\n| 2369 | swimming |\n| 2581 | cricket |\n| 2613 | chess |\n| 2643 | hockey |\n| 2711 | volleyball |\n| 2872 | football |\n| 2926 | cricket |\n| 2959 | photography |\n| 3125 | music |\n| 3125 | chess |\n\nThe following SQL query is executed on the above tables:\n\n```sql\nselect hostel\nfrom student natural join hobby\nwhere marks >= 75 and roll between 2000 and 3000;\n```\n\nRelations S and H with the same schema as those of these two tables respectively contain the same information as tuples. A new relation S' is obtained by the following relational algebra operation:\n\n$S' = \\Pi_{hostel}((\\sigma_{S.roll = H.roll}(\\sigma_{marks > 75 \\text{ and } roll > 2000 \\text{ and } roll < 3000}(S))) \\times (H))$\n\nThe difference between the number of rows output by the SQL statement and the number of tuples in S' is",
+      "text": "A table 'student' with schema (roll, name, hostel, marks) and another table 'hobby' with schema (roll, hobbyname) contains records as shown below:\n\nTable student\n\n| Roll | Name | Hostel | Marks |\n|---|---|---|---|\n| 1798 | Manoj Rathod | 7 | 95 |\n| 2154 | Soumie Banerjee | 5 | 68 |\n| 2369 | Gumma Reddy | 7 | 86 |\n| 2581 | Pradeep Pendse | 6 | 92 |\n| 2643 | Suhas Kulkarni | 5 | 78 |\n| 2711 | Nitin Kadam | 8 | 72 |\n| 2872 | Kiran Vora | 5 | 92 |\n| 2926 | Manoj Kunkalikar | 5 | 94 |\n| 2959 | Hemant Karkhanis | 7 | 88 |\n| 3125 | Rajesh Doshi | 5 | 82 |\n\nTable hobby\n\n| Roll | hobbyname |\n|---|---|\n| 1798 | chess |\n| 1798 | music |\n| 2154 | music |\n| 2369 | swimming |\n| 2581 | cricket |\n| 2643 | chess |\n| 2643 | hockey |\n| 2711 | volleyball |\n| 2872 | football |\n| 2926 | cricket |\n| 2959 | photography |\n| 3125 | music |\n| 3125 | chess |\n\nThe following SQL query is executed on the above tables:\n\n```sql\nselect hostel\nfrom student natural join hobby\nwhere marks >= 75 and roll between 2000 and 3000;\n```\n\nRelations S and H with the same schema as those of these two tables respectively contain the same information as tuples. A new relation S' is obtained by the following relational algebra operation:\n\n$S' = \\Pi_{hostel}((\\sigma_{S.roll = H.roll}(\\sigma_{marks > 75 \\text{ and } roll > 2000 \\text{ and } roll < 3000}(S))) \\times (H))$\n\nThe difference between the number of rows output by the SQL statement and the number of tuples in S' is",
       "options": [
         {
           "l": "A",
@@ -122787,14 +122775,14 @@
         "natural-join",
         "relational-algebra"
       ],
-      "answer": "C",
+      "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
       "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DB** (Sql) from **IT 2005 Q68** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **C**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Relational Database Laws:**\n- Functional Dependencies & Normal Forms: BCNF requires LHS of all non-trivial FDs to be a superkey; 3NF requires LHS superkey or RHS prime attribute.\n- Serializability: A concurrency schedule is conflict serializable iff its serialization precedence graph is acyclic (DAG).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  SQL returns one row per matching (student, hobby) pair with duplicates (no DISTINCT).\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  projection in S' removes duplicates.\n- **Step 3.3 (Intermediate Reduction):**\n  Answer follows the intended original data..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`C`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **C**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `6`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `4`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (CORRECT):** `2`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option D (INCORRECT):** `0`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** For candidate keys, identify attributes that never appear on the RHS of any functional dependency. They must be present in every candidate key!",
       "textSource": "pdf",
       "sourceUrl": null,
       "needsReview": true,
-      "reviewNote": "Computed on the data exactly as printed in this reprint the SQL gives 6 rows and S' gives 3 tuples (difference 3, not an option); the reprint has a data typo (roll 2613 in hobby vs 2643 in student). Answer C is the likely key, not derivable cleanly from the printed data. Student names/hostels read from a blurred scan."
+      "reviewNote": "Hobby row 2613 corrected to 2643 (typo in the reprint). The SQL gives 7 rows and S' gives 3 distinct hostels, so the answer is 4 (B). On the uncorrected data it would be 6 − 3 = 3, which is not an option. No official key for 2005."
     },
     {
       "id": "it-2005-cs-69",

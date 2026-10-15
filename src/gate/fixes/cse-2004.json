@@ -40,6 +40,412 @@
       "after": "number",
       "reason": "Number-system conversion belongs to digital logic (number systems).",
       "source": "GATE 2004 CS paper Q.19"
+    },
+    {
+      "id": "cse-2004-cs-25",
+      "field": "subject",
+      "before": "ga",
+      "after": "prob",
+      "reason": "Probability question in the technical section, not general aptitude (CSE 2004 had no GA section).",
+      "source": "GATE 2004 CS paper Q.25"
+    },
+    {
+      "id": "cse-2004-cs-25",
+      "field": "topic",
+      "before": "quant",
+      "after": "basic",
+      "reason": "Basic probability (binomial count).",
+      "source": "GATE 2004 CS paper Q.25"
+    },
+    {
+      "id": "cse-2004-cs-33",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Scan re-checked at higher resolution: the statement is p[i] = s[length - i]; answer D is proved (p[0] = NUL).",
+      "source": "GATE 2004 CS paper Q.33"
+    },
+    {
+      "id": "cse-2004-cs-34",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Scan re-checked: statements (i)-(viii) as transcribed; answer A follows from standard OO design.",
+      "source": "GATE 2004 CS paper Q.34"
+    },
+    {
+      "id": "cse-2004-cs-44",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Figure re-read at 250 dpi: all ten edge weights confirmed and redrawn; Dijkstra order B proved.",
+      "source": "GATE 2004 CS paper Q.44"
+    },
+    {
+      "id": "cse-2004-cs-37",
+      "field": "reviewNote",
+      "before": "Node labels in the four heap images are unreadable (low-res scan); answer derived by simulation and matches the published key (C), but the option contents could not be read individually.",
+      "after": "Option heaps are unreadable in the scan and were reconstructed from the standard version of this question (A: 32/30,25/15,12,20,16; B: 32/25,30/12,15,20,16; C: 32/30,25/15,12,16,20; D: 32/25,30/12,15,16,20). Simulating the insertions gives 32/30,25/15,12,20,16 = option A, not the stored key C. Key changed C -> A on the strength of the deterministic simulation; verify the option images against a clearer copy of the paper.",
+      "reason": "Record why the key was changed and what remains uncertain.",
+      "source": "GATE 2004 CS paper Q.37"
+    },
+    {
+      "id": "cse-2004-cs-37",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Inserting 32, 15, 20, 30, 12, 25, 16 one by one with sift-up deterministically yields level order 32, 30, 25, 15, 12, 20, 16 = option A; the stored key C (leaves 16, 20 under 25) is impossible because 20 moves to index 5 when 25 is sifted up and 16 is inserted last at index 6.",
+      "source": "GATE 2004 CS paper Q.37"
+    },
+    {
+      "id": "cse-2004-cs-37",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "![](/gate-fig/cse-2004/cs-37-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![](/gate-fig/cse-2004/cs-37-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![](/gate-fig/cse-2004/cs-37-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![](/gate-fig/cse-2004/cs-37-D.svg)"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "![Max-heap: root 32; children 30, 25; leaves 15, 12 under 30 and 20, 16 under 25](/gate-fig/cse-2004/cs-37-A.svg)"
+        },
+        {
+          "l": "B",
+          "t": "![Max-heap: root 32; children 25, 30; leaves 12, 15 under 25 and 20, 16 under 30](/gate-fig/cse-2004/cs-37-B.svg)"
+        },
+        {
+          "l": "C",
+          "t": "![Max-heap: root 32; children 30, 25; leaves 15, 12 under 30 and 16, 20 under 25](/gate-fig/cse-2004/cs-37-C.svg)"
+        },
+        {
+          "l": "D",
+          "t": "![Max-heap: root 32; children 25, 30; leaves 12, 15 under 25 and 16, 20 under 30](/gate-fig/cse-2004/cs-37-D.svg)"
+        }
+      ],
+      "reason": "Option heap images redrawn as SVG; add descriptive alt text for each option.",
+      "source": "GATE 2004 CS paper Q.37"
+    },
+    {
+      "id": "cse-2004-cs-47",
+      "field": "reviewNote",
+      "before": "My own computation with a 3-access miss gives 1260 ns (not an option); answer D is from recollection of the published key. Verify.",
+      "after": "Exact two-level accounting (TLB miss = 2 page-table accesses + 1 data access) gives 1260 ns, which is not an option; 1230 ns (D, the commonly accepted key) results only if a TLB miss costs one extra memory access. Confirm the intended model.",
+      "reason": "Precise statement of the discrepancy.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.47"
+    },
+    {
+      "id": "cse-2004-cs-48",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Re-read from the scan: the code is as transcribed, and the V() order does not affect which P() ordering avoids deadlock.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.48"
+    },
+    {
+      "id": "cse-2004-cs-48",
+      "field": "reviewNote",
+      "before": "Pseudo-code is tiny/blurry; the V() order in each process was read as V(Sx),V(Sy) for P1 and V(Sy),V(Sx) for P2.",
+      "after": null,
+      "reason": "Resolved.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.48"
+    },
+    {
+      "id": "cse-2004-cs-48",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2004/cs-48-1.png",
+          "alt": "Two while-true loops. P1: L1, L2 blanks, X=X+1, Y=Y-1, V(Sx), V(Sy). P2: L3, L4 blanks, Y=Y+1, X=X-1, V(Sy), V(Sx).",
+          "svg": "cse-2004/cs-48-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure is only the pseudo-code, which is already fully transcribed as a code block in the text; the old SVG was an unrelated placeholder.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.48"
+    },
+    {
+      "id": "cse-2004-cs-49",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Option C reads 2^34 and is consistent with the computation (≈2^34 bytes).",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.49"
+    },
+    {
+      "id": "cse-2004-cs-49",
+      "field": "reviewNote",
+      "before": "Option C exponent is blurry (read as 2^34).",
+      "after": null,
+      "reason": "Resolved.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.49"
+    },
+    {
+      "id": "cse-2004-cs-51",
+      "field": "text",
+      "before": "Consider the relation Student (<u>name</u>, sex, marks), where the primary key is shown underlined, pertaining to students in a class that has at least one boy and one girl. What does the following relational algebra expression produce? (Note: $\\rho$ is the rename operator).\n\n$\\Pi_{name}(\\sigma_{sex=female}(Student)) - \\Pi_{name}(Student \\bowtie_{(sex=female \\wedge x=male \\wedge marks<m)} \\rho_{n,x,m}(Student))$",
+      "after": "Consider the relation Student ($\\underline{name}$, sex, marks), where the primary key is shown underlined, pertaining to students in a class that has at least one boy and one girl. What does the following relational algebra expression produce? (Note: $\\rho$ is the rename operator).\n\n$$\\Pi_{name}(\\sigma_{sex=female}(Student)) - \\Pi_{name}\\left(Student \\bowtie_{(sex=female \\,\\wedge\\, x=male \\,\\wedge\\, marks \\le m)} \\rho_{n,x,m}(Student)\\right)$$",
+      "reason": "Remove raw HTML (<u>), display the expression with KaTeX; join condition is marks ≤ m as in the standard paper.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.51"
+    },
+    {
+      "id": "cse-2004-cs-51",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2004/cs-51-1.png",
+          "alt": "Pi_name(sigma_{sex=female}(Student)) minus Pi_name(Student join with condition (sex=female and x=male and marks<m) of rho_{n,x,m}(Student))",
+          "svg": "cse-2004/cs-51-1.svg"
+        }
+      ],
+      "after": [],
+      "reason": "The figure is only the RA expression, now fully in the text; the old SVG was an unrelated placeholder.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.51"
+    },
+    {
+      "id": "cse-2004-cs-51",
+      "field": "reviewNote",
+      "before": "Join condition and rename attributes are tiny in the scan; reconstructed from the standard version of the question.",
+      "after": "The comparison in the join condition is unreadable in the scan; transcribed as marks ≤ m (standard version). With marks < m the result would be girls with marks ≥ every boy; option D remains the best choice either way.",
+      "reason": "Updated note.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.51"
+    },
+    {
+      "id": "cse-2004-cs-52",
+      "field": "subject",
+      "before": "calc",
+      "after": "db",
+      "reason": "B+ tree index order is a database (indexing) question.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.52"
+    },
+    {
+      "id": "cse-2004-cs-52",
+      "field": "topic",
+      "before": "maxmin",
+      "after": "indexing",
+      "reason": "B+ tree index order is a database (indexing) question.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.52"
+    },
+    {
+      "id": "cse-2004-cs-56",
+      "field": "text",
+      "before": "Consider three IP networks A, B and C. Host 1-4 in network A sends messages each containing 180 bytes of application data to a host Hc in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nAssuming that the packets are correctly delivered, how many bytes, including headers, are delivered to the IP layer at the destination for one application message, in the best case? Consider only data packets.",
+      "after": "Consider three IP networks A, B and C. Host $H_A$ in network A sends messages each containing 180 bytes of application data to a host $H_C$ in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nAssuming that the packets are correctly delivered, how many bytes, including headers, are delivered to the IP layer at the destination for one application message, in the best case? Consider only data packets.",
+      "reason": "OCR junk: the paper says host H_A; host H_C in KaTeX.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.56"
+    },
+    {
+      "id": "cse-2004-cs-57",
+      "field": "text",
+      "before": "Consider three IP networks A, B and C. Host 1-4 in network A sends messages each containing 180 bytes of application data to a host Hc in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nWhat is the rate at which application data is transferred to host Hc? Ignore errors, acknowledgements, and other overheads.",
+      "after": "Consider three IP networks A, B and C. Host $H_A$ in network A sends messages each containing 180 bytes of application data to a host $H_C$ in network C. The TCP layer prefixes a 20 byte header to the message. This passes through an intermediate network B. The maximum packet size, including 20 byte IP header, in each network is:\n\nA: 1000 bytes\nB: 100 bytes\nC: 1000 bytes\n\nThe networks A and B are connected through a 1 Mbps link, while B and C are connected by a 512 Kbps link (bps = bits per second).\n\nWhat is the rate at which application data is transferred to host $H_C$? Ignore errors, acknowledgements, and other overheads.",
+      "reason": "OCR junk: the paper says host H_A; host H_C in KaTeX.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.57"
+    },
+    {
+      "id": "cse-2004-cs-57",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Computed rate disagrees with the stored (unofficial) key.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.57"
+    },
+    {
+      "id": "cse-2004-cs-57",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Each 180-byte application message crosses the 512 Kbps B–C link as 3 IP fragments totalling 260 bytes (Q.56), so application throughput = 512 × 180/260 ≈ 354.5 Kbps (option B). Stored key C (409.6 = 512 × 160/200) ignores fragmentation overhead. No official key available; verify before changing the answer.",
+      "reason": "Disagreement with stored key.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.57"
+    },
+    {
+      "id": "cse-2004-cs-60",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Option B reads \"T to X, R to Y, T to Z\" (already transcribed); answer unaffected.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.60"
+    },
+    {
+      "id": "cse-2004-cs-60",
+      "field": "reviewNote",
+      "before": "Option B printed 'T to K' (read as X); answer A is unaffected.",
+      "after": null,
+      "reason": "Resolved.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.60"
+    },
+    {
+      "id": "cse-2004-cs-62",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Delay derived independently: 2 (P via 2-level XOR) + 2 (AND-OR carry) + 2 (sum XOR) = 6.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.62"
+    },
+    {
+      "id": "cse-2004-cs-62",
+      "field": "reviewNote",
+      "before": "Delay count recalled from the published key.",
+      "after": null,
+      "reason": "Resolved.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.62"
+    },
+    {
+      "id": "cse-2004-cs-63",
+      "field": "text",
+      "before": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | R1 <- Memory[5000] | 2 |\n| MOV R2,(R1) | R2 <- Memory[(R1)] | 1 |\n| ADD R2,R3 | R2 <- R2 + R1 | 1 |\n| MOV 6000,R2 | Memory[6000] <- R2 | 2 |\n| HALT | Machine halts | 1 |\n\nConsider that the memory is byte addressable with word size 32 bits, and the program has been loaded starting from memory location 1000 (decimal). If an interrupt occurs while the CPU has been halted after executing the HALT instruction, the return address (in decimal) saved in the stack will be",
+      "after": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | $R1 \\leftarrow \\text{Memory}[5000]$ | 2 |\n| MOV R2,(R1) | $R2 \\leftarrow \\text{Memory}[(R1)]$ | 1 |\n| ADD R2,R3 | $R2 \\leftarrow R2 + R3$ | 1 |\n| MOV 6000,R2 | $\\text{Memory}[6000] \\leftarrow R2$ | 2 |\n| HALT | Machine halts | 1 |\n\nConsider that the memory is byte addressable with word size 32 bits, and the program has been loaded starting from memory location 1000 (decimal). If an interrupt occurs while the CPU has been halted after executing the HALT instruction, the return address (in decimal) saved in the stack will be",
+      "reason": "ADD operation is R2 ← R2 + R3 in the paper (was R1); arrows in KaTeX.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.63"
+    },
+    {
+      "id": "cse-2004-cs-64",
+      "field": "text",
+      "before": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | R1 <- Memory[5000] | 2 |\n| MOV R2,(R1) | R2 <- Memory[(R1)] | 1 |\n| ADD R2,R3 | R2 <- R2 + R1 | 1 |\n| MOV 6000,R2 | Memory[6000] <- R2 | 2 |\n| HALT | Machine halts | 1 |\n\nLet the clock cycles required for various operations be as follows:\n\nRegister to/from memory transfer: 3 clock cycles\n\nADD with both operands in register: 1 clock cycle\n\nInstruction fetch and decode: 2 clock cycles per word\n\nThe total number of clock cycles required to execute the program is",
+      "after": "Consider the following program segment for a hypothetical CPU having three user registers $R_1$, $R_2$ and $R_3$.\n\n| Instruction | Operation | Instruction Size (in words) |\n|---|---|---|\n| MOV R1,5000 | $R1 \\leftarrow \\text{Memory}[5000]$ | 2 |\n| MOV R2,(R1) | $R2 \\leftarrow \\text{Memory}[(R1)]$ | 1 |\n| ADD R2,R3 | $R2 \\leftarrow R2 + R3$ | 1 |\n| MOV 6000,R2 | $\\text{Memory}[6000] \\leftarrow R2$ | 2 |\n| HALT | Machine halts | 1 |\n\nLet the clock cycles required for various operations be as follows:\n\nRegister to/from memory transfer: 3 clock cycles\n\nADD with both operands in register: 1 clock cycle\n\nInstruction fetch and decode: 2 clock cycles per word\n\nThe total number of clock cycles required to execute the program is",
+      "reason": "ADD operation is R2 ← R2 + R3 in the paper (was R1); arrows in KaTeX.",
+      "source": "GATE 2004 CS question paper (scanned PDF) Q.64"
+    },
+    {
+      "id": "cse-2004-cs-71",
+      "field": "text",
+      "before": "How many solutions does the following system of linear equations have?\n\n$-x + 5y = -1$\n$x - y = 2$\n$x + 3y = 3$",
+      "after": "How many solutions does the following system of linear equations have?\n\n$$\\begin{aligned} -x + 5y &= -1 \\\\ x - y &= 2 \\\\ x + 3y &= 3 \\end{aligned}$$",
+      "reason": "Equations were on separate single-newline lines and rendered run together; set as an aligned display block.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-71",
+      "field": "reviewNote",
+      "before": "Right-hand side of the first equation was illegible in the scan; recovered from gateoverflow.",
+      "after": "The scan prints the first equation as \"-x + 5y = 1\" (the minus on the right-hand side looks lost). With RHS +1 the system is inconsistent (answer D); with the widely cited RHS -1 it has the unique solution (9/4, 1/4) (answer C). Text and key follow the -1 version.",
+      "reason": "Make the review note precise about how the two readings change the answer.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-84",
+      "field": "text",
+      "before": "The recurrence equation\n\nT(1) = 1\n\nT(n) = 2T(n-1) + n, $n \\geq 2$\n\nevaluates to",
+      "after": "The recurrence equation\n\n$$T(1) = 1, \\qquad T(n) = 2T(n-1) + n,\\quad n \\geq 2$$\n\nevaluates to",
+      "reason": "Typeset the recurrence in KaTeX.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-88",
+      "field": "text",
+      "before": "Consider the following grammar G:\n\n$S \\to bS \\mid aA \\mid b$\n$A \\to bA \\mid aB$\n$B \\to bB \\mid aS \\mid a$\n\nLet $N_a(w)$ and $N_b(w)$ denote the number of a's and b's in a string w respectively. The language $L(G) \\subseteq \\{a, b\\}^+$ generated by G is",
+      "after": "Consider the following grammar G:\n\n$\\begin{aligned} S &\\to bS \\mid aA \\mid b \\\\ A &\\to bA \\mid aB \\\\ B &\\to bB \\mid aS \\mid a \\end{aligned}$\n\nLet $N_a(w)$ and $N_b(w)$ denote the number of a's and b's in a string w respectively. The language $L(G) \\subseteq \\{a, b\\}^+$ generated by G is",
+      "reason": "Productions were on single-newline lines and rendered as one run-on line; set as an aligned display block.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-89",
+      "field": "text",
+      "before": "$L_1$ is a recursively enumerable language over $\\Sigma$. An algorithm A effectively enumerates its words as $w_1, w_2, w_3, \\ldots$. Define another language $L_2$ over $\\Sigma \\cup \\{\\#\\}$ as $\\{w_i \\# w_j : w_i, w_j \\in L_1, i < j\\}$. Here # is a new symbol. Consider the following assertions.\n\n$S_1$: $L_1$ is recursive implies $L_2$ is recursive\n$S_2$: $L_2$ is recursive implies $L_1$ is recursive\n\nWhich of the following statements is true?",
+      "after": "$L_1$ is a recursively enumerable language over $\\Sigma$. An algorithm A effectively enumerates its words as $w_1, w_2, w_3, \\ldots$. Define another language $L_2$ over $\\Sigma \\cup \\{\\#\\}$ as $\\{w_i \\# w_j : w_i, w_j \\in L_1, i < j\\}$. Here # is a new symbol. Consider the following assertions.\n\n$S_1$: $L_1$ is recursive implies $L_2$ is recursive\n\n$S_2$: $L_2$ is recursive implies $L_1$ is recursive\n\nWhich of the following statements is true?",
+      "reason": "S1 and S2 rendered on one line; separate them into paragraphs.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-73",
+      "field": "answer",
+      "before": "C",
+      "after": "A",
+      "reason": "Proof: adding {1} alone gives a bottom element and every pair then has a meet and a join ({1,2,3} and {1,3,5} meet at {1}; every join is {1,2,3,4,5} or a member), so the finite poset is a complete lattice; {1,3} is not necessary. Stored C was a solved (unofficial) key.",
+      "source": "independent proof"
+    },
+    {
+      "id": "cse-2004-cs-73",
+      "field": "needsReview",
+      "before": false,
+      "after": true,
+      "reason": "Pre-2014 key changed on proof, without an official key.",
+      "source": "independent proof"
+    },
+    {
+      "id": "cse-2004-cs-73",
+      "field": "reviewNote",
+      "before": null,
+      "after": "Key changed from C to A by proof: S together with {1} is already a complete lattice (finite, has bottom {1} and top {1,2,3,4,5}, all pairwise meets/joins exist), and {1} is necessary because {1,2} and {1,3,5} have no common lower bound in S. Option C adds the unnecessary {1,3}. No official key available.",
+      "reason": "independent proof",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-77",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Figure re-read at 250 dpi; the 16 edges in the alt text and the redrawn SVG match the paper.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-77",
+      "field": "reviewNote",
+      "before": "Edges read from a small figure.",
+      "after": null,
+      "reason": "Figure verified; note no longer applies.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-79",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Options re-read from a 250 dpi render; structure matches (A: C((n^2-n)/2,(n^2-3n)/2), B: sum to (n^2-3n)/2, C: C((n^2-n)/2, n), D: sum k=0..n).",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-79",
+      "field": "reviewNote",
+      "before": "Binomial indices in options are blurry; read from context.",
+      "after": null,
+      "reason": "Options verified; note no longer applies.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-85",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Derivation T(n) = 2T(n/2) + n/2 = Theta(n log n) is standard and the key B is the widely accepted answer.",
+      "source": "independent derivation"
+    },
+    {
+      "id": "cse-2004-cs-85",
+      "field": "reviewNote",
+      "before": "Confident in the derivation but the official key may differ; check.",
+      "after": null,
+      "reason": "Note no longer applies.",
+      "source": "independent derivation"
+    },
+    {
+      "id": "cse-2004-cs-90",
+      "field": "subject",
+      "before": "ga",
+      "after": "pds",
+      "reason": "Programming paradigms are a programming topic, not general aptitude.",
+      "source": "GATE 2004 question paper (scan)"
+    },
+    {
+      "id": "cse-2004-cs-90",
+      "field": "topic",
+      "before": "quant",
+      "after": "c",
+      "reason": "Same subject/topic as the other 2004 programming-concepts question (cs-1).",
+      "source": "GATE 2004 question paper (scan)"
     }
   ]
 }

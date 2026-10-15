@@ -1,0 +1,255 @@
+{
+  "paper": "cse-2003",
+  "fixes": [
+    {
+      "id": "cse-2003-cs-3",
+      "field": "text",
+      "before": "Let P(E) denote the probability of the event E. Given P(A) = 1, P(B) = ½, the values of P(A|B) and P(B|A) respectively are",
+      "after": "Let $P(E)$ denote the probability of the event $E$. Given $P(A) = 1$, $P(B) = \\frac{1}{2}$, the values of $P(A \\mid B)$ and $P(B \\mid A)$ respectively are",
+      "reason": "Typeset probabilities and fractions in KaTeX",
+      "source": "GATE 2003 question paper (PDF p.1)"
+    },
+    {
+      "id": "cse-2003-cs-3",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "¼, ½"
+        },
+        {
+          "l": "B",
+          "t": "½, ¼"
+        },
+        {
+          "l": "C",
+          "t": "½, 1"
+        },
+        {
+          "l": "D",
+          "t": "1, ½"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$\\frac{1}{4}, \\frac{1}{2}$"
+        },
+        {
+          "l": "B",
+          "t": "$\\frac{1}{2}, \\frac{1}{4}$"
+        },
+        {
+          "l": "C",
+          "t": "$\\frac{1}{2}, 1$"
+        },
+        {
+          "l": "D",
+          "t": "$1, \\frac{1}{2}$"
+        }
+      ],
+      "reason": "Typeset fractions in KaTeX (same values as the paper)",
+      "source": "GATE 2003 question paper (PDF p.1)"
+    },
+    {
+      "id": "cse-2003-cs-6",
+      "field": "text",
+      "before": "Let T(n) be the number of different binary search trees on n distinct elements. Then $T(n) = \\sum_{k=1}^{n} T(k-1)T(x)$, where x is",
+      "after": "Let $T(n)$ be the number of different binary search trees on $n$ distinct elements. Then $T(n) = \\sum_{k=1}^{n} T(k-1)\\,T(x)$, where $x$ is",
+      "reason": "Typeset variables in KaTeX",
+      "source": "GATE 2003 question paper (PDF p.1)"
+    },
+    {
+      "id": "cse-2003-cs-6",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "n - k + 1"
+        },
+        {
+          "l": "B",
+          "t": "n - k"
+        },
+        {
+          "l": "C",
+          "t": "n - k - 1"
+        },
+        {
+          "l": "D",
+          "t": "n - k - 2"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$n - k + 1$"
+        },
+        {
+          "l": "B",
+          "t": "$n - k$"
+        },
+        {
+          "l": "C",
+          "t": "$n - k - 1$"
+        },
+        {
+          "l": "D",
+          "t": "$n - k - 2$"
+        }
+      ],
+      "reason": "Typeset options in KaTeX",
+      "source": "GATE 2003 question paper (PDF p.1)"
+    },
+    {
+      "id": "cse-2003-cs-8",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "k and n"
+        },
+        {
+          "l": "B",
+          "t": "k-1 and k+1"
+        },
+        {
+          "l": "C",
+          "t": "k-1 and n-1"
+        },
+        {
+          "l": "D",
+          "t": "k+1 and n-k"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$k$ and $n$"
+        },
+        {
+          "l": "B",
+          "t": "$k-1$ and $k+1$"
+        },
+        {
+          "l": "C",
+          "t": "$k-1$ and $n-1$"
+        },
+        {
+          "l": "D",
+          "t": "$k+1$ and $n-k$"
+        }
+      ],
+      "reason": "Typeset options in KaTeX",
+      "source": "GATE 2003 question paper (PDF p.1)"
+    },
+    {
+      "id": "cse-2003-cs-36",
+      "field": "subject",
+      "before": "pds",
+      "after": "dm",
+      "reason": "Perfect matchings in K6 is a graph-theory (discrete maths) question, not C programming",
+      "source": "GATE 2003 question paper (PDF p.5)"
+    },
+    {
+      "id": "cse-2003-cs-36",
+      "field": "topic",
+      "before": "c-prog",
+      "after": "graphs",
+      "reason": "Perfect matchings in K6 is a graph-theory question",
+      "source": "GATE 2003 question paper (PDF p.5)"
+    },
+    {
+      "id": "cse-2003-cs-42",
+      "field": "figures",
+      "before": [
+        {
+          "f": "cse-2003/cs-42-1.png",
+          "alt": "Piecewise linear f(x): from (0,1.0) down to (0.5,0.5), then steeply down through root 0.6 to minimum (1.0,−0.8), then up through root 1.3 to (1.55,0.5) and on to (2.05,1.0). Initial guesses x0 (≈0.1), x1 (≈0.75, between 0.6 and 1.0) and x2 (≈1.8, between 1.55 and 2.05) marked on the x-axis.",
+          "svg": "cse-2003/cs-42-1.svg"
+        }
+      ],
+      "after": [
+        {
+          "f": "cse-2003/cs-42-1.png",
+          "alt": "Piecewise linear f(x) drawn with thick lines through (0, 1.0), (0.5, 0.5), (1.0, −0.8), (1.55, 0.5) and (2.05, 1.0), continuing upward. It crosses the x-axis at 0.6 (steep falling segment) and 1.3 (rising segment). Initial guesses are marked on the x-axis: x₀ ≈ 0.2 (on the first segment), x₁ between 0.6 and 1.0 (on the steep falling segment) and x₂ between 1.55 and 2.05.",
+          "svg": "cse-2003/cs-42-1.svg"
+        }
+      ],
+      "reason": "Figure redrawn as SVG from the paper; alt text made precise (x₀ position, all vertices)",
+      "source": "GATE 2003 question paper (PDF p.5)"
+    },
+    {
+      "id": "cse-2003-cs-73",
+      "field": "subject",
+      "before": "ga",
+      "after": "cd",
+      "reason": "Parameter passing and scoping belong to compiler runtime environments, not general aptitude.",
+      "source": "GATE 2003 CS paper Q.73"
+    },
+    {
+      "id": "cse-2003-cs-73",
+      "field": "topic",
+      "before": "quant",
+      "after": "runtime",
+      "reason": "Parameter passing and scoping belong to compiler runtime environments.",
+      "source": "GATE 2003 CS paper Q.73"
+    },
+    {
+      "id": "cse-2003-cs-74",
+      "field": "subject",
+      "before": "ga",
+      "after": "cd",
+      "reason": "Parameter passing and scoping belong to compiler runtime environments, not general aptitude.",
+      "source": "GATE 2003 CS paper Q.74"
+    },
+    {
+      "id": "cse-2003-cs-74",
+      "field": "topic",
+      "before": "quant",
+      "after": "runtime",
+      "reason": "Parameter passing and scoping belong to compiler runtime environments.",
+      "source": "GATE 2003 CS paper Q.74"
+    },
+    {
+      "id": "cse-2003-cs-75",
+      "field": "subject",
+      "before": "cn",
+      "after": "legacy",
+      "reason": "Object-oriented dynamic binding, not computer networks; matches other OOP questions (legacy/se).",
+      "source": "GATE 2003 CS paper Q.75"
+    },
+    {
+      "id": "cse-2003-cs-75",
+      "field": "topic",
+      "before": "transport",
+      "after": "se",
+      "reason": "Object-oriented dynamic binding question.",
+      "source": "GATE 2003 CS paper Q.75"
+    },
+    {
+      "id": "cse-2003-cs-80",
+      "field": "text",
+      "before": "The following information pertains to Q. 80-81. Suppose we want to synchronize two concurrent processes P and Q using binary semaphores S and T. The code for the processes P and Q is shown below.\n\n```\nProcess P:             Process Q:\nwhile (1) {            while (1) {\nW:                     Y:\n    print '0';             print '1';\n    print '0';             print '1';\nX:                     Z:\n}                      }\n```\n\nSynchronization statements can be inserted only at points W, X, Y, and Z.\n\nWhich of the following will always lead to an output staring with '001100110011'?",
+      "after": "The following information pertains to Q. 80-81. Suppose we want to synchronize two concurrent processes P and Q using binary semaphores S and T. The code for the processes P and Q is shown below.\n\n```\nProcess P:             Process Q:\nwhile (1) {            while (1) {\nW:                     Y:\n    print '0';             print '1';\n    print '0';             print '1';\nX:                     Z:\n}                      }\n```\n\nSynchronization statements can be inserted only at points W, X, Y, and Z.\n\nWhich of the following will always lead to an output starting with '001100110011'?",
+      "reason": "Fix typo 'staring' -> 'starting'.",
+      "source": "GATE 2003 CS paper Q.80"
+    },
+    {
+      "id": "cse-2003-cs-72",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "Answer verified: with P, Q, R as formulas (as option d presumes), P=true, Q=false, R=true makes P∨Q satisfiable but (P∨R)∧(Q∨¬R) unsatisfiable, so (c) is the FALSE statement; options match the PDF.",
+      "source": "GATE 2003 CS paper Q.72"
+    },
+    {
+      "id": "cse-2003-cs-72",
+      "field": "reviewNote",
+      "before": "Printed option (c) has '(Q∨¬ZR)', read as (Q ∨ ¬R). Answer uncertain: with P, Q, R as propositional variables all four statements look true.",
+      "after": null,
+      "reason": "Concern resolved; see needsReview fix.",
+      "source": "GATE 2003 CS paper Q.72"
+    }
+  ]
+}
