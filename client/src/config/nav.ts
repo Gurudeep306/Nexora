@@ -59,6 +59,9 @@ export const CREATE_SECTION: NavSection = {
   ],
 }
 
+/** Shown to anyone holding an admin-panel permission. */
+export const ADMIN_ITEM: NavItem = { to: '/admin', label: 'Admin', icon: 'shield' }
+
 export const ACCOUNT_ITEMS: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: 'profile' },
   { to: '/theme', label: 'Theme Centre', icon: 'palette' },
@@ -69,6 +72,7 @@ export const ACCOUNT_ITEMS: NavItem[] = [
 export function navMeta(pathname: string): { section?: string; label: string } {
   if (pathname.startsWith('/solve')) return { section: 'Play', label: 'Solve' }
   if (pathname.startsWith('/profile/')) return { section: 'Players', label: decodeURIComponent(pathname.split('/')[2] ?? '') }
+  if (pathname === '/admin') return { section: 'Account', label: 'Admin' }
   for (const sec of [...NAV_SECTIONS, CREATE_SECTION, { title: 'Account', items: ACCOUNT_ITEMS }]) {
     const hit = sec.items.find((i) => pathname === i.to || pathname.startsWith(`${i.to}/`))
     if (hit) return { section: sec.title, label: hit.label }

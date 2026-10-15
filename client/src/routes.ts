@@ -45,6 +45,7 @@ export const pageLoaders = {
   SettingsPage: () => import('@/pages/SettingsPage'),
   ThemeCentrePage: () => import('@/pages/ThemeCentrePage'),
   NotFoundPage: () => import('@/pages/NotFoundPage'),
+  AdminPage: () => import('@/pages/AdminPage'),
 } satisfies Record<string, Loader>
 
 /** First path segment → the chunk(s) that route renders. */
@@ -66,6 +67,7 @@ const BY_SEGMENT: Record<string, Loader[]> = {
   settings: [pageLoaders.SettingsPage],
   theme: [pageLoaders.ThemeCentrePage],
   auth: [pageLoaders.AuthPage],
+  admin: [pageLoaders.AdminPage],
 }
 
 const started = new Set<Loader>()
