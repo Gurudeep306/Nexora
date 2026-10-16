@@ -4,6 +4,14 @@
    see the signed-in student's own progress. */
 const { get, all } = require("../db");
 const { me, meSql } = require("../context");
+const { getCatalog, likeMatcher } = require("../problem-catalog");
+
+/** The current user's progress as Map(problem id -> status), by index. */
+async function myStatuses() {
+  const rows = await all("SELECT problem_rowid, status FROM progress WHERE username=?", [me()]);
+  return new Map(rows.map((r) => [r.problem_rowid, r.status]));
+}
+const ratingAsc = (a, b) => (a.rating === 0) - (b.rating === 0) || (a.rating ?? -1) - (b.rating ?? -1) || a.id - b.id;
 
 const clamp = (v, lo, hi, dflt) => {
   const n = Math.trunc(Number(v));
@@ -43,40 +51,30 @@ const slimProblem = (p) => ({
   status: p.solve_status || "unsolved",
 });
 
+// Problem lookups run against the in-memory catalog (src/problem-catalog.js):
+// the LIKE/ORDER BY queries they replace walked large parts of `problems`.
 async function searchProblems({ query, tags, minRating, maxRating, platform, status, limit } = {}) {
-  const where = ["1=1"];
-  const params = [];
-  if (platform && platform !== "all") {
-    where.push("p.platform=?");
-    params.push(String(platform));
+  const [catalog, statuses] = await Promise.all([getCatalog(), myStatuses()]);
+  const plat = platform && platform !== "all" ? String(platform) : null;
+  const min = Number.isFinite(+minRating) && minRating !== null && minRating !== "" ? +minRating : null;
+  const max = Number.isFinite(+maxRating) && maxRating !== null && maxRating !== "" ? +maxRating : null;
+  const tagLikes = (Array.isArray(tags) ? tags : tags ? [tags] : []).slice(0, 4).map((t) => likeMatcher(`%${String(t).slice(0, 40)}%`));
+  const q = query ? likeMatcher(`%${String(query).slice(0, 80)}%`) : null;
+  const out = [];
+  for (const p of catalog.rows) {
+    if (plat && p.platform !== plat) continue;
+    if (min != null && !(p.rating != null && p.rating >= min)) continue;
+    if (max != null && !(p.rating != null && p.rating <= max)) continue;
+    if (!tagLikes.every((m) => m(p.tags))) continue;
+    const st = statuses.get(p.id);
+    if (status === "solved" && (st || "unsolved") !== "solved") continue;
+    if (status === "attempted" && (st || "unsolved") !== "attempted") continue;
+    if (status === "unsolved" && !(st == null || st === "unsolved")) continue;
+    if (q && !q(p.title) && !q(p.problem_id)) continue;
+    out.push({ ...p, solve_status: st || "unsolved" });
   }
-  if (Number.isFinite(+minRating) && minRating !== null && minRating !== "") {
-    where.push("p.rating>=?");
-    params.push(+minRating);
-  }
-  if (Number.isFinite(+maxRating) && maxRating !== null && maxRating !== "") {
-    where.push("p.rating<=?");
-    params.push(+maxRating);
-  }
-  for (const t of (Array.isArray(tags) ? tags : tags ? [tags] : []).slice(0, 4)) {
-    where.push("p.tags LIKE ?");
-    params.push(`%${String(t).slice(0, 40)}%`);
-  }
-  if (status === "solved") where.push("COALESCE(pr.status,'unsolved')='solved'");
-  else if (status === "attempted") where.push("COALESCE(pr.status,'unsolved')='attempted'");
-  else if (status === "unsolved") where.push("(pr.status IS NULL OR pr.status='unsolved')");
-  if (query) {
-    where.push("(p.title LIKE ? OR p.problem_id LIKE ?)");
-    const q = `%${String(query).slice(0, 80)}%`;
-    params.push(q, q);
-  }
-  const rows = await all(
-    `SELECT p.id, p.platform, p.problem_id, p.title, p.rating, p.tags, COALESCE(pr.status,'unsolved') as solve_status
-     FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-     WHERE ${where.join(" AND ")} ORDER BY (p.rating=0), p.rating ASC LIMIT ?`,
-    [...params, clamp(limit, 1, 20, 10)],
-  );
-  return rows.map(slimProblem);
+  out.sort(ratingAsc);
+  return out.slice(0, clamp(limit, 1, 20, 10)).map(slimProblem);
 }
 
 /** Problem metadata + statement as plain text (≤ maxChars). */
@@ -155,14 +153,14 @@ async function weaknessAnalysis({ recommend = true } = {}) {
     .sort((a, b) => a.solveRate - b.solveRate);
   const recommendations = [];
   if (recommend) {
+    const [catalog, statuses] = await Promise.all([getCatalog(), myStatuses()]);
     for (const wt of analysis.filter((a) => a.solveRate < 70).slice(0, 5)) {
-      const probs = await all(
-        `SELECT p.id, p.title, p.problem_id, p.platform, p.rating, COALESCE(pr.status,'unsolved') as solve_status
-         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-         WHERE p.tags LIKE ? AND (pr.status IS NULL OR pr.status!='solved') AND p.rating>0
-         ORDER BY p.rating ASC LIMIT 5`,
-        [`%${wt.tag}%`],
-      );
+      const m = likeMatcher(`%${wt.tag}%`);
+      const probs = catalog.rows
+        .filter((p) => p.rating > 0 && m(p.tags) && statuses.get(p.id) !== "solved")
+        .sort(ratingAsc)
+        .slice(0, 5)
+        .map((p) => ({ id: p.id, title: p.title, problem_id: p.problem_id, platform: p.platform, rating: p.rating, solve_status: statuses.get(p.id) || "unsolved" }));
       if (probs.length) recommendations.push({ tag: wt.tag, solveRate: wt.solveRate, problems: probs });
     }
   }
@@ -177,18 +175,18 @@ async function recommendProblems({ tag, count } = {}) {
      WHERE pr.username=${meSql()} AND pr.status='solved' AND p.rating>0`,
   );
   const target = Math.round((avg?.r || 1000) / 100) * 100;
-  const where = ["(pr.status IS NULL OR pr.status!='solved')", "p.rating BETWEEN ? AND ?"];
-  const params = [target - 100, target + 300];
-  if (tag) {
-    where.push("p.tags LIKE ?");
-    params.push(`%${String(tag).slice(0, 40)}%`);
-  }
-  const rows = await all(
-    `SELECT p.id, p.platform, p.problem_id, p.title, p.rating, p.tags, COALESCE(pr.status,'unsolved') as solve_status
-     FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-     WHERE ${where.join(" AND ")} ORDER BY RANDOM() LIMIT ?`,
-    [...params, n],
+  const [catalog, statuses] = await Promise.all([getCatalog(), myStatuses()]);
+  const m = tag ? likeMatcher(`%${String(tag).slice(0, 40)}%`) : null;
+  const pool = catalog.rows.filter(
+    (p) => statuses.get(p.id) !== "solved" && p.rating != null && p.rating >= target - 100 && p.rating <= target + 300 && (!m || m(p.tags)),
   );
+  // ORDER BY RANDOM() LIMIT n: a partial Fisher–Yates shuffle.
+  const rows = [];
+  for (let i = 0; i < pool.length && rows.length < n; i++) {
+    const j = i + Math.floor(Math.random() * (pool.length - i));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+    rows.push({ ...pool[i], solve_status: statuses.get(pool[i].id) || "unsolved" });
+  }
   return { targetRating: target, problems: rows.map(slimProblem) };
 }
 

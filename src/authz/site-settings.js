@@ -5,9 +5,11 @@
 // so they are cached in memory. A write through this process invalidates the
 // cache at once (db onWrite hook); a write from elsewhere — the emergency CLI
 // in scripts/admin/, another instance — is picked up within CACHE_TTL_MS.
+// (Each re-read is a full read of the table, on every request's path, so the
+// TTL is a minute rather than seconds: ~1.4k reads a day instead of ~17k×rows.)
 const { all, run, onWrite } = require("../db");
 
-const CACHE_TTL_MS = 5000;
+const CACHE_TTL_MS = Number(process.env.SITE_SETTINGS_TTL_MS) || 60_000;
 
 const FEATURE_FLAGS = ["gate", "contests", "social", "ai_tutor", "practice"];
 

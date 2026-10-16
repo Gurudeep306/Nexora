@@ -6,6 +6,7 @@ import { UserBadges } from '@/components/shared/UserBadges'
 import { Delta, Empty, Failed, Kpi, Panel, RolePill, Skeleton, TrendChart } from './kit'
 import { ago, delta } from './format'
 import type { Overview } from './types'
+import { DbUsageCard } from './DbUsageCard'
 
 const sum = (a: number[]) => a.reduce((s, v) => s + v, 0)
 
@@ -54,6 +55,8 @@ export function OverviewSection({ onOpenUser }: { onOpenUser: (username: string)
         <Kpi label="Open reports" value={t.open_reports} icon="flag" tone={t.open_reports ? 'warning' : 'brand'} hint={`${formatNumber(t.banned)} banned or suspended`} />
         <Kpi label="Server errors · 24h" value={t.errors24h} icon="warning" tone={t.errors24h ? 'danger' : 'success'} hint={t.errors24h ? '5xx responses — check the logs' : 'All quiet'} />
       </div>
+
+      <DbUsageCard />
 
       <div className="grid gap-4 xl:grid-cols-2">
         <ChartPanel title="Sign-ups" total={sum(s.signups)} unit="new accounts" series={s.signups} days={days} color="var(--nx-b1)" />
