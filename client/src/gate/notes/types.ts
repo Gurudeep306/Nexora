@@ -86,6 +86,8 @@ export interface NotesSubject {
   chapterCount: number
   lessonCount: number
   est_minutes: number
+  /** PYQs in this subject's scope, and how many are mapped to lesson blocks. */
+  coverage: { total: number; covered: number }
 }
 
 export interface LessonRef {
@@ -148,7 +150,9 @@ export interface Lesson {
   prerequisites: LessonRef[]
   pyq_topics: string[]
   outline: { id: string; text: string; level: number }[]
-  blocks: { id: string; name: BlockName; depth: Depth }[]
+  blocks: { id: string; name: BlockName; depth: Depth; title?: string }[]
+  /** Every PYQ this lesson teaches (embedded or mapped in pyq-map.json), newest first. */
+  pyqLinks: PyqLink[]
   pyqs: string[]
   practice: string[]
   viz: string[]
@@ -163,6 +167,18 @@ export interface LessonPayload {
   viz: Record<string, VizSpec>
   prev: { id: string; title: string; chapter: string } | null
   next: { id: string; title: string; chapter: string } | null
+}
+
+export interface PyqLink {
+  id: string
+  year: number
+  marks: number | null
+  type: string
+  paper: string
+  /** Shown as a card in this lesson (else it lives in the practice bank). */
+  embedded: boolean
+  /** Block / heading ids in this lesson that teach it. */
+  tests: string[]
 }
 
 export interface SearchResult {

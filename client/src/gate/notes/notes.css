@@ -1809,3 +1809,159 @@ h4.notes-h {
     transform: none;
   }
 }
+
+/* ── PYQ links: lesson list, concept chips, subject coverage ─────────── */
+
+.notes-pyqs {
+  margin: 0 0 1.25rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 14px;
+  background: var(--color-bg-surface);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-text-stroke: 0;
+  font-variation-settings: normal;
+}
+.notes-pyqs > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+.notes-pyqs > summary strong {
+  display: inline-flex;
+  min-width: 1.6em;
+  justify-content: center;
+  margin-left: 6px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: var(--notes-subject-ink);
+  color: var(--notes-paper);
+  font-size: 13px;
+}
+.notes-pyqs ul {
+  display: grid;
+  gap: 4px;
+  margin: 0 !important;
+  padding: 0 10px 10px !important;
+  list-style: none !important;
+}
+.notes-pyqs li::before {
+  content: none !important;
+}
+.notes-pyq-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+  min-height: 40px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--color-text-primary) !important;
+  text-decoration: none !important;
+}
+.notes-pyq-row:hover {
+  background: var(--color-bg-surface-2);
+}
+.notes-pyq-year {
+  font-weight: 700;
+}
+.notes-pyq-where {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--notes-subject-ink);
+}
+.notes-pyq-tests {
+  display: block;
+  padding: 0 8px 6px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.nb-concepts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin: 0 0 0.9em;
+  font-family: var(--font-body);
+  font-size: 14px;
+  -webkit-text-stroke: 0;
+  font-variation-settings: normal;
+}
+.nb-concepts-label {
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+.nb-concepts ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+.nb-concepts li::before {
+  content: none !important;
+}
+.nb-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1.5px solid var(--notes-subject-ink);
+  border-radius: 999px;
+  color: var(--notes-subject-ink) !important;
+  text-decoration: none !important;
+  font-weight: 600;
+}
+.nb-chip:hover {
+  background: color-mix(in oklab, var(--notes-subject) 12%, transparent);
+}
+.nb-chip:focus-visible {
+  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
+  outline-offset: 2px;
+}
+
+.notes-coverage {
+  margin: -0.5rem 0 1.5rem;
+  padding: 14px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-surface);
+}
+.notes-coverage-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.notes-coverage-head strong {
+  font-size: 16px;
+  color: var(--color-text-primary);
+}
+.notes-coverage-bar {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
+  overflow: hidden;
+}
+.notes-coverage-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--notes-subject-ink);
+}
+@media print {
+  .notes-pyqs {
+    display: none !important;
+  }
+}

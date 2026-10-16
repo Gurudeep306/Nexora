@@ -27,7 +27,95 @@ import { useNotesPrefs } from '@/gate/notes/prefs'
 import { Crumbs, LessonTree, NotesRoot } from '@/gate/notes/ui'
 import { NotesContextProvider, Nodes, type NotesContext } from '@/gate/notes/render/NotesContent'
 import { domId } from '@/gate/notes/render/ids'
-import type { ChapterSummary, LessonPayload } from '@/gate/notes/types'
+import type { ChapterSummary, Lesson, LessonPayload, PyqLink } from '@/gate/notes/types'
+import { gateApi } from '@/gate/api'
+import { questionLink } from '@/gate/shell/links'
+
+const BLOCK_LABEL: Record<string, string> = {
+  intuition: 'Intuition',
+  definition: 'Definition',
+  theorem: 'Theorem',
+  proof: 'Proof',
+  derivation: 'Derivation',
+  example: 'Example',
+  check: 'Check',
+  trick: 'Trick',
+  trap: 'Trap',
+  table: 'Table',
+  summary: 'Summary',
+  note: 'Note',
+  aside: 'Aside',
+}
+
+/** Readable names for every block and heading a PYQ can point at. */
+function conceptTitles(lesson: Lesson): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const h of lesson.outline) out[h.id] = h.text
+  for (const b of lesson.blocks) {
+    const kind = BLOCK_LABEL[b.name] ?? b.name
+    out[b.id] = b.title ? `${kind}: ${b.title}` : kind
+  }
+  return out
+}
+
+const DIFF = ['', 'Easy', 'Easy-medium', 'Medium', 'Hard', 'Very hard']
+
+/* "PYQs from this lesson": every past question this lesson teaches, with its year, marks and difficulty. */
+function LessonPyqs({ links, concepts }: { links: PyqLink[]; concepts: Record<string, string> }) {
+  const [diff, setDiff] = useState<Record<string, number | null>>({})
+  const [open, setOpen] = useState(false)
+  useEffect(() => {
+    if (!open) return
+    let alive = true
+    for (const l of links)
+      gateApi
+        .questionStats(l.id)
+        .then((r) => alive && setDiff((d) => ({ ...d, [l.id]: r.stats.difficulty })))
+        .catch(() => {})
+    return () => {
+      alive = false
+    }
+  }, [open, links])
+  return (
+    <details className="notes-pyqs" onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
+      <summary>
+        <Icon name="gate" className="size-4" aria-hidden="true" />
+        <span>
+          PYQs from this lesson <strong>{links.length}</strong>
+        </span>
+      </summary>
+      <ul>
+        {links.map((l) => {
+          const href = l.embedded ? `#${domId(`pyq-${l.id}`)}` : questionLink(l.id)
+          const meta = (
+            <>
+              <span className="notes-pyq-year">GATE {l.year}</span>
+              <span>{l.marks ? `${l.marks} mark${l.marks === 1 ? '' : 's'}` : '—'}</span>
+              <span>{l.type}</span>
+              <span>{diff[l.id] ? DIFF[diff[l.id]!] : open && !(l.id in diff) ? '…' : 'Difficulty n/a'}</span>
+            </>
+          )
+          return (
+            <li key={l.id}>
+              {l.embedded ? (
+                <a href={href} className="notes-pyq-row">
+                  {meta}
+                  <span className="notes-pyq-where">in this lesson</span>
+                </a>
+              ) : (
+                <Link to={href} className="notes-pyq-row">
+                  {meta}
+                  <span className="notes-pyq-where">open in practice</span>
+                </Link>
+              )}
+              {l.tests.length > 0 && <span className="notes-pyq-tests">Tests: {l.tests.map((t) => concepts[t] ?? t).join(' · ')}</span>}
+            </li>
+          )
+        })}
+      </ul>
+    </details>
+  )
+}
 
 export default function NotesLessonPage() {
   const { subject = '', lesson = '' } = useParams()
@@ -80,6 +168,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
       pyqTopics: lesson.pyq_topics,
       cleanLines: prefs.cleanLines,
       setCleanLines: (on) => setPrefs({ cleanLines: on }),
+      concepts: conceptTitles(lesson),
     }),
     [subject, lesson, data.practice, data.viz, prefs.cleanLines, setPrefs],
   )
@@ -211,6 +300,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
                     ))}
                   </p>
                 )}
+                {lesson.pyqLinks.length > 0 && <LessonPyqs links={lesson.pyqLinks} concepts={ctx.concepts ?? {}} />}
                 {resumeFrom > 3 && resumeFrom < 97 && (
                   <button type="button" className="notes-resume" onClick={resume}>
                     <Icon name="play" className="size-3.5" aria-hidden="true" /> Continue where you left off ({resumeFrom}%)
