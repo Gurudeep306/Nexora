@@ -181,6 +181,42 @@ test('drafts and needs_review fail a production build but pass with --drafts', a
   assert.equal(await errorsFor(draft, {}, { drafts: true }), '');
 });
 
+test('PYQ coverage: published subjects must map every PYQ in scope to real blocks; drafts only warn', async () => {
+  // A two-question bank for subject "tst".
+  const bankFile = path.join(fs.mkdtempSync(path.join(tmp, 'bank-')), 'questions.json');
+  const q = (id, topic) => ({ id, paper: 'cse-2020', exam: 'CSE', year: 2020, subject: 'tst', topic, type: 'MCQ', marks: 1, text: 'Q', options: [], answer: 'A' });
+  fs.writeFileSync(bankFile, JSON.stringify({ version: 1, papers: [], subjects: {}, questions: [q('tst-1', 'number'), q('tst-2', 'number')] }));
+  const lesson = LESSON.replace('pyq_topics: [dl/number]', 'pyq_topics: [tst/number]') + '\n:::pyq{id="tst-1" tests="def-a"}\n:::\n';
+  const meta = (status) => JSON.stringify({ title: 'Test', order: 1, icon: 'binary', color: 'info', description: 'Scratch subject.', status });
+  const run = async (status, extra = {}) => {
+    const content = scratch(lesson, extra);
+    fs.writeFileSync(path.join(content, 'tst', '_meta.json'), meta(status));
+    return build({ content, questions: bankFile });
+  };
+
+  // tst-2 is not mapped: an error when published, a warning in draft.
+  let r = await run('published');
+  assert.match(r.errors.join('\n'), /1 of 2 PYQs in scope \(tst\) are not mapped to any lesson block/);
+  r = await run('draft');
+  assert.deepEqual(r.errors, []);
+  assert.match(r.warnings.join('\n'), /1 of 2 PYQs in scope/);
+
+  // Mapping tst-2 through pyq-map.json makes the published build pass and fills the coverage map.
+  const map = (tests) => ({ '01-basics/pyq-map.json': JSON.stringify([{ id: 'tst-2', lesson: 'alpha', tests }]) });
+  r = await run('published', map(['start']));
+  assert.deepEqual(r.errors, []);
+  const cov = JSON.parse(r.outputs.get('_coverage.json')).subjects.tst;
+  assert.equal(cov.total, 2);
+  assert.equal(cov.covered, 2);
+  assert.deepEqual(cov.byPyq['tst-1'][0].blocks.map((b) => b.id), ['def-a']);
+  assert.deepEqual(JSON.parse(r.outputs.get('tst.json')).lessons.alpha.pyqLinks.map((x) => [x.id, x.embedded]), [['tst-1', true], ['tst-2', false]]);
+  assert.match([...r.reports.values()][0], /Covered: \*\*2 \/ 2\*\* PYQs/);
+
+  // A mapping to a block that does not exist fails a published subject.
+  r = await run('published', map(['no-such-block']));
+  assert.match(r.errors.join('\n'), /pyq-map\.json:1: PYQ tst-2: block "no-such-block" is not in alpha/);
+});
+
 /* ── API ── */
 
 let proc;
@@ -275,6 +311,12 @@ test('API', async (t) => {
 
     const s = await call('GET', '/api/gate/notes/search?q=radix', owner);
     assert.equal(s.body.results[0].lesson, 'place-value');
+
+    // The coverage map: which blocks teach a PYQ (staff-only demo here).
+    const teach = await call('GET', '/api/gate/questions/cse-2023-cs-22/teaching', owner);
+    assert.deepEqual(teach.body.teaching[0].blocks.map((b) => b.id), ['place-value-def', 'expansion']);
+    assert.deepEqual((await call('GET', '/api/gate/questions/cse-2023-cs-22/teaching', ana)).body.teaching, []);
+    assert.ok(tree.body.subject.coverage.total >= tree.body.subject.coverage.covered);
   });
 
   await t.test('progress needs auth, validates input and stays per user', async () => {

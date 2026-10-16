@@ -16,6 +16,8 @@ const { hasAnyAdminPerm } = require("../authz/permissions");
  *   GET /api/gate/notes/:subject              chapter / lesson tree
  *   GET /api/gate/notes/:subject/:lesson      one lesson: AST, its practice
  *                                             questions and viz specs, prev/next
+ *   GET /api/gate/questions/:id/teaching      the lesson blocks that teach a PYQ
+ *                                             (from the coverage map, _coverage.json)
  *
  * Subjects marked hidden (the pipeline demo) exist only for staff. Lesson
  * `sources` never reach the compiled files, so they cannot leak from here.
@@ -48,6 +50,7 @@ function currentSignature() {
 function build() {
   const subjects = new Map();
   let search = [];
+  let coverage = {};
   let files = [];
   try {
     files = fs.readdirSync(DIR).filter((f) => f.endsWith(".json")).sort();
@@ -57,7 +60,9 @@ function build() {
   for (const f of files) {
     try {
       const doc = JSON.parse(fs.readFileSync(path.join(DIR, f), "utf8"));
-      if (f === "_search.json") {
+      if (f === "_coverage.json") {
+        coverage = doc.subjects || {};
+      } else if (f === "_search.json") {
         search = (doc.entries || []).map((e) => ({ ...e, _hay: [e.title, e.chapter, ...(e.headings || []), e.text].join(" \u0000 ").toLowerCase() }));
       } else if (!f.startsWith("_") && doc.version === 1 && doc.subject?.id) {
         subjects.set(doc.subject.id, view(doc));
@@ -66,7 +71,7 @@ function build() {
       console.error(`[gate-notes] cannot read ${f}: ${err.message}`);
     }
   }
-  return { subjects, search };
+  return { subjects, search, coverage };
 }
 
 /** Derived, response-ready shapes for one compiled subject. */
@@ -90,7 +95,7 @@ function view(doc) {
         ...(l.status !== "published" ? { status: l.status } : {}),
         prerequisites: l.prerequisites,
         pyq_topics: l.pyq_topics,
-        pyqCount: l.pyqs.length,
+        pyqCount: (l.pyqLinks || l.pyqs).length,
         practiceCount: l.practice.length,
       };
     }),
@@ -108,6 +113,7 @@ function view(doc) {
     chapterCount: chapters.length,
     lessonCount,
     est_minutes: order.reduce((n, id) => n + (doc.lessons[id].est_minutes || 0), 0),
+    coverage: s.coverage || { total: 0, covered: 0 },
   };
   const brief = (id) => (id ? { id, title: doc.lessons[id].title, chapter: doc.lessons[id].chapter } : null);
   const lessons = new Map();
@@ -256,6 +262,21 @@ function createGateNotesRouter() {
     const l = s.lessons.get(req.params.lesson);
     if (!l) return fail(res, 404, "Unknown lesson");
     res.json({ ok: true, subject: s.card, ...l });
+  });
+
+  /* Which lesson blocks teach a PYQ (for "Concepts this tests" and mistake links). */
+  router.get("/api/gate/questions/:id/teaching", cache, (req, res) => {
+    const id = String(req.params.id || "");
+    const teaching = [];
+    for (const [sid, cov] of Object.entries(load().coverage)) {
+      const s = subjectFor(req, sid);
+      if (!s) continue;
+      for (const x of cov.byPyq?.[id] || []) {
+        if (!x.blocks.length) continue;
+        teaching.push({ subject: sid, subjectTitle: s.card.title, lesson: x.lesson, title: x.title, blocks: x.blocks });
+      }
+    }
+    res.json({ ok: true, id, teaching });
   });
 
   /* ── Per-user study state ── */
