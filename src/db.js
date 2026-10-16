@@ -1013,6 +1013,113 @@ async function initDb() {
 
   await initGateTables();
   await initAdminTables();
+  await initSocialTables();
+}
+
+/* ===== Social network + profiles (src/routes/social.js) =====
+ * Posts, comments, likes, follows, blocks/mutes, notifications and the
+ * profile extras (cover, links, privacy, pins). Timestamps are epoch ms.
+ * Counters on posts/comments are kept in step by the routes so a feed page
+ * never has to COUNT(*) per row. One batch on Turso. */
+async function initSocialTables() {
+  await runBatch([
+    [`CREATE TABLE IF NOT EXISTS social_posts (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      kind TEXT NOT NULL DEFAULT 'post',
+      body TEXT NOT NULL DEFAULT '',
+      code TEXT,
+      code_lang TEXT,
+      images TEXT,
+      poll TEXT,
+      share TEXT,
+      quote_of INTEGER,
+      repost_of INTEGER,
+      like_count INTEGER NOT NULL DEFAULT 0,
+      comment_count INTEGER NOT NULL DEFAULT 0,
+      repost_count INTEGER NOT NULL DEFAULT 0,
+      featured_at INTEGER,
+      created_at INTEGER NOT NULL,
+      edited_at INTEGER,
+      deleted INTEGER NOT NULL DEFAULT 0
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_social_posts_user ON social_posts(username, created_at)"],
+    ["CREATE INDEX IF NOT EXISTS idx_social_posts_time ON social_posts(created_at)"],
+    ["CREATE INDEX IF NOT EXISTS idx_social_posts_featured ON social_posts(featured_at) WHERE featured_at IS NOT NULL"],
+    ["CREATE UNIQUE INDEX IF NOT EXISTS idx_social_reposts ON social_posts(username, repost_of) WHERE kind = 'repost' AND deleted = 0"],
+    [`CREATE TABLE IF NOT EXISTS social_comments (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      post_id INTEGER NOT NULL,
+      parent_id INTEGER,
+      username TEXT NOT NULL,
+      body TEXT NOT NULL,
+      like_count INTEGER NOT NULL DEFAULT 0,
+      created_at INTEGER NOT NULL,
+      edited_at INTEGER,
+      deleted INTEGER NOT NULL DEFAULT 0
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_social_comments_post ON social_comments(post_id, created_at)"],
+    ["CREATE INDEX IF NOT EXISTS idx_social_comments_user ON social_comments(username, created_at)"],
+    [`CREATE TABLE IF NOT EXISTS social_likes (
+      post_id INTEGER NOT NULL, username TEXT NOT NULL, created_at INTEGER NOT NULL,
+      PRIMARY KEY (post_id, username)
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_social_likes_user ON social_likes(username, created_at)"],
+    [`CREATE TABLE IF NOT EXISTS social_comment_likes (
+      comment_id INTEGER NOT NULL, username TEXT NOT NULL, created_at INTEGER NOT NULL,
+      PRIMARY KEY (comment_id, username)
+    )`],
+    [`CREATE TABLE IF NOT EXISTS social_bookmarks (
+      username TEXT NOT NULL, post_id INTEGER NOT NULL, created_at INTEGER NOT NULL,
+      PRIMARY KEY (username, post_id)
+    )`],
+    [`CREATE TABLE IF NOT EXISTS social_poll_votes (
+      post_id INTEGER NOT NULL, username TEXT NOT NULL, option INTEGER NOT NULL, created_at INTEGER NOT NULL,
+      PRIMARY KEY (post_id, username)
+    )`],
+    [`CREATE TABLE IF NOT EXISTS social_hashtags (
+      tag TEXT NOT NULL, post_id INTEGER NOT NULL, created_at INTEGER NOT NULL,
+      PRIMARY KEY (tag, post_id)
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_social_hashtags_time ON social_hashtags(created_at)"],
+    [`CREATE TABLE IF NOT EXISTS social_follows (
+      follower TEXT NOT NULL, followee TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'accepted', created_at INTEGER NOT NULL,
+      PRIMARY KEY (follower, followee)
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_social_follows_followee ON social_follows(followee, created_at)"],
+    [`CREATE TABLE IF NOT EXISTS social_blocks (
+      blocker TEXT NOT NULL, blocked TEXT NOT NULL, created_at INTEGER NOT NULL,
+      PRIMARY KEY (blocker, blocked)
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_social_blocks_blocked ON social_blocks(blocked)"],
+    [`CREATE TABLE IF NOT EXISTS social_mutes (
+      muter TEXT NOT NULL, muted TEXT NOT NULL, created_at INTEGER NOT NULL,
+      PRIMARY KEY (muter, muted)
+    )`],
+    [`CREATE TABLE IF NOT EXISTS social_notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      actor TEXT NOT NULL,
+      type TEXT NOT NULL,
+      post_id INTEGER,
+      comment_id INTEGER,
+      created_at INTEGER NOT NULL,
+      read_at INTEGER
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_social_notifications_user ON social_notifications(username, created_at)"],
+    [`CREATE TABLE IF NOT EXISTS social_profiles (
+      username TEXT PRIMARY KEY,
+      cover TEXT,
+      accent TEXT,
+      location TEXT,
+      pronouns TEXT,
+      website TEXT,
+      links TEXT,
+      visibility TEXT NOT NULL DEFAULT 'public',
+      pinned TEXT,
+      updated_at INTEGER
+    )`],
+  ]);
 }
 
 /* ===== Owner / admin system (src/authz/*, src/routes/admin.js) =====
@@ -1380,4 +1487,4 @@ async function migratePerUser() {
   }
 }
 
-module.exports = { run, get, all, runMany, runBatch, initDb, initAdminTables, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };
+module.exports = { run, get, all, runMany, runBatch, initDb, initAdminTables, initSocialTables, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };
