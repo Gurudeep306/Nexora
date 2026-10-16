@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Avatar, Button, ErrorState, LoadingBlock, SearchInput, Select } from '@/components/ui'
+import { Avatar, Select } from '@/components/ui'
 import { UserBadges } from '@/components/shared/UserBadges'
 import { Icon } from '@/components/icon/Icon'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { cn, formatNumber } from '@/lib/utils'
-import { RolePill } from './kit'
+import { Chip, Empty, Failed, Pager, RolePill, Skeleton } from './kit'
 import { ago } from './format'
 import type { AdminUserRow } from './types'
 
@@ -18,22 +18,41 @@ interface Filters {
   sort: string
 }
 const INITIAL: Filters = { q: '', role: 'all', status: 'all', joined: 'all', active: 'all', sort: 'joined' }
-const PAGE = 50
+const PAGE = 25
+
+function StatusCell({ u }: { u: AdminUserRow }) {
+  return (
+    <span className="flex flex-wrap gap-1">
+      {u.ban ? (
+        <Chip tone="danger" icon="lock">
+          {u.ban.until ? `Suspended · ${ago(u.ban.until).replace('in ', '')}` : 'Banned'}
+        </Chip>
+      ) : u.status === 'online' ? (
+        <Chip tone="success">
+          <span className="size-1.5 rounded-full bg-state-success" /> Online
+        </Chip>
+      ) : (
+        <span className="text-xs text-text-muted">Active</span>
+      )}
+      {u.earlyAccess && u.role !== 'owner' && u.role !== 'admin' && <Chip tone="violet">Early access</Chip>}
+    </span>
+  )
+}
 
 export function UsersSection({ onOpenUser, revision }: { onOpenUser: (username: string) => void; revision: number }) {
   const [filters, setFilters] = useState<Filters>(INITIAL)
   const [q, setQ] = useState('')
-  const [limit, setLimit] = useState(PAGE)
+  const [page, setPage] = useState(0)
   const set = (k: keyof Filters) => (v: string) => {
     setFilters((f) => ({ ...f, [k]: v }))
-    setLimit(PAGE)
+    setPage(0)
   }
 
   // Debounced search box.
   useEffect(() => {
     const t = setTimeout(() => {
       setFilters((f) => (f.q === q.trim() ? f : { ...f, q: q.trim() }))
-      setLimit(PAGE)
+      setPage(0)
     }, 200)
     return () => clearTimeout(t)
   }, [q])
@@ -45,55 +64,56 @@ export function UsersSection({ onOpenUser, revision }: { onOpenUser: (username: 
     joined: filters.joined === 'all' ? undefined : filters.joined,
     active: filters.active === 'all' ? undefined : filters.active,
     sort: filters.sort,
-    limit,
+    limit: PAGE,
+    offset: page * PAGE,
   }
   const { data, loading, error, refetch } = useApi(
     () => api.get<{ users: AdminUserRow[]; total: number }>('/api/admin/users', { query }),
     [JSON.stringify(query), revision],
   )
-
   const filtered = JSON.stringify({ ...filters, q }) !== JSON.stringify({ ...INITIAL, q: '' })
+  const reset = () => {
+    setFilters(INITIAL)
+    setQ('')
+    setPage(0)
+  }
 
   return (
-    <div className="space-y-4">
-      <div className="card flex flex-col gap-2 p-3 2xl:flex-row 2xl:items-center">
-        <SearchInput
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          onClear={() => setQ('')}
-          placeholder="Search username, name or email"
-          containerClassName="2xl:flex-1"
-          aria-label="Search users"
-          autoFocus
-        />
-        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5 2xl:flex 2xl:flex-none">
-          <Select value={filters.role} onValueChange={set('role')} aria-label="Role" className="2xl:w-32">
+    <div className="space-y-3">
+      {/* ── filters ── */}
+      <div className="nx-panel flex flex-col gap-2 p-2.5 xl:flex-row xl:items-center">
+        <label className="relative block xl:flex-1">
+          <Icon name="search" className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-text-muted" />
+          <input className="nx-input !pl-9" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by username, name or email" aria-label="Search users" autoFocus />
+        </label>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 xl:flex">
+          <Select value={filters.role} onValueChange={set('role')} aria-label="Role" className="!h-[2.375rem] xl:w-32">
             <option value="all">All roles</option>
             <option value="owner">Owner</option>
             <option value="admin">Admins</option>
             <option value="moderator">Moderators</option>
             <option value="member">Members</option>
           </Select>
-          <Select value={filters.status} onValueChange={set('status')} aria-label="Status" className="2xl:w-36">
+          <Select value={filters.status} onValueChange={set('status')} aria-label="Status" className="!h-[2.375rem] xl:w-36">
             <option value="all">Any status</option>
             <option value="active">Not banned</option>
             <option value="banned">Banned</option>
             <option value="verified">Verified</option>
             <option value="early">Early access</option>
           </Select>
-          <Select value={filters.joined} onValueChange={set('joined')} aria-label="Joined" className="2xl:w-36">
+          <Select value={filters.joined} onValueChange={set('joined')} aria-label="Joined" className="!h-[2.375rem] xl:w-36">
             <option value="all">Joined any time</option>
             <option value="1">Joined today</option>
             <option value="7">Joined this week</option>
             <option value="30">Joined this month</option>
           </Select>
-          <Select value={filters.active} onValueChange={set('active')} aria-label="Active" className="2xl:w-36">
+          <Select value={filters.active} onValueChange={set('active')} aria-label="Active" className="!h-[2.375rem] xl:w-36">
             <option value="all">Any activity</option>
             <option value="1">Active today</option>
             <option value="7">Active this week</option>
             <option value="30">Active this month</option>
           </Select>
-          <Select value={filters.sort} onValueChange={set('sort')} aria-label="Sort" className="2xl:w-36">
+          <Select value={filters.sort} onValueChange={set('sort')} aria-label="Sort" className="col-span-2 !h-[2.375rem] sm:col-span-1 xl:w-36">
             <option value="joined">Newest first</option>
             <option value="seen">Last seen</option>
             <option value="name">Username A–Z</option>
@@ -101,86 +121,99 @@ export function UsersSection({ onOpenUser, revision }: { onOpenUser: (username: 
         </div>
       </div>
 
-      <div className="flex items-center justify-between px-1 text-xs text-text-secondary">
-        <span className="tabular-nums">{data ? `${formatNumber(data.total)} ${data.total === 1 ? 'user' : 'users'}` : ' '}</span>
+      <div className="flex h-5 items-center justify-between px-1 text-xs text-text-muted">
+        <span className="nx-num">{data ? `${formatNumber(data.total)} ${data.total === 1 ? 'user' : 'users'}` : ''}</span>
         {filtered && (
-          <button
-            type="button"
-            onClick={() => {
-              setFilters(INITIAL)
-              setQ('')
-            }}
-            className="cursor-pointer text-accent-brand hover:underline"
-          >
+          <button type="button" onClick={reset} className="cursor-pointer font-medium text-[var(--nx-b1)] hover:underline">
             Clear filters
           </button>
         )}
       </div>
 
       {error ? (
-        <ErrorState message={error} onRetry={refetch} />
-      ) : !data && loading ? (
-        <LoadingBlock rows={8} />
+        <div className="nx-panel">
+          <Failed message={error} onRetry={refetch} />
+        </div>
       ) : (
-        <div className="card overflow-hidden">
-          <div className="hidden grid-cols-[minmax(0,2.2fr)_110px_minmax(0,1fr)_110px_110px] gap-3 border-b border-border px-4 py-2 text-[11px] font-semibold tracking-wider text-text-muted uppercase md:grid">
-            <span>User</span>
-            <span>Role</span>
-            <span>Status</span>
-            <span>Joined</span>
-            <span>Last seen</span>
-          </div>
-          {data?.users.length === 0 && <p className="px-4 py-10 text-center text-sm text-text-secondary">No users match these filters.</p>}
-          <ul className={cn('divide-y divide-border', loading && 'opacity-60')}>
-            {data?.users.map((u) => (
-              <li key={u.username}>
-                <button
-                  type="button"
+        <div className="nx-panel">
+          <table className="w-full table-fixed border-separate border-spacing-0 text-left">
+            <colgroup>
+              <col />
+              <col className="w-[116px]" />
+              <col className="hidden w-[190px] md:table-column" />
+              <col className="hidden w-[104px] lg:table-column" />
+              <col className="hidden w-[104px] lg:table-column" />
+            </colgroup>
+            <thead>
+              <tr className="text-[11px] font-semibold tracking-[0.08em] text-text-muted uppercase">
+                {['User', 'Role', 'Status', 'Joined', 'Last seen'].map((h, i) => (
+                  <th
+                    key={h}
+                    className={cn(
+                      'sticky top-14 z-10 border-b border-[color:var(--nx-hair)] bg-bg-surface/90 px-4 py-2.5 font-semibold backdrop-blur-md first:rounded-tl-2xl last:rounded-tr-2xl',
+                      i === 2 && 'hidden md:table-cell',
+                      i >= 3 && 'hidden lg:table-cell',
+                      i === 1 && 'rounded-tr-2xl md:rounded-tr-none',
+                    )}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className={cn(loading && data && 'opacity-60 transition-opacity')}>
+              {!data &&
+                Array.from({ length: 8 }, (_, i) => (
+                  <tr key={i}>
+                    <td colSpan={5} className="px-4 py-2.5">
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="size-8 !rounded-full" />
+                        <Skeleton className="h-3.5 w-40" />
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              {data?.users.map((u) => (
+                <tr
+                  key={u.username}
+                  tabIndex={0}
                   onClick={() => onOpenUser(u.username)}
-                  className="grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-bg-surface-2 md:grid-cols-[minmax(0,2.2fr)_110px_minmax(0,1fr)_110px_110px]"
+                  onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), onOpenUser(u.username))}
+                  className="group cursor-pointer outline-none [&>td]:border-b [&>td]:border-[color:var(--nx-hair)] last:[&>td]:border-b-0 hover:bg-[color-mix(in_oklab,var(--color-text-primary)_3%,transparent)] focus-visible:bg-[color-mix(in_oklab,var(--nx-b1)_8%,transparent)]"
                 >
-                  <span className="flex min-w-0 items-center gap-3">
-                    <Avatar seed={u.username} avatar={u.avatar} src={u.avatar_url} name={u.display_name || u.username} size="sm" online={u.status === 'online'} />
-                    <span className="min-w-0">
-                      <span className="flex items-center gap-1.5 truncate text-sm font-medium text-text-primary">
-                        <span className="truncate">{u.display_name || u.username}</span>
-                        <UserBadges username={u.username} role={u.role} verified={u.verified} />
-                      </span>
-                      <span className="block truncate text-xs text-text-secondary">
-                        @{u.username}
-                        {u.email ? ` · ${u.email}` : ''}
+                  <td className="px-4 py-2.5">
+                    <span className="flex min-w-0 items-center gap-3">
+                      <Avatar seed={u.username} avatar={u.avatar} src={u.avatar_url} name={u.display_name || u.username} size="sm" online={u.status === 'online'} />
+                      <span className="min-w-0">
+                        <span className="flex items-center gap-1.5 text-[13.5px] font-medium text-text-primary">
+                          <span className="truncate">{u.display_name || u.username}</span>
+                          <UserBadges username={u.username} role={u.role} verified={u.verified} size={14} />
+                        </span>
+                        <span className="block truncate text-xs text-text-muted">
+                          @{u.username}
+                          {u.email ? ` · ${u.email}` : ''}
+                        </span>
                       </span>
                     </span>
-                  </span>
-                  <span>
+                  </td>
+                  <td className="px-4 py-2.5">
                     <RolePill role={u.role} />
-                  </span>
-                  <span className="hidden min-w-0 flex-wrap gap-1 md:flex">
-                    {u.ban ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-state-error/25 bg-state-error/10 px-2 py-0.5 text-[11px] font-medium text-state-error">
-                        <Icon name="lock" className="size-3" />
-                        {u.ban.until ? `Suspended · ${ago(u.ban.until)}` : 'Banned'}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-text-muted">Active</span>
-                    )}
-                    {u.earlyAccess && u.role !== 'owner' && u.role !== 'admin' && (
-                      <span className="rounded-full border border-accent-brand/25 bg-accent-brand/10 px-2 py-0.5 text-[11px] font-medium text-accent-brand">Early access</span>
-                    )}
-                  </span>
-                  <span className="hidden text-xs text-text-secondary md:block">{ago(u.created_at)}</span>
-                  <span className="hidden text-xs text-text-secondary md:block">{u.status === 'online' ? <span className="text-state-success">Online</span> : ago(u.last_seen)}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          {data && data.users.length < data.total && (
-            <div className="border-t border-border p-3 text-center">
-              <Button variant="secondary" size="sm" loading={loading} onClick={() => setLimit((l) => Math.min(l + PAGE, 200))} disabled={limit >= 200}>
-                {limit >= 200 ? 'Refine the search to see more' : 'Show more'}
-              </Button>
-            </div>
+                  </td>
+                  <td className="hidden px-4 py-2.5 md:table-cell">
+                    <StatusCell u={u} />
+                  </td>
+                  <td className="nx-num hidden px-4 py-2.5 text-xs text-text-secondary lg:table-cell">{ago(u.created_at)}</td>
+                  <td className="nx-num hidden px-4 py-2.5 text-xs text-text-secondary lg:table-cell">{u.status === 'online' ? 'now' : ago(u.last_seen)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {data?.users.length === 0 && (
+            <Empty icon="search" title="No users match" action={filtered ? <button type="button" className="nx-btn" data-size="sm" onClick={reset}>Clear filters</button> : undefined}>
+              Try a different name or loosen the filters.
+            </Empty>
           )}
+          {data && <Pager page={page} pageSize={PAGE} total={data.total} onPage={setPage} />}
         </div>
       )}
     </div>

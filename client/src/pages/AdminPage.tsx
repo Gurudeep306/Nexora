@@ -1,34 +1,50 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
-import { Button, ErrorState, LoadingBlock } from '@/components/ui'
-import { Icon, IconBadge, type IconName } from '@/components/icon/Icon'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import '@fontsource-variable/bricolage-grotesque/opsz.css'
+import '@/components/site/brand.css'
+import { Icon, type IconName } from '@/components/icon/Icon'
 import { useApi } from '@/hooks/useApi'
 import { api } from '@/lib/api'
 import { refreshBadges } from '@/lib/badges'
 import { useSite } from '@/context/SiteContext'
 import { cn } from '@/lib/utils'
-import { RolePill } from '@/components/admin/kit'
+import { Failed, RolePill, Skeleton } from '@/components/admin/kit'
 import { OverviewSection } from '@/components/admin/OverviewSection'
 import { UsersSection } from '@/components/admin/UsersSection'
 import { UserDrawer } from '@/components/admin/UserDrawer'
 import { AnnouncementsPanel, SiteSettingsPanel } from '@/components/admin/SiteSection'
 import { ModerationSection } from '@/components/admin/ModerationSection'
 import { AuditSection } from '@/components/admin/AuditSection'
+import NotFoundPage from '@/pages/NotFoundPage'
 import type { AdminMe } from '@/components/admin/types'
 
-type SectionId = 'overview' | 'users' | 'site' | 'announcements' | 'moderation' | 'audit'
+type SectionId = 'overview' | 'users' | 'moderation' | 'site' | 'announcements' | 'audit'
 
-const SECTIONS: { id: SectionId; label: string; icon: IconName; perm: string; blurb: string }[] = [
-  { id: 'overview', label: 'Overview', icon: 'chart', perm: 'analytics.view', blurb: 'Totals, trends and who is around' },
-  { id: 'users', label: 'Users', icon: 'users', perm: 'users.view', blurb: 'Search, roles, permissions, bans' },
-  { id: 'site', label: 'Site', icon: 'globe', perm: 'site.settings', blurb: 'Private mode, flags, registrations' },
-  { id: 'announcements', label: 'Announcements', icon: 'bell', perm: 'announcements.post', blurb: 'Banner bar and broadcasts' },
-  { id: 'moderation', label: 'Moderation', icon: 'flag', perm: 'content.moderate', blurb: 'Reports queue and removals' },
-  { id: 'audit', label: 'Audit log', icon: 'list', perm: 'audit.view', blurb: 'Every admin action' },
+const GROUPS: { label: string; items: { id: SectionId; label: string; icon: IconName; perm: string; title: string; blurb: string }[] }[] = [
+  {
+    label: 'Insights',
+    items: [{ id: 'overview', label: 'Overview', icon: 'chart', perm: 'analytics.view', title: 'Overview', blurb: 'How NexoraGuru is doing over the last 30 days.' }],
+  },
+  {
+    label: 'People',
+    items: [
+      { id: 'users', label: 'Users', icon: 'users', perm: 'users.view', title: 'Users', blurb: 'Search accounts, change roles and permissions, ban and verify.' },
+      { id: 'moderation', label: 'Moderation', icon: 'flag', perm: 'content.moderate', title: 'Moderation', blurb: 'Reports from the community — remove, restore, resolve.' },
+    ],
+  },
+  {
+    label: 'Platform',
+    items: [
+      { id: 'site', label: 'Site', icon: 'globe', perm: 'site.settings', title: 'Site', blurb: 'Private mode, early access, sign-ups, feature flags and maintenance.' },
+      { id: 'announcements', label: 'Announcements', icon: 'bell', perm: 'announcements.post', title: 'Announcements', blurb: 'The bar above every page, and notifications to everyone.' },
+      { id: 'audit', label: 'Audit log', icon: 'list', perm: 'audit.view', title: 'Audit log', blurb: 'Every admin action — who, what, when, from where.' },
+    ],
+  },
 ]
+const ALL = GROUPS.flatMap((g) => g.items)
 
 export default function AdminPage() {
-  const { data: me, loading, error, refetch } = useApi(() => api.get<AdminMe>('/api/admin/me'), [])
+  const { data: me, loading, error, refetch } = useApi(() => api.get<AdminMe>('/api/admin/me'), [], { cacheKey: 'admin:me' })
   const [params, setParams] = useSearchParams()
   const [revision, setRevision] = useState(0)
   const { previewAsMember, setPreviewAsMember, status } = useSite()
@@ -36,37 +52,35 @@ export default function AdminPage() {
 
   if (loading && !me) {
     return (
-      <div className="py-8">
-        <LoadingBlock rows={8} />
+      <div className="grid gap-6 pt-2 lg:grid-cols-[236px_minmax(0,1fr)]">
+        <Skeleton className="hidden h-80 lg:block" />
+        <div className="space-y-4">
+          <Skeleton className="h-24" />
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+            {[0, 1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-36" />
+            ))}
+          </div>
+          <Skeleton className="h-64" />
+        </div>
       </div>
     )
   }
-  if (error || !me) {
-    const denied = error && /admin|permission|sign in/i.test(error)
-    return denied ? (
-      <div className="mx-auto flex max-w-md flex-col items-center py-24 text-center">
-        <IconBadge name="lock" tone="neutral" box="lg" />
-        <h1 className="mt-5 font-display text-xl font-semibold text-text-primary">Admins only</h1>
-        <p className="mt-2 text-sm text-text-secondary">You don't have access to the admin panel.</p>
-        <Link to="/hub" className="mt-6 text-sm font-medium text-accent-brand hover:underline">
-          Back to home
-        </Link>
-      </div>
-    ) : (
-      <ErrorState message={error ?? 'Could not load the admin panel'} onRetry={refetch} />
-    )
-  }
+  // The API 404s for non-admins: show the ordinary not-found page.
+  if (error && /not found/i.test(error)) return <NotFoundPage />
+  if (error || !me) return <Failed message={error ?? 'Could not load the admin panel'} onRetry={refetch} />
 
   const can = (p: string) => me.isOwner || me.permissions.includes(p)
-  const visible = SECTIONS.filter((s) => can(s.perm))
+  const visible = ALL.filter((s) => can(s.perm))
   const requested = params.get('section') as SectionId | null
-  const section = visible.find((s) => s.id === requested)?.id ?? visible[0]?.id
+  const current = visible.find((s) => s.id === requested) ?? visible[0]
   const openUser = params.get('user')
   const go = (id: SectionId) => {
     const next = new URLSearchParams(params)
     next.set('section', id)
     next.delete('user')
     setParams(next, { replace: true })
+    window.scrollTo({ top: 0 })
   }
   const setUser = (u: string | null) => {
     if (!can('users.view')) return
@@ -81,92 +95,139 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="pb-10">
+    <div className="pb-12">
       {/* ── header ── */}
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-4">
-          <IconBadge name={me.isOwner ? 'crown' : 'shield'} tone={me.isOwner ? 'gold' : 'accent'} box="lg" />
-          <div className="min-w-0">
-            <p className="mb-0.5 text-[11px] font-semibold tracking-[0.14em] text-accent-brand/80 uppercase">NexoraGuru</p>
-            <h1 className="font-display text-[26px] leading-tight font-semibold tracking-tight text-text-primary md:text-[30px]">Admin</h1>
-            <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-text-secondary">
-              Signed in as @{me.username} <RolePill role={me.role} />
-              {status?.private && (
-                <span className="inline-flex items-center gap-1 rounded-full border border-state-warning/30 bg-state-warning/10 px-2 py-0.5 text-[11px] font-medium text-state-warning">
-                  <Icon name="lock" className="size-3" /> Site is private
-                </span>
+      <header className="nx-panel relative isolate mb-6 overflow-hidden !rounded-[20px] px-5 py-5 sm:px-6">
+        <div className="nx-atmos" aria-hidden="true" />
+        <div className="relative z-10 flex flex-wrap items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-4">
+            <span
+              className={cn(
+                'flex size-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.3),0_8px_24px_-10px_var(--glow)]',
+                me.isOwner ? 'bg-[linear-gradient(160deg,#ffd66b,#e09a1a)] [--glow:#e09a1a]' : 'bg-[linear-gradient(140deg,#3a63f0,#6d3df0_60%,#0e9488)] [--glow:#6d3df0]',
               )}
-            </p>
+            >
+              <Icon name={me.isOwner ? 'crown' : 'shield'} className="size-6" />
+            </span>
+            <div className="min-w-0">
+              <h1 className="nx-display text-[28px] leading-none font-semibold text-text-primary sm:text-[32px]">Admin</h1>
+              <p className="mt-2 flex flex-wrap items-center gap-2 text-[13px] text-text-secondary">
+                <span>@{me.username}</span>
+                <RolePill role={me.role} />
+                {status && (
+                  <span className="nx-chip" data-tone={status.private ? 'warning' : 'success'}>
+                    <span className={cn('size-1.5 rounded-full', status.private ? 'bg-state-warning' : 'bg-state-success')} />
+                    {status.private ? 'Private — coming soon' : 'Public'}
+                  </span>
+                )}
+              </p>
+            </div>
           </div>
+          {me.isOwner && (
+            <button
+              type="button"
+              className="nx-btn"
+              onClick={() => {
+                setPreviewAsMember(!previewAsMember)
+                navigate('/hub')
+              }}
+            >
+              <Icon name="eye" /> View as member
+            </button>
+          )}
         </div>
-        {me.isOwner && (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => {
-              setPreviewAsMember(!previewAsMember)
-              if (!previewAsMember) navigate('/hub')
-            }}
-          >
-            <Icon name="eye" /> View as member
-          </Button>
-        )}
-      </div>
+      </header>
 
       {visible.length === 0 ? (
-        <p className="card px-4 py-10 text-center text-sm text-text-secondary">Your permissions don't include any admin sections yet.</p>
+        <div className="nx-panel">
+          <Failed message="Your permissions don't include any admin sections yet." />
+        </div>
       ) : (
-        <div className="grid gap-6 lg:grid-cols-[220px_minmax(0,1fr)]">
-          {/* ── section nav ── */}
-          <nav aria-label="Admin sections" className="lg:sticky lg:top-20 lg:self-start">
-            <ul className="-mx-1 flex gap-1 overflow-x-auto px-1 pb-1 [scrollbar-width:none] lg:mx-0 lg:flex-col lg:overflow-visible lg:px-0">
-              {visible.map((s) => {
-                const on = s.id === section
+        <div className="grid gap-6 lg:grid-cols-[236px_minmax(0,1fr)]">
+          {/* ── sidebar ── */}
+          <nav aria-label="Admin sections" className="min-w-0 lg:sticky lg:top-20 lg:self-start">
+            {/* phones / tablets: one scrollable row */}
+            <ul className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:hidden">
+              {visible.map((s) => (
+                <li key={s.id} className="shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => go(s.id)}
+                    aria-current={s.id === current?.id ? 'page' : undefined}
+                    className={cn(
+                      'flex h-9 cursor-pointer items-center gap-2 rounded-full px-3.5 text-[13px] font-medium transition-colors',
+                      s.id === current?.id
+                        ? 'bg-[color-mix(in_oklab,var(--nx-b1)_14%,transparent)] text-text-primary shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--nx-b1)_35%,transparent)]'
+                        : 'text-text-secondary shadow-[inset_0_0_0_1px_var(--nx-hair)]',
+                    )}
+                  >
+                    <Icon name={s.icon} className="size-4" />
+                    {s.label}
+                    {s.id === 'moderation' && !!me.counts.openReports && <span className="nx-chip !h-4.5 !px-1.5 nx-num" data-tone="warning">{me.counts.openReports}</span>}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {/* desktop: grouped rail */}
+            <div className="nx-panel hidden p-2 lg:block">
+              {GROUPS.map((g) => {
+                const items = g.items.filter((s) => can(s.perm))
+                if (!items.length) return null
                 return (
-                  <li key={s.id} className="shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => go(s.id)}
-                      aria-current={on ? 'page' : undefined}
-                      className={cn(
-                        'group flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left transition-colors',
-                        on ? 'bg-accent-brand/12 text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
-                      )}
-                    >
-                      <Icon name={s.icon} className={cn('size-4 shrink-0', on && 'text-accent-brand')} />
-                      <span className="min-w-0">
-                        <span className="block text-sm font-medium whitespace-nowrap">{s.label}</span>
-                        <span className="hidden truncate text-[11px] text-text-muted lg:block">{s.blurb}</span>
-                      </span>
-                    </button>
-                  </li>
+                  <div key={g.label} className="py-1.5 first:pt-1">
+                    <p className="px-2.5 pb-1.5 text-[10.5px] font-semibold tracking-[0.14em] text-text-muted uppercase">{g.label}</p>
+                    {items.map((s) => {
+                      const on = s.id === current?.id
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => go(s.id)}
+                          aria-current={on ? 'page' : undefined}
+                          className={cn(
+                            'relative flex w-full cursor-pointer items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left text-[13.5px] font-medium transition-colors',
+                            on ? 'bg-[color-mix(in_oklab,var(--nx-b1)_10%,transparent)] text-text-primary' : 'text-text-secondary hover:bg-bg-surface-2 hover:text-text-primary',
+                          )}
+                        >
+                          {on && <span aria-hidden="true" className="absolute top-2 bottom-2 left-0 w-[3px] rounded-full bg-[linear-gradient(180deg,var(--nx-b1),var(--nx-b2),var(--nx-b3))]" />}
+                          <Icon name={s.icon} className={cn('size-4 shrink-0', on ? 'text-[var(--nx-b1)]' : 'text-text-muted')} />
+                          <span className="flex-1">{s.label}</span>
+                          {s.id === 'moderation' && !!me.counts.openReports && (
+                            <span className="nx-chip nx-num !h-5 !px-1.5" data-tone="warning">
+                              {me.counts.openReports}
+                            </span>
+                          )}
+                        </button>
+                      )
+                    })}
+                  </div>
                 )
               })}
-            </ul>
-            {me.isOwner && (
-              <div className="mt-4 hidden rounded-xl border border-state-gold/25 bg-state-gold/[0.06] p-3 lg:block">
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-state-gold">
-                  <Icon name="crown" className="size-3.5" /> Owner powers
-                </p>
-                <ul className="mt-2 space-y-1 text-[11px] leading-snug text-text-secondary">
-                  <li>Make admins & grant site settings</li>
-                  <li>Untouchable: no one can demote or ban you</li>
-                  <li>See every section, whatever the flags</li>
-                  <li>Pin announcements, delete accounts</li>
-                  <li>Read what admins did in the audit log</li>
-                </ul>
-              </div>
-            )}
+              {me.isOwner && (
+                <div className="mx-1 mt-2 mb-1 rounded-xl bg-[linear-gradient(160deg,color-mix(in_oklab,#f5c451_14%,transparent),transparent_70%)] p-3 shadow-[inset_0_0_0_1px_color-mix(in_oklab,#e09a1a_25%,transparent)]">
+                  <p className="flex items-center gap-1.5 text-[12px] font-semibold text-[var(--nx-gold)]">
+                    <Icon name="crown" className="size-3.5" /> Owner
+                  </p>
+                  <p className="mt-1 text-[11.5px] leading-snug text-text-secondary">Untouchable, sees every section, makes admins and grants site settings.</p>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* ── section ── */}
           <div className="min-w-0">
-            {section === 'overview' && <OverviewSection key={revision} onOpenUser={setUser} />}
-            {section === 'users' && <UsersSection onOpenUser={setUser} revision={revision} />}
-            {section === 'site' && <SiteSettingsPanel />}
-            {section === 'announcements' && <AnnouncementsPanel me={me} />}
-            {section === 'moderation' && <ModerationSection me={me} onOpenUser={setUser} />}
-            {section === 'audit' && <AuditSection me={me} />}
+            {current && (
+              <div className="mb-4 hidden sm:block">
+                <h2 className="nx-display text-[22px] leading-tight font-semibold text-text-primary">{current.title}</h2>
+                <p className="mt-1 text-[13px] text-text-secondary">{current.blurb}</p>
+              </div>
+            )}
+            {current?.id === 'overview' && <OverviewSection key={revision} onOpenUser={setUser} />}
+            {current?.id === 'users' && <UsersSection onOpenUser={setUser} revision={revision} />}
+            {current?.id === 'site' && <SiteSettingsPanel />}
+            {current?.id === 'announcements' && <AnnouncementsPanel me={me} />}
+            {current?.id === 'moderation' && <ModerationSection me={me} onOpenUser={setUser} onChanged={refetch} />}
+            {current?.id === 'audit' && <AuditSection me={me} />}
           </div>
         </div>
       )}
@@ -175,4 +236,3 @@ export default function AdminPage() {
     </div>
   )
 }
-

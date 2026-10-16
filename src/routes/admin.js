@@ -312,8 +312,13 @@ function createAdminRouter(deps) {
     "/api/admin/me",
     h(async (req, res) => {
       const a = req.access;
+      // Sidebar counters (one cheap COUNT, only for those who can act on it).
+      const openReports = P.can(req, "content.moderate")
+        ? Number((await get("SELECT COUNT(*) AS c FROM reports WHERE status = 'open'"))?.c || 0)
+        : null;
       res.json({
         ok: true,
+        counts: { openReports },
         username: a.username,
         role: a.role,
         isOwner: a.role === "owner",

@@ -8,6 +8,7 @@ export interface PermissionDef {
 }
 
 export interface AdminMe {
+  counts: { openReports: number | null }
   username: string
   role: SiteRole
   isOwner: boolean
