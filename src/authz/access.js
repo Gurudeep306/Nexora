@@ -212,6 +212,9 @@ async function initAdminSystem() {
   }
   const exists = !!row0;
   const row = await get("SELECT value FROM site_settings WHERE key='private_mode'");
+  if (String(process.env.SITE_PRIVATE || "") === "1") {
+    console.log(`🔒 SITE_PRIVATE=1: this site is private. Only ${owner}, admins and early-access users can get in.`);
+  }
   if (!exists) {
     console.warn(
       `\n⚠️  Owner "${owner}" (from ${ownerSource()}) has no account yet — private mode stays ${row ? "as set" : "OFF"}.\n` +
