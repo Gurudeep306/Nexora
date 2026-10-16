@@ -280,7 +280,7 @@ test('moderation: report → a moderator removes → hidden; restore brings it b
   assert.ok(report, 'in the queue');
   assert.equal(report.target_user, EVE);
   assert.equal(report.snapshot, 'buy followers cheap');
-  assert.equal((await call('POST', '/api/admin/content/remove', c[DAN], { content_type: 'post', content_id: id })).status, 403, 'members cannot remove');
+  assert.equal((await call('POST', '/api/admin/content/remove', c[DAN], { content_type: 'post', content_id: id })).status, 404, 'members cannot remove (admin API is hidden from them)');
   ok(await call('POST', '/api/admin/content/remove', c[CAT], { content_type: 'post', content_id: id, reason: 'spam' }));
   assert.equal((await call('GET', `/api/social/posts/${id}`, c[DAN])).status, 404, 'hidden from members');
   assert.equal((await call('GET', `/api/social/posts/${id}`, c[EVE])).status, 404, 'hidden from the author too');
