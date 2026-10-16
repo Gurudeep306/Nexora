@@ -1428,6 +1428,18 @@ async function initGateTables() {
       plan TEXT NOT NULL,
       updated_at INTEGER NOT NULL
     )`],
+    // GATE Notes reader: per-lesson study state (src/routes/gate-notes.js).
+    [`CREATE TABLE IF NOT EXISTS gate_notes_progress (
+      username TEXT NOT NULL,
+      subject TEXT NOT NULL,
+      lesson TEXT NOT NULL,
+      completed INTEGER NOT NULL DEFAULT 0,
+      scroll_pct INTEGER NOT NULL DEFAULT 0,
+      bookmarked INTEGER NOT NULL DEFAULT 0,
+      completed_at INTEGER,
+      updated_at INTEGER NOT NULL,
+      PRIMARY KEY (username, subject, lesson)
+    )`],
   ]);
 }
 

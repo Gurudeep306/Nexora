@@ -46,6 +46,7 @@ const { createLearningRouter } = require("./routes/learning");
 const { createLearnRouter } = require("./routes/learn");
 const { createGateRouter } = require("./routes/gate");
 const { createGateMeRouter } = require("./routes/gate-me");
+const { createGateNotesRouter } = require("./routes/gate-notes");
 const { createStudioRouter } = require("./routes/studio");
 const { createAgentRouter } = require("./routes/agent");
 const { weaknessAnalysis } = require("./ai/data");
@@ -2269,7 +2270,7 @@ app.post("/api/reset-progress", async (req, res) => {
     await run("DELETE FROM daily_activity WHERE username=?", [u]);
     await run("DELETE FROM user_achievements WHERE username=?", [u]);
     await run("DELETE FROM user_daily_challenges WHERE username=?", [u]);
-    for (const t of ["gate_attempts", "gate_qstate", "gate_notes", "gate_collections", "gate_tests", "gate_plans"]) {
+    for (const t of ["gate_attempts", "gate_qstate", "gate_notes", "gate_collections", "gate_tests", "gate_plans", "gate_notes_progress"]) {
       await run(`DELETE FROM ${t} WHERE username=?`, [u]);
     }
     invalidateCache();
@@ -5812,6 +5813,8 @@ app.use(createLearnRouter({ get, all, run }));
 app.use(createGateRouter());
 // GATE learning platform: attempts, progress, review, tests, plan, leaderboard
 app.use(createGateMeRouter());
+// GATE Notes: the course reader (compiled lessons) + per-user study state
+app.use(createGateNotesRouter());
 
 // ForgeBuilder routes
 app.use("/api/forge", createForgeRouter({ all, get, run }));
