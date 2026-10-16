@@ -34,6 +34,8 @@ const GateDailyPage = lazy(pageLoaders.GateDailyPage)
 const GateTestsPage = lazy(pageLoaders.GateTestsPage)
 const GateTestPage = lazy(pageLoaders.GateTestPage)
 const SocialPage = lazy(pageLoaders.SocialPage)
+const SocialPostPage = lazy(pageLoaders.SocialPostPage)
+const SocialTagPage = lazy(pageLoaders.SocialTagPage)
 const SubmissionsPage = lazy(pageLoaders.SubmissionsPage)
 const BookmarksPage = lazy(pageLoaders.BookmarksPage)
 const ProfilePage = lazy(pageLoaders.ProfilePage)
@@ -114,10 +116,13 @@ export default function App() {
             <Route path="/gate/cbt" element={<GateCbtPage />} />
             <Route path="/gate/cbt/:paperId" element={<GateCbtPage />} />
             <Route path="/social" element={<SocialPage />} />
+            <Route path="/social/post/:id" element={<SocialPostPage />} />
+            <Route path="/social/tag/:tag" element={<SocialTagPage />} />
             <Route path="/submissions" element={<SubmissionsPage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/:username" element={<ProfilePage />} />
+            <Route path="/u/:username" element={<ProfilePage />} />
             <Route path="/settings" element={<SettingsRoute />} />
             <Route path="/theme" element={<ThemeCentrePage />} />
             <Route path="/admin" element={<AdminPage />} />

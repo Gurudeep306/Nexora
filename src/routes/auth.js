@@ -3,6 +3,7 @@ const rateLimit = require("express-rate-limit");
 const { errMessage } = require("../http-error");
 const { persistUpload } = require("../upload-store");
 const { isSetAvatar, normalizeAvatar } = require("../avatar-set");
+const { SOCIAL_USER_COLUMNS } = require("./social");
 const { regenerateSession, sanitizeSessionUser } = require("../middleware/auth");
 const { isOwnerName, mayEnterPrivateSite } = require("../authz/permissions");
 const { getSettings, privateModeActive } = require("../authz/site-settings");
@@ -428,6 +429,7 @@ function createAuthRouter(deps) {
             ["ai_battles", "username"], ["code_replays", "username"], ["user_achievements", "username"],
             ["user_daily_challenges", "username"], ["bookmarks", "username"],
             ["custom_problems", "creator"], ["custom_contests", "creator"], ["solve_rooms", "creator"],
+            ...SOCIAL_USER_COLUMNS,
           ]) {
             await run(`UPDATE ${table} SET ${col}=? WHERE ${col}=?`, [cleanNew, currentUsername]).catch(() => {});
           }

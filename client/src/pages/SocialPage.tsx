@@ -1,51 +1,54 @@
+import { useCallback, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { DoorOpen, PlugZap, Rss } from 'lucide-react'
 import { Card, EmptyState, PageHeader, Tabs } from '@/components/ui'
 import { useAuth } from '@/context/AuthContext'
 import { useSocket } from '@/lib/socket'
+import { api } from '@/lib/api'
 import { FriendsTab } from '@/components/social/FriendsTab'
 import { MessagesTab } from '@/components/social/MessagesTab'
 import { RoomsTab } from '@/components/social/RoomsTab'
 import { LeaderboardTab } from '@/components/social/LeaderboardTab'
 import { FeedTab } from '@/components/social/FeedTab'
+import { NotificationsTab, useSocialUnread } from '@/components/social/feed/notifications'
+import { FeedEmpty, PostList, usePostList } from '@/components/social/feed/PostList'
+import { FollowButton, SocialSearch, UserRow } from '@/components/social/feed/People'
+import type { FeedPage, SocialUser } from '@/components/social/feed/types'
 import { Icon } from '@/components/icon/Icon'
 
-const TABS = [
-  { id: 'friends', label: 'Friends', icon: <Icon name="users" className="size-3.5" /> },
-  { id: 'messages', label: 'Messages', icon: <Icon name="messages" className="size-3.5" /> },
-  { id: 'rooms', label: 'Solve Rooms', icon: <DoorOpen className="size-3.5" /> },
-  { id: 'feed', label: 'Feed', icon: <Rss className="size-3.5" /> },
-  { id: 'leaderboard', label: 'Leaderboard', icon: <Icon name="trophy" className="size-3.5" /> },
-]
-
-const TAB_IDS = new Set(TABS.map((t) => t.id))
+const TAB_IDS = new Set(['feed', 'notifications', 'friends', 'messages', 'rooms', 'leaderboard', 'search'])
 
 export default function SocialPage() {
   const { user } = useAuth()
   const socket = useSocket()
   const [params, setParams] = useSearchParams()
-  const requested = params.get('tab') ?? 'friends'
-  const tab = TAB_IDS.has(requested) ? requested : 'friends'
+  const requested = params.get('tab') ?? 'feed'
+  const tab = TAB_IDS.has(requested) ? requested : 'feed'
   const me = user?.username ?? ''
+  const { unread, clear } = useSocialUnread(!!me)
 
-  // Presence is registered server-side from the session on every (re)connect.
+  const TABS = [
+    { id: 'feed', label: 'Feed', icon: <Rss className="size-3.5" /> },
+    { id: 'notifications', label: 'Notifications', icon: <Icon name="bell" className="size-3.5" />, badge: unread > 0 ? (unread > 99 ? '99+' : unread) : undefined },
+    { id: 'friends', label: 'Friends', icon: <Icon name="users" className="size-3.5" /> },
+    { id: 'messages', label: 'Messages', icon: <Icon name="messages" className="size-3.5" /> },
+    { id: 'rooms', label: 'Solve Rooms', icon: <DoorOpen className="size-3.5" /> },
+    { id: 'leaderboard', label: 'Leaderboard', icon: <Icon name="trophy" className="size-3.5" /> },
+  ]
 
   function selectTab(id: string) {
     const next = new URLSearchParams(params)
     next.set('tab', id)
+    next.delete('q')
     setParams(next, { replace: true })
   }
 
   if (!me) {
     return (
       <div>
-        <PageHeader icon="social" title="Social Guild" subtitle="Friends, messages, solve rooms & rankings" />
+        <PageHeader icon="social" title="Community" subtitle="Posts, friends, messages, solve rooms & rankings" />
         <Card>
-          <EmptyState
-            icon="users"
-            title="Identity required"
-            description="Sign in to enter the social rift — friends, DMs and co-op rooms are keyed to your username."
-          />
+          <EmptyState icon="users" title="Sign in to join the community" description="Share wins, follow learners and solve together — it's all tied to your account." />
         </Card>
       </div>
     )
@@ -55,30 +58,56 @@ export default function SocialPage() {
     <div>
       <PageHeader
         icon="social"
-        title="Social Guild"
-        subtitle="Your squad, your DMs, your co-op solve rooms — all wired to the realtime rift."
+        title="Community"
+        subtitle="Share wins, follow learners, swap snippets and solve together — live."
         actions={
           <span
             className={
               socket?.connected
-                ? 'inline-flex items-center gap-1.5 rounded-lg border border-success/40 bg-success/10 px-2.5 py-1.5 text-[11px] font-semibold tracking-wider text-success uppercase'
-                : 'inline-flex items-center gap-1.5 rounded-lg border border-warning/40 bg-warning/10 px-2.5 py-1.5 text-[11px] font-semibold tracking-wider text-warning uppercase'
+                ? 'inline-flex items-center gap-1.5 rounded-full border border-state-success/30 bg-state-success/10 px-2.5 py-1 text-[11px] font-semibold text-state-success'
+                : 'inline-flex items-center gap-1.5 rounded-full border border-state-warning/30 bg-state-warning/10 px-2.5 py-1 text-[11px] font-semibold text-state-warning'
             }
             role="status"
           >
             <PlugZap className="size-3.5" />
-            {socket?.connected ? 'Socket live' : 'Socket offline'}
+            {socket?.connected ? 'Live' : 'Offline'}
           </span>
         }
       />
 
-      <Tabs items={TABS} active={tab} onChange={selectTab} className="mb-5" />
+      <Tabs items={TABS} active={tab === 'search' ? 'feed' : tab} onChange={selectTab} className="mb-5" />
 
+      {tab === 'feed' && <FeedTab me={me} />}
+      {tab === 'search' && <SearchResults q={params.get('q') ?? ''} />}
+      {tab === 'notifications' && <NotificationsTab onSeen={clear} />}
       {tab === 'friends' && <FriendsTab me={me} socket={socket} />}
       {tab === 'messages' && <MessagesTab me={me} socket={socket} />}
       {tab === 'rooms' && <RoomsTab me={me} socket={socket} />}
-      {tab === 'feed' && <FeedTab me={me} />}
       {tab === 'leaderboard' && <LeaderboardTab me={me} />}
+    </div>
+  )
+}
+
+function SearchResults({ q }: { q: string }) {
+  const [users, setUsers] = useState<(SocialUser & { followers?: number })[]>([])
+  const fetchPage = useCallback(async (): Promise<FeedPage> => {
+    const r = await api.get<{ users: SocialUser[]; items: FeedPage['items'] }>('/api/social/search', { query: { q } })
+    setUsers(r.users)
+    return { items: r.items, next: null }
+  }, [q])
+  const list = usePostList(fetchPage, [q])
+  return (
+    <div className="mx-auto max-w-2xl space-y-4">
+      <SocialSearch key={q} initial={q} />
+      {users.length > 0 && (
+        <section className="card p-2" aria-label="People">
+          <h2 className="px-2 pt-1 pb-1 text-xs font-semibold tracking-wider text-text-muted uppercase">People</h2>
+          {users.map((u) => (
+            <UserRow key={u.username} u={u} right={<FollowButton username={u.username} state={null} />} />
+          ))}
+        </section>
+      )}
+      <PostList list={list} empty={<FeedEmpty title={`No posts match “${q}”`} description="Try another word, a #hashtag or someone's @handle." />} />
     </div>
   )
 }
