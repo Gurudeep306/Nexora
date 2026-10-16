@@ -53,7 +53,7 @@ $$
 :::viz{spec="binary-place-values" mode="animate"}
 :::
 
-::::example{level="easy" title="Binary to decimal"}
+::::example{#binary-to-decimal level="easy" title="Binary to decimal"}
 Convert $(1011)_2$ to decimal.
 
 :::step{why="Each position stands for a power of the base, starting from 2⁰ on the right."}
@@ -90,7 +90,7 @@ $(1011)_2 = 11$
 :::
 ::::
 
-::::example{level="medium" title="Octal to decimal"}
+::::example{#octal-to-decimal level="medium" title="Octal to decimal"}
 Convert $(257)_8$ to decimal.
 
 :::step{why="In base 8 the places are 8⁰ = 1, 8¹ = 8 and 8² = 64."}
@@ -118,7 +118,7 @@ $(257)_8 = 175$
 :::
 ::::
 
-::::example{level="gate" title="Find the unknown base"}
+::::example{#find-base level="gate" title="Find the unknown base"}
 For which base $b$ is $(31)_b = 16$?
 
 :::step{why="Expanding with place values turns the numeral into an equation in b."}
@@ -163,7 +163,7 @@ Read binary left to right in your head: start at $0$; for each bit, double the t
 For $1011$: $0 \to 1 \to 2 \to 5 \to 11$. It is the chain form from the [derivation](#expansion).
 :::
 
-:::trap{title="Digits must be smaller than the base"}
+:::trap{#digit-limit title="Digits must be smaller than the base"}
 "$(19)_8$" is not an octal numeral, because 9 is not an octal digit. In equations like $(43)_x = (y3)_8$
 this quietly adds the conditions $x > 4$ and $y < 8$, and missing them gives wrong counts.
 :::
@@ -179,7 +179,7 @@ this quietly adds the conditions $x > 4$ and $y < 8$, and missing them gives wro
 
 ## Practice
 
-:::pyq{id="cse-2023-cs-22"}
+:::pyq{id="cse-2023-cs-22" tests="place-value-def,expansion"}
 :::
 
 :::practice{id="nx-demo-01-01-q01"}

@@ -13,10 +13,16 @@
  *   content/gate-notes/<subject>/NN-chapter/_meta.json  optional { title, summary }
  *   content/gate-notes/<subject>/NN-chapter/NN-lesson.md   YAML frontmatter + Markdown + KaTeX + :::blocks
  *   content/gate-notes/<subject>/NN-chapter/practice.json  our own questions for that chapter
+ *   content/gate-notes/<subject>/NN-chapter/pyq-map.json   PYQ → lesson blocks it tests (optional;
+ *                                                       :::pyq{id tests="a,b"} embeds count too)
  *   content/gate-notes/<subject>/viz/<name>.json        Nexora Viz scene specs
  *
  * Output: src/gate/notes/<subject>.json (lesson tree, pre-parsed AST per
- * lesson, practice questions, viz specs) and src/gate/notes/_search.json.
+ * lesson, practice questions, viz specs), src/gate/notes/_search.json and
+ * the PYQ coverage map src/gate/notes/_coverage.json (with a readable
+ * content/gate-notes/<subject>/_coverage.md). A subject whose _meta.json
+ * says "status": "published" fails the build unless every PYQ in its scope
+ * maps to blocks that exist; draft subjects only warn.
  * Lesson `sources` are validated but never written out.
  *
  * Every problem is reported as file:line: message, and any error exits 1.
@@ -52,7 +58,7 @@ const BLOCKS = {
   answer: { attrs: {} },
   trick: { attrs: { title: "text" } },
   trap: { attrs: { title: "text" } },
-  pyq: { attrs: { id: "ref" }, required: ["id"], leaf: true },
+  pyq: { attrs: { id: "ref", tests: "long" }, required: ["id"], leaf: true },
   practice: { attrs: { id: "ref" }, required: ["id"], leaf: true },
   viz: { attrs: { spec: "ref", mode: ["animate", "static"], caption: "text" }, required: ["spec"], leaf: true },
   table: { attrs: { title: "text" } },
@@ -73,6 +79,11 @@ const COLOR_TOKENS = ["accent", "info", "success", "warning", "danger", "syntax-
 
 /* ── Small helpers ────────────────────────────────────────────────────── */
 
+const splitList = (v) =>
+  String(v || "")
+    .split(/[\s,]+/)
+    .map((x) => x.trim())
+    .filter(Boolean);
 const rel = (f) => {
   const r = path.relative(ROOT, f);
   return (r.startsWith("..") ? f : r).split(path.sep).join("/");
@@ -501,8 +512,9 @@ class Compiler {
     }
 
     const node = { t: "block", name, id, depth, attrs, ...(label ? { label } : {}), c, line };
-    this.blocks.push({ id, name, depth, line });
-    if (name === "pyq" && attrs.id) this.pyqs.push({ id: attrs.id, line });
+    const blockTitle = label ? this.plain(label) : attrs.term || attrs.name || attrs.title || attrs.of || "";
+    this.blocks.push({ id, name, depth, line, title: String(blockTitle).trim() });
+    if (name === "pyq" && attrs.id) this.pyqs.push({ id: attrs.id, line, tests: splitList(attrs.tests) });
     if (name === "practice" && attrs.id) this.practice.push({ id: attrs.id, line });
     if (name === "viz" && attrs.spec) this.viz.push({ spec: attrs.spec, line, node });
     if (label) this.text.push(this.plain(label));
@@ -650,7 +662,13 @@ async function loadTools() {
 function loadBank(file) {
   const raw = JSON.parse(fs.readFileSync(file, "utf8"));
   const qs = Array.isArray(raw) ? raw : raw.questions || [];
-  return { ids: new Set(qs.map((q) => q.id)), topics: new Set(qs.filter((q) => q.subject && q.topic).map((q) => `${q.subject}/${q.topic}`)) };
+  return {
+    ids: new Set(qs.map((q) => q.id)),
+    byId: new Map(qs.map((q) => [q.id, q])),
+    questions: qs,
+    subjects: new Set(qs.map((q) => q.subject).filter(Boolean)),
+    topics: new Set(qs.filter((q) => q.subject && q.topic).map((q) => `${q.subject}/${q.topic}`)),
+  };
 }
 
 const listDir = (dir) => {
@@ -752,6 +770,88 @@ async function build(opts = {}) {
     for (const name of s.viz.keys()) if (!s.vizUsed.has(name)) report.warn(path.join(s.dir, "viz", `${name}.json`), 1, "viz spec is not used by any lesson");
   }
 
+  // PYQ coverage: every PYQ in a subject's scope → the lesson blocks that teach it.
+  const coverage = {};
+  const reports = new Map(); // absolute path → text (content/gate-notes/<subject>/_coverage.md)
+  for (const s of subjects) {
+    const strict = s.meta.status === "published";
+    const flag = (file, line, msg) => (strict ? report.error(file, line, msg) : report.warn(file, line, msg));
+    const links = new Map(); // pyq id → [{ lesson, tests, missing }]
+    const add = (pyq, lesson, tests, file, line) => {
+      const missing = tests.filter((b) => !lesson.c.ids.has(b));
+      for (const b of missing) flag(file, line, `PYQ ${pyq}: block "${b}" is not in ${lesson.fm.id}`);
+      if (!tests.length) flag(file, line, `PYQ ${pyq} is embedded but names no concept blocks — add tests="block-id,…" or a pyq-map.json entry`);
+      const list = links.get(pyq) ?? [];
+      const prev = list.find((x) => x.lesson === lesson);
+      if (prev) {
+        prev.tests = [...new Set([...prev.tests, ...tests])];
+        prev.missing = [...new Set([...prev.missing, ...missing])];
+      } else list.push({ lesson, tests: [...tests], missing });
+      links.set(pyq, list);
+    };
+    for (const l of s.lessons) for (const p of l.c.pyqs) if (bank.ids.has(p.id)) add(p.id, l, p.tests, l.file, p.line);
+    for (const e of s.pyqMap) {
+      if (!bank.ids.has(e.id)) {
+        report.error(e.file, e.line, `PYQ "${e.id}" is not in src/gate/questions.json`);
+        continue;
+      }
+      const lesson = s.lessons.find((l) => l.fm.id === e.lesson && l.chapterId === e.chapterId);
+      if (!lesson) {
+        report.error(e.file, e.line, `PYQ ${e.id}: no lesson "${e.lesson}" in ${e.chapterId}`);
+        continue;
+      }
+      add(e.id, lesson, e.tests, e.file, e.line);
+    }
+
+    const inScope = (q) => s.pyqScope.some((k) => (k.includes("/") ? `${q.subject}/${q.topic}` === k : q.subject === k));
+    const scope = bank.questions.filter(inScope).map((q) => q.id).sort();
+    const good = (id) => (links.get(id) ?? []).some((x) => x.tests.length > x.missing.length);
+    const covered = scope.filter(good);
+    const uncovered = scope.filter((id) => !good(id));
+    const missingBlocks = [...links.entries()]
+      .flatMap(([id, list]) => list.filter((x) => !x.tests.length || x.missing.length).map((x) => ({ id, lesson: x.lesson.fm.id, missing: x.missing, ...(x.tests.length ? {} : { none: true }) })))
+      .sort((a, b) => a.id.localeCompare(b.id));
+    const lessonsWithout = s.lessons.filter((l) => ![...links.values()].some((list) => list.some((x) => x.lesson === l))).map((l) => l.fm.id);
+    if (uncovered.length) {
+      const msg = `${uncovered.length} of ${scope.length} PYQs in scope (${s.pyqScope.join(", ") || "none"}) are not mapped to any lesson block — see content/gate-notes/${s.id}/_coverage.md`;
+      flag(path.join(s.dir, "_meta.json"), 1, msg);
+    }
+    for (const l of s.lessons) {
+      l.pyqLinks = [...links.entries()]
+        .filter(([, list]) => list.some((x) => x.lesson === l))
+        .map(([id, list]) => {
+          const x = list.find((y) => y.lesson === l);
+          const q = bank.byId.get(id);
+          return { id, year: q.year, marks: q.marks ?? null, type: q.type, paper: q.paper, embedded: l.c.pyqs.some((p) => p.id === id), tests: x.tests.filter((b) => !x.missing.includes(b)) };
+        })
+        .sort((a, b) => (b.year || 0) - (a.year || 0) || a.id.localeCompare(b.id));
+    }
+    const byPyq = {};
+    for (const [id, list] of [...links.entries()].sort(([a], [b]) => a.localeCompare(b))) {
+      byPyq[id] = list.map((x) => ({
+        lesson: x.lesson.fm.id,
+        title: x.lesson.fm.title,
+        blocks: x.tests.filter((b) => !x.missing.includes(b)).map((b) => {
+          const blk = x.lesson.c.blocks.find((y) => y.id === b);
+          const h = x.lesson.c.headings.find((y) => y.id === b);
+          return { id: b, name: blk ? blk.name : "heading", title: blk ? blk.title : h ? h.text : "" };
+        }),
+      }));
+    }
+    coverage[s.id] = {
+      status: s.meta.status,
+      hidden: s.meta.hidden,
+      scope: s.pyqScope,
+      total: scope.length,
+      covered: covered.length,
+      uncovered,
+      missingBlocks,
+      lessonsWithoutPyqs: lessonsWithout,
+      byPyq,
+    };
+    reports.set(path.join(s.dir, "_coverage.md"), coverageMarkdown(s, coverage[s.id], bank));
+  }
+
   // Prerequisite cycles.
   const state = new Map();
   const visit = (l, trail) => {
@@ -788,7 +888,8 @@ async function build(opts = {}) {
         prerequisites: (l.prereqs || []).map((p) => ({ subject: p.subject, id: p.fm.id, title: p.fm.title })),
         pyq_topics: l.fm.pyq_topics || [],
         outline: l.c.headings,
-        blocks: l.c.blocks.map((b) => ({ id: b.id, name: b.name, depth: b.depth })),
+        blocks: l.c.blocks.map((b) => ({ id: b.id, name: b.name, depth: b.depth, ...(b.title ? { title: b.title } : {}) })),
+        pyqLinks: l.pyqLinks || [],
         pyqs: [...new Set(l.c.pyqs.map((p) => p.id))],
         practice: [...new Set(l.c.practice.map((p) => p.id))],
         viz: [...new Set(l.c.viz.map((v) => v.spec))],
@@ -810,7 +911,7 @@ async function build(opts = {}) {
     for (const name of [...s.vizUsed].sort()) viz[name] = s.viz.get(name);
     const doc = {
       version: 1,
-      subject: { id: s.id, ...s.meta },
+      subject: { id: s.id, ...s.meta, coverage: { total: coverage[s.id].total, covered: coverage[s.id].covered } },
       chapters: s.chapters.map((ch) => ({
         id: ch.id,
         n: ch.n,
@@ -825,7 +926,40 @@ async function build(opts = {}) {
     outputs.set(`${s.id}.json`, `${JSON.stringify(doc)}\n`);
   }
   outputs.set("_search.json", `${JSON.stringify({ version: 1, entries: search })}\n`);
-  return { errors: report.errors, warnings: report.warnings, outputs };
+  outputs.set("_coverage.json", `${JSON.stringify({ version: 1, subjects: coverage })}\n`);
+  return { errors: report.errors, warnings: report.warnings, outputs, reports };
+}
+
+function coverageMarkdown(s, cov, bank) {
+  const label = (id) => {
+    const q = bank.byId.get(id);
+    return q ? `\`${id}\` (${q.year}, ${q.marks ?? "?"} mark${q.marks === 1 ? "" : "s"}, ${q.type}, ${q.topic || "no topic"})` : `\`${id}\``;
+  };
+  const lines = [
+    `# PYQ coverage: ${s.meta.title}`,
+    "",
+    "Generated by `npm run notes:build` — do not edit.",
+    "",
+    `- Status: **${cov.status}**${cov.status === "published" ? " (the build fails on any gap)" : " (gaps are warnings until the subject is published)"}`,
+    `- Scope: ${cov.scope.length ? cov.scope.map((k) => `\`${k}\``).join(", ") : "none"}`,
+    `- Covered: **${cov.covered} / ${cov.total}** PYQs`,
+    "",
+    `## Covered (${cov.covered})`,
+    "",
+  ];
+  const coveredIds = Object.keys(cov.byPyq).filter((id) => cov.byPyq[id].some((x) => x.blocks.length));
+  for (const id of coveredIds) lines.push(`- ${label(id)} → ${cov.byPyq[id].filter((x) => x.blocks.length).map((x) => `${x.lesson}: ${x.blocks.map((b) => `#${b.id}`).join(", ")}`).join("; ")}`);
+  if (!coveredIds.length) lines.push("_None yet._");
+  lines.push("", `## Not mapped to any lesson block (${cov.uncovered.length})`, "");
+  for (const id of cov.uncovered) lines.push(`- ${label(id)}`);
+  if (!cov.uncovered.length) lines.push("_None._");
+  lines.push("", `## Mapped, but concept blocks missing (${cov.missingBlocks.length})`, "");
+  for (const m of cov.missingBlocks) lines.push(`- ${label(m.id)} in ${m.lesson}: ${m.none ? "no blocks named" : m.missing.map((b) => `#${b}`).join(", ")}`);
+  if (!cov.missingBlocks.length) lines.push("_None._");
+  lines.push("", `## Lessons with no PYQs (${cov.lessonsWithoutPyqs.length})`, "");
+  for (const l of cov.lessonsWithoutPyqs) lines.push(`- ${l}`);
+  if (!cov.lessonsWithoutPyqs.length) lines.push("_None._");
+  return `${lines.join("\n")}\n`;
 }
 
 function loadSubject(dir, id, ctx) {
@@ -839,7 +973,7 @@ function loadSubject(dir, id, ctx) {
   if (!metaJson) return null;
   const m = metaJson.value;
   const mErr = (key, msg) => report.error(metaFile, lineOf(metaJson.raw, new RegExp(`"${key}"`)), `${key} ${msg}`);
-  const allowedMeta = new Set(["title", "order", "icon", "color", "description", "hidden", "exam"]);
+  const allowedMeta = new Set(["title", "order", "icon", "color", "description", "hidden", "exam", "status", "pyq_scope"]);
   for (const k of Object.keys(m || {})) if (!allowedMeta.has(k)) mErr(k, "is not a known field");
   if (!isStr(m.title, 80)) mErr("title", "is required");
   if (!Number.isInteger(m.order) || m.order < 0 || m.order > 999) mErr("order", "must be an integer 0–999");
@@ -847,6 +981,11 @@ function loadSubject(dir, id, ctx) {
   if (!COLOR_TOKENS.includes(m.color)) mErr("color", `must be a theme colour token: ${COLOR_TOKENS.join(" | ")}`);
   if (!isStr(m.description, 400)) mErr("description", "is required (≤ 400 characters)");
   if (m.hidden !== undefined && typeof m.hidden !== "boolean") mErr("hidden", "must be true or false");
+  if (m.status !== undefined && !["draft", "published"].includes(m.status)) mErr("status", 'must be "draft" or "published"');
+  if (m.pyq_scope !== undefined && !(strList(m.pyq_scope, 60, 60) || (Array.isArray(m.pyq_scope) && !m.pyq_scope.length))) mErr("pyq_scope", "must be a list of bank subject or subject/topic keys");
+  for (const k of Array.isArray(m.pyq_scope) ? m.pyq_scope : []) {
+    if (!(k.includes("/") ? ctx.bank.topics.has(k) : ctx.bank.subjects.has(k))) mErr("pyq_scope", `"${k}" is not a subject or subject/topic in the question bank`);
+  }
   if (m.exam !== undefined && !(Array.isArray(m.exam) && m.exam.every((e) => ["CSE", "DA"].includes(e)))) mErr("exam", 'must be a list of "CSE" | "DA"');
   const meta = {
     title: m.title,
@@ -856,9 +995,12 @@ function loadSubject(dir, id, ctx) {
     description: m.description,
     hidden: !!m.hidden,
     exam: m.exam || ["CSE"],
+    status: m.status === "published" ? "published" : "draft",
   };
+  // Which bank PYQs this subject must teach: explicit, else the bank subject with the same id.
+  const pyqScope = Array.isArray(m.pyq_scope) ? m.pyq_scope : ctx.bank.subjects.has(id) ? [id] : [];
 
-  const subject = { id, dir, meta, chapters: [], lessons: [], practice: [], viz: new Map(), vizUsed: new Set() };
+  const subject = { id, dir, meta, pyqScope, chapters: [], lessons: [], practice: [], pyqMap: [], viz: new Map(), vizUsed: new Set() };
 
   // Viz specs.
   for (const ent of listDir(path.join(dir, "viz"))) {
@@ -882,7 +1024,7 @@ function loadSubject(dir, id, ctx) {
   }
 
   for (const ent of listDir(dir)) {
-    if (ent.name === "_meta.json" || ent.name === "viz" || ent.name.startsWith(".")) continue;
+    if (ent.name === "_meta.json" || ent.name === "_coverage.md" || ent.name === "viz" || ent.name.startsWith(".")) continue;
     const cm = /^(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(ent.name);
     if (!ent.isDirectory() || !cm) {
       report.error(path.join(dir, ent.name), 1, "expected _meta.json, viz/ or NN-chapter-slug/ directories only");
@@ -910,6 +1052,22 @@ function loadSubject(dir, id, ctx) {
     for (const f of listDir(chDir)) {
       const file = path.join(chDir, f.name);
       if (f.name === "_meta.json") continue;
+      if (f.name === "pyq-map.json") {
+        const j = readJson(file, report);
+        if (!j) continue;
+        const list = Array.isArray(j.value) ? j.value : j.value?.map;
+        if (!Array.isArray(list)) {
+          report.error(file, 1, 'pyq-map.json is a list of { "id": "<pyq id>", "lesson": "<lesson id>", "tests": ["<block id>", …] }');
+          continue;
+        }
+        list.forEach((e, i) => {
+          const line = isObj(e) && typeof e.id === "string" ? lineOf(j.raw, new RegExp(`"${e.id.replace(/[-]/g, "\\-")}"`)) : 1;
+          if (!isObj(e) || !isStr(e.id, 80) || !isStr(e.lesson, 60) || !strList(e.tests, 20, 48) || Object.keys(e).some((k) => !["id", "lesson", "tests"].includes(k)))
+            return report.error(file, line, `entry ${i + 1} must be { "id", "lesson", "tests": [block ids] }`);
+          subject.pyqMap.push({ id: e.id, lesson: e.lesson, tests: e.tests, chapterId: ent.name, file, line });
+        });
+        continue;
+      }
       if (f.name === "practice.json") {
         const j = readJson(file, report);
         if (!j) continue;
@@ -921,7 +1079,7 @@ function loadSubject(dir, id, ctx) {
       }
       const lm = /^(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/.exec(f.name);
       if (!f.isFile() || !lm) {
-        report.error(file, 1, "chapters hold NN-lesson-slug.md lessons, practice.json and _meta.json only");
+        report.error(file, 1, "chapters hold NN-lesson-slug.md lessons, practice.json, pyq-map.json and _meta.json only");
         continue;
       }
       const lesson = loadLesson(file, { ...ctx, subject: id, chapter, lessonNum: lm[1], lessonSlug: lm[2] });
@@ -1010,7 +1168,7 @@ async function main(argv) {
     console.error(`✗ ${e.message}`);
     return 1;
   }
-  const { errors, warnings, outputs } = result;
+  const { errors, warnings, outputs, reports } = result;
   for (const w of warnings) console.warn(`! ${w}`);
   if (errors.length) {
     for (const e of errors) console.error(`✗ ${e}`);
@@ -1028,17 +1186,31 @@ async function main(argv) {
       } catch {}
       if (cur !== text) stale.push(cur === null ? `${name} (missing)` : name);
     }
+    let staleReports = 0;
     for (const name of existing) if (!outputs.has(name)) stale.push(`${name} (no longer built)`);
+    for (const [file, text] of reports) {
+      let cur = null;
+      try {
+        cur = fs.readFileSync(file, "utf8");
+      } catch {}
+      if (cur !== text) {
+        console.error(`✗ ${rel(file)}: out of date — run npm run notes:build`);
+        staleReports++;
+      }
+    }
     if (stale.length) {
       for (const s of stale) console.error(`✗ ${rel(path.join(out, s.split(" ")[0]))}: out of date — run npm run notes:build${s.includes("(") ? ` ${s.slice(s.indexOf("("))}` : ""}`);
       return 1;
     }
-    if (!quiet) console.log(`✓ GATE notes valid and up to date (${outputs.size - 1} subject${outputs.size === 2 ? "" : "s"})`);
+    if (staleReports) return 1;
+    const n = [...outputs.keys()].filter((k) => !k.startsWith("_")).length;
+    if (!quiet) console.log(`✓ GATE notes valid and up to date (${n} subject${n === 1 ? "" : "s"})`);
     return 0;
   }
   fs.mkdirSync(out, { recursive: true });
   for (const [name, text] of outputs) fs.writeFileSync(path.join(out, name), text);
   for (const name of existing) if (!outputs.has(name)) fs.unlinkSync(path.join(out, name));
+  for (const [file, text] of reports) fs.writeFileSync(file, text);
   if (!quiet) {
     for (const [name, text] of outputs) console.log(`  ${rel(path.join(out, name))}  ${(text.length / 1024).toFixed(1)} KB`);
     console.log(`✓ GATE notes built${drafts ? " (drafts included)" : ""}`);
