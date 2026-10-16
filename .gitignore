@@ -44,9 +44,6 @@ __pycache__/
 *.pyc
 
 # Heavy neural network binary weights (>100MB exceed GitHub push limits)
-archive/ai-engine/models/*.gguf
-archive/ai-engine/models/*.bin
-archive/ai-engine/models/*.safetensors
 
 # Python environments
 .venv/
