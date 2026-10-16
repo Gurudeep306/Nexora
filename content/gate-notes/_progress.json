@@ -1,0 +1,252 @@
+{
+  "version": 1,
+  "updated": "2026-10-16",
+  "steps": {
+    "N0": "review",
+    "N1": "pending",
+    "N2": "pending",
+    "N2b": "pending",
+    "N3": "pending"
+  },
+  "subjects": {
+    "dl": {
+      "name": "Digital Logic",
+      "order": 1,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 409,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "dm": {
+      "name": "Discrete Mathematics",
+      "order": 2,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 919,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "pds": {
+      "name": "Programming & Data Structures",
+      "order": 3,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 545,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "algo": {
+      "name": "Algorithms",
+      "order": 4,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 542,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "toc": {
+      "name": "Theory of Computation",
+      "order": 5,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 450,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "coa": {
+      "name": "Computer Organisation & Architecture",
+      "order": 6,
+      "status": "pending",
+      "noteSets": 6,
+      "pages": 672,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "os": {
+      "name": "Operating Systems",
+      "order": 7,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 502,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "db": {
+      "name": "Databases (DBMS)",
+      "order": 8,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 422,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "cn": {
+      "name": "Computer Networks",
+      "order": 9,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 920,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "cd": {
+      "name": "Compiler Design",
+      "order": 10,
+      "status": "pending",
+      "noteSets": 6,
+      "pages": 341,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "prob": {
+      "name": "Probability & Statistics",
+      "order": 11,
+      "status": "pending",
+      "noteSets": 6,
+      "pages": 407,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "la": {
+      "name": "Linear Algebra",
+      "order": 12,
+      "status": "pending",
+      "noteSets": 6,
+      "pages": 245,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "calc": {
+      "name": "Calculus",
+      "order": 13,
+      "status": "pending",
+      "noteSets": 5,
+      "pages": 200,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    },
+    "ga": {
+      "name": "General Aptitude",
+      "order": 14,
+      "status": "pending",
+      "noteSets": 0,
+      "pages": 0,
+      "stages": {
+        "digests": "pending",
+        "outline": "pending",
+        "lessons": "pending",
+        "viz": "pending",
+        "questions": "pending",
+        "review": "pending",
+        "wrapup": "pending"
+      },
+      "chapters": []
+    }
+  },
+  "notes": "General Aptitude has no reference notes: write from the syllabus, standard sources and our PYQ bank. DA subjects come later."
+}

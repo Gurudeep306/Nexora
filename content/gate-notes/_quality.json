@@ -1,0 +1,24 @@
+{
+  "_legend": {
+    "good": "Clear handwriting, one page per scan; render at 200 dpi.",
+    "spreads": "Phone-scanned two-page spreads, small writing, curved pages; render at 250 dpi and read each half.",
+    "dense": "Dense two-up pages on ruled paper, faint; render at 250-300 dpi.",
+    "faint": "Readable but faded or with bleed-through; render at 250 dpi.",
+    "noisy": "Speckled scan; readable at 250 dpi.",
+    "typed": "Typed or digital short notes and solved questions; text layer partly usable.",
+    "reference": "Typed formula handbook or textbook pages: use only to check facts, never as a teaching model."
+  },
+  "algo": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "typed" },
+  "coa": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "typed", "F": "good" },
+  "calc": { "A": "faint", "B": "spreads", "C": "good", "D": "dense", "E": "reference" },
+  "cd": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "noisy", "F": "typed" },
+  "cn": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "typed" },
+  "db": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "typed" },
+  "dl": { "A": "faint", "B": "spreads", "C": "good", "D": "typed", "E": "dense" },
+  "dm": { "A": "faint", "B": "spreads", "C": "good", "D": "dense", "E": "good" },
+  "la": { "A": "good", "B": "spreads", "C": "good", "D": "good", "E": "dense", "F": "reference" },
+  "os": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "typed" },
+  "prob": { "A": "good", "B": "spreads", "C": "good", "D": "good", "E": "reference", "F": "reference" },
+  "pds": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "typed" },
+  "toc": { "A": "good", "B": "spreads", "C": "good", "D": "dense", "E": "noisy" }
+}

@@ -1,0 +1,5752 @@
+[
+  {
+    "file": "GATE_CSE_Algorithms_5_Notes.pdf",
+    "subject": "algo",
+    "subjectName": "Algorithms",
+    "pages": 542,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Algorithm analysis",
+            "start": 7,
+            "end": 7
+          },
+          {
+            "depth": 1,
+            "title": "Asymptotic notation",
+            "start": 8,
+            "end": 24
+          },
+          {
+            "depth": 1,
+            "title": "Loop complexity",
+            "start": 25,
+            "end": 29
+          },
+          {
+            "depth": 1,
+            "title": "Complexity of recursive programs",
+            "start": 30,
+            "end": 37
+          },
+          {
+            "depth": 1,
+            "title": "Master theorem",
+            "start": 38,
+            "end": 47
+          },
+          {
+            "depth": 1,
+            "title": "Divide & conquer",
+            "start": 48,
+            "end": 52
+          },
+          {
+            "depth": 1,
+            "title": "Merge sort",
+            "start": 53,
+            "end": 58
+          },
+          {
+            "depth": 1,
+            "title": "Max\u2013min problem",
+            "start": 59,
+            "end": 65
+          },
+          {
+            "depth": 1,
+            "title": "Closest pair",
+            "start": 66,
+            "end": 68
+          },
+          {
+            "depth": 1,
+            "title": "Strassen's multiplication",
+            "start": 69,
+            "end": 69
+          },
+          {
+            "depth": 1,
+            "title": "Quick sort",
+            "start": 70,
+            "end": 74
+          },
+          {
+            "depth": 1,
+            "title": "Selection & binary search",
+            "start": 75,
+            "end": 77
+          },
+          {
+            "depth": 1,
+            "title": "Sorting algorithms",
+            "start": 78,
+            "end": 79
+          },
+          {
+            "depth": 1,
+            "title": "Graphs & DFS",
+            "start": 80,
+            "end": 90
+          },
+          {
+            "depth": 1,
+            "title": "Topological sort",
+            "start": 91,
+            "end": 92
+          },
+          {
+            "depth": 1,
+            "title": "Articulation points",
+            "start": 93,
+            "end": 94
+          },
+          {
+            "depth": 1,
+            "title": "BFS",
+            "start": 95,
+            "end": 97
+          },
+          {
+            "depth": 1,
+            "title": "Greedy algorithms",
+            "start": 98,
+            "end": 98
+          },
+          {
+            "depth": 1,
+            "title": "Dijkstra",
+            "start": 99,
+            "end": 99
+          },
+          {
+            "depth": 1,
+            "title": "Bellman\u2013Ford",
+            "start": 100,
+            "end": 103
+          },
+          {
+            "depth": 1,
+            "title": "Minimum spanning trees",
+            "start": 104,
+            "end": 107
+          },
+          {
+            "depth": 1,
+            "title": "Huffman coding",
+            "start": 108,
+            "end": 108
+          },
+          {
+            "depth": 1,
+            "title": "Optimal merge pattern",
+            "start": 109,
+            "end": 110
+          },
+          {
+            "depth": 1,
+            "title": "Job scheduling with deadlines",
+            "start": 111,
+            "end": 111
+          }
+        ],
+        "end": 111,
+        "pages": 108
+      },
+      {
+        "label": "B",
+        "start": 112,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Algorithms main notes",
+            "start": 113,
+            "end": 147
+          },
+          {
+            "depth": 2,
+            "title": "Time & space complexity",
+            "start": 113,
+            "end": 120
+          },
+          {
+            "depth": 2,
+            "title": "Comparing functions",
+            "start": 121,
+            "end": 122
+          },
+          {
+            "depth": 2,
+            "title": "Recurrence relations",
+            "start": 123,
+            "end": 129
+          },
+          {
+            "depth": 2,
+            "title": "Master theorem",
+            "start": 130,
+            "end": 132
+          },
+          {
+            "depth": 2,
+            "title": "Sorting",
+            "start": 133,
+            "end": 137
+          },
+          {
+            "depth": 2,
+            "title": "Merge sort",
+            "start": 138,
+            "end": 138
+          },
+          {
+            "depth": 2,
+            "title": "Heap sort",
+            "start": 139,
+            "end": 140
+          },
+          {
+            "depth": 2,
+            "title": "Quick sort",
+            "start": 141,
+            "end": 142
+          },
+          {
+            "depth": 2,
+            "title": "Graphs",
+            "start": 143,
+            "end": 143
+          },
+          {
+            "depth": 2,
+            "title": "BFS",
+            "start": 144,
+            "end": 144
+          },
+          {
+            "depth": 2,
+            "title": "DFS",
+            "start": 145,
+            "end": 146
+          },
+          {
+            "depth": 2,
+            "title": "MST & shortest paths",
+            "start": 147,
+            "end": 147
+          },
+          {
+            "depth": 1,
+            "title": "Algorithms short notes",
+            "start": 148,
+            "end": 165
+          },
+          {
+            "depth": 1,
+            "title": "Algorithms extra notes",
+            "start": 166,
+            "end": 181
+          }
+        ],
+        "end": 181,
+        "pages": 70
+      },
+      {
+        "label": "C",
+        "start": 182,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Part 1",
+            "start": 183,
+            "end": 363
+          },
+          {
+            "depth": 2,
+            "title": "Asymptotic analysis",
+            "start": 183,
+            "end": 240
+          },
+          {
+            "depth": 2,
+            "title": "Asymptotic analysis (addendum)",
+            "start": 241,
+            "end": 259
+          },
+          {
+            "depth": 2,
+            "title": "Recursion & backtracking",
+            "start": 260,
+            "end": 274
+          },
+          {
+            "depth": 2,
+            "title": "Sorting algorithms",
+            "start": 275,
+            "end": 319
+          },
+          {
+            "depth": 2,
+            "title": "Searching algorithms",
+            "start": 320,
+            "end": 322
+          },
+          {
+            "depth": 2,
+            "title": "Divide & conquer",
+            "start": 323,
+            "end": 324
+          },
+          {
+            "depth": 2,
+            "title": "Greedy algorithms",
+            "start": 325,
+            "end": 363
+          },
+          {
+            "depth": 1,
+            "title": "Part 2",
+            "start": 364,
+            "end": 506
+          },
+          {
+            "depth": 2,
+            "title": "Graph algorithms",
+            "start": 364,
+            "end": 386
+          },
+          {
+            "depth": 2,
+            "title": "Shortest path algorithms",
+            "start": 387,
+            "end": 405
+          },
+          {
+            "depth": 2,
+            "title": "Dynamic programming",
+            "start": 406,
+            "end": 460
+          },
+          {
+            "depth": 2,
+            "title": "Heaps (addendum)",
+            "start": 461,
+            "end": 465
+          },
+          {
+            "depth": 2,
+            "title": "Hashing",
+            "start": 466,
+            "end": 493
+          },
+          {
+            "depth": 2,
+            "title": "Complexity theory (P, NP)",
+            "start": 494,
+            "end": 506
+          },
+          {
+            "depth": 1,
+            "title": "Short note (typed)",
+            "start": 507,
+            "end": 514
+          }
+        ],
+        "end": 514,
+        "pages": 333
+      },
+      {
+        "label": "D",
+        "start": 515,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Growth of functions",
+            "start": 517,
+            "end": 519
+          },
+          {
+            "depth": 1,
+            "title": "Recurrences & master method",
+            "start": 520,
+            "end": 520
+          },
+          {
+            "depth": 1,
+            "title": "Sorting & heap sort",
+            "start": 521,
+            "end": 521
+          },
+          {
+            "depth": 1,
+            "title": "Quick sort",
+            "start": 522,
+            "end": 522
+          },
+          {
+            "depth": 1,
+            "title": "Counting sort",
+            "start": 523,
+            "end": 523
+          },
+          {
+            "depth": 1,
+            "title": "Graph algorithms",
+            "start": 524,
+            "end": 524
+          },
+          {
+            "depth": 1,
+            "title": "BFS & DFS",
+            "start": 525,
+            "end": 525
+          },
+          {
+            "depth": 1,
+            "title": "Topological sort & MST",
+            "start": 526,
+            "end": 526
+          },
+          {
+            "depth": 1,
+            "title": "Prim & shortest paths",
+            "start": 527,
+            "end": 527
+          },
+          {
+            "depth": 1,
+            "title": "Bellman\u2013Ford & Dijkstra",
+            "start": 528,
+            "end": 528
+          },
+          {
+            "depth": 1,
+            "title": "Matrix-chain multiplication (DP)",
+            "start": 529,
+            "end": 529
+          },
+          {
+            "depth": 1,
+            "title": "Longest common subsequence (DP)",
+            "start": 530,
+            "end": 530
+          },
+          {
+            "depth": 1,
+            "title": "Strongly connected components",
+            "start": 531,
+            "end": 531
+          },
+          {
+            "depth": 1,
+            "title": "Graph algorithm complexities",
+            "start": 532,
+            "end": 532
+          }
+        ],
+        "end": 532,
+        "pages": 18
+      },
+      {
+        "label": "E",
+        "start": 533,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed DS & Algo notes",
+            "start": 534,
+            "end": 542
+          }
+        ],
+        "end": 542,
+        "pages": 10
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_COA_6_Notes.pdf",
+    "subject": "coa",
+    "subjectName": "COA",
+    "pages": 672,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Part 1",
+            "start": 5,
+            "end": 88
+          },
+          {
+            "depth": 2,
+            "title": "Number representation & IEEE 754",
+            "start": 6,
+            "end": 9
+          },
+          {
+            "depth": 2,
+            "title": "Components of a computer",
+            "start": 10,
+            "end": 13
+          },
+          {
+            "depth": 2,
+            "title": "Instructions & instruction formats",
+            "start": 14,
+            "end": 18
+          },
+          {
+            "depth": 2,
+            "title": "Addressing modes",
+            "start": 19,
+            "end": 23
+          },
+          {
+            "depth": 2,
+            "title": "CPU performance (CPI, MIPS)",
+            "start": 24,
+            "end": 25
+          },
+          {
+            "depth": 2,
+            "title": "ALU, datapath & hardwired control",
+            "start": 26,
+            "end": 28
+          },
+          {
+            "depth": 2,
+            "title": "Microprogrammed control",
+            "start": 29,
+            "end": 30
+          },
+          {
+            "depth": 2,
+            "title": "RISC vs CISC",
+            "start": 31,
+            "end": 31
+          },
+          {
+            "depth": 2,
+            "title": "Byte/word addressing & endianness",
+            "start": 32,
+            "end": 33
+          },
+          {
+            "depth": 2,
+            "title": "I/O organisation",
+            "start": 34,
+            "end": 38
+          },
+          {
+            "depth": 2,
+            "title": "Interrupts",
+            "start": 39,
+            "end": 41
+          },
+          {
+            "depth": 2,
+            "title": "DMA",
+            "start": 42,
+            "end": 46
+          },
+          {
+            "depth": 2,
+            "title": "Memory organisation & RAM chips",
+            "start": 47,
+            "end": 58
+          },
+          {
+            "depth": 2,
+            "title": "Locality & cache basics",
+            "start": 59,
+            "end": 64
+          },
+          {
+            "depth": 2,
+            "title": "Cache mapping",
+            "start": 65,
+            "end": 73
+          },
+          {
+            "depth": 2,
+            "title": "Magnetic disk",
+            "start": 74,
+            "end": 75
+          },
+          {
+            "depth": 2,
+            "title": "Pipelining & hazards",
+            "start": 76,
+            "end": 80
+          },
+          {
+            "depth": 2,
+            "title": "Quick revision pages",
+            "start": 81,
+            "end": 88
+          },
+          {
+            "depth": 1,
+            "title": "Part 2",
+            "start": 89,
+            "end": 165
+          },
+          {
+            "depth": 2,
+            "title": "Basic organisation",
+            "start": 89,
+            "end": 89
+          },
+          {
+            "depth": 2,
+            "title": "Main memory",
+            "start": 90,
+            "end": 93
+          },
+          {
+            "depth": 2,
+            "title": "Byte ordering",
+            "start": 94,
+            "end": 98
+          },
+          {
+            "depth": 2,
+            "title": "System bus",
+            "start": 99,
+            "end": 101
+          },
+          {
+            "depth": 2,
+            "title": "Memory expansion",
+            "start": 102,
+            "end": 103
+          },
+          {
+            "depth": 2,
+            "title": "CPU registers & flags",
+            "start": 104,
+            "end": 109
+          },
+          {
+            "depth": 2,
+            "title": "Instruction set architecture",
+            "start": 110,
+            "end": 112
+          },
+          {
+            "depth": 2,
+            "title": "RISC vs CISC",
+            "start": 113,
+            "end": 116
+          },
+          {
+            "depth": 2,
+            "title": "Instruction format & expanding opcode",
+            "start": 117,
+            "end": 123
+          },
+          {
+            "depth": 2,
+            "title": "Instruction cycle",
+            "start": 124,
+            "end": 129
+          },
+          {
+            "depth": 2,
+            "title": "Addressing modes",
+            "start": 130,
+            "end": 136
+          },
+          {
+            "depth": 2,
+            "title": "Cache memory",
+            "start": 137,
+            "end": 147
+          },
+          {
+            "depth": 2,
+            "title": "Pipelining",
+            "start": 148,
+            "end": 148
+          },
+          {
+            "depth": 2,
+            "title": "I/O interfacing & interrupts",
+            "start": 149,
+            "end": 160
+          },
+          {
+            "depth": 2,
+            "title": "DMA",
+            "start": 161,
+            "end": 165
+          }
+        ],
+        "end": 165,
+        "pages": 162
+      },
+      {
+        "label": "B",
+        "start": 166,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 167,
+            "end": 279
+          },
+          {
+            "depth": 2,
+            "title": "Memory hierarchy",
+            "start": 167,
+            "end": 170
+          },
+          {
+            "depth": 2,
+            "title": "Main memory (RAM)",
+            "start": 171,
+            "end": 174
+          },
+          {
+            "depth": 2,
+            "title": "Multi-level memory access time",
+            "start": 175,
+            "end": 185
+          },
+          {
+            "depth": 2,
+            "title": "Cache mapping",
+            "start": 186,
+            "end": 200
+          },
+          {
+            "depth": 2,
+            "title": "Replacement policies",
+            "start": 201,
+            "end": 209
+          },
+          {
+            "depth": 2,
+            "title": "Cache & arrays",
+            "start": 210,
+            "end": 214
+          },
+          {
+            "depth": 2,
+            "title": "Secondary storage (disk)",
+            "start": 215,
+            "end": 238
+          },
+          {
+            "depth": 2,
+            "title": "I/O transfer modes",
+            "start": 239,
+            "end": 244
+          },
+          {
+            "depth": 2,
+            "title": "Interrupts",
+            "start": 245,
+            "end": 253
+          },
+          {
+            "depth": 2,
+            "title": "Pipelining",
+            "start": 254,
+            "end": 260
+          },
+          {
+            "depth": 2,
+            "title": "Instruction pipeline & hazards",
+            "start": 261,
+            "end": 272
+          },
+          {
+            "depth": 2,
+            "title": "Instruction formats & addressing modes",
+            "start": 273,
+            "end": 277
+          },
+          {
+            "depth": 2,
+            "title": "Control unit",
+            "start": 278,
+            "end": 279
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 280,
+            "end": 293
+          }
+        ],
+        "end": 293,
+        "pages": 128
+      },
+      {
+        "label": "C",
+        "start": 294,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Basic structure of computers",
+            "start": 295,
+            "end": 320
+          },
+          {
+            "depth": 1,
+            "title": "Machine instructions & programs",
+            "start": 321,
+            "end": 348
+          },
+          {
+            "depth": 1,
+            "title": "I/O organisation",
+            "start": 349,
+            "end": 380
+          },
+          {
+            "depth": 1,
+            "title": "Memory system",
+            "start": 381,
+            "end": 442
+          },
+          {
+            "depth": 1,
+            "title": "ALU, datapath, control unit",
+            "start": 443,
+            "end": 476
+          },
+          {
+            "depth": 1,
+            "title": "Pipelining",
+            "start": 477,
+            "end": 489
+          }
+        ],
+        "end": 489,
+        "pages": 196
+      },
+      {
+        "label": "D",
+        "start": 490,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Floating point",
+            "start": 492,
+            "end": 493
+          },
+          {
+            "depth": 1,
+            "title": "Register transfer & micro-operations",
+            "start": 494,
+            "end": 499
+          },
+          {
+            "depth": 1,
+            "title": "Instruction formats & addressing modes",
+            "start": 500,
+            "end": 504
+          },
+          {
+            "depth": 1,
+            "title": "Control unit",
+            "start": 505,
+            "end": 507
+          },
+          {
+            "depth": 1,
+            "title": "Microprogrammed control",
+            "start": 508,
+            "end": 509
+          },
+          {
+            "depth": 1,
+            "title": "Pipelining",
+            "start": 510,
+            "end": 512
+          },
+          {
+            "depth": 1,
+            "title": "I/O organisation",
+            "start": 513,
+            "end": 514
+          },
+          {
+            "depth": 1,
+            "title": "Interrupts",
+            "start": 515,
+            "end": 517
+          },
+          {
+            "depth": 1,
+            "title": "DMA",
+            "start": 518,
+            "end": 520
+          },
+          {
+            "depth": 1,
+            "title": "Memory hierarchy",
+            "start": 521,
+            "end": 524
+          },
+          {
+            "depth": 1,
+            "title": "Cache memory",
+            "start": 525,
+            "end": 528
+          },
+          {
+            "depth": 1,
+            "title": "Virtual memory & paging",
+            "start": 529,
+            "end": 537
+          }
+        ],
+        "end": 537,
+        "pages": 48
+      },
+      {
+        "label": "E",
+        "start": 538,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed short notes",
+            "start": 539,
+            "end": 549
+          }
+        ],
+        "end": 549,
+        "pages": 12
+      },
+      {
+        "label": "F",
+        "start": 550,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Memory hierarchy",
+            "start": 554,
+            "end": 562
+          },
+          {
+            "depth": 1,
+            "title": "Cache mapping",
+            "start": 563,
+            "end": 582
+          },
+          {
+            "depth": 1,
+            "title": "Cache & arrays",
+            "start": 583,
+            "end": 588
+          },
+          {
+            "depth": 1,
+            "title": "Magnetic disk",
+            "start": 589,
+            "end": 600
+          },
+          {
+            "depth": 1,
+            "title": "Magnetic tape",
+            "start": 601,
+            "end": 604
+          },
+          {
+            "depth": 1,
+            "title": "I/O modes & DMA",
+            "start": 605,
+            "end": 619
+          },
+          {
+            "depth": 1,
+            "title": "Machine instructions",
+            "start": 620,
+            "end": 630
+          },
+          {
+            "depth": 1,
+            "title": "Addressing modes",
+            "start": 631,
+            "end": 635
+          },
+          {
+            "depth": 1,
+            "title": "Control unit design",
+            "start": 636,
+            "end": 645
+          },
+          {
+            "depth": 1,
+            "title": "ALU & datapath",
+            "start": 646,
+            "end": 648
+          },
+          {
+            "depth": 1,
+            "title": "Number & data representation",
+            "start": 649,
+            "end": 656
+          },
+          {
+            "depth": 1,
+            "title": "Pipelining",
+            "start": 657,
+            "end": 672
+          }
+        ],
+        "end": 672,
+        "pages": 123
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Calculus_5_Notes.pdf",
+    "subject": "calc",
+    "subjectName": "Calculus",
+    "pages": 200,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Calculus notes",
+            "start": 5,
+            "end": 9
+          }
+        ],
+        "end": 9,
+        "pages": 6
+      },
+      {
+        "label": "B",
+        "start": 10,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 11,
+            "end": 38
+          },
+          {
+            "depth": 2,
+            "title": "Limits",
+            "start": 11,
+            "end": 11
+          },
+          {
+            "depth": 2,
+            "title": "Standard limits",
+            "start": 12,
+            "end": 12
+          },
+          {
+            "depth": 2,
+            "title": "L'H\u00f4pital's rule",
+            "start": 13,
+            "end": 16
+          },
+          {
+            "depth": 2,
+            "title": "Continuity",
+            "start": 17,
+            "end": 17
+          },
+          {
+            "depth": 2,
+            "title": "Differentiation",
+            "start": 18,
+            "end": 19
+          },
+          {
+            "depth": 2,
+            "title": "Parametric & partial differentiation",
+            "start": 20,
+            "end": 21
+          },
+          {
+            "depth": 2,
+            "title": "Maxima & minima",
+            "start": 22,
+            "end": 23
+          },
+          {
+            "depth": 2,
+            "title": "Mean value theorems",
+            "start": 24,
+            "end": 25
+          },
+          {
+            "depth": 2,
+            "title": "Taylor series",
+            "start": 26,
+            "end": 26
+          },
+          {
+            "depth": 2,
+            "title": "Integral calculus",
+            "start": 27,
+            "end": 29
+          },
+          {
+            "depth": 2,
+            "title": "Integration techniques",
+            "start": 30,
+            "end": 31
+          },
+          {
+            "depth": 2,
+            "title": "Definite integrals & properties",
+            "start": 32,
+            "end": 38
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 39,
+            "end": 48
+          }
+        ],
+        "end": 48,
+        "pages": 39
+      },
+      {
+        "label": "C",
+        "start": 49,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Limits",
+            "start": 51,
+            "end": 57
+          },
+          {
+            "depth": 1,
+            "title": "Continuity",
+            "start": 58,
+            "end": 58
+          },
+          {
+            "depth": 1,
+            "title": "Differentiability",
+            "start": 59,
+            "end": 63
+          },
+          {
+            "depth": 1,
+            "title": "Maxima & minima",
+            "start": 64,
+            "end": 66
+          },
+          {
+            "depth": 1,
+            "title": "Mean value theorems",
+            "start": 67,
+            "end": 68
+          },
+          {
+            "depth": 1,
+            "title": "Taylor series",
+            "start": 69,
+            "end": 70
+          },
+          {
+            "depth": 1,
+            "title": "Partial derivatives",
+            "start": 71,
+            "end": 74
+          },
+          {
+            "depth": 1,
+            "title": "Integration",
+            "start": 75,
+            "end": 76
+          },
+          {
+            "depth": 1,
+            "title": "Definite integrals",
+            "start": 77,
+            "end": 80
+          },
+          {
+            "depth": 1,
+            "title": "Improper integrals",
+            "start": 81,
+            "end": 84
+          },
+          {
+            "depth": 1,
+            "title": "Double integrals",
+            "start": 85,
+            "end": 89
+          },
+          {
+            "depth": 1,
+            "title": "Areas & volumes",
+            "start": 90,
+            "end": 92
+          }
+        ],
+        "end": 92,
+        "pages": 44
+      },
+      {
+        "label": "D",
+        "start": 93,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Cheat sheet",
+            "start": 94,
+            "end": 96
+          }
+        ],
+        "end": 96,
+        "pages": 4
+      },
+      {
+        "label": "E",
+        "start": 97,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Differential calculus",
+            "start": 98,
+            "end": 133
+          },
+          {
+            "depth": 1,
+            "title": "Integral calculus",
+            "start": 134,
+            "end": 200
+          }
+        ],
+        "end": 200,
+        "pages": 104
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Compiler_Design_6_Notes.pdf",
+    "subject": "cd",
+    "subjectName": "Compiler Design",
+    "pages": 341,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Phases of a compiler",
+            "start": 6,
+            "end": 7
+          },
+          {
+            "depth": 1,
+            "title": "Symbol table",
+            "start": 8,
+            "end": 9
+          },
+          {
+            "depth": 1,
+            "title": "Syntax analysis & ambiguity",
+            "start": 10,
+            "end": 10
+          },
+          {
+            "depth": 1,
+            "title": "Types of parsers",
+            "start": 11,
+            "end": 11
+          },
+          {
+            "depth": 1,
+            "title": "FIRST & FOLLOW",
+            "start": 12,
+            "end": 13
+          },
+          {
+            "depth": 1,
+            "title": "LL(1) parsing table",
+            "start": 14,
+            "end": 15
+          },
+          {
+            "depth": 1,
+            "title": "Recursive descent",
+            "start": 16,
+            "end": 16
+          },
+          {
+            "depth": 1,
+            "title": "Operator precedence",
+            "start": 17,
+            "end": 18
+          },
+          {
+            "depth": 1,
+            "title": "LR parsers",
+            "start": 19,
+            "end": 20
+          },
+          {
+            "depth": 1,
+            "title": "LR(0) & SLR(1)",
+            "start": 21,
+            "end": 25
+          },
+          {
+            "depth": 1,
+            "title": "CLR(1) & LALR(1)",
+            "start": 26,
+            "end": 32
+          },
+          {
+            "depth": 1,
+            "title": "Syntax-directed translation",
+            "start": 33,
+            "end": 36
+          },
+          {
+            "depth": 1,
+            "title": "S- & L-attributed SDT",
+            "start": 37,
+            "end": 38
+          },
+          {
+            "depth": 1,
+            "title": "Intermediate code generation",
+            "start": 39,
+            "end": 39
+          },
+          {
+            "depth": 1,
+            "title": "Backpatching",
+            "start": 40,
+            "end": 41
+          },
+          {
+            "depth": 1,
+            "title": "Runtime environments",
+            "start": 42,
+            "end": 42
+          },
+          {
+            "depth": 1,
+            "title": "Code optimisation",
+            "start": 43,
+            "end": 43
+          },
+          {
+            "depth": 1,
+            "title": "Basic blocks & flow graphs",
+            "start": 44,
+            "end": 47
+          },
+          {
+            "depth": 1,
+            "title": "Data-flow analysis",
+            "start": 48,
+            "end": 50
+          }
+        ],
+        "end": 50,
+        "pages": 47
+      },
+      {
+        "label": "B",
+        "start": 51,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 52,
+            "end": 123
+          },
+          {
+            "depth": 2,
+            "title": "Phases of a compiler",
+            "start": 52,
+            "end": 56
+          },
+          {
+            "depth": 2,
+            "title": "Lexical analysis & symbol table",
+            "start": 57,
+            "end": 58
+          },
+          {
+            "depth": 2,
+            "title": "Syntax analysis & ambiguity",
+            "start": 59,
+            "end": 62
+          },
+          {
+            "depth": 2,
+            "title": "Left recursion & left factoring",
+            "start": 63,
+            "end": 65
+          },
+          {
+            "depth": 2,
+            "title": "Top-down parsing & LL(1)",
+            "start": 66,
+            "end": 67
+          },
+          {
+            "depth": 2,
+            "title": "FIRST & FOLLOW",
+            "start": 68,
+            "end": 71
+          },
+          {
+            "depth": 2,
+            "title": "Operator precedence parsing",
+            "start": 72,
+            "end": 76
+          },
+          {
+            "depth": 2,
+            "title": "LR(0) & SLR(1)",
+            "start": 77,
+            "end": 86
+          },
+          {
+            "depth": 2,
+            "title": "CLR(1) & LALR(1)",
+            "start": 87,
+            "end": 96
+          },
+          {
+            "depth": 2,
+            "title": "Syntax-directed translation",
+            "start": 97,
+            "end": 103
+          },
+          {
+            "depth": 2,
+            "title": "S- & L-attributed definitions",
+            "start": 104,
+            "end": 108
+          },
+          {
+            "depth": 2,
+            "title": "Intermediate code generation",
+            "start": 109,
+            "end": 115
+          },
+          {
+            "depth": 2,
+            "title": "Runtime environment",
+            "start": 116,
+            "end": 117
+          },
+          {
+            "depth": 2,
+            "title": "Code optimisation",
+            "start": 118,
+            "end": 118
+          },
+          {
+            "depth": 2,
+            "title": "Loop optimisation & basic blocks",
+            "start": 119,
+            "end": 123
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 124,
+            "end": 134
+          },
+          {
+            "depth": 2,
+            "title": "Phases & symbol table",
+            "start": 124,
+            "end": 124
+          },
+          {
+            "depth": 2,
+            "title": "Syntax analysis & ambiguity",
+            "start": 125,
+            "end": 126
+          },
+          {
+            "depth": 2,
+            "title": "LL(1) parsing",
+            "start": 127,
+            "end": 127
+          },
+          {
+            "depth": 2,
+            "title": "Operator precedence & LR(0)",
+            "start": 128,
+            "end": 128
+          },
+          {
+            "depth": 2,
+            "title": "SLR, CLR & LALR",
+            "start": 129,
+            "end": 130
+          },
+          {
+            "depth": 2,
+            "title": "SDT",
+            "start": 131,
+            "end": 131
+          },
+          {
+            "depth": 2,
+            "title": "Intermediate code",
+            "start": 132,
+            "end": 132
+          },
+          {
+            "depth": 2,
+            "title": "Storage allocation & loop optimisation",
+            "start": 133,
+            "end": 133
+          },
+          {
+            "depth": 2,
+            "title": "Code optimisation",
+            "start": 134,
+            "end": 134
+          }
+        ],
+        "end": 134,
+        "pages": 84
+      },
+      {
+        "label": "C",
+        "start": 135,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Complete topic-wise notes",
+            "start": 136,
+            "end": 228
+          },
+          {
+            "depth": 2,
+            "title": "Introduction",
+            "start": 136,
+            "end": 148
+          },
+          {
+            "depth": 2,
+            "title": "Parsers",
+            "start": 149,
+            "end": 186
+          },
+          {
+            "depth": 2,
+            "title": "Syntax-directed translation",
+            "start": 187,
+            "end": 200
+          },
+          {
+            "depth": 2,
+            "title": "Intermediate code generation",
+            "start": 201,
+            "end": 207
+          },
+          {
+            "depth": 2,
+            "title": "Runtime environment",
+            "start": 208,
+            "end": 209
+          },
+          {
+            "depth": 2,
+            "title": "Code optimisation",
+            "start": 210,
+            "end": 214
+          },
+          {
+            "depth": 2,
+            "title": "Data-flow analysis",
+            "start": 215,
+            "end": 228
+          },
+          {
+            "depth": 1,
+            "title": "Extras",
+            "start": 229,
+            "end": 236
+          }
+        ],
+        "end": 236,
+        "pages": 102
+      },
+      {
+        "label": "D",
+        "start": 237,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Phases of a compiler",
+            "start": 238,
+            "end": 238
+          },
+          {
+            "depth": 1,
+            "title": "Syntax analysis",
+            "start": 239,
+            "end": 239
+          },
+          {
+            "depth": 1,
+            "title": "Top-down parsing",
+            "start": 240,
+            "end": 241
+          },
+          {
+            "depth": 1,
+            "title": "FIRST & FOLLOW",
+            "start": 242,
+            "end": 242
+          },
+          {
+            "depth": 1,
+            "title": "Bottom-up & LR parsing",
+            "start": 243,
+            "end": 243
+          },
+          {
+            "depth": 1,
+            "title": "Operator precedence",
+            "start": 244,
+            "end": 245
+          },
+          {
+            "depth": 1,
+            "title": "Intermediate code generation",
+            "start": 246,
+            "end": 246
+          },
+          {
+            "depth": 1,
+            "title": "Code optimisation",
+            "start": 247,
+            "end": 249
+          },
+          {
+            "depth": 1,
+            "title": "Runtime & storage",
+            "start": 250,
+            "end": 250
+          }
+        ],
+        "end": 250,
+        "pages": 14
+      },
+      {
+        "label": "E",
+        "start": 251,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Phases of a compiler",
+            "start": 252,
+            "end": 255
+          },
+          {
+            "depth": 1,
+            "title": "Lexical analysis",
+            "start": 256,
+            "end": 256
+          },
+          {
+            "depth": 1,
+            "title": "Ambiguity",
+            "start": 257,
+            "end": 258
+          },
+          {
+            "depth": 1,
+            "title": "Left recursion & left factoring",
+            "start": 259,
+            "end": 261
+          },
+          {
+            "depth": 1,
+            "title": "Top-down & recursive descent",
+            "start": 262,
+            "end": 264
+          },
+          {
+            "depth": 1,
+            "title": "LL(1) parsing",
+            "start": 265,
+            "end": 265
+          },
+          {
+            "depth": 1,
+            "title": "FIRST & FOLLOW",
+            "start": 266,
+            "end": 277
+          },
+          {
+            "depth": 1,
+            "title": "Operator precedence",
+            "start": 278,
+            "end": 284
+          },
+          {
+            "depth": 1,
+            "title": "LR parsers",
+            "start": 285,
+            "end": 286
+          },
+          {
+            "depth": 1,
+            "title": "LR(0) & SLR(1)",
+            "start": 287,
+            "end": 295
+          },
+          {
+            "depth": 1,
+            "title": "CLR(1) & LALR(1)",
+            "start": 296,
+            "end": 307
+          },
+          {
+            "depth": 1,
+            "title": "Syntax-directed translation",
+            "start": 308,
+            "end": 314
+          },
+          {
+            "depth": 1,
+            "title": "S- & L-attributed SDT",
+            "start": 315,
+            "end": 321
+          },
+          {
+            "depth": 1,
+            "title": "Intermediate code generation",
+            "start": 322,
+            "end": 329
+          },
+          {
+            "depth": 1,
+            "title": "Runtime environment",
+            "start": 330,
+            "end": 330
+          },
+          {
+            "depth": 1,
+            "title": "Code optimisation",
+            "start": 331,
+            "end": 331
+          },
+          {
+            "depth": 1,
+            "title": "Basic blocks & loops",
+            "start": 332,
+            "end": 337
+          }
+        ],
+        "end": 337,
+        "pages": 87
+      },
+      {
+        "label": "F",
+        "start": 338,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed short notes",
+            "start": 339,
+            "end": 341
+          }
+        ],
+        "end": 341,
+        "pages": 4
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Computer_Networks_5_Notes.pdf",
+    "subject": "cn",
+    "subjectName": "Computer Networks",
+    "pages": 920,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "IP addressing & classes",
+            "start": 5,
+            "end": 11
+          },
+          {
+            "depth": 1,
+            "title": "Subnet masks",
+            "start": 12,
+            "end": 12
+          },
+          {
+            "depth": 1,
+            "title": "VLSM",
+            "start": 13,
+            "end": 14
+          },
+          {
+            "depth": 1,
+            "title": "CIDR",
+            "start": 15,
+            "end": 18
+          },
+          {
+            "depth": 1,
+            "title": "Supernetting",
+            "start": 19,
+            "end": 21
+          },
+          {
+            "depth": 1,
+            "title": "Delays & flow control",
+            "start": 22,
+            "end": 23
+          },
+          {
+            "depth": 1,
+            "title": "Stop-and-wait",
+            "start": 24,
+            "end": 31
+          },
+          {
+            "depth": 1,
+            "title": "Go-Back-N",
+            "start": 32,
+            "end": 34
+          },
+          {
+            "depth": 1,
+            "title": "Selective repeat",
+            "start": 35,
+            "end": 37
+          },
+          {
+            "depth": 1,
+            "title": "Access control: TDM, polling",
+            "start": 38,
+            "end": 40
+          },
+          {
+            "depth": 1,
+            "title": "CSMA/CD",
+            "start": 41,
+            "end": 43
+          },
+          {
+            "depth": 1,
+            "title": "Token ring",
+            "start": 44,
+            "end": 48
+          },
+          {
+            "depth": 1,
+            "title": "Error control",
+            "start": 49,
+            "end": 49
+          },
+          {
+            "depth": 1,
+            "title": "CRC",
+            "start": 50,
+            "end": 50
+          },
+          {
+            "depth": 1,
+            "title": "Checksum",
+            "start": 51,
+            "end": 51
+          },
+          {
+            "depth": 1,
+            "title": "OSI model",
+            "start": 52,
+            "end": 56
+          },
+          {
+            "depth": 1,
+            "title": "Network layer",
+            "start": 57,
+            "end": 58
+          },
+          {
+            "depth": 1,
+            "title": "Ethernet frame",
+            "start": 59,
+            "end": 60
+          },
+          {
+            "depth": 1,
+            "title": "Switching",
+            "start": 61,
+            "end": 61
+          },
+          {
+            "depth": 1,
+            "title": "IPv4 header",
+            "start": 62,
+            "end": 66
+          },
+          {
+            "depth": 1,
+            "title": "Fragmentation",
+            "start": 67,
+            "end": 70
+          },
+          {
+            "depth": 1,
+            "title": "ARP, RARP, DHCP",
+            "start": 71,
+            "end": 73
+          },
+          {
+            "depth": 1,
+            "title": "ICMP",
+            "start": 74,
+            "end": 79
+          },
+          {
+            "depth": 1,
+            "title": "Routing",
+            "start": 80,
+            "end": 81
+          },
+          {
+            "depth": 1,
+            "title": "Distance vector routing",
+            "start": 82,
+            "end": 84
+          },
+          {
+            "depth": 1,
+            "title": "Link state routing",
+            "start": 85,
+            "end": 87
+          },
+          {
+            "depth": 1,
+            "title": "TCP",
+            "start": 88,
+            "end": 91
+          },
+          {
+            "depth": 1,
+            "title": "TCP connection management",
+            "start": 92,
+            "end": 101
+          },
+          {
+            "depth": 1,
+            "title": "TCP congestion control",
+            "start": 102,
+            "end": 104
+          },
+          {
+            "depth": 1,
+            "title": "TCP timers",
+            "start": 105,
+            "end": 106
+          },
+          {
+            "depth": 1,
+            "title": "UDP",
+            "start": 107,
+            "end": 107
+          },
+          {
+            "depth": 1,
+            "title": "Application layer protocols",
+            "start": 108,
+            "end": 114
+          },
+          {
+            "depth": 1,
+            "title": "Network devices",
+            "start": 115,
+            "end": 127
+          },
+          {
+            "depth": 1,
+            "title": "Framing & bit stuffing",
+            "start": 128,
+            "end": 131
+          },
+          {
+            "depth": 1,
+            "title": "Hamming code",
+            "start": 132,
+            "end": 136
+          }
+        ],
+        "end": 136,
+        "pages": 133
+      },
+      {
+        "label": "B",
+        "start": 137,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 138,
+            "end": 280
+          },
+          {
+            "depth": 2,
+            "title": "OSI introduction",
+            "start": 139,
+            "end": 141
+          },
+          {
+            "depth": 2,
+            "title": "Flow control",
+            "start": 142,
+            "end": 157
+          },
+          {
+            "depth": 2,
+            "title": "Error control & CRC",
+            "start": 158,
+            "end": 167
+          },
+          {
+            "depth": 2,
+            "title": "Sliding window protocols",
+            "start": 168,
+            "end": 180
+          },
+          {
+            "depth": 2,
+            "title": "Ethernet & MAC",
+            "start": 181,
+            "end": 188
+          },
+          {
+            "depth": 2,
+            "title": "Network devices",
+            "start": 189,
+            "end": 199
+          },
+          {
+            "depth": 2,
+            "title": "TCP",
+            "start": 200,
+            "end": 217
+          },
+          {
+            "depth": 2,
+            "title": "Routing algorithms",
+            "start": 218,
+            "end": 228
+          },
+          {
+            "depth": 2,
+            "title": "Congestion control, leaky & token bucket",
+            "start": 229,
+            "end": 238
+          },
+          {
+            "depth": 2,
+            "title": "Application layer",
+            "start": 239,
+            "end": 249
+          },
+          {
+            "depth": 2,
+            "title": "IPv4 addressing & subnetting",
+            "start": 250,
+            "end": 280
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 281,
+            "end": 309
+          }
+        ],
+        "end": 309,
+        "pages": 173
+      },
+      {
+        "label": "C",
+        "start": 310,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Part 1: subnetting, flow, access & error control",
+            "start": 311,
+            "end": 470
+          },
+          {
+            "depth": 2,
+            "title": "Subnetting & supernetting",
+            "start": 311,
+            "end": 352
+          },
+          {
+            "depth": 2,
+            "title": "Flow control methods",
+            "start": 353,
+            "end": 412
+          },
+          {
+            "depth": 2,
+            "title": "Access control methods",
+            "start": 413,
+            "end": 450
+          },
+          {
+            "depth": 2,
+            "title": "Error control methods",
+            "start": 451,
+            "end": 470
+          },
+          {
+            "depth": 1,
+            "title": "Part 2: OSI, LAN, switching, IPv4, routing",
+            "start": 471,
+            "end": 592
+          },
+          {
+            "depth": 2,
+            "title": "ISO/OSI model",
+            "start": 471,
+            "end": 504
+          },
+          {
+            "depth": 2,
+            "title": "LAN technologies",
+            "start": 505,
+            "end": 510
+          },
+          {
+            "depth": 2,
+            "title": "Switching",
+            "start": 511,
+            "end": 529
+          },
+          {
+            "depth": 2,
+            "title": "IPv4",
+            "start": 530,
+            "end": 537
+          },
+          {
+            "depth": 2,
+            "title": "Fragmentation",
+            "start": 538,
+            "end": 553
+          },
+          {
+            "depth": 2,
+            "title": "Network-layer protocols",
+            "start": 554,
+            "end": 577
+          },
+          {
+            "depth": 2,
+            "title": "Routing",
+            "start": 578,
+            "end": 592
+          },
+          {
+            "depth": 1,
+            "title": "Part 3: TCP, UDP, application layer, security",
+            "start": 593,
+            "end": 779
+          },
+          {
+            "depth": 2,
+            "title": "TCP",
+            "start": 593,
+            "end": 665
+          },
+          {
+            "depth": 2,
+            "title": "TCP flow control",
+            "start": 666,
+            "end": 668
+          },
+          {
+            "depth": 2,
+            "title": "TCP vs UDP",
+            "start": 669,
+            "end": 672
+          },
+          {
+            "depth": 2,
+            "title": "UDP",
+            "start": 673,
+            "end": 677
+          },
+          {
+            "depth": 2,
+            "title": "Network devices",
+            "start": 678,
+            "end": 678
+          },
+          {
+            "depth": 2,
+            "title": "Application layer protocols",
+            "start": 679,
+            "end": 695
+          },
+          {
+            "depth": 2,
+            "title": "IPv6 & WiFi",
+            "start": 696,
+            "end": 733
+          },
+          {
+            "depth": 2,
+            "title": "Network security",
+            "start": 734,
+            "end": 779
+          },
+          {
+            "depth": 1,
+            "title": "Extras 1 (typed)",
+            "start": 780,
+            "end": 800
+          },
+          {
+            "depth": 1,
+            "title": "Extras 2 (typed)",
+            "start": 801,
+            "end": 826
+          },
+          {
+            "depth": 1,
+            "title": "Extras 3 (typed)",
+            "start": 827,
+            "end": 832
+          },
+          {
+            "depth": 1,
+            "title": "Formula sheet (typed)",
+            "start": 833,
+            "end": 835
+          },
+          {
+            "depth": 1,
+            "title": "Short note (typed)",
+            "start": 836,
+            "end": 842
+          }
+        ],
+        "end": 842,
+        "pages": 533
+      },
+      {
+        "label": "D",
+        "start": 843,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Physical layer & signals",
+            "start": 845,
+            "end": 855
+          },
+          {
+            "depth": 1,
+            "title": "Network topologies",
+            "start": 856,
+            "end": 858
+          },
+          {
+            "depth": 1,
+            "title": "OSI model",
+            "start": 859,
+            "end": 867
+          },
+          {
+            "depth": 1,
+            "title": "Data link layer",
+            "start": 868,
+            "end": 868
+          },
+          {
+            "depth": 1,
+            "title": "Error detection & CRC",
+            "start": 869,
+            "end": 873
+          },
+          {
+            "depth": 1,
+            "title": "Hamming code",
+            "start": 874,
+            "end": 874
+          },
+          {
+            "depth": 1,
+            "title": "Flow control & ARQ",
+            "start": 875,
+            "end": 880
+          },
+          {
+            "depth": 1,
+            "title": "Multiple access (ALOHA, CSMA)",
+            "start": 881,
+            "end": 884
+          },
+          {
+            "depth": 1,
+            "title": "Routing algorithms",
+            "start": 885,
+            "end": 888
+          },
+          {
+            "depth": 1,
+            "title": "Congestion control",
+            "start": 889,
+            "end": 891
+          },
+          {
+            "depth": 1,
+            "title": "Network devices",
+            "start": 892,
+            "end": 896
+          },
+          {
+            "depth": 1,
+            "title": "TCP/IP model",
+            "start": 897,
+            "end": 898
+          },
+          {
+            "depth": 1,
+            "title": "IP addressing",
+            "start": 899,
+            "end": 899
+          },
+          {
+            "depth": 1,
+            "title": "Subnetting",
+            "start": 900,
+            "end": 902
+          },
+          {
+            "depth": 1,
+            "title": "ARP",
+            "start": 903,
+            "end": 903
+          },
+          {
+            "depth": 1,
+            "title": "ICMP & UDP",
+            "start": 904,
+            "end": 904
+          },
+          {
+            "depth": 1,
+            "title": "TCP",
+            "start": 905,
+            "end": 907
+          },
+          {
+            "depth": 1,
+            "title": "Application layer",
+            "start": 908,
+            "end": 912
+          },
+          {
+            "depth": 1,
+            "title": "Network security",
+            "start": 913,
+            "end": 914
+          }
+        ],
+        "end": 914,
+        "pages": 72
+      },
+      {
+        "label": "E",
+        "start": 915,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed short notes",
+            "start": 916,
+            "end": 920
+          }
+        ],
+        "end": 920,
+        "pages": 6
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_DBMS_5_Notes.pdf",
+    "subject": "db",
+    "subjectName": "DBMS",
+    "pages": 422,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Introduction & data models",
+            "start": 6,
+            "end": 8
+          },
+          {
+            "depth": 1,
+            "title": "ER model",
+            "start": 9,
+            "end": 10
+          },
+          {
+            "depth": 1,
+            "title": "Mapping cardinality & participation",
+            "start": 11,
+            "end": 11
+          },
+          {
+            "depth": 1,
+            "title": "Extended ER features",
+            "start": 12,
+            "end": 13
+          },
+          {
+            "depth": 1,
+            "title": "Relational model & keys",
+            "start": 14,
+            "end": 15
+          },
+          {
+            "depth": 1,
+            "title": "Functional dependencies",
+            "start": 16,
+            "end": 17
+          },
+          {
+            "depth": 1,
+            "title": "Normalization",
+            "start": 18,
+            "end": 19
+          },
+          {
+            "depth": 1,
+            "title": "Lossless decomposition",
+            "start": 20,
+            "end": 20
+          },
+          {
+            "depth": 1,
+            "title": "SQL",
+            "start": 21,
+            "end": 22
+          },
+          {
+            "depth": 1,
+            "title": "SQL joins",
+            "start": 23,
+            "end": 26
+          },
+          {
+            "depth": 1,
+            "title": "GROUP BY, HAVING, ORDER BY",
+            "start": 27,
+            "end": 27
+          },
+          {
+            "depth": 1,
+            "title": "Subqueries & EXISTS",
+            "start": 28,
+            "end": 30
+          },
+          {
+            "depth": 1,
+            "title": "Relational algebra",
+            "start": 31,
+            "end": 32
+          },
+          {
+            "depth": 1,
+            "title": "Division operator",
+            "start": 33,
+            "end": 33
+          },
+          {
+            "depth": 1,
+            "title": "Transactions",
+            "start": 34,
+            "end": 35
+          },
+          {
+            "depth": 1,
+            "title": "Schedules & serializability",
+            "start": 36,
+            "end": 37
+          },
+          {
+            "depth": 1,
+            "title": "View serializability",
+            "start": 38,
+            "end": 38
+          },
+          {
+            "depth": 1,
+            "title": "Recoverability",
+            "start": 39,
+            "end": 39
+          },
+          {
+            "depth": 1,
+            "title": "Locking & 2PL",
+            "start": 40,
+            "end": 43
+          },
+          {
+            "depth": 1,
+            "title": "Timestamp protocols",
+            "start": 44,
+            "end": 45
+          },
+          {
+            "depth": 1,
+            "title": "Deadlock prevention",
+            "start": 46,
+            "end": 46
+          },
+          {
+            "depth": 1,
+            "title": "File organisation",
+            "start": 47,
+            "end": 48
+          },
+          {
+            "depth": 1,
+            "title": "Indexing",
+            "start": 49,
+            "end": 49
+          },
+          {
+            "depth": 1,
+            "title": "B-trees",
+            "start": 50,
+            "end": 53
+          },
+          {
+            "depth": 1,
+            "title": "B+ trees",
+            "start": 54,
+            "end": 55
+          },
+          {
+            "depth": 1,
+            "title": "Multilevel indexing",
+            "start": 56,
+            "end": 56
+          }
+        ],
+        "end": 56,
+        "pages": 53
+      },
+      {
+        "label": "B",
+        "start": 57,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 58,
+            "end": 161
+          },
+          {
+            "depth": 2,
+            "title": "Introduction & keys",
+            "start": 58,
+            "end": 65
+          },
+          {
+            "depth": 2,
+            "title": "Functional dependencies",
+            "start": 66,
+            "end": 71
+          },
+          {
+            "depth": 2,
+            "title": "Normalization",
+            "start": 72,
+            "end": 82
+          },
+          {
+            "depth": 2,
+            "title": "Relational algebra & SQL",
+            "start": 83,
+            "end": 91
+          },
+          {
+            "depth": 2,
+            "title": "Transactions",
+            "start": 92,
+            "end": 97
+          },
+          {
+            "depth": 2,
+            "title": "Serializability",
+            "start": 98,
+            "end": 109
+          },
+          {
+            "depth": 2,
+            "title": "Concurrency control",
+            "start": 110,
+            "end": 112
+          },
+          {
+            "depth": 2,
+            "title": "ER diagrams",
+            "start": 113,
+            "end": 118
+          },
+          {
+            "depth": 2,
+            "title": "SQL & PYQs",
+            "start": 119,
+            "end": 140
+          },
+          {
+            "depth": 2,
+            "title": "File organisation",
+            "start": 141,
+            "end": 143
+          },
+          {
+            "depth": 2,
+            "title": "Indexing",
+            "start": 144,
+            "end": 151
+          },
+          {
+            "depth": 2,
+            "title": "B & B+ trees",
+            "start": 152,
+            "end": 161
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 162,
+            "end": 182
+          }
+        ],
+        "end": 182,
+        "pages": 126
+      },
+      {
+        "label": "C",
+        "start": 183,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "ER & relational model",
+            "start": 184,
+            "end": 235
+          },
+          {
+            "depth": 1,
+            "title": "Normalization",
+            "start": 236,
+            "end": 251
+          },
+          {
+            "depth": 1,
+            "title": "Relational algebra",
+            "start": 252,
+            "end": 260
+          },
+          {
+            "depth": 1,
+            "title": "Tuple relational calculus",
+            "start": 261,
+            "end": 264
+          },
+          {
+            "depth": 1,
+            "title": "Domain relational calculus",
+            "start": 265,
+            "end": 265
+          },
+          {
+            "depth": 1,
+            "title": "SQL",
+            "start": 266,
+            "end": 282
+          },
+          {
+            "depth": 1,
+            "title": "Transactions & concurrency control",
+            "start": 283,
+            "end": 313
+          },
+          {
+            "depth": 1,
+            "title": "Transactions (addendum)",
+            "start": 314,
+            "end": 320
+          },
+          {
+            "depth": 1,
+            "title": "File structures",
+            "start": 321,
+            "end": 349
+          }
+        ],
+        "end": 349,
+        "pages": 167
+      },
+      {
+        "label": "D",
+        "start": 350,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "DBMS notes",
+            "start": 351,
+            "end": 409
+          },
+          {
+            "depth": 2,
+            "title": "Introduction & architecture",
+            "start": 352,
+            "end": 354
+          },
+          {
+            "depth": 2,
+            "title": "ER model",
+            "start": 355,
+            "end": 366
+          },
+          {
+            "depth": 2,
+            "title": "Relational model & constraints",
+            "start": 367,
+            "end": 370
+          },
+          {
+            "depth": 2,
+            "title": "Relational algebra",
+            "start": 371,
+            "end": 376
+          },
+          {
+            "depth": 2,
+            "title": "Relational calculus",
+            "start": 377,
+            "end": 382
+          },
+          {
+            "depth": 2,
+            "title": "Functional dependencies",
+            "start": 383,
+            "end": 385
+          },
+          {
+            "depth": 2,
+            "title": "Closure & canonical cover",
+            "start": 386,
+            "end": 388
+          },
+          {
+            "depth": 2,
+            "title": "Normal forms",
+            "start": 389,
+            "end": 391
+          },
+          {
+            "depth": 2,
+            "title": "Decomposition algorithms",
+            "start": 392,
+            "end": 399
+          },
+          {
+            "depth": 2,
+            "title": "Transactions & ACID",
+            "start": 400,
+            "end": 400
+          },
+          {
+            "depth": 2,
+            "title": "Serializability",
+            "start": 401,
+            "end": 403
+          },
+          {
+            "depth": 2,
+            "title": "Locking protocols",
+            "start": 404,
+            "end": 405
+          },
+          {
+            "depth": 2,
+            "title": "Timestamp protocols",
+            "start": 406,
+            "end": 407
+          },
+          {
+            "depth": 2,
+            "title": "Recovery & logs",
+            "start": 408,
+            "end": 409
+          },
+          {
+            "depth": 1,
+            "title": "File organisation & indexing (from his OS notebook)",
+            "start": 410,
+            "end": 418
+          }
+        ],
+        "end": 418,
+        "pages": 69
+      },
+      {
+        "label": "E",
+        "start": 419,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed short notes",
+            "start": 420,
+            "end": 422
+          }
+        ],
+        "end": 422,
+        "pages": 4
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Digital_Logic_5_Notes.pdf",
+    "subject": "dl",
+    "subjectName": "Digital Logic",
+    "pages": 409,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Number systems",
+            "start": 8,
+            "end": 14
+          },
+          {
+            "depth": 1,
+            "title": "Binary codes (BCD, Excess-3, Gray)",
+            "start": 15,
+            "end": 19
+          },
+          {
+            "depth": 1,
+            "title": "Signed numbers & floating point",
+            "start": 20,
+            "end": 23
+          },
+          {
+            "depth": 1,
+            "title": "Logic gates & universal gates",
+            "start": 24,
+            "end": 32
+          },
+          {
+            "depth": 1,
+            "title": "Boolean algebra",
+            "start": 33,
+            "end": 36
+          },
+          {
+            "depth": 1,
+            "title": "K-maps & prime implicants",
+            "start": 37,
+            "end": 43
+          },
+          {
+            "depth": 1,
+            "title": "Combinational circuits: adders, subtractors",
+            "start": 44,
+            "end": 60
+          },
+          {
+            "depth": 1,
+            "title": "Comparators",
+            "start": 61,
+            "end": 63
+          },
+          {
+            "depth": 1,
+            "title": "Multiplexers",
+            "start": 64,
+            "end": 72
+          },
+          {
+            "depth": 1,
+            "title": "Decoders & encoders",
+            "start": 73,
+            "end": 75
+          },
+          {
+            "depth": 1,
+            "title": "Sequential circuits & latches",
+            "start": 76,
+            "end": 78
+          },
+          {
+            "depth": 1,
+            "title": "Flip-flops",
+            "start": 79,
+            "end": 86
+          },
+          {
+            "depth": 1,
+            "title": "Counters (ring, Johnson, ripple)",
+            "start": 87,
+            "end": 92
+          },
+          {
+            "depth": 1,
+            "title": "Quick revision pages",
+            "start": 93,
+            "end": 101
+          }
+        ],
+        "end": 101,
+        "pages": 98
+      },
+      {
+        "label": "B",
+        "start": 102,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 103,
+            "end": 160
+          },
+          {
+            "depth": 2,
+            "title": "Logic functions & Boolean properties",
+            "start": 104,
+            "end": 112
+          },
+          {
+            "depth": 2,
+            "title": "Minimisation (K-maps)",
+            "start": 113,
+            "end": 116
+          },
+          {
+            "depth": 2,
+            "title": "Combinational circuit design",
+            "start": 117,
+            "end": 119
+          },
+          {
+            "depth": 2,
+            "title": "Multiplexers",
+            "start": 120,
+            "end": 124
+          },
+          {
+            "depth": 2,
+            "title": "Decoders & ROM",
+            "start": 125,
+            "end": 128
+          },
+          {
+            "depth": 2,
+            "title": "Adders & carry-lookahead",
+            "start": 129,
+            "end": 132
+          },
+          {
+            "depth": 2,
+            "title": "Comparators",
+            "start": 133,
+            "end": 134
+          },
+          {
+            "depth": 2,
+            "title": "Flip-flops",
+            "start": 135,
+            "end": 137
+          },
+          {
+            "depth": 2,
+            "title": "Counters",
+            "start": 138,
+            "end": 138
+          },
+          {
+            "depth": 2,
+            "title": "Number systems",
+            "start": 139,
+            "end": 142
+          },
+          {
+            "depth": 2,
+            "title": "Signed numbers & complements",
+            "start": 143,
+            "end": 151
+          },
+          {
+            "depth": 2,
+            "title": "Floating point (IEEE 754)",
+            "start": 152,
+            "end": 153
+          },
+          {
+            "depth": 2,
+            "title": "Sequential circuits & counter design",
+            "start": 154,
+            "end": 160
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 161,
+            "end": 185
+          }
+        ],
+        "end": 185,
+        "pages": 84
+      },
+      {
+        "label": "C",
+        "start": 186,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Basics, number systems, logic gates",
+            "start": 187,
+            "end": 258
+          },
+          {
+            "depth": 1,
+            "title": "Minimization",
+            "start": 259,
+            "end": 276
+          },
+          {
+            "depth": 1,
+            "title": "Combinational circuits",
+            "start": 277,
+            "end": 325
+          },
+          {
+            "depth": 1,
+            "title": "Sequential circuits",
+            "start": 326,
+            "end": 372
+          },
+          {
+            "depth": 1,
+            "title": "Memory & programmable logic",
+            "start": 373,
+            "end": 393
+          },
+          {
+            "depth": 1,
+            "title": "Data converters",
+            "start": 394,
+            "end": 398
+          }
+        ],
+        "end": 398,
+        "pages": 213
+      },
+      {
+        "label": "D",
+        "start": 399,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed short notes",
+            "start": 400,
+            "end": 403
+          }
+        ],
+        "end": 403,
+        "pages": 5
+      },
+      {
+        "label": "E",
+        "start": 404,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Cheat sheet",
+            "start": 405,
+            "end": 409
+          }
+        ],
+        "end": 409,
+        "pages": 6
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Discrete_Mathematics_5_Notes.pdf",
+    "subject": "dm",
+    "subjectName": "Discrete Mathematics",
+    "pages": 919,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Prerequisites: series, modular arithmetic, proof techniques",
+            "start": 7,
+            "end": 14
+          },
+          {
+            "depth": 1,
+            "title": "Propositional logic",
+            "start": 15,
+            "end": 25
+          },
+          {
+            "depth": 1,
+            "title": "First-order logic",
+            "start": 26,
+            "end": 43
+          },
+          {
+            "depth": 1,
+            "title": "Set theory",
+            "start": 44,
+            "end": 46
+          },
+          {
+            "depth": 1,
+            "title": "Relations & functions",
+            "start": 47,
+            "end": 52
+          },
+          {
+            "depth": 1,
+            "title": "POSETs & Hasse diagrams",
+            "start": 53,
+            "end": 58
+          },
+          {
+            "depth": 1,
+            "title": "Lattices",
+            "start": 59,
+            "end": 67
+          },
+          {
+            "depth": 1,
+            "title": "Combinatorics",
+            "start": 68,
+            "end": 86
+          },
+          {
+            "depth": 1,
+            "title": "Generating functions",
+            "start": 87,
+            "end": 89
+          },
+          {
+            "depth": 1,
+            "title": "Recurrence relations",
+            "start": 90,
+            "end": 92
+          },
+          {
+            "depth": 1,
+            "title": "Graph theory (I)",
+            "start": 93,
+            "end": 123
+          },
+          {
+            "depth": 1,
+            "title": "Algebraic structures & groups",
+            "start": 124,
+            "end": 136
+          },
+          {
+            "depth": 1,
+            "title": "Graph theory (II): matching, colouring, Euler, Hamiltonian, planar",
+            "start": 137,
+            "end": 155
+          }
+        ],
+        "end": 155,
+        "pages": 152
+      },
+      {
+        "label": "B",
+        "start": 156,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 157,
+            "end": 249
+          },
+          {
+            "depth": 2,
+            "title": "Mathematical logic",
+            "start": 157,
+            "end": 177
+          },
+          {
+            "depth": 2,
+            "title": "Set theory",
+            "start": 178,
+            "end": 183
+          },
+          {
+            "depth": 2,
+            "title": "Relations",
+            "start": 184,
+            "end": 191
+          },
+          {
+            "depth": 2,
+            "title": "Functions",
+            "start": 192,
+            "end": 196
+          },
+          {
+            "depth": 2,
+            "title": "Groups",
+            "start": 197,
+            "end": 204
+          },
+          {
+            "depth": 2,
+            "title": "POSETs, Hasse diagrams & lattices",
+            "start": 205,
+            "end": 211
+          },
+          {
+            "depth": 2,
+            "title": "Graph theory",
+            "start": 212,
+            "end": 228
+          },
+          {
+            "depth": 2,
+            "title": "Matching",
+            "start": 229,
+            "end": 230
+          },
+          {
+            "depth": 2,
+            "title": "Combinatorics",
+            "start": 231,
+            "end": 249
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 250,
+            "end": 278
+          }
+        ],
+        "end": 278,
+        "pages": 123
+      },
+      {
+        "label": "C",
+        "start": 279,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Mathematical Logic & Proof Techniques",
+            "start": 280,
+            "end": 328
+          },
+          {
+            "depth": 1,
+            "title": "Sets, Relations, Functions, POSETs & Lattices",
+            "start": 329,
+            "end": 410
+          },
+          {
+            "depth": 1,
+            "title": "Algebraic Structures (Groups)",
+            "start": 411,
+            "end": 441
+          },
+          {
+            "depth": 1,
+            "title": "Graph Theory - 1",
+            "start": 442,
+            "end": 457
+          },
+          {
+            "depth": 1,
+            "title": "Graph Theory - 2",
+            "start": 458,
+            "end": 491
+          },
+          {
+            "depth": 1,
+            "title": "Graph Theory - 3",
+            "start": 492,
+            "end": 528
+          },
+          {
+            "depth": 1,
+            "title": "Graph Theory - 4",
+            "start": 529,
+            "end": 568
+          },
+          {
+            "depth": 1,
+            "title": "Combinatorics - Counting",
+            "start": 569,
+            "end": 596
+          },
+          {
+            "depth": 1,
+            "title": "Advanced Counting - 1 (Recurrences)",
+            "start": 597,
+            "end": 637
+          },
+          {
+            "depth": 1,
+            "title": "Advanced Counting - 2 (Generating Functions)",
+            "start": 638,
+            "end": 658
+          },
+          {
+            "depth": 1,
+            "title": "One-glance Short Note",
+            "start": 659,
+            "end": 666
+          },
+          {
+            "depth": 1,
+            "title": "Extras",
+            "start": 667,
+            "end": 669
+          }
+        ],
+        "end": 669,
+        "pages": 391
+      },
+      {
+        "label": "D",
+        "start": 670,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Discrete Mathematics",
+            "start": 671,
+            "end": 711
+          },
+          {
+            "depth": 2,
+            "title": "Propositional logic",
+            "start": 671,
+            "end": 675
+          },
+          {
+            "depth": 2,
+            "title": "Predicates & quantifiers",
+            "start": 676,
+            "end": 681
+          },
+          {
+            "depth": 2,
+            "title": "Sets",
+            "start": 682,
+            "end": 686
+          },
+          {
+            "depth": 2,
+            "title": "Functions",
+            "start": 687,
+            "end": 691
+          },
+          {
+            "depth": 2,
+            "title": "Relations",
+            "start": 692,
+            "end": 698
+          },
+          {
+            "depth": 2,
+            "title": "POSETs",
+            "start": 699,
+            "end": 702
+          },
+          {
+            "depth": 2,
+            "title": "Lattices",
+            "start": 703,
+            "end": 703
+          },
+          {
+            "depth": 2,
+            "title": "Groups",
+            "start": 704,
+            "end": 705
+          },
+          {
+            "depth": 2,
+            "title": "Permutations & combinations",
+            "start": 706,
+            "end": 708
+          },
+          {
+            "depth": 2,
+            "title": "Generating functions",
+            "start": 709,
+            "end": 709
+          },
+          {
+            "depth": 2,
+            "title": "Recurrence relations",
+            "start": 710,
+            "end": 711
+          },
+          {
+            "depth": 1,
+            "title": "Graph Theory",
+            "start": 712,
+            "end": 728
+          }
+        ],
+        "end": 728,
+        "pages": 59
+      },
+      {
+        "label": "E",
+        "start": 729,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Basic Counting, Sets & Logic",
+            "start": 730,
+            "end": 797
+          },
+          {
+            "depth": 1,
+            "title": "Relations & Functions",
+            "start": 798,
+            "end": 841
+          },
+          {
+            "depth": 1,
+            "title": "Groups, Sequences, Permutations & Combinations with Repetition",
+            "start": 842,
+            "end": 878
+          },
+          {
+            "depth": 1,
+            "title": "Graph Theory",
+            "start": 879,
+            "end": 919
+          }
+        ],
+        "end": 919,
+        "pages": 191
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Linear_Algebra_6_Notes.pdf",
+    "subject": "la",
+    "subjectName": "Linear Algebra",
+    "pages": 245,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Vectors & linear independence",
+            "start": 6,
+            "end": 9
+          },
+          {
+            "depth": 1,
+            "title": "Systems of linear equations",
+            "start": 10,
+            "end": 14
+          },
+          {
+            "depth": 1,
+            "title": "Rank of a matrix",
+            "start": 15,
+            "end": 18
+          },
+          {
+            "depth": 1,
+            "title": "Determinants",
+            "start": 19,
+            "end": 21
+          },
+          {
+            "depth": 1,
+            "title": "Cramer's rule & inverse",
+            "start": 22,
+            "end": 23
+          },
+          {
+            "depth": 1,
+            "title": "Eigenvalues & eigenvectors",
+            "start": 24,
+            "end": 29
+          },
+          {
+            "depth": 1,
+            "title": "Cayley\u2013Hamilton theorem",
+            "start": 30,
+            "end": 32
+          },
+          {
+            "depth": 1,
+            "title": "LU decomposition",
+            "start": 33,
+            "end": 33
+          },
+          {
+            "depth": 1,
+            "title": "Types of matrices",
+            "start": 34,
+            "end": 37
+          }
+        ],
+        "end": 37,
+        "pages": 34
+      },
+      {
+        "label": "B",
+        "start": 38,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes (GATE)",
+            "start": 39,
+            "end": 70
+          },
+          {
+            "depth": 2,
+            "title": "Types of matrices",
+            "start": 40,
+            "end": 46
+          },
+          {
+            "depth": 2,
+            "title": "Determinants",
+            "start": 47,
+            "end": 49
+          },
+          {
+            "depth": 2,
+            "title": "Inverse of a matrix",
+            "start": 50,
+            "end": 53
+          },
+          {
+            "depth": 2,
+            "title": "Rank",
+            "start": 54,
+            "end": 54
+          },
+          {
+            "depth": 2,
+            "title": "Linear dependence",
+            "start": 55,
+            "end": 56
+          },
+          {
+            "depth": 2,
+            "title": "Systems of equations",
+            "start": 57,
+            "end": 60
+          },
+          {
+            "depth": 2,
+            "title": "Eigenvalues & eigenvectors",
+            "start": 61,
+            "end": 68
+          },
+          {
+            "depth": 2,
+            "title": "Cayley\u2013Hamilton",
+            "start": 69,
+            "end": 70
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 71,
+            "end": 86
+          },
+          {
+            "depth": 1,
+            "title": "MIT Strang lecture notes (deeper)",
+            "start": 87,
+            "end": 150
+          },
+          {
+            "depth": 2,
+            "title": "Elimination & matrices",
+            "start": 89,
+            "end": 90
+          },
+          {
+            "depth": 2,
+            "title": "Multiplication & inverses",
+            "start": 91,
+            "end": 93
+          },
+          {
+            "depth": 2,
+            "title": "LU factorisation",
+            "start": 94,
+            "end": 94
+          },
+          {
+            "depth": 2,
+            "title": "Vector spaces",
+            "start": 95,
+            "end": 97
+          },
+          {
+            "depth": 2,
+            "title": "Column space & null space",
+            "start": 98,
+            "end": 100
+          },
+          {
+            "depth": 2,
+            "title": "Solving Ax = b",
+            "start": 101,
+            "end": 103
+          },
+          {
+            "depth": 2,
+            "title": "Independence, basis, dimension",
+            "start": 104,
+            "end": 105
+          },
+          {
+            "depth": 2,
+            "title": "The four fundamental subspaces",
+            "start": 106,
+            "end": 107
+          },
+          {
+            "depth": 2,
+            "title": "Matrix spaces",
+            "start": 108,
+            "end": 112
+          },
+          {
+            "depth": 2,
+            "title": "Orthogonality",
+            "start": 113,
+            "end": 114
+          },
+          {
+            "depth": 2,
+            "title": "Projections & least squares",
+            "start": 115,
+            "end": 119
+          },
+          {
+            "depth": 2,
+            "title": "Orthonormal bases & Gram\u2013Schmidt",
+            "start": 120,
+            "end": 123
+          },
+          {
+            "depth": 2,
+            "title": "Determinants",
+            "start": 124,
+            "end": 127
+          },
+          {
+            "depth": 2,
+            "title": "Eigenvalues & eigenvectors",
+            "start": 128,
+            "end": 130
+          },
+          {
+            "depth": 2,
+            "title": "Diagonalisation",
+            "start": 131,
+            "end": 145
+          },
+          {
+            "depth": 2,
+            "title": "Norms & dot product",
+            "start": 146,
+            "end": 150
+          },
+          {
+            "depth": 1,
+            "title": "MIT Strang short notes",
+            "start": 151,
+            "end": 164
+          }
+        ],
+        "end": 164,
+        "pages": 127
+      },
+      {
+        "label": "C",
+        "start": 165,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Types of matrices",
+            "start": 167,
+            "end": 169
+          },
+          {
+            "depth": 1,
+            "title": "Determinants",
+            "start": 170,
+            "end": 177
+          },
+          {
+            "depth": 1,
+            "title": "Rank",
+            "start": 178,
+            "end": 181
+          },
+          {
+            "depth": 1,
+            "title": "Linear dependence",
+            "start": 182,
+            "end": 183
+          },
+          {
+            "depth": 1,
+            "title": "Systems of equations",
+            "start": 184,
+            "end": 188
+          },
+          {
+            "depth": 1,
+            "title": "Eigenvalues & eigenvectors",
+            "start": 189,
+            "end": 192
+          },
+          {
+            "depth": 1,
+            "title": "Cayley\u2013Hamilton",
+            "start": 193,
+            "end": 194
+          }
+        ],
+        "end": 194,
+        "pages": 30
+      },
+      {
+        "label": "D",
+        "start": 195,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Types of matrices",
+            "start": 196,
+            "end": 200
+          },
+          {
+            "depth": 1,
+            "title": "Properties",
+            "start": 201,
+            "end": 204
+          },
+          {
+            "depth": 1,
+            "title": "Inverse & adjoint",
+            "start": 205,
+            "end": 206
+          },
+          {
+            "depth": 1,
+            "title": "Determinants",
+            "start": 207,
+            "end": 212
+          },
+          {
+            "depth": 1,
+            "title": "Rank",
+            "start": 213,
+            "end": 213
+          },
+          {
+            "depth": 1,
+            "title": "Gauss elimination",
+            "start": 214,
+            "end": 216
+          },
+          {
+            "depth": 1,
+            "title": "Systems of equations",
+            "start": 217,
+            "end": 220
+          },
+          {
+            "depth": 1,
+            "title": "Eigenvalues & eigenvectors",
+            "start": 221,
+            "end": 226
+          },
+          {
+            "depth": 1,
+            "title": "Cayley\u2013Hamilton",
+            "start": 227,
+            "end": 228
+          }
+        ],
+        "end": 228,
+        "pages": 34
+      },
+      {
+        "label": "E",
+        "start": 229,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Cheat sheet",
+            "start": 230,
+            "end": 233
+          }
+        ],
+        "end": 233,
+        "pages": 5
+      },
+      {
+        "label": "F",
+        "start": 234,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Matrices & determinants formulas",
+            "start": 235,
+            "end": 245
+          }
+        ],
+        "end": 245,
+        "pages": 12
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Operating_Systems_5_Notes.pdf",
+    "subject": "os",
+    "subjectName": "Operating Systems",
+    "pages": 502,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Types of operating systems",
+            "start": 5,
+            "end": 7
+          },
+          {
+            "depth": 1,
+            "title": "Process & PCB",
+            "start": 8,
+            "end": 10
+          },
+          {
+            "depth": 1,
+            "title": "Process states",
+            "start": 11,
+            "end": 14
+          },
+          {
+            "depth": 1,
+            "title": "Schedulers",
+            "start": 15,
+            "end": 15
+          },
+          {
+            "depth": 1,
+            "title": "Scheduling times",
+            "start": 16,
+            "end": 16
+          },
+          {
+            "depth": 1,
+            "title": "FCFS & SJF",
+            "start": 17,
+            "end": 18
+          },
+          {
+            "depth": 1,
+            "title": "SRTF",
+            "start": 19,
+            "end": 19
+          },
+          {
+            "depth": 1,
+            "title": "HRRN",
+            "start": 20,
+            "end": 20
+          },
+          {
+            "depth": 1,
+            "title": "Priority scheduling",
+            "start": 21,
+            "end": 21
+          },
+          {
+            "depth": 1,
+            "title": "Round robin",
+            "start": 22,
+            "end": 22
+          },
+          {
+            "depth": 1,
+            "title": "Multilevel (feedback) queues",
+            "start": 23,
+            "end": 26
+          },
+          {
+            "depth": 1,
+            "title": "Threads",
+            "start": 27,
+            "end": 29
+          },
+          {
+            "depth": 1,
+            "title": "Process synchronization",
+            "start": 30,
+            "end": 31
+          },
+          {
+            "depth": 1,
+            "title": "Peterson & software solutions",
+            "start": 32,
+            "end": 32
+          },
+          {
+            "depth": 1,
+            "title": "Synchronization hardware",
+            "start": 33,
+            "end": 33
+          },
+          {
+            "depth": 1,
+            "title": "Semaphores",
+            "start": 34,
+            "end": 35
+          },
+          {
+            "depth": 1,
+            "title": "Classical problems",
+            "start": 36,
+            "end": 38
+          },
+          {
+            "depth": 1,
+            "title": "Deadlock",
+            "start": 39,
+            "end": 41
+          },
+          {
+            "depth": 1,
+            "title": "Deadlock prevention & avoidance",
+            "start": 42,
+            "end": 43
+          },
+          {
+            "depth": 1,
+            "title": "Banker's algorithm",
+            "start": 44,
+            "end": 44
+          },
+          {
+            "depth": 1,
+            "title": "Deadlock detection",
+            "start": 45,
+            "end": 46
+          },
+          {
+            "depth": 1,
+            "title": "System calls & fork()",
+            "start": 47,
+            "end": 49
+          },
+          {
+            "depth": 1,
+            "title": "Memory management",
+            "start": 50,
+            "end": 50
+          },
+          {
+            "depth": 1,
+            "title": "Contiguous allocation",
+            "start": 51,
+            "end": 52
+          },
+          {
+            "depth": 1,
+            "title": "Paging",
+            "start": 53,
+            "end": 55
+          },
+          {
+            "depth": 1,
+            "title": "TLB",
+            "start": 56,
+            "end": 57
+          },
+          {
+            "depth": 1,
+            "title": "Multilevel paging",
+            "start": 58,
+            "end": 59
+          },
+          {
+            "depth": 1,
+            "title": "Segmentation",
+            "start": 60,
+            "end": 61
+          },
+          {
+            "depth": 1,
+            "title": "Virtual memory & demand paging",
+            "start": 62,
+            "end": 62
+          },
+          {
+            "depth": 1,
+            "title": "Page replacement",
+            "start": 63,
+            "end": 63
+          },
+          {
+            "depth": 1,
+            "title": "Frame allocation",
+            "start": 64,
+            "end": 64
+          },
+          {
+            "depth": 1,
+            "title": "Thrashing",
+            "start": 65,
+            "end": 67
+          },
+          {
+            "depth": 1,
+            "title": "Inverted & hashed page tables",
+            "start": 68,
+            "end": 73
+          },
+          {
+            "depth": 1,
+            "title": "Files & directories",
+            "start": 74,
+            "end": 78
+          },
+          {
+            "depth": 1,
+            "title": "Magnetic disk",
+            "start": 79,
+            "end": 82
+          },
+          {
+            "depth": 1,
+            "title": "File allocation methods",
+            "start": 83,
+            "end": 86
+          },
+          {
+            "depth": 1,
+            "title": "Disk scheduling",
+            "start": 87,
+            "end": 89
+          }
+        ],
+        "end": 89,
+        "pages": 86
+      },
+      {
+        "label": "B",
+        "start": 90,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 91,
+            "end": 209
+          },
+          {
+            "depth": 2,
+            "title": "Process & process states",
+            "start": 91,
+            "end": 98
+          },
+          {
+            "depth": 2,
+            "title": "Process creation & fork()",
+            "start": 99,
+            "end": 106
+          },
+          {
+            "depth": 2,
+            "title": "CPU scheduling",
+            "start": 107,
+            "end": 107
+          },
+          {
+            "depth": 2,
+            "title": "FCFS",
+            "start": 108,
+            "end": 112
+          },
+          {
+            "depth": 2,
+            "title": "SJF & SRTF",
+            "start": 113,
+            "end": 116
+          },
+          {
+            "depth": 2,
+            "title": "Priority scheduling",
+            "start": 117,
+            "end": 122
+          },
+          {
+            "depth": 2,
+            "title": "Round robin",
+            "start": 123,
+            "end": 127
+          },
+          {
+            "depth": 2,
+            "title": "Multilevel queues",
+            "start": 128,
+            "end": 134
+          },
+          {
+            "depth": 2,
+            "title": "Threads & IPC",
+            "start": 135,
+            "end": 136
+          },
+          {
+            "depth": 2,
+            "title": "Process synchronization",
+            "start": 137,
+            "end": 143
+          },
+          {
+            "depth": 2,
+            "title": "Hardware solutions",
+            "start": 144,
+            "end": 151
+          },
+          {
+            "depth": 2,
+            "title": "Semaphores",
+            "start": 152,
+            "end": 156
+          },
+          {
+            "depth": 2,
+            "title": "Classic problems",
+            "start": 157,
+            "end": 166
+          },
+          {
+            "depth": 2,
+            "title": "Deadlock",
+            "start": 167,
+            "end": 171
+          },
+          {
+            "depth": 2,
+            "title": "Banker's algorithm",
+            "start": 172,
+            "end": 180
+          },
+          {
+            "depth": 2,
+            "title": "Memory management",
+            "start": 181,
+            "end": 181
+          },
+          {
+            "depth": 2,
+            "title": "Paging",
+            "start": 182,
+            "end": 188
+          },
+          {
+            "depth": 2,
+            "title": "Multilevel paging",
+            "start": 189,
+            "end": 195
+          },
+          {
+            "depth": 2,
+            "title": "Virtual memory & page replacement",
+            "start": 196,
+            "end": 204
+          },
+          {
+            "depth": 2,
+            "title": "File systems",
+            "start": 205,
+            "end": 209
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 210,
+            "end": 232
+          },
+          {
+            "depth": 1,
+            "title": "Extra notes (file systems, disk, deadlock)",
+            "start": 233,
+            "end": 249
+          },
+          {
+            "depth": 2,
+            "title": "File system & allocation",
+            "start": 233,
+            "end": 235
+          },
+          {
+            "depth": 2,
+            "title": "Free-space management",
+            "start": 236,
+            "end": 238
+          },
+          {
+            "depth": 2,
+            "title": "Disk scheduling",
+            "start": 239,
+            "end": 245
+          },
+          {
+            "depth": 2,
+            "title": "Deadlock",
+            "start": 246,
+            "end": 247
+          },
+          {
+            "depth": 2,
+            "title": "Process synchronization",
+            "start": 248,
+            "end": 248
+          },
+          {
+            "depth": 2,
+            "title": "Semaphores & disk numericals",
+            "start": 249,
+            "end": 249
+          }
+        ],
+        "end": 249,
+        "pages": 160
+      },
+      {
+        "label": "C",
+        "start": 250,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Basics",
+            "start": 251,
+            "end": 259
+          },
+          {
+            "depth": 1,
+            "title": "Process management",
+            "start": 260,
+            "end": 300
+          },
+          {
+            "depth": 1,
+            "title": "Process synchronisation",
+            "start": 301,
+            "end": 343
+          },
+          {
+            "depth": 1,
+            "title": "Deadlock",
+            "start": 344,
+            "end": 361
+          },
+          {
+            "depth": 1,
+            "title": "Memory management",
+            "start": 362,
+            "end": 425
+          },
+          {
+            "depth": 1,
+            "title": "File system & I/O",
+            "start": 426,
+            "end": 441
+          }
+        ],
+        "end": 441,
+        "pages": 192
+      },
+      {
+        "label": "D",
+        "start": 442,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Processes",
+            "start": 444,
+            "end": 447
+          },
+          {
+            "depth": 1,
+            "title": "Threads",
+            "start": 448,
+            "end": 450
+          },
+          {
+            "depth": 1,
+            "title": "CPU scheduling",
+            "start": 451,
+            "end": 454
+          },
+          {
+            "depth": 1,
+            "title": "Scheduling algorithms",
+            "start": 455,
+            "end": 457
+          },
+          {
+            "depth": 1,
+            "title": "Deadlocks",
+            "start": 458,
+            "end": 460
+          },
+          {
+            "depth": 1,
+            "title": "Banker's algorithm",
+            "start": 461,
+            "end": 463
+          },
+          {
+            "depth": 1,
+            "title": "Process synchronization",
+            "start": 464,
+            "end": 466
+          },
+          {
+            "depth": 1,
+            "title": "Semaphores & classic problems",
+            "start": 467,
+            "end": 475
+          },
+          {
+            "depth": 1,
+            "title": "Memory management",
+            "start": 476,
+            "end": 476
+          },
+          {
+            "depth": 1,
+            "title": "File systems",
+            "start": 477,
+            "end": 478
+          },
+          {
+            "depth": 1,
+            "title": "Paging & virtual memory",
+            "start": 479,
+            "end": 481
+          },
+          {
+            "depth": 1,
+            "title": "Disk structure",
+            "start": 482,
+            "end": 485
+          },
+          {
+            "depth": 1,
+            "title": "File organisation & indexing",
+            "start": 486,
+            "end": 494
+          }
+        ],
+        "end": 494,
+        "pages": 53
+      },
+      {
+        "label": "E",
+        "start": 495,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed short notes",
+            "start": 496,
+            "end": 502
+          }
+        ],
+        "end": 502,
+        "pages": 8
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Probability_Statistics_6_Notes.pdf",
+    "subject": "prob",
+    "subjectName": "Probability Statistics",
+    "pages": 407,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Set rules & conditional probability",
+            "start": 5,
+            "end": 5
+          },
+          {
+            "depth": 1,
+            "title": "Bayes' theorem & probability trees",
+            "start": 6,
+            "end": 6
+          },
+          {
+            "depth": 1,
+            "title": "Conditional independence",
+            "start": 7,
+            "end": 7
+          },
+          {
+            "depth": 1,
+            "title": "Random variables",
+            "start": 8,
+            "end": 8
+          },
+          {
+            "depth": 1,
+            "title": "PMF & expectation",
+            "start": 9,
+            "end": 10
+          },
+          {
+            "depth": 1,
+            "title": "Variance",
+            "start": 11,
+            "end": 11
+          },
+          {
+            "depth": 1,
+            "title": "Properties of expectation & variance",
+            "start": 12,
+            "end": 12
+          },
+          {
+            "depth": 1,
+            "title": "Discrete random variables",
+            "start": 13,
+            "end": 13
+          },
+          {
+            "depth": 1,
+            "title": "Poisson distribution",
+            "start": 14,
+            "end": 14
+          },
+          {
+            "depth": 1,
+            "title": "Discrete uniform",
+            "start": 15,
+            "end": 15
+          },
+          {
+            "depth": 1,
+            "title": "Continuous random variables",
+            "start": 16,
+            "end": 16
+          },
+          {
+            "depth": 1,
+            "title": "Normal distribution",
+            "start": 17,
+            "end": 18
+          }
+        ],
+        "end": 18,
+        "pages": 15
+      },
+      {
+        "label": "B",
+        "start": 19,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes (GATE)",
+            "start": 20,
+            "end": 64
+          },
+          {
+            "depth": 2,
+            "title": "Probability basics",
+            "start": 20,
+            "end": 24
+          },
+          {
+            "depth": 2,
+            "title": "Conditional probability",
+            "start": 25,
+            "end": 27
+          },
+          {
+            "depth": 2,
+            "title": "Bayes' theorem",
+            "start": 28,
+            "end": 29
+          },
+          {
+            "depth": 2,
+            "title": "Discrete distributions",
+            "start": 30,
+            "end": 31
+          },
+          {
+            "depth": 2,
+            "title": "Binomial distribution",
+            "start": 32,
+            "end": 32
+          },
+          {
+            "depth": 2,
+            "title": "Poisson distribution",
+            "start": 33,
+            "end": 33
+          },
+          {
+            "depth": 2,
+            "title": "Continuous distributions",
+            "start": 34,
+            "end": 38
+          },
+          {
+            "depth": 2,
+            "title": "Normal distribution",
+            "start": 39,
+            "end": 39
+          },
+          {
+            "depth": 2,
+            "title": "Statistics: mean, median, mode",
+            "start": 40,
+            "end": 41
+          },
+          {
+            "depth": 2,
+            "title": "Variance & standard deviation",
+            "start": 42,
+            "end": 43
+          },
+          {
+            "depth": 2,
+            "title": "Random variables (2nd pass)",
+            "start": 44,
+            "end": 49
+          },
+          {
+            "depth": 2,
+            "title": "Uniform distribution",
+            "start": 50,
+            "end": 50
+          },
+          {
+            "depth": 2,
+            "title": "Expectation",
+            "start": 51,
+            "end": 52
+          },
+          {
+            "depth": 2,
+            "title": "Independence",
+            "start": 53,
+            "end": 58
+          },
+          {
+            "depth": 2,
+            "title": "Total probability",
+            "start": 59,
+            "end": 61
+          },
+          {
+            "depth": 2,
+            "title": "Bayes' theorem (2nd pass)",
+            "start": 62,
+            "end": 64
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 65,
+            "end": 75
+          },
+          {
+            "depth": 1,
+            "title": "Extra probability notes",
+            "start": 76,
+            "end": 96
+          }
+        ],
+        "end": 96,
+        "pages": 78
+      },
+      {
+        "label": "C",
+        "start": 97,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Probability basics",
+            "start": 99,
+            "end": 107
+          },
+          {
+            "depth": 1,
+            "title": "Conditional probability",
+            "start": 108,
+            "end": 108
+          },
+          {
+            "depth": 1,
+            "title": "Total probability",
+            "start": 109,
+            "end": 114
+          },
+          {
+            "depth": 1,
+            "title": "Random variables",
+            "start": 115,
+            "end": 115
+          },
+          {
+            "depth": 1,
+            "title": "Expectation & variance",
+            "start": 116,
+            "end": 121
+          },
+          {
+            "depth": 1,
+            "title": "Joint distributions",
+            "start": 122,
+            "end": 126
+          },
+          {
+            "depth": 1,
+            "title": "Poisson & other distributions",
+            "start": 127,
+            "end": 130
+          },
+          {
+            "depth": 1,
+            "title": "Normal distribution & statistics",
+            "start": 131,
+            "end": 133
+          },
+          {
+            "depth": 1,
+            "title": "Correlation & regression",
+            "start": 134,
+            "end": 135
+          }
+        ],
+        "end": 135,
+        "pages": 39
+      },
+      {
+        "label": "D",
+        "start": 136,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Statistics: data & frequency",
+            "start": 137,
+            "end": 138
+          },
+          {
+            "depth": 1,
+            "title": "Central tendency",
+            "start": 139,
+            "end": 140
+          },
+          {
+            "depth": 1,
+            "title": "Dispersion",
+            "start": 141,
+            "end": 142
+          },
+          {
+            "depth": 1,
+            "title": "Probability",
+            "start": 143,
+            "end": 146
+          },
+          {
+            "depth": 1,
+            "title": "Bayes' theorem",
+            "start": 147,
+            "end": 154
+          },
+          {
+            "depth": 1,
+            "title": "Random variables",
+            "start": 155,
+            "end": 155
+          },
+          {
+            "depth": 1,
+            "title": "Expectation & variance",
+            "start": 156,
+            "end": 160
+          },
+          {
+            "depth": 1,
+            "title": "Binomial distribution",
+            "start": 161,
+            "end": 162
+          },
+          {
+            "depth": 1,
+            "title": "Poisson distribution",
+            "start": 163,
+            "end": 165
+          },
+          {
+            "depth": 1,
+            "title": "Normal distribution",
+            "start": 166,
+            "end": 169
+          },
+          {
+            "depth": 1,
+            "title": "Uniform distribution",
+            "start": 170,
+            "end": 170
+          },
+          {
+            "depth": 1,
+            "title": "Exponential distribution",
+            "start": 171,
+            "end": 176
+          }
+        ],
+        "end": 176,
+        "pages": 41
+      },
+      {
+        "label": "E",
+        "start": 177,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Combinatorics",
+            "start": 181,
+            "end": 188
+          },
+          {
+            "depth": 1,
+            "title": "Axioms of probability",
+            "start": 189,
+            "end": 201
+          },
+          {
+            "depth": 1,
+            "title": "Conditional probability & independence",
+            "start": 202,
+            "end": 222
+          },
+          {
+            "depth": 1,
+            "title": "Discrete random variables",
+            "start": 223,
+            "end": 235
+          },
+          {
+            "depth": 1,
+            "title": "Continuous random variables",
+            "start": 236,
+            "end": 247
+          },
+          {
+            "depth": 1,
+            "title": "Joint distributions",
+            "start": 248,
+            "end": 264
+          },
+          {
+            "depth": 1,
+            "title": "Expectation & limit theorems",
+            "start": 265,
+            "end": 297
+          },
+          {
+            "depth": 1,
+            "title": "Moment generating functions",
+            "start": 298,
+            "end": 322
+          },
+          {
+            "depth": 1,
+            "title": "Markov chains (beyond GATE)",
+            "start": 323,
+            "end": 375
+          },
+          {
+            "depth": 1,
+            "title": "Poisson process",
+            "start": 376,
+            "end": 395
+          }
+        ],
+        "end": 395,
+        "pages": 219
+      },
+      {
+        "label": "F",
+        "start": 396,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Probability formulas",
+            "start": 397,
+            "end": 407
+          }
+        ],
+        "end": 407,
+        "pages": 12
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_Programming_Data_Structures_5_Notes.pdf",
+    "subject": "pds",
+    "subjectName": "Programming Data Structures",
+    "pages": 545,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Introduction & complexity",
+            "start": 5,
+            "end": 10
+          },
+          {
+            "depth": 1,
+            "title": "Arrays & address calculation",
+            "start": 11,
+            "end": 16
+          },
+          {
+            "depth": 1,
+            "title": "2D arrays",
+            "start": 17,
+            "end": 22
+          },
+          {
+            "depth": 1,
+            "title": "Linked lists",
+            "start": 23,
+            "end": 29
+          },
+          {
+            "depth": 1,
+            "title": "Doubly linked lists",
+            "start": 30,
+            "end": 32
+          },
+          {
+            "depth": 1,
+            "title": "Queues",
+            "start": 33,
+            "end": 34
+          },
+          {
+            "depth": 1,
+            "title": "Priority queues",
+            "start": 35,
+            "end": 36
+          },
+          {
+            "depth": 1,
+            "title": "Stacks",
+            "start": 37,
+            "end": 42
+          },
+          {
+            "depth": 1,
+            "title": "Expression conversion & evaluation",
+            "start": 43,
+            "end": 52
+          },
+          {
+            "depth": 1,
+            "title": "Recursion",
+            "start": 53,
+            "end": 56
+          },
+          {
+            "depth": 1,
+            "title": "Tower of Hanoi",
+            "start": 57,
+            "end": 59
+          },
+          {
+            "depth": 1,
+            "title": "Trees",
+            "start": 60,
+            "end": 62
+          },
+          {
+            "depth": 1,
+            "title": "Binary trees",
+            "start": 63,
+            "end": 66
+          },
+          {
+            "depth": 1,
+            "title": "Tree traversals",
+            "start": 67,
+            "end": 73
+          },
+          {
+            "depth": 1,
+            "title": "Types of binary trees",
+            "start": 74,
+            "end": 77
+          },
+          {
+            "depth": 1,
+            "title": "Binary search trees",
+            "start": 78,
+            "end": 83
+          },
+          {
+            "depth": 1,
+            "title": "AVL trees",
+            "start": 84,
+            "end": 90
+          },
+          {
+            "depth": 1,
+            "title": "Heaps",
+            "start": 91,
+            "end": 94
+          },
+          {
+            "depth": 1,
+            "title": "Graph representation",
+            "start": 95,
+            "end": 98
+          },
+          {
+            "depth": 1,
+            "title": "Hashing",
+            "start": 99,
+            "end": 107
+          }
+        ],
+        "end": 107,
+        "pages": 104
+      },
+      {
+        "label": "B",
+        "start": 108,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "C programming main notes",
+            "start": 109,
+            "end": 151
+          },
+          {
+            "depth": 2,
+            "title": "Data types",
+            "start": 109,
+            "end": 112
+          },
+          {
+            "depth": 2,
+            "title": "Operators",
+            "start": 113,
+            "end": 118
+          },
+          {
+            "depth": 2,
+            "title": "Storage classes",
+            "start": 119,
+            "end": 120
+          },
+          {
+            "depth": 2,
+            "title": "Functions & recursion",
+            "start": 121,
+            "end": 128
+          },
+          {
+            "depth": 2,
+            "title": "Static vs dynamic scoping",
+            "start": 129,
+            "end": 132
+          },
+          {
+            "depth": 2,
+            "title": "Pointers",
+            "start": 133,
+            "end": 134
+          },
+          {
+            "depth": 2,
+            "title": "Arrays & pointers",
+            "start": 135,
+            "end": 137
+          },
+          {
+            "depth": 2,
+            "title": "2D arrays & pointers",
+            "start": 138,
+            "end": 151
+          },
+          {
+            "depth": 1,
+            "title": "Data structures main notes",
+            "start": 152,
+            "end": 222
+          },
+          {
+            "depth": 2,
+            "title": "Arrays",
+            "start": 152,
+            "end": 159
+          },
+          {
+            "depth": 2,
+            "title": "Structures & unions",
+            "start": 160,
+            "end": 162
+          },
+          {
+            "depth": 2,
+            "title": "Linked lists",
+            "start": 163,
+            "end": 173
+          },
+          {
+            "depth": 2,
+            "title": "Doubly linked lists",
+            "start": 174,
+            "end": 177
+          },
+          {
+            "depth": 2,
+            "title": "Stacks",
+            "start": 178,
+            "end": 184
+          },
+          {
+            "depth": 2,
+            "title": "Expression evaluation",
+            "start": 185,
+            "end": 188
+          },
+          {
+            "depth": 2,
+            "title": "Queues",
+            "start": 189,
+            "end": 195
+          },
+          {
+            "depth": 2,
+            "title": "Trees",
+            "start": 196,
+            "end": 196
+          },
+          {
+            "depth": 2,
+            "title": "Binary trees",
+            "start": 197,
+            "end": 211
+          },
+          {
+            "depth": 2,
+            "title": "Binary search trees",
+            "start": 212,
+            "end": 217
+          },
+          {
+            "depth": 2,
+            "title": "AVL trees",
+            "start": 218,
+            "end": 220
+          },
+          {
+            "depth": 2,
+            "title": "Heaps",
+            "start": 221,
+            "end": 222
+          },
+          {
+            "depth": 1,
+            "title": "C programming short notes",
+            "start": 223,
+            "end": 234
+          },
+          {
+            "depth": 1,
+            "title": "Data structures short notes",
+            "start": 235,
+            "end": 255
+          }
+        ],
+        "end": 255,
+        "pages": 148
+      },
+      {
+        "label": "C",
+        "start": 256,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "C programming notes (typed)",
+            "start": 257,
+            "end": 307
+          },
+          {
+            "depth": 1,
+            "title": "Data structures bookmarked notes",
+            "start": 308,
+            "end": 521
+          },
+          {
+            "depth": 2,
+            "title": "Introduction",
+            "start": 308,
+            "end": 310
+          },
+          {
+            "depth": 2,
+            "title": "Arrays",
+            "start": 311,
+            "end": 314
+          },
+          {
+            "depth": 2,
+            "title": "Stacks",
+            "start": 315,
+            "end": 350
+          },
+          {
+            "depth": 2,
+            "title": "Stack (addendum)",
+            "start": 351,
+            "end": 357
+          },
+          {
+            "depth": 2,
+            "title": "Queues",
+            "start": 358,
+            "end": 382
+          },
+          {
+            "depth": 2,
+            "title": "Queue (addendum)",
+            "start": 383,
+            "end": 385
+          },
+          {
+            "depth": 2,
+            "title": "Linked lists",
+            "start": 386,
+            "end": 404
+          },
+          {
+            "depth": 2,
+            "title": "Linked list (addendum)",
+            "start": 405,
+            "end": 428
+          },
+          {
+            "depth": 2,
+            "title": "Trees",
+            "start": 429,
+            "end": 509
+          },
+          {
+            "depth": 2,
+            "title": "Priority queues & heaps",
+            "start": 510,
+            "end": 521
+          }
+        ],
+        "end": 521,
+        "pages": 266
+      },
+      {
+        "label": "D",
+        "start": 522,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Arrays",
+            "start": 523,
+            "end": 523
+          },
+          {
+            "depth": 1,
+            "title": "Stacks",
+            "start": 524,
+            "end": 524
+          },
+          {
+            "depth": 1,
+            "title": "Queues & linked lists",
+            "start": 525,
+            "end": 525
+          },
+          {
+            "depth": 1,
+            "title": "Binary trees",
+            "start": 526,
+            "end": 526
+          },
+          {
+            "depth": 1,
+            "title": "Binary search trees",
+            "start": 527,
+            "end": 527
+          },
+          {
+            "depth": 1,
+            "title": "AVL trees",
+            "start": 528,
+            "end": 530
+          },
+          {
+            "depth": 1,
+            "title": "B-trees",
+            "start": 531,
+            "end": 532
+          },
+          {
+            "depth": 1,
+            "title": "Hash tables",
+            "start": 533,
+            "end": 535
+          }
+        ],
+        "end": 535,
+        "pages": 14
+      },
+      {
+        "label": "E",
+        "start": 536,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Typed DS & Algo notes",
+            "start": 537,
+            "end": 545
+          }
+        ],
+        "end": 545,
+        "pages": 10
+      }
+    ]
+  },
+  {
+    "file": "GATE_CSE_TOC_5_Notes.pdf",
+    "subject": "toc",
+    "subjectName": "TOC",
+    "pages": 450,
+    "sets": [
+      {
+        "label": "A",
+        "start": 4,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Basics: symbols, alphabets, strings",
+            "start": 5,
+            "end": 6
+          },
+          {
+            "depth": 1,
+            "title": "Finite automata & DFA",
+            "start": 7,
+            "end": 9
+          },
+          {
+            "depth": 1,
+            "title": "Minimal DFA constructions",
+            "start": 10,
+            "end": 22
+          },
+          {
+            "depth": 1,
+            "title": "Operations on DFA",
+            "start": 23,
+            "end": 24
+          },
+          {
+            "depth": 1,
+            "title": "NFA & NFA \u2192 DFA",
+            "start": 25,
+            "end": 30
+          },
+          {
+            "depth": 1,
+            "title": "Moore & Mealy machines",
+            "start": 31,
+            "end": 35
+          },
+          {
+            "depth": 1,
+            "title": "\u03b5-NFA",
+            "start": 36,
+            "end": 38
+          },
+          {
+            "depth": 1,
+            "title": "Chomsky hierarchy",
+            "start": 39,
+            "end": 39
+          },
+          {
+            "depth": 1,
+            "title": "Regular languages & expressions",
+            "start": 40,
+            "end": 43
+          },
+          {
+            "depth": 1,
+            "title": "RE \u2192 FA",
+            "start": 44,
+            "end": 44
+          },
+          {
+            "depth": 1,
+            "title": "FA \u2192 RE",
+            "start": 45,
+            "end": 47
+          },
+          {
+            "depth": 1,
+            "title": "Regular grammars",
+            "start": 48,
+            "end": 51
+          },
+          {
+            "depth": 1,
+            "title": "Classification of grammars",
+            "start": 52,
+            "end": 52
+          },
+          {
+            "depth": 1,
+            "title": "Simplification of CFG",
+            "start": 53,
+            "end": 54
+          },
+          {
+            "depth": 1,
+            "title": "CNF & CYK",
+            "start": 55,
+            "end": 57
+          },
+          {
+            "depth": 1,
+            "title": "Push-down automata",
+            "start": 58,
+            "end": 61
+          },
+          {
+            "depth": 1,
+            "title": "Pumping lemma for CFLs",
+            "start": 62,
+            "end": 62
+          },
+          {
+            "depth": 1,
+            "title": "Turing machines",
+            "start": 63,
+            "end": 66
+          },
+          {
+            "depth": 1,
+            "title": "TM variants",
+            "start": 67,
+            "end": 68
+          },
+          {
+            "depth": 1,
+            "title": "REC & RE languages",
+            "start": 69,
+            "end": 69
+          },
+          {
+            "depth": 1,
+            "title": "Unrestricted grammars",
+            "start": 70,
+            "end": 71
+          },
+          {
+            "depth": 1,
+            "title": "Countability",
+            "start": 72,
+            "end": 73
+          },
+          {
+            "depth": 1,
+            "title": "Undecidability",
+            "start": 74,
+            "end": 77
+          },
+          {
+            "depth": 1,
+            "title": "Closure properties",
+            "start": 78,
+            "end": 78
+          }
+        ],
+        "end": 78,
+        "pages": 75
+      },
+      {
+        "label": "B",
+        "start": 79,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Main notes",
+            "start": 80,
+            "end": 215
+          },
+          {
+            "depth": 2,
+            "title": "Strings & languages",
+            "start": 80,
+            "end": 85
+          },
+          {
+            "depth": 2,
+            "title": "DFA",
+            "start": 86,
+            "end": 101
+          },
+          {
+            "depth": 2,
+            "title": "NFA & subset construction",
+            "start": 102,
+            "end": 107
+          },
+          {
+            "depth": 2,
+            "title": "\u03b5-NFA",
+            "start": 108,
+            "end": 115
+          },
+          {
+            "depth": 2,
+            "title": "Equivalence & minimisation of DFA",
+            "start": 116,
+            "end": 123
+          },
+          {
+            "depth": 2,
+            "title": "Moore & Mealy machines",
+            "start": 124,
+            "end": 135
+          },
+          {
+            "depth": 2,
+            "title": "Regular expressions",
+            "start": 136,
+            "end": 148
+          },
+          {
+            "depth": 2,
+            "title": "Arden's theorem & FA \u2192 RE",
+            "start": 149,
+            "end": 152
+          },
+          {
+            "depth": 2,
+            "title": "CFG & derivations",
+            "start": 153,
+            "end": 164
+          },
+          {
+            "depth": 2,
+            "title": "Ambiguity",
+            "start": 165,
+            "end": 167
+          },
+          {
+            "depth": 2,
+            "title": "Simplification of CFG",
+            "start": 168,
+            "end": 169
+          },
+          {
+            "depth": 2,
+            "title": "CNF & GNF",
+            "start": 170,
+            "end": 176
+          },
+          {
+            "depth": 2,
+            "title": "Push-down automata",
+            "start": 177,
+            "end": 184
+          },
+          {
+            "depth": 2,
+            "title": "RL vs CFL & pumping lemma",
+            "start": 185,
+            "end": 192
+          },
+          {
+            "depth": 2,
+            "title": "Turing machines",
+            "start": 193,
+            "end": 199
+          },
+          {
+            "depth": 2,
+            "title": "Recursive & RE languages",
+            "start": 200,
+            "end": 203
+          },
+          {
+            "depth": 2,
+            "title": "CSG & LBA",
+            "start": 204,
+            "end": 207
+          },
+          {
+            "depth": 2,
+            "title": "Decidability",
+            "start": 208,
+            "end": 209
+          },
+          {
+            "depth": 2,
+            "title": "Closure properties",
+            "start": 210,
+            "end": 215
+          },
+          {
+            "depth": 1,
+            "title": "Short notes (revision)",
+            "start": 216,
+            "end": 247
+          },
+          {
+            "depth": 2,
+            "title": "FA & regular expressions",
+            "start": 217,
+            "end": 226
+          },
+          {
+            "depth": 2,
+            "title": "CFG & PDA",
+            "start": 227,
+            "end": 232
+          },
+          {
+            "depth": 2,
+            "title": "RL, CFL, pumping lemma",
+            "start": 233,
+            "end": 233
+          },
+          {
+            "depth": 2,
+            "title": "TM & decidability",
+            "start": 234,
+            "end": 235
+          },
+          {
+            "depth": 2,
+            "title": "Closure properties",
+            "start": 236,
+            "end": 236
+          },
+          {
+            "depth": 2,
+            "title": "Previous-year GATE notes",
+            "start": 237,
+            "end": 247
+          }
+        ],
+        "end": 247,
+        "pages": 169
+      },
+      {
+        "label": "C",
+        "start": 248,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Complete topic-wise notes",
+            "start": 249,
+            "end": 323
+          },
+          {
+            "depth": 2,
+            "title": "Finite automata, RE & languages",
+            "start": 249,
+            "end": 275
+          },
+          {
+            "depth": 2,
+            "title": "PDA, CFL & grammars",
+            "start": 276,
+            "end": 298
+          },
+          {
+            "depth": 2,
+            "title": "Turing machine & undecidability",
+            "start": 299,
+            "end": 323
+          },
+          {
+            "depth": 1,
+            "title": "Extras",
+            "start": 324,
+            "end": 328
+          }
+        ],
+        "end": 328,
+        "pages": 81
+      },
+      {
+        "label": "D",
+        "start": 329,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Finite automata",
+            "start": 331,
+            "end": 331
+          },
+          {
+            "depth": 1,
+            "title": "Regular expressions",
+            "start": 332,
+            "end": 334
+          },
+          {
+            "depth": 1,
+            "title": "Formal languages & grammars",
+            "start": 335,
+            "end": 337
+          },
+          {
+            "depth": 1,
+            "title": "Context-free languages",
+            "start": 338,
+            "end": 338
+          },
+          {
+            "depth": 1,
+            "title": "Simplification & normal forms",
+            "start": 339,
+            "end": 342
+          },
+          {
+            "depth": 1,
+            "title": "Push-down automata",
+            "start": 343,
+            "end": 343
+          },
+          {
+            "depth": 1,
+            "title": "Turing machines",
+            "start": 344,
+            "end": 344
+          },
+          {
+            "depth": 1,
+            "title": "Recursive & RE languages",
+            "start": 345,
+            "end": 345
+          },
+          {
+            "depth": 1,
+            "title": "Undecidability",
+            "start": 346,
+            "end": 348
+          },
+          {
+            "depth": 1,
+            "title": "P, NP & NP-complete",
+            "start": 349,
+            "end": 351
+          }
+        ],
+        "end": 351,
+        "pages": 23
+      },
+      {
+        "label": "E",
+        "start": 352,
+        "topics": [
+          {
+            "depth": 1,
+            "title": "Class notes",
+            "start": 353,
+            "end": 450
+          }
+        ],
+        "end": 450,
+        "pages": 99
+      }
+    ]
+  }
+]
