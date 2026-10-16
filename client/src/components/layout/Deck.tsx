@@ -13,6 +13,7 @@ import { MoreHorizontal } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
 import { prefetchHandlers } from '@/routes'
 import { cn } from '@/lib/utils'
+import { DUR, EASE_EMPHASIZED, tEnter } from '@/lib/motion'
 import { useSite } from '@/context/SiteContext'
 import { featureForPath } from '@/lib/site'
 import { openCommandPalette } from './CommandPalette'
@@ -235,7 +236,7 @@ export function Deck() {
         aria-hidden={hidden || undefined}
         initial={reduce ? false : { y: hidden ? 130 : 110, opacity: hidden ? 0 : 1 }}
         animate={{ y: hidden ? 130 : 0, opacity: hidden ? 0 : 1 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 28, delay: hidden ? 0 : 0.1 }}
+        transition={{ duration: DUR.slow, ease: EASE_EMPHASIZED, delay: hidden ? 0 : 0.1 }}
         onMouseMove={(e) => mouseX.set(e.clientX)}
         onMouseLeave={() => mouseX.set(Infinity)}
         onContextMenu={(e) => {
@@ -289,10 +290,10 @@ export function Deck() {
               <>
                 <div className="fixed inset-0 z-0" onClick={() => setMoreOpen(false)} aria-hidden="true" />
                 <motion.div
-                  initial={{ y: 8, scale: 0.97 }}
-                  animate={{ y: 0, scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 420, damping: 32 }}
-                  className="pop-surface absolute right-0 bottom-full z-10 mb-4 w-64 origin-bottom-right !rounded-2xl p-2"
+                  initial={{ y: 4, scale: 0.985, opacity: 0 }}
+                  animate={{ y: 0, scale: 1, opacity: 1 }}
+                  transition={tEnter}
+                  className="pop-surface absolute right-0 bottom-full z-10 mb-4 w-64 origin-bottom-right p-2"
                 >
                   {rest.length > 0 ? (
                     <div className="grid grid-cols-3 gap-1">
