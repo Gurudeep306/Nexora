@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { Group, Panel, Separator, useDefaultLayout } from 'react-resizable-panels'
 import { ArrowDownToLine, ArrowLeftToLine, ArrowRightToLine, PictureInPicture2 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { tStandard } from '@/lib/motion'
 import { ALLOWED_DOCKS, type Dock, type PaneId, type Rect } from './state'
 import type { WorkspaceApi } from './useWorkspace'
 import { PaneHeader } from './PaneHeader'
@@ -52,7 +53,7 @@ function ResizeHandle({ orientation }: { orientation: 'vertical' | 'horizontal' 
     >
       <span
         className={cn(
-          'rounded-full bg-white/[0.08] transition-[background-color,box-shadow,height,width] duration-150 group-hover:bg-primary group-focus-visible:bg-primary group-data-[separator=active]:bg-primary-bright group-data-[separator=active]:shadow-[0_0_10px_rgb(139_92_246/0.9)]',
+          'rounded-full bg-border transition-[background-color,height,width] duration-150 group-hover:bg-primary group-focus-visible:bg-primary group-data-[separator=active]:bg-primary-bright',
           vertical ? 'h-10 w-[3px] group-hover:h-16' : 'h-[3px] w-10 group-hover:w-16',
         )}
       />
@@ -329,7 +330,7 @@ export function Workspace({
       initial={{ opacity: 0, width: 0 }}
       animate={{ opacity: 1, width: 36 }}
       exit={{ opacity: 0, width: 0 }}
-      transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+      transition={tStandard}
       onClick={() => setMin(pane, false)}
       aria-label={`Restore ${specs[pane].title} panel`}
       title={`Restore ${specs[pane].title} (Alt+${pane === 'problem' ? 1 : 2})`}
@@ -365,7 +366,7 @@ export function Workspace({
         }}
         className={cn(
           'nx-float pop-surface absolute top-0 left-0 flex flex-col overflow-hidden rounded-xl bg-surface/95 will-change-transform',
-          dragUi?.pane === p && !dragUi.fromDock && 'shadow-[0_30px_80px_-10px_rgb(0_0_0/0.9),0_0_0_1px_rgb(139_92_246/0.55)]',
+          dragUi?.pane === p && !dragUi.fromDock && 'shadow-[0_0_0_1px_color-mix(in_oklab,var(--color-primary)_45%,transparent),var(--elev-3)]',
         )}
         role="dialog"
         aria-label={`${specs[p].title} window`}
@@ -510,7 +511,7 @@ export function Workspace({
                 initial={{ opacity: 0, height: 0, marginTop: 0 }}
                 animate={{ opacity: 1, height: 36, marginTop: 10 }}
                 exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                transition={{ type: 'spring', stiffness: 420, damping: 36 }}
+                transition={tStandard}
                 onClick={() => minimize('tests', false)}
                 aria-label="Restore Tests panel"
                 title="Restore Tests (Alt+2)"
@@ -578,7 +579,7 @@ function VGroup({ id, panelIds, children }: { id: string; panelIds: string[]; ch
 function DockTargets({ pane, zone }: { pane: PaneId; zone: Dock | null }) {
   const allowed = ALLOWED_DOCKS[pane]
   const target = (d: Dock) =>
-    zone === d ? 'border-primary bg-primary/20 text-on-accent-brand shadow-[0_0_30px_rgb(139_92_246/0.45)] scale-[1.02]' : 'border-white/10 bg-bg-field text-foreground-faint'
+    zone === d ? 'border-primary bg-primary/15 text-text-primary' : 'border-border bg-bg-field text-foreground-faint'
   const base = 'absolute flex items-center justify-center gap-2 rounded-xl border-2 border-dashed text-xs font-semibold transition-[background-color,border-color,transform,color] duration-150'
   return (
     <motion.div
