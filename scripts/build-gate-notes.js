@@ -47,6 +47,8 @@ const BLOCKS = {
   derivation: { attrs: { of: "text" } },
   example: { attrs: { level: ["easy", "medium", "gate"], title: "text" } },
   check: { attrs: { title: "text" } },
+  // Worked-example steps: :::step{why="…"} inside :::example, then a final :::answer.
+  step: { attrs: { why: "long" } },
   answer: { attrs: {} },
   trick: { attrs: { title: "text" } },
   trap: { attrs: { title: "text" } },
@@ -440,6 +442,8 @@ class Compiler {
       if (Array.isArray(kind) && !kind.includes(v)) this.err(n, `:::${name}: ${k} must be ${kind.join(" | ")} (got "${v}")`);
       if (kind !== "text" && !Array.isArray(kind) && !String(v).trim()) this.err(n, `:::${name}: ${k} needs a value`);
       if (kind === "text" && String(v).length > 120) this.err(n, `:::${name}: ${k} is too long`);
+      if (kind === "long" && String(v).length > 400) this.err(n, `:::${name}: ${k} is too long (≤ 400 characters)`);
+      if (kind === "long" && !String(v).trim()) this.err(n, `:::${name}: ${k} needs text`);
     }
     for (const k of def.required || []) if (!attrs[k]) this.err(n, `:::${name} needs ${k}="…"`);
 
@@ -464,7 +468,8 @@ class Compiler {
       children = children.slice(1);
     }
 
-    if (name === "answer" && parent !== "check") this.err(n, ":::answer belongs inside a :::check block");
+    if (name === "answer" && parent !== "check" && parent !== "example") this.err(n, ":::answer belongs inside a :::check or :::example block");
+    if (name === "step" && parent !== "example") this.err(n, ":::step belongs inside an :::example block");
     if (def.leaf && children.length) this.err(n, `:::${name} takes no content — write ::${name}{…} or close it straight away`);
 
     const c = [];
@@ -481,6 +486,18 @@ class Compiler {
       const answers = c.filter((x) => x.t === "block" && x.name === "answer");
       if (answers.length !== 1) this.err(n, `:::check needs exactly one nested :::answer (found ${answers.length})`);
       else if (c[c.length - 1] !== answers[0]) this.err(n, ":::answer must be the last thing in its :::check");
+    }
+
+    if (name === "example") {
+      const steps = c.filter((x) => x.t === "block" && x.name === "step");
+      const answers = c.filter((x) => x.t === "block" && x.name === "answer");
+      if (answers.length > 1) this.err(n, `:::example has ${answers.length} :::answer blocks (at most one)`);
+      if (steps.length && answers.length !== 1) this.err(n, ":::example with steps needs a final :::answer");
+      if (answers.length && c[c.length - 1] !== answers[0]) this.err(n, ":::answer must be the last thing in its :::example");
+      const firstStep = c.findIndex((x) => x.t === "block" && x.name === "step");
+      if (firstStep >= 0 && c.slice(firstStep).some((x) => !(x.t === "block" && (x.name === "step" || x.name === "answer"))))
+        this.err(n, "in an :::example, put the problem first, then only :::step blocks and the :::answer");
+      if (steps.length && firstStep === 0) this.err(n, ":::example needs the problem statement before its first :::step");
     }
 
     const node = { t: "block", name, id, depth, attrs, ...(label ? { label } : {}), c, line };

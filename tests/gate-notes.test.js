@@ -155,6 +155,14 @@ test('the validator reports mistakes with file:line', async () => {
   e = await errorsFor(swap('pyq_topics: [dl/number]', 'pyq_topics: [dl/nonsense]'));
   assert.match(e, /pyq topic "dl\/nonsense" is not a subject\/topic/);
 
+  e = await errorsFor(`${LESSON}\n:::step{why="x"}\nOrphan.\n:::\n`);
+  assert.match(e, /:::step belongs inside an :::example block/);
+
+  e = await errorsFor(`${LESSON}\n::::example\nProblem.\n:::step{why="because"}\nDo it.\n:::\n::::\n`);
+  assert.match(e, /:::example with steps needs a final :::answer/);
+
+  assert.equal(await errorsFor(`${LESSON}\n::::example{level="easy"}\nProblem.\n:::step{why="because"}\nDo it.\n:::\n:::answer\n42\n:::\n::::\n`), '');
+
   e = await errorsFor(`${LESSON}\n<div>raw</div>\n`);
   assert.match(e, /raw HTML is not allowed/);
 
