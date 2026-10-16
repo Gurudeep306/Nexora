@@ -11,6 +11,8 @@ import { setFaviconBadge } from '@/lib/faviconFx'
 import { useSite } from '@/context/SiteContext'
 import { Icon } from '@/components/icon/Icon'
 import type { FriendRequest, UnreadCount } from '@/components/social/types'
+import { SocialActivity } from '@/components/social/feed/BellActivity'
+import { useSocialUnread } from '@/components/social/feed/notifications'
 
 /** Bell + inbox popover: friend requests and unread DMs, live over the socket. */
 export function Notifications() {
@@ -45,7 +47,9 @@ export function Notifications() {
     if (open) for (const b of unseen) dismiss(`b:${b.id}`)
   }, [open, unseen, dismiss])
 
-  const total = (data?.total ?? 0) + unseen.length
+  // Social activity (likes, comments, follows…), live over the socket.
+  const social = useSocialUnread(!!username && status?.flags?.social !== false)
+  const total = (data?.total ?? 0) + unseen.length + social.unread
 
   // Mirror the unread count onto the browser tab title, e.g. "(3) NexoraGuru — …".
   useEffect(() => setFaviconBadge(total), [total])
@@ -86,7 +90,7 @@ export function Notifications() {
             </div>
           ) : error ? (
             <ErrorState message={error} onRetry={refetch} />
-          ) : !total && !broadcasts.length ? (
+          ) : !total && !broadcasts.length && !social.unread ? (
             <div className="flex flex-col items-center gap-2 px-6 py-10 text-center">
               <span className="flex size-10 items-center justify-center rounded-full bg-state-success/10 text-state-success">
                 <CheckCheck className="size-5" />
@@ -96,6 +100,7 @@ export function Notifications() {
             </div>
           ) : (
             <>
+              {social.unread > 0 && <SocialActivity open={open} onNavigate={() => setOpen(false)} onSeen={social.clear} />}
               {broadcasts.map((b) => (
                 <Link
                   key={`b${b.id}`}

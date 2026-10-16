@@ -51,7 +51,7 @@ function isPublicPath(p) {
 const FEATURE_ROUTES = [
   ["gate", /^\/api\/gate(\/|$)/],
   ["contests", /^\/api\/(contests|live)(\/|$)/],
-  ["social", /^\/api\/(friends|messages|rooms|feed)(\/|$)/],
+  ["social", /^\/api\/(friends|messages|rooms|feed|social)(\/|$)/],
   ["ai_tutor", /^\/api\/(agent|ai)(\/|$)/],
   ["practice", /^\/api\/(problems|problem-statement)(\/|$)/],
 ];
