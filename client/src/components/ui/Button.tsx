@@ -4,24 +4,27 @@ import { cn } from '@/lib/utils'
 import { Loader2 } from 'lucide-react'
 
 const buttonVariants = cva(
-  "relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-lg font-medium transition-[background-color,border-color,color,box-shadow,transform] duration-200 select-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-brand focus-visible:ring-offset-2",
+  "relative inline-flex cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-control)] font-medium transition-[background-color,border-color,color,box-shadow,transform,filter] duration-[var(--dur-fast)] ease-[var(--ease-standard)] select-none disabled:pointer-events-none disabled:opacity-50 data-[state=active]:scale-[0.98]",
   {
     variants: {
       variant: {
+        // Solid accent with a 1px top light and a neutral contact shadow — no
+        // coloured glow under the button.
         primary:
-          'bg-accent-brand text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2),0_0_0_1px_color-mix(in_oklch,var(--color-accent-brand)_60%,transparent),0_6px_20px_-6px_color-mix(in_oklch,var(--color-accent-brand)_70%,transparent)] hover:bg-accent-brand/90',
+          'bg-accent-brand text-on-accent-brand shadow-[inset_0_1px_0_oklch(100%_0_0/0.16),0_0_0_1px_color-mix(in_oklab,var(--color-accent-brand)_80%,var(--shadow-ink)),var(--elev-1)] hover:bg-accent-brand-hover',
         secondary:
-          'border border-border bg-bg-surface-2 text-text-primary shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.04)] hover:border-border-strong hover:bg-bg-surface-3',
+          'border border-border bg-bg-surface-2 text-text-primary shadow-[inset_0_1px_0_var(--specular)] hover:border-border-strong hover:bg-bg-surface-3',
         outline:
-          'border border-accent-brand/20 bg-transparent text-accent-brand hover:bg-accent-brand/10 hover:border-accent-brand/30',
-        ghost: 'text-text-secondary hover:bg-accent-brand/5 hover:text-accent-brand',
+          'border border-border-strong bg-transparent text-text-primary hover:bg-text-primary/5',
+        ghost: 'text-text-secondary hover:bg-text-primary/6 hover:text-text-primary',
         subtle:
-          'border border-border bg-bg-surface-2 text-text-primary shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.04)] hover:border-border-strong hover:bg-bg-surface-3',
-        destructive: 'bg-state-error text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2)] hover:bg-state-error/90',
-        danger: 'bg-state-error text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2)] hover:bg-state-error/90',
-        success: 'bg-state-success text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.2)] hover:bg-state-success/90',
+          'border border-border bg-bg-surface-2 text-text-primary shadow-[inset_0_1px_0_var(--specular)] hover:border-border-strong hover:bg-bg-surface-3',
+        destructive: 'bg-state-error text-on-accent-brand shadow-[inset_0_1px_0_oklch(100%_0_0/0.14),var(--elev-1)] hover:bg-state-error/90',
+        danger: 'bg-state-error text-on-accent-brand shadow-[inset_0_1px_0_oklch(100%_0_0/0.14),var(--elev-1)] hover:bg-state-error/90',
+        success: 'bg-state-success text-on-accent-brand shadow-[inset_0_1px_0_oklch(100%_0_0/0.14),var(--elev-1)] hover:bg-state-success/90',
+        // The brand CTA: the one place a (quiet, same-hue) gradient earns its keep.
         accent:
-          'bg-gradient-to-b from-accent-brand to-accent-brand-hover text-on-accent-brand shadow-[inset_0_1px_0_oklch(98%_0%_0%/0.25),0_0_0_1px_color-mix(in_oklch,var(--color-accent-brand)_60%,transparent),0_6px_20px_-6px_color-mix(in_oklch,var(--color-accent-brand)_70%,transparent)] hover:brightness-110',
+          'bg-gradient-to-b from-[color-mix(in_oklab,var(--color-accent-brand)_86%,white)] to-accent-brand text-on-accent-brand shadow-[inset_0_1px_0_oklch(100%_0_0/0.18),0_0_0_1px_color-mix(in_oklab,var(--color-accent-brand)_80%,var(--shadow-ink)),var(--elev-1)] hover:brightness-[1.06]',
         link: 'text-accent-brand underline-offset-4 hover:underline',
       },
       size: {

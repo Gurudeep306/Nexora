@@ -8,8 +8,10 @@ import {
   type ReactNode,
 } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Check, CornerDownLeft, Search, X } from 'lucide-react'
+import { Check, CornerDownLeft, Search, SearchX, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { popIn } from '@/lib/motion'
+import { Highlight } from './Highlight'
 
 export type ComboboxItem = {
   id: string
@@ -21,6 +23,10 @@ export type ComboboxItem = {
   trailing?: ReactNode
   /** Per-item action, run before the combobox-level `onSelect`. */
   onSelect?: () => void
+  /** Keep the panel open after choosing (e.g. a recent query that refills the field). */
+  keepOpen?: boolean
+  /** Don't highlight the query inside this label (e.g. "Search all for …"). */
+  plain?: boolean
 }
 
 export interface SearchComboboxProps {
@@ -38,6 +44,12 @@ export interface SearchComboboxProps {
   openOnFocus?: boolean
   /** Extra node pinned under the scrollable list (e.g. a ⌘K hint). */
   footer?: ReactNode
+  /** A small control shown at the right of a group's header (e.g. "Clear" on Recent). */
+  groupActions?: Partial<Record<string, ReactNode>>
+  /** A notice shown above the items (e.g. "No problems match"). */
+  notice?: ReactNode
+  /** Mark the typed text inside each result (default on). */
+  highlight?: boolean
   closeOnSelect?: boolean
   containerClassName?: string
   className?: string
@@ -48,8 +60,8 @@ export interface SearchComboboxProps {
 
 /**
  * A search field whose results drop down from the bar itself — an anchored
- * combobox, not a centered modal. Reuses the SearchInput look (leading icon,
- * focus halo, clear button) and the app's frosted `pop-surface` for the panel.
+ * combobox, not a centered modal. Uses the shared field look (input-base: a
+ * single border + soft focus halo) and the opaque `pop-surface` for the panel.
  * Full keyboard support: ↑/↓ to move, ⏎ to open, Esc to dismiss.
  */
 export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(function SearchCombobox(
@@ -64,6 +76,9 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
     emptyText = 'No matches.',
     openOnFocus = true,
     footer,
+    groupActions,
+    notice,
+    highlight = true,
     closeOnSelect = true,
     containerClassName,
     className,
@@ -108,9 +123,11 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
   const choose = (item: ComboboxItem) => {
     item.onSelect?.()
     onSelect?.(item)
-    if (closeOnSelect) {
+    if (closeOnSelect && !item.keepOpen) {
       setOpen(false)
       innerRef.current?.blur()
+    } else {
+      innerRef.current?.focus()
     }
   }
 
@@ -142,10 +159,10 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
 
   return (
     <div ref={rootRef} className={cn('group/search relative', containerClassName)}>
-      <div className="relative flex items-center rounded-[var(--radius-control)] transition-shadow duration-200 focus-within:shadow-[0_0_0_3px_color-mix(in_oklab,var(--color-accent-brand)_12%,transparent)]">
+      <div className="relative flex items-center">
         <Search
           aria-hidden="true"
-          className="pointer-events-none absolute left-3 z-10 size-4 text-foreground-faint transition-all duration-200 group-focus-within/search:scale-110 group-focus-within/search:text-primary-bright"
+          className="pointer-events-none absolute left-3 z-10 size-4 text-text-muted transition-colors duration-[var(--dur-fast)] group-focus-within/search:text-text-primary"
         />
         <input
           ref={setRefs}
@@ -167,7 +184,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
           {...rest}
         />
         {placeholderNode && !hasValue && (
-          <span className="pointer-events-none absolute top-1/2 right-3 left-9 z-10 -translate-y-1/2 truncate text-[13px] text-foreground-faint">
+          <span className="pointer-events-none absolute top-1/2 right-3 left-9 z-10 -translate-y-1/2 truncate text-[13px] text-text-muted">
             {placeholderNode}
           </span>
         )}
@@ -179,7 +196,7 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
               innerRef.current?.focus()
             }}
             aria-label="Clear search"
-            className="absolute right-2 z-10 flex size-6 cursor-pointer items-center justify-center rounded-full text-foreground-faint transition-all duration-150 hover:scale-105 hover:bg-foreground/10 hover:text-foreground active:scale-95"
+            className="absolute right-2 z-10 flex size-6 cursor-pointer items-center justify-center rounded-full text-text-muted transition-colors hover:bg-text-primary/8 hover:text-text-primary"
           >
             <X className="size-3.5" aria-hidden="true" />
           </button>
@@ -189,28 +206,31 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
       <AnimatePresence>
         {showPanel && (
           <motion.div
-            id="search-combobox-list"
-            role="listbox"
-            ref={listRef}
-            initial={{ opacity: 0, y: -6, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -4, scale: 0.99, transition: { duration: 0.12 } }}
-            transition={{ type: 'spring', stiffness: 520, damping: 38 }}
+            {...popIn}
             className={cn(
-              'pop-surface absolute top-[calc(100%+8px)] left-0 z-[60] max-h-[min(22rem,var(--scb-available,22rem))] w-full origin-top overflow-hidden p-1.5',
+              'pop-surface absolute top-[calc(100%+6px)] left-0 z-[60] flex max-h-[min(26rem,70vh)] w-full origin-top flex-col overflow-hidden',
               panelClassName,
             )}
           >
-            <div className="max-h-[min(20rem,60vh)] overflow-y-auto overscroll-contain">
+            <div
+              id="search-combobox-list"
+              role="listbox"
+              ref={listRef}
+              className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-1.5"
+            >
+              {notice}
               {loading && items.length === 0 && (
-                <div className="space-y-1.5 p-1.5">
-                  <div className="skeleton h-7 w-full" />
-                  <div className="skeleton h-7 w-4/5" />
-                  <div className="skeleton h-7 w-3/5" />
+                <div className="space-y-1 p-1" aria-label="Searching">
+                  <div className="skeleton h-8 w-full" />
+                  <div className="skeleton h-8 w-4/5" />
+                  <div className="skeleton h-8 w-3/5" />
                 </div>
               )}
-              {!loading && items.length === 0 && (
-                <p className="px-3 py-6 text-center text-sm text-foreground-faint">{emptyText}</p>
+              {!loading && items.length === 0 && !notice && (
+                <div className="flex flex-col items-center px-4 py-7 text-center">
+                  <SearchX className="size-5 text-text-muted" aria-hidden="true" />
+                  <p className="mt-2 mb-0 text-[13px] text-text-secondary">{emptyText}</p>
+                </div>
               )}
               {items.map((item) => {
                 const header = item.group && item.group !== lastGroup ? item.group : null
@@ -222,9 +242,10 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
                 return (
                   <div key={item.id}>
                     {header && (
-                      <p className="px-2.5 pt-2.5 pb-1 text-[10px] font-semibold tracking-[0.12em] text-foreground-faint uppercase">
-                        {header}
-                      </p>
+                      <div className={cn('flex items-center justify-between px-2.5 pb-1', i === 0 ? 'pt-1.5' : 'pt-3')}>
+                        <span className="text-[11px] font-medium text-text-muted">{header}</span>
+                        {groupActions?.[header]}
+                      </div>
                     )}
                     <button
                       id={`scb-${item.id}`}
@@ -235,42 +256,29 @@ export const SearchCombobox = forwardRef<HTMLInputElement, SearchComboboxProps>(
                       onMouseMove={() => setActive(i)}
                       onClick={() => choose(item)}
                       className={cn(
-                        'relative flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-[13px] transition-colors',
-                        isActive ? 'bg-foreground/8 text-foreground' : 'text-text-secondary',
+                        'flex h-9 w-full cursor-pointer items-center gap-2.5 rounded-[calc(var(--radius-control)*0.8)] px-2.5 text-left text-[13px] active:!scale-100',
+                        isActive ? 'bg-text-primary/[0.07] text-text-primary' : 'text-text-secondary',
                       )}
                     >
-                      {isActive && (
-                        <motion.span
-                          layoutId="scb-active"
-                          className="absolute inset-y-1.5 left-0 w-[2.5px] rounded-r-full bg-accent-brand"
-                          transition={{ type: 'spring', stiffness: 600, damping: 40 }}
-                        />
-                      )}
-                      {Icon && (
-                        <span
-                          className={cn(
-                            'flex size-6 shrink-0 items-center justify-center rounded-md border transition-colors',
-                            isActive
-                              ? 'border-accent-brand/40 bg-accent-brand/15 text-accent-brand'
-                              : 'border-border/10 bg-bg-app/5 text-foreground-faint',
-                          )}
-                        >
-                          <Icon className="size-3.5" />
-                        </span>
-                      )}
-                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
+                      {Icon && <Icon className={cn('size-4 shrink-0', isActive ? 'text-text-primary' : 'text-text-muted')} />}
+                      <span className="min-w-0 flex-1 truncate">
+                        {highlight && !item.plain ? <Highlight text={item.label} query={value} /> : item.label}
+                      </span>
                       {item.trailing ? (
                         item.trailing
                       ) : (
-                        item.hint && <span className="shrink-0 font-mono text-[11px] text-foreground-faint">{item.hint}</span>
+                        item.hint && <span className="shrink-0 text-[11.5px] text-text-muted">{item.hint}</span>
                       )}
-                      {isActive && !item.trailing && <CornerDownLeft className="size-3 shrink-0 text-accent-brand" aria-hidden="true" />}
+                      <CornerDownLeft
+                        className={cn('size-3.5 shrink-0 text-text-muted transition-opacity', isActive ? 'opacity-100' : 'opacity-0')}
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
                 )
               })}
             </div>
-            {footer && <div className="mt-1 border-t border-border/10 pt-1">{footer}</div>}
+            {footer && <div className="shrink-0 border-t border-border p-1.5">{footer}</div>}
           </motion.div>
         )}
       </AnimatePresence>

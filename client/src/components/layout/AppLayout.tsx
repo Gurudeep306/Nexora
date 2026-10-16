@@ -17,6 +17,7 @@ import { useSite } from '@/context/SiteContext'
 import { featureForPath } from '@/lib/site'
 import { SiteBanners } from '@/components/site/SiteBanners'
 import { SectionOff } from '@/components/site/SectionOff'
+import { DUR, EASE_EMPHASIZED } from '@/lib/motion'
 
 export function AppLayout() {
   const location = useLocation()
@@ -37,7 +38,7 @@ export function AppLayout() {
     <div className="relative min-h-dvh">
       <a
         href="#main-content"
-        className="fixed top-2 left-2 z-[1400] -translate-y-20 rounded-lg bg-accent-brand px-3 py-2 text-sm font-semibold text-text-primary/90 transition-transform focus:translate-y-0"
+        className="fixed top-2 left-2 z-[1400] -translate-y-20 rounded-[var(--radius-control)] bg-accent-brand px-3 py-2 text-sm font-semibold text-on-accent-brand transition-transform focus:translate-y-0"
       >
         Skip to content
       </a>
@@ -66,10 +67,10 @@ export function AppLayout() {
                 /* Position only: an opacity fade would make this wrapper a
                    backdrop root, and every glass card inside would lose its
                    blur for the length of the transition. */
-                initial={{ y: 8 }}
+                initial={{ y: 6 }}
                 animate={{ y: 0 }}
                 exit={{ transition: { duration: 0 } }}
-                transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ duration: DUR.slow, ease: EASE_EMPHASIZED }}
               >
                 <PageErrorBoundary key={location.pathname}>
                   {sectionOff ? <SectionOff flag={sectionOff} /> : <Outlet />}

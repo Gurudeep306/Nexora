@@ -20,6 +20,7 @@ export { StatCard } from './StatCard'
 export { PageHeader } from './PageHeader'
 export { AnimatedNumber } from './AnimatedNumber'
 export { Kbd } from './Kbd'
+export { Highlight } from './Highlight'
 export {
   Menu,
   MenuTrigger,

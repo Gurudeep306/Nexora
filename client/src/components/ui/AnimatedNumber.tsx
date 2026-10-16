@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { animate, useInView, useReducedMotion } from 'motion/react'
+import { cn } from '@/lib/utils'
+import { EASE_EMPHASIZED } from '@/lib/motion'
 
 /** Counts up to `value` the first time it scrolls into view. */
 export function AnimatedNumber({
   value,
-  duration = 1.1,
+  duration = 0.9,
   format = (n: number) => Math.round(n).toLocaleString(),
   className,
 }: {
@@ -31,7 +33,7 @@ export function AnimatedNumber({
     }
     const controls = animate(last.current, value, {
       duration,
-      ease: [0.22, 1, 0.36, 1],
+      ease: EASE_EMPHASIZED,
       onUpdate: (v) => {
         el.textContent = fmt.current(v)
       },
@@ -41,7 +43,8 @@ export function AnimatedNumber({
   }, [value, inView, reduce, duration])
 
   return (
-    <span ref={ref} className={className} aria-label={format(value)}>
+    // Tabular digits: the number doesn't change width while it ticks.
+    <span ref={ref} className={cn('tabular-nums', className)} aria-label={format(value)}>
       {format(reduce ? value : 0)}
     </span>
   )
