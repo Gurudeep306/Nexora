@@ -7,7 +7,7 @@
  *
  * OWNER_USERNAME in the server's environment always wins over this setting:
  * if it is set to someone else, change it there (and restart) instead.
- * A running server picks the change up within a few seconds.
+ * A running server picks the change up within a minute (SITE_SETTINGS_TTL_MS).
  */
 import { audit, get, positional, ready, run, setSetting, where } from "./_db.mjs";
 

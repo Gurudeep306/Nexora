@@ -13,6 +13,10 @@ const { getSessionUser } = require("../middleware/auth");
 const P = require("../authz/permissions");
 const { errorCount } = require("../authz/access");
 const content = require("../authz/content");
+const dbStats = require("../db-stats");
+const { sharedCache } = require("../shared-cache");
+
+const announcementCache = sharedCache({ name: "announcements", ttlMs: 5 * 60 * 1000, tables: ["announcements"] });
 const { defaultAvatar } = require("../avatar-set");
 const {
   FEATURE_FLAGS,
@@ -218,11 +222,16 @@ function createAdminRouter(deps) {
       const me = a?.username || null;
       const now = Date.now();
       const [announcements, notices] = await Promise.all([
-        all(
-          `SELECT id, kind, title, body, link, color, pinned, expires_at, created_at FROM announcements
-           WHERE active = 1 AND (expires_at IS NULL OR expires_at > ?) ORDER BY pinned DESC, created_at DESC LIMIT 12`,
-          [now],
-        ),
+        // Every page load asks for this: the active announcements are cached
+        // (dropped on any announcements write) and the expiry applied here.
+        announcementCache
+          .get("active", () =>
+            all(
+              `SELECT id, kind, title, body, link, color, pinned, expires_at, created_at FROM announcements
+               WHERE active = 1 ORDER BY pinned DESC, created_at DESC LIMIT 200`,
+            ),
+          )
+          .then((rows) => rows.filter((x) => x.expires_at == null || x.expires_at > now).slice(0, 12).map((x) => ({ ...x }))),
         me
           ? all("SELECT id, reason, created_at FROM user_warnings WHERE username = ? AND acknowledged_at IS NULL ORDER BY id DESC LIMIT 5", [me])
           : Promise.resolve([]),
@@ -386,6 +395,19 @@ function createAdminRouter(deps) {
         recentSignups: recent.map((u) => ({ ...u, role: P.effectiveRole(u.username, u.role) })),
         online: online ? online.slice(0, 50) : null,
       });
+    }),
+  );
+
+  /* ═════════════ Database usage (Turso quota) ═════════════ */
+
+  // Rows read / written since boot, the top statements and a monthly
+  // projection against the free-plan quota (src/db-stats.js). Costs no query.
+  router.get(
+    "/api/admin/db-stats",
+    requirePerm("analytics.view"),
+    h(async (req, res) => {
+      const top = intIn(req.query.top, 1, 200, 25);
+      res.json({ ok: true, ...dbStats.snapshot({ top }) });
     }),
   );
 

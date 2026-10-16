@@ -5,7 +5,7 @@
  *
  *   node scripts/admin/private-mode.mjs on|off|status [--message "…"] [--cloud]
  *
- * A running server picks the change up within a few seconds.
+ * A running server picks the change up within a minute (SITE_SETTINGS_TTL_MS).
  */
 import { args, audit, configOwner, get, positional, ready, setSetting, where } from "./_db.mjs";
 
