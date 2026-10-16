@@ -1,0 +1,45 @@
+[
+  {
+    "id": "nx-demo-01-01-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "What is $(1011.01)_2$ in decimal?",
+    "answer": 11.25,
+    "solution": [
+      "Integer part: $1\\cdot 2^3 + 0\\cdot 2^2 + 1\\cdot 2^1 + 1\\cdot 2^0 = 8 + 2 + 1 = 11$.",
+      "Fraction part: the digits after the point stand for $2^{-1}$ and $2^{-2}$, so $.01_2 = 0\\cdot\\tfrac12 + 1\\cdot\\tfrac14 = 0.25$.",
+      "Together: $11 + 0.25 = 11.25$."
+    ],
+    "concept": "Positions after the radix point carry negative powers of the base.",
+    "common_wrong": [
+      { "answer": 11.01, "why": "The digits after the point were copied across. In base 2 they stand for halves and quarters, not hundredths." },
+      { "answer": 11.5, "why": "The 1 was read as the $2^{-1}$ digit. It is the second digit after the point, so it is worth $2^{-2} = 0.25$." }
+    ],
+    "blocks": ["place-value-def", "expansion"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-demo-01-01-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which decimal number is $(2D)_{16}$?",
+    "options": [
+      { "l": "A", "t": "$29$" },
+      { "l": "B", "t": "$43$" },
+      { "l": "C", "t": "$45$" },
+      { "l": "D", "t": "$213$" }
+    ],
+    "answer": "C",
+    "solution": [
+      "In base 16 the digit D stands for 13.",
+      "$(2D)_{16} = 2\\cdot 16 + 13 = 45$."
+    ],
+    "concept": "Each hexadecimal digit is worth digit × a power of 16.",
+    "common_wrong": [
+      { "answer": "A", "why": "This reads D as 13 but weights the 2 by 8, the octal place value." },
+      { "answer": "D", "why": "The digits were written side by side (2 and 13) instead of being weighted by their places." }
+    ],
+    "blocks": ["expansion"],
+    "source": "nexora"
+  }
+]

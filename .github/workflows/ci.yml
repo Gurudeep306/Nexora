@@ -40,8 +40,25 @@ jobs:
       # The GATE solution validator renders formulas with the client's KaTeX.
       - name: Client dependencies (for the GATE solution validator)
         run: npm ci --prefix client --no-audit --no-fund
+      # GATE Notes: content validates (file:line errors) and src/gate/notes
+      # matches the sources. npm test runs the same check; this step names it.
+      - name: GATE notes pipeline (validate + up to date)
+        run: npm run notes:check
       - name: Tests (incl. cloud-database end-to-end)
         run: npm test
+
+  notes-checks:
+    name: GATE notes verification scripts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install sympy
+      - name: Run content/gate-notes/_checks
+        run: python3 scripts/gate-notes/run_checks.py
 
   client:
     name: Client build
