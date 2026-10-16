@@ -201,9 +201,16 @@ async function initAdminSystem() {
     );
     return settings;
   }
+  // Runs on every boot (free hosts restart often), so it only reads by index
+  // (idx_users_role, the username key) and only writes when something is off.
   await run("UPDATE users SET role='admin' WHERE role='owner' AND username <> ? COLLATE NOCASE", [owner]);
-  const r = await run("UPDATE users SET role='owner' WHERE username = ? COLLATE NOCASE", [owner]);
-  const exists = r.changes > 0 || !!(await get("SELECT 1 AS x FROM users WHERE username = ? COLLATE NOCASE", [owner]));
+  const exact = await get("SELECT username, role FROM users WHERE username = ?", [owner]);
+  // A case variant of the configured name (rare) still needs the NOCASE match.
+  const row0 = exact || (await get("SELECT username, role FROM users WHERE username = ? COLLATE NOCASE", [owner]));
+  if (row0 && row0.role !== "owner") {
+    await run("UPDATE users SET role='owner' WHERE username = ?", [row0.username]);
+  }
+  const exists = !!row0;
   const row = await get("SELECT value FROM site_settings WHERE key='private_mode'");
   if (!exists) {
     console.warn(

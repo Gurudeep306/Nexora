@@ -134,3 +134,30 @@ export interface Report {
 }
 
 export type AdminAnnouncement = Announcement & { active: number; created_by: string }
+
+/** GET /api/admin/db-stats — database rows read/written since boot (Turso quota). */
+export interface DbStatement {
+  sql: string
+  calls: number
+  returned: number
+  reads: number
+  written: number
+  scans: string[]
+}
+export interface DbStats {
+  detailed: boolean
+  since: string
+  uptimeSec: number
+  totals: { statements: number; returned: number; written: number; reads: number; scans: number }
+  projection: {
+    monthlyReads: number
+    monthlyWrites: number
+    quota: { reads: number; writes: number }
+    share: { reads: number; writes: number }
+    warnAt: number
+    warning: boolean
+  }
+  topReads: DbStatement[]
+  topWrites: DbStatement[]
+  endpoints?: { route: string; requests: number; statements: number; reads: number; written: number }[]
+}

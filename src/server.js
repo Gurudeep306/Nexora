@@ -21,7 +21,9 @@ const GitHubStrategy = require("passport-github2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { Server: SocketServer } = require("socket.io");
 const { run, get, all, runBatch, initDb, dbInfo, migratePerUser } = require("./db");
-const { getCatalog, topicPool } = require("./problem-catalog");
+const { getCatalog, topicPool, filterIndices, filterKey, sortIndices, tagList, randomPick, likeMatcher } = require("./problem-catalog");
+const dbStats = require("./db-stats");
+const { sharedCache } = require("./shared-cache");
 const { requestContext, me, meSql, runAs, queryCount } = require("./context");
 const { DbSessionStore } = require("./session-store");
 const { isSetAvatar, normalizeAvatar } = require("./avatar-set");
@@ -622,6 +624,10 @@ async function _scrapeAC(page, problem) {
 
 const app = express();
 
+// DB_STATS=1: attribute every request's rows read/written to its endpoint
+// (GET /api/admin/db-stats). Must be first so session queries count too.
+if (dbStats.ENABLED) app.use(dbStats.requestMiddleware());
+
 /* ── Trust proxy (for Caddy / Nginx / Cloudflare / Railway / Render) ── */
 // Default: 1 hop in production (Render's proxy, or Caddy on the VM — Caddy
 // rewrites X-Forwarded-For to the real visitor IP). TRUST_PROXY overrides.
@@ -1091,60 +1097,75 @@ app.get("/api/problems", async (req, res) => {
       limit,
       offset,
     } = req.query;
-    let where = ["1=1"];
-    let params = [];
-
-    if (platform && platform !== "all") {
-      where.push("p.platform=?");
-      params.push(platform);
-    }
-    if (minRating) {
-      where.push("p.rating>=?");
-      params.push(+minRating);
-    }
-    if (maxRating) {
-      where.push("p.rating<=?");
-      params.push(+maxRating);
-    }
-    if (tag) {
-      where.push("p.tags LIKE ?");
-      params.push(`%${tag}%`);
-    }
-    if (status && status !== "all") {
-      if (status === "solved")
-        where.push("COALESCE(pr.status,'unsolved')='solved'");
-      else if (status === "attempted")
-        where.push("COALESCE(pr.status,'unsolved')='attempted'");
-      else if (status === "unsolved")
-        where.push("(pr.status IS NULL OR pr.status='unsolved')");
-    }
-    if (search) {
-      where.push("(p.title LIKE ? OR p.problem_id LIKE ?)");
-      params.push(`%${search}%`, `%${search}%`);
-    }
-
-    const sortCol =
-      { rating: "p.rating", title: "p.title", id: "p.problem_id" }[sort] ||
-      "p.rating";
-    const sortDir = order === "desc" ? "DESC" : "ASC";
     // Clamp both: LIMIT -1 means "no limit" to SQLite, and NaN binds as NULL.
     const lim = Math.min(Math.max(Math.trunc(+limit) || 50, 1), 200);
     const off = Math.max(Math.trunc(+offset) || 0, 0);
-
-    const countSql = `SELECT COUNT(*) as total FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()} WHERE ${where.join(" AND ")}`;
-    const dataSql = `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status, pr.attempts, pr.xp_earned, pr.solved_at
-      FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-      WHERE ${where.join(" AND ")} ORDER BY ${sortCol === "p.rating" ? "(p.rating = 0), " : ""}${sortCol} ${sortDir} LIMIT ? OFFSET ?`;
-
-    const [{ total }, problems] = await Promise.all([
-      get(countSql, params),
-      all(dataSql, [...params, lim, off]),
-    ]);
-    res.json({ ok: true, total, problems, limit: lim, offset: off });
+    // Filters, search, sort and counts come from the in-memory catalog (no
+    // table scan); only this user's progress rows are read, by index.
+    const catalog = await getCatalog();
+    const filters = {
+      platform: platform && platform !== "all" ? String(platform) : "",
+      minRating: minRating ? +minRating : null,
+      maxRating: maxRating ? +maxRating : null,
+      tag: tag ? String(tag) : "",
+      search: search ? String(search) : "",
+    };
+    const matched = filterIndices(catalog, filters);
+    const st = status && status !== "all" ? String(status) : "";
+    const statusFilter = st === "solved" || st === "attempted" || st === "unsolved";
+    let progress = null; // problem id -> progress row
+    let indices = matched;
+    if (statusFilter) {
+      progress = await userProgressMap();
+      indices = matched.filter((i) => {
+        const s0 = progress.get(catalog.rows[i].id)?.status;
+        if (st === "unsolved") return s0 == null || s0 === "unsolved";
+        return (s0 == null ? "unsolved" : s0) === st;
+      });
+    }
+    const sorted = sortIndices(
+      catalog,
+      indices,
+      sort,
+      order === "desc",
+      statusFilter ? null : filterKey(filters),
+    );
+    const page = sorted.slice(off, off + lim).map((i) => catalog.rows[i]);
+    if (!progress) progress = await userProgressMap(page.map((p) => p.id));
+    const problems = page.map((p) => {
+      const pr = progress.get(p.id);
+      return {
+        ...p,
+        solve_status: pr?.status ?? "unsolved",
+        attempts: pr ? pr.attempts : null,
+        xp_earned: pr ? pr.xp_earned : null,
+        solved_at: pr ? pr.solved_at : null,
+      };
+    });
+    res.json({ ok: true, total: indices.length, problems, limit: lim, offset: off });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
 });
+
+/**
+ * The signed-in user's progress rows as a Map(problem id -> row), read by
+ * index — all of them, or only those for `ids` (one page of problems).
+ */
+async function userProgressMap(ids) {
+  const cols = "problem_rowid, status, attempts, xp_earned, solved_at";
+  let rows;
+  if (ids) {
+    if (!ids.length) return new Map();
+    rows = await all(
+      `SELECT ${cols} FROM progress WHERE username=? AND problem_rowid IN (${ids.map(() => "?").join(",")})`,
+      [me(), ...ids],
+    );
+  } else {
+    rows = await all(`SELECT ${cols} FROM progress WHERE username=?`, [me()]);
+  }
+  return new Map(rows.map((r) => [r.problem_rowid, r]));
+}
 
 app.get("/api/problems/:id", async (req, res) => {
   try {
@@ -1499,15 +1520,25 @@ app.get("/api/problem-statement/:id", async (req, res) => {
 });
 
 /* ========== SCRAPE STATS ========== */
+// Statement coverage per platform: problem counts from the in-memory catalog,
+// the cached-statement ids read at most every 10 minutes (not on each call).
+let _scrapeStats = null;
 app.get("/api/scrape-stats", async (_req, res) => {
   try {
-    const total = (await get("SELECT COUNT(*) as c FROM problems")).c;
-    const scraped = (await get("SELECT COUNT(*) as c FROM problem_statements"))
-      .c;
-    const byPlatform = await all(`
-      SELECT p.platform, COUNT(ps.problem_rowid) as scraped, COUNT(p.id) as total
-      FROM problems p LEFT JOIN problem_statements ps ON ps.problem_rowid = p.id
-      GROUP BY p.platform`);
+    const catalog = await getCatalog();
+    if (!_scrapeStats || _scrapeStats.catalog !== catalog || Date.now() - _scrapeStats.at > 10 * 60 * 1000) {
+      const ids = new Set((await all("SELECT problem_rowid FROM problem_statements")).map((r) => r.problem_rowid));
+      const per = new Map();
+      for (const p of catalog.rows) {
+        const e = per.get(p.platform) || { platform: p.platform, scraped: 0, total: 0 };
+        e.total++;
+        if (ids.has(p.id)) e.scraped++;
+        per.set(p.platform, e);
+      }
+      const byPlatform = [...per.values()].sort((x, y) => (x.platform < y.platform ? -1 : x.platform > y.platform ? 1 : 0));
+      _scrapeStats = { at: Date.now(), catalog, total: catalog.rows.length, scraped: ids.size, byPlatform };
+    }
+    const { total, scraped, byPlatform } = _scrapeStats;
     res.json({
       ok: true,
       total,
@@ -2013,14 +2044,14 @@ app.get("/api/stats", async (req, res) => {
 
       // Batch core counts into a single query
       const counts = await get(`SELECT
-      (SELECT COUNT(*) FROM problems) as total,
       (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
       (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
       (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
+      // Catalog size from memory (COUNT(*) over problems reads every row).
+      const total = (await getCatalog()).rows.length;
       let {
-        total,
         solved,
         attempted,
         totalXp,
@@ -2277,17 +2308,18 @@ app.post("/api/sync-solved", async (req, res) => {
       });
 
     const solvedIds = await fetchCodeforcesSolved(cfHandle);
+    // Codeforces ids resolved in memory, progress read once (by index).
+    const catalog = await getCatalog();
+    const cfIds = new Map();
+    for (const p of catalog.rows) if (p.platform === "codeforces") cfIds.set(p.problem_id, p.id);
+    const progress = await userProgressMap();
     let synced = 0;
+    let lastSynced = null;
     for (const pid of solvedIds) {
-      const prob = await get(
-        "SELECT id FROM problems WHERE platform='codeforces' AND problem_id=?",
-        [pid],
-      );
-      if (!prob) continue;
-      const existing = await get(
-        "SELECT * FROM progress WHERE username=? AND problem_rowid=?",
-        [me(), prob.id],
-      );
+      const id = cfIds.get(pid);
+      if (id == null) continue;
+      const prob = { id };
+      const existing = progress.get(prob.id);
       if (!existing) {
         const xp = await calcXp(prob.id);
         await run(
@@ -2295,6 +2327,8 @@ app.post("/api/sync-solved", async (req, res) => {
           [me(), prob.id, "solved", 1, new Date().toISOString(), xp],
         );
         synced++;
+        lastSynced = prob.id;
+        progress.set(prob.id, { status: "solved" });
       } else if (existing.status !== "solved") {
         const xp = await calcXp(prob.id);
         await run(
@@ -2302,7 +2336,16 @@ app.post("/api/sync-solved", async (req, res) => {
           [new Date().toISOString(), xp, me(), prob.id],
         );
         synced++;
+        lastSynced = prob.id;
+        progress.set(prob.id, { status: "solved" });
       }
+    }
+    // Achievements for the imported solves now (this used to wait for the
+    // next server boot, which scanned all of `progress` to find them).
+    if (lastSynced != null) {
+      await checkAchievements(lastSynced, "AC", { backfill: true }).catch((e) =>
+        console.error("[achievements] sync backfill failed:", e.message),
+      );
     }
     invalidateCache();
     res.json({ ok: true, synced, total: solvedIds.length });
@@ -2314,16 +2357,7 @@ app.post("/api/sync-solved", async (req, res) => {
 /* ========== TAGS ========== */
 app.get("/api/tags", async (req, res) => {
   try {
-    const rows = await all(
-      "SELECT DISTINCT tags FROM problems WHERE tags != '[]' LIMIT 500",
-    );
-    const tagSet = new Set();
-    for (const r of rows) {
-      try {
-        JSON.parse(r.tags).forEach((t) => tagSet.add(t));
-      } catch {}
-    }
-    res.json({ ok: true, tags: [...tagSet].sort() });
+    res.json({ ok: true, tags: tagList(await getCatalog()) });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
@@ -2645,13 +2679,26 @@ async function checkAchievements(problemId, verdict, { backfill = false } = {}) 
   const hour = new Date().getHours();
   const today = now.slice(0, 10);
 
+  // Achievement definitions (static, cached) and this user's current rows,
+  // read once instead of once per award.
+  const [defs, mineRows] = await Promise.all([
+    achievementDefs(),
+    all("SELECT achievement_id, progress, unlocked_at FROM user_achievements WHERE username=?", [u]),
+  ]);
+  const mine = new Map(mineRows.map((r) => [r.achievement_id, r]));
+
   // Record progress for one achievement for this user; unlock (once) when
   // progress reaches `target` (defaults to the achievement's own target).
+  // Only a real change is written (progress = MAX, unlocked_at = first).
   const award = async (id, progress, target = null) => {
-    const def = await get("SELECT target FROM achievements WHERE id=?", [id]);
+    const def = defs.get(id);
     if (!def) return;
     const goal = target ?? def.target ?? 1;
     const p = Math.min(progress, goal);
+    const cur = mine.get(id);
+    const unlocks = progress >= goal;
+    if (cur && (Number(cur.progress) || 0) >= p && (cur.unlocked_at || !unlocks)) return;
+    mine.set(id, { progress: Math.max(p, Number(cur?.progress) || 0), unlocked_at: cur?.unlocked_at || (unlocks ? now : null) });
     await run(
       `INSERT INTO user_achievements(username, achievement_id, progress, unlocked_at)
        VALUES(?,?,?,?)
@@ -2746,6 +2793,16 @@ async function checkAchievements(problemId, verdict, { backfill = false } = {}) 
   for (const t of [3, 7, 30]) if (current >= 1) await award(`streak_${t}`, current, t);
 }
 
+let _achievementDefs = null;
+/** id -> { target } for every achievement (seeded at boot, never edited). */
+async function achievementDefs() {
+  if (!_achievementDefs) {
+    const rows = await all("SELECT id, target FROM achievements");
+    _achievementDefs = new Map(rows.map((r) => [r.id, r]));
+  }
+  return _achievementDefs;
+}
+
 function getPlayerTitle(xp, solvedCount = 0) {
   const lvlData = calcLevel(xp, solvedCount);
   const curr = RIFT_LEVELS[lvlData.level - 1];
@@ -2798,13 +2855,9 @@ async function getDailyChallenges() {
 
   const challenges = [];
   for (const diff of difficulties) {
-    const prob = await get(
-      // Same three picks for everyone each day (a shared daily challenge).
-      `SELECT p.* FROM problems p
-       WHERE p.rating >= ? AND p.rating <= ? AND p.rating > 0
-       ORDER BY RANDOM() LIMIT 1`,
-      [diff.minR, diff.maxR],
-    );
+    // Same three picks for everyone each day (a shared daily challenge),
+    // drawn from the in-memory catalog instead of ORDER BY RANDOM().
+    const prob = randomPick(await getCatalog(), diff.minR, diff.maxR);
     if (prob) {
       await run(
         `INSERT OR IGNORE INTO daily_challenges(date,problem_rowid,difficulty,bonus_xp) VALUES(?,?,?,?)`,
@@ -2993,13 +3046,13 @@ app.get("/api/performance", async (req, res) => {
       const ovP = myOverrides();
       ovP.catch(() => {});
       const counts = await get(`SELECT
-      (SELECT COUNT(*) FROM problems) as total,
       (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='solved') as solved,
       (SELECT COUNT(*) FROM progress WHERE username=${meSql()} AND status='attempted') as attempted,
       (SELECT COALESCE(SUM(xp_earned),0) FROM progress WHERE username=${meSql()}) as totalXp,
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()}) as submissions,
       (SELECT COUNT(*) FROM submissions WHERE username=${meSql()} AND verdict='AC') as acCount`);
-      const { total, attempted, submissions, acCount } = counts;
+      const { attempted, submissions, acCount } = counts;
+      const total = (await getCatalog()).rows.length;
       // Include admin bonuses so every page shows the same level as the Hub.
       const ov = await ovP;
       const totalXp = counts.totalXp + ov.xp;
@@ -4916,31 +4969,35 @@ app.get("/api/skill-tree/:nodeId/problems", async (req, res) => {
     if (!skill.tags.length) return res.json({ ok: true, problems: [], skill });
 
     const [minDiff, maxDiff] = skill.difficulty || [0, 9999];
-    const tagCond = skill.tags.map(() => "p.tags LIKE ?").join(" OR ");
-    const tagParams = skill.tags.map((t) => `%${t}%`);
-
-    const [problems, totalRow] = await Promise.all([
-      all(
-        `
-      SELECT p.id, p.problem_id, p.title, p.rating, p.platform, p.tags,
-        COALESCE(pr.status,'unsolved') as solve_status,
-        pr.solved_at
-      FROM problems p
-      LEFT JOIN progress pr ON pr.problem_rowid = p.id AND pr.username=${meSql()}
-      WHERE (${tagCond})
-        AND p.rating >= ? AND p.rating <= ?
-      ORDER BY
-        CASE WHEN pr.status = 'solved' THEN 1 ELSE 0 END,
-        p.rating ASC
-      LIMIT 50
-    `,
-        [...tagParams, minDiff, maxDiff],
-      ),
-      get(
-        `SELECT COUNT(*) as c FROM problems p WHERE (${tagCond}) AND p.rating >= ? AND p.rating <= ?`,
-        [...tagParams, minDiff, maxDiff],
-      ),
-    ]);
+    // Matching problems from the in-memory catalog (was a LIKE scan + COUNT).
+    const catalog = await getCatalog();
+    const likes = skill.tags.map((t) => likeMatcher(`%${t}%`));
+    const matching = [];
+    for (const p of catalog.rows) {
+      const r = p.rating;
+      if (r == null || !(r >= minDiff && r <= maxDiff)) continue;
+      if (likes.some((m) => m(p.tags))) matching.push(p);
+    }
+    const progress = await userProgressMap();
+    const solvedFirst = (p) => (progress.get(p.id)?.status === "solved" ? 1 : 0);
+    const problems = matching
+      .slice()
+      .sort((a, b) => solvedFirst(a) - solvedFirst(b) || a.rating - b.rating || a.id - b.id)
+      .slice(0, 50)
+      .map((p) => {
+        const pr = progress.get(p.id);
+        return {
+          id: p.id,
+          problem_id: p.problem_id,
+          title: p.title,
+          rating: p.rating,
+          platform: p.platform,
+          tags: p.tags,
+          solve_status: pr?.status ?? "unsolved",
+          solved_at: pr ? pr.solved_at : null,
+        };
+      });
+    const totalRow = { c: matching.length };
 
     const solvedCount = problems.filter(
       (p) => p.solve_status === "solved",
@@ -5363,23 +5420,39 @@ app.get("/api/feed/:username", async (req, res) => {
 });
 
 /* ========== LEADERBOARD ========== */
+// The same for everyone and it aggregates all of `progress`, so it is cached:
+// 5 minutes, or 1 minute after a solve / activity / profile change.
+const leaderboardCache = sharedCache({
+  name: "leaderboard",
+  ttlMs: 5 * 60 * 1000,
+  minAgeMs: 60 * 1000,
+  tables: ["progress", "daily_activity", "users"],
+});
 app.get("/api/leaderboard", async (req, res) => {
   try {
     const limit = Math.min(parseInt(req.query.limit) || 25, 100);
     const type = req.query.type || "xp"; // xp | solved | streak
+    const leaderboard = await leaderboardCache.get(`${type}|${limit}`, () => computeLeaderboard(type, limit));
+    // A copy: callers must not mutate the cached rows.
+    res.json({ ok: true, leaderboard: leaderboard.map((r) => ({ ...r })), type });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+async function computeLeaderboard(type, limit) {
+  {
     // Real per-user totals (progress rows) plus any admin override.
     const rows = await all(
       `
       SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.created_at,
-        COALESCE(u.xp_override,0) + COALESCE(pg.xp,0) as total_xp,
-        COALESCE(u.solved_override,0) + COALESCE(pg.solved,0) as total_solved,
-        COALESCE(da.active_days,0) as active_days
+        COALESCE(u.xp_override,0) + COALESCE(us.xp,0) as total_xp,
+        COALESCE(u.solved_override,0) + COALESCE(us.solved,0) as total_solved,
+        COALESCE(us.active_days,0) as active_days
       FROM users u
-      LEFT JOIN (SELECT username, SUM(xp_earned) as xp,
-                   SUM(CASE WHEN status='solved' THEN 1 ELSE 0 END) as solved
-                 FROM progress GROUP BY username) pg ON pg.username = u.username
-      LEFT JOIN (SELECT username, COUNT(*) as active_days FROM daily_activity
-                 WHERE problems_solved > 0 GROUP BY username) da ON da.username = u.username
+      -- Per-user totals kept in step with progress / daily_activity by
+      -- triggers (src/db.js initUserStats): ~2 rows read per user.
+      LEFT JOIN user_stats us ON us.username = u.username
       WHERE u.username IS NOT NULL
       ORDER BY ${type === "solved" ? "total_solved DESC, total_xp DESC" : "total_xp DESC, total_solved DESC"}
       LIMIT ?`,
@@ -5401,11 +5474,9 @@ app.get("/api/leaderboard", async (req, res) => {
       r.level = lv.level;
       r.level_name = lv.name;
     }
-    res.json({ ok: true, leaderboard: rows, type });
-  } catch (e) {
-    res.status(500).json({ ok: false, error: errMessage(e) });
+    return rows;
   }
-});
+}
 
 /* ========== WORKSHOP STATS ========== */
 app.get("/api/workshop/stats", async (req, res) => {
@@ -6189,8 +6260,11 @@ io.on("connection", (socket) => {
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();
   // Award achievements already earned by existing progress (once per user).
+  // A one-time migration: progress made since is awarded as it happens
+  // (judge, CF sync), so later boots skip the scan of `progress`.
   try {
-    const owners = await all(
+    const done = await get("SELECT value FROM settings WHERE username='' AND key='achievements_backfilled'");
+    const owners = done ? [] : await all(
       `SELECT DISTINCT p.username FROM progress p
        WHERE p.status='solved' AND p.username<>''
        AND NOT EXISTS (SELECT 1 FROM user_achievements ua WHERE ua.username=p.username)`,
@@ -6201,6 +6275,11 @@ io.on("connection", (socket) => {
         [username],
       );
       if (last) await runAs(username, () => checkAchievements(last.problem_rowid, "AC", { backfill: true }));
+    }
+    if (!done) {
+      await run("INSERT OR REPLACE INTO settings(username, key, value) VALUES('', 'achievements_backfilled', ?)", [
+        new Date().toISOString(),
+      ]);
     }
   } catch (e) {
     console.error("[achievements] backfill failed:", e.message);
@@ -6279,34 +6358,38 @@ io.on("connection", (socket) => {
     sentry.captureException(reason);
   });
 
-  // Background pre-scraper: silently scrape un-cached statements
-  if (process.env.NODE_ENV !== "test" && process.env.DISABLE_SCRAPER !== "1") {
+  // Background pre-scraper (cache statements ahead of time). Opt-in with
+  // BG_SCRAPE=1: statements are fetched on demand anyway, and free hosts
+  // restart often, so it must never cost anything by default.
+  if (BG_SCRAPE_ENABLED) {
     _backgroundScrape();
   }
 })();
 
 /* ========== Background Pre-Scraper ========== */
+// Off unless BG_SCRAPE=1 (and never in tests / with DISABLE_SCRAPER=1).
+// Strictly incremental: the ids that already have a statement are read once
+// (one indexed read per cached statement), pending problems come from the
+// in-memory catalog, and every attempted problem — cached or failed — is
+// remembered, so no batch ever re-scans `problems` or retries a dead page.
+const BG_SCRAPE_ENABLED =
+  process.env.BG_SCRAPE === "1" && process.env.NODE_ENV !== "test" && process.env.DISABLE_SCRAPER !== "1";
+let _bgSeen = null; // problem ids with a statement, or already tried by this process
 async function _backgroundScrape() {
   const BG_BATCH = 30;
   try {
-    // Prioritize non-CF (fast HTTP scraping) first, then CF (Puppeteer)
-    const httpPending = await all(
-      `
-      SELECT p.* FROM problems p
-      LEFT JOIN problem_statements ps ON ps.problem_rowid = p.id
-      WHERE ps.problem_rowid IS NULL AND p.platform != 'codeforces'
-      ORDER BY p.rating ASC LIMIT ?`,
-      [BG_BATCH],
-    );
-
-    const cfPending = await all(
-      `
-      SELECT p.* FROM problems p
-      LEFT JOIN problem_statements ps ON ps.problem_rowid = p.id
-      WHERE ps.problem_rowid IS NULL AND p.platform = 'codeforces'
-      ORDER BY p.rating ASC LIMIT ?`,
-      [Math.max(5, BG_BATCH - httpPending.length)],
-    );
+    if (!_bgSeen) {
+      _bgSeen = new Set((await all("SELECT problem_rowid FROM problem_statements")).map((r) => r.problem_rowid));
+    }
+    const catalog = await getCatalog();
+    // Same priority as before: non-CF (fast HTTP) first, easiest first.
+    const byRating = (a, b) => (a.rating ?? -1) - (b.rating ?? -1) || a.id - b.id;
+    const left = catalog.rows.filter((p) => !_bgSeen.has(p.id));
+    const httpPending = left.filter((p) => p.platform !== "codeforces").sort(byRating).slice(0, BG_BATCH);
+    const cfPending = left
+      .filter((p) => p.platform === "codeforces")
+      .sort(byRating)
+      .slice(0, Math.max(5, BG_BATCH - httpPending.length));
 
     const pending = [...httpPending, ...cfPending];
     if (!pending.length) {
@@ -6320,6 +6403,7 @@ async function _backgroundScrape() {
     let ok = 0,
       fail = 0;
     for (const problem of pending) {
+      _bgSeen.add(problem.id);
       try {
         // Use fast HTTP for non-CF, Puppeteer for CF
         let data;

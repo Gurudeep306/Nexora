@@ -29,6 +29,18 @@ const { getSessionUser } = require("../middleware/auth");
 const { can } = require("../authz/permissions");
 const content = require("../authz/content");
 const { persistUpload } = require("../upload-store");
+const { getCatalog, byId: catalogById } = require("../problem-catalog");
+const { sharedCache } = require("../shared-cache");
+
+// Who-to-follow per user: several aggregates over users/progress/follows, so
+// cached for 10 minutes and dropped the moment a follow/block/friendship or
+// a new account lands.
+const suggestionsCache = sharedCache({
+  name: "social-suggestions",
+  ttlMs: 10 * 60 * 1000,
+  tables: ["social_follows", "social_blocks", "friendships", "users"],
+  max: 2000,
+});
 
 /* ── content types for reports / moderation ── */
 content.registerContentType("post", { table: "social_posts", id: "id", text: "body", owner: "username", label: "Post" });
@@ -743,7 +755,7 @@ function createSocialRouter(deps) {
         all(
           `SELECT p.id, p.like_count, p.comment_count, p.repost_count, p.created_at FROM social_posts p
            WHERE p.kind <> 'repost' AND p.featured_at IS NULL AND p.created_at > ? AND ${vis.sql}
-           ORDER BY p.id DESC LIMIT 800`,
+           ORDER BY p.created_at DESC, p.id DESC LIMIT 800`,
           [Date.now() - 14 * DAY, ...vis.args],
         ),
         offset === 0
@@ -1130,6 +1142,12 @@ function createSocialRouter(deps) {
     requireMe,
     h(async (req, res) => {
       const u = me(req);
+      res.json(await suggestionsCache.get(u, () => computeSuggestions(u)));
+    }),
+  );
+
+  async function computeSuggestions(u) {
+    {
       const exclude = `c.username <> ?
         AND NOT EXISTS (SELECT 1 FROM social_follows f WHERE f.follower = ? AND f.followee = c.username)
         AND NOT EXISTS (SELECT 1 FROM social_blocks b WHERE (b.blocker = ? AND b.blocked = c.username) OR (b.blocker = c.username AND b.blocked = ?))`;
@@ -1177,12 +1195,12 @@ function createSocialRouter(deps) {
         ? await all(`SELECT username, display_name, avatar, avatar_url, role, verified, bio FROM users WHERE username IN (${ph(names.length)})`, names)
         : [];
       const byName = new Map(users.map((x) => [x.username, x]));
-      res.json({
+      return {
         ok: true,
         users: names.filter((n) => byName.has(n)).map((n) => ({ ...author(byName.get(n)), bio: String(byName.get(n).bio || "").slice(0, 120), reason: reasons.get(n) })),
-      });
-    }),
-  );
+      };
+    }
+  }
 
   /* ═════════════ search ═════════════ */
 
@@ -1367,22 +1385,12 @@ function createSocialRouter(deps) {
       if (!(await canSee(req, user.username))) return res.json({ ok: true, locked: true });
       const u = user.username;
       const since = new Date(Date.now() - 371 * DAY).toISOString().slice(0, 10);
-      const [totals, diff, solvedTags, heat, gate, gateTests, contests, langs, achievements, prof, recentSolved, recentPosts, feed, streak] = await Promise.all([
-        get(
-          `SELECT COALESCE(SUM(xp_earned),0) AS xp, SUM(CASE WHEN status='solved' THEN 1 ELSE 0 END) AS solved,
-             COUNT(*) AS attempted FROM progress WHERE username = ?`,
-          [u],
-        ),
-        all(
-          `SELECT CASE WHEN pb.rating IS NULL OR pb.rating = 0 THEN 'unrated' WHEN pb.rating < 1200 THEN 'easy' WHEN pb.rating < 1800 THEN 'medium' ELSE 'hard' END AS d,
-             COUNT(*) AS n FROM progress pr JOIN problems pb ON pb.id = pr.problem_rowid WHERE pr.username = ? AND pr.status = 'solved' GROUP BY d`,
-          [u],
-        ),
-        all(
-          `SELECT pb.tags, pb.category FROM progress pr JOIN problems pb ON pb.id = pr.problem_rowid
-           WHERE pr.username = ? AND pr.status = 'solved' ORDER BY pr.solved_at DESC LIMIT 3000`,
-          [u],
-        ),
+      // This user's progress is read ONCE (by index) and joined with the
+      // in-memory problem catalog for the totals, difficulty split, topics
+      // and recent solves (was four passes over progress + a lookup per row).
+      const [progRows, catalog, heat, gate, gateTests, contests, langs, achievements, prof, recentPosts, feed, streak] = await Promise.all([
+        all("SELECT problem_rowid, status, solved_at, xp_earned FROM progress WHERE username = ?", [u]),
+        getCatalog(),
         all(
           `SELECT date, problems_solved AS s, problems_attempted AS a, COALESCE(gate_attempts,0) AS g, xp_earned AS xp
            FROM daily_activity WHERE username = ? AND date >= ? ORDER BY date`,
@@ -1418,11 +1426,6 @@ function createSocialRouter(deps) {
         ),
         get("SELECT pinned FROM social_profiles WHERE username = ?", [u]),
         all(
-          `SELECT pb.id, pb.title, pb.rating, pb.platform, pr.solved_at FROM progress pr JOIN problems pb ON pb.id = pr.problem_rowid
-           WHERE pr.username = ? AND pr.status = 'solved' AND pr.solved_at IS NOT NULL ORDER BY pr.solved_at DESC LIMIT 8`,
-          [u],
-        ),
-        all(
           `SELECT p.id, p.body, p.created_at FROM social_posts p WHERE p.username = ? AND p.deleted = 0 AND p.kind = 'post'
              AND NOT EXISTS (SELECT 1 FROM moderated_content mc WHERE mc.content_type = 'post' AND mc.content_id = CAST(p.id AS TEXT))
            ORDER BY p.id DESC LIMIT 5`,
@@ -1431,6 +1434,31 @@ function createSocialRouter(deps) {
         all(`SELECT id, type, content, created_at FROM activity_feed WHERE username = ? ORDER BY id DESC LIMIT 8`, [u]),
         calcStreak(u),
       ]);
+      const totals = { xp: 0, solved: 0, attempted: progRows.length };
+      const solvedRows = [];
+      for (const r of progRows) {
+        totals.xp += Number(r.xp_earned) || 0;
+        if (r.status !== "solved") continue;
+        totals.solved++;
+        const pb = catalogById(catalog, r.problem_rowid);
+        if (pb) solvedRows.push({ pr: r, pb });
+      }
+      const diffCount = new Map();
+      for (const { pb } of solvedRows) {
+        const rt = pb.rating;
+        const d = rt == null || rt === 0 ? "unrated" : rt < 1200 ? "easy" : rt < 1800 ? "medium" : "hard";
+        diffCount.set(d, (diffCount.get(d) || 0) + 1);
+      }
+      const diff = [...diffCount.entries()].map(([d, n]) => ({ d, n }));
+      // ORDER BY solved_at DESC (NULLs last), as the SQL did.
+      const bySolvedDesc = solvedRows
+        .slice()
+        .sort((a, b) => (a.pr.solved_at == null) - (b.pr.solved_at == null) || (a.pr.solved_at < b.pr.solved_at ? 1 : a.pr.solved_at > b.pr.solved_at ? -1 : 0));
+      const solvedTags = bySolvedDesc.slice(0, 3000).map(({ pb }) => ({ tags: pb.tags, category: pb.category }));
+      const recentSolved = bySolvedDesc
+        .filter(({ pr }) => pr.solved_at != null)
+        .slice(0, 8)
+        .map(({ pr, pb }) => ({ id: pb.id, title: pb.title, rating: pb.rating, platform: pb.platform, solved_at: pr.solved_at }));
 
       const solved = (totals?.solved || 0) + (user.solved_override || 0);
       const xp = (totals?.xp || 0) + (user.xp_override || 0);

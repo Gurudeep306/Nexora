@@ -12,7 +12,8 @@ const store = new AsyncLocalStorage();
 function requestContext(getUser) {
   return (req, _res, next) => {
     const u = getUser(req);
-    store.run({ username: u?.username || "" }, next);
+    // Keep the request's DB accounting (see trackRequest) across the nesting.
+    store.run({ username: u?.username || "", acct: store.getStore()?.acct }, next);
   };
 }
 
@@ -38,9 +39,22 @@ function countQuery() {
   if (s) s.dbq = (s.dbq || 0) + 1;
 }
 
+/**
+ * DB_STATS: open an accounting scope for the whole request (before the
+ * session is loaded), so its session/access queries are attributed too.
+ */
+function trackRequest(makeAcct) {
+  return (req, res, next) => store.run({ username: "", acct: makeAcct(req, res) }, next);
+}
+
+/** The current request's accounting object (DB_STATS), if any. */
+function currentAcct() {
+  return store.getStore()?.acct || null;
+}
+
 /** Number of DB round trips the current request has made so far. */
 function queryCount() {
   return store.getStore()?.dbq || 0;
 }
 
-module.exports = { requestContext, me, meSql, runAs, countQuery, queryCount };
+module.exports = { requestContext, me, meSql, runAs, countQuery, queryCount, trackRequest, currentAcct };
