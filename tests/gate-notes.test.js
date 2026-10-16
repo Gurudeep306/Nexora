@@ -288,3 +288,36 @@ test('API', async (t) => {
     assert.deepEqual((await call('GET', '/api/gate/me/notes-progress', ben)).body.progress, {});
   });
 });
+
+/* ── Colour: every ink the reader uses meets WCAG AA in every palette ── */
+
+test('notes inks (subject accents, asides, traps, maths, sticky notes) are AA on the page in every palette', async () => {
+  const { pathToFileURL } = require('node:url');
+  const theme = (f) => import(pathToFileURL(path.join(ROOT, 'client', 'src', 'theme', f)).href);
+  const { PALETTES } = await theme('palettes.ts');
+  const { contrast, mixOklab } = await theme('color.ts');
+  // Mirrors client/src/gate/notes/notes.css and SUBJECT_COLOR_VAR in api.ts.
+  const token = (t, k) => (k === 'accent' ? t.accent : k.startsWith('syntax-') ? t.syntax[k.slice(7)] : t[k]);
+  const SUBJECT = ['accent', 'info', 'success', 'warning', 'danger', 'syntax-keyword', 'syntax-function', 'syntax-type', 'syntax-string', 'syntax-number'];
+  const failures = [];
+  const check = (what, a, b) => {
+    const r = contrast(a, b);
+    if (r < 4.5) failures.push(`${what}: ${r.toFixed(2)}`);
+  };
+  for (const p of PALETTES) {
+    for (const mode of ['light', 'dark']) {
+      const t = p[mode];
+      if (!t) continue;
+      const fg = t.fg[0];
+      for (const [name, bg] of Object.entries({ app: t.bg[0], paper: t.bg[1] })) {
+        for (const k of SUBJECT) check(`${p.id}/${mode} subject ink ${k} on ${name}`, mixOklab(token(t, k), fg, 0.5), bg);
+        check(`${p.id}/${mode} aside ink on ${name}`, mixOklab(t.info, fg, 0.8), bg);
+        check(`${p.id}/${mode} trap ink on ${name}`, mixOklab(t.danger, fg, 0.8), bg);
+        check(`${p.id}/${mode} maths ink on ${name}`, mixOklab(fg, t.info, 0.8), bg);
+      }
+      for (const k of SUBJECT) check(`${p.id}/${mode} theorem tab label (${k})`, t.bg[1], mixOklab(token(t, k), fg, 0.5));
+      check(`${p.id}/${mode} text on sticky note`, fg, mixOklab(t.warning, t.bg[1], mode === 'dark' ? 0.15 : 0.22));
+    }
+  }
+  assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
+});

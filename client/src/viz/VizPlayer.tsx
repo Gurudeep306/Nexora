@@ -1,0 +1,177 @@
+/*
+  Nexora Viz player: steps a scene frame by frame.
+
+    animate  play / pause, step back / forward, scrub, keyboard
+             (← → step, Space play/pause, Home / End), captions announced
+    static   the last frame with every caption listed — used for
+             mode="static", prefers-reduced-motion, and printing
+
+  The text alternative (every caption, in order) is always available.
+*/
+import { useCallback, useEffect, useId, useMemo, useState, type KeyboardEvent } from 'react'
+import { Icon } from '@/components/icon/Icon'
+import { cn } from '@/lib/utils'
+import type { VizSpec } from './schema'
+import { buildFrames } from './frames'
+import { VizScene } from './VizScene'
+import { useSketcher } from './sketch'
+import './viz.css'
+
+const STEP_MS = 2400
+
+function useMedia(query: string) {
+  const [on, setOn] = useState(() => typeof window !== 'undefined' && window.matchMedia(query).matches)
+  useEffect(() => {
+    const mq = window.matchMedia(query)
+    const update = () => setOn(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [query])
+  return on
+}
+
+export interface VizPlayerProps {
+  spec: VizSpec
+  mode?: 'animate' | 'static'
+  /** Optional caption from the lesson (shown under the figure). */
+  caption?: string
+  cleanLines: boolean
+  onCleanLines: (on: boolean) => void
+}
+
+export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onCleanLines }: VizPlayerProps) {
+  const frames = useMemo(() => buildFrames(spec), [spec])
+  const reduced = useMedia('(prefers-reduced-motion: reduce)')
+  const printing = useMedia('print')
+  const isStatic = mode === 'static' || reduced || printing
+  const last = frames.length - 1
+  const [i, setI] = useState(0)
+  const [playing, setPlaying] = useState(false)
+  const sketch = useSketcher(!cleanLines)
+  const uid = useId()
+  const frame = frames[isStatic ? last : i]!
+
+  // Playing stops by itself on the last frame.
+  const running = playing && i < last && !isStatic
+  useEffect(() => {
+    if (!running) return
+    const t = window.setTimeout(() => setI((n) => Math.min(last, n + 1)), STEP_MS)
+    return () => window.clearTimeout(t)
+  }, [running, i, last])
+
+  const go = useCallback(
+    (n: number) => {
+      setPlaying(false)
+      setI(Math.max(0, Math.min(last, n)))
+    },
+    [last],
+  )
+  const toggle = () => {
+    if (i >= last) {
+      setI(0)
+      setPlaying(true)
+    } else setPlaying(!running)
+  }
+
+  const onKey = (e: KeyboardEvent<HTMLElement>) => {
+    if (isStatic) return
+    const target = e.target as HTMLElement
+    if (target.tagName === 'INPUT') return // the scrubber handles its own arrows
+    if (e.key === 'ArrowRight') go(i + 1)
+    else if (e.key === 'ArrowLeft') go(i - 1)
+    else if (e.key === 'Home') go(0)
+    else if (e.key === 'End') go(last)
+    else if (e.key === ' ' && target.tagName !== 'BUTTON') toggle()
+    else return
+    e.preventDefault()
+  }
+
+  return (
+    <figure
+      className={cn('viz', isStatic && 'viz--static')}
+      aria-roledescription={isStatic ? undefined : 'step-by-step diagram'}
+      aria-label={spec.title}
+      onKeyDown={onKey}
+    >
+      <div className="viz-stage">
+        <VizScene spec={spec} frame={frame} sketch={sketch} titleId={`${uid}-t`} descId={`${uid}-d`} />
+      </div>
+
+      {!isStatic && (
+        <>
+          <p className="viz-caption" aria-live="polite">
+            <span className="viz-step">
+              {i === 0 ? 'Start' : `Step ${i} of ${last}`}
+            </span>
+            {frame.caption}
+          </p>
+          <div className="viz-controls" role="group" aria-label="Diagram controls">
+            <button type="button" className="viz-btn" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Previous step">
+              <span className="inline-flex" style={{ transform: 'scaleX(-1)' }}><Icon name="play" className="size-4" /></span>
+            </button>
+            <button type="button" className="viz-btn viz-btn--main" onClick={toggle} aria-label={running ? 'Pause' : i >= last ? 'Replay' : 'Play'}>
+              <Icon name={running ? 'pause' : i >= last ? 'refresh' : 'play'} className="size-4" />
+              <span>{running ? 'Pause' : i >= last ? 'Replay' : 'Play'}</span>
+            </button>
+            <button type="button" className="viz-btn" onClick={() => go(i + 1)} disabled={i >= last} aria-label="Next step">
+              <Icon name="play" className="size-4" />
+            </button>
+            <input
+              type="range"
+              className="viz-scrub"
+              min={0}
+              max={last}
+              step={1}
+              value={i}
+              onChange={(e) => go(Number(e.target.value))}
+              aria-label="Scrub through the steps"
+              aria-valuetext={i === 0 ? 'Start' : `Step ${i} of ${last}`}
+            />
+            <CleanToggle on={cleanLines} onChange={onCleanLines} />
+          </div>
+        </>
+      )}
+
+      {isStatic && (
+        <ol className="viz-captions" aria-label="What the diagram shows">
+          {frames.map((f) => (
+            <li key={f.index}>{f.caption}</li>
+          ))}
+        </ol>
+      )}
+
+      {(caption || !isStatic) && (
+        <figcaption className="viz-figcaption">
+          {caption && <span>{caption}</span>}
+          {!isStatic && (
+            <details className="viz-alt">
+              <summary>Text description</summary>
+              <ol>
+                {frames.map((f) => (
+                  <li key={f.index}>{f.caption}</li>
+                ))}
+              </ol>
+            </details>
+          )}
+        </figcaption>
+      )}
+      {isStatic && !printing && (
+        <div className="viz-controls viz-controls--static">
+          <CleanToggle on={cleanLines} onChange={onCleanLines} />
+        </div>
+      )}
+    </figure>
+  )
+}
+
+function CleanToggle({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) {
+  return (
+    <label className="viz-clean">
+      <input type="checkbox" checked={on} onChange={(e) => onChange(e.target.checked)} />
+      <span>Clean lines</span>
+    </label>
+  )
+}
+
+export default VizPlayer

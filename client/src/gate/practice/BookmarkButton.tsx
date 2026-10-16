@@ -52,7 +52,7 @@ export function BookmarkButton({ questionId }: { questionId: string }) {
         }}
       >
         <PopoverTrigger asChild>
-          <button type="button" className="rounded-r-lg py-1.5 pr-1 text-text-muted hover:bg-bg-surface-2 hover:text-text-primary" aria-label="Add to a collection" title="Collections">
+          <button type="button" className="inline-flex min-h-7 min-w-6 items-center justify-center rounded-r-lg py-1.5 pr-1 text-text-muted hover:bg-bg-surface-2 hover:text-text-primary" aria-label="Add to a collection" title="Collections">
             <ChevronDown className="size-3.5" />
           </button>
         </PopoverTrigger>

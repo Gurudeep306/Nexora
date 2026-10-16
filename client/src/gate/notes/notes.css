@@ -1,0 +1,1636 @@
+/*
+  GATE Notes — the reader's look: "handwritten feel, never cursive, easy to
+  read for hours".
+
+  Tokens only. Everything is derived from the theme's semantic roles, so
+  the notes follow all palettes, light and dark, and print:
+
+    --notes-subject       the subject's accent role (set inline from _meta.json `color`)
+    --notes-subject-ink   that accent mixed half-way toward body text: AA (≥ 4.5:1)
+                          on the page in every palette (tests/gate-notes.test.js)
+    --notes-hand          THE body typeface. One variable; the face is chosen by
+                          data-notes-font on .notes-root (NOTES_BODY_FONT in prefs.ts)
+
+  Hand faces run at different sizes, so each carries its own size, leading
+  and weights. Maths keeps KaTeX's fonts, coloured like dark ink; code keeps
+  the app's mono face.
+*/
+
+.notes-root {
+  --notes-subject: var(--color-accent-brand);
+  --notes-subject-ink: color-mix(in oklab, var(--notes-subject) 50%, var(--color-text-primary));
+  --notes-ink: var(--color-text-primary);
+  --notes-math-ink: color-mix(in oklab, var(--color-text-primary) 80%, var(--color-state-info));
+  --notes-blue-ink: color-mix(in oklab, var(--color-state-info) 80%, var(--color-text-primary));
+  --notes-red-ink: color-mix(in oklab, var(--color-state-error) 80%, var(--color-text-primary));
+  --notes-paper: var(--color-bg-surface);
+  --notes-dot: color-mix(in oklab, var(--color-text-muted) 26%, transparent);
+  --notes-margin-rule: color-mix(in oklab, var(--color-state-error) 38%, transparent);
+  --notes-sticky: color-mix(in oklab, var(--color-state-warning) 22%, var(--color-bg-surface));
+  --notes-highlight: color-mix(in oklab, var(--color-state-warning) 34%, transparent);
+  --notes-rail: 15rem;
+
+  /* Hand faces (self-hosted, OFL; loaded by prefs.ts when a notes page opens). */
+  --notes-font-shantell: 'Shantell Sans Variable', var(--font-body);
+  --notes-font-kalam: 'Kalam', var(--font-body);
+  --notes-font-patrick: 'Patrick Hand', var(--font-body);
+  --notes-font-clean: 'Atkinson Hyperlegible Next Variable', var(--font-body);
+
+  --notes-hand: var(--notes-font-shantell);
+  --notes-size: 19px;
+  --notes-leading: 1.7;
+  --notes-weight: 400;
+  --notes-strong: 650;
+  --notes-head: 700;
+  --notes-variation: normal;
+  --notes-stroke: 0;
+}
+[data-mode='dark'] .notes-root {
+  --notes-dot: transparent;
+  --notes-sticky: color-mix(in oklab, var(--color-state-warning) 15%, var(--color-bg-surface));
+  --notes-highlight: color-mix(in oklab, var(--color-state-warning) 26%, transparent);
+  --notes-margin-rule: color-mix(in oklab, var(--color-state-error) 30%, transparent);
+}
+
+.notes-root[data-notes-font='shantell'] {
+  --notes-hand: var(--notes-font-shantell);
+  --notes-size: 19px;
+  --notes-leading: 1.7;
+  --notes-weight: 400;
+  --notes-strong: 640;
+  --notes-head: 720;
+  /* "Informal" axis part-way: hand-made detail that still reads like print. */
+  --notes-variation: 'INFM' 45;
+}
+.notes-root[data-notes-font='kalam'] {
+  --notes-hand: var(--notes-font-kalam);
+  --notes-size: 20px;
+  --notes-leading: 1.65;
+  --notes-weight: 400;
+  --notes-strong: 700;
+  --notes-head: 700;
+}
+.notes-root[data-notes-font='patrick'] {
+  --notes-hand: var(--notes-font-patrick);
+  --notes-size: 21px;
+  --notes-leading: 1.58;
+  --notes-weight: 400;
+  --notes-strong: 400;
+  --notes-head: 400;
+  /* One weight only: a hair of stroke makes bold and headings heavier. */
+  --notes-stroke: 0.55px;
+}
+.notes-root[data-notes-font='clean'] {
+  --notes-hand: var(--notes-font-clean);
+  --notes-size: 18.5px;
+  --notes-leading: 1.7;
+  --notes-weight: 400;
+  --notes-strong: 700;
+  --notes-head: 700;
+}
+@media (max-width: 639px) {
+  .notes-root {
+    --notes-size: 18px;
+  }
+  .notes-root[data-notes-font='patrick'] {
+    --notes-size: 20px;
+  }
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+
+.notes-layout {
+  display: grid;
+  gap: 1.5rem;
+}
+@media (min-width: 1024px) {
+  .notes-layout {
+    grid-template-columns: 14.5rem minmax(0, 1fr);
+    gap: 2rem;
+  }
+}
+.notes-main {
+  min-width: 0;
+}
+
+.notes-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 40;
+  height: 3px;
+  pointer-events: none;
+}
+.notes-progress span {
+  display: block;
+  height: 100%;
+  background: var(--notes-subject-ink);
+  transform-origin: 0 50%;
+}
+
+/* Lesson tree */
+.notes-tree {
+  display: none;
+  font-size: 14px;
+}
+@media (min-width: 1024px) {
+  .notes-tree {
+    display: block;
+    position: sticky;
+    top: 7.25rem;
+    align-self: start;
+    max-height: calc(100dvh - 8.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 4px;
+  }
+}
+.notes-tree-subject {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-weight: 650;
+  color: var(--color-text-primary);
+}
+.notes-tree-subject:hover {
+  color: var(--notes-subject-ink);
+}
+.notes-tree-list > li + li {
+  margin-top: 14px;
+}
+.notes-tree-chapter {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0 0 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.notes-tree-n {
+  color: var(--notes-subject-ink);
+}
+.notes-tree-count {
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.notes-tree-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: var(--color-text-secondary);
+  line-height: 1.35;
+}
+.notes-tree-link:hover {
+  background: var(--color-bg-surface-2);
+  color: var(--color-text-primary);
+}
+.notes-tree-link.is-current {
+  background: color-mix(in oklab, var(--notes-subject) 12%, transparent);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  box-shadow: inset 2px 0 0 var(--notes-subject-ink);
+}
+.notes-tree-link:focus-visible,
+.notes-tree-subject:focus-visible,
+.notes-lesson-row:focus-visible,
+.notes-card:focus-visible,
+.notes-pager-link:focus-visible,
+.notes-tool:focus-visible,
+.notes-prose a:focus-visible,
+.notes-prose summary:focus-visible,
+.nb-reveal:focus-visible,
+.np-btn:focus-visible,
+.np-option:focus-visible,
+.notes-resume:focus-visible {
+  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
+  outline-offset: 2px;
+}
+
+.notes-tree-mobile {
+  margin-bottom: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+  font-size: 14px;
+}
+.notes-tree-mobile > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+.notes-tree-mobile > .notes-tree-list {
+  padding: 4px 10px 12px;
+}
+@media (min-width: 1024px) {
+  .notes-tree-mobile {
+    display: none;
+  }
+}
+
+.notes-status {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  border: 1.5px solid var(--color-border-strong);
+}
+.notes-status.is-done {
+  border-color: var(--color-state-success);
+  background: var(--color-state-success);
+  color: var(--color-bg-surface);
+}
+.notes-status.is-started {
+  border-color: var(--notes-subject-ink);
+  background: linear-gradient(90deg, var(--notes-subject-ink) 50%, transparent 50%);
+}
+
+/* Toolbar buttons (GateShell actions) */
+.notes-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.notes-tool:hover {
+  background: var(--color-bg-surface-2);
+}
+.notes-tool.is-on {
+  border-color: var(--notes-subject-ink);
+  color: var(--notes-subject-ink);
+}
+.notes-tool--main {
+  border-color: transparent;
+  background: var(--color-accent-brand);
+  color: var(--color-on-accent-brand);
+}
+.notes-tool--main:hover {
+  background: var(--color-accent-brand-hover);
+}
+.notes-tool--main.is-on {
+  border-color: var(--color-state-success);
+  background: color-mix(in oklab, var(--color-state-success) 14%, var(--color-bg-surface));
+  color: var(--color-text-primary);
+}
+
+/* ── Paper ───────────────────────────────────────────────────────────── */
+
+.notes-paper {
+  position: relative;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background-color: var(--notes-paper);
+  background-image: radial-gradient(circle at 1px 1px, var(--notes-dot) 1px, transparent 1.4px);
+  background-size: 24px 24px;
+  padding: 1.25rem 1rem 1.75rem;
+  box-shadow: var(--shadow-card);
+}
+@media (min-width: 640px) {
+  .notes-paper {
+    padding: 1.75rem 1.75rem 2.25rem 3.5rem;
+  }
+  /* The notebook margin line. */
+  .notes-paper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 2.25rem;
+    width: 1.5px;
+    background: var(--notes-margin-rule);
+    pointer-events: none;
+  }
+}
+
+.notes-prose {
+  max-width: 70ch;
+  font-family: var(--notes-hand);
+  font-size: var(--notes-size);
+  line-height: var(--notes-leading);
+  font-weight: var(--notes-weight);
+  font-variation-settings: var(--notes-variation);
+  -webkit-text-stroke: var(--notes-stroke) currentColor;
+  color: var(--notes-ink);
+  font-kerning: normal;
+  font-variant-numeric: lining-nums;
+  overflow-wrap: break-word;
+}
+/* The margin rail (outline + asides) lives in the prose box's right padding. */
+@media (min-width: 1280px) {
+  .notes-prose {
+    max-width: calc(70ch + var(--notes-rail));
+    padding-right: var(--notes-rail);
+  }
+}
+.notes-prose > :first-child {
+  margin-top: 0;
+}
+.notes-prose p,
+.notes-prose ul,
+.notes-prose ol,
+.notes-prose blockquote,
+.notes-prose .notes-table,
+.notes-prose .nm-display,
+.notes-prose .notes-pre {
+  margin: 0.9em 0;
+}
+.notes-prose strong {
+  font-weight: var(--notes-strong);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 1.6) currentColor;
+}
+.notes-prose em {
+  font-style: italic;
+}
+.notes-prose a {
+  color: var(--notes-subject-ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in oklab, var(--notes-subject-ink) 55%, transparent);
+}
+.notes-prose a:hover {
+  text-decoration-color: currentColor;
+}
+.notes-prose ul,
+.notes-prose ol {
+  padding-left: 1.4em;
+}
+.notes-prose ul {
+  list-style: none;
+}
+.notes-prose ul > li {
+  position: relative;
+}
+.notes-prose ul > li::before {
+  content: '–';
+  position: absolute;
+  left: -1.05em;
+  color: var(--notes-subject-ink);
+  font-weight: 700;
+}
+.notes-prose ol {
+  list-style: decimal;
+}
+.notes-prose ol > li::marker {
+  color: var(--notes-subject-ink);
+  font-weight: var(--notes-strong);
+}
+.notes-prose li + li {
+  margin-top: 0.25em;
+}
+.notes-prose li > p {
+  margin: 0.3em 0;
+}
+.notes-prose ul.tight li > p,
+.notes-prose ol.tight li > p {
+  margin: 0;
+}
+.notes-prose blockquote {
+  padding-left: 1em;
+  border-left: 3px solid var(--color-border-strong);
+  color: var(--color-text-secondary);
+}
+.notes-prose hr {
+  margin: 2em 0;
+  border: 0;
+  border-top: 1.5px dashed var(--color-border-strong);
+}
+
+/* Headings: heavier, with a hand-drawn squiggle in the subject colour. */
+.notes-h,
+.notes-sample-title {
+  font-family: var(--notes-hand);
+  font-variation-settings: var(--notes-variation);
+  letter-spacing: normal;
+}
+.notes-h {
+  margin: 1.9em 0 0.6em;
+  font-weight: var(--notes-head);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 2) currentColor;
+  line-height: 1.25;
+  color: var(--color-text-primary);
+  scroll-margin-top: 8rem;
+}
+h2.notes-h {
+  font-size: 1.45em;
+}
+h3.notes-h {
+  font-size: 1.18em;
+}
+h4.notes-h {
+  font-size: 1.05em;
+}
+.notes-h-text {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+.notes-squiggle {
+  position: absolute;
+  left: -2px;
+  right: -4px;
+  bottom: -0.38em;
+  width: calc(100% + 6px);
+  height: 0.42em;
+  fill: none;
+  stroke: var(--notes-subject-ink);
+  stroke-width: 2.4px;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Key terms: a highlighter band through the lower half. */
+.notes-key {
+  padding: 0 0.12em;
+  margin: 0 -0.04em;
+  color: inherit;
+  background: linear-gradient(176deg, transparent 0 46%, var(--notes-highlight) 48% 88%, transparent 90%);
+  border-radius: 0.2em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Maths in dark ink, code in mono. */
+.notes-prose .katex {
+  font-size: 1.06em;
+  color: var(--notes-math-ink);
+  -webkit-text-stroke: 0;
+  font-variation-settings: normal;
+}
+.notes-root[data-notes-font='patrick'] .notes-prose .katex {
+  font-size: 0.98em;
+}
+.nm-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.15em 0;
+}
+.nm-display .katex-display {
+  margin: 0;
+}
+.notes-code,
+.notes-pre {
+  font-family: var(--font-mono);
+  -webkit-text-stroke: 0;
+  font-variation-settings: normal;
+}
+.notes-code {
+  padding: 0.08em 0.35em;
+  border-radius: 6px;
+  background: var(--color-code-bg);
+  font-size: 0.8em;
+}
+.notes-pre {
+  overflow-x: auto;
+  padding: 0.9em 1em;
+  border-radius: 12px;
+  background: var(--color-code-bg);
+  font-size: 0.76em;
+  line-height: 1.6;
+}
+.notes-img {
+  max-width: 100%;
+  border-radius: 10px;
+}
+
+/* Tables */
+.notes-table {
+  overflow-x: auto;
+}
+.notes-table table {
+  border-collapse: collapse;
+  font-size: 0.92em;
+}
+.notes-table th,
+.notes-table td {
+  padding: 0.3em 0.9em;
+  border-bottom: 1.5px solid color-mix(in oklab, var(--color-text-primary) 18%, transparent);
+  text-align: left;
+}
+.notes-table th {
+  font-weight: var(--notes-head);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 1.6) currentColor;
+  border-bottom-width: 2px;
+  border-bottom-color: var(--notes-subject-ink);
+}
+
+/* Meta line, crumbs, prerequisites, resume */
+.notes-crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 0.35rem;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  -webkit-text-stroke: 0;
+  color: var(--color-text-secondary);
+}
+.notes-crumbs li + li::before {
+  content: '/';
+  margin-right: 4px;
+  color: var(--color-text-muted);
+}
+.notes-crumbs a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+}
+.notes-crumbs a:hover {
+  color: var(--notes-subject-ink);
+  text-decoration: underline;
+}
+.notes-prose > .notes-crumbs ol {
+  margin-bottom: 0.25rem;
+}
+.notes-meta {
+  margin: 0 0 1rem !important;
+  font-size: 0.82em;
+  color: var(--color-text-secondary);
+}
+.notes-prereq {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.86em;
+  color: var(--color-text-secondary);
+}
+.notes-resume {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  margin: 0 0 1rem;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px dashed var(--notes-subject-ink);
+  background: transparent;
+  color: var(--notes-subject-ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  -webkit-text-stroke: 0;
+  cursor: pointer;
+}
+
+/* On this page */
+.notes-outline {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-text-stroke: 0;
+  font-variation-settings: normal;
+}
+.notes-outline details {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--notes-paper) 70%, transparent);
+  padding: 4px 12px 8px;
+}
+.notes-outline summary {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+.notes-outline ol {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+.notes-outline li::marker {
+  content: none;
+}
+.notes-outline li.is-sub {
+  padding-left: 12px;
+}
+.notes-outline a {
+  display: block;
+  padding: 4px 0;
+  color: var(--color-text-secondary) !important;
+  text-decoration: none !important;
+}
+.notes-outline a:hover {
+  color: var(--notes-subject-ink) !important;
+}
+
+/* ── Callouts (:::blocks) ────────────────────────────────────────────── */
+
+.nb {
+  position: relative;
+  margin: 1.6em 0;
+  scroll-margin-top: 8rem;
+}
+.nb-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15em 0.55em;
+  margin-bottom: 0.35em;
+  line-height: 1.35;
+}
+.nb-kicker {
+  font-size: 0.74em;
+  font-weight: var(--notes-head);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 1.6) currentColor;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--notes-subject-ink);
+}
+.nb-title {
+  font-weight: var(--notes-strong);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 1.6) currentColor;
+}
+.nb-title dfn {
+  font-style: normal;
+}
+.nb-icon {
+  width: 1em;
+  height: 1em;
+  align-self: center;
+  color: var(--notes-subject-ink);
+}
+.nb-emoji {
+  font-size: 0.95em;
+}
+.nb-body > :first-child {
+  margin-top: 0;
+}
+.nb-body > :last-child {
+  margin-bottom: 0;
+}
+.nb-loading {
+  height: 12rem;
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--color-text-primary) 5%, transparent);
+}
+.nb-missing {
+  color: var(--color-text-secondary);
+  font-size: 0.9em;
+}
+
+/* intuition — a soft rule and a lightbulb */
+.nb-intuition {
+  padding: 0.1em 0 0.1em 1em;
+  border-left: 3px solid color-mix(in oklab, var(--notes-subject) 55%, transparent);
+}
+
+/* definition — a box with a sketched border */
+.nb-definition {
+  padding: 0.85em 1.15em 0.95em;
+  border: 2px solid var(--notes-subject-ink);
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  background: color-mix(in oklab, var(--notes-subject) 5%, transparent);
+}
+
+/* theorem — a card with a name tab */
+.nb-theorem {
+  margin-top: 2.6em;
+  padding: 1.05em 1.15em 0.95em;
+  border: 1.5px solid var(--notes-subject-ink);
+  border-radius: 4px 14px 14px 14px;
+  background: var(--notes-paper);
+}
+.nb-theorem > .nb-head {
+  position: absolute;
+  bottom: 100%;
+  left: -1.5px;
+  margin: 0;
+  padding: 0.12em 0.85em 0.05em;
+  border-radius: 10px 10px 0 0;
+  background: var(--notes-subject-ink);
+  color: var(--notes-paper);
+}
+.nb-theorem > .nb-head .nb-kicker {
+  color: var(--notes-paper);
+}
+
+/* proof — indented, ends in a hand-drawn ∎ */
+.nb-proof {
+  margin-left: 1.25em;
+  padding-left: 1em;
+  border-left: 1.5px dashed var(--color-border-strong);
+}
+.nb-proof > summary {
+  display: flex;
+  cursor: pointer;
+  list-style: none;
+  font-style: italic;
+}
+.nb-proof > summary::-webkit-details-marker {
+  display: none;
+}
+.nb-proof > summary::before {
+  content: '▸';
+  margin-right: 0.35em;
+  color: var(--notes-subject-ink);
+  transition: transform 150ms var(--ease-standard);
+  font-style: normal;
+}
+.nb-proof[open] > summary::before {
+  transform: rotate(90deg);
+}
+.notes-qed {
+  display: block;
+  width: 1.05em;
+  height: 1.05em;
+  margin: 0.1em 0 0 auto;
+  fill: none;
+  stroke: var(--notes-ink);
+  stroke-width: 1.5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* derivation — a dashed work-box */
+.nb-derivation {
+  padding: 0.8em 1.1em;
+  border: 1.5px dashed color-mix(in oklab, var(--notes-subject-ink) 55%, transparent);
+  border-radius: 14px;
+}
+
+/* example — level badge */
+.nb-example {
+  padding-top: 0.6em;
+  border-top: 1.5px solid color-mix(in oklab, var(--color-text-primary) 15%, transparent);
+}
+.nb-level {
+  display: inline-block;
+  margin-right: 0.4em;
+  padding: 0 0.55em;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.78em;
+  font-weight: var(--notes-strong);
+}
+.nb-level-easy {
+  color: var(--color-state-success);
+}
+.nb-level-medium {
+  color: var(--color-state-warning);
+}
+.nb-level-gate {
+  color: var(--notes-red-ink);
+}
+
+/* check — hidden answer */
+.nb-check {
+  padding: 0.85em 1.1em 0.95em;
+  border: 1.5px solid color-mix(in oklab, var(--color-state-info) 40%, transparent);
+  border-radius: 14px;
+  background: color-mix(in oklab, var(--color-state-info) 6%, transparent);
+}
+.nb-reveal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  margin-top: 0.4em;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  -webkit-text-stroke: 0;
+  cursor: pointer;
+}
+.nb-reveal:hover {
+  background: var(--color-bg-surface-2);
+}
+.nb-answer {
+  margin-top: 0.6em;
+  padding: 0.5em 0.9em;
+  border-left: 3px solid var(--color-state-success);
+  background: color-mix(in oklab, var(--color-state-success) 7%, transparent);
+  border-radius: 0 10px 10px 0;
+}
+
+/* trick — a yellow sticky note, tilted on wide screens */
+.nb-trick {
+  max-width: 36em;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1em 1.2em 1.05em;
+  background: var(--notes-sticky);
+  border-radius: 3px 3px 14px 3px;
+  box-shadow:
+    0 1px 1px color-mix(in oklab, var(--shadow-ink, black) 12%, transparent),
+    0 12px 20px -14px color-mix(in oklab, var(--shadow-ink, black) 55%, transparent);
+}
+.nb-trick::before {
+  /* tape */
+  content: '';
+  position: absolute;
+  top: -0.6em;
+  left: 50%;
+  width: 4.5em;
+  height: 1.2em;
+  transform: translateX(-50%) rotate(-2deg);
+  background: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
+  border-radius: 2px;
+}
+.nb-trick .nb-kicker,
+.nb-trick .nb-icon {
+  color: var(--color-text-primary);
+}
+@media (min-width: 768px) {
+  .nb-trick {
+    transform: rotate(-1.1deg);
+  }
+}
+
+/* trap — a red-ink margin note */
+.nb-trap {
+  padding: 0.55em 1em 0.6em;
+  border-left: 3px solid var(--notes-red-ink);
+  background: color-mix(in oklab, var(--color-state-error) 5%, transparent);
+  border-radius: 0 12px 12px 0;
+}
+.nb-trap .nb-kicker {
+  color: var(--notes-red-ink);
+}
+
+/* table / summary / note */
+.nb-table {
+  margin-left: 0;
+  margin-right: 0;
+}
+.nb-table > .nb-head .nb-title {
+  font-size: 0.86em;
+  color: var(--color-text-secondary);
+}
+.nb-summary {
+  padding: 0.85em 1.15em;
+  border: 2px solid var(--notes-subject-ink);
+  border-radius: 18px 225px 18px 255px / 255px 18px 225px 18px;
+}
+.nb-summary ul > li::before {
+  content: '✓';
+}
+.nb-note {
+  padding: 0.4em 0 0.4em 1em;
+  border-left: 3px dotted var(--color-border-strong);
+  font-size: 0.94em;
+}
+.nb-note .nb-kicker,
+.nb-note .nb-icon {
+  color: var(--color-text-secondary);
+}
+
+/* aside — smaller blue-ink handwriting: inline on narrow screens, in the margin on wide ones */
+.nb-aside {
+  padding: 0.3em 0 0.3em 0.9em;
+  border-left: 2px dotted var(--notes-blue-ink);
+  font-size: 0.86em;
+  line-height: 1.5;
+  color: var(--notes-blue-ink);
+}
+.nb-aside .nb-title {
+  color: var(--notes-blue-ink);
+}
+
+@media (min-width: 1280px) {
+  .notes-outline,
+  .nb-aside {
+    float: right;
+    clear: right;
+    width: calc(var(--notes-rail) - 2rem);
+    margin-left: 2rem;
+    margin-right: calc(-1 * var(--notes-rail));
+  }
+  .nb-aside {
+    margin-top: 0.2em;
+    padding: 0;
+    border-left: 0;
+    transform: rotate(-0.6deg);
+  }
+  .nb-aside::before {
+    content: '';
+    position: absolute;
+    left: -1.4rem;
+    top: 0.75em;
+    width: 1rem;
+    border-top: 1.5px dotted var(--notes-blue-ink);
+  }
+}
+
+/* Embeds */
+.nb-pyq > .nb-body,
+.nb-practice > .nb-body {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  font-weight: 400;
+  font-variation-settings: normal;
+  -webkit-text-stroke: 0;
+}
+.nb-pyq .katex,
+.nb-practice .np-options .katex {
+  font-size: 1.05em;
+}
+.npyq-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  margin-top: 8px;
+  font-weight: 600;
+}
+.nb-viz {
+  margin: 1.8em 0;
+}
+
+/* Our own practice question */
+.np {
+  padding: 1em 1.1em;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 14px;
+  background: var(--color-bg-surface);
+}
+.np-text {
+  font-family: var(--notes-hand);
+  font-size: var(--notes-size);
+  font-variation-settings: var(--notes-variation);
+  line-height: 1.55;
+}
+.np-text p {
+  margin: 0 0 0.6em;
+}
+.np-hint {
+  margin: 0 0 4px !important;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.np-options {
+  display: grid;
+  gap: 8px;
+  margin: 0.6em 0;
+}
+.np-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  text-align: left;
+  cursor: pointer;
+}
+.np-option:hover:not(:disabled) {
+  background: var(--color-bg-surface-2);
+}
+.np-option:disabled {
+  cursor: default;
+}
+.np-option p {
+  margin: 0 !important;
+}
+.np-option.is-on {
+  border-color: var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-accent-brand) 10%, var(--color-bg-surface));
+}
+.np-option.is-key {
+  border-color: var(--color-state-success);
+  background: color-mix(in oklab, var(--color-state-success) 10%, var(--color-bg-surface));
+}
+.np-option.is-wrong {
+  border-color: var(--color-state-error);
+  background: color-mix(in oklab, var(--color-state-error) 10%, var(--color-bg-surface));
+}
+.np-letter {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.np-option-text {
+  padding-top: 2px;
+}
+.np-nat {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin: 0.6em 0;
+}
+.np-nat label {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.np-nat input {
+  width: 12rem;
+  max-width: 100%;
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--color-border-input);
+  border-radius: 10px;
+  background: var(--color-bg-field);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 15px;
+}
+.np-nat input:focus-visible {
+  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
+  outline-offset: 1px;
+}
+.np-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 0.4em;
+}
+.np-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.np-btn:hover:not(:disabled) {
+  background: var(--color-bg-surface-2);
+}
+.np-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.np-btn--main {
+  border-color: transparent;
+  background: var(--color-accent-brand);
+  color: var(--color-on-accent-brand);
+}
+.np-btn--main:hover:not(:disabled) {
+  background: var(--color-accent-brand-hover);
+}
+.np-feedback {
+  margin-top: 0.75em;
+  padding: 0.6em 0.9em;
+  border-radius: 10px;
+  border: 1px solid;
+}
+.np-feedback.is-correct {
+  border-color: color-mix(in oklab, var(--color-state-success) 45%, transparent);
+  background: color-mix(in oklab, var(--color-state-success) 9%, transparent);
+}
+.np-feedback.is-incorrect {
+  border-color: color-mix(in oklab, var(--color-state-error) 45%, transparent);
+  background: color-mix(in oklab, var(--color-state-error) 8%, transparent);
+}
+.np-why {
+  margin-top: 0.35em;
+}
+.np-why p {
+  margin: 0;
+}
+.np-solution {
+  margin-top: 0.85em;
+  padding-top: 0.6em;
+  border-top: 1px dashed var(--color-border-strong);
+}
+.np-solution ol {
+  margin: 0.4em 0 0;
+  padding-left: 1.3em;
+  list-style: decimal;
+}
+.np-solution li p {
+  margin: 0;
+}
+.np-concept {
+  margin: 0;
+}
+
+/* End of lesson + pager */
+.notes-done {
+  display: flex;
+  justify-content: center;
+  margin-top: 2.5em;
+  padding-top: 1.5em;
+  border-top: 1.5px dashed var(--color-border-strong);
+  clear: both;
+}
+.notes-done-btn {
+  min-height: 46px;
+  padding: 0 20px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  -webkit-text-stroke: 0;
+}
+.notes-pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 1rem;
+}
+.notes-pager-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 64px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+.notes-pager-link:hover {
+  border-color: var(--notes-subject-ink);
+}
+.notes-pager-link.is-next {
+  grid-column: 2;
+  text-align: right;
+  align-items: flex-end;
+}
+.notes-pager-dir {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.notes-pager-title {
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+/* ── Subject home ────────────────────────────────────────────────────── */
+
+.notes-root > .notes-crumbs ol {
+  margin-bottom: 1rem;
+}
+.notes-subject-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--notes-subject) 14%, var(--color-bg-surface));
+  color: var(--notes-subject-ink);
+}
+.notes-overview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+  margin-bottom: 1.5rem;
+  padding: 16px 20px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-surface);
+}
+.notes-overview dl {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+  margin: 0;
+}
+.notes-overview dt {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+.notes-overview dd {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 650;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.notes-ring {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+}
+.notes-ring svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.notes-ring-track,
+.notes-ring-fill {
+  fill: none;
+  stroke-width: 4;
+}
+.notes-ring-track {
+  stroke: color-mix(in oklab, var(--color-text-primary) 12%, transparent);
+}
+.notes-ring-fill {
+  stroke: var(--notes-subject-ink);
+  stroke-linecap: round;
+  transition: stroke-dasharray 400ms var(--ease-standard);
+}
+.notes-ring-text {
+  position: relative;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+.notes-ring-text small {
+  font-size: 0.7em;
+  color: var(--color-text-secondary);
+}
+.notes-chapters {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.notes-chapter {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-surface);
+  overflow: hidden;
+}
+.notes-chapter > header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+}
+.notes-chapter h2 {
+  letter-spacing: normal;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  margin: 0;
+  font-family: var(--notes-hand);
+  font-variation-settings: var(--notes-variation);
+  font-size: 21px;
+  font-weight: var(--notes-head);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 2) currentColor;
+  color: var(--color-text-primary);
+}
+.notes-chapter-n {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--notes-subject-ink);
+  -webkit-text-stroke: 0;
+}
+.notes-chapter header p {
+  margin: 2px 0 0;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.notes-chapter-time {
+  flex: none;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.notes-lessons {
+  margin: 0;
+  padding: 0 8px 8px;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+}
+.notes-lesson-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  min-height: 48px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--color-text-primary);
+}
+.notes-lesson-row:hover {
+  background: var(--color-bg-surface-2);
+}
+.notes-lesson-title {
+  flex: 1 1 14rem;
+  min-width: 0;
+  font-weight: 600;
+}
+.notes-lesson-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+/* ── All subjects ────────────────────────────────────────────────────── */
+
+.notes-search {
+  max-width: 32rem;
+  margin-bottom: 1.25rem;
+}
+.notes-results {
+  margin-bottom: 1.5rem;
+}
+.notes-results ol {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.notes-results a {
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+}
+.notes-results a:hover {
+  border-color: var(--color-border-strong);
+}
+.notes-result-title {
+  font-weight: 650;
+}
+.notes-result-meta {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.notes-result-snippet {
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+}
+.notes-empty {
+  color: var(--color-text-secondary);
+}
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.notes-grid > li {
+  --notes-subject-ink: color-mix(in oklab, var(--notes-subject) 50%, var(--color-text-primary));
+  display: flex;
+}
+.notes-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-card);
+  transition: border-color 150ms var(--ease-standard), transform 150ms var(--ease-standard);
+}
+.notes-card:hover {
+  border-color: var(--notes-subject-ink);
+  transform: translateY(-1px);
+}
+.notes-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.notes-card-title {
+  font-family: var(--notes-hand);
+  font-variation-settings: var(--notes-variation);
+  font-size: 22px;
+  font-weight: var(--notes-head);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 2) currentColor;
+  line-height: 1.25;
+}
+.notes-card-desc {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+}
+.notes-card-meta {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.notes-card-bar {
+  display: block;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-primary) 10%, transparent);
+  overflow: hidden;
+}
+.notes-card-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--notes-subject-ink);
+}
+.notes-badge {
+  padding: 2px 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+/* ── Font samples (staff) ────────────────────────────────────────────── */
+
+.notes-fonts-intro {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 1rem;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+.notes-fonts {
+  display: grid;
+  gap: 18px;
+}
+@media (min-width: 1100px) {
+  .notes-fonts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.notes-fonts-head h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+.notes-fonts-head p {
+  margin: 2px 0 10px;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.notes-sample.notes-paper {
+  padding: 1.25rem 1.1rem 1.5rem 2.6rem;
+}
+.notes-sample.notes-paper::before {
+  left: 1.6rem;
+}
+.notes-sample .notes-prose {
+  max-width: none;
+  padding-right: 0;
+}
+.notes-sample-title {
+  margin: 0 0 0.5em;
+  font-size: 1.6em;
+  font-weight: var(--notes-head);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 2) currentColor;
+  line-height: 1.2;
+}
+.notes-sample .nb-aside {
+  float: right;
+  clear: right;
+  width: 42%;
+  margin: 0.2em 0 0.6em 1em;
+  padding: 0 0 0 0.7em;
+  margin-right: 0;
+  transform: none;
+}
+.notes-sample .nb-aside::before {
+  content: none;
+}
+.notes-sample .nb-trick {
+  transform: rotate(-1deg);
+}
+
+/* ── Print: keep the handwriting, drop the chrome ────────────────────── */
+
+@media print {
+  /* Paper is paper: dark ink on white whatever the screen palette. */
+  html:has(.notes-paper),
+  html:has(.notes-paper) body,
+  html:has(.notes-paper) [data-palette] {
+    --color-bg-app: #fff;
+    --color-bg-surface: #fff;
+    --color-bg-surface-2: #f3f3f3;
+    --color-bg-field: #fff;
+    --color-code-bg: #f3f3f3;
+    --color-text-primary: #1b1b1f;
+    --color-text-secondary: #45454d;
+    --color-text-muted: #6b6b73;
+    --color-border: #d4d4d8;
+    --color-border-strong: #a1a1aa;
+    --color-state-info: #1d4ed8;
+    --color-state-error: #b91c1c;
+    --color-state-warning: #b45309;
+    --color-state-success: #15803d;
+    --notes-dot: transparent;
+    --notes-sticky: #fdf3c8;
+    --notes-highlight: #fde68a;
+    color-scheme: light;
+    background: #fff !important;
+  }
+  body:has(.notes-paper) :is(header.titlebar, nav[aria-label='Quick navigation'], nav[aria-label='Dock'], .gate-shell > div:not(.notes-root), .gate-shell > header > div:last-child, button[aria-label^='Open NexoraGuru AI']) {
+    display: none !important;
+  }
+  .notes-tree,
+  .notes-tree-mobile,
+  .notes-pager,
+  .notes-progress,
+  .notes-outline,
+  .notes-done,
+  .notes-resume,
+  .notes-tool,
+  .nb-reveal,
+  .np-actions,
+  .npyq-more {
+    display: none !important;
+  }
+  .notes-layout {
+    display: block;
+  }
+  .notes-paper {
+    border: 0;
+    box-shadow: none;
+    padding: 0 0 0 2.2rem;
+    background-image: none;
+  }
+  .notes-paper::before {
+    left: 1rem;
+  }
+  .notes-prose {
+    max-width: none;
+    padding-right: 0;
+    font-size: 12.5pt;
+  }
+  .nb-answer[hidden],
+  .np-solution[hidden] {
+    display: block !important;
+  }
+  .nb,
+  .notes-h {
+    break-inside: avoid;
+  }
+  .notes-h {
+    break-after: avoid;
+  }
+  .nb-trick {
+    transform: none;
+  }
+  .nb-aside {
+    float: none !important;
+    width: auto !important;
+    margin: 1em 0 !important;
+    transform: none !important;
+    padding-left: 0.9em !important;
+    border-left: 2px dotted var(--notes-blue-ink) !important;
+  }
+}
