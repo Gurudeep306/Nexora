@@ -20,19 +20,21 @@ const passport = require("passport");
 const GitHubStrategy = require("passport-github2").Strategy;
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { Server: SocketServer } = require("socket.io");
-const { run, get, all, initDb, dbInfo, migratePerUser } = require("./db");
+const { run, get, all, runBatch, initDb, dbInfo, migratePerUser } = require("./db");
 const { getCatalog, topicPool } = require("./problem-catalog");
 const { requestContext, me, meSql, runAs, queryCount } = require("./context");
 const { DbSessionStore } = require("./session-store");
 const { isSetAvatar, normalizeAvatar } = require("./avatar-set");
 const { restoreUploads } = require("./upload-store");
 const { authz } = require("./middleware/authz");
+const { createAccessControl, initAdminSystem, socketAccess } = require("./authz/access");
+const { can, hasAnyAdminPerm } = require("./authz/permissions");
+const { createAdminRouter } = require("./routes/admin");
 const {
   clearSessionUser,
   createStudioAuth,
   getSessionUser,
   persistSessionUser,
-  requireAdmin,
   requireAuthenticatedUser,
   requireSelfOrAdmin,
 } = require("./middleware/auth");
@@ -773,6 +775,10 @@ const sessionMiddleware = session({
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
+// Roles, permissions, bans, private mode and feature flags for every request
+// (pages and API) — see src/authz/access.js. Before requestContext so a banned
+// user's request already runs signed out.
+app.use(createAccessControl());
 // Remember who is making each request (per-user progress queries read it).
 app.use(requestContext(getSessionUser));
 // DB_QUERY_STATS=1 logs DB round trips + wall time per API request (perf tooling).
@@ -1756,7 +1762,7 @@ async function problemTestcases(problemId) {
 function canSeeHiddenTests(req, problem) {
   const u = me();
   if (u && problem.creator && problem.creator === u) return true;
-  return getSessionUser(req)?.role === "admin";
+  return can(req, "problems.manage");
 }
 
 /** A Workshop problem's samples (visible) and testcases (hidden). */
@@ -1938,7 +1944,14 @@ app.get("/api/languages", (req, res) => {
 
 /* Admin: run a tiny program in every language through the real judge.
    GET /api/admin/judge-selftest?langs=cpp,python  (all languages when omitted) */
-app.get("/api/admin/judge-selftest", requireAdmin, async (req, res) => {
+app.get("/api/admin/judge-selftest", (req, res, next) =>
+  can(req, "problems.manage")
+    ? next()
+    : // Non-admins get the same 404 as any unknown endpoint (see routes/admin.js).
+      hasAnyAdminPerm(req)
+      ? res.status(403).json({ ok: false, error: "Admin access required" })
+      : res.status(404).json({ ok: false, error: "API endpoint not found" }),
+async (req, res) => {
   try {
     const { selfTest } = require("./judge-selftest");
     const only = typeof req.query.langs === "string" && req.query.langs ? req.query.langs.split(",") : null;
@@ -4988,7 +5001,6 @@ app.use(
     getSessionUser,
     hashPassword,
     persistSessionUser,
-    requireAdmin,
     requireAuthenticatedUser,
     requireSelfOrAdmin,
     run,
@@ -4999,6 +5011,25 @@ app.use(
     calcStreak,
   }),
 );
+
+/* ── Owner / admin system: /api/admin/*, /api/site/*, /api/reports ── */
+// Filled in once socket.io is up (below): presence, per-user pushes,
+// broadcasts and force-disconnect for the admin panel.
+const realtime = {};
+// Admin changes must come from the site itself (CSRF): an allowed Origin, or
+// the same host. Requests without an Origin are not from a browser page.
+function isTrustedOrigin(req) {
+  const origin = req.headers.origin;
+  if (!origin) return true;
+  if (DEPLOY.enforceOrigins ? isOriginAllowed(DEPLOY, origin) : true) return true;
+  try {
+    return new URL(origin).host === req.headers.host;
+  } catch {
+    return false;
+  }
+}
+const adminApi = createAdminRouter({ all, get, run, runBatch, realtime, isTrustedOrigin });
+app.use(adminApi.router);
 
 app.get("/api/user/search", async (req, res) => {
   try {
@@ -5759,11 +5790,19 @@ function isAllowedSocketOrigin(req) {
   }
 }
 
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   if (!isAllowedSocketOrigin(socket.request))
     return next(new Error("Origin not allowed"));
   const user = getSessionUser(socket.request);
   if (!user?.username) return next(new Error("Authentication required"));
+  // Banned users, and everyone without access while the site is private,
+  // get no realtime connection either.
+  try {
+    const verdict = await socketAccess(user.username);
+    if (!verdict.ok) return next(new Error(verdict.reason));
+  } catch (e) {
+    return next(new Error("Authentication failed"));
+  }
   socket.data.username = user.username;
   next();
 });
@@ -5800,6 +5839,13 @@ function sharesSolveRoom(socket, targetId) {
   }
   return false;
 }
+
+realtime.online = () => Object.keys(userSockets);
+realtime.emitToUser = (username, event, payload) => emitToUser(username, event, payload);
+realtime.broadcast = (event, payload) => io.emit(event, payload);
+realtime.disconnectUser = (username) => {
+  for (const sid of userSockets[username] || []) io.sockets.sockets.get(sid)?.disconnect(true);
+};
 
 io.on("connection", (socket) => {
   // Set by the io.use() auth middleware from the session — the only identity
@@ -6131,6 +6177,8 @@ io.on("connection", (socket) => {
 
 (async () => {
   await initDb();
+  // Owner from OWNER_USERNAME, first-boot private mode (src/authz/access.js).
+  await initAdminSystem();
   await Promise.all([_forgeInit, _liveInit]);
   // Give every account its own progress/XP/settings (one-time, idempotent).
   await migratePerUser();

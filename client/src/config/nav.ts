@@ -59,6 +59,9 @@ export const CREATE_SECTION: NavSection = {
   ],
 }
 
+/** Shown to anyone holding an admin-panel permission. */
+export const ADMIN_ITEM: NavItem = { to: '/admin', label: 'Admin', icon: 'shield' }
+
 export const ACCOUNT_ITEMS: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: 'profile' },
   { to: '/theme', label: 'Theme Centre', icon: 'palette' },

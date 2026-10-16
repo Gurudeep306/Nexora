@@ -54,25 +54,42 @@ function requireAuthenticatedUser(req, res, next) {
   next();
 }
 
+// Loaded lazily: src/authz/permissions.js requires this module.
+const perms = () => require('../authz/permissions');
+
+/** Anyone holding an admin-panel permission (owner, admins, granted staff). */
 function requireAdmin(req, res, next) {
   const sessionUser = getSessionUser(req);
-  if (!sessionUser?.username || sessionUser.role !== 'admin') {
+  if (!sessionUser?.username || !perms().hasAnyAdminPerm(req)) {
     return res.status(403).json({ ok: false, error: 'Admin access required' });
   }
   req.sessionUser = sessionUser;
   next();
 }
 
+/** Your own account, or staff with users.manage acting on someone they outrank. */
 function requireSelfOrAdmin(getTargetUsername) {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     const sessionUser = getSessionUser(req);
     const target = typeof getTargetUsername === 'function' ? getTargetUsername(req) : null;
     if (!sessionUser?.username) {
       return res.status(401).json({ ok: false, error: 'Authentication required' });
     }
-    if (sessionUser.role === 'admin' || (target && sessionUser.username === target)) {
+    if (target && sessionUser.username === target) {
       req.sessionUser = sessionUser;
       return next();
+    }
+    if (target && typeof target === 'string' && perms().can(req, 'users.manage')) {
+      try {
+        const row = await require('../db').get('SELECT role FROM users WHERE username=?', [target]);
+        // A missing user is answered with 404 by the route itself.
+        if (!row || perms().canActOn(req, target, row.role)) {
+          req.sessionUser = sessionUser;
+          return next();
+        }
+      } catch (e) {
+        return next(e);
+      }
     }
     return res.status(403).json({ ok: false, error: 'You can only modify your own account' });
   };
@@ -82,7 +99,7 @@ function createStudioAuth({ studioPass }) {
   return (req, res, next) => {
     const token = req.headers['x-studio-token'] || req.query.token;
     const sessionUser = getSessionUser(req);
-    if (token === studioPass || sessionUser?.role === 'admin') {
+    if (token === studioPass || (sessionUser && perms().can(req, 'problems.manage'))) {
       req.sessionUser = sessionUser || null;
       return next();
     }

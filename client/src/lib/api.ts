@@ -23,6 +23,9 @@ export function assetUrl(src: string | null | undefined): string | undefined {
   return src.startsWith('/uploads/') ? apiUrl(src) : src
 }
 
+/** window event fired with the response body of a site_private / account_banned / feature_disabled 403. */
+export const SITE_ACCESS_EVENT = 'nexora:site-access'
+
 export class ApiError extends Error {
   status: number
   data: unknown
@@ -79,6 +82,12 @@ async function request<T>(method: string, path: string, options: RequestOptions 
     }
 
     if (!res.ok) {
+      // Site-wide access answers (private mode, a ban, a switched-off section)
+      // are handled once, by SiteProvider, wherever the request came from.
+      const code = (data as { code?: string } | null)?.code
+      if (res.status === 403 && (code === 'site_private' || code === 'account_banned' || code === 'feature_disabled')) {
+        window.dispatchEvent(new CustomEvent(SITE_ACCESS_EVENT, { detail: data }))
+      }
       const message =
         (data as { error?: string; message?: string } | null)?.error ??
         (data as { error?: string; message?: string } | null)?.message ??
