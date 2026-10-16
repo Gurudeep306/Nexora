@@ -2,6 +2,7 @@ import type { ReactElement, ReactNode } from 'react'
 import { motion } from 'motion/react'
 import { cn } from '@/lib/utils'
 import { IconBadge, type IconName } from '@/components/icon/Icon'
+import { tEnter } from '@/lib/motion'
 
 /**
  * Page title block. An optional `eyebrow` sits above the title (section name),
@@ -27,27 +28,28 @@ export function PageHeader({
 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      className={cn('mb-7 flex flex-wrap items-end justify-between gap-4', className)}
+      transition={tEnter}
+      className={cn('mb-8 flex flex-wrap items-end justify-between gap-x-6 gap-y-4', className)}
     >
       <div className="flex min-w-0 items-start gap-4">
         {typeof icon === 'string' ? (
           <IconBadge name={icon} box="lg" boxClassName="mt-1 hidden sm:inline-flex" />
         ) : icon && (
-          <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-xl border border-accent-brand/20 bg-gradient-to-b from-accent-brand/20 to-accent-brand/5 text-accent-brand/80 shadow-[inset_0_1px_0_var(--specular)] sm:flex [&_svg]:size-5">
+          <div className="mt-1 hidden size-11 shrink-0 items-center justify-center rounded-[var(--radius-control)] border border-border bg-bg-surface-2 text-accent-brand shadow-[inset_0_1px_0_var(--specular)] sm:flex [&_svg]:size-5">
             {icon}
           </div>
         )}
         <div className="min-w-0">
           {eyebrow && (
-            <p className="mb-1 text-[11px] font-semibold tracking-[0.14em] text-accent-brand/80 uppercase">{eyebrow}</p>
+            <p className="mb-1.5 text-[11px] font-semibold tracking-[0.12em] text-accent-brand uppercase">{eyebrow}</p>
           )}
-          <h1 className="font-display text-[26px] leading-tight font-semibold tracking-tight md:text-[32px] text-gradient">
+          {/* Solid ink: gradient-clipped titles read as decoration. */}
+          <h1 className="font-display text-[26px] leading-[1.15] font-semibold tracking-[-0.022em] text-text-primary md:text-[30px]">
             {title}
           </h1>
-          {subtitle && <p className="mt-1.5 max-w-2xl text-sm text-text-secondary">{subtitle}</p>}
+          {subtitle && <p className="mt-2 mb-0 max-w-2xl text-[14px] leading-relaxed text-text-secondary text-pretty">{subtitle}</p>}
         </div>
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}

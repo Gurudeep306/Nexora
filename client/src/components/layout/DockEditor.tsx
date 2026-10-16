@@ -2,6 +2,7 @@ import { Minus, Plus, RotateCcw } from 'lucide-react'
 import { motion, Reorder, useReducedMotion } from 'motion/react'
 import { Button, Modal } from '@/components/ui'
 import { cn } from '@/lib/utils'
+import { tStandard } from '@/lib/motion'
 import { DockBadge } from './DockBadge'
 import {
   DEFAULT_DOCK,
@@ -32,7 +33,7 @@ function Toggle({ on, onChange, label }: { on: boolean; onChange: (v: boolean) =
     >
       <motion.span
         layout
-        transition={{ type: 'spring', stiffness: 500, damping: 34 }}
+        transition={tStandard}
         className={cn('absolute top-[2px] size-[18px] rounded-full bg-white shadow', on ? 'right-[2px]' : 'left-[2px]')}
       />
     </button>
