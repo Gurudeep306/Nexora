@@ -6,6 +6,7 @@
 const express = require('express');
 const { errMessage } = require("../http-error");
 const { run, get, all } = require('../db');
+const { can } = require('../authz/permissions');
 const crypto = require('crypto');
 const {
   createLiveClass,
@@ -17,7 +18,8 @@ const {
   clampInt,
 } = require('../live-db');
 
-const isAdmin = (user) => user?.role === 'admin';
+// Staff with contests.manage (admins and the owner by default) manage any class.
+const isAdmin = (user) => can(user, 'contests.manage');
 const notFound = (res) => res.status(404).json({ ok: false, error: 'Class not found' });
 const forbidden = (res) => res.status(403).json({ ok: false, error: 'Not authorized' });
 
@@ -50,7 +52,7 @@ function createLiveRouter(deps = {}) {
   const isTeacher = (req, res, next) => {
     if (!req.session?.user) return res.status(401).json({ ok: false, error: 'Unauthorized' });
     const role = req.session.user.role;
-    if (role !== 'admin' && role !== 'teacher') return res.status(403).json({ ok: false, error: 'Teacher or Admin only' });
+    if (role !== 'teacher' && !can(req, 'contests.manage')) return res.status(403).json({ ok: false, error: 'Teacher or Admin only' });
     next();
   };
 

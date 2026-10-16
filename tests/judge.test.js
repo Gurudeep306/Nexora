@@ -63,8 +63,9 @@ test('/api/languages flags unavailable languages', async () => {
 });
 
 test('judge self-test is admin only', async () => {
+  // Admin endpoints don't exist (404) for anyone without an admin permission.
   const r = await fetch(`${base}/api/admin/judge-selftest`);
-  assert.equal(r.status, 403);
+  assert.equal(r.status, 404);
 });
 
 /* ── output comparison & verdict rollup (no network) ── */

@@ -11,6 +11,7 @@ import App from './App'
 import { AuthProvider } from './context/AuthContext'
 import { ToastProvider } from './components/ui'
 import { SocketProvider } from './lib/socket'
+import { SiteProvider } from './context/SiteContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { initFaviconFx } from './lib/faviconFx'
 import { initSentry } from './lib/sentry'
@@ -29,7 +30,9 @@ createRoot(document.getElementById('root')!).render(
       <AuthProvider>
         <ToastProvider>
           <SocketProvider>
-            <App />
+            <SiteProvider>
+              <App />
+            </SiteProvider>
           </SocketProvider>
         </ToastProvider>
       </AuthProvider>

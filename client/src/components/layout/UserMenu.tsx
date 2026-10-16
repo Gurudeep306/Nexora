@@ -4,11 +4,15 @@ import { Avatar, Menu, MenuContent, MenuItem, MenuLabel, MenuSeparator, MenuTrig
 import { useAuth } from '@/context/AuthContext'
 import { openShortcuts } from './ShortcutsDialog'
 import { Icon } from '@/components/icon/Icon'
+import { useSite } from '@/context/SiteContext'
+import { UserBadges } from '@/components/shared/UserBadges'
+import { prefetchHandlers } from '@/routes'
 
 /** Account dropdown — used by the sidebar footer and the mobile topbar. */
 export function UserMenu({ children, side = 'top', align = 'start' }: { children: ReactNode; side?: 'top' | 'bottom'; align?: 'start' | 'end' }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const { isStaff, isOwner, previewAsMember, setPreviewAsMember } = useSite()
   if (!user) return null
   const level = Number(user.level) || 1
   return (
@@ -27,11 +31,35 @@ export function UserMenu({ children, side = 'top', align = 'start' }: { children
             <p className="truncate text-sm font-semibold text-text-primary">
               {typeof user.display_name === 'string' && user.display_name ? user.display_name : user.username}
             </p>
-            <p className="truncate text-xs text-text-secondary">@{user.username}</p>
+            <p className="flex items-center gap-1 truncate text-xs text-text-secondary">
+              @{user.username}
+              <UserBadges username={user.username} role={typeof user.role === 'string' ? user.role : undefined} />
+            </p>
           </div>
           <RankGlyph level={level} size={30} animated={false} />
         </div>
         <MenuSeparator />
+        {isStaff && (
+          <>
+            <MenuItem icon={<Icon name={isOwner ? 'crown' : 'shield'} />} onSelect={() => navigate('/admin')} {...prefetchHandlers('/admin')}>
+              Admin
+            </MenuItem>
+            {isOwner && (
+              <MenuItem icon={<Icon name="eye" />} onSelect={() => setPreviewAsMember(true)}>
+                View as member
+              </MenuItem>
+            )}
+            <MenuSeparator />
+          </>
+        )}
+        {previewAsMember && (
+          <>
+            <MenuItem icon={<Icon name="eye-off" />} onSelect={() => setPreviewAsMember(false)}>
+              Exit member preview
+            </MenuItem>
+            <MenuSeparator />
+          </>
+        )}
         <MenuLabel>Account</MenuLabel>
         <MenuItem icon={<Icon name="profile" />} onSelect={() => navigate('/profile')}>
           Profile
