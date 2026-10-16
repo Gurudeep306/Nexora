@@ -30,6 +30,7 @@ const { authz } = require("./middleware/authz");
 const { createAccessControl, initAdminSystem, socketAccess } = require("./authz/access");
 const { can, hasAnyAdminPerm } = require("./authz/permissions");
 const { createAdminRouter } = require("./routes/admin");
+const { createSocialRouter } = require("./routes/social");
 const {
   clearSessionUser,
   createStudioAuth,
@@ -697,6 +698,8 @@ app.use(
 );
 
 /* ── Body parsing ── */
+// Social image uploads carry a 2 MB image as base64 (~2.7 MB of JSON).
+app.use("/api/social/upload", express.json({ limit: "3mb" }));
 app.use(express.json({ limit: "2mb" }));
 app.use(express.urlencoded({ extended: false, limit: "2mb" }));
 
@@ -5031,6 +5034,9 @@ function isTrustedOrigin(req) {
 const adminApi = createAdminRouter({ all, get, run, runBatch, realtime, isTrustedOrigin });
 app.use(adminApi.router);
 
+/* ── Social network + public profiles: /api/social/*, /api/profiles/* ── */
+app.use(createSocialRouter({ all, get, run, realtime, isTrustedOrigin, calcLevel, calcStreak }).router);
+
 app.get("/api/user/search", async (req, res) => {
   try {
     const q = (req.query.q || "").trim();
@@ -5052,7 +5058,7 @@ app.get("/api/friends/:username", async (req, res) => {
     const u = req.params.username;
     const friends = await all(
       `
-      SELECT u.username, u.display_name, u.avatar, u.status, u.last_seen, f.created_at as friends_since
+      SELECT u.username, u.display_name, u.avatar, u.avatar_url, u.role, u.verified, u.status, u.last_seen, f.created_at as friends_since
       FROM friendships f JOIN users u ON (CASE WHEN f.from_user=? THEN f.to_user ELSE f.from_user END) = u.username
       WHERE (f.from_user=? OR f.to_user=?) AND f.status='accepted'`,
       [u, u, u],
@@ -5067,12 +5073,12 @@ app.get("/api/friends/:username/requests", async (req, res) => {
   try {
     const u = req.params.username;
     const incoming = await all(
-      `SELECT f.id, u.username, u.display_name, u.avatar, f.created_at
+      `SELECT f.id, u.username, u.display_name, u.avatar, u.avatar_url, f.created_at
       FROM friendships f JOIN users u ON f.from_user=u.username WHERE f.to_user=? AND f.status='pending'`,
       [u],
     );
     const outgoing = await all(
-      `SELECT f.id, u.username, u.display_name, u.avatar, f.created_at
+      `SELECT f.id, u.username, u.display_name, u.avatar, u.avatar_url, f.created_at
       FROM friendships f JOIN users u ON f.to_user=u.username WHERE f.from_user=? AND f.status='pending'`,
       [u],
     );

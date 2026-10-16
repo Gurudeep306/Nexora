@@ -1,124 +1,169 @@
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'motion/react'
-import { Rss, RefreshCw, Swords, DoorOpen, UserPlus, Trophy, Zap, Activity } from 'lucide-react'
-import { Avatar, Button, Card, EmptyState, ErrorState, LoadingBlock } from '@/components/ui'
-import { PlatformBadge } from '@/components/shared/PlatformBadge'
+import { ArrowUp, Bookmark, Compass, Home, RefreshCw } from 'lucide-react'
 import { api } from '@/lib/api'
-import { useApi } from '@/hooks/useApi'
-import { timeAgo } from '@/lib/utils'
-import type { FeedRow } from './types'
+import { useSocket } from '@/lib/socket'
+import { cn } from '@/lib/utils'
+import { Composer } from './feed/Composer'
+import { FeedEmpty, PostList, usePostList } from './feed/PostList'
+import { SocialSearch, TrendingTags, WhoToFollow } from './feed/People'
+import type { FeedPage } from './feed/types'
+import './feed/social.css'
 
-const TYPE_META: Record<string, { verb: string; icon: React.ComponentType<{ className?: string }>; className: string }> = {
-  solve: { verb: 'solved', icon: Swords, className: 'text-success' },
-  solved: { verb: 'solved', icon: Swords, className: 'text-success' },
-  room_created: { verb: 'opened a solve room', icon: DoorOpen, className: 'text-cyan' },
-  room: { verb: 'opened a solve room', icon: DoorOpen, className: 'text-cyan' },
-  friend: { verb: 'made a new ally', icon: UserPlus, className: 'text-accent' },
-  achievement: { verb: 'unlocked', icon: Trophy, className: 'text-gold' },
-  level_up: { verb: 'ranked up', icon: Zap, className: 'text-primary-bright' },
-}
+type FeedKind = 'home' | 'explore' | 'saved'
 
-function dayLabel(iso: string): string {
-  const d = new Date(iso)
-  const today = new Date()
-  const yesterday = new Date(Date.now() - 864e5)
-  if (d.toDateString() === today.toDateString()) return 'Today'
-  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday'
-  return d.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' })
-}
+const SEGMENTS: { id: FeedKind; label: string; icon: typeof Home }[] = [
+  { id: 'home', label: 'Following', icon: Home },
+  { id: 'explore', label: 'Explore', icon: Compass },
+  { id: 'saved', label: 'Saved', icon: Bookmark },
+]
 
+/** The social feed: Following (home), Explore (trending) and Saved, with a composer and live new-post pill. */
 export function FeedTab({ me }: { me: string }) {
-  const feedApi = useApi<{ feed: FeedRow[] }>(
-    () => api.get<{ feed: FeedRow[] }>(`/api/feed/${encodeURIComponent(me)}`),
-    [me],
+  const [kind, setKind] = useState<FeedKind>(() => {
+    try {
+      return (sessionStorage.getItem('nexora:feed-kind') as FeedKind) || 'home'
+    } catch {
+      return 'home'
+    }
+  })
+  useEffect(() => {
+    try {
+      sessionStorage.setItem('nexora:feed-kind', kind)
+    } catch {
+      /* ignore */
+    }
+  }, [kind])
+
+  const list = usePostList(
+    (cursor) =>
+      kind === 'saved'
+        ? api.get<FeedPage>('/api/social/bookmarks')
+        : api.get<FeedPage>('/api/social/feed', { query: { tab: kind, cursor } }),
+    [kind, me],
   )
 
-  const groups = useMemo(() => {
-    const out: { day: string; rows: FeedRow[] }[] = []
-    for (const row of feedApi.data?.feed ?? []) {
-      const day = dayLabel(row.created_at)
-      const last = out[out.length - 1]
-      if (last?.day === day) last.rows.push(row)
-      else out.push({ day, rows: [row] })
+  // Live: followers' new posts raise a pill instead of shoving the feed around.
+  const socket = useSocket()
+  const [fresh, setFresh] = useState<string[]>([])
+  useEffect(() => {
+    if (!socket) return
+    const onPost = (p: { author: string }) => {
+      if (p.author === me) return
+      setFresh((cur) => (cur.includes(p.author) ? cur : [...cur, p.author]))
     }
-    return out
-  }, [feedApi.data])
+    socket.on('social:post', onPost)
+    return () => {
+      socket.off('social:post', onPost)
+    }
+  }, [socket, me])
+  const { refresh } = list
+  const showFresh = useCallback(() => {
+    setFresh([])
+    if (kind !== 'home') setKind('home')
+    else void refresh()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [kind, refresh])
 
-  if (feedApi.loading && !feedApi.data) return <LoadingBlock rows={6} />
-  if (feedApi.error) return <ErrorState message={feedApi.error} onRetry={feedApi.refetch} />
+  // Pull to refresh (touch).
+  const [pull, setPull] = useState(0)
+  const startY = useRef<number | null>(null)
+  const onTouchStart = (e: React.TouchEvent) => {
+    startY.current = window.scrollY <= 0 ? e.touches[0].clientY : null
+  }
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (startY.current == null) return
+    const d = e.touches[0].clientY - startY.current
+    setPull(d > 0 ? Math.min(90, d * 0.5) : 0)
+  }
+  const onTouchEnd = () => {
+    if (pull > 60) {
+      setFresh([])
+      void refresh()
+    }
+    setPull(0)
+    startY.current = null
+  }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-xs text-foreground-faint">You and your allies — solves, rooms and milestones.</p>
-        <Button variant="ghost" size="sm" onClick={feedApi.refetch} aria-label="Refresh feed">
-          <RefreshCw aria-hidden="true" /> Refresh
-        </Button>
+    <div className="mx-auto grid max-w-6xl gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="min-w-0" onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
+        <SocialSearch className="mb-3 lg:hidden" />
+
+        <div className="sticky top-[var(--topbar-h,56px)] z-20 -mx-1 mb-3 bg-bg-app/80 px-1 py-1.5 backdrop-blur-md">
+          <div role="tablist" aria-label="Feed" className="relative grid grid-cols-3 rounded-xl border border-border bg-bg-surface-2/70 p-1">
+            {SEGMENTS.map((s) => {
+              const on = kind === s.id
+              const Icon = s.icon
+              return (
+                <button
+                  key={s.id}
+                  role="tab"
+                  aria-selected={on}
+                  onClick={() => (on ? void refresh() : setKind(s.id))}
+                  className={cn('relative z-10 flex cursor-pointer items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium transition-colors', on ? 'text-text-primary' : 'text-text-secondary hover:text-text-primary')}
+                >
+                  {on && <motion.span layoutId="feed-seg" className="absolute inset-0 -z-10 rounded-lg border border-border bg-bg-surface shadow-sm" transition={{ type: 'spring', stiffness: 500, damping: 38 }} />}
+                  <Icon className="size-4" aria-hidden="true" />
+                  {s.label}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {pull > 0 && (
+          <div className="grid place-items-center text-text-muted" style={{ height: pull }} aria-hidden="true">
+            <RefreshCw className="size-5" style={{ transform: `rotate(${pull * 4}deg)`, opacity: pull / 60 }} />
+          </div>
+        )}
+
+        {kind !== 'saved' && (
+          <div className="mb-3">
+            <Composer
+              onPosted={(p) => {
+                if (kind === 'home') list.prepend(p)
+                else setKind('home')
+              }}
+            />
+          </div>
+        )}
+
+        {fresh.length > 0 && (
+          <div className="sticky top-[calc(var(--topbar-h,56px)+60px)] z-30 h-0">
+            <button
+              type="button"
+              onClick={showFresh}
+              className="ng-pill absolute left-1/2 inline-flex -translate-x-1/2 cursor-pointer items-center gap-2 rounded-full bg-accent-brand px-4 py-2 text-sm font-semibold text-on-accent-brand shadow-lg"
+            >
+              <ArrowUp className="size-4" />
+              New posts from {fresh.slice(0, 2).join(', ')}
+              {fresh.length > 2 ? ` +${fresh.length - 2}` : ''}
+            </button>
+          </div>
+        )}
+
+        <PostList
+          list={list}
+          empty={
+            kind === 'home' ? (
+              <FeedEmpty title="Your feed is waiting" description="Follow people to fill it — or post your first win. Explore shows what's trending right now." />
+            ) : kind === 'explore' ? (
+              <FeedEmpty title="Nothing trending yet" description="Be the first: share a solve, a snippet or a question." />
+            ) : (
+              <FeedEmpty title="No saved posts" description="Tap the bookmark on any post to keep it here." />
+            )
+          }
+        />
       </div>
 
-      {groups.length === 0 ? (
-        <Card>
-          <EmptyState
-            icon={<Rss />}
-            title="The rift is quiet"
-            description="Add friends and start solving — their activity and yours streams here."
-          />
-        </Card>
-      ) : (
-        groups.map((g) => (
-          <section key={g.day}>
-            <h3 className="mb-2 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">{g.day}</h3>
-            <ol className="relative space-y-2 border-l border-border pl-5">
-              {g.rows.map((row, i) => {
-                const meta = TYPE_META[row.type?.toLowerCase()] ?? { verb: row.type.replace(/_/g, ' '), icon: Activity, className: 'text-foreground-dim' }
-                const Icon = meta.icon
-                return (
-                  <motion.li
-                    key={row.id}
-                    initial={{ opacity: 0, x: -6 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.2, delay: Math.min(i * 0.04, 0.4) }}
-                    className="relative"
-                  >
-                    <span className="absolute top-3 -left-[27px] grid size-3.5 place-items-center rounded-full border border-border bg-background">
-                      <span className="size-1.5 rounded-full bg-primary" />
-                    </span>
-                    <div className="card-neon flex items-start gap-3 px-3.5 py-3">
-                      <Link to={`/profile/${encodeURIComponent(row.username)}`} aria-label={`Open ${row.username}'s profile`}>
-                        <Avatar seed={row.username} name={row.display_name || row.username} size="sm" />
-                      </Link>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm text-foreground-dim">
-                          <Link
-                            to={`/profile/${encodeURIComponent(row.username)}`}
-                            className="cursor-pointer font-semibold text-foreground transition-colors hover:text-primary-bright"
-                          >
-                            {row.username === me ? 'You' : row.display_name || row.username}
-                          </Link>{' '}
-                          <Icon className={`mx-0.5 inline size-3.5 align-[-2px] ${meta.className}`} aria-hidden="true" /> {meta.verb}{' '}
-                          {row.problem_title ? (
-                            <Link to={`/solve/${row.problem_id}`} className="cursor-pointer text-foreground underline-offset-2 hover:text-primary-bright hover:underline">
-                              {row.problem_title}
-                            </Link>
-                          ) : (
-                            row.content && <span className="text-foreground">{row.content}</span>
-                          )}
-                        </p>
-                        <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-foreground-faint">
-                          {row.problem_platform && <PlatformBadge platform={row.problem_platform} />}
-                          {row.problem_rating ? <span className="font-mono tabular-nums">{row.problem_rating}</span> : null}
-                          <span className="font-mono tabular-nums">{timeAgo(row.created_at)}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.li>
-                )
-              })}
-            </ol>
-          </section>
-        ))
-      )}
+      <aside className="hidden space-y-4 lg:block" aria-label="Discover">
+        <div className="sticky top-[calc(var(--topbar-h,56px)+8px)] space-y-4">
+          <SocialSearch />
+          <TrendingTags />
+          <WhoToFollow />
+        </div>
+      </aside>
     </div>
   )
 }
