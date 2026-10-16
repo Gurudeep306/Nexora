@@ -6,6 +6,10 @@ const { requireAuthenticatedUser } = require("../middleware/auth");
 const { loadGateBank } = require("./gate");
 const { gradeQuestion, isAnswered, questionMarks } = require("../gate/grade");
 const { recordAttempts, reviewState, isoDay, addDays, DAY_MS } = require("../gate/attempts");
+const { sharedCache } = require("../shared-cache");
+
+// Leaderboard rows per period (all ranked users), shared by every visitor.
+const gateBoardCache = sharedCache({ name: "gate-leaderboard", ttlMs: 10 * 60 * 1000, minAgeMs: 5 * 60 * 1000, tables: ["gate_attempts", "users"] });
 
 /*
  * GATE learning platform — the server half of client/src/gate/api.ts.
@@ -145,10 +149,12 @@ async function questionStats(q) {
   return stats;
 }
 
-/* Difficulty of every question with ≥ 5 attempts (for test filters), cached. */
+/* Difficulty of every question with ≥ 5 attempts (for test filters), cached.
+ * It aggregates all of gate_attempts and moves slowly, so an hour. */
+const DIFF_TTL_MS = 60 * 60 * 1000;
 let diffCache = { at: 0, map: new Map() };
 async function difficultyMap() {
-  if (Date.now() - diffCache.at < STATS_TTL_MS) return diffCache.map;
+  if (Date.now() - diffCache.at < DIFF_TTL_MS) return diffCache.map;
   const rows = await all(
     `SELECT question_id, COUNT(*) AS n, SUM(outcome='correct') AS c, AVG(time_ms) AS t
      FROM gate_attempts WHERE outcome IN ${OUTCOMES_ANSWERED}
@@ -1003,7 +1009,9 @@ function createGateMeRouter() {
     const period = ["week", "month", "all"].includes(req.query.period) ? req.query.period : "week";
     const since = period === "week" ? Date.now() - 7 * DAY_MS : period === "month" ? Date.now() - 30 * DAY_MS : 0;
     const u = me();
-    const rows = await all(
+    // Every ranked user for the period, shared by all visitors and cached
+    // (10 min; 5 min after new attempts) — then top 50 + me from memory.
+    const rows = await gateBoardCache.get(period, () => all(
       `WITH agg AS (
          SELECT username, COUNT(*) AS attempted, SUM(outcome='correct') AS correct,
                 SUM(CASE WHEN marks > 0 THEN marks ELSE 0 END) AS score
@@ -1014,10 +1022,9 @@ function createGateMeRouter() {
        )
        SELECT r.username, r.attempted, r.correct, r.score, r.rnk, u.display_name, u.avatar, u.avatar_url
        FROM ranked r LEFT JOIN users u ON u.username = r.username
-       WHERE r.rnk <= 50 OR r.username = ?
        ORDER BY r.rnk`,
-      [since, u],
-    );
+      [since],
+    ));
     const shape = (r) => {
       const row = {
         username: r.username,
@@ -1033,7 +1040,7 @@ function createGateMeRouter() {
       return row;
     };
     const out = { ok: true, rows: rows.filter((r) => Number(r.rnk) <= 50).map(shape) };
-    const mine = u ? rows.find((r) => r.username === u) : null;
+    const mine = u ? rows.find((r) => r.username === u) || null : null;
     if (mine) out.me = shape(mine);
     res.json(out);
   }));
