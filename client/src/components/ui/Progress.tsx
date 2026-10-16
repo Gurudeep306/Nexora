@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse bg-surface-2 rounded', className)} aria-hidden="true" />
+  return <div className={cn('skeleton', className)} aria-hidden="true" />
 }
 
 export function Progress({
@@ -51,11 +51,9 @@ export function XpBar({ xp, nextLevelXp, level, levelName }: { xp: number; nextL
       </div>
       <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-border/20">
         <div
-          className="h-full rounded-full bg-primary/20 transition-[width] duration-700 ease-out"
+          className="h-full rounded-full bg-primary/20 transition-[width] duration-700 ease-[var(--ease-emphasized)]"
           style={{ width: `${pct}%` }}
-        >
-          <span aria-hidden="true" className="absolute inset-0 animate-pulse bg-[linear-gradient(90deg,transparent_0%,primary_50%,transparent_100%)] bg-[length:200%_100%]" />
-        </div>
+        />
       </div>
     </div>
   )

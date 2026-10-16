@@ -439,6 +439,10 @@ test('client: /admin is gated before its chunk loads, and admin UI is staff-only
   assert.doesNotMatch(common, /admin/);
   // Menu / palette entries require staff (and disappear in "view as member").
   assert.match(read('components/layout/UserMenu.tsx'), /isStaff &&/);
-  assert.match(read('components/layout/CommandPalette.tsx'), /isStaff \? \[ADMIN_ITEM\]/);
+  // Search (top bar and palette) builds its page list in one place.
+  const sources = read('components/layout/searchSources.ts');
+  assert.match(sources, /isStaff \? \[\{ \.\.\.ADMIN_ITEM/);
+  assert.match(sources, /featureOn\(featureForPath/);
+  assert.match(read('components/layout/CommandPalette.tsx'), /usePageEntries\(\)/);
   assert.match(read('context/SiteContext.tsx'), /isStaff: !preview/);
 });

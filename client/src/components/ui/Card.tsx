@@ -12,9 +12,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       ref={ref}
       className={cn(
         'card',
-        glow && 'glow-box-accent',
-        interactive &&
-          'cursor-pointer hover:-translate-y-0.5 hover:border-accent-brand/40 hover:shadow-[inset_0_1px_0_color-mix(in_oklch,var(--oklch-fg-0)_8%,transparent),0_16px_40px_-16px_color-mix(in_oklch,var(--color-accent-brand)_40%,transparent)]',
+        glow && 'glow-box',
+        // Answers the pointer with the card style's own hover border and a
+        // step up in elevation — no lift, no coloured halo.
+        interactive && 'card-interactive cursor-pointer',
         className,
       )}
       {...props}
@@ -33,7 +34,7 @@ export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingEle
   return (
     <h3
       className={cn(
-        'text-lg font-semibold text-text-primary mb-2',
+        'font-display text-[15px] leading-snug font-semibold tracking-[-0.01em] text-text-primary',
         className,
       )}
       {...props}
@@ -42,7 +43,7 @@ export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingEle
 }
 
 export function CardDescription({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn('text-sm text-text-muted mb-2', className)} {...props} />
+  return <p className={cn('mt-0.5 mb-0 text-[13px] text-text-secondary', className)} {...props} />
 }
 
 export function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
