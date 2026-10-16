@@ -13,6 +13,8 @@ import { MoreHorizontal } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
 import { prefetchHandlers } from '@/routes'
 import { cn } from '@/lib/utils'
+import { useSite } from '@/context/SiteContext'
+import { featureForPath } from '@/lib/site'
 import { openCommandPalette } from './CommandPalette'
 import { DockBadge } from './DockBadge'
 import { DockEditor } from './DockEditor'
@@ -176,8 +178,11 @@ export function Deck() {
   const { pathname } = useLocation()
   const reduce = useReducedMotion()
 
-  const items = dock.pinned.map((id) => DOCK_BY_ID.get(id)).filter((i): i is DockItem => !!i)
-  const rest = DOCK_ITEMS.filter((i) => !dock.pinned.includes(i.id))
+  // Sections switched off by an admin (feature flags) leave the dock.
+  const { featureOn } = useSite()
+  const enabled = (i: DockItem) => featureOn(featureForPath(i.to ?? ''))
+  const items = dock.pinned.map((id) => DOCK_BY_ID.get(id)).filter((i): i is DockItem => !!i && enabled(i))
+  const rest = DOCK_ITEMS.filter((i) => !dock.pinned.includes(i.id) && enabled(i))
   const mono = dock.iconStyle === 'mono'
   const moreActive = rest.some((i) => isActive(i, pathname))
 

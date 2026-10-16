@@ -1012,6 +1012,126 @@ async function initDb() {
   )`);
 
   await initGateTables();
+  await initAdminTables();
+}
+
+/* ===== Owner / admin system (src/authz/*, src/routes/admin.js) =====
+ * Roles live on users.role; everything else an admin can change lives here.
+ * Idempotent: CREATE … IF NOT EXISTS + guarded ALTERs, one batch on Turso. */
+async function initAdminTables() {
+  await run("ALTER TABLE users ADD COLUMN verified INTEGER DEFAULT 0").catch(() => {});
+  await runBatch([
+    // Per-user permission overrides: granted=1 adds a permission on top of
+    // the role's defaults, granted=0 takes one away.
+    [`CREATE TABLE IF NOT EXISTS user_permissions (
+      username TEXT NOT NULL,
+      perm TEXT NOT NULL,
+      granted INTEGER NOT NULL DEFAULT 1,
+      granted_by TEXT,
+      created_at INTEGER NOT NULL,
+      PRIMARY KEY (username, perm)
+    )`],
+    // Bans (no expiry) and suspensions (expires_at, ms). Lifted rows are kept
+    // as history.
+    [`CREATE TABLE IF NOT EXISTS user_bans (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      kind TEXT NOT NULL DEFAULT 'ban',
+      reason TEXT NOT NULL DEFAULT '',
+      expires_at INTEGER,
+      created_by TEXT,
+      created_at INTEGER NOT NULL,
+      lifted_at INTEGER,
+      lifted_by TEXT
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_user_bans_user ON user_bans(username, lifted_at)"],
+    [`CREATE TABLE IF NOT EXISTS site_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_by TEXT,
+      updated_at INTEGER NOT NULL
+    )`],
+    // kind 'banner' = the global announcement bar; 'broadcast' = an in-app
+    // notification sent to everyone.
+    [`CREATE TABLE IF NOT EXISTS announcements (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      kind TEXT NOT NULL DEFAULT 'banner',
+      title TEXT NOT NULL DEFAULT '',
+      body TEXT NOT NULL DEFAULT '',
+      link TEXT,
+      color TEXT NOT NULL DEFAULT 'brand',
+      pinned INTEGER NOT NULL DEFAULT 0,
+      active INTEGER NOT NULL DEFAULT 1,
+      expires_at INTEGER,
+      created_by TEXT,
+      created_at INTEGER NOT NULL
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_announcements_active ON announcements(active, kind, created_at)"],
+    [`CREATE TABLE IF NOT EXISTS audit_log (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      actor TEXT NOT NULL,
+      actor_role TEXT,
+      action TEXT NOT NULL,
+      target_type TEXT,
+      target TEXT,
+      before TEXT,
+      after TEXT,
+      ip TEXT,
+      created_at INTEGER NOT NULL
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_audit_log_time ON audit_log(created_at)"],
+    ["CREATE INDEX IF NOT EXISTS idx_audit_log_actor ON audit_log(actor, created_at)"],
+    // Generic reports: any content type (post, comment, message, profile, …).
+    [`CREATE TABLE IF NOT EXISTS reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      reporter TEXT NOT NULL,
+      content_type TEXT NOT NULL,
+      content_id TEXT NOT NULL,
+      target_user TEXT,
+      reason TEXT NOT NULL,
+      details TEXT NOT NULL DEFAULT '',
+      snapshot TEXT,
+      status TEXT NOT NULL DEFAULT 'open',
+      resolution TEXT,
+      resolved_by TEXT,
+      resolved_at INTEGER,
+      created_at INTEGER NOT NULL
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_reports_status ON reports(status, created_at)"],
+    ["CREATE UNIQUE INDEX IF NOT EXISTS idx_reports_once ON reports(reporter, content_type, content_id)"],
+    // Removed content (and the original text, so it can be restored).
+    [`CREATE TABLE IF NOT EXISTS moderated_content (
+      content_type TEXT NOT NULL,
+      content_id TEXT NOT NULL,
+      original TEXT,
+      reason TEXT NOT NULL DEFAULT '',
+      removed_by TEXT,
+      removed_at INTEGER NOT NULL,
+      PRIMARY KEY (content_type, content_id)
+    )`],
+    [`CREATE TABLE IF NOT EXISTS user_warnings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      reason TEXT NOT NULL,
+      created_by TEXT,
+      created_at INTEGER NOT NULL,
+      acknowledged_at INTEGER
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_user_warnings_user ON user_warnings(username, acknowledged_at)"],
+    // Invites that let someone register (and enter) while the site is private.
+    [`CREATE TABLE IF NOT EXISTS access_allowlist (
+      entry TEXT PRIMARY KEY COLLATE NOCASE,
+      note TEXT NOT NULL DEFAULT '',
+      created_by TEXT,
+      created_at INTEGER NOT NULL
+    )`],
+    // One row per user per active day (DAU / WAU in the admin overview).
+    [`CREATE TABLE IF NOT EXISTS user_daily_active (
+      username TEXT NOT NULL,
+      day TEXT NOT NULL,
+      PRIMARY KEY (day, username)
+    )`],
+  ]);
 }
 
 /* ===== GATE learning platform (src/routes/gate-me.js) =====
@@ -1260,4 +1380,4 @@ async function migratePerUser() {
   }
 }
 
-module.exports = { run, get, all, runMany, runBatch, initDb, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };
+module.exports = { run, get, all, runMany, runBatch, initDb, initAdminTables, dbInfo, migratePerUser, LEGACY_OWNER, onWrite };

@@ -1,0 +1,431 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Brand surface language shared by the owner / admin system: the coming-soon
+   page, the admin panel, site banners, badges and the report dialog.
+
+   Same vocabulary as the sign-in page (components/auth/auth.css): soft brand
+   light, film grain, 1px gradient hairlines, the blue → violet → teal ramp
+   on primary actions, Bricolage Grotesque for display type. Everything reads
+   the semantic tokens, so every palette works in light and dark.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --nx-b1: #2f5bea;
+  --nx-b2: #7c3aed;
+  --nx-b3: #0d9488;
+  --nx-gold: #b7791f;
+  --nx-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --nx-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --nx-hair: color-mix(in oklab, var(--color-text-primary) 9%, transparent);
+  --nx-hair-strong: color-mix(in oklab, var(--color-text-primary) 15%, transparent);
+}
+[data-mode='dark'] {
+  --nx-b1: #5b8cff;
+  --nx-b2: #9b6bff;
+  --nx-b3: #2dd4bf;
+  --nx-gold: #f5c451;
+}
+
+/* In the components layer so Tailwind utilities can still override. */
+@layer components {
+/* ── Type ── */
+.nx-display {
+  font-family: 'Bricolage Grotesque Variable', var(--font-display);
+  font-optical-sizing: auto;
+  letter-spacing: -0.03em;
+}
+.nx-grad-text {
+  background: linear-gradient(95deg, var(--nx-b1), var(--nx-b2) 55%, var(--nx-b3));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.nx-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum', 'ss01';
+}
+
+/* ── Atmosphere: soft pools of brand light + grain (position: relative parent) ── */
+.nx-atmos {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.nx-atmos::before {
+  content: '';
+  position: absolute;
+  inset: -12%;
+  background:
+    radial-gradient(42% 46% at 70% 18%, color-mix(in oklab, var(--nx-b1) 26%, transparent), transparent 70%),
+    radial-gradient(36% 40% at 22% 64%, color-mix(in oklab, var(--nx-b2) 20%, transparent), transparent 70%),
+    radial-gradient(40% 30% at 82% 96%, color-mix(in oklab, var(--nx-b3) 16%, transparent), transparent 70%);
+  filter: blur(10px);
+  animation: nx-breathe 18s var(--nx-ease) infinite alternate;
+}
+.nx-atmos::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: var(--nx-grain);
+  background-size: 160px;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+}
+[data-mode='light'] .nx-atmos::before {
+  opacity: 0.7;
+}
+[data-mode='light'] .nx-atmos::after {
+  opacity: 0.1;
+  mix-blend-mode: multiply;
+}
+.nx-atmos .nx-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(color-mix(in oklab, var(--color-text-primary) 20%, transparent) 1px, transparent 1.3px);
+  background-size: 22px 22px;
+  background-position: center;
+  mask-image: radial-gradient(56% 52% at 50% 46%, black 10%, transparent 100%);
+  opacity: 0.6;
+}
+.nx-atmos .nx-pointer {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(560px circle at var(--px, 50%) var(--py, 40%), color-mix(in oklab, var(--nx-b1) 12%, transparent), transparent 60%);
+}
+@keyframes nx-breathe {
+  from { transform: translate3d(-1.5%, 0, 0) scale(1); }
+  to { transform: translate3d(1.5%, -2%, 0) scale(1.06); }
+}
+
+/* ── Surfaces: quiet card with a 1px gradient hairline ── */
+.nx-panel {
+  position: relative;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--color-text-primary) 2.5%, transparent), transparent 120px),
+    var(--color-bg-surface);
+  box-shadow:
+    inset 0 1px 0 0 color-mix(in oklab, white 6%, transparent),
+    0 1px 2px oklch(0 0 0 / 0.08),
+    0 10px 30px -18px oklch(0 0 0 / 0.35);
+}
+[data-mode='light'] .nx-panel {
+  background: linear-gradient(180deg, white, color-mix(in oklab, white 70%, var(--color-bg-surface)) 140px), var(--color-bg-surface);
+  box-shadow:
+    inset 0 1px 0 0 white,
+    0 1px 2px oklch(0.2 0.02 260 / 0.05),
+    0 10px 28px -18px oklch(0.2 0.02 260 / 0.18);
+}
+.nx-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    165deg,
+    var(--nx-hair-strong),
+    var(--nx-hair) 35%,
+    color-mix(in oklab, var(--nx-b2) 12%, var(--nx-hair)) 85%,
+    color-mix(in oklab, var(--nx-b3) 18%, var(--nx-hair))
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.nx-divide > * + * {
+  border-top: 1px solid var(--nx-hair);
+}
+.nx-hairline {
+  border-color: var(--nx-hair);
+}
+
+/* ── Primary action: the brand gradient ── */
+.nx-cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.25rem;
+  padding: 0 1rem;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 13.5px;
+  white-space: nowrap;
+  background: linear-gradient(100deg, #3a63f0 0%, #6d3df0 52%, #0e9488 115%);
+  background-size: 140% 100%;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.28),
+    inset 0 -1px 0 rgb(0 0 0 / 0.18),
+    0 1px 2px rgb(0 0 0 / 0.2),
+    0 8px 22px -10px color-mix(in oklab, #6d3df0 75%, transparent);
+  transition: background-position 0.6s var(--nx-ease), box-shadow 0.3s var(--nx-ease), transform 0.2s var(--nx-ease), opacity 0.2s;
+  cursor: pointer;
+}
+.nx-cta:hover:not(:disabled) {
+  background-position: 60% 50%;
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.32),
+    inset 0 -1px 0 rgb(0 0 0 / 0.18),
+    0 1px 2px rgb(0 0 0 / 0.2),
+    0 12px 28px -10px color-mix(in oklab, #6d3df0 85%, transparent);
+}
+.nx-cta:active:not(:disabled) {
+  transform: translateY(1px) scale(0.99);
+}
+.nx-cta:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-bg-surface), 0 0 0 4px color-mix(in oklab, var(--nx-b1) 70%, transparent);
+}
+.nx-cta:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: saturate(0.7);
+}
+.nx-cta[data-size='lg'] {
+  height: 2.75rem;
+  padding: 0 1.25rem;
+  border-radius: 12px;
+  font-size: 14.5px;
+}
+.nx-cta svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Secondary / ghost buttons in the same family. */
+.nx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  height: 2.25rem;
+  padding: 0 0.875rem;
+  border-radius: 10px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  background: color-mix(in oklab, var(--color-text-primary) 4%, var(--color-bg-surface));
+  box-shadow: inset 0 0 0 1px var(--nx-hair-strong), inset 0 1px 0 color-mix(in oklab, white 6%, transparent);
+  transition: background-color 0.2s, box-shadow 0.2s, color 0.2s, transform 0.15s;
+  cursor: pointer;
+}
+.nx-btn:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--color-text-primary) 8%, var(--color-bg-surface));
+}
+.nx-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.nx-btn:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 1px var(--nx-hair-strong), 0 0 0 3px color-mix(in oklab, var(--nx-b1) 40%, transparent);
+}
+.nx-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.nx-btn[data-tone='danger'] {
+  color: var(--color-state-error);
+  background: color-mix(in oklab, var(--color-state-error) 8%, var(--color-bg-surface));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-state-error) 28%, transparent);
+}
+.nx-btn[data-tone='danger']:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--color-state-error) 14%, var(--color-bg-surface));
+}
+.nx-btn[data-size='sm'] {
+  height: 1.875rem;
+  padding: 0 0.625rem;
+  font-size: 12.5px;
+  border-radius: 8px;
+}
+.nx-btn svg {
+  width: 0.95rem;
+  height: 0.95rem;
+}
+.nx-btn[data-tone='danger-solid'] {
+  color: white;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--color-state-error) 92%, white), var(--color-state-error));
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), 0 6px 18px -8px color-mix(in oklab, var(--color-state-error) 70%, transparent);
+}
+.nx-btn[data-tone='danger-solid']:hover:not(:disabled) {
+  filter: brightness(1.06);
+}
+
+/* ── Fields ── */
+.nx-input {
+  height: 2.375rem;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid var(--nx-hair-strong);
+  background: color-mix(in oklab, var(--color-bg-app) 55%, transparent);
+  padding: 0 0.75rem;
+  font-size: 13.5px;
+  color: var(--color-text-primary);
+  box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.08);
+  transition: border-color 0.2s var(--nx-ease), box-shadow 0.3s var(--nx-ease), background-color 0.2s;
+}
+textarea.nx-input {
+  height: auto;
+  min-height: 5rem;
+  padding: 0.625rem 0.75rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+[data-mode='light'] .nx-input {
+  background: color-mix(in oklab, white 88%, var(--color-bg-app));
+  box-shadow: inset 0 1px 2px oklch(0.2 0.02 260 / 0.05);
+}
+.nx-input::placeholder {
+  color: var(--color-text-muted);
+  opacity: 0.85;
+}
+.nx-input:hover {
+  border-color: color-mix(in oklab, var(--color-text-primary) 22%, transparent);
+}
+.nx-input:focus {
+  outline: none;
+  border-color: color-mix(in oklab, var(--nx-b1) 70%, var(--color-text-primary) 10%);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--nx-b1) 16%, transparent), 0 0 20px -8px color-mix(in oklab, var(--nx-b1) 45%, transparent);
+}
+.nx-input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Switch ── */
+.nx-switch {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  width: 2.5rem;
+  height: 1.5rem;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-text-primary) 12%, transparent);
+  box-shadow: inset 0 0 0 1px var(--nx-hair-strong), inset 0 1px 2px oklch(0 0 0 / 0.15);
+  transition: background 0.25s var(--nx-ease), box-shadow 0.25s;
+  cursor: pointer;
+}
+.nx-switch[data-size='sm'] {
+  width: 2.125rem;
+  height: 1.25rem;
+}
+.nx-switch[aria-checked='true'] {
+  background: linear-gradient(100deg, #3a63f0, #6d3df0 70%, #0e9488 140%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 4px 14px -6px color-mix(in oklab, #6d3df0 70%, transparent);
+}
+.nx-switch > span {
+  position: absolute;
+  left: 3px;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 999px;
+  background: white;
+  box-shadow: 0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px -2px oklch(0 0 0 / 0.3);
+  transition: transform 0.3s var(--nx-ease);
+}
+.nx-switch[data-size='sm'] > span {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.nx-switch[aria-checked='true'] > span {
+  transform: translateX(1rem);
+}
+.nx-switch[data-size='sm'][aria-checked='true'] > span {
+  transform: translateX(0.875rem);
+}
+.nx-switch:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--nx-b1) 40%, transparent);
+}
+.nx-switch:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Chips ── */
+.nx-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 1.375rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 550;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  background: color-mix(in oklab, var(--color-text-primary) 6%, transparent);
+  box-shadow: inset 0 0 0 1px var(--nx-hair);
+}
+.nx-chip svg {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.nx-chip[data-tone='brand'] { color: var(--nx-b1); background: color-mix(in oklab, var(--nx-b1) 11%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--nx-b1) 24%, transparent); }
+.nx-chip[data-tone='violet'] { color: var(--nx-b2); background: color-mix(in oklab, var(--nx-b2) 11%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--nx-b2) 24%, transparent); }
+.nx-chip[data-tone='teal'] { color: var(--nx-b3); background: color-mix(in oklab, var(--nx-b3) 11%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--nx-b3) 24%, transparent); }
+.nx-chip[data-tone='gold'] { color: var(--nx-gold); background: color-mix(in oklab, var(--nx-gold) 13%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--nx-gold) 30%, transparent); }
+.nx-chip[data-tone='success'] { color: var(--color-state-success); background: color-mix(in oklab, var(--color-state-success) 11%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-state-success) 24%, transparent); }
+.nx-chip[data-tone='warning'] { color: var(--color-state-warning); background: color-mix(in oklab, var(--color-state-warning) 12%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-state-warning) 28%, transparent); }
+.nx-chip[data-tone='danger'] { color: var(--color-state-error); background: color-mix(in oklab, var(--color-state-error) 10%, transparent); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-state-error) 26%, transparent); }
+
+/* ── Skeleton shimmer ── */
+.nx-skel {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-text-primary) 5%, transparent) 0%,
+    color-mix(in oklab, var(--color-text-primary) 10%, transparent) 40%,
+    color-mix(in oklab, var(--color-text-primary) 5%, transparent) 80%
+  );
+  background-size: 300% 100%;
+  animation: nx-shimmer 1.6s linear infinite;
+}
+@keyframes nx-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* ── Site banners (announcement bar, maintenance, notices) ── */
+.nx-bar {
+  position: relative;
+  border-bottom: 1px solid color-mix(in oklab, var(--tone) 22%, var(--nx-hair));
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--tone) 14%, transparent), color-mix(in oklab, var(--tone) 6%, transparent) 50%, color-mix(in oklab, var(--tone) 12%, transparent)),
+    var(--color-bg-app);
+}
+.nx-bar[data-variant='maintenance'] {
+  background:
+    repeating-linear-gradient(-45deg, color-mix(in oklab, var(--tone) 9%, transparent) 0 10px, transparent 10px 20px),
+    linear-gradient(90deg, color-mix(in oklab, var(--tone) 14%, transparent), color-mix(in oklab, var(--tone) 8%, transparent)),
+    var(--color-bg-app);
+}
+.nx-bar-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 7px;
+  color: var(--tone);
+  background: color-mix(in oklab, var(--tone) 16%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--tone) 28%, transparent);
+}
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-atmos::before,
+  .nx-skel {
+    animation: none;
+  }
+}
