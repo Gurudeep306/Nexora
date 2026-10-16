@@ -59,3 +59,10 @@ venv/
 
 # Local AI-tool config (may hold API keys)
 opencode.json
+
+# Reference notes for the GATE course: never committed (third-party material).
+GATE_NOTES/
+gate_notes/
+Gate_Notes/
+# Internal per-author digests (summaries of the reference notes); kept on disk only.
+content/gate-notes/_digest/
