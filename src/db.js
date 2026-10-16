@@ -134,14 +134,19 @@ async function libsqlExec(sql, params) {
   }
 }
 
+const dbStats = require("./db-stats");
+
 const run = async (sql, params = []) => {
   await beforeQuery(sql);
+  let r;
   try {
-    return await runRaw(sql, params);
+    r = await runRaw(sql, params);
+    return r;
   } finally {
     // After the write lands (or fails), so a cache reload that raced it is
     // seen as stale rather than tagged as current.
     if (writeHooks.length) notifyWrite(sql);
+    if (r) await dbStats.record(sql, params, 0, r.changes || 0);
   }
 };
 
@@ -174,31 +179,8 @@ const runRaw = async (sql, params) => {
   });
 };
 
-const get = async (sql, params = []) => {
-  await beforeQuery(sql);
-  if (libsql) {
-    const rs = await libsqlExec(sql, params);
-    return plainRow(rs.rows[0], rs.columns);
-  }
-  return new Promise((resolve, reject) => {
-    if (_usingBuiltinSqlite) {
-      try {
-        const stmt = db.prepare(sql);
-        const row = Array.isArray(params) ? stmt.get(...params) : stmt.get(params);
-        resolve(row);
-      } catch (err) {
-        reject(err);
-      }
-      return;
-    }
-    db.get(sql, params, (err, row) => {
-      err ? reject(err) : resolve(row);
-    });
-  });
-};
-
-const all = async (sql, params = []) => {
-  await beforeQuery(sql);
+/** Every row of a query, without accounting (also used by db-stats itself). */
+const allRaw = async (sql, params = []) => {
   if (libsql) {
     const rs = await libsqlExec(sql, params);
     return rs.rows.map((r) => plainRow(r, rs.columns));
@@ -220,6 +202,51 @@ const all = async (sql, params = []) => {
   });
 };
 
+const get = async (sql, params = []) => {
+  await beforeQuery(sql);
+  if (libsql) {
+    const rs = await libsqlExec(sql, params);
+    const row = plainRow(rs.rows[0], rs.columns);
+    await dbStats.record(sql, params, rs.rows.length ? 1 : 0, Number(rs.rowsAffected || 0));
+    return row;
+  }
+  const row = await new Promise((resolve, reject) => {
+    if (_usingBuiltinSqlite) {
+      try {
+        const stmt = db.prepare(sql);
+        const r = Array.isArray(params) ? stmt.get(...params) : stmt.get(params);
+        resolve(r);
+      } catch (err) {
+        reject(err);
+      }
+      return;
+    }
+    db.get(sql, params, (err, r) => {
+      err ? reject(err) : resolve(r);
+    });
+  });
+  await dbStats.record(sql, params, row ? 1 : 0, 0);
+  return row;
+};
+
+const all = async (sql, params = []) => {
+  await beforeQuery(sql);
+  const rows = await allRaw(sql, params);
+  await dbStats.record(sql, params, rows.length, 0);
+  return rows;
+};
+
+// DB_STATS=1: EXPLAIN QUERY PLAN + table sizes for the read estimates. Both
+// bypass the accounting above (and EXPLAIN reads no table rows).
+dbStats.configure({
+  explain: (sql, params) => allRaw(`EXPLAIN QUERY PLAN ${sql}`, params),
+  tableSize: async (table) => {
+    if (!/^\w+$/.test(table)) return 0;
+    const r = await allRaw(`SELECT MAX(rowid) AS n FROM "${table}"`);
+    return r[0]?.n || 0;
+  },
+});
+
 /**
  * Run the same statement for many parameter rows. In cloud mode this is sent
  * as one batched round-trip (in chunks) instead of one HTTP request per row,
@@ -232,10 +259,11 @@ async function runMany(sql, rows, chunkSize = 200) {
       for (let i = 0; i < rows.length; i += chunkSize) {
         const slice = rows.slice(i, i + chunkSize);
         countQuery();
-        await libsql.batch(
+        const rs = await libsql.batch(
           slice.map((p) => ({ sql, args: toLibsqlArgs(p) })),
           "write",
         );
+        for (let j = 0; j < rs.length; j++) await dbStats.record(sql, slice[j], 0, Number(rs[j].rowsAffected || 0));
       }
     } finally {
       if (writeHooks.length) notifyWrite(sql);
@@ -260,6 +288,9 @@ async function runBatch(stmts) {
         list.map(([sql, params]) => ({ sql, args: toLibsqlArgs(params) })),
         "write",
       );
+      for (let j = 0; j < rs.length; j++) {
+        await dbStats.record(list[j][0], list[j][1] || [], rs[j].rows?.length || 0, Number(rs[j].rowsAffected || 0));
+      }
       return rs.map((r) => ({ changes: Number(r.rowsAffected || 0) }));
     } finally {
       if (writeHooks.length) for (const [sql] of list) notifyWrite(sql);
@@ -914,8 +945,9 @@ async function initDb() {
   // ===== SEED TUTORIALS =====
   // Seeding is helpful for local dev, but can make automated tests time out.
   if (!IS_TEST) {
-    const tutCount = await get("SELECT COUNT(*) as c FROM tutorials");
-    if (!tutCount || tutCount.c === 0) {
+    // Any row at all (COUNT(*) would read every tutorial on every boot).
+    const anyTutorial = await get("SELECT 1 AS x FROM tutorials LIMIT 1");
+    if (!anyTutorial) {
       await runMany(
         `INSERT INTO tutorials(category,topic,title,description,content,difficulty,order_index,estimated_time,code_examples) VALUES(?,?,?,?,?,?,?,?,?)`,
         tutorialData.map(([cat, topic, title, desc, diff, order, time, content, examples]) => [
@@ -1014,6 +1046,85 @@ async function initDb() {
   await initGateTables();
   await initAdminTables();
   await initSocialTables();
+  // Catalog version (triggers) + snapshot — src/problem-catalog.js.
+  // eslint-disable-next-line global-require
+  await require("./problem-catalog").initCatalogTables();
+}
+
+/* ===== Per-user totals for the leaderboard =====
+ * The XP / solved leaderboard used to aggregate ALL of `progress` and
+ * `daily_activity` (tens of thousands of billed reads per refresh). These
+ * triggers keep one row per user in step with every write, whoever makes it,
+ * so the leaderboard reads ~2 rows per user instead. The first boot with the
+ * triggers fills the table once from the existing rows. */
+async function initUserStats() {
+  const done = await get("SELECT v FROM catalog_meta WHERE k = 'user_stats'").catch(() => null);
+  const bump = (user, xp, solved, days) => [
+    // Not "INSERT OR IGNORE": inside a trigger the outer statement's
+    // conflict policy (e.g. an upsert's ABORT) would override it.
+    `INSERT INTO user_stats(username) SELECT ${user} WHERE NOT EXISTS (SELECT 1 FROM user_stats WHERE username = ${user});`,
+    `UPDATE user_stats SET xp = xp + (${xp}), solved = solved + (${solved}), active_days = active_days + (${days}) WHERE username = ${user};`,
+  ].join("\n      ");
+  const prAdd = (r) => bump(`${r}.username`, `COALESCE(${r}.xp_earned, 0)`, `${r}.status = 'solved'`, "0");
+  const prSub = (r) => bump(`${r}.username`, `-COALESCE(${r}.xp_earned, 0)`, `-(${r}.status = 'solved')`, "0");
+  const daAdd = (r) => bump(`${r}.username`, "0", "0", `COALESCE(${r}.problems_solved, 0) > 0`);
+  const daSub = (r) => bump(`${r}.username`, "0", "0", `-(COALESCE(${r}.problems_solved, 0) > 0)`);
+  await runBatch([
+    [`CREATE TABLE IF NOT EXISTS user_stats (
+      username TEXT PRIMARY KEY,
+      xp INTEGER NOT NULL DEFAULT 0,
+      solved INTEGER NOT NULL DEFAULT 0,
+      active_days INTEGER NOT NULL DEFAULT 0
+    )`],
+    [`CREATE TRIGGER IF NOT EXISTS trg_user_stats_pr_ins AFTER INSERT ON progress BEGIN
+      ${prAdd("NEW")}
+    END`],
+    [`CREATE TRIGGER IF NOT EXISTS trg_user_stats_pr_del AFTER DELETE ON progress BEGIN
+      ${prSub("OLD")}
+    END`],
+    [`CREATE TRIGGER IF NOT EXISTS trg_user_stats_pr_upd AFTER UPDATE OF username, status, xp_earned ON progress BEGIN
+      ${prSub("OLD")}
+      ${prAdd("NEW")}
+    END`],
+    [`CREATE TRIGGER IF NOT EXISTS trg_user_stats_da_ins AFTER INSERT ON daily_activity BEGIN
+      ${daAdd("NEW")}
+    END`],
+    [`CREATE TRIGGER IF NOT EXISTS trg_user_stats_da_del AFTER DELETE ON daily_activity BEGIN
+      ${daSub("OLD")}
+    END`],
+    [`CREATE TRIGGER IF NOT EXISTS trg_user_stats_da_upd AFTER UPDATE OF username, problems_solved ON daily_activity BEGIN
+      ${daSub("OLD")}
+      ${daAdd("NEW")}
+    END`],
+    // One-time fill (same batch as the triggers, before any request).
+    ...(done
+      ? []
+      : [
+          ["DELETE FROM user_stats"],
+          [`INSERT INTO user_stats(username, xp, solved, active_days)
+            SELECT username, SUM(xp), SUM(solved), SUM(days) FROM (
+              SELECT username, COALESCE(SUM(xp_earned), 0) AS xp, SUM(status = 'solved') AS solved, 0 AS days FROM progress GROUP BY username
+              UNION ALL
+              SELECT username, 0, 0, COUNT(*) FROM daily_activity WHERE problems_solved > 0 GROUP BY username
+            ) GROUP BY username`],
+          ["INSERT OR REPLACE INTO catalog_meta(k, v) VALUES('user_stats', 1)"],
+        ]),
+  ]);
+}
+
+/* ===== Indexes for the hot read paths (Turso bills every scanned row) =====
+ * Each one turns a per-request SCAN into a SEARCH; verified with EXPLAIN
+ * QUERY PLAN in tests/db-usage.test.js. One batch on Turso. */
+async function initUsageIndexes() {
+  await runBatch([
+    // Recent submissions of one user (stats, performance, AI tutor).
+    ["CREATE INDEX IF NOT EXISTS idx_submissions_user_time ON submissions(username, submitted_at)"],
+    // Staff/verified badge directory, owner fix-up at boot.
+    ["CREATE INDEX IF NOT EXISTS idx_users_role ON users(role)"],
+    ["CREATE INDEX IF NOT EXISTS idx_users_verified ON users(verified) WHERE verified = 1"],
+    // Case-insensitive username checks (sign-up, availability, owner).
+    ["CREATE INDEX IF NOT EXISTS idx_users_nocase ON users(username COLLATE NOCASE)"],
+  ]);
 }
 
 /* ===== Social network + profiles (src/routes/social.js) =====
@@ -1482,6 +1593,9 @@ async function migratePerUser() {
   if (!(await columnsOf("daily_activity")).includes("gate_attempts")) {
     await run("ALTER TABLE daily_activity ADD COLUMN gate_attempts INTEGER DEFAULT 0").catch(() => {});
   }
+  // After the per-user columns exist.
+  await initUsageIndexes();
+  await initUserStats();
   if (changed.length) {
     console.log(`✓ Per-user data: added owners to ${changed.join(", ")} (existing rows → ${LEGACY_OWNER})`);
   }

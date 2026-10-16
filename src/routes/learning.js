@@ -2,6 +2,12 @@ const express = require('express');
 const { errMessage } = require("../http-error");
 const forgePaths = require('../dev-roadmap-data');
 const { me, meSql } = require('../context');
+const { sharedCache } = require('../shared-cache');
+const { getCatalog, likeMatcher } = require('../problem-catalog');
+
+// Tutorial rows are site content (edited only in the Studio): read once and
+// kept until a write to `tutorials` (or 10 minutes).
+const tutorialCache = sharedCache({ name: 'tutorials', ttlMs: 10 * 60 * 1000, tables: ['tutorials'] });
 
 const TOPIC_TAG_MAP = {
   complexity: ['implementation', 'math'],
@@ -49,16 +55,18 @@ function createLearningRouter(deps) {
     try {
       const topic = req.params.topic;
       const tags = TOPIC_TAG_MAP[topic] || ['implementation'];
-      const placeholders = tags.map(() => 'p.tags LIKE ?').join(' OR ');
-      const params = tags.map(t => `%${t}%`);
-      const problems = await all(
-        `SELECT p.*, COALESCE(pr.status,'unsolved') as solve_status
-         FROM problems p LEFT JOIN progress pr ON pr.problem_rowid=p.id AND pr.username=${meSql()}
-         WHERE (${placeholders})
-         ORDER BY p.rating ASC
-         LIMIT 30`,
-        params
-      );
+      // From the in-memory catalog (was a LIKE walk over problems).
+      const [catalog, prog] = await Promise.all([
+        getCatalog(),
+        all('SELECT problem_rowid, status FROM progress WHERE username = ?', [me()]),
+      ]);
+      const status = new Map(prog.map((r) => [r.problem_rowid, r.status]));
+      const likes = tags.map((t) => likeMatcher(`%${t}%`));
+      const problems = catalog.rows
+        .filter((p) => likes.some((m) => m(p.tags)))
+        .sort((a, b) => (a.rating ?? -Infinity) - (b.rating ?? -Infinity) || a.id - b.id)
+        .slice(0, 30)
+        .map((p) => ({ ...p, solve_status: status.get(p.id) ?? 'unsolved' }));
       res.json({ ok: true, problems });
     } catch (e) {
       res.status(500).json({ ok: false, error: errMessage(e) });
@@ -68,10 +76,13 @@ function createLearningRouter(deps) {
   router.get('/api/tutorials', async (req, res) => {
     try {
       const { category } = req.query;
-      const tutorials =
-        category && category !== 'all'
-          ? await all('SELECT * FROM tutorials WHERE category = ? ORDER BY order_index', [category])
-          : await all('SELECT * FROM tutorials ORDER BY category, order_index');
+      const cat = category && category !== 'all' ? String(category) : '';
+      const rows = await tutorialCache.get(`list|${cat}`, () =>
+        cat
+          ? all('SELECT * FROM tutorials WHERE category = ? ORDER BY order_index', [cat])
+          : all('SELECT * FROM tutorials ORDER BY category, order_index'),
+      );
+      const tutorials = rows.map((t) => ({ ...t }));
       // One query for all progress rows instead of one per tutorial (N+1).
       const progRows = await all('SELECT tutorial_id, completed FROM tutorial_progress WHERE username = ?', [me()]);
       const doneById = new Map(progRows.map((r) => [r.tutorial_id, r.completed]));
