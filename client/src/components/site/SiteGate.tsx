@@ -1,8 +1,13 @@
-import type { ReactNode } from 'react'
+import { lazy, Suspense, type ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useSite } from '@/context/SiteContext'
 import { useAuth } from '@/context/AuthContext'
-import { BannedScreen, ComingSoon } from './ComingSoon'
+
+// Only visitors who are kept out ever download these screens.
+const ComingSoon = lazy(() => import('./ComingSoon').then((m) => ({ default: m.ComingSoon })))
+const BannedScreen = lazy(() => import('./ComingSoon').then((m) => ({ default: m.BannedScreen })))
+
+const Blank = () => <div className="min-h-dvh bg-bg-app" aria-busy="true" />
 
 /**
  * Wraps every route. While the site is private, visitors who aren't let in
@@ -20,17 +25,25 @@ export function SiteGate({ children }: { children: ReactNode }) {
 
   if (ban) {
     return (
-      <BannedScreen
-        ban={ban}
-        onDismiss={() => {
-          clearBan()
-          navigate('/auth', { replace: true })
-        }}
-      />
+      <Suspense fallback={<Blank />}>
+        <BannedScreen
+          ban={ban}
+          onDismiss={() => {
+            clearBan()
+            navigate('/auth', { replace: true })
+          }}
+        />
+      </Suspense>
     )
   }
   // First load: don't flash the app before we know whether it's private.
-  if ((loading && !status) || (blocked && stale)) return <div className="min-h-dvh bg-bg-app" aria-busy="true" />
-  if (blocked && pathname !== '/auth') return <ComingSoon message={status?.privateMessage} />
+  if ((loading && !status) || (blocked && stale)) return <Blank />
+  if (blocked && pathname !== '/auth') {
+    return (
+      <Suspense fallback={<Blank />}>
+        <ComingSoon message={status?.privateMessage} />
+      </Suspense>
+    )
+  }
   return <>{children}</>
 }

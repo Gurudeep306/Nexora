@@ -24,3 +24,11 @@ export function ago(ts: number | string | null | undefined): string {
   if (s < 86400 * 30) return `${Math.round(s / 86400)}d ago`
   return new Date(t).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 }
+
+/** Percentage change of the last `n` days against the `n` before. */
+export function delta(series: number[], n = 7): number | null {
+  const cur = series.slice(-n).reduce((s, v) => s + v, 0)
+  const prev = series.slice(-2 * n, -n).reduce((s, v) => s + v, 0)
+  if (!prev) return cur ? null : 0
+  return Math.round(((cur - prev) / prev) * 100)
+}
