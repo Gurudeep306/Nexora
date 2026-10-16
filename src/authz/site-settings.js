@@ -107,9 +107,15 @@ async function setSetting(key, value, by = null) {
   );
 }
 
-/** Private mode only applies when there is an owner who can still get in. */
+/**
+ * Private mode only applies when there is an owner who can still get in.
+ * SITE_PRIVATE=1 (e.g. on a staging copy) keeps the site private regardless of
+ * the stored setting, even before the owner's account exists there; the owner's
+ * reserved username can still sign up.
+ */
 function privateModeActive(settings) {
-  return !!(settings.private_mode.enabled && settings.owner_username);
+  if (!settings.owner_username) return false;
+  return String(process.env.SITE_PRIVATE || "") === "1" || !!settings.private_mode.enabled;
 }
 
 module.exports = {
