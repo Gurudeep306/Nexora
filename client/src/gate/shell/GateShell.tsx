@@ -90,7 +90,7 @@ function Countdown() {
     return (
       <Link
         to={GATE_ROUTES.planner}
-        className="hidden h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12.5px] text-text-muted transition-colors hover:bg-bg-surface-2 hover:text-text-primary sm:inline-flex"
+        className="hidden h-8 items-center gap-1.5 rounded-lg px-2.5 text-[12.5px] text-text-secondary transition-colors hover:bg-bg-surface-2 hover:text-text-primary sm:inline-flex"
       >
         <Icon name="calendar" className="size-3.5" /> Set exam date
       </Link>

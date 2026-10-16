@@ -267,6 +267,7 @@ export const gateApi = {
 export const GATE_ROUTES = {
   home: '/gate',
   practice: '/gate/practice',
+  notes: '/gate/notes',
   review: '/gate/review',
   daily: '/gate/daily',
   tests: '/gate/tests',

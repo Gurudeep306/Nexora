@@ -14,6 +14,7 @@ export interface GateNavItem {
 export const GATE_NAV: GateNavItem[] = [
   { id: 'home', label: 'Home', to: GATE_ROUTES.home, icon: 'home', hint: 'Your command centre' },
   { id: 'practice', label: 'Practice', to: GATE_ROUTES.practice, icon: 'practice', hint: 'The full PYQ bank' },
+  { id: 'notes', label: 'Notes', to: GATE_ROUTES.notes, icon: 'learn', hint: 'Course notes, subject by subject', prefix: true },
   { id: 'review', label: 'Review', to: GATE_ROUTES.review, icon: 'brain', hint: 'Spaced repetition queue' },
   { id: 'daily', label: 'Daily', to: GATE_ROUTES.daily, icon: 'sunrise', hint: "Today's challenge" },
   { id: 'tests', label: 'Tests', to: GATE_ROUTES.tests, icon: 'timer', hint: 'Custom & sectional tests', prefix: true },
