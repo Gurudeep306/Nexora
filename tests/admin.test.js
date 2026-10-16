@@ -100,6 +100,18 @@ test('the owner comes from OWNER_USERNAME, else config/site.json', () => {
   assert.equal(probe({ OWNER_USERNAME: 'someone_else' }), 'someone_else', 'env overrides');
 });
 
+test('SITE_PRIVATE=1 forces private mode on (staging copies), even with the stored setting off', () => {
+  const { execFileSync } = require('node:child_process');
+  const probe = (env, enabled) =>
+    execFileSync(process.execPath, ['-e', `const s=require('./src/authz/site-settings');process.stdout.write(String(s.privateModeActive({private_mode:{enabled:${enabled}},owner_username:'Gurudeep306'})))`], {
+      cwd: path.join(__dirname, '..'),
+      env: { ...process.env, NODE_ENV: 'test', DB_PATH: ':memory:', ...env },
+    }).toString();
+  assert.equal(probe({ SITE_PRIVATE: '' }, false), 'false', 'off by default');
+  assert.equal(probe({ SITE_PRIVATE: '1' }, false), 'true', 'env forces it on');
+  assert.equal(probe({ SITE_PRIVATE: '' }, true), 'true', 'stored setting still works');
+});
+
 test('private mode stays OFF until the owner account exists', async () => {
   assert.equal((await call('GET', '/api/problems')).status, 200, 'public: no owner account yet');
   assert.match(serverLog, /has no account yet/);
