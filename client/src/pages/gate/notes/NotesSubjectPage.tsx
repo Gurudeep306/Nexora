@@ -93,6 +93,27 @@ function SubjectHome({ data }: { data: SubjectTree }) {
           </dl>
           <ProgressRing done={done} total={lessons.length} size={64} label={`${done} of ${lessons.length} lessons completed`} />
         </section>
+        {(subject.coverage?.total ?? 0) > 0 && (
+          <section className="notes-coverage" aria-label="PYQ coverage">
+            <div className="notes-coverage-head">
+              <Icon name="gate" className="size-4" aria-hidden="true" />
+              <strong>
+                {subject.coverage.covered}/{subject.coverage.total} PYQs covered
+              </strong>
+              <span>every past question in this subject, linked to the lesson block that teaches it</span>
+            </div>
+            <span
+              className="notes-coverage-bar"
+              role="progressbar"
+              aria-label="PYQs covered by the notes"
+              aria-valuemin={0}
+              aria-valuemax={subject.coverage.total}
+              aria-valuenow={subject.coverage.covered}
+            >
+              <span style={{ width: `${(subject.coverage.covered / subject.coverage.total) * 100}%` }} />
+            </span>
+          </section>
+        )}
 
         <ol className="notes-chapters">
           {chapters.map((ch) => {

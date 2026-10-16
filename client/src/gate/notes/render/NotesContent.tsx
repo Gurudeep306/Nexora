@@ -34,6 +34,8 @@ export interface NotesContext {
   idPrefix?: string
   /** Start worked examples with every step shown (the font samples). */
   expandExamples?: boolean
+  /** Lesson blocks and headings by id, for "Concepts this tests" chips. */
+  concepts?: Record<string, string>
 }
 const Ctx = createContext<NotesContext | null>(null)
 export const NotesContextProvider = Ctx.Provider
@@ -333,6 +335,7 @@ const BLOCK_RENDERERS: Record<BlockName, (p: BlockProps) => ReactNode> = {
   ),
   pyq: ({ node }) => (
     <Frame node={node} as="div" icon="gate" kicker="Previous-year question">
+      <ConceptChips tests={node.attrs.tests} />
       <Suspense fallback={<div className="nb-loading" aria-busy="true" />}>
         <PyqEmbedSlot id={node.attrs.id!} />
       </Suspense>
@@ -493,6 +496,28 @@ function Example({ node }: { node: DirectiveNode }) {
         )}
       </div>
     </Frame>
+  )
+}
+
+/** "Concepts this tests": chips that jump to the blocks a PYQ draws on. */
+function ConceptChips({ tests }: { tests?: string }) {
+  const ctx = useNotes()
+  const did = useDomId()
+  const ids = (tests ?? '').split(/[\s,]+/).filter(Boolean)
+  if (!ids.length) return null
+  return (
+    <div className="nb-concepts">
+      <span className="nb-concepts-label">Concepts this tests</span>
+      <ul>
+        {ids.map((id) => (
+          <li key={id}>
+            <a href={`#${did(id)}`} className="nb-chip">
+              {ctx?.concepts?.[id] ?? id}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 
