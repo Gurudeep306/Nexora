@@ -1,97 +1,113 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, SearchX } from 'lucide-react'
 import { Icon } from '@/components/icon/Icon'
 import { iconComponent } from '@/components/icon/iconComponent'
 import { useAuth } from '@/context/AuthContext'
 import { useSite } from '@/context/SiteContext'
-import { featureForPath } from '@/lib/site'
 import { AnimatedNumber, Avatar, BackButton, Kbd, RotatingText, SearchCombobox, Tooltip, type ComboboxItem } from '@/components/ui'
-import { ACCOUNT_ITEMS, ADMIN_ITEM, CREATE_SECTION, NAV_SECTIONS, navMeta } from '@/config/nav'
+import { navMeta } from '@/config/nav'
 import { Notifications } from './Notifications'
 import { LookPopover } from '@/components/look/LookPopover'
 import { openCommandPalette } from './CommandPalette'
 import { openAssistantEvent } from '@/context/AgentContext'
 import { UserMenu } from './UserMenu'
-import { api } from '@/lib/api'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import { LogoMark } from '@/components/brand/Logo'
-import type { Problem, ProblemsResponse } from '@/components/problems/types'
+import { useProblemSearch } from '@/lib/problemSearch'
+import { pushRecentSearch, useRecentSearches } from '@/lib/recentSearches'
+import { describeRecent, pageMatches, usePageEntries, type PageEntry } from './searchSources'
+import { ClearRecents } from './ClearRecents'
 
 const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 
 export function Topbar() {
   const { user } = useAuth()
-  const { can, featureOn, isStaff } = useSite()
+  const { featureOn } = useSite()
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const meta = navMeta(pathname)
 
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<Problem[]>([])
-  const [searching, setSearching] = useState(false)
-
-  useEffect(() => {
-    const q = query.trim()
-    if (q.length < 2) {
-      setResults([])
-      setSearching(false)
-      return
-    }
-    setSearching(true)
-    const t = setTimeout(async () => {
-      try {
-        const res = await api.get<ProblemsResponse>('/api/problems', { query: { search: q, limit: 6 } })
-        setResults(res.problems ?? [])
-      } catch {
-        setResults([])
-      } finally {
-        setSearching(false)
-      }
-    }, 220)
-    return () => clearTimeout(t)
-  }, [query])
+  const pages = usePageEntries()
+  const recents = useRecentSearches()
+  const q = query.trim()
+  const { results, loading: searching, settled } = useProblemSearch(query)
 
   const items = useMemo<ComboboxItem[]>(() => {
-    const q = query.trim().toLowerCase()
-    const pages: ComboboxItem[] = [
-      ...NAV_SECTIONS.flatMap((s) => s.items).filter((i) => featureOn(featureForPath(i.to))),
-      // Creator tools follow the problems.manage permission (admins by default).
-      ...CREATE_SECTION.items.filter((i) => !i.adminOnly || can('problems.manage')),
-      ...ACCOUNT_ITEMS,
-      ...(isStaff ? [ADMIN_ITEM] : []),
-    ]
-      .filter((n) => !q || n.label.toLowerCase().includes(q) || n.to.toLowerCase().includes(q))
-      .map((n) => ({
+    const openPage = (n: PageEntry) => {
+      pushRecentSearch({ kind: 'page', label: n.label, to: n.to, icon: n.icon })
+      if (n.external) window.location.href = n.to
+      else navigate(n.to)
+    }
+    // Nothing typed yet: what you looked for last, then every page.
+    if (!q) {
+      const recent: ComboboxItem[] = recents.slice(0, 5).map((r, i) => {
+        const d = describeRecent(r)
+        return {
+          id: `recent:${i}`,
+          group: 'Recent',
+          label: d.label,
+          hint: d.hint,
+          icon: d.icon,
+          keepOpen: r.kind === 'query',
+          onSelect: () => (r.kind === 'query' ? setQuery(r.q) : navigate(r.to)),
+        }
+      })
+      const all = pages.map<ComboboxItem>((n) => ({
         id: `page:${n.to}`,
         group: 'Go to',
         label: n.label,
-        hint: n.to,
+        hint: n.section,
         icon: iconComponent(n.icon),
-        onSelect: () => (n.external ? (window.location.href = n.to) : navigate(n.to)),
+        onSelect: () => openPage(n),
       }))
-    const problems: ComboboxItem[] = results.map((p) => ({
-      id: `problem:${p.id}`,
-      group: 'Problems',
-      label: p.title,
-      icon: iconComponent('problems'),
-      trailing: <PlatformBadge platform={p.platform} />,
-      onSelect: () => navigate(`/solve/${p.id}`),
-    }))
+      return [...recent, ...all]
+    }
+    const pageHits = pages
+      .filter((n) => pageMatches(n, q))
+      .map<ComboboxItem>((n) => ({
+        id: `page:${n.to}`,
+        group: 'Pages',
+        label: n.label,
+        hint: n.section,
+        icon: iconComponent(n.icon),
+        onSelect: () => openPage(n),
+      }))
+    const problems: ComboboxItem[] =
+      q.length >= 2
+        ? results.map((p) => ({
+            id: `problem:${p.id}`,
+            group: 'Problems',
+            label: p.title,
+            icon: iconComponent('problems'),
+            trailing: <PlatformBadge platform={p.platform} />,
+            onSelect: () => {
+              pushRecentSearch({ kind: 'problem', label: p.title, to: `/solve/${p.id}`, hint: p.platform })
+              navigate(`/solve/${p.id}`)
+            },
+          }))
+        : []
     const tail: ComboboxItem[] =
       q.length >= 2
         ? [
             {
               id: 'all',
-              group: 'Problems',
-              label: `Search all problems for “${query.trim()}”`,
+              group: problems.length ? 'Problems' : 'Search',
+              label: `Search all problems for “${q}”`,
+              plain: true,
               icon: iconComponent('search'),
-              onSelect: () => navigate(`/problems?q=${encodeURIComponent(query.trim())}`),
+              onSelect: () => {
+                pushRecentSearch({ kind: 'query', q })
+                navigate(`/problems?q=${encodeURIComponent(q)}`)
+              },
             },
           ]
         : []
-    return [...pages, ...problems, ...tail]
-  }, [query, results, can, featureOn, isStaff, navigate])
+    return [...pageHits, ...problems, ...tail]
+  }, [q, results, pages, recents, navigate])
+
+  const noMatches = q.length >= 2 && settled && results.length === 0 && !pages.some((n) => pageMatches(n, q))
 
   const handleUniversalBack = useCallback(() => {
     // If browser history has a previous entry in this session, navigate back
@@ -123,7 +139,7 @@ export function Topbar() {
         <Link
           to="/hub"
           aria-label="NexoraGuru home"
-          className="hidden shrink-0 rounded-lg transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-brand md:block"
+          className="hidden shrink-0 rounded-lg transition-opacity hover:opacity-85 md:block"
         >
           <LogoMark size={28} interactive />
         </Link>
@@ -166,6 +182,18 @@ export function Topbar() {
         onSelect={() => setQuery('')}
         loading={searching}
         emptyText="Nothing matches. Try a problem name or page."
+        groupActions={{ Recent: <ClearRecents /> }}
+        notice={
+          noMatches ? (
+            <div className="flex items-start gap-2.5 px-2.5 pt-2 pb-2.5">
+              <SearchX className="mt-0.5 size-4 shrink-0 text-text-muted" aria-hidden="true" />
+              <p className="mb-0 text-[12.5px] leading-snug text-text-secondary">
+                No pages or problem titles match <span className="font-medium text-text-primary">“{q}”</span>.
+                <span className="block text-text-muted">Check the spelling, or search the full library below.</span>
+              </p>
+            </div>
+          ) : null
+        }
         placeholderNode={<RotatingText items={['Search problems…', 'Jump to a page…', 'Find a topic…', 'Run an action…']} />}
         containerClassName="mx-auto hidden w-full max-w-md md:block"
         className="text-[13px]"
@@ -174,7 +202,7 @@ export function Topbar() {
           <button
             type="button"
             onClick={openCommandPalette}
-            className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-[12px] text-foreground-faint transition-colors hover:bg-foreground/5 hover:text-foreground"
+            className="flex h-8 w-full cursor-pointer items-center gap-2 rounded-[calc(var(--radius-control)*0.8)] px-2.5 text-[12px] text-text-muted transition-colors hover:bg-text-primary/[0.05] hover:text-text-primary active:!scale-100"
           >
             <Icon name="keyboard" className="size-3.5" />
             <span className="flex-1 text-left">Open the full command palette</span>
@@ -190,7 +218,7 @@ export function Topbar() {
         <button
           onClick={openCommandPalette}
           aria-label="Search"
-          className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 md:hidden"
+          className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-text-primary/6 hover:text-text-primary md:hidden"
         >
           <Icon name="search" className="size-[17px]" />
         </button>
@@ -218,7 +246,7 @@ export function Topbar() {
             <button
               onClick={() => openAssistantEvent()}
               aria-label="Open AI assistant"
-              className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-accent-brand/5 hover:text-accent-brand"
+              className="flex size-9 cursor-pointer items-center justify-center rounded-lg text-text-secondary transition-colors hover:bg-text-primary/6 hover:text-text-primary"
             >
               <Icon name="sparkles" className="size-[17px]" />
             </button>

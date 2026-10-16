@@ -2,30 +2,36 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'motion/react'
-import { ArrowRight, CornerDownLeft, Search } from 'lucide-react'
+import { CornerDownLeft, Loader2, Search, SearchX } from 'lucide-react'
 import { iconComponent } from '@/components/icon/iconComponent'
-import { Kbd } from '@/components/ui'
+import { Highlight, Kbd } from '@/components/ui'
 import { openShortcuts } from './ShortcutsDialog'
 import { openAssistantEvent } from '@/context/AgentContext'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { ACCOUNT_ITEMS, ADMIN_ITEM, CREATE_SECTION, NAV_SECTIONS } from '@/config/nav'
+import { fadeInOut, popIn } from '@/lib/motion'
 import { useAuth } from '@/context/AuthContext'
-import { useSite } from '@/context/SiteContext'
-import { featureForPath } from '@/lib/site'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import type { Problem, ProblemsResponse } from '@/components/problems/types'
+import { useProblemSearch } from '@/lib/problemSearch'
+import { pushRecentSearch, useRecentSearches } from '@/lib/recentSearches'
+import { describeRecent, pageMatches, usePageEntries } from './searchSources'
+import { ClearRecents } from './ClearRecents'
 // Theme entries (Theme Centre)
 import { useTheme } from '@/context/ThemeContext'
 import { PALETTES } from '@/theme/palettes'
 
+type Group = 'Recent' | 'Go to' | 'Pages' | 'Problems' | 'Themes' | 'Actions' | 'Try instead'
+
 type Item = {
   id: string
-  group: 'Go to' | 'Problems' | 'Themes' | 'Actions'
+  group: Group
   label: string
   hint?: string
   icon: React.ComponentType<{ className?: string }>
   problem?: Problem
+  /** Don't mark the query inside this label. */
+  plain?: boolean
   run: () => void | Promise<void>
 }
 
@@ -39,20 +45,20 @@ export const openCommandPalette = () => window.dispatchEvent(new Event('nexora:p
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<Problem[]>([])
   const [active, setActive] = useState(0)
-  const [searching, setSearching] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
   const { logout } = useAuth()
-  const { can, featureOn, isStaff } = useSite()
   const { mode, setAppearance, setLook } = useTheme()
+  const pages = usePageEntries()
+  const recents = useRecentSearches()
+  const q = query.trim()
+  const { results, loading: searching, settled } = useProblemSearch(query, { enabled: open })
 
   const close = useCallback(() => {
     setOpen(false)
     setQuery('')
-    setResults([])
     setActive(0)
   }, [])
 
@@ -81,28 +87,6 @@ export function CommandPalette() {
     if (open) requestAnimationFrame(() => inputRef.current?.focus())
   }, [open])
 
-  // Debounced problem search
-  useEffect(() => {
-    if (!open) return
-    const q = query.trim()
-    if (q.length < 2) {
-      setResults([])
-      return
-    }
-    setSearching(true)
-    const t = setTimeout(async () => {
-      try {
-        const res = await api.get<ProblemsResponse>('/api/problems', { query: { search: q, limit: 6 } })
-        setResults(res.problems ?? [])
-      } catch {
-        setResults([])
-      } finally {
-        setSearching(false)
-      }
-    }, 220)
-    return () => clearTimeout(t)
-  }, [query, open])
-
   const go = useCallback(
     (to: string, external?: boolean) => {
       close()
@@ -112,23 +96,15 @@ export function CommandPalette() {
     [close, navigate],
   )
 
-  const items = useMemo<Item[]>(() => {
-    const q = query.trim().toLowerCase()
-    const pages = [
-      ...NAV_SECTIONS.flatMap((s) => s.items).filter((i) => featureOn(featureForPath(i.to))),
-      // Creator tools follow the problems.manage permission (admins by default).
-      ...CREATE_SECTION.items.filter((i) => !i.adminOnly || can('problems.manage')),
-      ...ACCOUNT_ITEMS,
-      ...(isStaff ? [ADMIN_ITEM] : []),
-    ].map<Item>((n) => ({
-      id: `page:${n.to}`,
-      group: 'Go to',
-      label: n.label,
-      hint: n.to,
-      icon: iconComponent(n.icon),
-      run: () => go(n.to, n.external),
-    }))
-    const actions: Item[] = [
+  const lower = q.toLowerCase()
+  const pageHits = useMemo(() => (q ? pages.filter((n) => pageMatches(n, q)) : pages), [pages, q])
+  const themeHits = useMemo(
+    () => (q.length >= 2 ? PALETTES.filter((p) => p.name.toLowerCase().includes(lower)).slice(0, 5) : []),
+    [q, lower],
+  )
+
+  const actions = useMemo<Item[]>(
+    () => [
       {
         id: 'act:random',
         group: 'Actions',
@@ -150,7 +126,7 @@ export function CommandPalette() {
         id: 'act:mode',
         group: 'Actions',
         label: mode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
-        hint: 'Toggle light/dark',
+        hint: 'Appearance',
         icon: iconComponent(mode === 'dark' ? 'sun' : 'moon'),
         run: () => {
           close()
@@ -172,17 +148,6 @@ export function CommandPalette() {
         },
       },
       {
-        id: 'act:assistant',
-        group: 'Actions',
-        label: q.length >= 2 ? `Ask NexoraGuru AI: “${query.trim()}”` : 'Ask NexoraGuru AI',
-        hint: '⌘J',
-        icon: iconComponent('sparkles'),
-        run: () => {
-          close()
-          openAssistantEvent(q.length >= 2 ? query.trim() : undefined)
-        },
-      },
-      {
         id: 'act:logout',
         group: 'Actions',
         label: 'Log out',
@@ -193,47 +158,124 @@ export function CommandPalette() {
           navigate('/auth')
         },
       },
-    ]
-    const match = (i: Item) => !q || i.label.toLowerCase().includes(q) || i.hint?.toLowerCase().includes(q)
-    const problemItems: Item[] = results.map((p) => ({
-      id: `problem:${p.id}`,
-      group: 'Problems',
-      label: p.title,
-      hint: `${p.problem_id}${p.rating ? ` · ${p.rating}` : ''}`,
-      icon: iconComponent('problems'),
-      problem: p,
-      run: () => go(`/solve/${p.id}`),
-    }))
-    if (q.length >= 2) {
-      problemItems.push({
-        id: 'act:search-all',
-        group: 'Problems',
-        label: `Search all problems for “${query.trim()}”`,
-        icon: iconComponent('search'),
-        run: () => go(`/problems?q=${encodeURIComponent(query.trim())}`),
-      })
-    }
-    // Typing a theme's name offers to apply it directly.
-    const themeItems: Item[] =
-      q.length >= 2
-        ? PALETTES.filter((p) => p.name.toLowerCase().includes(q))
-            .slice(0, 5)
-            .map((p) => ({
-              id: `theme:${p.id}`,
-              group: 'Themes',
-              label: `Use theme: ${p.name}`,
-              hint: p.dark && p.light ? 'Light & dark' : p.dark ? 'Dark' : 'Light',
-              icon: iconComponent('palette'),
-              run: () => {
-                close()
-                setLook({ theme: p.id })
-              },
-            }))
-        : []
-    return [...pages.filter(match), ...problemItems, ...themeItems, ...actions.filter(match)]
-  }, [query, results, can, featureOn, isStaff, go, close, logout, navigate, mode, setAppearance, setLook])
+    ],
+    [mode, close, go, navigate, setAppearance, logout],
+  )
 
-  useEffect(() => setActive(0), [query, results.length])
+  const askAi = useMemo<Item>(
+    () => ({
+      id: 'act:assistant',
+      group: 'Actions',
+      label: q.length >= 2 ? `Ask NexoraGuru AI: “${q}”` : 'Ask NexoraGuru AI',
+      plain: true,
+      hint: '⌘J',
+      icon: iconComponent('sparkles'),
+      run: () => {
+        close()
+        openAssistantEvent(q.length >= 2 ? q : undefined)
+      },
+    }),
+    [q, close],
+  )
+
+  const searchAll = useMemo<Item>(
+    () => ({
+      id: 'act:search-all',
+      group: 'Problems',
+      label: `Search all problems for “${q}”`,
+      plain: true,
+      icon: iconComponent('search'),
+      run: () => {
+        pushRecentSearch({ kind: 'query', q })
+        go(`/problems?q=${encodeURIComponent(q)}`)
+      },
+    }),
+    [q, go],
+  )
+
+  // Nothing matched: the query got no page, problem, theme or action.
+  const noMatches =
+    q.length >= 2 &&
+    settled &&
+    results.length === 0 &&
+    pageHits.length === 0 &&
+    themeHits.length === 0 &&
+    !actions.some((i) => i.label.toLowerCase().includes(lower))
+
+  const items = useMemo<Item[]>(() => {
+    if (!q) {
+      const recent: Item[] = recents.slice(0, 5).map((r, i) => {
+        const d = describeRecent(r)
+        return {
+          id: `recent:${i}`,
+          group: 'Recent',
+          label: d.label,
+          hint: d.hint,
+          icon: d.icon,
+          run: () => (r.kind === 'query' ? setQuery(r.q) : go(r.to)),
+        }
+      })
+      const goTo = pages.map<Item>((n) => ({
+        id: `page:${n.to}`,
+        group: 'Go to',
+        label: n.label,
+        hint: n.section,
+        icon: iconComponent(n.icon),
+        run: () => {
+          pushRecentSearch({ kind: 'page', label: n.label, to: n.to, icon: n.icon })
+          go(n.to, n.external)
+        },
+      }))
+      return [...recent, ...goTo, ...actions, askAi]
+    }
+    if (noMatches) {
+      return [{ ...searchAll, group: 'Try instead' }, { ...askAi, group: 'Try instead' }]
+    }
+    const pageItems = pageHits.map<Item>((n) => ({
+      id: `page:${n.to}`,
+      group: 'Pages',
+      label: n.label,
+      hint: n.section,
+      icon: iconComponent(n.icon),
+      run: () => {
+        pushRecentSearch({ kind: 'page', label: n.label, to: n.to, icon: n.icon })
+        go(n.to, n.external)
+      },
+    }))
+    const problemItems: Item[] = q.length >= 2
+      ? [
+          ...results.map<Item>((p) => ({
+            id: `problem:${p.id}`,
+            group: 'Problems',
+            label: p.title,
+            hint: `${p.problem_id}${p.rating ? ` · ${p.rating}` : ''}`,
+            icon: iconComponent('problems'),
+            problem: p,
+            run: () => {
+              pushRecentSearch({ kind: 'problem', label: p.title, to: `/solve/${p.id}`, hint: p.platform })
+              go(`/solve/${p.id}`)
+            },
+          })),
+          searchAll,
+        ]
+      : []
+    // Typing a theme's name offers to apply it directly.
+    const themeItems: Item[] = themeHits.map((p) => ({
+      id: `theme:${p.id}`,
+      group: 'Themes',
+      label: `Use theme: ${p.name}`,
+      hint: p.dark && p.light ? 'Light & dark' : p.dark ? 'Dark' : 'Light',
+      icon: iconComponent('palette'),
+      run: () => {
+        close()
+        setLook({ theme: p.id })
+      },
+    }))
+    const actionItems = [...actions.filter((i) => i.label.toLowerCase().includes(lower) || i.hint?.toLowerCase().includes(lower)), askAi]
+    return [...pageItems, ...problemItems, ...themeItems, ...actionItems]
+  }, [q, lower, recents, pages, pageHits, results, themeHits, actions, askAi, searchAll, noMatches, go, close, setLook])
+
+  useEffect(() => setActive(0), [q, results.length, noMatches])
 
   useEffect(() => {
     listRef.current?.querySelector<HTMLElement>(`[data-index="${active}"]`)?.scrollIntoView({ block: 'nearest' })
@@ -260,25 +302,20 @@ export function CommandPalette() {
     <AnimatePresence>
       {open && (
         <div className="fixed inset-0 z-[1050] flex items-start justify-center p-3 pt-[10vh] sm:p-4 sm:pt-[14vh]" onKeyDown={onKeyDown}>
-          <motion.div
-            className="absolute inset-0 bg-bg-app/55 backdrop-blur-[3px]"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={close}
-          />
+          <motion.div className="absolute inset-0 bg-bg-app/60 backdrop-blur-[2px]" {...fadeInOut} onClick={close} />
           <motion.div
             role="dialog"
             aria-modal="true"
             aria-label="Command palette"
-            className="pop-surface relative w-full max-w-[640px] overflow-hidden !rounded-2xl"
-            initial={{ opacity: 0, y: -10, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -6, scale: 0.98, transition: { duration: 0.1 } }}
-            transition={{ type: 'spring', stiffness: 520, damping: 36 }}
+            className="pop-surface relative flex max-h-[min(36rem,80vh)] w-full max-w-[640px] flex-col overflow-hidden !rounded-[var(--radius-sheet)]"
+            {...popIn}
           >
-            <div className="flex items-center gap-3 border-b border-border/10 px-4">
-              <Search className="size-4 shrink-0 text-accent-brand" aria-hidden="true" />
+            <div className="flex shrink-0 items-center gap-3 border-b border-border px-4">
+              {searching ? (
+                <Loader2 className="size-[18px] shrink-0 animate-spin text-text-muted" aria-hidden="true" />
+              ) : (
+                <Search className="size-[18px] shrink-0 text-text-muted" aria-hidden="true" />
+              )}
               <input
                 ref={inputRef}
                 value={query}
@@ -289,77 +326,81 @@ export function CommandPalette() {
                 aria-expanded="true"
                 aria-controls="palette-list"
                 aria-activedescendant={items[active] ? `palette-${items[active].id}` : undefined}
-                className="h-14 w-full bg-transparent text-[15px] text-text-primary placeholder:text-text-primary/60 focus:outline-none"
+                className="h-14 w-full bg-transparent text-[15px] text-text-primary outline-none placeholder:text-text-muted focus-visible:outline-none"
               />
-              <Kbd className="hidden sm:inline-flex">ESC</Kbd>
+              <Kbd className="hidden sm:inline-flex">Esc</Kbd>
             </div>
-            <div ref={listRef} id="palette-list" role="listbox" className="max-h-[55vh] overflow-y-auto p-2">
-              {items.length === 0 && (
-                <p className="px-3 py-8 text-center text-sm text-text-secondary">
-                  {searching ? 'Searching the rift…' : 'Nothing matches that. Try a problem name or page.'}
-                </p>
+            <div ref={listRef} id="palette-list" role="listbox" className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-2">
+              {noMatches && (
+                <div className="flex flex-col items-center px-6 pt-7 pb-5 text-center">
+                  <span className="flex size-10 items-center justify-center rounded-full border border-border bg-bg-surface text-text-muted">
+                    <SearchX className="size-[18px]" aria-hidden="true" />
+                  </span>
+                  <p className="mt-3 mb-0 text-sm font-medium text-text-primary">No results for “{q}”</p>
+                  <p className="mt-1 mb-0 max-w-xs text-[13px] text-text-secondary">
+                    Nothing in pages, problem titles, themes or actions. Check the spelling, or try one of these.
+                  </p>
+                </div>
               )}
               {items.map((item, i) => {
                 const header = item.group !== lastGroup ? item.group : null
                 lastGroup = item.group
                 const Icon = item.icon
+                const isActive = i === active
                 return (
                   <div key={item.id}>
                     {header && (
-                      <p className="px-3 pt-3 pb-1.5 text-[10.5px] font-semibold tracking-[0.12em] text-text-secondary uppercase">
-                        {header}
-                        {header === 'Problems' && searching && <span className="ml-2 normal-case">searching…</span>}
-                      </p>
+                      <div className={cn('flex items-center justify-between px-3 pb-1.5', i === 0 && !noMatches ? 'pt-1.5' : 'pt-4')}>
+                        <span className="text-[11px] font-medium text-text-muted">
+                          {header}
+                          {header === 'Problems' && searching && <span className="ml-2 text-text-muted/80">Searching…</span>}
+                        </span>
+                        {header === 'Recent' && <ClearRecents />}
+                      </div>
                     )}
                     <button
                       id={`palette-${item.id}`}
                       data-index={i}
                       role="option"
-                      aria-selected={i === active}
+                      aria-selected={isActive}
                       onMouseMove={() => setActive(i)}
                       onClick={() => void item.run()}
                       className={cn(
-                        'relative flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors',
-                        i === active ? 'bg-bg-app/5 text-text-primary' : 'text-text-secondary',
+                        'flex h-10 w-full cursor-pointer items-center gap-3 rounded-[var(--radius-control)] px-3 text-left text-sm active:!scale-100',
+                        isActive ? 'bg-text-primary/[0.07] text-text-primary' : 'text-text-secondary',
                       )}
                     >
-                      {i === active && (
-                        <motion.span
-                          layoutId="palette-active"
-                          className="absolute inset-y-2 left-0 w-[3px] rounded-r-full bg-accent-brand"
-                          transition={{ type: 'spring', stiffness: 600, damping: 40 }}
-                        />
-                      )}
-                      <span
-                        className={cn(
-                          'flex size-7 shrink-0 items-center justify-center rounded-md border',
-                          i === active ? 'border-accent-brand/40 bg-accent-brand/15 text-accent-brand' : 'border-border/10 bg-bg-app/5 text-text-secondary',
-                        )}
-                      >
-                        <Icon className="size-3.5" />
+                      <Icon className={cn('size-4 shrink-0', isActive ? 'text-text-primary' : 'text-text-muted')} />
+                      <span className="min-w-0 flex-1 truncate">
+                        {item.plain ? item.label : <Highlight text={item.label} query={q} />}
                       </span>
-                      <span className="min-w-0 flex-1 truncate">{item.label}</span>
                       {item.problem ? (
-                        <PlatformBadge platform={item.problem.platform} />
+                        <>
+                          {item.hint && <span className="hidden shrink-0 font-mono text-[11px] text-text-muted sm:inline">{item.hint}</span>}
+                          <PlatformBadge platform={item.problem.platform} />
+                        </>
                       ) : (
-                        item.hint && <span className="font-mono text-[11px] text-text-secondary">{item.hint}</span>
+                        item.hint && <span className="shrink-0 text-[12px] text-text-muted">{item.hint}</span>
                       )}
-                      {i === active && <ArrowRight className="size-3.5 text-accent-brand" aria-hidden="true" />}
+                      <CornerDownLeft
+                        className={cn('size-3.5 shrink-0 text-text-muted', isActive ? 'opacity-100' : 'opacity-0')}
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
                 )
               })}
             </div>
-            <div className="flex items-center gap-4 border-t border-border/10 bg-bg-app/20 px-4 py-2.5 text-[11px] text-text-secondary">
+            <div className="flex shrink-0 items-center gap-4 border-t border-border bg-bg-surface/60 px-4 py-2.5 text-[11.5px] text-text-muted">
               <span className="flex items-center gap-1.5">
                 <Kbd>↑</Kbd>
-                <Kbd>↓</Kbd> navigate
+                <Kbd>↓</Kbd> to move
               </span>
               <span className="flex items-center gap-1.5">
                 <Kbd>
                   <CornerDownLeft className="size-3" />
                 </Kbd>
-                open
+                to open
               </span>
               <span className="ml-auto hidden items-center gap-1.5 sm:flex">
                 <Kbd>?</Kbd> all shortcuts

@@ -14,6 +14,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'motion/react'
 import { Icon, IconBadge } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
+import { tStandard } from '@/lib/motion'
 import { GateNav } from './GateNav'
 import { GATE_EXAMS, useGateExam, type GateExam } from './examStore'
 import { useReviewDue } from './useGateData'
@@ -70,7 +71,7 @@ function ExamSwitcher() {
               <motion.span
                 layoutId="gate-exam-pill"
                 className="absolute inset-0 -z-10 rounded-md bg-accent-brand"
-                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+                transition={tStandard}
               />
             )}
             {x.label}
