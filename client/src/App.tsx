@@ -34,6 +34,10 @@ const GateReviewPage = lazy(pageLoaders.GateReviewPage)
 const GateDailyPage = lazy(pageLoaders.GateDailyPage)
 const GateTestsPage = lazy(pageLoaders.GateTestsPage)
 const GateTestPage = lazy(pageLoaders.GateTestPage)
+const NotesIndexPage = lazy(pageLoaders.NotesIndexPage)
+const NotesSubjectPage = lazy(pageLoaders.NotesSubjectPage)
+const NotesLessonPage = lazy(pageLoaders.NotesLessonPage)
+const NotesFontsPage = lazy(pageLoaders.NotesFontsPage)
 const SocialPage = lazy(pageLoaders.SocialPage)
 const SocialPostPage = lazy(pageLoaders.SocialPostPage)
 const SocialTagPage = lazy(pageLoaders.SocialTagPage)
@@ -104,6 +108,10 @@ export default function App() {
             <Route path="/learn/dsa/:topic/:page?" element={<LearnTopicPage />} />
             <Route path="/gate" element={<LegacyGateRedirect><GateHomePage /></LegacyGateRedirect>} />
             <Route path="/gate/practice" element={<GatePage />} />
+            <Route path="/gate/notes" element={<NotesIndexPage />} />
+            <Route path="/gate/notes/_fonts" element={<NotesFontsPage />} />
+            <Route path="/gate/notes/:subject" element={<NotesSubjectPage />} />
+            <Route path="/gate/notes/:subject/:lesson" element={<NotesLessonPage />} />
             <Route path="/gate/review" element={<GateReviewPage />} />
             <Route path="/gate/daily" element={<GateDailyPage />} />
             <Route path="/gate/tests" element={<GateTestsPage />} />

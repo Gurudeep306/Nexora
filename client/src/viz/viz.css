@@ -1,0 +1,183 @@
+/* Nexora Viz — figure frame, player controls, motion and print. Colours are theme roles only. */
+
+.viz {
+  --viz-subject: var(--notes-subject-ink, var(--color-accent-brand));
+  margin: 1.75rem 0;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-bg-surface);
+  padding: 12px 12px 10px;
+  break-inside: avoid;
+}
+.viz-slot {
+  display: block;
+}
+
+.viz-stage {
+  width: 100%;
+}
+.viz-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.viz--placeholder .viz-stage {
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-text-primary) 4%, transparent);
+}
+
+.viz-hand {
+  font-family: var(--notes-hand, var(--font-body));
+}
+.viz-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.viz-el,
+.viz-el :is(rect, circle, path, polyline, text) {
+  transition:
+    opacity 360ms var(--ease-standard),
+    fill 360ms var(--ease-standard),
+    stroke 360ms var(--ease-standard);
+}
+
+.viz-caption {
+  margin: 8px 4px 0;
+  min-height: 3em;
+  font-size: 0.95em;
+  line-height: 1.5;
+  color: var(--color-text-primary);
+}
+.viz-step {
+  display: inline-block;
+  margin-right: 0.5em;
+  font-family: var(--font-body);
+  font-size: 0.72em;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--viz-subject);
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+.viz-controls--static {
+  justify-content: flex-end;
+}
+.viz-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 40px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 10px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+.viz-btn:hover:not(:disabled) {
+  background: var(--color-bg-surface-2);
+}
+.viz-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.viz-btn--main {
+  border-color: transparent;
+  background: var(--color-accent-brand);
+  color: var(--color-on-accent-brand);
+  padding: 0 14px;
+}
+.viz-btn--main:hover:not(:disabled) {
+  background: var(--color-accent-brand-hover);
+}
+.viz-btn:focus-visible,
+.viz-scrub:focus-visible,
+.viz-clean input:focus-visible {
+  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
+  outline-offset: 2px;
+}
+.viz-scrub {
+  flex: 1 1 120px;
+  min-width: 100px;
+  height: 40px;
+  accent-color: var(--color-accent-brand);
+}
+.viz-clean {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 4px;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+.viz-clean input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent-brand);
+}
+
+.viz-captions {
+  margin: 10px 4px 0;
+  padding-left: 1.4em;
+  font-size: 0.92em;
+  line-height: 1.55;
+  color: var(--color-text-primary);
+  list-style: decimal;
+}
+.viz-captions li + li {
+  margin-top: 2px;
+}
+.viz-figcaption {
+  margin: 6px 4px 0;
+  font-size: 0.85em;
+  color: var(--color-text-secondary);
+}
+.viz-alt summary {
+  display: inline-block;
+  min-height: 32px;
+  padding: 6px 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+}
+.viz-alt ol {
+  margin: 4px 0 0;
+  padding-left: 1.4em;
+  list-style: decimal;
+  color: var(--color-text-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viz-el,
+  .viz-el :is(rect, circle, path, polyline, text) {
+    transition: none;
+  }
+}
+
+@media print {
+  .viz {
+    border-color: #999;
+    padding: 6px 0;
+  }
+  .viz-controls,
+  .viz-alt {
+    display: none !important;
+  }
+}
