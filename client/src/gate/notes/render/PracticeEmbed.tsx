@@ -144,7 +144,7 @@ export function PracticeEmbed({ q }: { q: PracticeQuestion }) {
         )}
       </div>
 
-      <div id={`${uid}-sol`} className="np-solution" hidden={!showSolution}>
+      <div id={`${uid}-sol`} className="np-solution" data-concealed={!showSolution || undefined}>
         <p className="np-concept">
           <strong>Idea:</strong> {q.concept}
         </p>

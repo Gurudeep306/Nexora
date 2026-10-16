@@ -32,6 +32,8 @@ export interface NotesContext {
   setCleanLines: (on: boolean) => void
   /** Prefix for DOM ids when one page shows a lesson more than once (the font samples). */
   idPrefix?: string
+  /** Start worked examples with every step shown (the font samples). */
+  expandExamples?: boolean
 }
 const Ctx = createContext<NotesContext | null>(null)
 export const NotesContextProvider = Ctx.Provider
@@ -292,12 +294,12 @@ const BLOCK_RENDERERS: Record<BlockName, (p: BlockProps) => ReactNode> = {
     </Frame>
   ),
   definition: ({ node, children }) => (
-    <Frame node={node} kicker="Definition" title={node.attrs.term || node.label ? <dfn>{label(node, 'term')}</dfn> : undefined}>
+    <Frame node={node} icon="book" kicker="Definition" title={node.attrs.term || node.label ? <dfn>{label(node, 'term')}</dfn> : undefined}>
       {children}
     </Frame>
   ),
   theorem: ({ node, children }) => (
-    <Frame node={node} kicker="Theorem" title={label(node, 'name')}>
+    <Frame node={node} icon="award" kicker="Theorem" title={label(node, 'name')}>
       {children}
     </Frame>
   ),
@@ -307,17 +309,9 @@ const BLOCK_RENDERERS: Record<BlockName, (p: BlockProps) => ReactNode> = {
       {children}
     </Frame>
   ),
-  example: ({ node, children }) => (
-    <Frame
-      node={node}
-      kicker="Example"
-      title={
-        <>
-          {node.attrs.level && <span className={cn('nb-level', `nb-level-${node.attrs.level}`)}>{LEVEL[node.attrs.level]}</span>}
-          {label(node, 'title')}
-        </>
-      }
-    >
+  example: ({ node }) => <Example node={node} />,
+  step: ({ node, children }) => (
+    <Frame node={node} as="div">
       {children}
     </Frame>
   ),
@@ -347,7 +341,7 @@ const BLOCK_RENDERERS: Record<BlockName, (p: BlockProps) => ReactNode> = {
   practice: ({ node }) => <PracticeSlot node={node} />,
   viz: ({ node }) => <VizSlot node={node} />,
   table: ({ node, children }) => (
-    <Frame node={node} as="figure" title={label(node, 'title')}>
+    <Frame node={node} as="figure" icon="grid" kicker="Table" title={label(node, 'title')}>
       {children}
     </Frame>
   ),
@@ -362,7 +356,7 @@ const BLOCK_RENDERERS: Record<BlockName, (p: BlockProps) => ReactNode> = {
     </Frame>
   ),
   aside: ({ node, children }) => (
-    <Frame node={node} as="aside" title={label(node, 'title')}>
+    <Frame node={node} as="aside" icon="info" kicker="Aside" title={label(node, 'title')}>
       {children}
     </Frame>
   ),
@@ -378,6 +372,7 @@ function Proof({ node, children }: BlockProps) {
   return (
     <details id={did(node.id)} data-block="proof" data-block-id={node.id} data-depth={node.depth} className="nb nb-proof" open={node.attrs.open !== 'false'}>
       <summary className="nb-head">
+        <Icon name="check" className="nb-icon" aria-hidden="true" />
         <span className="nb-kicker">Proof</span>
         {node.attrs.of && <span className="nb-title">of {node.attrs.of}</span>}
       </summary>
@@ -401,8 +396,101 @@ function Check({ node }: { node: DirectiveNode }) {
         <Icon name={open ? 'eye-off' : 'eye'} className="size-4" aria-hidden="true" />
         {open ? 'Hide answer' : 'Show answer'}
       </button>
-      <div id={answerId} className="nb-answer" hidden={!open} data-block-id={answer?.id}>
+      <div id={answerId} className="nb-answer" data-concealed={!open || undefined} data-block-id={answer?.id}>
         {answer && <Nodes nodes={answer.c} />}
+      </div>
+    </Frame>
+  )
+}
+
+/*
+  Worked example: the problem in a highlighted header, then numbered steps —
+  each "what we do" with a "why" line — and the answer row. Steps can be
+  revealed one at a time (Next step) or all at once; printing shows all.
+*/
+function Example({ node }: { node: DirectiveNode }) {
+  const isStep = (c: Node): c is DirectiveNode => c.t === 'block' && c.name === 'step'
+  const steps = node.c.filter(isStep)
+  const answer = node.c.find((c): c is DirectiveNode => c.t === 'block' && c.name === 'answer')
+  const problem = node.c.filter((c) => c !== answer && !isStep(c))
+  const [shown, setShown] = useState(useNotes()?.expandExamples ? steps.length : 0)
+  const listId = useId()
+  const all = shown >= steps.length
+  const title = (
+    <>
+      {node.attrs.level && <span className={cn('nb-level', `nb-level-${node.attrs.level}`)}>{LEVEL[node.attrs.level]}</span>}
+      {label(node, 'title')}
+    </>
+  )
+  if (!steps.length)
+    return (
+      <Frame node={node} icon="edit" kicker="Example" title={title}>
+        <Nodes nodes={node.c.filter((c) => c !== answer)} />
+        {answer && (
+          <div className="nb-ex-answer">
+            <span className="nb-ex-answer-label">Answer</span>
+            <div>
+              <Nodes nodes={answer.c} />
+            </div>
+          </div>
+        )}
+      </Frame>
+    )
+  return (
+    <Frame node={node} icon="edit" kicker="Worked example" title={title} className="nb-example--steps">
+      <div className="nb-ex-problem">
+        <span className="nb-ex-problem-label">Problem</span>
+        <Nodes nodes={problem} />
+      </div>
+      <ol className="nb-ex-steps" id={listId} aria-live="polite">
+        {steps.map((st, i) => (
+          <li key={st.id} className="nb-ex-step" data-block-id={st.id} data-concealed={i >= shown || undefined}>
+            <span className="nb-ex-n" aria-hidden="true">
+              {i + 1}
+            </span>
+            <div className="nb-ex-step-body">
+              <span className="sr-only">Step {i + 1}. </span>
+              {st.label && (
+                <p className="nb-ex-step-title">
+                  <Inlines nodes={st.label} />
+                </p>
+              )}
+              <Nodes nodes={st.c} />
+              {st.attrs.why && (
+                <p className="nb-ex-why">
+                  <span className="nb-ex-why-label">Why:</span> {st.attrs.why}
+                </p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+      {answer && (
+        <div className="nb-ex-answer" data-concealed={!all || undefined}>
+          <span className="nb-ex-answer-label">Answer</span>
+          <div>
+            <Nodes nodes={answer.c} />
+          </div>
+        </div>
+      )}
+      <div className="nb-ex-controls">
+        {!all ? (
+          <>
+            <button type="button" className="nb-reveal nb-reveal--main" aria-controls={listId} onClick={() => setShown((n) => n + 1)}>
+              <Icon name="play" className="size-4" aria-hidden="true" />
+              {shown === 0 ? 'Reveal steps one by one' : `Next step (${shown + 1} of ${steps.length})`}
+            </button>
+            <button type="button" className="nb-reveal" aria-controls={listId} onClick={() => setShown(steps.length)}>
+              <Icon name="list" className="size-4" aria-hidden="true" />
+              Show all
+            </button>
+          </>
+        ) : (
+          <button type="button" className="nb-reveal" aria-controls={listId} onClick={() => setShown(0)}>
+            <Icon name="refresh" className="size-4" aria-hidden="true" />
+            Hide steps
+          </button>
+        )}
       </div>
     </Frame>
   )

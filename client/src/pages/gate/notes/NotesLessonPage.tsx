@@ -1,13 +1,14 @@
 /*
   The lesson reader: /gate/notes/:subject/:lesson
 
-    ┌ lesson tree ┬ paper: crumbs · meta · lesson body ……… ┬ On this page ┐
-    │ (sticky)    │                                          │ margin asides│
-    │             │ mark complete · prev / next              │              │
-    └─────────────┴──────────────────────────────────────────┴──────────────┘
+    ┌ lesson tree ┬ paper: crumbs · meta ……………………………… [≡ On this page] ┐
+    │ (sticky,    │ lesson body — every block spans the full column;     │
+    │ can hide)   │ running text keeps a ~72ch measure                   │
+    │             │ mark complete · prev / next                          │
+    └─────────────┴──────────────────────────────────────────────────────┘
 
-  Below xl the outline folds into a disclosure above the text and asides sit
-  inline; below lg the tree becomes a "Lessons" disclosure. Study state:
+  The outline is an icon that opens a small panel; asides sit inline.
+  Below lg the tree becomes a "Lessons" disclosure. Study state:
   mark complete, bookmark, reading position (src/gate/notes/progress.ts).
 
   Extension points for later steps: the toolbar (Explain simpler, revision
@@ -65,6 +66,7 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
   const [prefs, setPrefs] = useNotesPrefs()
   const [treeOpen, setTreeOpen] = useState(false)
   const article = useRef<HTMLElement>(null)
+  const outlineRef = useRef<HTMLDetailsElement>(null)
   const [pct, setPct] = useState(0)
   const { hash } = useLocation()
   const [resumeFrom] = useState(() => (p.completed ? 0 : p.scrollPct))
@@ -163,16 +165,24 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
         <div className="notes-progress" aria-hidden="true">
           <span style={{ transform: `scaleX(${pct / 100})` }} />
         </div>
-        <div className="notes-layout">
+        <div className={cn('notes-layout', prefs.treeHidden && 'is-tree-hidden')}>
           <nav className="notes-tree" aria-label={`Lessons in ${subject.title}`}>
-            <Link to={NOTES_ROUTES.subject(subject.id)} className="notes-tree-subject">
-              <Icon name="learn" className="size-4" aria-hidden="true" />
-              {subject.title}
-            </Link>
+            <div className="notes-tree-head">
+              <Link to={NOTES_ROUTES.subject(subject.id)} className="notes-tree-subject">
+                <Icon name="learn" className="size-4" aria-hidden="true" />
+                {subject.title}
+              </Link>
+              <button type="button" className="notes-icon-btn" onClick={() => setPrefs({ treeHidden: true })} aria-label="Hide the lesson list">
+                <Icon name="eye-off" className="size-4" aria-hidden="true" />
+              </button>
+            </div>
             {chapters ? <LessonTree subject={subject.id} chapters={chapters} current={lesson.id} progress={progressMap} /> : <LoadingBlock rows={3} />}
           </nav>
 
           <div className="notes-main">
+            <button type="button" className="notes-icon-btn notes-show-tree" onClick={() => setPrefs({ treeHidden: false })}>
+              <Icon name="list" className="size-4" aria-hidden="true" /> Lessons
+            </button>
             <details className="notes-tree-mobile" open={treeOpen} onToggle={(e) => setTreeOpen((e.target as HTMLDetailsElement).open)}>
               <summary>
                 <Icon name="list" className="size-4" aria-hidden="true" /> Lessons in {subject.title}
@@ -209,15 +219,23 @@ function Reader({ data, chapters }: { data: LessonPayload; chapters: ChapterSumm
 
                 {outline.length > 1 && (
                   <nav className="notes-outline" aria-label="On this page">
-                    <details open>
-                      <summary>On this page</summary>
-                      <ol>
-                        {outline.map((h) => (
-                          <li key={h.id} className={cn(h.level === 3 && 'is-sub')}>
-                            <a href={`#${domId(h.id)}`}>{h.text}</a>
-                          </li>
-                        ))}
-                      </ol>
+                    <details ref={outlineRef}>
+                      <summary className="notes-icon-btn" title="On this page">
+                        <Icon name="list" className="size-4" aria-hidden="true" />
+                        <span className="sr-only sm:not-sr-only">On this page</span>
+                      </summary>
+                      <div className="notes-outline-panel">
+                        <p>On this page</p>
+                        <ol>
+                          {outline.map((h) => (
+                            <li key={h.id} className={cn(h.level === 3 && 'is-sub')}>
+                              <a href={`#${domId(h.id)}`} onClick={() => outlineRef.current?.removeAttribute('open')}>
+                                {h.text}
+                              </a>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
                     </details>
                   </nav>
                 )}

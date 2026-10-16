@@ -128,7 +128,7 @@ function Label({ x, y, text, mono, size = 15, color, weight }: { x: number; y: n
       y={y}
       textAnchor="middle"
       dominantBaseline="central"
-      className={mono ? 'viz-mono' : 'viz-hand'}
+      className={mono ? 'nxv-mono' : 'nxv-hand'}
       fontSize={size}
       fontWeight={weight === 'bold' ? 700 : undefined}
       fill={color}
@@ -171,7 +171,7 @@ const Element = memo(function Element({ el, byId, sketch }: { el: VizElement; by
           y={el.y}
           textAnchor={el.anchor ?? 'start'}
           dominantBaseline="central"
-          className={el.mono ? 'viz-mono' : 'viz-hand'}
+          className={el.mono ? 'nxv-mono' : 'nxv-hand'}
           fontSize={el.size ?? 15}
           fontWeight={el.weight === 'bold' ? 700 : undefined}
           fill={stroke}
@@ -260,7 +260,7 @@ const Element = memo(function Element({ el, byId, sketch }: { el: VizElement; by
             const on = hi.has(i)
             const s = on ? subject : stroke
             return (
-              <g key={i} className="viz-cell">
+              <g key={i} className="nxv-cell">
                 <rect x={x} y={el.y} width={c} height={c} fill={on ? HIGHLIGHT_WASH : fill} stroke={sketch ? 'none' : s} strokeWidth={on ? 2.2 : 1.6} />
                 <Stroke paths={sk('rect', [x, el.y, c, c], `${el.id}-${i}`)} fallback={null} stroke={s} />
                 <Label x={x + c / 2} y={el.y + c / 2} text={bit} mono size={c * 0.42} color={s} weight={on ? 'bold' : 'normal'} />
@@ -279,13 +279,13 @@ export function VizScene({ spec, frame, sketch, titleId, descId }: { spec: VizSp
   const byId = useMemo(() => new Map(frame.elements.map((e) => [e.id, e])), [frame.elements])
   const changed = useMemo(() => new Set(frame.changed), [frame.changed])
   return (
-    <svg viewBox={`0 0 ${spec.width} ${spec.height}`} className="viz-svg" role="img" aria-labelledby={`${titleId} ${descId}`}>
+    <svg viewBox={`0 0 ${spec.width} ${spec.height}`} className="nxv-svg" role="img" aria-labelledby={`${titleId} ${descId}`}>
       <title id={titleId}>{spec.title}</title>
       <desc id={descId}>{frame.caption}</desc>
       {frame.elements.map((el) => (
         <g
           key={el.id}
-          className="viz-el"
+          className="nxv-el"
           data-changed={changed.has(el.id) || undefined}
           style={{ opacity: el.hidden ? 0 : (el.opacity ?? 1) }}
           aria-hidden="true"

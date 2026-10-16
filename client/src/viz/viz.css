@@ -1,6 +1,6 @@
 /* Nexora Viz — figure frame, player controls, motion and print. Colours are theme roles only. */
 
-.viz {
+.nxv {
   --viz-subject: var(--notes-subject-ink, var(--color-accent-brand));
   margin: 1.75rem 0;
   border: 1px solid var(--color-border);
@@ -9,48 +9,51 @@
   padding: 12px 12px 10px;
   break-inside: avoid;
 }
-.viz-slot {
+.nxv-slot {
   display: block;
 }
 
-.viz-stage {
+.nxv-stage {
   width: 100%;
+  /* Full-width frame, but the drawing itself stops growing at a readable size. */
+  max-width: 720px;
+  margin: 0 auto;
 }
-.viz-svg {
+.nxv-svg {
   display: block;
   width: 100%;
   height: auto;
   overflow: visible;
 }
-.viz--placeholder .viz-stage {
+.nxv--placeholder .nxv-stage {
   border-radius: 10px;
   background: color-mix(in oklab, var(--color-text-primary) 4%, transparent);
 }
 
-.viz-hand {
+.nxv-hand {
   font-family: var(--notes-hand, var(--font-body));
 }
-.viz-mono {
+.nxv-mono {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;
 }
 
-.viz-el,
-.viz-el :is(rect, circle, path, polyline, text) {
+.nxv-el,
+.nxv-el :is(rect, circle, path, polyline, text) {
   transition:
     opacity 360ms var(--ease-standard),
     fill 360ms var(--ease-standard),
     stroke 360ms var(--ease-standard);
 }
 
-.viz-caption {
+.nxv-caption {
   margin: 8px 4px 0;
   min-height: 3em;
   font-size: 0.95em;
   line-height: 1.5;
   color: var(--color-text-primary);
 }
-.viz-step {
+.nxv-step {
   display: inline-block;
   margin-right: 0.5em;
   font-family: var(--font-body);
@@ -61,7 +64,7 @@
   color: var(--viz-subject);
 }
 
-.viz-controls {
+.nxv-controls {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -70,10 +73,10 @@
   font-family: var(--font-body);
   font-size: 13px;
 }
-.viz-controls--static {
+.nxv-controls--static {
   justify-content: flex-end;
 }
-.viz-btn {
+.nxv-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -88,35 +91,35 @@
   font-weight: 600;
   cursor: pointer;
 }
-.viz-btn:hover:not(:disabled) {
+.nxv-btn:hover:not(:disabled) {
   background: var(--color-bg-surface-2);
 }
-.viz-btn:disabled {
+.nxv-btn:disabled {
   opacity: 0.45;
   cursor: default;
 }
-.viz-btn--main {
+.nxv-btn--main {
   border-color: transparent;
   background: var(--color-accent-brand);
   color: var(--color-on-accent-brand);
   padding: 0 14px;
 }
-.viz-btn--main:hover:not(:disabled) {
+.nxv-btn--main:hover:not(:disabled) {
   background: var(--color-accent-brand-hover);
 }
-.viz-btn:focus-visible,
-.viz-scrub:focus-visible,
-.viz-clean input:focus-visible {
+.nxv-btn:focus-visible,
+.nxv-scrub:focus-visible,
+.nxv-clean input:focus-visible {
   outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
   outline-offset: 2px;
 }
-.viz-scrub {
+.nxv-scrub {
   flex: 1 1 120px;
   min-width: 100px;
   height: 40px;
   accent-color: var(--color-accent-brand);
 }
-.viz-clean {
+.nxv-clean {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -126,13 +129,13 @@
   cursor: pointer;
   user-select: none;
 }
-.viz-clean input {
+.nxv-clean input {
   width: 18px;
   height: 18px;
   accent-color: var(--color-accent-brand);
 }
 
-.viz-captions {
+.nxv-captions {
   margin: 10px 4px 0;
   padding-left: 1.4em;
   font-size: 0.92em;
@@ -140,15 +143,15 @@
   color: var(--color-text-primary);
   list-style: decimal;
 }
-.viz-captions li + li {
+.nxv-captions li + li {
   margin-top: 2px;
 }
-.viz-figcaption {
+.nxv-figcaption {
   margin: 6px 4px 0;
   font-size: 0.85em;
   color: var(--color-text-secondary);
 }
-.viz-alt summary {
+.nxv-alt summary {
   display: inline-block;
   min-height: 32px;
   padding: 6px 0;
@@ -157,7 +160,7 @@
   cursor: pointer;
   color: var(--color-text-secondary);
 }
-.viz-alt ol {
+.nxv-alt ol {
   margin: 4px 0 0;
   padding-left: 1.4em;
   list-style: decimal;
@@ -165,19 +168,19 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .viz-el,
-  .viz-el :is(rect, circle, path, polyline, text) {
+  .nxv-el,
+  .nxv-el :is(rect, circle, path, polyline, text) {
     transition: none;
   }
 }
 
 @media print {
-  .viz {
+  .nxv {
     border-color: #999;
     padding: 6px 0;
   }
-  .viz-controls,
-  .viz-alt {
+  .nxv-controls,
+  .nxv-alt {
     display: none !important;
   }
 }
