@@ -38,6 +38,7 @@ export type BlockName =
   | 'derivation'
   | 'example'
   | 'check'
+  | 'step'
   | 'answer'
   | 'trick'
   | 'trap'
