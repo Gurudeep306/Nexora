@@ -28,7 +28,6 @@
   --notes-margin-rule: color-mix(in oklab, var(--color-state-error) 38%, transparent);
   --notes-sticky: color-mix(in oklab, var(--color-state-warning) 22%, var(--color-bg-surface));
   --notes-highlight: color-mix(in oklab, var(--color-state-warning) 34%, transparent);
-  --notes-rail: 15rem;
 
   /* Hand faces (self-hosted, OFL; loaded by prefs.ts when a notes page opens). */
   --notes-font-shantell: 'Shantell Sans Variable', var(--font-body);
@@ -105,8 +104,59 @@
 }
 @media (min-width: 1024px) {
   .notes-layout {
-    grid-template-columns: 14.5rem minmax(0, 1fr);
-    gap: 2rem;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 1.75rem;
+  }
+  .notes-layout.is-tree-hidden {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .notes-layout.is-tree-hidden > .notes-tree {
+    display: none;
+  }
+}
+.notes-tree-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.notes-tree-head .notes-tree-subject {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+.notes-icon-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.notes-icon-btn:hover {
+  background: var(--color-bg-surface-2);
+  color: var(--color-text-primary);
+}
+.notes-icon-btn:focus-visible {
+  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
+  outline-offset: 2px;
+}
+.notes-show-tree {
+  display: none;
+  margin-bottom: 12px;
+}
+@media (min-width: 1024px) {
+  .is-tree-hidden .notes-show-tree {
+    display: inline-flex;
   }
 }
 .notes-main {
@@ -326,7 +376,7 @@
 }
 
 .notes-prose {
-  max-width: 70ch;
+  max-width: 1000px;
   font-family: var(--notes-hand);
   font-size: var(--notes-size);
   line-height: var(--notes-leading);
@@ -338,15 +388,13 @@
   font-variant-numeric: lining-nums;
   overflow-wrap: break-word;
 }
-/* The margin rail (outline + asides) lives in the prose box's right padding. */
-@media (min-width: 1280px) {
-  .notes-prose {
-    max-width: calc(70ch + var(--notes-rail));
-    padding-right: var(--notes-rail);
-  }
-}
 .notes-prose > :first-child {
   margin-top: 0;
+}
+/* Plain paragraphs, lists and headings keep a comfortable measure (~72ch);
+   blocks, tables and diagrams take the whole column. */
+.notes-prose > :is(p, ul, ol, blockquote, .notes-h, .nm-display) {
+  max-width: 72ch;
 }
 .notes-prose p,
 .notes-prose ul,
@@ -597,36 +645,50 @@ h4.notes-h {
   cursor: pointer;
 }
 
-/* On this page */
+/* On this page: collapsed to an icon in the paper's top-right corner */
 .notes-outline {
-  margin: 0 0 1.25rem;
+  position: relative;
+  float: right;
+  z-index: 5;
+  margin: -0.25rem -0.25rem 0.5rem 1rem;
   font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.45;
   -webkit-text-stroke: 0;
   font-variation-settings: normal;
 }
-.notes-outline details {
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: color-mix(in oklab, var(--notes-paper) 70%, transparent);
-  padding: 4px 12px 8px;
+.notes-outline > details > summary {
+  list-style: none;
 }
-.notes-outline summary {
-  min-height: 36px;
-  display: flex;
-  align-items: center;
+.notes-outline > details > summary::-webkit-details-marker {
+  display: none;
+}
+.notes-outline-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  width: min(18rem, 80vw);
+  max-height: 60vh;
+  overflow: auto;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 12px;
+  background: var(--color-bg-surface);
+  box-shadow: var(--shadow-pop);
+}
+.notes-outline-panel p {
+  margin: 0 0 4px !important;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--color-text-secondary);
-  cursor: pointer;
 }
 .notes-outline ol {
   margin: 0 !important;
   padding: 0 !important;
   list-style: none !important;
+  max-width: none !important;
 }
 .notes-outline li::marker {
   content: none;
@@ -636,31 +698,37 @@ h4.notes-h {
 }
 .notes-outline a {
   display: block;
-  padding: 4px 0;
-  color: var(--color-text-secondary) !important;
+  padding: 6px 4px;
+  border-radius: 6px;
+  color: var(--color-text-primary) !important;
   text-decoration: none !important;
 }
 .notes-outline a:hover {
-  color: var(--notes-subject-ink) !important;
+  background: var(--color-bg-surface-2);
+}
+
+/* Revealed on demand (answers, worked steps, solutions); see print below. */
+.notes-root [data-concealed] {
+  display: none;
 }
 
 /* ── Callouts (:::blocks) ────────────────────────────────────────────── */
 
 .nb {
   position: relative;
-  margin: 1.6em 0;
+  margin: 1.75em 0;
   scroll-margin-top: 8rem;
 }
 .nb-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0.15em 0.55em;
-  margin-bottom: 0.35em;
+  align-items: center;
+  gap: 0.2em 0.6em;
+  margin-bottom: 0.6em;
   line-height: 1.35;
 }
 .nb-kicker {
-  font-size: 0.74em;
+  font-size: 0.8em;
   font-weight: var(--notes-head);
   -webkit-text-stroke: calc(var(--notes-stroke) * 1.6) currentColor;
   letter-spacing: 0.08em;
@@ -668,6 +736,7 @@ h4.notes-h {
   color: var(--notes-subject-ink);
 }
 .nb-title {
+  font-size: 1.04em;
   font-weight: var(--notes-strong);
   -webkit-text-stroke: calc(var(--notes-stroke) * 1.6) currentColor;
 }
@@ -675,8 +744,8 @@ h4.notes-h {
   font-style: normal;
 }
 .nb-icon {
-  width: 1em;
-  height: 1em;
+  width: 1.15em;
+  height: 1.15em;
   align-self: center;
   color: var(--notes-subject-ink);
 }
@@ -699,15 +768,55 @@ h4.notes-h {
   font-size: 0.9em;
 }
 
-/* intuition — a soft rule and a lightbulb */
+/* Boxed blocks share one roomy frame; each look below only changes ink and edge. */
+.nb-intuition,
+.nb-definition,
+.nb-theorem,
+.nb-proof,
+.nb-derivation,
+.nb-example,
+.nb-check,
+.nb-trick,
+.nb-trap,
+.nb-summary,
+.nb-note,
+.nb-aside,
+.nb-pyq,
+.nb-practice,
+.nb-table {
+  padding: 1.1em 1.4em 1.2em;
+  border-radius: 16px;
+}
+@media (max-width: 639px) {
+  .nb-intuition,
+  .nb-definition,
+  .nb-theorem,
+  .nb-proof,
+  .nb-derivation,
+  .nb-example,
+  .nb-check,
+  .nb-trick,
+  .nb-trap,
+  .nb-summary,
+  .nb-note,
+  .nb-aside,
+  .nb-pyq,
+  .nb-practice,
+  .nb-table {
+    padding: 0.95em 1em 1.05em;
+  }
+}
+
+/* intuition — a lightbulb, a warm subject wash and a thick left edge */
 .nb-intuition {
-  padding: 0.1em 0 0.1em 1em;
-  border-left: 3px solid color-mix(in oklab, var(--notes-subject) 55%, transparent);
+  border: 1.5px solid color-mix(in oklab, var(--notes-subject) 35%, transparent);
+  border-left-width: 5px;
+  border-left-color: var(--notes-subject-ink);
+  background: color-mix(in oklab, var(--notes-subject) 7%, transparent);
 }
 
 /* definition — a box with a sketched border */
 .nb-definition {
-  padding: 0.85em 1.15em 0.95em;
   border: 2px solid var(--notes-subject-ink);
   border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
   background: color-mix(in oklab, var(--notes-subject) 5%, transparent);
@@ -715,8 +824,7 @@ h4.notes-h {
 
 /* theorem — a card with a name tab */
 .nb-theorem {
-  margin-top: 2.6em;
-  padding: 1.05em 1.15em 0.95em;
+  margin-top: 2.8em;
   border: 1.5px solid var(--notes-subject-ink);
   border-radius: 4px 14px 14px 14px;
   background: var(--notes-paper);
@@ -737,9 +845,11 @@ h4.notes-h {
 
 /* proof — indented, ends in a hand-drawn ∎ */
 .nb-proof {
-  margin-left: 1.25em;
-  padding-left: 1em;
-  border-left: 1.5px dashed var(--color-border-strong);
+  border: 1.5px dashed var(--color-border-strong);
+  background: color-mix(in oklab, var(--color-text-primary) 2.5%, transparent);
+}
+.nb-theorem + .nb-proof {
+  margin-top: -0.75em;
 }
 .nb-proof > summary {
   display: flex;
@@ -774,15 +884,13 @@ h4.notes-h {
 
 /* derivation — a dashed work-box */
 .nb-derivation {
-  padding: 0.8em 1.1em;
-  border: 1.5px dashed color-mix(in oklab, var(--notes-subject-ink) 55%, transparent);
-  border-radius: 14px;
+  border: 1.5px dashed color-mix(in oklab, var(--notes-subject-ink) 60%, transparent);
 }
 
 /* example — level badge */
 .nb-example {
-  padding-top: 0.6em;
-  border-top: 1.5px solid color-mix(in oklab, var(--color-text-primary) 15%, transparent);
+  border: 1.5px solid var(--color-border-strong);
+  background: var(--notes-paper);
 }
 .nb-level {
   display: inline-block;
@@ -805,10 +913,17 @@ h4.notes-h {
 
 /* check — hidden answer */
 .nb-check {
-  padding: 0.85em 1.1em 0.95em;
   border: 1.5px solid color-mix(in oklab, var(--color-state-info) 40%, transparent);
   border-radius: 14px;
   background: color-mix(in oklab, var(--color-state-info) 6%, transparent);
+}
+.nb-reveal--main {
+  border-color: transparent !important;
+  background: var(--color-accent-brand) !important;
+  color: var(--color-on-accent-brand) !important;
+}
+.nb-reveal--main:hover {
+  background: var(--color-accent-brand-hover) !important;
 }
 .nb-reveal {
   display: inline-flex;
@@ -840,12 +955,8 @@ h4.notes-h {
 
 /* trick — a yellow sticky note, tilted on wide screens */
 .nb-trick {
-  max-width: 36em;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 1em 1.2em 1.05em;
   background: var(--notes-sticky);
-  border-radius: 3px 3px 14px 3px;
+  border-radius: 4px 4px 18px 4px;
   box-shadow:
     0 1px 1px color-mix(in oklab, var(--shadow-ink, black) 12%, transparent),
     0 12px 20px -14px color-mix(in oklab, var(--shadow-ink, black) 55%, transparent);
@@ -866,18 +977,13 @@ h4.notes-h {
 .nb-trick .nb-icon {
   color: var(--color-text-primary);
 }
-@media (min-width: 768px) {
-  .nb-trick {
-    transform: rotate(-1.1deg);
-  }
-}
+
 
 /* trap — a red-ink margin note */
 .nb-trap {
-  padding: 0.55em 1em 0.6em;
-  border-left: 3px solid var(--notes-red-ink);
-  background: color-mix(in oklab, var(--color-state-error) 5%, transparent);
-  border-radius: 0 12px 12px 0;
+  border: 1.5px solid color-mix(in oklab, var(--notes-red-ink) 35%, transparent);
+  border-left: 5px solid var(--notes-red-ink);
+  background: color-mix(in oklab, var(--color-state-error) 6%, transparent);
 }
 .nb-trap .nb-kicker {
   color: var(--notes-red-ink);
@@ -887,13 +993,9 @@ h4.notes-h {
 .nb-table {
   margin-left: 0;
   margin-right: 0;
-}
-.nb-table > .nb-head .nb-title {
-  font-size: 0.86em;
-  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
 }
 .nb-summary {
-  padding: 0.85em 1.15em;
   border: 2px solid var(--notes-subject-ink);
   border-radius: 18px 225px 18px 255px / 255px 18px 225px 18px;
 }
@@ -901,57 +1003,141 @@ h4.notes-h {
   content: '✓';
 }
 .nb-note {
-  padding: 0.4em 0 0.4em 1em;
-  border-left: 3px dotted var(--color-border-strong);
-  font-size: 0.94em;
+  border: 1.5px dotted var(--color-border-strong);
 }
 .nb-note .nb-kicker,
 .nb-note .nb-icon {
   color: var(--color-text-secondary);
 }
 
-/* aside — smaller blue-ink handwriting: inline on narrow screens, in the margin on wide ones */
+/* aside — blue-ink handwriting, inline at every width */
 .nb-aside {
-  padding: 0.3em 0 0.3em 0.9em;
-  border-left: 2px dotted var(--notes-blue-ink);
-  font-size: 0.86em;
-  line-height: 1.5;
+  border: 1.5px dotted var(--notes-blue-ink);
   color: var(--notes-blue-ink);
 }
+.nb-aside .nb-kicker,
+.nb-aside .nb-icon,
 .nb-aside .nb-title {
   color: var(--notes-blue-ink);
 }
 
-@media (min-width: 1280px) {
-  .notes-outline,
-  .nb-aside {
-    float: right;
-    clear: right;
-    width: calc(var(--notes-rail) - 2rem);
-    margin-left: 2rem;
-    margin-right: calc(-1 * var(--notes-rail));
-  }
-  .nb-aside {
-    margin-top: 0.2em;
-    padding: 0;
-    border-left: 0;
-    transform: rotate(-0.6deg);
-  }
-  .nb-aside::before {
-    content: '';
-    position: absolute;
-    left: -1.4rem;
-    top: 0.75em;
-    width: 1rem;
-    border-top: 1.5px dotted var(--notes-blue-ink);
-  }
+/* Worked examples: problem header, numbered steps with a "why" line, answer row */
+.nb-ex-problem {
+  margin: 0 0 1em;
+  padding: 0.85em 1.1em;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--notes-subject) 10%, var(--notes-paper));
+  border: 1.5px solid color-mix(in oklab, var(--notes-subject) 35%, transparent);
+}
+.nb-ex-problem > p {
+  margin: 0.2em 0;
+}
+.nb-ex-problem-label,
+.nb-ex-answer-label {
+  display: block;
+  font-size: 0.78em;
+  font-weight: var(--notes-head);
+  -webkit-text-stroke: calc(var(--notes-stroke) * 1.6) currentColor;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--notes-subject-ink);
+}
+.nb-ex-steps {
+  display: grid;
+  gap: 0.9em;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+.nb-ex-steps > li::before {
+  content: none !important;
+}
+.nb-ex-step {
+  display: grid;
+  grid-template-columns: 2.1em minmax(0, 1fr);
+  gap: 0.8em;
+  align-items: start;
+}
+
+.nb-ex-n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.1em;
+  height: 2.1em;
+  border: 2px solid var(--notes-subject-ink);
+  border-radius: 999px;
+  font-weight: var(--notes-head);
+  color: var(--notes-subject-ink);
+}
+.nb-ex-step-body {
+  padding-bottom: 0.9em;
+  border-bottom: 1.5px dashed color-mix(in oklab, var(--color-text-primary) 14%, transparent);
+}
+.nb-ex-step-body > :first-child,
+.nb-ex-step-body > .sr-only + * {
+  margin-top: 0.15em;
+}
+.nb-ex-step-body > :last-child {
+  margin-bottom: 0;
+}
+.nb-ex-step-title {
+  font-weight: var(--notes-strong);
+}
+.nb-ex-why {
+  margin: 0.5em 0 0 !important;
+  padding-left: 0.8em;
+  border-left: 3px solid color-mix(in oklab, var(--notes-blue-ink) 60%, transparent);
+  color: var(--notes-blue-ink);
+}
+.nb-ex-why-label {
+  font-weight: var(--notes-strong);
+}
+.nb-ex-step .nm-display {
+  margin: 0.5em 0;
+}
+.nb-ex-step .katex-display > .katex {
+  text-align: left;
+}
+.nb-ex-answer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em 1em;
+  margin-top: 1em;
+  padding: 0.75em 1.1em;
+  border-radius: 12px;
+  border: 2px solid var(--color-state-success);
+  background: color-mix(in oklab, var(--color-state-success) 9%, transparent);
+  font-size: 1.05em;
+}
+
+.nb-ex-answer .nb-ex-answer-label {
+  color: var(--color-text-primary);
+}
+.nb-ex-answer p {
+  margin: 0;
+}
+.nb-ex-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1em;
+}
+.nb-ex-controls .nb-reveal {
+  margin-top: 0;
 }
 
 /* Embeds */
+.nb-pyq,
+.nb-practice {
+  border: 1px solid var(--color-border);
+  background: color-mix(in oklab, var(--color-text-primary) 2%, transparent);
+}
 .nb-pyq > .nb-body,
 .nb-practice > .nb-body {
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: 16.5px;
   line-height: 1.6;
   font-weight: 400;
   font-variation-settings: normal;
@@ -1535,21 +1721,7 @@ h4.notes-h {
   -webkit-text-stroke: calc(var(--notes-stroke) * 2) currentColor;
   line-height: 1.2;
 }
-.notes-sample .nb-aside {
-  float: right;
-  clear: right;
-  width: 42%;
-  margin: 0.2em 0 0.6em 1em;
-  padding: 0 0 0 0.7em;
-  margin-right: 0;
-  transform: none;
-}
-.notes-sample .nb-aside::before {
-  content: none;
-}
-.notes-sample .nb-trick {
-  transform: rotate(-1deg);
-}
+
 
 /* ── Print: keep the handwriting, drop the chrome ────────────────────── */
 
@@ -1611,9 +1783,20 @@ h4.notes-h {
     padding-right: 0;
     font-size: 12.5pt;
   }
-  .nb-answer[hidden],
-  .np-solution[hidden] {
+  /* Printed notes show every answer, step and solution. */
+  .nb-answer[data-concealed],
+  .np-solution[data-concealed] {
     display: block !important;
+  }
+  .nb-ex-step[data-concealed] {
+    display: grid !important;
+  }
+  .nb-ex-answer[data-concealed] {
+    display: flex !important;
+  }
+  .nb-ex-controls,
+  .notes-show-tree {
+    display: none !important;
   }
   .nb,
   .notes-h {
@@ -1624,13 +1807,5 @@ h4.notes-h {
   }
   .nb-trick {
     transform: none;
-  }
-  .nb-aside {
-    float: none !important;
-    width: auto !important;
-    margin: 1em 0 !important;
-    transform: none !important;
-    padding-left: 0.9em !important;
-    border-left: 2px dotted var(--notes-blue-ink) !important;
   }
 }

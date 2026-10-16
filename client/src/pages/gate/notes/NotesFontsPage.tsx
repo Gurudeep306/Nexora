@@ -22,12 +22,13 @@ export default function NotesFontsPage() {
   return <Samples />
 }
 
-/** The opening of the demo lesson (headings, body, maths, intuition, definition, aside, derivation) plus its trick and trap. */
+/** The opening of the demo lesson (headings, body, maths, intuition, definition, aside, derivation), its first worked example, trick and trap. */
 function sampleNodes(body: Node[]): Node[] {
   const cut = body.findIndex((n) => n.t === 'block' && n.name === 'viz')
   const opening = body.slice(0, cut > 0 ? cut : 8)
+  const example = body.find((n) => n.t === 'block' && n.name === 'example')
   const extra = body.filter((n) => n.t === 'block' && (n.name === 'trick' || n.name === 'trap'))
-  return [...opening, ...extra]
+  return [...opening, ...(example ? [example] : []), ...extra]
 }
 
 function Samples() {
@@ -68,7 +69,7 @@ function Samples() {
               <article className="notes-paper notes-sample" aria-label={`${f.label} sample`}>
                 <div className="notes-prose">
                   <h2 className="notes-sample-title">{data.lesson.title}</h2>
-                  <NotesContextProvider value={{ ...ctx, idPrefix: `${f.id}-` }}>
+                  <NotesContextProvider value={{ ...ctx, idPrefix: `${f.id}-`, expandExamples: true }}>
                     <Nodes nodes={nodes} />
                   </NotesContextProvider>
                 </div>

@@ -33,7 +33,7 @@ export function VizBlock(props: VizPlayerProps) {
 
   const placeholder = <Placeholder spec={props.spec} />
   return (
-    <div ref={ref} className="viz-slot">
+    <div ref={ref} className="nxv-slot">
       {show ? <Suspense fallback={placeholder}>{<VizPlayer {...props} />}</Suspense> : placeholder}
     </div>
   )
@@ -41,8 +41,8 @@ export function VizBlock(props: VizPlayerProps) {
 
 function Placeholder({ spec }: { spec: VizSpec }) {
   return (
-    <div className="viz viz--placeholder" role="img" aria-label={`${spec.title} (loading)`}>
-      <div className="viz-stage" style={{ aspectRatio: `${spec.width} / ${spec.height}` }} />
+    <div className="nxv nxv--placeholder" role="img" aria-label={`${spec.title} (loading)`}>
+      <div className="nxv-stage" style={{ aspectRatio: `${spec.width} / ${spec.height}` }} />
     </div>
   )
 }

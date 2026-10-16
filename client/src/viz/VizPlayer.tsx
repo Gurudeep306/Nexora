@@ -89,37 +89,37 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
 
   return (
     <figure
-      className={cn('viz', isStatic && 'viz--static')}
+      className={cn('nxv', isStatic && 'nxv--static')}
       aria-roledescription={isStatic ? undefined : 'step-by-step diagram'}
       aria-label={spec.title}
       onKeyDown={onKey}
     >
-      <div className="viz-stage">
+      <div className="nxv-stage">
         <VizScene spec={spec} frame={frame} sketch={sketch} titleId={`${uid}-t`} descId={`${uid}-d`} />
       </div>
 
       {!isStatic && (
         <>
-          <p className="viz-caption" aria-live="polite">
-            <span className="viz-step">
+          <p className="nxv-caption" aria-live="polite">
+            <span className="nxv-step">
               {i === 0 ? 'Start' : `Step ${i} of ${last}`}
             </span>
             {frame.caption}
           </p>
-          <div className="viz-controls" role="group" aria-label="Diagram controls">
-            <button type="button" className="viz-btn" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Previous step">
+          <div className="nxv-controls" role="group" aria-label="Diagram controls">
+            <button type="button" className="nxv-btn" onClick={() => go(i - 1)} disabled={i === 0} aria-label="Previous step">
               <span className="inline-flex" style={{ transform: 'scaleX(-1)' }}><Icon name="play" className="size-4" /></span>
             </button>
-            <button type="button" className="viz-btn viz-btn--main" onClick={toggle} aria-label={running ? 'Pause' : i >= last ? 'Replay' : 'Play'}>
+            <button type="button" className="nxv-btn nxv-btn--main" onClick={toggle} aria-label={running ? 'Pause' : i >= last ? 'Replay' : 'Play'}>
               <Icon name={running ? 'pause' : i >= last ? 'refresh' : 'play'} className="size-4" />
               <span>{running ? 'Pause' : i >= last ? 'Replay' : 'Play'}</span>
             </button>
-            <button type="button" className="viz-btn" onClick={() => go(i + 1)} disabled={i >= last} aria-label="Next step">
+            <button type="button" className="nxv-btn" onClick={() => go(i + 1)} disabled={i >= last} aria-label="Next step">
               <Icon name="play" className="size-4" />
             </button>
             <input
               type="range"
-              className="viz-scrub"
+              className="nxv-scrub"
               min={0}
               max={last}
               step={1}
@@ -134,7 +134,7 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
       )}
 
       {isStatic && (
-        <ol className="viz-captions" aria-label="What the diagram shows">
+        <ol className="nxv-captions" aria-label="What the diagram shows">
           {frames.map((f) => (
             <li key={f.index}>{f.caption}</li>
           ))}
@@ -142,10 +142,10 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
       )}
 
       {(caption || !isStatic) && (
-        <figcaption className="viz-figcaption">
+        <figcaption className="nxv-figcaption">
           {caption && <span>{caption}</span>}
           {!isStatic && (
-            <details className="viz-alt">
+            <details className="nxv-alt">
               <summary>Text description</summary>
               <ol>
                 {frames.map((f) => (
@@ -157,7 +157,7 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
         </figcaption>
       )}
       {isStatic && !printing && (
-        <div className="viz-controls viz-controls--static">
+        <div className="nxv-controls nxv-controls--static">
           <CleanToggle on={cleanLines} onChange={onCleanLines} />
         </div>
       )}
@@ -167,7 +167,7 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
 
 function CleanToggle({ on, onChange }: { on: boolean; onChange: (on: boolean) => void }) {
   return (
-    <label className="viz-clean">
+    <label className="nxv-clean">
       <input type="checkbox" checked={on} onChange={(e) => onChange(e.target.checked)} />
       <span>Clean lines</span>
     </label>

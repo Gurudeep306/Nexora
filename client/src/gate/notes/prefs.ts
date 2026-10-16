@@ -2,6 +2,7 @@
   Reader preferences, remembered per user on this device:
     cleanFont   body in Atkinson Hyperlegible instead of the handwriting face
     cleanLines  viz drawn with straight lines instead of the sketched look
+    treeHidden  the reader's lesson tree collapsed, giving the lesson the width
 */
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
 import { useAuth } from '@/context/AuthContext'
@@ -9,8 +10,9 @@ import { useAuth } from '@/context/AuthContext'
 export interface NotesPrefs {
   cleanFont: boolean
   cleanLines: boolean
+  treeHidden: boolean
 }
-const DEFAULTS: NotesPrefs = { cleanFont: false, cleanLines: false }
+const DEFAULTS: NotesPrefs = { cleanFont: false, cleanLines: false, treeHidden: false }
 
 /*
   The handwriting face for notes. One of 'shantell' | 'kalam' | 'patrick'
