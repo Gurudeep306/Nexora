@@ -9,8 +9,10 @@ import { openShortcuts } from './ShortcutsDialog'
 import { openAssistantEvent } from '@/context/AgentContext'
 import { api } from '@/lib/api'
 import { cn } from '@/lib/utils'
-import { ACCOUNT_ITEMS, CREATE_SECTION, NAV_SECTIONS } from '@/config/nav'
+import { ACCOUNT_ITEMS, ADMIN_ITEM, CREATE_SECTION, NAV_SECTIONS } from '@/config/nav'
 import { useAuth } from '@/context/AuthContext'
+import { useSite } from '@/context/SiteContext'
+import { featureForPath } from '@/lib/site'
 import { PlatformBadge } from '@/components/shared/PlatformBadge'
 import type { Problem, ProblemsResponse } from '@/components/problems/types'
 // Theme entries (Theme Centre)
@@ -43,7 +45,8 @@ export function CommandPalette() {
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { logout } = useAuth()
+  const { can, featureOn, isStaff } = useSite()
   const { mode, setAppearance, setLook } = useTheme()
 
   const close = useCallback(() => {
@@ -112,9 +115,11 @@ export function CommandPalette() {
   const items = useMemo<Item[]>(() => {
     const q = query.trim().toLowerCase()
     const pages = [
-      ...NAV_SECTIONS.flatMap((s) => s.items),
-      ...CREATE_SECTION.items.filter((i) => !i.adminOnly || user?.role === 'admin'),
+      ...NAV_SECTIONS.flatMap((s) => s.items).filter((i) => featureOn(featureForPath(i.to))),
+      // Creator tools follow the problems.manage permission (admins by default).
+      ...CREATE_SECTION.items.filter((i) => !i.adminOnly || can('problems.manage')),
       ...ACCOUNT_ITEMS,
+      ...(isStaff ? [ADMIN_ITEM] : []),
     ].map<Item>((n) => ({
       id: `page:${n.to}`,
       group: 'Go to',
@@ -226,7 +231,7 @@ export function CommandPalette() {
             }))
         : []
     return [...pages.filter(match), ...problemItems, ...themeItems, ...actions.filter(match)]
-  }, [query, results, user?.role, go, close, logout, navigate, mode, setAppearance, setLook])
+  }, [query, results, can, featureOn, isStaff, go, close, logout, navigate, mode, setAppearance, setLook])
 
   useEffect(() => setActive(0), [query, results.length])
 
