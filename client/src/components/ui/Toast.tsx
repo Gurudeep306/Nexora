@@ -35,7 +35,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <Toaster
         theme={mode}
         position="bottom-right"
-        gap={4}
+        gap={8}
+        offset={20}
         visibleToasts={3}
         closeButton
         duration={5000}
@@ -49,13 +50,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
         toastOptions={{
           classNames: {
             // Sonner paints its own background with a more specific selector,
-            // so the surface has to be forced.
+            // so the surface has to be forced. A toast is transient, so it
+            // floats one step lower than menus and dialogs.
             toast:
-              'pop-surface !rounded-[var(--radius-card)] !text-text-primary !font-body !bg-bg-surface-2 !border-border !shadow-[inset_0_1px_0_var(--specular),var(--elev-3)]',
-            title: '!text-sm !font-medium',
-            description: '!text-xs !text-text-secondary',
-            closeButton: '!bg-bg-surface-3 !border-border !text-text-secondary hover:text-text-primary',
-            actionButton: '!bg-accent-brand/10 hover:bg-accent-brand/20',
+              'nx-toast !gap-2.5 !rounded-[var(--radius-card)] !border !border-[var(--hairline)] !bg-bg-surface-2 !pl-3.5 !pr-9 !py-3 !font-body !text-text-primary !shadow-[inset_0_1px_0_var(--specular),var(--elev-2)]',
+            title: '!text-[13px] !font-medium !leading-snug',
+            description: '!text-[12px] !leading-snug !text-text-secondary',
+            icon: '!mt-px !self-start',
+            closeButton:
+              '!left-auto !right-1.5 !top-1.5 !translate-x-0 !translate-y-0 !size-6 !rounded-md !border-0 !bg-transparent !text-text-muted hover:!bg-text-primary/8 hover:!text-text-primary',
+            actionButton: '!rounded-md !bg-accent-brand !text-on-accent-brand !text-[12px] !font-medium',
+            cancelButton: '!rounded-md !bg-bg-surface-3 !text-text-secondary !text-[12px]',
           },
         }}
       />

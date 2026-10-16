@@ -8,6 +8,7 @@ import { Icon } from '@/components/icon/Icon'
 import { dockIconName } from './dockIcons'
 import { openCommandPalette } from './CommandPalette'
 import { DOCK_BY_ID, isDockFocusRoute, useDock, type DockItem } from './dockStore'
+import { tStandard } from '@/lib/motion'
 
 /** Native-feeling bottom tab bar on phones. Its four tabs are the first four
  *  pages in the user's Dock, so customizing the Dock customizes this too. */
@@ -32,15 +33,19 @@ export function MobileTabBar() {
       <div className="mx-auto grid h-14 max-w-md" style={{ gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))` }}>
         {tabs.map((t) =>
           t === 'search' ? (
+            // The centre tab opens search. A flat, tinted well marks it as the
+            // primary action — no gloss, no glow — and it keeps a label so it
+            // lines up with its neighbours.
             <button
               key="search"
               onClick={openCommandPalette}
-              className="flex cursor-pointer flex-col items-center justify-center gap-0.5 text-text-secondary hover:!scale-100"
+              className="flex cursor-pointer flex-col items-center justify-center gap-0.5 text-[10px] font-medium text-text-secondary active:!scale-100"
               aria-label="Search"
             >
-              <span className="flex size-9 items-center justify-center rounded-xl bg-gradient-to-b from-accent-brand-hover to-accent-brand text-on-accent-brand shadow-[0_6px_20px_-6px_color-mix(in_oklab,var(--color-accent-brand)_80%,transparent)]">
-                <Icon name="search" className="size-[18px]" />
+              <span className="flex h-7 w-11 items-center justify-center rounded-full border border-border bg-text-primary/[0.06] text-text-primary transition-colors active:bg-text-primary/10">
+                <Icon name="search" className="size-[17px]" />
               </span>
+              Search
             </button>
           ) : (
             <NavLink
@@ -59,10 +64,13 @@ export function MobileTabBar() {
                   {isActive && (
                     <motion.span
                       layoutId="tab-dot"
-                      className="absolute top-0 h-0.5 w-8 rounded-b-full bg-accent-brand shadow-[0_0_10px_var(--color-accent-brand)]"
+                      transition={tStandard}
+                      className="absolute top-0 h-0.5 w-7 rounded-b-full bg-accent-brand"
                     />
                   )}
-                  <Icon name={dockIconName(t.id)} className={cn('size-[19px]', isActive && 'text-accent-brand')} />
+                  <span className="flex h-7 items-center justify-center">
+                    <Icon name={dockIconName(t.id)} className={cn('size-[19px]', isActive && 'text-accent-brand')} />
+                  </span>
                   {t.label}
                 </>
               )}

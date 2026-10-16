@@ -44,9 +44,11 @@
   --field-shadow: oklch(0 0 0 / 0.3);
   --rank-ink: color-mix(in oklab, var(--oklch-bg-0) 80%, oklch(0 0 0));
   --shadow-ink: oklch(0 0 0);
-  --elev-1: 0 1px 2px oklch(0 0 0 / 0.34), 0 4px 12px -4px oklch(0 0 0 / 0.44);
-  --elev-2: 0 2px 6px oklch(0 0 0 / 0.38), 0 16px 40px -12px oklch(0 0 0 / 0.6);
-  --elev-3: 0 8px 20px oklch(0 0 0 / 0.44), 0 32px 72px -20px oklch(0 0 0 / 0.7);
+  /* Elevation: a tight contact shadow plus one soft ambient layer. Dark
+     surfaces separate by tone, so the ambient layer stays short. */
+  --elev-1: 0 1px 2px oklch(0 0 0 / 0.28), 0 2px 6px -2px oklch(0 0 0 / 0.24);
+  --elev-2: 0 1px 2px oklch(0 0 0 / 0.3), 0 8px 24px -8px oklch(0 0 0 / 0.42);
+  --elev-3: 0 2px 4px oklch(0 0 0 / 0.3), 0 18px 44px -14px oklch(0 0 0 / 0.55);
 }
 
 [data-mode='light'] {
@@ -57,9 +59,9 @@
   --field-shadow: oklch(0 0 0 / 0.06);
   --rank-ink: var(--oklch-bg-1);
   --shadow-ink: color-mix(in oklab, var(--oklch-fg-0) 70%, oklch(0 0 0));
-  --elev-1: 0 1px 2px oklch(0 0 0 / 0.06), 0 3px 8px -2px oklch(0 0 0 / 0.08);
-  --elev-2: 0 2px 6px oklch(0 0 0 / 0.07), 0 12px 32px -10px oklch(0 0 0 / 0.14);
-  --elev-3: 0 8px 20px oklch(0 0 0 / 0.1), 0 28px 64px -18px oklch(0 0 0 / 0.2);
+  --elev-1: 0 1px 2px oklch(0 0 0 / 0.05), 0 1px 4px -1px oklch(0 0 0 / 0.05);
+  --elev-2: 0 1px 2px oklch(0 0 0 / 0.05), 0 8px 24px -10px oklch(0 0 0 / 0.13);
+  --elev-3: 0 2px 6px oklch(0 0 0 / 0.06), 0 20px 48px -16px oklch(0 0 0 / 0.2);
 }
 
 /* ── Semantic roles ──────────────────────────────────────────────────────────
@@ -119,7 +121,8 @@
   --color-surface-2: var(--oklch-bg-2);
   --color-surface-3: var(--oklch-bg-3);
   --color-muted: var(--oklch-bg-3);
-  --color-border-glow: color-mix(in oklab, var(--oklch-accent-0) 45%, var(--oklch-border));
+  /* Was a 45% accent "neon" edge; now a hairline that is only tinted. */
+  --color-border-glow: color-mix(in oklab, var(--oklch-accent-0) 22%, var(--oklch-border));
   --color-foreground: var(--oklch-fg-0);
   --color-foreground-dim: var(--oklch-fg-1);
   --color-foreground-faint: var(--oklch-fg-2);
@@ -152,9 +155,13 @@
   --shadow-xl: var(--elev-3);
   --shadow-2xl: var(--elev-3);
   --shadow-inner: inset 0 1px 2px var(--field-shadow);
-  --shadow-input-focus: 0 0 0 4px color-mix(in oklab, var(--oklch-accent-0) 28%, transparent);
+  --shadow-input-focus: 0 0 0 3px color-mix(in oklab, var(--oklch-accent-0) 18%, transparent);
   --shadow-card: inset 0 1px 0 0 var(--specular), var(--elev-1);
   --shadow-pop: inset 0 1px 0 0 var(--specular), var(--elev-3);
+
+  /* Focus: an outline (it follows each element's own corner radius and never
+     fights the element's shadows) in a slightly softened accent. */
+  --focus-ring-color: color-mix(in oklab, var(--oklch-accent-0) 80%, var(--oklch-fg-0));
 }
 
 /* A previewed theme paints its own page colour and text. */
@@ -255,12 +262,20 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   --duration-700: 700ms;
   --duration-1000: 1000ms;
 
+  /* One motion scale (mirrored in src/lib/motion.ts for framer-motion):
+     standard for state changes, emphasized for things entering the screen.
+     No overshoot anywhere: the old spring names alias the calm curves. */
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --ease-smooth: cubic-bezier(0.32, 0.72, 0, 1);
-  --ease-spring: cubic-bezier(0.34, 1.26, 0.52, 1);
-  --ease-spring-bounce: cubic-bezier(0.34, 1.45, 0.58, 1);
+  --ease-smooth: var(--ease-emphasized);
+  --ease-spring: var(--ease-emphasized);
+  --ease-spring-bounce: var(--ease-emphasized);
+  --dur-fast: 120ms;
+  --dur-base: 180ms;
+  --dur-slow: 280ms;
 
   /* ── Typography ── [data-font] / [data-code-font] (generated) override
      these; the stacks here are the defaults, Geist and JetBrains Mono. */
@@ -314,14 +329,19 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   --shadow-pop: inset 0 1px 0 0 var(--specular), var(--elev-3);
 
   --animate-pulse-glow: pulse-glow 2.4s ease-in-out infinite;
-  --animate-shimmer: shimmer 2s linear infinite;
+  /* Loading placeholders breathe gently instead of sweeping a highlight. */
+  --animate-shimmer: skeleton-pulse 1.8s ease-in-out infinite;
   --animate-float: float 6s ease-in-out infinite;
   --animate-scan: scan 8s linear infinite;
   --animate-glitch: glitch 0.3s linear;
 
   @keyframes pulse-glow {
-    0%, 100% { opacity: 0.6; }
+    0%, 100% { opacity: 0.75; }
     50% { opacity: 1; }
+  }
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
   }
   @keyframes shimmer {
     from { background-position: 200% 0; }
@@ -345,9 +365,9 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   }
 
   --animate-pulse-subtle: pulse-subtle 2.4s ease-in-out infinite;
-  --animate-slide-in-up: slide-in-up 180ms var(--ease-smooth);
-  --animate-fade-in: fade-in 160ms var(--ease-smooth);
-  --animate-scale-in: scale-in 140ms var(--ease-smooth);
+  --animate-slide-in-up: slide-in-up var(--dur-base) var(--ease-emphasized);
+  --animate-fade-in: fade-in var(--dur-base) var(--ease-standard);
+  --animate-scale-in: scale-in var(--dur-base) var(--ease-emphasized);
 }
 
 @keyframes pulse-subtle {
@@ -357,7 +377,7 @@ html[data-text-size='xl'] { font-size: 112.5%; }
 
 @keyframes slide-in-up {
   from {
-    transform: translateY(12px);
+    transform: translateY(6px);
     opacity: 0;
   }
   to {
@@ -373,7 +393,7 @@ html[data-text-size='xl'] { font-size: 112.5%; }
 
 @keyframes scale-in {
   from {
-    transform: scale(0.96);
+    transform: scale(0.98);
     opacity: 0;
   }
   to {
@@ -438,10 +458,10 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   border-radius: var(--radius-card);
   box-shadow: var(--card-shadow, var(--elev-1));
   transition:
-    border-color var(--duration-200) var(--ease-smooth),
-    box-shadow var(--duration-200) var(--ease-smooth),
-    background-color var(--duration-300) var(--ease-smooth),
-    transform var(--duration-200) var(--ease-smooth);
+    border-color var(--dur-base) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    background-color var(--dur-slow) var(--ease-standard),
+    transform var(--dur-base) var(--ease-standard);
 }
 
 /* The older name for the same surface; forty panels still use it. */
@@ -454,10 +474,10 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   border-radius: var(--radius-card);
   box-shadow: var(--card-shadow, var(--elev-1));
   transition:
-    border-color var(--duration-200) var(--ease-smooth),
-    box-shadow var(--duration-200) var(--ease-smooth),
-    background-color var(--duration-300) var(--ease-smooth),
-    transform var(--duration-200) var(--ease-smooth);
+    border-color var(--dur-base) var(--ease-standard),
+    box-shadow var(--dur-base) var(--ease-standard),
+    background-color var(--dur-slow) var(--ease-standard),
+    transform var(--dur-base) var(--ease-standard);
 }
 
 /* Gradient headline treatment (subtle brand tint, still AA on dark) */
@@ -494,9 +514,9 @@ html[data-text-size='xl'] { font-size: 112.5%; }
   color: var(--color-text-primary);
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  transition: border-color var(--duration-200) ease,
-              box-shadow var(--duration-200) ease,
-              background-color var(--duration-200) ease;
+  transition: border-color var(--dur-fast) var(--ease-standard),
+              box-shadow var(--dur-fast) var(--ease-standard),
+              background-color var(--dur-fast) var(--ease-standard);
 
   &:focus {
     border-color: var(--color-accent-brand);
@@ -584,13 +604,21 @@ input[type='search']::-webkit-search-results-decoration {
     color: var(--color-text-primary);
   }
 
-  /* The macOS focus ring: a soft accent halo, not a hard offset outline. */
+  /* Keyboard focus: a crisp 2px outline just outside the element. Outlines
+     follow the element's own radius (a pill stays a pill, an avatar stays
+     round) and never replace its shadows. Text fields draw their own focus
+     (border + soft halo, see input-base), so they opt out. */
   :focus-visible {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+  :where(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color']), textarea, select, [contenteditable='true']):focus-visible {
     outline: none;
-    box-shadow:
-      0 0 0 1px var(--color-accent-brand),
-      0 0 0 4px color-mix(in oklab, var(--color-accent-brand) 28%, transparent);
-    border-radius: var(--radius-control);
+  }
+  /* Components that draw their own Tailwind focus ring keep just that one. */
+  [class*='focus-visible:ring']:focus-visible,
+  [class*='focus:ring']:focus-visible {
+    outline: none;
   }
 
   /* Headings take the display face and its tracking from the chosen font
@@ -632,12 +660,9 @@ input[type='search']::-webkit-search-results-decoration {
     @apply disabled:cursor-not-allowed disabled:opacity-50;
   }
 
-  button:not(:disabled):hover {
-    @apply scale-[1.015];
-  }
-
+  /* No hover zoom (it blurs text and jiggles rows); a small press only. */
   button:not(:disabled):active {
-    @apply scale-[0.985];
+    @apply scale-[0.98];
   }
 
   /* Remove default button styles in some contexts */
@@ -652,7 +677,7 @@ input[type='search']::-webkit-search-results-decoration {
   /* Premium Button Variants */
   .btn-primary {
     @apply btn-base bg-accent-brand text-on-accent-brand px-4 py-2.5 text-sm font-medium;
-    @apply hover:bg-accent-brand-hover hover:shadow-md;
+    @apply hover:bg-accent-brand-hover;
     @apply active:bg-accent-brand/90;
     @apply disabled:opacity-50 disabled:cursor-not-allowed;
   }
@@ -705,8 +730,8 @@ input[type='search']::-webkit-search-results-decoration {
   /* Card Variants */
   .card-primary {
     @apply card bg-bg-surface-3 border-border-hover;
-    @apply hover:shadow-lg hover:border-accent-brand/20;
-    @apply transition-all duration-300 ease-in-out;
+    @apply hover:shadow-md hover:border-border-strong;
+    @apply transition-[border-color,box-shadow] duration-200;
   }
 
   .card-elevated {
@@ -715,7 +740,7 @@ input[type='search']::-webkit-search-results-decoration {
   }
 
   .card-interactive {
-    @apply card hover:shadow-lg hover:border-accent-brand/20 transition-shadow duration-300;
+    @apply card hover:shadow-md hover:border-border-strong;
   }
 
   /* Badge Styles */
@@ -937,13 +962,6 @@ input[type='search']::-webkit-search-results-decoration {
     transition: none !important;
   }
 
-  /* Keep essential feedback */
-  .btn-primary:hover,
-  .btn-secondary:hover,
-  .btn-outline:hover {
-    @apply scale-[1.015];
-  }
-
   .card-interactive:hover {
     @apply shadow-lg;
   }
@@ -985,7 +1003,7 @@ input[type='search']::-webkit-search-results-decoration {
    may show through. */
 .pop-surface {
   border-radius: var(--radius-card);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--hairline);
   background-color: var(--color-bg-surface-2);
   box-shadow: inset 0 1px 0 var(--specular), var(--elev-3);
 }
@@ -1077,13 +1095,13 @@ input[type='search']::-webkit-search-results-decoration {
   --card-border: color-mix(in oklab, var(--color-accent-brand) 38%, var(--color-border));
   --card-shadow:
     inset 0 1px 0 0 var(--specular),
-    0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 10%, transparent),
-    0 10px 32px -12px color-mix(in oklab, var(--color-accent-brand) 45%, transparent);
+    0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 8%, transparent),
+    0 8px 24px -14px color-mix(in oklab, var(--color-accent-brand) 35%, transparent);
   --card-hover-border: color-mix(in oklab, var(--color-accent-brand) 60%, var(--color-border));
   --card-hover-shadow:
     inset 0 1px 0 0 var(--specular),
-    0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 18%, transparent),
-    0 14px 40px -12px color-mix(in oklab, var(--color-accent-brand) 60%, transparent);
+    0 0 0 1px color-mix(in oklab, var(--color-accent-brand) 14%, transparent),
+    0 10px 28px -14px color-mix(in oklab, var(--color-accent-brand) 45%, transparent);
 }
 
 /* A card inside a card is a quiet inset fill, never a second elevated sheet. */
