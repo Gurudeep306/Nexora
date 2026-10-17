@@ -26,29 +26,30 @@ questions.json `subject/topic` keys.
 ## Chapter overview
 | # | Chapter | Folder | Lessons | PYQs | Est. time |
 |---|---|---|---|---|---|
-| 1 | Number systems and codes | `01-number-systems` | 5 | 40 | 4 h 45 min |
+| 1 | Number systems, codes and floating point | `01-number-systems` | 8 | 65 | 7 h 25 min |
 | 2 | Boolean algebra and logic gates | `02-boolean-algebra-gates` | 6 | 64 | 4 h 55 min |
 | 3 | Minimisation | `03-minimisation` | 4 | 39 | 3 h 55 min |
 | 4 | Combinational circuits | `04-combinational-circuits` | 6 | 38 | 4 h 10 min |
 | 5 | Arithmetic circuits | `05-arithmetic-circuits` | 4 | 35 | 3 h 45 min |
 | 6 | Latches, flip-flops and sequential analysis | `06-latches-flip-flops` | 3 | 24 | 2 h 45 min |
 | 7 | Counters, registers and FSMs | `07-counters-registers-fsms` | 5 | 35 | 4 h 10 min |
-| 8 | Floating point and IEEE-754 | `08-floating-point` | 3 | 25 | 2 h 40 min |
-| 9 | Beyond the core syllabus | `09-beyond-syllabus` | 3 | 4 | 1 h 20 min |
+| 8 | Beyond the core syllabus | `08-beyond-syllabus` | 3 | 4 | 1 h 20 min |
 | | **Total** | | **39** | **304** | **32 h 25 min** |
 
-Foundation-first order: codes and complements (Ch 1) → gates and algebra (Ch 2) → minimisation
-(Ch 3) → combinational blocks (Ch 4) → arithmetic circuits, which use adders, signed numbers and
-MUX/XOR (Ch 5) → storage elements (Ch 6) → counters, registers and FSMs, which use flip-flops and
-K-maps (Ch 7) → floating point, which uses biased exponents, fractions and adders (Ch 8).
-Ch 9 is optional enrichment from Set C and older PYQs.
+Foundation-first order: number representations (Ch 1: bases, fixed point, complements, then
+floating point and IEEE-754, which need only biased exponents and binary fractions, then codes)
+→ gates and algebra (Ch 2) → minimisation (Ch 3) → combinational blocks (Ch 4) → arithmetic
+circuits, which use adders, signed numbers and MUX/XOR (Ch 5) → storage elements (Ch 6) →
+counters, registers and FSMs, which use flip-flops and K-maps (Ch 7). Ch 8 is optional enrichment
+from Set C and older PYQs. (Floating point was Chapter 8 until 2026-10-17; the owner asked for
+IEEE-754 early, inside Chapter 1, so it now follows signed numbers and precedes codes.)
 
 ---
 
-## Chapter 1 · Number systems and codes (`01-number-systems`), the pilot
+## Chapter 1 · Number systems, codes and floating point (`01-number-systems`), the pilot
 Live Lab: **Number Lab**: a base converter with step replay (any base, fractions, grouping), a
 signed-width explorer with the 2's-complement wheel, fixed point, and codes (BCD, excess-3, Gray,
-Hamming). The IEEE-754 tab is added in Ch 8. The detailed plan is in
+Hamming), plus an IEEE-754 tab (float ↔ hex ↔ bits, special-value badges, ulp). The detailed plan is in
 `01-number-systems/_plan.md`.
 
 ### dl-01-01-place-value · Place value and changing bases
@@ -108,7 +109,45 @@ Hamming). The IEEE-754 tab is added in Ch 8. The detailed plan is in
 - Practice themes: encode/decode at width n; ranges; radix complement; sign extension; shifts
 - Gaps: arithmetic-shift rules and minimum width (thin; B covers r's and (r−1)'s complements)
 
-### dl-01-05-codes · Binary codes: BCD, excess-3, Gray, parity and Hamming
+### dl-01-05-floating-point-basics · Floating-point representation: formats, normalisation, range
+- Prerequisites: dl-01-03, dl-01-04 (biased)
+- Sub-topics: scientific notation in base 2 and 16; mantissa/significand, exponent and bias
+  (excess-K); normalisation and the hidden bit; custom formats (sign-magnitude mantissa, 2's
+  complement exponent, base-16 exponents); range, precision and ulp (gap between neighbours)
+- Sets: A 21–23; B 150–152
+- pyq_topics: dl/floating
+- PYQs (7; floating): `cse-1996-a-25`, `cse-1997-b-72-a`, `cse-2002-b-57-a`, `cse-2002-b-57-b`, `cse-2003-cs-43`, `cse-2005-cs-85a`, `cse-2005-cs-85b`
+- Time: 55 min
+- Diagrams/animations: floating-point number line with densities (gaps doubling); normalise
+  shift animation
+- Practice themes: encode in a custom format; range; ulp
+
+### dl-01-06-ieee-754 · IEEE-754 single and double precision
+- Prerequisites: dl-01-05
+- Sub-topics: the single and double layouts; bias 127/1023; encode and decode; special values (±0,
+  ±∞, NaN); denormals; largest and smallest values; reading hex words quickly
+- Sets: A 23; B 152–153; D 402–403
+- pyq_topics: dl/floating
+- PYQs (10; floating): `cse-2008-cs-4`, `it-2008-it-7`, `cse-2012-cs-7`, `cse-2014-2-cs-45`, `cse-2017-2-cs-12`, `cse-2021-1-cs-24`, `cse-2021-2-cs-4`, `cse-2022-cs-31`, `cse-2024-2-cs-4`, `cse-2026-2-cs-24`
+- Time: 55 min
+- Diagrams/animations: **IEEE-754 bit layout** (clickable fields); special-value map of the
+  exponent/fraction plane
+- Practice themes: hex ↔ decimal; special values; extremes
+
+### dl-01-07-floating-point-arithmetic · Floating-point arithmetic, rounding and its pitfalls
+- Prerequisites: dl-01-06 (the ripple-carry adder of dl-05-01 is mentioned only as hardware context)
+- Sub-topics: add/subtract (align, add, normalise, round); multiply/divide (add/subtract
+  exponents); multiplying by powers of two; rounding and absorption; non-associativity;
+  relative error
+- Sets: B 150–153 (brief); no set works an IEEE add/multiply
+- pyq_topics: dl/floating
+- PYQs (8; floating): `cse-1997-b-72-b`, `cse-1997-b-72-c`, `cse-2000-a-2-14`, `cse-2004-cs-28`, `cse-2020-cs-29`, `cse-2023-cs-35`, `cse-2025-2-cs-39`, `cse-2026-1-cs-26`
+- Time: 50 min
+- Diagrams/animations: alignment-shift animation; absorption demo (1e30 + 1)
+- Practice themes: IEEE add/multiply; rounding order; error
+- Gaps: **GAP** rounding modes and the guard/round/sticky bits (textbook)
+
+### dl-01-08-codes · Binary codes: BCD, excess-3, Gray, parity and Hamming
 - Prerequisites: dl-01-01, dl-01-02 (⊕ is defined locally by its truth table)
 - Sub-topics: weighted vs unweighted codes (8421, 2421, 84−2−1); BCD validity; self-complementing
   codes; excess-3; reflected Gray (construction, conversions, unit distance); Gray successor
@@ -130,7 +169,7 @@ fill in; a "NAND-only / NOR-only" challenge mode; a minterm-set calculator (AND 
 XOR = Δ).
 
 ### dl-02-01-logic-gates · Logic gates and truth tables
-- Prerequisites: dl-01-05 (bits, XOR as "differ")
+- Prerequisites: dl-01-08 (bits, XOR as "differ")
 - Sub-topics: NOT, AND, OR, NAND, NOR, XOR, XNOR (symbols, truth tables, multi-input forms);
   bubbles and active-low; positive vs negative logic; buffers; gate-level reading of simple
   expressions
@@ -220,7 +259,7 @@ highlight the essential ones, choose a minimal SOP or POS, and step through Quin
 the same function.
 
 ### dl-03-01-kmaps · Karnaugh maps (2–4 variables)
-- Prerequisites: dl-02-04, dl-01-05 (Gray order)
+- Prerequisites: dl-02-04, dl-01-08 (Gray order)
 - Sub-topics: map layout and Gray order; adjacency and wrap-around (corners); grouping rules
   (powers of 2, largest first); SOP from 1s and POS from 0s; reading a given map; spotting
   XOR/XNOR patterns; algebraic minimisation alongside; counting minterms of an expression
@@ -523,56 +562,12 @@ self-start checker.
 
 ---
 
-## Chapter 8 · Floating point and IEEE-754 (`08-floating-point`)
-Live Lab: **Number Lab, IEEE-754 tab**: float ↔ hex ↔ bits with a clickable bit layout,
-special-value badges, ulp display, and a step-through float add/multiply.
-
-### dl-08-01-floating-point-basics · Floating-point representation: formats, normalisation, range
-- Prerequisites: dl-01-03, dl-01-04 (biased)
-- Sub-topics: scientific notation in base 2 and 16; mantissa/significand, exponent and bias
-  (excess-K); normalisation and the hidden bit; custom formats (sign-magnitude mantissa, 2's
-  complement exponent, base-16 exponents); range, precision and ulp (gap between neighbours)
-- Sets: A 21–23; B 150–152
-- pyq_topics: dl/floating
-- PYQs (7; floating): `cse-1996-a-25`, `cse-1997-b-72-a`, `cse-2002-b-57-a`, `cse-2002-b-57-b`, `cse-2003-cs-43`, `cse-2005-cs-85a`, `cse-2005-cs-85b`
-- Time: 55 min
-- Diagrams/animations: floating-point number line with densities (gaps doubling); normalise
-  shift animation
-- Practice themes: encode in a custom format; range; ulp
-
-### dl-08-02-ieee-754 · IEEE-754 single and double precision
-- Prerequisites: dl-08-01
-- Sub-topics: the single and double layouts; bias 127/1023; encode and decode; special values (±0,
-  ±∞, NaN); denormals; largest and smallest values; reading hex words quickly
-- Sets: A 23; B 152–153; D 402–403
-- pyq_topics: dl/floating
-- PYQs (10; floating): `cse-2008-cs-4`, `it-2008-it-7`, `cse-2012-cs-7`, `cse-2014-2-cs-45`, `cse-2017-2-cs-12`, `cse-2021-1-cs-24`, `cse-2021-2-cs-4`, `cse-2022-cs-31`, `cse-2024-2-cs-4`, `cse-2026-2-cs-24`
-- Time: 55 min
-- Diagrams/animations: **IEEE-754 bit layout** (clickable fields); special-value map of the
-  exponent/fraction plane
-- Practice themes: hex ↔ decimal; special values; extremes
-
-### dl-08-03-floating-point-arithmetic · Floating-point arithmetic, rounding and its pitfalls
-- Prerequisites: dl-08-02, dl-05-01
-- Sub-topics: add/subtract (align, add, normalise, round); multiply/divide (add/subtract
-  exponents); multiplying by powers of two; rounding and absorption; non-associativity;
-  relative error
-- Sets: B 150–153 (brief); no set works an IEEE add/multiply
-- pyq_topics: dl/floating
-- PYQs (8; floating): `cse-1997-b-72-b`, `cse-1997-b-72-c`, `cse-2000-a-2-14`, `cse-2004-cs-28`, `cse-2020-cs-29`, `cse-2023-cs-35`, `cse-2025-2-cs-39`, `cse-2026-1-cs-26`
-- Time: 50 min
-- Diagrams/animations: alignment-shift animation; absorption demo (1e30 + 1)
-- Practice themes: IEEE add/multiply; rounding order; error
-- Gaps: **GAP** rounding modes and the guard/round/sticky bits (textbook)
-
----
-
-## Chapter 9 · Beyond the core syllabus (optional, `09-beyond-syllabus`)
+## Chapter 8 · Beyond the core syllabus (optional, `08-beyond-syllabus`)
 Kept because Set C covers these and some old PYQs test them. They are marked "optional" in the
 reader. Live Lab: **Converter Bench**: a SAR ADC stepping through its binary search beside an
 R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 
-### dl-09-01-memory-devices · Semiconductor memory organisation
+### dl-08-01-memory-devices · Semiconductor memory organisation
 - Prerequisites: dl-04-05
 - Sub-topics: RAM/ROM types; chip organisation; expanding word size and count (cross-reference COA)
 - Sets: C 373–377, 392–393 (memory arrays, SRAM vs DRAM, 4×4 RAM)
@@ -581,7 +576,7 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - Time: 25 min
 - Diagrams/animations: chip-array expansion
 
-### dl-09-02-data-converters · DAC and ADC basics
+### dl-08-02-data-converters · DAC and ADC basics
 - Prerequisites: dl-01-03
 - Sub-topics: weighted-resistor and R-2R DAC; resolution; flash/successive-approximation/counter
   ADCs
@@ -592,7 +587,7 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - Diagrams/animations: SAR binary-search animation
 - Gaps: **GAP** ADC types (C only names them)
 
-### dl-09-03-logic-families · Logic families and switch-level circuits
+### dl-08-03-logic-families · Logic families and switch-level circuits
 - Prerequisites: dl-02-01
 - Sub-topics: TTL/CMOS/ECL comparison; noise margins and levels; CMOS static power; pass
   transistors and transmission gates
@@ -609,7 +604,7 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - dl PYQs in `src/gate/questions.json`: **304** (sequential 59, combinational 42, number 40, minimization 40, boolean 36, gates 33, arithmetic 29, floating 25).
 - Assigned to a lesson: **304**; each id has exactly one *primary* lesson (secondary links are listed in chapter plans).
 - **Unassigned: 0** (none)
-- Lessons with no PYQ: `dl-04-04`, `dl-09-01`, `dl-09-02` (kept: set coverage, building blocks or optional).
+- Lessons with no PYQ: `dl-04-04`, `dl-08-01`, `dl-08-02` (kept: set coverage, building blocks or optional).
 - Enforced by `content/gate-notes/_checks/dl/outline_pyq_assignment.py` (runs in CI via `scripts/gate-notes/run_checks.py`). Once lessons exist, `npm run notes:build` coverage takes over.
 
 ## Gaps summary (write from textbooks)
@@ -621,6 +616,6 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - `dl-05-04-multipliers-booth` (Multiplication: array multipliers and Booth's algorithm): Booth's algorithm worked end to end and the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
 - `dl-07-04-finite-state-machines` (Finite state machines: Mealy and Moore): Mealy/Moore theory, detectors and FSM → circuit (only E 405/407 touch it; textbook: Mano)
 - `dl-07-05-state-minimisation` (State minimisation): partition refinement (E 409 shows one implication table only)
-- `dl-08-03-floating-point-arithmetic` (Floating-point arithmetic, rounding and its pitfalls): rounding modes and the guard/round/sticky bits (textbook)
-- `dl-09-02-data-converters` (DAC and ADC basics): ADC types (C only names them)
-- `dl-09-03-logic-families` (Logic families and switch-level circuits): (pre-2000 PYQs only)
+- `dl-01-07-floating-point-arithmetic` (Floating-point arithmetic, rounding and its pitfalls): rounding modes and the guard/round/sticky bits (textbook)
+- `dl-08-02-data-converters` (DAC and ADC basics): ADC types (C only names them)
+- `dl-08-03-logic-families` (Logic families and switch-level circuits): (pre-2000 PYQs only)

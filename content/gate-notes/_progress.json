@@ -27,18 +27,22 @@
       "chapters": [
         {
           "id": "01-number-systems",
-          "title": "Number systems and codes",
-          "lessons": 5,
-          "pyqs": 40,
-          "status": "reviewed",
+          "title": "Number systems, codes and floating point",
+          "lessons": 8,
+          "pyqs": 65,
+          "status": "in-progress",
           "review": "2026-10-17: second-pass examiner review (independent reviewer): 14 findings (4 errors, 3 misleading, 7 minor) all fixed and re-checked; 40/40 PYQ keys re-derived, none wrong; coverage 40/40.",
           "lessons_status": {
             "place-value": "published+reviewed",
             "power-of-two-bases": "published+reviewed",
             "fractions-fixed-point": "published+reviewed",
             "signed-numbers": "published+reviewed",
+            "floating-point-basics": "written (draft): 5480 words, 20 worked examples, 3 viz (3 animated), 7 PYQs, 9 practice; checks l05_fp_basics.py pass",
+            "ieee-754": "planned",
+            "floating-point-arithmetic": "planned",
             "codes": "published+reviewed"
-          }
+          },
+          "restructure": "2026-10-17: floating point (old Chapter 8, 3 lessons, 25 PYQs) moved into Chapter 1 as lessons 5-7, after signed numbers and before codes (now lesson 8). Lesson ids unchanged; codes practice ids renamed nx-dl-01-05-* -> nx-dl-01-08-*."
         },
         {
           "id": "02-boolean-algebra-gates",
@@ -83,14 +87,7 @@
           "status": "planned"
         },
         {
-          "id": "08-floating-point",
-          "title": "Floating point and IEEE-754",
-          "lessons": 3,
-          "pyqs": 25,
-          "status": "planned"
-        },
-        {
-          "id": "09-beyond-syllabus",
+          "id": "08-beyond-syllabus",
           "title": "Beyond the core syllabus",
           "lessons": 3,
           "pyqs": 4,

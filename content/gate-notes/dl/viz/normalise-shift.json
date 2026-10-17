@@ -1,0 +1,211 @@
+{
+ "version": 1,
+ "title": "Normalising a significand: shift left, lower the exponent",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 290
+ },
+ "intro": "The significand 0.0001011 times 2 to the 6 is 5.5, but it starts with three zeros after the point, which waste precision.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Normalising 0.0001011 × 2⁶ (the value is 5.5)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Normalising 0.0001011 × 2⁶",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "sig",
+   "type": "bits",
+   "x": 112,
+   "y": 84,
+   "bits": "0.0001011",
+   "cell": 46,
+   "labels": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ],
+   "narrow": {
+    "x": 18,
+    "y": 84,
+    "cell": 36
+   }
+  },
+  {
+   "id": "exp",
+   "type": "text",
+   "x": 548,
+   "y": 107,
+   "text": "× 2⁶",
+   "size": 24,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 152,
+    "size": 22
+   }
+  },
+  {
+   "id": "val",
+   "type": "text",
+   "x": 320,
+   "y": 176,
+   "text": "value = 11/128 × 64 = 5.5",
+   "anchor": "middle",
+   "size": 17,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 196,
+    "size": 16
+   }
+  },
+  {
+   "id": "form",
+   "type": "box",
+   "x": 150,
+   "y": 214,
+   "w": 340,
+   "h": 44,
+   "size": 16,
+   "narrow": {
+    "x": 20,
+    "y": 226,
+    "w": 320,
+    "h": 44,
+    "size": 15
+   },
+   "label": "not normalised: three 0s after the point"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Find the first 1. It sits in the 4th place after the point, so the significand starts with three wasted zeros.",
+   "patches": [
+    {
+     "id": "sig",
+     "set": {
+      "highlight": [
+       5
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Fraction form (0.1…): shift the significand 3 places left, so the first 1 sits just after the point. A left shift by 3 multiplies by 2³, so the exponent drops by 3: 0.1011 × 2³.",
+   "patches": [
+    {
+     "id": "sig",
+     "set": {
+      "bits": "0.1011000",
+      "highlight": [
+       2
+      ]
+     }
+    },
+    {
+     "id": "exp",
+     "set": {
+      "text": "× 2³"
+     }
+    },
+    {
+     "id": "val",
+     "set": {
+      "text": "value = 11/16 × 8 = 5.5"
+     }
+    },
+    {
+     "id": "form",
+     "set": {
+      "label": "fraction form: ½ ≤ M < 1",
+      "tone": "info",
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Hidden-bit form (1.f): shift one more place, so the first 1 sits before the point. The exponent drops once more: 1.011 × 2².",
+   "patches": [
+    {
+     "id": "sig",
+     "set": {
+      "bits": "1.0110000",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "exp",
+     "set": {
+      "text": "× 2²"
+     }
+    },
+    {
+     "id": "val",
+     "set": {
+      "text": "value = 11/8 × 4 = 5.5"
+     }
+    },
+    {
+     "id": "form",
+     "set": {
+      "label": "hidden-bit form: 1 ≤ M < 2",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "In the hidden-bit form the bit before the point is always 1, so it is not stored. The fraction field keeps only 011 (then zeros), and every shift kept the value at 5.5.",
+   "patches": [
+    {
+     "id": "sig",
+     "set": {
+      "highlight": [
+       2,
+       3,
+       4
+      ]
+     }
+    },
+    {
+     "id": "form",
+     "set": {
+      "label": "stored fraction field: 011 000…",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

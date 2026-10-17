@@ -416,3 +416,78 @@ test('viz arc: valid sectors pass, bad sweeps and radii are reported, geometry i
   assert.equal((ring.match(/A40 40/g) || []).length, 2);
   assert.deepEqual(arcLabelPoint(100, 100, 80, 40, 0, 90), polar(100, 100, 60, 45));
 });
+
+/* ── Viz: the narrow (phone) layout — schema and frames ── */
+
+test('viz narrow layout: a second canvas, per-element geometry and wide/narrow-only elements', async () => {
+  const { pathToFileURL } = require('node:url');
+  const viz = (f) => import(pathToFileURL(path.join(ROOT, 'client', 'src', 'viz', f)).href);
+  const { validateVizSpec } = await viz('schema.ts');
+  const { buildFrames, canvasSize, pickLayout } = await viz('frames.ts');
+  const spec = {
+    version: 1,
+    title: 'Bit layout',
+    width: 640,
+    height: 120,
+    narrow: { width: 360, height: 240 },
+    elements: [
+      { id: 'row', type: 'bits', x: 10, y: 40, bits: '10000001', cell: 20, only: 'wide' },
+      { id: 'hi', type: 'bits', x: 20, y: 40, bits: '1000', cell: 40, only: 'narrow' },
+      { id: 'lo', type: 'bits', x: 20, y: 140, bits: '0001', cell: 40, only: 'narrow' },
+      { id: 'cap', type: 'text', x: 320, y: 20, text: 'exponent', size: 14, narrow: { x: 180, size: 18 } },
+      { id: 'pt', type: 'arrow', from: 'cap', to: 'hi', only: 'narrow' },
+    ],
+    steps: [
+      {
+        caption: 'Light the exponent',
+        patches: [
+          { id: 'row', set: { highlight: [0] } },
+          { id: 'hi', set: { highlight: [0] } },
+          { id: 'cap', set: { tone: 'accent', x: 300 } },
+        ],
+      },
+    ],
+  };
+  assert.deepEqual(validateVizSpec(spec), []);
+
+  // Wide: the narrow-only elements are absent and the authored geometry is used.
+  const wide = buildFrames(spec, 'wide');
+  assert.deepEqual(wide[0].elements.map((e) => e.id), ['row', 'cap']);
+  assert.deepEqual([...wide[1].changed].sort(), ['cap', 'row']);
+  assert.equal(wide[1].elements.find((e) => e.id === 'cap').x, 300);
+  assert.deepEqual(buildFrames(spec), wide, 'wide is the default layout');
+  // Narrow: wide-only elements are dropped; the layout geometry wins over a patch for the keys it names.
+  const narrow = buildFrames(spec, 'narrow');
+  assert.deepEqual(narrow[0].elements.map((e) => e.id), ['hi', 'lo', 'cap', 'pt']);
+  const cap = narrow[1].elements.find((e) => e.id === 'cap');
+  assert.deepEqual([cap.x, cap.size, cap.tone], [180, 18, 'accent']);
+  assert.deepEqual([...narrow[1].changed].sort(), ['cap', 'hi']);
+  assert.deepEqual(narrow[1].elements.find((e) => e.id === 'hi').highlight, [0]);
+  // The text alternative is the same in both layouts.
+  assert.deepEqual(wide.map((f) => f.caption), narrow.map((f) => f.caption));
+  // Canvas and layout choice.
+  assert.deepEqual(canvasSize(spec, 'narrow'), { width: 360, height: 240 });
+  assert.deepEqual(canvasSize(spec, 'wide'), { width: 640, height: 120 });
+  assert.equal(pickLayout(spec, 343), 'narrow');
+  assert.equal(pickLayout(spec, 700), 'wide');
+  assert.equal(pickLayout({ ...spec, narrow: { ...spec.narrow, below: 300 } }, 343), 'wide');
+  assert.equal(pickLayout({}, 200), 'wide', 'no narrow canvas: always wide');
+  assert.equal(pickLayout(spec, 0), 'wide', 'unmeasured: wide');
+
+  // Errors.
+  const errs = (patch) => validateVizSpec({ ...spec, ...patch }).join('\n');
+  const { narrow: _n, ...noCanvas } = spec;
+  assert.match(validateVizSpec(noCanvas).join('\n'), /"only" and "narrow" need a top-level narrow canvas/);
+  assert.match(errs({ narrow: { width: 10, height: 240 } }), /narrow\.width: must be a number/);
+  assert.match(errs({ narrow: { width: 360, height: 240, below: 50 } }), /narrow\.below: must be an integer/);
+  assert.match(errs({ narrow: { width: 360, height: 240, zoom: 2 } }), /narrow\.zoom: unknown property/);
+  const withEl = (el) => errs({ elements: [...spec.elements.slice(0, 4), el] });
+  const t = { id: 'x', type: 'text', x: 1, y: 1, text: 'a' };
+  assert.match(withEl({ ...t, narrow: { text: 'b' } }), /narrow\.text: only geometry can change per layout/);
+  assert.match(withEl({ ...t, narrow: { cell: 30 } }), /narrow\.cell: unknown property for a text/);
+  assert.match(withEl({ ...t, narrow: { size: 99 } }), /narrow\.size: must be a number in \[8, 48\]/);
+  assert.match(withEl({ ...t, only: 'wide', narrow: { x: 2 } }), /an element drawn only in the wide layout has no narrow geometry/);
+  assert.match(withEl({ ...t, only: 'tablet' }), /only: must be one of wide \| narrow/);
+  assert.match(withEl({ id: 'x', type: 'arrow', from: 'cap', to: 'row' }), /elements\[4\]\.to: "row" is not drawn in the narrow layout/);
+  assert.match(errs({ steps: [{ caption: 'Move', patches: [{ id: 'cap', set: { only: 'wide' } }] }] }), /cannot change the layout \(only, narrow\)/);
+});

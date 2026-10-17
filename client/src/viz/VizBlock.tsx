@@ -6,6 +6,8 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import type { VizSpec } from './schema'
 import type { VizPlayerProps } from './VizPlayer'
+import { canvasSize } from './frames'
+import { useVizLayout } from './useVizLayout'
 import './viz.css'
 
 const VizPlayer = lazy(() => import('./VizPlayer'))
@@ -31,7 +33,8 @@ export function VizBlock(props: VizPlayerProps) {
     }
   }, [show])
 
-  const placeholder = <Placeholder spec={props.spec} />
+  const layout = useVizLayout(props.spec, ref)
+  const placeholder = <Placeholder spec={props.spec} layout={layout} />
   return (
     <div ref={ref} className="nxv-slot">
       {show ? <Suspense fallback={placeholder}>{<VizPlayer {...props} />}</Suspense> : placeholder}
@@ -39,10 +42,11 @@ export function VizBlock(props: VizPlayerProps) {
   )
 }
 
-function Placeholder({ spec }: { spec: VizSpec }) {
+function Placeholder({ spec, layout }: { spec: VizSpec; layout: 'wide' | 'narrow' }) {
+  const { width, height } = canvasSize(spec, layout)
   return (
     <div className="nxv nxv--placeholder" role="img" aria-label={`${spec.title} (loading)`}>
-      <div className="nxv-stage" style={{ aspectRatio: `${spec.width} / ${spec.height}` }} />
+      <div className="nxv-stage" style={{ aspectRatio: `${width} / ${height}` }} />
     </div>
   )
 }
