@@ -587,6 +587,164 @@ SOLUTIONS["cse-2002-a-28"] = {
 }
 
 
+# ── Lesson 4: canonical forms and counting ──────────────────────────────────
+
+SOLUTIONS["cse-2007-cs-3"] = {
+    "approach": "Concept tested: **counting Boolean functions**. A function is its truth table's output column: one free bit per row.",
+    "concepts": ["Truth table", "Counting functions"],
+    "steps": [
+        {"title": "Count the rows", "body": "$n$ Boolean variables have $2^n$ input combinations, so the truth table has $2^n$ rows."},
+        {"title": "Count the columns", "body": "Each row's output is chosen independently as 0 or 1, so there are $2 \\times 2 \\times \\dots \\times 2$ ($2^n$ factors) $= 2^{2^n}$ different output columns, i.e. functions."},
+        {"title": "Check small n", "body": "$n = 1$: $2^{2} = 4$ functions ($0, x, x', 1$); $n = 2$: $2^4 = 16$, the sixteen two-input functions."},
+    ],
+    "answer": {"value": "(C) $2^{2^n}$", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$n^2$ gives 1 for $n = 1$, but there are 4 functions of one variable."),
+        opt("B", False, "$2^n$ is the number of rows (input combinations), not of functions."),
+        opt("C", True, "One free output bit for each of the $2^n$ rows."),
+        opt("D", False, "$2^{n^2}$ gives 2 for $n = 1$ and 16 for $n = 2$ but 512 for $n = 3$, where the true count is 256."),
+    ],
+    "shortcut": "Rows = $2^n$; functions = $2^{\\text{rows}}$.",
+    "pitfalls": ["Answering the number of rows ($2^n$) instead of the number of functions."],
+    "verification": "Enumerating every column for $n = 1, 2, 3$ gives 4, 16, 256.",
+}
+
+SOLUTIONS["cse-2010-cs-6"] = {
+    "approach": "Concept tested: **expanding product terms into minterms**. Write each term as a pattern over $P, Q, R$ ($P$ is the most significant bit), expand the missing variable, and take the union.",
+    "concepts": ["Minterms", "Canonical SOP"],
+    "steps": [
+        {"title": "Patterns", "body": "| Term | Pattern ($PQR$) | Rows | Minterms |\n|---|---|---|---|\n| $PQ$ | $11-$ | 110, 111 | 6, 7 |\n| $Q\\overline{R}$ | $-10$ | 010, 110 | 2, 6 |\n| $P\\overline{R}$ | $1-0$ | 100, 110 | 4, 6 |"},
+        {"title": "Union", "body": "$\\{6, 7\\} \\cup \\{2, 6\\} \\cup \\{4, 6\\} = \\{2, 4, 6, 7\\}$: $f = m_2 + m_4 + m_6 + m_7$."},
+    ],
+    "answer": {"value": "(A) $m_2 + m_4 + m_6 + m_7$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "The union of the three terms' minterms."),
+        opt("B", False, "$m_0, m_1, m_3, m_5$ are exactly the rows where $f = 0$: this is $\\overline{f}$."),
+        opt("C", False, "Contains $m_0, m_1$ ($P = 0, Q = 0$), where every term is 0."),
+        opt("D", False, "Contains $m_3$ (011) and $m_5$ (101), where every term is 0."),
+    ],
+    "shortcut": "$f$ is the majority-like 'at least two of $P, Q, \\overline{R}$': rows where two or more of $P = 1$, $Q = 1$, $R = 0$ hold: 010, 100, 110, 111.",
+    "pitfalls": ["Taking $R$ as the most significant bit, which renumbers every minterm.", "Counting $m_6$ three times instead of once."],
+    "verification": "Row 3 (011): $PQ = 0$, $Q\\overline{R} = 0$, $P\\overline{R} = 0$, so $m_3$ is correctly excluded.",
+}
+
+SOLUTIONS["cse-2015-3-cs-44"] = {
+    "approach": "Concept tested: **Σ and Π lists**. Expand $F = P' + QR$ into minterms ($P$ is the MSB); the maxterms are the remaining rows.",
+    "concepts": ["Canonical SOP", "Canonical POS", "Minterms and maxterms"],
+    "steps": [
+        {"title": "Minterms", "body": "$P' \\to 0--$: rows 0, 1, 2, 3. $QR \\to -11$: rows 3, 7. Union: $F = \\Sigma(0, 1, 2, 3, 7)$."},
+        {"title": "Maxterms", "body": "The other rows are 4, 5, 6, so $F = \\Pi(4, 5, 6)$."},
+        {"title": "Judge the statements", "body": "S1 $\\Sigma(4,5,6)$: false (those are the 0-rows). S2 $\\Sigma(0,1,2,3,7)$: true. S3 $\\Pi(4,5,6)$: true. S4 $\\Pi(0,1,2,3,7)$: false (that is $F'$)."},
+    ],
+    "answer": {"value": "(A) S1 false, S2 true, S3 true, S4 false", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "Matches the computed lists."),
+        opt("B", False, "Swaps the meaning of Σ and Π: S1 and S4 describe $F'$."),
+        opt("C", False, "S2 is true: $F$ is 1 on rows 0, 1, 2, 3, 7."),
+        opt("D", False, "S1 is false and S3 is true."),
+    ],
+    "shortcut": "Σ lists the 1-rows, Π the 0-rows; a correct pair (S2, S3) always uses complementary lists.",
+    "pitfalls": ["Thinking $\\Pi$ of a list equals $\\Sigma$ of the same list."],
+    "verification": "Row 5 (101): $P' = 0$, $QR = 0$, so $F = 0$: 5 is a maxterm. Row 7: $QR = 1$, a minterm.",
+}
+
+SOLUTIONS["cse-2024-1-cs-37"] = {
+    "approach": "Concept tested: **canonical forms and the majority function**. $\\Sigma(3, 5, 6, 7)$ is the 3-input majority; its Π list is the complementary set, and dependence on a variable is shown by one pair of inputs that differ only in it.",
+    "concepts": ["Canonical SOP and POS", "Majority function", "Variable dependence"],
+    "steps": [
+        {"title": "Recognise the function", "body": "Rows 3, 5, 6, 7 are 011, 101, 110, 111: exactly the rows with at least two 1s. So $F = XY + YZ + XZ$ (majority)."},
+        {"title": "(A): the Π form", "body": "The 0-rows are 0, 1, 2, 4, so $F = \\Pi(0, 1, 2, 4)$. Correct."},
+        {"title": "(C) and (D): dependence", "body": "$F$ depends on $Y$: with $X = 1, Z = 0$, $Y = 0$ gives row 4 ($F = 0$) and $Y = 1$ gives row 6 ($F = 1$). By symmetry it also depends on $X$ (rows 2 and 6). Both (C) and (D) are false."},
+    ],
+    "answer": {"value": "(A) and (B)", "choice": ["A", "B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "The maxterms are the complementary rows 0, 1, 2, 4."),
+        opt("B", True, "The majority function's minimal SOP."),
+        opt("C", False, "Rows 4 and 6 differ only in $Y$ but have different outputs."),
+        opt("D", False, "Rows 2 and 6 differ only in $X$ but have different outputs."),
+    ],
+    "shortcut": "Majority is symmetric and depends on every input; as soon as you see $\\Sigma(3, 5, 6, 7)$, (B) is true and (C), (D) are false.",
+    "pitfalls": ["Writing $\\Pi(3, 5, 6, 7)$ for the POS form (the same numbers under Π describe the complement)."],
+    "verification": "$XY + YZ + XZ$ over rows 0–7 gives 0, 0, 0, 1, 0, 1, 1, 1.",
+}
+
+SOLUTIONS["cse-2021-1-cs-42"] = {
+    "approach": "Concept tested: **complement of a product of sums, compared by minterm sets**. Find the rows where $F = 1$, complement them, and list each option's rows.",
+    "concepts": ["Minterm sets", "Complement", "Canonical forms"],
+    "given": "$F = (X + Y + Z)(\\overline{X} + Y)(\\overline{Y} + Z)$",
+    "steps": [
+        {"title": "Where F = 1", "body": "$(X + Y + Z) = 0$ on row 000; $(\\overline{X} + Y) = 0$ on rows $10- = \\{4, 5\\}$; $(\\overline{Y} + Z) = 0$ on rows $-10 = \\{2, 6\\}$. So $F = \\Pi(0, 2, 4, 5, 6) = \\Sigma(1, 3, 7)$ and $\\overline{F} = \\Sigma(0, 2, 4, 5, 6)$."},
+        {"title": "(A)", "body": "Its factors are 0 on rows $\\{7\\}$, $01- = \\{2, 3\\}$ and $-01 = \\{1, 5\\}$, so (A) $= \\Sigma(0, 4, 6)$. Not $\\overline{F}$ (the literals were complemented but the operators were not swapped)."},
+        {"title": "(B), (C), (D)", "body": "(B) $X\\overline{Y} \\to 10-$, $\\overline{Z} \\to --0$: $\\{4, 5\\} \\cup \\{0, 2, 4, 6\\} = \\{0, 2, 4, 5, 6\\}$. (C) factors are 0 on $0-1 = \\{1, 3\\}$ and $-11 = \\{3, 7\\}$, so (C) $= \\Sigma(0, 2, 4, 5, 6)$. (D) $\\{4, 5\\} \\cup \\{2, 6\\} \\cup \\{0\\} = \\{0, 2, 4, 5, 6\\}$. All three equal $\\overline{F}$."},
+    ],
+    "answer": {"value": "(B), (C) and (D)", "choice": ["B", "C", "D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$\\Sigma(0, 4, 6)$; it misses rows 2 and 5 of $\\overline{F}$."),
+        opt("B", True, "$\\Sigma(0, 2, 4, 5, 6) = \\overline{F}$."),
+        opt("C", True, "A POS whose maxterms are exactly $F$'s minterms 1, 3, 7."),
+        opt("D", True, "The De Morgan expansion of $\\overline{F}$ (one term per factor of $F$)."),
+    ],
+    "shortcut": "De Morgan gives (D) directly: $\\overline{F} = \\overline{X}\\,\\overline{Y}\\,\\overline{Z} + X\\overline{Y} + Y\\overline{Z}$. Then only (A) needs a row: at 010 (A) is 0 but $\\overline{F} = 1$.",
+    "pitfalls": ["Complementing the literals without swapping AND and OR (option A).", "Stopping after finding one correct option in an MSQ."],
+    "verification": "Row 010: $F$'s third factor $\\overline{Y} + Z = 0$, so $\\overline{F} = 1$; (B) $\\overline{Z} = 1$ ✓, (C) $(0 + 1)(0 + 1) = 1$ ✓, (D) $Y\\overline{Z} = 1$ ✓, (A) $= 1 \\cdot 0 \\ldots = 0$ ✗.",
+}
+
+SOLUTIONS["cse-2001-b-58-a"] = {
+    "approach": "Concept tested: **the self-dual test**. A 3-variable function is self-dual iff $f(\\bar{x}) = \\overline{f(x)}$, i.e. of every complementary pair of rows $(m, 7 - m)$ exactly one is a minterm.",
+    "concepts": ["Self-dual function", "Duality", "Complementary pairs"],
+    "steps": [
+        {"title": "Pair the rows", "body": "The complementary pairs are $(0, 7), (1, 6), (2, 5), (3, 4)$ (indices adding up to $2^3 - 1 = 7$)."},
+        {"title": "Check each pair", "body": "$f = \\Sigma(0, 1, 2, 4)$ takes 0 from $(0, 7)$, 1 from $(1, 6)$, 2 from $(2, 5)$ and 4 from $(3, 4)$: exactly one from each pair."},
+        {"title": "Conclusion", "body": "So $f(\\bar{x}) = \\overline{f(x)}$ on every row and $f$ is self-dual. (In fact $f$ is 'at most one input is 1' $= M(\\bar{A}, \\bar{B}, \\bar{C})$, the majority of the complemented inputs; complementing inputs keeps self-duality.)"},
+    ],
+    "answer": {"value": "Yes: f = Σ(0, 1, 2, 4) is self-dual", "matchesKey": True},
+    "shortcut": "Self-dual ⇔ neutral (4 of 8 minterms) and no complementary pair fully present. Here 4 minterms, and no two of 0, 1, 2, 4 add up to 7.",
+    "pitfalls": ["Testing $f = \\overline{f}$ (never true) instead of $f = f^D$.", "Concluding 'self-dual' from neutrality alone."],
+    "verification": "Dual expression: $f = A'B' + A'C' + B'C'$ ('at most one 1'); its dual $(A' + B')(A' + C')(B' + C')$ expands back to $A'B' + A'C' + B'C'$.",
+}
+
+SOLUTIONS["cse-2014-2-cs-6"] = {
+    "approach": "Concept tested: **counting self-dual functions**. A self-dual function satisfies $F(\\bar{x}) = \\overline{F(x)}$; the $2^n$ inputs form $2^{n-1}$ complementary pairs, and choosing $F$ on one member of each pair fixes it on the other.",
+    "concepts": ["Duality", "Self-dual functions", "Counting Boolean functions"],
+    "steps": [
+        {"title": "Dual as a function", "body": "The dual expression computes $F^D(x) = \\overline{F(\\bar{x})}$ (swap $+$/$\\cdot$ = De Morgan with all literals complemented). So $F = F^D$ means $F(\\bar{x}) = \\overline{F(x)}$ for every input $x$."},
+        {"title": "Pair the inputs", "body": "Each input $x$ is paired with its bitwise complement $\\bar{x}$; the $2^n$ inputs form $2^{n-1}$ disjoint pairs."},
+        {"title": "Count", "body": "In each pair, $F(x)$ can be chosen freely and then $F(\\bar{x}) = \\overline{F(x)}$ is forced. So there are $2^{2^{n-1}}$ self-dual functions."},
+    ],
+    "answer": {"value": "(D) $2^{2^{n-1}}$", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$2^n$ agrees only at $n = 2$ (4); for $n = 3$ there are 16 self-dual functions, not 8."),
+        opt("B", False, "$2^{n-1}$ is the number of complementary pairs, not of functions."),
+        opt("C", False, "$2^{2^n}$ counts all functions of $n$ variables."),
+        opt("D", True, "One free choice per pair."),
+    ],
+    "shortcut": "Self-dual functions are fixed by half the truth table: $2^{(\\text{rows}/2)}$.",
+    "pitfalls": ["Choosing (A) after checking only $n = 2$, where $2^n = 2^{2^{n-1}} = 4$."],
+    "verification": "Brute force: $n = 1, 2, 3, 4$ give 2, 4, 16, 256 self-dual functions, matching $2^{2^{n-1}}$.",
+}
+
+SOLUTIONS["cse-2025-1-cs-14"] = {
+    "approach": "Concept tested: **the majority function**. $X$ is the 3-input majority; its key property is $X(p, p, q) = p$ (two equal inputs decide). Prove the true identities by cases on whether two inputs are equal, and refute the false ones with one assignment.",
+    "concepts": ["Majority function", "Boolean identities", "Case analysis"],
+    "steps": [
+        {"title": "The tool", "body": "If $a = b$, then $X(a, b, z) = a$ whatever $z$ is. If $a \\ne b$, then $X(a, b, z) = z$ (the third input breaks the tie)."},
+        {"title": "(B) holds", "body": "$X(a, b, X(a, b, c))$: if $a = b$ both sides are $a$; if $a \\ne b$ the left side is $X(a, b, c)$ (tie broken by the third input). Always equal."},
+        {"title": "(D) holds", "body": "$X(a, c, c) = c$, so the right side is $X(a, M, c)$ with $M = X(a, b, c)$. If $a = c$: both sides are $a$. If $a \\ne c$: the right side is $M$ (tie broken), which is the left side."},
+        {"title": "(A) and (C) fail", "body": "(A) at $(a, b, c, d, e) = (1, 1, 0, 0, 0)$: left $X(1, 1, 0) = 1$, right $X(X(1,1,0), 0, 0) = X(1, 0, 0) = 0$. (C) at $(a, b, c, d) = (1, 1, 0, 0)$: left $X(1, 1, X(1, 0, 0)) = 1$, right $X(1,1,1) \\text{ AND } X(0,0,0) = 1 \\cdot 0 = 0$."},
+    ],
+    "answer": {"value": "(B) and (D)", "choice": ["B", "D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Majority is not associative in this sense: fails at $(1, 1, 0, 0, 0)$."),
+        opt("B", True, "Case split on $a = b$."),
+        opt("C", False, "The right side is just $a \\cdot c$; fails at $(1, 1, 0, 0)$."),
+        opt("D", True, "$X(a, c, c) = c$, then case split on $a = c$."),
+    ],
+    "shortcut": "Simplify the inner calls first: $X(a, b, a) = a$, $X(c, d, c) = c$, $X(a, c, c) = c$. Then (C) becomes '$\\ldots = ac$' and (D) '$X(a, b, c) = X(a, M, c)$'.",
+    "pitfalls": ["Assuming the median identities of (A) because they look like associativity.", "Not simplifying $X(a, b, a)$ to $a$ before comparing."],
+    "verification": "Brute force over all 32 assignments of $a, \\ldots, e$: (B) and (D) always hold; (A) fails on 4 of the 32 assignments, and (C) on 4 of the 16 assignments of $a, b, c, d$.",
+}
+
+
 def write():
     bank = {q["id"]: q for q in json.loads((ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
     by_paper = {}
