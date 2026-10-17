@@ -1169,27 +1169,28 @@
       "verification": "Tuple (10, 5) is excluded by C but included by A and B; (10, 20) is excluded by D."
     },
     "cse-1999-a-20": {
-      "approach": "Write $-57$ in 8-bit two's complement, then recode each bit as $b_{i-1}-b_i$ (with $b_{-1}=0$).",
+      "approach": "Concept tested: **Booth recoding of a negative number**. Write $-57$ in 8-bit 2's complement, append $q_{-1} = 0$, and recode each pair $(q_i, q_{i-1})$: $10 \\to -1$, $01 \\to +1$, else 0.",
       "concepts": [
+        "2's complement",
         "Booth recoding",
-        "Two's complement"
+        "Value check"
       ],
       "steps": [
         {
-          "title": "Two's complement",
-          "body": "$57=00111001_2$, so $-57=11000111_2$ ($b_7..b_0$)."
+          "title": "−57 in 8 bits",
+          "body": "$256 - 57 = 199 = 1100\\,0111$."
         },
         {
-          "title": "Recode",
-          "body": "| i | $b_i$ | $b_{i-1}$ | digit |\n|---|---|---|---|\n| 0 | 1 | 0 | −1 |\n| 1 | 1 | 1 | 0 |\n| 2 | 1 | 1 | 0 |\n| 3 | 0 | 1 | +1 |\n| 4 | 0 | 0 | 0 |\n| 5 | 0 | 0 | 0 |\n| 6 | 1 | 0 | −1 |\n| 7 | 1 | 1 | 0 |"
+          "title": "Pairs from the right",
+          "body": "$(q_0, q_{-1}) = (1,0) \\to -1$; $(1,1), (1,1) \\to 0$; $(0,1) \\to +1$; $(0,0), (0,0) \\to 0$; $(1,0) \\to -1$; $(1,1) \\to 0$."
         },
         {
-          "title": "Read MSB first",
-          "body": "0 −1 0 0 +1 0 0 −1. Check: $-64+8-1=-57$ → option 2 (B)."
+          "title": "Digits MSB first",
+          "body": "$0\\ {-1}\\ 0\\ 0\\ {+1}\\ 0\\ 0\\ {-1}$. Check: $-64 + 8 - 1 = -57$. Option (B)."
         }
       ],
       "answer": {
-        "value": "0 −1 0 0 +1 0 0 −1",
+        "value": "$0\\ {-1}\\ 0\\ 0\\ {+1}\\ 0\\ 0\\ {-1}$ — option (B)",
         "choice": [
           "B"
         ],
@@ -1199,25 +1200,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Value −64+8 = −56."
+          "reason": "The lowest digit is missing ($q_{-1} = 0$ forgotten): value $-56$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: −64+8−1 = −57."
+          "reason": "$-64 + 8 - 1 = -57$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Value −64+32−4+1 = −35."
+          "reason": "Value $-64 + 32 - 4 + 1 = -35$: wrong pairs."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Value −32+8−1 = −25."
+          "reason": "Value $-32 + 8 - 1 = -25$: the digits are shifted one place."
         }
       ],
-      "verification": "Evaluated every option's weighted digit sum."
+      "shortcut": "Check each option's value by place weights; only one gives $-57$.",
+      "pitfalls": [
+        "Reading the pair the other way (gives $+57$).",
+        "Recoding $+57 = 0011\\,1001$ and negating the digits by hand, then mis-aligning."
+      ],
+      "verification": "Brute force recoding of every 8-bit value reproduces each recoding's value; (B) is the only option equal to $-57$. ✓"
     },
     "cse-1999-a-21": {
       "approach": "In an $n\\times n$ array multiplier the critical path runs through about $2n$ full-adder cells, so the delay is linear.",

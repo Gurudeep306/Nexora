@@ -26,7 +26,7 @@ questions.json `subject/topic` keys.
 ## Chapter overview
 | # | Chapter | Folder | Lessons | PYQs | Est. time |
 |---|---|---|---|---|---|
-| 1 | Number systems, codes and floating point | `01-number-systems` | 10 | 88 | 9 h 40 min |
+| 1 | Number systems, codes and floating point | `01-number-systems` | 10 | 86 | 9 h 40 min |
 | 2 | Boolean algebra and logic gates | `02-boolean-algebra-gates` | 6 | 64 | 4 h 55 min |
 | 3 | Minimisation | `03-minimisation` | 4 | 39 | 3 h 55 min |
 | 4 | Combinational circuits | `04-combinational-circuits` | 6 | 38 | 4 h 10 min |

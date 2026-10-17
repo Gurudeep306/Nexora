@@ -4120,27 +4120,27 @@
       }
     },
     "cse-2004-cs-66": {
-      "approach": "Convert to decimal, multiply, and write the product back in 8-bit 2's complement.",
+      "approach": "Concept tested: **signed (2's-complement) multiplication**. Decode $A = -6$ and $B = 10$; the product $-60$ fits in 8 bits, so the answer is the 8-bit pattern of $-60$.",
       "concepts": [
-        "2's complement",
-        "Signed multiplication"
+        "2's-complement decoding",
+        "Signed shift-and-add"
       ],
       "steps": [
         {
           "title": "Decode",
-          "body": "$A = 11111010$: negative; magnitude $= 00000110 = 6$, so $A = -6$. $B = 00001010 = 10$."
+          "body": "$A = 1111\\,1010 = -6$, $B = 0000\\,1010 = 10$."
         },
         {
-          "title": "Multiply",
-          "body": "$-6 \\times 10 = -60$."
+          "title": "Multiply with sign-extended partial products",
+          "body": "$B$ has 1s at bits 1 and 3: $A \\cdot 2 + A \\cdot 8 = 1111\\,0100 + 1101\\,0000 = 1\\,1100\\,0100 \\to 1100\\,0100$."
         },
         {
-          "title": "Encode −60",
-          "body": "$60 = 00111100$; invert → $11000011$; add 1 → **11000100** ($= 196 = 256 - 60$)."
+          "title": "Check",
+          "body": "$1100\\,0100 = -128 + 64 + 4 = -60 = -6 \\times 10$: option (A)."
         }
       ],
       "answer": {
-        "value": "11000100",
+        "value": "$11000100$ ($-60$) — option (A)",
         "choice": [
           "A"
         ],
@@ -4155,23 +4155,24 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "10011100 = −100."
+          "reason": "$10011100 = -100$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "10100101 = −91."
+          "reason": "$10100101 = -91$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "11010101 = −43."
+          "reason": "$11010101 = -43$."
         }
       ],
+      "shortcut": "Decode, multiply in decimal, encode: $-60 = -(0011\\,1100) = 1100\\,0100$.",
       "pitfalls": [
-        "Multiplying the raw unsigned patterns (250 × 10)."
+        "Multiplying the patterns as unsigned ($250 \\times 10$)."
       ],
-      "verification": "11000100 → invert 00111011 + 1 = 00111100 = 60 ⇒ −60 ✓."
+      "verification": "$1100\\,0100 + 0011\\,1100 = 1\\,0000\\,0000$, so it is the negative of 60. ✓"
     },
     "cse-2004-cs-67": {
       "approach": "Y must select one of the 8 status bits ⇒ $\\log_2 8$ bits; X takes the remaining bits of the 26-bit word and addresses the control memory.",

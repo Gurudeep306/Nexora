@@ -1865,5 +1865,189 @@
     ],
     "blocks": ["base-b-arith"],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is the Booth (radix-2) recoding of the 8-bit multiplier $00101101$ (+45)?",
+    "options": [
+      { "l": "A", "t": "$0\\ {+1}\\ {-1}\\ {+1}\\ 0\\ {-1}\\ {+1}\\ {-1}$" },
+      { "l": "B", "t": "$0\\ {-1}\\ {+1}\\ {-1}\\ 0\\ {+1}\\ {-1}\\ {+1}$" },
+      { "l": "C", "t": "$0\\ 0\\ {+1}\\ 0\\ {+1}\\ {+1}\\ 0\\ {+1}$" },
+      { "l": "D", "t": "$0\\ {+1}\\ {-1}\\ {+1}\\ 0\\ {-1}\\ {+1}\\ 0$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Append $q_{-1} = 0$ and read each pair $(q_i, q_{i-1})$ from the right: $(1,0), (0,1), (1,0), (1,1), (0,1), (1,0), (0,1), (0,0)$.",
+      "Digits $d_0 \\ldots d_7$: $-1, +1, -1, 0, +1, -1, +1, 0$.",
+      "MSB first: $0\\,{+1}\\,{-1}\\,{+1}\\,0\\,{-1}\\,{+1}\\,{-1}$. Check: $64 - 32 + 16 - 4 + 2 - 1 = 45$."
+    ],
+    "concept": "Booth digit d_i = q_{i−1} − q_i with an appended 0.",
+    "common_wrong": [
+      { "answer": "B", "why": "The pair was read as (current − right), which negates every digit and gives $-45$." },
+      { "answer": "C", "why": "That just copies the 1s (plain binary), not a Booth recoding." },
+      { "answer": "D", "why": "The appended $q_{-1} = 0$ was forgotten, so the lowest digit was lost; the value is 46, not 45." }
+    ],
+    "blocks": ["booth-recode", "trap-booth-pair"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q02",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many additions and subtractions (in total) does Booth's algorithm perform for the 16-bit multiplier $1100\\,1100\\,1100\\,1100$?",
+    "answer": 7,
+    "solution": [
+      "The count is the number of bit changes reading $q_{15} \\ldots q_0 q_{-1}$ with $q_{-1} = 0$.",
+      "From the right: $q_1 q_0 q_{-1} = 000$ (no change), then the pattern alternates in pairs: changes at $i = 2, 4, 6, 8, 10, 12, 14$.",
+      "The top run $11$ reaches the sign bit, so there is no change above it. Total: 7."
+    ],
+    "concept": "Booth's operation count = number of non-zero recoded digits = bit changes of the multiplier with an appended 0.",
+    "common_wrong": [
+      { "answer": 8, "why": "That counts the 1s (plain shift-and-add) or adds a change above the top run, which does not exist." },
+      { "answer": 4, "why": "Only the subtractions (pairs 10) were counted; additions count too." }
+    ],
+    "blocks": ["booth-count", "trap-booth-count"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q03",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which 8-bit multiplier makes Booth's algorithm perform the most additions/subtractions?",
+    "options": [
+      { "l": "A", "t": "$0110\\,0110$" },
+      { "l": "B", "t": "$0101\\,0101$" },
+      { "l": "C", "t": "$1111\\,0000$" },
+      { "l": "D", "t": "$0011\\,0011$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Count bit changes with $q_{-1} = 0$: (A) 4, (B) 8, (C) 1, (D) 4.",
+      "Alternating bits change at every position, so $0101\\,0101$ needs $n = 8$ operations: the worst case."
+    ],
+    "concept": "Booth's worst case is an alternating multiplier; runs of equal bits are cheap.",
+    "common_wrong": [
+      { "answer": "C", "why": "It has the most consecutive 1s, but a run costs only its two ends (here only one, since it reaches the sign bit)." },
+      { "answer": "A", "why": "Two short runs: 4 operations, half of (B)." }
+    ],
+    "blocks": ["booth-count", "booth-count-why"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q04",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The 4-bit 2's-complement numbers $1011$ and $0110$ are multiplied to give an 8-bit 2's-complement product. What is the product's value in decimal?",
+    "answer": -30,
+    "solution": [
+      "$1011 = -5$ and $0110 = 6$.",
+      "Signed shift-and-add: sign-extend $M = 1111\\,1011$, add $M \\cdot 2 = 1111\\,0110$ and $M \\cdot 4 = 1110\\,1100$: $1\\,1110\\,0010 \\to 1110\\,0010$.",
+      "$1110\\,0010 = -30$."
+    ],
+    "concept": "Signed products: sign-extend the partial products to 2n bits.",
+    "common_wrong": [
+      { "answer": 66, "why": "The patterns were multiplied as unsigned numbers ($11 \\times 6$)." },
+      { "answer": 30, "why": "The sign of the multiplicand was dropped." }
+    ],
+    "blocks": ["signed-shift-add", "product-width"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which statements about radix-2 Booth recoding are true?",
+    "options": [
+      { "l": "A", "t": "The recoding of the 4-bit multiplier $0111$ is ${+1}\\ 0\\ 0\\ {-1}$." },
+      { "l": "B", "t": "For the multiplier $0000\\,1111$ Booth needs exactly 2 operations." },
+      { "l": "C", "t": "Booth never needs more additions/subtractions than plain shift-and-add." },
+      { "l": "D", "t": "The number of Booth operations depends on the multiplicand as well as the multiplier." }
+    ],
+    "answer": ["A", "B"],
+    "solution": [
+      "(A) Pairs $(1,0), (1,1), (1,1), (0,1)$ from the right give $-1, 0, 0, +1$; MSB first ${+1}\\,0\\,0\\,{-1} = 8 - 1 = 7$. True.",
+      "(B) Changes at $i = 0$ ($1$ over the appended 0) and $i = 4$ ($0$ over $1$): 2. True.",
+      "(C) False: $0101\\,0101$ needs 8 Booth operations but only 4 plain additions.",
+      "(D) False: the recoding uses only the multiplier's bits."
+    ],
+    "concept": "Booth digits depend only on the multiplier; runs are cheap, alternation is expensive.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C"], "why": "Booth is worse than plain shift-and-add for alternating multipliers." },
+      { "answer": ["A"], "why": "(B) has one subtraction where the run starts and one addition just above it." }
+    ],
+    "blocks": ["booth-recode", "booth-count"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "What is the bit-pair (radix-4) recoding of the 8-bit multiplier $0110\\,1011$ (+107), most significant digit first?",
+    "options": [
+      { "l": "A", "t": "${+2}\\ {-1}\\ {-1}\\ {-1}$" },
+      { "l": "B", "t": "${+1}\\ {+2}\\ {+2}\\ {+3}$" },
+      { "l": "C", "t": "${+2}\\ {-1}\\ {-1}\\ {+1}$" },
+      { "l": "D", "t": "${-2}\\ {+1}\\ {+1}\\ {+1}$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Triples $(q_{i+1}, q_i, q_{i-1})$ from the right with $q_{-1} = 0$: $110$, $101$, $101$, $011$.",
+      "Table: $110 \\to -1$, $101 \\to -1$, $101 \\to -1$, $011 \\to +2$.",
+      "MSB first: ${+2}\\,{-1}\\,{-1}\\,{-1}$. Check: $2 \\cdot 64 - 16 - 4 - 1 = 107$."
+    ],
+    "concept": "Bit-pair digit D = −2q_{i+1} + q_i + q_{i−1}, triples overlapping by one bit.",
+    "common_wrong": [
+      { "answer": "B", "why": "Those are the plain base-4 digits of 107 ($1223_4$); radix-4 Booth digits never exceed 2 in size." },
+      { "answer": "C", "why": "The lowest digit is wrong: the triple $(q_1, q_0, q_{-1}) = 110$ gives $-1$, not $+1$ (this option is 109)." },
+      { "answer": "D", "why": "The sign of every digit was flipped (the $-2q_{i+1}$ term was made positive)." }
+    ],
+    "blocks": ["bitpair", "bitpair-why"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q07",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Unsigned $A = a_3a_2a_1a_0 = 1101$ and $B = b_3b_2b_1b_0 = 0111$ are multiplied. What is product bit $c_2$?",
+    "answer": 0,
+    "solution": [
+      "Column 2 gets $a_2b_0 + a_1b_1 + a_0b_2$ plus the carry from column 1, which is $a_1b_0 \\cdot a_0b_1$.",
+      "$a_2b_0 = 1$, $a_1b_1 = 0$, $a_0b_2 = 1$; column 1 has $a_1b_0 = 0$ and $a_0b_1 = 1$, so its carry is 0.",
+      "Column 2 sum $= 1 + 0 + 1 + 0 = 2$: bit $c_2 = 0$ (carry 1 onward). Check: $13 \\times 7 = 91 = 1011011_2$, bit 2 is 0."
+    ],
+    "concept": "A product bit is the sum mod 2 of its column's partial-product bits and incoming carries.",
+    "common_wrong": [
+      { "answer": 1, "why": "The column was ORed instead of added, or the carry into column 2 was mishandled; two 1s in a column give bit 0." }
+    ],
+    "blocks": ["product-bits", "signed-shift-add"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q08",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Booth's register algorithm multiplies $M = 0101$ by $Q = 0110$ (4 bits; $A$ and $Q_{-1}$ start at 0). What are $A$, $Q$ and $Q_{-1}$ after the first **two** steps (each step = optional add/subtract, then an arithmetic right shift of $A, Q, Q_{-1}$)?",
+    "options": [
+      { "l": "A", "t": "$A = 1101$, $Q = 1001$, $Q_{-1} = 1$" },
+      { "l": "B", "t": "$A = 0010$, $Q = 1001$, $Q_{-1} = 1$" },
+      { "l": "C", "t": "$A = 1011$, $Q = 0011$, $Q_{-1} = 0$" },
+      { "l": "D", "t": "$A = 0101$, $Q = 1001$, $Q_{-1} = 1$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Step 1: $(Q_0, Q_{-1}) = (0, 0)$: shift only. $A = 0000$, $Q = 0011$, $Q_{-1} = 0$.",
+      "Step 2: $(1, 0)$: $A = A - M = 0000 - 0101 = 1011$; arithmetic shift: $A = 1101$, $Q = 1001$ (A's low bit 1 enters Q), $Q_{-1} = 1$.",
+      "(Continuing gives $A\\,Q = 0001\\,1110 = 30 = 5 \\times 6$.)"
+    ],
+    "concept": "Booth's algorithm: 10 → A − M, 01 → A + M, then shift A, Q, Q−1 right arithmetically.",
+    "common_wrong": [
+      { "answer": "B", "why": "$M$ was added on the pair 10 ($0000 + 0101 = 0101$, shifted to $0010$); pair 10 subtracts." },
+      { "answer": "C", "why": "That is $A$ right after the subtraction, before the shift of step 2." },
+      { "answer": "D", "why": "The shift was logical (a 0 entered $A$): $1011 \\to 0101$; an arithmetic shift copies the sign bit, giving $1101$." }
+    ],
+    "blocks": ["booth-algorithm", "booth-recode"],
+    "source": "nexora"
   }
 ]

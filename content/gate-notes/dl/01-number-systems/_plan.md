@@ -14,6 +14,9 @@ starts with "Edge case:".
   Chapter 8 (floating point, 3 lessons, 25 PYQs) became lessons 5–7, after signed numbers and before
   codes (now lesson 8). Lesson ids and slugs did not change; only `order`, file prefixes and the codes
   practice ids (`nx-dl-01-05-*` → `nx-dl-01-08-*`) moved.
+- **Arithmetic move (2026-10-17):** all number-level arithmetic joined Chapter 1 as lessons 9–10 (13 PYQs
+  from `dl-05-03`, 8 from `dl-05-04`, `it-2005-cs-47` from lesson 2, `cse-2010-cs-8` from lesson 4).
+  Chapter 5 keeps only the circuit questions and links back. `pyq_topics` gain `dl/arithmetic`.
 - Check scripts: `content/gate-notes/_checks/dl/` (one Python module per lesson plus a shared
   `numlib.py`). Every worked value, viz caption, Live Lab test vector and practice answer is
   asserted there before the lesson leaves draft. They use exact arithmetic (`fractions.Fraction`
@@ -31,8 +34,11 @@ starts with "Edge case:".
 | 6 | `dl-01-06-ieee-754` | IEEE-754 single and double precision | 10 | 55 min |
 | 7 | `dl-01-07-floating-point-arithmetic` | Floating-point arithmetic, rounding and overflow | 8 | 50 min |
 | 8 | `dl-01-08-codes` | Binary codes: BCD, excess-3, Gray, parity and Hamming | 1 | 60 min |
+| 9 | `dl-01-09-code-arithmetic` | Arithmetic with number codes | 15 | 75 min |
+| 10 | `dl-01-10-multiplication-booth` | Signed multiplication and Booth's algorithm | 8 | 60 min |
 
-Chapter total: 65 PYQs, about 7 h 25 min of study, 8 lessons.
+Chapter total: 86 PYQs, about 9 h 40 min of study, 10 lessons. (Lesson 2 now has 6 PYQs and lesson 4 has 15:
+it-2005-cs-47 and cse-2010-cs-8 moved to lesson 9.)
 
 ---
 
@@ -205,7 +211,7 @@ Arithmetic in octal or hex is light in every set, so we write it ourselves.
 | cse-2005-cs-17 | `octal-hex` |
 | cse-2009-cs-5 | `octal-hex` |
 | cse-2017-2-cs-1 | `grouping` (hex → octal) |
-| it-2005-cs-47 | `base-arithmetic` (with Lesson 1 `expansion`) |
+| (it-2005-cs-47) | moved to Lesson 9 `base-b-arith`; the base-arithmetic section here stays and links forward |
 
 ### Diagrams and animations
 - `grouping-slider` (animate): a bit string with brackets that snap into groups of 3 or 4 from
@@ -396,7 +402,7 @@ Arithmetic-shift rules and minimum-width reasoning are thin, so we add them from
 | cse-2002-a-16 | `sign-extension` |
 | cse-2003-cs-9 | `decode-twos` |
 | cse-2005-cs-16 | `twos-complement` (range) |
-| cse-2010-cs-8 | `arithmetic-shift` |
+| (cse-2010-cs-8) | moved to Lesson 9 `shift-arith`; `arithmetic-shift` here still teaches the rule |
 | cse-2013-cs-4 | `twos-complement` (range) |
 | cse-2016-1-cs-7 | `decode-twos` |
 | cse-2016-2-cs-9 | `compare-representations`, `sign-magnitude` |
@@ -710,6 +716,85 @@ design question (`dl-07-03`) and the codes in the code-converter questions of `d
 9. MCQ: the g₀ minterm list of the Gray successor function for 3 bits.
 The script implements the Gray and inverse-Gray conversions, BCD/excess-3, a Hamming(7,4)
 encoder and syndrome decoder, and the successor-table generator (it re-derives the 2006 key).
+
+---
+
+## Lesson 9 · `dl-01-09-code-arithmetic` · Arithmetic with number codes
+
+**Prerequisites:** `dl-01-04-signed-numbers`, `dl-01-08-codes`.
+**Covered by sets:** A 20–21 (overflow; errata X3), B 141–148 and 159–160, C 203–216. Added at the
+owner's request because the syllabus says "number representations and computer arithmetic".
+
+### Teaching sequence (each concept: intuition → definition → why → 4 step examples → trap → recap)
+1. Binary add/subtract `#binary-add` (carry at 2, borrow 2; carry/borrow out meanings) with the
+   `column-add-carry` animation.
+2. Multiply/divide `#binary-mul`, `#mul-why` (shift-and-add, m + n bits, long division).
+3. Base-b arithmetic `#base-b-arith` (carry at b; base 8, 16, 5, 7).
+4. Complement subtraction `#radix-sub`, `#diminished-sub`, theorem `#end-around` + proof, animation
+   `complement-subtraction`.
+5. Signed addition `#signed-add-rules` (SM, 1's, 2's), `#overflow-rule`, theorem `#overflow-theorem` +
+   proof, `#carry-vs-overflow` flags table, `#sign-extend-add`; animations `overflow-carries` and the
+   reused `overflow-wheel`.
+6. BCD `#bcd-add`, `#bcd-why-six`, `#bcd-sub`; animation `bcd-plus-six`.
+7. Excess-3 `#xs3-add`, `#xs3-why`, `#xs3-sub`; animation `excess3-correction`.
+8. Gray `#gray-arith` (convert, operate, convert back).
+9. Shifts `#shift-arith` (arithmetic vs logical, floor rounding).
+
+### PYQ → block map
+| PYQ | Block(s) |
+|---|---|
+| cse-1992-b-4-a | `overflow-theorem`, `overflow-rule` |
+| cse-1995-a-51 | `binary-add`, `binary-mul`, `carry-vs-overflow` |
+| cse-2002-a-21 | `overflow-rule`, `trap-carry-overflow` |
+| it-2004-it-42 | `overflow-rule` |
+| it-2005-cs-47 | `base-b-arith` |
+| cse-2006-cs-39 | `overflow-rule`, `overflow-theorem` |
+| it-2006-cs-7 | `signed-add-rules`, `overflow-rule` |
+| it-2008-it-15 | `carry-vs-overflow`, `overflow-rule` |
+| cse-2010-cs-8 | `shift-arith` |
+| cse-2017-1-cs-9 | `overflow-rule`, `trap-carry-overflow` |
+| cse-2019-cs-8 | `signed-add-rules`, `trap-sm-overflow` |
+| cse-2022-cs-8 | `overflow-rule`, `overflow-theorem` |
+| cse-2024-1-cs-3 | `overflow-rule`, `signed-add-rules` |
+| cse-2026-1-cs-12 | `signed-add-rules`, `trap-sm-overflow` |
+| cse-2026-2-cs-18 | `overflow-rule`, `signed-add-rules` |
+
+### Practice (`_checks/dl/l09_code_arithmetic.py`, brute-force rule checks)
+9: binary subtraction (NAT), 10's-complement interpretation (MCQ), 1's-complement subtraction (NAT),
+overflow (MSQ), flags (MCQ), BCD corrections (NAT), excess-3 sum (MCQ), arithmetic shift (MCQ), base-4
+addition (NAT).
+
+---
+
+## Lesson 10 · `dl-01-10-multiplication-booth` · Signed multiplication and Booth's algorithm
+
+**Prerequisites:** `dl-01-09-code-arithmetic`.
+**Covered by sets:** B 153–154, 178, 183, 185; D 401–402. Restoring/non-restoring division: no set or
+dl PYQ covers it, so it is a deep aside only.
+
+### Teaching sequence
+1. Signed shift-and-add `#signed-shift-add`, `#product-width`, `#product-bits`.
+2. Booth radix-2 `#booth-recode`, theorem `#booth-value` + proof (telescoping), `#booth-algorithm`
+   (registers), animation `booth-scan`.
+3. Counting `#booth-count`, `#booth-count-why`; best/worst patterns.
+4. Bit-pair `#bitpair`, `#bitpair-why`, animation `bitpair-table`.
+5. Aside `#division-aside` (restoring / non-restoring).
+
+### PYQ → block map
+| PYQ | Block(s) |
+|---|---|
+| cse-1991-a-1-v | `product-bits` |
+| cse-1996-a-23 | `booth-count`, `booth-count-why` |
+| cse-1999-a-20 | `booth-recode`, `booth-value`, `trap-booth-pair` |
+| cse-2004-cs-66 | `signed-shift-add`, `product-width` |
+| it-2005-cs-8 | `booth-recode`, `booth-value` |
+| it-2006-cs-38 | `bitpair`, `bitpair-why` |
+| it-2008-it-42 | `booth-count`, `trap-booth-count` |
+| cse-2025-2-cs-22 | `booth-count`, `trap-booth-count` |
+
+### Practice (`_checks/dl/l10_multiplication_booth.py`, `boothlib.py`)
+8: Booth recoding (MCQ), operation count (NAT), worst multiplier (MCQ), signed product (NAT), Booth
+statements (MSQ), bit-pair recoding (MCQ), a product bit (NAT), register trace (MCQ).
 
 ---
 
