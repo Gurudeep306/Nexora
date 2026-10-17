@@ -51,13 +51,14 @@
           "title": "Boolean algebra and logic gates",
           "lessons": 6,
           "pyqs": 64,
-          "status": "writing",
+          "status": "drafted",
           "lessons_status": {
             "logic-gates": "draft",
             "boolean-laws": "draft",
             "xor-and-operators": "draft",
             "canonical-forms": "draft",
-            "universal-gates": "draft"
+            "universal-gates": "draft",
+            "gate-circuit-analysis": "draft"
           }
         },
         {

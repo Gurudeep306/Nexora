@@ -2561,7 +2561,7 @@
       "verification": "Slots 3, 4 and 6 each receive only one block (3, 20, 30), so those survive; slot 2's last block is 82."
     },
     "it-2007-cs-38": {
-      "approach": "Replace each AND by NAND and simplify. NAND(NAND(x,y),z) = xy + z', so each 3-literal product becomes \"pair + complement of third\"; then absorb.",
+      "approach": "Concept tested: **wrong-gate fabrication**. Replace each 2-input AND by a NAND and simplify. $\\text{NAND}(\\text{NAND}(x, y), z) = xy + \\bar{z}$, so each three-literal product becomes 'pair + complement of the third'; then absorb.",
       "concepts": [
         "NAND gate",
         "Boolean simplification",
@@ -2570,15 +2570,19 @@
       "steps": [
         {
           "title": "Rewrite each term",
-          "body": "$\\overline{\\overline{ab}\\,c} = ab + \\bar c$\n\n$\\overline{\\overline{\\bar a c}\\,d} = \\bar a c + \\bar d$\n\n$\\overline{\\overline{bc}\\,d} = bc + \\bar d$\n\n$\\overline{ad} = \\bar a + \\bar d$"
+          "body": "$(ab)c \\to \\overline{\\overline{ab}\\,c} = ab + \\bar c$. $(\\bar a c)d \\to \\bar a c + \\bar d$. $(bc)d \\to bc + \\bar d$. $a \\cdot d \\to \\overline{ad} = \\bar a + \\bar d$."
         },
         {
-          "title": "OR them and simplify",
-          "body": "$$F = ab + \\bar c + \\bar a c + \\bar d + bc + \\bar a$$\n\n$\\bar a + ab = \\bar a + b$; then $\\bar a$ absorbs $\\bar a c$ and $b$ absorbs $bc$:\n\n$$F = \\bar a + b + \\bar c + \\bar d$$"
+          "title": "OR them",
+          "body": "$F = ab + \\bar c + \\bar a c + \\bar d + bc + \\bar d + \\bar a + \\bar d$."
+        },
+        {
+          "title": "Simplify",
+          "body": "$\\bar a + ab = \\bar a + b$ and $\\bar c + bc = \\bar c + b$; $\\bar a c$ is absorbed by $\\bar a$. So $F = \\bar a + b + \\bar c + \\bar d$."
         }
       ],
       "answer": {
-        "value": "ā + b + c̄ + d̄",
+        "value": "(C) $\\bar a + b + \\bar c + \\bar d$",
         "choice": [
           "C"
         ],
@@ -2588,28 +2592,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "F = 0 for a = 1, b = 0, c = 1, d = 1, so it is not constant 1."
+          "reason": "$F = 0$ at $a = 1, b = 0, c = 1, d = 1$, so it is not the constant 1."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Has b̄ instead of b; at a = 1, b = 0, c = 1, d = 1 option B gives 1 but F = 0."
+          "reason": "$\\bar b$ instead of $b$: at $a = c = d = 1, b = 1$, $F = 1$ but (B) gives 0."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: ā + b + c̄ + d̄."
+          "reason": "The simplification above."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Has b̄ and c; at a = 1, b = 1, c = 0, d = 1 option D gives 0 but F = 1 (c̄ = 1)."
+          "reason": "At $a = 1, b = 0, c = 1, d = 1$, (D) gives 1 but $F = 0$."
         }
       ],
+      "shortcut": "$F$ is 0 only when every term is 0: $\\bar a = 0$, $\\bar d = 0$, $\\bar c = 0$ and $ab = 0$ ⇒ $a = c = d = 1$, $b = 0$. The single 0-row is 1011, i.e. $F = \\bar a + b + \\bar c + \\bar d$.",
       "pitfalls": [
-        "Forgetting that the outer gate of a nested pair is also a NAND, so the inner NAND gets inverted back."
+        "Complementing the whole product $(ab)c$ instead of applying the two NANDs in turn.",
+        "Forgetting the single-gate term $a \\cdot d$, which becomes $\\bar a + \\bar d$."
       ],
-      "verification": "F = 0 only when a = 1, b = 0, c = 1, d = 1: term values ab + c̄ = 0, āc + d̄ = 0, bc + d̄ = 0, ā + d̄ = 0 — consistent."
+      "verification": "Exhaustive check over all 16 rows: the faulty circuit is 0 only at $abcd = 1011$, exactly like (C)."
     },
     "it-2007-cs-39": {
       "approach": "Compare final machine state (registers and memory) of LHS and RHS. A replacement is safe only if both R2/Loc contents end the same, since later instructions may read either.",

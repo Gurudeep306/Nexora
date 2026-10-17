@@ -1,0 +1,575 @@
+{
+ "version": 1,
+ "title": "Values propagate through a NAND circuit level by level",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "A two-level NAND circuit, G1 = NAND(A, B), G2 = NAND(A, C), F = NAND(G1, G2).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Signals flow one gate delay at a time",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "One gate delay per level",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g1",
+   "type": "gate",
+   "x": 210,
+   "y": 60,
+   "w": 60,
+   "h": 44,
+   "kind": "nand",
+   "label": "G1",
+   "narrow": {
+    "x": 110,
+    "y": 60,
+    "w": 54,
+    "h": 40
+   }
+  },
+  {
+   "id": "g2",
+   "type": "gate",
+   "x": 210,
+   "y": 170,
+   "w": 60,
+   "h": 44,
+   "kind": "nand",
+   "label": "G2",
+   "narrow": {
+    "x": 110,
+    "y": 170,
+    "w": 54,
+    "h": 40
+   }
+  },
+  {
+   "id": "g3",
+   "type": "gate",
+   "x": 400,
+   "y": 115,
+   "w": 60,
+   "h": 44,
+   "kind": "nand",
+   "label": "G3",
+   "narrow": {
+    "x": 240,
+    "y": 115,
+    "w": 54,
+    "h": 40
+   }
+  },
+  {
+   "id": "lA",
+   "type": "text",
+   "x": 56,
+   "y": 74.67,
+   "text": "A",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "y": 74.67,
+    "size": 10
+   }
+  },
+  {
+   "id": "lB",
+   "type": "text",
+   "x": 56,
+   "y": 89.33,
+   "text": "B",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "y": 89.33,
+    "size": 10
+   }
+  },
+  {
+   "id": "lC",
+   "type": "text",
+   "x": 56,
+   "y": 199.33,
+   "text": "C",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "y": 199.33,
+    "size": 10
+   }
+  },
+  {
+   "id": "wG10",
+   "type": "line",
+   "points": [
+    [
+     60,
+     74.67
+    ],
+    [
+     210.0,
+     74.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      74.67
+     ],
+     [
+      80,
+      74.67
+     ],
+     [
+      80,
+      73.33
+     ],
+     [
+      110.0,
+      73.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG11",
+   "type": "line",
+   "points": [
+    [
+     60,
+     89.33
+    ],
+    [
+     210.0,
+     89.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      89.33
+     ],
+     [
+      80.0,
+      89.33
+     ],
+     [
+      80.0,
+      86.67
+     ],
+     [
+      110.0,
+      86.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG20",
+   "type": "line",
+   "points": [
+    [
+     60,
+     74.67
+    ],
+    [
+     150,
+     74.67
+    ],
+    [
+     150,
+     184.67
+    ],
+    [
+     210.0,
+     184.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      74.67
+     ],
+     [
+      80,
+      74.67
+     ],
+     [
+      80,
+      183.33
+     ],
+     [
+      110.0,
+      183.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG21",
+   "type": "line",
+   "points": [
+    [
+     60,
+     199.33
+    ],
+    [
+     210.0,
+     199.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      199.33
+     ],
+     [
+      80.0,
+      199.33
+     ],
+     [
+      80.0,
+      196.67
+     ],
+     [
+      110.0,
+      196.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG30",
+   "type": "line",
+   "points": [
+    [
+     270.0,
+     82.0
+    ],
+    [
+     335.0,
+     82.0
+    ],
+    [
+     335.0,
+     129.67
+    ],
+    [
+     400.0,
+     129.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      164.0,
+      80.0
+     ],
+     [
+      202.0,
+      80.0
+     ],
+     [
+      202.0,
+      128.33
+     ],
+     [
+      240.0,
+      128.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG31",
+   "type": "line",
+   "points": [
+    [
+     270.0,
+     192.0
+    ],
+    [
+     335.0,
+     192.0
+    ],
+    [
+     335.0,
+     144.33
+    ],
+    [
+     400.0,
+     144.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      164.0,
+      190.0
+     ],
+     [
+      202.0,
+      190.0
+     ],
+     [
+      202.0,
+      141.67
+     ],
+     [
+      240.0,
+      141.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wF",
+   "type": "line",
+   "points": [
+    [
+     460.0,
+     137.0
+    ],
+    [
+     500.0,
+     137.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      294.0,
+      135.0
+     ],
+     [
+      324.0,
+      135.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lF",
+   "type": "text",
+   "x": 512.0,
+   "y": 137.0,
+   "text": "F",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "narrow": {
+    "x": 334.0,
+    "y": 135.0
+   }
+  },
+  {
+   "id": "vG1",
+   "type": "text",
+   "x": 282,
+   "y": 56,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 170,
+    "y": 56,
+    "size": 12
+   }
+  },
+  {
+   "id": "vG2",
+   "type": "text",
+   "x": 282,
+   "y": 166,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 170,
+    "y": 166,
+    "size": 12
+   }
+  },
+  {
+   "id": "vG3",
+   "type": "text",
+   "x": 472,
+   "y": 111,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 300,
+    "y": 111,
+    "size": 12
+   }
+  },
+  {
+   "id": "clock",
+   "type": "text",
+   "x": 320.0,
+   "y": 262,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 252,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "t = 0: the inputs change to A = 1, B = 0, C = 1. The gate outputs still show their old values for one gate delay.",
+   "patches": [
+    {
+     "id": "lA",
+     "set": {
+      "text": "A = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lB",
+     "set": {
+      "text": "B = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lC",
+     "set": {
+      "text": "C = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "clock",
+     "set": {
+      "text": "t = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 1 gate delay: the first level settles. G1 = (A·B)′ = 1, G2 = (A·C)′ = 0.",
+   "patches": [
+    {
+     "id": "vG1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "clock",
+     "set": {
+      "text": "t = 1 delay"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 2 gate delays: the output gate sees settled inputs. F = (G1·G2)′ = (1·0)′ = 1. The circuit is AB + AC, and A(B + C) = 1·1 = 1 agrees.",
+   "patches": [
+    {
+     "id": "vG3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wF",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "clock",
+     "set": {
+      "text": "t = 2 delays: F settled"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The longest input-to-output path passes through two gates, so the output is valid two gate delays after the inputs change: that is the circuit's propagation delay.",
+   "patches": [
+    {
+     "id": "clock",
+     "set": {
+      "text": "delay = 2 levels",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

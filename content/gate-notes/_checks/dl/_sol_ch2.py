@@ -956,6 +956,345 @@ SOLUTIONS["cse-2015-1-cs-39"] = {
 }
 
 
+# ── Lesson 6: circuit analysis and timing ───────────────────────────────────
+
+SOLUTIONS["cse-2020-cs-28"] = {
+    "approach": "Concept tested: **reading a gate circuit**. Write each gate in terms of its inputs, then expand the expression into minterms ($a$ is the MSB).",
+    "concepts": ["Logic gates", "Sum of minterms"],
+    "steps": [
+        {"title": "Expression", "body": "NOT gives $\\bar b$; AND gives $\\bar b c$; OR with $a$ gives $z = a + \\bar b c$."},
+        {"title": "Minterms", "body": "$a \\to 1-- = \\{4, 5, 6, 7\\}$; $\\bar b c \\to -01 = \\{1, 5\\}$. Union: $\\{1, 4, 5, 6, 7\\}$."},
+        {"title": "Match", "body": "$z = \\Sigma(1, 4, 5, 6, 7)$: option (B)."},
+    ],
+    "answer": {"value": "(B) $z = \\sum(1, 4, 5, 6, 7)$", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Contains $m_0$ and $m_3$, where $a = 0$ and $\\bar b c = 0$."),
+        opt("B", True, "All rows with $a = 1$, plus row 001."),
+        opt("C", False, "Contains $m_2$ (010) and misses $m_1$ (001)."),
+        opt("D", False, "Misses every row with $a = 1$ except 5."),
+    ],
+    "shortcut": "OR with $a$ means all four rows $1xx$ are in; only one extra row (001) comes from $\\bar b c$.",
+    "pitfalls": ["Taking $c$ as the most significant bit, which renumbers the rows."],
+    "verification": "Row 001: $\\bar b c = 1$ ⇒ $z = 1$; row 011: $\\bar b = 0$, $a = 0$ ⇒ $z = 0$.",
+    "animation": circuit("z = a + b′c", [("a", 0), ("b", 0), ("c", 1)], [("N", "NOT", ["b"]), ("G1", "AND", ["N", "c"]), ("G2", "OR", ["G1", "a"])], "G2", "Row 001: z = 1."),
+}
+
+SOLUTIONS["cse-1993-ii-a-6-1"] = {
+    "approach": "Concept tested: **reading a NOR circuit**. Write each NOR output in terms of $x, y$: the inner gate gives $\\overline{x + y}$, the two middle gates give $\\bar{x} y$ and $x \\bar{y}$, and the last NOR complements their sum.",
+    "concepts": ["NOR gate", "XOR / XNOR from universal gates", "De Morgan"],
+    "steps": [
+        {"title": "Gate 1", "body": "$G_1 = \\overline{x + y}$."},
+        {"title": "Gates 2 and 3", "body": "$G_2 = \\overline{x + G_1} = \\bar{x}\\,\\overline{G_1} = \\bar{x}(x + y) = \\bar{x} y$. Similarly $G_3 = \\overline{G_1 + y} = (x + y)\\bar{y} = x\\bar{y}$."},
+        {"title": "Output", "body": "$f = \\overline{G_2 + G_3} = \\overline{\\bar{x}y + x\\bar{y}} = \\overline{x \\oplus y}$: exclusive NOR."},
+    ],
+    "answer": {"value": "(B) exclusive NOR", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "XOR is the input of the last NOR, $G_2 + G_3$; the NOR complements it."),
+        opt("B", True, "$f = \\overline{x \\oplus y}$."),
+        opt("C", False, "NAND is 1 on three rows; $f$ is 1 on rows 00 and 11 only."),
+        opt("D", False, "NOR is 0 on row 11, but $f(1, 1) = 1$."),
+        opt("E", False, "The circuit is XNOR, which is listed."),
+    ],
+    "shortcut": "This is the mirror of the four-NAND XOR: four NORs with a shared first gate make XNOR.",
+    "pitfalls": ["Stopping at $G_2 + G_3 = x \\oplus y$ and forgetting the final NOR's inversion."],
+    "verification": "Row 11: $G_1 = 0$, $G_2 = \\overline{1 + 0} = 0$, $G_3 = 0$, $f = 1$. Row 10: $G_1 = 0$, $G_2 = 0$, $G_3 = \\overline{0 + 0} = 1$, $f = 0$.",
+    "animation": circuit("Four NOR gates", [("x", 1), ("y", 1)], [("G1", "NOR", ["x", "y"]), ("G2", "NOR", ["x", "G1"]), ("G3", "NOR", ["G1", "y"]), ("G4", "NOR", ["G2", "G3"])], "G4", "x = y = 1: f = 1 (equal inputs)."),
+}
+
+SOLUTIONS["cse-1994-a-8"] = {
+    "approach": "Concept tested: **pushing inversions through NAND levels**. Label each NAND output and apply De Morgan; a NAND fed by two NANDs is an OR of the two products.",
+    "concepts": ["NAND gates", "De Morgan's laws"],
+    "given": "| Gate | Inputs | Output |\n|---|---|---|\n| $G_1$ | $A, B$ | $P = \\overline{AB}$ |\n| $G_2$ | $P, C$ | $Q = \\overline{PC}$ |\n| $G_3$ | $C, D$ | $R = \\overline{CD}$ |\n| $G_4$ | $Q, R$ | $F = \\overline{QR}$ |",
+    "steps": [
+        {"title": "Output gate", "body": "$F = \\overline{QR} = \\overline{Q} + \\overline{R} = PC + CD$."},
+        {"title": "Substitute P", "body": "$PC = \\overline{AB}\\,C = (\\overline{A} + \\overline{B})C = \\overline{A}C + \\overline{B}C$."},
+        {"title": "Result", "body": "$F = \\overline{A}C + \\overline{B}C + CD$: option (A)."},
+    ],
+    "answer": {"value": "(A) $\\overline{A}C + \\overline{B}C + CD$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "The De Morgan expansion above."),
+        opt("B", False, "Uses $\\overline{C}$ instead of $C$: at $C = 0$ the circuit gives $F = 0$ ($Q = R = 1$)."),
+        opt("C", False, "$ABC + \\overline{C}\\,\\overline{D}$ is 1 at $C = D = 0$, where the circuit gives 0."),
+        opt("D", False, "$\\overline{A}\\,\\overline{B}$ is 1 at $C = 0$, where $F = 0$."),
+    ],
+    "shortcut": "Every term of $F$ must contain $C$ (both inner products contain $C$), which kills (B), (C) and (D) at once.",
+    "pitfalls": ["Losing the inversion of $G_1$: $PC$ is $\\overline{AB}C$, not $ABC$."],
+    "verification": "$A = 0, C = 1, D = 0$: $P = 1$, $Q = 0$, $R = 1$, $F = 1$; option (A) gives $\\overline{A}C = 1$. ✓",
+}
+
+SOLUTIONS["cse-2010-cs-31"] = {
+    "approach": "Concept tested: **reading stacked NOR gates**. A NOR of two NORs is the AND of their ORs; then absorption shows that $P$ drops out. (The paper's figure has first-level NORs on (P, Q), (Q, R), (P, R) and (Q, R).)",
+    "concepts": ["NOR gate", "De Morgan", "Absorption"],
+    "given": "| Gate | Inputs |\n|---|---|\n| G1 | P, Q |\n| G2 | Q, R |\n| G3 | P, R |\n| G4 | Q, R |\n| G5 | G1, G2 |\n| G6 | G3, G4 |\n| f | G5, G6 |",
+    "steps": [
+        {"title": "Second level, upper", "body": "$G_5 = \\overline{\\overline{P+Q} + \\overline{Q+R}} = (P+Q)(Q+R) = Q + PR$."},
+        {"title": "Second level, lower", "body": "$G_6 = \\overline{\\overline{P+R} + \\overline{Q+R}} = (P+R)(Q+R) = R + PQ$."},
+        {"title": "Output", "body": "$f = \\overline{G_5 + G_6} = \\overline{Q + PR + R + PQ}$. Since $PR$ is absorbed by $R$ and $PQ$ by $Q$, $Q + R + PR + PQ = Q + R$, so $f = \\overline{Q + R}$."},
+        {"title": "About the key", "body": "The bank's earlier key was D, $\\overline{P+Q+R}$; it has been corrected to A. At $P = 1, Q = R = 0$ the circuit gives $f = 1$ but $\\overline{P+Q+R} = 0$."},
+    ],
+    "answer": {"value": "(A) $\\overline{Q+R}$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "Absorption reduces $Q + R + PR + PQ$ to $Q + R$."),
+        opt("B", False, "$P = Q = 0, R = 1$ gives $f = 0$ but $\\overline{P+Q} = 1$."),
+        opt("C", False, "$P = R = 0, Q = 1$ gives $f = 0$ but $\\overline{P+R} = 1$."),
+        opt("D", False, "$P = 1, Q = R = 0$ gives $f = 1$ but $\\overline{P+Q+R} = 0$: $P$ does not affect $f$."),
+    ],
+    "shortcut": "$G_5 + G_6 = (Q + R)\\big[(P + Q) + (P + R)\\big] = (Q + R)(P + Q + R) = Q + R$ (absorption).",
+    "pitfalls": ["Assuming the output must depend on all three inputs.", "Misreading the figure's input pairs."],
+    "verification": "Truth table: $f = 1$ exactly when $Q = R = 0$, for $P = 0$ and $P = 1$ alike (e.g. $P = 1, Q = R = 0$: $G_1 = 0, G_2 = 1, G_3 = 0, G_4 = 1$, so $G_5 = G_6 = 0$ and $f = 1$).",
+    "animation": circuit("Seven NOR gates", [("P", 1), ("Q", 0), ("R", 0)],
+                         [("G1", "NOR", ["P", "Q"]), ("G2", "NOR", ["Q", "R"]), ("G3", "NOR", ["P", "R"]), ("G4", "NOR", ["Q", "R"]),
+                          ("G5", "NOR", ["G1", "G2"]), ("G6", "NOR", ["G3", "G4"]), ("G7", "NOR", ["G5", "G6"])], "G7",
+                         "P = 1, Q = R = 0: f = 1, which rules out (P + Q + R)′."),
+}
+
+SOLUTIONS["cse-2005-cs-15"] = {
+    "approach": "Concept tested: **redundant inputs**. Write the output algebraically, $f = \\overline{\\overline{X\\bar Y} \\cdot YZ}$, simplify with De Morgan, and see which variable survives.",
+    "concepts": ["NAND gate", "De Morgan laws", "Boolean simplification"],
+    "given": "| Gate | Inputs | Output |\n|---|---|---|\n| NAND₁ | $X$, $\\bar Y$ (bubble on input) | $\\overline{X\\bar Y}$ |\n| AND | $Y$, $Z$ | $YZ$ |\n| NAND₂ | the two outputs | $f$ |",
+    "steps": [
+        {"title": "De Morgan on the output", "body": "$f = \\overline{\\overline{X\\bar Y} \\cdot YZ} = X\\bar Y + \\overline{YZ} = X\\bar Y + \\bar Y + \\bar Z$."},
+        {"title": "Absorb", "body": "$X\\bar Y$ is absorbed by $\\bar Y$: $f = \\bar Y + \\bar Z$."},
+        {"title": "Read the dependence", "body": "$X$ has disappeared: $f$ is independent of $X$ but depends on $Y$ and $Z$."},
+    ],
+    "answer": {"value": "(A) f is independent of X", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$f = \\bar Y + \\bar Z$ contains no $X$."),
+        opt("B", False, "$Y = 1, Z = 1$ gives $f = 0$ while $Y = 0, Z = 1$ gives $f = 1$: $f$ depends on $Y$."),
+        opt("C", False, "$Y = 1$: $Z = 0$ gives 1, $Z = 1$ gives 0: $f$ depends on $Z$."),
+        opt("D", False, "$X$ is redundant."),
+    ],
+    "shortcut": "The cofactors on $X$: $f(0, Y, Z) = \\overline{YZ}$ and $f(1, Y, Z) = \\bar Y + \\overline{YZ} = \\overline{YZ}$. Equal, so $X$ is redundant.",
+    "pitfalls": ["Missing the input bubble on $Y$ in the first NAND."],
+    "verification": "$X = 0$ and $X = 1$ give the same column for $(Y, Z) = 00, 01, 10, 11$: 1, 1, 1, 0.",
+}
+
+SOLUTIONS["cse-2011-cs-13"] = {
+    "approach": "Concept tested: **XOR/XNOR in circuits**. Write each circuit's function using $\\bar{X} \\oplus Y = X \\oplus \\bar{Y} = \\overline{X \\oplus Y}$ and $\\bar{X} \\oplus \\bar{Y} = X \\oplus Y$; simplify the AND/OR network of option D.",
+    "concepts": ["XOR/XNOR identities", "Boolean algebra", "Circuit analysis"],
+    "steps": [
+        {"title": "Options A, B, C", "body": "(A) $\\overline{A \\oplus B}$: XNOR. (B) $\\overline{\\bar{A} \\oplus \\bar{B}} = \\overline{A \\oplus B}$: XNOR. (C) $\\bar{A} \\oplus B = \\overline{A \\oplus B}$: XNOR."},
+        {"title": "Option D", "body": "$G_1 = A\\bar{B}$, $G_2 = \\bar{B} + A$, and $F = \\overline{\\overline{G_1} \\cdot G_2} = G_1 + \\overline{G_2} = A\\bar{B} + \\bar{A}B = A \\oplus B$."},
+        {"title": "Conclusion", "body": "Circuit D computes XOR, so it is the one NOT equivalent to XNOR."},
+    ],
+    "answer": {"value": "(D)", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "XOR followed by NOT is XNOR."),
+        opt("B", False, "Complementing both XOR inputs cancels; the output NOT makes XNOR."),
+        opt("C", False, "One complemented XOR input gives XNOR."),
+        opt("D", True, "Simplifies to $A\\bar B + \\bar A B = A \\oplus B$."),
+    ],
+    "shortcut": "Count the inversions around each XOR: odd ⇒ XNOR (A: 1, B: 3, C: 1). D has no XOR gate, so simplify it.",
+    "pitfalls": ["Assuming two input NOTs plus an output NOT 'cancel to XOR' (three inversions is odd: XNOR)."],
+    "verification": "Row $A = B = 0$: XNOR is 1; circuit D gives $G_1 = 0$, $G_2 = 1$, $F = \\overline{1 \\cdot 1} = 0$.",
+}
+
+SOLUTIONS["cse-2025-2-cs-21"] = {
+    "approach": "Concept tested: **reading a circuit and simplifying**. Read the three OR inputs off the diagram, write $F$, simplify with absorption, then test each option for equality.",
+    "concepts": ["NAND gate", "Boolean simplification", "Absorption law", "De Morgan"],
+    "given": "OR gate inputs: NAND$(X, Y)$, NOT $X$, and AND$(X, \\bar{Y})$.",
+    "steps": [
+        {"title": "Write F", "body": "$F = \\overline{XY} + \\bar{X} + X\\bar{Y} = (\\bar X + \\bar Y) + \\bar X + X\\bar Y$."},
+        {"title": "Simplify", "body": "$\\bar X + \\bar Y + X\\bar Y = \\bar X + \\bar Y$ ($X\\bar Y$ is absorbed by $\\bar Y$). So $F = \\overline{XY}$."},
+        {"title": "Check the options", "body": "(A) $\\overline{XY}$: equal. (B) $\\bar X + \\bar Y + X\\bar Y = \\bar X + \\bar Y$: equal. (C) $\\overline{XY} + \\bar X + X\\bar Y$ is $F$ written out: equal. (D) $X + \\bar Y$ is 0 at $X = 0, Y = 1$, where $F = 1$: not equal."},
+    ],
+    "answer": {"value": "(A), (B) and (C)", "choice": ["A", "B", "C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$F$ simplifies to NAND."),
+        opt("B", True, "Equal after absorbing $X\\bar Y$."),
+        opt("C", True, "This is exactly the circuit's expression."),
+        opt("D", False, "Differs at $X = 0, Y = 1$."),
+    ],
+    "shortcut": "The NAND input alone is already 1 wherever the other two inputs are 1, so $F = \\overline{XY}$.",
+    "pitfalls": ["Reading the NOT on $X$ as a NOT on $Y$."],
+    "verification": "$F$ is 0 only at $X = Y = 1$: NAND $= 0$, $\\bar X = 0$, $X\\bar Y = 0$.",
+}
+
+SOLUTIONS["cse-1997-a-40"] = {
+    "approach": "Concept tested: **function blocks as minterm sets**. Here $f = f_1 f_2 + f_3$: compute $f_1 f_2$ (intersection); $f_3$ must supply the remaining minterms of $f$ and must not introduce any minterm outside $f$.",
+    "concepts": ["Canonical SOP", "AND/OR of minterm sets"],
+    "given": "| Signal | Minterms |\n|---|---|\n| $f_1$ | 8, 9, 10 |\n| $f_2$ | 7, 8, 12, 13, 14, 15 |\n| $f$ | 8, 9 |",
+    "steps": [
+        {"title": "AND = intersection", "body": "$f_1 f_2 = \\{8, 9, 10\\} \\cap \\{7, 8, 12, 13, 14, 15\\} = \\{8\\}$, which lies inside $f$."},
+        {"title": "Bounds on f₃", "body": "$f_3 \\supseteq f \\setminus f_1f_2 = \\{9\\}$ and $f_3 \\subseteq f = \\{8, 9\\}$."},
+        {"title": "Match", "body": "Only $\\Sigma 9$ satisfies both: option (B)."},
+    ],
+    "answer": {"value": "(B) $\\Sigma\\,9$", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Minterm 10 is not in $f$; OR would add it."),
+        opt("B", True, "Supplies 9, adds nothing outside $f$."),
+        opt("C", False, "Minterm 1 is not in $f$."),
+        opt("D", False, "Misses 9, and 10, 15 are not in $f$."),
+    ],
+    "shortcut": "$f \\setminus f_1 f_2 \\subseteq f_3 \\subseteq f$.",
+    "pitfalls": ["Trying to expand the blocks into expressions over $w, x, y, z$.", "(The original scan misprints $f$; the bank uses the corrected $\\Sigma 8, 9$.)"],
+    "verification": "$f_1 f_2 + f_3 = \\{8\\} \\cup \\{9\\} = \\{8, 9\\} = f$.",
+}
+
+SOLUTIONS["cse-2008-cs-8"] = {
+    "approach": "Concept tested: **solving for an AND input**. The circuit computes $f = f_1 f_2 + f_3$. Minterm 8 of $f$ is missing from $f_3$, so it must come from $f_1 f_2$; and $f_1 f_2$ must not add any minterm outside $f$.",
+    "concepts": ["Canonical SOP", "AND as intersection, OR as union"],
+    "steps": [
+        {"title": "What f₁f₂ must contain", "body": "$f \\setminus f_3 = \\{1, 6, 8, 15\\} \\setminus \\{1, 6, 15\\} = \\{8\\}$, so $8 \\in f_1 \\cap f_2$."},
+        {"title": "What f₁f₂ may contain", "body": "$f_1 \\cap f_2 \\subseteq f \\cap f_1 = \\{6, 8\\}$. So $f_2$ must contain 8, may contain 6, and must not contain 4, 5 or 7 (they are in $f_1$ but not in $f$)."},
+        {"title": "Check the options", "body": "(A) $\\{4, 6\\}$: contains 4 and misses 8. (B) $\\{4, 8\\}$: contains 4. (C) $\\{6, 8\\}$: works ($f_1 f_2 = \\{6, 8\\}$, union with $f_3$ = $\\{1, 6, 8, 15\\}$). (D) contains 4."},
+    ],
+    "answer": {"value": "(C) $\\Sigma m(6, 8)$", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$f_1 f_2 = \\{4, 6\\}$: adds 4 and misses 8."),
+        opt("B", False, "$f_1 f_2 = \\{4, 8\\}$: adds 4, which is not in $f$."),
+        opt("C", True, "$f_1 f_2 = \\{6, 8\\} \\subseteq f$ and supplies 8."),
+        opt("D", False, "$f_1 f_2 = \\{4, 6, 8\\}$: adds 4."),
+    ],
+    "shortcut": "Every option except (C) contains 4, which is in $f_1$ but not in $f$.",
+    "pitfalls": ["Forgetting that $f_1 f_2$ may overlap $f_3$ (row 6) without harm."],
+    "verification": "$(\\{4,5,6,7,8\\} \\cap \\{6, 8\\}) \\cup \\{1, 6, 15\\} = \\{1, 6, 8, 15\\}$. ✓",
+}
+
+SOLUTIONS["cse-2002-a-26"] = {
+    "approach": "Concept tested: **NAND levels with function blocks**. Read the circuit as an expression and simplify with De Morgan: a NAND of a NAND output and an inverted input collapses to an AND–OR form.",
+    "concepts": ["NAND gate", "De Morgan's law", "Minterm intersection"],
+    "steps": [
+        {"title": "Write the output", "body": "First NAND: $\\overline{f_1 f_2}$. Second NAND: $f = \\overline{\\overline{f_1 f_2} \\cdot \\overline{f_3}} = f_1 f_2 + f_3$."},
+        {"title": "Intersection", "body": "$f_1 f_2 = \\{0, 1, 3, 5\\} \\cap \\{6, 7\\} = \\varnothing$: the AND contributes nothing."},
+        {"title": "Solve", "body": "So $f = f_3$, i.e. $f_3 = \\Sigma(1, 4, 5)$: option (A)."},
+    ],
+    "answer": {"value": "(A) $\\Sigma(1, 4, 5)$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$f_1 f_2 = 0$, so $f_3 = f$."),
+        opt("B", False, "$\\Sigma(6, 7)$ is $f_2$; with it, $f$ would be $\\{6, 7\\}$."),
+        opt("C", False, "$\\Sigma(0, 1, 3, 5)$ is $f_1$; it would add 0 and 3 and miss 4."),
+        opt("D", False, "(A) works."),
+    ],
+    "shortcut": "NAND–NAND with an inverted input is just AND–OR: $f = f_1 f_2 + f_3$.",
+    "pitfalls": ["Ignoring the NOT on $f_3$ and getting $f_1 f_2 + \\overline{f_3}$."],
+    "verification": "$\\varnothing \\cup \\{1, 4, 5\\} = \\{1, 4, 5\\} = f$.",
+}
+
+SOLUTIONS["cse-2019-cs-30"] = {
+    "approach": "Concept tested: **AND and XOR of minterm sets**. The AND output is the intersection of $f_1$ and $f_2$; XOR with $f_3$ keeps the minterms that are in exactly one of the two sets (symmetric difference).",
+    "concepts": ["Sum of minterms", "AND as intersection", "XOR as symmetric difference"],
+    "steps": [
+        {"title": "AND gate", "body": "$f_1 f_2 = \\{0, 2, 5, 8, 14\\} \\cap \\{2, 3, 6, 8, 14, 15\\} = \\{2, 8, 14\\}$."},
+        {"title": "XOR gate", "body": "$f = \\{2, 8, 14\\} \\triangle \\{2, 7, 11, 14\\}$: 2 and 14 are in both and cancel; 8 is only in the first; 7 and 11 only in the second. $f = \\{7, 8, 11\\}$."},
+        {"title": "Match", "body": "$f = \\Sigma(7, 8, 11)$: option (A)."},
+    ],
+    "answer": {"value": "(A) $\\sum(7, 8, 11)$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "The symmetric difference."),
+        opt("B", False, "$\\Sigma(2, 7, 8, 11, 14)$ is the union (OR), not XOR."),
+        opt("C", False, "$\\Sigma(2, 14)$ is the intersection of the two XOR inputs."),
+        opt("D", False, "The union of all three functions."),
+    ],
+    "shortcut": "XOR = union minus intersection.",
+    "pitfalls": ["Treating the XOR gate as an OR."],
+    "verification": "$\\{2, 8, 14\\} \\triangle \\{7, 8, 11\\} = \\{2, 7, 11, 14\\} = f_3$: XOR undoes itself. ✓",
+}
+
+SOLUTIONS["cse-2024-2-cs-40"] = {
+    "approach": "Concept tested: **set algebra on minterm lists, then Σ and Π forms**. AND is intersection, OR is union, XOR is symmetric difference; convert the final set to both forms to judge all four options.",
+    "concepts": ["Canonical SOP/POS", "Set view of AND/OR/XOR", "Minterms and maxterms"],
+    "given": "$Y = (f_1 \\cdot f_2) \\oplus (f_3 + f_4)$",
+    "steps": [
+        {"title": "AND", "body": "$f_1 f_2 = \\{0, 2, 3, 5, 7, 8, 11, 13\\} \\cap \\{1, 3, 5, 7, 11, 13, 15\\} = \\{3, 5, 7, 11, 13\\}$."},
+        {"title": "OR is union", "body": "$f_3 + f_4 = \\{0, 1, 4, 11\\} \\cup \\{0, 2, 6, 13\\} = \\{0, 1, 2, 4, 6, 11, 13\\}$."},
+        {"title": "XOR", "body": "11 and 13 are in both and cancel; the rest survive: $Y = \\{0, 1, 2, 3, 4, 5, 6, 7\\}$."},
+        {"title": "Both forms", "body": "$Y = \\Sigma(0, \\ldots, 7) = \\Pi(8, \\ldots, 15)$ (it is simply $\\overline{w}$). Options (C) and (D)."},
+    ],
+    "answer": {"value": "(C) and (D)", "choice": ["C", "D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$\\Sigma(0, 1, 2, 11, 13)$ looks like part of the OR output; it is not $Y$."),
+        opt("B", False, "Its maxterms would make $Y = \\Sigma(0, 1, 2, 11, 13)$, the same wrong set as (A)."),
+        opt("C", True, "$Y$ is 1 on rows 0–7."),
+        opt("D", True, "$Y$ is 0 on rows 8–15."),
+    ],
+    "shortcut": "Rows 11 and 13 are the only overlap between the two XOR inputs; the remaining rows happen to be exactly 0–7.",
+    "pitfalls": ["Forgetting that XOR removes the common minterms 11 and 13."],
+    "verification": "$\\{3, 5, 7, 11, 13\\} \\triangle \\{0, 1, 2, 4, 6, 11, 13\\} = \\{0, 1, \\ldots, 7\\}$.",
+}
+
+SOLUTIONS["it-2007-cs-38"] = {
+    "approach": "Concept tested: **wrong-gate fabrication**. Replace each 2-input AND by a NAND and simplify. $\\text{NAND}(\\text{NAND}(x, y), z) = xy + \\bar{z}$, so each three-literal product becomes 'pair + complement of the third'; then absorb.",
+    "concepts": ["NAND gate", "Boolean simplification", "Absorption"],
+    "steps": [
+        {"title": "Rewrite each term", "body": "$(ab)c \\to \\overline{\\overline{ab}\\,c} = ab + \\bar c$. $(\\bar a c)d \\to \\bar a c + \\bar d$. $(bc)d \\to bc + \\bar d$. $a \\cdot d \\to \\overline{ad} = \\bar a + \\bar d$."},
+        {"title": "OR them", "body": "$F = ab + \\bar c + \\bar a c + \\bar d + bc + \\bar d + \\bar a + \\bar d$."},
+        {"title": "Simplify", "body": "$\\bar a + ab = \\bar a + b$ and $\\bar c + bc = \\bar c + b$; $\\bar a c$ is absorbed by $\\bar a$. So $F = \\bar a + b + \\bar c + \\bar d$."},
+    ],
+    "answer": {"value": "(C) $\\bar a + b + \\bar c + \\bar d$", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$F = 0$ at $a = 1, b = 0, c = 1, d = 1$, so it is not the constant 1."),
+        opt("B", False, "$\\bar b$ instead of $b$: at $a = c = d = 1, b = 1$, $F = 1$ but (B) gives 0."),
+        opt("C", True, "The simplification above."),
+        opt("D", False, "At $a = 1, b = 0, c = 1, d = 1$, (D) gives 1 but $F = 0$."),
+    ],
+    "shortcut": "$F$ is 0 only when every term is 0: $\\bar a = 0$, $\\bar d = 0$, $\\bar c = 0$ and $ab = 0$ ⇒ $a = c = d = 1$, $b = 0$. The single 0-row is 1011, i.e. $F = \\bar a + b + \\bar c + \\bar d$.",
+    "pitfalls": ["Complementing the whole product $(ab)c$ instead of applying the two NANDs in turn.", "Forgetting the single-gate term $a \\cdot d$, which becomes $\\bar a + \\bar d$."],
+    "verification": "Exhaustive check over all 16 rows: the faulty circuit is 0 only at $abcd = 1011$, exactly like (C).",
+}
+
+SOLUTIONS["it-2005-cs-10"] = {
+    "approach": "Concept tested: **switch networks (staircase circuit)**. Trace the loop: from pivot $a$ of S1, current must reach pivot $a$ of S2. The only paths are the b–b wire (both ON) or the c–c wire (both OFF), so the bulb lights iff S1 = S2.",
+    "concepts": ["Two-way (staircase) switch", "XNOR"],
+    "steps": [
+        {"title": "Possible paths", "body": "S1 = 1 connects S1's $a$ to $b$; the $b$–$b$ wire leads to S2's $b$, which reaches S2's $a$ only if S2 = 1. Likewise S1 = 0 uses the $c$–$c$ wire, which needs S2 = 0."},
+        {"title": "Bulb function", "body": "Lit $= S_1 S_2 + \\overline{S_1}\\,\\overline{S_2} = \\overline{S_1 \\oplus S_2}$."},
+        {"title": "Match", "body": "Option (C)."},
+    ],
+    "answer": {"value": "(C) $\\overline{S1 \\oplus S2}$", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "With S1 = 1, S2 = 0 the blades sit on different wires: no path."),
+        opt("B", False, "S1 = 1, S2 = 0 makes $S1 + S2 = 1$ but the bulb is off."),
+        opt("C", True, "Lit exactly when both switches are in the same position."),
+        opt("D", False, "XOR is the opposite: it would be lit exactly when the bulb is off."),
+    ],
+    "shortcut": "Straight wires (b–b, c–c) give XNOR; crossed wires give XOR.",
+    "pitfalls": ["Treating the switches as simple on/off contacts in series."],
+    "verification": "All four positions: (1, 1) lit, (0, 0) lit, (1, 0) and (0, 1) dark.",
+}
+
+SOLUTIONS["cse-2003-cs-47"] = {
+    "approach": "Concept tested: **timing with XOR edge detectors**. Write the two XOR outputs as $P(t) = A(t) \\oplus A(t - 2)$ and $B(t) = P(t) \\oplus P(t - 4)$ and tabulate them over the intervals where something changes; count the level changes of $B$.",
+    "concepts": ["XOR gate", "Propagation delay", "Timing diagram"],
+    "given": "| Element | Delay |\n|---|---|\n| buffer δ₁ | 2 ns |\n| buffer δ₂ | 4 ns |\n| XOR gates, wires | 0 |\n\n$A$: 0 until 1 ns, then 1.",
+    "steps": [
+        {"title": "First stage", "body": "$A(t - 2)$ rises at 3 ns. $P = A \\oplus A(t-2)$ is 1 only while they differ: $P = 1$ on $[1, 3)$ ns."},
+        {"title": "Second stage", "body": "$P(t - 4)$ is the same pulse shifted by 4: 1 on $[5, 7)$ ns. $B = P \\oplus P(t - 4)$ is 1 on $[1, 3)$ and $[5, 7)$ (the pulses do not overlap)."},
+        {"title": "Count transitions in [0, 10]", "body": "$B$ changes at 1, 3, 5 and 7 ns: **4** transitions. Option (D)."},
+    ],
+    "answer": {"value": "(D) 4", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "One transition would mean $B$ follows $A$; but each XOR stage turns an edge into a pulse."),
+        opt("B", False, "Two transitions is $P$ (one pulse), not $B$."),
+        opt("C", False, "Transitions come in pairs here (each pulse rises and falls inside the window)."),
+        opt("D", True, "Two pulses, two transitions each."),
+    ],
+    "shortcut": "An XOR with a $\\delta$-delayed copy turns every edge into a $\\delta$-wide pulse. One edge → one pulse (2 transitions) → two pulses (4 transitions).",
+    "pitfalls": ["Adding the two delays and looking for a single change at 6 ns.", "Counting the falling edge at 7 ns as outside the window (it is inside 0–10 ns)."],
+    "verification": "Event simulation of the circuit: $B$ = 0 on [0,1), 1 on [1,3), 0 on [3,5), 1 on [5,7), 0 on [7,10].",
+}
+
+SOLUTIONS["cse-2024-1-cs-18"] = {
+    "approach": "Concept tested: **the X·X̄ glitch**. Write the steady-state function $Y = X \\cdot \\overline{X}$, then argue with timing: the NOT output keeps its old value for one gate delay, so right after an edge of $X$ the AND gate may briefly see both inputs at 1, but only on the rising edge.",
+    "concepts": ["Complement law $X\\overline{X} = 0$", "Propagation delay", "Static hazard"],
+    "steps": [
+        {"title": "No delays", "body": "$Y = X \\cdot \\overline{X} = 0$ for every $X$: (A) is correct and (B) is wrong."},
+        {"title": "Rising edge with delays", "body": "Before the edge $X = 0$, $\\overline{X} = 1$. When $X$ rises, the inverter output stays 1 for its delay, so for that short time both AND inputs are 1 and $Y$ can pulse to 1: (C) is correct."},
+        {"title": "Falling edge with delays", "body": "Before the edge $X = 1$, $\\overline{X} = 0$, and $Y = 0$. When $X$ falls, the AND sees $X = 0$ immediately (and $\\overline{X}$ is still 0). Both inputs are never 1, so $Y$ stays at 0: there is no transient; it is 0 throughout. (D) is wrong."},
+    ],
+    "answer": {"value": "(A) and (C)", "choice": ["A", "C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$X\\overline{X} = 0$."),
+        opt("B", False, "The steady output is 0, never 1."),
+        opt("C", True, "A 1-pulse of width equal to the inverter delay after a rising edge."),
+        opt("D", False, "After a falling edge $Y$ is already 0 and stays 0; a 'transient 0' would need $Y$ to be 1 around it."),
+    ],
+    "shortcut": "AND of $X$ and a slow $\\overline{X}$ glitches to 1 on the rising edge only; OR of them glitches to 0 on the falling edge only.",
+    "pitfalls": ["Assuming glitches happen on both edges.", "Saying 'no glitch at all' because the Boolean function is 0."],
+    "verification": "Event simulation with an inverter delay $d$: $X$ rises at $t_0$ ⇒ $Y = 1$ on $[t_0, t_0 + d)$; $X$ falls ⇒ $Y$ has no event.",
+}
+
+
 def write():
     bank = {q["id"]: q for q in json.loads((ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
     by_paper = {}

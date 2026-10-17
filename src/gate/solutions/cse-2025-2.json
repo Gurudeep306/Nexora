@@ -3190,58 +3190,30 @@
       }
     },
     "cse-2025-2-cs-21": {
-      "approach": "Read the three OR inputs off the diagram, write $F$, and simplify with absorption. Then test each option for equality with the simplified function.",
+      "approach": "Concept tested: **reading a circuit and simplifying**. Read the three OR inputs off the diagram, write $F$, simplify with absorption, then test each option for equality.",
       "concepts": [
         "NAND gate",
         "Boolean simplification",
         "Absorption law",
         "De Morgan"
       ],
-      "given": "OR gate inputs: NAND$(X, Y)$, NOT $X$, and AND$(X, \\bar Y)$.",
+      "given": "OR gate inputs: NAND$(X, Y)$, NOT $X$, and AND$(X, \\bar{Y})$.",
       "steps": [
         {
-          "title": "Write F from the circuit",
-          "body": "Top gate: NAND of $Y$ and $X$ → $\\overline{XY}$. Middle: inverter on $X$ → $\\bar X$. Bottom: AND of $X$ and $\\bar Y$ → $X\\bar Y$. The OR gives\n\n$$F = \\overline{XY} + \\bar X + X\\bar Y.$$",
-          "scene": {
-            "inputs": [
-              {
-                "id": "X",
-                "value": 1
-              },
-              {
-                "id": "Y",
-                "value": 1
-              }
-            ]
-          }
+          "title": "Write F",
+          "body": "$F = \\overline{XY} + \\bar{X} + X\\bar{Y} = (\\bar X + \\bar Y) + \\bar X + X\\bar Y$."
         },
         {
           "title": "Simplify",
-          "body": "De Morgan: $\\overline{XY} = \\bar X + \\bar Y$. So\n\n$$F = \\bar X + \\bar Y + \\bar X + X\\bar Y = \\bar X + \\bar Y + X\\bar Y.$$\n\nAbsorption ($\\bar Y + X\\bar Y = \\bar Y(1 + X) = \\bar Y$):\n\n$$F = \\bar X + \\bar Y = \\overline{XY}.$$\n\nSo $F$ is 0 only for $X = Y = 1$ (shown in the frame)."
+          "body": "$\\bar X + \\bar Y + X\\bar Y = \\bar X + \\bar Y$ ($X\\bar Y$ is absorbed by $\\bar Y$). So $F = \\overline{XY}$."
         },
         {
-          "title": "Check with another input",
-          "body": "For $X = 1, Y = 0$: NAND $= 1$, so $F = 1$. Indeed $\\overline{1 \\cdot 0} = 1$. Any input with a 0 makes $F = 1$; only $11$ gives $0$ — exactly NAND.",
-          "scene": {
-            "inputs": [
-              {
-                "id": "X",
-                "value": 1
-              },
-              {
-                "id": "Y",
-                "value": 0
-              }
-            ]
-          }
-        },
-        {
-          "title": "Match the options",
-          "body": "- (A) $\\overline{XY}$ = simplified $F$ ✓\n- (B) $\\bar X + \\bar Y + X\\bar Y = \\bar X + \\bar Y$ ✓ (absorption)\n- (C) is $F$ written exactly as read from the gates ✓\n- (D) $X + \\bar Y$: at $X = 1, Y = 1$ it is $1$ but $F = 0$ ✗"
+          "title": "Check the options",
+          "body": "(A) $\\overline{XY}$: equal. (B) $\\bar X + \\bar Y + X\\bar Y = \\bar X + \\bar Y$: equal. (C) $\\overline{XY} + \\bar X + X\\bar Y$ is $F$ written out: equal. (D) $X + \\bar Y$ is 0 at $X = 0, Y = 1$, where $F = 1$: not equal."
         }
       ],
       "answer": {
-        "value": "$F = \\overline{XY}$ — options **(A), (B) and (C)**",
+        "value": "(A), (B) and (C)",
         "choice": [
           "A",
           "B",
@@ -3253,96 +3225,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "After De Morgan and absorption, $F = \\bar X + \\bar Y = \\overline{XY}$."
+          "reason": "$F$ simplifies to NAND."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "It equals $\\overline{XY} + X\\bar Y$ rewritten by De Morgan; the $X\\bar Y$ term is absorbed by $\\bar Y$, giving $\\overline{XY}$."
+          "reason": "Equal after absorbing $X\\bar Y$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "This is literally the OR of the three gate outputs, i.e. $F$ before simplification."
+          "reason": "This is exactly the circuit's expression."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "At $X = 1, Y = 1$: $X + \\bar Y = 1$ but $F = 0$. It would come from misreading the middle inverter as a buffer."
+          "reason": "Differs at $X = 0, Y = 1$."
         }
       ],
-      "shortcut": "One OR input is already $\\overline{XY}$, and the other two ($\\bar X$, $X\\bar Y$) imply it (each is 1 only when $XY = 0$), so they add nothing: $F = \\overline{XY}$.",
+      "shortcut": "The NAND input alone is already 1 wherever the other two inputs are 1, so $F = \\overline{XY}$.",
       "pitfalls": [
-        "Missing the bubble on the top gate (AND vs NAND).",
-        "Not realising an MSQ can have several equivalent expressions all correct."
+        "Reading the NOT on $X$ as a NOT on $Y$."
       ],
-      "verification": "Truth table: $XY = 00, 01, 10, 11$ gives $F = 1, 1, 1, 0$ (NAND) and option (B)/(C) give $1, 1, 1, 0$ as well, while (D) gives $1, 0, 1, 1$.",
-      "animation": {
-        "kind": "circuit",
-        "title": "F = NAND(X,Y) + X̄ + X·Ȳ",
-        "inputs": [
-          {
-            "id": "X",
-            "value": 1
-          },
-          {
-            "id": "Y",
-            "value": 1
-          }
-        ],
-        "gates": [
-          {
-            "id": "g1",
-            "type": "NAND",
-            "in": [
-              "X",
-              "Y"
-            ],
-            "label": "NAND"
-          },
-          {
-            "id": "g2",
-            "type": "NOT",
-            "in": [
-              "X"
-            ],
-            "label": "X̄"
-          },
-          {
-            "id": "g3",
-            "type": "NOT",
-            "in": [
-              "Y"
-            ],
-            "label": "Ȳ"
-          },
-          {
-            "id": "g4",
-            "type": "AND",
-            "in": [
-              "X",
-              "g3"
-            ],
-            "label": "XȲ"
-          },
-          {
-            "id": "g5",
-            "type": "OR",
-            "in": [
-              "g1",
-              "g2",
-              "g4"
-            ],
-            "label": "OR"
-          }
-        ],
-        "outputs": [
-          {
-            "id": "F",
-            "from": "g5"
-          }
-        ]
-      }
+      "verification": "$F$ is 0 only at $X = Y = 1$: NAND $= 0$, $\\bar X = 0$, $X\\bar Y = 0$."
     },
     "cse-2025-2-cs-22": {
       "approach": "Concept tested: **Booth's operation count**: count the positions where $q_i \\ne q_{i-1}$ in $Q$ with $q_{-1} = 0$; the multiplicand $M$ does not matter.",

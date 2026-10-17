@@ -995,6 +995,240 @@ def completeness_checklist():
                 "Each row is a set of gates; each column one of Post's five closed classes.", els, st)
 
 
+# ── Lesson 6: circuit analysis and timing ───────────────────────────────────
+
+def wave_points(events, t_end, x0, sx, y_low, y_high, start=0):
+    """Polyline for a 0/1 waveform: events = sorted list of (time, new value)."""
+    pts, v = [[x0, y_high if start else y_low]], start
+    for t, nv in events:
+        if nv == v:
+            continue
+        x = x0 + t * sx
+        pts.append([x, y_high if v else y_low])
+        pts.append([x, y_high if nv else y_low])
+        v = nv
+    pts.append([x0 + t_end * sx, y_high if v else y_low])
+    return [[round(a, 2), round(b, 2)] for a, b in pts]
+
+
+def simulate(events_a, d, t_end):
+    """Waveform of the delayed signal a(t − d)."""
+    return [(t + d, v) for t, v in events_a if t + d <= t_end]
+
+
+def xor_wave(e1, e2, t_end):
+    times = sorted({t for t, _ in e1} | {t for t, _ in e2})
+    val = lambda ev, t: ([v for tt, v in ev if tt <= t] or [0])[-1]
+    out, last = [], 0
+    for t in times:
+        v = val(e1, t) ^ val(e2, t)
+        if v != last:
+            out.append((t, v))
+            last = v
+    return out
+
+
+def and_wave(e1, e2, t_end, start1=0, start2=0):
+    times = sorted({0} | {t for t, _ in e1} | {t for t, _ in e2})
+    val = lambda ev, t, s: ([v for tt, v in ev if tt <= t] or [s])[-1]
+    out, last = [], val(e1, 0, start1) & val(e2, 0, start2)
+    for t in times:
+        v = val(e1, t, start1) & val(e2, t, start2)
+        if v != last:
+            out.append((t, v))
+            last = v
+    return out, (start1 & start2)
+
+
+@scene
+def signal_flow():
+    V = ["A", "B", "C"]
+    nand = lambda a, b: 1 - (a & b)
+    assert bl.equal("((AB)'(AC)')'", "AB + AC", V)
+    W, NW = 640, 360
+    gw, gh = 60, 44
+    G = {"G1": (210, 60), "G2": (210, 170), "G3": (400, 115)}
+    NG = {"G1": (110, 60), "G2": (110, 170), "G3": (240, 115)}
+    srcs = {"G1": ["A", "B"], "G2": ["A", "C"], "G3": ["G1", "G2"]}
+    yin = {"A": 74.67, "B": 89.33, "C": 199.33}
+    els = [*heads("Signals flow one gate delay at a time", "One gate delay per level", W)]
+    for g in G:
+        els.append(gate(g.lower(), *G[g], gw, gh, "nand", {"x": NG[g][0], "y": NG[g][1], "w": 54, "h": 40}, label=g))
+    for name, y in yin.items():
+        els.append(text("l" + name, 56, y, name, {"x": 46, "y": y, "size": 10}, anchor="end", size=13, weight="bold", mono=True))
+    for g, ss in srcs.items():
+        p = pins("nand", *G[g], gw, gh)[0]
+        q = pins("nand", *NG[g], 54, 40)[0]
+        for k, s_ in enumerate(ss):
+            if s_ in yin:
+                a, na = [60, yin[s_]], [50, yin[s_]]
+                mid, nmid = (150 if s_ == "A" else None), (80 if s_ == "A" else None)
+            else:
+                a = pins("nand", *G[s_], gw, gh)[1]
+                na = pins("nand", *NG[s_], 54, 40)[1]
+                mid = nmid = None
+            els.append(line(f"w{g}{k}", wire_pts(a, p[k], mid), {"points": wire_pts(na, q[k], nmid)}))
+    o = pins("nand", *G["G3"], gw, gh)[1]
+    no = pins("nand", *NG["G3"], 54, 40)[1]
+    els.append(line("wF", [o, [o[0] + 40, o[1]]], {"points": [no, [no[0] + 30, no[1]]]}))
+    els.append(text("lF", o[0] + 52, o[1], "F", {"x": no[0] + 40, "y": no[1]}, anchor="middle", size=15, weight="bold"))
+    for g in G:
+        els.append(text("v" + g, G[g][0] + gw + 12, G[g][1] - 4, "", {"x": NG[g][0] + 60, "y": NG[g][1] - 4, "size": 12}, anchor="middle", size=15, weight="bold", mono=True))
+    els.append(text("clock", W / 2, 262, "", {"x": NW / 2, "y": 252, "size": 12}, anchor="middle", size=15, mono=True))
+    A, B, C = 1, 0, 1
+    g1, g2 = nand(A, B), nand(A, C)
+    f = nand(g1, g2)
+    assert (g1, g2, f) == (1, 0, 1) and f == (A & B) | (A & C)
+    st = [
+        step("t = 0: the inputs change to A = 1, B = 0, C = 1. The gate outputs still show their old values for one gate delay.",
+             ("lA", {"text": "A = 1", "tone": "success"}), ("lB", {"text": "B = 0", "tone": "muted"}), ("lC", {"text": "C = 1", "tone": "success"}),
+             ("clock", {"text": "t = 0"})),
+        step(f"t = 1 gate delay: the first level settles. G1 = (A·B)′ = {g1}, G2 = (A·C)′ = {g2}.",
+             ("vG1", {"text": str(g1), "tone": tone(g1)}), ("vG2", {"text": str(g2), "tone": tone(g2)}),
+             ("g1", {"fill": "success" if g1 else "none"}), ("g2", {"fill": "success" if g2 else "none"}), ("clock", {"text": "t = 1 delay"})),
+        step(f"t = 2 gate delays: the output gate sees settled inputs. F = (G1·G2)′ = ({g1}·{g2})′ = {f}. The circuit is AB + AC, and A(B + C) = 1·1 = 1 agrees.",
+             ("vG3", {"text": str(f), "tone": tone(f)}), ("g3", {"fill": "success" if f else "none"}), ("wF", {"tone": tone(f)}),
+             ("clock", {"text": "t = 2 delays: F settled"})),
+        step("The longest input-to-output path passes through two gates, so the output is valid two gate delays after the inputs change: that is the circuit's propagation delay.",
+             ("clock", {"text": "delay = 2 levels", "tone": "success"})),
+    ]
+    return spec("Values propagate through a NAND circuit level by level", (W, 280), (NW, 270),
+                "A two-level NAND circuit, G1 = NAND(A, B), G2 = NAND(A, C), F = NAND(G1, G2).", els, st)
+
+
+@scene
+def block_sets():
+    f1, f2, f = [1, 3, 5, 7, 9], [3, 7, 9, 12], [3, 7, 9, 14]
+    p = sorted(set(f1) & set(f2))
+    need = sorted(set(f) - set(p))
+    assert p == [3, 7, 9] and need == [14] and set(p) <= set(f)
+    W, NW = 660, 360
+    fill = lambda ms: "".join("1" if i in ms else "0" for i in range(16))
+    rows_ = [("f₁", f1), ("f₂", f2), ("f₁·f₂", p), ("f", f), ("f₃ ⊇", need)]
+    els = [*heads("Solving f = f₁·f₂ + f₃ for the unknown block", "Solve f = f₁f₂ + f₃", W)]
+    for k, (lab, ms) in enumerate(rows_):
+        y, ny = 64 + k * 46, 62 + k * 40
+        hid = k >= 2
+        kw = {"labels": [str(i) for i in range(16)]} if k == 0 else {}
+        els.append(text(f"l{k}", 66, y + 15, lab, {"x": 30, "y": ny + 10, "size": 11}, anchor="middle", size=14, weight="bold", hidden=hid))
+        els.append(bits(f"b{k}", 104, y, fill(ms), 34, {"x": 60, "y": ny, "cell": 18}, hidden=hid, **kw))
+    els.append(text("res", W / 2, 300, "", {"x": NW / 2, "y": 272, "size": 11}, anchor="middle", size=14, mono=True))
+    st = [
+        step("AND is intersection: f₁·f₂ = Σ(3, 7, 9). These rows are already supplied by the AND gate.",
+             ("l2", {"hidden": False}), ("b2", {"hidden": False, "highlight": p})),
+        step("The target is f = Σ(3, 7, 9, 14). First check that f₁·f₂ lies inside f; it does, so a solution exists.",
+             ("l3", {"hidden": False}), ("b3", {"hidden": False, "highlight": p})),
+        step("OR is union, so f₃ must supply every row of f that the AND does not: f₃ must contain row 14.",
+             ("l4", {"hidden": False}), ("b4", {"hidden": False, "highlight": need})),
+        step("f₃ must also stay inside f (any extra row would appear in the output). So f₃ = Σ(14) plus any subset of {3, 7, 9}: f − f₁f₂ ⊆ f₃ ⊆ f.",
+             ("res", {"text": "Σ(14) ⊆ f₃ ⊆ Σ(3, 7, 9, 14)", "tone": "success"})),
+    ]
+    return spec("Unknown blocks in a circuit of functions, by minterm sets", (W, 320), (NW, 290),
+                "Four-variable functions as rows 0–15. The circuit computes f = f₁·f₂ + f₃; f₁, f₂ and f are known.", els, st)
+
+
+@scene
+def staircase_switch():
+    W, NW = 640, 360
+    def blade(px, py, on):
+        return [[px, py], [px + 50, py - 44]] if on else [[px, py], [px + 50, py + 44]]
+    els = [*heads("Two staircase switches: the lamp is XNOR", "Staircase switches = XNOR", W),
+           line("bb", [[190, 78], [450, 78]], {"points": [[110, 78], [250, 78]]}),
+           line("cc", [[190, 166], [450, 166]], {"points": [[110, 166], [250, 166]]}),
+           text("tb", 320, 66, "b–b wire", {"x": 180, "y": 66, "size": 11}, anchor="middle", size=12, tone="muted"),
+           text("tc", 320, 184, "c–c wire", {"x": 180, "y": 184, "size": 11}, anchor="middle", size=12, tone="muted"),
+           line("loop", [[140, 122], [60, 122], [60, 240], [560, 240], [560, 122], [500, 122]],
+                {"points": [[60, 122], [24, 122], [24, 260], [336, 260], [336, 122], [300, 122]]}),
+           el("lamp", "circle", {"cx": 180, "cy": 260, "r": 16}, cx=310, cy=240, r=18, fill="none", label="off", size=11),
+           text("s1", 150, 200, "S1", {"x": 70, "y": 210, "size": 12}, anchor="middle", size=14, weight="bold"),
+           text("s2", 490, 200, "S2", {"x": 290, "y": 210, "size": 12}, anchor="middle", size=14, weight="bold"),
+           line("p1", blade(140, 122, 1), "wide", tone="accent"), line("p2", [[500, 122], [450, 78]], "wide", tone="accent"),
+           line("p1n", blade(60, 122, 1), "narrow", tone="accent"), line("p2n", [[300, 122], [250, 78]], "narrow", tone="accent"),
+           text("st", W / 2, 290, "", {"x": NW / 2, "y": 300, "size": 12}, anchor="middle", size=15, mono=True)]
+    for e in els:
+        if e["id"] in ("bb", "cc"):
+            pass
+    def b2(px, py, on, nwide=True):
+        return [[px, py], [px - 50, py - 44]] if on else [[px, py], [px - 50, py + 44]]
+    st = []
+    for s1, s2 in [(1, 1), (1, 0), (0, 0), (0, 1)]:
+        lit = int(s1 == s2)
+        st.append(step(f"S1 = {s1}, S2 = {s2}: " + ("both blades touch the same wire, the loop closes, the lamp is on." if lit else "the blades touch different wires, the loop is open, the lamp is off.")
+                       + (" Flipping either switch now toggles the lamp." if (s1, s2) == (1, 0) else ""),
+                       ("p1", {"points": blade(140, 122, s1)}), ("p2", {"points": b2(500, 122, s2)}),
+                       ("p1n", {"points": blade(60, 122, s1)}), ("p2n", {"points": b2(300, 122, s2)}),
+                       ("lamp", {"fill": "warning" if lit else "none", "label": "on" if lit else "off", "tone": "warning" if lit else "ink"}),
+                       ("st", {"text": f"lamp = S1 ⊙ S2 = {lit}"})))
+    st.append(step("The lamp is on exactly when the two switches agree: L = S1 ⊙ S2 = S1·S2 + S1′·S2′. Swapping the wires (b to c) gives XOR instead; either way each switch toggles the lamp.",))
+    assert bl.tt("S \\odot T", ["S", "T"]) == (1, 0, 0, 1)
+    return spec("A staircase (two-way switch) circuit computes XNOR", (W, 310), (NW, 320),
+                "Each two-way switch connects its pivot to the top terminal b (ON, 1) or the bottom terminal c (OFF, 0). The b terminals are wired together, and so are the c terminals.", els, st)
+
+
+@scene
+def glitch_timing():
+    T, d = 10, 1
+    X = [(2, 1), (6, 0)]
+    Xn = [(t + d, 1 - v) for t, v in X]   # inverter output, delayed
+    Y, y0 = and_wave(X, Xn, T, start1=0, start2=1)
+    assert Y == [(2, 1), (3, 0)] and y0 == 0
+    W, NW = 640, 360
+    x0, sx, nx0, nsx = 110, 46, 60, 28
+    lanes = [("X", X, 0, 70), ("X′", Xn, 1, 140), ("Y = X·X′", Y, 0, 210)]
+    els = [*heads("A glitch from a slow inverter: Y = X·X′", "Glitch: Y = X·X′", W)]
+    for k, (lab, ev, s0, y) in enumerate(lanes):
+        ny = 70 + k * 64
+        els.append(text(f"l{k}", 96, y, lab, {"x": 54, "y": ny, "size": 11}, anchor="end", size=13, weight="bold", mono=True, hidden=k > 0))
+        els.append(line(f"w{k}", wave_points(ev, T, x0, sx, y + 14, y - 14, s0), {"points": wave_points(ev, T, nx0, nsx, ny + 12, ny - 12, s0)},
+                        hidden=k > 0, tone="info" if k < 2 else "danger"))
+    for t in range(0, T + 1, 2):
+        els.append(text(f"t{t}", x0 + t * sx, 250, str(t), {"x": nx0 + t * nsx, "y": 250, "size": 10}, anchor="middle", size=11, tone="muted"))
+    els.append(box("pulse", x0 + 2 * sx, 186, sx, 48, None, {"x": nx0 + 2 * nsx, "y": 190, "w": nsx, "h": 40}, fill="danger", hidden=True, dashed=True))
+    els.append(text("note", W / 2, 285, "", {"x": NW / 2, "y": 285, "size": 11}, anchor="middle", size=14))
+    st = [
+        step("X rises at t = 2 and falls at t = 6. Logically Y = X·X′ is always 0.",),
+        step("The inverter takes one time unit, so X′ falls only at t = 3 and rises only at t = 7.", ("l1", {"hidden": False}), ("w1", {"hidden": False})),
+        step("Between t = 2 and t = 3 both AND inputs are 1, so Y pulses to 1 for exactly the inverter delay: a static-0 hazard (a glitch).",
+             ("l2", {"hidden": False}), ("w2", {"hidden": False}), ("pulse", {"hidden": False}), ("note", {"text": "1-pulse of width = inverter delay on the rising edge"})),
+        step("On the falling edge (t = 6 to 7) X is already 0 while X′ is still 0, so the AND sees 0, 0 and Y stays 0. The glitch appears only after X rises.",
+             ("note", {"text": "no glitch on the falling edge", "tone": "ink"})),
+    ]
+    return spec("Timing diagram of the X·X′ glitch", (W, 300), (NW, 300),
+                "A signal X feeds an AND gate directly and through an inverter with a delay of 1 time unit. The AND gate is ideal (no delay).", els, st)
+
+
+@scene
+def xor_delay_timing():
+    T, d1, d2 = 8, 1, 3
+    A = [(1, 1)]
+    P = xor_wave(A, simulate(A, d1, T), T)
+    Bw = xor_wave(P, simulate(P, d2, T), T)
+    assert P == [(1, 1), (2, 0)] and Bw == [(1, 1), (2, 0), (4, 1), (5, 0)]
+    W, NW = 640, 360
+    x0, sx, nx0, nsx = 140, 52, 70, 32
+    lanes = [("A", A), (f"A(t−{d1})", simulate(A, d1, T)), ("P", P), (f"P(t−{d2})", simulate(P, d2, T)), ("B", Bw)]
+    els = [*heads("Edge detectors: XOR with a delayed copy", "XOR with a delayed copy", W)]
+    for k, (lab, ev) in enumerate(lanes):
+        y, ny = 64 + k * 46, 64 + k * 46
+        els.append(text(f"l{k}", 128, y, lab, {"x": 64, "y": ny, "size": 11}, anchor="end", size=13, weight="bold", mono=True, hidden=k > 0))
+        els.append(line(f"w{k}", wave_points(ev, T, x0, sx, y + 12, y - 12), {"points": wave_points(ev, T, nx0, nsx, ny + 12, ny - 12)},
+                        hidden=k > 0, tone="danger" if k in (2, 4) else "info"))
+    for t in range(0, T + 1):
+        els.append(text(f"t{t}", x0 + t * sx, 300, str(t), {"x": nx0 + t * nsx, "y": 300, "size": 10}, anchor="middle", size=11, tone="muted"))
+    els.append(text("note", W / 2, 330, "", {"x": NW / 2, "y": 330, "size": 11}, anchor="middle", size=14))
+    show = lambda k: [(f"l{k}", {"hidden": False}), (f"w{k}", {"hidden": False})]
+    st = [
+        step("Input A: 0 until t = 1, then 1 for ever. (Everything is 0 before t = 0.)",),
+        step(f"A buffer delays A by {d1}: its output rises at t = {1 + d1}.", *show(1)),
+        step("P = A ⊕ (delayed A) is 1 only while the two differ: from t = 1 to t = 2. A single edge of A becomes a pulse whose width is the delay.", *show(2)),
+        step(f"A second buffer delays P by {d2}: a copy of the pulse from t = 4 to t = 5.", *show(3)),
+        step("B = P ⊕ (delayed P) is 1 wherever exactly one pulse is high: [1, 2) and [4, 5). B changes level 4 times between t = 0 and t = 8.",
+             *show(4), ("note", {"text": "B: 0→1 at 1, 1→0 at 2, 0→1 at 4, 1→0 at 5: 4 transitions", "tone": "success"})),
+    ]
+    return spec("Timing diagram of two XOR edge-detector stages", (W, 345), (NW, 345),
+                "A circuit of two stages: P = A ⊕ A delayed by 1, then B = P ⊕ P delayed by 3. XOR gates and wires have no delay.", els, st)
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

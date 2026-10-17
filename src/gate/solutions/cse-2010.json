@@ -2164,61 +2164,153 @@
       "verification": "For each x the formula only needs one victim y and one instant t where x fails — exactly what \"x cannot fool everyone all the time\" means."
     },
     "cse-2010-cs-31": {
-      "approach": "Write each NOR output, then simplify level by level using De Morgan: NOR of two NORs is the AND of their ORs.",
+      "approach": "Concept tested: **reading stacked NOR gates**. A NOR of two NORs is the AND of their ORs; then absorption shows that $P$ drops out. (The paper's figure has first-level NORs on (P, Q), (Q, R), (P, R) and (Q, R).)",
       "concepts": [
         "NOR gate",
         "De Morgan",
-        "Boolean simplification"
+        "Absorption"
       ],
       "given": "| Gate | Inputs |\n|---|---|\n| G1 | P, Q |\n| G2 | Q, R |\n| G3 | P, R |\n| G4 | Q, R |\n| G5 | G1, G2 |\n| G6 | G3, G4 |\n| f | G5, G6 |",
       "steps": [
         {
-          "title": "Level 2, upper",
-          "body": "$G5 = \\overline{\\overline{P+Q} + \\overline{Q+R}} = (P+Q)(Q+R) = Q + PR$."
+          "title": "Second level, upper",
+          "body": "$G_5 = \\overline{\\overline{P+Q} + \\overline{Q+R}} = (P+Q)(Q+R) = Q + PR$."
         },
         {
-          "title": "Level 2, lower",
-          "body": "$G6 = \\overline{\\overline{P+R} + \\overline{Q+R}} = (P+R)(Q+R) = R + PQ$."
+          "title": "Second level, lower",
+          "body": "$G_6 = \\overline{\\overline{P+R} + \\overline{Q+R}} = (P+R)(Q+R) = R + PQ$."
         },
         {
           "title": "Output",
-          "body": "$f = \\overline{G5 + G6} = \\overline{Q + PR + R + PQ}$. Since $PR \\le R$ and $PQ \\le Q$ (absorption), $Q + R + PR + PQ = Q + R$, so\n$$f = \\overline{Q+R}.$$"
+          "body": "$f = \\overline{G_5 + G_6} = \\overline{Q + PR + R + PQ}$. Since $PR$ is absorbed by $R$ and $PQ$ by $Q$, $Q + R + PR + PQ = Q + R$, so $f = \\overline{Q + R}$."
+        },
+        {
+          "title": "About the key",
+          "body": "The bank's earlier key was D, $\\overline{P+Q+R}$; it has been corrected to A. At $P = 1, Q = R = 0$ the circuit gives $f = 1$ but $\\overline{P+Q+R} = 0$."
         }
       ],
       "answer": {
-        "value": "f = (Q + R)′",
+        "value": "(A) $\\overline{Q+R}$",
         "choice": [
           "A"
         ],
-        "matchesKey": false,
-        "keyNote": "The stored key D, (P+Q+R)′, is wrong: with P = 1, Q = R = 0 the circuit gives G5 = 0, G6 = 0, so f = 1, whereas (P+Q+R)′ = 0. The derivation gives (Q+R)′, option A (also the widely accepted answer)."
+        "matchesKey": true
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": true,
-          "reason": "Absorption reduces Q + R + PR + PQ to Q + R."
+          "reason": "Absorption reduces $Q + R + PR + PQ$ to $Q + R$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Q = 0, P = 0, R = 1 gives f = 0 but (P+Q)′ = 1."
+          "reason": "$P = Q = 0, R = 1$ gives $f = 0$ but $\\overline{P+Q} = 1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "P = 0, R = 0, Q = 1 gives f = 0 but (P+R)′ = 1."
+          "reason": "$P = R = 0, Q = 1$ gives $f = 0$ but $\\overline{P+R} = 1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "P = 1, Q = R = 0 gives f = 1 but (P+Q+R)′ = 0 — P does not affect f."
+          "reason": "$P = 1, Q = R = 0$ gives $f = 1$ but $\\overline{P+Q+R} = 0$: $P$ does not affect $f$."
         }
       ],
+      "shortcut": "$G_5 + G_6 = (Q + R)\\big[(P + Q) + (P + R)\\big] = (Q + R)(P + Q + R) = Q + R$ (absorption).",
       "pitfalls": [
-        "Assuming the output depends on all three inputs; P is absorbed completely."
+        "Assuming the output must depend on all three inputs.",
+        "Misreading the figure's input pairs."
       ],
-      "verification": "Truth table check: f = 1 exactly when Q = R = 0 — for P = 0 and P = 1 alike (e.g. P=1,Q=R=0: G1=0,G2=1,G3=0,G4=1 → G5=0,G6=0 → f=1)."
+      "verification": "Truth table: $f = 1$ exactly when $Q = R = 0$, for $P = 0$ and $P = 1$ alike (e.g. $P = 1, Q = R = 0$: $G_1 = 0, G_2 = 1, G_3 = 0, G_4 = 1$, so $G_5 = G_6 = 0$ and $f = 1$).",
+      "animation": {
+        "kind": "circuit",
+        "title": "Seven NOR gates",
+        "inputs": [
+          {
+            "id": "P",
+            "label": "P",
+            "value": 1
+          },
+          {
+            "id": "Q",
+            "label": "Q",
+            "value": 0
+          },
+          {
+            "id": "R",
+            "label": "R",
+            "value": 0
+          }
+        ],
+        "gates": [
+          {
+            "id": "G1",
+            "type": "NOR",
+            "in": [
+              "P",
+              "Q"
+            ]
+          },
+          {
+            "id": "G2",
+            "type": "NOR",
+            "in": [
+              "Q",
+              "R"
+            ]
+          },
+          {
+            "id": "G3",
+            "type": "NOR",
+            "in": [
+              "P",
+              "R"
+            ]
+          },
+          {
+            "id": "G4",
+            "type": "NOR",
+            "in": [
+              "Q",
+              "R"
+            ]
+          },
+          {
+            "id": "G5",
+            "type": "NOR",
+            "in": [
+              "G1",
+              "G2"
+            ]
+          },
+          {
+            "id": "G6",
+            "type": "NOR",
+            "in": [
+              "G3",
+              "G4"
+            ]
+          },
+          {
+            "id": "G7",
+            "type": "NOR",
+            "in": [
+              "G5",
+              "G6"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "G7",
+            "label": "F"
+          }
+        ],
+        "caption": "P = 1, Q = R = 0: f = 1, which rules out (P + Q + R)′."
+      }
     },
     "cse-2010-cs-32": {
       "approach": "Both T inputs are 1, so each flip-flop toggles on every rising edge of its own clock. FF0 toggles on every clock; FF1 toggles when Q0 rises from 0 to 1.",

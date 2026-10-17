@@ -477,7 +477,7 @@
       "verification": "Units: $10^4$ ns / $10^6$ ns $=10^{-2}$."
     },
     "it-2005-cs-10": {
-      "approach": "Trace the loop: from terminal a of S1 current must reach terminal a of S2. The only paths are via the b–b wire (both ON) or the c–c wire (both OFF), so the bulb lights iff S1 = S2.",
+      "approach": "Concept tested: **switch networks (staircase circuit)**. Trace the loop: from pivot $a$ of S1, current must reach pivot $a$ of S2. The only paths are the b–b wire (both ON) or the c–c wire (both OFF), so the bulb lights iff S1 = S2.",
       "concepts": [
         "Two-way (staircase) switch",
         "XNOR"
@@ -485,15 +485,19 @@
       "steps": [
         {
           "title": "Possible paths",
-          "body": "S1 = 1 connects a→b; then S2 must also connect b→a, i.e. S2 = 1. S1 = 0 connects a→c; then S2 = 0 is needed."
+          "body": "S1 = 1 connects S1's $a$ to $b$; the $b$–$b$ wire leads to S2's $b$, which reaches S2's $a$ only if S2 = 1. Likewise S1 = 0 uses the $c$–$c$ wire, which needs S2 = 0."
         },
         {
-          "title": "Truth table",
-          "body": "| S1 | S2 | Bulb |\n|---|---|---|\n| 0 | 0 | ON |\n| 0 | 1 | OFF |\n| 1 | 0 | OFF |\n| 1 | 1 | ON |\n\nThis is $\\overline{S1\\oplus S2}$ (XNOR)."
+          "title": "Bulb function",
+          "body": "Lit $= S_1 S_2 + \\overline{S_1}\\,\\overline{S_2} = \\overline{S_1 \\oplus S_2}$."
+        },
+        {
+          "title": "Match",
+          "body": "Option (C)."
         }
       ],
       "answer": {
-        "value": "$\\overline{S1\\oplus S2}$",
+        "value": "(C) $\\overline{S1 \\oplus S2}$",
         "choice": [
           "C"
         ],
@@ -503,25 +507,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$S1=1,S2=0$ leaves the circuit open (b of S1 meets an unconnected b of S2)."
+          "reason": "With S1 = 1, S2 = 0 the blades sit on different wires: no path."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "True for $(0,1)$ and $(1,0)$, where the circuit is open."
+          "reason": "S1 = 1, S2 = 0 makes $S1 + S2 = 1$ but the bulb is off."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Bulb is ON exactly when both switches are in the same position."
+          "reason": "Lit exactly when both switches are in the same position."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "XOR is the complement — exactly the OFF cases."
+          "reason": "XOR is the opposite: it would be lit exactly when the bulb is off."
         }
       ],
-      "verification": "This is the classic staircase-switch wiring: toggling either switch toggles the bulb, consistent with XNOR."
+      "shortcut": "Straight wires (b–b, c–c) give XNOR; crossed wires give XOR.",
+      "pitfalls": [
+        "Treating the switches as simple on/off contacts in series."
+      ],
+      "verification": "All four positions: (1, 1) lit, (0, 0) lit, (1, 0) and (0, 1) dark."
     },
     "it-2005-cs-11": {
       "approach": "An up-counter increments by 1 per pulse and wraps from 255 to 0; count up to 255, wrap, then up to the target.",
