@@ -1,0 +1,345 @@
+{
+ "version": 1,
+ "title": "The associativity test for NAND",
+ "width": 640,
+ "height": 350,
+ "narrow": {
+  "width": 360,
+  "height": 320
+ },
+ "intro": "To test whether an operator is associative, compare (a ⋆ b) ⋆ c with a ⋆ (b ⋆ c) on every row.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Is NAND associative? Compare both bracketings on all 8 rows",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Is NAND associative?",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 120,
+   "y": 56,
+   "cellW": 80,
+   "cellH": 28,
+   "rows": [
+    [
+     "a",
+     "b",
+     "c",
+     "(a↑b)↑c",
+     "a↑(b↑c)"
+    ],
+    [
+     "0",
+     "0",
+     "0",
+     " ",
+     " "
+    ],
+    [
+     "0",
+     "0",
+     "1",
+     " ",
+     " "
+    ],
+    [
+     "0",
+     "1",
+     "0",
+     " ",
+     " "
+    ],
+    [
+     "0",
+     "1",
+     "1",
+     " ",
+     " "
+    ],
+    [
+     "1",
+     "0",
+     "0",
+     " ",
+     " "
+    ],
+    [
+     "1",
+     "0",
+     "1",
+     " ",
+     " "
+    ],
+    [
+     "1",
+     "1",
+     "0",
+     " ",
+     " "
+    ],
+    [
+     "1",
+     "1",
+     "1",
+     " ",
+     " "
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 10,
+    "y": 50,
+    "cellW": 68,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 320.0,
+   "y": 330,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180.0,
+    "y": 300,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Fill the column (a↑b)↑c: first NAND a with b, then NAND the result with c. Algebraically it is ab + c′.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "a",
+        "b",
+        "c",
+        "(a↑b)↑c",
+        "a↑(b↑c)"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "1",
+        " "
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        " "
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "1",
+        " "
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0",
+        " "
+       ],
+       [
+        "1",
+        "0",
+        "0",
+        "1",
+        " "
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        "0",
+        " "
+       ],
+       [
+        "1",
+        "1",
+        "0",
+        "1",
+        " "
+       ],
+       [
+        "1",
+        "1",
+        "1",
+        "1",
+        " "
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Fill the column a↑(b↑c): it is a′ + bc.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "a",
+        "b",
+        "c",
+        "(a↑b)↑c",
+        "a↑(b↑c)"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "1",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "1",
+        "1"
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "0",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "0",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The columns disagree on rows 001, 011, 100, 110. One disagreeing row is enough: NAND is not associative.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": [
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "text": "(a↑b)↑c ≠ a↑(b↑c)",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The same 8-row test works for any operator defined by a table: compute both bracketings and compare. AND, OR, XOR and XNOR pass it; NAND, NOR and implication fail.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "8 rows decide associativity",
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

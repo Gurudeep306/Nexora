@@ -4153,23 +4153,28 @@
       "verification": "Tiny instance: E1 → {GOOD, GOOD}, E2 → {GOOD, BAD}. Subquery empty for E1 only → returns E1, matching D."
     },
     "cse-2014-3-cs-55": {
-      "approach": "XOR is associative and commutative with $a\\oplus a=0$, $a\\oplus0=a$. Flatten the expression and cancel pairs.",
+      "approach": "Concept tested: **XOR associativity and cancellation**. Flatten the whole expression, cancel equal terms in pairs, and keep what is left.",
       "concepts": [
         "XOR algebra",
+        "Associativity",
         "XNOR"
       ],
       "steps": [
         {
           "title": "Flatten",
-          "body": "$F=1\\oplus P\\oplus P\\oplus Q\\oplus P\\oplus Q\\oplus Q\\oplus0$.\n\n$P$ occurs 3 times, $Q$ occurs 3 times."
+          "body": "XOR is associative and commutative, so drop the brackets: $F = 1 \\oplus P \\oplus P \\oplus Q \\oplus P \\oplus Q \\oplus Q \\oplus 0$."
         },
         {
-          "title": "Cancel pairs",
-          "body": "$P\\oplus P=0$, $Q\\oplus Q=0$, so $F=1\\oplus P\\oplus Q\\oplus0=1\\oplus(P\\oplus Q)=\\overline{P\\oplus Q}$."
+          "title": "Count copies",
+          "body": "$P$ appears 3 times and $Q$ 3 times (odd: one copy of each survives); the constants give $1 \\oplus 0 = 1$."
+        },
+        {
+          "title": "Result",
+          "body": "$F = 1 \\oplus P \\oplus Q = \\overline{P \\oplus Q}$: option (D)."
         }
       ],
       "answer": {
-        "value": "$\\overline{P\\oplus Q}$",
+        "value": "(D) $\\overline{P \\oplus Q}$",
         "choice": [
           "D"
         ],
@@ -4179,25 +4184,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong — at $P=1,Q=0$: $F=0$ while $P+Q=1$."
+          "reason": "$P + Q$ is 0 on row 00, where $F = \\overline{0 \\oplus 0} = 1$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong — at $P=Q=1$, $\\overline{P+Q}=0$ but $F=1$."
+          "reason": "NOR is 0 on row 11, but $F(1, 1) = 1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong — it is the complement: at $P=Q=0$, $F=1$ but $P\\oplus Q=0$."
+          "reason": "XOR is the complement of $F$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct — $F=1\\oplus P\\oplus Q$ = XNOR."
+          "reason": "Flattening leaves $1 \\oplus P \\oplus Q$."
         }
       ],
-      "verification": "Direct: $P=Q=0$: $(1\\oplus0)\\oplus(0\\oplus0)\\oplus((0\\oplus0)\\oplus(0\\oplus0))=1$ = XNOR(0,0); $P=1,Q=0$: $(0\\oplus1)\\oplus(1\\oplus0)=1\\oplus1=0$ = XNOR(1,0)."
+      "shortcut": "Count each symbol's copies mod 2: $P$ 3, $Q$ 3, constant 1 once.",
+      "pitfalls": [
+        "Dropping the leading constant 1 and answering $P \\oplus Q$."
+      ],
+      "verification": "Row 00: $((1 \\oplus 0) \\oplus 0) \\oplus (0 \\oplus 0) = 1$, and $\\overline{0 \\oplus 0} = 1$."
     }
   }
 }

@@ -1,0 +1,521 @@
+{
+ "version": 1,
+ "title": "XOR as a controlled inverter",
+ "width": 640,
+ "height": 380,
+ "narrow": {
+  "width": 360,
+  "height": 370
+ },
+ "intro": "An XOR gate with a data input x and a control input c.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "XOR as a controlled inverter",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "XOR: a controlled inverter",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g",
+   "type": "gate",
+   "x": 260,
+   "y": 90,
+   "w": 80,
+   "h": 56,
+   "kind": "xor",
+   "narrow": {
+    "x": 140,
+    "y": 90
+   }
+  },
+  {
+   "id": "wx",
+   "type": "line",
+   "points": [
+    [
+     140,
+     108.67
+    ],
+    [
+     268.0,
+     108.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      108.67
+     ],
+     [
+      148.0,
+      108.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wc",
+   "type": "line",
+   "points": [
+    [
+     140,
+     127.33
+    ],
+    [
+     268.0,
+     127.33
+    ]
+   ],
+   "tone": "accent",
+   "narrow": {
+    "points": [
+     [
+      40,
+      127.33
+     ],
+     [
+      148.0,
+      127.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo",
+   "type": "line",
+   "points": [
+    [
+     340.0,
+     118.0
+    ],
+    [
+     400.0,
+     118.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220.0,
+      118.0
+     ],
+     [
+      270.0,
+      118.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lx",
+   "type": "text",
+   "x": 130,
+   "y": 108.67,
+   "text": "data x",
+   "anchor": "end",
+   "size": 15,
+   "weight": "bold",
+   "narrow": {
+    "x": 34,
+    "y": 96.67,
+    "size": 12
+   }
+  },
+  {
+   "id": "lc",
+   "type": "text",
+   "x": 130,
+   "y": 127.33,
+   "text": "control c",
+   "anchor": "end",
+   "size": 15,
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 34,
+    "y": 141.32999999999998,
+    "size": 12
+   }
+  },
+  {
+   "id": "vo",
+   "type": "text",
+   "x": 414.0,
+   "y": 118.0,
+   "text": "",
+   "anchor": "start",
+   "size": 16,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 280.0,
+    "y": 118.0,
+    "size": 14
+   }
+  },
+  {
+   "id": "mode",
+   "type": "text",
+   "x": 320.0,
+   "y": 200,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 210,
+    "size": 13
+   }
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 220,
+   "y": 230,
+   "cellW": 66,
+   "cellH": 26,
+   "rows": [
+    [
+     "c",
+     "x",
+     "x ⊕ c"
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 81,
+    "y": 236,
+    "cellW": 66,
+    "cellH": 24
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "c = 0, x = 0: the output is 0 ⊕ 0 = 0. With the control at 0 the gate passes x unchanged.",
+   "patches": [
+    {
+     "id": "vo",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mode",
+     "set": {
+      "text": "c = 0: copy",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "c",
+        "x",
+        "x ⊕ c"
+       ],
+       [
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "c = 0, x = 1: the output is 1 ⊕ 0 = 1. With the control at 0 the gate passes x unchanged.",
+   "patches": [
+    {
+     "id": "vo",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "mode",
+     "set": {
+      "text": "c = 0: copy",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "c",
+        "x",
+        "x ⊕ c"
+       ],
+       [
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1"
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "c = 1, x = 0: the output is 0 ⊕ 1 = 1. With the control at 1 the gate inverts x.",
+   "patches": [
+    {
+     "id": "vo",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mode",
+     "set": {
+      "text": "c = 1: invert",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "c",
+        "x",
+        "x ⊕ c"
+       ],
+       [
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "1"
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "c = 1, x = 1: the output is 1 ⊕ 1 = 0. With the control at 1 the gate inverts x.",
+   "patches": [
+    {
+     "id": "vo",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "mode",
+     "set": {
+      "text": "c = 1: invert",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "c",
+        "x",
+        "x ⊕ c"
+       ],
+       [
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "1",
+        "0"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So x ⊕ 0 = x and x ⊕ 1 = x′. This is why XOR complements a bit on demand: in adder-subtractors, in parity generators and in the 'flip if differ' tricks of this lesson.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "highlight": []
+     }
+    }
+   ]
+  }
+ ]
+}

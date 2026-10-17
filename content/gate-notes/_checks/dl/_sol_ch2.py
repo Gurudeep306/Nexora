@@ -277,6 +277,316 @@ SOLUTIONS["cse-2000-a-2-10"] = {
 }
 
 
+# ── Lesson 3: XOR, XNOR and defined operators ───────────────────────────────
+
+SOLUTIONS["cse-2013-cs-21"] = {
+    "approach": "Concept tested: **complemented inputs of XOR**. Each complement (on an input, or turning XOR into XNOR) toggles the function; two complements cancel.",
+    "concepts": ["XOR / XNOR identities", "Complemented inputs"],
+    "steps": [
+        {"title": "The target", "body": "XNOR: $x \\odot y = (x \\oplus y)' = xy + x'y'$."},
+        {"title": "One complemented input", "body": "$x \\oplus y' = x \\oplus y \\oplus 1 = (x \\oplus y)'$ and likewise $x' \\oplus y = (x \\oplus y)'$: both are XNOR."},
+        {"title": "Two complemented inputs", "body": "$x' \\oplus y' = x \\oplus y \\oplus 1 \\oplus 1 = x \\oplus y$: plain XOR, not XNOR."},
+    ],
+    "answer": {"value": "(D) $x' \\oplus y'$", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$xy + x'y'$ is the sum-of-products form of XNOR."),
+        opt("B", False, "One complemented input turns XOR into XNOR."),
+        opt("C", False, "One complemented input turns XOR into XNOR."),
+        opt("D", True, "Two complements cancel: $x' \\oplus y' = x \\oplus y$, the opposite of XNOR."),
+    ],
+    "shortcut": "Count complements: XNOR has one relative to XOR. (B) and (C) have one, (D) has two.",
+    "pitfalls": ["Assuming that complementing both inputs complements the output twice 'in the same direction'."],
+    "verification": "At $x = y = 0$: XNOR is 1; (D) gives $1 \\oplus 1 = 0$.",
+}
+
+SOLUTIONS["cse-2018-cs-4"] = {
+    "approach": "Concept tested: **XOR/XNOR identities**: $\\overline{P} \\oplus Q = \\overline{P \\oplus Q} = P \\odot Q$, $X \\oplus 1 = \\overline{X}$ and $X \\odot 0 = \\overline{X}$. Check each option.",
+    "concepts": ["XOR / XNOR identities", "Complemented inputs"],
+    "steps": [
+        {"title": "(A) and (B)", "body": "(A) is the definition of XNOR. (B) one complemented input gives XNOR: $\\overline{P} \\oplus Q = P \\oplus Q \\oplus 1 = P \\odot Q$. Both correct."},
+        {"title": "(C)", "body": "$\\overline{P} \\oplus \\overline{Q} = P \\oplus Q \\oplus 1 \\oplus 1 = P \\oplus Q$. Correct."},
+        {"title": "(D)", "body": "Left: $P \\oplus \\overline{P} = 1$, so $1 \\oplus Q = \\overline{Q}$. Right: $P \\odot \\overline{P} = 0$, so $0 \\odot \\overline{Q} = \\overline{\\overline{Q}} = Q$. Left $\\overline{Q}$, right $Q$: **not correct**."},
+    ],
+    "answer": {"value": "(D)", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Correct by definition."),
+        opt("B", False, "Correct: one complemented input gives XNOR."),
+        opt("C", False, "Correct: two complements cancel."),
+        opt("D", True, "Not correct: the left side is $\\overline{Q}$, the right side is $Q$."),
+    ],
+    "shortcut": "In (D), $P \\oplus \\overline{P} = 1$ and $P \\odot \\overline{P} = 0$; XOR with 1 inverts and XNOR with 0 inverts, so the left side is $\\overline{Q}$ and the right side is $\\overline{\\overline{Q}} = Q$.",
+    "pitfalls": ["Treating $X \\odot 0$ as $X$ (that is $X \\oplus 0$)."],
+    "verification": "At $Q = 0$: left $1 \\oplus 0 = 1$; right $0 \\odot 1 = 0$.",
+}
+
+SOLUTIONS["cse-2026-1-cs-11"] = {
+    "approach": "Concept tested: **XOR of a function with a sub-function, and XOR forms**. Since $\\bar{P}Q$ implies $\\bar{P} + Q$, XOR removes those rows: $F = (\\bar{P} + Q)\\cdot\\overline{\\bar{P}Q}$. Then recognise which XOR forms equal the result.",
+    "concepts": ["XOR / XNOR identities", "Complemented inputs", "Truth tables"],
+    "steps": [
+        {"title": "Truth table of F", "body": "| $P$ | $Q$ | $\\bar{P} + Q$ | $\\bar{P}Q$ | $F$ |\n|---|---|---|---|---|\n| 0 | 0 | 1 | 0 | 1 |\n| 0 | 1 | 1 | 1 | 0 |\n| 1 | 0 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 0 | 1 |"},
+        {"title": "Name it", "body": "$F$ is 1 on rows 00 and 11: $F = P \\odot Q = \\overline{P \\oplus Q}$."},
+        {"title": "Check the options", "body": "(A) $\\overline{P \\oplus Q}$: XNOR, equal. (B) $P \\oplus Q$: the complement, not equal. (C) $\\bar{P} \\oplus Q$: one complement, XNOR, equal. (D) $\\bar{P} \\oplus \\bar{Q}$: two complements cancel, XOR, not equal."},
+    ],
+    "answer": {"value": "(A) and (C)", "choice": ["A", "C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$F$ is XNOR."),
+        opt("B", False, "XOR is the complement of $F$."),
+        opt("C", True, "One complemented input turns XOR into XNOR."),
+        opt("D", False, "Two complements cancel, giving XOR."),
+    ],
+    "shortcut": "When $Y$ implies $X$ (every 1 of $Y$ is a 1 of $X$), $X \\oplus Y = X\\bar{Y}$: here $(\\bar{P} + Q)(P + \\bar{Q}) = PQ + \\bar{P}\\bar{Q}$.",
+    "pitfalls": ["Treating $\\oplus$ like $+$ and simplifying $(\\bar{P} + Q) \\oplus \\bar{P}Q$ by absorption to $\\bar{P} + Q$."],
+    "verification": "Row 01: $F = 1 \\oplus 1 = 0$; (A) gives 0, (C) gives $1 \\oplus 1 = 0$; (B) gives 1.",
+}
+
+SOLUTIONS["cse-2014-3-cs-55"] = {
+    "approach": "Concept tested: **XOR associativity and cancellation**. Flatten the whole expression, cancel equal terms in pairs, and keep what is left.",
+    "concepts": ["XOR algebra", "Associativity", "XNOR"],
+    "steps": [
+        {"title": "Flatten", "body": "XOR is associative and commutative, so drop the brackets: $F = 1 \\oplus P \\oplus P \\oplus Q \\oplus P \\oplus Q \\oplus Q \\oplus 0$."},
+        {"title": "Count copies", "body": "$P$ appears 3 times and $Q$ 3 times (odd: one copy of each survives); the constants give $1 \\oplus 0 = 1$."},
+        {"title": "Result", "body": "$F = 1 \\oplus P \\oplus Q = \\overline{P \\oplus Q}$: option (D)."},
+    ],
+    "answer": {"value": "(D) $\\overline{P \\oplus Q}$", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$P + Q$ is 0 on row 00, where $F = \\overline{0 \\oplus 0} = 1$."),
+        opt("B", False, "NOR is 0 on row 11, but $F(1, 1) = 1$."),
+        opt("C", False, "XOR is the complement of $F$."),
+        opt("D", True, "Flattening leaves $1 \\oplus P \\oplus Q$."),
+    ],
+    "shortcut": "Count each symbol's copies mod 2: $P$ 3, $Q$ 3, constant 1 once.",
+    "pitfalls": ["Dropping the leading constant 1 and answering $P \\oplus Q$."],
+    "verification": "Row 00: $((1 \\oplus 0) \\oplus 0) \\oplus (0 \\oplus 0) = 1$, and $\\overline{0 \\oplus 0} = 1$.",
+}
+
+SOLUTIONS["it-2005-cs-7"] = {
+    "approach": "Concept tested: **parity**. $(A \\oplus B) \\oplus C$ is 1 exactly on the rows with an odd number of 1s: minterms 1, 2, 4, 7. List the minterms of each option.",
+    "concepts": ["XOR", "Parity function", "Minterms"],
+    "steps": [
+        {"title": "Target", "body": "Odd weight rows: 001, 010, 100, 111, i.e. $\\Sigma(1, 2, 4, 7)$."},
+        {"title": "(A) and (B)", "body": "(A) $(A + B + C)(\\overline{A} + \\overline{B} + \\overline{C})$ is 0 only on 000 and 111: $\\Sigma(1, \\ldots, 6)$. (B) is 0 only on 000 and 110. Neither is the parity function."},
+        {"title": "(C)", "body": "$ABC = m_7$; $\\overline{A}(B \\oplus C)$: $A = 0$ and $B \\ne C$, rows 001, 010; $\\overline{B}(A \\oplus C)$: $B = 0$ and $A \\ne C$, rows 001, 100. Union $\\{1, 2, 4, 7\\}$: equal."},
+    ],
+    "answer": {"value": "(C)", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "1 on six rows (all but 000 and 111)."),
+        opt("B", False, "1 on six rows (all but 000 and 110)."),
+        opt("C", True, "Covers exactly $m_1, m_2, m_4, m_7$."),
+        opt("D", False, "(C) is equivalent, so 'none of these' is wrong."),
+    ],
+    "shortcut": "The parity function is neutral (4 of 8 rows). (A) and (B) are 1 on 6 rows, so only (C) can match.",
+    "pitfalls": ["Thinking 'odd parity' means 'not all equal' (that is option A)."],
+    "verification": "Row 111: target 1; (C) $ABC = 1$. Row 011: target 0; (C): $ABC = 0$, $\\overline{A}(1 \\oplus 1) = 0$, $\\overline{B} = 0$. ✓",
+}
+
+SOLUTIONS["cse-2016-2-cs-8"] = {
+    "approach": "Concept tested: **even parity and complemented inputs**. $x_1 \\oplus x_2 \\oplus x_3 \\oplus x_4 = 0$ means an even number of 1s; rearrange it, and refute the other options with one assignment each.",
+    "concepts": ["XOR properties", "Even parity", "Complemented inputs"],
+    "steps": [
+        {"title": "Rewrite the condition", "body": "XOR is commutative and associative: $x_1 \\oplus x_3 = x_2 \\oplus x_4$ (move $x_2 \\oplus x_4$ across)."},
+        {"title": "Option C", "body": "Complementing both inputs of an XOR leaves it unchanged: $\\bar{x}_1 \\oplus \\bar{x}_3 = x_1 \\oplus x_3$ and $\\bar{x}_2 \\oplus \\bar{x}_4 = x_2 \\oplus x_4$. So (C) is exactly the rewritten condition: it must hold."},
+        {"title": "Refute the others", "body": "$x = 1111$ (four 1s, even) breaks (A) ($x_1x_2x_3x_4 = 1$), (B) ($x_1x_3 + x_2 = 1$) and (D) (the OR is 1)."},
+    ],
+    "answer": {"value": "(C)", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Fails at 1111, which has even parity."),
+        opt("B", False, "Fails at 1111 (also at 0101)."),
+        opt("C", True, "A rearrangement of the given parity condition."),
+        opt("D", False, "Fails at any even-weight row other than 0000, e.g. 1100."),
+    ],
+    "shortcut": "'XOR = 0' means an **even** number of 1s, which includes 1111 and 1100; that one assignment kills (A), (B) and (D).",
+    "pitfalls": ["Reading 'XOR = 0' as 'all inputs are 0'.", "Reading it as 'the number of 1s is a multiple of 4' (it is any even number)."],
+    "verification": "Over all 16 rows, the 8 rows with even parity all satisfy (C); each of the others fails on at least one of them.",
+}
+
+SOLUTIONS["cse-1998-a-13"] = {
+    "approach": "Concept tested: **iterated XOR**. $B \\oplus B = 0$ and $B \\oplus 0 = B$, so only the number of copies of $B$ (mod 2) matters. With $n$ XOR *operations* there are $n + 1$ copies.",
+    "concepts": ["XOR properties", "Iterated XOR"],
+    "steps": [
+        {"title": "Basic identities", "body": "$B \\oplus B = 0$, $B \\oplus 0 = B$, and $\\oplus$ is associative, so copies cancel in pairs."},
+        {"title": "Count the copies", "body": "'XORed with itself $n$ times' means $n$ XOR operations: $B \\oplus B$ (one operation, two copies) $= 0$; two operations, three copies: $B$; and so on. $n$ operations join $n + 1$ copies."},
+        {"title": "Conclude", "body": "$n + 1$ copies leave $B$ when $n + 1$ is odd, that is when $n$ is **even**. So the string remains unchanged when $n$ is even: option (D)."},
+    ],
+    "answer": {"value": "(D) remains unchanged when n is even", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "XOR with copies of itself never complements: it gives $B$ or $0$."),
+        opt("B", False, "Same reason: no complement ever appears; for odd $n$ the result is 0."),
+        opt("C", False, "XOR has nothing to do with division by 2 (that is a right shift)."),
+        opt("D", True, "Even $n$ means an odd number $n + 1$ of copies, leaving $B$."),
+    ],
+    "shortcut": "Translate words into copies first: $n$ operations = $n + 1$ copies; odd copies = $B$.",
+    "pitfalls": ["Counting $n$ copies instead of $n$ operations, which flips the answer; read the bracket $B \\oplus (B \\oplus (B \\ldots))$ as $n$ XOR signs."],
+    "verification": "$n = 2$: $B \\oplus (B \\oplus B) = B \\oplus 0 = B$ (unchanged, $n$ even). $n = 1$: $B \\oplus B = 0$.",
+}
+
+SOLUTIONS["cse-1992-a-2-i"] = {
+    "approach": "Concept tested: **commutativity and associativity of operators**. All four operators are commutative; test associativity, which only NAND fails.",
+    "concepts": ["Commutativity", "Associativity", "NAND"],
+    "steps": [
+        {"title": "Commutativity", "body": "AND, OR, XOR and NAND are all symmetric in their two inputs (rows 01 and 10 give the same output)."},
+        {"title": "AND, OR, XOR are associative", "body": "AND: both bracketings are 1 iff all three are 1. OR: iff any is 1. XOR: both give the parity of $a, b, c$."},
+        {"title": "NAND is not", "body": "$(a \\uparrow b) \\uparrow c = ab + \\bar{c}$ and $a \\uparrow (b \\uparrow c) = \\bar{a} + bc$. At $a = b = 0, c = 1$: the first is 0, the second 1."},
+    ],
+    "answer": {"value": "(D) NAND", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "AND is commutative and associative."),
+        opt("B", False, "OR is commutative and associative."),
+        opt("C", False, "XOR is commutative and associative (parity)."),
+        opt("D", True, "Commutative, but $(0 \\uparrow 0) \\uparrow 1 = 0 \\ne 1 = 0 \\uparrow (0 \\uparrow 1)$."),
+    ],
+    "shortcut": "Inverting gates (NAND, NOR) lose associativity; AND, OR, XOR, XNOR keep it.",
+    "pitfalls": ["Marking XOR as non-associative because it is 'not idempotent'."],
+    "verification": "8-row comparison of the two NAND bracketings: they differ on rows 001, 011, 100, 110.",
+}
+
+SOLUTIONS["cse-1998-a-43"] = {
+    "approach": "Concept tested: **associativity test**. All four operators are commutative; compare $(a \\star b) \\star c$ with $a \\star (b \\star c)$. NAND fails, the others pass.",
+    "concepts": ["Boolean operators", "Associativity", "NAND"],
+    "steps": [
+        {"title": "Commutativity", "body": "AND, OR, NAND and EXOR all give equal outputs on rows 01 and 10."},
+        {"title": "Associativity of NAND", "body": "$(a \\uparrow b) \\uparrow c = ab + \\bar{c}$, $a \\uparrow (b \\uparrow c) = \\bar{a} + bc$. They differ at $(0, 0, 1)$."},
+        {"title": "The others", "body": "AND, OR and EXOR are associative (all-ones, any-one and parity respectively), so NAND is the only one that is commutative but not associative."},
+    ],
+    "answer": {"value": "(C) NAND", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "AND is associative."),
+        opt("B", False, "OR is associative."),
+        opt("C", True, "Commutative but not associative."),
+        opt("D", False, "EXOR is associative."),
+    ],
+    "shortcut": "Same fact as the 1992 question: NAND and NOR are the commutative, non-associative gates.",
+    "pitfalls": ["Assuming every commutative operator is associative."],
+    "verification": "$(0 \\uparrow 0) \\uparrow 1 = 1 \\uparrow 1 = 0$, $0 \\uparrow (0 \\uparrow 1) = 0 \\uparrow 1 = 1$.",
+}
+
+SOLUTIONS["cse-2015-1-cs-28"] = {
+    "approach": "Concept tested: **identifying an operator from its table** and testing its properties. The table 0, 1, 1, 0 is XOR.",
+    "concepts": ["XOR", "Commutativity", "Associativity"],
+    "steps": [
+        {"title": "Identify", "body": "$p \\neq q$ is 1 exactly when $p$ and $q$ differ: it is XOR."},
+        {"title": "Commutative", "body": "Rows $(0, 1)$ and $(1, 0)$ both give 1, so $p \\neq q = q \\neq p$."},
+        {"title": "Associative", "body": "Both bracketings $(p \\neq q) \\neq r$ and $p \\neq (q \\neq r)$ equal the parity of $p, q, r$, so they agree on all 8 rows."},
+    ],
+    "answer": {"value": "(A) both commutative and associative", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "XOR is both."),
+        opt("B", False, "XOR is associative (parity), so 'not associative' is wrong."),
+        opt("C", False, "The table is symmetric, so it is commutative."),
+        opt("D", False, "It has both properties."),
+    ],
+    "shortcut": "Name the operator first: the column 0110 is XOR, whose properties you already know.",
+    "pitfalls": ["Reading '$\\neq$' as 'not equal to' in the arithmetic sense and doubting associativity because '$a \\ne b \\ne c$' is ambiguous in words."],
+    "verification": "Row $(1, 1, 1)$: $(1 \\neq 1) \\neq 1 = 0 \\neq 1 = 1$ and $1 \\neq (1 \\neq 1) = 1 \\neq 0 = 1$.",
+}
+
+SOLUTIONS["cse-2016-1-cs-6"] = {
+    "approach": "Concept tested: **identifying a defined operator from properties**. The first two properties already fix all four rows of the table.",
+    "concepts": ["Defined operators", "XOR"],
+    "steps": [
+        {"title": "Use x # 0 = x", "body": "Rows $(0, 0) \\to 0$ and $(1, 0) \\to 1$."},
+        {"title": "Use x # 1 = x̄", "body": "Rows $(0, 1) \\to 1$ and $(1, 1) \\to 0$."},
+        {"title": "Name it and check", "body": "Column 0, 1, 1, 0 (rows 00, 01, 10, 11): XOR, $x \\bar{y} + \\bar{x} y$. Consistency: $x \\oplus x = 0$ and $x \\oplus \\bar{x} = 1$, the other two properties."},
+    ],
+    "answer": {"value": "(A) $x\\bar{y} + \\bar{x}y$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "XOR, which satisfies all four properties."),
+        opt("B", False, "$x\\bar{y} + \\bar{x}\\bar{y} = \\bar{y}$; then $x \\# 0 = 1$, not $x$."),
+        opt("C", False, "$\\bar{x}y + xy = y$; then $x \\# 0 = 0$, not $x$."),
+        opt("D", False, "XNOR: $x \\# 0 = \\bar{x}$, not $x$."),
+    ],
+    "shortcut": "'XOR with 0 copies, XOR with 1 inverts' is the controlled-inverter description of XOR.",
+    "pitfalls": ["Confusing XOR (identity 0) with XNOR (identity 1)."],
+    "verification": "Option (A) at $y = 0$: $x \\cdot 1 + \\bar{x} \\cdot 0 = x$. ✓",
+}
+
+SOLUTIONS["cse-1994-a-27-a-i"] = {
+    "approach": "Concept tested: **a defined operator**: $A * B = AB + \\bar{A}\\bar{B}$ is XNOR (equivalence). Substitute $B = A$.",
+    "concepts": ["XNOR / equivalence", "Idempotence", "Complement law"],
+    "steps": [
+        {"title": "Substitute", "body": "$A * A = A \\cdot A + \\bar{A} \\cdot \\bar{A} = A + \\bar{A}$ (idempotence)."},
+        {"title": "Simplify", "body": "$A + \\bar{A} = 1$ (complement law). Equivalently, XNOR of equal inputs is always 1."},
+    ],
+    "answer": {"value": "$A * A = 1$", "matchesKey": True},
+    "shortcut": "XNOR is equality, and $A$ always equals $A$.",
+    "pitfalls": ["Answering $A$ (that would be AND or OR of $A$ with itself)."],
+    "verification": "$A = 0$: $0 + 1 = 1$; $A = 1$: $1 + 0 = 1$.",
+}
+
+SOLUTIONS["cse-1994-a-27-a-ii"] = {
+    "approach": "Concept tested: **undoing an XNOR**. $*$ is XNOR, which is commutative and associative with $A * A = 1$ and $1 * B = B$.",
+    "concepts": ["XNOR / equivalence", "Associativity", "Moving a term across"],
+    "steps": [
+        {"title": "Regroup", "body": "$C * A = (A * B) * A = (A * A) * B$ (commutative and associative)."},
+        {"title": "Simplify", "body": "$A * A = 1$ and $1 * B = 1 \\cdot B + 0 \\cdot \\bar{B} = B$. So $C * A = B$."},
+        {"title": "Check by table", "body": "| $A$ | $B$ | $C = A * B$ | $C * A$ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| 0 | 1 | 0 | 1 |\n| 1 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 1 |\n\nThe last column equals $B$."},
+    ],
+    "answer": {"value": "$C * A = B$", "matchesKey": True},
+    "shortcut": "XNOR, like XOR, can be undone: if $C = A \\odot B$ then $C \\odot A = B$.",
+    "pitfalls": ["Assuming XNOR is not associative because XNOR *gates* with three inputs behave differently (that concerns gates, not the operator chain)."],
+    "verification": "The four rows of the table.",
+}
+
+SOLUTIONS["cse-2007-cs-33"] = {
+    "approach": "Concept tested: **XNOR algebra**. $X * Y = XY + X'Y'$ is XNOR $= X \\oplus Y \\oplus 1$; it is associative and commutative, so each statement reduces by cancelling equal terms.",
+    "concepts": ["XNOR", "XOR algebra", "Moving a term across"],
+    "steps": [
+        {"title": "Rewrite", "body": "$Z = X * Y = X \\oplus Y \\oplus 1$."},
+        {"title": "Statements P and Q", "body": "$Y * Z = Y \\oplus (X \\oplus Y \\oplus 1) \\oplus 1 = X$: P holds. By symmetry $X * Z = Y$: Q holds."},
+        {"title": "Statement R", "body": "$X * Y * Z = Z * Z = 1$ (XNOR of equal values; the chain is unambiguous because XNOR is associative): R holds."},
+    ],
+    "answer": {"value": "(D) all of P, Q, R are valid", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "R is also valid."),
+        opt("B", False, "P is also valid."),
+        opt("C", False, "Q is also valid."),
+        opt("D", True, "All three reduce to identities."),
+    ],
+    "shortcut": "If $Z = X \\odot Y$, then $X, Y, Z$ have even 'XNOR-parity': any one is the XNOR of the other two, and the XNOR of all three is 1.",
+    "pitfalls": ["Doubting R because $X * Y * Z$ has no brackets: XNOR is associative, so both bracketings agree."],
+    "verification": "All four $(X, Y)$ rows: $Z = 1, 0, 0, 1$; $Y * Z = 0, 0, 1, 1 = X$; $X * Z = 0, 1, 0, 1 = Y$; $Z * Z = 1$.",
+}
+
+SOLUTIONS["cse-1997-a-11"] = {
+    "approach": "Concept tested: **a defined implication operator and nesting**. $x * y = \\bar{x} + y$; substitute $z = \\bar{x} + y$ into $z * x = \\bar{z} + x$ and simplify.",
+    "concepts": ["Implication", "De Morgan's law", "Absorption"],
+    "steps": [
+        {"title": "Apply the definition", "body": "$z * x = \\bar{z} + x = \\overline{\\bar{x} + y} + x$."},
+        {"title": "De Morgan", "body": "$\\overline{\\bar{x} + y} = x\\bar{y}$, so $z * x = x\\bar{y} + x$."},
+        {"title": "Absorb", "body": "$x\\bar{y} + x = x$ (absorption). Option (B)."},
+    ],
+    "answer": {"value": "(B) $x$", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$\\bar{x} + y$ is $z$ itself, not $z * x$."),
+        opt("B", True, "$\\bar{z} + x = x\\bar{y} + x = x$."),
+        opt("C", False, "At $x = 1$ the result is 1, so it is not the constant 0."),
+        opt("D", False, "At $x = 0$: $z = 1$, so $z * x = 0 + 0 = 0$, not 1."),
+    ],
+    "shortcut": "Check $x = 0$ and $x = 1$: $x = 1$ gives $\\bar{z} + 1 = 1$; $x = 0$ gives $z = 1$, so $\\bar{z} + 0 = 0$. The result equals $x$.",
+    "pitfalls": ["Swapping the arguments (computing $x * z$ instead of $z * x$): implication is not commutative."],
+    "verification": "Rows $(x, y)$: (0,0): $z = 1$, $z * x = 0$; (0,1): $z = 1$, 0; (1,0): $z = 0$, $1 + 1 = 1$; (1,1): $z = 1$, $0 + 1 = 1$. Column = $x$.",
+}
+
+SOLUTIONS["cse-2002-a-28"] = {
+    "approach": "Concept tested: **nested operators**. $f(A, B) = A' + B$ is implication; evaluate from the inside out, simplifying at each level.",
+    "concepts": ["Nested operators", "Absorption law", "De Morgan's law"],
+    "steps": [
+        {"title": "Inner call", "body": "$f(x + y, y) = (x + y)' + y = x'y' + y = x' + y$ (redundant literal: $y + y'x' = y + x'$)."},
+        {"title": "Outer call", "body": "$f(x' + y, z) = (x' + y)' + z = xy' + z$ (De Morgan)."},
+        {"title": "Match", "body": "$xy' + z$ is option (C)."},
+    ],
+    "answer": {"value": "(C) $xy' + z$", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$x' + z$ is 1 at $x = 0, z = 0$, but there $xy' + z = 0$."),
+        opt("B", False, "$xyz$ is 0 at $x = 1, y = 0, z = 0$, but $xy' + z = 1$ there."),
+        opt("C", True, "The inside-out simplification."),
+        opt("D", False, "(C) is correct."),
+    ],
+    "shortcut": "Implication: $f(A, B) = 0$ only when $A = 1, B = 0$. The outer call is 0 only when $z = 0$ and the inner value is 1, i.e. $x' + y = 1$; so the result is $\\overline{(x' + y)z'} = xy' + z$.",
+    "pitfalls": ["Forgetting to complement the whole first argument: $(x + y)'$ is $x'y'$, not $x' + y'$."],
+    "verification": "$x = 1, y = 0, z = 0$: inner $f(1, 0) = 0$, outer $f(0, 0) = 1$; $xy' + z = 1$. ✓",
+}
+
+
 def write():
     bank = {q["id"]: q for q in json.loads((ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
     by_paper = {}

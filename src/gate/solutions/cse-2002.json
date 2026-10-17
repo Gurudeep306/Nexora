@@ -1417,24 +1417,28 @@
       "verification": "Truth check: $(x,y,z)=(1,1,0)$: EN=1, select 00 → $x=1$ ✓; $(1,0,0)$: select 10 → $y=0$ ✓; any $z=1$ → 0 ✓."
     },
     "cse-2002-a-28": {
-      "approach": "Apply the definition f(A,B) = A' + B from the inside out and simplify with absorption and De Morgan.",
+      "approach": "Concept tested: **nested operators**. $f(A, B) = A' + B$ is implication; evaluate from the inside out, simplifying at each level.",
       "concepts": [
-        "Boolean algebra",
+        "Nested operators",
         "Absorption law",
         "De Morgan's law"
       ],
       "steps": [
         {
           "title": "Inner call",
-          "body": "$f(x+y,\\,y) = (x+y)' + y = x'y' + y = x' + y$ (absorption $x'y' + y = x' + y$)."
+          "body": "$f(x + y, y) = (x + y)' + y = x'y' + y = x' + y$ (redundant literal: $y + y'x' = y + x'$)."
         },
         {
           "title": "Outer call",
-          "body": "$f(x'+y,\\,z) = (x'+y)' + z = x\\,y' + z$."
+          "body": "$f(x' + y, z) = (x' + y)' + z = xy' + z$ (De Morgan)."
+        },
+        {
+          "title": "Match",
+          "body": "$xy' + z$ is option (C)."
         }
       ],
       "answer": {
-        "value": "$xy' + z$ — option (C)",
+        "value": "(C) $xy' + z$",
         "choice": [
           "C"
         ],
@@ -1444,28 +1448,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$x' + z$ comes from wrongly simplifying the inner call to $x'$."
+          "reason": "$x' + z$ is 1 at $x = 0, z = 0$, but there $xy' + z = 0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$xyz$ has no basis; e.g. $x=0,y=0,z=1$ gives $f=1$ but $xyz=0$."
+          "reason": "$xyz$ is 0 at $x = 1, y = 0, z = 0$, but $xy' + z = 1$ there."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Matches $xy' + z$."
+          "reason": "The inside-out simplification."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Option (C) is correct."
+          "reason": "(C) is correct."
         }
       ],
+      "shortcut": "Implication: $f(A, B) = 0$ only when $A = 1, B = 0$. The outer call is 0 only when $z = 0$ and the inner value is 1, i.e. $x' + y = 1$; so the result is $\\overline{(x' + y)z'} = xy' + z$.",
       "pitfalls": [
-        "Forgetting to complement the first argument in the outer call."
+        "Forgetting to complement the whole first argument: $(x + y)'$ is $x'y'$, not $x' + y'$."
       ],
-      "verification": "$x=1,y=0,z=0$: inner $=(1)'+0=0$; outer $=0'+0=1$; $xy'+z = 1$ ✓."
+      "verification": "$x = 1, y = 0, z = 0$: inner $f(1, 0) = 0$, outer $f(0, 0) = 1$; $xy' + z = 1$. ✓"
     },
     "cse-2002-a-29": {
       "approach": "Add 5DH and 6BH in binary; AC is the carry out of bit 3 (low nibble), CY the carry out of bit 7.",

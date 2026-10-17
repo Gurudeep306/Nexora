@@ -1701,23 +1701,28 @@
       "verification": "Union of each expression's minterms was compared with the 8 given minterms."
     },
     "cse-2007-cs-33": {
-      "approach": "$X*Y$ is XNOR, i.e. $X\\oplus Y\\oplus1$. XNOR is associative and commutative, so each identity reduces by cancelling equal terms.",
+      "approach": "Concept tested: **XNOR algebra**. $X * Y = XY + X'Y'$ is XNOR $= X \\oplus Y \\oplus 1$; it is associative and commutative, so each statement reduces by cancelling equal terms.",
       "concepts": [
         "XNOR",
-        "XOR algebra"
+        "XOR algebra",
+        "Moving a term across"
       ],
       "steps": [
         {
           "title": "Rewrite",
-          "body": "$X*Y=XY+X'Y'=X\\odot Y=X\\oplus Y\\oplus1$, so $Z=X\\oplus Y\\oplus1$."
+          "body": "$Z = X * Y = X \\oplus Y \\oplus 1$."
         },
         {
-          "title": "Check P, Q, R",
-          "body": "- P: $Y*Z=Y\\oplus Z\\oplus1=Y\\oplus X\\oplus Y\\oplus1\\oplus1=X$ ✓\n- Q: $X*Z=X\\oplus X\\oplus Y\\oplus1\\oplus1=Y$ ✓\n- R: $X*Y*Z=(X*Y)*Z=Z*Z=Z\\oplus Z\\oplus1=1$ ✓"
+          "title": "Statements P and Q",
+          "body": "$Y * Z = Y \\oplus (X \\oplus Y \\oplus 1) \\oplus 1 = X$: P holds. By symmetry $X * Z = Y$: Q holds."
+        },
+        {
+          "title": "Statement R",
+          "body": "$X * Y * Z = Z * Z = 1$ (XNOR of equal values; the chain is unambiguous because XNOR is associative): R holds."
         }
       ],
       "answer": {
-        "value": "All P, Q, R are valid",
+        "value": "(D) all of P, Q, R are valid",
         "choice": [
           "D"
         ],
@@ -1745,7 +1750,11 @@
           "reason": "All three reduce to identities."
         }
       ],
-      "verification": "Truth table for $(X,Y)=(0,0),(0,1),(1,0),(1,1)$: $Z=1,0,0,1$; $Y*Z=0,0,1,1=X$ ✓."
+      "shortcut": "If $Z = X \\odot Y$, then $X, Y, Z$ have even 'XNOR-parity': any one is the XNOR of the other two, and the XNOR of all three is 1.",
+      "pitfalls": [
+        "Doubting R because $X * Y * Z$ has no brackets: XNOR is associative, so both bracketings agree."
+      ],
+      "verification": "All four $(X, Y)$ rows: $Z = 1, 0, 0, 1$; $Y * Z = 0, 0, 1, 1 = X$; $X * Z = 0, 1, 0, 1 = Y$; $Z * Z = 1$."
     },
     "cse-2007-cs-34": {
       "approach": "Use $n-1$ variables as select lines; each data input is then one of $0,1,x_n,x_n'$, which a single inverter supplies.",

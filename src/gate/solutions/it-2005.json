@@ -316,7 +316,7 @@
       "verification": "A DFA with enough states (about $3\\cdot10^6$ plus a trap) recognises it."
     },
     "it-2005-cs-7": {
-      "approach": "$(A\\oplus B)\\oplus C$ is the odd-parity function: 1 exactly on minterms with an odd number of 1s ($001,010,100,111$). List the minterms covered by each option.",
+      "approach": "Concept tested: **parity**. $(A \\oplus B) \\oplus C$ is 1 exactly on the rows with an odd number of 1s: minterms 1, 2, 4, 7. List the minterms of each option.",
       "concepts": [
         "XOR",
         "Parity function",
@@ -324,20 +324,20 @@
       ],
       "steps": [
         {
-          "title": "Target minterms",
-          "body": "$(A\\oplus B)\\oplus C=1$ for $ABC\\in\\{001,010,100,111\\}$."
+          "title": "Target",
+          "body": "Odd weight rows: 001, 010, 100, 111, i.e. $\\Sigma(1, 2, 4, 7)$."
         },
         {
-          "title": "Option C term by term",
-          "body": "- $ABC$: $111$\n- $\\overline A(B\\oplus C)$: $A=0$, $B\\ne C$: $010,001$\n- $\\overline B(A\\oplus C)$: $B=0$, $A\\ne C$: $100,001$\n\nUnion $=\\{001,010,100,111\\}$ — exactly the target."
+          "title": "(A) and (B)",
+          "body": "(A) $(A + B + C)(\\overline{A} + \\overline{B} + \\overline{C})$ is 0 only on 000 and 111: $\\Sigma(1, \\ldots, 6)$. (B) is 0 only on 000 and 110. Neither is the parity function."
         },
         {
-          "title": "Options A, B",
-          "body": "(A) is 0 only for $000$ and $111$ → 6 minterms. (B) is 0 only for $000$ and $110$ → 6 minterms. Neither is parity."
+          "title": "(C)",
+          "body": "$ABC = m_7$; $\\overline{A}(B \\oplus C)$: $A = 0$ and $B \\ne C$, rows 001, 010; $\\overline{B}(A \\oplus C)$: $B = 0$ and $A \\ne C$, rows 001, 100. Union $\\{1, 2, 4, 7\\}$: equal."
         }
       ],
       "answer": {
-        "value": "$ABC+\\overline{A}(B\\oplus C)+\\overline{B}(A\\oplus C)$",
+        "value": "(C)",
         "choice": [
           "C"
         ],
@@ -347,25 +347,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True on $011,101,110$ too (anything except all-equal inputs)."
+          "reason": "1 on six rows (all but 000 and 111)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "True on 6 minterms, including $011$."
+          "reason": "1 on six rows (all but 000 and 110)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Covers exactly $001,010,100,111$."
+          "reason": "Covers exactly $m_1, m_2, m_4, m_7$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "(C) is equivalent."
+          "reason": "(C) is equivalent, so 'none of these' is wrong."
         }
       ],
-      "verification": "Check $011$: target 0; C gives $0+0+0=0$ ✓. Check $100$: target 1; C gives $\\overline B(A\\oplus C)=1\\cdot1=1$ ✓."
+      "shortcut": "The parity function is neutral (4 of 8 rows). (A) and (B) are 1 on 6 rows, so only (C) can match.",
+      "pitfalls": [
+        "Thinking 'odd parity' means 'not all equal' (that is option A)."
+      ],
+      "verification": "Row 111: target 1; (C) $ABC = 1$. Row 011: target 0; (C): $ABC = 0$, $\\overline{A}(1 \\oplus 1) = 0$, $\\overline{B} = 0$. ✓"
     },
     "it-2005-cs-8": {
       "approach": "Concept tested: **Booth recoding** of the multiplier $-57$: 8-bit pattern $1100\\,0111$, appended 0, digit $= q_{i-1} - q_i$.",

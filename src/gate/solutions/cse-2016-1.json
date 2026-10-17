@@ -658,23 +658,27 @@
       "verification": "A real 3×3 matrix with eigenvalues $2\\pm i$, 3 has a real determinant, as 15 is."
     },
     "cse-2016-1-cs-6": {
-      "approach": "Read the given identities as a truth table for $x \\# y$ and match it against the options.",
+      "approach": "Concept tested: **identifying a defined operator from properties**. The first two properties already fix all four rows of the table.",
       "concepts": [
-        "Boolean algebra",
+        "Defined operators",
         "XOR"
       ],
       "steps": [
         {
-          "title": "Truth table",
-          "body": "$x\\#0 = x$: $(0,0)\\to0$, $(1,0)\\to1$. $x\\#1 = \\bar x$: $(0,1)\\to1$, $(1,1)\\to0$. So output is 1 exactly when $x \\ne y$."
+          "title": "Use x # 0 = x",
+          "body": "Rows $(0, 0) \\to 0$ and $(1, 0) \\to 1$."
         },
         {
-          "title": "Identify",
-          "body": "That is XOR: $x\\#y = x\\bar y + \\bar x y$. It also satisfies $x\\#x = 0$ and $x\\#\\bar x = 1$."
+          "title": "Use x # 1 = x̄",
+          "body": "Rows $(0, 1) \\to 1$ and $(1, 1) \\to 0$."
+        },
+        {
+          "title": "Name it and check",
+          "body": "Column 0, 1, 1, 0 (rows 00, 01, 10, 11): XOR, $x \\bar{y} + \\bar{x} y$. Consistency: $x \\oplus x = 0$ and $x \\oplus \\bar{x} = 1$, the other two properties."
         }
       ],
       "answer": {
-        "value": "$x\\bar{y} + \\bar{x}y$",
+        "value": "(A) $x\\bar{y} + \\bar{x}y$",
         "choice": [
           "A"
         ],
@@ -684,25 +688,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "XOR — matches all four identities."
+          "reason": "XOR, which satisfies all four properties."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$x\\bar y + \\bar x\\bar y = \\bar y$; then $x\\#0 = 1 \\ne x$."
+          "reason": "$x\\bar{y} + \\bar{x}\\bar{y} = \\bar{y}$; then $x \\# 0 = 1$, not $x$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\bar x y + xy = y$; then $x\\#0 = 0 \\ne x$."
+          "reason": "$\\bar{x}y + xy = y$; then $x \\# 0 = 0$, not $x$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "XNOR; gives $x\\#x = 1$, not 0."
+          "reason": "XNOR: $x \\# 0 = \\bar{x}$, not $x$."
         }
       ],
-      "verification": "Check A: $x\\cdot1 + \\bar x\\cdot0 = x$ for $y=0$; $0 + \\bar x = \\bar x$ for $y=1$."
+      "shortcut": "'XOR with 0 copies, XOR with 1 inverts' is the controlled-inverter description of XOR.",
+      "pitfalls": [
+        "Confusing XOR (identity 0) with XNOR (identity 1)."
+      ],
+      "verification": "Option (A) at $y = 0$: $x \\cdot 1 + \\bar{x} \\cdot 0 = x$. ✓"
     },
     "cse-2016-1-cs-7": {
       "approach": "Concept tested: decoding a 2's-complement pattern. The top bit is 1, so the value is negative; its size is the negation of the pattern (or subtract $2^{16}$ from the unsigned value).",
