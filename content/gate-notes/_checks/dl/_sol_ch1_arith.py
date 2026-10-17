@@ -269,6 +269,157 @@ SOLUTIONS["cse-1995-a-51"] = {
 }
 
 
+# ── Lesson 10 ───────────────────────────────────────────────────────────────
+
+SOLUTIONS["cse-1991-a-1-v"] = {
+    "approach": "Concept tested: **product bits as Boolean functions**. Write the partial products in columns; column 1 contains only $a_1b_0$ and $a_0b_1$ and receives no carry (column 0 has a single term), so its bit is their sum mod 2.",
+    "concepts": ["Partial products", "Column sums mod 2", "AND as 1-bit multiplication"],
+    "steps": [
+        {"title": "Partial-product columns", "body": "Column 0: $a_0b_0$. Column 1: $a_1b_0$ and $a_0b_1$. Column 2: $a_2b_0$, $a_1b_1$, $a_0b_2$ plus the carry from column 1."},
+        {"title": "Carry into column 1", "body": "Column 0 has one term, so it never carries: $c_0 = a_0 b_0$."},
+        {"title": "Column 1", "body": "$c_1 = (a_1 b_0 + a_0 b_1) \\bmod 2 = a_1 b_0 \\oplus a_0 b_1$; the carry $a_1b_0 \\cdot a_0b_1$ goes to column 2."},
+    ],
+    "answer": {"value": "$c_1 = a_1b_0 \\oplus a_0b_1$", "matchesKey": True},
+    "shortcut": "Bit $k$ of a product = XOR of the column-$k$ terms XOR the carries into column $k$; columns 0 and 1 have no incoming carry.",
+    "pitfalls": ["Writing $a_1b_0 + a_0b_1$ (OR): two 1s give bit 0 with a carry.", "Including a carry from column 0, which cannot exist."],
+    "verification": "$A = 0011$, $B = 0011$: $3 \\times 3 = 9 = 1001$, so $c_1 = 0$; formula $1\\cdot1 \\oplus 1\\cdot1 = 0$. ✓",
+}
+
+SOLUTIONS["cse-1996-a-23"] = {
+    "approach": "Concept tested: **Booth's operation count**. Booth adds or subtracts once for every bit change of the multiplier (reading from an appended 0), so alternating bits are the worst case and runs are the best.",
+    "concepts": ["Booth recoding", "Operation count = bit changes", "Best and worst multipliers"],
+    "steps": [
+        {"title": "Count rule", "body": "With $q_{-1} = 0$, Booth does an addition/subtraction at every $i$ with $q_i \\ne q_{i-1}$."},
+        {"title": "Apply to the options (12 bits for the dots)", "body": "- (A) $1010\\ldots10$: every pair above the lowest changes: $n - 1 = 11$.\n- (B) $100\\ldots001$: changes at bit 0, bit 1 and the top: 3.\n- (C) $111\\ldots1$: one change at bit 0: 1.\n- (D) $0111\\ldots10$: two changes: 2."},
+        {"title": "Answer", "body": "(A), the alternating pattern, needs the most operations: option (A)."},
+    ],
+    "answer": {"value": "$1010\\ldots1010$ — option (A)", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "Alternating bits change at almost every position: about $n$ operations."),
+        opt("B", False, "Only 3 changes: a single 1 at each end."),
+        opt("C", False, "All 1s: one subtraction at bit 0, the best case for a negative multiplier."),
+        opt("D", False, "One run of 1s: one subtraction and one addition."),
+    ],
+    "shortcut": "Booth loves runs and hates alternation.",
+    "pitfalls": ["Picking the pattern with the most 1s (C): Booth's cost depends on transitions, not on 1s."],
+    "verification": "Brute force over all 12-bit multipliers: the maximum, 12, is $0101\\ldots01$; $1010\\ldots10$ gives 11, the most among the options. ✓",
+}
+
+SOLUTIONS["cse-1999-a-20"] = {
+    "approach": "Concept tested: **Booth recoding of a negative number**. Write $-57$ in 8-bit 2's complement, append $q_{-1} = 0$, and recode each pair $(q_i, q_{i-1})$: $10 \\to -1$, $01 \\to +1$, else 0.",
+    "concepts": ["2's complement", "Booth recoding", "Value check"],
+    "steps": [
+        {"title": "−57 in 8 bits", "body": "$256 - 57 = 199 = 1100\\,0111$."},
+        {"title": "Pairs from the right", "body": "$(q_0, q_{-1}) = (1,0) \\to -1$; $(1,1), (1,1) \\to 0$; $(0,1) \\to +1$; $(0,0), (0,0) \\to 0$; $(1,0) \\to -1$; $(1,1) \\to 0$."},
+        {"title": "Digits MSB first", "body": "$0\\ {-1}\\ 0\\ 0\\ {+1}\\ 0\\ 0\\ {-1}$. Check: $-64 + 8 - 1 = -57$. Option (B)."},
+    ],
+    "answer": {"value": "$0\\ {-1}\\ 0\\ 0\\ {+1}\\ 0\\ 0\\ {-1}$ — option (B)", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "The lowest digit is missing ($q_{-1} = 0$ forgotten): value $-56$."),
+        opt("B", True, "$-64 + 8 - 1 = -57$."),
+        opt("C", False, "Value $-64 + 32 - 4 + 1 = -35$: wrong pairs."),
+        opt("D", False, "Value $-32 + 8 - 1 = -25$: the digits are shifted one place."),
+    ],
+    "shortcut": "Check each option's value by place weights; only one gives $-57$.",
+    "pitfalls": ["Reading the pair the other way (gives $+57$).", "Recoding $+57 = 0011\\,1001$ and negating the digits by hand, then mis-aligning."],
+    "verification": "Brute force recoding of every 8-bit value reproduces each recoding's value; (B) is the only option equal to $-57$. ✓",
+}
+
+SOLUTIONS["it-2005-cs-8"] = {
+    "approach": "Concept tested: **Booth recoding** of the multiplier $-57$: 8-bit pattern $1100\\,0111$, appended 0, digit $= q_{i-1} - q_i$.",
+    "concepts": ["Booth recoding", "2's complement of −57"],
+    "steps": [
+        {"title": "Pattern", "body": "$-57 = 1100\\,0111$ (8-bit 2's complement)."},
+        {"title": "Recode", "body": "Pairs from the right $(1,0), (1,1), (1,1), (0,1), (0,0), (0,0), (1,0), (1,1)$ give $-1, 0, 0, +1, 0, 0, -1, 0$."},
+        {"title": "Answer", "body": "MSB first: $0\\ {-1}\\ 0\\ 0\\ 1\\ 0\\ 0\\ {-1}$: option (A). Value $-64 + 8 - 1 = -57$."},
+    ],
+    "answer": {"value": "$0\\ {-1}\\ 0\\ 0\\ 1\\ 0\\ 0\\ {-1}$ — option (A)", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$-64 + 8 - 1 = -57$."),
+        opt("B", False, "That is the plain 2's-complement pattern $1100\\,0111$, not a recoding."),
+        opt("C", False, "The lowest digit is lost (no appended 0): $-56$."),
+        opt("D", False, "Every sign flipped (pair read the wrong way): $+57$."),
+    ],
+    "shortcut": "A negative multiplier's leading run of 1s ends in a single $-1$ at the top of the run.",
+    "pitfalls": ["Forgetting the appended 0.", "Reading the pair as current − right."],
+    "verification": "Sum of the recoded digits times powers of two is $-57$. ✓",
+}
+
+SOLUTIONS["cse-2004-cs-66"] = {
+    "approach": "Concept tested: **signed (2's-complement) multiplication**. Decode $A = -6$ and $B = 10$; the product $-60$ fits in 8 bits, so the answer is the 8-bit pattern of $-60$.",
+    "concepts": ["2's-complement decoding", "Signed shift-and-add"],
+    "steps": [
+        {"title": "Decode", "body": "$A = 1111\\,1010 = -6$, $B = 0000\\,1010 = 10$."},
+        {"title": "Multiply with sign-extended partial products", "body": "$B$ has 1s at bits 1 and 3: $A \\cdot 2 + A \\cdot 8 = 1111\\,0100 + 1101\\,0000 = 1\\,1100\\,0100 \\to 1100\\,0100$."},
+        {"title": "Check", "body": "$1100\\,0100 = -128 + 64 + 4 = -60 = -6 \\times 10$: option (A)."},
+    ],
+    "answer": {"value": "$11000100$ ($-60$) — option (A)", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$-60$ in 8-bit 2's complement."),
+        opt("B", False, "$10011100 = -100$."),
+        opt("C", False, "$10100101 = -91$."),
+        opt("D", False, "$11010101 = -43$."),
+    ],
+    "shortcut": "Decode, multiply in decimal, encode: $-60 = -(0011\\,1100) = 1100\\,0100$.",
+    "pitfalls": ["Multiplying the patterns as unsigned ($250 \\times 10$)."],
+    "verification": "$1100\\,0100 + 0011\\,1100 = 1\\,0000\\,0000$, so it is the negative of 60. ✓",
+}
+
+SOLUTIONS["it-2006-cs-38"] = {
+    "approach": "Concept tested: **bit-pair (radix-4) recoding**. Each triple $(x_{i+1}, x_i, x_{i-1})$ selects $D = -2x_{i+1} + x_i + x_{i-1}$ times $Y$.",
+    "concepts": ["Bit-pair recoding", "Radix-4 Booth digits"],
+    "steps": [
+        {"title": "The digit formula", "body": "Pairing two Booth digits: $D = 2(x_i - x_{i+1}) + (x_{i-1} - x_i) = -2x_{i+1} + x_i + x_{i-1}$."},
+        {"title": "Row 5: 100", "body": "$D = -2 + 0 + 0 = -2$: partial product $-2Y$."},
+        {"title": "Row 8: 111", "body": "$D = -2 + 1 + 1 = 0$: partial product 0 (inside a run of 1s). Option (C)."},
+    ],
+    "answer": {"value": "$-2Y$ and $0$ — option (C)", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$2Y$ for row 5 ignores the $-2$ weight of $x_{i+1}$."),
+        opt("B", False, "Row 8 is inside a run of 1s, so it contributes 0, not $2Y$."),
+        opt("C", True, "$-2 + 0 + 0 = -2$ and $-2 + 1 + 1 = 0$."),
+        opt("D", False, "Row 5 is not 0: a run of 1s starts at $x_{i+1}$."),
+    ],
+    "shortcut": "The table is antisymmetric: row $k$ and row $7 - k$ have opposite digits ($000 \\leftrightarrow 111$: 0, $011 \\leftrightarrow 100$: $\\pm 2$).",
+    "pitfalls": ["Treating $x_{i+1}$ as $+2$ instead of $-2$."],
+    "verification": "The given rows check out with the formula: $001 \\to 1$, $011 \\to 2$, $101 \\to -1$, $110 \\to -1$. ✓",
+}
+
+SOLUTIONS["it-2008-it-42"] = {
+    "approach": "Concept tested: **counting Booth's additions/subtractions**: one per bit change of the multiplier read with an appended 0. The multiplicand is irrelevant.",
+    "concepts": ["Booth recoding", "Operation count = bit changes"],
+    "steps": [
+        {"title": "Multiplier with the appended 0", "body": "$0111\\,0111\\,1011\\,1101\\ |\\ 0$."},
+        {"title": "Count changes from the right", "body": "Pairs $(q_i, q_{i-1})$ that differ: $i = 0$ (1 over 0), $1$, $2$, $6$, $7$, $11$, $12$, $15$. That is 8 changes."},
+        {"title": "Answer", "body": "Recoding $+1\\,0\\,0\\,{-1}\\,{+1}\\,0\\,0\\,0\\,{-1}\\,{+1}\\,0\\,0\\,0\\,{-1}\\,{+1}\\,{-1}$ has 8 non-zero digits: 8 operations, option (B)."},
+    ],
+    "answer": {"value": "8 — option (B)", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "6 misses some changes (for example at bits 0 and 1)."),
+        opt("B", True, "Eight bit changes, so eight additions/subtractions."),
+        opt("C", False, "10 overcounts; the runs of 1s cost only their two ends."),
+        opt("D", False, "12 is the number of 1s: the plain shift-and-add count."),
+    ],
+    "shortcut": "Count the boundaries between runs (plus the boundary with the appended 0 if $q_0 = 1$).",
+    "pitfalls": ["Counting 1s.", "Forgetting the appended 0 (misses the change at bit 0)."],
+    "verification": "boothlib's brute-force-checked recoder gives 8 non-zero digits for this multiplier. ✓",
+}
+
+SOLUTIONS["cse-2025-2-cs-22"] = {
+    "approach": "Concept tested: **Booth's operation count**: count the positions where $q_i \\ne q_{i-1}$ in $Q$ with $q_{-1} = 0$; the multiplicand $M$ does not matter.",
+    "concepts": ["Booth recoding", "Operation count = bit changes"],
+    "steps": [
+        {"title": "Write Q with the appended 0", "body": "$1010\\,0100\\,1010\\,1010\\ |\\ 0$."},
+        {"title": "Count changes from the right", "body": "Bits $q_0 \\ldots q_{15}$ = 0,1,0,1,0,1,0,1,0,0,1,0,0,1,0,1. Changes at $i = 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 13, 14, 15$: 13."},
+        {"title": "Answer", "body": "13 additions and subtractions."},
+    ],
+    "answer": {"value": "13", "number": 13, "matchesKey": True},
+    "shortcut": "The low byte $1010\\,1010$ alone gives 7 changes; the high byte $1010\\,0100$ adds 6.",
+    "pitfalls": ["Counting the 1s (7).", "Including the multiplicand.", "Counting a change at $i = 0$ (here $q_0 = 0 = q_{-1}$)."],
+    "verification": "The recoding $-1\\,+1\\,-1\\,0\\,+1\\,-1\\,0\\,+1\\,-1\\,+1\\,-1\\,+1\\,-1\\,+1\\,-1\\,0$ has 13 non-zero digits. ✓",
+}
+
+
 def write():
     bank = {q["id"]: q for q in json.loads((ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
     by_paper = {}

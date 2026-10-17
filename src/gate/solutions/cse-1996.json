@@ -1402,51 +1402,60 @@
       }
     },
     "cse-1996-a-23": {
-      "approach": "Booth performs an add or subtract at every 0↔1 transition in the multiplier; alternating bits maximise transitions.",
+      "approach": "Concept tested: **Booth's operation count**. Booth adds or subtracts once for every bit change of the multiplier (reading from an appended 0), so alternating bits are the worst case and runs are the best.",
       "concepts": [
-        "Booth's algorithm",
-        "Bit-pair recoding"
+        "Booth recoding",
+        "Operation count = bit changes",
+        "Best and worst multipliers"
       ],
       "steps": [
         {
-          "title": "Operation count",
-          "body": "Booth scans pairs $(q_i, q_{i-1})$: 10 ⇒ subtract, 01 ⇒ add, 00/11 ⇒ only shift."
+          "title": "Count rule",
+          "body": "With $q_{-1} = 0$, Booth does an addition/subtraction at every $i$ with $q_i \\ne q_{i-1}$."
         },
         {
-          "title": "Worst pattern",
-          "body": "101010…10 (with $q_{-1}=0$) gives a transition at every bit position ⇒ an add/subtract on every step — n operations, worst case."
+          "title": "Apply to the options (12 bits for the dots)",
+          "body": "- (A) $1010\\ldots10$: every pair above the lowest changes: $n - 1 = 11$.\n- (B) $100\\ldots001$: changes at bit 0, bit 1 and the top: 3.\n- (C) $111\\ldots1$: one change at bit 0: 1.\n- (D) $0111\\ldots10$: two changes: 2."
+        },
+        {
+          "title": "Answer",
+          "body": "(A), the alternating pattern, needs the most operations: option (A)."
         }
       ],
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": true,
-          "reason": "Correct: transition at every position."
-        },
-        {
-          "option": "B",
-          "correct": false,
-          "reason": "Only a few transitions (at the ends)."
-        },
-        {
-          "option": "C",
-          "correct": false,
-          "reason": "All 1s: only one subtract at the start — best case."
-        },
-        {
-          "option": "D",
-          "correct": false,
-          "reason": "0111…110: just two transitions."
-        }
-      ],
-      "verification": "For 8-bit 10101010 with $q_{-1}=0$: pairs 01,10,01,10,… give 8 operations, vs 1 for 11111111.",
       "answer": {
-        "value": "101010…1010",
+        "value": "$1010\\ldots1010$ — option (A)",
         "choice": [
           "A"
         ],
         "matchesKey": true
-      }
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": true,
+          "reason": "Alternating bits change at almost every position: about $n$ operations."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "Only 3 changes: a single 1 at each end."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "All 1s: one subtraction at bit 0, the best case for a negative multiplier."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "One run of 1s: one subtraction and one addition."
+        }
+      ],
+      "shortcut": "Booth loves runs and hates alternation.",
+      "pitfalls": [
+        "Picking the pattern with the most 1s (C): Booth's cost depends on transitions, not on 1s."
+      ],
+      "verification": "Brute force over all 12-bit multipliers: the maximum, 12, is $0101\\ldots01$; $1010\\ldots10$ gives 11, the most among the options. ✓"
     },
     "cse-1996-a-24": {
       "approach": "In a daisy chain the grant signal passes device to device; the device nearest the CPU sees it first, so priority depends on position.",

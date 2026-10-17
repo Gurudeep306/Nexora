@@ -226,6 +226,87 @@ def excess3_correction():
                 "47 and 38 in excess-3 (each digit plus 3, in 4 bits).", els, steps)
 
 
+# ── Lesson 10 ───────────────────────────────────────────────────────────────
+
+import boothlib as bl  # noqa: E402
+
+
+@scene
+def booth_scan():
+    q = nl.to_twos(-29, 8)
+    ds = bl.booth_digits(q)                      # MSB first
+    assert q == "11100011" and bl.digits_value(ds) == -29 and bl.booth_ops(q) == 3
+    s = q + "0"                                  # appended q₋₁
+    c, x0, nc, nx0 = 52, 66, 36, 18
+    els = [*heads("Booth recoding of −29 = 11100011: slide a 2-bit window", "Booth scan of 11100011", 600),
+           bits("q", x0, 70, s, c, {"x": nx0, "y": 70, "cell": nc},
+                labels=[f"q{7 - i}" for i in range(8)] + ["q₋₁"], below=[""] * 9),
+           box("win", x0 + 7 * c - 3, 64, 2 * c + 6, c + 12, None, "wide", tone="subject", dashed=True),
+           box("nwin", nx0 + 7 * nc - 3, 64, 2 * nc + 6, nc + 12, None, "narrow", tone="subject", dashed=True),
+           text("dl", x0 - 8, 70 + c + 22, "d:", {"x": nx0 - 4, "y": 70 + nc + 18, "size": 12}, anchor="end", size=14, tone="muted"),
+           text("rule", 300, 200, "pair (qᵢ, qᵢ₋₁): 10 → −1, 01 → +1, 00 / 11 → 0", {"x": 180, "y": 160, "size": 12}, anchor="middle", size=15, tone="muted"),
+           text("ops", 300, 236, "operations so far: 0", {"x": 180, "y": 190, "size": 13}, anchor="middle", size=16)]
+    below = [""] * 9
+    steps, ops = [], 0
+    for i in range(8):
+        qi, qim1 = int(s[7 - i]), int(s[8 - i])
+        d = qim1 - qi
+        ops += d != 0
+        below[7 - i] = {1: "+1", -1: "−1", 0: "0"}[d]
+        meaning = {1: "a run of 1s ended just below: add M", -1: "a run of 1s starts here: subtract M", 0: "inside a run: shift only"}[d]
+        steps.append(step(f"i = {i}: the window holds (q{i}, q{i - 1 if i else '₋₁'}) = ({qi}, {qim1}), so d{i} = {qim1} − {qi} = {d:+d}" if d else
+                          f"i = {i}: the window holds (q{i}, q{i - 1 if i else '₋₁'}) = ({qi}, {qim1}), so d{i} = 0",
+                          ("win", {"x": x0 + (7 - i) * c - 3}), ("nwin", {"x": nx0 + (7 - i) * nc - 3}),
+                          ("q", {"below": list(below), "highlight": [7 - i, 8 - i]}),
+                          ("ops", {"text": f"operations so far: {ops}"})))
+        steps[-1]["caption"] += f" ({meaning})."
+    assert below[:8] == [{1: "+1", -1: "−1", 0: "0"}[d] for d in ds]
+    steps.append(step("Read the digits MSB first: 0 0 −1 0 0 +1 0 −1 = −32 + 4 − 1 = −29. Three operations instead of five additions (one per 1): the run of three 1s at the top costs a single subtraction.",
+                      ("q", {"highlight": []}), ("ops", {"text": "3 operations (plain shift-and-add: 5)", "tone": "success"})))
+    return spec("Booth recoding: a sliding pair window", (600, 260), (360, 220),
+                "The 8-bit multiplier −29 = 11100011 with a 0 appended on the right (q₋₁). A window covers the current bit and the bit to its right.",
+                els, steps)
+
+
+@scene
+def bitpair_table():
+    rows = [["q(i+1) q(i) q(i−1)", "D = −2q(i+1) + q(i) + q(i−1)", "partial product"]]
+    lab = {0: "0", 1: "+M", 2: "+2M", -1: "−M", -2: "−2M"}
+    for t in range(8):
+        a, b, cc = (t >> 2) & 1, (t >> 1) & 1, t & 1
+        D = bl.bitpair_digit(a, b, cc)
+        rows.append([f"{a} {b} {cc}", f"−{2 * a} + {b} + {cc} = {D:+d}" if D else f"−{2 * a} + {b} + {cc} = 0", lab[D]])
+    q = nl.to_twos(-29, 8)
+    ds = bl.bitpair_digits(q)
+    assert ds == [0, -2, 1, -1] and bl.digits_value(ds, 4) == -29
+    nrows = [["triple", "D"]] + [[r[0], r[2]] for r in rows[1:]]
+    els = [*heads("Bit-pair (radix-4) recoding table", "Bit-pair table", 600),
+           el_table("tab", 20, 44, 186, 26, rows, "wide"), el_table("ntab", 70, 44, 110, 26, nrows, "narrow"),
+           text("note", 300, 300, "", {"x": 180, "y": 300, "size": 12}, anchor="middle", size=15)]
+    trip = []
+    bits_ = [int(x) for x in q][::-1]
+    for k in range(4):
+        qm1 = bits_[2 * k - 1] if k else 0
+        trip.append((bits_[2 * k + 1], bits_[2 * k], qm1))
+    steps = [step("Each radix-4 digit pairs two Booth digits: D = 2d(i+1) + d(i) = −2q(i+1) + q(i) + q(i−1). The eight triples give the digits 0, ±1, ±2.", ("note", {"text": "D = 2·d(i+1) + d(i)"}))]
+    for k, (a, b, cc) in enumerate(trip):
+        r = 1 + (a << 2 | b << 1 | cc)
+        steps.append(step(f"−29 = 11100011: triple {k} (bits {2 * k + 1}, {2 * k}, {2 * k - 1 if k else '₋₁'}) is {a}{b}{cc}, so D{k} = {ds[3 - k]:+d}" if ds[3 - k] else
+                          f"−29 = 11100011: triple {k} (bits {2 * k + 1}, {2 * k}, {2 * k - 1}) is {a}{b}{cc}, so D{k} = 0",
+                          ("tab", {"highlight": [[r, 0], [r, 1], [r, 2]]}), ("ntab", {"highlight": [[r, 0], [r, 1]]}),
+                          ("note", {"text": f"D{k} = {lab[ds[3 - k]]}"})))
+    steps.append(step("So −29 = 0·4³ − 2·4² + 1·4 − 1: four radix-4 digits, at most four partial products for 8 bits, each a shift of ±M or ±2M.",
+                      ("tab", {"highlight": []}), ("ntab", {"highlight": []}), ("note", {"text": "0 −2 +1 −1 = −29 ✓", "tone": "success"})))
+    return spec("Bit-pair recoding table", (600, 320), (360, 320),
+                "The eight multiplier triples and the radix-4 partial product each one selects.", els, steps)
+
+
+def el_table(id, x, y, cw, ch, rows, n):
+    e = {"id": id, "type": "table", "x": x, "y": y, "cellW": cw, "cellH": ch, "rows": rows, "header": True, "mono": True}
+    e["only"] = n
+    return e
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

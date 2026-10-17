@@ -2247,23 +2247,27 @@
       }
     },
     "it-2008-it-42": {
-      "approach": "Append $Q_{-1}=0$ to the multiplier and scan bit pairs $(Q_i,Q_{i-1})$: $10$ ⇒ subtract, $01$ ⇒ add, $00/11$ ⇒ shift only. The count of operations equals the number of bit transitions.",
+      "approach": "Concept tested: **counting Booth's additions/subtractions**: one per bit change of the multiplier read with an appended 0. The multiplicand is irrelevant.",
       "concepts": [
-        "Booth's algorithm",
-        "Bit-pair recoding"
+        "Booth recoding",
+        "Operation count = bit changes"
       ],
       "steps": [
         {
-          "title": "Write the pairs",
-          "body": "Multiplier $0111\\,0111\\,1011\\,1101$ with $Q_{-1}=0$:\n\n| bit $i$ | 0 | 1 | 2 | 3–5 | 6 | 7 | 8–10 | 11 | 12 | 13–14 | 15 |\n|---|---|---|---|---|---|---|---|---|---|---|---|\n| $(Q_i,Q_{i-1})$ | 10 | 01 | 10 | 11 | 01 | 10 | 11 | 01 | 10 | 11 | 01 |\n| op | sub | add | sub | – | add | sub | – | add | sub | – | add |"
+          "title": "Multiplier with the appended 0",
+          "body": "$0111\\,0111\\,1011\\,1101\\ |\\ 0$."
         },
         {
-          "title": "Count",
-          "body": "Subtractions at $i=0,2,7,12$ (4); additions at $i=1,6,11,15$ (4). Total $4+4=8$."
+          "title": "Count changes from the right",
+          "body": "Pairs $(q_i, q_{i-1})$ that differ: $i = 0$ (1 over 0), $1$, $2$, $6$, $7$, $11$, $12$, $15$. That is 8 changes."
+        },
+        {
+          "title": "Answer",
+          "body": "Recoding $+1\\,0\\,0\\,{-1}\\,{+1}\\,0\\,0\\,0\\,{-1}\\,{+1}\\,0\\,0\\,0\\,{-1}\\,{+1}\\,{-1}$ has 8 non-zero digits: 8 operations, option (B)."
         }
       ],
       "answer": {
-        "value": "**8** additions/subtractions — option (B)",
+        "value": "8 — option (B)",
         "choice": [
           "B"
         ],
@@ -2273,28 +2277,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Undercounts: misses the transitions next to the isolated 0 bits."
+          "reason": "6 misses some changes (for example at bits 0 and 1)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "4 subtractions + 4 additions = 8 transitions."
+          "reason": "Eight bit changes, so eight additions/subtractions."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Overcounts; Booth performs one operation per bit transition, and there are only 8."
+          "reason": "10 overcounts; the runs of 1s cost only their two ends."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "12 is the number of 1 bits — the additions of plain shift-and-add, not Booth."
+          "reason": "12 is the number of 1s: the plain shift-and-add count."
         }
       ],
+      "shortcut": "Count the boundaries between runs (plus the boundary with the appended 0 if $q_0 = 1$).",
       "pitfalls": [
-        "Forgetting the implicit $Q_{-1}=0$ (it makes the LSB pair $10$ a subtraction)."
+        "Counting 1s.",
+        "Forgetting the appended 0 (misses the change at bit 0)."
       ],
-      "verification": "Recoding: $Q=2^{15}-2^{12}+2^{11}-2^7+2^6-2^2+2^1-2^0=32768-4096+2048-128+64-4+2-1=30653$, and $0111011110111101_2=30653$ ✓ (8 non-zero digits)."
+      "verification": "boothlib's brute-force-checked recoder gives 8 non-zero digits for this multiplier. ✓"
     },
     "it-2008-it-43": {
       "approach": "Radix sort costs $\\Theta(d\\,(n+b))$ for $d$ digits in base $b$. With a fixed base, an integer up to $n^k$ has $d=\\Theta(\\log n^k)=\\Theta(k\\log n)=\\Theta(\\log n)$ digits.",

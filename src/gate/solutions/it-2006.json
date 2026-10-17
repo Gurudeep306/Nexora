@@ -2053,23 +2053,27 @@
       "verification": "$S=0,y=0$: $S^+ = 1\\cdot1 + 0 = 1$ ✓. $S=1,x=0$: $S^+ = 0 + 0 = 0$ ✓."
     },
     "it-2006-cs-38": {
-      "approach": "In bit-pair recoding the multiple of $Y$ for a bit pair is $-2x_{i+1} + x_i + x_{i-1}$.",
+      "approach": "Concept tested: **bit-pair (radix-4) recoding**. Each triple $(x_{i+1}, x_i, x_{i-1})$ selects $D = -2x_{i+1} + x_i + x_{i-1}$ times $Y$.",
       "concepts": [
-        "Booth's algorithm",
-        "Bit-pair recoding"
+        "Bit-pair recoding",
+        "Radix-4 Booth digits"
       ],
       "steps": [
         {
-          "title": "Recoding rule",
-          "body": "Pair $(x_{i+1}, x_i)$ with look-back bit $x_{i-1}$ contributes $(-2x_{i+1} + x_i + x_{i-1})\\,Y$. Check: row 4 $(0,1,1)$: $0+1+1 = 2$ → $2Y$ ✓; row 6 $(1,0,1)$: $-2+0+1 = -1$ ✓."
+          "title": "The digit formula",
+          "body": "Pairing two Booth digits: $D = 2(x_i - x_{i+1}) + (x_{i-1} - x_i) = -2x_{i+1} + x_i + x_{i-1}$."
         },
         {
-          "title": "Rows 5 and 8",
-          "body": "Row 5 $(1,0,0)$: $-2 + 0 + 0 = -2$ → $-2Y$.\n\nRow 8 $(1,1,1)$: $-2 + 1 + 1 = 0$ → $0$."
+          "title": "Row 5: 100",
+          "body": "$D = -2 + 0 + 0 = -2$: partial product $-2Y$."
+        },
+        {
+          "title": "Row 8: 111",
+          "body": "$D = -2 + 1 + 1 = 0$: partial product 0 (inside a run of 1s). Option (C)."
         }
       ],
       "answer": {
-        "value": "$-2Y$ and $0$",
+        "value": "$-2Y$ and $0$ — option (C)",
         "choice": [
           "C"
         ],
@@ -2079,25 +2083,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Signs wrong: a leading 1 in the pair contributes $-2$."
+          "reason": "$2Y$ for row 5 ignores the $-2$ weight of $x_{i+1}$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Row 8 is a run of 1s inside the multiplier, contributing 0, not $2Y$."
+          "reason": "Row 8 is inside a run of 1s, so it contributes 0, not $2Y$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct."
+          "reason": "$-2 + 0 + 0 = -2$ and $-2 + 1 + 1 = 0$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Row 5 starts a run of 1s, which contributes $-2Y$, not 0."
+          "reason": "Row 5 is not 0: a run of 1s starts at $x_{i+1}$."
         }
       ],
-      "verification": "The rule reproduces all six given rows (0, Y, Y, 2Y, −Y, −Y)."
+      "shortcut": "The table is antisymmetric: row $k$ and row $7 - k$ have opposite digits ($000 \\leftrightarrow 111$: 0, $011 \\leftrightarrow 100$: $\\pm 2$).",
+      "pitfalls": [
+        "Treating $x_{i+1}$ as $+2$ instead of $-2$."
+      ],
+      "verification": "The given rows check out with the formula: $001 \\to 1$, $011 \\to 2$, $101 \\to -1$, $110 \\to -1$. ✓"
     },
     "it-2006-cs-39": {
       "approach": "Relative (PC-relative) addressing forms the effective address as PC + offset. That needs an addition, so it cannot be faster than absolute addressing, where the address is used directly.",
