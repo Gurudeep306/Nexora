@@ -100,6 +100,15 @@ test('a valid scratch lesson builds with no errors', async () => {
   assert.ok(!('sources' in lesson));
 });
 
+test('internal planning notes (_outline.md, _plan.md) are skipped; other stray files still fail', async () => {
+  const r = await build({ content: scratch(LESSON, { '_outline.md': '# map', '01-basics/_plan.md': '# plan' }) });
+  assert.deepEqual(r.errors, []);
+  assert.ok(!r.outputs.get('tst.json').includes('# plan'));
+  const e = await errorsFor(LESSON, { '01-basics/notes.md': 'x', 'stray.md': 'y' });
+  assert.match(e, /chapters hold NN-lesson-slug\.md lessons/);
+  assert.match(e, /expected _meta\.json, viz\/ or NN-chapter-slug\/ directories only/);
+});
+
 test('the validator reports mistakes with file:line', async () => {
   const at = (n) => new RegExp(`01-alpha\\.md:${n}: `);
   const swap = (from, to) => LESSON.replace(from, to);
