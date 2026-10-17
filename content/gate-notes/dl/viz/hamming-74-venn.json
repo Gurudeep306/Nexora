@@ -1,0 +1,377 @@
+{
+ "version": 1,
+ "title": "Hamming (7,4) as three overlapping parity circles",
+ "width": 540,
+ "height": 420,
+ "intro": "Three overlapping circles named 1, 2 and 4. The seven regions hold bit positions 1 to 7: position 7 is in all three circles, 3 in circles 1 and 2, 5 in circles 1 and 4, 6 in circles 2 and 4, and 1, 2, 4 each in one circle only. The data bits 1, 0, 1, 1 sit in positions 3, 5, 6, 7.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 270,
+   "y": 22,
+   "text": "Hamming (7,4): three parity circles",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "p1",
+   "type": "circle",
+   "cx": 210,
+   "cy": 150,
+   "r": 100,
+   "tone": "info"
+  },
+  {
+   "id": "p2",
+   "type": "circle",
+   "cx": 330,
+   "cy": 150,
+   "r": 100,
+   "tone": "info"
+  },
+  {
+   "id": "p4",
+   "type": "circle",
+   "cx": 270,
+   "cy": 250,
+   "r": 100,
+   "tone": "info"
+  },
+  {
+   "id": "lp1",
+   "type": "text",
+   "x": 120,
+   "y": 70,
+   "text": "circle 1",
+   "size": 15,
+   "tone": "info"
+  },
+  {
+   "id": "lp2",
+   "type": "text",
+   "x": 380,
+   "y": 70,
+   "text": "circle 2",
+   "size": 15,
+   "tone": "info"
+  },
+  {
+   "id": "lp4",
+   "type": "text",
+   "x": 300,
+   "y": 368,
+   "text": "circle 4",
+   "size": 15,
+   "tone": "info"
+  },
+  {
+   "id": "b7",
+   "type": "box",
+   "x": 248,
+   "y": 176,
+   "w": 44,
+   "h": 32,
+   "mono": true,
+   "size": 17,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "n7",
+   "type": "text",
+   "x": 270,
+   "y": 218,
+   "text": "pos 7",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted"
+  },
+  {
+   "id": "b3",
+   "type": "box",
+   "x": 248,
+   "y": 94,
+   "w": 44,
+   "h": 32,
+   "mono": true,
+   "size": 17,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 270,
+   "y": 136,
+   "text": "pos 3",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted"
+  },
+  {
+   "id": "b5",
+   "type": "box",
+   "x": 198,
+   "y": 212,
+   "w": 44,
+   "h": 32,
+   "mono": true,
+   "size": 17,
+   "tone": "ink",
+   "label": "0"
+  },
+  {
+   "id": "n5",
+   "type": "text",
+   "x": 220,
+   "y": 254,
+   "text": "pos 5",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted"
+  },
+  {
+   "id": "b6",
+   "type": "box",
+   "x": 298,
+   "y": 212,
+   "w": 44,
+   "h": 32,
+   "mono": true,
+   "size": 17,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "n6",
+   "type": "text",
+   "x": 320,
+   "y": 254,
+   "text": "pos 6",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted"
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 138,
+   "y": 114,
+   "w": 44,
+   "h": 32,
+   "mono": true,
+   "size": 17,
+   "tone": "muted",
+   "label": "?"
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 160,
+   "y": 156,
+   "text": "pos 1",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted"
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 358,
+   "y": 114,
+   "w": 44,
+   "h": 32,
+   "mono": true,
+   "size": 17,
+   "tone": "muted",
+   "label": "?"
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 380,
+   "y": 156,
+   "text": "pos 2",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted"
+  },
+  {
+   "id": "b4",
+   "type": "box",
+   "x": 248,
+   "y": 286,
+   "w": 44,
+   "h": 32,
+   "mono": true,
+   "size": 17,
+   "tone": "muted",
+   "label": "?"
+  },
+  {
+   "id": "n4",
+   "type": "text",
+   "x": 270,
+   "y": 328,
+   "text": "pos 4",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted"
+  },
+  {
+   "id": "info",
+   "type": "text",
+   "x": 270,
+   "y": 400,
+   "text": "data 1011 in positions 3, 5, 6, 7",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each parity bit makes its circle hold an even number of 1s. Circle 1 holds positions 3, 5, 7 = 1, 0, 1: two 1s already, so p1 = 0.",
+   "patches": [
+    {
+     "id": "b1",
+     "set": {
+      "label": "0",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "p1",
+     "set": {
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Circle 2 holds positions 3, 6, 7 = 1, 1, 1: three 1s, so p2 = 1 to make four.",
+   "patches": [
+    {
+     "id": "p1",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "label": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "p2",
+     "set": {
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Circle 4 holds positions 5, 6, 7 = 0, 1, 1: two 1s, so p4 = 0. The codeword (positions 1–7) is 0110011.",
+   "patches": [
+    {
+     "id": "p2",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "b4",
+     "set": {
+      "label": "0",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "p4",
+     "set": {
+      "fill": "info"
+     }
+    },
+    {
+     "id": "info",
+     "set": {
+      "text": "sent: 0110011"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Noise flips position 6 (1 → 0). The received word is 0110001.",
+   "patches": [
+    {
+     "id": "p4",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "b6",
+     "set": {
+      "label": "0",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "info",
+     "set": {
+      "text": "received: 0110001"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Recount each circle. Circle 1 is still even (it does not contain position 6). Circles 2 and 4 are now odd: they fail.",
+   "patches": [
+    {
+     "id": "p2",
+     "set": {
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "p4",
+     "set": {
+      "tone": "danger",
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "p1",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add the numbers of the failing circles: 2 + 4 = 6. The only position inside circles 2 and 4 but outside circle 1 is 6, so flip it back. Syndrome 6, corrected word 0110011.",
+   "patches": [
+    {
+     "id": "b6",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "info",
+     "set": {
+      "text": "syndrome = 4·1 + 2·1 + 1·0 = 6 → fix position 6"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -2274,9 +2274,10 @@
       "verification": "4-bit check: $0111+0001 = 1000$: $a_3=b_3=0$, $c_3=1$ → (B) gives 1 ✓ ($7+1$ overflows)."
     },
     "cse-2006-cs-40": {
-      "approach": "Tabulate, for every gray code $h$ (as a minterm index), the gray code of the next number, and read off where each output bit is 1.",
+      "approach": "Concept tested: Gray code and Boolean functions given as minterm lists. Tabulate, for each number $n$, its Gray code $h$ (the input) and the Gray code $g$ of $n + 1$ (the output); each $g_i$ has a minterm at the **value of $h$** wherever bit $i$ of $g$ is 1. Then compare each option with the computed list for the bit it names.",
       "concepts": [
-        "Gray code",
+        "Reflected Gray code",
+        "Gray successor function",
         "Minterm lists"
       ],
       "steps": [
@@ -2316,23 +2317,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: $\\Sigma(1,2,3,6,10,13,14,15)$ is $g_1$; e.g. $h = 0$ (n=0) → $g = 0001$, so $g_0(0) = 1$, but 0 is missing."
+          "reason": "$\\Sigma(1, 2, 3, 6, 10, 13, 14, 15)$ is the true list of $g_1$, not $g_0$; $g_0 = \\Sigma(0, 1, 6, 7, 10, 11, 12, 13)$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: $\\Sigma(4,9,\\dots,15)$ is $g_3$; e.g. $h = 1$ → $g = 0011$, so $g_1(1) = 1$, but 1 is missing."
+          "reason": "$\\Sigma(4, 9, 10, 11, 12, 13, 14, 15)$ is the true list of $g_3$, not $g_1$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: matches the computed $g_2$."
+          "reason": "$g_2 = 1$ exactly for $h \\in \\{2, 4, 5, 6, 7, 12, 13, 15\\}$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: $\\Sigma(0,1,6,7,10,11,12,13)$ is $g_0$; e.g. $h = 0$ → $g = 0001$ has $g_3 = 0$, yet 0 is listed."
+          "reason": "$\\Sigma(0, 1, 6, 7, 10, 11, 12, 13)$ is the true list of $g_0$, not $g_3$."
         }
+      ],
+      "shortcut": "Kill three options with one row each. Row $h = 0000$ ($n = 0$, successor $0001$): $g_0 = 1$, so A (which omits 0 from $g_0$) is wrong, and $g_3 = 0$, so D (which puts 0 in $g_3$) is wrong. Row $h = 1001$ ($n = 14$, successor $1000$): $g_1 = 0$, but B lists 9. Only C survives.",
+      "pitfalls": [
+        "Indexing the minterms by $n$ instead of by the Gray input $h$.",
+        "Forgetting the wrap-around $n = 15 \\to 0$ (input $1000$, output $0000$).",
+        "Converting Gray to binary bit-pairwise, which mislabels the rows."
       ],
       "verification": "Generated $g = \\text{gray}((\\text{gray}^{-1}(h)+1) \\bmod 16)$ by program for all 16 $h$.",
       "animation": {

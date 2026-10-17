@@ -709,6 +709,164 @@ def arithmetic_shift():
                 "The 8-bit pattern of −7, 11111001. Shifted copies will appear underneath.", els, steps)
 
 
+# ── Lesson 5 ────────────────────────────────────────────────────────────────
+
+@scene
+def gray_reflect():
+    g1, g2, g3 = nl.reflected_gray(1), nl.reflected_gray(2), nl.reflected_gray(3)
+    assert g3 == [nl.gray_bits(i, 3) for i in range(8)]
+    cw, ch = 64, 30
+    els = [text("head", 280, 22, "Building Gray codes by reflection", anchor="middle", size=17, weight="bold")]
+    cols = {1: 40, 2: 210, 3: 380}
+    for w, lst in ((1, g1), (2, g2), (3, g3)):
+        els.append(text(f"t{w}", cols[w] + cw / 2, 52, f"{w} bit{'s' if w > 1 else ''}", anchor="middle", size=15, tone="muted", hidden=w > 1))
+        for i, c in enumerate(lst):
+            els.append(box(f"c{w}_{i}", cols[w], 64 + i * ch, cw + (10 if w == 3 else 0), ch - 2, c, mono=True, size=16,
+                           hidden=w > 1, tone="info" if (w > 1 and i >= len(lst) // 2) else "ink"))
+    els.append({"id": "m2", "type": "line", "points": [[cols[2] - 10, 64 + 2 * ch - 1], [cols[2] + cw + 10, 64 + 2 * ch - 1]], "tone": "danger", "dashed": True, "hidden": True})
+    els.append({"id": "m3", "type": "line", "points": [[cols[3] - 10, 64 + 4 * ch - 1], [cols[3] + cw + 20, 64 + 4 * ch - 1]], "tone": "danger", "dashed": True, "hidden": True})
+    els.append(text("mirror", 300, 330, "", anchor="middle", size=15, tone="danger"))
+    steps = [
+        step("Start with the 1-bit Gray code: 0, 1. The two codes differ in one bit.", ),
+        step("Copy the list, then append its mirror image (1, 0) underneath. Put 0 in front of the top half and 1 in front of the bottom half: 00, 01, 11, 10.",
+             ("t2", {"hidden": False}), *[(f"c2_{i}", {"hidden": False}) for i in range(4)], ("m2", {"hidden": False}),
+             ("mirror", {"text": "dashed line = mirror"})),
+        step("Do it again: the 2-bit list, then its mirror, with prefixes 0 and 1. The result is the 3-bit reflected Gray code: 000 001 011 010 110 111 101 100.",
+             ("t3", {"hidden": False}), *[(f"c3_{i}", {"hidden": False}) for i in range(8)], ("m3", {"hidden": False})),
+        step("Across the mirror line the two neighbours are the same code with only the new front bit changed (010 → 110). And the last code 100 differs from the first 000 in one bit too, so the list wraps round.",
+             ("c3_3", {"fill": "warning"}), ("c3_4", {"fill": "warning"}), ("c3_0", {"fill": "success"}), ("c3_7", {"fill": "success"})),
+    ]
+    steps[0] = {"caption": steps[0]["caption"], "patches": [{"id": "c1_0", "set": {"fill": "subject"}}, {"id": "c1_1", "set": {"fill": "subject"}}]}
+    return spec("Reflected Gray code, built by mirroring", 560, 340,
+                "The 1-bit Gray code, 0 and 1. Longer codes will be built to its right, each from the one before.", els, steps)
+
+
+@scene
+def gray_xor_ladder():
+    b = "1011"
+    g = nl.gray_bits(int(b, 2), 4)
+    assert g == "1110"
+    gb = "101100"
+    bb = nl.to_base(nl.gray_inv(int(gb, 2)), 2, 6)
+    assert bb == "110111"
+    cell, x0 = 56, 140
+    els = [text("head", 280, 22, "Binary → Gray: XOR each bit with its left neighbour", anchor="middle", size=17, weight="bold"),
+           {"id": "b", "type": "bits", "x": x0, "y": 52, "bits": b, "cell": cell},
+           text("bl", x0 - 12, 80, "binary", anchor="end", size=15, tone="muted"),
+           {"id": "g", "type": "bits", "x": x0, "y": 172, "bits": "????", "cell": cell},
+           text("gl", x0 - 12, 200, "Gray", anchor="end", size=15, tone="muted")]
+    els.append(arrow("a0", [x0 + cell / 2, 112], [x0 + cell / 2, 168], tone="subject", hidden=True))
+    for i in range(1, 4):
+        els.append(text(f"x{i}", x0 + cell * i, 140, "⊕", anchor="middle", size=24, tone="subject", hidden=True))
+    els.append(text("note", 280, 262, "", anchor="middle", size=16, mono=True))
+    steps = [step("The first Gray bit is the first binary bit, copied: 1.", ("a0", {"hidden": False}), ("g", {"bits": "1???", "highlight": [0]}), ("b", {"highlight": [0]}))]
+    for i in range(1, 4):
+        cur = g[:i + 1] + "?" * (3 - i)
+        steps.append(step(
+            f"Gray bit {i + 1} = binary bit {i} ⊕ binary bit {i + 1} = {b[i - 1]} ⊕ {b[i]} = {g[i]}. (⊕ gives 1 exactly when the two bits differ.)",
+            (f"x{i}", {"hidden": False}), ("b", {"highlight": [i - 1, i]}), ("g", {"bits": cur, "highlight": [i]})))
+    steps.append(step("So binary 1011 (eleven) has Gray code 1110. In one line: Gray = b ⊕ (b shifted right by 1).",
+                      ("b", {"highlight": []}), ("g", {"highlight": []}), ("note", {"text": "1011 ⊕ 0101 = 1110"})))
+    steps.append(step("Going back, each binary bit is the XOR of all Gray bits from the left down to it, a running XOR: Gray 101100 gives binary 1, 1, 0, 1, 1, 1 = 110111.",
+                      ("note", {"text": "Gray 101100 → running XOR → 110111"})))
+    assert int(b, 2) ^ (int(b, 2) >> 1) == int(g, 2)
+    return spec("The XOR ladder between binary and Gray", 560, 290,
+                "The binary number 1011 on top and an empty Gray row underneath.", els, steps)
+
+
+@scene
+def gray_wheel():
+    cx, cy = 250, 260
+    rings = [(60, 110), (110, 160), (160, 210)]   # inner ring = MSB, outer ring = LSB
+    els = [text("head", 250, 22, "A 3-bit Gray-coded rotary disc", anchor="middle", size=17, weight="bold")]
+    for k in range(8):
+        code = nl.gray_bits(k, 3)
+        for bit, (r0, r) in enumerate(rings):
+            if code[bit] == "1":
+                els.append({"id": f"s{k}_{bit}", "type": "arc", "cx": cx, "cy": cy, "r": r, "r0": r0, "start": 45 * k, "end": 45 * (k + 1),
+                            "fill": "subject", "emphasis": "strong", "tone": "ink"})
+            else:
+                els.append({"id": f"s{k}_{bit}", "type": "arc", "cx": cx, "cy": cy, "r": r, "r0": r0, "start": 45 * k, "end": 45 * (k + 1), "tone": "muted"})
+        x, y = polar(cx, cy, 228, 45 * k + 22.5)
+        els.append(text(f"l{k}", x, y, code, anchor="middle", size=15, mono=True))
+    els.append(text("key", 250, 492, "inner ring = first bit, outer ring = last bit; shaded = 1", anchor="middle", size=15, tone="muted"))
+    for k in range(8):
+        assert nl.hamming_distance(nl.gray_bits(k, 3), nl.gray_bits((k + 1) % 8, 3)) == 1
+    return spec("Rotary encoder disc in Gray code", 500, 510,
+                "A disc cut into 8 sectors and 3 rings. Reading clockwise from the top, the sectors are coded 000, 001, 011, 010, 110, 111, 101, 100. At every boundary between neighbouring sectors only one ring changes from clear to shaded, so a sensor sitting on a boundary can misread at most one bit and is never more than one position wrong.",
+                els, [])
+
+
+@scene
+def hamming_74_venn():
+    d = "1011"
+    w = nl.hamming74_encode(d)
+    bad = nl.flip(w, 6)
+    syn, (s4, s2, s1) = nl.hamming74_syndrome(bad)
+    assert w == "0110011" and syn == 6 and (s4, s2, s1) == (1, 1, 0)
+    C = {"p1": (210, 150), "p2": (330, 150), "p4": (270, 250)}
+    R = 100
+    els = [text("head", 270, 22, "Hamming (7,4): three parity circles", anchor="middle", size=17, weight="bold")]
+    for name, (x, y) in C.items():
+        els.append({"id": name, "type": "circle", "cx": x, "cy": y, "r": R, "tone": "info"})
+    els += [text("lp1", 120, 70, "circle 1", size=15, tone="info"), text("lp2", 380, 70, "circle 2", size=15, tone="info"),
+            text("lp4", 300, 368, "circle 4", size=15, tone="info")]
+    pos = {7: (270, 192), 3: (270, 110), 5: (220, 228), 6: (320, 228), 1: (160, 130), 2: (380, 130), 4: (270, 302)}
+    for p, (x, y) in pos.items():
+        els.append(box(f"b{p}", x - 22, y - 16, 44, 32, "?" if p in (1, 2, 4) else w[p - 1], mono=True, size=17,
+                       tone="ink" if p in (3, 5, 6, 7) else "muted"))
+        els.append(text(f"n{p}", x, y + 26, f"pos {p}", anchor="middle", size=12, tone="muted"))
+    els.append(text("info", 270, 400, "data 1011 in positions 3, 5, 6, 7", anchor="middle", size=16, mono=True))
+    steps = [
+        step("Each parity bit makes its circle hold an even number of 1s. Circle 1 holds positions 3, 5, 7 = 1, 0, 1: two 1s already, so p1 = 0.",
+             ("b1", {"label": w[0], "tone": "success"}), ("p1", {"fill": "info"})),
+        step("Circle 2 holds positions 3, 6, 7 = 1, 1, 1: three 1s, so p2 = 1 to make four.",
+             ("p1", {"fill": "none"}), ("b2", {"label": w[1], "tone": "success"}), ("p2", {"fill": "info"})),
+        step("Circle 4 holds positions 5, 6, 7 = 0, 1, 1: two 1s, so p4 = 0. The codeword (positions 1–7) is 0110011.",
+             ("p2", {"fill": "none"}), ("b4", {"label": w[3], "tone": "success"}), ("p4", {"fill": "info"}), ("info", {"text": "sent: 0110011"})),
+        step("Noise flips position 6 (1 → 0). The received word is 0110001.",
+             ("p4", {"fill": "none"}), ("b6", {"label": bad[5], "tone": "danger", "fill": "danger"}), ("info", {"text": "received: 0110001"})),
+        step("Recount each circle. Circle 1 is still even (it does not contain position 6). Circles 2 and 4 are now odd: they fail.",
+             ("p2", {"tone": "danger", "fill": "danger"}), ("p4", {"tone": "danger", "fill": "danger"}), ("p1", {"tone": "success"})),
+        step("Add the numbers of the failing circles: 2 + 4 = 6. The only position inside circles 2 and 4 but outside circle 1 is 6, so flip it back. Syndrome 6, corrected word 0110011.",
+             ("b6", {"label": w[5], "tone": "success", "fill": "success"}), ("info", {"text": "syndrome = 4·1 + 2·1 + 1·0 = 6 → fix position 6"})),
+    ]
+    return spec("Hamming (7,4) as three overlapping parity circles", 540, 420,
+                "Three overlapping circles named 1, 2 and 4. The seven regions hold bit positions 1 to 7: position 7 is in all three circles, 3 in circles 1 and 2, 5 in circles 1 and 4, 6 in circles 2 and 4, and 1, 2, 4 each in one circle only. The data bits 1, 0, 1, 1 sit in positions 3, 5, 6, 7.",
+                els, steps)
+
+
+@scene
+def bcd_vs_binary():
+    n = 59
+    bcd = nl.bcd(n).replace(" ", "")
+    bn = nl.to_base(n, 2)
+    assert bcd == "01011001" and bn == "111011" and int(bcd, 2) == 89
+    els = [text("head", 280, 22, "59 in BCD and in pure binary", anchor="middle", size=17, weight="bold"),
+           text("t1", 30, 66, "BCD (8 bits)", size=15, tone="muted"),
+           {"id": "bcd", "type": "bits", "x": 150, "y": 46, "bits": bcd, "cell": 44, "below": ["8", "4", "2", "1", "8", "4", "2", "1"]},
+           text("d5", 150 + 88, 126, "digit 5", anchor="middle", size=15, tone="subject"),
+           text("d9", 150 + 264, 126, "digit 9", anchor="middle", size=15, tone="subject"),
+           text("t2", 30, 176, "binary (6 bits)", size=15, tone="muted"),
+           {"id": "bin", "type": "bits", "x": 238, "y": 156, "bits": bn, "cell": 44, "below": ["32", "16", "8", "4", "2", "1"]},
+           text("note", 280, 250, "read as binary, the BCD pattern 0101 1001 would be 89, not 59", anchor="middle", size=15, tone="danger")]
+    return spec("BCD versus binary", 560, 270,
+                "Top: 59 in BCD, two 4-bit groups 0101 (5) and 1001 (9), each with weights 8 4 2 1. Bottom: 59 in pure binary, 111011, six bits with weights 32 to 1. BCD spends 8 bits where binary needs 6, and reading the BCD pattern as plain binary gives 89.",
+                els, [])
+
+
+@scene
+def code_tables():
+    rows = [["digit", "8421", "XS-3", "2421", "Gray"]]
+    for d in range(10):
+        rows.append([str(d), nl.to_base(d, 2, 4), nl.to_base(d + 3, 2, 4), nl.WEIGHTED_2421[d], nl.gray_bits(d, 4)])
+    assert rows[10] == ["9", "1001", "1100", "1111", "1101"]
+    els = [{"id": "t", "type": "table", "x": 30, "y": 10, "cellW": 100, "cellH": 30, "rows": rows, "header": True, "mono": True}]
+    return spec("Decimal digits in four codes", 560, 350,
+                "A table of the digits 0 to 9 in 8421 BCD, excess-3, 2421 and 4-bit Gray code. For example 5 is 0101 in BCD, 1000 in excess-3, 1011 in 2421 and 0111 in Gray; 9 is 1001, 1100, 1111 and 1101.",
+                els, [])
+
+
 # ── Writer ──────────────────────────────────────────────────────────────────
 
 def build_all():

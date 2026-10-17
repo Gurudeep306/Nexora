@@ -1,0 +1,102 @@
+{
+ "version": 1,
+ "title": "BCD versus binary",
+ "width": 560,
+ "height": 270,
+ "intro": "Top: 59 in BCD, two 4-bit groups 0101 (5) and 1001 (9), each with weights 8 4 2 1. Bottom: 59 in pure binary, 111011, six bits with weights 32 to 1. BCD spends 8 bits where binary needs 6, and reading the BCD pattern as plain binary gives 89.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "59 in BCD and in pure binary",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 30,
+   "y": 66,
+   "text": "BCD (8 bits)",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "bcd",
+   "type": "bits",
+   "x": 150,
+   "y": 46,
+   "bits": "01011001",
+   "cell": 44,
+   "below": [
+    "8",
+    "4",
+    "2",
+    "1",
+    "8",
+    "4",
+    "2",
+    "1"
+   ]
+  },
+  {
+   "id": "d5",
+   "type": "text",
+   "x": 238,
+   "y": 126,
+   "text": "digit 5",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "subject"
+  },
+  {
+   "id": "d9",
+   "type": "text",
+   "x": 414,
+   "y": 126,
+   "text": "digit 9",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "subject"
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 30,
+   "y": 176,
+   "text": "binary (6 bits)",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "bin",
+   "type": "bits",
+   "x": 238,
+   "y": 156,
+   "bits": "111011",
+   "cell": 44,
+   "below": [
+    "32",
+    "16",
+    "8",
+    "4",
+    "2",
+    "1"
+   ]
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 280,
+   "y": 250,
+   "text": "read as binary, the BCD pattern 0101 1001 would be 89, not 59",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "danger"
+  }
+ ],
+ "steps": []
+}

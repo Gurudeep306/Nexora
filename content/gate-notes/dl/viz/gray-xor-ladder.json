@@ -1,0 +1,263 @@
+{
+ "version": 1,
+ "title": "The XOR ladder between binary and Gray",
+ "width": 560,
+ "height": 290,
+ "intro": "The binary number 1011 on top and an empty Gray row underneath.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "Binary → Gray: XOR each bit with its left neighbour",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "b",
+   "type": "bits",
+   "x": 140,
+   "y": 52,
+   "bits": "1011",
+   "cell": 56
+  },
+  {
+   "id": "bl",
+   "type": "text",
+   "x": 128,
+   "y": 80,
+   "text": "binary",
+   "anchor": "end",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "g",
+   "type": "bits",
+   "x": 140,
+   "y": 172,
+   "bits": "????",
+   "cell": 56
+  },
+  {
+   "id": "gl",
+   "type": "text",
+   "x": 128,
+   "y": 200,
+   "text": "Gray",
+   "anchor": "end",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "a0",
+   "type": "arrow",
+   "from": [
+    168.0,
+    112
+   ],
+   "to": [
+    168.0,
+    168
+   ],
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "x1",
+   "type": "text",
+   "x": 196,
+   "y": 140,
+   "text": "⊕",
+   "anchor": "middle",
+   "size": 24,
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "x2",
+   "type": "text",
+   "x": 252,
+   "y": 140,
+   "text": "⊕",
+   "anchor": "middle",
+   "size": 24,
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "x3",
+   "type": "text",
+   "x": 308,
+   "y": 140,
+   "text": "⊕",
+   "anchor": "middle",
+   "size": 24,
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 280,
+   "y": 262,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The first Gray bit is the first binary bit, copied: 1.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "g",
+     "set": {
+      "bits": "1???",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "b",
+     "set": {
+      "highlight": [
+       0
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Gray bit 2 = binary bit 1 ⊕ binary bit 2 = 1 ⊕ 0 = 1. (⊕ gives 1 exactly when the two bits differ.)",
+   "patches": [
+    {
+     "id": "x1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b",
+     "set": {
+      "highlight": [
+       0,
+       1
+      ]
+     }
+    },
+    {
+     "id": "g",
+     "set": {
+      "bits": "11??",
+      "highlight": [
+       1
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Gray bit 3 = binary bit 2 ⊕ binary bit 3 = 0 ⊕ 1 = 1. (⊕ gives 1 exactly when the two bits differ.)",
+   "patches": [
+    {
+     "id": "x2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b",
+     "set": {
+      "highlight": [
+       1,
+       2
+      ]
+     }
+    },
+    {
+     "id": "g",
+     "set": {
+      "bits": "111?",
+      "highlight": [
+       2
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Gray bit 4 = binary bit 3 ⊕ binary bit 4 = 1 ⊕ 1 = 0. (⊕ gives 1 exactly when the two bits differ.)",
+   "patches": [
+    {
+     "id": "x3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b",
+     "set": {
+      "highlight": [
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "g",
+     "set": {
+      "bits": "1110",
+      "highlight": [
+       3
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So binary 1011 (eleven) has Gray code 1110. In one line: Gray = b ⊕ (b shifted right by 1).",
+   "patches": [
+    {
+     "id": "b",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "g",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "1011 ⊕ 0101 = 1110"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Going back, each binary bit is the XOR of all Gray bits from the left down to it, a running XOR: Gray 101100 gives binary 1, 1, 0, 1, 1, 1 = 110111.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "Gray 101100 → running XOR → 110111"
+     }
+    }
+   ]
+  }
+ ]
+}

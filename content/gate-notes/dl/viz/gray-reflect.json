@@ -1,0 +1,438 @@
+{
+ "version": 1,
+ "title": "Reflected Gray code, built by mirroring",
+ "width": 560,
+ "height": 340,
+ "intro": "The 1-bit Gray code, 0 and 1. Longer codes will be built to its right, each from the one before.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "Building Gray codes by reflection",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 72.0,
+   "y": 52,
+   "text": "1 bit",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "hidden": false
+  },
+  {
+   "id": "c1_0",
+   "type": "box",
+   "x": 40,
+   "y": 64,
+   "w": 64,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": false,
+   "tone": "ink",
+   "label": "0"
+  },
+  {
+   "id": "c1_1",
+   "type": "box",
+   "x": 40,
+   "y": 94,
+   "w": 64,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": false,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 242.0,
+   "y": 52,
+   "text": "2 bits",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "c2_0",
+   "type": "box",
+   "x": 210,
+   "y": 64,
+   "w": 64,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "ink",
+   "label": "00"
+  },
+  {
+   "id": "c2_1",
+   "type": "box",
+   "x": 210,
+   "y": 94,
+   "w": 64,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "ink",
+   "label": "01"
+  },
+  {
+   "id": "c2_2",
+   "type": "box",
+   "x": 210,
+   "y": 124,
+   "w": 64,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "info",
+   "label": "11"
+  },
+  {
+   "id": "c2_3",
+   "type": "box",
+   "x": 210,
+   "y": 154,
+   "w": 64,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "info",
+   "label": "10"
+  },
+  {
+   "id": "t3",
+   "type": "text",
+   "x": 412.0,
+   "y": 52,
+   "text": "3 bits",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "c3_0",
+   "type": "box",
+   "x": 380,
+   "y": 64,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "ink",
+   "label": "000"
+  },
+  {
+   "id": "c3_1",
+   "type": "box",
+   "x": 380,
+   "y": 94,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "ink",
+   "label": "001"
+  },
+  {
+   "id": "c3_2",
+   "type": "box",
+   "x": 380,
+   "y": 124,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "ink",
+   "label": "011"
+  },
+  {
+   "id": "c3_3",
+   "type": "box",
+   "x": 380,
+   "y": 154,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "ink",
+   "label": "010"
+  },
+  {
+   "id": "c3_4",
+   "type": "box",
+   "x": 380,
+   "y": 184,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "info",
+   "label": "110"
+  },
+  {
+   "id": "c3_5",
+   "type": "box",
+   "x": 380,
+   "y": 214,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "info",
+   "label": "111"
+  },
+  {
+   "id": "c3_6",
+   "type": "box",
+   "x": 380,
+   "y": 244,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "info",
+   "label": "101"
+  },
+  {
+   "id": "c3_7",
+   "type": "box",
+   "x": 380,
+   "y": 274,
+   "w": 74,
+   "h": 28,
+   "mono": true,
+   "size": 16,
+   "hidden": true,
+   "tone": "info",
+   "label": "100"
+  },
+  {
+   "id": "m2",
+   "type": "line",
+   "points": [
+    [
+     200,
+     123
+    ],
+    [
+     284,
+     123
+    ]
+   ],
+   "tone": "danger",
+   "dashed": true,
+   "hidden": true
+  },
+  {
+   "id": "m3",
+   "type": "line",
+   "points": [
+    [
+     370,
+     183
+    ],
+    [
+     464,
+     183
+    ]
+   ],
+   "tone": "danger",
+   "dashed": true,
+   "hidden": true
+  },
+  {
+   "id": "mirror",
+   "type": "text",
+   "x": 300,
+   "y": 330,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "danger"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start with the 1-bit Gray code: 0, 1. The two codes differ in one bit.",
+   "patches": [
+    {
+     "id": "c1_0",
+     "set": {
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "c1_1",
+     "set": {
+      "fill": "subject"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Copy the list, then append its mirror image (1, 0) underneath. Put 0 in front of the top half and 1 in front of the bottom half: 00, 01, 11, 10.",
+   "patches": [
+    {
+     "id": "t2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c2_0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c2_1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c2_2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c2_3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "mirror",
+     "set": {
+      "text": "dashed line = mirror"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Do it again: the 2-bit list, then its mirror, with prefixes 0 and 1. The result is the 3-bit reflected Gray code: 000 001 011 010 110 111 101 100.",
+   "patches": [
+    {
+     "id": "t3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c3_7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Across the mirror line the two neighbours are the same code with only the new front bit changed (010 → 110). And the last code 100 differs from the first 000 in one bit too, so the list wraps round.",
+   "patches": [
+    {
+     "id": "c3_3",
+     "set": {
+      "fill": "warning"
+     }
+    },
+    {
+     "id": "c3_4",
+     "set": {
+      "fill": "warning"
+     }
+    },
+    {
+     "id": "c3_0",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "c3_7",
+     "set": {
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
