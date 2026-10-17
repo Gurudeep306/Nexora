@@ -2172,27 +2172,27 @@
       "verification": "Only B gives $\\varepsilon$ to the final state and $A\\to aA$, $A\\to bB$ from $\\delta(A,\\cdot)$; the string \"b\" is derived as $A\\Rightarrow bB\\Rightarrow b$ and is accepted by M ✓"
     },
     "it-2004-it-42": {
-      "approach": "In 2's complement, overflow happens only when two operands of the same sign give a result of the opposite sign (equivalently, carry into MSB ≠ carry out).",
+      "approach": "Concept tested: **overflow in 4-bit 2's complement**. Decode each sum and compare it with the range $-8 \\dots 7$.",
       "concepts": [
-        "2's complement",
-        "Overflow detection"
+        "2's-complement range",
+        "Overflow rule"
       ],
       "steps": [
         {
-          "title": "1. 1100 + 1100",
-          "body": "$-4+(-4)=-8$; $1100+1100=1\\,1000$ → result $1000=-8$, representable (range $-8\\ldots7$). **No overflow.**"
+          "title": "Sum 1",
+          "body": "$1100 + 1100 = -4 + (-4) = -8$: in range (pattern $1000$)."
         },
         {
-          "title": "2. 0011 + 0111",
-          "body": "$3+7=10>7$; $0011+0111=1010$, a negative result from two positives. **Overflow.**"
+          "title": "Sum 2",
+          "body": "$0011 + 0111 = 3 + 7 = 10 > 7$: overflow ($1010$ looks negative)."
         },
         {
-          "title": "3. 1111 + 0111",
-          "body": "$-1+7=6$; $1111+0111=1\\,0110$ → $0110=6$. Opposite signs never overflow. **No overflow.**"
+          "title": "Sum 3",
+          "body": "$1111 + 0111 = -1 + 7 = 6$: opposite signs, no overflow. Only sum 2 overflows: option (B)."
         }
       ],
       "answer": {
-        "value": "2 only",
+        "value": "2 only — option (B)",
         "choice": [
           "B"
         ],
@@ -2202,28 +2202,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "1100+1100 = −8 fits in 4 bits; the discarded carry-out is not overflow."
+          "reason": "$-8$ is representable; the carry out of $1100 + 1100$ is not overflow."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: only 3+7 = 10 exceeds +7."
+          "reason": "Only $3 + 7 = 10$ leaves the range."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Operands of opposite sign cannot overflow."
+          "reason": "Opposite signs never overflow in addition."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Neither 1 nor 3 overflows."
+          "reason": "Both 1 and 3 merely produce a carry out."
         }
       ],
+      "shortcut": "Same-sign pairs only: (1) $-8$ fits, (2) $10$ does not.",
       "pitfalls": [
-        "Treating the carry-out of the MSB as overflow."
+        "Equating carry out with overflow.",
+        "Forgetting that $-8$ is in the 4-bit range."
       ],
-      "verification": "Carry into MSB vs carry out: (1) 1 vs 1, (2) 1 vs 0 ⇒ overflow, (3) 1 vs 1 ✓"
+      "verification": "Carry rule: sum 2 has carry into bit 3 = 1, out = 0 (differ); sums 1 and 3 have equal carries. ✓"
     },
     "it-2004-it-43": {
       "approach": "Concept tested: one binary string read in several power-of-2 bases. Expand the octal number to bits once, then regroup in fours (hex) and in twos (base 4).",

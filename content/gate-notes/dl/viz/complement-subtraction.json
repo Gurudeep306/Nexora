@@ -1,0 +1,318 @@
+{
+ "version": 1,
+ "title": "Complement subtraction with the end-around carry",
+ "width": 600,
+ "height": 400,
+ "narrow": {
+  "width": 360,
+  "height": 360
+ },
+ "intro": "M = 1010100 (84). We will subtract N = 1000011 (67) using only an adder and bit inversion.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "84 − 67 with the 1's complement and the end-around carry",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "84 − 67, 1's complement",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "m",
+   "type": "bits",
+   "x": 150,
+   "y": 70,
+   "bits": " 1010100",
+   "cell": 46,
+   "hidden": false,
+   "fill": "none",
+   "narrow": {
+    "x": 88,
+    "y": 70,
+    "cell": 34
+   }
+  },
+  {
+   "id": "ml",
+   "type": "text",
+   "x": 138,
+   "y": 93.0,
+   "text": "M",
+   "anchor": "end",
+   "size": 14,
+   "hidden": false,
+   "narrow": {
+    "x": 80,
+    "y": 87.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "nb",
+   "type": "bits",
+   "x": 150,
+   "y": 124,
+   "bits": " 0111100",
+   "cell": 46,
+   "hidden": true,
+   "fill": "none",
+   "narrow": {
+    "x": 88,
+    "y": 116,
+    "cell": 34
+   }
+  },
+  {
+   "id": "nbl",
+   "type": "text",
+   "x": 138,
+   "y": 147.0,
+   "text": "N̄",
+   "anchor": "end",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "x": 80,
+    "y": 133.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "s",
+   "type": "bits",
+   "x": 150,
+   "y": 196,
+   "bits": "10010000",
+   "cell": 46,
+   "hidden": true,
+   "fill": "none",
+   "narrow": {
+    "x": 88,
+    "y": 178,
+    "cell": 34
+   }
+  },
+  {
+   "id": "sl",
+   "type": "text",
+   "x": 138,
+   "y": 219.0,
+   "text": "sum",
+   "anchor": "end",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "x": 80,
+    "y": 195.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "e",
+   "type": "bits",
+   "x": 150,
+   "y": 250,
+   "bits": "       1",
+   "cell": 46,
+   "hidden": true,
+   "fill": "none",
+   "narrow": {
+    "x": 88,
+    "y": 224,
+    "cell": 34
+   }
+  },
+  {
+   "id": "el",
+   "type": "text",
+   "x": 138,
+   "y": 273.0,
+   "text": "+1",
+   "anchor": "end",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "x": 80,
+    "y": 241.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "r",
+   "type": "bits",
+   "x": 150,
+   "y": 314,
+   "bits": " 0010001",
+   "cell": 46,
+   "hidden": true,
+   "fill": "success",
+   "narrow": {
+    "x": 88,
+    "y": 282,
+    "cell": 34
+   }
+  },
+  {
+   "id": "rl",
+   "type": "text",
+   "x": 138,
+   "y": 337.0,
+   "text": "M − N",
+   "anchor": "end",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "x": 80,
+    "y": 299.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "bar",
+   "type": "line",
+   "points": [
+    [
+     150,
+     182
+    ],
+    [
+     518,
+     182
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      88,
+      166
+     ],
+     [
+      360,
+      166
+     ]
+    ]
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 300,
+   "y": 380,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 340,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Write N = 1000011 (67) and flip every bit: N̄ = 0111100. This is the 1's complement, 2⁷ − 1 − 67 = 60.",
+   "patches": [
+    {
+     "id": "nb",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nbl",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add M + N̄ = 1010100 + 0111100 = 1 0010000. The sum is 144 = 2⁷ + 16: a carry comes out of the top bit because M > N.",
+   "patches": [
+    {
+     "id": "bar",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s",
+     "set": {
+      "hidden": false,
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "sl",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "End-around carry: remove the carry (worth 2⁷) and add it back as 1 at the bottom. Removing 2⁷ leaves M − N − 1 = 16; adding 1 corrects the 'one short' of the 1's complement.",
+   "patches": [
+    {
+     "id": "e",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "el",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "16 + 1 = 17"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Result 0010001 = 17 = 84 − 67. Had there been no carry, the result would have been negative, with magnitude equal to the 1's complement of the sum.",
+   "patches": [
+    {
+     "id": "r",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "84 − 67 = 17 ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

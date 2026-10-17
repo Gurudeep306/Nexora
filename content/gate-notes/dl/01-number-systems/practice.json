@@ -1659,5 +1659,211 @@
     ],
     "blocks": ["gray-successor", "ex-succ-edge"],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Compute $110110_2 - 1011_2$ by binary subtraction and give the result in decimal.",
+    "answer": 43,
+    "solution": [
+      "Align: $110110 - 001011$.",
+      "Column 0: $0 - 1$ borrows: $2 - 1 = 1$. Column 1: $1 - 1 - 1$ borrows: $2 + 1 - 1 - 1 = 1$. Column 2: $1 - 0 - 1 = 0$. Column 3: $0 - 1$ borrows: $2 - 1 = 1$. Column 4: $1 - 0 - 1 = 0$. Column 5: $1$.",
+      "Result $101011_2 = 43$; check $54 - 11 = 43$."
+    ],
+    "concept": "Binary subtraction borrows 2 from the next column.",
+    "common_wrong": [
+      { "answer": 45, "why": "A borrow was taken but not paid back in the next column." },
+      { "answer": 65, "why": "The columns were added instead of subtracted ($54 + 11$)." }
+    ],
+    "blocks": ["binary-add", "ex-sub-borrow"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Using 4-digit 10's-complement arithmetic, $4021 - 7352$ is computed as $4021 + 2648$. How is the sum interpreted?",
+    "options": [
+      { "l": "A", "t": "No carry: the result is $-3331$" },
+      { "l": "B", "t": "No carry: the result is $6669$" },
+      { "l": "C", "t": "No carry: the result is $-3332$" },
+      { "l": "D", "t": "Carry: the result is $3331$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$2648$ is the 10's complement of $7352$ ($10^4 - 7352$).",
+      "$4021 + 2648 = 6669$, still 4 digits: no carry, so the result is negative.",
+      "Magnitude = 10's complement of $6669$ = $10^4 - 6669 = 3331$. Result $-3331$ (check: $4021 - 7352 = -3331$)."
+    ],
+    "concept": "In r's-complement subtraction, no carry means a negative result whose magnitude is the complement of the sum.",
+    "common_wrong": [
+      { "answer": "B", "why": "The sum 6669 is the 10's-complement **pattern** of the answer, not the answer itself." },
+      { "answer": "C", "why": "That is the 9's complement of 6669; with the 10's complement no 1 is lost." },
+      { "answer": "D", "why": "There is no carry out of 4 digits, and the true difference is negative." }
+    ],
+    "blocks": ["radix-sub", "end-around"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Compute $01100101_2 - 00101100_2$ with the 1's complement (8 bits, with the end-around carry) and give the result in decimal.",
+    "answer": 57,
+    "solution": [
+      "1's complement of $00101100$: $11010011$.",
+      "$01100101 + 11010011 = 1\\,00111000$: a carry out.",
+      "End-around: $00111000 + 1 = 00111001 = 57$. Check: $101 - 44 = 57$."
+    ],
+    "concept": "With the (r−1)'s complement, a carry out is added back to the result.",
+    "common_wrong": [
+      { "answer": 56, "why": "The end-around carry was dropped instead of added back." },
+      { "answer": 312, "why": "The carry was kept as a ninth bit ($100111000_2$)." }
+    ],
+    "blocks": ["diminished-sub", "end-around"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q04",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "In 4-bit 2's-complement arithmetic, which of these operations overflow?",
+    "options": [
+      { "l": "A", "t": "$0110 + 0011$" },
+      { "l": "B", "t": "$1100 + 1101$" },
+      { "l": "C", "t": "$1000 + 1111$" },
+      { "l": "D", "t": "$0111 - 1111$" }
+    ],
+    "answer": ["A", "C", "D"],
+    "solution": [
+      "(A) $6 + 3 = 9 > 7$: overflow ($0110 + 0011 = 1001$ looks negative).",
+      "(B) $-4 + (-3) = -7$: in range, no overflow ($1\\,1001$, carry dropped, $1001 = -7$).",
+      "(C) $-8 + (-1) = -9 < -8$: overflow ($1\\,0111$ looks positive).",
+      "(D) $7 - (-1) = 8 > 7$: overflow; subtraction with opposite-sign operands can overflow."
+    ],
+    "concept": "A 2's-complement result overflows when the true value leaves −2^(n−1) … 2^(n−1) − 1.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C"], "why": "(B) carries out of the top bit, but a carry is not an overflow; (D) was missed because the operands have opposite signs, which can overflow in **subtraction**." },
+      { "answer": ["A", "C"], "why": "(D) is $7 + 1 = 8$ after negating $-1$; subtraction of a negative number can overflow." }
+    ],
+    "blocks": ["overflow-rule", "trap-carry-overflow"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q05",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A processor adds the 8-bit 2's-complement numbers $10010110$ and $10100011$. What are the carry (C), overflow (V) and sign (S) flags, in that order?",
+    "options": [
+      { "l": "A", "t": "1, 1, 0" },
+      { "l": "B", "t": "1, 0, 0" },
+      { "l": "C", "t": "0, 1, 1" },
+      { "l": "D", "t": "1, 1, 1" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Unsigned: $150 + 163 = 313 = 256 + 57$, so the result is $00111001$ and $C = 1$.",
+      "Signed: $-106 + (-93) = -199 < -128$: two negative operands gave a positive-looking result, so $V = 1$.",
+      "The result's top bit is 0, so $S = 0$."
+    ],
+    "concept": "C is the unsigned carry out; V is signed overflow (same-sign operands, other-sign result); S is the result's top bit.",
+    "common_wrong": [
+      { "answer": "B", "why": "Overflow was judged from the carry alone; here both operands are negative and the result is positive, so V = 1." },
+      { "answer": "D", "why": "S is the sign bit of the stored result (0), not the sign of the true sum." }
+    ],
+    "blocks": ["carry-vs-overflow", "overflow-rule"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The BCD numbers $0111\\,1001$ and $0101\\,0110$ are added digit by digit. How many times is the $+6$ ($0110$) correction applied?",
+    "answer": 2,
+    "solution": [
+      "Units: $9 + 6 = 15 > 9$: correct ($1111 + 0110 = 1\\,0101$), digit 5, carry 1.",
+      "Tens: $7 + 5 + 1 = 13 > 9$: correct ($1101 + 0110 = 1\\,0011$), digit 3, carry 1.",
+      "Result $1\\,0011\\,0101 = 135 = 79 + 56$, with 2 corrections."
+    ],
+    "concept": "A BCD digit sum above 9 (or with a carry out) needs +6.",
+    "common_wrong": [
+      { "answer": 1, "why": "Only the units digit was corrected; the tens digit $7 + 5 + 1 = 13$ also exceeds 9 and needs its own +6." },
+      { "answer": 0, "why": "The digits were added as one 8-bit binary number; BCD needs a per-digit correction." }
+    ],
+    "blocks": ["bcd-add", "bcd-why-six"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "The excess-3 codes of 24 and 35 are $0101\\,0111$ and $0110\\,1000$. What is the excess-3 code of their sum, after the corrections?",
+    "options": [
+      { "l": "A", "t": "$1000\\,1100$" },
+      { "l": "B", "t": "$0101\\,1001$" },
+      { "l": "C", "t": "$1011\\,1111$" },
+      { "l": "D", "t": "$1000\\,1111$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Units: $0111 + 1000 = 1111$, no carry → subtract 3: $1100$ (excess-3 of 9).",
+      "Tens: $0101 + 0110 = 1011$, no carry → subtract 3: $1000$ (excess-3 of 5).",
+      "Result $1000\\,1100$ = excess-3 of $59 = 24 + 35$."
+    ],
+    "concept": "Excess-3 addition: no carry → subtract 3; carry → add 3.",
+    "common_wrong": [
+      { "answer": "B", "why": "That is the BCD code of 59, not the excess-3 code." },
+      { "answer": "C", "why": "That is the raw binary sum; each digit still carries an excess of 6 and needs −3." },
+      { "answer": "D", "why": "Only the tens digit was corrected; every digit needs its own −3." }
+    ],
+    "blocks": ["xs3-add", "xs3-why"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q08",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The 8-bit 2's-complement pattern $10110100$ is shifted right arithmetically by 3 places. What is the result?",
+    "options": [
+      { "l": "A", "t": "$11110110$" },
+      { "l": "B", "t": "$00010110$" },
+      { "l": "C", "t": "$11110111$" },
+      { "l": "D", "t": "$10100000$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$10110100 = -76$.",
+      "An arithmetic right shift copies the sign bit into the vacated places: $10110100 \\to 11011010 \\to 11101101 \\to 11110110$.",
+      "$11110110 = -10 = \\lfloor -76 / 8 \\rfloor = \\lfloor -9.5 \\rfloor$."
+    ],
+    "concept": "An arithmetic right shift by k computes ⌊x / 2^k⌋ (rounding toward −∞).",
+    "common_wrong": [
+      { "answer": "B", "why": "That is a logical shift (0s brought in), which gives $22$ for a negative number." },
+      { "answer": "C", "why": "$-9$ is $-9.5$ rounded toward 0 (C's division), but shifting rounds toward $-\\infty$." },
+      { "answer": "D", "why": "That is a left shift." }
+    ],
+    "blocks": ["shift-arith", "trap-asr"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q09",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Add $(123)_4$ and $(321)_4$ in base 4. Enter the base-4 digits of the sum as a number (for example, $(1032)_4$ is entered as 1032).",
+    "answer": 1110,
+    "solution": [
+      "Units: $3 + 1 = 4 = 10_4$: write 0, carry 1.",
+      "Fours: $2 + 2 + 1 = 5 = 11_4$: write 1, carry 1.",
+      "Sixteens: $1 + 3 + 1 = 5 = 11_4$: write 1, carry 1 into a new digit.",
+      "Sum $(1110)_4$. Check: $27 + 57 = 84 = 64 + 16 + 4$."
+    ],
+    "concept": "In base b a column carries when it reaches b.",
+    "common_wrong": [
+      { "answer": 444, "why": "No carries were made; 4 is not a base-4 digit." },
+      { "answer": 84, "why": "That is the decimal value; the question asks for the base-4 digits." }
+    ],
+    "blocks": ["base-b-arith"],
+    "source": "nexora"
   }
 ]

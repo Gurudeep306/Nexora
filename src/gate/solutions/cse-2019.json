@@ -864,27 +864,27 @@
       "verification": "For $L = \\Sigma^*$, (A) becomes $\\Sigma^*$ (regular) while (B) becomes the even palindromes (not regular)."
     },
     "cse-2019-cs-8": {
-      "approach": "Find the largest possible magnitude of $X - Y$: it happens when the two have opposite signs and maximum magnitudes, so the magnitudes add.",
+      "approach": "Concept tested: **sign-magnitude range and overflow**. With $n$ bits the magnitudes go up to $2^{n-1} - 1$; $X - Y$ with opposite signs adds the magnitudes, reaching $2^n - 2$, which needs $n$ magnitude bits plus a sign: $n + 1$ bits.",
       "concepts": [
-        "Sign-magnitude",
-        "Overflow"
+        "Sign-magnitude range",
+        "Overflow in sign-magnitude"
       ],
       "steps": [
         {
-          "title": "Range of each operand",
-          "body": "$n$-bit sign-magnitude: 1 sign bit + $(n-1)$ magnitude bits, range $\\pm(2^{n-1} - 1)$."
+          "title": "Range of X and Y",
+          "body": "$n$-bit sign-magnitude: $-(2^{n-1} - 1) \\dots 2^{n-1} - 1$."
         },
         {
-          "title": "Worst case",
-          "body": "$X = 2^{n-1} - 1$, $Y = -(2^{n-1} - 1)$: $Z = X - Y = 2^n - 2$."
+          "title": "Worst case of X − Y",
+          "body": "$X = 2^{n-1} - 1$, $Y = -(2^{n-1} - 1)$: $X - Y = 2^n - 2$ (and symmetrically $-(2^n - 2)$)."
         },
         {
-          "title": "Bits for Z",
-          "body": "Magnitude $2^n - 2$ needs $n$ bits (since $2^{n-1} \\le 2^n - 2 \\le 2^n - 1$ for $n \\ge 2$), plus 1 sign bit ⇒ **$n + 1$ bits**."
+          "title": "Bits needed",
+          "body": "Magnitude $2^n - 2 < 2^n$ needs $n$ bits, plus 1 sign bit: $n + 1$ bits. Option (C)."
         }
       ],
       "answer": {
-        "value": "n + 1 bits",
+        "value": "$n + 1$ bits — option (C)",
         "choice": [
           "C"
         ],
@@ -894,25 +894,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$n$ bits hold magnitudes only up to $2^{n-1} - 1$; $2^n - 2$ overflows."
+          "reason": "$n$ bits hold magnitudes up to $2^{n-1} - 1$, but $X - Y$ can reach $2^n - 2$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Fewer bits than an operand — certainly overflows."
+          "reason": "Fewer bits than the operands cannot hold even $X - 0$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$n$ magnitude bits + 1 sign bit cover $\\pm(2^n - 1) \\supseteq \\pm(2^n - 2)$. Correct."
+          "reason": "One extra bit absorbs the doubled magnitude."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Enough, but not the minimum."
+          "reason": "Two extra bits are more than the minimum."
         }
       ],
-      "verification": "Example $n = 4$: range $\\pm 7$; $7 - (-7) = 14$ needs 4 magnitude bits + sign = 5 = $n + 1$."
+      "shortcut": "Adding or subtracting two $n$-bit numbers never needs more than one extra bit.",
+      "pitfalls": [
+        "Thinking subtraction can only shrink the result (opposite signs make it grow)."
+      ],
+      "verification": "$n = 4$: $7 - (-7) = 14$ needs magnitude 1110 (4 bits) + sign = 5 bits. ✓"
     },
     "cse-2019-cs-9": {
       "approach": "For a square matrix, invertibility and non-zero determinant are equivalent: $\\det(X)\\det(X^{-1}) = 1$ in one direction, and the adjugate formula in the other.",

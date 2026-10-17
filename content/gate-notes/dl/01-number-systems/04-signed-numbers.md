@@ -24,7 +24,7 @@ encodings (sign-magnitude, 1's complement and 2's complement), learn why 2's com
 and become fast at the things GATE asks again and again: the range of an $n$-bit format,
 encoding and decoding negative values, the invert-and-add-1 rule and its copy-to-the-first-1
 shortcut, complements in any base, the smallest width that holds a value, sign extension, and
-arithmetic shifts. This is the most-tested lesson of the chapter: sixteen previous-year
+arithmetic shifts. It is one of the two most-tested lessons of the chapter: fifteen previous-year
 questions.
 
 ## Where this fits
@@ -38,13 +38,13 @@ use the biased (excess-K) code from the end of this lesson for floating-point ex
 :::table{#radar title="GATE radar: signed numbers and complements" depth="quick"}
 | What | Detail |
 |:--|:--|
-| PYQs mapped to this lesson | 16 (1994–2025), the most of any lesson in the chapter |
-| Marks | 12 one-mark, 2 two-mark, one 5-mark descriptive (1995) and one unmarked fill-in (1994) |
-| Formats | 10 MCQ, 2 MSQ, 2 NAT, 1 fill-in, 1 descriptive |
+| PYQs mapped to this lesson | 15 (1994–2025) |
+| Marks | 11 one-mark, 2 two-mark, one 5-mark descriptive (1995) and one unmarked fill-in (1994) |
+| Formats | 9 MCQ, 2 MSQ, 2 NAT, 1 fill-in, 1 descriptive |
 | Pattern 1 | Range of $n$-bit 2's complement: 1994, 2005, 2013 |
 | Pattern 2 | Encode or decode a value: 1998, 2000, 2002, 2016, 2019 |
 | Pattern 3 | Two zeros and value counts: 1999, 2016 |
-| Pattern 4 | Sign extension and shifts: 2002, 2010, 2025 |
+| Pattern 4 | Sign extension: 2002, 2025 (the 2010 question on 8·P by shifting is solved in Lesson 9) |
 | Pattern 5 | Complements in hex, divisibility, a conversion routine: 1995, 2001, 2003 |
 | What examiners test | Range "$-2^{n-1}$ to $2^{n-1}$" (off by one), zero-padding a negative number, and $-15$ as $1111$ |
 :::
@@ -778,7 +778,7 @@ stores the exponent in excess-127, so $1000\,0010 = 130 - 127 = 3$ ([Lesson 6](l
 
 ## GATE questions on this lesson
 
-All sixteen previous-year questions for this lesson, from the easiest to the hardest.
+All fifteen previous-year questions for this lesson, from the easiest to the hardest.
 
 :::pyq{id="cse-2000-a-1-6" tests="twos-complement,unsigned-range" depth="standard"}
 :::
@@ -817,9 +817,6 @@ All sixteen previous-year questions for this lesson, from the easiest to the har
 :::
 
 :::pyq{id="cse-2001-a-35" tests="radix-complement,trick-hex-complement" depth="standard"}
-:::
-
-:::pyq{id="cse-2010-cs-8" tests="arithmetic-shift,decode-twos" depth="standard"}
 :::
 
 :::pyq{id="cse-2003-cs-9" tests="decode-twos" depth="standard"}

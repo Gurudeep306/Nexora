@@ -26,6 +26,8 @@ LESSONS = {
     "06-ieee-754.md": "dl-01-06-ieee-754",
     "07-floating-point-arithmetic.md": "dl-01-07-floating-point-arithmetic",
     "08-codes.md": "dl-01-08-codes",
+    "09-code-arithmetic.md": "dl-01-09-code-arithmetic",
+    "10-multiplication-booth.md": "dl-01-10-multiplication-booth",
 }
 OPEN = re.compile(r"^(:{3,})([a-z]+)(\{.*\})?\s*$")
 CLOSE = re.compile(r"^(:{3,})\s*$")

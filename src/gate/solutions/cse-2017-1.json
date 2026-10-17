@@ -920,24 +920,27 @@
       "verification": "Trace with `n = 1→NULL`, `m = 2→NULL`: loop does not run, `p->next = m`, result `1→2→NULL`."
     },
     "cse-2017-1-cs-9": {
-      "approach": "In 2's complement, overflow happens exactly when two operands of the same sign give a sum of the opposite sign; write that as a Boolean expression on the sign bits.",
+      "approach": "Concept tested: **the overflow condition in terms of signs**. Overflow happens when both operands have the same sign and the sum's sign is different: $A_7 B_7 \\overline{S_7} + \\overline{A_7}\\,\\overline{B_7} S_7$.",
       "concepts": [
-        "2's complement overflow",
-        "Sign bits",
-        "Ripple-carry adder"
+        "Overflow rule",
+        "Sign bits"
       ],
       "steps": [
         {
-          "title": "Overflow rule",
-          "body": "Adding a positive and a negative number can never overflow. Overflow occurs iff both are positive and the sum is negative, or both are negative and the sum is non-negative."
+          "title": "Two negative operands",
+          "body": "$A_7 = B_7 = 1$ and a non-negative-looking result $S_7 = 0$: the term $A_7 B_7 \\overline{S_7}$."
         },
         {
-          "title": "Translate to sign bits",
-          "body": "- Both negative, sum positive: $A_7 B_7 \\overline{S_7}$.\n- Both positive, sum negative: $\\overline{A_7}\\,\\overline{B_7} S_7$.\n\nOverflow $= A_7 B_7 \\overline{S_7} + \\overline{A_7}\\,\\overline{B_7} S_7$, which is option C."
+          "title": "Two non-negative operands",
+          "body": "$A_7 = B_7 = 0$ and a negative-looking result $S_7 = 1$: the term $\\overline{A_7}\\,\\overline{B_7} S_7$."
+        },
+        {
+          "title": "Answer",
+          "body": "The OR of the two terms is option (C). The ripple-carry adder only computes the bits; the condition is about the numbers."
         }
       ],
       "answer": {
-        "value": "A7·B7·S7′ + A7′·B7′·S7 is 1",
+        "value": "(C) $A_7 B_7 \\overline{S_7} + \\overline{A_7}\\,\\overline{B_7} S_7$",
         "choice": [
           "C"
         ],
@@ -947,26 +950,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Carry-out alone is not overflow: $(-1)+(1)$ gives $C_7=1$ with the correct result 0."
+          "reason": "A carry out of the top bit alone is not overflow ($-1 + 1$ carries but is correct)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "All carries 1 is neither necessary nor sufficient, e.g. $11111111+00000001$ sets all carries but $-1+1=0$ is correct."
+          "reason": "All carries being 1 is neither necessary nor sufficient (e.g. $-1 + (-1)$ is correct)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Exactly the \"same-sign operands, different-sign result\" condition on bit 7."
+          "reason": "Same-sign operands with a different-sign result."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Uses the least significant bits, which carry no sign information."
+          "reason": "Bit 0 says nothing about the sign; this is the same formula on the wrong bits."
         }
       ],
-      "shortcut": "Equivalent form: overflow $= c_{\\text{in},7} \\oplus c_{\\text{out},7}$.",
-      "verification": "$01111111+00000001=10000000$: $A_7=B_7=0,S_7=1$ → C gives 1 (127+1 overflows)."
+      "shortcut": "Overflow formulas always involve the **sign bits** (bit 7 here); that eliminates (D) and (B).",
+      "pitfalls": [
+        "Choosing the carry-out option (A)."
+      ],
+      "verification": "Brute force over all 8-bit pairs: (C) is 1 exactly when the true sum is outside $-128 \\dots 127$. ✓"
     },
     "cse-2017-1-cs-10": {
       "approach": "Expand the recursion of $S$: each application adds one $ab$ on the left and one $cT$ on the right, and each $T$ independently derives $b^m$, $m\\ge1$.",

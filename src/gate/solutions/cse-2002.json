@@ -1063,22 +1063,27 @@
       "verification": "Standard result (Codd 1972), stated in all database textbooks."
     },
     "cse-2002-a-21": {
-      "approach": "Overflow means the true sum lies outside the representable range. Adding numbers of opposite sign gives a result between them, so it always fits.",
+      "approach": "Concept tested: **the overflow condition** for 2's-complement addition. Overflow needs same-sign operands; equivalently the carry into the sign bit differs from the carry out of it.",
       "concepts": [
-        "2's complement overflow"
+        "Overflow rule",
+        "Carry vs overflow"
       ],
       "steps": [
         {
           "title": "Opposite signs",
-          "body": "If $a\\ge0>b$ then $b\\le a+b<a$, so $a+b$ lies inside the representable range: no overflow."
+          "body": "If one operand is positive and the other negative, the sum lies between them, hence inside the range: no overflow is possible. That is statement (B)."
         },
         {
-          "title": "Test A and C",
-          "body": "4-bit: $0111+1111$ ($7+(-1)$) $=1\\,0110$: carry out of the sign bit, yet the result $6$ is correct, so A is wrong. Overflow is flagged when the carry into and out of the sign bit differ (not match), so C is wrong."
+          "title": "Check the other statements",
+          "body": "(A) A carry from the sign bit happens in many correct sums, e.g. $-1 + 1 = 0$ ($1111 + 0001 = 1\\,0000$). (C) Overflow is flagged when the two carries **differ**, not when they match."
+        },
+        {
+          "title": "Conclusion",
+          "body": "(B) is true, so (D) 'none of the above' is false. Answer (B)."
         }
       ],
       "answer": {
-        "value": "cannot occur when a positive value is added to a negative value",
+        "value": "(B) overflow cannot occur when a positive value is added to a negative value",
         "choice": [
           "B"
         ],
@@ -1088,25 +1093,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Carry-out alone is not overflow: $7+(-1)$ produces a carry but the result 6 is correct."
+          "reason": "A carry out of the sign bit is not overflow: $1111 + 0001 = 1\\,0000$ is the correct $0$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: the sum of opposite-sign numbers lies between them."
+          "reason": "The sum of opposite-sign values lies between them, so it always fits."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Overflow $=c_{n}\\oplus c_{n-1}$: flagged when the carries differ."
+          "reason": "Overflow is flagged when the carry into and out of the sign bit **differ**."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "B is true."
+          "reason": "(B) is a correct statement."
         }
       ],
-      "verification": "Exhaustive over 4-bit pairs of opposite sign: every sum lies in $[-8,7]$."
+      "shortcut": "Remember V = $c_{n-1} \\oplus c_n$; anything else in the options is a distractor.",
+      "pitfalls": [
+        "Some old keys say (D); (B) is the factually correct statement (see the question's review note)."
+      ],
+      "verification": "Brute force over all 4-bit pairs: no opposite-sign pair overflows. ✓"
     },
     "cse-2002-a-22": {
       "approach": "A scheduler is non-preemptive if a running process keeps the CPU until it blocks or ends; FIFO (FCFS) is the only such one listed.",
