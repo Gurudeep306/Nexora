@@ -6045,10 +6045,10 @@
       }
     },
     "cse-2024-2-cs-39": {
-      "approach": "Convert everything to decimal with positional weights and compare with $224_5$.",
+      "approach": "Concept tested: comparing numerals written in different bases. Each one must be turned into its value; there is no way to compare the digit strings directly. Find $224_5$ in decimal and test every option (it is an MSQ).",
       "concepts": [
-        "Positional number systems",
-        "Base conversion"
+        "Place value (expansion)",
+        "Comparing bases through values"
       ],
       "steps": [
         {
@@ -6077,17 +6077,17 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$224_5 = 64$ in decimal."
+          "reason": "$224_5 = 2\\cdot25 + 2\\cdot5 + 4 = 64$, which is $64$ in radix 10."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$100_8 = 8^2 = 64$."
+          "reason": "$100_8 = 1\\cdot 8^2 = 64$ (a 1 followed by two zeros is the base squared)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$50_{16} = 5 \\times 16 = 80 \\ne 64$ (the hex value equal to 64 is $40_{16}$)."
+          "reason": "$50_{16} = 5\\cdot16 = 80 \\ne 64$. The hex form of 64 is $40_{16}$; this distractor comes from guessing a digit instead of dividing."
         },
         {
           "option": "D",
@@ -6095,9 +6095,10 @@
           "reason": "$121_7 = 49 + 14 + 1 = 64$."
         }
       ],
-      "shortcut": "$64 = 2^6 = 8^2 = 4 \\cdot 16$, so in base 8 it is $100$ and in base 16 it is $40$, not $50$.",
+      "shortcut": "$64 = 8^2$ gives $100_8$ at once, and $64 = 4\\cdot16$ gives $40_{16}$, which rules out C. Only D needs a calculation: $121_7 = (7+1)^2 = 64$.",
       "pitfalls": [
-        "Reading $224_5$ with weights $10^k$ or mixing up $5^2 = 25$ with $5 \\times 2$."
+        "Expanding $224_5$ with powers of 10, or computing $5^2$ as $10$.",
+        "Stopping after the first correct option: an MSQ can have several (here three)."
       ],
       "verification": "Back-convert 64 to base 5: $64 = 2 \\cdot 25 + 14$, $14 = 2 \\cdot 5 + 4$ → digits $2, 2, 4$ ✓; and to base 7: $64 = 1 \\cdot 49 + 15$, $15 = 2 \\cdot 7 + 1$ → $121$ ✓."
     },

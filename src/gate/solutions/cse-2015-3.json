@@ -2943,23 +2943,28 @@
       "verification": "Every schedule ends at 15 (total burst 15, no idle time); only the completion order changes the TAT sum."
     },
     "cse-2015-3-cs-35": {
-      "approach": "Expand both sides: $4x + 3 = 8y + 3 \\Rightarrow x = 2y$; then apply digit constraints ($x \\ge 5$, $0 \\le y \\le 7$).",
+      "approach": "Concept tested: counting solutions under digit limits. Expanding both sides gives a simple relation $x = 2y$; the base $x$ must exceed the digit 4, and $y$ must be an octal digit.",
       "concepts": [
-        "Number bases",
-        "Positional notation"
+        "Polynomial in the radix",
+        "Digit limit",
+        "Counting solutions"
       ],
       "steps": [
         {
-          "title": "Equation",
-          "body": "$(43)_x = 4x + 3$ and $(y3)_8 = 8y + 3$ ⇒ $4x = 8y$ ⇒ $x = 2y$."
+          "title": "Translate",
+          "body": "$(43)_x = 4x + 3$ and $(y3)_8 = 8y + 3$, so $4x = 8y$ and $x = 2y$."
         },
         {
-          "title": "Constraints",
-          "body": "Digit 4 needs base $x \\ge 5$ ⇒ $2y \\ge 5$ ⇒ $y \\ge 3$. Octal digit: $y \\le 7$."
+          "title": "Range of y",
+          "body": "$y$ is a digit of base 8: $0 \\le y \\le 7$, giving candidates $x = 0, 2, 4, \\dots, 14$."
+        },
+        {
+          "title": "Digit limit on x",
+          "body": "The numeral $(43)_x$ uses the digit 4, so $x \\ge 5$, which means $2y \\ge 5$, i.e. $y \\ge 3$."
         },
         {
           "title": "Count",
-          "body": "$y \\in \\{3,4,5,6,7\\}$ ⇒ $(x,y) = (6,3), (8,4), (10,5), (12,6), (14,7)$: **5** solutions."
+          "body": "$y \\in \\{3, 4, 5, 6, 7\\}$ gives $(x, y) = (6,3), (8,4), (10,5), (12,6), (14,7)$: **5** solutions."
         }
       ],
       "answer": {
@@ -2967,10 +2972,12 @@
         "number": 5,
         "matchesKey": true
       },
+      "shortcut": "$x = 2y$ with $3 \\le y \\le 7$: count the integers from 3 to 7, which is 5.",
       "pitfalls": [
-        "Allowing $y = 2$ ($x = 4$), where 4 is not a valid base-4 digit."
+        "Allowing $y = 1$ or $2$ ($x = 2$ or $4$): the digit 4 is not legal in bases 2 or 4. That over-count gives 7.",
+        "Allowing $y = 8$ or more: $y$ is an octal digit."
       ],
-      "verification": "$(43)_6 = 27 = (33)_8$ ✓; $(43)_{14} = 59 = (73)_8$ ✓."
+      "verification": "$(43)_6 = 27 = (33)_8$ ✓ and $(43)_{14} = 59 = (73)_8$ ✓."
     },
     "cse-2015-3-cs-36": {
       "approach": "Draw the timeline packet by packet: two 5000-bit packets, store-and-forward with a 35 µs processing delay at the switch. The answer is the moment the last bit of packet 2 reaches the receiver.",

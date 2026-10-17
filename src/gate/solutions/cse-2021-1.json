@@ -772,18 +772,24 @@
       "verification": "Standard textbook facts (Dragon book Ex. 4.48 grammar; CYK complexity)."
     },
     "cse-2021-1-cs-6": {
-      "approach": "Convert base 3 to decimal, then decimal to hexadecimal.",
+      "approach": "Concept tested: base conversion when the two bases (3 and 16) are not powers of a common number, so there is no grouping shortcut. Read $(210)_3$ into decimal by place values, then write the value in hex by repeated division.",
       "concepts": [
-        "Base conversion"
+        "Place value (expansion)",
+        "Repeated division",
+        "Base to base via decimal"
       ],
       "steps": [
         {
-          "title": "Base 3 → decimal",
-          "body": "$(210)_3=2\\cdot3^2+1\\cdot3+0=18+3=21$."
+          "title": "Read the base-3 numeral",
+          "body": "The places in base 3 are $3^2 = 9$, $3^1 = 3$ and $3^0 = 1$:\\n$$(210)_3 = 2\\cdot 9 + 1\\cdot 3 + 0\\cdot 1 = 18 + 3 + 0 = 21.$$"
         },
         {
-          "title": "Decimal → hex",
-          "body": "$21=1\\cdot16+5\\Rightarrow(15)_{16}$."
+          "title": "Write 21 in base 16",
+          "body": "Divide by 16: $21 = 16\\cdot 1 + 5$, then $1 = 16\\cdot 0 + 1$. The remainders read from the last to the first are $1, 5$, so $21 = (15)_{16}$."
+        },
+        {
+          "title": "Check by converting back",
+          "body": "$(15)_{16} = 1\\cdot 16 + 5 = 21 = (210)_3$. ✓"
         }
       ],
       "answer": {
@@ -797,28 +803,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$(15)_{16}=16+5=21$."
+          "reason": "$(15)_{16} = 16 + 5 = 21$, which is the value of $(210)_3$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "21 is the decimal value, not hex."
+          "reason": "$21$ is the decimal value. Stopping halfway and writing the decimal digits as if they were hex gives this distractor; $(21)_{16}$ is $33$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$(D2)_{16}=210$ decimal — reads \"210\" as decimal."
+          "reason": "$(D2)_{16} = 13\\cdot16 + 2 = 210$: this converts the digit string 210 as if it were *decimal*, ignoring the base 3."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "528 is unrelated."
+          "reason": "$528 = 2\\cdot256 + 1\\cdot16 + 0 = (210)_{16}$: this reads the digits 210 as a hex numeral and writes its decimal value, so both bases are misused."
         }
       ],
+      "shortcut": "$(210)_3 = 3\\cdot(21)_3 = 3\\cdot 7 = 21$ (a trailing 0 in base 3 multiplies by 3), and $21 = 16 + 5$, so the hex numeral is $15$. About 20 seconds.",
       "pitfalls": [
-        "Stopping at the decimal value 21."
+        "Stopping at the decimal value $21$ (option B).",
+        "Treating the digit string 210 as decimal or as hex (options C and D) instead of base 3."
       ],
-      "verification": "$(15)_{16}=21=(210)_3$."
+      "verification": "Both directions agree: $(15)_{16} = 21$ and $21 = 2\\cdot9 + 1\\cdot3 + 0 = (210)_3$."
     },
     "cse-2021-1-cs-7": {
       "approach": "Simplify the common sub-formula: $\\neg p\\wedge(p\\vee q)\\equiv\\neg p\\wedge q$, then check each implication.",

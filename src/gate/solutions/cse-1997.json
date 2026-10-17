@@ -1934,23 +1934,28 @@
       "verification": "Count states: $4\\times2^6=256=2^8$, so 8 bits is the minimum under the simultaneous reading."
     },
     "cse-1997-a-39": {
-      "approach": "Square both sides and compare the base-$r$ expansions, giving a quadratic in $r$.",
+      "approach": "Concept tested: solving for an unknown radix. Square the right side, expand both numerals as polynomials in $r$, solve the quadratic, and keep the root that is a legal base.",
       "concepts": [
-        "Positional number systems",
-        "Radix"
+        "Polynomial in the radix",
+        "Solving for the base",
+        "Digit limit"
       ],
       "steps": [
         {
-          "title": "Expand",
-          "body": "$(224)_r=2r^2+2r+4$ and $(13)_r^2=(r+3)^2=r^2+6r+9$."
+          "title": "Remove the square root",
+          "body": "$\\sqrt{(224)_r} = (13)_r$ means $(224)_r = \\big((13)_r\\big)^2$."
         },
         {
-          "title": "Solve",
-          "body": "$2r^2+2r+4=r^2+6r+9\\Rightarrow r^2-4r-5=0\\Rightarrow(r-5)(r+1)=0\\Rightarrow r=5$."
+          "title": "Expand in base r",
+          "body": "$(224)_r = 2r^2 + 2r + 4$ and $(13)_r^2 = (r + 3)^2 = r^2 + 6r + 9$."
         },
         {
-          "title": "Validity",
-          "body": "Largest digit used is 4 < 5, so radix 5 is valid — (C)."
+          "title": "Solve the quadratic",
+          "body": "$2r^2 + 2r + 4 = r^2 + 6r + 9 \\Rightarrow r^2 - 4r - 5 = 0 \\Rightarrow (r - 5)(r + 1) = 0$, so $r = 5$ or $r = -1$."
+        },
+        {
+          "title": "Keep the legal base",
+          "body": "A radix is a whole number at least 2 and larger than every digit (largest digit 4). So $r = 5$."
         }
       ],
       "answer": {
@@ -1964,26 +1969,28 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "In base 10, $\\sqrt{224}\\approx14.97\\ne13$."
+          "reason": "Base 10: $\\sqrt{224} \\approx 14.97 \\ne 13$. The digits only look decimal."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Base 8: $(224)_8=148$, $(13)_8^2=11^2=121$."
+          "reason": "Base 8: $(224)_8 = 148$ but $(13)_8^2 = 11^2 = 121$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: $(224)_5=64=8^2=(13)_5^2$."
+          "reason": "$(224)_5 = 64 = 8^2$ and $(13)_5 = 8$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Base 6: $(224)_6=88$, $(13)_6^2=9^2=81$."
+          "reason": "Base 6: $(224)_6 = 88$ but $(13)_6^2 = 9^2 = 81$."
         }
       ],
+      "shortcut": "Test the options instead of solving: in base 5, $(13)_5 = 8$ and $8^2 = 64 = 2\\cdot25 + 2\\cdot5 + 4 = (224)_5$. One option check takes less time than the quadratic.",
       "pitfalls": [
-        "Forgetting to check that every digit is smaller than the radix."
+        "Forgetting to check that every digit is smaller than the radix.",
+        "Keeping the negative root $r = -1$."
       ],
       "verification": "$(224)_5=50+10+4=64$, $(13)_5=8$, $8^2=64$ ✓."
     },

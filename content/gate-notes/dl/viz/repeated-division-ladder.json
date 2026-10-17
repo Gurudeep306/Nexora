@@ -1,0 +1,238 @@
+{
+ "version": 1,
+ "title": "Repeated division: 2748 to hexadecimal",
+ "width": 560,
+ "height": 310,
+ "intro": "We will divide by 16 again and again. Each remainder becomes one hex digit.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 24,
+   "y": 26,
+   "text": "Convert 2748 to base 16: divide by 16, keep the remainder",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "r0",
+   "type": "text",
+   "x": 30,
+   "y": 76,
+   "text": "2748 = 16 × 171 + 12",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d0",
+   "type": "box",
+   "x": 300,
+   "y": 55,
+   "w": 56,
+   "h": 42,
+   "mono": true,
+   "size": 22,
+   "hidden": true,
+   "tone": "subject",
+   "label": "C"
+  },
+  {
+   "id": "n0",
+   "type": "text",
+   "x": 372,
+   "y": 76,
+   "text": "12 is the hex digit C",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r1",
+   "type": "text",
+   "x": 30,
+   "y": 130,
+   "text": "171 = 16 × 10 + 11",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d1",
+   "type": "box",
+   "x": 300,
+   "y": 109,
+   "w": 56,
+   "h": 42,
+   "mono": true,
+   "size": 22,
+   "hidden": true,
+   "tone": "subject",
+   "label": "B"
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 372,
+   "y": 130,
+   "text": "11 is the hex digit B",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r2",
+   "type": "text",
+   "x": 30,
+   "y": 184,
+   "text": "10 = 16 × 0 + 10",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d2",
+   "type": "box",
+   "x": 300,
+   "y": 163,
+   "w": 56,
+   "h": 42,
+   "mono": true,
+   "size": 22,
+   "hidden": true,
+   "tone": "subject",
+   "label": "A"
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 372,
+   "y": 184,
+   "text": "10 is the hex digit A",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "up",
+   "type": "arrow",
+   "from": [
+    328,
+    216
+   ],
+   "to": [
+    328,
+    44
+   ],
+   "tone": "success",
+   "hidden": true
+  },
+  {
+   "id": "ans",
+   "type": "box",
+   "x": 150,
+   "y": 250,
+   "w": 260,
+   "h": 44,
+   "mono": true,
+   "size": 19,
+   "hidden": true,
+   "tone": "success",
+   "fill": "success",
+   "label": "2748 = (ABC)₁₆"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Divide 2748 by 16: quotient 171, remainder 12, which is written C in hex. This first remainder is the units digit.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Divide 171 by 16: quotient 10, remainder 11, which is written B in hex. Carry on with the quotient.",
+   "patches": [
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Divide 10 by 16: quotient 0, remainder 10, which is written A in hex. The quotient is now 0, so we stop.",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The first remainder is the lowest digit and the last remainder is the leading digit, so read the column from the bottom up: A, B, C.",
+   "patches": [
+    {
+     "id": "up",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So 2748 = (ABC)₁₆. Check by expanding: 10·256 + 11·16 + 12 = 2560 + 176 + 12 = 2748.",
+   "patches": [
+    {
+     "id": "ans",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  }
+ ]
+}

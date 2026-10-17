@@ -4322,10 +4322,11 @@
       }
     },
     "cse-2023-cs-22": {
-      "approach": "Go through decimal: expand $132_4$ by place values, then convert to radix 5 by repeated division by 5, reading the remainders from last to first.",
+      "approach": "Concept tested: changing between two bases through decimal. Expand $132_4$ by place values to get its value, then write that value in radix 5 by repeated division, reading the remainders from the last to the first.",
       "concepts": [
-        "Positional number systems",
-        "Base conversion by repeated division"
+        "Place value (expansion)",
+        "Repeated division",
+        "Base to base via decimal"
       ],
       "steps": [
         {
@@ -4363,8 +4364,9 @@
       },
       "shortcut": "Peel off powers of 5 directly: $30 = 1\\cdot25 + 1\\cdot5 + 0\\cdot1$ ⇒ digits $1,1,0$.",
       "pitfalls": [
-        "Reading the remainders top-down (gives 011).",
-        "Copying the digits across (132) as if radix 4 and radix 5 numerals meant the same value."
+        "Reading the remainders top-down gives $011$, the digits reversed.",
+        "Copying the digits across: $132$ in radix 4 and $132$ in radix 5 are different numbers ($30$ and $42$).",
+        "Using powers of 10 for the radix-4 places ($1\\cdot100 + 3\\cdot10 + 2$)."
       ],
       "verification": "$110_5 = 1\\cdot25 + 1\\cdot5 + 0 = 30$, and $132_4 = 30$. ✓",
       "animation": {

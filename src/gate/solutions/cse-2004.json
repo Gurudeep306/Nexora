@@ -1042,19 +1042,28 @@
       "verification": "For a NOR latch the forbidden input S = R = 1 gives Q = Q' = 0; the NAND version is the dual, giving 1, 1."
     },
     "cse-2004-cs-19": {
-      "approach": "Convert both numerals to decimal, equate them, and test the option pairs (also checking the bases are large enough for the digits).",
+      "approach": "Concept tested: an equation between numerals in two unknown bases, with the digit limit as a filter. Expand each numeral as a polynomial in its own base, then test the option pairs; each base must also exceed the digits written in it.",
       "concepts": [
-        "Positional number systems",
-        "Base conversion"
+        "Place value (expansion)",
+        "Digit limit",
+        "Testing option pairs"
       ],
       "steps": [
         {
-          "title": "Equation",
-          "body": "$73_x = 7x+3$, $54_y = 5y+4$. So $7x+3 = 5y+4 \\Rightarrow 7x = 5y+1$. Digits 7 and 5 need $x\\ge8$, $y\\ge6$."
+          "title": "Translate both numerals",
+          "body": "$73_x = 7x + 3$ and $54_y = 5y + 4$. The equation is $7x + 3 = 5y + 4$, that is $7x = 5y + 1$."
         },
         {
-          "title": "Test options",
-          "body": "A: $56$ vs $81$ ✗. B: $70$ vs $61$ ✗. C: $63$ vs $66$ ✗. D: $7\\cdot8=56$, $5\\cdot11+1=56$ ✓ — both equal $59$ in decimal."
+          "title": "Digit limits",
+          "body": "$73_x$ uses the digit 7, so $x \\ge 8$; $54_y$ uses the digit 5, so $y \\ge 6$. Every option passes this test, so the arithmetic decides."
+        },
+        {
+          "title": "Test each pair in $7x = 5y + 1$",
+          "body": "- (A) $x=8, y=16$: $56$ vs $81$ ✗\\n- (B) $x=10, y=12$: $70$ vs $61$ ✗\\n- (C) $x=9, y=13$: $63$ vs $66$ ✗\\n- (D) $x=8, y=11$: $56$ vs $56$ ✓"
+        },
+        {
+          "title": "Confirm with the actual values",
+          "body": "$73_8 = 7\\cdot8 + 3 = 59$ and $54_{11} = 5\\cdot11 + 4 = 59$. Equal."
         }
       ],
       "answer": {
@@ -1068,25 +1077,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "73₈ = 59 but 54₁₆ = 84."
+          "reason": "$73_8 = 59$ but $54_{16} = 84$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "73₁₀ = 73 but 54₁₂ = 64."
+          "reason": "$73_{10} = 73$ but $54_{12} = 64$. Choosing base 10 for $x$ just because the numeral looks decimal is the trap."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "73₉ = 66 but 54₁₃ = 69."
+          "reason": "$73_9 = 66$ but $54_{13} = 69$: close, but not equal."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: 73₈ = 59 = 54₁₁."
+          "reason": "$73_8 = 59 = 54_{11}$."
         }
       ],
-      "verification": "7·8 + 3 = 59 and 5·11 + 4 = 59."
+      "shortcut": "From $7x = 5y + 1$, $x$ must make $7x - 1$ a multiple of 5, so $7x \\equiv 1 \\pmod 5$, i.e. $x \\equiv 3 \\pmod 5$: $x = 8, 13, \\dots$ Only options with $x = 8$ survive, and $y = (56 - 1)/5 = 11$.",
+      "pitfalls": [
+        "Comparing the digit strings instead of their values.",
+        "Skipping the digit-limit check; here it passes, but in other questions it removes candidates."
+      ],
+      "verification": "$7\\cdot8 + 3 = 59$ and $5\\cdot11 + 4 = 59$."
     },
     "cse-2004-cs-20": {
       "approach": "A program can be moved at run time only if its address computations do not embed absolute addresses; that is true when addresses are formed relative to a base register or to the PC.",

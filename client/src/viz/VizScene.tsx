@@ -9,6 +9,7 @@ import { memo, useMemo, type ReactNode } from 'react'
 import type { VizArrow, VizElement, VizSpec, VizTone } from './schema'
 import type { VizFrame } from './frames'
 import { strokePaths, type Sketcher } from './sketch'
+import { arcLabelPoint, arcPath } from './geometry'
 
 const TONE: Record<VizTone, string> = {
   ink: 'var(--color-text-primary)',
@@ -51,6 +52,12 @@ function bounds(el: VizElement): Box | { cx: number; cy: number; r: number } | n
       return { x: el.x, y: el.y, w: el.cell * el.cols, h: el.cell * el.rows }
     case 'text':
       return { x: el.x - 2, y: el.y - 10, w: 4, h: 14 }
+    case 'arc': {
+      // Arrows meet a sector at its label point, as if it were a small disc there.
+      const r0 = el.r0 ?? 0
+      const [cx, cy] = arcLabelPoint(el.cx, el.cy, el.r, r0, el.start, el.end)
+      return { cx, cy, r: Math.max(4, (el.r - r0) / 3) }
+    }
     default:
       return null
   }
@@ -164,6 +171,18 @@ const Element = memo(function Element({ el, byId, sketch }: { el: VizElement; by
           {el.label && <Label x={el.cx} y={el.cy} text={el.label} mono={el.mono} size={el.size} color={stroke} />}
         </>
       )
+    case 'arc': {
+      const r0 = el.r0 ?? 0
+      const d = arcPath(el.cx, el.cy, el.r, r0, el.start, el.end)
+      const [lx, ly] = arcLabelPoint(el.cx, el.cy, el.r, r0, el.start, el.end)
+      return (
+        <>
+          <path d={d} fill={fill} fillRule="evenodd" stroke={sketch ? 'none' : stroke} strokeWidth={1.6} strokeDasharray={dash} strokeLinejoin="round" />
+          <Stroke paths={sk('path', d)} fallback={null} stroke={stroke} dashed={dashed} />
+          {el.label && <Label x={lx} y={ly} text={el.label} mono={el.mono} size={el.size} color={stroke} />}
+        </>
+      )
+    }
     case 'text':
       return (
         <text

@@ -1637,23 +1637,24 @@
       "verification": "A 3-regular graph on 16 vertices has $16 \\cdot 3 / 2 = 24$ edges; one extra edge gives 25 edges with all degrees $\\ge 3$."
     },
     "cse-2017-2-cs-24": {
-      "approach": "Read the coefficients 13 and 36 as base-$b$ numerals and use Vieta's formulas (sum and product of roots) with the roots 5 and 6.",
+      "approach": "Concept tested: an unknown base hidden in polynomial coefficients. The roots 5 and 6 are single digits (the same in any base above 6), while the coefficients 13 and 36 are base-$b$ numerals. Vieta's formulas link them: sum of roots $= (13)_b$, product $= (36)_b$.",
       "concepts": [
-        "Positional number systems",
-        "Vieta's formulas"
+        "Polynomial in the radix",
+        "Vieta's formulas",
+        "Digit limit"
       ],
       "steps": [
         {
-          "title": "Convert coefficients",
-          "body": "$(13)_b = b + 3$ and $(36)_b = 3b + 6$. The roots 5 and 6 are single digits, the same in any base $b > 6$."
+          "title": "Translate the coefficients",
+          "body": "$(13)_b = b + 3$ and $(36)_b = 3b + 6$. The digit 6 requires $b \\ge 7$."
         },
         {
-          "title": "Sum of roots",
-          "body": "$5 + 6 = 11 = b + 3 \\Rightarrow b = 8$."
+          "title": "Sum of the roots",
+          "body": "For $x^2 - px + q = 0$ the roots add to $p$: $5 + 6 = 11 = b + 3$, so $b = 8$."
         },
         {
-          "title": "Product check",
-          "body": "$5 \\times 6 = 30 = 3b + 6 = 3 \\times 8 + 6 = 30$ ✓. So $b = 8$."
+          "title": "Product of the roots (check)",
+          "body": "The roots multiply to $q$: $5 \\times 6 = 30$ and $3b + 6 = 3\\cdot8 + 6 = 30$ ✓."
         }
       ],
       "answer": {
@@ -1661,10 +1662,12 @@
         "number": 8,
         "matchesKey": true
       },
+      "shortcut": "Use only the sum, $b + 3 = 11$; the product is a free check. No quadratic needs solving.",
       "pitfalls": [
-        "Treating 13 and 36 as decimal — then the roots would be 4 and 9, not 5 and 6."
+        "Treating 13 and 36 as decimal: then the roots would be 4 and 9, not 5 and 6.",
+        "Substituting $x = 5$ into the equation with decimal coefficients and getting a contradiction, then concluding there is no base."
       ],
-      "verification": "In base 8: $x^2 - 11x + 30 = (x-5)(x-6)$ in decimal, matching the given roots."
+      "verification": "In base 8 the equation is $x^2 - 11x + 30 = 0$ in decimal, which factors as $(x - 5)(x - 6)$."
     },
     "cse-2017-2-cs-25": {
       "approach": "Translate the language: $|w_1| = 2$ fixes the 3rd symbol to be $a$, and $|w_2| \\ge 3$ means total length $\\ge 6$. Build the counting DFA and argue every state is distinguishable.",

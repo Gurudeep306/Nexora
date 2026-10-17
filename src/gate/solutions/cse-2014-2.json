@@ -739,27 +739,32 @@
       "verification": "For n = 2 the output words 0001 → 0010 → 0100 → 1000 match a 4-bit ring counter's sequence."
     },
     "cse-2014-2-cs-8": {
-      "approach": "Convert $(123)_5$ to decimal, write $(x8)_y=xy+8$, and count integer pairs that respect the digit rules $y>8$ and $1\\le x<y$.",
+      "approach": "Concept tested: counting solutions of a base equation with two unknowns. The equation alone gives many candidate pairs; the digit limits decide which ones are real. Here $y$ is a base and $x$ is a digit of base $y$.",
       "concepts": [
-        "Number systems",
-        "Base conversion"
+        "Polynomial in the radix",
+        "Digit limit",
+        "Counting solutions"
       ],
       "steps": [
         {
           "title": "Left side",
-          "body": "$(123)_5=1\\cdot25+2\\cdot5+3=38$."
+          "body": "$(123)_5 = 1\\cdot25 + 2\\cdot5 + 3 = 38$."
         },
         {
           "title": "Right side",
-          "body": "$(x8)_y=x\\cdot y+8$, so $xy+8=38\\Rightarrow xy=30$."
+          "body": "$(x8)_y = x\\cdot y + 8$, so $xy + 8 = 38$ and $xy = 30$."
         },
         {
-          "title": "Constraints",
-          "body": "Digit 8 needs $y\\ge9$; $x$ is a leading digit, so $1\\le x\\le y-1$. Factor pairs of 30 with $y\\ge9$: $(x,y)=(3,10),(2,15),(1,30)$. All satisfy $x<y$."
+          "title": "List every factor pair",
+          "body": "$(x, y) \\in \\{(1,30), (2,15), (3,10), (5,6), (6,5), (10,3), (15,2), (30,1)\\}$: eight candidates."
+        },
+        {
+          "title": "Apply the digit limits",
+          "body": "The digit 8 needs $y \\ge 9$, and $x$ is a digit of base $y$, so $1 \\le x \\le y - 1$. Only $(1,30)$, $(2,15)$ and $(3,10)$ survive."
         },
         {
           "title": "Count",
-          "body": "The valid pairs are $(3,10)$, $(2,15)$ and $(1,30)$, so the number of solutions is **3**."
+          "body": "There are **3** solutions."
         }
       ],
       "answer": {
@@ -767,10 +772,12 @@
         "number": 3,
         "matchesKey": true
       },
+      "shortcut": "Since $y \\ge 9$ and $xy = 30$, $y$ must be a divisor of 30 that is at least 9: $10, 15, 30$. Three divisors, three solutions.",
       "pitfalls": [
-        "Allowing y = 5 or 6 (with x = 6 or 5): the digit 8 is invalid in those bases."
+        "Counting all eight factor pairs (or seven, dropping $y = 1$): the digit 8 is illegal in bases below 9.",
+        "Allowing $x \\ge y$; $x$ is itself a digit of base $y$."
       ],
-      "verification": "$(38)_{10}=38$, $(28)_{15}=30+8=38$, $(18)_{30}=30+8=38$."
+      "verification": "$(38)_{10} = 38$, $(28)_{15} = 30 + 8 = 38$, $(18)_{30} = 30 + 8 = 38$."
     },
     "cse-2014-2-cs-9": {
       "approach": "Split the 32-bit byte address into tag, set index and block offset: offset from the block size, index from the number of sets, tag is the rest.",

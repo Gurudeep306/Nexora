@@ -1,0 +1,201 @@
+[
+  {
+    "id": "nx-dl-01-01-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "What is the decimal value of $(3021)_4$?",
+    "answer": 201,
+    "solution": [
+      "The places in base 4 are $4^3 = 64$, $4^2 = 16$, $4^1 = 4$ and $4^0 = 1$.",
+      "Expand: $3 \\cdot 64 + 0 \\cdot 16 + 2 \\cdot 4 + 1 \\cdot 1 = 192 + 0 + 8 + 1 = 201$.",
+      "Check with Horner's chain: $3 \\to 3\\cdot4+0 = 12 \\to 12\\cdot4+2 = 50 \\to 50\\cdot4+1 = 201$."
+    ],
+    "concept": "A numeral's value is the sum of digit × place value, with place values that are powers of the base.",
+    "common_wrong": [
+      { "answer": 3021, "why": "The digits were copied as if the numeral were decimal. The subscript 4 means every place is a power of 4." },
+      { "answer": 99, "why": "The digits were weighted from the wrong end, with the leftmost digit taken as the units. That evaluates $(1203)_4 = 64 + 32 + 0 + 3 = 99$. The rightmost digit is always the units digit." }
+    ],
+    "blocks": ["place-value-def", "expansion"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "How is $2026$ written in base 7?",
+    "options": [
+      { "l": "A", "t": "$(3265)_7$" },
+      { "l": "B", "t": "$(5623)_7$" },
+      { "l": "C", "t": "$(5632)_7$" },
+      { "l": "D", "t": "$(4623)_7$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Divide by 7 repeatedly: $2026 = 7 \\cdot 289 + 3$, $289 = 7 \\cdot 41 + 2$, $41 = 7 \\cdot 5 + 6$, $5 = 7 \\cdot 0 + 5$.",
+      "The remainders are $3, 2, 6, 5$ in the order found. The first is the units digit, so read them from the last to the first: $(5623)_7$.",
+      "Check: $5 \\cdot 343 + 6 \\cdot 49 + 2 \\cdot 7 + 3 = 1715 + 294 + 14 + 3 = 2026$."
+    ],
+    "concept": "Repeated division gives the digits from the units digit upward, so the remainders are read bottom to top.",
+    "common_wrong": [
+      { "answer": "A", "why": "These are the remainders in the order they were found (top to bottom), which reverses the numeral. $(3265)_7 = 1174$." },
+      { "answer": "C", "why": "The last two digits were swapped. $(5632)_7 = 2032$, six too many." }
+    ],
+    "blocks": ["repeated-division", "trap-read-down"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Find the base $r$ for which $(110)_r = (2A)_{16}$.",
+    "answer": 6,
+    "solution": [
+      "Read the hex side: $(2A)_{16} = 2 \\cdot 16 + 10 = 42$.",
+      "Expand the left side in base $r$: $(110)_r = r^2 + r$.",
+      "Solve $r^2 + r = 42$, that is $r^2 + r - 42 = 0 = (r - 6)(r + 7)$, so $r = 6$ or $r = -7$.",
+      "A base is a whole number of at least 2 and larger than every digit (here the digits are 0 and 1), so $r = 6$. Check: $36 + 6 = 42$."
+    ],
+    "concept": "Expand each numeral as a polynomial in its base, solve, and keep only a legal base.",
+    "common_wrong": [
+      { "answer": 7, "why": "This takes the magnitude of the negative root. A base must be a positive root of the equation; $(110)_7 = 56$." },
+      { "answer": 42, "why": "This stops after converting the hex side; 42 is the value, not the base." }
+    ],
+    "blocks": ["find-base", "expansion"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q04",
+    "type": "NAT",
+    "marks": 1,
+    "text": "What is the smallest number of bits that can hold every 20-digit decimal number?",
+    "answer": 67,
+    "solution": [
+      "The largest 20-digit decimal number is $10^{20} - 1$.",
+      "$n$ bits hold $0 \\dots 2^n - 1$, so we need $2^n \\ge 10^{20}$, that is $n \\ge 20 \\log_2 10 \\approx 20 \\times 3.3219 = 66.4$.",
+      "Round up to a whole number of bits: $n = 67$. (66 bits stop at $2^{66} - 1 \\approx 7.4 \\times 10^{19}$, which is too small.)"
+    ],
+    "concept": "k decimal digits need ⌈k·log₂10⌉ bits, because 2ⁿ must reach 10ᵏ.",
+    "common_wrong": [
+      { "answer": 66, "why": "This rounds $66.4$ down. Bits come in whole numbers and 66 bits fall short of $10^{20} - 1$." },
+      { "answer": 80, "why": "This uses 4 bits per decimal digit, which is BCD, not pure binary. Binary needs only about 3.32 bits per digit." }
+    ],
+    "blocks": ["digit-count"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following numerals are equal to one hundred (decimal)?",
+    "options": [
+      { "l": "A", "t": "$(144)_8$" },
+      { "l": "B", "t": "$(46)_{16}$" },
+      { "l": "C", "t": "$(202)_7$" },
+      { "l": "D", "t": "$(10201)_3$" }
+    ],
+    "answer": ["A", "C", "D"],
+    "solution": [
+      "(A) $1 \\cdot 64 + 4 \\cdot 8 + 4 = 64 + 32 + 4 = 100$. Equal.",
+      "(B) $4 \\cdot 16 + 6 = 70$. Not equal. (One hundred in hex is $(64)_{16}$; the option has the digits reversed.)",
+      "(C) $2 \\cdot 49 + 0 \\cdot 7 + 2 = 98 + 2 = 100$. Equal.",
+      "(D) $1 \\cdot 81 + 0 \\cdot 27 + 2 \\cdot 9 + 0 \\cdot 3 + 1 = 81 + 18 + 1 = 100$. Equal."
+    ],
+    "concept": "Numerals in different bases can only be compared through their values; check every option in an MSQ.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "Option B was taken to be the hex form of 100. The hex form is $(64)_{16}$; reading remainders top to bottom gives the reversed $(46)_{16} = 70$." },
+      { "answer": ["A", "C"], "why": "Option D was skipped because the numeral is long. $(10201)_3$ expands to $81 + 18 + 1 = 100$." }
+    ],
+    "blocks": ["expansion", "base-to-base"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q06",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is the smallest base in which $7A5$ is a valid numeral, and what is its decimal value in that base?",
+    "options": [
+      { "l": "A", "t": "Base 8, value 453" },
+      { "l": "B", "t": "Base 11, value 952" },
+      { "l": "C", "t": "Base 11, value 962" },
+      { "l": "D", "t": "Base 16, value 1957" }
+    ],
+    "answer": "C",
+    "solution": [
+      "The largest digit is A = 10, so the base must be at least 11.",
+      "In base 11: $7 \\cdot 121 + 10 \\cdot 11 + 5 = 847 + 110 + 5 = 962$.",
+      "Horner check: $7 \\to 7\\cdot11+10 = 87 \\to 87\\cdot11+5 = 962$."
+    ],
+    "concept": "The base must exceed the largest digit; A stands for 10.",
+    "common_wrong": [
+      { "answer": "A", "why": "Base 8 only looked at the digit 7. The digit A (ten) is not legal in base 8." },
+      { "answer": "B", "why": "Right base, but $10 \\cdot 11 = 110$ was added as $100$. Horner's chain catches this slip." },
+      { "answer": "D", "why": "Base 16 is valid ($7 \\cdot 256 + 160 + 5 = 1957$), but it is not the smallest base." }
+    ],
+    "blocks": ["digit-limit", "expansion"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "For which radixes $r$ does $(1331)_r = \\big((11)_r\\big)^3$ hold?",
+    "options": [
+      { "l": "A", "t": "Only $r = 10$" },
+      { "l": "B", "t": "Every $r \\ge 2$" },
+      { "l": "C", "t": "Every $r \\ge 4$" },
+      { "l": "D", "t": "Only $r = 4$" }
+    ],
+    "answer": "C",
+    "solution": [
+      "Expand both sides as polynomials in $r$: $(1331)_r = r^3 + 3r^2 + 3r + 1$ and $(11)_r = r + 1$.",
+      "By the binomial expansion $(r + 1)^3 = r^3 + 3r^2 + 3r + 1$, so the two sides are the same polynomial: the equation holds for every base.",
+      "The only restriction is the digit limit: the digit 3 needs $r \\ge 4$."
+    ],
+    "concept": "When both sides are the same polynomial in r, the equation holds in every base above the largest digit.",
+    "common_wrong": [
+      { "answer": "A", "why": "11³ = 1331 is familiar from decimal, but nothing in the algebra uses r = 10." },
+      { "answer": "B", "why": "This forgets the digit limit. In base 2 or 3 the numeral $(1331)_r$ does not exist because of the digit 3." }
+    ],
+    "blocks": ["all-bases", "digit-limit"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "In some base $b$, the multiplication $16 \\times 5 = 106$ is correct (every numeral is written in base $b$). Find $b$.",
+    "answer": 8,
+    "solution": [
+      "Translate every numeral into base $b$: $(16)_b = b + 6$, $(5)_b = 5$ and $(106)_b = b^2 + 6$.",
+      "The equation becomes $5(b + 6) = b^2 + 6$, that is $b^2 - 5b - 24 = 0$.",
+      "Factor: $(b - 8)(b + 3) = 0$, so $b = 8$ or $b = -3$. Only $b = 8$ is a base, and it exceeds the largest digit 6.",
+      "Check in decimal: $(16)_8 = 14$, $14 \\times 5 = 70$, and $(106)_8 = 64 + 6 = 70$."
+    ],
+    "concept": "Arithmetic written in an unknown base becomes a polynomial equation once every numeral is expanded.",
+    "common_wrong": [
+      { "answer": 10, "why": "In decimal $16 \\times 5 = 80$, not 106, so base 10 fails; the digits must be expanded in $b$." },
+      { "answer": 7, "why": "Base 7 is the smallest base that allows the digit 6, but $(16)_7 \\times 5 = 65$ while $(106)_7 = 55$. The digit limit filters roots; it does not replace solving." }
+    ],
+    "blocks": ["find-base", "expansion"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-01-q09",
+    "type": "NAT",
+    "marks": 2,
+    "text": "$x$ is a digit of base 9 and $y$ is a digit of base 7. How many pairs $(x, y)$ satisfy $(5x)_9 = (y4)_7$?",
+    "answer": 1,
+    "solution": [
+      "Translate: $(5x)_9 = 45 + x$ and $(y4)_7 = 7y + 4$.",
+      "So $45 + x = 7y + 4$, that is $x = 7y - 41$.",
+      "Digit limits: $0 \\le x \\le 8$ needs $41 \\le 7y \\le 49$, so $y \\in \\{6, 7\\}$. But $y$ is a base-7 digit, so $y \\le 6$.",
+      "Only $y = 6$, $x = 1$ survives. Check: $(51)_9 = 46$ and $(64)_7 = 46$."
+    ],
+    "concept": "Every unknown digit must respect the limit of the base it is written in.",
+    "common_wrong": [
+      { "answer": 2, "why": "This keeps $y = 7$ (giving $x = 8$). The equation is satisfied, but 7 is not a digit of base 7." }
+    ],
+    "blocks": ["count-solutions", "digit-limit"],
+    "source": "nexora"
+  }
+]

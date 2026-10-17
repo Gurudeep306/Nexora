@@ -759,19 +759,28 @@
       }
     },
     "cse-2014-1-cs-8": {
-      "approach": "Write every numeral in base $b$, multiply out $13.1_b \\times 20_b$ and equate to $312_b$, giving a quadratic in $b$.",
+      "approach": "Concept tested: an unknown base with a digit after the radix point. Translate each numeral separately into base $b$ (the digit after the point is worth $1/b$), clear the division, and solve for $b$.",
       "concepts": [
-        "Number systems",
-        "Radix"
+        "Polynomial in the radix",
+        "Fraction digits",
+        "Solving for the base"
       ],
       "steps": [
         {
-          "title": "Convert",
-          "body": "$312_b = 3b^2 + b + 2$, $\\;20_b = 2b$, $\\;13.1_b = b + 3 + \\frac1b$."
+          "title": "Translate every numeral",
+          "body": "$312_b = 3b^2 + b + 2$, $\\;20_b = 2b$, $\\;13.1_b = b + 3 + \\dfrac{1}{b}$."
         },
         {
-          "title": "Equate",
-          "body": "$$3b^2 + b + 2 = 2b\\left(b + 3 + \\frac1b\\right) = 2b^2 + 6b + 2$$\n$$b^2 - 5b = 0 \\Rightarrow b = 5 \\;(b \\ne 0)$$"
+          "title": "Clear the division",
+          "body": "$312_b = 20_b \\times 13.1_b$:\\n$$3b^2 + b + 2 = 2b\\left(b + 3 + \\frac1b\\right) = 2b^2 + 6b + 2.$$"
+        },
+        {
+          "title": "Solve",
+          "body": "$b^2 - 5b = 0$, so $b(b - 5) = 0$ and $b = 5$ (a base cannot be 0)."
+        },
+        {
+          "title": "Digit limit",
+          "body": "The largest digit is 3, so any $b \\ge 4$ is legal; $b = 5$ passes."
         }
       ],
       "answer": {
@@ -779,10 +788,12 @@
         "number": 5,
         "matchesKey": true
       },
+      "shortcut": "Try the smallest legal bases: in base 4, $312_4 = 54$ and $20_4 = 8$, but $54/8 = 6.75 \\ne 13.1_4 = 7.25$. In base 5, $82/10 = 8.2 = 13.1_5$ ✓.",
       "pitfalls": [
-        "Forgetting that the digit 3 requires $b \\ge 4$ — here $b = 5$ is valid."
+        "Dividing 312 by 20 in decimal ($15.6$) before translating.",
+        "Reading the digit after the point as $1/10$ instead of $1/b$."
       ],
-      "verification": "Base 5: $312_5 = 75 + 5 + 2 = 82$, $20_5 = 10$, $13.1_5 = 5 + 3 + 0.2 = 8.2$, and $82 / 10 = 8.2$ ✔."
+      "verification": "Base 5: $312_5 = 75 + 5 + 2 = 82$, $20_5 = 10$, $13.1_5 = 5 + 3 + 0.2 = 8.2$, and $82 / 10 = 8.2$ ✓."
     },
     "cse-2014-1-cs-9": {
       "approach": "Split the 32-bit instruction into opcode, two register fields and the immediate; the immediate gets the leftover bits.",
