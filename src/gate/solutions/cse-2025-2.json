@@ -5388,7 +5388,7 @@
           "reason": "De Morgan per factor, then $\\bar{A}BD + \\bar{A}\\bar{B}D = \\bar{A}D$ and $A\\bar{C}\\bar{D}$ is absorbed by $\\bar{C}\\bar{D}$."
         }
       ],
-      "shortcut": "(B) and (C) are the two faces of the consensus theorem. Only (A) needs real checking, and the single row $A = 1, B = 0, C = 1$ settles it (left 1, right 0).",
+      "shortcut": "(B) is consensus; (C) expands to (B)'s left side, so it is consensus too. Only (A) needs real checking, and the single row $A = 1, B = 0, C = 1$ settles it (left 1, right 0).",
       "pitfalls": [
         "Complementing the factors of (D) without swapping $+$ to $\\cdot$ inside each.",
         "Assuming (A) because both sides have similar-looking terms."

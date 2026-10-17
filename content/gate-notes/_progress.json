@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-17",
+  "updated": "2026-10-18",
   "steps": {
     "N0": "review",
     "N1": "review",
@@ -21,7 +21,7 @@
         "lessons": "written",
         "viz": "done",
         "questions": "done",
-        "review": "ch1-reviewed",
+        "review": "ch1-ch2-reviewed",
         "wrapup": "pending"
       },
       "chapters": [
@@ -51,15 +51,17 @@
           "title": "Boolean algebra and logic gates",
           "lessons": 6,
           "pyqs": 64,
-          "status": "drafted",
+          "status": "reviewed",
           "lessons_status": {
-            "logic-gates": "draft",
-            "boolean-laws": "draft",
-            "xor-and-operators": "draft",
-            "canonical-forms": "draft",
-            "universal-gates": "draft",
-            "gate-circuit-analysis": "draft"
-          }
+            "logic-gates": "published+reviewed",
+            "boolean-laws": "published+reviewed",
+            "xor-and-operators": "published+reviewed",
+            "canonical-forms": "published+reviewed",
+            "universal-gates": "published+reviewed",
+            "gate-circuit-analysis": "published+reviewed"
+          },
+          "review": "2026-10-18: second-pass examiner review by three independent reviewers: 85 findings (9 errors, 15 misleading, the rest minor or style) all fixed and re-checked, including new intuition blocks, worked examples and proofs; all 64 PYQ keys re-derived, two wrong keys fixed (cse-2009-cs-6 D->B, cse-2010-cs-31 D->A, with their legacy solution texts); Chapter 2 coverage 64/64.",
+          "live_lab": "Gate Bench (:::lab gate-bench: bench, NAND/NOR challenge, minterm sets)"
         },
         {
           "id": "03-minimisation",

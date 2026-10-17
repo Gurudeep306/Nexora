@@ -149,7 +149,7 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "$2^{n^2}$ gives 2 for $n = 1$ and 16 for $n = 2$ but 512 for $n = 3$, where the true count is 256."
+          "reason": "$2^{n^2}$ agrees only at $n = 2$ (16); it gives 2 for $n = 1$ (true 4) and 512 for $n = 3$ (true 256)."
         }
       ],
       "shortcut": "Rows = $2^n$; functions = $2^{\\text{rows}}$.",
@@ -1755,7 +1755,7 @@
           "reason": "All three reduce to identities."
         }
       ],
-      "shortcut": "If $Z = X \\odot Y$, then $X, Y, Z$ have even 'XNOR-parity': any one is the XNOR of the other two, and the XNOR of all three is 1.",
+      "shortcut": "If $Z = X \\odot Y$ then $X \\oplus Y \\oplus Z = 1$; so any one of $X, Y, Z$ is the XNOR of the other two, and $X \\odot Y \\odot Z = Z \\odot Z = 1$.",
       "pitfalls": [
         "Doubting R because $X * Y * Z$ has no brackets: XNOR is associative, so both bracketings agree."
       ],

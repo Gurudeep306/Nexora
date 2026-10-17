@@ -31,7 +31,7 @@ assert eq("x \\uparrow x", "x'", ["x"]) and eq("x' + y'", "x \\uparrow y", ["x",
 # Gate count table: parse every row and re-derive both minima.
 sec = L.split(":::table{#gate-count-table")[1].split("\n:::")[0]
 rows = [((e + "'") if neg else e, a, b) for neg, e, a, b in re.findall(r"^\| (NOT )?\$(.+?)\$ \| \**(\d+)\** \| \**(\d+)\** \|$", sec, re.M)]
-assert len(rows) == 13, rows
+assert len(rows) == 14, rows
 for expr, nand, nor in rows:
     v = sorted(bl.variables(bl.parse(expr)))
     t = tt(expr, v)

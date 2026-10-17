@@ -7,7 +7,7 @@
   "width": 360,
   "height": 290
  },
- "intro": "Four-variable functions as rows 0–15. The circuit computes f = f₁·f₂ + f₃; f₁, f₂ and f are known.",
+ "intro": "Four-variable functions as rows 0–15. The circuit computes f = f₁·f₂ + f₃ with f₁ = Σ(1, 3, 5, 7, 9), f₂ = Σ(3, 7, 9, 12) and the target f = Σ(3, 7, 9, 14).",
  "elements": [
   {
    "id": "head",

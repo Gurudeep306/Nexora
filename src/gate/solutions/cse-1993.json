@@ -2241,7 +2241,7 @@
       "pitfalls": [
         "Claiming completeness without saying where the constant 1 comes from."
       ],
-      "verification": "Example: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$ uses three half adders as inverters and one carry as AND, plus one more inverter."
+      "verification": "Example: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$ uses three half adders as inverters and one carry output as the AND."
     },
     "cse-1993-ii-b-10": {
       "approach": "Mode 2 is autoincrement register-indirect with RegR = PC. After fetching the one-word instruction at 2000 the PC already holds 2001, so the operand is taken from 2001 and the autoincrement then moves PC to 2002.",

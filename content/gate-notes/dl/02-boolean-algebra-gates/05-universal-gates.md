@@ -8,8 +8,8 @@ prerequisites: [canonical-forms]
 pyq_topics: [dl/gates]
 est_minutes: 55
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every construction, minimum gate count (by exhaustive search) and completeness claim is checked in content/gate-notes/_checks/dl/l2_05_universal_gates.py."
   - "Coverage checklist only (internal digests, never copied): set A pp. 29–32 and 43, set B pp. 111–112 and 117–118, set C pp. 229–232, 250–252 and 279, set D p. 400. Set D's MUX-cascade slip and the NAND/NOR speed disagreement are recorded in _errata/dl.md."
@@ -85,11 +85,20 @@ literals, each literal a variable or a NOT of one; the sum is an OR of the minte
 circuit of NOT, AND and OR gates computing $f$.
 :::
 
-:::definition{#two-op-complete term="{AND, NOT} and {OR, NOT} are complete" depth="quick"}
+:::theorem{#two-op-complete name="{AND, NOT} and {OR, NOT} are complete" depth="quick"}
 De Morgan supplies the missing operation:
 $$
 x + y = (x' y')', \qquad xy = (x' + y')' .
 $$
+:::
+
+:::proof{#proof-two-op of="the completeness of {AND, NOT} and {OR, NOT}" depth="standard"}
+**Idea first:** replace every OR in a circuit by the De Morgan form, and nothing else changes.
+
+Take any circuit of AND, OR and NOT gates (one exists for every function by the previous theorem).
+Replace each OR gate with inputs $x, y$ by NOT–AND–NOT: $(x'y')'$. By De Morgan this computes $x + y$
+on every row, so the new circuit computes the same function using only AND and NOT. Replacing each AND
+by $(x' + y')'$ instead gives an {OR, NOT} circuit.
 So OR can be built from AND and NOT, and AND from OR and NOT. **{AND, OR} without NOT is not
 complete**: every circuit of AND and OR gates is monotone (raising an input never lowers the
 output), so it can never compute $x'$.
@@ -139,7 +148,7 @@ $$
 F = (G_2\, G_3)' = \big((A' + B)(A + B')\big)' = (AB + A'B')' = A \oplus B .
 $$
 The trick is the **shared** gate $G_1$: it feeds both $G_2$ and $G_3$, so four gates do the work that
-the naive construction (two inverters, two ANDs, one OR, each converted to NANDs) needs far more for.
+the NAND–NAND form of $AB' + A'B$ needs five for (two inverters, two first-level NANDs, one output NAND).
 
 **Sanity check.** $A = 1, B = 1$: $G_1 = 0$, $G_2 = G_3 = 1$, $F = 0$. $A = 1, B = 0$: $G_1 = 1$,
 $G_2 = 0$, $G_3 = 1$, $F = 1$.
@@ -160,10 +169,17 @@ $G_2 = 0$, $G_3 = 1$, $F = 1$.
 | $A \odot B$ | **5** | **4** |
 | $A'B$ | 3 | 2 |
 | $AB + C$ | 3 | 3 |
-| $A + BC$ | 3 | 3 |
+| $(A + B)C$ | 3 | 3 |
+| $A' + B$ | 2 | 3 |
 | $(ABC)'$ | 3 | 7 |
 | $ABC$ | 4 | 6 |
 | $A + B + C$ | 6 | 4 |
+:::
+
+:::trap{#trap-xor-five title="XOR is 4 NANDs, not 5" depth="quick"}
+Converting $AB' + A'B$ to NAND–NAND (two inverters, two first-level NANDs, one output NAND) gives 5,
+and 5 is the option examiners expect careless candidates to pick. Sharing the gate $(AB)'$ saves one:
+the minimum is 4. (Five *is* the right answer for XNOR with NAND gates.)
 :::
 
 Notice the mirror: every NAND count is the NOR count of the dual function. XOR and XNOR are duals,
@@ -178,15 +194,13 @@ No circuit of three 2-input NAND gates computes $A \oplus B$; four is the minimu
 are too expensive to make twice with only two gates.
 
 The output gate is $F = (PQ)'$, so $F = A \oplus B$ needs $PQ = AB + A'B'$: both $P$ and $Q$ must be 1
-on rows 00 and 11, and their product 0 on rows 01 and 10. With three gates in total, $P$ and $Q$ come
-from the inputs and at most **two** earlier gates. List what those can compute (outputs for rows 00, 01,
-10, 11): one gate gives $(AB)' = 1110$, $A' = 1100$ or $B' = 1010$; two gates add $AB = 0001$,
-$A' + B = 1101$ (as $(A \\cdot (AB)')'$ or $(A B')'$), $A + B' = 1011$ and the constant 1. The only signals that are 1 on both 00
-and 11 are $A' + B$, $A + B'$ and the constant 1. A constant 1 cannot be $P$ (then $Q$ would itself have
-to be XNOR), so $\{P, Q\} = \{A' + B, A + B'\}$. But each of those needs two gates of its own,
-and producing both needs at least three earlier gates (sharing $(AB)'$ is the cheapest way), leaving no
-room within a three-gate budget.
-Hence three gates never suffice. Our check script confirms this by trying every circuit.
+on rows 00 and 11, and their product 0 on rows 01 and 10. If $P = Q$, then $P$ itself would have to be
+XNOR, which no two NAND gates make. So $P \ne Q$, and with three gates in total $P$ and $Q$ come from
+the inputs and at most **two** earlier gates, $g_1$ (a NAND of inputs) and $g_2$ (which may read $g_1$).
+The first gate is $(AB)' = 1110$, $A' = 1100$ or $B' = 1010$ (outputs for rows 00, 01, 10, 11), and none
+of these, nor $A$ or $B$, is 1 on both 00 and 11. So at most one of $P, Q$ (namely $g_2$) can be
+suitable, never both. Hence three gates never suffice; our check script confirms it by trying every
+circuit.
 :::
 
 :::note{#recap-universal title="Recap" depth="quick"}
@@ -229,22 +243,22 @@ OR: 2 NOR gates. AND: 3 NOR gates (the dual of the NAND counts).
 ::::
 
 ::::example{#ex-nand-one level="gate" title="One inverter and one NAND" depth="standard"}
-Implement $Z = X' + Y + Z_0'$ using one inverter and one NAND gate (of any number of inputs).
+Implement $F = X' + Y + W'$ using one inverter and one NAND gate (of any number of inputs).
 
 :::step{why="A NAND computes the OR of complemented inputs: (abc)′ = a′ + b′ + c′."}
-Write $Z$ as an OR of complements: $X' + Y + Z_0' = X' + (Y')' + Z_0'$.
+Write $F$ as an OR of complements: $X' + Y + W' = X' + (Y')' + W'$.
 :::
 
-:::step{why="So Z is a NAND of X, Y′ and Z₀; only Y needs an inverter."}
-$Z = (X \cdot Y' \cdot Z_0)'$.
+:::step{why="So F is a NAND of X, Y′ and W; only Y needs an inverter."}
+$F = (X \cdot Y' \cdot W)'$.
 :::
 
-:::step{why="Check one row: X = 1, Y = 0, Z₀ = 1 gives Z = 0 + 0 + 0 = 0, and the NAND of 1, 1, 1 is 0."}
-Circuit: inverter on $Y$, then a 3-input NAND of $X$, $Y'$ and $Z_0$.
+:::step{why="Check one row: X = 1, Y = 0, W = 1 gives F = 0 + 0 + 0 = 0, and the NAND of 1, 1, 1 is 0."}
+Circuit: inverter on $Y$, then a 3-input NAND of $X$, $Y'$ and $W$.
 :::
 
 :::answer
-$Z = \text{NAND}(X, \overline{Y}, Z_0)$: one inverter, one 3-input NAND.
+$F = \text{NAND}(X, \overline{Y}, W)$: one inverter, one 3-input NAND.
 :::
 ::::
 
@@ -288,9 +302,10 @@ for example $AB + C = (A + C)(B + C)$ by the distributive law, which is $\text{N
 
 :::definition{#bubble-conversion term="Conversion by bubble pushing" depth="standard"}
 To convert any AND/OR circuit into NAND (or NOR) form:
-1. Draw each AND as a NAND and each OR as a NAND with bubbled inputs (the same gate, by De Morgan).
-2. Every wire should now carry **pairs** of bubbles (which cancel). Where a wire has a single bubble,
-   insert an inverter (a NAND with tied inputs).
+1. Replace each AND by a NAND (an AND with an output bubble) and each OR by an OR with bubbled inputs,
+   which is a NAND by De Morgan.
+2. Two bubbles on one wire cancel. A wire or circuit input with a single bubble needs an inverter (a
+   tied NAND), or the complemented literal.
 3. This works for multi-level circuits too: a second OR level after an OR level needs an inverter in
    between, which is exactly the 2002 GATE question.
 :::
@@ -402,9 +417,9 @@ inverter wherever a wire has an unpaired bubble.
 :::trap{#trap-naive-count title="Counting the naive conversion as the minimum" depth="quick"}
 For $AB + C$ with 2-input NOR gates, converting gate by gate (AND = 3 NORs, OR = 2 NORs) gives 5. The
 minimum is **3**: $AB + C = (A + C)(B + C) = \text{NOR}(\text{NOR}(A, C), \text{NOR}(B, C))$, and two
-NOR gates cannot do it (with two gates the output is $\big((x + y)' + z\big)' = (x + y) z'$ for some
-inputs, which is 0 whenever $z = 1$, but $AB + C$ is 1 with any one of $A$, $B$, $C$ equal to 1 in
-suitable rows). Our bank's stored key for the 2009 question said 5; it has been corrected to 3.
+NOR gates cannot do it ($AB + C$ depends on all three variables, so with two gates the output must be
+$\text{NOR}(g, z) = (x + y)z'$ with $z$ an input; that is 0 whenever $z = 1$, but $AB + C$ is 1 at
+$C = 1$, and at $A = B = 1$ with $C = 0$, so every choice of $z$ fails). Our bank's stored key for the 2009 question said 5; it has been corrected to 3.
 :::
 
 ### Worked examples: minimum counts
@@ -432,12 +447,12 @@ What is the minimum number of 2-input NAND gates for $A + BC$?
 $G_1 = (BC)'$, $G_2 = A'$, $F = (G_1 G_2)' = BC + A$: 3 gates.
 :::
 
-:::step{why="Two gates: the output is (P·Q)′ = P′ + Q′, and with one earlier gate one of P, Q is an input; a quick check of every case (done by our search) finds none that works."}
+:::step{why="With two NANDs the output is NAND(g, g) = xy, which uses only two variables, or NAND(g, z) = xy + z′ with z an input. Matching A + BC would need z′ = A for an input z, which is impossible."}
 Two gates are not enough.
 :::
 
 :::answer
-3 (the same count as $AB + C$ with NOR, its dual).
+3 (the same as $A(B + C)$ with NOR gates, its dual; and $A + BC$ is just $AB + C$ with the variables renamed).
 :::
 ::::
 
@@ -503,6 +518,15 @@ Examples: implication $x' + y$ (needs 0), inhibition $x'y$ (needs 1), the 2:1 MU
 
 ### Post's five classes
 
+:::intuition{#post-intuition title="Five traps a set of gates can be stuck in" depth="standard"}
+Some gate sets cannot build everything, and every failure has a reason you can name. Gates that output
+0 on all-zero inputs can never make anything else on all-zero inputs. Gates without any inversion can
+never make NOT. Gates that are pure XORs can only ever make XORs. Each such reason is a "trap": a family
+of functions closed under wiring, so a circuit built from members never leaves it. Post proved that
+there are exactly five such traps that matter, and that a set of gates is complete exactly when it is
+not caught in any of them.
+:::
+
 :::definition{#post-classes term="Post's five closed classes" depth="quick"}
 A Boolean function $f$ belongs to:
 - **T₀ (0-preserving)** if $f(0, \dots, 0) = 0$;
@@ -528,16 +552,19 @@ build NOT and AND.
 in the first level sees zeros and outputs 0, so the next level sees zeros, and so on; the output is 0.
 So every circuit is 0-preserving and NOT ($1$ at input 0) is unreachable. The same argument works for
 T₁. For M: a composition of monotone functions is monotone, and NOT is not monotone. For A: substituting
-XORs of inputs into an XOR of inputs gives an XOR of inputs, and AND is not affine. For S: if every gate
+XORs of inputs and constants into an XOR of inputs gives an XOR of inputs and possibly the constant 1,
+and AND is not affine. For S: if every gate
 satisfies $g(x') = g(x)'$, then complementing all circuit inputs complements every wire in turn, so the
 circuit is self-dual; the constant 0 is not.
 
-*Sufficiency (sketch).* Take $f_0 \notin$ T₀, $f_1 \notin$ T₁ and $f_S \notin$ S. Tying all inputs of
-$f_0$ together gives either NOT or the constant 1; with $f_1$ likewise NOT or the constant 0; and if
-neither gives NOT, both constants are available and a non-self-dual function with constants yields a
-NOT. With NOT and constants, a non-monotone function and a non-affine function together yield an AND
-(a non-affine function has an AND-term in its algebraic normal form, which can be isolated by fixing
-the other variables). NOT and AND are complete.
+*Sufficiency (sketch).* Take $f_0 \notin$ T₀, $f_1 \notin$ T₁, $f_S \notin$ S, $f_M \notin$ M and
+$f_A \notin$ A. Tying all inputs of $f_0$ gives NOT or the constant 1; tying those of $f_1$ gives NOT or
+the constant 0. *Getting NOT:* if neither gives NOT, both constants are available, and the non-monotone
+$f_M$ with constants substituted gives NOT. *Getting constants:* if both give NOT, the non-self-dual
+$f_S$, with each input replaced by $x$ or $x'$, gives a constant, and NOT gives the other. *Getting
+AND:* with NOT and both constants, fix all but two variables of the non-affine $f_A$ so that one
+AND-term of its algebraic normal form survives; inverters then turn it into $xy$. NOT and AND are
+complete.
 :::
 
 :::trick{#trick-post-quick title="Quick checks for Post's classes" depth="standard"}
@@ -547,8 +574,9 @@ the other variables). NOT and AND are complete.
 - S: test one pair of complementary rows; a single failure rules out self-duality.
 
 **Why it works:** each check is the definition on the cheapest rows. **When it fails:** an expression
-that *contains* complements may still be monotone after simplification (e.g. $x + x'x$), so for M and
-A on a messy expression, simplify first or check the truth table.
+that *contains* complements may still be monotone after simplification (e.g. $x + x'x$), and an affine
+function can be written with AND/OR (e.g. $xy' + x'y = x \oplus y$), so a verdict on M or A for a messy
+expression needs simplification, the truth table, or the algebraic normal form.
 :::
 
 :::definition{#with-constants term="With free constants, only M and A matter" depth="standard"}
@@ -580,8 +608,7 @@ $\text{MUX}(s; a, b) = s'a + sb$ (output $a$ when $s = 0$, $b$ when $s = 1$). Th
 $$
 \text{MUX}(x; 1, 0) = x', \qquad \text{MUX}(x; 0, y) = xy, \qquad \text{MUX}(x; y, 1) = x + y .
 $$
-NOT and AND suffice. (A cascade of two MUXes with constants gives NAND as well; a slip in one reference
-calls that cascade OR.)
+NOT and AND suffice. (A cascade of two MUXes with constants gives NAND as well.)
 :::
 
 :::definition{#and-xor-1 term="{AND, XOR, 1} is complete" depth="quick"}
@@ -601,6 +628,13 @@ an AND. {AND, NOT} is complete, so any function can be built from half adders an
 :::
 
 ### A single complete function
+
+:::intuition{#sheffer-intuition title="One key that opens every lock" depth="standard"}
+A single gate type is universal only if it escapes all five traps on its own. Two quick looks do most
+of the work: it must output 1 when all inputs are 0 (else it is stuck preserving 0) and 0 when all
+inputs are 1 (else it is stuck preserving 1). Such a gate already contains an inverter: tie its inputs
+together. The only remaining question is whether it is self-dual.
+:::
 
 :::theorem{#single-function-test name="When one function is complete on its own" depth="standard"}
 A single function $f$ is complete (with no constants) **if and only if** $f(0, \dots, 0) = 1$,
@@ -625,6 +659,42 @@ functions are universal: NAND and NOR.
 :::
 
 ### Worked examples: completeness
+
+::::example{#ex-cpl-sheffer level="gate" title="The Sheffer test on a three-variable function" depth="standard"}
+Is the single function $h(x, y, z) = x'z' + y'z'$ complete on its own?
+
+:::step{why="Corner rows first: Sheffer needs h(0,0,0) = 1 and h(1,1,1) = 0."}
+$h(0, 0, 0) = 1 + 1 = 1$ and $h(1, 1, 1) = 0 + 0 = 0$.
+:::
+
+:::step{why="Self-duality: a self-dual function has exactly 2ⁿ⁻¹ = 4 minterms (one per complementary pair)."}
+$h = z'(x' + y')$ is 1 on rows 000, 010, 100: three minterms, so it is not self-dual.
+:::
+
+:::step{why="Confirm by building NAND, which is universal."}
+$h(x, y, 0) = x' + y' = (xy)'$: a NAND. So $\{h\}$ is complete.
+:::
+
+:::answer
+Complete (it passes the Sheffer test, and $h(x, y, 0)$ is NAND).
+:::
+::::
+
+::::example{#ex-cpl-minority level="gate" title="Edge case: passes the corners but is self-dual" depth="standard"}
+Is the minority function $m(x, y, z) = x'y' + y'z' + z'x'$ (1 when at most one input is 1) complete on its own?
+
+:::step{why="Corners: m(0,0,0) = 1 and m(1,1,1) = 0, so it escapes T₀, T₁ and M."}
+Both corner conditions hold.
+:::
+
+:::step{why="m is the majority of the complemented inputs, and complementing all inputs of a self-dual function keeps it self-dual."}
+$m(x', y', z') = M(x, y, z) = \big(m(x, y, z)\big)'$: $m$ is self-dual.
+:::
+
+:::answer
+Not complete: every circuit of minority gates is self-dual, so it can never compute a constant (or AND).
+:::
+::::
 
 ::::example{#ex-cpl-xor level="easy" title="Is {XOR, NOT} complete?" depth="quick"}
 Decide whether {XOR, NOT} is complete.
@@ -675,7 +745,7 @@ $x \oplus y = \big((x \to y)(y \to x)\big)' = (x \to y) \to \big((y \to x) \to 0
 :::
 
 :::answer
-Complete with 0; XOR needs four implication gates (one of them fed the constant 0).
+Complete with 0; this XOR uses four implication gates (one of them fed the constant 0), and four is the minimum, by exhaustive search.
 :::
 ::::
 
@@ -801,7 +871,8 @@ care.
 
 :::note{#further-depth title="Further depth: why NAND wins in silicon" depth="deep"}
 In CMOS a 2-input NAND puts its two series transistors in the fast NMOS pull-down network, while a NOR
-puts them in the slower PMOS pull-up. So a NAND is faster and smaller than a NOR of the same size, which
-is why standard-cell libraries and old TTL families were built around NAND. (One reference claims the
-opposite; the transistor argument is the deciding one.)
+puts them in the slower PMOS pull-up. So for equal drive strength a NAND needs smaller transistors than
+a NOR, which makes it smaller and faster; that is why CMOS standard-cell libraries are built around NAND.
+(The older TTL family was also NAND-based, for a different reason: its multi-emitter input transistor
+naturally forms a NAND.)
 :::

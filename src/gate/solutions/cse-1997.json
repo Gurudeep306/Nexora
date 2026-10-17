@@ -2051,9 +2051,9 @@
       "shortcut": "$f \\setminus f_1 f_2 \\subseteq f_3 \\subseteq f$.",
       "pitfalls": [
         "Trying to expand the blocks into expressions over $w, x, y, z$.",
-        "(The original scan misprints $f$; the bank uses the corrected $\\Sigma 8, 9$.)"
+        "Letting $f_3$ add minterms outside $f$ (options A, C, D)."
       ],
-      "verification": "$f_1 f_2 + f_3 = \\{8\\} \\cup \\{9\\} = \\{8, 9\\} = f$."
+      "verification": "$f_1 f_2 + f_3 = \\{8\\} \\cup \\{9\\} = \\{8, 9\\} = f$. (The paper scan misprints $f$ as $\\Sigma\\,7, 9$, which is inconsistent with $f_1 f_2 = \\Sigma\\,8$; the bank uses the corrected $\\Sigma\\,8, 9$.)"
     },
     "cse-1997-a-41": {
       "approach": "A total (linear) order extending the partial order must put $x$ first and $y$ last; the $a_i$ are mutually incomparable, so they can be arranged in any order between them.",

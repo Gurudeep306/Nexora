@@ -1320,7 +1320,7 @@
           "reason": "$xz + w = 0$ and $\\bar{z}\\bar{w} = 1$."
         }
       ],
-      "shortcut": "The fourth equation with $xy = 0$ says $z + w = 1$; together with $xz + w = 1$ it rejects every option with $w = 0$ unless $x = z = 1$. Only (C) survives.",
+      "shortcut": "The fourth equation with $xy = 0$ says $z + w = 1$; together with $xz + w = 1$ it rejects every option with $w = 0$ unless $x = z = 1$, and (B) fails $xy = 0$ directly. Only (C) survives.",
       "pitfalls": [
         "Assuming the solution is unique: a full search finds six solutions (0011, 0101, 0111, 1001, 1010, 1011); (C) is the only one offered."
       ],
