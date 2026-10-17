@@ -1903,28 +1903,28 @@
       "verification": "Joint table: $P(P\\bar Q) = \\frac14 - \\frac1{12} = \\frac16$, $P(\\bar P \\bar Q) = \\frac56 - \\frac16 = \\frac23$; $\\frac{2/3}{5/6} = 0.8$."
     },
     "cse-2017-2-cs-27": {
-      "approach": "Simplify the left side of each identity with absorption / De Morgan and compare with the right side; the one that does not match is the answer.",
+      "approach": "Concept tested: **simplification with absorption and De Morgan**. Simplify the left side of each option and compare with its right side; the one that disagrees is INCORRECT.",
       "concepts": [
-        "Boolean algebra",
         "Absorption law",
-        "De Morgan's law"
+        "De Morgan's law",
+        "Distributive law"
       ],
       "steps": [
         {
-          "title": "Check (A)",
-          "body": "$wx + wx + wy + x + xy = wx + wy + x = x + wy$ (absorption $x + wx = x$) ✓."
+          "title": "(A)",
+          "body": "$wx + w(x + y) + x(x + y) = wx + wx + wy + x + xy = x + wy$ (the terms $wx$ and $xy$ are absorbed by $x$). Correct."
         },
         {
-          "title": "Check (B)",
-          "body": "$\\overline{w\\bar x(y + \\bar z)} = \\bar w + x + \\bar y z$; adding $\\bar w x$ (absorbed by $\\bar w$) gives $\\bar w + x + \\bar y z$ ✓."
+          "title": "(B)",
+          "body": "$\\overline{w\\bar{x}(y + \\bar{z})} = \\bar{w} + x + \\overline{y + \\bar{z}} = \\bar{w} + x + \\bar{y}z$ (De Morgan twice). Adding $\\bar{w}x$ changes nothing (absorbed by $\\bar{w}$). Correct."
         },
         {
-          "title": "Check (C)",
-          "body": "$w\\bar x(y + x\\bar z) = w\\bar x y + w\\bar x x\\bar z = w\\bar x y$. So LHS $= (w\\bar x y + \\bar w \\bar x)y = w\\bar x y + \\bar w \\bar x y = \\bar x y$, not $x\\bar y$ ✗."
+          "title": "(C)",
+          "body": "$w\\bar{x}(y + x\\bar{z}) = w\\bar{x}y + w\\bar{x}x\\bar{z} = w\\bar{x}y$. Then $(w\\bar{x}y + \\bar{w}\\bar{x})y = w\\bar{x}y + \\bar{w}\\bar{x}y = \\bar{x}y$. The option claims $x\\bar{y}$: **incorrect**."
         },
         {
-          "title": "Check (D)",
-          "body": "$(w + y)(wxy + wyz) = wxy + wyz + wxy + wyz = wxy + wyz$ ✓ (since $ww = w$, $yy = y$). So (C) is INCORRECT."
+          "title": "(D)",
+          "body": "$(w + y)(wxy + wyz)$: each term of the second factor contains both $w$ and $y$, so multiplying by $(w + y)$ changes nothing (absorption). Correct."
         }
       ],
       "answer": {
@@ -1938,28 +1938,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Valid identity: LHS reduces to $x + wy$."
+          "reason": "Simplifies to $x + wy$, as claimed."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid identity by De Morgan; $\\bar w x$ is absorbed by $\\bar w$."
+          "reason": "De Morgan gives $\\bar{w} + x + \\bar{y}z$, as claimed."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "LHS reduces to $\\bar x y$, which differs from $x\\bar y$ (e.g. $x=0, y=1$ gives LHS 1, RHS 0) — this is the INCORRECT one."
+          "reason": "The left side is $\\bar{x}y$, not $x\\bar{y}$ (e.g. $x = 0, y = 1$: left 1, right 0)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Valid identity: multiplying out gives exactly $wxy + wyz$."
+          "reason": "$(w + y) \\cdot wy(x + z) = wy(x + z)$, as claimed."
         }
       ],
+      "shortcut": "For (C), the outer factor $y$ makes the whole left side 0 whenever $y = 0$, but the right side $x\\bar{y}$ needs $y = 0$ to be 1. They can never be 1 together, so they cannot be equal (both are not identically 0).",
       "pitfalls": [
-        "Missing that $x\\bar x = 0$ kills the $x\\bar z$ term in (C)."
+        "Losing a bar while applying De Morgan in (B).",
+        "Missing that $\\bar{x}x = 0$ kills a term in (C)."
       ],
-      "verification": "Counter-example for (C): $w = 0, x = 0, y = 1$: LHS $= (0 + 1)\\cdot 1 = 1$, RHS $= 0 \\cdot 0 = 0$."
+      "verification": "$w = 0, x = 0, y = 1$: left of (C) $= (0 + 1) \\cdot 1 = 1$, right $= 0$."
     },
     "cse-2017-2-cs-28": {
       "approach": "For POS, group the zeros (maxterms) of $f$, using don't-cares to enlarge groups. The zeros are $4, 9, 12, 13, 14$.",

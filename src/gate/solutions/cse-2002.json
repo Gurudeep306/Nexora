@@ -3020,90 +3020,40 @@
       "verification": "Catalan number $C_3 = 5$ matches the enumeration, and each tree’s preorder was checked to be $C, B, A$."
     },
     "cse-2002-b-55-a": {
-      "approach": "Add the consensus term $xz'$ so the sum of products factors as $(x+y)(y'+z')$; then De Morgan turns $y'+z'$ into a single complement $(yz)'$.",
+      "approach": "Concept tested: **adding a consensus term to make factoring possible**, then **De Morgan** to merge two complemented literals into one complement.",
       "concepts": [
         "Consensus theorem",
-        "De Morgan’s law",
+        "De Morgan's law",
         "Factoring"
       ],
       "steps": [
         {
           "title": "Add the consensus term",
-          "body": "In $xy' + yz'$ the variable $y$ appears complemented in one term and uncomplemented in the other, so the consensus term is $x\\cdot z'$:\n$$f = xy' + yz' + xz'.$$"
+          "body": "In $xy' + yz'$ the variable $y$ appears as $y'$ and $y$; the consensus of the two terms is $xz'$. Adding it does not change $f$: $f = xy' + yz' + xz'$."
         },
         {
-          "title": "Factor",
-          "body": "Expand $(x+y)(y'+z') = xy' + xz' + yy' + yz' = xy' + xz' + 0 + yz'$, which equals $f$. Hence $f = (x+y)(y'+z')$."
+          "title": "Factor into two sums",
+          "body": "$(x + y)(y' + z') = xy' + xz' + yy' + yz' = xy' + xz' + yz'$, exactly the three terms. So $f = (x + y)(y' + z')$."
         },
         {
           "title": "One complement",
-          "body": "De Morgan: $y'+z' = (yz)'$, so\n$$f = (x+y)\\cdot(yz)'.$$\nCircuit: OR gate on $x,y$; AND gate on $y,z$ followed by the single NOT gate; a final AND gate combines the two.",
-          "scene": {
-            "caption": "f = (x + y)·(yz)′ with one NOT gate"
-          }
+          "body": "De Morgan: $y' + z' = (yz)'$. Hence $f = (x + y)\\,(yz)'$."
+        },
+        {
+          "title": "The circuit",
+          "body": "One AND gate forms $yz$, the single NOT gate inverts it, one OR gate forms $x + y$, and a final AND gate multiplies the two: AND, NOT, OR, AND."
         }
       ],
-      "animation": {
-        "kind": "circuit",
-        "inputs": [
-          {
-            "id": "x"
-          },
-          {
-            "id": "y"
-          },
-          {
-            "id": "z"
-          }
-        ],
-        "gates": [
-          {
-            "id": "g1",
-            "type": "OR",
-            "in": [
-              "x",
-              "y"
-            ]
-          },
-          {
-            "id": "g2",
-            "type": "AND",
-            "in": [
-              "y",
-              "z"
-            ]
-          },
-          {
-            "id": "g3",
-            "type": "NOT",
-            "in": [
-              "g2"
-            ]
-          },
-          {
-            "id": "g4",
-            "type": "AND",
-            "in": [
-              "g1",
-              "g3"
-            ]
-          }
-        ],
-        "outputs": [
-          {
-            "id": "f",
-            "from": "g4"
-          }
-        ]
-      },
       "answer": {
-        "value": "$f = (x+y)\\,(yz)'$ — OR($x,y$) AND NOT(AND($y,z$))",
+        "value": "$f = (x + y)\\,(yz)'$: an OR of $x, y$ ANDed with the NOT of $yz$",
         "matchesKey": true
       },
+      "shortcut": "When a sum of products needs two different complemented literals, try to collect them into one factor $(a' + b') = (ab)'$; adding a consensus term is the usual way to create that factor.",
       "pitfalls": [
-        "Writing $f = x(yz)' + \\dots$ with two complements, or forgetting that the factorisation only works after adding the consensus term."
+        "Writing $x\\overline{y} + y\\overline{z}$ with two NOT gates, which the question forbids.",
+        "Expanding $(x + y)(yz)'$ incorrectly and losing the term $xz'$ (it is the harmless consensus term)."
       ],
-      "verification": "Truth table over $xyz = 000\\ldots111$: $f = 0,0,1,0,1,1,1,0$ for both $xy'+yz'$ and $(x+y)(yz)'$."
+      "verification": "Rows where $f = 1$: $xy' = 1$ at 100, 101; $yz' = 1$ at 010, 110. $(x + y)(yz)'$ is 1 at 010, 100, 101, 110 and 0 elsewhere (at 011 and 111, $yz = 1$). Same four rows."
     },
     "cse-2002-b-55-b": {
       "approach": "AND–OR becomes NAND–NAND, but the circuit has two cascaded OR levels; insert one NAND used as an inverter so the second OR level is again a NAND fed by complemented inputs.",

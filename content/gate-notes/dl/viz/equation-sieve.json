@@ -1,0 +1,253 @@
+{
+ "version": 1,
+ "title": "A system of Boolean equations solved by elimination",
+ "width": 640,
+ "height": 400,
+ "narrow": {
+  "width": 360,
+  "height": 400
+ },
+ "intro": "All 16 assignments of A, B, C, D (row ABCD). Each equation keeps only the rows on which its two sides are equal.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Solving a system by striking out rows",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Solve by striking out rows",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g",
+   "type": "grid",
+   "x": 180,
+   "y": 64,
+   "rows": 4,
+   "cols": 4,
+   "cell": 70,
+   "values": [
+    [
+     "0000",
+     "0001",
+     "0010",
+     "0011"
+    ],
+    [
+     "0100",
+     "0101",
+     "0110",
+     "0111"
+    ],
+    [
+     "1000",
+     "1001",
+     "1010",
+     "1011"
+    ],
+    [
+     "1100",
+     "1101",
+     "1110",
+     "1111"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 40,
+    "y": 70,
+    "cell": 70
+   }
+  },
+  {
+   "id": "eq",
+   "type": "text",
+   "x": 320.0,
+   "y": 370,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 370,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Equation: A′ + AB = 0. A sum is 0 only if every term is 0: A′ = 0 forces A = 1, then AB = 0 forces B = 0. Four rows survive.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "1000",
+        "1001",
+        "1010",
+        "1011"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "A′ + AB = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Equation: AB = AC. With A = 1 and B = 0 the equation reads 0 = C, so C = 0. Two rows survive.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "1000",
+        "1001",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "AB = AC"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Equation: AB + AC′ + CD = C′D. With A = 1, B = 0, C = 0 it reads 0 + 1 + 0 = D, so D = 1. One row survives: ABCD = 1001.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "1001",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "AB + AC′ + CD = C′D"
+     }
+    }
+   ]
+  }
+ ]
+}

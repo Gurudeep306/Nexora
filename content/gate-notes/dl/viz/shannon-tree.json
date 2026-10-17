@@ -1,0 +1,568 @@
+{
+ "version": 1,
+ "title": "Shannon expansion as a decision tree",
+ "width": 640,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 320
+ },
+ "intro": "f = AB + A′C. Shannon expansion splits f on one variable into two smaller functions, the cofactors.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Shannon expansion: f = A′·f(0,B,C) + A·f(1,B,C)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Shannon expansion",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "erf0",
+   "type": "line",
+   "points": [
+    [
+     320,
+     99
+    ],
+    [
+     180,
+     151
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      180,
+      97
+     ],
+     [
+      90,
+      148
+     ]
+    ]
+   }
+  },
+  {
+   "id": "erf1",
+   "type": "line",
+   "points": [
+    [
+     320,
+     99
+    ],
+    [
+     460,
+     151
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      180,
+      97
+     ],
+     [
+      270,
+      148
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ef0c0",
+   "type": "line",
+   "points": [
+    [
+     180,
+     189
+    ],
+    [
+     120,
+     241
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      90,
+      182
+     ],
+     [
+      45,
+      233
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ef0c1",
+   "type": "line",
+   "points": [
+    [
+     180,
+     189
+    ],
+    [
+     240,
+     241
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      90,
+      182
+     ],
+     [
+      135,
+      233
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ef1b0",
+   "type": "line",
+   "points": [
+    [
+     460,
+     189
+    ],
+    [
+     400,
+     241
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      270,
+      182
+     ],
+     [
+      225,
+      233
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ef1b1",
+   "type": "line",
+   "points": [
+    [
+     460,
+     189
+    ],
+    [
+     520,
+     241
+    ]
+   ],
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      270,
+      182
+     ],
+     [
+      315,
+      233
+     ]
+    ]
+   }
+  },
+  {
+   "id": "r",
+   "type": "circle",
+   "cx": 320,
+   "cy": 80,
+   "r": 19,
+   "label": "f",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 180,
+    "cy": 80,
+    "r": 17
+   }
+  },
+  {
+   "id": "f0",
+   "type": "circle",
+   "cx": 180,
+   "cy": 170,
+   "r": 19,
+   "label": "C",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "hidden": true,
+   "narrow": {
+    "cx": 90,
+    "cy": 165,
+    "r": 17
+   }
+  },
+  {
+   "id": "f1",
+   "type": "circle",
+   "cx": 460,
+   "cy": 170,
+   "r": 19,
+   "label": "B",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "hidden": true,
+   "narrow": {
+    "cx": 270,
+    "cy": 165,
+    "r": 17
+   }
+  },
+  {
+   "id": "c0",
+   "type": "circle",
+   "cx": 120,
+   "cy": 260,
+   "r": 19,
+   "label": "0",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "hidden": true,
+   "narrow": {
+    "cx": 45,
+    "cy": 250,
+    "r": 17
+   }
+  },
+  {
+   "id": "c1",
+   "type": "circle",
+   "cx": 240,
+   "cy": 260,
+   "r": 19,
+   "label": "1",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "hidden": true,
+   "narrow": {
+    "cx": 135,
+    "cy": 250,
+    "r": 17
+   }
+  },
+  {
+   "id": "b0",
+   "type": "circle",
+   "cx": 400,
+   "cy": 260,
+   "r": 19,
+   "label": "0",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "hidden": true,
+   "narrow": {
+    "cx": 225,
+    "cy": 250,
+    "r": 17
+   }
+  },
+  {
+   "id": "b1",
+   "type": "circle",
+   "cx": 520,
+   "cy": 260,
+   "r": 19,
+   "label": "1",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "hidden": true,
+   "narrow": {
+    "cx": 315,
+    "cy": 250,
+    "r": 17
+   }
+  },
+  {
+   "id": "t0",
+   "type": "text",
+   "x": 230,
+   "y": 118,
+   "text": "A = 0",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 118,
+    "y": 116,
+    "size": 11
+   }
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 410,
+   "y": 118,
+   "text": "A = 1",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 242,
+    "y": 116,
+    "size": 11
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 130,
+   "y": 212,
+   "text": "C = 0",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 50,
+    "y": 205,
+    "size": 11
+   }
+  },
+  {
+   "id": "t3",
+   "type": "text",
+   "x": 230,
+   "y": 212,
+   "text": "C = 1",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 130,
+    "y": 205,
+    "size": 11
+   }
+  },
+  {
+   "id": "t4",
+   "type": "text",
+   "x": 410,
+   "y": 212,
+   "text": "B = 0",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 230,
+    "y": 205,
+    "size": 11
+   }
+  },
+  {
+   "id": "t5",
+   "type": "text",
+   "x": 510,
+   "y": 212,
+   "text": "B = 1",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 310,
+    "y": 205,
+    "size": 11
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 320,
+   "y": 322,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 302,
+    "size": 11
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Set A = 0: the term AB vanishes and A′C becomes C. The cofactor is f(0, B, C) = C.",
+   "patches": [
+    {
+     "id": "f0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "erf0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t0",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Set A = 1: the term A′C vanishes and AB becomes B. The cofactor is f(1, B, C) = B.",
+   "patches": [
+    {
+     "id": "f1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "erf1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Glue the halves back, each with the literal that selects it: f = A′·C + A·B, which is f again.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "f = A′·f(0,B,C) + A·f(1,B,C) = A′C + AB"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Keep splitting and every path ends in a constant. This decision tree describes f completely; a 2:1 multiplexer is the same picture in hardware (Chapter 4).",
+   "patches": [
+    {
+     "id": "c0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ef0c0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ef0c1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ef1b0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ef1b1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  }
+ ]
+}

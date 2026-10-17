@@ -2973,55 +2973,29 @@
       "verification": "Matches the official key B;D (GATE 2024 CS2 final answer key)."
     },
     "cse-2024-2-cs-20": {
-      "approach": "With a single variable, a two-row truth table settles every identity: an equation is true only if both sides agree for $x=0$ and $x=1$. Here \".\" is AND and \"+\" is OR.",
+      "approach": "Concept tested: the **basic laws** (identity, null, idempotence, complement). A one-variable identity is settled by its two rows, $x = 0$ and $x = 1$; an identity that fails on either row is FALSE.",
       "concepts": [
-        "Boolean algebra identities",
-        "Idempotent law",
-        "Null (dominance) law",
+        "Identity law",
+        "Null law",
+        "Idempotence",
         "Complement law"
       ],
       "steps": [
         {
-          "title": "Build the truth table",
-          "body": "Evaluate each left-hand side for $x = 0$ and $x = 1$:\n\n- $x \\cdot 1$: $0\\cdot1 = 0$, $1 \\cdot 1 = 1$\n- $x + 1$: $0+1 = 1$, $1+1 = 1$\n- $x \\cdot x$: $0\\cdot0 = 0$, $1\\cdot1 = 1$\n- $x + \\bar{x}$: $0+1 = 1$, $1+0 = 1$",
-          "scene": {
-            "reveal": 10
-          }
+          "title": "Check each statement on both rows",
+          "body": "| Statement | $x = 0$ | $x = 1$ | Verdict |\n|---|---|---|---|\n| $x \\cdot 1 = x$ | $0 = 0$ | $1 = 1$ | true (identity) |\n| $x + 1 = x$ | $1 \\ne 0$ | $1 = 1$ | **false** |\n| $x \\cdot x = 0$ | $0 = 0$ | $1 \\ne 0$ | **false** |\n| $x + \\bar{x} = 1$ | $1 = 1$ | $1 = 1$ | true (complement) |"
         },
         {
-          "title": "Compare with the right-hand sides",
-          "body": "- (A) $x\\cdot1$ column equals $x$ in both rows — **true** (identity law).\n- (B) $x+1$ is 1 in both rows, but $x=0$ in row 1: $1 \\ne 0$ — **false** (actually $x+1=1$).\n- (C) $x\\cdot x$ is 1 when $x=1$, not 0 — **false** (actually $x \\cdot x = x$, idempotent law).\n- (D) $x+\\bar{x}$ is 1 in both rows — **true** (complement law).",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "c": 2,
-                "tone": "error"
-              },
-              {
-                "r": 1,
-                "c": 3,
-                "tone": "error"
-              },
-              {
-                "c": 1,
-                "tone": "success"
-              },
-              {
-                "c": 4,
-                "tone": "success"
-              }
-            ],
-            "caption": "Red cells break the claimed identity"
-          }
+          "title": "Name the correct laws",
+          "body": "The true forms are the **null law** $x + 1 = 1$ and **idempotence** $x \\cdot x = x$. Statements (B) and (C) are distorted versions of them."
         },
         {
-          "title": "Pick the FALSE statements",
-          "body": "The false ones are **(B)** and **(C)**."
+          "title": "Conclusion",
+          "body": "The FALSE statements are (B) and (C)."
         }
       ],
       "answer": {
-        "value": "False statements: **(B) and (C)**",
+        "value": "(B) and (C)",
         "choice": [
           "B",
           "C"
@@ -3032,59 +3006,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$x\\cdot1 = x$ is the identity law — true, so not selected."
+          "reason": "True: 1 is the identity of AND, $x \\cdot 1 = x$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$x+1 = 1$ (null law); for $x=0$ it gives $1 \\ne 0$, so \"$x+1=x$\" is false."
+          "reason": "False: 1 controls OR, so $x + 1 = 1$, not $x$ (fails at $x = 0$)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$x\\cdot x = x$ (idempotent law); for $x=1$ it gives $1 \\ne 0$, so \"$x \\cdot x = 0$\" is false. It would be true only for $x\\cdot\\bar{x}$."
+          "reason": "False: $x \\cdot x = x$ (idempotence); it fails at $x = 1$. It is $x \\cdot \\bar{x}$ that is 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$x+\\bar{x} = 1$ is the complement law — true, so not selected."
+          "reason": "True: the complement law $x + \\bar{x} = 1$."
         }
       ],
-      "shortcut": "One counterexample kills an identity: put $x=0$ into (B) and $x=1$ into (C).",
+      "shortcut": "For a single variable, try $x = 0$ and $x = 1$: a statement that fails on either is false.",
       "pitfalls": [
-        "Reading option (C) as $x\\cdot\\bar{x} = 0$ — the paper has no complement bar there.",
-        "Choosing the true identities when the question asks for FALSE ones."
+        "Reading the question as 'which are TRUE'.",
+        "Confusing $x \\cdot x$ (= $x$) with $x \\cdot \\bar{x}$ (= 0)."
       ],
-      "verification": "Known laws: $x+1=1$ and $x\\cdot x=x$ contradict (B) and (C) whenever $x \\ne$ the right-hand side, while (A) and (D) are textbook identities.",
-      "animation": {
-        "kind": "table",
-        "title": "Truth table for one variable",
-        "cols": [
-          "x",
-          "x·1",
-          "x+1",
-          "x·x",
-          "x+x̄"
-        ],
-        "rows": [
-          [
-            0,
-            0,
-            1,
-            0,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      }
+      "verification": "Statements (A) and (D) are postulates of Boolean algebra (identity and complement); (B) and (C) each fail on one row."
     },
     "cse-2024-2-cs-21": {
       "approach": "Write each instruction's destination and sources, then classify every pair on R3 by who writes and who reads: write→read is RAW, read→write is WAR, write→write is WAW (always in program order).",

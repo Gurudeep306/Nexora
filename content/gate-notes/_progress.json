@@ -53,7 +53,8 @@
           "pyqs": 64,
           "status": "writing",
           "lessons_status": {
-            "logic-gates": "draft"
+            "logic-gates": "draft",
+            "boolean-laws": "draft"
           }
         },
         {

@@ -939,27 +939,28 @@
       "verification": "Layer check: bridge = L2 = MAC; router = L3 = IP."
     },
     "cse-2004-cs-17": {
-      "approach": "Group the two x' terms, then use the absorption identity a + a'b = a + b.",
+      "approach": "Concept tested: **factoring and the redundant-literal rule** $x + \\bar{x}y = x + y$ (here in the form $x' + xy = x' + y$).",
       "concepts": [
-        "Boolean algebra",
+        "Distributive law",
+        "Redundant-literal rule",
         "Absorption"
       ],
       "steps": [
         {
-          "title": "Factor",
-          "body": "$x'y' + x'y = x'(y'+y) = x'$. So $F = x' + xy$."
+          "title": "Factor the two x′ terms",
+          "body": "$x'y' + x'y = x'(y' + y) = x' \\cdot 1 = x'$. The function is now $x' + xy$."
         },
         {
-          "title": "Absorb",
-          "body": "$x' + xy = (x'+x)(x'+y) = x'+y$."
+          "title": "Delete the redundant literal",
+          "body": "In $x' + xy$, the literal $x'$ stands alone, so the $x$ inside $xy$ is redundant: $x' + xy = (x' + x)(x' + y) = x' + y$."
         },
         {
-          "title": "Check with the truth table",
-          "body": "F is 0 only for the missing minterm $xy'$ ($x=1,y=0$), and $x'+y$ is 0 only at $x=1,y=0$. ✓"
+          "title": "Check by rows",
+          "body": "The original has a term equal to 1 on rows $xy = 00$ ($x'y'$), $01$ ($x'y$) and $11$ ($xy$); it is 0 only on row 10. $x' + y$ is 0 exactly on row 10. Option (D)."
         }
       ],
       "answer": {
-        "value": "x' + y",
+        "value": "(D) $x' + y$",
         "choice": [
           "D"
         ],
@@ -969,25 +970,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "x' + y' is 0 at x = y = 1, but F contains xy, so F(1,1) = 1."
+          "reason": "$x' + y'$ is 0 on row 11, but the original is 1 there ($xy = 1$)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "x + y is 0 at x = y = 0, but F contains x'y', so F(0,0) = 1."
+          "reason": "$x + y$ is 0 on row 00, but the original is 1 there ($x'y' = 1$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "x + y' is 0 at x = 0, y = 1, but F contains x'y."
+          "reason": "$x + y'$ (as reprinted; the scan's symbol is unclear) is 0 on row 01, but the original is 1 there. The answer does not depend on how (C) is read."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: F = x' + y."
+          "reason": "Matches on all four rows: 0 only on row 10."
         }
       ],
-      "verification": "F has minterms m0, m1, m3; its complement is m2 = xy', so F = (xy')' = x' + y."
+      "shortcut": "Three of the four minterms are present ($m_0, m_1, m_3$); the function is 0 only at $x = 1, y = 0$, so it is the single OR $x' + y$.",
+      "pitfalls": [
+        "Factoring $y$ instead and stopping at $y + x'y'$ without simplifying it to $x' + y$."
+      ],
+      "verification": "Row 10: original $0 + 0 + 0 = 0$, $x' + y = 0$; the other three rows give 1 in both."
     },
     "cse-2004-cs-18": {
       "approach": "A NAND gate outputs 1 whenever any input is 0. In a NAND (active-low) SR latch, S and R both 0 feed a 0 into both gates, so both outputs are forced to 1.",
