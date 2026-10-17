@@ -2959,24 +2959,36 @@
       "verification": "Stall count: 1 (Load→Add) + 1 (Add→Dec R1) + 2 (Dec R1→Mpy) + 2 (Mpy→Store) = 6; 7 + 6 = 13."
     },
     "it-2007-cs-42": {
-      "approach": "Convert both numbers to decimal, subtract, then convert the result to octal (integer part by repeated division, fraction by repeated multiplication).",
+      "approach": "Concept tested: arithmetic across bases with fraction digits, answer in octal. Convert both operands to exact values (the hex fraction $.25$ is $2/16 + 5/256$), subtract, then write the integer part by repeated division by 8 and the fraction by repeated multiplication by 8.",
       "concepts": [
-        "Number systems",
-        "Hexadecimal",
-        "Octal conversion"
+        "Hex and binary fractions",
+        "Repeated division",
+        "Repeated multiplication"
       ],
       "steps": [
         {
-          "title": "Both operands in decimal",
-          "body": "$(C012.25)_{16} = 12\\cdot4096 + 0 + 1\\cdot16 + 2 + \\tfrac{2}{16} + \\tfrac{5}{256} = 49170 + 0.14453125 = 49170.14453125$\n\n$(10111001110.101)_2 = (5CE)_{16} + 0.625 = 5\\cdot256 + 12\\cdot16 + 14 + 0.625 = 1486.625$"
+          "title": "First operand",
+          "body": "$(C012.25)_{16} = 12\\cdot4096 + 0 + 16 + 2 + \\tfrac{2}{16} + \\tfrac{5}{256} = 49170 + 0.14453125 = 49170.14453125$."
+        },
+        {
+          "title": "Second operand",
+          "body": "$(10111001110.101)_2 = 1024 + 256 + 128 + 64 + 8 + 4 + 2 + 0.5 + 0.125 = 1486.625$."
         },
         {
           "title": "Subtract",
-          "body": "$49170.14453125 - 1486.625 = 47683.51953125$"
+          "body": "$49170.14453125 - 1486.625 = 47683.51953125$."
         },
         {
-          "title": "To octal",
-          "body": "Integer: $47683 = 8\\cdot5960 + 3$, $5960 = 8\\cdot745 + 0$, $745 = 8\\cdot93 + 1$, $93 = 8\\cdot11 + 5$, $11 = 8\\cdot1 + 3$, $1$ → $135103$.\n\nFraction: $0.51953125\\cdot8 = 4.15625$ → 4; $0.15625\\cdot8 = 1.25$ → 1; $0.25\\cdot8 = 2$ → 2.\n\nResult: $(135103.412)_8$ (option A)."
+          "title": "Integer part to octal",
+          "body": "$47683 = 8\\cdot5960 + 3$, $5960 = 8\\cdot745 + 0$, $745 = 8\\cdot93 + 1$, $93 = 8\\cdot11 + 5$, $11 = 8\\cdot1 + 3$, $1 = 8\\cdot0 + 1$. Upward: $(135103)_8$."
+        },
+        {
+          "title": "Fraction part to octal",
+          "body": "$0.51953125 \\times 8 = 4.15625$ → 4; $0.15625 \\times 8 = 1.25$ → 1; $0.25 \\times 8 = 2.0$ → 2, stop. So $.412$."
+        },
+        {
+          "title": "Answer",
+          "body": "$(135103.412)_8$: option A."
         }
       ],
       "answer": {
@@ -2990,28 +3002,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: 47683.51953125 = (135103.412)_8."
+          "reason": "$(135103.412)_8 = 47683.51953125$, the exact difference."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "564411 is not the octal form of 47683 (it is about 190729)."
+          "reason": "$564411$ has the integer digits of A reversed: the remainders were read top to bottom."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong integer and wrong fraction (.205_8 = 0.259…)."
+          "reason": "Reversed integer digits and reversed fraction digits ($.205$ instead of $.412$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Right integer part but .205_8 ≠ 0.51953125."
+          "reason": "Correct integer part, but the fraction digits $.205$ are $.412$ backwards: multiplication digits must be read top to bottom."
         }
       ],
+      "shortcut": "Do it all in binary. $(C012.25)_{16} = 1100\\,0000\\,0001\\,0010.0010\\,0101$; subtract $0101\\,1100\\,1110.101$ to get $1011\\,1010\\,0100\\,0011.1000\\,0101$, then group in threes from the point: $1|011|101|001|000|011\\,.\\,100|001|010 = (135103.412)_8$.",
       "pitfalls": [
-        "Mis-grouping the binary fraction .101 (= 0.625)."
+        "Reading $(.25)_{16}$ as the decimal $0.25$.",
+        "Reading division remainders top-down or multiplication digits bottom-up."
       ],
-      "verification": "Back-convert: 1·32768 + 3·4096 + 5·512 + 1·64 + 0·8 + 3 = 32768 + 12288 + 2560 + 64 + 3 = 47683; 4/8 + 1/64 + 2/512 = 0.51953125."
+      "verification": "$(135103.412)_8 = 47683 + \\tfrac48 + \\tfrac1{64} + \\tfrac2{512} = 47683.51953125$."
     },
     "it-2007-cs-43": {
       "approach": "A code corrects t errors when its minimum Hamming distance d ≥ 2t + 1. Find d over all pairs of code words.",

@@ -1724,19 +1724,23 @@
       "verification": "Length-8 strings: the DFA is in q5 after the 3rd symbol for any prefix, and stays there; so all 256 are accepted."
     },
     "cse-2021-2-cs-18": {
-      "approach": "Convert the binary fraction using place values $2^{-1}, 2^{-2}, \\dots$ and read off the digits.",
+      "approach": "Concept tested: reading a binary fraction by place value. The places after the point are $\\tfrac12, \\tfrac14, \\tfrac18, \\tfrac1{16}$; add the ones that hold a 1 and read off the decimal digits.",
       "concepts": [
-        "Binary fractions",
-        "Positional number systems"
+        "Place value of fraction bits",
+        "Binary to decimal"
       ],
       "steps": [
         {
-          "title": "Convert",
-          "body": "$$(0.1101)_2 = \\tfrac12 + \\tfrac14 + 0\\cdot\\tfrac18 + \\tfrac1{16} = 0.5 + 0.25 + 0.0625 = 0.8125$$"
+          "title": "Weight each bit",
+          "body": "$(0.1101)_2 = 1\\cdot\\tfrac12 + 1\\cdot\\tfrac14 + 0\\cdot\\tfrac18 + 1\\cdot\\tfrac1{16}$."
         },
         {
-          "title": "Match digits",
-          "body": "$0.8125 = 0.8xy5 \\Rightarrow x = 1,\\ y = 2$, so $x + y = 1 + 2 = $ **3**."
+          "title": "Add",
+          "body": "$0.5 + 0.25 + 0.0625 = 0.8125$."
+        },
+        {
+          "title": "Match the pattern $0.8xy5$",
+          "body": "$0.8125$ gives $x = 1$, $y = 2$, so $x + y = 3$."
         }
       ],
       "answer": {
@@ -1744,10 +1748,12 @@
         "number": 3,
         "matchesKey": true
       },
+      "shortcut": "$(0.1101)_2 = (1101)_2 / 16 = 13/16 = 0.8125$.",
       "pitfalls": [
-        "Reading the bits in reverse ($0.1011_2 = 0.6875$)."
+        "Using $\\tfrac1{10}, \\tfrac1{100}, \\dots$ for the bit places.",
+        "Forgetting the 0 bit in the third place, which shifts the last 1 to $\\tfrac18$."
       ],
-      "verification": "$13/16 = 0.8125$ since $(1101)_2 = 13$."
+      "verification": "$13/16 = 0.8125$ exactly (16 is a power of 2, so the decimal terminates in 4 places)."
     },
     "cse-2021-2-cs-19": {
       "approach": "Split the 32-bit address into tag | set index | offset. Offset and tag widths are known, so the index width gives the number of sets, and lines ÷ sets is the associativity.",
