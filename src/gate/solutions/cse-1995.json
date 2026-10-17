@@ -3615,70 +3615,34 @@
       "verification": "$4{,}684{,}800 / 4{,}800{,}000 = 0.976 = 3904/4000$. ✓"
     },
     "cse-1995-b-63-a": {
-      "approach": "Use De Morgan: $\\overline{A}+\\overline{B}+C = \\overline{A\\cdot B\\cdot\\overline{C}}$, which is a 3-input NAND of A, B and $\\overline{C}$; the inverter supplies $\\overline{C}$.",
+      "approach": "Concept tested: **NAND as an OR of complements** (De Morgan): $\\overline{abc} = \\bar{a} + \\bar{b} + \\bar{c}$. Match $Z$ to that pattern; the one literal that appears uncomplemented needs the inverter.",
       "concepts": [
         "De Morgan's law",
         "NAND implementation"
       ],
       "steps": [
         {
-          "title": "Rewrite",
-          "body": "$C = \\overline{\\overline{C}}$, so $Z = \\overline{A}+\\overline{B}+\\overline{\\overline{C}} = \\overline{A\\cdot B\\cdot \\overline{C}}$ (De Morgan)."
+          "title": "Rewrite each literal as a complement",
+          "body": "$Z = \\overline{A} + \\overline{B} + C = \\overline{A} + \\overline{B} + \\overline{\\overline{C}}$."
         },
         {
-          "title": "Circuit",
-          "body": "Feed C through the inverter; feed A, B and $\\overline{C}$ into a 3-input NAND gate. Its output is Z. With $A=1, B=1, C=0$ the NAND inputs are all 1, so $Z=0$ — the only input that makes $\\overline{A}+\\overline{B}+C$ false."
+          "title": "Apply De Morgan",
+          "body": "$\\bar{a} + \\bar{b} + \\bar{c} = \\overline{abc}$ with $a = A$, $b = B$, $c = \\overline{C}$: $Z = \\overline{A \\cdot B \\cdot \\overline{C}}$."
+        },
+        {
+          "title": "The circuit",
+          "body": "One inverter produces $\\overline{C}$; one 3-input NAND gate takes $A$, $B$ and $\\overline{C}$ and outputs $Z$."
         }
       ],
-      "animation": {
-        "kind": "circuit",
-        "inputs": [
-          {
-            "id": "A",
-            "value": 1
-          },
-          {
-            "id": "B",
-            "value": 1
-          },
-          {
-            "id": "C",
-            "value": 0
-          }
-        ],
-        "gates": [
-          {
-            "id": "n1",
-            "type": "NOT",
-            "in": [
-              "C"
-            ]
-          },
-          {
-            "id": "g1",
-            "type": "NAND",
-            "in": [
-              "A",
-              "B",
-              "n1"
-            ]
-          }
-        ],
-        "outputs": [
-          {
-            "id": "Z",
-            "from": "g1"
-          }
-        ]
-      },
       "answer": {
-        "value": "Invert C, then Z = NAND(A, B, $\\overline{C}$)",
+        "value": "Invert C, then $Z = \\text{NAND}(A, B, \\overline{C})$",
         "matchesKey": true
       },
+      "shortcut": "A NAND is 'OR with bubbled inputs': every input that appears complemented in the OR goes in directly; every uncomplemented one needs an inverter.",
       "pitfalls": [
-        "Inverting A and B instead — that needs three inverters and an OR, not one inverter and a NAND."
+        "Feeding $C$ directly (that gives $\\bar{A} + \\bar{B} + \\bar{C}$)."
       ],
-      "verification": "Truth check: Z = 0 only for $A=B=1, C=0$ in both $\\overline{A}+\\overline{B}+C$ and NAND(A, B, $\\overline{C}$)."
+      "verification": "Only row $A = B = 1$, $C = 0$ makes $Z = 0$; the NAND's inputs are then $1, 1, 1$, output 0. ✓"
     },
     "cse-1995-b-63-b": {
       "approach": "Read the 1s off the map and look for the largest wrap-around groups: the four corners form one quad and the four centre cells form another. Two quads cover all eight 1s, so the SOP has two terms.",

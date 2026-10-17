@@ -328,7 +328,7 @@
       "verification": "8-row comparison of the two NAND bracketings: they differ on rows 001, 011, 100, 110."
     },
     "cse-1992-a-2-ii": {
-      "approach": "A component is universal if it can build NOT and AND, given the constants 0 and 1.",
+      "approach": "Concept tested: **functional completeness with constants**. With 0 and 1 available, a component is universal iff it can make a non-monotone function and a non-affine one (equivalently, NOT and AND).",
       "concepts": [
         "Functional completeness",
         "Multiplexer",
@@ -337,19 +337,23 @@
       "steps": [
         {
           "title": "Multiplexer",
-          "body": "A 2:1 MUX $y=\\overline{s}a+sb$: with $a=1,b=0$ it gives $\\overline{s}$; with $a=0$ it gives $sb$ (AND). NOT+AND is complete."
+          "body": "A 2:1 MUX $y = \\bar{s}a + sb$: with $a = 1, b = 0$ it gives $\\bar{s}$ (NOT); with $a = 0$ it gives $sb$ (AND). Complete."
         },
         {
           "title": "Half adder",
-          "body": "Outputs $S=x\\oplus y$, $C=xy$. $S$ with $y=1$ gives $\\overline{x}$; $C$ is AND. Complete."
+          "body": "Sum $= x \\oplus y$, carry $= xy$. With $y = 1$ the sum is $\\bar{x}$ (NOT); the carry is AND. Complete."
         },
         {
-          "title": "XOR only, OR only",
-          "body": "XOR gates (even with constants) only produce affine functions $c\\oplus x_1\\oplus\\dots$, so no AND. OR gates are monotone, so no NOT."
+          "title": "Ex-OR gates alone",
+          "body": "Every XOR circuit is an XOR of inputs and constants (affine): it can never compute $xy$. Not complete."
+        },
+        {
+          "title": "OR gates alone",
+          "body": "Every OR circuit is monotone (and an OR of inputs): it can never compute $\\bar{x}$. Not complete."
         }
       ],
       "answer": {
-        "value": "(b) Multiplexers and (c) Half adders",
+        "value": "(B) multiplexers and (C) half adders",
         "choice": [
           "B",
           "C"
@@ -360,28 +364,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "XOR circuits are linear (affine); they cannot form $xy$."
+          "reason": "XOR gates are affine: no AND."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "A 2:1 MUX yields NOT and AND with constant inputs."
+          "reason": "MUX with constants gives NOT and AND."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Sum output gives NOT (XOR with 1), carry gives AND."
+          "reason": "Half adder: sum with 1 is NOT, carry is AND."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "OR is monotone; it cannot invert."
+          "reason": "OR gates are monotone: no NOT."
         }
       ],
+      "shortcut": "With free constants, check two things only: can it make a complement (non-monotone)? can it make an AND-like product (non-affine)?",
       "pitfalls": [
-        "Both B and C assume constant 0/1 inputs are available, which is standard."
+        "Forgetting that the MUX and the half adder need the constants (they are 0- and/or 1-preserving without them); the standard reading allows constants."
       ],
-      "verification": "Post's criteria: XOR is linear, OR is monotone; MUX and HA escape all five classes."
+      "verification": "MUX$(x; 1, 0) = \\bar{x}$ and MUX$(x; 0, y) = xy$ on all four rows; half-adder sum with $y = 1$: $0 \\to 1$, $1 \\to 0$."
     },
     "cse-1992-a-2-iii": {
       "approach": "A bit-slice chip (e.g. AMD 2901) is a 4-bit slice of a CPU's data path (ALU + register file + shifter); word length comes from cascading slices, control comes from a separate microprogram sequencer.",

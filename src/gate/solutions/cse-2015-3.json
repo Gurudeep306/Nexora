@@ -524,7 +524,7 @@
       "verification": "Even a single-CPU system can have hundreds of processes in the ready queue."
     },
     "cse-2015-3-cs-2": {
-      "approach": "$X\\#Y=X'+Y'=(XY)'$ is NAND. NAND is commutative but not associative; confirm associativity fails with one assignment.",
+      "approach": "Concept tested: **NAND as an operator**. $X \\# Y = X' + Y' = (XY)'$ is NAND, which is commutative but not associative; confirm the failure of associativity with one assignment.",
       "concepts": [
         "NAND gate",
         "Commutativity",
@@ -533,19 +533,19 @@
       "steps": [
         {
           "title": "Recognise NAND",
-          "body": "$X\\#Y=X'+Y'=(XY)'$ by De Morgan. Since $XY=YX$, $Q\\#R=R\\#Q$, so **S2 is true**."
+          "body": "$X \\# Y = X' + Y' = (XY)'$ by De Morgan."
         },
         {
-          "title": "Test S1 with P=0, Q=0, R=1",
-          "body": "$(P\\#Q)\\#R=(0\\#0)\\#1=1\\#1=0$. $P\\#(Q\\#R)=0\\#(0\\#1)=0\\#1=1$. Since $0\\ne1$, **S1 is false**."
+          "title": "Statement S2",
+          "body": "$Q \\# R = (QR)' = (RQ)' = R \\# Q$: commutative. S2 is true."
         },
         {
-          "title": "Conclusion",
-          "body": "Only S2 holds → **B**."
+          "title": "Statement S1",
+          "body": "$(P \\# Q) \\# R = PQ + R'$ and $P \\# (Q \\# R) = P' + QR$. At $P = Q = 0, R = 1$: $0 + 0 = 0$ vs $1 + 0 = 1$. S1 is false."
         }
       ],
       "answer": {
-        "value": "Only S2 is true",
+        "value": "(B) only S2 is true",
         "choice": [
           "B"
         ],
@@ -555,7 +555,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "S1 (associativity) fails for P=0, Q=0, R=1."
+          "reason": "S1 (associativity) fails at $P = Q = 0, R = 1$."
         },
         {
           "option": "B",
@@ -570,10 +570,14 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "S2 is true since X′+Y′ = Y′+X′."
+          "reason": "S2 is true: AND, and hence NAND, is symmetric."
         }
       ],
-      "verification": "Symbolically $(P\\#Q)\\#R=PQ+R'$ while $P\\#(Q\\#R)=P'+QR$; they differ at $P=0,Q=0,R=1$."
+      "shortcut": "Any NAND/NOR in disguise: commutative yes, associative no.",
+      "pitfalls": [
+        "Assuming the De Morgan form $X' + Y'$ is associative because OR is: the primes are applied to the *results* of the inner operation."
+      ],
+      "verification": "$(0 \\# 0) \\# 1 = 1 \\# 1 = 0$; $0 \\# (0 \\# 1) = 0 \\# 1 = 1$."
     },
     "cse-2015-3-cs-3": {
       "approach": "A theatre has maximum capacity exactly when its capacity is ≥ every capacity in the table; that is \">= ALL\" over the capacity column.",

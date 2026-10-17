@@ -745,6 +745,217 @@ SOLUTIONS["cse-2025-1-cs-14"] = {
 }
 
 
+# ── Lesson 5: universal gates and completeness ──────────────────────────────
+
+def circuit(title, inputs, gates, out, caption=None):
+    f = {"kind": "circuit", "title": title, "inputs": [{"id": i, "label": i, "value": v} for i, v in inputs],
+         "gates": [{"id": g, "type": t, "in": ins} for g, t, ins in gates], "outputs": [{"id": "F", "from": out, "label": "F"}]}
+    if caption:
+        f["caption"] = caption
+    return f
+
+
+SOLUTIONS["it-2004-it-8"] = {
+    "approach": "Concept tested: **XOR from NAND gates and minimality**. The standard construction shares one gate, $(AB)'$, between two others; then argue that three gates cannot work.",
+    "concepts": ["NAND universality", "XOR realisation", "Minimum gate count"],
+    "steps": [
+        {"title": "Construction", "body": "$G_1 = \\overline{AB}$, $G_2 = \\overline{A\\,G_1} = \\overline{A} + B$, $G_3 = \\overline{G_1 B} = A + \\overline{B}$, $F = \\overline{G_2 G_3} = \\overline{(\\overline{A} + B)(A + \\overline{B})} = \\overline{AB + \\overline{A}\\,\\overline{B}} = A \\oplus B$. Four gates."},
+        {"title": "Why not three", "body": "The output gate is $\\overline{PQ}$, so $PQ$ must be XNOR: $P$ and $Q$ must both be 1 on rows 00 and 11. With at most two earlier gates the only such signals are $\\overline{A} + B$, $A + \\overline{B}$ and the constant 1, and producing both of the first two already takes three gates. So three gates are not enough."},
+        {"title": "Conclusion", "body": "The minimum is 4 (an exhaustive search over all circuits confirms it): option (B)."},
+    ],
+    "answer": {"value": "(B) 4", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Three NANDs cannot compute XOR (see the argument above)."),
+        opt("B", True, "The shared-gate construction uses four, and it is minimal."),
+        opt("C", False, "Five is the NAND count for XNOR (or for XOR built without sharing)."),
+        opt("D", False, "Six or more comes from converting the SOP $A\\overline{B} + \\overline{A}B$ gate by gate."),
+    ],
+    "shortcut": "Remember the table: XOR = 4 NAND = 5 NOR; XNOR = 5 NAND = 4 NOR.",
+    "pitfalls": ["Converting $A\\bar{B} + \\bar{A}B$ directly (2 inverters + 3 NANDs = 5) and calling it the minimum."],
+    "verification": "Row 10: $G_1 = 1$, $G_2 = \\overline{1 \\cdot 1} = 0$, $G_3 = \\overline{1 \\cdot 0} = 1$, $F = \\overline{0 \\cdot 1} = 1 = 1 \\oplus 0$.",
+    "animation": circuit("XOR from four NAND gates", [("A", 1), ("B", 0)], [("G1", "NAND", ["A", "B"]), ("G2", "NAND", ["A", "G1"]), ("G3", "NAND", ["G1", "B"]), ("G4", "NAND", ["G2", "G3"])], "G4",
+                         "A = 1, B = 0: the output is 1."),
+}
+
+SOLUTIONS["cse-2009-cs-6"] = {
+    "approach": "Concept tested: **NOR–NOR realisation from a product of sums, and a minimality argument**. Rewrite $AB + C$ as $(A + C)(B + C)$, which maps onto two levels of NOR gates; then show two gates are not enough.",
+    "concepts": ["NOR as universal gate", "POS form", "NOR–NOR realisation"],
+    "steps": [
+        {"title": "Product-of-sums form", "body": "By distributivity (OR over AND), $AB + C = (A + C)(B + C)$."},
+        {"title": "Three NOR gates", "body": "$G_1 = \\overline{A + C}$, $G_2 = \\overline{B + C}$, $G_3 = \\overline{G_1 + G_2} = \\overline{G_1}\\,\\overline{G_2} = (A + C)(B + C) = AB + C$. So 3 gates suffice."},
+        {"title": "Two gates are not enough", "body": "The function depends on $A$, $B$ and $C$, so with two gates the output gate must read the other gate $G = \\overline{x + y}$ and one variable $z$. Its output is $\\overline{G + z} = (x + y)\\bar{z}$, which is 0 whenever $z = 1$. But $AB + C$ is 1 in some row with $z = 1$ whichever variable $z$ is ($C = 1$; or $A = B = 1, C = 0$). So 2 gates cannot work."},
+        {"title": "Conclusion", "body": "The minimum is **3**: option (B). (The bank's earlier key D = 5 counted the naive conversion; it has been corrected.)"},
+    ],
+    "answer": {"value": "(B) 3", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Two NOR gates compute at most $(x + y)\\bar{z}$, never $AB + C$."),
+        opt("B", True, "NOR–NOR on $(A + C)(B + C)$: three gates, and two are not enough."),
+        opt("C", False, "Four gates work but are not the minimum."),
+        opt("D", False, "Five is the count of the naive conversion (AND = 3 NORs, OR = 2 NORs), not the minimum."),
+    ],
+    "shortcut": "For NOR gates, go to a product of sums first: one NOR per sum term plus one output NOR.",
+    "pitfalls": ["Converting the SOP gate by gate and getting 5.", "Forgetting that a minimum question also needs the argument that fewer gates fail."],
+    "verification": "Truth table: for $C = 1$ both sums are 1, so the output is 1; for $C = 0$ it is $AB$. Matches $AB + C$ on all 8 rows. An exhaustive search over every 2-gate circuit finds no match.",
+    "animation": circuit("AB + C from three NOR gates", [("A", 1), ("B", 1), ("C", 0)], [("G1", "NOR", ["A", "C"]), ("G2", "NOR", ["B", "C"]), ("G3", "NOR", ["G1", "G2"])], "G3",
+                         "A = B = 1, C = 0: G1 = G2 = 0, so F = 1 = AB + C."),
+}
+
+SOLUTIONS["cse-1995-b-63-a"] = {
+    "approach": "Concept tested: **NAND as an OR of complements** (De Morgan): $\\overline{abc} = \\bar{a} + \\bar{b} + \\bar{c}$. Match $Z$ to that pattern; the one literal that appears uncomplemented needs the inverter.",
+    "concepts": ["De Morgan's law", "NAND implementation"],
+    "steps": [
+        {"title": "Rewrite each literal as a complement", "body": "$Z = \\overline{A} + \\overline{B} + C = \\overline{A} + \\overline{B} + \\overline{\\overline{C}}$."},
+        {"title": "Apply De Morgan", "body": "$\\bar{a} + \\bar{b} + \\bar{c} = \\overline{abc}$ with $a = A$, $b = B$, $c = \\overline{C}$: $Z = \\overline{A \\cdot B \\cdot \\overline{C}}$."},
+        {"title": "The circuit", "body": "One inverter produces $\\overline{C}$; one 3-input NAND gate takes $A$, $B$ and $\\overline{C}$ and outputs $Z$."},
+    ],
+    "answer": {"value": "Invert C, then $Z = \\text{NAND}(A, B, \\overline{C})$", "matchesKey": True},
+    "shortcut": "A NAND is 'OR with bubbled inputs': every input that appears complemented in the OR goes in directly; every uncomplemented one needs an inverter.",
+    "pitfalls": ["Feeding $C$ directly (that gives $\\bar{A} + \\bar{B} + \\bar{C}$)."],
+    "verification": "Only row $A = B = 1$, $C = 0$ makes $Z = 0$; the NAND's inputs are then $1, 1, 1$, output 0. ✓",
+}
+
+SOLUTIONS["cse-2002-b-55-b"] = {
+    "approach": "Concept tested: **multi-level NAND conversion by bubble pairs**. The circuit is AND → OR → OR; the first AND–OR level becomes NAND–NAND, and the second OR level needs an inverter (an unpaired bubble) before it can be a NAND too.",
+    "concepts": ["NAND-only realisation", "Bubble pushing", "De Morgan's law"],
+    "steps": [
+        {"title": "Read the circuit", "body": "$f = (ab + cd) + ef$: AND gates on $(a, b)$, $(c, d)$, $(e, f)$, an OR of the first two, and an OR of that with the third."},
+        {"title": "First AND–OR level", "body": "$N_1 = \\overline{ab}$, $N_2 = \\overline{cd}$, $N_3 = \\overline{N_1 N_2} = ab + cd$ (NAND–NAND)."},
+        {"title": "The second OR level", "body": "To NAND $ab + cd$ with $ef$, the output NAND needs both inputs complemented: $\\overline{ef}$ comes from $N_5 = \\overline{ef}$, and $\\overline{ab + cd}$ needs an inverter $N_4 = \\overline{N_3 N_3}$."},
+        {"title": "Output", "body": "$f = \\overline{N_4 N_5} = \\overline{N_4} + \\overline{N_5} = (ab + cd) + ef$. Six 2-input NANDs: $N_1, \\ldots, N_5$ and the output gate."},
+    ],
+    "answer": {"value": "N1 = (ab)′, N2 = (cd)′, N3 = NAND(N1, N2), N4 = NAND(N3, N3), N5 = (ef)′, f = NAND(N4, N5): six 2-input NANDs", "matchesKey": True},
+    "shortcut": "Draw every gate as NAND and count bubbles on each wire: wherever a wire has a single bubble (here between the two OR levels), add one inverter.",
+    "pitfalls": ["Replacing every gate by a NAND without the inverter, which computes $\\overline{ab + cd} + ef$.", "Using a 3-input NAND for the OR of three products (the question requires 2-input gates)."],
+    "verification": "$a = b = 1$, others 0: $N_1 = 0$, $N_2 = 1$, $N_3 = 1$, $N_4 = 0$, $N_5 = 1$, $f = \\overline{0 \\cdot 1} = 1$. ✓",
+}
+
+SOLUTIONS["cse-2015-3-cs-2"] = {
+    "approach": "Concept tested: **NAND as an operator**. $X \\# Y = X' + Y' = (XY)'$ is NAND, which is commutative but not associative; confirm the failure of associativity with one assignment.",
+    "concepts": ["NAND gate", "Commutativity", "Associativity"],
+    "steps": [
+        {"title": "Recognise NAND", "body": "$X \\# Y = X' + Y' = (XY)'$ by De Morgan."},
+        {"title": "Statement S2", "body": "$Q \\# R = (QR)' = (RQ)' = R \\# Q$: commutative. S2 is true."},
+        {"title": "Statement S1", "body": "$(P \\# Q) \\# R = PQ + R'$ and $P \\# (Q \\# R) = P' + QR$. At $P = Q = 0, R = 1$: $0 + 0 = 0$ vs $1 + 0 = 1$. S1 is false."},
+    ],
+    "answer": {"value": "(B) only S2 is true", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "S1 (associativity) fails at $P = Q = 0, R = 1$."),
+        opt("B", True, "NAND is commutative but not associative."),
+        opt("C", False, "S1 is false."),
+        opt("D", False, "S2 is true: AND, and hence NAND, is symmetric."),
+    ],
+    "shortcut": "Any NAND/NOR in disguise: commutative yes, associative no.",
+    "pitfalls": ["Assuming the De Morgan form $X' + Y'$ is associative because OR is: the primes are applied to the *results* of the inner operation."],
+    "verification": "$(0 \\# 0) \\# 1 = 1 \\# 1 = 0$; $0 \\# (0 \\# 1) = 0 \\# 1 = 1$.",
+}
+
+SOLUTIONS["cse-1992-a-2-ii"] = {
+    "approach": "Concept tested: **functional completeness with constants**. With 0 and 1 available, a component is universal iff it can make a non-monotone function and a non-affine one (equivalently, NOT and AND).",
+    "concepts": ["Functional completeness", "Multiplexer", "Half adder"],
+    "steps": [
+        {"title": "Multiplexer", "body": "A 2:1 MUX $y = \\bar{s}a + sb$: with $a = 1, b = 0$ it gives $\\bar{s}$ (NOT); with $a = 0$ it gives $sb$ (AND). Complete."},
+        {"title": "Half adder", "body": "Sum $= x \\oplus y$, carry $= xy$. With $y = 1$ the sum is $\\bar{x}$ (NOT); the carry is AND. Complete."},
+        {"title": "Ex-OR gates alone", "body": "Every XOR circuit is an XOR of inputs and constants (affine): it can never compute $xy$. Not complete."},
+        {"title": "OR gates alone", "body": "Every OR circuit is monotone (and an OR of inputs): it can never compute $\\bar{x}$. Not complete."},
+    ],
+    "answer": {"value": "(B) multiplexers and (C) half adders", "choice": ["B", "C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "XOR gates are affine: no AND."),
+        opt("B", True, "MUX with constants gives NOT and AND."),
+        opt("C", True, "Half adder: sum with 1 is NOT, carry is AND."),
+        opt("D", False, "OR gates are monotone: no NOT."),
+    ],
+    "shortcut": "With free constants, check two things only: can it make a complement (non-monotone)? can it make an AND-like product (non-affine)?",
+    "pitfalls": ["Forgetting that the MUX and the half adder need the constants (they are 0- and/or 1-preserving without them); the standard reading allows constants."],
+    "verification": "MUX$(x; 1, 0) = \\bar{x}$ and MUX$(x; 0, y) = xy$ on all four rows; half-adder sum with $y = 1$: $0 \\to 1$, $1 \\to 0$.",
+}
+
+SOLUTIONS["cse-1999-a-34"] = {
+    "approach": "Concept tested: **Post's classes with constants available**. A set is complete iff it contains a non-monotone member and a non-affine member (the constants handle the other three classes).",
+    "concepts": ["Functional completeness", "Multiplexer", "Post's criteria"],
+    "steps": [
+        {"title": "(A) XOR, NOT", "body": "Both are affine ($x \\oplus y$, $x \\oplus 1$); every circuit is an XOR of inputs and constants, so AND is impossible. Not sufficient."},
+        {"title": "(B) 2:1 MUX", "body": "$\\text{MUX}(x; 1, 0) = \\bar{x}$ and $\\text{MUX}(x; 0, y) = xy$. Sufficient."},
+        {"title": "(C) AND, XOR", "body": "$x \\oplus 1 = \\bar{x}$ gives NOT; with AND that is complete. Sufficient."},
+        {"title": "(D) AB + C gates", "body": "$(A \\cdot B) + C$ has no complement and is monotone; constants are monotone too, so every circuit is monotone and NOT is impossible. Not sufficient."},
+    ],
+    "answer": {"value": "(B) and (C)", "choice": ["B", "C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Trapped in the affine class: no AND."),
+        opt("B", True, "MUX with constants builds NOT and AND."),
+        opt("C", True, "XOR with 1 is NOT; with AND that is complete."),
+        opt("D", False, "Trapped in the monotone class: no NOT."),
+    ],
+    "shortcut": "Monotone (D) and affine (A) sets are the two classic dead ends.",
+    "pitfalls": ["Thinking (D) is complete because it 'contains both AND and OR'.", "Rejecting (C) because neither gate alone is universal."],
+    "verification": "Post class table: {XOR, NOT} all affine; {MUX} escapes M and A; {AND, XOR} escapes M (XOR) and A (AND); {AB + C} all monotone.",
+}
+
+SOLUTIONS["cse-1993-ii-b-9"] = {
+    "approach": "Concept tested: **completeness of a building block**. A half adder outputs $S = x \\oplus y$ and $C = xy$. Show that it yields NOT and AND (with the constant 1), and use the completeness of {AND, NOT}.",
+    "concepts": ["Half adder", "Functional completeness", "Constants"],
+    "steps": [
+        {"title": "AND", "body": "The carry output of a half adder with inputs $x, y$ is $xy$: an AND gate."},
+        {"title": "NOT", "body": "Tie one input to logic 1: the sum output is $x \\oplus 1 = \\bar{x}$: an inverter."},
+        {"title": "Everything else", "body": "{AND, NOT} is complete: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$, and every function is a canonical SOP of ANDs, ORs and NOTs. So any Boolean function can be built from half adders (and the constant 1)."},
+        {"title": "Why the constant is needed", "body": "Without it, every half-adder circuit maps the all-zero input to 0 (both $S$ and $C$ are 0-preserving), so NOT could never be built. The constant 1 is the standard assumption."},
+    ],
+    "answer": {"value": "Carry gives AND, sum with one input at 1 gives NOT; {AND, NOT} is complete, so half adders realise every function", "matchesKey": True},
+    "shortcut": "Any block that offers an AND-type output and an XOR-type output is complete once the constant 1 is available.",
+    "pitfalls": ["Claiming completeness without saying where the constant 1 comes from."],
+    "verification": "Example: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$ uses three half adders as inverters and one carry as AND, plus one more inverter.",
+}
+
+SOLUTIONS["cse-1998-a-57-a"] = {
+    "approach": "Concept tested: **building XOR from implication gates**. IMP computes $a \\to b = \\bar{a} + b$. Write $f = x\\bar{y} + \\bar{x}y$ as a single implication whose inputs are themselves implications, using the constant 0 for one negation.",
+    "concepts": ["Implication gate", "XOR", "Logic synthesis"],
+    "steps": [
+        {"title": "XOR as 'not both implications'", "body": "$x \\to y$ is 0 only at $(1, 0)$ and $y \\to x$ only at $(0, 1)$, so $(x \\to y)(y \\to x)$ is XNOR and $f = \\overline{(x \\to y)(y \\to x)} = \\overline{g_1} + \\overline{g_2}$ with $g_1 = x \\to y$, $g_2 = y \\to x$."},
+        {"title": "Write it as one implication", "body": "$\\overline{g_1} + \\overline{g_2} = g_1 \\to \\overline{g_2}$, and $\\overline{g_2} = g_2 \\to 0$."},
+        {"title": "The four gates", "body": "$g_1 = x \\to y$, $g_2 = y \\to x$, $g_3 = g_2 \\to 0 = \\overline{g_2}$, $f = g_1 \\to g_3$."},
+    ],
+    "answer": {"value": "g1 = x→y, g2 = y→x, g3 = g2→0 (= ¬g2), f = g1→g3 = ¬g1 + ¬g2 = x⊕y", "matchesKey": True},
+    "shortcut": "IMP with 0 is NOT; IMP itself is 'OR with the first input inverted'. XOR = OR of the two 'inhibition' terms, each the complement of an implication.",
+    "pitfalls": ["Using the gates without the constant 0: implication is 1-preserving, so some negation must come from a constant."],
+    "verification": "| $x$ | $y$ | $g_1$ | $g_2$ | $g_3$ | $f$ |\n|---|---|---|---|---|---|\n| 0 | 0 | 1 | 1 | 0 | 0 |\n| 0 | 1 | 1 | 0 | 1 | 1 |\n| 1 | 0 | 0 | 1 | 0 | 1 |\n| 1 | 1 | 1 | 1 | 0 | 0 |",
+}
+
+SOLUTIONS["cse-1998-a-57-b"] = {
+    "approach": "Concept tested: **functional completeness by building a known complete set**. Make NOT and OR from implication gates (with the constant 0); {NOT, OR} is complete.",
+    "concepts": ["Functional completeness", "Implication gate", "Partial completeness"],
+    "steps": [
+        {"title": "Build NOT", "body": "$x \\to 0 = \\bar{x} + 0 = \\bar{x}$."},
+        {"title": "Build OR", "body": "$(x \\to 0) \\to y = \\bar{\\bar{x}} + y = x + y$."},
+        {"title": "Conclude", "body": "{NOT, OR} is functionally complete (AND $= \\overline{\\bar{x} + \\bar{y}}$), so implication gates with the constant 0 can realise every Boolean function."},
+        {"title": "Why 0 is essential", "body": "$1 \\to 1 = 1$: implication is 1-preserving, so without the constant 0 every circuit outputs 1 on the all-ones input and NOT is impossible. The gate is *partially* complete."},
+    ],
+    "answer": {"value": "x→0 = x̄ (NOT); (x→0)→y = x + y (OR); {NOT, OR} is complete (given the constant 0)", "matchesKey": True},
+    "shortcut": "To show completeness, build NOT and one of AND/OR; to show the need for a constant, check the all-0 and all-1 rows.",
+    "pitfalls": ["Claiming completeness 'without constants', which is false (1-preserving)."],
+    "verification": "Post's classes of $x' + y$: not 0-preserving, 1-preserving, not self-dual, not monotone, not affine. Only T₁ traps it, and the constant 0 escapes T₁.",
+}
+
+SOLUTIONS["cse-2015-1-cs-39"] = {
+    "approach": "Concept tested: **completeness of a single function (no constants)**. Simplify each function; a single function is complete iff $f(0,\\ldots,0) = 1$, $f(1,\\ldots,1) = 0$ and it is not self-dual. Or construct NAND from it directly.",
+    "concepts": ["Functional completeness", "NAND universality", "Boolean simplification"],
+    "steps": [
+        {"title": "Simplify g", "body": "$g = X'YZ + X'YZ' + XY = X'Y + XY = Y$. A circuit of $g$ gates only ever copies an input: not complete."},
+        {"title": "Corner test for f", "body": "$f = X'YZ + XY' + Y'Z'$. $f(0,0,0) = Y'Z' = 1$ and $f(1,1,1) = 0$: escapes T₀ and T₁ (and hence M). It has the minterms $\\{0, 3, 4, 5\\}$; rows 3 and 4 are a complementary pair, so it is not self-dual. By the Sheffer criterion, $\\{f\\}$ is complete."},
+        {"title": "Constructive check", "body": "$f(X, X, X) = \\bar{X}$ (NOT). $f(X, Y, Y) = X'Y + XY' + Y' = X'Y + Y' = X' + Y' = \\overline{XY}$: a NAND, which is universal."},
+    ],
+    "answer": {"value": "(B) only {f} is functionally complete", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$g = Y$ cannot even make NOT."),
+        opt("B", True, "$f(X, Y, Y) = \\overline{XY}$ is NAND; $g$ is a projection."),
+        opt("C", False, "$g$ is the one that fails."),
+        opt("D", False, "$f$ is complete."),
+    ],
+    "shortcut": "Tie inputs together: $f(X, Y, Y)$ already gives NAND.",
+    "pitfalls": ["Not simplifying $g$ and assuming it is complete because it contains complemented literals."],
+    "verification": "Post's classes of $f$ (by truth table $\\Sigma(0, 3, 4, 5)$): not 0-preserving, not 1-preserving, not self-dual, not monotone, not affine.",
+}
+
+
 def write():
     bank = {q["id"]: q for q in json.loads((ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
     by_paper = {}

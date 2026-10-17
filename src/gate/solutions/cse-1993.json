@@ -2150,38 +2150,39 @@
       "verification": "Each term = n gives exactly n², which is in every class (b)–(e) but not O(n)."
     },
     "cse-1993-ii-b-9": {
-      "approach": "A half adder gives $S=x\\oplus y$ and $C=xy$. Tie one input to logic 1 and the sum output becomes NOT; the carry output is AND. Since $\\{\\text{AND},\\text{NOT}\\}$ is functionally complete, half adders alone realise any Boolean function.",
+      "approach": "Concept tested: **completeness of a building block**. A half adder outputs $S = x \\oplus y$ and $C = xy$. Show that it yields NOT and AND (with the constant 1), and use the completeness of {AND, NOT}.",
       "concepts": [
         "Half adder",
         "Functional completeness",
-        "XOR with constant"
+        "Constants"
       ],
       "steps": [
         {
-          "title": "Outputs of one half adder",
-          "body": "For inputs $x,y$: $$S=x\\oplus y,\\qquad C=x\\cdot y$$ So the carry output is already a 2-input **AND** gate."
+          "title": "AND",
+          "body": "The carry output of a half adder with inputs $x, y$ is $xy$: an AND gate."
         },
         {
-          "title": "NOT from the sum output",
-          "body": "Fix $y=1$: $$S=x\\oplus 1=\\overline{x}$$ (if $x=0$, $S=1$; if $x=1$, $S=0$). So the sum output of a half adder with one input tied to 1 is an **inverter**."
+          "title": "NOT",
+          "body": "Tie one input to logic 1: the sum output is $x \\oplus 1 = \\bar{x}$: an inverter."
         },
         {
-          "title": "OR also follows",
-          "body": "By De Morgan, $x+y=\\overline{\\overline{x}\\cdot\\overline{y}}$: two half adders as inverters, one as AND (carry), one more as inverter. (Also $x+y=(x\\oplus y)\\oplus(xy)$ using one half adder's $S$ and $C$ fed into a second half adder's inputs: its sum output is $x\\oplus y\\oplus xy=x+y$.)"
+          "title": "Everything else",
+          "body": "{AND, NOT} is complete: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$, and every function is a canonical SOP of ANDs, ORs and NOTs. So any Boolean function can be built from half adders (and the constant 1)."
         },
         {
-          "title": "Conclusion",
-          "body": "AND and NOT (hence also OR) can be built only from half adders. Every Boolean function has a sum-of-products form using only AND, OR, NOT, so **every Boolean function can be implemented with half adders alone**."
+          "title": "Why the constant is needed",
+          "body": "Without it, every half-adder circuit maps the all-zero input to 0 (both $S$ and $C$ are 0-preserving), so NOT could never be built. The constant 1 is the standard assumption."
         }
       ],
       "answer": {
-        "value": "Carry $=xy$ gives AND; sum with one input tied to 1 gives $x\\oplus1=\\overline{x}$ (NOT). $\\{\\text{AND},\\text{NOT}\\}$ is functionally complete, so any Boolean function can be built from half adders.",
+        "value": "Carry gives AND, sum with one input at 1 gives NOT; {AND, NOT} is complete, so half adders realise every function",
         "matchesKey": true
       },
+      "shortcut": "Any block that offers an AND-type output and an XOR-type output is complete once the constant 1 is available.",
       "pitfalls": [
-        "Forgetting that a constant 1 input is allowed — without it, XOR and AND alone cannot produce NOT (they map all-zero inputs to 0)."
+        "Claiming completeness without saying where the constant 1 comes from."
       ],
-      "verification": "Checked $x\\oplus1$ on both values of $x$, and $(x\\oplus y)\\oplus xy$ on all four input pairs: 0,1,1,1 = OR."
+      "verification": "Example: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$ uses three half adders as inverters and one carry as AND, plus one more inverter."
     },
     "cse-1993-ii-b-10": {
       "approach": "Mode 2 is autoincrement register-indirect with RegR = PC. After fetching the one-word instruction at 2000 the PC already holds 2001, so the operand is taken from 2001 and the autoincrement then moves PC to 2002.",

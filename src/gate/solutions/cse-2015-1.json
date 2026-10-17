@@ -2836,7 +2836,7 @@
       "verification": "Equivalently $S = \\dfrac{\\text{CPI}_{np}}{\\text{CPI}_{p}} \\times \\dfrac{f_{p}}{f_{np}} = 4 \\times \\dfrac{2}{2.5} = 3.2$."
     },
     "cse-2015-1-cs-39": {
-      "approach": "Simplify each function and try to build NOT and NAND from it alone (no constants). If a single function yields NAND it is functionally complete.",
+      "approach": "Concept tested: **completeness of a single function (no constants)**. Simplify each function; a single function is complete iff $f(0,\\ldots,0) = 1$, $f(1,\\ldots,1) = 0$ and it is not self-dual. Or construct NAND from it directly.",
       "concepts": [
         "Functional completeness",
         "NAND universality",
@@ -2845,19 +2845,19 @@
       "steps": [
         {
           "title": "Simplify g",
-          "body": "$$g = X'YZ + X'YZ' + XY = X'Y(Z+Z') + XY = X'Y + XY = Y$$\n\n$g$ just returns its second input, so composing $g$ can only produce projections — $\\{g\\}$ is **not** complete."
+          "body": "$g = X'YZ + X'YZ' + XY = X'Y + XY = Y$. A circuit of $g$ gates only ever copies an input: not complete."
         },
         {
-          "title": "Get NOT from f",
-          "body": "Put $X = Y = Z = A$:\n$$f(A,A,A) = A'AA + AA' + A'A' = 0 + 0 + A' = A'$$"
+          "title": "Corner test for f",
+          "body": "$f = X'YZ + XY' + Y'Z'$. $f(0,0,0) = Y'Z' = 1$ and $f(1,1,1) = 0$: escapes T₀ and T₁ (and hence M). It has the minterms $\\{0, 3, 4, 5\\}$; rows 3 and 4 are a complementary pair, so it is not self-dual. By the Sheffer criterion, $\\{f\\}$ is complete."
         },
         {
-          "title": "Get NAND from f",
-          "body": "Put $Z = Y$:\n$$f(X,Y,Y) = X'YY + XY' + Y'Y' = X'Y + XY' + Y' = X'Y + Y'$$\n$$= (X' + Y')(Y + Y') = X' + Y' = \\overline{XY}$$\n\nNAND is universal, so $\\{f\\}$ **is** complete. Only $\\{f\\}$ ⇒ option (B)."
+          "title": "Constructive check",
+          "body": "$f(X, X, X) = \\bar{X}$ (NOT). $f(X, Y, Y) = X'Y + XY' + Y' = X'Y + Y' = X' + Y' = \\overline{XY}$: a NAND, which is universal."
         }
       ],
       "answer": {
-        "value": "Only {f} is functionally complete",
+        "value": "(B) only {f} is functionally complete",
         "choice": [
           "B"
         ],
@@ -2867,29 +2867,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$g = Y$ is a projection, never complete."
+          "reason": "$g = Y$ cannot even make NOT."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$f(X,Y,Y) = \\overline{XY}$ (NAND), while $g = Y$."
+          "reason": "$f(X, Y, Y) = \\overline{XY}$ is NAND; $g$ is a projection."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Reversed: $g$ is the trivial one."
+          "reason": "$g$ is the one that fails."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$f$ realises NAND, so it is complete."
+          "reason": "$f$ is complete."
         }
       ],
-      "shortcut": "Post's test for f: f(0,0,0)=1 (not 0-preserving), f(1,1,1)=0 (not 1-preserving), and f(A,A,A)=A' — together with non-linearity/non-monotonicity this already signals completeness.",
+      "shortcut": "Tie inputs together: $f(X, Y, Y)$ already gives NAND.",
       "pitfalls": [
-        "Assuming constants 0/1 are freely available — here we built NAND without them."
+        "Not simplifying $g$ and assuming it is complete because it contains complemented literals."
       ],
-      "verification": "Truth table of $f(X,Y,Y)$: (0,0)→1, (0,1)→1, (1,0)→1, (1,1)→0 = NAND."
+      "verification": "Post's classes of $f$ (by truth table $\\Sigma(0, 3, 4, 5)$): not 0-preserving, not 1-preserving, not self-dual, not monotone, not affine."
     },
     "cse-2015-1-cs-40": {
       "approach": "Insertions dominate (N of them), while find/delete/decrease-key happen only $\\sqrt{\\log N}$ times. Pick the structure with O(1) insert and acceptable cost for the rare operations, then total each option.",

@@ -782,6 +782,219 @@ def self_dual_pairs():
                 "The eight rows of a 3-variable truth table, arranged in complementary pairs.", els, st)
 
 
+# ── Lesson 5: universal gates ───────────────────────────────────────────────
+
+def mini_circuit(prefix, gates_, inputs, out_label, dx, ndx, ny_shift, hidden=True, gw=50, gh=36):
+    """A small circuit. gates_: list of (id, kind, (x, y), [sources]); inputs: {name: y}.
+    Returns elements (wide coordinates offset by dx; narrow by ndx and ny_shift)."""
+    els = []
+    pos = {}
+    for gid, kind, (x, y), srcs in gates_:
+        pos[gid] = (kind, x, y)
+    for name, y in inputs.items():
+        els.append(text(f"{prefix}i{name}", dx + 8, y, name, {"x": ndx + 8, "y": y + ny_shift}, anchor="middle", size=14, weight="bold", hidden=hidden))
+    for gid, kind, (x, y), srcs in gates_:
+        n_in = 1 if kind == "not" else 2
+        p, o = pins(kind, dx + x, y, gw, gh, n_in)
+        q, r = pins(kind, ndx + x, y + ny_shift, gw, gh, n_in)
+        els.append(gate(f"{prefix}{gid}", dx + x, y, gw, gh, kind, {"x": ndx + x, "y": y + ny_shift}, hidden=hidden))
+        for k, s_ in enumerate(srcs):
+            if s_ in inputs:
+                a, na = [dx + 18, inputs[s_]], [ndx + 18, inputs[s_] + ny_shift]
+            else:
+                k2, x2, y2 = pos[s_]
+                a = pins(k2, dx + x2, y2, gw, gh, 1 if k2 == "not" else 2)[1]
+                na = pins(k2, ndx + x2, y2 + ny_shift, gw, gh, 1 if k2 == "not" else 2)[1]
+            els.append(line(f"{prefix}w{gid}{k}", wire_pts(a, p[k]), {"points": wire_pts(na, q[k])}, hidden=hidden))
+    last = gates_[-1]
+    kind, x, y = last[1], last[2][0], last[2][1]
+    o = pins(kind, dx + x, y, gw, gh)[1]
+    no = pins(kind, ndx + x, y + ny_shift, gw, gh)[1]
+    els.append(line(f"{prefix}wo", [o, [o[0] + 20, o[1]]], {"points": [no, [no[0] + 16, no[1]]]}, hidden=hidden))
+    els.append(text(f"{prefix}lo", o[0] + 26, o[1], out_label, {"x": no[0] + 20, "y": no[1], "size": 12}, anchor="start", size=14, mono=True, hidden=hidden))
+    return els
+
+
+@scene
+def nand_builds():
+    assert bl.equal("(x x)'", "x'", ["x"]) and bl.equal("(((AB)')((AB)'))'", "AB", ["A", "B"]) and bl.equal("((A A)'(B B)')'", "A + B", ["A", "B"])
+    W, NW = 660, 360
+    els = [*heads("Everything from NAND: NOT, AND and OR", "Everything from NAND", W)]
+    els += mini_circuit("n", [("g", "nand", (40, 70), ["x", "x"])], {"x": 88}, "x′", 0, 30, 0)
+    els += mini_circuit("a", [("g1", "nand", (40, 160), ["A", "B"]), ("g2", "nand", (120, 160), ["g1", "g1"])], {"A": 172, "B": 184}, "AB", 0, 30, 10)
+    els += mini_circuit("o", [("g1", "nand", (40, 60), ["A", "A"]), ("g2", "nand", (40, 130), ["B", "B"]), ("g3", "nand", (130, 95), ["g1", "g2"])],
+                        {"A": 78, "B": 148}, "A + B", 330, 30, 210)
+    els.append(text("cnt", W / 2, 270, "", {"x": NW / 2, "y": 470, "size": 12}, anchor="middle", size=15))
+    show = lambda pre: [(e["id"], {"hidden": False}) for e in els if e["id"].startswith(pre) and e["id"] != "cnt"]
+    st = [
+        step("NOT: tie both inputs of a NAND together. NAND(x, x) = (x·x)′ = x′. One gate.", *show("n"), ("cnt", {"text": "NOT = 1 NAND"})),
+        step("AND: a NAND followed by a NAND used as an inverter undoes the inversion: ((AB)′)′ = AB. Two gates.", *show("a"), ("cnt", {"text": "NOT 1, AND 2"})),
+        step("OR: invert both inputs, then NAND them: (A′·B′)′ = A + B by De Morgan. Three gates.", *show("o"), ("cnt", {"text": "NOT 1, AND 2, OR 3 (2-input NAND gates)"})),
+        step("NOT, AND and OR can build every function (canonical SOP), so NAND alone can build every function: it is universal. The NOR gate is the dual: NOT 1, OR 2, AND 3."),
+    ]
+    return spec("Building NOT, AND and OR from NAND gates", (W, 290), (NW, 490),
+                "NAND gates only. Three small circuits will appear, one per basic gate.", els, st)
+
+
+@scene
+def xor_from_nand():
+    AB = ["A", "B"]
+    W, NW = 640, 360
+    gw, gh = 58, 42
+    G = {"G1": (190, 110), "G2": (320, 60), "G3": (320, 160), "G4": (450, 110)}
+    NG = {"G1": (90, 110), "G2": (180, 60), "G3": (180, 160), "G4": (270, 110)}
+    srcs = {"G1": ["A", "B"], "G2": ["A", "G1"], "G3": ["G1", "B"], "G4": ["G2", "G3"]}
+    yin = {"A": 70, "B": 200}
+    els = [*heads("XOR from four NAND gates", "XOR from four NANDs", W)]
+    for g, (x, y) in G.items():
+        nx, ny = NG[g]
+        els.append(gate(g.lower(), x, y, gw, gh, "nand", {"x": nx, "y": ny, "w": 52, "h": 38}, label=g))
+    for name, y in yin.items():
+        els.append(text("l" + name, 30, y, name, {"x": 14, "y": y}, anchor="middle", size=15, weight="bold", mono=True))
+    for g, ss in srcs.items():
+        p, _ = pins("nand", *G[g], gw, gh)
+        q, _ = pins("nand", *NG[g], 52, 38)
+        for k, s_ in enumerate(ss):
+            if s_ in yin:
+                a, na = [44, yin[s_]], [26, yin[s_]]
+            else:
+                a = pins("nand", *G[s_], gw, gh)[1]
+                na = pins("nand", *NG[s_], 52, 38)[1]
+            mid = None
+            if s_ in yin:
+                mid = (G[g][0] - 30) if g == "G1" else (150 + (10 if s_ == "B" else 0))
+                nmid = (NG[g][0] - 20) if g == "G1" else (60 + (8 if s_ == "B" else 0))
+            else:
+                nmid = None
+            els.append(line(f"w{g}{k}", wire_pts(a, p[k], mid), {"points": wire_pts(na, q[k], nmid)}))
+    o = pins("nand", *G["G4"], gw, gh)[1]
+    no = pins("nand", *NG["G4"], 52, 38)[1]
+    els.append(line("wF", [o, [o[0] + 40, o[1]]], {"points": [no, [no[0] + 24, no[1]]]}))
+    els.append(text("lF", o[0] + 50, o[1], "F", {"x": no[0] + 32, "y": no[1]}, anchor="middle", size=15, weight="bold"))
+    for g, (x, y) in G.items():
+        nx, ny = NG[g]
+        els.append(text("v" + g, x + gw + 12, y - 4, "", {"x": nx + 60, "y": ny - 4, "size": 12}, anchor="middle", size=14, weight="bold", mono=True))
+    els.append(text("row", W / 2, 250, "", {"x": NW / 2, "y": 240, "size": 12}, anchor="middle", size=15, mono=True))
+    nand = lambda a, b: 1 - (a & b)
+    st = []
+    for A, B in [(0, 0), (0, 1), (1, 0), (1, 1)]:
+        g1 = nand(A, B)
+        g2, g3 = nand(A, g1), nand(g1, B)
+        g4 = nand(g2, g3)
+        assert g4 == A ^ B
+        st.append(step(f"A = {A}, B = {B}: G1 = ({A}·{B})′ = {g1}, G2 = (A·G1)′ = {g2}, G3 = (G1·B)′ = {g3}, F = (G2·G3)′ = {g4} = A ⊕ B.",
+                       ("vG1", {"text": str(g1), "tone": tone(g1)}), ("vG2", {"text": str(g2), "tone": tone(g2)}),
+                       ("vG3", {"text": str(g3), "tone": tone(g3)}), ("vG4", {"text": str(g4), "tone": tone(g4)}),
+                       ("row", {"text": f"A = {A}, B = {B}  →  F = {g4}"})))
+    st.append(step("Algebra: G2 = (A·(AB)′)′ = A′ + AB = A′ + B and G3 = A + B′, so F = ((A′ + B)(A + B′))′ = (AB + A′B′)′ = A ⊕ B. An exhaustive search confirms that no circuit of three 2-input NANDs computes XOR.",
+                   ("row", {"text": "F = A ⊕ B with 4 NANDs (the minimum)", "tone": "success"})))
+    assert bl.equal("(A((AB)'))'", "A' + B", AB) and bl.min_gates(bl.tt("A \\oplus B", AB), "NAND") == 4
+    return spec("XOR built from four NAND gates", (W, 270), (NW, 260),
+                "Four 2-input NAND gates: G1 is shared by G2 and G3, and G4 combines them.", els, st)
+
+
+@scene
+def nand_nand_conversion():
+    V = ["A", "B", "C", "D"]
+    assert bl.equal("((AB)'(CD)')'", "AB + CD", V)
+    W, NW = 640, 360
+    gw, gh = 60, 44
+    G = {"g1": (170, 60, "and"), "g2": (170, 170, "and"), "g3": (360, 115, "or")}
+    NG = {"g1": (90, 60), "g2": (90, 170), "g3": (220, 115)}
+    yin = {"A": 74, "B": 90, "C": 184, "D": 200}
+    els = [*heads("AND–OR to NAND–NAND by bubble pairs", "AND–OR → NAND–NAND", W)]
+    for g, (x, y, k) in G.items():
+        els.append(gate(g, x, y, gw, gh, k, {"x": NG[g][0], "y": NG[g][1], "w": 54, "h": 40}))
+    for name, y in yin.items():
+        els.append(text("l" + name, 40, y, name, {"x": 16, "y": y, "size": 12}, anchor="middle", size=14, weight="bold"))
+    srcs = {"g1": ["A", "B"], "g2": ["C", "D"]}
+    for g, ss in srcs.items():
+        p, _ = pins("and", G[g][0], G[g][1], gw, gh)
+        q, _ = pins("and", NG[g][0], NG[g][1], 54, 40)
+        for k, s_ in enumerate(ss):
+            els.append(line(f"w{g}{k}", wire_pts([52, yin[s_]], p[k]), {"points": wire_pts([28, yin[s_]], q[k])}))
+    p3, o3 = pins("or", 360, 115, gw, gh)
+    q3, r3 = pins("or", 220, 115, 54, 40)
+    for k, g in enumerate(["g1", "g2"]):
+        a = pins("and", G[g][0], G[g][1], gw, gh)[1]
+        na = pins("and", NG[g][0], NG[g][1], 54, 40)[1]
+        els.append(line(f"wm{k}", wire_pts(a, p3[k]), {"points": wire_pts(na, q3[k])}))
+    els.append(line("wF", [o3, [o3[0] + 40, o3[1]]], {"points": [r3, [r3[0] + 30, r3[1]]]}))
+    els.append(text("eq", W / 2, 260, "F = AB + CD", {"x": NW / 2, "y": 250, "size": 13}, anchor="middle", size=16, mono=True))
+    # Bubbled inputs on the OR move its pins; the middle wires get twins per stage (wide and narrow).
+    pb, _ = pins("or", 360, 115, gw, gh, 2, (0, 1))
+    qb, _ = pins("or", 220, 115, 54, 40, 2, (0, 1))
+    st = [
+        step("Start from the two-level AND–OR circuit for F = AB + CD: one AND per product term, one OR to combine them.",),
+        step("Put a bubble at the output of each AND and a bubble at the matching OR input. Each wire now has two bubbles, which cancel, so the function is unchanged.",
+             ("g1", {"kind": "nand", "tone": "accent"}), ("g2", {"kind": "nand", "tone": "accent"}), ("g3", {"bubbles": [0, 1], "tone": "accent"}),
+             ("wm0", {"points": wire_pts(pins("nand", 170, 60, gw, gh)[1], pb[0])}), ("wm1", {"points": wire_pts(pins("nand", 170, 170, gw, gh)[1], pb[1])})),
+        step("An OR with bubbled inputs is a NAND (De Morgan). Redraw it: the whole circuit is now NAND–NAND.",
+             ("g3", {"kind": "nand", "bubbles": [], "tone": "success"}), ("g1", {"tone": "success"}), ("g2", {"tone": "success"}),
+             ("wm0", {"points": wire_pts(pins("nand", 170, 60, gw, gh)[1], pins("nand", 360, 115, gw, gh)[0][0])}),
+             ("wm1", {"points": wire_pts(pins("nand", 170, 170, gw, gh)[1], pins("nand", 360, 115, gw, gh)[0][1])}),
+             ("eq", {"text": "F = ((AB)′ · (CD)′)′ = AB + CD", "tone": "success"})),
+        step("Rule: any two-level AND–OR (sum of products) becomes NAND–NAND by replacing every gate with a NAND. A single-literal term must first pass through an inverter.",),
+    ]
+    for e in els:
+        if e["id"] in ("wm0", "wm1"):
+            e.pop("narrow")
+            e["only"] = "wide"
+    for k, g in enumerate(["g1", "g2"]):
+        na = pins("and", NG[g][0], NG[g][1], 54, 40)[1]
+        nb = pins("nand", NG[g][0], NG[g][1], 54, 40)[1]
+        els.append(line(f"nm{k}", wire_pts(na, q3[k]), "narrow"))
+        st[1]["patches"].append({"id": f"nm{k}", "set": {"points": wire_pts(nb, qb[k])}})
+        st[2]["patches"].append({"id": f"nm{k}", "set": {"points": wire_pts(nb, pins("nand", 220, 115, 54, 40)[0][k])}})
+    return spec("Converting AND–OR into NAND–NAND", (W, 280), (NW, 270),
+                "A sum of products, F = AB + CD, built as AND gates feeding an OR gate.", els, st)
+
+
+@scene
+def completeness_checklist():
+    AB = ["x", "y"]
+    t = lambda e, v=AB: bl.tt(e, v)
+    sets = [
+        ("NAND", [t("(xy)'")]),
+        ("AND, OR", [t("xy"), t("x + y")]),
+        ("XOR, NOT", [t("x \\oplus y"), t("x'", ["x"])]),
+        ("AND, NOT", [t("xy"), t("x'", ["x"])]),
+        ("IMP", [t("x' + y")]),
+        ("MAJ", [t("xy + yz + zx", ["x", "y", "z"])]),
+        ("MUX", [t("s'a + sb", ["s", "a", "b"])]),
+    ]
+    head = ["set", "T0", "T1", "S", "M", "A", "all ✓?"]
+    rows_, verdict = [], []
+    for name, fs in sets:
+        esc = [any(not bl.post_classes(f)[c] for f in fs) for c in bl.POST]
+        ok = all(esc)
+        assert ok == bl.complete(fs)
+        rows_.append([name] + ["✓" if e else "·" for e in esc] + ["yes" if ok else "no"])
+        verdict.append(ok)
+    assert verdict == [True, False, False, True, False, False, False]
+    assert bl.complete(sets[4][1], constants=(0,)) and bl.complete(sets[6][1], constants=(0, 1)) and not bl.complete(sets[5][1], constants=(0, 1))
+    W, NW = 660, 360
+    blank = [[r[0]] + [" "] * 6 for r in rows_]
+    els = [*heads("Post's test: a set must escape all five classes", "Post's five classes", W),
+           tbl("t", 30, 60, 85, 30, [head] + blank, {"x": 4, "y": 56, "cellW": 50, "cellH": 28}),
+           text("leg", W / 2, 320, "T0: 0-preserving · T1: 1-preserving · S: self-dual · M: monotone · A: affine. ✓ = some member is outside the class.",
+                "wide", anchor="middle", size=12),
+           text("legn", NW / 2, 290, "✓ = a member escapes the class", "narrow", anchor="middle", size=11)]
+    st, cur = [], [r[:] for r in blank]
+    why = ["NAND escapes every class: NAND(0, 0) = 1, NAND(1, 1) = 0, it is not self-dual, not monotone (0 → 1 lowers it) and not affine. Complete on its own.",
+           "AND and OR are both monotone (and 0- and 1-preserving): they can never produce a complement. Not complete.",
+           "XOR and NOT are both affine (x ⊕ y and x ⊕ 1): every circuit of them is an XOR of inputs and constants. Not complete.",
+           "AND escapes the self-dual and affine classes, NOT escapes the preserving and monotone ones: together they escape all five. Complete.",
+           "Implication escapes everything except 1-preservation (1 → 1 = 1). Not complete alone; add the constant 0 and it is.",
+           "Majority is self-dual, monotone, 0- and 1-preserving. Not complete, even with free constants (constants are monotone).",
+           "The 2:1 MUX preserves 0 and 1, so alone it is not complete; with the constants 0 and 1 it is (it then makes NOT and AND)."]
+    for k in range(len(sets)):
+        cur[k] = rows_[k][:]
+        st.append(step(why[k], ("t", {"rows": [head] + [r[:] for r in cur], "highlight": [[k + 1, j] for j in range(1, 7) if rows_[k][j] in ("✓", "yes")]})))
+    return spec("Functional completeness by Post's five classes", (W, 340), (NW, 310),
+                "Each row is a set of gates; each column one of Post's five closed classes.", els, st)
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

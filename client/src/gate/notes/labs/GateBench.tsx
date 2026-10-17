@@ -218,8 +218,9 @@ function CircuitView({ bench, values }: { bench: Bench; values: Record<string, n
     rowsPer.set(l, k + 1)
     pos.set(g.id, { x: colX(l) - 30, y: 30 + k * 62 })
   }
-  const height = Math.max(...[...pos.values()].map((p) => p.y)) + 50
-  const width = colX(maxL) + 120
+  // A floor on the canvas keeps an empty or tiny bench from being scaled up to giant symbols.
+  const height = Math.max(170, Math.max(...[...pos.values()].map((p) => p.y)) + 50)
+  const width = Math.max(460, colX(maxL) + 120)
   const outPoint = (s: string): [number, number] => {
     const p = pos.get(s)!
     const g = bench.gates.find((x) => x.id === s)

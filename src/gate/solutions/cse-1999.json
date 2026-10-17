@@ -1927,20 +1927,28 @@
       "verification": "Checked all four options in $Y=ABCY$ with $Y=1$."
     },
     "cse-1999-a-34": {
-      "approach": "With constants 0/1 available, a set is functionally complete iff it can build NOT and AND (or OR). Sets producing only affine (XOR/NOT) or only monotone functions are not complete.",
+      "approach": "Concept tested: **Post's classes with constants available**. A set is complete iff it contains a non-monotone member and a non-affine member (the constants handle the other three classes).",
       "concepts": [
         "Functional completeness",
         "Multiplexer",
-        "Post’s criteria"
+        "Post's criteria"
       ],
       "steps": [
         {
-          "title": "Complete sets",
-          "body": "- 2:1 MUX $Y=\\bar S I_0 + S I_1$: with $I_0=1,I_1=0$ it gives $\\bar S$; with $I_0=0$ it gives $S\\cdot I_1$ (AND). AND + NOT is complete.\n- AND, XOR: $x\\oplus1=\\bar x$, and AND + NOT is complete."
+          "title": "(A) XOR, NOT",
+          "body": "Both are affine ($x \\oplus y$, $x \\oplus 1$); every circuit is an XOR of inputs and constants, so AND is impossible. Not sufficient."
         },
         {
-          "title": "Incomplete sets",
-          "body": "- XOR, NOT: every output is an affine function $c\\oplus x_{i_1}\\oplus\\dots$; AND ($xy$) is not affine.\n- $(A\\cdot B)+C$: monotone (no inversion possible), so NOT cannot be built."
+          "title": "(B) 2:1 MUX",
+          "body": "$\\text{MUX}(x; 1, 0) = \\bar{x}$ and $\\text{MUX}(x; 0, y) = xy$. Sufficient."
+        },
+        {
+          "title": "(C) AND, XOR",
+          "body": "$x \\oplus 1 = \\bar{x}$ gives NOT; with AND that is complete. Sufficient."
+        },
+        {
+          "title": "(D) AB + C gates",
+          "body": "$(A \\cdot B) + C$ has no complement and is monotone; constants are monotone too, so every circuit is monotone and NOT is impossible. Not sufficient."
         }
       ],
       "answer": {
@@ -1955,28 +1963,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Only affine (XOR-type) functions result; AND cannot be built."
+          "reason": "Trapped in the affine class: no AND."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "A MUX builds NOT and AND from constants."
+          "reason": "MUX with constants builds NOT and AND."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "XOR with 1 gives NOT; with AND that is complete."
+          "reason": "XOR with 1 is NOT; with AND that is complete."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The gate is monotone; no NOT is possible."
+          "reason": "Trapped in the monotone class: no NOT."
         }
       ],
+      "shortcut": "Monotone (D) and affine (A) sets are the two classic dead ends.",
       "pitfalls": [
-        "(C) relies on constant 1 being available, which is the usual GATE assumption."
+        "Thinking (D) is complete because it 'contains both AND and OR'.",
+        "Rejecting (C) because neither gate alone is universal."
       ],
-      "verification": "Built NOT and AND explicitly for (B) and (C)."
+      "verification": "Post class table: {XOR, NOT} all affine; {MUX} escapes M and A; {AND, XOR} escapes M (XOR) and A (AND); {AB + C} all monotone."
     },
     "cse-1999-a-35": {
       "approach": "A multi-user, multiprogramming OS must protect processes and itself from user programs: that needs a privileged (kernel) mode and hardware memory protection through address translation/relocation. DMA and demand paging are only performance features.",

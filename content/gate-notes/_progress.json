@@ -56,7 +56,8 @@
             "logic-gates": "draft",
             "boolean-laws": "draft",
             "xor-and-operators": "draft",
-            "canonical-forms": "draft"
+            "canonical-forms": "draft",
+            "universal-gates": "draft"
           }
         },
         {

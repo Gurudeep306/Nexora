@@ -3061,116 +3061,40 @@
       "verification": "Rows where $f = 1$: $xy' = 1$ at 100, 101; $yz' = 1$ at 010, 110. $(x + y)(yz)'$ is 1 at 010, 100, 101, 110 and 0 elsewhere (at 011 and 111, $yz = 1$). Same four rows."
     },
     "cse-2002-b-55-b": {
-      "approach": "AND–OR becomes NAND–NAND, but the circuit has two cascaded OR levels; insert one NAND used as an inverter so the second OR level is again a NAND fed by complemented inputs.",
+      "approach": "Concept tested: **multi-level NAND conversion by bubble pairs**. The circuit is AND → OR → OR; the first AND–OR level becomes NAND–NAND, and the second OR level needs an inverter (an unpaired bubble) before it can be a NAND too.",
       "concepts": [
         "NAND-only realisation",
         "Bubble pushing",
-        "De Morgan’s law"
+        "De Morgan's law"
       ],
       "steps": [
         {
+          "title": "Read the circuit",
+          "body": "$f = (ab + cd) + ef$: AND gates on $(a, b)$, $(c, d)$, $(e, f)$, an OR of the first two, and an OR of that with the third."
+        },
+        {
           "title": "First AND–OR level",
-          "body": "Label the inputs $a,b$; $c,d$; $e,f$. By bubble pushing, AND gates feeding an OR gate become NAND gates feeding a NAND gate:\n$N_1 = \\overline{ab}$, $N_2 = \\overline{cd}$, $N_3 = \\text{NAND}(N_1,N_2)$, which equals the first OR output ($ab + cd$)."
+          "body": "$N_1 = \\overline{ab}$, $N_2 = \\overline{cd}$, $N_3 = \\overline{N_1 N_2} = ab + cd$ (NAND–NAND)."
         },
         {
-          "title": "Second OR level",
-          "body": "The second OR needs complemented inputs to become a NAND. The third AND gives $N_5 = \\overline{ef}$ (already complemented). The first OR output must be inverted: $N_4 = \\text{NAND}(N_3,N_3)$ (a NAND with its inputs tied acts as NOT)."
+          "title": "The second OR level",
+          "body": "To NAND $ab + cd$ with $ef$, the output NAND needs both inputs complemented: $\\overline{ef}$ comes from $N_5 = \\overline{ef}$, and $\\overline{ab + cd}$ needs an inverter $N_4 = \\overline{N_3 N_3}$."
         },
         {
-          "title": "Output gate",
-          "body": "$N_6 = \\text{NAND}(N_4, N_5)$ — this replaces the second OR gate. Gate count: $N_1\\ldots N_6 = 6$ two-input NAND gates.",
-          "scene": {
-            "caption": "Six 2-input NAND gates (N4 is a NAND used as an inverter)"
-          }
+          "title": "Output",
+          "body": "$f = \\overline{N_4 N_5} = \\overline{N_4} + \\overline{N_5} = (ab + cd) + ef$. Six 2-input NANDs: $N_1, \\ldots, N_5$ and the output gate."
         }
       ],
-      "animation": {
-        "kind": "circuit",
-        "inputs": [
-          {
-            "id": "a"
-          },
-          {
-            "id": "b"
-          },
-          {
-            "id": "c"
-          },
-          {
-            "id": "d"
-          },
-          {
-            "id": "e"
-          },
-          {
-            "id": "f"
-          }
-        ],
-        "gates": [
-          {
-            "id": "N1",
-            "type": "NAND",
-            "in": [
-              "a",
-              "b"
-            ]
-          },
-          {
-            "id": "N2",
-            "type": "NAND",
-            "in": [
-              "c",
-              "d"
-            ]
-          },
-          {
-            "id": "N3",
-            "type": "NAND",
-            "in": [
-              "N1",
-              "N2"
-            ]
-          },
-          {
-            "id": "N4",
-            "type": "NAND",
-            "in": [
-              "N3",
-              "N3"
-            ]
-          },
-          {
-            "id": "N5",
-            "type": "NAND",
-            "in": [
-              "e",
-              "f"
-            ]
-          },
-          {
-            "id": "N6",
-            "type": "NAND",
-            "in": [
-              "N4",
-              "N5"
-            ]
-          }
-        ],
-        "outputs": [
-          {
-            "id": "out",
-            "from": "N6"
-          }
-        ]
-      },
       "answer": {
-        "value": "$N_1=\\text{NAND}(a,b)$, $N_2=\\text{NAND}(c,d)$, $N_3=\\text{NAND}(N_1,N_2)$, $N_4=\\text{NAND}(N_3,N_3)$, $N_5=\\text{NAND}(e,f)$, output $=\\text{NAND}(N_4,N_5)$",
+        "value": "N1 = (ab)′, N2 = (cd)′, N3 = NAND(N1, N2), N4 = NAND(N3, N3), N5 = (ef)′, f = NAND(N4, N5): six 2-input NANDs",
         "matchesKey": true
       },
+      "shortcut": "Draw every gate as NAND and count bubbles on each wire: wherever a wire has a single bubble (here between the two OR levels), add one inverter.",
       "pitfalls": [
-        "Feeding $N_3$ straight into the last NAND — $N_3$ is uncomplemented, so the output would be wrong without the inverter $N_4$."
+        "Replacing every gate by a NAND without the inverter, which computes $\\overline{ab + cd} + ef$.",
+        "Using a 3-input NAND for the OR of three products (the question requires 2-input gates)."
       ],
-      "verification": "Bubble check: $N_3 = \\overline{\\overline{ab}\\cdot\\overline{cd}} = ab+cd$; $N_6 = \\overline{\\overline{N_3}\\cdot\\overline{ef}} = N_3 + ef = ab + cd + ef$, the original circuit."
+      "verification": "$a = b = 1$, others 0: $N_1 = 0$, $N_2 = 1$, $N_3 = 1$, $N_4 = 0$, $N_5 = 1$, $f = \\overline{0 \\cdot 1} = 1$. ✓"
     },
     "cse-2002-b-56-a": {
       "approach": "Each falling edge shifts the data one stage down: R0 takes the new inputs, R1 the first-stage result of R0, R2 the second-stage result of R1. So after clock $k$, R2 holds pair $k-2$ and $Z$ (from the last full adder) is $A_{k-2}+B_{k-2}$.",

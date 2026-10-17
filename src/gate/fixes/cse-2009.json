@@ -4,18 +4,18 @@
     {
       "id": "cse-2009-cs-6",
       "field": "needsReview",
-      "before": false,
-      "after": true,
-      "reason": "Stored key D (5) is contradicted by a 3-gate realisation: NOR(NOR(A,C), NOR(B,C)) = (A+C)(B+C) = AB+C; 2 gates cannot realise it. Proven answer is B (3).",
-      "source": "independent derivation (no official pre-2014 key available)"
+      "before": true,
+      "after": false,
+      "reason": "The key question is settled (see the answer fix): Proven: AB + C = (A + C)(B + C) = NOR(NOR(A, C), NOR(B, C)) uses three 2-input NOR gates, and an exhaustive search over every circuit of two 2-input NOR gates finds none computing AB + C. The stored key D (5) is the naive gate-by-gate conversion count.",
+      "source": "GATE 2009 CS paper scan (GATE_PYQ/GATE2009.pdf p. 2, Q6: options 2, 3, 4, 5) + exhaustive search in content/gate-notes/_checks/dl/l2_05_universal_gates.py; errata dl.md section 3"
     },
     {
       "id": "cse-2009-cs-6",
       "field": "reviewNote",
-      "before": null,
-      "after": "Stored key D (5) looks wrong: (A+C)(B+C) = AB+C is realised by 3 two-input NOR gates (NOR(NOR(A,C),NOR(B,C))) and 2 gates provably cannot do it, so the answer should be B (3). Confirm against an official key before changing the answer.",
-      "reason": "Record why the stored key D is suspect so a reviewer can confirm B (3).",
-      "source": "independent derivation"
+      "before": "Stored key D (5) looks wrong: (A+C)(B+C) = AB+C is realised by 3 two-input NOR gates (NOR(NOR(A,C),NOR(B,C))) and 2 gates provably cannot do it, so the answer should be B (3). Confirm against an official key before changing the answer.",
+      "after": null,
+      "reason": "The note asked for confirmation before changing the key; the key is now changed with a proof.",
+      "source": "GATE 2009 CS paper scan (GATE_PYQ/GATE2009.pdf p. 2, Q6: options 2, 3, 4, 5) + exhaustive search in content/gate-notes/_checks/dl/l2_05_universal_gates.py; errata dl.md section 3"
     },
     {
       "id": "cse-2009-cs-20",
@@ -194,6 +194,14 @@
       "after": "The query returns suppliers who supplied no blue part (including suppliers with no catalog rows); no option states this exactly. Kept the accepted key A (suppliers of non-blue parts). Official 2009 key not verified.",
       "reason": "Make the review note precise.",
       "source": "Independent solution"
+    },
+    {
+      "id": "cse-2009-cs-6",
+      "field": "answer",
+      "before": "D",
+      "after": "B",
+      "reason": "Proven: AB + C = (A + C)(B + C) = NOR(NOR(A, C), NOR(B, C)) uses three 2-input NOR gates, and an exhaustive search over every circuit of two 2-input NOR gates finds none computing AB + C. The stored key D (5) is the naive gate-by-gate conversion count.",
+      "source": "GATE 2009 CS paper scan (GATE_PYQ/GATE2009.pdf p. 2, Q6: options 2, 3, 4, 5) + exhaustive search in content/gate-notes/_checks/dl/l2_05_universal_gates.py; errata dl.md section 3"
     }
   ]
 }
