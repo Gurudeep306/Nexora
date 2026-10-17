@@ -8,7 +8,7 @@ prerequisites: [place-value, power-of-two-bases]
 pyq_topics: [dl/number]
 est_minutes: 45
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l03_fractions.py."
@@ -204,7 +204,7 @@ Write $0.7$ in octal.
 $0.7 \to 5.6$ (5), $0.6 \to 4.8$ (4), $0.8 \to 6.4$ (6), $0.4 \to 3.2$ (3), $0.2 \to 1.6$ (1), $0.6 \to 4.8$ (4), …
 :::
 
-:::step{why="The fraction 0.6 came back after the first row, so everything from the second digit repeats."}
+:::step{why="The fraction 0.6 is first kept after row 1 and comes back after row 5, so everything from the second digit repeats."}
 $0.7 = (0.5\overline{4631})_8$: one non-repeating digit, then a period of four.
 :::
 

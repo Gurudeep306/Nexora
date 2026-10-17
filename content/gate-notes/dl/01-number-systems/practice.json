@@ -952,7 +952,7 @@
     ],
     "concept": "The syndrome must name every possible error position plus 'no error': 2ᵖ ≥ m + p + 1.",
     "common_wrong": [
-      { "answer": 3, "why": "This used $2^p \\ge m$ (8 < 11 fails anyway) or forgot that the parity bits themselves can be hit." },
+      { "answer": 3, "why": "Three is the Hamming (7,4) number, recalled without recomputing (or $\\lfloor \\log_2 11 \\rfloor = 3$). With $p = 3$ the syndrome has only 8 values, too few for 15 positions plus 'no error'." },
       { "answer": 5, "why": "This used $2^p > m + p + 1$ (strict); equality is enough, because 16 syndromes cover 15 positions plus 'no error' exactly." }
     ],
     "blocks": ["hamming-code", "parity-count"],
@@ -980,7 +980,7 @@
     "concept": "The failing checks, read as a binary number, give the error position.",
     "common_wrong": [
       { "answer": "B", "why": "The syndrome bits were read in the wrong order ($s_1 s_2 s_4 = 110$ read as 6). The weights are $s_4 = 4$, $s_2 = 2$, $s_1 = 1$." },
-      { "answer": "D", "why": "The total number of 1s (five) was checked as if it were a single parity bit. Each check covers its own positions." }
+      { "answer": "D", "why": "Only the last check (positions 4, 5, 6, 7: $0, 1, 1, 0$, even) was computed and taken as the verdict. All three checks are needed; two of them fail here." }
     ],
     "blocks": ["hamming-code", "ex-ham-encode"],
     "source": "nexora"

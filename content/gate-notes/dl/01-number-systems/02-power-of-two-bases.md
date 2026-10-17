@@ -8,7 +8,7 @@ prerequisites: [place-value]
 pyq_topics: [dl/number]
 est_minutes: 45
 difficulty: basic
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l02_grouping.py."
@@ -239,7 +239,7 @@ $(3F2C)_{16} = (37454)_8$
 A student writes $(1010110)_2$ in hex by cutting fours from the **left**: $1010\;110$. What goes wrong?
 
 :::step{why="Cutting from the left leaves the short group at the right, where it no longer sits on the 2⁰ boundary."}
-From the left: $1010 = A$ and $110$ is padded to $0110 = 6$, giving $(A6)_{16} = 166$.
+From the left: $1010 = A$, and the stray $110$ must be padded somewhere: as $0110 = 6$ it gives $(A6)_{16} = 166$, as $1100 = C$ it gives $(AC)_{16} = 172$. Either way the groups no longer sit on the $2^0$ boundary.
 :::
 
 :::step{why="Correct grouping starts at the point (the right end)."}
@@ -259,7 +259,8 @@ $(56)_{16}$. Grouping from the left gives $(A6)_{16}$, a classic distractor.
 Groups start at the radix point. For a whole number that is the **right** end. Cutting from the
 left shifts every group and gives a wrong numeral that often appears as an option: for
 $(657)_8 = (110\,101\,111)_2$ the correct hex is $1AF$, but cutting fours from the left gives
-$1101\;0111\;1 \to D7$ followed by a padded $1000 = 8$, i.e. $D78$.
+$1101\;0111\;1 \to D, 7$ and a stray bit; padded on the right it reads $1000 = 8$, giving $D78$, and
+padded on the left $0001 = 1$, giving $D71$. Both are options in GATE 2005, and both are wrong.
 :::
 
 ### Worked examples: grouping fractions
@@ -357,14 +358,15 @@ from the point and pad on the left. Check with values when unsure.
 ## Between octal, hex and base 4: always through binary
 
 :::definition{#octal-hex term="Octal ↔ hex ↔ base 4" depth="quick"}
-Bases 4, 8 and 16 are all powers of 2, but not powers of one another (8 is not a power of 4).
-So convert in two hops through binary:
+Bases 4, 8 and 16 are all powers of 2. Octal is not a power of 4 or of 16 (nor they of 8), so
+octal ↔ hex and octal ↔ base 4 go in two hops through binary:
 
 $$
 (\dots)_{8} \xrightarrow{\ 3 \text{ bits per digit}\ } (\dots)_2 \xrightarrow{\ \text{regroup in 4s (or 2s)}\ } (\dots)_{16} \text{ or } (\dots)_4 .
 $$
 
-Never go through decimal for these: it is correct but slow and error-prone.
+Base 4 and hex are different: $16 = 4^2$, so they convert digit by digit (next block). Never go
+through decimal for any of these: it is correct but slow and error-prone.
 :::
 
 :::definition{#base4 term="Base 4: two bits per digit" depth="quick"}

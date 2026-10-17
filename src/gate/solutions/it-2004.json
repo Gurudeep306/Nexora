@@ -2275,7 +2275,7 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "$A62E$ and $22120232$ both carry the same one-bit error in the third nibble."
+          "reason": "$A62E$ has $6 = 0110$ in the second hex digit where the bits give $7 = 0111$; the base-4 part $22120232$ carries the same one-bit error."
         }
       ],
       "shortcut": "Hex → base 4 is digit by digit: $A = 22$, $7 = 13$, $2 = 02$, $E = 32$, so $A72E \\to 22\\,13\\,02\\,32$. Once the hex is fixed, the base-4 form follows without regrouping.",

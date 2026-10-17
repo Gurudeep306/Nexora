@@ -493,7 +493,7 @@
    ]
   },
   {
-   "caption": "Now 0101 (+5) + 1101 (−3). As unsigned steps that is 13 clockwise, which wraps past 0000 to 0010 = +2. Passing 0000 just drops a carry out of 4 bits; the seam is not crossed, so the answer +2 is right.",
+   "caption": "Now 0101 (+5) + 1101 (−3). As unsigned steps that is 13 clockwise, which lands in the same place as 3 steps back (13 = 16 − 3): 0010 = +2. The band shows the short way round. The 13-step route only passes 0000 (a carry out of 4 bits, dropped); the seam is not crossed, so +2 is right.",
    "patches": [
     {
      "id": "n7",

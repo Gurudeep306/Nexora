@@ -8,7 +8,7 @@ prerequisites: [place-value, power-of-two-bases]
 pyq_topics: [dl/number]
 est_minutes: 60
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l05_codes.py."
@@ -421,10 +421,10 @@ Gray(15) $= 1000$ in 4 bits; Gray(16) $= 11000$ in 5 bits ($0000$ is only the 4-
 :::definition{#gray-successor term="The Gray successor function" depth="quick"}
 Treat a Gray code $h$ as an input and let $g$ be the Gray code of the **next** number (mod $2^n$).
 Each output bit $g_i$ is a Boolean function of the input bits. To get its minterm list:
-1. for each $n = 0 \dots 2^n - 1$, write $h = \text{Gray}(n)$ and $g = \text{Gray}(n + 1)$;
+1. for each count $k = 0 \dots 2^n - 1$, write $h = \text{Gray}(k)$ and $g = \text{Gray}(k + 1)$;
 2. $g_i$ has a minterm at the **value of $h$** (read as a binary index) whenever bit $i$ of $g$ is 1.
 
-The minterm indices are values of the *Gray input*, not of $n$; that is the usual slip.
+The minterm indices are values of the *Gray input* $h$, not of the count $k$; that is the usual slip.
 :::
 
 ::::example{#ex-succ-easy level="easy" title="The next code after 0110" depth="quick"}

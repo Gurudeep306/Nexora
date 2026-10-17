@@ -113,4 +113,9 @@ opts = {k: sorted(int(x) for x in t.split("Sigma(")[1].split(")")[0].split(","))
 nl.assert_mcq(q, [k for k, v in opts.items() if v == successor(3, 0)][0])
 assert opts["B"] == sorted(n for n in range(8) if nl.gray((n + 1) % 8) & 1) and opts["D"] == successor(3, 2)
 
+# Second-pass review: in q07 the last check alone passes (so "no error" comes from computing only it).
+r = "1110110"
+assert sum(int(r[k - 1]) for k in (4, 5, 6, 7)) % 2 == 0 and sum(int(r[k - 1]) for k in (1, 3, 5, 7)) % 2 == 1
+assert r.count("1") == 5 and nl.parity_bits_needed(11) == 4 and int(math.log2(11)) == 3
+
 print("l05_codes: every value in the lesson, its PYQ key and its practice answers check out")

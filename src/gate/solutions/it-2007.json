@@ -3007,17 +3007,17 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "$564411$ has the integer digits of A reversed: the remainders were read top to bottom."
+          "reason": "$564411$ groups the 16 integer bits $1011\\,1010\\,0100\\,0011$ in threes from the **left** ($101|110|100|100|001|1$), so every group is misaligned. Groups start at the radix point."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Reversed integer digits and reversed fraction digits ($.205$ instead of $.412$)."
+          "reason": "Both parts grouped from the wrong end: the integer part from the left (as in B) and the fraction bits $.10000101$ from their right end ($010|000|101 = .205$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Correct integer part, but the fraction digits $.205$ are $.412$ backwards: multiplication digits must be read top to bottom."
+          "reason": "Correct integer part, but the fraction bits $.10000101$ were grouped from the right end (padded on the left), giving $.205$; fraction groups start at the point: $100|001|010 = .412$."
         }
       ],
       "shortcut": "Do it all in binary. $(C012.25)_{16} = 1100\\,0000\\,0001\\,0010.0010\\,0101$; subtract $0101\\,1100\\,1110.101$ to get $1011\\,1010\\,0100\\,0011.1000\\,0101$, then group in threes from the point: $1|011|101|001|000|011\\,.\\,100|001|010 = (135103.412)_8$.",

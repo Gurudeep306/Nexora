@@ -125,4 +125,17 @@ nl.must_contain(qt("nx-dl-01-02-q05"), "= 282", where="q05")
 nl.must_contain(qt("nx-dl-01-02-q06"), "65534 = (177776)_8", where="q06")
 nl.must_contain(qt("nx-dl-01-02-q09"), "= 499", "= 501", "= -266", where="q09")
 
+# Second-pass review: both paddings of the stray left-grouped bits, and the 2005 distractors.
+assert v("AC", 16) == 172 and v("A6", 16) == 166
+assert "".join(nl.DIGITS[int(b657[i:i + 4].rjust(4, "0"), 2)] for i in range(0, 9, 4)) == "D71"
+has("$(AC)_{16} = 172$", "giving $D71$")
+assert {o["t"] for o in bank["cse-2005-cs-17"]["options"]} >= {"D78", "D71"}
+# IT 2007 distractors: left-grouped integer bits and right-grouped fraction bits.
+ib, fb = "1011101001000011", "10000101"
+left = [ib[i:i + 3] for i in range(0, 16, 3)]
+assert "".join(str(int(g, 2)) for g in left) == "564411"
+fr = fb.rjust(9, "0")
+assert "".join(str(int(fr[i:i + 3], 2)) for i in range(0, 9, 3)) == "205"
+assert "".join(str(int(fb.ljust(9, "0")[i:i + 3], 2)) for i in range(0, 9, 3)) == "412"
+
 print("l02_grouping: every value in the lesson, its PYQ keys and its practice answers check out")

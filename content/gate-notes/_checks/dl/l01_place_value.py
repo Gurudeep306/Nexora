@@ -172,4 +172,8 @@ nl.must_contain(qt("nx-dl-01-01-q08"), "\\\\times 5 = 65", "(106)_7 = 55", "64 +
 nl.must_contain(qt("nx-dl-01-01-q09"), "(51)_9 = 46", "(64)_7 = 46", where="q09")
 assert nl.value("51", 9) == nl.value("64", 7) == 46
 
+# Second-pass review: ⌈3.32 k⌉ is only an approximation of ⌈k log2 10⌉.
+assert nl.min_bits_for_decimal_digits(25) == 84 and math.ceil(25 * 3.32) == 83 and 2 ** 83 < 10 ** 25
+nl.must_contain(L, "$k = 25$ needs 84 bits, not 83")
+
 print("l01_place_value: every value in the lesson, its PYQ keys and its practice answers check out")
