@@ -7,7 +7,7 @@
   "width": 360,
   "height": 400
  },
- "intro": "All 16 assignments of A, B, C, D (row ABCD). Each equation keeps only the rows on which its two sides are equal.",
+ "intro": "All 16 assignments of P, Q, R, S (row PQRS). Each equation keeps only the rows on which its two sides are equal.",
  "elements": [
   {
    "id": "head",
@@ -90,7 +90,7 @@
  ],
  "steps": [
   {
-   "caption": "Equation: A′ + AB = 0. A sum is 0 only if every term is 0: A′ = 0 forces A = 1, then AB = 0 forces B = 0. Four rows survive.",
+   "caption": "Equation: P + Q = 1. At least one of P, Q is 1: the four rows with P = Q = 0 go. Twelve rows survive.",
    "patches": [
     {
      "id": "g",
@@ -103,10 +103,102 @@
         "·"
        ],
        [
+        "0100",
+        "0101",
+        "0110",
+        "0111"
+       ],
+       [
+        "1000",
+        "1001",
+        "1010",
+        "1011"
+       ],
+       [
+        "1100",
+        "1101",
+        "1110",
+        "1111"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "P + Q = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Equation: PQ = 0. P and Q are not both 1: the four rows with P = Q = 1 go. Exactly one of P, Q is 1 on the eight survivors.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
         "·",
         "·",
         "·",
         "·"
+       ],
+       [
+        "0100",
+        "0101",
+        "0110",
+        "0111"
        ],
        [
         "1000",
@@ -122,6 +214,22 @@
        ]
       ],
       "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
        [
         2,
         0
@@ -144,13 +252,81 @@
     {
      "id": "eq",
      "set": {
-      "text": "A′ + AB = 0"
+      "text": "PQ = 0"
      }
     }
    ]
   },
   {
-   "caption": "Equation: AB = AC. With A = 1 and B = 0 the equation reads 0 = C, so C = 0. Two rows survive.",
+   "caption": "Equation: Q + R = R. Q + R = R means Q = 1 forces R = 1: rows 0100 and 0101 go. Six rows survive.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "0110",
+        "0111"
+       ],
+       [
+        "1000",
+        "1001",
+        "1010",
+        "1011"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "Q + R = R"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Equation: P′R + S = 0. A sum equal to 0: S = 0, and P = 0 forces R = 0, which kills the remaining P = 0 rows. Two rows survive: PQRS = 1000 and 1010.",
    "patches": [
     {
      "id": "g",
@@ -170,8 +346,8 @@
        ],
        [
         "1000",
-        "1001",
         "·",
+        "1010",
         "·"
        ],
        [
@@ -188,7 +364,7 @@
        ],
        [
         2,
-        1
+        2
        ]
       ]
      }
@@ -196,55 +372,7 @@
     {
      "id": "eq",
      "set": {
-      "text": "AB = AC"
-     }
-    }
-   ]
-  },
-  {
-   "caption": "Equation: AB + AC′ + CD = C′D. With A = 1, B = 0, C = 0 it reads 0 + 1 + 0 = D, so D = 1. One row survives: ABCD = 1001.",
-   "patches": [
-    {
-     "id": "g",
-     "set": {
-      "values": [
-       [
-        "·",
-        "·",
-        "·",
-        "·"
-       ],
-       [
-        "·",
-        "·",
-        "·",
-        "·"
-       ],
-       [
-        "·",
-        "1001",
-        "·",
-        "·"
-       ],
-       [
-        "·",
-        "·",
-        "·",
-        "·"
-       ]
-      ],
-      "highlight": [
-       [
-        2,
-        1
-       ]
-      ]
-     }
-    },
-    {
-     "id": "eq",
-     "set": {
-      "text": "AB + AC′ + CD = C′D"
+      "text": "P′R + S = 0"
      }
     }
    ]

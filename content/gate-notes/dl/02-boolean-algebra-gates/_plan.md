@@ -161,7 +161,7 @@ expressions equal x′ (tied/constant inputs). 4. MCQ: negative-logic reading of
    general rule `#demorgan-general` (complement = dual with every literal complemented); animated
    `complement-tree`.
 7. **Consensus** `#consensus` (xy + x′z + yz = xy + x′z, proof by splitting yz on x) and its dual
-   `#consensus-dual`; using it backwards to *add* a term `#consensus-add`; animated `consensus-venn`.
+   `#consensus-dual`; using it backwards to *add* a term `#consensus-add`; animated `consensus-cells`.
 8. **Simplification strategy** `#simplify-method`: expand/flatten, absorb, redundant literal,
    consensus, factor; stop when no rule shrinks the expression.
 9. **Shannon expansion** `#shannon` (theorem + proof), cofactors `#cofactor-def`, the POS form
@@ -223,7 +223,7 @@ expressions equal x′ (tied/constant inputs). 4. MCQ: negative-logic reading of
   at a time.
 - `complement-tree` (animate): complementing (A + B′C)(A′ + D) node by node (swap the operator,
   complement the leaves).
-- `consensus-venn` (animate): the regions xy, x′z and yz; yz is shown to sit inside the other two.
+- `consensus-cells` (animate): the rows of xy, x′z and yz as cell strips; yz is shown to sit inside the other two.
 - `shannon-tree` (animate): f split on A, then on B, down to constant leaves.
 - `equation-sieve` (animate): 16 rows of (A, B, C, D) struck out equation by equation.
 
@@ -318,8 +318,7 @@ the solutions of a system (NAT); absorption in a 4-factor product (MCQ).
 ### Practice (`_checks/dl/l2_03_xor_operators.py`)
 8–9: XOR simplification (MCQ); XNOR equivalents (MSQ); parity minterm count (NAT); iterated XOR (MCQ);
 operator properties of a table (MCQ); associativity of implication (MCQ); defined operator nest (MCQ);
-number of commutative and associative 2-input operators (NAT, 8 associative? computed); XOR equation
-solve (MCQ).
+number of commutative and associative 2-input operators (NAT, 6); a nested defined operator (MCQ).
 
 ---
 
@@ -454,7 +453,7 @@ majority identities (MSQ).
   (medium); the 2002 AND–OR–OR circuit in six 2-input NANDs (GATE); edge case: AB + C needs an
   inverter on C in NAND–NAND.
 - **Minimum counts:** XOR with NAND (easy, 4); AB + C with NOR (medium, 3); XNOR with NAND (GATE, 5);
-  edge case: A′B with NOR only (2? computed by search) — pick a case whose answer surprises.
+  edge case: A′B costs 2 NORs but 3 NANDs (computed by search).
 - **Completeness:** {XOR, NOT} (easy, no: affine); 2:1 MUX with constants (medium, yes); implication
   (GATE, needs 0); edge case: f = X′YZ + XY′ + Y′Z′ alone (the 2015 pattern).
 
@@ -593,7 +592,13 @@ component in `client/src/gate/notes/labs/`. Logic lives in a pure, dependency-fr
 3. **Minterm sets** (lessons 4 and 6): enter f and g as Σ lists over 3 or 4 variables and see f·g
    (∩), f + g (∪), f ⊕ g (Δ) and f′ as Σ and Π lists and as a cell strip.
 
-## Size target
-- Six lessons at Chapter 1 depth (≈ 5 000–7 000 words each), ≥ 4 step examples per concept section.
-- About 25 Viz scenes, most animated, all with phone layouts.
-- 64 embedded PYQs with teacher-style v2 solutions; ≥ 8 practice questions per lesson (≈ 54).
+## Size of Chapter 2 (as built, 2026-10-17)
+- Lessons: 6 (gates, laws, XOR and operators, canonical forms, universal gates, circuit analysis).
+- Worked examples (step format, a why on every step): 100 (16 / 20 / 16 / 16 / 16 / 16).
+- Viz scenes: 27, 26 animated, every one with a phone (narrow) layout; gate symbols use the new `gate`
+  primitive.
+- Live Lab: Gate Bench (bench, NAND/NOR challenge, minterm sets), embedded in lessons 1, 4, 5 and 6.
+- Embedded PYQs with teacher-style v2 solutions: 64 (coverage 64/64); two keys corrected
+  (`cse-2009-cs-6` D → B, `cse-2010-cs-31` D → A).
+- Practice questions: 54, all script-checked by truth-table enumeration or exhaustive search.
+- Check scripts: boollib, l2_01 … l2_06, l2_lab_vectors, lessons_ch2, pyq_ch2, viz_ch2.
