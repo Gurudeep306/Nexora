@@ -1304,7 +1304,7 @@
       "verification": "$n=4$: $K_4$ has 6 edges $=\\frac{4\\cdot3}{2}$ ✓."
     },
     "cse-2002-a-26": {
-      "approach": "Read the circuit as a Boolean expression and simplify with De Morgan: NAND of a NAND output and an inverted input collapses to an AND-OR form.",
+      "approach": "Concept tested: **NAND levels with function blocks**. Read the circuit as an expression and simplify with De Morgan: a NAND of a NAND output and an inverted input collapses to an AND–OR form.",
       "concepts": [
         "NAND gate",
         "De Morgan's law",
@@ -1313,19 +1313,19 @@
       "steps": [
         {
           "title": "Write the output",
-          "body": "First NAND gives $(f_1 f_2)'$. The second NAND has inputs $(f_1f_2)'$ and $f_3'$:\n$$f = \\big((f_1f_2)'\\cdot f_3'\\big)' = f_1f_2 + f_3$$"
+          "body": "First NAND: $\\overline{f_1 f_2}$. Second NAND: $f = \\overline{\\overline{f_1 f_2} \\cdot \\overline{f_3}} = f_1 f_2 + f_3$."
         },
         {
-          "title": "Evaluate $f_1 f_2$",
-          "body": "AND of two functions = intersection of their minterm sets: $\\{0,1,3,5\\}\\cap\\{6,7\\} = \\varnothing$, so $f_1f_2 = 0$."
+          "title": "Intersection",
+          "body": "$f_1 f_2 = \\{0, 1, 3, 5\\} \\cap \\{6, 7\\} = \\varnothing$: the AND contributes nothing."
         },
         {
-          "title": "Solve for $f_3$",
-          "body": "$f = 0 + f_3 = f_3$, hence $f_3 = f = \\Sigma(1,4,5)$."
+          "title": "Solve",
+          "body": "So $f = f_3$, i.e. $f_3 = \\Sigma(1, 4, 5)$: option (A)."
         }
       ],
       "answer": {
-        "value": "$f_3 = \\Sigma(1,4,5)$ — option (A)",
+        "value": "(A) $\\Sigma(1, 4, 5)$",
         "choice": [
           "A"
         ],
@@ -1335,29 +1335,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Since $f_1f_2=0$, $f = f_3$, so $f_3 = \\Sigma(1,4,5)$."
+          "reason": "$f_1 f_2 = 0$, so $f_3 = f$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\Sigma(6,7)$ is $f_2$; with it $f = \\Sigma(6,7) \\ne \\Sigma(1,4,5)$."
+          "reason": "$\\Sigma(6, 7)$ is $f_2$; with it, $f$ would be $\\{6, 7\\}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\Sigma(0,1,3,5)$ is $f_1$; it would give $f = \\Sigma(0,1,3,5)$."
+          "reason": "$\\Sigma(0, 1, 3, 5)$ is $f_1$; it would add 0 and 3 and miss 4."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A valid answer exists (option A), so \"none\" is wrong."
+          "reason": "(A) works."
         }
       ],
+      "shortcut": "NAND–NAND with an inverted input is just AND–OR: $f = f_1 f_2 + f_3$.",
       "pitfalls": [
-        "Forgetting the inverter on $f_3$ and getting $f = f_1f_2 + f_3'$.",
-        "Treating the product of two functions as a union of minterms instead of an intersection."
+        "Ignoring the NOT on $f_3$ and getting $f_1 f_2 + \\overline{f_3}$."
       ],
-      "verification": "Minterm 4: $f_1(4)=0, f_2(4)=0, f_3(4)=1$ ⇒ first NAND = 1, NOT = 0, second NAND = $(1\\cdot0)'=1 = f(4)$ ✓."
+      "verification": "$\\varnothing \\cup \\{1, 4, 5\\} = \\{1, 4, 5\\} = f$."
     },
     "cse-2002-a-27": {
       "approach": "Decode the wiring: EN is driven by z', A1A0 = y'z, so the MUX is active only for z = 0 and then picks I0 (=x) or I2 (=y) depending on y.",

@@ -1924,5 +1924,355 @@
       "nand-universal"
     ],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "In a circuit, $b$ passes through a NOT gate; an AND gate takes $a$ and $b'$; an OR gate combines the AND output with $c$. The output $z(a, b, c)$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(1, 3, 4, 5, 7)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(4, 5, 7)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(1, 3, 5, 7)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(0, 2, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The circuit computes $z = ab' + c$.",
+      "$ab' \\to 10- = \\{4, 5\\}$ and $c \\to --1 = \\{1, 3, 5, 7\\}$. The union is $\\{1, 3, 4, 5, 7\\}$."
+    ],
+    "concept": "Read the circuit as an expression, then expand to minterms with dash patterns.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "That is $c$ alone; the term $ab'$ adds row 4."
+      },
+      {
+        "answer": "D",
+        "why": "That is the complement, $z'$."
+      }
+    ],
+    "blocks": [
+      "analysis-method"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "$F = \\text{NOR}\\big(\\text{NOR}(X, Y), \\text{NOR}(X, Y')\\big)$. Which statement is true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$F$ is independent of $X$"
+      },
+      {
+        "l": "B",
+        "t": "$F$ is independent of $Y$"
+      },
+      {
+        "l": "C",
+        "t": "$F$ is independent of both"
+      },
+      {
+        "l": "D",
+        "t": "$F$ depends on both $X$ and $Y$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "A NOR of NORs is an AND of ORs: $F = (X + Y)(X + Y')$.",
+      "OR distributes over AND: $(X + Y)(X + Y') = X + YY' = X$. So $F = X$: it does not depend on $Y$."
+    ],
+    "concept": "A NOR fed by NORs is an AND of ORs; a variable that appears with both polarities may cancel.",
+    "common_wrong": [
+      {
+        "answer": "D",
+        "why": "$Y$ appears twice, but as $Y$ and $Y'$; the two cancel."
+      },
+      {
+        "answer": "A",
+        "why": "$F = X$, so it depends on $X$ and only on $X$."
+      }
+    ],
+    "blocks": [
+      "nand-nor-circuits",
+      "redundancy"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q03",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A circuit computes $f = f_1 f_2 + f_3$ for 4-variable functions with $f_1 = \\Sigma(0, 1, 2, 3, 8)$, $f_2 = \\Sigma(1, 3, 8, 9, 12)$ and $f = \\Sigma(1, 3, 6, 8)$. Which $f_3$ works?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(6, 9)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(1, 3, 8)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(0, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "AND is intersection: $f_1 f_2 = \\{1, 3, 8\\}$, which lies inside $f$.",
+      "$f_3$ must supply the missing row 6 and must not add any row outside $f$: $\\{6\\} \\subseteq F_3 \\subseteq \\{1, 3, 6, 8\\}$.",
+      "Only $\\Sigma(6)$ among the options satisfies both conditions."
+    ],
+    "concept": "For f = g + h: f − g ⊆ h ⊆ f.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "Row 9 is not in $f$; OR would add it to the output."
+      },
+      {
+        "answer": "C",
+        "why": "It repeats what the AND already supplies and misses row 6."
+      }
+    ],
+    "blocks": [
+      "solve-block",
+      "block-equations"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q04",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Over three variables, $f = f_1 \\oplus f_2$ with $f_1 = \\Sigma(1, 2, 5)$ and $f = \\Sigma(0, 1, 5, 6)$. Then $f_2$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(0, 2, 6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(0, 6)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(0, 1, 2, 5, 6)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(3, 4, 7)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "XOR can be undone: $f_2 = f \\oplus f_1$, the symmetric difference.",
+      "$\\{0, 1, 5, 6\\} \\triangle \\{1, 2, 5\\} = \\{0, 2, 6\\}$.",
+      "Check: $\\{1, 2, 5\\} \\triangle \\{0, 2, 6\\} = \\{0, 1, 5, 6\\}$."
+    ],
+    "concept": "An XOR block is always uniquely determined: h = f ⊕ g.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "Row 2 is in $f_1$ but not in $f$, so $f_2$ must contain it to cancel it."
+      },
+      {
+        "answer": "C",
+        "why": "That is the union $f \\cup f_1$, not the symmetric difference."
+      }
+    ],
+    "blocks": [
+      "xor-block"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q05",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "$F = ab + cd$ is built with two 2-input AND gates and one OR gate, but both AND gates are fabricated as NAND gates. The circuit computes",
+    "options": [
+      {
+        "l": "A",
+        "t": "$a' + b' + c' + d'$"
+      },
+      {
+        "l": "B",
+        "t": "$(ab + cd)'$"
+      },
+      {
+        "l": "C",
+        "t": "$ab + cd$"
+      },
+      {
+        "l": "D",
+        "t": "$(a + b)(c + d)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The faulty gates output $(ab)' = a' + b'$ and $(cd)' = c' + d'$.",
+      "The OR gate combines them: $a' + b' + c' + d'$."
+    ],
+    "concept": "A wrong gate complements its own output only; recompute each affected term.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That would require the OR gate to be faulty (a NOR); the complements are on the AND outputs, before the OR."
+      },
+      {
+        "answer": "C",
+        "why": "NAND–NAND would give $ab + cd$, but here the second level is still an OR."
+      }
+    ],
+    "blocks": [
+      "wrong-gate"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "$Y = X \\cdot X'$ is built from an inverter with delay 4 ns and an AND gate with delay 1 ns. $X$ rises from 0 to 1. What is the width (in ns) of the resulting pulse on $Y$?",
+    "answer": 4,
+    "solution": [
+      "For 4 ns after $X$ rises, the inverter still outputs the old value 1, so both AND inputs are 1.",
+      "The AND gate delays the pulse by 1 ns but does not change its width: a 1-pulse of width 4 ns."
+    ],
+    "concept": "The X·X′ glitch lasts as long as the inverter delay; later gates shift it but do not stretch it.",
+    "common_wrong": [
+      {
+        "answer": 5,
+        "why": "The AND delay shifts the pulse in time; it does not add to its width."
+      },
+      {
+        "answer": 0,
+        "why": "Logically $X \\cdot X' = 0$, but with a slow inverter the output pulses after the rising edge."
+      }
+    ],
+    "blocks": [
+      "glitch",
+      "trap-steady-state"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q07",
+    "type": "NAT",
+    "marks": 2,
+    "text": "$P = A \\oplus A(t - 2)$: an XOR gate fed by $A$ and by $A$ delayed 2 ns through a buffer (the XOR is ideal; everything is 0 before $t = 0$). $A$ rises at $t = 1$, falls at $t = 4$ and rises again at $t = 7$ (all in ns). How many transitions does $P$ make in $[0, 12]$?",
+    "answer": 6,
+    "solution": [
+      "An XOR with a delayed copy is 1 for 2 ns after every edge of $A$.",
+      "Edges at 1, 4, 7 give pulses on $[1, 3)$, $[4, 6)$ and $[7, 9)$; they do not overlap.",
+      "Each pulse has two transitions: $3 \\times 2 = 6$."
+    ],
+    "concept": "A ⊕ A(t − δ) turns every edge of A, rising or falling, into a δ-wide pulse.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "The falling edge at $t = 4$ also produces a pulse; XOR detects every change."
+      },
+      {
+        "answer": 3,
+        "why": "That counts pulses; each pulse has two transitions."
+      }
+    ],
+    "blocks": [
+      "xor-edge-detector",
+      "timing-method"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "In a circuit, input $A$ goes through a NOT gate (delay 1 ns) into an AND gate (delay 2 ns) whose output, together with an AND of $B$ and $C$ (delay 2 ns), feeds an OR gate (delay 2 ns). What is the propagation delay (in ns) of the circuit?",
+    "answer": 5,
+    "solution": [
+      "Paths: $A \\to$ NOT $\\to$ AND $\\to$ OR: $1 + 2 + 2 = 5$ ns. $B$ or $C \\to$ AND $\\to$ OR: $2 + 2 = 4$ ns.",
+      "The output is settled only after the slowest path: 5 ns."
+    ],
+    "concept": "The circuit delay is the critical path, the largest sum of gate delays from an input to the output.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "That is the shorter path; the inverter on $A$ adds 1 ns."
+      },
+      {
+        "answer": 7,
+        "why": "Delays along different paths are not added; only the delays on one path are summed."
+      }
+    ],
+    "blocks": [
+      "critical-path",
+      "prop-delay"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q09",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A contact network has a contact $x$ in series with the parallel pair ($x'$, $y$); this whole branch is in parallel with a contact $z$. The network conducts when",
+    "options": [
+      {
+        "l": "A",
+        "t": "$xy + z = 1$"
+      },
+      {
+        "l": "B",
+        "t": "$x + z = 1$"
+      },
+      {
+        "l": "C",
+        "t": "$z = 1$"
+      },
+      {
+        "l": "D",
+        "t": "$x + y + z = 1$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Series is AND, parallel is OR: $f = x(x' + y) + z$.",
+      "$x \\cdot x' = 0$, so $x(x' + y) = xy$ and $f = xy + z$."
+    ],
+    "concept": "Series = AND, parallel = OR; a path through x and x′ never conducts.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "The branch can conduct through $x$ and $y$; only the $x, x'$ path is dead."
+      },
+      {
+        "answer": "B",
+        "why": "With $x = 1$ the branch also needs $y = 1$, because the $x'$ contact is then open."
+      }
+    ],
+    "blocks": [
+      "switch-networks"
+    ],
+    "source": "nexora"
   }
 ]

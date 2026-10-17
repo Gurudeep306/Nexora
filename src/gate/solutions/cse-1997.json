@@ -1999,28 +1999,28 @@
       "verification": "$(224)_5=50+10+4=64$, $(13)_5=8$, $8^2=64$ ✓."
     },
     "cse-1997-a-40": {
-      "approach": "Here $f=f_1f_2+f_3$. Compute $f_1f_2$ (intersection of minterm sets); $f_3$ must supply the remaining minterms of $f$ and must not introduce any minterm outside $f$.",
+      "approach": "Concept tested: **function blocks as minterm sets**. Here $f = f_1 f_2 + f_3$: compute $f_1 f_2$ (intersection); $f_3$ must supply the remaining minterms of $f$ and must not introduce any minterm outside $f$.",
       "concepts": [
         "Canonical SOP",
         "AND/OR of minterm sets"
       ],
-      "given": "| Signal | Minterms |\n|---|---|\n| $f_1$ | 8, 9, 10 |\n| $f_2$ | 7, 8, 12, 13, 14, 15 |\n| $f$ | 8, 9 (scan prints 7, 9 — misprint) |",
+      "given": "| Signal | Minterms |\n|---|---|\n| $f_1$ | 8, 9, 10 |\n| $f_2$ | 7, 8, 12, 13, 14, 15 |\n| $f$ | 8, 9 |",
       "steps": [
         {
-          "title": "AND gate",
-          "body": "$f_1f_2=\\{8,9,10\\}\\cap\\{7,8,12,13,14,15\\}=\\Sigma\\,8$."
+          "title": "AND = intersection",
+          "body": "$f_1 f_2 = \\{8, 9, 10\\} \\cap \\{7, 8, 12, 13, 14, 15\\} = \\{8\\}$, which lies inside $f$."
         },
         {
-          "title": "Constraint on $f_3$",
-          "body": "$f=\\Sigma8\\cup f_3=\\Sigma\\,8,9$ ⇒ $f_3$ must contain 9, may contain 8, and nothing else."
+          "title": "Bounds on f₃",
+          "body": "$f_3 \\supseteq f \\setminus f_1f_2 = \\{9\\}$ and $f_3 \\subseteq f = \\{8, 9\\}$."
         },
         {
-          "title": "Choose",
-          "body": "Only $\\Sigma\\,9$ satisfies this — (B). (With the printed $f=\\Sigma7,9$ no $f_3$ works, since 8 from $f_1f_2$ would always appear in $f$; hence the correction to $\\Sigma8,9$.)"
+          "title": "Match",
+          "body": "Only $\\Sigma 9$ satisfies both: option (B)."
         }
       ],
       "answer": {
-        "value": "Σ 9",
+        "value": "(B) $\\Sigma\\,9$",
         "choice": [
           "B"
         ],
@@ -2030,28 +2030,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Minterm 10 would appear in $f$, but $f=\\Sigma8,9$."
+          "reason": "Minterm 10 is not in $f$; OR would add it."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: $\\Sigma8\\cup\\Sigma9=\\Sigma8,9=f$."
+          "reason": "Supplies 9, adds nothing outside $f$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Minterm 1 would appear in $f$."
+          "reason": "Minterm 1 is not in $f$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Lacks 9 and adds 10 and 15."
+          "reason": "Misses 9, and 10, 15 are not in $f$."
         }
       ],
+      "shortcut": "$f \\setminus f_1 f_2 \\subseteq f_3 \\subseteq f$.",
       "pitfalls": [
-        "Using union for the AND gate instead of intersection."
+        "Trying to expand the blocks into expressions over $w, x, y, z$.",
+        "(The original scan misprints $f$; the bank uses the corrected $\\Sigma 8, 9$.)"
       ],
-      "verification": "Recompute $f$ for (B): $f_1f_2+f_3=\\Sigma8+\\Sigma9=\\Sigma8,9$ ✓; every other option adds or misses a minterm."
+      "verification": "$f_1 f_2 + f_3 = \\{8\\} \\cup \\{9\\} = \\{8, 9\\} = f$."
     },
     "cse-1997-a-41": {
       "approach": "A total (linear) order extending the partial order must put $x$ first and $y$ last; the $a_i$ are mutually incomparable, so they can be arranged in any order between them.",

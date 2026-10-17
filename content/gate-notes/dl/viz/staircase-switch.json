@@ -1,0 +1,621 @@
+{
+ "version": 1,
+ "title": "A staircase (two-way switch) circuit computes XNOR",
+ "width": 640,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 320
+ },
+ "intro": "Each two-way switch connects its pivot to the top terminal b (ON, 1) or the bottom terminal c (OFF, 0). The b terminals are wired together, and so are the c terminals.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Two staircase switches: the lamp is XNOR",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Staircase switches = XNOR",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "bb",
+   "type": "line",
+   "points": [
+    [
+     190,
+     78
+    ],
+    [
+     450,
+     78
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      110,
+      78
+     ],
+     [
+      250,
+      78
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cc",
+   "type": "line",
+   "points": [
+    [
+     190,
+     166
+    ],
+    [
+     450,
+     166
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      110,
+      166
+     ],
+     [
+      250,
+      166
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tb",
+   "type": "text",
+   "x": 320,
+   "y": 66,
+   "text": "b–b wire",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 66,
+    "size": 11
+   }
+  },
+  {
+   "id": "tc",
+   "type": "text",
+   "x": 320,
+   "y": 184,
+   "text": "c–c wire",
+   "anchor": "middle",
+   "size": 12,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 184,
+    "size": 11
+   }
+  },
+  {
+   "id": "loop",
+   "type": "line",
+   "points": [
+    [
+     140,
+     122
+    ],
+    [
+     60,
+     122
+    ],
+    [
+     60,
+     240
+    ],
+    [
+     560,
+     240
+    ],
+    [
+     560,
+     122
+    ],
+    [
+     500,
+     122
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      60,
+      122
+     ],
+     [
+      24,
+      122
+     ],
+     [
+      24,
+      260
+     ],
+     [
+      336,
+      260
+     ],
+     [
+      336,
+      122
+     ],
+     [
+      300,
+      122
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lamp",
+   "type": "circle",
+   "cx": 310,
+   "cy": 240,
+   "r": 18,
+   "fill": "none",
+   "label": "off",
+   "size": 11,
+   "narrow": {
+    "cx": 180,
+    "cy": 260,
+    "r": 16
+   }
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 150,
+   "y": 200,
+   "text": "S1",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "narrow": {
+    "x": 70,
+    "y": 210,
+    "size": 12
+   }
+  },
+  {
+   "id": "s2",
+   "type": "text",
+   "x": 490,
+   "y": 200,
+   "text": "S2",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "narrow": {
+    "x": 290,
+    "y": 210,
+    "size": 12
+   }
+  },
+  {
+   "id": "p1",
+   "type": "line",
+   "points": [
+    [
+     140,
+     122
+    ],
+    [
+     190,
+     78
+    ]
+   ],
+   "tone": "accent",
+   "only": "wide"
+  },
+  {
+   "id": "p2",
+   "type": "line",
+   "points": [
+    [
+     500,
+     122
+    ],
+    [
+     450,
+     78
+    ]
+   ],
+   "tone": "accent",
+   "only": "wide"
+  },
+  {
+   "id": "p1n",
+   "type": "line",
+   "points": [
+    [
+     60,
+     122
+    ],
+    [
+     110,
+     78
+    ]
+   ],
+   "tone": "accent",
+   "only": "narrow"
+  },
+  {
+   "id": "p2n",
+   "type": "line",
+   "points": [
+    [
+     300,
+     122
+    ],
+    [
+     250,
+     78
+    ]
+   ],
+   "tone": "accent",
+   "only": "narrow"
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 320.0,
+   "y": 290,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 300,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "S1 = 1, S2 = 1: both blades touch the same wire, the loop closes, the lamp is on.",
+   "patches": [
+    {
+     "id": "p1",
+     "set": {
+      "points": [
+       [
+        140,
+        122
+       ],
+       [
+        190,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2",
+     "set": {
+      "points": [
+       [
+        500,
+        122
+       ],
+       [
+        450,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p1n",
+     "set": {
+      "points": [
+       [
+        60,
+        122
+       ],
+       [
+        110,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2n",
+     "set": {
+      "points": [
+       [
+        300,
+        122
+       ],
+       [
+        250,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "lamp",
+     "set": {
+      "fill": "warning",
+      "label": "on",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "lamp = S1 ⊙ S2 = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S1 = 1, S2 = 0: the blades touch different wires, the loop is open, the lamp is off. Flipping either switch now toggles the lamp.",
+   "patches": [
+    {
+     "id": "p1",
+     "set": {
+      "points": [
+       [
+        140,
+        122
+       ],
+       [
+        190,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2",
+     "set": {
+      "points": [
+       [
+        500,
+        122
+       ],
+       [
+        450,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p1n",
+     "set": {
+      "points": [
+       [
+        60,
+        122
+       ],
+       [
+        110,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2n",
+     "set": {
+      "points": [
+       [
+        300,
+        122
+       ],
+       [
+        250,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "lamp",
+     "set": {
+      "fill": "none",
+      "label": "off",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "lamp = S1 ⊙ S2 = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S1 = 0, S2 = 0: both blades touch the same wire, the loop closes, the lamp is on.",
+   "patches": [
+    {
+     "id": "p1",
+     "set": {
+      "points": [
+       [
+        140,
+        122
+       ],
+       [
+        190,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2",
+     "set": {
+      "points": [
+       [
+        500,
+        122
+       ],
+       [
+        450,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p1n",
+     "set": {
+      "points": [
+       [
+        60,
+        122
+       ],
+       [
+        110,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2n",
+     "set": {
+      "points": [
+       [
+        300,
+        122
+       ],
+       [
+        250,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "lamp",
+     "set": {
+      "fill": "warning",
+      "label": "on",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "lamp = S1 ⊙ S2 = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S1 = 0, S2 = 1: the blades touch different wires, the loop is open, the lamp is off.",
+   "patches": [
+    {
+     "id": "p1",
+     "set": {
+      "points": [
+       [
+        140,
+        122
+       ],
+       [
+        190,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2",
+     "set": {
+      "points": [
+       [
+        500,
+        122
+       ],
+       [
+        450,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p1n",
+     "set": {
+      "points": [
+       [
+        60,
+        122
+       ],
+       [
+        110,
+        166
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p2n",
+     "set": {
+      "points": [
+       [
+        300,
+        122
+       ],
+       [
+        250,
+        78
+       ]
+      ]
+     }
+    },
+    {
+     "id": "lamp",
+     "set": {
+      "fill": "none",
+      "label": "off",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "lamp = S1 ⊙ S2 = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The lamp is on exactly when the two switches agree: L = S1 ⊙ S2 = S1·S2 + S1′·S2′. Swapping the wires (b to c) gives XOR instead; either way each switch toggles the lamp.",
+   "patches": []
+  }
+ ]
+}

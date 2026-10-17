@@ -967,24 +967,28 @@
       "verification": "Master theorem with $a=1,b=2,f=k$: case 2 gives $\\Theta(\\log n)$ ✓."
     },
     "cse-1994-a-8": {
-      "approach": "Label each NAND output and push inversions through with De Morgan; a NAND fed by two NANDs is an OR of the two ANDs.",
+      "approach": "Concept tested: **pushing inversions through NAND levels**. Label each NAND output and apply De Morgan; a NAND fed by two NANDs is an OR of the two products.",
       "concepts": [
         "NAND gates",
         "De Morgan's laws"
       ],
-      "given": "| Gate | Inputs | Output |\n|---|---|---|\n| $G_1$ | $A,B$ | $P=\\overline{AB}$ |\n| $G_2$ | $P,C$ | $Q=\\overline{PC}$ |\n| $G_3$ | $C,D$ | $R=\\overline{CD}$ |\n| $G_4$ | $Q,R$ | $F=\\overline{QR}$ |",
+      "given": "| Gate | Inputs | Output |\n|---|---|---|\n| $G_1$ | $A, B$ | $P = \\overline{AB}$ |\n| $G_2$ | $P, C$ | $Q = \\overline{PC}$ |\n| $G_3$ | $C, D$ | $R = \\overline{CD}$ |\n| $G_4$ | $Q, R$ | $F = \\overline{QR}$ |",
       "steps": [
         {
-          "title": "Final gate",
-          "body": "$$F=\\overline{Q\\,R}=\\overline{Q}+\\overline{R}=PC+CD$$"
+          "title": "Output gate",
+          "body": "$F = \\overline{QR} = \\overline{Q} + \\overline{R} = PC + CD$."
         },
         {
           "title": "Substitute P",
-          "body": "$$F=\\overline{AB}\\,C+CD=(\\overline{A}+\\overline{B})C+CD=\\overline{A}C+\\overline{B}C+CD$$"
+          "body": "$PC = \\overline{AB}\\,C = (\\overline{A} + \\overline{B})C = \\overline{A}C + \\overline{B}C$."
+        },
+        {
+          "title": "Result",
+          "body": "$F = \\overline{A}C + \\overline{B}C + CD$: option (A)."
         }
       ],
       "answer": {
-        "value": "$\\overline{A}C + \\overline{B}C + CD$",
+        "value": "(A) $\\overline{A}C + \\overline{B}C + CD$",
         "choice": [
           "A"
         ],
@@ -994,25 +998,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct — matches the derivation."
+          "reason": "The De Morgan expansion above."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Complements C instead of A and B; $A=1,B=C=D=0$ gives 1 here but the circuit outputs 0."
+          "reason": "Uses $\\overline{C}$ instead of $C$: at $C = 0$ the circuit gives $F = 0$ ($Q = R = 1$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$A=B=C=D=0$ gives 1 here, but the circuit outputs 0."
+          "reason": "$ABC + \\overline{C}\\,\\overline{D}$ is 1 at $C = D = 0$, where the circuit gives 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$A=B=C=D=0$ gives 1 here, but the circuit outputs 0."
+          "reason": "$\\overline{A}\\,\\overline{B}$ is 1 at $C = 0$, where $F = 0$."
         }
       ],
-      "verification": "$A=B=C=1,D=0$: $P=0,Q=1,R=1,F=0$; option (a) gives $0+0+0=0$ ✓. $A=0,C=1,D=0$: $P=1,Q=0,F=1$; (a) gives 1 ✓."
+      "shortcut": "Every term of $F$ must contain $C$ (both inner products contain $C$), which kills (B), (C) and (D) at once.",
+      "pitfalls": [
+        "Losing the inversion of $G_1$: $PC$ is $\\overline{AB}C$, not $ABC$."
+      ],
+      "verification": "$A = 0, C = 1, D = 0$: $P = 1$, $Q = 0$, $R = 1$, $F = 1$; option (A) gives $\\overline{A}C = 1$. ✓"
     },
     "cse-1994-a-9": {
       "approach": "Look for a linear dependency among rows: row 2 minus three times row 3 is a multiple of row 1.",
