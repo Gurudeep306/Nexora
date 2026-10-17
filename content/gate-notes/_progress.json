@@ -51,7 +51,10 @@
           "title": "Boolean algebra and logic gates",
           "lessons": 6,
           "pyqs": 64,
-          "status": "planned"
+          "status": "writing",
+          "lessons_status": {
+            "logic-gates": "draft"
+          }
         },
         {
           "id": "03-minimisation",

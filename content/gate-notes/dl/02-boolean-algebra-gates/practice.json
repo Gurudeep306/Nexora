@@ -1,0 +1,210 @@
+[
+  {
+    "id": "nx-dl-02-01-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A two-input gate gives the outputs 1, 0, 0, 0 for the input rows $AB = 00, 01, 10, 11$. Which gate is it?",
+    "options": [
+      { "l": "A", "t": "NAND" },
+      { "l": "B", "t": "NOR" },
+      { "l": "C", "t": "XNOR" },
+      { "l": "D", "t": "AND" }
+    ],
+    "answer": "B",
+    "solution": [
+      "The output column has a single 1, on row 00, so the gate outputs 1 only when both inputs are 0.",
+      "'1 only when no input is 1' is the complement of OR: $(A + B)'$, the NOR gate.",
+      "Check against the vocabulary: NOR is 1000, NAND 1110, XNOR 1001, AND 0001."
+    ],
+    "concept": "Name a gate by its output column: NOR is 1000, the complement of OR's 0111.",
+    "common_wrong": [
+      { "answer": "A", "why": "NAND is 1110: it is 0 only on row 11. This table is 1 only on row 00, the mirror image." },
+      { "answer": "C", "why": "XNOR is also 1 on row 11 (equal inputs 1, 1). This table is 0 there." }
+    ],
+    "blocks": ["nand-nor", "trick-odd-row"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q02",
+    "type": "NAT",
+    "marks": 1,
+    "text": "A 4-input NOR gate is driven through all $2^4 = 16$ input combinations. On how many of them is its output 1?",
+    "answer": 1,
+    "solution": [
+      "A NOR is the complement of an OR. The 4-input OR is 0 only when all four inputs are 0, which is one row (0000).",
+      "So the NOR is 1 on exactly that row and 0 on the other 15."
+    ],
+    "concept": "An n-input NOR is 1 only on the all-zero row; 1 is its controlling value.",
+    "common_wrong": [
+      { "answer": 15, "why": "That is the number of rows where the NOR is 0 (or where the OR is 1)." },
+      { "answer": 8, "why": "Half the rows is the count for XOR or XNOR, which have no controlling value. A NOR is forced to 0 by any single 1." }
+    ],
+    "blocks": ["nand-nor", "controlling-value", "multi-input"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following are equal to $x'$ for both values of $x$?",
+    "options": [
+      { "l": "A", "t": "$x$ NAND $1$" },
+      { "l": "B", "t": "$x$ XOR $1$" },
+      { "l": "C", "t": "$x$ NOR $x$" },
+      { "l": "D", "t": "$x$ XNOR $1$" }
+    ],
+    "answer": ["A", "B", "C"],
+    "solution": [
+      "(A) 1 is the non-controlling value of AND, so the AND body passes $x$ and the bubble inverts it: $(x \\cdot 1)' = x'$. Equal.",
+      "(B) XOR with 1 is the controlled inverter with its control on: $x \\oplus 1 = x'$. Equal.",
+      "(C) Tying both inputs: $(x + x)' = x'$. Equal.",
+      "(D) XNOR is 1 when its inputs are equal, and $x$ equals 1 exactly when $x = 1$: $x \\odot 1 = x$. Not equal."
+    ],
+    "concept": "Any inverting gate becomes a NOT when its inputs are tied or when it is fed its non-controlling constant; XOR with 1 inverts, XNOR with 1 copies.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "XNOR with 1 does not invert: $1 \\odot 1 = 1$ and $0 \\odot 1 = 0$, so it copies $x$. XNOR with 0 is the inverter." },
+      { "answer": ["A", "C"], "why": "XOR with 1 was missed: $0 \\oplus 1 = 1$ and $1 \\oplus 1 = 0$, which is $x'$." }
+    ],
+    "blocks": ["tie-inputs", "trick-inverter", "gate-as-switch"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q04",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A chip works as an XOR gate in positive logic. If the same chip is used in a system that follows negative logic, which function does it perform?",
+    "options": [
+      { "l": "A", "t": "XOR" },
+      { "l": "B", "t": "XNOR" },
+      { "l": "C", "t": "NAND" },
+      { "l": "D", "t": "OR" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Negative logic complements every input and the output, so the function seen is the dual $f^D(A, B) = \\big(f(A', B')\\big)'$.",
+      "For XOR: $A' \\oplus B' = A \\oplus B$ (complementing both inputs leaves XOR unchanged), and the output complement gives $(A \\oplus B)'$.",
+      "So the chip performs XNOR. Check one row: in negative logic the inputs $A = B = 1$ are both low; low, low gives a low output (XOR of 0, 0 in positive logic), and low reads as 1. XNOR(1, 1) = 1."
+    ],
+    "concept": "Changing from positive to negative logic turns every function into its dual: XOR ↔ XNOR, AND ↔ OR, NAND ↔ NOR.",
+    "common_wrong": [
+      { "answer": "A", "why": "Complementing only the inputs leaves XOR unchanged, but the output is complemented too." },
+      { "answer": "D", "why": "OR is the negative-logic reading of an AND chip, not of an XOR chip." }
+    ],
+    "blocks": ["pos-neg-logic", "logic-duality"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q05",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Of the 16 possible two-input Boolean functions $f(A, B)$, how many are commutative, that is, satisfy $f(A, B) = f(B, A)$ for all inputs?",
+    "answer": 8,
+    "solution": [
+      "Swapping $A$ and $B$ only exchanges the rows 01 and 10; rows 00 and 11 map to themselves.",
+      "So $f$ is commutative exactly when $f(0,1) = f(1,0)$. The free choices are $f(0,0)$, $f(1,1)$ and the common value of $f(0,1) = f(1,0)$: three binary choices.",
+      "That gives $2^3 = 8$ functions: 0, AND, XOR, OR, NOR, XNOR, NAND and 1."
+    ],
+    "concept": "A two-input function is commutative iff its rows 01 and 10 agree; count the free rows.",
+    "common_wrong": [
+      { "answer": 6, "why": "The two constants 0 and 1 are also commutative; they were left out." },
+      { "answer": 4, "why": "Only rows 00 and 11 were treated as free; the shared value of rows 01 and 10 is a third free choice." }
+    ],
+    "blocks": ["sixteen-functions", "truth-table-def"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A student builds a '3-input NAND' by feeding the output of a 2-input NAND of $A$ and $B$ into a second 2-input NAND together with $C$. What does the circuit compute?",
+    "options": [
+      { "l": "A", "t": "$(ABC)'$" },
+      { "l": "B", "t": "$AB + C'$" },
+      { "l": "C", "t": "$A' + B' + C$" },
+      { "l": "D", "t": "$(AB)'C$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "The first gate gives $G = (AB)'$. The second gives $\\big(G \\cdot C\\big)' = G' + C'$ by De Morgan.",
+      "$G' = \\big((AB)'\\big)' = AB$, so the output is $AB + C'$.",
+      "It is not $(ABC)'$: at $A = B = 0, C = 1$ the true 3-input NAND gives 1, but $AB + C' = 0$."
+    ],
+    "concept": "NAND is not associative: NAND(NAND(A, B), C) = AB + C′, not (ABC)′.",
+    "common_wrong": [
+      { "answer": "A", "why": "That is the true 3-input NAND, which needs an inverter between the two 2-input NANDs." },
+      { "answer": "D", "why": "This is the input of the second gate's bubble, $(AB)' \\cdot C$; the second gate's output inverts it." }
+    ],
+    "blocks": ["multi-input", "trap-nand-chain"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q07",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following statements about bubbles are correct?",
+    "options": [
+      { "l": "A", "t": "An AND gate with a bubble on both inputs is a NOR gate." },
+      { "l": "B", "t": "Two bubbles on the same wire cancel each other." },
+      { "l": "C", "t": "An OR gate with bubbles on both inputs and on its output is an AND gate." },
+      { "l": "D", "t": "A NAND gate with one input tied to 0 acts as an inverter for the other input." }
+    ],
+    "answer": ["A", "B", "C"],
+    "solution": [
+      "(A) The body sees $A'$ and $B'$: $A'B' = (A + B)'$ by De Morgan, a NOR. Correct.",
+      "(B) Inverting twice restores the signal: $x'' = x$. Correct.",
+      "(C) The output is $(A' + B')' = A''B'' = AB$ by De Morgan. Correct.",
+      "(D) 0 is the controlling value of NAND: $(x \\cdot 0)' = 1$ for both values of $x$. The output is stuck at 1, so this is wrong; tie the input to 1 (or to $x$) instead."
+    ],
+    "concept": "Moving bubbles across a gate swaps AND and OR and inverts each crossed signal; a controlling constant makes an output constant.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "Feeding a NAND its controlling value 0 forces the output to 1; it does not invert." },
+      { "answer": ["A", "B"], "why": "Statement C is De Morgan applied twice: bubbled-input OR is NAND, and the output bubble undoes the NOT, leaving AND." }
+    ],
+    "blocks": ["bubbles", "demorgan-gates", "controlling-value"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "In a circuit, $G_1 = \\text{NAND}(A, B)$, $G_2 = \\text{NOR}(B, C)$ and the output is $F = \\text{OR}(G_1, G_2)$. For how many of the 8 input rows $(A, B, C)$ is $F = 1$?",
+    "answer": 6,
+    "solution": [
+      "$G_1 = (AB)' = A' + B'$ and $G_2 = (B + C)' = B'C'$.",
+      "$F = A' + B' + B'C'$. The term $B'C'$ is 1 only when $B' = 1$, and then $B'$ already makes $F = 1$, so $F = A' + B'$.",
+      "$A' + B'$ is 0 only when $A = B = 1$: rows 110 and 111. So $F = 1$ on $8 - 2 = 6$ rows."
+    ],
+    "concept": "Read a circuit gate by gate, write each output in terms of its inputs, simplify, then count rows.",
+    "common_wrong": [
+      { "answer": 7, "why": "Only row 111 was excluded. Row 110 also has $A = B = 1$, so $G_1 = 0$, and $G_2 = (1 + 0)' = 0$." },
+      { "answer": 2, "why": "That counts the rows where $F = 0$." }
+    ],
+    "blocks": ["read-circuit", "nand-nor"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q09",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A data signal $x$ and a control signal $c$ feed a two-input XOR gate. Which statement describes its output?",
+    "options": [
+      { "l": "A", "t": "It passes $x$ when $c = 1$ and inverts $x$ when $c = 0$." },
+      { "l": "B", "t": "It passes $x$ when $c = 0$ and inverts $x$ when $c = 1$." },
+      { "l": "C", "t": "It is forced to 0 when $c = 1$, whatever $x$ is." },
+      { "l": "D", "t": "It is forced to 1 when $c = 1$, whatever $x$ is." }
+    ],
+    "answer": "B",
+    "solution": [
+      "With $c = 0$: $x \\oplus 0 = x$, the data passes unchanged.",
+      "With $c = 1$: $x \\oplus 1 = x'$, the data is inverted.",
+      "XOR has no controlling value, so it is never forced to a constant: options C and D are impossible."
+    ],
+    "concept": "An XOR gate is a controlled inverter: control 0 passes the data, control 1 inverts it.",
+    "common_wrong": [
+      { "answer": "A", "why": "This is the XNOR gate's behaviour: $x \\odot 1 = x$ and $x \\odot 0 = x'$." },
+      { "answer": "C", "why": "Forcing to 0 is what a 0 does to an AND gate. XOR has no controlling value." }
+    ],
+    "blocks": ["gate-as-switch", "xor-gate", "controlling-value"],
+    "source": "nexora"
+  }
+]

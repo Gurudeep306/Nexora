@@ -2312,3 +2312,24 @@ h4.notes-h {
     display: none;
   }
 }
+@media (max-width: 480px) {
+  .lab {
+    padding: 10px;
+    font-size: 14px;
+  }
+  .lab-gate-row {
+    gap: 4px;
+  }
+  .lab-select {
+    min-height: 32px;
+    padding: 0 3px;
+    font-size: 13.5px;
+  }
+  .lab-of {
+    display: none;
+  }
+  .lab-x {
+    min-width: 30px;
+    min-height: 32px;
+  }
+}
