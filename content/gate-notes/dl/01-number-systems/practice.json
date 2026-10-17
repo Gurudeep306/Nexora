@@ -403,5 +403,203 @@
     ],
     "blocks": ["octal-hex", "hex-expansion"],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Write $0.6875$ in binary. How many 1s are there after the binary point?",
+    "answer": 3,
+    "solution": [
+      "Double and peel: $0.6875 \\times 2 = 1.375$ → 1; $0.375 \\times 2 = 0.75$ → 0; $0.75 \\times 2 = 1.5$ → 1; $0.5 \\times 2 = 1.0$ → 1, stop.",
+      "Read the bits top to bottom: $0.6875 = (0.1011)_2$.",
+      "Check: $\\tfrac12 + \\tfrac18 + \\tfrac1{16} = \\tfrac{11}{16} = 0.6875$. The fraction has three 1s."
+    ],
+    "concept": "Repeated multiplication by 2 gives the fraction bits from the first to the last.",
+    "common_wrong": [
+      { "answer": 4, "why": "Four is the number of bits after the point, not the number of 1s." },
+      { "answer": 2, "why": "The last doubling ($0.5 \\times 2 = 1.0$) was skipped; it produces the final 1 bit." }
+    ],
+    "blocks": ["repeated-multiplication"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q02",
+    "type": "MSQ",
+    "marks": 1,
+    "text": "Which of these decimal values have a finite (terminating) binary representation?",
+    "options": [
+      { "l": "A", "t": "$0.5$" },
+      { "l": "B", "t": "$0.2$" },
+      { "l": "C", "t": "$0.375$" },
+      { "l": "D", "t": "$0.05$" }
+    ],
+    "answer": ["A", "C"],
+    "solution": [
+      "Write each as a fraction in lowest terms; it terminates in binary exactly when the denominator is a power of 2.",
+      "(A) $0.5 = 1/2$: terminates, $(0.1)_2$.",
+      "(B) $0.2 = 1/5$: the factor 5 makes it recur, $(0.\\overline{0011})_2$.",
+      "(C) $0.375 = 3/8$: terminates, $(0.011)_2$.",
+      "(D) $0.05 = 1/20 = 1/(4\\cdot5)$: the factor 5 makes it recur."
+    ],
+    "concept": "p/q in lowest terms terminates in binary iff q is a power of 2.",
+    "common_wrong": [
+      { "answer": ["A"], "why": "0.375 was rejected because it 'looks like' a long decimal. Its denominator 8 is a power of 2." },
+      { "answer": ["A", "C", "D"], "why": "0.05 was accepted because 20 contains the factor 4. Every prime factor must be 2; the 5 spoils it." }
+    ],
+    "blocks": ["terminates", "trick-power-of-two"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "A 10-bit unsigned fixed-point format uses 4 bits for the fraction. What is the largest value it can represent?",
+    "answer": 63.9375,
+    "solution": [
+      "Integer bits: $i = 10 - 4 = 6$; fraction bits $f = 4$.",
+      "The largest pattern is all ones: $(2^{10} - 1) \\cdot 2^{-4} = 1023 / 16 = 63.9375$.",
+      "Equivalently $2^i - 2^{-f} = 64 - 0.0625 = 63.9375$."
+    ],
+    "concept": "The unsigned i.f maximum is 2^i − 2^−f.",
+    "common_wrong": [
+      { "answer": 64, "why": "64 = $2^6$ needs a seventh integer bit; all ones stops one step ($2^{-4}$) short." },
+      { "answer": 63.9, "why": "Four fraction bits were treated like four decimal places. The fraction part tops out at $15/16 = 0.9375$." }
+    ],
+    "blocks": ["fixed-point", "fixed-max"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q04",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following values are exactly representable in unsigned 8-bit fixed point with 4 integer bits and 4 fraction bits?",
+    "options": [
+      { "l": "A", "t": "$15.9375$" },
+      { "l": "B", "t": "$7.1$" },
+      { "l": "C", "t": "$0.0625$" },
+      { "l": "D", "t": "$16$" }
+    ],
+    "answer": ["A", "C"],
+    "solution": [
+      "Test: $x \\cdot 2^4$ must be a whole number, and $x \\le 2^4 - 2^{-4} = 15.9375$.",
+      "(A) $15.9375 \\cdot 16 = 255$, whole, and it is exactly the maximum ($1111.1111$). Exact.",
+      "(B) $7.1 \\cdot 16 = 113.6$, not whole: $0.1$ recurs in binary. Not exact.",
+      "(C) $0.0625 \\cdot 16 = 1$: the pattern $0000.0001$, the smallest positive value. Exact.",
+      "(D) $16 \\cdot 16 = 256$ is whole, but $16 > 15.9375$: it needs a fifth integer bit. Not representable."
+    ],
+    "concept": "Exact in i.f means x·2^f is a whole number and x is within [0, 2^i − 2^−f].",
+    "common_wrong": [
+      { "answer": ["A", "C", "D"], "why": "16 passes the 'whole number' test but fails the range test; the maximum is $15.9375$." },
+      { "answer": ["C"], "why": "15.9375 was thought to be out of range. It is precisely the all-ones maximum." }
+    ],
+    "blocks": ["representable", "fixed-max"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q05",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is $(0.101)_2 + (0.3)_8$ in decimal?",
+    "options": [
+      { "l": "A", "t": "$1.0$" },
+      { "l": "B", "t": "$0.925$" },
+      { "l": "C", "t": "$0.401$" },
+      { "l": "D", "t": "$0.75$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$(0.101)_2 = \\tfrac12 + \\tfrac18 = 0.625$.",
+      "$(0.3)_8 = \\tfrac38 = 0.375$.",
+      "Sum: $0.625 + 0.375 = 1.0$."
+    ],
+    "concept": "Fraction digits are worth negative powers of their own base.",
+    "common_wrong": [
+      { "answer": "B", "why": "$(0.3)_8$ was read as the decimal $0.3$: $0.625 + 0.3 = 0.925$." },
+      { "answer": "C", "why": "Both numerals were read as decimals: $0.101 + 0.3 = 0.401$." }
+    ],
+    "blocks": ["repeated-multiplication", "trap-hex-fraction"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q06",
+    "type": "NAT",
+    "marks": 2,
+    "text": "$0.7$ is written in binary and truncated to 4 bits after the point. What is the truncation error (exact value minus stored value)? Give the answer to 4 decimal places.",
+    "answer": 0.0125,
+    "solution": [
+      "Double and peel: $0.7 \\to 1.4$ (1), $0.4 \\to 0.8$ (0), $0.8 \\to 1.6$ (1), $0.6 \\to 1.2$ (1), … so $0.7 = (0.1\\overline{0110})_2$.",
+      "Keep four bits: $(0.1011)_2 = \\tfrac{11}{16} = 0.6875$.",
+      "Error: $0.7 - 0.6875 = 0.0125$, which is indeed below the bound $2^{-4} = 0.0625$."
+    ],
+    "concept": "Truncating to k bits leaves an error below 2^−k; compute it exactly by subtracting.",
+    "common_wrong": [
+      { "answer": 0.0625, "why": "That is the bound $2^{-4}$, not the actual error." },
+      { "answer": 0.075, "why": "The four bits were taken as $0.1010_2 = 0.625$ (the fourth bit read as 0), giving $0.7 - 0.625$." }
+    ],
+    "blocks": ["truncation", "repeated-multiplication"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A 16-bit signed fixed-point format stores a 2's-complement integer scaled by $2^{-8}$ (8 integer bits including the sign, 8 fraction bits). What are its resolution and range?",
+    "options": [
+      { "l": "A", "t": "Resolution $2^{-8}$, range $-128$ to $127.99609375$" },
+      { "l": "B", "t": "Resolution $2^{-8}$, range $-128$ to $128$" },
+      { "l": "C", "t": "Resolution $2^{-16}$, range $-1$ to $1$" },
+      { "l": "D", "t": "Resolution $2^{-8}$, range $0$ to $255.99609375$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "The step between neighbours is the weight of the last bit: $2^{-8} = 0.00390625$.",
+      "The 16-bit 2's-complement integers run from $-2^{15}$ to $2^{15} - 1$. Scaling by $2^{-8}$ gives $-2^{7} = -128$ up to $2^{7} - 2^{-8} = 127.99609375$.",
+      "So the range is $[-128,\\; 127.99609375]$."
+    ],
+    "concept": "Signed Q-format range is [−2^(i−1), 2^(i−1) − 2^−f].",
+    "common_wrong": [
+      { "answer": "B", "why": "The top end of a 2's-complement range is one step below $+2^{i-1}$, never equal to it." },
+      { "answer": "D", "why": "That is the unsigned 8.8 range; the sign bit makes half the patterns negative." }
+    ],
+    "blocks": ["signed-q", "fixed-point"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q08",
+    "type": "NAT",
+    "marks": 1,
+    "text": "$1/5$ has a recurring binary expansion. How many bits are in its repeating block (its period)?",
+    "answer": 4,
+    "solution": [
+      "Double and peel: $\\tfrac15 \\to \\tfrac25$ (0) $\\to \\tfrac45$ (0) $\\to \\tfrac85 = 1\\tfrac35$ (1) $\\to \\tfrac65 = 1\\tfrac15$ (1).",
+      "The fraction is back to $\\tfrac15$ after four rows, so $1/5 = (0.\\overline{0011})_2$.",
+      "The period is 4 (indeed $2^4 = 16 \\equiv 1 \\pmod 5$)."
+    ],
+    "concept": "A recurring expansion repeats from the first fraction part that comes back.",
+    "common_wrong": [
+      { "answer": 5, "why": "This guesses the period equals the denominator. The period is the number of rows until the fraction part repeats." },
+      { "answer": 2, "why": "Only the two 1 bits were counted; the block $0011$ also contains two 0s." }
+    ],
+    "blocks": ["repeated-multiplication", "terminates"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-03-q09",
+    "type": "NAT",
+    "marks": 1,
+    "text": "If $(0.11)_2 = (0.xy)_{10}$ where $x$ and $y$ are decimal digits, what is $x + y$?",
+    "answer": 12,
+    "solution": [
+      "$(0.11)_2 = \\tfrac12 + \\tfrac14 = 0.75$.",
+      "So $x = 7$ and $y = 5$, and $x + y = 12$."
+    ],
+    "concept": "Binary fraction digits are worth 1/2, 1/4, … .",
+    "common_wrong": [
+      { "answer": 2, "why": "The bits were copied as decimal digits ($0.11$ read as eleven hundredths, $1 + 1 = 2$)." },
+      { "answer": 5, "why": "Only the first bit was converted ($0.5$, giving $x = 5$, $y = 0$). The second bit adds $0.25$." }
+    ],
+    "blocks": ["repeated-multiplication"],
+    "source": "nexora"
   }
 ]

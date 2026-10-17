@@ -1,0 +1,86 @@
+{
+ "version": 1,
+ "title": "Bit weights in a 5.3 fixed-point byte",
+ "width": 560,
+ "height": 240,
+ "intro": "Eight bit cells b7 to b0 with the binary point between b3 and b2. Weights above the point are 16, 8, 4, 2, 1; below it ½, ¼, ⅛. The pattern 01011.010 is 8 + 2 + 1 + ¼ = 11.25. The format covers 0 to 31.875 in steps of ⅛.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "Unsigned 5.3 fixed point: b₇ … b₃ . b₂ b₁ b₀",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "cells",
+   "type": "bits",
+   "x": 90,
+   "y": 72,
+   "bits": "01011010",
+   "cell": 48,
+   "labels": [
+    "b₇",
+    "b₆",
+    "b₅",
+    "b₄",
+    "b₃",
+    "b₂",
+    "b₁",
+    "b₀"
+   ],
+   "below": [
+    "16",
+    "8",
+    "4",
+    "2",
+    "1",
+    "½",
+    "¼",
+    "⅛"
+   ],
+   "highlight": [
+    1,
+    3,
+    4,
+    6
+   ]
+  },
+  {
+   "id": "pt",
+   "type": "text",
+   "x": 330,
+   "y": 118,
+   "text": "•",
+   "anchor": "middle",
+   "size": 30,
+   "weight": "bold",
+   "tone": "danger"
+  },
+  {
+   "id": "val",
+   "type": "text",
+   "x": 280,
+   "y": 184,
+   "text": "01011.010 = 8 + 2 + 1 + ¼ = 11.25",
+   "anchor": "middle",
+   "size": 18,
+   "mono": true,
+   "tone": "success"
+  },
+  {
+   "id": "rng",
+   "type": "text",
+   "x": 280,
+   "y": 220,
+   "text": "range 0 … 31.875 in steps of ⅛ (2⁸ = 256 values)",
+   "anchor": "middle",
+   "size": 16,
+   "tone": "muted"
+  }
+ ],
+ "steps": []
+}

@@ -806,19 +806,27 @@
       "verification": "Levels 0–3 of a perfect tree hold $1+2+4+8=15$ nodes; a chain of $n$ nodes has height $n-1$."
     },
     "cse-2017-1-cs-7": {
-      "approach": "With $i$ integer bits and $f$ fraction bits, the smallest value is all zeros and the largest is all ones.",
+      "approach": "Concept tested: the range of unsigned fixed point. The smallest pattern is all zeros (0); the largest is all ones, the integer $2^n - 1$ scaled by $2^{-f}$, which is $2^i - 2^{-f}$.",
       "concepts": [
-        "Fixed-point representation",
-        "Unsigned range"
+        "Unsigned fixed point",
+        "Range and resolution"
       ],
       "steps": [
         {
+          "title": "Value of a pattern",
+          "body": "An $n$-bit pattern with $f$ fraction bits is worth (its unsigned integer) $\\times 2^{-f}$."
+        },
+        {
           "title": "Smallest value",
-          "body": "All $n$ bits 0 gives $X=0$."
+          "body": "The all-zeros pattern is the unsigned integer 0, and $0 \\times 2^{-f} = 0$. (The smallest *positive* value is $2^{-f}$.)"
         },
         {
           "title": "Largest value",
-          "body": "All bits 1: integer part $2^i-1$, fraction part $\\sum_{k=1}^{f}2^{-k}=1-2^{-f}$. Total $$X_{\\max}=(2^i-1)+(1-2^{-f})=2^i-2^{-f}.$$"
+          "body": "All ones: $(2^n - 1)\\,2^{-f} = 2^{n-f} - 2^{-f} = 2^i - 2^{-f}$."
+        },
+        {
+          "title": "Answer",
+          "body": "The range is $0$ to $2^i - 2^{-f}$: option D."
         }
       ],
       "answer": {
@@ -832,25 +840,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Unsigned fixed point can represent 0, and $2^i$ needs an extra integer bit."
+          "reason": "$2^{-f}$ is the smallest *positive* value, but 0 (all zeros) is representable; and $2^i$ needs an extra integer bit."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "The lower end is 0, not $2^{-f}$ (the all-zero pattern is valid)."
+          "reason": "The maximum is right but the minimum is not: the all-zeros pattern gives 0."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$2^i$ itself is not representable; the maximum falls short by one LSB, $2^{-f}$."
+          "reason": "$2^i$ would be $1$ followed by $i$ zeros before the point, which needs $i + 1$ integer bits. The all-ones maximum is one step short."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Range $[0,\\ 2^i-2^{-f}]$ in steps of $2^{-f}$."
+          "reason": "Minimum 0, maximum $2^i - 2^{-f}$."
         }
       ],
-      "verification": "Example $i=2,f=1$: patterns $00.0$ to $11.1 = 3.5 = 2^2-2^{-1}$."
+      "shortcut": "Try a tiny case: $i = 1$, $f = 1$ gives the patterns $0.0, 0.1, 1.0, 1.1 = 0, 0.5, 1, 1.5$. The range is $0$ to $1.5 = 2^1 - 2^{-1}$; only D fits.",
+      "pitfalls": [
+        "Choosing $2^i$ as the maximum.",
+        "Choosing $2^{-f}$ as the minimum."
+      ],
+      "verification": "$i = 5$, $f = 3$: $11111.111_2 = 31.875 = 2^5 - 2^{-3}$."
     },
     "cse-2017-1-cs-8": {
       "approach": "Trace `join` on the edge case where the list `n` is empty.",

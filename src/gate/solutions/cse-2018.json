@@ -2398,23 +2398,24 @@
       "verification": "$\\lfloor \\log_2 \\lfloor \\log_2 2^{40} \\rfloor \\rfloor = \\lfloor \\log_2 40 \\rfloor = 5$."
     },
     "cse-2018-cs-33": {
-      "approach": "Five integer bits (0–31) and three fraction bits (multiples of $1/8 = 0.125$). A number is exactly representable iff it lies in $[0, 31.875]$ and its fractional part is a multiple of 0.125.",
+      "approach": "Concept tested: exact representability in fixed point. With 5 integer and 3 fraction bits, a value is exact iff it lies in $[0, 31.875]$ and is a multiple of $2^{-3} = 0.125$ (i.e. $8x$ is a whole number).",
       "concepts": [
-        "Fixed-point representation",
-        "Binary fractions"
+        "Unsigned fixed point",
+        "Exact representability",
+        "Terminating binary fractions"
       ],
       "steps": [
         {
-          "title": "Format",
-          "body": "Integer part $b_7..b_3$: $0..31$. Fraction $b_2b_1b_0$: $k/8$ for $k = 0..7$ (0, 0.125, …, 0.875)."
+          "title": "The format",
+          "body": "$i = 5$, $f = 3$: values are $k/8$ for $k = 0 \\dots 255$, so the range is $0$ to $31.875$ in steps of $0.125$."
         },
         {
-          "title": "Check each",
-          "body": "| Number | Integer | Fraction = k/8? | Representable |\n|---|---|---|---|\n| 31.500 | 31 = 11111 | 0.5 = 4/8 → 100 | yes |\n| 0.875 | 0 = 00000 | 0.875 = 7/8 → 111 | yes |\n| 12.100 | 12 = 01100 | 0.1 = 0.8/8 | no |\n| 3.001 | 3 = 00011 | 0.001 = 0.008/8 | no |"
+          "title": "Test each value: multiply by 8",
+          "body": "- (i) $31.5 \\times 8 = 252$: whole, in range → exact ($11111.100$).\\n- (ii) $0.875 \\times 8 = 7$: whole → exact ($00000.111$).\\n- (iii) $12.1 \\times 8 = 96.8$: not whole → not exact.\\n- (iv) $3.001 \\times 8 = 24.008$: not whole → not exact."
         },
         {
-          "title": "Conclusion",
-          "body": "Only (iii) and (iv) cannot be represented exactly, which is option C."
+          "title": "Conclude",
+          "body": "Only (iii) and (iv) cannot be represented exactly: option C."
         }
       ],
       "answer": {
@@ -2428,28 +2429,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "(i) = 11111.100 and (ii) = 00000.111 are exact."
+          "reason": "(i) and (ii) are exact: $31.5 = 11111.100_2$ and $0.875 = 0.111_2$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "0.875 = 0.111₂ is exact."
+          "reason": "$0.875 = 7/8$ needs exactly three fraction bits, which the format has."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct."
+          "reason": "$12.1$ and $3.001$ need fractions $0.1$ and $0.001$, whose denominators contain 5, so they recur in binary."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "(i) and (ii) are exact; it is (iii) and (iv) that fail."
+          "reason": "This reverses the truth: (i) and (ii) are the exact ones."
         }
       ],
+      "shortcut": "Only fractional parts matter here (all values are below 32): $.5, .875$ are multiples of $1/8$; $.1$ and $.001$ are not.",
       "pitfalls": [
-        "Thinking 31.5 overflows: the maximum is 31.875."
+        "Thinking 31.5 overflows: the maximum is 31.875.",
+        "Rounding 12.1 to 12.125 and calling it representable; the question asks for *exact* representation."
       ],
-      "verification": "0.1 in binary is 0.000110011… (repeating), so 3 bits cannot hold it."
+      "verification": "$31.5 = 252/8$, $0.875 = 7/8$; $12.1 = 121/10$ and $3.001 = 3001/1000$ have the factor 5 in the denominator."
     },
     "cse-2018-cs-34": {
       "approach": "Split the P-bit byte address into tag | set index | block offset. Offset = bits to address a byte inside a $2^{M}$-word block of $2^{W}$-byte words; sets = cache size / (block size × K).",

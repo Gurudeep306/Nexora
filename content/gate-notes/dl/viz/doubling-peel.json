@@ -1,0 +1,294 @@
+{
+ "version": 1,
+ "title": "Repeated doubling: 0.625 to binary",
+ "width": 560,
+ "height": 270,
+ "intro": "We will double the fraction again and again. Each integer part that pops out is one bit after the point.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 24,
+   "text": "0.625 to binary: double, peel off the integer part",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "r0",
+   "type": "text",
+   "x": 40,
+   "y": 70,
+   "text": "0.625 × 2 = 1.25",
+   "size": 19,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d0",
+   "type": "box",
+   "x": 300,
+   "y": 51,
+   "w": 44,
+   "h": 38,
+   "mono": true,
+   "size": 20,
+   "tone": "subject",
+   "hidden": true,
+   "label": "1"
+  },
+  {
+   "id": "k0",
+   "type": "text",
+   "x": 356,
+   "y": 70,
+   "text": "keep 0.25",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r1",
+   "type": "text",
+   "x": 40,
+   "y": 118,
+   "text": "0.25 × 2 = 0.5",
+   "size": 19,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d1",
+   "type": "box",
+   "x": 300,
+   "y": 99,
+   "w": 44,
+   "h": 38,
+   "mono": true,
+   "size": 20,
+   "tone": "subject",
+   "hidden": true,
+   "label": "0"
+  },
+  {
+   "id": "k1",
+   "type": "text",
+   "x": 356,
+   "y": 118,
+   "text": "keep 0.5",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r2",
+   "type": "text",
+   "x": 40,
+   "y": 166,
+   "text": "0.5 × 2 = 1",
+   "size": 19,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d2",
+   "type": "box",
+   "x": 300,
+   "y": 147,
+   "w": 44,
+   "h": 38,
+   "mono": true,
+   "size": 20,
+   "tone": "subject",
+   "hidden": true,
+   "label": "1"
+  },
+  {
+   "id": "k2",
+   "type": "text",
+   "x": 356,
+   "y": 166,
+   "text": "keep 0",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "down",
+   "type": "arrow",
+   "from": [
+    322,
+    40
+   ],
+   "to": [
+    322,
+    196
+   ],
+   "tone": "success",
+   "hidden": true
+  },
+  {
+   "id": "bits",
+   "type": "text",
+   "x": 28,
+   "y": 238,
+   "text": "0.",
+   "size": 24,
+   "mono": true,
+   "weight": "bold"
+  },
+  {
+   "id": "b0",
+   "type": "box",
+   "x": 62,
+   "y": 218,
+   "w": 38,
+   "h": 40,
+   "mono": true,
+   "size": 22,
+   "tone": "success",
+   "label": ""
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 102,
+   "y": 218,
+   "w": 38,
+   "h": 40,
+   "mono": true,
+   "size": 22,
+   "tone": "success",
+   "label": ""
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 142,
+   "y": 218,
+   "w": 38,
+   "h": 40,
+   "mono": true,
+   "size": 22,
+   "tone": "success",
+   "label": ""
+  },
+  {
+   "id": "ans",
+   "type": "text",
+   "x": 220,
+   "y": 238,
+   "text": "",
+   "size": 17,
+   "tone": "success",
+   "weight": "bold"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "0.625 × 2 = 1.25. The integer part 1 is the next bit after the point; keep the fraction 0.25 for the next round.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "label": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0.25 × 2 = 0.5. The integer part 0 is the next bit after the point; keep the fraction 0.5 for the next round.",
+   "patches": [
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "label": "0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0.5 × 2 = 1. The integer part 1 is the next bit after the point; keep the fraction 0 for the next round. The fraction left is 0, so the expansion stops: 0.625 has a finite binary form.",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "label": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The bits come out first-to-last from the top, so read the column downward: 0.625 = (0.101)₂ = 1/2 + 1/8.",
+   "patches": [
+    {
+     "id": "down",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ans",
+     "set": {
+      "text": "= 1/2 + 1/8 = 0.625"
+     }
+    }
+   ]
+  }
+ ]
+}

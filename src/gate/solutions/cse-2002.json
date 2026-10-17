@@ -698,18 +698,23 @@
       "verification": "Each of A, B, D can store and return bits; C cannot."
     },
     "cse-2002-a-14": {
-      "approach": "Convert the fraction by repeated doubling, or note $0.25=2^{-2}$.",
+      "approach": "Concept tested: converting a decimal fraction to binary, and knowing which fractions are exact. $0.25 = 1/4$ has a power-of-2 denominator, so it terminates; repeated doubling gives its bits.",
       "concepts": [
-        "Binary fractions"
+        "Repeated multiplication",
+        "Terminating binary fractions"
       ],
       "steps": [
         {
-          "title": "Repeated doubling",
-          "body": "$0.25\\times2=0.5$ → bit 0; $0.5\\times2=1.0$ → bit 1; remainder 0, stop. So $0.25_{10}=0.01_2$."
+          "title": "Double and peel",
+          "body": "$0.25 \\times 2 = 0.5$ → bit 0, keep $0.5$; $0.5 \\times 2 = 1.0$ → bit 1, fraction 0, stop."
         },
         {
-          "title": "Check",
-          "body": "$0.01_2 = 0\\cdot2^{-1}+1\\cdot2^{-2}=0.25$ ✓, exact."
+          "title": "Read top to bottom",
+          "body": "The bits come out first to last, so read them in the order found: 0 then 1. Hence $0.25 = (0.01)_2$."
+        },
+        {
+          "title": "Check by place value",
+          "body": "$(0.01)_2 = 0\\cdot\\tfrac12 + 1\\cdot\\tfrac14 = 0.25$. ✓"
         }
       ],
       "answer": {
@@ -723,28 +728,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$0.1_2 = 0.5$."
+          "reason": "$(0.1)_2 = \\tfrac12 = 0.5$, twice the value."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: $2^{-2}=0.25$."
+          "reason": "$(0.01)_2 = \\tfrac14 = 0.25$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$0.00111\\ldots_2 = 2^{-3}+2^{-4}+\\dots = 0.25$ only as an infinite limit (like $0.0999\\ldots$); the exact finite form is $0.01$, the intended answer."
+          "reason": "With 1s repeating for ever, $(0.00111\\dots)_2$ equals $0.25$ only as a limit, in the same way that $0.999\\dots = 1$; the binary form of $0.25$ is the finite $0.01$. The option baits students who think every decimal fraction recurs in binary."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$0.25$ is a power of 2, so it is exact in binary."
+          "reason": "$0.25 = 1/4$ has denominator $2^2$, so it is exact in binary. Only denominators with other primes (like $0.1 = 1/10$) recur."
         }
       ],
+      "shortcut": "$0.25 = 2^{-2}$, so it is a single 1 in the second place after the point: $0.01$.",
       "pitfalls": [
-        "Thinking every decimal fraction is inexact in binary; only those whose reduced denominator has a factor other than 2 are."
+        "Assuming no decimal fraction is exact in binary because 0.1 is not.",
+        "Reading the doubled bits bottom to top."
       ],
-      "verification": "$1/4 = 2^{-2}$ is a terminating binary fraction."
+      "verification": "$\\tfrac14 = 0.25$ and $(0.01)_2 = \\tfrac14$."
     },
     "cse-2002-a-15": {
       "approach": "Take the shortest width that holds $-15$: 5 bits (range $-16..15$). Invert $+15$ and add 1.",

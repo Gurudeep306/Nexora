@@ -16,6 +16,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from fractions import Fraction  # noqa: E402
+from fractions import Fraction as F  # noqa: E402
 
 import numlib as nl  # noqa: E402
 
@@ -374,6 +375,126 @@ def base_carry_column():
     assert int(a, 8) == 31 and int(b, 8) == 37 and int(s, 8) == 68
     return spec("Column addition in base 8", 560, 280,
                 "Two octal numbers lined up by place: 37 above 45. Carries will appear above the columns.", els, steps)
+
+
+# ── Lesson 3 ────────────────────────────────────────────────────────────────
+
+def _peel_rows(x, base, n):
+    rows, cyc = nl.frac_steps(x, base, n)
+    return rows, cyc
+
+
+def fmt_dec(fr):
+    """Exact short decimal for a Fraction with a terminating decimal expansion."""
+    s = nl.to_base_mixed(fr, 10, 8).rstrip("0").rstrip(".")
+    assert nl.value(s, 10) == fr, fr
+    return s
+
+
+@scene
+def doubling_peel():
+    x = F(5, 8)
+    rows, cyc = _peel_rows(x, 2, 10)
+    assert cyc is None and [r[2] for r in rows] == [1, 0, 1]
+    els = [text("head", 280, 24, "0.625 to binary: double, peel off the integer part", anchor="middle", size=17, weight="bold")]
+    for i, (xb, p, d, xa) in enumerate(rows):
+        y = 70 + 48 * i
+        els.append(text(f"r{i}", 40, y, f"{fmt_dec(xb)} × 2 = {fmt_dec(p)}", size=19, mono=True, hidden=True))
+        els.append(box(f"d{i}", 300, y - 19, 44, 38, str(d), mono=True, size=20, tone="subject", hidden=True))
+        els.append(text(f"k{i}", 356, y, f"keep {fmt_dec(xa)}", size=15, tone="muted", hidden=True))
+    els.append(arrow("down", [322, 40], [322, 70 + 48 * 2 + 30], tone="success", hidden=True))
+    els.append(text("bits", 28, 238, "0.", size=24, mono=True, weight="bold"))
+    for i in range(3):
+        els.append(box(f"b{i}", 62 + 40 * i, 218, 38, 40, "", mono=True, size=22, tone="success"))
+    els.append(text("ans", 220, 238, "", size=17, tone="success", weight="bold"))
+    steps = []
+    for i, (xb, p, d, xa) in enumerate(rows):
+        tail = " The fraction left is 0, so the expansion stops: 0.625 has a finite binary form." if xa == 0 else ""
+        steps.append(step(
+            f"{fmt_dec(xb)} × 2 = {fmt_dec(p)}. The integer part {d} is the next bit after the point; keep the fraction {fmt_dec(xa)} for the next round.{tail}",
+            (f"r{i}", {"hidden": False}), (f"d{i}", {"hidden": False}), (f"k{i}", {"hidden": False}), (f"b{i}", {"label": str(d)})))
+    steps.append(step("The bits come out first-to-last from the top, so read the column downward: 0.625 = (0.101)₂ = 1/2 + 1/8.",
+                      ("down", {"hidden": False}), ("ans", {"text": "= 1/2 + 1/8 = 0.625"})))
+    assert nl.value("0.101", 2) == x
+    return spec("Repeated doubling: 0.625 to binary", 560, 270,
+                "We will double the fraction again and again. Each integer part that pops out is one bit after the point.", els, steps)
+
+
+@scene
+def recurring_loop():
+    x = F(1, 10)
+    rows, cyc = _peel_rows(x, 2, 20)
+    assert cyc == 1 and len(rows) == 5 and [r[2] for r in rows] == [0, 0, 0, 1, 1]
+    assert nl.expand_fraction(x, 2) == ("0", "0011")
+    els = [text("head", 280, 22, "0.1 to binary never stops: the fraction comes back", anchor="middle", size=17, weight="bold")]
+    for i, (xb, p, d, xa) in enumerate(rows):
+        y = 62 + 40 * i
+        els.append(text(f"r{i}", 40, y, f"{fmt_dec(xb)} × 2 = {fmt_dec(p)}", size=18, mono=True, hidden=True))
+        els.append(box(f"d{i}", 270, y - 16, 36, 32, str(d), mono=True, size=18, tone="subject", hidden=True))
+        els.append(text(f"k{i}", 320, y, f"keep {fmt_dec(xa)}", size=15, tone="muted", hidden=True))
+    els.append(arrow("loop", [440, 62 + 40 * 4], [440, 62 + 40 * 1], curve=-0.5, tone="danger", hidden=True))
+    els.append(text("looplab", 500, 62 + 40 * 2.5, "repeats", size=15, tone="danger", hidden=True))
+    els.append(text("ans", 280, 278, "", anchor="middle", size=18, mono=True, weight="bold", tone="success"))
+    steps = []
+    for i, (xb, p, d, xa) in enumerate(rows):
+        steps.append(step(f"{fmt_dec(xb)} × 2 = {fmt_dec(p)}: bit {d}, keep {fmt_dec(xa)}.",
+                          (f"r{i}", {"hidden": False}), (f"d{i}", {"hidden": False}), (f"k{i}", {"hidden": False})))
+    steps.append(step("The fraction left over is 0.2 again, the same as after the first row. From here the same four rows repeat for ever, so the bits 0011 repeat for ever.",
+                      ("k4", {"tone": "danger"}), ("k0", {"tone": "danger"}), ("loop", {"hidden": False}), ("looplab", {"hidden": False})))
+    steps.append(step("So 0.1 = (0.0 0011 0011 0011 …)₂, a recurring binary fraction. Any finite number of bits only approximates it.",
+                      ("ans", {"text": "0.1 = (0.0 0011 0011 …)₂"})))
+    return spec("Why 0.1 recurs in binary", 560, 300,
+                "The same doubling method as for 0.625, applied to 0.1. Watch the fraction that is kept after each row.", els, steps)
+
+
+@scene
+def fixed_point_ruler():
+    n = 4
+    x0, x1, y = 40, 520, 140
+    scale = (x1 - x0) / 16  # pixels per unit, axis 0 … 16
+    els = [text("head", 280, 22, "4 bits, point moved: range shrinks, steps get finer", anchor="middle", size=17, weight="bold"),
+           {"id": "axis", "type": "line", "points": [[x0, y], [x1, y]]}]
+    for k in range(0, 17, 4):
+        els.append(text(f"ax{k}", x0 + k * scale, y + 30, str(k), anchor="middle", size=15, tone="muted"))
+    for t in range(16):
+        els.append({"id": f"t{t}", "type": "line", "points": [[x0 + t * scale, y - 18], [x0 + t * scale, y]], "tone": "subject"})
+    els.append(text("info", 280, 210, "", anchor="middle", size=17, mono=True))
+    els.append(text("fmt", 280, 70, "", anchor="middle", size=18, mono=True, weight="bold"))
+    steps = []
+    for f in range(0, 4):
+        i = n - f
+        mn, mx, res, cnt = nl.fixed_range(i, f)
+        assert cnt == 16
+        pats = [(f"t{t}", {"points": [[round(x0 + float(t * res) * scale, 2), y - 18], [round(x0 + float(t * res) * scale, 2), y]]}) for t in range(16)]
+        bits = "b" * i + ("." + "b" * f if f else "")
+        steps.append(step(
+            f"With {f} fraction bit{'s' if f != 1 else ''} ({i}.{f} format) the 16 patterns are the multiples of {fmt_dec(res)} from 0 to {fmt_dec(mx)}: resolution {fmt_dec(res)}, largest value {fmt_dec(mx)} = 2{sup(i)} − {fmt_dec(res)}.",
+            *pats, ("info", {"text": f"step {fmt_dec(res)}, max {fmt_dec(mx)}"}), ("fmt", {"text": f"{bits}   (i = {i}, f = {f})"})))
+    steps.append(step("The count of values never changes: n bits always give 2ⁿ = 16 patterns. Moving the point only trades range for resolution.",
+                      ("info", {"tone": "success"})))
+    return spec("Fixed point: the range–resolution trade-off", 560, 240,
+                "A number line from 0 to 16 with sixteen tick marks, one for each 4-bit pattern. Each step moves the binary point one place left.",
+                els, steps)
+
+
+@scene
+def fixed_point_bits():
+    labels = ["b₇", "b₆", "b₅", "b₄", "b₃", "b₂", "b₁", "b₀"]
+    weights = ["16", "8", "4", "2", "1", "½", "¼", "⅛"]
+    x = F(45, 4)   # 11.25
+    pat = nl.fixed_bits(x, 5, 3).replace(".", "")
+    assert pat == "01011010"
+    els = [text("head", 280, 22, "Unsigned 5.3 fixed point: b₇ … b₃ . b₂ b₁ b₀", anchor="middle", size=17, weight="bold"),
+           {"id": "cells", "type": "bits", "x": 90, "y": 72, "bits": pat, "cell": 48, "labels": labels, "below": weights,
+            "highlight": [i for i, c in enumerate(pat) if c == "1"]},
+           text("pt", 90 + 5 * 48, 118, "•", anchor="middle", size=30, weight="bold", tone="danger"),
+           text("val", 280, 184, "01011.010 = 8 + 2 + 1 + ¼ = 11.25", anchor="middle", size=18, mono=True, tone="success"),
+           text("rng", 280, 220, "range 0 … 31.875 in steps of ⅛ (2⁸ = 256 values)", anchor="middle", size=16, tone="muted")]
+    mn, mx, res, cnt = nl.fixed_range(5, 3)
+    assert mx == F(255, 8) and res == F(1, 8) and cnt == 256 and 8 + 2 + 1 + F(1, 4) == x
+    return spec("Bit weights in a 5.3 fixed-point byte", 560, 240,
+                "Eight bit cells b7 to b0 with the binary point between b3 and b2. Weights above the point are 16, 8, 4, 2, 1; below it ½, ¼, ⅛. The pattern 01011.010 is 8 + 2 + 1 + ¼ = 11.25. The format covers 0 to 31.875 in steps of ⅛.",
+                els, [])
 
 
 # ── Writer ──────────────────────────────────────────────────────────────────

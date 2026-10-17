@@ -1,0 +1,378 @@
+{
+ "version": 1,
+ "title": "Why 0.1 recurs in binary",
+ "width": 560,
+ "height": 300,
+ "intro": "The same doubling method as for 0.625, applied to 0.1. Watch the fraction that is kept after each row.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "0.1 to binary never stops: the fraction comes back",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "r0",
+   "type": "text",
+   "x": 40,
+   "y": 62,
+   "text": "0.1 × 2 = 0.2",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d0",
+   "type": "box",
+   "x": 270,
+   "y": 46,
+   "w": 36,
+   "h": 32,
+   "mono": true,
+   "size": 18,
+   "tone": "subject",
+   "hidden": true,
+   "label": "0"
+  },
+  {
+   "id": "k0",
+   "type": "text",
+   "x": 320,
+   "y": 62,
+   "text": "keep 0.2",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r1",
+   "type": "text",
+   "x": 40,
+   "y": 102,
+   "text": "0.2 × 2 = 0.4",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d1",
+   "type": "box",
+   "x": 270,
+   "y": 86,
+   "w": 36,
+   "h": 32,
+   "mono": true,
+   "size": 18,
+   "tone": "subject",
+   "hidden": true,
+   "label": "0"
+  },
+  {
+   "id": "k1",
+   "type": "text",
+   "x": 320,
+   "y": 102,
+   "text": "keep 0.4",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r2",
+   "type": "text",
+   "x": 40,
+   "y": 142,
+   "text": "0.4 × 2 = 0.8",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d2",
+   "type": "box",
+   "x": 270,
+   "y": 126,
+   "w": 36,
+   "h": 32,
+   "mono": true,
+   "size": 18,
+   "tone": "subject",
+   "hidden": true,
+   "label": "0"
+  },
+  {
+   "id": "k2",
+   "type": "text",
+   "x": 320,
+   "y": 142,
+   "text": "keep 0.8",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r3",
+   "type": "text",
+   "x": 40,
+   "y": 182,
+   "text": "0.8 × 2 = 1.6",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d3",
+   "type": "box",
+   "x": 270,
+   "y": 166,
+   "w": 36,
+   "h": 32,
+   "mono": true,
+   "size": 18,
+   "tone": "subject",
+   "hidden": true,
+   "label": "1"
+  },
+  {
+   "id": "k3",
+   "type": "text",
+   "x": 320,
+   "y": 182,
+   "text": "keep 0.6",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "r4",
+   "type": "text",
+   "x": 40,
+   "y": 222,
+   "text": "0.6 × 2 = 1.2",
+   "size": 18,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "d4",
+   "type": "box",
+   "x": 270,
+   "y": 206,
+   "w": 36,
+   "h": 32,
+   "mono": true,
+   "size": 18,
+   "tone": "subject",
+   "hidden": true,
+   "label": "1"
+  },
+  {
+   "id": "k4",
+   "type": "text",
+   "x": 320,
+   "y": 222,
+   "text": "keep 0.2",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "loop",
+   "type": "arrow",
+   "from": [
+    440,
+    222
+   ],
+   "to": [
+    440,
+    102
+   ],
+   "curve": -0.5,
+   "tone": "danger",
+   "hidden": true
+  },
+  {
+   "id": "looplab",
+   "type": "text",
+   "x": 500,
+   "y": 162.0,
+   "text": "repeats",
+   "size": 15,
+   "tone": "danger",
+   "hidden": true
+  },
+  {
+   "id": "ans",
+   "type": "text",
+   "x": 280,
+   "y": 278,
+   "text": "",
+   "anchor": "middle",
+   "size": 18,
+   "mono": true,
+   "weight": "bold",
+   "tone": "success"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "0.1 × 2 = 0.2: bit 0, keep 0.2.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k0",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0.2 × 2 = 0.4: bit 0, keep 0.4.",
+   "patches": [
+    {
+     "id": "r1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0.4 × 2 = 0.8: bit 0, keep 0.8.",
+   "patches": [
+    {
+     "id": "r2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0.8 × 2 = 1.6: bit 1, keep 0.6.",
+   "patches": [
+    {
+     "id": "r3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0.6 × 2 = 1.2: bit 1, keep 0.2.",
+   "patches": [
+    {
+     "id": "r4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "k4",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The fraction left over is 0.2 again, the same as after the first row. From here the same four rows repeat for ever, so the bits 0011 repeat for ever.",
+   "patches": [
+    {
+     "id": "k4",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "k0",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "loop",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "looplab",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So 0.1 = (0.0 0011 0011 0011 …)₂, a recurring binary fraction. Any finite number of bits only approximates it.",
+   "patches": [
+    {
+     "id": "ans",
+     "set": {
+      "text": "0.1 = (0.0 0011 0011 …)₂"
+     }
+    }
+   ]
+  }
+ ]
+}
