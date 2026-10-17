@@ -5536,28 +5536,27 @@
       }
     },
     "cse-2025-2-cs-39": {
-      "approach": "Decode the three words (sign | 8-bit exponent with bias 127 | fraction). The fractions have only one or three leading bits, so each value is a small integer; then evaluate the four equations.",
+      "approach": "Concept tested: **decode, then do exact arithmetic**. All three registers hold small integers ($-9$, $6$, $12$), and every expression in the options is exactly representable, so no rounding enters.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Bias 127",
-        "Hidden leading 1"
+        "IEEE-754 decoding",
+        "Exact float arithmetic on small integers"
       ],
       "steps": [
         {
-          "title": "Decode RX = 0xC1100000",
-          "body": "Binary: `1 10000010 00100000…`. Sign $1$ (negative), exponent $10000010_2 = 130$, so $2^{130-127} = 2^3$. Significand $1.001_2 = 1.125$.\n\n$X = -1.125 \\times 8 = -9$."
+          "title": "Decode",
+          "body": "- $R_X$ = `C1100000` $= -1.001_2 \\times 2^3 = -9$.\n- $R_Y$ = `40C00000` $= 1.1_2 \\times 2^2 = 6$.\n- $R_Z$ = `41400000` $= 1.1_2 \\times 2^3 = 12$."
         },
         {
-          "title": "Decode RY and RZ",
-          "body": "RY = 0x40C00000 = `0 10000001 1000…`: exponent $129 \\Rightarrow 2^2$, significand $1.1_2 = 1.5$, so $Y = 1.5 \\times 4 = 6$.\n\nRZ = 0x41400000 = `0 10000010 1000…`: exponent $130 \\Rightarrow 2^3$, significand $1.5$, so $Z = 1.5 \\times 8 = 12$."
+          "title": "Check each option",
+          "body": "- (A) $4(X + Y) + Z = 4(-3) + 12 = 0$: correct.\n- (B) $2Y - Z = 12 - 12 = 0$: correct.\n- (C) $4X + 3Z = -36 + 36 = 0$: correct.\n- (D) $X + Y + Z = -9 + 6 + 12 = 9 \\ne 0$: wrong."
         },
         {
-          "title": "Evaluate the options",
-          "body": "With $X = -9$, $Y = 6$, $Z = 12$:\n\n- (A) $4(X+Y)+Z = 4(-3) + 12 = 0$ ✓\n- (B) $2Y - Z = 12 - 12 = 0$ ✓\n- (C) $4X + 3Z = -36 + 36 = 0$ ✓\n- (D) $X + Y + Z = -9 + 6 + 12 = 9 \\ne 0$ ✗"
+          "title": "Why no rounding",
+          "body": "Every intermediate value ($-3$, $-12$, $12$, $-36$, $36$, …) is a small integer, exactly representable in single precision, so the float results equal the exact ones."
         }
       ],
       "answer": {
-        "value": "$X=-9,\\ Y=6,\\ Z=12$ ⇒ **(A), (B) and (C)**",
+        "value": "(A), (B) and (C)",
         "choice": [
           "A",
           "B",
@@ -5569,30 +5568,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$4(-9+6)+12 = -12+12 = 0$."
+          "reason": "$4(-9 + 6) + 12 = -12 + 12 = 0$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$2\\cdot6 - 12 = 0$."
+          "reason": "$2 \\times 6 - 12 = 0$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$4(-9) + 3(12) = -36+36 = 0$."
+          "reason": "$4(-9) + 3(12) = -36 + 36 = 0$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$-9+6+12 = 9$; it would be 0 only if the sign bit of RX were misread (e.g. $X=-18$) or the bias wrong."
+          "reason": "$-9 + 6 + 12 = 9$."
         }
       ],
-      "shortcut": "Hex digit after the sign/exponent nibbles: 0x41 4… means exponent 130 and fraction .1 → $1.5\\times 8 = 12$; 0x40C… → $1.5\\times4 = 6$; 0xC11… → $-1.125\\times8 = -9$.",
+      "shortcut": "`411` vs `410` vs `40C`: exponents 130, 130, 129 give scales 8, 8, 4; fractions $1.125, 1.5, 1.5$ give 9, 12, 6.",
       "pitfalls": [
-        "Forgetting the hidden leading 1 (giving $X = -1$, $Y = 2$, $Z = 4$).",
-        "Using bias 128 instead of 127, which halves every value."
+        "Decoding `C1100000` as $-1.1 \\times 2^3 = -12$ (misreading the fraction bits 001).",
+        "Worrying about rounding: small integers are exact."
       ],
-      "verification": "Re-encode $12 = 1.5\\times2^3$: sign 0, exponent $3+127=130=10000010_2$, fraction $1000…$ → `0100 0001 0100 0000 …` = 0x41400000 ✓.",
+      "verification": "Python `struct` decodes the words to −9.0, 6.0, 12.0. ✓",
       "animation": {
         "kind": "bits",
         "title": "Sign | exponent | fraction",

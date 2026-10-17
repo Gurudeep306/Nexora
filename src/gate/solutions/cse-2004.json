@@ -1491,23 +1491,28 @@
       "verification": "Also $CDA \\cdot B = I$: from $BCDA = I$, $CDA = B^{-1}$ and a one-sided inverse of a square matrix is two-sided."
     },
     "cse-2004-cs-28": {
-      "approach": "Evaluate each sum one operation at a time, rounding every intermediate result to three significant digits.",
+      "approach": "Concept tested: **rounding after every operation** in 3-significant-digit decimal arithmetic, and the resulting **non-associativity**.",
       "concepts": [
-        "Floating-point rounding",
-        "Non-associativity of FP addition"
+        "Rounding to p significant digits",
+        "Non-associativity",
+        "Order of operations"
       ],
       "steps": [
         {
           "title": "First expression",
-          "body": "$113. + (-111.) = 2.00$ (exact). Then $2.00 + 7.51 = 9.51$ (exact, 3 digits). Result **9.51**."
+          "body": "$113. + (-111.) = 2.00$ (exact). Then $2.00 + 7.51 = 9.51$, which fits in 3 digits: **9.51**."
         },
         {
-          "title": "Second expression",
-          "body": "$-111. + 7.51 = -103.49 \\to -103.$ (round to 3 digits). Then $113. + (-103.) = 10.0$. Result **10.0**."
+          "title": "Second expression, inner bracket",
+          "body": "$-111. + 7.51 = -103.49$, which needs 5 digits; rounded to 3 significant digits: $-103$."
+        },
+        {
+          "title": "Second expression, outer",
+          "body": "$113. + (-103.) = 10.0$: **10.0**. Answer: 9.51 and 10.0, option (A)."
         }
       ],
       "answer": {
-        "value": "9.51 and 10.0 respectively",
+        "value": "9.51 and 10.0 — option (A)",
         "choice": [
           "A"
         ],
@@ -1517,28 +1522,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the rounding in the second expression loses 0.49."
+          "reason": "The first keeps 7.51 intact; the second rounds $-103.49$ to $-103$, losing $0.49$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Swapped order of results."
+          "reason": "This swaps the two results."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Would hold only with exact arithmetic; rounding $-103.49$ to $-103.$ changes the second result."
+          "reason": "9.51 is the exact answer, but the second order rounds an intermediate result."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The first expression has no rounding loss, so it stays $9.51$."
+          "reason": "The first expression never rounds: $2.00 + 7.51 = 9.51$."
         }
       ],
+      "shortcut": "Only intermediate results with more than 3 significant digits get rounded: $-103.49$ is the only one.",
       "pitfalls": [
-        "Rounding only the final answer instead of each intermediate result."
+        "Rounding only the final answer.",
+        "Truncating $-103.49$ to $-103$ is the same here, but rounding $-103.51$ would give $-104$: read 'with rounding'."
       ],
-      "verification": "Exact value of both is 9.51; only the second suffers a rounding error of +0.49."
+      "verification": "Exact value $9.51$; the second order is off by $0.49$, exactly the digits lost when $-103.49 \\to -103$. ✓"
     },
     "cse-2004-cs-29": {
       "approach": "Decision-tree argument: a comparison sort must distinguish all $n!$ permutations, so the tree height is at least $\\log_2 n! = \\Theta(n \\log n)$.",

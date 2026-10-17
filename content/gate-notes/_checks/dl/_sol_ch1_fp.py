@@ -397,6 +397,165 @@ SOLUTIONS["cse-2026-2-cs-24"] = {
 }
 
 
+# ── Lesson 7: arithmetic ────────────────────────────────────────────────────
+
+SOLUTIONS["cse-1997-b-72-b"] = {
+    "approach": "Concept tested: **floating-point addition** in a custom truncating format. Align the operand with the smaller exponent to the larger one (shift its fraction right, truncating), add the fractions, then normalise.",
+    "concepts": ["Exponent alignment", "Fraction-form significands", "Truncation"],
+    "given": "From part (a): $A = 0.11011 \\times 2^{6}$ (stores 54), $B = 0.10011 \\times 2^{4}$ (stores 9.5); 5 magnitude bits, truncation.",
+    "steps": [
+        {"title": "Compare exponents", "body": "$e_A = 6$, $e_B = 4$: $B$ must be shifted right by $6 - 4 = 2$ places."},
+        {"title": "Align B", "body": "$0.10011 \\times 2^{4} = 0.0010011 \\times 2^{6}$; keeping 5 bits (truncation): $0.00100 \\times 2^{6}$. The bits $11$ fall off."},
+        {"title": "Add the fractions", "body": "$0.11011 + 0.00100 = 0.11111$, so the sum is $0.11111 \\times 2^{6}$."},
+        {"title": "Normalise and store", "body": "$0.11111$ already starts with 1 and has not overflowed past 1, so no shift is needed: $f = 0\\,11111$, $e = 0\\,110$, value $\\tfrac{31}{32} \\times 64 = 62$."},
+    ],
+    "answer": {"value": "Align $B$ to $0.00100 \\times 2^6$, add to get $0.11111 \\times 2^6 = 62$ ($f = 0\\,11111$, $e = 0\\,110$), already normalised.", "matchesKey": True},
+    "shortcut": "In decimal: $54 + (9.5$ truncated to a multiple of $2^{6-5} = 2) = 54 + 8 = 62$.",
+    "pitfalls": ["Shifting the larger operand left instead of the smaller one right.", "Rounding the aligned $B$ up to $0.00101$ (gives 64): this format truncates.", "Adding the exponents."],
+    "verification": "At exponent 6 the fraction step is $2^{6-5} = 2$, so $B$ can only contribute a multiple of 2: $9.5 \\to 8$. $54 + 8 = 62$. ✓",
+}
+
+SOLUTIONS["cse-1997-b-72-c"] = {
+    "approach": "Concept tested: **percentage error** of a floating-point sum. Compare the computed sum (62, from part b) with the true sum $54.75 + 9.75 = 64.5$, relative to the true value.",
+    "concepts": ["Relative and percentage error", "Truncation error"],
+    "steps": [
+        {"title": "True and computed sums", "body": "True: $54.75 + 9.75 = 64.5$. Computed (part b): $62$."},
+        {"title": "Relative error", "body": "$\\dfrac{|62 - 64.5|}{64.5} = \\dfrac{2.5}{64.5} = 0.03876\\ldots$"},
+        {"title": "Percentage", "body": "$0.03876 \\times 100 \\approx 3.876\\,\\% \\approx 3.9\\,\\%$ (one place after the point)."},
+    ],
+    "answer": {"value": "$\\dfrac{2.5}{64.5} \\times 100 \\approx$ **3.9 %**", "matchesKey": True},
+    "shortcut": "Error $= 0.75$ (A truncated) $+ 0.25$ (B truncated) $+ 1.5$ (alignment) $= 2.5$ out of $64.5$.",
+    "pitfalls": ["Dividing by the computed sum 62 (gives 4.0 %).", "Using only the representation errors (1.0 out of 64.5 ≈ 1.6 %) and forgetting the alignment loss."],
+    "verification": "$64.5 \\times 0.039 \\approx 2.5$. ✓",
+}
+
+SOLUTIONS["cse-2000-a-2-14"] = {
+    "approach": "Concept tested: **absorption and non-associativity**. A 32-bit float has about 7 significant digits, so $1.0$ vanishes when added to $2 \\times 10^{30}$; the order of the additions decides whether it survives.",
+    "concepts": ["Absorption", "Non-associativity of FP addition", "ulp of large numbers"],
+    "steps": [
+        {"title": "X: big terms cancel first", "body": "$X = A + B = 2 \\times 10^{30} - 2 \\times 10^{30} = 0$ exactly; then $X = 0 + 1.0 = 1.0$."},
+        {"title": "Y: the 1 meets a huge number", "body": "Near $2 \\times 10^{30} \\approx 2^{100.7}$ the gap between floats is $2^{100-23} = 2^{77} \\approx 1.5 \\times 10^{23}$. Adding $1.0$ is far below half that gap, so $Y = A + C = A$ (absorbed)."},
+        {"title": "Then add B", "body": "$Y = A + B = 0$. So $X = 1.0$, $Y = 0.0$: option (B)."},
+    ],
+    "answer": {"value": "$X = 1.0$, $Y = 0.0$ — option (B)", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Exact arithmetic would give 1.0 for both, but $Y$ loses the 1 to absorption."),
+        opt("B", True, "$X$ cancels the large terms first; $Y$ absorbs the 1 into $A$."),
+        opt("C", False, "This swaps the two results."),
+        opt("D", False, "$X$ is exact: $0 + 1 = 1$."),
+    ],
+    "shortcut": "7 significant digits cannot hold $2000\\ldots001$ (31 digits): any '+1' next to $10^{30}$ disappears.",
+    "pitfalls": ["Assuming floating-point addition is associative.", "Thinking $A + B$ might not be exactly 0: equal magnitudes cancel exactly."],
+    "verification": "In Python with float32 rounding: `f32(f32(2e30) + 1.0) == f32(2e30)` is True. ✓",
+}
+
+SOLUTIONS["cse-2004-cs-28"] = {
+    "approach": "Concept tested: **rounding after every operation** in 3-significant-digit decimal arithmetic, and the resulting **non-associativity**.",
+    "concepts": ["Rounding to p significant digits", "Non-associativity", "Order of operations"],
+    "steps": [
+        {"title": "First expression", "body": "$113. + (-111.) = 2.00$ (exact). Then $2.00 + 7.51 = 9.51$, which fits in 3 digits: **9.51**."},
+        {"title": "Second expression, inner bracket", "body": "$-111. + 7.51 = -103.49$, which needs 5 digits; rounded to 3 significant digits: $-103$."},
+        {"title": "Second expression, outer", "body": "$113. + (-103.) = 10.0$: **10.0**. Answer: 9.51 and 10.0, option (A)."},
+    ],
+    "answer": {"value": "9.51 and 10.0 — option (A)", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "The first keeps 7.51 intact; the second rounds $-103.49$ to $-103$, losing $0.49$."),
+        opt("B", False, "This swaps the two results."),
+        opt("C", False, "9.51 is the exact answer, but the second order rounds an intermediate result."),
+        opt("D", False, "The first expression never rounds: $2.00 + 7.51 = 9.51$."),
+    ],
+    "shortcut": "Only intermediate results with more than 3 significant digits get rounded: $-103.49$ is the only one.",
+    "pitfalls": ["Rounding only the final answer.", "Truncating $-103.49$ to $-103$ is the same here, but rounding $-103.51$ would give $-104$: read 'with rounding'."],
+    "verification": "Exact value $9.51$; the second order is off by $0.49$, exactly the digits lost when $-103.49 \\to -103$. ✓",
+}
+
+SOLUTIONS["cse-2020-cs-29"] = {
+    "approach": "Concept tested: **floating-point division**. Decode both registers (40 and −10); the quotient is $-4 = -1.0 \\times 2^{2}$. In fields: sign $0 \\oplus 1$, exponent $e_1 - e_2 + 127$, significand $1.25 / 1.25 = 1$.",
+    "concepts": ["IEEE-754 decoding", "Division: subtract exponents, add the bias", "Sign XOR"],
+    "steps": [
+        {"title": "Decode R1 = 0x42200000", "body": "$0\\ 10000100\\ 0100\\ldots$: $1.01_2 \\times 2^{132-127} = 1.25 \\times 32 = 40$."},
+        {"title": "Decode R2 = 0xC1200000", "body": "$1\\ 10000010\\ 0100\\ldots$: $-1.25 \\times 2^{3} = -10$."},
+        {"title": "Divide by fields", "body": "Sign $0 \\oplus 1 = 1$. Significand $1.25 / 1.25 = 1.0$ (fraction 0). Exponent field $132 - 130 + 127 = 129$."},
+        {"title": "Pack", "body": "$1\\ 10000001\\ 0\\ldots0 = 1100\\,0000\\,1000\\,0000\\ldots = \\texttt{0xC0800000} = -4$: option (B)."},
+    ],
+    "answer": {"value": "`0xC0800000` $= -4$ — option (B)", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "`0x40800000` is $+4$: the sign was not XORed."),
+        opt("B", True, "$40 / (-10) = -4 = -1.0 \\times 2^2$."),
+        opt("C", False, "`0x83400000` has exponent field 6, i.e. about $-1.5 \\times 2^{-121}$: the bias must be added back once after subtracting the fields, and here it was not handled."),
+        opt("D", False, "`0xC8500000` has exponent field 144, about $-1.6 \\times 2^{17}$: far too large, and its fraction is not 0 although $1.25/1.25 = 1$."),
+    ],
+    "shortcut": "$R1 = 4 \\times |R2|$ exactly (same fraction 0100…), so $R3 = -4$: take `40800000` and set the sign bit.",
+    "pitfalls": ["Subtracting the exponent fields without adding 127 back.", "Forgetting the sign."],
+    "verification": "Decode `C0800000`: $-1.0 \\times 2^{129-127} = -4$, and $-4 \\times -10 = 40$. ✓",
+}
+
+SOLUTIONS["cse-2023-cs-35"] = {
+    "approach": "Concept tested: **multiplying by a power of two**. $P = $ `0xC1800000` $= -16 = -2^4$, so $P \\times Q$ keeps Q's fraction, adds 4 to its exponent field and sets the sign bit.",
+    "concepts": ["IEEE-754 single precision", "Multiplication: e1 + e2 − bias", "Multiplying by 2^k"],
+    "steps": [
+        {"title": "Decode P", "body": "`C1800000` $= 1\\ 10000011\\ 0\\ldots0$: $-1.0 \\times 2^{131-127} = -16$."},
+        {"title": "Read Q's fields", "body": "`3F5C2EF4` $= 0\\ 01111110\\ 101\\,1100\\,0010\\,1110\\,1111\\,0100$: $e = 126$, so $Q = 1.f \\times 2^{-1} \\approx 0.86$."},
+        {"title": "Multiply by fields", "body": "Sign $1 \\oplus 0 = 1$. Significand $1.0 \\times 1.f = 1.f$ (unchanged, no normalising shift). Exponent $131 + 126 - 127 = 130$."},
+        {"title": "Pack", "body": "$1\\ 10000010\\ 1011100\\ldots = 1100\\,0001\\,0101\\,1100\\,0010\\,1110\\,1111\\,0100 = \\texttt{0xC15C2EF4}$: option (C)."},
+    ],
+    "answer": {"value": "`0xC15C2EF4` — option (C)", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "`0x404C2EF4` is positive with a changed fraction; a negative times a positive is negative."),
+        opt("B", False, "`0x405C2EF4` keeps the fraction but is positive with exponent 128: $+4Q$."),
+        opt("C", True, "Sign 1, exponent $126 + 4 = 130$, fraction of Q unchanged."),
+        opt("D", False, "`0xC14C2EF4` has the right sign and exponent but a changed fraction ($100\\,1100\\ldots$); multiplying by $2^4$ never changes the fraction."),
+    ],
+    "shortcut": "$\\times(-16)$: add $4 \\times$ `0x00800000` = `0x02000000` and set the sign bit: `3F5C2EF4` + `02000000` = `415C2EF4` → `C15C2EF4`.",
+    "pitfalls": ["Adding the biased exponents without subtracting 127 once ($131 + 126 = 257$).", "Forgetting the sign.", "Reading the exponent from whole hex digits (it straddles them)."],
+    "verification": "$Q \\approx 0.8601$, so $PQ \\approx -13.76$; `C15C2EF4` decodes to $-1.7202 \\times 8 \\approx -13.76$. ✓",
+    "_keep_animation": True,
+}
+
+SOLUTIONS["cse-2025-2-cs-39"] = {
+    "approach": "Concept tested: **decode, then do exact arithmetic**. All three registers hold small integers ($-9$, $6$, $12$), and every expression in the options is exactly representable, so no rounding enters.",
+    "concepts": ["IEEE-754 decoding", "Exact float arithmetic on small integers"],
+    "steps": [
+        {"title": "Decode", "body": "- $R_X$ = `C1100000` $= -1.001_2 \\times 2^3 = -9$.\n- $R_Y$ = `40C00000` $= 1.1_2 \\times 2^2 = 6$.\n- $R_Z$ = `41400000` $= 1.1_2 \\times 2^3 = 12$."},
+        {"title": "Check each option", "body": "- (A) $4(X + Y) + Z = 4(-3) + 12 = 0$: correct.\n- (B) $2Y - Z = 12 - 12 = 0$: correct.\n- (C) $4X + 3Z = -36 + 36 = 0$: correct.\n- (D) $X + Y + Z = -9 + 6 + 12 = 9 \\ne 0$: wrong."},
+        {"title": "Why no rounding", "body": "Every intermediate value ($-3$, $-12$, $12$, $-36$, $36$, …) is a small integer, exactly representable in single precision, so the float results equal the exact ones."},
+    ],
+    "answer": {"value": "(A), (B) and (C)", "choice": ["A", "B", "C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "$4(-9 + 6) + 12 = -12 + 12 = 0$."),
+        opt("B", True, "$2 \\times 6 - 12 = 0$."),
+        opt("C", True, "$4(-9) + 3(12) = -36 + 36 = 0$."),
+        opt("D", False, "$-9 + 6 + 12 = 9$."),
+    ],
+    "shortcut": "`411` vs `410` vs `40C`: exponents 130, 130, 129 give scales 8, 8, 4; fractions $1.125, 1.5, 1.5$ give 9, 12, 6.",
+    "pitfalls": ["Decoding `C1100000` as $-1.1 \\times 2^3 = -12$ (misreading the fraction bits 001).", "Worrying about rounding: small integers are exact."],
+    "verification": "Python `struct` decodes the words to −9.0, 6.0, 12.0. ✓",
+    "_keep_animation": True,
+}
+
+SOLUTIONS["cse-2026-1-cs-26"] = {
+    "approach": "Concept tested: **floating-point addition with alignment**. $X = 1.1 \\times 2^{-20}$ and $Y = 1.01 \\times 2^{-22}$; shift $Y$'s significand (hidden 1 included) right by 2, add, and repack.",
+    "concepts": ["Exponent alignment", "Hidden bit in alignment", "IEEE-754 packing"],
+    "steps": [
+        {"title": "Decode X = 0x35C00000", "body": "$0\\ 01101011\\ 1000\\ldots$: $e = 107$, $E = -20$, $X = 1.1_2 \\times 2^{-20}$."},
+        {"title": "Decode Y = 0x34A00000", "body": "$0\\ 01101001\\ 0100\\ldots$: $e = 105$, $E = -22$, $Y = 1.01_2 \\times 2^{-22}$."},
+        {"title": "Align Y to exponent −20", "body": "Shift right by 2, hidden 1 included: $1.01 \\times 2^{-22} = 0.0101 \\times 2^{-20}$."},
+        {"title": "Add and pack", "body": "$1.1000 + 0.0101 = 1.1101$, so $Z = 1.1101_2 \\times 2^{-20}$: $e = 107$, $f = 1101\\,0\\ldots$\n\n$0\\ 01101011\\ 1101\\ldots = 0011\\,0101\\,1110\\,1000\\ldots = \\texttt{35E80000}$: option (C)."},
+    ],
+    "answer": {"value": "`35E80000` — option (C)", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "`35C80000` has fraction $1001$: only Y's stored fraction $01$ was shifted (the hidden 1 was dropped), giving $1.1 + 0.0001$."),
+        opt("B", False, "`35CC0000` is $1.10011_2 \\times 2^{-20}$: it adds only $0.09375 \\times 2^{-20}$ instead of $Y = 0.3125 \\times 2^{-20}$ (a mis-aligned Y)."),
+        opt("C", True, "$1.1000 + 0.0101 = 1.1101$ at exponent 107."),
+        opt("D", False, "`35EC0000` is $1.11011_2 \\times 2^{-20}$: it adds $0.34375 \\times 2^{-20}$, one low bit too many, instead of $0.3125 \\times 2^{-20}$."),
+    ],
+    "shortcut": "In decimal: $Z = (1.5 + 1.25/4) \\times 2^{-20} = 1.8125 \\times 2^{-20}$; $0.8125 = 0.1101_2$, so the fraction starts `1101` → `35E8…`.",
+    "pitfalls": ["Shifting only the stored fraction, not the hidden 1.", "Aligning the larger operand instead of the smaller one.", "Changing the exponent field: the sum stays below $2 \\times 2^{-20}$, so no renormalisation."],
+    "verification": "Python float32: `X + Y` gives the bit pattern `0x35E80000`. ✓",
+    "_keep_animation": True,
+}
+
+
 def write():
     bank = {q["id"]: q for q in json.loads((ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
     by_paper = {}

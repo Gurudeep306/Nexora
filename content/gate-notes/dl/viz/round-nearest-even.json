@@ -1,0 +1,252 @@
+{
+ "version": 1,
+ "title": "Round to nearest, ties to even",
+ "width": 600,
+ "height": 270,
+ "narrow": {
+  "width": 360,
+  "height": 250
+ },
+ "intro": "A significand with 4 kept fraction bits, followed by the guard (G), round (R) and sticky (S) bits that the hardware keeps while it computes.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "Round to nearest, ties to even, from the G, R and S bits",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Rounding with G, R, S",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "k",
+   "type": "bits",
+   "x": 120,
+   "y": 70,
+   "bits": "1.0110",
+   "cell": 46,
+   "labels": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "LSB"
+   ],
+   "narrow": {
+    "x": 14,
+    "y": 70,
+    "cell": 34
+   }
+  },
+  {
+   "id": "x",
+   "type": "bits",
+   "x": 406,
+   "y": 70,
+   "bits": "011",
+   "cell": 46,
+   "fill": "warning",
+   "labels": [
+    "G",
+    "R",
+    "S"
+   ],
+   "narrow": {
+    "x": 224,
+    "y": 70,
+    "cell": 34
+   }
+  },
+  {
+   "id": "arrow",
+   "type": "text",
+   "x": 300,
+   "y": 156,
+   "text": "↓ round",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 140
+   }
+  },
+  {
+   "id": "out",
+   "type": "bits",
+   "x": 120,
+   "y": 180,
+   "bits": "1.0110",
+   "cell": 46,
+   "fill": "success",
+   "hidden": true,
+   "narrow": {
+    "x": 14,
+    "y": 162,
+    "cell": 34
+   }
+  },
+  {
+   "id": "why",
+   "type": "text",
+   "x": 300,
+   "y": 250,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "narrow": {
+    "x": 180,
+    "y": 232,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Kept bits 1.0110, extra bits G R S = 0 1 1. G = 0: less than half an ulp, round down (truncate). Result 1.0110.",
+   "patches": [
+    {
+     "id": "k",
+     "set": {
+      "bits": "1.0110",
+      "highlight": [
+       5
+      ]
+     }
+    },
+    {
+     "id": "x",
+     "set": {
+      "bits": "011"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "bits": "1.0110",
+      "hidden": false
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "G = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Kept bits 1.0110, extra bits G R S = 1 0 1. G = 1 and R or S = 1: more than half an ulp, round up. Result 1.0111.",
+   "patches": [
+    {
+     "id": "k",
+     "set": {
+      "bits": "1.0110",
+      "highlight": [
+       5
+      ]
+     }
+    },
+    {
+     "id": "x",
+     "set": {
+      "bits": "101"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "bits": "1.0111",
+      "hidden": false
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "G = 1 and R or S = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Kept bits 1.0110, extra bits G R S = 1 0 0. G = 1, R = S = 0: exactly half. Tie: keep the even last bit (0), so round down. Result 1.0110.",
+   "patches": [
+    {
+     "id": "k",
+     "set": {
+      "bits": "1.0110",
+      "highlight": [
+       5
+      ]
+     }
+    },
+    {
+     "id": "x",
+     "set": {
+      "bits": "100"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "bits": "1.0110",
+      "hidden": false
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "G = 1, R = S = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Kept bits 1.0111, extra bits G R S = 1 0 0. Exactly half again, but the last kept bit is 1 (odd): round up to make it even. Result 1.1000.",
+   "patches": [
+    {
+     "id": "k",
+     "set": {
+      "bits": "1.0111",
+      "highlight": [
+       5
+      ]
+     }
+    },
+    {
+     "id": "x",
+     "set": {
+      "bits": "100"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "bits": "1.1000",
+      "hidden": false
+     }
+    },
+    {
+     "id": "why",
+     "set": {
+      "text": "Exactly half again, but the last kept bit is 1 (odd)"
+     }
+    }
+   ]
+  }
+ ]
+}
