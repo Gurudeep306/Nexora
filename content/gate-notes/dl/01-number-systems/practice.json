@@ -1243,6 +1243,221 @@
     "source": "nexora"
   },
   {
+    "id": "nx-dl-01-07-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Two single-precision registers hold `0x40A00000` and `0x3FC00000`. Which word is their IEEE sum?",
+    "options": [
+      { "l": "A", "t": "`0x40D00000`" },
+      { "l": "B", "t": "`0x40E00000`" },
+      { "l": "C", "t": "`0x3FD00000`" },
+      { "l": "D", "t": "`0x40C00000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Decode: `40A00000` $= 1.01_2 \\times 2^{2} = 5$; `3FC00000` $= 1.1_2 \\times 2^{0} = 1.5$.",
+      "Align the smaller to exponent 2 (shift right 2, hidden 1 included): $1.1 \\times 2^0 = 0.011 \\times 2^2$.",
+      "Add: $1.010 + 0.011 = 1.101$, so the sum is $1.101_2 \\times 2^2 = 6.5$; $e = 129$, $f = 101\\ldots$",
+      "Word: $0\\ 10000001\\ 1010\\ldots = $ `0x40D00000`."
+    ],
+    "concept": "Floating-point addition aligns the smaller operand to the larger exponent before adding significands.",
+    "common_wrong": [
+      { "answer": "B", "why": "The fraction fields were added without aligning ($.01 + .1 = .11$ at exponent 2), giving 7." },
+      { "answer": "C", "why": "The result was given the smaller operand's exponent ($1.625 = 6.5/4$)." },
+      { "answer": "D", "why": "The hidden 1 of 1.5 was not shifted in while aligning, giving $5 + 1 = 6$." }
+    ],
+    "blocks": ["fp-add-algorithm", "trap-align"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q02",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which single-precision word is the product of `0x41100000` and `0xBF000000`?",
+    "options": [
+      { "l": "A", "t": "`0xC0900000`" },
+      { "l": "B", "t": "`0xC1900000`" },
+      { "l": "C", "t": "`0x40900000`" },
+      { "l": "D", "t": "`0xC0100000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Decode: `41100000` $= 1.001_2 \\times 2^{3} = 9$; `BF000000` $= -1.0 \\times 2^{-1} = -0.5$.",
+      "Sign $0 \\oplus 1 = 1$. Significand $1.001 \\times 1.0 = 1.001$. Exponent field $130 + 126 - 127 = 129$.",
+      "Word: $1\\ 10000001\\ 0010\\ldots = $ `0xC0900000` $= -4.5$."
+    ],
+    "concept": "Multiplication: XOR the signs, add the exponent fields and subtract the bias once, multiply the significands.",
+    "common_wrong": [
+      { "answer": "B", "why": "The exponent came out 2 too high ($E = 5$, value $-18$), e.g. by using $+1$ instead of $-1$ for 0.5's exponent." },
+      { "answer": "C", "why": "The sign bit was not set; a positive times a negative is negative." },
+      { "answer": "D", "why": "$-2.25$: the exponent is one too low (the $\\times 0.5$ was applied twice)." }
+    ],
+    "blocks": ["fp-mul", "bias-subtract", "trick-pow2"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "A significand is rounded to 4 fraction bits using round to nearest, ties to even. The bits after the bar are the guard, round and sticky bits. Which roundings are correct?",
+    "options": [
+      { "l": "A", "t": "$1.0110\\,|\\,100 \\to 1.0110$" },
+      { "l": "B", "t": "$1.0101\\,|\\,100 \\to 1.0110$" },
+      { "l": "C", "t": "$1.0110\\,|\\,011 \\to 1.0111$" },
+      { "l": "D", "t": "$1.1111\\,|\\,110 \\to 10.0000$ (then renormalised to $1.0000$ with the exponent increased by 1)" }
+    ],
+    "answer": ["A", "B", "D"],
+    "solution": [
+      "(A) $G = 1$, $R = S = 0$: a tie; the last kept bit is 0 (even), so keep $1.0110$. Correct.",
+      "(B) A tie again, but the last kept bit is 1 (odd), so round up to $1.0110$. Correct.",
+      "(C) $G = 0$: less than half an ulp, so round down to $1.0110$, not up. Incorrect.",
+      "(D) $G = 1$, $R = 1$: more than half an ulp, round up: $1.1111 + 0.0001 = 10.0000$, which overflows the significand and is renormalised to $1.0000$ with $E + 1$. Correct."
+    ],
+    "concept": "Round to nearest even decides from G, R, S: G = 0 down, G = 1 with R or S up, G alone a tie to even.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "(C) has guard bit 0, so the discarded part is below half an ulp however many 1s follow." },
+      { "answer": ["B", "D"], "why": "(A) is a tie whose last bit is already even, so it stays; ties do not always round up." }
+    ],
+    "blocks": ["grs", "round-half-even", "rounding-modes"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q04",
+    "type": "NAT",
+    "marks": 2,
+    "text": "In IEEE single precision (round to nearest even), what is the smallest positive integer $y$ for which the computed sum $2^{25} + y$ is different from $2^{25}$?",
+    "answer": 3,
+    "solution": [
+      "In the binade $[2^{25}, 2^{26})$ the ulp is $2^{25 - 23} = 4$, so the floats next to $2^{25}$ are $2^{25}$ and $2^{25} + 4$.",
+      "$y = 1$: below half an ulp (2), absorbed. $y = 2$: exactly half an ulp, a tie; $2^{25}$ has an even last bit, so the sum rounds back to $2^{25}$.",
+      "$y = 3$: more than half an ulp, so the sum rounds up to $2^{25} + 4 \\ne 2^{25}$. Answer: 3."
+    ],
+    "concept": "Absorption: y vanishes when it is below half an ulp of x, and at exactly half an ulp ties to even decide.",
+    "common_wrong": [
+      { "answer": 1, "why": "That assumes every integer is a float; above $2^{24}$ the gap is larger than 1." },
+      { "answer": 2, "why": "2 is exactly half the ulp, a tie, and the tie goes to the even neighbour $2^{25}$." },
+      { "answer": 4, "why": "4 is the ulp, but already 3 is more than half of it and rounds up." }
+    ],
+    "blocks": ["absorption", "grs", "round-half-even"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "For IEEE single-precision values with round to nearest even, which statements are true?",
+    "options": [
+      { "l": "A", "t": "$a + b = b + a$ for all non-NaN floats $a, b$." },
+      { "l": "B", "t": "$(a + b) + c = a + (b + c)$ for all finite floats $a, b, c$." },
+      { "l": "C", "t": "$(2^{25} + 1) + 1 = 2^{25}$." },
+      { "l": "D", "t": "$2^{25} + (1 + 1) = 2^{25} + 2$." }
+    ],
+    "answer": ["A", "C"],
+    "solution": [
+      "(A) True: both orders round the same exact sum.",
+      "(B) False: $(2^{24} + 1) + 1 = 2^{24}$ (each 1 is a tie that rounds to even), but $2^{24} + (1 + 1) = 2^{24} + 2$ exactly.",
+      "(C) True: the ulp at $2^{25}$ is 4, so adding 1 (a quarter ulp) is absorbed, twice.",
+      "(D) False: $1 + 1 = 2$, and $2^{25} + 2$ is a tie between $2^{25}$ and $2^{25} + 4$; it rounds to the even $2^{25}$. $2^{25} + 2$ is not even a float."
+    ],
+    "concept": "Floating-point addition is commutative but not associative; absorption depends on the ulp of the larger operand.",
+    "common_wrong": [
+      { "answer": ["A", "C", "D"], "why": "(D) assumes $2^{25} + 2$ is representable; at $2^{25}$ the gap between floats is 4." },
+      { "answer": ["A", "B", "C"], "why": "Associativity fails in general; the rounding after each addition depends on the order." }
+    ],
+    "blocks": ["not-associative", "absorption"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Single-precision values `0x3F000000` and `0x3E800000` are multiplied. What is the exponent field of the product, as an unsigned decimal number?",
+    "answer": 124,
+    "solution": [
+      "The fields are $126$ (that is $0.5 = 2^{-1}$) and $125$ ($0.25 = 2^{-2}$); both significands are $1.0$.",
+      "Product field $= 126 + 125 - 127 = 124$, i.e. $E = -3$: $0.5 \\times 0.25 = 0.125 = 2^{-3}$."
+    ],
+    "concept": "Adding biased exponents counts the bias twice, so subtract it once.",
+    "common_wrong": [
+      { "answer": 251, "why": "The fields were added without subtracting the bias." },
+      { "answer": -3, "why": "That is the true exponent; the field stores $-3 + 127$." }
+    ],
+    "blocks": ["bias-subtract", "fp-mul"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "In IEEE single precision with the default rounding, what is `0x7F000000` + `0x7F000000`?",
+    "options": [
+      { "l": "A", "t": "`0x7F800000`" },
+      { "l": "B", "t": "`0x7F7FFFFF`" },
+      { "l": "C", "t": "`0xFF000000`" },
+      { "l": "D", "t": "`0x7FC00000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "`7F000000` $= 1.0 \\times 2^{254 - 127} = 2^{127}$.",
+      "The exact sum is $2^{128}$, which exceeds the largest finite value $(2 - 2^{-23})2^{127}$ (and the overflow threshold).",
+      "In round to nearest, overflow gives $+\\infty$ = `0x7F800000`."
+    ],
+    "concept": "Floating-point overflow saturates to infinity in the default rounding mode; it does not wrap around.",
+    "common_wrong": [
+      { "answer": "B", "why": "Clamping to the largest finite value happens only in round-toward-zero (or toward −∞ for positives)." },
+      { "answer": "C", "why": "That treats the sum like a 2's-complement integer wrap-around; floats saturate instead." },
+      { "answer": "D", "why": "Overflow of a finite sum gives infinity, not NaN; NaN needs something like ∞ − ∞." }
+    ],
+    "blocks": ["overflow-underflow", "fp-add-algorithm"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "A format stores $f$ as a 6-bit sign-magnitude fraction (5 magnitude bits, normalised $0.1\\ldots$) and $e$ as a 4-bit sign-magnitude exponent, $n = f \\cdot 2^e$; extra bits are truncated at every step. $A = 11.25$ and $B = 3.5$ are stored, aligned and added. What is the percentage error of the computed sum (to two decimal places)?",
+    "answer": [1.69, 1.7],
+    "solution": [
+      "$A = 1011.01_2 = 0.101101 \\times 2^4 \\to 0.10110 \\times 2^4 = 11$ (truncated).",
+      "$B = 11.1_2 = 0.111 \\times 2^2$; aligned to $2^4$ it is $0.00111 \\times 2^4$, which still fits in 5 bits: $3.5$.",
+      "Sum: $0.10110 + 0.00111 = 0.11101$, so $0.11101 \\times 2^4 = 14.5$.",
+      "True sum $14.75$; percentage error $= \\dfrac{14.75 - 14.5}{14.75} \\times 100 = 1.695\\ldots \\approx 1.69\\text{–}1.70\\,\\%$."
+    ],
+    "concept": "Percentage error = |computed − true| / |true| × 100, with truncation at representation and at alignment.",
+    "common_wrong": [
+      { "answer": 1.72, "why": "The error was divided by the computed sum 14.5 instead of the true sum 14.75." },
+      { "answer": 0, "why": "Truncating $A$ when it is stored loses 0.25; that error carries into the sum." }
+    ],
+    "blocks": ["relative-error", "fp-add-algorithm"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q09",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which single-precision word is `0xC1800000` divided by `0x40000000`?",
+    "options": [
+      { "l": "A", "t": "`0xC1000000`" },
+      { "l": "B", "t": "`0x81800000`" },
+      { "l": "C", "t": "`0x41000000`" },
+      { "l": "D", "t": "`0xC2000000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "`C1800000` $= -1.0 \\times 2^{131 - 127} = -16$; `40000000` $= 1.0 \\times 2^{1} = 2$.",
+      "Sign $1 \\oplus 0 = 1$; significand $1.0 / 1.0 = 1.0$; exponent field $131 - 128 + 127 = 130$.",
+      "$-1.0 \\times 2^{3} = -8 = $ `0xC1000000`."
+    ],
+    "concept": "Division: subtract the exponent fields and add the bias back.",
+    "common_wrong": [
+      { "answer": "B", "why": "The fields were subtracted ($131 - 128 = 3$) without adding the bias back, giving a tiny number." },
+      { "answer": "C", "why": "The sign was dropped." },
+      { "answer": "D", "why": "That is $-32$: the operation was done as a multiplication." }
+    ],
+    "blocks": ["fp-div", "bias-subtract"],
+    "source": "nexora"
+  },
+  {
     "id": "nx-dl-01-08-q01",
     "type": "MCQ",
     "marks": 1,

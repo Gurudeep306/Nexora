@@ -1,0 +1,540 @@
+{
+ "version": 1,
+ "title": "Floating-point addition: align, add, normalise, round",
+ "width": 640,
+ "height": 380,
+ "narrow": {
+  "width": 360,
+  "height": 390
+ },
+ "intro": "Two numbers in a toy format with 4 fraction bits: A = 7 = 1.1100 × 2² and B = 1.625 = 1.1010 × 2⁰.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Adding 7 + 1.625 with 4 fraction bits",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "7 + 1.625, 4 fraction bits",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "a",
+   "type": "bits",
+   "x": 200,
+   "y": 60,
+   "bits": "01.1100",
+   "cell": 34,
+   "hidden": false,
+   "narrow": {
+    "x": 120,
+    "y": 70,
+    "cell": 26
+   }
+  },
+  {
+   "id": "ag",
+   "type": "bits",
+   "x": 444,
+   "y": 60,
+   "bits": "00",
+   "cell": 34,
+   "fill": "warning",
+   "hidden": false,
+   "narrow": {
+    "x": 306,
+    "y": 70,
+    "cell": 26
+   }
+  },
+  {
+   "id": "al",
+   "type": "text",
+   "x": 184,
+   "y": 77.0,
+   "text": "A = 7",
+   "anchor": "end",
+   "size": 15,
+   "hidden": false,
+   "narrow": {
+    "x": 112,
+    "y": 83.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "ae",
+   "type": "text",
+   "x": 540,
+   "y": 77.0,
+   "text": "× 2²",
+   "size": 16,
+   "mono": true,
+   "hidden": false,
+   "tone": "info",
+   "narrow": {
+    "x": 360,
+    "y": 83.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "b",
+   "type": "bits",
+   "x": 200,
+   "y": 112,
+   "bits": "01.1010",
+   "cell": 34,
+   "hidden": false,
+   "narrow": {
+    "x": 120,
+    "y": 122,
+    "cell": 26
+   }
+  },
+  {
+   "id": "bg",
+   "type": "bits",
+   "x": 444,
+   "y": 112,
+   "bits": "00",
+   "cell": 34,
+   "fill": "warning",
+   "hidden": false,
+   "narrow": {
+    "x": 306,
+    "y": 122,
+    "cell": 26
+   }
+  },
+  {
+   "id": "bl",
+   "type": "text",
+   "x": 184,
+   "y": 129.0,
+   "text": "B = 1.625",
+   "anchor": "end",
+   "size": 15,
+   "hidden": false,
+   "narrow": {
+    "x": 112,
+    "y": 135.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "be",
+   "type": "text",
+   "x": 540,
+   "y": 129.0,
+   "text": "× 2⁰",
+   "size": 16,
+   "mono": true,
+   "hidden": false,
+   "tone": "info",
+   "narrow": {
+    "x": 360,
+    "y": 135.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "s",
+   "type": "bits",
+   "x": 200,
+   "y": 196,
+   "bits": "10.0010",
+   "cell": 34,
+   "hidden": true,
+   "narrow": {
+    "x": 120,
+    "y": 206,
+    "cell": 26
+   }
+  },
+  {
+   "id": "sg",
+   "type": "bits",
+   "x": 444,
+   "y": 196,
+   "bits": "10",
+   "cell": 34,
+   "fill": "warning",
+   "hidden": true,
+   "narrow": {
+    "x": 306,
+    "y": 206,
+    "cell": 26
+   }
+  },
+  {
+   "id": "sl",
+   "type": "text",
+   "x": 184,
+   "y": 213.0,
+   "text": "sum",
+   "anchor": "end",
+   "size": 15,
+   "hidden": true,
+   "narrow": {
+    "x": 112,
+    "y": 219.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "se",
+   "type": "text",
+   "x": 540,
+   "y": 213.0,
+   "text": "× 2²",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "x": 360,
+    "y": 219.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "n",
+   "type": "bits",
+   "x": 200,
+   "y": 248,
+   "bits": "01.0001",
+   "cell": 34,
+   "hidden": true,
+   "narrow": {
+    "x": 120,
+    "y": 258,
+    "cell": 26
+   }
+  },
+  {
+   "id": "ng",
+   "type": "bits",
+   "x": 444,
+   "y": 248,
+   "bits": "01",
+   "cell": 34,
+   "fill": "warning",
+   "hidden": true,
+   "narrow": {
+    "x": 306,
+    "y": 258,
+    "cell": 26
+   }
+  },
+  {
+   "id": "nl",
+   "type": "text",
+   "x": 184,
+   "y": 265.0,
+   "text": "normalise",
+   "anchor": "end",
+   "size": 15,
+   "hidden": true,
+   "narrow": {
+    "x": 112,
+    "y": 271.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "ne",
+   "type": "text",
+   "x": 540,
+   "y": 265.0,
+   "text": "× 2³",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "x": 360,
+    "y": 271.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "r",
+   "type": "bits",
+   "x": 200,
+   "y": 300,
+   "bits": "01.0001",
+   "cell": 34,
+   "hidden": true,
+   "narrow": {
+    "x": 120,
+    "y": 310,
+    "cell": 26
+   }
+  },
+  {
+   "id": "rg",
+   "type": "bits",
+   "x": 444,
+   "y": 300,
+   "bits": "  ",
+   "cell": 34,
+   "fill": "warning",
+   "hidden": true,
+   "narrow": {
+    "x": 306,
+    "y": 310,
+    "cell": 26
+   }
+  },
+  {
+   "id": "rl",
+   "type": "text",
+   "x": 184,
+   "y": 317.0,
+   "text": "round",
+   "anchor": "end",
+   "size": 15,
+   "hidden": true,
+   "narrow": {
+    "x": 112,
+    "y": 323.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "re",
+   "type": "text",
+   "x": 540,
+   "y": 317.0,
+   "text": "× 2³",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "x": 360,
+    "y": 323.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "bar",
+   "type": "line",
+   "points": [
+    [
+     196,
+     170
+    ],
+    [
+     516,
+     170
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      116,
+      166
+     ],
+     [
+      360,
+      166
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gl",
+   "type": "text",
+   "x": 478,
+   "y": 44,
+   "text": "G R",
+   "anchor": "middle",
+   "size": 13,
+   "tone": "warning",
+   "narrow": {
+    "x": 332,
+    "y": 50,
+    "size": 12
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 320,
+   "y": 362,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "tone": "success",
+   "narrow": {
+    "x": 180,
+    "y": 370,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Write both significands with their hidden 1 and two extra guard positions. A = 1.1100 × 2², B = 1.1010 × 2⁰. The exponents differ by 2.",
+   "patches": [
+    {
+     "id": "a",
+     "set": {
+      "highlight": [
+       3,
+       4
+      ]
+     }
+    },
+    {
+     "id": "b",
+     "set": {
+      "highlight": [
+       3,
+       4
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Align: shift the smaller number right by 2 and raise its exponent to 2. B becomes 0.0110 × 2², and the bits shifted out (1 0) land in the guard and round positions instead of being lost.",
+   "patches": [
+    {
+     "id": "b",
+     "set": {
+      "bits": "00.0110",
+      "highlight": []
+     }
+    },
+    {
+     "id": "bg",
+     "set": {
+      "bits": "10"
+     }
+    },
+    {
+     "id": "be",
+     "set": {
+      "text": "× 2²"
+     }
+    },
+    {
+     "id": "a",
+     "set": {
+      "highlight": []
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add the aligned significands: 1.1100 00 + 0.0110 10 = 10.0010 10. The sum overflowed into a second integer bit.",
+   "patches": [
+    {
+     "id": "bar",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "s",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sg",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "se",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Normalise: 10.0010 10 has two bits before the point, so shift right by 1 and add 1 to the exponent: 1.0001 010 × 2³. The bit shifted out joins the extra bits: G = 0, R = 1.",
+   "patches": [
+    {
+     "id": "n",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ng",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ne",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Round to nearest even: the guard bit is 0, so the extra bits are less than half an ulp and are dropped. Result 1.0001 × 2³ = 8.5.",
+   "patches": [
+    {
+     "id": "r",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "re",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "text": "stored 8.5; exact sum 8.625 (error 0.125, under half an ulp = 0.25)"
+     }
+    }
+   ]
+  }
+ ]
+}

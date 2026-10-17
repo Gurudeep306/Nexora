@@ -4287,166 +4287,32 @@
       }
     },
     "cse-2026-1-cs-26": {
-      "approach": "Decode both numbers into (sign, exponent, 1.fraction), align the smaller one to the larger exponent, add the significands, normalise, and re-encode. Here the sum is exact, so there is no rounding to worry about.",
+      "approach": "Concept tested: **floating-point addition with alignment**. $X = 1.1 \\times 2^{-20}$ and $Y = 1.01 \\times 2^{-22}$; shift $Y$'s significand (hidden 1 included) right by 2, add, and repack.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Biased exponent (bias 127)",
-        "Hidden leading 1",
-        "Significand alignment"
+        "Exponent alignment",
+        "Hidden bit in alignment",
+        "IEEE-754 packing"
       ],
-      "given": "X = `35C00000`, Y = `34A00000` (hex), Z = X + Y.",
       "steps": [
         {
-          "title": "Decode X",
-          "body": "`35C00000` $= 0011\\,0101\\,1100\\,0000 \\dots$ → sign $0$, exponent $0110\\,1011_2 = 107$, fraction $1000\\dots$\n\n$$X = 1.1_2 \\times 2^{107-127} = 1.5 \\times 2^{-20}.$$",
-          "scene": {
-            "rows": [
-              {
-                "label": "X",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "s"
-                  },
-                  {
-                    "bits": "01101011",
-                    "label": "exp 107",
-                    "tone": "cat1"
-                  },
-                  {
-                    "bits": "10000000000000000000000",
-                    "label": "fraction .1",
-                    "tone": "cat2"
-                  }
-                ],
-                "value": "35C00000"
-              }
-            ]
-          }
+          "title": "Decode X = 0x35C00000",
+          "body": "$0\\ 01101011\\ 1000\\ldots$: $e = 107$, $E = -20$, $X = 1.1_2 \\times 2^{-20}$."
         },
         {
-          "title": "Decode Y",
-          "body": "`34A00000` $= 0011\\,0100\\,1010\\,0000 \\dots$ → sign $0$, exponent $0110\\,1001_2 = 105$, fraction $0100\\dots$\n\n$$Y = 1.01_2 \\times 2^{105-127} = 1.25 \\times 2^{-22}.$$",
-          "scene": {
-            "rows": [
-              {
-                "label": "X",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "s"
-                  },
-                  {
-                    "bits": "01101011",
-                    "label": "exp 107",
-                    "tone": "cat1"
-                  },
-                  {
-                    "bits": "10000000000000000000000",
-                    "label": "fraction .1",
-                    "tone": "cat2"
-                  }
-                ],
-                "value": "35C00000"
-              },
-              {
-                "label": "Y",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "s"
-                  },
-                  {
-                    "bits": "01101001",
-                    "label": "exp 105",
-                    "tone": "cat1"
-                  },
-                  {
-                    "bits": "01000000000000000000000",
-                    "label": "fraction .01",
-                    "tone": "cat2"
-                  }
-                ],
-                "value": "34A00000"
-              }
-            ]
-          }
+          "title": "Decode Y = 0x34A00000",
+          "body": "$0\\ 01101001\\ 0100\\ldots$: $e = 105$, $E = -22$, $Y = 1.01_2 \\times 2^{-22}$."
         },
         {
-          "title": "Align and add",
-          "body": "Exponents differ by $107 - 105 = 2$, so shift Y's significand (with its hidden 1) right by 2: $1.01_2 \\times 2^{-22} = 0.0101_2 \\times 2^{-20}$.\n\n$$\\begin{aligned} &\\ \\ 1.1000_2 \\\\ +\\ &\\ \\ 0.0101_2 \\\\ =\\ &\\ \\ 1.1101_2 \\end{aligned} \\qquad Z = 1.1101_2 \\times 2^{-20} = 1.8125 \\times 2^{-20}.$$\n\nCheck in decimal: $1.5 + 1.25/4 = 1.5 + 0.3125 = 1.8125$. Already normalised (one digit before the point)."
+          "title": "Align Y to exponent −20",
+          "body": "Shift right by 2, hidden 1 included: $1.01 \\times 2^{-22} = 0.0101 \\times 2^{-20}$."
         },
         {
-          "title": "Encode Z",
-          "body": "Sign $0$, exponent $-20 + 127 = 107 = 0110\\,1011_2$, fraction $1101\\,0000\\dots$\n\n$0\\,|\\,01101011\\,|\\,11010000\\dots = 0011\\,0101\\,1110\\,1000\\,0000\\dots = $ **`35E80000`** — option (C).",
-          "scene": {
-            "rows": [
-              {
-                "label": "X",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "s"
-                  },
-                  {
-                    "bits": "01101011",
-                    "label": "exp 107",
-                    "tone": "cat1"
-                  },
-                  {
-                    "bits": "10000000000000000000000",
-                    "label": "fraction .1",
-                    "tone": "cat2"
-                  }
-                ],
-                "value": "35C00000"
-              },
-              {
-                "label": "Y",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "s"
-                  },
-                  {
-                    "bits": "01101001",
-                    "label": "exp 105",
-                    "tone": "cat1"
-                  },
-                  {
-                    "bits": "01000000000000000000000",
-                    "label": "fraction .01",
-                    "tone": "cat2"
-                  }
-                ],
-                "value": "34A00000"
-              },
-              {
-                "label": "Z",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "s"
-                  },
-                  {
-                    "bits": "01101011",
-                    "label": "exp 107",
-                    "tone": "success"
-                  },
-                  {
-                    "bits": "11010000000000000000000",
-                    "label": "fraction .1101",
-                    "tone": "success"
-                  }
-                ],
-                "value": "35E80000"
-              }
-            ]
-          }
+          "title": "Add and pack",
+          "body": "$1.1000 + 0.0101 = 1.1101$, so $Z = 1.1101_2 \\times 2^{-20}$: $e = 107$, $f = 1101\\,0\\ldots$\n\n$0\\ 01101011\\ 1101\\ldots = 0011\\,0101\\,1110\\,1000\\ldots = \\texttt{35E80000}$: option (C)."
         }
       ],
       "answer": {
-        "value": "Z = **35E80000** — option (C)",
+        "value": "`35E80000` — option (C)",
         "choice": [
           "C"
         ],
@@ -4456,31 +4322,31 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "`35C80000` $= 1.1001_2 \\times 2^{-20} = 1.5625 \\times 2^{-20}$: what you get by adding only Y's fraction $.01_2$ shifted by 2 and **forgetting its hidden 1**."
+          "reason": "`35C80000` has fraction $1001$: only Y's stored fraction $01$ was shifted (the hidden 1 was dropped), giving $1.1 + 0.0001$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "`35CC0000` $= 1.10011_2 \\times 2^{-20} = 1.59375 \\times 2^{-20} \\ne 1.8125 \\times 2^{-20}$ (mis-aligned addition)."
+          "reason": "`35CC0000` is $1.10011_2 \\times 2^{-20}$: it adds only $0.09375 \\times 2^{-20}$ instead of $Y = 0.3125 \\times 2^{-20}$ (a mis-aligned Y)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$1.1_2 \\times 2^{-20} + 1.01_2 \\times 2^{-22} = 1.1101_2 \\times 2^{-20}$ → `0 01101011 1101000…` = `35E80000`."
+          "reason": "$1.1000 + 0.0101 = 1.1101$ at exponent 107."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "`35EC0000` $= 1.11011_2 \\times 2^{-20} = 1.84375 \\times 2^{-20}$, which exceeds the exact sum by $0.03125 \\times 2^{-20}$."
+          "reason": "`35EC0000` is $1.11011_2 \\times 2^{-20}$: it adds $0.34375 \\times 2^{-20}$, one low bit too many, instead of $0.3125 \\times 2^{-20}$."
         }
       ],
-      "shortcut": "Same sign, exponent gap 2: $X + Y = 2^{-20}(1.5 + 1.25/4) = 1.8125 \\times 2^{-20}$. Exponent field unchanged (`35`/`6B…`), fraction $.1101$ → third hex digit becomes `E`, fourth `8`: `35E80000`.",
+      "shortcut": "In decimal: $Z = (1.5 + 1.25/4) \\times 2^{-20} = 1.8125 \\times 2^{-20}$; $0.8125 = 0.1101_2$, so the fraction starts `1101` → `35E8…`.",
       "pitfalls": [
-        "Dropping the hidden 1 of Y when shifting (gives option A).",
-        "Shifting by the wrong amount — the shift equals the exponent difference, $107 - 105 = 2$.",
-        "Forgetting that the exponent field starts after the sign bit, so hex digits do not align with fields."
+        "Shifting only the stored fraction, not the hidden 1.",
+        "Aligning the larger operand instead of the smaller one.",
+        "Changing the exponent field: the sum stays below $2 \\times 2^{-20}$, so no renormalisation."
       ],
-      "verification": "Decode `35E80000`: exponent bits $01101011 = 107$, fraction $.1101 = 0.8125$ → $1.8125 \\times 2^{-20}$, which equals $1.5 \\times 2^{-20} + 1.25 \\times 2^{-22}$ exactly.",
+      "verification": "Python float32: `X + Y` gives the bit pattern `0x35E80000`. ✓",
       "animation": {
         "kind": "bits",
         "title": "IEEE 754 fields: sign | exponent | fraction",

@@ -1,0 +1,265 @@
+{
+ "version": 1,
+ "title": "Absorption and the loss of associativity",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 280
+ },
+ "intro": "A toy format with 4 fraction bits: x = 32 = 1.0000 × 2⁵ and y = 1 = 1.0000 × 2⁰. Neighbours of 32 are 2 apart.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Absorption: a small number added to a large one (4 fraction bits)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Absorption (4 fraction bits)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "xl",
+   "type": "text",
+   "x": 136,
+   "y": 80,
+   "text": "x = 32",
+   "anchor": "end",
+   "size": 15,
+   "narrow": {
+    "x": 70,
+    "y": 80,
+    "size": 13
+   }
+  },
+  {
+   "id": "x",
+   "type": "bits",
+   "x": 150,
+   "y": 60,
+   "bits": "1.0000",
+   "cell": 40,
+   "narrow": {
+    "x": 80,
+    "y": 60,
+    "cell": 30
+   }
+  },
+  {
+   "id": "xe",
+   "type": "text",
+   "x": 460,
+   "y": 80,
+   "text": "× 2⁵",
+   "size": 16,
+   "mono": true,
+   "tone": "info",
+   "narrow": {
+    "x": 310,
+    "y": 80,
+    "size": 13
+   }
+  },
+  {
+   "id": "yl",
+   "type": "text",
+   "x": 136,
+   "y": 140,
+   "text": "y = 1",
+   "anchor": "end",
+   "size": 15,
+   "narrow": {
+    "x": 70,
+    "y": 140,
+    "size": 13
+   }
+  },
+  {
+   "id": "y",
+   "type": "bits",
+   "x": 150,
+   "y": 120,
+   "bits": "1.0000",
+   "cell": 40,
+   "narrow": {
+    "x": 80,
+    "y": 120,
+    "cell": 30
+   }
+  },
+  {
+   "id": "yg",
+   "type": "bits",
+   "x": 396,
+   "y": 120,
+   "bits": "  ",
+   "cell": 40,
+   "fill": "warning",
+   "hidden": true,
+   "labels": [
+    "G",
+    "R"
+   ],
+   "narrow": {
+    "x": 264,
+    "y": 120,
+    "cell": 30
+   }
+  },
+  {
+   "id": "ye",
+   "type": "text",
+   "x": 460,
+   "y": 140,
+   "text": "× 2⁰",
+   "size": 16,
+   "mono": true,
+   "tone": "info",
+   "narrow": {
+    "x": 310,
+    "y": 140,
+    "size": 13
+   }
+  },
+  {
+   "id": "res",
+   "type": "box",
+   "x": 120,
+   "y": 190,
+   "w": 400,
+   "h": 46,
+   "size": 15,
+   "narrow": {
+    "x": 10,
+    "y": 190,
+    "w": 340,
+    "h": 46,
+    "size": 13
+   },
+   "label": ""
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320,
+   "y": 262,
+   "text": "ulp(32) = 2 here, so half an ulp is 1",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 262,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Align y to x's exponent 5: shift its significand right 5 places. The 1 lands just past the 4 kept bits: 0.0000 with guard bit 1 and round bit 0.",
+   "patches": [
+    {
+     "id": "y",
+     "set": {
+      "bits": "0.0000"
+     }
+    },
+    {
+     "id": "yg",
+     "set": {
+      "bits": "10",
+      "hidden": false
+     }
+    },
+    {
+     "id": "ye",
+     "set": {
+      "text": "× 2⁵"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The extra bits are exactly half an ulp (G = 1, R = S = 0): a tie. Ties go to the even neighbour, and 1.0000 is even, so x + y rounds to 32. y has been absorbed.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "label": "32 + 1 = 32 (tie, rounds to even)",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add 1 again: the same thing happens, so (32 + 1) + 1 = 32.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "label": "(32 + 1) + 1 = 32",
+      "tone": "danger",
+      "fill": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now add the small numbers first: 1 + 1 = 2 exactly. Aligning 2 = 1.0000 × 2¹ to exponent 5 shifts it 4 places: 0.0001, with nothing left over. 32 + 2 = 1.0001 × 2⁵ = 34 exactly.",
+   "patches": [
+    {
+     "id": "yl",
+     "set": {
+      "text": "y = 2"
+     }
+    },
+    {
+     "id": "y",
+     "set": {
+      "bits": "0.0001"
+     }
+    },
+    {
+     "id": "yg",
+     "set": {
+      "bits": "00"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "label": "32 + (1 + 1) = 34",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So (32 + 1) + 1 ≠ 32 + (1 + 1): floating-point addition is not associative. Adding the small terms first keeps them from being absorbed.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "order matters: add small numbers first",
+      "tone": "subject"
+     }
+    }
+   ]
+  }
+ ]
+}

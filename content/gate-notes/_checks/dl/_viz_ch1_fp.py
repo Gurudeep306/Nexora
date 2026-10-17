@@ -370,6 +370,118 @@ def gradual_underflow():
                 els, steps)
 
 
+# ── Lesson 7 ────────────────────────────────────────────────────────────────
+
+def sig_row(id, x, y, sig, extra, c, nx, ny, nc, hidden=False, **kw):
+    """A significand row: the kept bits, then the extra (guard/round/sticky) bits in a warning tone."""
+    return [bits(id, x, y, sig, c, {"x": nx, "y": ny, "cell": nc}, hidden=hidden, **kw),
+            bits(id + "g", x + c * len(sig) + 6, y, extra or "  ", c, {"x": nx + nc * len(sig) + 4, "y": ny, "cell": nc}, fill="warning", hidden=hidden or not extra.strip())]
+
+
+@scene
+def fp_align_add():
+    f = 4
+    A, B = F(7), F(13, 8)
+    assert fp.normalise_hidden(A) == (F(7, 4), 2) and fp.normalise_hidden(B) == (F(13, 8), 0)
+    exact = A + B
+    assert exact == F(69, 8) and fp.add(A, B, 4, f) == F(17, 2) and fp.binary(exact, 3) == "1000.101"
+    assert fp.grs("0001" + "010", 4) == ("0001", 0, 1, 0)
+    c, x0 = 34, 200
+    nc, nx0 = 26, 120
+    els = [*heads("Adding 7 + 1.625 with 4 fraction bits", "7 + 1.625, 4 fraction bits", 640)]
+    rows = [("a", 60, "01.1100", "00", "A = 7", "× 2²"), ("b", 112, "01.1010", "00", "B = 1.625", "× 2⁰"),
+            ("s", 196, "10.0010", "10", "sum", "× 2²"), ("n", 248, "01.0001", "01", "normalise", "× 2³"),
+            ("r", 300, "01.0001", "", "round", "× 2³")]
+    for id, y, sig, extra, lab, ex in rows:
+        hid = id in ("s", "n", "r")
+        ny = y + 10
+        els += sig_row(id, x0, y, sig, extra, c, nx0, ny, nc, hidden=hid)
+        els.append(text(id + "l", x0 - 16, y + c / 2, lab, {"x": nx0 - 8, "y": ny + nc / 2, "size": 13}, anchor="end", size=15, hidden=hid))
+        els.append(text(id + "e", x0 + 10 * c, y + c / 2, ex, {"x": nx0 + 9 * nc + 6, "y": ny + nc / 2, "size": 13}, size=16, mono=True, hidden=hid, tone="info"))
+    els.append(line("bar", [[x0 - 4, 170], [x0 + 9 * c + 10, 170]], {"points": [[nx0 - 4, 166], [nx0 + 9 * nc + 6, 166]]}, hidden=True))
+    els.append(text("gl", x0 + 7 * c + 6 + c, 44, "G R", {"x": nx0 + 7 * nc + 4 + nc, "y": 50, "size": 12}, anchor="middle", size=13, tone="warning"))
+    els.append(text("res", 320, 362, "", {"x": 180, "y": 370, "size": 13}, anchor="middle", size=16, tone="success"))
+    steps = [
+        step("Write both significands with their hidden 1 and two extra guard positions. A = 1.1100 × 2², B = 1.1010 × 2⁰. The exponents differ by 2.",
+             ("a", {"highlight": [3, 4]}), ("b", {"highlight": [3, 4]})),
+        step("Align: shift the smaller number right by 2 and raise its exponent to 2. B becomes 0.0110 × 2², and the bits shifted out (1 0) land in the guard and round positions instead of being lost.",
+             ("b", {"bits": "00.0110", "highlight": []}), ("bg", {"bits": "10"}), ("be", {"text": "× 2²"}), ("a", {"highlight": []})),
+        step("Add the aligned significands: 1.1100 00 + 0.0110 10 = 10.0010 10. The sum overflowed into a second integer bit.",
+             ("bar", {"hidden": False}), ("s", {"hidden": False}), ("sg", {"hidden": False}), ("sl", {"hidden": False}), ("se", {"hidden": False})),
+        step("Normalise: 10.0010 10 has two bits before the point, so shift right by 1 and add 1 to the exponent: 1.0001 010 × 2³. The bit shifted out joins the extra bits: G = 0, R = 1.",
+             ("n", {"hidden": False}), ("ng", {"hidden": False}), ("nl", {"hidden": False}), ("ne", {"hidden": False})),
+        step("Round to nearest even: the guard bit is 0, so the extra bits are less than half an ulp and are dropped. Result 1.0001 × 2³ = 8.5.",
+             ("r", {"hidden": False}), ("rl", {"hidden": False}), ("re", {"hidden": False}),
+             ("res", {"text": "stored 8.5; exact sum 8.625 (error 0.125, under half an ulp = 0.25)"})),
+    ]
+    return spec("Floating-point addition: align, add, normalise, round", (640, 380), (360, 390),
+                "Two numbers in a toy format with 4 fraction bits: A = 7 = 1.1100 × 2² and B = 1.625 = 1.1010 × 2⁰.",
+                els, steps)
+
+
+@scene
+def round_nearest_even():
+    f = 4
+    cases = [("1.0110", "011", "1.0110", "G = 0: less than half an ulp, round down (truncate)."),
+             ("1.0110", "101", "1.0111", "G = 1 and R or S = 1: more than half an ulp, round up."),
+             ("1.0110", "100", "1.0110", "G = 1, R = S = 0: exactly half. Tie: keep the even last bit (0), so round down."),
+             ("1.0111", "100", "1.1000", "Exactly half again, but the last kept bit is 1 (odd): round up to make it even.")]
+    for kept, ex, res, _ in cases:
+        v = F(int((kept + ex).replace(".", ""), 2), 2 ** (4 + len(ex)))
+        assert fp.round_to(v, 4, f) == F(int(res.replace(".", ""), 2), 2 ** 4), (kept, ex)
+        g, r, s = int(ex[0]), int(ex[1]), int(ex[2])
+        assert fp.rne_from_grs(kept.replace(".", ""), g, r, s) == (res != kept)
+    c, x0 = 46, 120
+    els = [*heads("Round to nearest, ties to even, from the G, R and S bits", "Rounding with G, R, S", 600),
+           bits("k", x0, 70, cases[0][0], c, {"x": 14, "y": 70, "cell": 34}, labels=["", "", "", "", "", "LSB"]),
+           bits("x", x0 + 6 * c + 10, 70, cases[0][1], c, {"x": 14 + 6 * 34 + 6, "y": 70, "cell": 34}, fill="warning", labels=["G", "R", "S"]),
+           text("arrow", 300, 156, "↓ round", {"x": 180, "y": 140}, anchor="middle", size=15, tone="muted"),
+           bits("out", x0, 180, cases[0][0], c, {"x": 14, "y": 162, "cell": 34}, fill="success", hidden=True),
+           text("why", 300, 250, "", {"x": 180, "y": 232, "size": 12}, anchor="middle", size=14)]
+    steps = []
+    for kept, ex, res, why in cases:
+        steps.append(step(f"Kept bits {kept}, extra bits G R S = {' '.join(ex)}. {why} Result {res}.",
+                          ("k", {"bits": kept, "highlight": [5]}), ("x", {"bits": ex}), ("out", {"bits": res, "hidden": False}),
+                          ("why", {"text": why.split(':')[0] if ':' in why else why})))
+    return spec("Round to nearest, ties to even", (600, 270), (360, 250),
+                "A significand with 4 kept fraction bits, followed by the guard (G), round (R) and sticky (S) bits that the hardware keeps while it computes.",
+                els, steps)
+
+
+@scene
+def absorption():
+    f = 4
+    assert fp.add(32, 1, 4, f) == 32 and fp.add(fp.add(32, 1, 4, f), 1, 4, f) == 32 and fp.add(32, 2, 4, f) == 34 and fp.add(1, 1, 4, f) == 2
+    assert fp.ulp(32, 4, f) == 2
+    c, x0 = 40, 150
+    els = [*heads("Absorption: a small number added to a large one (4 fraction bits)", "Absorption (4 fraction bits)", 640),
+           text("xl", x0 - 14, 80, "x = 32", {"x": 70, "y": 80, "size": 13}, anchor="end", size=15),
+           bits("x", x0, 60, "1.0000", c, {"x": 80, "y": 60, "cell": 30}),
+           text("xe", x0 + 6 * c + 70, 80, "× 2⁵", {"x": 80 + 6 * 30 + 50, "y": 80, "size": 13}, size=16, mono=True, tone="info"),
+           text("yl", x0 - 14, 140, "y = 1", {"x": 70, "y": 140, "size": 13}, anchor="end", size=15),
+           bits("y", x0, 120, "1.0000", c, {"x": 80, "y": 120, "cell": 30}),
+           bits("yg", x0 + 6 * c + 6, 120, "  ", c, {"x": 80 + 6 * 30 + 4, "y": 120, "cell": 30}, fill="warning", hidden=True, labels=["G", "R"]),
+           text("ye", x0 + 6 * c + 70, 140, "× 2⁰", {"x": 80 + 6 * 30 + 50, "y": 140, "size": 13}, size=16, mono=True, tone="info"),
+           box("res", 120, 190, 400, 46, "", {"x": 10, "y": 190, "w": 340, "h": 46, "size": 13}, size=15),
+           text("note", 320, 262, "ulp(32) = 2 here, so half an ulp is 1", {"x": 180, "y": 262, "size": 13}, anchor="middle", size=14, tone="muted")]
+    steps = [
+        step("Align y to x's exponent 5: shift its significand right 5 places. The 1 lands just past the 4 kept bits: 0.0000 with guard bit 1 and round bit 0.",
+             ("y", {"bits": "0.0000"}), ("yg", {"bits": "10", "hidden": False}), ("ye", {"text": "× 2⁵"})),
+        step("The extra bits are exactly half an ulp (G = 1, R = S = 0): a tie. Ties go to the even neighbour, and 1.0000 is even, so x + y rounds to 32. y has been absorbed.",
+             ("res", {"label": "32 + 1 = 32 (tie, rounds to even)", "tone": "danger", "fill": "danger"})),
+        step("Add 1 again: the same thing happens, so (32 + 1) + 1 = 32.",
+             ("res", {"label": "(32 + 1) + 1 = 32", "tone": "danger", "fill": "danger"})),
+        step("Now add the small numbers first: 1 + 1 = 2 exactly. Aligning 2 = 1.0000 × 2¹ to exponent 5 shifts it 4 places: 0.0001, with nothing left over. 32 + 2 = 1.0001 × 2⁵ = 34 exactly.",
+             ("yl", {"text": "y = 2"}), ("y", {"bits": "0.0001"}), ("yg", {"bits": "00"}),
+             ("res", {"label": "32 + (1 + 1) = 34", "tone": "success", "fill": "success"})),
+        step("So (32 + 1) + 1 ≠ 32 + (1 + 1): floating-point addition is not associative. Adding the small terms first keeps them from being absorbed.",
+             ("note", {"text": "order matters: add small numbers first", "tone": "subject"})),
+    ]
+    return spec("Absorption and the loss of associativity", (640, 280), (360, 280),
+                "A toy format with 4 fraction bits: x = 32 = 1.0000 × 2⁵ and y = 1 = 1.0000 × 2⁰. Neighbours of 32 are 2 apart.",
+                els, steps)
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

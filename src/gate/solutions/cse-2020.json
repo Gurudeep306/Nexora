@@ -2439,27 +2439,32 @@
       }
     },
     "cse-2020-cs-29": {
-      "approach": "Decode both IEEE-754 values, divide, and re-encode the quotient.",
+      "approach": "Concept tested: **floating-point division**. Decode both registers (40 and −10); the quotient is $-4 = -1.0 \\times 2^{2}$. In fields: sign $0 \\oplus 1$, exponent $e_1 - e_2 + 127$, significand $1.25 / 1.25 = 1$.",
       "concepts": [
-        "IEEE-754 single precision",
-        "Bias 127"
+        "IEEE-754 decoding",
+        "Division: subtract exponents, add the bias",
+        "Sign XOR"
       ],
       "steps": [
         {
-          "title": "Decode R1",
-          "body": "0x42200000 = 0 10000100 0100…0: sign +, exponent $132 - 127 = 5$, significand $1.01_2 = 1.25$. $$R1 = 1.25\\times 2^5 = 40$$"
+          "title": "Decode R1 = 0x42200000",
+          "body": "$0\\ 10000100\\ 0100\\ldots$: $1.01_2 \\times 2^{132-127} = 1.25 \\times 32 = 40$."
         },
         {
-          "title": "Decode R2",
-          "body": "0xC1200000 = 1 10000010 0100…0: sign −, exponent $130-127 = 3$, significand $1.25$. $$R2 = -1.25\\times 2^3 = -10$$"
+          "title": "Decode R2 = 0xC1200000",
+          "body": "$1\\ 10000010\\ 0100\\ldots$: $-1.25 \\times 2^{3} = -10$."
         },
         {
-          "title": "Divide and encode",
-          "body": "$R3 = 40 / (-10) = -4 = -1.0\\times 2^2$. Sign 1, exponent $2 + 127 = 129 = 10000001_2$, fraction 0: $$1\\,10000001\\,000\\ldots0 = \\texttt{0xC0800000}$$"
+          "title": "Divide by fields",
+          "body": "Sign $0 \\oplus 1 = 1$. Significand $1.25 / 1.25 = 1.0$ (fraction 0). Exponent field $132 - 130 + 127 = 129$."
+        },
+        {
+          "title": "Pack",
+          "body": "$1\\ 10000001\\ 0\\ldots0 = 1100\\,0000\\,1000\\,0000\\ldots = \\texttt{0xC0800000} = -4$: option (B)."
         }
       ],
       "answer": {
-        "value": "0xC0800000",
+        "value": "`0xC0800000` $= -4$ — option (B)",
         "choice": [
           "B"
         ],
@@ -2469,26 +2474,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "0x40800000 is +4; the quotient is negative."
+          "reason": "`0x40800000` is $+4$: the sign was not XORed."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Encodes −1.0 × 2²."
+          "reason": "$40 / (-10) = -4 = -1.0 \\times 2^2$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "0x83400000 has exponent field 6 → a tiny value near 10⁻³⁷."
+          "reason": "`0x83400000` has exponent field 6, i.e. about $-1.5 \\times 2^{-121}$: the bias must be added back once after subtracting the fields, and here it was not handled."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "0xC8500000 has exponent field 144 → about −2.1 × 10⁵."
+          "reason": "`0xC8500000` has exponent field 144, about $-1.6 \\times 2^{17}$: far too large, and its fraction is not 0 although $1.25/1.25 = 1$."
         }
       ],
-      "shortcut": "Signs differ → result negative; exponents subtract 5 − 3 = 2 and significands 1.25/1.25 = 1, so −1.0 × 2² directly.",
-      "verification": "Re-decode 0xC0800000: sign −, exponent 129 − 127 = 2, significand 1 → −4 = 40/−10."
+      "shortcut": "$R1 = 4 \\times |R2|$ exactly (same fraction 0100…), so $R3 = -4$: take `40800000` and set the sign bit.",
+      "pitfalls": [
+        "Subtracting the exponent fields without adding 127 back.",
+        "Forgetting the sign."
+      ],
+      "verification": "Decode `C0800000`: $-1.0 \\times 2^{129-127} = -4$, and $-4 \\times -10 = 40$. ✓"
     },
     "cse-2020-cs-30": {
       "approach": "Find the set-index field: 256 B blocks give an 8-bit offset, 64 KB / (256 B × 4) = 64 sets give 6 index bits, so set = (address >> 8) mod 64.",
