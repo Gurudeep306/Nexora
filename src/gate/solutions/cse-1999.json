@@ -308,24 +308,32 @@
       "verification": "Both constructions are the standard textbook ones."
     },
     "cse-1999-a-7": {
-      "approach": "Evaluate each option with the gate definitions.",
+      "approach": "Concept tested: **gates with tied or constant inputs** and **controlling values**. Evaluate each option for $x = 0$ and $x = 1$ (two rows decide everything) and look for the one that is not $\\overline{x}$.",
       "concepts": [
-        "NAND",
-        "NOR",
-        "Boolean identities"
+        "NAND and NOR",
+        "Controlling values",
+        "Tied inputs"
       ],
       "steps": [
         {
-          "title": "Evaluate",
-          "body": "- $x$ NAND $x=\\overline{x\\cdot x}=\\overline{x}$\n- $x$ NOR $x=\\overline{x+x}=\\overline{x}$\n- $x$ NAND $1=\\overline{x\\cdot1}=\\overline{x}$\n- $x$ NOR $1=\\overline{x+1}=\\overline{1}=0$"
+          "title": "Tie both inputs",
+          "body": "$x$ NAND $x = \\overline{x \\cdot x} = \\overline{x}$ and $x$ NOR $x = \\overline{x + x} = \\overline{x}$: an AND or OR of a signal with itself is the signal, and the output bubble inverts it."
         },
         {
-          "title": "Pick the odd one",
-          "body": "Only $x$ NOR 1 is the constant 0, not $\\overline{x}$."
+          "title": "Feed a non-controlling constant",
+          "body": "1 does not control AND ($x \\cdot 1 = x$), so $x$ NAND $1 = \\overline{x \\cdot 1} = \\overline{x}$."
+        },
+        {
+          "title": "Feed a controlling constant",
+          "body": "1 controls OR ($x + 1 = 1$), so $x$ NOR $1 = \\overline{x + 1} = \\overline{1} = 0$ for **both** values of $x$. It is the constant 0, not $\\overline{x}$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "Only option (D) is not equivalent to $\\overline{x}$."
         }
       ],
       "answer": {
-        "value": "$x$ NOR 1",
+        "value": "(D) $x$ NOR 1",
         "choice": [
           "D"
         ],
@@ -335,25 +343,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Equals $\\overline{x}$."
+          "reason": "$\\overline{x \\cdot x} = \\overline{x}$: tying a NAND's inputs makes an inverter."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Equals $\\overline{x}$."
+          "reason": "$\\overline{x + x} = \\overline{x}$: tying a NOR's inputs makes an inverter."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Equals $\\overline{x}$."
+          "reason": "$\\overline{x \\cdot 1} = \\overline{x}$: 1 is the non-controlling value of NAND, so the gate inverts $x$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: always 0."
+          "reason": "$\\overline{x + 1} = 0$: 1 is the controlling value of NOR, so the output is stuck at 0."
         }
       ],
-      "verification": "x = 0: x NOR 1 = 0 but x̄ = 1."
+      "shortcut": "An inverting gate fed its **controlling** value gives a constant (NOR with 1 → 0, NAND with 0 → 1); fed the **non-controlling** value or its own input twice, it gives $\\overline{x}$.",
+      "pitfalls": [
+        "Thinking 'NOR inverts, so x NOR 1 = x̄': the 1 forces the OR part to 1 first.",
+        "Confusing x NOR 1 with x NOR 0, which is the inverter."
+      ],
+      "verification": "Two-row table: for $x = 0, 1$ options (A)–(C) give $1, 0$; option (D) gives $0, 0$."
     },
     "cse-1999-a-8": {
       "approach": "Read minterms (A,B,C,D with A as MSB), group using don't-cares only if they help, then compare with the options.",
