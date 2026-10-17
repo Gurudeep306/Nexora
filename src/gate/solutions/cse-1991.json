@@ -60,23 +60,24 @@
       "verification": "4 modules, 16 words: low-order puts word 5 in module $5 \\bmod 4 = 1$ and word 6 in module 2; high-order puts words 4–7 all in module 1. ✓"
     },
     "cse-1991-a-1-iii": {
-      "approach": "Add the terms exactly as printed and convert the total to binary, splitting it into powers of two.",
+      "approach": "Concept tested: counting 1s in binary. Evaluate the expression **exactly as printed**, then split the total into powers of two (or read it as hex).",
       "concepts": [
-        "binary representation",
-        "powers of two"
+        "Binary representation",
+        "Powers of two",
+        "Counting 1s"
       ],
       "steps": [
         {
-          "title": "Evaluate the expression",
-          "body": "$16^3 = 4096$, $16^2 = 256$, so\n\n$$4096 + 9 + 256 + 7 + 16 + 5 + 3 = 4096 + 256 + (9+7+16+5+3) = 4096 + 256 + 40 = 4392$$"
+          "title": "Add the terms as printed",
+          "body": "$16^3 + 9 + 16^2 + 7 + 16 + 5 + 3 = 4096 + 256 + 16 + (9 + 7 + 5 + 3) = 4096 + 256 + 16 + 24 = 4392$."
         },
         {
-          "title": "Split into powers of two",
-          "body": "$40 = 32 + 8$, so $4392 = 2^{12} + 2^{8} + 2^{5} + 2^{3}$.\n\nBinary: $1\\,0001\\,0010\\,1000_2$ (hex $1128_{16}$)."
+          "title": "Write it in hex",
+          "body": "$4392 = 4096 + 256 + 40 = 1\\cdot16^3 + 1\\cdot16^2 + 2\\cdot16 + 8 = (1128)_{16}$."
         },
         {
           "title": "Count the 1s",
-          "body": "Four distinct powers of two ⇒ **4** ones."
+          "body": "$1 \\to 1$, $1 \\to 1$, $2 \\to 1$, $8 \\to 1$: four 1s. In binary, $4392 = (1\\,0001\\,0010\\,1000)_2$."
         }
       ],
       "answer": {
@@ -84,10 +85,12 @@
         "number": 4,
         "matchesKey": true
       },
+      "shortcut": "Group the small terms: $9 + 7 + 5 + 3 = 24 = 16 + 8$, so the total is $16^3 + 16^2 + 2\\cdot16 + 8$; every hex digit is a single power of two, so there are four 1s.",
       "pitfalls": [
-        "Reading the expression as hex digits $9,7,5,3$ in positions — the terms are simply added."
+        "Reading the expression as $9\\cdot16^3 + 7\\cdot16^2 + 5\\cdot16 + 3 = (9753)_{16}$, which has nine 1s. That may have been the paper's intent, but the printed question (and the recorded key) is the sum.",
+        "Adding $16 + 5 + 3$ but forgetting the $+9$ and $+7$ terms."
       ],
-      "verification": "$0x1128 = 1\\cdot4096 + 1\\cdot256 + 2\\cdot16 + 8 = 4096+256+32+8 = 4392$ ✓; digits 1,1,2,8 contribute 1+1+1+1 ones."
+      "verification": "$4392 = 4096 + 256 + 32 + 8$: four distinct powers of two."
     },
     "cse-1991-a-1-iv": {
       "approach": "The 8087 coprocessor shares the local bus with the 8086 and needs the queue-status (QS0/QS1) and RQ/GT lines, which the 8086 provides only in maximum mode.",

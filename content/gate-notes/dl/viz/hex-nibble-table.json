@@ -1,0 +1,142 @@
+{
+ "version": 1,
+ "title": "The sixteen hex digits as 4-bit groups, with their count of 1s",
+ "width": 548,
+ "height": 290,
+ "intro": "Two tables. Left: hex digits 0 to 7, right: 8 to F. Each row gives the digit, its four bits, how many of those bits are 1, and its decimal value. For example 7 is 0111 with three 1s, and F is 1111 with four 1s.",
+ "elements": [
+  {
+   "id": "tl",
+   "type": "table",
+   "x": 8,
+   "y": 8,
+   "cellW": 64,
+   "cellH": 30,
+   "rows": [
+    [
+     "hex",
+     "bits",
+     "1s",
+     "dec"
+    ],
+    [
+     "0",
+     "0000",
+     "0",
+     "0"
+    ],
+    [
+     "1",
+     "0001",
+     "1",
+     "1"
+    ],
+    [
+     "2",
+     "0010",
+     "1",
+     "2"
+    ],
+    [
+     "3",
+     "0011",
+     "2",
+     "3"
+    ],
+    [
+     "4",
+     "0100",
+     "1",
+     "4"
+    ],
+    [
+     "5",
+     "0101",
+     "2",
+     "5"
+    ],
+    [
+     "6",
+     "0110",
+     "2",
+     "6"
+    ],
+    [
+     "7",
+     "0111",
+     "3",
+     "7"
+    ]
+   ],
+   "header": true,
+   "mono": true
+  },
+  {
+   "id": "tr",
+   "type": "table",
+   "x": 280,
+   "y": 8,
+   "cellW": 64,
+   "cellH": 30,
+   "rows": [
+    [
+     "hex",
+     "bits",
+     "1s",
+     "dec"
+    ],
+    [
+     "8",
+     "1000",
+     "1",
+     "8"
+    ],
+    [
+     "9",
+     "1001",
+     "2",
+     "9"
+    ],
+    [
+     "A",
+     "1010",
+     "2",
+     "10"
+    ],
+    [
+     "B",
+     "1011",
+     "3",
+     "11"
+    ],
+    [
+     "C",
+     "1100",
+     "2",
+     "12"
+    ],
+    [
+     "D",
+     "1101",
+     "3",
+     "13"
+    ],
+    [
+     "E",
+     "1110",
+     "3",
+     "14"
+    ],
+    [
+     "F",
+     "1111",
+     "4",
+     "15"
+    ]
+   ],
+   "header": true,
+   "mono": true
+  }
+ ],
+ "steps": []
+}

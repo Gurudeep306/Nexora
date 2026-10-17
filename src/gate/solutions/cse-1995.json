@@ -1909,19 +1909,23 @@
       "verification": "The largest variant (two reals, 16 B) must fit, so 20 B per record is the minimum."
     },
     "cse-1995-a-37": {
-      "approach": "The expression is a hex number: $3\\cdot16^3 + 15\\cdot16^2 + 5\\cdot16 + 3 = (3F53)_{16}$; count 1s per hex digit.",
+      "approach": "Concept tested: a sum of powers of 16 is a hex numeral. $4096 = 16^3$, $256 = 16^2$, so the expression is $(3F53)_{16}$; count the 1s one hex digit at a time.",
       "concepts": [
-        "Hexadecimal",
-        "Binary"
+        "Powers of 16 as hex digits",
+        "Counting 1s per hex digit"
       ],
       "steps": [
         {
-          "title": "Read as hex",
-          "body": "$4096 = 16^3$, $256 = 16^2$, so the value is $(3\\,F\\,5\\,3)_{16}$."
+          "title": "Recognise the powers of 16",
+          "body": "$3\\cdot4096 + 15\\cdot256 + 5\\cdot16 + 3 = 3\\cdot16^3 + 15\\cdot16^2 + 5\\cdot16 + 3 = (3F53)_{16}$."
         },
         {
-          "title": "Count 1s",
-          "body": "$3 = 0011$ (2), $F = 1111$ (4), $5 = 0101$ (2), $3 = 0011$ (2). Total $= 2 + 4 + 2 + 2 = 10$."
+          "title": "Count 1s per digit",
+          "body": "$3 = 0011 \\to 2$, $F = 1111 \\to 4$, $5 = 0101 \\to 2$, $3 = 0011 \\to 2$."
+        },
+        {
+          "title": "Add",
+          "body": "$2 + 4 + 2 + 2 = 10$."
         }
       ],
       "answer": {
@@ -1935,25 +1939,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "8 misses two 1s (e.g. counting 15 as 2 bits)."
+          "reason": "8 misses two 1s, typically by counting F as 2 or 5 as 1."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "9 miscounts one digit."
+          "reason": "9 is one short; a single digit was miscounted."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: 0011 1111 0101 0011."
+          "reason": "$(3F53)_{16} = 0011\\,1111\\,0101\\,0011$ has ten 1s."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "12 overcounts."
+          "reason": "12 overcounts by two, typically by counting each 3 = 0011 as three 1s."
         }
       ],
-      "verification": "Decimal value $12288 + 3840 + 80 + 3 = 16211 = 0011\\,1111\\,0101\\,0011_2$, ten 1s."
+      "shortcut": "Never compute the decimal value: each coefficient is a hex digit, and the popcount is the sum of the digit popcounts.",
+      "pitfalls": [
+        "Computing the decimal value (16211) and converting it by repeated division: slow and error-prone."
+      ],
+      "verification": "$(3F53)_{16} = 16211 = 8192 + 4096 + 2048 + 1024 + 512 + 256 + 64 + 16 + 2 + 1$: ten powers of two."
     },
     "cse-1995-a-38": {
       "approach": "Compute $a \\times b$ (perpendicular to both) and normalise it.",

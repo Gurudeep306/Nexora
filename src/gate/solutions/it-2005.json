@@ -2628,23 +2628,32 @@
       "verification": "$N=2$: 8 multiple faults ($3^2-1$) — 4 single + 4 double."
     },
     "it-2005-cs-47": {
-      "approach": "Convert both octal numbers to decimal, multiply, and convert the product back to octal; then compare with each option.",
+      "approach": "Concept tested: arithmetic with octal fractions. The safest route is to convert both factors to decimal (or to fractions), multiply, and convert the product back to octal; then compare with every option.",
       "concepts": [
         "Octal fractions",
-        "Base conversion"
+        "Base conversion",
+        "Arithmetic in base 8"
       ],
       "steps": [
         {
-          "title": "Convert to decimal",
-          "body": "$(33.4)_8 = 3\\cdot 8 + 3 + \\tfrac{4}{8} = 24 + 3 + 0.5 = 27.5$\n\n$(23.4)_8 = 2\\cdot 8 + 3 + \\tfrac{4}{8} = 16 + 3 + 0.5 = 19.5$"
+          "title": "Convert the factors",
+          "body": "$(33.4)_8 = 27 + \\tfrac48 = 27.5$ and $(23.4)_8 = 19 + \\tfrac48 = 19.5$."
         },
         {
           "title": "Multiply",
-          "body": "$27.5 \\times 19.5 = 27.5 \\times 20 - 27.5 \\times 0.5 = 550 - 13.75 = 536.25$"
+          "body": "$27.5 \\times 19.5 = 536.25$."
         },
         {
-          "title": "Back to octal",
-          "body": "Integer part: $536 = 1\\cdot 512 + 0\\cdot 64 + 3\\cdot 8 + 0 \\Rightarrow (1030)_8$.\n\nFraction: $0.25 \\times 8 = 2.0 \\Rightarrow (.2)_8$.\n\nProduct $= (1030.2)_8$, which is none of A, B, C."
+          "title": "Integer part back to octal",
+          "body": "$536 = 8\\cdot67 + 0$, $67 = 8\\cdot8 + 3$, $8 = 8\\cdot1 + 0$, $1 = 8\\cdot0 + 1$; read upward: $(1030)_8$."
+        },
+        {
+          "title": "Fraction part back to octal",
+          "body": "$0.25 \\times 8 = 2.0$, so the fraction is $(0.2)_8$. The product is $(1030.2)_8$."
+        },
+        {
+          "title": "Compare with the options",
+          "body": "None of A, B, C equals $(1030.2)_8$, so the answer is D."
         }
       ],
       "answer": {
@@ -2658,29 +2667,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$(1053.6)_8 = 512 + 40 + 3 + 0.75 = 555.75$, not $536.25$."
+          "reason": "$(1053.6)_8 = 555.75 \\ne 536.25$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$(1053.2)_8 = 555.25$, not $536.25$."
+          "reason": "$(1053.2)_8 = 555.25 \\ne 536.25$; it looks like a carry was mishandled in base-8 multiplication."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$(1024.2)_8 = 512 + 16 + 4 + 0.25 = 532.25$, not $536.25$."
+          "reason": "$(1024.2)_8 = 532.25 \\ne 536.25$; close, but four too small."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: the true product $(1030.2)_8$ is not listed."
+          "reason": "The product is $(1030.2)_8$, which is not listed."
         }
       ],
+      "shortcut": "Work in eighths: $(33.4)_8 = 220/8$ and $(23.4)_8 = 156/8$, so the product is $34320/64 = 536.25$. A quick check of the options: $(10xx.2)_8$ needs $512 + 8x + y = 536$, so $8x + y = 24 = (30)_8$.",
       "pitfalls": [
-        "Treating the octal digits as decimal and multiplying 33.4 × 23.4 directly.",
-        "Forgetting that one octal fractional digit is worth eighths, not tenths."
+        "Multiplying the digit strings as decimal numbers ($33.4 \\times 23.4 = 781.56$).",
+        "Converting the fraction $.4_8$ as $0.4$ instead of $4/8 = 0.5$."
       ],
-      "verification": "$(1030.2)_8 = 512 + 24 + 0.25 = 536.25 = 27.5 \\times 19.5$. ✓"
+      "verification": "$(1030.2)_8 = 512 + 24 + 0.25 = 536.25 = 27.5 \\times 19.5$."
     },
     "it-2005-cs-48": {
       "approach": "The second MUX outputs x when its select is 1 and y when it is 0. Make the first MUX produce A + B on that select line, then choose x and y so the output is the complement.",

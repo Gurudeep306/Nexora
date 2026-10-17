@@ -198,24 +198,27 @@
       "verification": "Both witnesses read directly from $R$."
     },
     "cse-2009-cs-5": {
-      "approach": "Go through binary: each octal digit is 3 bits, regroup into 4-bit groups from the right to read hexadecimal.",
+      "approach": "Concept tested: octal → hex through binary, and recognising a value written in another base. Expand $(1217)_8$ to bits and regroup in fours from the right; compare each option by value.",
       "concepts": [
-        "Base conversion",
-        "Octal",
-        "Hexadecimal"
+        "Grouping theorem",
+        "Octal to hex via binary"
       ],
       "steps": [
         {
-          "title": "Octal → binary",
-          "body": "$1\\to001,\\;2\\to010,\\;1\\to001,\\;7\\to111$, so $(1217)_8 = 001\\,010\\,001\\,111 = (1010001111)_2$."
+          "title": "Expand each octal digit to 3 bits",
+          "body": "$1 \\to 001$, $2 \\to 010$, $1 \\to 001$, $7 \\to 111$: $001\\,010\\,001\\,111$."
         },
         {
-          "title": "Binary → hex",
-          "body": "Group 4 bits from the right: $0010\\;1000\\;1111 = 2\\;8\\;F$, so $(1217)_8 = (28F)_{16} = (028F)_{16}$."
+          "title": "Regroup in fours from the right",
+          "body": "Forget the 3-bit boundaries and cut the same twelve bits into fours, starting at the right end: $0010\\;1000\\;1111$."
         },
         {
-          "title": "Decimal check",
-          "body": "$1\\cdot512 + 2\\cdot64 + 1\\cdot8 + 7 = 512+128+8+7 = 655$ and $2\\cdot256 + 8\\cdot16 + 15 = 512+128+15 = 655$. ✓"
+          "title": "Read the hex digits",
+          "body": "$2, 8, F$: $(1217)_8 = (28F)_{16} = (028F)_{16}$ (a leading 0 changes nothing)."
+        },
+        {
+          "title": "Decimal value for the remaining options",
+          "body": "$(1217)_8 = 512 + 128 + 8 + 7 = 655$."
         }
       ],
       "answer": {
@@ -229,25 +232,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Same digits in a different base: $(1217)_{16} = 4631 \\ne 655$."
+          "reason": "$(1217)_{16} = 4631$: copying the digits into another base changes the value."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct — $(028F)_{16} = 655 = (1217)_8$."
+          "reason": "$(028F)_{16} = 2\\cdot256 + 8\\cdot16 + 15 = 655$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "The value is $655$ in decimal, not $2297$."
+          "reason": "The decimal value is 655, not 2297; 2297 does not come from any correct reading of 1217."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$(0B17)_{16} = 2839 \\ne 655$."
+          "reason": "$(0B17)_{16} = 2839$. It looks like a partial regrouping but the bits do not match."
         }
       ],
-      "verification": "Both sides evaluate to 655 in decimal."
+      "shortcut": "Only B and D are hex forms that could come from grouping; the last hex digit is the last four bits $1111 = F$, which only B has.",
+      "pitfalls": [
+        "Expanding an octal digit to 4 bits instead of 3.",
+        "Thinking a leading 0 in $028F$ makes it different from $28F$."
+      ],
+      "verification": "$(028F)_{16} = 655 = (1217)_8$."
     },
     "cse-2009-cs-6": {
       "approach": "Rewrite AB + C in product-of-sums form, (A+C)(B+C), which maps directly onto a two-level NOR–NOR circuit; then show 2 gates are not enough.",

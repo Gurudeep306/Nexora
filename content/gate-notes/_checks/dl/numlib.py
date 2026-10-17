@@ -73,7 +73,8 @@ def expansion_terms(numeral, base):
 
 def to_base(n, base, width=0):
     """Non-negative integer → base-b numeral (upper-case digits), zero-padded to width."""
-    assert n >= 0 and 2 <= base <= 36
+    assert n >= 0 and 2 <= base <= 36 and Fraction(n).denominator == 1
+    n = int(n)
     if n == 0:
         s = "0"
     else:

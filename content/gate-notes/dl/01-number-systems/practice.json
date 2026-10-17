@@ -197,5 +197,211 @@
     ],
     "blocks": ["count-solutions", "digit-limit"],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is $(7354)_8$ in hexadecimal?",
+    "options": [
+      { "l": "A", "t": "$(EEC)_{16}$" },
+      { "l": "B", "t": "$(3820)_{16}$" },
+      { "l": "C", "t": "$(7354)_{16}$" },
+      { "l": "D", "t": "$(1DD8)_{16}$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Expand each octal digit to three bits: $7 \\to 111$, $3 \\to 011$, $5 \\to 101$, $4 \\to 100$, giving $111\\,011\\,101\\,100$.",
+      "Regroup in fours from the right: $1110\\;1110\\;1100$.",
+      "Read the hex digits: $1110 = E$, $1110 = E$, $1100 = C$, so the answer is $(EEC)_{16}$.",
+      "Check: $(7354)_8 = 7\\cdot512 + 3\\cdot64 + 5\\cdot8 + 4 = 3820$ and $(EEC)_{16} = 14\\cdot256 + 14\\cdot16 + 12 = 3820$."
+    ],
+    "concept": "Octal to hex goes through binary: 3 bits per octal digit, then regroup in fours from the point.",
+    "common_wrong": [
+      { "answer": "B", "why": "3820 is the decimal value. Writing it with a hex subscript skips the last step; $(3820)_{16}$ is 14368." },
+      { "answer": "C", "why": "Each octal digit was expanded to four bits instead of three ($0111\\,0011\\,0101\\,0100$), which just copies the digits. An octal digit is exactly three bits." }
+    ],
+    "blocks": ["octal-hex", "grouping"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q02",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many 1s are there in the binary representation of $(7E5F)_{16}$?",
+    "answer": 12,
+    "solution": [
+      "Each hex digit is its own 4-bit group, so add the 1-counts of the digits.",
+      "$7 = 0111 \\to 3$, $E = 1110 \\to 3$, $5 = 0101 \\to 2$, $F = 1111 \\to 4$.",
+      "Total: $3 + 3 + 2 + 4 = 12$."
+    ],
+    "concept": "The number of 1s is the sum of the 1-counts of the hex digits.",
+    "common_wrong": [
+      { "answer": 11, "why": "E (1110) was counted as two 1s. E has three." },
+      { "answer": 16, "why": "16 is the number of bits, not the number of 1s." }
+    ],
+    "blocks": ["popcount"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q03",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is $(3A.C)_{16}$ in octal?",
+    "options": [
+      { "l": "A", "t": "$(72.6)_8$" },
+      { "l": "B", "t": "$(72.14)_8$" },
+      { "l": "C", "t": "$(58.6)_8$" },
+      { "l": "D", "t": "$(35.6)_8$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Expand to bits, keeping the point: $0011\\;1010\\,.\\,1100$.",
+      "Integer part, threes leftward from the point: $111\\;010 \\to 7, 2$.",
+      "Fraction part, threes rightward from the point: $110\\;0(00) \\to 6, 0$; the trailing 0 can be dropped.",
+      "So the answer is $(72.6)_8$. Check: $(3A.C)_{16} = 58 + \\tfrac{12}{16} = 58.75$ and $(72.6)_8 = 58 + \\tfrac68 = 58.75$."
+    ],
+    "concept": "Fraction bits are grouped rightward from the point and padded on the right.",
+    "common_wrong": [
+      { "answer": "B", "why": "The four fraction bits $1100$ were grouped from their right end ($1\\;100$, padded to $001\\;100$), which inserts zeros next to the point. $(72.14)_8 = 58.1875$." },
+      { "answer": "C", "why": "The integer part was written in decimal (58) instead of octal. 58 is not even a valid octal numeral." }
+    ],
+    "blocks": ["grouping", "padding", "trap-frac-pad"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q04",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following are equal to $(2301)_4$?",
+    "options": [
+      { "l": "A", "t": "$(10110001)_2$" },
+      { "l": "B", "t": "$(261)_8$" },
+      { "l": "C", "t": "$(B1)_{16}$" },
+      { "l": "D", "t": "$(1B)_{16}$" }
+    ],
+    "answer": ["A", "B", "C"],
+    "solution": [
+      "Each base-4 digit is two bits: $2 \\to 10$, $3 \\to 11$, $0 \\to 00$, $1 \\to 01$, so $(2301)_4 = (10110001)_2$. (A) is equal.",
+      "Threes from the right: $10\\;110\\;001 \\to 010\\;110\\;001 = (261)_8$. (B) is equal.",
+      "Fours from the right: $1011\\;0001 = (B1)_{16}$. (C) is equal.",
+      "(D) $(1B)_{16} = 27$, but $(2301)_4 = 2\\cdot64 + 3\\cdot16 + 0 + 1 = 177$. Not equal."
+    ],
+    "concept": "Base 4, octal and hex all meet in binary.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "Option D has the hex digits of (C) in reverse order. Reversing digits changes the value." },
+      { "answer": ["A", "C"], "why": "Option B was rejected after grouping the 8 bits in threes from the left ($101\\;100\\;01$). Groups start at the right end of a whole number." }
+    ],
+    "blocks": ["base4", "octal-hex", "grouping"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q05",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Compute $(57)_8 \\times (6)_8$ and write the product in octal. Enter the octal digits as a number (for example, enter $(123)_8$ as 123).",
+    "answer": 432,
+    "solution": [
+      "Units digit: $7 \\times 6 = 42 = 5\\cdot8 + 2$. Write 2, carry 5.",
+      "Next digit: $5 \\times 6 + 5 = 35 = 4\\cdot8 + 3$. Write 3, carry 4.",
+      "The final carry 4 is the leading digit: $(432)_8$.",
+      "Check: $(57)_8 = 47$, $47 \\times 6 = 282$, and $(432)_8 = 256 + 24 + 2 = 282$."
+    ],
+    "concept": "Multiplication in base b: each partial product is split into a digit and a carry by dividing by b.",
+    "common_wrong": [
+      { "answer": 342, "why": "$57 \\times 6 = 342$ is the product of the digit strings read as decimal numbers." },
+      { "answer": 282, "why": "282 is the correct value, but in decimal; the question asks for the octal digits." }
+    ],
+    "blocks": ["base-arithmetic"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q06",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is $(FFFF)_{16} - 1$ in octal?",
+    "options": [
+      { "l": "A", "t": "$(177776)_8$" },
+      { "l": "B", "t": "$(177777)_8$" },
+      { "l": "C", "t": "$(77776)_8$" },
+      { "l": "D", "t": "$(FFFE)_8$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$(FFFF)_{16} - 1 = (FFFE)_{16}$, which is fifteen 1s followed by a 0: $1111\\,1111\\,1111\\,1110$.",
+      "Group 16 bits in threes from the right: $1\\;111\\;111\\;111\\;111\\;110$.",
+      "Read the digits: $1, 7, 7, 7, 7, 6$, so the answer is $(177776)_8$. Check: $2^{16} - 2 = 65534 = (177776)_8$."
+    ],
+    "concept": "Hex to octal through binary; 16 bits make five full octal groups and one extra leading bit.",
+    "common_wrong": [
+      { "answer": "B", "why": "That is $(FFFF)_{16}$ itself in octal; the subtraction of 1 was forgotten." },
+      { "answer": "C", "why": "The leading single bit (the sixth octal digit) was dropped: 16 bits need six octal digits, not five." }
+    ],
+    "blocks": ["octal-hex", "grouping"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q07",
+    "type": "NAT",
+    "marks": 1,
+    "text": "What is the largest number of octal digits needed to write an unsigned 32-bit value?",
+    "answer": 11,
+    "solution": [
+      "One octal digit holds exactly 3 bits.",
+      "32 bits need $\\lceil 32 / 3 \\rceil = 11$ groups: ten full groups of three (30 bits) and one group holding the top 2 bits.",
+      "The largest value, $2^{32} - 1$, is $(37777777777)_8$: eleven digits."
+    ],
+    "concept": "Each octal digit is 3 bits, so n bits need ⌈n/3⌉ octal digits.",
+    "common_wrong": [
+      { "answer": 10, "why": "$\\lfloor 32/3 \\rfloor = 10$ forgets the two leftover top bits, which still need a digit." },
+      { "answer": 8, "why": "8 is the number of hex digits for 32 bits." }
+    ],
+    "blocks": ["grouping"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q08",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "How many 1s are in the binary representation of $4 \\cdot 16^3 + 2 \\cdot 16 + 7$?",
+    "options": [
+      { "l": "A", "t": "4" },
+      { "l": "B", "t": "5" },
+      { "l": "C", "t": "6" },
+      { "l": "D", "t": "13" }
+    ],
+    "answer": "B",
+    "solution": [
+      "The coefficients are the hex digits, with a 0 for the missing $16^2$ term: $(4027)_{16}$.",
+      "1-counts: $4 \\to 1$, $0 \\to 0$, $2 \\to 1$, $7 \\to 3$.",
+      "Total: $1 + 0 + 1 + 3 = 5$."
+    ],
+    "concept": "A sum of powers of 16 with coefficients 0–15 is a hex numeral; count 1s per digit.",
+    "common_wrong": [
+      { "answer": "A", "why": "This counts one 1 per non-zero digit instead of the 1s inside each digit (7 = 0111 has three)." },
+      { "answer": "D", "why": "13 is the sum of the coefficients $4 + 2 + 7$, not a count of bits." }
+    ],
+    "blocks": ["hex-expansion", "popcount"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-02-q09",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Evaluate $(1F3)_{16} - (765)_8$ and give the answer in decimal.",
+    "answer": -2,
+    "solution": [
+      "The two numerals are in different bases, so convert both (through binary or directly).",
+      "$(1F3)_{16} = 256 + 15\\cdot16 + 3 = 499$.",
+      "$(765)_8 = 7\\cdot64 + 6\\cdot8 + 5 = 448 + 48 + 5 = 501$.",
+      "Difference: $499 - 501 = -2$. (In binary: $1\\,1111\\,0011 - 1\\,1111\\,0101$.)"
+    ],
+    "concept": "Numerals in different bases must be brought to a common base before subtracting.",
+    "common_wrong": [
+      { "answer": 2, "why": "The operands were subtracted in the wrong order, or the sign was dropped. The octal number is the larger one." },
+      { "answer": -266, "why": "The octal numeral was read as decimal: $499 - 765 = -266$. Every numeral must be converted from its own base." }
+    ],
+    "blocks": ["octal-hex", "hex-expansion"],
+    "source": "nexora"
   }
 ]

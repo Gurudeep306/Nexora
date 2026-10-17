@@ -1,0 +1,267 @@
+{
+ "version": 1,
+ "title": "Column addition in base 8",
+ "width": 560,
+ "height": 280,
+ "intro": "Two octal numbers lined up by place: 37 above 45. Carries will appear above the columns.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "Adding (37)₈ + (45)₈: a column that reaches 8 carries",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 220,
+   "y": 78,
+   "text": " ",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 290,
+   "y": 78,
+   "text": "3",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true
+  },
+  {
+   "id": "a2",
+   "type": "text",
+   "x": 360,
+   "y": 78,
+   "text": "7",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true
+  },
+  {
+   "id": "b0",
+   "type": "text",
+   "x": 220,
+   "y": 122,
+   "text": " ",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true
+  },
+  {
+   "id": "b1",
+   "type": "text",
+   "x": 290,
+   "y": 122,
+   "text": "4",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true
+  },
+  {
+   "id": "b2",
+   "type": "text",
+   "x": 360,
+   "y": 122,
+   "text": "5",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true
+  },
+  {
+   "id": "plus",
+   "type": "text",
+   "x": 170,
+   "y": 122,
+   "text": "+",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true
+  },
+  {
+   "id": "bar",
+   "type": "line",
+   "points": [
+    [
+     180,
+     146
+    ],
+    [
+     390,
+     146
+    ]
+   ]
+  },
+  {
+   "id": "s0",
+   "type": "text",
+   "x": 220,
+   "y": 176,
+   "text": "",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true,
+   "tone": "success",
+   "weight": "bold"
+  },
+  {
+   "id": "cy0",
+   "type": "text",
+   "x": 220,
+   "y": 44,
+   "text": "",
+   "anchor": "middle",
+   "size": 18,
+   "mono": true,
+   "tone": "warning"
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 290,
+   "y": 176,
+   "text": "",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true,
+   "tone": "success",
+   "weight": "bold"
+  },
+  {
+   "id": "cy1",
+   "type": "text",
+   "x": 290,
+   "y": 44,
+   "text": "",
+   "anchor": "middle",
+   "size": 18,
+   "mono": true,
+   "tone": "warning"
+  },
+  {
+   "id": "s2",
+   "type": "text",
+   "x": 360,
+   "y": 176,
+   "text": "",
+   "anchor": "middle",
+   "size": 28,
+   "mono": true,
+   "tone": "success",
+   "weight": "bold"
+  },
+  {
+   "id": "cy2",
+   "type": "text",
+   "x": 360,
+   "y": 44,
+   "text": "",
+   "anchor": "middle",
+   "size": 18,
+   "mono": true,
+   "tone": "warning"
+  },
+  {
+   "id": "work",
+   "type": "text",
+   "x": 280,
+   "y": 226,
+   "text": "",
+   "anchor": "middle",
+   "size": 16
+  },
+  {
+   "id": "chk",
+   "type": "text",
+   "x": 280,
+   "y": 258,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Units column: 7 + 5 = 12. In base 8, twelve is one eight and four units, so write 4 and carry 1 into the eights column.",
+   "patches": [
+    {
+     "id": "s2",
+     "set": {
+      "text": "4"
+     }
+    },
+    {
+     "id": "cy1",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "work",
+     "set": {
+      "text": "7 + 5 = 12 = 1·8 + 4"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Eights column: 3 + 4 + the carry 1 = 8. That is exactly one 64 and no eights, so write 0 and carry 1 again.",
+   "patches": [
+    {
+     "id": "s1",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "cy0",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "work",
+     "set": {
+      "text": "3 + 4 + 1 = 8 = 1·8 + 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Nothing is left to add except the carry, so it becomes the leading digit: (37)₈ + (45)₈ = (104)₈.",
+   "patches": [
+    {
+     "id": "s0",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "work",
+     "set": {
+      "text": "(37)₈ + (45)₈ = (104)₈"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check in decimal: 31 + 37 = 68, and (104)₈ = 64 + 4 = 68.",
+   "patches": [
+    {
+     "id": "chk",
+     "set": {
+      "text": "31 + 37 = 68 = 64 + 0·8 + 4 ✓"
+     }
+    }
+   ]
+  }
+ ]
+}
