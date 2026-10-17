@@ -104,23 +104,27 @@
       "verification": "For $S=\\{1,2\\}$: largest $=\\{(1,1),(1,2),(2,1),(2,2)\\}$ (4 $=2^2$), smallest $=\\{(1,1),(2,2)\\}$ (2 $=n$)."
     },
     "cse-2007-cs-3": {
-      "approach": "Count truth tables: a function is fixed by choosing an output bit for every input row.",
+      "approach": "Concept tested: **counting Boolean functions**. A function is its truth table's output column: one free bit per row.",
       "concepts": [
         "Truth table",
-        "Counting"
+        "Counting functions"
       ],
       "steps": [
         {
-          "title": "Rows",
-          "body": "$n$ Boolean variables give $2^n$ distinct input combinations (rows of the truth table)."
+          "title": "Count the rows",
+          "body": "$n$ Boolean variables have $2^n$ input combinations, so the truth table has $2^n$ rows."
         },
         {
-          "title": "Outputs",
-          "body": "Each row independently gets output 0 or 1, so the number of distinct functions is $2\\cdot2\\cdots2$ ($2^n$ times) $=2^{2^n}$."
+          "title": "Count the columns",
+          "body": "Each row's output is chosen independently as 0 or 1, so there are $2 \\times 2 \\times \\dots \\times 2$ ($2^n$ factors) $= 2^{2^n}$ different output columns, i.e. functions."
+        },
+        {
+          "title": "Check small n",
+          "body": "$n = 1$: $2^{2} = 4$ functions ($0, x, x', 1$); $n = 2$: $2^4 = 16$, the sixteen two-input functions."
         }
       ],
       "answer": {
-        "value": "$2^{2^n}$",
+        "value": "(C) $2^{2^n}$",
         "choice": [
           "C"
         ],
@@ -130,28 +134,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$n^2$ has no connection to truth tables; for $n=1$ it gives 1, but there are 4 functions."
+          "reason": "$n^2$ gives 1 for $n = 1$, but there are 4 functions of one variable."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$2^n$ is the number of rows, not the number of functions."
+          "reason": "$2^n$ is the number of rows (input combinations), not of functions."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$2$ choices for each of the $2^n$ rows: $2^{2^n}$."
+          "reason": "One free output bit for each of the $2^n$ rows."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$2^{n^2}$ would need $n^2$ rows; for $n=1$ it gives 2, not 4."
+          "reason": "$2^{n^2}$ gives 2 for $n = 1$ and 16 for $n = 2$ but 512 for $n = 3$, where the true count is 256."
         }
       ],
+      "shortcut": "Rows = $2^n$; functions = $2^{\\text{rows}}$.",
       "pitfalls": [
-        "Do not confuse the number of rows ($2^n$) with the number of functions ($2^{2^n}$)."
+        "Answering the number of rows ($2^n$) instead of the number of functions."
       ],
-      "verification": "$n=1$: the functions $0,1,x,\\bar x$ — exactly $2^{2^1}=4$. $n=2$: $2^4=16$ functions, the well-known count."
+      "verification": "Enumerating every column for $n = 1, 2, 3$ gives 4, 16, 256."
     },
     "cse-2007-cs-4": {
       "approach": "By Kuratowski, a non-planar graph contains a subdivision of $K_5$ or $K_{3,3}$; take the smaller one in edges.",

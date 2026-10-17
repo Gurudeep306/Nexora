@@ -3065,29 +3065,29 @@
       "verification": "Example for D: edges x–u, u–y, y–x, u–z. DFS x, u, y, then z. u is a cut vertex (z isolated), but x–y is a direct edge."
     },
     "cse-2021-1-cs-42": {
-      "approach": "Find the minterms of F with a quick truth table, complement them, then evaluate each option on the 8 rows.",
+      "approach": "Concept tested: **complement of a product of sums, compared by minterm sets**. Find the rows where $F = 1$, complement them, and list each option's rows.",
       "concepts": [
-        "Boolean algebra",
-        "Truth tables",
-        "Complement"
+        "Minterm sets",
+        "Complement",
+        "Canonical forms"
       ],
-      "given": "$F = (X+Y+Z)(\\overline{X}+Y)(\\overline{Y}+Z)$",
+      "given": "$F = (X + Y + Z)(\\overline{X} + Y)(\\overline{Y} + Z)$",
       "steps": [
         {
           "title": "Where F = 1",
-          "body": "$(X+Y+Z)$ kills 000; $(\\overline X+Y)$ kills $X=1,Y=0$ (100, 101); $(\\overline Y+Z)$ kills $Y=1,Z=0$ (010, 110). Remaining: $F = \\sum m(1, 3, 7)$, so $\\overline F = \\sum m(0, 2, 4, 5, 6)$."
+          "body": "$(X + Y + Z) = 0$ on row 000; $(\\overline{X} + Y) = 0$ on rows $10- = \\{4, 5\\}$; $(\\overline{Y} + Z) = 0$ on rows $-10 = \\{2, 6\\}$. So $F = \\Pi(0, 2, 4, 5, 6) = \\Sigma(1, 3, 7)$ and $\\overline{F} = \\Sigma(0, 2, 4, 5, 6)$."
         },
         {
-          "title": "Check the options",
-          "body": "| XYZ | $\\overline F$ | A | B | C | D |\n|---|---|---|---|---|---|\n| 000 | 1 | 1 | 1 | 1 | 1 |\n| 001 | 0 | 0 | 0 | 0 | 0 |\n| 010 | 1 | **0** | 1 | 1 | 1 |\n| 011 | 0 | 0 | 0 | 0 | 0 |\n| 100 | 1 | 1 | 1 | 1 | 1 |\n| 101 | 1 | 1 | 1 | 1 | 1 |\n| 110 | 1 | 1 | 1 | 1 | 1 |\n| 111 | 0 | 0 | 0 | 0 | 0 |\n\nB, C and D match $\\overline F$ on every row; A fails at 010."
+          "title": "(A)",
+          "body": "Its factors are 0 on rows $\\{7\\}$, $01- = \\{2, 3\\}$ and $-01 = \\{1, 5\\}$, so (A) $= \\Sigma(0, 4, 6)$. Not $\\overline{F}$ (the literals were complemented but the operators were not swapped)."
         },
         {
-          "title": "Algebraic check",
-          "body": "$\\overline F = \\sum m(0,2,4,5,6)$: $m(4,5) = X\\overline Y$, $m(0,2,4,6) = \\overline Z$, so $\\overline F = X\\overline Y + \\overline Z$ (B). Its product form $(X+\\overline Z)(\\overline Y+\\overline Z)$ expands to $X\\overline Y + \\overline Z$ (C)."
+          "title": "(B), (C), (D)",
+          "body": "(B) $X\\overline{Y} \\to 10-$, $\\overline{Z} \\to --0$: $\\{4, 5\\} \\cup \\{0, 2, 4, 6\\} = \\{0, 2, 4, 5, 6\\}$. (C) factors are 0 on $0-1 = \\{1, 3\\}$ and $-11 = \\{3, 7\\}$, so (C) $= \\Sigma(0, 2, 4, 5, 6)$. (D) $\\{4, 5\\} \\cup \\{2, 6\\} \\cup \\{0\\} = \\{0, 2, 4, 5, 6\\}$. All three equal $\\overline{F}$."
         }
       ],
       "answer": {
-        "value": "B, C, D",
+        "value": "(B), (C) and (D)",
         "choice": [
           "B",
           "C",
@@ -3099,28 +3099,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "This is the dual-with-complemented-literals, not the complement; at XYZ = 010 it gives 0 while $\\overline F = 1$."
+          "reason": "$\\Sigma(0, 4, 6)$; it misses rows 2 and 5 of $\\overline{F}$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Minimal SOP of $\\overline F$."
+          "reason": "$\\Sigma(0, 2, 4, 5, 6) = \\overline{F}$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$(X+\\overline Z)(\\overline Y+\\overline Z) = X\\overline Y + \\overline Z$."
+          "reason": "A POS whose maxterms are exactly $F$'s minterms 1, 3, 7."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Covers $m4,m5$ ($X\\overline Y$), $m2,m6$ ($Y\\overline Z$) and $m0$ — exactly $\\overline F$."
+          "reason": "The De Morgan expansion of $\\overline{F}$ (one term per factor of $F$)."
         }
       ],
+      "shortcut": "De Morgan gives (D) directly: $\\overline{F} = \\overline{X}\\,\\overline{Y}\\,\\overline{Z} + X\\overline{Y} + Y\\overline{Z}$. Then only (A) needs a row: at 010 (A) is 0 but $\\overline{F} = 1$.",
       "pitfalls": [
-        "Complementing each literal without swapping AND/OR (that is option A)."
+        "Complementing the literals without swapping AND and OR (option A).",
+        "Stopping after finding one correct option in an MSQ."
       ],
-      "verification": "Five ones in every correct column (rows 000, 010, 100, 101, 110)."
+      "verification": "Row 010: $F$'s third factor $\\overline{Y} + Z = 0$, so $\\overline{F} = 1$; (B) $\\overline{Z} = 1$ ✓, (C) $(0 + 1)(0 + 1) = 1$ ✓, (D) $Y\\overline{Z} = 1$ ✓, (A) $= 1 \\cdot 0 \\ldots = 0$ ✗."
     },
     "cse-2021-1-cs-43": {
       "approach": "Derive symmetry and transitivity from circularity plus the given property, and use the empty relation as the counterexample for non-reflexive cases.",

@@ -716,23 +716,23 @@
       "verification": "$n=1000$: $0.999^{2000}=e^{2000\\ln 0.999}\\approx e^{-2.001}\\approx0.135=e^{-2}$."
     },
     "cse-2010-cs-6": {
-      "approach": "Expand each product term over the missing variable and collect minterm indices with bit order $P,Q,R$ ($P$ is the MSB).",
+      "approach": "Concept tested: **expanding product terms into minterms**. Write each term as a pattern over $P, Q, R$ ($P$ is the most significant bit), expand the missing variable, and take the union.",
       "concepts": [
         "Minterms",
         "Canonical SOP"
       ],
       "steps": [
         {
-          "title": "Expand each term",
-          "body": "| Term | Fixed bits (PQR) | Minterms |\n|---|---|---|\n| $PQ$ | 11x | 110 = 6, 111 = 7 |\n| $Q\\overline R$ | x10 | 010 = 2, 110 = 6 |\n| $P\\overline R$ | 1x0 | 100 = 4, 110 = 6 |"
+          "title": "Patterns",
+          "body": "| Term | Pattern ($PQR$) | Rows | Minterms |\n|---|---|---|---|\n| $PQ$ | $11-$ | 110, 111 | 6, 7 |\n| $Q\\overline{R}$ | $-10$ | 010, 110 | 2, 6 |\n| $P\\overline{R}$ | $1-0$ | 100, 110 | 4, 6 |"
         },
         {
           "title": "Union",
-          "body": "$\\{6,7\\}\\cup\\{2,6\\}\\cup\\{4,6\\}=\\{2,4,6,7\\}$, so $f=m_2+m_4+m_6+m_7$."
+          "body": "$\\{6, 7\\} \\cup \\{2, 6\\} \\cup \\{4, 6\\} = \\{2, 4, 6, 7\\}$: $f = m_2 + m_4 + m_6 + m_7$."
         }
       ],
       "answer": {
-        "value": "$m_2+m_4+m_6+m_7$",
+        "value": "(A) $m_2 + m_4 + m_6 + m_7$",
         "choice": [
           "A"
         ],
@@ -742,25 +742,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Exactly the union of the three terms' minterms."
+          "reason": "The union of the three terms' minterms."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$m_0,m_1,m_3,m_5$ are the **zeros** of $f$ (its maxterm positions) — the exact complement."
+          "reason": "$m_0, m_1, m_3, m_5$ are exactly the rows where $f = 0$: this is $\\overline{f}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$m_0$ (000) and $m_1$ (001) make every term 0."
+          "reason": "Contains $m_0, m_1$ ($P = 0, Q = 0$), where every term is 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$m_3$ (011) and $m_5$ (101) make every term 0."
+          "reason": "Contains $m_3$ (011) and $m_5$ (101), where every term is 0."
         }
       ],
-      "verification": "Zeros of $f$ should be $\\{0,1,3,5\\}$: e.g. 011 → $PQ=0$, $Q\\overline R=0$, $P\\overline R=0$. ✓"
+      "shortcut": "$f$ is the majority-like 'at least two of $P, Q, \\overline{R}$': rows where two or more of $P = 1$, $Q = 1$, $R = 0$ hold: 010, 100, 110, 111.",
+      "pitfalls": [
+        "Taking $R$ as the most significant bit, which renumbers every minterm.",
+        "Counting $m_6$ three times instead of once."
+      ],
+      "verification": "Row 3 (011): $PQ = 0$, $Q\\overline{R} = 0$, $P\\overline{R} = 0$, so $m_3$ is correctly excluded."
     },
     "cse-2010-cs-7": {
       "approach": "A DRAM refresh operation refreshes one whole **row** of a chip, and all chips refresh in parallel. So total time = (rows per chip) × (time per refresh).",

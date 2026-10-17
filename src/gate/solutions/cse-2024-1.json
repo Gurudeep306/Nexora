@@ -5830,99 +5830,28 @@
       }
     },
     "cse-2024-1-cs-37": {
-      "approach": "Put the minterms on a 3-variable K-map: $\\sum(3,5,6,7)$ is the majority function, whose minimal SOP is $XY + YZ + XZ$. The POS form uses the remaining indices, and dependence on a variable is shown by one pair of inputs differing only in it.",
+      "approach": "Concept tested: **canonical forms and the majority function**. $\\Sigma(3, 5, 6, 7)$ is the 3-input majority; its Π list is the complementary set, and dependence on a variable is shown by one pair of inputs that differ only in it.",
       "concepts": [
         "Canonical SOP and POS",
-        "K-map minimisation",
-        "Majority function"
+        "Majority function",
+        "Variable dependence"
       ],
-      "given": "| $m$ | $XYZ$ | $F$ |\n|---|---|---|\n| 3 | 011 | 1 |\n| 5 | 101 | 1 |\n| 6 | 110 | 1 |\n| 7 | 111 | 1 |\n| 0, 1, 2, 4 | — | 0 |",
       "steps": [
         {
-          "title": "(A): maxterms are the missing indices",
-          "body": "A 3-variable function has indices $0..7$. $F = 1$ on $\\{3, 5, 6, 7\\}$, so $F = 0$ on $\\{0, 1, 2, 4\\}$, and the canonical POS is $F = \\Pi(0, 1, 2, 4)$. (A) is true."
+          "title": "Recognise the function",
+          "body": "Rows 3, 5, 6, 7 are 011, 101, 110, 111: exactly the rows with at least two 1s. So $F = XY + YZ + XZ$ (majority)."
         },
         {
-          "title": "(B): minimise with the K-map",
-          "body": "Minterm 7 pairs with each of the other three:\n\n- $\\{6, 7\\} = XYZ' + XYZ = XY$\n- $\\{3, 7\\} = X'YZ + XYZ = YZ$\n- $\\{5, 7\\} = XY'Z + XYZ = XZ$\n\nSo $F = XY + YZ + XZ$ (output is 1 when at least two inputs are 1). (B) is true.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  6,
-                  7
-                ],
-                "label": "XY",
-                "tone": "cat1"
-              },
-              {
-                "cells": [
-                  3,
-                  7
-                ],
-                "label": "YZ",
-                "tone": "cat2"
-              },
-              {
-                "cells": [
-                  5,
-                  7
-                ],
-                "label": "XZ",
-                "tone": "cat3"
-              }
-            ]
-          }
+          "title": "(A): the Π form",
+          "body": "The 0-rows are 0, 1, 2, 4, so $F = \\Pi(0, 1, 2, 4)$. Correct."
         },
         {
-          "title": "(C) and (D): F depends on Y and on X",
-          "body": "- Change only $Y$: $F(0,0,1) = m_1 = 0$ but $F(0,1,1) = m_3 = 1$. So $F$ depends on $Y$ — (C) is false.\n- Change only $X$: $F(0,0,1) = m_1 = 0$ but $F(1,0,1) = m_5 = 1$. So $F$ depends on $X$ — (D) is false.\n\nCorrect: **A, B**.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  6,
-                  7
-                ],
-                "label": "XY",
-                "tone": "cat1"
-              },
-              {
-                "cells": [
-                  3,
-                  7
-                ],
-                "label": "YZ",
-                "tone": "cat2"
-              },
-              {
-                "cells": [
-                  5,
-                  7
-                ],
-                "label": "XZ",
-                "tone": "cat3"
-              }
-            ],
-            "hl": [
-              {
-                "cell": 1,
-                "tone": "error"
-              },
-              {
-                "cell": 3,
-                "tone": "success"
-              },
-              {
-                "cell": 5,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "(C) and (D): dependence",
+          "body": "$F$ depends on $Y$: with $X = 1, Z = 0$, $Y = 0$ gives row 4 ($F = 0$) and $Y = 1$ gives row 6 ($F = 1$). By symmetry it also depends on $X$ (rows 2 and 6). Both (C) and (D) are false."
         }
       ],
       "answer": {
-        "value": "Options **(A), (B)**",
+        "value": "(A) and (B)",
         "choice": [
           "A",
           "B"
@@ -5933,45 +5862,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "The canonical POS lists the indices where $F = 0$: $\\{0, 1, 2, 4\\}$."
+          "reason": "The maxterms are the complementary rows 0, 1, 2, 4."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "The three pairs $\\{6,7\\}, \\{3,7\\}, \\{5,7\\}$ give $XY + YZ + XZ$, the majority function."
+          "reason": "The majority function's minimal SOP."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "False: $F(0,0,1) = 0$ but $F(0,1,1) = 1$ — flipping $Y$ alone changes $F$."
+          "reason": "Rows 4 and 6 differ only in $Y$ but have different outputs."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "False: $F(0,0,1) = 0$ but $F(1,0,1) = 1$ — flipping $X$ alone changes $F$."
+          "reason": "Rows 2 and 6 differ only in $X$ but have different outputs."
         }
       ],
-      "shortcut": "$3, 5, 6, 7$ are exactly the 3-bit numbers with at least two 1s, i.e. the majority function $XY+YZ+XZ$ — symmetric in all three inputs, so it depends on every input.",
+      "shortcut": "Majority is symmetric and depends on every input; as soon as you see $\\Sigma(3, 5, 6, 7)$, (B) is true and (C), (D) are false.",
       "pitfalls": [
-        "Writing the POS with the same indices as the SOP ($\\Pi(3,5,6,7)$) instead of the complementary ones.",
-        "Missing that one pair of inputs differing only in a variable is enough to prove dependence."
+        "Writing $\\Pi(3, 5, 6, 7)$ for the POS form (the same numbers under Π describe the complement)."
       ],
-      "verification": "Evaluate $XY+YZ+XZ$ on all 8 inputs: it is 1 exactly for $011, 101, 110, 111$ = minterms $3, 5, 6, 7$.",
-      "animation": {
-        "kind": "kmap",
-        "title": "K-map of F = Σ(3,5,6,7)",
-        "variables": [
-          "X",
-          "Y",
-          "Z"
-        ],
-        "ones": [
-          3,
-          5,
-          6,
-          7
-        ]
-      }
+      "verification": "$XY + YZ + XZ$ over rows 0–7 gives 0, 0, 0, 1, 0, 1, 1, 1."
     },
     "cse-2024-1-cs-38": {
       "approach": "Find a closed form instead of tracing 20 iterations: the update $x \\leftarrow 2x + y$ becomes pure doubling for $x + y$, so after $y$ iterations $f(x, y) = 2^{y}(x + y) - y$. Then compare with $2^{10} = 1024$ and $2^{20} = 1\\,048\\,576$.",

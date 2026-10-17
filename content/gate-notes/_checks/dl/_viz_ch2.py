@@ -659,6 +659,129 @@ def xnor_chain():
                 "Truth table of x ⊕ y ⊕ z, the chain x ⊙ y ⊙ z, and a 3-input XNOR gate (the complement of the 3-input XOR).", els, [])
 
 
+# ── Lesson 4: canonical forms ───────────────────────────────────────────────
+
+@scene
+def minterm_highlighter():
+    V = ["P", "Q", "R"]
+    terms = [("PQ", "PQ"), ("QR'", "QR′"), ("PR'", "PR′")]
+    cols = [bl.tt(t, V) for t, _ in terms]
+    f = bl.tt("PQ + QR' + PR'", V)
+    assert [i for i, v in enumerate(f) if v] == [2, 4, 6, 7]
+    head = ["m", "P", "Q", "R", "PQ", "QR′", "PR′", "f"]
+    body = [[str(i)] + [str(r[v]) for v in V] + [str(c[i]) for c in cols] + [str(f[i])] for i, r in enumerate(bl.rows(V))]
+    blank = [r[:4] + [" "] * 4 for r in body]
+    W, NW = 640, 360
+    els = [*heads("From terms to minterms: each term lights its rows", "Terms → minterms", W),
+           tbl("t", 80, 50, 60, 27, [head] + blank, {"x": 4, "y": 46, "cellW": 44, "cellH": 26}),
+           text("s", W / 2, 312, "", {"x": NW / 2, "y": 298, "size": 13}, anchor="middle", size=16, mono=True)]
+    st, cur = [], [r[:] for r in blank]
+    for k, (t, lab) in enumerate(terms):
+        for i in range(8):
+            cur[i][4 + k] = body[i][4 + k]
+        on = [i for i in range(8) if cols[k][i]]
+        pat = "".join("1" if t.count(v) and "'" not in t.split(v)[1][:1] else ("0" if v in t else "−") for v in V)
+        st.append(step(f"The term {lab} fixes {len(t.replace(chr(39), ''))} of the 3 variables, so it covers 2 rows: {', '.join(f'{i:03b}' for i in on)}, that is minterms {' and '.join(map(str, on))}.",
+                       ("t", {"rows": [head] + [r[:] for r in cur], "highlight": [[i + 1, 4 + k] for i in on]})))
+    for i in range(8):
+        cur[i][7] = body[i][7]
+    on = [i for i in range(8) if f[i]]
+    st.append(step("f is the OR of the three columns: it is 1 wherever at least one term is 1. Row 6 is covered three times but is counted once.",
+                   ("t", {"rows": [head] + cur, "highlight": [[i + 1, 7] for i in on]})))
+    st.append(step("Read the 1-rows of f: the canonical sum of products is Σm(2, 4, 6, 7), and the remaining rows give the product of maxterms ΠM(0, 1, 3, 5).",
+                   ("s", {"text": "f = Σm(2, 4, 6, 7) = ΠM(0, 1, 3, 5)", "tone": "success"})))
+    return spec("Expanding a sum of products into its minterms", (W, 330), (NW, 310),
+                "f(P, Q, R) = PQ + QR′ + PR′. The rows are numbered with P as the most significant bit.", els, st)
+
+
+@scene
+def minterm_set_venn():
+    n = 3
+    f, g = [1, 3, 5, 7], [3, 6, 7]
+    F, G = set(f), set(g)
+    r = range(8)
+    ops = [("f", f), ("g", g), ("f·g", [i for i in r if i in F and i in G]), ("f + g", [i for i in r if i in F or i in G]),
+           ("f ⊕ g", [i for i in r if (i in F) != (i in G)]), ("f′", [i for i in r if i not in F])]
+    assert ops[2][1] == [3, 7] and ops[4][1] == [1, 5, 6]
+    W, NW = 640, 360
+    els = [*heads("Functions as sets of rows", "Functions as sets of rows", W)]
+    fill = lambda ms: "".join("1" if i in ms else "0" for i in range(8))
+    for k, (lab, ms) in enumerate(ops):
+        y, ny = 60 + k * 44, 58 + k * 40
+        els.append(text(f"l{k}", 100, y + 18, lab, {"x": 46, "y": ny + 16, "size": 12}, anchor="end", size=15, weight="bold", mono=True, hidden=k > 1))
+        kw = {"labels": [str(i) for i in range(8)]} if k == 0 else {}
+        els.append(bits(f"b{k}", 112, y, fill(ms) if k < 2 else "        ", 36, {"x": 54, "y": ny, "cell": 32}, hidden=k > 1, **kw))
+        els.append(text(f"s{k}", 412, y + 18, f"Σ({', '.join(map(str, ms))})" if k < 2 else "", "wide", anchor="start", size=13, mono=True))
+    caps = ["AND keeps the rows that are in both sets: f·g = Σ(3, 7) (intersection).",
+            "OR keeps the rows in either set: f + g = Σ(1, 3, 5, 6, 7) (union).",
+            "XOR keeps the rows in exactly one set: f ⊕ g = Σ(1, 5, 6) (symmetric difference).",
+            "NOT keeps the rows outside the set: f′ = Σ(0, 2, 4, 6) (complement)."]
+    st = []
+    for k in range(2, 6):
+        ms = ops[k][1]
+        st.append(step(caps[k - 2], (f"l{k}", {"hidden": False}), (f"b{k}", {"hidden": False, "bits": fill(ms), "highlight": ms}),
+                       (f"s{k}", {"text": f"Σ({', '.join(map(str, ms))})"})))
+    for k, c in zip(range(2, 6), caps):
+        assert f"Σ({', '.join(map(str, ops[k][1]))})" in c
+    return spec("AND, OR, XOR and NOT as set operations on minterm lists", (W, 330), (NW, 300),
+                "Two functions of three variables, f = Σ(1, 3, 5, 7) and g = Σ(3, 6, 7), each drawn as the set of rows where it is 1.", els, st)
+
+
+@scene
+def function_count():
+    W, NW = 640, 360
+    els = [*heads("How many Boolean functions of n variables?", "How many functions?", W),
+           text("rows", W / 2, 60, "", {"x": NW / 2, "y": 58, "size": 12}, anchor="middle", size=15)]
+    for k, n in enumerate([1, 2, 3]):
+        y, ny = 90 + k * 70, 92 + k * 92
+        els.append(text(f"n{k}", 70, y + 20, f"n = {n}", {"x": 30, "y": ny + 16, "size": 12}, anchor="middle", size=15, weight="bold", hidden=True))
+        els.append(bits(f"b{k}", 120, y, "?" * 2 ** n, 40, {"x": 64, "y": ny, "cell": 32}, labels=[f"{i:0{n}b}" for i in range(2 ** n)], hidden=True))
+        els.append(text(f"c{k}", 120 + 2 ** n * 40 + 20, y + 20, {1: "2² = 4", 2: "2⁴ = 16", 3: "2⁸ = 256"}[n], {"x": 64, "y": ny + 50, "size": 12}, anchor="start", size=15, mono=True, hidden=True))
+    assert [2 ** 2 ** n for n in (1, 2, 3, 4)] == [4, 16, 256, 65536]
+    st = [
+        step("One variable: 2 rows. Each row's output is an independent choice of 0 or 1, so there are 2 × 2 = 2² = 4 functions: 0, x, x′ and 1.",
+             ("n0", {"hidden": False}), ("b0", {"hidden": False}), ("c0", {"hidden": False}), ("rows", {"text": "a function = one output bit per row"})),
+        step("Two variables: 4 rows, so 2⁴ = 16 functions, the sixteen of Lesson 1.",
+             ("n1", {"hidden": False}), ("b1", {"hidden": False}), ("c1", {"hidden": False})),
+        step("Three variables: 8 rows, so 2⁸ = 256 functions. In general n variables give 2ⁿ rows and 2^(2ⁿ) functions; for n = 4 that is 65 536.",
+             ("n2", {"hidden": False}), ("b2", {"hidden": False}), ("c2", {"hidden": False}), ("rows", {"text": "n variables: 2ⁿ rows, 2^(2ⁿ) functions"})),
+    ]
+    return spec("Counting Boolean functions: one free output bit per row", (W, 310), (NW, 370),
+                "A Boolean function is completely described by its output column. Count the columns.", els, st)
+
+
+@scene
+def self_dual_pairs():
+    n = 3
+    good, bad = [0, 1, 2, 4], [0, 1, 6, 7]
+    assert bl.is_self_dual(bl.from_minterms(good, n)) and not bl.is_self_dual(bl.from_minterms(bad, n))
+    assert bl.is_neutral(bl.from_minterms(bad, n))
+    W, NW = 640, 360
+    pairs = [(0, 7), (1, 6), (2, 5), (3, 4)]
+    els = [*heads("Self-dual: exactly one row of every complementary pair", "Self-dual: one of each pair", W)]
+    for k, (a, b) in enumerate(pairs):
+        x, nx = 120 + k * 110, 30 + k * 80
+        els.append(box(f"p{k}a", x, 80, 70, 44, f"{a} = {a:03b}", {"x": nx, "y": 80, "w": 64, "h": 40, "size": 11}, mono=True, size=13))
+        els.append(box(f"p{k}b", x, 150, 70, 44, f"{b} = {b:03b}", {"x": nx, "y": 150, "w": 64, "h": 40, "size": 11}, mono=True, size=13))
+        els.append(line(f"p{k}l", [[x + 35, 124], [x + 35, 150]], {"points": [[nx + 32, 120], [nx + 32, 150]]}, tone="muted", dashed=True))
+    els.append(text("f", W / 2, 230, "", {"x": NW / 2, "y": 226, "size": 12}, anchor="middle", size=15, mono=True))
+    els.append(text("v", W / 2, 262, "", {"x": NW / 2, "y": 258, "size": 12}, anchor="middle", size=15, weight="bold"))
+    pick = lambda ms, tonev: [(f"p{k}{s}", {"fill": tonev if (a if s == "a" else b) in ms else "none"}) for k, (a, b) in enumerate(pairs) for s in "ab"]
+    st = [
+        step("Pair every row with its bitwise complement: (0, 7), (1, 6), (2, 5), (3, 4). The two indices always add up to 2ⁿ − 1 = 7.",
+             ("f", {"text": "pairs (i, 7 − i)"})),
+        step("f = Σ(0, 1, 2, 4) takes exactly one row from each pair (0 from the first, 1, 2 and 4 from the others). So f(x′) = f(x)′ on every row: f is self-dual.",
+             *pick(good, "success"), ("f", {"text": "f = Σ(0, 1, 2, 4)"}), ("v", {"text": "self-dual ✓", "tone": "success"})),
+        step("g = Σ(0, 1, 6, 7) also has four minterms (it is neutral), but it takes both rows of the pairs (0, 7) and (1, 6) and none of the others. Not self-dual.",
+             *pick(bad, "danger"), ("f", {"text": "g = Σ(0, 1, 6, 7)"}), ("v", {"text": "neutral but not self-dual ✗", "tone": "danger"})),
+        step("Counting: a self-dual function is one free choice per pair. There are 2ⁿ⁻¹ pairs, so 2^(2ⁿ⁻¹) self-dual functions: 2⁴ = 16 for n = 3.",
+             *pick([], "none"), ("f", {"text": "2^(2ⁿ⁻¹) self-dual functions"}), ("v", {"text": "n = 3: 16", "tone": "ink"})),
+    ]
+    assert sum(1 for t in bl.all_functions(3) if bl.is_self_dual(t)) == 16
+    return spec("The complementary-pair test for self-dual functions", (W, 290), (NW, 290),
+                "The eight rows of a 3-variable truth table, arranged in complementary pairs.", els, st)
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

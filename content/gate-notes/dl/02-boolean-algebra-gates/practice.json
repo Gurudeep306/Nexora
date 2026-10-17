@@ -1172,5 +1172,379 @@
       "defined-operators"
     ],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The minterm expansion of $f(A, B, C) = A'B + BC'$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma m(2, 3, 6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma m(1, 2, 6)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma m(2, 3, 4, 6)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Pi M(2, 3, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Patterns over $A, B, C$: $A'B \\to 01-$, $BC' \\to -10$.",
+      "$01- = \\{2, 3\\}$ and $-10 = \\{2, 6\\}$; the union is $\\{2, 3, 6\\}$."
+    ],
+    "concept": "Expand each term with dash patterns and take the union of the minterm lists.",
+    "common_wrong": [
+      {
+        "answer": "D",
+        "why": "The correct numbers under $\\Pi$ name the complement: $\\Pi M(2, 3, 6) = \\Sigma m(0, 1, 4, 5, 7)$."
+      },
+      {
+        "answer": "C",
+        "why": "Row 4 (100) has $B = 0$, so neither term covers it."
+      }
+    ],
+    "blocks": [
+      "expand-terms",
+      "trick-dash"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A 3-variable function is $f = \\Sigma m(0, 2, 5, 7)$. Its canonical product of sums is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Pi M(1, 3, 4, 6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Pi M(0, 2, 5, 7)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma m(1, 3, 4, 6)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Pi M(1, 3, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The maxterms are the rows where $f = 0$: all rows 0–7 except 0, 2, 5, 7.",
+      "That leaves $1, 3, 4, 6$, so $f = \\Pi M(1, 3, 4, 6)$."
+    ],
+    "concept": "Σ and Π lists of the same function are complementary sets of rows.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "Same numbers under $\\Pi$ give the complement of $f$."
+      },
+      {
+        "answer": "C",
+        "why": "That is $f'$ written as a sum of minterms."
+      }
+    ],
+    "blocks": [
+      "sigma-pi",
+      "trap-sigma-pi"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "In a function of five variables $f(A, B, C, D, E)$, how many minterms does the product term $AC'$ cover?",
+    "answer": 8,
+    "solution": [
+      "The term fixes 2 of the 5 variables; the other 3 are free.",
+      "Each free variable doubles the count: $2^{5 - 2} = 8$."
+    ],
+    "concept": "A k-literal term of n variables covers 2^(n−k) minterms.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "That is $2^2$, counting the fixed variables instead of the free ones."
+      },
+      {
+        "answer": 2,
+        "why": "Only one missing variable was expanded; there are three."
+      }
+    ],
+    "blocks": [
+      "term-size"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q04",
+    "type": "NAT",
+    "marks": 2,
+    "text": "How many Boolean functions of 3 variables have at most 2 minterms?",
+    "answer": 37,
+    "solution": [
+      "Count by the number of minterms: 0 minterms: $\\binom{8}{0} = 1$; 1 minterm: $\\binom{8}{1} = 8$; 2 minterms: $\\binom{8}{2} = 28$.",
+      "Total $1 + 8 + 28 = 37$."
+    ],
+    "concept": "A function with exactly k minterms is a choice of k of the 2ⁿ rows.",
+    "common_wrong": [
+      {
+        "answer": 36,
+        "why": "The constant 0 (no minterms) also has at most 2 minterms."
+      },
+      {
+        "answer": 28,
+        "why": "That counts exactly 2 minterms only."
+      }
+    ],
+    "blocks": [
+      "count-k-minterms"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following 3-variable functions are self-dual?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma m(1, 2, 4, 7)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma m(0, 1, 2, 3)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma m(0, 1, 6, 7)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma m(3, 5, 6)$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "The complementary pairs are $(0, 7), (1, 6), (2, 5), (3, 4)$; self-dual means exactly one row of each pair.",
+      "(A) takes 7, 1, 2, 4: one per pair, self-dual (it is $A \\oplus B \\oplus C$).",
+      "(B) takes 0, 1, 2, 3: one per pair, self-dual (it is $A'$).",
+      "(C) takes both 0 and 7, and both 1 and 6: not self-dual although it has four minterms.",
+      "(D) has only three minterms, so it is not neutral and cannot be self-dual."
+    ],
+    "concept": "Self-dual iff exactly one row of each complementary pair (i, 2ⁿ − 1 − i) is a minterm.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "(C) is neutral, but it contains both rows of two pairs."
+      },
+      {
+        "answer": [
+          "A"
+        ],
+        "why": "(B) is the single literal $A'$; complementing all inputs turns $A'$ into $A$, its complement, so it is self-dual."
+      }
+    ],
+    "blocks": [
+      "self-dual-test",
+      "neutral-vs-self-dual",
+      "trick-pair-sum"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many neutral Boolean functions of 2 variables are there (functions with as many 1s as 0s in their truth table)?",
+    "answer": 6,
+    "solution": [
+      "Two variables give 4 rows; neutral means exactly 2 of them are 1.",
+      "$\\binom{4}{2} = 6$: $A$, $B$, $A'$, $B'$, $A \\oplus B$ and $A \\odot B$."
+    ],
+    "concept": "Neutral functions are choices of half the rows: C(2ⁿ, 2ⁿ⁻¹).",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "That is the number of self-dual functions; $A \\oplus B$ and $A \\odot B$ are neutral but not self-dual."
+      },
+      {
+        "answer": 2,
+        "why": "Only XOR and XNOR were counted; the four single literals are also neutral."
+      }
+    ],
+    "blocks": [
+      "neutral"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The dual of $f = (A + B')C$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AB' + C$"
+      },
+      {
+        "l": "B",
+        "t": "$A'B + C'$"
+      },
+      {
+        "l": "C",
+        "t": "$A + B' + C$"
+      },
+      {
+        "l": "D",
+        "t": "$AB'C$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Swap $+$ and $\\cdot$ and keep the literals: $(A + B')$ becomes $A \\cdot B'$ and the outer product becomes a sum.",
+      "$f^D = AB' + C$. Check with $f^D(x) = f(x')'$ at $A = 1, B = 0, C = 0$: $f(0, 1, 1) = (0 + 0) \\cdot 1 = 0$, so $f^D = 1$, and $AB' + C = 1$."
+    ],
+    "concept": "The dual swaps the operators and keeps every literal; the complement also complements the literals.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That is the complement $f'$ (literals complemented as well)."
+      },
+      {
+        "answer": "C",
+        "why": "The inner $+$ must also become $\\cdot$."
+      }
+    ],
+    "blocks": [
+      "dual-theorem",
+      "dual-vs-complement"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q08",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Over three variables, $f = \\Sigma(1, 4, 6)$ and $g = \\Sigma(1, 2, 6, 7)$. Then $f \\oplus g$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(2, 4, 7)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(1, 6)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(1, 2, 4, 6, 7)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(0, 3, 5)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "XOR keeps the rows that are in exactly one of the two lists.",
+      "Rows 1 and 6 are in both (they cancel); 4 is only in $f$; 2 and 7 are only in $g$. So $f \\oplus g = \\Sigma(2, 4, 7)$."
+    ],
+    "concept": "XOR of functions is the symmetric difference of their minterm sets.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That is $f \\cdot g$, the intersection."
+      },
+      {
+        "answer": "C",
+        "why": "That is $f + g$, the union."
+      }
+    ],
+    "blocks": [
+      "minterm-sets"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q09",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Let $M(a, b, c) = ab + bc + ca$ be the 3-input majority function. Which of the following are identities?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$M(a, a, b) = a$"
+      },
+      {
+        "l": "B",
+        "t": "$M(a, b, c) = \\big(M(a', b', c')\\big)'$"
+      },
+      {
+        "l": "C",
+        "t": "$M(a, b, 1) = a + b$"
+      },
+      {
+        "l": "D",
+        "t": "$M(a, b, 0) = a + b$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "solution": [
+      "(A) $M(a, a, b) = a + ab + ab = a$: two equal inputs decide. Identity.",
+      "(B) This says $M$ is self-dual; it takes rows 7, 6, 5, 3 from the pairs (0, 7), (1, 6), (2, 5), (3, 4). Identity.",
+      "(C) $M(a, b, 1) = ab + b + a = a + b$. Identity.",
+      "(D) $M(a, b, 0) = ab$, not $a + b$ (they differ at $a = 1, b = 0$)."
+    ],
+    "concept": "Majority: two equal inputs decide, it is self-dual, and fixing one input to 1 or 0 gives OR or AND of the others.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "C"
+        ],
+        "why": "(B) is self-duality, which the majority function has."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "With $c = 0$ both other inputs must be 1 for a majority: $M(a, b, 0) = ab$."
+      }
+    ],
+    "blocks": [
+      "majority",
+      "self-dual-def"
+    ],
+    "source": "nexora"
   }
 ]
