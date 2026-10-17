@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-16",
+  "updated": "2026-10-17",
   "steps": {
     "N0": "review",
     "N1": "review",
@@ -12,19 +12,84 @@
     "dl": {
       "name": "Digital Logic",
       "order": 1,
-      "status": "pending",
+      "status": "in-progress",
       "noteSets": 5,
       "pages": 409,
       "stages": {
-        "digests": "pending",
-        "outline": "pending",
+        "digests": "done",
+        "outline": "review",
         "lessons": "pending",
         "viz": "pending",
         "questions": "pending",
         "review": "pending",
         "wrapup": "pending"
       },
-      "chapters": []
+      "chapters": [
+        {
+          "id": "01-number-systems",
+          "title": "Number systems and codes",
+          "lessons": 5,
+          "pyqs": 40,
+          "status": "plan-review"
+        },
+        {
+          "id": "02-boolean-algebra-gates",
+          "title": "Boolean algebra and logic gates",
+          "lessons": 6,
+          "pyqs": 64,
+          "status": "planned"
+        },
+        {
+          "id": "03-minimisation",
+          "title": "Minimisation",
+          "lessons": 4,
+          "pyqs": 39,
+          "status": "planned"
+        },
+        {
+          "id": "04-combinational-circuits",
+          "title": "Combinational circuits",
+          "lessons": 6,
+          "pyqs": 38,
+          "status": "planned"
+        },
+        {
+          "id": "05-arithmetic-circuits",
+          "title": "Arithmetic circuits",
+          "lessons": 4,
+          "pyqs": 35,
+          "status": "planned"
+        },
+        {
+          "id": "06-latches-flip-flops",
+          "title": "Latches, flip-flops and sequential analysis",
+          "lessons": 3,
+          "pyqs": 24,
+          "status": "planned"
+        },
+        {
+          "id": "07-counters-registers-fsms",
+          "title": "Counters, registers and FSMs",
+          "lessons": 5,
+          "pyqs": 35,
+          "status": "planned"
+        },
+        {
+          "id": "08-floating-point",
+          "title": "Floating point and IEEE-754",
+          "lessons": 3,
+          "pyqs": 25,
+          "status": "planned"
+        },
+        {
+          "id": "09-beyond-syllabus",
+          "title": "Beyond the core syllabus",
+          "lessons": 3,
+          "pyqs": 4,
+          "status": "planned",
+          "optional": true
+        }
+      ]
     },
     "dm": {
       "name": "Discrete Mathematics",

@@ -1,0 +1,167 @@
+# Digital Logic errata (internal)
+
+This file records places where a reference set (A–E) is wrong, where sets disagree with each
+other, or where a set disagrees with the textbooks. Each entry gives the correct version with a
+short derivation. Lessons must teach the **correct** version, and where a slip is a classic
+trap they should name it in a `:::trap`. Page numbers are PDF pages. Sets are named only by
+letter.
+
+Legend: **E** = error in one set · **X** = sets disagree · **B** = question-bank note (for the
+PYQ pipeline, not a set error).
+
+## 1. Cross-set disagreements (X)
+
+| # | Topic | Disagreement | Correct version |
+|---|---|---|---|
+| X1 | Floating-point bias | B 151 writes bias = 2ⁿ − 1, while B 152 and its examples use 2^{k−1}. IEEE (D 402–403, A 23) uses 2^{k−1} − 1. | Two conventions exist. *Excess-2^{k−1}* (textbook custom formats, e.g. excess-64 for a 7-bit exponent) and *IEEE* 2^{k−1} − 1 (127 / 1023). The lesson must state which one each question uses (dl-08-01). |
+| X2 | Ring/Johnson counters | A 88 lists them under "asynchronous counters". B 155–156 and D 402 treat them as synchronous shift counters. | They are synchronous, because every flip-flop shares one clock. |
+| X3 | Overflow with opposite signs | A 21 says that opposite-sign operands never overflow "in addition or subtraction". B 146 and C 214 state the addition rule only. | Addition: overflow needs same-sign operands. Subtraction A − B = A + (−B), so it can overflow only when A and B have **opposite** signs (4-bit: 7 − (−2) = 9 > 7). |
+| X4 | NAND vs NOR speed | A 95 says NOR is faster. Textbooks say NAND. | In CMOS a NOR puts its series transistors in the slow PMOS pull-up, while a NAND puts them in the NMOS pull-down. So NAND is faster and smaller, which is why it is the preferred universal gate. |
+| X5 | Race-around | A 99 says it occurs when t_pd ≪ T_clk, and that the fix is t_pd > T_clk. B 135–137 attributes it to the pulse width. | Race-around occurs when the clock pulse width t_w > t_pd (the JK output toggles again while the clock is still high). Timing fix: t_w < t_pd < T. Practical fix: master–slave or edge triggering. |
+| X6 | Edge-triggered vs transparent | A 79 draws a clock-gated SR latch and calls it edge-triggered; A 83 calls the D flip-flop "transparent". | A gated latch is level-sensitive (transparent while enabled). An edge-triggered flip-flop samples only at the edge. Teach latch vs flip-flop explicitly (dl-06-01/02). |
+| X7 | Weighted codes | B 144 / 175 call 1's complement "non-weighted" and SM "weighted". | 2's complement is the clean weighted case (MSB weight −2^{n−1}). 1's complement can be given MSB weight −(2^{n−1} − 1). SM's sign bit is a flag, not a weight. Avoid the phrase in lessons except for 2's complement. |
+| X8 | Reflective vs self-complementing | C 214 groups "reflective" with "self-complementing" (2421, XS-3). A 16–19 separates them. | Reflected = the Gray-code construction property. Self-complementing = code(9 − d) = NOT code(d) (2421, 84−2−1, XS-3). They are different properties. |
+
+## 2. Errors inside a single set (E)
+
+### Number systems, codes and representations
+- **A 22:** the minimum of a signed 1|16|15 fixed-point format is given as −2^{−15}. That is the
+  negative value closest to 0. In sign-magnitude the most negative value is −(2^{16} − 2^{−15});
+  the smallest positive value is +2^{−15}.
+- **A 23:** the IEEE single largest value is written (2^{24} − 1)·2^{127}. Correct:
+  (2 − 2^{−23})·2^{127} = (2^{24} − 1)·2^{104} ≈ 3.4 × 10^{38}. The "smallest" pattern (exponent
+  0, fraction 0…01) is a **denormal** = ±2^{−149}. The smallest positive normal is 2^{−126}.
+- **A 14:** 22/256 is rounded to 0.086. The exact value is 0.0859375 (minor).
+- **B 143:** "having a decimal point makes it floating point" is wrong. Floating point means
+  sign, significand and exponent; 14.135 can be fixed point.
+- **B 176–177:** "Gray is unweighted BCD" and "Gray needs fewer bits than BCD" are wrong. Gray
+  encodes binary counts (it is not a BCD code) and uses as many bits as plain binary.
+- **B 183:** 16·P for P = A72E5₁₆ is written in 20 bits, which overflows. Keep 24 bits:
+  1010 0111 0010 1110 0101 0000. "1's complement = 2's complement − 1" holds only as a pattern
+  relation for the same value, not as written.
+- **C 203:** (101)₂ is "approximately" 5. It is exactly 5.
+- **C 209:** the line "4096 − 5671 − 1" should read 5674 (the octal 7's complement 7777 − 5674 =
+  2103₈ is right).
+- **C 211:** n in the range formulas is the number of bits, not "variables".
+- **C 213:** the result 0111 after re-complementing must be read as −7.
+- **C 215:** "packed BCD = BCD of numbers > 9" is wrong. Packed BCD stores two digits per byte;
+  unpacked stores one per byte.
+- **C 219:** Gray(16) is written as 0000. In 5 bits Gray(10000) = 11000 (0000 is only the 4-bit
+  cyclic wrap).
+- **C 221:** parity detects any **odd** number of bit errors (not just one), and Hamming(7,4)
+  **corrects** single-bit errors.
+- **D 402:** the exponent field of the largest normal is written as 1111110 (7 bits). It should
+  be 11111110 = 254.
+- **D 403:** "denormals give larger negative numbers" is wrong. Denormals fill (0, 2^{−126}) in
+  magnitude on both signs, closer to zero.
+
+### Boolean algebra, gates, minimisation
+- **B 113:** "the minimal SOP is always unique" is wrong. Σ(1,2,3,4,5,6) over (a,b,c) has two
+  minimal covers: a′c + bc′ + ab′ and a′b + b′c + ac′. Only canonical forms are unique.
+- **C 238:** A′BCE + ABCE is left as two terms. They merge to BCE, so the minimal result is
+  C′E′ + BD + A′DE + BCE.
+- **C 240:** a typo z′z′ for x′z′.
+- **C 245–246:** results are left unsimplified. A + A′BC = A + BC, and AB′C′ + ABC + AB + AC′ =
+  A(B + C′).
+- **C 253:** "number of variables = 2ⁿ" should be the number of rows/minterms = 2ⁿ.
+- **C 255–256:** XOR as mod-2 sum: x₁ ⊕ … ⊕ x₄ = 0 ⇔ the number of 1s is **even** (0, 2 or 4),
+  not "a multiple of 4". The side note "(A + B)/2 = 2k + R" should read A + B = 2k + R.
+- **D 400:** the consensus result is mis-typed. xy + zy′ + xz = xy + zy′.
+- **D 400:** a 2:1-MUX cascade with constants 1/0 is labelled A + B. Under the usual input order
+  it gives NAND = (AB)′. A + B = MUX(I₀ = A, I₁ = 1, S = B). The conclusion "a MUX is
+  functionally complete" is still right.
+- **D 400:** "f_clk = 1/2ⁿ" should be f_out = f_clk/2ⁿ for an n-stage divider. The ring-oscillator
+  formula is missing: f = 1/(2N·t_pd) for N inverters.
+- **E 408:** the sum operators look like XNOR in the scan. S = A ⊕ B ⊕ C_in must be XOR (check
+  A = B = C = 0 ⇒ S = 0).
+
+### Combinational and arithmetic
+- **A 38:** a "binary-to-Gray" converter uses rows 10–15 as don't-cares, so X = A + B. That holds
+  only for BCD inputs. A full 4-bit converter needs X = A ⊕ B (input 1100 → Gray 1010).
+- **A 53:** "A = B = 0 generates a carry" is wrong. A = B = 0 *kills* the carry; only A = B = 1
+  generates.
+- **A 55:** the sum delay for A = B = C_in = 1 is labelled with the AND delay. It is the XOR₂ delay.
+- **A 58:** the full-subtractor borrow is simplified to B + A′B_in. Correct: B_out = A′B + A′B_in
+  + BB_in (check A = B = 1, B_in = 0 ⇒ no borrow).
+- **A 61 / 63:** typos A1B0 → B1B0. In the 3-bit comparator the third term needs
+  (A₂ ⊙ B₂)(A₁ ⊙ B₁)A₀B₀′, not (A₀ ⊙ B₀)….
+- **A 64:** the 2:1 MUX table row (S, D₁, D₀) = (0, 0, 1) must give 1 (Y = S′D₀ + SD₁).
+- **B 120 / 166:** "XOR = AB + A′B′ on a 4:1 MUX (I₀ = I₃ = 1)" is XNOR. XOR needs I₁ = I₂ = 1,
+  I₀ = I₃ = 0. The enable equation also lost its bars:
+  E(I₀S₁′S₀′ + I₁S₁′S₀ + I₂S₁S₀′ + I₃S₁S₀).
+- **B 178:** "Booth reduces multiplication to O(n^{log₂3})" is wrong. That is Karatsuba's bound.
+  Booth only reduces the number of add/subtract operations for runs of 1s.
+- **D 401:** "CLA = 6 delays when XOR gates are available" assumes complemented literals and
+  2-level XOR. With unit-delay XOR gates the count is 1 + 2 + 1 = 4. Lessons must state the gate
+  model.
+
+### Sequential
+- **B 179:** a garbled box on Johnson counters. An N-flip-flop Johnson counter has 2N states, so
+  mod-2N needs N flip-flops.
+- **B 180:** the "down counter" is drawn 0 → 1 → 2 → 3. A down count is 0 → 3 → 2 → 1 → 0.
+- **B 183:** next state is equated with the T input. For a T flip-flop, Q⁺ = T ⊕ Q.
+- **A 101:** the third output is labelled Q1 again. It should be Q2 (f/8).
+- **D 400:** "D = Qn" should be Q_{n+1} = D.
+
+### Other
+- **C 189:** "digital needs less bandwidth" is the opposite of the truth (PCM voice at 64 kb/s
+  vs a 4 kHz analog channel). It is out of scope for GATE, but do not repeat it.
+
+## 3. Question-bank notes (B), for the PYQ pipeline
+- `cse-1991-a-1-iii`: the bank prints 16³ + 9 + 16² + 7 + 16 + 5 + 3 (= 4392 → four 1s, matching
+  the key 4). The original likely read 16³·9 + 16²·7 + 16·5 + 3 = 0x9753 (nine 1s). The key
+  agrees with the printed text, so the lesson evaluates what is printed and flags it. **Open
+  doubt:** confirm against the official 1991 paper.
+- `it-2004-it-44`: already `needsReview` (reprint typos). Keep it in dl-03-01 and solve the
+  intended version with a note.
+- `cse-2002-a-15`: the key D (10001) assumes the minimum width (5 bits). The lesson's
+  `min-width` block makes that assumption explicit.
+
+## 4. Set C, sequential, memory and converters (pp. 326–398)
+- **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,
+  J_B = K_B = 1, J_C = K_C = Q_B′) is presented as working, but it **locks out**. The unused states
+  cycle 001 → 010 → 100 → 111 → 001 and never reach the main loop. (Check from 001: A holds
+  because Q_B = 0, B toggles to 1, and C toggles to 0, giving 010; and so on.) Fix: give unused
+  states an explicit next state (for example 000) instead of don't-cares, which is the set's own
+  advice on p. 372. Use this as the self-start example in dl-07-03.
+- **C 345:** "preset = 1 gives output 0" is wrong. Preset forces Q = 1 and clear forces Q = 0
+  (active-low on the drawn symbol, pp. 341–342).
+- **C 332:** a clock-gated SR circuit is drawn with an edge symbol. It is a level-sensitive gated
+  latch (same issue as X6).
+- **C 361:** for a 4-bit SISO, the first stored bit reaches the output after 4 clocks; all 4 bits
+  have been seen after 7 clocks, and 8 clocks shift them out completely.
+- **C 381:** "bit 2 of a square is always 0" should say bit 1 (value 2). Squares mod 4 are 0 or
+  1. The set's own table agrees with the corrected version.
+- **C 387:** a PLA product term labelled C′ should be C (F₂ = C + A′B′).
+- **C 397:** 5 V/2 kΩ is 2.5 mA (not 25 mA). The output is −I′R_f = −(2.5 mA/8)(2 kΩ) =
+  −0.625 V (not −0.3125 V). The MSB/LSB labelling also flips between pp. 394–396 and p. 397.
+- **C 398:** fan-in is defined as input loading. The usual (GATE) meaning is the number of gate
+  inputs.
+- **C 343 / 392:** loose claims ("ripple counters used in ICs due to simplicity"; SRAM "high
+  power"). SRAM's advantage is that it needs no refresh, and its standby power is usually below
+  DRAM's.
+
+## 4b. Set C part 2 (pp. 259–325)
+- **C 267:** the PI labels in the branching example are wrong. The PI covering m1, m5 is w′y′z (not
+  w′y′z′); the one covering m5, m7 is w′xz (not w′xy). The chart columns are right.
+- **C 267:** in "which set cannot be the PI set", {a′, b, ac} is also impossible:
+  a′ + b + ac = a′ + b + c, so ac is not prime. The question has two correct options as written.
+- **C 271:** in the VEM of Σ(1, 2, 5, 6), the A = 0, B = 1 cell is C′ (m2 = 1, m3 = 0), not 1.
+- **C 273:** "minimal SOP f and minimal POS g differ" does not hold for that example. Both reduce
+  to z + w′y. The general warning (SOP and POS may treat don't-cares differently) still stands.
+- **C 288:** the second borrow form A′C + C(A ⊕ B)′ is wrong (A = 0, B = 1, C = 0 must borrow).
+  Correct: B_out = A′B + C(A ⊕ B)′ = A′B + A′C + BC.
+- **C 302:** a typo, AB′C for A′B′C. The MUX residues (C, 1, 0, C) are right.
+- **C 306:** the cascaded-MUX result drops AQR′. Correct: h = g′P + gQ with g = R′A + RB gives
+  h = B′PR + A′PR′ + AQR′ + BQR (checked over all 32 inputs).
+- **C 308:** the level count of a MUX/decoder tree is exactly ⌈log_N M⌉. Round up at each level
+  when counting blocks.
+- **C 313:** an AND-gate decoder question assumes active-low outputs that the figure does not
+  show. State the assumption in our version.
+
+## 5. Coverage notes for lesson writers
+- No set runs the full Quine–McCluskey tabulation. C 262–274 has PI charts, dominance and
+  branching only.
+- No set covers hazards beyond a summary (B 129, D 402). The same holds for Mealy/Moore design
+  and state minimisation (E 405/407/409 only), Booth worked end to end (B 153–154, D 401–402
+  tables), stuck-at faults (B 129) and IEEE add/multiply.

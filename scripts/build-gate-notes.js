@@ -16,6 +16,7 @@
  *   content/gate-notes/<subject>/NN-chapter/pyq-map.json   PYQ → lesson blocks it tests (optional;
  *                                                       :::pyq{id tests="a,b"} embeds count too)
  *   content/gate-notes/<subject>/viz/<name>.json        Nexora Viz scene specs
+ *   content/gate-notes/<subject>/[NN-chapter/]_name.md  internal planning notes (_outline.md, _plan.md): skipped
  *
  * Output: src/gate/notes/<subject>.json (lesson tree, pre-parsed AST per
  * lesson, practice questions, viz specs), src/gate/notes/_search.json and
@@ -73,6 +74,8 @@ const INLINE = { key: { attrs: {} } };
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const ID_RE = /^[a-z][a-z0-9-]{0,47}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+// Internal planning files (_outline.md, _plan.md) may sit beside the content; the build skips them.
+const PLANNING_FILE_RE = /^_[a-z0-9]+(?:-[a-z0-9]+)*\.md$/;
 const STATUSES = ["draft", "review", "published"];
 const DIFFICULTIES = ["basic", "core", "advanced"];
 const COLOR_TOKENS = ["accent", "info", "success", "warning", "danger", "syntax-keyword", "syntax-function", "syntax-type", "syntax-string", "syntax-number"];
@@ -1025,6 +1028,7 @@ function loadSubject(dir, id, ctx) {
 
   for (const ent of listDir(dir)) {
     if (ent.name === "_meta.json" || ent.name === "_coverage.md" || ent.name === "viz" || ent.name.startsWith(".")) continue;
+    if (ent.isFile() && PLANNING_FILE_RE.test(ent.name)) continue; // internal planning notes (_outline.md …): never built
     const cm = /^(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)$/.exec(ent.name);
     if (!ent.isDirectory() || !cm) {
       report.error(path.join(dir, ent.name), 1, "expected _meta.json, viz/ or NN-chapter-slug/ directories only");
@@ -1052,6 +1056,7 @@ function loadSubject(dir, id, ctx) {
     for (const f of listDir(chDir)) {
       const file = path.join(chDir, f.name);
       if (f.name === "_meta.json") continue;
+      if (f.isFile() && PLANNING_FILE_RE.test(f.name)) continue; // internal planning notes (_plan.md …): never built
       if (f.name === "pyq-map.json") {
         const j = readJson(file, report);
         if (!j) continue;

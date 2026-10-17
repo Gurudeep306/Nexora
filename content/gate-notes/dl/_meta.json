@@ -1,0 +1,12 @@
+{
+  "title": "Digital Logic",
+  "order": 1,
+  "icon": "binary",
+  "color": "syntax-keyword",
+  "description": "Number systems and codes, Boolean algebra and gates, minimisation, combinational and sequential circuits, computer arithmetic and IEEE-754 floating point, built from first principles with animated circuits and every GATE question mapped.",
+  "hidden": true,
+  "status": "draft",
+  "pyq_scope": [
+    "dl"
+  ]
+}
