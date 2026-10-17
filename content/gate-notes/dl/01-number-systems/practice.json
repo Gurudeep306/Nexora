@@ -827,6 +827,216 @@
   },
   {
     "id": "nx-dl-01-05-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "An 8-bit floating-point format is sign (1 bit) | exponent (4 bits, bias 7) | fraction (3 bits, with a hidden 1), and every exponent field is an ordinary exponent. What decimal value does the word $1\\,1010\\,101$ represent?",
+    "answer": -13,
+    "solution": [
+      "Cut the word into its fields in the stated order: $s = 1$, $e = 1010_2 = 10$, $f = 101$.",
+      "Remove the bias: $E = 10 - 7 = 3$.",
+      "Put the hidden 1 back: $M = 1.101_2 = 1 + \\tfrac12 + \\tfrac18 = 1.625$.",
+      "Value $= (-1)^1 \\times 1.625 \\times 2^3 = -13$."
+    ],
+    "concept": "Decoding a hidden-bit format: sign, exponent minus bias, and 1.f as the significand.",
+    "common_wrong": [
+      { "answer": 13, "why": "The sign bit was ignored. A leading 1 in the sign field makes the value negative." },
+      { "answer": -5, "why": "The hidden 1 was forgotten, so the significand was taken as $0.101_2 = 0.625$ instead of $1.101_2$." },
+      { "answer": -6.5, "why": "The bias was taken as 8 instead of the stated 7, giving $E = 2$." }
+    ],
+    "blocks": ["ex-fmt-decode", "decode-method", "hidden-bit"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A format normalises its mantissa as a fraction $0.1b_2b_3\\ldots$ (no hidden bit). How is $0.1875$ written in normalised form?",
+    "options": [
+      { "l": "A", "t": "$1.1_2 \\times 2^{-3}$" },
+      { "l": "B", "t": "$0.11_2 \\times 2^{-2}$" },
+      { "l": "C", "t": "$0.011_2 \\times 2^{-1}$" },
+      { "l": "D", "t": "$11_2 \\times 2^{-4}$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Binary first: $0.1875 = \\tfrac{3}{16} = 0.0011_2$.",
+      "Fraction form puts the point just before the first 1: move it 2 places right, which is a left shift of the significand by 2, so the exponent is $-2$.",
+      "So $0.0011_2 = 0.11_2 \\times 2^{-2}$. Check: $0.75 \\times \\tfrac14 = 0.1875$."
+    ],
+    "concept": "Fraction-form normalisation puts the first 1 just after the point, so 1/2 ≤ M < 1.",
+    "common_wrong": [
+      { "answer": "A", "why": "That is the hidden-bit (1.f) form, which IEEE uses. The question asks for the fraction form, whose exponent is one larger." },
+      { "answer": "C", "why": "The value is right but the mantissa starts with a 0 after the point, so it is not normalised." }
+    ],
+    "blocks": ["normalisation", "normalise-procedure", "trap-convention"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "An exponent $E = -5$ is stored in an 8-bit excess-127 field. What is the field, read as an unsigned decimal number?",
+    "answer": 122,
+    "solution": [
+      "A biased field stores $e = E + B$.",
+      "$e = -5 + 127 = 122$, which is $0111\\,1010_2$."
+    ],
+    "concept": "A biased exponent field stores E + bias as an unsigned number.",
+    "common_wrong": [
+      { "answer": 123, "why": "The bias was taken as 128 (excess-$2^{k-1}$), but the question says excess-127." },
+      { "answer": 251, "why": "That is the 8-bit 2's-complement pattern of $-5$, not the biased field." },
+      { "answer": 132, "why": "The bias was subtracted instead of added: $127 - (-5)$." }
+    ],
+    "blocks": ["biased-exponent", "ex-bias-easy"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q04",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A 16-bit format is sign (1) | exponent (5 bits, excess-16) | fraction (10 bits, hidden 1). Which word represents $+10.5$?",
+    "options": [
+      { "l": "A", "t": "`4D40`" },
+      { "l": "B", "t": "`4EA0`" },
+      { "l": "C", "t": "`4940`" },
+      { "l": "D", "t": "`52A0`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Binary: $10.5 = 1010.1_2 = 1.0101_2 \\times 2^{3}$.",
+      "Exponent field $= 3 + 16 = 19 = 10011_2$.",
+      "Fraction field: the bits after the hidden 1, padded to 10 bits: $0101\\,000000$.",
+      "Word: $0\\ 10011\\ 0101000000 = 0100\\,1101\\,0100\\,0000 = $ `4D40`."
+    ],
+    "concept": "Encoding in a hidden-bit format: normalise to 1.f, bias the exponent, store only f, regroup into hex.",
+    "common_wrong": [
+      { "answer": "B", "why": "The leading 1 was stored ($1010100000$) as if the format had no hidden bit." },
+      { "answer": "C", "why": "A bias of 15 was used (IEEE style) instead of the stated excess-16, so the exponent field is $10010$." },
+      { "answer": "D", "why": "The value was normalised as a fraction $0.10101 \\times 2^4$ and stored with its leading 1, which is a different convention from the one stated." }
+    ],
+    "blocks": ["encode-method", "hidden-bit", "biased-exponent"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q05",
+    "type": "NAT",
+    "marks": 2,
+    "text": "A 16-bit format is sign (1) | exponent $e$ (7 bits) | mantissa $m$ (8 bits), with value $(-1)^s (1 + m \\cdot 2^{-8})\\, 2^{e - 63}$ when $e \\ne 1111111$, and $0$ when $e = 1111111$. The largest difference between two successive representable values is $2^k$. What is $k$?",
+    "answer": 55,
+    "solution": [
+      "Inside one exponent, consecutive $m$ differ by 1, so successive values differ by $2^{-8} \\times 2^{e - 63}$.",
+      "The gap grows with $e$, so take the largest ordinary exponent. The field $1111111 = 127$ is reserved for zero, so $e_{\\max} = 126$.",
+      "Largest gap $= 2^{-8} \\times 2^{126 - 63} = 2^{-8} \\times 2^{63} = 2^{55}$, so $k = 55$."
+    ],
+    "concept": "The gap between neighbours is one ulp, 2^(E − f); it is largest at the largest ordinary exponent.",
+    "common_wrong": [
+      { "answer": -8, "why": "That is the step of the mantissa alone; the gap between values also carries the factor $2^{e-63}$." },
+      { "answer": 56, "why": "The reserved field $e = 127$ was used as an ordinary exponent." },
+      { "answer": -71, "why": "That is the smallest gap, at $e = 0$: $2^{-8} \\times 2^{-63}$." }
+    ],
+    "blocks": ["ulp-def", "range-formulas", "trap-gap"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q06",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "A floating-point format has a 6-bit exponent field. Which of the following statements are true?",
+    "options": [
+      { "l": "A", "t": "In excess-32 the field can represent exponents from $-32$ to $+31$." },
+      { "l": "B", "t": "With a bias of 31, the field $000000$ stands for the exponent $-31$." },
+      { "l": "C", "t": "With a 2's-complement exponent, the field of $-1$ is larger, as an unsigned number, than the field of $+1$." },
+      { "l": "D", "t": "With a bias of 31, the exponent $+32$ cannot be stored, because $32 + 31$ needs 7 bits." }
+    ],
+    "answer": ["A", "B", "C"],
+    "solution": [
+      "(A) The field runs over $0 \\dots 63$, so $E = e - 32$ runs over $-32 \\dots 31$. True.",
+      "(B) $E = 0 - 31 = -31$. True.",
+      "(C) In 6-bit 2's complement, $-1 = 111111 = 63$ and $+1 = 000001 = 1$, and $63 > 1$. True; this is why formats bias the exponent instead.",
+      "(D) $32 + 31 = 63 = 111111$, which fits in 6 bits. False. (A format may still reserve that field, but the statement's reason is wrong.)"
+    ],
+    "concept": "A k-bit field with bias B holds exponents −B … 2^k − 1 − B; 2's complement breaks the unsigned order.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "Option D's arithmetic was not checked: $63$ is the largest 6-bit value, so the field fits." },
+      { "answer": ["A", "B"], "why": "Option C was rejected, but $111111 > 000001$ as unsigned numbers, exactly the ordering problem a bias fixes." }
+    ],
+    "blocks": ["bias-range", "biased-exponent", "bias-order"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A 32-bit base-16 format is sign (1 bit, MSB) | exponent (7 bits, excess-64) | fraction (24 bits, point at its left end), normalised so that the first hex digit of the fraction is non-zero. Which word represents $-0.375$?",
+    "options": [
+      { "l": "A", "t": "`C0600000`" },
+      { "l": "B", "t": "`BF600000`" },
+      { "l": "C", "t": "`BFC00000`" },
+      { "l": "D", "t": "`40600000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Base 16, so convert to hex: $0.375 = \\tfrac{6}{16} = 0.6_{16}$.",
+      "The first hex digit (6) is already non-zero, so $0.375 = 0.6_{16} \\times 16^{0}$ and $E = 0$.",
+      "Exponent field $= 0 + 64 = 64 = 1000000_2$; fraction $= 600000_{16}$; sign $= 1$.",
+      "Word: $1\\ 1000000\\ 0110\\,0000\\ldots0 = 1100\\,0000\\,0110\\,0000\\ldots = $ `C0600000`."
+    ],
+    "concept": "Base-16 normalisation works with whole hex digits: the first hex digit must be non-zero, not the first bit.",
+    "common_wrong": [
+      { "answer": "B", "why": "The value was written $6.0 \\times 16^{-1}$, with exponent $-1$. A normalised fraction has the point before the first hex digit." },
+      { "answer": "C", "why": "Base-2 normalisation was used ($0.11_2 \\times 2^{-1}$), but this format's exponent is a power of 16." },
+      { "answer": "D", "why": "The sign bit was left as 0, which is $+0.375$." }
+    ],
+    "blocks": ["normalisation", "encode-method", "ex-norm-hex"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "A 32-bit format has an 8-bit exponent in 2's complement and a 24-bit sign-magnitude mantissa (1 sign bit, then 23 magnitude bits normalised as $0.1\\ldots$). Every pattern is an ordinary number. The smallest positive normalised value is $2^k$. What is $k$?",
+    "answer": -129,
+    "solution": [
+      "The smallest normalised magnitude is $0.1000\\ldots0_2 = \\tfrac12 = 2^{-1}$.",
+      "An 8-bit 2's-complement exponent runs from $-128$ to $+127$, so the smallest exponent is $-128$.",
+      "Smallest positive value $= 2^{-1} \\times 2^{-128} = 2^{-129}$, so $k = -129$."
+    ],
+    "concept": "In fraction form the smallest normalised value is ½ × 2^Emin.",
+    "common_wrong": [
+      { "answer": -128, "why": "The mantissa was taken as 1, but a normalised fraction is at least $\\tfrac12$, not 1." },
+      { "answer": -127, "why": "An excess-127 range was assumed; the exponent here is 2's complement, which reaches $-128$." },
+      { "answer": -151, "why": "The mantissa was taken as its smallest non-zero pattern $2^{-23}$, which is not normalised." }
+    ],
+    "blocks": ["range-formulas", "normalisation", "ex-range-mag"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q09",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A format stores $f$ as a 6-bit sign-magnitude fraction (1 sign bit, 5 magnitude bits, normalised as $0.1\\ldots$) and $e$ as a 4-bit sign-magnitude exponent, with value $f \\cdot 2^{e}$. Extra mantissa bits are truncated. What value is actually stored for $29.5$?",
+    "options": [
+      { "l": "A", "t": "$28$" },
+      { "l": "B", "t": "$29$" },
+      { "l": "C", "t": "$29.5$" },
+      { "l": "D", "t": "$30$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Binary: $29.5 = 11101.1_2 = 0.111011_2 \\times 2^{5}$, so $e = 0\\,101$.",
+      "Only 5 magnitude bits fit; truncation keeps $0.11101_2$ and drops the final 1.",
+      "Stored value $= 0.11101_2 \\times 2^5 = \\tfrac{29}{32} \\times 32 = 29$."
+    ],
+    "concept": "A short mantissa cuts the significand; truncation always moves toward zero.",
+    "common_wrong": [
+      { "answer": "D", "why": "The value was rounded to nearest ($0.111011 \\to 0.11110$), but the question says the format truncates." },
+      { "answer": "C", "why": "29.5 needs 6 significant bits; only 5 fit, so it cannot be stored exactly." }
+    ],
+    "blocks": ["encode-method", "trap-truncation", "ex-norm-gate"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-08-q01",
     "type": "MCQ",
     "marks": 1,
     "text": "What is the 4-bit Gray code of the decimal number 13?",
@@ -851,7 +1061,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q02",
+    "id": "nx-dl-01-08-q02",
     "type": "NAT",
     "marks": 1,
     "text": "The 4-bit Gray code $1101$ is received from a position encoder. Which decimal number does it represent?",
@@ -870,7 +1080,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q03",
+    "id": "nx-dl-01-08-q03",
     "type": "MSQ",
     "marks": 2,
     "text": "Which of these decimal codes are self-complementing (the code of $9 - d$ is the bitwise complement of the code of $d$)?",
@@ -896,7 +1106,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q04",
+    "id": "nx-dl-01-08-q04",
     "type": "NAT",
     "marks": 1,
     "text": "How many of the 256 possible 8-bit patterns are **not** valid as a 2-digit BCD number?",
@@ -915,7 +1125,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q05",
+    "id": "nx-dl-01-08-q05",
     "type": "MCQ",
     "marks": 1,
     "text": "What is the excess-3 code of the decimal number 47?",
@@ -940,7 +1150,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q06",
+    "id": "nx-dl-01-08-q06",
     "type": "NAT",
     "marks": 1,
     "text": "What is the minimum number of parity bits a Hamming code needs to correct any single-bit error in 11 data bits?",
@@ -959,7 +1169,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q07",
+    "id": "nx-dl-01-08-q07",
     "type": "MCQ",
     "marks": 2,
     "text": "An even-parity Hamming (7,4) code has parity bits at positions 1, 2, 4 and data at 3, 5, 6, 7 (positions numbered 1 to 7 from the left). The word $1110110$ is received. Which position holds the error?",
@@ -986,7 +1196,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q08",
+    "id": "nx-dl-01-08-q08",
     "type": "NAT",
     "marks": 1,
     "text": "What is the minimum Hamming distance a code needs in order to correct every pattern of up to 2 bit errors?",
@@ -1004,7 +1214,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q09",
+    "id": "nx-dl-01-08-q09",
     "type": "MCQ",
     "marks": 2,
     "text": "Let $h_2 h_1 h_0$ be the 3-bit Gray code of $n$ and $g_2 g_1 g_0$ the Gray code of $(n + 1) \\bmod 8$. Which is the minterm list of $g_0$ as a function of $h_2 h_1 h_0$?",

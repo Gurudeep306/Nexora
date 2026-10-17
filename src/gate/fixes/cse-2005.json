@@ -574,18 +574,18 @@
     {
       "id": "cse-2005-cs-85b",
       "field": "needsReview",
-      "before": false,
-      "after": true,
-      "reason": "Question is flawed: no option is a fully consistent hidden-bit encoding.",
-      "source": "Independent solution"
+      "before": true,
+      "after": false,
+      "reason": "Re-solved 2026-10-17: the question is not flawed. 0.00111101 x 2^13 = 1.11101 x 2^10 (five 1s), so with the implicit 1 the stored fields are exponent 74 = 1001010 and mantissa 11101000, i.e. 4AE8 = option D, the stored key. An earlier fix had flagged it as flawed after dropping a 1 (1.1101).",
+      "source": "Independent re-derivation (content/gate-notes/_checks/dl/l05_fp_basics.py); errata dl.md section 3"
     },
     {
       "id": "cse-2005-cs-85b",
       "field": "reviewNote",
-      "before": null,
-      "after": "Flawed question: with an implicit leading 1, 0.239×2^13 = 1.1101×2^10 encodes as 0 1001010 11010000 = 4AD0, which is not an option. Option D (4AE8) keeps the 3-bit-shifted field 11101000 as the mantissa and is the intended/commonly accepted answer; stored key D kept.",
-      "reason": "Explain the flaw.",
-      "source": "Independent solution"
+      "before": "Flawed question: with an implicit leading 1, 0.239×2^13 = 1.1101×2^10 encodes as 0 1001010 11010000 = 4AD0, which is not an option. Option D (4AE8) keeps the 3-bit-shifted field 11101000 as the mantissa and is the intended/commonly accepted answer; stored key D kept.",
+      "after": null,
+      "reason": "The note claimed the question was flawed (4AD0 not offered); that came from miscounting the 1s. 4AE8 decodes to 1.90625 x 2^10 = 1952 = 61/256 x 2^13, the same value as part (a), so the key D is fully consistent.",
+      "source": "Independent re-derivation (content/gate-notes/_checks/dl/l05_fp_basics.py); errata dl.md section 3"
     }
   ]
 }

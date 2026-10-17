@@ -31,8 +31,9 @@ questions.
 
 [Lesson 1](lesson:place-value) gave place value and [Lesson 2](lesson:power-of-two-bases) gave
 the hex shorthand used for long patterns. Here one place value turns negative. Chapter 5 builds
-the adder–subtractor and the overflow detector on top of 2's complement; Chapter 8 uses the
-biased (excess-K) code from the end of this lesson for floating-point exponents.
+the adder–subtractor and the overflow detector on top of 2's complement. The next three lessons
+([5](lesson:floating-point-basics), [6](lesson:ieee-754) and [7](lesson:floating-point-arithmetic))
+use the biased (excess-K) code from the end of this lesson for floating-point exponents.
 
 :::table{#radar title="GATE radar: signed numbers and complements" depth="quick"}
 | What | Detail |
@@ -758,7 +759,7 @@ bits and $K = 2^{n-1}$ the range is $-2^{n-1}$ to $2^{n-1} - 1$, the same as 2's
 the code is just 2's complement with the top bit flipped. Its advantage is that bigger values
 have bigger unsigned patterns, so comparison is plain unsigned comparison.
 Examples: excess-8 in 4 bits, $1011 = 11 - 8 = 3$ and $0000 = -8$; IEEE-754 single precision
-stores the exponent in excess-127, so $1000\,0010 = 130 - 127 = 3$ (Chapter 8).
+stores the exponent in excess-127, so $1000\,0010 = 130 - 127 = 3$ ([Lesson 6](lesson:ieee-754)).
 :::
 
 ## All the representations side by side

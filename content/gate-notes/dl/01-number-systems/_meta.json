@@ -1,4 +1,4 @@
 {
-  "title": "Number systems and codes",
-  "summary": "Place value in any base, the binary family, fractions and fixed point, signed numbers and complements, and the codes digital systems use."
+  "title": "Number systems, codes and floating point",
+  "summary": "Place value in any base, the binary family, fractions and fixed point, signed numbers and complements, floating point and IEEE-754 (formats, special values, arithmetic and rounding), and the codes digital systems use."
 }

@@ -1,0 +1,1312 @@
+{
+ "version": 1,
+ "title": "The gap between neighbours doubles every binade",
+ "width": 680,
+ "height": 250,
+ "narrow": {
+  "width": 360,
+  "height": 390
+ },
+ "intro": "Positive values of a toy floating-point format with a hidden bit and 2 fraction bits, from 1/2 up to 8, marked on a number line.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 24,
+   "text": "A toy float with 2 fraction bits: 4 values in every binade",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "4 values in every binade",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "axis",
+   "type": "line",
+   "points": [
+    [
+     40,
+     120
+    ],
+    [
+     624,
+     120
+    ]
+   ],
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "t0",
+   "type": "line",
+   "points": [
+    [
+     76.0,
+     108
+    ],
+    [
+     76.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t1",
+   "type": "line",
+   "points": [
+    [
+     85.0,
+     108
+    ],
+    [
+     85.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t2",
+   "type": "line",
+   "points": [
+    [
+     94.0,
+     108
+    ],
+    [
+     94.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t3",
+   "type": "line",
+   "points": [
+    [
+     103.0,
+     108
+    ],
+    [
+     103.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t4",
+   "type": "line",
+   "points": [
+    [
+     112.0,
+     108
+    ],
+    [
+     112.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t5",
+   "type": "line",
+   "points": [
+    [
+     130.0,
+     108
+    ],
+    [
+     130.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t6",
+   "type": "line",
+   "points": [
+    [
+     148.0,
+     108
+    ],
+    [
+     148.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t7",
+   "type": "line",
+   "points": [
+    [
+     166.0,
+     108
+    ],
+    [
+     166.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t8",
+   "type": "line",
+   "points": [
+    [
+     184.0,
+     108
+    ],
+    [
+     184.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t9",
+   "type": "line",
+   "points": [
+    [
+     220.0,
+     108
+    ],
+    [
+     220.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t10",
+   "type": "line",
+   "points": [
+    [
+     256.0,
+     108
+    ],
+    [
+     256.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t11",
+   "type": "line",
+   "points": [
+    [
+     292.0,
+     108
+    ],
+    [
+     292.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t12",
+   "type": "line",
+   "points": [
+    [
+     328.0,
+     108
+    ],
+    [
+     328.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t13",
+   "type": "line",
+   "points": [
+    [
+     400.0,
+     108
+    ],
+    [
+     400.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t14",
+   "type": "line",
+   "points": [
+    [
+     472.0,
+     108
+    ],
+    [
+     472.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t15",
+   "type": "line",
+   "points": [
+    [
+     544.0,
+     108
+    ],
+    [
+     544.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "t16",
+   "type": "line",
+   "points": [
+    [
+     616.0,
+     108
+    ],
+    [
+     616.0,
+     132
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "l0",
+   "type": "text",
+   "x": 40,
+   "y": 150,
+   "text": "0",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 112,
+   "y": 150,
+   "text": "1",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 184,
+   "y": 150,
+   "text": "2",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "l4",
+   "type": "text",
+   "x": 328,
+   "y": 150,
+   "text": "4",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "l8",
+   "type": "text",
+   "x": 616,
+   "y": 150,
+   "text": "8",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "l0half",
+   "type": "text",
+   "x": 76.0,
+   "y": 150,
+   "text": "½",
+   "anchor": "middle",
+   "size": 14,
+   "mono": true,
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "g0",
+   "type": "text",
+   "x": 94.0,
+   "y": 90,
+   "text": "gap 1/8",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "subject",
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "g1",
+   "type": "text",
+   "x": 148.0,
+   "y": 90,
+   "text": "gap 1/4",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "subject",
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "g2",
+   "type": "text",
+   "x": 256.0,
+   "y": 90,
+   "text": "gap 1/2",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "subject",
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "g3",
+   "type": "text",
+   "x": 472.0,
+   "y": 90,
+   "text": "gap 1",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "subject",
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "na0",
+   "type": "line",
+   "points": [
+    [
+     40,
+     78
+    ],
+    [
+     320,
+     78
+    ]
+   ],
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "nt0_0",
+   "type": "line",
+   "points": [
+    [
+     40,
+     68
+    ],
+    [
+     40,
+     88
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt0_1",
+   "type": "line",
+   "points": [
+    [
+     110,
+     68
+    ],
+    [
+     110,
+     88
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt0_2",
+   "type": "line",
+   "points": [
+    [
+     180,
+     68
+    ],
+    [
+     180,
+     88
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt0_3",
+   "type": "line",
+   "points": [
+    [
+     250,
+     68
+    ],
+    [
+     250,
+     88
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt0_4",
+   "type": "line",
+   "points": [
+    [
+     320,
+     68
+    ],
+    [
+     320,
+     88
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nl0",
+   "type": "text",
+   "x": 40,
+   "y": 102,
+   "text": "1/2 … 1",
+   "size": 13,
+   "mono": true,
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "ng0",
+   "type": "text",
+   "x": 320,
+   "y": 102,
+   "text": "gap 1/8",
+   "anchor": "end",
+   "size": 13,
+   "tone": "subject",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "na1",
+   "type": "line",
+   "points": [
+    [
+     40,
+     142
+    ],
+    [
+     320,
+     142
+    ]
+   ],
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "nt1_0",
+   "type": "line",
+   "points": [
+    [
+     40,
+     132
+    ],
+    [
+     40,
+     152
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt1_1",
+   "type": "line",
+   "points": [
+    [
+     110,
+     132
+    ],
+    [
+     110,
+     152
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt1_2",
+   "type": "line",
+   "points": [
+    [
+     180,
+     132
+    ],
+    [
+     180,
+     152
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt1_3",
+   "type": "line",
+   "points": [
+    [
+     250,
+     132
+    ],
+    [
+     250,
+     152
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt1_4",
+   "type": "line",
+   "points": [
+    [
+     320,
+     132
+    ],
+    [
+     320,
+     152
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nl1",
+   "type": "text",
+   "x": 40,
+   "y": 166,
+   "text": "1 … 2",
+   "size": 13,
+   "mono": true,
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "ng1",
+   "type": "text",
+   "x": 320,
+   "y": 166,
+   "text": "gap 1/4",
+   "anchor": "end",
+   "size": 13,
+   "tone": "subject",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "na2",
+   "type": "line",
+   "points": [
+    [
+     40,
+     206
+    ],
+    [
+     320,
+     206
+    ]
+   ],
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "nt2_0",
+   "type": "line",
+   "points": [
+    [
+     40,
+     196
+    ],
+    [
+     40,
+     216
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt2_1",
+   "type": "line",
+   "points": [
+    [
+     110,
+     196
+    ],
+    [
+     110,
+     216
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt2_2",
+   "type": "line",
+   "points": [
+    [
+     180,
+     196
+    ],
+    [
+     180,
+     216
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt2_3",
+   "type": "line",
+   "points": [
+    [
+     250,
+     196
+    ],
+    [
+     250,
+     216
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt2_4",
+   "type": "line",
+   "points": [
+    [
+     320,
+     196
+    ],
+    [
+     320,
+     216
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nl2",
+   "type": "text",
+   "x": 40,
+   "y": 230,
+   "text": "2 … 4",
+   "size": 13,
+   "mono": true,
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "ng2",
+   "type": "text",
+   "x": 320,
+   "y": 230,
+   "text": "gap 1/2",
+   "anchor": "end",
+   "size": 13,
+   "tone": "subject",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "na3",
+   "type": "line",
+   "points": [
+    [
+     40,
+     270
+    ],
+    [
+     320,
+     270
+    ]
+   ],
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "nt3_0",
+   "type": "line",
+   "points": [
+    [
+     40,
+     260
+    ],
+    [
+     40,
+     280
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt3_1",
+   "type": "line",
+   "points": [
+    [
+     110,
+     260
+    ],
+    [
+     110,
+     280
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt3_2",
+   "type": "line",
+   "points": [
+    [
+     180,
+     260
+    ],
+    [
+     180,
+     280
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt3_3",
+   "type": "line",
+   "points": [
+    [
+     250,
+     260
+    ],
+    [
+     250,
+     280
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nt3_4",
+   "type": "line",
+   "points": [
+    [
+     320,
+     260
+    ],
+    [
+     320,
+     280
+    ]
+   ],
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nl3",
+   "type": "text",
+   "x": 40,
+   "y": 294,
+   "text": "4 … 8",
+   "size": 13,
+   "mono": true,
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "ng3",
+   "type": "text",
+   "x": 320,
+   "y": 294,
+   "text": "gap 1",
+   "anchor": "end",
+   "size": 13,
+   "tone": "subject",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "rel",
+   "type": "box",
+   "x": 150,
+   "y": 196,
+   "w": 380,
+   "h": 40,
+   "size": 15,
+   "narrow": {
+    "x": 20,
+    "y": 334,
+    "w": 320,
+    "h": 40,
+    "size": 14
+   },
+   "label": "relative gap: gap ÷ start of binade"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Binade [1, 2): the exponent is fixed and the 2 fraction bits give 4 values, 1, 5/4, 3/2, 7/4. Neighbours are 1/4 apart: one ulp = 2^(E − 2) with E = 0.",
+   "patches": [
+    {
+     "id": "t4",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t5",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t6",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t7",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ng1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nt1_0",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt1_1",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt1_2",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt1_3",
+     "set": {
+      "tone": "subject"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Binade [2, 4): the exponent is fixed and the 2 fraction bits give 4 values, 2, 5/2, 3, 7/2. Neighbours are 1/2 apart: one ulp = 2^(E − 2) with E = 1.",
+   "patches": [
+    {
+     "id": "t8",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t9",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t10",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t11",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ng2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nt2_0",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt2_1",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt2_2",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt2_3",
+     "set": {
+      "tone": "subject"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Binade [4, 8): the exponent is fixed and the 2 fraction bits give 4 values, 4, 5, 6, 7. Neighbours are 1 apart: one ulp = 2^(E − 2) with E = 2.",
+   "patches": [
+    {
+     "id": "t12",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t13",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t14",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t15",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ng3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nt3_0",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt3_1",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt3_2",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt3_3",
+     "set": {
+      "tone": "subject"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Binade [1/2, 1): the exponent is fixed and the 2 fraction bits give 4 values, 1/2, 5/8, 3/4, 7/8. Neighbours are 1/8 apart: one ulp = 2^(E − 2) with E = -1.",
+   "patches": [
+    {
+     "id": "t0",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "g0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ng0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nt0_0",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt0_1",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt0_2",
+     "set": {
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "nt0_3",
+     "set": {
+      "tone": "subject"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every binade holds the same 4 values, so each step up doubles the gap: 1/8, 1/4, 1/2, 1. The largest gap is in the top binade.",
+   "patches": [
+    {
+     "id": "t0",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t4",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t5",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t6",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t7",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t8",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t9",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t10",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t11",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t12",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t13",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t14",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "t15",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Divide each gap by the start of its binade: (1/8)/(1/2) = (1/4)/1 = (1/2)/2 = 1/4 = 2⁻². The relative gap is the same everywhere: that is floating point's promise.",
+   "patches": [
+    {
+     "id": "rel",
+     "set": {
+      "label": "relative gap = 2⁻² in every binade",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -13,7 +13,7 @@ PYQ pipeline, not a set error).
 
 | # | Topic | Disagreement | Correct version |
 |---|---|---|---|
-| X1 | Floating-point bias | B 151 writes bias = 2ⁿ − 1, while B 152 and its examples use 2^{k−1}. IEEE (D 402–403, A 23) uses 2^{k−1} − 1. | Two conventions exist. *Excess-2^{k−1}* (textbook custom formats, e.g. excess-64 for a 7-bit exponent) and *IEEE* 2^{k−1} − 1 (127 / 1023). The lesson must state which one each question uses (dl-08-01). |
+| X1 | Floating-point bias | B 151 writes bias = 2ⁿ − 1, while B 152 and its examples use 2^{k−1}. IEEE (D 402–403, A 23) uses 2^{k−1} − 1. | Two conventions exist. *Excess-2^{k−1}* (textbook custom formats, e.g. excess-64 for a 7-bit exponent) and *IEEE* 2^{k−1} − 1 (127 / 1023). The lesson must state which one each question uses (dl-01-05, `bias-conventions`). |
 | X2 | Ring/Johnson counters | A 88 lists them under "asynchronous counters". B 155–156 and D 402 treat them as synchronous shift counters. | They are synchronous, because every flip-flop shares one clock. |
 | X3 | Overflow with opposite signs | A 21 says that opposite-sign operands never overflow "in addition or subtraction". B 146 and C 214 state the addition rule only. | Addition: overflow needs same-sign operands. Subtraction A − B = A + (−B), so it can overflow only when A and B have **opposite** signs (4-bit: 7 − (−2) = 9 > 7). |
 | X4 | NAND vs NOR speed | A 95 says NOR is faster. Textbooks say NAND. | In CMOS a NOR puts its series transistors in the slow PMOS pull-up, while a NAND puts them in the NMOS pull-down. So NAND is faster and smaller, which is why it is the preferred universal gate. |
@@ -123,6 +123,19 @@ PYQ pipeline, not a set error).
   entry was needed. The 40 v2 solutions were rewritten or extended to the teacher-style standard
   (concept tested, steps, every option explained, shortcut, pitfalls), enforced by
   `_checks/dl/pyq_ch1.py`.
+
+- `cse-2005-cs-85b` (**fixed 2026-10-17**, `src/gate/fixes/cse-2005.json`): an earlier fix had set
+  `needsReview: true` with a note calling the question flawed ("1.1101 × 2¹⁰ encodes as 4AD0, not an
+  option"). That note dropped a 1: $0.00111101 \times 2^{13} = 1.11101 \times 2^{10}$ (five 1s), so the
+  hidden-bit word is exponent $74 = 1001010$, mantissa $11101000$, i.e. **4AE8 = option D**, the stored
+  key. 4AE8 decodes to $1.90625 \times 2^{10} = 1952 = \tfrac{61}{256} \times 2^{13}$, the same value as
+  part (a). The fix now restores `needsReview: false` and clears the note; the key is unchanged.
+  Re-derived in `_checks/dl/l05_fp_basics.py`.
+- **Floating-point bias conventions in GATE papers** (for lessons 5–7): 1996 used a 2's-complement
+  exponent, 1997 a sign-magnitude exponent, 2002 and 2005 excess-64 (base 16 in 2002), 2003 a bias of 31
+  with the all-ones field meaning zero, and every paper from 2008 the IEEE biases 127 / 1023 (2021-1 says
+  "bias of 127" explicitly). Solution sets that write "bias = 2ᵏ⁻¹" for IEEE, or 2ⁿ − 1 (set B 151), are
+  wrong for IEEE; lesson 5's `bias-conventions` table and `trap-bias` teach the distinction.
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,
