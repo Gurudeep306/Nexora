@@ -71,7 +71,7 @@
           "status": "in-progress",
           "lessons_status": {
             "kmaps": "draft",
-            "prime-implicants": "pending",
+            "prime-implicants": "draft",
             "tabular-method": "pending",
             "two-level-implementation": "pending"
           },

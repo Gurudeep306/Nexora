@@ -3433,22 +3433,22 @@
       "verification": "No constant $c$ bounds $n/g(n)$ or $g(n)/n$ for all large $n$ because the exponent keeps returning near 0 and near 2."
     },
     "cse-2015-3-cs-43": {
-      "approach": "Plot the six minterms on a 4-variable K-map and list every maximal group; each maximal group is a prime implicant.",
+      "approach": "Concept tested: **counting prime implicants**. Plot the six minterms and grow a maximal loop from every 1; count every maximal loop, whether or not a minimal SOP would use it.",
       "concepts": [
-        "Karnaugh map",
-        "Prime implicants"
+        "Prime implicant",
+        "Karnaugh map"
       ],
       "steps": [
         {
-          "title": "Plot the minterms",
-          "body": "Minterms $0,2,4,5,6,10$ (variables $w,x$ on rows, $y,z$ on columns).",
+          "title": "Plot",
+          "body": "$f(w, x, y, z) = \\Sigma(0, 2, 4, 5, 6, 10)$: row $wx = 00$ has $m_0, m_2$; row 01 has $m_4, m_5, m_6$; row 10 has $m_{10}$.",
           "scene": {
             "groups": []
           }
         },
         {
-          "title": "Largest group",
-          "body": "$0,2,4,6$ (all $w=0,z=0$) form a quad: $w'z'$.",
+          "title": "Grow from each 1",
+          "body": "$m_0, m_2, m_4, m_6$ form a quad (rows 00, 01; columns 00 and 10, through the wrap): $\\overline{w}\\,\\overline{z}$. $m_5$ pairs only with $m_4$: $\\overline{w}x\\overline{y}$. $m_{10}$ pairs only with $m_2$: $\\overline{x}y\\overline{z}$.",
           "scene": {
             "groups": [
               {
@@ -3458,56 +3458,44 @@
                   4,
                   6
                 ],
-                "label": "w′z′"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Remaining 1s",
-          "body": "- $5$ (0101): neighbours $1,4,7,13$; only $4$ is a 1 → pair $\\{4,5\\}=w'xy'$.\n- $10$ (1010): neighbours $2,8,11,14$; only $2$ is a 1 → pair $\\{2,10\\}=x'yz'$.\n\nNo larger group contains 5 or 10.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  2,
-                  4,
-                  6
-                ],
-                "label": "w′z′"
+                "label": "w′z′",
+                "tone": "accent"
               },
               {
                 "cells": [
                   4,
                   5
                 ],
-                "label": "w′xy′"
+                "label": "w′xy′",
+                "tone": "success"
               },
               {
                 "cells": [
                   2,
                   10
                 ],
-                "label": "x′yz′"
+                "label": "x′yz′",
+                "tone": "warning"
               }
             ]
           }
         },
         {
           "title": "Count",
-          "body": "Prime implicants: $w'z',\\ w'xy',\\ x'yz'$ → **3** (all three are essential)."
+          "body": "No other loop is maximal (every other pair lies inside the quad). So there are **3** prime implicants, all essential here."
         }
       ],
       "answer": {
-        "value": "3",
+        "value": "**3** prime implicants",
         "number": 3,
         "matchesKey": true
       },
+      "shortcut": "A 1 with a single neighbouring 1 ($m_5$, $m_{10}$) contributes exactly one PI (a pair); the remaining 1s form one quad.",
       "pitfalls": [
-        "Counting non-maximal groups like $\\{0,4\\}$ or $\\{2,6\\}$, which are contained in $w'z'$."
+        "Counting the pairs inside the quad (e.g. $m_0, m_2$) as separate prime implicants.",
+        "Missing the wrap-around that makes $m_0, m_2, m_4, m_6$ a quad."
       ],
-      "verification": "Quine–McCluskey: no implicant of size 4 other than $w'z'$; pairs not covered by it are only $(4,5)$ and $(2,10)$.",
+      "verification": "Quine–McCluskey and a scan of all 81 cubes both give exactly $\\{\\overline{w}\\,\\overline{z}, \\overline{w}x\\overline{y}, \\overline{x}y\\overline{z}\\}$.",
       "animation": {
         "kind": "kmap",
         "variables": [

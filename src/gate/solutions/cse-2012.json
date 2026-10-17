@@ -2164,34 +2164,24 @@
       "verification": "Example: path with weights 2, 3: t = 5, t² = 25, t′ = 4 + 9 = 13 < 25 (B holds); single edge of weight 2: t′ = 4 = t² (B fails)."
     },
     "cse-2012-cs-30": {
-      "approach": "Read 1s and don't-cares from the map, then cover the 1s with the largest legal groups: the four corners give b′d′, and the remaining 1 (abcd = 1001) joins the b′c′ quad using don't-care 0001.",
+      "approach": "Concept tested: **minimal SOP with don't-cares** (rows $cd$, columns $ab$). Both quads are essential; options that add terms or leave a 1 uncovered are not minimal.",
       "concepts": [
-        "Karnaugh map",
         "Don't-care conditions",
-        "Prime implicants"
+        "Minimal SOP",
+        "Essential prime implicant"
       ],
-      "given": "| | minterms (abcd) |\n|---|---|\n| 1s | 0 (0000), 2 (0010), 8 (1000), 9 (1001) |\n| X | 1 (0001), 4 (0100), 10 (1010), 12 (1100) |",
+      "given": "Rows $cd$, columns $ab$. Row 00: 1 X X 1; row 01: X 0 0 1; row 11: 0 0 0 0; row 10: 1 0 0 X.",
       "steps": [
         {
-          "title": "Corners → $\\overline{b}\\,\\overline{d}$",
-          "body": "Minterms 0, 2, 8, 10 (four corners, 10 is X) form a quad with $b = 0, d = 0$ ⇒ $\\overline{b}\\,\\overline{d}$. This covers 1s 0, 2, 8.",
+          "title": "Read the 1s",
+          "body": "In $(a, b, c, d)$: $m_0$, $m_8$ (row 00), $m_9$ (row 01, column 10), $m_2$ (row 10, column 00). Xs: $m_4$, $m_{12}$, $m_1$, $m_{10}$.",
           "scene": {
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  2,
-                  8,
-                  10
-                ],
-                "label": "b'd'"
-              }
-            ]
+            "groups": []
           }
         },
         {
-          "title": "Cover minterm 9",
-          "body": "Minterm 9 (1001) is left. The quad 0, 1, 8, 9 ($b = 0, c = 0$; 1 is X) is the largest group containing it ⇒ $\\overline{b}\\,\\overline{c}$.",
+          "title": "Loops",
+          "body": "Corners with $X_{10}$: $\\overline{b}\\,\\overline{d}$ ($m_0, m_2, m_8, X_{10}$). $m_9$ needs $\\overline{b}\\,\\overline{c}$ ($m_0, X_1, m_8, m_9$). Both are essential ($m_2$ only in the first, $m_9$ only in the second).",
           "scene": {
             "groups": [
               {
@@ -2201,27 +2191,25 @@
                   8,
                   10
                 ],
-                "label": "b'd'"
+                "label": "b′d′",
+                "tone": "accent"
               },
               {
                 "cells": [
                   0,
-                  1,
-                  8,
-                  9
+                  2,
+                  4,
+                  6
                 ],
-                "label": "b'c'"
+                "label": "b′c′",
+                "tone": "success"
               }
             ]
           }
-        },
-        {
-          "title": "Minimal SOP",
-          "body": "$F = \\overline{b}\\,\\overline{d} + \\overline{b}\\,\\overline{c}$. Don't-cares 4 and 12 are not needed."
         }
       ],
       "answer": {
-        "value": "$\\overline{b}\\,\\overline{d} + \\overline{b}\\,\\overline{c}$ — option (B)",
+        "value": "(B) $\\overline{b}\\,\\overline{d} + \\overline{b}\\,\\overline{c}$",
         "choice": [
           "B"
         ],
@@ -2231,50 +2219,52 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Leaves minterm 9 (a b′ c′ d) uncovered."
+          "reason": "$\\overline{b}\\,\\overline{d}$ alone misses $m_9$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Two quads cover all 1s with the fewest literals — correct."
+          "reason": "The two essential quads, 4 literals."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Covers 9 with a 4-literal term; b′c′ is a larger group, so this is not minimal."
+          "reason": "Covers $m_9$ with the 4-literal minterm $a\\overline{b}\\,\\overline{c}d$ instead of the quad $\\overline{b}\\,\\overline{c}$: correct but not minimal (6 literals)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "c′d′ (0, 4, 8, 12) is redundant — its only 1s (0, 8) are already covered."
+          "reason": "Adds the redundant $\\overline{c}\\,\\overline{d}$ (6 literals)."
         }
       ],
+      "shortcut": "$m_9$ is the only 1 outside the corners; give it the largest loop the Xs allow ($\\overline{b}\\,\\overline{c}$).",
       "pitfalls": [
-        "Using don't-cares 4 and 12 just because they are available — only use them when they enlarge a needed group."
+        "Covering $m_9$ with its minterm (option C).",
+        "Adding $\\overline{c}\\,\\overline{d}$ because it uses the Xs $m_4, m_{12}$."
       ],
-      "verification": "Evaluate $b'd' + b'c'$ on every 0-cell (3, 5, 6, 7, 11, 13, 14, 15): each has b = 1 or (c = 1 and d = 1), so the function is 0 there ✓.",
+      "verification": "PIs with the Xs: $\\overline{b}\\,\\overline{d}$, $\\overline{b}\\,\\overline{c}$, $\\overline{c}\\,\\overline{d}$; the chart over $\\{0, 2, 8, 9\\}$ has single-mark columns 2 and 9.",
       "animation": {
         "kind": "kmap",
         "variables": [
-          "a",
-          "b",
           "c",
-          "d"
+          "d",
+          "a",
+          "b"
         ],
         "ones": [
           0,
           2,
-          8,
-          9
-        ],
-        "dcs": [
-          1,
-          4,
-          10,
-          12
+          6,
+          8
         ],
         "groups": [],
-        "caption": "Rows ab, columns cd (the transpose of the question's map)."
+        "dcs": [
+          1,
+          3,
+          4,
+          10
+        ],
+        "title": "Rows cd, columns ab (as printed)"
       }
     },
     "cse-2012-cs-31": {

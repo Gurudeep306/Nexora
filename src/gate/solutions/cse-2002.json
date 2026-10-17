@@ -528,52 +528,26 @@
       "verification": "Standard UART framing: 1 start bit (0), 5–8 data bits, optional parity, 1–2 stop bits (1)."
     },
     "cse-2002-a-12": {
-      "approach": "Group the 1s with the help of the don't-cares: the 1s sit exactly where $x\\neq z$, giving two quads $xz'$ and $x'z$.",
+      "approach": "Concept tested: **don't-cares and an XOR pattern** on a map with rows $yz$, columns $wx$. Loop the 1s with the useful Xs; the result is $x \\oplus z$.",
       "concepts": [
-        "K-map minimisation",
-        "Don't-care conditions"
+        "Don't-care conditions",
+        "XOR pattern",
+        "Reading a printed map"
       ],
-      "given": "| $yz$ (rows) / $wx$ (cols) | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 | 0 | 1 | 1 | 0 |\n| 01 | x | 0 | 0 | 1 |\n| 11 | x | 0 | 0 | 1 |\n| 10 | 0 | 1 | 1 | x |",
+      "given": "Rows $yz$, columns $wx$. Row 00: 0 1 1 0; rows 01, 11: X 0 0 1; row 10: 0 1 1 X.",
       "steps": [
         {
-          "title": "List the cells",
-          "body": "With $m=8w+4x+2y+z$: 1s at $m_4,m_6,m_{12},m_{14}$ (where $x=1,z=0$) and $m_9,m_{11}$ (where $x=0,z=1$); don't-cares at $m_1,m_3,m_{10}$. The animation draws rows $wx$ and columns $yz$ (the transpose of the paper's layout; same cells).",
+          "title": "Read the map",
+          "body": "1s with $z = 0$ sit in the middle columns ($x = 1$); 1s with $z = 1$ sit in column $wx = 10$ ($x = 0$, $w = 1$), with Xs in column 00.",
           "scene": {
-            "caption": "Map plotted: six 1s, three don't-cares"
+            "groups": []
           }
         },
         {
-          "title": "Quad $xz'$",
-          "body": "$x=1,z=0$: cells $m_4,m_6,m_{12},m_{14}$, all 1s; columns $yz=00$ and $10$ are adjacent by wrap-around. Term $xz'$.",
+          "title": "Loop",
+          "body": "Rows $yz = 00, 10$ ($z = 0$) × columns 01, 11 ($x = 1$): the quad $x\\overline{z}$. Rows 01, 11 ($z = 1$) × columns 00, 10 ($x = 0$, using the Xs in column 00 through the wrap): the quad $\\overline{x}z$.",
           "scene": {
             "groups": [
-              {
-                "cells": [
-                  4,
-                  6,
-                  12,
-                  14
-                ],
-                "label": "xz′"
-              }
-            ],
-            "caption": "Quad 1: xz′"
-          }
-        },
-        {
-          "title": "Quad $x'z$",
-          "body": "$x=0,z=1$: cells $m_1,m_3,m_9,m_{11}$ = two don't-cares + two 1s; rows $wx=00$ and $10$ wrap. Term $x'z$. Using $m_{10}$ as a 1 would add a term, so it is taken as 0.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  4,
-                  6,
-                  12,
-                  14
-                ],
-                "label": "xz′"
-              },
               {
                 "cells": [
                   1,
@@ -581,42 +555,29 @@
                   9,
                   11
                 ],
-                "label": "x′z"
+                "label": "xz′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  4,
+                  6,
+                  12,
+                  14
+                ],
+                "label": "x′z",
+                "tone": "success"
               }
-            ],
-            "caption": "Quad 2: x′z (uses don't-cares m1, m3)"
+            ]
           }
         },
         {
           "title": "Result",
-          "body": "$f = xz' + x'z = x\\oplus z$: two 2-literal terms; no single term covers both groups, so this is minimal."
+          "body": "$f = x\\overline{z} + \\overline{x}z = x \\oplus z$: option (B) ($xz' + zx'$)."
         }
       ],
-      "animation": {
-        "kind": "kmap",
-        "variables": [
-          "w",
-          "x",
-          "y",
-          "z"
-        ],
-        "ones": [
-          4,
-          6,
-          9,
-          11,
-          12,
-          14
-        ],
-        "dcs": [
-          1,
-          3,
-          10
-        ],
-        "groups": []
-      },
       "answer": {
-        "value": "$xz'+zx'$",
+        "value": "(B) $xz' + zx'$",
         "choice": [
           "B"
         ],
@@ -626,29 +587,54 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$xz$ covers $m_5,m_7,m_{13},m_{15}$, which are all 0s."
+          "reason": "$xz + y'z$ is 1 where $x = z = 1$ (columns 01, 11, rows 01, 11), which are 0s."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: two quads cover all six 1s and no 0."
+          "reason": "The two quads."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$x'y$ covers $m_2$ ($w=0,x=0,y=1,z=0$), a 0 cell."
+          "reason": "$x'y + zx'$ is 1 on row $yz = 10$, column 00 ($m_2$), which is 0, and misses the $x\\overline{z}$ 1s."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "B is a valid minimum SOP, so D is wrong."
+          "reason": "(B) is correct, so 'none of the above' is wrong."
         }
       ],
+      "shortcut": "The 1s sit where $x$ and $z$ differ (with Xs filling in): XOR of $x$ and $z$.",
       "pitfalls": [
-        "Reading the map with the wrong variable order on rows/columns.",
-        "Forgetting wrap-around adjacency of the outer columns/rows."
+        "Not using the Xs in column 00, which leaves $\\overline{x}z$ as a pair ($w\\overline{x}z$, 3 literals).",
+        "Reading the rows as $wx$."
       ],
-      "verification": "Checked all 16 cells: $x\\oplus z$ is 1 exactly on the six 1s and on don't-cares $m_1,m_3$, and 0 on every 0 cell (and on don't-care $m_{10}$)."
+      "verification": "$x \\oplus z$ agrees with all 13 care cells of the map (enumeration).",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "y",
+          "z",
+          "w",
+          "x"
+        ],
+        "ones": [
+          1,
+          3,
+          6,
+          9,
+          11,
+          14
+        ],
+        "groups": [],
+        "dcs": [
+          4,
+          10,
+          12
+        ],
+        "title": "Rows yz, columns wx (as printed)"
+      }
     },
     "cse-2002-a-13": {
       "approach": "Memory means a storage element; an opcode is a field of an instruction (information), not a storage device.",

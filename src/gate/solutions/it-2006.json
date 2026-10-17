@@ -1811,24 +1811,24 @@
       "verification": "$\\varepsilon$, $ab$, $abb$, $aabb$ derivable; $a$, $aab$ not."
     },
     "it-2006-cs-35": {
-      "approach": "List the 1-cells, then find a cell covered by only one prime implicant. Cell $P'Q'R'S'$ (minterm 0) can only be covered by the corner quad $Q'S'$, so $Q'S'$ is essential; check the other options are not.",
+      "approach": "Concept tested: **essential prime implicants on a printed map** (rows $RS$, columns $PQ$). List the PIs, find the 1-cells covered by one PI only, and match against the options.",
       "concepts": [
-        "K-map",
-        "Prime implicant",
-        "Essential prime implicant"
+        "Essential prime implicant",
+        "Corner quad",
+        "Reading a printed map"
       ],
-      "given": "1s at $(PQ,RS)$: $(00,00),(10,00),(11,01),(10,01),(00,11),(01,11),(11,11),(00,10),(10,10)$, i.e. minterms $\\{0,2,3,7,8,9,10,13,15\\}$.",
+      "given": "Rows $RS$, columns $PQ$ (Gray order). Rows: 00: 1 0 0 1; 01: 0 0 1 1; 11: 1 1 1 0; 10: 1 0 0 1.",
       "steps": [
         {
-          "title": "Read the map",
-          "body": "Minterm index $=PQRS$. Ones: $0,2,8,10$ (the four corners of $Q=0,S=0$), $3,7,15$ ($RS=11$), $9,13$ ($RS=01$).",
+          "title": "Read the 1s",
+          "body": "In terms of $(P, Q, R, S)$: the four corners ($Q = 0$, $S = 0$: $m_0, m_2, m_8, m_{10}$), row $RS = 01$ at $PQ = 11, 10$ ($m_{13}, m_9$), row $RS = 11$ at $PQ = 00, 01, 11$ ($m_3, m_7, m_{15}$).",
           "scene": {
-            "caption": "The 9 ones"
+            "groups": []
           }
         },
         {
-          "title": "Q′S′ is a prime implicant",
-          "body": "$Q'S'$ = minterms $\\{0,2,8,10\\}$ (the four corners): all 1, and it cannot grow ($Q'$ alone includes minterm 1 = 0).",
+          "title": "Prime implicants",
+          "body": "Corner quad $\\overline{Q}\\,\\overline{S}$; pairs $\\overline{P}\\,\\overline{Q}R$ (2, 3), $\\overline{P}RS$ (3, 7), $QRS$ (7, 15), $PQS$ (13, 15), $P\\overline{R}S$ (9, 13), $P\\overline{Q}\\,\\overline{R}$ (8, 9). No other quad fits.",
           "scene": {
             "groups": [
               {
@@ -1838,93 +1838,55 @@
                   8,
                   10
                 ],
-                "label": "Q′S′"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Minterm 0 forces it",
-          "body": "Neighbours of minterm 0: $1, 4$ (both 0), $2, 8$ (1). Any implicant containing 0 lies inside $\\{0,2,8,10\\}$, so $Q'S'$ is the only prime implicant covering 0. Hence $Q'S'$ is **essential**.",
-          "scene": {
-            "hl": [
-              {
-                "cell": 0,
+                "label": "Q′S′",
                 "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "The other options",
-          "body": "$QRS = \\{7,15\\}$ and $PQS=\\{13,15\\}$ are prime but not essential: 7 is also in $P'RS=\\{3,7\\}$, 15 in $PQS$/$QRS$, 13 in $PR'S = \\{9,13\\}$. $PQ'S' = \\{8,10\\} \\subset Q'S'$ is not even prime.",
-          "scene": {
-            "groups": [
+              },
               {
                 "cells": [
-                  0,
-                  2,
-                  8,
-                  10
+                  12,
+                  13
                 ],
-                "label": "Q′S′"
+                "label": "P′RS",
+                "tone": "accent"
               },
               {
                 "cells": [
                   7,
                   15
                 ],
-                "label": "QRS"
-              },
+                "label": "PQS",
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Distinguished cells",
+          "body": "$m_0$ (row 00, column 00) lies only in $\\overline{Q}\\,\\overline{S}$. Every other 1 lies in two PIs (e.g. $m_9$ in $P\\overline{R}S$ and $P\\overline{Q}\\,\\overline{R}$). So $\\overline{Q}\\,\\overline{S}$ is the only EPI.",
+          "scene": {
+            "groups": [
               {
                 "cells": [
-                  13,
-                  15
+                  0,
+                  2,
+                  8,
+                  10
                 ],
-                "label": "PQS"
-              },
-              {
-                "cells": [
-                  9,
-                  13
-                ],
-                "label": "PR′S"
-              },
-              {
-                "cells": [
-                  3,
-                  7
-                ],
-                "label": "P′RS"
+                "label": "Q′S′",
+                "tone": "success"
               }
             ],
-            "hl": []
+            "hl": [
+              {
+                "cell": 0,
+                "tone": "warning"
+              }
+            ]
           }
         }
       ],
-      "animation": {
-        "kind": "kmap",
-        "variables": [
-          "P",
-          "Q",
-          "R",
-          "S"
-        ],
-        "ones": [
-          0,
-          2,
-          3,
-          7,
-          8,
-          9,
-          10,
-          13,
-          15
-        ],
-        "caption": "Rows PQ, columns RS (minterm = PQRS)"
-      },
       "answer": {
-        "value": "Q'S'",
+        "value": "(D) $\\overline{Q}\\,\\overline{S}$",
         "choice": [
           "D"
         ],
@@ -1934,29 +1896,52 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Prime, but its cells 7 and 15 are also covered by $P'RS$ and $PQS$, so not essential."
+          "reason": "$QRS$ ($m_7, m_{15}$) is a PI, but $m_7$ is also in $\\overline{P}RS$ and $m_{15}$ in $PQS$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Prime, but 13 is also covered by $PR'S$ and 15 by $QRS$; not essential."
+          "reason": "$PQS$ ($m_{13}, m_{15}$) is a PI, but both cells have another PI."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\{8,10\\}$ is contained in $Q'S'$, so it is not even prime."
+          "reason": "$PQ'S'$ ($m_8, m_{10}$) lies inside the corner quad: an implicant, not prime."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: the only prime implicant covering minterm 0."
+          "reason": "The corner quad; $m_0$ is covered by nothing else."
         }
       ],
+      "shortcut": "Check the corner cells first: four 1s in the corners almost always form an essential quad, because the corner cells' other neighbours are 0s.",
       "pitfalls": [
-        "Missing the wrap-around corner group.",
-        "Reading the map with rows and columns swapped; here columns are $PQ$ and rows $RS$."
+        "Reading the rows as $PQ$ (the paper puts $RS$ on the rows).",
+        "Picking $PQ'S'$, which is inside the corner quad and therefore not prime."
       ],
-      "verification": "A minimal cover: $Q'S' + P'RS + PR'S + PQS$ (or with $QRS$) covers all 9 ones, with $Q'S'$ in every cover."
+      "verification": "Quine–McCluskey on $\\Sigma(0, 2, 3, 7, 8, 9, 10, 13, 15)$: 7 PIs; the only single-mark column is $m_0$, under $\\overline{Q}\\,\\overline{S}$.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "R",
+          "S",
+          "P",
+          "Q"
+        ],
+        "ones": [
+          0,
+          2,
+          6,
+          7,
+          8,
+          10,
+          12,
+          13,
+          15
+        ],
+        "groups": [],
+        "title": "Rows RS, columns PQ (as printed)"
+      }
     },
     "it-2006-cs-36": {
       "approach": "Shannon-expand the majority function on the select input $z$: $f = z\\cdot f|_{z=1} + z'\\cdot f|_{z=0}$. Box P feeds mux input 1 and box Q feeds input 0.",

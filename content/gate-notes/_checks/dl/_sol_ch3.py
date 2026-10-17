@@ -480,6 +480,307 @@ SOLUTIONS["cse-2026-2-cs-30"] = {
 }
 
 
+# ── Lesson 2: prime implicants and don't-cares ──────────────────────────────
+
+XYZ = list("xyz")
+SOLUTIONS["cse-1997-a-36"] = {
+    "approach": "Concept tested: **minterm vs implicant vs prime implicant**. Simplify $f$, then test each claim against the definitions: an implicant's cells must all be 1s; a prime implicant must lose that property when any literal is dropped.",
+    "concepts": ["Implicant", "Prime implicant", "Minterm"],
+    "steps": [
+        {"title": "Simplify f", "body": "$\\overline{x} + \\overline{y}x = \\overline{x} + \\overline{y}$ (redundant-literal rule), so $f = \\overline{x} + \\overline{y} + z = \\Sigma(0, 1, 2, 3, 4, 5, 7)$; only $m_6 = xy\\overline{z}$ is 0.", "scene": {"groups": []}},
+        {"title": "The prime implicants", "body": "The 1s are covered by three quads, $\\overline{x}$, $\\overline{y}$ and $z$, each maximal. These are the prime implicants.", "scene": {"groups": [grp("x'", XYZ, "accent"), grp("y'", XYZ, "success"), grp("z", XYZ, "warning")]}},
+        {"title": "Test each claim", "body": "(A) $\\overline{y}x$ is an implicant, but it lies inside $\\overline{y}$ (drop $x$ and it is still an implicant): **not prime**.\n\n(B) $xz$ has 2 literals; a minterm of a 3-variable function has 3. **Not a minterm.**\n\n(C) $xz = \\{m_5, m_7\\}$, both 1s: **an implicant**. True.\n\n(D) $y = \\{m_2, m_3, m_6, m_7\\}$ contains the 0-cell $m_6$: not even an implicant."},
+    ],
+    "answer": {"value": "(C) $xz$ is an implicant of $f$", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$\\overline{y}x \\subset \\overline{y}$, and $\\overline{y}$ is itself an implicant, so $\\overline{y}x$ is not prime."),
+        opt("B", False, "A minterm contains all three variables; $xz$ has two."),
+        opt("C", True, "Both cells of $xz$ ($m_5$, $m_7$) are 1s."),
+        opt("D", False, "$y$ covers $m_6$, where $f = 0$."),
+    ],
+    "shortcut": "$f$ is 0 only at $xy\\overline{z}$. A product is an implicant iff it avoids that one cell: $xz$ (needs $z = 1$) avoids it; $y$ does not.",
+    "pitfalls": ["Calling every term of the given expression a prime implicant: $\\overline{y}x$ and $xz$ are implicants that can be enlarged.", "Confusing 'implicant' with 'minterm'."],
+    "verification": "Truth table: $f$ is 1 on every row except 110; $xz$ is 1 on rows 101, 111 only.",
+    "animation": km(XYZ, [0, 1, 2, 3, 4, 5, 7]),
+}
+
+abc = list("abc")
+SOLUTIONS["cse-2004-cs-59"] = {
+    "approach": "Concept tested: **essential prime implicants**. List all PIs of $f$, then find the 1-cells that lie in exactly one PI.",
+    "concepts": ["Prime implicant", "Essential prime implicant"],
+    "steps": [
+        {"title": "Minterms", "body": "$\\overline{a}c = \\{1, 3\\}$, $a\\overline{c} = \\{4, 6\\}$, $\\overline{b}c = \\{1, 5\\}$: $f = \\Sigma(1, 3, 4, 5, 6)$.", "scene": {"groups": []}},
+        {"title": "All prime implicants", "body": "Pairs: $\\overline{a}c$ (1, 3), $\\overline{b}c$ (1, 5), $a\\overline{b}$ (4, 5), $a\\overline{c}$ (4, 6). No quad fits (each would contain $m_0$, $m_2$ or $m_7$).", "scene": {"groups": [grp("a'c", abc, "accent"), grp("b'c", abc, "info"), grp("ab'", abc, "warning"), grp("ac'", abc, "success")]}},
+        {"title": "Distinguished cells", "body": "$m_3$ lies only in $\\overline{a}c$; $m_6$ only in $a\\overline{c}$. $m_1$, $m_4$, $m_5$ each lie in two PIs. So the EPIs are $\\overline{a}c$ and $a\\overline{c}$.", "scene": {"groups": [grp("a'c", abc, "success"), grp("ac'", abc, "success")], "hl": [{"cell": 3, "tone": "warning"}, {"cell": 6, "tone": "warning"}]}},
+    ],
+    "answer": {"value": "(A) $\\overline{a}c$ and $a\\overline{c}$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "The only PIs through $m_3$ and $m_6$ respectively."),
+        opt("B", False, "$\\overline{b}c$ is a PI but $m_1$ and $m_5$ are also covered by other PIs: it is selective."),
+        opt("C", False, "$a\\overline{c}$ is essential too (through $m_6$)."),
+        opt("D", False, "$b\\overline{c} = \\{2, 6\\}$ contains the 0-cell $m_2$: not even an implicant."),
+    ],
+    "shortcut": "In the given SOP, a term is essential iff it has a cell no other term (and no consensus term) covers: $m_3$ and $m_6$.",
+    "pitfalls": ["Assuming every term of the given expression is essential ($\\overline{b}c$ is not).", "Forgetting the PI $a\\overline{b}$, which is not in the expression but competes for $m_4, m_5$."],
+    "verification": "Quine–McCluskey on $\\Sigma(1, 3, 4, 5, 6)$ gives the same four PIs; the chart's single-mark columns are 3 and 6.",
+    "animation": km(abc, [1, 3, 4, 5, 6]),
+}
+
+RSPQ = list("RSPQ")
+o06 = ml.from_map(["1001", "0011", "1110", "1001"], "RS", "PQ", RSPQ)[0]
+SOLUTIONS["it-2006-cs-35"] = {
+    "approach": "Concept tested: **essential prime implicants on a printed map** (rows $RS$, columns $PQ$). List the PIs, find the 1-cells covered by one PI only, and match against the options.",
+    "concepts": ["Essential prime implicant", "Corner quad", "Reading a printed map"],
+    "given": "Rows $RS$, columns $PQ$ (Gray order). Rows: 00: 1 0 0 1; 01: 0 0 1 1; 11: 1 1 1 0; 10: 1 0 0 1.",
+    "steps": [
+        {"title": "Read the 1s", "body": "In terms of $(P, Q, R, S)$: the four corners ($Q = 0$, $S = 0$: $m_0, m_2, m_8, m_{10}$), row $RS = 01$ at $PQ = 11, 10$ ($m_{13}, m_9$), row $RS = 11$ at $PQ = 00, 01, 11$ ($m_3, m_7, m_{15}$).", "scene": {"groups": []}},
+        {"title": "Prime implicants", "body": "Corner quad $\\overline{Q}\\,\\overline{S}$; pairs $\\overline{P}\\,\\overline{Q}R$ (2, 3), $\\overline{P}RS$ (3, 7), $QRS$ (7, 15), $PQS$ (13, 15), $P\\overline{R}S$ (9, 13), $P\\overline{Q}\\,\\overline{R}$ (8, 9). No other quad fits.", "scene": {"groups": [grp("Q'S'", RSPQ, "success"), grp("P'RS", RSPQ, "accent"), grp("PQS", RSPQ, "warning")]}},
+        {"title": "Distinguished cells", "body": "$m_0$ (row 00, column 00) lies only in $\\overline{Q}\\,\\overline{S}$. Every other 1 lies in two PIs (e.g. $m_9$ in $P\\overline{R}S$ and $P\\overline{Q}\\,\\overline{R}$). So $\\overline{Q}\\,\\overline{S}$ is the only EPI.", "scene": {"groups": [grp("Q'S'", RSPQ, "success")], "hl": [{"cell": 0, "tone": "warning"}]}},
+    ],
+    "answer": {"value": "(D) $\\overline{Q}\\,\\overline{S}$", "choice": ["D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$QRS$ ($m_7, m_{15}$) is a PI, but $m_7$ is also in $\\overline{P}RS$ and $m_{15}$ in $PQS$."),
+        opt("B", False, "$PQS$ ($m_{13}, m_{15}$) is a PI, but both cells have another PI."),
+        opt("C", False, "$PQ'S'$ ($m_8, m_{10}$) lies inside the corner quad: an implicant, not prime."),
+        opt("D", True, "The corner quad; $m_0$ is covered by nothing else."),
+    ],
+    "shortcut": "Check the corner cells first: four 1s in the corners almost always form an essential quad, because the corner cells' other neighbours are 0s.",
+    "pitfalls": ["Reading the rows as $PQ$ (the paper puts $RS$ on the rows).", "Picking $PQ'S'$, which is inside the corner quad and therefore not prime."],
+    "verification": "Quine–McCluskey on $\\Sigma(0, 2, 3, 7, 8, 9, 10, 13, 15)$: 7 PIs; the only single-mark column is $m_0$, under $\\overline{Q}\\,\\overline{S}$.",
+    "animation": km(RSPQ, o06, title="Rows RS, columns PQ (as printed)"),
+}
+
+SOLUTIONS["cse-2015-3-cs-43"] = {
+    "approach": "Concept tested: **counting prime implicants**. Plot the six minterms and grow a maximal loop from every 1; count every maximal loop, whether or not a minimal SOP would use it.",
+    "concepts": ["Prime implicant", "Karnaugh map"],
+    "steps": [
+        {"title": "Plot", "body": "$f(w, x, y, z) = \\Sigma(0, 2, 4, 5, 6, 10)$: row $wx = 00$ has $m_0, m_2$; row 01 has $m_4, m_5, m_6$; row 10 has $m_{10}$.", "scene": {"groups": []}},
+        {"title": "Grow from each 1", "body": "$m_0, m_2, m_4, m_6$ form a quad (rows 00, 01; columns 00 and 10, through the wrap): $\\overline{w}\\,\\overline{z}$. $m_5$ pairs only with $m_4$: $\\overline{w}x\\overline{y}$. $m_{10}$ pairs only with $m_2$: $\\overline{x}y\\overline{z}$.", "scene": {"groups": [grp("w'z'", W, "accent"), grp("w'xy'", W, "success"), grp("x'yz'", W, "warning")]}},
+        {"title": "Count", "body": "No other loop is maximal (every other pair lies inside the quad). So there are **3** prime implicants, all essential here."},
+    ],
+    "answer": {"value": "**3** prime implicants", "number": 3, "matchesKey": True},
+    "shortcut": "A 1 with a single neighbouring 1 ($m_5$, $m_{10}$) contributes exactly one PI (a pair); the remaining 1s form one quad.",
+    "pitfalls": ["Counting the pairs inside the quad (e.g. $m_0, m_2$) as separate prime implicants.", "Missing the wrap-around that makes $m_0, m_2, m_4, m_6$ a quad."],
+    "verification": "Quine–McCluskey and a scan of all 81 cubes both give exactly $\\{\\overline{w}\\,\\overline{z}, \\overline{w}x\\overline{y}, \\overline{x}y\\overline{z}\\}$.",
+    "animation": km(W, [0, 2, 4, 5, 6, 10]),
+}
+
+SOLUTIONS["cse-2018-cs-49"] = {
+    "approach": "Concept tested: **essential prime implicants with don't-cares**. Use the Xs to form the largest PIs, then count the PIs that are the only cover of some **1**-cell (a don't-care never makes a PI essential).",
+    "concepts": ["Essential prime implicant", "Don't-care conditions"],
+    "given": "$F(P, Q, R, S) = \\Sigma m(0, 2, 5, 7, 9, 11) + d(3, 8, 10, 12, 14)$.",
+    "steps": [
+        {"title": "Plot", "body": "1s: 0, 2, 5, 7, 9, 11. Xs: 3, 8, 10, 12, 14.", "scene": {"groups": []}},
+        {"title": "Prime implicants", "body": "Using the Xs: $\\overline{Q}\\,\\overline{S}$ (0, 2, 8, 10), $P\\overline{Q}$ (8, 9, 10, 11), $\\overline{Q}R$ (2, 3, 10, 11), $\\overline{P}QS$ (5, 7), $\\overline{P}RS$ (3, 7). ($P\\overline{S}$ = 8, 10, 12, 14 is made of Xs only, so it covers no 1 and is never used.)", "scene": {"groups": [grp("Q'S'", PQRS, "accent"), grp("PQ'", PQRS, "info"), grp("Q'R", PQRS, "warning"), grp("P'QS", PQRS, "success"), grp("P'RS", PQRS, "cat1")]}},
+        {"title": "Distinguished 1-cells", "body": "$m_0$: only $\\overline{Q}\\,\\overline{S}$. $m_5$: only $\\overline{P}QS$. $m_9$: only $P\\overline{Q}$. ($m_2$, $m_7$, $m_{11}$ each lie in two PIs.)", "scene": {"groups": [grp("Q'S'", PQRS, "success"), grp("P'QS", PQRS, "success"), grp("PQ'", PQRS, "success")], "hl": [{"cell": 0, "tone": "warning"}, {"cell": 5, "tone": "warning"}, {"cell": 9, "tone": "warning"}]}},
+        {"title": "Count", "body": "3 essential PIs. They already cover every 1, so $F = \\overline{Q}\\,\\overline{S} + \\overline{P}QS + P\\overline{Q}$."},
+    ],
+    "answer": {"value": "**3** essential prime implicants", "number": 3, "matchesKey": True},
+    "shortcut": "Look at the 1s with the fewest 1/X neighbours: $m_0$, $m_5$, $m_9$ each have one maximal loop.",
+    "pitfalls": ["Counting a PI as essential because it is the only one through some don't-care cell: essential is decided by 1-cells only.", "Forgetting that the Xs can make the corner quad."],
+    "verification": "Quine–McCluskey with the don't-cares, then a chart over the six 1-cells only: single-mark columns 0, 5, 9.",
+    "animation": km(PQRS, [0, 2, 5, 7, 9, 11], [3, 8, 10, 12, 14]),
+}
+
+SOLUTIONS["cse-1991-b-5-b"] = {
+    "approach": "Concept tested: **minimal SOP with don't-cares**. Use an X only when it enlarges a loop: the four corners give one quad, and $m_{15}$ joins three Xs in a second quad.",
+    "concepts": ["Don't-care conditions", "Corner quad", "Minimal SOP"],
+    "steps": [
+        {"title": "Plot", "body": "1s: 0, 2, 8, 10, 15. Xs: 3, 11, 12, 14.", "scene": {"groups": []}},
+        {"title": "The corners", "body": "$m_0, m_2, m_8, m_{10}$ are the four corners: $\\overline{B}\\,\\overline{D}$.", "scene": {"groups": [grp("B'D'", ABCD, "accent")]}},
+        {"title": "The lone 1 at m15", "body": "$m_{15}$ (1111) has neighbours $X_{14}$, $X_{11}$, $m_7$ (0) and $m_{13}$ (0). The quad $m_{10}, X_{11}, X_{14}, m_{15}$ (rows $AB = 11, 10$, columns $CD = 11, 10$) is $AC$.", "scene": {"groups": [grp("B'D'", ABCD, "accent"), grp("AC", ABCD, "success")]}},
+        {"title": "Unused Xs", "body": "$X_3$ and $X_{12}$ would only enlarge loops we do not need, so they stay 0."},
+    ],
+    "answer": {"value": "$f = \\overline{B}\\,\\overline{D} + AC$", "matchesKey": True},
+    "shortcut": "Corners first; then the only 1 left ($m_{15}$) takes the biggest loop the Xs allow.",
+    "pitfalls": ["Covering $m_{15}$ with the pair $ABC$ (3 literals) instead of the quad $AC$.", "Adding a term to cover the X at $m_3$ or $m_{12}$."],
+    "verification": "Without don't-cares the minimum is $\\overline{B}\\,\\overline{D} + ABCD$ (6 literals); with them, 4 literals, and Petrick's method confirms $\\overline{B}\\,\\overline{D} + AC$ is the unique minimum.",
+    "animation": km(ABCD, [0, 2, 8, 10, 15], [3, 11, 12, 14]),
+}
+
+SOLUTIONS["cse-1999-a-8"] = {
+    "approach": "Concept tested: **implementing a map with don't-cares**. Find the minimal SOP (Xs used only to enlarge loops), then check each option against the care cells.",
+    "concepts": ["Don't-care conditions", "Minimal SOP", "Equivalent forms"],
+    "given": "Rows $AB$, columns $CD$. Row 00: 0 0 1 0; row 01: X X 1 X; row 11: 0 1 1 0; row 10: 0 1 1 0.",
+    "steps": [
+        {"title": "Read the map", "body": "1s: $m_3, m_7, m_{15}, m_{11}$ (column $CD = 11$), $m_{13}, m_9$ (column 01, rows 11 and 10). Xs: $m_4, m_5, m_6$.", "scene": {"groups": []}},
+        {"title": "Loop", "body": "Column $CD = 11$: $CD$. Rows 11 and 10, columns 01 and 11: $AD$. The Xs are not needed.", "scene": {"groups": [grp("CD", ABCD, "accent"), grp("AD", ABCD, "success")]}},
+        {"title": "Factor", "body": "$CD + AD = D(C + A)$: option (B)."},
+    ],
+    "answer": {"value": "(B) $D(C + A)$", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$\\overline{A}B + CD$ is 1 on $m_4$–$m_7$ (Xs, fine) but 0 on $m_9$ and $m_{13}$, which are 1s."),
+        opt("B", True, "$AD + CD$ factored; it agrees with every care cell."),
+        opt("C", False, "$AD + \\overline{A}B$ misses $m_3$ (row 00, column 11)."),
+        opt("D", False, "$(C + D)(\\overline{C} + D) = D$, so this is $D(A + B)$: it misses $m_3$ and is 1 on $m_1$, a 0."),
+    ],
+    "shortcut": "Every 1 has $D = 1$, and the 1s with $C = 0$ all have $A = 1$: $f = D(A + C)$.",
+    "pitfalls": ["Using the Xs in row 01 to make $\\overline{A}B$ although no 1 needs it.", "Forgetting that $(C + D)(\\overline{C} + D)$ collapses to $D$."],
+    "verification": "Enumeration: (B) matches all 13 care cells; (A), (C), (D) each fail on at least one.",
+    "animation": km(ABCD, [3, 7, 9, 11, 13, 15], [4, 5, 6]),
+}
+
+YZWX = list("yzwx")
+o01, d01 = ml.from_map(["0X0X", "X1X1", "0X10", "01X0"], "yz", "wx", YZWX)
+SOLUTIONS["cse-2001-a-11"] = {
+    "approach": "Concept tested: **minimal SOP with many don't-cares**, on a map whose rows are $yz$ and columns $wx$. There is no essential PI, so compare covers by cost.",
+    "concepts": ["Don't-care conditions", "Minimal SOP", "Reading a printed map"],
+    "given": "Rows $yz$, columns $wx$. Row 00: 0 X 0 X; row 01: X 1 X 1; row 11: 0 X 1 0; row 10: 0 1 X 0.",
+    "steps": [
+        {"title": "Read the 1s", "body": "In $(w, x, y, z)$: $m_5$ (row 01, column 01), $m_9$ (row 01, column 10), $m_{15}$ (row 11, column 11), $m_6$ (row 10, column 01). Xs: 1, 4, 7, 8, 13, 14.", "scene": {"groups": []}},
+        {"title": "Two quads", "body": "Row $yz = 01$ is all 1s and Xs: $\\overline{y}z$ covers $m_5$ and $m_9$. Rows 11 and 10 at columns 01, 11 ($m_7, m_{15}, m_6, m_{14}$) are 1s and Xs: $xy$ covers $m_{15}$ and $m_6$.", "scene": {"groups": [grp("y'z", YZWX, "accent"), grp("xy", YZWX, "success")]}},
+        {"title": "Why nothing cheaper", "body": "$m_9$ and $m_6$ have no common loop, so at least two terms are needed; $\\overline{y}z + xy$ has two terms of 2 literals. It is the unique minimum (4 literals), although no PI is essential."},
+    ],
+    "answer": {"value": "(A) $xy + \\overline{y}z$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "Two quads, 4 literals: minimal."),
+        opt("B", False, "$w\\overline{x}\\,\\overline{y} + xy + xz$ also implements the map, but it costs 7 literals."),
+        opt("C", False, "$\\overline{w}x + \\overline{y}z + xy$ implements the map with 6 literals; $\\overline{w}x$ is unnecessary."),
+        opt("D", False, "$xz + y$ is 1 on $m_2$ and $m_3$ (row 10 and row 11 of column 00), which are 0s."),
+    ],
+    "shortcut": "Two 1s that cannot share a loop ($m_9$ and $m_6$) force at least two terms; the 2-term option is the answer if it is correct.",
+    "pitfalls": ["Rejecting (A) because $\\overline{y}z$ is not essential: minimality is about cost, and here no PI is essential.", "Reading the rows as $wx$."],
+    "verification": "Petrick's method over the PIs (with the Xs) gives the single minimal cover $\\{\\overline{y}z, xy\\}$; (B) and (C) agree with the map but cost more.",
+    "animation": km(YZWX, o01, d01, title="Rows yz, columns wx (as printed)"),
+}
+
+o02, d02 = ml.from_map(["0110", "X001", "X001", "011X"], "yz", "wx", YZWX)
+SOLUTIONS["cse-2002-a-12"] = {
+    "approach": "Concept tested: **don't-cares and an XOR pattern** on a map with rows $yz$, columns $wx$. Loop the 1s with the useful Xs; the result is $x \\oplus z$.",
+    "concepts": ["Don't-care conditions", "XOR pattern", "Reading a printed map"],
+    "given": "Rows $yz$, columns $wx$. Row 00: 0 1 1 0; rows 01, 11: X 0 0 1; row 10: 0 1 1 X.",
+    "steps": [
+        {"title": "Read the map", "body": "1s with $z = 0$ sit in the middle columns ($x = 1$); 1s with $z = 1$ sit in column $wx = 10$ ($x = 0$, $w = 1$), with Xs in column 00.", "scene": {"groups": []}},
+        {"title": "Loop", "body": "Rows $yz = 00, 10$ ($z = 0$) × columns 01, 11 ($x = 1$): the quad $x\\overline{z}$. Rows 01, 11 ($z = 1$) × columns 00, 10 ($x = 0$, using the Xs in column 00 through the wrap): the quad $\\overline{x}z$.", "scene": {"groups": [grp("xz'", YZWX, "accent"), grp("x'z", YZWX, "success")]}},
+        {"title": "Result", "body": "$f = x\\overline{z} + \\overline{x}z = x \\oplus z$: option (B) ($xz' + zx'$)."},
+    ],
+    "answer": {"value": "(B) $xz' + zx'$", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$xz + y'z$ is 1 where $x = z = 1$ (columns 01, 11, rows 01, 11), which are 0s."),
+        opt("B", True, "The two quads."),
+        opt("C", False, "$x'y + zx'$ is 1 on row $yz = 10$, column 00 ($m_2$), which is 0, and misses the $x\\overline{z}$ 1s."),
+        opt("D", False, "(B) is correct, so 'none of the above' is wrong."),
+    ],
+    "shortcut": "The 1s sit where $x$ and $z$ differ (with Xs filling in): XOR of $x$ and $z$.",
+    "pitfalls": ["Not using the Xs in column 00, which leaves $\\overline{x}z$ as a pair ($w\\overline{x}z$, 3 literals).", "Reading the rows as $wx$."],
+    "verification": "$x \\oplus z$ agrees with all 13 care cells of the map (enumeration).",
+    "animation": km(YZWX, o02, d02, title="Rows yz, columns wx (as printed)"),
+}
+
+CDAB_l = list("cdab")
+o08, d08 = ml.from_map(["1101", "X000", "X000", "110X"], "cd", "ab", CDAB_l)
+SOLUTIONS["cse-2008-cs-5"] = {
+    "approach": "Concept tested: **minimal SOP with don't-cares** on a map with rows $cd$, columns $ab$. Two quads cover every 1; options that are equal but use more terms are not minimal.",
+    "concepts": ["Don't-care conditions", "Minimal SOP", "Corner quad"],
+    "given": "Rows $cd$, columns $ab$. Row 00: 1 1 0 1; rows 01, 11: X 0 0 0; row 10: 1 1 0 X.",
+    "steps": [
+        {"title": "Read the 1s", "body": "In $(a, b, c, d)$: $m_0, m_4, m_8$ (row 00), $m_2, m_6$ (row 10). Xs: $m_1, m_3$ (column 00), $m_{10}$.", "scene": {"groups": []}},
+        {"title": "Two quads", "body": "Rows $cd = 00, 10$ ($d = 0$) × columns $ab = 00, 01$ ($a = 0$): $\\overline{a}\\,\\overline{d}$ ($m_0, m_4, m_2, m_6$). The corners with $X_{10}$: $\\overline{b}\\,\\overline{d}$ ($m_0, m_8, m_2, X_{10}$).", "scene": {"groups": [grp("a'd'", CDAB_l, "accent"), grp("b'd'", CDAB_l, "success")]}},
+        {"title": "Check", "body": "All five 1s are covered with 4 literals; $X_1, X_3$ are not needed."},
+    ],
+    "answer": {"value": "(A) $\\overline{b}\\,\\overline{d} + \\overline{a}\\,\\overline{d}$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "Two quads, 4 literals."),
+        opt("B", False, "Implements the map, but uses three terms and 7 literals ($\\overline{a}b\\overline{d}$ lies inside $\\overline{a}\\,\\overline{d}$)."),
+        opt("C", False, "$ab\\overline{d}$ covers $m_{12}, m_{14}$ (0s) and misses $m_4, m_6$."),
+        opt("D", False, "Implements the map (using $X_1, X_3$ in $\\overline{a}\\,\\overline{b}$), but costs 6 literals; $\\overline{a}\\,\\overline{b}$ is unnecessary."),
+    ],
+    "shortcut": "Every 1 has $d = 0$; the ones with $b = 1$ have $a = 0$: $f = \\overline{d}(\\overline{a} + \\overline{b})$.",
+    "pitfalls": ["Choosing (D) because it 'uses more don't-cares'.", "Reading the rows as $ab$."],
+    "verification": "Petrick's method gives the unique minimal cover $\\{\\overline{a}\\,\\overline{d}, \\overline{b}\\,\\overline{d}\\}$ (4 literals).",
+    "animation": km(CDAB_l, o08, d08, title="Rows cd, columns ab (as printed)"),
+}
+
+o12, d12 = ml.from_map(["1XX1", "X001", "0000", "100X"], "cd", "ab", CDAB_l)
+SOLUTIONS["cse-2012-cs-30"] = {
+    "approach": "Concept tested: **minimal SOP with don't-cares** (rows $cd$, columns $ab$). Both quads are essential; options that add terms or leave a 1 uncovered are not minimal.",
+    "concepts": ["Don't-care conditions", "Minimal SOP", "Essential prime implicant"],
+    "given": "Rows $cd$, columns $ab$. Row 00: 1 X X 1; row 01: X 0 0 1; row 11: 0 0 0 0; row 10: 1 0 0 X.",
+    "steps": [
+        {"title": "Read the 1s", "body": "In $(a, b, c, d)$: $m_0$, $m_8$ (row 00), $m_9$ (row 01, column 10), $m_2$ (row 10, column 00). Xs: $m_4$, $m_{12}$, $m_1$, $m_{10}$.", "scene": {"groups": []}},
+        {"title": "Loops", "body": "Corners with $X_{10}$: $\\overline{b}\\,\\overline{d}$ ($m_0, m_2, m_8, X_{10}$). $m_9$ needs $\\overline{b}\\,\\overline{c}$ ($m_0, X_1, m_8, m_9$). Both are essential ($m_2$ only in the first, $m_9$ only in the second).", "scene": {"groups": [grp("b'd'", CDAB_l, "accent"), grp("b'c'", CDAB_l, "success")]}},
+    ],
+    "answer": {"value": "(B) $\\overline{b}\\,\\overline{d} + \\overline{b}\\,\\overline{c}$", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$\\overline{b}\\,\\overline{d}$ alone misses $m_9$."),
+        opt("B", True, "The two essential quads, 4 literals."),
+        opt("C", False, "Covers $m_9$ with the 4-literal minterm $a\\overline{b}\\,\\overline{c}d$ instead of the quad $\\overline{b}\\,\\overline{c}$: correct but not minimal (6 literals)."),
+        opt("D", False, "Adds the redundant $\\overline{c}\\,\\overline{d}$ (6 literals)."),
+    ],
+    "shortcut": "$m_9$ is the only 1 outside the corners; give it the largest loop the Xs allow ($\\overline{b}\\,\\overline{c}$).",
+    "pitfalls": ["Covering $m_9$ with its minterm (option C).", "Adding $\\overline{c}\\,\\overline{d}$ because it uses the Xs $m_4, m_{12}$."],
+    "verification": "PIs with the Xs: $\\overline{b}\\,\\overline{d}$, $\\overline{b}\\,\\overline{c}$, $\\overline{c}\\,\\overline{d}$; the chart over $\\{0, 2, 8, 9\\}$ has single-mark columns 2 and 9.",
+    "animation": km(CDAB_l, o12, d12, title="Rows cd, columns ab (as printed)"),
+}
+
+SOLUTIONS["cse-2014-3-cs-7"] = {
+    "approach": "Concept tested: **don't-cares need not be covered**. Plot the four real 1s, use the Xs only to enlarge their loops, and reject options that spend terms on the Xs.",
+    "concepts": ["Don't-care conditions", "Corner quad", "XNOR pattern"],
+    "given": "1s: 0, 5, 10, 15. Don't-cares: 2, 7, 8, 13.",
+    "steps": [
+        {"title": "Plot", "body": "Over $(P, Q, R, S)$: 1s at $m_0$, $m_5$, $m_{10}$, $m_{15}$; Xs at $m_2$, $m_7$, $m_8$, $m_{13}$.", "scene": {"groups": []}},
+        {"title": "Loop", "body": "Corners $m_0, X_2, X_8, m_{10}$: $\\overline{Q}\\,\\overline{S}$. Centre $m_5, X_7, X_{13}, m_{15}$: $QS$.", "scene": {"groups": [grp("Q'S'", PQRS, "accent"), grp("QS", PQRS, "success")]}},
+    ],
+    "answer": {"value": "(B) $\\overline{Q}\\,\\overline{S} + QS$", "choice": ["B"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "$Q\\overline{S} + \\overline{Q}S$ is the complement pattern: 0 on all four 1s."),
+        opt("B", True, "Two quads that swallow the Xs for free."),
+        opt("C", False, "Correct on the 1s but uses four 3-literal pairs (12 literals)."),
+        opt("D", False, "Four 3-literal terms; equal on the care cells, not minimal."),
+    ],
+    "shortcut": "The 1s are where $Q = S$: $\\overline{Q \\oplus S} = \\overline{Q}\\,\\overline{S} + QS$.",
+    "pitfalls": ["Spending terms to cover the Xs.", "Choosing (A), the XOR, by mixing up the corner pattern."],
+    "verification": "(B), (C), (D) all agree with the care cells; only (B) has the minimum 4 literals.",
+    "animation": km(PQRS, [0, 5, 10, 15], [2, 7, 8, 13]),
+}
+
+SOLUTIONS["cse-2017-2-cs-28"] = {
+    "approach": "Concept tested: **minimal POS with don't-cares**. Loop the 0s, using the Xs that enlarge 0-loops, and read each loop as a sum term (0 → plain letter, 1 → primed letter).",
+    "concepts": ["Minimal POS", "Don't-care conditions"],
+    "given": "$f = \\Sigma_m(0, 1, 2, 3, 7, 8, 10) + \\Sigma_d(5, 6, 11, 15)$; the 0s are 4, 9, 12, 13, 14.",
+    "steps": [
+        {"title": "The 0s", "body": "0s: $m_4, m_9, m_{12}, m_{13}, m_{14}$ (the figure plots the 0s, so its loops are loops of 0s).", "scene": {"groups": []}},
+        {"title": "First 0-loop", "body": "$m_4, X_6, m_{12}, m_{14}$ ($x = 1$, $z = 0$): the factor $(\\overline{x} + z)$.", "scene": {"groups": [{"cells": ml.cells(ml.parse_term("xz'", W)), "label": "(x′ + z)", "tone": "error"}]}},
+        {"title": "Second 0-loop", "body": "$m_9, X_{11}, m_{13}, X_{15}$ ($w = 1$, $z = 1$): the factor $(\\overline{w} + \\overline{z})$.", "scene": {"groups": [{"cells": ml.cells(ml.parse_term("xz'", W)), "label": "(x′ + z)", "tone": "error"}, {"cells": ml.cells(ml.parse_term("wz", W)), "label": "(w′ + z′)", "tone": "warning"}]}},
+        {"title": "Result", "body": "$f = (\\overline{w} + \\overline{z})(\\overline{x} + z)$, 4 literals."},
+    ],
+    "answer": {"value": "(A) $(\\overline{w} + \\overline{z})(\\overline{x} + z)$", "choice": ["A"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", True, "The two quads of 0s read as sum terms."),
+        opt("B", False, "$(\\overline{w} + z)(x + z) = z + \\overline{w}x$ is 0 at $m_8$ ($w = 1$, $x = 0$, $z = 0$), which is a 1."),
+        opt("C", False, "$(w + z)(\\overline{x} + z)$ is 0 at $m_0$ ($w = z = 0$), a 1."),
+        opt("D", False, "$(w + \\overline{z})(\\overline{x} + z)$ is 0 at $m_1$ ($w = 0$, $z = 1$), a 1."),
+    ],
+    "shortcut": "Each option has the factor pattern; test one 1-cell per option: $m_8$ kills (B), $m_0$ kills (C), $m_1$ kills (D).",
+    "pitfalls": ["Reading a 0-loop with the SOP habit (1 → plain letter).", "Requiring the POS to agree with the minimal SOP on don't-care cells: the SOP $\\overline{x}\\,\\overline{z} + \\overline{w}z$ and this POS choose the Xs differently."],
+    "verification": "Enumeration over the 12 care cells: only (A) agrees with all of them; 4 literals is the minimum POS cost (Petrick on the 0s).",
+    "animation": km(W, [4, 9, 12, 13, 14], [5, 6, 11, 15], title="The 0-cells of f (drawn as the 1s of f′), with the don't-cares"),
+}
+
+SOLUTIONS["cse-2026-1-cs-38"] = {
+    "approach": "Concept tested: **several minimal SOPs**. Find the EPIs, then every cheapest way to cover what is left; an option is correct iff it equals $F$ **and** has the minimum cost.",
+    "concepts": ["Essential prime implicant", "Multiple minimal covers", "Equivalent forms"],
+    "given": "$F(P, Q, R, S) = \\Sigma m(1, 2, 3, 4, 5, 7, 10, 12, 13, 14)$.",
+    "steps": [
+        {"title": "Prime implicants", "body": "$\\overline{P}S$ (1, 3, 5, 7), $Q\\overline{R}$ (4, 5, 12, 13), and the pairs $\\overline{P}\\,\\overline{Q}R$ (2, 3), $\\overline{Q}R\\overline{S}$ (2, 10), $PR\\overline{S}$ (10, 14), $PQ\\overline{S}$ (12, 14).", "scene": {"groups": [grp("P'S", PQRS, "accent"), grp("QR'", PQRS, "success")]}},
+        {"title": "EPIs", "body": "$m_1$ lies only in $\\overline{P}S$; $m_4$ only in $Q\\overline{R}$. Both are essential and cover 1, 3, 4, 5, 7, 12, 13."},
+        {"title": "Left: m2, m10, m14", "body": "Two more pairs are needed (no single PI covers all three). The 2-term covers: $\\{\\overline{Q}R\\overline{S}, PR\\overline{S}\\}$, $\\{\\overline{Q}R\\overline{S}, PQ\\overline{S}\\}$, $\\{\\overline{P}\\,\\overline{Q}R, PR\\overline{S}\\}$. Each gives $F$ with 4 terms and 10 literals: three minimal SOPs.", "scene": {"groups": [grp("P'S", PQRS, "accent"), grp("QR'", PQRS, "success"), grp("Q'RS'", PQRS, "warning"), grp("PQS'", PQRS, "info")]}},
+        {"title": "Check the options", "body": "(A) uses $\\overline{P}\\,\\overline{Q}R$ and $\\overline{Q}R\\overline{S}$: $m_{14}$ uncovered. (B) $\\overline{P}\\,\\overline{Q}R + PR\\overline{S}$: a minimal cover. (C) $PQ\\overline{S} + PR\\overline{S}$: $m_2$ uncovered. (D) $PQ\\overline{S} + \\overline{Q}R\\overline{S}$: a minimal cover."},
+    ],
+    "answer": {"value": "(B) and (D)", "choice": ["B", "D"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "Misses $m_{14}$ (no term with $P = 1$, $R = 1$, $S = 0$)."),
+        opt("B", True, "EPIs + $\\overline{P}\\,\\overline{Q}R$ + $PR\\overline{S}$: equal to $F$, 10 literals."),
+        opt("C", False, "Misses $m_2$ (0010)."),
+        opt("D", True, "EPIs + $PQ\\overline{S}$ + $\\overline{Q}R\\overline{S}$: equal to $F$, 10 literals."),
+    ],
+    "shortcut": "All four options share the EPIs; test only the cells the last two terms must cover: 2, 10, 14.",
+    "pitfalls": ["Assuming there is a single minimal SOP and marking only one option.", "Checking cost but not equality (A and C have the right cost but miss a 1)."],
+    "verification": "Petrick's method on the reduced chart gives exactly three minimal covers; (B) and (D) are two of them.",
+    "animation": km(PQRS, [1, 2, 3, 4, 5, 7, 10, 12, 13, 14]),
+}
+
+
 # ── Lesson 4: two-level implementation ──────────────────────────────────────
 
 SOLUTIONS["cse-2006-cs-38"] = {
