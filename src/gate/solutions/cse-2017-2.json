@@ -1026,27 +1026,32 @@
       "verification": "Option B's implication $(p\\wedge q)\\to\\neg r$ is equivalent to $r \\to \\neg(p\\wedge q)$, a different statement from $\\neg r \\to (p\\wedge q)$ (its contrapositive is $\\neg(p\\wedge q) \\to r$)."
     },
     "cse-2017-2-cs-12": {
-      "approach": "Split the 32 bits into sign (1), biased exponent (8) and fraction (23), then evaluate (−1)^s × 1.f × 2^(e−127).",
+      "approach": "Concept tested: **decoding single precision** with a negative exponent. Split 1 | 8 | 23, compute $E = e - 127 = -3$, and evaluate $1.f \\times 2^{-3}$.",
       "concepts": [
-        "IEEE-754 single precision"
+        "IEEE-754 decoding",
+        "Negative exponents",
+        "Binary fraction to decimal"
       ],
-      "given": "| Field | Bits | Value |\n|---|---|---|\n| sign | `0` | + |\n| exponent | `01111100` | 124 |\n| fraction | `11011010000000000000000` | .1101101 |",
       "steps": [
         {
-          "title": "Split the fields",
-          "body": "Bits: `0 | 01111100 | 1101101 0000000000000000`. Sign 0 means positive. Exponent $01111100_2 = 64+32+16+8+4 = 124$, so the true exponent is $124-127 = -3$."
+          "title": "Split",
+          "body": "`0 01111100 11011010000000000000000`: $s = 0$, $e = 0111\\,1100 = 124$, $f = 1101101\\,0\\ldots$"
+        },
+        {
+          "title": "Exponent",
+          "body": "$E = 124 - 127 = -3$."
         },
         {
           "title": "Significand",
-          "body": "$1.1101101_2 = 1 + \\frac12 + \\frac14 + \\frac1{16} + \\frac1{32} + \\frac1{128} = 1 + 0.5 + 0.25 + 0.0625 + 0.03125 + 0.0078125 = 1.8515625$."
+          "body": "$1.1101101_2 = 1 + \\tfrac12 + \\tfrac14 + \\tfrac1{16} + \\tfrac1{32} + \\tfrac1{128} = 1.8515625$."
         },
         {
           "title": "Value",
-          "body": "$1.8515625 \\times 2^{-3} = \\frac{1.8515625}{8} = 0.2314453$. The closest option is $2.27 \\times 10^{-1}$."
+          "body": "$1.8515625 \\times 2^{-3} = 0.2314453125$. The closest option is $2.27 \\times 10^{-1}$: option (C)."
         }
       ],
       "answer": {
-        "value": "$2.27\\times 10^{-1}$",
+        "value": "$\\approx 0.2314$, closest to $2.27 \\times 10^{-1}$ — option (C)",
         "choice": [
           "C"
         ],
@@ -1056,29 +1061,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$14.5$ would need a positive exponent; here the exponent is $-3$."
+          "reason": "$14.5$ is far too large; it would need a positive exponent."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$0.145$ is about $0.086$ away from $0.2314$, much farther than $0.227$."
+          "reason": "$0.145$ lies in the right binade $[0.125, 0.25)$ but needs a significand of about 1.16; the fraction bits $1101101$ give 1.85."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: $0.2314$ is closest to $0.227$."
+          "reason": "$0.2314$ is nearest to $0.227$ among the options."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$22.7$ would need exponent $+4$, not $-3$."
+          "reason": "$22.7$ has the right digits but the exponent sign is wrong."
         }
       ],
+      "shortcut": "$e = 124$ ⇒ the value is in $[2^{-3}, 2^{-2}) = [0.125, 0.25)$. Only $0.145$ and $0.227$ lie there, and $1.85/8 \\approx 0.23$.",
       "pitfalls": [
-        "Forgetting the implicit leading 1, which gives 0.8515625/8 ≈ 0.106.",
-        "Misplacing the 8-bit exponent boundary when the bit string is printed without spaces."
+        "Reading the exponent as 248 or 62 by mis-cutting the fields.",
+        "Forgetting the hidden 1 (gives about 0.106)."
       ],
-      "verification": "$|0.2314 - 0.227| = 0.0044$ against $|0.2314 - 0.145| = 0.0864$; option C is clearly nearest."
+      "verification": "Python: `struct.unpack('>f', bytes.fromhex('3E6D0000'))` gives 0.2314453125. ✓"
     },
     "cse-2017-2-cs-13": {
       "approach": "For O(1) enqueue at REAR and dequeue at FRONT, the only extra link needed is REAR→FRONT, which makes the list circular.",

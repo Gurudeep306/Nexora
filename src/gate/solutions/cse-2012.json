@@ -806,23 +806,28 @@
       "verification": "Column-by-column comparison: $f$ = (0,0,1,1) = $X$."
     },
     "cse-2012-cs-7": {
-      "approach": "Normalise 0.5 as $1.f \\times 2^{e}$: it is exactly $1.0 \\times 2^{-1}$, so the fraction is all zeros and the (actual) exponent is −1.",
+      "approach": "Concept tested: **encoding** with the hidden bit and the biased exponent. $0.5 = 1.0 \\times 2^{-1}$, so the fraction field is all zeros and the (true) exponent is $-1$.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Normalised form"
+        "Normalisation 1.f",
+        "Hidden bit",
+        "True vs biased exponent"
       ],
       "steps": [
         {
           "title": "Normalise",
-          "body": "$0.5_{10} = 0.1_2 = 1.0_2 \\times 2^{-1}$. The hidden 1 is implicit, so the 23 fraction bits are $000\\ldots000$."
+          "body": "$0.5 = 0.1_2 = 1.0_2 \\times 2^{-1}$."
+        },
+        {
+          "title": "Fraction field",
+          "body": "The bits after the point of $1.0$: all zeros, `000…000` (the leading 1 is hidden)."
         },
         {
           "title": "Exponent",
-          "body": "Actual exponent $= -1$; stored biased exponent $= -1 + 127 = 126 = 01111110_2$. The option speaks of the exponent **value**, which is −1."
+          "body": "The exponent **value** is $-1$; it is stored as $-1 + 127 = 126 = 0111\\,1110$. The options speak of the exponent value, so option (B)."
         }
       ],
       "answer": {
-        "value": "fraction 000…000, exponent −1",
+        "value": "Fraction $000\\ldots0$, exponent value $-1$ — option (B)",
         "choice": [
           "B"
         ],
@@ -832,25 +837,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Exponent 0 with zero fraction encodes $1.0 \\times 2^0 = 1$, not 0.5."
+          "reason": "Exponent 0 with fraction 0 is $1.0$, not $0.5$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$0.5 = 1.0 \\times 2^{-1}$."
+          "reason": "$0.5 = 1.0 \\times 2^{-1}$: empty fraction, exponent $-1$ (stored as 126)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Fraction $100\\ldots0$ with exponent 0 is $1.5 \\times 2^0 = 1.5$."
+          "reason": "Fraction $100\\ldots$ with exponent 0 is $1.5$; it treats the significand as $0.1_2$ without the hidden 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "0.5 is a power of two, so it is exactly representable."
+          "reason": "$0.5 = 2^{-1}$ has a power-of-two denominator, so it is exact."
         }
       ],
-      "verification": "Bit pattern 0 01111110 000…0 = 0x3F000000, the well-known encoding of 0.5f."
+      "shortcut": "Any power of two $2^k$ has fraction 0 and exponent value $k$.",
+      "pitfalls": [
+        "Confusing the exponent value ($-1$) with the stored field (126).",
+        "Storing the leading 1 in the fraction."
+      ],
+      "verification": "`0x3F000000` $= 0\\ 01111110\\ 0\\ldots$: $1.0 \\times 2^{126-127} = 0.5$. ✓"
     },
     "cse-2012-cs-8": {
       "approach": "Each `fork()` doubles the number of processes; after $n$ calls there are $2^n$ processes, of which $2^n - 1$ are children (all except the original).",

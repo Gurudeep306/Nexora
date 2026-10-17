@@ -4174,73 +4174,24 @@
       }
     },
     "cse-2026-2-cs-24": {
-      "approach": "Expand the hex word into its 32 bits, split as sign (1) | exponent (8) | fraction (23), and evaluate $(-1)^s \\times 1.f \\times 2^{e-127}$.",
+      "approach": "Concept tested: **decoding a hex word**. `C27` gives the sign and exponent ($1\\ 10000100$, $E = 5$); the fraction starts $1110001$.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Biased exponent (bias 127)",
-        "Binary fractions"
+        "IEEE-754 decoding",
+        "Hex to bits",
+        "Bias 127"
       ],
       "steps": [
         {
-          "title": "Hex to binary",
-          "body": "$C = 1100,\\ 2 = 0010,\\ 7 = 0111,\\ 1 = 0001,\\ 0 = 0000$:\n\n$$\\texttt{0xC2710000} = 1100\\ 0010\\ 0111\\ 0001\\ 0000\\ 0000\\ 0000\\ 0000$$"
+          "title": "Hex to bits",
+          "body": "`C2710000` $= 1100\\,0010\\,0111\\,0001\\,0000\\ldots = 1\\ \\ 10000100\\ \\ 1110001\\,0\\ldots$"
         },
         {
-          "title": "Split the fields",
-          "body": "- sign $s = 1$ (negative)\n- exponent $= 10000100_2 = 128 + 4 = 132$\n- fraction $= 1110001\\,0000000000000000_2$",
-          "scene": {
-            "rows": [
-              {
-                "label": "0xC2710000",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "10000100",
-                    "label": "exponent = 132",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "11100010000000000000000",
-                    "label": "fraction",
-                    "tone": "info"
-                  }
-                ]
-              }
-            ]
-          }
+          "title": "Exponent",
+          "body": "$e = 1000\\,0100 = 132$, $E = 132 - 127 = 5$."
         },
         {
-          "title": "Evaluate",
-          "body": "True exponent $= 132 - 127 = 5$.\n\n$$1.1110001_2 \\times 2^5 = 111100.01_2$$\n\n$111100_2 = 32 + 16 + 8 + 4 = 60$ and $.01_2 = 0.25$, so the magnitude is $60.25$ and the number is $\\mathbf{-60.25}$.",
-          "scene": {
-            "rows": [
-              {
-                "label": "0xC2710000",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "10000100",
-                    "label": "exponent = 132",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "11100010000000000000000",
-                    "label": "fraction",
-                    "tone": "info"
-                  }
-                ],
-                "value": "−1.1110001₂ × 2⁵ = −60.25"
-              }
-            ]
-          }
+          "title": "Value",
+          "body": "$1.1110001_2 \\times 2^5 = 111100.01_2 = 60 + 0.25 = 60.25$, so the number is $-60.25$."
         }
       ],
       "answer": {
@@ -4248,13 +4199,12 @@
         "number": -60.25,
         "matchesKey": true
       },
-      "shortcut": "Fraction bits $1110001$ mean $1 + \\tfrac12 + \\tfrac14 + \\tfrac18 + \\tfrac{1}{128} = 1.8828125$; times $2^5 = 32$ gives $60.25$.",
+      "shortcut": "Shift the point 5 places: $1.1110001 \\to 111100.01$; integer part 60, fraction .01 = 0.25.",
       "pitfalls": [
-        "Forgetting the hidden leading 1 (gives $0.8828125 \\times 32 = 28.25$).",
-        "Using bias 128 or forgetting the sign bit.",
-        "Splitting the hex digits as if each field were nibble-aligned — the exponent straddles the 1st and 3rd nibbles."
+        "Dropping the hidden 1 (gives $-28.25$).",
+        "Cutting the exponent at the hex-digit boundary ($e = 1000\\,010$...) instead of after 8 bits."
       ],
-      "verification": "Encode back: $60.25 = 111100.01_2 = 1.1110001_2 \\times 2^5$; exponent $5 + 127 = 132 = 10000100_2$; with sign 1 the word is $1\\,10000100\\,1110001\\,0\\dots0 = \\texttt{0xC2710000}$ ✓.",
+      "verification": "Re-encode $-60.25 = -1.1110001 \\times 2^5$: $e = 132$, giving `C2710000`. ✓",
       "animation": {
         "kind": "bits",
         "title": "IEEE 754 single precision",

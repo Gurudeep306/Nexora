@@ -2078,23 +2078,31 @@
       "verification": "Bit count 1 + 10 + 5 = 16 confirms the field sizes."
     },
     "cse-2022-cs-31": {
-      "approach": "Decode each word: sign | 8-bit exponent (bias 127) | mantissa. Then check the four relations.",
+      "approach": "Concept tested: **decoding several words**, then checking simple arithmetic claims. Decode $A$, $B$, $C$ to ordinary numbers first; each claim is then one line.",
       "concepts": [
-        "IEEE-754 single precision"
+        "IEEE-754 decoding",
+        "Reading the exponent from the hex digits"
       ],
-      "given": "| Reg | Hex | Sign | Exponent | Mantissa |\n|---|---|---|---|---|\n| $R_A$ | C1400000 | 1 | 1000 0010 = 130 | .1000… |\n| $R_B$ | 42100000 | 0 | 1000 0100 = 132 | .0010… |\n| $R_C$ | 41400000 | 0 | 1000 0010 = 130 | .1000… |",
       "steps": [
         {
-          "title": "Decode",
-          "body": "$A = -1.1_2 \\times 2^{130-127} = -1.5 \\times 8 = -12$\n\n$B = +1.001_2 \\times 2^{132-127} = 1.125 \\times 32 = 36$\n\n$C = +1.1_2 \\times 2^{3} = 12$"
+          "title": "Decode A = 0xC1400000",
+          "body": "$1\\ 10000010\\ 1000\\ldots$: $-1.1_2 \\times 2^{3} = -1.5 \\times 8 = -12$."
         },
         {
-          "title": "Check options",
-          "body": "(A) $A + C = -12 + 12 = 0$ ✓\n\n(B) $A + B = -12 + 36 = 24 \\ne 12 = C$ ✗\n\n(C) $3C = 36 = B$ ✓\n\n(D) $B - C = 24 > 0$ ✓\n\nThe FALSE one is (B)."
+          "title": "Decode B = 0x42100000",
+          "body": "$0\\ 10000100\\ 0010\\ldots$: $1.001_2 \\times 2^{5} = 1.125 \\times 32 = 36$."
+        },
+        {
+          "title": "Decode C = 0x41400000",
+          "body": "$0\\ 10000010\\ 1000\\ldots$: $1.5 \\times 8 = 12$ (it is $A$ with the sign bit cleared)."
+        },
+        {
+          "title": "Check each claim",
+          "body": "- (A) $A + C = -12 + 12 = 0$: true.\n- (B) $A + B = -12 + 36 = 24 \\ne 12 = C$: **false**.\n- (C) $3C = 36 = B$: true.\n- (D) $B - C = 24 > 0$: true.\n\nThe FALSE statement is (B)."
         }
       ],
       "answer": {
-        "value": "C = A + B",
+        "value": "(B) $C = A + B$ is false ($A + B = 24$, $C = 12$)",
         "choice": [
           "B"
         ],
@@ -2104,25 +2112,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True: −12 + 12 = 0."
+          "reason": "True: $A = -12$ and $C = 12$ differ only in the sign bit (`C1…` vs `41…`)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "FALSE (answer): A + B = 24, not 12."
+          "reason": "False: $A + B = 24$, but $C = 12$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "True: 3 × 12 = 36."
+          "reason": "True: $B = 36 = 3 \\times 12$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "True: 36 − 12 = 24 > 0."
+          "reason": "True: $B - C = 24 > 0$."
         }
       ],
-      "verification": "RA and RC differ only in the sign bit, so A = −C, consistent with option A being true."
+      "shortcut": "`C14…` and `414…` differ only in the top bit, so $A = -C$ instantly; `421` has exponent 132 (scale 32), so $B = 1.125 \\times 32 = 36$.",
+      "pitfalls": [
+        "Answering 'which is TRUE' by mistake.",
+        "Decoding $B$ with exponent 131 (gives 18) by mis-cutting the bits."
+      ],
+      "verification": "Python `struct` decodes the three words to −12.0, 36.0 and 12.0. ✓"
     },
     "cse-2022-cs-32": {
       "approach": "Simulate round robin (q = 4, order P, Q, R, S) for each option and count the switches S→Q, R→Q, Q→R and S→P.",

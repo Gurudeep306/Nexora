@@ -1036,6 +1036,213 @@
     "source": "nexora"
   },
   {
+    "id": "nx-dl-01-06-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "What decimal value does the IEEE-754 single-precision word `0x41A40000` represent?",
+    "answer": 20.5,
+    "solution": [
+      "Bits: $0100\\,0001\\,1010\\,0100\\,0000\\ldots = 0\\ \\ 10000011\\ \\ 0100100\\ldots$",
+      "$e = 1000\\,0011 = 131$, so $E = 131 - 127 = 4$; the significand is $1.01001_2$.",
+      "$1.01001_2 \\times 2^4 = 10100.1_2 = 16 + 4 + 0.5 = 20.5$."
+    ],
+    "concept": "Decoding single precision: split 1 | 8 | 23, subtract 127, restore the hidden 1.",
+    "common_wrong": [
+      { "answer": 10.25, "why": "The bias was taken as 128, giving $E = 3$." },
+      { "answer": 4.5, "why": "The hidden 1 was dropped: $0.01001_2 \\times 2^4 = 4.5$. A normal significand is $1.f$, not $0.f$." },
+      { "answer": -20.5, "why": "The first hex digit 4 = 0100 has sign bit 0, so the value is positive." }
+    ],
+    "blocks": ["decode-ieee", "ieee-layout"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which IEEE-754 single-precision word represents $-3.75$?",
+    "options": [
+      { "l": "A", "t": "`C0700000`" },
+      { "l": "B", "t": "`C0F80000`" },
+      { "l": "C", "t": "`40700000`" },
+      { "l": "D", "t": "`C0F00000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$3.75 = 11.11_2 = 1.111_2 \\times 2^{1}$.",
+      "$e = 1 + 127 = 128 = 1000\\,0000$; $f = 111\\,0\\ldots$; $s = 1$.",
+      "$1\\ 10000000\\ 1110\\ldots = 1100\\,0000\\,0111\\,0000\\ldots = $ `C0700000`."
+    ],
+    "concept": "Encoding: normalise to 1.f, bias the exponent by 127, store only the bits after the point.",
+    "common_wrong": [
+      { "answer": "B", "why": "The hidden 1 was stored too (fraction $1111\\ldots$) and the exponent bumped by one; only the bits after the point go into the fraction field." },
+      { "answer": "C", "why": "The sign bit was left at 0, which is $+3.75$." },
+      { "answer": "D", "why": "The exponent was biased by 128 ($e = 129$), which makes the value $-7.5$." }
+    ],
+    "blocks": ["encode-ieee", "trap-hidden-one"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following single-precision words are **not** normal numbers?",
+    "options": [
+      { "l": "A", "t": "`0x00000000`" },
+      { "l": "B", "t": "`0x00800000`" },
+      { "l": "C", "t": "`0x7F800001`" },
+      { "l": "D", "t": "`0x807FFFFF`" }
+    ],
+    "answer": ["A", "C", "D"],
+    "solution": [
+      "(A) $e = 0$, $f = 0$: the special value $+0$. Not normal.",
+      "(B) $e = 0000\\,0001 = 1$, $f = 0$: the smallest normal number $2^{-126}$. Normal.",
+      "(C) $e = 1111\\,1111$, $f = 0\\ldots01 \\ne 0$: NaN. Not normal.",
+      "(D) Sign 1, $e = 0$, $f$ all ones: the denormal $-(1 - 2^{-23})\\,2^{-126}$. Not normal."
+    ],
+    "concept": "Exponent field 0 means zero or a denormal; 255 means infinity or NaN; only 1 … 254 are normal.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "`0x00800000` looks tiny, but its exponent field is 1, so it is the smallest **normal** number." },
+      { "answer": ["A", "C"], "why": "(D) was taken as a normal negative number, but its exponent field is 0, so it is a denormal." }
+    ],
+    "blocks": ["special-values", "denormal", "extremes"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q04",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The smallest positive IEEE-754 **double-precision** value is $2^k$. What is $k$?",
+    "answer": -1074,
+    "solution": [
+      "The smallest positive value is the denormal with only the last fraction bit set.",
+      "Denormals are $0.f \\times 2^{1 - 1023} = 0.f \\times 2^{-1022}$, and the last of 52 fraction bits is worth $2^{-52}$.",
+      "So the value is $2^{-52} \\times 2^{-1022} = 2^{-1074}$."
+    ],
+    "concept": "The smallest denormal is 2^(1 − bias − f).",
+    "common_wrong": [
+      { "answer": -1022, "why": "That is the smallest **normal** double; denormals go further down." },
+      { "answer": -1075, "why": "The denormal exponent was taken as $0 - 1023 = -1023$; it is $1 - 1023 = -1022$." },
+      { "answer": -149, "why": "That is the single-precision answer." }
+    ],
+    "blocks": ["denormal", "extremes"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q05",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The gap between $100.0$ and the next larger single-precision value is $2^k$. What is $k$?",
+    "answer": -17,
+    "solution": [
+      "$2^6 = 64 \\le 100 < 128 = 2^7$, so $100$ is in the binade with $E = 6$.",
+      "One ulp is $2^{E - 23} = 2^{6 - 23} = 2^{-17}$."
+    ],
+    "concept": "ulp(x) = 2^(E − 23) for a normal single with 2^E ≤ |x| < 2^(E+1).",
+    "common_wrong": [
+      { "answer": -23, "why": "That is the gap next to 1.0 (machine epsilon); the gap scales with the exponent." },
+      { "answer": -16, "why": "The binade was taken as $E = 7$; but $100 < 128$, so $E = 6$." }
+    ],
+    "blocks": ["ulp-ieee", "machine-epsilon"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which single-precision pattern is the **largest finite** value?",
+    "options": [
+      { "l": "A", "t": "`7F7FFFFF`" },
+      { "l": "B", "t": "`7FFFFFFF`" },
+      { "l": "C", "t": "`FF7FFFFF`" },
+      { "l": "D", "t": "`7F800000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "(B) has exponent field 255 and a non-zero fraction: NaN, not a number at all.",
+      "(D) has exponent field 255 and fraction 0: $+\\infty$, not finite.",
+      "(C) has the sign bit set: it is the most **negative** finite value.",
+      "(A) is $0\\ 11111110\\ 1\\ldots1 = (2 - 2^{-23})\\,2^{127} \\approx 3.4 \\times 10^{38}$, the largest finite value."
+    ],
+    "concept": "The largest finite float uses exponent field 254 (not 255) with an all-ones fraction.",
+    "common_wrong": [
+      { "answer": "B", "why": "As an unsigned integer `7FFFFFFF` is bigger, but exponent 255 with a non-zero fraction is NaN." },
+      { "answer": "D", "why": "`7F800000` is $+\\infty$, which is not finite." }
+    ],
+    "blocks": ["extremes", "special-values", "compare-bits"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which 64-bit word is $0.75$ in IEEE-754 **double** precision?",
+    "options": [
+      { "l": "A", "t": "`3FE8000000000000`" },
+      { "l": "B", "t": "`07E8000000000000`" },
+      { "l": "C", "t": "`3FF8000000000000`" },
+      { "l": "D", "t": "`3F40000000000000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$0.75 = 0.11_2 = 1.1_2 \\times 2^{-1}$.",
+      "$e = -1 + 1023 = 1022 = 011\\,1111\\,1110$; $f = 1000\\ldots$ (52 bits); $s = 0$.",
+      "$0\\ 01111111110\\ 1000\\ldots = 0011\\,1111\\,1110\\,1000\\,0\\ldots = $ `3FE8000000000000`."
+    ],
+    "concept": "Double precision: 1 | 11 | 52 with bias 1023.",
+    "common_wrong": [
+      { "answer": "B", "why": "The single-precision bias 127 was used in the 11-bit field ($e = 126$)." },
+      { "answer": "C", "why": "That is $1.5$: the exponent $-1$ was dropped." },
+      { "answer": "D", "why": "That is the single-precision word `3F400000` padded with zeros; double has a wider exponent field, so the bits shift." }
+    ],
+    "blocks": ["encode-ieee", "ieee-layout"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "How many integers $n$ with $2^{24} \\le n \\le 2^{25}$ can be stored exactly in IEEE-754 single precision?",
+    "answer": 8388609,
+    "solution": [
+      "In the binade $[2^{24}, 2^{25})$ the ulp is $2^{24 - 23} = 2$, so the floats there are exactly the even integers $2^{24}, 2^{24} + 2, \\ldots, 2^{25} - 2$: that is $2^{23}$ values.",
+      "$2^{25}$ itself is $1.0 \\times 2^{25}$, also exact.",
+      "Total $2^{23} + 1 = 8\\,388\\,609$."
+    ],
+    "concept": "Above 2^24 the ulp of single precision exceeds 1, so only every second (then fourth …) integer is a float.",
+    "common_wrong": [
+      { "answer": 16777217, "why": "Every integer was counted; above $2^{24}$ only even integers are floats." },
+      { "answer": 8388608, "why": "The endpoint $2^{25}$, which is exact, was left out." }
+    ],
+    "blocks": ["ulp-ieee", "exactness"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q09",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which statements about IEEE-754 single precision are true?",
+    "options": [
+      { "l": "A", "t": "$+0$ and $-0$ compare equal." },
+      { "l": "B", "t": "`0x80000000` is the most negative representable number." },
+      { "l": "C", "t": "For a NaN $x$, the comparison $x = x$ is false." },
+      { "l": "D", "t": "Denormal numbers have an implicit leading 1." }
+    ],
+    "answer": ["A", "C"],
+    "solution": [
+      "(A) True: the two zeros differ only in the sign bit and compare equal.",
+      "(B) False: `0x80000000` is $-0$. The most negative finite value is `0xFF7FFFFF` $\\approx -3.4 \\times 10^{38}$ (and $-\\infty$ is `0xFF800000`).",
+      "(C) True: every comparison involving NaN is false.",
+      "(D) False: denormals have exponent field 0, which switches the hidden 1 off: $0.f \\times 2^{-126}$."
+    ],
+    "concept": "Signed zero, NaN comparisons and denormals are the special cases of IEEE-754.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C"], "why": "`0x80000000` was read as a 2's-complement integer ($-2^{31}$); as a float it is $-0$." },
+      { "answer": ["A", "C", "D"], "why": "Denormals have no hidden 1; that is exactly what lets them reach below $2^{-126}$." }
+    ],
+    "blocks": ["signed-zero", "nan", "denormal"],
+    "source": "nexora"
+  },
+  {
     "id": "nx-dl-01-08-q01",
     "type": "MCQ",
     "marks": 1,
