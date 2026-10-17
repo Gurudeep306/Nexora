@@ -399,6 +399,148 @@ def kmap_checkerboard():
                 "A 4-variable map (rows A B, columns C D) with 1s on the odd-parity minterms.", els, steps)
 
 
+# ── Lesson 2: prime implicants and don't-cares ──────────────────────────────
+
+def side_notes(ids_y, x=380, nx=30, ny0=340, dy=26):
+    return [note(i, x, y, nx, ny0 + k * dy) for k, (i, y) in enumerate(ids_y)]
+
+
+@scene
+def pi_enumeration():
+    """Every prime implicant drawn one at a time, then the redundant one identified."""
+    W_, NW = 660, 360
+    ones = [0, 1, 2, 3, 5, 7, 8, 10, 14]
+    ps, es, red, sel = ml.classify(ones, [], 4)
+    order = [ml.parse_term(t, V4) for t in ("A'B'", "A'D", "B'D'", "ACD'")]
+    assert sorted(order, key=ml.cube_key) == ps and red == [order[0]] and sorted(es, key=ml.cube_key) == sorted(order[1:], key=ml.cube_key)
+    assert [c for c in ml.min_covers(ones, [], 4)] == [tuple(sorted(order[1:], key=ml.cube_key))]
+    km = KMap("k", 4, V4, 120, 92, 56, 92, 92, 56, ones=ones)
+    els = [*heads("Listing every prime implicant", "Listing every prime implicant", W_)]
+    els += km.elements()
+    for k, c in enumerate(order):
+        els += km.loops(f"P{k}", c, k)
+    els += side_notes([("n0", 110), ("n1", 136), ("n2", 162), ("n3", 188), ("ex", 230)])
+    t = [pretty(c, V4) for c in order]
+    steps = [
+        step("f = Σm(0, 1, 2, 3, 5, 7, 8, 10, 14). A prime implicant is a loop that cannot be made any bigger. Grow a loop from every 1 in every direction it can go.",
+             ("n0", {"text": "9 ones; find every maximal loop", "tone": "muted"})),
+        step(f"Starting from m0: the whole top row is 1s, a quad {t[0]}. It cannot grow (row A B = 01 is not all 1s).",
+             *show(km.loop_ids("P0", order[0])), ("n0", {"text": f"PI 1: {t[0]} (m0 1 2 3)", "tone": "accent"})),
+        step(f"Starting from m5: m1, m3, m5, m7 form a quad {t[1]} (rows 00 and 01, columns 01 and 11).",
+             *show(km.loop_ids("P1", order[1])), ("n1", {"text": f"PI 2: {t[1]} (m1 3 5 7)", "tone": "success"})),
+        step(f"Starting from m8: m0, m2, m8, m10 are the four corners, a quad {t[2]}.",
+             *show(km.loop_ids("P2", order[2])), ("n2", {"text": f"PI 3: {t[2]} (m0 2 8 10)", "tone": "info"})),
+        step(f"Starting from m14: its only neighbouring 1 is m10, so the largest loop is the pair {t[3]}. No 1 is left outside a loop: there are exactly 4 prime implicants.",
+             *show(km.loop_ids("P3", order[3])), ("n3", {"text": f"PI 4: {t[3]} (m10 14)", "tone": "warning"})),
+        step(f"The biggest loop is not always needed: {t[0]}'s cells 0, 2 are inside {t[2]} and 1, 3 inside {t[1]}. It is a prime implicant but a redundant one. Minimal SOP: f = {t[1]} + {t[2]} + {t[3]}.",
+             *hide(km.loop_ids("P0", order[0])), ("n0", {"text": f"PI 1: {t[0]} is redundant", "tone": "danger"}),
+             ("ex", {"text": f"f = {t[1]} + {t[2]} + {t[3]}", "tone": "success"})),
+    ]
+    return spec("Listing every prime implicant of a 4-variable function", (W_, 330), (NW, 480),
+                "Σm(0, 1, 2, 3, 5, 7, 8, 10, 14) on a 4-variable map (rows A B, columns C D).", els, steps)
+
+
+@scene
+def epi_highlight():
+    W_, NW = 660, 360
+    ones = [1, 3, 6, 7, 10, 12, 13, 14]
+    ps, es, red, sel = ml.classify(ones, [], 4)
+    covs = ml.min_covers(ones, [], 4)
+    assert len(ps) == 7 and len(es) == 3 and len(red) == 1 and len(covs) == 1
+    ch = ml.chart(ones, ps)
+    dist = [m for m, cov in ch.items() if len(cov) == 1]
+    assert dist == [1, 10, 13]
+    km = KMap("k", 4, V4, 120, 92, 56, 92, 92, 56, ones=ones)
+    els = [*heads("Essential prime implicants: 1s with only one way out", "Essential prime implicants", W_)]
+    els += km.elements()
+    ess = sorted(es, key=ml.cube_key)
+    for k, c in enumerate(ess):
+        els += km.loops(f"E{k}", c, k, tone="success")
+    rest = sorted(sel, key=ml.cube_key)
+    fin = [c for c in covs[0] if c not in es][0]
+    els += km.loops("S", fin, 3, tone="accent")
+    els += side_notes([("n0", 110), ("n1", 136), ("n2", 162), ("n3", 188), ("ex", 230)])
+    hl = [[*ml.cell_rc(m, 4)] for m in dist]
+    steps = [
+        step(f"f = Σm({', '.join(map(str, ones))}) has {len(ps)} prime implicants. Count, for every 1-cell, how many of them contain it.",
+             ("n0", {"text": f"{len(ps)} prime implicants", "tone": "muted"})),
+        step(f"Three 1s lie in exactly one prime implicant: m{dist[0]}, m{dist[1]} and m{dist[2]} (shaded). Any cover must use that implicant, so it is essential.",
+             ("kg", {"highlight": hl}), ("n0", {"text": "1s covered once: m1, m10, m13", "tone": "warning"})),
+        step(f"The essential prime implicants: {', '.join(pretty(c, V4) for c in ess)}. Draw them first.",
+             *show([i for k, c in enumerate(ess) for i in km.loop_ids(f"E{k}", c)]),
+             ("n1", {"text": "EPIs: " + ", ".join(pretty(c, V4) for c in ess), "tone": "success"})),
+        step(f"Still uncovered: m6 and m7. Of the remaining prime implicants, {pretty(fin, V4)} covers both; A′CD or BCD′ would cover only one each and need a second term. So {pretty(fin, V4)} is the cheapest way to finish.",
+             ("kg", {"highlight": [[*ml.cell_rc(6, 4)], [*ml.cell_rc(7, 4)]]}), *show(km.loop_ids("S", fin)),
+             ("n2", {"text": f"m6, m7: choose {pretty(fin, V4)}", "tone": "accent"})),
+        step(f"Minimal SOP: f = {' + '.join(pretty(c, V4) for c in sorted(covs[0], key=ml.cube_key))}. {pretty(red[0], V4)} is redundant: its 1s are all inside the essential ones.",
+             ("kg", {"highlight": []}), ("n3", {"text": f"redundant: {pretty(red[0], V4)}", "tone": "danger"}),
+             ("ex", {"text": "f = " + " + ".join(pretty(c, V4) for c in sorted(covs[0], key=ml.cube_key)), "tone": "success"})),
+    ]
+    return spec("Essential prime implicants from the 1s covered only once", (W_, 330), (NW, 480),
+                f"Σm({', '.join(map(str, ones))}) on a 4-variable map (rows A B, columns C D).", els, steps)
+
+
+@scene
+def cyclic_map():
+    W_, NW = 660, 360
+    ones = [1, 2, 3, 4, 5, 6]
+    ps = ml.primes(ones, [], 3)
+    covs = ml.min_covers(ones, [], 3)
+    assert len(ps) == 6 and not ml.essential(ones, [], 3) and len(covs) == 2
+    km = KMap("k", 3, V3, 140, 110, 64, 92, 110, 64, ones=ones)
+    els = [*heads("A cyclic function: no essential prime implicant", "A cyclic function", W_)]
+    els += km.elements()
+    c1, c2 = (sorted(c, key=ml.cube_key) for c in covs)
+    for k, c in enumerate(c1):
+        els += km.loops(f"A{k}", c, k, tone="accent")
+    for k, c in enumerate(c2):
+        els += km.loops(f"B{k}", c, k + 1, tone="success", dashed=True)
+    els += side_notes([("n0", 120), ("n1", 146), ("n2", 172), ("ex", 214)], x=420, ny0=270)
+    s1 = " + ".join(pretty(c, V3) for c in c1)
+    s2 = " + ".join(pretty(c, V3) for c in c2)
+    steps = [
+        step("Σm(1, 2, 3, 4, 5, 6): every 1 except the corners of the cube 000 and 111. Each 1 has exactly two neighbouring 1s, so it can be looped in two different pairs.",
+             ("n0", {"text": "6 ones, each with 2 neighbouring 1s"})),
+        step("The six pairs form a ring: 1–3, 3–2, 2–6, 6–4, 4–5, 5–1. All six are prime implicants and every 1 is in two of them, so no prime implicant is essential.",
+             ("n1", {"text": "6 PIs, 0 EPIs: cyclic", "tone": "warning"})),
+        step(f"Pick every other pair around the ring: {s1}. Three pairs, 6 literals, every 1 covered once.",
+             *show([i for k, c in enumerate(c1) for i in km.loop_ids(f"A{k}", c)]), ("ex", {"text": "f = " + s1, "tone": "accent"})),
+        step(f"Or start one step further round: {s2}. Also three pairs and 6 literals. Two different minimal SOPs: the minimal form is not unique.",
+             *hide([i for k, c in enumerate(c1) for i in km.loop_ids(f"A{k}", c)]),
+             *show([i for k, c in enumerate(c2) for i in km.loop_ids(f"B{k}", c)]),
+             ("n2", {"text": "2 minimal covers, equal cost", "tone": "success"}), ("ex", {"text": "f = " + s2, "tone": "success"})),
+    ]
+    return spec("The cyclic function Σm(1, 2, 3, 4, 5, 6) and its two minimal covers", (W_, 290), (NW, 400),
+                "Σm(1, 2, 3, 4, 5, 6) on a 3-variable map (rows A, columns B C).", els, steps)
+
+
+@scene
+def dont_care_toggle():
+    W_, NW = 660, 360
+    ones, dcs = [1, 3, 7, 11, 15], [0, 5]
+    assert ml.min_sop(ones, dcs, 4, V4) == ["A'D + CD"] and ml.min_sop(ones, [], 4, V4) == ["CD + A'B'D"]
+    km = KMap("k", 4, V4, 120, 92, 56, 92, 92, 56, ones=ones, dcs=dcs)
+    els = [*heads("Don't-cares: use an X only if it makes a loop bigger", "Use an X only if it helps", W_)]
+    els += km.elements()
+    els += km.loops("C", "--11", 0, tone="accent")
+    els += km.loops("P", "00-1", 1, tone="warning", dashed=True)
+    els += km.loops("Q", "0--1", 2, tone="success")
+    els += side_notes([("n0", 110), ("n1", 136), ("n2", 162), ("n3", 188), ("ex", 230)])
+    steps = [
+        step("f = Σm(1, 3, 7, 11, 15) + d(0, 5). The X cells may be treated as 1 or as 0, whichever gives the cheaper expression; they never need to be covered.",
+             ("n0", {"text": "X = don't-care (0 or 1, your choice)", "tone": "muted"})),
+        step("Column C D = 11 (m3, m7, m15, m11) is a quad of 1s: CD.", *show(km.loop_ids("C", "--11")), ("n1", {"text": "CD (m3 7 15 11)", "tone": "accent"})),
+        step("m1 is left. Without don't-cares its best loop is the pair m1, m3: A′B′D, 3 literals.",
+             *show(km.loop_ids("P", "00-1")), ("n2", {"text": "without X: A′B′D", "tone": "warning"}), ("ex", {"text": "f = CD + A′B′D (5 literals)"})),
+        step("Treat X at m5 as 1: m1, m3, m5, m7 become a quad, A′D, with only 2 literals. The X at m0 would not enlarge any loop, so it stays 0 and is left out.",
+             *hide(km.loop_ids("P", "00-1")), *show(km.loop_ids("Q", "0--1")),
+             ("n2", {"text": "X at m5 used: A′D", "tone": "success"}), ("n3", {"text": "X at m0 not used", "tone": "muted"}),
+             ("ex", {"text": "f = CD + A′D (4 literals)", "tone": "success"})),
+    ]
+    return spec("Using don't-cares only where they enlarge a loop", (W_, 330), (NW, 480),
+                "Σm(1, 3, 7, 11, 15) + d(0, 5) on a 4-variable map (rows A B, columns C D); X marks a don't-care.", els, steps)
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

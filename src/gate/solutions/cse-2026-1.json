@@ -5951,17 +5951,17 @@
       }
     },
     "cse-2026-1-cs-38": {
-      "approach": "Plot the K-map, take the essential prime implicants, then cover the three leftover minterms $2, 10, 14$ with two 3-literal prime implicants. Every option shares $\\bar P S + Q\\bar R$, so only the last two terms need checking.",
+      "approach": "Concept tested: **several minimal SOPs**. Find the EPIs, then every cheapest way to cover what is left; an option is correct iff it equals $F$ **and** has the minimum cost.",
       "concepts": [
-        "Karnaugh map",
-        "Essential prime implicants",
-        "Minimal cover"
+        "Essential prime implicant",
+        "Multiple minimal covers",
+        "Equivalent forms"
       ],
-      "given": "$F = \\sum m(1, 2, 3, 4, 5, 7, 10, 12, 13, 14)$, variable order $PQRS$.",
+      "given": "$F(P, Q, R, S) = \\Sigma m(1, 2, 3, 4, 5, 7, 10, 12, 13, 14)$.",
       "steps": [
         {
-          "title": "Essential prime implicants",
-          "body": "$m_7 = 0111$: its neighbours $m_6, m_{15}$ are 0s, so the only prime implicant covering it is $\\bar P S = \\{1, 3, 5, 7\\}$: essential.\n\n$m_4 = 0100$: neighbours $m_0, m_6$ are 0s, so only $Q\\bar R = \\{4, 5, 12, 13\\}$ covers it: essential.",
+          "title": "Prime implicants",
+          "body": "$\\overline{P}S$ (1, 3, 5, 7), $Q\\overline{R}$ (4, 5, 12, 13), and the pairs $\\overline{P}\\,\\overline{Q}R$ (2, 3), $\\overline{Q}R\\overline{S}$ (2, 10), $PR\\overline{S}$ (10, 14), $PQ\\overline{S}$ (12, 14).",
           "scene": {
             "groups": [
               {
@@ -5971,7 +5971,8 @@
                   5,
                   7
                 ],
-                "label": "P'S"
+                "label": "P′S",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -5980,14 +5981,19 @@
                   12,
                   13
                 ],
-                "label": "QR'"
+                "label": "QR′",
+                "tone": "success"
               }
             ]
           }
         },
         {
-          "title": "Leftover minterms and their prime implicants",
-          "body": "Not yet covered: $m_2 = 0010$, $m_{10} = 1010$, $m_{14} = 1110$. The prime implicants covering them (all 3 literals):\n\n| Term | Minterms |\n|---|---|\n| $\\bar P \\bar Q R$ | 2, 3 |\n| $\\bar Q R \\bar S$ | 2, 10 |\n| $P R \\bar S$ | 10, 14 |\n| $P Q \\bar S$ | 12, 14 |\n\nNo single term covers all three (that would need $R\\bar S = \\{2, 6, 10, 14\\}$, but $m_6 = 0$), so exactly two more terms are needed.",
+          "title": "EPIs",
+          "body": "$m_1$ lies only in $\\overline{P}S$; $m_4$ only in $Q\\overline{R}$. Both are essential and cover 1, 3, 4, 5, 7, 12, 13."
+        },
+        {
+          "title": "Left: m2, m10, m14",
+          "body": "Two more pairs are needed (no single PI covers all three). The 2-term covers: $\\{\\overline{Q}R\\overline{S}, PR\\overline{S}\\}$, $\\{\\overline{Q}R\\overline{S}, PQ\\overline{S}\\}$, $\\{\\overline{P}\\,\\overline{Q}R, PR\\overline{S}\\}$. Each gives $F$ with 4 terms and 10 literals: three minimal SOPs.",
           "scene": {
             "groups": [
               {
@@ -5997,7 +6003,8 @@
                   5,
                   7
                 ],
-                "label": "P'S"
+                "label": "P′S",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -6006,83 +6013,35 @@
                   12,
                   13
                 ],
-                "label": "QR'"
-              },
-              {
-                "cells": [
-                  2,
-                  3
-                ],
-                "label": "P'Q'R"
+                "label": "QR′",
+                "tone": "success"
               },
               {
                 "cells": [
                   2,
                   10
                 ],
-                "label": "Q'RS'"
-              },
-              {
-                "cells": [
-                  10,
-                  14
-                ],
-                "label": "PRS'"
+                "label": "Q′RS′",
+                "tone": "warning"
               },
               {
                 "cells": [
                   12,
                   14
                 ],
-                "label": "PQS'"
+                "label": "PQS′",
+                "tone": "info"
               }
             ]
           }
         },
         {
-          "title": "Check each option",
-          "body": "| Option | Last two terms cover | Missing |\n|---|---|---|\n| A | $\\{2, 3\\} \\cup \\{2, 10\\}$ | $m_{14}$ ✗ |\n| B | $\\{2, 3\\} \\cup \\{10, 14\\}$ | none ✓ |\n| C | $\\{12, 14\\} \\cup \\{10, 14\\}$ | $m_2$ ✗ |\n| D | $\\{12, 14\\} \\cup \\{2, 10\\}$ | none ✓ |\n\nB and D each use 4 terms with $2 + 2 + 3 + 3 = 10$ literals, the minimum. Answer: **B, D**.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  1,
-                  3,
-                  5,
-                  7
-                ],
-                "label": "P'S"
-              },
-              {
-                "cells": [
-                  4,
-                  5,
-                  12,
-                  13
-                ],
-                "label": "QR'"
-              },
-              {
-                "cells": [
-                  2,
-                  3
-                ],
-                "label": "P'Q'R"
-              },
-              {
-                "cells": [
-                  10,
-                  14
-                ],
-                "label": "PRS'"
-              }
-            ],
-            "caption": "Option B shown; D swaps in PQS' + Q'RS'"
-          }
+          "title": "Check the options",
+          "body": "(A) uses $\\overline{P}\\,\\overline{Q}R$ and $\\overline{Q}R\\overline{S}$: $m_{14}$ uncovered. (B) $\\overline{P}\\,\\overline{Q}R + PR\\overline{S}$: a minimal cover. (C) $PQ\\overline{S} + PR\\overline{S}$: $m_2$ uncovered. (D) $PQ\\overline{S} + \\overline{Q}R\\overline{S}$: a minimal cover."
         }
       ],
       "answer": {
-        "value": "**B, D**",
+        "value": "(B) and (D)",
         "choice": [
           "B",
           "D"
@@ -6093,30 +6052,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\bar P\\bar Q R$ and $\\bar Q R\\bar S$ both cover $m_2$; $m_{14}$ is left uncovered, so this is not even $F$."
+          "reason": "Misses $m_{14}$ (no term with $P = 1$, $R = 1$, $S = 0$)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$\\bar P\\bar Q R$ covers $m_2$, $PR\\bar S$ covers $m_{10}, m_{14}$: a minimal cover."
+          "reason": "EPIs + $\\overline{P}\\,\\overline{Q}R$ + $PR\\overline{S}$: equal to $F$, 10 literals."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$PQ\\bar S$ and $PR\\bar S$ both cover $m_{14}$; $m_2$ is left uncovered."
+          "reason": "Misses $m_2$ (0010)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$\\bar Q R\\bar S$ covers $m_2, m_{10}$, $PQ\\bar S$ covers $m_{14}$: a minimal cover."
+          "reason": "EPIs + $PQ\\overline{S}$ + $\\overline{Q}R\\overline{S}$: equal to $F$, 10 literals."
         }
       ],
-      "shortcut": "Ignore the common $\\bar PS + Q\\bar R$; just test whether the last two terms of each option hit $\\{2, 10, 14\\}$: A misses 14, C misses 2.",
+      "shortcut": "All four options share the EPIs; test only the cells the last two terms must cover: 2, 10, 14.",
       "pitfalls": [
-        "Assuming every option is a valid expression of $F$ and comparing only literal counts: A and C do not even equal $F$.",
-        "Missing that a function can have more than one minimal SOP."
+        "Assuming there is a single minimal SOP and marking only one option.",
+        "Checking cost but not equality (A and C have the right cost but miss a 1)."
       ],
-      "verification": "Option D at $m_{14} = 1110$: $PQ\\bar S = 1 \\cdot 1 \\cdot 1 = 1$ ✓; at $m_6 = 0110$ (a 0): $\\bar PS = 0$, $Q\\bar R = 0$, $PQ\\bar S = 0$, $\\bar QR\\bar S = 0$ ✓.",
+      "verification": "Petrick's method on the reduced chart gives exactly three minimal covers; (B) and (D) are two of them.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -6137,8 +6096,7 @@
           13,
           14
         ],
-        "groups": [],
-        "caption": "1s of F; groups added step by step"
+        "groups": []
       }
     },
     "cse-2026-1-cs-39": {

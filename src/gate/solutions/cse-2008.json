@@ -212,73 +212,56 @@
       "verification": "C's `float x = 0.0f;` has the bit pattern `0x00000000`, and `-0.0f` is `0x80000000`; they compare equal."
     },
     "cse-2008-cs-5": {
-      "approach": "Mark minterms (rows $ab$, columns $cd$), then use the don't-cares to form the two largest quads covering all 1s.",
+      "approach": "Concept tested: **minimal SOP with don't-cares** on a map with rows $cd$, columns $ab$. Two quads cover every 1; options that are equal but use more terms are not minimal.",
       "concepts": [
-        "K-map minimization",
         "Don't-care conditions",
-        "Prime implicants"
+        "Minimal SOP",
+        "Corner quad"
       ],
-      "given": "| cell | minterms ($abcd$) |\n|---|---|\n| 1s | 0, 2, 4, 6, 8 |\n| X | 1, 3, 10 |",
+      "given": "Rows $cd$, columns $ab$. Row 00: 1 1 0 1; rows 01, 11: X 0 0 0; row 10: 1 1 0 X.",
       "steps": [
         {
-          "title": "Read the map",
-          "body": "Row $cd=00$: $ab=00,01,10$ → $m_0,m_4,m_8$. Row $cd=10$: $ab=00,01$ → $m_2,m_6$; $ab=10$ → X ($m_{10}$). X also at $m_1,m_3$ (column $ab=00$, rows 01, 11).",
+          "title": "Read the 1s",
+          "body": "In $(a, b, c, d)$: $m_0, m_4, m_8$ (row 00), $m_2, m_6$ (row 10). Xs: $m_1, m_3$ (column 00), $m_{10}$.",
           "scene": {
-            "caption": "1s: 0,2,4,6,8 · don't-cares: 1,3,10"
+            "groups": []
           }
         },
         {
-          "title": "Quad with corners",
-          "body": "$m_0,m_2,m_8,m_{10}$ (four corners, using X at $m_{10}$): $b=0,\\ d=0$ → $\\overline{b}\\,\\overline{d}$. Covers $m_8$.",
+          "title": "Two quads",
+          "body": "Rows $cd = 00, 10$ ($d = 0$) × columns $ab = 00, 01$ ($a = 0$): $\\overline{a}\\,\\overline{d}$ ($m_0, m_4, m_2, m_6$). The corners with $X_{10}$: $\\overline{b}\\,\\overline{d}$ ($m_0, m_8, m_2, X_{10}$).",
           "scene": {
             "groups": [
               {
                 "cells": [
                   0,
-                  2,
+                  1,
                   8,
-                  10
+                  9
                 ],
-                "label": "b′d′"
-              }
-            ],
-            "caption": "Corner quad → b′d′"
-          }
-        },
-        {
-          "title": "Second quad",
-          "body": "$m_0,m_2,m_4,m_6$: $a=0,\\ d=0$ → $\\overline{a}\\,\\overline{d}$. Covers $m_4,m_6$.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  2,
-                  8,
-                  10
-                ],
-                "label": "b′d′"
+                "label": "a′d′",
+                "tone": "accent"
               },
               {
                 "cells": [
                   0,
                   2,
-                  4,
-                  6
+                  8,
+                  10
                 ],
-                "label": "a′d′"
+                "label": "b′d′",
+                "tone": "success"
               }
-            ],
-            "caption": "f = b′d′ + a′d′"
+            ]
           }
         },
         {
-          "title": "Result",
-          "body": "All 1s are covered by two essential quads: $f=\\overline{b}\\,\\overline{d}+\\overline{a}\\,\\overline{d}$."
+          "title": "Check",
+          "body": "All five 1s are covered with 4 literals; $X_1, X_3$ are not needed."
         }
       ],
       "answer": {
-        "value": "$\\overline{b}\\,\\overline{d}+\\overline{a}\\,\\overline{d}$",
+        "value": "(A) $\\overline{b}\\,\\overline{d} + \\overline{a}\\,\\overline{d}$",
         "choice": [
           "A"
         ],
@@ -288,46 +271,52 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Two quads cover every 1; no smaller cover exists."
+          "reason": "Two quads, 4 literals."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Valid cover but uses three terms where two quads suffice; not minimal."
+          "reason": "Implements the map, but uses three terms and 7 literals ($\\overline{a}b\\overline{d}$ lies inside $\\overline{a}\\,\\overline{d}$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$ab\\overline{d}$ covers $m_{12},m_{14}$, which are 0s; and $m_4,m_6$ are left uncovered."
+          "reason": "$ab\\overline{d}$ covers $m_{12}, m_{14}$ (0s) and misses $m_4, m_6$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\overline{a}\\,\\overline{b}$ is redundant once the two quads are present; three terms, not minimal."
+          "reason": "Implements the map (using $X_1, X_3$ in $\\overline{a}\\,\\overline{b}$), but costs 6 literals; $\\overline{a}\\,\\overline{b}$ is unnecessary."
         }
       ],
-      "verification": "Evaluate A on each 1: $m_4$ ($a=0,d=0$) ✓, $m_8$ ($b=0,d=0$) ✓; on 0s like $m_5$ ($d=1$) both terms are 0 ✓.",
+      "shortcut": "Every 1 has $d = 0$; the ones with $b = 1$ have $a = 0$: $f = \\overline{d}(\\overline{a} + \\overline{b})$.",
+      "pitfalls": [
+        "Choosing (D) because it 'uses more don't-cares'.",
+        "Reading the rows as $ab$."
+      ],
+      "verification": "Petrick's method gives the unique minimal cover $\\{\\overline{a}\\,\\overline{d}, \\overline{b}\\,\\overline{d}\\}$ (4 literals).",
       "animation": {
         "kind": "kmap",
         "variables": [
-          "a",
-          "b",
           "c",
-          "d"
+          "d",
+          "a",
+          "b"
         ],
         "ones": [
           0,
-          2,
-          4,
-          6,
-          8
-        ],
-        "dcs": [
           1,
-          3,
-          10
+          2,
+          8,
+          9
         ],
-        "groups": []
+        "groups": [],
+        "dcs": [
+          4,
+          10,
+          12
+        ],
+        "title": "Rows cd, columns ab (as printed)"
       }
     },
     "cse-2008-cs-6": {

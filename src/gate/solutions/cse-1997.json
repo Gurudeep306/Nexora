@@ -1780,25 +1780,65 @@
       "verification": "$n=600 \\Rightarrow h=0.01 \\Rightarrow E\\le\\tfrac{6}{12}(10^{-4})(2)=10^{-4}$ ✓; $n=599$ gives $h>0.01$, $E$ bound $>10^{-4}$."
     },
     "cse-1997-a-36": {
-      "approach": "Simplify $f$ with absorption, then test each claim against the definitions of implicant, prime implicant and minterm.",
+      "approach": "Concept tested: **minterm vs implicant vs prime implicant**. Simplify $f$, then test each claim against the definitions: an implicant's cells must all be 1s; a prime implicant must lose that property when any literal is dropped.",
       "concepts": [
         "Implicant",
         "Prime implicant",
-        "Minterm",
-        "Boolean simplification"
+        "Minterm"
       ],
       "steps": [
         {
-          "title": "Simplify",
-          "body": "$\\bar x+x\\bar y=\\bar x+\\bar y$ and $\\bar x+xz=\\bar x+z$, so $f=\\bar x+\\bar y+z$. Thus $f=0$ only for $x=1,y=1,z=0$."
+          "title": "Simplify f",
+          "body": "$\\overline{x} + \\overline{y}x = \\overline{x} + \\overline{y}$ (redundant-literal rule), so $f = \\overline{x} + \\overline{y} + z = \\Sigma(0, 1, 2, 3, 4, 5, 7)$; only $m_6 = xy\\overline{z}$ is 0.",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Test options",
-          "body": "- $\\bar y x$: implicant, but $\\bar y$ alone is an implicant ⇒ not prime.\n- $xz$: two literals, a minterm needs all three ⇒ not a minterm.\n- $xz=1\\Rightarrow z=1\\Rightarrow f=1$ ⇒ **implicant** ✓.\n- $y$: at $x=1,y=1,z=0$, $y=1$ but $f=0$ ⇒ not an implicant."
+          "title": "The prime implicants",
+          "body": "The 1s are covered by three quads, $\\overline{x}$, $\\overline{y}$ and $z$, each maximal. These are the prime implicants.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  1,
+                  2,
+                  3
+                ],
+                "label": "x′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  0,
+                  1,
+                  4,
+                  5
+                ],
+                "label": "y′",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  1,
+                  3,
+                  5,
+                  7
+                ],
+                "label": "z",
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Test each claim",
+          "body": "(A) $\\overline{y}x$ is an implicant, but it lies inside $\\overline{y}$ (drop $x$ and it is still an implicant): **not prime**.\n\n(B) $xz$ has 2 literals; a minterm of a 3-variable function has 3. **Not a minterm.**\n\n(C) $xz = \\{m_5, m_7\\}$, both 1s: **an implicant**. True.\n\n(D) $y = \\{m_2, m_3, m_6, m_7\\}$ contains the 0-cell $m_6$: not even an implicant."
         }
       ],
       "answer": {
-        "value": "xz is an implicant of f",
+        "value": "(C) $xz$ is an implicant of $f$",
         "choice": [
           "C"
         ],
@@ -1808,28 +1848,48 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\bar y x$ is covered by the larger implicant $\\bar y$, so it is not prime."
+          "reason": "$\\overline{y}x \\subset \\overline{y}$, and $\\overline{y}$ is itself an implicant, so $\\overline{y}x$ is not prime."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A minterm of a 3-variable function has 3 literals; $xz$ has two."
+          "reason": "A minterm contains all three variables; $xz$ has two."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: whenever $xz=1$, $f=1$ (it is even a term of the given expression)."
+          "reason": "Both cells of $xz$ ($m_5$, $m_7$) are 1s."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$y=1$ does not force $f=1$ (counterexample $x=1,y=1,z=0$)."
+          "reason": "$y$ covers $m_6$, where $f = 0$."
         }
       ],
+      "shortcut": "$f$ is 0 only at $xy\\overline{z}$. A product is an implicant iff it avoids that one cell: $xz$ (needs $z = 1$) avoids it; $y$ does not.",
       "pitfalls": [
-        "Calling any product term of the given SOP a prime implicant without checking whether a literal can be dropped."
+        "Calling every term of the given expression a prime implicant: $\\overline{y}x$ and $xz$ are implicants that can be enlarged.",
+        "Confusing 'implicant' with 'minterm'."
       ],
-      "verification": "Prime implicants of $\\bar x+\\bar y+z$ are exactly $\\bar x,\\bar y,z$; $xz\\subseteq z$, so it is an implicant but not prime."
+      "verification": "Truth table: $f$ is 1 on every row except 110; $xz$ is 1 on rows 101, 111 only.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          7
+        ],
+        "groups": []
+      }
     },
     "cse-1997-a-37": {
       "approach": "Add in binary, then apply the DAA rules: add 06H if the low nibble > 9 (or AC=1), add 60H if the high nibble > 9 (or CY=1).",

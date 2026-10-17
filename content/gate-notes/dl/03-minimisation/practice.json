@@ -5,10 +5,22 @@
   "marks": 1,
   "text": "Which of the following is the **minimal** sum of products of $f(A, B, C) = \\Sigma m(1, 3, 5, 6, 7)$?",
   "options": [
-   {"l": "A", "t": "$C + AB$"},
-   {"l": "B", "t": "$A'C + AB + AC$"},
-   {"l": "C", "t": "$C + AC'$"},
-   {"l": "D", "t": "$AB + B'C$"}
+   {
+    "l": "A",
+    "t": "$C + AB$"
+   },
+   {
+    "l": "B",
+    "t": "$A'C + AB + AC$"
+   },
+   {
+    "l": "C",
+    "t": "$C + AC'$"
+   },
+   {
+    "l": "D",
+    "t": "$AB + B'C$"
+   }
   ],
   "answer": "A",
   "solution": [
@@ -19,10 +31,20 @@
   ],
   "concept": "Loop the largest legal groups; a quad on a 3-variable map is a single literal.",
   "common_wrong": [
-   {"answer": "B", "why": "$A'C + AB + AC$ is **equal** to $f$ (its minterms are 1, 3, 5, 6, 7), but $A'C + AC = C$ was never merged: 6 literals instead of 3. Equal is not minimal."},
-   {"answer": "C", "why": "$C + AC' = A + C$ also contains $m_4$, which is a 0 of $f$."}
+   {
+    "answer": "B",
+    "why": "$A'C + AB + AC$ is **equal** to $f$ (its minterms are 1, 3, 5, 6, 7), but $A'C + AC = C$ was never merged: 6 literals instead of 3. Equal is not minimal."
+   },
+   {
+    "answer": "C",
+    "why": "$C + AC' = A + C$ also contains $m_4$, which is a 0 of $f$."
+   }
   ],
-  "blocks": ["sop-method", "group-term", "equivalent-forms"],
+  "blocks": [
+   "sop-method",
+   "group-term",
+   "equivalent-forms"
+  ],
   "source": "nexora"
  },
  {
@@ -38,10 +60,20 @@
   ],
   "concept": "Cell numbers follow the Gray labels, not the position: 0 1 3 2 / 4 5 7 6 / 12 13 15 14 / 8 9 11 10.",
   "common_wrong": [
-   {"answer": 11, "why": "That is counting order (row 3 = 10, column 4 = 11, giving 1011). On a K-map the third label is 11 and the fourth is 10."},
-   {"answer": 10, "why": "1010 is the fourth row, fourth column."}
+   {
+    "answer": 11,
+    "why": "That is counting order (row 3 = 10, column 4 = 11, giving 1011). On a K-map the third label is 11 and the fourth is 10."
+   },
+   {
+    "answer": 10,
+    "why": "1010 is the fourth row, fourth column."
+   }
   ],
-  "blocks": ["map-layout", "cell-numbers", "trick-cell-numbers"],
+  "blocks": [
+   "map-layout",
+   "cell-numbers",
+   "trick-cell-numbers"
+  ],
   "source": "nexora"
  },
  {
@@ -50,12 +82,28 @@
   "marks": 1,
   "text": "On a 4-variable K-map (variables $A, B, C, D$, rows $AB$, columns $CD$, both in Gray order), which of the following cells are neighbours of $m_{10}$?",
   "options": [
-   {"l": "A", "t": "$m_2$"},
-   {"l": "B", "t": "$m_8$"},
-   {"l": "C", "t": "$m_0$"},
-   {"l": "D", "t": "$m_{14}$"}
+   {
+    "l": "A",
+    "t": "$m_2$"
+   },
+   {
+    "l": "B",
+    "t": "$m_8$"
+   },
+   {
+    "l": "C",
+    "t": "$m_0$"
+   },
+   {
+    "l": "D",
+    "t": "$m_{14}$"
+   }
   ],
-  "answer": ["A", "B", "D"],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
   "solution": [
    "$m_{10} = 1010$. Its neighbours differ from it in exactly one bit: flip $A$ → 0010 = 2, flip $B$ → 1110 = 14, flip $C$ → 1000 = 8, flip $D$ → 1011 = 11.",
    "So $m_2$ (through the top/bottom wrap), $m_8$ (through the left/right wrap) and $m_{14}$ (directly above) are neighbours.",
@@ -63,10 +111,27 @@
   ],
   "concept": "Neighbours differ in exactly one bit, including across the borders; diagonal corners are not neighbours.",
   "common_wrong": [
-   {"answer": ["A", "B", "C", "D"], "why": "$m_0$ and $m_{10}$ are diagonal corners: two bits differ. They belong to the corner quad, but they are not neighbours."},
-   {"answer": ["D"], "why": "This misses the wrap-around: the left and right borders, and the top and bottom borders, are adjacent."}
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "$m_0$ and $m_{10}$ are diagonal corners: two bits differ. They belong to the corner quad, but they are not neighbours."
+   },
+   {
+    "answer": [
+     "D"
+    ],
+    "why": "This misses the wrap-around: the left and right borders, and the top and bottom borders, are adjacent."
+   }
   ],
-  "blocks": ["adjacency", "wrap-around", "corner-quad"],
+  "blocks": [
+   "adjacency",
+   "wrap-around",
+   "corner-quad"
+  ],
   "source": "nexora"
  },
  {
@@ -75,10 +140,22 @@
   "marks": 2,
   "text": "What is the minimal product of sums of $f(A, B, C, D) = \\Sigma m(0, 1, 2, 3, 4, 6, 8, 9, 10, 11)$?",
   "options": [
-   {"l": "A", "t": "$(A' + B')(B' + D')$"},
-   {"l": "B", "t": "$(A + B)(B + D)$"},
-   {"l": "C", "t": "$A'B' + B'D'$"},
-   {"l": "D", "t": "$(A' + B')(B' + D)$"}
+   {
+    "l": "A",
+    "t": "$(A' + B')(B' + D')$"
+   },
+   {
+    "l": "B",
+    "t": "$(A + B)(B + D)$"
+   },
+   {
+    "l": "C",
+    "t": "$A'B' + B'D'$"
+   },
+   {
+    "l": "D",
+    "t": "$(A' + B')(B' + D)$"
+   }
   ],
   "answer": "A",
   "solution": [
@@ -89,10 +166,20 @@
   ],
   "concept": "Loop the 0s; read each loop as a sum term with 0 → plain letter and 1 → primed letter.",
   "common_wrong": [
-   {"answer": "B", "why": "The 0-loops were read with the SOP habit (1 → plain letter). $(A + B)(B + D)$ is 0 on $m_0$, which is a 1 of $f$."},
-   {"answer": "C", "why": "That is a sum of products, not a POS, and it is not even equal to $f$: $A'B' + B'D' = \\Sigma(0, 1, 2, 3, 8, 10)$ misses $m_4, m_6, m_9, m_{11}$."}
+   {
+    "answer": "B",
+    "why": "The 0-loops were read with the SOP habit (1 → plain letter). $(A + B)(B + D)$ is 0 on $m_0$, which is a 1 of $f$."
+   },
+   {
+    "answer": "C",
+    "why": "That is a sum of products, not a POS, and it is not even equal to $f$: $A'B' + B'D' = \\Sigma(0, 1, 2, 3, 8, 10)$ misses $m_4, m_6, m_9, m_{11}$."
+   }
   ],
-  "blocks": ["pos-method", "trick-pos-labels", "trap-pos-literals"],
+  "blocks": [
+   "pos-method",
+   "trick-pos-labels",
+   "trap-pos-literals"
+  ],
   "source": "nexora"
  },
  {
@@ -108,10 +195,19 @@
   ],
   "concept": "A k-literal term of n variables is a group of 2^(n−k) cells.",
   "common_wrong": [
-   {"answer": 4, "why": "That is the count for 4 variables (the four corners). With five variables there is one more free variable, doubling it."},
-   {"answer": 2, "why": "$2^{k}$ with $k = 2$ literals: the exponent is the number of **missing** variables, $n - k$."}
+   {
+    "answer": 4,
+    "why": "That is the count for 4 variables (the four corners). With five variables there is one more free variable, doubling it."
+   },
+   {
+    "answer": 2,
+    "why": "$2^{k}$ with $k = 2$ literals: the exponent is the number of **missing** variables, $n - k$."
+   }
   ],
-  "blocks": ["group-term", "group-sizes"],
+  "blocks": [
+   "group-term",
+   "group-sizes"
+  ],
   "source": "nexora"
  },
  {
@@ -120,10 +216,22 @@
   "marks": 2,
   "text": "A K-map for $f(A, B, C, D)$ has rows labelled $CD$ and columns labelled $AB$, both in the order 00, 01, 11, 10. The rows read (left to right):\n\n| $CD$ \\ $AB$ | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 | 0 | 0 | 0 | 1 |\n| 01 | 0 | 0 | 0 | 0 |\n| 11 | 1 | 1 | 0 | 0 |\n| 10 | 1 | 1 | 0 | 1 |\n\nWhat is the minimal SOP of $f$?",
   "options": [
-   {"l": "A", "t": "$A'C + AB'D'$"},
-   {"l": "B", "t": "$AC' + B'CD'$"},
-   {"l": "C", "t": "$A'C + B'D'$"},
-   {"l": "D", "t": "$A'C + B'CD'$"}
+   {
+    "l": "A",
+    "t": "$A'C + AB'D'$"
+   },
+   {
+    "l": "B",
+    "t": "$AC' + B'CD'$"
+   },
+   {
+    "l": "C",
+    "t": "$A'C + B'D'$"
+   },
+   {
+    "l": "D",
+    "t": "$A'C + B'CD'$"
+   }
   ],
   "answer": "A",
   "solution": [
@@ -135,10 +243,20 @@
   ],
   "concept": "The loops do not care how the axes are arranged, but each cell must be decoded from its own labels.",
   "common_wrong": [
-   {"answer": "B", "why": "This reads the rows as $AB$ and the columns as $CD$ (the usual layout) although the map is labelled the other way round: every cell is transposed."},
-   {"answer": "C", "why": "$B'D'$ would need the four corners, but row $CD = 00$, column $AB = 00$ is a 0."}
+   {
+    "answer": "B",
+    "why": "This reads the rows as $AB$ and the columns as $CD$ (the usual layout) although the map is labelled the other way round: every cell is transposed."
+   },
+   {
+    "answer": "C",
+    "why": "$B'D'$ would need the four corners, but row $CD = 00$, column $AB = 00$ is a 0."
+   }
   ],
-  "blocks": ["read-map", "trap-axis-order", "wrap-around"],
+  "blocks": [
+   "read-map",
+   "trap-axis-order",
+   "wrap-around"
+  ],
   "source": "nexora"
  },
  {
@@ -147,10 +265,22 @@
   "marks": 1,
   "text": "The function $f(A, B, C, D) = \\Sigma m(0, 2, 5, 7, 8, 10, 13, 15)$ depends on which variables?",
   "options": [
-   {"l": "A", "t": "only $B$ and $D$"},
-   {"l": "B", "t": "only $A$ and $C$"},
-   {"l": "C", "t": "all four variables"},
-   {"l": "D", "t": "only $B$, $C$ and $D$"}
+   {
+    "l": "A",
+    "t": "only $B$ and $D$"
+   },
+   {
+    "l": "B",
+    "t": "only $A$ and $C$"
+   },
+   {
+    "l": "C",
+    "t": "all four variables"
+   },
+   {
+    "l": "D",
+    "t": "only $B$, $C$ and $D$"
+   }
   ],
   "answer": "A",
   "solution": [
@@ -161,10 +291,20 @@
   ],
   "concept": "f ignores x exactly when its minterm list is closed under flipping x (adding or subtracting x's weight).",
   "common_wrong": [
-   {"answer": "B", "why": "This swaps the roles: $A$ and $C$ are exactly the variables the list is symmetric in, i.e. the ones $f$ ignores."},
-   {"answer": "C", "why": "Every minterm appears in the minterm list with all four variables, but that does not mean $f$ depends on all of them; test each variable."}
+   {
+    "answer": "B",
+    "why": "This swaps the roles: $A$ and $C$ are exactly the variables the list is symmetric in, i.e. the ones $f$ ignores."
+   },
+   {
+    "answer": "C",
+    "why": "Every minterm appears in the minterm list with all four variables, but that does not mean $f$ depends on all of them; test each variable."
+   }
   ],
-  "blocks": ["free-variable", "trick-free-variable", "xor-patterns"],
+  "blocks": [
+   "free-variable",
+   "trick-free-variable",
+   "xor-patterns"
+  ],
   "source": "nexora"
  },
  {
@@ -173,12 +313,28 @@
   "marks": 2,
   "text": "Let $f(A, B, C) = \\Sigma m(0, 1, 3, 7)$. Which of the following expressions are **equal** to $f$?",
   "options": [
-   {"l": "A", "t": "$A'B' + BC$"},
-   {"l": "B", "t": "$A'B' + A'C + BC$"},
-   {"l": "C", "t": "$A'B' + AC$"},
-   {"l": "D", "t": "$(A' + B)(B' + C)$"}
+   {
+    "l": "A",
+    "t": "$A'B' + BC$"
+   },
+   {
+    "l": "B",
+    "t": "$A'B' + A'C + BC$"
+   },
+   {
+    "l": "C",
+    "t": "$A'B' + AC$"
+   },
+   {
+    "l": "D",
+    "t": "$(A' + B)(B' + C)$"
+   }
   ],
-  "answer": ["A", "B", "D"],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
   "solution": [
    "(A) $A'B' = \\{0, 1\\}$, $BC = \\{3, 7\\}$: union $\\{0, 1, 3, 7\\}$. Equal.",
    "(B) adds $A'C = \\{1, 3\\}$, already inside the union: still $\\{0, 1, 3, 7\\}$. Equal (but not minimal; $A'C$ is the consensus of $A'B'$ and $BC$).",
@@ -187,10 +343,25 @@
   ],
   "concept": "Decide equality by minterm lists, not by the look of the terms; an SOP may contain a redundant consensus term and still be equal.",
   "common_wrong": [
-   {"answer": ["A"], "why": "(B) is equal too (a redundant term changes the cost, not the function), and (D) is the POS of the same function."},
-   {"answer": ["A", "B"], "why": "The POS in (D) is 0 exactly on rows 2, 4, 5, 6, the 0s of $f$: it is equal."}
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "(B) is equal too (a redundant term changes the cost, not the function), and (D) is the POS of the same function."
+   },
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "The POS in (D) is 0 exactly on rows 2, 4, 5, 6, the 0s of $f$: it is equal."
+   }
   ],
-  "blocks": ["equivalent-forms", "algebra-check", "pos-method"],
+  "blocks": [
+   "equivalent-forms",
+   "algebra-check",
+   "pos-method"
+  ],
   "source": "nexora"
  },
  {
@@ -206,10 +377,19 @@
   ],
   "concept": "Count the union of the terms' minterm sets; subtract the overlaps.",
   "common_wrong": [
-   {"answer": 12, "why": "Adding 4 + 4 + 4 counts $m_3$ and $m_{15}$ twice."},
-   {"answer": 6, "why": "That is the number of 0s, $16 - 10$."}
+   {
+    "answer": 12,
+    "why": "Adding 4 + 4 + 4 counts $m_3$ and $m_{15}$ twice."
+   },
+   {
+    "answer": 6,
+    "why": "That is the number of 0s, $16 - 10$."
+   }
   ],
-  "blocks": ["count-minterms", "group-term"],
+  "blocks": [
+   "count-minterms",
+   "group-term"
+  ],
   "source": "nexora"
  },
  {
@@ -218,10 +398,22 @@
   "marks": 2,
   "text": "A K-map for $f(A, B, C, D)$ is printed with rows $AB = 00, 01, 10, 11$ (in this order, top to bottom) and columns $CD = 00, 01, 11, 10$. The 1s are in the four corner cells of the printed grid; every other cell is 0. What is the minimal SOP of $f$?",
   "options": [
-   {"l": "A", "t": "$B'D'$"},
-   {"l": "B", "t": "$A'B'D' + ABD'$"},
-   {"l": "C", "t": "$D'$"},
-   {"l": "D", "t": "$A'D' + AD'$"}
+   {
+    "l": "A",
+    "t": "$B'D'$"
+   },
+   {
+    "l": "B",
+    "t": "$A'B'D' + ABD'$"
+   },
+   {
+    "l": "C",
+    "t": "$D'$"
+   },
+   {
+    "l": "D",
+    "t": "$A'D' + AD'$"
+   }
   ],
   "answer": "B",
   "solution": [
@@ -232,10 +424,440 @@
   ],
   "concept": "On a map printed in counting order, the end rows are two bits apart: decode, then re-draw in Gray order before looping.",
   "common_wrong": [
-   {"answer": "A", "why": "This loops the four printed corners as a corner quad, which is only valid when the labels are in Gray order. Here the bottom row is $AB = 11$, not 10."},
-   {"answer": "D", "why": "$A'D' + AD' = D'$ covers all eight cells with $D = 0$, including $m_4$ and $m_8$, which are 0s."}
+   {
+    "answer": "A",
+    "why": "This loops the four printed corners as a corner quad, which is only valid when the labels are in Gray order. Here the bottom row is $AB = 11$, not 10."
+   },
+   {
+    "answer": "D",
+    "why": "$A'D' + AD' = D'$ covers all eight cells with $D = 0$, including $m_4$ and $m_8$, which are 0s."
+   }
   ],
-  "blocks": ["trap-non-gray", "trap-binary-labels", "read-map"],
+  "blocks": [
+   "trap-non-gray",
+   "trap-binary-labels",
+   "read-map"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many prime implicants does $f(A, B, C) = \\Sigma m(0, 1, 2, 5, 6, 7)$ have?",
+  "answer": 6,
+  "solution": [
+   "Plot: row $A = 0$ has 1s at $BC = 00, 01, 10$; row $A = 1$ at $BC = 01, 11, 10$.",
+   "Each 1 has exactly two neighbouring 1s: the 1s form a ring $m_0 - m_1 - m_5 - m_7 - m_6 - m_2 - m_0$.",
+   "Every quad contains a 0 ($m_3$ or $m_4$), so the prime implicants are the six pairs of the ring: $A'B'$, $B'C$, $AC$, $AB$, $BC'$, $A'C'$."
+  ],
+  "concept": "Count every maximal loop, used or not; here the 1s form a ring of six pairs.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "3 is the number of terms in a minimal SOP (every other pair of the ring), not the number of prime implicants."
+   },
+   {
+    "answer": 0,
+    "why": "That is the number of essential prime implicants: the function is cyclic."
+   }
+  ],
+  "blocks": [
+   "list-pis",
+   "pi-def",
+   "trap-pi-vs-chosen",
+   "cyclic"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q02",
+  "type": "NAT",
+  "marks": 2,
+  "text": "How many essential prime implicants does $f(A, B, C, D) = \\Sigma m(1, 4, 5, 6, 7, 9, 14) + d(3, 15)$ have?",
+  "answer": 3,
+  "solution": [
+   "Prime implicants (with the Xs usable): $A'B$ ($m_4$–$m_7$), $BC$ ($m_6, m_7, m_{14}, X_{15}$), $A'D$ ($m_1, X_3, m_5, m_7$) and $B'C'D$ ($m_1, m_9$).",
+   "Distinguished 1-cells: $m_4$ lies only in $A'B$; $m_{14}$ only in $BC$; $m_9$ only in $B'C'D$.",
+   "So $A'B$, $BC$, $B'C'D$ are essential; together they cover every 1, and $A'D$ is redundant."
+  ],
+  "concept": "An EPI is the only prime implicant through some 1-cell; don't-cares help form PIs but never make one essential.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "$A'D$ is a prime implicant but not essential: each of its 1s ($m_1, m_5, m_7$) also lies in another PI."
+   },
+   {
+    "answer": 2,
+    "why": "$B'C'D$ is easy to miss: $m_9$ is a 1 whose only loop is the pair with $m_1$."
+   }
+  ],
+  "blocks": [
+   "epi-def",
+   "distinguished",
+   "dont-care-rules"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which of the following is an **essential** prime implicant of $f(A, B, C, D) = \\Sigma m(0, 2, 3, 5, 7, 10, 14)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A'B'D'$"
+   },
+   {
+    "l": "B",
+    "t": "$A'CD$"
+   },
+   {
+    "l": "C",
+    "t": "$B'CD'$"
+   },
+   {
+    "l": "D",
+    "t": "$A'B'C$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The prime implicants are $A'B'D'$, $A'B'C$, $B'CD'$, $A'CD$, $A'BD$, $ACD'$.",
+   "$m_0$ lies only in $A'B'D'$, so $A'B'D'$ is essential (so are $A'BD$, through $m_5$, and $ACD'$, through $m_{14}$).",
+   "$A'CD$ and $A'B'C$ are selective (both cover $m_3$, the only 1 left after the EPIs); $B'CD'$ is redundant (its 1s $m_2$, $m_{10}$ are covered by EPIs)."
+  ],
+  "concept": "Find the 1-cells with a single prime implicant through them.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "$A'CD$ appears in one minimal SOP, but $m_3$ and $m_7$ also lie in other PIs; it is selective, not essential."
+   },
+   {
+    "answer": "C",
+    "why": "$B'CD'$ is a prime implicant, but both of its 1s are covered by essential PIs: it is redundant."
+   }
+  ],
+  "blocks": [
+   "epi-def",
+   "rpi-spi",
+   "distinguished"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Let $f(x, y, z) = x'y + xz$. Which of the following statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$x'yz$ is an implicant of $f$"
+   },
+   {
+    "l": "B",
+    "t": "$yz$ is a prime implicant of $f$"
+   },
+   {
+    "l": "C",
+    "t": "$yz$ is an essential prime implicant of $f$"
+   },
+   {
+    "l": "D",
+    "t": "$x'z$ is an implicant of $f$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "$f = \\Sigma m(2, 3, 5, 7)$.",
+   "(A) $x'yz = m_3$, a 1 of $f$: every minterm of $f$ is an implicant. True.",
+   "(B) $yz = \\{3, 7\\}$, both 1s, so it is an implicant; dropping $y$ gives $z = \\{1, 3, 5, 7\\}$ ($m_1$ is 0) and dropping $z$ gives $y = \\{2, 3, 6, 7\\}$ ($m_6$ is 0). It is prime. True.",
+   "(C) $m_3$ also lies in $x'y$ and $m_7$ in $xz$, so $yz$ (the consensus term) has no distinguished cell. False.",
+   "(D) $x'z = \\{1, 3\\}$ and $m_1$ is 0. False."
+  ],
+  "concept": "Implicant: all its cells are 1s. Prime: no literal can be dropped. Essential: the only PI through some 1.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "A consensus term is prime but never essential here: both of its cells are covered by the other two PIs."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "$yz$ is prime: removing either literal adds a 0-cell."
+   }
+  ],
+  "blocks": [
+   "implicant-def",
+   "pi-def",
+   "epi-def",
+   "term-ladder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A circuit receives BCD digits $ABCD$ (codes 1010–1111 never occur) and must output 1 for the digits 1, 2, 5, 6 and 9. What is its minimal SOP?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$C'D + CD'$"
+   },
+   {
+    "l": "B",
+    "t": "$A'C'D + A'CD' + B'C'D$"
+   },
+   {
+    "l": "C",
+    "t": "$C'D + CD' + AD$"
+   },
+   {
+    "l": "D",
+    "t": "$A'C'D + A'CD'$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$f = \\Sigma m(1, 2, 5, 6, 9) + d(10, 11, 12, 13, 14, 15)$.",
+   "Column $CD = 01$: $m_1, m_5, X_{13}, m_9$ is a quad, $C'D$.",
+   "Column $CD = 10$: $m_2, m_6, X_{14}, X_{10}$ is a quad, $CD'$.",
+   "Every 1 is covered: $f = C'D + CD' = C \\oplus D$ (4 literals)."
+  ],
+  "concept": "Unused input codes are don't-cares; including them where they enlarge loops shrinks the circuit.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "This is the minimal SOP **without** the don't-cares (9 literals); the unused codes may be set to 1."
+   },
+   {
+    "answer": "C",
+    "why": "Equal on the digits, but $AD$ is a redundant prime implicant: it covers only $m_9$, already in $C'D$."
+   }
+  ],
+  "blocks": [
+   "dont-care-def",
+   "dont-care-rules",
+   "dc-intuition"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "How many different minimal SOP expressions does $f(A, B, C, D) = \\Sigma m(0, 2, 3, 4, 5, 8, 11, 13)$ have?",
+  "answer": 4,
+  "solution": [
+   "PIs: $A'B'D'$ (0, 2), $A'C'D'$ (0, 4), $B'C'D'$ (0, 8), $A'B'C$ (2, 3), $B'CD$ (3, 11), $A'BC'$ (4, 5), $BC'D$ (5, 13). No quads.",
+   "EPIs: $B'C'D'$ ($m_8$), $B'CD$ ($m_{11}$), $BC'D$ ($m_{13}$). They cover 0, 8, 3, 11, 5, 13.",
+   "Left: $m_2$ and $m_4$. $m_2$ needs $A'B'D'$ or $A'B'C$; $m_4$ needs $A'C'D'$ or $A'BC'$; no single PI covers both, and all four are 3-literal terms.",
+   "Independent choices: $2 \\times 2 = 4$ minimal SOPs, each with 5 terms and 15 literals."
+  ],
+  "concept": "After the EPIs, independent tied choices multiply the number of minimal SOPs.",
+  "common_wrong": [
+   {
+    "answer": 1,
+    "why": "The minimal SOP is not unique: $m_2$ and $m_4$ each have two equally cheap PIs."
+   },
+   {
+    "answer": 2,
+    "why": "Each of the two leftover cells has two choices, and the choices are independent: $2 \\times 2$."
+   }
+  ],
+  "blocks": [
+   "multiple-covers",
+   "cover-method",
+   "trap-unique"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q07",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Which of the following 3-variable functions $f(A, B, C)$ is **cyclic** (has prime implicants but no essential prime implicant)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Sigma m(1, 2, 3, 4, 5, 6)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Sigma m(0, 1, 3, 7)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Sigma m(0, 2, 5, 7)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Sigma m(0, 1, 2, 3)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "(A) The six 1s form a ring of six pairs; every 1 is in two PIs, so no PI is essential: cyclic.",
+   "(B) $m_0$ lies only in $A'B'$ and $m_7$ only in $BC$: two EPIs.",
+   "(C) Pairs $A'C'$ ($m_0, m_2$) and $AC$ ($m_5, m_7$), both essential.",
+   "(D) The single quad $A'$ is essential."
+  ],
+  "concept": "A cyclic function: every 1-cell lies in at least two prime implicants.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "$A'C$ there is redundant, but $A'B'$ and $BC$ are essential (through $m_0$ and $m_7$)."
+   },
+   {
+    "answer": "C",
+    "why": "Two separate pairs: each 1 has a single PI, so both are essential."
+   }
+  ],
+  "blocks": [
+   "cyclic",
+   "epi-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "What is the minimal product-of-sums form of $f(A, B, C, D) = \\Sigma m(1, 3, 5, 7, 9) + d(6, 12, 13)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$D\\,(A' + C')$"
+   },
+   {
+    "l": "B",
+    "t": "$D\\,(A + C)$"
+   },
+   {
+    "l": "C",
+    "t": "$(A' + D)(C' + D)$"
+   },
+   {
+    "l": "D",
+    "t": "$A'D + C'D$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The 0s are $m_0, m_2, m_4, m_8, m_{10}, m_{11}, m_{14}, m_{15}$.",
+   "With $X_6$ and $X_{12}$, the column $D = 0$ ($m_0, m_2, m_4, X_6, m_8, m_{10}, X_{12}, m_{14}$) is an octet of 0s with $D = 0$: the factor $(D)$.",
+   "$m_{11}, m_{15}$ with $m_{10}, m_{14}$ form the quad $A = 1, C = 1$: the factor $(A' + C')$.",
+   "$f = D\\,(A' + C')$ (3 literals). It sets $X_6, X_{12}$ to 0 and $X_{13}$ to 1."
+  ],
+  "concept": "Loop the 0s (with useful Xs) and read sum terms: 0 → plain, 1 → primed.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "The quad of 0s at $A = 1, C = 1$ was read with the SOP habit; $(A + C)$ is 0 at $A = C = 0$, which includes the 1s $m_1$ and $m_5$."
+   },
+   {
+    "answer": "D",
+    "why": "$A'D + C'D$ is the same function expanded, but it is a sum of products, not a POS."
+   }
+  ],
+  "blocks": [
+   "dc-sop-pos",
+   "dont-care-rules"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A function of four variables is specified as $\\Sigma m(0, 3, 5, 12) + d(2, 6, 9, 13)$. How many different completely specified functions satisfy this specification?",
+  "answer": 16,
+  "solution": [
+   "Every specified row (1 or 0) is fixed; each of the 4 don't-care rows can independently be 0 or 1.",
+   "So there are $2^4 = 16$ completions."
+  ],
+  "concept": "k don't-cares allow 2^k completely specified functions.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "That is the number of don't-cares, not the number of ways to fill them."
+   },
+   {
+    "answer": 256,
+    "why": "$2^8$ would let the four specified 1s vary too; they are fixed."
+   }
+  ],
+  "blocks": [
+   "dc-count",
+   "dont-care-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-02-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "For $f(A, B, C, D) = \\Sigma m(0, 1, 3, 7, 8, 9) + d(2, 5, 13)$, which of the following are **redundant** prime implicants (prime, but never in a minimal SOP)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A'B'$"
+   },
+   {
+    "l": "B",
+    "t": "$B'C'$"
+   },
+   {
+    "l": "C",
+    "t": "$C'D$"
+   },
+   {
+    "l": "D",
+    "t": "$A'D$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "Prime implicants: $B'C'$ ($m_0, m_1, m_8, m_9$), $A'D$ ($m_1, m_3, X_5, m_7$), $A'B'$ ($m_0, m_1, X_2, m_3$), $C'D$ ($m_1, X_5, m_9, X_{13}$).",
+   "Distinguished 1-cells: $m_8$ lies only in $B'C'$; $m_7$ only in $A'D$. These two are essential.",
+   "They cover 0, 1, 3, 7, 8, 9: all the 1s. $A'B'$'s 1s (0, 1, 3) and $C'D$'s 1s (1, 9) are already covered, so both are redundant."
+  ],
+  "concept": "Redundant PI: every 1 it covers is already covered by the essential prime implicants.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "$C'D$ is redundant too: its only 1s are $m_1$ and $m_9$, both inside $B'C'$; the Xs it holds do not need covering."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "$B'C'$ is essential (the only PI through $m_8$)."
+   }
+  ],
+  "blocks": [
+   "rpi-spi",
+   "epi-def",
+   "dont-care-rules"
+  ],
   "source": "nexora"
  }
 ]

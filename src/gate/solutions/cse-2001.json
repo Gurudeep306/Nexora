@@ -494,70 +494,56 @@
       "verification": "MIPS uses `jal` (return address in register `ra`) and a GPR by convention as stack pointer, supporting nested calls and interrupts."
     },
     "cse-2001-a-11": {
-      "approach": "Read the minterms from the map, then cover the four 1s with the largest groups, using don't-cares freely.",
+      "approach": "Concept tested: **minimal SOP with many don't-cares**, on a map whose rows are $yz$ and columns $wx$. There is no essential PI, so compare covers by cost.",
       "concepts": [
-        "Karnaugh map",
         "Don't-care conditions",
-        "Minimal SOP"
+        "Minimal SOP",
+        "Reading a printed map"
       ],
-      "given": "| | minterms ($wxyz$) |\n|---|---|\n| 1s | 5, 6, 9, 15 |\n| don't cares | 1, 4, 7, 8, 13, 14 |\n| 0s | 0, 2, 3, 10, 11, 12 |",
+      "given": "Rows $yz$, columns $wx$. Row 00: 0 X 0 X; row 01: X 1 X 1; row 11: 0 X 1 0; row 10: 0 1 X 0.",
       "steps": [
         {
-          "title": "Read the map",
-          "body": "Cell (row $yz$, column $wx$) is minterm $wxyz$. The 1s are at $wx\\,yz = 01\\,01,\\ 10\\,01,\\ 11\\,11,\\ 01\\,10$, i.e. $m_5, m_9, m_{15}, m_6$. Don't-cares: $m_1,m_4,m_7,m_8,m_{13},m_{14}$.",
+          "title": "Read the 1s",
+          "body": "In $(w, x, y, z)$: $m_5$ (row 01, column 01), $m_9$ (row 01, column 10), $m_{15}$ (row 11, column 11), $m_6$ (row 10, column 01). Xs: 1, 4, 7, 8, 13, 14.",
           "scene": {
-            "groups": [],
-            "caption": "1s: 5, 6, 9, 15; X: 1, 4, 7, 8, 13, 14"
+            "groups": []
           }
         },
         {
-          "title": "Group for 6 and 15",
-          "body": "$\\{6,7,14,15\\}$ ($x=1,y=1$) uses don't-cares 7 and 14: term $xy$.",
+          "title": "Two quads",
+          "body": "Row $yz = 01$ is all 1s and Xs: $\\overline{y}z$ covers $m_5$ and $m_9$. Rows 11 and 10 at columns 01, 11 ($m_7, m_{15}, m_6, m_{14}$) are 1s and Xs: $xy$ covers $m_{15}$ and $m_6$.",
           "scene": {
             "groups": [
               {
                 "cells": [
+                  4,
+                  5,
                   6,
-                  7,
-                  14,
-                  15
+                  7
                 ],
-                "label": "xy"
-              }
-            ],
-            "caption": "xy covers 6 and 15"
-          }
-        },
-        {
-          "title": "Group for 5 and 9",
-          "body": "$\\{1,5,9,13\\}$ ($y=0,z=1$) uses don't-cares 1 and 13: term $y'z$. All 1s are covered by two 2-literal terms: $f = xy + y'z$.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  6,
-                  7,
-                  14,
-                  15
-                ],
-                "label": "xy"
+                "label": "y′z",
+                "tone": "accent"
               },
               {
                 "cells": [
-                  1,
-                  5,
                   9,
-                  13
+                  11,
+                  13,
+                  15
                 ],
-                "label": "y'z"
+                "label": "xy",
+                "tone": "success"
               }
-            ],
-            "caption": "f = xy + y'z"
+            ]
           }
+        },
+        {
+          "title": "Why nothing cheaper",
+          "body": "$m_9$ and $m_6$ have no common loop, so at least two terms are needed; $\\overline{y}z + xy$ has two terms of 2 literals. It is the unique minimum (4 literals), although no PI is essential."
         }
       ],
       "answer": {
-        "value": "$xy + y'z$",
+        "value": "(A) $xy + \\overline{y}z$",
         "choice": [
           "A"
         ],
@@ -567,35 +553,37 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Two quads cover all four 1s and no 0s — minimal."
+          "reason": "Two quads, 4 literals: minimal."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A valid cover but three terms (one with 3 literals) — not minimal."
+          "reason": "$w\\overline{x}\\,\\overline{y} + xy + xz$ also implements the map, but it costs 7 literals."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A valid cover but three terms; $w'x$ is redundant once $xy$ and $y'z$ are present."
+          "reason": "$\\overline{w}x + \\overline{y}z + xy$ implements the map with 6 literals; $\\overline{w}x$ is unnecessary."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$y$ covers $m_2, m_3, m_{10}, m_{11}$, which are 0s — wrong function."
+          "reason": "$xz + y$ is 1 on $m_2$ and $m_3$ (row 10 and row 11 of column 00), which are 0s."
         }
       ],
+      "shortcut": "Two 1s that cannot share a loop ($m_9$ and $m_6$) force at least two terms; the 2-term option is the answer if it is correct.",
       "pitfalls": [
-        "Rows are $yz$ and columns $wx$ — the minterm number is still $wxyz$."
+        "Rejecting (A) because $\\overline{y}z$ is not essential: minimality is about cost, and here no PI is essential.",
+        "Reading the rows as $wx$."
       ],
-      "verification": "Evaluated $xy+y'z$ on all 16 minterms: it is 1 exactly on 5, 6, 9, 15 and don't-cares 1, 7, 13, 14, and 0 on every 0-cell.",
+      "verification": "Petrick's method over the PIs (with the Xs) gives the single minimal cover $\\{\\overline{y}z, xy\\}$; (B) and (C) agree with the map but cost more.",
       "animation": {
         "kind": "kmap",
         "variables": [
-          "w",
-          "x",
           "y",
-          "z"
+          "z",
+          "w",
+          "x"
         ],
         "ones": [
           5,
@@ -603,15 +591,16 @@
           9,
           15
         ],
+        "groups": [],
         "dcs": [
           1,
+          2,
           4,
           7,
-          8,
-          13,
-          14
+          11,
+          13
         ],
-        "groups": []
+        "title": "Rows yz, columns wx (as printed)"
       }
     },
     "cse-2001-a-12": {

@@ -369,23 +369,24 @@
       "verification": "Two-row table: for $x = 0, 1$ options (A)–(C) give $1, 0$; option (D) gives $0, 0$."
     },
     "cse-1999-a-8": {
-      "approach": "Read minterms (A,B,C,D with A as MSB), group using don't-cares only if they help, then compare with the options.",
+      "approach": "Concept tested: **implementing a map with don't-cares**. Find the minimal SOP (Xs used only to enlarge loops), then check each option against the care cells.",
       "concepts": [
-        "Karnaugh map",
-        "Don't-care conditions"
+        "Don't-care conditions",
+        "Minimal SOP",
+        "Equivalent forms"
       ],
-      "given": "Ones: $m_3,m_7,m_9,m_{11},m_{13},m_{15}$; don't-cares: $m_4,m_5,m_6$.",
+      "given": "Rows $AB$, columns $CD$. Row 00: 0 0 1 0; row 01: X X 1 X; row 11: 0 1 1 0; row 10: 0 1 1 0.",
       "steps": [
         {
           "title": "Read the map",
-          "body": "Row 00: CD = 11 → $m_3$. Row 01: CD = 11 → $m_7$; X at $m_4,m_5,m_6$. Row 11: CD = 01, 11 → $m_{13},m_{15}$. Row 10: CD = 01, 11 → $m_9,m_{11}$.",
+          "body": "1s: $m_3, m_7, m_{15}, m_{11}$ (column $CD = 11$), $m_{13}, m_9$ (column 01, rows 11 and 10). Xs: $m_4, m_5, m_6$.",
           "scene": {
-            "caption": "Ones and don't-cares"
+            "groups": []
           }
         },
         {
-          "title": "Group",
-          "body": "Column CD = 11 (all four rows): $m_3,m_7,m_{11},m_{15}$ → $CD$. Rows with A = 1 and D = 1: $m_9,m_{11},m_{13},m_{15}$ → $AD$. The don't-cares are not needed.",
+          "title": "Loop",
+          "body": "Column $CD = 11$: $CD$. Rows 11 and 10, columns 01 and 11: $AD$. The Xs are not needed.",
           "scene": {
             "groups": [
               {
@@ -395,7 +396,8 @@
                   11,
                   15
                 ],
-                "label": "CD"
+                "label": "CD",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -404,17 +406,52 @@
                   13,
                   15
                 ],
-                "label": "AD"
+                "label": "AD",
+                "tone": "success"
               }
-            ],
-            "caption": "F = CD + AD"
+            ]
           }
         },
         {
           "title": "Factor",
-          "body": "$F=CD+AD=D(C+A)$ → option (b)."
+          "body": "$CD + AD = D(C + A)$: option (B)."
         }
       ],
+      "answer": {
+        "value": "(B) $D(C + A)$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$\\overline{A}B + CD$ is 1 on $m_4$–$m_7$ (Xs, fine) but 0 on $m_9$ and $m_{13}$, which are 1s."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "$AD + CD$ factored; it agrees with every care cell."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$AD + \\overline{A}B$ misses $m_3$ (row 00, column 11)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$(C + D)(\\overline{C} + D) = D$, so this is $D(A + B)$: it misses $m_3$ and is 1 on $m_1$, a 0."
+        }
+      ],
+      "shortcut": "Every 1 has $D = 1$, and the 1s with $C = 0$ all have $A = 1$: $f = D(A + C)$.",
+      "pitfalls": [
+        "Using the Xs in row 01 to make $\\overline{A}B$ although no 1 needs it.",
+        "Forgetting that $(C + D)(\\overline{C} + D)$ collapses to $D$."
+      ],
+      "verification": "Enumeration: (B) matches all 13 care cells; (A), (C), (D) each fail on at least one.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -431,43 +468,13 @@
           13,
           15
         ],
+        "groups": [],
         "dcs": [
           4,
           5,
           6
-        ],
-        "groups": []
-      },
-      "answer": {
-        "value": "$D(C+A)$",
-        "choice": [
-          "B"
-        ],
-        "matchesKey": true
-      },
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": false,
-          "reason": "$\\overline{A}B+CD$ gives 0 at $m_{13}$ (A = 1, B = 1, C = 0, D = 1), which must be 1."
-        },
-        {
-          "option": "B",
-          "correct": true,
-          "reason": "Correct: $CD+AD$ covers every 1 and no 0."
-        },
-        {
-          "option": "C",
-          "correct": false,
-          "reason": "$AD+\\overline{A}B$ gives 0 at $m_3$ (A = B = 0, C = D = 1), which must be 1."
-        },
-        {
-          "option": "D",
-          "correct": false,
-          "reason": "$(C+D)(\\overline{C}+D)=D$, so it is $D(A+B)$, which is 0 at $m_3$."
-        }
-      ],
-      "verification": "Checked all 13 specified cells of the map against D(C+A)."
+        ]
+      }
     },
     "cse-1999-a-9": {
       "approach": "Ask what physical resource each OS abstraction virtualises.",
