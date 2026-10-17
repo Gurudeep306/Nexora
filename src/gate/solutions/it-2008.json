@@ -300,63 +300,28 @@
       "verification": "Counterexamples given for B, C and D."
     },
     "it-2008-it-7": {
-      "approach": "Split the 32 bits into sign (1), biased exponent (8) and fraction (23), then compute $(-1)^s\\times 1.f\\times 2^{e-127}$.",
+      "approach": "Concept tested: **decoding single precision**. Split the 32 bits as 1 | 8 | 23, subtract the bias 127 from the exponent, restore the hidden 1 and shift the point.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Biased exponent"
+        "IEEE-754 single precision",
+        "Bias 127",
+        "Hidden bit"
       ],
       "steps": [
         {
-          "title": "Split the fields",
-          "body": "$\\underbrace{1}_{s}\\;\\underbrace{10000011}_{e}\\;\\underbrace{101000\\ldots0}_{f}$. Sign $s=1$, so the number is negative.",
-          "scene": {
-            "caption": "sign | exponent | fraction"
-          }
+          "title": "Split the bits",
+          "body": "`1 10000011 10100000000000000000000`: $s = 1$, $e = 1000\\,0011 = 131$, $f = 101\\,0\\ldots$"
         },
         {
-          "title": "Exponent and significand",
-          "body": "$e = 10000011_2 = 128+2+1 = 131$, so the true exponent is $131-127 = 4$.\nSignificand $1.101_2 = 1 + 0.5 + 0.125 = 1.625$.",
-          "scene": {
-            "caption": "e = 131 → 131 − 127 = 4; significand 1.101₂ = 1.625"
-          }
+          "title": "True exponent",
+          "body": "$E = 131 - 127 = 4$."
         },
         {
-          "title": "Value",
-          "body": "$-1.625 \\times 2^4 = -1.625\\times 16 = -26$.",
-          "scene": {
-            "caption": "Value = −1.625 × 16 = −26"
-          }
+          "title": "Significand and value",
+          "body": "$1.101_2 \\times 2^{4} = 11010_2 = 26$, and the sign bit makes it $-26$: option (C)."
         }
       ],
-      "animation": {
-        "kind": "bits",
-        "title": "IEEE 754 single precision",
-        "rows": [
-          {
-            "label": "bits",
-            "fields": [
-              {
-                "bits": "1",
-                "label": "sign",
-                "tone": "error"
-              },
-              {
-                "bits": "10000011",
-                "label": "exponent",
-                "tone": "accent"
-              },
-              {
-                "bits": "10100000000000000000000",
-                "label": "fraction",
-                "tone": "info"
-              }
-            ],
-            "value": "-26"
-          }
-        ]
-      },
       "answer": {
-        "value": "-26",
+        "value": "$-26$ — option (C)",
         "choice": [
           "C"
         ],
@@ -366,29 +331,58 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$-10 = -1.25\\times 2^3$ would need a different exponent and fraction (it also results from dropping the hidden 1: $-0.625\\times 16$)."
+          "reason": "$-10$ comes from dropping the hidden 1: $0.101_2 \\times 2^4 = 10$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$-13 = -1.625\\times 2^3$: off by one in the exponent (bias 128 instead of 127)."
+          "reason": "$-13$ is $1.101_2 \\times 2^3$, i.e. a bias of 128."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: $-1.625\\times 2^4 = -26$."
+          "reason": "$-1.101_2 \\times 2^{131-127} = -1.625 \\times 16 = -26$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The pattern is a normal number with value $-26$, which is listed."
+          "reason": "The pattern is an ordinary normal number, so one of the values is right."
         }
       ],
+      "shortcut": "The word is `0xC1D00000`; `C1` + the next bit gives $e = 131$ (scale 16), and $1.625 \\times 16 = 26$.",
       "pitfalls": [
-        "Forgetting the hidden leading 1 gives $-0.625\\times16=-10$.",
-        "Using bias 128 gives $-13$."
+        "Forgetting the hidden 1.",
+        "Using bias 128.",
+        "Ignoring the sign bit."
       ],
-      "verification": "Hex form 0xC1D00000 is the encoding of −26.0f."
+      "verification": "Re-encode $-26 = -11010_2 = -1.101 \\times 2^4$: $e = 131$, $f = 101\\ldots$, the same bits. ✓",
+      "animation": {
+        "kind": "bits",
+        "title": "Decoding the word",
+        "rows": [
+          {
+            "label": "word",
+            "fields": [
+              {
+                "bits": "1",
+                "label": "sign −",
+                "tone": "error"
+              },
+              {
+                "bits": "10000011",
+                "label": "e = 131 → E = 4",
+                "tone": "accent"
+              },
+              {
+                "bits": "10100000000000000000000",
+                "label": "f → 1.101",
+                "tone": "info"
+              }
+            ],
+            "value": "−26"
+          }
+        ]
+      }
     },
     "it-2008-it-8": {
       "approach": "Plot the minterms on a 4-variable K-map and group them; D never appears in the minimal cover, while A, B and C do.",

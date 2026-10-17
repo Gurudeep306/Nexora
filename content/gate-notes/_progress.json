@@ -38,7 +38,7 @@
             "fractions-fixed-point": "published+reviewed",
             "signed-numbers": "published+reviewed",
             "floating-point-basics": "written (draft): 5480 words, 20 worked examples, 3 viz (3 animated), 7 PYQs, 9 practice; checks l05_fp_basics.py pass",
-            "ieee-754": "planned",
+            "ieee-754": "written (draft): ~5000 words, 32 worked examples, 4 viz (4 animated), 10 PYQs, 9 practice; checks l06_ieee754.py pass",
             "floating-point-arithmetic": "planned",
             "codes": "published+reviewed"
           },

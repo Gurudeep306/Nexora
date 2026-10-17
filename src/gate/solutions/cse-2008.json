@@ -155,23 +155,28 @@
       "verification": "At $\\alpha=0$ the determinant is $-5$; at $\\alpha=5$ rows reduce to rank 2 with a consistent RHS."
     },
     "cse-2008-cs-4": {
-      "approach": "All-zero exponent field with zero fraction is the IEEE special encoding of $+0$, not a normalized number.",
+      "approach": "Concept tested: **IEEE-754 special values**. An all-zero word has exponent field 0 and fraction 0, which IEEE reserves for zero; it is not a normalised number (normalised values need $1 \\le e \\le 254$ and carry a hidden 1).",
       "concepts": [
-        "IEEE 754 single precision",
-        "Special values"
+        "IEEE-754 special values",
+        "Signed zero",
+        "Hidden bit"
       ],
       "steps": [
         {
-          "title": "Fields",
-          "body": "0x00000000 → sign 0, exponent field $00000000$, fraction 0."
+          "title": "Split the word",
+          "body": "`0x00000000` $\\Rightarrow s = 0$, $e = 0000\\,0000$, $f = 0$."
         },
         {
-          "title": "Interpretation",
-          "body": "Exponent field 0 is reserved (zero / denormals); with fraction 0 it encodes **+0**, a special value. Normalized numbers need exponent field $1\\ldots254$, the smallest being $2^{-126}$."
+          "title": "Classify by the exponent field",
+          "body": "$e = 0$ switches the hidden 1 off. With $f = 0$ the pattern is **zero**; with $f \\ne 0$ it would be a denormal. Normalised numbers need $1 \\le e \\le 254$."
+        },
+        {
+          "title": "Sign",
+          "body": "$s = 0$, so it is $+0$ (`0x80000000` is $-0$). It is a *special* value, not a normalised one: option (D)."
         }
       ],
       "answer": {
-        "value": "the special value +0",
+        "value": "The special value $+0$ — option (D)",
         "choice": [
           "D"
         ],
@@ -181,25 +186,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$2^{-127}$ is not even representable as a normalized single (min is $2^{-126}$)."
+          "reason": "Reading $e = 0$ as $E = -127$ with a hidden 1 gives $2^{-127}$, but IEEE never puts a hidden 1 under $e = 0$, and $2^{-127}$ is only reachable as a denormal (`0x00400000`)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$2^{-126}$ is 0x00800000 (exponent field 1)."
+          "reason": "$2^{-126}$ is the smallest normalised value, `0x00800000` (exponent field 1)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Zero cannot be normalized (no implicit leading 1); it is a special encoding."
+          "reason": "Zero cannot be normalised (it has no leading 1); IEEE encodes it as a special value."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Exponent 0 and fraction 0 with sign 0 is the reserved encoding of +0."
+          "reason": "Exponent field 0 and fraction 0 is the reserved encoding of $+0$."
         }
       ],
-      "verification": "0x80000000 is −0, the companion special value."
+      "shortcut": "Exponent field 0 or 255 ⇒ special (zero/denormal or ∞/NaN). Only 1 … 254 are normalised.",
+      "pitfalls": [
+        "Applying the normal formula $1.f \\times 2^{e-127}$ to $e = 0$.",
+        "Calling zero 'normalised'."
+      ],
+      "verification": "C's `float x = 0.0f;` has the bit pattern `0x00000000`, and `-0.0f` is `0x80000000`; they compare equal."
     },
     "cse-2008-cs-5": {
       "approach": "Mark minterms (rows $ab$, columns $cd$), then use the don't-cares to form the two largest quads covering all 1s.",

@@ -1,0 +1,381 @@
+{
+ "version": 1,
+ "title": "IEEE-754 special values",
+ "width": 640,
+ "height": 270,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "The five ways IEEE-754 single precision reads a word, chosen by the exponent field and whether the fraction is zero.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "How IEEE-754 single precision reads the exponent field",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Special values (single)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tab",
+   "type": "table",
+   "x": 20,
+   "y": 50,
+   "cellW": 150,
+   "cellH": 34,
+   "rows": [
+    [
+     "exponent e",
+     "fraction f",
+     "meaning",
+     "value"
+    ],
+    [
+     "0000 0000",
+     "0",
+     "zero",
+     "±0"
+    ],
+    [
+     "0000 0000",
+     "≠ 0",
+     "denormal",
+     "±0.f × 2⁻¹²⁶"
+    ],
+    [
+     "1 … 254",
+     "any",
+     "normal",
+     "±1.f × 2^(e−127)"
+    ],
+    [
+     "1111 1111",
+     "0",
+     "infinity",
+     "±∞"
+    ],
+    [
+     "1111 1111",
+     "≠ 0",
+     "NaN",
+     "not a number"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "ntab",
+   "type": "table",
+   "x": 12,
+   "y": 50,
+   "cellW": 112,
+   "cellH": 34,
+   "rows": [
+    [
+     "e",
+     "f",
+     "value"
+    ],
+    [
+     "0",
+     "0",
+     "±0"
+    ],
+    [
+     "0",
+     "≠ 0",
+     "±0.f × 2⁻¹²⁶"
+    ],
+    [
+     "1–254",
+     "any",
+     "±1.f × 2^(e−127)"
+    ],
+    [
+     "255",
+     "0",
+     "±∞"
+    ],
+    [
+     "255",
+     "≠ 0",
+     "NaN"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "0x00000000 is +0 and 0x80000000 is −0. They compare equal, but 1/(+0) = +∞ and 1/(−0) = −∞.",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x00400000 has e = 0 and f = 100…0: a denormal, 0.1₂ × 2⁻¹²⁶ = 2⁻¹²⁷. No hidden 1, and the exponent is fixed at −126.",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every field from 1 to 254 is an ordinary number with a hidden 1: 0x3F800000 has e = 127, so it is 1.0.",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x7F800000 is +∞ and 0xFF800000 is −∞: the results of overflow or of dividing a non-zero number by zero.",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x7FC00000 has e = 255 and a non-zero fraction: NaN, from 0/0, ∞ − ∞ or √−1. NaN is unequal even to itself.",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Only the two end fields are special. The 254 fields in between hold every normal number, from 2⁻¹²⁶ up to about 3.4 × 10³⁸.",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": []
+     }
+    }
+   ]
+  }
+ ]
+}

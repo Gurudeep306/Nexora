@@ -709,24 +709,28 @@
       "verification": "The official GATE key is (C)."
     },
     "cse-2021-2-cs-4": {
-      "approach": "Normalised numbers need a biased exponent from 1 to 254 (0 is reserved for zero/denormals). The smallest positive one uses the smallest allowed exponent and an all-zero fraction.",
+      "approach": "Concept tested: **the smallest normalised number**. Normalised values need an exponent field from 1 to 254; the smallest is field 1 with fraction 0, i.e. $1.0 \\times 2^{-126}$.",
       "concepts": [
-        "IEEE 754 single precision",
-        "biased exponent",
-        "normalised vs denormal"
+        "Normalised vs denormal",
+        "Reserved exponent fields",
+        "Extremes of IEEE-754"
       ],
       "steps": [
         {
-          "title": "Exponent field",
-          "body": "Value $= (-1)^s \\times 1.M \\times 2^{E-127}$ for $1 \\le E \\le 254$. $E = 0$ encodes zero and denormals, so the smallest normalised exponent is $E = 00000001$."
+          "title": "Which exponent fields are normal",
+          "body": "Field 0 is zero/denormal and field 255 is ∞/NaN. Normal fields are $1 \\dots 254$, so the smallest normal field is $0000\\,0001$."
         },
         {
-          "title": "Mantissa field",
-          "body": "To minimise $1.M$, take $M = 0\\ldots0$ (23 zeros). Smallest positive normalised number $= 1.0 \\times 2^{1-127} = 2^{-126}$."
+          "title": "Smallest significand",
+          "body": "With the hidden 1, the smallest significand is $1.000\\ldots0$, i.e. fraction all zeros."
+        },
+        {
+          "title": "Answer",
+          "body": "Exponent $00000001$, mantissa $000\\ldots0$: $1.0 \\times 2^{1-127} = 2^{-126}$, option (C)."
         }
       ],
       "answer": {
-        "value": "exponent = 00000001 and mantissa = all zeros, i.e. $2^{-126}$",
+        "value": "Exponent $00000001$, mantissa all zeros ($2^{-126}$) — option (C)",
         "choice": [
           "C"
         ],
@@ -736,25 +740,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Exponent 0 with fraction 0 encodes $+0$, which is not a positive normalised number."
+          "reason": "Exponent 0 and mantissa 0 is the special value $+0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Exponent 0 with a non-zero fraction is a **denormal** ($2^{-149}$), not normalised."
+          "reason": "Exponent 0 with mantissa $0\\ldots01$ is the smallest **denormal**, $2^{-149}$, not a normalised number."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: $1.0\\times2^{-126}$."
+          "reason": "The smallest normal field with the smallest fraction: $2^{-126}$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Valid normalised, but $(1 + 2^{-23})\\times2^{-126}$ is larger than option (C)."
+          "reason": "Normal, but one ulp larger: $(1 + 2^{-23})\\,2^{-126}$."
         }
       ],
-      "verification": "$2^{-126} \\approx 1.18\\times10^{-38}$, the well-known FLT_MIN."
+      "shortcut": "Smallest normal = `0x00800000` (just the lowest exponent bit set).",
+      "pitfalls": [
+        "Picking the denormal (B) because it is the smallest *positive* value.",
+        "Treating exponent field 0 as normal."
+      ],
+      "verification": "`0x00800000` decodes to $1.1755 \\times 10^{-38} = 2^{-126}$; `0x007FFFFF` (one less) is already a denormal. ✓"
     },
     "cse-2021-2-cs-5": {
       "approach": "With $y, z$ on the select lines, each data input is the residue of $f$ in $x$ for that $yz$ value: input $i$ $= f(x=0, yz=i)$ and $f(x=1, yz=i)$ combined.",
