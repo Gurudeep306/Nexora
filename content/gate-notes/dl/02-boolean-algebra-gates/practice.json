@@ -5,10 +5,22 @@
     "marks": 1,
     "text": "A two-input gate gives the outputs 1, 0, 0, 0 for the input rows $AB = 00, 01, 10, 11$. Which gate is it?",
     "options": [
-      { "l": "A", "t": "NAND" },
-      { "l": "B", "t": "NOR" },
-      { "l": "C", "t": "XNOR" },
-      { "l": "D", "t": "AND" }
+      {
+        "l": "A",
+        "t": "NAND"
+      },
+      {
+        "l": "B",
+        "t": "NOR"
+      },
+      {
+        "l": "C",
+        "t": "XNOR"
+      },
+      {
+        "l": "D",
+        "t": "AND"
+      }
     ],
     "answer": "B",
     "solution": [
@@ -18,10 +30,19 @@
     ],
     "concept": "Name a gate by its output column: NOR is 1000, the complement of OR's 0111.",
     "common_wrong": [
-      { "answer": "A", "why": "NAND is 1110: it is 0 only on row 11. This table is 1 only on row 00, the mirror image." },
-      { "answer": "C", "why": "XNOR is also 1 on row 11 (equal inputs 1, 1). This table is 0 there." }
+      {
+        "answer": "A",
+        "why": "NAND is 1110: it is 0 only on row 11. This table is 1 only on row 00, the mirror image."
+      },
+      {
+        "answer": "C",
+        "why": "XNOR is also 1 on row 11 (equal inputs 1, 1). This table is 0 there."
+      }
     ],
-    "blocks": ["nand-nor", "trick-odd-row"],
+    "blocks": [
+      "nand-nor",
+      "trick-odd-row"
+    ],
     "source": "nexora"
   },
   {
@@ -36,10 +57,20 @@
     ],
     "concept": "An n-input NOR is 1 only on the all-zero row; 1 is its controlling value.",
     "common_wrong": [
-      { "answer": 15, "why": "That is the number of rows where the NOR is 0 (or where the OR is 1)." },
-      { "answer": 8, "why": "Half the rows is the count for XOR or XNOR, which have no controlling value. A NOR is forced to 0 by any single 1." }
+      {
+        "answer": 15,
+        "why": "That is the number of rows where the NOR is 0 (or where the OR is 1)."
+      },
+      {
+        "answer": 8,
+        "why": "Half the rows is the count for XOR or XNOR, which have no controlling value. A NOR is forced to 0 by any single 1."
+      }
     ],
-    "blocks": ["nand-nor", "controlling-value", "multi-input"],
+    "blocks": [
+      "nand-nor",
+      "controlling-value",
+      "multi-input"
+    ],
     "source": "nexora"
   },
   {
@@ -48,12 +79,28 @@
     "marks": 2,
     "text": "Which of the following are equal to $x'$ for both values of $x$?",
     "options": [
-      { "l": "A", "t": "$x$ NAND $1$" },
-      { "l": "B", "t": "$x$ XOR $1$" },
-      { "l": "C", "t": "$x$ NOR $x$" },
-      { "l": "D", "t": "$x$ XNOR $1$" }
+      {
+        "l": "A",
+        "t": "$x$ NAND $1$"
+      },
+      {
+        "l": "B",
+        "t": "$x$ XOR $1$"
+      },
+      {
+        "l": "C",
+        "t": "$x$ NOR $x$"
+      },
+      {
+        "l": "D",
+        "t": "$x$ XNOR $1$"
+      }
     ],
-    "answer": ["A", "B", "C"],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
     "solution": [
       "(A) 1 is the non-controlling value of AND, so the AND body passes $x$ and the bubble inverts it: $(x \\cdot 1)' = x'$. Equal.",
       "(B) XOR with 1 is the controlled inverter with its control on: $x \\oplus 1 = x'$. Equal.",
@@ -62,10 +109,28 @@
     ],
     "concept": "Any inverting gate becomes a NOT when its inputs are tied or when it is fed its non-controlling constant; XOR with 1 inverts, XNOR with 1 copies.",
     "common_wrong": [
-      { "answer": ["A", "B", "C", "D"], "why": "XNOR with 1 does not invert: $1 \\odot 1 = 1$ and $0 \\odot 1 = 0$, so it copies $x$. XNOR with 0 is the inverter." },
-      { "answer": ["A", "C"], "why": "XOR with 1 was missed: $0 \\oplus 1 = 1$ and $1 \\oplus 1 = 0$, which is $x'$." }
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "XNOR with 1 does not invert: $1 \\odot 1 = 1$ and $0 \\odot 1 = 0$, so it copies $x$. XNOR with 0 is the inverter."
+      },
+      {
+        "answer": [
+          "A",
+          "C"
+        ],
+        "why": "XOR with 1 was missed: $0 \\oplus 1 = 1$ and $1 \\oplus 1 = 0$, which is $x'$."
+      }
     ],
-    "blocks": ["tie-inputs", "trick-inverter", "gate-as-switch"],
+    "blocks": [
+      "tie-inputs",
+      "trick-inverter",
+      "gate-as-switch"
+    ],
     "source": "nexora"
   },
   {
@@ -74,10 +139,22 @@
     "marks": 1,
     "text": "A chip works as an XOR gate in positive logic. If the same chip is used in a system that follows negative logic, which function does it perform?",
     "options": [
-      { "l": "A", "t": "XOR" },
-      { "l": "B", "t": "XNOR" },
-      { "l": "C", "t": "NAND" },
-      { "l": "D", "t": "OR" }
+      {
+        "l": "A",
+        "t": "XOR"
+      },
+      {
+        "l": "B",
+        "t": "XNOR"
+      },
+      {
+        "l": "C",
+        "t": "NAND"
+      },
+      {
+        "l": "D",
+        "t": "OR"
+      }
     ],
     "answer": "B",
     "solution": [
@@ -87,10 +164,19 @@
     ],
     "concept": "Changing from positive to negative logic turns every function into its dual: XOR ↔ XNOR, AND ↔ OR, NAND ↔ NOR.",
     "common_wrong": [
-      { "answer": "A", "why": "Complementing only the inputs leaves XOR unchanged, but the output is complemented too." },
-      { "answer": "D", "why": "OR is the negative-logic reading of an AND chip, not of an XOR chip." }
+      {
+        "answer": "A",
+        "why": "Complementing only the inputs leaves XOR unchanged, but the output is complemented too."
+      },
+      {
+        "answer": "D",
+        "why": "OR is the negative-logic reading of an AND chip, not of an XOR chip."
+      }
     ],
-    "blocks": ["pos-neg-logic", "logic-duality"],
+    "blocks": [
+      "pos-neg-logic",
+      "logic-duality"
+    ],
     "source": "nexora"
   },
   {
@@ -106,10 +192,19 @@
     ],
     "concept": "A two-input function is commutative iff its rows 01 and 10 agree; count the free rows.",
     "common_wrong": [
-      { "answer": 6, "why": "The two constants 0 and 1 are also commutative; they were left out." },
-      { "answer": 4, "why": "Only rows 00 and 11 were treated as free; the shared value of rows 01 and 10 is a third free choice." }
+      {
+        "answer": 6,
+        "why": "The two constants 0 and 1 are also commutative; they were left out."
+      },
+      {
+        "answer": 4,
+        "why": "Only rows 00 and 11 were treated as free; the shared value of rows 01 and 10 is a third free choice."
+      }
     ],
-    "blocks": ["sixteen-functions", "truth-table-def"],
+    "blocks": [
+      "sixteen-functions",
+      "truth-table-def"
+    ],
     "source": "nexora"
   },
   {
@@ -118,10 +213,22 @@
     "marks": 2,
     "text": "A student builds a '3-input NAND' by feeding the output of a 2-input NAND of $A$ and $B$ into a second 2-input NAND together with $C$. What does the circuit compute?",
     "options": [
-      { "l": "A", "t": "$(ABC)'$" },
-      { "l": "B", "t": "$AB + C'$" },
-      { "l": "C", "t": "$A' + B' + C$" },
-      { "l": "D", "t": "$(AB)'C$" }
+      {
+        "l": "A",
+        "t": "$(ABC)'$"
+      },
+      {
+        "l": "B",
+        "t": "$AB + C'$"
+      },
+      {
+        "l": "C",
+        "t": "$A' + B' + C$"
+      },
+      {
+        "l": "D",
+        "t": "$(AB)'C$"
+      }
     ],
     "answer": "B",
     "solution": [
@@ -131,10 +238,19 @@
     ],
     "concept": "NAND is not associative: NAND(NAND(A, B), C) = AB + C′, not (ABC)′.",
     "common_wrong": [
-      { "answer": "A", "why": "That is the true 3-input NAND, which needs an inverter between the two 2-input NANDs." },
-      { "answer": "D", "why": "This is the input of the second gate's bubble, $(AB)' \\cdot C$; the second gate's output inverts it." }
+      {
+        "answer": "A",
+        "why": "That is the true 3-input NAND, which needs an inverter between the two 2-input NANDs."
+      },
+      {
+        "answer": "D",
+        "why": "This is the input of the second gate's bubble, $(AB)' \\cdot C$; the second gate's output inverts it."
+      }
     ],
-    "blocks": ["multi-input", "trap-nand-chain"],
+    "blocks": [
+      "multi-input",
+      "trap-nand-chain"
+    ],
     "source": "nexora"
   },
   {
@@ -143,12 +259,28 @@
     "marks": 2,
     "text": "Which of the following statements about bubbles are correct?",
     "options": [
-      { "l": "A", "t": "An AND gate with a bubble on both inputs is a NOR gate." },
-      { "l": "B", "t": "Two bubbles on the same wire cancel each other." },
-      { "l": "C", "t": "An OR gate with bubbles on both inputs and on its output is an AND gate." },
-      { "l": "D", "t": "A NAND gate with one input tied to 0 acts as an inverter for the other input." }
+      {
+        "l": "A",
+        "t": "An AND gate with a bubble on both inputs is a NOR gate."
+      },
+      {
+        "l": "B",
+        "t": "Two bubbles on the same wire cancel each other."
+      },
+      {
+        "l": "C",
+        "t": "An OR gate with bubbles on both inputs and on its output is an AND gate."
+      },
+      {
+        "l": "D",
+        "t": "A NAND gate with one input tied to 0 acts as an inverter for the other input."
+      }
     ],
-    "answer": ["A", "B", "C"],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
     "solution": [
       "(A) The body sees $A'$ and $B'$: $A'B' = (A + B)'$ by De Morgan, a NOR. Correct.",
       "(B) Inverting twice restores the signal: $x'' = x$. Correct.",
@@ -157,10 +289,28 @@
     ],
     "concept": "Moving bubbles across a gate swaps AND and OR and inverts each crossed signal; a controlling constant makes an output constant.",
     "common_wrong": [
-      { "answer": ["A", "B", "C", "D"], "why": "Feeding a NAND its controlling value 0 forces the output to 1; it does not invert." },
-      { "answer": ["A", "B"], "why": "Statement C is De Morgan applied twice: bubbled-input OR is NAND, and the output bubble undoes the NOT, leaving AND." }
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "Feeding a NAND its controlling value 0 forces the output to 1; it does not invert."
+      },
+      {
+        "answer": [
+          "A",
+          "B"
+        ],
+        "why": "Statement C is De Morgan applied twice: bubbled-input OR is NAND, and the output bubble undoes the NOT, leaving AND."
+      }
     ],
-    "blocks": ["bubbles", "demorgan-gates", "controlling-value"],
+    "blocks": [
+      "bubbles",
+      "demorgan-gates",
+      "controlling-value"
+    ],
     "source": "nexora"
   },
   {
@@ -176,10 +326,19 @@
     ],
     "concept": "Read a circuit gate by gate, write each output in terms of its inputs, simplify, then count rows.",
     "common_wrong": [
-      { "answer": 7, "why": "Only row 111 was excluded. Row 110 also has $A = B = 1$, so $G_1 = 0$, and $G_2 = (1 + 0)' = 0$." },
-      { "answer": 2, "why": "That counts the rows where $F = 0$." }
+      {
+        "answer": 7,
+        "why": "Only row 111 was excluded. Row 110 also has $A = B = 1$, so $G_1 = 0$, and $G_2 = (1 + 0)' = 0$."
+      },
+      {
+        "answer": 2,
+        "why": "That counts the rows where $F = 0$."
+      }
     ],
-    "blocks": ["read-circuit", "nand-nor"],
+    "blocks": [
+      "read-circuit",
+      "nand-nor"
+    ],
     "source": "nexora"
   },
   {
@@ -188,10 +347,22 @@
     "marks": 1,
     "text": "A data signal $x$ and a control signal $c$ feed a two-input XOR gate. Which statement describes its output?",
     "options": [
-      { "l": "A", "t": "It passes $x$ when $c = 1$ and inverts $x$ when $c = 0$." },
-      { "l": "B", "t": "It passes $x$ when $c = 0$ and inverts $x$ when $c = 1$." },
-      { "l": "C", "t": "It is forced to 0 when $c = 1$, whatever $x$ is." },
-      { "l": "D", "t": "It is forced to 1 when $c = 1$, whatever $x$ is." }
+      {
+        "l": "A",
+        "t": "It passes $x$ when $c = 1$ and inverts $x$ when $c = 0$."
+      },
+      {
+        "l": "B",
+        "t": "It passes $x$ when $c = 0$ and inverts $x$ when $c = 1$."
+      },
+      {
+        "l": "C",
+        "t": "It is forced to 0 when $c = 1$, whatever $x$ is."
+      },
+      {
+        "l": "D",
+        "t": "It is forced to 1 when $c = 1$, whatever $x$ is."
+      }
     ],
     "answer": "B",
     "solution": [
@@ -201,10 +372,420 @@
     ],
     "concept": "An XOR gate is a controlled inverter: control 0 passes the data, control 1 inverts it.",
     "common_wrong": [
-      { "answer": "A", "why": "This is the XNOR gate's behaviour: $x \\odot 1 = x$ and $x \\odot 0 = x'$." },
-      { "answer": "C", "why": "Forcing to 0 is what a 0 does to an AND gate. XOR has no controlling value." }
+      {
+        "answer": "A",
+        "why": "This is the XNOR gate's behaviour: $x \\odot 1 = x$ and $x \\odot 0 = x'$."
+      },
+      {
+        "answer": "C",
+        "why": "Forcing to 0 is what a 0 does to an AND gate. XOR has no controlling value."
+      }
     ],
-    "blocks": ["gate-as-switch", "xor-gate", "controlling-value"],
+    "blocks": [
+      "gate-as-switch",
+      "xor-gate",
+      "controlling-value"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The expression $A'B + AB + AB'$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$A + B$"
+      },
+      {
+        "l": "B",
+        "t": "$A' + B$"
+      },
+      {
+        "l": "C",
+        "t": "$AB$"
+      },
+      {
+        "l": "D",
+        "t": "$1$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Factor the two terms that share $A$: $AB + AB' = A(B + B') = A$.",
+      "What is left is $A'B + A$, the redundant-literal pattern: $A$ stands alone, so the $A'$ inside $A'B$ can be deleted, giving $A + B$.",
+      "Check: the only row where all three terms are 0 is $A = B = 0$, and $A + B$ is 0 exactly there."
+    ],
+    "concept": "Factor to expose x + x′ = 1, then use the redundant-literal rule x + x′y = x + y.",
+    "common_wrong": [
+      {
+        "answer": "D",
+        "why": "Three of the four rows give 1, not all four: row 00 makes every term 0."
+      },
+      {
+        "answer": "B",
+        "why": "The wrong pair was factored: $A'B + AB = B$, and then $B + AB' = B + A$, still $A + B$, not $A' + B$."
+      }
+    ],
+    "blocks": [
+      "redundant-literal",
+      "simplify-method"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which one of the following is NOT a valid Boolean identity?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$x + x'y = x + y$"
+      },
+      {
+        "l": "B",
+        "t": "$x(x' + y) = xy$"
+      },
+      {
+        "l": "C",
+        "t": "$x + yz = (x + y)(x + z)$"
+      },
+      {
+        "l": "D",
+        "t": "$x(y + z) = xy + z$"
+      }
+    ],
+    "answer": "D",
+    "solution": [
+      "(A) is the redundant-literal rule and (B) its dual; (C) is the distributive law of OR over AND. All three are identities.",
+      "(D) is wrong: the correct law is $x(y + z) = xy + xz$. Counterexample $x = 0, z = 1$: the left side is 0, the right side is 1."
+    ],
+    "concept": "Disprove a claimed identity with one row; AND distributes over OR as xy + xz, and OR distributes over AND as (x + y)(x + z).",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "OR really does distribute over AND in Boolean algebra (it is one of the postulates), unlike in ordinary arithmetic."
+      },
+      {
+        "answer": "A",
+        "why": "Check both values of $x$: at $x = 0$ both sides are $y$, at $x = 1$ both are 1."
+      }
+    ],
+    "blocks": [
+      "laws-table",
+      "counterexample"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following expressions are equal to $AB + A'C$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AB + A'C + BC$"
+      },
+      {
+        "l": "B",
+        "t": "$(A + C)(A' + B)$"
+      },
+      {
+        "l": "C",
+        "t": "$AB + A'C + BC'$"
+      },
+      {
+        "l": "D",
+        "t": "$(A + B)(A' + C)$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "(A) $BC$ is the consensus of $AB$ and $A'C$, so it is redundant: equal.",
+      "(B) Expand: $AA' + AB + A'C + BC = AB + A'C + BC = AB + A'C$: equal.",
+      "(C) $BC'$ is not the consensus term; at $A = 0, B = 1, C = 0$ it gives 1 while $AB + A'C = 0$: not equal.",
+      "(D) $(A + B)(A' + C) = AC + A'B$; at $A = 1, B = 1, C = 0$ it is 0 but $AB + A'C = 1$: not equal."
+    ],
+    "concept": "The consensus term yz of xy and x′z is redundant; expanding (x + z)(x′ + y) gives xy + x′z.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "D"
+        ],
+        "why": "(D) pairs $A$ with $B$ and $A'$ with $C$ the other way round; it expands to $AC + A'B$, a different function."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "(C) looks like a consensus term but has $C'$ instead of $C$; it adds row 010."
+      }
+    ],
+    "blocks": [
+      "consensus",
+      "consensus-dual",
+      "trap-consensus-fake"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q04",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The complement of $(A + B)(C' + D)$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$A'B' + CD'$"
+      },
+      {
+        "l": "B",
+        "t": "$(A' + B')(C + D')$"
+      },
+      {
+        "l": "C",
+        "t": "$AB + C'D$"
+      },
+      {
+        "l": "D",
+        "t": "$A'B'CD'$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The complement of a product is the sum of the complements of its factors: $(A + B)' + (C' + D)'$.",
+      "Each factor is a sum, so De Morgan gives $A'B'$ and $CD'$. The complement is $A'B' + CD'$.",
+      "Rule of thumb: swap every operator and complement every literal."
+    ],
+    "concept": "Complement = dual with every literal complemented.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "The literals were complemented but the operators were not swapped."
+      },
+      {
+        "answer": "D",
+        "why": "The outer AND must become an OR; this keeps it as an AND."
+      }
+    ],
+    "blocks": [
+      "demorgan",
+      "demorgan-general"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Let $f = A + B'C$. Which of the following statements are correct?",
+    "options": [
+      {
+        "l": "A",
+        "t": "The dual of $f$ is $A(B' + C)$."
+      },
+      {
+        "l": "B",
+        "t": "The complement of $f$ is $A'(B + C')$."
+      },
+      {
+        "l": "C",
+        "t": "The dual of $f$ equals the complement of $f$."
+      },
+      {
+        "l": "D",
+        "t": "$f$ is equal to its own dual."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "(A) Dual: swap $+$ and $\\cdot$, keep the literals: $A \\cdot (B' + C)$. Correct.",
+      "(B) Complement: swap the operators and complement the literals: $A'(B + C')$. Correct.",
+      "(C) At $A = 1, B = 1, C = 0$ the dual is $1 \\cdot (0 + 0) = 0$ and the complement is $0$; at $A = 1, B = 0, C = 0$ the dual is 1 but the complement is 0. Different functions: wrong.",
+      "(D) At $A = 1, B = 1, C = 0$: $f = 1$ but the dual is 0. Wrong."
+    ],
+    "concept": "The dual swaps only the operators; the complement also complements every literal. They are different functions in general.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "The dual keeps the literals unchanged, so it cannot equal the complement here; check a row."
+      },
+      {
+        "answer": [
+          "B"
+        ],
+        "why": "The dual must keep the grouping: $A + B'C$ becomes $A(B' + C)$, with brackets."
+      }
+    ],
+    "blocks": [
+      "dual-def",
+      "trap-dual-complement",
+      "demorgan-general"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Let $f(A, B, C) = AB + BC + CA$. The cofactor $f(1, B, C)$ is a function of $B$ and $C$. On how many of its four input rows is it 1?",
+    "answer": 3,
+    "solution": [
+      "Set $A = 1$: $AB \\to B$, $BC \\to BC$, $CA \\to C$. So $f(1, B, C) = B + BC + C = B + C$ (absorption).",
+      "$B + C$ is 1 on rows 01, 10, 11: three rows."
+    ],
+    "concept": "A cofactor is the function with one variable fixed; simplify it before counting.",
+    "common_wrong": [
+      {
+        "answer": 1,
+        "why": "That is the count for $BC$, the cofactor $f(0, B, C)$."
+      },
+      {
+        "answer": 4,
+        "why": "Row $B = C = 0$ gives $0 + 0 = 0$."
+      }
+    ],
+    "blocks": [
+      "cofactor-def",
+      "shannon"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which values of $(x, y, z)$ satisfy all three equations $x'y + z = 1$, $x + y' = 0$ and $yz' = 0$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$(0, 1, 1)$"
+      },
+      {
+        "l": "B",
+        "t": "$(0, 1, 0)$"
+      },
+      {
+        "l": "C",
+        "t": "$(1, 0, 1)$"
+      },
+      {
+        "l": "D",
+        "t": "$(0, 0, 1)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "$x + y' = 0$ is a sum equal to 0, so $x = 0$ and $y' = 0$, that is $y = 1$.",
+      "$yz' = 0$ with $y = 1$ forces $z' = 0$, so $z = 1$.",
+      "Check the first equation: $x'y + z = 1 + 1 = 1$. The solution is $(0, 1, 1)$."
+    ],
+    "concept": "A sum equal to 0 pins every term to 0; substitute and continue.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "It satisfies the first two equations but $yz' = 1 \\cdot 1 = 1 \\ne 0$."
+      },
+      {
+        "answer": "D",
+        "why": "With $y = 0$, $x + y' = 1 \\ne 0$."
+      }
+    ],
+    "blocks": [
+      "bool-equations"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "How many assignments of $(A, B, C, D)$ satisfy both $AB + C = 1$ and $A + D = 0$?",
+    "answer": 2,
+    "solution": [
+      "$A + D = 0$ forces $A = 0$ and $D = 0$.",
+      "Then $AB = 0$, so $AB + C = 1$ forces $C = 1$.",
+      "$B$ is not constrained: $B = 0$ or $B = 1$. Two assignments: 0010 and 0110."
+    ],
+    "concept": "Pin what the equations force and count the free variables (each doubles the count).",
+    "common_wrong": [
+      {
+        "answer": 1,
+        "why": "$B$ appears only inside $AB$, which is 0 once $A = 0$; it stays free."
+      },
+      {
+        "answer": 4,
+        "why": "$C$ is not free: with $A = 0$ the first equation needs $C = 1$."
+      }
+    ],
+    "blocks": [
+      "bool-equations",
+      "equation-to-zero"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q09",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "The expression $(A + B)(A + B')(A' + C)$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AC$"
+      },
+      {
+        "l": "B",
+        "t": "$A$"
+      },
+      {
+        "l": "C",
+        "t": "$C$"
+      },
+      {
+        "l": "D",
+        "t": "$A + C$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "OR distributes over AND: $(A + B)(A + B') = A + BB' = A + 0 = A$.",
+      "Then $A(A' + C) = AA' + AC = AC$ (the dual redundant-literal rule $x(x' + y) = xy$).",
+      "Check $A = 1, C = 0$: the original gives $(1)(1)(0) = 0$, and $AC = 0$."
+    ],
+    "concept": "The dual laws: (x + y)(x + y′) = x and x(x′ + y) = xy.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "The third factor still matters: at $A = 1, C = 0$ it is 0."
+      },
+      {
+        "answer": "D",
+        "why": "That would be the dual of the correct answer; the factors are multiplied, so the result is a product."
+      }
+    ],
+    "blocks": [
+      "redundant-literal",
+      "laws-table",
+      "simplify-method"
+    ],
     "source": "nexora"
   }
 ]

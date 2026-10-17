@@ -359,6 +359,174 @@ def circuit_read():
                 "Three gates: G1 is a NAND of A and B, G2 an OR of B and C, and G3 an AND of the two results.", els, steps)
 
 
+# ── Lesson 2: Boolean laws ──────────────────────────────────────────────────
+
+def tbl(id, x, y, cw, ch, rows, n, **kw):
+    return el(id, "table", n, x=x, y=y, cellW=cw, cellH=ch, rows=rows, header=True, mono=True, **kw)
+
+
+@scene
+def law_cards():
+    X, XY = ["x"], ["x", "y"]
+    cards = [
+        ("Idempotence: x + x = x and x·x = x", X, ["x + x", "x x"], "x"),
+        ("Absorption: x + xy = x", XY, ["x y", "x + x y"], "x"),
+        ("Redundant literal: x + x′y = x + y", XY, ["x' y", "x + x' y", "x + y"], "x + y"),
+    ]
+    W, NW = 640, 360
+    els = [*heads("Proof by truth table (perfect induction)", "Proof by truth table", W),
+           text("sub", W / 2, 54, "", {"x": NW / 2, "y": 52, "size": 13}, anchor="middle", size=15, tone="accent")]
+    steps = []
+    for k, (title, vars_, cols, target) in enumerate(cards):
+        heads_ = vars_ + [c.replace("'", "′").replace(" ", "") for c in cols]
+        body = [[str(r[v]) for v in vars_] + [str(bl.ev(bl.parse(c), r)) for c in cols] for r in bl.rows(vars_)]
+        ncol = len(heads_)
+        cw, ncw = 78, 52
+        x0, nx0 = (W - ncol * cw) / 2, (NW - ncol * ncw) / 2
+        els.append(tbl(f"c{k}", x0, 80, cw, 30, [heads_] + [[" "] * ncol for _ in body], {"x": nx0, "y": 76, "cellW": ncw, "cellH": 28}, hidden=True))
+        tcol = [str(v) for v in bl.tt(target, vars_)]
+        eqcols = [j for j in range(ncol) if [r[j] for r in body] == tcol]
+        assert len(eqcols) == [3, 2, 2][k]
+        hide = [(f"c{j}", {"hidden": True}) for j in range(len(cards)) if j != k]
+        steps.append(step(f"Card {k + 1}. {title}: list every row of the variables ({2 ** len(vars_)} rows).",
+                          *hide, (f"c{k}", {"hidden": False, "rows": [heads_] + [r[:len(vars_)] + [" "] * len(cols) for r in body]}),
+                          ("sub", {"text": title})))
+        same = ", ".join(heads_[j] for j in eqcols)
+        steps.append(step(f"Fill each column from the definitions. The highlighted columns {same} agree on every row. With only {2 ** len(vars_)} possible rows, that is a complete proof.",
+                          (f"c{k}", {"rows": [heads_] + body, "highlight": [[i + 1, j] for i in range(len(body)) for j in eqcols]})))
+    return spec("Proving Boolean laws by truth table", (W, 250), (NW, 240),
+                "Three laws, each proved by listing every case: idempotence, absorption, and the redundant-literal rule.", els, steps)
+
+
+def tree_els(nodes, edges, hidden=()):
+    """nodes: id -> (label, (x, y), (nx, ny)); edges: (a, b). Edge ids are 'e' + a + b."""
+    els = []
+    for a, b in edges:
+        (_, (ax, ay), (nax, nay)), (_, (bx, by), (nbx, nby)) = nodes[a], nodes[b]
+        els.append(line(f"e{a}{b}", [[ax, ay + 19], [bx, by - 19]], {"points": [[nax, nay + 17], [nbx, nby - 17]]}, tone="muted",
+                        **({"hidden": True} if b in hidden else {})))
+    for i, (lab, (x, y), (nx, ny)) in nodes.items():
+        els.append(el(i, "circle", {"cx": nx, "cy": ny, "r": 17}, cx=x, cy=y, r=19, label=lab, mono=True, size=14, fill="none",
+                      **({"hidden": True} if i in hidden else {})))
+    return els
+
+
+@scene
+def complement_tree():
+    V = ["A", "B", "C", "D"]
+    f, fc = "(A + B'C)(A' + D)", "A'(B + C') + AD'"
+    assert bl.tt(fc, V) == bl.complement_tt(bl.tt(f, V))
+    assert bl.tt(bl.dual("(A' + BC')(A + D')"), V) == bl.tt(fc, V)
+    nodes = {
+        "r": ("·", (320, 80), (180, 80)),
+        "o1": ("+", (190, 150), (95, 145)), "o2": ("+", (450, 150), (265, 145)),
+        "a": ("A", (130, 220), (45, 210)), "n": ("·", (250, 220), (145, 210)),
+        "a2": ("A′", (400, 220), (225, 210)), "d": ("D", (500, 220), (305, 210)),
+        "b": ("B′", (210, 290), (115, 275)), "c": ("C", (290, 290), (175, 275)),
+    }
+    edges = [("r", "o1"), ("r", "o2"), ("o1", "a"), ("o1", "n"), ("o2", "a2"), ("o2", "d"), ("n", "b"), ("n", "c")]
+    els = [*heads("Complement = swap every operator, complement every literal", "Complementing via the tree", 640),
+           *tree_els(nodes, edges),
+           text("res", 320, 340, "f = (A + B′C)(A′ + D)", {"x": 180, "y": 320, "size": 13}, anchor="middle", size=16, mono=True)]
+    ops = [("r", "+"), ("o1", "·"), ("o2", "·"), ("n", "+")]
+    lits = [("a", "A′"), ("b", "B"), ("c", "C′"), ("a2", "A"), ("d", "D′")]
+    st = [
+        step("General De Morgan, rule 1: swap every operator, AND ↔ OR. The root AND becomes an OR, the two ORs become ANDs, and the inner AND becomes an OR.",
+             *[(i, {"label": v, "tone": "accent", "fill": "accent"}) for i, v in ops]),
+        step("Rule 2: complement every literal. A becomes A′, B′ becomes B, C becomes C′, A′ becomes A and D becomes D′.",
+             *[(i, {"label": v, "tone": "info", "fill": "info"}) for i, v in lits]),
+        step("Read the new tree back, keeping its grouping: the root is now an OR, so f′ = A′(B + C′) + AD′. A truth table over all 16 rows confirms it is 1 exactly where f is 0.",
+             ("res", {"text": "f′ = A′(B + C′) + AD′", "tone": "success"})),
+    ]
+    return spec("Complementing an expression: swap operators, complement literals", (640, 360), (360, 340),
+                "The expression f = (A + B′C)(A′ + D) drawn as a tree: operators inside, literals at the leaves.", els, st)
+
+
+@scene
+def consensus_cells():
+    V = ["x", "y", "z"]
+    xy, xz, yz = bl.minterms("xy", V), bl.minterms("x'z", V), bl.minterms("yz", V)
+    assert set(yz) <= set(xy) | set(xz) and (xy, xz, yz) == ([6, 7], [1, 3], [3, 7])
+    assert bl.equal("xy + x'z + yz", "xy + x'z", V)
+    W, NW = 640, 360
+    labels = [f"{i:03b}" for i in range(8)]
+    els = [*heads("Consensus: yz is already covered by xy and x′z", "Consensus: yz is covered", W)]
+    for id, lab, y, ny in [("sxy", "xy", 96, 90), ("sxz", "x′z", 170, 150), ("syz", "yz", 244, 210)]:
+        els.append(text(id + "l", 70, y + 26, lab, {"x": 32, "y": ny + 18, "size": 13}, anchor="middle", size=16, weight="bold", mono=True))
+        kw = {"labels": labels} if id == "sxy" else {}
+        els.append(bits(id, 110, y, "        ", 52, {"x": 60, "y": ny, "cell": 36}, **kw))
+    els.append(text("note", W / 2, 330, "", {"x": NW / 2, "y": 280, "size": 12}, anchor="middle", size=15))
+    fill = lambda ms: "".join("1" if i in ms else "0" for i in range(8))
+    st = [
+        step("Each cell is one row xyz of the truth table. The term xy is 1 on rows 110 and 111.", ("sxy", {"bits": fill(xy), "highlight": xy})),
+        step("The term x′z is 1 on rows 001 and 011.", ("sxz", {"bits": fill(xz), "highlight": xz})),
+        step("The consensus term yz is 1 on rows 011 and 111. Row 111 is already in xy (there x = 1) and row 011 is already in x′z (there x = 0).",
+             ("syz", {"bits": fill(yz), "highlight": yz})),
+        step("So adding yz adds no new 1: xy + x′z + yz = xy + x′z. Whatever x is, one of the first two terms already covers yz.",
+             ("note", {"text": "yz lies inside xy + x′z, so it is redundant", "tone": "success"})),
+    ]
+    return spec("The consensus theorem on the rows of a truth table", (W, 350), (NW, 300),
+                "Three product terms over x, y, z, each drawn as the set of rows where it is 1.", els, st)
+
+
+@scene
+def shannon_tree():
+    V = ["A", "B", "C"]
+    assert bl.equal("A'C + AB", "AB + A'C", V)
+    nodes = {
+        "r": ("f", (320, 80), (180, 80)),
+        "f0": ("C", (180, 170), (90, 165)), "f1": ("B", (460, 170), (270, 165)),
+        "c0": ("0", (120, 260), (45, 250)), "c1": ("1", (240, 260), (135, 250)),
+        "b0": ("0", (400, 260), (225, 250)), "b1": ("1", (520, 260), (315, 250)),
+    }
+    edges = [("r", "f0"), ("r", "f1"), ("f0", "c0"), ("f0", "c1"), ("f1", "b0"), ("f1", "b1")]
+    hidden = ("f0", "f1", "c0", "c1", "b0", "b1")
+    els = [*heads("Shannon expansion: f = A′·f(0,B,C) + A·f(1,B,C)", "Shannon expansion", 640), *tree_els(nodes, edges, hidden)]
+    for k, (x, y, nx, ny, t) in enumerate([(230, 118, 118, 116, "A = 0"), (410, 118, 242, 116, "A = 1"),
+                                           (130, 212, 50, 205, "C = 0"), (230, 212, 130, 205, "C = 1"),
+                                           (410, 212, 230, 205, "B = 0"), (510, 212, 310, 205, "B = 1")]):
+        els.append(text(f"t{k}", x, y, t, {"x": nx, "y": ny, "size": 11}, anchor="middle", size=13, tone="muted", hidden=True))
+    els.append(text("res", 320, 322, "", {"x": 180, "y": 302, "size": 11}, anchor="middle", size=15, mono=True))
+    st = [
+        step("Set A = 0: the term AB vanishes and A′C becomes C. The cofactor is f(0, B, C) = C.",
+             ("f0", {"hidden": False}), ("erf0", {"hidden": False}), ("t0", {"hidden": False})),
+        step("Set A = 1: the term A′C vanishes and AB becomes B. The cofactor is f(1, B, C) = B.",
+             ("f1", {"hidden": False}), ("erf1", {"hidden": False}), ("t1", {"hidden": False})),
+        step("Glue the halves back, each with the literal that selects it: f = A′·C + A·B, which is f again.",
+             ("res", {"text": "f = A′·f(0,B,C) + A·f(1,B,C) = A′C + AB"})),
+        step("Keep splitting and every path ends in a constant. This decision tree describes f completely; a 2:1 multiplexer is the same picture in hardware (Chapter 4).",
+             *[(i, {"hidden": False}) for i in ["c0", "c1", "b0", "b1", "t2", "t3", "t4", "t5", "ef0c0", "ef0c1", "ef1b0", "ef1b1"]]),
+    ]
+    return spec("Shannon expansion as a decision tree", (640, 340), (360, 320),
+                "f = AB + A′C. Shannon expansion splits f on one variable into two smaller functions, the cofactors.", els, st)
+
+
+@scene
+def equation_sieve():
+    V = ["A", "B", "C", "D"]
+    eqs = [("A' + AB", "0"), ("AB", "AC"), ("AB + AC' + CD", "C'D")]
+    alive, survivors = set(range(16)), []
+    for lhs, rhs in eqs:
+        alive = {i for i in alive if bl.tt(lhs, V)[i] == bl.tt(rhs, V)[i]}
+        survivors.append(sorted(alive))
+    assert survivors == [[8, 9, 10, 11], [8, 9], [9]]
+    W, NW = 640, 360
+    vals = [[f"{4 * r + c:04b}" for c in range(4)] for r in range(4)]
+    els = [*heads("Solving a system by striking out rows", "Solve by striking out rows", W),
+           el("g", "grid", {"x": 40, "y": 70, "cell": 70}, x=180, y=64, rows=4, cols=4, cell=70, values=vals, mono=True),
+           text("eq", W / 2, 370, "", {"x": NW / 2, "y": 370, "size": 12}, anchor="middle", size=15, mono=True)]
+    names = ["A′ + AB = 0", "AB = AC", "AB + AC′ + CD = C′D"]
+    extra = ["A sum is 0 only if every term is 0: A′ = 0 forces A = 1, then AB = 0 forces B = 0. Four rows survive.",
+             "With A = 1 and B = 0 the equation reads 0 = C, so C = 0. Two rows survive.",
+             "With A = 1, B = 0, C = 0 it reads 0 + 1 + 0 = D, so D = 1. One row survives: ABCD = 1001."]
+    st = []
+    for ss, nm, ex in zip(survivors, names, extra):
+        v = [[(f"{4 * r + c:04b}" if 4 * r + c in ss else "·") for c in range(4)] for r in range(4)]
+        st.append(step(f"Equation: {nm}. {ex}", ("g", {"values": v, "highlight": [[i // 4, i % 4] for i in ss]}), ("eq", {"text": nm})))
+    return spec("A system of Boolean equations solved by elimination", (W, 400), (NW, 400),
+                "All 16 assignments of A, B, C, D (row ABCD). Each equation keeps only the rows on which its two sides are equal.", els, st)
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

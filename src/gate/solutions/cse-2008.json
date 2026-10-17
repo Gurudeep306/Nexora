@@ -1466,28 +1466,32 @@
       "verification": "$f''(x) = 36x^2-96x+48$: $f''(0)=48>0$ (minimum); $f''(2)=144-192+48=0$ and $f'''(2)=72\\cdot2-96=48\\ne0$ ⇒ inflection at $x=2$."
     },
     "cse-2008-cs-26": {
-      "approach": "Factor $P$ out of the middle term and use absorption $X(X+Y)=X$ repeatedly; the expression collapses in three short lines.",
+      "approach": "Concept tested: **absorption and the distributive law**. Factor $P$ out of the middle factor; the first factor is then absorbed, and the last two collapse by $(x + y)(x + z) = x + yz$.",
       "concepts": [
-        "Boolean algebra",
         "Absorption law",
-        "Distributive law"
+        "Distributive law",
+        "Complement law"
       ],
       "steps": [
         {
-          "title": "Absorb the first two factors",
-          "body": "$P\\overline Q + PR = P(\\overline Q + R)$. Then $(P+\\overline Q)\\cdot P(\\overline Q+R) = P(\\overline Q+R)$ because $P(P+\\overline Q) = P$."
+          "title": "Factor the middle term",
+          "body": "$P\\overline{Q} + PR = P(\\overline{Q} + R)$."
         },
         {
-          "title": "Absorb P into the third factor",
-          "body": "$P\\cdot(P\\overline R + \\overline Q) = P\\overline R + P\\overline Q = P(\\overline R + \\overline Q)$. So the expression is $P(\\overline Q + R)(\\overline Q + \\overline R)$."
+          "title": "Absorb the first factor",
+          "body": "$(P + \\overline{Q}) \\cdot P = P$ (absorption $x(x + y) = x$), so the product so far is $P(\\overline{Q} + R)$."
         },
         {
-          "title": "Finish",
-          "body": "$(\\overline Q + R)(\\overline Q + \\overline R) = \\overline Q + R\\overline R = \\overline Q$. Hence the expression $= P\\overline Q$."
+          "title": "Combine the remaining sums",
+          "body": "$(\\overline{Q} + R)(\\overline{Q} + P\\overline{R}) = \\overline{Q} + R \\cdot P\\overline{R} = \\overline{Q} + 0 = \\overline{Q}$ (OR distributes over AND; $R\\overline{R} = 0$)."
+        },
+        {
+          "title": "Result",
+          "body": "$P \\cdot \\overline{Q} = P\\overline{Q}$: option (A)."
         }
       ],
       "answer": {
-        "value": "P·Q̄",
+        "value": "(A) $P\\overline{Q}$",
         "choice": [
           "A"
         ],
@@ -1497,25 +1501,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the expression equals $P\\overline Q$."
+          "reason": "The simplification above; it agrees on all 8 rows."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$P=1,Q=1,R=0$: $P\\overline R = 1$, but the middle factor $P\\overline Q + PR = 0$, so the expression is 0."
+          "reason": "$P\\overline{R}$ is 1 at $P = 1, Q = 1, R = 0$, but there the middle factor $P\\overline{Q} + PR = 0$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$P=0,R=1$: $P\\overline Q + R = 1$, but the middle factor $P\\overline Q + PR = 0$, so the expression is 0."
+          "reason": "$P\\overline{Q} + R$ is 1 at $P = 0, R = 1$, but there the middle factor is 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$P=0,Q=1$: $P\\overline R + Q = 1$, but the middle factor is 0, so the expression is 0."
+          "reason": "$P\\overline{R} + Q$ is 1 at $P = 0, Q = 1$, but then $P\\overline{Q} + PR = 0$."
         }
       ],
-      "verification": "The middle factor forces $P=1$; then the remaining factors are $(\\overline Q+R)(\\overline R+\\overline Q)$, which is 1 exactly when $Q=0$. So the expression is 1 exactly when $P=1, Q=0$, i.e. $P\\overline Q$."
+      "shortcut": "The middle factor forces $P = 1$; with $P = 1$ the expression is $(1)(\\overline{Q} + R)(\\overline{R} + \\overline{Q}) = \\overline{Q} + R\\overline{R} = \\overline{Q}$. So the answer is $P\\overline{Q}$.",
+      "pitfalls": [
+        "Expanding all three factors into 8 terms and losing track.",
+        "Forgetting that the middle factor already forces $P = 1$."
+      ],
+      "verification": "$P = 1, Q = 0, R = 0$: $(1)(1)(1) = 1$ and $P\\overline{Q} = 1$; $P = 1, Q = 1$: the middle factor is $R$ and the last is $\\overline{R}$, product 0, and $P\\overline{Q} = 0$."
     },
     "cse-2008-cs-27": {
       "approach": "Two-step Markov chain: sum over Tuesday's subject. $P(\\text{CS on Wed}) = P(\\text{CS Tue})\\cdot0.4 + P(\\text{M Tue})\\cdot0.4$.",

@@ -1447,9 +1447,10 @@
       "verification": "Had it been `var X : real`, the call would be a compile-time type error (integer actual for a real var parameter), so value semantics is the only valid reading."
     },
     "cse-1995-a-30": {
-      "approach": "Solve the equations in order: the first forces A and B, the second then forces C, the third then forces D.",
+      "approach": "Concept tested: **simultaneous Boolean equations**. The first equation pins $A$ and $B$, the second then pins $C$, the third $D$.",
       "concepts": [
-        "Boolean algebra"
+        "Boolean equations",
+        "Sum = 0 rule"
       ],
       "steps": [
         {
@@ -1458,15 +1459,19 @@
         },
         {
           "title": "Second equation",
-          "body": "$AB = AC$: left $= 1\\cdot 0 = 0$, so $1\\cdot C = 0 \\Rightarrow C = 0$."
+          "body": "$AB = AC$ becomes $0 = 1 \\cdot C$, so $C = 0$."
         },
         {
           "title": "Third equation",
-          "body": "$AB + A\\overline{C} + CD = 0 + 1\\cdot 1 + 0 = 1$, and $\\overline{C}D = 1\\cdot D = D$. So $D = 1$."
+          "body": "$AB + A\\overline{C} + CD = \\overline{C}D$ becomes $0 + 1 + 0 = 1 \\cdot D$, so $D = 1$."
+        },
+        {
+          "title": "Conclusion",
+          "body": "$A = 1, B = 0, C = 0, D = 1$: option (A)."
         }
       ],
       "answer": {
-        "value": "A=1, B=0, C=0, D=1",
+        "value": "(A) $A = 1, B = 0, C = 0, D = 1$",
         "choice": [
           "A"
         ],
@@ -1476,25 +1481,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: satisfies all three equations."
+          "reason": "Satisfies all three equations; it is the unique solution."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$B = 1$ makes $AB = 1$, violating the first equation."
+          "reason": "$B = 1$ makes $\\overline{A} + AB = 1 \\ne 0$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$C = 1$ makes $AC = 1 \\ne AB = 0$."
+          "reason": "$C = 1$ breaks $AB = AC$ ($0 \\ne 1$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$D = 0$ makes the third equation $1 = 0$."
+          "reason": "$D = 0$ breaks the third equation: the left side is 1, the right side $\\overline{C}D = 0$."
         }
       ],
-      "verification": "Substituting (1,0,0,1): $0 + 0 = 0$; $0 = 0$; $0 + 1 + 0 = 1 = 1\\cdot 1$."
+      "shortcut": "Substitute the options: (B) fails the first equation, (C) the second, (D) the third.",
+      "pitfalls": [
+        "Cancelling $A$ in $AB = AC$ to get $B = C$: cancellation is not allowed in general (it happens to be valid here only because $A = 1$)."
+      ],
+      "verification": "Searching all 16 rows, the three equations hold only at $ABCD = 1001$."
     },
     "cse-1995-a-31": {
       "approach": "Optimal (minimum mean turnaround) non-preemptive scheduling may deliberately keep the CPU idle: waiting until job 3 (burst 1) arrives at t = 1 and then running shortest-first beats starting the 9-unit job at t = 0.",

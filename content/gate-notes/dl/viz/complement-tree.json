@@ -1,0 +1,506 @@
+{
+ "version": 1,
+ "title": "Complementing an expression: swap operators, complement literals",
+ "width": 640,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 340
+ },
+ "intro": "The expression f = (A + B′C)(A′ + D) drawn as a tree: operators inside, literals at the leaves.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Complement = swap every operator, complement every literal",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Complementing via the tree",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "ero1",
+   "type": "line",
+   "points": [
+    [
+     320,
+     99
+    ],
+    [
+     190,
+     131
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      180,
+      97
+     ],
+     [
+      95,
+      128
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ero2",
+   "type": "line",
+   "points": [
+    [
+     320,
+     99
+    ],
+    [
+     450,
+     131
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      180,
+      97
+     ],
+     [
+      265,
+      128
+     ]
+    ]
+   }
+  },
+  {
+   "id": "eo1a",
+   "type": "line",
+   "points": [
+    [
+     190,
+     169
+    ],
+    [
+     130,
+     201
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      95,
+      162
+     ],
+     [
+      45,
+      193
+     ]
+    ]
+   }
+  },
+  {
+   "id": "eo1n",
+   "type": "line",
+   "points": [
+    [
+     190,
+     169
+    ],
+    [
+     250,
+     201
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      95,
+      162
+     ],
+     [
+      145,
+      193
+     ]
+    ]
+   }
+  },
+  {
+   "id": "eo2a2",
+   "type": "line",
+   "points": [
+    [
+     450,
+     169
+    ],
+    [
+     400,
+     201
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      265,
+      162
+     ],
+     [
+      225,
+      193
+     ]
+    ]
+   }
+  },
+  {
+   "id": "eo2d",
+   "type": "line",
+   "points": [
+    [
+     450,
+     169
+    ],
+    [
+     500,
+     201
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      265,
+      162
+     ],
+     [
+      305,
+      193
+     ]
+    ]
+   }
+  },
+  {
+   "id": "enb",
+   "type": "line",
+   "points": [
+    [
+     250,
+     239
+    ],
+    [
+     210,
+     271
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      145,
+      227
+     ],
+     [
+      115,
+      258
+     ]
+    ]
+   }
+  },
+  {
+   "id": "enc",
+   "type": "line",
+   "points": [
+    [
+     250,
+     239
+    ],
+    [
+     290,
+     271
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      145,
+      227
+     ],
+     [
+      175,
+      258
+     ]
+    ]
+   }
+  },
+  {
+   "id": "r",
+   "type": "circle",
+   "cx": 320,
+   "cy": 80,
+   "r": 19,
+   "label": "·",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 180,
+    "cy": 80,
+    "r": 17
+   }
+  },
+  {
+   "id": "o1",
+   "type": "circle",
+   "cx": 190,
+   "cy": 150,
+   "r": 19,
+   "label": "+",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 95,
+    "cy": 145,
+    "r": 17
+   }
+  },
+  {
+   "id": "o2",
+   "type": "circle",
+   "cx": 450,
+   "cy": 150,
+   "r": 19,
+   "label": "+",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 265,
+    "cy": 145,
+    "r": 17
+   }
+  },
+  {
+   "id": "a",
+   "type": "circle",
+   "cx": 130,
+   "cy": 220,
+   "r": 19,
+   "label": "A",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 45,
+    "cy": 210,
+    "r": 17
+   }
+  },
+  {
+   "id": "n",
+   "type": "circle",
+   "cx": 250,
+   "cy": 220,
+   "r": 19,
+   "label": "·",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 145,
+    "cy": 210,
+    "r": 17
+   }
+  },
+  {
+   "id": "a2",
+   "type": "circle",
+   "cx": 400,
+   "cy": 220,
+   "r": 19,
+   "label": "A′",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 225,
+    "cy": 210,
+    "r": 17
+   }
+  },
+  {
+   "id": "d",
+   "type": "circle",
+   "cx": 500,
+   "cy": 220,
+   "r": 19,
+   "label": "D",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 305,
+    "cy": 210,
+    "r": 17
+   }
+  },
+  {
+   "id": "b",
+   "type": "circle",
+   "cx": 210,
+   "cy": 290,
+   "r": 19,
+   "label": "B′",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 115,
+    "cy": 275,
+    "r": 17
+   }
+  },
+  {
+   "id": "c",
+   "type": "circle",
+   "cx": 290,
+   "cy": 290,
+   "r": 19,
+   "label": "C",
+   "mono": true,
+   "size": 14,
+   "fill": "none",
+   "narrow": {
+    "cx": 175,
+    "cy": 275,
+    "r": 17
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 320,
+   "y": 340,
+   "text": "f = (A + B′C)(A′ + D)",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 320,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "General De Morgan, rule 1: swap every operator, AND ↔ OR. The root AND becomes an OR, the two ORs become ANDs, and the inner AND becomes an OR.",
+   "patches": [
+    {
+     "id": "r",
+     "set": {
+      "label": "+",
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "·",
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "·",
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "n",
+     "set": {
+      "label": "+",
+      "tone": "accent",
+      "fill": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rule 2: complement every literal. A becomes A′, B′ becomes B, C becomes C′, A′ becomes A and D becomes D′.",
+   "patches": [
+    {
+     "id": "a",
+     "set": {
+      "label": "A′",
+      "tone": "info",
+      "fill": "info"
+     }
+    },
+    {
+     "id": "b",
+     "set": {
+      "label": "B",
+      "tone": "info",
+      "fill": "info"
+     }
+    },
+    {
+     "id": "c",
+     "set": {
+      "label": "C′",
+      "tone": "info",
+      "fill": "info"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "label": "A",
+      "tone": "info",
+      "fill": "info"
+     }
+    },
+    {
+     "id": "d",
+     "set": {
+      "label": "D′",
+      "tone": "info",
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Read the new tree back, keeping its grouping: the root is now an OR, so f′ = A′(B + C′) + AD′. A truth table over all 16 rows confirms it is 1 exactly where f is 0.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "f′ = A′(B + C′) + AD′",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -5428,78 +5428,32 @@
       }
     },
     "cse-2025-2-cs-40": {
-      "approach": "Compare minterm sets for (A); use the consensus theorem for (B) and (C); push the complement through the product with De Morgan for (D).",
+      "approach": "Concept tested: **consensus, De Morgan on a whole expression, and comparing functions by minterms**. Use consensus for (B) and (C), push the complement through the product for (D), and list minterms for (A).",
       "concepts": [
-        "Minterm comparison",
         "Consensus theorem",
         "De Morgan's law",
-        "Absorption"
+        "Minterm comparison"
       ],
       "steps": [
         {
           "title": "(A): compare minterms",
-          "body": "LHS (order $ABC$): $\\bar ABC = m_3$, $A\\bar B\\bar C = m_4$, $\\bar A\\bar B\\bar C = m_0$, $A\\bar BC = m_5$, $ABC = m_7$ → $\\{0,3,4,5,7\\}$.\n\nRHS: $BC = \\{3,7\\}$, $\\bar B\\bar C = \\{0,4\\}$, $\\bar A\\bar B = \\{0,1\\}$ → $\\{0,1,3,4,7\\}$.\n\nThey differ at $m_1$ and $m_5$ (e.g. $A=1,B=0,C=1$: LHS $=1$, RHS $=0$) ✗.",
-          "scene": {
-            "reveal": 24
-          }
+          "body": "Left: $\\bar{A}BC = m_3$, $A\\bar{B}\\bar{C} = m_4$, $\\bar{A}\\bar{B}\\bar{C} = m_0$, $A\\bar{B}C = m_5$, $ABC = m_7$, so $\\{0, 3, 4, 5, 7\\}$. Right: $BC = \\{3, 7\\}$, $\\bar{B}\\bar{C} = \\{0, 4\\}$, $\\bar{A}\\bar{B} = \\{0, 1\\}$, so $\\{0, 1, 3, 4, 7\\}$. They differ ($m_5$ vs $m_1$): incorrect."
         },
         {
-          "title": "(B): consensus theorem",
-          "body": "$BC$ is the consensus of $AB$ and $\\bar AC$:\n\n$BC = BC(A + \\bar A) = ABC + \\bar ABC$, and $ABC$ is absorbed by $AB$, $\\bar ABC$ by $\\bar AC$. So $AB + \\bar AC + BC = AB + \\bar AC$ ✓."
+          "title": "(B): consensus",
+          "body": "$BC$ is the consensus of $AB$ and $\\bar{A}C$, so $AB + \\bar{A}C + BC = AB + \\bar{A}C$. Correct."
         },
         {
-          "title": "(C): expand the product",
-          "body": "$(A+C)(\\bar A+B) = A\\bar A + AB + \\bar AC + BC = AB + \\bar AC + BC$ (since $A\\bar A = 0$) $= AB + \\bar AC$ by (B) ✓."
+          "title": "(C): expand",
+          "body": "$(A + C)(\\bar{A} + B) = A\\bar{A} + AB + \\bar{A}C + BC = AB + \\bar{A}C$ (consensus again). Correct."
         },
         {
           "title": "(D): De Morgan",
-          "body": "The complement of a product is the sum of the complemented factors:\n\n$\\overline{(A+\\bar B+\\bar D)} = \\bar A B D$, $\\overline{(C+D)} = \\bar C\\bar D$, $\\overline{(\\bar A+C+D)} = A\\bar C\\bar D$, $\\overline{(A+B+\\bar D)} = \\bar A\\bar B D$.\n\nSum: $\\bar ABD + \\bar A\\bar BD + \\bar C\\bar D + A\\bar C\\bar D = \\bar AD(B+\\bar B) + \\bar C\\bar D(1 + A) = \\bar AD + \\bar C\\bar D$ ✓.",
-          "scene": {
-            "kind": "kmap",
-            "title": "Option (D): Ā D + C̄ D̄",
-            "variables": [
-              "A",
-              "B",
-              "C",
-              "D"
-            ],
-            "ones": [
-              1,
-              3,
-              5,
-              7,
-              0,
-              4,
-              8,
-              12
-            ],
-            "groups": [
-              {
-                "cells": [
-                  1,
-                  3,
-                  5,
-                  7
-                ],
-                "label": "ĀD",
-                "tone": "cat1"
-              },
-              {
-                "cells": [
-                  0,
-                  4,
-                  8,
-                  12
-                ],
-                "label": "C̄D̄",
-                "tone": "cat2"
-              }
-            ]
-          }
+          "body": "The complement of a product is the sum of the complements: $\\overline{A + \\bar{B} + \\bar{D}} = \\bar{A}BD$, $\\overline{C + D} = \\bar{C}\\bar{D}$, $\\overline{\\bar{A} + C + D} = A\\bar{C}\\bar{D}$, $\\overline{A + B + \\bar{D}} = \\bar{A}\\bar{B}D$. Sum: $\\bar{A}BD + \\bar{A}\\bar{B}D + \\bar{C}\\bar{D} + A\\bar{C}\\bar{D} = \\bar{A}D + \\bar{C}\\bar{D}$. Correct."
         }
       ],
       "answer": {
-        "value": "**(B), (C) and (D)**",
+        "value": "(B), (C) and (D)",
         "choice": [
           "B",
           "C",
@@ -5511,93 +5465,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "LHS has $m_5$ ($A\\bar BC$) but not $m_1$; RHS has $m_1$ ($\\bar A\\bar B$ with $C=1$) but not $m_5$."
+          "reason": "Incorrect: the left side contains $m_5$ ($A\\bar{B}C$) but not $m_1$; the right side contains $m_1$ ($\\bar{A}\\bar{B}C$) but not $m_5$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Consensus theorem: $BC$ is redundant."
+          "reason": "Consensus theorem."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Expanding gives $AB + \\bar AC + BC$, which reduces to $AB + \\bar AC$ by consensus."
+          "reason": "Expands to $AB + \\bar{A}C + BC$, then consensus."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "De Morgan turns the complemented product into $\\bar ABD + \\bar C\\bar D + A\\bar C\\bar D + \\bar A\\bar BD = \\bar AD + \\bar C\\bar D$."
+          "reason": "De Morgan per factor, then $\\bar{A}BD + \\bar{A}\\bar{B}D = \\bar{A}D$ and $A\\bar{C}\\bar{D}$ is absorbed by $\\bar{C}\\bar{D}$."
         }
       ],
-      "shortcut": "(B) and (C) are the consensus theorem and its dual form; (A) fails on the single input $A=1, B=0, C=1$.",
+      "shortcut": "(B) and (C) are the two faces of the consensus theorem. Only (A) needs real checking, and the single row $A = 1, B = 0, C = 1$ settles it (left 1, right 0).",
       "pitfalls": [
-        "Missing that the overbar in (D) spans the whole product (it is not four separate complemented sums).",
-        "Comparing (A) term-by-term instead of by minterm sets."
+        "Complementing the factors of (D) without swapping $+$ to $\\cdot$ inside each.",
+        "Assuming (A) because both sides have similar-looking terms."
       ],
-      "verification": "Spot-check (D) at $A=0,B=0,C=1,D=1$: factors $= (0+1+0)(1)(1)(0+0+0) = 0$, complement $= 1$; RHS $\\bar AD = 1$ ✓.",
-      "animation": {
-        "kind": "table",
-        "title": "Option (A): truth table",
-        "cols": [
-          "ABC",
-          "LHS",
-          "RHS"
-        ],
-        "rows": [
-          [
-            "000",
-            "1",
-            "1"
-          ],
-          [
-            "001",
-            "0",
-            "1"
-          ],
-          [
-            "010",
-            "0",
-            "0"
-          ],
-          [
-            "011",
-            "1",
-            "1"
-          ],
-          [
-            "100",
-            "1",
-            "1"
-          ],
-          [
-            "101",
-            "1",
-            "0"
-          ],
-          [
-            "110",
-            "0",
-            "0"
-          ],
-          [
-            "111",
-            "1",
-            "1"
-          ]
-        ],
-        "reveal": 0,
-        "hl": [
-          {
-            "r": 1,
-            "tone": "error"
-          },
-          {
-            "r": 5,
-            "tone": "error"
-          }
-        ],
-        "mono": true
-      }
+      "verification": "Row $A = 1, B = 0, C = 1$ in (A): left $A\\bar{B}C = 1$; right $BC = 0$, $\\bar{B}\\bar{C} = 0$, $\\bar{A}\\bar{B} = 0$."
     },
     "cse-2025-2-cs-41": {
       "approach": "Show both grammars are ambiguous by exhibiting two parse trees for one string; an ambiguous grammar is never LL(1). (G1 is the classic dangling-else grammar; G2 only looks like the textbook fix.)",

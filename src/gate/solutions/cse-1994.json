@@ -1986,30 +1986,35 @@
       "verification": "Algebraic derivation and the 4-row truth table agree."
     },
     "cse-1994-a-27-b": {
-      "approach": "Start from the equation that equals 0: a sum is 0 only when every term is 0, which pins B and forces the first equation.",
+      "approach": "Concept tested: **solving Boolean equations**. A sum equal to 0 forces every term to 0; substitute what you learn into the other equation.",
       "concepts": [
         "Boolean equations",
         "OR is 0 iff all terms are 0"
       ],
       "steps": [
         {
-          "title": "Second equation",
-          "body": "$AC+B=0 \\Rightarrow B=0$ and $AC=0$."
+          "title": "Start with the equation equal to 0",
+          "body": "$AC + B = 0$ forces $B = 0$ and $AC = 0$."
         },
         {
-          "title": "First equation",
-          "body": "With $B=0$: $AB+\\overline{A}C = 0+\\overline{A}C = 1 \\Rightarrow \\overline{A}=1,\\ C=1$, i.e. $A=0,\\ C=1$."
+          "title": "Substitute into the first equation",
+          "body": "With $B = 0$, $AB = 0$, so $AB + \\overline{A}C = 1$ becomes $\\overline{A}C = 1$, which forces $\\overline{A} = 1$ and $C = 1$, i.e. $A = 0$, $C = 1$."
         },
         {
-          "title": "Check",
-          "body": "$AC = 0\\cdot1=0$ ✓. $AB+\\overline{A}C=0+1\\cdot1=1$ ✓, $AC+B=0+0=0$ ✓. The solution is unique."
+          "title": "Check the remaining condition",
+          "body": "$AC = 0 \\cdot 1 = 0$, as required."
         }
       ],
       "answer": {
-        "value": "$A=0,\\ B=0,\\ C=1$",
+        "value": "$A = 0, B = 0, C = 1$",
         "matchesKey": true
       },
-      "verification": "Substituted back into both equations."
+      "shortcut": "A product equal to 1 ($\\overline{A}C = 1$) pins every factor; a sum equal to 0 pins every term.",
+      "pitfalls": [
+        "Starting with the first equation, which has several solutions on its own.",
+        "Forgetting to re-check $AC = 0$."
+      ],
+      "verification": "$AB + \\overline{A}C = 0 + 1 \\cdot 1 = 1$ and $AC + B = 0 + 0 = 0$. A truth-table search over all 8 rows finds this as the only solution."
     },
     "cse-1994-a-28": {
       "approach": "Induct on the number of internal nodes $n$: replacing one leaf by an internal node with three leaf children adds one internal node and a net of two leaves.",

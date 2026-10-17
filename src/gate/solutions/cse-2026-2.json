@@ -1576,7 +1576,7 @@
       }
     },
     "cse-2026-2-cs-6": {
-      "approach": "Check each identity against the Boolean-algebra postulates (commutative and complement laws) — or simply substitute $a = 0, 1$: a law must hold for every value.",
+      "approach": "Concept tested: **Huntington's postulates** (commutativity and complements). A property must hold for every value; check each option on $a = 0, 1$ (and $b$ where needed).",
       "concepts": [
         "Huntington postulates",
         "Complement law",
@@ -1584,69 +1584,20 @@
       ],
       "steps": [
         {
-          "title": "Commutative laws",
-          "body": "$a + b = b + a$ and $a \\,.\\, b = b \\,.\\, a$ are the commutative postulates of Boolean algebra — both are properties (options A and D).",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Commutativity",
+          "body": "(A) $a + b = b + a$ and (D) $a \\cdot b = b \\cdot a$ are postulates: OR and AND tables are symmetric in their inputs."
         },
         {
-          "title": "Complement laws",
-          "body": "The complement postulates are $a + a' = 1$ and $a \\,.\\, a' = 0$. So $a + a' = 1$ (option C) is a property.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              },
-              {
-                "r": 2,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Complements",
+          "body": "The complement postulate says $a + a' = 1$ (option C) **and** $a \\cdot a' = 0$. A variable and its complement are never both 1, so their AND is 0."
         },
         {
-          "title": "Test a . a' = 1",
-          "body": "Take $a = 1$: $a \\,.\\, a' = 1 \\,.\\, 0 = 0 \\ne 1$; take $a = 0$: $0 \\,.\\, 1 = 0 \\ne 1$. A variable AND its complement is **always 0**, so $a \\,.\\, a' = 1$ is **not** a property — option **(B)**.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              },
-              {
-                "r": 2,
-                "tone": "success"
-              },
-              {
-                "r": 1,
-                "tone": "error"
-              }
-            ],
-            "caption": "a·a′ is always 0"
-          }
+          "title": "The odd one out",
+          "body": "(B) claims $a \\cdot a' = 1$. At $a = 0$: $0 \\cdot 1 = 0 \\ne 1$; at $a = 1$: $1 \\cdot 0 = 0 \\ne 1$. It fails on every row: not a property."
         }
       ],
       "answer": {
-        "value": "$a \\,.\\, a' = 1$ is not a property — option (B)",
+        "value": "(B) $a \\cdot a' = 1$",
         "choice": [
           "B"
         ],
@@ -1656,71 +1607,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Commutative law of OR — a Boolean-algebra postulate."
+          "reason": "Commutativity of OR: a postulate."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "False for every $a$: $a \\,.\\, a' = 0$ (complement law), so it is not a property."
+          "reason": "False on both rows: the correct law is $a \\cdot a' = 0$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Complement law for OR: one of $a, a'$ is 1, so the OR is 1."
+          "reason": "The complement postulate $a + a' = 1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Commutative law of AND — a Boolean-algebra postulate."
+          "reason": "Commutativity of AND: a postulate."
         }
       ],
-      "shortcut": "Dual check: the dual of $a + a' = 1$ is $a \\,.\\, a' = 0$, not $= 1$.",
+      "shortcut": "AND of anything with its complement is 0, OR is 1. Any option claiming otherwise is the answer.",
       "pitfalls": [
-        "Applying duality only to the operator and forgetting to swap $1 \\leftrightarrow 0$: the dual of $a + a' = 1$ is $a \\,.\\, a' = 0$."
+        "Mixing up the two halves of the complement postulate."
       ],
-      "verification": "Truth table over $a \\in \\{0, 1\\}$ (canvas): A, C, D hold in both rows; B fails in both rows.",
-      "animation": {
-        "kind": "table",
-        "title": "Check each identity for a = 0 and a = 1 (b ranging over 0, 1)",
-        "cols": [
-          "Identity",
-          "a = 0",
-          "a = 1",
-          "Holds?"
-        ],
-        "rows": [
-          [
-            "a + b = b + a",
-            "✓",
-            "✓",
-            "yes"
-          ],
-          [
-            "a . a′ = 1",
-            "0 ≠ 1",
-            "0 ≠ 1",
-            "no"
-          ],
-          [
-            "a + a′ = 1",
-            "1 = 1",
-            "1 = 1",
-            "yes"
-          ],
-          [
-            "a . b = b . a",
-            "✓",
-            "✓",
-            "yes"
-          ]
-        ],
-        "rowLabels": [
-          "A",
-          "B",
-          "C",
-          "D"
-        ]
-      }
+      "verification": "Two-row table for $a \\cdot a'$: 0, 0. Never 1."
     },
     "cse-2026-2-cs-7": {
       "approach": "Place each object in the C memory layout: static storage (data/BSS), stack (automatic variables, return addresses) or heap (dynamic allocation). Only `malloc`/`calloc`/`realloc` memory is on the heap.",
