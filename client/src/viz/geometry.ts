@@ -51,3 +51,86 @@ export function arcLabelPoint(cx: number, cy: number, r: number, r0: number, sta
   const rr = r0 > 0 ? (r + r0) / 2 : r * 0.62
   return polar(cx, cy, rr, mid)
 }
+
+/* ── Logic-gate symbols ────────────────────────────────────────────────── */
+
+export type GateKind = 'and' | 'or' | 'not' | 'buf' | 'nand' | 'nor' | 'xor' | 'xnor'
+
+export interface GateShape {
+  /** Body outline (path data). */
+  body: string
+  /** The second back curve of XOR / XNOR. */
+  extra?: string
+  /** Output inversion bubble. */
+  outBubble?: { cx: number; cy: number; r: number }
+  /** Input inversion bubbles, one per bubbled input. */
+  inBubbles: { cx: number; cy: number; r: number }[]
+  /** Where each input wire ends (left of any input bubble), top to bottom. */
+  pins: Pt[]
+  /** Where the output wire starts (the right edge, after any bubble). */
+  out: Pt
+}
+
+const INVERTING: GateKind[] = ['nand', 'nor', 'xnor', 'not']
+const OR_FAMILY: GateKind[] = ['or', 'nor', 'xor', 'xnor']
+
+/** Radius of an inversion bubble for a gate of height h. */
+export function gateBubbleR(h: number): number {
+  return round(Math.max(3, Math.min(7, h * 0.12)))
+}
+
+/**
+ * Geometry of a gate symbol drawn inside the box (x, y, w, h). The output
+ * bubble, when there is one, sits inside the box's right end, so the output
+ * pin is always (x + w, y + h/2). Input k of n is at y + h·(k + 1)/(n + 1);
+ * on the curved back of the OR family the pin follows the curve. A bubbled
+ * input moves its pin left by one bubble diameter. The generator in
+ * content/gate-notes/_checks/dl/_viz_ch2.py mirrors this function.
+ */
+export function gateShape(kind: GateKind, x: number, y: number, w: number, h: number, inputs?: number, bubbles: number[] = []): GateShape {
+  const single = kind === 'not' || kind === 'buf'
+  const n = single ? 1 : Math.max(1, inputs ?? 2)
+  const r = gateBubbleR(h)
+  const inv = INVERTING.includes(kind)
+  const wb = Math.max(4, w - (inv ? 2 * r : 0))
+  const xor = kind === 'xor' || kind === 'xnor'
+  const gap = xor ? round(Math.min(8, 0.14 * wb)) : 0
+  const bx = x + gap
+  const bw = wb - gap
+  const mid = y + h / 2
+  let body: string
+  let extra: string | undefined
+  if (single) body = `M${round(x)} ${round(y)} L${round(x + wb)} ${round(mid)} L${round(x)} ${round(y + h)} Z`
+  else if (OR_FAMILY.includes(kind)) {
+    body =
+      `M${round(bx)} ${round(y)} Q${round(bx + 0.25 * bw)} ${round(mid)} ${round(bx)} ${round(y + h)} ` +
+      `Q${round(bx + 0.62 * bw)} ${round(y + h)} ${round(bx + bw)} ${round(mid)} Q${round(bx + 0.62 * bw)} ${round(y)} ${round(bx)} ${round(y)} Z`
+    if (xor) extra = `M${round(x)} ${round(y)} Q${round(x + 0.25 * bw)} ${round(mid)} ${round(x)} ${round(y + h)}`
+  } else {
+    const ry = h / 2
+    const rx = Math.min(ry, bw)
+    const flat = Math.max(0, bw - rx)
+    body = `M${round(bx)} ${round(y)} H${round(bx + flat)} A${round(rx)} ${round(ry)} 0 0 1 ${round(bx + flat)} ${round(y + h)} H${round(bx)} Z`
+  }
+  const pins: Pt[] = []
+  const inBubbles: GateShape['inBubbles'] = []
+  for (let k = 0; k < n; k++) {
+    const py = y + (h * (k + 1)) / (n + 1)
+    const t = (py - y) / h
+    // The OR-family back curve is a quadratic Bézier whose x bulges by 0.5·bw·t(1 − t).
+    let px = OR_FAMILY.includes(kind) ? (xor ? x : bx) + 0.5 * bw * t * (1 - t) : x
+    if (bubbles.includes(k)) {
+      inBubbles.push({ cx: round(px - r), cy: round(py), r })
+      px -= 2 * r
+    }
+    pins.push([round(px), round(py)])
+  }
+  return {
+    body,
+    extra,
+    outBubble: inv ? { cx: round(x + wb + r), cy: round(mid), r } : undefined,
+    inBubbles,
+    pins,
+    out: [round(x + w), round(mid)],
+  }
+}

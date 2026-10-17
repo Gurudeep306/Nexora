@@ -18,6 +18,7 @@ import { VizBlock } from '@/viz/VizBlock'
 import type { VizSpec } from '@/viz/schema'
 import type { BlockName, DirectiveNode, Inline, Node, NotesSubject, PracticeQuestion } from '../types'
 import { PracticeEmbed } from './PracticeEmbed'
+import { LABS, type LabName } from '../labs'
 import { domId } from './ids'
 
 const PyqEmbed = lazy(() => import('./PyqEmbed'))
@@ -343,6 +344,7 @@ const BLOCK_RENDERERS: Record<BlockName, (p: BlockProps) => ReactNode> = {
   ),
   practice: ({ node }) => <PracticeSlot node={node} />,
   viz: ({ node }) => <VizSlot node={node} />,
+  lab: ({ node }) => <LabSlot node={node} />,
   table: ({ node, children }) => (
     <Frame node={node} as="figure" icon="grid" kicker="Table" title={label(node, 'title')}>
       {children}
@@ -550,6 +552,20 @@ function VizSlot({ node }: { node: DirectiveNode }) {
         cleanLines={ctx?.cleanLines ?? false}
         onCleanLines={(on) => ctx?.setCleanLines(on)}
       />
+    </div>
+  )
+}
+
+function LabSlot({ node }: { node: DirectiveNode }) {
+  const did = useDomId()
+  const Lab = LABS[node.attrs.lab as LabName]
+  if (!Lab) return <p className="nb-missing">This lab is not available.</p>
+  const tab = (node.attrs.tab as 'bench' | 'challenge' | 'sets' | undefined) ?? 'bench'
+  return (
+    <div id={did(node.id)} data-block="lab" data-block-id={node.id} data-depth={node.depth} className="nb nb-lab">
+      <Suspense fallback={<div className="nb-loading" aria-busy="true" />}>
+        <Lab tab={tab} title={node.attrs.title} />
+      </Suspense>
     </div>
   )
 }
