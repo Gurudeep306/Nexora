@@ -816,12 +816,11 @@ One interactive panel with four tabs. It is backed by the same functions as `_ch
 5. **IEEE-754** (planned): float ↔ hex ↔ bits with special-value badges and the ulp, backed by
    `_checks/dl/fplib.py`.
 
-## Size estimate for Chapter 1
-- Lessons: 8 (5 number-system lessons + 3 floating-point lessons).
-- Worked examples: about 22 concept groups × 4 = **88**, written in step format (lesson
-  split 20 / 16 / 16 / 24 / 16).
-- Diagrams and animations: **22** Viz specs (5 + 4 + 3 + 5 + 5), about 16 of them animated, plus
-  the Live Lab.
-- Embedded PYQs with full teacher-style solutions: **40**.
-- Practice questions: **47** (9 + 9 + 9 + 10 + 9, our own, all script-checked).
-- Check scripts: `numlib.py` plus 5 lesson modules, each asserting every worked value.
+## Size of Chapter 1 (as built, 2026-10-17)
+- Lessons: 10 (place value, bases, fractions, signed numbers, FP basics, IEEE-754, FP arithmetic, codes,
+  code arithmetic, Booth).
+- Worked examples (step format): 233 (26 / 21 / 18 / 24 / 20 / 32 / 20 / 20 / 36 / 16).
+- Viz scenes: 43 used (32 animated); every new FP/arithmetic scene has a phone (narrow) layout.
+- Embedded PYQs with teacher-style v2 solutions: 86 (coverage 86/86).
+- Practice questions: 90, all script-checked.
+- Check scripts: numlib, fplib, boothlib, ten lesson modules, viz generators and structure/PYQ checks.
