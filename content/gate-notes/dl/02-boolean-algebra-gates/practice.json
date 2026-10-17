@@ -787,5 +787,390 @@
       "simplify-method"
     ],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which one of the following equals $x \\odot y$ (XNOR)?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$x' \\oplus y'$"
+      },
+      {
+        "l": "B",
+        "t": "$x \\oplus y'$"
+      },
+      {
+        "l": "C",
+        "t": "$(x' \\oplus y)'$"
+      },
+      {
+        "l": "D",
+        "t": "$x'y + xy'$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "Each complement toggles XOR and XNOR. (A) has two complements: XOR. (B) has one: XNOR. (C) has two (the prime on $x$ and the outer bar): XOR. (D) is the sum-of-products form of XOR.",
+      "Check (B) at $x = y = 0$: $0 \\oplus 1 = 1$, and $0 \\odot 0 = 1$."
+    ],
+    "concept": "Complementing one input of an XOR gives XNOR; complementing two gives XOR back.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "Complementing both inputs cancels: $x' \\oplus y' = x \\oplus y$."
+      },
+      {
+        "answer": "C",
+        "why": "The outer bar undoes the XNOR made by the primed input, leaving XOR."
+      }
+    ],
+    "blocks": [
+      "complement-inputs",
+      "trick-bubble-count"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q02",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following are equal to $x \\odot y$ for all $x, y$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$(x \\oplus y)'$"
+      },
+      {
+        "l": "B",
+        "t": "$x' \\oplus y$"
+      },
+      {
+        "l": "C",
+        "t": "$x' \\odot y'$"
+      },
+      {
+        "l": "D",
+        "t": "$x \\odot y'$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "solution": [
+      "(A) XNOR is by definition the complement of XOR.",
+      "(B) One complement on an input turns XOR into XNOR.",
+      "(C) $x' \\odot y' = x' \\oplus y' \\oplus 1 = x \\oplus y \\oplus 1 = x \\odot y$: the two input complements cancel.",
+      "(D) One complement on an input of an XNOR gives XOR: $x \\odot y' = x \\oplus y$. Not equal."
+    ],
+    "concept": "Write XNOR as XOR ⊕ 1 and count the complements: an even total of complements cancels.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B"
+        ],
+        "why": "(C) was missed: complementing both inputs of an XNOR leaves it unchanged."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "(D) has an odd number of complements relative to XNOR, so it is XOR."
+      }
+    ],
+    "blocks": [
+      "complement-inputs",
+      "xnor-forms"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "On how many of the 16 input rows is $A \\oplus B \\oplus C \\oplus D = 1$?",
+    "answer": 8,
+    "solution": [
+      "The XOR is 1 when an odd number of inputs are 1: one 1 ($\\binom{4}{1} = 4$ rows) or three 1s ($\\binom{4}{3} = 4$ rows).",
+      "Total $4 + 4 = 8$, exactly half of the 16 rows."
+    ],
+    "concept": "An n-input XOR is 1 on the odd-weight rows, which are exactly half of all rows.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "Only the rows with a single 1 were counted; three 1s is also odd."
+      },
+      {
+        "answer": 5,
+        "why": "Row 1111 has four 1s, an even number, so the XOR is 0 there."
+      }
+    ],
+    "blocks": [
+      "parity"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q04",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Seven copies of a bit string $B$ are XORed together: $B \\oplus B \\oplus B \\oplus B \\oplus B \\oplus B \\oplus B$. The result is",
+    "options": [
+      {
+        "l": "A",
+        "t": "the all-zero string"
+      },
+      {
+        "l": "B",
+        "t": "$B$"
+      },
+      {
+        "l": "C",
+        "t": "the complement of $B$"
+      },
+      {
+        "l": "D",
+        "t": "the all-one string"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "XOR is associative, and each pair $B \\oplus B$ is 0. Seven copies form three pairs and one leftover copy.",
+      "$0 \\oplus 0 \\oplus 0 \\oplus B = B$."
+    ],
+    "concept": "Copies of B cancel in pairs: an odd number of copies leaves B, an even number leaves 0.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "That is the result for an even number of copies; seven is odd."
+      },
+      {
+        "answer": "C",
+        "why": "XOR with itself never complements; only XOR with 1s does."
+      }
+    ],
+    "blocks": [
+      "iterated-xor",
+      "trap-n-times"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q05",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "The expression $(A \\oplus B) \\oplus (B \\oplus C) \\oplus (C \\oplus A \\oplus 1)$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$0$"
+      },
+      {
+        "l": "B",
+        "t": "$1$"
+      },
+      {
+        "l": "C",
+        "t": "$A \\oplus B \\oplus C$"
+      },
+      {
+        "l": "D",
+        "t": "$A'$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "Drop the brackets (XOR is associative and commutative): $A \\oplus B \\oplus B \\oplus C \\oplus C \\oplus A \\oplus 1$.",
+      "Each variable appears twice and cancels; one constant 1 remains. The expression is the constant 1."
+    ],
+    "concept": "Flatten an XOR chain and count copies modulo 2.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "The constant 1 was dropped; it is the only term that survives."
+      },
+      {
+        "answer": "C",
+        "why": "Each variable occurs twice, so each cancels; none survives."
+      }
+    ],
+    "blocks": [
+      "xor-laws",
+      "trick-flatten"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "An operator $\\star$ has the outputs 1, 0, 0, 0 for the rows $xy$ = 00, 01, 10, 11. Which statement is true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\star$ is commutative and associative"
+      },
+      {
+        "l": "B",
+        "t": "$\\star$ is commutative but not associative"
+      },
+      {
+        "l": "C",
+        "t": "$\\star$ is associative but not commutative"
+      },
+      {
+        "l": "D",
+        "t": "$\\star$ is neither"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "The column 1000 is NOR. Rows 01 and 10 both give 0, so it is commutative.",
+      "Associativity: $(x \\star y) \\star z = (x + y)z'$ and $x \\star (y \\star z) = x'(y + z)$. At $x = 1, y = 0, z = 0$ the first is 1 and the second is 0.",
+      "So it is commutative but not associative."
+    ],
+    "concept": "NOR (like NAND) is commutative but not associative.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "Commutativity does not imply associativity; the row 100 separates the two bracketings."
+      },
+      {
+        "answer": "D",
+        "why": "Rows 01 and 10 have equal outputs, so it is commutative."
+      }
+    ],
+    "blocks": [
+      "test-from-table",
+      "nand-not-assoc",
+      "operator-properties"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Let $x * y = x' + y$. Which statement is true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$*$ is commutative and associative"
+      },
+      {
+        "l": "B",
+        "t": "$*$ is commutative but not associative"
+      },
+      {
+        "l": "C",
+        "t": "$*$ is associative but not commutative"
+      },
+      {
+        "l": "D",
+        "t": "$*$ is neither commutative nor associative"
+      }
+    ],
+    "answer": "D",
+    "solution": [
+      "Commutative? $0 * 1 = 1 + 1 = 1$ but $1 * 0 = 0 + 0 = 0$: no.",
+      "Associative? $(0 * 0) * 0 = 1 * 0 = 0$ but $0 * (0 * 0) = 0 * 1 = 1$: no."
+    ],
+    "concept": "Implication is neither commutative nor associative.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "The row (0, 0, 0) already separates the two bracketings."
+      },
+      {
+        "answer": "B",
+        "why": "Rows 01 and 10 give different outputs, so it is not commutative."
+      }
+    ],
+    "blocks": [
+      "implication",
+      "operator-properties"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Of the 16 possible two-input Boolean operators, how many are both commutative and associative?",
+    "answer": 6,
+    "solution": [
+      "Commutative operators have equal outputs on rows 01 and 10; there are 8: constant 0, AND, XOR, OR, NOR, XNOR, NAND, constant 1.",
+      "Test associativity on each. The constants are associative ($(x \\star y) \\star z$ and $x \\star (y \\star z)$ are both the constant). AND, OR, XOR and XNOR are associative.",
+      "NAND and NOR fail (for example NAND at $a = b = 0, c = 1$). That leaves 6."
+    ],
+    "concept": "Combine the two table tests: commutativity from rows 01/10, associativity from the 8-row comparison.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "The two constant operators are also commutative and associative."
+      },
+      {
+        "answer": 8,
+        "why": "NAND and NOR are commutative but not associative."
+      }
+    ],
+    "blocks": [
+      "operator-properties",
+      "test-from-table"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q09",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Let $x \\diamond y = x + y'$. The nested expression $(x \\diamond y) \\diamond x$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$1$"
+      },
+      {
+        "l": "B",
+        "t": "$x$"
+      },
+      {
+        "l": "C",
+        "t": "$x + y'$"
+      },
+      {
+        "l": "D",
+        "t": "$x'y$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Inner call: $x \\diamond y = x + y'$.",
+      "Outer call: $(x + y') \\diamond x = (x + y') + x' = 1$, because $x + x' = 1$ already."
+    ],
+    "concept": "Evaluate nested operators from the inside out and simplify at each level.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "That is only the inner call; the outer call ORs in $x'$, which makes the whole expression 1."
+      },
+      {
+        "answer": "D",
+        "why": "That is the complement of the inner call, $(x + y')'$; the outer call complements its *second* argument, $x$, not the first."
+      }
+    ],
+    "blocks": [
+      "nested",
+      "defined-operators"
+    ],
+    "source": "nexora"
   }
 ]

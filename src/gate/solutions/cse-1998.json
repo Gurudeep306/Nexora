@@ -616,22 +616,27 @@
       "verification": "Checked (c) by exhausting the possible first blocks; (d) by the last-symbol argument."
     },
     "cse-1998-a-13": {
-      "approach": "Use $B\\oplus B=0$ and $B\\oplus0=B$: the result alternates between $B$ and $0$ with the number of XOR operations.",
+      "approach": "Concept tested: **iterated XOR**. $B \\oplus B = 0$ and $B \\oplus 0 = B$, so only the number of copies of $B$ (mod 2) matters. With $n$ XOR *operations* there are $n + 1$ copies.",
       "concepts": [
-        "XOR properties"
+        "XOR properties",
+        "Iterated XOR"
       ],
       "steps": [
         {
           "title": "Basic identities",
-          "body": "$B\\oplus B=0$, $B\\oplus0=B$, and $\\oplus$ is associative."
+          "body": "$B \\oplus B = 0$, $B \\oplus 0 = B$, and $\\oplus$ is associative, so copies cancel in pairs."
         },
         {
-          "title": "Count the operations",
-          "body": "With $n$ XOR operations applied to copies of $B$:\n- $n=1$: $B\\oplus B=0$\n- $n=2$: $B\\oplus(B\\oplus B)=B\\oplus0=B$\n- $n=3$: $0$; $n=4$: $B$; …\n\nSo for even $n$ the string is unchanged; for odd $n$ it becomes all zeros. It is never complemented."
+          "title": "Count the copies",
+          "body": "'XORed with itself $n$ times' means $n$ XOR operations: $B \\oplus B$ (one operation, two copies) $= 0$; two operations, three copies: $B$; and so on. $n$ operations join $n + 1$ copies."
+        },
+        {
+          "title": "Conclude",
+          "body": "$n + 1$ copies leave $B$ when $n + 1$ is odd, that is when $n$ is **even**. So the string remains unchanged when $n$ is even: option (D)."
         }
       ],
       "answer": {
-        "value": "remains unchanged when n is even",
+        "value": "(D) remains unchanged when n is even",
         "choice": [
           "D"
         ],
@@ -641,28 +646,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "XOR of $B$ with itself never complements it; results are only $B$ or $0$."
+          "reason": "XOR with copies of itself never complements: it gives $B$ or $0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Same reason: odd counts give $0$, not $\\bar B$."
+          "reason": "Same reason: no complement ever appears; for odd $n$ the result is 0."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "XOR has nothing to do with division (that would be a right shift)."
+          "reason": "XOR has nothing to do with division by 2 (that is a right shift)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "With an even number of XOR operations the result is $B$."
+          "reason": "Even $n$ means an odd number $n + 1$ of copies, leaving $B$."
         }
       ],
+      "shortcut": "Translate words into copies first: $n$ operations = $n + 1$ copies; odd copies = $B$.",
       "pitfalls": [
-        "Counting copies of $B$ instead of XOR operations; with $n$ copies the even case gives 0. The intended reading takes $n$ as the number of XORs."
+        "Counting $n$ copies instead of $n$ operations, which flips the answer; read the bracket $B \\oplus (B \\oplus (B \\ldots))$ as $n$ XOR signs."
       ],
-      "verification": "Try $B=1011$: $1011\\oplus1011=0000$, then $1011\\oplus0000=1011$."
+      "verification": "$n = 2$: $B \\oplus (B \\oplus B) = B \\oplus 0 = B$ (unchanged, $n$ even). $n = 1$: $B \\oplus B = 0$."
     },
     "cse-1998-a-14": {
       "approach": "$k$ select lines address $2^k$ data inputs.",
@@ -2282,7 +2288,7 @@
       "verification": "Check $ABC=101$: $B\\ne C$ so $f=0$, matching the map ($A=1$, $BC=01$ is 0)."
     },
     "cse-1998-a-43": {
-      "approach": "All four are commutative; test associativity with a small counterexample. NAND fails, the other three are associative.",
+      "approach": "Concept tested: **associativity test**. All four operators are commutative; compare $(a \\star b) \\star c$ with $a \\star (b \\star c)$. NAND fails, the others pass.",
       "concepts": [
         "Boolean operators",
         "Associativity",
@@ -2291,15 +2297,19 @@
       "steps": [
         {
           "title": "Commutativity",
-          "body": "AND, OR, NAND, XOR are all symmetric in their two inputs, so each is commutative."
+          "body": "AND, OR, NAND and EXOR all give equal outputs on rows 01 and 10."
         },
         {
           "title": "Associativity of NAND",
-          "body": "Take $a=0,b=1,c=1$:\n\n$(a\\uparrow b)\\uparrow c=(0\\uparrow1)\\uparrow1=1\\uparrow1=0$\n\n$a\\uparrow(b\\uparrow c)=0\\uparrow(1\\uparrow1)=0\\uparrow0=1$\n\n$0\\ne1$, so NAND is not associative."
+          "body": "$(a \\uparrow b) \\uparrow c = ab + \\bar{c}$, $a \\uparrow (b \\uparrow c) = \\bar{a} + bc$. They differ at $(0, 0, 1)$."
+        },
+        {
+          "title": "The others",
+          "body": "AND, OR and EXOR are associative (all-ones, any-one and parity respectively), so NAND is the only one that is commutative but not associative."
         }
       ],
       "answer": {
-        "value": "NAND",
+        "value": "(C) NAND",
         "choice": [
           "C"
         ],
@@ -2309,28 +2319,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "AND is both commutative and associative."
+          "reason": "AND is associative."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "OR is both commutative and associative."
+          "reason": "OR is associative."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "NAND is commutative but $(0\\uparrow1)\\uparrow1=0\\ne1=0\\uparrow(1\\uparrow1)$."
+          "reason": "Commutative but not associative."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "XOR is associative (parity of three bits does not depend on grouping)."
+          "reason": "EXOR is associative."
         }
       ],
+      "shortcut": "Same fact as the 1992 question: NAND and NOR are the commutative, non-associative gates.",
       "pitfalls": [
-        "Treating XOR as non-associative; it is associative."
+        "Assuming every commutative operator is associative."
       ],
-      "verification": "NOR fails the same way; AND/OR/XOR verified associative via truth tables."
+      "verification": "$(0 \\uparrow 0) \\uparrow 1 = 1 \\uparrow 1 = 0$, $0 \\uparrow (0 \\uparrow 1) = 0 \\uparrow 1 = 1$."
     },
     "cse-1998-a-44": {
       "approach": "Low-level formatting lays down the track/sector structure: sector headers (address marks, IDs), gaps and checksums on every track.",

@@ -54,7 +54,8 @@
           "status": "writing",
           "lessons_status": {
             "logic-gates": "draft",
-            "boolean-laws": "draft"
+            "boolean-laws": "draft",
+            "xor-and-operators": "draft"
           }
         },
         {

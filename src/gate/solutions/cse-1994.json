@@ -1938,52 +1938,62 @@
       "verification": "Total request $300+25+125+50=500$ equals total free $150+350=500$, so success needs exact packing; first fit achieves it, best fit splits the 350 hole wrongly."
     },
     "cse-1994-a-27-a-i": {
-      "approach": "$A*B=AB+\\overline{A}\\,\\overline{B}$ is XNOR (equivalence); substitute $B=A$.",
+      "approach": "Concept tested: **a defined operator**: $A * B = AB + \\bar{A}\\bar{B}$ is XNOR (equivalence). Substitute $B = A$.",
       "concepts": [
         "XNOR / equivalence",
-        "Boolean identities"
+        "Idempotence",
+        "Complement law"
       ],
       "steps": [
         {
           "title": "Substitute",
-          "body": "$A*A = A\\cdot A + \\overline{A}\\cdot\\overline{A} = A + \\overline{A}$ (idempotence)."
+          "body": "$A * A = A \\cdot A + \\bar{A} \\cdot \\bar{A} = A + \\bar{A}$ (idempotence)."
         },
         {
           "title": "Simplify",
-          "body": "$A+\\overline{A}=1$ (complement law), so $A*A=1$ — every value equals itself."
+          "body": "$A + \\bar{A} = 1$ (complement law). Equivalently, XNOR of equal inputs is always 1."
         }
       ],
       "answer": {
         "value": "$A * A = 1$",
         "matchesKey": true
       },
-      "verification": "A = 0: $0\\cdot0+1\\cdot1=1$; A = 1: $1\\cdot1+0\\cdot0=1$."
+      "shortcut": "XNOR is equality, and $A$ always equals $A$.",
+      "pitfalls": [
+        "Answering $A$ (that would be AND or OR of $A$ with itself)."
+      ],
+      "verification": "$A = 0$: $0 + 1 = 1$; $A = 1$: $1 + 0 = 1$."
     },
     "cse-1994-a-27-a-ii": {
-      "approach": "Since $*$ is XNOR and XNOR is associative with $A*A=1$ and $1*B=B$, $C*A=(A*B)*A=B$.",
+      "approach": "Concept tested: **undoing an XNOR**. $*$ is XNOR, which is commutative and associative with $A * A = 1$ and $1 * B = B$.",
       "concepts": [
         "XNOR / equivalence",
         "Associativity",
-        "Truth table"
+        "Moving a term across"
       ],
       "steps": [
         {
-          "title": "Algebra",
-          "body": "XNOR is commutative and associative, so $C*A=(A*B)*A=(A*A)*B=1*B$. And $1*B = 1\\cdot B+0\\cdot\\overline{B}=B$."
+          "title": "Regroup",
+          "body": "$C * A = (A * B) * A = (A * A) * B$ (commutative and associative)."
         },
         {
-          "title": "Truth-table check",
-          "body": "| $A$ | $B$ | $C=A*B$ | $C*A$ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| 0 | 1 | 0 | 1 |\n| 1 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 1 |\n\nThe last column equals $B$."
+          "title": "Simplify",
+          "body": "$A * A = 1$ and $1 * B = 1 \\cdot B + 0 \\cdot \\bar{B} = B$. So $C * A = B$."
+        },
+        {
+          "title": "Check by table",
+          "body": "| $A$ | $B$ | $C = A * B$ | $C * A$ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| 0 | 1 | 0 | 1 |\n| 1 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 1 |\n\nThe last column equals $B$."
         }
       ],
       "answer": {
         "value": "$C * A = B$",
         "matchesKey": true
       },
+      "shortcut": "XNOR, like XOR, can be undone: if $C = A \\odot B$ then $C \\odot A = B$.",
       "pitfalls": [
-        "Reading the second term as $\\overline{AB}$ instead of $\\overline{A}\\,\\overline{B}$ makes $*$ constantly 1."
+        "Assuming XNOR is not associative because XNOR *gates* with three inputs behave differently (that concerns gates, not the operator chain)."
       ],
-      "verification": "Algebraic derivation and the 4-row truth table agree."
+      "verification": "The four rows of the table."
     },
     "cse-1994-a-27-b": {
       "approach": "Concept tested: **solving Boolean equations**. A sum equal to 0 forces every term to 0; substitute what you learn into the other equation.",

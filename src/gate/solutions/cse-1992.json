@@ -272,7 +272,7 @@
       "verification": "$K_4$: $n=4$, $e=6=3\\cdot4-6$; $K_5$ has $10>9$ edges, so it is non-planar."
     },
     "cse-1992-a-2-i": {
-      "approach": "All four are commutative; test associativity with a small counterexample.",
+      "approach": "Concept tested: **commutativity and associativity of operators**. All four operators are commutative; test associativity, which only NAND fails.",
       "concepts": [
         "Commutativity",
         "Associativity",
@@ -280,16 +280,20 @@
       ],
       "steps": [
         {
-          "title": "AND, OR, XOR",
-          "body": "All three are both commutative and associative ($(a\\oplus b)\\oplus c=a\\oplus(b\\oplus c)$ = parity of the three)."
+          "title": "Commutativity",
+          "body": "AND, OR, XOR and NAND are all symmetric in their two inputs (rows 01 and 10 give the same output)."
         },
         {
-          "title": "NAND",
-          "body": "Commutative: $\\overline{ab}=\\overline{ba}$. Take $a=0,b=0,c=1$: $(a\\uparrow b)\\uparrow c=1\\uparrow1=0$ but $a\\uparrow(b\\uparrow c)=0\\uparrow1=1$. Not associative."
+          "title": "AND, OR, XOR are associative",
+          "body": "AND: both bracketings are 1 iff all three are 1. OR: iff any is 1. XOR: both give the parity of $a, b, c$."
+        },
+        {
+          "title": "NAND is not",
+          "body": "$(a \\uparrow b) \\uparrow c = ab + \\bar{c}$ and $a \\uparrow (b \\uparrow c) = \\bar{a} + bc$. At $a = b = 0, c = 1$: the first is 0, the second 1."
         }
       ],
       "answer": {
-        "value": "(d) NAND",
+        "value": "(D) NAND",
         "choice": [
           "D"
         ],
@@ -299,28 +303,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "AND is associative."
+          "reason": "AND is commutative and associative."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "OR is associative."
+          "reason": "OR is commutative and associative."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "XOR is associative (result is the parity of all inputs)."
+          "reason": "XOR is commutative and associative (parity)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Commutative, but $(0\\uparrow0)\\uparrow1=0\\ne1=0\\uparrow(0\\uparrow1)$."
+          "reason": "Commutative, but $(0 \\uparrow 0) \\uparrow 1 = 0 \\ne 1 = 0 \\uparrow (0 \\uparrow 1)$."
         }
       ],
+      "shortcut": "Inverting gates (NAND, NOR) lose associativity; AND, OR, XOR, XNOR keep it.",
       "pitfalls": [
-        "NOR fails associativity the same way."
+        "Marking XOR as non-associative because it is 'not idempotent'."
       ],
-      "verification": "Counterexample computed both ways above."
+      "verification": "8-row comparison of the two NAND bracketings: they differ on rows 001, 011, 100, 110."
     },
     "cse-1992-a-2-ii": {
       "approach": "A component is universal if it can build NOT and AND, given the constants 0 and 1.",

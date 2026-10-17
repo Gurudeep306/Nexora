@@ -527,6 +527,138 @@ def equation_sieve():
                 "All 16 assignments of A, B, C, D (row ABCD). Each equation keeps only the rows on which its two sides are equal.", els, st)
 
 
+# ── Lesson 3: XOR and operators ─────────────────────────────────────────────
+
+@scene
+def xor_controlled_inverter():
+    W, NW = 640, 360
+    gx, gy, gw, gh = 260, 90, 80, 56
+    ngx, ngy = 140, 90
+    p, o = pins("xor", gx, gy, gw, gh)
+    q, r = pins("xor", ngx, ngy, gw, gh)
+    els = [*heads("XOR as a controlled inverter", "XOR: a controlled inverter", W),
+           gate("g", gx, gy, gw, gh, "xor", {"x": ngx, "y": ngy}),
+           wire("wx", [gx - 120, p[0][1]], p[0], {"points": [[ngx - 100, q[0][1]], q[0]]}),
+           wire("wc", [gx - 120, p[1][1]], p[1], {"points": [[ngx - 100, q[1][1]], q[1]]}, tone="accent"),
+           wire("wo", o, [o[0] + 60, o[1]], {"points": [r, [r[0] + 50, r[1]]]}),
+           text("lx", gx - 130, p[0][1], "data x", {"x": ngx - 106, "y": q[0][1] - 12, "size": 12}, anchor="end", size=15, weight="bold"),
+           text("lc", gx - 130, p[1][1], "control c", {"x": ngx - 106, "y": q[1][1] + 14, "size": 12}, anchor="end", size=15, weight="bold", tone="accent"),
+           text("vo", o[0] + 74, o[1], "", {"x": r[0] + 60, "y": r[1], "size": 14}, anchor="start", size=16, weight="bold", mono=True),
+           text("mode", W / 2, 200, "", {"x": NW / 2, "y": 210, "size": 13}, anchor="middle", size=16, weight="bold"),
+           tbl("t", 220, 230, 66, 26, [["c", "x", "x ⊕ c"]] + [[" "] * 3 for _ in range(4)], {"x": 81, "y": 236, "cellW": 66, "cellH": 24})]
+    rows = [[" "] * 3 for _ in range(4)]
+    st = []
+    for k, (c, x) in enumerate([(0, 0), (0, 1), (1, 0), (1, 1)]):
+        y = x ^ c
+        rows[k] = [str(c), str(x), str(y)]
+        what = "passes x unchanged" if c == 0 else "inverts x"
+        st.append(step(f"c = {c}, x = {x}: the output is {x} ⊕ {c} = {y}. With the control at {c} the gate {what}.",
+                       ("vo", {"text": str(y), "tone": tone(y)}), ("wo", {"tone": tone(y)}), ("wx", {"tone": tone(x)}),
+                       ("mode", {"text": "c = 0: copy" if c == 0 else "c = 1: invert", "tone": "ink" if c == 0 else "accent"}),
+                       ("t", {"rows": [["c", "x", "x ⊕ c"]] + [rr[:] for rr in rows], "highlight": [[k + 1, 2]]})))
+    st.append(step("So x ⊕ 0 = x and x ⊕ 1 = x′. This is why XOR complements a bit on demand: in adder-subtractors, in parity generators and in the 'flip if differ' tricks of this lesson.",
+                   ("t", {"highlight": []})))
+    return spec("XOR as a controlled inverter", (W, 380), (NW, 370),
+                "An XOR gate with a data input x and a control input c.", els, st)
+
+
+@scene
+def xor_parity_chain():
+    bits_in = [1, 0, 1, 1]
+    runs = [bits_in[0]]
+    for b in bits_in[1:]:
+        runs.append(runs[-1] ^ b)
+    assert runs == [1, 1, 0, 1] and runs[-1] == sum(bits_in) % 2
+    assert bl.tt("A \\oplus B \\oplus C \\oplus D", ["A", "B", "C", "D"])[0b1011] == 1
+    W, NW = 640, 360
+    gw, gh = 62, 54
+    G = [(170, 56), (300, 120), (430, 184)]
+    NG = [(80, 60), (170, 120), (260, 180)]
+    els = [*heads("A chain of XORs computes parity", "XOR chain = parity", W)]
+    names = ["A", "B", "C", "D"]
+    for k, ((x, y), (nx, ny)) in enumerate(zip(G, NG)):
+        p, o = pins("xor", x, y, gw, gh)
+        q, r = pins("xor", nx, ny, 50, 38)
+        els.append(gate(f"g{k}", x, y, gw, gh, "xor", {"x": nx, "y": ny, "w": 50, "h": 38}))
+        if k == 0:
+            els.append(wire("wA", [60, p[0][1]], p[0], {"points": [[24, q[0][1]], q[0]]}))
+            els.append(text("lA", 52, p[0][1], "A = 1", {"x": 20, "y": q[0][1] - 10, "size": 11}, anchor="end", size=14, mono=True, weight="bold"))
+        src = names[k + 1]
+        els.append(wire(f"w{src}", [60, p[1][1]], p[1], {"points": [[24, q[1][1]], q[1]]}))
+        els.append(text(f"l{src}", 52, p[1][1], f"{src} = {bits_in[k + 1]}", {"x": 20, "y": q[1][1] + 8, "size": 11}, anchor="end", size=14, mono=True, weight="bold"))
+        if k < 2:
+            p2, _ = pins("xor", *G[k + 1], gw, gh)
+            q2, _ = pins("xor", *NG[k + 1], 50, 38)
+            els.append(wire(f"o{k}", o, p2[0], {"points": wire_pts(r, q2[0])}))
+        else:
+            els.append(wire(f"o{k}", o, [o[0] + 50, o[1]], {"points": [r, [r[0] + 40, r[1]]]}))
+        els.append(text(f"v{k}", o[0] + 14, o[1] - 14, "", {"x": r[0] + 10, "y": r[1] - 12, "size": 12}, anchor="middle", size=15, mono=True, weight="bold"))
+    els.append(text("sum", W / 2, 280, "", {"x": NW / 2, "y": 270, "size": 12}, anchor="middle", size=15))
+    st = []
+    seen = [bits_in[0]]
+    for k in range(3):
+        b = bits_in[k + 1]
+        seen.append(b)
+        v = runs[k + 1]
+        st.append(step(f"Gate {k + 1}: {runs[k]} ⊕ {b} = {v}. The running value is the parity of the inputs so far ({', '.join(map(str, seen))}: {sum(seen)} one{'s' if sum(seen) != 1 else ''}, {'odd' if v else 'even'}).",
+                       (f"v{k}", {"text": str(v), "tone": tone(v)}), (f"o{k}", {"tone": tone(v)}), (f"g{k}", {"fill": "success" if v else "none"})))
+    st.append(step("The final output is 1 because three of the four inputs are 1, an odd number. An XOR of any number of inputs is 1 exactly when an odd number of them are 1.",
+                   ("sum", {"text": "1 ⊕ 0 ⊕ 1 ⊕ 1 = 1 (three 1s: odd)", "tone": "success"})))
+    return spec("A chain of XOR gates computes the parity of its inputs", (W, 300), (NW, 290),
+                "Four inputs A, B, C, D = 1, 0, 1, 1 enter a chain of three 2-input XOR gates.", els, st)
+
+
+@scene
+def assoc_test():
+    V = ["a", "b", "c"]
+    nand = lambda x, y: 1 - (x & y)
+    head = ["a", "b", "c", "(a↑b)↑c", "a↑(b↑c)"]
+    body = []
+    for r in bl.rows(V):
+        a, b, c = r["a"], r["b"], r["c"]
+        body.append([str(a), str(b), str(c), str(nand(nand(a, b), c)), str(nand(a, nand(b, c)))])
+    bad = [i for i, row in enumerate(body) if row[3] != row[4]]
+    assert bad == [1, 3, 4, 6] and bl.equal("((ab)'c)'", "ab + c'", V) and bl.equal("(a(bc)')'", "a' + bc", V)
+    W, NW = 640, 360
+    els = [*heads("Is NAND associative? Compare both bracketings on all 8 rows", "Is NAND associative?", W),
+           tbl("t", 120, 56, 80, 28, [head] + [r[:3] + [" ", " "] for r in body], {"x": 10, "y": 50, "cellW": 68, "cellH": 26}),
+           text("res", W / 2, 330, "", {"x": NW / 2, "y": 300, "size": 12}, anchor="middle", size=15)]
+    st = [
+        step("Fill the column (a↑b)↑c: first NAND a with b, then NAND the result with c. Algebraically it is ab + c′.",
+             ("t", {"rows": [head] + [r[:4] + [" "] for r in body]})),
+        step("Fill the column a↑(b↑c): it is a′ + bc.",
+             ("t", {"rows": [head] + body})),
+        step(f"The columns disagree on rows {', '.join(f'{i:03b}' for i in bad)}. One disagreeing row is enough: NAND is not associative.",
+             ("t", {"highlight": [[i + 1, j] for i in bad for j in (3, 4)]}), ("res", {"text": "(a↑b)↑c ≠ a↑(b↑c)", "tone": "danger"})),
+        step("The same 8-row test works for any operator defined by a table: compute both bracketings and compare. AND, OR, XOR and XNOR pass it; NAND, NOR and implication fail.",
+             ("res", {"text": "8 rows decide associativity", "tone": "ink"})),
+    ]
+    return spec("The associativity test for NAND", (W, 350), (NW, 320),
+                "To test whether an operator is associative, compare (a ⋆ b) ⋆ c with a ⋆ (b ⋆ c) on every row.", els, st)
+
+
+@scene
+def xnor_chain():
+    V = ["x", "y", "z"]
+    x3 = bl.tt("x \\oplus y \\oplus z", V)
+    n3 = bl.tt("x \\odot y \\odot z", V)
+    g3 = bl.complement_tt(x3)
+    assert x3 == n3 and g3 != n3
+    V2 = ["x", "y"]
+    assert bl.tt("x \\odot y", V2) == bl.complement_tt(bl.tt("x \\oplus y", V2))
+    head = ["x", "y", "z", "x⊕y⊕z", "x⊙y⊙z", "XNOR₃"]
+    body = [[str(r["x"]), str(r["y"]), str(r["z"]), str(x3[i]), str(n3[i]), str(g3[i])] for i, r in enumerate(bl.rows(V))]
+    W, NW = 640, 360
+    els = [*heads("Chains of XNOR vs XOR, three variables", "XNOR chain vs XOR", W),
+           tbl("t", 80, 56, 80, 28, [head] + body, {"x": 6, "y": 50, "cellW": 58, "cellH": 26},
+               highlight=[[i + 1, j] for i in range(8) for j in (3, 4)]),
+           text("n", W / 2, 330, "With three variables the XNOR chain equals the XOR chain; a 3-input XNOR gate (XNOR₃) is their complement.",
+                "wide", anchor="middle", size=13),
+           text("nn", NW / 2, 300, "Odd n: chain ⊙ = chain ⊕. XNOR₃ gate = complement.", "narrow", anchor="middle", size=12)]
+    return spec("XNOR chains and XOR chains agree for an odd number of variables", (W, 345), (NW, 315),
+                "Truth table of x ⊕ y ⊕ z, the chain x ⊙ y ⊙ z, and a 3-input XNOR gate (the complement of the 3-input XOR).", els, [])
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

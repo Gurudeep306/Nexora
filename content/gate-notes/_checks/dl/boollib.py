@@ -41,7 +41,7 @@ _TOKEN = re.compile(r"""
     (?P<lp>\(|\[) | (?P<rp>\)|\]) |
     (?P<lb>\{) | (?P<rb>\}) |
     (?P<const>[01](?![0-9])) |
-    (?P<var>[A-Za-z](?:_\{?\d+\}?|\d+)?)
+    (?P<var>[A-Za-z](?:_(?:\{\d+\}|\d+)|\d+)?)
 """, re.X)
 
 
@@ -148,7 +148,10 @@ class _Parser:
 
 
 def parse(s):
-    return _Parser(s.replace("$", "")).parse()
+    s = s.replace("$", "")
+    # \bar{x}_1 means the complement of x_1: move the subscript inside the braces.
+    s = re.sub(r"\\(bar|overline)\{([A-Za-z])\}_\{?(\d+)\}?", r"\\\1{\2_\3}", s)
+    return _Parser(s).parse()
 
 
 def variables(e):
