@@ -1,0 +1,189 @@
+{
+ "version": 1,
+ "title": "Sign extension keeps the value",
+ "width": 500,
+ "height": 300,
+ "intro": "The 4-bit pattern 1101 at the right. Wider copies of it will appear underneath, lined up on the right.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 250,
+   "y": 22,
+   "text": "Sign extension: copy the sign bit into every new place",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "l4",
+   "type": "text",
+   "x": 10,
+   "y": 52,
+   "text": "4 bits",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "w4",
+   "type": "bits",
+   "x": 370,
+   "y": 62,
+   "bits": "1101",
+   "cell": 30,
+   "highlight": [
+    0
+   ]
+  },
+  {
+   "id": "l8",
+   "type": "text",
+   "x": 10,
+   "y": 114,
+   "text": "8 bits",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "w8",
+   "type": "bits",
+   "x": 250,
+   "y": 124,
+   "bits": "11111101",
+   "cell": 30,
+   "hidden": true,
+   "highlight": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "id": "l16",
+   "type": "text",
+   "x": 10,
+   "y": 176,
+   "text": "16 bits",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "w16",
+   "type": "bits",
+   "x": 10,
+   "y": 186,
+   "bits": "1111111111111101",
+   "cell": 30,
+   "hidden": true,
+   "highlight": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  {
+   "id": "val",
+   "type": "text",
+   "x": 250,
+   "y": 250,
+   "text": "1101 = −8 + 4 + 1 = −3",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "bad",
+   "type": "text",
+   "x": 250,
+   "y": 282,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "danger"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "−3 in 4 bits is 1101: the sign bit (weight −8) is 1.",
+   "patches": [
+    {
+     "id": "val",
+     "set": {
+      "text": "1101 = −8 + 4 + 1 = −3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "To widen to 8 bits, copy the sign bit 1 into the four new places: 1111 1101. The value is still −3 (−128 + 64 + 32 + 16 + 8 + 4 + 1 = −3).",
+   "patches": [
+    {
+     "id": "w8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "l8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "val",
+     "set": {
+      "text": "1111 1101 = −3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Widen again to 16 bits: twelve copies of the sign bit in front of 1101. Still −3.",
+   "patches": [
+    {
+     "id": "w16",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "l16",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "val",
+     "set": {
+      "text": "1111 1111 1111 1101 = −3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Padding with zeros instead (0000 1101) would give +13: zero-padding is right only for unsigned and for non-negative numbers, e.g. +5 = 0101 → 0000 0101.",
+   "patches": [
+    {
+     "id": "bad",
+     "set": {
+      "text": "0000 1101 = +13 ✗   ·   +5: 0101 → 0000 0101 ✓"
+     }
+    }
+   ]
+  }
+ ]
+}

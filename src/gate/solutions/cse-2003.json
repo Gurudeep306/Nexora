@@ -387,18 +387,23 @@
       "verification": "Path $a - b - c$ ($n=3, k=1$): remove $b$ → 2 = $n-1$; three isolated vertices ($k=3$): remove one → 2 = $k-1$."
     },
     "cse-2003-cs-9": {
-      "approach": "Convert every 8-bit 2's-complement value to decimal and test divisibility by the divisor's value.",
+      "approach": "Concept tested: decoding 8-bit 2's complement and divisibility of values. Decode the divisor and each option, then test divisibility as integers.",
       "concepts": [
-        "2's complement"
+        "Decoding 2's complement",
+        "Divisibility"
       ],
       "steps": [
         {
-          "title": "Divisor",
-          "body": "$11111011_2 = 251$, and $251 - 256 = -5$."
+          "title": "Decode the divisor",
+          "body": "$1111\\,1011$: copy up to the first 1 and flip gives $0000\\,0101$, so it is $-5$."
         },
         {
-          "title": "Options",
-          "body": "| Option | Unsigned | Signed | ÷ 5? |\n|---|---|---|---|\n| 11100111 | 231 | $-25$ | yes |\n| 11100100 | 228 | $-28$ | no |\n| 11010111 | 215 | $-41$ | no |\n| 11011011 | 219 | $-37$ | no |"
+          "title": "Decode the options",
+          "body": "(A) $1110\\,0111 = -25$; (B) $1110\\,0100 = -28$; (C) $1101\\,0111 = -41$; (D) $1101\\,1011 = -37$."
+        },
+        {
+          "title": "Test divisibility by −5",
+          "body": "Only $-25 = 5 \\times (-5)$ is a multiple. Option A."
         }
       ],
       "answer": {
@@ -412,25 +417,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$-25 = (-5)\\cdot 5$."
+          "reason": "$1110\\,0111 = -25 = 5 \\times (-5)$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$-28$ is not a multiple of 5."
+          "reason": "$1110\\,0100 = -28$, not a multiple of 5."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$-41$ is not a multiple of 5."
+          "reason": "$1101\\,0111 = -41$, not a multiple of 5."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$-37$ is not a multiple of 5."
+          "reason": "$1101\\,1011 = -37$, not a multiple of 5."
         }
       ],
-      "verification": "Negate (A): invert $11100111$ → $00011000$, add 1 → $00011001 = 25$; negate divisor → $00000101 = 5$; $25 = 5 \\cdot 5$."
+      "shortcut": "Negate everything (copy to the first 1, flip): the sizes are $5$ and $25, 28, 41, 37$. Only 25 is a multiple of 5.",
+      "pitfalls": [
+        "Reading the patterns as unsigned ($251$ and $231, 228, 215, 219$) and finding no multiple."
+      ],
+      "verification": "$-5 \\times 5 = -25$ and $-25 = 1110\\,0111$ in 8 bits."
     },
     "cse-2003-cs-10": {
       "approach": "Classify each situation into the three hazard types: data, control, structural.",

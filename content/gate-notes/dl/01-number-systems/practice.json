@@ -601,5 +601,228 @@
     ],
     "blocks": ["repeated-multiplication"],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "A 12-bit register holds $(F9C)_{16}$, read as a 2's-complement integer. What is its decimal value?",
+    "answer": -100,
+    "solution": [
+      "$(F9C)_{16} = 1111\\,1001\\,1100$; the top bit is 1, so the value is negative.",
+      "Unsigned value: $15\\cdot256 + 9\\cdot16 + 12 = 3996$. Subtract $2^{12} = 4096$: $3996 - 4096 = -100$.",
+      "Check by negating: copy up to the first 1 from the right ($100$), flip the rest: $0000\\,0110\\,0100 = 100$."
+    ],
+    "concept": "A 2's-complement pattern with top bit 1 is worth (unsigned value) − 2ⁿ.",
+    "common_wrong": [
+      { "answer": 3996, "why": "This is the unsigned reading; the top bit of a 2's-complement pattern weighs $-2^{11}$." },
+      { "answer": -99, "why": "Only the bits were inverted ($0000\\,0110\\,0011 = 99$); the +1 of the negation was forgotten. That is the 1's-complement reading." }
+    ],
+    "blocks": ["decode-twos", "twos-complement"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is $-100$ in 8-bit 2's complement, written in hexadecimal?",
+    "options": [
+      { "l": "A", "t": "$(64)_{16}$" },
+      { "l": "B", "t": "$(9C)_{16}$" },
+      { "l": "C", "t": "$(E4)_{16}$" },
+      { "l": "D", "t": "$(9B)_{16}$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "$+100 = 0110\\,0100 = (64)_{16}$.",
+      "Negate: invert to $1001\\,1011$, add 1: $1001\\,1100 = (9C)_{16}$.",
+      "Check: $(9C)_{16} = 156 = 256 - 100$."
+    ],
+    "concept": "−x in n-bit 2's complement is 2ⁿ − x, i.e. invert and add 1.",
+    "common_wrong": [
+      { "answer": "C", "why": "$(E4)_{16} = 1110\\,0100$ is $-100$ in sign-magnitude (sign bit set on $+100$), not 2's complement." },
+      { "answer": "D", "why": "$(9B)_{16}$ is the 1's complement (inverted, no +1)." }
+    ],
+    "blocks": ["negation", "twos-complement"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q03",
+    "type": "MSQ",
+    "marks": 1,
+    "text": "Which of these 6-bit patterns represent negative zero ($-0$) in the representation named?",
+    "options": [
+      { "l": "A", "t": "$100000$ in sign-magnitude" },
+      { "l": "B", "t": "$111111$ in 1's complement" },
+      { "l": "C", "t": "$100000$ in 2's complement" },
+      { "l": "D", "t": "$111111$ in 2's complement" }
+    ],
+    "answer": ["A", "B"],
+    "solution": [
+      "(A) Sign bit 1, size 0: $-0$ in sign-magnitude. Correct.",
+      "(B) In 1's complement $-0$ is $000000$ with every bit flipped: $111111$. Correct.",
+      "(C) In 2's complement $100000 = -32$, the most negative value.",
+      "(D) In 2's complement $111111 = -1$. 2's complement has no $-0$ at all."
+    ],
+    "concept": "SM and 1's complement have two zeros; 2's complement has one.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C"], "why": "$100000$ looks like 'sign bit + zero size', but in 2's complement the top bit is a weight of $-32$, not a sign flag." },
+      { "answer": ["A", "B", "D"], "why": "$111111$ is $-0$ only in 1's complement; in 2's complement all ones is $-1$." }
+    ],
+    "blocks": ["sign-magnitude", "ones-complement", "ex-rng-zero"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q04",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many distinct integers can be represented in 10-bit 1's complement?",
+    "answer": 1023,
+    "solution": [
+      "There are $2^{10} = 1024$ patterns.",
+      "Two of them, $00\\dots0$ and $11\\dots1$, both mean zero.",
+      "So there are $1024 - 1 = 1023$ distinct integers, from $-511$ to $+511$."
+    ],
+    "concept": "1's complement wastes one pattern on −0: 2ⁿ − 1 values.",
+    "common_wrong": [
+      { "answer": 1024, "why": "That is the number of patterns, which equals the number of values only in 2's complement." },
+      { "answer": 1022, "why": "Both zeros were removed; one of them still counts as the integer 0." }
+    ],
+    "blocks": ["ones-complement", "ranges"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q05",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The 8-bit 2's-complement pattern $(B7)_{16}$ is sign-extended to 16 bits. What is the result?",
+    "options": [
+      { "l": "A", "t": "$(00B7)_{16}$" },
+      { "l": "B", "t": "$(FFB7)_{16}$" },
+      { "l": "C", "t": "$(80B7)_{16}$" },
+      { "l": "D", "t": "$(B7FF)_{16}$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "$(B7)_{16} = 1011\\,0111$: the sign bit is 1 (the value is $183 - 256 = -73$).",
+      "Sign extension copies the sign bit into the 8 new places: $1111\\,1111\\,1011\\,0111 = (FFB7)_{16}$.",
+      "Check: $(FFB7)_{16} = 65463 = 65536 - 73$, still $-73$."
+    ],
+    "concept": "Widening copies the sign bit; for a hex pattern with top bit 1 that means leading F's.",
+    "common_wrong": [
+      { "answer": "A", "why": "Zero-padding is for unsigned numbers; $(00B7)_{16}$ is $+183$." },
+      { "answer": "C", "why": "That moves the sign bit to the top and pads zeros after it, which is sign-magnitude extension. In 2's complement it is $-32585$." }
+    ],
+    "blocks": ["sign-extension", "trap-zero-pad"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The 16-bit 2's-complement pattern $(FFE0)_{16}$ is arithmetically shifted right by 3 places. What is the decimal value of the result?",
+    "answer": -4,
+    "solution": [
+      "$(FFE0)_{16} = 65504 - 65536 = -32$.",
+      "Each arithmetic right shift divides by 2, rounding down: $-32 \\to -16 \\to -8 \\to -4$.",
+      "As bits: $1111\\,1111\\,1110\\,0000 \\to 1111\\,1111\\,1111\\,1100 = (FFFC)_{16} = -4$."
+    ],
+    "concept": "An arithmetic right shift by k computes ⌊x / 2ᵏ⌋ for a 2's-complement x.",
+    "common_wrong": [
+      { "answer": 8188, "why": "A logical shift fills with 0s: $0001\\,1111\\,1111\\,1100 = 8188$. Arithmetic shifts copy the sign bit." },
+      { "answer": -256, "why": "That is a left shift by 3 ($-32 \\times 8$)." }
+    ],
+    "blocks": ["arithmetic-shift"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is the 10's complement of the 4-digit decimal number $4070$?",
+    "options": [
+      { "l": "A", "t": "$5930$" },
+      { "l": "B", "t": "$5929$" },
+      { "l": "C", "t": "$6930$" },
+      { "l": "D", "t": "$6070$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "9's complement: each digit $d \\to 9 - d$: $4070 \\to 5929$.",
+      "10's complement = 9's complement + 1: $5929 + 1 = 5930$.",
+      "Check: $4070 + 5930 = 10000 = 10^4$."
+    ],
+    "concept": "The r's complement is r^n − N, i.e. the (r−1)'s complement plus 1.",
+    "common_wrong": [
+      { "answer": "B", "why": "That is the 9's complement; the +1 is missing." },
+      { "answer": "D", "why": "Only the leading digit was complemented ($10 - 4 = 6$) and the rest copied. Every digit changes: copy the trailing zeros, take $10 - d$ for the first non-zero digit from the right, then $9 - d$ for the rest." }
+    ],
+    "blocks": ["radix-complement"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "What is the minimum number of bits needed to represent every integer from $-300$ to $+200$ in 2's complement?",
+    "answer": 10,
+    "solution": [
+      "We need $-2^{n-1} \\le -300$ and $200 \\le 2^{n-1} - 1$.",
+      "$n = 9$ covers $-256 \\dots 255$: $+200$ fits but $-300$ does not.",
+      "$n = 10$ covers $-512 \\dots 511$: both fit. So $n = 10$."
+    ],
+    "concept": "Choose the smallest n with −2ⁿ⁻¹ ≤ L and H ≤ 2ⁿ⁻¹ − 1; check both ends.",
+    "common_wrong": [
+      { "answer": 9, "why": "This checked only $+200$ (or computed $\\lceil \\log_2 500 \\rceil = 9$ for the width of the range). The negative end $-300$ needs $-2^{n-1} \\le -300$, so $n = 10$." },
+      { "answer": 11, "why": "This counted a separate sign bit on top of 10 magnitude bits; in 2's complement the sign is already one of the $n$ bits." }
+    ],
+    "blocks": ["min-width", "ranges"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q09",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "For $n$-bit numbers ($n \\ge 2$), which of the following statements are true?",
+    "options": [
+      { "l": "A", "t": "Sign-magnitude and 1's complement have exactly the same range." },
+      { "l": "B", "t": "The 2's-complement range is $-2^{n-1}$ to $2^{n-1}$." },
+      { "l": "C", "t": "2's complement represents exactly one more distinct integer than sign-magnitude." },
+      { "l": "D", "t": "The largest positive value is the same in all three signed representations." }
+    ],
+    "answer": ["A", "C", "D"],
+    "solution": [
+      "(A) Both run from $-(2^{n-1} - 1)$ to $2^{n-1} - 1$. True.",
+      "(B) The top of the 2's-complement range is $2^{n-1} - 1$, not $2^{n-1}$. False.",
+      "(C) 2's complement has $2^n$ values; sign-magnitude has $2^n - 1$ (two zeros). The difference is 1. True.",
+      "(D) In all three, the largest value is $0$ followed by all 1s, $2^{n-1} - 1$. True."
+    ],
+    "concept": "The three signed codes differ only on the negative side and in the number of zeros.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "B is the classic off-by-one: zero uses up one non-negative pattern." },
+      { "answer": ["A", "C"], "why": "D was rejected because the minima differ. The maxima are all $2^{n-1} - 1$." }
+    ],
+    "blocks": ["ranges", "compare-representations"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-04-q10",
+    "type": "NAT",
+    "marks": 2,
+    "text": "The 8-bit pattern $1001\\,0110$ is read once as sign-magnitude (value $S$) and once as 2's complement (value $T$). What is $S - T$?",
+    "answer": 84,
+    "solution": [
+      "Sign-magnitude: sign 1, size $001\\,0110 = 22$, so $S = -22$.",
+      "2's complement: $-128 + 16 + 4 + 2 = -106$, so $T = -106$.",
+      "$S - T = -22 - (-106) = 84$.",
+      "In general, for a pattern with sign bit 1 and lower bits worth $m$: $S - T = -m - (m - 128) = 128 - 2m$, here $128 - 44 = 84$."
+    ],
+    "concept": "The same bits have different values in different encodings; the top bit is a flag in SM and a −2ⁿ⁻¹ weight in 2's complement.",
+    "common_wrong": [
+      { "answer": -84, "why": "The subtraction was done the other way round ($T - S$)." },
+      { "answer": 128, "why": "This assumes the two readings differ by the sign weight alone; the lower bits are subtracted in SM but added in 2's complement." }
+    ],
+    "blocks": ["sign-magnitude", "decode-twos", "ex-dec-three"],
+    "source": "nexora"
   }
 ]

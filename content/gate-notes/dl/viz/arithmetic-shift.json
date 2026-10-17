@@ -1,0 +1,230 @@
+{
+ "version": 1,
+ "title": "Arithmetic and logical shifts",
+ "width": 560,
+ "height": 330,
+ "intro": "The 8-bit pattern of −7, 11111001. Shifted copies will appear underneath.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "Shifting −7 (8 bits): arithmetic vs logical",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "x",
+   "type": "bits",
+   "x": 110,
+   "y": 52,
+   "bits": "11111001",
+   "cell": 50
+  },
+  {
+   "id": "xl",
+   "type": "text",
+   "x": 100,
+   "y": 77,
+   "text": "x",
+   "anchor": "end",
+   "size": 16,
+   "mono": true
+  },
+  {
+   "id": "xv",
+   "type": "text",
+   "x": 520,
+   "y": 77,
+   "text": "−7",
+   "size": 16,
+   "mono": true
+  },
+  {
+   "id": "a",
+   "type": "bits",
+   "x": 110,
+   "y": 122,
+   "bits": "11111100",
+   "cell": 50,
+   "hidden": true,
+   "highlight": [
+    0
+   ]
+  },
+  {
+   "id": "al",
+   "type": "text",
+   "x": 100,
+   "y": 147,
+   "text": "asr",
+   "anchor": "end",
+   "size": 15,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "av",
+   "type": "text",
+   "x": 520,
+   "y": 147,
+   "text": "−4",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "success"
+  },
+  {
+   "id": "l",
+   "type": "bits",
+   "x": 110,
+   "y": 192,
+   "bits": "01111100",
+   "cell": 50,
+   "hidden": true,
+   "highlight": [
+    0
+   ]
+  },
+  {
+   "id": "ll",
+   "type": "text",
+   "x": 100,
+   "y": 217,
+   "text": "lsr",
+   "anchor": "end",
+   "size": 15,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "lv",
+   "type": "text",
+   "x": 520,
+   "y": 217,
+   "text": "124",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "danger"
+  },
+  {
+   "id": "s",
+   "type": "bits",
+   "x": 110,
+   "y": 262,
+   "bits": "11110010",
+   "cell": 50,
+   "hidden": true,
+   "highlight": [
+    7
+   ]
+  },
+  {
+   "id": "sl",
+   "type": "text",
+   "x": 100,
+   "y": 287,
+   "text": "asl",
+   "anchor": "end",
+   "size": 15,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "sv",
+   "type": "text",
+   "x": 520,
+   "y": 287,
+   "text": "−14",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "success"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Arithmetic shift right: every bit moves one place right, the last bit falls off, and the sign bit is copied into the empty top place. 11111001 → 11111100 = −4.",
+   "patches": [
+    {
+     "id": "a",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "al",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "av",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "−7 ÷ 2 = −3.5, and the shift gave −4: an arithmetic right shift divides by 2 and rounds down (towards −∞), not towards zero.",
+   "patches": [
+    {
+     "id": "av",
+     "set": {
+      "text": "−4 = ⌊−3.5⌋"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A logical shift right fills the top with 0 instead. 01111100 = 124: fine for unsigned numbers, wrong for negative ones.",
+   "patches": [
+    {
+     "id": "l",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lv",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift left (arithmetic and logical are the same): a 0 enters at the right. 11110010 = −14 = 2 × (−7). It is exact because the top two bits of x were equal, so no significant bit was lost.",
+   "patches": [
+    {
+     "id": "s",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sv",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  }
+ ]
+}

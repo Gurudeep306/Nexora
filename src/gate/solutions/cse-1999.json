@@ -2329,20 +2329,24 @@
       "verification": "$1+15=16$ adder cells for 16 bits."
     },
     "cse-1999-a-42": {
-      "approach": "Write zero in 4-bit form in each representation and see whether a negative-zero pattern exists.",
+      "approach": "Concept tested: the zeros of each signed encoding. Write $-0$ in each: sign-magnitude sets the sign bit on a zero size, 1's complement flips all bits of $0$, and 2's complement wraps $-0$ back to $0$.",
       "concepts": [
         "Sign-magnitude",
-        "1’s complement",
-        "2’s complement"
+        "1's complement",
+        "2's complement"
       ],
       "steps": [
         {
-          "title": "Sign-magnitude and 1’s complement",
-          "body": "- Sign-magnitude: $+0=0000$, $-0=1000$ → two zeros.\n- 1’s complement: $+0=0000$, $-0=\\overline{0000}=1111$ → two zeros."
+          "title": "Sign-magnitude",
+          "body": "$+0 = 0000$ and $-0 = 1000$ (sign bit set, size 0): two zeros."
         },
         {
-          "title": "2’s complement",
-          "body": "$-0 = 1111+1 = 1\\,0000 \\to 0000$ (carry dropped) → one zero."
+          "title": "1's complement",
+          "body": "$-0 = \\overline{0000} = 1111$: two zeros, $0000$ and $1111$."
+        },
+        {
+          "title": "2's complement",
+          "body": "$-0 = \\overline{0000} + 1 = 1111 + 1 = 1\\,0000$, and the fifth bit is dropped: $0000$. Only one zero."
         }
       ],
       "answer": {
@@ -2357,25 +2361,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "0000 and 1000."
+          "reason": "$0000$ and $1000$ both mean zero."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "0000 and 1111."
+          "reason": "$0000$ and $1111$ both mean zero."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Negating 0 gives 0 again; unique zero."
+          "reason": "Negating 0 returns 0; every pattern is a different integer (range $-2^{n-1}$ to $2^{n-1} - 1$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "(A) and (B) are correct."
+          "reason": "A and B are correct."
         }
       ],
-      "verification": "Consistent with the ranges: SM/1’s $[-(2^{n-1}-1),\\,2^{n-1}-1]$ vs 2’s $[-2^{n-1},\\,2^{n-1}-1]$."
+      "shortcut": "Count values: SM and 1's hold $2^n - 1$ integers in $2^n$ patterns, so one integer (zero) has two patterns; 2's complement holds $2^n$.",
+      "pitfalls": [
+        "Thinking $1000$ is $-0$ in 2's complement; it is $-8$."
+      ],
+      "verification": "4 bits: SM and 1's cover $-7 \\dots 7$ (15 values), 2's covers $-8 \\dots 7$ (16 values)."
     },
     "cse-1999-a-43": {
       "approach": "RAID combines striping (parallel transfers, speed) with mirroring/parity (redundancy, fault tolerance); it never stores more bits per platter.",

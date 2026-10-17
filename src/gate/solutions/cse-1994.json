@@ -289,10 +289,10 @@
       "verification": "Fair die, $A$=even, $B=\\{1,2,3\\}$: $P_2=1/6$, $P_3=2/6$, sum $=1/2=P(A)$ ✔"
     },
     "cse-1994-a-2-7": {
-      "approach": "In $n$-bit two's complement the MSB has weight $-2^{n-1}$ and the other bits add up to at most $2^{n-1}-1$.",
+      "approach": "Concept tested: the 2's-complement range. The MSB has weight $-2^{n-1}$; the other $n - 1$ bits add at most $2^{n-1} - 1$. So the extremes are $100\\dots0$ and $011\\dots1$.",
       "concepts": [
-        "Two's complement",
-        "Range of representation"
+        "2's complement range",
+        "Negative MSB weight"
       ],
       "steps": [
         {
@@ -312,8 +312,10 @@
         "value": "$-2^{n-1} \\le N \\le 2^{n-1}-1$",
         "matchesKey": true
       },
+      "shortcut": "Check with $n = 3$: patterns $100 \\dots 011$ are $-4 \\dots 3$, i.e. $-2^2 \\dots 2^2 - 1$.",
       "pitfalls": [
-        "Giving the symmetric range $-(2^{n-1}-1)$ to $2^{n-1}-1$, which is sign-magnitude / one's complement."
+        "Giving the symmetric range $-(2^{n-1} - 1)$ to $2^{n-1} - 1$, which is sign-magnitude / 1's complement.",
+        "Giving $2^{n-1}$ as the top: zero uses one of the non-negative patterns."
       ],
       "verification": "$n=8$: $-128$ to $127$ ✔"
     },

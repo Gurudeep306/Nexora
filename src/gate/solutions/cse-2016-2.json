@@ -756,10 +756,11 @@
       "verification": "$\\bar a \\oplus \\bar b = (1\\oplus a)\\oplus(1\\oplus b) = a \\oplus b$ since $1 \\oplus 1 = 0$."
     },
     "cse-2016-2-cs-9": {
-      "approach": "2's complement uses all $2^{16}$ patterns for distinct values; sign-magnitude wastes one pattern on −0.",
+      "approach": "Concept tested: counting distinct values. 2's complement uses all $2^{16}$ patterns for different integers; sign-magnitude spends two patterns ($+0$, $-0$) on zero, so it has one fewer.",
       "concepts": [
         "2's complement range",
-        "Sign-magnitude representation"
+        "Sign-magnitude",
+        "Two zeros"
       ],
       "steps": [
         {
@@ -780,6 +781,11 @@
         "number": 1,
         "matchesKey": true
       },
+      "shortcut": "No arithmetic needed: the two formats have the same number of patterns and SM wastes exactly one on $-0$, so $X - Y = 1$ for every width.",
+      "pitfalls": [
+        "Comparing the ranges' end points ($-32768$ vs $-32767$) and answering 2 or 0 by miscounting.",
+        "Counting only non-zero values."
+      ],
       "verification": "Sign magnitude: $2(2^{15}-1) + 1 = 65535$ integers; 2's complement: $2^{15} + 2^{15} = 65536$."
     },
     "cse-2016-2-cs-10": {

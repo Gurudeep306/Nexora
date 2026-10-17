@@ -2864,10 +2864,10 @@
       }
     },
     "cse-2025-1-cs-15": {
-      "approach": "Widening a 2's complement number is **sign extension**: copy the sign bit into every new high-order bit. $-6 = 1010$ has sign bit 1, so pad with 1s.",
+      "approach": "Concept tested: sign extension. Widening a 2's-complement number copies the sign bit into every new place; $-6 = 1010$ has sign bit 1, so the new places are all 1s.",
       "concepts": [
-        "2's complement",
-        "Sign extension"
+        "Sign extension",
+        "2's complement"
       ],
       "steps": [
         {
@@ -3010,9 +3010,10 @@
           "reason": "Correct sign extension: $-65536 + 65530 = -6$."
         }
       ],
-      "shortcut": "$-6$ in any width is \"all 1s except the low bits of $+5$ inverted\": $+6 = \\ldots 0110$, invert $\\ldots 1001$, add 1 $\\to \\ldots 1010$ with 1s above. Any option with 0s above bit 3 is wrong.",
+      "shortcut": "A small negative number has 1s in every high position at every width; any option with 0s above the original 4 bits is wrong (A and C).",
       "pitfalls": [
-        "Moving only the sign bit to the new MSB and filling with 0s (that is sign–magnitude extension)."
+        "Moving only the sign bit to the new MSB and filling with 0s (that is sign-magnitude extension).",
+        "Zero-padding, which turns $1010$ into $+10$."
       ],
       "verification": "$-6 + 6$ in 8 bits: $1111\\,1010 + 0000\\,0110 = 1\\,0000\\,0000$, carry out discarded → $0$. ✓",
       "animation": {

@@ -813,19 +813,23 @@
       "verification": "Matches the widely accepted answer; the row count, not the chip count, sets the time."
     },
     "cse-2010-cs-8": {
-      "approach": "Multiplying by $8=2^3$ is an arithmetic left shift by 3 bits. $P$ is a small negative number, so no overflow occurs.",
+      "approach": "Concept tested: multiplying a 2's-complement number by a power of 2 with an arithmetic left shift. $8 = 2^3$, so shift left by 3; it is exact because the top four bits of $F87B$ are equal (1111), i.e. no overflow.",
       "concepts": [
-        "2's complement",
-        "Arithmetic shift"
+        "Arithmetic left shift",
+        "Decoding 2's complement"
       ],
       "steps": [
         {
-          "title": "Write P in binary",
-          "body": "$(F87B)_{16}=1111\\,1000\\,0111\\,1011$. As a signed value: $F87B_{16}-10000_{16}=-0785_{16}=-1925$."
+          "title": "Decode P",
+          "body": "$(F87B)_{16} = 1111\\,1000\\,0111\\,1011 = 63611 - 65536 = -1925$."
         },
         {
           "title": "Shift left by 3",
-          "body": "$1111\\,1000\\,0111\\,1011\\ll3 = 1100\\,0011\\,1101\\,1000=(C3D8)_{16}$.\n\nCheck: $8\\times(-1925)=-15400$; $10000_{16}-C3D8_{16}=3C28_{16}=15400$. ✓ (Within $-32768$, no overflow.)"
+          "body": "Drop the top three bits and append three 0s: $1100\\,0011\\,1101\\,1000 = (C3D8)_{16}$."
+        },
+        {
+          "title": "Check the value",
+          "body": "$(C3D8)_{16} = 50136 - 65536 = -15400 = 8 \\times (-1925)$. ✓"
         }
       ],
       "answer": {
@@ -839,25 +843,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Left shift by 3 of F87B gives C3D8 = −15400 = 8 × (−1925)."
+          "reason": "$(C3D8)_{16} = -15400 = 8P$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$(187B)_{16}$ is positive, so it cannot be 8 × a negative number."
+          "reason": "$(187B)_{16}$ changes only the top digit: it looks like a shift of the top nibble, not of the whole word. It is $+6267$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$(F878)_{16}$ just clears the low bits; it equals $P-3$."
+          "reason": "$(F878)_{16}$ touches only the last digit."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$(987B)_{16}$ keeps the low 12 bits unchanged — not a shift."
+          "reason": "$(987B)_{16}$ is another partial edit; its value is $-26501$."
         }
       ],
-      "verification": "Decimal check done in the last step."
+      "shortcut": "A left shift by 3 of hex digits $F,8,7,B$: the result's last hex digit must be $B\\cdot8 \\bmod 16 = 88 \\bmod 16 = 8$, which only A has.",
+      "pitfalls": [
+        "Worrying about overflow without checking: the top 4 bits are equal, so ×8 is exact."
+      ],
+      "verification": "$-1925 \\times 8 = -15400$ lies in $-32768 \\dots 32767$."
     },
     "cse-2010-cs-9": {
       "approach": "Write the MUX output as a sum over select combinations $(S_1S_0)=(PQ)$ and tabulate: output is $R$ when $P=Q$ and $\\overline R$ when $P\\ne Q$ — the 3-input parity function.",
