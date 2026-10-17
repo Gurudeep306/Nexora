@@ -49,7 +49,7 @@ def column_add_carry():
            line("bar", [[x0, 92 + 2 * c + 20], [x0 + 9 * c, 92 + 2 * c + 20]], {"points": [[nx0, 92 + 2 * nc + 18], [nx0 + 9 * nc, 92 + 2 * nc + 18]]}),
            bits("cs", x0, 92 + 2 * c + 30, " " * 9, c, {"x": nx0, "y": 92 + 2 * nc + 26, "cell": nc}, fill="success"),
            text("plus", x0 - 20, 92 + c + 8 + c / 2, "+", {"x": nx0 - 14, "y": 92 + nc + 8 + nc / 2}, anchor="middle", size=22),
-           text("cap", 300, 284, "carry row", {"x": 180, "y": 236, "size": 13}, anchor="middle", size=15, tone="muted")]
+           text("cap", 300, 284, "sum", {"x": 180, "y": 236, "size": 13}, anchor="middle", size=15, tone="muted")]
     for i in range(9):
         els.append(text(f"k{i}", x0 + i * c + c / 2, 74, "", {"x": nx0 + i * nc + nc / 2, "y": 76, "size": 13}, anchor="middle", size=15, tone="warning", mono=True))
     steps, sumbits = [], [" "] * 9
@@ -130,7 +130,7 @@ def overflow_carries():
     steps = []
     for k, (a, b, lab, s, c3, c4, v) in enumerate(info):
         over = c3 != c4
-        verdict = f"overflow (true sum {v} is outside −8 … 7)" if over else f"no overflow (the sum {v} fits)"
+        verdict = f"overflow (true sum {v} is outside −8 … 7)".replace("-", "−") if over else f"no overflow (the sum {v} fits)".replace("-", "−")
         steps.append(step(f"{lab}: {a:04b} + {b:04b} = {c4} {s:04b}. Carry into the sign column c₃ = {c3}, carry out c₄ = {c4}. "
                           f"They {'differ' if over else 'agree'}, so {verdict}." + (" The carry out alone is not overflow." if (c4 and not over) else ""),
                           ("ra", {"bits": f"{a:04b}", "highlight": [0]}), ("rb", {"bits": f"{b:04b}", "highlight": [0]}),
@@ -214,7 +214,7 @@ def excess3_correction():
     tf = t - 3
     steps = [
         step(f"Units: 1010 + 1011 = 1 0101. A carry came out, so the digit sum was 10 or more: add 3. 0101 + 0011 = {uf:04b} (excess-3 of 5), decimal carry 1.",
-             ("raw", {"bits": f"    {u % 16:04b}"}), ("res", {"bits": f"     {uf:04b}"}), ("note", {"text": "carry → +3"})),
+             ("raw", {"bits": f"     {u % 16:04b}"}), ("res", {"bits": f"     {uf:04b}"}), ("note", {"text": "carry → +3"})),
         step(f"Tens: 0111 + 0110 + carry 1 = {t:04b}, with no carry out: the digit sum was at most 9, so subtract 3: {t:04b} − 0011 = {tf:04b} (excess-3 of 8).",
              ("raw", {"bits": f"{t:04b} {u % 16:04b}"}), ("res", {"bits": f"{tf:04b} {uf:04b}"}), ("note", {"text": "no carry → −3"})),
         step("Why: each code carries an excess of 3, so a sum carries an excess of 6. Without a carry, remove 3 to leave a single excess of 3. With a carry, the 16 taken away already over-removed, so put 3 back.",
@@ -254,7 +254,7 @@ def booth_scan():
         ops += d != 0
         below[7 - i] = {1: "+1", -1: "−1", 0: "0"}[d]
         meaning = {1: "a run of 1s ended just below: add M", -1: "a run of 1s starts here: subtract M", 0: "inside a run: shift only"}[d]
-        steps.append(step(f"i = {i}: the window holds (q{i}, q{i - 1 if i else '₋₁'}) = ({qi}, {qim1}), so d{i} = {qim1} − {qi} = {d:+d}" if d else
+        steps.append(step(f"i = {i}: the window holds (q{i}, q{i - 1 if i else '₋₁'}) = ({qi}, {qim1}), so d{i} = {qim1} − {qi} = {d:+d}".replace("-1", "−1") if d else
                           f"i = {i}: the window holds (q{i}, q{i - 1 if i else '₋₁'}) = ({qi}, {qim1}), so d{i} = 0",
                           ("win", {"x": x0 + (7 - i) * c - 3}), ("nwin", {"x": nx0 + (7 - i) * nc - 3}),
                           ("q", {"below": list(below), "highlight": [7 - i, 8 - i]}),
@@ -275,7 +275,7 @@ def bitpair_table():
     for t in range(8):
         a, b, cc = (t >> 2) & 1, (t >> 1) & 1, t & 1
         D = bl.bitpair_digit(a, b, cc)
-        rows.append([f"{a} {b} {cc}", f"−{2 * a} + {b} + {cc} = {D:+d}" if D else f"−{2 * a} + {b} + {cc} = 0", lab[D]])
+        rows.append([f"{a} {b} {cc}", (f"−{2 * a} + {b} + {cc} = {D:+d}" if D else f"−{2 * a} + {b} + {cc} = 0").replace("= -", "= −"), lab[D]])
     q = nl.to_twos(-29, 8)
     ds = bl.bitpair_digits(q)
     assert ds == [0, -2, 1, -1] and bl.digits_value(ds, 4) == -29
@@ -291,7 +291,7 @@ def bitpair_table():
     steps = [step("Each radix-4 digit pairs two Booth digits: D = 2d(i+1) + d(i) = −2q(i+1) + q(i) + q(i−1). The eight triples give the digits 0, ±1, ±2.", ("note", {"text": "D = 2·d(i+1) + d(i)"}))]
     for k, (a, b, cc) in enumerate(trip):
         r = 1 + (a << 2 | b << 1 | cc)
-        steps.append(step(f"−29 = 11100011: triple {k} (bits {2 * k + 1}, {2 * k}, {2 * k - 1 if k else '₋₁'}) is {a}{b}{cc}, so D{k} = {ds[3 - k]:+d}" if ds[3 - k] else
+        steps.append(step(f"−29 = 11100011: triple {k} (bits {2 * k + 1}, {2 * k}, {2 * k - 1 if k else '₋₁'}) is {a}{b}{cc}, so D{k} = {ds[3 - k]:+d}".replace("-", "−") if ds[3 - k] else
                           f"−29 = 11100011: triple {k} (bits {2 * k + 1}, {2 * k}, {2 * k - 1}) is {a}{b}{cc}, so D{k} = 0",
                           ("tab", {"highlight": [[r, 0], [r, 1], [r, 2]]}), ("ntab", {"highlight": [[r, 0], [r, 1]]}),
                           ("note", {"text": f"D{k} = {lab[ds[3 - k]]}"})))

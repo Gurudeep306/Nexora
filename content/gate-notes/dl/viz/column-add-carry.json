@@ -115,7 +115,7 @@
    "type": "text",
    "x": 300,
    "y": 284,
-   "text": "carry row",
+   "text": "sum",
    "anchor": "middle",
    "size": 15,
    "tone": "muted",

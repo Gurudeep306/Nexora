@@ -8,8 +8,8 @@ prerequisites: [ieee-754]
 pyq_topics: [dl/floating]
 est_minutes: 50
 difficulty: advanced
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l07_fp_arithmetic.py (exact IEEE arithmetic in fplib.py, cross-checked with Python's float/struct)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 150–153 (brief). No set works an IEEE add or multiply or covers rounding modes, so this lesson is written from the textbooks below."
@@ -36,8 +36,8 @@ Chapter 5 later builds the integer adders that do the significand arithmetic des
 | What | Detail |
 |:--|:--|
 | PYQs mapped to this lesson | 8 (1997–2026) |
-| Marks | 1 one-mark, 7 two-mark (one is an MSQ) |
-| Formats | 5 MCQ/MSQ, 3 descriptive or fill-in (1997) |
+| Marks | 2 one-mark, 6 two-mark (one is an MSQ) |
+| Formats | 6 MCQ/MSQ, 2 descriptive or fill-in (1997) |
 | Pattern 1 | Add, multiply or divide two IEEE words and give the result in hex: 2020, 2023, 2026 |
 | Pattern 2 | Decode registers, then check arithmetic identities: 2025 |
 | Pattern 3 | Order of operations and absorption: 2000, 2004 |
@@ -349,8 +349,10 @@ round once, check the range.
 ## Absorption, cancellation and lost associativity
 
 :::definition{#absorption term="Absorption" depth="quick"}
-If $|y| < \tfrac12\,\text{ulp}(x)$, then $x + y$ rounds back to $x$: $y$ is **absorbed**. (At exactly
-half an ulp, ties to even decide.) In single precision $\text{ulp}(1) = 2^{-23}$, so adding anything
+If $y$ has the same sign as $x$ and $|y| < \tfrac12\,\text{ulp}(x)$, then $x + y$ rounds back to $x$: $y$ is
+**absorbed**. (At exactly half an ulp, ties to even decide. For $y$ of the opposite sign use half the gap
+**below** $x$, which is only $\tfrac14\,\text{ulp}(x)$ when $x$ is a power of two: in single precision
+$1 - 0.75 \cdot 2^{-24}$ rounds to $1 - 2^{-24}$, not to 1.) In single precision $\text{ulp}(1) = 2^{-23}$, so adding anything
 below $2^{-24}$ to 1 changes nothing; next to $2 \times 10^{30}$ the ulp is about $1.5 \times 10^{23}$, so
 adding 1 changes nothing.
 :::
@@ -466,7 +468,7 @@ small number meets a large one; cancellation happens when two large ones of oppo
 :::
 
 :::note{#recap-absorb title="Recap" depth="quick"}
-$|y| < \tfrac12\text{ulp}(x)$ ⇒ $x + y = x$. Addition is commutative but not associative. Subtracting
+Same signs and $|y| < \tfrac12\text{ulp}(x)$ ⇒ $x + y = x$. Addition is commutative but not associative. Subtracting
 close numbers is exact but amplifies earlier errors. Add small terms first; cancel large ones first.
 :::
 
@@ -619,8 +621,8 @@ Divide: $e = e_x - e_y + B$, at most one left shift. $\times 2^k$ = add $k$ to t
 - **Overflow:** the rounded result is larger in magnitude than the largest finite value. In round to
   nearest it becomes $\pm\infty$; in round toward zero it becomes $\pm x_{\max}$.
 - **Underflow:** the result is smaller in magnitude than the smallest normal value $2^{-126}$. IEEE
-  then delivers a denormal (gradual underflow, Lesson 6), or $\pm 0$ if it is below half the smallest
-  denormal. Custom formats without denormals simply return 0.
+  then delivers a denormal (gradual underflow, Lesson 6), or $\pm 0$ if it is at or below half the
+  smallest denormal ($2^{-150}$; exactly $2^{-150}$ is a tie that rounds to the even neighbour, 0). Custom formats without denormals simply return 0.
 
 Unlike integer overflow (Lesson 4), floating-point overflow never wraps around to a wrong-signed
 value: it saturates to infinity, and the exception is flagged.
@@ -768,7 +770,7 @@ Python's own floats.
 | G, R, S | G = 0 → down; G = 1 and (R or S) → up; G = 1 only → tie to even |
 | Relative error | ≤ $2^{-p}$ (nearest), ≤ $2^{1-p}$ (truncation) |
 | Add/subtract | align smaller right (hidden 1 too) → add → normalise → round → range check |
-| Absorption | $|y| < \tfrac12\text{ulp}(x)$ ⇒ $x + y = x$ |
+| Absorption | same signs, $\lvert y \rvert < \tfrac12\text{ulp}(x)$ ⇒ $x + y = x$ |
 | Order | commutative, **not** associative |
 | Multiply | $s_x \oplus s_y$; $e_x + e_y - B$; $M \in [1, 4)$, at most one right shift |
 | Divide | $e_x - e_y + B$; $M \in (\tfrac12, 2)$, at most one left shift |

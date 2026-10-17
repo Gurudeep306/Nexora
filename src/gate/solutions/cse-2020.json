@@ -2484,7 +2484,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "`0x83400000` has exponent field 6, i.e. about $-1.5 \\times 2^{-121}$: the bias must be added back once after subtracting the fields, and here it was not handled."
+          "reason": "`0x83400000` has exponent field 6, i.e. about $-1.5 \\times 2^{-121}$, a tiny number, while the quotient is $-4$ (field 129). Forgetting to add the bias back would give field 2, also tiny: any tiny-exponent answer signals that slip."
         },
         {
           "option": "D",

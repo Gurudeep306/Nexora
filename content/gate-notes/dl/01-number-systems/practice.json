@@ -1004,7 +1004,7 @@
     "concept": "In fraction form the smallest normalised value is ½ × 2^Emin.",
     "common_wrong": [
       { "answer": -128, "why": "The mantissa was taken as 1, but a normalised fraction is at least $\\tfrac12$, not 1." },
-      { "answer": -127, "why": "An excess-127 range was assumed; the exponent here is 2's complement, which reaches $-128$." },
+      { "answer": -127, "why": "IEEE's normal exponent range ($-126 \\dots 127$) was assumed, giving $\\tfrac12 \\times 2^{-126} = 2^{-127}$; this 2's-complement exponent reaches $-128$." },
       { "answer": -151, "why": "The mantissa was taken as its smallest non-zero pattern $2^{-23}$, which is not normalised." }
     ],
     "blocks": ["range-formulas", "normalisation", "ex-range-mag"],
@@ -1231,7 +1231,7 @@
     "solution": [
       "(A) True: the two zeros differ only in the sign bit and compare equal.",
       "(B) False: `0x80000000` is $-0$. The most negative finite value is `0xFF7FFFFF` $\\approx -3.4 \\times 10^{38}$ (and $-\\infty$ is `0xFF800000`).",
-      "(C) True: every comparison involving NaN is false.",
+      "(C) True: `==` (and every ordered comparison) involving a NaN is false; only `!=` is true.",
       "(D) False: denormals have exponent field 0, which switches the hidden 1 off: $0.f \\times 2^{-126}$."
     ],
     "concept": "Signed zero, NaN comparisons and denormals are the special cases of IEEE-754.",
@@ -1264,7 +1264,7 @@
     "common_wrong": [
       { "answer": "B", "why": "The fraction fields were added without aligning ($.01 + .1 = .11$ at exponent 2), giving 7." },
       { "answer": "C", "why": "The result was given the smaller operand's exponent ($1.625 = 6.5/4$)." },
-      { "answer": "D", "why": "The hidden 1 of 1.5 was not shifted in while aligning, giving $5 + 1 = 6$." }
+      { "answer": "D", "why": "The fraction bit of 1.5 was dropped while aligning (1.5 treated as 1), giving $5 + 1 = 6$." }
     ],
     "blocks": ["fp-add-algorithm", "trap-align"],
     "source": "nexora"
@@ -1288,7 +1288,7 @@
     ],
     "concept": "Multiplication: XOR the signs, add the exponent fields and subtract the bias once, multiply the significands.",
     "common_wrong": [
-      { "answer": "B", "why": "The exponent came out 2 too high ($E = 5$, value $-18$), e.g. by using $+1$ instead of $-1$ for 0.5's exponent." },
+      { "answer": "B", "why": "The exponent came out 2 too high ($E = 4$, value $-18$), e.g. by using $+1$ instead of $-1$ for 0.5's exponent." },
       { "answer": "C", "why": "The sign bit was not set; a positive times a negative is negative." },
       { "answer": "D", "why": "$-2.25$: the exponent is one too low (the $\\times 0.5$ was applied twice)." }
     ],
@@ -1699,7 +1699,7 @@
     "concept": "In r's-complement subtraction, no carry means a negative result whose magnitude is the complement of the sum.",
     "common_wrong": [
       { "answer": "B", "why": "The sum 6669 is the 10's-complement **pattern** of the answer, not the answer itself." },
-      { "answer": "C", "why": "That is the 9's complement of 6669; with the 10's complement no 1 is lost." },
+      { "answer": "C", "why": "$-3332$ adds an extra 1 to the magnitude: $10^4 - 6669 = 3331$ (the 9's complement would give 3330)." },
       { "answer": "D", "why": "There is no carry out of 4 digits, and the true difference is negative." }
     ],
     "blocks": ["radix-sub", "end-around"],
@@ -2001,7 +2001,7 @@
     "common_wrong": [
       { "answer": "B", "why": "Those are the plain base-4 digits of 107 ($1223_4$); radix-4 Booth digits never exceed 2 in size." },
       { "answer": "C", "why": "The lowest digit is wrong: the triple $(q_1, q_0, q_{-1}) = 110$ gives $-1$, not $+1$ (this option is 109)." },
-      { "answer": "D", "why": "The sign of every digit was flipped (the $-2q_{i+1}$ term was made positive)." }
+      { "answer": "D", "why": "Every digit's sign was flipped (the triple read as $2q_{i+1} - q_i - q_{i-1}$), giving $-107$." }
     ],
     "blocks": ["bitpair", "bitpair-why"],
     "source": "nexora"

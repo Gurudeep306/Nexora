@@ -77,6 +77,11 @@ for n in (2, 4, 6, 8, 10):
     for v in range(-(2 ** (n - 1)), 2 ** (n - 1)):
         assert bl.digits_value(bl.bitpair_digits(nl.to_twos(v, n)), 4) == v
 assert divmod(7, 2) == (3, 1)
+# Your-turn checks and the Booth-vs-plain table.
+assert bl.fmt(bl.booth_digits("110110")) == "0 −1 +1 0 −1 0" and bl.booth_ops("110110") == 3 and -16 + 8 - 2 == -10
+assert bl.bitpair_digits("0101") == [1, 1] and bl.fmt(bl.booth_digits("0101")) == "+1 −1 +1 −1"
+assert [(q.count("1"), bl.booth_ops(q)) for q in ("01111110", "11110000", "00110011", "01010101", "00000000")] == [(6, 2), (4, 1), (4, 4), (4, 8), (0, 0)]
+assert bl.booth_trace(-8, b2("1000"), 4)[1] == 64 and nl.to_base(64, 2, 8) == "01000000"
 has("$1111\\,0111 = -9$", "$0\\ 0\\ {-1}\\ 0\\ 0\\ {+1}\\ 0\\ {-1}$", "$-1\\ {+2}\\ {-2}$", "$1101\\,0110 = -42 = (-7) \\times 6$")
 
 # ── PYQ keys, re-derived ────────────────────────────────────────────────────

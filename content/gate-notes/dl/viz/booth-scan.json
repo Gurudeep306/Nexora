@@ -135,7 +135,7 @@
  ],
  "steps": [
   {
-   "caption": "i = 0: the window holds (q0, q₋₁) = (1, 0), so d0 = 0 − 1 = -1 (a run of 1s starts here: subtract M).",
+   "caption": "i = 0: the window holds (q0, q₋₁) = (1, 0), so d0 = 0 − 1 = −1 (a run of 1s starts here: subtract M).",
    "patches": [
     {
      "id": "win",
@@ -350,7 +350,7 @@
    ]
   },
   {
-   "caption": "i = 5: the window holds (q5, q4) = (1, 0), so d5 = 0 − 1 = -1 (a run of 1s starts here: subtract M).",
+   "caption": "i = 5: the window holds (q5, q4) = (1, 0), so d5 = 0 − 1 = −1 (a run of 1s starts here: subtract M).",
    "patches": [
     {
      "id": "win",

@@ -137,6 +137,17 @@ PYQ pipeline, not a set error).
   the only bank change is the `cse-2005-cs-85b` review-note fix above. The 1997 parts (a)–(c) assume
   truncation, which the lesson states. The 25 v2 solutions were rewritten to the teacher-style standard
   (enforced by `pyq_ch1.py`).
+- **Arithmetic PYQ move and key audit (2026-10-17):** the 13 number-level PYQs of `dl-05-03`, the 8
+  Booth/product PYQs of `dl-05-04`, `it-2005-cs-47` (lesson 2) and `cse-2010-cs-8` (lesson 4) now live in
+  Chapter 1 lessons 9–10. All 23 keys were re-derived in `_checks/dl/l09_code_arithmetic.py` and
+  `l10_multiplication_booth.py` (brute force where possible, e.g. the overflow formulas over every
+  4- and 8-bit operand pair, Booth counts with `boothlib.py`). All stored keys are correct. Three keep
+  their existing `needsReview` notes, which are about interpretation, not the key: `cse-1995-a-51`
+  (W's negative result as an "error"), `cse-2002-a-21` (some published keys give D; B is right) and
+  `it-2008-it-42` (multiplier read from a blurry scan; with the printed digits the count is 8 = B).
+- **B 185** (Booth): the boxed recoding of −113 drops its leading −1 digit; the full recoding is
+  −1 0 0 +1 0 0 0 −1 (value −128 + 16 − 1 = −113). Lesson 10's `trap-booth-pair` and the value check
+  ("sum the digits times powers of two") catch this.
 - **Floating-point bias conventions in GATE papers** (for lessons 5–7): 1996 used a 2's-complement
   exponent, 1997 a sign-magnitude exponent, 2002 and 2005 excess-64 (base 16 in 2002), 2003 a bias of 31
   with the all-ones field meaning zero, and every paper from 2008 the IEEE biases 127 / 1023 (2021-1 says

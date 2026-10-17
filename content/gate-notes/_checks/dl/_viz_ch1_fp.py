@@ -478,7 +478,7 @@ def absorption():
              ("note", {"text": "order matters: add small numbers first", "tone": "subject"})),
     ]
     return spec("Absorption and the loss of associativity", (640, 280), (360, 280),
-                "A toy format with 4 fraction bits: x = 32 = 1.0000 × 2⁵ and y = 1 = 1.0000 × 2⁰. Neighbours of 32 are 2 apart.",
+                "A toy format with 4 fraction bits: x = 32 = 1.0000 × 2⁵ and y = 1 = 1.0000 × 2⁰. The next float above 32 is 34 (ulp = 2).",
                 els, steps)
 
 

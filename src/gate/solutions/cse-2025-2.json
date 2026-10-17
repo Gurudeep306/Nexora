@@ -5356,7 +5356,7 @@
           "reason": "$-9 + 6 + 12 = 9$."
         }
       ],
-      "shortcut": "`411` vs `410` vs `40C`: exponents 130, 130, 129 give scales 8, 8, 4; fractions $1.125, 1.5, 1.5$ give 9, 12, 6.",
+      "shortcut": "`C11` vs `414` vs `40C`: exponents 130, 130, 129 give scales 8, 8, 4; fractions $1.125, 1.5, 1.5$ give $-9$, 12, 6.",
       "pitfalls": [
         "Decoding `C1100000` as $-1.1 \\times 2^3 = -12$ (misreading the fraction bits 001).",
         "Worrying about rounding: small integers are exact."

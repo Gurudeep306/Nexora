@@ -8,8 +8,8 @@ prerequisites: [code-arithmetic]
 pyq_topics: [dl/arithmetic]
 est_minutes: 60
 difficulty: advanced
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l10_multiplication_booth.py, using boothlib.py (Booth recoding and the register algorithm verified by brute force over every multiplier up to 10 bits)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 153–154, 178, 183, 185 (Booth rules and recodings; its Karatsuba remark and a dropped leading digit are recorded in _errata/dl.md), set D pp. 401–402 (radix-2 and radix-4 tables)."
@@ -296,7 +296,8 @@ Digits $-1\ 0\ 0\ 0$: $-8$, one subtraction.
 :::
 
 :::step{why="The subtraction computes A − M = 0 − (−8) = +8, which does not fit in 4-bit 2's complement."}
-With $M = -8$ and a 4-bit $A$, $-M$ overflows; the true product $(-8)(-8) = 64$ needs the extra bit.
+With $M = -8$ and a 4-bit $A$, the intermediate $A = +8$ needs a fifth bit; the final 8-bit product
+$0100\,0000 = 64$ fits (without the extra bit the trace would end at $1100\,0000 = -64$).
 :::
 
 :::answer
@@ -311,12 +312,29 @@ it as current minus right flips every sign and gives $+57$ for $-57$. Also remem
 $q_{-1} = 0$: without it the lowest digit is lost.
 :::
 
+::::check{#check-booth title="Your turn" depth="standard"}
+Booth-recode the 6-bit multiplier $110110$ ($-10$) and count the operations.
+
+:::answer
+Pairs from the right with $q_{-1} = 0$: $(0,0) \to 0$, $(1,0) \to -1$, $(1,1) \to 0$, $(0,1) \to +1$,
+$(1,0) \to -1$, $(1,1) \to 0$. MSB first: $0\,{-1}\,{+1}\,0\,{-1}\,0 = -16 + 8 - 2 = -10$, three operations.
+:::
+::::
+
 :::note{#recap-booth title="Recap" depth="quick"}
 $d_i = q_{i-1} - q_i$, $q_{-1} = 0$: $10 \to -1$, $01 \to +1$, else 0. $\sum d_i 2^i = Q$ exactly, so
 negative multipliers need no special case. Registers: subtract on 10, add on 01, then arithmetic shift.
 :::
 
 ## Counting Booth's additions and subtractions
+
+:::intuition{#count-intuition title="Pay only at the edges of each run" depth="standard"}
+Plain shift-and-add pays once for every 1 in the multiplier, so a multiplier full of 1s is
+expensive. Booth pays only where the bits **change**: once where a run of 1s begins (a subtraction)
+and once where it ends (an addition). Inside a run, and inside a run of 0s, it only shifts. So the
+cost of a multiplier is the number of its run boundaries, which can be far fewer than its 1s
+(long runs) or far more (alternating bits).
+:::
 
 :::definition{#booth-count term="Number of operations, best and worst multipliers" depth="quick"}
 Booth performs one addition or subtraction for every **non-zero recoded digit**, i.e. for every
@@ -404,9 +422,27 @@ $1111\,0000 = -16$ in 8 bits.
 :::
 ::::
 
+:::table{#booth-vs-plain title="Booth against plain shift-and-add (8-bit multipliers)" depth="standard"}
+| Multiplier | 1s (plain adds) | Booth operations | Better |
+|:--|:--|:--|:--|
+| $0111\,1110$ | 6 | 2 | Booth |
+| $1111\,0000$ | 4 | 1 | Booth |
+| $0011\,0011$ | 4 | 4 | equal |
+| $0101\,0101$ | 4 | 8 | plain |
+| $0000\,0000$ | 0 | 0 | equal |
+:::
+
+:::trick{#trick-boundaries title="Count the boundaries, not the 1s" depth="standard"}
+Write the multiplier, append a 0, and draw a bar wherever two neighbouring bits differ. The number
+of bars is Booth's operation count. **Why it works:** each bar is a non-zero digit
+$d_i = q_{i-1} - q_i$. **When it fails:** never for the count; but remember a bar at the very top
+cannot exist (there is no bit above the sign bit), so a run that reaches the sign bit costs one
+operation, not two.
+:::
+
 :::trap{#trap-booth-count title="Counting only the additions, or counting the 1s" depth="quick"}
 GATE asks for "additions/subtractions": count **every** non-zero digit. Counting the 1s of the
-multiplier gives the plain shift-and-add count, and counting only the $+1$ digits halves the answer.
+multiplier gives the plain shift-and-add count, and counting only the $+1$ digits roughly halves the answer.
 :::
 
 :::note{#recap-count title="Recap" depth="quick"}
@@ -508,6 +544,15 @@ $D_2 D_1 D_0 = (-1)(+2)(-2)$: $-16 + 8 - 2 = -10$.
 
 :::answer
 $-1\ {+2}\ {-2}$. Padding with 0 instead would make it the positive number $22$.
+:::
+::::
+
+::::check{#check-bitpair title="Your turn" depth="standard"}
+Bit-pair recode $Q = 0101$ (5) and check the value.
+
+:::answer
+Triples: $(q_1, q_0, q_{-1}) = 010 \to +1$ and $(q_3, q_2, q_1) = 010 \to +1$, so $D_1 D_0 = (+1)(+1)$ and
+$4 + 1 = 5$. Radix-2 Booth needed four digits ${+1}\,{-1}\,{+1}\,{-1}$; radix 4 needs two.
 :::
 ::::
 

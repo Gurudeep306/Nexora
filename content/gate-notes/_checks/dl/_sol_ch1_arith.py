@@ -380,7 +380,7 @@ SOLUTIONS["it-2006-cs-38"] = {
         opt("C", True, "$-2 + 0 + 0 = -2$ and $-2 + 1 + 1 = 0$."),
         opt("D", False, "Row 5 is not 0: a run of 1s starts at $x_{i+1}$."),
     ],
-    "shortcut": "The table is antisymmetric: row $k$ and row $7 - k$ have opposite digits ($000 \\leftrightarrow 111$: 0, $011 \\leftrightarrow 100$: $\\pm 2$).",
+    "shortcut": "The table is antisymmetric: triples that are bitwise complements (row $r$ and row $9 - r$) have opposite digits ($000 \\leftrightarrow 111$: 0, $011 \\leftrightarrow 100$: $\\pm 2$).",
     "pitfalls": ["Treating $x_{i+1}$ as $+2$ instead of $-2$."],
     "verification": "The given rows check out with the formula: $001 \\to 1$, $011 \\to 2$, $101 \\to -1$, $110 \\to -1$. ✓",
 }
