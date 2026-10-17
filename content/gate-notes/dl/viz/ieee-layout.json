@@ -1,0 +1,532 @@
+{
+ "version": 1,
+ "title": "IEEE-754 single and double layouts",
+ "width": 760,
+ "height": 344,
+ "narrow": {
+  "width": 360,
+  "height": 460
+ },
+ "intro": "The 32 bits of −6.75 in single precision, split into a 1-bit sign (red), an 8-bit exponent (blue) and a 23-bit fraction (green).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 380.0,
+   "y": 24,
+   "text": "IEEE-754 layouts: −6.75 in single, then in double",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "IEEE-754: −6.75",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "sgl",
+   "type": "text",
+   "x": 28,
+   "y": 52,
+   "text": "single precision: 32 bits",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 24,
+    "y": 54
+   }
+  },
+  {
+   "id": "sgn",
+   "type": "bits",
+   "x": 28,
+   "y": 96,
+   "bits": "1",
+   "cell": 22,
+   "fill": "danger",
+   "labels": [
+    "31"
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "exp",
+   "type": "bits",
+   "x": 50,
+   "y": 96,
+   "bits": "10000001",
+   "cell": 22,
+   "fill": "info",
+   "labels": [
+    "30",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "23"
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "frc",
+   "type": "bits",
+   "x": 226,
+   "y": 96,
+   "bits": "10110000000000000000000",
+   "cell": 22,
+   "fill": "success",
+   "labels": [
+    "22",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "0"
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "tsg",
+   "type": "text",
+   "x": 39.0,
+   "y": 138,
+   "text": "s",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "danger",
+   "only": "wide"
+  },
+  {
+   "id": "tex",
+   "type": "text",
+   "x": 138,
+   "y": 138,
+   "text": "exponent e: 8 bits, bias 127",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "tfr",
+   "type": "text",
+   "x": 479.0,
+   "y": 138,
+   "text": "fraction f: 23 bits (hidden 1 not stored)",
+   "anchor": "middle",
+   "size": 14,
+   "tone": "success",
+   "only": "wide"
+  },
+  {
+   "id": "nsgn",
+   "type": "bits",
+   "x": 30,
+   "y": 84,
+   "bits": "1",
+   "cell": 30,
+   "fill": "danger",
+   "labels": [
+    "31"
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "nexp",
+   "type": "bits",
+   "x": 60,
+   "y": 84,
+   "bits": "10000001",
+   "cell": 30,
+   "fill": "info",
+   "labels": [
+    "30",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "23"
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "ntex",
+   "type": "text",
+   "x": 24,
+   "y": 134,
+   "text": "s | exponent e (8 bits, bias 127)",
+   "size": 13,
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "nfr1",
+   "type": "bits",
+   "x": 24,
+   "y": 172,
+   "bits": "101100000000",
+   "cell": 26,
+   "fill": "success",
+   "labels": [
+    "22",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "11"
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "nfr2",
+   "type": "bits",
+   "x": 24,
+   "y": 214,
+   "bits": "00000000000",
+   "cell": 26,
+   "fill": "success",
+   "labels": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "ntfr",
+   "type": "text",
+   "x": 24,
+   "y": 258,
+   "text": "fraction f (23 bits)",
+   "size": 13,
+   "tone": "success",
+   "only": "narrow"
+  },
+  {
+   "id": "val",
+   "type": "text",
+   "x": 380,
+   "y": 174,
+   "text": "value = −1.1011₂ × 2^(129 − 127) = −1.6875 × 4 = −6.75",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 290,
+    "size": 14
+   }
+  },
+  {
+   "id": "dbl",
+   "type": "text",
+   "x": 28,
+   "y": 218,
+   "text": "double precision: 64 bits",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 24,
+    "y": 330
+   }
+  },
+  {
+   "id": "dsg",
+   "type": "box",
+   "x": 28,
+   "y": 234,
+   "w": 11,
+   "h": 36,
+   "fill": "danger",
+   "hidden": true,
+   "narrow": {
+    "x": 24,
+    "y": 346,
+    "w": 24,
+    "h": 36
+   }
+  },
+  {
+   "id": "dex",
+   "type": "box",
+   "x": 39,
+   "y": 234,
+   "w": 121,
+   "h": 36,
+   "fill": "info",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "x": 48,
+    "y": 346,
+    "w": 80,
+    "h": 36,
+    "size": 13
+   },
+   "label": "e: 11 bits"
+  },
+  {
+   "id": "dfr",
+   "type": "box",
+   "x": 160,
+   "y": 234,
+   "w": 572,
+   "h": 36,
+   "fill": "success",
+   "size": 14,
+   "hidden": true,
+   "narrow": {
+    "x": 128,
+    "y": 346,
+    "w": 208,
+    "h": 36,
+    "size": 13
+   },
+   "label": "f: 52 bits"
+  },
+  {
+   "id": "dv1",
+   "type": "text",
+   "x": 380,
+   "y": 298,
+   "text": "bias 1023: e = 2 + 1023 = 1025 = 100 0000 0001",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 410,
+    "size": 13
+   }
+  },
+  {
+   "id": "dv2",
+   "type": "text",
+   "x": 380,
+   "y": 324,
+   "text": "−6.75 = 0xC01B000000000000",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "success",
+   "narrow": {
+    "x": 180,
+    "y": 436,
+    "size": 14
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The sign bit (bit 31) comes first. It is 1, so the number is negative. The significand is stored as a magnitude: sign-magnitude, not 2's complement.",
+   "patches": [
+    {
+     "id": "sgn",
+     "set": {
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "nsgn",
+     "set": {
+      "highlight": [
+       0
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bits 30–23 hold the biased exponent e = 10000001 = 129. Subtracting the bias 127 gives the true exponent E = 2.",
+   "patches": [
+    {
+     "id": "sgn",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "nsgn",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "exp",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ]
+     }
+    },
+    {
+     "id": "nexp",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2,
+       3,
+       4,
+       5,
+       6,
+       7
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bits 22–0 hold the fraction f = 1011 followed by zeros. The leading 1 of the significand is hidden, so the significand is 1.1011₂ = 1.6875.",
+   "patches": [
+    {
+     "id": "exp",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "nexp",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "frc",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "nfr1",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2,
+       3
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Put it together: (−1)¹ × 1.1011₂ × 2² = −110.11₂ = −6.75. In hex the word is 0xC0D80000.",
+   "patches": [
+    {
+     "id": "val",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Double precision keeps the same three fields, only wider: 1 sign bit, an 11-bit exponent with bias 1023, and a 52-bit fraction.",
+   "patches": [
+    {
+     "id": "dbl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dsg",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dex",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dfr",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The same −6.75 as a double: the true exponent is still 2, so e = 1025; the fraction 1011 is padded with 48 zeros. The word is 0xC01B000000000000.",
+   "patches": [
+    {
+     "id": "dv1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "dv2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  }
+ ]
+}

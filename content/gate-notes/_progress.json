@@ -27,18 +27,24 @@
       "chapters": [
         {
           "id": "01-number-systems",
-          "title": "Number systems and codes",
-          "lessons": 5,
-          "pyqs": 40,
+          "title": "Number systems, codes and floating point",
+          "lessons": 10,
+          "pyqs": 86,
           "status": "reviewed",
-          "review": "2026-10-17: second-pass examiner review (independent reviewer): 14 findings (4 errors, 3 misleading, 7 minor) all fixed and re-checked; 40/40 PYQ keys re-derived, none wrong; coverage 40/40.",
+          "review": "2026-10-17: second-pass examiner review (independent reviewer): 14 findings (4 errors, 3 misleading, 7 minor) all fixed and re-checked; 40/40 PYQ keys re-derived, none wrong; coverage 40/40. | 2026-10-17 (lessons 5-7, 9-10): second-pass examiner review by three independent reviewers: 26 findings (10 errors, 8 misleading, 8 minor) all fixed and re-checked; 46 moved/new PYQ keys re-derived, none wrong (cse-2005-cs-85b review note corrected); Chapter 1 coverage 86/86.",
           "lessons_status": {
             "place-value": "published+reviewed",
             "power-of-two-bases": "published+reviewed",
             "fractions-fixed-point": "published+reviewed",
             "signed-numbers": "published+reviewed",
-            "codes": "published+reviewed"
-          }
+            "floating-point-basics": "published+reviewed",
+            "ieee-754": "published+reviewed",
+            "floating-point-arithmetic": "published+reviewed",
+            "codes": "published+reviewed",
+            "code-arithmetic": "published+reviewed",
+            "multiplication-booth": "published+reviewed"
+          },
+          "restructure": "2026-10-17: floating point (old Chapter 8, 3 lessons, 25 PYQs) moved into Chapter 1 as lessons 5-7, after signed numbers and before codes (now lesson 8). Lesson ids unchanged; codes practice ids renamed nx-dl-01-05-* -> nx-dl-01-08-*. Later the same day all number-level arithmetic moved into Chapter 1 as lesson 9 (code-arithmetic: 13 PYQs from dl-05-03, it-2005-cs-47 from lesson 2, cse-2010-cs-8 from lesson 4) and lesson 10 (multiplication-booth: 8 PYQs from dl-05-04). Chapter 5 keeps only hardware PYQs (14)."
         },
         {
           "id": "02-boolean-algebra-gates",
@@ -63,9 +69,9 @@
         },
         {
           "id": "05-arithmetic-circuits",
-          "title": "Arithmetic circuits",
+          "title": "Arithmetic circuits (hardware)",
           "lessons": 4,
-          "pyqs": 35,
+          "pyqs": 14,
           "status": "planned"
         },
         {
@@ -83,14 +89,7 @@
           "status": "planned"
         },
         {
-          "id": "08-floating-point",
-          "title": "Floating point and IEEE-754",
-          "lessons": 3,
-          "pyqs": 25,
-          "status": "planned"
-        },
-        {
-          "id": "09-beyond-syllabus",
+          "id": "08-beyond-syllabus",
           "title": "Beyond the core syllabus",
           "lessons": 3,
           "pyqs": 4,

@@ -24,26 +24,27 @@ encodings (sign-magnitude, 1's complement and 2's complement), learn why 2's com
 and become fast at the things GATE asks again and again: the range of an $n$-bit format,
 encoding and decoding negative values, the invert-and-add-1 rule and its copy-to-the-first-1
 shortcut, complements in any base, the smallest width that holds a value, sign extension, and
-arithmetic shifts. This is the most-tested lesson of the chapter: sixteen previous-year
+arithmetic shifts. It is one of the two most-tested lessons of the chapter: fifteen previous-year
 questions.
 
 ## Where this fits
 
 [Lesson 1](lesson:place-value) gave place value and [Lesson 2](lesson:power-of-two-bases) gave
-the hex shorthand used for long patterns. Here one place value turns negative. Chapter 5 builds
-the adder–subtractor and the overflow detector on top of 2's complement; Chapter 8 uses the
-biased (excess-K) code from the end of this lesson for floating-point exponents.
+the hex shorthand used for long patterns. Here one place value turns negative. [Lesson 9](lesson:code-arithmetic) does arithmetic with
+these patterns (overflow, complement subtraction), and Chapter 5 builds the adder–subtractor circuit. The next three lessons
+([5](lesson:floating-point-basics), [6](lesson:ieee-754) and [7](lesson:floating-point-arithmetic))
+use the biased (excess-K) code from the end of this lesson for floating-point exponents.
 
 :::table{#radar title="GATE radar: signed numbers and complements" depth="quick"}
 | What | Detail |
 |:--|:--|
-| PYQs mapped to this lesson | 16 (1994–2025), the most of any lesson in the chapter |
-| Marks | 12 one-mark, 2 two-mark, one 5-mark descriptive (1995) and one unmarked fill-in (1994) |
-| Formats | 10 MCQ, 2 MSQ, 2 NAT, 1 fill-in, 1 descriptive |
+| PYQs mapped to this lesson | 15 (1994–2025) |
+| Marks | 11 one-mark, 2 two-mark, one 5-mark descriptive (1995) and one unmarked fill-in (1994) |
+| Formats | 9 MCQ, 2 MSQ, 2 NAT, 1 fill-in, 1 descriptive |
 | Pattern 1 | Range of $n$-bit 2's complement: 1994, 2005, 2013 |
 | Pattern 2 | Encode or decode a value: 1998, 2000, 2002, 2016, 2019 |
 | Pattern 3 | Two zeros and value counts: 1999, 2016 |
-| Pattern 4 | Sign extension and shifts: 2002, 2010, 2025 |
+| Pattern 4 | Sign extension: 2002, 2025 (the 2010 question on 8·P by shifting is solved in Lesson 9) |
 | Pattern 5 | Complements in hex, divisibility, a conversion routine: 1995, 2001, 2003 |
 | What examiners test | Range "$-2^{n-1}$ to $2^{n-1}$" (off by one), zero-padding a negative number, and $-15$ as $1111$ |
 :::
@@ -746,8 +747,8 @@ It overflows; $-2^{n-1}$ is the one value whose negation does not fit.
 A 2's-complement sum overflows exactly when two operands of the **same sign** give a result of
 the other sign: on the wheel, the sum crosses the $+7/-8$ seam. Operands of opposite signs never
 overflow in addition. (For subtraction $A - B = A + (-B)$, so it is the opposite-sign pairs that
-can overflow.) A carry out of the top bit alone is **not** overflow for signed numbers. Chapter 5
-builds the detector.
+can overflow.) A carry out of the top bit alone is **not** overflow for signed numbers.
+[Lesson 9](lesson:code-arithmetic#overflow-theorem) proves the carry rule; Chapter 5 builds the detector.
 :::
 
 ## Biased (excess-K) codes
@@ -758,7 +759,7 @@ bits and $K = 2^{n-1}$ the range is $-2^{n-1}$ to $2^{n-1} - 1$, the same as 2's
 the code is just 2's complement with the top bit flipped. Its advantage is that bigger values
 have bigger unsigned patterns, so comparison is plain unsigned comparison.
 Examples: excess-8 in 4 bits, $1011 = 11 - 8 = 3$ and $0000 = -8$; IEEE-754 single precision
-stores the exponent in excess-127, so $1000\,0010 = 130 - 127 = 3$ (Chapter 8).
+stores the exponent in excess-127, so $1000\,0010 = 130 - 127 = 3$ ([Lesson 6](lesson:ieee-754)).
 :::
 
 ## All the representations side by side
@@ -777,7 +778,7 @@ stores the exponent in excess-127, so $1000\,0010 = 130 - 127 = 3$ (Chapter 8).
 
 ## GATE questions on this lesson
 
-All sixteen previous-year questions for this lesson, from the easiest to the hardest.
+All fifteen previous-year questions for this lesson, from the easiest to the hardest.
 
 :::pyq{id="cse-2000-a-1-6" tests="twos-complement,unsigned-range" depth="standard"}
 :::
@@ -816,9 +817,6 @@ All sixteen previous-year questions for this lesson, from the easiest to the har
 :::
 
 :::pyq{id="cse-2001-a-35" tests="radix-complement,trick-hex-complement" depth="standard"}
-:::
-
-:::pyq{id="cse-2010-cs-8" tests="arithmetic-shift,decode-twos" depth="standard"}
 :::
 
 :::pyq{id="cse-2003-cs-9" tests="decode-twos" depth="standard"}

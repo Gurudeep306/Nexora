@@ -1,0 +1,367 @@
+{
+ "version": 1,
+ "title": "Decimal to IEEE-754: encoding 13.625",
+ "width": 640,
+ "height": 380,
+ "narrow": {
+  "width": 360,
+  "height": 430
+ },
+ "intro": "We will turn 13.625 into a 32-bit single-precision word, one decision at a time.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Encoding 13.625 in single precision",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Encode 13.625 (single)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 30,
+   "y": 62,
+   "text": "sign: + so s = 0",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 56,
+    "size": 14
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 30,
+   "y": 92,
+   "text": "13 = 1101₂ (repeated division by 2)",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 84,
+    "size": 14
+   }
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 30,
+   "y": 122,
+   "text": "0.625 = 0.101₂ (doubling: 1.25, 0.5, 1.0)",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 112,
+    "size": 14
+   }
+  },
+  {
+   "id": "l4",
+   "type": "text",
+   "x": 30,
+   "y": 152,
+   "text": "13.625 = 1101.101₂ = 1.101101₂ × 2³",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 140,
+    "size": 14
+   }
+  },
+  {
+   "id": "l5",
+   "type": "text",
+   "x": 30,
+   "y": 182,
+   "text": "e = 3 + 127 = 130 = 1000 0010₂",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 168,
+    "size": 14
+   }
+  },
+  {
+   "id": "l6",
+   "type": "text",
+   "x": 30,
+   "y": 212,
+   "text": "f = 101101, then 17 zeros",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 16,
+    "y": 196,
+    "size": 14
+   }
+  },
+  {
+   "id": "ws",
+   "type": "bits",
+   "x": 32,
+   "y": 268,
+   "bits": "0",
+   "cell": 18,
+   "fill": "danger",
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "we",
+   "type": "bits",
+   "x": 50,
+   "y": 268,
+   "bits": "10000010",
+   "cell": 18,
+   "fill": "info",
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "wf",
+   "type": "bits",
+   "x": 194,
+   "y": 268,
+   "bits": "10110100000000000000000",
+   "cell": 18,
+   "fill": "success",
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "ns",
+   "type": "bits",
+   "x": 30,
+   "y": 252,
+   "bits": "0",
+   "cell": 30,
+   "fill": "danger",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "ne",
+   "type": "bits",
+   "x": 60,
+   "y": 252,
+   "bits": "10000010",
+   "cell": 30,
+   "fill": "info",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "nf1",
+   "type": "bits",
+   "x": 24,
+   "y": 296,
+   "bits": "101101000000",
+   "cell": 26,
+   "fill": "success",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "nf2",
+   "type": "bits",
+   "x": 24,
+   "y": 330,
+   "bits": "00000000000",
+   "cell": 26,
+   "fill": "success",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "hex",
+   "type": "text",
+   "x": 320,
+   "y": 330,
+   "text": "0100 0001 0101 1010 0000 … 0000 = 0x415A0000",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "hidden": true,
+   "tone": "success",
+   "narrow": {
+    "x": 180,
+    "y": 384,
+    "size": 13
+   }
+  },
+  {
+   "id": "chk",
+   "type": "text",
+   "x": 320,
+   "y": 360,
+   "text": "check: +1.703125 × 2³ = 13.625",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 410,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Step 1, the sign: 13.625 is positive, so the sign bit is 0.",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Step 2, the integer part in binary: 13 = 8 + 4 + 1 = 1101₂.",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Step 3, the fraction part by repeated doubling: 0.625 × 2 = 1.25 (bit 1), 0.25 × 2 = 0.5 (bit 0), 0.5 × 2 = 1.0 (bit 1). So 0.625 = 0.101₂, and it terminates.",
+   "patches": [
+    {
+     "id": "l3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Step 4, normalise: move the point 3 places left so exactly one 1 is before it. 1101.101₂ = 1.101101₂ × 2³.",
+   "patches": [
+    {
+     "id": "l4",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Step 5, bias the exponent: e = 3 + 127 = 130 = 10000010₂.",
+   "patches": [
+    {
+     "id": "l5",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Step 6, the fraction field holds the bits after the point (the leading 1 is hidden): 101101, padded with 17 zeros to 23 bits.",
+   "patches": [
+    {
+     "id": "l6",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Step 7, assemble sign | exponent | fraction into 32 bits.",
+   "patches": [
+    {
+     "id": "ws",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wf",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ns",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ne",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nf1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nf2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Step 8, regroup the 32 bits in fours to get hex: 0x415A0000. Decoding it gives 1.703125 × 8 = 13.625 exactly, because 13.625 = 109/8 has a power-of-two denominator.",
+   "patches": [
+    {
+     "id": "hex",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "chk",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  }
+ ]
+}

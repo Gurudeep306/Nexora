@@ -1409,154 +1409,27 @@
       }
     },
     "cse-2024-1-cs-3": {
-      "approach": "Decode $A$ and $B$, compute each result in ordinary integers and check it against the 5-bit 2’s complement range $[-16, 15]$. A result outside the range is an overflow (too large) or underflow (too small).",
+      "approach": "Concept tested: **overflow in subtraction**. Decode $A = 10$ and $B = -6$ in 5 bits (range $-16 \\dots 15$) and evaluate each operation; subtraction overflows when the operands have opposite signs and the true result leaves the range.",
       "concepts": [
-        "2’s complement representation",
-        "Overflow / underflow"
+        "5-bit 2's-complement range",
+        "Overflow in addition and subtraction"
       ],
-      "given": "5-bit 2’s complement; range $-2^4 \\ldots 2^4 - 1 = -16 \\ldots 15$. $A = 01010$, $B = 11010$.",
       "steps": [
         {
-          "title": "Decode A and B",
-          "body": "$A = 01010 = 8 + 2 = +10$.\n\n$B = 11010 = -16 + 8 + 2 = -6$ (sign bit has weight $-2^4$).",
-          "scene": {
-            "rows": [
-              {
-                "label": "A",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "sign"
-                  },
-                  {
-                    "bits": "1010"
-                  }
-                ],
-                "value": "+10"
-              },
-              {
-                "label": "B",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign"
-                  },
-                  {
-                    "bits": "1010"
-                  }
-                ],
-                "value": "−6"
-              }
-            ]
-          }
+          "title": "Decode",
+          "body": "$A = 01010 = 10$, $B = 11010 = -16 + 10 = -6$. Range: $-16 \\dots 15$."
         },
         {
-          "title": "Evaluate every option",
-          "body": "| op | value | in $[-16, 15]$? |\n|---|---|---|\n| $A + B$ | $10 - 6 = 4$ | yes |\n| $A - B$ | $10 + 6 = 16$ | **no** ($> 15$) |\n| $B - A$ | $-6 - 10 = -16$ | yes |\n| $2 \\ast B$ | $-12$ | yes |"
+          "title": "Evaluate",
+          "body": "- (A) $A + B = 4$.\n- (B) $A - B = 16 > 15$: overflow.\n- (C) $B - A = -16$: just fits.\n- (D) $2B = -12$: fits."
         },
         {
-          "title": "A − B overflows",
-          "body": "$A - B = A + (-B)$ with $-B = 00110$:\n$$01010 + 00110 = 10000$$\nTwo positive operands give a result with sign bit 1 ($-16$): **overflow**.",
-          "scene": {
-            "rows": [
-              {
-                "label": "A",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "sign"
-                  },
-                  {
-                    "bits": "1010"
-                  }
-                ],
-                "value": "+10"
-              },
-              {
-                "label": "−B",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "sign"
-                  },
-                  {
-                    "bits": "0110"
-                  }
-                ],
-                "value": "+6"
-              },
-              {
-                "label": "A − B",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "0000"
-                  }
-                ],
-                "value": "reads −16 ✗"
-              }
-            ],
-            "caption": "+10 + 6 = 16 does not fit in 5 bits"
-          }
-        },
-        {
-          "title": "The others fit",
-          "body": "$B - A = 11010 + 10110 = (1)\\,10000 = -16$, the most negative 5-bit value — representable, no underflow. $2 \\ast B = 10100 = -12$ ✓, $A + B = 00100 = 4$ ✓. Only option (B) fails.",
-          "scene": {
-            "rows": [
-              {
-                "label": "B − A",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "success"
-                  },
-                  {
-                    "bits": "0000"
-                  }
-                ],
-                "value": "−16 ✓"
-              },
-              {
-                "label": "2·B",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "success"
-                  },
-                  {
-                    "bits": "0100"
-                  }
-                ],
-                "value": "−12 ✓"
-              },
-              {
-                "label": "A + B",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "sign",
-                    "tone": "success"
-                  },
-                  {
-                    "bits": "0100"
-                  }
-                ],
-                "value": "+4 ✓"
-              }
-            ],
-            "caption": "Results inside [−16, 15]"
-          }
+          "title": "Answer",
+          "body": "Only (B) leaves the range."
         }
       ],
       "answer": {
-        "value": "$A - B = 16 > 15$ overflows — option (B)",
+        "value": "(B) $A - B = 16$ overflows",
         "choice": [
           "B"
         ],
@@ -1566,29 +1439,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$A + B = 4$ fits; operands of opposite sign can never overflow."
+          "reason": "Opposite signs in an addition never overflow: $4$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$A - B = 16$ exceeds the maximum $15$ — overflow."
+          "reason": "$10 - (-6) = 16$, one more than the largest 5-bit value 15."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$B - A = -16$ is exactly the minimum representable value $-2^4$, so no underflow."
+          "reason": "$-6 - 10 = -16$, exactly the smallest 5-bit value."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$2 \\ast B = -12 \\ge -16$; shifting $11010$ left gives $10100$ with the sign preserved."
+          "reason": "$-12$ fits ($11010 \\ll 1 = 10100$, top two bits equal)."
         }
       ],
-      "shortcut": "Range $[-16, 15]$ is asymmetric: $+16$ does not fit but $-16$ does — so $A - B$ fails while $B - A$ is fine.",
+      "shortcut": "Subtraction can overflow only for opposite signs: (B) and (C); $16 > 15$ but $-16 \\ge -16$.",
       "pitfalls": [
-        "Assuming $B - A = -16$ underflows: in $n$-bit 2’s complement $-2^{n-1}$ is representable."
+        "Thinking $-16$ is out of range in 5 bits.",
+        "Forgetting that subtracting a negative number adds."
       ],
-      "verification": "Overflow rule on bits: adding two numbers of the same sign must keep that sign. $01010 + 00110$ (both +) → $1\\ldots$ ✗; $11010 + 10110$ (both −) → $1\\ldots$ ✓.",
+      "verification": "$A - B = A + (-B) = 01010 + 00110 = 10000$: positive operands, negative-looking result: overflow. ✓",
       "animation": {
         "kind": "bits",
         "title": "5-bit 2’s complement",

@@ -1730,30 +1730,37 @@
       "verification": "Complement: $P(\\text{neither}) = \\frac13 \\cdot \\frac{19}{20} = \\frac{19}{60}$, so $1200(1 - \\frac{19}{60}) = 1200 - 380 = 820$ ✓."
     },
     "cse-2021-1-cs-24": {
-      "approach": "Value $= (-1)^S \\times 1.F \\times 2^{E-127}$ for a normalised number.",
+      "approach": "Concept tested: **decoding** given fields. Exponent $10000001 = 129$ gives $E = 2$; the significand is $1.1111_2$; the sign is negative.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Biased exponent"
+        "IEEE-754 decoding",
+        "Bias 127",
+        "Hidden bit"
       ],
       "steps": [
         {
-          "title": "Fields",
-          "body": "$S=1$ → negative. $E = 10000001_2 = 129$, so the true exponent is $129 - 127 = 2$. Mantissa $1.1111_2 = 1 + \\frac12 + \\frac14 + \\frac18 + \\frac1{16} = 1.9375$."
+          "title": "Exponent",
+          "body": "$E = 1000\\,0001_2 - 127 = 129 - 127 = 2$."
+        },
+        {
+          "title": "Significand",
+          "body": "$1.f = 1.1111_2 = 1 + 0.5 + 0.25 + 0.125 + 0.0625 = 1.9375$."
         },
         {
           "title": "Value",
-          "body": "$-1.9375 \\times 2^2 = -7.75$ (equivalently $-111.11_2 = -(4+2+1+0.5+0.25)$)."
+          "body": "$-1.9375 \\times 2^{2} = -7.75$ (equivalently $-111.11_2$)."
         }
       ],
       "answer": {
-        "value": "-7.75",
+        "value": "$-7.75$",
         "number": -7.75,
         "matchesKey": true
       },
+      "shortcut": "Shift the point right by $E = 2$: $1.1111_2 \\to 111.11_2 = 7.75$, then apply the sign.",
       "pitfalls": [
-        "Forgetting the hidden leading 1 (that gives −3.75)."
+        "Answering $+7.75$ (sign ignored).",
+        "Answering $-3.875$ (bias 128) or $-3.75$ (no hidden 1: $0.1111 \\times 4$)."
       ],
-      "verification": "$7.75 = 111.11_2 = 1.1111_2 \\times 2^2$, exponent field $2+127 = 129 = 10000001_2$ ✓."
+      "verification": "Re-encode $-7.75 = -1.1111 \\times 2^2$: $e = 129$, $f = 1111$ — the given fields. ✓"
     },
     "cse-2021-1-cs-25": {
       "approach": "With all arrivals at 0 and known bursts, non-preemptive Shortest Job First minimises average waiting time.",

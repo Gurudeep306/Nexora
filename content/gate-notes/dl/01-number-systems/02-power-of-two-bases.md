@@ -36,12 +36,12 @@ of [Lesson 4](lesson:signed-numbers) are also usually given in hex.
 :::table{#radar title="GATE radar: binary, octal and hexadecimal" depth="quick"}
 | What | Detail |
 |:--|:--|
-| PYQs mapped to this lesson | 7 (1991–2017) |
-| Marks | 3 one-mark, 4 two-mark |
-| Formats | 6 MCQ, 1 fill-in |
+| PYQs mapped to this lesson | 6 (1991–2017) |
+| Marks | 3 one-mark, 3 two-mark |
+| Formats | 5 MCQ, 1 fill-in |
 | Pattern 1 | Octal ↔ hex (or hex → octal) through binary: 2005, 2009, 2017, IT 2004 |
 | Pattern 2 | Count the 1s in a sum of powers of 16: 1991, 1995 |
-| Pattern 3 | Arithmetic directly in base 8: IT 2005 |
+| Related | Arithmetic directly in base 8 (IT 2005) is solved with the other arithmetic questions in Lesson 9 |
 | What examiners test | Grouping from the wrong end, and padding on the wrong side of a fraction |
 :::
 
@@ -736,8 +736,8 @@ has four 1s; the key agrees. Some solution sets read it as $9\cdot16^3 + 7\cdot1
 evaluate what is printed.
 :::
 
-:::pyq{id="it-2005-cs-47" tests="base-arithmetic" depth="standard"}
-:::
+The IT 2005 question on multiplying octal numbers, $(33.4)_8 \times (23.4)_8$, is solved in
+[Lesson 9](lesson:code-arithmetic#base-b-arith), together with the other number-arithmetic questions.
 
 ## Practice
 

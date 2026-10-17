@@ -1,0 +1,194 @@
+{
+ "version": 1,
+ "title": "Excess-3 addition and its ±3 correction",
+ "width": 600,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 280
+ },
+ "intro": "47 and 38 in excess-3 (each digit plus 3, in 4 bits).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "Excess-3 addition 47 + 38: −3 without a carry, +3 with one",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Excess-3: 47 + 38",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "A",
+   "type": "bits",
+   "x": 180,
+   "y": 64,
+   "bits": "0111 1010",
+   "cell": 40,
+   "narrow": {
+    "x": 50,
+    "y": 64,
+    "cell": 30
+   }
+  },
+  {
+   "id": "B",
+   "type": "bits",
+   "x": 180,
+   "y": 110,
+   "bits": "0110 1011",
+   "cell": 40,
+   "narrow": {
+    "x": 50,
+    "y": 100,
+    "cell": 30
+   }
+  },
+  {
+   "id": "Al",
+   "type": "text",
+   "x": 170,
+   "y": 84.0,
+   "text": "XS3(47)",
+   "anchor": "end",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "Bl",
+   "type": "text",
+   "x": 170,
+   "y": 130.0,
+   "text": "XS3(38)",
+   "anchor": "end",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "raw",
+   "type": "bits",
+   "x": 180,
+   "y": 170,
+   "bits": "         ",
+   "cell": 40,
+   "fill": "warning",
+   "narrow": {
+    "x": 50,
+    "y": 146,
+    "cell": 30
+   }
+  },
+  {
+   "id": "res",
+   "type": "bits",
+   "x": 180,
+   "y": 230,
+   "bits": "         ",
+   "cell": 40,
+   "fill": "success",
+   "narrow": {
+    "x": 50,
+    "y": 196,
+    "cell": 30
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 300,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 256,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Units: 1010 + 1011 = 1 0101. A carry came out, so the digit sum was 10 or more: add 3. 0101 + 0011 = 1000 (excess-3 of 5), decimal carry 1.",
+   "patches": [
+    {
+     "id": "raw",
+     "set": {
+      "bits": "     0101"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "bits": "     1000"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "carry → +3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Tens: 0111 + 0110 + carry 1 = 1110, with no carry out: the digit sum was at most 9, so subtract 3: 1110 − 0011 = 1011 (excess-3 of 8).",
+   "patches": [
+    {
+     "id": "raw",
+     "set": {
+      "bits": "1110 0101"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "bits": "1011 1000"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "no carry → −3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Why: each code carries an excess of 3, so a sum carries an excess of 6. Without a carry, remove 3 to leave a single excess of 3. With a carry, the 16 taken away already over-removed, so put 3 back.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "XS3(a) + XS3(b) = a + b + 6"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Result 1011 1000 is excess-3 of 85 = 47 + 38.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "47 + 38 = 85 ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

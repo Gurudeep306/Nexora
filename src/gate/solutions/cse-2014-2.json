@@ -3649,28 +3649,33 @@
       "verification": "Example: 32 KB, 64 B blocks, 2-way → 256 sets (8 index bits); 4-way → 128 sets (7 bits), tag +1 bit."
     },
     "cse-2014-2-cs-45": {
-      "approach": "Convert $-14.25$ to normalised binary, bias the exponent by 127, and pack sign | exponent | fraction into hex.",
+      "approach": "Concept tested: **decimal to IEEE-754 encoding**. Convert $14.25$ to binary, normalise to $1.f \\times 2^3$, bias the exponent, set the sign bit, and regroup the 32 bits into hex.",
       "concepts": [
-        "IEEE-754 single precision",
-        "Biased exponent",
-        "Binary fractions"
+        "Decimal to binary",
+        "Normalisation 1.f",
+        "Bias 127",
+        "Hex grouping"
       ],
       "steps": [
         {
-          "title": "Binary and normalise",
-          "body": "$14.25=1110.01_2=1.11001_2\\times2^{3}$. Sign bit $=1$ (negative)."
+          "title": "Binary",
+          "body": "$14 = 1110_2$, $0.25 = 0.01_2$, so $14.25 = 1110.01_2$."
         },
         {
-          "title": "Exponent and fraction",
-          "body": "Biased exponent $=3+127=130=10000010_2$. Fraction $=11001000\\ldots0$ (23 bits)."
+          "title": "Normalise",
+          "body": "$1110.01 = 1.11001 \\times 2^{3}$."
         },
         {
-          "title": "Pack into hex",
-          "body": "$1\\,10000010\\,11001000000000000000000$\\n$=1100\\;0001\\;0110\\;0100\\;0000\\ldots=\\texttt{C1640000}_{16}$."
+          "title": "Fields",
+          "body": "$s = 1$; $e = 3 + 127 = 130 = 1000\\,0010$; $f = 11001\\,0\\ldots$ (23 bits)."
+        },
+        {
+          "title": "Regroup",
+          "body": "$1\\ 10000010\\ 1100100\\ldots = 1100\\,0001\\,0110\\,0100\\,0000\\ldots = \\texttt{C1640000}$: option (A)."
         }
       ],
       "answer": {
-        "value": "C1640000H",
+        "value": "`C1640000H` — option (A)",
         "choice": [
           "A"
         ],
@@ -3685,20 +3690,53 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "Sign 0 and fraction 1101100… — wrong sign and mantissa."
+          "reason": "`416C0000` is positive and has fraction $11011$ ($+14.75$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Correct magnitude ($+14.25$) but sign bit 0."
+          "reason": "`41640000` is $+14.25$: the sign bit is missing."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Sign right, but fraction 11011 (that is $-14.75$)."
+          "reason": "`C16C0000` has fraction $11011$, i.e. $-14.75$ (0.25 converted as 0.11)."
         }
       ],
-      "verification": "Decode C1640000: $-1.78125\times2^3=-14.25$ ✓."
+      "shortcut": "Negative and between 8 and 16 ⇒ the word starts `C16`; then $0.25 = 0.01$ makes the fraction $1100\\,1$ → `C164`.",
+      "pitfalls": [
+        "Storing the hidden 1.",
+        "Forgetting the sign.",
+        "Converting 0.25 as 0.11 (that is 0.75)."
+      ],
+      "verification": "Decode `C1640000`: $-1.78125 \\times 8 = -14.25$. ✓",
+      "animation": {
+        "kind": "bits",
+        "title": "−14.25 in single precision",
+        "rows": [
+          {
+            "label": "X",
+            "fields": [
+              {
+                "bits": "1",
+                "label": "sign",
+                "tone": "error"
+              },
+              {
+                "bits": "10000010",
+                "label": "e = 130",
+                "tone": "accent"
+              },
+              {
+                "bits": "11001000000000000000000",
+                "label": "f = 11001…",
+                "tone": "info"
+              }
+            ],
+            "value": "0xC1640000"
+          }
+        ]
+      }
     },
     "cse-2014-2-cs-46": {
       "approach": "Just run Newton–Raphson from $x_0=2$; the iterates fall into a 2-cycle.",

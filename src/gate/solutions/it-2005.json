@@ -368,28 +368,27 @@
       "verification": "Check $011$: target 0; C gives $0+0+0=0$ ✓. Check $100$: target 1; C gives $\\overline B(A\\oplus C)=1\\cdot1=1$ ✓."
     },
     "it-2005-cs-8": {
-      "approach": "Write $-57$ in 8-bit two's complement, append $b_{-1}=0$, and recode each bit as $b_{i-1}-b_i$ (Booth: 10 → −1, 01 → +1, 00/11 → 0).",
+      "approach": "Concept tested: **Booth recoding** of the multiplier $-57$: 8-bit pattern $1100\\,0111$, appended 0, digit $= q_{i-1} - q_i$.",
       "concepts": [
         "Booth recoding",
-        "Two's complement"
+        "2's complement of −57"
       ],
-      "given": "| Quantity | Value |\n|---|---|\n| $+57$ | $00111001$ |\n| $-57$ | $11000111$ |",
       "steps": [
         {
-          "title": "Two's complement",
-          "body": "$57=00111001_2$. Invert: $11000110$; add 1: $11000111$."
+          "title": "Pattern",
+          "body": "$-57 = 1100\\,0111$ (8-bit 2's complement)."
         },
         {
-          "title": "Recode right to left",
-          "body": "| $i$ | $b_i$ | $b_{i-1}$ | $b_{i-1}-b_i$ |\n|---|---|---|---|\n| 0 | 1 | 0 | $-1$ |\n| 1 | 1 | 1 | 0 |\n| 2 | 1 | 1 | 0 |\n| 3 | 0 | 1 | $+1$ |\n| 4 | 0 | 0 | 0 |\n| 5 | 0 | 0 | 0 |\n| 6 | 1 | 0 | $-1$ |\n| 7 | 1 | 1 | 0 |"
+          "title": "Recode",
+          "body": "Pairs from the right $(1,0), (1,1), (1,1), (0,1), (0,0), (0,0), (1,0), (1,1)$ give $-1, 0, 0, +1, 0, 0, -1, 0$."
         },
         {
-          "title": "Read MSB → LSB",
-          "body": "$0\\;{-1}\\;0\\;0\\;1\\;0\\;0\\;{-1}$"
+          "title": "Answer",
+          "body": "MSB first: $0\\ {-1}\\ 0\\ 0\\ 1\\ 0\\ 0\\ {-1}$: option (A). Value $-64 + 8 - 1 = -57$."
         }
       ],
       "answer": {
-        "value": "0 −1 0 0 1 0 0 −1",
+        "value": "$0\\ {-1}\\ 0\\ 0\\ 1\\ 0\\ 0\\ {-1}$ — option (A)",
         "choice": [
           "A"
         ],
@@ -399,28 +398,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Matches the recoding; value $-64+8-1=-57$."
+          "reason": "$-64 + 8 - 1 = -57$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "That is the plain two's-complement pattern, not the Booth recoding."
+          "reason": "That is the plain 2's-complement pattern $1100\\,0111$, not a recoding."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Value $-64+8=-56$; misses the $-1$ at bit 0 (forgot $b_{-1}=0$)."
+          "reason": "The lowest digit is lost (no appended 0): $-56$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Value $64-8+1=+57$ — the recoding of $+57$."
+          "reason": "Every sign flipped (pair read the wrong way): $+57$."
         }
       ],
+      "shortcut": "A negative multiplier's leading run of 1s ends in a single $-1$ at the top of the run.",
       "pitfalls": [
-        "Forgetting the implicit $b_{-1}=0$, which loses the LSB digit."
+        "Forgetting the appended 0.",
+        "Reading the pair as current − right."
       ],
-      "verification": "Weights: $-1\\cdot2^6+1\\cdot2^3-1\\cdot2^0=-64+8-1=-57$."
+      "verification": "Sum of the recoded digits times powers of two is $-57$. ✓"
     },
     "it-2005-cs-9": {
       "approach": "Compare total refresh time with elapsed time over one millisecond.",

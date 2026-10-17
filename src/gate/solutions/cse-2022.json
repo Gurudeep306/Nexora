@@ -856,23 +856,27 @@
       "verification": "Standard COA fact: DMA (burst mode) is the preferred method for high-speed block devices like disks."
     },
     "cse-2022-cs-8": {
-      "approach": "In 4-bit 2's complement the range is $-8$ to $+7$; overflow happens only when two operands of the same sign give a sum outside this range (sign of result flips).",
+      "approach": "Concept tested: **overflow in 2's-complement addition**. Decode each pair; only two operands of the same sign can overflow, when their sum leaves $-8 \\dots 7$.",
       "concepts": [
-        "2's complement",
-        "Overflow detection"
+        "2's-complement range",
+        "Overflow rule"
       ],
       "steps": [
         {
-          "title": "Decode and add",
-          "body": "| Option | R1 | R2 | Sum | In $[-8,7]$? |\n|---|---|---|---|---|\n| A | 1011 = −5 | 1110 = −2 | −7 | yes |\n| B | 1100 = −4 | 1010 = −6 | −10 | **no** |\n| C | 0011 = 3 | 0100 = 4 | 7 | yes |\n| D | 1001 = −7 | 1111 = −1 | −8 | yes |"
+          "title": "Decode every pair",
+          "body": "- (A) $1011 + 1110 = -5 + (-2) = -7$.\n- (B) $1100 + 1010 = -4 + (-6) = -10$.\n- (C) $0011 + 0100 = 3 + 4 = 7$.\n- (D) $1001 + 1111 = -7 + (-1) = -8$."
         },
         {
-          "title": "Bit-level check for (B)",
-          "body": "$1100+1010=1\\,0110$; keeping 4 bits gives $0110=+6$. Two negatives produced a positive ⇒ **overflow**."
+          "title": "Compare with the range",
+          "body": "4-bit 2's complement holds $-8 \\dots 7$. Only (B), $-10$, is outside."
+        },
+        {
+          "title": "Confirm with the bits",
+          "body": "$1100 + 1010 = 1\\,0110$: two negative operands give $0110 = +6$, a positive-looking result: overflow. Answer (B)."
         }
       ],
       "answer": {
-        "value": "R1 = 1100, R2 = 1010",
+        "value": "(B) R1 = 1100, R2 = 1010",
         "choice": [
           "B"
         ],
@@ -882,28 +886,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$-5+(-2)=-7$, representable ($1001$)."
+          "reason": "$-7$ fits; the carry out is dropped harmlessly."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$-4+(-6)=-10<-8$: result $0110$ has the wrong sign."
+          "reason": "$-10 < -8$: overflow (result $0110$ looks positive)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$3+4=7$, representable ($0111$)."
+          "reason": "$7$ is exactly the largest value, so it fits."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$-7+(-1)=-8$, representable ($1000$)."
+          "reason": "$-8$ is exactly the smallest value, so it fits."
         }
       ],
+      "shortcut": "Overflow ⇔ same-sign operands and a sum outside $[-8, 7]$; check only (A), (B), (D) (both negative).",
       "pitfalls": [
-        "Treating a carry out of the MSB as overflow — in (A) and (D) there is a carry-out but no overflow."
+        "Calling every carry out an overflow (A and D carry but are correct).",
+        "Thinking $-8$ or $+7$ overflow."
       ],
-      "verification": "Carry-in to MSB vs carry-out of MSB: for (B) carry-in 0, carry-out 1 → differ → overflow; for the others they match."
+      "verification": "Carry rule for (B): into the sign column 0, out of it 1: they differ. ✓"
     },
     "cse-2022-cs-9": {
       "approach": "The first letter printed is B, so only T2 (waiting on S1) may start: S1 = 1 and S2 = S3 = 0. Then each signal passes a single token along the cycle T2 → T1 → T3 → T2.",
@@ -2078,23 +2084,31 @@
       "verification": "Bit count 1 + 10 + 5 = 16 confirms the field sizes."
     },
     "cse-2022-cs-31": {
-      "approach": "Decode each word: sign | 8-bit exponent (bias 127) | mantissa. Then check the four relations.",
+      "approach": "Concept tested: **decoding several words**, then checking simple arithmetic claims. Decode $A$, $B$, $C$ to ordinary numbers first; each claim is then one line.",
       "concepts": [
-        "IEEE-754 single precision"
+        "IEEE-754 decoding",
+        "Reading the exponent from the hex digits"
       ],
-      "given": "| Reg | Hex | Sign | Exponent | Mantissa |\n|---|---|---|---|---|\n| $R_A$ | C1400000 | 1 | 1000 0010 = 130 | .1000… |\n| $R_B$ | 42100000 | 0 | 1000 0100 = 132 | .0010… |\n| $R_C$ | 41400000 | 0 | 1000 0010 = 130 | .1000… |",
       "steps": [
         {
-          "title": "Decode",
-          "body": "$A = -1.1_2 \\times 2^{130-127} = -1.5 \\times 8 = -12$\n\n$B = +1.001_2 \\times 2^{132-127} = 1.125 \\times 32 = 36$\n\n$C = +1.1_2 \\times 2^{3} = 12$"
+          "title": "Decode A = 0xC1400000",
+          "body": "$1\\ 10000010\\ 1000\\ldots$: $-1.1_2 \\times 2^{3} = -1.5 \\times 8 = -12$."
         },
         {
-          "title": "Check options",
-          "body": "(A) $A + C = -12 + 12 = 0$ ✓\n\n(B) $A + B = -12 + 36 = 24 \\ne 12 = C$ ✗\n\n(C) $3C = 36 = B$ ✓\n\n(D) $B - C = 24 > 0$ ✓\n\nThe FALSE one is (B)."
+          "title": "Decode B = 0x42100000",
+          "body": "$0\\ 10000100\\ 0010\\ldots$: $1.001_2 \\times 2^{5} = 1.125 \\times 32 = 36$."
+        },
+        {
+          "title": "Decode C = 0x41400000",
+          "body": "$0\\ 10000010\\ 1000\\ldots$: $1.5 \\times 8 = 12$ (it is $A$ with the sign bit cleared)."
+        },
+        {
+          "title": "Check each claim",
+          "body": "- (A) $A + C = -12 + 12 = 0$: true.\n- (B) $A + B = -12 + 36 = 24 \\ne 12 = C$: **false**.\n- (C) $3C = 36 = B$: true.\n- (D) $B - C = 24 > 0$: true.\n\nThe FALSE statement is (B)."
         }
       ],
       "answer": {
-        "value": "C = A + B",
+        "value": "(B) $C = A + B$ is false ($A + B = 24$, $C = 12$)",
         "choice": [
           "B"
         ],
@@ -2104,25 +2118,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True: −12 + 12 = 0."
+          "reason": "True: $A = -12$ and $C = 12$ differ only in the sign bit (`C1…` vs `41…`)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "FALSE (answer): A + B = 24, not 12."
+          "reason": "False: $A + B = 24$, but $C = 12$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "True: 3 × 12 = 36."
+          "reason": "True: $B = 36 = 3 \\times 12$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "True: 36 − 12 = 24 > 0."
+          "reason": "True: $B - C = 24 > 0$."
         }
       ],
-      "verification": "RA and RC differ only in the sign bit, so A = −C, consistent with option A being true."
+      "shortcut": "`C14…` and `414…` differ only in the top bit, so $A = -C$ instantly; `421` has exponent 132 (scale 32), so $B = 1.125 \\times 32 = 36$.",
+      "pitfalls": [
+        "Answering 'which is TRUE' by mistake.",
+        "Decoding $B$ with exponent 131 (gives 18) by mis-cutting the bits."
+      ],
+      "verification": "Python `struct` decodes the three words to −12.0, 36.0 and 12.0. ✓"
     },
     "cse-2022-cs-32": {
       "approach": "Simulate round robin (q = 4, order P, Q, R, S) for each option and count the switches S→Q, R→Q, Q→R and S→P.",

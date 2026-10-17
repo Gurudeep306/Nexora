@@ -1,0 +1,373 @@
+{
+ "version": 1,
+ "title": "Bit-pair recoding table",
+ "width": 600,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 320
+ },
+ "intro": "The eight multiplier triples and the radix-4 partial product each one selects.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "Bit-pair (radix-4) recoding table",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Bit-pair table",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tab",
+   "type": "table",
+   "x": 20,
+   "y": 44,
+   "cellW": 186,
+   "cellH": 26,
+   "rows": [
+    [
+     "q(i+1) q(i) q(i−1)",
+     "D = −2q(i+1) + q(i) + q(i−1)",
+     "partial product"
+    ],
+    [
+     "0 0 0",
+     "−0 + 0 + 0 = 0",
+     "0"
+    ],
+    [
+     "0 0 1",
+     "−0 + 0 + 1 = +1",
+     "+M"
+    ],
+    [
+     "0 1 0",
+     "−0 + 1 + 0 = +1",
+     "+M"
+    ],
+    [
+     "0 1 1",
+     "−0 + 1 + 1 = +2",
+     "+2M"
+    ],
+    [
+     "1 0 0",
+     "−2 + 0 + 0 = −2",
+     "−2M"
+    ],
+    [
+     "1 0 1",
+     "−2 + 0 + 1 = −1",
+     "−M"
+    ],
+    [
+     "1 1 0",
+     "−2 + 1 + 0 = −1",
+     "−M"
+    ],
+    [
+     "1 1 1",
+     "−2 + 1 + 1 = 0",
+     "0"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "ntab",
+   "type": "table",
+   "x": 70,
+   "y": 44,
+   "cellW": 110,
+   "cellH": 26,
+   "rows": [
+    [
+     "triple",
+     "D"
+    ],
+    [
+     "0 0 0",
+     "0"
+    ],
+    [
+     "0 0 1",
+     "+M"
+    ],
+    [
+     "0 1 0",
+     "+M"
+    ],
+    [
+     "0 1 1",
+     "+2M"
+    ],
+    [
+     "1 0 0",
+     "−2M"
+    ],
+    [
+     "1 0 1",
+     "−M"
+    ],
+    [
+     "1 1 0",
+     "−M"
+    ],
+    [
+     "1 1 1",
+     "0"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "narrow"
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 300,
+   "y": 300,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 300,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each radix-4 digit pairs two Booth digits: D = 2d(i+1) + d(i) = −2q(i+1) + q(i) + q(i−1). The eight triples give the digits 0, ±1, ±2.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "D = 2·d(i+1) + d(i)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "−29 = 11100011: triple 0 (bits 1, 0, ₋₁) is 110, so D0 = −1",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "D0 = −M"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "−29 = 11100011: triple 1 (bits 3, 2, 1) is 001, so D1 = +1",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "D1 = +M"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "−29 = 11100011: triple 2 (bits 5, 4, 3) is 100, so D2 = −2",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "D2 = −2M"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "−29 = 11100011: triple 3 (bits 7, 6, 5) is 111, so D3 = 0",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": [
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": [
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "D3 = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So −29 = 0·4³ − 2·4² + 1·4 − 1: four radix-4 digits, at most four partial products for 8 bits, each a shift of ±M or ±2M.",
+   "patches": [
+    {
+     "id": "tab",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "ntab",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "0 −2 +1 −1 = −29 ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

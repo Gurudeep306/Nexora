@@ -4343,88 +4343,111 @@
       }
     },
     "cse-1997-b-72-a": {
-      "approach": "Convert to binary, normalise to 0.1xxxx × 2^e, keep 5 magnitude bits (truncating the rest) and write the exponent in 4-bit sign-magnitude.",
+      "approach": "Concept tested: **encoding in a custom format** with a fraction-form mantissa and sign-magnitude fields. Convert to binary, normalise as $0.1\\ldots \\times 2^e$, keep 5 magnitude bits (truncating, as the key assumes) and write $e$ in 4-bit sign-magnitude.",
       "concepts": [
-        "Normalised floating point",
-        "Sign-magnitude",
+        "Fraction-form normalisation",
+        "Sign-magnitude fields",
         "Truncation"
       ],
-      "given": "| Field | Bits | Form |\n|---|---|---|\n| $f$ (mantissa) | 6 = sign + 5 | sign-magnitude fraction $0.b_1\\dots b_5$ |\n| $e$ (exponent) | 4 = sign + 3 | sign-magnitude integer |",
+      "given": "$f$: 6 bits = sign + 5 magnitude bits (a fraction). $e$: 4 bits = sign + 3 magnitude bits. $n = f \\cdot 2^{e}$. $A = 54.75$, $B = 9.75$.",
       "steps": [
         {
-          "title": "A = 54.75",
-          "body": "$54.75=110110.11_2=0.11011011\\times2^6$. Keep 5 bits: $0.11011$.\n\n$f=0\\,11011$, $e=+6=0\\,110$. Stored value $0.11011_2\\times2^6=110110_2=54$."
+          "title": "A to binary and normalise",
+          "body": "$54.75 = 110110.11_2 = 0.11011011_2 \\times 2^{6}$ (point moved 6 places left)."
         },
         {
-          "title": "B = 9.75",
-          "body": "$9.75=1001.11_2=0.100111\\times2^4$. Keep 5 bits: $0.10011$.\n\n$f=0\\,10011$, $e=+4=0\\,100$. Stored value $1001.1_2=9.5$."
+          "title": "Fit A into the fields",
+          "body": "Five magnitude bits: $11011$ (the dropped bits $011$ are lost by truncation). $e = 6 = 110_2$.\n\n$f_A = 0\\ 11011$, $e_A = 0\\ 110$; stored value $0.11011_2 \\times 2^6 = \\tfrac{27}{32} \\times 64 = 54$."
+        },
+        {
+          "title": "B to binary and normalise",
+          "body": "$9.75 = 1001.11_2 = 0.100111_2 \\times 2^{4}$."
+        },
+        {
+          "title": "Fit B into the fields",
+          "body": "Truncate to $10011$; $e = 4 = 100_2$.\n\n$f_B = 0\\ 10011$, $e_B = 0\\ 100$; stored value $0.10011_2 \\times 2^4 = \\tfrac{19}{32} \\times 16 = 9.5$."
         }
       ],
       "answer": {
-        "value": "A: f = 0 11011, e = 0 110 (0.11011 × 2^6 = 54); B: f = 0 10011, e = 0 100 (0.10011 × 2^4 = 9.5)",
+        "value": "$A$: $f = 0\\,11011$, $e = 0\\,110$ (stores 54). $B$: $f = 0\\,10011$, $e = 0\\,100$ (stores 9.5).",
         "matchesKey": true
       },
+      "shortcut": "Write the integer part's bit count as the exponent directly: $54 < 64 = 2^6$ gives $e = 6$, $9 < 16 = 2^4$ gives $e = 4$; then copy the first 5 bits of the binary string.",
       "pitfalls": [
-        "Using an unnormalised mantissa (e.g. 0.01101 × 2^7) and losing a significant bit.",
-        "Rounding instead of truncating — the question's error part (c) assumes the bits are simply dropped."
+        "Rounding instead of truncating: $B$ would become $0.10100 \\times 2^4 = 10$ (the official key truncates).",
+        "Using 6 magnitude bits: the 6-bit $f$ includes its sign bit.",
+        "Writing $e$ in 2's complement or biased form; the question says sign-magnitude."
       ],
-      "verification": "0.11011 × 64 = 0.84375 × 64 = 54; 0.10011 × 16 = 0.59375 × 16 = 9.5."
+      "verification": "Decode: $0.11011_2 = 27/32$, $27/32 \\times 64 = 54$; $0.10011_2 = 19/32$, $19/32 \\times 16 = 9.5$. Both are within one truncated step of the originals."
     },
     "cse-1997-b-72-b": {
-      "approach": "Standard FP addition: equalise exponents by shifting the smaller operand's mantissa right, add mantissas, then normalise.",
+      "approach": "Concept tested: **floating-point addition** in a custom truncating format. Align the operand with the smaller exponent to the larger one (shift its fraction right, truncating), add the fractions, then normalise.",
       "concepts": [
-        "Floating-point addition",
         "Exponent alignment",
-        "Normalisation"
+        "Fraction-form significands",
+        "Truncation"
       ],
-      "given": "| Field | Bits | Form |\n|---|---|---|\n| $f$ (mantissa) | 6 = sign + 5 | sign-magnitude fraction $0.b_1\\dots b_5$ |\n| $e$ (exponent) | 4 = sign + 3 | sign-magnitude integer |",
+      "given": "From part (a): $A = 0.11011 \\times 2^{6}$ (stores 54), $B = 0.10011 \\times 2^{4}$ (stores 9.5); 5 magnitude bits, truncation.",
       "steps": [
         {
           "title": "Compare exponents",
-          "body": "$e_A=6$, $e_B=4$; difference $6-4=2$, so shift B's mantissa right by 2."
+          "body": "$e_A = 6$, $e_B = 4$: $B$ must be shifted right by $6 - 4 = 2$ places."
         },
         {
           "title": "Align B",
-          "body": "$0.10011\\times2^4\\to0.0010011\\times2^6\\to0.00100\\times2^6$ (5 bits kept; the shifted-out $11$ is lost)."
+          "body": "$0.10011 \\times 2^{4} = 0.0010011 \\times 2^{6}$; keeping 5 bits (truncation): $0.00100 \\times 2^{6}$. The bits $11$ fall off."
         },
         {
-          "title": "Add and normalise",
-          "body": "$0.11011+0.00100=0.11111$; no overflow, leading bit 1 ⇒ already normalised.\n\nResult $f=0\\,11111$, $e=0\\,110$: $0.11111_2\\times2^6=111110_2=62$."
+          "title": "Add the fractions",
+          "body": "$0.11011 + 0.00100 = 0.11111$, so the sum is $0.11111 \\times 2^{6}$."
+        },
+        {
+          "title": "Normalise and store",
+          "body": "$0.11111$ already starts with 1 and has not overflowed past 1, so no shift is needed: $f = 0\\,11111$, $e = 0\\,110$, value $\\tfrac{31}{32} \\times 64 = 62$."
         }
       ],
       "answer": {
-        "value": "Align B to exponent 6: 0.10011×2^4 → 0.00100×2^6; add mantissas 0.11011 + 0.00100 = 0.11111; result 0.11111 × 2^6 = 62 (f = 0 11111, e = 0 110), already normalized.",
+        "value": "Align $B$ to $0.00100 \\times 2^6$, add to get $0.11111 \\times 2^6 = 62$ ($f = 0\\,11111$, $e = 0\\,110$), already normalised.",
         "matchesKey": true
       },
+      "shortcut": "In decimal: $54 + (9.5$ truncated to a multiple of $2^{6-5} = 2) = 54 + 8 = 62$.",
       "pitfalls": [
-        "Shifting the larger operand left instead of the smaller one right."
+        "Shifting the larger operand left instead of the smaller one right.",
+        "Rounding the aligned $B$ up to $0.00101$ (gives 64): this format truncates.",
+        "Adding the exponents."
       ],
-      "verification": "54 + 8 = 62, where 8 is the aligned value 0.001 × 2^6 of B."
+      "verification": "At exponent 6 the fraction step is $2^{6-5} = 2$, so $B$ can only contribute a multiple of 2: $9.5 \\to 8$. $54 + 8 = 62$. ✓"
     },
     "cse-1997-b-72-c": {
-      "approach": "Compare the computed sum 62 with the true sum 54.75 + 9.75 = 64.5.",
+      "approach": "Concept tested: **percentage error** of a floating-point sum. Compare the computed sum (62, from part b) with the true sum $54.75 + 9.75 = 64.5$, relative to the true value.",
       "concepts": [
-        "Relative error",
+        "Relative and percentage error",
         "Truncation error"
       ],
       "steps": [
         {
           "title": "True and computed sums",
-          "body": "True: $54.75+9.75=64.5$. Computed in (b): $62$."
+          "body": "True: $54.75 + 9.75 = 64.5$. Computed (part b): $62$."
         },
         {
-          "title": "Percentage error",
-          "body": "$\\dfrac{64.5-62}{64.5}\\times100=\\dfrac{2.5}{64.5}\\times100=3.876\\ldots\\approx3.9\\%$"
+          "title": "Relative error",
+          "body": "$\\dfrac{|62 - 64.5|}{64.5} = \\dfrac{2.5}{64.5} = 0.03876\\ldots$"
+        },
+        {
+          "title": "Percentage",
+          "body": "$0.03876 \\times 100 \\approx 3.876\\,\\% \\approx 3.9\\,\\%$ (one place after the point)."
         }
       ],
       "answer": {
-        "value": "3.9%",
+        "value": "$\\dfrac{2.5}{64.5} \\times 100 \\approx$ **3.9 %**",
         "matchesKey": true
       },
+      "shortcut": "Error $= 0.75$ (A truncated) $+ 0.25$ (B truncated) $+ 1.5$ (alignment) $= 2.5$ out of $64.5$.",
       "pitfalls": [
-        "Dividing by the computed value 62 (gives 4.0%) — relative error uses the true value."
+        "Dividing by the computed sum 62 (gives 4.0 %).",
+        "Using only the representation errors (1.0 out of 64.5 ≈ 1.6 %) and forgetting the alignment loss."
       ],
-      "verification": "2.5/64.5 = 0.03876 → 3.9 % to one decimal place."
+      "verification": "$64.5 \\times 0.039 \\approx 2.5$. ✓"
     },
     "cse-1997-b-73": {
       "approach": "request_R either grants R immediately or records the request. release_R, inside the mutex, hands R directly to the highest-priority recorded requester (V on its semaphore) and keeps busy = true; only if nobody waits does it set busy = false.",

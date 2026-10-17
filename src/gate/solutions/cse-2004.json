@@ -1491,23 +1491,28 @@
       "verification": "Also $CDA \\cdot B = I$: from $BCDA = I$, $CDA = B^{-1}$ and a one-sided inverse of a square matrix is two-sided."
     },
     "cse-2004-cs-28": {
-      "approach": "Evaluate each sum one operation at a time, rounding every intermediate result to three significant digits.",
+      "approach": "Concept tested: **rounding after every operation** in 3-significant-digit decimal arithmetic, and the resulting **non-associativity**.",
       "concepts": [
-        "Floating-point rounding",
-        "Non-associativity of FP addition"
+        "Rounding to p significant digits",
+        "Non-associativity",
+        "Order of operations"
       ],
       "steps": [
         {
           "title": "First expression",
-          "body": "$113. + (-111.) = 2.00$ (exact). Then $2.00 + 7.51 = 9.51$ (exact, 3 digits). Result **9.51**."
+          "body": "$113. + (-111.) = 2.00$ (exact). Then $2.00 + 7.51 = 9.51$, which fits in 3 digits: **9.51**."
         },
         {
-          "title": "Second expression",
-          "body": "$-111. + 7.51 = -103.49 \\to -103.$ (round to 3 digits). Then $113. + (-103.) = 10.0$. Result **10.0**."
+          "title": "Second expression, inner bracket",
+          "body": "$-111. + 7.51 = -103.49$, which needs 5 digits; rounded to 3 significant digits: $-103$."
+        },
+        {
+          "title": "Second expression, outer",
+          "body": "$113. + (-103.) = 10.0$: **10.0**. Answer: 9.51 and 10.0, option (A)."
         }
       ],
       "answer": {
-        "value": "9.51 and 10.0 respectively",
+        "value": "9.51 and 10.0 — option (A)",
         "choice": [
           "A"
         ],
@@ -1517,28 +1522,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the rounding in the second expression loses 0.49."
+          "reason": "The first keeps 7.51 intact; the second rounds $-103.49$ to $-103$, losing $0.49$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Swapped order of results."
+          "reason": "This swaps the two results."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Would hold only with exact arithmetic; rounding $-103.49$ to $-103.$ changes the second result."
+          "reason": "9.51 is the exact answer, but the second order rounds an intermediate result."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The first expression has no rounding loss, so it stays $9.51$."
+          "reason": "The first expression never rounds: $2.00 + 7.51 = 9.51$."
         }
       ],
+      "shortcut": "Only intermediate results with more than 3 significant digits get rounded: $-103.49$ is the only one.",
       "pitfalls": [
-        "Rounding only the final answer instead of each intermediate result."
+        "Rounding only the final answer.",
+        "Truncating $-103.49$ to $-103$ is the same here, but rounding $-103.51$ would give $-104$: read 'with rounding'."
       ],
-      "verification": "Exact value of both is 9.51; only the second suffers a rounding error of +0.49."
+      "verification": "Exact value $9.51$; the second order is off by $0.49$, exactly the digits lost when $-103.49 \\to -103$. ✓"
     },
     "cse-2004-cs-29": {
       "approach": "Decision-tree argument: a comparison sort must distinguish all $n!$ permutations, so the tree height is at least $\\log_2 n! = \\Theta(n \\log n)$.",
@@ -4113,27 +4120,27 @@
       }
     },
     "cse-2004-cs-66": {
-      "approach": "Convert to decimal, multiply, and write the product back in 8-bit 2's complement.",
+      "approach": "Concept tested: **signed (2's-complement) multiplication**. Decode $A = -6$ and $B = 10$; the product $-60$ fits in 8 bits, so the answer is the 8-bit pattern of $-60$.",
       "concepts": [
-        "2's complement",
-        "Signed multiplication"
+        "2's-complement decoding",
+        "Signed shift-and-add"
       ],
       "steps": [
         {
           "title": "Decode",
-          "body": "$A = 11111010$: negative; magnitude $= 00000110 = 6$, so $A = -6$. $B = 00001010 = 10$."
+          "body": "$A = 1111\\,1010 = -6$, $B = 0000\\,1010 = 10$."
         },
         {
-          "title": "Multiply",
-          "body": "$-6 \\times 10 = -60$."
+          "title": "Multiply with sign-extended partial products",
+          "body": "$B$ has 1s at bits 1 and 3: $A \\cdot 2 + A \\cdot 8 = 1111\\,0100 + 1101\\,0000 = 1\\,1100\\,0100 \\to 1100\\,0100$."
         },
         {
-          "title": "Encode −60",
-          "body": "$60 = 00111100$; invert → $11000011$; add 1 → **11000100** ($= 196 = 256 - 60$)."
+          "title": "Check",
+          "body": "$1100\\,0100 = -128 + 64 + 4 = -60 = -6 \\times 10$: option (A)."
         }
       ],
       "answer": {
-        "value": "11000100",
+        "value": "$11000100$ ($-60$) — option (A)",
         "choice": [
           "A"
         ],
@@ -4148,23 +4155,24 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "10011100 = −100."
+          "reason": "$10011100 = -100$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "10100101 = −91."
+          "reason": "$10100101 = -91$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "11010101 = −43."
+          "reason": "$11010101 = -43$."
         }
       ],
+      "shortcut": "Decode, multiply in decimal, encode: $-60 = -(0011\\,1100) = 1100\\,0100$.",
       "pitfalls": [
-        "Multiplying the raw unsigned patterns (250 × 10)."
+        "Multiplying the patterns as unsigned ($250 \\times 10$)."
       ],
-      "verification": "11000100 → invert 00111011 + 1 = 00111100 = 60 ⇒ −60 ✓."
+      "verification": "$1100\\,0100 + 0011\\,1100 = 1\\,0000\\,0000$, so it is the negative of 60. ✓"
     },
     "cse-2004-cs-67": {
       "approach": "Y must select one of the 8 status bits ⇒ $\\log_2 8$ bits; X takes the remaining bits of the 26-bit word and addresses the control memory.",
