@@ -705,18 +705,23 @@
       "verification": "Check A: $x\\cdot1 + \\bar x\\cdot0 = x$ for $y=0$; $0 + \\bar x = \\bar x$ for $y=1$."
     },
     "cse-2016-1-cs-7": {
-      "approach": "The MSB is 1, so the number is negative; its magnitude is the 2's complement (invert and add 1).",
+      "approach": "Concept tested: decoding a 2's-complement pattern. The top bit is 1, so the value is negative; its size is the negation of the pattern (or subtract $2^{16}$ from the unsigned value).",
       "concepts": [
-        "2's complement"
+        "Decoding 2's complement",
+        "Negation"
       ],
       "steps": [
         {
-          "title": "Invert",
-          "body": "$1111\\,1111\\,1111\\,0101 \\to 0000\\,0000\\,0000\\,1010 = 10$."
+          "title": "Read the sign",
+          "body": "The top bit of $1111\\,1111\\,1111\\,0101$ is 1, so the number is negative."
         },
         {
-          "title": "Add 1",
-          "body": "$10 + 1 = 11$, so the value is $-11$."
+          "title": "Negate to find the size",
+          "body": "Invert: $0000\\,0000\\,0000\\,1010$; add 1: $0000\\,0000\\,0000\\,1011 = 11$."
+        },
+        {
+          "title": "Attach the sign and check",
+          "body": "The value is $-11$. Check: as unsigned the pattern is $65525$, and $65525 - 65536 = -11$."
         }
       ],
       "answer": {
@@ -724,7 +729,11 @@
         "number": -11,
         "matchesKey": true
       },
-      "shortcut": "Weighted sum: $-2^{15} + (2^{15} - 1 - 10) = -11$, i.e. value $= -(\\text{inverted} + 1)$.",
+      "shortcut": "Leading 1s can be dropped down to one: $1111\\dots1\\,0101 = 10101_2$ in 5 bits $= -16 + 4 + 1 = -11$.",
+      "pitfalls": [
+        "Reading only the low byte $0101 = 5$ and attaching a minus sign.",
+        "Inverting without adding 1, which gives $-10$."
+      ],
       "verification": "$+11 = 0000\\,0000\\,0000\\,1011$; invert $\\to 1111\\,1111\\,1111\\,0100$; add 1 $\\to 1111\\,1111\\,1111\\,0101$ ✓."
     },
     "cse-2016-1-cs-8": {

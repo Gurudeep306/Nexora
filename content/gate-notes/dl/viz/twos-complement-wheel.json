@@ -1,0 +1,1563 @@
+{
+ "version": 1,
+ "title": "The 2's-complement wheel",
+ "width": 500,
+ "height": 520,
+ "intro": "Sixteen 4-bit patterns arranged clockwise in counting order, 0000 at the top. The number inside the ring next to each pattern is its unsigned value, 0 to 15.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 250,
+   "y": 22,
+   "text": "4-bit patterns on a wheel",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "pos",
+   "type": "arc",
+   "cx": 250,
+   "cy": 272,
+   "r": 216,
+   "r0": 204,
+   "start": -11.25,
+   "end": 168.75,
+   "fill": "success",
+   "tone": "success",
+   "hidden": true
+  },
+  {
+   "id": "neg",
+   "type": "arc",
+   "cx": 250,
+   "cy": 272,
+   "r": 216,
+   "r0": 204,
+   "start": 168.75,
+   "end": 348.75,
+   "fill": "danger",
+   "tone": "danger",
+   "hidden": true
+  },
+  {
+   "id": "path",
+   "type": "arc",
+   "cx": 250,
+   "cy": 272,
+   "r": 140,
+   "r0": 128,
+   "start": 0,
+   "end": 22.5,
+   "fill": "warning",
+   "tone": "warning",
+   "emphasis": "strong",
+   "hidden": true
+  },
+  {
+   "id": "n0",
+   "type": "node",
+   "cx": 250.0,
+   "cy": 100.0,
+   "r": 25,
+   "label": "0000",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v0",
+   "type": "text",
+   "x": 250.0,
+   "y": 168.0,
+   "text": "0",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n1",
+   "type": "node",
+   "cx": 315.82,
+   "cy": 113.09,
+   "r": 25,
+   "label": "0001",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 289.8,
+   "y": 175.92,
+   "text": "1",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n2",
+   "type": "node",
+   "cx": 371.62,
+   "cy": 150.38,
+   "r": 25,
+   "label": "0010",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v2",
+   "type": "text",
+   "x": 323.54,
+   "y": 198.46,
+   "text": "2",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n3",
+   "type": "node",
+   "cx": 408.91,
+   "cy": 206.18,
+   "r": 25,
+   "label": "0011",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v3",
+   "type": "text",
+   "x": 346.08,
+   "y": 232.2,
+   "text": "3",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n4",
+   "type": "node",
+   "cx": 422.0,
+   "cy": 272.0,
+   "r": 25,
+   "label": "0100",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v4",
+   "type": "text",
+   "x": 354.0,
+   "y": 272.0,
+   "text": "4",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n5",
+   "type": "node",
+   "cx": 408.91,
+   "cy": 337.82,
+   "r": 25,
+   "label": "0101",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v5",
+   "type": "text",
+   "x": 346.08,
+   "y": 311.8,
+   "text": "5",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n6",
+   "type": "node",
+   "cx": 371.62,
+   "cy": 393.62,
+   "r": 25,
+   "label": "0110",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v6",
+   "type": "text",
+   "x": 323.54,
+   "y": 345.54,
+   "text": "6",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n7",
+   "type": "node",
+   "cx": 315.82,
+   "cy": 430.91,
+   "r": 25,
+   "label": "0111",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v7",
+   "type": "text",
+   "x": 289.8,
+   "y": 368.08,
+   "text": "7",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n8",
+   "type": "node",
+   "cx": 250.0,
+   "cy": 444.0,
+   "r": 25,
+   "label": "1000",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v8",
+   "type": "text",
+   "x": 250.0,
+   "y": 376.0,
+   "text": "8",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n9",
+   "type": "node",
+   "cx": 184.18,
+   "cy": 430.91,
+   "r": 25,
+   "label": "1001",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v9",
+   "type": "text",
+   "x": 210.2,
+   "y": 368.08,
+   "text": "9",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n10",
+   "type": "node",
+   "cx": 128.38,
+   "cy": 393.62,
+   "r": 25,
+   "label": "1010",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v10",
+   "type": "text",
+   "x": 176.46,
+   "y": 345.54,
+   "text": "10",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n11",
+   "type": "node",
+   "cx": 91.09,
+   "cy": 337.82,
+   "r": 25,
+   "label": "1011",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v11",
+   "type": "text",
+   "x": 153.92,
+   "y": 311.8,
+   "text": "11",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n12",
+   "type": "node",
+   "cx": 78.0,
+   "cy": 272.0,
+   "r": 25,
+   "label": "1100",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v12",
+   "type": "text",
+   "x": 146.0,
+   "y": 272.0,
+   "text": "12",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n13",
+   "type": "node",
+   "cx": 91.09,
+   "cy": 206.18,
+   "r": 25,
+   "label": "1101",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v13",
+   "type": "text",
+   "x": 153.92,
+   "y": 232.2,
+   "text": "13",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n14",
+   "type": "node",
+   "cx": 128.38,
+   "cy": 150.38,
+   "r": 25,
+   "label": "1110",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v14",
+   "type": "text",
+   "x": 176.46,
+   "y": 198.46,
+   "text": "14",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "n15",
+   "type": "node",
+   "cx": 184.18,
+   "cy": 113.09,
+   "r": 25,
+   "label": "1111",
+   "mono": true,
+   "size": 14
+  },
+  {
+   "id": "v15",
+   "type": "text",
+   "x": 210.2,
+   "y": 175.92,
+   "text": "15",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true
+  },
+  {
+   "id": "ptr",
+   "type": "arrow",
+   "from": [
+    250,
+    272
+   ],
+   "to": "n0",
+   "tone": "accent"
+  },
+  {
+   "id": "lab",
+   "type": "text",
+   "x": 250,
+   "y": 506,
+   "text": "",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each clockwise step adds 1. From 0000 to 0111 the patterns count 0 to 7, exactly as unsigned numbers.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "n7",
+     "set": {
+      "fill": "subject",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "ptr",
+     "set": {
+      "to": "n7"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now step backwards from 0000: one step anticlockwise lands on 1111. A step back means −1, so it is natural to read 1111 as −1, not 15.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n7",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n9",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n10",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n11",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n12",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n13",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n14",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n15",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n15",
+     "set": {
+      "fill": "danger",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "ptr",
+     "set": {
+      "to": "n15"
+     }
+    },
+    {
+     "id": "v15",
+     "set": {
+      "text": "−1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Reading every pattern with a leading 1 as (unsigned value − 16) gives 2's complement: 1111 = −1, 1110 = −2, …, 1000 = −8. The top bit now says the sign.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n7",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n9",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n10",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n11",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n12",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n13",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n14",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n15",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "+1"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "+2"
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "text": "+3"
+     }
+    },
+    {
+     "id": "v4",
+     "set": {
+      "text": "+4"
+     }
+    },
+    {
+     "id": "v5",
+     "set": {
+      "text": "+5"
+     }
+    },
+    {
+     "id": "v6",
+     "set": {
+      "text": "+6"
+     }
+    },
+    {
+     "id": "v7",
+     "set": {
+      "text": "+7"
+     }
+    },
+    {
+     "id": "v8",
+     "set": {
+      "text": "−8"
+     }
+    },
+    {
+     "id": "v9",
+     "set": {
+      "text": "−7"
+     }
+    },
+    {
+     "id": "v10",
+     "set": {
+      "text": "−6"
+     }
+    },
+    {
+     "id": "v11",
+     "set": {
+      "text": "−5"
+     }
+    },
+    {
+     "id": "v12",
+     "set": {
+      "text": "−4"
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "text": "−3"
+     }
+    },
+    {
+     "id": "v14",
+     "set": {
+      "text": "−2"
+     }
+    },
+    {
+     "id": "v15",
+     "set": {
+      "text": "−1"
+     }
+    },
+    {
+     "id": "pos",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neg",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lab",
+     "set": {
+      "text": "2's complement"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The only jump is the seam at the bottom: 0111 (+7) is followed by 1000 (−8). Crossing it is overflow. 4-bit 2's complement covers −8 … +7, sixteen different values, one zero.",
+   "patches": [
+    {
+     "id": "n7",
+     "set": {
+      "fill": "warning",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "fill": "warning",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "ptr",
+     "set": {
+      "to": "n8"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Sign-magnitude reads the top bit as a sign and the other three as a size: 1000 is −0 and 1111 is −7. Two patterns mean zero, so only 15 values fit (−7 … +7).",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n7",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n9",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n10",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n11",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n12",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n13",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n14",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n15",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "+1"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "+2"
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "text": "+3"
+     }
+    },
+    {
+     "id": "v4",
+     "set": {
+      "text": "+4"
+     }
+    },
+    {
+     "id": "v5",
+     "set": {
+      "text": "+5"
+     }
+    },
+    {
+     "id": "v6",
+     "set": {
+      "text": "+6"
+     }
+    },
+    {
+     "id": "v7",
+     "set": {
+      "text": "+7"
+     }
+    },
+    {
+     "id": "v8",
+     "set": {
+      "text": "−0"
+     }
+    },
+    {
+     "id": "v9",
+     "set": {
+      "text": "−1"
+     }
+    },
+    {
+     "id": "v10",
+     "set": {
+      "text": "−2"
+     }
+    },
+    {
+     "id": "v11",
+     "set": {
+      "text": "−3"
+     }
+    },
+    {
+     "id": "v12",
+     "set": {
+      "text": "−4"
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "text": "−5"
+     }
+    },
+    {
+     "id": "v14",
+     "set": {
+      "text": "−6"
+     }
+    },
+    {
+     "id": "v15",
+     "set": {
+      "text": "−7"
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "fill": "danger",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "fill": "danger",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "lab",
+     "set": {
+      "text": "sign-magnitude"
+     }
+    },
+    {
+     "id": "ptr",
+     "set": {
+      "to": "n8"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "1's complement negates by flipping every bit: 1111 is −0 and 1000 is −7. Again two zeros and the range −7 … +7.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n7",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n9",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n10",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n11",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n12",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n13",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n14",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n15",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "+1"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "+2"
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "text": "+3"
+     }
+    },
+    {
+     "id": "v4",
+     "set": {
+      "text": "+4"
+     }
+    },
+    {
+     "id": "v5",
+     "set": {
+      "text": "+5"
+     }
+    },
+    {
+     "id": "v6",
+     "set": {
+      "text": "+6"
+     }
+    },
+    {
+     "id": "v7",
+     "set": {
+      "text": "+7"
+     }
+    },
+    {
+     "id": "v8",
+     "set": {
+      "text": "−7"
+     }
+    },
+    {
+     "id": "v9",
+     "set": {
+      "text": "−6"
+     }
+    },
+    {
+     "id": "v10",
+     "set": {
+      "text": "−5"
+     }
+    },
+    {
+     "id": "v11",
+     "set": {
+      "text": "−4"
+     }
+    },
+    {
+     "id": "v12",
+     "set": {
+      "text": "−3"
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "text": "−2"
+     }
+    },
+    {
+     "id": "v14",
+     "set": {
+      "text": "−1"
+     }
+    },
+    {
+     "id": "v15",
+     "set": {
+      "text": "−0"
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "fill": "danger",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "n15",
+     "set": {
+      "fill": "danger",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "lab",
+     "set": {
+      "text": "1's complement"
+     }
+    },
+    {
+     "id": "ptr",
+     "set": {
+      "to": "n15"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Back to 2's complement: one zero, no gaps, and the wheel's clockwise steps are ordinary addition. That is why every modern machine uses it.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n4",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n5",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n6",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n7",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n8",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n9",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n10",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n11",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n12",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n13",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n14",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "n15",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "v0",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "v1",
+     "set": {
+      "text": "+1"
+     }
+    },
+    {
+     "id": "v2",
+     "set": {
+      "text": "+2"
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "text": "+3"
+     }
+    },
+    {
+     "id": "v4",
+     "set": {
+      "text": "+4"
+     }
+    },
+    {
+     "id": "v5",
+     "set": {
+      "text": "+5"
+     }
+    },
+    {
+     "id": "v6",
+     "set": {
+      "text": "+6"
+     }
+    },
+    {
+     "id": "v7",
+     "set": {
+      "text": "+7"
+     }
+    },
+    {
+     "id": "v8",
+     "set": {
+      "text": "−8"
+     }
+    },
+    {
+     "id": "v9",
+     "set": {
+      "text": "−7"
+     }
+    },
+    {
+     "id": "v10",
+     "set": {
+      "text": "−6"
+     }
+    },
+    {
+     "id": "v11",
+     "set": {
+      "text": "−5"
+     }
+    },
+    {
+     "id": "v12",
+     "set": {
+      "text": "−4"
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "text": "−3"
+     }
+    },
+    {
+     "id": "v14",
+     "set": {
+      "text": "−2"
+     }
+    },
+    {
+     "id": "v15",
+     "set": {
+      "text": "−1"
+     }
+    },
+    {
+     "id": "lab",
+     "set": {
+      "text": "2's complement"
+     }
+    },
+    {
+     "id": "ptr",
+     "set": {
+      "to": "n0"
+     }
+    }
+   ]
+  }
+ ]
+}

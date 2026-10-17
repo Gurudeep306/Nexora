@@ -497,6 +497,218 @@ def fixed_point_bits():
                 els, [])
 
 
+# ── Lesson 4 ────────────────────────────────────────────────────────────────
+
+WC, WR = (250, 272), 172   # wheel centre and node radius
+
+
+def polar(cx, cy, r, deg):
+    """Same convention as client/src/viz/geometry.ts: degrees clockwise from 12 o'clock."""
+    a = math.radians(deg)
+    return round(cx + r * math.sin(a), 2), round(cy - r * math.cos(a), 2)
+
+
+def _wheel(values, title):
+    cx, cy = WC
+    els = [text("head", 250, 22, title, anchor="middle", size=17, weight="bold"),
+           {"id": "pos", "type": "arc", "cx": cx, "cy": cy, "r": WR + 44, "r0": WR + 32, "start": -11.25, "end": 168.75,
+            "fill": "success", "tone": "success", "hidden": True},
+           {"id": "neg", "type": "arc", "cx": cx, "cy": cy, "r": WR + 44, "r0": WR + 32, "start": 168.75, "end": 348.75,
+            "fill": "danger", "tone": "danger", "hidden": True},
+           {"id": "path", "type": "arc", "cx": cx, "cy": cy, "r": 140, "r0": 128, "start": 0, "end": 22.5,
+            "fill": "warning", "tone": "warning", "emphasis": "strong", "hidden": True}]
+    for k in range(16):
+        x, y = polar(cx, cy, WR, 22.5 * k)
+        els.append({"id": f"n{k}", "type": "node", "cx": x, "cy": y, "r": 25, "label": nl.to_base(k, 2, 4), "mono": True, "size": 14})
+        vx, vy = polar(cx, cy, 104, 22.5 * k)
+        els.append(text(f"v{k}", vx, vy, str(values[k]), anchor="middle", size=17, mono=True))
+    els.append(arrow("ptr", [cx, cy], "n0", tone="accent"))
+    els.append(text("lab", cx, 506, "", anchor="middle", size=17, weight="bold"))
+    return els
+
+
+def _vals(kind):
+    f = {"unsigned": lambda p: int(p, 2), "twos": nl.from_twos, "sm": nl.from_sm, "ones": nl.from_ones}[kind]
+    out = []
+    for k in range(16):
+        p = nl.to_base(k, 2, 4)
+        val = f(p)
+        neg_zero = kind in ("sm", "ones") and val == 0 and p[0] == "1"
+        out.append("−0" if neg_zero else (f"+{val}" if val > 0 and kind != "unsigned" else str(val).replace("-", "−")))
+    return out
+
+
+def _relabel(kind):
+    return [(f"v{k}", {"text": t}) for k, t in enumerate(_vals(kind))]
+
+
+@scene
+def twos_complement_wheel():
+    els = _wheel(_vals("unsigned"), "4-bit patterns on a wheel")
+    tw = _vals("twos")
+    assert tw[7] == "+7" and tw[8] == "−8" and tw[15] == "−1"
+    assert _vals("sm")[8] == "−0" and _vals("ones")[15] == "−0" and _vals("sm")[15] == "−7" and _vals("ones")[8] == "−7"
+    hi = lambda ks, tone="subject": [(f"n{k}", {"fill": tone, "tone": tone}) for k in ks]
+    clear = [(f"n{k}", {"fill": "none", "tone": "ink"}) for k in range(16)]
+    steps = [
+        step("Each clockwise step adds 1. From 0000 to 0111 the patterns count 0 to 7, exactly as unsigned numbers.",
+             *hi(range(8)), ("ptr", {"to": "n7"})),
+        step("Now step backwards from 0000: one step anticlockwise lands on 1111. A step back means −1, so it is natural to read 1111 as −1, not 15.",
+             *clear, *hi([15], "danger"), ("ptr", {"to": "n15"}), ("v15", {"text": "−1"})),
+        step("Reading every pattern with a leading 1 as (unsigned value − 16) gives 2's complement: 1111 = −1, 1110 = −2, …, 1000 = −8. The top bit now says the sign.",
+             *clear, *_relabel("twos"), ("pos", {"hidden": False}), ("neg", {"hidden": False}), ("lab", {"text": "2's complement"})),
+        step("The only jump is the seam at the bottom: 0111 (+7) is followed by 1000 (−8). Crossing it is overflow. 4-bit 2's complement covers −8 … +7, sixteen different values, one zero.",
+             *hi([7, 8], "warning"), ("ptr", {"to": "n8"})),
+        step("Sign-magnitude reads the top bit as a sign and the other three as a size: 1000 is −0 and 1111 is −7. Two patterns mean zero, so only 15 values fit (−7 … +7).",
+             *clear, *_relabel("sm"), *hi([0, 8], "danger"), ("lab", {"text": "sign-magnitude"}), ("ptr", {"to": "n8"})),
+        step("1's complement negates by flipping every bit: 1111 is −0 and 1000 is −7. Again two zeros and the range −7 … +7.",
+             *clear, *_relabel("ones"), *hi([0, 15], "danger"), ("lab", {"text": "1's complement"}), ("ptr", {"to": "n15"})),
+        step("Back to 2's complement: one zero, no gaps, and the wheel's clockwise steps are ordinary addition. That is why every modern machine uses it.",
+             *clear, *_relabel("twos"), ("lab", {"text": "2's complement"}), ("ptr", {"to": "n0"})),
+    ]
+    return spec("The 2's-complement wheel", 500, 520,
+                "Sixteen 4-bit patterns arranged clockwise in counting order, 0000 at the top. The number inside the ring next to each pattern is its unsigned value, 0 to 15.",
+                els, steps)
+
+
+@scene
+def overflow_wheel():
+    els = _wheel(_vals("twos"), "Adding on the wheel: overflow is crossing the seam")
+    els = [dict(e, hidden=False) if e["id"] in ("pos", "neg") else e for e in els]
+    s = lambda a, b: nl.from_twos(nl.to_base((int(nl.to_twos(a, 4), 2) + int(nl.to_twos(b, 4), 2)) % 16, 2, 4))
+    assert s(5, 4) == -7 and s(-6, -3) == 7 and s(5, -3) == 2
+    k = lambda v: int(nl.to_twos(v, 4), 2)
+    steps = [
+        step("Start at 0101 = +5. Adding a positive number means stepping clockwise.",
+             ("ptr", {"to": f"n{k(5)}"}), (f"n{k(5)}", {"fill": "subject", "tone": "subject"})),
+        step("Add +4: four steps clockwise pass 0111 (+7) and cross the seam into 1001. The pattern reads −7, but 5 + 4 = 9 does not fit in 4 bits. Overflow.",
+             ("path", {"hidden": False, "start": 22.5 * 5, "end": 22.5 * 9}), ("ptr", {"to": f"n{k(-7)}"}),
+             (f"n{k(-7)}", {"fill": "danger", "tone": "danger"}), ("lab", {"text": "5 + 4 → −7 ✗"})),
+        step("Start at 1010 = −6 and add −3: three steps anticlockwise cross the seam backwards to 0111 = +7. The true sum −9 is below −8. Overflow again.",
+             (f"n{k(5)}", {"fill": "none", "tone": "ink"}), (f"n{k(-7)}", {"fill": "none", "tone": "ink"}),
+             ("path", {"start": 22.5 * 7, "end": 22.5 * 10}), ("ptr", {"to": f"n{k(7)}"}),
+             (f"n{k(7)}", {"fill": "danger", "tone": "danger"}), ("lab", {"text": "−6 + (−3) → +7 ✗"})),
+        step("Now 0101 (+5) + 1101 (−3). As unsigned steps that is 13 clockwise, which wraps past 0000 to 0010 = +2. Passing 0000 just drops a carry out of 4 bits; the seam is not crossed, so the answer +2 is right.",
+             (f"n{k(7)}", {"fill": "none", "tone": "ink"}), ("path", {"start": 22.5 * 2, "end": 22.5 * 5}),
+             ("ptr", {"to": f"n{k(2)}"}), (f"n{k(2)}", {"fill": "success", "tone": "success"}), ("lab", {"text": "5 + (−3) → +2 ✓"})),
+        step("Rule: a sum overflows exactly when it crosses the +7 / −8 seam. That can only happen when both operands have the same sign. (Chapter 5 turns this into a gate: carry into the sign bit ≠ carry out of it.)",
+             ("path", {"hidden": True}), ("lab", {"text": "overflow = crossing the seam"})),
+    ]
+    return spec("Overflow on the 2's-complement wheel", 500, 520,
+                "The 4-bit wheel with 2's-complement values inside. The green band marks the non-negative patterns, the red band the negative ones; they meet at the seam between 0111 (+7) and 1000 (−8).",
+                els, steps)
+
+
+@scene
+def negate_invert_plus_one():
+    x = "01011000"
+    xb = nl.invert(x)
+    r = nl.add_one(xb)
+    assert nl.from_twos(x) == 88 and r == nl.copy_first_one(x) == "10101000" and nl.from_twos(r) == -88
+    cell, x0 = 52, 74
+    els = [text("head", 280, 22, "Negating +88 in 8 bits: invert, then add 1", anchor="middle", size=17, weight="bold")]
+    rows = [("x", x, 64, "x = +88"), ("xb", xb, 134, "~x (every bit flipped)"), ("r", r, 204, "~x + 1 = −88")]
+    for id, b, y, lab in rows:
+        els.append({"id": id, "type": "bits", "x": x0, "y": y, "bits": b, "cell": cell, "hidden": id != "x"})
+        els.append(text(id + "l", x0 - 8, y + cell / 2, {"x": "x", "xb": "~x", "r": "−x"}[id], anchor="end", size=16, mono=True, hidden=id != "x"))
+    els.append(text("note", 280, 286, "x = +88", anchor="middle", size=17))
+    els.append(text("carry", x0 + cell * 5, 196, "", size=14, tone="warning"))
+    steps = [
+        step("Flip every bit of 01011000. The result 10100111 is x̄, and x + x̄ = 11111111 = 2⁸ − 1.",
+             ("xb", {"hidden": False}), ("xbl", {"hidden": False}), ("note", {"text": "x + x̄ = 2⁸ − 1"})),
+        step("Add 1 to x̄. The three trailing 1s of x̄ turn into 0s as the carry ripples left, and the first 0 it meets becomes 1.",
+             ("xb", {"highlight": [4, 5, 6, 7]}), ("r", {"hidden": False, "highlight": [4, 5, 6, 7]}), ("rl", {"hidden": False}),
+             ("carry", {"text": "carry ripples ←"}), ("note", {"text": "x̄ + 1 = 2⁸ − x, which is −x mod 2⁸"})),
+        step("Compare x and −x: the rightmost 1 of x and everything to its right (1000) are copied unchanged; every bit to its left is flipped. That is the copy-to-the-first-1 shortcut.",
+             ("x", {"highlight": [4, 5, 6, 7]}), ("xb", {"highlight": []}), ("carry", {"text": ""}), ("note", {"text": "copy …1000, flip 0101 → 1010"})),
+        step("Check: 10101000 read with the −128 weight is −128 + 32 + 8 = −88.", ("note", {"text": "−128 + 32 + 8 = −88 ✓", "tone": "success"})),
+    ]
+    assert -128 + 32 + 8 == -88
+    return spec("Invert and add 1, and the copy-to-the-first-1 shortcut", 560, 310,
+                "The 8-bit pattern of +88: 01011000. We will build the pattern of −88 underneath.", els, steps)
+
+
+@scene
+def sign_extension_stretch():
+    a = nl.to_twos(-3, 4)
+    b8, b16 = nl.sign_extend(a, 8), nl.sign_extend(a, 16)
+    p = nl.to_twos(5, 4)
+    assert a == "1101" and b8 == "11111101" and b16 == "1111111111111101" and nl.from_twos(b16) == -3 and nl.sign_extend(p, 8) == "00000101"
+    cell = 30
+    els = [text("head", 250, 22, "Sign extension: copy the sign bit into every new place", anchor="middle", size=17, weight="bold"),
+           text("l4", 10, 52, "4 bits", size=15, tone="muted"),
+           {"id": "w4", "type": "bits", "x": 10 + 12 * cell, "y": 62, "bits": a, "cell": cell, "highlight": [0]},
+           text("l8", 10, 114, "8 bits", size=15, tone="muted", hidden=True),
+           {"id": "w8", "type": "bits", "x": 10 + 8 * cell, "y": 124, "bits": b8, "cell": cell, "hidden": True, "highlight": [0, 1, 2, 3, 4]},
+           text("l16", 10, 176, "16 bits", size=15, tone="muted", hidden=True),
+           {"id": "w16", "type": "bits", "x": 10, "y": 186, "bits": b16, "cell": cell, "hidden": True, "highlight": list(range(13))},
+           text("val", 250, 250, "1101 = −8 + 4 + 1 = −3", anchor="middle", size=17, mono=True),
+           text("bad", 250, 282, "", anchor="middle", size=15, tone="danger")]
+    steps = [
+        step("−3 in 4 bits is 1101: the sign bit (weight −8) is 1.", ("val", {"text": "1101 = −8 + 4 + 1 = −3"})),
+        step("To widen to 8 bits, copy the sign bit 1 into the four new places: 1111 1101. The value is still −3 (−128 + 64 + 32 + 16 + 8 + 4 + 1 = −3).",
+             ("w8", {"hidden": False}), ("l8", {"hidden": False}), ("val", {"text": "1111 1101 = −3"})),
+        step("Widen again to 16 bits: twelve copies of the sign bit in front of 1101. Still −3.",
+             ("w16", {"hidden": False}), ("l16", {"hidden": False}), ("val", {"text": "1111 1111 1111 1101 = −3"})),
+        step("Padding with zeros instead (0000 1101) would give +13: zero-padding is right only for unsigned and for non-negative numbers, e.g. +5 = 0101 → 0000 0101.",
+             ("bad", {"text": "0000 1101 = +13 ✗   ·   +5: 0101 → 0000 0101 ✓"})),
+    ]
+    assert -128 + 64 + 32 + 16 + 8 + 4 + 1 == -3 and int("00001101", 2) == 13
+    return spec("Sign extension keeps the value", 500, 300,
+                "The 4-bit pattern 1101 at the right. Wider copies of it will appear underneath, lined up on the right.", els, steps)
+
+
+@scene
+def msb_weight_bar():
+    pat = nl.to_base(0xB4, 2, 8)
+    ws = [-128, 64, 32, 16, 8, 4, 2, 1]
+    assert pat == "10110100" and nl.from_twos(pat) == sum(w for w, c in zip(ws, pat) if c == "1") == -76
+    els = [text("head", 280, 22, "8-bit 2's complement: the top bit weighs −128", anchor="middle", size=17, weight="bold"),
+           {"id": "b", "type": "bits", "x": 64, "y": 74, "bits": pat, "cell": 54, "labels": [str(w).replace("-", "−") for w in ws],
+            "highlight": [i for i, c in enumerate(pat) if c == "1"]},
+           box("neg", 64, 74, 54, 54, None, tone="danger", fill="danger", emphasis="soft", dashed=True),
+           text("sum", 280, 168, "−128 + 32 + 16 + 4 = −76", anchor="middle", size=19, mono=True, tone="success"),
+           text("rng", 280, 204, "range: −128 (1000 0000) … +127 (0111 1111)", anchor="middle", size=16, tone="muted")]
+    return spec("Place values of an 8-bit 2's-complement number", 560, 230,
+                "Eight bit cells with weights −128, 64, 32, 16, 8, 4, 2, 1; the leftmost weight is negative. The pattern 10110100 has 1s under −128, 32, 16 and 4, so it is worth −76. The range is −128 to +127.",
+                els, [])
+
+
+@scene
+def arithmetic_shift():
+    x = nl.to_twos(-7, 8)
+    a, l = nl.asr(x), nl.lsr(x)
+    sl, over = nl.asl(x)
+    assert (x, a, l, sl, over) == ("11111001", "11111100", "01111100", "11110010", False)
+    assert nl.from_twos(a) == -4 and int(l, 2) == 124 and nl.from_twos(sl) == -14
+    cell, x0 = 50, 110
+    els = [text("head", 280, 22, "Shifting −7 (8 bits): arithmetic vs logical", anchor="middle", size=17, weight="bold"),
+           {"id": "x", "type": "bits", "x": x0, "y": 52, "bits": x, "cell": cell},
+           text("xl", x0 - 10, 77, "x", anchor="end", size=16, mono=True),
+           text("xv", x0 + 8 * cell + 10, 77, "−7", size=16, mono=True),
+           {"id": "a", "type": "bits", "x": x0, "y": 122, "bits": a, "cell": cell, "hidden": True, "highlight": [0]},
+           text("al", x0 - 10, 147, "asr", anchor="end", size=15, mono=True, hidden=True),
+           text("av", x0 + 8 * cell + 10, 147, "−4", size=16, mono=True, hidden=True, tone="success"),
+           {"id": "l", "type": "bits", "x": x0, "y": 192, "bits": l, "cell": cell, "hidden": True, "highlight": [0]},
+           text("ll", x0 - 10, 217, "lsr", anchor="end", size=15, mono=True, hidden=True),
+           text("lv", x0 + 8 * cell + 10, 217, "124", size=16, mono=True, hidden=True, tone="danger"),
+           {"id": "s", "type": "bits", "x": x0, "y": 262, "bits": sl, "cell": cell, "hidden": True, "highlight": [7]},
+           text("sl", x0 - 10, 287, "asl", anchor="end", size=15, mono=True, hidden=True),
+           text("sv", x0 + 8 * cell + 10, 287, "−14", size=16, mono=True, hidden=True, tone="success")]
+    steps = [
+        step("Arithmetic shift right: every bit moves one place right, the last bit falls off, and the sign bit is copied into the empty top place. 11111001 → 11111100 = −4.",
+             ("a", {"hidden": False}), ("al", {"hidden": False}), ("av", {"hidden": False})),
+        step("−7 ÷ 2 = −3.5, and the shift gave −4: an arithmetic right shift divides by 2 and rounds down (towards −∞), not towards zero.",
+             ("av", {"text": "−4 = ⌊−3.5⌋"})),
+        step("A logical shift right fills the top with 0 instead. 01111100 = 124: fine for unsigned numbers, wrong for negative ones.",
+             ("l", {"hidden": False}), ("ll", {"hidden": False}), ("lv", {"hidden": False})),
+        step("Shift left (arithmetic and logical are the same): a 0 enters at the right. 11110010 = −14 = 2 × (−7). It is exact because the top two bits of x were equal, so no significant bit was lost.",
+             ("s", {"hidden": False}), ("sl", {"hidden": False}), ("sv", {"hidden": False})),
+    ]
+    return spec("Arithmetic and logical shifts", 560, 330,
+                "The 8-bit pattern of −7, 11111001. Shifted copies will appear underneath.", els, steps)
+
+
 # ── Writer ──────────────────────────────────────────────────────────────────
 
 def build_all():

@@ -789,19 +789,23 @@
       "verification": "Truth check: $Y=1,Z=1$ gives NAND₁ $=\\overline{X\\cdot0}=1$, AND $=1$, $f=0$ for both $X$; any $Y=0$ or $Z=0$ makes AND $=0$, so $f=1$ for both $X$."
     },
     "cse-2005-cs-16": {
-      "approach": "In $n$-bit two's complement the MSB has weight $-2^{n-1}$, the rest sum to at most $2^{n-1}-1$.",
+      "approach": "Concept tested: the 2's-complement range. With the MSB weighted $-2^{n-1}$, the smallest value is $-2^{n-1}$ and the largest is $2^{n-1} - 1$; there are $2^n$ values and one zero.",
       "concepts": [
-        "Two's complement",
-        "Number range"
+        "2's complement range",
+        "Negative MSB weight"
       ],
       "steps": [
         {
-          "title": "Weights",
-          "body": "An $n$-bit two's complement word $b_{n-1}\\dots b_0$ has value $-b_{n-1}2^{n-1}+\\sum_{i=0}^{n-2} b_i 2^i$."
+          "title": "Smallest",
+          "body": "$100\\dots0 = -2^{n-1}$."
         },
         {
-          "title": "Extremes",
-          "body": "Most negative: $100\\dots0 = -2^{n-1}$. Most positive: $011\\dots1=2^{n-1}-1$.\n\nE.g. $n=8$: $-128$ to $127$."
+          "title": "Largest",
+          "body": "$011\\dots1 = 2^{n-2} + \\dots + 2 + 1 = 2^{n-1} - 1$."
+        },
+        {
+          "title": "Count",
+          "body": "From $-2^{n-1}$ to $2^{n-1} - 1$ there are $2^n$ integers, one per pattern. Option A."
         }
       ],
       "answer": {
@@ -815,28 +819,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: $2^n$ values, one more negative than positive."
+          "reason": "$-2^{n-1}$ to $2^{n-1} - 1$: $2^n$ values, one per pattern."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "That is the range of sign-magnitude or one's complement (two zeros)."
+          "reason": "$-(2^{n-1} - 1)$ to $2^{n-1} - 1$ is the sign-magnitude / 1's-complement range."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Has $2^n+1$ values — impossible with $n$ bits."
+          "reason": "$-2^{n-1}$ to $2^{n-1}$ has $2^n + 1$ integers, one more than there are patterns."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$-(2^{n-1}+1)$ cannot be represented."
+          "reason": "$-(2^{n-1} + 1)$ needs more than $n$ bits."
         }
       ],
+      "shortcut": "Count: an $n$-bit format has $2^n$ patterns. Only A and B have at most $2^n$ integers, and B has $2^n - 1$ (it is the two-zero formats).",
       "pitfalls": [
-        "Using the symmetric one's-complement range."
+        "Choosing the symmetric range C."
       ],
-      "verification": "Count: from $-2^{n-1}$ to $2^{n-1}-1$ there are $2^n$ integers, matching $n$ bits."
+      "verification": "$n = 4$: $-8 \\dots 7$ (A gives exactly that)."
     },
     "cse-2005-cs-17": {
       "approach": "Concept tested: octal → hex by grouping bits. 8 and 16 are both powers of 2, so expand each octal digit to 3 bits and regroup the same bits in fours, starting from the right end (the radix point).",

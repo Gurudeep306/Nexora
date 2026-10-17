@@ -814,19 +814,23 @@
       "verification": "$4800/12=400\\ge300$ characters/s."
     },
     "cse-1998-a-17": {
-      "approach": "Convert octal to an 8-bit pattern (3 bits per digit), then read it as an 8-bit two's-complement number, as the 8085 treats signed bytes.",
+      "approach": "Concept tested: octal → binary by grouping, then reading the byte as signed. The 8085 treats signed bytes as 2's complement, so expand $(342)_8$ to bits, keep 8, and decode with the $-128$ weight.",
       "concepts": [
         "Octal to binary",
-        "Two's complement"
+        "Decoding 2's complement"
       ],
       "steps": [
         {
-          "title": "Octal to binary",
-          "body": "$3\\to011,\\ 4\\to100,\\ 2\\to010$: $(342)_8=011\\,100\\,010$. Keeping 8 bits: $1110\\,0010$ (unsigned value $3\\cdot64+4\\cdot8+2=226$)."
+          "title": "Octal to bits",
+          "body": "$3 \\to 011$, $4 \\to 100$, $2 \\to 010$: $011\\,100\\,010$. The leading 0 is outside the byte: $1110\\,0010$."
         },
         {
-          "title": "Signed value",
-          "body": "The MSB is 1, so the value is negative: $226-256=-30$. Check: complement $11100010\\to00011101$, add 1 $\\to00011110=30$, so the number is $-30$."
+          "title": "Decode as 8-bit 2's complement",
+          "body": "Top bit 1: $-128 + 64 + 32 + 2 = -30$ (or $226 - 256 = -30$)."
+        },
+        {
+          "title": "Check by negating",
+          "body": "Copy up to the first 1 from the right of $1110\\,0010$ (that is $10$) and flip the rest: $0001\\,1110 = 30$. So the byte is $-30$, option D."
         }
       ],
       "answer": {
@@ -840,28 +844,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "226 is the unsigned reading, not the signed 8-bit integer."
+          "reason": "226 is the unsigned value; the question asks for the signed reading on the 8085."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$-98$ would be $10011110_2$, a different pattern."
+          "reason": "$-98$ is the sign-magnitude reading ($1\\,1100010$: size 98)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "76 has no relation to this bit pattern."
+          "reason": "76 does not come from any reading of $1110\\,0010$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$11100010_2$ in two's complement is $-30$."
+          "reason": "$1110\\,0010 = -30$."
         }
       ],
+      "shortcut": "$(342)_8 = 226$; as a signed byte, $226 - 256 = -30$.",
       "pitfalls": [
-        "Stopping at the unsigned value 226."
+        "Using the sign-magnitude reading.",
+        "Keeping 9 bits ($011100010$) and reading it as positive."
       ],
-      "verification": "$-30$ in 8-bit two's complement is $256-30=226=(342)_8$."
+      "verification": "$+30 = 0001\\,1110$; negating gives $1110\\,0010$. ✓"
     },
     "cse-1998-a-18": {
       "approach": "Give the highest interrupt priority to the device whose data is lost soonest if not serviced, i.e. the one with the highest transfer rate.",

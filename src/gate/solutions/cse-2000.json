@@ -1013,19 +1013,23 @@
       "verification": "A 3-state DFA (start, odd, even-accepting) accepts exactly $(00)^+$."
     },
     "cse-2000-a-1-6": {
-      "approach": "A positive number has the same 2's complement form as its plain binary form, padded with a leading 0 to 8 bits.",
+      "approach": "Concept tested: encoding a **positive** number in 2's complement. A non-negative value is stored exactly as unsigned binary with a 0 sign bit; no inversion is involved.",
       "concepts": [
-        "2's complement",
-        "Binary conversion"
+        "2's complement of a positive number",
+        "Decimal to binary"
       ],
       "steps": [
         {
-          "title": "Convert 43 to binary",
-          "body": "$43 = 32 + 8 + 2 + 1 = 2^5 + 2^3 + 2^1 + 2^0$, so $43 = 101011_2$."
+          "title": "Binary of 43",
+          "body": "$43 = 32 + 8 + 2 + 1 = (101011)_2$."
         },
         {
           "title": "Pad to 8 bits",
-          "body": "A positive number keeps sign bit 0: $00101011$."
+          "body": "Add leading zeros: $0010\\,1011$. The top bit is 0, as every non-negative 2's-complement number needs."
+        },
+        {
+          "title": "Check",
+          "body": "$0010\\,1011 = 32 + 8 + 2 + 1 = 43$, and its top bit 0 says the number is non-negative. Option C."
         }
       ],
       "answer": {
@@ -1039,28 +1043,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$01010101 = 85$."
+          "reason": "$0101\\,0101 = 85$, not 43."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Sign bit 1 makes it negative ($11010101 = -43$)."
+          "reason": "$1101\\,0101$ is the 2's complement of 43, i.e. the pattern of $-43$. The question asks for $+43$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$00101011 = 32+8+2+1 = 43$."
+          "reason": "$0010\\,1011 = 43$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Sign bit 1, so it is negative; this is $-85$."
+          "reason": "$1010\\,1011$ sets the sign bit on $+43$: that is $-43$ in sign-magnitude, or $-85$ in 2's complement."
         }
       ],
+      "shortcut": "A positive number must start with 0, which leaves only A and C; $0010\\,1011 = 32 + 11 = 43$.",
       "pitfalls": [
-        "Taking the complement of a positive number; complementing is only for negatives."
+        "Applying invert-and-add-1 to a positive number: '2's complement representation' means the encoding, not the negation operation."
       ],
-      "verification": "Back-conversion: $0\\cdot128 + 0\\cdot64 + 1\\cdot32 + 0\\cdot16 + 1\\cdot8 + 0\\cdot4 + 1\\cdot2 + 1\\cdot1 = 43$."
+      "verification": "$0\\cdot128 + 0\\cdot64 + 1\\cdot32 + 0\\cdot16 + 1\\cdot8 + 0\\cdot4 + 1\\cdot2 + 1 = 43$."
     },
     "cse-2000-a-1-7": {
       "approach": "The 8085 samples its READY pin during T2; if READY is low it inserts wait states until READY goes high.",

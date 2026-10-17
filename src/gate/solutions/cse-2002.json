@@ -754,22 +754,23 @@
       "verification": "$\\tfrac14 = 0.25$ and $(0.01)_2 = \\tfrac14$."
     },
     "cse-2002-a-15": {
-      "approach": "Take the shortest width that holds $-15$: 5 bits (range $-16..15$). Invert $+15$ and add 1.",
+      "approach": "Concept tested: 2's complement at the **minimum width**, since the question gives no width. $-15$ needs $-2^{n-1} \\le -15$, so $n = 5$; then negate $+15 = 01111$.",
       "concepts": [
-        "2's complement"
+        "Minimum width",
+        "2's complement negation"
       ],
       "steps": [
         {
-          "title": "Write +15 in 5 bits",
-          "body": "$15 = 8+4+2+1$, so $+15 = 01111$ in 5 bits (a leading 0 for the sign)."
+          "title": "Find the width",
+          "body": "4 bits reach only $-8$; 5 bits reach $-16$. So use $n = 5$."
         },
         {
-          "title": "Invert and add 1",
-          "body": "$\\overline{01111}=10000$; $10000+1=10001$."
+          "title": "Negate +15 in 5 bits",
+          "body": "$+15 = 01111$; invert $10000$; add 1: $10001$."
         },
         {
           "title": "Check",
-          "body": "$10001 = -16+1 = -15$ ✓."
+          "body": "$10001 = -16 + 1 = -15$. ✓"
         }
       ],
       "answer": {
@@ -783,40 +784,49 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$1111$ in 4 bits $=-1$."
+          "reason": "$1111$ is $-1$ in 4-bit 2's complement (and $-7$ in sign-magnitude); it is $+15$ only as unsigned."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$11111 = -1$ in 5 bits."
+          "reason": "$11111 = -16 + 15 = -1$ in 5 bits: a run of 1s is always $-1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$111111 = -1$ in 6 bits."
+          "reason": "$111111$ is also $-1$ (in 6 bits)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: $-16+1=-15$."
+          "reason": "$10001 = -15$ in 5 bits, the minimum width."
         }
       ],
-      "verification": "$10001 + 01111 = 100000$, i.e. 0 once the carry is discarded."
+      "shortcut": "Copy up to the first 1 from the right of $01111$ (just the last 1) and flip the rest: $10001$.",
+      "pitfalls": [
+        "Writing the unsigned pattern of 15 and calling it negative.",
+        "Assuming 4 bits, where $-15$ does not fit."
+      ],
+      "verification": "In 8 bits the same number is $1111\\,0001$ (sign extension of $10001$), and $1111\\,0001 + 0000\\,1111 = 1\\,0000\\,0000$."
     },
     "cse-2002-a-16": {
-      "approach": "Sign extension copies the sign bit into the new high-order bits so a signed value keeps its value when it is widened.",
+      "approach": "Concept tested: what sign extension is for. Copying the sign bit into new high-order places keeps a 2's-complement value unchanged when it is moved into a wider register or variable.",
       "concepts": [
         "Sign extension",
-        "2's complement"
+        "Changing the width"
       ],
       "steps": [
         {
-          "title": "What it does",
-          "body": "Widening 8-bit $11111011$ ($-5$) to 16 bits gives $1111\\,1111\\,1111\\,1011$, still $-5$; zero-filling would give $251$."
+          "title": "What sign extension does",
+          "body": "It widens an $n$-bit signed number to $m > n$ bits by copying the sign bit, e.g. $1101 \\to 1111\\,1101$ (both $-3$)."
         },
         {
-          "title": "Where it is used",
-          "body": "Exactly when converting a signed integer from one size to another (e.g. `char` to `int`, or a 16-bit immediate into a 32-bit register)."
+          "title": "When it is needed",
+          "body": "Whenever a signed integer changes size: loading a byte into a 32-bit register, casting `short` to `int`, widening an immediate operand."
+        },
+        {
+          "title": "Match the options",
+          "body": "Only option D describes a change of size. Additions of equal-width integers, shifts and floating-point multiplication do not widen a signed integer."
         }
       ],
       "answer": {
@@ -830,25 +840,28 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Floating-point multiplication multiplies significands and adds exponents; no signed-integer widening."
+          "reason": "Floating-point multiplication adds exponents and multiplies significands; there is no sign-extension step in the algorithm."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Adding two 16-bit signed integers of the same width needs no extension."
+          "reason": "Adding two 16-bit integers keeps them at 16 bits; nothing is widened (sign extension happens only if an operand comes from a narrower size)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Arithmetic left shift fills zeros on the right; it is right shift that replicates the sign."
+          "reason": "An arithmetic **right** shift copies the sign bit; a left shift inserts zeros at the right. Neither is sign extension, and left shift is the distractor here."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: this is the definition of sign extension."
+          "reason": "Sign extension is exactly the step that preserves the value when a signed integer is widened."
         }
       ],
-      "verification": "In 2's complement, $1\\,x_{n-2}\\ldots x_0$ and $11\\,x_{n-2}\\ldots x_0$ have the same value, which is why copying the sign bit is safe."
+      "pitfalls": [
+        "Confusing sign extension with an arithmetic shift."
+      ],
+      "verification": "$-3 = 1101 = 1111\\,1101 = -128 + 125$: same value in 4 and 8 bits."
     },
     "cse-2002-a-17": {
       "approach": "C allocates a new activation record on the single runtime stack for every call, so the number of records between main and the current function depends on the dynamic call chain.",

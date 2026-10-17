@@ -1753,19 +1753,23 @@
       "verification": "Consistent with standard COA texts."
     },
     "cse-2001-a-35": {
-      "approach": "Write 539 in hex, then take the 2's complement in 12 bits (3 hex digits): $\\text{FFF} - N + 1$.",
+      "approach": "Concept tested: radix complement in hex. Three hex digits are 12 bits, and the 16's complement in 3 digits is the 2's complement in 12 bits: $16^3 - 539$. Compute it as the F's complement plus 1.",
       "concepts": [
-        "2's complement",
-        "Hexadecimal"
+        "16's complement",
+        "2's complement in hex"
       ],
       "steps": [
         {
           "title": "539 in hex",
-          "body": "$539 = 2\\cdot256 + 1\\cdot16 + 11 = (21\\text{B})_{16}$."
+          "body": "$539 = 2\\cdot256 + 1\\cdot16 + 11 = (21B)_{16}$."
         },
         {
-          "title": "Complement",
-          "body": "$\\text{FFF} - 21\\text{B} = \\text{DE4}$, then $\\text{DE4} + 1 = \\text{DE5}$."
+          "title": "F's complement (15 − d per digit)",
+          "body": "Subtract each hex digit from F (15): $F - 2 = D$, $F - 1 = E$, $F - B = 15 - 11 = 4$. So $FFF - 21B = DE4$."
+        },
+        {
+          "title": "Add 1",
+          "body": "$DE4 + 1 = (DE5)_{16}$, the 16's complement, which is the 12-bit 2's complement of 539."
         }
       ],
       "answer": {
@@ -1779,28 +1783,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "ABE is not $-539$ in 12 bits."
+          "reason": "$(ABE)_{16} = 2750$; $4096 - 2750 = 1346 \\ne 539$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "DBC is not $-539$ in 12 bits."
+          "reason": "$(DBC)_{16}$ is $-580$ in 12 bits, not $-539$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$\\text{DE5} + 21\\text{B} = 1000_{16}$, i.e. 0 in 12 bits."
+          "reason": "$(DE5)_{16} = 3557 = 4096 - 539$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "9E7 is not $-539$ in 12 bits."
+          "reason": "$(9E7)_{16}$ is $-1561$ in 12 bits."
         }
       ],
+      "shortcut": "Check each option by adding it to $(21B)_{16}$: only $21B + DE5 = 1000$ (i.e. $16^3$) gives zero in 3 digits.",
       "pitfalls": [
-        "Forgetting the +1 (DE4 is the 1's complement)."
+        "Converting 539 to hex wrongly (it is $21B$, not $21C$).",
+        "Forgetting the +1 (F's complement $DE4$ is the 1's complement)."
       ],
-      "verification": "$\\text{DE5} + 21\\text{B} = \\text{1000}$, which wraps to 0 in 12 bits."
+      "verification": "$(DE5)_{16} = 13\\cdot256 + 14\\cdot16 + 5 = 3557$ and $3557 - 4096 = -539$."
     },
     "cse-2001-a-36": {
       "approach": "Apply $ac' + bc$ to each mux in turn.",

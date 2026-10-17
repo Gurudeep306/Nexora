@@ -3955,9 +3955,9 @@
       "verification": "9 × 12 = 108 pixels per cell × 2000 cells = 216000 pixels."
     },
     "cse-1995-b-66": {
-      "approach": "The range −8…+7 is exactly 4-bit two's complement, whose pattern for negative N equals the unsigned value N + 2⁴. After that the loop is the usual repeated-division conversion, writing each remainder as a decimal digit.",
+      "approach": "Concept tested: the link between a 2's-complement code and an unsigned number. For $-8 \\le N \\le 7$ the 4-bit pattern of a negative $N$ is the unsigned value $N + 2^4$; after that, the loop is ordinary repeated division by 2, writing each remainder as a decimal digit.",
       "concepts": [
-        "4-bit two's complement",
+        "2's complement as N + 2^n",
         "Repeated division by 2",
         "Digits built in base 10"
       ],
@@ -3982,9 +3982,11 @@
         "value": "A = N + 16, B = REM, C = N div 2",
         "matchesKey": true
       },
+      "shortcut": "For any width $n$: the code of a negative $N$ is the unsigned binary of $N + 2^n$, so one line before the usual conversion loop handles all negatives.",
       "pitfalls": [
-        "Using A = −N or abs(N) gives the magnitude, not the two's complement code.",
-        "Writing C = N / 2 — Pascal \"/\" is real division; integer division is div."
+        "Using $A = -N$ or $\\text{abs}(N)$: that gives the magnitude, not the 2's-complement code.",
+        "Writing $C = N / 2$: in Pascal `/` is real division; integer division is `div`.",
+        "Using $N + 15$ (the 1's complement) instead of $N + 16$."
       ],
       "verification": "N = −8 → 8 → 1000 and N = −1 → 15 → 1111, both correct 4-bit codes; positive N skips A.",
       "animation": {

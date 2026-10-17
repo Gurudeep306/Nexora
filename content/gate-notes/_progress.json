@@ -35,7 +35,7 @@
             "place-value": "written+checked",
             "power-of-two-bases": "written+checked",
             "fractions-fixed-point": "written+checked",
-            "signed-numbers": "pending",
+            "signed-numbers": "written+checked",
             "codes": "pending"
           }
         },

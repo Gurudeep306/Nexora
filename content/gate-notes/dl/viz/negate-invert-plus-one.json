@@ -1,0 +1,214 @@
+{
+ "version": 1,
+ "title": "Invert and add 1, and the copy-to-the-first-1 shortcut",
+ "width": 560,
+ "height": 310,
+ "intro": "The 8-bit pattern of +88: 01011000. We will build the pattern of −88 underneath.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "Negating +88 in 8 bits: invert, then add 1",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "x",
+   "type": "bits",
+   "x": 74,
+   "y": 64,
+   "bits": "01011000",
+   "cell": 52,
+   "hidden": false
+  },
+  {
+   "id": "xl",
+   "type": "text",
+   "x": 66,
+   "y": 90.0,
+   "text": "x",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "hidden": false
+  },
+  {
+   "id": "xb",
+   "type": "bits",
+   "x": 74,
+   "y": 134,
+   "bits": "10100111",
+   "cell": 52,
+   "hidden": true
+  },
+  {
+   "id": "xbl",
+   "type": "text",
+   "x": 66,
+   "y": 160.0,
+   "text": "~x",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "r",
+   "type": "bits",
+   "x": 74,
+   "y": 204,
+   "bits": "10101000",
+   "cell": 52,
+   "hidden": true
+  },
+  {
+   "id": "rl",
+   "type": "text",
+   "x": 66,
+   "y": 230.0,
+   "text": "−x",
+   "anchor": "end",
+   "size": 16,
+   "mono": true,
+   "hidden": true
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 280,
+   "y": 286,
+   "text": "x = +88",
+   "anchor": "middle",
+   "size": 17
+  },
+  {
+   "id": "carry",
+   "type": "text",
+   "x": 334,
+   "y": 196,
+   "text": "",
+   "size": 14,
+   "tone": "warning"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Flip every bit of 01011000. The result 10100111 is x̄, and x + x̄ = 11111111 = 2⁸ − 1.",
+   "patches": [
+    {
+     "id": "xb",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "xbl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "x + x̄ = 2⁸ − 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add 1 to x̄. The three trailing 1s of x̄ turn into 0s as the carry ripples left, and the first 0 it meets becomes 1.",
+   "patches": [
+    {
+     "id": "xb",
+     "set": {
+      "highlight": [
+       4,
+       5,
+       6,
+       7
+      ]
+     }
+    },
+    {
+     "id": "r",
+     "set": {
+      "hidden": false,
+      "highlight": [
+       4,
+       5,
+       6,
+       7
+      ]
+     }
+    },
+    {
+     "id": "rl",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "carry",
+     "set": {
+      "text": "carry ripples ←"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "x̄ + 1 = 2⁸ − x, which is −x mod 2⁸"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Compare x and −x: the rightmost 1 of x and everything to its right (1000) are copied unchanged; every bit to its left is flipped. That is the copy-to-the-first-1 shortcut.",
+   "patches": [
+    {
+     "id": "x",
+     "set": {
+      "highlight": [
+       4,
+       5,
+       6,
+       7
+      ]
+     }
+    },
+    {
+     "id": "xb",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "carry",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "copy …1000, flip 0101 → 1010"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check: 10101000 read with the −128 weight is −128 + 32 + 8 = −88.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "−128 + 32 + 8 = −88 ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
