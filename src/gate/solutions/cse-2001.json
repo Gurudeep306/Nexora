@@ -3368,29 +3368,36 @@
       "verification": "Equivalently 4096 sets × 4 ways × 2 bytes per tag $= 32768$ bytes."
     },
     "cse-2001-b-58-a": {
-      "approach": "A 3-variable function is self-dual iff $f(\\bar x) = \\overline{f(x)}$, i.e. of every complementary minterm pair $(m, 7-m)$ exactly one is a minterm.",
+      "approach": "Concept tested: **the self-dual test**. A 3-variable function is self-dual iff $f(\\bar{x}) = \\overline{f(x)}$, i.e. of every complementary pair of rows $(m, 7 - m)$ exactly one is a minterm.",
       "concepts": [
         "Self-dual function",
-        "Duality"
+        "Duality",
+        "Complementary pairs"
       ],
       "steps": [
         {
-          "title": "Pair the minterms",
-          "body": "Complementary pairs: $(0,7), (1,6), (2,5), (3,4)$. $f = \\Sigma(0,1,2,4)$ contains $0$ (not 7), $1$ (not 6), $2$ (not 5), $4$ (not 3)."
+          "title": "Pair the rows",
+          "body": "The complementary pairs are $(0, 7), (1, 6), (2, 5), (3, 4)$ (indices adding up to $2^3 - 1 = 7$)."
         },
         {
-          "title": "Verdict",
-          "body": "Every pair contributes exactly one minterm, so $f(\\bar a, \\bar b, \\bar c) = \\overline{f(a,b,c)}$ for all inputs, i.e. $f^d = f$. **Yes, $f$ is self-dual.**\n\nIndeed $f = 1$ iff at most one variable is 1, i.e. $f = \\bar a\\bar b + \\bar b \\bar c + \\bar a \\bar c = \\text{MAJ}(\\bar a, \\bar b, \\bar c)$, and majority is self-dual."
+          "title": "Check each pair",
+          "body": "$f = \\Sigma(0, 1, 2, 4)$ takes 0 from $(0, 7)$, 1 from $(1, 6)$, 2 from $(2, 5)$ and 4 from $(3, 4)$: exactly one from each pair."
+        },
+        {
+          "title": "Conclusion",
+          "body": "So $f(\\bar{x}) = \\overline{f(x)}$ on every row and $f$ is self-dual. (In fact $f$ is 'at most one input is 1' $= M(\\bar{A}, \\bar{B}, \\bar{C})$, the majority of the complemented inputs; complementing inputs keeps self-duality.)"
         }
       ],
       "answer": {
-        "value": "Yes — of each complementary pair $(0,7),(1,6),(2,5),(3,4)$ exactly one is a minterm, so $f^d(a,b,c) = \\overline{f(\\bar a,\\bar b,\\bar c)} = f$.",
+        "value": "Yes: f = Σ(0, 1, 2, 4) is self-dual",
         "matchesKey": true
       },
+      "shortcut": "Self-dual ⇔ neutral (4 of 8 minterms) and no complementary pair fully present. Here 4 minterms, and no two of 0, 1, 2, 4 add up to 7.",
       "pitfalls": [
-        "A self-dual function of $n$ variables must have exactly $2^{n-1}$ minterms (here 4); having 4 is necessary but the pair test is what proves it."
+        "Testing $f = \\overline{f}$ (never true) instead of $f = f^D$.",
+        "Concluding 'self-dual' from neutrality alone."
       ],
-      "verification": "Dual of $\\bar a\\bar b + \\bar b\\bar c + \\bar a\\bar c$ is $(\\bar a+\\bar b)(\\bar b+\\bar c)(\\bar a+\\bar c)$, which expands back to $\\bar a\\bar b + \\bar b\\bar c + \\bar a\\bar c$."
+      "verification": "Dual expression: $f = A'B' + A'C' + B'C'$ ('at most one 1'); its dual $(A' + B')(A' + C')(B' + C')$ expands back to $A'B' + A'C' + B'C'$."
     },
     "cse-2001-b-58-b": {
       "approach": "Tabulate the 10 valid excess-3 codes (3–12) with the codes 0, 1, 2, 13, 14, 15 as don't-cares, then group the 0s of the $b_4$ column on a K-map.",

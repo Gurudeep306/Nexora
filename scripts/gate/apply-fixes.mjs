@@ -27,7 +27,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.
 const FIX_DIR = path.join(ROOT, 'src', 'gate', 'fixes')
 const BANK = path.join(ROOT, 'src', 'gate', 'questions.json')
 
-export const FIELDS = ['text', 'options', 'answer', 'type', 'marks', 'figures', 'topic', 'subject', 'tags', 'needsReview', 'reviewNote']
+export const FIELDS = ['text', 'options', 'answer', 'type', 'marks', 'figures', 'topic', 'subject', 'tags', 'needsReview', 'reviewNote', 'solution']
 
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
 

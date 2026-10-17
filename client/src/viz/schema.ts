@@ -32,8 +32,11 @@
 export const VIZ_TONES = ['ink', 'muted', 'accent', 'subject', 'success', 'warning', 'danger', 'info'] as const
 export type VizTone = (typeof VIZ_TONES)[number]
 
-export const VIZ_ELEMENT_TYPES = ['box', 'circle', 'node', 'text', 'arrow', 'line', 'table', 'grid', 'bits', 'arc'] as const
+export const VIZ_ELEMENT_TYPES = ['box', 'circle', 'node', 'text', 'arrow', 'line', 'table', 'grid', 'bits', 'arc', 'gate'] as const
 export type VizElementType = (typeof VIZ_ELEMENT_TYPES)[number]
+/** Logic-gate symbols (the `gate` element). */
+export const VIZ_GATE_KINDS = ['and', 'or', 'not', 'buf', 'nand', 'nor', 'xor', 'xnor'] as const
+export type VizGateKind = (typeof VIZ_GATE_KINDS)[number]
 
 export const VIZ_LAYOUTS = ['wide', 'narrow'] as const
 export type VizLayout = (typeof VIZ_LAYOUTS)[number]
@@ -168,7 +171,31 @@ export interface VizArc extends Common {
   size?: number
 }
 
-export type VizElement = VizBox | VizCircle | VizText | VizArrow | VizLine | VizTable | VizGrid | VizBits | VizArc
+/**
+ * A logic-gate symbol drawn in the box (x, y, w, h): the body, the XOR back
+ * curve, the output bubble of NAND / NOR / XNOR / NOT, and optional input
+ * bubbles (De Morgan's alternative symbols). Input pins are evenly spaced;
+ * the output pin is the middle of the right edge (see gateShape in
+ * geometry.ts). Wires are ordinary `line` elements.
+ */
+export interface VizGate extends Common {
+  type: 'gate'
+  x: number
+  y: number
+  w: number
+  h: number
+  kind: VizGateKind
+  /** Number of inputs (default 2; NOT and BUF always have 1). */
+  inputs?: number
+  /** Indexes (0 = top) of inputs drawn with an inversion bubble. */
+  bubbles?: number[]
+  /** Small text inside the body (e.g. "G1"). */
+  label?: string
+  mono?: boolean
+  size?: number
+}
+
+export type VizElement = VizBox | VizCircle | VizText | VizArrow | VizLine | VizTable | VizGrid | VizBits | VizArc | VizGate
 
 export interface VizPatch {
   id: string
@@ -289,6 +316,19 @@ const FIELDS: Record<VizElementType, { required: string[]; props: Record<string,
     required: ['cx', 'cy', 'r', 'start', 'end'],
     props: { cx: num(), cy: num(), r: num(1), r0: num(0), start: num(-720, 720), end: num(-720, 720), ...LABEL },
   },
+  gate: {
+    required: ['x', 'y', 'w', 'h', 'kind'],
+    props: {
+      x: num(),
+      y: num(),
+      w: num(8),
+      h: num(8),
+      kind: oneOf(VIZ_GATE_KINDS),
+      inputs: int(1, 8),
+      bubbles: (v) => (Array.isArray(v) && v.length <= 8 && v.every((n) => Number.isInteger(n) && n >= 0 && n < 8) ? null : 'must be a list of input indexes (0–7)'),
+      ...LABEL,
+    },
+  },
   bits: {
     required: ['x', 'y', 'bits'],
     props: {
@@ -329,6 +369,12 @@ function checkElement(el: unknown, where: string): string[] {
     const sweep = el.end - el.start
     if (!(sweep > 0 && sweep <= 360)) errs.push(`${where}.end: must be after start, at most one full turn (360°) later`)
     if (typeof el.r0 === 'number' && typeof el.r === 'number' && el.r0 >= el.r) errs.push(`${where}.r0: inner radius must be smaller than r`)
+  }
+  if (el.type === 'gate') {
+    const single = el.kind === 'not' || el.kind === 'buf'
+    const n = single ? 1 : typeof el.inputs === 'number' ? el.inputs : 2
+    if (single && el.inputs !== undefined && el.inputs !== 1) errs.push(`${where}.inputs: a ${el.kind} gate has exactly one input`)
+    if (Array.isArray(el.bubbles) && el.bubbles.some((b) => typeof b === 'number' && b >= n)) errs.push(`${where}.bubbles: an index is not an input of this gate (it has ${n})`)
   }
   if (isObj(el.narrow)) {
     const { narrow, ...rest } = el

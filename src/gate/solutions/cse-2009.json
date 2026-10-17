@@ -258,7 +258,7 @@
       "verification": "$(028F)_{16} = 655 = (1217)_8$."
     },
     "cse-2009-cs-6": {
-      "approach": "Rewrite AB + C in product-of-sums form, (A+C)(B+C), which maps directly onto a two-level NOR–NOR circuit; then show 2 gates are not enough.",
+      "approach": "Concept tested: **NOR–NOR realisation from a product of sums, and a minimality argument**. Rewrite $AB + C$ as $(A + C)(B + C)$, which maps onto two levels of NOR gates; then show two gates are not enough.",
       "concepts": [
         "NOR as universal gate",
         "POS form",
@@ -266,53 +266,112 @@
       ],
       "steps": [
         {
-          "title": "POS form",
-          "body": "By distributivity, $AB + C = (A + C)(B + C)$."
+          "title": "Product-of-sums form",
+          "body": "By distributivity (OR over AND), $AB + C = (A + C)(B + C)$."
         },
         {
           "title": "Three NOR gates",
-          "body": "$G_1 = \\overline{A+C}$, $G_2 = \\overline{B+C}$, $G_3 = \\overline{G_1 + G_2}$.\n\n$G_3 = \\overline{\\overline{A+C} + \\overline{B+C}} = (A+C)(B+C) = AB + C$ (De Morgan). So **3** gates suffice."
+          "body": "$G_1 = \\overline{A + C}$, $G_2 = \\overline{B + C}$, $G_3 = \\overline{G_1 + G_2} = \\overline{G_1}\\,\\overline{G_2} = (A + C)(B + C) = AB + C$. So 3 gates suffice."
         },
         {
           "title": "Two gates are not enough",
-          "body": "The function depends on all of $A,B,C$, so with 2 gates the output gate must take the other gate $G = \\overline{x+y}$ and one variable $z$ (the only other wirings use at most 2 variables). Output $= \\overline{\\overline{x+y} + z} = (x+y)\\,\\bar z$, which is 0 whenever $z = 1$. But $AB + C$ can be 1 with $z = 1$ whichever variable $z$ is: $z=C$: take $C=1$; $z=A$ or $B$: take $A=B=1, C=0$. So 2 gates cannot work and the minimum is **3**."
+          "body": "The function depends on $A$, $B$ and $C$, so with two gates the output gate must read the other gate $G = \\overline{x + y}$ and one variable $z$. Its output is $\\overline{G + z} = (x + y)\\bar{z}$, which is 0 whenever $z = 1$. But $AB + C$ is 1 in some row with $z = 1$ whichever variable $z$ is ($C = 1$; or $A = B = 1, C = 0$). So 2 gates cannot work."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The minimum is **3**: option (B). (The bank's earlier key D = 5 counted the naive conversion; it has been corrected.)"
         }
       ],
       "answer": {
-        "value": "3",
+        "value": "(B) 3",
         "choice": [
           "B"
         ],
-        "matchesKey": false,
-        "keyNote": "The stored key is D (5), but $\\overline{\\overline{A+C}+\\overline{B+C}} = (A+C)(B+C) = AB+C$ uses only 3 two-input NOR gates, and 2 gates provably cannot realise the function, so the minimum is 3 (option B). Flagged for review."
+        "matchesKey": true
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "Two NOR gates give at most $(x+y)\\bar z$ — never $AB + C$."
+          "reason": "Two NOR gates compute at most $(x + y)\\bar{z}$, never $AB + C$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct — NOR–NOR realisation of $(A+C)(B+C)$ needs exactly 3 gates."
+          "reason": "NOR–NOR on $(A + C)(B + C)$: three gates, and two are not enough."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "4 gates work but are not the minimum."
+          "reason": "Four gates work but are not the minimum."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "5 is the count from the naive conversion (AND and OR each built from NORs), not the minimum."
+          "reason": "Five is the count of the naive conversion (AND = 3 NORs, OR = 2 NORs), not the minimum."
         }
       ],
-      "shortcut": "POS form + NOR–NOR: one NOR per sum term plus one output NOR.",
+      "shortcut": "For NOR gates, go to a product of sums first: one NOR per sum term plus one output NOR.",
       "pitfalls": [
-        "Converting the SOP form gate-by-gate (AND → 3 NORs, OR → 2 NORs) and getting 5 without simplifying."
+        "Converting the SOP gate by gate and getting 5.",
+        "Forgetting that a minimum question also needs the argument that fewer gates fail."
       ],
-      "verification": "Truth table: for $C=1$ both sums are 1 ⇒ output 1; for $C=0$ the output is $A\\cdot B$. Matches $AB + C$ on all 8 rows."
+      "verification": "Truth table: for $C = 1$ both sums are 1, so the output is 1; for $C = 0$ it is $AB$. Matches $AB + C$ on all 8 rows. An exhaustive search over every 2-gate circuit finds no match.",
+      "animation": {
+        "kind": "circuit",
+        "title": "AB + C from three NOR gates",
+        "inputs": [
+          {
+            "id": "A",
+            "label": "A",
+            "value": 1
+          },
+          {
+            "id": "B",
+            "label": "B",
+            "value": 1
+          },
+          {
+            "id": "C",
+            "label": "C",
+            "value": 0
+          }
+        ],
+        "gates": [
+          {
+            "id": "G1",
+            "type": "NOR",
+            "in": [
+              "A",
+              "C"
+            ]
+          },
+          {
+            "id": "G2",
+            "type": "NOR",
+            "in": [
+              "B",
+              "C"
+            ]
+          },
+          {
+            "id": "G3",
+            "type": "NOR",
+            "in": [
+              "G1",
+              "G2"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "G3",
+            "label": "F"
+          }
+        ],
+        "caption": "A = B = 1, C = 0: G1 = G2 = 0, so F = 1 = AB + C."
+      }
     },
     "cse-2009-cs-7": {
       "approach": "Number of chips = required bits ÷ bits per chip.",

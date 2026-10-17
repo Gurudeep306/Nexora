@@ -1,0 +1,650 @@
+{
+ "version": 1,
+ "title": "Timing diagram of two XOR edge-detector stages",
+ "width": 640,
+ "height": 345,
+ "narrow": {
+  "width": 360,
+  "height": 345
+ },
+ "intro": "A circuit of two stages: P = A ⊕ A delayed by 1, then B = P ⊕ P delayed by 3. XOR gates and wires have no delay.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Edge detectors: XOR with a delayed copy",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "XOR with a delayed copy",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l0",
+   "type": "text",
+   "x": 128,
+   "y": 64,
+   "text": "A",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 64,
+    "y": 64,
+    "size": 11
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     140,
+     76
+    ],
+    [
+     192,
+     76
+    ],
+    [
+     192,
+     52
+    ],
+    [
+     556,
+     52
+    ]
+   ],
+   "hidden": false,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      70,
+      76
+     ],
+     [
+      102,
+      76
+     ],
+     [
+      102,
+      52
+     ],
+     [
+      326,
+      52
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 128,
+   "y": 110,
+   "text": "A(t−1)",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 110,
+    "size": 11
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     140,
+     122
+    ],
+    [
+     244,
+     122
+    ],
+    [
+     244,
+     98
+    ],
+    [
+     556,
+     98
+    ]
+   ],
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      70,
+      122
+     ],
+     [
+      134,
+      122
+     ],
+     [
+      134,
+      98
+     ],
+     [
+      326,
+      98
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 128,
+   "y": 156,
+   "text": "P",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 156,
+    "size": 11
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     140,
+     168
+    ],
+    [
+     192,
+     168
+    ],
+    [
+     192,
+     144
+    ],
+    [
+     244,
+     144
+    ],
+    [
+     244,
+     168
+    ],
+    [
+     556,
+     168
+    ]
+   ],
+   "hidden": true,
+   "tone": "danger",
+   "narrow": {
+    "points": [
+     [
+      70,
+      168
+     ],
+     [
+      102,
+      168
+     ],
+     [
+      102,
+      144
+     ],
+     [
+      134,
+      144
+     ],
+     [
+      134,
+      168
+     ],
+     [
+      326,
+      168
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 128,
+   "y": 202,
+   "text": "P(t−3)",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 202,
+    "size": 11
+   }
+  },
+  {
+   "id": "w3",
+   "type": "line",
+   "points": [
+    [
+     140,
+     214
+    ],
+    [
+     348,
+     214
+    ],
+    [
+     348,
+     190
+    ],
+    [
+     400,
+     190
+    ],
+    [
+     400,
+     214
+    ],
+    [
+     556,
+     214
+    ]
+   ],
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      70,
+      214
+     ],
+     [
+      198,
+      214
+     ],
+     [
+      198,
+      190
+     ],
+     [
+      230,
+      190
+     ],
+     [
+      230,
+      214
+     ],
+     [
+      326,
+      214
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l4",
+   "type": "text",
+   "x": 128,
+   "y": 248,
+   "text": "B",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 248,
+    "size": 11
+   }
+  },
+  {
+   "id": "w4",
+   "type": "line",
+   "points": [
+    [
+     140,
+     260
+    ],
+    [
+     192,
+     260
+    ],
+    [
+     192,
+     236
+    ],
+    [
+     244,
+     236
+    ],
+    [
+     244,
+     260
+    ],
+    [
+     348,
+     260
+    ],
+    [
+     348,
+     236
+    ],
+    [
+     400,
+     236
+    ],
+    [
+     400,
+     260
+    ],
+    [
+     556,
+     260
+    ]
+   ],
+   "hidden": true,
+   "tone": "danger",
+   "narrow": {
+    "points": [
+     [
+      70,
+      260
+     ],
+     [
+      102,
+      260
+     ],
+     [
+      102,
+      236
+     ],
+     [
+      134,
+      236
+     ],
+     [
+      134,
+      260
+     ],
+     [
+      198,
+      260
+     ],
+     [
+      198,
+      236
+     ],
+     [
+      230,
+      236
+     ],
+     [
+      230,
+      260
+     ],
+     [
+      326,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t0",
+   "type": "text",
+   "x": 140,
+   "y": 300,
+   "text": "0",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 70,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 192,
+   "y": 300,
+   "text": "1",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 102,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 244,
+   "y": 300,
+   "text": "2",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 134,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t3",
+   "type": "text",
+   "x": 296,
+   "y": 300,
+   "text": "3",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 166,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t4",
+   "type": "text",
+   "x": 348,
+   "y": 300,
+   "text": "4",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 198,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t5",
+   "type": "text",
+   "x": 400,
+   "y": 300,
+   "text": "5",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 230,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t6",
+   "type": "text",
+   "x": 452,
+   "y": 300,
+   "text": "6",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 262,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t7",
+   "type": "text",
+   "x": 504,
+   "y": 300,
+   "text": "7",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 294,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "t8",
+   "type": "text",
+   "x": 556,
+   "y": 300,
+   "text": "8",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 326,
+    "y": 300,
+    "size": 10
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320.0,
+   "y": 330,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "narrow": {
+    "x": 180.0,
+    "y": 330,
+    "size": 11
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Input A: 0 until t = 1, then 1 for ever. (Everything is 0 before t = 0.)",
+   "patches": []
+  },
+  {
+   "caption": "A buffer delays A by 1: its output rises at t = 2.",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P = A ⊕ (delayed A) is 1 only while the two differ: from t = 1 to t = 2. A single edge of A becomes a pulse whose width is the delay.",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A second buffer delays P by 3: a copy of the pulse from t = 4 to t = 5.",
+   "patches": [
+    {
+     "id": "l3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "B = P ⊕ (delayed P) is 1 wherever exactly one pulse is high: [1, 2) and [4, 5). B changes level 4 times between t = 0 and t = 8.",
+   "patches": [
+    {
+     "id": "l4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "B: 0→1 at 1, 1→0 at 2, 0→1 at 4, 1→0 at 5: 4 transitions",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,532 @@
+{
+ "version": 1,
+ "title": "The complementary-pair test for self-dual functions",
+ "width": 640,
+ "height": 290,
+ "narrow": {
+  "width": 360,
+  "height": 290
+ },
+ "intro": "The eight rows of a 3-variable truth table, arranged in complementary pairs.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Self-dual: exactly one row of every complementary pair",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Self-dual: one of each pair",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "p0a",
+   "type": "box",
+   "x": 120,
+   "y": 80,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 30,
+    "y": 80,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "0 = 000"
+  },
+  {
+   "id": "p0b",
+   "type": "box",
+   "x": 120,
+   "y": 150,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 30,
+    "y": 150,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "7 = 111"
+  },
+  {
+   "id": "p0l",
+   "type": "line",
+   "points": [
+    [
+     155,
+     124
+    ],
+    [
+     155,
+     150
+    ]
+   ],
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "points": [
+     [
+      62,
+      120
+     ],
+     [
+      62,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "p1a",
+   "type": "box",
+   "x": 230,
+   "y": 80,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 110,
+    "y": 80,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "1 = 001"
+  },
+  {
+   "id": "p1b",
+   "type": "box",
+   "x": 230,
+   "y": 150,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 110,
+    "y": 150,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "6 = 110"
+  },
+  {
+   "id": "p1l",
+   "type": "line",
+   "points": [
+    [
+     265,
+     124
+    ],
+    [
+     265,
+     150
+    ]
+   ],
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "points": [
+     [
+      142,
+      120
+     ],
+     [
+      142,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "p2a",
+   "type": "box",
+   "x": 340,
+   "y": 80,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 190,
+    "y": 80,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "2 = 010"
+  },
+  {
+   "id": "p2b",
+   "type": "box",
+   "x": 340,
+   "y": 150,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 190,
+    "y": 150,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "5 = 101"
+  },
+  {
+   "id": "p2l",
+   "type": "line",
+   "points": [
+    [
+     375,
+     124
+    ],
+    [
+     375,
+     150
+    ]
+   ],
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "points": [
+     [
+      222,
+      120
+     ],
+     [
+      222,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "p3a",
+   "type": "box",
+   "x": 450,
+   "y": 80,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 270,
+    "y": 80,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "3 = 011"
+  },
+  {
+   "id": "p3b",
+   "type": "box",
+   "x": 450,
+   "y": 150,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "size": 13,
+   "narrow": {
+    "x": 270,
+    "y": 150,
+    "w": 64,
+    "h": 40,
+    "size": 11
+   },
+   "label": "4 = 100"
+  },
+  {
+   "id": "p3l",
+   "type": "line",
+   "points": [
+    [
+     485,
+     124
+    ],
+    [
+     485,
+     150
+    ]
+   ],
+   "tone": "muted",
+   "dashed": true,
+   "narrow": {
+    "points": [
+     [
+      302,
+      120
+     ],
+     [
+      302,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "f",
+   "type": "text",
+   "x": 320.0,
+   "y": 230,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 226,
+    "size": 12
+   }
+  },
+  {
+   "id": "v",
+   "type": "text",
+   "x": 320.0,
+   "y": 262,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 258,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Pair every row with its bitwise complement: (0, 7), (1, 6), (2, 5), (3, 4). The two indices always add up to 2ⁿ − 1 = 7.",
+   "patches": [
+    {
+     "id": "f",
+     "set": {
+      "text": "pairs (i, 7 − i)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "f = Σ(0, 1, 2, 4) takes exactly one row from each pair (0 from the first, 1, 2 and 4 from the others). So f(x′) = f(x)′ on every row: f is self-dual.",
+   "patches": [
+    {
+     "id": "p0a",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "p0b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p1a",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "p1b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p2a",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "p2b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p3a",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p3b",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "f",
+     "set": {
+      "text": "f = Σ(0, 1, 2, 4)"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "self-dual ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "g = Σ(0, 1, 6, 7) also has four minterms (it is neutral), but it takes both rows of the pairs (0, 7) and (1, 6) and none of the others. Not self-dual.",
+   "patches": [
+    {
+     "id": "p0a",
+     "set": {
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "p0b",
+     "set": {
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "p1a",
+     "set": {
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "p1b",
+     "set": {
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "p2a",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p2b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p3a",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p3b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "f",
+     "set": {
+      "text": "g = Σ(0, 1, 6, 7)"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "neutral but not self-dual ✗",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Counting: a self-dual function is one free choice per pair. There are 2ⁿ⁻¹ pairs, so 2^(2ⁿ⁻¹) self-dual functions: 2⁴ = 16 for n = 3.",
+   "patches": [
+    {
+     "id": "p0a",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p0b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p1a",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p1b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p2a",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p2b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p3a",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "p3b",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "f",
+     "set": {
+      "text": "2^(2ⁿ⁻¹) self-dual functions"
+     }
+    },
+    {
+     "id": "v",
+     "set": {
+      "text": "n = 3: 16",
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

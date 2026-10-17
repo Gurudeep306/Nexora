@@ -639,7 +639,7 @@
       "verification": "With $c=1$: $f(0)=-6$, $f(4)=6$; product −36 < 0, sum 0."
     },
     "cse-2014-2-cs-6": {
-      "approach": "A self-dual function satisfies $F(\\bar x)=\\overline{F(x)}$. The $2^n$ inputs pair up into $2^{n-1}$ complementary pairs; choosing $F$ on one member of each pair fixes it on the other.",
+      "approach": "Concept tested: **counting self-dual functions**. A self-dual function satisfies $F(\\bar{x}) = \\overline{F(x)}$; the $2^n$ inputs form $2^{n-1}$ complementary pairs, and choosing $F$ on one member of each pair fixes it on the other.",
       "concepts": [
         "Duality",
         "Self-dual functions",
@@ -647,20 +647,20 @@
       ],
       "steps": [
         {
-          "title": "Self-dual condition",
-          "body": "For any function, $F^D(x_1,\\ldots,x_n)=\\big(F(x_1',\\ldots,x_n')\\big)'$. So $F=F^D$ means $F(\\bar x)=\\overline{F(x)}$ for every input $x$."
+          "title": "Dual as a function",
+          "body": "The dual expression computes $F^D(x) = \\overline{F(\\bar{x})}$ (swap $+$/$\\cdot$ = De Morgan with all literals complemented). So $F = F^D$ means $F(\\bar{x}) = \\overline{F(x)}$ for every input $x$."
         },
         {
           "title": "Pair the inputs",
-          "body": "The $2^n$ inputs split into $2^{n-1}$ pairs $\\{x,\\bar x\\}$. On each pair $F$ is decided by its value on one member (2 choices); the other value is forced."
+          "body": "Each input $x$ is paired with its bitwise complement $\\bar{x}$; the $2^n$ inputs form $2^{n-1}$ disjoint pairs."
         },
         {
           "title": "Count",
-          "body": "Number of self-dual functions $=2^{2^{n-1}}$."
+          "body": "In each pair, $F(x)$ can be chosen freely and then $F(\\bar{x}) = \\overline{F(x)}$ is forced. So there are $2^{2^{n-1}}$ self-dual functions."
         }
       ],
       "answer": {
-        "value": "$2^{2^{n-1}}$",
+        "value": "(D) $2^{2^{n-1}}$",
         "choice": [
           "D"
         ],
@@ -670,25 +670,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$2^n$ is the number of input combinations, not functions."
+          "reason": "$2^n$ agrees only at $n = 1$ (2) and $n = 2$ (4); for $n = 3$ there are 16 self-dual functions, not 8."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$2^{n-1}$ is the number of complementary input pairs."
+          "reason": "$2^{n-1}$ is the number of complementary pairs, not of functions."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$2^{2^n}$ counts all Boolean functions of n variables."
+          "reason": "$2^{2^n}$ counts all functions of $n$ variables."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: one free bit for each of the $2^{n-1}$ pairs."
+          "reason": "One free choice per pair."
         }
       ],
-      "verification": "For $n=1$ the self-dual functions are $x$ and $x'$: exactly $2=2^{2^0}$; the constants 0 and 1 are not self-dual."
+      "shortcut": "Self-dual functions are fixed by half the truth table: $2^{(\\text{rows}/2)}$.",
+      "pitfalls": [
+        "Choosing (A) after checking only $n \\le 2$, where $2^n = 2^{2^{n-1}}$."
+      ],
+      "verification": "Brute force: $n = 1, 2, 3, 4$ give 2, 4, 16, 256 self-dual functions, matching $2^{2^{n-1}}$."
     },
     "cse-2014-2-cs-7": {
       "approach": "The counter steps through $0,1,\\ldots,k-1$; the decoder turns each count into a single 1 on line $0,1,\\ldots,k-1$. Exactly one of the $k$ outputs is 1 and it moves one place each clock: a ring-counter pattern.",

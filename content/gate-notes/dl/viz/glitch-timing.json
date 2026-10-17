@@ -1,0 +1,451 @@
+{
+ "version": 1,
+ "title": "Timing diagram of the X·X′ glitch",
+ "width": 640,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 300
+ },
+ "intro": "A signal X feeds an AND gate directly and through an inverter with a delay of 1 time unit. The AND gate is ideal (no delay).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "A glitch from a slow inverter: Y = X·X′",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Glitch: Y = X·X′",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l0",
+   "type": "text",
+   "x": 96,
+   "y": 70,
+   "text": "X",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 54,
+    "y": 70,
+    "size": 11
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     110,
+     84
+    ],
+    [
+     202,
+     84
+    ],
+    [
+     202,
+     56
+    ],
+    [
+     386,
+     56
+    ],
+    [
+     386,
+     84
+    ],
+    [
+     570,
+     84
+    ]
+   ],
+   "hidden": false,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      60,
+      82
+     ],
+     [
+      116,
+      82
+     ],
+     [
+      116,
+      58
+     ],
+     [
+      228,
+      58
+     ],
+     [
+      228,
+      82
+     ],
+     [
+      340,
+      82
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 96,
+   "y": 140,
+   "text": "X′",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 54,
+    "y": 134,
+    "size": 11
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     110,
+     126
+    ],
+    [
+     248,
+     126
+    ],
+    [
+     248,
+     154
+    ],
+    [
+     432,
+     154
+    ],
+    [
+     432,
+     126
+    ],
+    [
+     570,
+     126
+    ]
+   ],
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      60,
+      122
+     ],
+     [
+      144,
+      122
+     ],
+     [
+      144,
+      146
+     ],
+     [
+      256,
+      146
+     ],
+     [
+      256,
+      122
+     ],
+     [
+      340,
+      122
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 96,
+   "y": 210,
+   "text": "Y = X·X′",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 54,
+    "y": 198,
+    "size": 11
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     110,
+     224
+    ],
+    [
+     202,
+     224
+    ],
+    [
+     202,
+     196
+    ],
+    [
+     248,
+     196
+    ],
+    [
+     248,
+     224
+    ],
+    [
+     570,
+     224
+    ]
+   ],
+   "hidden": true,
+   "tone": "danger",
+   "narrow": {
+    "points": [
+     [
+      60,
+      210
+     ],
+     [
+      116,
+      210
+     ],
+     [
+      116,
+      186
+     ],
+     [
+      144,
+      186
+     ],
+     [
+      144,
+      210
+     ],
+     [
+      340,
+      210
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t0",
+   "type": "text",
+   "x": 110,
+   "y": 250,
+   "text": "0",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 60,
+    "y": 250,
+    "size": 10
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 202,
+   "y": 250,
+   "text": "2",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 116,
+    "y": 250,
+    "size": 10
+   }
+  },
+  {
+   "id": "t4",
+   "type": "text",
+   "x": 294,
+   "y": 250,
+   "text": "4",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 172,
+    "y": 250,
+    "size": 10
+   }
+  },
+  {
+   "id": "t6",
+   "type": "text",
+   "x": 386,
+   "y": 250,
+   "text": "6",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 228,
+    "y": 250,
+    "size": 10
+   }
+  },
+  {
+   "id": "t8",
+   "type": "text",
+   "x": 478,
+   "y": 250,
+   "text": "8",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 284,
+    "y": 250,
+    "size": 10
+   }
+  },
+  {
+   "id": "t10",
+   "type": "text",
+   "x": 570,
+   "y": 250,
+   "text": "10",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 340,
+    "y": 250,
+    "size": 10
+   }
+  },
+  {
+   "id": "pulse",
+   "type": "box",
+   "x": 202,
+   "y": 186,
+   "w": 46,
+   "h": 48,
+   "fill": "danger",
+   "hidden": true,
+   "dashed": true,
+   "narrow": {
+    "x": 116,
+    "y": 190,
+    "w": 28,
+    "h": 40
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320.0,
+   "y": 285,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "narrow": {
+    "x": 180.0,
+    "y": 285,
+    "size": 11
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "X rises at t = 2 and falls at t = 6. Logically Y = X·X′ is always 0.",
+   "patches": []
+  },
+  {
+   "caption": "The inverter takes one time unit, so X′ falls only at t = 3 and rises only at t = 7.",
+   "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Between t = 2 and t = 3 both AND inputs are 1, so Y pulses to 1 for exactly the inverter delay: a static-0 hazard (a glitch).",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "pulse",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "1-pulse of width = inverter delay on the rising edge"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "On the falling edge (t = 6 to 7) X is already 0 while X′ is still 0, so the AND sees 0, 0 and Y stays 0. The glitch appears only after X rises.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "no glitch on the falling edge",
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

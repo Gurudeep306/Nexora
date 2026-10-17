@@ -153,6 +153,30 @@ PYQ pipeline, not a set error).
   with the all-ones field meaning zero, and every paper from 2008 the IEEE biases 127 / 1023 (2021-1 says
   "bias of 127" explicitly). Solution sets that write "bias = 2ᵏ⁻¹" for IEEE, or 2ⁿ − 1 (set B 151), are
   wrong for IEEE; lesson 5's `bias-conventions` table and `trap-bias` teach the distinction.
+- **Chapter 2 key audit (2026-10-17):** all 64 Chapter 2 keys (`dl/boolean` 36, `dl/gates` 27,
+  `dl/combinational` 1) were re-derived in `_checks/dl/l2_01 … l2_06` by truth-table enumeration
+  (every option of every MCQ/MSQ is parsed and evaluated), exhaustive minimum-gate search
+  (`boollib.min_gates`) and timing simulation. 62 stored keys are correct; two were wrong and are now
+  fixed in `src/gate/fixes/` (the earlier `needsReview` flags were turned into answer fixes):
+  - `cse-2009-cs-6` (**fixed D → B**, `src/gate/fixes/cse-2009.json`): the minimum number of 2-input NOR
+    gates for $AB + C$ is 3, not 5: $AB + C = (A + C)(B + C) = \text{NOR}(\text{NOR}(A, C), \text{NOR}(B, C))$,
+    and an exhaustive search over every 2-gate NOR circuit finds none. 5 is the naive gate-by-gate count.
+    The paper scan (`GATE_PYQ/GATE2009.pdf` p. 2, Q6) prints the options 2, 3, 4, 5.
+  - `cse-2010-cs-31` (**fixed D → A**, `src/gate/fixes/cse-2010.json`): the paper scan
+    (`GATE_PYQ/GATE2010.pdf` p. 7, Q31) shows first-level NORs on (P, Q), (Q, R), (P, R), (Q, R), so
+    $f = \big((P+Q)(Q+R) + (P+R)(Q+R)\big)' = (Q + R)'$ (option A); $P = 1, Q = R = 0$ gives $f = 1$, which
+    rules out D, $(P+Q+R)'$.
+  - Interpretations kept (keys unchanged): `cse-1998-a-13` reads "XORed with itself n times" as $n$ XOR
+    operations ($n + 1$ copies), which is what makes D the key; `cse-1992-a-2-ii` and `cse-1999-a-34`
+    assume the constants 0 and 1 are available (without them neither the MUX nor {AND, XOR} is complete);
+    `cse-2000-a-2-10`'s equation system has six solutions, of which only option C is offered.
+  - The legacy free-text `solution` field of both questions argued for the old key D. `solution` is now a
+    fixable field in `scripts/gate/apply-fixes.mjs`, and both texts are replaced through
+    `src/gate/fixes/cse-2009.json` and `cse-2010.json` (the v2 solutions in `src/gate/solutions` were already
+    correct).
+  - Set-level slips noticed while writing Chapter 2 (lessons teach the correct versions): one set claims NOR
+    is faster than NAND (X4 above), and one set labels a cascade of two 2:1 MUXes with constants as OR when
+    it computes NAND (D 400 above).
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,

@@ -2288,7 +2288,7 @@
       "verification": "A = B = I₂ refutes I and IV; II and III are standard theorems."
     },
     "cse-2020-cs-28": {
-      "approach": "Read the circuit as z = a + b̄c, then list the minterms: all four with a = 1 plus a = 0, b = 0, c = 1.",
+      "approach": "Concept tested: **reading a gate circuit**. Write each gate in terms of its inputs, then expand the expression into minterms ($a$ is the MSB).",
       "concepts": [
         "Logic gates",
         "Sum of minterms"
@@ -2296,40 +2296,19 @@
       "steps": [
         {
           "title": "Expression",
-          "body": "NOT gives $\\bar b$; AND gives $\\bar b c$; OR with $a$ gives $$z = a + \\bar b c$$"
+          "body": "NOT gives $\\bar b$; AND gives $\\bar b c$; OR with $a$ gives $z = a + \\bar b c$."
         },
         {
           "title": "Minterms",
-          "body": "$a = 1$: minterms $4,5,6,7$. $\\bar b c$ with $a=0$: $abc = 001 = 1$. So $z = \\sum(1,4,5,6,7)$.",
-          "scene": {
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              },
-              {
-                "r": 4,
-                "tone": "success"
-              },
-              {
-                "r": 5,
-                "tone": "success"
-              },
-              {
-                "r": 6,
-                "tone": "success"
-              },
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ],
-            "caption": "z = 1 for minterms 1, 4, 5, 6, 7"
-          }
+          "body": "$a \\to 1-- = \\{4, 5, 6, 7\\}$; $\\bar b c \\to -01 = \\{1, 5\\}$. Union: $\\{1, 4, 5, 6, 7\\}$."
+        },
+        {
+          "title": "Match",
+          "body": "$z = \\Sigma(1, 4, 5, 6, 7)$: option (B)."
         }
       ],
       "answer": {
-        "value": "z = Σ(1,4,5,6,7)",
+        "value": "(B) $z = \\sum(1, 4, 5, 6, 7)$",
         "choice": [
           "B"
         ],
@@ -2339,103 +2318,82 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Contains 0 (z = 0 when a = b = c = 0) and misses 4, 5, 6."
+          "reason": "Contains $m_0$ and $m_3$, where $a = 0$ and $\\bar b c = 0$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exactly the rows where a = 1 or (b = 0 and c = 1)."
+          "reason": "All rows with $a = 1$, plus row 001."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Contains 2 (abc = 010 gives z = 0) and misses 1."
+          "reason": "Contains $m_2$ (010) and misses $m_1$ (001)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Contains 2 and 3, both 0, and misses 1, 4, 6, 7."
+          "reason": "Misses every row with $a = 1$ except 5."
         }
       ],
-      "verification": "Truth table of z = a + b̄c checked row by row.",
+      "shortcut": "OR with $a$ means all four rows $1xx$ are in; only one extra row (001) comes from $\\bar b c$.",
+      "pitfalls": [
+        "Taking $c$ as the most significant bit, which renumbers the rows."
+      ],
+      "verification": "Row 001: $\\bar b c = 1$ ⇒ $z = 1$; row 011: $\\bar b = 0$, $a = 0$ ⇒ $z = 0$.",
       "animation": {
-        "kind": "table",
-        "title": "Truth table",
-        "cols": [
-          "m",
-          "a",
-          "b",
-          "c",
-          "b̄c",
-          "z"
+        "kind": "circuit",
+        "title": "z = a + b′c",
+        "inputs": [
+          {
+            "id": "a",
+            "label": "a",
+            "value": 0
+          },
+          {
+            "id": "b",
+            "label": "b",
+            "value": 0
+          },
+          {
+            "id": "c",
+            "label": "c",
+            "value": 1
+          }
         ],
-        "rows": [
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            1,
-            1,
-            1
-          ],
-          [
-            2,
-            0,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            3,
-            0,
-            1,
-            1,
-            0,
-            0
-          ],
-          [
-            4,
-            1,
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            5,
-            1,
-            0,
-            1,
-            1,
-            1
-          ],
-          [
-            6,
-            1,
-            1,
-            0,
-            0,
-            1
-          ],
-          [
-            7,
-            1,
-            1,
-            1,
-            0,
-            1
-          ]
+        "gates": [
+          {
+            "id": "N",
+            "type": "NOT",
+            "in": [
+              "b"
+            ]
+          },
+          {
+            "id": "G1",
+            "type": "AND",
+            "in": [
+              "N",
+              "c"
+            ]
+          },
+          {
+            "id": "G2",
+            "type": "OR",
+            "in": [
+              "G1",
+              "a"
+            ]
+          }
         ],
-        "mono": true
+        "outputs": [
+          {
+            "id": "F",
+            "from": "G2",
+            "label": "F"
+          }
+        ],
+        "caption": "Row 001: z = 1."
       }
     },
     "cse-2020-cs-29": {

@@ -1821,7 +1821,7 @@
       "verification": "Distinct Student_Name values in Student = {Raj, Rohit}, and each has at least one Performance row, so there are 2 groups."
     },
     "cse-2015-1-cs-28": {
-      "approach": "The table is XOR. Check commutativity from the symmetric rows, and associativity by noting that both bracketings give the parity of $p, q, r$.",
+      "approach": "Concept tested: **identifying an operator from its table** and testing its properties. The table 0, 1, 1, 0 is XOR.",
       "concepts": [
         "XOR",
         "Commutativity",
@@ -1829,16 +1829,20 @@
       ],
       "steps": [
         {
+          "title": "Identify",
+          "body": "$p \\neq q$ is 1 exactly when $p$ and $q$ differ: it is XOR."
+        },
+        {
           "title": "Commutative",
-          "body": "Rows $(0,1)$ and $(1,0)$ both give 1, and the diagonal rows are symmetric anyway, so $p \\ne q = q \\ne p$."
+          "body": "Rows $(0, 1)$ and $(1, 0)$ both give 1, so $p \\neq q = q \\neq p$."
         },
         {
           "title": "Associative",
-          "body": "$(p \\oplus q) \\oplus r$ and $p \\oplus (q \\oplus r)$ are both 1 exactly when an odd number of $p, q, r$ are 1. For example $p=q=r=1$: $(1\\oplus1)\\oplus1 = 0 \\oplus 1 = 1$ and $1 \\oplus (1\\oplus1) = 1 \\oplus 0 = 1$. Answer (A)."
+          "body": "Both bracketings $(p \\neq q) \\neq r$ and $p \\neq (q \\neq r)$ equal the parity of $p, q, r$, so they agree on all 8 rows."
         }
       ],
       "answer": {
-        "value": "Both commutative and associative",
+        "value": "(A) both commutative and associative",
         "choice": [
           "A"
         ],
@@ -1848,25 +1852,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: XOR is both commutative and associative."
+          "reason": "XOR is both."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "XOR is associative, since both bracketings compute parity."
+          "reason": "XOR is associative (parity), so 'not associative' is wrong."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "XOR is commutative, since the truth table is symmetric in $p$ and $q$."
+          "reason": "The table is symmetric, so it is commutative."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "XOR has both properties."
+          "reason": "It has both properties."
         }
       ],
-      "verification": "All 8 combinations of $(p,q,r)$ give equal results for both bracketings, because each equals $p+q+r \\bmod 2$."
+      "shortcut": "Name the operator first: the column 0110 is XOR, whose properties you already know.",
+      "pitfalls": [
+        "Reading '$\\neq$' as 'not equal to' in the arithmetic sense and doubting associativity because '$a \\ne b \\ne c$' is ambiguous in words."
+      ],
+      "verification": "Row $(1, 1, 1)$: $(1 \\neq 1) \\neq 1 = 0 \\neq 1 = 1$ and $1 \\neq (1 \\neq 1) = 1 \\neq 0 = 1$."
     },
     "cse-2015-1-cs-29": {
       "approach": "A frame goes out without collision in slot 1 exactly when **one** station transmits and the other three stay silent. Add the four disjoint cases.",
@@ -2828,7 +2836,7 @@
       "verification": "Equivalently $S = \\dfrac{\\text{CPI}_{np}}{\\text{CPI}_{p}} \\times \\dfrac{f_{p}}{f_{np}} = 4 \\times \\dfrac{2}{2.5} = 3.2$."
     },
     "cse-2015-1-cs-39": {
-      "approach": "Simplify each function and try to build NOT and NAND from it alone (no constants). If a single function yields NAND it is functionally complete.",
+      "approach": "Concept tested: **completeness of a single function (no constants)**. Simplify each function; a single function is complete iff $f(0,\\ldots,0) = 1$, $f(1,\\ldots,1) = 0$ and it is not self-dual. Or construct NAND from it directly.",
       "concepts": [
         "Functional completeness",
         "NAND universality",
@@ -2837,19 +2845,19 @@
       "steps": [
         {
           "title": "Simplify g",
-          "body": "$$g = X'YZ + X'YZ' + XY = X'Y(Z+Z') + XY = X'Y + XY = Y$$\n\n$g$ just returns its second input, so composing $g$ can only produce projections — $\\{g\\}$ is **not** complete."
+          "body": "$g = X'YZ + X'YZ' + XY = X'Y + XY = Y$. A circuit of $g$ gates only ever copies an input: not complete."
         },
         {
-          "title": "Get NOT from f",
-          "body": "Put $X = Y = Z = A$:\n$$f(A,A,A) = A'AA + AA' + A'A' = 0 + 0 + A' = A'$$"
+          "title": "Corner test for f",
+          "body": "$f = X'YZ + XY' + Y'Z'$. $f(0,0,0) = Y'Z' = 1$ and $f(1,1,1) = 0$: escapes T₀ and T₁ (and hence M). It has the minterms $\\{0, 3, 4, 5\\}$; rows 3 and 4 are a complementary pair, so it is not self-dual. By the Sheffer criterion, $\\{f\\}$ is complete."
         },
         {
-          "title": "Get NAND from f",
-          "body": "Put $Z = Y$:\n$$f(X,Y,Y) = X'YY + XY' + Y'Y' = X'Y + XY' + Y' = X'Y + Y'$$\n$$= (X' + Y')(Y + Y') = X' + Y' = \\overline{XY}$$\n\nNAND is universal, so $\\{f\\}$ **is** complete. Only $\\{f\\}$ ⇒ option (B)."
+          "title": "Constructive check",
+          "body": "$f(X, X, X) = \\bar{X}$ (NOT). $f(X, Y, Y) = X'Y + XY' + Y' = X'Y + Y' = X' + Y' = \\overline{XY}$: a NAND, which is universal."
         }
       ],
       "answer": {
-        "value": "Only {f} is functionally complete",
+        "value": "(B) only {f} is functionally complete",
         "choice": [
           "B"
         ],
@@ -2859,29 +2867,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$g = Y$ is a projection, never complete."
+          "reason": "$g = Y$ cannot even make NOT."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$f(X,Y,Y) = \\overline{XY}$ (NAND), while $g = Y$."
+          "reason": "$f(X, Y, Y) = \\overline{XY}$ is NAND; $g$ is a projection."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Reversed: $g$ is the trivial one."
+          "reason": "$g$ is the one that fails."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$f$ realises NAND, so it is complete."
+          "reason": "$f$ is complete."
         }
       ],
-      "shortcut": "Post's test for f: f(0,0,0)=1 (not 0-preserving), f(1,1,1)=0 (not 1-preserving), and f(A,A,A)=A' — together with non-linearity/non-monotonicity this already signals completeness.",
+      "shortcut": "Tie inputs together: $f(X, Y, Y)$ already gives NAND.",
       "pitfalls": [
-        "Assuming constants 0/1 are freely available — here we built NAND without them."
+        "Not simplifying $g$ and assuming it is complete because it contains complemented literals."
       ],
-      "verification": "Truth table of $f(X,Y,Y)$: (0,0)→1, (0,1)→1, (1,0)→1, (1,1)→0 = NAND."
+      "verification": "Post's classes of $f$ (by truth table $\\Sigma(0, 3, 4, 5)$): not 0-preserving, not 1-preserving, not self-dual, not monotone, not affine."
     },
     "cse-2015-1-cs-40": {
       "approach": "Insertions dominate (N of them), while find/delete/decrease-key happen only $\\sqrt{\\log N}$ times. Pick the structure with O(1) insert and acceptable cost for the rare operations, then total each option.",

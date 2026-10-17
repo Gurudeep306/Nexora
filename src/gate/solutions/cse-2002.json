@@ -1304,7 +1304,7 @@
       "verification": "$n=4$: $K_4$ has 6 edges $=\\frac{4\\cdot3}{2}$ ✓."
     },
     "cse-2002-a-26": {
-      "approach": "Read the circuit as a Boolean expression and simplify with De Morgan: NAND of a NAND output and an inverted input collapses to an AND-OR form.",
+      "approach": "Concept tested: **NAND levels with function blocks**. Read the circuit as an expression and simplify with De Morgan: a NAND of a NAND output and an inverted input collapses to an AND–OR form.",
       "concepts": [
         "NAND gate",
         "De Morgan's law",
@@ -1313,19 +1313,19 @@
       "steps": [
         {
           "title": "Write the output",
-          "body": "First NAND gives $(f_1 f_2)'$. The second NAND has inputs $(f_1f_2)'$ and $f_3'$:\n$$f = \\big((f_1f_2)'\\cdot f_3'\\big)' = f_1f_2 + f_3$$"
+          "body": "First NAND: $\\overline{f_1 f_2}$. Second NAND: $f = \\overline{\\overline{f_1 f_2} \\cdot \\overline{f_3}} = f_1 f_2 + f_3$."
         },
         {
-          "title": "Evaluate $f_1 f_2$",
-          "body": "AND of two functions = intersection of their minterm sets: $\\{0,1,3,5\\}\\cap\\{6,7\\} = \\varnothing$, so $f_1f_2 = 0$."
+          "title": "Intersection",
+          "body": "$f_1 f_2 = \\{0, 1, 3, 5\\} \\cap \\{6, 7\\} = \\varnothing$: the AND contributes nothing."
         },
         {
-          "title": "Solve for $f_3$",
-          "body": "$f = 0 + f_3 = f_3$, hence $f_3 = f = \\Sigma(1,4,5)$."
+          "title": "Solve",
+          "body": "So $f = f_3$, i.e. $f_3 = \\Sigma(1, 4, 5)$: option (A)."
         }
       ],
       "answer": {
-        "value": "$f_3 = \\Sigma(1,4,5)$ — option (A)",
+        "value": "(A) $\\Sigma(1, 4, 5)$",
         "choice": [
           "A"
         ],
@@ -1335,29 +1335,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Since $f_1f_2=0$, $f = f_3$, so $f_3 = \\Sigma(1,4,5)$."
+          "reason": "$f_1 f_2 = 0$, so $f_3 = f$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\Sigma(6,7)$ is $f_2$; with it $f = \\Sigma(6,7) \\ne \\Sigma(1,4,5)$."
+          "reason": "$\\Sigma(6, 7)$ is $f_2$; with it, $f$ would be $\\{6, 7\\}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\Sigma(0,1,3,5)$ is $f_1$; it would give $f = \\Sigma(0,1,3,5)$."
+          "reason": "$\\Sigma(0, 1, 3, 5)$ is $f_1$; it would add 0 and 3 and miss 4."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A valid answer exists (option A), so \"none\" is wrong."
+          "reason": "(A) works."
         }
       ],
+      "shortcut": "NAND–NAND with an inverted input is just AND–OR: $f = f_1 f_2 + f_3$.",
       "pitfalls": [
-        "Forgetting the inverter on $f_3$ and getting $f = f_1f_2 + f_3'$.",
-        "Treating the product of two functions as a union of minterms instead of an intersection."
+        "Ignoring the NOT on $f_3$ and getting $f_1 f_2 + \\overline{f_3}$."
       ],
-      "verification": "Minterm 4: $f_1(4)=0, f_2(4)=0, f_3(4)=1$ ⇒ first NAND = 1, NOT = 0, second NAND = $(1\\cdot0)'=1 = f(4)$ ✓."
+      "verification": "$\\varnothing \\cup \\{1, 4, 5\\} = \\{1, 4, 5\\} = f$."
     },
     "cse-2002-a-27": {
       "approach": "Decode the wiring: EN is driven by z', A1A0 = y'z, so the MUX is active only for z = 0 and then picks I0 (=x) or I2 (=y) depending on y.",
@@ -1417,24 +1417,28 @@
       "verification": "Truth check: $(x,y,z)=(1,1,0)$: EN=1, select 00 → $x=1$ ✓; $(1,0,0)$: select 10 → $y=0$ ✓; any $z=1$ → 0 ✓."
     },
     "cse-2002-a-28": {
-      "approach": "Apply the definition f(A,B) = A' + B from the inside out and simplify with absorption and De Morgan.",
+      "approach": "Concept tested: **nested operators**. $f(A, B) = A' + B$ is implication; evaluate from the inside out, simplifying at each level.",
       "concepts": [
-        "Boolean algebra",
+        "Nested operators",
         "Absorption law",
         "De Morgan's law"
       ],
       "steps": [
         {
           "title": "Inner call",
-          "body": "$f(x+y,\\,y) = (x+y)' + y = x'y' + y = x' + y$ (absorption $x'y' + y = x' + y$)."
+          "body": "$f(x + y, y) = (x + y)' + y = x'y' + y = x' + y$ (redundant literal: $y + y'x' = y + x'$)."
         },
         {
           "title": "Outer call",
-          "body": "$f(x'+y,\\,z) = (x'+y)' + z = x\\,y' + z$."
+          "body": "$f(x' + y, z) = (x' + y)' + z = xy' + z$ (De Morgan)."
+        },
+        {
+          "title": "Match",
+          "body": "$xy' + z$ is option (C)."
         }
       ],
       "answer": {
-        "value": "$xy' + z$ — option (C)",
+        "value": "(C) $xy' + z$",
         "choice": [
           "C"
         ],
@@ -1444,28 +1448,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$x' + z$ comes from wrongly simplifying the inner call to $x'$."
+          "reason": "$x' + z$ is 1 at $x = 0, z = 0$, but there $xy' + z = 0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$xyz$ has no basis; e.g. $x=0,y=0,z=1$ gives $f=1$ but $xyz=0$."
+          "reason": "$xyz$ is 0 at $x = 1, y = 0, z = 0$, but $xy' + z = 1$ there."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Matches $xy' + z$."
+          "reason": "The inside-out simplification."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Option (C) is correct."
+          "reason": "(C) is correct."
         }
       ],
+      "shortcut": "Implication: $f(A, B) = 0$ only when $A = 1, B = 0$. The outer call is 0 only when $z = 0$ and the inner value is 1, i.e. $x' + y = 1$; so the result is $\\overline{(x' + y)z'} = xy' + z$.",
       "pitfalls": [
-        "Forgetting to complement the first argument in the outer call."
+        "Forgetting to complement the whole first argument: $(x + y)'$ is $x'y'$, not $x' + y'$."
       ],
-      "verification": "$x=1,y=0,z=0$: inner $=(1)'+0=0$; outer $=0'+0=1$; $xy'+z = 1$ ✓."
+      "verification": "$x = 1, y = 0, z = 0$: inner $f(1, 0) = 0$, outer $f(0, 0) = 1$; $xy' + z = 1$. ✓"
     },
     "cse-2002-a-29": {
       "approach": "Add 5DH and 6BH in binary; AC is the carry out of bit 3 (low nibble), CY the carry out of bit 7.",
@@ -3020,202 +3025,75 @@
       "verification": "Catalan number $C_3 = 5$ matches the enumeration, and each tree’s preorder was checked to be $C, B, A$."
     },
     "cse-2002-b-55-a": {
-      "approach": "Add the consensus term $xz'$ so the sum of products factors as $(x+y)(y'+z')$; then De Morgan turns $y'+z'$ into a single complement $(yz)'$.",
+      "approach": "Concept tested: **adding a consensus term to make factoring possible**, then **De Morgan** to merge two complemented literals into one complement.",
       "concepts": [
         "Consensus theorem",
-        "De Morgan’s law",
+        "De Morgan's law",
         "Factoring"
       ],
       "steps": [
         {
           "title": "Add the consensus term",
-          "body": "In $xy' + yz'$ the variable $y$ appears complemented in one term and uncomplemented in the other, so the consensus term is $x\\cdot z'$:\n$$f = xy' + yz' + xz'.$$"
+          "body": "In $xy' + yz'$ the variable $y$ appears as $y'$ and $y$; the consensus of the two terms is $xz'$. Adding it does not change $f$: $f = xy' + yz' + xz'$."
         },
         {
-          "title": "Factor",
-          "body": "Expand $(x+y)(y'+z') = xy' + xz' + yy' + yz' = xy' + xz' + 0 + yz'$, which equals $f$. Hence $f = (x+y)(y'+z')$."
+          "title": "Factor into two sums",
+          "body": "$(x + y)(y' + z') = xy' + xz' + yy' + yz' = xy' + xz' + yz'$, exactly the three terms. So $f = (x + y)(y' + z')$."
         },
         {
           "title": "One complement",
-          "body": "De Morgan: $y'+z' = (yz)'$, so\n$$f = (x+y)\\cdot(yz)'.$$\nCircuit: OR gate on $x,y$; AND gate on $y,z$ followed by the single NOT gate; a final AND gate combines the two.",
-          "scene": {
-            "caption": "f = (x + y)·(yz)′ with one NOT gate"
-          }
+          "body": "De Morgan: $y' + z' = (yz)'$. Hence $f = (x + y)\\,(yz)'$."
+        },
+        {
+          "title": "The circuit",
+          "body": "One AND gate forms $yz$, the single NOT gate inverts it, one OR gate forms $x + y$, and a final AND gate multiplies the two: AND, NOT, OR, AND."
         }
       ],
-      "animation": {
-        "kind": "circuit",
-        "inputs": [
-          {
-            "id": "x"
-          },
-          {
-            "id": "y"
-          },
-          {
-            "id": "z"
-          }
-        ],
-        "gates": [
-          {
-            "id": "g1",
-            "type": "OR",
-            "in": [
-              "x",
-              "y"
-            ]
-          },
-          {
-            "id": "g2",
-            "type": "AND",
-            "in": [
-              "y",
-              "z"
-            ]
-          },
-          {
-            "id": "g3",
-            "type": "NOT",
-            "in": [
-              "g2"
-            ]
-          },
-          {
-            "id": "g4",
-            "type": "AND",
-            "in": [
-              "g1",
-              "g3"
-            ]
-          }
-        ],
-        "outputs": [
-          {
-            "id": "f",
-            "from": "g4"
-          }
-        ]
-      },
       "answer": {
-        "value": "$f = (x+y)\\,(yz)'$ — OR($x,y$) AND NOT(AND($y,z$))",
+        "value": "$f = (x + y)\\,(yz)'$: an OR of $x, y$ ANDed with the NOT of $yz$",
         "matchesKey": true
       },
+      "shortcut": "When a sum of products needs two different complemented literals, try to collect them into one factor $(a' + b') = (ab)'$; adding a consensus term is the usual way to create that factor.",
       "pitfalls": [
-        "Writing $f = x(yz)' + \\dots$ with two complements, or forgetting that the factorisation only works after adding the consensus term."
+        "Writing $x\\overline{y} + y\\overline{z}$ with two NOT gates, which the question forbids."
       ],
-      "verification": "Truth table over $xyz = 000\\ldots111$: $f = 0,0,1,0,1,1,1,0$ for both $xy'+yz'$ and $(x+y)(yz)'$."
+      "verification": "Rows where $f = 1$: $xy' = 1$ at 100, 101; $yz' = 1$ at 010, 110. $(x + y)(yz)'$ is 1 at 010, 100, 101, 110 and 0 elsewhere (at 011 and 111, $yz = 1$). Same four rows."
     },
     "cse-2002-b-55-b": {
-      "approach": "AND–OR becomes NAND–NAND, but the circuit has two cascaded OR levels; insert one NAND used as an inverter so the second OR level is again a NAND fed by complemented inputs.",
+      "approach": "Concept tested: **multi-level NAND conversion by bubble pairs**. The circuit is AND → OR → OR; the first AND–OR level becomes NAND–NAND, and the second OR level needs an inverter (an unpaired bubble) before it can be a NAND too.",
       "concepts": [
         "NAND-only realisation",
         "Bubble pushing",
-        "De Morgan’s law"
+        "De Morgan's law"
       ],
       "steps": [
         {
+          "title": "Read the circuit",
+          "body": "$f = (ab + cd) + ef$: AND gates on $(a, b)$, $(c, d)$, $(e, f)$, an OR of the first two, and an OR of that with the third."
+        },
+        {
           "title": "First AND–OR level",
-          "body": "Label the inputs $a,b$; $c,d$; $e,f$. By bubble pushing, AND gates feeding an OR gate become NAND gates feeding a NAND gate:\n$N_1 = \\overline{ab}$, $N_2 = \\overline{cd}$, $N_3 = \\text{NAND}(N_1,N_2)$, which equals the first OR output ($ab + cd$)."
+          "body": "$N_1 = \\overline{ab}$, $N_2 = \\overline{cd}$, $N_3 = \\overline{N_1 N_2} = ab + cd$ (NAND–NAND)."
         },
         {
-          "title": "Second OR level",
-          "body": "The second OR needs complemented inputs to become a NAND. The third AND gives $N_5 = \\overline{ef}$ (already complemented). The first OR output must be inverted: $N_4 = \\text{NAND}(N_3,N_3)$ (a NAND with its inputs tied acts as NOT)."
+          "title": "The second OR level",
+          "body": "To NAND $ab + cd$ with $ef$, the output NAND needs both inputs complemented: $\\overline{ef}$ comes from $N_5 = \\overline{ef}$, and $\\overline{ab + cd}$ needs an inverter $N_4 = \\overline{N_3 N_3}$."
         },
         {
-          "title": "Output gate",
-          "body": "$N_6 = \\text{NAND}(N_4, N_5)$ — this replaces the second OR gate. Gate count: $N_1\\ldots N_6 = 6$ two-input NAND gates.",
-          "scene": {
-            "caption": "Six 2-input NAND gates (N4 is a NAND used as an inverter)"
-          }
+          "title": "Output",
+          "body": "$f = \\overline{N_4 N_5} = \\overline{N_4} + \\overline{N_5} = (ab + cd) + ef$. Six 2-input NANDs: $N_1, \\ldots, N_5$ and the output gate."
         }
       ],
-      "animation": {
-        "kind": "circuit",
-        "inputs": [
-          {
-            "id": "a"
-          },
-          {
-            "id": "b"
-          },
-          {
-            "id": "c"
-          },
-          {
-            "id": "d"
-          },
-          {
-            "id": "e"
-          },
-          {
-            "id": "f"
-          }
-        ],
-        "gates": [
-          {
-            "id": "N1",
-            "type": "NAND",
-            "in": [
-              "a",
-              "b"
-            ]
-          },
-          {
-            "id": "N2",
-            "type": "NAND",
-            "in": [
-              "c",
-              "d"
-            ]
-          },
-          {
-            "id": "N3",
-            "type": "NAND",
-            "in": [
-              "N1",
-              "N2"
-            ]
-          },
-          {
-            "id": "N4",
-            "type": "NAND",
-            "in": [
-              "N3",
-              "N3"
-            ]
-          },
-          {
-            "id": "N5",
-            "type": "NAND",
-            "in": [
-              "e",
-              "f"
-            ]
-          },
-          {
-            "id": "N6",
-            "type": "NAND",
-            "in": [
-              "N4",
-              "N5"
-            ]
-          }
-        ],
-        "outputs": [
-          {
-            "id": "out",
-            "from": "N6"
-          }
-        ]
-      },
       "answer": {
-        "value": "$N_1=\\text{NAND}(a,b)$, $N_2=\\text{NAND}(c,d)$, $N_3=\\text{NAND}(N_1,N_2)$, $N_4=\\text{NAND}(N_3,N_3)$, $N_5=\\text{NAND}(e,f)$, output $=\\text{NAND}(N_4,N_5)$",
+        "value": "N1 = (ab)′, N2 = (cd)′, N3 = NAND(N1, N2), N4 = NAND(N3, N3), N5 = (ef)′, f = NAND(N4, N5): six 2-input NANDs",
         "matchesKey": true
       },
+      "shortcut": "Draw every gate as NAND and count bubbles on each wire: wherever a wire has a single bubble (here between the two OR levels), add one inverter.",
       "pitfalls": [
-        "Feeding $N_3$ straight into the last NAND — $N_3$ is uncomplemented, so the output would be wrong without the inverter $N_4$."
+        "Replacing every gate by a NAND without the inverter, which computes $\\overline{ab + cd} + ef$.",
+        "Using a 3-input NAND for the OR of three products (the question requires 2-input gates)."
       ],
-      "verification": "Bubble check: $N_3 = \\overline{\\overline{ab}\\cdot\\overline{cd}} = ab+cd$; $N_6 = \\overline{\\overline{N_3}\\cdot\\overline{ef}} = N_3 + ef = ab + cd + ef$, the original circuit."
+      "verification": "$a = b = 1$, others 0: $N_1 = 0$, $N_2 = 1$, $N_3 = 1$, $N_4 = 0$, $N_5 = 1$, $f = \\overline{0 \\cdot 1} = 1$. ✓"
     },
     "cse-2002-b-56-a": {
       "approach": "Each falling edge shifts the data one stage down: R0 takes the new inputs, R1 the first-stage result of R0, R2 the second-stage result of R1. So after clock $k$, R2 holds pair $k-2$ and $Z$ (from the last full adder) is $A_{k-2}+B_{k-2}$.",

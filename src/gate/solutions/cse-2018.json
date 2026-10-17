@@ -669,26 +669,27 @@
       "verification": "Reversing the roles (enqueue at tail, dequeue at head) would give Θ(1), Θ(1); this design uses the wrong ends, hence Θ(n) for dequeue."
     },
     "cse-2018-cs-4": {
-      "approach": "Use $\\overline{P}\\oplus Q = \\overline{P\\oplus Q} = P\\odot Q$, $X\\oplus 1 = \\overline X$, $X\\odot 0 = \\overline X$ and check each identity.",
+      "approach": "Concept tested: **XOR/XNOR identities**: $\\overline{P} \\oplus Q = \\overline{P \\oplus Q} = P \\odot Q$, $X \\oplus 1 = \\overline{X}$ and $X \\odot 0 = \\overline{X}$. Check each option.",
       "concepts": [
-        "XOR / XNOR identities"
+        "XOR / XNOR identities",
+        "Complemented inputs"
       ],
       "steps": [
         {
-          "title": "A, B, C",
-          "body": "(A) XNOR is by definition the complement of XOR ✓. (B) Complementing one input complements the XOR: $\\overline P\\oplus Q = \\overline{P\\oplus Q} = P\\odot Q$ ✓. (C) Complementing both inputs leaves XOR unchanged ✓."
+          "title": "(A) and (B)",
+          "body": "(A) is the definition of XNOR. (B) one complemented input gives XNOR: $\\overline{P} \\oplus Q = P \\oplus Q \\oplus 1 = P \\odot Q$. Both correct."
         },
         {
-          "title": "D, left side",
-          "body": "$P\\oplus\\overline P = 1$, so $1\\oplus Q = \\overline Q$."
+          "title": "(C)",
+          "body": "$\\overline{P} \\oplus \\overline{Q} = P \\oplus Q \\oplus 1 \\oplus 1 = P \\oplus Q$. Correct."
         },
         {
-          "title": "D, right side",
-          "body": "$P\\odot\\overline P = 0$, so $0\\odot\\overline Q = \\overline{0\\oplus\\overline Q} = \\overline{\\overline Q} = Q$. Since $\\overline Q \\neq Q$, (D) is NOT correct."
+          "title": "(D)",
+          "body": "Left: $P \\oplus \\overline{P} = 1$, so $1 \\oplus Q = \\overline{Q}$. Right: $P \\odot \\overline{P} = 0$, so $0 \\odot \\overline{Q} = \\overline{\\overline{Q}} = Q$. Left $\\overline{Q}$, right $Q$: **not correct**."
         }
       ],
       "answer": {
-        "value": "$(P \\oplus \\overline{P}) \\oplus Q = (P \\odot \\overline{P}) \\odot \\overline{Q}$",
+        "value": "(D)",
         "choice": [
           "D"
         ],
@@ -698,25 +699,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True by definition of XNOR."
+          "reason": "Correct by definition."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "True: complementing one input of XOR complements the result."
+          "reason": "Correct: one complemented input gives XNOR."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "True: complementing both inputs cancels out."
+          "reason": "Correct: two complements cancel."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "NOT correct: the left side is $\\overline Q$ and the right side is $Q$."
+          "reason": "Not correct: the left side is $\\overline{Q}$, the right side is $Q$."
         }
       ],
-      "verification": "Truth check with $Q = 0$: left $= 1\\oplus0 = 1$; right $= 0\\odot1 = 0$. They differ."
+      "shortcut": "In (D), $P \\oplus \\overline{P} = 1$ and $P \\odot \\overline{P} = 0$; XOR with 1 inverts and XNOR with 0 inverts, so the left side is $\\overline{Q}$ and the right side is $\\overline{\\overline{Q}} = Q$.",
+      "pitfalls": [
+        "Treating $X \\odot 0$ as $X$ (that is $X \\oplus 0$)."
+      ],
+      "verification": "At $Q = 0$: left $1 \\oplus 0 = 1$; right $0 \\odot 1 = 0$."
     },
     "cse-2018-cs-5": {
       "approach": "Recall the defining RISC traits: load/store architecture (ALU operations only on registers), uniform fixed-length instructions for simple decoding/pipelining, and a fast hardwired control unit.",

@@ -1,0 +1,290 @@
+{
+ "version": 1,
+ "title": "Counting Boolean functions: one free output bit per row",
+ "width": 640,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 370
+ },
+ "intro": "A Boolean function is completely described by its output column. Count the columns.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "How many Boolean functions of n variables?",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "How many functions?",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "rows",
+   "type": "text",
+   "x": 320.0,
+   "y": 60,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180.0,
+    "y": 58,
+    "size": 12
+   }
+  },
+  {
+   "id": "n0",
+   "type": "text",
+   "x": 70,
+   "y": 110,
+   "text": "n = 1",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 30,
+    "y": 108,
+    "size": 12
+   }
+  },
+  {
+   "id": "b0",
+   "type": "bits",
+   "x": 120,
+   "y": 90,
+   "bits": "??",
+   "cell": 40,
+   "labels": [
+    "0",
+    "1"
+   ],
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 92,
+    "cell": 32
+   }
+  },
+  {
+   "id": "c0",
+   "type": "text",
+   "x": 220,
+   "y": 110,
+   "text": "2² = 4",
+   "anchor": "start",
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 142,
+    "size": 12
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 70,
+   "y": 180,
+   "text": "n = 2",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 30,
+    "y": 200,
+    "size": 12
+   }
+  },
+  {
+   "id": "b1",
+   "type": "bits",
+   "x": 120,
+   "y": 160,
+   "bits": "????",
+   "cell": 40,
+   "labels": [
+    "00",
+    "01",
+    "10",
+    "11"
+   ],
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 184,
+    "cell": 32
+   }
+  },
+  {
+   "id": "c1",
+   "type": "text",
+   "x": 300,
+   "y": 180,
+   "text": "2⁴ = 16",
+   "anchor": "start",
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 234,
+    "size": 12
+   }
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 70,
+   "y": 250,
+   "text": "n = 3",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 30,
+    "y": 292,
+    "size": 12
+   }
+  },
+  {
+   "id": "b2",
+   "type": "bits",
+   "x": 120,
+   "y": 230,
+   "bits": "????????",
+   "cell": 40,
+   "labels": [
+    "000",
+    "001",
+    "010",
+    "011",
+    "100",
+    "101",
+    "110",
+    "111"
+   ],
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 276,
+    "cell": 32
+   }
+  },
+  {
+   "id": "c2",
+   "type": "text",
+   "x": 460,
+   "y": 250,
+   "text": "2⁸ = 256",
+   "anchor": "start",
+   "size": 15,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 64,
+    "y": 326,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "One variable: 2 rows. Each row's output is an independent choice of 0 or 1, so there are 2 × 2 = 2² = 4 functions: 0, x, x′ and 1.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rows",
+     "set": {
+      "text": "a function = one output bit per row"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Two variables: 4 rows, so 2⁴ = 16 functions, the sixteen of Lesson 1.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Three variables: 8 rows, so 2⁸ = 256 functions. In general n variables give 2ⁿ rows and 2^(2ⁿ) functions; for n = 4 that is 65 536.",
+   "patches": [
+    {
+     "id": "n2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "rows",
+     "set": {
+      "text": "n variables: 2ⁿ rows, 2^(2ⁿ) functions"
+     }
+    }
+   ]
+  }
+ ]
+}

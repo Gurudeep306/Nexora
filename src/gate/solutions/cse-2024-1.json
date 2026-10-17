@@ -2937,136 +2937,28 @@
       }
     },
     "cse-2024-1-cs-18": {
-      "approach": "Write the steady-state function $Y = X \\cdot \\overline{X}$, then argue with timing: the NOT output keeps its old value for one gate delay, so right after an edge of $X$ the AND gate may briefly see both inputs at 1 — but only on the rising edge.",
+      "approach": "Concept tested: **the X·X̄ glitch**. Write the steady-state function $Y = X \\cdot \\overline{X}$, then argue with timing: the NOT output keeps its old value for one gate delay, so right after an edge of $X$ the AND gate may briefly see both inputs at 1, but only on the rising edge.",
       "concepts": [
         "Complement law $X\\overline{X} = 0$",
         "Propagation delay",
-        "Static-0 hazard (glitch)",
-        "Pulse (edge) detector"
+        "Static hazard"
       ],
-      "given": "$Y = \\text{AND}\\big(X,\\ \\text{NOT}(X)\\big)$. Let the NOT gate have delay $t_{N}$ and the AND gate delay $t_{A}$; wires have no delay.",
       "steps": [
         {
-          "title": "No delays: Y is always 0",
-          "body": "Both AND inputs change together, so $Y = X \\cdot \\overline{X}$:\n\n- $X = 0$: $Y = 0 \\cdot 1 = 0$\n- $X = 1$: $Y = 1 \\cdot 0 = 0$\n\n$Y$ is always logic Zero: (A) true, (B) false.",
-          "scene": {
-            "inputs": [
-              {
-                "id": "X",
-                "value": 1
-              }
-            ],
-            "caption": "$X=1$: AND inputs $(1,0)$, so $Y=0$"
-          }
+          "title": "No delays",
+          "body": "$Y = X \\cdot \\overline{X} = 0$ for every $X$: (A) is correct and (B) is wrong."
         },
         {
-          "title": "X rises 0 → 1: a transient 1 appears",
-          "body": "Before the edge: $X = 0$, NOT output $= 1$, $Y = 0$.\n\nAt $t = 0$ the direct input becomes 1 immediately, but the NOT output is still $1$ until $t = t_N$. During $0 < t < t_N$ the AND inputs are $(1, 1)$, so after $t_A$ the output pulses to **1** for a time $t_N$, then returns to 0 when the NOT output falls. (C) is true.",
-          "scene": {
-            "kind": "table",
-            "title": "Rising edge of X (t = 0)",
-            "cols": [
-              "interval",
-              "X",
-              "NOT out",
-              "AND inputs",
-              "Y (after t_A)"
-            ],
-            "rows": [
-              [
-                "t < 0",
-                0,
-                1,
-                "(0, 1)",
-                0
-              ],
-              [
-                "0 < t < t_N",
-                1,
-                {
-                  "v": 1,
-                  "tone": "warning",
-                  "sub": "stale"
-                },
-                "(1, 1)",
-                {
-                  "v": 1,
-                  "tone": "error",
-                  "sub": "glitch"
-                }
-              ],
-              [
-                "t > t_N",
-                1,
-                0,
-                "(1, 0)",
-                0
-              ]
-            ],
-            "hl": [
-              {
-                "r": 1,
-                "tone": "error"
-              }
-            ],
-            "caption": "The NOT output lags, so both inputs are briefly 1"
-          }
+          "title": "Rising edge with delays",
+          "body": "Before the edge $X = 0$, $\\overline{X} = 1$. When $X$ rises, the inverter output stays 1 for its delay, so for that short time both AND inputs are 1 and $Y$ can pulse to 1: (C) is correct."
         },
         {
-          "title": "X falls 1 → 0: no glitch",
-          "body": "Before the edge: $X = 1$, NOT output $= 0$, $Y = 0$.\n\nAt $t = 0$ the direct input drops to 0 at once; the NOT output rises only at $t = t_N$. The AND inputs go $(1,0) \\to (0,0) \\to (0,1)$ — at least one input is always 0, so $Y$ stays 0 throughout. $Y$ was already 0, so there is nothing that could be a \"transient Zero\": (D) is false.",
-          "scene": {
-            "kind": "table",
-            "title": "Falling edge of X (t = 0)",
-            "cols": [
-              "interval",
-              "X",
-              "NOT out",
-              "AND inputs",
-              "Y (after t_A)"
-            ],
-            "rows": [
-              [
-                "t < 0",
-                1,
-                0,
-                "(1, 0)",
-                0
-              ],
-              [
-                "0 < t < t_N",
-                0,
-                {
-                  "v": 0,
-                  "tone": "warning",
-                  "sub": "stale"
-                },
-                "(0, 0)",
-                {
-                  "v": 0,
-                  "tone": "success"
-                }
-              ],
-              [
-                "t > t_N",
-                0,
-                1,
-                "(0, 1)",
-                0
-              ]
-            ],
-            "hl": [
-              {
-                "r": 1,
-                "tone": "success"
-              }
-            ],
-            "caption": "One input is always 0, so Y never leaves 0"
-          }
+          "title": "Falling edge with delays",
+          "body": "Before the edge $X = 1$, $\\overline{X} = 0$, and $Y = 0$. When $X$ falls, the AND sees $X = 0$ immediately (and $\\overline{X}$ is still 0). Both inputs are never 1, so $Y$ stays at 0: there is no transient; it is 0 throughout. (D) is wrong."
         }
       ],
       "answer": {
-        "value": "**(A) and (C)**",
+        "value": "(A) and (C)",
         "choice": [
           "A",
           "C"
@@ -3077,67 +2969,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$X\\overline{X} = 0$ for both values of $X$."
+          "reason": "$X\\overline{X} = 0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "The ideal output is the constant 0, never 1."
+          "reason": "The steady output is 0, never 1."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "On a rising edge the stale NOT output (still 1) and the new $X = 1$ overlap for $t_N$, giving a short 1 pulse."
+          "reason": "A 1-pulse of width equal to the inverter delay after a rising edge."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "On a falling edge the direct input becomes 0 first, which forces the AND output to 0; $Y$ was already 0, so no transient (of either value) occurs."
+          "reason": "After a falling edge $Y$ is already 0 and stays 0; a 'transient 0' would need $Y$ to be 1 around it."
         }
       ],
-      "shortcut": "$X \\cdot \\overline{X}$ is a static-0 circuit; its only possible glitch is a 1-pulse, and that needs both AND inputs at 1 together, which only happens when $X$ rises while $\\overline{X}$ is still stale.",
+      "shortcut": "AND of $X$ and a slow $\\overline{X}$ glitches to 1 on the rising edge only; OR of them glitches to 0 on the falling edge only.",
       "pitfalls": [
-        "Marking (D) because \"the output is zero\" — a transient is a short departure from the steady value, and the steady value is already 0.",
-        "Assuming the glitch appears on both edges: on a falling edge the fast path brings a 0, which blocks the AND gate.",
-        "Forgetting that a gate output keeps its old value until its propagation delay has elapsed."
+        "Assuming glitches happen on both edges.",
+        "Saying 'no glitch at all' because the Boolean function is 0."
       ],
-      "verification": "This is the classic rising-edge pulse generator: with $t_N = 1$ unit, a rising $X$ at $t=0$ gives AND inputs $(1,1)$ on $[0,1)$, so $Y = 1$ on $[t_A, 1 + t_A)$; a falling $X$ gives $(0,0)$ on $[0,1)$, so $Y$ stays 0.",
-      "animation": {
-        "kind": "circuit",
-        "title": "Steady state (no delays)",
-        "inputs": [
-          {
-            "id": "X",
-            "value": 0
-          }
-        ],
-        "gates": [
-          {
-            "id": "n",
-            "type": "NOT",
-            "in": [
-              "X"
-            ],
-            "label": "NOT"
-          },
-          {
-            "id": "g",
-            "type": "AND",
-            "in": [
-              "X",
-              "n"
-            ],
-            "label": "AND"
-          }
-        ],
-        "outputs": [
-          {
-            "id": "Y",
-            "from": "g"
-          }
-        ],
-        "caption": "$X=0$: AND inputs $(0,1)$, so $Y=0$"
-      }
+      "verification": "Event simulation with an inverter delay $d$: $X$ rises at $t_0$ ⇒ $Y = 1$ on $[t_0, t_0 + d)$; $X$ falls ⇒ $Y$ has no event."
     },
     "cse-2024-1-cs-19": {
       "approach": "Recall two facts about the three-way handshake: each side picks a (pseudo)random initial sequence number (ISN), and the SYN flag consumes one sequence number, so it is acknowledged with ISN + 1.",
@@ -5830,99 +5685,28 @@
       }
     },
     "cse-2024-1-cs-37": {
-      "approach": "Put the minterms on a 3-variable K-map: $\\sum(3,5,6,7)$ is the majority function, whose minimal SOP is $XY + YZ + XZ$. The POS form uses the remaining indices, and dependence on a variable is shown by one pair of inputs differing only in it.",
+      "approach": "Concept tested: **canonical forms and the majority function**. $\\Sigma(3, 5, 6, 7)$ is the 3-input majority; its Π list is the complementary set, and dependence on a variable is shown by one pair of inputs that differ only in it.",
       "concepts": [
         "Canonical SOP and POS",
-        "K-map minimisation",
-        "Majority function"
+        "Majority function",
+        "Variable dependence"
       ],
-      "given": "| $m$ | $XYZ$ | $F$ |\n|---|---|---|\n| 3 | 011 | 1 |\n| 5 | 101 | 1 |\n| 6 | 110 | 1 |\n| 7 | 111 | 1 |\n| 0, 1, 2, 4 | — | 0 |",
       "steps": [
         {
-          "title": "(A): maxterms are the missing indices",
-          "body": "A 3-variable function has indices $0..7$. $F = 1$ on $\\{3, 5, 6, 7\\}$, so $F = 0$ on $\\{0, 1, 2, 4\\}$, and the canonical POS is $F = \\Pi(0, 1, 2, 4)$. (A) is true."
+          "title": "Recognise the function",
+          "body": "Rows 3, 5, 6, 7 are 011, 101, 110, 111: exactly the rows with at least two 1s. So $F = XY + YZ + XZ$ (majority)."
         },
         {
-          "title": "(B): minimise with the K-map",
-          "body": "Minterm 7 pairs with each of the other three:\n\n- $\\{6, 7\\} = XYZ' + XYZ = XY$\n- $\\{3, 7\\} = X'YZ + XYZ = YZ$\n- $\\{5, 7\\} = XY'Z + XYZ = XZ$\n\nSo $F = XY + YZ + XZ$ (output is 1 when at least two inputs are 1). (B) is true.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  6,
-                  7
-                ],
-                "label": "XY",
-                "tone": "cat1"
-              },
-              {
-                "cells": [
-                  3,
-                  7
-                ],
-                "label": "YZ",
-                "tone": "cat2"
-              },
-              {
-                "cells": [
-                  5,
-                  7
-                ],
-                "label": "XZ",
-                "tone": "cat3"
-              }
-            ]
-          }
+          "title": "(A): the Π form",
+          "body": "The 0-rows are 0, 1, 2, 4, so $F = \\Pi(0, 1, 2, 4)$. Correct."
         },
         {
-          "title": "(C) and (D): F depends on Y and on X",
-          "body": "- Change only $Y$: $F(0,0,1) = m_1 = 0$ but $F(0,1,1) = m_3 = 1$. So $F$ depends on $Y$ — (C) is false.\n- Change only $X$: $F(0,0,1) = m_1 = 0$ but $F(1,0,1) = m_5 = 1$. So $F$ depends on $X$ — (D) is false.\n\nCorrect: **A, B**.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  6,
-                  7
-                ],
-                "label": "XY",
-                "tone": "cat1"
-              },
-              {
-                "cells": [
-                  3,
-                  7
-                ],
-                "label": "YZ",
-                "tone": "cat2"
-              },
-              {
-                "cells": [
-                  5,
-                  7
-                ],
-                "label": "XZ",
-                "tone": "cat3"
-              }
-            ],
-            "hl": [
-              {
-                "cell": 1,
-                "tone": "error"
-              },
-              {
-                "cell": 3,
-                "tone": "success"
-              },
-              {
-                "cell": 5,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "(C) and (D): dependence",
+          "body": "$F$ depends on $Y$: with $X = 1, Z = 0$, $Y = 0$ gives row 4 ($F = 0$) and $Y = 1$ gives row 6 ($F = 1$). By symmetry it also depends on $X$ (rows 2 and 6). Both (C) and (D) are false."
         }
       ],
       "answer": {
-        "value": "Options **(A), (B)**",
+        "value": "(A) and (B)",
         "choice": [
           "A",
           "B"
@@ -5933,45 +5717,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "The canonical POS lists the indices where $F = 0$: $\\{0, 1, 2, 4\\}$."
+          "reason": "The maxterms are the complementary rows 0, 1, 2, 4."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "The three pairs $\\{6,7\\}, \\{3,7\\}, \\{5,7\\}$ give $XY + YZ + XZ$, the majority function."
+          "reason": "The majority function's minimal SOP."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "False: $F(0,0,1) = 0$ but $F(0,1,1) = 1$ — flipping $Y$ alone changes $F$."
+          "reason": "Rows 4 and 6 differ only in $Y$ but have different outputs."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "False: $F(0,0,1) = 0$ but $F(1,0,1) = 1$ — flipping $X$ alone changes $F$."
+          "reason": "Rows 2 and 6 differ only in $X$ but have different outputs."
         }
       ],
-      "shortcut": "$3, 5, 6, 7$ are exactly the 3-bit numbers with at least two 1s, i.e. the majority function $XY+YZ+XZ$ — symmetric in all three inputs, so it depends on every input.",
+      "shortcut": "Majority is symmetric and depends on every input; as soon as you see $\\Sigma(3, 5, 6, 7)$, (B) is true and (C), (D) are false.",
       "pitfalls": [
-        "Writing the POS with the same indices as the SOP ($\\Pi(3,5,6,7)$) instead of the complementary ones.",
-        "Missing that one pair of inputs differing only in a variable is enough to prove dependence."
+        "Writing $\\Pi(3, 5, 6, 7)$ for the POS form (the same numbers under Π describe the complement)."
       ],
-      "verification": "Evaluate $XY+YZ+XZ$ on all 8 inputs: it is 1 exactly for $011, 101, 110, 111$ = minterms $3, 5, 6, 7$.",
-      "animation": {
-        "kind": "kmap",
-        "title": "K-map of F = Σ(3,5,6,7)",
-        "variables": [
-          "X",
-          "Y",
-          "Z"
-        ],
-        "ones": [
-          3,
-          5,
-          6,
-          7
-        ]
-      }
+      "verification": "$XY + YZ + XZ$ over rows 0–7 gives 0, 0, 0, 1, 0, 1, 1, 1."
     },
     "cse-2024-1-cs-38": {
       "approach": "Find a closed form instead of tracing 20 iterations: the update $x \\leftarrow 2x + y$ becomes pure doubling for $x + y$, so after $y$ iterations $f(x, y) = 2^{y}(x + y) - y$. Then compare with $2^{10} = 1024$ and $2^{20} = 1\\,048\\,576$.",

@@ -524,7 +524,7 @@
       "verification": "Even a single-CPU system can have hundreds of processes in the ready queue."
     },
     "cse-2015-3-cs-2": {
-      "approach": "$X\\#Y=X'+Y'=(XY)'$ is NAND. NAND is commutative but not associative; confirm associativity fails with one assignment.",
+      "approach": "Concept tested: **NAND as an operator**. $X \\# Y = X' + Y' = (XY)'$ is NAND, which is commutative but not associative; confirm the failure of associativity with one assignment.",
       "concepts": [
         "NAND gate",
         "Commutativity",
@@ -533,19 +533,19 @@
       "steps": [
         {
           "title": "Recognise NAND",
-          "body": "$X\\#Y=X'+Y'=(XY)'$ by De Morgan. Since $XY=YX$, $Q\\#R=R\\#Q$, so **S2 is true**."
+          "body": "$X \\# Y = X' + Y' = (XY)'$ by De Morgan."
         },
         {
-          "title": "Test S1 with P=0, Q=0, R=1",
-          "body": "$(P\\#Q)\\#R=(0\\#0)\\#1=1\\#1=0$. $P\\#(Q\\#R)=0\\#(0\\#1)=0\\#1=1$. Since $0\\ne1$, **S1 is false**."
+          "title": "Statement S2",
+          "body": "$Q \\# R = (QR)' = (RQ)' = R \\# Q$: commutative. S2 is true."
         },
         {
-          "title": "Conclusion",
-          "body": "Only S2 holds → **B**."
+          "title": "Statement S1",
+          "body": "$(P \\# Q) \\# R = PQ + R'$ and $P \\# (Q \\# R) = P' + QR$. At $P = Q = 0, R = 1$: $0 + 0 = 0$ vs $1 + 0 = 1$. S1 is false."
         }
       ],
       "answer": {
-        "value": "Only S2 is true",
+        "value": "(B) only S2 is true",
         "choice": [
           "B"
         ],
@@ -555,7 +555,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "S1 (associativity) fails for P=0, Q=0, R=1."
+          "reason": "S1 (associativity) fails at $P = Q = 0, R = 1$."
         },
         {
           "option": "B",
@@ -570,10 +570,14 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "S2 is true since X′+Y′ = Y′+X′."
+          "reason": "S2 is true: AND, and hence NAND, is symmetric."
         }
       ],
-      "verification": "Symbolically $(P\\#Q)\\#R=PQ+R'$ while $P\\#(Q\\#R)=P'+QR$; they differ at $P=0,Q=0,R=1$."
+      "shortcut": "Any NAND/NOR in disguise: commutative yes, associative no.",
+      "pitfalls": [
+        "Assuming the De Morgan form $X' + Y'$ is associative because OR is: the primes are applied to the *results* of the inner operation."
+      ],
+      "verification": "$(0 \\# 0) \\# 1 = 1 \\# 1 = 0$; $0 \\# (0 \\# 1) = 0 \\# 1 = 1$."
     },
     "cse-2015-3-cs-3": {
       "approach": "A theatre has maximum capacity exactly when its capacity is ≥ every capacity in the table; that is \">= ALL\" over the capacity column.",
@@ -3524,7 +3528,7 @@
       }
     },
     "cse-2015-3-cs-44": {
-      "approach": "Expand $F=P'+QR$ into minterms (P is the MSB), then the maxterms are the remaining indices.",
+      "approach": "Concept tested: **Σ and Π lists**. Expand $F = P' + QR$ into minterms ($P$ is the MSB); the maxterms are the remaining rows.",
       "concepts": [
         "Canonical SOP",
         "Canonical POS",
@@ -3533,15 +3537,19 @@
       "steps": [
         {
           "title": "Minterms",
-          "body": "$P'$ covers $PQR=000,001,010,011\\to0,1,2,3$. $QR$ covers $011,111\\to3,7$. Union: $F=\\sum(0,1,2,3,7)$."
+          "body": "$P' \\to 0--$: rows 0, 1, 2, 3. $QR \\to -11$: rows 3, 7. Union: $F = \\Sigma(0, 1, 2, 3, 7)$."
         },
         {
-          "title": "Maxterms and verdict",
-          "body": "Remaining indices $4,5,6$: $F=\\prod(4,5,6)$.\n\nS1 false, S2 true, S3 true, S4 false."
+          "title": "Maxterms",
+          "body": "The other rows are 4, 5, 6, so $F = \\Pi(4, 5, 6)$."
+        },
+        {
+          "title": "Judge the statements",
+          "body": "S1 $\\Sigma(4,5,6)$: false (those are the 0-rows). S2 $\\Sigma(0,1,2,3,7)$: true. S3 $\\Pi(4,5,6)$: true. S4 $\\Pi(0,1,2,3,7)$: false (that is $F'$)."
         }
       ],
       "answer": {
-        "value": "S1 False, S2 True, S3 True, S4 False",
+        "value": "(A) S1 false, S2 true, S3 true, S4 false",
         "choice": [
           "A"
         ],
@@ -3551,25 +3559,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Matches the derived SOP and POS forms."
+          "reason": "Matches the computed lists."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Swaps the roles: $\\sum(4,5,6)$ is $F'$, not $F$."
+          "reason": "Swaps the meaning of Σ and Π: S1 and S4 describe $F'$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "S2 is true, not false; S4 lists the minterms as maxterms."
+          "reason": "S2 is true: $F$ is 1 on rows 0, 1, 2, 3, 7."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "S1 is false: 4, 5, 6 are the 0s of $F$."
+          "reason": "S1 is false and S3 is true."
         }
       ],
-      "verification": "Check $m_6$ ($P=1,Q=1,R=0$): $P'=0$, $QR=0$ → $F=0$ ✓; $m_7$: $QR=1$ → $F=1$ ✓."
+      "shortcut": "Σ lists the 1-rows, Π the 0-rows; a correct pair (S2, S3) always uses complementary lists.",
+      "pitfalls": [
+        "Thinking $\\Pi$ of a list equals $\\Sigma$ of the same list."
+      ],
+      "verification": "Row 5 (101): $P' = 0$, $QR = 0$, so $F = 0$: 5 is a maxterm. Row 7: $QR = 1$, a minterm."
     },
     "cse-2015-3-cs-45": {
       "approach": "Replace $x$ by $1/x$ to get a second equation, solve the 2×2 linear system for $f(x)$, then integrate from 1 to 2.",

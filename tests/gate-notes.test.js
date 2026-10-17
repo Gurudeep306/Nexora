@@ -109,6 +109,18 @@ test('internal planning notes (_outline.md, _plan.md) are skipped; other stray f
   assert.match(e, /expected _meta\.json, viz\/ or NN-chapter-slug\/ directories only/);
 });
 
+test(':::lab embeds a known Live Lab; unknown labs, tabs and content are reported', async () => {
+  const r = await build({ content: scratch(`${LESSON}\n:::lab{#lab-bench lab="gate-bench" tab="sets" depth="standard"}\n:::\n`) });
+  assert.deepEqual(r.errors, []);
+  const body = JSON.parse(r.outputs.get('tst.json')).lessons.alpha.body;
+  const lab = body.find((n) => n.t === 'block' && n.name === 'lab');
+  assert.deepEqual([lab.id, lab.attrs], ['lab-bench', { lab: 'gate-bench', tab: 'sets' }]);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="kmap-solver"}\n:::\n`), /lab must be gate-bench/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench" tab="draw"}\n:::\n`), /tab must be bench \| challenge \| sets/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{tab="bench"}\n:::\n`), /:::lab needs lab=/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench"}\nText.\n:::\n`), /:::lab takes no content/);
+});
+
 test('the validator reports mistakes with file:line', async () => {
   const at = (n) => new RegExp(`01-alpha\\.md:${n}: `);
   const swap = (from, to) => LESSON.replace(from, to);
@@ -415,6 +427,89 @@ test('viz arc: valid sectors pass, bad sweeps and radii are reported, geometry i
   assert.equal((ring.match(/A80 80/g) || []).length, 2);
   assert.equal((ring.match(/A40 40/g) || []).length, 2);
   assert.deepEqual(arcLabelPoint(100, 100, 80, 40, 0, 90), polar(100, 100, 60, 45));
+});
+
+/* ── Viz: the gate (logic symbol) primitive — schema and geometry ── */
+
+test('viz gate: kinds, inputs and bubbles are validated; pins and bubbles are placed exactly', async () => {
+  const { pathToFileURL } = require('node:url');
+  const viz = (f) => import(pathToFileURL(path.join(ROOT, 'client', 'src', 'viz', f)).href);
+  const { validateVizSpec } = await viz('schema.ts');
+  const { gateShape, gateBubbleR } = await viz('geometry.ts');
+  const spec = (el, steps = []) => ({ version: 1, title: 'Gates', width: 300, height: 200, elements: [el], steps });
+  const ok = { id: 'g1', type: 'gate', x: 100, y: 50, w: 60, h: 40, kind: 'nor', bubbles: [0], label: 'G1' };
+
+  assert.deepEqual(validateVizSpec(spec(ok)), []);
+  assert.deepEqual(validateVizSpec(spec({ ...ok, kind: 'xor', inputs: 4, bubbles: [3] })), []);
+  assert.deepEqual(validateVizSpec(spec(ok, [{ caption: 'It becomes a NAND', patches: [{ id: 'g1', set: { kind: 'nand', tone: 'success' } }] }])), []);
+  assert.match(validateVizSpec(spec({ ...ok, kind: 'mux' })).join('\n'), /elements\[0\]\.kind: must be one of and \| or/);
+  assert.match(validateVizSpec(spec({ ...ok, kind: 'not', inputs: 2, bubbles: [] })).join('\n'), /a not gate has exactly one input/);
+  assert.match(validateVizSpec(spec({ ...ok, bubbles: [2] })).join('\n'), /bubbles: an index is not an input of this gate \(it has 2\)/);
+  const { kind: _k, ...noKind } = ok;
+  assert.match(validateVizSpec(spec(noKind)).join('\n'), /kind: is required for a gate/);
+  assert.match(validateVizSpec(spec(ok, [{ caption: 'Bad', patches: [{ id: 'g1', set: { inputs: 9 } }] }])).join('\n'), /set\.inputs: must be an integer in \[1, 8\]/);
+
+  // AND: flat back, half-disc front; pins evenly spaced on the back; no bubbles.
+  const and = gateShape('and', 0, 0, 60, 40);
+  assert.equal(and.body, 'M0 0 H40 A20 20 0 0 1 40 40 H0 Z');
+  assert.deepEqual(and.pins, [[0, 13.33], [0, 26.67]]);
+  assert.deepEqual(and.out, [60, 20]);
+  assert.equal(and.outBubble, undefined);
+  // NOR with a bubbled top input: the pins follow the curved back (x + 0.5·w·t(1 − t)),
+  // the bubbled pin moves left by one diameter, and the output bubble fits inside w.
+  const r = gateBubbleR(40);
+  assert.equal(r, 4.8);
+  const nor = gateShape('nor', 100, 50, 60, 40, 2, [0]);
+  assert.deepEqual(nor.pins, [[96, 63.33], [105.6, 76.67]]);
+  assert.deepEqual(nor.inBubbles, [{ cx: 100.8, cy: 63.33, r: 4.8 }]);
+  assert.deepEqual(nor.outBubble, { cx: 155.2, cy: 70, r: 4.8 });
+  assert.deepEqual(nor.out, [160, 70]);
+  // XOR has the extra back curve; NOT is a triangle with one input.
+  assert.match(gateShape('xor', 0, 0, 60, 40).extra, /^M0 0 Q/);
+  const not = gateShape('not', 0, 0, 40, 30, 3);
+  assert.equal(not.pins.length, 1);
+  assert.deepEqual(not.out, [40, 15]);
+});
+
+/* ── Live Lab: Gate Bench logic against the Python-verified vectors ── */
+
+test('gate bench: evaluation, truth tables, challenges and minterm sets match the checks', async () => {
+  const { pathToFileURL } = require('node:url');
+  const lab = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'benchLogic.ts')).href);
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch2.json'), 'utf8'));
+
+  // Every challenge: same target column and the same proven minimum counts.
+  assert.deepEqual(lab.CHALLENGES.map((c) => c.id), vec.challenges.map((c) => c.id));
+  for (const want of vec.challenges) {
+    const c = lab.CHALLENGES.find((x) => x.id === want.id);
+    assert.deepEqual(c.inputs, want.inputs, want.id);
+    assert.deepEqual(c.table, want.table, `${want.id} table`);
+    assert.deepEqual(c.min, want.min, `${want.id} minimum`);
+  }
+  // Presets compute the functions they are named after.
+  for (const p of lab.PRESETS) {
+    assert.deepEqual(lab.benchErrors(p.bench), [], p.id);
+    assert.deepEqual(lab.truthTable(p.bench), vec.presets[p.id], p.id);
+  }
+  // Minterm-set operations.
+  for (const s of vec.sets) {
+    const r = lab.setOps(s.f, s.g, s.n);
+    for (const k of ['and', 'or', 'xor', 'notF']) assert.deepEqual(r[k], s[k], `${k} of ${s.f} / ${s.g}`);
+  }
+  // The proven-minimum XOR passes the challenge check at the minimum; a wrong bench is reported row by row.
+  const xor = lab.CHALLENGES.find((c) => c.id === 'xor');
+  const four = lab.PRESETS.find((p) => p.id === 'xor4').bench;
+  assert.deepEqual(lab.checkChallenge(four, xor, 'NAND'), { match: true, wrongRows: [], count: 4, foreign: [], min: 4 });
+  const one = { inputs: ['A', 'B'], gates: [{ id: 'G1', type: 'NAND', in: ['A', 'B'] }], output: 'G1' };
+  assert.deepEqual(lab.checkChallenge(one, xor, 'NAND').wrongRows, ['00']);
+  // Editing: bad wiring is reported, removal rewires readers, ids are reused, lists parse with ranges.
+  assert.match(lab.benchErrors({ inputs: ['A'], gates: [{ id: 'G1', type: 'AND', in: ['A', 'G2'] }], output: 'G1' }).join(), /G2/);
+  assert.deepEqual(lab.removeGate(four, 'G1').gates[0].in, ['A', 'A']);
+  assert.equal(lab.nextGateId(lab.removeGate(four, 'G2')), 'G2');
+  assert.deepEqual(lab.parseIndexList('7, 1 3-5', 3), { list: [1, 3, 4, 5, 7] });
+  assert.match(lab.parseIndexList('9', 3).error, /not a row of a 3-variable table/);
+  assert.equal(lab.formatSigma([1, 2]), 'Σm(1, 2)');
+  assert.deepEqual(lab.usedGates({ ...four, output: 'G2' }).map((g) => g.id), ['G1', 'G2']);
 });
 
 /* ── Viz: the narrow (phone) layout — schema and frames ── */

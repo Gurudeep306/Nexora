@@ -733,29 +733,29 @@
       "verification": "Both defects verified directly; the record is flagged for review because (a) is also a true statement."
     },
     "cse-2005-cs-15": {
-      "approach": "Write the output algebraically: $f=\\overline{\\overline{X\\bar Y}\\cdot YZ}$ and simplify with De Morgan.",
+      "approach": "Concept tested: **redundant inputs**. Write the output algebraically, $f = \\overline{\\overline{X\\bar Y} \\cdot YZ}$, simplify with De Morgan, and see which variable survives.",
       "concepts": [
         "NAND gate",
         "De Morgan laws",
         "Boolean simplification"
       ],
-      "given": "| Gate | Inputs | Output |\n|---|---|---|\n| NAND₁ | $X$, $\\bar Y$ (bubble on input) | $\\overline{X\\bar Y}$ |\n| AND | $Y$, $Z$ | $YZ$ |\n| NAND₂ | both outputs | $f$ |",
+      "given": "| Gate | Inputs | Output |\n|---|---|---|\n| NAND₁ | $X$, $\\bar Y$ (bubble on input) | $\\overline{X\\bar Y}$ |\n| AND | $Y$, $Z$ | $YZ$ |\n| NAND₂ | the two outputs | $f$ |",
       "steps": [
         {
-          "title": "Write f",
-          "body": "$f=\\overline{\\overline{X\\bar Y}\\cdot YZ}$."
-        },
-        {
-          "title": "De Morgan",
-          "body": "$f=\\overline{\\overline{X\\bar Y}}+\\overline{YZ}=X\\bar Y+\\bar Y+\\bar Z$."
+          "title": "De Morgan on the output",
+          "body": "$f = \\overline{\\overline{X\\bar Y} \\cdot YZ} = X\\bar Y + \\overline{YZ} = X\\bar Y + \\bar Y + \\bar Z$."
         },
         {
           "title": "Absorb",
-          "body": "$X\\bar Y+\\bar Y=\\bar Y$ (absorption), so $f=\\bar Y+\\bar Z$. $X$ does not appear: **f is independent of X**."
+          "body": "$X\\bar Y$ is absorbed by $\\bar Y$: $f = \\bar Y + \\bar Z$."
+        },
+        {
+          "title": "Read the dependence",
+          "body": "$X$ has disappeared: $f$ is independent of $X$ but depends on $Y$ and $Z$."
         }
       ],
       "answer": {
-        "value": "f is independent of X",
+        "value": "(A) f is independent of X",
         "choice": [
           "A"
         ],
@@ -765,28 +765,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: $f=\\bar Y+\\bar Z$."
+          "reason": "$f = \\bar Y + \\bar Z$ contains no $X$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$f$ depends on $Y$: with $Z=1$, $f=\\bar Y$."
+          "reason": "$Y = 1, Z = 1$ gives $f = 0$ while $Y = 0, Z = 1$ gives $f = 1$: $f$ depends on $Y$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$f$ depends on $Z$: with $Y=1$, $f=\\bar Z$."
+          "reason": "$Y = 1$: $Z = 0$ gives 1, $Z = 1$ gives 0: $f$ depends on $Z$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "X is redundant."
+          "reason": "$X$ is redundant."
         }
       ],
+      "shortcut": "The cofactors on $X$: $f(0, Y, Z) = \\overline{YZ}$ and $f(1, Y, Z) = \\bar Y + \\overline{YZ} = \\overline{YZ}$. Equal, so $X$ is redundant.",
       "pitfalls": [
-        "Missing the inversion bubble on the Y input of the first NAND — without it the result changes."
+        "Missing the input bubble on $Y$ in the first NAND."
       ],
-      "verification": "Truth check: $Y=1,Z=1$ gives NAND₁ $=\\overline{X\\cdot0}=1$, AND $=1$, $f=0$ for both $X$; any $Y=0$ or $Z=0$ makes AND $=0$, so $f=1$ for both $X$."
+      "verification": "$X = 0$ and $X = 1$ give the same column for $(Y, Z) = 00, 01, 10, 11$: 1, 1, 1, 0."
     },
     "cse-2005-cs-16": {
       "approach": "Concept tested: the 2's-complement range. With the MSB weighted $-2^{n-1}$, the smallest value is $-2^{n-1}$ and the largest is $2^{n-1} - 1$; there are $2^n$ values and one zero.",

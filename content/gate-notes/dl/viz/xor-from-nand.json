@@ -1,0 +1,754 @@
+{
+ "version": 1,
+ "title": "XOR built from four NAND gates",
+ "width": 640,
+ "height": 270,
+ "narrow": {
+  "width": 360,
+  "height": 260
+ },
+ "intro": "Four 2-input NAND gates: G1 is shared by G2 and G3, and G4 combines them.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "XOR from four NAND gates",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "XOR from four NANDs",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g1",
+   "type": "gate",
+   "x": 190,
+   "y": 110,
+   "w": 58,
+   "h": 42,
+   "kind": "nand",
+   "label": "G1",
+   "narrow": {
+    "x": 90,
+    "y": 110,
+    "w": 52,
+    "h": 38
+   }
+  },
+  {
+   "id": "g2",
+   "type": "gate",
+   "x": 320,
+   "y": 60,
+   "w": 58,
+   "h": 42,
+   "kind": "nand",
+   "label": "G2",
+   "narrow": {
+    "x": 180,
+    "y": 60,
+    "w": 52,
+    "h": 38
+   }
+  },
+  {
+   "id": "g3",
+   "type": "gate",
+   "x": 320,
+   "y": 160,
+   "w": 58,
+   "h": 42,
+   "kind": "nand",
+   "label": "G3",
+   "narrow": {
+    "x": 180,
+    "y": 160,
+    "w": 52,
+    "h": 38
+   }
+  },
+  {
+   "id": "g4",
+   "type": "gate",
+   "x": 450,
+   "y": 110,
+   "w": 58,
+   "h": 42,
+   "kind": "nand",
+   "label": "G4",
+   "narrow": {
+    "x": 270,
+    "y": 110,
+    "w": 52,
+    "h": 38
+   }
+  },
+  {
+   "id": "lA",
+   "type": "text",
+   "x": 30,
+   "y": 70,
+   "text": "A",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 70
+   }
+  },
+  {
+   "id": "lB",
+   "type": "text",
+   "x": 30,
+   "y": 200,
+   "text": "B",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 14,
+    "y": 200
+   }
+  },
+  {
+   "id": "wG10",
+   "type": "line",
+   "points": [
+    [
+     44,
+     70
+    ],
+    [
+     160,
+     70
+    ],
+    [
+     160,
+     124.0
+    ],
+    [
+     190.0,
+     124.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      26,
+      70
+     ],
+     [
+      70,
+      70
+     ],
+     [
+      70,
+      122.67
+     ],
+     [
+      90.0,
+      122.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG11",
+   "type": "line",
+   "points": [
+    [
+     44,
+     200
+    ],
+    [
+     160,
+     200
+    ],
+    [
+     160,
+     138.0
+    ],
+    [
+     190.0,
+     138.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      26,
+      200
+     ],
+     [
+      70,
+      200
+     ],
+     [
+      70,
+      135.33
+     ],
+     [
+      90.0,
+      135.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG20",
+   "type": "line",
+   "points": [
+    [
+     44,
+     70
+    ],
+    [
+     150,
+     70
+    ],
+    [
+     150,
+     74.0
+    ],
+    [
+     320.0,
+     74.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      26,
+      70
+     ],
+     [
+      60,
+      70
+     ],
+     [
+      60,
+      72.67
+     ],
+     [
+      180.0,
+      72.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG21",
+   "type": "line",
+   "points": [
+    [
+     248.0,
+     131.0
+    ],
+    [
+     284.0,
+     131.0
+    ],
+    [
+     284.0,
+     88.0
+    ],
+    [
+     320.0,
+     88.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      129.0
+     ],
+     [
+      161.0,
+      129.0
+     ],
+     [
+      161.0,
+      85.33
+     ],
+     [
+      180.0,
+      85.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG30",
+   "type": "line",
+   "points": [
+    [
+     248.0,
+     131.0
+    ],
+    [
+     284.0,
+     131.0
+    ],
+    [
+     284.0,
+     174.0
+    ],
+    [
+     320.0,
+     174.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      129.0
+     ],
+     [
+      161.0,
+      129.0
+     ],
+     [
+      161.0,
+      172.67
+     ],
+     [
+      180.0,
+      172.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG31",
+   "type": "line",
+   "points": [
+    [
+     44,
+     200
+    ],
+    [
+     160,
+     200
+    ],
+    [
+     160,
+     188.0
+    ],
+    [
+     320.0,
+     188.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      26,
+      200
+     ],
+     [
+      68,
+      200
+     ],
+     [
+      68,
+      185.33
+     ],
+     [
+      180.0,
+      185.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG40",
+   "type": "line",
+   "points": [
+    [
+     378.0,
+     81.0
+    ],
+    [
+     414.0,
+     81.0
+    ],
+    [
+     414.0,
+     124.0
+    ],
+    [
+     450.0,
+     124.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      232.0,
+      79.0
+     ],
+     [
+      251.0,
+      79.0
+     ],
+     [
+      251.0,
+      122.67
+     ],
+     [
+      270.0,
+      122.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wG41",
+   "type": "line",
+   "points": [
+    [
+     378.0,
+     181.0
+    ],
+    [
+     414.0,
+     181.0
+    ],
+    [
+     414.0,
+     138.0
+    ],
+    [
+     450.0,
+     138.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      232.0,
+      179.0
+     ],
+     [
+      251.0,
+      179.0
+     ],
+     [
+      251.0,
+      135.33
+     ],
+     [
+      270.0,
+      135.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wF",
+   "type": "line",
+   "points": [
+    [
+     508.0,
+     131.0
+    ],
+    [
+     548.0,
+     131.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      322.0,
+      129.0
+     ],
+     [
+      346.0,
+      129.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lF",
+   "type": "text",
+   "x": 558.0,
+   "y": 131.0,
+   "text": "F",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "narrow": {
+    "x": 354.0,
+    "y": 129.0
+   }
+  },
+  {
+   "id": "vG1",
+   "type": "text",
+   "x": 260,
+   "y": 106,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 150,
+    "y": 106,
+    "size": 12
+   }
+  },
+  {
+   "id": "vG2",
+   "type": "text",
+   "x": 390,
+   "y": 56,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 240,
+    "y": 56,
+    "size": 12
+   }
+  },
+  {
+   "id": "vG3",
+   "type": "text",
+   "x": 390,
+   "y": 156,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 240,
+    "y": 156,
+    "size": 12
+   }
+  },
+  {
+   "id": "vG4",
+   "type": "text",
+   "x": 520,
+   "y": 106,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 330,
+    "y": 106,
+    "size": 12
+   }
+  },
+  {
+   "id": "row",
+   "type": "text",
+   "x": 320.0,
+   "y": 250,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 240,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A = 0, B = 0: G1 = (0·0)′ = 1, G2 = (A·G1)′ = 1, G3 = (G1·B)′ = 1, F = (G2·G3)′ = 0 = A ⊕ B.",
+   "patches": [
+    {
+     "id": "vG1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "row",
+     "set": {
+      "text": "A = 0, B = 0  →  F = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 0, B = 1: G1 = (0·1)′ = 1, G2 = (A·G1)′ = 1, G3 = (G1·B)′ = 0, F = (G2·G3)′ = 1 = A ⊕ B.",
+   "patches": [
+    {
+     "id": "vG1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vG4",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "row",
+     "set": {
+      "text": "A = 0, B = 1  →  F = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 1, B = 0: G1 = (1·0)′ = 1, G2 = (A·G1)′ = 0, G3 = (G1·B)′ = 1, F = (G2·G3)′ = 1 = A ⊕ B.",
+   "patches": [
+    {
+     "id": "vG1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vG3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG4",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "row",
+     "set": {
+      "text": "A = 1, B = 0  →  F = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 1, B = 1: G1 = (1·1)′ = 0, G2 = (A·G1)′ = 1, G3 = (G1·B)′ = 1, F = (G2·G3)′ = 0 = A ⊕ B.",
+   "patches": [
+    {
+     "id": "vG1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vG2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vG4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "row",
+     "set": {
+      "text": "A = 1, B = 1  →  F = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Algebra: G2 = (A·(AB)′)′ = A′ + AB = A′ + B and G3 = A + B′, so F = ((A′ + B)(A + B′))′ = (AB + A′B′)′ = A ⊕ B. An exhaustive search confirms that no circuit of three 2-input NANDs computes XOR.",
+   "patches": [
+    {
+     "id": "row",
+     "set": {
+      "text": "F = A ⊕ B with 4 NANDs (the minimum)",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

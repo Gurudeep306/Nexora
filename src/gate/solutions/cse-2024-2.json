@@ -2973,55 +2973,29 @@
       "verification": "Matches the official key B;D (GATE 2024 CS2 final answer key)."
     },
     "cse-2024-2-cs-20": {
-      "approach": "With a single variable, a two-row truth table settles every identity: an equation is true only if both sides agree for $x=0$ and $x=1$. Here \".\" is AND and \"+\" is OR.",
+      "approach": "Concept tested: the **basic laws** (identity, null, idempotence, complement). A one-variable identity is settled by its two rows, $x = 0$ and $x = 1$; an identity that fails on either row is FALSE.",
       "concepts": [
-        "Boolean algebra identities",
-        "Idempotent law",
-        "Null (dominance) law",
+        "Identity law",
+        "Null law",
+        "Idempotence",
         "Complement law"
       ],
       "steps": [
         {
-          "title": "Build the truth table",
-          "body": "Evaluate each left-hand side for $x = 0$ and $x = 1$:\n\n- $x \\cdot 1$: $0\\cdot1 = 0$, $1 \\cdot 1 = 1$\n- $x + 1$: $0+1 = 1$, $1+1 = 1$\n- $x \\cdot x$: $0\\cdot0 = 0$, $1\\cdot1 = 1$\n- $x + \\bar{x}$: $0+1 = 1$, $1+0 = 1$",
-          "scene": {
-            "reveal": 10
-          }
+          "title": "Check each statement on both rows",
+          "body": "| Statement | $x = 0$ | $x = 1$ | Verdict |\n|---|---|---|---|\n| $x \\cdot 1 = x$ | $0 = 0$ | $1 = 1$ | true (identity) |\n| $x + 1 = x$ | $1 \\ne 0$ | $1 = 1$ | **false** |\n| $x \\cdot x = 0$ | $0 = 0$ | $1 \\ne 0$ | **false** |\n| $x + \\bar{x} = 1$ | $1 = 1$ | $1 = 1$ | true (complement) |"
         },
         {
-          "title": "Compare with the right-hand sides",
-          "body": "- (A) $x\\cdot1$ column equals $x$ in both rows — **true** (identity law).\n- (B) $x+1$ is 1 in both rows, but $x=0$ in row 1: $1 \\ne 0$ — **false** (actually $x+1=1$).\n- (C) $x\\cdot x$ is 1 when $x=1$, not 0 — **false** (actually $x \\cdot x = x$, idempotent law).\n- (D) $x+\\bar{x}$ is 1 in both rows — **true** (complement law).",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "c": 2,
-                "tone": "error"
-              },
-              {
-                "r": 1,
-                "c": 3,
-                "tone": "error"
-              },
-              {
-                "c": 1,
-                "tone": "success"
-              },
-              {
-                "c": 4,
-                "tone": "success"
-              }
-            ],
-            "caption": "Red cells break the claimed identity"
-          }
+          "title": "Name the correct laws",
+          "body": "The true forms are the **null law** $x + 1 = 1$ and **idempotence** $x \\cdot x = x$. Statements (B) and (C) are distorted versions of them."
         },
         {
-          "title": "Pick the FALSE statements",
-          "body": "The false ones are **(B)** and **(C)**."
+          "title": "Conclusion",
+          "body": "The FALSE statements are (B) and (C)."
         }
       ],
       "answer": {
-        "value": "False statements: **(B) and (C)**",
+        "value": "(B) and (C)",
         "choice": [
           "B",
           "C"
@@ -3032,59 +3006,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$x\\cdot1 = x$ is the identity law — true, so not selected."
+          "reason": "True: 1 is the identity of AND, $x \\cdot 1 = x$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$x+1 = 1$ (null law); for $x=0$ it gives $1 \\ne 0$, so \"$x+1=x$\" is false."
+          "reason": "False: 1 controls OR, so $x + 1 = 1$, not $x$ (fails at $x = 0$)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$x\\cdot x = x$ (idempotent law); for $x=1$ it gives $1 \\ne 0$, so \"$x \\cdot x = 0$\" is false. It would be true only for $x\\cdot\\bar{x}$."
+          "reason": "False: $x \\cdot x = x$ (idempotence); it fails at $x = 1$. It is $x \\cdot \\bar{x}$ that is 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$x+\\bar{x} = 1$ is the complement law — true, so not selected."
+          "reason": "True: the complement law $x + \\bar{x} = 1$."
         }
       ],
-      "shortcut": "One counterexample kills an identity: put $x=0$ into (B) and $x=1$ into (C).",
+      "shortcut": "For a single variable, try $x = 0$ and $x = 1$: a statement that fails on either is false.",
       "pitfalls": [
-        "Reading option (C) as $x\\cdot\\bar{x} = 0$ — the paper has no complement bar there.",
-        "Choosing the true identities when the question asks for FALSE ones."
+        "Reading the question as 'which are TRUE'.",
+        "Confusing $x \\cdot x$ (= $x$) with $x \\cdot \\bar{x}$ (= 0)."
       ],
-      "verification": "Known laws: $x+1=1$ and $x\\cdot x=x$ contradict (B) and (C) whenever $x \\ne$ the right-hand side, while (A) and (D) are textbook identities.",
-      "animation": {
-        "kind": "table",
-        "title": "Truth table for one variable",
-        "cols": [
-          "x",
-          "x·1",
-          "x+1",
-          "x·x",
-          "x+x̄"
-        ],
-        "rows": [
-          [
-            0,
-            0,
-            1,
-            0,
-            1
-          ],
-          [
-            1,
-            1,
-            1,
-            1,
-            1
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      }
+      "verification": "Statements (A) and (D) are postulates of Boolean algebra (identity and complement); (B) and (C) each fail on one row."
     },
     "cse-2024-2-cs-21": {
       "approach": "Write each instruction's destination and sources, then classify every pair on R3 by who writes and who reads: write→read is RAW, read→write is WAR, write→write is WAW (always in program order).",
@@ -5852,58 +5797,33 @@
       "verification": "Back-convert 64 to base 5: $64 = 2 \\cdot 25 + 14$, $14 = 2 \\cdot 5 + 4$ → digits $2, 2, 4$ ✓; and to base 7: $64 = 1 \\cdot 49 + 15$, $15 = 2 \\cdot 7 + 1$ → $121$ ✓."
     },
     "cse-2024-2-cs-40": {
-      "approach": "Work with minterm sets: AND is intersection, OR is union, XOR is symmetric difference. Then convert the final set to both $\\sum$ and $\\prod$ forms to judge all four options.",
+      "approach": "Concept tested: **set algebra on minterm lists, then Σ and Π forms**. AND is intersection, OR is union, XOR is symmetric difference; convert the final set to both forms to judge all four options.",
       "concepts": [
         "Canonical SOP/POS",
         "Set view of AND/OR/XOR",
         "Minterms and maxterms"
       ],
-      "given": "$Y = (f_1 \\cdot f_2) \\oplus (f_3 + f_4)$ from the circuit.",
+      "given": "$Y = (f_1 \\cdot f_2) \\oplus (f_3 + f_4)$",
       "steps": [
         {
-          "title": "AND gate: intersection",
-          "body": "$f_1 \\cdot f_2$ is 1 exactly on minterms in both lists:\n$\\{0,2,3,5,7,8,11,13\\} \\cap \\{1,3,5,7,11,13,15\\} = \\{3, 5, 7, 11, 13\\}$.",
-          "scene": {
-            "reveal": 48,
-            "hl": [
-              {
-                "r": 2
-              }
-            ]
-          }
+          "title": "AND",
+          "body": "$f_1 f_2 = \\{0, 2, 3, 5, 7, 8, 11, 13\\} \\cap \\{1, 3, 5, 7, 11, 13, 15\\} = \\{3, 5, 7, 11, 13\\}$."
         },
         {
-          "title": "OR gate: union",
-          "body": "$f_3 + f_4$ is 1 on minterms in either list:\n$\\{0,1,4,11\\} \\cup \\{0,2,6,13\\} = \\{0, 1, 2, 4, 6, 11, 13\\}$.",
-          "scene": {
-            "reveal": 96,
-            "hl": [
-              {
-                "r": 5
-              }
-            ]
-          }
+          "title": "OR is union",
+          "body": "$f_3 + f_4 = \\{0, 1, 4, 11\\} \\cup \\{0, 2, 6, 13\\} = \\{0, 1, 2, 4, 6, 11, 13\\}$."
         },
         {
-          "title": "XOR gate: symmetric difference",
-          "body": "$Y = 1$ where exactly one input is 1. Minterms 11 and 13 are in **both** sets, so $Y = 0$ there; the remaining ones are $\\{3,5,7\\} \\cup \\{0,1,2,4,6\\}$:\n$$Y = \\textstyle\\sum(0,1,2,3,4,5,6,7)$$",
-          "scene": {
-            "reveal": 112,
-            "hl": [
-              {
-                "r": 6
-              }
-            ],
-            "caption": "$Y = 1$ on minterms 0–7 only."
-          }
+          "title": "XOR",
+          "body": "11 and 13 are in both and cancel; the rest survive: $Y = \\{0, 1, 2, 3, 4, 5, 6, 7\\}$."
         },
         {
-          "title": "Express as a product of maxterms",
-          "body": "The 0s of $Y$ are minterms $8$ to $15$, so $Y = \\prod(8,9,10,11,12,13,14,15)$ (in fact $Y = \\overline{A}$, the complement of the most significant variable). Options (C) and (D) are both correct."
+          "title": "Both forms",
+          "body": "$Y = \\Sigma(0, \\ldots, 7) = \\Pi(8, \\ldots, 15)$ (it is simply $\\overline{w}$). Options (C) and (D)."
         }
       ],
       "answer": {
-        "value": "$Y = \\sum(0,\\dots,7) = \\prod(8,\\dots,15)$ — **(C) and (D)**",
+        "value": "(C) and (D)",
         "choice": [
           "C",
           "D"
@@ -5914,252 +5834,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Contains 11 and 13, where both XOR inputs are 1 (so $Y = 0$), and misses 3, 4, 5, 6, 7, where exactly one input is 1."
+          "reason": "$\\Sigma(0, 1, 2, 11, 13)$ looks like part of the OR output; it is not $Y$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Its 1s are the minterms not listed, $\\{0,1,2,11,13\\}$ — the same wrong function as (A)."
+          "reason": "Its maxterms would make $Y = \\Sigma(0, 1, 2, 11, 13)$, the same wrong set as (A)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "The symmetric difference of $\\{3,5,7,11,13\\}$ and $\\{0,1,2,4,6,11,13\\}$ is exactly $\\{0,\\dots,7\\}$."
+          "reason": "$Y$ is 1 on rows 0–7."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$Y$ is 0 exactly on minterms 8–15, so its maxterm list is $(8,\\dots,15)$ — the same function as (C)."
+          "reason": "$Y$ is 0 on rows 8–15."
         }
       ],
-      "shortcut": "Only 11 and 13 are common to both gate outputs, so XOR removes them and keeps everything else in the union of the two sets: $\\{3,5,7\\} \\cup \\{0,1,2,4,6\\}$.",
+      "shortcut": "Rows 11 and 13 are the only overlap between the two XOR inputs; the remaining rows happen to be exactly 0–7.",
       "pitfalls": [
-        "Treating XOR as OR and keeping 11 and 13.",
-        "Forgetting that a $\\Pi$ list names the 0s, so (C) and (D) describe the same function."
+        "Forgetting that XOR removes the common minterms 11 and 13."
       ],
-      "verification": "Spot-check $m = 11$: $f_1 = f_2 = 1$ gives AND $= 1$; $f_3 = 1$ gives OR $= 1$; $1 \\oplus 1 = 0$ ✓. Spot-check $m = 4$: AND $= 0$ ($f_1(4) = 0$), OR $= 1$ ($f_3(4) = 1$), so $Y = 1$ ✓.",
-      "animation": {
-        "kind": "table",
-        "title": "Minterm table (0–15)",
-        "cols": [
-          "0",
-          "1",
-          "2",
-          "3",
-          "4",
-          "5",
-          "6",
-          "7",
-          "8",
-          "9",
-          "10",
-          "11",
-          "12",
-          "13",
-          "14",
-          "15"
-        ],
-        "rowLabels": [
-          "f1",
-          "f2",
-          "AND",
-          "f3",
-          "f4",
-          "OR",
-          "Y"
-        ],
-        "corner": "m",
-        "rows": [
-          [
-            1,
-            0,
-            1,
-            1,
-            0,
-            1,
-            0,
-            1,
-            1,
-            0,
-            0,
-            1,
-            0,
-            1,
-            0,
-            0
-          ],
-          [
-            0,
-            1,
-            0,
-            1,
-            0,
-            1,
-            0,
-            1,
-            0,
-            0,
-            0,
-            1,
-            0,
-            1,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            0,
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            1,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0
-          ],
-          [
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            0,
-            0,
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            {
-              "v": 1,
-              "tone": "warning"
-            },
-            0,
-            0
-          ],
-          [
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            {
-              "v": 1,
-              "tone": "success"
-            },
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ]
-        ],
-        "reveal": 32,
-        "mono": true
-      }
+      "verification": "$\\{3, 5, 7, 11, 13\\} \\triangle \\{0, 1, 2, 4, 6, 11, 13\\} = \\{0, 1, \\ldots, 7\\}$."
     },
     "cse-2024-2-cs-41": {
       "approach": "Use the edge-exchange property of spanning trees: if a cycle had an even edge $e$ and an odd edge $f$, there is a spanning tree $T$ containing $e$ but not $f$, and $T - e + f$ is another spanning tree whose weight differs by an odd amount. So every cycle is parity-uniform; small examples refute the stronger claims.",

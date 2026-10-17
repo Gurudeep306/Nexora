@@ -9,7 +9,7 @@ import { memo, useMemo, type ReactNode } from 'react'
 import type { VizArrow, VizElement, VizLayout, VizSpec, VizTone } from './schema'
 import { canvasSize, type VizFrame } from './frames'
 import { strokePaths, type Sketcher } from './sketch'
-import { arcLabelPoint, arcPath } from './geometry'
+import { arcLabelPoint, arcPath, gateShape } from './geometry'
 
 const TONE: Record<VizTone, string> = {
   ink: 'var(--color-text-primary)',
@@ -38,6 +38,7 @@ interface Box {
 function bounds(el: VizElement): Box | { cx: number; cy: number; r: number } | null {
   switch (el.type) {
     case 'box':
+    case 'gate':
       return { x: el.x, y: el.y, w: el.w, h: el.h }
     case 'circle':
     case 'node':
@@ -180,6 +181,32 @@ const Element = memo(function Element({ el, byId, sketch }: { el: VizElement; by
           <path d={d} fill={fill} fillRule="evenodd" stroke={sketch ? 'none' : stroke} strokeWidth={1.6} strokeDasharray={dash} strokeLinejoin="round" />
           <Stroke paths={sk('path', d)} fallback={null} stroke={stroke} dashed={dashed} />
           {el.label && <Label x={lx} y={ly} text={el.label} mono={el.mono} size={el.size} color={stroke} />}
+        </>
+      )
+    }
+    case 'gate': {
+      const g = gateShape(el.kind, el.x, el.y, el.w, el.h, el.inputs, el.bubbles)
+      const bubbles = [...(g.outBubble ? [g.outBubble] : []), ...g.inBubbles]
+      const single = el.kind === 'not' || el.kind === 'buf'
+      return (
+        <>
+          <path d={g.body} fill={fill} stroke={sketch ? 'none' : stroke} strokeWidth={1.8} strokeDasharray={dash} strokeLinejoin="round" />
+          <Stroke paths={sk('path', g.body)} fallback={null} stroke={stroke} dashed={dashed} />
+          {g.extra && <Stroke paths={sk('path', g.extra, `${el.id}-x`)} fallback={<path d={g.extra} fill="none" stroke={stroke} strokeWidth={1.8} />} stroke={stroke} />}
+          {bubbles.map((b, i) => (
+            <circle key={i} cx={b.cx} cy={b.cy} r={b.r} fill="var(--color-bg-surface)" stroke={stroke} strokeWidth={1.6} />
+          ))}
+          {el.label && (
+            <Label
+              x={el.x + (single ? el.w * 0.32 : el.w * 0.42)}
+              y={el.y + el.h / 2}
+              text={el.label}
+              mono={el.mono}
+              size={el.size ?? Math.min(13, el.h * 0.3)}
+              color={stroke}
+              weight="bold"
+            />
+          )}
         </>
       )
     }

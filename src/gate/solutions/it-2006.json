@@ -371,23 +371,27 @@
       "verification": "$aab$: loop 0 times, $a$, $a$, $b$ ✓; $ab$ cannot reach the final state ✓."
     },
     "it-2006-cs-6": {
-      "approach": "Recognise Shannon expansion: $f = x_i'f|_{x_i=0} + x_i f|_{x_i=1}$. A, B and C are valid identities; D drops the literals.",
+      "approach": "Concept tested: **Shannon expansion** $f = x_i' f|_{x_i=0} + x_i f|_{x_i=1}$. Check each option against it; the one that drops the selecting literals is not an identity.",
       "concepts": [
         "Shannon expansion",
-        "Boolean algebra"
+        "Cofactors"
       ],
       "steps": [
         {
-          "title": "Check A, B, C",
-          "body": "A and B: $x'f + xf = (x'+x)f = f$ ✓. C is the Shannon expansion on $x_n$ ✓."
+          "title": "(A) and (B)",
+          "body": "$x_1' f + x_1 f = (x_1' + x_1) f = f$, and the same for $x_2$. True for every $f$ (they are not even expansions, just $f \\cdot 1$)."
         },
         {
-          "title": "Counterexample for D",
-          "body": "Take $f=x_1$. Then $f(0,\\ldots)+f(1,\\ldots)=0+1=1$, but $f=x_1$ is $0$ when $x_1=0$. So D is **not** true in general."
+          "title": "(C)",
+          "body": "$x_n' f(x_1, \\ldots, 0) + x_n f(x_1, \\ldots, 1)$ is exactly Shannon's expansion on $x_n$. True."
+        },
+        {
+          "title": "(D)",
+          "body": "$f(0, x_2, \\ldots) + f(1, x_2, \\ldots)$ has no selecting literals. Take $f = x_1 x_2$: it gives $0 + x_2 = x_2 \\ne x_1x_2$ (at $x_1 = 0, x_2 = 1$). Not true in general."
         }
       ],
       "answer": {
-        "value": "D",
+        "value": "(D)",
         "choice": [
           "D"
         ],
@@ -397,25 +401,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True: $x_1'f+x_1f=f$."
+          "reason": "Always true: $(x_1' + x_1)f = f$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "True: same identity with $x_2$."
+          "reason": "Always true: $(x_2 + x_2')f = f$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "True: Shannon expansion about $x_n$."
+          "reason": "Shannon's expansion on $x_n$; always true."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct (NOT true): the cofactors are summed without $x_1'$, $x_1$; fails for $f=x_1$."
+          "reason": "Drops $x_1'$ and $x_1$; it equals 'f is 1 for some value of $x_1$', not $f$."
         }
       ],
-      "verification": "For $f=x_1$: RHS of D is the constant 1, LHS is $x_1$."
+      "shortcut": "$f(0, \\ldots) + f(1, \\ldots)$ is the 'exists $x_1$' function; it equals $f$ only when $f$ does not depend on $x_1$.",
+      "pitfalls": [
+        "Thinking (A) is false because it 'is not an expansion': it is still an identity.",
+        "Missing the literals in (D)."
+      ],
+      "verification": "For $f = x_1x_2$ at $(x_1, x_2) = (0, 1)$: $f = 0$ while (D) gives 1. Options (A)–(C) give 0 there."
     },
     "it-2006-cs-7": {
       "approach": "Concept tested: **2's-complement addition and overflow**. Add the patterns as unsigned numbers, drop the carry out, and remember that operands of opposite signs can never overflow.",

@@ -967,24 +967,28 @@
       "verification": "Master theorem with $a=1,b=2,f=k$: case 2 gives $\\Theta(\\log n)$ ✓."
     },
     "cse-1994-a-8": {
-      "approach": "Label each NAND output and push inversions through with De Morgan; a NAND fed by two NANDs is an OR of the two ANDs.",
+      "approach": "Concept tested: **pushing inversions through NAND levels**. Label each NAND output and apply De Morgan; a NAND fed by two NANDs is an OR of the two products.",
       "concepts": [
         "NAND gates",
         "De Morgan's laws"
       ],
-      "given": "| Gate | Inputs | Output |\n|---|---|---|\n| $G_1$ | $A,B$ | $P=\\overline{AB}$ |\n| $G_2$ | $P,C$ | $Q=\\overline{PC}$ |\n| $G_3$ | $C,D$ | $R=\\overline{CD}$ |\n| $G_4$ | $Q,R$ | $F=\\overline{QR}$ |",
+      "given": "| Gate | Inputs | Output |\n|---|---|---|\n| $G_1$ | $A, B$ | $P = \\overline{AB}$ |\n| $G_2$ | $P, C$ | $Q = \\overline{PC}$ |\n| $G_3$ | $C, D$ | $R = \\overline{CD}$ |\n| $G_4$ | $Q, R$ | $F = \\overline{QR}$ |",
       "steps": [
         {
-          "title": "Final gate",
-          "body": "$$F=\\overline{Q\\,R}=\\overline{Q}+\\overline{R}=PC+CD$$"
+          "title": "Output gate",
+          "body": "$F = \\overline{QR} = \\overline{Q} + \\overline{R} = PC + CD$."
         },
         {
           "title": "Substitute P",
-          "body": "$$F=\\overline{AB}\\,C+CD=(\\overline{A}+\\overline{B})C+CD=\\overline{A}C+\\overline{B}C+CD$$"
+          "body": "$PC = \\overline{AB}\\,C = (\\overline{A} + \\overline{B})C = \\overline{A}C + \\overline{B}C$."
+        },
+        {
+          "title": "Result",
+          "body": "$F = \\overline{A}C + \\overline{B}C + CD$: option (A)."
         }
       ],
       "answer": {
-        "value": "$\\overline{A}C + \\overline{B}C + CD$",
+        "value": "(A) $\\overline{A}C + \\overline{B}C + CD$",
         "choice": [
           "A"
         ],
@@ -994,25 +998,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct — matches the derivation."
+          "reason": "The De Morgan expansion above."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Complements C instead of A and B; $A=1,B=C=D=0$ gives 1 here but the circuit outputs 0."
+          "reason": "Uses $\\overline{C}$ instead of $C$: at $C = 0$ the circuit gives $F = 0$ ($Q = R = 1$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$A=B=C=D=0$ gives 1 here, but the circuit outputs 0."
+          "reason": "$ABC + \\overline{C}\\,\\overline{D}$ is 1 at $C = D = 0$, where the circuit gives 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$A=B=C=D=0$ gives 1 here, but the circuit outputs 0."
+          "reason": "$\\overline{A}\\,\\overline{B}$ is 1 at $C = 0$, where $F = 0$."
         }
       ],
-      "verification": "$A=B=C=1,D=0$: $P=0,Q=1,R=1,F=0$; option (a) gives $0+0+0=0$ ✓. $A=0,C=1,D=0$: $P=1,Q=0,F=1$; (a) gives 1 ✓."
+      "shortcut": "Every term of $F$ must contain $C$ (both inner products contain $C$), which kills (B), (C) and (D) at once.",
+      "pitfalls": [
+        "Losing the inversion of $G_1$: $PC$ is $\\overline{AB}C$, not $ABC$."
+      ],
+      "verification": "$A = 0, C = 1, D = 0$: $P = 1$, $Q = 0$, $R = 1$, $F = 1$; option (A) gives $\\overline{A}C = 1$. ✓"
     },
     "cse-1994-a-9": {
       "approach": "Look for a linear dependency among rows: row 2 minus three times row 3 is a multiple of row 1.",
@@ -1938,78 +1946,93 @@
       "verification": "Total request $300+25+125+50=500$ equals total free $150+350=500$, so success needs exact packing; first fit achieves it, best fit splits the 350 hole wrongly."
     },
     "cse-1994-a-27-a-i": {
-      "approach": "$A*B=AB+\\overline{A}\\,\\overline{B}$ is XNOR (equivalence); substitute $B=A$.",
+      "approach": "Concept tested: **a defined operator**: $A * B = AB + \\bar{A}\\bar{B}$ is XNOR (equivalence). Substitute $B = A$.",
       "concepts": [
         "XNOR / equivalence",
-        "Boolean identities"
+        "Idempotence",
+        "Complement law"
       ],
       "steps": [
         {
           "title": "Substitute",
-          "body": "$A*A = A\\cdot A + \\overline{A}\\cdot\\overline{A} = A + \\overline{A}$ (idempotence)."
+          "body": "$A * A = A \\cdot A + \\bar{A} \\cdot \\bar{A} = A + \\bar{A}$ (idempotence)."
         },
         {
           "title": "Simplify",
-          "body": "$A+\\overline{A}=1$ (complement law), so $A*A=1$ — every value equals itself."
+          "body": "$A + \\bar{A} = 1$ (complement law). Equivalently, XNOR of equal inputs is always 1."
         }
       ],
       "answer": {
         "value": "$A * A = 1$",
         "matchesKey": true
       },
-      "verification": "A = 0: $0\\cdot0+1\\cdot1=1$; A = 1: $1\\cdot1+0\\cdot0=1$."
+      "shortcut": "XNOR is equality, and $A$ always equals $A$.",
+      "pitfalls": [
+        "Answering $A$ (that would be AND or OR of $A$ with itself)."
+      ],
+      "verification": "$A = 0$: $0 + 1 = 1$; $A = 1$: $1 + 0 = 1$."
     },
     "cse-1994-a-27-a-ii": {
-      "approach": "Since $*$ is XNOR and XNOR is associative with $A*A=1$ and $1*B=B$, $C*A=(A*B)*A=B$.",
+      "approach": "Concept tested: **undoing an XNOR**. $*$ is XNOR, which is commutative and associative with $A * A = 1$ and $1 * B = B$.",
       "concepts": [
         "XNOR / equivalence",
         "Associativity",
-        "Truth table"
+        "Moving a term across"
       ],
       "steps": [
         {
-          "title": "Algebra",
-          "body": "XNOR is commutative and associative, so $C*A=(A*B)*A=(A*A)*B=1*B$. And $1*B = 1\\cdot B+0\\cdot\\overline{B}=B$."
+          "title": "Regroup",
+          "body": "$C * A = (A * B) * A = (A * A) * B$ (commutative and associative)."
         },
         {
-          "title": "Truth-table check",
-          "body": "| $A$ | $B$ | $C=A*B$ | $C*A$ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| 0 | 1 | 0 | 1 |\n| 1 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 1 |\n\nThe last column equals $B$."
+          "title": "Simplify",
+          "body": "$A * A = 1$ and $1 * B = 1 \\cdot B + 0 \\cdot \\bar{B} = B$. So $C * A = B$."
+        },
+        {
+          "title": "Check by table",
+          "body": "| $A$ | $B$ | $C = A * B$ | $C * A$ |\n|---|---|---|---|\n| 0 | 0 | 1 | 0 |\n| 0 | 1 | 0 | 1 |\n| 1 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 1 |\n\nThe last column equals $B$."
         }
       ],
       "answer": {
         "value": "$C * A = B$",
         "matchesKey": true
       },
+      "shortcut": "XNOR, like XOR, can be undone: if $C = A \\odot B$ then $C \\odot A = B$.",
       "pitfalls": [
-        "Reading the second term as $\\overline{AB}$ instead of $\\overline{A}\\,\\overline{B}$ makes $*$ constantly 1."
+        "Assuming XNOR is not associative because XNOR *gates* with three inputs behave differently (that concerns gates, not the operator chain)."
       ],
-      "verification": "Algebraic derivation and the 4-row truth table agree."
+      "verification": "The four rows of the table."
     },
     "cse-1994-a-27-b": {
-      "approach": "Start from the equation that equals 0: a sum is 0 only when every term is 0, which pins B and forces the first equation.",
+      "approach": "Concept tested: **solving Boolean equations**. A sum equal to 0 forces every term to 0; substitute what you learn into the other equation.",
       "concepts": [
         "Boolean equations",
         "OR is 0 iff all terms are 0"
       ],
       "steps": [
         {
-          "title": "Second equation",
-          "body": "$AC+B=0 \\Rightarrow B=0$ and $AC=0$."
+          "title": "Start with the equation equal to 0",
+          "body": "$AC + B = 0$ forces $B = 0$ and $AC = 0$."
         },
         {
-          "title": "First equation",
-          "body": "With $B=0$: $AB+\\overline{A}C = 0+\\overline{A}C = 1 \\Rightarrow \\overline{A}=1,\\ C=1$, i.e. $A=0,\\ C=1$."
+          "title": "Substitute into the first equation",
+          "body": "With $B = 0$, $AB = 0$, so $AB + \\overline{A}C = 1$ becomes $\\overline{A}C = 1$, which forces $\\overline{A} = 1$ and $C = 1$, i.e. $A = 0$, $C = 1$."
         },
         {
-          "title": "Check",
-          "body": "$AC = 0\\cdot1=0$ ✓. $AB+\\overline{A}C=0+1\\cdot1=1$ ✓, $AC+B=0+0=0$ ✓. The solution is unique."
+          "title": "Check the remaining condition",
+          "body": "$AC = 0 \\cdot 1 = 0$, as required."
         }
       ],
       "answer": {
-        "value": "$A=0,\\ B=0,\\ C=1$",
+        "value": "$A = 0, B = 0, C = 1$",
         "matchesKey": true
       },
-      "verification": "Substituted back into both equations."
+      "shortcut": "A product equal to 1 ($\\overline{A}C = 1$) pins every factor; a sum equal to 0 pins every term.",
+      "pitfalls": [
+        "Starting with the first equation, which has several solutions on its own.",
+        "Forgetting to re-check $AC = 0$."
+      ],
+      "verification": "$AB + \\overline{A}C = 0 + 1 \\cdot 1 = 1$ and $AC + B = 0 + 0 = 0$. A truth-table search over all 8 rows finds this as the only solution."
     },
     "cse-1994-a-28": {
       "approach": "Induct on the number of internal nodes $n$: replacing one leaf by an internal node with three leaf children adds one internal node and a net of two leaves.",

@@ -716,23 +716,23 @@
       "verification": "$n=1000$: $0.999^{2000}=e^{2000\\ln 0.999}\\approx e^{-2.001}\\approx0.135=e^{-2}$."
     },
     "cse-2010-cs-6": {
-      "approach": "Expand each product term over the missing variable and collect minterm indices with bit order $P,Q,R$ ($P$ is the MSB).",
+      "approach": "Concept tested: **expanding product terms into minterms**. Write each term as a pattern over $P, Q, R$ ($P$ is the most significant bit), expand the missing variable, and take the union.",
       "concepts": [
         "Minterms",
         "Canonical SOP"
       ],
       "steps": [
         {
-          "title": "Expand each term",
-          "body": "| Term | Fixed bits (PQR) | Minterms |\n|---|---|---|\n| $PQ$ | 11x | 110 = 6, 111 = 7 |\n| $Q\\overline R$ | x10 | 010 = 2, 110 = 6 |\n| $P\\overline R$ | 1x0 | 100 = 4, 110 = 6 |"
+          "title": "Patterns",
+          "body": "| Term | Pattern ($PQR$) | Rows | Minterms |\n|---|---|---|---|\n| $PQ$ | $11-$ | 110, 111 | 6, 7 |\n| $Q\\overline{R}$ | $-10$ | 010, 110 | 2, 6 |\n| $P\\overline{R}$ | $1-0$ | 100, 110 | 4, 6 |"
         },
         {
           "title": "Union",
-          "body": "$\\{6,7\\}\\cup\\{2,6\\}\\cup\\{4,6\\}=\\{2,4,6,7\\}$, so $f=m_2+m_4+m_6+m_7$."
+          "body": "$\\{6, 7\\} \\cup \\{2, 6\\} \\cup \\{4, 6\\} = \\{2, 4, 6, 7\\}$: $f = m_2 + m_4 + m_6 + m_7$."
         }
       ],
       "answer": {
-        "value": "$m_2+m_4+m_6+m_7$",
+        "value": "(A) $m_2 + m_4 + m_6 + m_7$",
         "choice": [
           "A"
         ],
@@ -742,25 +742,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Exactly the union of the three terms' minterms."
+          "reason": "The union of the three terms' minterms."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$m_0,m_1,m_3,m_5$ are the **zeros** of $f$ (its maxterm positions) — the exact complement."
+          "reason": "$m_0, m_1, m_3, m_5$ are exactly the rows where $f = 0$: this is $\\overline{f}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$m_0$ (000) and $m_1$ (001) make every term 0."
+          "reason": "Contains $m_0, m_1$ ($P = 0, Q = 0$), where every term is 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$m_3$ (011) and $m_5$ (101) make every term 0."
+          "reason": "Contains $m_3$ (011) and $m_5$ (101), where every term is 0."
         }
       ],
-      "verification": "Zeros of $f$ should be $\\{0,1,3,5\\}$: e.g. 011 → $PQ=0$, $Q\\overline R=0$, $P\\overline R=0$. ✓"
+      "shortcut": "$f$ is the majority-like 'at least two of $P, Q, \\overline{R}$': rows where two or more of $P = 1$, $Q = 1$, $R = 0$ hold: 010, 100, 110, 111.",
+      "pitfalls": [
+        "Taking $R$ as the most significant bit, which renumbers every minterm.",
+        "Counting $m_6$ three times instead of once."
+      ],
+      "verification": "Row 3 (011): $PQ = 0$, $Q\\overline{R} = 0$, $P\\overline{R} = 0$, so $m_3$ is correctly excluded."
     },
     "cse-2010-cs-7": {
       "approach": "A DRAM refresh operation refreshes one whole **row** of a chip, and all chips refresh in parallel. So total time = (rows per chip) × (time per refresh).",
@@ -2159,61 +2164,153 @@
       "verification": "For each x the formula only needs one victim y and one instant t where x fails — exactly what \"x cannot fool everyone all the time\" means."
     },
     "cse-2010-cs-31": {
-      "approach": "Write each NOR output, then simplify level by level using De Morgan: NOR of two NORs is the AND of their ORs.",
+      "approach": "Concept tested: **reading stacked NOR gates**. A NOR of two NORs is the AND of their ORs; then absorption shows that $P$ drops out. (The paper's figure has first-level NORs on (P, Q), (Q, R), (P, R) and (Q, R).)",
       "concepts": [
         "NOR gate",
         "De Morgan",
-        "Boolean simplification"
+        "Absorption"
       ],
       "given": "| Gate | Inputs |\n|---|---|\n| G1 | P, Q |\n| G2 | Q, R |\n| G3 | P, R |\n| G4 | Q, R |\n| G5 | G1, G2 |\n| G6 | G3, G4 |\n| f | G5, G6 |",
       "steps": [
         {
-          "title": "Level 2, upper",
-          "body": "$G5 = \\overline{\\overline{P+Q} + \\overline{Q+R}} = (P+Q)(Q+R) = Q + PR$."
+          "title": "Second level, upper",
+          "body": "$G_5 = \\overline{\\overline{P+Q} + \\overline{Q+R}} = (P+Q)(Q+R) = Q + PR$."
         },
         {
-          "title": "Level 2, lower",
-          "body": "$G6 = \\overline{\\overline{P+R} + \\overline{Q+R}} = (P+R)(Q+R) = R + PQ$."
+          "title": "Second level, lower",
+          "body": "$G_6 = \\overline{\\overline{P+R} + \\overline{Q+R}} = (P+R)(Q+R) = R + PQ$."
         },
         {
           "title": "Output",
-          "body": "$f = \\overline{G5 + G6} = \\overline{Q + PR + R + PQ}$. Since $PR \\le R$ and $PQ \\le Q$ (absorption), $Q + R + PR + PQ = Q + R$, so\n$$f = \\overline{Q+R}.$$"
+          "body": "$f = \\overline{G_5 + G_6} = \\overline{Q + PR + R + PQ}$. Since $PR$ is absorbed by $R$ and $PQ$ by $Q$, $Q + R + PR + PQ = Q + R$, so $f = \\overline{Q + R}$."
+        },
+        {
+          "title": "About the key",
+          "body": "The bank's earlier key was D, $\\overline{P+Q+R}$; it has been corrected to A. At $P = 1, Q = R = 0$ the circuit gives $f = 1$ but $\\overline{P+Q+R} = 0$."
         }
       ],
       "answer": {
-        "value": "f = (Q + R)′",
+        "value": "(A) $\\overline{Q+R}$",
         "choice": [
           "A"
         ],
-        "matchesKey": false,
-        "keyNote": "The stored key D, (P+Q+R)′, is wrong: with P = 1, Q = R = 0 the circuit gives G5 = 0, G6 = 0, so f = 1, whereas (P+Q+R)′ = 0. The derivation gives (Q+R)′, option A (also the widely accepted answer)."
+        "matchesKey": true
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": true,
-          "reason": "Absorption reduces Q + R + PR + PQ to Q + R."
+          "reason": "Absorption reduces $Q + R + PR + PQ$ to $Q + R$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Q = 0, P = 0, R = 1 gives f = 0 but (P+Q)′ = 1."
+          "reason": "$P = Q = 0, R = 1$ gives $f = 0$ but $\\overline{P+Q} = 1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "P = 0, R = 0, Q = 1 gives f = 0 but (P+R)′ = 1."
+          "reason": "$P = R = 0, Q = 1$ gives $f = 0$ but $\\overline{P+R} = 1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "P = 1, Q = R = 0 gives f = 1 but (P+Q+R)′ = 0 — P does not affect f."
+          "reason": "$P = 1, Q = R = 0$ gives $f = 1$ but $\\overline{P+Q+R} = 0$: $P$ does not affect $f$."
         }
       ],
+      "shortcut": "$G_5 + G_6 = (Q + R)\\big[(P + Q) + (P + R)\\big] = (Q + R)(P + Q + R) = Q + R$ (absorption).",
       "pitfalls": [
-        "Assuming the output depends on all three inputs; P is absorbed completely."
+        "Assuming the output must depend on all three inputs.",
+        "Misreading the figure's input pairs."
       ],
-      "verification": "Truth table check: f = 1 exactly when Q = R = 0 — for P = 0 and P = 1 alike (e.g. P=1,Q=R=0: G1=0,G2=1,G3=0,G4=1 → G5=0,G6=0 → f=1)."
+      "verification": "Truth table: $f = 1$ exactly when $Q = R = 0$, for $P = 0$ and $P = 1$ alike (e.g. $P = 1, Q = R = 0$: $G_1 = 0, G_2 = 1, G_3 = 0, G_4 = 1$, so $G_5 = G_6 = 0$ and $f = 1$).",
+      "animation": {
+        "kind": "circuit",
+        "title": "Seven NOR gates",
+        "inputs": [
+          {
+            "id": "P",
+            "label": "P",
+            "value": 1
+          },
+          {
+            "id": "Q",
+            "label": "Q",
+            "value": 0
+          },
+          {
+            "id": "R",
+            "label": "R",
+            "value": 0
+          }
+        ],
+        "gates": [
+          {
+            "id": "G1",
+            "type": "NOR",
+            "in": [
+              "P",
+              "Q"
+            ]
+          },
+          {
+            "id": "G2",
+            "type": "NOR",
+            "in": [
+              "Q",
+              "R"
+            ]
+          },
+          {
+            "id": "G3",
+            "type": "NOR",
+            "in": [
+              "P",
+              "R"
+            ]
+          },
+          {
+            "id": "G4",
+            "type": "NOR",
+            "in": [
+              "Q",
+              "R"
+            ]
+          },
+          {
+            "id": "G5",
+            "type": "NOR",
+            "in": [
+              "G1",
+              "G2"
+            ]
+          },
+          {
+            "id": "G6",
+            "type": "NOR",
+            "in": [
+              "G3",
+              "G4"
+            ]
+          },
+          {
+            "id": "G7",
+            "type": "NOR",
+            "in": [
+              "G5",
+              "G6"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "G7",
+            "label": "F"
+          }
+        ],
+        "caption": "P = 1, Q = R = 0: f = 1, which rules out (P + Q + R)′."
+      }
     },
     "cse-2010-cs-32": {
       "approach": "Both T inputs are 1, so each flip-flop toggles on every rising edge of its own clock. FF0 toggles on every clock; FF1 toggles when Q0 rises from 0 to 1.",

@@ -1,0 +1,853 @@
+{
+ "version": 1,
+ "title": "Functional completeness by Post's five classes",
+ "width": 660,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 310
+ },
+ "intro": "Each row is a set of gates; each column one of Post's five closed classes.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "Post's test: a set must escape all five classes",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Post's five classes",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 30,
+   "y": 60,
+   "cellW": 85,
+   "cellH": 30,
+   "rows": [
+    [
+     "set",
+     "T0",
+     "T1",
+     "S",
+     "M",
+     "A",
+     "all ✓?"
+    ],
+    [
+     "NAND",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "AND, OR",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "XOR, NOT",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "AND, NOT",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "IMP",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "MAJ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     "MUX",
+     " ",
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 4,
+    "y": 56,
+    "cellW": 50,
+    "cellH": 28
+   }
+  },
+  {
+   "id": "leg",
+   "type": "text",
+   "x": 330.0,
+   "y": 320,
+   "text": "T0: 0-preserving · T1: 1-preserving · S: self-dual · M: monotone · A: affine. ✓ = some member is outside the class.",
+   "anchor": "middle",
+   "size": 12,
+   "only": "wide"
+  },
+  {
+   "id": "legn",
+   "type": "text",
+   "x": 180.0,
+   "y": 290,
+   "text": "✓ = a member escapes the class",
+   "anchor": "middle",
+   "size": 11,
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "NAND escapes every class: NAND(0, 0) = 1, NAND(1, 1) = 0, it is not self-dual, not monotone (0 → 1 lowers it) and not affine. Complete on its own.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "set",
+        "T0",
+        "T1",
+        "S",
+        "M",
+        "A",
+        "all ✓?"
+       ],
+       [
+        "NAND",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "AND, OR",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "XOR, NOT",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "AND, NOT",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "IMP",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MAJ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MUX",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        1,
+        5
+       ],
+       [
+        1,
+        6
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "AND and OR are both monotone (and 0- and 1-preserving): they can never produce a complement. Not complete.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "set",
+        "T0",
+        "T1",
+        "S",
+        "M",
+        "A",
+        "all ✓?"
+       ],
+       [
+        "NAND",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "AND, OR",
+        "·",
+        "·",
+        "✓",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "XOR, NOT",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "AND, NOT",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "IMP",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MAJ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MUX",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        5
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "XOR and NOT are both affine (x ⊕ y and x ⊕ 1): every circuit of them is an XOR of inputs and constants. Not complete.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "set",
+        "T0",
+        "T1",
+        "S",
+        "M",
+        "A",
+        "all ✓?"
+       ],
+       [
+        "NAND",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "AND, OR",
+        "·",
+        "·",
+        "✓",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "XOR, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "·",
+        "no"
+       ],
+       [
+        "AND, NOT",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "IMP",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MAJ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MUX",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "AND escapes the self-dual and affine classes, NOT escapes the preserving and monotone ones: together they escape all five. Complete.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "set",
+        "T0",
+        "T1",
+        "S",
+        "M",
+        "A",
+        "all ✓?"
+       ],
+       [
+        "NAND",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "AND, OR",
+        "·",
+        "·",
+        "✓",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "XOR, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "·",
+        "no"
+       ],
+       [
+        "AND, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "IMP",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MAJ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MUX",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ],
+       [
+        4,
+        5
+       ],
+       [
+        4,
+        6
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Implication escapes everything except 1-preservation (1 → 1 = 1). Not complete alone; add the constant 0 and it is.",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "set",
+        "T0",
+        "T1",
+        "S",
+        "M",
+        "A",
+        "all ✓?"
+       ],
+       [
+        "NAND",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "AND, OR",
+        "·",
+        "·",
+        "✓",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "XOR, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "·",
+        "no"
+       ],
+       [
+        "AND, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "IMP",
+        "✓",
+        "·",
+        "✓",
+        "✓",
+        "✓",
+        "no"
+       ],
+       [
+        "MAJ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        "MUX",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        5,
+        5
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Majority is self-dual, monotone, 0- and 1-preserving. Not complete, even with free constants (constants are monotone).",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "set",
+        "T0",
+        "T1",
+        "S",
+        "M",
+        "A",
+        "all ✓?"
+       ],
+       [
+        "NAND",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "AND, OR",
+        "·",
+        "·",
+        "✓",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "XOR, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "·",
+        "no"
+       ],
+       [
+        "AND, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "IMP",
+        "✓",
+        "·",
+        "✓",
+        "✓",
+        "✓",
+        "no"
+       ],
+       [
+        "MAJ",
+        "·",
+        "·",
+        "·",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "MUX",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        6,
+        5
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The 2:1 MUX preserves 0 and 1, so alone it is not complete; with the constants 0 and 1 it is (it then makes NOT and AND).",
+   "patches": [
+    {
+     "id": "t",
+     "set": {
+      "rows": [
+       [
+        "set",
+        "T0",
+        "T1",
+        "S",
+        "M",
+        "A",
+        "all ✓?"
+       ],
+       [
+        "NAND",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "AND, OR",
+        "·",
+        "·",
+        "✓",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "XOR, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "·",
+        "no"
+       ],
+       [
+        "AND, NOT",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "✓",
+        "yes"
+       ],
+       [
+        "IMP",
+        "✓",
+        "·",
+        "✓",
+        "✓",
+        "✓",
+        "no"
+       ],
+       [
+        "MAJ",
+        "·",
+        "·",
+        "·",
+        "·",
+        "✓",
+        "no"
+       ],
+       [
+        "MUX",
+        "·",
+        "·",
+        "✓",
+        "✓",
+        "✓",
+        "no"
+       ]
+      ],
+      "highlight": [
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        7,
+        5
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}
