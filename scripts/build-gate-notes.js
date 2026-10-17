@@ -45,6 +45,8 @@ const DEFAULTS = {
 
 /* ── The block vocabulary ─────────────────────────────────────────────── */
 
+// Live Labs the reader can render (keep in step with client/src/gate/notes/labs/index.ts).
+const LABS = ["gate-bench"];
 // Attribute kinds: 'text' (any short string), 'ref' (an id resolved later), or a list of allowed values.
 const BLOCKS = {
   intuition: { attrs: { title: "text" } },
@@ -62,6 +64,8 @@ const BLOCKS = {
   pyq: { attrs: { id: "ref", tests: "long" }, required: ["id"], leaf: true },
   practice: { attrs: { id: "ref" }, required: ["id"], leaf: true },
   viz: { attrs: { spec: "ref", mode: ["animate", "static"], caption: "text" }, required: ["spec"], leaf: true },
+  // Interactive Live Labs (client/src/gate/notes/labs): :::lab{#id lab="gate-bench" tab="bench"}.
+  lab: { attrs: { lab: LABS, tab: ["bench", "challenge", "sets"], title: "text" }, required: ["lab"], leaf: true },
   table: { attrs: { title: "text" } },
   summary: { attrs: { title: "text" } },
   note: { attrs: { title: "text" } },
