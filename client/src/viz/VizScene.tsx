@@ -6,8 +6,8 @@
   generator is passed in).
 */
 import { memo, useMemo, type ReactNode } from 'react'
-import type { VizArrow, VizElement, VizSpec, VizTone } from './schema'
-import type { VizFrame } from './frames'
+import type { VizArrow, VizElement, VizLayout, VizSpec, VizTone } from './schema'
+import { canvasSize, type VizFrame } from './frames'
 import { strokePaths, type Sketcher } from './sketch'
 import { arcLabelPoint, arcPath } from './geometry'
 
@@ -294,11 +294,26 @@ const Element = memo(function Element({ el, byId, sketch }: { el: VizElement; by
   }
 })
 
-export function VizScene({ spec, frame, sketch, titleId, descId }: { spec: VizSpec; frame: VizFrame; sketch: Sketcher | null; titleId: string; descId: string }) {
+export function VizScene({
+  spec,
+  layout = 'wide',
+  frame,
+  sketch,
+  titleId,
+  descId,
+}: {
+  spec: VizSpec
+  layout?: VizLayout
+  frame: VizFrame
+  sketch: Sketcher | null
+  titleId: string
+  descId: string
+}) {
   const byId = useMemo(() => new Map(frame.elements.map((e) => [e.id, e])), [frame.elements])
   const changed = useMemo(() => new Set(frame.changed), [frame.changed])
+  const { width, height } = canvasSize(spec, layout)
   return (
-    <svg viewBox={`0 0 ${spec.width} ${spec.height}`} className="nxv-svg" role="img" aria-labelledby={`${titleId} ${descId}`}>
+    <svg viewBox={`0 0 ${width} ${height}`} className="nxv-svg" role="img" aria-labelledby={`${titleId} ${descId}`}>
       <title id={titleId}>{spec.title}</title>
       <desc id={descId}>{frame.caption}</desc>
       {frame.elements.map((el) => (

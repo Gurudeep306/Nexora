@@ -343,30 +343,36 @@
       }
     },
     "cse-1991-a-1-v": {
-      "approach": "Write the long multiplication: column 0 has one partial product, column 1 has two. The product bit is the XOR (sum bit) of the column's partial products, since column 0 produces no carry.",
+      "approach": "Concept tested: **product bits as Boolean functions**. Write the partial products in columns; column 1 contains only $a_1b_0$ and $a_0b_1$ and receives no carry (column 0 has a single term), so its bit is their sum mod 2.",
       "concepts": [
-        "binary multiplication",
-        "partial products",
-        "half adder"
+        "Partial products",
+        "Column sums mod 2",
+        "AND as 1-bit multiplication"
       ],
       "steps": [
         {
-          "title": "Partial products by column",
-          "body": "Column 0: $a_0b_0$ only ⇒ $c_0 = a_0b_0$ with no carry.\n\nColumn 1: $a_1b_0$ and $a_0b_1$."
+          "title": "Partial-product columns",
+          "body": "Column 0: $a_0b_0$. Column 1: $a_1b_0$ and $a_0b_1$. Column 2: $a_2b_0$, $a_1b_1$, $a_0b_2$ plus the carry from column 1."
         },
         {
-          "title": "Add column 1",
-          "body": "A half adder adds the two bits: sum $= a_1b_0 \\oplus a_0b_1$, carry $= a_1b_0\\,a_0b_1$ goes to column 2.\n\n$$c_1 = a_1b_0 \\oplus a_0b_1$$"
+          "title": "Carry into column 1",
+          "body": "Column 0 has one term, so it never carries: $c_0 = a_0 b_0$."
+        },
+        {
+          "title": "Column 1",
+          "body": "$c_1 = (a_1 b_0 + a_0 b_1) \\bmod 2 = a_1 b_0 \\oplus a_0 b_1$; the carry $a_1b_0 \\cdot a_0b_1$ goes to column 2."
         }
       ],
       "answer": {
         "value": "$c_1 = a_1b_0 \\oplus a_0b_1$",
         "matchesKey": true
       },
+      "shortcut": "Bit $k$ of a product = XOR of the column-$k$ terms XOR the carries into column $k$; columns 0 and 1 have no incoming carry.",
       "pitfalls": [
-        "Using OR instead of XOR: when both partial products are 1, $c_1 = 0$ and a carry goes up."
+        "Writing $a_1b_0 + a_0b_1$ (OR): two 1s give bit 0 with a carry.",
+        "Including a carry from column 0, which cannot exist."
       ],
-      "verification": "$A=3 (0011)$, $B=3 (0011)$: product $9 = 1001$, so $c_1 = 0$. Formula: $1\\cdot1 \\oplus 1\\cdot1 = 0$ ✓."
+      "verification": "$A = 0011$, $B = 0011$: $3 \\times 3 = 9 = 1001$, so $c_1 = 0$; formula $1\\cdot1 \\oplus 1\\cdot1 = 0$. ✓"
     },
     "cse-1991-a-1-vi": {
       "approach": "Find a property true on loop entry and preserved by one iteration. The guard $i \\bmod 2 = 0$ makes $i$ even on entry, and the body always corrects the parity back to even.",

@@ -8,11 +8,12 @@
 
   The text alternative (every caption, in order) is always available.
 */
-import { useCallback, useEffect, useId, useMemo, useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { Icon } from '@/components/icon/Icon'
 import { cn } from '@/lib/utils'
 import type { VizSpec } from './schema'
 import { buildFrames } from './frames'
+import { useVizLayout } from './useVizLayout'
 import { VizScene } from './VizScene'
 import { useSketcher } from './sketch'
 import './viz.css'
@@ -41,7 +42,9 @@ export interface VizPlayerProps {
 }
 
 export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onCleanLines }: VizPlayerProps) {
-  const frames = useMemo(() => buildFrames(spec), [spec])
+  const figRef = useRef<HTMLElement>(null)
+  const layout = useVizLayout(spec, figRef)
+  const frames = useMemo(() => buildFrames(spec, layout), [spec, layout])
   const reduced = useMedia('(prefers-reduced-motion: reduce)')
   const printing = useMedia('print')
   const isStatic = mode === 'static' || reduced || printing
@@ -89,13 +92,15 @@ export function VizPlayer({ spec, mode = 'animate', caption, cleanLines, onClean
 
   return (
     <figure
+      ref={figRef}
       className={cn('nxv', isStatic && 'nxv--static')}
+      data-layout={layout}
       aria-roledescription={isStatic ? undefined : 'step-by-step diagram'}
       aria-label={spec.title}
       onKeyDown={onKey}
     >
       <div className="nxv-stage">
-        <VizScene spec={spec} frame={frame} sketch={sketch} titleId={`${uid}-t`} descId={`${uid}-d`} />
+        <VizScene spec={spec} layout={layout} frame={frame} sketch={sketch} titleId={`${uid}-t`} descId={`${uid}-d`} />
       </div>
 
       {!isStatic && (

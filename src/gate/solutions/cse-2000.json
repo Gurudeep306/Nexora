@@ -1532,24 +1532,28 @@
       "verification": "C is the closest call: $960{,}000<1{,}048{,}576$, so it fits."
     },
     "cse-2000-a-2-14": {
-      "approach": "A 32-bit float has a 24-bit significand (~7 decimal digits). Adding 1.0 to $2\\times10^{30}$ is lost to rounding, so the order of operations decides the result.",
+      "approach": "Concept tested: **absorption and non-associativity**. A 32-bit float has about 7 significant digits, so $1.0$ vanishes when added to $2 \\times 10^{30}$; the order of the additions decides whether it survives.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Rounding / absorption",
-        "Non-associativity"
+        "Absorption",
+        "Non-associativity of FP addition",
+        "ulp of large numbers"
       ],
       "steps": [
         {
-          "title": "Compute X",
-          "body": "$X=A+B=2\\times10^{30}-2\\times10^{30}=0.0$ (exact). Then $X=0.0+1.0=1.0$."
+          "title": "X: big terms cancel first",
+          "body": "$X = A + B = 2 \\times 10^{30} - 2 \\times 10^{30} = 0$ exactly; then $X = 0 + 1.0 = 1.0$."
         },
         {
-          "title": "Compute Y",
-          "body": "$Y=A+C=2\\times10^{30}+1$. The gap between neighbouring floats near $2^{100}\\approx1.27\\times10^{30}$ is $2^{100-23}=2^{77}\\approx1.5\\times10^{23}\\gg1$, so $A+C$ rounds to $A$. Then $Y=A+B=0.0$."
+          "title": "Y: the 1 meets a huge number",
+          "body": "Near $2 \\times 10^{30} \\approx 2^{100.7}$ the gap between floats is $2^{100-23} = 2^{77} \\approx 1.5 \\times 10^{23}$. Adding $1.0$ is far below half that gap, so $Y = A + C = A$ (absorbed)."
+        },
+        {
+          "title": "Then add B",
+          "body": "$Y = A + B = 0$. So $X = 1.0$, $Y = 0.0$: option (B)."
         }
       ],
       "answer": {
-        "value": "X = 1.0, Y = 0.0",
+        "value": "$X = 1.0$, $Y = 0.0$ — option (B)",
         "choice": [
           "B"
         ],
@@ -1559,25 +1563,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Y would be 1.0 only with exact arithmetic."
+          "reason": "Exact arithmetic would give 1.0 for both, but $Y$ loses the 1 to absorption."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: the 1.0 survives in X but is absorbed in Y."
+          "reason": "$X$ cancels the large terms first; $Y$ absorbs the 1 into $A$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Swaps the two results."
+          "reason": "This swaps the two results."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "X is exactly 1.0, since $A+B$ cancels exactly first."
+          "reason": "$X$ is exact: $0 + 1 = 1$."
         }
       ],
-      "verification": "$2\\times10^{30}<3.4\\times10^{38}$, so no overflow; the only loss is the absorbed 1.0 in $A+C$."
+      "shortcut": "7 significant digits cannot hold $2000\\ldots001$ (31 digits): any '+1' next to $10^{30}$ disappears.",
+      "pitfalls": [
+        "Assuming floating-point addition is associative.",
+        "Thinking $A + B$ might not be exactly 0: equal magnitudes cancel exactly."
+      ],
+      "verification": "In Python with float32 rounding: `f32(f32(2e30) + 1.0) == f32(2e30)` is True. ✓"
     },
     "cse-2000-a-2-15": {
       "approach": "This is the classic reversal algorithm for rotation: reversing the two blocks and then the whole array swaps the blocks, i.e. $s[1..k]\\,s[k{+}1..n]\\to s[k{+}1..n]\\,s[1..k]$ — a left rotation by $k$.",

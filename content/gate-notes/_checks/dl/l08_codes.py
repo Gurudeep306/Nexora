@@ -1,4 +1,4 @@
-"""Checks for dl/01-number-systems/05-codes: BCD, excess-3, weighted and self-complementing codes,
+"""Checks for dl/01-number-systems/08-codes: BCD, excess-3, weighted and self-complementing codes,
 Gray conversions and successor tables, parity, Hamming distance and Hamming (7,4), PYQ key
 (re-derived by brute force) and practice answers."""
 import json
@@ -10,7 +10,7 @@ from itertools import combinations
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import numlib as nl  # noqa: E402
 
-L = nl.lesson_text("05-codes.md")
+L = nl.lesson_text("08-codes.md")
 has = lambda *s: nl.must_contain(L, *s)
 
 
@@ -92,23 +92,23 @@ assert [k for k, (bit, lst) in claims.items() if successor(4, bit) == lst] == ["
 
 # Practice.
 P = nl.practice()
-q = P["nx-dl-01-05-q01"]
+q = P["nx-dl-01-08-q01"]
 nl.assert_mcq(q, [k for k, t in nl.option_values(q).items() if t.strip("$") == nl.gray_bits(13, 4)][0])
 assert nl.to_base(nl.gray_inv(0b1101), 2, 4) == "1001"
-nl.assert_nat(P["nx-dl-01-05-q02"], nl.gray_inv(0b1101))
+nl.assert_nat(P["nx-dl-01-08-q02"], nl.gray_inv(0b1101))
 assert int(wrong("1101"), 2) == 11
-nl.assert_msq(P["nx-dl-01-05-q03"], [k for k, t in {"A": xs3, "B": bcd, "C": nl.WEIGHTED_2421, "D": c842}.items() if nl.is_self_complementing(t)])
-nl.assert_nat(P["nx-dl-01-05-q04"], sum(1 for p in range(256) if (p >> 4) > 9 or (p & 15) > 9))
-q = P["nx-dl-01-05-q05"]
+nl.assert_msq(P["nx-dl-01-08-q03"], [k for k, t in {"A": xs3, "B": bcd, "C": nl.WEIGHTED_2421, "D": c842}.items() if nl.is_self_complementing(t)])
+nl.assert_nat(P["nx-dl-01-08-q04"], sum(1 for p in range(256) if (p >> 4) > 9 or (p & 15) > 9))
+q = P["nx-dl-01-08-q05"]
 nl.assert_mcq(q, [k for k, t in nl.option_values(q).items() if t.strip("$").replace("\\;", " ") == nl.xs3(47)][0])
 assert nl.to_base(50, 2, 8) == "00110010" and nl.bcd(47) == "0100 0111"
-nl.assert_nat(P["nx-dl-01-05-q06"], nl.parity_bits_needed(11))
-q = P["nx-dl-01-05-q07"]
+nl.assert_nat(P["nx-dl-01-08-q06"], nl.parity_bits_needed(11))
+q = P["nx-dl-01-08-q07"]
 syn = nl.hamming74_syndrome("1110110")[0]
 nl.assert_mcq(q, {3: "A", 6: "B", 5: "C", 0: "D"}[syn])
 assert nl.flip("1110110", 3) == nl.hamming74_encode("0110") == "1100110" and nl.hamming74_syndrome("1110110")[1] == (0, 1, 1)
-nl.assert_nat(P["nx-dl-01-05-q08"], next(dm for dm in range(1, 20) if (dm - 1) // 2 >= 2))
-q = P["nx-dl-01-05-q09"]
+nl.assert_nat(P["nx-dl-01-08-q08"], next(dm for dm in range(1, 20) if (dm - 1) // 2 >= 2))
+q = P["nx-dl-01-08-q09"]
 opts = {k: sorted(int(x) for x in t.split("Sigma(")[1].split(")")[0].split(",")) for k, t in nl.option_values(q).items()}
 nl.assert_mcq(q, [k for k, v in opts.items() if v == successor(3, 0)][0])
 assert opts["B"] == sorted(n for n in range(8) if nl.gray((n + 1) % 8) & 1) and opts["D"] == successor(3, 2)

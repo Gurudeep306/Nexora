@@ -5551,32 +5551,65 @@
       "verification": "Sum of all profits: 15+20+30+18+18+10+23+16+25 = 175; minus $T_4$(18) and $T_6$(10) = 147."
     },
     "cse-2005-cs-85a": {
-      "approach": "Store the exponent with bias 64 and the fraction 0.239 as 8 binary digits (truncated), then read the 16-bit word in hex.",
+      "approach": "Concept tested: **encoding without normalisation**. Convert the mantissa 0.239 to 8 binary places (truncating), store the exponent 13 in excess-64, and assemble sign | exponent | mantissa.",
       "concepts": [
+        "Fraction to binary (repeated doubling)",
         "Excess-64 exponent",
-        "Fraction to binary",
-        "Sign-magnitude"
+        "Hex grouping of a 16-bit word"
       ],
+      "given": "16 bits: sign (bit 15) | exponent (bits 14–8, excess-64) | mantissa (bits 7–0, a pure fraction in sign-magnitude, the sign being bit 15).",
       "steps": [
         {
-          "title": "Exponent",
-          "body": "$13 + 64 = 77 = 1001101_2$ (7 bits)."
+          "title": "0.239 to binary, 8 places",
+          "body": "Double and peel: $0.478 \\to 0$, $0.956 \\to 0$, $1.912 \\to 1$, $1.824 \\to 1$, $1.648 \\to 1$, $1.296 \\to 1$, $0.592 \\to 0$, $1.184 \\to 1$.\n\nSo $0.239 \\approx 0.00111101_2$ (truncated)."
         },
         {
-          "title": "Mantissa (8 bits)",
-          "body": "Repeated doubling of 0.239: 0.478→**0**, 0.956→**0**, 1.912→**1**, 1.824→**1**, 1.648→**1**, 1.296→**1**, 0.592→**0**, 1.184→**1**\n\n$$0.239 \\approx 0.00111101_2$$"
+          "title": "Exponent field",
+          "body": "$13 + 64 = 77 = 100\\,1101_2$."
         },
         {
-          "title": "Assemble",
-          "body": "sign 0 | 1001101 | 00111101 → $0100\\ 1101\\ 0011\\ 1101_2$ = **4D 3D**.",
-          "scene": {
-            "caption": "0 1001101 00111101 = 4D3D"
-          }
+          "title": "Assemble and group",
+          "body": "$0\\ 1001101\\ 00111101 = 0100\\,1101\\,0011\\,1101 = \\texttt{4D 3D}$: option (D)."
         }
       ],
+      "answer": {
+        "value": "`4D 3D` — option (D)",
+        "choice": [
+          "D"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "`0D 24`: the exponent field lacks the bias (13 = 0001101) and the mantissa bits are wrong."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "`0D 4D`: unbiased exponent, and the bytes of exponent and mantissa are confused."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "`4D 0D`: right exponent byte, but the mantissa byte 0D is not 0.239."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "Exponent 77 → `4D`, mantissa 00111101 → `3D`."
+        }
+      ],
+      "shortcut": "With the sign bit 0, the high byte is just the excess-64 exponent: $77 = 4D_{16}$. Only options C and D start with `4D`, and $0.239 \\times 256 = 61.2 \\to 61 = 3D_{16}$.",
+      "pitfalls": [
+        "Forgetting the bias (exponent byte `0D`).",
+        "Rounding $0.239 \\times 256 = 61.18$ the wrong way, or converting 0.239 as if it were 239."
+      ],
+      "verification": "$3D_{16} = 61$ and $61/256 = 0.23828$, within $1/256$ of 0.239. ✓",
       "animation": {
         "kind": "bits",
-        "group": 4,
+        "title": "0.239 × 2¹³ without normalisation",
         "rows": [
           {
             "label": "word",
@@ -5588,20 +5621,48 @@
               },
               {
                 "bits": "1001101",
-                "label": "exponent",
+                "label": "exp 13+64",
                 "tone": "accent"
               },
               {
                 "bits": "00111101",
-                "label": "mantissa",
+                "label": "mantissa ≈ 0.239",
                 "tone": "success"
               }
-            ]
+            ],
+            "value": "0x4D3D"
           }
-        ]
-      },
+        ],
+        "group": 4
+      }
+    },
+    "cse-2005-cs-85b": {
+      "approach": "Concept tested: **normalising with a hidden bit**. Shift the mantissa $0.00111101$ left until its first 1 is just before the point (3 places), lower the exponent by 3, and store only the bits after that 1 (padding with 0s, as the question says).",
+      "concepts": [
+        "Normalisation (shift left, lower the exponent)",
+        "Hidden (implicit) bit",
+        "Excess-64 exponent"
+      ],
+      "steps": [
+        {
+          "title": "Find the first 1",
+          "body": "From part (a), $0.239 \\times 2^{13} \\approx 0.00111101_2 \\times 2^{13}$. The first 1 is in the 3rd place after the point."
+        },
+        {
+          "title": "Shift left by 3",
+          "body": "$0.00111101 \\times 2^{13} = 1.11101 \\times 2^{10}$: the significand is multiplied by $2^3$, so the exponent drops from 13 to 10."
+        },
+        {
+          "title": "Fields",
+          "body": "- Exponent: $10 + 64 = 74 = 100\\,1010_2$.\n- Mantissa: the 1 before the point is implicit, so store the bits after it, $11101$, padded with 0s to 8 bits: $1110\\,1000$. (These are exactly the 8 bits of part (a) shifted left by 3.)"
+        },
+        {
+          "title": "Assemble",
+          "body": "$0\\ 1001010\\ 11101000 = 0100\\,1010\\,1110\\,1000 = \\texttt{4A E8}$: option (D)."
+        }
+      ],
       "answer": {
-        "value": "4D 3D",
+        "value": "`4A E8` — option (D)",
         "choice": [
           "D"
         ],
@@ -5611,60 +5672,58 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "0D 24 drops the excess-64 bias and garbles the mantissa."
+          "reason": "`0A 20`: exponent stored without the bias of 64, and the mantissa byte is wrong."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "0D 4D: exponent without bias (13 = 0001101) and a wrong mantissa."
+          "reason": "`11 34`: exponent field $0010001 = 17$, i.e. $E = -47$, unrelated to the number."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "4D is right but 0D is not the 8-bit fraction of 0.239 (0D = 0.0508)."
+          "reason": "`49 D0`: exponent 73 (shift of 4) with mantissa $11010000$, which drops one of the 1s: it encodes $1.1101 \\times 2^9 = 928$, not 1952."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: 0 1001101 00111101 = 4D3D."
+          "reason": "Exponent $13 - 3 + 64 = 74$ → `4A`; mantissa $11101000$ → `E8`."
         }
       ],
-      "verification": "$3D_{16}/256 = 61/256 = 0.2383 \\approx 0.239$ ✓; $4D_{16} = 77 = 13 + 64$ ✓."
-    },
-    "cse-2005-cs-85b": {
-      "approach": "Normalise $0.00111101 \\times 2^{13}$ by shifting the mantissa left 3 places and lowering the exponent by 3 (to 10, stored as 74). The options were set with the shifted 8-bit field 11101000 kept as the mantissa, which picks 4A E8.",
-      "concepts": [
-        "Normalisation",
-        "Hidden (implicit) bit",
-        "Excess-64"
+      "shortcut": "Normalising never changes the value, so decode the options: (D) gives $1.11101_2 \\times 2^{10} = 1.90625 \\times 1024 = 1952$, the same as part (a)'s $61/256 \\times 2^{13} = 1952$.",
+      "pitfalls": [
+        "Writing $1.1101 \\times 2^{10}$ (one 1 lost while shifting): $0.00111101$ has five 1s, so $1.11101$ keeps five 1s.",
+        "Shifting left but *raising* the exponent.",
+        "Storing the leading 1 as well (`4A F4`), which a hidden-bit format never does."
       ],
-      "steps": [
-        {
-          "title": "Shift",
-          "body": "$$0.00111101 \\times 2^{13} = 1.1101 \\times 2^{10}$$\nShift left 3 places, padding 0s on the right: 00111101 → **11101000**."
-        },
-        {
-          "title": "Exponent",
-          "body": "$13 - 3 = 10$; stored $10 + 64 = 74 = 1001010_2$."
-        },
-        {
-          "title": "Assemble",
-          "body": "sign 0 | 1001010 | 11101000 → $0100\\ 1010\\ 1110\\ 1000_2$ = **4A E8** (option D).",
-          "scene": {
-            "caption": "0 1001010 11101000 = 4AE8"
-          }
-        },
-        {
-          "title": "Caveat",
-          "body": "Strictly, with the leading 1 implicit, only the bits after it are stored (1101 0000 → D0), giving 4A D0, which is not an option. Exponent field 4A is present only in (D), which is the intended answer."
-        }
-      ],
+      "verification": "Part (a) stores $61/256 \\times 2^{13} = 1952$. Option (D) stores $(1 + 29/32) \\times 2^{10} = 1952$. Same value, so no bits were lost and the key D is fully consistent (an older review note claiming the question was flawed miscounted the 1s).",
       "animation": {
         "kind": "bits",
-        "group": 4,
+        "title": "Normalising: shift left by 3, exponent 13 → 10",
         "rows": [
           {
-            "label": "word",
+            "label": "(a) raw",
+            "fields": [
+              {
+                "bits": "0",
+                "label": "sign",
+                "tone": "muted"
+              },
+              {
+                "bits": "1001101",
+                "label": "exp 77",
+                "tone": "accent"
+              },
+              {
+                "bits": "00111101",
+                "label": "0.00111101",
+                "tone": "info"
+              }
+            ],
+            "value": "0x4D3D"
+          },
+          {
+            "label": "(b) normalised",
             "fields": [
               {
                 "bits": "0",
@@ -5673,52 +5732,20 @@
               },
               {
                 "bits": "1001010",
-                "label": "exponent",
+                "label": "exp 74",
                 "tone": "accent"
               },
               {
                 "bits": "11101000",
-                "label": "mantissa",
+                "label": "after the hidden 1",
                 "tone": "success"
               }
-            ]
+            ],
+            "value": "0x4AE8"
           }
-        ]
-      },
-      "answer": {
-        "value": "4A E8",
-        "choice": [
-          "D"
         ],
-        "matchesKey": true
-      },
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": false,
-          "reason": "0A 20: exponent stored without the bias of 64."
-        },
-        {
-          "option": "B",
-          "correct": false,
-          "reason": "11 34 has no consistent exponent (0010001 = 17 → 2^{-47})."
-        },
-        {
-          "option": "C",
-          "correct": false,
-          "reason": "49 D0: exponent 1001001 = 73 → 9 is off by one (shift of 4 instead of 3)."
-        },
-        {
-          "option": "D",
-          "correct": true,
-          "reason": "Correct (intended): exponent 74 → 4A and the mantissa field shifted left by 3 → E8."
-        }
-      ],
-      "pitfalls": [
-        "Shifting left by 3 must decrease the exponent by 3 (77 → 74).",
-        "A fully consistent hidden-bit encoding gives 4AD0, which is not offered."
-      ],
-      "verification": "$4A_{16} = 74 = 10 + 64$; E8 = 11101000 = 00111101 << 3 ✓."
+        "group": 4
+      }
     }
   }
 }

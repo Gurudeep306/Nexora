@@ -14,6 +14,16 @@
   Colours are never literal: `tone` (stroke/text) and `fill` name theme roles
   (see VIZ_TONES), so every scene follows the palette and dark mode.
 
+  Narrow screens: a scene may add a second canvas, `"narrow": { "width",
+  "height", "below"? }`, used when the figure is narrower than `below` CSS
+  pixels (default 560). In that layout each element may move or resize
+  through its own `"narrow": { …geometry… }` override, and an element marked
+  `"only": "wide"` or `"only": "narrow"` exists in one layout only (so a
+  32-bit row can be drawn as one strip on desktop and as stacked fields on a
+  phone). Steps are shared: a patch to an element that is absent from the
+  current layout is ignored, and a layout override always wins over a patch
+  for the geometry it names.
+
   This module is shared: the reader imports it, and scripts/build-gate-notes.js
   loads it in Node (type-stripped) to validate every viz/<name>.json. Keep it
   dependency-free and erasable-syntax only.
@@ -24,6 +34,13 @@ export type VizTone = (typeof VIZ_TONES)[number]
 
 export const VIZ_ELEMENT_TYPES = ['box', 'circle', 'node', 'text', 'arrow', 'line', 'table', 'grid', 'bits', 'arc'] as const
 export type VizElementType = (typeof VIZ_ELEMENT_TYPES)[number]
+
+export const VIZ_LAYOUTS = ['wide', 'narrow'] as const
+export type VizLayout = (typeof VIZ_LAYOUTS)[number]
+/** Default width (CSS px) below which a scene with a `narrow` canvas switches to it. */
+export const VIZ_NARROW_BELOW = 560
+/** Properties an element's `narrow` override may change: geometry and text size only, never content. */
+export const VIZ_LAYOUT_KEYS = ['x', 'y', 'w', 'h', 'cx', 'cy', 'r', 'r0', 'start', 'end', 'cell', 'cellW', 'cellH', 'size', 'points', 'from', 'to', 'curve', 'anchor'] as const
 
 export type VizPoint = [number, number]
 /** An arrow end: a point, or the id of an element (snaps to its outline). */
@@ -42,6 +59,10 @@ interface Common {
   /** 0–1. */
   opacity?: number
   dashed?: boolean
+  /** Draw this element in one layout only (needs a top-level `narrow` canvas). */
+  only?: VizLayout
+  /** Geometry used in the narrow layout (keys from VIZ_LAYOUT_KEYS). */
+  narrow?: Record<string, unknown>
 }
 
 export interface VizBox extends Common {
@@ -157,11 +178,19 @@ export interface VizStep {
   caption: string
   patches: VizPatch[]
 }
+export interface VizNarrowCanvas {
+  width: number
+  height: number
+  /** Switch to this canvas when the figure is narrower than this many CSS px (default 560). */
+  below?: number
+}
 export interface VizSpec {
   version: 1
   title: string
   width: number
   height: number
+  /** Optional second canvas for phones; see the header comment. */
+  narrow?: VizNarrowCanvas
   /** Caption for the first frame (before any step). */
   intro?: string
   elements: VizElement[]
@@ -203,6 +232,8 @@ const COMMON: Record<string, Check> = {
   hidden: bool,
   opacity: num(0, 1),
   dashed: bool,
+  only: oneOf(VIZ_LAYOUTS),
+  narrow: (v) => (isObj(v) ? null : 'must be an object of layout overrides'),
 }
 const LABEL = { label: str(80), mono: bool, size: num(8, 48) }
 
@@ -299,6 +330,15 @@ function checkElement(el: unknown, where: string): string[] {
     if (!(sweep > 0 && sweep <= 360)) errs.push(`${where}.end: must be after start, at most one full turn (360°) later`)
     if (typeof el.r0 === 'number' && typeof el.r === 'number' && el.r0 >= el.r) errs.push(`${where}.r0: inner radius must be smaller than r`)
   }
+  if (isObj(el.narrow)) {
+    const { narrow, ...rest } = el
+    for (const k of Object.keys(narrow)) {
+      if (!(VIZ_LAYOUT_KEYS as readonly string[]).includes(k)) errs.push(`${where}.narrow.${k}: only geometry can change per layout (${VIZ_LAYOUT_KEYS.join(', ')})`)
+      else if (!def.props[k]) errs.push(`${where}.narrow.${k}: unknown property for a ${el.type}`)
+    }
+    if (el.only === 'wide') errs.push(`${where}.narrow: an element drawn only in the wide layout has no narrow geometry`)
+    for (const e of checkElement({ ...rest, ...narrow }, `${where}.narrow`)) if (!errs.includes(e)) errs.push(e)
+  }
   if (el.type === 'bits' && typeof el.bits === 'string') {
     for (const k of ['labels', 'below'] as const) {
       const list = el[k]
@@ -312,7 +352,7 @@ function checkElement(el: unknown, where: string): string[] {
 export function validateVizSpec(spec: unknown): string[] {
   if (!isObj(spec)) return ['spec: must be an object']
   const errs: string[] = []
-  const allowed = new Set(['$schema', 'version', 'title', 'width', 'height', 'intro', 'elements', 'steps'])
+  const allowed = new Set(['$schema', 'version', 'title', 'width', 'height', 'narrow', 'intro', 'elements', 'steps'])
   for (const k of Object.keys(spec)) if (!allowed.has(k)) errs.push(`${k}: unknown top-level property`)
   if (spec.version !== 1) errs.push('version: must be 1')
   const t = str(120)(spec.title)
@@ -320,6 +360,20 @@ export function validateVizSpec(spec: unknown): string[] {
   for (const k of ['width', 'height'] as const) {
     const e = num(40, 4000)(spec[k])
     if (e) errs.push(`${k}: ${e}`)
+  }
+  if (spec.narrow !== undefined) {
+    if (!isObj(spec.narrow)) errs.push('narrow: must be { width, height, below? }')
+    else {
+      for (const k of Object.keys(spec.narrow)) if (!['width', 'height', 'below'].includes(k)) errs.push(`narrow.${k}: unknown property`)
+      for (const k of ['width', 'height'] as const) {
+        const e = num(40, 4000)(spec.narrow[k])
+        if (e) errs.push(`narrow.${k}: ${e}`)
+      }
+      if (spec.narrow.below !== undefined) {
+        const e = int(200, 2000)(spec.narrow.below)
+        if (e) errs.push(`narrow.below: ${e}`)
+      }
+    }
   }
   if (spec.intro !== undefined) {
     const e = str(400)(spec.intro)
@@ -347,6 +401,20 @@ export function validateVizSpec(spec: unknown): string[] {
     }
   }
   spec.elements.forEach((el, i) => isObj(el) && checkEnds(el, `elements[${i}]`))
+  // Layouts: per-element layout data needs the second canvas, and an arrow must find its ends in every layout it is drawn in.
+  const inLayout = (el: Record<string, unknown> | undefined, layout: VizLayout) => !!el && (el.only === undefined || el.only === layout)
+  spec.elements.forEach((el, i) => {
+    if (!isObj(el)) return
+    if ((el.only !== undefined || el.narrow !== undefined) && !isObj(spec.narrow)) errs.push(`elements[${i}]: "only" and "narrow" need a top-level narrow canvas`)
+    if (el.type !== 'arrow') return
+    for (const layout of VIZ_LAYOUTS) {
+      if (!inLayout(el, layout)) continue
+      for (const k of ['from', 'to']) {
+        const v = el[k]
+        if (typeof v === 'string' && byId.has(v) && !inLayout(byId.get(v), layout)) errs.push(`elements[${i}].${k}: "${v}" is not drawn in the ${layout} layout`)
+      }
+    }
+  })
 
   if (!Array.isArray(spec.steps) || spec.steps.length > MAX_STEPS) {
     errs.push(`steps: must be a list of at most ${MAX_STEPS} steps`)
@@ -367,6 +435,7 @@ export function validateVizSpec(spec: unknown): string[] {
       const cur = state.get(p.id)
       if (!cur) return errs.push(`${pw}.id: no element with id "${p.id}"`)
       if ('id' in p.set || 'type' in p.set) errs.push(`${pw}.set: cannot change id or type`)
+      if ('only' in p.set || 'narrow' in p.set) errs.push(`${pw}.set: cannot change the layout (only, narrow)`)
       const next = { ...cur, ...p.set }
       for (const e of checkElement(next, `${pw}.set`)) errs.push(e)
       checkEnds(next, `${pw}.set`)

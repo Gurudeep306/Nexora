@@ -1,0 +1,324 @@
+{
+ "version": 1,
+ "title": "Overflow and the carries of the sign column",
+ "width": 600,
+ "height": 390,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "Three 4-bit 2's-complement additions. Above the sign column we show the carry into it (c₃) and out of it (c₄).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "Overflow: compare the carry into and out of the sign bit",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Carry in vs carry out of the MSB",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "cin",
+   "type": "text",
+   "x": 291.0,
+   "y": 70,
+   "text": "c₃",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "narrow": {
+    "x": 180.0,
+    "y": 70,
+    "size": 13
+   }
+  },
+  {
+   "id": "cout",
+   "type": "text",
+   "x": 237.0,
+   "y": 70,
+   "text": "c₄",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "narrow": {
+    "x": 140.0,
+    "y": 70,
+    "size": 13
+   }
+  },
+  {
+   "id": "cinv",
+   "type": "text",
+   "x": 291.0,
+   "y": 92,
+   "text": "",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true,
+   "tone": "warning",
+   "narrow": {
+    "x": 180.0,
+    "y": 92,
+    "size": 14
+   }
+  },
+  {
+   "id": "coutv",
+   "type": "text",
+   "x": 237.0,
+   "y": 92,
+   "text": "",
+   "anchor": "middle",
+   "size": 17,
+   "mono": true,
+   "tone": "warning",
+   "narrow": {
+    "x": 140.0,
+    "y": 92,
+    "size": 14
+   }
+  },
+  {
+   "id": "ra",
+   "type": "bits",
+   "x": 264,
+   "y": 110,
+   "bits": "0101",
+   "cell": 54,
+   "narrow": {
+    "x": 160,
+    "y": 110,
+    "cell": 40
+   }
+  },
+  {
+   "id": "rb",
+   "type": "bits",
+   "x": 264,
+   "y": 170,
+   "bits": "0100",
+   "cell": 54,
+   "narrow": {
+    "x": 160,
+    "y": 156,
+    "cell": 40
+   }
+  },
+  {
+   "id": "rs",
+   "type": "bits",
+   "x": 210,
+   "y": 242,
+   "bits": "01001",
+   "cell": 54,
+   "fill": "info",
+   "narrow": {
+    "x": 120,
+    "y": 212,
+    "cell": 40
+   }
+  },
+  {
+   "id": "lab",
+   "type": "text",
+   "x": 300,
+   "y": 360,
+   "text": "",
+   "anchor": "middle",
+   "size": 17,
+   "narrow": {
+    "x": 180,
+    "y": 310,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "+5 + (+4): 0101 + 0100 = 0 1001. Carry into the sign column c₃ = 1, carry out c₄ = 0. They differ, so overflow (true sum 9 is outside −8 … 7).",
+   "patches": [
+    {
+     "id": "ra",
+     "set": {
+      "bits": "0101",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "rb",
+     "set": {
+      "bits": "0100",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "bits": "01001",
+      "highlight": [
+       0,
+       1
+      ],
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "cinv",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "coutv",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "lab",
+     "set": {
+      "text": "+5 + (+4) → V = 1",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "−5 + (−6): 1011 + 1010 = 1 0101. Carry into the sign column c₃ = 0, carry out c₄ = 1. They differ, so overflow (true sum −11 is outside −8 … 7).",
+   "patches": [
+    {
+     "id": "ra",
+     "set": {
+      "bits": "1011",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "rb",
+     "set": {
+      "bits": "1010",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "bits": "10101",
+      "highlight": [
+       0,
+       1
+      ],
+      "fill": "danger"
+     }
+    },
+    {
+     "id": "cinv",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "coutv",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "lab",
+     "set": {
+      "text": "−5 + (−6) → V = 1",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "+5 + (−3): 0101 + 1101 = 1 0010. Carry into the sign column c₃ = 1, carry out c₄ = 1. They agree, so no overflow (the sum 2 fits). The carry out alone is not overflow.",
+   "patches": [
+    {
+     "id": "ra",
+     "set": {
+      "bits": "0101",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "rb",
+     "set": {
+      "bits": "1101",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "bits": "10010",
+      "highlight": [
+       0,
+       1
+      ],
+      "fill": "success"
+     }
+    },
+    {
+     "id": "cinv",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "coutv",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "lab",
+     "set": {
+      "text": "+5 + (−3) → V = 0",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rule: V = c₃ ⊕ c₄. Equivalently, overflow happens exactly when both operands have the same sign and the result's sign differs.",
+   "patches": [
+    {
+     "id": "lab",
+     "set": {
+      "text": "V = carry in ⊕ carry out (sign column)",
+      "tone": "subject"
+     }
+    }
+   ]
+  }
+ ]
+}

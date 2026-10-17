@@ -2270,28 +2270,33 @@
       "verification": "x₂ → 1.05 → $1.05-\\frac{f(1.05)}{2.364}$ with $f(1.05)=-0.8+0.05\\cdot2.364=-0.682$ gives $1.05+0.289=1.339\\approx1.3$ ✓."
     },
     "cse-2003-cs-43": {
-      "approach": "The gap between consecutive numbers is one mantissa ulp times the scale: $2^{-9}\\cdot2^{e-31}$. It is largest for the largest usable exponent, e = 111110₂ = 62.",
+      "approach": "Concept tested: the **gap between successive values** (one ulp). Within one exponent the mantissa steps by $2^{-9}$, so values step by $2^{-9} \\cdot 2^{e-31}$; the gap is largest at the largest ordinary exponent, $e = 62$ (the all-ones field means zero).",
       "concepts": [
-        "Floating point",
-        "ULP",
-        "Biased exponent"
+        "Unit in the last place (ulp)",
+        "Hidden-bit format",
+        "Reserved exponent field"
       ],
+      "given": "16 bits: $s$ (1) | $e$ (6) | $m$ (9). Value $(-1)^s (1 + m \\cdot 2^{-9})\\, 2^{e-31}$ for $e \\ne 111111$; $0$ otherwise.",
       "steps": [
         {
-          "title": "Gap at exponent e",
-          "body": "Consecutive mantissas differ by 1, so the values differ by $2^{-9}\\cdot2^{e-31}$."
+          "title": "Gap inside one exponent",
+          "body": "Consecutive $m$ differ by 1, so consecutive values differ by $\\Delta(e) = 2^{-9} \\times 2^{e - 31}$."
         },
         {
-          "title": "Largest valid exponent",
-          "body": "$e=111111_2$ is reserved for 0, so $e_{\\max}=111110_2=62$."
+          "title": "Which exponent gives the largest gap",
+          "body": "$\\Delta(e)$ grows with $e$. The field $e = 111111 = 63$ is reserved for zero, so the largest ordinary exponent is $e = 62$."
         },
         {
-          "title": "Maximum gap",
-          "body": "$2^{-9}\\cdot2^{62-31}=2^{-9}\\cdot2^{31}=2^{22}$."
+          "title": "Compute it",
+          "body": "$\\Delta(62) = 2^{-9} \\times 2^{62 - 31} = 2^{-9} \\times 2^{31} = 2^{22}$."
+        },
+        {
+          "title": "Across an exponent boundary",
+          "body": "From the largest value at $e$ to $1.0 \\times 2^{e+1-31}$ the step is again $\\Delta(e)$, so no larger gap hides at a boundary. Answer: $2^{22}$, option (C)."
         }
       ],
       "answer": {
-        "value": "$2^{22}$",
+        "value": "$2^{22}$ — option (C)",
         "choice": [
           "C"
         ],
@@ -2301,25 +2306,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$2^{-40}=2^{-9}\\cdot2^{0-31}$ is the *minimum* gap (e = 0)."
+          "reason": "$2^{-40} = 2^{-9} \\times 2^{0-31}$ is the **smallest** gap (at $e = 0$), not the largest."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$2^{-9}$ is the gap only for e = 31."
+          "reason": "$2^{-9}$ is the step of the mantissa alone, ignoring the factor $2^{e-31}$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct."
+          "reason": "$2^{-9} \\times 2^{62-31} = 2^{22}$ at the largest ordinary exponent."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$2^{31}$ is the scale factor, not the gap (forgets the $2^{-9}$ ulp)."
+          "reason": "$2^{31}$ is the scale factor at $e = 62$ without the mantissa step $2^{-9}$ (and $2^{32}$ would use the reserved $e = 63$)."
         }
       ],
-      "verification": "Bits: 6 exponent bits (14–9), 9 mantissa bits (8–0) as in the figure."
+      "shortcut": "Largest gap = (mantissa step) × (largest power of two) $= 2^{-9} \\times 2^{62-31}$.",
+      "pitfalls": [
+        "Using $e = 63$, which is reserved for zero ($2^{-9} \\cdot 2^{32} = 2^{23}$ is not even offered).",
+        "Forgetting that the gap scales with the exponent."
+      ],
+      "verification": "Two successive values at the top: $(1 + 511 \\cdot 2^{-9})\\,2^{31}$ and $(1 + 510 \\cdot 2^{-9})\\,2^{31}$ differ by $2^{-9} \\cdot 2^{31} = 2^{22}$. ✓"
     },
     "cse-2003-cs-44": {
       "approach": "The circuit only needs to remember the running difference d = zₖ − nₖ while |d| < 2, plus two absorbing states for the two outcomes: d ∈ {−1, 0, +1} and \"saw +2\", \"saw −2\" — 5 states.",

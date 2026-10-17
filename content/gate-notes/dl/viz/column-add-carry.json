@@ -1,0 +1,584 @@
+{
+ "version": 1,
+ "title": "Binary column addition with a moving carry",
+ "width": 600,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 260
+ },
+ "intro": "Two bytes, 181 and 110, written one above the other. The small row on top will hold the carries.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "Adding 10110101 + 01101110, one column at a time",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "10110101 + 01101110",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "ca",
+   "type": "bits",
+   "x": 112,
+   "y": 92,
+   "bits": " 10110101",
+   "cell": 48,
+   "narrow": {
+    "x": 36,
+    "y": 92,
+    "cell": 34
+   }
+  },
+  {
+   "id": "cb",
+   "type": "bits",
+   "x": 112,
+   "y": 148,
+   "bits": " 01101110",
+   "cell": 48,
+   "narrow": {
+    "x": 36,
+    "y": 134,
+    "cell": 34
+   }
+  },
+  {
+   "id": "bar",
+   "type": "line",
+   "points": [
+    [
+     112,
+     208
+    ],
+    [
+     544,
+     208
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      36,
+      178
+     ],
+     [
+      342,
+      178
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cs",
+   "type": "bits",
+   "x": 112,
+   "y": 218,
+   "bits": "         ",
+   "cell": 48,
+   "fill": "success",
+   "narrow": {
+    "x": 36,
+    "y": 186,
+    "cell": 34
+   }
+  },
+  {
+   "id": "plus",
+   "type": "text",
+   "x": 92,
+   "y": 172.0,
+   "text": "+",
+   "anchor": "middle",
+   "size": 22,
+   "narrow": {
+    "x": 22,
+    "y": 151.0
+   }
+  },
+  {
+   "id": "cap",
+   "type": "text",
+   "x": 300,
+   "y": 284,
+   "text": "sum",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 236,
+    "size": 13
+   }
+  },
+  {
+   "id": "k0",
+   "type": "text",
+   "x": 136.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 53.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k1",
+   "type": "text",
+   "x": 184.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 87.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k2",
+   "type": "text",
+   "x": 232.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 121.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k3",
+   "type": "text",
+   "x": 280.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 155.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k4",
+   "type": "text",
+   "x": 328.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 189.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k5",
+   "type": "text",
+   "x": 376.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 223.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k6",
+   "type": "text",
+   "x": 424.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 257.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k7",
+   "type": "text",
+   "x": 472.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 291.0,
+    "y": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "k8",
+   "type": "text",
+   "x": 520.0,
+   "y": 74,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "warning",
+   "mono": true,
+   "narrow": {
+    "x": 325.0,
+    "y": 76,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Column 0: 1 + 0 = 1, which is 1 in binary: write 1, no carry.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "        1",
+      "highlight": [
+       8
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       8
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       8
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column 1: 0 + 1 = 1, which is 1 in binary: write 1, no carry.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "       11",
+      "highlight": [
+       7
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       7
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       7
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column 2: 1 + 1 = 2, which is 10 in binary: write 0, carry 1 to the next column.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "      011",
+      "highlight": [
+       6
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       6
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       6
+      ]
+     }
+    },
+    {
+     "id": "k5",
+     "set": {
+      "text": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column 3: 0 + 1 + carry 1 = 2, which is 10 in binary: write 0, carry 1 to the next column.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "     0011",
+      "highlight": [
+       5
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       5
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       5
+      ]
+     }
+    },
+    {
+     "id": "k4",
+     "set": {
+      "text": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column 4: 1 + 0 + carry 1 = 2, which is 10 in binary: write 0, carry 1 to the next column.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "    00011",
+      "highlight": [
+       4
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       4
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       4
+      ]
+     }
+    },
+    {
+     "id": "k3",
+     "set": {
+      "text": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column 5: 1 + 1 + carry 1 = 3, which is 11 in binary: write 1, carry 1 to the next column.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "   100011",
+      "highlight": [
+       3
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       3
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       3
+      ]
+     }
+    },
+    {
+     "id": "k2",
+     "set": {
+      "text": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column 6: 0 + 1 + carry 1 = 2, which is 10 in binary: write 0, carry 1 to the next column.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "  0100011",
+      "highlight": [
+       2
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       2
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       2
+      ]
+     }
+    },
+    {
+     "id": "k1",
+     "set": {
+      "text": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column 7: 1 + 0 + carry 1 = 2, which is 10 in binary: write 0, carry 1 to the next column.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": " 00100011",
+      "highlight": [
+       1
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": [
+       1
+      ]
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": [
+       1
+      ]
+     }
+    },
+    {
+     "id": "k0",
+     "set": {
+      "text": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The carry out of column 7 becomes a ninth bit: the sum is 1 0010 0011 = 291 = 181 + 110. In an 8-bit register the 1 would be the carry flag.",
+   "patches": [
+    {
+     "id": "cs",
+     "set": {
+      "bits": "100100011",
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "ca",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "cb",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "cap",
+     "set": {
+      "text": "sum = 291",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

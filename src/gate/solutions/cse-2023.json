@@ -6525,161 +6525,28 @@
       }
     },
     "cse-2023-cs-35": {
-      "approach": "Decode P first: it is exactly $-16 = -2^4$. Multiplying by a power of two flips the sign and adds 4 to Q's biased exponent; Q's 23-bit fraction is copied unchanged.",
+      "approach": "Concept tested: **multiplying by a power of two**. $P = $ `0xC1800000` $= -16 = -2^4$, so $P \\times Q$ keeps Q's fraction, adds 4 to its exponent field and sets the sign bit.",
       "concepts": [
         "IEEE-754 single precision",
-        "Biased exponent (bias 127)",
-        "Multiplying by a power of two"
+        "Multiplication: e1 + e2 − bias",
+        "Multiplying by 2^k"
       ],
       "steps": [
         {
-          "title": "Decode P = 0xC1800000",
-          "body": "$\\texttt{C1800000} = 1100\\,0001\\,1000\\,0000 \\ldots 0$.\n\nSign $= 1$; exponent $= 1000\\,0011_2 = 131$; fraction $= 0$.\n\n$$P = -1.0 \\times 2^{131 - 127} = -2^4 = -16$$",
-          "scene": {
-            "rows": [
-              {
-                "label": "P",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "10000011",
-                    "label": "exp 131",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "00000000000000000000000",
-                    "label": "fraction 0"
-                  }
-                ],
-                "value": "−16"
-              }
-            ]
-          }
+          "title": "Decode P",
+          "body": "`C1800000` $= 1\\ 10000011\\ 0\\ldots0$: $-1.0 \\times 2^{131-127} = -16$."
         },
         {
-          "title": "Decode Q = 0x3F5C2EF4",
-          "body": "$\\texttt{3F5C2EF4} = 0011\\,1111\\,0101\\,1100\\,0010\\,1110\\,1111\\,0100$.\n\nSign $= 0$; exponent $= 0111\\,1110_2 = 126$; fraction $= 101\\,1100\\,0010\\,1110\\,1111\\,0100$ (that is $\\texttt{5C2EF4}$).\n\n$$Q = +1.f \\times 2^{126 - 127} = 1.f \\times 2^{-1} \\approx 0.8601$$",
-          "scene": {
-            "rows": [
-              {
-                "label": "P",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "10000011",
-                    "label": "exp 131",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "00000000000000000000000",
-                    "label": "fraction 0"
-                  }
-                ],
-                "value": "−16"
-              },
-              {
-                "label": "Q",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "sign"
-                  },
-                  {
-                    "bits": "01111110",
-                    "label": "exp 126",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "10111000010111011110100",
-                    "label": "fraction",
-                    "tone": "info"
-                  }
-                ],
-                "value": "≈ 0.8601"
-              }
-            ]
-          }
+          "title": "Read Q's fields",
+          "body": "`3F5C2EF4` $= 0\\ 01111110\\ 101\\,1100\\,0010\\,1110\\,1111\\,0100$: $e = 126$, so $Q = 1.f \\times 2^{-1} \\approx 0.86$."
         },
         {
-          "title": "Multiply sign, exponent and significand",
-          "body": "- Sign: $1 \\oplus 0 = 1$ (negative).\n- Significand: $1.0 \\times 1.f = 1.f$, already normalised, so the fraction is unchanged.\n- Exponent: $2^4 \\times 2^{-1} = 2^3$; biased $= 126 + 4 = 130 = 1000\\,0010_2$.\n\n$$P \\times Q = -1.f \\times 2^{3} \\approx -13.76$$",
-          "scene": {
-            "rows": [
-              {
-                "label": "P",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "10000011",
-                    "label": "exp 131",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "00000000000000000000000",
-                    "label": "fraction 0"
-                  }
-                ],
-                "value": "−16"
-              },
-              {
-                "label": "Q",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "sign"
-                  },
-                  {
-                    "bits": "01111110",
-                    "label": "exp 126",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "10111000010111011110100",
-                    "label": "fraction",
-                    "tone": "info"
-                  }
-                ],
-                "value": "≈ 0.8601"
-              },
-              {
-                "label": "P×Q",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "success"
-                  },
-                  {
-                    "bits": "10000010",
-                    "label": "exp 130",
-                    "tone": "success"
-                  },
-                  {
-                    "bits": "10111000010111011110100",
-                    "label": "fraction (same)",
-                    "tone": "info"
-                  }
-                ],
-                "value": "0xC15C2EF4"
-              }
-            ]
-          }
+          "title": "Multiply by fields",
+          "body": "Sign $1 \\oplus 0 = 1$. Significand $1.0 \\times 1.f = 1.f$ (unchanged, no normalising shift). Exponent $131 + 126 - 127 = 130$."
         },
         {
-          "title": "Pack the result",
-          "body": "$1 \\mid 1000\\,0010 \\mid 101\\,1100\\,0010\\,1110\\,1111\\,0100$, regrouped in nibbles:\n\n$$1100\\,0001\\,0101\\,1100\\,0010\\,1110\\,1111\\,0100 = \\texttt{0xC15C2EF4}$$\n\nwhich is option (C)."
+          "title": "Pack",
+          "body": "$1\\ 10000010\\ 1011100\\ldots = 1100\\,0001\\,0101\\,1100\\,0010\\,1110\\,1111\\,0100 = \\texttt{0xC15C2EF4}$: option (C)."
         }
       ],
       "answer": {
@@ -6693,12 +6560,12 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "`0x404C2EF4` is positive (sign 0), has exponent 128 and a changed fraction ($100\\,1100\\ldots$). The product of a negative and a positive number is negative."
+          "reason": "`0x404C2EF4` is positive with a changed fraction; a negative times a positive is negative."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "`0x405C2EF4` keeps the fraction but is positive with exponent 128, i.e. $+4Q$: wrong sign and wrong power of two."
+          "reason": "`0x405C2EF4` keeps the fraction but is positive with exponent 128: $+4Q$."
         },
         {
           "option": "C",
@@ -6708,16 +6575,16 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "`0xC14C2EF4` has the right sign and exponent but the fraction starts $100\\,1100$ instead of $101\\,1100$; multiplying by $2^4$ never changes the fraction."
+          "reason": "`0xC14C2EF4` has the right sign and exponent but a changed fraction ($100\\,1100\\ldots$); multiplying by $2^4$ never changes the fraction."
         }
       ],
-      "shortcut": "$\\times(-16)$ means: add 4 to the exponent field, i.e. add $4 \\times 2^{23} = \\texttt{0x02000000}$, then set the sign bit: $\\texttt{0x3F5C2EF4} + \\texttt{0x02000000} = \\texttt{0x415C2EF4}$, and with the sign bit set, $\\texttt{0xC15C2EF4}$.",
+      "shortcut": "$\\times(-16)$: add $4 \\times$ `0x00800000` = `0x02000000` and set the sign bit: `3F5C2EF4` + `02000000` = `415C2EF4` → `C15C2EF4`.",
       "pitfalls": [
-        "Adding the biased exponents ($131 + 126$) without subtracting the bias once.",
-        "Forgetting the sign: only options C and D are negative.",
-        "Reading the exponent from the first two hex digits: the exponent field straddles the nibble boundary (bits 30–23)."
+        "Adding the biased exponents without subtracting 127 once ($131 + 126 = 257$).",
+        "Forgetting the sign.",
+        "Reading the exponent from whole hex digits (it straddles them)."
       ],
-      "verification": "Decimal check: $1.f = 1 + \\texttt{5C2EF4}/2^{23} = 1 + 6041332/8388608 \\approx 1.7202$, so $Q \\approx 0.8601$ and $P \\times Q \\approx -13.76$. Decoding C: $-1.7202 \\times 2^{130-127} = -1.7202 \\times 8 \\approx -13.76$.",
+      "verification": "$Q \\approx 0.8601$, so $PQ \\approx -13.76$; `C15C2EF4` decodes to $-1.7202 \\times 8 \\approx -13.76$. ✓",
       "animation": {
         "kind": "bits",
         "title": "IEEE-754 single precision fields",

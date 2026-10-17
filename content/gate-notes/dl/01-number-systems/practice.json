@@ -827,6 +827,638 @@
   },
   {
     "id": "nx-dl-01-05-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "An 8-bit floating-point format is sign (1 bit) | exponent (4 bits, bias 7) | fraction (3 bits, with a hidden 1), and every exponent field is an ordinary exponent. What decimal value does the word $1\\,1010\\,101$ represent?",
+    "answer": -13,
+    "solution": [
+      "Cut the word into its fields in the stated order: $s = 1$, $e = 1010_2 = 10$, $f = 101$.",
+      "Remove the bias: $E = 10 - 7 = 3$.",
+      "Put the hidden 1 back: $M = 1.101_2 = 1 + \\tfrac12 + \\tfrac18 = 1.625$.",
+      "Value $= (-1)^1 \\times 1.625 \\times 2^3 = -13$."
+    ],
+    "concept": "Decoding a hidden-bit format: sign, exponent minus bias, and 1.f as the significand.",
+    "common_wrong": [
+      { "answer": 13, "why": "The sign bit was ignored. A leading 1 in the sign field makes the value negative." },
+      { "answer": -5, "why": "The hidden 1 was forgotten, so the significand was taken as $0.101_2 = 0.625$ instead of $1.101_2$." },
+      { "answer": -6.5, "why": "The bias was taken as 8 instead of the stated 7, giving $E = 2$." }
+    ],
+    "blocks": ["ex-fmt-decode", "decode-method", "hidden-bit"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A format normalises its mantissa as a fraction $0.1b_2b_3\\ldots$ (no hidden bit). How is $0.1875$ written in normalised form?",
+    "options": [
+      { "l": "A", "t": "$1.1_2 \\times 2^{-3}$" },
+      { "l": "B", "t": "$0.11_2 \\times 2^{-2}$" },
+      { "l": "C", "t": "$0.011_2 \\times 2^{-1}$" },
+      { "l": "D", "t": "$11_2 \\times 2^{-4}$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Binary first: $0.1875 = \\tfrac{3}{16} = 0.0011_2$.",
+      "Fraction form puts the point just before the first 1: move it 2 places right, which is a left shift of the significand by 2, so the exponent is $-2$.",
+      "So $0.0011_2 = 0.11_2 \\times 2^{-2}$. Check: $0.75 \\times \\tfrac14 = 0.1875$."
+    ],
+    "concept": "Fraction-form normalisation puts the first 1 just after the point, so 1/2 ≤ M < 1.",
+    "common_wrong": [
+      { "answer": "A", "why": "That is the hidden-bit (1.f) form, which IEEE uses. The question asks for the fraction form, whose exponent is one larger." },
+      { "answer": "C", "why": "The value is right but the mantissa starts with a 0 after the point, so it is not normalised." }
+    ],
+    "blocks": ["normalisation", "normalise-procedure", "trap-convention"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "An exponent $E = -5$ is stored in an 8-bit excess-127 field. What is the field, read as an unsigned decimal number?",
+    "answer": 122,
+    "solution": [
+      "A biased field stores $e = E + B$.",
+      "$e = -5 + 127 = 122$, which is $0111\\,1010_2$."
+    ],
+    "concept": "A biased exponent field stores E + bias as an unsigned number.",
+    "common_wrong": [
+      { "answer": 123, "why": "The bias was taken as 128 (excess-$2^{k-1}$), but the question says excess-127." },
+      { "answer": 251, "why": "That is the 8-bit 2's-complement pattern of $-5$, not the biased field." },
+      { "answer": 132, "why": "The bias was subtracted instead of added: $127 - (-5)$." }
+    ],
+    "blocks": ["biased-exponent", "ex-bias-easy"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q04",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A 16-bit format is sign (1) | exponent (5 bits, excess-16) | fraction (10 bits, hidden 1). Which word represents $+10.5$?",
+    "options": [
+      { "l": "A", "t": "`4D40`" },
+      { "l": "B", "t": "`4EA0`" },
+      { "l": "C", "t": "`4940`" },
+      { "l": "D", "t": "`52A0`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Binary: $10.5 = 1010.1_2 = 1.0101_2 \\times 2^{3}$.",
+      "Exponent field $= 3 + 16 = 19 = 10011_2$.",
+      "Fraction field: the bits after the hidden 1, padded to 10 bits: $0101\\,000000$.",
+      "Word: $0\\ 10011\\ 0101000000 = 0100\\,1101\\,0100\\,0000 = $ `4D40`."
+    ],
+    "concept": "Encoding in a hidden-bit format: normalise to 1.f, bias the exponent, store only f, regroup into hex.",
+    "common_wrong": [
+      { "answer": "B", "why": "The leading 1 was stored ($1010100000$) as if the format had no hidden bit." },
+      { "answer": "C", "why": "A bias of 15 was used (IEEE style) instead of the stated excess-16, so the exponent field is $10010$." },
+      { "answer": "D", "why": "The value was normalised as a fraction $0.10101 \\times 2^4$ and stored with its leading 1, which is a different convention from the one stated." }
+    ],
+    "blocks": ["encode-method", "hidden-bit", "biased-exponent"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q05",
+    "type": "NAT",
+    "marks": 2,
+    "text": "A 16-bit format is sign (1) | exponent $e$ (7 bits) | mantissa $m$ (8 bits), with value $(-1)^s (1 + m \\cdot 2^{-8})\\, 2^{e - 63}$ when $e \\ne 1111111$, and $0$ when $e = 1111111$. The largest difference between two successive representable values is $2^k$. What is $k$?",
+    "answer": 55,
+    "solution": [
+      "Inside one exponent, consecutive $m$ differ by 1, so successive values differ by $2^{-8} \\times 2^{e - 63}$.",
+      "The gap grows with $e$, so take the largest ordinary exponent. The field $1111111 = 127$ is reserved for zero, so $e_{\\max} = 126$.",
+      "Largest gap $= 2^{-8} \\times 2^{126 - 63} = 2^{-8} \\times 2^{63} = 2^{55}$, so $k = 55$."
+    ],
+    "concept": "The gap between neighbours is one ulp, 2^(E − f); it is largest at the largest ordinary exponent.",
+    "common_wrong": [
+      { "answer": -8, "why": "That is the step of the mantissa alone; the gap between values also carries the factor $2^{e-63}$." },
+      { "answer": 56, "why": "The reserved field $e = 127$ was used as an ordinary exponent." },
+      { "answer": -71, "why": "That is the smallest gap, at $e = 0$: $2^{-8} \\times 2^{-63}$." }
+    ],
+    "blocks": ["ulp-def", "range-formulas", "trap-gap"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q06",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "A floating-point format has a 6-bit exponent field. Which of the following statements are true?",
+    "options": [
+      { "l": "A", "t": "In excess-32 the field can represent exponents from $-32$ to $+31$." },
+      { "l": "B", "t": "With a bias of 31, the field $000000$ stands for the exponent $-31$." },
+      { "l": "C", "t": "With a 2's-complement exponent, the field of $-1$ is larger, as an unsigned number, than the field of $+1$." },
+      { "l": "D", "t": "With a bias of 31, the exponent $+32$ cannot be stored, because $32 + 31$ needs 7 bits." }
+    ],
+    "answer": ["A", "B", "C"],
+    "solution": [
+      "(A) The field runs over $0 \\dots 63$, so $E = e - 32$ runs over $-32 \\dots 31$. True.",
+      "(B) $E = 0 - 31 = -31$. True.",
+      "(C) In 6-bit 2's complement, $-1 = 111111 = 63$ and $+1 = 000001 = 1$, and $63 > 1$. True; this is why formats bias the exponent instead.",
+      "(D) $32 + 31 = 63 = 111111$, which fits in 6 bits. False. (A format may still reserve that field, but the statement's reason is wrong.)"
+    ],
+    "concept": "A k-bit field with bias B holds exponents −B … 2^k − 1 − B; 2's complement breaks the unsigned order.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "Option D's arithmetic was not checked: $63$ is the largest 6-bit value, so the field fits." },
+      { "answer": ["A", "B"], "why": "Option C was rejected, but $111111 > 000001$ as unsigned numbers, exactly the ordering problem a bias fixes." }
+    ],
+    "blocks": ["bias-range", "biased-exponent", "bias-order"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A 32-bit base-16 format is sign (1 bit, MSB) | exponent (7 bits, excess-64) | fraction (24 bits, point at its left end), normalised so that the first hex digit of the fraction is non-zero. Which word represents $-0.375$?",
+    "options": [
+      { "l": "A", "t": "`C0600000`" },
+      { "l": "B", "t": "`BF600000`" },
+      { "l": "C", "t": "`BFC00000`" },
+      { "l": "D", "t": "`40600000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Base 16, so convert to hex: $0.375 = \\tfrac{6}{16} = 0.6_{16}$.",
+      "The first hex digit (6) is already non-zero, so $0.375 = 0.6_{16} \\times 16^{0}$ and $E = 0$.",
+      "Exponent field $= 0 + 64 = 64 = 1000000_2$; fraction $= 600000_{16}$; sign $= 1$.",
+      "Word: $1\\ 1000000\\ 0110\\,0000\\ldots0 = 1100\\,0000\\,0110\\,0000\\ldots = $ `C0600000`."
+    ],
+    "concept": "Base-16 normalisation works with whole hex digits: the first hex digit must be non-zero, not the first bit.",
+    "common_wrong": [
+      { "answer": "B", "why": "The value was written $6.0 \\times 16^{-1}$, with exponent $-1$. A normalised fraction has the point before the first hex digit." },
+      { "answer": "C", "why": "Base-2 normalisation was used ($0.11_2 \\times 2^{-1}$), but this format's exponent is a power of 16." },
+      { "answer": "D", "why": "The sign bit was left as 0, which is $+0.375$." }
+    ],
+    "blocks": ["normalisation", "encode-method", "ex-norm-hex"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "A 32-bit format has an 8-bit exponent in 2's complement and a 24-bit sign-magnitude mantissa (1 sign bit, then 23 magnitude bits normalised as $0.1\\ldots$). Every pattern is an ordinary number. The smallest positive normalised value is $2^k$. What is $k$?",
+    "answer": -129,
+    "solution": [
+      "The smallest normalised magnitude is $0.1000\\ldots0_2 = \\tfrac12 = 2^{-1}$.",
+      "An 8-bit 2's-complement exponent runs from $-128$ to $+127$, so the smallest exponent is $-128$.",
+      "Smallest positive value $= 2^{-1} \\times 2^{-128} = 2^{-129}$, so $k = -129$."
+    ],
+    "concept": "In fraction form the smallest normalised value is ½ × 2^Emin.",
+    "common_wrong": [
+      { "answer": -128, "why": "The mantissa was taken as 1, but a normalised fraction is at least $\\tfrac12$, not 1." },
+      { "answer": -127, "why": "IEEE's normal exponent range ($-126 \\dots 127$) was assumed, giving $\\tfrac12 \\times 2^{-126} = 2^{-127}$; this 2's-complement exponent reaches $-128$." },
+      { "answer": -151, "why": "The mantissa was taken as its smallest non-zero pattern $2^{-23}$, which is not normalised." }
+    ],
+    "blocks": ["range-formulas", "normalisation", "ex-range-mag"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-05-q09",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A format stores $f$ as a 6-bit sign-magnitude fraction (1 sign bit, 5 magnitude bits, normalised as $0.1\\ldots$) and $e$ as a 4-bit sign-magnitude exponent, with value $f \\cdot 2^{e}$. Extra mantissa bits are truncated. What value is actually stored for $29.5$?",
+    "options": [
+      { "l": "A", "t": "$28$" },
+      { "l": "B", "t": "$29$" },
+      { "l": "C", "t": "$29.5$" },
+      { "l": "D", "t": "$30$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Binary: $29.5 = 11101.1_2 = 0.111011_2 \\times 2^{5}$, so $e = 0\\,101$.",
+      "Only 5 magnitude bits fit; truncation keeps $0.11101_2$ and drops the final 1.",
+      "Stored value $= 0.11101_2 \\times 2^5 = \\tfrac{29}{32} \\times 32 = 29$."
+    ],
+    "concept": "A short mantissa cuts the significand; truncation always moves toward zero.",
+    "common_wrong": [
+      { "answer": "D", "why": "The value was rounded to nearest ($0.111011 \\to 0.11110$), but the question says the format truncates." },
+      { "answer": "C", "why": "29.5 needs 6 significant bits; only 5 fit, so it cannot be stored exactly." }
+    ],
+    "blocks": ["encode-method", "trap-truncation", "ex-norm-gate"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "What decimal value does the IEEE-754 single-precision word `0x41A40000` represent?",
+    "answer": 20.5,
+    "solution": [
+      "Bits: $0100\\,0001\\,1010\\,0100\\,0000\\ldots = 0\\ \\ 10000011\\ \\ 0100100\\ldots$",
+      "$e = 1000\\,0011 = 131$, so $E = 131 - 127 = 4$; the significand is $1.01001_2$.",
+      "$1.01001_2 \\times 2^4 = 10100.1_2 = 16 + 4 + 0.5 = 20.5$."
+    ],
+    "concept": "Decoding single precision: split 1 | 8 | 23, subtract 127, restore the hidden 1.",
+    "common_wrong": [
+      { "answer": 10.25, "why": "The bias was taken as 128, giving $E = 3$." },
+      { "answer": 4.5, "why": "The hidden 1 was dropped: $0.01001_2 \\times 2^4 = 4.5$. A normal significand is $1.f$, not $0.f$." },
+      { "answer": -20.5, "why": "The first hex digit 4 = 0100 has sign bit 0, so the value is positive." }
+    ],
+    "blocks": ["decode-ieee", "ieee-layout"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which IEEE-754 single-precision word represents $-3.75$?",
+    "options": [
+      { "l": "A", "t": "`C0700000`" },
+      { "l": "B", "t": "`C0F80000`" },
+      { "l": "C", "t": "`40700000`" },
+      { "l": "D", "t": "`C0F00000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$3.75 = 11.11_2 = 1.111_2 \\times 2^{1}$.",
+      "$e = 1 + 127 = 128 = 1000\\,0000$; $f = 111\\,0\\ldots$; $s = 1$.",
+      "$1\\ 10000000\\ 1110\\ldots = 1100\\,0000\\,0111\\,0000\\ldots = $ `C0700000`."
+    ],
+    "concept": "Encoding: normalise to 1.f, bias the exponent by 127, store only the bits after the point.",
+    "common_wrong": [
+      { "answer": "B", "why": "The hidden 1 was stored too (fraction $1111\\ldots$) and the exponent bumped by one; only the bits after the point go into the fraction field." },
+      { "answer": "C", "why": "The sign bit was left at 0, which is $+3.75$." },
+      { "answer": "D", "why": "The exponent was biased by 128 ($e = 129$), which makes the value $-7.5$." }
+    ],
+    "blocks": ["encode-ieee", "trap-hidden-one"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following single-precision words are **not** normal numbers?",
+    "options": [
+      { "l": "A", "t": "`0x00000000`" },
+      { "l": "B", "t": "`0x00800000`" },
+      { "l": "C", "t": "`0x7F800001`" },
+      { "l": "D", "t": "`0x807FFFFF`" }
+    ],
+    "answer": ["A", "C", "D"],
+    "solution": [
+      "(A) $e = 0$, $f = 0$: the special value $+0$. Not normal.",
+      "(B) $e = 0000\\,0001 = 1$, $f = 0$: the smallest normal number $2^{-126}$. Normal.",
+      "(C) $e = 1111\\,1111$, $f = 0\\ldots01 \\ne 0$: NaN. Not normal.",
+      "(D) Sign 1, $e = 0$, $f$ all ones: the denormal $-(1 - 2^{-23})\\,2^{-126}$. Not normal."
+    ],
+    "concept": "Exponent field 0 means zero or a denormal; 255 means infinity or NaN; only 1 … 254 are normal.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "`0x00800000` looks tiny, but its exponent field is 1, so it is the smallest **normal** number." },
+      { "answer": ["A", "C"], "why": "(D) was taken as a normal negative number, but its exponent field is 0, so it is a denormal." }
+    ],
+    "blocks": ["special-values", "denormal", "extremes"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q04",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The smallest positive IEEE-754 **double-precision** value is $2^k$. What is $k$?",
+    "answer": -1074,
+    "solution": [
+      "The smallest positive value is the denormal with only the last fraction bit set.",
+      "Denormals are $0.f \\times 2^{1 - 1023} = 0.f \\times 2^{-1022}$, and the last of 52 fraction bits is worth $2^{-52}$.",
+      "So the value is $2^{-52} \\times 2^{-1022} = 2^{-1074}$."
+    ],
+    "concept": "The smallest denormal is 2^(1 − bias − f).",
+    "common_wrong": [
+      { "answer": -1022, "why": "That is the smallest **normal** double; denormals go further down." },
+      { "answer": -1075, "why": "The denormal exponent was taken as $0 - 1023 = -1023$; it is $1 - 1023 = -1022$." },
+      { "answer": -149, "why": "That is the single-precision answer." }
+    ],
+    "blocks": ["denormal", "extremes"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q05",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The gap between $100.0$ and the next larger single-precision value is $2^k$. What is $k$?",
+    "answer": -17,
+    "solution": [
+      "$2^6 = 64 \\le 100 < 128 = 2^7$, so $100$ is in the binade with $E = 6$.",
+      "One ulp is $2^{E - 23} = 2^{6 - 23} = 2^{-17}$."
+    ],
+    "concept": "ulp(x) = 2^(E − 23) for a normal single with 2^E ≤ |x| < 2^(E+1).",
+    "common_wrong": [
+      { "answer": -23, "why": "That is the gap next to 1.0 (machine epsilon); the gap scales with the exponent." },
+      { "answer": -16, "why": "The binade was taken as $E = 7$; but $100 < 128$, so $E = 6$." }
+    ],
+    "blocks": ["ulp-ieee", "machine-epsilon"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which single-precision pattern is the **largest finite** value?",
+    "options": [
+      { "l": "A", "t": "`7F7FFFFF`" },
+      { "l": "B", "t": "`7FFFFFFF`" },
+      { "l": "C", "t": "`FF7FFFFF`" },
+      { "l": "D", "t": "`7F800000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "(B) has exponent field 255 and a non-zero fraction: NaN, not a number at all.",
+      "(D) has exponent field 255 and fraction 0: $+\\infty$, not finite.",
+      "(C) has the sign bit set: it is the most **negative** finite value.",
+      "(A) is $0\\ 11111110\\ 1\\ldots1 = (2 - 2^{-23})\\,2^{127} \\approx 3.4 \\times 10^{38}$, the largest finite value."
+    ],
+    "concept": "The largest finite float uses exponent field 254 (not 255) with an all-ones fraction.",
+    "common_wrong": [
+      { "answer": "B", "why": "As an unsigned integer `7FFFFFFF` is bigger, but exponent 255 with a non-zero fraction is NaN." },
+      { "answer": "D", "why": "`7F800000` is $+\\infty$, which is not finite." }
+    ],
+    "blocks": ["extremes", "special-values", "compare-bits"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which 64-bit word is $0.75$ in IEEE-754 **double** precision?",
+    "options": [
+      { "l": "A", "t": "`3FE8000000000000`" },
+      { "l": "B", "t": "`07E8000000000000`" },
+      { "l": "C", "t": "`3FF8000000000000`" },
+      { "l": "D", "t": "`3F40000000000000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$0.75 = 0.11_2 = 1.1_2 \\times 2^{-1}$.",
+      "$e = -1 + 1023 = 1022 = 011\\,1111\\,1110$; $f = 1000\\ldots$ (52 bits); $s = 0$.",
+      "$0\\ 01111111110\\ 1000\\ldots = 0011\\,1111\\,1110\\,1000\\,0\\ldots = $ `3FE8000000000000`."
+    ],
+    "concept": "Double precision: 1 | 11 | 52 with bias 1023.",
+    "common_wrong": [
+      { "answer": "B", "why": "The single-precision bias 127 was used in the 11-bit field ($e = 126$)." },
+      { "answer": "C", "why": "That is $1.5$: the exponent $-1$ was dropped." },
+      { "answer": "D", "why": "That is the single-precision word `3F400000` padded with zeros; double has a wider exponent field, so the bits shift." }
+    ],
+    "blocks": ["encode-ieee", "ieee-layout"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "How many integers $n$ with $2^{24} \\le n \\le 2^{25}$ can be stored exactly in IEEE-754 single precision?",
+    "answer": 8388609,
+    "solution": [
+      "In the binade $[2^{24}, 2^{25})$ the ulp is $2^{24 - 23} = 2$, so the floats there are exactly the even integers $2^{24}, 2^{24} + 2, \\ldots, 2^{25} - 2$: that is $2^{23}$ values.",
+      "$2^{25}$ itself is $1.0 \\times 2^{25}$, also exact.",
+      "Total $2^{23} + 1 = 8\\,388\\,609$."
+    ],
+    "concept": "Above 2^24 the ulp of single precision exceeds 1, so only every second (then fourth …) integer is a float.",
+    "common_wrong": [
+      { "answer": 16777217, "why": "Every integer was counted; above $2^{24}$ only even integers are floats." },
+      { "answer": 8388608, "why": "The endpoint $2^{25}$, which is exact, was left out." }
+    ],
+    "blocks": ["ulp-ieee", "exactness"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-06-q09",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which statements about IEEE-754 single precision are true?",
+    "options": [
+      { "l": "A", "t": "$+0$ and $-0$ compare equal." },
+      { "l": "B", "t": "`0x80000000` is the most negative representable number." },
+      { "l": "C", "t": "For a NaN $x$, the comparison $x = x$ is false." },
+      { "l": "D", "t": "Denormal numbers have an implicit leading 1." }
+    ],
+    "answer": ["A", "C"],
+    "solution": [
+      "(A) True: the two zeros differ only in the sign bit and compare equal.",
+      "(B) False: `0x80000000` is $-0$. The most negative finite value is `0xFF7FFFFF` $\\approx -3.4 \\times 10^{38}$ (and $-\\infty$ is `0xFF800000`).",
+      "(C) True: `==` (and every ordered comparison) involving a NaN is false; only `!=` is true.",
+      "(D) False: denormals have exponent field 0, which switches the hidden 1 off: $0.f \\times 2^{-126}$."
+    ],
+    "concept": "Signed zero, NaN comparisons and denormals are the special cases of IEEE-754.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C"], "why": "`0x80000000` was read as a 2's-complement integer ($-2^{31}$); as a float it is $-0$." },
+      { "answer": ["A", "C", "D"], "why": "Denormals have no hidden 1; that is exactly what lets them reach below $2^{-126}$." }
+    ],
+    "blocks": ["signed-zero", "nan", "denormal"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Two single-precision registers hold `0x40A00000` and `0x3FC00000`. Which word is their IEEE sum?",
+    "options": [
+      { "l": "A", "t": "`0x40D00000`" },
+      { "l": "B", "t": "`0x40E00000`" },
+      { "l": "C", "t": "`0x3FD00000`" },
+      { "l": "D", "t": "`0x40C00000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Decode: `40A00000` $= 1.01_2 \\times 2^{2} = 5$; `3FC00000` $= 1.1_2 \\times 2^{0} = 1.5$.",
+      "Align the smaller to exponent 2 (shift right 2, hidden 1 included): $1.1 \\times 2^0 = 0.011 \\times 2^2$.",
+      "Add: $1.010 + 0.011 = 1.101$, so the sum is $1.101_2 \\times 2^2 = 6.5$; $e = 129$, $f = 101\\ldots$",
+      "Word: $0\\ 10000001\\ 1010\\ldots = $ `0x40D00000`."
+    ],
+    "concept": "Floating-point addition aligns the smaller operand to the larger exponent before adding significands.",
+    "common_wrong": [
+      { "answer": "B", "why": "The fraction fields were added without aligning ($.01 + .1 = .11$ at exponent 2), giving 7." },
+      { "answer": "C", "why": "The result was given the smaller operand's exponent ($1.625 = 6.5/4$)." },
+      { "answer": "D", "why": "The fraction bit of 1.5 was dropped while aligning (1.5 treated as 1), giving $5 + 1 = 6$." }
+    ],
+    "blocks": ["fp-add-algorithm", "trap-align"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q02",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which single-precision word is the product of `0x41100000` and `0xBF000000`?",
+    "options": [
+      { "l": "A", "t": "`0xC0900000`" },
+      { "l": "B", "t": "`0xC1900000`" },
+      { "l": "C", "t": "`0x40900000`" },
+      { "l": "D", "t": "`0xC0100000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Decode: `41100000` $= 1.001_2 \\times 2^{3} = 9$; `BF000000` $= -1.0 \\times 2^{-1} = -0.5$.",
+      "Sign $0 \\oplus 1 = 1$. Significand $1.001 \\times 1.0 = 1.001$. Exponent field $130 + 126 - 127 = 129$.",
+      "Word: $1\\ 10000001\\ 0010\\ldots = $ `0xC0900000` $= -4.5$."
+    ],
+    "concept": "Multiplication: XOR the signs, add the exponent fields and subtract the bias once, multiply the significands.",
+    "common_wrong": [
+      { "answer": "B", "why": "The exponent came out 2 too high ($E = 4$, value $-18$), e.g. by using $+1$ instead of $-1$ for 0.5's exponent." },
+      { "answer": "C", "why": "The sign bit was not set; a positive times a negative is negative." },
+      { "answer": "D", "why": "$-2.25$: the exponent is one too low (the $\\times 0.5$ was applied twice)." }
+    ],
+    "blocks": ["fp-mul", "bias-subtract", "trick-pow2"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "A significand is rounded to 4 fraction bits using round to nearest, ties to even. The bits after the bar are the guard, round and sticky bits. Which roundings are correct?",
+    "options": [
+      { "l": "A", "t": "$1.0110\\,|\\,100 \\to 1.0110$" },
+      { "l": "B", "t": "$1.0101\\,|\\,100 \\to 1.0110$" },
+      { "l": "C", "t": "$1.0110\\,|\\,011 \\to 1.0111$" },
+      { "l": "D", "t": "$1.1111\\,|\\,110 \\to 10.0000$ (then renormalised to $1.0000$ with the exponent increased by 1)" }
+    ],
+    "answer": ["A", "B", "D"],
+    "solution": [
+      "(A) $G = 1$, $R = S = 0$: a tie; the last kept bit is 0 (even), so keep $1.0110$. Correct.",
+      "(B) A tie again, but the last kept bit is 1 (odd), so round up to $1.0110$. Correct.",
+      "(C) $G = 0$: less than half an ulp, so round down to $1.0110$, not up. Incorrect.",
+      "(D) $G = 1$, $R = 1$: more than half an ulp, round up: $1.1111 + 0.0001 = 10.0000$, which overflows the significand and is renormalised to $1.0000$ with $E + 1$. Correct."
+    ],
+    "concept": "Round to nearest even decides from G, R, S: G = 0 down, G = 1 with R or S up, G alone a tie to even.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C", "D"], "why": "(C) has guard bit 0, so the discarded part is below half an ulp however many 1s follow." },
+      { "answer": ["B", "D"], "why": "(A) is a tie whose last bit is already even, so it stays; ties do not always round up." }
+    ],
+    "blocks": ["grs", "round-half-even", "rounding-modes"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q04",
+    "type": "NAT",
+    "marks": 2,
+    "text": "In IEEE single precision (round to nearest even), what is the smallest positive integer $y$ for which the computed sum $2^{25} + y$ is different from $2^{25}$?",
+    "answer": 3,
+    "solution": [
+      "In the binade $[2^{25}, 2^{26})$ the ulp is $2^{25 - 23} = 4$, so the floats next to $2^{25}$ are $2^{25}$ and $2^{25} + 4$.",
+      "$y = 1$: below half an ulp (2), absorbed. $y = 2$: exactly half an ulp, a tie; $2^{25}$ has an even last bit, so the sum rounds back to $2^{25}$.",
+      "$y = 3$: more than half an ulp, so the sum rounds up to $2^{25} + 4 \\ne 2^{25}$. Answer: 3."
+    ],
+    "concept": "Absorption: y vanishes when it is below half an ulp of x, and at exactly half an ulp ties to even decide.",
+    "common_wrong": [
+      { "answer": 1, "why": "That assumes every integer is a float; above $2^{24}$ the gap is larger than 1." },
+      { "answer": 2, "why": "2 is exactly half the ulp, a tie, and the tie goes to the even neighbour $2^{25}$." },
+      { "answer": 4, "why": "4 is the ulp, but already 3 is more than half of it and rounds up." }
+    ],
+    "blocks": ["absorption", "grs", "round-half-even"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "For IEEE single-precision values with round to nearest even, which statements are true?",
+    "options": [
+      { "l": "A", "t": "$a + b = b + a$ for all non-NaN floats $a, b$." },
+      { "l": "B", "t": "$(a + b) + c = a + (b + c)$ for all finite floats $a, b, c$." },
+      { "l": "C", "t": "$(2^{25} + 1) + 1 = 2^{25}$." },
+      { "l": "D", "t": "$2^{25} + (1 + 1) = 2^{25} + 2$." }
+    ],
+    "answer": ["A", "C"],
+    "solution": [
+      "(A) True: both orders round the same exact sum.",
+      "(B) False: $(2^{24} + 1) + 1 = 2^{24}$ (each 1 is a tie that rounds to even), but $2^{24} + (1 + 1) = 2^{24} + 2$ exactly.",
+      "(C) True: the ulp at $2^{25}$ is 4, so adding 1 (a quarter ulp) is absorbed, twice.",
+      "(D) False: $1 + 1 = 2$, and $2^{25} + 2$ is a tie between $2^{25}$ and $2^{25} + 4$; it rounds to the even $2^{25}$. $2^{25} + 2$ is not even a float."
+    ],
+    "concept": "Floating-point addition is commutative but not associative; absorption depends on the ulp of the larger operand.",
+    "common_wrong": [
+      { "answer": ["A", "C", "D"], "why": "(D) assumes $2^{25} + 2$ is representable; at $2^{25}$ the gap between floats is 4." },
+      { "answer": ["A", "B", "C"], "why": "Associativity fails in general; the rounding after each addition depends on the order." }
+    ],
+    "blocks": ["not-associative", "absorption"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Single-precision values `0x3F000000` and `0x3E800000` are multiplied. What is the exponent field of the product, as an unsigned decimal number?",
+    "answer": 124,
+    "solution": [
+      "The fields are $126$ (that is $0.5 = 2^{-1}$) and $125$ ($0.25 = 2^{-2}$); both significands are $1.0$.",
+      "Product field $= 126 + 125 - 127 = 124$, i.e. $E = -3$: $0.5 \\times 0.25 = 0.125 = 2^{-3}$."
+    ],
+    "concept": "Adding biased exponents counts the bias twice, so subtract it once.",
+    "common_wrong": [
+      { "answer": 251, "why": "The fields were added without subtracting the bias." },
+      { "answer": -3, "why": "That is the true exponent; the field stores $-3 + 127$." }
+    ],
+    "blocks": ["bias-subtract", "fp-mul"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "In IEEE single precision with the default rounding, what is `0x7F000000` + `0x7F000000`?",
+    "options": [
+      { "l": "A", "t": "`0x7F800000`" },
+      { "l": "B", "t": "`0x7F7FFFFF`" },
+      { "l": "C", "t": "`0xFF000000`" },
+      { "l": "D", "t": "`0x7FC00000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "`7F000000` $= 1.0 \\times 2^{254 - 127} = 2^{127}$.",
+      "The exact sum is $2^{128}$, which exceeds the largest finite value $(2 - 2^{-23})2^{127}$ (and the overflow threshold).",
+      "In round to nearest, overflow gives $+\\infty$ = `0x7F800000`."
+    ],
+    "concept": "Floating-point overflow saturates to infinity in the default rounding mode; it does not wrap around.",
+    "common_wrong": [
+      { "answer": "B", "why": "Clamping to the largest finite value happens only in round-toward-zero (or toward −∞ for positives)." },
+      { "answer": "C", "why": "That treats the sum like a 2's-complement integer wrap-around; floats saturate instead." },
+      { "answer": "D", "why": "Overflow of a finite sum gives infinity, not NaN; NaN needs something like ∞ − ∞." }
+    ],
+    "blocks": ["overflow-underflow", "fp-add-algorithm"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "A format stores $f$ as a 6-bit sign-magnitude fraction (5 magnitude bits, normalised $0.1\\ldots$) and $e$ as a 4-bit sign-magnitude exponent, $n = f \\cdot 2^e$; extra bits are truncated at every step. $A = 11.25$ and $B = 3.5$ are stored, aligned and added. What is the percentage error of the computed sum (to two decimal places)?",
+    "answer": [1.69, 1.7],
+    "solution": [
+      "$A = 1011.01_2 = 0.101101 \\times 2^4 \\to 0.10110 \\times 2^4 = 11$ (truncated).",
+      "$B = 11.1_2 = 0.111 \\times 2^2$; aligned to $2^4$ it is $0.00111 \\times 2^4$, which still fits in 5 bits: $3.5$.",
+      "Sum: $0.10110 + 0.00111 = 0.11101$, so $0.11101 \\times 2^4 = 14.5$.",
+      "True sum $14.75$; percentage error $= \\dfrac{14.75 - 14.5}{14.75} \\times 100 = 1.695\\ldots \\approx 1.69\\text{–}1.70\\,\\%$."
+    ],
+    "concept": "Percentage error = |computed − true| / |true| × 100, with truncation at representation and at alignment.",
+    "common_wrong": [
+      { "answer": 1.72, "why": "The error was divided by the computed sum 14.5 instead of the true sum 14.75." },
+      { "answer": 0, "why": "Truncating $A$ when it is stored loses 0.25; that error carries into the sum." }
+    ],
+    "blocks": ["relative-error", "fp-add-algorithm"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-07-q09",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which single-precision word is `0xC1800000` divided by `0x40000000`?",
+    "options": [
+      { "l": "A", "t": "`0xC1000000`" },
+      { "l": "B", "t": "`0x81800000`" },
+      { "l": "C", "t": "`0x41000000`" },
+      { "l": "D", "t": "`0xC2000000`" }
+    ],
+    "answer": "A",
+    "solution": [
+      "`C1800000` $= -1.0 \\times 2^{131 - 127} = -16$; `40000000` $= 1.0 \\times 2^{1} = 2$.",
+      "Sign $1 \\oplus 0 = 1$; significand $1.0 / 1.0 = 1.0$; exponent field $131 - 128 + 127 = 130$.",
+      "$-1.0 \\times 2^{3} = -8 = $ `0xC1000000`."
+    ],
+    "concept": "Division: subtract the exponent fields and add the bias back.",
+    "common_wrong": [
+      { "answer": "B", "why": "The fields were subtracted ($131 - 128 = 3$) without adding the bias back, giving a tiny number." },
+      { "answer": "C", "why": "The sign was dropped." },
+      { "answer": "D", "why": "That is $-32$: the operation was done as a multiplication." }
+    ],
+    "blocks": ["fp-div", "bias-subtract"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-08-q01",
     "type": "MCQ",
     "marks": 1,
     "text": "What is the 4-bit Gray code of the decimal number 13?",
@@ -851,7 +1483,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q02",
+    "id": "nx-dl-01-08-q02",
     "type": "NAT",
     "marks": 1,
     "text": "The 4-bit Gray code $1101$ is received from a position encoder. Which decimal number does it represent?",
@@ -870,7 +1502,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q03",
+    "id": "nx-dl-01-08-q03",
     "type": "MSQ",
     "marks": 2,
     "text": "Which of these decimal codes are self-complementing (the code of $9 - d$ is the bitwise complement of the code of $d$)?",
@@ -896,7 +1528,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q04",
+    "id": "nx-dl-01-08-q04",
     "type": "NAT",
     "marks": 1,
     "text": "How many of the 256 possible 8-bit patterns are **not** valid as a 2-digit BCD number?",
@@ -915,7 +1547,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q05",
+    "id": "nx-dl-01-08-q05",
     "type": "MCQ",
     "marks": 1,
     "text": "What is the excess-3 code of the decimal number 47?",
@@ -940,7 +1572,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q06",
+    "id": "nx-dl-01-08-q06",
     "type": "NAT",
     "marks": 1,
     "text": "What is the minimum number of parity bits a Hamming code needs to correct any single-bit error in 11 data bits?",
@@ -959,7 +1591,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q07",
+    "id": "nx-dl-01-08-q07",
     "type": "MCQ",
     "marks": 2,
     "text": "An even-parity Hamming (7,4) code has parity bits at positions 1, 2, 4 and data at 3, 5, 6, 7 (positions numbered 1 to 7 from the left). The word $1110110$ is received. Which position holds the error?",
@@ -986,7 +1618,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q08",
+    "id": "nx-dl-01-08-q08",
     "type": "NAT",
     "marks": 1,
     "text": "What is the minimum Hamming distance a code needs in order to correct every pattern of up to 2 bit errors?",
@@ -1004,7 +1636,7 @@
     "source": "nexora"
   },
   {
-    "id": "nx-dl-01-05-q09",
+    "id": "nx-dl-01-08-q09",
     "type": "MCQ",
     "marks": 2,
     "text": "Let $h_2 h_1 h_0$ be the 3-bit Gray code of $n$ and $g_2 g_1 g_0$ the Gray code of $(n + 1) \\bmod 8$. Which is the minterm list of $g_0$ as a function of $h_2 h_1 h_0$?",
@@ -1026,6 +1658,396 @@
       { "answer": "D", "why": "That is the list for $g_2$, the first bit of the next code, not the last." }
     ],
     "blocks": ["gray-successor", "ex-succ-edge"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q01",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Compute $110110_2 - 1011_2$ by binary subtraction and give the result in decimal.",
+    "answer": 43,
+    "solution": [
+      "Align: $110110 - 001011$.",
+      "Column 0: $0 - 1$ borrows: $2 - 1 = 1$. Column 1: $1 - 1 - 1$ borrows: $2 + 1 - 1 - 1 = 1$. Column 2: $1 - 0 - 1 = 0$. Column 3: $0 - 1$ borrows: $2 - 1 = 1$. Column 4: $1 - 0 - 1 = 0$. Column 5: $1$.",
+      "Result $101011_2 = 43$; check $54 - 11 = 43$."
+    ],
+    "concept": "Binary subtraction borrows 2 from the next column.",
+    "common_wrong": [
+      { "answer": 45, "why": "A borrow was taken but not paid back in the next column." },
+      { "answer": 65, "why": "The columns were added instead of subtracted ($54 + 11$)." }
+    ],
+    "blocks": ["binary-add", "ex-sub-borrow"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Using 4-digit 10's-complement arithmetic, $4021 - 7352$ is computed as $4021 + 2648$. How is the sum interpreted?",
+    "options": [
+      { "l": "A", "t": "No carry: the result is $-3331$" },
+      { "l": "B", "t": "No carry: the result is $6669$" },
+      { "l": "C", "t": "No carry: the result is $-3332$" },
+      { "l": "D", "t": "Carry: the result is $3331$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$2648$ is the 10's complement of $7352$ ($10^4 - 7352$).",
+      "$4021 + 2648 = 6669$, still 4 digits: no carry, so the result is negative.",
+      "Magnitude = 10's complement of $6669$ = $10^4 - 6669 = 3331$. Result $-3331$ (check: $4021 - 7352 = -3331$)."
+    ],
+    "concept": "In r's-complement subtraction, no carry means a negative result whose magnitude is the complement of the sum.",
+    "common_wrong": [
+      { "answer": "B", "why": "The sum 6669 is the 10's-complement **pattern** of the answer, not the answer itself." },
+      { "answer": "C", "why": "$-3332$ adds an extra 1 to the magnitude: $10^4 - 6669 = 3331$ (the 9's complement would give 3330)." },
+      { "answer": "D", "why": "There is no carry out of 4 digits, and the true difference is negative." }
+    ],
+    "blocks": ["radix-sub", "end-around"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Compute $01100101_2 - 00101100_2$ with the 1's complement (8 bits, with the end-around carry) and give the result in decimal.",
+    "answer": 57,
+    "solution": [
+      "1's complement of $00101100$: $11010011$.",
+      "$01100101 + 11010011 = 1\\,00111000$: a carry out.",
+      "End-around: $00111000 + 1 = 00111001 = 57$. Check: $101 - 44 = 57$."
+    ],
+    "concept": "With the (r−1)'s complement, a carry out is added back to the result.",
+    "common_wrong": [
+      { "answer": 56, "why": "The end-around carry was dropped instead of added back." },
+      { "answer": 312, "why": "The carry was kept as a ninth bit ($100111000_2$)." }
+    ],
+    "blocks": ["diminished-sub", "end-around"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q04",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "In 4-bit 2's-complement arithmetic, which of these operations overflow?",
+    "options": [
+      { "l": "A", "t": "$0110 + 0011$" },
+      { "l": "B", "t": "$1100 + 1101$" },
+      { "l": "C", "t": "$1000 + 1111$" },
+      { "l": "D", "t": "$0111 - 1111$" }
+    ],
+    "answer": ["A", "C", "D"],
+    "solution": [
+      "(A) $6 + 3 = 9 > 7$: overflow ($0110 + 0011 = 1001$ looks negative).",
+      "(B) $-4 + (-3) = -7$: in range, no overflow ($1\\,1001$, carry dropped, $1001 = -7$).",
+      "(C) $-8 + (-1) = -9 < -8$: overflow ($1\\,0111$ looks positive).",
+      "(D) $7 - (-1) = 8 > 7$: overflow; subtraction with opposite-sign operands can overflow."
+    ],
+    "concept": "A 2's-complement result overflows when the true value leaves −2^(n−1) … 2^(n−1) − 1.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C"], "why": "(B) carries out of the top bit, but a carry is not an overflow; (D) was missed because the operands have opposite signs, which can overflow in **subtraction**." },
+      { "answer": ["A", "C"], "why": "(D) is $7 + 1 = 8$ after negating $-1$; subtraction of a negative number can overflow." }
+    ],
+    "blocks": ["overflow-rule", "trap-carry-overflow"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q05",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A processor adds the 8-bit 2's-complement numbers $10010110$ and $10100011$. What are the carry (C), overflow (V) and sign (S) flags, in that order?",
+    "options": [
+      { "l": "A", "t": "1, 1, 0" },
+      { "l": "B", "t": "1, 0, 0" },
+      { "l": "C", "t": "0, 1, 1" },
+      { "l": "D", "t": "1, 1, 1" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Unsigned: $150 + 163 = 313 = 256 + 57$, so the result is $00111001$ and $C = 1$.",
+      "Signed: $-106 + (-93) = -199 < -128$: two negative operands gave a positive-looking result, so $V = 1$.",
+      "The result's top bit is 0, so $S = 0$."
+    ],
+    "concept": "C is the unsigned carry out; V is signed overflow (same-sign operands, other-sign result); S is the result's top bit.",
+    "common_wrong": [
+      { "answer": "B", "why": "Overflow was judged from the carry alone; here both operands are negative and the result is positive, so V = 1." },
+      { "answer": "D", "why": "S is the sign bit of the stored result (0), not the sign of the true sum." }
+    ],
+    "blocks": ["carry-vs-overflow", "overflow-rule"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The BCD numbers $0111\\,1001$ and $0101\\,0110$ are added digit by digit. How many times is the $+6$ ($0110$) correction applied?",
+    "answer": 2,
+    "solution": [
+      "Units: $9 + 6 = 15 > 9$: correct ($1111 + 0110 = 1\\,0101$), digit 5, carry 1.",
+      "Tens: $7 + 5 + 1 = 13 > 9$: correct ($1101 + 0110 = 1\\,0011$), digit 3, carry 1.",
+      "Result $1\\,0011\\,0101 = 135 = 79 + 56$, with 2 corrections."
+    ],
+    "concept": "A BCD digit sum above 9 (or with a carry out) needs +6.",
+    "common_wrong": [
+      { "answer": 1, "why": "Only the units digit was corrected; the tens digit $7 + 5 + 1 = 13$ also exceeds 9 and needs its own +6." },
+      { "answer": 0, "why": "The digits were added as one 8-bit binary number; BCD needs a per-digit correction." }
+    ],
+    "blocks": ["bcd-add", "bcd-why-six"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "The excess-3 codes of 24 and 35 are $0101\\,0111$ and $0110\\,1000$. What is the excess-3 code of their sum, after the corrections?",
+    "options": [
+      { "l": "A", "t": "$1000\\,1100$" },
+      { "l": "B", "t": "$0101\\,1001$" },
+      { "l": "C", "t": "$1011\\,1111$" },
+      { "l": "D", "t": "$1000\\,1111$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Units: $0111 + 1000 = 1111$, no carry → subtract 3: $1100$ (excess-3 of 9).",
+      "Tens: $0101 + 0110 = 1011$, no carry → subtract 3: $1000$ (excess-3 of 5).",
+      "Result $1000\\,1100$ = excess-3 of $59 = 24 + 35$."
+    ],
+    "concept": "Excess-3 addition: no carry → subtract 3; carry → add 3.",
+    "common_wrong": [
+      { "answer": "B", "why": "That is the BCD code of 59, not the excess-3 code." },
+      { "answer": "C", "why": "That is the raw binary sum; each digit still carries an excess of 6 and needs −3." },
+      { "answer": "D", "why": "Only the tens digit was corrected; every digit needs its own −3." }
+    ],
+    "blocks": ["xs3-add", "xs3-why"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q08",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The 8-bit 2's-complement pattern $10110100$ is shifted right arithmetically by 3 places. What is the result?",
+    "options": [
+      { "l": "A", "t": "$11110110$" },
+      { "l": "B", "t": "$00010110$" },
+      { "l": "C", "t": "$11110111$" },
+      { "l": "D", "t": "$10100000$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "$10110100 = -76$.",
+      "An arithmetic right shift copies the sign bit into the vacated places: $10110100 \\to 11011010 \\to 11101101 \\to 11110110$.",
+      "$11110110 = -10 = \\lfloor -76 / 8 \\rfloor = \\lfloor -9.5 \\rfloor$."
+    ],
+    "concept": "An arithmetic right shift by k computes ⌊x / 2^k⌋ (rounding toward −∞).",
+    "common_wrong": [
+      { "answer": "B", "why": "That is a logical shift (0s brought in), which gives $22$ for a negative number." },
+      { "answer": "C", "why": "$-9$ is $-9.5$ rounded toward 0 (C's division), but shifting rounds toward $-\\infty$." },
+      { "answer": "D", "why": "That is a left shift." }
+    ],
+    "blocks": ["shift-arith", "trap-asr"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-09-q09",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Add $(123)_4$ and $(321)_4$ in base 4. Enter the base-4 digits of the sum as a number (for example, $(1032)_4$ is entered as 1032).",
+    "answer": 1110,
+    "solution": [
+      "Units: $3 + 1 = 4 = 10_4$: write 0, carry 1.",
+      "Fours: $2 + 2 + 1 = 5 = 11_4$: write 1, carry 1.",
+      "Sixteens: $1 + 3 + 1 = 5 = 11_4$: write 1, carry 1 into a new digit.",
+      "Sum $(1110)_4$. Check: $27 + 57 = 84 = 64 + 16 + 4$."
+    ],
+    "concept": "In base b a column carries when it reaches b.",
+    "common_wrong": [
+      { "answer": 444, "why": "No carries were made; 4 is not a base-4 digit." },
+      { "answer": 84, "why": "That is the decimal value; the question asks for the base-4 digits." }
+    ],
+    "blocks": ["base-b-arith"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is the Booth (radix-2) recoding of the 8-bit multiplier $00101101$ (+45)?",
+    "options": [
+      { "l": "A", "t": "$0\\ {+1}\\ {-1}\\ {+1}\\ 0\\ {-1}\\ {+1}\\ {-1}$" },
+      { "l": "B", "t": "$0\\ {-1}\\ {+1}\\ {-1}\\ 0\\ {+1}\\ {-1}\\ {+1}$" },
+      { "l": "C", "t": "$0\\ 0\\ {+1}\\ 0\\ {+1}\\ {+1}\\ 0\\ {+1}$" },
+      { "l": "D", "t": "$0\\ {+1}\\ {-1}\\ {+1}\\ 0\\ {-1}\\ {+1}\\ 0$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Append $q_{-1} = 0$ and read each pair $(q_i, q_{i-1})$ from the right: $(1,0), (0,1), (1,0), (1,1), (0,1), (1,0), (0,1), (0,0)$.",
+      "Digits $d_0 \\ldots d_7$: $-1, +1, -1, 0, +1, -1, +1, 0$.",
+      "MSB first: $0\\,{+1}\\,{-1}\\,{+1}\\,0\\,{-1}\\,{+1}\\,{-1}$. Check: $64 - 32 + 16 - 4 + 2 - 1 = 45$."
+    ],
+    "concept": "Booth digit d_i = q_{i−1} − q_i with an appended 0.",
+    "common_wrong": [
+      { "answer": "B", "why": "The pair was read as (current − right), which negates every digit and gives $-45$." },
+      { "answer": "C", "why": "That just copies the 1s (plain binary), not a Booth recoding." },
+      { "answer": "D", "why": "The appended $q_{-1} = 0$ was forgotten, so the lowest digit was lost; the value is 46, not 45." }
+    ],
+    "blocks": ["booth-recode", "trap-booth-pair"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q02",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many additions and subtractions (in total) does Booth's algorithm perform for the 16-bit multiplier $1100\\,1100\\,1100\\,1100$?",
+    "answer": 7,
+    "solution": [
+      "The count is the number of bit changes reading $q_{15} \\ldots q_0 q_{-1}$ with $q_{-1} = 0$.",
+      "From the right: $q_1 q_0 q_{-1} = 000$ (no change), then the pattern alternates in pairs: changes at $i = 2, 4, 6, 8, 10, 12, 14$.",
+      "The top run $11$ reaches the sign bit, so there is no change above it. Total: 7."
+    ],
+    "concept": "Booth's operation count = number of non-zero recoded digits = bit changes of the multiplier with an appended 0.",
+    "common_wrong": [
+      { "answer": 8, "why": "That counts the 1s (plain shift-and-add) or adds a change above the top run, which does not exist." },
+      { "answer": 4, "why": "Only the subtractions (pairs 10) were counted; additions count too." }
+    ],
+    "blocks": ["booth-count", "trap-booth-count"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q03",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which 8-bit multiplier makes Booth's algorithm perform the most additions/subtractions?",
+    "options": [
+      { "l": "A", "t": "$0110\\,0110$" },
+      { "l": "B", "t": "$0101\\,0101$" },
+      { "l": "C", "t": "$1111\\,0000$" },
+      { "l": "D", "t": "$0011\\,0011$" }
+    ],
+    "answer": "B",
+    "solution": [
+      "Count bit changes with $q_{-1} = 0$: (A) 4, (B) 8, (C) 1, (D) 4.",
+      "Alternating bits change at every position, so $0101\\,0101$ needs $n = 8$ operations: the worst case."
+    ],
+    "concept": "Booth's worst case is an alternating multiplier; runs of equal bits are cheap.",
+    "common_wrong": [
+      { "answer": "C", "why": "It has the most consecutive 1s, but a run costs only its two ends (here only one, since it reaches the sign bit)." },
+      { "answer": "A", "why": "Two short runs: 4 operations, half of (B)." }
+    ],
+    "blocks": ["booth-count", "booth-count-why"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q04",
+    "type": "NAT",
+    "marks": 1,
+    "text": "The 4-bit 2's-complement numbers $1011$ and $0110$ are multiplied to give an 8-bit 2's-complement product. What is the product's value in decimal?",
+    "answer": -30,
+    "solution": [
+      "$1011 = -5$ and $0110 = 6$.",
+      "Signed shift-and-add: sign-extend $M = 1111\\,1011$, add $M \\cdot 2 = 1111\\,0110$ and $M \\cdot 4 = 1110\\,1100$: $1\\,1110\\,0010 \\to 1110\\,0010$.",
+      "$1110\\,0010 = -30$."
+    ],
+    "concept": "Signed products: sign-extend the partial products to 2n bits.",
+    "common_wrong": [
+      { "answer": 66, "why": "The patterns were multiplied as unsigned numbers ($11 \\times 6$)." },
+      { "answer": 30, "why": "The sign of the multiplicand was dropped." }
+    ],
+    "blocks": ["signed-shift-add", "product-width"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which statements about radix-2 Booth recoding are true?",
+    "options": [
+      { "l": "A", "t": "The recoding of the 4-bit multiplier $0111$ is ${+1}\\ 0\\ 0\\ {-1}$." },
+      { "l": "B", "t": "For the multiplier $0000\\,1111$ Booth needs exactly 2 operations." },
+      { "l": "C", "t": "Booth never needs more additions/subtractions than plain shift-and-add." },
+      { "l": "D", "t": "The number of Booth operations depends on the multiplicand as well as the multiplier." }
+    ],
+    "answer": ["A", "B"],
+    "solution": [
+      "(A) Pairs $(1,0), (1,1), (1,1), (0,1)$ from the right give $-1, 0, 0, +1$; MSB first ${+1}\\,0\\,0\\,{-1} = 8 - 1 = 7$. True.",
+      "(B) Changes at $i = 0$ ($1$ over the appended 0) and $i = 4$ ($0$ over $1$): 2. True.",
+      "(C) False: $0101\\,0101$ needs 8 Booth operations but only 4 plain additions.",
+      "(D) False: the recoding uses only the multiplier's bits."
+    ],
+    "concept": "Booth digits depend only on the multiplier; runs are cheap, alternation is expensive.",
+    "common_wrong": [
+      { "answer": ["A", "B", "C"], "why": "Booth is worse than plain shift-and-add for alternating multipliers." },
+      { "answer": ["A"], "why": "(B) has one subtraction where the run starts and one addition just above it." }
+    ],
+    "blocks": ["booth-recode", "booth-count"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "What is the bit-pair (radix-4) recoding of the 8-bit multiplier $0110\\,1011$ (+107), most significant digit first?",
+    "options": [
+      { "l": "A", "t": "${+2}\\ {-1}\\ {-1}\\ {-1}$" },
+      { "l": "B", "t": "${+1}\\ {+2}\\ {+2}\\ {+3}$" },
+      { "l": "C", "t": "${+2}\\ {-1}\\ {-1}\\ {+1}$" },
+      { "l": "D", "t": "${-2}\\ {+1}\\ {+1}\\ {+1}$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Triples $(q_{i+1}, q_i, q_{i-1})$ from the right with $q_{-1} = 0$: $110$, $101$, $101$, $011$.",
+      "Table: $110 \\to -1$, $101 \\to -1$, $101 \\to -1$, $011 \\to +2$.",
+      "MSB first: ${+2}\\,{-1}\\,{-1}\\,{-1}$. Check: $2 \\cdot 64 - 16 - 4 - 1 = 107$."
+    ],
+    "concept": "Bit-pair digit D = −2q_{i+1} + q_i + q_{i−1}, triples overlapping by one bit.",
+    "common_wrong": [
+      { "answer": "B", "why": "Those are the plain base-4 digits of 107 ($1223_4$); radix-4 Booth digits never exceed 2 in size." },
+      { "answer": "C", "why": "The lowest digit is wrong: the triple $(q_1, q_0, q_{-1}) = 110$ gives $-1$, not $+1$ (this option is 109)." },
+      { "answer": "D", "why": "Every digit's sign was flipped (the triple read as $2q_{i+1} - q_i - q_{i-1}$), giving $-107$." }
+    ],
+    "blocks": ["bitpair", "bitpair-why"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q07",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Unsigned $A = a_3a_2a_1a_0 = 1101$ and $B = b_3b_2b_1b_0 = 0111$ are multiplied. What is product bit $c_2$?",
+    "answer": 0,
+    "solution": [
+      "Column 2 gets $a_2b_0 + a_1b_1 + a_0b_2$ plus the carry from column 1, which is $a_1b_0 \\cdot a_0b_1$.",
+      "$a_2b_0 = 1$, $a_1b_1 = 0$, $a_0b_2 = 1$; column 1 has $a_1b_0 = 0$ and $a_0b_1 = 1$, so its carry is 0.",
+      "Column 2 sum $= 1 + 0 + 1 + 0 = 2$: bit $c_2 = 0$ (carry 1 onward). Check: $13 \\times 7 = 91 = 1011011_2$, bit 2 is 0."
+    ],
+    "concept": "A product bit is the sum mod 2 of its column's partial-product bits and incoming carries.",
+    "common_wrong": [
+      { "answer": 1, "why": "The column was ORed instead of added, or the carry into column 2 was mishandled; two 1s in a column give bit 0." }
+    ],
+    "blocks": ["product-bits", "signed-shift-add"],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-01-10-q08",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Booth's register algorithm multiplies $M = 0101$ by $Q = 0110$ (4 bits; $A$ and $Q_{-1}$ start at 0). What are $A$, $Q$ and $Q_{-1}$ after the first **two** steps (each step = optional add/subtract, then an arithmetic right shift of $A, Q, Q_{-1}$)?",
+    "options": [
+      { "l": "A", "t": "$A = 1101$, $Q = 1001$, $Q_{-1} = 1$" },
+      { "l": "B", "t": "$A = 0010$, $Q = 1001$, $Q_{-1} = 1$" },
+      { "l": "C", "t": "$A = 1011$, $Q = 0011$, $Q_{-1} = 0$" },
+      { "l": "D", "t": "$A = 0101$, $Q = 1001$, $Q_{-1} = 1$" }
+    ],
+    "answer": "A",
+    "solution": [
+      "Step 1: $(Q_0, Q_{-1}) = (0, 0)$: shift only. $A = 0000$, $Q = 0011$, $Q_{-1} = 0$.",
+      "Step 2: $(1, 0)$: $A = A - M = 0000 - 0101 = 1011$; arithmetic shift: $A = 1101$, $Q = 1001$ (A's low bit 1 enters Q), $Q_{-1} = 1$.",
+      "(Continuing gives $A\\,Q = 0001\\,1110 = 30 = 5 \\times 6$.)"
+    ],
+    "concept": "Booth's algorithm: 10 → A − M, 01 → A + M, then shift A, Q, Q−1 right arithmetically.",
+    "common_wrong": [
+      { "answer": "B", "why": "$M$ was added on the pair 10 ($0000 + 0101 = 0101$, shifted to $0010$); pair 10 subtracts." },
+      { "answer": "C", "why": "That is $A$ right after the subtraction, before the shift of step 2." },
+      { "answer": "D", "why": "The shift was logical (a 0 entered $A$): $1011 \\to 0101$; an arithmetic shift copies the sign bit, giving $1101$." }
+    ],
+    "blocks": ["booth-algorithm", "booth-recode"],
     "source": "nexora"
   }
 ]

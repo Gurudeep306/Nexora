@@ -1265,279 +1265,28 @@
       }
     },
     "cse-2024-2-cs-4": {
-      "approach": "Decode only the exponent field first: an all-ones exponent (255) is reserved for $\\pm\\infty$/NaN, so it is not a number at all. Among the normal numbers the one with the biggest biased exponent wins, since the significand $1.M$ is always in $[1, 2)$.",
+      "approach": "Concept tested: **special exponent fields and extremes**. Classify each pattern by its exponent field first: all ones is ∞ or NaN, not a number to compare; among the normal ones, the larger exponent wins.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Biased exponent (bias 127)",
-        "Special values: ∞ and NaN"
+        "Special values",
+        "Largest finite float",
+        "Comparing floats by bits"
       ],
-      "given": "| | Sign | Exponent | Mantissa |\n|---|---|---|---|\n| (A) | 0 | 0111 1111 | all 1s |\n| (B) | 0 | 1111 1110 | all 1s |\n| (C) | 0 | 1111 1111 | all 1s |\n| (D) | 0 | 0111 1111 | all 0s |",
       "steps": [
         {
-          "title": "Value of a normal single-precision number",
-          "body": "For $1 \\le E \\le 254$ the value is\n\n$$(-1)^S \\times 1.M \\times 2^{E-127}.$$\n\n$E = 0$ is for zero/denormals and $E = 255$ (all ones) is reserved: $M = 0$ gives $\\pm\\infty$, $M \\neq 0$ gives **NaN**. All four options have $S = 0$ (positive).",
-          "scene": {
-            "caption": "All four options are positive (sign bit 0); compare the exponent fields."
-          }
+          "title": "Classify",
+          "body": "- (A) $e = 127$, $f$ all ones: $\\approx 2 - 2^{-23} \\approx 2$.\n- (B) $e = 254$, $f$ all ones: $(2 - 2^{-23})\\,2^{127} \\approx 3.4 \\times 10^{38}$, the largest finite float.\n- (C) $e = 255$, $f \\ne 0$: **NaN**.\n- (D) $e = 127$, $f = 0$: $1.0$."
         },
         {
-          "title": "Option (C) is NaN, not a number",
-          "body": "Exponent $1111\\,1111_2 = 255$ with a non-zero mantissa is **NaN** (Not a Number). It has no numeric value, so it cannot be the \"largest floating-point number\".",
-          "scene": {
-            "rows": [
-              {
-                "label": "(A)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "01111111",
-                    "label": "E = 127",
-                    "tone": "default"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "≈ 2"
-              },
-              {
-                "label": "(B)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "11111110",
-                    "label": "E = 254",
-                    "tone": "default"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "≈ 3.4×10³⁸"
-              },
-              {
-                "label": "(C)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "11111111",
-                    "label": "E = 255",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "NaN"
-              },
-              {
-                "label": "(D)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "01111111",
-                    "label": "E = 127",
-                    "tone": "default"
-                  },
-                  {
-                    "bits": "00000000000000000000000",
-                    "label": "M = 0"
-                  }
-                ],
-                "value": "1.0"
-              }
-            ],
-            "caption": "E = 255 with M ≠ 0 → NaN (red)."
-          }
+          "title": "Compare the numbers",
+          "body": "Among A, B, D (all positive and normal) the largest exponent decides: (B)."
         },
         {
-          "title": "Decode the three real numbers",
-          "body": "- (A): $E = 0111\\,1111_2 = 127$, $M$ all ones: $1.11\\ldots1_2 \\times 2^{127-127} = (2 - 2^{-23}) \\times 2^0 \\approx 2$.\n- (B): $E = 1111\\,1110_2 = 254$, $M$ all ones: $(2 - 2^{-23}) \\times 2^{254-127} = (2 - 2^{-23}) \\times 2^{127} \\approx 3.4 \\times 10^{38}$.\n- (D): $E = 127$, $M = 0$: $1.0 \\times 2^{0} = 1$.",
-          "scene": {
-            "rows": [
-              {
-                "label": "(A)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "01111111",
-                    "label": "E = 127",
-                    "tone": "warning"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "≈ 2"
-              },
-              {
-                "label": "(B)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "11111110",
-                    "label": "E = 254",
-                    "tone": "warning"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "≈ 3.4×10³⁸"
-              },
-              {
-                "label": "(C)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "11111111",
-                    "label": "E = 255",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "NaN"
-              },
-              {
-                "label": "(D)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "01111111",
-                    "label": "E = 127",
-                    "tone": "warning"
-                  },
-                  {
-                    "bits": "00000000000000000000000",
-                    "label": "M = 0"
-                  }
-                ],
-                "value": "1.0"
-              }
-            ],
-            "caption": "Biased exponents: 127, 254, 127."
-          }
-        },
-        {
-          "title": "The largest is (B)",
-          "body": "Since every significand lies in $[1, 2)$, the largest exponent wins: $2^{127}$ dwarfs $2^{0}$. (B) is in fact the **largest finite** single-precision number, $(2-2^{-23})\\times 2^{127} \\approx 3.4028 \\times 10^{38}$.",
-          "scene": {
-            "rows": [
-              {
-                "label": "(A)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "01111111",
-                    "label": "E = 127",
-                    "tone": "muted"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "≈ 2"
-              },
-              {
-                "label": "(B)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "11111110",
-                    "label": "E = 254",
-                    "tone": "success"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "≈ 3.4×10³⁸"
-              },
-              {
-                "label": "(C)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "11111111",
-                    "label": "E = 255",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "11111111111111111111111",
-                    "label": "M ≠ 0"
-                  }
-                ],
-                "value": "NaN"
-              },
-              {
-                "label": "(D)",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "S"
-                  },
-                  {
-                    "bits": "01111111",
-                    "label": "E = 127",
-                    "tone": "muted"
-                  },
-                  {
-                    "bits": "00000000000000000000000",
-                    "label": "M = 0"
-                  }
-                ],
-                "value": "1.0"
-              }
-            ],
-            "caption": "(B) = (2 − 2⁻²³) × 2¹²⁷ is the largest finite float."
-          }
+          "title": "Answer",
+          "body": "Option (B); (C) is not a number at all."
         }
       ],
       "answer": {
-        "value": "$(2-2^{-23}) \\times 2^{127} \\approx 3.4 \\times 10^{38}$ — option (B)",
+        "value": "(B), $(2 - 2^{-23})\\,2^{127}$ — the largest finite float",
         "choice": [
           "B"
         ],
@@ -1547,30 +1296,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Biased exponent 127 → actual exponent 0; value $(2 - 2^{-23}) \\times 2^0 \\approx 2$. Tiny compared with (B)."
+          "reason": "About 2: exponent field 127 means $E = 0$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exponent 254 is the largest allowed for a normal number and the mantissa is all ones: $(2-2^{-23})\\times 2^{127}$, the maximum finite float."
+          "reason": "Exponent 254 ($E = 127$) with an all-ones fraction is the largest finite value."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Exponent all ones (255) with non-zero mantissa encodes NaN — not a number, so it is not \"largest\". Choosing it means treating the bit pattern as an unsigned integer."
+          "reason": "Exponent 255 with a non-zero fraction is NaN, which is not ordered."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Exponent 127, mantissa 0 → exactly $1.0$."
+          "reason": "Exactly 1.0."
         }
       ],
-      "shortcut": "Exponent 1111 1111 is never a finite number (∞/NaN); the largest finite float always has exponent 1111 1110 and mantissa all ones — that is option (B).",
+      "shortcut": "Never pick an all-ones exponent field as 'largest': it is ∞ (fraction 0) or NaN (fraction ≠ 0).",
       "pitfalls": [
-        "Comparing bit patterns as integers and picking (C), forgetting that exponent 255 is reserved for ∞/NaN.",
-        "Forgetting the bias of 127 (0111 1111 means $2^0$, not $2^{127}$)."
+        "Choosing (C) because its bit pattern is the largest integer.",
+        "Thinking exponent 255 with all-ones fraction is the maximum."
       ],
-      "verification": "Known constant: FLT_MAX $= 0\\;11111110\\;11\\ldots1 = 3.40282347 \\times 10^{38}$, exactly option (B).",
+      "verification": "`0x7F7FFFFF` = 3.4028234663852886e38 in Python; `0x7FFFFFFF` decodes to nan. ✓",
       "animation": {
         "kind": "bits",
         "title": "The four bit patterns",

@@ -1,0 +1,500 @@
+{
+ "version": 1,
+ "title": "Booth recoding: a sliding pair window",
+ "width": 600,
+ "height": 260,
+ "narrow": {
+  "width": 360,
+  "height": 220
+ },
+ "intro": "The 8-bit multiplier −29 = 11100011 with a 0 appended on the right (q₋₁). A window covers the current bit and the bit to its right.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "Booth recoding of −29 = 11100011: slide a 2-bit window",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Booth scan of 11100011",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "q",
+   "type": "bits",
+   "x": 66,
+   "y": 70,
+   "bits": "111000110",
+   "cell": 52,
+   "labels": [
+    "q7",
+    "q6",
+    "q5",
+    "q4",
+    "q3",
+    "q2",
+    "q1",
+    "q0",
+    "q₋₁"
+   ],
+   "below": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ],
+   "narrow": {
+    "x": 18,
+    "y": 70,
+    "cell": 36
+   }
+  },
+  {
+   "id": "win",
+   "type": "box",
+   "x": 427,
+   "y": 64,
+   "w": 110,
+   "h": 64,
+   "tone": "subject",
+   "dashed": true,
+   "only": "wide"
+  },
+  {
+   "id": "nwin",
+   "type": "box",
+   "x": 267,
+   "y": 64,
+   "w": 78,
+   "h": 48,
+   "tone": "subject",
+   "dashed": true,
+   "only": "narrow"
+  },
+  {
+   "id": "dl",
+   "type": "text",
+   "x": 58,
+   "y": 144,
+   "text": "d:",
+   "anchor": "end",
+   "size": 14,
+   "tone": "muted",
+   "narrow": {
+    "x": 14,
+    "y": 124,
+    "size": 12
+   }
+  },
+  {
+   "id": "rule",
+   "type": "text",
+   "x": 300,
+   "y": 200,
+   "text": "pair (qᵢ, qᵢ₋₁): 10 → −1, 01 → +1, 00 / 11 → 0",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 160,
+    "size": 12
+   }
+  },
+  {
+   "id": "ops",
+   "type": "text",
+   "x": 300,
+   "y": 236,
+   "text": "operations so far: 0",
+   "anchor": "middle",
+   "size": 16,
+   "narrow": {
+    "x": 180,
+    "y": 190,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "i = 0: the window holds (q0, q₋₁) = (1, 0), so d0 = 0 − 1 = −1 (a run of 1s starts here: subtract M).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 427
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 267
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       7,
+       8
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "i = 1: the window holds (q1, q0) = (1, 1), so d1 = 0 (inside a run: shift only).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 375
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 231
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "",
+       "0",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       6,
+       7
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "i = 2: the window holds (q2, q1) = (0, 1), so d2 = 1 − 0 = +1 (a run of 1s ended just below: add M).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 323
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 195
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "",
+       "",
+       "",
+       "",
+       "",
+       "+1",
+       "0",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       5,
+       6
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "i = 3: the window holds (q3, q2) = (0, 0), so d3 = 0 (inside a run: shift only).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 271
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 159
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "",
+       "",
+       "",
+       "",
+       "0",
+       "+1",
+       "0",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       4,
+       5
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "i = 4: the window holds (q4, q3) = (0, 0), so d4 = 0 (inside a run: shift only).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 219
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 123
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "",
+       "",
+       "",
+       "0",
+       "0",
+       "+1",
+       "0",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       3,
+       4
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "i = 5: the window holds (q5, q4) = (1, 0), so d5 = 0 − 1 = −1 (a run of 1s starts here: subtract M).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 167
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 87
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "",
+       "",
+       "−1",
+       "0",
+       "0",
+       "+1",
+       "0",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "i = 6: the window holds (q6, q5) = (1, 1), so d6 = 0 (inside a run: shift only).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 115
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 51
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "",
+       "0",
+       "−1",
+       "0",
+       "0",
+       "+1",
+       "0",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       1,
+       2
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "i = 7: the window holds (q7, q6) = (1, 1), so d7 = 0 (inside a run: shift only).",
+   "patches": [
+    {
+     "id": "win",
+     "set": {
+      "x": 63
+     }
+    },
+    {
+     "id": "nwin",
+     "set": {
+      "x": 15
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "below": [
+       "0",
+       "0",
+       "−1",
+       "0",
+       "0",
+       "+1",
+       "0",
+       "−1",
+       ""
+      ],
+      "highlight": [
+       0,
+       1
+      ]
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "operations so far: 3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Read the digits MSB first: 0 0 −1 0 0 +1 0 −1 = −32 + 4 − 1 = −29. Three operations instead of five additions (one per 1): the run of three 1s at the top costs a single subtraction.",
+   "patches": [
+    {
+     "id": "q",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "ops",
+     "set": {
+      "text": "3 operations (plain shift-and-add: 5)",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

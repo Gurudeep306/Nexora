@@ -22,7 +22,12 @@ LESSONS = {
     "02-power-of-two-bases.md": "dl-01-02-power-of-two-bases",
     "03-fractions-fixed-point.md": "dl-01-03-fractions-fixed-point",
     "04-signed-numbers.md": "dl-01-04-signed-numbers",
-    "05-codes.md": "dl-01-05-codes",
+    "05-floating-point-basics.md": "dl-01-05-floating-point-basics",
+    "06-ieee-754.md": "dl-01-06-ieee-754",
+    "07-floating-point-arithmetic.md": "dl-01-07-floating-point-arithmetic",
+    "08-codes.md": "dl-01-08-codes",
+    "09-code-arithmetic.md": "dl-01-09-code-arithmetic",
+    "10-multiplication-booth.md": "dl-01-10-multiplication-booth",
 }
 OPEN = re.compile(r"^(:{3,})([a-z]+)(\{.*\})?\s*$")
 CLOSE = re.compile(r"^(:{3,})\s*$")

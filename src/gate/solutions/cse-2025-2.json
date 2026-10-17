@@ -3345,267 +3345,37 @@
       }
     },
     "cse-2025-2-cs-22": {
-      "approach": "Booth's algorithm (radix-2) scans the multiplier pairs $(Q_i, Q_{i-1})$ with $Q_{-1} = 0$: pair $10$ ⇒ subtract $M$, $01$ ⇒ add $M$, $00$/$11$ ⇒ shift only. So the count is just the number of bit **changes** in $Q$ with a $0$ appended on the right; $M$ is irrelevant.",
+      "approach": "Concept tested: **Booth's operation count**: count the positions where $q_i \\ne q_{i-1}$ in $Q$ with $q_{-1} = 0$; the multiplicand $M$ does not matter.",
       "concepts": [
-        "Booth's algorithm",
-        "2's complement",
-        "Bit-pair recoding"
+        "Booth recoding",
+        "Operation count = bit changes"
       ],
-      "given": "$Q = 1010\\,0100\\,1010\\,1010$ (16 bits), $Q_{-1} = 0$. $M$ does not affect the count.",
       "steps": [
         {
-          "title": "Rule",
-          "body": "At each of the 16 iterations look at $(Q_i, Q_{i-1})$:\n\n| pair | action |\n|---|---|\n| 00, 11 | shift only |\n| 10 | $A \\leftarrow A - M$, then shift |\n| 01 | $A \\leftarrow A + M$, then shift |\n\nSo every place where adjacent bits of $Q\\,0$ differ costs one add/sub."
+          "title": "Write Q with the appended 0",
+          "body": "$1010\\,0100\\,1010\\,1010\\ |\\ 0$."
         },
         {
-          "title": "Bits 0–7",
-          "body": "Low byte $1010\\,1010$ with $Q_{-1} = 0$: pairs $(Q_0,Q_{-1}) = 00$ (none), then $10, 01, 10, 01, 10, 01, 10$ for $i = 1 \\dots 7$ — **7 operations** (4 SUB, 3 ADD).",
-          "scene": {
-            "reveal": 40,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "warning"
-              },
-              {
-                "r": 2,
-                "tone": "info"
-              },
-              {
-                "r": 3,
-                "tone": "warning"
-              },
-              {
-                "r": 4,
-                "tone": "info"
-              },
-              {
-                "r": 5,
-                "tone": "warning"
-              },
-              {
-                "r": 6,
-                "tone": "info"
-              },
-              {
-                "r": 7,
-                "tone": "warning"
-              }
-            ]
-          }
+          "title": "Count changes from the right",
+          "body": "Bits $q_0 \\ldots q_{15}$ = 0,1,0,1,0,1,0,1,0,0,1,0,0,1,0,1. Changes at $i = 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 13, 14, 15$: 13."
         },
         {
-          "title": "Bits 8–15",
-          "body": "High byte $1010\\,0100$ ($Q_{15} \\dots Q_8$), with $Q_7 = 1$ entering: $(Q_8,Q_7) = 01$ ADD, $(Q_9,Q_8) = 00$, $(Q_{10},Q_9) = 10$ SUB, $(Q_{11},Q_{10}) = 01$ ADD, $(Q_{12},Q_{11}) = 00$, $(Q_{13},Q_{12}) = 10$ SUB, $(Q_{14},Q_{13}) = 01$ ADD, $(Q_{15},Q_{14}) = 10$ SUB — **6 operations** (3 SUB, 3 ADD).",
-          "scene": {
-            "reveal": 80,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "warning"
-              },
-              {
-                "r": 2,
-                "tone": "info"
-              },
-              {
-                "r": 3,
-                "tone": "warning"
-              },
-              {
-                "r": 4,
-                "tone": "info"
-              },
-              {
-                "r": 5,
-                "tone": "warning"
-              },
-              {
-                "r": 6,
-                "tone": "info"
-              },
-              {
-                "r": 7,
-                "tone": "warning"
-              },
-              {
-                "r": 8,
-                "tone": "info"
-              },
-              {
-                "r": 10,
-                "tone": "warning"
-              },
-              {
-                "r": 11,
-                "tone": "info"
-              },
-              {
-                "r": 13,
-                "tone": "warning"
-              },
-              {
-                "r": 14,
-                "tone": "info"
-              },
-              {
-                "r": 15,
-                "tone": "warning"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Total",
-          "body": "Subtractions: $4 + 3 = 7$. Additions: $3 + 3 = 6$.\n\n$$7 + 6 = 13$$\n\nadd/sub operations.",
-          "scene": {
-            "vars": {
-              "SUB": 7,
-              "ADD": 6,
-              "total": 13
-            }
-          }
+          "title": "Answer",
+          "body": "13 additions and subtractions."
         }
       ],
       "answer": {
-        "value": "**13** addition/subtraction operations",
+        "value": "13",
         "number": 13,
         "matchesKey": true
       },
-      "shortcut": "Write $Q$ followed by $0$: $1010010010101010\\,0$ and count positions where neighbouring bits differ: 13.",
+      "shortcut": "The low byte $1010\\,1010$ alone gives 7 changes; the high byte $1010\\,0100$ adds 6.",
       "pitfalls": [
-        "Forgetting the appended $Q_{-1} = 0$ (here it adds nothing because $Q_0 = 0$, but it matters when $Q_0 = 1$).",
-        "Counting 1-bits of $Q$ (7) as in ordinary shift-and-add multiplication.",
-        "Looking at $M$ — the multiplicand only decides what is added, not how often."
+        "Counting the 1s (7).",
+        "Including the multiplicand.",
+        "Counting a change at $i = 0$ (here $q_0 = 0 = q_{-1}$)."
       ],
-      "verification": "Transition count in the 17-bit string $1\\,0\\,1\\,0\\,0\\,1\\,0\\,0\\,1\\,0\\,1\\,0\\,1\\,0\\,1\\,0\\,0$: the only equal neighbour pairs are $(Q_{12},Q_{11})$, $(Q_9,Q_8)$ and $(Q_0,Q_{-1})$, so $16 - 3 = 13$ changes.",
-      "animation": {
-        "kind": "table",
-        "title": "Booth scan of Q = 1010 0100 1010 1010",
-        "cols": [
-          "i",
-          "Qᵢ",
-          "Qᵢ₋₁",
-          "pair",
-          "operation"
-        ],
-        "mono": true,
-        "rows": [
-          [
-            "0",
-            "0",
-            "0",
-            "00",
-            "—"
-          ],
-          [
-            "1",
-            "1",
-            "0",
-            "10",
-            "SUB M"
-          ],
-          [
-            "2",
-            "0",
-            "1",
-            "01",
-            "ADD M"
-          ],
-          [
-            "3",
-            "1",
-            "0",
-            "10",
-            "SUB M"
-          ],
-          [
-            "4",
-            "0",
-            "1",
-            "01",
-            "ADD M"
-          ],
-          [
-            "5",
-            "1",
-            "0",
-            "10",
-            "SUB M"
-          ],
-          [
-            "6",
-            "0",
-            "1",
-            "01",
-            "ADD M"
-          ],
-          [
-            "7",
-            "1",
-            "0",
-            "10",
-            "SUB M"
-          ],
-          [
-            "8",
-            "0",
-            "1",
-            "01",
-            "ADD M"
-          ],
-          [
-            "9",
-            "0",
-            "0",
-            "00",
-            "—"
-          ],
-          [
-            "10",
-            "1",
-            "0",
-            "10",
-            "SUB M"
-          ],
-          [
-            "11",
-            "0",
-            "1",
-            "01",
-            "ADD M"
-          ],
-          [
-            "12",
-            "0",
-            "0",
-            "00",
-            "—"
-          ],
-          [
-            "13",
-            "1",
-            "0",
-            "10",
-            "SUB M"
-          ],
-          [
-            "14",
-            "0",
-            "1",
-            "01",
-            "ADD M"
-          ],
-          [
-            "15",
-            "1",
-            "0",
-            "10",
-            "SUB M"
-          ]
-        ],
-        "reveal": 0
-      }
+      "verification": "The recoding $-1\\,+1\\,-1\\,0\\,+1\\,-1\\,0\\,+1\\,-1\\,+1\\,-1\\,+1\\,-1\\,+1\\,-1\\,0$ has 13 non-zero digits. ✓"
     },
     "cse-2025-2-cs-23": {
       "approach": "The loop is Euclid's subtraction algorithm: replacing the larger number by the difference keeps $\\gcd(x, y)$ unchanged, and it stops when $x = y$, i.e. at the gcd. So the output is $\\gcd(126, 105)$; a short trace confirms it.",
@@ -5536,28 +5306,27 @@
       }
     },
     "cse-2025-2-cs-39": {
-      "approach": "Decode the three words (sign | 8-bit exponent with bias 127 | fraction). The fractions have only one or three leading bits, so each value is a small integer; then evaluate the four equations.",
+      "approach": "Concept tested: **decode, then do exact arithmetic**. All three registers hold small integers ($-9$, $6$, $12$), and every expression in the options is exactly representable, so no rounding enters.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Bias 127",
-        "Hidden leading 1"
+        "IEEE-754 decoding",
+        "Exact float arithmetic on small integers"
       ],
       "steps": [
         {
-          "title": "Decode RX = 0xC1100000",
-          "body": "Binary: `1 10000010 00100000…`. Sign $1$ (negative), exponent $10000010_2 = 130$, so $2^{130-127} = 2^3$. Significand $1.001_2 = 1.125$.\n\n$X = -1.125 \\times 8 = -9$."
+          "title": "Decode",
+          "body": "- $R_X$ = `C1100000` $= -1.001_2 \\times 2^3 = -9$.\n- $R_Y$ = `40C00000` $= 1.1_2 \\times 2^2 = 6$.\n- $R_Z$ = `41400000` $= 1.1_2 \\times 2^3 = 12$."
         },
         {
-          "title": "Decode RY and RZ",
-          "body": "RY = 0x40C00000 = `0 10000001 1000…`: exponent $129 \\Rightarrow 2^2$, significand $1.1_2 = 1.5$, so $Y = 1.5 \\times 4 = 6$.\n\nRZ = 0x41400000 = `0 10000010 1000…`: exponent $130 \\Rightarrow 2^3$, significand $1.5$, so $Z = 1.5 \\times 8 = 12$."
+          "title": "Check each option",
+          "body": "- (A) $4(X + Y) + Z = 4(-3) + 12 = 0$: correct.\n- (B) $2Y - Z = 12 - 12 = 0$: correct.\n- (C) $4X + 3Z = -36 + 36 = 0$: correct.\n- (D) $X + Y + Z = -9 + 6 + 12 = 9 \\ne 0$: wrong."
         },
         {
-          "title": "Evaluate the options",
-          "body": "With $X = -9$, $Y = 6$, $Z = 12$:\n\n- (A) $4(X+Y)+Z = 4(-3) + 12 = 0$ ✓\n- (B) $2Y - Z = 12 - 12 = 0$ ✓\n- (C) $4X + 3Z = -36 + 36 = 0$ ✓\n- (D) $X + Y + Z = -9 + 6 + 12 = 9 \\ne 0$ ✗"
+          "title": "Why no rounding",
+          "body": "Every intermediate value ($-3$, $-12$, $12$, $-36$, $36$, …) is a small integer, exactly representable in single precision, so the float results equal the exact ones."
         }
       ],
       "answer": {
-        "value": "$X=-9,\\ Y=6,\\ Z=12$ ⇒ **(A), (B) and (C)**",
+        "value": "(A), (B) and (C)",
         "choice": [
           "A",
           "B",
@@ -5569,30 +5338,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$4(-9+6)+12 = -12+12 = 0$."
+          "reason": "$4(-9 + 6) + 12 = -12 + 12 = 0$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$2\\cdot6 - 12 = 0$."
+          "reason": "$2 \\times 6 - 12 = 0$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$4(-9) + 3(12) = -36+36 = 0$."
+          "reason": "$4(-9) + 3(12) = -36 + 36 = 0$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$-9+6+12 = 9$; it would be 0 only if the sign bit of RX were misread (e.g. $X=-18$) or the bias wrong."
+          "reason": "$-9 + 6 + 12 = 9$."
         }
       ],
-      "shortcut": "Hex digit after the sign/exponent nibbles: 0x41 4… means exponent 130 and fraction .1 → $1.5\\times 8 = 12$; 0x40C… → $1.5\\times4 = 6$; 0xC11… → $-1.125\\times8 = -9$.",
+      "shortcut": "`C11` vs `414` vs `40C`: exponents 130, 130, 129 give scales 8, 8, 4; fractions $1.125, 1.5, 1.5$ give $-9$, 12, 6.",
       "pitfalls": [
-        "Forgetting the hidden leading 1 (giving $X = -1$, $Y = 2$, $Z = 4$).",
-        "Using bias 128 instead of 127, which halves every value."
+        "Decoding `C1100000` as $-1.1 \\times 2^3 = -12$ (misreading the fraction bits 001).",
+        "Worrying about rounding: small integers are exact."
       ],
-      "verification": "Re-encode $12 = 1.5\\times2^3$: sign 0, exponent $3+127=130=10000010_2$, fraction $1000…$ → `0100 0001 0100 0000 …` = 0x41400000 ✓.",
+      "verification": "Python `struct` decodes the words to −9.0, 6.0, 12.0. ✓",
       "animation": {
         "kind": "bits",
         "title": "Sign | exponent | fraction",

@@ -30,8 +30,9 @@ and exactly which values they can hold. GATE asks all four of these.
 [Lesson 1](lesson:place-value) showed that the digits after the point are worth $b^{-1}, b^{-2},
 \dots$, and [Lesson 2](lesson:power-of-two-bases) grouped fraction bits rightward from the point.
 Here we go the other way, from a decimal fraction to its digits. Fixed point is the simplest way
-real numbers live in hardware; Chapter 8 replaces it with floating point, where the point moves.
-The question "is this value exactly representable?" comes back there in the same form.
+real numbers live in hardware; [Lesson 5](lesson:floating-point-basics) replaces it with floating
+point, where the point moves. The question "is this value exactly representable?" comes back
+there in the same form.
 
 :::table{#radar title="GATE radar: fractions and fixed point" depth="quick"}
 | What | Detail |

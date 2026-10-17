@@ -3105,80 +3105,27 @@
       }
     },
     "cse-2026-2-cs-18": {
-      "approach": "Convert the four 4-bit patterns to decimals; 4-bit two's complement holds only $[-8, 7]$, so an operation overflows exactly when its true result leaves that range (equivalently, two same-sign operands give a result of the other sign).",
+      "approach": "Concept tested: **overflow of sums and differences** in 4-bit 2's complement. Decode the four numbers and check each true result against $-8 \\dots 7$.",
       "concepts": [
-        "Two's complement range",
-        "Signed overflow rule",
-        "Subtraction as adding the negation"
+        "4-bit 2's-complement range",
+        "Overflow in addition and subtraction"
       ],
-      "given": "| Name | Bits | Value |\n|---|---|---|\n| $N_1$ | 1011 | $-5$ |\n| $N_2$ | 1101 | $-3$ |\n| $N_3$ | 1010 | $-6$ |\n| $N_4$ | 1001 | $-7$ |",
       "steps": [
         {
-          "title": "Decode the numbers",
-          "body": "A 4-bit pattern $b_3b_2b_1b_0$ has value $-8b_3 + 4b_2 + 2b_1 + b_0$:\n\n- $N_1 = 1011 = -8 + 2 + 1 = -5$\n- $N_2 = 1101 = -8 + 4 + 1 = -3$\n- $N_3 = 1010 = -8 + 2 = -6$\n- $N_4 = 1001 = -8 + 1 = -7$\n\nRepresentable range: $-2^3 \\dots 2^3 - 1 = -8 \\dots 7$.",
-          "scene": {
-            "reveal": 0
-          }
+          "title": "Decode",
+          "body": "$N_1 = 1011 = -5$, $N_2 = 1101 = -3$, $N_3 = 1010 = -6$, $N_4 = 1001 = -7$."
         },
         {
-          "title": "A: N1 + N2",
-          "body": "$-5 + (-3) = -8$, inside the range. Bitwise: $1011 + 1101 = 1\\,1000$, keep $1000 = -8$ (negative + negative = negative). **No overflow.**",
-          "scene": {
-            "reveal": 5,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Evaluate",
+          "body": "- (A) $N_1 + N_2 = -8$: fits.\n- (B) $N_2 + N_3 = -9$: overflow.\n- (C) $N_3 - N_4 = -6 + 7 = 1$: fits.\n- (D) $N_1 + N_4 = -12$: overflow."
         },
         {
-          "title": "B: N2 + N3",
-          "body": "$-3 + (-6) = -9 < -8$. Bitwise: $1101 + 1010 = 1\\,0111$, keep $0111 = +7$: two negatives gave a positive. **Overflow.**",
-          "scene": {
-            "reveal": 10,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "error"
-              }
-            ]
-          }
-        },
-        {
-          "title": "C: N3 − N4",
-          "body": "$-6 - (-7) = +1$, inside the range. Hardware adds the negation: $-N_4 = 0111$, and $1010 + 0111 = 1\\,0001$, keep $0001 = 1$. Operands of opposite sign can never overflow. **No overflow.**",
-          "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 2,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "D: N1 + N4",
-          "body": "$-5 + (-7) = -12 < -8$. Bitwise: $1011 + 1001 = 1\\,0100$, keep $0100 = +4$: two negatives gave a positive. **Overflow.**",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "error"
-              },
-              {
-                "r": 3,
-                "tone": "error"
-              }
-            ]
-          }
+          "title": "Answer",
+          "body": "(B) and (D)."
         }
       ],
       "answer": {
-        "value": "Overflow occurs for **$N_2 + N_3$ and $N_1 + N_4$** — options (B) and (D)",
+        "value": "(B) and (D)",
         "choice": [
           "B",
           "D"
@@ -3189,31 +3136,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$-5 + (-3) = -8$ is exactly the most negative 4-bit value ($1000$), so it fits. Treating $-8$ as out of range is the trap."
+          "reason": "$-8$ is the smallest 4-bit value, so it fits."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$-3 + (-6) = -9 < -8$; the 4-bit sum $0111 = +7$ has the wrong sign."
+          "reason": "$-9 < -8$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$-6 - (-7) = +1$; adding $1010 + 0111$ gives $0001$. The end carry out is discarded and is not an overflow."
+          "reason": "Same-sign operands in a subtraction never overflow: $1$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$-5 + (-7) = -12 < -8$; the 4-bit sum $0100 = +4$ has the wrong sign."
+          "reason": "$-12 < -8$."
         }
       ],
-      "shortcut": "All four numbers are negative. Sums of two negatives overflow when the magnitudes add to more than $8$: $5+3 = 8$ (fits), $3+6 = 9$ and $5+7 = 12$ (overflow). A difference of two negatives cannot overflow.",
+      "shortcut": "All four are negative: sums can overflow (if below $-8$), the difference cannot.",
       "pitfalls": [
-        "Calling a carry out of the MSB an overflow — in two's complement, overflow means the carry into the MSB differs from the carry out of it.",
-        "Forgetting that $-8$ is representable in 4 bits, so $N_1 + N_2$ is fine.",
-        "Reading the patterns as unsigned numbers."
+        "Treating $-8$ as overflow.",
+        "Thinking a subtraction of two negatives can overflow."
       ],
-      "verification": "Carry rule: for $N_2+N_3$ ($1101+1010$) the carry into bit 3 is $0$ and the carry out is $1$ — they differ, overflow. For $N_1+N_2$ ($1011+1101$) both carries are $1$ — no overflow.",
+      "verification": "Bits: $1101 + 1010 = 1\\,0111$ (looks $+7$) and $1011 + 1001 = 1\\,0100$ (looks $+4$): negative operands, positive results. ✓",
       "animation": {
         "kind": "table",
         "title": "4-bit two's complement additions",
@@ -4174,73 +4120,24 @@
       }
     },
     "cse-2026-2-cs-24": {
-      "approach": "Expand the hex word into its 32 bits, split as sign (1) | exponent (8) | fraction (23), and evaluate $(-1)^s \\times 1.f \\times 2^{e-127}$.",
+      "approach": "Concept tested: **decoding a hex word**. `C27` gives the sign and exponent ($1\\ 10000100$, $E = 5$); the fraction starts $1110001$.",
       "concepts": [
-        "IEEE 754 single precision",
-        "Biased exponent (bias 127)",
-        "Binary fractions"
+        "IEEE-754 decoding",
+        "Hex to bits",
+        "Bias 127"
       ],
       "steps": [
         {
-          "title": "Hex to binary",
-          "body": "$C = 1100,\\ 2 = 0010,\\ 7 = 0111,\\ 1 = 0001,\\ 0 = 0000$:\n\n$$\\texttt{0xC2710000} = 1100\\ 0010\\ 0111\\ 0001\\ 0000\\ 0000\\ 0000\\ 0000$$"
+          "title": "Hex to bits",
+          "body": "`C2710000` $= 1100\\,0010\\,0111\\,0001\\,0000\\ldots = 1\\ \\ 10000100\\ \\ 1110001\\,0\\ldots$"
         },
         {
-          "title": "Split the fields",
-          "body": "- sign $s = 1$ (negative)\n- exponent $= 10000100_2 = 128 + 4 = 132$\n- fraction $= 1110001\\,0000000000000000_2$",
-          "scene": {
-            "rows": [
-              {
-                "label": "0xC2710000",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "10000100",
-                    "label": "exponent = 132",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "11100010000000000000000",
-                    "label": "fraction",
-                    "tone": "info"
-                  }
-                ]
-              }
-            ]
-          }
+          "title": "Exponent",
+          "body": "$e = 1000\\,0100 = 132$, $E = 132 - 127 = 5$."
         },
         {
-          "title": "Evaluate",
-          "body": "True exponent $= 132 - 127 = 5$.\n\n$$1.1110001_2 \\times 2^5 = 111100.01_2$$\n\n$111100_2 = 32 + 16 + 8 + 4 = 60$ and $.01_2 = 0.25$, so the magnitude is $60.25$ and the number is $\\mathbf{-60.25}$.",
-          "scene": {
-            "rows": [
-              {
-                "label": "0xC2710000",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign",
-                    "tone": "error"
-                  },
-                  {
-                    "bits": "10000100",
-                    "label": "exponent = 132",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "11100010000000000000000",
-                    "label": "fraction",
-                    "tone": "info"
-                  }
-                ],
-                "value": "−1.1110001₂ × 2⁵ = −60.25"
-              }
-            ]
-          }
+          "title": "Value",
+          "body": "$1.1110001_2 \\times 2^5 = 111100.01_2 = 60 + 0.25 = 60.25$, so the number is $-60.25$."
         }
       ],
       "answer": {
@@ -4248,13 +4145,12 @@
         "number": -60.25,
         "matchesKey": true
       },
-      "shortcut": "Fraction bits $1110001$ mean $1 + \\tfrac12 + \\tfrac14 + \\tfrac18 + \\tfrac{1}{128} = 1.8828125$; times $2^5 = 32$ gives $60.25$.",
+      "shortcut": "Shift the point 5 places: $1.1110001 \\to 111100.01$; integer part 60, fraction .01 = 0.25.",
       "pitfalls": [
-        "Forgetting the hidden leading 1 (gives $0.8828125 \\times 32 = 28.25$).",
-        "Using bias 128 or forgetting the sign bit.",
-        "Splitting the hex digits as if each field were nibble-aligned — the exponent straddles the 1st and 3rd nibbles."
+        "Dropping the hidden 1 (gives $-28.25$).",
+        "Cutting the exponent at the hex-digit boundary ($e = 1000\\,010$...) instead of after 8 bits."
       ],
-      "verification": "Encode back: $60.25 = 111100.01_2 = 1.1110001_2 \\times 2^5$; exponent $5 + 127 = 132 = 10000100_2$; with sign 1 the word is $1\\,10000100\\,1110001\\,0\\dots0 = \\texttt{0xC2710000}$ ✓.",
+      "verification": "Re-encode $-60.25 = -1.1110001 \\times 2^5$: $e = 132$, giving `C2710000`. ✓",
       "animation": {
         "kind": "bits",
         "title": "IEEE 754 single precision",

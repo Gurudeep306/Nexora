@@ -1063,22 +1063,27 @@
       "verification": "Standard result (Codd 1972), stated in all database textbooks."
     },
     "cse-2002-a-21": {
-      "approach": "Overflow means the true sum lies outside the representable range. Adding numbers of opposite sign gives a result between them, so it always fits.",
+      "approach": "Concept tested: **the overflow condition** for 2's-complement addition. Overflow needs same-sign operands; equivalently the carry into the sign bit differs from the carry out of it.",
       "concepts": [
-        "2's complement overflow"
+        "Overflow rule",
+        "Carry vs overflow"
       ],
       "steps": [
         {
           "title": "Opposite signs",
-          "body": "If $a\\ge0>b$ then $b\\le a+b<a$, so $a+b$ lies inside the representable range: no overflow."
+          "body": "If one operand is positive and the other negative, the sum lies between them, hence inside the range: no overflow is possible. That is statement (B)."
         },
         {
-          "title": "Test A and C",
-          "body": "4-bit: $0111+1111$ ($7+(-1)$) $=1\\,0110$: carry out of the sign bit, yet the result $6$ is correct, so A is wrong. Overflow is flagged when the carry into and out of the sign bit differ (not match), so C is wrong."
+          "title": "Check the other statements",
+          "body": "(A) A carry from the sign bit happens in many correct sums, e.g. $-1 + 1 = 0$ ($1111 + 0001 = 1\\,0000$). (C) Overflow is flagged when the two carries **differ**, not when they match."
+        },
+        {
+          "title": "Conclusion",
+          "body": "(B) is true, so (D) 'none of the above' is false. Answer (B)."
         }
       ],
       "answer": {
-        "value": "cannot occur when a positive value is added to a negative value",
+        "value": "(B) overflow cannot occur when a positive value is added to a negative value",
         "choice": [
           "B"
         ],
@@ -1088,25 +1093,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Carry-out alone is not overflow: $7+(-1)$ produces a carry but the result 6 is correct."
+          "reason": "A carry out of the sign bit is not overflow: $1111 + 0001 = 1\\,0000$ is the correct $0$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: the sum of opposite-sign numbers lies between them."
+          "reason": "The sum of opposite-sign values lies between them, so it always fits."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Overflow $=c_{n}\\oplus c_{n-1}$: flagged when the carries differ."
+          "reason": "Overflow is flagged when the carry into and out of the sign bit **differ**."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "B is true."
+          "reason": "(B) is a correct statement."
         }
       ],
-      "verification": "Exhaustive over 4-bit pairs of opposite sign: every sum lies in $[-8,7]$."
+      "shortcut": "Remember V = $c_{n-1} \\oplus c_n$; anything else in the options is a distractor.",
+      "pitfalls": [
+        "Some old keys say (D); (B) is the factually correct statement (see the question's review note)."
+      ],
+      "verification": "Brute force over all 4-bit pairs: no opposite-sign pair overflows. ✓"
     },
     "cse-2002-a-22": {
       "approach": "A scheduler is non-preemptive if a running process keeps the CPU until it blocks or ends; FIFO (FCFS) is the only such one listed.",
@@ -3420,61 +3429,106 @@
       "verification": "Part (a) gives $Z = A+B$ for every input pair, two clocks after loading."
     },
     "cse-2002-b-57-a": {
-      "approach": "Write $7.5$ as a base-16 fraction with a non-zero leading hex digit, bias the exponent by 64, then pack sign | fraction | exponent and read the 32 bits in hex.",
+      "approach": "Concept tested: a **base-16** format with an **excess-64** exponent and an unusual field order (sign | fraction | exponent). Normalise so the first *hex digit* of the fraction is non-zero, then assemble the 32 bits and regroup into hex.",
       "concepts": [
-        "Floating point",
         "Base-16 normalisation",
-        "Excess-64 exponent"
+        "Excess-64 exponent",
+        "Field order"
       ],
+      "given": "| Field | Bits | Meaning |\n|---|---|---|\n| sign (MSB) | 1 | 0 = +, 1 = − |\n| fraction | 24 | point at its left end |\n| exponent | 7 | excess-64, base 16 |",
       "steps": [
+        {
+          "title": "Convert 7.5 to hex",
+          "body": "$7.5 = 7.8_{16}$ (since $0.5 = 8/16$)."
+        },
         {
           "title": "Normalise in base 16",
-          "body": "$7.5 = 7.8_{16} = 0.78_{16}\\times16^1$. The leading hex digit $7 \\ne 0$, so it is normalised. Fraction bits: $0111\\,1000$ followed by 16 zeros, i.e. $780000_{16}$."
+          "body": "Move the point one hex digit left: $7.8_{16} = 0.78_{16} \\times 16^{1}$. The first hex digit (7) is non-zero, so this is normalised and $E = 1$."
         },
         {
-          "title": "Sign and exponent",
-          "body": "Negative, so sign $=1$. Exponent $=1+64 = 65 = 1000001_2 = 41_{16}$ (7 bits)."
+          "title": "Fields",
+          "body": "- Sign: $1$ (negative).\n- Fraction (6 hex digits): $780000_{16} = 0111\\,1000\\,0000\\ldots0$.\n- Exponent: $1 + 64 = 65 = 41_{16} = 100\\,0001_2$."
         },
         {
-          "title": "Pack the word",
-          "body": "$$\\underbrace{1}_{\\text{sign}}\\ \\underbrace{0111\\,1000\\,0000\\,0000\\,0000\\,0000}_{\\text{fraction}}\\ \\underbrace{100\\,0001}_{\\text{exponent}}$$\nRegroup into nibbles: $1011\\ 1100\\ 0000\\ 0000\\ 0000\\ 0000\\ 0100\\ 0001 = \\text{BC000041}_{16}$."
+          "title": "Assemble and regroup",
+          "body": "$1\\ \\ 0111\\,1000\\,0000\\,0000\\,0000\\,0000\\ \\ 100\\,0001$\n\nRegroup the 32 bits in fours: $1011\\,1100\\,0000\\,0000\\,0000\\,0000\\,0100\\,0001 = \\texttt{BC000041}_{16}$."
         }
       ],
       "answer": {
-        "value": "Sign $=1$, fraction $=780000_{16}$, exponent $=41_{16}$ (65); word $=\\text{BC000041}_{16}$",
+        "value": "Sign $= 1$, fraction $= 780000_{16}$, exponent $= 41_{16}$ (65); word $=$ **BC000041H**",
         "matchesKey": true
       },
+      "shortcut": "In base 16 a value between 1 and 16 always has exponent 1 (one hex digit before the point), so the exponent field is $64 + 1 = 41_{16}$ immediately.",
       "pitfalls": [
-        "Normalising in base 2 ($0.1111\\times2^3$) — the base is 16, so only the leading hex digit must be non-zero.",
-        "Forgetting that the 4-bit nibbles straddle the field boundaries when converting the whole word to hex."
+        "Normalising in binary ($0.1111 \\times 2^3$): the exponent is a power of 16, so normalise by hex digits.",
+        "Putting the exponent right after the sign, as in IEEE: this format puts it last.",
+        "Reading the fields' hex digits directly (`1 780000 41`): the fields are not nibble-aligned, so regroup the whole word."
       ],
-      "verification": "Decode: sign 1, exponent $41_{16}-64 = 1$, fraction $0.78_{16} = 7/16+8/256 = 0.46875$; $-0.46875\\times16 = -7.5$."
+      "verification": "Decode BC000041: sign 1, fraction $0.78_{16} = 0.46875$, exponent $65 - 64 = 1$: $-0.46875 \\times 16 = -7.5$. ✓",
+      "animation": {
+        "kind": "bits",
+        "title": "The −7.5 word",
+        "rows": [
+          {
+            "label": "word",
+            "fields": [
+              {
+                "bits": "1",
+                "label": "sign",
+                "tone": "error"
+              },
+              {
+                "bits": "011110000000000000000000",
+                "label": "fraction 0x780000",
+                "tone": "info"
+              },
+              {
+                "bits": "1000001",
+                "label": "exp 65",
+                "tone": "accent"
+              }
+            ],
+            "value": "BC000041"
+          }
+        ]
+      }
     },
     "cse-2002-b-57-b": {
-      "approach": "Largest value = largest fraction × $16^{\\text{largest exponent}}$; convert to a power of 10 with logarithms.",
+      "approach": "Concept tested: the **largest value** of a base-16 format. Take the largest fraction ($0.FFFFFF_{16}$) and the largest exponent (excess-64 in 7 bits gives $+63$), then convert $16^{63}$ to a power of 10.",
       "concepts": [
-        "Floating point range",
+        "Range of a floating-point format",
         "Excess-64 exponent",
-        "Logarithms"
+        "Powers of 16 to powers of 10"
       ],
       "steps": [
         {
-          "title": "Extreme fields",
-          "body": "Largest fraction $=0.\\text{FFFFFF}_{16} = 1-16^{-6} = 1-2^{-24}\\approx1$. Largest exponent field $=127$, so the exponent is $127-64 = 63$."
+          "title": "Largest exponent",
+          "body": "7-bit field: $e \\le 127$, so $E = 127 - 64 = 63$."
         },
         {
-          "title": "Convert",
-          "body": "Max $\\approx16^{63} = 2^{252}$. $\\log_{10}2^{252} = 252\\times0.30103 = 75.86$, so the value is $\\approx 10^{75.86}\\approx 7.2\\times10^{75}$, nearest power of ten $10^{76}$."
+          "title": "Largest fraction",
+          "body": "All 24 bits 1: $0.FFFFFF_{16} = 1 - 16^{-6} \\approx 1$."
+        },
+        {
+          "title": "Largest value",
+          "body": "$x_{\\max} = (1 - 16^{-6}) \\times 16^{63} \\approx 16^{63} = 2^{252}$."
+        },
+        {
+          "title": "Convert to a power of 10",
+          "body": "$\\log_{10} 2^{252} = 252 \\times 0.30103 \\approx 75.86$, so $x_{\\max} \\approx 10^{75.86} \\approx 7.2 \\times 10^{75}$. The nearest power of 10 is $10^{76}$."
         }
       ],
       "answer": {
-        "value": "$(1-2^{-24})\\times16^{63}\\approx 7.2\\times10^{75}\\approx 10^{76}$",
+        "value": "$x_{\\max} = (1 - 16^{-6})\\,16^{63} \\approx 7.2 \\times 10^{75}$, i.e. $\\approx 10^{76}$",
         "matchesKey": true
       },
+      "shortcut": "$16^{63} = 2^{252}$ and $2^{10} \\approx 10^{3}$: $2^{252} = 2^{2} \\cdot (2^{10})^{25} \\approx 4 \\times 10^{75}$, close to $10^{76}$ (the exact log is 75.86).",
       "pitfalls": [
-        "Using exponent $+64$ (field 127 means $127-64=63$)."
+        "Using base 2 ($2^{63} \\approx 10^{19}$): the exponent is a power of 16.",
+        "Taking $E_{\\max} = 64$ or $127$: excess-64 in 7 bits reaches $+63$.",
+        "Rounding $10^{75.86}$ down to $10^{75}$: the nearest power is $10^{76}$."
       ],
-      "verification": "$10^{75.86}$ lies between $10^{75.5}$ and $10^{76}$, so $10^{76}$ is the nearest power of 10."
+      "verification": "$7.24 \\times 10^{75}$ is $10^{75.86}$; $|75.86 - 76| < |75.86 - 75|$, so $10^{76}$ is nearer."
     },
     "cse-2002-b-58-a": {
       "approach": "Map each element to its cache line: line $=\\lfloor\\text{address}/16\\rfloor \\bmod 512$. Two elements conflict only if they map to the same line but lie in different memory blocks.",

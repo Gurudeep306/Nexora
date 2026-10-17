@@ -13,7 +13,7 @@ PYQ pipeline, not a set error).
 
 | # | Topic | Disagreement | Correct version |
 |---|---|---|---|
-| X1 | Floating-point bias | B 151 writes bias = 2ⁿ − 1, while B 152 and its examples use 2^{k−1}. IEEE (D 402–403, A 23) uses 2^{k−1} − 1. | Two conventions exist. *Excess-2^{k−1}* (textbook custom formats, e.g. excess-64 for a 7-bit exponent) and *IEEE* 2^{k−1} − 1 (127 / 1023). The lesson must state which one each question uses (dl-08-01). |
+| X1 | Floating-point bias | B 151 writes bias = 2ⁿ − 1, while B 152 and its examples use 2^{k−1}. IEEE (D 402–403, A 23) uses 2^{k−1} − 1. | Two conventions exist. *Excess-2^{k−1}* (textbook custom formats, e.g. excess-64 for a 7-bit exponent) and *IEEE* 2^{k−1} − 1 (127 / 1023). The lesson must state which one each question uses (dl-01-05, `bias-conventions`). |
 | X2 | Ring/Johnson counters | A 88 lists them under "asynchronous counters". B 155–156 and D 402 treat them as synchronous shift counters. | They are synchronous, because every flip-flop shares one clock. |
 | X3 | Overflow with opposite signs | A 21 says that opposite-sign operands never overflow "in addition or subtraction". B 146 and C 214 state the addition rule only. | Addition: overflow needs same-sign operands. Subtraction A − B = A + (−B), so it can overflow only when A and B have **opposite** signs (4-bit: 7 − (−2) = 9 > 7). |
 | X4 | NAND vs NOR speed | A 95 says NOR is faster. Textbooks say NAND. | In CMOS a NOR puts its series transistors in the slow PMOS pull-up, while a NAND puts them in the NMOS pull-down. So NAND is faster and smaller, which is why it is the preferred universal gate. |
@@ -123,6 +123,36 @@ PYQ pipeline, not a set error).
   entry was needed. The 40 v2 solutions were rewritten or extended to the teacher-style standard
   (concept tested, steps, every option explained, shortcut, pitfalls), enforced by
   `_checks/dl/pyq_ch1.py`.
+
+- `cse-2005-cs-85b` (**fixed 2026-10-17**, `src/gate/fixes/cse-2005.json`): an earlier fix had set
+  `needsReview: true` with a note calling the question flawed ("1.1101 × 2¹⁰ encodes as 4AD0, not an
+  option"). That note dropped a 1: $0.00111101 \times 2^{13} = 1.11101 \times 2^{10}$ (five 1s), so the
+  hidden-bit word is exponent $74 = 1001010$, mantissa $11101000$, i.e. **4AE8 = option D**, the stored
+  key. 4AE8 decodes to $1.90625 \times 2^{10} = 1952 = \tfrac{61}{256} \times 2^{13}$, the same value as
+  part (a). The fix now restores `needsReview: false` and clears the note; the key is unchanged.
+  Re-derived in `_checks/dl/l05_fp_basics.py`.
+- **Floating-point key audit (2026-10-17):** all 25 `dl/floating` keys were re-derived from scratch in
+  `_checks/dl/l05_fp_basics.py`, `l06_ieee754.py` and `l07_fp_arithmetic.py` (exact IEEE arithmetic in
+  `fplib.py`, cross-checked against Python's `struct`/float32 rounding). All 25 stored keys are correct;
+  the only bank change is the `cse-2005-cs-85b` review-note fix above. The 1997 parts (a)–(c) assume
+  truncation, which the lesson states. The 25 v2 solutions were rewritten to the teacher-style standard
+  (enforced by `pyq_ch1.py`).
+- **Arithmetic PYQ move and key audit (2026-10-17):** the 13 number-level PYQs of `dl-05-03`, the 8
+  Booth/product PYQs of `dl-05-04`, `it-2005-cs-47` (lesson 2) and `cse-2010-cs-8` (lesson 4) now live in
+  Chapter 1 lessons 9–10. All 23 keys were re-derived in `_checks/dl/l09_code_arithmetic.py` and
+  `l10_multiplication_booth.py` (brute force where possible, e.g. the overflow formulas over every
+  4- and 8-bit operand pair, Booth counts with `boothlib.py`). All stored keys are correct. Three keep
+  their existing `needsReview` notes, which are about interpretation, not the key: `cse-1995-a-51`
+  (W's negative result as an "error"), `cse-2002-a-21` (some published keys give D; B is right) and
+  `it-2008-it-42` (multiplier read from a blurry scan; with the printed digits the count is 8 = B).
+- **B 185** (Booth): the boxed recoding of −113 drops its leading −1 digit; the full recoding is
+  −1 0 0 +1 0 0 0 −1 (value −128 + 16 − 1 = −113). Lesson 10's `trap-booth-pair` and the value check
+  ("sum the digits times powers of two") catch this.
+- **Floating-point bias conventions in GATE papers** (for lessons 5–7): 1996 used a 2's-complement
+  exponent, 1997 a sign-magnitude exponent, 2002 and 2005 excess-64 (base 16 in 2002), 2003 a bias of 31
+  with the all-ones field meaning zero, and every paper from 2008 the IEEE biases 127 / 1023 (2021-1 says
+  "bias of 127" explicitly). Solution sets that write "bias = 2ᵏ⁻¹" for IEEE, or 2ⁿ − 1 (set B 151), are
+  wrong for IEEE; lesson 5's `bias-conventions` table and `trap-bias` teach the distinction.
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,
