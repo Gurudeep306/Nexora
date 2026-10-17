@@ -820,7 +820,7 @@ One interactive panel with four tabs. It is backed by the same functions as `_ch
 - Lessons: 10 (place value, bases, fractions, signed numbers, FP basics, IEEE-754, FP arithmetic, codes,
   code arithmetic, Booth).
 - Worked examples (step format): 233 (26 / 21 / 18 / 24 / 20 / 32 / 20 / 20 / 36 / 16).
-- Viz scenes: 43 used (32 animated); every new FP/arithmetic scene has a phone (narrow) layout.
+- Viz scenes: 43 used (36 animated); every new FP/arithmetic scene has a phone (narrow) layout.
 - Embedded PYQs with teacher-style v2 solutions: 86 (coverage 86/86).
 - Practice questions: 90, all script-checked.
 - Check scripts: numlib, fplib, boothlib, ten lesson modules, viz generators and structure/PYQ checks.
