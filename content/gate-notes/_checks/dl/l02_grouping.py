@@ -67,6 +67,11 @@ assert nl.to_base(0xA9 - 0x3F, 16) == "6A" and 0xA9 - 0x3F == 106 and 9 + 16 - 1
 assert nl.to_base(v("26", 8) * 7, 8) == "232" and v("26", 8) * 7 == 154 and 6 * 7 == 5 * 8 + 2 and 2 * 7 + 5 == 2 * 8 + 3
 assert nl.to_base(v("4002", 8) - v("1765", 8), 8) == "2015" and v("4002", 8) == 2050 and v("1765", 8) == 1013
 has("$(104)_8$", "$(6A)_{16}$", "$(232)_8$", "$(2015)_8$")
+# Check blocks added in the review pass.
+assert pop(0xA5) == 4 and 10 * 16 + 5 == 0xA5
+assert nl.to_base(v("65", 8) + v("27", 8), 8) == "114" and v("65", 8) == 53 and v("27", 8) == 23 and 53 + 23 == 76 == 64 + 8 + 4
+assert 5 + 7 == 1 * 8 + 4 and 6 + 2 + 1 == 1 * 8 + 1
+has("Result $(114)_8$. Check: $53 + 23 = 76 = 64 + 8 + 4$.")
 
 # PYQ keys.
 bank = {q["id"]: q for q in json.loads((nl.ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
@@ -80,7 +85,7 @@ assert regroup("123456", 8, 16) == "A72E" and regroup("123456", 8, 4) == "221302
 assert 3 * 4096 + 15 * 256 + 5 * 16 + 3 == 0x3F53 and pop(0x3F53) == 10 and opts("cse-1995-a-37")[key("cse-1995-a-37")] == "10"
 printed = 16 ** 3 + 9 + 16 ** 2 + 7 + 16 + 5 + 3
 assert printed == 4392 and pop(printed) == 4 == int(key("cse-1991-a-1-iii")) and pop(0x9753) == 9
-has("which is 4392 and has four 1s", "which has nine 1s")
+has("which is 4392 and", "has four 1s; the key agrees", "which has nine 1s")
 prod = v("33.4", 8) * v("23.4", 8)
 assert prod == F(2145, 4) and nl.to_base_mixed(prod, 8, 1) == "1030.2" and nl.expand_fraction(prod - 536, 8) == ("2", "")
 assert all(v(o.strip("$()_8"), 8) != prod for o in [opts("it-2005-cs-47")[k] for k in "ABC"]) and key("it-2005-cs-47") == "D"

@@ -84,6 +84,17 @@ $0.5 \times 2 = 1.0$ (digit 1), fraction 0: $(0.101)_2 = \tfrac12 + \tfrac18 = 0
 repeated multiplication, then join them at the point.
 :::
 
+Why multiply here when integers needed division? For an integer, the digit you can see
+immediately is the **last** one (the remainder), so you peel from the right by dividing. For a
+fraction, the digit you can expose immediately is the **first** one after the point: one
+multiplication by $b$ pushes it across the point into the integer part. Each method attacks the
+end of the numeral that is next to the point, and moves away from it.
+
+A practical habit: write the fraction you keep at the end of each row in a column. The moment a
+value in that column repeats, stop, because every later row is already known. For decimal inputs
+the kept fractions are always "something over 10, 100, …", so with a little practice you spot the
+repeat after a handful of rows.
+
 :::viz{#peel spec="doubling-peel" mode="animate" depth="standard"}
 :::
 
@@ -369,7 +380,24 @@ $1 - 2^{-f}$; together $2^i - 1 + 1 - 2^{-f} = 2^i - 2^{-f}$.
 The format can never reach $2^i$ itself; that needs one more integer bit.
 :::
 
+The picture to keep in mind is a ruler with $2^n$ tick marks. The number of bits fixes how many
+ticks there are; the position of the point fixes how far apart they are. Moving the point one
+place left halves the spacing (finer resolution) and halves the reach (smaller range). Nothing
+is free: with a fixed word length, **range × resolution trade off exactly**. The animation below
+moves the point through a 4-bit word.
+
 :::viz{#ruler spec="fixed-point-ruler" mode="animate" depth="standard"}
+:::
+
+:::derivation{#choose-format of="choosing i and f for a required range and resolution" depth="standard"}
+Suppose values from $0$ up to $M$ must be stored with a step no coarser than $r$.
+
+- **Fraction bits:** the step $2^{-f}$ must satisfy $2^{-f} \le r$, so $f = \lceil \log_2 (1/r) \rceil$.
+- **Integer bits:** the maximum $2^i - 2^{-f}$ must reach $M$, so take the smallest $i$ with $2^i - 2^{-f} \ge M$ (usually $2^i > M$ is enough).
+
+**Sanity check.** $M = 100$, $r = 0.01$: $2^{-6} = 0.015625$ is too coarse and $2^{-7} = 0.0078125$
+is fine, so $f = 7$; $2^6 = 64$ is too small and $2^7 = 128$ is enough, so $i = 7$. A 14-bit
+7.7 format covers $0$ to $127.9921875$ in steps of $0.0078125$.
 :::
 
 :::viz{#fp-bits spec="fixed-point-bits" mode="static" depth="standard"}
@@ -444,6 +472,26 @@ Maximum $(2^n - 1)2^{-f} = 2^{i} - 2^{-f}$.
 
 :::answer
 $0$ to $2^i - 2^{-f}$.
+:::
+::::
+
+::::example{#ex-fx-design level="gate" title="Design a format for a sensor" depth="standard"}
+A temperature from $0$ to $50$ degrees must be stored unsigned with a resolution of at least $0.1$ degree. What is the smallest fixed-point format?
+
+:::step{why="The step 2⁻ᶠ must be at most 0.1."}
+$2^{-3} = 0.125$ is too coarse; $2^{-4} = 0.0625 \le 0.1$. So $f = 4$.
+:::
+
+:::step{why="The maximum 2ⁱ − 2⁻ᶠ must reach 50."}
+$i = 5$ gives $32 - 0.0625 = 31.9375 < 50$; $i = 6$ gives $64 - 0.0625 = 63.9375 \ge 50$. So $i = 6$.
+:::
+
+:::step{why="The word length is the sum."}
+$n = i + f = 10$ bits, format 6.4: range $0$ to $63.9375$, step $0.0625$.
+:::
+
+:::answer
+10 bits as unsigned 6.4 fixed point.
 :::
 ::::
 

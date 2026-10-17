@@ -109,13 +109,20 @@ PYQ pipeline, not a set error).
 
 ## 3. Question-bank notes (B), for the PYQ pipeline
 - `cse-1991-a-1-iii`: the bank prints 16³ + 9 + 16² + 7 + 16 + 5 + 3 (= 4392 → four 1s, matching
-  the key 4). The original likely read 16³·9 + 16²·7 + 16·5 + 3 = 0x9753 (nine 1s). The key
-  agrees with the printed text, so the lesson evaluates what is printed and flags it. **Open
-  doubt:** confirm against the official 1991 paper.
+  the key 4). Some solution sets read it as 16³·9 + 16²·7 + 16·5 + 3 = 0x9753 (nine 1s).
+  **Resolved 2026-10-17:** the 1991 paper scan in `GATE_PYQ/GATE1991.pdf` (p. 1, Q1(iii)) prints
+  the sum exactly as the bank does, so the key 4 stands. The lesson's `trap-printed` block and
+  aside teach "evaluate what is printed".
 - `it-2004-it-44`: already `needsReview` (reprint typos). Keep it in dl-03-01 and solve the
   intended version with a note.
 - `cse-2002-a-15`: the key D (10001) assumes the minimum width (5 bits). The lesson's
   `min-width` block makes that assumption explicit.
+- **Chapter 1 key audit (2026-10-17):** all 40 `dl/number` keys were re-derived from scratch in
+  `_checks/dl/l01…l05` (brute force where possible, e.g. every radix 2–64, every 4-bit Gray
+  successor, every option of each MCQ/MSQ). All 40 stored keys are correct; no `src/gate/fixes`
+  entry was needed. The 40 v2 solutions were rewritten or extended to the teacher-style standard
+  (concept tested, steps, every option explained, shortcut, pitfalls), enforced by
+  `_checks/dl/pyq_ch1.py`.
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,
