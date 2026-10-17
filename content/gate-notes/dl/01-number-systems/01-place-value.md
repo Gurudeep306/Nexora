@@ -8,7 +8,7 @@ prerequisites: []
 pyq_topics: [dl/number]
 est_minutes: 55
 difficulty: basic
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l01_place_value.py."
@@ -40,7 +40,7 @@ addresses and IEEE-754 fields with exactly the tools built here.
 | Formats | 5 NAT, 4 MCQ, 1 MSQ, 1 fill-in |
 | Pattern 1 | Convert between two bases (often through decimal): 1993, 2021, 2023, 2024 |
 | Pattern 2 | Find an unknown base from an equation: 1997, 2008, 2014, 2017 |
-| Pattern 3 | Count the solutions of a two-unknown base equation under digit limits: 2004, 2014, 2015 |
+| Pattern 3 | Two unknown bases or digits: test candidate pairs (2004) or count the solutions under digit limits (2014, 2015) |
 | What examiners test | The digit limit (a digit must be smaller than its base) and reading remainders in the right order |
 :::
 
@@ -680,7 +680,8 @@ $2^n > N$".
 
 :::note{#recap-count title="Recap" depth="quick"}
 $N$ has $\lfloor \log_b N \rfloor + 1$ digits in base $b$. $k$ digits hold $b^k$ values,
-$0 \dots b^k - 1$. A $k$-digit decimal fits in $\lceil 3.32\,k \rceil$ bits (exactly, $\lceil k\log_2 10\rceil$).
+$0 \dots b^k - 1$. A $k$-digit decimal needs exactly $\lceil k\log_2 10\rceil$ bits, about $3.32\,k$ (rounding
+$3.32\,k$ itself can be one short, e.g. $k = 25$ needs 84 bits, not 83).
 :::
 
 ## When the base is the unknown

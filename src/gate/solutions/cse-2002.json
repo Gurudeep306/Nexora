@@ -738,7 +738,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "With 1s repeating for ever, $(0.00111\\dots)_2$ equals $0.25$ only as a limit, in the same way that $0.999\\dots = 1$; the binary form of $0.25$ is the finite $0.01$. The option baits students who think every decimal fraction recurs in binary."
+          "reason": "Numerically, $(0.00111\\dots)_2$ with 1s for ever also equals $\\tfrac14$ (just as $0.999\\dots = 1$), but the standard finite binary form of $0.25$ is $0.01$, which is option B. The option baits students who think every decimal fraction must recur in binary."
         },
         {
           "option": "D",

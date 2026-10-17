@@ -1939,7 +1939,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "8 misses two 1s, typically by counting F as 2 or 5 as 1."
+          "reason": "8 misses two 1s, for example by counting F as two 1s, or by miscounting two of the digits."
         },
         {
           "option": "B",

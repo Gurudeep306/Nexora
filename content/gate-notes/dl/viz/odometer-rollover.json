@@ -264,7 +264,7 @@
    ]
   },
   {
-   "caption": "Jump ahead to 26 counts: every wheel shows its largest digit, 222. That is 2·9 + 2·3 + 2 = 26 = 3³ − 1.",
+   "caption": "Jump ahead to 26 counts: the three right-hand wheels all show their largest digit, 0222. That is 2·9 + 2·3 + 2 = 26 = 3³ − 1.",
    "patches": [
     {
      "id": "w0",
@@ -313,7 +313,7 @@
    ]
   },
   {
-   "caption": "One more count makes every wheel roll over in turn, and the carry ripples to a new wheel: 1000 in base 3 is 3³ = 27. In any base, 1 followed by k zeros is b to the power k.",
+   "caption": "One more count rolls each of those three wheels over to 0 in turn, and the carry ripples into the fourth wheel: 1000 in base 3 is 3³ = 27. In any base, 1 followed by k zeros is b to the power k.",
    "patches": [
     {
      "id": "w0",

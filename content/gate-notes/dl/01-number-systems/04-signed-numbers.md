@@ -8,7 +8,7 @@ prerequisites: [place-value, power-of-two-bases, fractions-fixed-point]
 pyq_topics: [dl/number]
 est_minutes: 80
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l04_signed.py."

@@ -21,7 +21,7 @@
         "lessons": "written",
         "viz": "done",
         "questions": "done",
-        "review": "pending",
+        "review": "ch1-reviewed",
         "wrapup": "pending"
       },
       "chapters": [
@@ -30,13 +30,14 @@
           "title": "Number systems and codes",
           "lessons": 5,
           "pyqs": 40,
-          "status": "written",
+          "status": "reviewed",
+          "review": "2026-10-17: second-pass examiner review (independent reviewer): 14 findings (4 errors, 3 misleading, 7 minor) all fixed and re-checked; 40/40 PYQ keys re-derived, none wrong; coverage 40/40.",
           "lessons_status": {
-            "place-value": "written+checked",
-            "power-of-two-bases": "written+checked",
-            "fractions-fixed-point": "written+checked",
-            "signed-numbers": "written+checked",
-            "codes": "written+checked"
+            "place-value": "published+reviewed",
+            "power-of-two-bases": "published+reviewed",
+            "fractions-fixed-point": "published+reviewed",
+            "signed-numbers": "published+reviewed",
+            "codes": "published+reviewed"
           }
         },
         {

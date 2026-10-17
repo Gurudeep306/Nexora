@@ -139,7 +139,7 @@
    ]
   },
   {
-   "caption": "Gray bit 2 = binary bit 1 ⊕ binary bit 2 = 1 ⊕ 0 = 1. (⊕ gives 1 exactly when the two bits differ.)",
+   "caption": "The second Gray bit (from the left) = first binary bit ⊕ second binary bit = 1 ⊕ 0 = 1. (⊕ gives 1 exactly when the two bits differ.)",
    "patches": [
     {
      "id": "x1",
@@ -168,7 +168,7 @@
    ]
   },
   {
-   "caption": "Gray bit 3 = binary bit 2 ⊕ binary bit 3 = 0 ⊕ 1 = 1. (⊕ gives 1 exactly when the two bits differ.)",
+   "caption": "The third Gray bit (from the left) = second binary bit ⊕ third binary bit = 0 ⊕ 1 = 1. (⊕ gives 1 exactly when the two bits differ.)",
    "patches": [
     {
      "id": "x2",
@@ -197,7 +197,7 @@
    ]
   },
   {
-   "caption": "Gray bit 4 = binary bit 3 ⊕ binary bit 4 = 1 ⊕ 1 = 0. (⊕ gives 1 exactly when the two bits differ.)",
+   "caption": "The fourth Gray bit (from the left) = third binary bit ⊕ fourth binary bit = 1 ⊕ 1 = 0. (⊕ gives 1 exactly when the two bits differ.)",
    "patches": [
     {
      "id": "x3",

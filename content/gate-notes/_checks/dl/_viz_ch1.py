@@ -137,9 +137,9 @@ def odometer_rollover():
         step("Two counts: the right wheel shows 2, the largest digit base 3 allows.", *show(2, tone_hi=(3,))),
         step("Three counts: the right wheel cannot show 3, so it rolls back to 0 and pushes the next wheel on by one. The display reads 10, which in base 3 means one three and no ones.",
              *show(3, ("carry", {"hidden": False}), tone_hi=(2, 3))),
-        step("Jump ahead to 26 counts: every wheel shows its largest digit, 222. That is 2·9 + 2·3 + 2 = 26 = 3³ − 1.",
+        step("Jump ahead to 26 counts: the three right-hand wheels all show their largest digit, 0222. That is 2·9 + 2·3 + 2 = 26 = 3³ − 1.",
              *show(26, ("carry", {"hidden": True}), tone_hi=())),
-        step("One more count makes every wheel roll over in turn, and the carry ripples to a new wheel: 1000 in base 3 is 3³ = 27. In any base, 1 followed by k zeros is b to the power k.",
+        step("One more count rolls each of those three wheels over to 0 in turn, and the carry ripples into the fourth wheel: 1000 in base 3 is 3³ = 27. In any base, 1 followed by k zeros is b to the power k.",
              *show(27, ("count", {"tone": "success", "fill": "success"}), tone_hi=(0, 1, 2, 3))),
     ]
     return spec("An odometer that rolls over at 3", 560, 260,
@@ -588,7 +588,7 @@ def overflow_wheel():
              (f"n{k(5)}", {"fill": "none", "tone": "ink"}), (f"n{k(-7)}", {"fill": "none", "tone": "ink"}),
              ("path", {"start": 22.5 * 7, "end": 22.5 * 10}), ("ptr", {"to": f"n{k(7)}"}),
              (f"n{k(7)}", {"fill": "danger", "tone": "danger"}), ("lab", {"text": "−6 + (−3) → +7 ✗"})),
-        step("Now 0101 (+5) + 1101 (−3). As unsigned steps that is 13 clockwise, which wraps past 0000 to 0010 = +2. Passing 0000 just drops a carry out of 4 bits; the seam is not crossed, so the answer +2 is right.",
+        step("Now 0101 (+5) + 1101 (−3). As unsigned steps that is 13 clockwise, which lands in the same place as 3 steps back (13 = 16 − 3): 0010 = +2. The band shows the short way round. The 13-step route only passes 0000 (a carry out of 4 bits, dropped); the seam is not crossed, so +2 is right.",
              (f"n{k(7)}", {"fill": "none", "tone": "ink"}), ("path", {"start": 22.5 * 2, "end": 22.5 * 5}),
              ("ptr", {"to": f"n{k(2)}"}), (f"n{k(2)}", {"fill": "success", "tone": "success"}), ("lab", {"text": "5 + (−3) → +2 ✓"})),
         step("Rule: a sum overflows exactly when it crosses the +7 / −8 seam. That can only happen when both operands have the same sign. (Chapter 5 turns this into a gate: carry into the sign bit ≠ carry out of it.)",
@@ -763,7 +763,7 @@ def gray_xor_ladder():
     for i in range(1, 4):
         cur = g[:i + 1] + "?" * (3 - i)
         steps.append(step(
-            f"Gray bit {i + 1} = binary bit {i} ⊕ binary bit {i + 1} = {b[i - 1]} ⊕ {b[i]} = {g[i]}. (⊕ gives 1 exactly when the two bits differ.)",
+            f"The {ordinal(i)} Gray bit (from the left) = {ordinal(i - 1)} binary bit ⊕ {ordinal(i)} binary bit = {b[i - 1]} ⊕ {b[i]} = {g[i]}. (⊕ gives 1 exactly when the two bits differ.)",
             (f"x{i}", {"hidden": False}), ("b", {"highlight": [i - 1, i]}), ("g", {"bits": cur, "highlight": [i]})))
     steps.append(step("So binary 1011 (eleven) has Gray code 1110. In one line: Gray = b ⊕ (b shifted right by 1).",
                       ("b", {"highlight": []}), ("g", {"highlight": []}), ("note", {"text": "1011 ⊕ 0101 = 1110"})))
@@ -793,7 +793,7 @@ def gray_wheel():
     for k in range(8):
         assert nl.hamming_distance(nl.gray_bits(k, 3), nl.gray_bits((k + 1) % 8, 3)) == 1
     return spec("Rotary encoder disc in Gray code", 500, 510,
-                "A disc cut into 8 sectors and 3 rings. Reading clockwise from the top, the sectors are coded 000, 001, 011, 010, 110, 111, 101, 100. At every boundary between neighbouring sectors only one ring changes from clear to shaded, so a sensor sitting on a boundary can misread at most one bit and is never more than one position wrong.",
+                "A disc cut into 8 sectors and 3 rings. Reading clockwise from the top, the sectors are coded 000, 001, 011, 010, 110, 111, 101, 100. At every boundary between neighbouring sectors only one ring changes between clear and shaded, so a sensor sitting on a boundary can misread at most one bit and is never more than one position wrong.",
                 els, [])
 
 
