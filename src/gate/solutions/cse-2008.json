@@ -321,19 +321,24 @@
       }
     },
     "cse-2008-cs-6": {
-      "approach": "Expand both numerals in base $r$: $121_r=(r+1)^2$ and $11_r=r+1$, an identity valid wherever the digits are legal.",
+      "approach": "Concept tested: an identity that holds in every base. Expand both numerals as polynomials in $r$; if they match for all $r$, the only restriction left is the digit limit.",
       "concepts": [
-        "Positional number systems",
-        "Radix"
+        "Polynomial in the radix",
+        "Identities in every base",
+        "Digit limit"
       ],
       "steps": [
         {
-          "title": "Expand",
-          "body": "$121_r=r^2+2r+1=(r+1)^2$, and $11_r=r+1$."
+          "title": "Expand both numerals",
+          "body": "$121_r = r^2 + 2r + 1 = (r + 1)^2$ and $11_r = r + 1$."
         },
         {
-          "title": "Valid radices",
-          "body": "$\\sqrt{(r+1)^2}=r+1$ holds for every radix. Digit 2 must be legal, so $r\\ge 3$, i.e. any $r>2$."
+          "title": "Compare",
+          "body": "$\\sqrt{(r+1)^2} = r + 1$ for every positive $r$, so the equation holds whatever the radix is."
+        },
+        {
+          "title": "Apply the digit limit",
+          "body": "The numeral $121_r$ uses the digit 2, which exists only when $r \\ge 3$. So the equation holds for every radix $r > 2$."
         }
       ],
       "answer": {
@@ -347,25 +352,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Works ($\\sqrt{121}=11$) but is not the only value."
+          "reason": "$r = 10$ does work ($\\sqrt{121} = 11$), but the question asks for *the only* values, and every $r > 2$ works."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Works ($144_{10}$, root $12$) but not uniquely."
+          "reason": "$r = 11$ works too ($121_{11} = 144 = 12^2$, $11_{11} = 12$), but it is not the only one."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Still omits e.g. $r=3$: $121_3=16=4^2$, $11_3=4$."
+          "reason": "Still incomplete: for example $r = 3$ gives $121_3 = 16 = 4^2$ and $11_3 = 4$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "The identity holds for every radix in which digit 2 exists."
+          "reason": "The equation is an identity in $r$; only the digit 2 restricts the base, to $r \\ge 3$."
         }
       ],
-      "verification": "$r=5$: $121_5=36$, $11_5=6$, $\\sqrt{36}=6$ ✓."
+      "shortcut": "Recognise the pattern $121 = 11^2$ as $(r+1)^2$: any equation whose two sides are the same polynomial in $r$ holds in every legal base.",
+      "pitfalls": [
+        "Solving for one value when the equation is an identity.",
+        "Forgetting the digit limit and answering \\\"every $r \\ge 2$\\\"."
+      ],
+      "verification": "$r = 5$: $121_5 = 36$, $11_5 = 6$, $\\sqrt{36} = 6$ ✓. $r = 3$: $121_3 = 16$, $11_3 = 4$ ✓."
     },
     "cse-2008-cs-7": {
       "approach": "Run DFS/BFS from every unvisited vertex, counting the starts; each vertex and edge is touched a constant number of times.",

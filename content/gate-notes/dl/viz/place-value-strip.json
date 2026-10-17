@@ -1,0 +1,318 @@
+{
+ "version": 1,
+ "title": "Place value: the same digits in base 3 and base 5",
+ "width": 560,
+ "height": 300,
+ "intro": "The digits 1 2 0 1 in four cells. Above each cell is its place value in base 3, a power of 3 that grows from right to left.",
+ "elements": [
+  {
+   "id": "base",
+   "type": "text",
+   "x": 280,
+   "y": 22,
+   "text": "Reading 1201 in base 3",
+   "anchor": "middle",
+   "size": 18,
+   "weight": "bold"
+  },
+  {
+   "id": "cells",
+   "type": "bits",
+   "x": 136,
+   "y": 70,
+   "bits": "1201",
+   "cell": 72,
+   "labels": [
+    "3³",
+    "3²",
+    "3¹",
+    "3⁰"
+   ],
+   "below": [
+    "27",
+    "9",
+    "3",
+    "1"
+   ]
+  },
+  {
+   "id": "c0",
+   "type": "text",
+   "x": 172.0,
+   "y": 194,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "tone": "subject"
+  },
+  {
+   "id": "c1",
+   "type": "text",
+   "x": 244.0,
+   "y": 194,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "tone": "subject"
+  },
+  {
+   "id": "c2",
+   "type": "text",
+   "x": 316.0,
+   "y": 194,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "tone": "subject"
+  },
+  {
+   "id": "c3",
+   "type": "text",
+   "x": 388.0,
+   "y": 194,
+   "text": "",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "tone": "subject"
+  },
+  {
+   "id": "total",
+   "type": "box",
+   "x": 170,
+   "y": 236,
+   "w": 220,
+   "h": 46,
+   "mono": true,
+   "size": 18,
+   "label": "total = 0"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The first digit is 1 and sits in the 3³ = 27 place, so it adds 1 × 27 = 27. Running total: 27.",
+   "patches": [
+    {
+     "id": "cells",
+     "set": {
+      "highlight": [
+       0
+      ]
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "text": "1×27=27"
+     }
+    },
+    {
+     "id": "total",
+     "set": {
+      "label": "total = 27"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The second digit is 2 and sits in the 3² = 9 place, so it adds 2 × 9 = 18. Running total: 45.",
+   "patches": [
+    {
+     "id": "cells",
+     "set": {
+      "highlight": [
+       0,
+       1
+      ]
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "text": "2×9=18"
+     }
+    },
+    {
+     "id": "total",
+     "set": {
+      "label": "total = 45"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The third digit is 0 and sits in the 3¹ = 3 place, so it adds 0 × 3 = 0. Running total: 45.",
+   "patches": [
+    {
+     "id": "cells",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2
+      ]
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "text": "0×3=0"
+     }
+    },
+    {
+     "id": "total",
+     "set": {
+      "label": "total = 45"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The fourth digit is 1 and sits in the 3⁰ = 1 place, so it adds 1 × 1 = 1. Running total: 46. So (1201)₃ = 46.",
+   "patches": [
+    {
+     "id": "cells",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "text": "1×1=1"
+     }
+    },
+    {
+     "id": "total",
+     "set": {
+      "label": "total = 46"
+     }
+    },
+    {
+     "id": "total",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now keep the same four digits but switch the base to 5. Only the place values change: 125, 25, 5 and 1.",
+   "patches": [
+    {
+     "id": "base",
+     "set": {
+      "text": "Reading 1201 in base 5"
+     }
+    },
+    {
+     "id": "cells",
+     "set": {
+      "labels": [
+       "5³",
+       "5²",
+       "5¹",
+       "5⁰"
+      ],
+      "below": [
+       "125",
+       "25",
+       "5",
+       "1"
+      ],
+      "highlight": []
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "total",
+     "set": {
+      "label": "total = 0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Weighting each digit again: 125 + 50 + 0 + 1 = 176. Same digits, larger base, larger value: (1201)₅ = 176.",
+   "patches": [
+    {
+     "id": "cells",
+     "set": {
+      "highlight": [
+       0,
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "text": "1×125=125"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "text": "2×25=50"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "text": "0×5=0"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "text": "1×1=1"
+     }
+    },
+    {
+     "id": "total",
+     "set": {
+      "label": "total = 176",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

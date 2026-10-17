@@ -18,8 +18,8 @@
       "stages": {
         "digests": "done",
         "outline": "review",
-        "lessons": "pending",
-        "viz": "pending",
+        "lessons": "in-progress",
+        "viz": "in-progress",
         "questions": "pending",
         "review": "pending",
         "wrapup": "pending"
@@ -30,7 +30,14 @@
           "title": "Number systems and codes",
           "lessons": 5,
           "pyqs": 40,
-          "status": "plan-review"
+          "status": "writing",
+          "lessons_status": {
+            "place-value": "written+checked",
+            "power-of-two-bases": "pending",
+            "fractions-fixed-point": "pending",
+            "signed-numbers": "pending",
+            "codes": "pending"
+          }
         },
         {
           "id": "02-boolean-algebra-gates",

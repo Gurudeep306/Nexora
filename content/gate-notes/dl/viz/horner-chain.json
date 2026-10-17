@@ -1,0 +1,234 @@
+{
+ "version": 1,
+ "title": "Horner's chain: (257)₈ to decimal",
+ "width": 560,
+ "height": 240,
+ "intro": "Start with a running total of 0. Each arrow will multiply the total by the base 8 and add one digit.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 24,
+   "text": "Horner's chain for (257)₈: multiply by 8, add the next digit",
+   "anchor": "middle",
+   "size": 16,
+   "weight": "bold"
+  },
+  {
+   "id": "t0",
+   "type": "box",
+   "x": 30,
+   "y": 90,
+   "w": 110,
+   "h": 52,
+   "mono": true,
+   "size": 22,
+   "tone": "ink",
+   "hidden": false,
+   "label": "0"
+  },
+  {
+   "id": "t1",
+   "type": "box",
+   "x": 160,
+   "y": 90,
+   "w": 110,
+   "h": 52,
+   "mono": true,
+   "size": 22,
+   "tone": "ink",
+   "hidden": true,
+   "label": "?"
+  },
+  {
+   "id": "t2",
+   "type": "box",
+   "x": 290,
+   "y": 90,
+   "w": 110,
+   "h": 52,
+   "mono": true,
+   "size": 22,
+   "tone": "ink",
+   "hidden": true,
+   "label": "?"
+  },
+  {
+   "id": "t3",
+   "type": "box",
+   "x": 420,
+   "y": 90,
+   "w": 110,
+   "h": 52,
+   "mono": true,
+   "size": 22,
+   "tone": "ink",
+   "hidden": true,
+   "label": "?"
+  },
+  {
+   "id": "a0",
+   "type": "arrow",
+   "from": "t0",
+   "to": "t1",
+   "label": "×8, +2",
+   "hidden": true,
+   "tone": "subject"
+  },
+  {
+   "id": "w0",
+   "type": "text",
+   "x": 215,
+   "y": 172,
+   "text": "0×8+2",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "a1",
+   "type": "arrow",
+   "from": "t1",
+   "to": "t2",
+   "label": "×8, +5",
+   "hidden": true,
+   "tone": "subject"
+  },
+  {
+   "id": "w1",
+   "type": "text",
+   "x": 345,
+   "y": 172,
+   "text": "2×8+5",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "a2",
+   "type": "arrow",
+   "from": "t2",
+   "to": "t3",
+   "label": "×8, +7",
+   "hidden": true,
+   "tone": "subject"
+  },
+  {
+   "id": "w2",
+   "type": "text",
+   "x": 475,
+   "y": 172,
+   "text": "21×8+7",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "tone": "muted",
+   "hidden": true
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 280,
+   "y": 220,
+   "text": "",
+   "anchor": "middle",
+   "size": 15
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Take the running total 0, multiply by 8 and add the next digit 2: 0 × 8 + 2 = 2.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "hidden": false,
+      "label": "2",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Take the running total 2, multiply by 8 and add the next digit 5: 2 × 8 + 5 = 21.",
+   "patches": [
+    {
+     "id": "a1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "hidden": false,
+      "label": "21",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Take the running total 21, multiply by 8 and add the next digit 7: 21 × 8 + 7 = 175.",
+   "patches": [
+    {
+     "id": "a2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "hidden": false,
+      "label": "175",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every digit has been used, so the last total is the value: (257)₈ = 175. The same total comes from 2·64 + 5·8 + 7, but without writing any powers.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "2·64 + 5·8 + 7 = 175 ✓"
+     }
+    }
+   ]
+  }
+ ]
+}

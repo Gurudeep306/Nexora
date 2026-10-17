@@ -992,29 +992,41 @@
       "verification": "$218\\times11=2398\\le2400<219\\times11=2409$."
     },
     "cse-1993-ii-a-6-5": {
-      "approach": "Convert the binary fraction by positional weights, and the decimal integer to hex by repeated division by 16.",
+      "approach": "Concept tested: reading a binary numeral with a fraction part by place value, and writing a decimal integer in hex by repeated division by 16.",
       "concepts": [
-        "Positional number systems",
-        "Base conversion"
+        "Place value with fraction digits",
+        "Repeated division",
+        "Hexadecimal digits"
       ],
       "steps": [
         {
-          "title": "Binary to decimal",
-          "body": "$(110.101)_2 = 4+2+0 + \\tfrac12 + 0 + \\tfrac18 = 6 + 0.5 + 0.125 = 6.625$, so $x = 6.625$."
+          "title": "Part (a): the integer bits",
+          "body": "$(110)_2 = 1\\cdot4 + 1\\cdot2 + 0\\cdot1 = 6$."
         },
         {
-          "title": "Decimal to hexadecimal",
-          "body": "$1118 \\div 16 = 69$ r $14$ (E); $69 \\div 16 = 4$ r $5$; $4 \\div 16 = 0$ r $4$.\n\nReading remainders upward: $(1118)_{10} = (45\\text{E})_{16}$."
+          "title": "Part (a): the fraction bits",
+          "body": "After the point the places are $2^{-1} = 0.5$, $2^{-2} = 0.25$, $2^{-3} = 0.125$:\\n$$(0.101)_2 = 1\\cdot0.5 + 0\\cdot0.25 + 1\\cdot0.125 = 0.625.$$\\nSo $x = 6 + 0.625 = 6.625$."
+        },
+        {
+          "title": "Part (b): divide 1118 by 16 repeatedly",
+          "body": "- $1118 = 16\\cdot 69 + 14$ → digit E\\n- $69 = 16\\cdot 4 + 5$ → digit 5\\n- $4 = 16\\cdot 0 + 4$ → digit 4 (quotient 0, stop)"
+        },
+        {
+          "title": "Part (b): read the remainders upward",
+          "body": "The first remainder is the units digit, so read from the last to the first: $4, 5, E$. Hence $y = (45E)_{16}$."
         }
       ],
       "answer": {
         "value": "x = 6.625; y = 45E",
         "matchesKey": true
       },
+      "shortcut": "(a) $(110.101)_2 = (110101)_2 / 2^3 = 53/8 = 6.625$. (b) $1118 = 1024 + 94 = 4\\cdot256 + 5\\cdot16 + 14$, so the hex digits are $4, 5, E$.",
       "pitfalls": [
-        "Reading remainders top-down gives E54, which is wrong."
+        "Reading the fraction bits as decimal digits ($6.101$) instead of halves, quarters and eighths.",
+        "Writing the remainders top-down, $E54$, which reverses the numeral.",
+        "Writing the remainder 14 as two digits \\\"14\\\" instead of the single hex digit E."
       ],
-      "verification": "$4\\cdot256 + 5\\cdot16 + 14 = 1024 + 80 + 14 = 1118$."
+      "verification": "$4\\cdot256 + 5\\cdot16 + 14 = 1024 + 80 + 14 = 1118$ and $53/8 = 6.625$."
     },
     "cse-1993-ii-a-6-6": {
       "approach": "A ROM truth table has one word per input combination and one output bit per product bit.",

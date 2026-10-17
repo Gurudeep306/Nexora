@@ -22,7 +22,7 @@
 export const VIZ_TONES = ['ink', 'muted', 'accent', 'subject', 'success', 'warning', 'danger', 'info'] as const
 export type VizTone = (typeof VIZ_TONES)[number]
 
-export const VIZ_ELEMENT_TYPES = ['box', 'circle', 'node', 'text', 'arrow', 'line', 'table', 'grid', 'bits'] as const
+export const VIZ_ELEMENT_TYPES = ['box', 'circle', 'node', 'text', 'arrow', 'line', 'table', 'grid', 'bits', 'arc'] as const
 export type VizElementType = (typeof VIZ_ELEMENT_TYPES)[number]
 
 export type VizPoint = [number, number]
@@ -126,7 +126,28 @@ export interface VizBits extends Common {
   highlight?: number[]
 }
 
-export type VizElement = VizBox | VizCircle | VizText | VizArrow | VizLine | VizTable | VizGrid | VizBits
+/**
+ * An annular sector (r0 > 0) or a pie slice (r0 = 0 or omitted): wheels,
+ * rotary encoder discs, the halves of a number circle. Angles are degrees
+ * clockwise from 12 o'clock; end − start is at most 360 (a full ring).
+ */
+export interface VizArc extends Common {
+  type: 'arc'
+  cx: number
+  cy: number
+  /** Outer radius. */
+  r: number
+  /** Inner radius (0 = a pie slice). */
+  r0?: number
+  start: number
+  end: number
+  /** Drawn at the middle of the band. */
+  label?: string
+  mono?: boolean
+  size?: number
+}
+
+export type VizElement = VizBox | VizCircle | VizText | VizArrow | VizLine | VizTable | VizGrid | VizBits | VizArc
 
 export interface VizPatch {
   id: string
@@ -233,6 +254,10 @@ const FIELDS: Record<VizElementType, { required: string[]; props: Record<string,
       mono: bool,
     },
   },
+  arc: {
+    required: ['cx', 'cy', 'r', 'start', 'end'],
+    props: { cx: num(), cy: num(), r: num(1), r0: num(0), start: num(-720, 720), end: num(-720, 720), ...LABEL },
+  },
   bits: {
     required: ['x', 'y', 'bits'],
     props: {
@@ -268,6 +293,11 @@ function checkElement(el: unknown, where: string): string[] {
     const rows = el.rows as number
     const cols = el.cols as number
     if (el.values.length > rows || el.values.some((r) => Array.isArray(r) && r.length > cols)) errs.push(`${where}.values: larger than rows × cols`)
+  }
+  if (el.type === 'arc' && typeof el.start === 'number' && typeof el.end === 'number') {
+    const sweep = el.end - el.start
+    if (!(sweep > 0 && sweep <= 360)) errs.push(`${where}.end: must be after start, at most one full turn (360°) later`)
+    if (typeof el.r0 === 'number' && typeof el.r === 'number' && el.r0 >= el.r) errs.push(`${where}.r0: inner radius must be smaller than r`)
   }
   if (el.type === 'bits' && typeof el.bits === 'string') {
     for (const k of ['labels', 'below'] as const) {

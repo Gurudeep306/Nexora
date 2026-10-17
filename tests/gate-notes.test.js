@@ -380,3 +380,39 @@ test('notes inks (subject accents, asides, traps, maths, sticky notes) are AA on
   }
   assert.deepEqual(failures, [], `\n${failures.join('\n')}`);
 });
+
+/* ── Viz: the arc (sector) primitive — schema and geometry ── */
+
+test('viz arc: valid sectors pass, bad sweeps and radii are reported, geometry is exact', async () => {
+  const { pathToFileURL } = require('node:url');
+  const viz = (f) => import(pathToFileURL(path.join(ROOT, 'client', 'src', 'viz', f)).href);
+  const { validateVizSpec } = await viz('schema.ts');
+  const { arcPath, arcLabelPoint, polar } = await viz('geometry.ts');
+  const spec = (el, steps = []) => ({ version: 1, title: 'Wheel', width: 200, height: 200, elements: [el], steps });
+  const ok = { id: 'a', type: 'arc', cx: 100, cy: 100, r: 80, r0: 40, start: 0, end: 90, fill: 'subject', label: '01' };
+
+  assert.deepEqual(validateVizSpec(spec(ok)), []);
+  const { r0: _r0, ...pie } = ok;
+  assert.deepEqual(validateVizSpec(spec({ ...pie, start: -90, end: 270 })), [], 'a full pie is allowed');
+  assert.deepEqual(validateVizSpec(spec(ok, [{ caption: 'Turn the band', patches: [{ id: 'a', set: { start: 90, end: 180 } }] }])), []);
+  assert.match(validateVizSpec(spec({ ...ok, end: 0 })).join('\n'), /elements\[0\]\.end: must be after start/);
+  assert.match(validateVizSpec(spec({ ...ok, end: 400 })).join('\n'), /at most one full turn/);
+  assert.match(validateVizSpec(spec({ ...ok, r0: 80 })).join('\n'), /r0: inner radius must be smaller than r/);
+  const { start: _s, ...noStart } = ok;
+  assert.match(validateVizSpec(spec(noStart)).join('\n'), /start: is required for a arc/);
+  assert.match(validateVizSpec(spec(ok, [{ caption: 'Bad', patches: [{ id: 'a', set: { end: -10 } }] }])).join('\n'), /steps\[0\]\.patches\[0\]\.set\.end: must be after start/);
+
+  // 0° is 12 o'clock and angles run clockwise.
+  assert.deepEqual(polar(100, 100, 50, 0), [100, 50]);
+  assert.deepEqual(polar(100, 100, 50, 90), [150, 100]);
+  assert.deepEqual(polar(100, 100, 50, 180), [100, 150]);
+  // Quarter band: outer arc to 3 o'clock, inner arc back.
+  assert.equal(arcPath(100, 100, 80, 40, 0, 90), 'M100 20 A80 80 0 0 1 180 100 L140 100 A40 40 0 0 0 100 60 Z');
+  // A sweep over 180° sets the large-arc flag; a pie slice starts at the centre.
+  assert.match(arcPath(100, 100, 80, 0, 0, 270), /^M100 100 L100 20 A80 80 0 1 1 20 100 Z$/);
+  // A full ring is two half arcs plus the inner hole.
+  const ring = arcPath(100, 100, 80, 40, 0, 360);
+  assert.equal((ring.match(/A80 80/g) || []).length, 2);
+  assert.equal((ring.match(/A40 40/g) || []).length, 2);
+  assert.deepEqual(arcLabelPoint(100, 100, 80, 40, 0, 90), polar(100, 100, 60, 45));
+});

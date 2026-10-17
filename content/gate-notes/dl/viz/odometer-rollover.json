@@ -1,0 +1,366 @@
+{
+ "version": 1,
+ "title": "An odometer that rolls over at 3",
+ "width": 560,
+ "height": 260,
+ "intro": "Four counter wheels, all at 0. Under each wheel is the place value it stands for: 27, 9, 3 and 1.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 26,
+   "text": "A base-3 counter (each wheel shows 0, 1 or 2)",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "w0",
+   "type": "box",
+   "x": 120,
+   "y": 70,
+   "w": 64,
+   "h": 76,
+   "mono": true,
+   "size": 34,
+   "label": "0"
+  },
+  {
+   "id": "p0",
+   "type": "text",
+   "x": 152.0,
+   "y": 166,
+   "text": "3³",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "w1",
+   "type": "box",
+   "x": 200,
+   "y": 70,
+   "w": 64,
+   "h": 76,
+   "mono": true,
+   "size": 34,
+   "label": "0"
+  },
+  {
+   "id": "p1",
+   "type": "text",
+   "x": 232.0,
+   "y": 166,
+   "text": "3²",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "w2",
+   "type": "box",
+   "x": 280,
+   "y": 70,
+   "w": 64,
+   "h": 76,
+   "mono": true,
+   "size": 34,
+   "label": "0"
+  },
+  {
+   "id": "p2",
+   "type": "text",
+   "x": 312.0,
+   "y": 166,
+   "text": "3¹",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "w3",
+   "type": "box",
+   "x": 360,
+   "y": 70,
+   "w": 64,
+   "h": 76,
+   "mono": true,
+   "size": 34,
+   "label": "0"
+  },
+  {
+   "id": "p3",
+   "type": "text",
+   "x": 392.0,
+   "y": 166,
+   "text": "3⁰",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "muted"
+  },
+  {
+   "id": "count",
+   "type": "box",
+   "x": 160,
+   "y": 196,
+   "w": 240,
+   "h": 44,
+   "mono": true,
+   "size": 17,
+   "label": "count = 0"
+  },
+  {
+   "id": "carry",
+   "type": "arrow",
+   "from": [
+    364,
+    62
+   ],
+   "to": [
+    340,
+    62
+   ],
+   "curve": -0.5,
+   "tone": "warning",
+   "hidden": true,
+   "label": "carry"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "One count: the right wheel moves from 0 to 1.",
+   "patches": [
+    {
+     "id": "w0",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "label": "1",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "count",
+     "set": {
+      "label": "count = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Two counts: the right wheel shows 2, the largest digit base 3 allows.",
+   "patches": [
+    {
+     "id": "w0",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "label": "2",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "count",
+     "set": {
+      "label": "count = 2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Three counts: the right wheel cannot show 3, so it rolls back to 0 and pushes the next wheel on by one. The display reads 10, which in base 3 means one three and no ones.",
+   "patches": [
+    {
+     "id": "w0",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "label": "1",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "label": "0",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "count",
+     "set": {
+      "label": "count = 3"
+     }
+    },
+    {
+     "id": "carry",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Jump ahead to 26 counts: every wheel shows its largest digit, 222. That is 2·9 + 2·3 + 2 = 26 = 3³ − 1.",
+   "patches": [
+    {
+     "id": "w0",
+     "set": {
+      "label": "0",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "label": "2",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "label": "2",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "label": "2",
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "count",
+     "set": {
+      "label": "count = 26"
+     }
+    },
+    {
+     "id": "carry",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "One more count makes every wheel roll over in turn, and the carry ripples to a new wheel: 1000 in base 3 is 3³ = 27. In any base, 1 followed by k zeros is b to the power k.",
+   "patches": [
+    {
+     "id": "w0",
+     "set": {
+      "label": "1",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "label": "0",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "label": "0",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "label": "0",
+      "tone": "subject",
+      "fill": "subject"
+     }
+    },
+    {
+     "id": "count",
+     "set": {
+      "label": "count = 27"
+     }
+    },
+    {
+     "id": "count",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
