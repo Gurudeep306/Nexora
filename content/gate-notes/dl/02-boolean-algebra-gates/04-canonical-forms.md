@@ -8,8 +8,8 @@ prerequisites: [boolean-laws]
 pyq_topics: [dl/boolean]
 est_minutes: 50
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every minterm list, count and answer is checked by enumeration in content/gate-notes/_checks/dl/l2_04_canonical_forms.py."
   - "Coverage checklist only (internal digests, never copied): set A pp. 36–37 and 43, set B pp. 105–108 and 112–113, set C pp. 192–198, 241–244, 253–254 and 268–269, set E p. 408. Set C's 'number of variables = 2ⁿ' slip is recorded in _errata/dl.md."
@@ -27,7 +27,7 @@ fall out: how many functions of $n$ variables exist, and how many of them are **
 ## Where this fits
 
 [Lesson 2](lesson:boolean-laws) simplified expressions by algebra; here we go the other way, to
-the *largest* standard form, because it is the one that is unique. Lesson 5 uses the canonical form
+the *fully expanded* standard form, because it is the one that is unique. Lesson 5 uses the canonical form
 to prove that {AND, OR, NOT} can build every function; Lesson 6 uses minterm-set algebra to read
 circuits made of function blocks; and Chapter 3 (K-maps) starts from the minterm list.
 
@@ -125,7 +125,7 @@ On a 0-row $r$, the factor $M_r$ is 0, so the product is 0; on a 1-row every fac
 :::
 
 :::theorem{#canonical-unique name="The canonical forms are unique" depth="standard"}
-Two expressions describe the same function exactly when they have the same minterm list (equivalently,
+Two expressions **over the same ordered variable list** describe the same function exactly when they have the same minterm list (equivalently,
 the same maxterm list). In particular every function has exactly one canonical SOP and one canonical POS.
 :::
 
@@ -191,8 +191,14 @@ order the function is written in, $f(P, Q, R)$), or if the expression is not a s
 
 :::trap{#trap-var-order title="Indices depend on the variable order" depth="quick"}
 The same expression has different minterm numbers under different variable orders. $AB'$ is
-$\Sigma(4, 5)$ as $f(A, B, C)$ but $\Sigma(1, 5)$ as $f(C, B, A)$, because now $C$ is the most
-significant bit. Always use the order given in the question.
+$\Sigma(4, 5)$ as $f(A, B, C)$ but $\Sigma(1, 3)$ as $f(B, C, A)$, because now $B$ is the most
+significant bit and $A$ the least. Always use the order given in the question.
+:::
+
+:::trap{#trap-rows-functions title="Rows are not functions" depth="quick"}
+$n$ variables give $2^n$ **rows** (minterms) but $2^{2^n}$ **functions**. Examiners offer $2^n$, $n^2$
+and $2^{n^2}$ as distractors for "how many functions"; $2^n$ is the size of one truth table, not the
+number of different tables.
 :::
 
 ### Worked examples: minterms and canonical forms
@@ -284,6 +290,14 @@ $k$-literal term covers $2^{n-k}$ minterms.
 :::
 
 ## Functions as sets of rows
+
+:::intuition{#sets-intuition title="A function is a set of lit squares" depth="standard"}
+Draw the $2^n$ rows as squares on a strip and light the squares where the function is 1. A function
+*is* its set of lit squares. Now two functions are two sets of lit squares, and the gates become set
+operations you can see: AND keeps the squares lit in both, OR the squares lit in either, XOR the
+squares lit in exactly one, NOT the dark squares. Questions about circuits of function blocks become
+questions about overlapping sets.
+:::
 
 Once a function is a list of rows, its algebra is the algebra of sets.
 
@@ -402,6 +416,13 @@ variables. Complementary rows sum to $2^n - 1$.
 
 ## Counting Boolean functions
 
+:::intuition{#count-intuition title="Fill in the output column, one free choice per row" depth="standard"}
+A truth table has a fixed left part (all input rows) and an output column you can fill in as you like.
+Every way of filling it is a different function. So counting functions is counting ways to fill a
+column of $2^n$ boxes with 0s and 1s, and each restriction ("exactly $k$ ones", "self-dual", "ignores
+$x_1$") just ties some boxes together or fixes how many are 1.
+:::
+
 :::derivation{#count-functions of="the number of Boolean functions of n variables" depth="quick"}
 A function is its output column. There are $2^n$ rows, and each row's output is chosen independently
 as 0 or 1, so by the multiplication principle there are
@@ -430,7 +451,7 @@ at most 3, $1 + 8 + 28 + 56 = 93$.
 :::
 
 :::definition{#neutral term="Neutral functions" depth="quick"}
-A function is **neutral** when it has as many 1s as 0s: exactly $2^{n-1}$ minterms. Their number is
+A function is **neutral** (also called *balanced*, as in Lesson 1) when it has as many 1s as 0s: exactly $2^{n-1}$ minterms. Their number is
 $\binom{2^n}{2^{n-1}}$: 6 for $n = 2$, 70 for $n = 3$. XOR and XNOR of any number of variables are
 neutral.
 :::
@@ -506,7 +527,7 @@ How many neutral functions of 3 variables are there, and how many of them are se
 $\binom{8}{4} = 70$.
 :::
 
-:::step{why="Self-dual functions are neutral, but they must also take one row of each complementary pair (next section)."}
+:::step{why="A self-dual function has one minterm per complementary pair (proved in the next section), hence 4 of 8 rows, chosen one per pair."}
 Self-dual: one choice per pair, 4 pairs, $2^4 = 16$.
 :::
 
@@ -527,7 +548,7 @@ $6$ functions ignore at least one variable.
 :::
 
 :::answer
-$16 - 6 = 10$: AND, OR, NAND, NOR, XOR, XNOR and the four 'one input inverted' functions.
+$16 - 6 = 10$: AND, OR, NAND, NOR, XOR, XNOR and $AB'$, $A'B$, $A + B'$, $A' + B$ (inhibition and implication).
 :::
 ::::
 
@@ -537,6 +558,14 @@ $2^{2^{n-1}}$ ignoring a given variable; $2^{n+1}$ symmetric; $2^{2^n - 1}$ 0-pr
 :::
 
 ## Duals and self-dual functions
+
+:::intuition{#selfdual-intuition title="A function that respects the mirror" depth="standard"}
+Turn every input into its opposite. Most functions then do something unrelated. A **self-dual**
+function answers with exactly the opposite of what it said before: the majority vote of three people
+flips if every vote flips. Pair each row with its mirror row (all bits flipped); a self-dual function
+must say "yes" on exactly one row of every mirror pair. That one picture gives both the test and the
+count.
+:::
 
 [Lesson 2](lesson:boolean-laws) defined the dual of an *expression* (swap $+$ and $\cdot$, swap 0 and
 1). Here is what it does to the *function*.
@@ -552,8 +581,8 @@ So the dual depends only on the function, not on the expression chosen for it.
 :::proof{#proof-dual-theorem of="the dual as a function" depth="standard"}
 **Idea first:** combine the general De Morgan rule with "complement every literal".
 
-By the general De Morgan rule, $E'$ is obtained from $E$ by swapping the operators *and* complementing
-every literal: $E'$ is the dual expression with complemented literals, $f(x)' = E^D(x')$. Replace every
+By the general De Morgan rule, $E'$ is obtained from $E$ by swapping $+$ and $\cdot$, swapping 0 and 1,
+*and* complementing every literal: $E'$ is the dual expression with complemented literals, $f(x)' = E^D(x')$. Replace every
 $x_i$ by $x_i'$ (which undoes the complemented literals): $f(x')' = E^D(x)$. So the dual expression
 computes $x \mapsto f(x')'$.
 
@@ -577,12 +606,21 @@ $$
 complementing **all** the inputs complements the output.
 :::
 
-:::definition{#self-dual-test term="The complementary-pair test" depth="quick"}
+:::theorem{#self-dual-test name="The complementary-pair test" depth="standard"}
 Pair each row $i$ with its complement row $2^n - 1 - i$. Then $f$ is self-dual exactly when, in
 **every** pair, **exactly one** of the two rows is a minterm.
 
 Consequences: a self-dual function has exactly $2^{n-1}$ minterms (it is neutral), and it never
 contains both $m_i$ and $m_{2^n - 1 - i}$.
+:::
+
+:::proof{#proof-self-dual-test of="the complementary-pair test" depth="standard"}
+**Idea first:** complementing every input of row $i$ lands on row $2^n - 1 - i$.
+
+Complementing all the bits of $i$ gives the bitwise complement, whose value is $2^n - 1 - i$. So the
+condition $f(x') = f(x)'$ for every input says exactly that $f(i) \ne f(2^n - 1 - i)$ for every $i$: in
+each pair one row is a 1 (a minterm) and the other a 0. The pairs partition the $2^n$ rows into
+$2^{n-1}$ pairs, so there are exactly $2^{n-1}$ minterms.
 :::
 
 :::viz{#pairs-viz spec="self-dual-pairs" mode="animate" depth="standard"}
@@ -623,24 +661,108 @@ only test "4 minterms out of 8" conclude that every neutral function is. Use the
 
 ## The majority function
 
+:::intuition{#majority-intuition title="Three judges, and the tie-breaker" depth="standard"}
+Three judges vote; the majority wins. If two judges already agree, the third judge's vote cannot change
+the outcome. If the first two disagree, the third judge decides alone. These two sentences prove almost
+every majority identity GATE asks about.
+:::
+
 :::definition{#majority term="The majority function" depth="quick"}
 $M(a, b, c)$ is 1 when at least two of its three inputs are 1:
 $$
 M(a, b, c) = ab + bc + ca = \Sigma(3, 5, 6, 7) = \Pi(0, 1, 2, 4).
 $$
 Properties used in GATE:
-- **Two equal inputs decide:** $M(a, a, b) = a$ (if two inputs agree, they are the majority).
-- **Self-dual:** its dual $(a + b)(b + c)(c + a)$ expands back to $ab + bc + ca$; in pair terms it takes
-  7, 6, 5, 3 from the pairs (0, 7), (1, 6), (2, 5), (3, 4).
+- **Two equal inputs decide:** $M(a, a, b) = a \cdot a + ab + ba = a + ab = a$ (absorption).
+- **Self-dual:** its dual is $(a + b)(b + c)(c + a)$; $(a + b)(b + c) = b + ac$ and
+  $(b + ac)(c + a) = bc + ab + ac$, the original. In pair terms it takes 7, 6, 5, 3 from the pairs
+  (0, 7), (1, 6), (2, 5), (3, 4).
+- **Fixing one input:** $M(a, b, 0) = ab$ and $M(a, b, 1) = a + b$.
 - **Symmetric and monotone:** permuting the inputs changes nothing, and turning an input from 0 to 1 never
   turns the output from 1 to 0.
 - It depends on all three inputs (it is not independent of any of them).
 - It is the carry-out of a full adder (Chapter 5).
 :::
 
-To prove an identity about $M$, split into cases on whether two particular inputs are equal: if
-$a = b$ then $M(a, b, \cdot) = a$ at once, and if $a \ne b$ then $M(a, b, c) = c$ (the third input
-breaks the tie). Two cases settle almost any majority identity.
+:::theorem{#majority-cases name="The tie-breaker rule" depth="standard"}
+For all $a, b, c$: if $a = b$ then $M(a, b, c) = a$, and if $a \ne b$ then $M(a, b, c) = c$.
+:::
+
+:::proof{#proof-majority-cases of="the tie-breaker rule" depth="standard"}
+**Idea first:** with only two input values, two equal inputs are already a majority.
+
+If $a = b$, then $M(a, a, c) = a$ by the absorption computation above. If $a \ne b$, one of $a, b$ is 0
+and the other 1, so $ab = 0$ and $a + b = 1$; then $M = ab + c(a + b) = 0 + c = c$.
+:::
+
+To prove an identity about $M$, split into the two cases of the rule on a well-chosen pair of inputs.
+Two cases settle almost any majority identity.
+
+### Worked examples: the majority function
+
+::::example{#ex-maj-eval level="easy" title="Evaluate the majority" depth="quick"}
+Find $M(1, 0, 1)$ and $M(0, 0, 1)$.
+
+:::step{why="Count the 1s: at least two means 1."}
+$M(1, 0, 1)$: two 1s, so 1.
+:::
+
+:::step{why="One 1 is not a majority."}
+$M(0, 0, 1)$: one 1, so 0 (equivalently: the first two agree on 0, so they decide).
+:::
+
+:::answer
+1 and 0.
+:::
+::::
+
+::::example{#ex-maj-fix level="medium" title="Fix one input to a constant" depth="standard"}
+Simplify $M(a, b, 0)$ and $M(a, b, 1)$.
+
+:::step{why="Substitute c = 0 into ab + bc + ca."}
+$M(a, b, 0) = ab + 0 + 0 = ab$.
+:::
+
+:::step{why="Substitute c = 1."}
+$M(a, b, 1) = ab + b + a = a + b$ (absorption).
+:::
+
+:::answer
+$ab$ and $a + b$: a majority gate with a constant input is an AND or an OR.
+:::
+::::
+
+::::example{#ex-maj-selfdual level="gate" title="Prove that majority is self-dual by the tie-breaker rule" depth="standard"}
+Show $M(a', b', c') = M(a, b, c)'$.
+
+:::step{why="Use the rule on the pair (a, b); complementing preserves equality of a and b."}
+If $a = b$: $M(a', b', c') = a'$ and $M(a, b, c)' = a'$. Equal.
+:::
+
+:::step{why="If a ≠ b then also a′ ≠ b′, so the third input decides on both sides."}
+If $a \ne b$: $M(a', b', c') = c'$ and $M(a, b, c)' = c'$. Equal.
+:::
+
+:::answer
+Equal in both cases, so $M$ is self-dual.
+:::
+::::
+
+::::example{#ex-maj-edge level="gate" title="Edge case: a complemented pair as two of the inputs" depth="standard"}
+Simplify $M(a, b, a')$.
+
+:::step{why="The inputs a and a′ always disagree."}
+Apply the tie-breaker rule to the pair $(a, a')$: they are never equal.
+:::
+
+:::step{why="So the remaining input decides."}
+$M(a, b, a') = b$. Check: $ab + ba' + aa' = b(a + a') + 0 = b$.
+:::
+
+:::answer
+$M(a, b, a') = b$, whatever $a$ is.
+:::
+::::
 
 ### Worked examples: duals and self-duality
 
@@ -671,7 +793,7 @@ $(0, 7), (1, 6), (2, 5), (3, 4)$.
 $(0, 7)$: 0. $(1, 6)$: 6. $(2, 5)$: 5. $(3, 4)$: 3. Exactly one in every pair.
 :::
 
-:::step{why="That is the self-dual test; recognise the function as a check: the 1-rows have an even number of 1s."}
+:::step{why="As a cross-check, rows 000, 011, 101, 110 all have an even number of 1s, so f is even parity, and an odd-length parity function is self-dual."}
 So $f$ is self-dual. (It is the even-parity function $(A \oplus B \oplus C)'$, an odd number of variables.)
 :::
 

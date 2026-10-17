@@ -1125,7 +1125,7 @@ def block_sets():
              ("res", {"text": "Σ(14) ⊆ f₃ ⊆ Σ(3, 7, 9, 14)", "tone": "success"})),
     ]
     return spec("Unknown blocks in a circuit of functions, by minterm sets", (W, 320), (NW, 290),
-                "Four-variable functions as rows 0–15. The circuit computes f = f₁·f₂ + f₃; f₁, f₂ and f are known.", els, st)
+                "Four-variable functions as rows 0–15. The circuit computes f = f₁·f₂ + f₃ with f₁ = Σ(1, 3, 5, 7, 9), f₂ = Σ(3, 7, 9, 12) and the target f = Σ(3, 7, 9, 14).", els, st)
 
 
 @scene

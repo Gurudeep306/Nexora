@@ -321,7 +321,7 @@
           "reason": "Commutative, but $(0 \\uparrow 0) \\uparrow 1 = 0 \\ne 1 = 0 \\uparrow (0 \\uparrow 1)$."
         }
       ],
-      "shortcut": "Inverting gates (NAND, NOR) lose associativity; AND, OR, XOR, XNOR keep it.",
+      "shortcut": "NAND and NOR lose associativity; AND, OR, XOR and XNOR keep it. XNOR shows that inversion alone is not the reason.",
       "pitfalls": [
         "Marking XOR as non-associative because it is 'not idempotent'."
       ],

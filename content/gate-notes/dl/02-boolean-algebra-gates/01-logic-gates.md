@@ -8,8 +8,8 @@ prerequisites: [codes]
 pyq_topics: [dl/gates]
 est_minutes: 35
 difficulty: basic
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l2_01_logic_gates.py."
   - "Coverage checklist only (internal digests, never copied): set A pp. 24–29, set B pp. 109–113, set C pp. 223–229 and 254–255, set E p. 407."

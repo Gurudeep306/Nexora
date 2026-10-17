@@ -8,8 +8,8 @@ prerequisites: [logic-gates]
 pyq_topics: [dl/boolean]
 est_minutes: 60
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every identity, example and answer is checked by truth table in content/gate-notes/_checks/dl/l2_02_boolean_laws.py."
   - "Coverage checklist only (internal digests, never copied): set A pp. 33–35, set B pp. 104–106, set C pp. 189–192, 238–240 and 246, set D p. 400. A consensus typo in set D and unsimplified results in set C are recorded in _errata/dl.md."

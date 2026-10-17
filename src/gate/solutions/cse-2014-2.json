@@ -670,7 +670,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$2^n$ agrees only at $n = 2$ (4); for $n = 3$ there are 16 self-dual functions, not 8."
+          "reason": "$2^n$ agrees only at $n = 1$ (2) and $n = 2$ (4); for $n = 3$ there are 16 self-dual functions, not 8."
         },
         {
           "option": "B",
@@ -690,7 +690,7 @@
       ],
       "shortcut": "Self-dual functions are fixed by half the truth table: $2^{(\\text{rows}/2)}$.",
       "pitfalls": [
-        "Choosing (A) after checking only $n = 2$, where $2^n = 2^{2^{n-1}} = 4$."
+        "Choosing (A) after checking only $n \\le 2$, where $2^n = 2^{2^{n-1}}$."
       ],
       "verification": "Brute force: $n = 1, 2, 3, 4$ give 2, 4, 16, 256 self-dual functions, matching $2^{2^{n-1}}$."
     },

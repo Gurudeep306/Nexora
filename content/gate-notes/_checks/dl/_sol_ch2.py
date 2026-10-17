@@ -160,7 +160,7 @@ SOLUTIONS["cse-2017-2-cs-27"] = {
         opt("C", True, "The left side is $\\bar{x}y$, not $x\\bar{y}$ (e.g. $x = 0, y = 1$: left 1, right 0)."),
         opt("D", False, "$(w + y) \\cdot wy(x + z) = wy(x + z)$, as claimed."),
     ],
-    "shortcut": "For (C), the outer factor $y$ makes the whole left side 0 whenever $y = 0$, but the right side $x\\bar{y}$ needs $y = 0$ to be 1. They can never be 1 together, so they cannot be equal (both are not identically 0).",
+    "shortcut": "For (C), the outer factor $y$ makes the whole left side 0 whenever $y = 0$, but the right side $x\\bar{y}$ needs $y = 0$ to be 1. They can never be 1 together, so they cannot be equal (neither side is identically 0).",
     "pitfalls": ["Losing a bar while applying De Morgan in (B).", "Missing that $\\bar{x}x = 0$ kills a term in (C)."],
     "verification": "$w = 0, x = 0, y = 1$: left of (C) $= (0 + 1) \\cdot 1 = 1$, right $= 0$.",
 }
@@ -181,7 +181,7 @@ SOLUTIONS["cse-2025-2-cs-40"] = {
         opt("C", True, "Expands to $AB + \\bar{A}C + BC$, then consensus."),
         opt("D", True, "De Morgan per factor, then $\\bar{A}BD + \\bar{A}\\bar{B}D = \\bar{A}D$ and $A\\bar{C}\\bar{D}$ is absorbed by $\\bar{C}\\bar{D}$."),
     ],
-    "shortcut": "(B) and (C) are the two faces of the consensus theorem. Only (A) needs real checking, and the single row $A = 1, B = 0, C = 1$ settles it (left 1, right 0).",
+    "shortcut": "(B) is consensus; (C) expands to (B)'s left side, so it is consensus too. Only (A) needs real checking, and the single row $A = 1, B = 0, C = 1$ settles it (left 1, right 0).",
     "pitfalls": ["Complementing the factors of (D) without swapping $+$ to $\\cdot$ inside each.", "Assuming (A) because both sides have similar-looking terms."],
     "verification": "Row $A = 1, B = 0, C = 1$ in (A): left $A\\bar{B}C = 1$; right $BC = 0$, $\\bar{B}\\bar{C} = 0$, $\\bar{A}\\bar{B} = 0$.",
 }
@@ -217,7 +217,7 @@ SOLUTIONS["cse-2002-b-55-a"] = {
     ],
     "answer": {"value": "$f = (x + y)\\,(yz)'$: an OR of $x, y$ ANDed with the NOT of $yz$", "matchesKey": True},
     "shortcut": "When a sum of products needs two different complemented literals, try to collect them into one factor $(a' + b') = (ab)'$; adding a consensus term is the usual way to create that factor.",
-    "pitfalls": ["Writing $x\\overline{y} + y\\overline{z}$ with two NOT gates, which the question forbids.", "Expanding $(x + y)(yz)'$ incorrectly and losing the term $xz'$ (it is the harmless consensus term)."],
+    "pitfalls": ["Writing $x\\overline{y} + y\\overline{z}$ with two NOT gates, which the question forbids."],
     "verification": "Rows where $f = 1$: $xy' = 1$ at 100, 101; $yz' = 1$ at 010, 110. $(x + y)(yz)'$ is 1 at 010, 100, 101, 110 and 0 elsewhere (at 011 and 111, $yz = 1$). Same four rows.",
 }
 
@@ -271,7 +271,7 @@ SOLUTIONS["cse-2000-a-2-10"] = {
         opt("C", True, "All four equations hold."),
         opt("D", False, "$xz + w = 0$ and $\\bar{z}\\bar{w} = 1$."),
     ],
-    "shortcut": "The fourth equation with $xy = 0$ says $z + w = 1$; together with $xz + w = 1$ it rejects every option with $w = 0$ unless $x = z = 1$. Only (C) survives.",
+    "shortcut": "The fourth equation with $xy = 0$ says $z + w = 1$; together with $xz + w = 1$ it rejects every option with $w = 0$ unless $x = z = 1$, and (B) fails $xy = 0$ directly. Only (C) survives.",
     "pitfalls": ["Assuming the solution is unique: a full search finds six solutions (0011, 0101, 0111, 1001, 1010, 1011); (C) is the only one offered."],
     "verification": "$1 + 0 + 1 = 1$, $1 \\cdot 0 = 0$, $1 \\cdot 1 + 1 = 1$, $0 + 0 \\cdot 0 = 0$.",
 }
@@ -434,7 +434,7 @@ SOLUTIONS["cse-1992-a-2-i"] = {
         opt("C", False, "XOR is commutative and associative (parity)."),
         opt("D", True, "Commutative, but $(0 \\uparrow 0) \\uparrow 1 = 0 \\ne 1 = 0 \\uparrow (0 \\uparrow 1)$."),
     ],
-    "shortcut": "Inverting gates (NAND, NOR) lose associativity; AND, OR, XOR, XNOR keep it.",
+    "shortcut": "NAND and NOR lose associativity; AND, OR, XOR and XNOR keep it. XNOR shows that inversion alone is not the reason.",
     "pitfalls": ["Marking XOR as non-associative because it is 'not idempotent'."],
     "verification": "8-row comparison of the two NAND bracketings: they differ on rows 001, 011, 100, 110.",
 }
@@ -541,7 +541,7 @@ SOLUTIONS["cse-2007-cs-33"] = {
         opt("C", False, "Q is also valid."),
         opt("D", True, "All three reduce to identities."),
     ],
-    "shortcut": "If $Z = X \\odot Y$, then $X, Y, Z$ have even 'XNOR-parity': any one is the XNOR of the other two, and the XNOR of all three is 1.",
+    "shortcut": "If $Z = X \\odot Y$ then $X \\oplus Y \\oplus Z = 1$; so any one of $X, Y, Z$ is the XNOR of the other two, and $X \\odot Y \\odot Z = Z \\odot Z = 1$.",
     "pitfalls": ["Doubting R because $X * Y * Z$ has no brackets: XNOR is associative, so both bracketings agree."],
     "verification": "All four $(X, Y)$ rows: $Z = 1, 0, 0, 1$; $Y * Z = 0, 0, 1, 1 = X$; $X * Z = 0, 1, 0, 1 = Y$; $Z * Z = 1$.",
 }
@@ -602,7 +602,7 @@ SOLUTIONS["cse-2007-cs-3"] = {
         opt("A", False, "$n^2$ gives 1 for $n = 1$, but there are 4 functions of one variable."),
         opt("B", False, "$2^n$ is the number of rows (input combinations), not of functions."),
         opt("C", True, "One free output bit for each of the $2^n$ rows."),
-        opt("D", False, "$2^{n^2}$ gives 2 for $n = 1$ and 16 for $n = 2$ but 512 for $n = 3$, where the true count is 256."),
+        opt("D", False, "$2^{n^2}$ agrees only at $n = 2$ (16); it gives 2 for $n = 1$ (true 4) and 512 for $n = 3$ (true 256)."),
     ],
     "shortcut": "Rows = $2^n$; functions = $2^{\\text{rows}}$.",
     "pitfalls": ["Answering the number of rows ($2^n$) instead of the number of functions."],
@@ -713,13 +713,13 @@ SOLUTIONS["cse-2014-2-cs-6"] = {
     ],
     "answer": {"value": "(D) $2^{2^{n-1}}$", "choice": ["D"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "$2^n$ agrees only at $n = 2$ (4); for $n = 3$ there are 16 self-dual functions, not 8."),
+        opt("A", False, "$2^n$ agrees only at $n = 1$ (2) and $n = 2$ (4); for $n = 3$ there are 16 self-dual functions, not 8."),
         opt("B", False, "$2^{n-1}$ is the number of complementary pairs, not of functions."),
         opt("C", False, "$2^{2^n}$ counts all functions of $n$ variables."),
         opt("D", True, "One free choice per pair."),
     ],
     "shortcut": "Self-dual functions are fixed by half the truth table: $2^{(\\text{rows}/2)}$.",
-    "pitfalls": ["Choosing (A) after checking only $n = 2$, where $2^n = 2^{2^{n-1}} = 4$."],
+    "pitfalls": ["Choosing (A) after checking only $n \\le 2$, where $2^n = 2^{2^{n-1}}$."],
     "verification": "Brute force: $n = 1, 2, 3, 4$ give 2, 4, 16, 256 self-dual functions, matching $2^{2^{n-1}}$.",
 }
 
@@ -903,7 +903,7 @@ SOLUTIONS["cse-1993-ii-b-9"] = {
     "answer": {"value": "Carry gives AND, sum with one input at 1 gives NOT; {AND, NOT} is complete, so half adders realise every function", "matchesKey": True},
     "shortcut": "Any block that offers an AND-type output and an XOR-type output is complete once the constant 1 is available.",
     "pitfalls": ["Claiming completeness without saying where the constant 1 comes from."],
-    "verification": "Example: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$ uses three half adders as inverters and one carry as AND, plus one more inverter.",
+    "verification": "Example: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$ uses three half adders as inverters and one carry output as the AND.",
 }
 
 SOLUTIONS["cse-1998-a-57-a"] = {
@@ -1127,8 +1127,8 @@ SOLUTIONS["cse-1997-a-40"] = {
         opt("D", False, "Misses 9, and 10, 15 are not in $f$."),
     ],
     "shortcut": "$f \\setminus f_1 f_2 \\subseteq f_3 \\subseteq f$.",
-    "pitfalls": ["Trying to expand the blocks into expressions over $w, x, y, z$.", "(The original scan misprints $f$; the bank uses the corrected $\\Sigma 8, 9$.)"],
-    "verification": "$f_1 f_2 + f_3 = \\{8\\} \\cup \\{9\\} = \\{8, 9\\} = f$.",
+    "pitfalls": ["Trying to expand the blocks into expressions over $w, x, y, z$.", "Letting $f_3$ add minterms outside $f$ (options A, C, D)."],
+    "verification": "$f_1 f_2 + f_3 = \\{8\\} \\cup \\{9\\} = \\{8, 9\\} = f$. (The paper scan misprints $f$ as $\\Sigma\\,7, 9$, which is inconsistent with $f_1 f_2 = \\Sigma\\,8$; the bank uses the corrected $\\Sigma\\,8, 9$.)",
 }
 
 SOLUTIONS["cse-2008-cs-8"] = {

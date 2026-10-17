@@ -3055,8 +3055,7 @@
       },
       "shortcut": "When a sum of products needs two different complemented literals, try to collect them into one factor $(a' + b') = (ab)'$; adding a consensus term is the usual way to create that factor.",
       "pitfalls": [
-        "Writing $x\\overline{y} + y\\overline{z}$ with two NOT gates, which the question forbids.",
-        "Expanding $(x + y)(yz)'$ incorrectly and losing the term $xz'$ (it is the harmless consensus term)."
+        "Writing $x\\overline{y} + y\\overline{z}$ with two NOT gates, which the question forbids."
       ],
       "verification": "Rows where $f = 1$: $xy' = 1$ at 100, 101; $yz' = 1$ at 010, 110. $(x + y)(yz)'$ is 1 at 010, 100, 101, 110 and 0 elsewhere (at 011 and 111, $yz = 1$). Same four rows."
     },

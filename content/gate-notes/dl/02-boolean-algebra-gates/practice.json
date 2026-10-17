@@ -105,7 +105,7 @@
       "(A) 1 is the non-controlling value of AND, so the AND body passes $x$ and the bubble inverts it: $(x \\cdot 1)' = x'$. Equal.",
       "(B) XOR with 1 is the controlled inverter with its control on: $x \\oplus 1 = x'$. Equal.",
       "(C) Tying both inputs: $(x + x)' = x'$. Equal.",
-      "(D) XNOR is 1 when its inputs are equal, and $x$ equals 1 exactly when $x = 1$: $x \\odot 1 = x$. Not equal."
+      "(D) XNOR with 1 is 1 exactly when $x$ is 1, so it copies $x$: $x \\odot 1 = x \\cdot 1 + x' \\cdot 0 = x$. Not equal."
     ],
     "concept": "Any inverting gate becomes a NOT when its inputs are tied or when it is fed its non-controlling constant; XOR with 1 inverts, XNOR with 1 copies.",
     "common_wrong": [
@@ -425,7 +425,7 @@
       },
       {
         "answer": "B",
-        "why": "The wrong pair was factored: $A'B + AB = B$, and then $B + AB' = B + A$, still $A + B$, not $A' + B$."
+        "why": "$A' + B$ is 0 only on row 10, but $AB' = 1$ there. This answer comes from misreading $AB'$ as $A'B'$, which turns the expression into $A'B' + AB + A'B = A' + B$."
       }
     ],
     "blocks": [
@@ -614,7 +614,7 @@
     "solution": [
       "(A) Dual: swap $+$ and $\\cdot$, keep the literals: $A \\cdot (B' + C)$. Correct.",
       "(B) Complement: swap the operators and complement the literals: $A'(B + C')$. Correct.",
-      "(C) At $A = 1, B = 1, C = 0$ the dual is $1 \\cdot (0 + 0) = 0$ and the complement is $0$; at $A = 1, B = 0, C = 0$ the dual is 1 but the complement is 0. Different functions: wrong.",
+      "(C) At $A = 1, B = 0, C = 0$ the dual $A(B' + C)$ is 1 but the complement $A'(B + C')$ is 0. Different functions: wrong.",
       "(D) At $A = 1, B = 1, C = 0$: $f = 1$ but the dual is 0. Wrong."
     ],
     "concept": "The dual swaps only the operators; the complement also complements every literal. They are different functions in general.",
@@ -625,7 +625,7 @@
           "B",
           "C"
         ],
-        "why": "The dual keeps the literals unchanged, so it cannot equal the complement here; check a row."
+        "why": "The dual and the complement are different functions here: at $A = 1, B = 0, C = 0$ the dual $A(B' + C)$ is 1 but the complement is 0."
       },
       {
         "answer": [
@@ -778,7 +778,7 @@
       },
       {
         "answer": "D",
-        "why": "That would be the dual of the correct answer; the factors are multiplied, so the result is a product."
+        "why": "At $A = 0, C = 1$ the original is $B \\cdot B' \\cdot 1 = 0$, but $A + C = 1$."
       }
     ],
     "blocks": [
@@ -1574,7 +1574,7 @@
     "solution": [
       "De Morgan: $AB = (A' + B')' = \\text{NOR}(A', B')$.",
       "Each complement costs one NOR with tied inputs: $A' = \\text{NOR}(A, A)$, $B' = \\text{NOR}(B, B)$. Total 3.",
-      "Two gates cannot work: the output NOR would need inputs whose OR is $(AB)'$, and with only one earlier gate the only candidates are $A$, $B$, $A'$, $B'$, $(A + B)'$; no pair of them ORs to $(AB)'$."
+      "Two gates cannot work. With one earlier gate $g$, the output NOR reads two of $\\{A, B, g\\}$, where $g$ is $A'$, $B'$ or $(A + B)'$ (a NOR of inputs). The output is $AB = (x + y)'$ only if $\\{x, y\\} = \\{A', B'\\}$, and that pair needs two earlier gates."
     ],
     "concept": "With NOR gates, AND costs 3 (two inverters and a NOR), the dual of OR from NANDs.",
     "common_wrong": [
@@ -1878,7 +1878,7 @@
     "solution": [
       "Sheffer test: $f(0,0,0) = 1$, $f(1,1,1) = 0$, not self-dual.",
       "(A) $f(1,1,1) = 1 + 0 = 1$: 1-preserving, fails. (C) $f(0,0,0) = 0$: 0-preserving, fails. (D) majority: 0- and 1-preserving, fails.",
-      "(B) is the 3-input NOR: $f(0,0,0) = 1$, $f(1,1,1) = 0$, and it has one minterm (not neutral), so it is not self-dual. Complete: $f(x, x, x) = x'$ and $f(x, y, y) = (x + y)'$ is a 2-input NOR."
+      "(B) is the 3-input NOR: $f(0,0,0) = 1$, $f(1,1,1) = 0$, and it is not self-dual: a self-dual function of $n$ variables has exactly $2^{n-1}$ minterms (one from each complementary pair), and $f$ has only one. Complete: $f(x, x, x) = x'$ and $f(x, y, y) = (x + y)'$ is a 2-input NOR."
     ],
     "concept": "A single function is complete iff f(0…0) = 1, f(1…1) = 0 and it is not self-dual.",
     "common_wrong": [

@@ -170,9 +170,13 @@ PYQ pipeline, not a set error).
     operations ($n + 1$ copies), which is what makes D the key; `cse-1992-a-2-ii` and `cse-1999-a-34`
     assume the constants 0 and 1 are available (without them neither the MUX nor {AND, XOR} is complete);
     `cse-2000-a-2-10`'s equation system has six solutions, of which only option C is offered.
-  - The legacy free-text `solution` field of both fixed questions still argues for the old key (it cannot
-    be changed through `src/gate/fixes`); the v2 solutions in `src/gate/solutions`, which the reader shows,
-    are correct.
+  - The legacy free-text `solution` field of both questions argued for the old key D. `solution` is now a
+    fixable field in `scripts/gate/apply-fixes.mjs`, and both texts are replaced through
+    `src/gate/fixes/cse-2009.json` and `cse-2010.json` (the v2 solutions in `src/gate/solutions` were already
+    correct).
+  - Set-level slips noticed while writing Chapter 2 (lessons teach the correct versions): one set claims NOR
+    is faster than NAND (X4 above), and one set labels a cascade of two 2:1 MUXes with constants as OR when
+    it computes NAND (D 400 above).
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,

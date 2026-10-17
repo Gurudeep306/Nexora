@@ -8,8 +8,8 @@ prerequisites: [canonical-forms, universal-gates]
 pyq_topics: [dl/gates, dl/combinational]
 est_minutes: 50
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every circuit, minterm list and waveform is checked by truth table or event simulation in content/gate-notes/_checks/dl/l2_06_circuit_analysis.py."
   - "Coverage checklist only (internal digests, never copied): set A p. 24, set B pp. 108–109, set C pp. 199–202, 223–226 and 245–246. Unsimplified results in set C are recorded in _errata/dl.md."
@@ -37,8 +37,8 @@ expressions you extract, and Chapter 6 adds feedback, which is where timing beco
 | What | Detail |
 |:--|:--|
 | PYQs mapped to this lesson | 16 (1993–2025), the largest group of circuit questions in the chapter |
-| Marks | 5 one-mark, 10 two-mark, 1 older |
-| Pattern 1 | Read a NAND/NOR/XOR circuit: 1993, 1994, 2005, 2010, 2011, 2020, 2025 |
+| Marks | 6 one-mark, 9 two-mark, 1 unmarked (1994) |
+| Pattern 1 | Read a gate circuit: NAND/NOR/XOR (1993, 1994, 2005, 2010, 2011, 2025) or NOT/AND/OR (2020) |
 | Pattern 2 | Circuits of function blocks given as Σ lists: 1997, 2002, 2008, 2019, 2024 |
 | Pattern 3 | Wrong gates fabricated (2007) and staircase switches (2005) |
 | Pattern 4 | Timing: transitions of an XOR/buffer circuit (2003), the $X \cdot \overline{X}$ glitch (2024) |
@@ -82,7 +82,8 @@ Two facts from [Lesson 5](lesson:universal-gates) do most of the work:
 - **A NOR fed by NORs is an AND of ORs:** $\big((a + b)' + (c + d)'\big)' = (a + b)(c + d)$.
 
 A NAND (or NOR) with both inputs tied together is an inverter. So in a NAND-only circuit, read the
-levels in pairs: each pair of NAND levels is an AND–OR pair.
+levels in pairs, counting from the output: each pair of NAND levels is an AND–OR pair. With an odd
+number of levels the input level is left over, and its complement survives.
 :::
 
 :::trick{#trick-nand-pairs title="Erase bubble pairs" depth="standard"}
@@ -181,7 +182,7 @@ $F = X(Y + Y') = X$.
 :::
 
 :::answer
-$F = X$: $Y$ is redundant (and so is the whole circuit, which is a buffer).
+$F = X$: $Y$ is redundant; the whole circuit is just a buffer (a wire) for $X$.
 :::
 ::::
 
@@ -191,6 +192,14 @@ An input is redundant when both cofactors agree.
 :::
 
 ## Circuits of function blocks
+
+:::intuition{#blocks-intuition title="Black boxes with known lists" depth="standard"}
+Sometimes a circuit's inputs are not variables but whole sub-circuits whose insides you are not shown,
+only their truth tables as lists of rows. You do not need their insides. A gate combines them row by
+row: on each row it sees one output from each box and produces one output. So the gate acts on the lists
+directly: AND keeps the rows common to both lists, OR merges the lists, XOR keeps the rows in exactly
+one. Solving for an unknown box is then a puzzle about lists, and an OR gate can only ever add rows.
+:::
 
 Some GATE circuits are drawn with whole functions as inputs: "$f_1$, $f_2$ and $f_3$ feed an AND and an
 OR gate". Never expand them into expressions. Work with the minterm lists as sets.
@@ -322,6 +331,13 @@ AND ∩, OR ∪, XOR △ on Σ lists. For $f = g + h$: need $g \subseteq f$, the
 
 ## Wrong gates and switch networks
 
+:::intuition{#switch-intuition title="Mistakes and mechanical switches follow the same rules" depth="standard"}
+A factory that fits a NAND where an AND was planned has simply added a bubble at that gate's output:
+recompute that one term with the bubble and keep everything else. A network of mechanical switches is
+logic too: current flows along a path only if every switch on it is closed (AND), and the lamp lights if
+any path conducts (OR). Both kinds of question reduce to the algebra you already have.
+:::
+
 :::definition{#wrong-gate term="Wrong-gate puzzles" depth="quick"}
 If an AND gate is replaced by a NAND by mistake, its output is complemented. Recompute each affected
 term and simplify. A frequent building block:
@@ -350,7 +366,7 @@ Either way, flipping either switch toggles the lamp, which is the whole point of
 
 ### Worked examples: wrong gates and switches
 
-::::example{#ex-wg-one level="easy" title="One AND fabricated as a NAND" depth="quick"}
+::::example{#ex-wg-one level="easy" title="Both ANDs fabricated as NANDs" depth="quick"}
 $F = (ab)c$ is built from two 2-input AND gates. Both are fabricated as NAND gates. What is computed?
 
 :::step{why="The first gate now outputs (ab)′."}
@@ -384,23 +400,23 @@ $L = S_1 \odot S_2$ (XNOR).
 ::::
 
 ::::example{#ex-wg-four level="gate" title="A sum of products with every AND replaced by NAND" depth="standard"}
-$F = (ab)c + (a'c)d$ is to be built from 2-input AND and OR gates, but every 2-input AND is fabricated as
+$F = (ab)c + (bd)a'$ is to be built from 2-input AND and OR gates, but every 2-input AND is fabricated as
 a 2-input NAND (the OR gates are fine). What function results?
 
 :::step{why="Each three-literal product uses two cascaded ANDs, which become NAND(NAND(x, y), z) = xy + z′."}
-$(ab)c \to ab + c'$, and $(a'c)d \to a'c + d'$.
+$(ab)c \to ab + c'$, and $(bd)a' \to bd + (a')' = bd + a$.
 :::
 
 :::step{why="The OR gates combine the faulty terms."}
-$F = ab + c' + a'c + d'$.
+$F = ab + c' + bd + a$.
 :::
 
-:::step{why="Simplify: c′ + a′c = c′ + a′ (redundant literal), then a′ + ab = a′ + b."}
-$F = a' + b + c' + d'$.
+:::step{why="Simplify: ab is absorbed by a."}
+$F = a + bd + c'$.
 :::
 
 :::answer
-$F = a' + b + c' + d'$, which is 0 only for $a = 1, b = 0, c = 1, d = 1$.
+$F = a + bd + c'$ instead of $abc + a'bd$.
 :::
 ::::
 
@@ -421,6 +437,14 @@ $f = xy$: the $x'$ contact is useless in this position.
 ::::
 
 ## Propagation delay and timing
+
+:::intuition{#timing-intuition title="News travels at a finite speed" depth="standard"}
+When an input changes, the news does not reach the output at once: each gate passes it on after a short
+delay. If the news travels along two paths of different lengths and the paths meet again at a gate,
+that gate briefly sees the new value on one input and the old value on the other. For that moment it
+can compute something the truth table never allows: a short wrong pulse, a glitch. Timing questions are
+about exactly these moments.
+:::
 
 So far gates were instantaneous. Real gates are not, and GATE asks about the consequences.
 
@@ -443,6 +467,10 @@ delay. Until that time has passed after an input change, the output may still be
 2. Between consecutive event times every signal is constant. In each interval, evaluate each gate from
    the values of its inputs *one delay earlier* ($y(t) = g(x(t - d))$).
 3. Count transitions, measure pulse widths, or read the final value from the resulting waveforms.
+
+This method assumes **transport delay**: every pulse, however short, passes through a gate unchanged,
+only shifted. Real gates have **inertial delay** and swallow pulses shorter than their own delay; GATE
+questions use the transport model unless they say otherwise.
 :::
 
 ### Glitches
@@ -476,8 +504,11 @@ transient, not the Boolean function.
 :::definition{#xor-edge-detector term="Edge detectors and pulse generators" depth="quick"}
 $P = A \oplus A(t - \delta)$, an XOR of a signal with a copy delayed by $\delta$, is 1 exactly while the
 two differ: for a time $\delta$ after **every** edge of $A$. So it turns each edge into a pulse of width
-$\delta$. Feeding $P$ into a second stage $B = P \oplus P(t - \delta_2)$ turns each pulse into two
-pulses, and so on. Counting the transitions of such circuits is a standard timing question.
+$\delta$ (provided successive edges of $A$ are more than $\delta$ apart). Feeding $P$ into a second stage
+$B = P \oplus P(t - \delta_2)$ turns each pulse into two pulses of width $\min(\delta, \delta_2)$, except
+when $\delta_2 = \delta$: the two pulses then touch and merge into a single pulse of width $2\delta$ (2
+transitions instead of 4), a variant an examiner can exploit. Counting the transitions of such circuits
+is a standard timing question.
 :::
 
 :::viz{#xordelay-viz spec="xor-delay-timing" mode="animate" depth="standard"}

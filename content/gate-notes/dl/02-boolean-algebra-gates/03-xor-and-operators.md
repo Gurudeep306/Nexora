@@ -8,8 +8,8 @@ prerequisites: [boolean-laws]
 pyq_topics: [dl/boolean]
 est_minutes: 45
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every identity, example and answer is checked by truth table in content/gate-notes/_checks/dl/l2_03_xor_operators.py."
   - "Coverage checklist only (internal digests, never copied): set A pp. 24–29, set B pp. 109–112, set C pp. 227–229, 247–248 and 255–256. Set C's 'a multiple of 4' parity slip is recorded in _errata/dl.md."
@@ -36,8 +36,8 @@ of Chapter 4.
 :::table{#radar title="GATE radar: XOR, XNOR and defined operators" depth="quick"}
 | What | Detail |
 |:--|:--|
-| PYQs mapped to this lesson | 16 (1992–2026), the largest group in the chapter |
-| Marks | 9 one-mark, 4 two-mark, 3 fill-in or MSQ from older papers |
+| PYQs mapped to this lesson | 16 (1992–2026), tied with Lesson 6 as the largest group in the chapter |
+| Marks | 8 one-mark, 5 two-mark, 3 fill-in or MSQ from older papers |
 | Pattern 1 | XOR/XNOR identities and complemented inputs: 2013, 2018, 2026 |
 | Pattern 2 | Flatten an XOR expression and cancel: 2014 (and 2005, the parity function) |
 | Pattern 3 | Parity: what must hold if $x_1 \oplus x_2 \oplus x_3 \oplus x_4 = 0$ (2016), B XORed n times (1998) |
@@ -51,7 +51,8 @@ of Chapter 4.
 :::intuition{#xor-intuition title="Three ways to think about XOR" depth="standard"}
 **A difference detector.** $x \oplus y$ is 1 exactly when $x$ and $y$ differ. Two people each hold
 a light switch at the two ends of a staircase; the lamp's state changes whenever either one flips
-their switch. That is XOR (Lesson 6 wires it).
+their switch. That is XOR or XNOR, depending on how the wires are crossed (Lesson 6 wires it);
+either way, one flip toggles the lamp.
 
 **Addition without carry.** Add two bits and keep only the units digit: $0 + 0 = 0$, $0 + 1 = 1$,
 $1 + 1 = 10_2$, units digit 0. That is $x \oplus y$. It is the sum bit of a half adder, and it is
@@ -143,7 +144,8 @@ $$
 a \oplus b = c \iff a = b \oplus c \iff b = a \oplus c .
 $$
 XOR both sides with $b$. This turns "find the unknown" questions into one XOR: if $C = A \oplus B$
-then $C \oplus A = B$. The same holds for XNOR chains, written with $\oplus$ and a constant 1.
+then $C \oplus A = B$. The same move works for XNOR: $a \odot b = c \iff a = b \odot c$ (proved in
+`#xnor-equivalence`).
 :::
 
 :::definition{#and-over-xor term="AND distributes over XOR" depth="standard"}
@@ -185,7 +187,7 @@ XNOR, one per bar over the whole thing. An even count gives XOR, an odd count gi
 example $(x' \odot y)'$ has three (prime, XNOR, bar): XNOR.
 
 **Why it works:** each complement is an "$\oplus\, 1$", and the 1s cancel in pairs. **When it fails:**
-only for pure XOR/XNOR expressions. A complement over an AND or OR, as in $(x + y)' \oplus z$, is not
+it applies only to pure XOR/XNOR expressions. A complement over an AND or OR, as in $(x + y)' \oplus z$, is not
 an $\oplus\, 1$ on a variable of the XOR; expand it first.
 :::
 
@@ -216,7 +218,77 @@ $$
 OR and XOR differ only on the row where both inputs are 1. If that row cannot happen (the terms are
 **disjoint**), they are the same. For example $x'y + xy' = x'y \oplus xy'$, and in Lesson 4 the
 minterms of a canonical SOP are disjoint, so their OR is also their XOR.
+
+**The other extreme.** If every 1 of $y$ is also a 1 of $x$ ($y$ implies $x$), then $x'y = 0$, so
+$x \oplus y = xy' + x'y = xy'$: XOR removes $y$'s rows from $x$. Example: $(x + y) \oplus xy = (x + y)(xy)'$,
+which is $x \oplus y$ again.
 :::
+
+### Worked examples: complemented inputs
+
+::::example{#ex-ci-basic level="easy" title="Two complements and a constant" depth="quick"}
+Simplify $x' \oplus y' \oplus 1$.
+
+:::step{why="Each complement is an ⊕ 1, so write them out."}
+$x \oplus 1 \oplus y \oplus 1 \oplus 1$.
+:::
+
+:::step{why="Three 1s leave one: an odd count of complements."}
+$x \oplus y \oplus 1 = (x \oplus y)'$.
+:::
+
+:::answer
+$x \odot y$.
+:::
+::::
+
+::::example{#ex-ci-which level="medium" title="Which forms are the complement of XOR?" depth="standard"}
+Which of $x' \oplus y$, $x \odot y'$ and $x' \odot y'$ equal $(x \oplus y)'$?
+
+:::step{why="Count complements relative to plain XOR: (x ⊕ y)′ has one."}
+Target: one complement.
+:::
+
+:::step{why="x′ ⊕ y has one (the prime); x ⊙ y′ has two (prime and XNOR); x′ ⊙ y′ has three."}
+Odd counts: $x' \oplus y$ (1) and $x' \odot y'$ (3). Even: $x \odot y'$ (2).
+:::
+
+:::answer
+$x' \oplus y$ and $x' \odot y'$ equal $(x \oplus y)'$; $x \odot y'$ equals $x \oplus y$.
+:::
+::::
+
+::::example{#ex-ci-three level="gate" title="Complements spread over a three-input expression" depth="standard"}
+Simplify $(A' \odot B)' \oplus C'$.
+
+:::step{why="Write every complement and every XNOR as ⊕ 1."}
+$A \oplus 1 \oplus B \oplus 1 \oplus 1 \oplus C \oplus 1$ (prime on $A$, the XNOR, the bar, prime on $C$).
+:::
+
+:::step{why="Four 1s cancel in pairs."}
+$A \oplus B \oplus C$.
+:::
+
+:::answer
+$A \oplus B \oplus C$ (odd parity).
+:::
+::::
+
+::::example{#ex-ci-trap level="gate" title="Edge case: a bar over an OR is not a bubble on an XOR" depth="standard"}
+Is $(x + y)' \oplus z$ equal to $x \oplus y \oplus z \oplus 1$?
+
+:::step{why="The bar covers an OR, so it is not an ⊕ 1 on an input of the XOR chain."}
+$(x + y)' = x'y'$, so the left side is $x'y' \oplus z$.
+:::
+
+:::step{why="Test a row: x = y = 1, z = 0."}
+Left: $0 \oplus 0 = 0$. Right: $1 \oplus 1 \oplus 0 \oplus 1 = 1$.
+:::
+
+:::answer
+No. The bubble count applies only to pure XOR/XNOR expressions.
+:::
+::::
 
 ### Worked examples: XOR algebra
 
@@ -247,7 +319,7 @@ $(x + y) \oplus xy = x \oplus y \oplus xy \oplus xy$.
 $= x \oplus y$.
 :::
 
-:::step{why="Check on the row where it matters: x = y = 1 gives 1 ⊕ 1 = 0, and x ⊕ y = 0."}
+:::step{why="Perfect induction on all four rows confirms it; row 11 is the one where OR and XOR differ."}
 Check rows 00, 01, 10, 11: $0, 1, 1, 0$. Correct.
 :::
 
@@ -311,6 +383,13 @@ cancel and move terms across. Each complement toggles XOR ↔ XNOR. Only AND dis
 :::
 
 ## Parity: the XOR of many inputs
+
+:::intuition{#parity-intuition title="A light that every switch can flip" depth="standard"}
+Imagine a lamp wired so that each of $n$ switches, when flipped, toggles it. Start with every switch
+down and the lamp off. Flip some switches up: each one toggles the lamp once, so the lamp is on exactly
+when an odd number of switches are up. That lamp is an $n$-input XOR. It does not care which switches
+are up, or in what order you flipped them: only how many, and only whether that number is odd.
+:::
 
 :::theorem{#parity name="An n-input XOR computes odd parity" depth="standard"}
 $x_1 \oplus x_2 \oplus \dots \oplus x_n = 1$ exactly when an **odd** number of the $x_i$ are 1.
@@ -406,7 +485,9 @@ Suppose $x_1 \oplus x_2 \oplus x_3 \oplus x_4 = 1$. Which of these must hold?
 :::
 
 :::answer
-All four must hold. (With "$= 0$" instead, (ii) and (iii) would fail: 0000 and 1111 have even parity.)
+All four must hold. (With "$= 0$" instead, none of the four must hold: (i) and (iv) become false on
+every row, 0000 breaks (ii) and 1111 breaks (iii). The true versions would be $x_1 \oplus x_2 = x_3 \oplus x_4$
+and $x_1' \oplus x_2' \oplus x_3' \oplus x_4' = 0$.)
 :::
 ::::
 
@@ -434,8 +515,16 @@ copies of $B$ XOR to $B$ if $k$ is odd, else 0; $n$ operations means $n + 1$ cop
 
 ## XNOR as equivalence, and chains of XNOR
 
+:::intuition{#xnor-intuition title="An equality test is a parity test in disguise" depth="standard"}
+"Are these two bits equal?" is the opposite of "do they differ?", so XNOR is XOR with the answer
+flipped: one extra toggle. Chaining XNORs adds one extra toggle per gate. With an even number of extra
+toggles nothing changes; with an odd number the answer is flipped. Everything about XNOR chains follows
+from counting those extra toggles.
+:::
+
 :::definition{#xnor-equivalence term="XNOR is equality" depth="quick"}
-$x \odot y = 1 \iff x = y$. It is commutative and associative (it is $x \oplus y \oplus 1$, and XOR is),
+$x \odot y = 1 \iff x = y$. It is commutative and associative: $(x \odot y) \odot z = x \oplus y \oplus 1
+\oplus z \oplus 1 = x \oplus y \oplus z$, and $x \odot (y \odot z)$ gives the same,
 $x \odot x = 1$, $x \odot 1 = x$, $x \odot 0 = x'$. So if $C = A \odot B$, then
 $C \odot A = A \odot B \odot A = B \odot (A \odot A) = B \odot 1 = B$: XNOR can be "undone" too.
 :::
@@ -455,6 +544,72 @@ Another reading: the chain is 1 exactly when the number of **0s** among the inpu
 :::viz{#xnorchain-viz spec="xnor-chain" mode="static" depth="standard"}
 :::
 
+### Worked examples: XNOR chains
+
+::::example{#ex-xc-eval level="easy" title="Evaluate a three-variable chain" depth="quick"}
+Find $1 \odot 0 \odot 1$.
+
+:::step{why="Evaluate left to right: 1 ⊙ 0 = 0 (they differ)."}
+$1 \odot 0 = 0$.
+:::
+
+:::step{why="Then 0 ⊙ 1 = 0 (they differ)."}
+$0 \odot 1 = 0$. Check: with three variables the chain equals the XOR, $1 \oplus 0 \oplus 1 = 0$.
+:::
+
+:::answer
+$0$.
+:::
+::::
+
+::::example{#ex-xc-four level="medium" title="A four-variable chain" depth="standard"}
+Write $w \odot x \odot y \odot z$ in terms of XOR.
+
+:::step{why="Three ⊙ operators add three ⊕ 1 terms."}
+$w \oplus x \oplus y \oplus z \oplus 1 \oplus 1 \oplus 1$.
+:::
+
+:::step{why="Three 1s leave one."}
+$(w \oplus x \oplus y \oplus z)'$.
+:::
+
+:::answer
+The complement of the 4-input XOR (even parity of 1s): with an even number of variables the chain flips.
+:::
+::::
+
+::::example{#ex-xc-count level="gate" title="Count the rows of a chain" depth="standard"}
+On how many of the 16 rows is $a \odot b \odot c \odot d = 1$?
+
+:::step{why="By the previous example it is the complement of a 4-input XOR."}
+It is 1 when an **even** number of $a, b, c, d$ are 1.
+:::
+
+:::step{why="Even weights 0, 2, 4: C(4, 0) + C(4, 2) + C(4, 4) = 1 + 6 + 1."}
+$8$ rows (the number of 0s is then also even, the other description of the chain).
+:::
+
+:::answer
+8.
+:::
+::::
+
+::::example{#ex-xc-gate level="gate" title="Edge case: chain versus 3-input XNOR gate" depth="standard"}
+At $x = y = z = 0$, compare the chain $x \odot y \odot z$ with a catalogue 3-input XNOR gate.
+
+:::step{why="The chain of an odd number of variables equals the XOR."}
+Chain: $0 \oplus 0 \oplus 0 = 0$.
+:::
+
+:::step{why="A 3-input XNOR gate is defined as the complement of the 3-input XOR."}
+Gate: $(0 \oplus 0 \oplus 0)' = 1$.
+:::
+
+:::answer
+They differ (0 vs 1); for three inputs they are complements on every row.
+:::
+::::
+
 :::trap{#trap-xnor-convention title="An n-input XNOR gate is not always the XNOR chain" depth="quick"}
 A catalogue "3-input XNOR gate" is defined as the **complement** of the 3-input XOR (1 for an even
 number of 1s). The chain $x \odot y \odot z$ of two 2-input XNOR gates is the XOR itself (1 for an odd
@@ -464,6 +619,14 @@ $\odot$ between three variables, it means the chain.
 
 ## Properties of operators
 
+:::intuition{#ops-intuition title="Does the order of the ingredients matter?" depth="standard"}
+Mixing flour and sugar gives the same bowl whichever goes in first: that is commutativity. Mixing
+flour with sugar and then adding eggs gives the same batter as mixing sugar with eggs and then adding
+flour: that is associativity. Some kitchen operations fail one or both tests (you cannot "un-bake").
+For a Boolean operator both questions are decided by its table: commutativity by two rows, associativity
+by eight.
+:::
+
 GATE often defines an operator, by a formula or a table, and asks about its properties. Here are
 the properties and how to test each one from a truth table.
 
@@ -472,7 +635,7 @@ the properties and how to test each one from a truth table.
 - **Associative:** $(x \star y) \star z = x \star (y \star z)$ for all $x, y, z$.
 - **Idempotent:** $x \star x = x$.
 - **Identity element** $e$: $x \star e = e \star x = x$ (0 for OR and XOR, 1 for AND and XNOR).
-- **Absorbing element** $a$: $x \star a = a$ (1 for OR, 0 for AND; XOR has none).
+- **Absorbing element** $a$: $x \star a = a \star x = a$ (1 for OR, 0 for AND; XOR and XNOR have none).
 
 | Operator | Commutative | Associative | Idempotent |
 |:--|:-:|:-:|:-:|
@@ -486,8 +649,9 @@ the properties and how to test each one from a truth table.
 1. **Commutative?** Compare the rows $(0, 1)$ and $(1, 0)$. Equal outputs ⇒ commutative (rows 00 and
    11 never matter).
 2. **Associative?** Build the 8-row table of $(a \star b) \star c$ and $a \star (b \star c)$ and compare.
-   One mismatch ⇒ not associative. Shortcut: if $\star$ is one of AND, OR, XOR, XNOR (identify it from
-   its column), it is associative.
+   One mismatch ⇒ not associative. Shortcut: exactly 8 of the 16 operators are associative, namely
+   the constants 0 and 1, AND, OR, XOR, XNOR and the two projections $x \star y = x$ and $x \star y = y$.
+   Every other operator fails, so identify the operator from its column first.
 3. **Identify the operator** first whenever possible: its column (00, 01, 10, 11) names it in the
    sixteen-function table of [Lesson 1](lesson:logic-gates).
 :::
@@ -571,7 +735,7 @@ $0 \circ 1 = 0 + 0 = 0$ but $1 \circ 0 = 1 + 1 = 1$: not commutative.
 $(x \circ y) \circ z = (x + y') + z' = x + y' + z'$; $x \circ (y \circ z) = x + (y + z')' = x + y'z$.
 :::
 
-:::step{why="Find a row that separates them: x = 0, y = 1, z = 0."}
+:::step{why="Make the second form 0 (x = 0 and y′z = 0) while the first is 1 (y′ + z′ = 1): y = 1, z = 0 does both."}
 First: $0 + 0 + 1 = 1$. Second: $0 + 0 \cdot 1 = 0$. Different.
 :::
 
@@ -602,6 +766,13 @@ XNOR are both; NAND, NOR are commutative only; implication is neither.
 :::
 
 ## Defined and nested operators
+
+:::intuition{#defined-intuition title="A familiar face behind a strange name" depth="standard"}
+GATE often invents a symbol, $*$ or $\#$, defines it by a formula or by a few properties, and asks
+about it. There are only sixteen two-input operators, so the invented one is always an old friend in
+disguise. Compute its four outputs, recognise it (XNOR, implication, NAND, …), and every law you
+already know about that friend applies at once.
+:::
 
 :::definition{#defined-operators term="Method: questions about a defined operator" depth="quick"}
 1. **Identify it.** Compute its four outputs (rows 00, 01, 10, 11) from the definition and look the
