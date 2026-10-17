@@ -8,8 +8,8 @@ prerequisites: [fractions-fixed-point, signed-numbers]
 pyq_topics: [dl/floating]
 est_minutes: 55
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l05_fp_basics.py (exact arithmetic in fplib.py)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 21–23, set B pp. 150–152. The bias-convention disagreement (B 151 vs B 152) is recorded in _errata/dl.md X1."
@@ -40,7 +40,7 @@ adds the special values; [Lesson 7](lesson:floating-point-arithmetic) adds, mult
 |:--|:--|
 | PYQs mapped to this lesson | 7 (1996–2005), all on formats the question defines itself |
 | Marks | 1 one-mark, 4 two-mark, 2 descriptive (old papers) |
-| Formats | 3 MCQ, 4 descriptive (encode a value, find the largest value) |
+| Formats | 4 MCQ, 3 descriptive (encode a value, find the largest value) |
 | Pattern 1 | Encode a decimal value in a given format and write the word in hex: 1997, 2002, 2005 |
 | Pattern 2 | The range of a format: magnitude of normalised mantissas (1996), largest value (2002) |
 | Pattern 3 | The gap between neighbouring values of a format (2003) |
@@ -126,7 +126,8 @@ keeps 11 significant bits everywhere, so its gap near 0.01 is about $0.01 \times
 
 :::answer
 Same 16 bits, but floating point covers about 16 000 times the range and keeps its relative
-precision at small values; fixed point has finer *absolute* steps only near its top end.
+precision at small values; fixed point has the finer *absolute* steps only for values above
+about 8, where the float's gap $2^{E-10}$ exceeds $2^{-8}$.
 :::
 ::::
 

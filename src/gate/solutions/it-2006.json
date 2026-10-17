@@ -2101,7 +2101,7 @@
           "reason": "Row 5 is not 0: a run of 1s starts at $x_{i+1}$."
         }
       ],
-      "shortcut": "The table is antisymmetric: row $k$ and row $7 - k$ have opposite digits ($000 \\leftrightarrow 111$: 0, $011 \\leftrightarrow 100$: $\\pm 2$).",
+      "shortcut": "The table is antisymmetric: triples that are bitwise complements (row $r$ and row $9 - r$) have opposite digits ($000 \\leftrightarrow 111$: 0, $011 \\leftrightarrow 100$: $\\pm 2$).",
       "pitfalls": [
         "Treating $x_{i+1}$ as $+2$ instead of $-2$."
       ],

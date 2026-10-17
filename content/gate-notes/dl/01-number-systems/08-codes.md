@@ -28,13 +28,14 @@ parity bits can locate any single flipped bit in a 7-bit word.
 
 ## Where this fits
 
-This lesson closes the chapter. It uses only place value and grouping from Lessons
-[1](lesson:place-value) and [2](lesson:power-of-two-bases), so you can read it before or after the
-floating-point lessons (5–7). The exclusive-OR $\oplus$ appears here only as "the bits differ"
+It uses only place value and grouping from Lessons [1](lesson:place-value) and
+[2](lesson:power-of-two-bases), so you can read it before or after the floating-point lessons
+(5–7). The next lesson, [Arithmetic with number codes](lesson:code-arithmetic), adds and subtracts in
+BCD and excess-3 using the codes defined here. The exclusive-OR $\oplus$ appears here only as "the bits differ"
 (its algebra is in Chapter 2). The codes come back often: Gray order labels the rows and columns
 of K-maps (Chapter 3), code converters (BCD → excess-3, binary → Gray) are classic combinational
-design problems (Chapter 4), BCD addition is in Chapter 5, and Gray-code counters are in
-Chapter 7.
+design problems (Chapter 4), BCD and excess-3 addition are in [Lesson 9](lesson:code-arithmetic#bcd-add)
+(the BCD adder circuit is in Chapter 5), and Gray-code counters are in Chapter 7.
 
 :::table{#radar title="GATE radar: binary codes" depth="quick"}
 | What | Detail |

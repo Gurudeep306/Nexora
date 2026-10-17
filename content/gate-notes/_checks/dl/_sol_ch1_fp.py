@@ -482,7 +482,7 @@ SOLUTIONS["cse-2020-cs-29"] = {
     "optionAnalysis": [
         opt("A", False, "`0x40800000` is $+4$: the sign was not XORed."),
         opt("B", True, "$40 / (-10) = -4 = -1.0 \\times 2^2$."),
-        opt("C", False, "`0x83400000` has exponent field 6, i.e. about $-1.5 \\times 2^{-121}$: the bias must be added back once after subtracting the fields, and here it was not handled."),
+        opt("C", False, "`0x83400000` has exponent field 6, i.e. about $-1.5 \\times 2^{-121}$, a tiny number, while the quotient is $-4$ (field 129). Forgetting to add the bias back would give field 2, also tiny: any tiny-exponent answer signals that slip."),
         opt("D", False, "`0xC8500000` has exponent field 144, about $-1.6 \\times 2^{17}$: far too large, and its fraction is not 0 although $1.25/1.25 = 1$."),
     ],
     "shortcut": "$R1 = 4 \\times |R2|$ exactly (same fraction 0100…), so $R3 = -4$: take `40800000` and set the sign bit.",
@@ -527,7 +527,7 @@ SOLUTIONS["cse-2025-2-cs-39"] = {
         opt("C", True, "$4(-9) + 3(12) = -36 + 36 = 0$."),
         opt("D", False, "$-9 + 6 + 12 = 9$."),
     ],
-    "shortcut": "`411` vs `410` vs `40C`: exponents 130, 130, 129 give scales 8, 8, 4; fractions $1.125, 1.5, 1.5$ give 9, 12, 6.",
+    "shortcut": "`C11` vs `414` vs `40C`: exponents 130, 130, 129 give scales 8, 8, 4; fractions $1.125, 1.5, 1.5$ give $-9$, 12, 6.",
     "pitfalls": ["Decoding `C1100000` as $-1.1 \\times 2^3 = -12$ (misreading the fraction bits 001).", "Worrying about rounding: small integers are exact."],
     "verification": "Python `struct` decodes the words to −9.0, 6.0, 12.0. ✓",
     "_keep_animation": True,

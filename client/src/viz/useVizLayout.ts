@@ -9,9 +9,9 @@ import type { VizLayout, VizSpec } from './schema'
 import { pickLayout } from './frames'
 
 export function useVizLayout(spec: VizSpec, ref: RefObject<HTMLElement | null>): VizLayout {
-  const [layout, setLayout] = useState<VizLayout>(() =>
-    typeof window === 'undefined' ? 'wide' : pickLayout(spec, ref.current?.clientWidth || window.innerWidth),
-  )
+  // First guess from the viewport (the figure is at most the window minus the page gutters); the
+  // effect below measures the element itself.
+  const [layout, setLayout] = useState<VizLayout>(() => (typeof window === 'undefined' ? 'wide' : pickLayout(spec, window.innerWidth - 32)))
   useEffect(() => {
     const el = ref.current
     if (!spec.narrow || !el) return

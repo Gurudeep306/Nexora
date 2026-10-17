@@ -8,8 +8,8 @@ prerequisites: [signed-numbers, codes]
 pyq_topics: [dl/arithmetic, dl/number]
 est_minutes: 75
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l09_code_arithmetic.py (exact integer arithmetic, brute force over every operand pair where a rule is claimed)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 20–21 (overflow; its opposite-sign remark is errata X3), set B pp. 141–148 and 159–160 (complements, BCD adder), set C pp. 203–216 (binary arithmetic, complement subtraction, overflow, BCD and excess-3 addition)."
@@ -27,7 +27,7 @@ that GATE's "which of these overflows?" and "what are the flags?" questions beco
 
 ## Where this fits
 
-This lesson closes Chapter 1 and uses most of it: place value and base-$b$ digits (Lessons
+This lesson and the next close Chapter 1, and they use most of it: place value and base-$b$ digits (Lessons
 [1](lesson:place-value) and [2](lesson:power-of-two-bases)), complements and signed patterns
 ([Lesson 4](lesson:signed-numbers)) and the codes of [Lesson 8](lesson:codes). Multiplication of
 signed numbers and Booth's algorithm follow in [Lesson 10](lesson:multiplication-booth). Chapter 5
@@ -846,7 +846,7 @@ $1001$ read as Gray is binary $1110 = 14$.
 :::
 
 :::step{why="The correct sum is 3 + 5 = 8, whose Gray code is 1100."}
-So the direct pattern sum $1001$ is wrong in every bit but the first.
+So the direct pattern sum $1001$ differs from the correct Gray code $1100$ in two bits.
 :::
 
 :::answer
@@ -894,11 +894,12 @@ $8$ and $12$.
 :::
 
 :::step{why="Subtract the binary values, not the Gray patterns."}
-$12 - 8 = 4$ steps (in either direction, the encoder moved 4 positions).
+$12 - 8 = 4$ steps (or 12 the other way round a 16-position wheel).
 :::
 
 :::answer
-$12 - 8 = 4$ steps. XORing or subtracting the raw Gray patterns ($1100 - 1010 = 0010$) would wrongly say 2.
+$12 - 8 = 4$ steps. Subtracting the raw Gray patterns ($1100 - 1010 = 0010$) would wrongly say 2
+(and XORing them gives $0110 = 6$).
 :::
 ::::
 
