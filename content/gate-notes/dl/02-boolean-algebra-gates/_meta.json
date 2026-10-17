@@ -1,0 +1,4 @@
+{
+  "title": "Boolean algebra and logic gates",
+  "summary": "Gates and truth tables, the laws of Boolean algebra (duality, De Morgan, consensus, Shannon), XOR/XNOR algebra and custom operators, minterms, maxterms and counting functions, universal gates and functional completeness, and how to analyse gate circuits and their timing."
+}
