@@ -3645,23 +3645,24 @@
       "verification": "Only row $A = B = 1$, $C = 0$ makes $Z = 0$; the NAND's inputs are then $1, 1, 1$, output 0. ✓"
     },
     "cse-1995-b-63-b": {
-      "approach": "Read the 1s off the map and look for the largest wrap-around groups: the four corners form one quad and the four centre cells form another. Two quads cover all eight 1s, so the SOP has two terms.",
+      "approach": "Concept tested: **reading a printed K-map** whose rows are $CD$ and columns $AB$, with **corner and centre quads**. Loop the four corners and the centre block; each quad keeps the two variables that never change in it.",
       "concepts": [
         "Karnaugh map",
-        "Wrap-around grouping",
-        "Sum of products"
+        "Wrap-around (corners)",
+        "XNOR pattern"
       ],
+      "given": "Rows $CD$, columns $AB$, both 00, 01, 11, 10. Rows 00 and 10: 1 0 0 1. Rows 01 and 11: 0 1 1 0.",
       "steps": [
         {
-          "title": "List the 1-cells",
-          "body": "| CD \\ AB | 00 | 01 | 11 | 10 |\n|---|---|---|---|---|\n| 00 | 1 | | | 1 |\n| 01 | | 1 | 1 | |\n| 11 | | 1 | 1 | |\n| 10 | 1 | | | 1 |\n\nEight 1s: the four corners and the central $2\\times2$ block.",
+          "title": "Read the axes",
+          "body": "Rows are labelled by $C D$ and columns by $A B$, both in Gray order. The loops do not depend on how the axes are arranged; only the labels of each loop matter.",
           "scene": {
-            "caption": "Eight 1s on the map"
+            "groups": []
           }
         },
         {
-          "title": "Corner quad",
-          "body": "Corners: $AB\\in\\{00,10\\}$ and $CD\\in\\{00,10\\}$. They are adjacent by wrap-around. Constant variables: $B=0$, $D=0$ ($A$, $C$ vary) $\\Rightarrow \\overline{B}\\,\\overline{D}$.",
+          "title": "The four corners",
+          "body": "Rows $CD = 00$ and $10$ have $D = 0$; columns $AB = 00$ and $10$ have $B = 0$. The four corner cells face each other across both borders, so they are one quad with $B = 0$, $D = 0$: the term $\\overline{B}\\,\\overline{D}$.",
           "scene": {
             "groups": [
               {
@@ -3671,15 +3672,15 @@
                   8,
                   10
                 ],
-                "label": "B′D′"
+                "label": "B′D′",
+                "tone": "accent"
               }
-            ],
-            "caption": "Corners → B′D′"
+            ]
           }
         },
         {
-          "title": "Centre quad",
-          "body": "Centre: $AB\\in\\{01,11\\}$, $CD\\in\\{01,11\\}$. Constant: $B=1$, $D=1$ $\\Rightarrow BD$.",
+          "title": "The centre quad",
+          "body": "Rows $CD = 01, 11$ ($D = 1$) and columns $AB = 01, 11$ ($B = 1$) form a $2 \\times 2$ block: $BD$.",
           "scene": {
             "groups": [
               {
@@ -3689,7 +3690,8 @@
                   8,
                   10
                 ],
-                "label": "B′D′"
+                "label": "B′D′",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -3698,26 +3700,27 @@
                   13,
                   15
                 ],
-                "label": "BD"
+                "label": "BD",
+                "tone": "success"
               }
-            ],
-            "caption": "Centre → BD"
+            ]
           }
         },
         {
-          "title": "Minimal SOP",
-          "body": "All 1s are covered by two essential prime implicants, so\n$$F = BD + \\overline{B}\\,\\overline{D} \\;(= \\overline{B \\oplus D})$$"
+          "title": "Check",
+          "body": "Every 1 is in one of the two quads and neither quad can grow (each has 0s on all four sides). $A$ and $C$ change inside both quads, so they drop out."
         }
       ],
       "answer": {
-        "value": "$F = BD + \\overline{B}\\,\\overline{D}$ (i.e. $B \\odot D$)",
+        "value": "$f = BD + \\overline{B}\\,\\overline{D}$ $\\;(= \\overline{B \\oplus D})$",
         "matchesKey": true
       },
+      "shortcut": "Corners plus centre on a 4-variable map is always $\\overline{x \\oplus y}$ of the two variables that are the second bits of the row and column labels.",
       "pitfalls": [
-        "Missing the corner wrap-around and writing four 2-cell terms instead of one quad.",
-        "Reading the map with rows/columns swapped — here columns are AB and rows CD."
+        "Writing $AC$-type terms by reading the map as if rows were $AB$: only $B$ and $D$ stay fixed here.",
+        "Looping the corners as two separate pairs, which gives 6 literals instead of 2."
       ],
-      "verification": "F = 1 exactly when B = D; every listed 1-cell has B = D and every blank cell has B ≠ D.",
+      "verification": "Expanding $BD + \\overline{B}\\,\\overline{D}$ gives minterms 0, 2, 5, 7, 8, 10, 13, 15 of $f(A, B, C, D)$: exactly the eight 1-cells of the map.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -3729,14 +3732,15 @@
         "ones": [
           0,
           2,
-          8,
-          10,
           5,
           7,
+          8,
+          10,
           13,
           15
         ],
-        "caption": "K-map (rows CD, columns AB)"
+        "groups": [],
+        "title": "Rows CD, columns AB (as printed)"
       }
     },
     "cse-1995-b-64-a": {

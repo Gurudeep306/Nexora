@@ -152,18 +152,18 @@
     {
       "id": "cse-2006-cs-38",
       "field": "needsReview",
-      "before": false,
-      "after": true,
-      "reason": "Stored key A is provably not hazard-free: no cube of (A) contains both minterms 13 (1101) and 15 (1111). Independent solution gives D.",
-      "source": "Independent solution (adjacent-pair coverage check)"
+      "before": true,
+      "after": false,
+      "reason": "The key question is settled (see the answer fix): Proven: f = Σ(5, 7, 11, 12, 13, 15) has six pairs of adjacent 1-cells (5-7, 5-13, 7-15, 11-15, 12-13, 13-15). A two-level cover keeps f at 1 while one input changes between two adjacent 1-cells exactly when some cube contains both cells. Co …",
+      "source": "GATE 2006 CS paper scan (GATE_PYQ/GATE2006.pdf p. 5, Q38; option (d)'s first cube read as wx y-bar, the only reading under which (d) covers minterm 12) + adjacent-pair check in content/gate-notes/_checks/dl/l3_04_two_level.py; errata dl.md section 3"
     },
     {
       "id": "cse-2006-cs-38",
       "field": "reviewNote",
-      "before": "Option overlines were partly illegible in the scan; option expressions taken from the web.",
-      "after": "Stored key A looks wrong: cover (A) = {5,7},{12,13},{5,13},{7,15},{11,15} has no cube containing the adjacent pair 13 (1101) / 15 (1111), so f can glitch when y changes. Option (D) (first cube read as wx y-bar; it is blurred in the scan) covers all six adjacent pairs 5-7, 5-13, 7-15, 13-15, 12-13, 11-15 and should be the answer. (B) and (C) contain false minterms 6 and 14.",
-      "reason": "Record the key disagreement and the blurred option (d) term for review.",
-      "source": "Independent solution + GATE 2006 scanned PDF"
+      "before": "Stored key A looks wrong: cover (A) = {5,7},{12,13},{5,13},{7,15},{11,15} has no cube containing the adjacent pair 13 (1101) / 15 (1111), so f can glitch when y changes. Option (D) (first cube read as wx y-bar; it is blurred in the scan) covers all six adjacent pairs 5-7, 5-13, 7-15, 13-15, 12-13, 11-15 and should be the answer. (B) and (C) contain false minterms 6 and 14.",
+      "after": null,
+      "reason": "The note asked for the key to be checked; it is now changed with a proof.",
+      "source": "GATE 2006 CS paper scan (GATE_PYQ/GATE2006.pdf p. 5, Q38; option (d)'s first cube read as wx y-bar, the only reading under which (d) covers minterm 12) + adjacent-pair check in content/gate-notes/_checks/dl/l3_04_two_level.py; errata dl.md section 3"
     },
     {
       "id": "cse-2006-cs-43",
@@ -246,6 +246,22 @@
       "after": null,
       "reason": "Review cleared after independent verification.",
       "source": "GATE 2006 question paper scan"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "answer",
+      "before": "A",
+      "after": "D",
+      "reason": "Proven: f = Σ(5, 7, 11, 12, 13, 15) has six pairs of adjacent 1-cells (5-7, 5-13, 7-15, 11-15, 12-13, 13-15). A two-level cover keeps f at 1 while one input changes between two adjacent 1-cells exactly when some cube contains both cells. Cover (A) has no cube containing 13 (1101) and 15 (1111), so f can glitch to 0 when y changes with w = x = z = 1. Cover (D) = wxy', wyz, wxz, w'xz, xy'z, xyz equals f and contains a cube for every one of the six pairs. (B) and (C) are not even equal to f (they include minterms 6 or 14 and miss others).",
+      "source": "GATE 2006 CS paper scan (GATE_PYQ/GATE2006.pdf p. 5, Q38; option (d)'s first cube read as wx y-bar, the only reading under which (d) covers minterm 12) + adjacent-pair check in content/gate-notes/_checks/dl/l3_04_two_level.py; errata dl.md section 3"
+    },
+    {
+      "id": "cse-2006-cs-38",
+      "field": "solution",
+      "before": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Minimization) from **CSE 2006 Q38** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 5, 7, 11, 12, 13, 15\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  A hazard-free (static-1) cover must contain a cube covering every pair of adjacent minterms.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Cubes $\\overline{w}xz$ (5,7), $wx\\overline{y}$ (12,13), $x\\overline{y}z$ (5,13), $xyz$ (7,15), $wyz$ (11,15) cover all adjacent pairs among the minterms..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `$\\overline{w}xz,\\ wx\\overline{y},\\ x\\overline{y}z,\\ xyz,\\ wyz$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `$wxy,\\ \\overline{w}xz,\\ wyz$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$wx\\overline{yz},\\ xz,\\ w\\overline{x}yz$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$wzy,\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "after": "**Concept:** static-1 hazards. A two-level AND–OR cover stays at 1 while a single input changes between two adjacent 1-cells only if one cube contains both cells.\n\n- $f = \\Sigma(5, 7, 11, 12, 13, 15)$; adjacent 1-pairs: 5–7, 5–13, 7–15, 11–15, 12–13, 13–15.\n- (A) $\\overline{w}xz$ (5, 7), $wx\\overline{y}$ (12, 13), $x\\overline{y}z$ (5, 13), $xyz$ (7, 15), $wyz$ (11, 15): no cube holds 13 and 15, so $f$ can glitch when $y$ changes with $w = x = z = 1$.\n- (B) and (C) are not equal to $f$.\n- (D) adds $wxz$ (13, 15): every adjacent pair is inside a cube.\n\n**Answer: (D).**",
+      "reason": "The legacy free-text solution argued for the old, wrong key A; it now matches the corrected key and the v2 solution.",
+      "source": "Independent derivation (content/gate-notes/_checks/dl/l3_04_two_level.py) and the paper scan; errata dl.md section 3"
     }
   ]
 }

@@ -4681,24 +4681,20 @@
       }
     },
     "cse-2026-2-cs-30": {
-      "approach": "Plot the eight minterms on a 4-variable K-map: they fill the two whole rows where $B = 0$, which is a single octet. An octet over 4 variables eliminates three variables, so the minimal SOP is one literal.",
+      "approach": "Concept tested: **an octet**. The eight minterms are rows $AB = 00$ and $AB = 10$, which are adjacent through the wrap: one group of 8 = one literal.",
       "concepts": [
-        "Karnaugh map",
-        "Prime implicant (octet)",
-        "Minimal sum of products"
+        "Group size",
+        "Wrap-around",
+        "Minimal SOP"
       ],
-      "given": "$F(A,B,C,D) = \\Sigma m(0,1,2,3,8,9,10,11)$, with $A$ the MSB and $D$ the LSB.",
       "steps": [
         {
-          "title": "Write the minterms in binary",
-          "body": "| minterms | $ABCD$ | common bits |\n|---|---|---|\n| $0,1,2,3$ | $00\\,xx$ | $A=0,\\ B=0$ |\n| $8,9,10,11$ | $10\\,xx$ | $A=1,\\ B=0$ |\n\nIn all eight minterms $B = 0$; $A$, $C$, $D$ take every combination ($2^3 = 8$ of them).",
-          "scene": {
-            "caption": "The 1s occupy rows $AB = 00$ and $AB = 10$."
-          }
+          "title": "Binary patterns",
+          "body": "0–3 are $00{-}{-}$ and 8–11 are $10{-}{-}$: in all eight, $B = 0$; $A$, $C$, $D$ take every combination."
         },
         {
-          "title": "Group the octet on the K-map",
-          "body": "Rows $AB = 00$ and $AB = 10$ are adjacent on the K-map (the first and last rows in Gray order $00, 01, 11, 10$ wrap around). Together they form one rectangle of $2 \\times 4 = 8$ cells — an **octet**.",
+          "title": "On the map",
+          "body": "Rows $AB = 00$ (top) and $10$ (bottom) are neighbours across the top/bottom border: an octet. $2^3$ cells keep $4 - 3 = 1$ literal: $\\overline{B}$.",
           "scene": {
             "groups": [
               {
@@ -4713,19 +4709,14 @@
                   11
                 ],
                 "label": "B′",
-                "tone": "success"
+                "tone": "accent"
               }
-            ],
-            "caption": "One octet covers every 1."
+            ]
           }
-        },
-        {
-          "title": "Read off the literal",
-          "body": "Inside the octet $A$ changes ($0$ and $1$), $C$ changes and $D$ changes; only $B$ stays $0$. So the octet is the single literal $B'$:\n\n$$F = B'.$$\n\nOne implicant with one literal cannot be simplified further, so this is the minimal SOP — option **(B)**."
         }
       ],
       "answer": {
-        "value": "$F = B'$ — option **(B)**",
+        "value": "(B) $B'$",
         "choice": [
           "B"
         ],
@@ -4735,33 +4726,32 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$A'+B'+C'+D'$ is $0$ only for $m_{15}$, so it is $1$ on 15 minterms — e.g. $m_4$ ($0100$), which is not in $F$."
+          "reason": "$A' + B' + C' + D'$ is 0 only on $m_{15}$: 15 minterms."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exactly the minterms with $B=0$: $0$–$3$ and $8$–$11$."
+          "reason": "The octet."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$A'B' + AB$ covers $0$–$3$ and $12$–$15$; it misses $8$–$11$ and wrongly includes $12$–$15$ (confusing $AB=10$ with $AB=11$)."
+          "reason": "$A'B' + AB$ is $\\{0..3\\} \\cup \\{12..15\\}$: the wrong second block."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$A'$ covers $0$–$7$: it includes $4$–$7$ and misses $8$–$11$."
+          "reason": "$A'$ is $m_0$–$m_7$."
         }
       ],
-      "shortcut": "$\\{0,\\dots,3\\} \\cup \\{8,\\dots,11\\}$ are exactly the numbers $0$–$15$ whose bit of weight $4$ (that is $B$) is $0$, so $F = B'$ immediately.",
+      "shortcut": "The list is closed under ±8 (flip $A$), ±2 and ±1 (flip $C$, $D$) and contains only $B = 0$ numbers: $f = \\overline{B}$.",
       "pitfalls": [
-        "Forgetting that the top and bottom K-map rows ($AB = 00$ and $AB = 10$) are adjacent and grouping them as two quads $A'B' + AB'$ — correct but not minimal.",
-        "Reading the row order as binary ($00,01,10,11$) instead of Gray order."
+        "Not seeing that the top and bottom rows wrap (answering $A'B' + AB'$, which is equal but not minimal).",
+        "Confusing 8–11 ($AB = 10$) with 12–15 ($AB = 11$)."
       ],
-      "verification": "Algebra: $\\Sigma m(0..3) = A'B'$ and $\\Sigma m(8..11) = AB'$, so $F = A'B' + AB' = (A'+A)B' = B'$.",
+      "verification": "$\\overline{B}$ over four variables has $2^3 = 8$ minterms: those with bit $B$ (weight 4) equal to 0, i.e. 0–3 and 8–11. ✓",
       "animation": {
         "kind": "kmap",
-        "title": "K-map of F(A,B,C,D)",
         "variables": [
           "A",
           "B",
@@ -4777,7 +4767,8 @@
           9,
           10,
           11
-        ]
+        ],
+        "groups": []
       }
     },
     "cse-2026-2-cs-31": {

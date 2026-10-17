@@ -1162,24 +1162,53 @@
       "verification": "Row $A = B = 0$: XNOR is 1; circuit D gives $G_1 = 0$, $G_2 = 1$, $F = \\overline{1 \\cdot 1} = 0$."
     },
     "cse-2011-cs-14": {
-      "approach": "Each sum term is a maxterm; list the minterms where the product is 0, the rest are 1s, and read off the minimal SOP.",
+      "approach": "Concept tested: **POS of maxterms → minimal SOP**. Each factor contains all three variables, so it is one maxterm; the function is 1 on every other row.",
       "concepts": [
         "Maxterms",
         "POS to SOP",
-        "K-map simplification"
+        "Karnaugh map"
       ],
       "steps": [
         {
-          "title": "Zeros of the function",
-          "body": "A sum term is 0 when every literal is 0:\n- $P+\\overline{Q}+\\overline{R}=0$ at $PQR=011$ (3)\n- $P+\\overline{Q}+R=0$ at $010$ (2)\n- $P+Q+\\overline{R}=0$ at $001$ (1)\n\nSo $F = \\prod M(1,2,3)$ and $F = \\sum m(0,4,5,6,7)$."
+          "title": "The zeros",
+          "body": "$(P + \\overline{Q} + \\overline{R}) = 0$ at $P = 0, Q = 1, R = 1$: $M_3$. $(P + \\overline{Q} + R) = M_2$. $(P + Q + \\overline{R}) = M_1$. So $f = \\Pi M(1, 2, 3) = \\Sigma m(0, 4, 5, 6, 7)$.",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Group the ones",
-          "body": "- $m(4,5,6,7)$: all cells with $P=1$ ⇒ $P$.\n- $m(0,4)$: $Q=0, R=0$ ⇒ $\\overline{Q}\\,\\overline{R}$.\n\n$$F = P + \\overline{Q}\\,\\overline{R}$$"
+          "title": "Loop",
+          "body": "Row $P = 1$ is a quad: $P$. $m_0$ pairs with $m_4$ (column $QR = 00$): $\\overline{Q}\\,\\overline{R}$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  4,
+                  5,
+                  6,
+                  7
+                ],
+                "label": "P",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  0,
+                  4
+                ],
+                "label": "Q′R′",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Algebra check",
+          "body": "The first two factors combine: $(P + \\overline{Q} + \\overline{R})(P + \\overline{Q} + R) = P + \\overline{Q}$. Then $(P + \\overline{Q})(P + Q + \\overline{R}) = P + \\overline{Q}(Q + \\overline{R}) = P + \\overline{Q}\\,\\overline{R}$."
         }
       ],
       "answer": {
-        "value": "$F = P + \\overline{Q}.\\overline{R}$ — option (B)",
+        "value": "(B) $P + \\overline{Q}\\,\\overline{R}$",
         "choice": [
           "B"
         ],
@@ -1189,29 +1218,46 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\overline{P}Q + \\overline{R}$ is 1 at $PQR = 010$, where the given product is 0."
+          "reason": "$\\overline{P}Q + \\overline{R}$ is 1 on $m_2, m_3$, which are 0s."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: ones exactly at minterms 0, 4, 5, 6, 7."
+          "reason": "The two loops."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\overline{P}Q + R$ is 1 at $001$ and $011$, where the product is 0."
+          "reason": "$\\overline{P}Q + R$ is 1 on $m_1, m_3$ (0s)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$PQ + R$ is 0 at $000$ (where $F=1$) and 1 at $001$ (where $F=0$)."
+          "reason": "$PQ + R$ misses $m_0$ and $m_4$ and adds $m_1, m_3$."
         }
       ],
-      "shortcut": "Algebra: $(P+\\overline{Q}+\\overline{R})(P+\\overline{Q}+R) = P+\\overline{Q}$; then $(P+\\overline{Q})(P+Q+\\overline{R}) = P + \\overline{Q}(Q+\\overline{R}) = P + \\overline{Q}\\,\\overline{R}$.",
+      "shortcut": "The three zeros all have $P = 0$ and are not $\\overline{Q}\\,\\overline{R}$: so $f = 1$ iff $P = 1$ or $Q = R = 0$.",
       "pitfalls": [
-        "Reading maxterm indices with complemented literals as 1 — in a sum term a complemented literal is 0 when the variable is 1."
+        "Reading the maxterm indices as minterms (Σ/Π mix-up), which gives $\\overline{P}(Q + R)$.",
+        "Writing the POS's literals as a product directly."
       ],
-      "verification": "Algebraic shortcut and K-map grouping give the same result."
+      "verification": "$P + \\overline{Q}\\,\\overline{R}$ at $P = 0$: 1 only for $QR = 00$, so it is 0 on rows 1, 2, 3, exactly the three maxterms.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "P",
+          "Q",
+          "R"
+        ],
+        "ones": [
+          0,
+          4,
+          5,
+          6,
+          7
+        ],
+        "groups": []
+      }
     },
     "cse-2011-cs-15": {
       "approach": "A mod-$N$ counter needs $N$ distinct states, so the number of flip-flops is the smallest $n$ with $2^n \\ge N$.",

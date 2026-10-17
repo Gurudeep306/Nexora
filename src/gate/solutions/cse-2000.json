@@ -1327,32 +1327,56 @@
       "verification": "$1 + 0 + 1 = 1$, $1 \\cdot 0 = 0$, $1 \\cdot 1 + 1 = 1$, $0 + 0 \\cdot 0 = 0$."
     },
     "cse-2000-a-2-11": {
-      "approach": "Read the 1s off the map: $y$ must be 1, and then either $x=1$ or $w=1$. Expand each option and see if it agrees with every 1 and 0 (don’t-cares are free).",
+      "approach": "Concept tested: **expressions that implement a map with don't-cares**. An expression implements the map if it agrees on every care cell (1s and 0s); don't-cares may go either way. Check each option against the cells.",
       "concepts": [
-        "K-map",
-        "Don't-care conditions",
-        "POS/SOP equivalence"
+        "Don't-cares",
+        "Equivalent forms",
+        "Reading a printed map"
       ],
+      "given": "Rows $xy$, columns $wz$ (Gray order). 1s: $xy = 11$ (whole row), $xy = 01$ at $wz = 11, 10$. Don't-cares at $wz = 01$ in rows 00, 01, 10.",
       "steps": [
         {
-          "title": "Function from the map",
-          "body": "Rows $xy$, columns $wz$. 1s: whole row $xy=11$ → $xy$; row $xy=01$ at $wz=11,10$ → $\\bar x y w$. So $f=xy+yw=y(x+w)$ (don’t-cares at $wz=01$ in rows 00, 01, 10 taken as 0)."
+          "title": "Read the map",
+          "body": "Over $(w, x, y, z)$ the 1s are $m_6, m_7, m_{10}, m_{11}, m_{14}, m_{15}$ (all with $y = 1$ and $w + x = 1$) and the don't-cares $m_1, m_3, m_5$.",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Check A and B",
-          "body": "(A) $(w+x)y=wy+xy$ and (B) $xy+yw$ — both equal $f$."
+          "title": "Loop",
+          "body": "Row $xy = 11$ is the quad $xy$; the cells $xy = 01, 11$ in columns $wz = 11, 10$ form the quad $wy$. So $f = xy + wy = (w + x)y$; the don't-cares are not needed.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  12,
+                  13,
+                  14,
+                  15
+                ],
+                "label": "xy",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  6,
+                  7,
+                  14,
+                  15
+                ],
+                "label": "wy",
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "Check C",
-          "body": "$(\\bar w+y)(\\bar x+y)=y+\\bar w\\bar x$. Then\n$$(w+x)(y+\\bar w\\bar x)=(w+x)y+(w+x)\\bar w\\bar x=(w+x)y+0.$$ Also equal to $f$."
-        },
-        {
-          "title": "Conclusion",
-          "body": "All of (A), (B), (C) implement the map, so the function that does NOT implement it is “None of the above”."
+          "title": "Check each option",
+          "body": "(A) $(w + x)y$ is the loop result. (B) $xy + yw$ is the same thing expanded. (C) $(w + x)(\\overline{w} + y)(\\overline{x} + y)$: for $w = 1$ it reduces to $1 \\cdot y \\cdot (\\overline{x} + y) = y$, for $w = 0$ to $x \\cdot 1 \\cdot (\\overline{x} + y) = xy$; so it is $wy + xy = (w + x)y$ exactly. All three implement the map."
         }
       ],
       "answer": {
-        "value": "None of the above",
+        "value": "(D) None of the above: (A), (B) and (C) all implement the map",
         "choice": [
           "D"
         ],
@@ -1362,25 +1386,54 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$(w+x)y$ implements the map."
+          "reason": "Implements the map: it is exactly the two quads factored."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$xy+yw$ is the same SOP."
+          "reason": "Implements the map: the two quads $xy$ and $wy$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Simplifies to $(w+x)y$, so it implements the map."
+          "reason": "Implements the map: split on $w$; it is $y$ when $w = 1$ and $xy$ when $w = 0$, i.e. exactly $(w + x)y$ (and 0 on the don't-cares $m_1, m_3, m_5$, which is allowed)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: every listed function implements it."
+          "reason": "Since all three implement the map, none of them is the one that does NOT."
         }
       ],
-      "verification": "Spot-check cell $xy=01,wz=00$ (0): A gives $(0+0)\\cdot1=0$ ✓; cell $xy=01,wz=10$ (1): A gives $(1+0)\\cdot1=1$ ✓."
+      "shortcut": "Factor first: $xy + wy = (w + x)y$, so (A) and (B) are one function; then test (C) on the few care cells it could disagree on.",
+      "pitfalls": [
+        "Requiring an option to be equal on the don't-care cells too.",
+        "Reading the rows as $wx$: the labels are $xy$ on the rows and $wz$ on the columns."
+      ],
+      "verification": "Over all 16 rows, each of (A), (B), (C) agrees with the map on the 13 care cells (by enumeration).",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "x",
+          "y",
+          "w",
+          "z"
+        ],
+        "ones": [
+          6,
+          7,
+          12,
+          13,
+          14,
+          15
+        ],
+        "groups": [],
+        "dcs": [
+          1,
+          5,
+          9
+        ],
+        "title": "Rows xy, columns wz (as printed)"
+      }
     },
     "cse-2000-a-2-12": {
       "approach": "J = K = 1 makes the JK flip-flop toggle; the D flip-flop copies P as it was before the shared clock edge (master-slave). Trace one clock cycle from (P, Q) = (0, 1).",

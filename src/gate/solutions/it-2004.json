@@ -2352,65 +2352,23 @@
       "verification": "$(123456)_8 = 42798 = (A72E)_{16}$, and $(22130232)_4 = 42798$."
     },
     "it-2004-it-44": {
-      "approach": "Convert the terms to minterms and minimise on a K-map; then compare with the options. The printed function has a misprint, so check which single correction makes an option fit.",
+      "approach": "Concept tested: **minterm expansion and a 3-variable K-map**. Turn each product into its minterm, plot, loop, and compare with the options by minterm lists.",
       "concepts": [
-        "K-map minimisation",
-        "Minterms"
+        "Minterms",
+        "Karnaugh map",
+        "Equivalent forms"
       ],
       "steps": [
         {
-          "title": "Minterms as printed",
-          "body": "$AB'C=5$, $A'BC=3$, $ABC'=6$, $A'B'C=1$, $AB'C=5$ (repeated). Function $=\\sum m(1,3,5,6)=A'C+B'C+ABC'$. As printed, **no option** equals this (option A covers 1,3,4,6,7; C covers 2,3,4,5,6; D covers 2,3,4,5,7).",
+          "title": "Minterms",
+          "body": "$A\\overline{B}C = m_5$, $\\overline{A}BC = m_3$, $AB\\overline{C} = m_6$, $\\overline{A}\\,\\overline{B}C = m_1$, $A\\overline{B}\\,\\overline{C} = m_4$. So $f = \\Sigma m(1, 3, 4, 5, 6)$.",
           "scene": {
-            "ones": [
-              1,
-              3,
-              5,
-              6
-            ],
-            "groups": [
-              {
-                "cells": [
-                  1,
-                  3
-                ],
-                "label": "A′C"
-              },
-              {
-                "cells": [
-                  1,
-                  5
-                ],
-                "label": "B′C"
-              },
-              {
-                "cells": [
-                  6
-                ],
-                "label": "ABC′"
-              }
-            ],
-            "caption": "as printed: Σm(1,3,5,6)"
+            "groups": []
           }
         },
         {
-          "title": "Intended function",
-          "body": "The duplicated term is a misprint for $AB'C'=4$. Then $F=\\sum m(1,3,4,5,6)$.",
-          "scene": {
-            "ones": [
-              1,
-              3,
-              4,
-              5,
-              6
-            ],
-            "groups": [],
-            "caption": "intended: Σm(1,3,4,5,6)"
-          }
-        },
-        {
-          "title": "Minimise",
-          "body": "Groups: $A'C=\\{1,3\\}$, $AC'=\\{4,6\\}$, $AB'=\\{4,5\\}$. So $F=AB'+AC'+A'C$ — option B, whose printed form \"$AB'AC'+A'C$\" has just lost a $+$.",
+          "title": "Forced loops",
+          "body": "$m_3$ pairs only with $m_1$: $\\overline{A}C$. $m_6$ pairs only with $m_4$: $A\\overline{C}$.",
           "scene": {
             "groups": [
               {
@@ -2418,61 +2376,88 @@
                   1,
                   3
                 ],
-                "label": "A′C"
+                "label": "A′C",
+                "tone": "accent"
               },
               {
                 "cells": [
                   4,
                   6
                 ],
-                "label": "AC′"
+                "label": "AC′",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The last 1",
+          "body": "$m_5$ can pair with $m_4$ ($A\\overline{B}$) or with $m_1$ ($\\overline{B}C$); both cost 2 literals, so there are two minimal SOPs. Option (B) uses $A\\overline{B}$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  1,
+                  3
+                ],
+                "label": "A′C",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  4,
+                  6
+                ],
+                "label": "AC′",
+                "tone": "success"
               },
               {
                 "cells": [
                   4,
                   5
                 ],
-                "label": "AB′"
+                "label": "AB′",
+                "tone": "warning"
               }
-            ],
-            "caption": "F = AB′ + AC′ + A′C"
+            ]
           }
         }
       ],
       "answer": {
-        "value": "$A\\overline{B}+A\\overline{C}+\\overline{A}C$ (option B, read with the missing '+')",
+        "value": "(B) $A\\overline{B} + A\\overline{C} + \\overline{A}C$",
         "choice": [
           "B"
         ],
-        "matchesKey": true,
-        "keyNote": "Matches the stored key only under the evident misprints (last term AB′C′; option B missing a +). As printed, no option is equivalent; question stays flagged for review."
+        "matchesKey": true
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "$AC'+AB+A'C=\\sum m(1,3,4,6,7)$: includes 7 and misses 5."
+          "reason": "$A\\overline{C} + AB + \\overline{A}C = \\Sigma(1, 3, 4, 6, 7)$: has $m_7$, lacks $m_5$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Intended $AB'+AC'+A'C=\\sum m(1,3,4,5,6)$ — matches the corrected function."
+          "reason": "$\\Sigma(4, 5) \\cup \\Sigma(4, 6) \\cup \\Sigma(1, 3) = \\Sigma(1, 3, 4, 5, 6)$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$A'B+AC'+AB'=\\sum m(2,3,4,5,6)$: includes 2 and misses 1."
+          "reason": "$\\overline{A}B + A\\overline{C} + A\\overline{B} = \\Sigma(2, 3, 4, 5, 6)$: has $m_2$, lacks $m_1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$A'B+AC+AB'=\\sum m(2,3,4,5,7)$: includes 2, 7 and misses 1, 6."
+          "reason": "$\\overline{A}B + AC + A\\overline{B} = \\Sigma(2, 3, 4, 5, 7)$."
         }
       ],
+      "shortcut": "Only option (B) contains $\\overline{A}C$ and no $\\overline{A}B$; checking $m_1 = \\overline{A}\\,\\overline{B}C$ alone already rules out (C) and (D).",
       "pitfalls": [
-        "Not expanding each option into minterms — it is the fastest way to compare."
+        "The reprint prints the fifth term as $A\\overline{B}C$ again and option (B) without its '+'; the original paper (and this bank, repaired) has $A\\overline{B}\\,\\overline{C}$.",
+        "Thinking the minimal SOP is unique: $\\overline{B}C$ could replace $A\\overline{B}$."
       ],
-      "verification": "Option B (with +) evaluated at all 8 inputs is 1 exactly at 1,3,4,5,6, which is the printed function with the one duplicated term corrected.",
+      "verification": "Enumerating all eight rows, only option (B) matches the function on every row.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -2483,6 +2468,7 @@
         "ones": [
           1,
           3,
+          4,
           5,
           6
         ],

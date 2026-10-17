@@ -653,23 +653,23 @@
       "verification": "Numerically, expanding the determinant at $\\theta = \\pi/4$ gives $f(\\pi/4) \\approx 0.856 - 0.259 - 0.5 \\approx 0.098 \\ne 0$, confirming $f$ is not constant."
     },
     "cse-2014-1-cs-7": {
-      "approach": "Factor out $Q$ and absorb: $P + \\overline{P}R = P + R$ and then $P + R + \\overline{R}S = P + R + S$, giving $Q(P + R + S)$.",
+      "approach": "Concept tested: **minimal SOP by map or algebra**. Expand the three terms into cells, loop the largest groups; or factor $Q$ out and use $x + \\overline{x}y = x + y$ twice.",
       "concepts": [
-        "Boolean algebra",
+        "Minimal SOP",
         "Absorption",
-        "K-map"
+        "Karnaugh map"
       ],
       "steps": [
         {
-          "title": "Factor Q",
-          "body": "$$F = Q\\,(P + \\overline{P}R + \\overline{P}\\,\\overline{R}S)$$",
+          "title": "Plot",
+          "body": "$PQ = \\{12, 13, 14, 15\\}$, $\\overline{P}QR = \\{6, 7\\}$, $\\overline{P}Q\\overline{R}S = \\{5\\}$: $F = \\Sigma(5, 6, 7, 12, 13, 14, 15)$.",
           "scene": {
-            "caption": "Minterms of F: PQ → 12–15, P̄QR → 6, 7, P̄QR̄S → 5"
+            "groups": []
           }
         },
         {
-          "title": "Absorb step by step",
-          "body": "$P + \\overline{P}R = P + R$ (rule $X + \\overline{X}Y = X + Y$). Then\n$$P + \\overline{P}\\,\\overline{R}S = P + \\overline{R}S, \\quad R + \\overline{R}S = R + S$$\nSo the bracket is $P + R + S$ and $F = PQ + QR + QS$.",
+          "title": "Loop",
+          "body": "Quads $PQ$ (12–15), $QR$ (6, 7, 14, 15) and $QS$ (5, 7, 13, 15): each is needed ($m_{12}$ only in $PQ$, $m_6$ only in $QR$, $m_5$ only in $QS$).",
           "scene": {
             "groups": [
               {
@@ -679,7 +679,8 @@
                   14,
                   15
                 ],
-                "label": "PQ"
+                "label": "PQ",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -688,7 +689,8 @@
                   14,
                   15
                 ],
-                "label": "QR"
+                "label": "QR",
+                "tone": "success"
               },
               {
                 "cells": [
@@ -697,15 +699,19 @@
                   13,
                   15
                 ],
-                "label": "QS"
+                "label": "QS",
+                "tone": "warning"
               }
-            ],
-            "caption": "Three quads cover all 7 ones: PQ + QR + QS"
+            ]
           }
+        },
+        {
+          "title": "Algebra check",
+          "body": "$F = Q(P + \\overline{P}R + \\overline{P}\\,\\overline{R}S) = Q(P + R + \\overline{R}S) = Q(P + R + S) = PQ + QR + QS$."
         }
       ],
       "answer": {
-        "value": "$PQ + QR + QS$",
+        "value": "(A) $PQ + QR + QS$",
         "choice": [
           "A"
         ],
@@ -715,28 +721,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: three 4-cell groups cover minterms 5, 6, 7, 12, 13, 14, 15 with 3 terms."
+          "reason": "The three essential quads."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Drops the factor $Q$: $P + Q + R + S$ is 1 for e.g. $P=1, Q=0$, where $F = 0$."
+          "reason": "$P + Q + R + S$ is 1 on 15 rows; $F$ has only 7 minterms."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Complemented literals — $F$ is 0 when $Q = 0$, but this expression is 1 there."
+          "reason": "$\\overline{P} + \\overline{Q} + \\overline{R} + \\overline{S}$ is 0 only on $m_{15}$, the opposite of $F$ there."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Equals $P + \\overline{P}R + \\overline{P}\\,\\overline{R}S = P + R + S$ — it forgets $Q$ and is not minimal."
+          "reason": "$\\overline{P}R + \\overline{P}\\,\\overline{R}S + P$ drops the common factor $Q$ entirely, adding many 0-rows."
         }
       ],
+      "shortcut": "Every term contains $Q$, so $F = Q \\cdot (\\dots)$, and (B), (C), (D) are 1 somewhere with $Q = 0$: only (A) survives.",
       "pitfalls": [
-        "Simplifying the bracket correctly but forgetting to multiply back by $Q$ (gives option D or B)."
+        "Dropping the common $Q$ while simplifying.",
+        "Stopping at $Q(P + R + S)$ when the question asks for SOP form."
       ],
-      "verification": "K-map: ones at 5, 6, 7, 12, 13, 14, 15 (seven cells); the union of the three quads is exactly these seven cells.",
+      "verification": "Expanding (A) gives $\\{12..15\\} \\cup \\{6, 7, 14, 15\\} \\cup \\{5, 7, 13, 15\\} = \\{5, 6, 7, 12, 13, 14, 15\\}$. ✓",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -754,8 +762,7 @@
           14,
           15
         ],
-        "groups": [],
-        "caption": "K-map of F"
+        "groups": []
       }
     },
     "cse-2014-1-cs-8": {

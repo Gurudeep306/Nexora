@@ -1,0 +1,687 @@
+{
+ "version": 1,
+ "title": "The corner quad B′D′ on a 4-variable K-map",
+ "width": 660,
+ "height": 330,
+ "narrow": {
+  "width": 340,
+  "height": 420
+ },
+ "intro": "A 4-variable map (rows A B, columns C D) with 1s in the four corner cells.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "The four corners form one group",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "The four corners are one group",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "kg",
+   "type": "grid",
+   "x": 120,
+   "y": 92,
+   "rows": 4,
+   "cols": 4,
+   "cell": 56,
+   "values": [
+    [
+     "1",
+     "",
+     "",
+     "1"
+    ],
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1",
+     "",
+     "",
+     "1"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 92,
+    "cell": 56
+   }
+  },
+  {
+   "id": "kc0",
+   "type": "text",
+   "x": 148.0,
+   "y": 80,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 120.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc1",
+   "type": "text",
+   "x": 204.0,
+   "y": 80,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 176.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc2",
+   "type": "text",
+   "x": 260.0,
+   "y": 80,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc3",
+   "type": "text",
+   "x": 316.0,
+   "y": 80,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 288.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kr0",
+   "type": "text",
+   "x": 110,
+   "y": 120.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 120.0
+   }
+  },
+  {
+   "id": "kr1",
+   "type": "text",
+   "x": 110,
+   "y": 176.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 176.0
+   }
+  },
+  {
+   "id": "kr2",
+   "type": "text",
+   "x": 110,
+   "y": 232.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 232.0
+   }
+  },
+  {
+   "id": "kr3",
+   "type": "text",
+   "x": 110,
+   "y": 288.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 288.0
+   }
+  },
+  {
+   "id": "kcv",
+   "type": "text",
+   "x": 232.0,
+   "y": 60,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 204.0,
+    "y": 63
+   }
+  },
+  {
+   "id": "krv",
+   "type": "text",
+   "x": 110,
+   "y": 80,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 81
+   }
+  },
+  {
+   "id": "ki0",
+   "type": "text",
+   "x": 172,
+   "y": 140,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki1",
+   "type": "text",
+   "x": 228,
+   "y": 140,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki2",
+   "type": "text",
+   "x": 340,
+   "y": 140,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki3",
+   "type": "text",
+   "x": 284,
+   "y": 140,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki4",
+   "type": "text",
+   "x": 172,
+   "y": 196,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki5",
+   "type": "text",
+   "x": 228,
+   "y": 196,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki6",
+   "type": "text",
+   "x": 340,
+   "y": 196,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki7",
+   "type": "text",
+   "x": 284,
+   "y": 196,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki8",
+   "type": "text",
+   "x": 172,
+   "y": 308,
+   "text": "8",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki9",
+   "type": "text",
+   "x": 228,
+   "y": 308,
+   "text": "9",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki10",
+   "type": "text",
+   "x": 340,
+   "y": 308,
+   "text": "10",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki11",
+   "type": "text",
+   "x": 284,
+   "y": 308,
+   "text": "11",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki12",
+   "type": "text",
+   "x": 172,
+   "y": 252,
+   "text": "12",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki13",
+   "type": "text",
+   "x": 228,
+   "y": 252,
+   "text": "13",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki14",
+   "type": "text",
+   "x": 340,
+   "y": 252,
+   "text": "14",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki15",
+   "type": "text",
+   "x": 284,
+   "y": 252,
+   "text": "15",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "q0",
+   "type": "box",
+   "x": 102.08,
+   "y": 74.08,
+   "w": 68.92,
+   "h": 68.92,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 74.08,
+    "y": 74.08,
+    "w": 68.92,
+    "h": 68.92
+   }
+  },
+  {
+   "id": "q1",
+   "type": "box",
+   "x": 293,
+   "y": 74.08,
+   "w": 68.92,
+   "h": 68.92,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 265,
+    "y": 74.08,
+    "w": 68.92,
+    "h": 68.92
+   }
+  },
+  {
+   "id": "q2",
+   "type": "box",
+   "x": 102.08,
+   "y": 265,
+   "w": 68.92,
+   "h": 68.92,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 74.08,
+    "y": 265,
+    "w": 68.92,
+    "h": 68.92
+   }
+  },
+  {
+   "id": "q3",
+   "type": "box",
+   "x": 293,
+   "y": 265,
+   "w": 68.92,
+   "h": 68.92,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 265,
+    "y": 265,
+    "w": 68.92,
+    "h": 68.92
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 380,
+   "y": 110,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 340,
+    "size": 13
+   }
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 380,
+   "y": 140,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 366,
+    "size": 13
+   }
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 380,
+   "y": 170,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 392,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The 1s are the four corners: m0 = 0000, m2 = 0010, m8 = 1000, m10 = 1010. They look as far apart as cells can be.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "text": "1s at m0, m2, m8, m10"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Across the left/right edge: m0 and m2 differ only in C (0000, 0010), and so do m8 and m10. Across the top/bottom edge: m0 and m8 differ only in A, m2 and m10 too.",
+   "patches": [
+    {
+     "id": "n2",
+     "set": {
+      "text": "0 ~ 2 and 8 ~ 10 (C changes)"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "text": "0 ~ 8 and 2 ~ 10 (A changes)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So the four corners are a 2 × 2 block on the torus: one group of 4, drawn as four corner pieces that reach outward through the edges.",
+   "patches": [
+    {
+     "id": "q0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "q1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "q2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "q3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Inside the group A and C both change; B = 0 and D = 0 never change. A group of 4 = 2² cells keeps 4 − 2 = 2 literals: B′D′.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "text": "f = B′D′",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "B = 0 and D = 0 throughout"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "text": "A and C change: they drop"
+     }
+    }
+   ]
+  }
+ ]
+}

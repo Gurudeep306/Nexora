@@ -2333,3 +2333,251 @@ h4.notes-h {
     min-height: 32px;
   }
 }
+
+/* ── Live Lab (K-map Solver) ─────────────────────────────────────────── */
+.km-grid {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+@media (max-width: 760px) {
+  .km-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.km-five {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+@media (max-width: 520px) {
+  .km-five {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.km-sub {
+  margin: 0 0 4px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+.km-wrap {
+  max-width: 420px;
+}
+.km-table {
+  position: relative;
+  display: grid;
+  gap: 0;
+  align-items: stretch;
+}
+.km-corner {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 6px 0 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+.km-axis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--notes-subject-ink, var(--color-text-secondary));
+}
+.km-cell {
+  position: relative;
+  aspect-ratio: 1;
+  min-height: 40px;
+  margin: 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+.km-cell:hover {
+  background: var(--color-bg-surface-2);
+}
+.km-cell:focus-visible {
+  z-index: 2;
+  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
+  outline-offset: -2px;
+}
+.km-cell.is-1 {
+  background: color-mix(in oklab, var(--color-state-success) 14%, var(--color-bg-surface));
+}
+.km-cell.is-x {
+  background: color-mix(in oklab, var(--color-state-warning) 12%, var(--color-bg-surface));
+}
+.km-val {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+}
+.km-cell.is-x .km-val {
+  color: color-mix(in oklab, var(--color-state-warning) 70%, var(--color-text-primary));
+}
+.km-idx {
+  position: absolute;
+  right: 3px;
+  bottom: 1px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+.km-loops {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.km-loop {
+  fill: none;
+  stroke-width: 2.6;
+}
+.km-loop.is-pos {
+  stroke-dasharray: 7 4;
+}
+.km-loop.tone-accent {
+  stroke: var(--color-accent-brand);
+}
+.km-loop.tone-success {
+  stroke: var(--color-state-success);
+}
+.km-loop.tone-info {
+  stroke: var(--color-state-info);
+}
+.km-loop.tone-warning {
+  stroke: var(--color-state-warning);
+}
+.km-loop.tone-danger {
+  stroke: var(--color-state-error);
+}
+.km-loop.tone-subject {
+  stroke: var(--notes-subject-ink, var(--color-text-primary));
+}
+.km-result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+  margin: 0 0 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--color-accent-brand) 8%, var(--color-bg-surface));
+}
+.km-f {
+  font-weight: 700;
+}
+.km-expr {
+  font-family: var(--font-mono);
+  font-size: 15.5px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.km-cost {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.km-h {
+  margin: 10px 0 6px;
+  font-size: 14px;
+}
+.km-pis {
+  display: grid;
+  gap: 4px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+}
+.km-pi {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  width: 100%;
+  min-height: 34px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.km-pi.is-on {
+  border-color: var(--color-accent-brand);
+  background: color-mix(in oklab, var(--color-accent-brand) 10%, var(--color-bg-surface));
+}
+.km-pi:focus-visible {
+  outline: 2px solid var(--focus-ring-color, var(--color-accent-brand));
+  outline-offset: 2px;
+}
+.km-pi-term {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+.km-pi-cells {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+.km-pi-kind {
+  margin-left: auto;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--color-text-secondary);
+}
+.km-pi.is-essential .km-pi-kind {
+  color: color-mix(in oklab, var(--color-state-success) 70%, var(--color-text-primary));
+}
+.km-pi.is-redundant .km-pi-kind {
+  color: var(--color-text-muted);
+}
+.km-qm .km-group-start td {
+  border-top: 2px solid var(--color-border-strong);
+}
+.km-qm tr.is-prime td {
+  background: color-mix(in oklab, var(--color-state-success) 10%, transparent);
+  font-weight: 700;
+}
+.km-cube {
+  letter-spacing: 0.08em;
+}
+.km-chart th[scope='row'] {
+  text-align: left;
+  white-space: nowrap;
+}
+.km-chart :is(th, td).is-single {
+  background: color-mix(in oklab, var(--color-state-warning) 14%, transparent);
+}
+.km-chart tr.is-essential th {
+  color: color-mix(in oklab, var(--color-state-success) 70%, var(--color-text-primary));
+}
+@media (max-width: 480px) {
+  .km-cell {
+    min-height: 34px;
+  }
+  .km-val {
+    font-size: 16px;
+  }
+}
+.lab ul.km-pis {
+  padding-left: 0;
+}
+.lab ul.km-pis > li::before {
+  content: none;
+}
+.km-wrap {
+  padding: 6px 12px 10px 0;
+}

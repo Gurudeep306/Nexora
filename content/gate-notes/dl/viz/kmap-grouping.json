@@ -1,0 +1,746 @@
+{
+ "version": 1,
+ "title": "Grouping a 4-variable K-map: an octet and two wrap-around quads",
+ "width": 660,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 460
+ },
+ "intro": "Σm(0, 1, 2, 4, 5, 6, 8, 9, 12, 13, 14) on a 4-variable map (rows A B, columns C D).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "Grouping the 1s: biggest legal loops, fewest of them",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Grouping the 1s, loop by loop",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "kg",
+   "type": "grid",
+   "x": 120,
+   "y": 92,
+   "rows": 4,
+   "cols": 4,
+   "cell": 56,
+   "values": [
+    [
+     "1",
+     "1",
+     "",
+     "1"
+    ],
+    [
+     "1",
+     "1",
+     "",
+     "1"
+    ],
+    [
+     "1",
+     "1",
+     "",
+     "1"
+    ],
+    [
+     "1",
+     "1",
+     "",
+     ""
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 92,
+    "cell": 56
+   }
+  },
+  {
+   "id": "kc0",
+   "type": "text",
+   "x": 148.0,
+   "y": 80,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 120.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc1",
+   "type": "text",
+   "x": 204.0,
+   "y": 80,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 176.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc2",
+   "type": "text",
+   "x": 260.0,
+   "y": 80,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc3",
+   "type": "text",
+   "x": 316.0,
+   "y": 80,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 288.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kr0",
+   "type": "text",
+   "x": 110,
+   "y": 120.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 120.0
+   }
+  },
+  {
+   "id": "kr1",
+   "type": "text",
+   "x": 110,
+   "y": 176.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 176.0
+   }
+  },
+  {
+   "id": "kr2",
+   "type": "text",
+   "x": 110,
+   "y": 232.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 232.0
+   }
+  },
+  {
+   "id": "kr3",
+   "type": "text",
+   "x": 110,
+   "y": 288.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 288.0
+   }
+  },
+  {
+   "id": "kcv",
+   "type": "text",
+   "x": 232.0,
+   "y": 60,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 204.0,
+    "y": 63
+   }
+  },
+  {
+   "id": "krv",
+   "type": "text",
+   "x": 110,
+   "y": 80,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 81
+   }
+  },
+  {
+   "id": "ki0",
+   "type": "text",
+   "x": 172,
+   "y": 140,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki1",
+   "type": "text",
+   "x": 228,
+   "y": 140,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki2",
+   "type": "text",
+   "x": 340,
+   "y": 140,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki3",
+   "type": "text",
+   "x": 284,
+   "y": 140,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki4",
+   "type": "text",
+   "x": 172,
+   "y": 196,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki5",
+   "type": "text",
+   "x": 228,
+   "y": 196,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki6",
+   "type": "text",
+   "x": 340,
+   "y": 196,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki7",
+   "type": "text",
+   "x": 284,
+   "y": 196,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki8",
+   "type": "text",
+   "x": 172,
+   "y": 308,
+   "text": "8",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki9",
+   "type": "text",
+   "x": 228,
+   "y": 308,
+   "text": "9",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki10",
+   "type": "text",
+   "x": 340,
+   "y": 308,
+   "text": "10",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki11",
+   "type": "text",
+   "x": 284,
+   "y": 308,
+   "text": "11",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki12",
+   "type": "text",
+   "x": 172,
+   "y": 252,
+   "text": "12",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki13",
+   "type": "text",
+   "x": 228,
+   "y": 252,
+   "text": "13",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki14",
+   "type": "text",
+   "x": 340,
+   "y": 252,
+   "text": "14",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki15",
+   "type": "text",
+   "x": 284,
+   "y": 252,
+   "text": "15",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "L00",
+   "type": "box",
+   "x": 125,
+   "y": 97,
+   "w": 102,
+   "h": 214,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 97,
+    "y": 97,
+    "w": 102,
+    "h": 214
+   }
+  },
+  {
+   "id": "L10",
+   "type": "box",
+   "x": 102.08,
+   "y": 101,
+   "w": 64.92,
+   "h": 94,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 74.08,
+    "y": 101,
+    "w": 64.92,
+    "h": 94
+   }
+  },
+  {
+   "id": "L11",
+   "type": "box",
+   "x": 297,
+   "y": 101,
+   "w": 64.92,
+   "h": 94,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 269,
+    "y": 101,
+    "w": 64.92,
+    "h": 94
+   }
+  },
+  {
+   "id": "L20",
+   "type": "box",
+   "x": 102.08,
+   "y": 161,
+   "w": 60.92,
+   "h": 86,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 74.08,
+    "y": 161,
+    "w": 60.92,
+    "h": 86
+   }
+  },
+  {
+   "id": "L21",
+   "type": "box",
+   "x": 301,
+   "y": 161,
+   "w": 60.92,
+   "h": 86,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 273,
+    "y": 161,
+    "w": 60.92,
+    "h": 86
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 380,
+   "y": 110,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 340,
+    "size": 13
+   }
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 380,
+   "y": 140,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 366,
+    "size": 13
+   }
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 380,
+   "y": 170,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 392,
+    "size": 13
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 380,
+   "y": 220,
+   "text": "",
+   "anchor": "start",
+   "size": 17,
+   "weight": "bold",
+   "tone": "success",
+   "narrow": {
+    "x": 30,
+    "y": 430,
+    "size": 15
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Eleven 1s to cover. Look for the largest possible groups first, but make sure every loop is a rectangle of 1, 2, 4, 8 or 16 cells (wrap-around allowed).",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "text": "11 ones, 5 zeros"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The first two columns (C D = 00 and 01) are all 1s: an octet. C is 0 in both columns; A, B and D all change. 8 = 2³ cells keep 4 − 3 = 1 literal: C′.",
+   "patches": [
+    {
+     "id": "L00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "text": "octet: C′  (m0 1 4 5 12 13 8 9)",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = C′"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Still uncovered: m2 and m6 (column C D = 10). They join m0 and m4 in the first column through the left/right wrap: a quad in rows A B = 00, 01. A = 0 and D = 0 stay fixed: A′D′.",
+   "patches": [
+    {
+     "id": "L10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "wrap quad: A′D′  (m0 2 4 6)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = C′ + A′D′"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Still uncovered: m14. Its biggest loop also wraps: m12, m14 with m4, m6 in rows A B = 01, 11. B = 1 and D = 0 stay fixed: BD′.",
+   "patches": [
+    {
+     "id": "L20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "text": "wrap quad: BD′  (m4 6 12 14)",
+      "tone": "info"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = C′ + A′D′ + BD′"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every 1 is now inside a loop, and no loop can be bigger or dropped. Minimal SOP: f = C′ + A′D′ + BD′, with 5 literals.",
+   "patches": [
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = C′ + A′D′ + BD′"
+     }
+    }
+   ]
+  }
+ ]
+}

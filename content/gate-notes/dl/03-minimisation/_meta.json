@@ -1,0 +1,4 @@
+{
+  "title": "Minimisation",
+  "summary": "Karnaugh maps from two to six variables, prime and essential prime implicants, don't-cares, minimal SOP and POS, the Quine–McCluskey tabular method with PI charts and Petrick's method, variable-entered maps, and how minimal forms become NAND/NOR circuits: literal and gate counts, static hazards and shared terms."
+}

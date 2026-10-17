@@ -68,7 +68,14 @@
           "title": "Minimisation",
           "lessons": 4,
           "pyqs": 39,
-          "status": "planned"
+          "status": "in-progress",
+          "lessons_status": {
+            "kmaps": "draft",
+            "prime-implicants": "pending",
+            "tabular-method": "pending",
+            "two-level-implementation": "pending"
+          },
+          "live_lab": "K-map Solver (:::lab kmap-solver: map, Quine–McCluskey)"
         },
         {
           "id": "04-combinational-circuits",

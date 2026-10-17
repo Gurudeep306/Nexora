@@ -4204,20 +4204,27 @@
       "verification": "Each member of a class gives the same renamed row: C → (CD/0, EFG/1) and D → (CD/0, EFG/1); E, F, G → (CD/1, CD/1). Partition from (a) is stable, so the 5-state machine is minimal."
     },
     "cse-1997-b-71-a": {
-      "approach": "Pair the clauses with the distributive law $(a+b)(a+c)=a+bc$: the $w$-clauses and the $x$-clauses each collapse, and the middle clause is then absorbed.",
+      "approach": "Concept tested: **POS → minimal SOP**. Find the 0-rows of each factor, take the remaining rows as the minterms, and loop them on a K-map.",
       "concepts": [
-        "Distributive law",
-        "Absorption",
-        "K-map"
+        "POS to SOP",
+        "Karnaugh map",
+        "Minimal SOP"
       ],
       "steps": [
         {
-          "title": "Collapse clause pairs",
-          "body": "$(\\overline{w}+y)(\\overline{w}+z)=\\overline{w}+yz$ and $(\\overline{x}+y)(\\overline{x}+z)=\\overline{x}+yz$.\n\nSo $f=(\\overline{w}+yz)(\\overline{x}+yz)(w+\\overline{x}+z)=(\\overline{w}\\,\\overline{x}+yz)(w+\\overline{x}+z)$."
+          "title": "Zeros of each factor",
+          "body": "A sum term is 0 only when all its literals are 0:\n\n| Factor | 0 when | Rows |\n|---|---|---|\n| $\\overline{w} + y$ | $w = 1, y = 0$ | 8, 9, 12, 13 |\n| $\\overline{x} + y$ | $x = 1, y = 0$ | 4, 5, 12, 13 |\n| $w + \\overline{x} + z$ | $w = 0, x = 1, z = 0$ | 4, 6 |\n| $\\overline{w} + z$ | $w = 1, z = 0$ | 8, 10, 12, 14 |\n| $\\overline{x} + z$ | $x = 1, z = 0$ | 4, 6, 12, 14 |"
         },
         {
-          "title": "Absorb the last clause",
-          "body": "$\\overline{w}\\,\\overline{x}\\cdot(w+\\overline{x}+z)=\\overline{w}\\,\\overline{x}$ (contains $\\overline{x}$) and $yz\\cdot(w+\\overline{x}+z)=yz$ (contains $z$).\n\n$$f=\\overline{w}\\,\\overline{x}+yz$$",
+          "title": "Minterms",
+          "body": "Zeros: $\\{4, 5, 6, 8, 9, 10, 12, 13, 14\\}$. So $f = \\Sigma m(0, 1, 2, 3, 7, 11, 15)$.",
+          "scene": {
+            "groups": []
+          }
+        },
+        {
+          "title": "Loop the 1s",
+          "body": "Row $wx = 00$ is all 1s: $\\overline{w}\\,\\overline{x}$. Column $yz = 11$ is all 1s: $yz$. Together they cover all seven 1s ($m_3$ is in both).",
           "scene": {
             "groups": [
               {
@@ -4227,7 +4234,8 @@
                   2,
                   3
                 ],
-                "label": "w′x′"
+                "label": "w′x′",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -4236,27 +4244,25 @@
                   11,
                   15
                 ],
-                "label": "yz"
+                "label": "yz",
+                "tone": "success"
               }
             ]
           }
-        },
-        {
-          "title": "Minimality",
-          "body": "On the K-map the 1s are $m_0,m_1,m_2,m_3,m_7,m_{11},m_{15}$. Both quads are essential prime implicants and together cover all 7 ones, so $f=\\overline{w}\\,\\overline{x}+yz$ is the minimal SOP."
         }
       ],
       "answer": {
-        "value": "$f=\\overline{w}\\,\\overline{x}+yz$",
+        "value": "$f = \\overline{w}\\,\\overline{x} + yz$",
         "matchesKey": true
       },
+      "shortcut": "Multiply the factors that share a literal: $(\\overline{w} + y)(\\overline{w} + z) = \\overline{w} + yz$ and $(\\overline{x} + y)(\\overline{x} + z) = \\overline{x} + yz$; their product is $\\overline{w}\\,\\overline{x} + yz$, and the factor $(w + \\overline{x} + z)$ is then redundant (it is 1 whenever $\\overline{w}\\,\\overline{x} + yz$ is).",
       "pitfalls": [
-        "Multiplying out all five clauses blindly — the distributive law gives the answer in two lines."
+        "Taking the zeros of a factor as its minterms (the Σ/Π mix-up).",
+        "Forgetting that $m_3$ may be covered twice."
       ],
-      "verification": "Truth check: $w=1,x=0,y=0,z=0$ — clause $(\\overline{w}+y)=0$ so $f=0$; formula gives $0+0=0$. ✓",
+      "verification": "$\\overline{w}\\,\\overline{x}$ covers 0–3 and $yz$ covers 3, 7, 11, 15: union $\\{0, 1, 2, 3, 7, 11, 15\\}$, the complement of the zero set.",
       "animation": {
         "kind": "kmap",
-        "title": "f(w,x,y,z)",
         "variables": [
           "w",
           "x",
@@ -4271,82 +4277,41 @@
           7,
           11,
           15
-        ]
+        ],
+        "groups": []
       }
     },
     "cse-1997-b-71-b": {
-      "approach": "A stuck-at-0 output is wrong exactly where f should be 1, so count the minterms of f = w′x′ + yz by inclusion–exclusion.",
+      "approach": "Concept tested: **counting minterms**. If the output is stuck at 0, the circuit is wrong exactly on the inputs where $f = 1$, so count the minterms of $f$.",
       "concepts": [
-        "Stuck-at fault",
-        "Minterm counting",
-        "Inclusion–exclusion"
+        "Stuck-at-0 fault",
+        "Counting minterms"
       ],
       "steps": [
         {
-          "title": "When is the output wrong?",
-          "body": "Output stuck at 0 ⇒ correct whenever $f=0$, wrong whenever $f=1$. Count the 1s of $f=\\overline{w}\\,\\overline{x}+yz$ (from (a))."
+          "title": "Where a stuck-at-0 output is wrong",
+          "body": "A stuck-at-0 output always shows 0. It is correct on the rows where $f = 0$ and wrong on every row where $f = 1$."
         },
         {
-          "title": "Count",
-          "body": "$|\\overline{w}\\,\\overline{x}|=2^2=4$, $|yz|=2^2=4$, overlap $\\overline{w}\\,\\overline{x}yz$: $1$.\n\n$4+4-1=7$ input combinations.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  1,
-                  2,
-                  3
-                ],
-                "label": "w′x′: 4"
-              },
-              {
-                "cells": [
-                  3,
-                  7,
-                  11,
-                  15
-                ],
-                "label": "yz: 4"
-              }
-            ],
-            "hl": [
-              {
-                "cell": 3,
-                "tone": "warning"
-              }
-            ],
-            "caption": "Overlap m3 counted once: 4 + 4 − 1 = 7"
-          }
+          "title": "Count the 1s of f",
+          "body": "From part (a), $f = \\overline{w}\\,\\overline{x} + yz$. $\\overline{w}\\,\\overline{x}$ covers $2^{4-2} = 4$ rows and $yz$ covers 4; they share $\\overline{w}\\,\\overline{x}yz$ (1 row). By inclusion–exclusion $4 + 4 - 1 = 7$."
+        },
+        {
+          "title": "Cross-check with the factors",
+          "body": "Directly from the POS: the zero-rows of the five factors are $\\{4, 5, 6, 8, 9, 10, 12, 13, 14\\}$ (9 rows), so $f$ is 1 on $16 - 9 = 7$ rows. A stuck-at-0 output is wrong on those 7."
         }
       ],
       "answer": {
-        "value": "7",
+        "value": "**7** input combinations",
+        "number": 7,
         "matchesKey": true
       },
+      "shortcut": "Wrong rows of a stuck-at-$v$ output = rows where $f \\ne v$: for stuck-at-0, the number of minterms.",
       "pitfalls": [
-        "Adding 4 + 4 = 8 and double counting w′x′yz."
+        "Counting the 0s (9) instead of the 1s.",
+        "Adding 4 + 4 without removing the shared minterm $m_3$."
       ],
-      "verification": "K-map 1-cells: m0, m1, m2, m3, m7, m11, m15 — seven cells.",
-      "animation": {
-        "kind": "kmap",
-        "title": "Cells where f = 1 (wrong when stuck at 0)",
-        "variables": [
-          "w",
-          "x",
-          "y",
-          "z"
-        ],
-        "ones": [
-          0,
-          1,
-          2,
-          3,
-          7,
-          11,
-          15
-        ]
-      }
+      "verification": "Part (a)'s minterm list $\\{0, 1, 2, 3, 7, 11, 15\\}$ has 7 entries."
     },
     "cse-1997-b-72-a": {
       "approach": "Concept tested: **encoding in a custom format** with a fraction-form mantissa and sign-magnitude fields. Convert to binary, normalise as $0.1\\ldots \\times 2^e$, keep 5 magnitude bits (truncating, as the key assumes) and write $e$ in 4-bit sign-magnitude.",
