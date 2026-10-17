@@ -18,9 +18,9 @@
       "stages": {
         "digests": "done",
         "outline": "review",
-        "lessons": "in-progress",
-        "viz": "in-progress",
-        "questions": "pending",
+        "lessons": "written",
+        "viz": "done",
+        "questions": "done",
         "review": "pending",
         "wrapup": "pending"
       },
@@ -30,13 +30,13 @@
           "title": "Number systems and codes",
           "lessons": 5,
           "pyqs": 40,
-          "status": "writing",
+          "status": "written",
           "lessons_status": {
             "place-value": "written+checked",
             "power-of-two-bases": "written+checked",
             "fractions-fixed-point": "written+checked",
             "signed-numbers": "written+checked",
-            "codes": "pending"
+            "codes": "written+checked"
           }
         },
         {
