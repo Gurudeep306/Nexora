@@ -3108,35 +3108,37 @@
       "verification": "Each pairing is the textbook classification; only C has all four."
     },
     "cse-2015-2-cs-37": {
-      "approach": "Simplify the expression inside the bracket first: $D'$ covers every $D=0$ cell, so only $D=1$ cells matter; then complement.",
+      "approach": "Concept tested: **counting the minterms of a complemented expression**. Find the rows where the bracket is 0; those are the minterms of its complement.",
       "concepts": [
-        "Boolean algebra",
         "Complement",
-        "Minterms"
+        "Counting minterms",
+        "De Morgan"
       ],
       "steps": [
         {
-          "title": "Split on D",
-          "body": "Let $F = D' + AB' + A'C + AC'D + A'C'D$. If $D = 0$, $F = 1$. If $D = 1$:\n$$F = AB' + A'C + AC' + A'C'$$"
+          "title": "When is the bracket 0?",
+          "body": "$D' + AB' + A'C + AC'D + A'C'D$ is 0 only if every term is 0. $D' = 0$ forces $D = 1$."
         },
         {
-          "title": "Simplify the D = 1 part",
-          "body": "$A'C + A'C' = A'$, so $F = A' + AB' + AC' = A' + B' + C'$ (absorption: $A' + AX = A' + X$)."
+          "title": "With D = 1",
+          "body": "The bracket becomes $AB' + A'C + AC' + A'C'$. Now $A'C + A'C' = A'$ and $AC'$: the sum is $A' + AB' + AC' = A' + B' + C'$ (redundant-literal rule). It is 0 only for $A = B = C = 1$."
         },
         {
-          "title": "Complement",
-          "body": "$F = D' + A' + B' + C'$, so\n$$F' = A\\,B\\,C\\,D$$\nwhich is a single minterm ($m_{15}$). Answer: **1**."
+          "title": "Count",
+          "body": "The bracket is 0 on exactly one row, $ABCD = 1111$, so its complement has one minterm, $m_{15}$."
         }
       ],
       "answer": {
-        "value": "1",
+        "value": "**1** minterm ($ABCD$)",
         "number": 1,
         "matchesKey": true
       },
+      "shortcut": "A sum is 0 only when every term is 0: $D = 1$ kills $D'$; then $A'C + A'C'$ forces $A = 1$, $AB'$ forces $B = 1$, $AC'D$ forces $C = 1$. One row.",
       "pitfalls": [
-        "Counting product terms of the un-complemented expression instead of minterms of $F'$."
+        "Counting the minterms of the bracket (15) instead of its complement.",
+        "Expanding term by term and losing track of overlaps."
       ],
-      "verification": "Check $ABCD = 1111$: every term of $F$ is 0 ($D'=0$, $B'=0$, $A'=0$, $C'=0$), so $F' = 1$; flipping any one bit makes one of $D', A', B', C'$ equal 1, so $F'=0$ elsewhere."
+      "verification": "Enumerating all 16 rows, the bracket is 1 on 15 of them and 0 only on 1111."
     },
     "cse-2015-2-cs-38": {
       "approach": "Notice that the local `static int stkTop` shadows the global one, so `main`'s `stkTop = -1` has no effect; then trace the pushes and pops on the shared array.",

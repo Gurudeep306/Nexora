@@ -1,0 +1,683 @@
+{
+ "version": 1,
+ "title": "The checkerboard K-map of 4-variable parity",
+ "width": 660,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 460
+ },
+ "intro": "A 4-variable map (rows A B, columns C D) with 1s on the odd-parity minterms.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "The checkerboard: parity cannot be grouped",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "The checkerboard (parity)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "kg",
+   "type": "grid",
+   "x": 120,
+   "y": 92,
+   "rows": 4,
+   "cols": 4,
+   "cell": 56,
+   "values": [
+    [
+     "",
+     "1",
+     "",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     "1",
+     ""
+    ],
+    [
+     "",
+     "1",
+     "",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     "1",
+     ""
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 92,
+    "cell": 56
+   }
+  },
+  {
+   "id": "kc0",
+   "type": "text",
+   "x": 148.0,
+   "y": 80,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 120.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc1",
+   "type": "text",
+   "x": 204.0,
+   "y": 80,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 176.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc2",
+   "type": "text",
+   "x": 260.0,
+   "y": 80,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc3",
+   "type": "text",
+   "x": 316.0,
+   "y": 80,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 288.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kr0",
+   "type": "text",
+   "x": 110,
+   "y": 120.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 120.0
+   }
+  },
+  {
+   "id": "kr1",
+   "type": "text",
+   "x": 110,
+   "y": 176.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 176.0
+   }
+  },
+  {
+   "id": "kr2",
+   "type": "text",
+   "x": 110,
+   "y": 232.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 232.0
+   }
+  },
+  {
+   "id": "kr3",
+   "type": "text",
+   "x": 110,
+   "y": 288.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 288.0
+   }
+  },
+  {
+   "id": "kcv",
+   "type": "text",
+   "x": 232.0,
+   "y": 60,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 204.0,
+    "y": 63
+   }
+  },
+  {
+   "id": "krv",
+   "type": "text",
+   "x": 110,
+   "y": 80,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 81
+   }
+  },
+  {
+   "id": "ki0",
+   "type": "text",
+   "x": 172,
+   "y": 140,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki1",
+   "type": "text",
+   "x": 228,
+   "y": 140,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki2",
+   "type": "text",
+   "x": 340,
+   "y": 140,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki3",
+   "type": "text",
+   "x": 284,
+   "y": 140,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki4",
+   "type": "text",
+   "x": 172,
+   "y": 196,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki5",
+   "type": "text",
+   "x": 228,
+   "y": 196,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki6",
+   "type": "text",
+   "x": 340,
+   "y": 196,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki7",
+   "type": "text",
+   "x": 284,
+   "y": 196,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki8",
+   "type": "text",
+   "x": 172,
+   "y": 308,
+   "text": "8",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki9",
+   "type": "text",
+   "x": 228,
+   "y": 308,
+   "text": "9",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki10",
+   "type": "text",
+   "x": 340,
+   "y": 308,
+   "text": "10",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki11",
+   "type": "text",
+   "x": 284,
+   "y": 308,
+   "text": "11",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki12",
+   "type": "text",
+   "x": 172,
+   "y": 252,
+   "text": "12",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki13",
+   "type": "text",
+   "x": 228,
+   "y": 252,
+   "text": "13",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki14",
+   "type": "text",
+   "x": 340,
+   "y": 252,
+   "text": "14",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki15",
+   "type": "text",
+   "x": 284,
+   "y": 252,
+   "text": "15",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 380,
+   "y": 110,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 340,
+    "size": 13
+   }
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 380,
+   "y": 140,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 366,
+    "size": 13
+   }
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 380,
+   "y": 170,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 392,
+    "size": 13
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 380,
+   "y": 220,
+   "text": "",
+   "anchor": "start",
+   "size": 16,
+   "weight": "bold",
+   "narrow": {
+    "x": 30,
+    "y": 430,
+    "size": 14
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The 1s are the minterms with an odd number of 1 bits: 1, 2, 4, 7, 8, 11, 13, 14. They form a checkerboard.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "text": "odd number of 1 bits → 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Every neighbour of a 1 is a 0: moving to a neighbour flips one bit, which changes the parity. Here m1 = 0001 and its neighbours m0, m3, m5, m9 all have an even number of 1s.",
+   "patches": [
+    {
+     "id": "kg",
+     "set": {
+      "highlight": [
+       [
+        0,
+        1
+       ],
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        2
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "each neighbour flips one bit → parity flips"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So no two 1s are adjacent: every prime implicant is a single minterm, and the minimal SOP has all 8 minterms (32 literals). The compact form is the XOR A ⊕ B ⊕ C ⊕ D.",
+   "patches": [
+    {
+     "id": "kg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "text": "8 PIs, each one cell"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = A ⊕ B ⊕ C ⊕ D",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A partial checkerboard, where only some variables alternate, does group: 1s where B = D form the two quads B′D′ (corners) and BD (centre), so f = B′D′ + BD = (B ⊕ D)′.",
+   "patches": [
+    {
+     "id": "kg",
+     "set": {
+      "values": [
+       [
+        "1",
+        "",
+        "",
+        "1"
+       ],
+       [
+        "",
+        "1",
+        "1",
+        ""
+       ],
+       [
+        "",
+        "1",
+        "1",
+        ""
+       ],
+       [
+        "1",
+        "",
+        "",
+        "1"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "text": "1 where B = D"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "corners B′D′ + centre BD"
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "text": "A and C are free"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = B′D′ + BD",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -114,7 +114,8 @@ PYQ pipeline, not a set error).
   the sum exactly as the bank does, so the key 4 stands. The lesson's `trap-printed` block and
   aside teach "evaluate what is printed".
 - `it-2004-it-44`: already `needsReview` (reprint typos). Keep it in dl-03-01 and solve the
-  intended version with a note.
+  intended version with a note. **Resolved 2026-10-18:** text and option (b) repaired through
+  `src/gate/fixes/it-2004.json` (see the Chapter 3 key audit below).
 - `cse-2002-a-15`: the key D (10001) assumes the minimum width (5 bits). The lesson's
   `min-width` block makes that assumption explicit.
 - **Chapter 1 key audit (2026-10-17):** all 40 `dl/number` keys were re-derived from scratch in
@@ -177,6 +178,33 @@ PYQ pipeline, not a set error).
   - Set-level slips noticed while writing Chapter 2 (lessons teach the correct versions): one set claims NOR
     is faster than NAND (X4 above), and one set labels a cascade of two 2:1 MUXes with constants as OR when
     it computes NAND (D 400 above).
+- **Chapter 3 key audit (2026-10-18):** all 39 Chapter 3 keys (`dl/minimization` 38, `dl/gates` 1) were
+  re-derived in `_checks/dl/l3_01 … l3_04` with `minlib.py`: prime implicants by Quine–McCluskey and by a
+  brute-force scan of all 3ⁿ cubes (which must agree), minimal covers by Petrick's method and by exhaustive
+  subset search (which must agree), every option of every MCQ/MSQ parsed and evaluated, printed maps read
+  from the question tables and figure alt texts (checked against the scans), minimum NOR counts by
+  exhaustive circuit search, hazards by checking every adjacent pair of 1-cells. Findings:
+  - `cse-2006-cs-38` (**fixed A → D**, `src/gate/fixes/cse-2006.json`): $f = \Sigma(5, 7, 11, 12, 13, 15)$ has six
+    adjacent 1-pairs; cover (A) has no cube containing 13 (1101) and 15 (1111), so it can glitch when $y$ changes
+    with $w = x = z = 1$. Cover (D) has a cube for every pair (it adds the consensus cube $wxz$). The scan
+    (`GATE_PYQ/GATE2006.pdf` p. 5, Q38) blurs (d)'s first cube; read as $wx\bar y$ (the only reading under which
+    (d) covers $m_{12}$) it is the bank's text. The earlier `needsReview` flag became the answer fix, and the
+    legacy free-text solution (which argued for A) is replaced through the same fixes file.
+  - `it-2004-it-44` (**text and option (b) repaired**, `src/gate/fixes/it-2004.json`; key B unchanged): the
+    reprint scan (`GATE2004IT.pdf` p. 6, Q44) prints the fifth term as $AB'C$, a duplicate of the first, and
+    option (b) as "AB'AC' + A'C" with a '+' missing. As printed no option is equivalent ($\Sigma(1, 3, 5, 6)$);
+    with $AB'C'$ the function is $\Sigma(1, 3, 4, 5, 6) = AB' + AC' + A'C$, option (b).
+  - `cse-2003-cs-45` (**key kept, flag kept**): the scan (`GATE2003.pdf` p. 6, Q45) matches the bank's map.
+    The true minimum literal counts are POS 9 and SOP 8 (SOP $y'w' + x'z'w + xz'w'$ or $\dots + xyz'$); no option
+    is (9, 8). The official key (C) (9, 10) has the right POS count; the v2 solution proves both counts and
+    explains why (C) is the answer that was given credit. The existing `needsReview` note stays.
+  - Interpretations kept (keys unchanged): `cse-2021-2-cs-52` (the three conditions leave $m_2, m_3$
+    unspecified; as don't-cares the minimum is 6 literals, any other completion costs 8 or 9),
+    `cse-2000-a-2-11` (all three expressions implement the map, so "none of the above"), `cse-1998-a-42`
+    (columns printed in counting order).
+  - Set-level slips noticed while writing Chapter 3 (lessons teach the correct versions): B 113's "the
+    minimal SOP is unique" (section 2), C 238's unmerged 5-variable pair (section 2), C 267 / 271 / 273
+    (section 4b).
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,

@@ -115,8 +115,12 @@ test(':::lab embeds a known Live Lab; unknown labs, tabs and content are reporte
   const body = JSON.parse(r.outputs.get('tst.json')).lessons.alpha.body;
   const lab = body.find((n) => n.t === 'block' && n.name === 'lab');
   assert.deepEqual([lab.id, lab.attrs], ['lab-bench', { lab: 'gate-bench', tab: 'sets' }]);
-  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="kmap-solver"}\n:::\n`), /lab must be gate-bench/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench" tab="draw"}\n:::\n`), /tab must be bench \| challenge \| sets/);
+  // Each lab has its own tabs: the K-map Solver takes map | qm, and not Gate Bench's tabs.
+  const km = await build({ content: scratch(`${LESSON}\n:::lab{#lab-km lab="kmap-solver" tab="qm" depth="standard"}\n:::\n`) });
+  assert.deepEqual(km.errors, []);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="kmap-solver" tab="sets"}\n:::\n`), /tab must be map \| qm for kmap-solver/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{tab="bench"}\n:::\n`), /:::lab needs lab=/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench"}\nText.\n:::\n`), /:::lab takes no content/);
 });
@@ -510,6 +514,42 @@ test('gate bench: evaluation, truth tables, challenges and minterm sets match th
   assert.match(lab.parseIndexList('9', 3).error, /not a row of a 3-variable table/);
   assert.equal(lab.formatSigma([1, 2]), 'Σm(1, 2)');
   assert.deepEqual(lab.usedGates({ ...four, output: 'G2' }).map((g) => g.id), ['G1', 'G2']);
+});
+
+/* ── Live Lab: K-map Solver logic against the Python-verified vectors ── */
+
+test('kmap solver: Quine–McCluskey, prime implicants, minimal covers and loops match the checks', async () => {
+  const { pathToFileURL } = require('node:url');
+  const km = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'kmapLogic.ts')).href);
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch3.json'), 'utf8'));
+  assert.ok(vec.cases.length >= 12);
+  for (const c of vec.cases) {
+    const at = `${c.n} vars Σ(${c.ones}) d(${c.dcs})`;
+    const qm = km.qmRounds(c.ones, c.dcs, c.n);
+    assert.deepEqual(qm.rounds.map((r) => r.map((x) => [x.cube, x.checked])), c.rounds, `${at}: Q–M rounds`);
+    const cl = km.classify(c.ones, c.dcs, c.n);
+    assert.deepEqual(cl.primes, c.primes, `${at}: prime implicants`);
+    assert.deepEqual(cl.essential, c.essential, `${at}: essential`);
+    assert.deepEqual(cl.redundant, c.redundant, `${at}: redundant`);
+    assert.deepEqual(cl.selective, c.selective, `${at}: selective`);
+    // Branch and bound (lab) finds exactly the minimal covers Petrick's method finds (minlib).
+    assert.deepEqual(km.minCovers(c.ones, c.dcs, c.n).covers, c.sop, `${at}: minimal SOP covers`);
+    assert.deepEqual(km.minPosCovers(c.ones, c.dcs, c.n).covers, c.pos, `${at}: minimal POS covers`);
+    for (const [p, rects] of Object.entries(c.rects)) assert.deepEqual(km.loopRects(p, c.n), rects, `${at}: loops of ${p}`);
+  }
+  // Presets are the functions the lessons solve.
+  for (const p of km.PRESETS) assert.deepEqual(p.spec, vec.presets[p.id], p.id);
+  // Notation, geometry and editing helpers.
+  assert.equal(km.termText('1-0', ['A', 'B', 'C']), 'AC′');
+  assert.equal(km.sumText('0-1', ['A', 'B', 'C']), '(A + C′)');
+  assert.deepEqual(km.axisLabels(4), [['00', '01', '11', '10'], ['00', '01', '11', '10']]);
+  assert.deepEqual(km.cellRC(13, 4), [2, 1]);
+  assert.equal(km.rcMinterm(2, 1, 4), 13);
+  assert.deepEqual(km.loopRects('-0-0', 4).length, 4);
+  assert.equal(km.NEXT['0'] + km.NEXT['1'] + km.NEXT.X, '1X0');
+  assert.deepEqual(km.specOf(['1', '0', 'X', '1']), { n: 2, ones: [0, 3], dcs: [2] });
+  assert.equal(km.sigmaText({ n: 2, ones: [0, 3], dcs: [2] }), 'Σm(0, 3) + d(2)');
+  assert.deepEqual(km.minCovers([], [], 3).covers, [[]]);
 });
 
 /* ── Viz: the narrow (phone) layout — schema and frames ── */

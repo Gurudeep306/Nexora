@@ -7,6 +7,7 @@ import { lazy } from 'react'
 
 export const LABS = {
   'gate-bench': lazy(() => import('./GateBench')),
+  'kmap-solver': lazy(() => import('./KmapSolver')),
 } as const
 
 export type LabName = keyof typeof LABS

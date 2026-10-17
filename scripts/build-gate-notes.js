@@ -45,8 +45,10 @@ const DEFAULTS = {
 
 /* ── The block vocabulary ─────────────────────────────────────────────── */
 
-// Live Labs the reader can render (keep in step with client/src/gate/notes/labs/index.ts).
-const LABS = ["gate-bench"];
+// Live Labs the reader can render and the tabs each one has (keep in step with
+// client/src/gate/notes/labs/index.ts).
+const LAB_TABS = { "gate-bench": ["bench", "challenge", "sets"], "kmap-solver": ["map", "qm"] };
+const LABS = Object.keys(LAB_TABS);
 // Attribute kinds: 'text' (any short string), 'ref' (an id resolved later), or a list of allowed values.
 const BLOCKS = {
   intuition: { attrs: { title: "text" } },
@@ -65,7 +67,8 @@ const BLOCKS = {
   practice: { attrs: { id: "ref" }, required: ["id"], leaf: true },
   viz: { attrs: { spec: "ref", mode: ["animate", "static"], caption: "text" }, required: ["spec"], leaf: true },
   // Interactive Live Labs (client/src/gate/notes/labs): :::lab{#id lab="gate-bench" tab="bench"}.
-  lab: { attrs: { lab: LABS, tab: ["bench", "challenge", "sets"], title: "text" }, required: ["lab"], leaf: true },
+  // tab must be one of that lab's tabs (LAB_TABS); the check is in Compiler.directive.
+  lab: { attrs: { lab: LABS, tab: "text", title: "text" }, required: ["lab"], leaf: true },
   table: { attrs: { title: "text" } },
   summary: { attrs: { title: "text" } },
   note: { attrs: { title: "text" } },
@@ -464,6 +467,8 @@ class Compiler {
       if (kind === "long" && !String(v).trim()) this.err(n, `:::${name}: ${k} needs text`);
     }
     for (const k of def.required || []) if (!attrs[k]) this.err(n, `:::${name} needs ${k}="…"`);
+    if (name === "lab" && LAB_TABS[attrs.lab] && attrs.tab !== undefined && !LAB_TABS[attrs.lab].includes(attrs.tab))
+      this.err(n, `:::lab: tab must be ${LAB_TABS[attrs.lab].join(" | ")} for ${attrs.lab} (got "${attrs.tab}")`);
 
     if (id !== undefined) {
       if (!ID_RE.test(id)) this.err(n, `:::${name}: id "${id}" must be lower-case letters, digits and dashes`);

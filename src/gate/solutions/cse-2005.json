@@ -901,24 +901,79 @@
       "verification": "$(657)_8 = 384 + 40 + 7 = 431$ and $(1AF)_{16} = 256 + 160 + 15 = 431$."
     },
     "cse-2005-cs-18": {
-      "approach": "Expand each product term of the options into minterms and pick the one whose union is exactly {1,4,5,9,11,12}.",
+      "approach": "Concept tested: **minimising a Σ list** and matching it against options. Loop the forced 1s first; then compare the options term by term.",
       "concepts": [
-        "Sum of products",
-        "Minterms",
-        "Karnaugh map"
+        "Karnaugh map",
+        "Essential groups",
+        "Minimal SOP"
       ],
       "steps": [
         {
-          "title": "Option (a) term by term",
-          "body": "Minterm index $=8A+4B+2C+D$.\n\n- $BC'D'$: $B=1,C=0,D=0$, $A$ free → $0100=4,\\ 1100=12$.\n- $A'C'D$: $A=0,C=0,D=1$, $B$ free → $0001=1,\\ 0101=5$.\n- $AB'D$: $A=1,B=0,D=1$, $C$ free → $1001=9,\\ 1011=11$."
+          "title": "Plot",
+          "body": "$f = \\Sigma(1, 4, 5, 9, 11, 12)$ over $(A, B, C, D)$.",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Union",
-          "body": "$\\{4,12\\}\\cup\\{1,5\\}\\cup\\{9,11\\}=\\{1,4,5,9,11,12\\}$ — exactly the given function."
+          "title": "Forced loops",
+          "body": "$m_{12}$ (1100) has one neighbouring 1, $m_4$: pair $B\\overline{C}\\,\\overline{D}$. $m_{11}$ (1011) has one, $m_9$: pair $A\\overline{B}D$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  4,
+                  12
+                ],
+                "label": "BC′D′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  9,
+                  11
+                ],
+                "label": "AB′D",
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The rest",
+          "body": "Left: $m_1, m_5$ (and $m_4, m_9$ are already covered). The pair $m_1, m_5$ is $\\overline{A}\\,\\overline{C}D$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  4,
+                  12
+                ],
+                "label": "BC′D′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  9,
+                  11
+                ],
+                "label": "AB′D",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  1,
+                  5
+                ],
+                "label": "A′C′D",
+                "tone": "warning"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "BC'D' + A'C'D + AB'D",
+        "value": "(A) $B\\overline{C}\\,\\overline{D} + \\overline{A}\\,\\overline{C}D + A\\overline{B}D$",
         "choice": [
           "A"
         ],
@@ -928,28 +983,48 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: covers exactly {1,4,5,9,11,12}."
+          "reason": "Exactly the three loops; their union is $\\{1, 4, 5, 9, 11, 12\\}$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$ABC'$ gives 12,13 — 13 is not in $f$."
+          "reason": "$AB\\overline{C}$ covers $m_{12}, m_{13}$: $m_{13}$ is a 0."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$ACD'$ gives 10,14 — neither is in $f$."
+          "reason": "$AC\\overline{D}$ covers $m_{10}, m_{14}$, both 0s."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$A'BD$ gives 5,7 — 7 is not in $f$."
+          "reason": "$\\overline{A}BD$ covers $m_5, m_7$: $m_7$ is a 0."
         }
       ],
+      "shortcut": "Check a single minterm that only one option can produce: $m_{11} = A\\overline{B}CD$ is covered only by $A\\overline{B}D$, which only (A) has.",
       "pitfalls": [
-        "Mixing up the variable order when converting to minterm numbers (A is the MSB)."
+        "Grabbing the pair $m_1, m_9$ ($\\overline{B}\\,\\overline{C}D$) first: it is a prime implicant, but then $m_5$ needs a fourth term (12 literals instead of 9).",
+        "Not checking the extra minterms an option's terms bring in."
       ],
-      "verification": "On a K-map the three terms are three disjoint pairs covering all six 1-cells with no 0-cell."
+      "verification": "Expanding (A): $\\{4, 12\\} \\cup \\{1, 5\\} \\cup \\{9, 11\\}$ = the given list; 9 literals, the minimum (by Quine–McCluskey and Petrick).",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "ones": [
+          1,
+          4,
+          5,
+          9,
+          11,
+          12
+        ],
+        "groups": []
+      }
     },
     "cse-2005-cs-19": {
       "approach": "With daisy chaining, many devices share the single request line and the grant is passed along the chain; the granted device puts its vector on the data bus.",
