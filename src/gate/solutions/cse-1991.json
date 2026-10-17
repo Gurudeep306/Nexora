@@ -87,7 +87,7 @@
       },
       "shortcut": "Group the small terms: $9 + 7 + 5 + 3 = 24 = 16 + 8$, so the total is $16^3 + 16^2 + 2\\cdot16 + 8$; every hex digit is a single power of two, so there are four 1s.",
       "pitfalls": [
-        "Reading the expression as $9\\cdot16^3 + 7\\cdot16^2 + 5\\cdot16 + 3 = (9753)_{16}$, which has nine 1s. That may have been the paper's intent, but the printed question (and the recorded key) is the sum.",
+        "Reading the expression as $9\\cdot16^3 + 7\\cdot16^2 + 5\\cdot16 + 3 = (9753)_{16}$, which has nine 1s. The paper prints a plain sum (checked against the 1991 paper), so evaluate what is printed.",
         "Adding $16 + 5 + 3$ but forgetting the $+9$ and $+7$ terms."
       ],
       "verification": "$4392 = 4096 + 256 + 32 + 8$: four distinct powers of two."

@@ -31,7 +31,7 @@ hex, and how to add, subtract and multiply directly in base 8 or 16.
 work for every base, but for bases 2, 4, 8 and 16 they are the slow road. Everything in later
 chapters is written in these bases: memory addresses and instruction fields in hex, Unix
 permissions in octal, K-map cells and register contents in binary. The 2's-complement patterns
-of Lesson 4 are also usually given in hex.
+of [Lesson 4](lesson:signed-numbers) are also usually given in hex.
 
 :::table{#radar title="GATE radar: binary, octal and hexadecimal" depth="quick"}
 | What | Detail |
@@ -102,6 +102,18 @@ $(0.11)_2 = 0.75$ but $(0.011)_2 = 0.375$.
 
 **Sanity check.** $(0.11)_2 = 0.75 = 6/8 = (0.6)_8$, which is what grouping $.110$ gives.
 :::
+
+Two consequences are worth saying out loud, because they are what make the method fast.
+First, **each group is converted on its own**: no carry ever passes from one group to the next,
+so you can work on the groups in any order and never hold a running total. Second, the method
+runs **both ways**. Going from hex to binary you simply write each digit as its four bits and
+place the strings side by side; going from binary to hex you cut and read. Compare that with
+Lesson 1, where writing a number in a new base needed a chain of divisions, each depending on
+the one before.
+
+Notice also what the theorem does **not** say. It does not let you group decimal digits, and it
+does not connect bases 8 and 16 directly, because neither is a power of the other. Whenever the
+two bases are both powers of 2, binary is the meeting point; whenever they are not, decimal is.
 
 :::viz{#grouping-viz spec="grouping-slider" mode="animate" depth="standard"}
 :::
@@ -464,11 +476,26 @@ bits straight off, without ever computing the decimal value. (4096 = $16^3$ and 
 If a coefficient is 16 or more, first carry: $16 \cdot 16^i = 1 \cdot 16^{i+1}$.
 :::
 
+Why is this legitimate? Multiplying by $16^i$ shifts a value left by $4i$ bits, exactly as
+multiplying by $10^i$ shifts a decimal number left by $i$ places. So $c_3 \cdot 16^3$ is the four
+bits of $c_3$ followed by twelve zeros, $c_2 \cdot 16^2$ is the four bits of $c_2$ followed by eight
+zeros, and so on. When every coefficient fits in four bits, these blocks occupy **separate**
+4-bit slots and never overlap, so adding them is just placing them side by side. The moment a
+coefficient needs a fifth bit, its block spills into the next slot and you must carry first.
+
 :::definition{#popcount term="Counting 1s (popcount) one hex digit at a time" depth="quick"}
 Because each hex digit is its own 4-bit group, the number of 1s in the binary form is the sum
 of the 1-counts of the hex digits (the "1s" column of the hex table): 0 → 0; 1, 2, 4, 8 → 1;
 3, 5, 6, 9, A, C → 2; 7, B, D, E → 3; F → 4.
 :::
+
+::::check{#check-popcount title="Count without converting" depth="standard"}
+How many 1s are in the binary form of $(A5)_{16}$? And of $10 \cdot 16 + 5$?
+
+:::answer
+Both are the same number: $A = 1010$ (two 1s) and $5 = 0101$ (two 1s), so four 1s.
+:::
+::::
 
 ### Worked examples: powers of 16 and 1s
 
@@ -560,8 +587,28 @@ The school algorithms work in any base; only the carry and borrow size changes f
 - **Always check** by converting the operands and the result to decimal.
 :::
 
+The reason is the same bundling idea as in Lesson 1. In base 8 a column holds a count of one
+bundle size; once the count reaches 8, eight bundles are repacked into one bundle of the next
+size, so one is carried and 8 is taken away from this column. Borrowing is the same move in
+reverse: unpacking one bundle of the next size gives **8** (not 10) of this size. Students who
+have only ever added in decimal carry at 10 out of habit; the column animation below makes the
+carry at 8 visible.
+
+Multiplication works the same way, but a column can produce a carry larger than 1: $6 \times 7 =
+42$ in an octal column is $5 \cdot 8 + 2$, so you write 2 and carry **5**. To split a column total
+$s$ into "digit and carry", divide by the base: digit $= s \bmod b$, carry $= \lfloor s/b \rfloor$.
+
 :::viz{#carry spec="base-carry-column" mode="animate" depth="standard"}
 :::
+
+::::check{#check-octal-add title="Your turn" depth="standard"}
+Find $(65)_8 + (27)_8$ and check it in decimal.
+
+:::answer
+Units $5 + 7 = 12 = 1\cdot8 + 4$: write 4, carry 1. Eights $6 + 2 + 1 = 9 = 1\cdot8 + 1$: write 1, carry 1.
+Result $(114)_8$. Check: $53 + 23 = 76 = 64 + 8 + 4$.
+:::
+::::
 
 ### Worked examples: arithmetic in base 8 and 16
 
@@ -681,10 +728,10 @@ All seven previous-year questions for this lesson, from the easiest to the harde
 :::
 
 :::aside{#aside-1991 title="About the 1991 question" depth="standard"}
-The bank prints the sum as $16^3 + 9 + 16^2 + 7 + 16 + 5 + 3$, which is 4392 and has four 1s;
-that agrees with the recorded key. It is likely the paper intended $9\cdot16^3 + 7\cdot16^2 +
-5\cdot16 + 3 = (9753)_{16}$, which has nine 1s. We solve what is printed and have flagged the
-wording for review.
+The 1991 paper prints the sum exactly as $16^3 + 9 + 16^2 + 7 + 16 + 5 + 3$, which is 4392 and
+has four 1s; the key agrees. Some solution sets read it as $9\cdot16^3 + 7\cdot16^2 + 5\cdot16 + 3
+= (9753)_{16}$, which has nine 1s. That reading changes the question, so in the exam hall
+evaluate what is printed.
 :::
 
 :::pyq{id="it-2005-cs-47" tests="base-arithmetic" depth="standard"}
