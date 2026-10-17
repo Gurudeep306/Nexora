@@ -31,7 +31,7 @@
           "lessons": 10,
           "pyqs": 86,
           "status": "reviewed",
-          "review": "2026-10-17: second-pass examiner review (independent reviewer): 14 findings (4 errors, 3 misleading, 7 minor) all fixed and re-checked; 40/40 PYQ keys re-derived, none wrong; coverage 40/40. | 2026-10-17 (lessons 5-7, 9-10): second-pass examiner review by three independent reviewers: 26 findings (8 errors, 9 misleading, 9 minor) all fixed and re-checked; 46 moved/new PYQ keys re-derived, none wrong (cse-2005-cs-85b review note corrected); Chapter 1 coverage 86/86.",
+          "review": "2026-10-17: second-pass examiner review (independent reviewer): 14 findings (4 errors, 3 misleading, 7 minor) all fixed and re-checked; 40/40 PYQ keys re-derived, none wrong; coverage 40/40. | 2026-10-17 (lessons 5-7, 9-10): second-pass examiner review by three independent reviewers: 26 findings (10 errors, 8 misleading, 8 minor) all fixed and re-checked; 46 moved/new PYQ keys re-derived, none wrong (cse-2005-cs-85b review note corrected); Chapter 1 coverage 86/86.",
           "lessons_status": {
             "place-value": "published+reviewed",
             "power-of-two-bases": "published+reviewed",

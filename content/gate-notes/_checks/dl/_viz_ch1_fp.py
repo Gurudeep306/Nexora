@@ -209,9 +209,9 @@ def ieee_layout():
     assert (fp.hexs(n), s, e, f[:4]) == ("C0D80000", "1", "10000001", "1011") and int(e, 2) - 127 == 2
     d = fp.encode(v, *fp.DOUBLE)
     assert fp.hexs(d, 64) == "C01B000000000000" and fp.split_fields(d, *fp.DOUBLE)[1] == "10000000001"
-    c, x0, y0 = 22, 28, 84
+    c, x0, y0 = 22, 28, 96
     els = [*heads("IEEE-754 layouts: −6.75 in single, then in double", "IEEE-754: −6.75", 760),
-           text("sgl", x0, 58, "single precision: 32 bits", {"x": 24, "y": 54}, size=15, tone="muted"),
+           text("sgl", x0, 52, "single precision: 32 bits", {"x": 24, "y": 54}, size=15, tone="muted"),
            bits("sgn", x0, y0, s, c, "wide", fill="danger", labels=["31"]),
            bits("exp", x0 + c, y0, e, c, "wide", fill="info", labels=idx_labels(8, 30, {30, 23})),
            bits("frc", x0 + 9 * c, y0, f, c, "wide", fill="success", labels=idx_labels(23, 22, {22, 0})),
@@ -225,13 +225,13 @@ def ieee_layout():
            bits("nfr1", 24, 172, f[:12], 26, "narrow", fill="success", labels=idx_labels(12, 22, {22, 11})),
            bits("nfr2", 24, 214, f[12:], 26, "narrow", fill="success", labels=[""] * 11),
            text("ntfr", 24, 258, "fraction f (23 bits)", "narrow", size=13, tone="success"),
-           text("val", 380, 162, "value = −1.1011₂ × 2^(129 − 127) = −1.6875 × 4 = −6.75", {"x": 180, "y": 290, "size": 14}, anchor="middle", size=16, mono=True, hidden=True),
-           text("dbl", x0, 206, "double precision: 64 bits", {"x": 24, "y": 330}, size=15, tone="muted", hidden=True),
-           box("dsg", x0, 222, 11, 36, None, {"x": 24, "y": 346, "w": 24, "h": 36}, fill="danger", hidden=True),
-           box("dex", x0 + 11, 222, 121, 36, "e: 11 bits", {"x": 48, "y": 346, "w": 80, "h": 36, "size": 13}, fill="info", size=14, hidden=True),
-           box("dfr", x0 + 132, 222, 572, 36, "f: 52 bits", {"x": 128, "y": 346, "w": 208, "h": 36, "size": 13}, fill="success", size=14, hidden=True),
-           text("dv1", 380, 286, "bias 1023: e = 2 + 1023 = 1025 = 100 0000 0001", {"x": 180, "y": 410, "size": 13}, anchor="middle", size=15, mono=True, hidden=True),
-           text("dv2", 380, 312, "−6.75 = 0xC01B000000000000", {"x": 180, "y": 436, "size": 14}, anchor="middle", size=16, mono=True, hidden=True, tone="success"),
+           text("val", 380, 174, "value = −1.1011₂ × 2^(129 − 127) = −1.6875 × 4 = −6.75", {"x": 180, "y": 290, "size": 14}, anchor="middle", size=16, mono=True, hidden=True),
+           text("dbl", x0, 218, "double precision: 64 bits", {"x": 24, "y": 330}, size=15, tone="muted", hidden=True),
+           box("dsg", x0, 234, 11, 36, None, {"x": 24, "y": 346, "w": 24, "h": 36}, fill="danger", hidden=True),
+           box("dex", x0 + 11, 234, 121, 36, "e: 11 bits", {"x": 48, "y": 346, "w": 80, "h": 36, "size": 13}, fill="info", size=14, hidden=True),
+           box("dfr", x0 + 132, 234, 572, 36, "f: 52 bits", {"x": 128, "y": 346, "w": 208, "h": 36, "size": 13}, fill="success", size=14, hidden=True),
+           text("dv1", 380, 298, "bias 1023: e = 2 + 1023 = 1025 = 100 0000 0001", {"x": 180, "y": 410, "size": 13}, anchor="middle", size=15, mono=True, hidden=True),
+           text("dv2", 380, 324, "−6.75 = 0xC01B000000000000", {"x": 180, "y": 436, "size": 14}, anchor="middle", size=16, mono=True, hidden=True, tone="success"),
            ]
     steps = [
         step("The sign bit (bit 31) comes first. It is 1, so the number is negative. The significand is stored as a magnitude: sign-magnitude, not 2's complement.",
@@ -247,7 +247,7 @@ def ieee_layout():
         step("The same −6.75 as a double: the true exponent is still 2, so e = 1025; the fraction 1011 is padded with 48 zeros. The word is 0xC01B000000000000.",
              ("dv1", {"hidden": False}), ("dv2", {"hidden": False})),
     ]
-    return spec("IEEE-754 single and double layouts", (760, 330), (360, 460),
+    return spec("IEEE-754 single and double layouts", (760, 344), (360, 460),
                 "The 32 bits of −6.75 in single precision, split into a 1-bit sign (red), an 8-bit exponent (blue) and a 23-bit fraction (green).",
                 els, steps)
 
@@ -387,7 +387,7 @@ def fp_align_add():
     assert exact == F(69, 8) and fp.add(A, B, 4, f) == F(17, 2) and fp.binary(exact, 3) == "1000.101"
     assert fp.grs("0001" + "010", 4) == ("0001", 0, 1, 0)
     c, x0 = 34, 200
-    nc, nx0 = 26, 120
+    nc, nx0 = 24, 96
     els = [*heads("Adding 7 + 1.625 with 4 fraction bits", "7 + 1.625, 4 fraction bits", 640)]
     rows = [("a", 60, "01.1100", "00", "A = 7", "× 2²"), ("b", 112, "01.1010", "00", "B = 1.625", "× 2⁰"),
             ("s", 196, "10.0010", "10", "sum", "× 2²"), ("n", 248, "01.0001", "01", "normalise", "× 2³"),
