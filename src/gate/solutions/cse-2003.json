@@ -2685,55 +2685,29 @@
       "verification": "2's complement: $-B=\\overline B+1$, exactly what K = 1, C₀ = 1 supplies."
     },
     "cse-2003-cs-47": {
-      "approach": "Write the two XOR outputs as $P(t)=A(t)\\oplus A(t-2)$ and $B(t)=P(t)\\oplus P(t-4)$ and tabulate them over the intervals where something changes; count the level changes of $B$.",
+      "approach": "Concept tested: **timing with XOR edge detectors**. Write the two XOR outputs as $P(t) = A(t) \\oplus A(t - 2)$ and $B(t) = P(t) \\oplus P(t - 4)$ and tabulate them over the intervals where something changes; count the level changes of $B$.",
       "concepts": [
         "XOR gate",
         "Propagation delay",
         "Timing diagram"
       ],
-      "given": "| Element | Delay |\n|---|---|\n| Buffer $\\delta_1$ | 2 ns |\n| Buffer $\\delta_2$ | 4 ns |\n| XOR gates, wires | 0 |\n\n$A$: 0 until 1 ns, then 1.",
+      "given": "| Element | Delay |\n|---|---|\n| buffer δ₁ | 2 ns |\n| buffer δ₂ | 4 ns |\n| XOR gates, wires | 0 |\n\n$A$: 0 until 1 ns, then 1.",
       "steps": [
         {
-          "title": "XOR 1 output",
-          "body": "$A$ rises at $t=1$, so the buffered copy $A(t-2)$ rises at $t=3$.\n\n$P(t)=A(t)\\oplus A(t-2)$ is $1$ only while the two differ: $P=1$ on $[1,3)$ and $0$ elsewhere — a 2 ns pulse.",
-          "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 2,
-                "tone": "accent"
-              }
-            ]
-          }
+          "title": "First stage",
+          "body": "$A(t - 2)$ rises at 3 ns. $P = A \\oplus A(t-2)$ is 1 only while they differ: $P = 1$ on $[1, 3)$ ns."
         },
         {
-          "title": "XOR 2 output",
-          "body": "The buffer delays $P$ by 4 ns: $P(t-4)=1$ on $[1+4,3+4)=[5,7)$.\n\n$B(t)=P(t)\\oplus P(t-4)$ is $1$ on $[1,3)$ (only $P$ high) and on $[5,7)$ (only the delayed copy high), and $0$ on $[0,1)$, $[3,5)$ and $[7,10]$.",
-          "scene": {
-            "reveal": 25,
-            "hl": [
-              {
-                "r": 4,
-                "tone": "accent"
-              }
-            ]
-          }
+          "title": "Second stage",
+          "body": "$P(t - 4)$ is the same pulse shifted by 4: 1 on $[5, 7)$ ns. $B = P \\oplus P(t - 4)$ is 1 on $[1, 3)$ and $[5, 7)$ (the pulses do not overlap)."
         },
         {
-          "title": "Count transitions of B",
-          "body": "$B$: $0 \\to 1$ at 1 ns, $1\\to 0$ at 3 ns, $0\\to 1$ at 5 ns, $1 \\to 0$ at 7 ns.\n\nAll four lie inside $[0,10]$ ns, so there are $\\mathbf{4}$ transitions.",
-          "scene": {
-            "hl": [
-              {
-                "r": 4,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Count transitions in [0, 10]",
+          "body": "$B$ changes at 1, 3, 5 and 7 ns: **4** transitions. Option (D)."
         }
       ],
       "answer": {
-        "value": "4",
+        "value": "(D) 4",
         "choice": [
           "D"
         ],
@@ -2743,85 +2717,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$B$ changes four times, not once: the pulse of XOR 1 and its 4 ns-delayed copy each produce a rise and a fall."
+          "reason": "One transition would mean $B$ follows $A$; but each XOR stage turns an edge into a pulse."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Two transitions would be just the single pulse $[1,3)$; it ignores the delayed copy that makes $B$ high again on $[5,7)$."
+          "reason": "Two transitions is $P$ (one pulse), not $B$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Three would miss the final fall at 7 ns, which is still inside the 10 ns window."
+          "reason": "Transitions come in pairs here (each pulse rises and falls inside the window)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: transitions at 1, 3, 5 and 7 ns."
+          "reason": "Two pulses, two transitions each."
         }
       ],
+      "shortcut": "An XOR with a $\\delta$-delayed copy turns every edge into a $\\delta$-wide pulse. One edge → one pulse (2 transitions) → two pulses (4 transitions).",
       "pitfalls": [
-        "Forgetting that the second XOR sees both the pulse and its delayed copy.",
-        "Counting the 7 ns fall as outside the window."
+        "Adding the two delays and looking for a single change at 6 ns.",
+        "Counting the falling edge at 7 ns as outside the window (it is inside 0–10 ns)."
       ],
-      "verification": "Checked with values: at $t=6$, $A=1$, $A(4)=1\\Rightarrow P(6)=0$; $P(2)=1$ so $B(6)=0\\oplus1=1$; at $t=8$, $P(8)=0,P(4)=0\\Rightarrow B=0$ — consistent with the table.",
-      "animation": {
-        "kind": "table",
-        "title": "Signal levels (ns intervals)",
-        "cols": [
-          "$[0,1)$",
-          "$[1,3)$",
-          "$[3,5)$",
-          "$[5,7)$",
-          "$[7,10]$"
-        ],
-        "rowLabels": [
-          "$A(t)$",
-          "$A(t-2)$",
-          "$P=A\\oplus A(t-2)$",
-          "$P(t-4)$",
-          "$B=P\\oplus P(t-4)$"
-        ],
-        "rows": [
-          [
-            0,
-            1,
-            1,
-            1,
-            1
-          ],
-          [
-            0,
-            0,
-            1,
-            1,
-            1
-          ],
-          [
-            0,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            1,
-            0
-          ],
-          [
-            0,
-            1,
-            0,
-            1,
-            0
-          ]
-        ],
-        "reveal": 10
-      }
+      "verification": "Event simulation of the circuit: $B$ = 0 on [0,1), 1 on [1,3), 0 on [3,5), 1 on [5,7), 0 on [7,10]."
     },
     "cse-2003-cs-48": {
       "approach": "Trace what one loop iteration does: `RRC` moves the current low bit of A into the carry, and `JC` adds 1 to B exactly when that bit was 1. Eight iterations push every original bit through the carry once.",

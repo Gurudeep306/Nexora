@@ -64084,14 +64084,14 @@
         "nor",
         "universal-gate"
       ],
-      "answer": "D",
+      "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
-      "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Gates) from **CSE 2009 Q6** (1 Mark).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 2\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  AB = NOR(A',B') needs 2 inverters + 1 NOR.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  then NOR with C gives (AB+C)' and one more NOR as inverter: 5 gates..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `2`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `3`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `4`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `5`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "solution": "**Concept:** NOR–NOR realisation from a product of sums.\n\n- $AB + C = (A + C)(B + C)$ (OR distributes over AND).\n- $G_1 = \\overline{A + C}$, $G_2 = \\overline{B + C}$, $F = \\overline{G_1 + G_2} = (A + C)(B + C) = AB + C$: **3** two-input NOR gates.\n- Two gates cannot work: the output would be $\\overline{\\overline{x + y} + z} = (x + y)\\bar z$, which is 0 whenever $z = 1$, but $AB + C$ is 1 with $C = 1$ and with $A = B = 1$.\n\n**Answer: (B) 3.** (5 is the naive gate-by-gate conversion count, not the minimum.)",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Stored key D (5) looks wrong: (A+C)(B+C) = AB+C is realised by 3 two-input NOR gates (NOR(NOR(A,C),NOR(B,C))) and 2 gates provably cannot do it, so the answer should be B (3). Confirm against an official key before changing the answer."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2009-cs-7",
@@ -68036,14 +68036,14 @@
       "tags": [
         "NOR"
       ],
-      "answer": "D",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
-      "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Gates) from **CSE 2010 Q31** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Upper NOR of (P+Q)' and (Q+R)' gives $P+Q+R$.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  lower NOR of (P+R)' and (Q+R)' gives $P+Q+R$.\n- **Step 3.3 (Intermediate Reduction):**\n  final NOR gives $\\overline{P+Q+R}$..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\overline{Q+R}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$\\overline{P+Q}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$\\overline{P+R}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `$\\overline{P+Q+R}$`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "solution": "**Concept:** stacked NOR gates (a NOR of NORs is an AND of ORs).\n\n- First level: $\\overline{P+Q}$, $\\overline{Q+R}$, $\\overline{P+R}$, $\\overline{Q+R}$.\n- Second level: $G_5 = (P+Q)(Q+R) = Q + PR$, $G_6 = (P+R)(Q+R) = R + PQ$.\n- Output: $f = \\overline{G_5 + G_6} = \\overline{Q + R + PR + PQ} = \\overline{Q + R}$ (absorption).\n- Check: $P = 1, Q = R = 0$ gives $f = 1$, which rules out $\\overline{P+Q+R}$.\n\n**Answer: (A) $\\overline{Q+R}$.**",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Stored key D, (P+Q+R)′, is wrong. G5 = (P+Q)(Q+R) = Q+PR, G6 = (P+R)(Q+R) = R+PQ, f = (Q+R+PR+PQ)′ = (Q+R)′ → option A. Check: P=1, Q=R=0 gives f=1 but (P+Q+R)′=0. No official pre-2014 key available; change answer to A after confirmation."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2010-cs-32",

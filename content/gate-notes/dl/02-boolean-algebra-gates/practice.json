@@ -1,0 +1,2278 @@
+[
+  {
+    "id": "nx-dl-02-01-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A two-input gate gives the outputs 1, 0, 0, 0 for the input rows $AB = 00, 01, 10, 11$. Which gate is it?",
+    "options": [
+      {
+        "l": "A",
+        "t": "NAND"
+      },
+      {
+        "l": "B",
+        "t": "NOR"
+      },
+      {
+        "l": "C",
+        "t": "XNOR"
+      },
+      {
+        "l": "D",
+        "t": "AND"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "The output column has a single 1, on row 00, so the gate outputs 1 only when both inputs are 0.",
+      "'1 only when no input is 1' is the complement of OR: $(A + B)'$, the NOR gate.",
+      "Check against the vocabulary: NOR is 1000, NAND 1110, XNOR 1001, AND 0001."
+    ],
+    "concept": "Name a gate by its output column: NOR is 1000, the complement of OR's 0111.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "NAND is 1110: it is 0 only on row 11. This table is 1 only on row 00, the mirror image."
+      },
+      {
+        "answer": "C",
+        "why": "XNOR is also 1 on row 11 (equal inputs 1, 1). This table is 0 there."
+      }
+    ],
+    "blocks": [
+      "nand-nor",
+      "trick-odd-row"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q02",
+    "type": "NAT",
+    "marks": 1,
+    "text": "A 4-input NOR gate is driven through all $2^4 = 16$ input combinations. On how many of them is its output 1?",
+    "answer": 1,
+    "solution": [
+      "A NOR is the complement of an OR. The 4-input OR is 0 only when all four inputs are 0, which is one row (0000).",
+      "So the NOR is 1 on exactly that row and 0 on the other 15."
+    ],
+    "concept": "An n-input NOR is 1 only on the all-zero row; 1 is its controlling value.",
+    "common_wrong": [
+      {
+        "answer": 15,
+        "why": "That is the number of rows where the NOR is 0 (or where the OR is 1)."
+      },
+      {
+        "answer": 8,
+        "why": "Half the rows is the count for XOR or XNOR, which have no controlling value. A NOR is forced to 0 by any single 1."
+      }
+    ],
+    "blocks": [
+      "nand-nor",
+      "controlling-value",
+      "multi-input"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following are equal to $x'$ for both values of $x$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$x$ NAND $1$"
+      },
+      {
+        "l": "B",
+        "t": "$x$ XOR $1$"
+      },
+      {
+        "l": "C",
+        "t": "$x$ NOR $x$"
+      },
+      {
+        "l": "D",
+        "t": "$x$ XNOR $1$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "solution": [
+      "(A) 1 is the non-controlling value of AND, so the AND body passes $x$ and the bubble inverts it: $(x \\cdot 1)' = x'$. Equal.",
+      "(B) XOR with 1 is the controlled inverter with its control on: $x \\oplus 1 = x'$. Equal.",
+      "(C) Tying both inputs: $(x + x)' = x'$. Equal.",
+      "(D) XNOR with 1 is 1 exactly when $x$ is 1, so it copies $x$: $x \\odot 1 = x \\cdot 1 + x' \\cdot 0 = x$. Not equal."
+    ],
+    "concept": "Any inverting gate becomes a NOT when its inputs are tied or when it is fed its non-controlling constant; XOR with 1 inverts, XNOR with 1 copies.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "XNOR with 1 does not invert: $1 \\odot 1 = 1$ and $0 \\odot 1 = 0$, so it copies $x$. XNOR with 0 is the inverter."
+      },
+      {
+        "answer": [
+          "A",
+          "C"
+        ],
+        "why": "XOR with 1 was missed: $0 \\oplus 1 = 1$ and $1 \\oplus 1 = 0$, which is $x'$."
+      }
+    ],
+    "blocks": [
+      "tie-inputs",
+      "trick-inverter",
+      "gate-as-switch"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q04",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A chip works as an XOR gate in positive logic. If the same chip is used in a system that follows negative logic, which function does it perform?",
+    "options": [
+      {
+        "l": "A",
+        "t": "XOR"
+      },
+      {
+        "l": "B",
+        "t": "XNOR"
+      },
+      {
+        "l": "C",
+        "t": "NAND"
+      },
+      {
+        "l": "D",
+        "t": "OR"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "Negative logic complements every input and the output, so the function seen is the dual $f^D(A, B) = \\big(f(A', B')\\big)'$.",
+      "For XOR: $A' \\oplus B' = A \\oplus B$ (complementing both inputs leaves XOR unchanged), and the output complement gives $(A \\oplus B)'$.",
+      "So the chip performs XNOR. Check one row: in negative logic the inputs $A = B = 1$ are both low; low, low gives a low output (XOR of 0, 0 in positive logic), and low reads as 1. XNOR(1, 1) = 1."
+    ],
+    "concept": "Changing from positive to negative logic turns every function into its dual: XOR ↔ XNOR, AND ↔ OR, NAND ↔ NOR.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "Complementing only the inputs leaves XOR unchanged, but the output is complemented too."
+      },
+      {
+        "answer": "D",
+        "why": "OR is the negative-logic reading of an AND chip, not of an XOR chip."
+      }
+    ],
+    "blocks": [
+      "pos-neg-logic",
+      "logic-duality"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q05",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Of the 16 possible two-input Boolean functions $f(A, B)$, how many are commutative, that is, satisfy $f(A, B) = f(B, A)$ for all inputs?",
+    "answer": 8,
+    "solution": [
+      "Swapping $A$ and $B$ only exchanges the rows 01 and 10; rows 00 and 11 map to themselves.",
+      "So $f$ is commutative exactly when $f(0,1) = f(1,0)$. The free choices are $f(0,0)$, $f(1,1)$ and the common value of $f(0,1) = f(1,0)$: three binary choices.",
+      "That gives $2^3 = 8$ functions: 0, AND, XOR, OR, NOR, XNOR, NAND and 1."
+    ],
+    "concept": "A two-input function is commutative iff its rows 01 and 10 agree; count the free rows.",
+    "common_wrong": [
+      {
+        "answer": 6,
+        "why": "The two constants 0 and 1 are also commutative; they were left out."
+      },
+      {
+        "answer": 4,
+        "why": "Only rows 00 and 11 were treated as free; the shared value of rows 01 and 10 is a third free choice."
+      }
+    ],
+    "blocks": [
+      "sixteen-functions",
+      "truth-table-def"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A student builds a '3-input NAND' by feeding the output of a 2-input NAND of $A$ and $B$ into a second 2-input NAND together with $C$. What does the circuit compute?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$(ABC)'$"
+      },
+      {
+        "l": "B",
+        "t": "$AB + C'$"
+      },
+      {
+        "l": "C",
+        "t": "$A' + B' + C$"
+      },
+      {
+        "l": "D",
+        "t": "$(AB)'C$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "The first gate gives $G = (AB)'$. The second gives $\\big(G \\cdot C\\big)' = G' + C'$ by De Morgan.",
+      "$G' = \\big((AB)'\\big)' = AB$, so the output is $AB + C'$.",
+      "It is not $(ABC)'$: at $A = B = 0, C = 1$ the true 3-input NAND gives 1, but $AB + C' = 0$."
+    ],
+    "concept": "NAND is not associative: NAND(NAND(A, B), C) = AB + C′, not (ABC)′.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "That is the true 3-input NAND, which needs an inverter between the two 2-input NANDs."
+      },
+      {
+        "answer": "D",
+        "why": "This is the input of the second gate's bubble, $(AB)' \\cdot C$; the second gate's output inverts it."
+      }
+    ],
+    "blocks": [
+      "multi-input",
+      "trap-nand-chain"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q07",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following statements about bubbles are correct?",
+    "options": [
+      {
+        "l": "A",
+        "t": "An AND gate with a bubble on both inputs is a NOR gate."
+      },
+      {
+        "l": "B",
+        "t": "Two bubbles on the same wire cancel each other."
+      },
+      {
+        "l": "C",
+        "t": "An OR gate with bubbles on both inputs and on its output is an AND gate."
+      },
+      {
+        "l": "D",
+        "t": "A NAND gate with one input tied to 0 acts as an inverter for the other input."
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "solution": [
+      "(A) The body sees $A'$ and $B'$: $A'B' = (A + B)'$ by De Morgan, a NOR. Correct.",
+      "(B) Inverting twice restores the signal: $x'' = x$. Correct.",
+      "(C) The output is $(A' + B')' = A''B'' = AB$ by De Morgan. Correct.",
+      "(D) 0 is the controlling value of NAND: $(x \\cdot 0)' = 1$ for both values of $x$. The output is stuck at 1, so this is wrong; tie the input to 1 (or to $x$) instead."
+    ],
+    "concept": "Moving bubbles across a gate swaps AND and OR and inverts each crossed signal; a controlling constant makes an output constant.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "Feeding a NAND its controlling value 0 forces the output to 1; it does not invert."
+      },
+      {
+        "answer": [
+          "A",
+          "B"
+        ],
+        "why": "Statement C is De Morgan applied twice: bubbled-input OR is NAND, and the output bubble undoes the NOT, leaving AND."
+      }
+    ],
+    "blocks": [
+      "bubbles",
+      "demorgan-gates",
+      "controlling-value"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "In a circuit, $G_1 = \\text{NAND}(A, B)$, $G_2 = \\text{NOR}(B, C)$ and the output is $F = \\text{OR}(G_1, G_2)$. For how many of the 8 input rows $(A, B, C)$ is $F = 1$?",
+    "answer": 6,
+    "solution": [
+      "$G_1 = (AB)' = A' + B'$ and $G_2 = (B + C)' = B'C'$.",
+      "$F = A' + B' + B'C'$. The term $B'C'$ is 1 only when $B' = 1$, and then $B'$ already makes $F = 1$, so $F = A' + B'$.",
+      "$A' + B'$ is 0 only when $A = B = 1$: rows 110 and 111. So $F = 1$ on $8 - 2 = 6$ rows."
+    ],
+    "concept": "Read a circuit gate by gate, write each output in terms of its inputs, simplify, then count rows.",
+    "common_wrong": [
+      {
+        "answer": 7,
+        "why": "Only row 111 was excluded. Row 110 also has $A = B = 1$, so $G_1 = 0$, and $G_2 = (1 + 0)' = 0$."
+      },
+      {
+        "answer": 2,
+        "why": "That counts the rows where $F = 0$."
+      }
+    ],
+    "blocks": [
+      "read-circuit",
+      "nand-nor"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-01-q09",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A data signal $x$ and a control signal $c$ feed a two-input XOR gate. Which statement describes its output?",
+    "options": [
+      {
+        "l": "A",
+        "t": "It passes $x$ when $c = 1$ and inverts $x$ when $c = 0$."
+      },
+      {
+        "l": "B",
+        "t": "It passes $x$ when $c = 0$ and inverts $x$ when $c = 1$."
+      },
+      {
+        "l": "C",
+        "t": "It is forced to 0 when $c = 1$, whatever $x$ is."
+      },
+      {
+        "l": "D",
+        "t": "It is forced to 1 when $c = 1$, whatever $x$ is."
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "With $c = 0$: $x \\oplus 0 = x$, the data passes unchanged.",
+      "With $c = 1$: $x \\oplus 1 = x'$, the data is inverted.",
+      "XOR has no controlling value, so it is never forced to a constant: options C and D are impossible."
+    ],
+    "concept": "An XOR gate is a controlled inverter: control 0 passes the data, control 1 inverts it.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "This is the XNOR gate's behaviour: $x \\odot 1 = x$ and $x \\odot 0 = x'$."
+      },
+      {
+        "answer": "C",
+        "why": "Forcing to 0 is what a 0 does to an AND gate. XOR has no controlling value."
+      }
+    ],
+    "blocks": [
+      "gate-as-switch",
+      "xor-gate",
+      "controlling-value"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The expression $A'B + AB + AB'$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$A + B$"
+      },
+      {
+        "l": "B",
+        "t": "$A' + B$"
+      },
+      {
+        "l": "C",
+        "t": "$AB$"
+      },
+      {
+        "l": "D",
+        "t": "$1$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Factor the two terms that share $A$: $AB + AB' = A(B + B') = A$.",
+      "What is left is $A'B + A$, the redundant-literal pattern: $A$ stands alone, so the $A'$ inside $A'B$ can be deleted, giving $A + B$.",
+      "Check: the only row where all three terms are 0 is $A = B = 0$, and $A + B$ is 0 exactly there."
+    ],
+    "concept": "Factor to expose x + x′ = 1, then use the redundant-literal rule x + x′y = x + y.",
+    "common_wrong": [
+      {
+        "answer": "D",
+        "why": "Three of the four rows give 1, not all four: row 00 makes every term 0."
+      },
+      {
+        "answer": "B",
+        "why": "$A' + B$ is 0 only on row 10, but $AB' = 1$ there. This answer comes from misreading $AB'$ as $A'B'$, which turns the expression into $A'B' + AB + A'B = A' + B$."
+      }
+    ],
+    "blocks": [
+      "redundant-literal",
+      "simplify-method"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which one of the following is NOT a valid Boolean identity?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$x + x'y = x + y$"
+      },
+      {
+        "l": "B",
+        "t": "$x(x' + y) = xy$"
+      },
+      {
+        "l": "C",
+        "t": "$x + yz = (x + y)(x + z)$"
+      },
+      {
+        "l": "D",
+        "t": "$x(y + z) = xy + z$"
+      }
+    ],
+    "answer": "D",
+    "solution": [
+      "(A) is the redundant-literal rule and (B) its dual; (C) is the distributive law of OR over AND. All three are identities.",
+      "(D) is wrong: the correct law is $x(y + z) = xy + xz$. Counterexample $x = 0, z = 1$: the left side is 0, the right side is 1."
+    ],
+    "concept": "Disprove a claimed identity with one row; AND distributes over OR as xy + xz, and OR distributes over AND as (x + y)(x + z).",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "OR really does distribute over AND in Boolean algebra (it is one of the postulates), unlike in ordinary arithmetic."
+      },
+      {
+        "answer": "A",
+        "why": "Check both values of $x$: at $x = 0$ both sides are $y$, at $x = 1$ both are 1."
+      }
+    ],
+    "blocks": [
+      "laws-table",
+      "counterexample"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q03",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following expressions are equal to $AB + A'C$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AB + A'C + BC$"
+      },
+      {
+        "l": "B",
+        "t": "$(A + C)(A' + B)$"
+      },
+      {
+        "l": "C",
+        "t": "$AB + A'C + BC'$"
+      },
+      {
+        "l": "D",
+        "t": "$(A + B)(A' + C)$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "(A) $BC$ is the consensus of $AB$ and $A'C$, so it is redundant: equal.",
+      "(B) Expand: $AA' + AB + A'C + BC = AB + A'C + BC = AB + A'C$: equal.",
+      "(C) $BC'$ is not the consensus term; at $A = 0, B = 1, C = 0$ it gives 1 while $AB + A'C = 0$: not equal.",
+      "(D) $(A + B)(A' + C) = AC + A'B$; at $A = 1, B = 1, C = 0$ it is 0 but $AB + A'C = 1$: not equal."
+    ],
+    "concept": "The consensus term yz of xy and x′z is redundant; expanding (x + z)(x′ + y) gives xy + x′z.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "D"
+        ],
+        "why": "(D) pairs $A$ with $B$ and $A'$ with $C$ the other way round; it expands to $AC + A'B$, a different function."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "(C) looks like a consensus term but has $C'$ instead of $C$; it adds row 010."
+      }
+    ],
+    "blocks": [
+      "consensus",
+      "consensus-dual",
+      "trap-consensus-fake"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q04",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The complement of $(A + B)(C' + D)$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$A'B' + CD'$"
+      },
+      {
+        "l": "B",
+        "t": "$(A' + B')(C + D')$"
+      },
+      {
+        "l": "C",
+        "t": "$AB + C'D$"
+      },
+      {
+        "l": "D",
+        "t": "$A'B'CD'$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The complement of a product is the sum of the complements of its factors: $(A + B)' + (C' + D)'$.",
+      "Each factor is a sum, so De Morgan gives $A'B'$ and $CD'$. The complement is $A'B' + CD'$.",
+      "Rule of thumb: swap every operator and complement every literal."
+    ],
+    "concept": "Complement = dual with every literal complemented.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "The literals were complemented but the operators were not swapped."
+      },
+      {
+        "answer": "D",
+        "why": "The outer AND must become an OR; this keeps it as an AND."
+      }
+    ],
+    "blocks": [
+      "demorgan",
+      "demorgan-general"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Let $f = A + B'C$. Which of the following statements are correct?",
+    "options": [
+      {
+        "l": "A",
+        "t": "The dual of $f$ is $A(B' + C)$."
+      },
+      {
+        "l": "B",
+        "t": "The complement of $f$ is $A'(B + C')$."
+      },
+      {
+        "l": "C",
+        "t": "The dual of $f$ equals the complement of $f$."
+      },
+      {
+        "l": "D",
+        "t": "$f$ is equal to its own dual."
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "(A) Dual: swap $+$ and $\\cdot$, keep the literals: $A \\cdot (B' + C)$. Correct.",
+      "(B) Complement: swap the operators and complement the literals: $A'(B + C')$. Correct.",
+      "(C) At $A = 1, B = 0, C = 0$ the dual $A(B' + C)$ is 1 but the complement $A'(B + C')$ is 0. Different functions: wrong.",
+      "(D) At $A = 1, B = 1, C = 0$: $f = 1$ but the dual is 0. Wrong."
+    ],
+    "concept": "The dual swaps only the operators; the complement also complements every literal. They are different functions in general.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "The dual and the complement are different functions here: at $A = 1, B = 0, C = 0$ the dual $A(B' + C)$ is 1 but the complement is 0."
+      },
+      {
+        "answer": [
+          "B"
+        ],
+        "why": "The dual must keep the grouping: $A + B'C$ becomes $A(B' + C)$, with brackets."
+      }
+    ],
+    "blocks": [
+      "dual-def",
+      "trap-dual-complement",
+      "demorgan-general"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "Let $f(A, B, C) = AB + BC + CA$. The cofactor $f(1, B, C)$ is a function of $B$ and $C$. On how many of its four input rows is it 1?",
+    "answer": 3,
+    "solution": [
+      "Set $A = 1$: $AB \\to B$, $BC \\to BC$, $CA \\to C$. So $f(1, B, C) = B + BC + C = B + C$ (absorption).",
+      "$B + C$ is 1 on rows 01, 10, 11: three rows."
+    ],
+    "concept": "A cofactor is the function with one variable fixed; simplify it before counting.",
+    "common_wrong": [
+      {
+        "answer": 1,
+        "why": "That is the count for $BC$, the cofactor $f(0, B, C)$."
+      },
+      {
+        "answer": 4,
+        "why": "Row $B = C = 0$ gives $0 + 0 = 0$."
+      }
+    ],
+    "blocks": [
+      "cofactor-def",
+      "shannon"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q07",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which values of $(x, y, z)$ satisfy all three equations $x'y + z = 1$, $x + y' = 0$ and $yz' = 0$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$(0, 1, 1)$"
+      },
+      {
+        "l": "B",
+        "t": "$(0, 1, 0)$"
+      },
+      {
+        "l": "C",
+        "t": "$(1, 0, 1)$"
+      },
+      {
+        "l": "D",
+        "t": "$(0, 0, 1)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "$x + y' = 0$ is a sum equal to 0, so $x = 0$ and $y' = 0$, that is $y = 1$.",
+      "$yz' = 0$ with $y = 1$ forces $z' = 0$, so $z = 1$.",
+      "Check the first equation: $x'y + z = 1 + 1 = 1$. The solution is $(0, 1, 1)$."
+    ],
+    "concept": "A sum equal to 0 pins every term to 0; substitute and continue.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "It satisfies the first two equations but $yz' = 1 \\cdot 1 = 1 \\ne 0$."
+      },
+      {
+        "answer": "D",
+        "why": "With $y = 0$, $x + y' = 1 \\ne 0$."
+      }
+    ],
+    "blocks": [
+      "bool-equations"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "How many assignments of $(A, B, C, D)$ satisfy both $AB + C = 1$ and $A + D = 0$?",
+    "answer": 2,
+    "solution": [
+      "$A + D = 0$ forces $A = 0$ and $D = 0$.",
+      "Then $AB = 0$, so $AB + C = 1$ forces $C = 1$.",
+      "$B$ is not constrained: $B = 0$ or $B = 1$. Two assignments: 0010 and 0110."
+    ],
+    "concept": "Pin what the equations force and count the free variables (each doubles the count).",
+    "common_wrong": [
+      {
+        "answer": 1,
+        "why": "$B$ appears only inside $AB$, which is 0 once $A = 0$; it stays free."
+      },
+      {
+        "answer": 4,
+        "why": "$C$ is not free: with $A = 0$ the first equation needs $C = 1$."
+      }
+    ],
+    "blocks": [
+      "bool-equations",
+      "equation-to-zero"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-02-q09",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "The expression $(A + B)(A + B')(A' + C)$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AC$"
+      },
+      {
+        "l": "B",
+        "t": "$A$"
+      },
+      {
+        "l": "C",
+        "t": "$C$"
+      },
+      {
+        "l": "D",
+        "t": "$A + C$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "OR distributes over AND: $(A + B)(A + B') = A + BB' = A + 0 = A$.",
+      "Then $A(A' + C) = AA' + AC = AC$ (the dual redundant-literal rule $x(x' + y) = xy$).",
+      "Check $A = 1, C = 0$: the original gives $(1)(1)(0) = 0$, and $AC = 0$."
+    ],
+    "concept": "The dual laws: (x + y)(x + y′) = x and x(x′ + y) = xy.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "The third factor still matters: at $A = 1, C = 0$ it is 0."
+      },
+      {
+        "answer": "D",
+        "why": "At $A = 0, C = 1$ the original is $B \\cdot B' \\cdot 1 = 0$, but $A + C = 1$."
+      }
+    ],
+    "blocks": [
+      "redundant-literal",
+      "laws-table",
+      "simplify-method"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Which one of the following equals $x \\odot y$ (XNOR)?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$x' \\oplus y'$"
+      },
+      {
+        "l": "B",
+        "t": "$x \\oplus y'$"
+      },
+      {
+        "l": "C",
+        "t": "$(x' \\oplus y)'$"
+      },
+      {
+        "l": "D",
+        "t": "$x'y + xy'$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "Each complement toggles XOR and XNOR. (A) has two complements: XOR. (B) has one: XNOR. (C) has two (the prime on $x$ and the outer bar): XOR. (D) is the sum-of-products form of XOR.",
+      "Check (B) at $x = y = 0$: $0 \\oplus 1 = 1$, and $0 \\odot 0 = 1$."
+    ],
+    "concept": "Complementing one input of an XOR gives XNOR; complementing two gives XOR back.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "Complementing both inputs cancels: $x' \\oplus y' = x \\oplus y$."
+      },
+      {
+        "answer": "C",
+        "why": "The outer bar undoes the XNOR made by the primed input, leaving XOR."
+      }
+    ],
+    "blocks": [
+      "complement-inputs",
+      "trick-bubble-count"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q02",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following are equal to $x \\odot y$ for all $x, y$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$(x \\oplus y)'$"
+      },
+      {
+        "l": "B",
+        "t": "$x' \\oplus y$"
+      },
+      {
+        "l": "C",
+        "t": "$x' \\odot y'$"
+      },
+      {
+        "l": "D",
+        "t": "$x \\odot y'$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "solution": [
+      "(A) XNOR is by definition the complement of XOR.",
+      "(B) One complement on an input turns XOR into XNOR.",
+      "(C) $x' \\odot y' = x' \\oplus y' \\oplus 1 = x \\oplus y \\oplus 1 = x \\odot y$: the two input complements cancel.",
+      "(D) One complement on an input of an XNOR gives XOR: $x \\odot y' = x \\oplus y$. Not equal."
+    ],
+    "concept": "Write XNOR as XOR ⊕ 1 and count the complements: an even total of complements cancels.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B"
+        ],
+        "why": "(C) was missed: complementing both inputs of an XNOR leaves it unchanged."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "(D) has an odd number of complements relative to XNOR, so it is XOR."
+      }
+    ],
+    "blocks": [
+      "complement-inputs",
+      "xnor-forms"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "On how many of the 16 input rows is $A \\oplus B \\oplus C \\oplus D = 1$?",
+    "answer": 8,
+    "solution": [
+      "The XOR is 1 when an odd number of inputs are 1: one 1 ($\\binom{4}{1} = 4$ rows) or three 1s ($\\binom{4}{3} = 4$ rows).",
+      "Total $4 + 4 = 8$, exactly half of the 16 rows."
+    ],
+    "concept": "An n-input XOR is 1 on the odd-weight rows, which are exactly half of all rows.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "Only the rows with a single 1 were counted; three 1s is also odd."
+      },
+      {
+        "answer": 5,
+        "why": "Row 1111 has four 1s, an even number, so the XOR is 0 there."
+      }
+    ],
+    "blocks": [
+      "parity"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q04",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Seven copies of a bit string $B$ are XORed together: $B \\oplus B \\oplus B \\oplus B \\oplus B \\oplus B \\oplus B$. The result is",
+    "options": [
+      {
+        "l": "A",
+        "t": "the all-zero string"
+      },
+      {
+        "l": "B",
+        "t": "$B$"
+      },
+      {
+        "l": "C",
+        "t": "the complement of $B$"
+      },
+      {
+        "l": "D",
+        "t": "the all-one string"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "XOR is associative, and each pair $B \\oplus B$ is 0. Seven copies form three pairs and one leftover copy.",
+      "$0 \\oplus 0 \\oplus 0 \\oplus B = B$."
+    ],
+    "concept": "Copies of B cancel in pairs: an odd number of copies leaves B, an even number leaves 0.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "That is the result for an even number of copies; seven is odd."
+      },
+      {
+        "answer": "C",
+        "why": "XOR with itself never complements; only XOR with 1s does."
+      }
+    ],
+    "blocks": [
+      "iterated-xor",
+      "trap-n-times"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q05",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "The expression $(A \\oplus B) \\oplus (B \\oplus C) \\oplus (C \\oplus A \\oplus 1)$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$0$"
+      },
+      {
+        "l": "B",
+        "t": "$1$"
+      },
+      {
+        "l": "C",
+        "t": "$A \\oplus B \\oplus C$"
+      },
+      {
+        "l": "D",
+        "t": "$A'$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "Drop the brackets (XOR is associative and commutative): $A \\oplus B \\oplus B \\oplus C \\oplus C \\oplus A \\oplus 1$.",
+      "Each variable appears twice and cancels; one constant 1 remains. The expression is the constant 1."
+    ],
+    "concept": "Flatten an XOR chain and count copies modulo 2.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "The constant 1 was dropped; it is the only term that survives."
+      },
+      {
+        "answer": "C",
+        "why": "Each variable occurs twice, so each cancels; none survives."
+      }
+    ],
+    "blocks": [
+      "xor-laws",
+      "trick-flatten"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q06",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "An operator $\\star$ has the outputs 1, 0, 0, 0 for the rows $xy$ = 00, 01, 10, 11. Which statement is true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\star$ is commutative and associative"
+      },
+      {
+        "l": "B",
+        "t": "$\\star$ is commutative but not associative"
+      },
+      {
+        "l": "C",
+        "t": "$\\star$ is associative but not commutative"
+      },
+      {
+        "l": "D",
+        "t": "$\\star$ is neither"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "The column 1000 is NOR. Rows 01 and 10 both give 0, so it is commutative.",
+      "Associativity: $(x \\star y) \\star z = (x + y)z'$ and $x \\star (y \\star z) = x'(y + z)$. At $x = 1, y = 0, z = 0$ the first is 1 and the second is 0.",
+      "So it is commutative but not associative."
+    ],
+    "concept": "NOR (like NAND) is commutative but not associative.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "Commutativity does not imply associativity; the row 100 separates the two bracketings."
+      },
+      {
+        "answer": "D",
+        "why": "Rows 01 and 10 have equal outputs, so it is commutative."
+      }
+    ],
+    "blocks": [
+      "test-from-table",
+      "nand-not-assoc",
+      "operator-properties"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Let $x * y = x' + y$. Which statement is true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$*$ is commutative and associative"
+      },
+      {
+        "l": "B",
+        "t": "$*$ is commutative but not associative"
+      },
+      {
+        "l": "C",
+        "t": "$*$ is associative but not commutative"
+      },
+      {
+        "l": "D",
+        "t": "$*$ is neither commutative nor associative"
+      }
+    ],
+    "answer": "D",
+    "solution": [
+      "Commutative? $0 * 1 = 1 + 1 = 1$ but $1 * 0 = 0 + 0 = 0$: no.",
+      "Associative? $(0 * 0) * 0 = 1 * 0 = 0$ but $0 * (0 * 0) = 0 * 1 = 1$: no."
+    ],
+    "concept": "Implication is neither commutative nor associative.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "The row (0, 0, 0) already separates the two bracketings."
+      },
+      {
+        "answer": "B",
+        "why": "Rows 01 and 10 give different outputs, so it is not commutative."
+      }
+    ],
+    "blocks": [
+      "implication",
+      "operator-properties"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "Of the 16 possible two-input Boolean operators, how many are both commutative and associative?",
+    "answer": 6,
+    "solution": [
+      "Commutative operators have equal outputs on rows 01 and 10; there are 8: constant 0, AND, XOR, OR, NOR, XNOR, NAND, constant 1.",
+      "Test associativity on each. The constants are associative ($(x \\star y) \\star z$ and $x \\star (y \\star z)$ are both the constant). AND, OR, XOR and XNOR are associative.",
+      "NAND and NOR fail (for example NAND at $a = b = 0, c = 1$). That leaves 6."
+    ],
+    "concept": "Combine the two table tests: commutativity from rows 01/10, associativity from the 8-row comparison.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "The two constant operators are also commutative and associative."
+      },
+      {
+        "answer": 8,
+        "why": "NAND and NOR are commutative but not associative."
+      }
+    ],
+    "blocks": [
+      "operator-properties",
+      "test-from-table"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-03-q09",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "Let $x \\diamond y = x + y'$. The nested expression $(x \\diamond y) \\diamond x$ simplifies to",
+    "options": [
+      {
+        "l": "A",
+        "t": "$1$"
+      },
+      {
+        "l": "B",
+        "t": "$x$"
+      },
+      {
+        "l": "C",
+        "t": "$x + y'$"
+      },
+      {
+        "l": "D",
+        "t": "$x'y$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Inner call: $x \\diamond y = x + y'$.",
+      "Outer call: $(x + y') \\diamond x = (x + y') + x' = 1$, because $x + x' = 1$ already."
+    ],
+    "concept": "Evaluate nested operators from the inside out and simplify at each level.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "That is only the inner call; the outer call ORs in $x'$, which makes the whole expression 1."
+      },
+      {
+        "answer": "D",
+        "why": "That is the complement of the inner call, $(x + y')'$; the outer call complements its *second* argument, $x$, not the first."
+      }
+    ],
+    "blocks": [
+      "nested",
+      "defined-operators"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The minterm expansion of $f(A, B, C) = A'B + BC'$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma m(2, 3, 6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma m(1, 2, 6)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma m(2, 3, 4, 6)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Pi M(2, 3, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Patterns over $A, B, C$: $A'B \\to 01-$, $BC' \\to -10$.",
+      "$01- = \\{2, 3\\}$ and $-10 = \\{2, 6\\}$; the union is $\\{2, 3, 6\\}$."
+    ],
+    "concept": "Expand each term with dash patterns and take the union of the minterm lists.",
+    "common_wrong": [
+      {
+        "answer": "D",
+        "why": "The correct numbers under $\\Pi$ name the complement: $\\Pi M(2, 3, 6) = \\Sigma m(0, 1, 4, 5, 7)$."
+      },
+      {
+        "answer": "C",
+        "why": "Row 4 (100) has $B = 0$, so neither term covers it."
+      }
+    ],
+    "blocks": [
+      "expand-terms",
+      "trick-dash"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A 3-variable function is $f = \\Sigma m(0, 2, 5, 7)$. Its canonical product of sums is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Pi M(1, 3, 4, 6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Pi M(0, 2, 5, 7)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma m(1, 3, 4, 6)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Pi M(1, 3, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The maxterms are the rows where $f = 0$: all rows 0–7 except 0, 2, 5, 7.",
+      "That leaves $1, 3, 4, 6$, so $f = \\Pi M(1, 3, 4, 6)$."
+    ],
+    "concept": "Σ and Π lists of the same function are complementary sets of rows.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "Same numbers under $\\Pi$ give the complement of $f$."
+      },
+      {
+        "answer": "C",
+        "why": "That is $f'$ written as a sum of minterms."
+      }
+    ],
+    "blocks": [
+      "sigma-pi",
+      "trap-sigma-pi"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q03",
+    "type": "NAT",
+    "marks": 1,
+    "text": "In a function of five variables $f(A, B, C, D, E)$, how many minterms does the product term $AC'$ cover?",
+    "answer": 8,
+    "solution": [
+      "The term fixes 2 of the 5 variables; the other 3 are free.",
+      "Each free variable doubles the count: $2^{5 - 2} = 8$."
+    ],
+    "concept": "A k-literal term of n variables covers 2^(n−k) minterms.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "That is $2^2$, counting the fixed variables instead of the free ones."
+      },
+      {
+        "answer": 2,
+        "why": "Only one missing variable was expanded; there are three."
+      }
+    ],
+    "blocks": [
+      "term-size"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q04",
+    "type": "NAT",
+    "marks": 2,
+    "text": "How many Boolean functions of 3 variables have at most 2 minterms?",
+    "answer": 37,
+    "solution": [
+      "Count by the number of minterms: 0 minterms: $\\binom{8}{0} = 1$; 1 minterm: $\\binom{8}{1} = 8$; 2 minterms: $\\binom{8}{2} = 28$.",
+      "Total $1 + 8 + 28 = 37$."
+    ],
+    "concept": "A function with exactly k minterms is a choice of k of the 2ⁿ rows.",
+    "common_wrong": [
+      {
+        "answer": 36,
+        "why": "The constant 0 (no minterms) also has at most 2 minterms."
+      },
+      {
+        "answer": 28,
+        "why": "That counts exactly 2 minterms only."
+      }
+    ],
+    "blocks": [
+      "count-k-minterms"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Which of the following 3-variable functions are self-dual?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma m(1, 2, 4, 7)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma m(0, 1, 2, 3)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma m(0, 1, 6, 7)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma m(3, 5, 6)$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "The complementary pairs are $(0, 7), (1, 6), (2, 5), (3, 4)$; self-dual means exactly one row of each pair.",
+      "(A) takes 7, 1, 2, 4: one per pair, self-dual (it is $A \\oplus B \\oplus C$).",
+      "(B) takes 0, 1, 2, 3: one per pair, self-dual (it is $A'$).",
+      "(C) takes both 0 and 7, and both 1 and 6: not self-dual although it has four minterms.",
+      "(D) has only three minterms, so it is not neutral and cannot be self-dual."
+    ],
+    "concept": "Self-dual iff exactly one row of each complementary pair (i, 2ⁿ − 1 − i) is a minterm.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "(C) is neutral, but it contains both rows of two pairs."
+      },
+      {
+        "answer": [
+          "A"
+        ],
+        "why": "(B) is the single literal $A'$; complementing all inputs turns $A'$ into $A$, its complement, so it is self-dual."
+      }
+    ],
+    "blocks": [
+      "self-dual-test",
+      "neutral-vs-self-dual",
+      "trick-pair-sum"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many neutral Boolean functions of 2 variables are there (functions with as many 1s as 0s in their truth table)?",
+    "answer": 6,
+    "solution": [
+      "Two variables give 4 rows; neutral means exactly 2 of them are 1.",
+      "$\\binom{4}{2} = 6$: $A$, $B$, $A'$, $B'$, $A \\oplus B$ and $A \\odot B$."
+    ],
+    "concept": "Neutral functions are choices of half the rows: C(2ⁿ, 2ⁿ⁻¹).",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "That is the number of self-dual functions; $A \\oplus B$ and $A \\odot B$ are neutral but not self-dual."
+      },
+      {
+        "answer": 2,
+        "why": "Only XOR and XNOR were counted; the four single literals are also neutral."
+      }
+    ],
+    "blocks": [
+      "neutral"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "The dual of $f = (A + B')C$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AB' + C$"
+      },
+      {
+        "l": "B",
+        "t": "$A'B + C'$"
+      },
+      {
+        "l": "C",
+        "t": "$A + B' + C$"
+      },
+      {
+        "l": "D",
+        "t": "$AB'C$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Swap $+$ and $\\cdot$ and keep the literals: $(A + B')$ becomes $A \\cdot B'$ and the outer product becomes a sum.",
+      "$f^D = AB' + C$. Check with $f^D(x) = f(x')'$ at $A = 1, B = 0, C = 0$: $f(0, 1, 1) = (0 + 0) \\cdot 1 = 0$, so $f^D = 1$, and $AB' + C = 1$."
+    ],
+    "concept": "The dual swaps the operators and keeps every literal; the complement also complements the literals.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That is the complement $f'$ (literals complemented as well)."
+      },
+      {
+        "answer": "C",
+        "why": "The inner $+$ must also become $\\cdot$."
+      }
+    ],
+    "blocks": [
+      "dual-theorem",
+      "dual-vs-complement"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q08",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Over three variables, $f = \\Sigma(1, 4, 6)$ and $g = \\Sigma(1, 2, 6, 7)$. Then $f \\oplus g$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(2, 4, 7)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(1, 6)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(1, 2, 4, 6, 7)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(0, 3, 5)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "XOR keeps the rows that are in exactly one of the two lists.",
+      "Rows 1 and 6 are in both (they cancel); 4 is only in $f$; 2 and 7 are only in $g$. So $f \\oplus g = \\Sigma(2, 4, 7)$."
+    ],
+    "concept": "XOR of functions is the symmetric difference of their minterm sets.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That is $f \\cdot g$, the intersection."
+      },
+      {
+        "answer": "C",
+        "why": "That is $f + g$, the union."
+      }
+    ],
+    "blocks": [
+      "minterm-sets"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-04-q09",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Let $M(a, b, c) = ab + bc + ca$ be the 3-input majority function. Which of the following are identities?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$M(a, a, b) = a$"
+      },
+      {
+        "l": "B",
+        "t": "$M(a, b, c) = \\big(M(a', b', c')\\big)'$"
+      },
+      {
+        "l": "C",
+        "t": "$M(a, b, 1) = a + b$"
+      },
+      {
+        "l": "D",
+        "t": "$M(a, b, 0) = a + b$"
+      }
+    ],
+    "answer": [
+      "A",
+      "B",
+      "C"
+    ],
+    "solution": [
+      "(A) $M(a, a, b) = a + ab + ab = a$: two equal inputs decide. Identity.",
+      "(B) This says $M$ is self-dual; it takes rows 7, 6, 5, 3 from the pairs (0, 7), (1, 6), (2, 5), (3, 4). Identity.",
+      "(C) $M(a, b, 1) = ab + b + a = a + b$. Identity.",
+      "(D) $M(a, b, 0) = ab$, not $a + b$ (they differ at $a = 1, b = 0$)."
+    ],
+    "concept": "Majority: two equal inputs decide, it is self-dual, and fixing one input to 1 or 0 gives OR or AND of the others.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "C"
+        ],
+        "why": "(B) is self-duality, which the majority function has."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "C",
+          "D"
+        ],
+        "why": "With $c = 0$ both other inputs must be 1 for a majority: $M(a, b, 0) = ab$."
+      }
+    ],
+    "blocks": [
+      "majority",
+      "self-dual-def"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is the minimum number of 2-input NOR gates needed to implement $F = AB$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "2"
+      },
+      {
+        "l": "B",
+        "t": "3"
+      },
+      {
+        "l": "C",
+        "t": "4"
+      },
+      {
+        "l": "D",
+        "t": "5"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "De Morgan: $AB = (A' + B')' = \\text{NOR}(A', B')$.",
+      "Each complement costs one NOR with tied inputs: $A' = \\text{NOR}(A, A)$, $B' = \\text{NOR}(B, B)$. Total 3.",
+      "Two gates cannot work. With one earlier gate $g$, the output NOR reads two of $\\{A, B, g\\}$, where $g$ is $A'$, $B'$ or $(A + B)'$ (a NOR of inputs). The output is $AB = (x + y)'$ only if $\\{x, y\\} = \\{A', B'\\}$, and that pair needs two earlier gates."
+    ],
+    "concept": "With NOR gates, AND costs 3 (two inverters and a NOR), the dual of OR from NANDs.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "Two NORs give OR ($\\text{NOR}(\\text{NOR}(A,B))$), not AND."
+      },
+      {
+        "answer": "C",
+        "why": "An extra inverter on the output is not needed: the NOR of the complements is already $AB$."
+      }
+    ],
+    "blocks": [
+      "nor-universal",
+      "gate-count-table"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q02",
+    "type": "NAT",
+    "marks": 2,
+    "text": "What is the minimum number of 2-input NAND gates needed to implement $F = A \\odot B$ (XNOR)?",
+    "answer": 5,
+    "solution": [
+      "Four NANDs give $A \\oplus B$ (with the shared gate $(AB)'$); one more NAND with tied inputs inverts it: 5.",
+      "Alternatively, $AB + A'B'$ in NAND–NAND needs two inverters, two first-level NANDs and one output NAND: also 5.",
+      "An exhaustive search over all circuits of four 2-input NANDs finds none that computes XNOR, so 5 is the minimum."
+    ],
+    "concept": "XNOR costs 5 NANDs but only 4 NORs: it is the dual of XOR.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "Four is the NAND count for XOR, and the NOR count for XNOR."
+      },
+      {
+        "answer": 6,
+        "why": "Converting gate by gate overcounts; sharing $(AB)'$ saves gates."
+      }
+    ],
+    "blocks": [
+      "gate-count-table",
+      "xor-4-nand"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q03",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "In a circuit, $G_1 = \\text{NAND}(A, B')$, $G_2 = \\text{NAND}(C, D)$ and $F = \\text{NAND}(G_1, G_2)$. Then $F$ equals",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AB' + CD$"
+      },
+      {
+        "l": "B",
+        "t": "$(A' + B)(C' + D')$"
+      },
+      {
+        "l": "C",
+        "t": "$(A + B')(C + D)$"
+      },
+      {
+        "l": "D",
+        "t": "$A'B + C'D'$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "NAND–NAND is AND–OR: $F = (G_1 G_2)' = G_1' + G_2'$.",
+      "$G_1' = AB'$ and $G_2' = CD$, so $F = AB' + CD$."
+    ],
+    "concept": "Two-level NAND–NAND computes the sum of the products formed at the first level.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That is $G_1 G_2$, the input of the output NAND before its inversion."
+      },
+      {
+        "answer": "C",
+        "why": "That would be NOR–NOR reading; NAND gates give products at the first level."
+      }
+    ],
+    "blocks": [
+      "nand-nand",
+      "bubble-conversion"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q04",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "With the constants 0 and 1 available as inputs, which of the following sets of gates are functionally complete?",
+    "options": [
+      {
+        "l": "A",
+        "t": "{AND, XOR}"
+      },
+      {
+        "l": "B",
+        "t": "{OR, XNOR}"
+      },
+      {
+        "l": "C",
+        "t": "{AND, OR}"
+      },
+      {
+        "l": "D",
+        "t": "{XOR, XNOR}"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "With free constants a set is complete iff it has a non-monotone member and a non-affine member.",
+      "(A) XOR is not monotone, AND is not affine: complete ($x \\oplus 1 = x'$, then AND + NOT).",
+      "(B) XNOR is not monotone, OR is not affine: complete ($x \\odot 0 = x'$, then OR + NOT).",
+      "(C) AND and OR are both monotone: no NOT can ever be built. (D) XOR and XNOR are both affine: no AND can be built."
+    ],
+    "concept": "With constants, completeness needs a non-monotone function and a non-affine function.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A"
+        ],
+        "why": "(B) is the dual of (A): XNOR with 0 is an inverter, and OR with NOT is complete."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "D"
+        ],
+        "why": "Every circuit of XOR and XNOR gates is affine; it can never compute $xy$."
+      }
+    ],
+    "blocks": [
+      "with-constants",
+      "post-classes",
+      "complete-with-constants"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Let $f(x, y) = x'y + xy'$. Which of the following statements are true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$f$ is 0-preserving"
+      },
+      {
+        "l": "B",
+        "t": "$f$ is affine (linear)"
+      },
+      {
+        "l": "C",
+        "t": "$f$ is self-dual"
+      },
+      {
+        "l": "D",
+        "t": "$f$ is monotone"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "$f$ is XOR. (A) $f(0, 0) = 0$: true.",
+      "(B) $f = x \\oplus y$ is an XOR of inputs: affine, true.",
+      "(C) $f(x', y') = x' \\oplus y' = x \\oplus y = f(x, y)$, not its complement: not self-dual.",
+      "(D) $f(1, 0) = 1$ but $f(1, 1) = 0$: raising $y$ lowered the output, so not monotone."
+    ],
+    "concept": "Test each of Post's classes on the cheapest rows: corners for T0/T1, a complementary pair for S, one rising input for M.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "XOR of an even number of variables is not self-dual: complementing both inputs leaves it unchanged."
+      },
+      {
+        "answer": [
+          "B"
+        ],
+        "why": "$f(0, 0) = 0$, so XOR is 0-preserving."
+      }
+    ],
+    "blocks": [
+      "post-classes",
+      "trick-post-quick"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many of the 16 two-input Boolean functions are universal on their own (functionally complete with no constants)?",
+    "answer": 2,
+    "solution": [
+      "A single function is complete iff $f(0, 0) = 1$, $f(1, 1) = 0$ and it is not self-dual.",
+      "The corner conditions leave four columns (rows 00, 01, 10, 11): 1000 (NOR), 1010 ($B'$), 1100 ($A'$), 1110 (NAND).",
+      "$A'$ and $B'$ are self-dual, so only NAND and NOR remain: 2."
+    ],
+    "concept": "Sheffer functions: f(0…0) = 1, f(1…1) = 0, not self-dual. Among 2-input functions, only NAND and NOR.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "$A'$ and $B'$ pass the corner test but are self-dual (and use only one input), so they cannot build AND."
+      },
+      {
+        "answer": 1,
+        "why": "NOR is universal too, by duality with NAND."
+      }
+    ],
+    "blocks": [
+      "sheffer",
+      "single-function-test"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A 2:1 multiplexer computes $s'a + sb$. With $s = x$, $a = y$ and $b = 1$, it computes",
+    "options": [
+      {
+        "l": "A",
+        "t": "$x + y$"
+      },
+      {
+        "l": "B",
+        "t": "$xy$"
+      },
+      {
+        "l": "C",
+        "t": "$x'y$"
+      },
+      {
+        "l": "D",
+        "t": "$x' + y$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Substitute: $x'y + x \\cdot 1 = x'y + x$.",
+      "Redundant literal: $x + x'y = x + y$."
+    ],
+    "concept": "A multiplexer with constants builds OR, AND and NOT, so it is complete with constants.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "AND needs $a = 0, b = y$: $x' \\cdot 0 + xy = xy$."
+      },
+      {
+        "answer": "C",
+        "why": "The term $x \\cdot 1 = x$ was dropped."
+      }
+    ],
+    "blocks": [
+      "mux-complete"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q08",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which one of the following single functions is functionally complete on its own (no constants)?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$f(x, y, z) = xy + z'$"
+      },
+      {
+        "l": "B",
+        "t": "$f(x, y, z) = x'y'z'$"
+      },
+      {
+        "l": "C",
+        "t": "$f(x, y, z) = x \\oplus y \\oplus z$"
+      },
+      {
+        "l": "D",
+        "t": "$f(x, y, z) = xy + yz + zx$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "Sheffer test: $f(0,0,0) = 1$, $f(1,1,1) = 0$, not self-dual.",
+      "(A) $f(1,1,1) = 1 + 0 = 1$: 1-preserving, fails. (C) $f(0,0,0) = 0$: 0-preserving, fails. (D) majority: 0- and 1-preserving, fails.",
+      "(B) is the 3-input NOR: $f(0,0,0) = 1$, $f(1,1,1) = 0$, and it is not self-dual: a self-dual function of $n$ variables has exactly $2^{n-1}$ minterms (one from each complementary pair), and $f$ has only one. Complete: $f(x, x, x) = x'$ and $f(x, y, y) = (x + y)'$ is a 2-input NOR."
+    ],
+    "concept": "A single function is complete iff f(0…0) = 1, f(1…1) = 0 and it is not self-dual.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "It contains a complement, but $f(1,1,1) = 1$ makes it 1-preserving: it can never produce NOT of all-ones."
+      },
+      {
+        "answer": "C",
+        "why": "XOR of three variables is 0-preserving (and affine)."
+      }
+    ],
+    "blocks": [
+      "single-function-test",
+      "post-classes"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q09",
+    "type": "NAT",
+    "marks": 2,
+    "text": "What is the minimum number of 2-input NAND gates needed to implement $F = A + B + C$?",
+    "answer": 6,
+    "solution": [
+      "$A + B = \\text{NAND}(A', B')$ costs 3 gates (two inverters and a NAND).",
+      "To OR in $C$, the output NAND needs $(A + B)'$ and $C'$: one inverter on $A + B$ and one on $C$, then the NAND. Total $3 + 1 + 1 + 1 = 6$.",
+      "An exhaustive search over all circuits of five 2-input NANDs finds none that computes $A + B + C$, so 6 is the minimum (the dual of $ABC$ with NOR gates, also 6)."
+    ],
+    "concept": "OR is expensive with NAND gates (every input needs an inverter); minimum counts are proved by search or a lower-bound argument.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "Four is the NOR count for $A + B + C$ (two NORs per OR level), not the NAND count."
+      },
+      {
+        "answer": 5,
+        "why": "The output of the first OR stage must be inverted before the second NAND; skipping it computes $(A + B)' + C$ instead."
+      }
+    ],
+    "blocks": [
+      "min-count-method",
+      "nand-universal"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "In a circuit, $b$ passes through a NOT gate; an AND gate takes $a$ and $b'$; an OR gate combines the AND output with $c$. The output $z(a, b, c)$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(1, 3, 4, 5, 7)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(4, 5, 7)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(1, 3, 5, 7)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(0, 2, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The circuit computes $z = ab' + c$.",
+      "$ab' \\to 10- = \\{4, 5\\}$ and $c \\to --1 = \\{1, 3, 5, 7\\}$. The union is $\\{1, 3, 4, 5, 7\\}$."
+    ],
+    "concept": "Read the circuit as an expression, then expand to minterms with dash patterns.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "That is $c$ alone; the term $ab'$ adds row 4."
+      },
+      {
+        "answer": "D",
+        "why": "That is the complement, $z'$."
+      }
+    ],
+    "blocks": [
+      "analysis-method"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q02",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "$F = \\text{NOR}\\big(\\text{NOR}(X, Y), \\text{NOR}(X, Y')\\big)$. Which statement is true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$F$ is independent of $X$"
+      },
+      {
+        "l": "B",
+        "t": "$F$ is independent of $Y$"
+      },
+      {
+        "l": "C",
+        "t": "$F$ is independent of both"
+      },
+      {
+        "l": "D",
+        "t": "$F$ depends on both $X$ and $Y$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "A NOR of NORs is an AND of ORs: $F = (X + Y)(X + Y')$.",
+      "OR distributes over AND: $(X + Y)(X + Y') = X + YY' = X$. So $F = X$: it does not depend on $Y$."
+    ],
+    "concept": "A NOR fed by NORs is an AND of ORs; a variable that appears with both polarities may cancel.",
+    "common_wrong": [
+      {
+        "answer": "D",
+        "why": "$Y$ appears twice, but as $Y$ and $Y'$; the two cancel."
+      },
+      {
+        "answer": "A",
+        "why": "$F = X$, so it depends on $X$ and only on $X$."
+      }
+    ],
+    "blocks": [
+      "nand-nor-circuits",
+      "redundancy"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q03",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "A circuit computes $f = f_1 f_2 + f_3$ for 4-variable functions with $f_1 = \\Sigma(0, 1, 2, 3, 8)$, $f_2 = \\Sigma(1, 3, 8, 9, 12)$ and $f = \\Sigma(1, 3, 6, 8)$. Which $f_3$ works?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(6, 9)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(1, 3, 8)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(0, 6)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "AND is intersection: $f_1 f_2 = \\{1, 3, 8\\}$, which lies inside $f$.",
+      "$f_3$ must supply the missing row 6 and must not add any row outside $f$: $\\{6\\} \\subseteq F_3 \\subseteq \\{1, 3, 6, 8\\}$.",
+      "Only $\\Sigma(6)$ among the options satisfies both conditions."
+    ],
+    "concept": "For f = g + h: f − g ⊆ h ⊆ f.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "Row 9 is not in $f$; OR would add it to the output."
+      },
+      {
+        "answer": "C",
+        "why": "It repeats what the AND already supplies and misses row 6."
+      }
+    ],
+    "blocks": [
+      "solve-block",
+      "block-equations"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q04",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Over three variables, $f = f_1 \\oplus f_2$ with $f_1 = \\Sigma(1, 2, 5)$ and $f = \\Sigma(0, 1, 5, 6)$. Then $f_2$ is",
+    "options": [
+      {
+        "l": "A",
+        "t": "$\\Sigma(0, 2, 6)$"
+      },
+      {
+        "l": "B",
+        "t": "$\\Sigma(0, 6)$"
+      },
+      {
+        "l": "C",
+        "t": "$\\Sigma(0, 1, 2, 5, 6)$"
+      },
+      {
+        "l": "D",
+        "t": "$\\Sigma(3, 4, 7)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "XOR can be undone: $f_2 = f \\oplus f_1$, the symmetric difference.",
+      "$\\{0, 1, 5, 6\\} \\triangle \\{1, 2, 5\\} = \\{0, 2, 6\\}$.",
+      "Check: $\\{1, 2, 5\\} \\triangle \\{0, 2, 6\\} = \\{0, 1, 5, 6\\}$."
+    ],
+    "concept": "An XOR block is always uniquely determined: h = f ⊕ g.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "Row 2 is in $f_1$ but not in $f$, so $f_2$ must contain it to cancel it."
+      },
+      {
+        "answer": "C",
+        "why": "That is the union $f \\cup f_1$, not the symmetric difference."
+      }
+    ],
+    "blocks": [
+      "xor-block"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q05",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "$F = ab + cd$ is built with two 2-input AND gates and one OR gate, but both AND gates are fabricated as NAND gates. The circuit computes",
+    "options": [
+      {
+        "l": "A",
+        "t": "$a' + b' + c' + d'$"
+      },
+      {
+        "l": "B",
+        "t": "$(ab + cd)'$"
+      },
+      {
+        "l": "C",
+        "t": "$ab + cd$"
+      },
+      {
+        "l": "D",
+        "t": "$(a + b)(c + d)$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "The faulty gates output $(ab)' = a' + b'$ and $(cd)' = c' + d'$.",
+      "The OR gate combines them: $a' + b' + c' + d'$."
+    ],
+    "concept": "A wrong gate complements its own output only; recompute each affected term.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That would require the OR gate to be faulty (a NOR); the complements are on the AND outputs, before the OR."
+      },
+      {
+        "answer": "C",
+        "why": "NAND–NAND would give $ab + cd$, but here the second level is still an OR."
+      }
+    ],
+    "blocks": [
+      "wrong-gate"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "$Y = X \\cdot X'$ is built from an inverter with delay 4 ns and an AND gate with delay 1 ns. $X$ rises from 0 to 1. What is the width (in ns) of the resulting pulse on $Y$?",
+    "answer": 4,
+    "solution": [
+      "For 4 ns after $X$ rises, the inverter still outputs the old value 1, so both AND inputs are 1.",
+      "The AND gate delays the pulse by 1 ns but does not change its width: a 1-pulse of width 4 ns."
+    ],
+    "concept": "The X·X′ glitch lasts as long as the inverter delay; later gates shift it but do not stretch it.",
+    "common_wrong": [
+      {
+        "answer": 5,
+        "why": "The AND delay shifts the pulse in time; it does not add to its width."
+      },
+      {
+        "answer": 0,
+        "why": "Logically $X \\cdot X' = 0$, but with a slow inverter the output pulses after the rising edge."
+      }
+    ],
+    "blocks": [
+      "glitch",
+      "trap-steady-state"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q07",
+    "type": "NAT",
+    "marks": 2,
+    "text": "$P = A \\oplus A(t - 2)$: an XOR gate fed by $A$ and by $A$ delayed 2 ns through a buffer (the XOR is ideal; everything is 0 before $t = 0$). $A$ rises at $t = 1$, falls at $t = 4$ and rises again at $t = 7$ (all in ns). How many transitions does $P$ make in $[0, 12]$?",
+    "answer": 6,
+    "solution": [
+      "An XOR with a delayed copy is 1 for 2 ns after every edge of $A$.",
+      "Edges at 1, 4, 7 give pulses on $[1, 3)$, $[4, 6)$ and $[7, 9)$; they do not overlap.",
+      "Each pulse has two transitions: $3 \\times 2 = 6$."
+    ],
+    "concept": "A ⊕ A(t − δ) turns every edge of A, rising or falling, into a δ-wide pulse.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "The falling edge at $t = 4$ also produces a pulse; XOR detects every change."
+      },
+      {
+        "answer": 3,
+        "why": "That counts pulses; each pulse has two transitions."
+      }
+    ],
+    "blocks": [
+      "xor-edge-detector",
+      "timing-method"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q08",
+    "type": "NAT",
+    "marks": 2,
+    "text": "In a circuit, input $A$ goes through a NOT gate (delay 1 ns) into an AND gate (delay 2 ns) whose output, together with an AND of $B$ and $C$ (delay 2 ns), feeds an OR gate (delay 2 ns). What is the propagation delay (in ns) of the circuit?",
+    "answer": 5,
+    "solution": [
+      "Paths: $A \\to$ NOT $\\to$ AND $\\to$ OR: $1 + 2 + 2 = 5$ ns. $B$ or $C \\to$ AND $\\to$ OR: $2 + 2 = 4$ ns.",
+      "The output is settled only after the slowest path: 5 ns."
+    ],
+    "concept": "The circuit delay is the critical path, the largest sum of gate delays from an input to the output.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "That is the shorter path; the inverter on $A$ adds 1 ns."
+      },
+      {
+        "answer": 7,
+        "why": "Delays along different paths are not added; only the delays on one path are summed."
+      }
+    ],
+    "blocks": [
+      "critical-path",
+      "prop-delay"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-06-q09",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A contact network has a contact $x$ in series with the parallel pair ($x'$, $y$); this whole branch is in parallel with a contact $z$. The network conducts when",
+    "options": [
+      {
+        "l": "A",
+        "t": "$xy + z = 1$"
+      },
+      {
+        "l": "B",
+        "t": "$x + z = 1$"
+      },
+      {
+        "l": "C",
+        "t": "$z = 1$"
+      },
+      {
+        "l": "D",
+        "t": "$x + y + z = 1$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Series is AND, parallel is OR: $f = x(x' + y) + z$.",
+      "$x \\cdot x' = 0$, so $x(x' + y) = xy$ and $f = xy + z$."
+    ],
+    "concept": "Series = AND, parallel = OR; a path through x and x′ never conducts.",
+    "common_wrong": [
+      {
+        "answer": "C",
+        "why": "The branch can conduct through $x$ and $y$; only the $x, x'$ path is dead."
+      },
+      {
+        "answer": "B",
+        "why": "With $x = 1$ the branch also needs $y = 1$, because the $x'$ contact is then open."
+      }
+    ],
+    "blocks": [
+      "switch-networks"
+    ],
+    "source": "nexora"
+  }
+]

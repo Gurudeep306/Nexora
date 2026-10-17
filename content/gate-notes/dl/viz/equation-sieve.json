@@ -1,0 +1,381 @@
+{
+ "version": 1,
+ "title": "A system of Boolean equations solved by elimination",
+ "width": 640,
+ "height": 400,
+ "narrow": {
+  "width": 360,
+  "height": 400
+ },
+ "intro": "All 16 assignments of P, Q, R, S (row PQRS). Each equation keeps only the rows on which its two sides are equal.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Solving a system by striking out rows",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Solve by striking out rows",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g",
+   "type": "grid",
+   "x": 180,
+   "y": 64,
+   "rows": 4,
+   "cols": 4,
+   "cell": 70,
+   "values": [
+    [
+     "0000",
+     "0001",
+     "0010",
+     "0011"
+    ],
+    [
+     "0100",
+     "0101",
+     "0110",
+     "0111"
+    ],
+    [
+     "1000",
+     "1001",
+     "1010",
+     "1011"
+    ],
+    [
+     "1100",
+     "1101",
+     "1110",
+     "1111"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 40,
+    "y": 70,
+    "cell": 70
+   }
+  },
+  {
+   "id": "eq",
+   "type": "text",
+   "x": 320.0,
+   "y": 370,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 370,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Equation: P + Q = 1. At least one of P, Q is 1: the four rows with P = Q = 0 go. Twelve rows survive.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "0100",
+        "0101",
+        "0110",
+        "0111"
+       ],
+       [
+        "1000",
+        "1001",
+        "1010",
+        "1011"
+       ],
+       [
+        "1100",
+        "1101",
+        "1110",
+        "1111"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "P + Q = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Equation: PQ = 0. P and Q are not both 1: the four rows with P = Q = 1 go. Exactly one of P, Q is 1 on the eight survivors.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "0100",
+        "0101",
+        "0110",
+        "0111"
+       ],
+       [
+        "1000",
+        "1001",
+        "1010",
+        "1011"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "PQ = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Equation: Q + R = R. Q + R = R means Q = 1 forces R = 1: rows 0100 and 0101 go. Six rows survive.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "0110",
+        "0111"
+       ],
+       [
+        "1000",
+        "1001",
+        "1010",
+        "1011"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "Q + R = R"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Equation: P′R + S = 0. A sum equal to 0: S = 0, and P = 0 forces R = 0, which kills the remaining P = 0 rows. Two rows survive: PQRS = 1000 and 1010.",
+   "patches": [
+    {
+     "id": "g",
+     "set": {
+      "values": [
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "1000",
+        "·",
+        "1010",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "P′R + S = 0"
+     }
+    }
+   ]
+  }
+ ]
+}

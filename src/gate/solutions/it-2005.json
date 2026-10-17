@@ -316,7 +316,7 @@
       "verification": "A DFA with enough states (about $3\\cdot10^6$ plus a trap) recognises it."
     },
     "it-2005-cs-7": {
-      "approach": "$(A\\oplus B)\\oplus C$ is the odd-parity function: 1 exactly on minterms with an odd number of 1s ($001,010,100,111$). List the minterms covered by each option.",
+      "approach": "Concept tested: **parity**. $(A \\oplus B) \\oplus C$ is 1 exactly on the rows with an odd number of 1s: minterms 1, 2, 4, 7. List the minterms of each option.",
       "concepts": [
         "XOR",
         "Parity function",
@@ -324,20 +324,20 @@
       ],
       "steps": [
         {
-          "title": "Target minterms",
-          "body": "$(A\\oplus B)\\oplus C=1$ for $ABC\\in\\{001,010,100,111\\}$."
+          "title": "Target",
+          "body": "Odd weight rows: 001, 010, 100, 111, i.e. $\\Sigma(1, 2, 4, 7)$."
         },
         {
-          "title": "Option C term by term",
-          "body": "- $ABC$: $111$\n- $\\overline A(B\\oplus C)$: $A=0$, $B\\ne C$: $010,001$\n- $\\overline B(A\\oplus C)$: $B=0$, $A\\ne C$: $100,001$\n\nUnion $=\\{001,010,100,111\\}$ — exactly the target."
+          "title": "(A) and (B)",
+          "body": "(A) $(A + B + C)(\\overline{A} + \\overline{B} + \\overline{C})$ is 0 only on 000 and 111: $\\Sigma(1, \\ldots, 6)$. (B) is 0 only on 000 and 110. Neither is the parity function."
         },
         {
-          "title": "Options A, B",
-          "body": "(A) is 0 only for $000$ and $111$ → 6 minterms. (B) is 0 only for $000$ and $110$ → 6 minterms. Neither is parity."
+          "title": "(C)",
+          "body": "$ABC = m_7$; $\\overline{A}(B \\oplus C)$: $A = 0$ and $B \\ne C$, rows 001, 010; $\\overline{B}(A \\oplus C)$: $B = 0$ and $A \\ne C$, rows 001, 100. Union $\\{1, 2, 4, 7\\}$: equal."
         }
       ],
       "answer": {
-        "value": "$ABC+\\overline{A}(B\\oplus C)+\\overline{B}(A\\oplus C)$",
+        "value": "(C)",
         "choice": [
           "C"
         ],
@@ -347,25 +347,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "True on $011,101,110$ too (anything except all-equal inputs)."
+          "reason": "1 on six rows (all but 000 and 111)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "True on 6 minterms, including $011$."
+          "reason": "1 on six rows (all but 000 and 110)."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Covers exactly $001,010,100,111$."
+          "reason": "Covers exactly $m_1, m_2, m_4, m_7$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "(C) is equivalent."
+          "reason": "(C) is equivalent, so 'none of these' is wrong."
         }
       ],
-      "verification": "Check $011$: target 0; C gives $0+0+0=0$ ✓. Check $100$: target 1; C gives $\\overline B(A\\oplus C)=1\\cdot1=1$ ✓."
+      "shortcut": "The parity function is neutral (4 of 8 rows). (A) and (B) are 1 on 6 rows, so only (C) can match.",
+      "pitfalls": [
+        "Thinking 'odd parity' means 'not all equal' (that is option A)."
+      ],
+      "verification": "Row 111: target 1; (C) $ABC = 1$. Row 011: target 0; (C): $ABC = 0$, $\\overline{A}(1 \\oplus 1) = 0$, $\\overline{B} = 0$. ✓"
     },
     "it-2005-cs-8": {
       "approach": "Concept tested: **Booth recoding** of the multiplier $-57$: 8-bit pattern $1100\\,0111$, appended 0, digit $= q_{i-1} - q_i$.",
@@ -473,7 +477,7 @@
       "verification": "Units: $10^4$ ns / $10^6$ ns $=10^{-2}$."
     },
     "it-2005-cs-10": {
-      "approach": "Trace the loop: from terminal a of S1 current must reach terminal a of S2. The only paths are via the b–b wire (both ON) or the c–c wire (both OFF), so the bulb lights iff S1 = S2.",
+      "approach": "Concept tested: **switch networks (staircase circuit)**. Trace the loop: from pivot $a$ of S1, current must reach pivot $a$ of S2. The only paths are the b–b wire (both ON) or the c–c wire (both OFF), so the bulb lights iff S1 = S2.",
       "concepts": [
         "Two-way (staircase) switch",
         "XNOR"
@@ -481,15 +485,19 @@
       "steps": [
         {
           "title": "Possible paths",
-          "body": "S1 = 1 connects a→b; then S2 must also connect b→a, i.e. S2 = 1. S1 = 0 connects a→c; then S2 = 0 is needed."
+          "body": "S1 = 1 connects S1's $a$ to $b$; the $b$–$b$ wire leads to S2's $b$, which reaches S2's $a$ only if S2 = 1. Likewise S1 = 0 uses the $c$–$c$ wire, which needs S2 = 0."
         },
         {
-          "title": "Truth table",
-          "body": "| S1 | S2 | Bulb |\n|---|---|---|\n| 0 | 0 | ON |\n| 0 | 1 | OFF |\n| 1 | 0 | OFF |\n| 1 | 1 | ON |\n\nThis is $\\overline{S1\\oplus S2}$ (XNOR)."
+          "title": "Bulb function",
+          "body": "Lit $= S_1 S_2 + \\overline{S_1}\\,\\overline{S_2} = \\overline{S_1 \\oplus S_2}$."
+        },
+        {
+          "title": "Match",
+          "body": "Option (C)."
         }
       ],
       "answer": {
-        "value": "$\\overline{S1\\oplus S2}$",
+        "value": "(C) $\\overline{S1 \\oplus S2}$",
         "choice": [
           "C"
         ],
@@ -499,25 +507,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$S1=1,S2=0$ leaves the circuit open (b of S1 meets an unconnected b of S2)."
+          "reason": "With S1 = 1, S2 = 0 the blades sit on different wires: no path."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "True for $(0,1)$ and $(1,0)$, where the circuit is open."
+          "reason": "S1 = 1, S2 = 0 makes $S1 + S2 = 1$ but the bulb is off."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Bulb is ON exactly when both switches are in the same position."
+          "reason": "Lit exactly when both switches are in the same position."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "XOR is the complement — exactly the OFF cases."
+          "reason": "XOR is the opposite: it would be lit exactly when the bulb is off."
         }
       ],
-      "verification": "This is the classic staircase-switch wiring: toggling either switch toggles the bulb, consistent with XNOR."
+      "shortcut": "Straight wires (b–b, c–c) give XNOR; crossed wires give XOR.",
+      "pitfalls": [
+        "Treating the switches as simple on/off contacts in series."
+      ],
+      "verification": "All four positions: (1, 1) lit, (0, 0) lit, (1, 0) and (0, 1) dark."
     },
     "it-2005-cs-11": {
       "approach": "An up-counter increments by 1 per pulse and wraps from 255 to 0; count up to 255, wrap, then up to the target.",

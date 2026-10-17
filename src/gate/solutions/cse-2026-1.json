@@ -2349,39 +2349,28 @@
       }
     },
     "cse-2026-1-cs-11": {
-      "approach": "Use $X \\oplus Y = X\\bar Y$ when $Y$ implies $X$: here $\\bar P Q \\Rightarrow \\bar P + Q$, so $F = (\\bar P + Q)\\cdot\\overline{\\bar P Q}$, which simplifies to XNOR. Then recognise which XOR forms equal XNOR.",
+      "approach": "Concept tested: **XOR of a function with a sub-function, and XOR forms**. Since $\\bar{P}Q$ implies $\\bar{P} + Q$, XOR removes those rows: $F = (\\bar{P} + Q)\\cdot\\overline{\\bar{P}Q}$. Then recognise which XOR forms equal the result.",
       "concepts": [
         "XOR / XNOR identities",
-        "Boolean simplification",
+        "Complemented inputs",
         "Truth tables"
       ],
       "steps": [
         {
-          "title": "Simplify the XOR",
-          "body": "Let $X = \\bar P + Q$ and $Y = \\bar P Q$. Whenever $Y = 1$ we have $\\bar P = 1$, so $X = 1$: $Y \\le X$. Then $X \\oplus Y = X\\bar Y + \\bar X Y = X\\bar Y$ (the term $\\bar X Y$ is always 0).\n$$F = (\\bar P + Q)(P + \\bar Q) = \\bar P P + \\bar P\\bar Q + QP + Q\\bar Q = \\bar P\\bar Q + PQ.$$\nSo $F = P \\odot Q = \\overline{P \\oplus Q}$ (XNOR).",
-          "scene": {
-            "reveal": 20
-          }
+          "title": "Truth table of F",
+          "body": "| $P$ | $Q$ | $\\bar{P} + Q$ | $\\bar{P}Q$ | $F$ |\n|---|---|---|---|---|\n| 0 | 0 | 1 | 0 | 1 |\n| 0 | 1 | 1 | 1 | 0 |\n| 1 | 0 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 0 | 1 |"
         },
         {
-          "title": "Check with the truth table",
-          "body": "| $P$ | $Q$ | $\\bar P+Q$ | $\\bar PQ$ | $F$ |\n|---|---|---|---|---|\n| 0 | 0 | 1 | 0 | 1 |\n| 0 | 1 | 1 | 1 | 0 |\n| 1 | 0 | 0 | 0 | 0 |\n| 1 | 1 | 1 | 0 | 1 |\n\n$F = 1$ exactly when $P = Q$: XNOR.",
-          "scene": {
-            "hl": [
-              {
-                "c": 4,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Name it",
+          "body": "$F$ is 1 on rows 00 and 11: $F = P \\odot Q = \\overline{P \\oplus Q}$."
         },
         {
-          "title": "Match the options",
-          "body": "- (A) $\\overline{P\\oplus Q}$ is XNOR. ✓\n- (B) $P \\oplus Q$ is XOR, the complement of $F$. ✗\n- (C) Complementing one input of an XOR complements the output: $\\bar P \\oplus Q = \\overline{P \\oplus Q}$. ✓\n- (D) Complementing both inputs cancels: $\\bar P \\oplus \\bar Q = P \\oplus Q$. ✗"
+          "title": "Check the options",
+          "body": "(A) $\\overline{P \\oplus Q}$: XNOR, equal. (B) $P \\oplus Q$: the complement, not equal. (C) $\\bar{P} \\oplus Q$: one complement, XNOR, equal. (D) $\\bar{P} \\oplus \\bar{Q}$: two complements cancel, XOR, not equal."
         }
       ],
       "answer": {
-        "value": "$F = \\overline{P\\oplus Q}$ — options **(A)** and **(C)**",
+        "value": "(A) and (C)",
         "choice": [
           "A",
           "C"
@@ -2392,73 +2381,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$F = \\bar P\\bar Q + PQ$ is exactly XNOR $= \\overline{P \\oplus Q}$."
+          "reason": "$F$ is XNOR."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "XOR is 1 when $P \\ne Q$ — the opposite of $F$ (rows 01 and 10)."
+          "reason": "XOR is the complement of $F$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$\\bar P \\oplus Q = \\bar P\\bar Q + PQ$ (complementing one XOR input complements the output), which is $F$."
+          "reason": "One complemented input turns XOR into XNOR."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Inverting both inputs leaves XOR unchanged: $\\bar P \\oplus \\bar Q = P \\oplus Q \\ne F$."
+          "reason": "Two complements cancel, giving XOR."
         }
       ],
-      "shortcut": "Evaluate F at P = Q = 0: F = 1 ⊕ 0 = 1. XOR-type options give 0 there (B and D); XNOR-type options give 1 (A and C).",
+      "shortcut": "When $Y$ implies $X$ (every 1 of $Y$ is a 1 of $X$), $X \\oplus Y = X\\bar{Y}$: here $(\\bar{P} + Q)(P + \\bar{Q}) = PQ + \\bar{P}\\bar{Q}$.",
       "pitfalls": [
-        "Treating the overline in (A) as covering only $Q$ ($P \\oplus \\bar Q$ is also XNOR, so the answer is the same, but read the bar correctly).",
-        "Thinking $\\bar P \\oplus \\bar Q$ is the complement of $P\\oplus Q$ — two inversions cancel."
+        "Treating $\\oplus$ like $+$ and simplifying $(\\bar{P} + Q) \\oplus \\bar{P}Q$ by absorption to $\\bar{P} + Q$."
       ],
-      "verification": "The four-row truth table (P, Q) = 00, 01, 10, 11 gives F = 1, 0, 0, 1, the same column as A and C and the complement of B and D.",
-      "animation": {
-        "kind": "table",
-        "title": "Truth table of F = (P̄ + Q) ⊕ (P̄Q)",
-        "cols": [
-          "P",
-          "Q",
-          "P̄+Q",
-          "P̄Q",
-          "F"
-        ],
-        "rows": [
-          [
-            0,
-            0,
-            1,
-            0,
-            1
-          ],
-          [
-            0,
-            1,
-            1,
-            1,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            1,
-            1,
-            0,
-            1
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      }
+      "verification": "Row 01: $F = 1 \\oplus 1 = 0$; (A) gives 0, (C) gives $1 \\oplus 1 = 0$; (B) gives 1."
     },
     "cse-2026-1-cs-12": {
       "approach": "Concept tested: **overflow in sign-magnitude**. Decode $X = -52$ and $Y = +76$; 8-bit sign-magnitude holds $-127 \\dots 127$. Operations that add the magnitudes ($52 + 76 = 128$) overflow.",

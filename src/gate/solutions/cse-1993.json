@@ -665,7 +665,7 @@
       "verification": "For $\\lambda=\\pi$: $y=\\sin x$ satisfies $y''+y=0$, $y(0)=0$, $y(\\pi)=0$."
     },
     "cse-1993-ii-a-6-1": {
-      "approach": "Write each NOR output in terms of $x,y$: the inner gate gives $\\overline{x+y}$, the two middle gates give $\\bar x y$ and $x\\bar y$, and the last NOR complements their sum.",
+      "approach": "Concept tested: **reading a NOR circuit**. Write each NOR output in terms of $x, y$: the inner gate gives $\\overline{x + y}$, the two middle gates give $\\bar{x} y$ and $x \\bar{y}$, and the last NOR complements their sum.",
       "concepts": [
         "NOR gate",
         "XOR / XNOR from universal gates",
@@ -674,19 +674,19 @@
       "steps": [
         {
           "title": "Gate 1",
-          "body": "$G_1=\\overline{x+y}$."
+          "body": "$G_1 = \\overline{x + y}$."
         },
         {
-          "title": "Middle gates",
-          "body": "Top: $G_2=\\overline{x+G_1}=\\bar x\\cdot\\overline{G_1}=\\bar x(x+y)=\\bar xy$.\n\nBottom: $G_3=\\overline{G_1+y}=\\overline{G_1}\\cdot\\bar y=(x+y)\\bar y=x\\bar y$."
+          "title": "Gates 2 and 3",
+          "body": "$G_2 = \\overline{x + G_1} = \\bar{x}\\,\\overline{G_1} = \\bar{x}(x + y) = \\bar{x} y$. Similarly $G_3 = \\overline{G_1 + y} = (x + y)\\bar{y} = x\\bar{y}$."
         },
         {
-          "title": "Output gate A",
-          "body": "$f=\\overline{G_2+G_3}=\\overline{\\bar xy+x\\bar y}=\\overline{x\\oplus y}=x\\odot y$ — exclusive NOR."
+          "title": "Output",
+          "body": "$f = \\overline{G_2 + G_3} = \\overline{\\bar{x}y + x\\bar{y}} = \\overline{x \\oplus y}$: exclusive NOR."
         }
       ],
       "answer": {
-        "value": "(b) exclusive NOR",
+        "value": "(B) exclusive NOR",
         "choice": [
           "B"
         ],
@@ -696,33 +696,92 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "The middle gates produce XOR, but gate A inverts it."
+          "reason": "XOR is the input of the last NOR, $G_2 + G_3$; the NOR complements it."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$f=\\overline{x\\oplus y}$."
+          "reason": "$f = \\overline{x \\oplus y}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "NAND is 1 at $x=y=0$ and at mixed inputs; here $f(0,1)=0$."
+          "reason": "NAND is 1 on three rows; $f$ is 1 on rows 00 and 11 only."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "NOR is 0 at $x=y=1$, but $f(1,1)=1$."
+          "reason": "NOR is 0 on row 11, but $f(1, 1) = 1$."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "Option (b) is correct."
+          "reason": "The circuit is XNOR, which is listed."
         }
       ],
+      "shortcut": "This is the mirror of the four-NAND XOR: four NORs with a shared first gate make XNOR.",
       "pitfalls": [
-        "Stopping at $G_2+G_3$ (XOR) and forgetting the bubble on gate A."
+        "Stopping at $G_2 + G_3 = x \\oplus y$ and forgetting the final NOR's inversion."
       ],
-      "verification": "Truth table: $(0,0)$: $G_1=1,G_2=0,G_3=0,f=1$; $(0,1)$: $G_1=0,G_2=1,G_3=0,f=0$; $(1,0)$: $f=0$; $(1,1)$: $G_1=0,G_2=0,G_3=0,f=1$ — XNOR."
+      "verification": "Row 11: $G_1 = 0$, $G_2 = \\overline{1 + 0} = 0$, $G_3 = 0$, $f = 1$. Row 10: $G_1 = 0$, $G_2 = 0$, $G_3 = \\overline{0 + 0} = 1$, $f = 0$.",
+      "animation": {
+        "kind": "circuit",
+        "title": "Four NOR gates",
+        "inputs": [
+          {
+            "id": "x",
+            "label": "x",
+            "value": 1
+          },
+          {
+            "id": "y",
+            "label": "y",
+            "value": 1
+          }
+        ],
+        "gates": [
+          {
+            "id": "G1",
+            "type": "NOR",
+            "in": [
+              "x",
+              "y"
+            ]
+          },
+          {
+            "id": "G2",
+            "type": "NOR",
+            "in": [
+              "x",
+              "G1"
+            ]
+          },
+          {
+            "id": "G3",
+            "type": "NOR",
+            "in": [
+              "G1",
+              "y"
+            ]
+          },
+          {
+            "id": "G4",
+            "type": "NOR",
+            "in": [
+              "G2",
+              "G3"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "G4",
+            "label": "F"
+          }
+        ],
+        "caption": "x = y = 1: f = 1 (equal inputs)."
+      }
     },
     "cse-1993-ii-a-6-2": {
       "approach": "The figure is missing from this paper copy. In the commonly reproduced version the \"state machine\" is a NOR gate whose output is fed back to one of its own inputs, the other inputs being $a$ and $b$: $Q^+=\\overline{a+b+Q}$. A stable state exists only when the feedback is masked, i.e. $a+b=1$.",
@@ -2150,38 +2209,39 @@
       "verification": "Each term = n gives exactly n², which is in every class (b)–(e) but not O(n)."
     },
     "cse-1993-ii-b-9": {
-      "approach": "A half adder gives $S=x\\oplus y$ and $C=xy$. Tie one input to logic 1 and the sum output becomes NOT; the carry output is AND. Since $\\{\\text{AND},\\text{NOT}\\}$ is functionally complete, half adders alone realise any Boolean function.",
+      "approach": "Concept tested: **completeness of a building block**. A half adder outputs $S = x \\oplus y$ and $C = xy$. Show that it yields NOT and AND (with the constant 1), and use the completeness of {AND, NOT}.",
       "concepts": [
         "Half adder",
         "Functional completeness",
-        "XOR with constant"
+        "Constants"
       ],
       "steps": [
         {
-          "title": "Outputs of one half adder",
-          "body": "For inputs $x,y$: $$S=x\\oplus y,\\qquad C=x\\cdot y$$ So the carry output is already a 2-input **AND** gate."
+          "title": "AND",
+          "body": "The carry output of a half adder with inputs $x, y$ is $xy$: an AND gate."
         },
         {
-          "title": "NOT from the sum output",
-          "body": "Fix $y=1$: $$S=x\\oplus 1=\\overline{x}$$ (if $x=0$, $S=1$; if $x=1$, $S=0$). So the sum output of a half adder with one input tied to 1 is an **inverter**."
+          "title": "NOT",
+          "body": "Tie one input to logic 1: the sum output is $x \\oplus 1 = \\bar{x}$: an inverter."
         },
         {
-          "title": "OR also follows",
-          "body": "By De Morgan, $x+y=\\overline{\\overline{x}\\cdot\\overline{y}}$: two half adders as inverters, one as AND (carry), one more as inverter. (Also $x+y=(x\\oplus y)\\oplus(xy)$ using one half adder's $S$ and $C$ fed into a second half adder's inputs: its sum output is $x\\oplus y\\oplus xy=x+y$.)"
+          "title": "Everything else",
+          "body": "{AND, NOT} is complete: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$, and every function is a canonical SOP of ANDs, ORs and NOTs. So any Boolean function can be built from half adders (and the constant 1)."
         },
         {
-          "title": "Conclusion",
-          "body": "AND and NOT (hence also OR) can be built only from half adders. Every Boolean function has a sum-of-products form using only AND, OR, NOT, so **every Boolean function can be implemented with half adders alone**."
+          "title": "Why the constant is needed",
+          "body": "Without it, every half-adder circuit maps the all-zero input to 0 (both $S$ and $C$ are 0-preserving), so NOT could never be built. The constant 1 is the standard assumption."
         }
       ],
       "answer": {
-        "value": "Carry $=xy$ gives AND; sum with one input tied to 1 gives $x\\oplus1=\\overline{x}$ (NOT). $\\{\\text{AND},\\text{NOT}\\}$ is functionally complete, so any Boolean function can be built from half adders.",
+        "value": "Carry gives AND, sum with one input at 1 gives NOT; {AND, NOT} is complete, so half adders realise every function",
         "matchesKey": true
       },
+      "shortcut": "Any block that offers an AND-type output and an XOR-type output is complete once the constant 1 is available.",
       "pitfalls": [
-        "Forgetting that a constant 1 input is allowed — without it, XOR and AND alone cannot produce NOT (they map all-zero inputs to 0)."
+        "Claiming completeness without saying where the constant 1 comes from."
       ],
-      "verification": "Checked $x\\oplus1$ on both values of $x$, and $(x\\oplus y)\\oplus xy$ on all four input pairs: 0,1,1,1 = OR."
+      "verification": "Example: $x + y = \\overline{\\bar{x}\\,\\bar{y}}$ uses three half adders as inverters and one carry output as the AND."
     },
     "cse-1993-ii-b-10": {
       "approach": "Mode 2 is autoincrement register-indirect with RegR = PC. After fetching the one-word instruction at 2000 the PC already holds 2001, so the operand is taken from 2001 and the autoincrement then moves PC to 2002.",

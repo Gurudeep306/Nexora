@@ -1,0 +1,696 @@
+{
+ "version": 1,
+ "title": "Converting AND–OR into NAND–NAND",
+ "width": 640,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 270
+ },
+ "intro": "A sum of products, F = AB + CD, built as AND gates feeding an OR gate.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "AND–OR to NAND–NAND by bubble pairs",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "AND–OR → NAND–NAND",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g1",
+   "type": "gate",
+   "x": 170,
+   "y": 60,
+   "w": 60,
+   "h": 44,
+   "kind": "and",
+   "narrow": {
+    "x": 90,
+    "y": 60,
+    "w": 54,
+    "h": 40
+   }
+  },
+  {
+   "id": "g2",
+   "type": "gate",
+   "x": 170,
+   "y": 170,
+   "w": 60,
+   "h": 44,
+   "kind": "and",
+   "narrow": {
+    "x": 90,
+    "y": 170,
+    "w": 54,
+    "h": 40
+   }
+  },
+  {
+   "id": "g3",
+   "type": "gate",
+   "x": 360,
+   "y": 115,
+   "w": 60,
+   "h": 44,
+   "kind": "or",
+   "narrow": {
+    "x": 220,
+    "y": 115,
+    "w": 54,
+    "h": 40
+   }
+  },
+  {
+   "id": "lA",
+   "type": "text",
+   "x": 40,
+   "y": 74,
+   "text": "A",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "narrow": {
+    "x": 16,
+    "y": 74,
+    "size": 12
+   }
+  },
+  {
+   "id": "lB",
+   "type": "text",
+   "x": 40,
+   "y": 90,
+   "text": "B",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "narrow": {
+    "x": 16,
+    "y": 90,
+    "size": 12
+   }
+  },
+  {
+   "id": "lC",
+   "type": "text",
+   "x": 40,
+   "y": 184,
+   "text": "C",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "narrow": {
+    "x": 16,
+    "y": 184,
+    "size": 12
+   }
+  },
+  {
+   "id": "lD",
+   "type": "text",
+   "x": 40,
+   "y": 200,
+   "text": "D",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "narrow": {
+    "x": 16,
+    "y": 200,
+    "size": 12
+   }
+  },
+  {
+   "id": "wg10",
+   "type": "line",
+   "points": [
+    [
+     52,
+     74
+    ],
+    [
+     111.0,
+     74
+    ],
+    [
+     111.0,
+     74.67
+    ],
+    [
+     170.0,
+     74.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      28,
+      74
+     ],
+     [
+      59.0,
+      74
+     ],
+     [
+      59.0,
+      73.33
+     ],
+     [
+      90.0,
+      73.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wg11",
+   "type": "line",
+   "points": [
+    [
+     52,
+     90
+    ],
+    [
+     111.0,
+     90
+    ],
+    [
+     111.0,
+     89.33
+    ],
+    [
+     170.0,
+     89.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      28,
+      90
+     ],
+     [
+      59.0,
+      90
+     ],
+     [
+      59.0,
+      86.67
+     ],
+     [
+      90.0,
+      86.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wg20",
+   "type": "line",
+   "points": [
+    [
+     52,
+     184
+    ],
+    [
+     111.0,
+     184
+    ],
+    [
+     111.0,
+     184.67
+    ],
+    [
+     170.0,
+     184.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      28,
+      184
+     ],
+     [
+      59.0,
+      184
+     ],
+     [
+      59.0,
+      183.33
+     ],
+     [
+      90.0,
+      183.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wg21",
+   "type": "line",
+   "points": [
+    [
+     52,
+     200
+    ],
+    [
+     111.0,
+     200
+    ],
+    [
+     111.0,
+     199.33
+    ],
+    [
+     170.0,
+     199.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      28,
+      200
+     ],
+     [
+      59.0,
+      200
+     ],
+     [
+      59.0,
+      196.67
+     ],
+     [
+      90.0,
+      196.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wm0",
+   "type": "line",
+   "points": [
+    [
+     230.0,
+     82.0
+    ],
+    [
+     298.34,
+     82.0
+    ],
+    [
+     298.34,
+     129.67
+    ],
+    [
+     366.67,
+     129.67
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "wm1",
+   "type": "line",
+   "points": [
+    [
+     230.0,
+     192.0
+    ],
+    [
+     298.34,
+     192.0
+    ],
+    [
+     298.34,
+     144.33
+    ],
+    [
+     366.67,
+     144.33
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "wF",
+   "type": "line",
+   "points": [
+    [
+     420.0,
+     137.0
+    ],
+    [
+     460.0,
+     137.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      274.0,
+      135.0
+     ],
+     [
+      304.0,
+      135.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "eq",
+   "type": "text",
+   "x": 320.0,
+   "y": 260,
+   "text": "F = AB + CD",
+   "anchor": "middle",
+   "size": 16,
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 250,
+    "size": 13
+   }
+  },
+  {
+   "id": "nm0",
+   "type": "line",
+   "points": [
+    [
+     144.0,
+     80.0
+    ],
+    [
+     185.0,
+     80.0
+    ],
+    [
+     185.0,
+     128.33
+    ],
+    [
+     226.0,
+     128.33
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "nm1",
+   "type": "line",
+   "points": [
+    [
+     144.0,
+     190.0
+    ],
+    [
+     185.0,
+     190.0
+    ],
+    [
+     185.0,
+     141.67
+    ],
+    [
+     226.0,
+     141.67
+    ]
+   ],
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start from the two-level AND–OR circuit for F = AB + CD: one AND per product term, one OR to combine them.",
+   "patches": []
+  },
+  {
+   "caption": "Put a bubble at the output of each AND and a bubble at the matching OR input. Each wire now has two bubbles, which cancel, so the function is unchanged.",
+   "patches": [
+    {
+     "id": "g1",
+     "set": {
+      "kind": "nand",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "kind": "nand",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "bubbles": [
+       0,
+       1
+      ],
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wm0",
+     "set": {
+      "points": [
+       [
+        230.0,
+        82.0
+       ],
+       [
+        293.06,
+        82.0
+       ],
+       [
+        293.06,
+        129.67
+       ],
+       [
+        356.11,
+        129.67
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wm1",
+     "set": {
+      "points": [
+       [
+        230.0,
+        192.0
+       ],
+       [
+        293.06,
+        192.0
+       ],
+       [
+        293.06,
+        144.33
+       ],
+       [
+        356.11,
+        144.33
+       ]
+      ]
+     }
+    },
+    {
+     "id": "nm0",
+     "set": {
+      "points": [
+       [
+        144.0,
+        80.0
+       ],
+       [
+        180.2,
+        80.0
+       ],
+       [
+        180.2,
+        128.33
+       ],
+       [
+        216.4,
+        128.33
+       ]
+      ]
+     }
+    },
+    {
+     "id": "nm1",
+     "set": {
+      "points": [
+       [
+        144.0,
+        190.0
+       ],
+       [
+        180.2,
+        190.0
+       ],
+       [
+        180.2,
+        141.67
+       ],
+       [
+        216.4,
+        141.67
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "An OR with bubbled inputs is a NAND (De Morgan). Redraw it: the whole circuit is now NAND–NAND.",
+   "patches": [
+    {
+     "id": "g3",
+     "set": {
+      "kind": "nand",
+      "bubbles": [],
+      "tone": "success"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wm0",
+     "set": {
+      "points": [
+       [
+        230.0,
+        82.0
+       ],
+       [
+        295.0,
+        82.0
+       ],
+       [
+        295.0,
+        129.67
+       ],
+       [
+        360.0,
+        129.67
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wm1",
+     "set": {
+      "points": [
+       [
+        230.0,
+        192.0
+       ],
+       [
+        295.0,
+        192.0
+       ],
+       [
+        295.0,
+        144.33
+       ],
+       [
+        360.0,
+        144.33
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq",
+     "set": {
+      "text": "F = ((AB)′ · (CD)′)′ = AB + CD",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "nm0",
+     "set": {
+      "points": [
+       [
+        144.0,
+        80.0
+       ],
+       [
+        182.0,
+        80.0
+       ],
+       [
+        182.0,
+        128.33
+       ],
+       [
+        220.0,
+        128.33
+       ]
+      ]
+     }
+    },
+    {
+     "id": "nm1",
+     "set": {
+      "points": [
+       [
+        144.0,
+        190.0
+       ],
+       [
+        182.0,
+        190.0
+       ],
+       [
+        182.0,
+        141.67
+       ],
+       [
+        220.0,
+        141.67
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rule: any two-level AND–OR (sum of products) becomes NAND–NAND by replacing every gate with a NAND. A single-literal term must first pass through an inverter.",
+   "patches": []
+  }
+ ]
+}

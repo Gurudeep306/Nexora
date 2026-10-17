@@ -616,22 +616,27 @@
       "verification": "Checked (c) by exhausting the possible first blocks; (d) by the last-symbol argument."
     },
     "cse-1998-a-13": {
-      "approach": "Use $B\\oplus B=0$ and $B\\oplus0=B$: the result alternates between $B$ and $0$ with the number of XOR operations.",
+      "approach": "Concept tested: **iterated XOR**. $B \\oplus B = 0$ and $B \\oplus 0 = B$, so only the number of copies of $B$ (mod 2) matters. With $n$ XOR *operations* there are $n + 1$ copies.",
       "concepts": [
-        "XOR properties"
+        "XOR properties",
+        "Iterated XOR"
       ],
       "steps": [
         {
           "title": "Basic identities",
-          "body": "$B\\oplus B=0$, $B\\oplus0=B$, and $\\oplus$ is associative."
+          "body": "$B \\oplus B = 0$, $B \\oplus 0 = B$, and $\\oplus$ is associative, so copies cancel in pairs."
         },
         {
-          "title": "Count the operations",
-          "body": "With $n$ XOR operations applied to copies of $B$:\n- $n=1$: $B\\oplus B=0$\n- $n=2$: $B\\oplus(B\\oplus B)=B\\oplus0=B$\n- $n=3$: $0$; $n=4$: $B$; …\n\nSo for even $n$ the string is unchanged; for odd $n$ it becomes all zeros. It is never complemented."
+          "title": "Count the copies",
+          "body": "'XORed with itself $n$ times' means $n$ XOR operations: $B \\oplus B$ (one operation, two copies) $= 0$; two operations, three copies: $B$; and so on. $n$ operations join $n + 1$ copies."
+        },
+        {
+          "title": "Conclude",
+          "body": "$n + 1$ copies leave $B$ when $n + 1$ is odd, that is when $n$ is **even**. So the string remains unchanged when $n$ is even: option (D)."
         }
       ],
       "answer": {
-        "value": "remains unchanged when n is even",
+        "value": "(D) remains unchanged when n is even",
         "choice": [
           "D"
         ],
@@ -641,28 +646,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "XOR of $B$ with itself never complements it; results are only $B$ or $0$."
+          "reason": "XOR with copies of itself never complements: it gives $B$ or $0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Same reason: odd counts give $0$, not $\\bar B$."
+          "reason": "Same reason: no complement ever appears; for odd $n$ the result is 0."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "XOR has nothing to do with division (that would be a right shift)."
+          "reason": "XOR has nothing to do with division by 2 (that is a right shift)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "With an even number of XOR operations the result is $B$."
+          "reason": "Even $n$ means an odd number $n + 1$ of copies, leaving $B$."
         }
       ],
+      "shortcut": "Translate words into copies first: $n$ operations = $n + 1$ copies; odd copies = $B$.",
       "pitfalls": [
-        "Counting copies of $B$ instead of XOR operations; with $n$ copies the even case gives 0. The intended reading takes $n$ as the number of XORs."
+        "Counting $n$ copies instead of $n$ operations, which flips the answer; read the bracket $B \\oplus (B \\oplus (B \\ldots))$ as $n$ XOR signs."
       ],
-      "verification": "Try $B=1011$: $1011\\oplus1011=0000$, then $1011\\oplus0000=1011$."
+      "verification": "$n = 2$: $B \\oplus (B \\oplus B) = B \\oplus 0 = B$ (unchanged, $n$ even). $n = 1$: $B \\oplus B = 0$."
     },
     "cse-1998-a-14": {
       "approach": "$k$ select lines address $2^k$ data inputs.",
@@ -2282,7 +2288,7 @@
       "verification": "Check $ABC=101$: $B\\ne C$ so $f=0$, matching the map ($A=1$, $BC=01$ is 0)."
     },
     "cse-1998-a-43": {
-      "approach": "All four are commutative; test associativity with a small counterexample. NAND fails, the other three are associative.",
+      "approach": "Concept tested: **associativity test**. All four operators are commutative; compare $(a \\star b) \\star c$ with $a \\star (b \\star c)$. NAND fails, the others pass.",
       "concepts": [
         "Boolean operators",
         "Associativity",
@@ -2291,15 +2297,19 @@
       "steps": [
         {
           "title": "Commutativity",
-          "body": "AND, OR, NAND, XOR are all symmetric in their two inputs, so each is commutative."
+          "body": "AND, OR, NAND and EXOR all give equal outputs on rows 01 and 10."
         },
         {
           "title": "Associativity of NAND",
-          "body": "Take $a=0,b=1,c=1$:\n\n$(a\\uparrow b)\\uparrow c=(0\\uparrow1)\\uparrow1=1\\uparrow1=0$\n\n$a\\uparrow(b\\uparrow c)=0\\uparrow(1\\uparrow1)=0\\uparrow0=1$\n\n$0\\ne1$, so NAND is not associative."
+          "body": "$(a \\uparrow b) \\uparrow c = ab + \\bar{c}$, $a \\uparrow (b \\uparrow c) = \\bar{a} + bc$. They differ at $(0, 0, 1)$."
+        },
+        {
+          "title": "The others",
+          "body": "AND, OR and EXOR are associative (all-ones, any-one and parity respectively), so NAND is the only one that is commutative but not associative."
         }
       ],
       "answer": {
-        "value": "NAND",
+        "value": "(C) NAND",
         "choice": [
           "C"
         ],
@@ -2309,28 +2319,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "AND is both commutative and associative."
+          "reason": "AND is associative."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "OR is both commutative and associative."
+          "reason": "OR is associative."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "NAND is commutative but $(0\\uparrow1)\\uparrow1=0\\ne1=0\\uparrow(1\\uparrow1)$."
+          "reason": "Commutative but not associative."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "XOR is associative (parity of three bits does not depend on grouping)."
+          "reason": "EXOR is associative."
         }
       ],
+      "shortcut": "Same fact as the 1992 question: NAND and NOR are the commutative, non-associative gates.",
       "pitfalls": [
-        "Treating XOR as non-associative; it is associative."
+        "Assuming every commutative operator is associative."
       ],
-      "verification": "NOR fails the same way; AND/OR/XOR verified associative via truth tables."
+      "verification": "$(0 \\uparrow 0) \\uparrow 1 = 1 \\uparrow 1 = 0$, $0 \\uparrow (0 \\uparrow 1) = 0 \\uparrow 1 = 1$."
     },
     "cse-1998-a-44": {
       "approach": "Low-level formatting lays down the track/sector structure: sector headers (address marks, IDs), gaps and checksums on every track.",
@@ -3184,7 +3195,7 @@
       "verification": "$101=5$: $q_0\\to q_1\\to q_2\\to q_0$ ✓; $111=7$: $q_0\\to q_1\\to q_3\\to q_2$, rejected ✓."
     },
     "cse-1998-a-57-a": {
-      "approach": "IMP computes $a\\to b=\\overline a+b$. Write $f=x\\overline y+\\overline x y$ in the form $\\overline a+b$: $f=g_1\\to\\overline{g_2}$ with $g_1=x\\to y$ and $g_2=y\\to x$; the negation $\\overline{g_2}=g_2\\to0$ needs the constant 0.",
+      "approach": "Concept tested: **building XOR from implication gates**. IMP computes $a \\to b = \\bar{a} + b$. Write $f = x\\bar{y} + \\bar{x}y$ as a single implication whose inputs are themselves implications, using the constant 0 for one negation.",
       "concepts": [
         "Implication gate",
         "XOR",
@@ -3192,52 +3203,62 @@
       ],
       "steps": [
         {
-          "title": "Gate identities",
-          "body": "$a\\to b=\\overline a+b$, so $a\\to0=\\overline a$ and $\\overline{x\\to y}=x\\overline y$."
+          "title": "XOR as 'not both implications'",
+          "body": "$x \\to y$ is 0 only at $(1, 0)$ and $y \\to x$ only at $(0, 1)$, so $(x \\to y)(y \\to x)$ is XNOR and $f = \\overline{(x \\to y)(y \\to x)} = \\overline{g_1} + \\overline{g_2}$ with $g_1 = x \\to y$, $g_2 = y \\to x$."
         },
         {
-          "title": "Construction",
-          "body": "$g_1=x\\to y=\\overline x+y$\n\n$g_2=y\\to x=\\overline y+x$\n\n$g_3=g_2\\to0=\\overline{g_2}=\\overline x\\,y$\n\n$f=g_1\\to g_3=\\overline{g_1}+g_3=x\\overline y+\\overline x y$ ✓ (4 gates)"
+          "title": "Write it as one implication",
+          "body": "$\\overline{g_1} + \\overline{g_2} = g_1 \\to \\overline{g_2}$, and $\\overline{g_2} = g_2 \\to 0$."
         },
         {
-          "title": "Why the constant 0 is needed",
-          "body": "IMP is 1-preserving: $1\\to1=1$. Any circuit of IMP gates fed only by $x,y$ outputs 1 when $x=y=1$, but $f(1,1)=0$. So a constant-0 input is unavoidable."
+          "title": "The four gates",
+          "body": "$g_1 = x \\to y$, $g_2 = y \\to x$, $g_3 = g_2 \\to 0 = \\overline{g_2}$, $f = g_1 \\to g_3$."
         }
       ],
       "answer": {
         "value": "g1 = x→y, g2 = y→x, g3 = g2→0 (= ¬g2), f = g1→g3 = ¬g1 + ¬g2 = x⊕y",
         "matchesKey": true
       },
-      "verification": "Truth table: $(x,y)=(0,0)$: $g_1=1,g_3=0\\Rightarrow f=0$; $(0,1)$: $g_3=1\\Rightarrow f=1$; $(1,0)$: $g_1=0\\Rightarrow f=1$; $(1,1)$: $g_1=1,g_3=0\\Rightarrow f=0$ ✓."
+      "shortcut": "IMP with 0 is NOT; IMP itself is 'OR with the first input inverted'. XOR = OR of the two 'inhibition' terms, each the complement of an implication.",
+      "pitfalls": [
+        "Using the gates without the constant 0: implication is 1-preserving, so some negation must come from a constant."
+      ],
+      "verification": "| $x$ | $y$ | $g_1$ | $g_2$ | $g_3$ | $f$ |\n|---|---|---|---|---|---|\n| 0 | 0 | 1 | 1 | 0 | 0 |\n| 0 | 1 | 1 | 0 | 1 | 1 |\n| 1 | 0 | 0 | 1 | 0 | 1 |\n| 1 | 1 | 1 | 1 | 0 | 0 |"
     },
     "cse-1998-a-57-b": {
-      "approach": "Build a known complete set: NOT from $x\\to0$ and OR from $(x\\to0)\\to y$. Since {NOT, OR} is functionally complete, so is IMP (with the constant 0).",
+      "approach": "Concept tested: **functional completeness by building a known complete set**. Make NOT and OR from implication gates (with the constant 0); {NOT, OR} is complete.",
       "concepts": [
         "Functional completeness",
-        "Implication gate"
+        "Implication gate",
+        "Partial completeness"
       ],
       "steps": [
         {
-          "title": "NOT gate",
-          "body": "$x\\to0=\\overline x+0=\\overline x$."
+          "title": "Build NOT",
+          "body": "$x \\to 0 = \\bar{x} + 0 = \\bar{x}$."
         },
         {
-          "title": "OR gate",
-          "body": "$(x\\to0)\\to y=\\overline{\\overline x}+y=x+y$."
+          "title": "Build OR",
+          "body": "$(x \\to 0) \\to y = \\bar{\\bar{x}} + y = x + y$."
         },
         {
           "title": "Conclude",
-          "body": "{NOT, OR} is complete (AND by De Morgan: $xy=\\overline{\\overline x+\\overline y}$), hence every Boolean function can be built from IMP gates and the constant 0."
+          "body": "{NOT, OR} is functionally complete (AND $= \\overline{\\bar{x} + \\bar{y}}$), so implication gates with the constant 0 can realise every Boolean function."
+        },
+        {
+          "title": "Why 0 is essential",
+          "body": "$1 \\to 1 = 1$: implication is 1-preserving, so without the constant 0 every circuit outputs 1 on the all-ones input and NOT is impossible. The gate is *partially* complete."
         }
       ],
       "answer": {
-        "value": "x→0 = x̄ (NOT); (x→0)→y = x + y (OR); {NOT, OR} is complete",
+        "value": "x→0 = x̄ (NOT); (x→0)→y = x + y (OR); {NOT, OR} is complete (given the constant 0)",
         "matchesKey": true
       },
+      "shortcut": "To show completeness, build NOT and one of AND/OR; to show the need for a constant, check the all-0 and all-1 rows.",
       "pitfalls": [
-        "Claiming completeness without a constant: IMP alone preserves 1, so the constant 0 is required."
+        "Claiming completeness 'without constants', which is false (1-preserving)."
       ],
-      "verification": "AND directly: $(x\\to(y\\to0))\\to0=\\overline{\\overline x+\\overline y}=xy$; truth table confirms all four rows."
+      "verification": "Post's classes of $x' + y$: not 0-preserving, 1-preserving, not self-dual, not monotone, not affine. Only T₁ traps it, and the constant 0 escapes T₁."
     },
     "cse-1998-a-58-a": {
       "approach": "Shift away the constant: the fixed point of $x = 2x - 1$ is $x = 1$, so $y_n = x_n - 1$ satisfies a pure doubling recurrence.",

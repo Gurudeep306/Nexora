@@ -1106,28 +1106,28 @@
       "verification": "Counter-example: students X and Y share joint account 123 as primary ⇒ two rows with BankAccount_Num = 123."
     },
     "cse-2011-cs-13": {
-      "approach": "Write the Boolean function of each circuit, using $\\overline{X}\\oplus Y = X \\oplus \\overline{Y} = \\overline{X\\oplus Y}$ and $\\overline{X}\\oplus\\overline{Y} = X\\oplus Y$; for circuit D simplify the AND/OR network algebraically.",
+      "approach": "Concept tested: **XOR/XNOR in circuits**. Write each circuit's function using $\\bar{X} \\oplus Y = X \\oplus \\bar{Y} = \\overline{X \\oplus Y}$ and $\\bar{X} \\oplus \\bar{Y} = X \\oplus Y$; simplify the AND/OR network of option D.",
       "concepts": [
         "XOR/XNOR identities",
         "Boolean algebra",
-        "De Morgan"
+        "Circuit analysis"
       ],
       "steps": [
         {
-          "title": "Circuits A, B, C",
-          "body": "- A: $F = \\overline{A\\oplus B}$ = XNOR.\n- B: $\\overline{A}\\oplus\\overline{B} = A\\oplus B$, then inverted: $F = \\overline{A\\oplus B}$ = XNOR.\n- C: $F = \\overline{A}\\oplus B = \\overline{A\\oplus B}$ = XNOR."
+          "title": "Options A, B, C",
+          "body": "(A) $\\overline{A \\oplus B}$: XNOR. (B) $\\overline{\\bar{A} \\oplus \\bar{B}} = \\overline{A \\oplus B}$: XNOR. (C) $\\bar{A} \\oplus B = \\overline{A \\oplus B}$: XNOR."
         },
         {
-          "title": "Circuit D — first level",
-          "body": "Inputs: $A$ and $\\overline{B}$.\n- G1 (AND) then NOT: $\\overline{A\\overline{B}} = \\overline{A} + B$.\n- G2 (OR): $A + \\overline{B}$."
+          "title": "Option D",
+          "body": "$G_1 = A\\bar{B}$, $G_2 = \\bar{B} + A$, and $F = \\overline{\\overline{G_1} \\cdot G_2} = G_1 + \\overline{G_2} = A\\bar{B} + \\bar{A}B = A \\oplus B$."
         },
         {
-          "title": "Circuit D — output",
-          "body": "$$G3 = (\\overline{A}+B)(A+\\overline{B}) = \\overline{A}\\,\\overline{B} + AB = \\overline{A\\oplus B}$$\nThe final NOT gives $F = A \\oplus B$ — an **XOR**, not an XNOR."
+          "title": "Conclusion",
+          "body": "Circuit D computes XOR, so it is the one NOT equivalent to XNOR."
         }
       ],
       "answer": {
-        "value": "Circuit (D) computes $A\\oplus B$, so it is **not** an XNOR",
+        "value": "(D)",
         "choice": [
           "D"
         ],
@@ -1137,29 +1137,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "XOR followed by NOT is the definition of XNOR."
+          "reason": "XOR followed by NOT is XNOR."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Inverting both XOR inputs leaves XOR unchanged; the output inverter makes it XNOR."
+          "reason": "Complementing both XOR inputs cancels; the output NOT makes XNOR."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Inverting exactly one XOR input complements the XOR, giving XNOR."
+          "reason": "One complemented XOR input gives XNOR."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: the AND–OR network before the last inverter is already XNOR, so the final NOT turns it into XOR."
+          "reason": "Simplifies to $A\\bar B + \\bar A B = A \\oplus B$."
         }
       ],
-      "shortcut": "Test $A=B=0$: an XNOR must output 1. In D, $G1 = 0 \\Rightarrow \\overline{G1} = 1$, $G2 = 0 + 1 = 1$, $G3 = 1$, $F = 0$ — so D fails immediately.",
+      "shortcut": "Count the inversions around each XOR: odd ⇒ XNOR (A: 1, B: 3, C: 1). D has no XOR gate, so simplify it.",
       "pitfalls": [
-        "Missing that the wire from A hops over the B line (no junction) and goes to the OR gate, not to the inverter."
+        "Assuming two input NOTs plus an output NOT 'cancel to XOR' (three inversions is odd: XNOR)."
       ],
-      "verification": "Truth table for D: $(A,B) = 00,01,10,11$ gives $F = 0,1,1,0$, i.e. XOR."
+      "verification": "Row $A = B = 0$: XNOR is 1; circuit D gives $G_1 = 0$, $G_2 = 1$, $F = \\overline{1 \\cdot 1} = 0$."
     },
     "cse-2011-cs-14": {
       "approach": "Each sum term is a maxterm; list the minterms where the product is 0, the rest are 1s, and read off the minimal SOP.",

@@ -493,28 +493,28 @@
       "verification": "Pascal supports recursion with only a stack, but needs a heap for `new`."
     },
     "cse-1997-a-11": {
-      "approach": "Substitute $z=\\overline{x}+y$ into $z*x=\\overline{z}+x$ and simplify with De Morgan and absorption.",
+      "approach": "Concept tested: **a defined implication operator and nesting**. $x * y = \\bar{x} + y$; substitute $z = \\bar{x} + y$ into $z * x = \\bar{z} + x$ and simplify.",
       "concepts": [
-        "Boolean algebra",
+        "Implication",
         "De Morgan's law",
         "Absorption"
       ],
       "steps": [
         {
           "title": "Apply the definition",
-          "body": "$z*x=\\overline{z}+x=\\overline{\\overline{x}+y}+x$"
+          "body": "$z * x = \\bar{z} + x = \\overline{\\bar{x} + y} + x$."
         },
         {
           "title": "De Morgan",
-          "body": "$\\overline{\\overline{x}+y}=x\\,\\overline{y}$, so $z*x=x\\overline{y}+x$."
+          "body": "$\\overline{\\bar{x} + y} = x\\bar{y}$, so $z * x = x\\bar{y} + x$."
         },
         {
-          "title": "Absorption",
-          "body": "$x\\overline{y}+x=x(\\overline{y}+1)=x$."
+          "title": "Absorb",
+          "body": "$x\\bar{y} + x = x$ (absorption). Option (B)."
         }
       ],
       "answer": {
-        "value": "x",
+        "value": "(B) $x$",
         "choice": [
           "B"
         ],
@@ -524,25 +524,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "That is $z$ itself, not $z*x$."
+          "reason": "$\\bar{x} + y$ is $z$ itself, not $z * x$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$x\\overline y+x=x$. Correct."
+          "reason": "$\\bar{z} + x = x\\bar{y} + x = x$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Fails for $x=1$ (result is 1)."
+          "reason": "At $x = 1$ the result is 1, so it is not the constant 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Fails for $x=0$ (result is 0)."
+          "reason": "At $x = 0$: $z = 1$, so $z * x = 0 + 0 = 0$, not 1."
         }
       ],
-      "verification": "Truth table: $(x,y)=(0,0)$: $z=1$, $z*x=0+0=0$; $(0,1)$: $z=1\\to0$; $(1,0)$: $z=0\\to1$; $(1,1)$: $z=1\\to1$ — equals $x$."
+      "shortcut": "Check $x = 0$ and $x = 1$: $x = 1$ gives $\\bar{z} + 1 = 1$; $x = 0$ gives $z = 1$, so $\\bar{z} + 0 = 0$. The result equals $x$.",
+      "pitfalls": [
+        "Swapping the arguments (computing $x * z$ instead of $z * x$): implication is not commutative."
+      ],
+      "verification": "Rows $(x, y)$: (0,0): $z = 1$, $z * x = 0$; (0,1): $z = 1$, 0; (1,0): $z = 0$, $1 + 1 = 1$; (1,1): $z = 1$, $0 + 1 = 1$. Column = $x$."
     },
     "cse-1997-a-12": {
       "approach": "8085 restart interrupts vector to $8\\times n$; RST 7.5 therefore goes to $8\\times7.5=60=003C$H.",
@@ -1995,28 +1999,28 @@
       "verification": "$(224)_5=50+10+4=64$, $(13)_5=8$, $8^2=64$ ✓."
     },
     "cse-1997-a-40": {
-      "approach": "Here $f=f_1f_2+f_3$. Compute $f_1f_2$ (intersection of minterm sets); $f_3$ must supply the remaining minterms of $f$ and must not introduce any minterm outside $f$.",
+      "approach": "Concept tested: **function blocks as minterm sets**. Here $f = f_1 f_2 + f_3$: compute $f_1 f_2$ (intersection); $f_3$ must supply the remaining minterms of $f$ and must not introduce any minterm outside $f$.",
       "concepts": [
         "Canonical SOP",
         "AND/OR of minterm sets"
       ],
-      "given": "| Signal | Minterms |\n|---|---|\n| $f_1$ | 8, 9, 10 |\n| $f_2$ | 7, 8, 12, 13, 14, 15 |\n| $f$ | 8, 9 (scan prints 7, 9 — misprint) |",
+      "given": "| Signal | Minterms |\n|---|---|\n| $f_1$ | 8, 9, 10 |\n| $f_2$ | 7, 8, 12, 13, 14, 15 |\n| $f$ | 8, 9 |",
       "steps": [
         {
-          "title": "AND gate",
-          "body": "$f_1f_2=\\{8,9,10\\}\\cap\\{7,8,12,13,14,15\\}=\\Sigma\\,8$."
+          "title": "AND = intersection",
+          "body": "$f_1 f_2 = \\{8, 9, 10\\} \\cap \\{7, 8, 12, 13, 14, 15\\} = \\{8\\}$, which lies inside $f$."
         },
         {
-          "title": "Constraint on $f_3$",
-          "body": "$f=\\Sigma8\\cup f_3=\\Sigma\\,8,9$ ⇒ $f_3$ must contain 9, may contain 8, and nothing else."
+          "title": "Bounds on f₃",
+          "body": "$f_3 \\supseteq f \\setminus f_1f_2 = \\{9\\}$ and $f_3 \\subseteq f = \\{8, 9\\}$."
         },
         {
-          "title": "Choose",
-          "body": "Only $\\Sigma\\,9$ satisfies this — (B). (With the printed $f=\\Sigma7,9$ no $f_3$ works, since 8 from $f_1f_2$ would always appear in $f$; hence the correction to $\\Sigma8,9$.)"
+          "title": "Match",
+          "body": "Only $\\Sigma 9$ satisfies both: option (B)."
         }
       ],
       "answer": {
-        "value": "Σ 9",
+        "value": "(B) $\\Sigma\\,9$",
         "choice": [
           "B"
         ],
@@ -2026,28 +2030,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Minterm 10 would appear in $f$, but $f=\\Sigma8,9$."
+          "reason": "Minterm 10 is not in $f$; OR would add it."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: $\\Sigma8\\cup\\Sigma9=\\Sigma8,9=f$."
+          "reason": "Supplies 9, adds nothing outside $f$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Minterm 1 would appear in $f$."
+          "reason": "Minterm 1 is not in $f$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Lacks 9 and adds 10 and 15."
+          "reason": "Misses 9, and 10, 15 are not in $f$."
         }
       ],
+      "shortcut": "$f \\setminus f_1 f_2 \\subseteq f_3 \\subseteq f$.",
       "pitfalls": [
-        "Using union for the AND gate instead of intersection."
+        "Trying to expand the blocks into expressions over $w, x, y, z$.",
+        "Letting $f_3$ add minterms outside $f$ (options A, C, D)."
       ],
-      "verification": "Recompute $f$ for (B): $f_1f_2+f_3=\\Sigma8+\\Sigma9=\\Sigma8,9$ ✓; every other option adds or misses a minterm."
+      "verification": "$f_1 f_2 + f_3 = \\{8\\} \\cup \\{9\\} = \\{8, 9\\} = f$. (The paper scan misprints $f$ as $\\Sigma\\,7, 9$, which is inconsistent with $f_1 f_2 = \\Sigma\\,8$; the bank uses the corrected $\\Sigma\\,8, 9$.)"
     },
     "cse-1997-a-41": {
       "approach": "A total (linear) order extending the partial order must put $x$ first and $y$ last; the $a_i$ are mutually incomparable, so they can be arranged in any order between them.",

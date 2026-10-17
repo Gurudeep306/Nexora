@@ -1,0 +1,212 @@
+{
+ "version": 1,
+ "title": "XNOR chains and XOR chains agree for an odd number of variables",
+ "width": 640,
+ "height": 345,
+ "narrow": {
+  "width": 360,
+  "height": 315
+ },
+ "intro": "Truth table of x ⊕ y ⊕ z, the chain x ⊙ y ⊙ z, and a 3-input XNOR gate (the complement of the 3-input XOR).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "Chains of XNOR vs XOR, three variables",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "XNOR chain vs XOR",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t",
+   "type": "table",
+   "x": 80,
+   "y": 56,
+   "cellW": 80,
+   "cellH": 28,
+   "rows": [
+    [
+     "x",
+     "y",
+     "z",
+     "x⊕y⊕z",
+     "x⊙y⊙z",
+     "XNOR₃"
+    ],
+    [
+     "0",
+     "0",
+     "0",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "0",
+     "0",
+     "1",
+     "1",
+     "1",
+     "0"
+    ],
+    [
+     "0",
+     "1",
+     "0",
+     "1",
+     "1",
+     "0"
+    ],
+    [
+     "0",
+     "1",
+     "1",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "1",
+     "0",
+     "0",
+     "1",
+     "1",
+     "0"
+    ],
+    [
+     "1",
+     "0",
+     "1",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "1",
+     "1",
+     "0",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "1",
+     "1",
+     "1",
+     "1",
+     "1",
+     "0"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "highlight": [
+    [
+     1,
+     3
+    ],
+    [
+     1,
+     4
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     2,
+     4
+    ],
+    [
+     3,
+     3
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     4,
+     3
+    ],
+    [
+     4,
+     4
+    ],
+    [
+     5,
+     3
+    ],
+    [
+     5,
+     4
+    ],
+    [
+     6,
+     3
+    ],
+    [
+     6,
+     4
+    ],
+    [
+     7,
+     3
+    ],
+    [
+     7,
+     4
+    ],
+    [
+     8,
+     3
+    ],
+    [
+     8,
+     4
+    ]
+   ],
+   "narrow": {
+    "x": 6,
+    "y": 50,
+    "cellW": 58,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "n",
+   "type": "text",
+   "x": 320.0,
+   "y": 330,
+   "text": "With three variables the XNOR chain equals the XOR chain; a 3-input XNOR gate (XNOR₃) is their complement.",
+   "anchor": "middle",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "nn",
+   "type": "text",
+   "x": 180.0,
+   "y": 300,
+   "text": "Odd n: chain ⊙ = chain ⊕. XNOR₃ gate = complement.",
+   "anchor": "middle",
+   "size": 12,
+   "only": "narrow"
+  }
+ ],
+ "steps": []
+}

@@ -1512,22 +1512,27 @@
       "verification": "$v=4$, $k=2$, $j=6$: set $6 \\bmod 4 = 2$, lines $4$ and $5$; option A gives $2\\cdot2=4$ to $5$ ✔."
     },
     "cse-2013-cs-21": {
-      "approach": "XNOR $= (x \\oplus y)'$. Complementing exactly one input of an XOR complements its output; complementing both leaves it unchanged.",
+      "approach": "Concept tested: **complemented inputs of XOR**. Each complement (on an input, or turning XOR into XNOR) toggles the function; two complements cancel.",
       "concepts": [
-        "XOR / XNOR identities"
+        "XOR / XNOR identities",
+        "Complemented inputs"
       ],
       "steps": [
         {
-          "title": "Identities",
-          "body": "$x \\odot y = xy + x'y'$. Also $x \\oplus y' = x' \\oplus y = (x \\oplus y)' = x \\odot y$."
+          "title": "The target",
+          "body": "XNOR: $x \\odot y = (x \\oplus y)' = xy + x'y'$."
         },
         {
-          "title": "Odd one out",
-          "body": "$x' \\oplus y' = x \\oplus y$ (two complements cancel), which is XOR, not XNOR."
+          "title": "One complemented input",
+          "body": "$x \\oplus y' = x \\oplus y \\oplus 1 = (x \\oplus y)'$ and likewise $x' \\oplus y = (x \\oplus y)'$: both are XNOR."
+        },
+        {
+          "title": "Two complemented inputs",
+          "body": "$x' \\oplus y' = x \\oplus y \\oplus 1 \\oplus 1 = x \\oplus y$: plain XOR, not XNOR."
         }
       ],
       "answer": {
-        "value": "$x' \\oplus y'$",
+        "value": "(D) $x' \\oplus y'$",
         "choice": [
           "D"
         ],
@@ -1537,28 +1542,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "This is the definition of XNOR."
+          "reason": "$xy + x'y'$ is the sum-of-products form of XNOR."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "One complemented input → XNOR."
+          "reason": "One complemented input turns XOR into XNOR."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "One complemented input → XNOR."
+          "reason": "One complemented input turns XOR into XNOR."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: equals $x \\oplus y$ (XOR)."
+          "reason": "Two complements cancel: $x' \\oplus y' = x \\oplus y$, the opposite of XNOR."
         }
       ],
+      "shortcut": "Count complements: XNOR has one relative to XOR. (B) and (C) have one, (D) has two.",
       "pitfalls": [
-        "Thinking each complemented input contributes a separate inversion that cannot cancel."
+        "Assuming that complementing both inputs complements the output twice 'in the same direction'."
       ],
-      "verification": "$x=y=0$: XNOR $=1$; $x'\\oplus y' = 1\\oplus1 = 0$ ✗, while $x\\oplus y' = 0\\oplus1 = 1$ ✔."
+      "verification": "At $x = y = 0$: XNOR is 1; (D) gives $1 \\oplus 1 = 0$."
     },
     "cse-2013-cs-22": {
       "approach": "Continuity at 3 needs the left limit, right limit and $f(3)$ to exist and be equal; test each option directly.",

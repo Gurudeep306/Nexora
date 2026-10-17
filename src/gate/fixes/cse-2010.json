@@ -70,18 +70,18 @@
     {
       "id": "cse-2010-cs-31",
       "field": "needsReview",
-      "before": false,
-      "after": true,
-      "reason": "Stored (solved) key D is contradicted by derivation.",
-      "source": "Independent derivation"
+      "before": true,
+      "after": false,
+      "reason": "The key question is settled (see the answer fix): Proven: the paper's figure has first-level NORs on (P, Q), (Q, R), (P, R), (Q, R); then G5 = (P+Q)(Q+R) = Q + PR, G6 = (P+R)(Q+R) = R + PQ and f = (G5 + G6)' = (Q + R)', option A. P = 1, Q = R = 0 gives f = 1, ruling out D, (P+Q+R)'.",
+      "source": "GATE 2010 CS paper scan (GATE_PYQ/GATE2010.pdf p. 7, Q31 figure) + truth-table check in content/gate-notes/_checks/dl/l2_06_circuit_analysis.py; errata dl.md section 3"
     },
     {
       "id": "cse-2010-cs-31",
       "field": "reviewNote",
-      "before": null,
-      "after": "Stored key D, (P+Q+R)′, is wrong. G5 = (P+Q)(Q+R) = Q+PR, G6 = (P+R)(Q+R) = R+PQ, f = (Q+R+PR+PQ)′ = (Q+R)′ → option A. Check: P=1, Q=R=0 gives f=1 but (P+Q+R)′=0. No official pre-2014 key available; change answer to A after confirmation.",
-      "reason": "Stored (solved) key D is contradicted by derivation.",
-      "source": "Independent derivation"
+      "before": "Stored key D, (P+Q+R)′, is wrong. G5 = (P+Q)(Q+R) = Q+PR, G6 = (P+R)(Q+R) = R+PQ, f = (Q+R+PR+PQ)′ = (Q+R)′ → option A. Check: P=1, Q=R=0 gives f=1 but (P+Q+R)′=0. No official pre-2014 key available; change answer to A after confirmation.",
+      "after": null,
+      "reason": "The note asked for confirmation before changing the key; the key is now changed with a proof.",
+      "source": "GATE 2010 CS paper scan (GATE_PYQ/GATE2010.pdf p. 7, Q31 figure) + truth-table check in content/gate-notes/_checks/dl/l2_06_circuit_analysis.py; errata dl.md section 3"
     },
     {
       "id": "cse-2010-cs-46",
@@ -138,6 +138,22 @@
       "after": null,
       "reason": "Review resolved.",
       "source": "solved"
+    },
+    {
+      "id": "cse-2010-cs-31",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Proven: the paper's figure has first-level NORs on (P, Q), (Q, R), (P, R), (Q, R); then G5 = (P+Q)(Q+R) = Q + PR, G6 = (P+R)(Q+R) = R + PQ and f = (G5 + G6)' = (Q + R)', option A. P = 1, Q = R = 0 gives f = 1, ruling out D, (P+Q+R)'.",
+      "source": "GATE 2010 CS paper scan (GATE_PYQ/GATE2010.pdf p. 7, Q31 figure) + truth-table check in content/gate-notes/_checks/dl/l2_06_circuit_analysis.py; errata dl.md section 3"
+    },
+    {
+      "id": "cse-2010-cs-31",
+      "field": "solution",
+      "before": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Gates) from **CSE 2010 Q31** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  Upper NOR of (P+Q)' and (Q+R)' gives $P+Q+R$.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  lower NOR of (P+R)' and (Q+R)' gives $P+Q+R$.\n- **Step 3.3 (Intermediate Reduction):**\n  final NOR gives $\\overline{P+Q+R}$..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$\\overline{Q+R}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `$\\overline{P+Q}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$\\overline{P+R}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `$\\overline{P+Q+R}$`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "after": "**Concept:** stacked NOR gates (a NOR of NORs is an AND of ORs).\n\n- First level: $\\overline{P+Q}$, $\\overline{Q+R}$, $\\overline{P+R}$, $\\overline{Q+R}$.\n- Second level: $G_5 = (P+Q)(Q+R) = Q + PR$, $G_6 = (P+R)(Q+R) = R + PQ$.\n- Output: $f = \\overline{G_5 + G_6} = \\overline{Q + R + PR + PQ} = \\overline{Q + R}$ (absorption).\n- Check: $P = 1, Q = R = 0$ gives $f = 1$, which rules out $\\overline{P+Q+R}$.\n\n**Answer: (A) $\\overline{Q+R}$.**",
+      "reason": "The legacy free-text solution argued for the old, wrong key D; it now matches the corrected key and the v2 solution.",
+      "source": "Independent derivation (content/gate-notes/_checks/dl/l2_05_universal_gates.py, l2_06_circuit_analysis.py) and the paper scan; errata dl.md section 3"
     }
   ]
 }

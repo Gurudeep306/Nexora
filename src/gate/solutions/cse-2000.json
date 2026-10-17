@@ -1272,22 +1272,27 @@
       "verification": "Any X with overlap $\\frac12$ must have one endpoint at $\\frac12$ (inside Y), giving exactly two choices."
     },
     "cse-2000-a-2-10": {
-      "approach": "Plug each option into the four equations; reject at the first failure.",
+      "approach": "Concept tested: **simultaneous Boolean equations**, checked option by option. Note that the system has several solutions; the question only asks which offered tuple is one of them.",
       "concepts": [
-        "Boolean algebra"
+        "Boolean equations",
+        "Substitution"
       ],
       "steps": [
         {
-          "title": "Check each option (x y z w)",
-          "body": "| Option | $x+y+z$ | $xy$ | $xz+w$ | $xy+\\bar z\\bar w$ | OK? |\n|---|---|---|---|---|---|\n| A: 0 1 0 0 | 1 | 0 | 0 ✗ | 1 | no |\n| B: 1 1 0 1 | 1 | 1 ✗ | 1 | 1 | no |\n| C: 1 0 1 1 | 1 | 0 | 1 | 0 | **yes** |\n| D: 1 0 0 0 | 1 | 0 | 0 ✗ | 1 | no |"
+          "title": "Read off the constraints",
+          "body": "$xy = 0$ (from the second equation; then the fourth reduces to $\\bar{z}\\bar{w} = 0$, so $z$ and $w$ are not both 0); $x + y + z = 1$; $xz + w = 1$."
+        },
+        {
+          "title": "Test each option (x y z w)",
+          "body": "| Option | $x+y+z$ | $xy$ | $xz+w$ | $xy+\\bar z\\bar w$ | OK? |\n|---|---|---|---|---|---|\n| A: 0 1 0 0 | 1 | 0 | **0** | **1** | no |\n| B: 1 1 0 1 | 1 | **1** | 1 | **1** | no |\n| C: 1 0 1 1 | 1 | 0 | 1 | 0 | yes |\n| D: 1 0 0 0 | 1 | 0 | **0** | **1** | no |"
         },
         {
           "title": "Conclusion",
-          "body": "Only $x=1,y=0,z=1,w=1$ satisfies all four equations."
+          "body": "Only (C) satisfies all four equations."
         }
       ],
       "answer": {
-        "value": "1 0 1 1",
+        "value": "(C) 1 0 1 1",
         "choice": [
           "C"
         ],
@@ -1297,25 +1302,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$xz+w=0\\cdot0+0=0\\ne1$."
+          "reason": "$xz + w = 0 \\ne 1$, and $\\bar{z}\\bar{w} = 1$ breaks the fourth equation."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$xy=1\\cdot1=1\\ne0$."
+          "reason": "$xy = 1$ breaks the second equation."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Satisfies all: $1$, $0$, $1\\cdot1+1=1$, $0+0\\cdot0=0$."
+          "reason": "All four equations hold."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$xz+w=1\\cdot0+0=0\\ne1$."
+          "reason": "$xz + w = 0$ and $\\bar{z}\\bar{w} = 1$."
         }
       ],
-      "verification": "For C: $\\bar z\\bar w=0\\cdot0=0$ and $xy=0$, so the last equation gives $0$ ✓."
+      "shortcut": "The fourth equation with $xy = 0$ says $z + w = 1$; together with $xz + w = 1$ it rejects every option with $w = 0$ unless $x = z = 1$, and (B) fails $xy = 0$ directly. Only (C) survives.",
+      "pitfalls": [
+        "Assuming the solution is unique: a full search finds six solutions (0011, 0101, 0111, 1001, 1010, 1011); (C) is the only one offered."
+      ],
+      "verification": "$1 + 0 + 1 = 1$, $1 \\cdot 0 = 0$, $1 \\cdot 1 + 1 = 1$, $0 + 0 \\cdot 0 = 0$."
     },
     "cse-2000-a-2-11": {
       "approach": "Read the 1s off the map: $y$ must be 1, and then either $x=1$ or $w=1$. Expand each option and see if it agrees with every 1 and 0 (don’t-cares are free).",

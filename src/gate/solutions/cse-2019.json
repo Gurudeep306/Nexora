@@ -767,23 +767,27 @@
       "verification": "Identity $\\sum k\\binom{n}{k} = n2^{n-1}$ checked for $n = 3$ (12 = 12)."
     },
     "cse-2019-cs-6": {
-      "approach": "Test each identity; for the suspicious one find a counter-example with a single assignment.",
+      "approach": "Concept tested: **proving and disproving identities**. Options that are known laws need no work; the suspicious one is disproved by a single row.",
       "concepts": [
         "XOR properties",
-        "Boolean identities"
+        "Counterexample method"
       ],
       "steps": [
         {
-          "title": "Valid ones",
-          "body": "(A) XOR is associative. (C) If $xy = 0$, $x$ and $y$ are never both 1, so $x \\oplus y = x'y + xy' = x + y$. (D) $xy + x'y'$ is XNOR, its complement is XOR."
+          "title": "Known laws",
+          "body": "(A) XOR is associative (both sides are the parity of $x, y, z$). (D) $(xy + x'y')' $ is the complement of XNOR, which is XOR."
         },
         {
-          "title": "Counter-example for (B)",
-          "body": "Take $x = 1, y = 1, z = 0$:\n- LHS $(1 + 1) \\oplus 0 = 1 \\oplus 0 = 1$\n- RHS $1 \\oplus (1 + 0) = 1 \\oplus 1 = 0$\n\n$1 \\ne 0$, so (B) is **not** an identity."
+          "title": "The conditional identity",
+          "body": "(C) If $xy = 0$, the row $x = y = 1$ never occurs. On the other three rows $x \\oplus y$ and $x + y$ agree ($0, 1, 1$). So (C) is valid under its condition."
+        },
+        {
+          "title": "Disprove (B) with one row",
+          "body": "Try $x = 0, y = 1, z = 1$: left $(0 + 1) \\oplus 1 = 1 \\oplus 1 = 0$; right $0 \\oplus (1 + 1) = 0 \\oplus 1 = 1$. They differ, so (B) is not an identity. (The row $1, 0, 0$ agrees: keep trying rows until one differs.)"
         }
       ],
       "answer": {
-        "value": "(x + y) ⊕ z = x ⊕ (y + z)",
+        "value": "(B)",
         "choice": [
           "B"
         ],
@@ -793,25 +797,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "XOR is associative — valid."
+          "reason": "Valid: XOR is associative."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Fails for $x = y = 1, z = 0$ (LHS 1, RHS 0). Not an identity — the answer."
+          "reason": "Not valid: fails at $x = 0, y = 1, z = 1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "With $xy = 0$ the only case where OR and XOR differ ($x = y = 1$) cannot occur — valid."
+          "reason": "Valid: with $xy = 0$ the only row where XOR and OR differ (11) is excluded."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$(xy + x'y')' = (x \\odot y)' = x \\oplus y$ — valid."
+          "reason": "Valid: $xy + x'y'$ is XNOR, and its complement is XOR."
         }
       ],
-      "verification": "One counter-example suffices to reject (B); the other three hold by standard identities."
+      "shortcut": "OR and XOR differ only on the row where both inputs are 1. Mixing them, as in (B), breaks as soon as such a row appears on one side only.",
+      "pitfalls": [
+        "Testing only one row of (B) (e.g. 100, which agrees) and concluding it is valid.",
+        "Rejecting (C) without using its condition $xy = 0$."
+      ],
+      "verification": "Full table of (B): the two sides differ on rows 011 and 110 and agree on the other six; one differing row is enough."
     },
     "cse-2019-cs-7": {
       "approach": "Regular languages are closed under reversal, concatenation, prefix and suffix. $\\{ww^R\\}$ needs the second half to mirror the first, which a finite automaton cannot remember; $L = \\Sigma^*$ gives a counter-example.",
@@ -1991,7 +2000,7 @@
       "verification": "RFC 826: ARP requests are sent to the Ethernet broadcast address; replies are unicast."
     },
     "cse-2019-cs-30": {
-      "approach": "The AND output is the intersection of the minterm sets of f1 and f2; XOR with f3 keeps minterms that are in exactly one of the two sets (symmetric difference).",
+      "approach": "Concept tested: **AND and XOR of minterm sets**. The AND output is the intersection of $f_1$ and $f_2$; XOR with $f_3$ keeps the minterms that are in exactly one of the two sets (symmetric difference).",
       "concepts": [
         "Sum of minterms",
         "AND as intersection",
@@ -2000,19 +2009,19 @@
       "steps": [
         {
           "title": "AND gate",
-          "body": "$f_1 f_2$: common minterms of $\\{0,2,5,8,14\\}$ and $\\{2,3,6,8,14,15\\}$ = $\\{2, 8, 14\\}$."
+          "body": "$f_1 f_2 = \\{0, 2, 5, 8, 14\\} \\cap \\{2, 3, 6, 8, 14, 15\\} = \\{2, 8, 14\\}$."
         },
         {
           "title": "XOR gate",
-          "body": "$\\{2,8,14\\} \\oplus \\{2,7,11,14\\}$: remove the common $\\{2, 14\\}$, keep the rest → $\\{7, 8, 11\\}$."
+          "body": "$f = \\{2, 8, 14\\} \\triangle \\{2, 7, 11, 14\\}$: 2 and 14 are in both and cancel; 8 is only in the first; 7 and 11 only in the second. $f = \\{7, 8, 11\\}$."
         },
         {
-          "title": "Result",
-          "body": "$f = \\sum(7, 8, 11)$."
+          "title": "Match",
+          "body": "$f = \\Sigma(7, 8, 11)$: option (A)."
         }
       ],
       "answer": {
-        "value": "Σ(7, 8, 11)",
+        "value": "(A) $\\sum(7, 8, 11)$",
         "choice": [
           "A"
         ],
@@ -2022,28 +2031,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: symmetric difference of {2,8,14} and {2,7,11,14}."
+          "reason": "The symmetric difference."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "This is the union {2,8,14} ∪ {2,7,11,14} — that would be an OR gate, not XOR."
+          "reason": "$\\Sigma(2, 7, 8, 11, 14)$ is the union (OR), not XOR."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "This is the intersection — an AND gate at the second stage."
+          "reason": "$\\Sigma(2, 14)$ is the intersection of the two XOR inputs."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "This is the union of f2 and f3 (plus 0, 5); it ignores both the AND and the XOR cancellation."
+          "reason": "The union of all three functions."
         }
       ],
+      "shortcut": "XOR = union minus intersection.",
       "pitfalls": [
-        "Treating XOR as OR and keeping minterms 2 and 14."
+        "Treating the XOR gate as an OR."
       ],
-      "verification": "Minterm 2: f1f2 = 1, f3 = 1 → 0. Minterm 7: 0 ⊕ 1 = 1. Minterm 8: 1 ⊕ 0 = 1. Minterm 11: 0 ⊕ 1 = 1. Minterm 14: 1 ⊕ 1 = 0."
+      "verification": "$\\{2, 8, 14\\} \\triangle \\{7, 8, 11\\} = \\{2, 7, 11, 14\\} = f_3$: XOR undoes itself. ✓"
     },
     "cse-2019-cs-31": {
       "approach": "A PDA can match only nested (last-in-first-out) dependencies. In (C) the $w \\ldots w^R$ pair and the $a^n \\ldots b^n$ pair cross each other, which one stack cannot handle.",

@@ -45,6 +45,7 @@ export type BlockName =
   | 'pyq'
   | 'practice'
   | 'viz'
+  | 'lab'
   | 'table'
   | 'summary'
   | 'note'

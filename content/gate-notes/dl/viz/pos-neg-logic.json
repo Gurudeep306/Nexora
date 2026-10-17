@@ -1,0 +1,398 @@
+{
+ "version": 1,
+ "title": "Positive and negative logic: one physical gate read two ways",
+ "width": 640,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 450
+ },
+ "intro": "A physical gate's behaviour in voltages: H is the high level, L the low level.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 24,
+   "text": "One physical gate, two readings",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "One gate, two readings",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 110,
+   "y": 64,
+   "text": "Voltages",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "narrow": {
+    "x": 90,
+    "y": 60
+   }
+  },
+  {
+   "id": "phys",
+   "type": "table",
+   "x": 50,
+   "y": 80,
+   "cellW": 40,
+   "cellH": 28,
+   "header": true,
+   "mono": true,
+   "rows": [
+    [
+     "A",
+     "B",
+     "F"
+    ],
+    [
+     "L",
+     "L",
+     "L"
+    ],
+    [
+     "L",
+     "H",
+     "L"
+    ],
+    [
+     "H",
+     "L",
+     "L"
+    ],
+    [
+     "H",
+     "H",
+     "H"
+    ]
+   ],
+   "narrow": {
+    "x": 30,
+    "y": 76,
+    "cellW": 40,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 320,
+   "y": 64,
+   "text": "Positive logic (H = 1)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 270,
+    "y": 60,
+    "size": 13
+   }
+  },
+  {
+   "id": "pos",
+   "type": "table",
+   "x": 260,
+   "y": 80,
+   "cellW": 40,
+   "cellH": 28,
+   "header": true,
+   "mono": true,
+   "rows": [
+    [
+     "A",
+     "B",
+     "F"
+    ],
+    [
+     "0",
+     "0",
+     "0"
+    ],
+    [
+     "0",
+     "1",
+     "0"
+    ],
+    [
+     "1",
+     "0",
+     "0"
+    ],
+    [
+     "1",
+     "1",
+     "1"
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "x": 210,
+    "y": 76,
+    "cellW": 40,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "t3",
+   "type": "text",
+   "x": 530,
+   "y": 64,
+   "text": "Negative logic (L = 1)",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 180,
+    "y": 240,
+    "size": 13
+   }
+  },
+  {
+   "id": "neg",
+   "type": "table",
+   "x": 470,
+   "y": 80,
+   "cellW": 40,
+   "cellH": 28,
+   "header": true,
+   "mono": true,
+   "rows": [
+    [
+     "A",
+     "B",
+     "F"
+    ],
+    [
+     "1",
+     "1",
+     "1"
+    ],
+    [
+     "1",
+     "0",
+     "1"
+    ],
+    [
+     "0",
+     "1",
+     "1"
+    ],
+    [
+     "0",
+     "0",
+     "0"
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "x": 120,
+    "y": 256,
+    "cellW": 40,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "p",
+   "type": "text",
+   "x": 320,
+   "y": 245,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "success",
+   "weight": "bold",
+   "narrow": {
+    "x": 270,
+    "y": 220,
+    "size": 13
+   }
+  },
+  {
+   "id": "q",
+   "type": "text",
+   "x": 530,
+   "y": 245,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "tone": "info",
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 400,
+    "size": 13
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 320.0,
+   "y": 290,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "narrow": {
+    "x": 180.0,
+    "y": 430,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The datasheet lists only voltages. The output is H only when both inputs are H.",
+   "patches": [
+    {
+     "id": "phys",
+     "set": {
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Read H as 1 and L as 0 (positive logic). F is 1 only on row 11: this gate is an AND.",
+   "patches": [
+    {
+     "id": "t2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "pos",
+     "set": {
+      "hidden": false,
+      "highlight": [
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "p",
+     "set": {
+      "text": "AND"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now read L as 1 and H as 0 (negative logic). Every 0 becomes 1 and vice versa, in the inputs and in the output.",
+   "patches": [
+    {
+     "id": "t3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "neg",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Sort the negative-logic rows into the usual order 00, 01, 10, 11: F reads 0, 1, 1, 1. The same chip is an OR gate.",
+   "patches": [
+    {
+     "id": "neg",
+     "set": {
+      "rows": [
+       [
+        "A",
+        "B",
+        "F"
+       ],
+       [
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "1",
+        "1"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "q",
+     "set": {
+      "text": "OR"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Changing the convention complements every input and the output, which turns each function into its dual: AND ↔ OR, NAND ↔ NOR, XOR ↔ XNOR.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "positive AND = negative OR (the dual)"
+     }
+    }
+   ]
+  }
+ ]
+}

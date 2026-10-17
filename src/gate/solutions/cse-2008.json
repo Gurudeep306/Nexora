@@ -436,27 +436,27 @@
       "verification": "Union-Find gives $O((m+n)\\alpha(n))$, consistent with the linear bound."
     },
     "cse-2008-cs-8": {
-      "approach": "The circuit computes $f=f_1f_2+f_3$. Minterm 8 of $f$ is missing from $f_3$, so it must come from $f_1f_2$; and $f_1f_2$ must not add any minterm outside $f$.",
+      "approach": "Concept tested: **solving for an AND input**. The circuit computes $f = f_1 f_2 + f_3$. Minterm 8 of $f$ is missing from $f_3$, so it must come from $f_1 f_2$; and $f_1 f_2$ must not add any minterm outside $f$.",
       "concepts": [
         "Canonical SOP",
         "AND as intersection, OR as union"
       ],
       "steps": [
         {
-          "title": "Write the circuit",
-          "body": "AND gate → $f_1f_2$ (intersection of minterm sets); OR with $f_3$ → union: $f=(f_1\\cap f_2)\\cup f_3$."
+          "title": "What f₁f₂ must contain",
+          "body": "$f \\setminus f_3 = \\{1, 6, 8, 15\\} \\setminus \\{1, 6, 15\\} = \\{8\\}$, so $8 \\in f_1 \\cap f_2$."
         },
         {
-          "title": "What f₁f₂ must give",
-          "body": "$f\\setminus f_3=\\{1,6,8,15\\}\\setminus\\{1,6,15\\}=\\{8\\}$ ⇒ $8\\in f_1f_2$. Also $f_1f_2\\subseteq f$, and $f_1f_2\\subseteq f_1=\\{4,5,6,7,8\\}$, so $f_1f_2\\subseteq\\{6,8\\}$."
+          "title": "What f₁f₂ may contain",
+          "body": "$f_1 \\cap f_2 \\subseteq f \\cap f_1 = \\{6, 8\\}$. So $f_2$ must contain 8, may contain 6, and must not contain 4, 5 or 7 (they are in $f_1$ but not in $f$)."
         },
         {
-          "title": "Constraint on f₂",
-          "body": "$8\\in f_2$; $4,5,7\\notin f_2$ (else they would appear in $f$); 6 is optional (already in $f_3$). Among the options only $\\Sigma m(6,8)$ fits: $f_1f_2=\\{6,8\\}$, $f=\\{6,8\\}\\cup\\{1,6,15\\}=\\{1,6,8,15\\}$ ✓."
+          "title": "Check the options",
+          "body": "(A) $\\{4, 6\\}$: contains 4 and misses 8. (B) $\\{4, 8\\}$: contains 4. (C) $\\{6, 8\\}$: works ($f_1 f_2 = \\{6, 8\\}$, union with $f_3$ = $\\{1, 6, 8, 15\\}$). (D) contains 4."
         }
       ],
       "answer": {
-        "value": "$\\Sigma m(6,8)$",
+        "value": "(C) $\\Sigma m(6, 8)$",
         "choice": [
           "C"
         ],
@@ -466,25 +466,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Lacks 8, so $f$ would miss 8; also adds 4 to $f$."
+          "reason": "$f_1 f_2 = \\{4, 6\\}$: adds 4 and misses 8."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$f_1f_2=\\{4,8\\}$ puts minterm 4 into $f$."
+          "reason": "$f_1 f_2 = \\{4, 8\\}$: adds 4, which is not in $f$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$f_1f_2=\\{6,8\\}$ and $f=\\{1,6,8,15\\}$ exactly."
+          "reason": "$f_1 f_2 = \\{6, 8\\} \\subseteq f$ and supplies 8."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Contains 4, which would appear in $f$."
+          "reason": "$f_1 f_2 = \\{4, 6, 8\\}$: adds 4."
         }
       ],
-      "verification": "Recompute with C: $\\{4,5,6,7,8\\}\\cap\\{6,8\\}=\\{6,8\\}$; union with $\\{1,6,15\\}$ gives $\\{1,6,8,15\\}$."
+      "shortcut": "Every option except (C) contains 4, which is in $f_1$ but not in $f$.",
+      "pitfalls": [
+        "Forgetting that $f_1 f_2$ may overlap $f_3$ (row 6) without harm."
+      ],
+      "verification": "$(\\{4,5,6,7,8\\} \\cap \\{6, 8\\}) \\cup \\{1, 6, 15\\} = \\{1, 6, 8, 15\\}$. ✓"
     },
     "cse-2008-cs-9": {
       "approach": "Pumping lemma for CFLs rules out context-freeness (hence regularity); a TM can test primality, so it is recursive.",
@@ -1466,28 +1470,32 @@
       "verification": "$f''(x) = 36x^2-96x+48$: $f''(0)=48>0$ (minimum); $f''(2)=144-192+48=0$ and $f'''(2)=72\\cdot2-96=48\\ne0$ ⇒ inflection at $x=2$."
     },
     "cse-2008-cs-26": {
-      "approach": "Factor $P$ out of the middle term and use absorption $X(X+Y)=X$ repeatedly; the expression collapses in three short lines.",
+      "approach": "Concept tested: **absorption and the distributive law**. Factor $P$ out of the middle factor; the first factor is then absorbed, and the last two collapse by $(x + y)(x + z) = x + yz$.",
       "concepts": [
-        "Boolean algebra",
         "Absorption law",
-        "Distributive law"
+        "Distributive law",
+        "Complement law"
       ],
       "steps": [
         {
-          "title": "Absorb the first two factors",
-          "body": "$P\\overline Q + PR = P(\\overline Q + R)$. Then $(P+\\overline Q)\\cdot P(\\overline Q+R) = P(\\overline Q+R)$ because $P(P+\\overline Q) = P$."
+          "title": "Factor the middle term",
+          "body": "$P\\overline{Q} + PR = P(\\overline{Q} + R)$."
         },
         {
-          "title": "Absorb P into the third factor",
-          "body": "$P\\cdot(P\\overline R + \\overline Q) = P\\overline R + P\\overline Q = P(\\overline R + \\overline Q)$. So the expression is $P(\\overline Q + R)(\\overline Q + \\overline R)$."
+          "title": "Absorb the first factor",
+          "body": "$(P + \\overline{Q}) \\cdot P = P$ (absorption $x(x + y) = x$), so the product so far is $P(\\overline{Q} + R)$."
         },
         {
-          "title": "Finish",
-          "body": "$(\\overline Q + R)(\\overline Q + \\overline R) = \\overline Q + R\\overline R = \\overline Q$. Hence the expression $= P\\overline Q$."
+          "title": "Combine the remaining sums",
+          "body": "$(\\overline{Q} + R)(\\overline{Q} + P\\overline{R}) = \\overline{Q} + R \\cdot P\\overline{R} = \\overline{Q} + 0 = \\overline{Q}$ (OR distributes over AND; $R\\overline{R} = 0$)."
+        },
+        {
+          "title": "Result",
+          "body": "$P \\cdot \\overline{Q} = P\\overline{Q}$: option (A)."
         }
       ],
       "answer": {
-        "value": "P·Q̄",
+        "value": "(A) $P\\overline{Q}$",
         "choice": [
           "A"
         ],
@@ -1497,25 +1505,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the expression equals $P\\overline Q$."
+          "reason": "The simplification above; it agrees on all 8 rows."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$P=1,Q=1,R=0$: $P\\overline R = 1$, but the middle factor $P\\overline Q + PR = 0$, so the expression is 0."
+          "reason": "$P\\overline{R}$ is 1 at $P = 1, Q = 1, R = 0$, but there the middle factor $P\\overline{Q} + PR = 0$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$P=0,R=1$: $P\\overline Q + R = 1$, but the middle factor $P\\overline Q + PR = 0$, so the expression is 0."
+          "reason": "$P\\overline{Q} + R$ is 1 at $P = 0, R = 1$, but there the middle factor is 0."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$P=0,Q=1$: $P\\overline R + Q = 1$, but the middle factor is 0, so the expression is 0."
+          "reason": "$P\\overline{R} + Q$ is 1 at $P = 0, Q = 1$, but then $P\\overline{Q} + PR = 0$."
         }
       ],
-      "verification": "The middle factor forces $P=1$; then the remaining factors are $(\\overline Q+R)(\\overline R+\\overline Q)$, which is 1 exactly when $Q=0$. So the expression is 1 exactly when $P=1, Q=0$, i.e. $P\\overline Q$."
+      "shortcut": "The middle factor forces $P = 1$; with $P = 1$ the expression is $(1)(\\overline{Q} + R)(\\overline{R} + \\overline{Q}) = \\overline{Q} + R\\overline{R} = \\overline{Q}$. So the answer is $P\\overline{Q}$.",
+      "pitfalls": [
+        "Expanding all three factors into 8 terms and losing track.",
+        "Forgetting that the middle factor already forces $P = 1$."
+      ],
+      "verification": "$P = 1, Q = 0, R = 0$: $(1)(1)(1) = 1$ and $P\\overline{Q} = 1$; $P = 1, Q = 1$: the middle factor is $R$ and the last is $\\overline{R}$, product 0, and $P\\overline{Q} = 0$."
     },
     "cse-2008-cs-27": {
       "approach": "Two-step Markov chain: sum over Tuesday's subject. $P(\\text{CS on Wed}) = P(\\text{CS Tue})\\cdot0.4 + P(\\text{M Tue})\\cdot0.4$.",
