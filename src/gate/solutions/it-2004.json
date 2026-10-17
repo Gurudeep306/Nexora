@@ -363,23 +363,28 @@
       "verification": "Counterexample: \"a\" ∈ (a+b+c)* but \"a\" ∉ ((ab)*+c*)*."
     },
     "it-2004-it-8": {
-      "approach": "Use the standard 4-NAND XOR: a shared NAND of A and B feeds two NANDs, and a final NAND combines them. Three gates are not enough.",
+      "approach": "Concept tested: **XOR from NAND gates and minimality**. The standard construction shares one gate, $(AB)'$, between two others; then argue that three gates cannot work.",
       "concepts": [
         "NAND universality",
-        "XOR realisation"
+        "XOR realisation",
+        "Minimum gate count"
       ],
       "steps": [
         {
           "title": "Construction",
-          "body": "$G_1 = \\overline{AB}$, $G_2 = \\overline{A\\,G_1}$, $G_3 = \\overline{B\\,G_1}$, $Y = \\overline{G_2G_3}$.\n\n$Y = A\\overline{AB} + B\\overline{AB} = A\\overline{B} + \\overline{A}B = A\\oplus B$."
+          "body": "$G_1 = \\overline{AB}$, $G_2 = \\overline{A\\,G_1} = \\overline{A} + B$, $G_3 = \\overline{G_1 B} = A + \\overline{B}$, $F = \\overline{G_2 G_3} = \\overline{(\\overline{A} + B)(A + \\overline{B})} = \\overline{AB + \\overline{A}\\,\\overline{B}} = A \\oplus B$. Four gates."
         },
         {
-          "title": "Minimality",
-          "body": "XOR is not unate, and no 3-NAND network of two inputs realises it (the known minimum for XOR in NANDs is 4)."
+          "title": "Why not three",
+          "body": "The output gate is $\\overline{PQ}$, so $PQ$ must be XNOR: $P$ and $Q$ must both be 1 on rows 00 and 11. With at most two earlier gates the only such signals are $\\overline{A} + B$, $A + \\overline{B}$ and the constant 1, and producing both of the first two already takes three gates. So three gates are not enough."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The minimum is 4 (an exhaustive search over all circuits confirms it): option (B)."
         }
       ],
       "answer": {
-        "value": "4",
+        "value": "(B) 4",
         "choice": [
           "B"
         ],
@@ -389,28 +394,87 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Three NAND gates cannot produce XOR."
+          "reason": "Three NANDs cannot compute XOR (see the argument above)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "The classic 4-gate circuit above is minimal."
+          "reason": "The shared-gate construction uses four, and it is minimal."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Five gates work (e.g. with explicit inverters), but five is not the minimum."
+          "reason": "Five is the NAND count for XNOR (or for XOR built without sharing)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Not minimal."
+          "reason": "Six or more comes from converting the SOP $A\\overline{B} + \\overline{A}B$ gate by gate."
         }
       ],
+      "shortcut": "Remember the table: XOR = 4 NAND = 5 NOR; XNOR = 5 NAND = 4 NOR.",
       "pitfalls": [
-        "The 5-gate SOP version (two inverters + 3 NANDs) works but is not minimal. Sharing $\\overline{AB}$ saves a gate."
+        "Converting $A\\bar{B} + \\bar{A}B$ directly (2 inverters + 3 NANDs = 5) and calling it the minimum."
       ],
-      "verification": "Truth table: AB = 00 → G1 = 1, G2 = 1, G3 = 1, Y = 0. 01 → G1 = 1, G2 = 1, G3 = 0, Y = 1. 10 → Y = 1 (by symmetry). 11 → G1 = 0, G2 = G3 = 1, Y = 0."
+      "verification": "Row 10: $G_1 = 1$, $G_2 = \\overline{1 \\cdot 1} = 0$, $G_3 = \\overline{1 \\cdot 0} = 1$, $F = \\overline{0 \\cdot 1} = 1 = 1 \\oplus 0$.",
+      "animation": {
+        "kind": "circuit",
+        "title": "XOR from four NAND gates",
+        "inputs": [
+          {
+            "id": "A",
+            "label": "A",
+            "value": 1
+          },
+          {
+            "id": "B",
+            "label": "B",
+            "value": 0
+          }
+        ],
+        "gates": [
+          {
+            "id": "G1",
+            "type": "NAND",
+            "in": [
+              "A",
+              "B"
+            ]
+          },
+          {
+            "id": "G2",
+            "type": "NAND",
+            "in": [
+              "A",
+              "G1"
+            ]
+          },
+          {
+            "id": "G3",
+            "type": "NAND",
+            "in": [
+              "G1",
+              "B"
+            ]
+          },
+          {
+            "id": "G4",
+            "type": "NAND",
+            "in": [
+              "G2",
+              "G3"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "G4",
+            "label": "F"
+          }
+        ],
+        "caption": "A = 1, B = 0: the output is 1."
+      }
     },
     "it-2004-it-9": {
       "approach": "Check each statement against standard facts. DPDAs accept only the deterministic CFLs, a proper subset of the CFLs that NPDAs accept.",

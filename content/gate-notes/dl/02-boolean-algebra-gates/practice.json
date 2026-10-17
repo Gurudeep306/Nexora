@@ -1546,5 +1546,383 @@
       "self-dual-def"
     ],
     "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q01",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "What is the minimum number of 2-input NOR gates needed to implement $F = AB$?",
+    "options": [
+      {
+        "l": "A",
+        "t": "2"
+      },
+      {
+        "l": "B",
+        "t": "3"
+      },
+      {
+        "l": "C",
+        "t": "4"
+      },
+      {
+        "l": "D",
+        "t": "5"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "De Morgan: $AB = (A' + B')' = \\text{NOR}(A', B')$.",
+      "Each complement costs one NOR with tied inputs: $A' = \\text{NOR}(A, A)$, $B' = \\text{NOR}(B, B)$. Total 3.",
+      "Two gates cannot work: the output NOR would need inputs whose OR is $(AB)'$, and with only one earlier gate the only candidates are $A$, $B$, $A'$, $B'$, $(A + B)'$; no pair of them ORs to $(AB)'$."
+    ],
+    "concept": "With NOR gates, AND costs 3 (two inverters and a NOR), the dual of OR from NANDs.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "Two NORs give OR ($\\text{NOR}(\\text{NOR}(A,B))$), not AND."
+      },
+      {
+        "answer": "C",
+        "why": "An extra inverter on the output is not needed: the NOR of the complements is already $AB$."
+      }
+    ],
+    "blocks": [
+      "nor-universal",
+      "gate-count-table"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q02",
+    "type": "NAT",
+    "marks": 2,
+    "text": "What is the minimum number of 2-input NAND gates needed to implement $F = A \\odot B$ (XNOR)?",
+    "answer": 5,
+    "solution": [
+      "Four NANDs give $A \\oplus B$ (with the shared gate $(AB)'$); one more NAND with tied inputs inverts it: 5.",
+      "Alternatively, $AB + A'B'$ in NAND–NAND needs two inverters, two first-level NANDs and one output NAND: also 5.",
+      "An exhaustive search over all circuits of four 2-input NANDs finds none that computes XNOR, so 5 is the minimum."
+    ],
+    "concept": "XNOR costs 5 NANDs but only 4 NORs: it is the dual of XOR.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "Four is the NAND count for XOR, and the NOR count for XNOR."
+      },
+      {
+        "answer": 6,
+        "why": "Converting gate by gate overcounts; sharing $(AB)'$ saves gates."
+      }
+    ],
+    "blocks": [
+      "gate-count-table",
+      "xor-4-nand"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q03",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "In a circuit, $G_1 = \\text{NAND}(A, B')$, $G_2 = \\text{NAND}(C, D)$ and $F = \\text{NAND}(G_1, G_2)$. Then $F$ equals",
+    "options": [
+      {
+        "l": "A",
+        "t": "$AB' + CD$"
+      },
+      {
+        "l": "B",
+        "t": "$(A' + B)(C' + D')$"
+      },
+      {
+        "l": "C",
+        "t": "$(A + B')(C + D)$"
+      },
+      {
+        "l": "D",
+        "t": "$A'B + C'D'$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "NAND–NAND is AND–OR: $F = (G_1 G_2)' = G_1' + G_2'$.",
+      "$G_1' = AB'$ and $G_2' = CD$, so $F = AB' + CD$."
+    ],
+    "concept": "Two-level NAND–NAND computes the sum of the products formed at the first level.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "That is $G_1 G_2$, the input of the output NAND before its inversion."
+      },
+      {
+        "answer": "C",
+        "why": "That would be NOR–NOR reading; NAND gates give products at the first level."
+      }
+    ],
+    "blocks": [
+      "nand-nand",
+      "bubble-conversion"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q04",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "With the constants 0 and 1 available as inputs, which of the following sets of gates are functionally complete?",
+    "options": [
+      {
+        "l": "A",
+        "t": "{AND, XOR}"
+      },
+      {
+        "l": "B",
+        "t": "{OR, XNOR}"
+      },
+      {
+        "l": "C",
+        "t": "{AND, OR}"
+      },
+      {
+        "l": "D",
+        "t": "{XOR, XNOR}"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "With free constants a set is complete iff it has a non-monotone member and a non-affine member.",
+      "(A) XOR is not monotone, AND is not affine: complete ($x \\oplus 1 = x'$, then AND + NOT).",
+      "(B) XNOR is not monotone, OR is not affine: complete ($x \\odot 0 = x'$, then OR + NOT).",
+      "(C) AND and OR are both monotone: no NOT can ever be built. (D) XOR and XNOR are both affine: no AND can be built."
+    ],
+    "concept": "With constants, completeness needs a non-monotone function and a non-affine function.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A"
+        ],
+        "why": "(B) is the dual of (A): XNOR with 0 is an inverter, and OR with NOT is complete."
+      },
+      {
+        "answer": [
+          "A",
+          "B",
+          "D"
+        ],
+        "why": "Every circuit of XOR and XNOR gates is affine; it can never compute $xy$."
+      }
+    ],
+    "blocks": [
+      "with-constants",
+      "post-classes",
+      "complete-with-constants"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q05",
+    "type": "MSQ",
+    "marks": 2,
+    "text": "Let $f(x, y) = x'y + xy'$. Which of the following statements are true?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$f$ is 0-preserving"
+      },
+      {
+        "l": "B",
+        "t": "$f$ is affine (linear)"
+      },
+      {
+        "l": "C",
+        "t": "$f$ is self-dual"
+      },
+      {
+        "l": "D",
+        "t": "$f$ is monotone"
+      }
+    ],
+    "answer": [
+      "A",
+      "B"
+    ],
+    "solution": [
+      "$f$ is XOR. (A) $f(0, 0) = 0$: true.",
+      "(B) $f = x \\oplus y$ is an XOR of inputs: affine, true.",
+      "(C) $f(x', y') = x' \\oplus y' = x \\oplus y = f(x, y)$, not its complement: not self-dual.",
+      "(D) $f(1, 0) = 1$ but $f(1, 1) = 0$: raising $y$ lowered the output, so not monotone."
+    ],
+    "concept": "Test each of Post's classes on the cheapest rows: corners for T0/T1, a complementary pair for S, one rising input for M.",
+    "common_wrong": [
+      {
+        "answer": [
+          "A",
+          "B",
+          "C"
+        ],
+        "why": "XOR of an even number of variables is not self-dual: complementing both inputs leaves it unchanged."
+      },
+      {
+        "answer": [
+          "B"
+        ],
+        "why": "$f(0, 0) = 0$, so XOR is 0-preserving."
+      }
+    ],
+    "blocks": [
+      "post-classes",
+      "trick-post-quick"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q06",
+    "type": "NAT",
+    "marks": 1,
+    "text": "How many of the 16 two-input Boolean functions are universal on their own (functionally complete with no constants)?",
+    "answer": 2,
+    "solution": [
+      "A single function is complete iff $f(0, 0) = 1$, $f(1, 1) = 0$ and it is not self-dual.",
+      "The corner conditions leave four columns (rows 00, 01, 10, 11): 1000 (NOR), 1010 ($B'$), 1100 ($A'$), 1110 (NAND).",
+      "$A'$ and $B'$ are self-dual, so only NAND and NOR remain: 2."
+    ],
+    "concept": "Sheffer functions: f(0…0) = 1, f(1…1) = 0, not self-dual. Among 2-input functions, only NAND and NOR.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "$A'$ and $B'$ pass the corner test but are self-dual (and use only one input), so they cannot build AND."
+      },
+      {
+        "answer": 1,
+        "why": "NOR is universal too, by duality with NAND."
+      }
+    ],
+    "blocks": [
+      "sheffer",
+      "single-function-test"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q07",
+    "type": "MCQ",
+    "marks": 1,
+    "text": "A 2:1 multiplexer computes $s'a + sb$. With $s = x$, $a = y$ and $b = 1$, it computes",
+    "options": [
+      {
+        "l": "A",
+        "t": "$x + y$"
+      },
+      {
+        "l": "B",
+        "t": "$xy$"
+      },
+      {
+        "l": "C",
+        "t": "$x'y$"
+      },
+      {
+        "l": "D",
+        "t": "$x' + y$"
+      }
+    ],
+    "answer": "A",
+    "solution": [
+      "Substitute: $x'y + x \\cdot 1 = x'y + x$.",
+      "Redundant literal: $x + x'y = x + y$."
+    ],
+    "concept": "A multiplexer with constants builds OR, AND and NOT, so it is complete with constants.",
+    "common_wrong": [
+      {
+        "answer": "B",
+        "why": "AND needs $a = 0, b = y$: $x' \\cdot 0 + xy = xy$."
+      },
+      {
+        "answer": "C",
+        "why": "The term $x \\cdot 1 = x$ was dropped."
+      }
+    ],
+    "blocks": [
+      "mux-complete"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q08",
+    "type": "MCQ",
+    "marks": 2,
+    "text": "Which one of the following single functions is functionally complete on its own (no constants)?",
+    "options": [
+      {
+        "l": "A",
+        "t": "$f(x, y, z) = xy + z'$"
+      },
+      {
+        "l": "B",
+        "t": "$f(x, y, z) = x'y'z'$"
+      },
+      {
+        "l": "C",
+        "t": "$f(x, y, z) = x \\oplus y \\oplus z$"
+      },
+      {
+        "l": "D",
+        "t": "$f(x, y, z) = xy + yz + zx$"
+      }
+    ],
+    "answer": "B",
+    "solution": [
+      "Sheffer test: $f(0,0,0) = 1$, $f(1,1,1) = 0$, not self-dual.",
+      "(A) $f(1,1,1) = 1 + 0 = 1$: 1-preserving, fails. (C) $f(0,0,0) = 0$: 0-preserving, fails. (D) majority: 0- and 1-preserving, fails.",
+      "(B) is the 3-input NOR: $f(0,0,0) = 1$, $f(1,1,1) = 0$, and it has one minterm (not neutral), so it is not self-dual. Complete: $f(x, x, x) = x'$ and $f(x, y, y) = (x + y)'$ is a 2-input NOR."
+    ],
+    "concept": "A single function is complete iff f(0…0) = 1, f(1…1) = 0 and it is not self-dual.",
+    "common_wrong": [
+      {
+        "answer": "A",
+        "why": "It contains a complement, but $f(1,1,1) = 1$ makes it 1-preserving: it can never produce NOT of all-ones."
+      },
+      {
+        "answer": "C",
+        "why": "XOR of three variables is 0-preserving (and affine)."
+      }
+    ],
+    "blocks": [
+      "single-function-test",
+      "post-classes"
+    ],
+    "source": "nexora"
+  },
+  {
+    "id": "nx-dl-02-05-q09",
+    "type": "NAT",
+    "marks": 2,
+    "text": "What is the minimum number of 2-input NAND gates needed to implement $F = A + B + C$?",
+    "answer": 6,
+    "solution": [
+      "$A + B = \\text{NAND}(A', B')$ costs 3 gates (two inverters and a NAND).",
+      "To OR in $C$, the output NAND needs $(A + B)'$ and $C'$: one inverter on $A + B$ and one on $C$, then the NAND. Total $3 + 1 + 1 + 1 = 6$.",
+      "An exhaustive search over all circuits of five 2-input NANDs finds none that computes $A + B + C$, so 6 is the minimum (the dual of $ABC$ with NOR gates, also 6)."
+    ],
+    "concept": "OR is expensive with NAND gates (every input needs an inverter); minimum counts are proved by search or a lower-bound argument.",
+    "common_wrong": [
+      {
+        "answer": 4,
+        "why": "Four is the NOR count for $A + B + C$ (two NORs per OR level), not the NAND count."
+      },
+      {
+        "answer": 5,
+        "why": "The output of the first OR stage must be inverted before the second NAND; skipping it computes $(A + B)' + C$ instead."
+      }
+    ],
+    "blocks": [
+      "min-count-method",
+      "nand-universal"
+    ],
+    "source": "nexora"
   }
 ]

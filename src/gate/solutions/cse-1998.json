@@ -3195,7 +3195,7 @@
       "verification": "$101=5$: $q_0\\to q_1\\to q_2\\to q_0$ ✓; $111=7$: $q_0\\to q_1\\to q_3\\to q_2$, rejected ✓."
     },
     "cse-1998-a-57-a": {
-      "approach": "IMP computes $a\\to b=\\overline a+b$. Write $f=x\\overline y+\\overline x y$ in the form $\\overline a+b$: $f=g_1\\to\\overline{g_2}$ with $g_1=x\\to y$ and $g_2=y\\to x$; the negation $\\overline{g_2}=g_2\\to0$ needs the constant 0.",
+      "approach": "Concept tested: **building XOR from implication gates**. IMP computes $a \\to b = \\bar{a} + b$. Write $f = x\\bar{y} + \\bar{x}y$ as a single implication whose inputs are themselves implications, using the constant 0 for one negation.",
       "concepts": [
         "Implication gate",
         "XOR",
@@ -3203,52 +3203,62 @@
       ],
       "steps": [
         {
-          "title": "Gate identities",
-          "body": "$a\\to b=\\overline a+b$, so $a\\to0=\\overline a$ and $\\overline{x\\to y}=x\\overline y$."
+          "title": "XOR as 'not both implications'",
+          "body": "$x \\to y$ is 0 only at $(1, 0)$ and $y \\to x$ only at $(0, 1)$, so $(x \\to y)(y \\to x)$ is XNOR and $f = \\overline{(x \\to y)(y \\to x)} = \\overline{g_1} + \\overline{g_2}$ with $g_1 = x \\to y$, $g_2 = y \\to x$."
         },
         {
-          "title": "Construction",
-          "body": "$g_1=x\\to y=\\overline x+y$\n\n$g_2=y\\to x=\\overline y+x$\n\n$g_3=g_2\\to0=\\overline{g_2}=\\overline x\\,y$\n\n$f=g_1\\to g_3=\\overline{g_1}+g_3=x\\overline y+\\overline x y$ ✓ (4 gates)"
+          "title": "Write it as one implication",
+          "body": "$\\overline{g_1} + \\overline{g_2} = g_1 \\to \\overline{g_2}$, and $\\overline{g_2} = g_2 \\to 0$."
         },
         {
-          "title": "Why the constant 0 is needed",
-          "body": "IMP is 1-preserving: $1\\to1=1$. Any circuit of IMP gates fed only by $x,y$ outputs 1 when $x=y=1$, but $f(1,1)=0$. So a constant-0 input is unavoidable."
+          "title": "The four gates",
+          "body": "$g_1 = x \\to y$, $g_2 = y \\to x$, $g_3 = g_2 \\to 0 = \\overline{g_2}$, $f = g_1 \\to g_3$."
         }
       ],
       "answer": {
         "value": "g1 = x→y, g2 = y→x, g3 = g2→0 (= ¬g2), f = g1→g3 = ¬g1 + ¬g2 = x⊕y",
         "matchesKey": true
       },
-      "verification": "Truth table: $(x,y)=(0,0)$: $g_1=1,g_3=0\\Rightarrow f=0$; $(0,1)$: $g_3=1\\Rightarrow f=1$; $(1,0)$: $g_1=0\\Rightarrow f=1$; $(1,1)$: $g_1=1,g_3=0\\Rightarrow f=0$ ✓."
+      "shortcut": "IMP with 0 is NOT; IMP itself is 'OR with the first input inverted'. XOR = OR of the two 'inhibition' terms, each the complement of an implication.",
+      "pitfalls": [
+        "Using the gates without the constant 0: implication is 1-preserving, so some negation must come from a constant."
+      ],
+      "verification": "| $x$ | $y$ | $g_1$ | $g_2$ | $g_3$ | $f$ |\n|---|---|---|---|---|---|\n| 0 | 0 | 1 | 1 | 0 | 0 |\n| 0 | 1 | 1 | 0 | 1 | 1 |\n| 1 | 0 | 0 | 1 | 0 | 1 |\n| 1 | 1 | 1 | 1 | 0 | 0 |"
     },
     "cse-1998-a-57-b": {
-      "approach": "Build a known complete set: NOT from $x\\to0$ and OR from $(x\\to0)\\to y$. Since {NOT, OR} is functionally complete, so is IMP (with the constant 0).",
+      "approach": "Concept tested: **functional completeness by building a known complete set**. Make NOT and OR from implication gates (with the constant 0); {NOT, OR} is complete.",
       "concepts": [
         "Functional completeness",
-        "Implication gate"
+        "Implication gate",
+        "Partial completeness"
       ],
       "steps": [
         {
-          "title": "NOT gate",
-          "body": "$x\\to0=\\overline x+0=\\overline x$."
+          "title": "Build NOT",
+          "body": "$x \\to 0 = \\bar{x} + 0 = \\bar{x}$."
         },
         {
-          "title": "OR gate",
-          "body": "$(x\\to0)\\to y=\\overline{\\overline x}+y=x+y$."
+          "title": "Build OR",
+          "body": "$(x \\to 0) \\to y = \\bar{\\bar{x}} + y = x + y$."
         },
         {
           "title": "Conclude",
-          "body": "{NOT, OR} is complete (AND by De Morgan: $xy=\\overline{\\overline x+\\overline y}$), hence every Boolean function can be built from IMP gates and the constant 0."
+          "body": "{NOT, OR} is functionally complete (AND $= \\overline{\\bar{x} + \\bar{y}}$), so implication gates with the constant 0 can realise every Boolean function."
+        },
+        {
+          "title": "Why 0 is essential",
+          "body": "$1 \\to 1 = 1$: implication is 1-preserving, so without the constant 0 every circuit outputs 1 on the all-ones input and NOT is impossible. The gate is *partially* complete."
         }
       ],
       "answer": {
-        "value": "x→0 = x̄ (NOT); (x→0)→y = x + y (OR); {NOT, OR} is complete",
+        "value": "x→0 = x̄ (NOT); (x→0)→y = x + y (OR); {NOT, OR} is complete (given the constant 0)",
         "matchesKey": true
       },
+      "shortcut": "To show completeness, build NOT and one of AND/OR; to show the need for a constant, check the all-0 and all-1 rows.",
       "pitfalls": [
-        "Claiming completeness without a constant: IMP alone preserves 1, so the constant 0 is required."
+        "Claiming completeness 'without constants', which is false (1-preserving)."
       ],
-      "verification": "AND directly: $(x\\to(y\\to0))\\to0=\\overline{\\overline x+\\overline y}=xy$; truth table confirms all four rows."
+      "verification": "Post's classes of $x' + y$: not 0-preserving, 1-preserving, not self-dual, not monotone, not affine. Only T₁ traps it, and the constant 0 escapes T₁."
     },
     "cse-1998-a-58-a": {
       "approach": "Shift away the constant: the fixed point of $x = 2x - 1$ is $x = 1$, so $y_n = x_n - 1$ satisfies a pure doubling recurrence.",

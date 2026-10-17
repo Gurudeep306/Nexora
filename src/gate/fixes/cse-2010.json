@@ -70,18 +70,18 @@
     {
       "id": "cse-2010-cs-31",
       "field": "needsReview",
-      "before": false,
-      "after": true,
-      "reason": "Stored (solved) key D is contradicted by derivation.",
-      "source": "Independent derivation"
+      "before": true,
+      "after": false,
+      "reason": "The key question is settled (see the answer fix): Proven: the paper's figure has first-level NORs on (P, Q), (Q, R), (P, R), (Q, R); then G5 = (P+Q)(Q+R) = Q + PR, G6 = (P+R)(Q+R) = R + PQ and f = (G5 + G6)' = (Q + R)', option A. P = 1, Q = R = 0 gives f = 1, ruling out D, (P+Q+R)'.",
+      "source": "GATE 2010 CS paper scan (GATE_PYQ/GATE2010.pdf p. 7, Q31 figure) + truth-table check in content/gate-notes/_checks/dl/l2_06_circuit_analysis.py; errata dl.md section 3"
     },
     {
       "id": "cse-2010-cs-31",
       "field": "reviewNote",
-      "before": null,
-      "after": "Stored key D, (P+Q+R)′, is wrong. G5 = (P+Q)(Q+R) = Q+PR, G6 = (P+R)(Q+R) = R+PQ, f = (Q+R+PR+PQ)′ = (Q+R)′ → option A. Check: P=1, Q=R=0 gives f=1 but (P+Q+R)′=0. No official pre-2014 key available; change answer to A after confirmation.",
-      "reason": "Stored (solved) key D is contradicted by derivation.",
-      "source": "Independent derivation"
+      "before": "Stored key D, (P+Q+R)′, is wrong. G5 = (P+Q)(Q+R) = Q+PR, G6 = (P+R)(Q+R) = R+PQ, f = (Q+R+PR+PQ)′ = (Q+R)′ → option A. Check: P=1, Q=R=0 gives f=1 but (P+Q+R)′=0. No official pre-2014 key available; change answer to A after confirmation.",
+      "after": null,
+      "reason": "The note asked for confirmation before changing the key; the key is now changed with a proof.",
+      "source": "GATE 2010 CS paper scan (GATE_PYQ/GATE2010.pdf p. 7, Q31 figure) + truth-table check in content/gate-notes/_checks/dl/l2_06_circuit_analysis.py; errata dl.md section 3"
     },
     {
       "id": "cse-2010-cs-46",
@@ -138,6 +138,14 @@
       "after": null,
       "reason": "Review resolved.",
       "source": "solved"
+    },
+    {
+      "id": "cse-2010-cs-31",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "Proven: the paper's figure has first-level NORs on (P, Q), (Q, R), (P, R), (Q, R); then G5 = (P+Q)(Q+R) = Q + PR, G6 = (P+R)(Q+R) = R + PQ and f = (G5 + G6)' = (Q + R)', option A. P = 1, Q = R = 0 gives f = 1, ruling out D, (P+Q+R)'.",
+      "source": "GATE 2010 CS paper scan (GATE_PYQ/GATE2010.pdf p. 7, Q31 figure) + truth-table check in content/gate-notes/_checks/dl/l2_06_circuit_analysis.py; errata dl.md section 3"
     }
   ]
 }

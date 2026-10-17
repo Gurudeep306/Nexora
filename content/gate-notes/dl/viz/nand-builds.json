@@ -1,0 +1,1034 @@
+{
+ "version": 1,
+ "title": "Building NOT, AND and OR from NAND gates",
+ "width": 660,
+ "height": 290,
+ "narrow": {
+  "width": 360,
+  "height": 490
+ },
+ "intro": "NAND gates only. Three small circuits will appear, one per basic gate.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "Everything from NAND: NOT, AND and OR",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Everything from NAND",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "nix",
+   "type": "text",
+   "x": 8,
+   "y": 88,
+   "text": "x",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 38,
+    "y": 88
+   }
+  },
+  {
+   "id": "ng",
+   "type": "gate",
+   "x": 40,
+   "y": 70,
+   "w": 50,
+   "h": 36,
+   "kind": "nand",
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "y": 70
+   }
+  },
+  {
+   "id": "nwg0",
+   "type": "line",
+   "points": [
+    [
+     18,
+     88
+    ],
+    [
+     29.0,
+     88
+    ],
+    [
+     29.0,
+     82.0
+    ],
+    [
+     40.0,
+     82.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      88
+     ],
+     [
+      59.0,
+      88
+     ],
+     [
+      59.0,
+      82.0
+     ],
+     [
+      70.0,
+      82.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nwg1",
+   "type": "line",
+   "points": [
+    [
+     18,
+     88
+    ],
+    [
+     29.0,
+     88
+    ],
+    [
+     29.0,
+     94.0
+    ],
+    [
+     40.0,
+     94.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      88
+     ],
+     [
+      59.0,
+      88
+     ],
+     [
+      59.0,
+      94.0
+     ],
+     [
+      70.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nwo",
+   "type": "line",
+   "points": [
+    [
+     90.0,
+     88.0
+    ],
+    [
+     110.0,
+     88.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      120.0,
+      88.0
+     ],
+     [
+      136.0,
+      88.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "nlo",
+   "type": "text",
+   "x": 116.0,
+   "y": 88.0,
+   "text": "x′",
+   "anchor": "start",
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 140.0,
+    "y": 88.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "aiA",
+   "type": "text",
+   "x": 8,
+   "y": 172,
+   "text": "A",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 38,
+    "y": 182
+   }
+  },
+  {
+   "id": "aiB",
+   "type": "text",
+   "x": 8,
+   "y": 184,
+   "text": "B",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 38,
+    "y": 194
+   }
+  },
+  {
+   "id": "ag1",
+   "type": "gate",
+   "x": 40,
+   "y": 160,
+   "w": 50,
+   "h": 36,
+   "kind": "nand",
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "y": 170
+   }
+  },
+  {
+   "id": "awg10",
+   "type": "line",
+   "points": [
+    [
+     18,
+     172
+    ],
+    [
+     40.0,
+     172.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      182
+     ],
+     [
+      70.0,
+      182.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "awg11",
+   "type": "line",
+   "points": [
+    [
+     18,
+     184
+    ],
+    [
+     40.0,
+     184.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      194
+     ],
+     [
+      70.0,
+      194.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ag2",
+   "type": "gate",
+   "x": 120,
+   "y": 160,
+   "w": 50,
+   "h": 36,
+   "kind": "nand",
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "y": 170
+   }
+  },
+  {
+   "id": "awg20",
+   "type": "line",
+   "points": [
+    [
+     90.0,
+     178.0
+    ],
+    [
+     105.0,
+     178.0
+    ],
+    [
+     105.0,
+     172.0
+    ],
+    [
+     120.0,
+     172.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      120.0,
+      188.0
+     ],
+     [
+      135.0,
+      188.0
+     ],
+     [
+      135.0,
+      182.0
+     ],
+     [
+      150.0,
+      182.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "awg21",
+   "type": "line",
+   "points": [
+    [
+     90.0,
+     178.0
+    ],
+    [
+     105.0,
+     178.0
+    ],
+    [
+     105.0,
+     184.0
+    ],
+    [
+     120.0,
+     184.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      120.0,
+      188.0
+     ],
+     [
+      135.0,
+      188.0
+     ],
+     [
+      135.0,
+      194.0
+     ],
+     [
+      150.0,
+      194.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "awo",
+   "type": "line",
+   "points": [
+    [
+     170.0,
+     178.0
+    ],
+    [
+     190.0,
+     178.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      200.0,
+      188.0
+     ],
+     [
+      216.0,
+      188.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "alo",
+   "type": "text",
+   "x": 196.0,
+   "y": 178.0,
+   "text": "AB",
+   "anchor": "start",
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 220.0,
+    "y": 188.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "oiA",
+   "type": "text",
+   "x": 338,
+   "y": 78,
+   "text": "A",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 38,
+    "y": 288
+   }
+  },
+  {
+   "id": "oiB",
+   "type": "text",
+   "x": 338,
+   "y": 148,
+   "text": "B",
+   "anchor": "middle",
+   "size": 14,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 38,
+    "y": 358
+   }
+  },
+  {
+   "id": "og1",
+   "type": "gate",
+   "x": 370,
+   "y": 60,
+   "w": 50,
+   "h": 36,
+   "kind": "nand",
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "y": 270
+   }
+  },
+  {
+   "id": "owg10",
+   "type": "line",
+   "points": [
+    [
+     348,
+     78
+    ],
+    [
+     359.0,
+     78
+    ],
+    [
+     359.0,
+     72.0
+    ],
+    [
+     370.0,
+     72.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      288
+     ],
+     [
+      59.0,
+      288
+     ],
+     [
+      59.0,
+      282.0
+     ],
+     [
+      70.0,
+      282.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "owg11",
+   "type": "line",
+   "points": [
+    [
+     348,
+     78
+    ],
+    [
+     359.0,
+     78
+    ],
+    [
+     359.0,
+     84.0
+    ],
+    [
+     370.0,
+     84.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      288
+     ],
+     [
+      59.0,
+      288
+     ],
+     [
+      59.0,
+      294.0
+     ],
+     [
+      70.0,
+      294.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "og2",
+   "type": "gate",
+   "x": 370,
+   "y": 130,
+   "w": 50,
+   "h": 36,
+   "kind": "nand",
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "y": 340
+   }
+  },
+  {
+   "id": "owg20",
+   "type": "line",
+   "points": [
+    [
+     348,
+     148
+    ],
+    [
+     359.0,
+     148
+    ],
+    [
+     359.0,
+     142.0
+    ],
+    [
+     370.0,
+     142.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      358
+     ],
+     [
+      59.0,
+      358
+     ],
+     [
+      59.0,
+      352.0
+     ],
+     [
+      70.0,
+      352.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "owg21",
+   "type": "line",
+   "points": [
+    [
+     348,
+     148
+    ],
+    [
+     359.0,
+     148
+    ],
+    [
+     359.0,
+     154.0
+    ],
+    [
+     370.0,
+     154.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      48,
+      358
+     ],
+     [
+      59.0,
+      358
+     ],
+     [
+      59.0,
+      364.0
+     ],
+     [
+      70.0,
+      364.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "og3",
+   "type": "gate",
+   "x": 460,
+   "y": 95,
+   "w": 50,
+   "h": 36,
+   "kind": "nand",
+   "hidden": true,
+   "narrow": {
+    "x": 160,
+    "y": 305
+   }
+  },
+  {
+   "id": "owg30",
+   "type": "line",
+   "points": [
+    [
+     420.0,
+     78.0
+    ],
+    [
+     440.0,
+     78.0
+    ],
+    [
+     440.0,
+     107.0
+    ],
+    [
+     460.0,
+     107.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      120.0,
+      288.0
+     ],
+     [
+      140.0,
+      288.0
+     ],
+     [
+      140.0,
+      317.0
+     ],
+     [
+      160.0,
+      317.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "owg31",
+   "type": "line",
+   "points": [
+    [
+     420.0,
+     148.0
+    ],
+    [
+     440.0,
+     148.0
+    ],
+    [
+     440.0,
+     119.0
+    ],
+    [
+     460.0,
+     119.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      120.0,
+      358.0
+     ],
+     [
+      140.0,
+      358.0
+     ],
+     [
+      140.0,
+      329.0
+     ],
+     [
+      160.0,
+      329.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "owo",
+   "type": "line",
+   "points": [
+    [
+     510.0,
+     113.0
+    ],
+    [
+     530.0,
+     113.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      210.0,
+      323.0
+     ],
+     [
+      226.0,
+      323.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "olo",
+   "type": "text",
+   "x": 536.0,
+   "y": 113.0,
+   "text": "A + B",
+   "anchor": "start",
+   "size": 14,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 230.0,
+    "y": 323.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "cnt",
+   "type": "text",
+   "x": 330.0,
+   "y": 270,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180.0,
+    "y": 470,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "NOT: tie both inputs of a NAND together. NAND(x, x) = (x·x)′ = x′. One gate.",
+   "patches": [
+    {
+     "id": "nix",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ng",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nwg0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nwg1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nwo",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "nlo",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "NOT = 1 NAND"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "AND: a NAND followed by a NAND used as an inverter undoes the inversion: ((AB)′)′ = AB. Two gates.",
+   "patches": [
+    {
+     "id": "aiA",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "aiB",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ag1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "awg10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "awg11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ag2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "awg20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "awg21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "awo",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "alo",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "NOT 1, AND 2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "OR: invert both inputs, then NAND them: (A′·B′)′ = A + B by De Morgan. Three gates.",
+   "patches": [
+    {
+     "id": "oiA",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "oiB",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "og1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "owg10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "owg11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "og2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "owg20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "owg21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "og3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "owg30",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "owg31",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "owo",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "olo",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "NOT 1, AND 2, OR 3 (2-input NAND gates)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "NOT, AND and OR can build every function (canonical SOP), so NAND alone can build every function: it is universal. The NOR gate is the dual: NOT 1, OR 2, AND 3.",
+   "patches": []
+  }
+ ]
+}
