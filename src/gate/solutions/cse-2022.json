@@ -856,23 +856,27 @@
       "verification": "Standard COA fact: DMA (burst mode) is the preferred method for high-speed block devices like disks."
     },
     "cse-2022-cs-8": {
-      "approach": "In 4-bit 2's complement the range is $-8$ to $+7$; overflow happens only when two operands of the same sign give a sum outside this range (sign of result flips).",
+      "approach": "Concept tested: **overflow in 2's-complement addition**. Decode each pair; only two operands of the same sign can overflow, when their sum leaves $-8 \\dots 7$.",
       "concepts": [
-        "2's complement",
-        "Overflow detection"
+        "2's-complement range",
+        "Overflow rule"
       ],
       "steps": [
         {
-          "title": "Decode and add",
-          "body": "| Option | R1 | R2 | Sum | In $[-8,7]$? |\n|---|---|---|---|---|\n| A | 1011 = −5 | 1110 = −2 | −7 | yes |\n| B | 1100 = −4 | 1010 = −6 | −10 | **no** |\n| C | 0011 = 3 | 0100 = 4 | 7 | yes |\n| D | 1001 = −7 | 1111 = −1 | −8 | yes |"
+          "title": "Decode every pair",
+          "body": "- (A) $1011 + 1110 = -5 + (-2) = -7$.\n- (B) $1100 + 1010 = -4 + (-6) = -10$.\n- (C) $0011 + 0100 = 3 + 4 = 7$.\n- (D) $1001 + 1111 = -7 + (-1) = -8$."
         },
         {
-          "title": "Bit-level check for (B)",
-          "body": "$1100+1010=1\\,0110$; keeping 4 bits gives $0110=+6$. Two negatives produced a positive ⇒ **overflow**."
+          "title": "Compare with the range",
+          "body": "4-bit 2's complement holds $-8 \\dots 7$. Only (B), $-10$, is outside."
+        },
+        {
+          "title": "Confirm with the bits",
+          "body": "$1100 + 1010 = 1\\,0110$: two negative operands give $0110 = +6$, a positive-looking result: overflow. Answer (B)."
         }
       ],
       "answer": {
-        "value": "R1 = 1100, R2 = 1010",
+        "value": "(B) R1 = 1100, R2 = 1010",
         "choice": [
           "B"
         ],
@@ -882,28 +886,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$-5+(-2)=-7$, representable ($1001$)."
+          "reason": "$-7$ fits; the carry out is dropped harmlessly."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$-4+(-6)=-10<-8$: result $0110$ has the wrong sign."
+          "reason": "$-10 < -8$: overflow (result $0110$ looks positive)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$3+4=7$, representable ($0111$)."
+          "reason": "$7$ is exactly the largest value, so it fits."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$-7+(-1)=-8$, representable ($1000$)."
+          "reason": "$-8$ is exactly the smallest value, so it fits."
         }
       ],
+      "shortcut": "Overflow ⇔ same-sign operands and a sum outside $[-8, 7]$; check only (A), (B), (D) (both negative).",
       "pitfalls": [
-        "Treating a carry out of the MSB as overflow — in (A) and (D) there is a carry-out but no overflow."
+        "Calling every carry out an overflow (A and D carry but are correct).",
+        "Thinking $-8$ or $+7$ overflow."
       ],
-      "verification": "Carry-in to MSB vs carry-out of MSB: for (B) carry-in 0, carry-out 1 → differ → overflow; for the others they match."
+      "verification": "Carry rule for (B): into the sign column 0, out of it 1: they differ. ✓"
     },
     "cse-2022-cs-9": {
       "approach": "The first letter printed is B, so only T2 (waiting on S1) may start: S1 = 1 and S2 = S3 = 0. Then each signal passes a single token along the cycle T2 → T1 → T3 → T2.",

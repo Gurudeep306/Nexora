@@ -26,23 +26,25 @@ questions.json `subject/topic` keys.
 ## Chapter overview
 | # | Chapter | Folder | Lessons | PYQs | Est. time |
 |---|---|---|---|---|---|
-| 1 | Number systems, codes and floating point | `01-number-systems` | 8 | 65 | 7 h 25 min |
+| 1 | Number systems, codes and floating point | `01-number-systems` | 10 | 88 | 9 h 40 min |
 | 2 | Boolean algebra and logic gates | `02-boolean-algebra-gates` | 6 | 64 | 4 h 55 min |
 | 3 | Minimisation | `03-minimisation` | 4 | 39 | 3 h 55 min |
 | 4 | Combinational circuits | `04-combinational-circuits` | 6 | 38 | 4 h 10 min |
-| 5 | Arithmetic circuits | `05-arithmetic-circuits` | 4 | 35 | 3 h 45 min |
+| 5 | Arithmetic circuits (hardware) | `05-arithmetic-circuits` | 4 | 14 | 2 h 50 min |
 | 6 | Latches, flip-flops and sequential analysis | `06-latches-flip-flops` | 3 | 24 | 2 h 45 min |
 | 7 | Counters, registers and FSMs | `07-counters-registers-fsms` | 5 | 35 | 4 h 10 min |
 | 8 | Beyond the core syllabus | `08-beyond-syllabus` | 3 | 4 | 1 h 20 min |
-| | **Total** | | **39** | **304** | **32 h 25 min** |
+| | **Total** | | **41** | **304** | **33 h 45 min** |
 
 Foundation-first order: number representations (Ch 1: bases, fixed point, complements, then
-floating point and IEEE-754, which need only biased exponents and binary fractions, then codes)
+floating point and IEEE-754, which need only biased exponents and binary fractions, then codes,
+then all number-level arithmetic: complements, overflow, BCD/excess-3 sums, Booth recoding)
 → gates and algebra (Ch 2) → minimisation (Ch 3) → combinational blocks (Ch 4) → arithmetic
-circuits, which use adders, signed numbers and MUX/XOR (Ch 5) → storage elements (Ch 6) →
+circuits (hardware only: adders, CLA, the adder–subtractor and BCD adder circuits, array multipliers; Ch 5) → storage elements (Ch 6) →
 counters, registers and FSMs, which use flip-flops and K-maps (Ch 7). Ch 8 is optional enrichment
 from Set C and older PYQs. (Floating point was Chapter 8 until 2026-10-17; the owner asked for
-IEEE-754 early, inside Chapter 1, so it now follows signed numbers and precedes codes.)
+IEEE-754 early, inside Chapter 1, so it now follows signed numbers and precedes codes. On the same day all
+number arithmetic moved into Chapter 1 as lessons 9–10; Chapter 5 keeps only the circuits.)
 
 ---
 
@@ -73,7 +75,7 @@ Hamming), plus an IEEE-754 tab (float ↔ hex ↔ bits, special-value badges, ul
   powers-of-16 sums read as hex; popcount per hex digit; add, subtract and multiply in base b
 - Sets: A 8–14; B 138–140; C 203–208 (incl. binary add/sub/mul/div)
 - pyq_topics: dl/number
-- PYQs (7; number): `cse-1991-a-1-iii`, `cse-1995-a-37`, `it-2004-it-43`, `cse-2005-cs-17`, `it-2005-cs-47`, `cse-2009-cs-5`, `cse-2017-2-cs-1`
+- PYQs (6; number): `cse-1991-a-1-iii`, `cse-1995-a-37`, `it-2004-it-43`, `cse-2005-cs-17`, `cse-2009-cs-5`, `cse-2017-2-cs-1` (it-2005-cs-47, octal multiplication, moved to dl-01-09)
 - Time: 45 min
 - Diagrams/animations: grouping slider (brackets snap from the point, padding fades in);
   octal → binary → hex bridge; hex nibble table; base-8 carry column
@@ -102,7 +104,7 @@ Hamming), plus an IEEE-754 tab (float ↔ hex ↔ bits, special-value badges, ul
   comparison table
 - Sets: A 20–21; B 141–146 (most detailed: radix/diminished-radix complements, sign extension); C 208–214; E 405
 - pyq_topics: dl/number
-- PYQs (16; number): `cse-1994-a-2-7`, `cse-1995-b-66`, `cse-1998-a-17`, `cse-1999-a-42`, `cse-2000-a-1-6`, `cse-2001-a-35`, `cse-2002-a-15`, `cse-2002-a-16`, `cse-2003-cs-9`, `cse-2005-cs-16`, `cse-2010-cs-8`, `cse-2013-cs-4`, `cse-2016-1-cs-7`, `cse-2016-2-cs-9`, `cse-2019-cs-4`, `cse-2025-1-cs-15`
+- PYQs (15; number; cse-2010-cs-8, ×8 by shifting, moved to dl-01-09): `cse-1994-a-2-7`, `cse-1995-b-66`, `cse-1998-a-17`, `cse-1999-a-42`, `cse-2000-a-1-6`, `cse-2001-a-35`, `cse-2002-a-15`, `cse-2002-a-16`, `cse-2003-cs-9`, `cse-2005-cs-16`, `cse-2013-cs-4`, `cse-2016-1-cs-7`, `cse-2016-2-cs-9`, `cse-2019-cs-4`, `cse-2025-1-cs-15`
 - Time: 80 min
 - Diagrams/animations: **the 2's-complement wheel** (SM/1's/2's ring toggle); invert + 1 ripple;
   sign-extension stretch; MSB-weight bar; arithmetic vs logical shift
@@ -160,6 +162,42 @@ Hamming), plus an IEEE-754 tab (float ↔ hex ↔ bits, special-value badges, ul
   Hamming(7,4) Venn with flip-a-bit; BCD vs binary
 - Practice themes: code conversion; validity; self-complementing; parity-bit counts; syndrome
 - Gaps: the minimum-distance theorem and its proof (B and C state the Hamming procedure only)
+
+### dl-01-09-code-arithmetic · Arithmetic with number codes
+- Prerequisites: dl-01-04, dl-01-08
+- Sub-topics: binary add/subtract (borrows), shift-and-add multiplication, long division; add/subtract/
+  multiply in base 8, 16 and any base b; r's and (r−1)'s complement subtraction in any base (end-around
+  carry with proof; reading a negative result); signed arithmetic in SM, 1's and 2's complement;
+  overflow (same-sign rule; c_in ≠ c_out of the MSB, with proof); unsigned carry vs signed overflow and
+  the flags; sign extension before mixing widths; BCD addition (+6, why 6, multi-digit carries) and BCD
+  subtraction via 9's/10's complement; excess-3 addition (−3/+3, why) and subtraction via
+  self-complementing; why Gray code is not used for arithmetic; multiply/divide by 2ᵏ with shifts
+  (arithmetic vs logical, rounding toward −∞)
+- Sets: A 20–21 (overflow); B 141–148, 159–160; C 203–216 (binary arithmetic, complement subtraction, overflow, BCD/XS-3 addition)
+- pyq_topics: dl/arithmetic, dl/number
+- PYQs (15; arithmetic, number): `cse-1992-b-4-a`, `cse-1995-a-51`, `cse-2002-a-21`, `it-2004-it-42`, `it-2005-cs-47`, `cse-2006-cs-39`, `it-2006-cs-7`, `it-2008-it-15`, `cse-2010-cs-8`, `cse-2017-1-cs-9`, `cse-2019-cs-8`, `cse-2022-cs-8`, `cse-2024-1-cs-3`, `cse-2026-1-cs-12`, `cse-2026-2-cs-18`
+- Time: 75 min
+- Diagrams/animations: column addition with a moving carry; complement subtraction with the
+  end-around carry; carry-in vs carry-out of the sign column; overflow on the 2's-complement wheel
+  (reused); BCD +6 correction; excess-3 ±3 correction
+- Practice themes: binary/base-b arithmetic; complement subtraction; overflow and flags; BCD and
+  excess-3 sums; shifts
+- Moved here 2026-10-17 from dl-05-03 (13 number-level PYQs), dl-01-02 (it-2005-cs-47) and dl-01-04
+  (cse-2010-cs-8)
+
+### dl-01-10-multiplication-booth · Signed multiplication and Booth's algorithm
+- Prerequisites: dl-01-09
+- Sub-topics: shift-and-add for unsigned and signed operands (sign-extended partial products; the
+  multiplier's sign bit weighs −2ⁿ⁻¹); product bits as Boolean functions; Booth recoding (radix-2) with
+  the value proof, the add/subtract count, best and worst patterns; bit-pair (radix-4) recoding and its
+  table; restoring and non-restoring division at number level (brief, no PYQ)
+- Sets: B 153–154, 178, 183, 185 (Booth); D 401–402 (radix-2 and radix-4 tables)
+- pyq_topics: dl/arithmetic
+- PYQs (8; arithmetic): `cse-1991-a-1-v`, `cse-1996-a-23`, `cse-1999-a-20`, `cse-2004-cs-66`, `it-2005-cs-8`, `it-2006-cs-38`, `it-2008-it-42`, `cse-2025-2-cs-22`
+- Time: 60 min
+- Diagrams/animations: **Booth scan** (sliding pair window, add/subtract marks); bit-pair recoding table
+- Practice themes: Booth recoding; operation counts; best/worst multipliers; bit-pair digits; signed products
+- Moved here 2026-10-17 from dl-05-04 (8 number-level PYQs)
 
 ---
 
@@ -390,7 +428,9 @@ the select lines, watch the chosen path light up, and use the "implement f with 
 
 ---
 
-## Chapter 5 · Arithmetic circuits (`05-arithmetic-circuits`)
+## Chapter 5 · Arithmetic circuits (hardware) (`05-arithmetic-circuits`)
+Hardware only: every number-level rule (complements, overflow, BCD/excess-3 corrections, Booth
+recoding) is in Chapter 1, lessons 9–10, and these lessons link back.
 Live Lab: **Adder Race**: a ripple-carry vs carry-look-ahead side-by-side simulation with
 gate-delay counters. Enter A and B, see the carry wave, flip to subtract, and watch the overflow
 flag.
@@ -418,33 +458,30 @@ flag.
 - Diagrams/animations: **ripple-carry vs carry-look-ahead** comparison; CLA tree
 - Practice themes: CLA delay; G/P expressions; level counts
 
-### dl-05-03-adder-subtractor-overflow · Adder–subtractor, overflow and BCD addition
-- Prerequisites: dl-05-01, dl-01-04
-- Sub-topics: XOR-controlled adder/subtractor; unsigned carry vs signed overflow; overflow rules
-  (same-sign operands, c_in ≠ c_out of the MSB); flags (C, V, S, Z); sign-magnitude
-  add/subtract range; 1's-complement end-around carry; BCD adder (+6 correction); adder-based
-  code conversion
+### dl-05-03-adder-subtractor-overflow · The adder–subtractor, flag logic and the BCD adder circuit
+- Prerequisites: dl-05-01, dl-01-09 (all the number-level rules: complements, overflow, BCD/excess-3
+  corrections are taught there; this lesson builds the circuits and links back)
+- Sub-topics: XOR-controlled adder/subtractor (K and C₀ control lines); the overflow detector
+  (XOR of the last two carries) and flag logic (C, V, S, Z); the BCD adder circuit (correction
+  detector C₄ + S₃S₂ + S₃S₁ and the second adder); adder-based code conversion
 - Sets: A 20–21 (overflow); B 146, 148, 159–160 (adder/subtractor, BCD adder); C 211–216 (complement subtraction, overflow, BCD/XS-3 addition), 289 (adder-subtractor with overflow), 290–291 (BCD adder)
 - pyq_topics: dl/arithmetic, dl/combinational
-- PYQs (15; arithmetic, combinational): `cse-1992-b-4-a`, `cse-1995-a-51`, `cse-1996-a-46`, `cse-2002-a-21`, `cse-2003-cs-46`, `it-2004-it-42`, `cse-2006-cs-39`, `it-2006-cs-7`, `it-2008-it-15`, `cse-2017-1-cs-9`, `cse-2019-cs-8`, `cse-2022-cs-8`, `cse-2024-1-cs-3`, `cse-2026-1-cs-12`, `cse-2026-2-cs-18`
-- Time: 60 min
-- Diagrams/animations: overflow on the 2's-complement wheel (crossing +7 → −8); flag panel;
-  BCD +6 correction animation
-- Practice themes: overflow detection; flags; BCD sums
+- PYQs (2; combinational): `cse-1996-a-46`, `cse-2003-cs-46` (the 13 number-level overflow/flag/complement PYQs moved to dl-01-09)
+- Time: 35 min
+- Diagrams/animations: adder–subtractor with the K line toggling; flag panel; BCD adder correction path
+- Practice themes: control-line settings; flag logic; BCD adder detector
 
-### dl-05-04-multipliers-booth · Multiplication: array multipliers and Booth's algorithm
-- Prerequisites: dl-05-03
-- Sub-topics: shift-and-add; partial products; array multiplier delay (≈ 2n); signed products;
-  Booth recoding (radix-2) and its add/subtract count; best and worst patterns; bit-pair
-  (radix-4) recoding
+### dl-05-04-multipliers-booth · Array multipliers (hardware)
+- Prerequisites: dl-05-03, dl-01-10 (shift-and-add, signed products and Booth recoding are taught there)
+- Sub-topics: the array multiplier (AND array + adder rows); its critical path and Θ(n) delay;
+  hardware cost; sequential (shift-register) multipliers and Booth hardware in brief, linking back
 - Sets: B 153–154, 178 (Booth); C 291–293 (array multiplier); D 401–402 (radix-2 and radix-4 Booth tables)
 - pyq_topics: dl/arithmetic
-- PYQs (10; arithmetic): `cse-1991-a-1-v`, `cse-1996-a-23`, `cse-1999-a-20`, `cse-1999-a-21`, `cse-2003-cs-11`, `cse-2004-cs-66`, `it-2005-cs-8`, `it-2006-cs-38`, `it-2008-it-42`, `cse-2025-2-cs-22`
-- Time: 60 min
-- Diagrams/animations: Booth scan animation (pair window sliding, add/sub marks); array
-  multiplier grid with the critical path
-- Practice themes: Booth recoding; count of operations; array delay
-- Gaps: **GAP** Booth's algorithm worked end to end and the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
+- PYQs (2; arithmetic): `cse-1999-a-21`, `cse-2003-cs-11` (the 8 Booth/recoding/product PYQs moved to dl-01-10)
+- Time: 30 min
+- Diagrams/animations: array multiplier grid with the critical path
+- Practice themes: array delay; gate and adder counts
+- Gaps: **GAP** the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
 
 ---
 
@@ -613,7 +650,8 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - `dl-03-03-tabular-method` (Quine–McCluskey and other map methods): Quine–McCluskey tabulation (no set runs it, and the 2027 syllabus names it); B and C cover VEM
 - `dl-03-04-two-level-implementation` (From minimal forms to gates: cost, NAND/NOR, hazards): hazards (only summaries in B 129 and D 402)
 - `dl-04-06-faults-testing` (Stuck-at faults and test inputs): (only one brief page in B; textbook: Mano / any testing primer)
-- `dl-05-04-multipliers-booth` (Multiplication: array multipliers and Booth's algorithm): Booth's algorithm worked end to end and the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
+- `dl-05-04-multipliers-booth` (Array multipliers (hardware)): the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
+- `dl-01-10-multiplication-booth` (Signed multiplication and Booth's algorithm): Booth's algorithm worked end to end (textbook: Hamacher / Mano CSA)
 - `dl-07-04-finite-state-machines` (Finite state machines: Mealy and Moore): Mealy/Moore theory, detectors and FSM → circuit (only E 405/407 touch it; textbook: Mano)
 - `dl-07-05-state-minimisation` (State minimisation): partition refinement (E 409 shows one implication table only)
 - `dl-01-07-floating-point-arithmetic` (Floating-point arithmetic, rounding and its pitfalls): rounding modes and the guard/round/sticky bits (textbook)

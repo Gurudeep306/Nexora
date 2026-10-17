@@ -3105,80 +3105,27 @@
       }
     },
     "cse-2026-2-cs-18": {
-      "approach": "Convert the four 4-bit patterns to decimals; 4-bit two's complement holds only $[-8, 7]$, so an operation overflows exactly when its true result leaves that range (equivalently, two same-sign operands give a result of the other sign).",
+      "approach": "Concept tested: **overflow of sums and differences** in 4-bit 2's complement. Decode the four numbers and check each true result against $-8 \\dots 7$.",
       "concepts": [
-        "Two's complement range",
-        "Signed overflow rule",
-        "Subtraction as adding the negation"
+        "4-bit 2's-complement range",
+        "Overflow in addition and subtraction"
       ],
-      "given": "| Name | Bits | Value |\n|---|---|---|\n| $N_1$ | 1011 | $-5$ |\n| $N_2$ | 1101 | $-3$ |\n| $N_3$ | 1010 | $-6$ |\n| $N_4$ | 1001 | $-7$ |",
       "steps": [
         {
-          "title": "Decode the numbers",
-          "body": "A 4-bit pattern $b_3b_2b_1b_0$ has value $-8b_3 + 4b_2 + 2b_1 + b_0$:\n\n- $N_1 = 1011 = -8 + 2 + 1 = -5$\n- $N_2 = 1101 = -8 + 4 + 1 = -3$\n- $N_3 = 1010 = -8 + 2 = -6$\n- $N_4 = 1001 = -8 + 1 = -7$\n\nRepresentable range: $-2^3 \\dots 2^3 - 1 = -8 \\dots 7$.",
-          "scene": {
-            "reveal": 0
-          }
+          "title": "Decode",
+          "body": "$N_1 = 1011 = -5$, $N_2 = 1101 = -3$, $N_3 = 1010 = -6$, $N_4 = 1001 = -7$."
         },
         {
-          "title": "A: N1 + N2",
-          "body": "$-5 + (-3) = -8$, inside the range. Bitwise: $1011 + 1101 = 1\\,1000$, keep $1000 = -8$ (negative + negative = negative). **No overflow.**",
-          "scene": {
-            "reveal": 5,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Evaluate",
+          "body": "- (A) $N_1 + N_2 = -8$: fits.\n- (B) $N_2 + N_3 = -9$: overflow.\n- (C) $N_3 - N_4 = -6 + 7 = 1$: fits.\n- (D) $N_1 + N_4 = -12$: overflow."
         },
         {
-          "title": "B: N2 + N3",
-          "body": "$-3 + (-6) = -9 < -8$. Bitwise: $1101 + 1010 = 1\\,0111$, keep $0111 = +7$: two negatives gave a positive. **Overflow.**",
-          "scene": {
-            "reveal": 10,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "error"
-              }
-            ]
-          }
-        },
-        {
-          "title": "C: N3 − N4",
-          "body": "$-6 - (-7) = +1$, inside the range. Hardware adds the negation: $-N_4 = 0111$, and $1010 + 0111 = 1\\,0001$, keep $0001 = 1$. Operands of opposite sign can never overflow. **No overflow.**",
-          "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 2,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "D: N1 + N4",
-          "body": "$-5 + (-7) = -12 < -8$. Bitwise: $1011 + 1001 = 1\\,0100$, keep $0100 = +4$: two negatives gave a positive. **Overflow.**",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "error"
-              },
-              {
-                "r": 3,
-                "tone": "error"
-              }
-            ]
-          }
+          "title": "Answer",
+          "body": "(B) and (D)."
         }
       ],
       "answer": {
-        "value": "Overflow occurs for **$N_2 + N_3$ and $N_1 + N_4$** — options (B) and (D)",
+        "value": "(B) and (D)",
         "choice": [
           "B",
           "D"
@@ -3189,31 +3136,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$-5 + (-3) = -8$ is exactly the most negative 4-bit value ($1000$), so it fits. Treating $-8$ as out of range is the trap."
+          "reason": "$-8$ is the smallest 4-bit value, so it fits."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$-3 + (-6) = -9 < -8$; the 4-bit sum $0111 = +7$ has the wrong sign."
+          "reason": "$-9 < -8$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$-6 - (-7) = +1$; adding $1010 + 0111$ gives $0001$. The end carry out is discarded and is not an overflow."
+          "reason": "Same-sign operands in a subtraction never overflow: $1$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$-5 + (-7) = -12 < -8$; the 4-bit sum $0100 = +4$ has the wrong sign."
+          "reason": "$-12 < -8$."
         }
       ],
-      "shortcut": "All four numbers are negative. Sums of two negatives overflow when the magnitudes add to more than $8$: $5+3 = 8$ (fits), $3+6 = 9$ and $5+7 = 12$ (overflow). A difference of two negatives cannot overflow.",
+      "shortcut": "All four are negative: sums can overflow (if below $-8$), the difference cannot.",
       "pitfalls": [
-        "Calling a carry out of the MSB an overflow — in two's complement, overflow means the carry into the MSB differs from the carry out of it.",
-        "Forgetting that $-8$ is representable in 4 bits, so $N_1 + N_2$ is fine.",
-        "Reading the patterns as unsigned numbers."
+        "Treating $-8$ as overflow.",
+        "Thinking a subtraction of two negatives can overflow."
       ],
-      "verification": "Carry rule: for $N_2+N_3$ ($1101+1010$) the carry into bit 3 is $0$ and the carry out is $1$ — they differ, overflow. For $N_1+N_2$ ($1011+1101$) both carries are $1$ — no overflow.",
+      "verification": "Bits: $1101 + 1010 = 1\\,0111$ (looks $+7$) and $1011 + 1001 = 1\\,0100$ (looks $+4$): negative operands, positive results. ✓",
       "animation": {
         "kind": "table",
         "title": "4-bit two's complement additions",

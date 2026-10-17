@@ -1488,30 +1488,35 @@
       "verification": "The 12-reference string above is Belady’s original counterexample."
     },
     "cse-1992-b-4-a": {
-      "approach": "Overflow happens when the true sum does not fit the signed range, which shows up as the carry into the sign bit differing from the carry out of it.",
+      "approach": "Concept tested: **the overflow condition**. Overflow is about the signed range, not about the carry out: it happens exactly when the carry into the sign bit differs from the carry out of it, i.e. when two same-sign operands give a result of the other sign.",
       "concepts": [
-        "Two's complement",
-        "Overflow detection"
+        "Overflow rule",
+        "Carry into vs out of the MSB"
       ],
       "steps": [
         {
-          "title": "Carry out is not overflow",
-          "body": "4-bit: $-1 + 1 = 1111 + 0001 = 1\\,0000$. There is a carry out, but the result $0000 = 0$ is correct — no overflow."
+          "title": "Why a carry is not enough",
+          "body": "In 2's complement the carry out of the MSB is discarded: $-1 + 1 = 1111 + 0001 = 1\\,0000$ gives the correct 0 with a carry. So 'carry out' cannot mean overflow."
         },
         {
-          "title": "Overflow without carry out",
-          "body": "$7 + 1 = 0111 + 0001 = 1000 = -8$: wrong sign. Carry **into** the MSB is $1$, carry **out** is $0$."
+          "title": "The condition",
+          "body": "Overflow $\\iff c_{n-1} \\oplus c_n = 1$ (carry into the sign column ≠ carry out of it) $\\iff$ both operands have the same sign and the result's sign differs."
         },
         {
-          "title": "Condition",
-          "body": "$$V = C_{n-1} \\oplus C_n$$ where $C_{n-1}$ is the carry into the MSB and $C_n$ the carry out. Equivalently: both operands have the same sign and the result has the opposite sign. Adding numbers of opposite signs can never overflow."
+          "title": "Why it holds",
+          "body": "Both non-negative: $c_n = 0$, and overflow means the sign bit became 1, which needs $c_{n-1} = 1$. Both negative: $c_n = 1$, and overflow means the sign bit became 0, which needs $c_{n-1} = 0$. Mixed signs never overflow and always have $c_{n-1} = c_n$."
         }
       ],
       "answer": {
-        "value": "Overflow iff carry into MSB $\\ne$ carry out of MSB ($V = C_{n-1} \\oplus C_n$), i.e. same-sign operands give a result of the other sign",
+        "value": "Overflow iff the carry into the MSB differs from the carry out of the MSB (equivalently, both operands have the same sign and the result's sign differs)",
         "matchesKey": true
       },
-      "verification": "$-8 + (-1) = 1000 + 1111 = 1\\,0111$: $C_n = 1$, $C_{n-1} = 0$ → overflow (result $+7$), as the rule says."
+      "shortcut": "$V = c_{n-1} \\oplus c_n$.",
+      "pitfalls": [
+        "Writing 'overflow when there is a carry out of the MSB'.",
+        "Forgetting that opposite signs never overflow."
+      ],
+      "verification": "$0101 + 0100 = 1001$: carries in/out of the MSB are 1/0, and $5 + 4 = 9$ does overflow. ✓"
     },
     "cse-1992-b-4-b": {
       "approach": "Assign codes A → 11, B → 10, C → 01, none → 00, write $X_1, X_0$ as functions of A, B, C, then use A, B as the select lines of two 4:1 MUXes with data inputs from {0, 1, C}.",

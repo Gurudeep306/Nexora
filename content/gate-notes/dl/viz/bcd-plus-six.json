@@ -1,0 +1,274 @@
+{
+ "version": 1,
+ "title": "BCD addition and the +6 correction",
+ "width": 600,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 260
+ },
+ "intro": "386 and 457 in BCD, one 4-bit group per decimal digit. We add digit by digit from the right.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 300.0,
+   "y": 24,
+   "text": "BCD addition 386 + 457 with the +6 correction",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "BCD: 386 + 457",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "A",
+   "type": "bits",
+   "x": 130,
+   "y": 64,
+   "bits": "0011 1000 0110",
+   "cell": 32,
+   "narrow": {
+    "x": 18,
+    "y": 64,
+    "cell": 23
+   }
+  },
+  {
+   "id": "B",
+   "type": "bits",
+   "x": 130,
+   "y": 102,
+   "bits": "0100 0101 0111",
+   "cell": 32,
+   "narrow": {
+    "x": 18,
+    "y": 93,
+    "cell": 23
+   }
+  },
+  {
+   "id": "Al",
+   "type": "text",
+   "x": 120,
+   "y": 80.0,
+   "text": "386",
+   "anchor": "end",
+   "size": 15,
+   "only": "wide"
+  },
+  {
+   "id": "Bl",
+   "type": "text",
+   "x": 120,
+   "y": 118.0,
+   "text": "457",
+   "anchor": "end",
+   "size": 15,
+   "only": "wide"
+  },
+  {
+   "id": "raw",
+   "type": "bits",
+   "x": 130,
+   "y": 150,
+   "bits": "              ",
+   "cell": 32,
+   "fill": "warning",
+   "narrow": {
+    "x": 18,
+    "y": 130,
+    "cell": 23
+   }
+  },
+  {
+   "id": "rawl",
+   "type": "text",
+   "x": 120,
+   "y": 166.0,
+   "text": "binary",
+   "anchor": "end",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "res",
+   "type": "bits",
+   "x": 130,
+   "y": 210,
+   "bits": "              ",
+   "cell": 32,
+   "fill": "success",
+   "narrow": {
+    "x": 18,
+    "y": 176,
+    "cell": 23
+   }
+  },
+  {
+   "id": "resl",
+   "type": "text",
+   "x": 120,
+   "y": 226.0,
+   "text": "BCD",
+   "anchor": "end",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 300,
+   "y": 280,
+   "text": "",
+   "anchor": "middle",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 236,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Units: 6 + 7 = 13 > 9, so add 0110: 1101 + 110 = 1 0011. Digit 3, decimal carry 1.",
+   "patches": [
+    {
+     "id": "raw",
+     "set": {
+      "bits": "          1101",
+      "highlight": [
+       10,
+       11,
+       12,
+       13
+      ]
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "bits": "          0011",
+      "highlight": [
+       10,
+       11,
+       12,
+       13
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "units digit = 3, carry 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Tens: 8 + 5 + carry 1 = 14 > 9, so add 0110: 1110 + 110 = 1 0100. Digit 4, decimal carry 1.",
+   "patches": [
+    {
+     "id": "raw",
+     "set": {
+      "bits": "     1110 1101",
+      "highlight": [
+       5,
+       6,
+       7,
+       8
+      ]
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "bits": "     0100 0011",
+      "highlight": [
+       5,
+       6,
+       7,
+       8
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "tens digit = 4, carry 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Hundreds: 3 + 4 + carry 1 = 8, not above 9: no correction.",
+   "patches": [
+    {
+     "id": "raw",
+     "set": {
+      "bits": "1000 1110 1101",
+      "highlight": [
+       0,
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "bits": "1000 0100 0011",
+      "highlight": [
+       0,
+       1,
+       2,
+       3
+      ]
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "hundreds digit = 8"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The result 1000 0100 0011 is BCD 843 = 386 + 457. Each +6 skipped the six unused patterns 1010 … 1111, so the carry came out at ten.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "raw",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "386 + 457 = 843 ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

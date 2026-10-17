@@ -2461,62 +2461,27 @@
       }
     },
     "cse-2026-1-cs-12": {
-      "approach": "Decode both numbers, compute each result as an ordinary integer, and check it against the sign-magnitude range of 8 bits, $-127$ to $+127$ (7-bit magnitude). Overflow is just \"result out of range\".",
+      "approach": "Concept tested: **overflow in sign-magnitude**. Decode $X = -52$ and $Y = +76$; 8-bit sign-magnitude holds $-127 \\dots 127$. Operations that add the magnitudes ($52 + 76 = 128$) overflow.",
       "concepts": [
-        "Sign-magnitude representation",
-        "Range of n-bit signed numbers",
-        "Arithmetic overflow"
+        "Sign-magnitude decoding",
+        "Sign-magnitude range"
       ],
       "steps": [
         {
-          "title": "Decode X and Y",
-          "body": "- $X = 1\\,0110100$: sign 1 (negative), magnitude $0110100_2 = 32+16+4 = 52$, so $X = -52$.\n- $Y = 0\\,1001100$: sign 0 (positive), magnitude $1001100_2 = 64+8+4 = 76$, so $Y = +76$.",
-          "scene": {
-            "rows": [
-              {
-                "label": "X",
-                "fields": [
-                  {
-                    "bits": "1",
-                    "label": "sign −",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "0110100",
-                    "label": "magnitude 52"
-                  }
-                ],
-                "value": "−52"
-              },
-              {
-                "label": "Y",
-                "fields": [
-                  {
-                    "bits": "0",
-                    "label": "sign +",
-                    "tone": "accent"
-                  },
-                  {
-                    "bits": "1001100",
-                    "label": "magnitude 76"
-                  }
-                ],
-                "value": "+76"
-              }
-            ]
-          }
+          "title": "Decode",
+          "body": "$X = 1\\,0110100 = -52$, $Y = 0\\,1001100 = +76$."
+        },
+        {
+          "title": "Evaluate",
+          "body": "- (A) $X + Y = 24$.\n- (B) $X - Y = -128$.\n- (C) $-X + Y = 128$.\n- (D) $-X - Y = -24$."
         },
         {
           "title": "Range",
-          "body": "With 1 sign bit and a 7-bit magnitude, representable values are $-(2^7-1)$ to $+(2^7-1)$, i.e. $-127$ to $+127$. ($-128$ is **not** representable in sign-magnitude, unlike two's complement.)"
-        },
-        {
-          "title": "Evaluate the four operations",
-          "body": "| operation | value | in $[-127, 127]$? |\n|---|---|---|\n| $X+Y$ | $-52+76 = 24$ | yes |\n| $X-Y$ | $-52-76 = -128$ | **no — overflow** |\n| $-X+Y$ | $52+76 = 128$ | **no — overflow** |\n| $-X-Y$ | $52-76 = -24$ | yes |\n\nOverflow occurs for **(B)** and **(C)**."
+          "body": "8-bit sign-magnitude reaches only $\\pm 127$, so $\\pm 128$ overflow: (B) and (C)."
         }
       ],
       "answer": {
-        "value": "$X-Y=-128$ and $-X+Y=128$ overflow — options **(B)** and **(C)**",
+        "value": "(B) and (C)",
         "choice": [
           "B",
           "C"
@@ -2527,12 +2492,12 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$-52 + 76 = 24$, well inside $\\pm127$."
+          "reason": "Opposite signs: the magnitudes are subtracted, $24$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$-52 - 76 = -128$: magnitude 128 needs 8 bits, but only 7 are available."
+          "reason": "$-52 - 76 = -128$; sign-magnitude has no $-128$."
         },
         {
           "option": "C",
@@ -2542,15 +2507,14 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "$52 - 76 = -24$, inside the range."
+          "reason": "$-24$ fits."
         }
       ],
-      "shortcut": "Opposite signs never overflow; overflow needs the operands to have the same effective sign. Only $X-Y$ and $-X+Y$ add magnitudes: $52+76 = 128 > 127$.",
+      "shortcut": "Overflow needs the magnitudes to be added: (B) and (C) both give $|52| + |76| = 128$.",
       "pitfalls": [
-        "Using the two's-complement range: $-128$ is representable there, but not in sign-magnitude, so (B) is an overflow here.",
-        "Reading X as an unsigned number (180) instead of −52."
+        "Using the 2's-complement range $-128 \\dots 127$ and accepting $-128$."
       ],
-      "verification": "Magnitude check: $|X|+|Y| = 128 = 10000000_2$ needs 8 magnitude bits, one more than the 7 available — so both \"same-sign\" combinations overflow and both \"opposite-sign\" ones ($|76-52| = 24$) fit.",
+      "verification": "$128$ needs 8 magnitude bits ($10000000$), but sign-magnitude leaves only 7. ✓",
       "animation": {
         "kind": "bits",
         "title": "8-bit sign-magnitude operands",

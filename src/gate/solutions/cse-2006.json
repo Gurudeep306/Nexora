@@ -2224,23 +2224,27 @@
       "verification": "Enumerated all 6 one-bit-adjacent pairs of true minterms and checked each option cube by cube."
     },
     "cse-2006-cs-39": {
-      "approach": "Two's-complement overflow happens exactly when both operands have the same sign and the sum has the opposite sign; express that with the sign bits $a_{n-1}$, $b_{n-1}$ and the sum sign bit $c_{n-1}$.",
+      "approach": "Concept tested: **detecting overflow from the operands' and the result's sign bits**. Here $c_{n-1}$ is the top **sum** bit, so overflow is $a_{n-1} b_{n-1} \\overline{c_{n-1}} + \\overline{a_{n-1}}\\,\\overline{b_{n-1}} c_{n-1}$.",
       "concepts": [
-        "Two's complement overflow",
-        "Sign bits"
+        "Overflow rule",
+        "Reading the question's notation"
       ],
       "steps": [
         {
-          "title": "Overflow rule",
-          "body": "Adding two positives cannot give a negative, and two negatives cannot give a non-negative, unless the result is out of range. Mixed signs never overflow."
+          "title": "Notation",
+          "body": "The sum bits are $c_{n-1} \\ldots c_0$ and the carry out is $c_{out}$. So $c_{n-1}$ is the result's sign bit, not a carry."
         },
         {
-          "title": "Boolean form",
-          "body": "- Both negative ($a_{n-1}=b_{n-1}=1$), sum non-negative ($c_{n-1}=0$): $a_{n-1}b_{n-1}\\overline{c_{n-1}}$.\n- Both non-negative, sum negative: $\\overline{a_{n-1}}\\,\\overline{b_{n-1}}\\,c_{n-1}$.\n\nOverflow $= a_{n-1}b_{n-1}\\overline{c_{n-1}} + \\overline{a_{n-1}}\\,\\overline{b_{n-1}}\\,c_{n-1}$ — option (B)."
+          "title": "Overflow condition",
+          "body": "Same-sign operands, different-sign result: $a_{n-1} b_{n-1} \\overline{c_{n-1}}$ (both negative, result non-negative) or $\\overline{a_{n-1}}\\,\\overline{b_{n-1}} c_{n-1}$ (both non-negative, result negative). That is option (B)."
+        },
+        {
+          "title": "Why the carry formulas fail here",
+          "body": "The textbook $c_{in} \\oplus c_{out}$ uses the carry **into** the sign column, which this notation does not name; $c_{out} \\oplus c_{n-1}$ mixes the carry out with a sum bit."
         }
       ],
       "answer": {
-        "value": "$a_{n-1}b_{n-1}\\overline{c_{n-1}} + \\overline{a_{n-1}}\\,\\overline{b_{n-1}}\\,c_{n-1}$",
+        "value": "(B) $a_{n-1}b_{n-1}\\overline{c_{n-1}} + \\overline{a_{n-1}}\\,\\overline{b_{n-1}}\\,c_{n-1}$",
         "choice": [
           "B"
         ],
@@ -2250,28 +2254,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: $c_{out}$ with equal signs misses positive overflow — $0111 + 0001 = 1000$ has $c_{out} = 0$ but overflows."
+          "reason": "Carry out with equal sign bits fires for $-1 + (-1)$ (correct result $-2$)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: same-sign operands with a different-sign result."
+          "reason": "Same-sign operands, other-sign result."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: here $c_{n-1}$ is the sum bit, not the carry into the MSB; e.g. $1111 + 0001 = 0000$, $c_{out}=1$, $c_{n-1}=0$, XOR $=1$ but $-1 + 1 = 0$ has no overflow."
+          "reason": "$c_{n-1}$ here is a sum bit, so $c_{out} \\oplus c_{n-1}$ is not the carry test: $-1 + 1 = 1111 + 0001 = 1\\,0000$ gives $c_{out} = 1$ and sum bit 0, so it flags a correct sum."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: since $c_{n-1}$ is the sum bit, $a_{n-1}\\oplus b_{n-1}\\oplus c_{n-1}$ is the carry into the MSB, not overflow; $1111+0001=0000$ gives $1\\oplus0\\oplus0=1$ though $-1+1=0$ does not overflow."
+          "reason": "$a \\oplus b \\oplus c_{n-1}$ is the carry into the sign column (sum bit = $a \\oplus b \\oplus$ carry-in), not an overflow test."
         }
       ],
+      "shortcut": "Look for the formula built only from the three sign bits with 'same, same, different'.",
       "pitfalls": [
-        "Using the familiar rule $C_{in,MSB} \\oplus C_{out}$ with $c_{n-1}$ — in this question $c_{n-1}$ denotes a sum bit."
+        "Reading $c_{n-1}$ as a carry and picking (C)."
       ],
-      "verification": "4-bit check: $0111+0001 = 1000$: $a_3=b_3=0$, $c_3=1$ → (B) gives 1 ✓ ($7+1$ overflows)."
+      "verification": "Brute force over all 4-bit pairs: (B) matches the range test exactly; (C) disagrees on some pairs. ✓"
     },
     "cse-2006-cs-40": {
       "approach": "Concept tested: Gray code and Boolean functions given as minterm lists. Tabulate, for each number $n$, its Gray code $h$ (the input) and the Gray code $g$ of $n + 1$ (the output); each $g_i$ has a minterm at the **value of $h$** wherever bit $i$ of $g$ is 1. Then compare each option with the computed list for the bit it names.",
