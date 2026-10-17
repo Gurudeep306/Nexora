@@ -23,8 +23,7 @@ usually smaller, circuit that computes the same thing. This lesson turns the rul
 You will see the handful of postulates everything rests on, prove the famous laws from them
 (absorption, De Morgan, consensus), learn the duality principle that gives you every law twice for
 the price of once, split any function in two with Shannon's expansion, and solve systems of Boolean
-equations. Twelve GATE questions test exactly these skills, more than any other lesson of this
-chapter.
+equations. Twelve GATE questions test exactly these skills.
 
 ## Where this fits
 
@@ -38,8 +37,8 @@ assumes the laws of this lesson.
 | What | Detail |
 |:--|:--|
 | PYQs mapped to this lesson | 12 (1994–2026), one of the most frequent topics of the chapter |
-| Marks | 7 one-mark, 4 two-mark, 1 descriptive |
-| Formats | 7 MCQ, 2 MSQ, 3 descriptive (old papers) |
+| Marks | 5 one-mark, 5 two-mark, 2 descriptive |
+| Formats | 8 MCQ, 2 MSQ, 2 descriptive (old papers) |
 | Pattern 1 | Simplify an expression to one of four options: 2004, 2008 |
 | Pattern 2 | Which identity is NOT valid / which are CORRECT: 2017, 2019, 2024, 2025, 2026 |
 | Pattern 3 | Solve simultaneous Boolean equations: 1994, 1995, 2000 |
@@ -64,6 +63,14 @@ keep and which to switch off.
 :::
 
 ## The postulates and the duality principle
+
+:::intuition{#duality-intuition title="Every rule has a mirror image" depth="standard"}
+Look at the switch pictures again. "Switches in parallel with one stuck closed: the lamp is on" and
+"switches in series with one stuck open: the lamp is off" are the same fact seen in a mirror that
+swaps series with parallel and closed with open. Boolean algebra has that mirror built in: swap AND
+with OR and 0 with 1 in any true law and you get another true law. Half of every list of laws is
+therefore free, and when you forget a law you can often recover it from its twin.
+:::
 
 An algebra is a set of values with operations and a short list of axioms (postulates) from which
 everything else is proved. For Boolean algebra the standard list is due to Huntington.
@@ -96,6 +103,13 @@ equation between the duals.
 - Dual of $x + 0 = x$ is $x \cdot 1 = x$.
 - Dual of $xy + x'z$ is $(x + y)(x' + z)$ (keep the brackets that preserve the grouping).
 - Dual of $x' + y'$ is $x' y'$.
+
+**Functional form.** If $E$ is any expression of $f$, its dual $E^D$ computes
+$f^D(x) = \big(f(x')\big)'$, whichever expression you started from. Proof: complement $f(x')$ with the
+general De Morgan rule (below): it swaps every operator and every constant *and* complements every
+literal. Each literal of $f(x')$ was already complemented once, so the second complement returns it to
+its original form, and what is left is exactly $E$ with the operators and constants swapped, $E^D$.
+(Lesson 1 used this for negative logic; Lesson 4 uses it for self-dual functions.)
 :::
 
 :::theorem{#duality name="Duality principle" depth="standard"}
@@ -165,7 +179,7 @@ identity. The dual chain proves $x \cdot x = x$.
 $$
 x + 1 = (x + 1) \cdot 1 = (x + 1)(x + x') = x + 1 \cdot x' = x + x' = 1 .
 $$
-(Identity, complement, distributivity in reverse, identity, complement.) The dual gives $x \cdot 0 = 0$.
+(Identity, complement, distributivity in reverse, commutativity and identity, complement.) The dual gives $x \cdot 0 = 0$.
 :::
 
 :::derivation{#absorption of="absorption: x + xy = x and x(x + y) = x" depth="quick"}
@@ -338,6 +352,13 @@ $AB + AB' = A$, then $A + A'B = A + B$ (redundant literal). Answer $A + B$.
 
 ## De Morgan's laws and complementing expressions
 
+:::intuition{#demorgan-intuition title="Not (rain or snow) means no rain and no snow" depth="standard"}
+"It is not true that it will rain or snow" means "no rain, and no snow": denying an OR denies every
+part of it. "It is not true that both the doors are locked" means "at least one door is unlocked":
+denying an AND only needs one part to fail. That is De Morgan's law in words. A NOT pushed inside a
+bracket flips every literal it meets and swaps OR with AND on the way in.
+:::
+
 :::theorem{#demorgan name="De Morgan's laws" depth="standard"}
 $$
 (x + y)' = x' y', \qquad (xy)' = x' + y' .
@@ -433,7 +454,8 @@ $F = 1$ needs $X + Y + Z = 1$, $X \Rightarrow Y$ and $Y \Rightarrow Z$: rows 001
 :::
 
 :::answer
-$F' = X'Y'Z' + XY' + YZ'$ (other equal forms exist, for example $XY' + Y'Z' + YZ'$; compare forms by rows).
+$F' = X'Y'Z' + XY' + YZ'$ (other equal forms exist, for example $XY' + Y'Z' + YZ'$; compare forms by
+rows). Simplest: $F = Z(X' + Y)$, so $F' = Z' + XY'$.
 :::
 ::::
 
@@ -463,6 +485,14 @@ complement every literal; the complement is the dual with complemented literals.
 :::
 
 ## The consensus theorem
+
+:::intuition{#consensus-intuition title="A rule that is already covered by two other rules" depth="standard"}
+A shop rule says: members (x) who brought a coupon (y) get a discount; non-members (x′) who spend over
+a limit (z) also get one. Someone suggests a third rule: anyone with a coupon who spends over the
+limit (yz) gets a discount. It adds nothing. Such a customer is either a member (and has a coupon, so
+rule 1 applies) or a non-member (and spent over the limit, so rule 2 applies). Whatever x is, one of
+the two old rules already covers them. That redundant third rule is the consensus term.
+:::
 
 :::theorem{#consensus name="Consensus theorem" depth="standard"}
 $$
@@ -507,6 +537,13 @@ xy' + xz' + yz' = (x + y)(y' + z'),
 $$
 which you can confirm by expanding the right side ($yy' = 0$ drops out). With De Morgan,
 $y' + z' = (yz)'$, so $E = (x + y)(yz)'$: a form that needs a **single** NOT gate.
+:::
+
+:::trap{#trap-consensus-two title="Consensus needs exactly one opposed variable" depth="quick"}
+The terms $xy$ and $x'y'$ disagree in **two** variables; their "consensus" would be $yy' = 0$, which is
+nothing. So $xy + x'y' + (\text{some term})$ is not a consensus pattern, and no term may be dropped on
+the strength of it. The expected wrong answer: deleting a term because it "is the consensus" of two
+terms that differ in two places.
 :::
 
 :::trap{#trap-consensus-fake title="A term that only looks like a consensus term" depth="quick"}
@@ -596,6 +633,14 @@ $(x + y)(x' + z)(y + z) = (x + y)(x' + z)$). It can be dropped, or added to make
 
 ## Shannon expansion
 
+:::intuition{#shannon-intuition title="Ask one question, then deal with the two cases" depth="standard"}
+A complicated rule often becomes simple once one fact is known. "Is the customer a member?" If yes,
+the rule is one thing; if no, it is another. Shannon's expansion does exactly this to a Boolean
+function: pick one variable, write down what the function becomes when that variable is 0 and when it
+is 1, and glue the two answers together with the variable as the selector. Repeating it on every
+variable gives a decision tree, which is how a multiplexer computes any function.
+:::
+
 Any function can be split on one of its variables into "what it does when the variable is 0" and
 "what it does when it is 1". This is the most general simplification tool there is, and it is also
 the idea behind multiplexers (Chapter 4).
@@ -605,7 +650,8 @@ For $f(x_1, x_2, \dots, x_n)$, the **cofactors** with respect to $x_1$ are
 $$
 f_{x_1'} = f(0, x_2, \dots, x_n), \qquad f_{x_1} = f(1, x_2, \dots, x_n) :
 $$
-$f$ with $x_1$ fixed to 0 and to 1. Each is a function of the remaining $n - 1$ variables. For
+$f$ with $x_1$ fixed to 0 and to 1. Each is a function of the remaining $n - 1$ variables. In this
+lesson we also write them $f|_{x_1=0}$ and $f|_{x_1=1}$; the three notations mean the same thing. For
 $f = AB + A'C$: $f(0, B, C) = C$ and $f(1, B, C) = B$.
 :::
 
@@ -676,7 +722,9 @@ $f = B'(A'C) + B(A + C)$.
 :::
 
 :::answer
-$f = A'B'C + AB + BC$ after expanding; $BC$ is the consensus term, so this simplifies back to $AB + A'C$.
+$f = A'B'C + AB + BC$ after expanding. To simplify back: $A'B'C + BC = C(A'B' + B) = C(A' + B) = A'C + BC$
+(redundant literal), so $f = AB + A'C + BC$; now $BC$ is the consensus of $AB$ and $A'C$, and it drops:
+$f = AB + A'C$.
 :::
 ::::
 
@@ -728,6 +776,13 @@ $x$ cannot be dropped.
 
 ## Proving and disproving identities
 
+:::intuition{#prove-intuition title="One counterexample sinks a claim; a proof must cover every case" depth="standard"}
+"All swans are white" is refuted by one black swan, but no number of white swans proves it. Boolean
+identities are the same, with one happy difference: there are only finitely many cases ($2^n$ rows),
+so you *can* look at every swan. Disproving needs one row; proving needs all rows or an algebraic
+argument that covers them all at once.
+:::
+
 Many GATE questions are "which of these is NOT valid?" or "which are CORRECT?". Proving and
 disproving are different kinds of work, and the fastest route to each is different.
 
@@ -743,8 +798,9 @@ disproving are different kinds of work, and the fastest route to each is differe
 :::trick{#counterexample title="Try the easy rows first" depth="standard"}
 For a claimed identity, test the all-0 row, the all-1 row and the rows with a single 1 before doing
 any algebra. Most false identities fail on one of them: $x \cdot x' = 1$ fails at once. Be
-persistent, though: $(x + y) \oplus z = x \oplus (y + z)$ *agrees* at $x = 1, y = 0, z = 0$ (both
-sides 1) and only fails at $x = 0, y = 1, z = 1$ (left $1 \oplus 1 = 0$, right $0 \oplus 1 = 1$).
+persistent, though: $(x + y) \oplus z = x \oplus (y + z)$ *agrees* on all the easy rows (000, 111,
+100, 010, 001) and fails only on 011 (left $1 \oplus 1 = 0$, right $0 \oplus 1 = 1$) and 110 (left
+$1 \oplus 0 = 1$, right $1 \oplus 1 = 0$).
 
 **Why it works:** a single differing row disproves an identity. **When it fails:** agreement on the
 rows you tried proves nothing; an identity can fail only on one rare row, so a *proof* still needs
@@ -754,7 +810,88 @@ algebra or the full table.
 The example in the trick is worth noticing: the first row you try may agree, and that tells you
 nothing. Keep going until a row differs, or switch to proving.
 
+### Worked examples: proving, disproving and dualising
+
+::::example{#ex-pd-disprove level="easy" title="Disprove with one row" depth="quick"}
+Is $x + yz = (x + y)z$ an identity?
+
+:::step{why="Try the row that makes the left side 1 most cheaply while the right side may be 0: x = 1, z = 0."}
+At $x = 1, y = 0, z = 0$: left $1 + 0 = 1$; right $(1 + 0) \cdot 0 = 0$.
+:::
+
+:::step{why="One differing row is a complete disproof; the correct law is x + yz = (x + y)(x + z)."}
+So it is not an identity.
+:::
+
+:::answer
+No. It fails at $x = 1, y = 0, z = 0$.
+:::
+::::
+
+::::example{#ex-pd-table level="medium" title="Prove by perfect induction" depth="standard"}
+Prove $x'y + xy' + xy = x + y$.
+
+:::step{why="Two variables give only four rows, so list them all."}
+Rows 00, 01, 10, 11: left side $0, 1, 1, 1$ (each row is covered by the term whose literals it matches, and row 00 by none).
+:::
+
+:::step{why="The right side is OR."}
+$x + y$: $0, 1, 1, 1$.
+:::
+
+:::step{why="Equal on every row means equal as functions; algebra agrees: xy′ + xy = x, then x + x′y = x + y."}
+The identity holds.
+:::
+
+:::answer
+True on all four rows (and by algebra: $x(y' + y) + x'y = x + x'y = x + y$).
+:::
+::::
+
+::::example{#ex-pd-conditional level="gate" title="A conditional identity" depth="standard"}
+Show that $x \oplus y = x + y$ holds **whenever** $xy = 0$, but is not an identity.
+
+:::step{why="XOR and OR differ only on the row where both inputs are 1."}
+Rows 00, 01, 10 give $x \oplus y = x + y$ (0, 1, 1); row 11 gives $0 \ne 1$.
+:::
+
+:::step{why="The condition xy = 0 excludes exactly row 11."}
+On every allowed row the two sides agree.
+:::
+
+:::answer
+It holds under $xy = 0$ (rows 00, 01, 10) and fails without it (row 11). A GATE option that states the condition is valid.
+:::
+::::
+
+::::example{#ex-pd-dual level="gate" title="Edge case: a law from its dual" depth="standard"}
+Use duality to obtain a second identity from $x + x'y = x + y$, and check it.
+
+:::step{why="Swap + with · (keeping the grouping); variables and primes stay."}
+Dual: $x \cdot (x' + y) = x \cdot y$.
+:::
+
+:::step{why="Check it independently: expand the left side."}
+$xx' + xy = 0 + xy = xy$. True.
+:::
+
+:::step{why="The dual is a new law, not the complement: the complement of x + y would be x′y′."}
+Note the difference: the dual of the right side $x + y$ is $xy$, while its complement is $x'y'$.
+:::
+
+:::answer
+$x(x' + y) = xy$ (the dual redundant-literal rule), true by the duality principle.
+:::
+::::
+
 ## Solving Boolean equations
+
+:::intuition{#equations-intuition title="Each equation crosses out some rows" depth="standard"}
+A system of Boolean equations is a sieve. Start with every possible assignment of the variables; each
+equation crosses out the rows on which its two sides differ; the rows that survive every equation are
+the solutions. Because a sum is 0 only when every term is 0, equations of the form "sum = 0" cross out
+most rows at once, so start with them.
+:::
 
 A Boolean equation is solved by finding the input values that make it true. GATE has asked for the
 solution of small systems three times; the method uses two facts and a little bookkeeping.

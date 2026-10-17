@@ -503,28 +503,29 @@ def shannon_tree():
 
 @scene
 def equation_sieve():
-    V = ["A", "B", "C", "D"]
-    eqs = [("A' + AB", "0"), ("AB", "AC"), ("AB + AC' + CD", "C'D")]
+    V = ["P", "Q", "R", "S"]
+    eqs = [("P + Q", "1"), ("PQ", "0"), ("Q + R", "R"), ("P'R + S", "0")]
     alive, survivors = set(range(16)), []
     for lhs, rhs in eqs:
         alive = {i for i in alive if bl.tt(lhs, V)[i] == bl.tt(rhs, V)[i]}
         survivors.append(sorted(alive))
-    assert survivors == [[8, 9, 10, 11], [8, 9], [9]]
+    assert survivors == [[4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], [4, 5, 6, 7, 8, 9, 10, 11], [6, 7, 8, 9, 10, 11], [8, 10]]
     W, NW = 640, 360
     vals = [[f"{4 * r + c:04b}" for c in range(4)] for r in range(4)]
     els = [*heads("Solving a system by striking out rows", "Solve by striking out rows", W),
            el("g", "grid", {"x": 40, "y": 70, "cell": 70}, x=180, y=64, rows=4, cols=4, cell=70, values=vals, mono=True),
            text("eq", W / 2, 370, "", {"x": NW / 2, "y": 370, "size": 12}, anchor="middle", size=15, mono=True)]
-    names = ["A′ + AB = 0", "AB = AC", "AB + AC′ + CD = C′D"]
-    extra = ["A sum is 0 only if every term is 0: A′ = 0 forces A = 1, then AB = 0 forces B = 0. Four rows survive.",
-             "With A = 1 and B = 0 the equation reads 0 = C, so C = 0. Two rows survive.",
-             "With A = 1, B = 0, C = 0 it reads 0 + 1 + 0 = D, so D = 1. One row survives: ABCD = 1001."]
+    names = ["P + Q = 1", "PQ = 0", "Q + R = R", "P′R + S = 0"]
+    extra = ["At least one of P, Q is 1: the four rows with P = Q = 0 go. Twelve rows survive.",
+             "P and Q are not both 1: the four rows with P = Q = 1 go. Exactly one of P, Q is 1 on the eight survivors.",
+             "Q + R = R means Q = 1 forces R = 1: rows 0100 and 0101 go. Six rows survive.",
+             "A sum equal to 0: S = 0, and P = 0 forces R = 0, which kills the remaining P = 0 rows. Two rows survive: PQRS = 1000 and 1010."]
     st = []
     for ss, nm, ex in zip(survivors, names, extra):
         v = [[(f"{4 * r + c:04b}" if 4 * r + c in ss else "·") for c in range(4)] for r in range(4)]
         st.append(step(f"Equation: {nm}. {ex}", ("g", {"values": v, "highlight": [[i // 4, i % 4] for i in ss]}), ("eq", {"text": nm})))
     return spec("A system of Boolean equations solved by elimination", (W, 400), (NW, 400),
-                "All 16 assignments of A, B, C, D (row ABCD). Each equation keeps only the rows on which its two sides are equal.", els, st)
+                "All 16 assignments of P, Q, R, S (row PQRS). Each equation keeps only the rows on which its two sides are equal.", els, st)
 
 
 # ── Lesson 3: XOR and operators ─────────────────────────────────────────────

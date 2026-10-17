@@ -39,7 +39,7 @@ gate is enough to build everything; Lesson 6 reads whole circuits, including the
 |:--|:--|
 | PYQs mapped to this lesson | 1 (1999), but every circuit question in this chapter assumes it |
 | Marks | 1 one-mark MCQ |
-| Pattern | A gate with tied or constant inputs: which of these equals $x'$? |
+| Pattern | A gate with tied or constant inputs: which of these is NOT equivalent to $x'$? |
 | Where it reappears | Universal gates (Lesson 5), circuit analysis (Lesson 6), multiplexers and adders (Chapters 4–5) |
 | What examiners test | Controlling values (a 1 into a NOR forces 0), the difference between a gate's symbol and its bubbles, and positive vs negative logic |
 :::
@@ -164,6 +164,19 @@ NOT: the opposite. The bubble, not the body, means inversion.
 
 ## The derived gates: NAND, NOR, XOR and XNOR
 
+:::intuition{#derived-intuition title="Two questions the basic gates cannot ask in one step" depth="standard"}
+AND and OR answer "are they all on?" and "is any of them on?". Two other questions come up all the
+time. The first is the negative of the old ones: "is it *not* the case that all are on?" (a warning
+light that stays lit until every door is shut) and "is *none* of them on?". Those are AND and OR with
+their answer flipped: NAND and NOR. Flipping the answer costs nothing in silicon (an inverting gate is
+actually the cheaper one), so these two are the real workhorses of chip design.
+
+The second question compares inputs: "are these two bits different?" or "are they the same?". A
+staircase light that either switch can toggle, a parity check that asks whether an odd number of bits
+flipped, an adder's sum bit: all of them ask "differ?". That is XOR, and its opposite, "same?", is
+XNOR. Neither can be built from a single AND or OR, which is why they get their own symbols.
+:::
+
 Four more gates appear everywhere. Two of them are basic gates with the output inverted; the other
 two compare their inputs.
 
@@ -173,13 +186,13 @@ two compare their inputs.
 - **NOR** = OR followed by NOT: $F = (A + B)' = \overline{A + B}$. The output is 1 only when all
   inputs are 0. Table: 1, 0, 0, 0. Symbol: the OR body with an output bubble.
 
-In circuits NAND is written $A \uparrow B$ (the Sheffer stroke) and NOR $A \downarrow B$ (the Peirce
+In logic notation NAND is written $A \uparrow B$ (the Sheffer stroke) and NOR $A \downarrow B$ (the Peirce
 arrow). Lesson 5 shows that either one, on its own, can build every Boolean function.
 :::
 
 :::definition{#xor-gate term="XOR (exclusive OR)" depth="quick"}
 $F = A \oplus B = A'B + AB'$: the output is 1 when the inputs **differ**. Table: 0, 1, 1, 0.
-With more inputs, an XOR is 1 when an **odd** number of inputs are 1, so it is the parity bit of
+With more inputs, an XOR is 1 when an **odd** number of inputs are 1, so it is the even-parity bit of
 [Chapter 1's parity codes](lesson:codes). The symbol is the OR body with a second curved line
 behind it.
 :::
@@ -189,7 +202,7 @@ $F = A \odot B = (A \oplus B)' = AB + A'B'$: the output is 1 when the inputs are
 1, 0, 0, 1. It is a one-bit equality detector. The symbol is the XOR body with an output bubble.
 :::
 
-Now see all seven at once. Each gate gets the same inputs; as A and B step through 00, 01, 10 and
+Now see all seven at once. Each two-input gate gets the same inputs A and B (NOT reads only A); as A and B step through 00, 01, 10 and
 11, the output of every gate lights up and its truth table fills in underneath.
 
 :::viz{#gates-viz spec="gate-symbols" mode="animate" depth="standard"}
@@ -228,8 +241,8 @@ $x \text{ NAND } x = x \text{ NAND } 1 = x \text{ NOR } x = x \text{ NOR } 0 = x
 **Why it works:** tying both inputs to $x$ makes AND and OR return $x$ itself, and the output bubble
 inverts it; feeding the *non-controlling* constant also passes $x$ through to the bubble. XOR with 1
 is the controlled inverter with its control on. **When it fails:** AND and OR have no bubble, so
-tying their inputs gives back $x$, not $x'$; and feeding the *controlling* constant (1 into NOR, 0
-into NAND) gives a constant, not $x'$.
+tying their inputs gives back $x$, not $x'$; feeding the *controlling* constant (1 into NOR, 0
+into NAND) gives a constant, not $x'$; and XOR with 0 or XNOR with 1 copies $x$ rather than inverting it.
 :::
 
 :::trap{#trap-nor-1 title="x NOR 1 is 0, not x′" depth="quick"}
@@ -267,10 +280,10 @@ useful, and GATE often hides one of them inside a "defined operator".
 | 1111 | $1$ | constant 1 |
 :::
 
-Two things to take from this table. First, the bottom half is the top half with every bit flipped
+Two things to take from this table. First, the bottom half is the top half flipped and read upwards
 (row $k$ and row $15 - k$ are complements): every function has a complement in the list. Second,
-**implication** $A' + B$ ("if A then B", 1101) is the only common one that is not symmetric in $A$
-and $B$. Lessons 3 and 5 use it repeatedly.
+8 of the 16 functions are not symmetric in $A$ and $B$ (swapping the inputs changes them); the one
+GATE uses most is **implication** $A' + B$ ("if A then B", 1101). Lessons 3 and 5 use it repeatedly.
 
 :::note{#recap-derived title="Recap" depth="quick"}
 NAND 1110, NOR 1000, XOR 0110 (differ, odd), XNOR 1001 (equal). An inverting gate with tied inputs,
@@ -340,7 +353,11 @@ $x \text{ NOR } 0 = (x + 0)' = x'$.
 :::
 
 :::step{why="Two equal inputs never differ, and XOR detects difference."}
-$x \text{ XOR } x = 0$, while $x \text{ XNOR } 1 = x$ (XNOR detects equality, and $x$ equals 1 exactly when $x = 1$).
+$x \text{ XOR } x = 0$.
+:::
+
+:::step{why="XNOR with 1 is 1 exactly when x is 1, so it copies x."}
+$x \text{ XNOR } 1 = x \cdot 1 + x' \cdot 0 = x$.
 :::
 
 :::step{why="A signal and its complement are never both 1, so an AND of them can never be 1."}
@@ -471,10 +488,23 @@ each literal so that it is 1 on that single 1-row (for AND) or 0 on that single 
 
 **Why it works:** an AND is 1 only when all its literals are 1, an OR is 0 only when all its literals
 are 0. **When it fails:** tables with two 1s and two 0s (XOR, XNOR, a copy of $A$) are not a single
-gate of this kind; read them as "differ", "equal" or "copy".
+gate of this kind; read them as "differ", "equal" or "copy". The constant tables 0000 and 1111 have no
+odd row at all: they are the constants, not gates of their inputs.
 :::
 
 ### Multi-input gates
+
+:::intuition{#multi-intuition title="What 'all', 'any' and 'odd' mean for many inputs" depth="standard"}
+A checklist with ten boxes is complete when *all* boxes are ticked: that is a 10-input AND, and it does
+not matter in which order you check the boxes. A fire alarm with ten smoke sensors rings when *any*
+sensor fires: a 10-input OR. A parity checker asks whether an *odd* number of bits are 1: a 10-input
+XOR. Each of these questions can be asked two inputs at a time and the partial answers combined,
+because the order of checking does not matter.
+
+NAND and NOR are different. "Not all ticked" for ten boxes is one question with one final flip; asking
+"not both" for two boxes and then "not both" again with the third box flips the answer twice in the
+middle, which asks a different question. That is why a NAND chain is not a big NAND.
+:::
 
 AND, OR and XOR extend naturally to any number of inputs. NAND and NOR need a moment's care.
 
@@ -505,6 +535,12 @@ $\text{NAND}(\text{NOT}(\text{NAND}(A, B)), C)$, where NOT is a NAND with tied i
 gates. The root cause is that NAND is not associative (proved in Lesson 3).
 :::
 
+:::trap{#trap-xnor-many title="A chain of XNOR gates is not an n-input XNOR gate" depth="quick"}
+For an odd number of inputs, a chain of 2-input XNORs equals the $n$-input **XOR**, not the $n$-input
+XNOR: $(x \odot y) \odot z = x \oplus y \oplus z$, because the two inversions inside the chain cancel.
+The expected wrong answer is the complement, $(x \oplus y \oplus z)'$. Lesson 3 proves the general rule.
+:::
+
 :::definition{#buffer term="Buffer" depth="standard"}
 A **buffer** has one input and outputs the same value: $F = A$. It is drawn as the NOT triangle
 without a bubble. Logically it does nothing, but physically it re-drives a weak signal so that it can
@@ -520,6 +556,16 @@ enabled at a time. The Z state is not a logic value; it is the absence of a driv
 :::
 
 ## Bubbles, active-low signals and De Morgan in pictures
+
+:::intuition{#bubble-intuition title="Saying the same rule in the negative" depth="standard"}
+"The lift may move only if *both* doors are closed" and "the lift must stop if *either* door is open"
+are the same rule, said once in the positive and once in the negative. Turning a rule inside out like
+this swaps "both" with "either" and turns every condition into its opposite. In gate pictures, "the
+opposite" is a bubble, "both" is an AND body and "either" is an OR body. So a gate can be redrawn by
+moving its bubbles across it, provided the body changes from AND to OR (or back) at the same time.
+That is all De Morgan's law says, and engineers use it to draw each gate in the form that matches what
+its signals mean.
+:::
 
 The bubble deserves more attention. It is an inversion that can sit on an output *or on an input*,
 and engineers move bubbles around a circuit to make it easier to read.
@@ -570,6 +616,15 @@ AND–OR circuits into NAND-only circuits.
 
 ## Positive and negative logic
 
+:::intuition{#posneg-intuition title="A dictionary can be read in either direction" depth="standard"}
+A chip only knows voltages: high and low. "1" is a word we attach to one of them. If a colleague
+attaches it to the other one, the chip does not change at all, but every 0 in their truth tables is a
+1 in yours and vice versa, inputs and outputs alike. So the same chip implements one function in your
+language and a related one in theirs. The related function is always the *dual*: flip every input,
+apply the function, flip the output. For an AND chip that turns "all high" into "any low", which reads
+as an OR.
+:::
+
 So far 1 meant "high voltage". That is a convention, not a law of nature.
 
 :::definition{#pos-neg-logic term="Positive and negative logic" depth="quick"}
@@ -598,8 +653,8 @@ alike.
 Let $x = (x_1, \dots, x_n)$ be the negative-logic values on the inputs. The voltages are the same
 as positive-logic values $x' = (x_1', \dots, x_n')$, so the chip produces the positive-logic output
 $f(x')$. Read in negative logic, that output is $\big(f(x')\big)'$. So the function seen in negative
-logic is $x \mapsto (f(x'))'$, the dual of $f$ (Lesson 2 shows that this is exactly "swap AND with
-OR and 0 with 1").
+logic is $x \mapsto (f(x'))'$, the dual of $f$. (Lesson 2, `#dual-def`, proves that this function is
+exactly what you get by swapping AND with OR and 0 with 1 in any expression of $f$.)
 
 For AND: $(x_1' x_2')' = x_1 + x_2$ by De Morgan, an OR. For XOR: $(x_1' \oplus x_2')' = (x_1 \oplus
 x_2)'$, an XNOR, because complementing both inputs of an XOR leaves it unchanged (Lesson 3).
@@ -691,6 +746,14 @@ inputs. Reading a circuit in negative logic turns every function into its dual.
 :::
 
 ## Reading a circuit, gate by gate
+
+:::intuition{#read-intuition title="A circuit is a recipe" depth="standard"}
+A recipe says: whisk the eggs, melt the butter, then fold the melted butter into the whisked eggs.
+Each step uses ingredients or the results of earlier steps, and you cannot fold before both earlier
+steps are done. A circuit is the same: each gate uses circuit inputs or the outputs of gates further
+left, and a gate's output is known only once all of its inputs are. So you read a circuit by naming
+each intermediate result and working from left to right, exactly as you would follow the recipe.
+:::
 
 A circuit is a set of gates whose outputs feed other gates. To find what it computes, give every
 gate output a name, then either follow one input row through the circuit or write each gate's
