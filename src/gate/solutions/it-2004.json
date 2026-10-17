@@ -2226,22 +2226,27 @@
       "verification": "Carry into MSB vs carry out: (1) 1 vs 1, (2) 1 vs 0 ⇒ overflow, (3) 1 vs 1 ✓"
     },
     "it-2004-it-43": {
-      "approach": "Expand each octal digit to 3 bits, then regroup the bits into 4s (hex) and 2s (base 4).",
+      "approach": "Concept tested: one binary string read in several power-of-2 bases. Expand the octal number to bits once, then regroup in fours (hex) and in twos (base 4).",
       "concepts": [
-        "Base conversion via binary"
+        "Grouping theorem",
+        "Octal, hex and base 4"
       ],
       "steps": [
         {
-          "title": "Octal → binary",
-          "body": "$1\\,2\\,3\\,4\\,5\\,6 \\to 001\\,010\\,011\\,100\\,101\\,110 = 1010011100101110_2$."
+          "title": "Octal to bits",
+          "body": "$1\\,2\\,3\\,4\\,5\\,6 \\to 001\\,010\\,011\\,100\\,101\\,110$, i.e. $1010011100101110$ after dropping the leading zeros."
         },
         {
-          "title": "Binary → hex",
-          "body": "$1010\\,0111\\,0010\\,1110 = A\\,7\\,2\\,E$ ⇒ $(A72E)_{16}$."
+          "title": "Fours from the right (hex)",
+          "body": "$1010\\;0111\\;0010\\;1110 \\to A, 7, 2, E$: $(A72E)_{16}$."
         },
         {
-          "title": "Binary → base 4",
-          "body": "$10\\,10\\,01\\,11\\,00\\,10\\,11\\,10 = 2\\,2\\,1\\,3\\,0\\,2\\,3\\,2$ ⇒ $(22130232)_4$."
+          "title": "Twos from the right (base 4)",
+          "body": "$10\\;10\\;01\\;11\\;00\\;10\\;11\\;10 \\to 2, 2, 1, 3, 0, 2, 3, 2$: $(22130232)_4$."
+        },
+        {
+          "title": "Match the option",
+          "body": "Only option A has both $A72E$ and $22130232$."
         }
       ],
       "answer": {
@@ -2255,28 +2260,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: both conversions match."
+          "reason": "Both forms match the regrouped bits."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Hex right, but the base-4 tail should be 0232 (bits 00 10 11 10), not 1122."
+          "reason": "The hex part is right, but $22131122$ is not the 2-bit regrouping of the same bits (the middle pairs are wrong)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Third hex digit is 2 (0010), not 3."
+          "reason": "$A73E$ has $0011$ where the bits are $0010$; one bit is wrong."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Second hex digit is 7 (0111), not 6; base-4 digit 4 is 3, not 2."
+          "reason": "$A62E$ and $22120232$ both carry the same one-bit error in the third nibble."
         }
       ],
+      "shortcut": "Hex → base 4 is digit by digit: $A = 22$, $7 = 13$, $2 = 02$, $E = 32$, so $A72E \\to 22\\,13\\,02\\,32$. Once the hex is fixed, the base-4 form follows without regrouping.",
       "pitfalls": [
-        "Grouping bits from the left instead of the right."
+        "Expanding an octal digit to 4 bits.",
+        "Regrouping from the left."
       ],
-      "verification": "Decimal: $123456_8=42798$; $A72E_{16}=10\\cdot4096+7\\cdot256+2\\cdot16+14=40960+1792+32+14=42798$ ✓"
+      "verification": "$(123456)_8 = 42798 = (A72E)_{16}$, and $(22130232)_4 = 42798$."
     },
     "it-2004-it-44": {
       "approach": "Convert the terms to minterms and minimise on a K-map; then compare with the options. The printed function has a misprint, so check which single correction makes an option fit.",

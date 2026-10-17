@@ -33,7 +33,7 @@
           "status": "writing",
           "lessons_status": {
             "place-value": "written+checked",
-            "power-of-two-bases": "pending",
+            "power-of-two-bases": "written+checked",
             "fractions-fixed-point": "pending",
             "signed-numbers": "pending",
             "codes": "pending"

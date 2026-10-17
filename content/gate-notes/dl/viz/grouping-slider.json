@@ -1,0 +1,529 @@
+{
+ "version": 1,
+ "title": "Grouping bits into octal and hex digits",
+ "width": 560,
+ "height": 300,
+ "intro": "The seven bits 1011010. The red dot marks the radix point at the right end. Dashed cells on the left are padding zeros that will appear when a group runs short.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 280,
+   "y": 24,
+   "text": "Grouping the bits of (1011010)₂ from the right",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold"
+  },
+  {
+   "id": "b0",
+   "type": "box",
+   "x": 55,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": true,
+   "dashed": true,
+   "tone": "muted",
+   "label": "0"
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 105,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": true,
+   "dashed": true,
+   "tone": "muted",
+   "label": "0"
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 155,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": false,
+   "dashed": false,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "b3",
+   "type": "box",
+   "x": 205,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": false,
+   "dashed": false,
+   "tone": "ink",
+   "label": "0"
+  },
+  {
+   "id": "b4",
+   "type": "box",
+   "x": 255,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": false,
+   "dashed": false,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "b5",
+   "type": "box",
+   "x": 305,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": false,
+   "dashed": false,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "b6",
+   "type": "box",
+   "x": 355,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": false,
+   "dashed": false,
+   "tone": "ink",
+   "label": "0"
+  },
+  {
+   "id": "b7",
+   "type": "box",
+   "x": 405,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": false,
+   "dashed": false,
+   "tone": "ink",
+   "label": "1"
+  },
+  {
+   "id": "b8",
+   "type": "box",
+   "x": 455,
+   "y": 70,
+   "w": 50,
+   "h": 50,
+   "mono": true,
+   "size": 22,
+   "hidden": false,
+   "dashed": false,
+   "tone": "ink",
+   "label": "0"
+  },
+  {
+   "id": "pt",
+   "type": "text",
+   "x": 511,
+   "y": 106,
+   "text": "•",
+   "size": 26,
+   "weight": "bold",
+   "tone": "danger"
+  },
+  {
+   "id": "ptl",
+   "type": "text",
+   "x": 501,
+   "y": 144,
+   "text": "point",
+   "size": 14,
+   "tone": "danger"
+  },
+  {
+   "id": "o0",
+   "type": "line",
+   "points": [
+    [
+     359,
+     130
+    ],
+    [
+     359,
+     140
+    ],
+    [
+     501,
+     140
+    ],
+    [
+     501,
+     130
+    ]
+   ],
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "o0t",
+   "type": "text",
+   "x": 430.0,
+   "y": 168,
+   "text": "2",
+   "anchor": "middle",
+   "size": 22,
+   "mono": true,
+   "weight": "bold",
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "o1",
+   "type": "line",
+   "points": [
+    [
+     209,
+     130
+    ],
+    [
+     209,
+     140
+    ],
+    [
+     351,
+     140
+    ],
+    [
+     351,
+     130
+    ]
+   ],
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "o1t",
+   "type": "text",
+   "x": 280.0,
+   "y": 168,
+   "text": "3",
+   "anchor": "middle",
+   "size": 22,
+   "mono": true,
+   "weight": "bold",
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "o2",
+   "type": "line",
+   "points": [
+    [
+     59,
+     130
+    ],
+    [
+     59,
+     140
+    ],
+    [
+     201,
+     140
+    ],
+    [
+     201,
+     130
+    ]
+   ],
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "o2t",
+   "type": "text",
+   "x": 130.0,
+   "y": 168,
+   "text": "1",
+   "anchor": "middle",
+   "size": 22,
+   "mono": true,
+   "weight": "bold",
+   "tone": "subject",
+   "hidden": true
+  },
+  {
+   "id": "h0",
+   "type": "line",
+   "points": [
+    [
+     309,
+     130
+    ],
+    [
+     309,
+     140
+    ],
+    [
+     501,
+     140
+    ],
+    [
+     501,
+     130
+    ]
+   ],
+   "tone": "info",
+   "hidden": true
+  },
+  {
+   "id": "h0t",
+   "type": "text",
+   "x": 405.0,
+   "y": 168,
+   "text": "A",
+   "anchor": "middle",
+   "size": 22,
+   "mono": true,
+   "weight": "bold",
+   "tone": "info",
+   "hidden": true
+  },
+  {
+   "id": "h1",
+   "type": "line",
+   "points": [
+    [
+     109,
+     130
+    ],
+    [
+     109,
+     140
+    ],
+    [
+     301,
+     140
+    ],
+    [
+     301,
+     130
+    ]
+   ],
+   "tone": "info",
+   "hidden": true
+  },
+  {
+   "id": "h1t",
+   "type": "text",
+   "x": 205.0,
+   "y": 168,
+   "text": "5",
+   "anchor": "middle",
+   "size": 22,
+   "mono": true,
+   "weight": "bold",
+   "tone": "info",
+   "hidden": true
+  },
+  {
+   "id": "ans",
+   "type": "box",
+   "x": 130,
+   "y": 236,
+   "w": 300,
+   "h": 44,
+   "mono": true,
+   "size": 18,
+   "hidden": true,
+   "tone": "success",
+   "fill": "success",
+   "label": ""
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start at the radix point (here, just right of the last bit) and cut off three bits: 010. Three bits make one octal digit, and 010 is 2.",
+   "patches": [
+    {
+     "id": "o0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "o0t",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The next three bits to the left, 011, are the octal digit 3.",
+   "patches": [
+    {
+     "id": "o1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "o1t",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Only one bit, 1, is left. Pad it on the left with two zeros (that adds nothing to the value) to make 001 = 1.",
+   "patches": [
+    {
+     "id": "b0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "o2t",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Read the groups left to right: (1011010)₂ = (132)₈. Check: 64 + 24 + 2 = 90.",
+   "patches": [
+    {
+     "id": "ans",
+     "set": {
+      "hidden": false,
+      "label": "(1011010)₂ = (132)₈"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Now regroup in fours for hexadecimal, again starting at the point: 1010 is A.",
+   "patches": [
+    {
+     "id": "o0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "o0t",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "o1t",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "o2t",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ans",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "h0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "h0t",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The last three bits 101 need one padding zero: 0101 = 5. So (1011010)₂ = (5A)₁₆ = 5·16 + 10 = 90.",
+   "patches": [
+    {
+     "id": "h1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "h1t",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ans",
+     "set": {
+      "hidden": false,
+      "label": "(1011010)₂ = (5A)₁₆"
+     }
+    }
+   ]
+  }
+ ]
+}

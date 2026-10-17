@@ -839,20 +839,23 @@
       "verification": "Count: from $-2^{n-1}$ to $2^{n-1}-1$ there are $2^n$ integers, matching $n$ bits."
     },
     "cse-2005-cs-17": {
-      "approach": "Convert octal to binary (3 bits per digit), then regroup into 4-bit groups from the right.",
+      "approach": "Concept tested: octal → hex by grouping bits. 8 and 16 are both powers of 2, so expand each octal digit to 3 bits and regroup the same bits in fours, starting from the right end (the radix point).",
       "concepts": [
-        "Base conversion",
-        "Octal",
-        "Hexadecimal"
+        "Grouping theorem",
+        "Octal to hex via binary"
       ],
       "steps": [
         {
-          "title": "Octal to binary",
-          "body": "$6\\to110,\\ 5\\to101,\\ 7\\to111$: $657_8=110\\,101\\,111_2$."
+          "title": "Expand each octal digit to 3 bits",
+          "body": "$6 \\to 110$, $5 \\to 101$, $7 \\to 111$: $(657)_8 = (110\\,101\\,111)_2$."
         },
         {
-          "title": "Regroup by 4",
-          "body": "$1\\,1010\\,1111_2 = 1\\ \\text{A}\\ \\text{F} = 1\\text{AF}_{16}$."
+          "title": "Regroup in fours from the right",
+          "body": "$1\\;1010\\;1111$, and pad the leftover bit: $0001\\;1010\\;1111$."
+        },
+        {
+          "title": "Read the hex digits",
+          "body": "$0001 = 1$, $1010 = A$, $1111 = F$, so $(657)_8 = (1AF)_{16}$."
         }
       ],
       "answer": {
@@ -866,25 +869,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: both equal $431_{10}$."
+          "reason": "$(1AF)_{16} = 256 + 160 + 15 = 431 = 6\\cdot64 + 5\\cdot8 + 7$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\text{D78}_{16}=3448$, not 431."
+          "reason": "$D78$ comes from cutting fours from the **left** ($1101\\;0111\\;1$) and padding the last bit on the right ($1000 = 8$). Groups must start at the radix point."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\text{D71}_{16}=3441$, not 431."
+          "reason": "$D71$ is the same left-grouping mistake with the stray bit read as $0001$; still misaligned."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\text{32F}_{16}=815$, not 431."
+          "reason": "$(32F)_{16} = 815$, not 431; it does not come from a valid regrouping of $110101111$."
         }
       ],
-      "verification": "$657_8=6\\cdot64+5\\cdot8+7=431$; $1\\text{AF}_{16}=256+160+15=431$."
+      "shortcut": "With the nibble table memorised: write the 9 bits, mark fours from the right, read $1|A|F$. No decimal needed.",
+      "pitfalls": [
+        "Grouping from the left (gives D78).",
+        "Going through decimal and slipping in the division."
+      ],
+      "verification": "$(657)_8 = 384 + 40 + 7 = 431$ and $(1AF)_{16} = 256 + 160 + 15 = 431$."
     },
     "cse-2005-cs-18": {
       "approach": "Expand each product term of the options into minterms and pick the one whose union is exactly {1,4,5,9,11,12}.",
