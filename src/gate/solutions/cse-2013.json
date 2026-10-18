@@ -754,7 +754,7 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "A decoder maps an $n$-bit number to $2^n$ one-hot outputs; here 4 inputs give a 2-bit code, the opposite direction, and no decoder table has x's in its address columns."
+          "reason": "A decoder maps an $n$-bit number to $2^n$ one-hot outputs; here 4 inputs give a 2-bit code, the opposite direction, and a decoder's table has x's in its address columns only on the disabled row ($E = 0$, all outputs 0), never on rows with a 1 output."
         },
         {
           "option": "C",
@@ -772,7 +772,7 @@
         "Choosing \"decoder\" because the word \"valid\" sounds like an enable.",
         "Reading $X_1$ as the high bit because it is the usual name; the table puts $X_0$ first, and it is $X_0$ that is 1 for $D_2$ and $D_3$."
       ],
-      "verification": "Expanding the x's, the five rows cover all 16 input patterns (1 + 1 + 2 + 4 + 8) and each agrees with a 4:2 priority encoder ($D_3$ highest) whose code is written $X_0X_1$ with $X_0$ the MSB.",
+      "verification": "Expanding the x's, the five rows cover all 16 input patterns (1 + 1 + 2 + 4 + 8) and each agrees with a 4:2 priority encoder ($D_3$ highest) whose code is written $X_0X_1$ with $X_0$ the MSB. Column order check: $D_2$'s row gives $X_0X_1 = 10$, so $X_0$ is the weight-2 bit (and $D_1$'s row, $X_0X_1 = 01$, confirms $X_1$ is the weight-1 bit).",
       "animation": {
         "kind": "table",
         "title": "The table (D₀ D₁ D₂ D₃ → X₀ X₁ V)",

@@ -67,6 +67,9 @@ for r in cl.rows(V8):
     assert cl.evaluate(net8, r)["Y"] == r[f"I{cl.num([r['S2'], r['S1'], r['S0']])}"]
 r = dict(zip(V8, [1, 0, 1] + [0] * 8)); r["I5"] = 1
 assert cl.evaluate(net8, r)["ma"] == 0 and cl.evaluate(net8, r)["Y"] == 1
+has(':::viz{#mux-enable-expand-viz spec="mux-enable-expand" mode="animate" depth="standard"}')
+# Trap 2002 sentence: only I0 = x (for y = 1) can give a 1.
+has("so only $I_0$ and $I_2$ can be chosen, and $I_2 = y$ is chosen only when $y = 0$", "$f = xy\\overline{z}$. Also check the polarity")
 # 6:1 MUX: 3 selects; unused inputs grounded give 0 on 110 and 111.
 assert cl.select_lines(6) == 3 and cl.mux([1] * 6 + [0, 0], [1, 1, 1]) == 0
 
@@ -75,11 +78,13 @@ net = [("f", "MUX", {"d": ["C", "~C", "~C", "C"], "s": ["A", "B"]})]
 assert ones(net, ABC) == bl.minterms("A \\oplus B \\oplus C", ABC) == [1, 2, 4, 7]
 net14 = [("f", "MUX", {"d": ["0", "1", "R", "~R"], "s": ["P", "Q"]})]
 assert ones(net14, PQR) == [2, 3, 5, 6] and min_sops([2, 3, 5, 6], PQR) == ["P'Q + QR' + PQ'R"]
-assert bl.equal("P'Q + PQ'R + PQR'", "P'Q + QR' + PQ'R", PQR)
+assert bl.equal("P'Q + PQ'R + PQR'", "P'Q + QR' + PQ'R", PQR) and len(re.findall(r"[PQR]", "P'Q + PQ'R + PQR'")) == 8
+has("minimal (8 literals). In GATE 2014 two of the wrong options are also equal to $F$ but are not minimal")
 # Data-input cascade.
 net = [m2("z", "y", "~x", "g"), m2("y", "x", "g", "f")]
 assert ones(net, XYZ) == [2, 3, 4, 5, 6] and min_sops([2, 3, 4, 5, 6], XYZ) == ["x'y + xy' + xz'", "x'y + yz' + xy'"]
 assert bl.minterms("(x \\oplus y) + yz'", XYZ) == [2, 3, 4, 5, 6] and bl.equal("xy' + yz' + x'yz", "x'y + xy' + yz'", XYZ)
+has("there MUX 1 feeds MUX 2's **input 0**, so you substitute $y = 0$ inside $g$")  # 2006: checked against the alt text below
 # Select-driven cascade: X = P' + R', Q vanishes.
 net = [m2("P", "Q", "R", "g"), m2("g", "1", "~P", "X")]
 assert ones(net, PQR, "X") == bl.minterms("P' + R'", PQR) and cl.ones_of(tuple(1 - v for v in cl.truth(net, PQR, "X"))) == [5, 7]
@@ -122,6 +127,14 @@ fm = bl.minterms("A'B + AC", ABC)
 assert cl.impl_table(fm, 3, [0, 1], ABC)[0] == ["0", "1", "C", "C"] and cl.impl_table(fm, 3, [1, 2], ABC)[0] == ["0", "A", "A′", "1"]
 # Fewer selects: majority on a 2:1 MUX with select z.
 assert cl.impl_table(maj, 3, [2], XYZ) == (["xy", "x + y"], ["x", "y"])
+# #ex-impl-fewer: Σ(1, 2, 6, 7) on a 2:1 MUX, select A: I0 = B ⊕ C, I1 = B; with select C: B and XNOR.
+f1267 = [1, 2, 6, 7]
+assert cl.impl_table(f1267, 3, [0], ABC) == (["B′C + BC′", "B"], ["B", "C"])
+assert bl.equal("B'C + BC'", "B \\oplus C", ["B", "C"])
+nf = [("x", "XOR", ["B", "C"]), m2("A", "x", "B", "f")]
+assert ones(nf, ABC) == f1267 and 5 not in f1267 and 3 not in f1267
+assert cl.impl_table(f1267, 3, [2], ABC) == (["B", "A′B′ + AB"], ["A", "B"])
+has("$I_0 = B \\oplus C$ (one XOR), $I_1 = B$ (a wire)")
 # Shannon realisation: for every 3-variable function and every pair of select variables, the residues are 0, 1, x, x′.
 for t in bl.all_functions(3):
     o = cl.ones_of(t)
@@ -186,6 +199,10 @@ want = {bl.tt(e, AB) for e in ["0", "1", "A", "B", "A'", "B'", "AB", "A + B", "A
 assert single == want and len(single) == 12
 for e in ["(AB)'", "(A + B)'", "A \\oplus B", "(A \\oplus B)'"]:
     assert bl.tt(e, AB) not in single
+# Half subtractor from two MUXes without complements: borrow MUX(A; B, 0) = A'B, difference MUX(B; A, A'B).
+hs = [m2("A", "B", "0", "bo"), m2("B", "A", "bo", "d")]
+assert cl.truth(hs, AB, "bo") == bl.tt("A'B", AB) and cl.truth(hs, AB, "d") == bl.tt("A \\oplus B", AB)
+has("borrow $= \\text{MUX}(A;\\ B, 0) = A'B$, and difference $= \\text{MUX}(B;\\ A, A'B)$")
 # Half adder: carry MUX(A; 0, B), sum MUX(A; B, B').
 assert cl.truth([m2("A", "0", "B", "c")], AB, "c") == bl.tt("AB", AB) and cl.truth([m2("A", "B", "~B", "s")], AB, "s") == bl.tt("A \\oplus B", AB)
 # Without constants a MUX preserves 0 (and 1).
@@ -213,6 +230,15 @@ sel_net = [("o", "OR", ["A", "B"]), ("no", "NOT", ["o"]), ("an", "AND", ["A", "B
 spec = {0: "AB", 1: "A \\oplus B", 2: "A + B", 3: "(A + B)'"}
 for r in cl.rows(VS4):
     assert cl.evaluate(sel_net, r)["F"] == bl.ev(bl.parse(spec[2 * r["C1"] + r["C0"]]), r)
+# #ex-app-edge: 00 → A (a wire), 01 → A′, 10 → AB, 11 → A ⊕ B with one inverter, one AND, one XOR.
+edge_net = [("na", "NOT", ["A"]), ("an", "AND", ["A", "B"]), ("xo", "XOR", ["A", "B"]),
+            ("F", "MUX", {"d": ["A", "na", "an", "xo"], "s": ["C1", "C0"]})]
+spec_e = {0: "A", 1: "A'", 2: "AB", 3: "A \\oplus B"}
+for r in cl.rows(VS4):
+    assert cl.evaluate(edge_net, r)["F"] == bl.ev(bl.parse(spec_e[2 * r["C1"] + r["C0"]]), r)
+assert len(edge_net) - 1 == 3
+assert cl.evaluate(edge_net, {"C1": 0, "C0": 0, "A": 1, "B": 0})["F"] == 1 and cl.evaluate(edge_net, {"C1": 1, "C0": 1, "A": 1, "B": 1})["F"] == 0
+has("One 4:1 MUX plus three gates (one inverter, one AND, one XOR) for four operations")
 
 # ── PYQs (keys from the bank as it stands) ─────────────────────────────────
 def key(qid):
@@ -315,7 +341,7 @@ o14 = ones(net14, PQR)
 eq14 = which_eq("cse-2014-1-cs-45", o14, PQR)
 assert eq14 == ["A", "B", "C"]
 lits = {l: len(re.findall(r"[PQR]", bl.option_values(q)[l])) for l in eq14}
-assert lits["A"] == ml.min_literals_sop(o14, [], 3) == 7 and lits["B"] > 7 and lits["C"] > 7 and key("cse-2014-1-cs-45") == "A"
+assert lits["A"] == ml.min_literals_sop(o14, [], 3) == 7 and lits["B"] == lits["C"] == 11 and key("cse-2014-1-cs-45") == "A"
 # 2014-3: if–else is a multiplexer.
 assert bl.option_values(B["cse-2014-3-cs-8"])[key("cse-2014-3-cs-8")] == "Multiplexor"
 # 2016.
@@ -416,11 +442,27 @@ for l, t in bl.option_values(q).items():
         good.append(l)
 bl.assert_msq(q, good)
 assert good == ["A", "B"] and cl.impl_table(f3, 3, [2, 1], ABC)[0] == ["0", "1", "A", "A′"] and cl.impl_table(f3, 3, [0, 2], ABC)[0] == ["B", "B", "B", "B′"]
-# q04: 2^(5−1) = 16:1.
+# q04 (no inverter): 2^5 = 32:1. With 4 selects, parity needs x′ on half the data lines for every choice of
+# selects, and a data line carrying 0, 1 or a variable never shows the pattern (1, 0) on two rows that differ only in x.
 q = P["nx-dl-04-02-q04"]
-bl.assert_mcq(q, [l for l, t in bl.option_values(q).items() if t == f"{2 ** 4} : 1"][0])
-par5 = bl.minterms("A \\oplus B \\oplus C \\oplus D \\oplus E", list("ABCDE"))
-assert all(len(n) > 2 for n in cl.impl_table(par5, 5, [0, 1, 2], list("ABCDE"))[0])
+bl.assert_mcq(q, [l for l, t in bl.option_values(q).items() if t == f"{2 ** 5} : 1"][0])
+assert "no inverter" in q["text"]
+V5 = list("ABCDE")
+par5 = bl.minterms("A \\oplus B \\oplus C \\oplus D \\oplus E", V5)
+for sel in itertools.combinations(range(5), 4):
+    names, rv = cl.impl_table(par5, 5, list(sel), V5)
+    assert names.count(rv[0] + "′") == 8 and names.count(rv[0]) == 8
+# On two rows that differ only in x, a data line wired to 0, 1, x or another variable v reads (0, 0), (1, 1),
+# (0, 1) or (v, v): never (1, 0), so x′ cannot be supplied without an inverter.
+for x in V5:
+    for m in range(32):
+        if not m >> (4 - V5.index(x)) & 1:
+            r0 = dict(zip(V5, cl.bits_of(m, 5)))
+            r1 = {**r0, x: 1}
+            pats = {(0, 0), (1, 1)} | {(r0[v], r1[v]) for v in V5}
+            assert (1, 0) not in pats
+assert all(len(n) > 2 for n in cl.impl_table(par5, 5, [0, 1, 2], V5)[0])
+assert cl.mux_realises(par5, 5, [0, 1, 2, 3, 4], [str(int(m in par5)) for m in range(32)], V5)
 bl.assert_nat(P["nx-dl-04-02-q05"], cl.mux_tree(128, 4)[1])
 assert cl.mux_tree(128, 4)[0] == [32, 8, 2, 1] and cl.mux_tree(128, 2)[1] == 127
 bl.assert_nat(P["nx-dl-04-02-q06"], cl.select_lines(48))

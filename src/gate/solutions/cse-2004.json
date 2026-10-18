@@ -3575,7 +3575,7 @@
         },
         {
           "title": "Two gates are impossible",
-          "body": "Use $f(0000) = 0$, $f(0011) = 0$, $f(0100) = 0$, $f(0101) = 1$, $f(0110) = 1$, $f(1000) = 1$. A NAND/NOR of inputs is 1 on 0000. An AND of literals is 1 on a cube; one holding 0101 and 1000 also holds 0000. An OR of literals is 0 on a cube; one holding 0011 and 0100 also holds 0101. $\\text{OR}(X) + \\text{AND}(Y)$: 0100 and 0011 force $X \\subseteq \\{A\\}$, then 0101 and 0110 force $Y = \\{B\\}$, which makes 0100 a 1. $\\text{AND}(X) \\cdot \\text{OR}(Y)$: 1000 and 0101 force $X = \\varnothing$. Every two-gate circuit is one of these."
+          "body": "Use $f(0000) = 0$, $f(0011) = 0$, $f(0100) = 0$, $f(0101) = 1$, $f(0110) = 1$, $f(1000) = 1$. A NAND/NOR of inputs is 1 on 0000. An AND of literals is 1 on a cube; one holding 0101 and 1000 also holds 0000. An OR of literals is 0 on a cube; one holding 0011 and 0100 also holds 0101. $\\text{OR}(X) + \\text{AND}(Y)$: 0100 and 0011 force $X \\subseteq \\{A\\}$, then 0101 and 0110 force $Y \\subseteq \\{B\\}$; $Y = \\varnothing$ is not a gate, and $Y = \\{B\\}$ makes 0100 a 1. $\\text{AND}(X) \\cdot \\text{OR}(Y)$: 1000 and 0101 force $X = \\varnothing$. Every two-gate circuit is one of these."
         }
       ],
       "answer": {

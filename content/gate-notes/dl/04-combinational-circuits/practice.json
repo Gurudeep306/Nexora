@@ -56,13 +56,13 @@
   "solution": [
    "The 1s are at rows 2, 3, 4, 6: $f = \\Sigma m(2, 3, 4, 6)$.",
    "$A'B$ = rows 2, 3; $AC'$ = rows 4, 6. Together exactly $\\{2, 3, 4, 6\\}$.",
-   "Each other option has a counterexample row: $A \\oplus B$ is 1 on row 5 (101) where $f = 0$; $B \\oplus C$ is 0 on row 3 (011) where $f = 1$; $A'B + AC$ is 1 on row 5 and 0 on row 4."
+   "Each other option has a counterexample row: $A \\oplus B$ is 1 on row 5 (101) where $f = 0$, and 0 on row 6 (110) where $f = 1$; $B \\oplus C$ is 0 on row 3 (011) where $f = 1$; $A'B + AC$ is 1 on row 5 and 0 on row 4."
   ],
   "concept": "An expression represents a table only if it agrees on every row; one counterexample row rejects it.",
   "common_wrong": [
    {
     "answer": "A",
-    "why": "$A \\oplus B$ agrees on rows 0–4 and 6–7 but is 1 on row 5 (101), where the table has 0."
+    "why": "$A \\oplus B$ agrees on rows 0–4 and 7 but is wrong on rows 5 (it gives 1, the table has 0) and 6 (it gives 0, the table has 1)."
    },
    {
     "answer": "D",
@@ -345,7 +345,7 @@
   "solution": [
    "(A) True: two cross-coupled NOR gates (an SR latch) hold either state for the same inputs.",
    "(B) True: the illegal rows are never applied, so their outputs are free.",
-   "(C) False: 'at least two of four' has a minimal SOP of six 2-literal terms (7 gates), while $AB + CD + (A + B)(C + D)$ uses 6 gates.",
+   "(C) False: 'at least two of four' has a minimal SOP of six 2-literal terms (7 gates two-level), while $AB + CD + (A + B)(C + D)$ uses 6 gates and $(A + B + CD)(C + D + AB)$ only 5.",
    "(D) False: unless complemented inputs are stated to be available, each complement needs a NOT gate, which counts."
   ],
   "concept": "Combinational = acyclic; don't-cares come from unused codes; gate counts depend on factoring and on whether complements are free.",
@@ -462,7 +462,7 @@
    },
    {
     "answer": "A",
-    "why": "Keeps $\\overline{A}\\,\\overline{B}$ and attaches $I_2$'s residue to the wrong select value; it is 1 on row 2, where $Y = I_1 = C = 0$."
+    "why": "Turns the $I_2$ term $A\\overline{B}\\,\\overline{C}$ into $B\\overline{C}$ (drops $A$ and complements $B$); it is 1 on row 2, where $Y = I_1 = C = 0$."
    }
   ],
   "blocks": [
@@ -550,7 +550,7 @@
   "solution": [
    "(A) Residue $C$: pairs (0,1)→0,0 → 0; (2,3)→1,1 → 1; (4,5)→0,1 → $C$; (6,7)→1,0 → $\\overline{C}$. Correct.",
    "(B) Residue $A$: column $BC = j$ holds rows $j$ and $j + 4$: (0,4)→0; (1,5)→0,1 → $A$; (2,6)→1,1 → 1; (3,7)→1,0 → $\\overline{A}$. Correct.",
-   "(C) With $S_1 = C$, $S_0 = B$ the select value 01 means $C = 0, B = 1$ (rows 2 and 6, both 1s), so $I_1$ must be 1 and $I_2$ must be $A$: the table is $(0, 1, A, \\overline{A})$. The given wiring outputs $A$ on row 2, where $f = 1$: wrong.",
+   "(C) With $S_1 = C$, $S_0 = B$ the select value 01 means $C = 0, B = 1$ (rows 2 and 6, both 1s), so $I_1$ must be 1 and $I_2$ must be $A$: the table is $(0, 1, A, \\overline{A})$. On row 2 ($ABC = 010$) the selects $CB = 01$ pick $I_1 = A = 0$, but $f = 1$: wrong.",
    "(D) Residue $B$: (0,2)→0,1 → $B$; (1,3)→ $B$; (4,6)→ $B$; (5,7)→1,0 → $\\overline{B}$. $I_3$ must be $\\overline{B}$; with $B$ there it outputs 0 on row 5: wrong."
   ],
   "concept": "Implementation tables for different select choices; the select order permutes the data inputs",
@@ -584,7 +584,7 @@
   "id": "nx-dl-04-02-q04",
   "type": "MCQ",
   "marks": 1,
-  "text": "Every Boolean function of 5 variables must be realisable with one multiplexer, one inverter and the constants 0 and 1, and nothing else. What is the smallest multiplexer that always suffices?",
+  "text": "Every Boolean function of 5 variables must be realisable with one multiplexer and the constants 0 and 1, and nothing else: no inverter, and only the uncomplemented variables are available. What is the smallest multiplexer that always suffices?",
   "options": [
    {
     "l": "A",
@@ -603,21 +603,22 @@
     "t": "4 : 1"
    }
   ],
-  "answer": "B",
+  "answer": "A",
   "solution": [
-   "Put 4 of the variables on the selects of a 16:1 MUX. Each data input serves two rows that differ only in the fifth variable $x$, so its residue is 0, 1, $x$ or $\\overline{x}$; the inverter makes $\\overline{x}$.",
-   "An 8:1 MUX leaves two free variables per data input. For the 5-input parity function every such residue is an XOR or XNOR of two variables, which a wire, a constant or one inverter cannot supply.",
-   "So the smallest MUX is $2^{5-1} = 16$ : 1."
+   "A 32:1 MUX always works: put all 5 variables on the selects and wire the truth table (constants only) to the data inputs.",
+   "A 16:1 MUX with 4 variables on the selects leaves one variable $x$ per data input. Each data input serves two rows that differ only in $x$, and it can carry 0, 1 or a variable. A variable other than $x$ has the same value on both rows, and $x$ itself gives (0, 1), so no data line can give the pattern (1, 0), which is $\\overline{x}$.",
+   "The 5-input parity function needs that pattern: whichever 4 variables are on the selects, half of the data inputs must carry $\\overline{x}$. (With a constant or a repeated variable on a select line, some data input serves rows that differ in two variables and needs an XOR, which is worse.) So no 16:1 wiring works without an inverter, and smaller MUXes fail for the same reason.",
+   "The smallest MUX that always suffices is 32 : 1. With an inverter allowed it would be $2^{5-1} = 16$ : 1; the missing inverter costs a factor of 2."
   ],
-  "concept": "Minimum MUX size for every n-variable function ($2^{n-1}$:1)",
+  "concept": "Minimum MUX size for every n-variable function: $2^{n-1}$:1 with an inverter, $2^n$:1 without one",
   "common_wrong": [
    {
-    "answer": "A",
-    "why": "32:1 works (wire the truth table) but is not the smallest: one variable can go on the data lines."
+    "answer": "B",
+    "why": "16:1 is the answer only when an inverter is available: some functions (parity) need $\\overline{x}$ on a data line, and here nothing can make it."
    },
    {
     "answer": "C",
-    "why": "8:1 would need 2-variable residues such as $u \\oplus v$, which need gates."
+    "why": "8:1 leaves two free variables per data input; parity would need $u \\oplus v$ there, which needs gates."
    }
   ],
   "blocks": [
@@ -1276,7 +1277,7 @@
    "$S = 1, B = 0$: it passes $I_2 = D_3 = AB$, which is 0 because $B = 0$: no row. $S = 1, B = 1$: $I_3 = 0$: no row.",
    "Total 2 (the output is $\\overline{S}\\,\\overline{A}$)."
   ],
-  "concept": "When a variable drives both the decoder and the MUX selects, the select value fixes that variable: count rows jointly, not per data line.",
+  "concept": "When a variable drives both the decoder and the MUX selects, the select value fixes that variable: count rows jointly, not one row per data line.",
   "common_wrong": [
    {
     "answer": 3,
@@ -1289,6 +1290,7 @@
   ],
   "blocks": [
    "decoder-mux-combo",
+   "trap-shared-variable",
    "decoder-minterms"
   ],
   "source": "nexora"
@@ -1384,7 +1386,7 @@
   "answer": 11,
   "solution": [
    "Construction: 6 XNOR gates give $x_5, \\dots, x_0$, and a tree of 5 two-input ANDs combines them: $6 + 5 = 11$.",
-   "Lower bound: $E$ depends on all 12 inputs (changing any single bit of an equal pair makes them unequal), and a circuit of 2-input gates whose output depends on $m$ inputs needs at least $m - 1$ gates (the graph argument of the XOR-tree theorem).",
+   "Lower bound: $E$ depends on all 12 inputs (changing any single bit of an equal pair makes them unequal), and any circuit of 2-input gates whose output depends on $m$ inputs needs at least $m - 1$ gates (the graph argument of the XOR-tree proof, which holds for every such function, not only parity).",
    "$12 - 1 = 11$, so 11 is optimal."
   ],
   "concept": "Any 2-input-gate circuit depending on $m$ inputs has at least $m - 1$ gates; the XNOR + AND tree meets the bound.",
@@ -1733,7 +1735,7 @@
    },
    {
     "answer": "B",
-    "why": "The patterns differ, so $E = 0$; $-6$ and $10$ share a pattern, but $A$ and $B$ do not."
+    "why": "The signed values $-6$ and $6$ do have the same absolute value, but a comparator compares bit patterns, and $1010 \\ne 0110$, so $E = 0$."
    }
   ],
   "blocks": [
@@ -2052,14 +2054,14 @@
    },
    {
     "l": "C",
-    "t": "2"
+    "t": "1"
    },
    {
     "l": "D",
-    "t": "1"
+    "t": "2"
    }
   ],
-  "answer": "D",
+  "answer": "C",
   "solution": [
    "$f$ is 0 only on row 7, so $f = A' + B' + C'$: three single-literal terms, and in a PLA each takes a product line.",
    "The complement has one 1: $f' = ABC$, one product term.",
@@ -2076,7 +2078,7 @@
     "why": "Counts minterms, as a ROM would."
    },
    {
-    "answer": "C",
+    "answer": "D",
     "why": "No 2-term SOP covers seven minterms of three variables."
    }
   ],
