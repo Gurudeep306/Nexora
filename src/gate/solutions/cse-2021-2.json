@@ -3915,35 +3915,108 @@
       "verification": "Seven S-productions, each once with the dot at the start, plus the kernel item S → <•S> = 8."
     },
     "cse-2021-2-cs-52": {
-      "approach": "Translate the three conditions into minterms on a 4-variable K-map, mark the uncovered cells, and group. The cover $x'y' + xy + wz$ needs 6 literals.",
+      "approach": "Concept tested: **a function defined by conditions**. Each condition fills a region of the map; fill them all, notice the cells no condition reaches, and minimise with those cells as don't-cares.",
       "concepts": [
-        "K-map",
-        "Minimal SOP",
+        "Partial specification",
+        "Don't-cares",
         "Literal count"
       ],
       "steps": [
         {
-          "title": "Ones and zeros (order w x y z)",
-          "body": "- $f(w,0,0,z) = 1$: 0000, 0001, 1000, 1001 are 1.\n- $f(1,x,1,z) = x+z$: 1011, 1110, 1111 are 1; 1010 is 0.\n- $f(w,1,y,z) = wz + y$: 0110, 0111, 1101, 1110, 1111 are 1; 0100, 0101, 1100 are 0.\n- 0010, 0011 are not fixed by any condition."
+          "title": "f(w, 0, 0, z) = 1",
+          "body": "$x = y = 0$: cells 0, 1, 8, 9 are 1."
         },
         {
-          "title": "Group",
-          "body": "- $x'y'$ covers 0000, 0001, 1000, 1001.\n- $xy$ covers 0110, 0111, 1110, 1111.\n- Remaining 1s: 1011 and 1101 → $wz$ covers 1001, 1011, 1101, 1111 (all 1s).\n\n$$f = x'y' + xy + wz \\quad\\Rightarrow\\quad 2 + 2 + 2 = 6 \\text{ literals}$$"
+          "title": "f(1, x, 1, z) = x + z",
+          "body": "$w = 1$, $y = 1$: cells 10 ($x = z = 0$) → 0, and 11, 14, 15 → 1."
         },
         {
-          "title": "Minimality",
-          "body": "1101 and 1011 need a cube avoiding the zeros 0101, 1100, 1010; the largest such cube containing both is $wz$ (2 literals). $x'y'$ and $xy$ are essential quads; no single literal works (each one covers a 0, e.g. $x'$ covers 1010). Treating 0010/0011 as 1 or 0 does not shrink anything, so 6 is minimal."
+          "title": "f(w, 1, y, z) = wz + y",
+          "body": "$x = 1$: cell 4 (0100) → 0, 5 → 0, 6 → 1, 7 → 1, 12 → 0, 13 → 1, 14 → 1, 15 → 1 (agreeing with the previous condition on 14, 15)."
+        },
+        {
+          "title": "Unreached cells",
+          "body": "Cells 2 (0010) and 3 (0011) have $w = 0$, $x = 0$, $y = 1$: no condition covers them. Treat them as don't-cares.",
+          "scene": {
+            "groups": []
+          }
+        },
+        {
+          "title": "Minimise",
+          "body": "1s: 0, 1, 6, 7, 8, 9, 11, 13, 14, 15. Loops: $\\overline{x}\\,\\overline{y}$ (0, 1, 8, 9), $xy$ (6, 7, 14, 15), $wz$ (9, 11, 13, 15). The don't-cares are not needed. $f = \\overline{x}\\,\\overline{y} + xy + wz$: 6 literals.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  1,
+                  8,
+                  9
+                ],
+                "label": "x′y′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  6,
+                  7,
+                  14,
+                  15
+                ],
+                "label": "xy",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  9,
+                  11,
+                  13,
+                  15
+                ],
+                "label": "wz",
+                "tone": "warning"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "6",
+        "value": "**6** literals ($\\overline{x}\\,\\overline{y} + xy + wz$)",
         "number": 6,
         "matchesKey": true
       },
+      "shortcut": "Each condition is a cofactor: $f = \\overline{x}\\,\\overline{y}$ on its region, $= wz + y$ when $x = 1$, $= x + z$ when $w = y = 1$; the three quads appear directly.",
       "pitfalls": [
-        "Merging x and y conditions incorrectly — check the overlapping cells (w = x = y = 1) agree before mapping."
+        "Fixing the unreached cells 2 and 3 arbitrarily: both 1 costs 8 literals, $m_2 = 0, m_3 = 1$ costs 8 and $m_2 = 1, m_3 = 0$ costs 9; only both 0 gives 6. Common wrong answers are therefore 8 and 9.",
+        "Missing that the conditions overlap and must agree (cells 14, 15)."
       ],
-      "verification": "Spot checks: f(1,0,1,0) = x + z = 0 and x′y′ + xy + wz = 0 + 0 + 0 = 0 ✓; f(0,1,1,0) = y = 1 and xy = 1 ✓."
+      "verification": "Of the four functions that satisfy the three conditions, the minimal SOPs cost 6, 8, 8 and 9 literals (enumeration); the intended answer is the minimum, 6.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          0,
+          1,
+          6,
+          7,
+          8,
+          9,
+          11,
+          13,
+          14,
+          15
+        ],
+        "groups": [],
+        "dcs": [
+          2,
+          3
+        ]
+      }
     },
     "cse-2021-2-cs-53": {
       "approach": "Every instruction depends on the previous one, so the EX stages form a chain. With forwarding, an EX can start right after the previous EX ends; without it, only after the previous instruction's WB. Count total cycles both ways.",

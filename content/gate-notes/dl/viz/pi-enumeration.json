@@ -1,0 +1,815 @@
+{
+ "version": 1,
+ "title": "Listing every prime implicant of a 4-variable function",
+ "width": 660,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 480
+ },
+ "intro": "Σm(0, 1, 2, 3, 5, 7, 8, 10, 14) on a 4-variable map (rows A B, columns C D).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "Listing every prime implicant",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Listing every prime implicant",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "kg",
+   "type": "grid",
+   "x": 120,
+   "y": 92,
+   "rows": 4,
+   "cols": 4,
+   "cell": 56,
+   "values": [
+    [
+     "1",
+     "1",
+     "1",
+     "1"
+    ],
+    [
+     "",
+     "1",
+     "1",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     "",
+     "1"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 92,
+    "cell": 56
+   }
+  },
+  {
+   "id": "kc0",
+   "type": "text",
+   "x": 148.0,
+   "y": 80,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 120.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc1",
+   "type": "text",
+   "x": 204.0,
+   "y": 80,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 176.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc2",
+   "type": "text",
+   "x": 260.0,
+   "y": 80,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc3",
+   "type": "text",
+   "x": 316.0,
+   "y": 80,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 288.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kr0",
+   "type": "text",
+   "x": 110,
+   "y": 120.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 120.0
+   }
+  },
+  {
+   "id": "kr1",
+   "type": "text",
+   "x": 110,
+   "y": 176.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 176.0
+   }
+  },
+  {
+   "id": "kr2",
+   "type": "text",
+   "x": 110,
+   "y": 232.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 232.0
+   }
+  },
+  {
+   "id": "kr3",
+   "type": "text",
+   "x": 110,
+   "y": 288.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 288.0
+   }
+  },
+  {
+   "id": "kcv",
+   "type": "text",
+   "x": 232.0,
+   "y": 60,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 204.0,
+    "y": 63
+   }
+  },
+  {
+   "id": "krv",
+   "type": "text",
+   "x": 110,
+   "y": 80,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 81
+   }
+  },
+  {
+   "id": "ki0",
+   "type": "text",
+   "x": 172,
+   "y": 140,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki1",
+   "type": "text",
+   "x": 228,
+   "y": 140,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki2",
+   "type": "text",
+   "x": 340,
+   "y": 140,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki3",
+   "type": "text",
+   "x": 284,
+   "y": 140,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki4",
+   "type": "text",
+   "x": 172,
+   "y": 196,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki5",
+   "type": "text",
+   "x": 228,
+   "y": 196,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki6",
+   "type": "text",
+   "x": 340,
+   "y": 196,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki7",
+   "type": "text",
+   "x": 284,
+   "y": 196,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki8",
+   "type": "text",
+   "x": 172,
+   "y": 308,
+   "text": "8",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki9",
+   "type": "text",
+   "x": 228,
+   "y": 308,
+   "text": "9",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki10",
+   "type": "text",
+   "x": 340,
+   "y": 308,
+   "text": "10",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki11",
+   "type": "text",
+   "x": 284,
+   "y": 308,
+   "text": "11",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki12",
+   "type": "text",
+   "x": 172,
+   "y": 252,
+   "text": "12",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki13",
+   "type": "text",
+   "x": 228,
+   "y": 252,
+   "text": "13",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki14",
+   "type": "text",
+   "x": 340,
+   "y": 252,
+   "text": "14",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki15",
+   "type": "text",
+   "x": 284,
+   "y": 252,
+   "text": "15",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "P00",
+   "type": "box",
+   "x": 125,
+   "y": 97,
+   "w": 214,
+   "h": 46,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 97,
+    "y": 97,
+    "w": 214,
+    "h": 46
+   }
+  },
+  {
+   "id": "P10",
+   "type": "box",
+   "x": 185,
+   "y": 101,
+   "w": 94,
+   "h": 94,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 157,
+    "y": 101,
+    "w": 94,
+    "h": 94
+   }
+  },
+  {
+   "id": "P20",
+   "type": "box",
+   "x": 102.08,
+   "y": 74.08,
+   "w": 60.92,
+   "h": 60.92,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 74.08,
+    "y": 74.08,
+    "w": 60.92,
+    "h": 60.92
+   }
+  },
+  {
+   "id": "P21",
+   "type": "box",
+   "x": 301,
+   "y": 74.08,
+   "w": 60.92,
+   "h": 60.92,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 273,
+    "y": 74.08,
+    "w": 60.92,
+    "h": 60.92
+   }
+  },
+  {
+   "id": "P22",
+   "type": "box",
+   "x": 102.08,
+   "y": 273,
+   "w": 60.92,
+   "h": 60.92,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 74.08,
+    "y": 273,
+    "w": 60.92,
+    "h": 60.92
+   }
+  },
+  {
+   "id": "P23",
+   "type": "box",
+   "x": 301,
+   "y": 273,
+   "w": 60.92,
+   "h": 60.92,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 273,
+    "y": 273,
+    "w": 60.92,
+    "h": 60.92
+   }
+  },
+  {
+   "id": "P30",
+   "type": "box",
+   "x": 293,
+   "y": 209,
+   "w": 46,
+   "h": 102,
+   "tone": "warning",
+   "fill": "warning",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 265,
+    "y": 209,
+    "w": 46,
+    "h": 102
+   }
+  },
+  {
+   "id": "n0",
+   "type": "text",
+   "x": 380,
+   "y": 110,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 340,
+    "size": 13
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 380,
+   "y": 136,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 366,
+    "size": 13
+   }
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 380,
+   "y": 162,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 392,
+    "size": 13
+   }
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 380,
+   "y": 188,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 418,
+    "size": 13
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 380,
+   "y": 230,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 444,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "f = Σm(0, 1, 2, 3, 5, 7, 8, 10, 14). A prime implicant is a loop that cannot be made any bigger. Grow a loop from every 1 in every direction it can go.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "text": "9 ones; find every maximal loop",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Starting from m0: the whole top row is 1s, a quad A′B′. It cannot grow (neither row A B = 01 nor row 10, its wrap-around neighbour, is all 1s).",
+   "patches": [
+    {
+     "id": "P00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "text": "PI 1: A′B′ (m0 1 2 3)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Starting from m5: m1, m3, m5, m7 form a quad A′D (rows 00 and 01, columns 01 and 11).",
+   "patches": [
+    {
+     "id": "P10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "text": "PI 2: A′D (m1 3 5 7)",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Starting from m8: m0, m2, m8, m10 are the four corners, a quad B′D′.",
+   "patches": [
+    {
+     "id": "P20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "P21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "P22",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "P23",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "PI 3: B′D′ (m0 2 8 10)",
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Starting from m14: its only neighbouring 1 is m10, so the largest loop is the pair ACD′. Every 1 has now been a starting point and no new maximal loop appeared: there are exactly 4 prime implicants.",
+   "patches": [
+    {
+     "id": "P30",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "text": "PI 4: ACD′ (m10 14)",
+      "tone": "warning"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A prime implicant is not always needed: A′B′'s cells 0, 2 are inside B′D′ and 1, 3 inside A′D. It is a prime implicant but a redundant one. Minimal SOP: f = A′D + B′D′ + ACD′.",
+   "patches": [
+    {
+     "id": "P00",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "text": "PI 1: A′B′ is redundant",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = A′D + B′D′ + ACD′",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -3,35 +3,84 @@
   "version": 2,
   "solutions": {
     "cse-1992-a-1-i": {
-      "approach": "Read the entered-variable map cell by cell to get the canonical expression in $A,B,C$, then merge minterms that differ in one variable.",
+      "approach": "Concept tested: **reading a variable-entered map**. Each cell holds the residue of $f$ as a function of the entered variable $A$; loop each entered literal with the 1-cells as helpers and AND it in, then cover any 1-cell not finished by both passes (or unfold the map into a 3-variable K-map).",
       "concepts": [
-        "Entered-variable K-map",
+        "Variable-entered map",
+        "Shannon expansion",
         "Minimal SOP"
       ],
-      "given": "| $B\\backslash C$ | 0 | 1 |\n|---|---|---|\n| 0 | 1 | 0 |\n| 1 | $\\overline{A}$ | $A$ |",
+      "given": "Map variables $B$ (rows) and $C$ (columns); entries: $(B, C) = (0, 0): 1$, $(0, 1): 0$, $(1, 0): \\overline{A}$, $(1, 1): A$.",
       "steps": [
         {
-          "title": "Read each cell",
-          "body": "Cell $(B,C)=(0,0)$ is 1 for any $A$: term $\\overline{B}\\,\\overline{C}$. Cell $(1,0)$ holds $\\overline{A}$: term $\\overline{A}B\\overline{C}$. Cell $(1,1)$ holds $A$: term $ABC$. Cell $(0,1)$ is 0.\n\n$$f=\\overline{B}\\,\\overline{C}+\\overline{A}B\\overline{C}+ABC$$\nIn minterms of $(A,B,C)$: $\\overline{B}\\,\\overline{C}=m_0+m_4$, $\\overline{A}B\\overline{C}=m_2$, $ABC=m_7$, so $f=\\sum m(0,2,4,7)$."
+          "title": "The A pass",
+          "body": "The entry $A$ at $(1, 1)$: its neighbours are $(0, 1) = 0$ and $(1, 0) = \\overline{A}$ (which cannot join an $A$-loop), so it stays alone: $BC$, giving $A \\cdot BC = ABC$."
         },
         {
-          "title": "Merge adjacent minterms",
-          "body": "$m_0+m_4=\\overline{B}\\,\\overline{C}$ and $m_0+m_2=\\overline{A}\\,\\overline{C}$ (pair $000,010$). $m_7=111$ has no neighbour among $\\{011,101,110\\}$ in $f$, so it stays $ABC$."
+          "title": "The A′ pass",
+          "body": "The entry $\\overline{A}$ at $(1, 0)$ may join the 1 at $(0, 0)$ (same column $C = 0$): the loop $\\overline{C}$, giving $\\overline{A}\\,\\overline{C}$."
         },
         {
-          "title": "Minimal SOP",
-          "body": "$$f=\\overline{B}\\,\\overline{C}+\\overline{A}\\,\\overline{C}+ABC$$\n(7 literals; the unmerged form $\\overline{B}\\,\\overline{C}+\\overline{A}B\\overline{C}+ABC$ is equivalent but uses 8.)"
+          "title": "The leftover 1",
+          "body": "The 1 at $(0, 0)$ was used by the $\\overline{A}$-pass only, so it is still uncovered for $A = 1$: loop it alone, $\\overline{B}\\,\\overline{C}$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  4
+                ],
+                "label": "B′C′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  0,
+                  2
+                ],
+                "label": "A′C′",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  7
+                ],
+                "label": "ABC",
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Check by unfolding",
+          "body": "Unfolded over $(A, B, C)$: $m_0, m_4$ (from the 1), $m_2$ (from $\\overline{A}$ at $B = 1, C = 0$), $m_7$ (from $A$ at $B = C = 1$): $f = \\Sigma(0, 2, 4, 7)$. Its K-map loops are exactly $\\overline{B}\\,\\overline{C}$, $\\overline{A}\\,\\overline{C}$ and $ABC$, all essential."
         }
       ],
       "answer": {
         "value": "$\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C} + ABC$",
         "matchesKey": true
       },
+      "shortcut": "Shannon expansion on $A$: $f = \\overline{A}(\\overline{B}\\,\\overline{C} + B\\overline{C}) + A(\\overline{B}\\,\\overline{C} + BC) = \\overline{A}\\,\\overline{C} + A\\overline{B}\\,\\overline{C} + ABC$, and $\\overline{C}(A\\overline{B} + \\overline{A}) = \\overline{C}(\\overline{A} + \\overline{B}) = \\overline{A}\\,\\overline{C} + \\overline{B}\\,\\overline{C}$.",
       "pitfalls": [
-        "Treating the $\\overline{A}$ and $A$ cells as don't-cares or as 1s.",
-        "Missing that $m_2$ can pair with $m_0$ to drop a literal."
+        "Looping $A$ with $\\overline{A}$ because they are adjacent: they are 1 for opposite values of $A$.",
+        "Forgetting that a 1-cell can serve as a don't-care in the $A$- and $\\overline{A}$-passes."
       ],
-      "verification": "Truth table of the answer gives 1 exactly at $ABC=000,010,100,111$, i.e. $\\sum m(0,2,4,7)$, matching the map."
+      "verification": "The unfolded function $\\Sigma(0, 2, 4, 7)$ has the three essential PIs $\\overline{B}\\,\\overline{C}$, $\\overline{A}\\,\\overline{C}$, $ABC$ (Quine–McCluskey), 7 literals in all.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "A",
+          "B",
+          "C"
+        ],
+        "ones": [
+          0,
+          2,
+          4,
+          7
+        ],
+        "groups": [],
+        "title": "The VEM unfolded into a 3-variable map"
+      }
     },
     "cse-1992-a-1-ii": {
       "approach": "Count Hamming check bits for single-error correction on 4 data bits, then add the overall parity bit that raises the minimum distance to 4, since detecting $t$ errors needs $d_{min}\\ge t+1$.",

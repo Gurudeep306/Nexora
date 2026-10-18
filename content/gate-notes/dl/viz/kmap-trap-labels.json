@@ -1,0 +1,476 @@
+{
+ "version": 1,
+ "title": "A K-map printed with binary-order labels, re-drawn in Gray order",
+ "width": 660,
+ "height": 290,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "A 3-variable map with rows A = 0, 1 and columns labelled B C = 00, 01, 10, 11 as printed in a GATE paper. Each row reads 1 0 0 1.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "Trap: a map printed in binary order",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Trap: binary-order labels",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "pg",
+   "type": "grid",
+   "x": 150,
+   "y": 100,
+   "rows": 2,
+   "cols": 4,
+   "cell": 56,
+   "values": [
+    [
+     "1",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "1",
+     "0",
+     "0",
+     "1"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 100,
+    "cell": 56
+   }
+  },
+  {
+   "id": "pc0",
+   "type": "text",
+   "x": 178.0,
+   "y": 88,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "danger",
+   "weight": "bold",
+   "narrow": {
+    "x": 120.0,
+    "y": 89
+   }
+  },
+  {
+   "id": "pc1",
+   "type": "text",
+   "x": 234.0,
+   "y": 88,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "danger",
+   "weight": "bold",
+   "narrow": {
+    "x": 176.0,
+    "y": 89
+   }
+  },
+  {
+   "id": "pc2",
+   "type": "text",
+   "x": 290.0,
+   "y": 88,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "danger",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 89
+   }
+  },
+  {
+   "id": "pc3",
+   "type": "text",
+   "x": 346.0,
+   "y": 88,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "danger",
+   "weight": "bold",
+   "narrow": {
+    "x": 288.0,
+    "y": 89
+   }
+  },
+  {
+   "id": "pr0",
+   "type": "text",
+   "x": 140,
+   "y": 128.0,
+   "text": "0",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 128.0
+   }
+  },
+  {
+   "id": "pr1",
+   "type": "text",
+   "x": 140,
+   "y": 184.0,
+   "text": "1",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 184.0
+   }
+  },
+  {
+   "id": "pcv",
+   "type": "text",
+   "x": 262,
+   "y": 68,
+   "text": "BC (as printed)",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 204,
+    "y": 71
+   }
+  },
+  {
+   "id": "prv",
+   "type": "text",
+   "x": 140,
+   "y": 88,
+   "text": "A",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 89
+   }
+  },
+  {
+   "id": "w0",
+   "type": "box",
+   "x": 132,
+   "y": 105,
+   "w": 69,
+   "h": 102,
+   "tone": "danger",
+   "fill": "danger",
+   "hidden": true,
+   "dashed": true,
+   "narrow": {
+    "x": 74,
+    "y": 105,
+    "w": 69,
+    "h": 102
+   }
+  },
+  {
+   "id": "w1",
+   "type": "box",
+   "x": 323,
+   "y": 105,
+   "w": 69,
+   "h": 102,
+   "tone": "danger",
+   "fill": "danger",
+   "hidden": true,
+   "dashed": true,
+   "narrow": {
+    "x": 265,
+    "y": 105,
+    "w": 69,
+    "h": 102
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 420,
+   "y": 110,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 260,
+    "size": 13
+   }
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 420,
+   "y": 140,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 286,
+    "size": 13
+   }
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 420,
+   "y": 170,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 312,
+    "size": 13
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 420,
+   "y": 215,
+   "text": "",
+   "anchor": "start",
+   "size": 16,
+   "weight": "bold",
+   "narrow": {
+    "x": 30,
+    "y": 345,
+    "size": 14
+   }
+  },
+  {
+   "id": "g0",
+   "type": "box",
+   "x": 155,
+   "y": 105,
+   "w": 46,
+   "h": 102,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 97,
+    "y": 105,
+    "w": 46,
+    "h": 102
+   }
+  },
+  {
+   "id": "g1",
+   "type": "box",
+   "x": 267,
+   "y": 105,
+   "w": 46,
+   "h": 102,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "narrow": {
+    "x": 209,
+    "y": 105,
+    "w": 46,
+    "h": 102
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The columns are labelled 00, 01, 10, 11: plain counting order, not Gray order. Between the 2nd and 3rd columns two bits change (01 → 10), and the two end columns (00 and 11) are not neighbours either.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "text": "labels: 00 01 10 11 (binary!)",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The tempting mistake: treat the end columns as a wrap-around group of four 1s and write C′. On this map the ends differ in two bits, so that loop is illegal.",
+   "patches": [
+    {
+     "id": "w0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "wrap loop of the ends: illegal",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "not C′",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Re-draw the columns in Gray order 00, 01, 11, 10: the column of 1s labelled 11 moves to the third place. Now the 1s are in columns 00 and 11, which are not adjacent.",
+   "patches": [
+    {
+     "id": "w0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "pg",
+     "set": {
+      "values": [
+       [
+        "1",
+        "0",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        "0"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "pc0",
+     "set": {
+      "text": "00",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "pc1",
+     "set": {
+      "text": "01",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "pc2",
+     "set": {
+      "text": "11",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "pc3",
+     "set": {
+      "text": "10",
+      "tone": "subject"
+     }
+    },
+    {
+     "id": "pcv",
+     "set": {
+      "text": "BC (Gray order)"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "re-drawn: 00 01 11 10",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Two vertical pairs: B = C = 0 gives B′C′, B = C = 1 gives BC (A changes in both, so it drops). f = B′C′ + BC = (B ⊕ C)′, the XNOR of B and C.",
+   "patches": [
+    {
+     "id": "g0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n3",
+     "set": {
+      "text": "pairs: B′C′ and BC",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = B′C′ + BC = (B ⊕ C)′",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

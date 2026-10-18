@@ -2466,17 +2466,25 @@
       "verification": "Input 00 → d: +1, +2 → output 10 at k = 2 ✓; input 0101… stays within {0, +1} and outputs 00 ✓."
     },
     "cse-2003-cs-45": {
-      "approach": "Find the minimal SOP over the 1-cells and the minimal POS over the 0-cells, using don't-cares freely. The minimal SOP has 8 literals and the minimal POS 9, so no option is exactly right; the accepted key (C) (9, 10) agrees on the POS count.",
+      "approach": "Concept tested: **minimum literal counts of SOP and POS with don't-cares**. Minimise the 1s (SOP) and the 0s (POS) separately, each using the Xs its own way, count literals, and prove each count cannot be beaten. The true minima are (POS, SOP) = (9, 8), which is not offered; the commonly published key is (C) (9, 10).",
       "concepts": [
-        "Karnaugh maps",
-        "Minimal SOP/POS",
-        "Literal count"
+        "Literal count",
+        "Minimal SOP",
+        "Minimal POS",
+        "Don't-care conditions"
       ],
-      "given": "| Cells | Minterms (xyzw) |\n|---|---|\n| 1s | 1, 2, 5, 12 |\n| don't-cares | 0, 7, 8, 10, 13, 15 |\n| 0s | 3, 4, 6, 9, 11, 14 |",
+      "given": "Rows $xy$, columns $zw$. Row 00: X 1 0 1; row 01: 0 1 X 0; row 11: 1 X X 0; row 10: X 0 0 X.",
       "steps": [
         {
+          "title": "Read the map",
+          "body": "Over $(x, y, z, w)$: 1s at $m_1, m_2, m_5, m_{12}$; Xs at $m_0, m_7, m_8, m_{10}, m_{13}, m_{15}$; 0s at $m_3, m_4, m_6, m_9, m_{11}, m_{14}$.",
+          "scene": {
+            "groups": []
+          }
+        },
+        {
           "title": "Minimal SOP",
-          "body": "- $m_2$: quad $\\{0,2,8,10\\}=y'w'$ (2 literals).\n- $m_1$: no valid quad ($m_3,m_4,m_9$ are 0) ⇒ pair $\\{1,5\\}=x'z'w$ (3), also covering $m_5$.\n- $m_{12}$: neighbours $m_4,m_{14}$ are 0, every quad hits a 0 ⇒ pair $\\{12,13\\}=xyz'$ (3).\n\n$f=y'w'+x'z'w+xyz'$: $2+3+3=$ **8 literals**. Three terms are needed (no term covers two of $m_1,m_2,m_{12}$), so 8 is minimal.",
+          "body": "Every quad through $m_1$ contains a 0 ($m_3$, $m_4$ or $m_9$), and so does every quad through $m_{12}$ ($m_4$, $m_9$ or $m_{14}$); so $m_1$ and $m_{12}$ each need a 3-literal pair, and no term holds both (they differ in 3 bits). $m_2$ needs at least a 2-literal term. So 8 is a lower bound, and it is reached: $\\overline{y}\\,\\overline{w}$ (corners with $X_0, X_8, X_{10}$) + $\\overline{x}\\,\\overline{z}w$ (takes $m_1$ and $m_5$) + $x\\overline{z}\\,\\overline{w}$ (or $xy\\overline{z}$).",
           "scene": {
             "groups": [
               {
@@ -2486,97 +2494,72 @@
                   8,
                   10
                 ],
-                "label": "y′w′"
+                "label": "y′w′",
+                "tone": "accent"
               },
               {
                 "cells": [
                   1,
                   5
                 ],
-                "label": "x′z′w"
+                "label": "x′z′w",
+                "tone": "success"
               },
               {
                 "cells": [
-                  12,
-                  13
+                  8,
+                  12
                 ],
-                "label": "xyz′"
+                "label": "xz′w′",
+                "tone": "warning"
               }
-            ],
-            "caption": "Minimal SOP: 8 literals"
+            ]
           }
         },
         {
           "title": "Minimal POS",
-          "body": "Group the 0s (with don't-cares):\n- $\\{3,7,11,15\\}$ → $(z'+w')$ (2)\n- $\\{6,7,14,15\\}$ → $(y'+z')$ (2)\n- $\\{9,11,13,15\\}$ → $(x'+w')$ (2)\n- $m_4$: every quad containing it hits a 1 ⇒ pair $\\{0,4\\}$ → $(x+z+w)$ (3)\n\nTotal $2+2+2+3=$ **9 literals**; four sums are unavoidable ($m_3$, $m_4$, $m_9$, and one of $m_6/m_{14}$ need separate terms).",
-          "scene": {
-            "kind": "kmap",
-            "variables": [
-              "x",
-              "y",
-              "z",
-              "w"
-            ],
-            "ones": [
-              3,
-              4,
-              6,
-              9,
-              11,
-              14
-            ],
-            "dcs": [
-              0,
-              7,
-              8,
-              10,
-              13,
-              15
-            ],
-            "groups": [
-              {
-                "cells": [
-                  3,
-                  7,
-                  11,
-                  15
-                ],
-                "label": "z′+w′"
-              },
-              {
-                "cells": [
-                  6,
-                  7,
-                  14,
-                  15
-                ],
-                "label": "y′+z′"
-              },
-              {
-                "cells": [
-                  9,
-                  11,
-                  13,
-                  15
-                ],
-                "label": "x′+w′"
-              },
-              {
-                "cells": [
-                  0,
-                  4
-                ],
-                "label": "x+z+w"
-              }
-            ],
-            "caption": "Zeros of f (cells of f′): minimal POS = 9 literals"
-          }
+          "body": "Every 0-quad through $m_4$ contains a 1, so $m_4$ needs a 3-literal factor such as $(x + z + w)$. $m_3$, $m_9$, $m_{14}$ pairwise share no 0-cube (any cube holding two of them contains $m_1$, $m_2$ or $m_{12}$) and none shares one with $m_4$, so at least 4 factors, at least $3 + 2 + 2 + 2 = 9$ literals. Reached: $(\\overline{z} + \\overline{w})(\\overline{y} + \\overline{z})(\\overline{x} + \\overline{w})(x + z + w)$."
         },
         {
-          "title": "Compare with options",
-          "body": "True minimum: (POS, SOP) = (9, 8). No option lists this; (C) (9, 10) — the accepted official key — has the correct POS count. The question is flagged for review."
+          "title": "Compare with the options",
+          "body": "True minima: (9, 8). No option is (9, 8). (C)'s SOP figure 10 is what you get if you miss the corner quad $\\overline{y}\\,\\overline{w}$: $\\overline{x}\\,\\overline{y}z\\overline{w} + \\overline{x}\\,\\overline{z}w + xy\\overline{z}$. The commonly published key is (C), with the correct POS count; (B)'s 13 matches no reasonable loop set."
         }
       ],
+      "answer": {
+        "value": "True minima (9, 8); keyed answer **(C) (9, 10)**",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "(11, 9): the POS minimum is 9, not 11."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "(9, 13): the POS count is right, but 13 is far above the SOP minimum of 8 and matches no natural loop set."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "Keyed answer: POS 9 is correct; its SOP 10 comes from missing the corner quad. The strictly correct pair (9, 8) is not offered."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "(11, 11): both counts are too high."
+        }
+      ],
+      "shortcut": "Count the cells that can only get small loops: $m_1$ and $m_{12}$ need 3-literal pairs and $m_2$ a 2-literal quad, so 8 is the SOP floor; $m_4$ needs a 3-literal sum and $m_3, m_9, m_{14}$ need three more factors, so 9 is the POS floor.",
+      "pitfalls": [
+        "Missing the corner quad $\\overline{y}\\,\\overline{w}$ (it needs three Xs and a wrap in both directions): that gives SOP 10.",
+        "Fixing the Xs as the other minimal SOP ($\\overline{y}\\,\\overline{w} + \\overline{x}\\,\\overline{z}w + xy\\overline{z}$, with $X_{13} = 1$) does and then deriving the POS: it rises to 10. Choose the Xs separately for each form."
+      ],
+      "verification": "Exhaustive cover search (Petrick, all completions of the six Xs) gives minimal SOPs of 8 literals and minimal POSs of 9 (l3_04_two_level.py); the paper scan shows the same map.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -2591,6 +2574,7 @@
           5,
           12
         ],
+        "groups": [],
         "dcs": [
           0,
           7,
@@ -2599,42 +2583,8 @@
           13,
           15
         ],
-        "groups": [],
-        "caption": "f: 1s and don't-cares"
-      },
-      "answer": {
-        "value": "(C) (9, 10) per the official key — though the true minimum is (9, 8): POS 9 literals, SOP 8 literals",
-        "choice": [
-          "C"
-        ],
-        "matchesKey": true
-      },
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": false,
-          "reason": "POS cannot need 11 literals — 9 suffice."
-        },
-        {
-          "option": "B",
-          "correct": false,
-          "reason": "SOP needs only 8 literals, not 13."
-        },
-        {
-          "option": "C",
-          "correct": true,
-          "reason": "Official key; POS = 9 is right, but SOP can be done in 8 (y′w′ + x′z′w + xyz′), so 10 is not the true minimum."
-        },
-        {
-          "option": "D",
-          "correct": false,
-          "reason": "Both counts exceed the minima (9, 8)."
-        }
-      ],
-      "pitfalls": [
-        "Forgetting that the don't-care quad {0, 2, 8, 10} covers m₂ with only 2 literals inflates the SOP count."
-      ],
-      "verification": "Checked y′w′ + x′z′w + xyz′ cell by cell: it is 1 on 1, 2, 5, 12, and 0 on 3, 4, 6, 9, 11, 14 (covers only don't-cares otherwise). The POS product is 0 on every 0-cell and 1 on every 1-cell."
+        "title": "Rows xy, columns zw (as printed)"
+      }
     },
     "cse-2003-cs-46": {
       "approach": "Each B bit passes through XOR with K, so K = 0 feeds B and K = 1 feeds B̅; C₀ adds 0 or 1. Thus only A + B + C₀ or A + B̅ + C₀ can be formed.",

@@ -526,28 +526,51 @@
       "verification": "General formula for a tree of $k$-to-$2^k$ decoders: $2^{6-3}+1=9$."
     },
     "cse-2007-cs-9": {
-      "approach": "Write the minterms in binary and look for a pattern (or use a K-map); the function collapses to $x\\oplus z$.",
+      "approach": "Concept tested: **variables a function ignores**. $f$ ignores a variable iff its minterm list is closed under flipping that variable (adding or subtracting its weight).",
       "concepts": [
-        "K-map",
-        "XOR",
-        "Minterms"
+        "Free variables",
+        "Karnaugh map"
       ],
       "steps": [
         {
-          "title": "Binary minterms",
-          "body": "| m | w x y z |\n|---|---|\n| 1 | 0 0 0 1 |\n| 3 | 0 0 1 1 |\n| 4 | 0 1 0 0 |\n| 6 | 0 1 1 0 |\n| 9 | 1 0 0 1 |\n| 11 | 1 0 1 1 |\n| 12 | 1 1 0 0 |\n| 14 | 1 1 1 0 |"
+          "title": "Weights",
+          "body": "In $f(w, x, y, z)$ the weights are $w = 8$, $x = 4$, $y = 2$, $z = 1$."
         },
         {
-          "title": "Pattern",
-          "body": "All four combinations of $w,y$ appear for each of the two $(x,z)$ patterns $(0,1)$ and $(1,0)$. Hence\n\n$$f=\\bar x z+x\\bar z=x\\oplus z$$\n\n(K-map: two quad groups $\\bar x z$ = {1,3,9,11} and $x\\bar z$ = {4,6,12,14})."
+          "title": "Test each variable",
+          "body": "List $\\{1, 3, 4, 6, 9, 11, 12, 14\\}$.\n\n- $w$ (±8): 1↔9, 3↔11, 4↔12, 6↔14, all present: **ignored**.\n- $y$ (±2): 1↔3, 4↔6, 9↔11, 12↔14, all present: **ignored**.\n- $x$ (±4): $m_1$ in, $m_5$ out: depends.\n- $z$ (±1): $m_1$ in, $m_0$ out: depends.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  1,
+                  3,
+                  9,
+                  11
+                ],
+                "label": "x′z",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  4,
+                  6,
+                  12,
+                  14
+                ],
+                "label": "xz′",
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "Conclusion",
-          "body": "$f$ does not depend on $w$ or $y$ — independent of **two** variables."
+          "title": "Minimal form",
+          "body": "$f = \\overline{x}z + x\\overline{z} = x \\oplus z$: only $x$ and $z$ appear."
         }
       ],
       "answer": {
-        "value": "Independent of two variables ($f=x\\oplus z$)",
+        "value": "(B) independent of two variables ($w$ and $y$)",
         "choice": [
           "B"
         ],
@@ -557,25 +580,50 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "It is independent of both $w$ and $y$, not just one."
+          "reason": "It ignores two variables, $w$ and $y$, not just one."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$f=x\\oplus z$; $w$ and $y$ are irrelevant."
+          "reason": "$f = x \\oplus z$ does not involve $w$ or $y$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$f$ depends on both $x$ and $z$ (it is their XOR)."
+          "reason": "It depends on both $x$ and $z$ (flipping either changes $f$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$w$ and $y$ never matter."
+          "reason": "Flipping $w$ or $y$ never changes $f$."
         }
       ],
-      "verification": "Count: $x\\oplus z$ is true for 2 of 4 $(x,z)$ pairs, times 4 $(w,y)$ pairs $=8$ minterms — matches the 8 given."
+      "shortcut": "The list splits into pairs $(m, m + 8)$ and also into pairs $(m, m + 2)$, so flipping $w$ or $y$ never changes $f$: both are free.",
+      "pitfalls": [
+        "Concluding 'depends on all' because all four variables appear in the minterms.",
+        "Testing only one minterm per variable for independence (one counterexample proves dependence, but independence needs every minterm)."
+      ],
+      "verification": "The truth table of $x \\oplus z$ over $(w, x, y, z)$ has exactly the minterms 1, 3, 4, 6, 9, 11, 12, 14.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          1,
+          3,
+          4,
+          6,
+          9,
+          11,
+          12,
+          14
+        ],
+        "groups": []
+      }
     },
     "cse-2007-cs-10": {
       "approach": "Word field from the line size, set field from the number of sets (lines ÷ ways), tag = the rest.",
@@ -1658,24 +1706,62 @@
       "verification": "For C, both inclusions were shown; for B, $0\\,1^3\\,00\\,1^3\\,0\\,1\\in L_B$ but $0\\,1^1\\,00\\,1^3\\,0\\,1\\notin L_B$."
     },
     "cse-2007-cs-32": {
-      "approach": "Expand each SOP into minterms and compare with $\\{0,4,5,7,8,9,13,15\\}$.",
+      "approach": "Concept tested: **equality of SOP expressions**. Two SOPs are equivalent iff they have the same minterm list; expand each of P, Q, R, S with dash patterns and compare with $\\Sigma(0, 4, 5, 7, 8, 9, 13, 15)$.",
       "concepts": [
-        "Sum of products",
-        "Minterms",
-        "Boolean equivalence"
+        "Equivalent forms",
+        "Minterm expansion",
+        "Consensus"
       ],
       "steps": [
         {
-          "title": "Minterm sets of the terms",
-          "body": "Variable order $wxyz$.\n\n| Term | Minterms |\n|---|---|\n| $xz$ | 5, 7, 13, 15 |\n| $x'y'z'$ | 0, 8 |\n| $w'xy'$ | 4, 5 |\n| $wy'z$ | 9, 13 |\n| $w'y'z'$ | 0, 4 |\n| $wx'y'$ | 8, 9 |\n| $xyz$ | 7, 15 |\n| $xy'z$ | 5, 13 |\n| $w'y$ | 2, 3, 6, 7 |"
+          "title": "The function",
+          "body": "$f = \\Sigma(0, 4, 5, 7, 8, 9, 13, 15)$ over $(w, x, y, z)$. Its minimal SOP is $xz + \\overline{w}\\,\\overline{y}\\,\\overline{z} + w\\overline{x}\\,\\overline{y}$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  5,
+                  7,
+                  13,
+                  15
+                ],
+                "label": "xz",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  0,
+                  4
+                ],
+                "label": "w′y′z′",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  8,
+                  9
+                ],
+                "label": "wx′y′",
+                "tone": "warning"
+              }
+            ]
+          }
         },
         {
-          "title": "Each expression",
-          "body": "- P: $\\{0,8\\}\\cup\\{4,5\\}\\cup\\{9,13\\}\\cup\\{5,7,13,15\\}=f$ ✓\n- Q: $\\{0,4\\}\\cup\\{8,9\\}\\cup\\{5,7,13,15\\}=f$ ✓\n- R: $\\{0,4\\}\\cup\\{8,9\\}\\cup\\{7,15\\}\\cup\\{5,13\\}=f$ ✓\n- S: $\\{0,8\\}\\cup\\{8,9\\}\\cup\\{2,3,6,7\\}$ — contains 2, 3, 6 (not in $f$) and misses 4, 5, 13, 15 ✗\n\nOnly S is not equivalent."
+          "title": "Statements P and Q",
+          "body": "(P) $\\overline{x}\\,\\overline{y}\\,\\overline{z} = \\{0, 8\\}$, $\\overline{w}x\\overline{y} = \\{4, 5\\}$, $w\\overline{y}z = \\{9, 13\\}$, $xz = \\{5, 7, 13, 15\\}$: union = $f$. (Q) $\\{0, 4\\} \\cup \\{8, 9\\} \\cup \\{5, 7, 13, 15\\}$ = $f$."
+        },
+        {
+          "title": "Statement R",
+          "body": "(R) $\\{0, 4\\} \\cup \\{8, 9\\} \\cup \\{7, 15\\} \\cup \\{5, 13\\}$ = $f$ (it just splits $xz$ into two pairs)."
+        },
+        {
+          "title": "Statement S",
+          "body": "(S) $\\overline{x}\\,\\overline{y}\\,\\overline{z} = \\{0, 8\\}$, $w\\overline{x}\\,\\overline{y} = \\{8, 9\\}$, $\\overline{w}y = \\{2, 3, 6, 7\\}$: it contains $m_2, m_3, m_6$ (0s of $f$) and misses $m_4, m_5, m_{13}, m_{15}$. Not equivalent."
         }
       ],
       "answer": {
-        "value": "S only",
+        "value": "(D) S only",
         "choice": [
           "D"
         ],
@@ -1685,25 +1771,50 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "P covers exactly f."
+          "reason": "P is equivalent (its terms cover exactly the eight minterms)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Q is equivalent to f."
+          "reason": "Q is equivalent; it is in fact the minimal SOP."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "R is equivalent to f."
+          "reason": "R is equivalent: $xyz + x\\overline{y}z = xz$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Only S differs from f."
+          "reason": "Only S has a different minterm list."
         }
       ],
-      "verification": "Union of each expression's minterms was compared with the 8 given minterms."
+      "shortcut": "Look for a term that is obviously too big or in the wrong place: $\\overline{w}y$ in S includes $m_2 = 0010$, which is not in the list.",
+      "pitfalls": [
+        "Thinking a non-minimal expression (P, R) is 'not equivalent'.",
+        "Comparing shapes of terms instead of minterm sets."
+      ],
+      "verification": "Enumeration over all 16 rows: P, Q, R agree with $f$ everywhere; S differs on 7 rows.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          0,
+          4,
+          5,
+          7,
+          8,
+          9,
+          13,
+          15
+        ],
+        "groups": []
+      }
     },
     "cse-2007-cs-33": {
       "approach": "Concept tested: **XNOR algebra**. $X * Y = XY + X'Y'$ is XNOR $= X \\oplus Y \\oplus 1$; it is associative and commutative, so each statement reduces by cancelling equal terms.",

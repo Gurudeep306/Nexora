@@ -1,0 +1,1321 @@
+{
+ "version": 1,
+ "title": "A five-variable K-map as two four-variable maps",
+ "width": 660,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 600
+ },
+ "intro": "f(A, B, C, D, E) = Σm(0, 2, 7, 8, 10, 11, 14, 15, 16, 18, 24, 26, 27, 30, 31), drawn as an A = 0 map and an A = 1 map (rows B C, columns D E).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "Five variables: two 4-variable maps, A = 0 and A = 1",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Five variables: two maps",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "ta",
+   "type": "text",
+   "x": 162,
+   "y": 50,
+   "text": "A = 0",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 180,
+    "y": 50
+   }
+  },
+  {
+   "id": "tb",
+   "type": "text",
+   "x": 482,
+   "y": 50,
+   "text": "A = 1",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 180,
+    "y": 310
+   }
+  },
+  {
+   "id": "ag",
+   "type": "grid",
+   "x": 70,
+   "y": 100,
+   "rows": 4,
+   "cols": 4,
+   "cell": 46,
+   "values": [
+    [
+     "1",
+     "",
+     "",
+     "1"
+    ],
+    [
+     "",
+     "",
+     "1",
+     ""
+    ],
+    [
+     "",
+     "",
+     "1",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     "1",
+     "1"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 92,
+    "cell": 44
+   }
+  },
+  {
+   "id": "ac0",
+   "type": "text",
+   "x": 93.0,
+   "y": 88,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 114.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "ac1",
+   "type": "text",
+   "x": 139.0,
+   "y": 88,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 158.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "ac2",
+   "type": "text",
+   "x": 185.0,
+   "y": 88,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 202.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "ac3",
+   "type": "text",
+   "x": 231.0,
+   "y": 88,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 246.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "ar0",
+   "type": "text",
+   "x": 60,
+   "y": 123.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 114.0
+   }
+  },
+  {
+   "id": "ar1",
+   "type": "text",
+   "x": 60,
+   "y": 169.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 158.0
+   }
+  },
+  {
+   "id": "ar2",
+   "type": "text",
+   "x": 60,
+   "y": 215.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 202.0
+   }
+  },
+  {
+   "id": "ar3",
+   "type": "text",
+   "x": 60,
+   "y": 261.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 246.0
+   }
+  },
+  {
+   "id": "acv",
+   "type": "text",
+   "x": 162.0,
+   "y": 68,
+   "text": "DE",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 63
+   }
+  },
+  {
+   "id": "arv",
+   "type": "text",
+   "x": 60,
+   "y": 88,
+   "text": "BC",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 81
+   }
+  },
+  {
+   "id": "ai0",
+   "type": "text",
+   "x": 112,
+   "y": 138,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 129,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai1",
+   "type": "text",
+   "x": 158,
+   "y": 138,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 129,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai2",
+   "type": "text",
+   "x": 250,
+   "y": 138,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 129,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai3",
+   "type": "text",
+   "x": 204,
+   "y": 138,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 129,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai4",
+   "type": "text",
+   "x": 112,
+   "y": 184,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 173,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai5",
+   "type": "text",
+   "x": 158,
+   "y": 184,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 173,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai6",
+   "type": "text",
+   "x": 250,
+   "y": 184,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 173,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai7",
+   "type": "text",
+   "x": 204,
+   "y": 184,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 173,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai8",
+   "type": "text",
+   "x": 112,
+   "y": 276,
+   "text": "8",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 261,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai9",
+   "type": "text",
+   "x": 158,
+   "y": 276,
+   "text": "9",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 261,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai10",
+   "type": "text",
+   "x": 250,
+   "y": 276,
+   "text": "10",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 261,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai11",
+   "type": "text",
+   "x": 204,
+   "y": 276,
+   "text": "11",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 261,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai12",
+   "type": "text",
+   "x": 112,
+   "y": 230,
+   "text": "12",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 217,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai13",
+   "type": "text",
+   "x": 158,
+   "y": 230,
+   "text": "13",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 217,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai14",
+   "type": "text",
+   "x": 250,
+   "y": 230,
+   "text": "14",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 217,
+    "size": 9
+   }
+  },
+  {
+   "id": "ai15",
+   "type": "text",
+   "x": 204,
+   "y": 230,
+   "text": "15",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 217,
+    "size": 9
+   }
+  },
+  {
+   "id": "bg",
+   "type": "grid",
+   "x": 390,
+   "y": 100,
+   "rows": 4,
+   "cols": 4,
+   "cell": 46,
+   "values": [
+    [
+     "1",
+     "",
+     "",
+     "1"
+    ],
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "1",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     "1",
+     "1"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 352,
+    "cell": 44
+   }
+  },
+  {
+   "id": "bc0",
+   "type": "text",
+   "x": 413.0,
+   "y": 88,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 114.0,
+    "y": 341
+   }
+  },
+  {
+   "id": "bc1",
+   "type": "text",
+   "x": 459.0,
+   "y": 88,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 158.0,
+    "y": 341
+   }
+  },
+  {
+   "id": "bc2",
+   "type": "text",
+   "x": 505.0,
+   "y": 88,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 202.0,
+    "y": 341
+   }
+  },
+  {
+   "id": "bc3",
+   "type": "text",
+   "x": 551.0,
+   "y": 88,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 246.0,
+    "y": 341
+   }
+  },
+  {
+   "id": "br0",
+   "type": "text",
+   "x": 380,
+   "y": 123.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 374.0
+   }
+  },
+  {
+   "id": "br1",
+   "type": "text",
+   "x": 380,
+   "y": 169.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 418.0
+   }
+  },
+  {
+   "id": "br2",
+   "type": "text",
+   "x": 380,
+   "y": 215.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 462.0
+   }
+  },
+  {
+   "id": "br3",
+   "type": "text",
+   "x": 380,
+   "y": 261.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 506.0
+   }
+  },
+  {
+   "id": "bcv",
+   "type": "text",
+   "x": 482.0,
+   "y": 68,
+   "text": "DE",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 323
+   }
+  },
+  {
+   "id": "brv",
+   "type": "text",
+   "x": 380,
+   "y": 88,
+   "text": "BC",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 341
+   }
+  },
+  {
+   "id": "bi0",
+   "type": "text",
+   "x": 432,
+   "y": 138,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 389,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi1",
+   "type": "text",
+   "x": 478,
+   "y": 138,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 389,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi2",
+   "type": "text",
+   "x": 570,
+   "y": 138,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 389,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi3",
+   "type": "text",
+   "x": 524,
+   "y": 138,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 389,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi4",
+   "type": "text",
+   "x": 432,
+   "y": 184,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 433,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi5",
+   "type": "text",
+   "x": 478,
+   "y": 184,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 433,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi6",
+   "type": "text",
+   "x": 570,
+   "y": 184,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 433,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi7",
+   "type": "text",
+   "x": 524,
+   "y": 184,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 433,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi8",
+   "type": "text",
+   "x": 432,
+   "y": 276,
+   "text": "8",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 521,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi9",
+   "type": "text",
+   "x": 478,
+   "y": 276,
+   "text": "9",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 521,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi10",
+   "type": "text",
+   "x": 570,
+   "y": 276,
+   "text": "10",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 521,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi11",
+   "type": "text",
+   "x": 524,
+   "y": 276,
+   "text": "11",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 521,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi12",
+   "type": "text",
+   "x": 432,
+   "y": 230,
+   "text": "12",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 133,
+    "y": 477,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi13",
+   "type": "text",
+   "x": 478,
+   "y": 230,
+   "text": "13",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 177,
+    "y": 477,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi14",
+   "type": "text",
+   "x": 570,
+   "y": 230,
+   "text": "14",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 265,
+    "y": 477,
+    "size": 9
+   }
+  },
+  {
+   "id": "bi15",
+   "type": "text",
+   "x": 524,
+   "y": 230,
+   "text": "15",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 221,
+    "y": 477,
+    "size": 9
+   }
+  },
+  {
+   "id": "L000",
+   "type": "box",
+   "x": 55.28,
+   "y": 85.28,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 77.92,
+    "y": 77.92,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L001",
+   "type": "box",
+   "x": 213,
+   "y": 85.28,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 229,
+    "y": 77.92,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L002",
+   "type": "box",
+   "x": 55.28,
+   "y": 243,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 77.92,
+    "y": 229,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L003",
+   "type": "box",
+   "x": 213,
+   "y": 243,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 229,
+    "y": 229,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L010",
+   "type": "box",
+   "x": 375.28,
+   "y": 85.28,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 77.92,
+    "y": 337.92,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L011",
+   "type": "box",
+   "x": 533,
+   "y": 85.28,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 229,
+    "y": 337.92,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L012",
+   "type": "box",
+   "x": 375.28,
+   "y": 243,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 77.92,
+    "y": 489,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L013",
+   "type": "box",
+   "x": 533,
+   "y": 243,
+   "w": 55.72,
+   "h": 55.72,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 229,
+    "y": 489,
+    "w": 53.08,
+    "h": 53.08
+   }
+  },
+  {
+   "id": "L100",
+   "type": "box",
+   "x": 171,
+   "y": 201,
+   "w": 74,
+   "h": 74,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 189,
+    "y": 189,
+    "w": 70,
+    "h": 70
+   }
+  },
+  {
+   "id": "L110",
+   "type": "box",
+   "x": 491,
+   "y": 201,
+   "w": 74,
+   "h": 74,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 189,
+    "y": 449,
+    "w": 70,
+    "h": 70
+   }
+  },
+  {
+   "id": "L200",
+   "type": "box",
+   "x": 175,
+   "y": 159,
+   "w": 20,
+   "h": 66,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 193,
+    "y": 149,
+    "w": 18,
+    "h": 62
+   }
+  },
+  {
+   "id": "n0",
+   "type": "text",
+   "x": 70,
+   "y": 318,
+   "text": "",
+   "anchor": "start",
+   "size": 14,
+   "narrow": {
+    "x": 20,
+    "y": 560,
+    "size": 12
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 70,
+   "y": 344,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "weight": "bold",
+   "tone": "success",
+   "narrow": {
+    "x": 20,
+    "y": 584,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A 5-variable map is two 4-variable maps (rows B C, columns D E), one for A = 0 and one for A = 1. Inside each map the usual neighbours apply; in addition every cell is adjacent to the cell in the same position of the other map (they differ only in A).",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "text": "same position in the other map = neighbour"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The four corner cells of each map (C = 0, E = 0) are 1s in both maps. In each map they form a corner quad, and the two quads face each other: one group of 8 = 2³ cells, so 5 − 3 = 2 literals: C′E′.",
+   "patches": [
+    {
+     "id": "L000",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L001",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L002",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L003",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L010",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L011",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L012",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L013",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = C′E′"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rows B C = 11 and 10, columns D E = 11 and 10 (B = 1, D = 1) are 1s in both maps: another octet across the maps, BD.",
+   "patches": [
+    {
+     "id": "L100",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L110",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = C′E′ + BD"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Remaining: m7 (00111) in the A = 0 map only. Its twin m23 is 0, so the loop cannot cross to A = 1; inside its own map it pairs with m15: A′CDE (4 literals).",
+   "patches": [
+    {
+     "id": "L200",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "text": "twin cell is 0: the pair stays in one map"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = C′E′ + BD + A′CDE"
+     }
+    }
+   ]
+  }
+ ]
+}

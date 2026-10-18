@@ -4400,17 +4400,16 @@
       }
     },
     "cse-2025-2-cs-33": {
-      "approach": "Read the map (rows $wx$, columns $yz$ in Gray order 00, 01, 11, 10): the four corners and the central $2\\times2$ block are 1. So $F = \\bar x\\bar z + xz$; then test each option by listing exactly which cells it covers.",
+      "approach": "Concept tested: **expressions equal to a map** (MSQ). The map is corners + centre, $\\overline{x}\\,\\overline{z} + xz$; expand every option and compare minterm lists; an option need not be minimal to be correct.",
       "concepts": [
-        "K-map reading",
-        "Corner (wrap-around) groups",
-        "Sum of products equivalence"
+        "Equivalent forms",
+        "Corner quad",
+        "XNOR pattern"
       ],
-      "given": "$F = 1$ at minterms (index $8w+4x+2y+z$): $0, 2, 8, 10$ (corners) and $5, 7, 13, 15$ (centre).",
       "steps": [
         {
-          "title": "Read the minimal expression",
-          "body": "Corners: $x = 0, z = 0$ with $w, y$ free → $\\bar x \\bar z$ (minterms $0, 2, 8, 10$).\nCentre block: rows $wx = 01, 11$ and columns $yz = 01, 11$ → $x = 1, z = 1$ → $xz$ (minterms $5, 7, 13, 15$).\n\n$$F = \\bar x\\bar z + xz \\quad(= \\overline{x \\oplus z})$$\n\nSo (D) is correct.",
+          "title": "Read the map",
+          "body": "Rows $wx$, columns $yz$: rows 1 and 4 read 1 0 0 1, rows 2 and 3 read 0 1 1 0. 1s: $m_0, m_2, m_8, m_{10}$ (corners) and $m_5, m_7, m_{13}, m_{15}$ (centre).",
           "scene": {
             "groups": [
               {
@@ -4420,8 +4419,8 @@
                   8,
                   10
                 ],
-                "label": "x̄z̄",
-                "tone": "cat1"
+                "label": "x′z′",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -4431,106 +4430,18 @@
                   15
                 ],
                 "label": "xz",
-                "tone": "cat2"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Option (A)",
-          "body": "$\\bar w\\bar x\\bar y\\bar z = m_0$, $w\\bar x\\bar y\\bar z = m_8$, $\\bar w\\bar x y\\bar z = m_2$, $w\\bar x y\\bar z = m_{10}$: exactly the four corners, i.e. $\\bar x\\bar z$ written as minterms. Plus $xz$. Equals $F$ ✓.",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  5,
-                  7,
-                  13,
-                  15
-                ],
-                "label": "xz",
-                "tone": "cat2"
-              }
-            ],
-            "hl": [
-              {
-                "cell": 0,
-                "tone": "success"
-              },
-              {
-                "cell": 8,
-                "tone": "success"
-              },
-              {
-                "cell": 2,
-                "tone": "success"
-              },
-              {
-                "cell": 10,
                 "tone": "success"
               }
             ]
           }
         },
         {
-          "title": "Option (B)",
-          "body": "Terms: $m_0$, $m_2$, $w\\bar x yz = m_{11}$, and $xz$. It misses $m_8$, $m_{10}$ (corners that are 1) and includes $m_{11}$ (row $wx=10$, column $yz=11$), which is **0** in the map ✗.",
-          "scene": {
-            "hl": [
-              {
-                "cell": 0,
-                "tone": "success"
-              },
-              {
-                "cell": 2,
-                "tone": "success"
-              },
-              {
-                "cell": 11,
-                "tone": "error"
-              },
-              {
-                "cell": 8,
-                "tone": "warning"
-              },
-              {
-                "cell": 10,
-                "tone": "warning"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Option (C)",
-          "body": "Terms: $m_0$, $m_8$, $w\\bar x\\bar y z = m_9$, and $xz$. It misses $m_2$, $m_{10}$ and includes $m_9$ (row $10$, column $01$), which is **0** ✗.",
-          "scene": {
-            "hl": [
-              {
-                "cell": 0,
-                "tone": "success"
-              },
-              {
-                "cell": 8,
-                "tone": "success"
-              },
-              {
-                "cell": 9,
-                "tone": "error"
-              },
-              {
-                "cell": 2,
-                "tone": "warning"
-              },
-              {
-                "cell": 10,
-                "tone": "warning"
-              }
-            ]
-          }
+          "title": "Option by option",
+          "body": "(A) the four corner minterms written out plus $xz$: same set. (B) has $w\\overline{x}yz = m_{11}$ (a 0) and lacks $m_8, m_{10}$. (C) has $w\\overline{x}\\,\\overline{y}z = m_9$ (a 0) and lacks $m_2, m_{10}$. (D) $\\overline{x}\\,\\overline{z} + xz$ is the minimal form."
         }
       ],
       "answer": {
-        "value": "**(A) and (D)**",
+        "value": "(A) and (D)",
         "choice": [
           "A",
           "D"
@@ -4541,33 +4452,32 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Its four minterms are exactly the four corner 1s ($\\bar x\\bar z$, unminimised), plus $xz$."
+          "reason": "Corners as four minterms plus the centre quad: equal (not minimal)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Contains $w\\bar x yz$ ($m_{11}$), a 0-cell, and misses the corners $m_8$, $m_{10}$."
+          "reason": "Contains $m_{11}$ and misses $m_8$, $m_{10}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Contains $w\\bar x\\bar y z$ ($m_9$), a 0-cell, and misses $m_2$, $m_{10}$."
+          "reason": "Contains $m_9$ and misses $m_2$, $m_{10}$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "The minimal SOP: corner quad $\\bar x\\bar z$ plus centre quad $xz$."
+          "reason": "The two quads: corners $\\overline{x}\\,\\overline{z}$ and centre $xz$."
         }
       ],
-      "shortcut": "Every term with $\\bar x$ must also have $\\bar z$ (the 1s with $x=0$ are exactly the $z=0$ cells). (B) has $w\\bar x yz$ and (C) has $w\\bar x\\bar y z$, both with $\\bar x z$ → wrong.",
+      "shortcut": "Any correct option must contain all four corners; (B) and (C) each list a non-corner cell among their minterms.",
       "pitfalls": [
-        "Missing the four-corner wrap-around group.",
-        "Accepting an expression because it \"contains $xz$\" without checking that its extra terms stay inside the 1s."
+        "Rejecting (A) because it is not minimal: the question asks which expressions represent $F$.",
+        "Reading the corners as two pairs only."
       ],
-      "verification": "Count: $F$ has 8 ones. (A) covers 4 + 4 = 8 distinct cells, all 1s; (D) also 8. (B) and (C) each cover a 0-cell.",
+      "verification": "Enumeration: (A) and (D) match the map on all 16 cells; (B) and (C) differ on 3 cells each.",
       "animation": {
         "kind": "kmap",
-        "title": "K-map of F(w,x,y,z)",
         "variables": [
           "w",
           "x",
@@ -4577,13 +4487,14 @@
         "ones": [
           0,
           2,
-          8,
-          10,
           5,
           7,
+          8,
+          10,
           13,
           15
-        ]
+        ],
+        "groups": []
       }
     },
     "cse-2025-2-cs-34": {

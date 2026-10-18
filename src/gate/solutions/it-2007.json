@@ -5420,23 +5420,59 @@
       "verification": "At c = 0.35: f′(L₋) = 1 − 1.949 = −0.949, inside (−1, 1)."
     },
     "it-2007-cs-78": {
-      "approach": "Plot each product term of ad̄ + āc̄ + bc̄d directly and compare with the four maps cell by cell.",
+      "approach": "Concept tested: **plotting an expression on a map** whose axes are labelled with letters ($\\bar a\\bar b$, $\\bar a b$, $ab$, $a\\bar b$ = 00, 01, 11, 10). Expand each term with dashes and compare cell by cell with the four option maps.",
       "concepts": [
-        "Karnaugh map",
-        "SOP"
+        "Plotting a K-map",
+        "Minterm expansion"
       ],
       "steps": [
         {
-          "title": "Plot the terms",
-          "body": "- $a\\bar d$: rows ab, ab̄ × columns c̄d̄, cd̄.\n- $\\bar a\\bar c$: rows āb̄, āb × columns c̄d̄, c̄d.\n- $b\\bar c d$: rows āb, ab × column c̄d."
+          "title": "Expand the terms",
+          "body": "$a\\bar d = 1{-}{-}0 = \\{8, 10, 12, 14\\}$; $\\bar a\\bar c = 0{-}0{-} = \\{0, 1, 4, 5\\}$; $b\\bar c d = {-}101 = \\{5, 13\\}$. Union: $\\{0, 1, 4, 5, 8, 10, 12, 13, 14\\}$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  1,
+                  4,
+                  5
+                ],
+                "label": "a′c′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  8,
+                  10,
+                  12,
+                  14
+                ],
+                "label": "ad′",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  5,
+                  13
+                ],
+                "label": "bc′d",
+                "tone": "warning"
+              }
+            ]
+          }
         },
         {
-          "title": "Resulting map",
-          "body": "| | c̄d̄ | c̄d | cd | cd̄ |\n|---|---|---|---|---|\n| āb̄ | × | × | | |\n| āb | × | × | | |\n| ab | × | × | | × |\n| ab̄ | × | | | × |\n\nThis is map A."
+          "title": "Row by row",
+          "body": "Row $\\bar a\\bar b$: $\\bar c\\bar d, \\bar c d$. Row $\\bar a b$: $\\bar c\\bar d, \\bar c d$. Row $ab$: $\\bar c\\bar d, \\bar c d, c\\bar d$. Row $a\\bar b$: $\\bar c\\bar d, c\\bar d$."
+        },
+        {
+          "title": "Compare",
+          "body": "Option (A)'s crosses are exactly these. (B) misses $\\bar a b \\bar c d$ ($m_5$) and adds $a\\bar b\\bar c d$ ($m_9$); (C) adds $\\bar a b c\\bar d$ ($m_6$); (D) adds $a\\bar b cd$ ($m_{11}$)."
         }
       ],
       "answer": {
-        "value": "A",
+        "value": "(A)",
         "choice": [
           "A"
         ],
@@ -5446,47 +5482,104 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Identical to the plotted map."
+          "reason": "Its crosses are exactly $m_0, m_1, m_4, m_5, m_8, m_{10}, m_{12}, m_{13}, m_{14}$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Misses āb·c̄d (from āc̄) and adds ab̄·c̄d."
+          "reason": "Row $\\bar a b$ has only $\\bar c\\bar d$ (misses $m_5$), and row $a\\bar b$ has an extra $\\bar c d$ ($m_9$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Adds āb·cd̄, which no term covers."
+          "reason": "Row $\\bar a b$ has an extra cross at $c\\bar d$ ($m_6$), which no term of the expression covers."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Adds ab̄·cd, which no term covers."
+          "reason": "Row $a\\bar b$ has $\\bar c\\bar d, cd, c\\bar d$: the $cd$ cell ($m_{11}$) is not covered by any term."
         }
       ],
+      "shortcut": "Check the cells only one option disagrees on: $m_5$ ($\\bar a b\\bar c d$) is covered by $\\bar a\\bar c$, which kills (B); $m_6$ and $m_{11}$ are 0s, which kill (C) and (D).",
       "pitfalls": [
-        "Using natural binary column order instead of Gray order (c̄d̄, c̄d, cd, cd̄)."
+        "Reading a bar as 1.",
+        "Forgetting the wrap: $a\\bar d$ covers both outer columns of rows $ab$ and $a\\bar b$."
       ],
-      "verification": "Map A has 9 ones: 4 (ad̄) + 4 (āc̄) + 2 (bc̄d) − 1 overlap (āb c̄d) = 9."
+      "verification": "Re-plotting each option's crosses as a minterm set (from the figure) gives a match only for (A).",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "ones": [
+          0,
+          1,
+          4,
+          5,
+          8,
+          10,
+          12,
+          13,
+          14
+        ],
+        "groups": []
+      }
     },
     "it-2007-cs-79": {
-      "approach": "Expand each option over the 9 ones of the Q78 map (āb̄c̄d̄, āb̄c̄d, ābc̄d̄, ābc̄d, abc̄d̄, abc̄d, abcd̄, ab̄c̄d̄, ab̄cd̄) and look for a term that covers a zero.",
+      "approach": "Concept tested: **equivalent SOPs of one map**. The map from Q78 is $\\Sigma(0, 1, 4, 5, 8, 10, 12, 13, 14)$; expand every option and find the one whose minterm list differs.",
       "concepts": [
-        "Karnaugh map",
-        "Boolean equivalence"
+        "Equivalent forms",
+        "Minterm expansion"
       ],
       "steps": [
         {
-          "title": "Look for an extra cell",
-          "body": "Option C contains $\\bar c d$, which covers the whole column c̄d — including $a\\bar b\\bar c d$, a **zero** of the map. So C is a different function."
+          "title": "The function",
+          "body": "$f = \\bar a\\bar c + a\\bar d + b\\bar c d = \\Sigma(0, 1, 4, 5, 8, 10, 12, 13, 14)$; its minimal SOP is $\\bar a\\bar c + a\\bar d + b\\bar c$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  1,
+                  4,
+                  5
+                ],
+                "label": "a′c′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  8,
+                  10,
+                  12,
+                  14
+                ],
+                "label": "ad′",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  4,
+                  5,
+                  12,
+                  13
+                ],
+                "label": "bc′",
+                "tone": "warning"
+              }
+            ]
+          }
         },
         {
-          "title": "Others match",
-          "body": "- A: c̄d̄ (column 1) + ad̄ + abc̄ + āc̄d → exactly the 9 ones.\n- B: āc̄ + c̄d̄ + ad̄ + abc̄d → exactly the 9 ones.\n- D: b̄c̄d̄ + acd̄ + āc̄ + abc̄ → exactly the 9 ones."
+          "title": "Expand each option",
+          "body": "(A) $\\bar c\\bar d = \\{0, 4, 8, 12\\}$, $a\\bar d$, $ab\\bar c = \\{12, 13\\}$, $\\bar a\\bar c d = \\{1, 5\\}$: union = $f$.\n\n(B) $\\bar a\\bar c$, $\\bar c\\bar d$, $a\\bar d$, $ab\\bar c d = \\{13\\}$: union = $f$.\n\n(C) $\\bar a\\bar c$, $a\\bar d$, $ab\\bar c$, $\\bar c d = \\{1, 5, 9, 13\\}$: contains $m_9$, a 0.\n\n(D) $\\bar b\\bar c\\bar d = \\{0, 8\\}$, $ac\\bar d = \\{10, 14\\}$, $\\bar a\\bar c$, $ab\\bar c$: union = $f$."
         }
       ],
       "answer": {
-        "value": "C",
+        "value": "(C)",
         "choice": [
           "C"
         ],
@@ -5496,28 +5589,51 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Covers exactly the ones of the map."
+          "reason": "Equal to the map (not minimal, but it represents it)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Covers exactly the ones of the map."
+          "reason": "Equal to the map."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "c̄d adds ab̄c̄d, which is 0 in the map."
+          "reason": "$\\bar c d$ covers $m_9 = a\\bar b\\bar c d$, which is 0 on the map."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Covers exactly the ones of the map."
+          "reason": "Equal to the map: $\\bar b\\bar c\\bar d + ac\\bar d$ is another way to cover the $a\\bar d$ cells with $\\bar a\\bar c$'s help."
         }
       ],
+      "shortcut": "Look for a term whose cells leave the 1-region: $\\bar c d$ spans all four rows of column $\\bar c d$, and row $a\\bar b$ of that column is 0.",
       "pitfalls": [
-        "Only checking that every 1 is covered and forgetting to check no 0 is covered."
+        "Assuming that only the minimal SOP 'corresponds' to the map.",
+        "Missing that $\\bar c d$ is a 4-cell term (it covers a whole column)."
       ],
-      "verification": "Evaluated at a=1, b=0, c=0, d=1: original ad̄ + āc̄ + bc̄d = 0, option C gives c̄d = 1."
+      "verification": "Enumeration: options A, B, D agree with the map on all 16 cells; C disagrees only on $m_9$.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "ones": [
+          0,
+          1,
+          4,
+          5,
+          8,
+          10,
+          12,
+          13,
+          14
+        ],
+        "groups": []
+      }
     },
     "it-2007-cs-80": {
       "approach": "If a point lies strictly between Pa and Pb in x, the slope of PaPb is a weighted average of the slopes to that middle point, so one of those two lines is steeper. Hence the steepest pair must be x-adjacent.",

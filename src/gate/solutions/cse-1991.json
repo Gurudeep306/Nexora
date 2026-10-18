@@ -1958,24 +1958,23 @@
       "verification": "Stable: in rows 01/10, substituting $Q=0$ gives 0 and $Q=1$ gives 1, so both are self-consistent."
     },
     "cse-1991-b-5-b": {
-      "approach": "Plot the K-map and use the don't cares to enlarge groups: the four corners give $\\overline B\\,\\overline D$, and minterm 15 joins don't cares 11 and 14 (plus 10) in the quad $AC$.",
+      "approach": "Concept tested: **minimal SOP with don't-cares**. Use an X only when it enlarges a loop: the four corners give one quad, and $m_{15}$ joins three Xs in a second quad.",
       "concepts": [
-        "Karnaugh map",
-        "don't-care conditions",
-        "prime implicants"
+        "Don't-care conditions",
+        "Corner quad",
+        "Minimal SOP"
       ],
       "steps": [
         {
           "title": "Plot",
-          "body": "1s at 0, 2, 8, 10, 15; don't cares at 3, 11, 12, 14.",
+          "body": "1s: 0, 2, 8, 10, 15. Xs: 3, 11, 12, 14.",
           "scene": {
-            "groups": [],
-            "caption": "m = 0,2,8,10,15; d = 3,11,12,14"
+            "groups": []
           }
         },
         {
-          "title": "Corner quad",
-          "body": "Cells 0, 2, 8, 10 (the four corners) have $B=0, D=0$: term $\\overline B\\,\\overline D$.",
+          "title": "The corners",
+          "body": "$m_0, m_2, m_8, m_{10}$ are the four corners: $\\overline{B}\\,\\overline{D}$.",
           "scene": {
             "groups": [
               {
@@ -1985,15 +1984,15 @@
                   8,
                   10
                 ],
-                "label": "B'D'"
+                "label": "B′D′",
+                "tone": "accent"
               }
-            ],
-            "caption": "Corners → B'D'"
+            ]
           }
         },
         {
-          "title": "Cover minterm 15",
-          "body": "Cells 10, 11, 14, 15 have $A=1, C=1$: the quad $AC$ (11, 14 are don't cares). No 2-literal term other than $AC$ contains 15 (BCD, ABD would need 7 or 13, which are 0s).",
+          "title": "The lone 1 at m15",
+          "body": "$m_{15}$ (1111) has neighbours $X_{14}$, $X_{11}$, $m_7$ (0) and $m_{13}$ (0). The quad $m_{10}, X_{11}, X_{14}, m_{15}$ (rows $AB = 11, 10$, columns $CD = 11, 10$) is $AC$.",
           "scene": {
             "groups": [
               {
@@ -2003,7 +2002,8 @@
                   8,
                   10
                 ],
-                "label": "B'D'"
+                "label": "B′D′",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -2012,17 +2012,27 @@
                   14,
                   15
                 ],
-                "label": "AC"
+                "label": "AC",
+                "tone": "success"
               }
-            ],
-            "caption": "f = B'D' + AC"
+            ]
           }
         },
         {
-          "title": "Result",
-          "body": "$$f = \\overline B\\,\\overline D + AC$$ — 2 terms, 4 literals; both are essential."
+          "title": "Unused Xs",
+          "body": "$X_3$ and $X_{12}$ would only enlarge loops we do not need, so they stay 0."
         }
       ],
+      "answer": {
+        "value": "$f = \\overline{B}\\,\\overline{D} + AC$",
+        "matchesKey": true
+      },
+      "shortcut": "Corners first; then the only 1 left ($m_{15}$) takes the biggest loop the Xs allow.",
+      "pitfalls": [
+        "Covering $m_{15}$ with the pair $ABC$ (3 literals) instead of the quad $AC$.",
+        "Adding a term to cover the X at $m_3$ or $m_{12}$."
+      ],
+      "verification": "Without don't-cares the minimum is $\\overline{B}\\,\\overline{D} + ABCD$ (6 literals); with them, 4 literals, and Petrick's method confirms $\\overline{B}\\,\\overline{D} + AC$ is the unique minimum.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -2038,22 +2048,14 @@
           10,
           15
         ],
+        "groups": [],
         "dcs": [
           3,
           11,
           12,
           14
-        ],
-        "groups": []
-      },
-      "answer": {
-        "value": "$f = \\overline{B}\\,\\overline{D} + AC$",
-        "matchesKey": true
-      },
-      "pitfalls": [
-        "Covering 15 with $ACD$ or $ABC$ (3 literals) instead of the larger quad $AC$."
-      ],
-      "verification": "Check all 1s: 0,2,8,10 ∈ $\\overline B\\,\\overline D$; 15 ∈ $AC$. Check 0s: 5 ($B=1$, $A=0$) gives $0+0=0$; 9 ($A=1,C=0,D=1$) gives 0."
+        ]
+      }
     },
     "cse-1991-b-5-c": {
       "approach": "All flip-flops share the clock, so the period must cover the longest path from a clock edge to a J/K input: clock-to-$Q_0$, then the two AND gates in the carry chain that drive $J_2K_2$.",
