@@ -72,7 +72,7 @@
           "lessons_status": {
             "kmaps": "draft",
             "prime-implicants": "draft",
-            "tabular-method": "pending",
+            "tabular-method": "draft",
             "two-level-implementation": "pending"
           },
           "live_lab": "K-map Solver (:::lab kmap-solver: map, Quine–McCluskey)"

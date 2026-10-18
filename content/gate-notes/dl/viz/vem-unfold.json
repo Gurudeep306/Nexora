@@ -1,0 +1,709 @@
+{
+ "version": 1,
+ "title": "Unfolding a variable-entered map into a K-map",
+ "width": 660,
+ "height": 350,
+ "narrow": {
+  "width": 360,
+  "height": 545
+ },
+ "intro": "A 2 × 2 variable-entered map for f(A, B, C): rows A, columns B, entered variable C. Entries: C, 1 (top row); 0, C′ (bottom row).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "A variable-entered map and its unfolded K-map",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Variable-entered map, unfolded",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "vg",
+   "type": "grid",
+   "x": 60,
+   "y": 110,
+   "rows": 2,
+   "cols": 2,
+   "cell": 64,
+   "values": [
+    [
+     "C",
+     "1"
+    ],
+    [
+     "0",
+     "C′"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 110,
+    "y": 90,
+    "cell": 60
+   }
+  },
+  {
+   "id": "vc0",
+   "type": "text",
+   "x": 92.0,
+   "y": 98,
+   "text": "0",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 140.0,
+    "y": 79
+   }
+  },
+  {
+   "id": "vr0",
+   "type": "text",
+   "x": 50,
+   "y": 142.0,
+   "text": "0",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 102,
+    "y": 120.0
+   }
+  },
+  {
+   "id": "vc1",
+   "type": "text",
+   "x": 156.0,
+   "y": 98,
+   "text": "1",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 200.0,
+    "y": 79
+   }
+  },
+  {
+   "id": "vr1",
+   "type": "text",
+   "x": 50,
+   "y": 206.0,
+   "text": "1",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 102,
+    "y": 180.0
+   }
+  },
+  {
+   "id": "vcv",
+   "type": "text",
+   "x": 124,
+   "y": 78,
+   "text": "B",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 170,
+    "y": 61
+   }
+  },
+  {
+   "id": "vrv",
+   "type": "text",
+   "x": 50,
+   "y": 98,
+   "text": "A",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 102,
+    "y": 79
+   }
+  },
+  {
+   "id": "kg",
+   "type": "grid",
+   "x": 330,
+   "y": 110,
+   "rows": 2,
+   "cols": 4,
+   "cell": 60,
+   "values": [
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 300,
+    "cell": 56
+   },
+   "hidden": true
+  },
+  {
+   "id": "kc0",
+   "type": "text",
+   "x": 360.0,
+   "y": 98,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 120.0,
+    "y": 289
+   },
+   "hidden": true
+  },
+  {
+   "id": "kc1",
+   "type": "text",
+   "x": 420.0,
+   "y": 98,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 176.0,
+    "y": 289
+   },
+   "hidden": true
+  },
+  {
+   "id": "kc2",
+   "type": "text",
+   "x": 480.0,
+   "y": 98,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 289
+   },
+   "hidden": true
+  },
+  {
+   "id": "kc3",
+   "type": "text",
+   "x": 540.0,
+   "y": 98,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 288.0,
+    "y": 289
+   },
+   "hidden": true
+  },
+  {
+   "id": "kr0",
+   "type": "text",
+   "x": 320,
+   "y": 140.0,
+   "text": "0",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 328.0
+   },
+   "hidden": true
+  },
+  {
+   "id": "kr1",
+   "type": "text",
+   "x": 320,
+   "y": 200.0,
+   "text": "1",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 384.0
+   },
+   "hidden": true
+  },
+  {
+   "id": "kcv",
+   "type": "text",
+   "x": 450.0,
+   "y": 78,
+   "text": "BC",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 204.0,
+    "y": 271
+   },
+   "hidden": true
+  },
+  {
+   "id": "krv",
+   "type": "text",
+   "x": 320,
+   "y": 98,
+   "text": "A",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 289
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki0",
+   "type": "text",
+   "x": 386,
+   "y": 162,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 349,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki1",
+   "type": "text",
+   "x": 446,
+   "y": 162,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 349,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki2",
+   "type": "text",
+   "x": 566,
+   "y": 162,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 349,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki3",
+   "type": "text",
+   "x": 506,
+   "y": 162,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 349,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki4",
+   "type": "text",
+   "x": 386,
+   "y": 222,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 405,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki5",
+   "type": "text",
+   "x": 446,
+   "y": 222,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 405,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki6",
+   "type": "text",
+   "x": 566,
+   "y": 222,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 405,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "ki7",
+   "type": "text",
+   "x": 506,
+   "y": 222,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 405,
+    "size": 9
+   },
+   "hidden": true
+  },
+  {
+   "id": "L00",
+   "type": "box",
+   "x": 395,
+   "y": 115,
+   "w": 110,
+   "h": 50,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 153,
+    "y": 305,
+    "w": 102,
+    "h": 46
+   }
+  },
+  {
+   "id": "L10",
+   "type": "box",
+   "x": 519,
+   "y": 119,
+   "w": 42,
+   "h": 102,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 269,
+    "y": 309,
+    "w": 38,
+    "h": 94
+   }
+  },
+  {
+   "id": "n0",
+   "type": "text",
+   "x": 330,
+   "y": 270,
+   "text": "",
+   "anchor": "start",
+   "size": 14,
+   "narrow": {
+    "x": 20,
+    "y": 470,
+    "size": 12
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 330,
+   "y": 296,
+   "text": "",
+   "anchor": "start",
+   "size": 14,
+   "narrow": {
+    "x": 20,
+    "y": 494,
+    "size": 12
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 330,
+   "y": 330,
+   "text": "",
+   "anchor": "start",
+   "size": 16,
+   "weight": "bold",
+   "tone": "success",
+   "narrow": {
+    "x": 20,
+    "y": 524,
+    "size": 14
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A variable-entered map for f(A, B, C) uses only A and B as map variables. Each cell holds what f is as a function of the entered variable C for that A, B: 0, 1, C or C′.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "text": "cell = f(A, B, C) as a function of C"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Unfold it: each VEM cell becomes two cells of the full map, C = 0 and C = 1. Cell A = 0, B = 0 holds C, so f(0, 0, 0) = 0 and f(0, 0, 1) = 1; cell A = 0, B = 1 holds 1, so both are 1; cell A = 1, B = 0 holds 0; cell A = 1, B = 1 holds C′, so only C = 0 gives 1.",
+   "patches": [
+    {
+     "id": "kg",
+     "set": {
+      "hidden": false,
+      "values": [
+       [
+        "",
+        "1",
+        "1",
+        "1"
+       ],
+       [
+        "",
+        "",
+        "",
+        "1"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "kc0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "kc1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "kc2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "kc3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "kr0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "kr1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "kcv",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "krv",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ki7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "text": "1s: m1, m2, m3, m6"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Group the full map: m1, m3 (A = 0, C = 1) give A′C; m2, m6 (B = 1, C = 0) give BC′.",
+   "patches": [
+    {
+     "id": "L00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = A′C + BC′"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Read directly from the VEM: the 1 at A = 0, B = 1 is a don't-care for the C-group and for the C′-group. C at (0, 0) with that 1 gives A′·C; C′ at (1, 1) with that 1 gives B·C′. Same answer, without unfolding.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "text": "C-loop: A′ → A′C;  C′-loop: B → BC′",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
