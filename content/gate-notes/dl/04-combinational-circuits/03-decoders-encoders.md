@@ -1009,6 +1009,13 @@ watch one output light (switch the outputs to active-low and watch it go dark in
 the enable to turn it into a DEMUX, and feed several active inputs to the priority encoder to see which one
 wins and when $V$ drops.
 
+To realise a function on a decoder, switch to the **implement** tab and choose the decoder + OR target. Its
+**IT 2008** preset (address $z\,y\,x$, with $z$ the MSB) draws $f$ as OR($D_1, D_3, D_4, D_6$): the outputs of
+the four 1-rows. The paper wires the other four outputs into a NOR, NOR($O_7, O_5, O_2, O_0$). That is the
+same function, because exactly one decoder output is 1 on every row: the NOR of the 0-rows is 1 precisely when
+the active output is one of the 1-rows. With four outputs on each side the lists tie, and the lab shows the OR
+form.
+
 :::lab{#lab-decoder lab="comb-workbench" tab="decoder" depth="standard"}
 :::
 

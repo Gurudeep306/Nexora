@@ -89,6 +89,13 @@ PYQ pipeline, not a set error).
 - **B 120 / 166:** "XOR = AB + A′B′ on a 4:1 MUX (I₀ = I₃ = 1)" is XNOR. XOR needs I₁ = I₂ = 1,
   I₀ = I₃ = 0. The enable equation also lost its bars:
   E(I₀S₁′S₀′ + I₁S₁′S₀ + I₂S₁S₀′ + I₃S₁S₀).
+- **A 72 / B 167:** the MUX-tree count ⌈M/N^k⌉ summed over k = 1, 2, … overcounts by one when the sum
+  runs one level too far (a level that already leaves a single signal needs no further MUX). Stop when one
+  block remains: 16:1 from 4:1 is 4 + 1 = 5 (dl-04-02 `mux-tree-count`, checked by `comblib.mux_tree`).
+- **B 129:** "a short is stuck-at-1 and an open is stuck-at-0" is a technology-dependent simplification
+  (an open TTL input floats high; a CMOS open can hold either value), and stuck-at faults are filed under
+  hazards. They are a separate topic: the logical fault model of dl-04-06, which states the model without
+  tying it to a physical defect.
 - **B 178:** "Booth reduces multiplication to O(n^{log₂3})" is wrong. That is Karatsuba's bound.
   Booth only reduces the number of add/subtract operations for runs of 1s.
 - **D 401:** "CLA = 6 delays when XOR gates are available" assumes complemented literals and
