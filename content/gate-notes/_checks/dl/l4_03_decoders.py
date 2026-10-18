@@ -95,7 +95,7 @@ for idx in ([1, 3, 4, 6], [1, 2, 3], [0, 3, 5, 6]):
     a = ones(gate_on_decoder("OR", idx, a=["C", "B", "A"]), V3, "f")
     assert a == sorted(rev(i, 3) for i in idx)
 assert sorted(rev(i, 3) for i in [1, 3, 4, 6]) == [1, 3, 4, 6] and [rev(1, 3), rev(3, 3)] == [4, 6]
-has("($1 = 001 \\to 100 = 4$, $3 = 011 \\to 110 = 6$)", "the remaining rows $\\{1, 3, 4, 6\\}$ map to themselves")
+has("($1 = 001 \\to 100 = 4$, $3 = 011 \\to 110 = 6$)", "the set $\\{1, 3, 4, 6\\}$ maps onto itself: $1 \\leftrightarrow 4$")
 
 # ── Worked examples: functions from a decoder ───────────────────────────────
 FA = ["A", "B", "K"]
@@ -391,12 +391,11 @@ assert (0x9A3 >> 10, 0x9A3 & 0x3FF) == (2, 0x1A3)
 assert {20, 1024, 2048}.isdisjoint({1034})
 # Coincident decoding: two 5:32 decoders = 64 lines; 2^a + 2^b with a + b = 10 is smallest at a = b.
 assert 32 + 32 == 64 and min(range(11), key=lambda a: 2 ** a + 2 ** (10 - a)) == 5
-# Display system example: 1 + 8 + 4 = 13; 256 = 2^8, 16 = 2^4.
-assert 1 + 8 + 4 == 13 and mem_decoder(256) == (8, 256) and mem_decoder(16) == (4, 16)
-has("$m + n = 11 + 2048 = 2059$", "$1 + 8 + 4 = 13$", "$32 + 32 = 64$", "($10 + 1024 = 1034$ for 1 KB, byte-addressable)")
+has("$m + n = 11 + 2048 = 2059$","$32 + 32 = 64$", "($10 + 1024 = 1034$ for 1 KB, byte-addressable)")
 
 # ── Decoder feeding a MUX ───────────────────────────────────────────────────
 IN4 = ["A", "B", "S1", "S0"]
+# The shared-variable example's data with separate selects S1, S0: the per-line count 7 (its wrong answer).
 net = [("Q", "DEC", {"a": ["A", "B"]}), ("Y", "MUX", {"d": ["Q.1", "Q.2", "Q.3", "1"], "s": ["S1", "S0"]})]
 assert len(ones(net, IN4, "Y")) == 7 == 1 + 1 + 1 + 4
 assert cl.truth(net, IN4, "Y") == bl.tt("S1' S0' A' B + S1' S0 A B' + S1 S0' A B + S1 S0", IN4)
@@ -407,7 +406,7 @@ def edge_net(i3):
 
 assert len(ones(edge_net("1"), V3, "Y")) == 5 and cl.truth(edge_net("1"), V3, "Y") == cl.truth(edge_net("0"), V3, "Y")
 assert all(not (cl.evaluate(edge_net("1"), r)["Q.3"] and cl.evaluate(edge_net("1"), r)["Q.0"]) for r in cl.rows(V3))
-has("$1 + 1 + 1 + 4 = 7$", "$1 + 2 + 2 = 5$ rows, and $I_3$ is never used")
+has("$1 + 1 + 1 + 2^2 = 7$", "$1 + 2 + 2 = 5$ rows, and $I_3$ is never used")
 
 # ── PYQ keys ────────────────────────────────────────────────────────────────
 # 2007: 6:64 from 3:8 with enables, no gates.
@@ -567,4 +566,118 @@ for r in cl.rows(V3):
     v = cl.evaluate(net, r)
     assert (v["x1"], v["x0"]) == t92[(r["A"], r["B"], r["C"])]
 assert [t92[k] for k in sorted(t92)] == [(0, 0), (0, 1), (1, 0), (1, 0), (1, 1), (1, 1), (1, 1), (1, 1)]
+# ── Review fixes: new worked examples and claims ───────────────────────────
+# Trap (active-low): an OR of ≥ 2 different active-low outputs is 1 with the enable off too.
+for idx in combinations(range(8), 2):
+    net = gate_on_decoder("OR", idx, low=True, en="E")
+    assert all(cl.evaluate(net, dict(zip(["E"] + V3, [e] + list(b))))["f"] == 1 for e in (0, 1) for b in product((0, 1), repeat=3))
+has("is the constant 1, enabled or not")
+# Trap (decoder count): seven 3:8 decoders give 56 < 64 outputs; 7 is the 3:8-from-1:2 count.
+assert 7 * 8 == 56 < 64 and cl.decoder_tree(3, 1)[1] == 7 == 4 + 2 + 1 and cl.decoder_tree(6, 1)[1] == 63
+has("seven 3:8 decoders have only $7 \\times 8 = 56$ outputs")
+# Edge example answer: 010 is its own reversal; IT 2008's set is closed under reversal by swaps.
+assert rev(2, 3) == 2 and {rev(i, 3) for i in (1, 3, 4, 6)} == {1, 3, 4, 6} and (rev(1, 3), rev(3, 3)) == (4, 6)
+# Half adder (A held at 0) and half subtractor from a 2:4 decoder: D = D1 + D2, B_out = D1.
+for a, b in product((0, 1), repeat=2):
+    d2 = cl.decoder([a, b])
+    assert d2[1] | d2[2] == a ^ b and d2[1] == int(a - b < 0)
+has("With $A$ held at 0, the same decoder gives the half adder of $B$ and $C_{in}$", "$B_{out} = D_1$ alone")
+# BCD → excess-3 from a 4:16 decoder and four ORs (D10–D15 unconnected).
+XS3 = {3: [5, 6, 7, 8, 9], 2: [1, 2, 3, 4, 9], 1: [0, 3, 4, 7, 8], 0: [0, 2, 4, 6, 8]}
+assert [format(d + 3, "04b") for d in range(10)] == ["0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011", "1100"]
+for d in range(10):
+    dec = cl.decoder(cl.bits_of(d, 4))
+    out = [int(any(dec[i] for i in XS3[bit])) for bit in (3, 2, 1, 0)]
+    assert out == cl.bits_of(d + 3, 4)
+assert [b for b in (3, 2, 1, 0) if 7 in XS3[b]] == [3, 1] and 0b1010 == 7 + 3
+has("$E_3 = D_5 + D_6 + D_7 + D_8 + D_9$", "$E_0 = D_0 + D_2 + D_4 + D_6 + D_8$")
+# DEMUX examples. Easy: S = 10, I = 1 → 0010; I = 0 → 0000.
+assert cl.demux(1, [1, 0]) == [0, 0, 1, 0] and cl.demux(0, [1, 0]) == [0, 0, 0, 0]
+
+
+# Medium: 1:8 from 1:2 DEMUXes (root on S2) = 7 blocks; from 1:4 DEMUXes = 3; S = 101 → Y5.
+def demux_tree(i, sel, k):
+    """Route data i through a tree of 1:2^k DEMUXes, root on the high select bits (a partly used
+    root has its spare select pins tied to 0). Returns (outputs, blocks)."""
+    n = len(sel)
+    widths = [n % k or k] + [k] * ((n - (n % k or k)) // k)
+    outs, blocks, pos = [i], 0, 0
+    for w in widths:
+        bits = sel[pos:pos + w]
+        pos += w
+        new = []
+        for x in outs:
+            y = cl.demux(x, [0] * (k - w) + bits)
+            new += y[:2 ** w]
+            blocks += 1
+        outs = new
+    return outs, blocks
+
+
+for k, want_blocks in ((1, 7), (2, 3)):
+    for s in range(8):
+        for i in (0, 1):
+            outs, blocks = demux_tree(i, cl.bits_of(s, 3), k)
+            assert outs == cl.demux(i, cl.bits_of(s, 3))
+    assert blocks == want_blocks == cl.decoder_tree(3, k)[1]
+assert demux_tree(1, [1, 0, 1], 1)[0].index(1) == 5
+has("(a) $1 + 2 + 4 = 7$ blocks", "(b) $2 + 1 = 3$ blocks")
+# GATE: MUX (select A) → wire → DEMUX (select T = A ⊕ M): straight for M = 0, crossed for M = 1.
+for A, M, Pv, Qv in product((0, 1), repeat=4):
+    W = cl.mux([Pv, Qv], [A])
+    y0, y1 = cl.demux(W, [A ^ M])
+    if M == 0:
+        assert (y0, y1) == ((1 - A) & Pv, A & Qv)
+    else:
+        assert (y0, y1) == (A & Qv, (1 - A) & Pv)
+# Edge: a 3:8 decoder without enable, I on the MSB pin: D4..D7 = 1:4 DEMUX of I, D0..D3 = DEMUX of I'.
+for i in (0, 1):
+    for s in range(4):
+        d = cl.decoder([i] + cl.bits_of(s, 2))
+        assert d[4:] == cl.demux(i, cl.bits_of(s, 2)) and d[:4] == cl.demux(1 - i, cl.bits_of(s, 2))
+assert all(sum(cl.decoder(cl.bits_of(s, 2))) == 1 for s in range(4))  # no enable: always one output lit
+# Encoders: octal 8:3, hex 16:4 and decimal 10:4 OR lists.
+for i in range(8):
+    d = [int(j == i) for j in range(8)]
+    assert [int(any(d[j] for j in lst)) for lst in ([4, 5, 6, 7], [2, 3, 6, 7], [1, 3, 5, 7])] == cl.bits_of(i, 3)
+HEX = [list(range(8, 16)), [4, 5, 6, 7, 12, 13, 14, 15], [2, 3, 6, 7, 10, 11, 14, 15], list(range(1, 16, 2))]
+for i in range(16):
+    d = [int(j == i) for j in range(16)]
+    assert [int(any(d[j] for j in lst)) for lst in HEX] == cl.bits_of(i, 4) == cl.encoder(d)
+assert all(len(lst) == 8 for lst in HEX) and 0 not in sum(HEX, [])
+DEC10 = [[8, 9], [4, 5, 6, 7], [2, 3, 6, 7], [1, 3, 5, 7, 9]]
+for i in range(10):
+    assert [int(i in lst) for lst in DEC10] == cl.bits_of(i, 4)
+# Lift analogy: 001 OR 010 = 011.
+assert cl.encoder([0, 1, 1, 0, 0, 0, 0, 0]) == [0, 1, 1]
+has("$001 \\text{ OR } 010 = 011$")
+# Gray converter: decoder output i → encoder input g(i); i = 5 → 111; the reversed wiring gives 6.
+G = [i ^ (i >> 1) for i in range(8)]
+assert G == [0, 1, 3, 2, 6, 7, 5, 4] and G[5] == 0b111
+inv = {g: i for i, g in enumerate(G)}
+assert inv[5] == 6 == 0b110
+has("$g = 0, 1, 3, 2, 6, 7, 5, 4$")
+# Priority encoder from MUXes, the 1992 form in the definition: X1 data 0,1,1,1; X0 data C,0,1,1.
+assert mux_data_for(NAT92) == [["0", "1", "1", "1"], ["C", "0", "1", "1"]]
+has("the $X_1$ MUX has data $0, 1, 1, 1$ and the $X_0$ MUX has data $C, 0, 1, 1$")
+# Address decoding. Gate (word-addressable): 8 KB / 4 B = 2048 words → 11 bits; 64 registers → 6; 18 bits.
+assert mem_decoder(8 * K, 4) == (11, 2048) and mem_decoder(64) == (6, 64) and 1 + 11 + 6 == 18
+assert mem_decoder(8 * K) == (13, 8192)
+has("$1 + 11 + 6 = 18$ bits")
+# Edge: 6 KB from three 2 KB chips: 13 lines, A10..A0 shared, 2:4 select with output 3 unused; 0x1234 → chip 2, 0x234.
+assert math.ceil(math.log2(6 * K)) == 13 and 2 ** 12 < 6 * K <= 2 ** 13 and cl.select_lines(3) == 2
+assert int(math.log2(2 * K)) == 11 and (0x1800, 0x1FFF) == (3 * 2 * K, 4 * 2 * K - 1)
+assert 0x1234 == 4660 == 2 * 2048 + 564 and (0x1234 >> 11, 0x1234 & 0x7FF) == (2, 0x234) and 564 == 0x234
+has("$m = \\lceil \\log_2 6144 \\rceil = 13$", "$0x1234$ is byte $0x234$ of chip 2")
+# Decoder → MUX. Easy: data 0, D0, 1, 0 → 5 rows.
+net = [("Q", "DEC", {"a": ["A", "B"]}), ("Y", "MUX", {"d": ["0", "Q.0", "1", "0"], "s": ["S1", "S0"]})]
+assert len(ones(net, IN4, "Y")) == 5 and cl.truth(net, IN4, "Y") == bl.tt("S1' S0 A' B' + S1 S0'", IN4)
+# Medium (shared A): S1 = A, S0 = C, data D1, D2, D3, 1 → 4 rows, Y = BC' + AC; the per-line count gives 7.
+net = [("Q", "DEC", {"a": ["A", "B"]}), ("Y", "MUX", {"d": ["Q.1", "Q.2", "Q.3", "1"], "s": ["A", "C"]})]
+assert len(ones(net, V3, "Y")) == 4 and cl.truth(net, V3, "Y") == bl.tt("B C' + A C", V3)
+assert ones(net, V3, "Y") == [0b010, 0b101, 0b110, 0b111] and 1 + 1 + 1 + 4 == 7
+# Gate: data D2, 1, D2, 1 → 10 rows, Y = S0 + AB'; counting D2 once gives 9.
+net = [("Q", "DEC", {"a": ["A", "B"]}), ("Y", "MUX", {"d": ["Q.2", "1", "Q.2", "1"], "s": ["S1", "S0"]})]
+assert len(ones(net, IN4, "Y")) == 10 == 1 + 4 + 1 + 4 and cl.truth(net, IN4, "Y") == bl.tt("S0 + A B'", IN4)
+has("$1 + 4 + 1 + 4 = 10$ rows", "$0 + 1 + 4 + 0 = 5$ rows", "4 rows. The per-line count")
 print("l4_03_decoders: decoder minterms/maxterms, decoder + gate over all 3-variable functions, trees as netlists, DEMUX, encoders, priority encoders (4:2, 8:3, both orders, MUX form, 1992 codes), memory decoders, decoder-into-MUX counts, 7 PYQ keys and 10 practice answers (with solution option analyses) OK")
