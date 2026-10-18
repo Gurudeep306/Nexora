@@ -7,7 +7,7 @@
   "width": 360,
   "height": 548
  },
- "intro": "Left: a binary to Gray converter (three XORs side by side). Right: a Gray to binary converter (a ripple of three XORs). The input is 1011.",
+ "intro": "First: a binary → Gray converter (three independent XORs). Second: a Gray → binary converter (a ripple of XORs). The input is 1011.",
  "elements": [
   {
    "id": "head",
@@ -1175,7 +1175,7 @@
  ],
  "steps": [
   {
-   "caption": "The binary input b3 b2 b1 b0 = 1011 enters. Each Gray bit compares two neighbouring binary bits.",
+   "caption": "The binary input b3 b2 b1 b0 = 1011 enters. Each Gray bit XORs two neighbouring binary bits; the three XORs work at once.",
    "patches": [
     {
      "id": "b0",

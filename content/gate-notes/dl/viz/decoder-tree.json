@@ -1297,7 +1297,7 @@
    ]
   },
   {
-   "caption": "Address A5…A0 = 101 110: the top decoder raises output 5, enabling leaf 5 only; that leaf decodes 110 = 6 and raises its output 6, which is D46.",
+   "caption": "Address A5…A0 = 101 110: the top decoder enables leaf 5 only; that leaf decodes 110 = 6 and raises its output 6, D46.",
    "patches": [
     {
      "id": "top",
@@ -1492,7 +1492,7 @@
    ]
   },
   {
-   "caption": "Address A5…A0 = 000 011: the top decoder raises output 0, enabling leaf 0 only; that leaf decodes 011 = 3 and raises its output 3, which is D3.",
+   "caption": "Address A5…A0 = 000 011: the top decoder enables leaf 0 only; that leaf decodes 011 = 3 and raises its output 3, D3.",
    "patches": [
     {
      "id": "top",

@@ -1993,7 +1993,7 @@
    ]
   },
   {
-   "caption": "G = A3B3′ + x3A2B2′ + x3x2A1B1′ + x3x2x1A0B0′ (xᵢ = Aᵢ ⊙ Bᵢ); L is the same with A and B swapped; E = x3x2x1x0. The MSB decides unless it ties.",
+   "caption": "G = A3B3′ + x3A2B2′ + x3x2A1B1′ + x3x2x1A0B0′ (xᵢ = Aᵢ ⊙ Bᵢ); L swaps A and B; E = x3x2x1x0. The MSB decides unless it ties.",
    "patches": [
     {
      "id": "dec",

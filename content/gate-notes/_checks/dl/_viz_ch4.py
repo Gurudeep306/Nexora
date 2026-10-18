@@ -41,6 +41,7 @@ GEOM = ["x", "y", "w", "h", "cx", "cy", "r", "r0", "start", "end", "cell", "cell
 # PLA plane frames, highlight frames around a label).
 FREE = ("lp", "pl", "hl")
 MIN_TEXT = {"wide": 13, "narrow": 12}
+CAP_MAX = 140  # a caption must fit a 375 px phone (the captions are the text alternative)
 
 
 def scene(fn):
@@ -332,7 +333,7 @@ def check_layout(name, spec):
     assert len(spec["steps"]) >= 4 and len(spec["steps"]) <= 60, f"{name}: needs 4–60 steps"
     assert spec["intro"].strip() and len(spec["intro"]) <= 400, f"{name}: intro"
     for st in spec["steps"]:
-        assert st["caption"].strip() and len(st["caption"]) <= 400, f"{name}: caption too long ({len(st['caption'])}): {st['caption']}"
+        assert st["caption"].strip() and len(st["caption"]) <= CAP_MAX, f"{name}: caption too long ({len(st['caption'])}): {st['caption']}"
     assert 640 <= spec["width"] <= 720 and spec["narrow"]["width"] == 360, f"{name}: canvas widths"
     for layout in ("wide", "narrow"):
         W, H = (spec["width"], spec["height"]) if layout == "wide" else (spec["narrow"]["width"], spec["narrow"]["height"])
@@ -399,8 +400,8 @@ def sop_str(cover, vars_):
     return " + ".join(pretty(c, vars_) for c in cs), cs
 
 
-def kmap_els(s, pid, x, y, cell, ones, dcs):
-    km = KMap(pid, 4, V4, x, y, cell, x, y, cell, ones=ones, dcs=dcs, idx=False)
+def kmap_els(s, pid, x, y, cell, ones, dcs, vars_=V4):
+    km = KMap(pid, 4, vars_, x, y, cell, x, y, cell, ones=ones, dcs=dcs, idx=False)
     for e in km.elements():
         e.pop("narrow", None)
         if e["id"] in (f"{pid}cv", f"{pid}rv") or re.fullmatch(f"{pid}c[0-9]", e["id"]):
@@ -478,15 +479,15 @@ def design_pipeline(L):
     s.text("vF", o3[0] + 22, o3[1], "F", anchor="start", weight="bold", mono=True, hidden=True)
     circ += ["g1", "g2", "g3", "wC", "wD", "wB", "n1", "wA", "n2", "wF", "vF"]
 
-    s.step("Stage 1, the truth table: F = 1 for digits 5–9 (0101 to 1001), F = 0 for 0–4, and the codes 1010–1111 never occur in BCD, so their F is a don't-care X.",
+    s.step("Stage 1, the truth table: F = 1 for digits 5–9, F = 0 for 0–4; the codes 1010–1111 never occur in BCD, so their F is a don't-care X.",
            ("tt0", {"rows": filled[0]}), ("tt1", {"rows": filled[1]}))
     s.step("Stage 2, the K-map: the five 1s (cells 5–9) and the six Xs (cells 10–15) are copied into a 4-variable map in Gray order.",
            ("kmg", {"values": km.values()}))
     s.step("Stage 3, grouping: the Xs let the 1s at 8 and 9 join cells 10–15 in an octet, the whole A = 1 half of the map, which reads A.",
            *[(i, {"hidden": False}) for i in loop_ids[0]])
-    s.step(f"Two quads finish the cover: BC (cells 6, 7, 14, 15) and BD (cells 5, 7, 13, 15). The minimal SOP is F = {expr}, which factors to A + B(C + D).",
+    s.step(f"Two quads finish the cover: BC (cells 6, 7, 14, 15) and BD (cells 5, 7, 13, 15). Minimal SOP: F = {expr} = A + B(C + D).",
            *[(i, {"hidden": False}) for ids in loop_ids[1:] for i in ids], ("ex1", {"hidden": False}), ("ex2", {"hidden": False}))
-    s.step("Stage 4, the circuit: the factored form needs only three 2-input gates, an OR for C + D, an AND with B, and an OR with A. No AND/OR/NOT circuit with fewer gates exists.",
+    s.step("Stage 4: three gates, OR(C, D), AND with B, OR with A. No AND/OR/NOT circuit with fewer gates exists.",
            *[(i, {"hidden": False}) for i in circ])
     for m in (6, 3):
         env = dict(zip(V4, cl.bits_of(m, 4)))
@@ -509,7 +510,9 @@ def converter_kmaps(L):
     s = S(L)
     W, NW = 680, 360
     dcs = list(range(10, 16))
-    outs = "wxyz"
+    outs = "wxyz"  # element ids; shown as E3 E2 E1 E0 over the inputs B3 B2 B1 B0 (the lesson's names)
+    VB = ["B3", "B2", "B1", "B0"]
+    oname = {"w": "E3", "x": "E2", "y": "E1", "z": "E0"}
     ones = {o: [d for d in range(10) if ((d + 3) >> (3 - j)) & 1] for j, o in enumerate(outs)}
     known = {"w": "A + BC + BD", "x": "B'C + B'D + BC'D'", "y": "CD + C'D'", "z": "D'"}
     exprs, cubes = {}, {}
@@ -517,39 +520,55 @@ def converter_kmaps(L):
     for o in outs:
         cov = ml.min_covers(ones[o], dcs, 4)
         assert len(cov) == 1, o
-        exprs[o], cubes[o] = sop_str(cov[0], V4)
+        _, cubes[o] = sop_str(cov[0], V4)
+        exprs[o] = " + ".join(pretty(c, VB) for c in cubes[o])
         t = bl.tt(known[o], V4)
         assert [m for m in care if t[m]] == ones[o] and len(cubes[o]) == known[o].count("+") + 1
+    assert exprs == {"w": "B3 + B2B1 + B2B0", "x": "B2′B1 + B2′B0 + B2B1′B0′", "y": "B1′B0′ + B1B0", "z": "B0′"}, exprs
     s.head("BCD → excess-3: four K-maps with don't-cares", "BCD → excess-3 K-maps", W, NW)
     kc = s.v(30, 28)
     maps, loops = {}, {}
     tones = ["accent", "success", "info"]
+    two_line = {}
     for j, o in enumerate(outs):
         qx = s.v(340 * (j % 2), 180 * (j % 2))
         qy = s.v(36 + 232 * (j // 2), 36 + 232 * (j // 2))
         mx = qx + s.v(120, 56)
         my = qy + 74
-        s.text(f"nm{o}", mx + 2 * kc, qy + 12, f"output {o}" + (" (MSB)" if o == "w" else " (LSB)" if o == "z" else ""), s.v(14, 13), anchor="middle", weight="bold")
-        maps[o] = kmap_els(s, f"k{o}", mx, my, kc, ones[o], dcs)
+        s.text(f"nm{o}", mx + 2 * kc, qy + 12, f"output {oname[o]}" + (" (MSB)" if o == "w" else " (LSB)" if o == "z" else ""), s.v(14, 13), anchor="middle", weight="bold")
+        maps[o] = kmap_els(s, f"k{o}", mx, my, kc, ones[o], dcs, VB)
         loops[o] = [loop_els(s, maps[o], f"lp{o}{k}", c, k, tones[k]) for k, c in enumerate(cubes[o])]
-        s.text(f"e{o}", s.v(mx + 2 * kc, qx + 92), my + 4 * kc + 20, f"{o} = {exprs[o]}".replace("'", "′"), s.v(14, 12), anchor="middle", hidden=True)
+        full = f"{oname[o]} = {exprs[o]}"
+        ex, ey = s.v(mx + 2 * kc, qx + 92), my + 4 * kc + 20
+        if not s.wd and len(full) > 22:
+            head, tail = full.rsplit(" + ", 1)
+            s.text(f"e{o}", ex, ey, head, 12, anchor="middle", hidden=True)
+            s.text(f"e{o}b", ex, ey + 16, "+ " + tail, 12, anchor="middle", hidden=True)
+            two_line[o] = True
+        else:
+            s.text(f"e{o}", ex, ey, full, s.v(14, 12), anchor="middle", hidden=True)
+
+    def show(o, st):
+        return [(f"e{o}", st)] + ([(f"e{o}b", st)] if o in two_line else [])
+
     s.step("Rows 10–15 are not BCD digits, so every output has an X there: six don't-cares per map that a loop may use or ignore.",
            *[(f"k{o}g", {"highlight": [list(ml.cell_rc(m, 4)) for m in dcs]}) for o in outs])
     for o in outs:
         n = len(cubes[o])
-        what = {"w": "The MSB w is 1 for digits 5–9. The octet A uses the Xs; quads BC and BD take the remaining 1s",
-                "x": "x is 1 for digits 1–4 and 9. The quads B′C and B′D use Xs; the pair BC′D′ (cells 4, 12) takes digit 4",
-                "y": "y is 1 when C and D are equal: the quad CD and the quad C′D′, which wraps around the left and right edges",
-                "z": "The LSB z is 1 for the even digits: the octet D′ (two outer columns) covers every one of them"}[o]
-        s.step(f"{what}. {o} = {exprs[o].replace(chr(39), '′')} ({n} term{'s' if n > 1 else ''}).",
+        what = {"w": "The MSB E3 is 1 for digits 5–9. The octet B3 uses the Xs; quads B2B1 and B2B0 take the other 1s",
+                "x": "E2 is 1 for digits 1–4 and 9: quads B2′B1 and B2′B0 use Xs, pair B2B1′B0′ (cells 4, 12) takes 4",
+                "y": "E1 = 1 when B1 = B0: the left column quad B1′B0′ and the third column quad B1B0",
+                "z": "The LSB E0 is 1 for the even digits: the octet B0′ (two outer columns) covers them all"}[o]
+        s.step(f"{what}. {oname[o]} = {exprs[o]} ({n} term{'s' if n > 1 else ''}).",
                *[(f"k{x}g", {"highlight": []}) for x in outs],
-               *[(i, {"hidden": False}) for ids in loops[o] for i in ids], (f"e{o}", {"hidden": False, "tone": "accent"}),
-               *[(f"e{x}", {"tone": "ink"}) for x in outs if x != o and outs.index(x) < outs.index(o)])
+               *[(i, {"hidden": False}) for ids in loops[o] for i in ids], *show(o, {"hidden": False, "tone": "accent"}),
+               *[p for x in outs if x != o and outs.index(x) < outs.index(o) for p in show(x, {"tone": "ink"})])
     lits = sum(ml.literals(c) for o in outs for c in cubes[o])
-    s.step(f"All four outputs: w = A + BC + BD, x = B′C + B′D + BC′D′, y = CD + C′D′ (an XNOR), z = D′. Without the don't-cares every map would need more or larger terms ({lits} literals in all here).",
-           *[(f"e{x}", {"tone": "ink"}) for x in outs])
+    assert lits == 17
+    s.step(f"All four maps are done: {lits} literals in all. Without the don't-cares every map would need more or larger terms.",
+           *[p for x in outs for p in show(x, {"tone": "ink"})])
     return s.done("BCD to excess-3 converter: four K-maps with don't-cares", (W, 500), (NW, 500),
-                  "Four K-maps over the BCD digit ABCD, one per excess-3 output bit w x y z (the digit plus 3). Cells 0–9 hold the outputs; cells 10–15 are don't-cares X.")
+                  "Four K-maps over the BCD digit B3 B2 B1 B0, one per excess-3 output bit E3 E2 E1 E0 (the digit plus 3). Cells 0–9 hold the outputs; cells 10–15 are don't-cares X.")
 
 
 @scene
@@ -624,7 +643,7 @@ def gray_converter(L):
     def bitset(i, v, pre):
         return (f"{pre}{i}", {"label": str(v), "tone": tv(v), "fill": fillv(v)})
 
-    s.step(f"The binary input b3 b2 b1 b0 = {sup(B)} enters. Each Gray bit compares two neighbouring binary bits.",
+    s.step(f"The binary input b3 b2 b1 b0 = {sup(B)} enters. Each Gray bit XORs two neighbouring binary bits; the three XORs work at once.",
            *[bitset(i, B[3 - i], "b") for i in range(4)], *[(f"bus{i}", {"tone": tv(B[3 - i])}) for i in range(4)],
            *[(f"tap{i}", {"tone": tv(B[2 - i])}) for i in range(3)])
     s.step(f"g3 = b3 = {G[0]}: the MSB is copied unchanged.", bitset(3, G[0], "g"))
@@ -645,7 +664,7 @@ def gray_converter(L):
     s.step(f"The ripple returns {sup(R)}, the original input. Binary → Gray needs no chain (each XOR is independent); Gray → binary is a chain of 3 XORs.",
            ("res", {"text": f"{sup(B)} → Gray {sup(G)} → binary {sup(R)}", "tone": "success"}))
     return s.done("Binary to Gray and Gray to binary converters", (W, 300), (NW, 548),
-                  "Left: a binary to Gray converter (three XORs side by side). Right: a Gray to binary converter (a ripple of three XORs). The input is 1011.")
+                  "First: a binary → Gray converter (three independent XORs). Second: a Gray → binary converter (a ripple of XORs). The input is 1011.")
 
 
 # ── Lesson 2: multiplexers ──────────────────────────────────────────────────
@@ -682,7 +701,7 @@ def mux_routing(L):
                ("s0", {"text": f"S1 = {sb[0]}"}), ("s1", {"text": f"S0 = {sb[1]}"}),
                ("ws0", {"tone": tv(sb[0])}), ("ws1", {"tone": tv(sb[1])}),
                ("wy", {"tone": tv(v)}), ("vy", {"text": f"Y = {v}", "tone": tv(v)}))
-    s.step(f"Over the four selects Y reads {' '.join(map(str, ys))}: the data inputs are the truth table, and with data 0 1 1 0 the MUX computes Y = S1′S0 + S1S0′ = S1 ⊕ S0.",
+    s.step(f"Over the four selects Y reads {' '.join(map(str, ys))}: the data inputs are the truth table, so Y = S1 ⊕ S0.",
            *[(f"path{j}", {"hidden": True}) for j in range(4)], *[(f"wd{j}", {"tone": tv(data[j])}) for j in range(4)],
            ("vy", {"text": "Y = S1 ⊕ S0", "tone": "accent"}))
     return s.done("A 4:1 multiplexer routing the selected input to its output", (W, 310), (NW, 310),
@@ -719,7 +738,7 @@ def mux_implement(L):
     s.text("chk", s.v(W / 2, NW / 2), s.v(290, 470), "", s.v(14, 13), anchor="middle")
     hl0 = [[1, c + 1] for c in range(4) if c in ones]
     hl1 = hl0 + [[2, c + 1] for c in range(4) if c + 4 in ones]
-    s.step("Row x′ lists the minterms with x = 0 (0–3), row x those with x = 1 (4–7); each column is one value of the selects yz. Ring the 1s of row x′: 0, 1 and 3.",
+    s.step("Row x′ holds minterms 0–3 (x = 0), row x holds 4–7; each column is one value of yz. Ring row x′'s 1s: 0, 1, 3.",
            ("it", {"highlight": hl0}))
     s.step("Ring the 1s of row x: 4, 5 and 6. Now read each column: which rows are ringed decides that data input.",
            ("it", {"highlight": hl1}))
@@ -732,7 +751,7 @@ def mux_implement(L):
                "only the x row is ringed, so the input equals x" if bot else "only the x′ row is ringed, so the input equals x′")
         s.step(f"Column yz = {format(c, '02b')} (minterms {c} and {c + 4}): {why}. I{c} = {names[c]}.",
                ("it", {"rows": [r[:] for r in cur], "highlight": hl1 + [[3, c + 1]]}))
-    s.step(f"Wire the residues to the MUX: I0 = {names[0]}, I1 = {names[1]}, I2 = {names[2]}, I3 = {names[3]}, with y on S1 and z on S0. One 4:1 MUX (and an inverter for x′) realises the 3-variable function.",
+    s.step(f"Wire the residues: I0 = {names[0]}, I1 = {names[1]}, I2 = {names[2]}, I3 = {names[3]}, y on S1, z on S0. One 4:1 MUX plus an inverter realises f.",
            ("it", {"highlight": []}), *[(f"d{k}", {"text": names[k], "tone": "accent"}) for k in range(4)])
     for m in (6, 7):
         env = dict(zip(V, cl.bits_of(m, 3)))
@@ -929,7 +948,7 @@ def mux_as_gates(L):
                "OR": "OR: x on the select, y on I0, 1 on I1. When x = 0 the output is y; when x = 1 it is 1. So Y = x′y + x = x + y.",
                "NOR": "NOR needs two MUXes: MUX a (select y, inputs 1 and 0) makes y′; the second MUX (select x, inputs y′ and 0) gives Y = x′y′ = (x + y)′."}[nm]
         s.step(cap, *pats)
-    s.step("With constants and one variable on the select, a 2:1 MUX makes NOT and AND (and OR), so 2:1 MUXes alone are functionally complete. Read every cascade from its truth table: a different wiring of constants can give NAND instead of OR.",
+    s.step("2:1 MUXes with 0 and 1 make NOT and AND, so they are complete. Read any constant cascade from its truth table: it may be NAND, not OR.",
            ("name", {"text": "2:1 MUX: functionally complete"}))
     return s.done("A 2:1 multiplexer wired as NOT, AND, OR and NOR", (W, 260), (NW, 400),
                   "A 2:1 MUX outputs I0 when its select S is 0 and I1 when S is 1. Tying its inputs to constants and variables turns it into gates.")
@@ -1026,7 +1045,7 @@ def decoder_function(L):
                *[(f"wo{k}", {"tone": ("accent" if k == m else "muted")}) for k in range(8)],
                ("or", {"fill": fillv(val["S"]), "tone": tv(val["S"]) if val["S"] else "ink"}), ("ws", {"tone": tv(val["S"])}),
                ("vs", {"text": f"S={val['S']}", "tone": tv(val["S"])}), ("col", {"text": "S column: " + " ".join(col)}))
-    s.step("The OR collects minterms 1, 2, 4 and 7, so S = Σ(1, 2, 4, 7) = A ⊕ B ⊕ C, the full-adder sum. Any n-variable function is one n:2ⁿ decoder plus an OR of its minterms.",
+    s.step("The OR collects minterms 1, 2, 4, 7: S = A ⊕ B ⊕ C, the full-adder sum. Any n-variable function is an n:2ⁿ decoder plus an OR.",
            *[(f"wo{k}", {"tone": "success" if k in used else "muted"}) for k in range(8)], ("vs", {"text": "S", "tone": "ink"}),
            ("or", {"fill": "none", "tone": "ink"}), ("ws", {"tone": "ink"}))
     return s.done("A decoder and an OR gate implementing the full-adder sum", (W, 340), (NW, 340),
@@ -1076,7 +1095,7 @@ def decoder_tree(L):
         assert out == addr
         others = [cl.decoder(ab[3:], en=0) for _ in range(7)]
         assert all(sum(o) == 0 for o in others)
-        s.step(f"Address A5…A0 = {sup(ab[:3])} {sup(ab[3:])}: the top decoder raises output {k}, enabling leaf {k} only; that leaf decodes {sup(ab[3:])} = {lo} and raises its output {lo}, which is D{out}.",
+        s.step(f"Address A5…A0 = {sup(ab[:3])} {sup(ab[3:])}: the top decoder enables leaf {k} only; that leaf decodes {sup(ab[3:])} = {lo} and raises its output {lo}, D{out}.",
                ("top", {"tone": "ink"}), *[(f"lf{j}", {"tone": "accent" if j == k else "muted", "fill": "accent" if j == k else "none"}) for j in range(8)],
                *[(f"we{j}", {"tone": "accent" if j == k else "muted"}) for j in range(8)],
                *[(f"lo{j}", {"text": f"D{out}" if j == k else "", "tone": "success"}) for j in range(8)],
@@ -1132,14 +1151,14 @@ def priority_scan(L):
     W, NW = 640, 360
     s.head("A 4:2 priority encoder scans from D3 down", "4:2 priority encoder", W, NW)
     x, y, w, h = s.v(260, 120), 60, s.v(120, 110), 180
-    P = s.block("pe", x, y, w, h, left=["D3", "D2", "D1", "D0"], right=["A1", "A0", "V"], title="4:2", title_xy=(x + w / 2 + 4, y + h / 2))
+    P = s.block("pe", x, y, w, h, left=["D3", "D2", "D1", "D0"], right=["X1", "X0", "V"], title="4:2", title_xy=(x + w / 2 + 4, y + h / 2))
     for j in range(4):
         i = 3 - j
         py = P[f"D{i}"][1]
         s.box(f"hl{i}", x - s.v(116, 92), py - 15, s.v(78, 64), 30, tone="accent", fill="accent", hidden=True)
         s.text(f"d{i}", x - s.v(46, 34), py, f"D{i} = ?", anchor="end", mono=True)
         s.line(f"wd{i}", [[x - s.v(38, 28), py], [x, py]])
-    for nm in ["A1", "A0", "V"]:
+    for nm in ["X1", "X0", "V"]:
         py = P[nm][1]
         s.line(f"w{nm}", [[x + w, py], [x + w + s.v(30, 22), py]])
         s.text(f"v{nm}", x + w + s.v(36, 28), py, f"{nm} = ?", anchor="start", mono=True)
@@ -1152,10 +1171,11 @@ def priority_scan(L):
         assert valid == (win is not None) and (not valid or cl.num(code) == win)
         load = [(f"d{i}", {"text": f"D{i} = {d[i]}", "tone": tv(d[i]), "opacity": 1}) for i in range(4)]
         load += [(f"wd{i}", {"tone": tv(d[i]), "opacity": 1}) for i in range(4)]
-        load += [(f"v{nm}", {"text": f"{nm} = ?", "tone": "ink"}) for nm in ["A1", "A0", "V"]]
-        load += [(f"w{nm}", {"tone": "ink"}) for nm in ["A1", "A0", "V"]]
+        load += [(f"v{nm}", {"text": f"{nm} = ?", "tone": "ink"}) for nm in ["X1", "X0", "V"]]
+        load += [(f"w{nm}", {"tone": "ink"}) for nm in ["X1", "X0", "V"]]
         first = True
         for i in range(3, -1, -1):
+            pre = f"Input D3 D2 D1 D0 = {sup(pat)}. " if first else ""
             pats = (load + [("st", {"text": f"input D3 D2 D1 D0 = {sup(pat)}", "tone": "ink"})]) if first else []
             pats += [(f"hl{j}", {"hidden": j != i}) for j in range(4)]
             first = False
@@ -1163,25 +1183,24 @@ def priority_scan(L):
                 lower = [j for j in range(i - 1, -1, -1)]
                 pats += [(f"d{j}", {"opacity": 0.4}) for j in lower] + [(f"wd{j}", {"opacity": 0.4}) for j in lower]
                 pats += [(f"wd{i}", {"tone": "accent"})]
-                pats += [("vA1", {"text": f"A1 = {code[0]}", "tone": tv(code[0])}), ("vA0", {"text": f"A0 = {code[1]}", "tone": tv(code[1])}),
-                         ("vV", {"text": "V = 1", "tone": "success"}), ("wA1", {"tone": tv(code[0])}), ("wA0", {"tone": tv(code[1])}), ("wV", {"tone": "success"}),
+                pats += [("vX1", {"text": f"X1 = {code[0]}", "tone": tv(code[0])}), ("vX0", {"text": f"X0 = {code[1]}", "tone": tv(code[1])}),
+                         ("vV", {"text": "V = 1", "tone": "success"}), ("wX1", {"tone": tv(code[0])}), ("wX0", {"tone": tv(code[1])}), ("wV", {"tone": "success"}),
                          ("st", {"text": f"{sup(pat)}: D{i} wins → code {sup(code)}, V = 1", "tone": "accent"})]
-                ign = f"; {', '.join(f'D{j}' for j in lower)} {'is' if len(lower) == 1 else 'are'} ignored" if lower and any(d[j] for j in lower) else ""
-                s.step(f"D{i} = 1 is the highest active input, so it wins: the code is A1A0 = {sup(code)} ({i} in binary) and V = 1{ign}.", *pats)
+                ign = f"; {', '.join(f'D{j}' for j in lower if d[j])} ignored" if any(d[j] for j in lower) else ""
+                s.step(f"{pre}D{i} = 1 is the highest active input, so it wins: X1X0 = {sup(code)} ({i} in binary), V = 1{ign}.", *pats)
                 break
             if i > 0:
-                s.step(f"Input D3 D2 D1 D0 = {sup(pat)}. D{i} = 0, so look at the next lower input." if pats and pats[0][0] == "d0" else
-                       f"D{i} = 0, so look at the next lower input.", *pats)
+                s.step(f"{pre}D{i} = 0, so look at the next lower input.", *pats)
             else:
-                pats += [("vA1", {"text": "A1 = 0", "tone": "muted"}), ("vA0", {"text": "A0 = 0", "tone": "muted"}),
+                pats += [("vX1", {"text": "X1 = 0", "tone": "muted"}), ("vX0", {"text": "X0 = 0", "tone": "muted"}),
                          ("vV", {"text": "V = 0", "tone": "danger"}), ("wV", {"tone": "muted"}),
                          ("st", {"text": "no input active → V = 0", "tone": "danger"})]
                 assert code == [0, 0] and valid == 0
-                s.step("D0 = 0 too: no input is active, so V = 0. The code 00 is then meaningless; V is what tells it apart from D0 = 1.", *pats)
-    s.step("The rule: scan from D3 down and output the index of the first 1; V = 1 when any input is 1. Lower inputs never matter once a higher one is active.",
+                s.step(f"{pre}D0 = 0 too: no input is active, so V = 0. The code 00 is then meaningless; V tells it apart from D0 = 1.", *pats)
+    s.step("The rule: scan from D3 down and output the index of the first 1; V = 1 when any input is 1. Lower inputs then never matter.",
            *[(f"hl{j}", {"hidden": True}) for j in range(4)], ("st", {"text": "first 1 from the top wins", "tone": "accent"}))
     return s.done("A 4-to-2 priority encoder scanning its inputs", (W, 300), (NW, 300),
-                  "A 4:2 priority encoder with inputs D3 (highest priority) to D0, code outputs A1 A0 and a valid flag V. Several input patterns follow.")
+                  "A 4:2 priority encoder with inputs D3 (highest priority) to D0, code outputs X1 X0 and a valid flag V. Several input patterns follow.")
 
 
 # ── Lesson 4: comparators and parity ────────────────────────────────────────
@@ -1272,7 +1291,7 @@ def comparator_cascade(L):
             s.step(f"Bit {i}: A{i} = {A[3 - i]}, B{i} = {B[3 - i]}, the first unequal bit. The term {term} = 1 fires, so {winner} = 1: A {'>' if g else '<'} B ({a} {'>' if g else '<'} {b}).{later}",
                    *bp, *rp, ("dec", {"text": f"first difference at bit {i} → {winner} = 1"}))
             break
-    s.step("G = A3B3′ + x3A2B2′ + x3x2A1B1′ + x3x2x1A0B0′ (xᵢ = Aᵢ ⊙ Bᵢ); L is the same with A and B swapped; E = x3x2x1x0. The MSB decides unless it ties.",
+    s.step("G = A3B3′ + x3A2B2′ + x3x2A1B1′ + x3x2x1A0B0′ (xᵢ = Aᵢ ⊙ Bᵢ); L swaps A and B; E = x3x2x1x0. The MSB decides unless it ties.",
            ("dec", {"text": "G, L: first unequal bit from the top"}))
     return s.done("A 4-bit magnitude comparator deciding from the most significant bit", (W, 280), (NW, 410),
                   "Two 4-bit numbers A and B are compared bit by bit. Each XNOR gives xᵢ = 1 when Aᵢ = Bᵢ. Outputs: G (A > B), E (A = B), L (A < B).")
@@ -1353,10 +1372,10 @@ def parity_tree(L):
            *[(f"v2{k}", {"text": str(r2[k]), "tone": tv(r2[k])}) for k in range(2)], *[(f"t{k}", {"tone": tv(r2[k])}) for k in range(2)])
     E = r3 ^ P
     assert E == 1 and (sum(recv) + P) % 2 == 1
-    s.step(f"The root now gives {r3}. One more XOR with the received P: E = {r3} ⊕ {P} = {E}. The 9 received bits hold {sum(recv) + P} ones, an odd count, so the error flag rises.",
+    s.step(f"The root now gives {r3}. One more XOR with the received P: F = {r3} ⊕ {P} = {E}. The 9 bits hold {sum(recv) + P} ones, odd, so the error flag F rises.",
            ("v3", {"text": f"p′ = {r3}", "tone": tv(r3)}), ("fin", {"hidden": False, "tone": "danger"}), ("wt", {"hidden": False, "tone": tv(r3)}),
-           ("wE", {"hidden": False, "tone": "danger"}), ("vE", {"text": f"E = {E}", "tone": "danger"}))
-    s.step("Any single flipped bit changes the count of 1s by one and is caught. Two flips cancel (the count stays even), so parity detects every odd number of errors and no even number.",
+           ("wE", {"hidden": False, "tone": "danger"}), ("vE", {"text": f"F = {E}", "tone": "danger"}))
+    s.step("One flipped bit changes the count of 1s by one and is caught; two flips cancel. Parity detects every odd number of errors, no even one.",
            ("st", {"text": "parity: detects 1, 3, 5 … errors", "tone": "accent"}))
     return s.done("An XOR tree generating and checking an even parity bit", (W, 410), (NW, 410),
                   "Eight data bits b7…b0 = 1011 0011 feed a balanced tree of 2-input XOR gates. Its output is the even parity bit P.")
@@ -1404,7 +1423,7 @@ def rom_grid(L):
         pats += [(f"a{j}", {"text": f"A{2 - j}={ab[j]}"}) for j in range(3)] if s.wd else [("adr", {"text": f"A2A1A0 = {sup(ab)}"})]
         pats += [("st", {"text": f"word {x}"}), ("st2", {"text": f"{sup(w)} = {x * x}"})]
         s.step(f"Address {sup(ab)}: the decoder raises word line {x} only, and that row of stored bits, {sup(w)} = {x * x} = {x}², appears on Q5…Q0.", *pats)
-    s.step(f"Size: 2³ = 8 words × 6 bits = {cl.rom_size(3, 6)[2]} bits. Column Q1 is 0 in every word and Q0 always equals A0, so a careful design stores only 4 columns (32 bits).",
+    s.step(f"Size: 2³ × 6 = {cl.rom_size(3, 6)[2]} bits. Q1 is always 0 and Q0 = A0, so only 4 columns (32 bits) need storing (proved in Sizing below).",
            *[(f"wl{k}", {"tone": "ink"}) for k in range(8)], ("grid", {"highlight": [[r, 4] for r in range(8)] + [[r, 5] for r in range(8)]}),
            ("st", {"text": "8 × 6 = 48 bits"}), ("st2", {"text": "Q1 = 0, Q0 = A0"}))
     return s.done("A ROM as a decoder and a grid of stored bits", (W, 370), (NW, 420),
@@ -1524,41 +1543,614 @@ def fault_injection(L):
     s.text("st", s.v(W / 2, NW / 2), s.v(344, 560), "", s.v(14, 13), anchor="middle", weight="bold")
     cur = [r[:] for r in rows0]
     diffs = []
-    for m, env in enumerate(cl.rows(V3)):
+    allrows = list(cl.rows(V3))
+    # Rows 000–101 (A or B is 0) all fail the same way, so they share one step.
+    for grp in ([0, 1, 2, 3, 4, 5], [6], [7]):
+        for m in grp:
+            env = allrows[m]
+            g = cl.evaluate(net, env)
+            b = cl.evaluate(net, env, {"p": 1})
+            differ = g["f"] != b["f"]
+            assert differ == (m in tests)
+            if differ:
+                diffs.append(m)
+            cur[m + 1] = [sup([env[v] for v in V3]), str(g["f"]), str(b["f"])]
+            if len(grp) > 1:
+                assert g["p"] == 1 and not differ  # not activated
+        m = grp[-1]  # the circuits show the last row of the group
+        env = allrows[m]
         g = cl.evaluate(net, env)
         b = cl.evaluate(net, env, {"p": 1})
         differ = g["f"] != b["f"]
-        assert differ == (m in tests)
-        if differ:
-            diffs.append(m)
         abc = sup([env[v] for v in V3])
-        cur[m + 1] = [abc, str(g["f"]), str(b["f"])]
-        if differ:
-            why = f"good p = (AB)′ = 0 so f = (0·C)′ = 1, but the faulty p is 1 and C = 1, so f = (1·1)′ = 0. The outputs differ: this row detects the fault."
-        elif g["p"] == 1:
-            why = f"good p = (AB)′ = 1 already, the same as the stuck value, so the fault is not activated; both outputs are {g['f']}."
+        if len(grp) > 1:
+            cap = (f"Rows {format(grp[0], '03b')}–{format(grp[-1], '03b')} (A or B is 0): good p = (AB)′ = 1, the stuck value, "
+                   f"so the fault is not activated; all {len(grp)} rows agree.")
+        elif differ:
+            cap = f"A B C = {' '.join(abc)}: good p = 0, f = (0·1)′ = 1; faulty p = 1, f = (1·1)′ = 0. The outputs differ: a test."
         else:
-            why = f"good p = 0 differs from the stuck 1, but C = 0 forces f = 1 in both circuits, so the difference cannot propagate."
+            assert g["p"] == 0
+            cap = f"A B C = {' '.join(abc)}: good p = 0 differs from the stuck 1, but C = 0 forces f = 1 in both circuits, so nothing propagates."
         pats = []
         for tag, val in (("G", g), ("F", b)):
             pats += [(f"{tag}i{v}", {"text": f"{v}={env[v]}", "tone": tv(env[v])}) for v in V3]
             pats += [(f"{tag}w{v}", {"tone": tv(env[v])}) for v in V3]
             pats += [(f"{tag}wp", {"tone": "danger" if tag == "F" else tv(val["p"])}), (f"{tag}vp", {"text": f"p={val['p']}", "tone": "danger" if tag == "F" else tv(val["p"])})]
             pats += [(f"{tag}wf", {"tone": tv(val["f"])}), (f"{tag}vf", {"text": f"f={val['f']}", "tone": ("danger" if differ else tv(val["f"])) if tag == "F" else tv(val["f"])})]
-        pats += [("tt", {"rows": [r[:] for r in cur], "highlight": [[m + 1, 0], [m + 1, 1], [m + 1, 2]] if differ else [[m + 1, 0]]})]
+        hl = [[r + 1, c] for r in grp for c in range(3)] if differ else [[r + 1, 0] for r in grp]
+        pats += [("tt", {"rows": [r[:] for r in cur], "highlight": hl})]
         pats += [("st", {"text": "outputs differ: fault detected" if differ else "outputs agree", "tone": "danger" if differ else "muted"})]
-        s.step(f"A B C = {' '.join(abc)}: {why}", *pats)
-    s.step(f"Only A = B = C = 1 (row {diffs[0]}) makes the outputs differ: A = B = 1 activates the fault (good p = 0) and C = 1 propagates it through the second NAND. That one vector is the test.",
+        s.step(cap, *pats)
+    assert diffs == [7]
+    s.step(f"Only {format(diffs[0], '03b')} differs: A = B = 1 activates (good p = 0), C = 1 propagates. That one vector is the test.",
            ("tt", {"highlight": [[diffs[0] + 1, 0], [diffs[0] + 1, 1], [diffs[0] + 1, 2]]}), ("st", {"text": "test vector: A = B = C = 1", "tone": "accent"}))
     return s.done("Injecting a stuck-at-1 fault and finding the test vector", (W, 360), (NW, 580),
                   "Two copies of the circuit p = (AB)′, f = (p·C)′. The lower copy has line p stuck at 1. Every input row is applied to both copies.")
 
 
+# ── Scenes added after the review ───────────────────────────────────────────
+
+def lv(g, f):
+    """A line's value in the good and the faulty circuit, written good/faulty."""
+    return f"{g}/{f}"
+
+
+def gf_tone(g, f):
+    return "danger" if g != f else tv(g)
+
+
+@scene
+def mux_enable_expand(L):
+    s = S(L)
+    W, NW = 680, 360
+    data = [0, 1, 1, 0, 1, 0, 0, 1]  # I0 … I7
+    ins = [f"I{k}" for k in range(8)]
+    net = [("ya", "MUX", {"d": ins[:4], "s": ["S1", "S0"], "en": "~S2"}),
+           ("yb", "MUX", {"d": ins[4:], "s": ["S1", "S0"], "en": "S2"}),
+           ("Y", "OR", ["ya", "yb"])]
+    for sel in range(8):
+        for hot in range(8):
+            env = {f"I{i}": int(i == hot) for i in range(8)}
+            env.update(dict(zip(["S2", "S1", "S0"], cl.bits_of(sel, 3))))
+            v = cl.evaluate(net, env)
+            assert v["Y"] == int(hot == sel) and (v["ya"] if sel >= 4 else v["yb"]) == 0
+    s.head("An 8:1 MUX from two 4:1 MUXes with enables", "8:1 from two 4:1 MUXes", W, NW)
+    x, w, h = s.v(250, 120), s.v(110, 92), 140
+    ys = {"a": s.v(86, 86), "b": s.v(276, 286)}
+    pins = {}
+    for t, lo, en in (("a", 0, "S2′"), ("b", 4, "S2")):
+        y = ys[t]
+        P = s.block(f"m{t}", x, y, w, h, left=[f"I{k}" for k in range(4)], right=["Y"], top=["EN"], bottom=["S1 S0"],
+                    title=f"MUX {t.upper()}", title_xy=(x + w / 2 + 4, y + h / 2 - 4))
+        pins[t] = P
+        for k in range(4):
+            i = lo + k
+            py = P[f"I{k}"][1]
+            s.text(f"d{i}", x - s.v(36, 26), py, f"I{i} = {data[i]}", s.v(13, 12), anchor="end", mono=True, tone=tv(data[i]))
+            s.line(f"wd{i}", [[x - s.v(32, 22), py], [x, py]], tone=tv(data[i]))
+        ex = P["EN"][0]
+        s.line(f"wen{t}", [[ex, y - 16], [ex, y]])
+        s.text(f"en{t}", ex, y - 26, f"EN = {en}", s.v(13, 12), anchor="middle", mono=True)
+    gx, gw, gh = s.v(470, 250), s.v(56, 46), 70
+    ya, yb = pins["a"]["Y"], pins["b"]["Y"]
+    gy = round((ya[1] + yb[1]) / 2 - gh / 2, 2)
+    gp, go = s.gate("or", gx, gy, gw, gh, "or")
+    s.wire("wya", ya, gp[0], s.v(420, 230))
+    s.wire("wyb", yb, gp[1], s.v(430, 238))
+    s.text("vya", ya[0] + s.v(30, 14), ya[1] - 12, "", s.v(13, 12), anchor="start", mono=True)
+    s.text("vyb", yb[0] + s.v(30, 14), yb[1] + 12, "", s.v(13, 12), anchor="start", mono=True)
+    s.line("wy", [go, [go[0] + s.v(24, 18), go[1]]])
+    s.text("vy", s.v(go[0] + 30, go[0] - 20), s.v(go[1], go[1] + 52), "Y", s.v(15, 13), anchor=s.v("start", "middle"), mono=True, weight="bold")
+    s.text("sel", s.v(W / 2, NW / 2), s.v(472, 482), "S1 S0 go to both MUXes", s.v(14, 13), anchor="middle", mono=True, weight="bold")
+    s.step("Two 4:1 MUXes share S1 S0. MUX A takes I0–I3 and is enabled by S2′; MUX B takes I4–I7 and is enabled by S2.",
+           ("ena", {"tone": "accent"}), ("enb", {"tone": "accent"}))
+    for sel in (0b010, 0b110, 0b101, 0b011):
+        sb = cl.bits_of(sel, 3)
+        env = {f"I{i}": data[i] for i in range(8)}
+        env.update(dict(zip(["S2", "S1", "S0"], sb)))
+        v = cl.evaluate(net, env)
+        on, off = ("a", "b") if sb[0] == 0 else ("b", "a")
+        assert v["Y"] == data[sel] and v["y" + off] == 0 and v["y" + on] == data[sel]
+        lo = 0 if on == "a" else 4
+        pats = [(f"wd{i}", {"tone": "accent" if i == sel else tv(data[i]), "opacity": 1 if lo <= i < lo + 4 else 0.35}) for i in range(8)]
+        pats += [(f"d{i}", {"opacity": 1 if lo <= i < lo + 4 else 0.35, "tone": "accent" if i == sel else tv(data[i])}) for i in range(8)]
+        pats += [(f"m{on}", {"tone": "accent"}), (f"m{off}", {"tone": "muted"})]
+        pats += [("ena", {"text": f"EN = S2′ = {1 - sb[0]}", "tone": tv(1 - sb[0])}), ("enb", {"text": f"EN = S2 = {sb[0]}", "tone": tv(sb[0])}),
+                 ("wena", {"tone": tv(1 - sb[0])}), ("wenb", {"tone": tv(sb[0])})]
+        pats += [("wya", {"tone": tv(v["ya"])}), ("wyb", {"tone": tv(v["yb"])}),
+                 ("vya", {"text": f"{v['ya']}", "tone": tv(v["ya"])}), ("vyb", {"text": f"{v['yb']}", "tone": tv(v["yb"])}),
+                 ("wy", {"tone": tv(v["Y"])}), ("vy", {"text": f"Y={v['Y']}", "tone": tv(v["Y"])}),
+                 ("sel", {"text": f"S2 S1 S0 = {sup(sb)} → I{sel}"})]
+        k = sel - lo
+        cap = (f"S2 S1 S0 = {sup(sb)}: S2 = {sb[0]} enables MUX {on.upper()}, which passes its input {k} (I{sel} = {data[sel]}); "
+               f"MUX {off.upper()} outputs 0. Y = {data[sel]}.")
+        s.step(cap, *pats)
+    s.step("Y = S2′·MUX A + S2·MUX B: a disabled MUX outputs 0, so the OR passes the enabled one. Two 4:1 MUXes and an OR make an 8:1.",
+           *[(f"wd{i}", {"tone": tv(data[i]), "opacity": 1}) for i in range(8)], *[(f"d{i}", {"opacity": 1, "tone": tv(data[i])}) for i in range(8)],
+           ("ma", {"tone": "ink"}), ("mb", {"tone": "ink"}), ("sel", {"text": "8:1 = two 4:1 + OR"}))
+    return s.done("An 8-to-1 multiplexer from two enabled 4-to-1 multiplexers", (W, 500), (NW, 510),
+                  "Two 4:1 MUXes with enable inputs: MUX A holds I0–I3, MUX B holds I4–I7. S2 picks the MUX through the enables; an OR joins the outputs.")
+
+
+@scene
+def address_decoding(L):
+    s = S(L)
+    W, NW = 700, 360
+    KB = 1024
+    s.head("Address decoding: a 2:4 decoder picks one of four 1 KB chips", "Address decoding, 4 × 1 KB", W, NW)
+    pitch, ch, cy0 = 76, 56, 76
+    rows_c = [cy0 + pitch * k + ch / 2 for k in range(4)]
+    dx, dw = s.v(150, 74), s.v(90, 62)
+    dy = rows_c[0] - pitch / 2
+    P = s.block("dec", dx, dy, dw, pitch * 4, left=["A11", "A10"], right=[f"Y{k}" for k in range(4)], title="2:4", title_xy=(dx + dw / 2, dy + 2 * pitch + 30))
+    for k in range(4):
+        assert abs(P[f"Y{k}"][1] - rows_c[k]) < 0.01
+    for j, nm in enumerate(["A11", "A10"]):
+        py = P[nm][1]
+        s.text(f"a{j}", dx - s.v(30, 8), py, f"{nm} = ?", s.v(13, 12), anchor="end", mono=True)
+        s.line(f"wa{j}", [[dx - s.v(26, 6), py], [dx, py]])
+    cx, cw = s.v(380, 170), s.v(170, 156)
+    bus = cx + cw + s.v(30, 18) if s.wd else None
+    for k in range(4):
+        y = cy0 + pitch * k
+        lo, hi = k * KB, k * KB + KB - 1
+        s.box(f"c{k}", cx, y, cw, ch)
+        s.text(f"cn{k}", cx + 8, y + 17, f"chip {k} (1 KB)", s.v(14, 13), anchor="start", weight="bold")
+        s.text(f"cr{k}", cx + 8, y + 39, f"0x{lo:03X}–0x{hi:03X}", s.v(13, 12), anchor="start", mono=True)
+        s.line(f"cs{k}", [[dx + dw, rows_c[k]], [cx, rows_c[k]]], tone="muted")
+        if s.wd:
+            s.line(f"ab{k}", [[bus, rows_c[k]], [cx + cw, rows_c[k]]], tone="info")
+    s.text("csl", (dx + dw + cx) / 2, cy0 - 16, "chip selects", s.v(13, 12), anchor="middle", tone="muted")
+    if s.wd:
+        s.line("bus", [[bus, cy0 - 20], [bus, rows_c[3]]], tone="info")
+        s.text("busl", bus, cy0 - 30, "A9…A0", 13, anchor="middle", mono=True, tone="info")
+    else:
+        s.text("busl", cx + cw / 2, cy0 - 32, "A9…A0 to every chip", 12, anchor="middle", mono=True, tone="info")
+    s.text("st", s.v(W / 2, NW / 2), 384, "", s.v(14, 13), anchor="middle", mono=True, weight="bold")
+    s.text("st2", s.v(W / 2, NW / 2), 408, "", s.v(14, 13), anchor="middle")
+    s.step("Each 1 KB chip needs 10 address lines (2¹⁰ = 1024): A9…A0 go to every chip. A11 A10 drive a 2:4 decoder whose outputs are chip selects.",
+           ("dec", {"tone": "accent"}), ("busl", {"tone": "accent"}))
+    for addr in (0x000, 0x5A3, 0x800, 0xFFF):
+        hi2 = cl.bits_of(addr >> 10, 2)
+        sel = cl.decoder(hi2)
+        k = sel.index(1)
+        off = addr & (KB - 1)
+        assert k * KB + off == addr and sum(sel) == 1
+        lo, hi = k * KB, k * KB + KB - 1
+        assert lo <= addr <= hi
+        b = format(addr, "012b")
+        pats = [("dec", {"tone": "ink"}), ("busl", {"tone": "info"})]
+        pats += [(f"a{j}", {"text": f"{['A11', 'A10'][j]} = {hi2[j]}", "tone": tv(hi2[j])}) for j in range(2)]
+        pats += [(f"wa{j}", {"tone": tv(hi2[j])}) for j in range(2)]
+        pats += [(f"cs{j}", {"tone": "accent" if sel[j] else "muted"}) for j in range(4)]
+        pats += [(f"c{j}", {"tone": "accent" if sel[j] else "ink", "fill": "accent" if sel[j] else "none"}) for j in range(4)]
+        pats += [("st", {"text": f"0x{addr:03X} = {b[:2]} {b[2:]}"}), ("st2", {"text": f"chip {k}, byte 0x{off:03X}", "tone": "accent"})]
+        s.step(f"0x{addr:03X}: A11 A10 = {sup(hi2)} raises Y{k}, selecting chip {k} (0x{lo:03X}–0x{hi:03X}); A9…A0 = 0x{off:03X} picks the byte in it.", *pats)
+    s.step("Chip k holds addresses k·0x400 to k·0x400 + 0x3FF: the top two bits pick the chip, the low ten the byte. 4 × 1 KB = 4 KB.",
+           *[(f"c{j}", {"tone": "ink", "fill": "none"}) for j in range(4)], *[(f"cs{j}", {"tone": "muted"}) for j in range(4)],
+           ("st2", {"text": "4 chips × 1 KB = 4 KB (12 address bits)", "tone": "ink"}))
+    return s.done("A 2-to-4 decoder selecting one of four 1 KB memory chips", (W, 424), (NW, 424),
+                  "A 4 KB memory from four 1 KB chips. The 12-bit address A11…A0 splits: A11 A10 go to a 2:4 decoder that enables one chip; A9…A0 go to all chips.")
+
+
+@scene
+def priority_mux(L):
+    s = S(L)
+    W, NW = 680, 360
+    V = ["A", "B", "C"]
+    dx1, dx0 = ["0", "1", "1", "1"], ["C", "0", "1", "1"]
+    net = [("X1", "MUX", {"d": dx1, "s": ["A", "B"]}), ("X0", "MUX", {"d": dx0, "s": ["A", "B"]})]
+    for env in cl.rows(V):
+        code, valid = cl.priority_encoder([0, env["C"], env["B"], env["A"]])  # A → 11, B → 10, C → 01
+        v = cl.evaluate(net, env)
+        assert [v["X1"], v["X0"]] == code
+    assert cl.truth(net, V, "X1") == bl.tt("A + B", V) and cl.truth(net, V, "X0") == bl.tt("A + B'C", V)
+    s.head("A priority encoder on two 4:1 MUXes (GATE 1992)", "Priority encoder on MUXes (1992)", W, NW)
+    w, h = s.v(100, 96), 150
+    pos = {"X1": (s.v(150, 130), 76), "X0": (s.v(440, 130), s.v(76, 316))}
+    for nm, d in (("X1", dx1), ("X0", dx0)):
+        x, y = pos[nm]
+        P = s.block(f"m{nm}", x, y, w, h, left=[f"I{k}" for k in range(4)], right=["Y"], bottom=["S1", "S0"], title=f"MUX {nm}", title_xy=(x + w / 2 + 6, y + 56))
+        for k in range(4):
+            py = P[f"I{k}"][1]
+            s.text(f"d{nm}{k}", x - 30, py, d[k], s.v(14, 13), anchor="end", mono=True, weight="bold")
+            s.line(f"wd{nm}{k}", [[x - 24, py], [x, py]])
+        for j, sv in enumerate(["A", "B"]):
+            px = P[["S1", "S0"][j]][0]
+            s.line(f"ws{nm}{j}", [[px, y + h], [px, y + h + 18]])
+            s.text(f"s{nm}{j}", px, y + h + 32, sv, s.v(14, 13), anchor="middle", mono=True)
+        oy = P["Y"][1]
+        s.line(f"wo{nm}", [[x + w, oy], [x + w + 24, oy]])
+        s.text(f"v{nm}", x + w + 30, oy, nm, s.v(15, 13), anchor="start", mono=True, weight="bold")
+    s.text("st", s.v(W / 2, NW / 2), s.v(300, 540), "", s.v(15, 14), anchor="middle", mono=True, weight="bold")
+    s.text("st2", s.v(W / 2, NW / 2), s.v(326, 564), "", s.v(14, 13), anchor="middle")
+    s.step("A has the top priority, then B, then C: A → 11, B → 10, C → 01, none → 00. A and B drive the selects of both MUXes; C is a data input.",
+           *[(f"s{nm}{j}", {"tone": "accent"}) for nm in ("X1", "X0") for j in range(2)])
+    names = {3: "A", 2: "B", 1: "C"}
+    for abc in (0b000, 0b001, 0b011, 0b010, 0b101):
+        env = dict(zip(V, cl.bits_of(abc, 3)))
+        v = cl.evaluate(net, env)
+        sel = env["A"] * 2 + env["B"]
+        code, valid = cl.priority_encoder([0, env["C"], env["B"], env["A"]])
+        win = names.get(cl.num(code)) if valid else None
+        val = {"X1": v["X1"], "X0": v["X0"]}
+        pats = [(f"s{nm}{j}", {"text": f"{V[j]}={env[V[j]]}", "tone": tv(env[V[j]])}) for nm in ("X1", "X0") for j in range(2)]
+        pats += [(f"ws{nm}{j}", {"tone": tv(env[V[j]])}) for nm in ("X1", "X0") for j in range(2)]
+        for nm, d in (("X1", dx1), ("X0", dx0)):
+            pats += [(f"wd{nm}{k}", {"tone": "accent" if k == sel else "ink"}) for k in range(4)]
+            pats += [(f"d{nm}{k}", {"text": (f"C={env['C']}" if d[k] == "C" else d[k]), "tone": "accent" if k == sel else "ink"}) for k in range(4)]
+            pats += [(f"wo{nm}", {"tone": tv(val[nm])}), (f"v{nm}", {"text": f"{nm}={val[nm]}", "tone": tv(val[nm])})]
+        pats += [("st", {"text": f"A B C = {sup(cl.bits_of(abc, 3))} → X1 X0 = {sup(code)}"}),
+                 ("st2", {"text": f"{win} wins" if win else "no input active", "tone": "accent" if win else "muted"})]
+        how = {None: "no input is active, so the code is 00", "A": "A wins (B and C are ignored)", "B": "B wins" + (", C is ignored" if env["C"] else ""), "C": "only C is active"}[win]
+        xs = f"I{sel} = {dx0[sel]}" + (f" = {env['C']}" if dx0[sel] == "C" else "")
+        s.step(f"A B C = {' '.join(map(str, cl.bits_of(abc, 3)))}: the selects read AB = {sup(cl.bits_of(sel, 2))}; X1 takes I{sel} = {dx1[sel]}, X0 takes {xs}: {how}.", *pats)
+    s.step("X1 = A + B (data 0 1 1 1) and X0 = A + B′C (data C 0 1 1): two 4:1 MUXes, A and B on the selects, C as a data input.",
+           *[(f"wd{nm}{k}", {"tone": "ink"}) for nm in ("X1", "X0") for k in range(4)],
+           *[(f"d{nm}{k}", {"text": d[k], "tone": "ink"}) for nm, d in (("X1", dx1), ("X0", dx0)) for k in range(4)],
+           ("st", {"text": "X1 = A + B,  X0 = A + B′C"}), ("st2", {"text": "", "tone": "ink"}))
+    return s.done("A 3-input priority encoder built from two 4-to-1 multiplexers", (W, 344), (NW, 580),
+                  "Inputs A > B > C (A highest), outputs X1 X0. Each output is one 4:1 MUX with A on S1 and B on S0; the data inputs come from the truth table.")
+
+
+def cmp_chip(a, b, cin):
+    """One 4-bit comparator chip with cascade inputs (G, E, L): its own nibbles decide unless they tie."""
+    if a > b:
+        return (1, 0, 0)
+    if a < b:
+        return (0, 0, 1)
+    return cin
+
+
+@scene
+def comparator_chain(L):
+    s = S(L)
+    W, NW = 700, 360
+    for a in range(256):
+        for b in range(256):
+            lo = cmp_chip(a & 15, b & 15, (0, 1, 0))
+            assert cmp_chip(a >> 4, b >> 4, lo) == cl.compare(a, b)
+    s.head("Two 4-bit comparators cascaded into an 8-bit comparator", "8-bit comparator from two chips", W, NW)
+    cw, chh, y = s.v(180, 110), 132, 116
+    xs = {"lo": s.v(110, 40), "hi": s.v(420, 200)}
+    pins = {}
+    for t in ("lo", "hi"):
+        x = xs[t]
+        pins[t] = s.block(f"c{t}", x, y, cw, chh, left=["G in", "E in", "L in"], right=["G", "E", "L"], top=["A", "B"],
+                          title=s.v("low chip" if t == "lo" else "high chip", "low" if t == "lo" else "high"), title_xy=(x + cw / 2 + s.v(0, 4), y + chh / 2 + 22))
+        for j, nm in enumerate(["A", "B"]):
+            px = pins[t][nm][0]
+            ty = s.v(y - 30, y - 30 - 20 * (1 - j))
+            s.line(f"w{t}{nm}", [[px, ty + 8], [px, y]])
+            s.text(f"v{t}{nm}", px, ty, "", s.v(13, 12), anchor="middle", mono=True)
+        s.text(f"n{t}", x + cw / 2, y + chh + 18, s.v("bits 3–0" if t == "lo" else "bits 7–4", "bits 3–0" if t == "lo" else "bits 7–4"), s.v(13, 12), anchor="middle", tone="muted")
+    for j, (nm, c) in enumerate(zip(["G in", "E in", "L in"], (0, 1, 0))):
+        py = pins["lo"][nm][1]
+        s.text(f"k{j}", xs["lo"] - 14, py, str(c), s.v(13, 12), anchor="end", mono=True, tone=tv(c))
+        s.line(f"wk{j}", [[xs["lo"] - 10, py], [xs["lo"], py]], tone=tv(c))
+    mid = (xs["lo"] + cw + xs["hi"]) / 2
+    for j, nm in enumerate(["G", "E", "L"]):
+        a, b = pins["lo"][nm], pins["hi"][nm + " in"]
+        assert abs(a[1] - b[1]) < 0.01
+        s.line(f"m{j}", [a, b])
+        s.text(f"vm{j}", mid, a[1] - 10, "", s.v(13, 12), anchor="middle", mono=True)
+        o = pins["hi"][nm]
+        s.line(f"o{j}", [o, [o[0] + s.v(24, 14), o[1]]])
+        s.text(f"vo{j}", o[0] + s.v(30, 18), o[1], nm, s.v(14, 12), anchor="start", mono=True, weight="bold")
+    s.text("st", s.v(W / 2, NW / 2), s.v(300, 300), "", s.v(14, 13), anchor="middle", mono=True, weight="bold")
+    s.text("st2", s.v(W / 2, NW / 2), s.v(324, 324), "", s.v(14, 13), anchor="middle")
+    s.step("The low chip compares bits 3–0 with cascade inputs G, E, L = 0, 1, 0; its G, E, L feed the high chip's cascade inputs.",
+           ("clo", {"tone": "accent"}), *[(f"wk{j}", {"tone": "accent"}) for j in range(3)])
+    for a, b in ((0x5A, 0x3F), (0x5A, 0x5C), (0x5A, 0x5A)):
+        al, bl_, ah, bh = a & 15, b & 15, a >> 4, b >> 4
+        lo = cmp_chip(al, bl_, (0, 1, 0))
+        hi = cmp_chip(ah, bh, lo)
+        assert hi == cl.compare(a, b)
+        word = {(1, 0, 0): "G", (0, 1, 0): "E", (0, 0, 1): "L"}
+        rel = {"G": ">", "E": "=", "L": "<"}
+        pats = [("clo", {"tone": "accent"}), ("chi", {"tone": "ink"})]
+        pats += [("vloA", {"text": f"A={format(al, '04b')}"}), ("vloB", {"text": f"B={format(bl_, '04b')}"}),
+                 ("vhiA", {"text": f"A={format(ah, '04b')}"}), ("vhiB", {"text": f"B={format(bh, '04b')}"})]
+        pats += [(f"m{j}", {"tone": tv(lo[j])}) for j in range(3)] + [(f"vm{j}", {"text": str(lo[j]), "tone": tv(lo[j])}) for j in range(3)]
+        pats += [(f"o{j}", {"tone": "ink"}) for j in range(3)] + [(f"vo{j}", {"text": ["G", "E", "L"][j], "tone": "ink"}) for j in range(3)]
+        pats += [("st", {"text": f"A = {a >> 4:04b} {a & 15:04b}, B = {b >> 4:04b} {b & 15:04b}"}), ("st2", {"text": "", "tone": "ink"})]
+        lw = word[lo]
+        s.step(f"A = 0x{a:02X}, B = 0x{b:02X}. Low chip: {al:04b} {rel[lw]} {bl_:04b}, so it sends {lw} = 1 to the high chip's cascade inputs.", *pats)
+        hw = word[hi]
+        pats = [("clo", {"tone": "ink"}), ("chi", {"tone": "accent"})]
+        pats += [(f"o{j}", {"tone": tv(hi[j])}) for j in range(3)] + [(f"vo{j}", {"text": f"{['G', 'E', 'L'][j]}={hi[j]}", "tone": tv(hi[j])}) for j in range(3)]
+        pats += [("st2", {"text": f"0x{a:02X} {rel[hw]} 0x{b:02X}  ({a} {rel[hw]} {b})", "tone": "accent"})]
+        if ah != bh:
+            cap = f"High chip: {ah:04b} {rel[hw]} {bh:04b}, the nibbles differ, so it outputs {hw} = 1 and ignores its cascade inputs: {a} {rel[hw]} {b}."
+        else:
+            cap = f"High chip: {ah:04b} = {bh:04b}, a tie, so it passes its cascade inputs: {hw} = 1, the low chip's verdict. {a} {rel[hw]} {b}."
+        s.step(cap, *pats)
+    s.step("The high chip decides unless its nibbles tie; then it copies the low chip's G, E, L. The lowest chip's cascade inputs are tied to 0, 1, 0.",
+           ("clo", {"tone": "ink"}), ("chi", {"tone": "ink"}), ("st2", {"text": "more chips: chain them the same way", "tone": "ink"}))
+    return s.done("Two 4-bit magnitude comparators cascaded into an 8-bit comparator", (W, 340), (NW, 340),
+                  "An 8-bit comparator from two 4-bit chips. Each chip has outputs G, E, L and cascade inputs; the low chip's outputs drive the high chip's cascade inputs.")
+
+
+@scene
+def equality_xnor(L):
+    s = S(L)
+    W, NW = 640, 360
+    vs = [f"A{i}" for i in range(3, -1, -1)] + [f"B{i}" for i in range(3, -1, -1)]
+    net = [(f"x{i}", "XNOR", [f"A{i}", f"B{i}"]) for i in range(4)] + [("E", "AND", [f"x{i}" for i in range(3, -1, -1)])]
+    for m in range(256):
+        env = dict(zip(vs, cl.bits_of(m, 8)))
+        assert cl.evaluate(net, env)["E"] == cl.compare(m >> 4, m & 15)[1]
+    s.head("4-bit equality: four XNORs and an AND", "Equality: XNORs + AND", W, NW)
+    pitch, gh = 74, 50
+    xg, gw = s.v(200, 96), s.v(54, 46)
+    xa, aw, ah = s.v(420, 230), s.v(60, 50), 170
+    centers = {i: 84 + pitch * (3 - i) for i in range(4)}
+    ay = round((centers[3] + centers[0]) / 2 - ah / 2, 2)
+    ap, ao = s.gate("and", xa, ay, aw, ah, "and", inputs=4)
+    mids = {3: s.v(300, 180), 2: s.v(330, 200), 1: s.v(330, 200), 0: s.v(300, 180)}
+    for k, i in enumerate((3, 2, 1, 0)):
+        c = centers[i]
+        gp, go = s.gate(f"g{i}", xg, c - gh / 2, gw, gh, "xnor")
+        for j, nm in enumerate((f"A{i}", f"B{i}")):
+            s.text(f"t{nm}", xg - s.v(34, 26), gp[j][1], f"{nm}=?", s.v(13, 12), anchor="end", mono=True)
+            s.line(f"w{nm}", [[xg - s.v(30, 22), gp[j][1]], gp[j]])
+        s.wire(f"wx{i}", go, ap[k], mids[i])
+        s.text(f"vx{i}", go[0] + s.v(22, 14), c - 12, "", s.v(13, 12), anchor="middle", mono=True)
+    s.line("wE", [ao, [ao[0] + s.v(24, 16), ao[1]]])
+    s.text("vE", s.v(ao[0] + 30, ao[0] - 10), s.v(ao[1], ay + ah + 20), "E", s.v(15, 13), anchor=s.v("start", "middle"), mono=True, weight="bold")
+    s.text("st", s.v(W / 2, NW / 2), s.v(390, 410), "", s.v(14, 13), anchor="middle", mono=True, weight="bold")
+    s.step("Each XNOR gives xᵢ = Aᵢ ⊙ Bᵢ, which is 1 exactly when the two bits are equal. The AND gives E = x3x2x1x0.",
+           *[(f"g{i}", {"tone": "accent"}) for i in range(4)])
+    for a, b in ((0b1011, 0b1011), (0b1011, 0b1001), (0b0110, 0b1001)):
+        A, B = cl.bits_of(a, 4), cl.bits_of(b, 4)
+        env = dict(zip(vs, A + B))
+        v = cl.evaluate(net, env)
+        assert v["E"] == int(a == b)
+        pats = [(f"g{i}", {"tone": tv(v[f"x{i}"]), "fill": fillv(v[f"x{i}"])}) for i in range(4)]
+        for i in range(4):
+            for nm in (f"A{i}", f"B{i}"):
+                pats += [(f"t{nm}", {"text": f"{nm}={env[nm]}", "tone": tv(env[nm])}), (f"w{nm}", {"tone": tv(env[nm])})]
+            pats += [(f"wx{i}", {"tone": tv(v[f"x{i}"])}), (f"vx{i}", {"text": f"x{i}={v[f'x{i}']}", "tone": tv(v[f"x{i}"])})]
+        pats += [("wE", {"tone": tv(v["E"])}), ("vE", {"text": f"E={v['E']}", "tone": tv(v["E"])}),
+                 ("st", {"text": f"A = {sup(A)}, B = {sup(B)} → E = {v['E']}"})]
+        xs = "".join(str(v[f"x{i}"]) for i in range(3, -1, -1))
+        bad = [i for i in range(3, -1, -1) if not v[f"x{i}"]]
+        if not bad:
+            cap = f"A = {sup(A)}, B = {sup(B)}: every pair is equal, so x3x2x1x0 = {xs} and the AND gives E = 1."
+        elif len(bad) == 1:
+            cap = f"A = {sup(A)}, B = {sup(B)}: only bit {bad[0]} differs, so x{bad[0]} = 0 and E = 0. One unequal pair is enough."
+        else:
+            cap = f"A = {sup(A)}, B = {sup(B)}: every pair differs, x3x2x1x0 = {xs}, so E = 0."
+        s.step(cap, *pats)
+    s.step("E = (A3 ⊙ B3)(A2 ⊙ B2)(A1 ⊙ B1)(A0 ⊙ B0): n XNORs and one n-input AND test n-bit equality.",
+           ("st", {"text": "E = x3 x2 x1 x0"}))
+    return s.done("A 4-bit equality comparator from XNOR gates and an AND gate", (W, 410), (NW, 430),
+                  "Two 4-bit numbers A and B. Each bit pair goes to an XNOR gate; the four XNOR outputs go to a 4-input AND, whose output E is 1 when A = B.")
+
+
+@scene
+def rom_expansion(L):
+    s = S(L)
+    W, NW = 680, 360
+    KB = 1024
+    rows_n, cols_n = 4 * KB // KB, 16 // 4
+    assert (rows_n, cols_n, rows_n * cols_n) == (4, 4, 16)
+    s.head("4K × 16 from sixteen 1K × 4 chips", "4K × 16 from 1K × 4 chips", W, NW)
+    pitch, ch = s.v(70, 64), s.v(46, 42)
+    gx, cw, cp = s.v(200, 116), s.v(96, 52), s.v(112, 60)
+    y0 = 70
+    rc = [y0 + pitch * r + ch / 2 for r in range(4)]
+    dx, dw = s.v(60, 36), s.v(84, 60)
+    dy = rc[0] - pitch / 2
+    P = s.block("dec", dx, dy, dw, pitch * 4, left=["A11", "A10"], right=[f"Y{k}" for k in range(4)], title="2:4", title_xy=(dx + dw / 2 - s.v(0, 4), dy + 2 * pitch + 30))
+    for j, nm in enumerate(["A11", "A10"]):
+        py = P[nm][1]
+        if s.wd:
+            s.text(f"a{j}", dx - 6, py, "", 13, anchor="end", mono=True)
+    for r in range(4):
+        assert abs(P[f"Y{r}"][1] - rc[r]) < 0.01
+        s.line(f"rw{r}0", [[dx + dw, rc[r]], [gx, rc[r]]], tone="muted")
+        for c in range(4):
+            x = gx + cp * c
+            s.box(f"k{r}{c}", x, y0 + pitch * r, cw, ch, s.v("1K × 4", "1K×4"), s.v(13, 12))
+            if c:
+                s.line(f"rw{r}{c}", [[x - cp + cw, rc[r]], [x, rc[r]]], tone="muted")
+    names = [f"D{15 - 4 * c}–{12 - 4 * c}" for c in range(4)]
+    ybot = y0 + pitch * 3 + ch
+    for c in range(4):
+        cx = gx + cp * c + cw / 2
+        for r in range(3):
+            s.line(f"cl{r}{c}", [[cx, y0 + pitch * r + ch], [cx, y0 + pitch * (r + 1)]], tone="muted")
+        s.line(f"co{c}", [[cx, ybot], [cx, ybot + 16]], tone="muted")
+        s.text(f"cn{c}", cx, ybot + 28, names[c], s.v(13, 12), anchor="middle", mono=True, weight="bold")
+    s.text("bus", gx + (cp * 3 + cw) / 2, y0 - 22, "A9…A0 go to all 16 chips", s.v(13, 12), anchor="middle", tone="info")
+    s.text("st", s.v(W / 2, NW / 2), s.v(392, 392), "", s.v(14, 13), anchor="middle", mono=True, weight="bold")
+    s.text("st2", s.v(W / 2, NW / 2), s.v(416, 416), "", s.v(14, 13), anchor="middle")
+    allk = [f"k{r}{c}" for r in range(4) for c in range(4)]
+    s.step("4K words need 4K / 1K = 4 rows of chips; 16-bit words need 16 / 4 = 4 columns. 4 × 4 = 16 chips of 1K × 4.",
+           *[(k, {"tone": "accent"}) for k in allk], ("st", {"text": "4 rows × 4 columns = 16 chips"}))
+    s.step("Each row holds 1K words. A11 A10 drive a 2:4 decoder whose output Yr enables the four chips of row r; A9…A0 reach every chip.",
+           *[(k, {"tone": "ink"}) for k in allk], ("dec", {"tone": "accent"}), ("st", {"text": "rows: words, columns: bits"}))
+    for addr in (0x000, 0x5A3, 0xBFF, 0xC00):
+        hi2 = cl.bits_of(addr >> 10, 2)
+        sel = cl.decoder(hi2)
+        r = sel.index(1)
+        off = addr & (KB - 1)
+        assert r * KB + off == addr
+        pats = [("dec", {"tone": "ink"})]
+        pats += [(f"k{rr}{c}", {"tone": "accent" if sel[rr] else "muted", "fill": "accent" if sel[rr] else "none"}) for rr in range(4) for c in range(4)]
+        pats += [(f"rw{rr}{c}", {"tone": "accent" if sel[rr] else "muted"}) for rr in range(4) for c in range(4)]
+        pats += [(f"co{c}", {"tone": "accent"}) for c in range(4)]
+        if s.wd:
+            pats += [(f"a{j}", {"text": f"{['A11', 'A10'][j]}={hi2[j]}", "tone": tv(hi2[j])}) for j in range(2)]
+        pats += [("st", {"text": f"0x{addr:03X}: A11 A10 = {sup(hi2)}, A9…A0 = 0x{off:03X}"}), ("st2", {"text": f"row {r} drives D15…D0", "tone": "accent"})]
+        s.step(f"0x{addr:03X}: A11 A10 = {sup(hi2)} enables row {r} (0x{r * KB:03X}–0x{r * KB + KB - 1:03X}); its four chips give 4 bits each of the 16-bit word.", *pats)
+    s.step("Capacity: 4K × 16 = 64K bits = 16 chips × 4K bits. Rows multiply the words (decoder on the top bits), columns the width.",
+           *[(k, {"tone": "ink", "fill": "none"}) for k in allk], *[(f"rw{rr}{c}", {"tone": "muted"}) for rr in range(4) for c in range(4)],
+           *[(f"co{c}", {"tone": "muted"}) for c in range(4)], ("st", {"text": "4K × 16 = 65 536 bits"}), ("st2", {"text": "16 × (1K × 4)", "tone": "ink"}))
+    assert 4 * KB * 16 == 16 * (KB * 4) == 65536
+    return s.done("A 4K × 16 memory from a 4 × 4 array of 1K × 4 chips", (W, 432), (NW, 432),
+                  "Sixteen 1K × 4 chips in 4 rows and 4 columns. A 2:4 decoder on A11 A10 enables one row; the four columns supply output bits D15–12, D11–8, D7–4, D3–0.")
+
+
+@scene
+def fault_reconvergent(L):
+    s = S(L)
+    W, NW = 640, 360
+    V = ["A", "B", "C"]
+    net = [("n", "NOT", ["A"]), ("g1", "AND", ["A", "B"]), ("g2", "AND", ["n", "C"]), ("f", "OR", ["g1", "g2"])]
+    assert cl.truth(net, V, "f") == bl.tt("AB + A'C", V)
+    stem = cl.tests_for(net, V, "f", "A", 0)
+    assert stem == [0b101, 0b110]
+    bd = [m for m, env in enumerate(cl.rows(V)) if env["B"] != env["C"]]
+    assert sorted(set(cl.boolean_difference(net, V, "f", "A"))) == bd
+    net_b = [("a1", "BUF", ["A"]), ("n", "NOT", ["A"]), ("g1", "AND", ["a1", "B"]), ("g2", "AND", ["n", "C"]), ("f", "OR", ["g1", "g2"])]
+    branch = cl.tests_for(net_b, V, "f", "a1", 0)
+    assert branch == [0b110, 0b111]
+    s.head("A stem fault on two reconvergent paths (A s-a-0)", "Reconvergent fan-out: A s-a-0", W, NW)
+    yB, yA, yC = 80, 110, 230
+    xin, xj = s.v(70, 40), s.v(130, 70)
+    xi, iw = s.v(190, 100), s.v(40, 34)
+    xg, gw = s.v(300, 160), s.v(54, 46)
+    xo, ow = s.v(440, 260), s.v(56, 46)
+    g1p, g1o = s.gate("g1", xg, 50, gw, 90, "and")
+    assert abs(g1p[0][1] - yB) < 0.01 and abs(g1p[1][1] - yA) < 0.01
+    g2p, g2o = s.gate("g2", xg, 170, gw, 90, "and")
+    assert abs(g2p[1][1] - yC) < 0.01
+    yn = g2p[0][1]
+    ip, io = s.gate("inv", xi, yn - 15, iw, 30, "not")
+    op, oo = s.gate("or", xo, 125, ow, 80, "or")
+    for nm, y in (("B", yB), ("A", yA), ("C", yC)):
+        s.text(f"i{nm}", xin - 4, y, nm, s.v(14, 13), anchor="end", mono=True, weight="bold")
+    s.line("wB", [[xin, yB], g1p[0]])
+    s.line("wA", [[xin, yA], g1p[1]])
+    s.line("wAb", [[xj, yA], [xj, yn], ip[0]])
+    s.node("jA", xj, yA, 3.5, fill="ink")
+    s.line("wn", [io, g2p[0]])
+    s.line("wC", [[xin, yC], g2p[1]])
+    s.wire("wg1", g1o, op[0], s.v(395, 220))
+    s.wire("wg2", g2o, op[1], s.v(410, 234))
+    s.line("wf", [oo, [oo[0] + s.v(24, 16), oo[1]]])
+    s.text("vA", (xj + xg) / 2 + s.v(20, 10), yA - 13, "", s.v(13, 12), anchor="middle", mono=True)
+    s.text("vn", (io[0] + xg) / 2, yn - 13, "", s.v(13, 12), anchor="middle", mono=True)
+    s.text("vg1", g1o[0] + s.v(22, 16), g1o[1] - 13, "", s.v(13, 12), anchor="middle", mono=True)
+    s.text("vg2", g2o[0] + s.v(22, 16), g2o[1] + 13, "", s.v(13, 12), anchor="middle", mono=True)
+    s.text("vf", s.v(oo[0] + 30, oo[0] - 10), s.v(oo[1], 222), "f", s.v(14, 13), anchor=s.v("start", "middle"), mono=True, weight="bold")
+    s.text("lg", s.v(W / 2, NW / 2), 292, "line values: good/faulty", s.v(13, 12), anchor="middle", tone="muted")
+    s.text("st", s.v(W / 2, NW / 2), 318, "", s.v(14, 13), anchor="middle", weight="bold")
+    s.step("f = AB + A′C. The stem A feeds g1 directly and g2 through an inverter. The fault: the stem A stuck-at-0, so both branches see 0.",
+           ("jA", {"fill": "danger", "tone": "danger"}), ("wA", {"tone": "danger"}), ("wAb", {"tone": "danger"}))
+
+    def frame(m):
+        env = dict(zip(V, cl.bits_of(m, 3)))
+        g = cl.evaluate(net, env)
+        b = cl.evaluate(net, env, {"A": 0})
+        pats = [(f"i{v}", {"text": f"{v}={env[v]}", "tone": tv(env[v])}) for v in V]
+        pats += [("wB", {"tone": tv(env["B"])}), ("wC", {"tone": tv(env["C"])})]
+        pats += [("wA", {"tone": gf_tone(g["A"], b["A"])}), ("wAb", {"tone": gf_tone(g["A"], b["A"])}), ("vA", {"text": lv(g["A"], b["A"]), "tone": gf_tone(g["A"], b["A"])})]
+        for ln, w_ in (("n", "wn"), ("g1", "wg1"), ("g2", "wg2"), ("f", "wf")):
+            pats += [(w_, {"tone": gf_tone(g[ln], b[ln])})]
+            pats += [(f"v{ln}", {"text": (f"f = {lv(g[ln], b[ln])}" if ln == "f" else lv(g[ln], b[ln])), "tone": gf_tone(g[ln], b[ln])})]
+        return g, b, pats
+
+    g, b, pats = frame(0b111)
+    assert (g["g1"], b["g1"], g["g2"], b["g2"], g["f"], b["f"]) == (1, 0, 0, 1, 1, 1)
+    s.step("The obvious test, A B C = 1 1 1: activate A (good 1) and open g1 (B = 1). But C = 1 also opens g2 to the faulty A′ = 1.",
+           *[p for p in pats if p[0] in ("iA", "iB", "iC", "wA", "wAb", "vA", "wB", "wC", "wn", "vn")])
+    s.step("g1 = 1/0 and g2 = 0/1: the error and its complement reach the OR together, so f = 1/1. The two paths cancel; 111 is not a test.",
+           *pats, ("st", {"text": "111: outputs agree, paths cancel", "tone": "muted"}))
+    for m in (0b110, 0b101):
+        g, b, pats = frame(m)
+        assert g["f"] != b["f"]
+        path = "g1 (C = 0 closes g2)" if m == 0b110 else "g2 (B = 0 closes g1)"
+        s.step(f"A B C = {' '.join(format(m, '03b'))}: only one path is open, through {path}. f = {lv(g['f'], b['f'])}: the outputs differ, a test.",
+               *pats, ("st", {"text": f"{format(m, '03b')}: outputs differ, detected", "tone": "danger"}))
+    s.step("∂f/∂A = B ⊕ C, so the stem tests are A = 1, B ≠ C: 101 and 110 only. The branch into g1 alone has tests 110 and 111.",
+           ("st", {"text": "stem A s-a-0: tests 101, 110", "tone": "accent"}))
+    return s.done("A stem fault whose effects reconverge and cancel", (W, 334), (NW, 334),
+                  "f = AB + A′C as g1 = AND(A, B), g2 = AND(A′, C), f = OR(g1, g2). Line A is stuck at 0. Each line shows good/faulty values.")
+
+
+@scene
+def fault_blocked(L):
+    s = S(L)
+    W, NW = 660, 360
+    X = ["X1", "X2", "X3", "X4"]
+    net = [("n1", "NAND", ["X1", "X2", "X3"]), ("o", "OR", ["n1", "X4"]), ("T", "AND", ["X3", "X4"]), ("out", "NOR", ["o", "T"])]
+    assert cl.tests_for(net, X, "out", "T", 0) == []
+    assert cl.truth(net, X, "out") == cl.truth(net, X, "out", {"T": 0})  # T is redundant
+    act = [m for m, env in enumerate(cl.rows(X)) if cl.evaluate(net, env)["T"] == 1]
+    assert act == [0b0011, 0b0111, 0b1011, 0b1111]
+    assert all(cl.evaluate(net, env)["o"] == 1 for env in cl.rows(X) if env["X4"] == 1)
+    s.head("T stuck-at-0 (IT 2007): activation blocks propagation", "T s-a-0 (IT 2007)", W, NW)
+    xin = s.v(70, 40)
+    j3, j4 = s.v(120, 64), s.v(95, 50)
+    xg, gw = s.v(190, 96), s.v(54, 46)
+    xo, ow = s.v(320, 190), s.v(54, 44)
+    xn, nw = s.v(450, 270), s.v(60, 48)
+    np_, no = s.gate("nand", xg, 50, gw, 90, "nand", inputs=3)
+    yX = {"X1": np_[0][1], "X2": np_[1][1], "X3": np_[2][1], "X4": 270}
+    tp, to = s.gate("and", xg, 205, gw, 50, "and")
+    op, oo = s.gate("or", xo, round(no[1] - 70 / 3, 2), ow, 70, "or")
+    rp, ro = s.gate("nor", xn, 125, nw, 80, "nor")
+    for nm in X:
+        s.text(f"i{nm}", xin - 4, yX[nm], f"{nm}=?", s.v(13, 12), anchor="end", mono=True)
+    s.line("w1", [[xin, yX["X1"]], np_[0]])
+    s.line("w2", [[xin, yX["X2"]], np_[1]])
+    s.line("w3", [[xin, yX["X3"]], np_[2]])
+    s.node("j3", j3, yX["X3"], 3.5, fill="ink")
+    s.line("w3b", [[j3, yX["X3"]], [j3, tp[0][1]], tp[0]])
+    s.line("w4", [[xin, yX["X4"]], [j4, yX["X4"]], [j4, tp[1][1]], tp[1]])
+    s.node("j4", j4, tp[1][1], 3.5, fill="ink")
+    yr = 172
+    s.line("w4b", [[j4, tp[1][1]], [j4, yr], [xo - s.v(20, 12), yr], [xo - s.v(20, 12), op[1][1]], op[1]])
+    s.wire("wn1", no, op[0], s.v(285, 168))
+    s.wire("wo", oo, rp[0], s.v(410, 246))
+    s.wire("wT", to, rp[1], s.v(425, 256))
+    s.line("wout", [ro, [ro[0] + s.v(24, 14), ro[1]]])
+    s.text("vn1", no[0] + s.v(22, 16), no[1] - 13, "", s.v(13, 12), anchor="middle", mono=True)
+    s.text("vo", oo[0] + 4, oo[1] - 13, "", s.v(13, 12), anchor="start", mono=True)
+    s.text("vT", to[0] + 6, to[1] + 14, "T", s.v(13, 12), anchor="start", mono=True, weight="bold")
+    s.text("vout", s.v(ro[0] + 30, ro[0] - 14), s.v(ro[1], 222), "out", s.v(14, 13), anchor=s.v("start", "middle"), mono=True, weight="bold")
+    s.text("lg", s.v(W / 2, NW / 2), 304, "line values: good/faulty", s.v(13, 12), anchor="middle", tone="muted")
+    s.text("st", s.v(W / 2, NW / 2), 330, "", s.v(14, 13), anchor="middle", weight="bold")
+    s.step("T = X3·X4 feeds the NOR. The fault: T stuck-at-0 (tied to ground). To activate it, the good T must be 1, so X3 = X4 = 1.",
+           ("wT", {"tone": "danger"}), ("vT", {"text": "T s-a-0", "tone": "danger"}))
+    s.step("But X4 = 1 also enters the OR, and 1 is the OR's controlling value: o = 1 whatever the NAND gives, so the NOR output is 0.",
+           ("w4", {"tone": "success"}), ("w4b", {"tone": "accent"}), ("wo", {"tone": "success"}), ("vo", {"text": "o = 1", "tone": "success"}))
+
+    def frame(m):
+        env = dict(zip(X, cl.bits_of(m, 4)))
+        g = cl.evaluate(net, env)
+        b = cl.evaluate(net, env, {"T": 0})
+        pats = [(f"i{nm}", {"text": f"{nm}={env[nm]}", "tone": tv(env[nm])}) for nm in X]
+        pats += [("w1", {"tone": tv(env["X1"])}), ("w2", {"tone": tv(env["X2"])}), ("w3", {"tone": tv(env["X3"])}), ("w3b", {"tone": tv(env["X3"])}),
+                 ("w4", {"tone": tv(env["X4"])}), ("w4b", {"tone": tv(env["X4"])})]
+        for ln, w_, lab in (("n1", "wn1", ""), ("o", "wo", "o = "), ("T", "wT", "T = "), ("out", "wout", "out = ")):
+            pats += [(w_, {"tone": gf_tone(g[ln], b[ln])}), (f"v{ln}", {"text": lab + lv(g[ln], b[ln]), "tone": gf_tone(g[ln], b[ln])})]
+        return env, g, b, pats
+
+    for m in (0b0111, 0b1111, 0b0000):
+        env, g, b, pats = frame(m)
+        assert g["out"] == b["out"]
+        bits_ = " ".join(format(m, "04b"))
+        if g["T"] == 1:
+            cap = f"X = {bits_}: T = {lv(g['T'], b['T'])} is activated, but X4 = 1 makes o = 1, so out = {lv(g['out'], b['out'])} in both circuits."
+        else:
+            cap = f"X = {bits_}: X3 = X4 = 0, so the good T is 0, the stuck value: not activated; out = {lv(g['out'], b['out'])}. No test."
+        s.step(cap, *pats, ("st", {"text": f"{format(m, '04b')}: outputs agree", "tone": "muted"}))
+    s.step("No input detects T s-a-0: activation (X4 = 1) blocks propagation. The answer is D, none of the above; T is redundant.",
+           ("st", {"text": "undetectable: T can be tied to 0", "tone": "accent"}))
+    return s.done("A stuck-at fault whose activation blocks its own propagation", (W, 346), (NW, 346),
+                  "X1 X2 X3 feed a 3-input NAND; its output and X4 feed an OR. T = AND(X3, X4). The OR output and T feed a NOR, the circuit output.")
+
+
 # ── Build ───────────────────────────────────────────────────────────────────
 
 ORDER = ["design-pipeline", "converter-kmaps", "gray-converter", "mux-routing", "mux-implement", "mux-cascade", "mux-tree",
-         "mux-as-gates", "decoder-lighting", "decoder-function", "decoder-tree", "demux-routing", "priority-scan",
-         "comparator-cascade", "parity-tree", "rom-grid", "pla-planes", "fault-injection"]
+         "mux-enable-expand", "mux-as-gates", "decoder-lighting", "decoder-function", "decoder-tree", "address-decoding",
+         "demux-routing", "priority-scan", "priority-mux", "comparator-cascade", "comparator-chain", "equality-xnor",
+         "parity-tree", "rom-grid", "rom-expansion", "pla-planes", "fault-injection", "fault-reconvergent", "fault-blocked"]
 
 
 def build_all():

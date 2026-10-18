@@ -1082,7 +1082,7 @@
    ]
   },
   {
-   "caption": "With constants and one variable on the select, a 2:1 MUX makes NOT and AND (and OR), so 2:1 MUXes alone are functionally complete. Read every cascade from its truth table: a different wiring of constants can give NAND instead of OR.",
+   "caption": "2:1 MUXes with 0 and 1 make NOT and AND, so they are complete. Read any constant cascade from its truth table: it may be NAND, not OR.",
    "patches": [
     {
      "id": "name",

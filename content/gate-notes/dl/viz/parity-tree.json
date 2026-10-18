@@ -1509,7 +1509,7 @@
    ]
   },
   {
-   "caption": "The root now gives 0. One more XOR with the received P: E = 0 ⊕ 1 = 1. The 9 received bits hold 5 ones, an odd count, so the error flag rises.",
+   "caption": "The root now gives 0. One more XOR with the received P: F = 0 ⊕ 1 = 1. The 9 bits hold 5 ones, odd, so the error flag F rises.",
    "patches": [
     {
      "id": "v3",
@@ -1542,14 +1542,14 @@
     {
      "id": "vE",
      "set": {
-      "text": "E = 1",
+      "text": "F = 1",
       "tone": "danger"
      }
     }
    ]
   },
   {
-   "caption": "Any single flipped bit changes the count of 1s by one and is caught. Two flips cancel (the count stays even), so parity detects every odd number of errors and no even number.",
+   "caption": "One flipped bit changes the count of 1s by one and is caught; two flips cancel. Parity detects every odd number of errors, no even one.",
    "patches": [
     {
      "id": "st",
