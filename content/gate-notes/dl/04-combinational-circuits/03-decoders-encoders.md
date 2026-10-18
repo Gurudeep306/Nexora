@@ -118,6 +118,19 @@ $\overline{m_i} = M_i$ by De Morgan.
 :::viz{#decoder-lighting-viz spec="decoder-lighting" mode="animate" depth="standard"}
 :::
 
+:::intuition{#active-low-intuition title="A lamp that goes dark instead of lighting" depth="standard"}
+Turn the hotel panel inside out: every lamp is normally **on**, and typing a room number makes that one
+lamp go **dark**. The panel carries exactly the same information (one lamp differs from all the others,
+and its position is the number you typed), only the polarity is reversed. Someone who looks for "the lit
+lamp" on this panel sees seven lit lamps and is confused; someone who looks for "the odd lamp out" reads
+it at once.
+
+That is an active-low decoder. Its selected output is the one that is 0. Because every output is now the
+complement of a minterm, the gate that collects them must change too: where an active-high decoder needs
+an OR ("is any of my lamps lit?"), an active-low one needs a NAND ("is any of my lamps dark?"). The rest
+of this block makes that precise.
+:::
+
 :::definition{#active-low term="Active-low decoders: the outputs are maxterms" depth="standard"}
 Real decoder chips usually have active-low outputs, because a NAND gate is cheaper than an AND gate. The
 selected output goes to 0 and the rest stay at 1. By the theorem above, with the enable on,
@@ -138,7 +151,8 @@ Some printed questions draw an AND gate on decoder outputs and expect you to rea
 maxterms, without ever saying that the outputs are active-low. Read literally, with ordinary active-high
 outputs, an AND of two or more **different** outputs is the constant 0: two different minterms are never 1
 on the same row. The same mix-up runs the other way: an OR of two or more different active-low outputs
-is the constant 1 while the decoder is enabled, because at most one of them can be 0.
+is the constant 1, enabled or not: while enabled at most one of them can be 0, and while disabled every
+one of them is 1.
 
 So the first thing to settle for any decoder-plus-gate circuit is the output polarity. If the figure has
 bubbles or the text says "active-low", outputs are maxterms; otherwise they are minterms. Examiners expect
@@ -232,8 +246,8 @@ student who reads the order backwards gets a different function. The quick fix: 
 renumbers each output by reversing the bits of its index ($1 = 001 \to 100 = 4$, $3 = 011 \to 110 = 6$).
 
 In GATE IT 2008 the decoder's inputs are $z$ (MSB), $y$, $x$ (LSB), and a NOR collects $O_7, O_5, O_2,
-O_0$. The answer happens to survive the reversal (the remaining rows $\{1, 3, 4, 6\}$ map to themselves),
-but you only know that after checking. The edge-case example below shows a wiring where it does not.
+O_0$. The answer happens to survive the reversal (the set $\{1, 3, 4, 6\}$ maps onto itself: $1 \leftrightarrow 4$
+and $3 \leftrightarrow 6$ swap places), but you only know that after checking. The edge-case example below shows a wiring where it does not.
 :::
 
 ### Worked examples: functions from a decoder
@@ -256,9 +270,13 @@ $S = D_1 + D_2 + D_4 + D_7$ and $C_{out} = D_3 + D_5 + D_6 + D_7$: one decoder a
 
 :::answer
 One 3:8 decoder and two 4-input ORs. Output $D_7$ feeds both gates, because row 111 has $S = C_{out} = 1$.
-The same decoder with ORs of $D_1, D_2$ and of $D_3$ alone gives the **half** adder of the two inputs on
-the lower address pins only if the MSB is held at 0; a 2:4 decoder does it directly ($S = D_1 + D_2$,
-$C = D_3$).
+With $A$ held at 0, the same decoder gives the half adder of $B$ and $C_{in}$: $S = D_1 + D_2$, $C = D_3$.
+A 2:4 decoder does this directly.
+
+The **half subtractor** comes from the same 2:4 decoder (inputs $A$ = MSB, $B$; difference $A - B$): the
+difference $A \oplus B$ is 1 on rows 01 and 10, so $D = D_1 + D_2$, and a borrow is needed only for
+$0 - 1$, row 01, so $B_{out} = D_1$ alone, with no gate at all. Notice that $D_1$ feeds both outputs, just
+as $D_7$ does in the full adder.
 :::
 ::::
 
@@ -281,6 +299,36 @@ $f = A \oplus B \oplus C$.
 :::answer
 $f = A \oplus B \oplus C$. A student who wires the same four outputs into an **OR** gets the complement,
 $\overline{A \oplus B \oplus C}$, which is the usual wrong option.
+:::
+::::
+
+::::example{#ex-dec-converter level="medium" title="A code converter: BCD to excess-3 from a decoder and four ORs" depth="standard"}
+A BCD digit $d = B_3B_2B_1B_0$ (0–9) drives a 4:16 decoder with active-high outputs ($B_3$ = MSB). Build
+the excess-3 outputs $E_3E_2E_1E_0$ (the 4-bit binary of $d + 3$) with OR gates only. Which decoder
+outputs are left unconnected?
+
+:::step{why="A code converter is a multi-output function of the input word, so start from its table: write d + 3 in 4 bits for every legal digit."}
+$d = 0, \dots, 9$ give $0011, 0100, 0101, 0110, 0111, 1000, 1001, 1010, 1011, 1100$.
+:::
+
+:::step{why="Each output bit is a separate function of d. Read its column: the digits where the bit is 1 are the decoder outputs that feed its OR."}
+$E_3$: digits 5–9; $E_2$: 1, 2, 3, 4, 9; $E_1$: 0, 3, 4, 7, 8; $E_0$: 0, 2, 4, 6, 8.
+:::
+
+:::step{why="Decoder output Dᵢ is 1 exactly when the input digit is i, so the OR of a list of outputs is 1 exactly on that list of digits."}
+$E_3 = D_5 + D_6 + D_7 + D_8 + D_9$, $E_2 = D_1 + D_2 + D_3 + D_4 + D_9$, $E_1 = D_0 + D_3 + D_4 + D_7 + D_8$,
+$E_0 = D_0 + D_2 + D_4 + D_6 + D_8$.
+:::
+
+:::step{why="Inputs 10–15 are not BCD and never occur, so the outputs that would light for them are don't-cares: leaving them unconnected is one legal way to fill those don't-cares."}
+$D_{10}, \dots, D_{15}$ are unused; a BCD-to-decimal (4:10) decoder, which has only $D_0 \dots D_9$, does the
+same job.
+:::
+
+:::answer
+Four 5-input ORs on one decoder, with $D_{10}$–$D_{15}$ unconnected. Check one digit: $d = 7$ lights
+$D_7$, which feeds $E_3$ and $E_1$ only, giving $1010 = 10 = 7 + 3$. ✓ Compared with the K-map design of
+[Lesson 1](lesson:combinational-design), this needs no minimisation at all; the price is the decoder.
 :::
 ::::
 
@@ -328,8 +376,9 @@ $f_b = \overline{C}(A + B)$.
 
 :::answer
 (a) $\overline{A}(B + C)$, (b) $\overline{C}(A + B)$: different functions from the same gate. Always fix the
-MSB before reading indices. (Output $D_2$ maps to itself because 010 is a palindrome; that is why some
-circuits, like the IT 2008 one, do not change.)
+MSB before reading indices. (Output $D_2$ keeps its number because 010 reads the same both ways. A
+circuit is unchanged by the reversal only when its whole index set maps onto itself; in IT 2008,
+$\{1, 3, 4, 6\}$ does, because $1 \leftrightarrow 4$ and $3 \leftrightarrow 6$.)
 :::
 ::::
 
@@ -365,8 +414,8 @@ To build an $n:2^n$ decoder from $k:2^k$ decoders that have an enable:
 **With gates allowed** you can save blocks: a 3:8 decoder from two 2:4 decoders needs only an inverter
 ($A_2$ to one enable and $\overline{A_2}$ to the other), and a 4:16 from two 3:8 decoders likewise. An
 active-low enable on one block and an active-high enable on the other does the same job with no gate at
-all. GATE's "without using any other logic gates" (with identical, active-high enables) rules all of
-these out and forces the tree.
+all. GATE's "without using any other logic gates", read with identical decoders whose enables have the
+same polarity, rules all of these out and forces the tree.
 
 **An extra variable on the enable.** Because the enable ANDs into every output, a 2:4 decoder on $A, B$
 with $E = C$ and an OR of $D_0$ and $D_3$ gives $(\overline{A}\,\overline{B} + AB)\,C = (A \odot B)\,C$: a
@@ -412,8 +461,9 @@ are fanned out.
 For a 6:64 decoder from 3:8 decoders, $64 / 8 = 8$ is the number of **leaves**, and option "8" is the
 answer examiners expect from a hurried student. Eight decoders with their enables tied high would all
 decode the low 3 bits at once and light eight outputs together. Something must look at the high 3 bits and
-enable one leaf: without other gates, that is a ninth 3:8 decoder. Answer 9. The opposite slip, "7", comes
-from treating a 6-bit tree like a binary tree of 1:2 blocks.
+enable one leaf: without other gates, that is a ninth 3:8 decoder. Answer 9. The option "7" cannot be
+right on any reading: seven 3:8 decoders have only $7 \times 8 = 56$ outputs, fewer than the 64 needed.
+(7 is the 1:2-block count for a **3:8** decoder, $4 + 2 + 1$, which is a different question.)
 :::
 
 ### Worked examples: decoder expansion
@@ -542,6 +592,12 @@ Compare the three blocks by their pins:
 A DEMUX is used to send serial data out to several destinations (serial to parallel), and a MUX at one end
 of a wire with a DEMUX at the other end lets several signals share one wire: if both are driven by the
 same select value, input $i$ arrives at output $i$.
+
+**The straight / cross switch.** With a 2:1 MUX at the sender (select $A$) and a 1:2 DEMUX at the receiver,
+the DEMUX select decides where each signal lands. Drive it with $A$ and the link is **straight**: the
+MUX's input 0 arrives at output 0 and input 1 at output 1. Drive it with $A \oplus M$ for a mode bit $M$:
+$M = 0$ gives the straight link, and $M = 1$ inverts the receiver's select, so input 0 arrives at
+output 1 and input 1 at output 0, a **cross**. One XOR gate turns a shared wire into a two-way switch.
 :::
 
 :::theorem{#demux-decoder name="A DEMUX is a decoder with the data on the enable" depth="standard"}
@@ -558,17 +614,125 @@ By the minterm theorem, the decoder's outputs are $D_i = E \cdot m_i(S)$. By def
 outputs are $Y_i = I \cdot m_i(S)$. Setting $E = I$ makes the two lists identical, output by output, for
 every input row. With $I = 1$ the DEMUX gives $Y_i = m_i(S)$, which is a decoder without enable.
 
-**What the theorem does not say.** A decoder **without** an enable pin cannot serve as a DEMUX: it has
-nowhere to put the data. And a DEMUX is not a decoder "in reverse": the reverse of a decoder is an
-encoder, which comes next.
+**What the theorem does not say.** An $n:2^n$ decoder **without** an enable pin cannot serve as a
+$1:2^n$ DEMUX: all $n$ address pins are needed for the selects, so the data has nowhere to go. (A decoder
+one size larger can, with the data on its MSB pin; see the edge case below.) And a DEMUX is not a decoder
+"in reverse": the reverse of a decoder is an encoder, which comes next.
 :::
 
 :::viz{#demux-routing-viz spec="demux-routing" mode="animate" depth="standard"}
 :::
 
+:::trick{#trick-demux-tree title="A DEMUX tree is counted like a decoder tree" depth="standard"}
+A $1:2^n$ DEMUX built from small DEMUXes is a tree with the data entering at the root. The root's
+selects are the **high** bits, each level below takes the next bits, and the leaves take the low bits and
+give the $2^n$ outputs. Count the blocks exactly as for a decoder tree: leaves first, then divide by the
+block size until one block, $\lceil N/K \rceil + \lceil N/K^2 \rceil + \dots + 1$.
+
+**Why it works:** a DEMUX is a decoder with the data on the enable, so a DEMUX tree is a decoder tree whose
+top enable carries the data. **When it fails:** when extra gates are allowed (as for decoders, an
+inverter can replace a block); and do not copy the wiring of a MUX tree, where the data enter at the
+leaves and the root gives the single output. The count is the same, the direction of flow is reversed.
+:::
+
+### Worked examples: demultiplexers
+
+::::example{#ex-demux-easy level="easy" title="Where does the data go?" depth="quick"}
+A 1:4 DEMUX has data $I = 1$ and selects $S_1S_0 = 10$. Give all four outputs. What changes if $I = 0$?
+
+:::step{why="The select value 10 is the number 2, so output Y₂ is the chosen one."}
+The selected output is $Y_2$.
+:::
+
+:::step{why="The chosen output copies the data and every other output is 0: Yᵢ = I·mᵢ(S), and only m₂ is 1."}
+$Y_0Y_1Y_2Y_3 = 0010$.
+:::
+
+:::step{why="With I = 0 the chosen output copies a 0, and the others are 0 anyway."}
+$Y_0Y_1Y_2Y_3 = 0000$.
+:::
+
+:::answer
+$0010$ for $I = 1$ and $0000$ for $I = 0$. Notice that a 0 on the data line looks exactly like "nothing
+sent": the receiver needs the select value to know which line is being talked to.
+:::
+::::
+
+::::example{#ex-demux-medium level="medium" title="A 1:8 DEMUX from smaller DEMUXes" depth="standard"}
+Build a 1:8 DEMUX (selects $S_2S_1S_0$) (a) from 1:2 DEMUXes and (b) from 1:4 DEMUXes, with no other
+gates. How many blocks does each need, and where does the data go for $S_2S_1S_0 = 101$?
+
+:::step{why="(a) The data must be split by the MSB first, so the root is a 1:2 DEMUX on S₂; each of its two outputs feeds a 1:2 DEMUX on S₁, and each of those four outputs feeds a 1:2 DEMUX on S₀."}
+(a) $1 + 2 + 4 = 7$ blocks, the leaves giving the 8 outputs. This is the decoder-tree count
+$\lceil 8/2 \rceil + \lceil 8/4 \rceil + \lceil 8/8 \rceil = 4 + 2 + 1$.
+:::
+
+:::step{why="Follow S = 101 from the root: S₂ = 1 takes the upper half (outputs 4–7), S₁ = 0 the lower pair of that half (4, 5), S₀ = 1 the odd one."}
+The data arrives at $Y_5$, as it must.
+:::
+
+:::step{why="(b) Two 1:4 leaves on S₁S₀ give 8 outputs; their data inputs come from a root that splits by S₂. The only block is a 1:4, so tie its S₁ pin to 0, put S₂ on its S₀ pin and use its outputs 0 and 1."}
+(b) $2 + 1 = 3$ blocks, the root half used: $\lceil 8/4 \rceil + \lceil 8/16 \rceil = 2 + 1$.
+:::
+
+:::answer
+(a) 7 blocks of 1:2, (b) 3 blocks of 1:4; $S = 101$ reaches $Y_5$ in both. The counts are those of decoder
+trees, because each DEMUX is a decoder whose enable carries the data.
+:::
+::::
+
+::::example{#ex-demux-gate level="gate" title="A shared wire as a straight or crossed link" depth="standard"}
+Signals $P$ and $Q$ share one wire $W$: a 2:1 MUX at the sender puts $P$ on $W$ when $A = 0$ and $Q$ when
+$A = 1$. At the receiver a 1:2 DEMUX with select $T = A \oplus M$ sends $W$ to $Y_0$ ($T = 0$) or $Y_1$
+($T = 1$). Find $Y_0$ and $Y_1$ for $M = 0$ and $M = 1$.
+
+:::step{why="The MUX equation gives the wire, and the DEMUX equation gives each output as the wire ANDed with the minterm of its select."}
+$W = \overline{A}P + AQ$, $Y_0 = W\,\overline{T}$, $Y_1 = W\,T$.
+:::
+
+:::step{why="M = 0 makes T = A, so the receiver's select agrees with the sender's: when P is on the wire (A = 0) it goes to Y₀."}
+$Y_0 = (\overline{A}P + AQ)\overline{A} = \overline{A}P$, $Y_1 = (\overline{A}P + AQ)A = AQ$: straight.
+:::
+
+:::step{why="M = 1 makes T = A̅: the receiver's select is the opposite of the sender's, so whatever is on the wire goes to the other output."}
+$Y_0 = (\overline{A}P + AQ)A = AQ$, $Y_1 = (\overline{A}P + AQ)\overline{A} = \overline{A}P$: crossed.
+:::
+
+:::answer
+$M = 0$: $Y_0 = \overline{A}P$, $Y_1 = AQ$ ($P \to Y_0$, $Q \to Y_1$). $M = 1$: $Y_0 = AQ$,
+$Y_1 = \overline{A}P$ ($P \to Y_1$, $Q \to Y_0$). As $A$ alternates, each output receives one signal in
+its time slot. The usual wrong answer for $M = 1$ is "$Y_1 = AP$": $P$ is on the wire only while $A = 0$,
+whatever the receiver does.
+:::
+::::
+
+::::example{#ex-demux-edge level="gate" title="Edge case: a decoder without an enable as a DEMUX" depth="standard"}
+Only decoders **without** enable pins are available. (a) Can a 2:4 decoder act as a 1:4 DEMUX with selects
+$S_1S_0$? (b) A 3:8 decoder has inputs $A_2$ (MSB), $A_1$, $A_0$. Wire $I$ to $A_2$ and $S_1, S_0$ to
+$A_1, A_0$. Which outputs form a 1:4 DEMUX, and what do the others give?
+
+:::step{why="(a) Both address pins are taken by S₁ and S₀, and with no enable the selected output is 1 whatever the data is."}
+(a) No: for $I = 0$ the decoder still lights $D_s$, where $s$ is the select value. The data has no pin.
+:::
+
+:::step{why="(b) Each output is a minterm of all three pins; split off the factor contributed by A₂ = I."}
+$D_{4 + s} = I \cdot m_s(S_1, S_0)$ and $D_s = \overline{I} \cdot m_s(S_1, S_0)$ for $s = 0, \dots, 3$.
+:::
+
+:::step{why="Compare with the DEMUX equation Yᵢ = I·mᵢ(S)."}
+$D_4, D_5, D_6, D_7$ are $Y_0, Y_1, Y_2, Y_3$ of a 1:4 DEMUX; $D_0, \dots, D_3$ are a DEMUX of $\overline{I}$.
+:::
+
+:::answer
+(a) No. (b) Yes, using $D_4$–$D_7$: the MSB address pin plays the role of the enable. A decoder without
+an enable is a DEMUX only if it has one address pin to spare for the data.
+:::
+::::
+
 :::note{#recap-demux title="Recap" depth="quick"}
 DEMUX: one data bit to the selected one of $2^n$ outputs, $Y_i = I\,m_i(S)$; the rest are 0. It is a
-decoder with the data on the enable. MUX many-to-one, DEMUX one-to-many, decoder number-to-one-hot.
+decoder with the data on the enable, and DEMUX trees are counted like decoder trees. A MUX and a DEMUX
+share a wire; the DEMUX select $A \oplus M$ makes the link straight ($M = 0$) or crossed ($M = 1$).
 :::
 
 ## Encoders and priority encoders
@@ -581,10 +745,10 @@ controller's bit 2 is 1 whenever the pressed floor is 4, 5, 6 or 7, so bit 2 is 
 buttons.
 
 Real people press several buttons at once. A plain encoder then ORs their codes and reports a floor nobody
-pressed (floors 1 and 2 together give $01 \text{ OR } 10 = 11$, floor 3). A **priority encoder** fixes
+pressed (floors 1 and 2 together give $001 \text{ OR } 010 = 011$, floor 3). A **priority encoder** fixes
 this by ranking the inputs: it reports the highest-ranked pressed button and ignores the rest. It also
-needs a way to say "nobody pressed anything", because the code 00 would otherwise be ambiguous; that is the
-**valid** bit.
+needs a way to say "nobody pressed anything", because the code 000 would otherwise be ambiguous (it is
+also floor 0's code); that is the **valid** bit.
 :::
 
 :::definition{#encoder-def term="Encoder (2ⁿ : n)" depth="standard"}
@@ -595,8 +759,19 @@ $$
 X_1 = D_2 + D_3, \qquad X_0 = D_1 + D_3.
 $$
 Input $D_0$ is not connected to anything: its code is 00, which is what the ORs give when the other inputs
-are 0. An 8:3 encoder is three 4-input ORs ($Y_2 = D_4 + D_5 + D_6 + D_7$, and so on); a decimal-to-BCD
-encoder is four ORs over 10 inputs (with input 0 again unconnected).
+are 0. The same rule gives every encoder as a list of ORs:
+
+- **Octal to binary (8:3):** three 4-input ORs, $Y_2 = D_4 + D_5 + D_6 + D_7$,
+  $Y_1 = D_2 + D_3 + D_6 + D_7$, $Y_0 = D_1 + D_3 + D_5 + D_7$.
+- **Hexadecimal to binary (16:4):** four 8-input ORs, $Y_3 = D_8 + \dots + D_{15}$,
+  $Y_2 = D_4 + \dots + D_7 + D_{12} + \dots + D_{15}$, $Y_1$ = the inputs 2, 3, 6, 7, 10, 11, 14, 15, and
+  $Y_0$ = the eight odd inputs.
+- **Decimal to BCD (10:4):** four ORs over 10 inputs, $Y_3 = D_8 + D_9$, $Y_2 = D_4 + \dots + D_7$,
+  $Y_1 = D_2 + D_3 + D_6 + D_7$, $Y_0 = D_1 + D_3 + D_5 + D_7 + D_9$.
+
+In every case input 0 is unconnected. In the octal and hex encoders each output bit collects exactly half
+of the inputs (4 of 8, 8 of 16), because half of all $n$-bit indices have that bit set; the decimal
+encoder is lopsided because its indices stop at 9.
 
 Two limitations follow from the OR form:
 - **No input active** gives 00, the same as $D_0$ active.
@@ -605,7 +780,8 @@ Two limitations follow from the OR form:
 An encoder at one end of a bus and a decoder at the other end carry "which one of $2^n$ lines" over just
 $n$ wires. A decoder followed by a rewired encoder is a code converter: decode the binary number, connect
 decoder output $i$ to encoder input $g(i)$, and the encoder outputs the code $g(i)$ (for example the Gray
-code of $i$).
+code of $i$; the last worked example of this section builds it). Equivalently, any code converter is a
+decoder with one OR gate per output bit, as in the BCD-to-excess-3 example earlier.
 :::
 
 :::definition{#priority-encoder term="Priority encoder" depth="standard"}
@@ -656,6 +832,15 @@ $Y_0 = D_7 + \overline{D_6}D_5 + \overline{D_6}\,\overline{D_4}D_3 + \overline{D
 :::viz{#priority-scan-viz spec="priority-scan" mode="animate" depth="standard"}
 :::
 
+:::intuition{#priority-mux-intuition title="Let the senior inputs choose the line" depth="standard"}
+In a priority encoder the top-ranked inputs are the powerful ones: if the highest input is active, the
+answer is fixed no matter what anyone below says. So put the two senior inputs on the select lines of a
+multiplexer. Of the four select values, three have at least one senior input active, and on those three
+lines the code is already decided: the data input is a constant 0 or 1. Only the line where both senior
+inputs are 0 has to look further down the ranking, and that is the one data input that depends on the
+junior inputs. The whole priority logic collapses into "which line, and which constant on it".
+:::
+
 :::definition{#priority-mux term="A priority encoder from multiplexers" depth="standard"}
 A priority encoder's outputs are functions of its inputs, so each output can be built on a multiplexer
 with the residue method of [Lesson 2](lesson:multiplexers). The natural choice of select lines is the
@@ -677,6 +862,14 @@ one OR gate.
 The data inputs depend on the **code assignment**. If the question gives the inputs other codes (a
 3-input priority encoder whose top input gets code 01, say), recompute each column from the table; the
 method does not change, the constants do.
+
+**A three-input example (GATE 1992).** Inputs $A > B > C$ with codes $A \to 11$, $B \to 10$, $C \to 01$
+and none → 00. With $A$ on $S_1$ and $B$ on $S_0$, the $X_1$ MUX has data $0, 1, 1, 1$ and the $X_0$ MUX
+has data $C, 0, 1, 1$: again three constant lines, and only the $AB = 00$ line looks at the junior input
+$C$. The animation below builds this circuit line by line.
+:::
+
+:::viz{#priority-mux-viz spec="priority-mux" mode="animate" depth="standard"}
 :::
 
 :::trap{#trap-encoder-vs-decoder title="Encoder or decoder? Look at where the x's are" depth="standard"}
@@ -795,6 +988,33 @@ longer because the "important" input now sits at the small end of every code.
 :::
 ::::
 
+::::example{#ex-enc-gray level="medium" title="A binary-to-Gray converter from a decoder and an encoder" depth="standard"}
+A 3:8 decoder ($B_2$ = MSB) decodes a 3-bit binary number $i$, and its outputs drive an 8:3 encoder. How
+must the eight wires be connected so that the encoder outputs the Gray code $g(i) = i \oplus (i \gg 1)$?
+What code comes out for $i = 5$?
+
+:::step{why="Decoder output i is the only line that is 1 when the input is i, and an encoder reports the index of its one active input. So the wire from output i must go to encoder input g(i)."}
+Connect decoder output $i$ to encoder input $g(i)$.
+:::
+
+:::step{why="Compute g(i) = i XOR (i shifted right by one) for every i."}
+$g = 0, 1, 3, 2, 6, 7, 5, 4$ for $i = 0, \dots, 7$: wires $0 \to 0$, $1 \to 1$, $2 \to 3$, $3 \to 2$,
+$4 \to 6$, $5 \to 7$, $6 \to 5$, $7 \to 4$.
+:::
+
+:::step{why="The wiring is a permutation (each encoder input gets exactly one wire), so the encoder still sees exactly one active input: its one-hot assumption holds and the output is correct."}
+For $i = 5 = 101$: decoder output 5 goes to encoder input 7, so the code is $111$, and indeed
+$101 \oplus 010 = 111$.
+:::
+
+:::answer
+Wire output $i$ to input $g(i)$ (the list above); $i = 5$ gives $111$. Any one-to-one code converter on
+$n$ bits can be built this way: each input word lights one decoder line, and the wiring only relabels it.
+The usual slip is to wire input $i$ to output $g(i)$ the other way round, which builds the inverse
+converter (Gray to binary): $5 \to 6$ instead of $5 \to 7$.
+:::
+::::
+
 :::note{#recap-encoders title="Recap" depth="quick"}
 Encoder: ORs of the inputs with each code bit set; correct only for one-hot inputs. Priority encoder: the
 highest-priority active input wins; x's in the input columns; $V$ flags "some input active". 4:2:
@@ -821,10 +1041,11 @@ For a memory with $L$ addressable locations:
 1. **Count the locations.** Byte-addressable: $L$ = number of bytes. Word-addressable: $L$ = number of
    words = bytes ÷ bytes per word. Here $1\ \text{K} = 2^{10} = 1024$.
 2. **Address lines:** $m = \lceil \log_2 L \rceil$.
-3. **Decoder:** $m$ inputs and $L = 2^m$ outputs (one per location). Its input + output count is
-   $m + 2^m$.
-4. **Chips.** A memory of $c$ equal chips uses $\log_2 c$ high address bits on a chip-select decoder
-   ($\log_2 c : c$); the remaining bits go to every chip.
+3. **Decoder:** $m$ inputs and $2^m \ge L$ outputs, one per location (exactly $L$ when $L$ is a power of 2,
+   as in every GATE question). Its input + output count is $m + 2^m$.
+4. **Chips.** A memory of $c$ equal chips uses $\lceil \log_2 c \rceil$ high address bits on a chip-select
+   decoder; the remaining bits go to every chip. When $c$ is not a power of 2, some outputs of the
+   chip-select decoder drive nothing.
 
 **A system of blocks.** When a code word holds a mode bit and two address fields (one for a memory of
 $2^a$ words and one for a register file of $2^b$ registers), each address field drives its own
@@ -833,13 +1054,18 @@ $a:2^a$ and $b:2^b$ decoder (which picks the word or register), and the mode bit
 MUX picks between two whole words.
 :::
 
+:::viz{#address-decoding-viz spec="address-decoding" mode="animate" depth="standard"}
+:::
+
 :::aside{#coincident-decoding title="Two small decoders instead of one big one" depth="deep"}
 A 10:1024 decoder has 1024 output lines. Real memories arrange the cells in a $32 \times 32$ square and use
 two 5:32 decoders, one for the row and one for the column: a cell is selected where its row line and column
 line are both on. That needs only $32 + 32 = 64$ decoder outputs. The same trade-off appears when a function
-is built from a decoder on some variables and a multiplexer on the others: $2^a + 2^b$ with $a + b$ fixed
-is smallest when $a$ and $b$ are about equal. A GATE question that asks for the decoder "to uniquely
-address" the memory means the single $m : 2^m$ decoder unless it says otherwise.
+is built from a decoder on $a$ of its variables and a multiplexer on the other $b$: the two blocks need
+$2^a + 2^b$ lines, against $2^{a + b}$ lines (or links) for one big decoder, and $2^a + 2^b$ with $a + b$
+fixed is smallest when $a$ and $b$ are about equal. [Lesson 5](lesson:rom-pla-pal) folds a ROM's word lines
+in the same way. A GATE question that asks for the decoder "to uniquely address" the memory means the single
+$m : 2^m$ decoder unless it says otherwise.
 :::
 
 :::trap{#trap-address-bits title="Words or bytes, and 1 K = 1024" depth="standard"}
@@ -847,40 +1073,11 @@ Three slips cost marks here. (1) **1 K is 1024**, not 1000; $\log_2 1000$ is not
 decoder has 1000 outputs. (2) **Bytes vs words:** 4 KB of 32-bit words is 1024 words, so 10 address lines,
 not 12. Read "byte-addressable" or "word-addressable" before counting. (3) **What is asked:** $m + n$ for
 a decoder is inputs **plus** outputs ($10 + 1024 = 1034$ for 1 KB, byte-addressable), not $m + m$ or
-$2^m$ alone. The usual wrong answers are 20 (adding $\log_2$ twice), 1024 (outputs only) and 2048.
+$2^m$ alone. The usual wrong answers are 20 (adding $\log_2$ twice), 1024 (outputs only) and 2048
+($1024 + 1024$, the outputs counted twice).
 :::
 
-## A decoder feeding a multiplexer
-
-:::intuition{#combo-intuition title="Each data line is a tiny function" depth="standard"}
-When a decoder's outputs are wired to a multiplexer's data inputs, each data input is a known small
-function of the decoder's address: $D_j$ is the minterm $m_j$, so it is 1 on exactly one address row.
-Constants 0 and 1 may sit on other data lines. The MUX then picks one of those small functions according
-to its own select lines. Counting the input rows where the output is 1 becomes bookkeeping: for each
-select value, count the address rows where the chosen data line is 1, and add.
-:::
-
-:::definition{#decoder-mux-combo term="Method: a decoder's outputs on a MUX's data lines" depth="standard"}
-Let a $k:2^k$ decoder (address $A$) drive some data inputs of a $2^s:1$ MUX (selects $S$), and let the
-other data inputs be constants. The inputs of the whole circuit are $A$ and $S$ ($2^{k+s}$ rows).
-1. For each select value $s$, name the data input $I_s$: $D_j$, 0 or 1.
-2. Count the address rows where $I_s = 1$: **1** row for $D_j$ (active-high, enabled), **0** for the
-   constant 0, **all $2^k$** for the constant 1 (and $2^k - 1$ for an active-low output).
-3. Add the counts over all select values: that is the number of rows with $Y = 1$.
-4. The expression is $Y = \sum_s m_s(S)\, I_s$ with each $D_j$ replaced by $m_j(A)$.
-
-If decoder outputs drive the **select** lines instead, remember that active-high outputs are one-hot:
-two outputs are never 1 together, so a select value that needs two of them to be 1 can never occur, and
-the data input it would choose is never used.
-:::
-
-:::note{#recap-address title="Recap" depth="quick"}
-A memory of $L$ locations needs $\log_2 L$ address lines and a $\log_2 L : L$ decoder; count bytes or words
-as the question says, with 1 K = 1024. A decoder feeding a MUX: each $D_j$ is one row, a constant 1 is
-all rows; add over the select values.
-:::
-
-### Worked examples: address decoding and decoder–MUX circuits
+### Worked examples: address decoding
 
 ::::example{#ex-addr-easy level="easy" title="The decoder of a 2 KB byte-addressable RAM" depth="quick"}
 A decoder with $m$ inputs and $n$ outputs uniquely addresses a byte-addressable 2 KB RAM. Find the smallest
@@ -921,51 +1118,171 @@ chip has its own internal 10:1024 decoder). Address $0x9A3$ ($A_{11}A_{10} = 10$
 :::
 ::::
 
-::::example{#ex-addr-gate level="gate" title="Name the blocks of a display system" depth="standard"}
-A 13-bit code word holds a mode bit $M$, an 8-bit field that addresses a 256-word memory $S$, and a 4-bit
-field that addresses a 16-register file $R$. Block $P$ turns the 8-bit field into the word select of $S$,
-block $Q$ turns the 4-bit field into the register select of $R$, and block $T$ passes either the word read
-from $S$ or the word read from $R$ into an output register, according to $M$. Name $P$, $Q$ and $T$.
+::::example{#ex-addr-gate level="gate" title="Name the blocks when the memory is word-addressable" depth="standard"}
+A code word holds a mode bit $M$, a field that addresses a **word-addressable** 8 KB memory $S$ of 32-bit
+words, and a field that addresses a file $R$ of 64 registers (also 32-bit). Block $P$ turns the first field
+into the word select of $S$, block $Q$ turns the second into the register select of $R$, and block $T$
+passes either the word read from $S$ or the word read from $R$ into an output register, according to $M$.
+How wide is the code word, and what are $P$, $Q$ and $T$?
 
-:::step{why="P receives an 8-bit number and must switch on exactly one of 256 word lines: number in, one-hot out."}
-$P$ is an $8:2^8$ (8:256) decoder.
+:::step{why="Word-addressable: a location is a 4-byte word, not a byte, so divide the size by the word size before taking log₂."}
+$S$ has $8192 / 4 = 2048 = 2^{11}$ words, so its field is 11 bits (not 13).
 :::
 
-:::step{why="The same job for 16 registers from a 4-bit field."}
-$Q$ is a $4:2^4$ (4:16) decoder.
+:::step{why="Registers are counted directly: 64 = 2⁶."}
+$R$'s field is 6 bits, and the code word is $1 + 11 + 6 = 18$ bits.
 :::
 
-:::step{why="T has two whole words as data inputs and one control bit choosing between them, and one word comes out: a multiplexer, not an encoder (an encoder has no data to pass) and not a DEMUX (that has one input and many outputs)."}
-$T$ is a 2:1 multiplexer (one per bit of the word).
+:::step{why="An address field must switch on exactly one word line: number in, one-hot out."}
+$P$ is an 11:2048 decoder and $Q$ a 6:64 decoder.
+:::
+
+:::step{why="T has two whole words as data inputs and one control bit choosing between them: a multiplexer, not an encoder (no data path) and not a DEMUX (one input, many outputs)."}
+$T$ is a 2:1 multiplexer for each of the 32 bits.
 :::
 
 :::answer
-$P$: 8:256 decoder; $Q$: 4:16 decoder; $T$: 2:1 MUX. Check the field widths: $1 + 8 + 4 = 13$ bits. A
-"1:8 DEMUX" for $P$ would have the wrong shape: it has 8 outputs, not 256, and it needs a data input that
-the address field does not provide.
+18-bit code word; $P$: 11:2048 decoder; $Q$: 6:64 decoder; $T$: 2:1 MUX (32 of them, one per bit). The
+expected wrong answer is a 13:8192 decoder for $P$, from counting bytes in a word-addressable memory.
 :::
 ::::
 
-::::example{#ex-combo-gate level="gate" title="Count the 1-rows of a decoder feeding a MUX" depth="standard"}
-A 2:4 decoder (active-high, enabled) has inputs $A$ (MSB), $B$. A 4:1 MUX with selects $S_1$ (MSB), $S_0$
-has data $I_0 = D_1$, $I_1 = D_2$, $I_2 = D_3$, $I_3 = 1$. Of the 16 rows of $(A, B, S_1, S_0)$, how many
-give $Y = 1$?
+::::example{#ex-addr-edge level="gate" title="Edge case: three chips and an unused decoder output" depth="standard"}
+A byte-addressable 6 KB memory is built from three 2 KB chips. How many address lines are there, what
+chip-select decoder is needed, and which chip holds address $0x1234$?
 
-:::step{why="For each select value, the MUX passes one data line; a decoder output is 1 on exactly one (A, B) row."}
-$S_1S_0 = 00$: $Y = D_1 = \overline{A}B$, 1 row. $S_1S_0 = 01$: $Y = D_2 = A\overline{B}$, 1 row.
+:::step{why="6 KB = 6144 locations is not a power of 2, so round the address width up."}
+$m = \lceil \log_2 6144 \rceil = 13$ lines, $A_{12} \dots A_0$ (since $2^{12} = 4096 < 6144 \le 8192 = 2^{13}$).
 :::
 
-:::step{why="D₃ is again one row; the constant 1 is 1 on all four (A, B) rows."}
-$S_1S_0 = 10$: $Y = D_3 = AB$, 1 row. $S_1S_0 = 11$: $Y = 1$, 4 rows.
+:::step{why="Each chip holds 2048 = 2¹¹ bytes, so the low 11 bits go to every chip."}
+$A_{10} \dots A_0$ shared; the high bits $A_{12}A_{11}$ choose the chip.
 :::
 
-:::step{why="The select values are disjoint, so the counts add."}
-$1 + 1 + 1 + 4 = 7$.
+:::step{why="Three chips need ⌈log₂ 3⌉ = 2 select bits, so a 2:4 decoder; its fourth output has no chip."}
+Outputs 0, 1, 2 enable chips 0, 1, 2; output 3 (addresses $0x1800$–$0x1FFF$) drives nothing.
+:::
+
+:::step{why="Split the address into the chip bits and the offset: 0x1234 = 4660 = 2 × 2048 + 564."}
+$A_{12}A_{11} = 10$: chip 2, byte $564 = 0x234$ inside it.
 :::
 
 :::answer
-7 rows. As an expression: $Y = \overline{S_1}\,\overline{S_0}\,\overline{A}B + \overline{S_1}S_0A\overline{B}
-+ S_1\overline{S_0}AB + S_1S_0$.
+13 address lines, a 2:4 chip-select decoder with one output unused, and $0x1234$ is byte $0x234$ of chip 2.
+"$\log_2 3$ select bits" is not an integer: always round up, and expect spare outputs.
+:::
+::::
+
+:::note{#recap-address title="Recap" depth="quick"}
+A memory of $L$ locations needs $m = \lceil \log_2 L \rceil$ address lines and an $m:2^m$ decoder; count bytes
+or words as the question says, with 1 K = 1024. Chips: the low bits go to every chip, $\lceil \log_2 c \rceil$
+high bits drive a chip-select decoder, and spare outputs drive nothing.
+:::
+
+## A decoder feeding a multiplexer
+
+:::intuition{#combo-intuition title="Each data line is a tiny function" depth="standard"}
+When a decoder's outputs are wired to a multiplexer's data inputs, each data input is a known small
+function of the decoder's address: $D_j$ is the minterm $m_j$, so it is 1 on exactly one address row.
+Constants 0 and 1 may sit on other data lines. The MUX then picks one of those small functions according
+to its own select lines. Counting the input rows where the output is 1 becomes bookkeeping: for each
+select value, count the address rows where the chosen data line is 1, and add.
+:::
+
+:::definition{#decoder-mux-combo term="Method: a decoder's outputs on a MUX's data lines" depth="standard"}
+Let a $k:2^k$ decoder (address $A$) drive some data inputs of a $2^s:1$ MUX (selects $S$), and let the
+other data inputs be constants. The inputs of the whole circuit are $A$ and $S$ ($2^{k+s}$ rows).
+1. For each select value $s$, name the data input $I_s$: $D_j$, 0 or 1.
+2. Count the address rows where $I_s = 1$: **1** row for $D_j$ (active-high, enabled), **0** for the
+   constant 0, **all $2^k$** for the constant 1 (and $2^k - 1$ for an active-low output).
+3. Add the counts over all select values: that is the number of rows with $Y = 1$.
+4. The expression is $Y = \sum_s m_s(S)\, I_s$ with each $D_j$ replaced by $m_j(A)$.
+
+**Shared variables.** The counts in step 2 assume the decoder inputs and the MUX selects are different
+variables. If one variable feeds both, a select value fixes that variable, and a decoder output $D_j$
+counts only if its row agrees with it (it may give 0 rows); a constant 1 then counts only the address rows
+that agree, too. Count jointly, row by row: for each select value, list the address rows still possible
+and check the chosen data line on each.
+
+If decoder outputs drive the **select** lines instead, remember that active-high outputs are one-hot:
+two outputs are never 1 together, so a select value that needs two of them to be 1 can never occur, and
+the data input it would choose is never used.
+:::
+
+:::trap{#trap-shared-variable title="Counting one row per decoder output when a variable is shared" depth="standard"}
+"A decoder output on a data line is one row" is true only when the select value says nothing about the
+decoder's address. When a variable such as $A$ is both the decoder's MSB and the MUX's $S_1$, the data
+inputs $I_0, I_1$ are chosen only on rows with $A = 0$, so an output like $D_2$ or $D_3$ (which needs
+$A = 1$) on those lines contributes **nothing**. The expected wrong answer is the per-line sum
+"$1 + 1 + 1 + \dots$"; the right method fixes the shared variable first and counts the surviving rows.
+:::
+
+### Worked examples: a decoder feeding a multiplexer
+
+::::example{#ex-combo-easy level="easy" title="One decoder output and constants" depth="quick"}
+A 2:4 decoder (active-high, enabled) has inputs $A$ (MSB), $B$. A 4:1 MUX with selects $S_1$ (MSB), $S_0$
+has data $I_0 = 0$, $I_1 = D_0$, $I_2 = 1$, $I_3 = 0$. On how many of the 16 rows of $(A, B, S_1, S_0)$ is
+$Y = 1$?
+
+:::step{why="The constant-0 lines can never give Y = 1."}
+$S_1S_0 = 00$ and $11$: 0 rows each.
+:::
+
+:::step{why="D₀ = A̅B̅ is 1 on one (A, B) row; the constant 1 is 1 on all four (A, B) rows."}
+$S_1S_0 = 01$: 1 row; $S_1S_0 = 10$: 4 rows.
+:::
+
+:::answer
+$0 + 1 + 4 + 0 = 5$ rows; $Y = \overline{S_1}S_0\,\overline{A}\,\overline{B} + S_1\overline{S_0}$. The slip
+to avoid is counting the constant 1 as one row.
+:::
+::::
+
+::::example{#ex-combo-medium level="medium" title="A variable shared by the decoder and the MUX" depth="standard"}
+A 2:4 decoder (active-high, enabled) has inputs $A$ (MSB), $B$. A 4:1 MUX has $S_1 = A$, $S_0 = C$ and data
+$I_0 = D_1$, $I_1 = D_2$, $I_2 = D_3$, $I_3 = 1$. On how many of the 8 rows of $(A, B, C)$ is $Y = 1$?
+
+:::step{why="A drives both the decoder MSB and S₁, so S₁ = 0 means A = 0: only the decoder rows AB = 00, 01 are possible there."}
+$AC = 00$: $Y = D_1 = \overline{A}B$, 1 on $B = 1$: 1 row. $AC = 01$: $Y = D_2 = A\overline{B}$, but
+$A = 0$: 0 rows.
+:::
+
+:::step{why="S₁ = 1 means A = 1: only the decoder rows AB = 10, 11 survive."}
+$AC = 10$: $Y = D_3 = AB$, 1 on $B = 1$: 1 row. $AC = 11$: $Y = 1$ for both values of $B$: 2 rows.
+:::
+
+:::step{why="Check by an expression: substitute the minterms and simplify."}
+$Y = \overline{A}\,\overline{C}\,\overline{A}B + \overline{A}C\,A\overline{B} + A\overline{C}\,AB + AC
+= B\overline{C} + AC$, which is 1 on rows 010, 110, 101, 111.
+:::
+
+:::answer
+4 rows. The per-line count of the method's step 2 would give $1 + 1 + 1 + 2^2 = 7$, which is wrong twice:
+$D_2$ can never be chosen while $A = 1$, and the constant 1 sees only the 2 rows with $A = 1$, not all 4.
+:::
+::::
+
+::::example{#ex-combo-gate level="gate" title="One decoder output on two data lines" depth="standard"}
+A 2:4 decoder (active-high, enabled) has inputs $A$ (MSB), $B$. A 4:1 MUX with selects $S_1$ (MSB), $S_0$
+has data $I_0 = D_2$, $I_1 = 1$, $I_2 = D_2$, $I_3 = 1$. Of the 16 rows of $(A, B, S_1, S_0)$, how many give
+$Y = 1$?
+
+:::step{why="For each select value the MUX passes one data line; the variables are all different, so D₂ = AB̅ is 1 on one (A, B) row each time it is chosen."}
+$S_1S_0 = 00$: 1 row. $S_1S_0 = 10$: 1 row.
+:::
+
+:::step{why="The constant 1 is 1 on all four (A, B) rows, and it is chosen twice."}
+$S_1S_0 = 01$: 4 rows. $S_1S_0 = 11$: 4 rows.
+:::
+
+:::step{why="Cross-check by an expression: S₀ = 1 always gives 1, S₀ = 0 gives D₂."}
+$Y = S_0 + \overline{S_0}A\overline{B} = S_0 + A\overline{B}$: 8 rows with $S_0 = 1$, plus 2 rows with
+$S_0 = 0$, $AB = 10$ (both $S_1$).
+:::
+
+:::answer
+$1 + 4 + 1 + 4 = 10$ rows. The expected wrong answer is 9, from counting $D_2$ once because it is "one
+decoder output": each data line it reaches is chosen on its own select value, so it counts once per line.
 :::
 ::::
 
@@ -997,9 +1314,9 @@ $1 + 2 + 2 = 5$ rows, and $I_3$ is never used (changing it to 0 changes nothing)
 ::::
 
 :::note{#recap-combos title="Recap" depth="quick"}
-Size a memory decoder from the number of locations (bytes or words, 1 K = 1024). Name blocks by their
-job: code → one-hot is a decoder, many words → one word is a MUX. In decoder–MUX circuits count rows per
-select value, and watch for select values a one-hot decoder can never produce.
+A decoder feeding a MUX: per select value, $D_j$ is one row, a constant 1 is all $2^k$ rows, a constant 0 is
+none; add. If a variable feeds both blocks, fix it from the select value and count the surviving rows
+jointly. Decoder outputs on the selects are one-hot, so some select values never occur.
 :::
 
 ## Try it
@@ -1085,9 +1402,10 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Active-low outputs | $\overline{D}_i = M_i$ (maxterms): NAND the 1-rows or AND the 0-rows; state the polarity |
 | Function from a decoder | OR of the 1-rows, or NOR of the 0-rows (shorter list); fix the address MSB first |
 | Decoder tree | $\lceil N/K \rceil + \lceil N/K^2 \rceil + \dots + 1$; 6:64 from 3:8 = 9 |
-| DEMUX $1:2^n$ | $Y_i = I\,m_i(S)$ = a decoder with the data on the enable |
-| Encoder $2^n:n$ | ORs of the inputs with each code bit set; needs one-hot input |
+| DEMUX $1:2^n$ | $Y_i = I\,m_i(S)$ = a decoder with the data on the enable; trees counted like decoder trees; MUX + DEMUX link straight / crossed by the select $A \oplus M$ |
+| Encoder $2^n:n$ | ORs of the inputs with each code bit set (octal 8:3, hex 16:4, decimal 10:4); needs one-hot input |
+| Code converter | decoder + one OR per output bit, or decoder + encoder with output $i$ wired to input $g(i)$ |
 | Priority encoder | highest active input wins, $V$ = OR of all; 4:2: $X_1 = D_2 + D_3$, $X_0 = D_3 + D_1\overline{D_2}$ |
-| Memory decoder | $\log_2 L : L$ for $L$ locations (bytes or words); 1 KB bytes → 10:1024, $m + n = 1034$ |
-| Decoder into MUX | count rows per select value: $D_j$ → 1, constant 1 → all |
+| Memory decoder | $m = \lceil \log_2 L \rceil$, an $m:2^m$ decoder for $L$ locations (bytes or words); 1 KB bytes → 10:1024, $m + n = 1034$; $c$ chips → $\lceil \log_2 c \rceil$ chip-select bits |
+| Decoder into MUX | count rows per select value: $D_j$ → 1, constant 1 → all; a variable on both blocks → count jointly |
 :::

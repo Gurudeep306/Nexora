@@ -42,7 +42,7 @@ this lesson only shows how the borrow and the zero test turn a subtractor into a
 | PYQs mapped to this lesson | 0: GATE has not asked about comparator or parity circuits directly |
 | Why it still matters | Comparators and XOR trees are standard building blocks inside every ALU, cache tag check and branch unit; the reasoning (first differing bit, $n - 1$ gates for $n$ inputs) appears in COA questions on comparisons, tag matching and condition flags |
 | Related PYQs elsewhere | Parity of an XOR chain: it-2005-cs-7 and cse-2016-2-cs-8 in [Chapter 2, Lesson 3](lesson:xor-and-operators); signed overflow behind "compare by subtracting": [Chapter 1, Lesson 9](lesson:code-arithmetic) |
-| Likely question shapes | Which expression gives A > B; how many input rows make A > B; which term of the cascade fires; chips in a cascade; a parity bit; XOR gates and depth for n inputs; which error patterns parity detects |
+| Likely question shapes | Which expression gives A > B; how many input rows make A > B; which term of the comparator expression fires; chips in a cascade; a parity bit; XOR gates and depth for n inputs; which error patterns parity detects |
 | What examiners would test | Scanning from the MSB (not the LSB), the XNOR as the per-bit equality test, the counts $2^n$ and $(4^n - 2^n)/2$, rounding up the number of chips, even parity meaning an even total *including* the parity bit, and that parity misses every even number of errors |
 :::
 
@@ -50,8 +50,8 @@ this lesson only shows how the borrow and the zero test turn a subtractor into a
 
 :::intuition{#compare-intuition title="Numbers compare like words in a dictionary" depth="standard"}
 To decide whether "carton" comes before "cartel" in a dictionary, you read both words from the left,
-skip the letters they share ("cart"), and stop at the first letter where they differ: "o" against "e".
-That one letter decides the order, and nothing after it matters ("n" against "l" is never looked at).
+skip the letters they share ("cart"), and stop at the first letter where they differ: "o" against "e";
+"e" comes first in the alphabet, so "cartel" comes before "carton". That one letter decides the order, and nothing after it matters ("n" against "l" is never looked at).
 
 Binary numbers of the same length work exactly the same way, with the most significant bit (MSB) playing
 the role of the first letter. Compare $A = 1010$ and $B = 1001$: the first two bits agree (1 and 1, then
@@ -102,6 +102,12 @@ $$
 Hardware: $n$ XNOR gates and one $n$-input AND. With 2-input gates only, the AND becomes a tree of
 $n - 1$ two-input ANDs, so $2n - 1$ gates in all. Equivalently $E = \overline{(A_{n-1} \oplus B_{n-1}) + \dots + (A_0 \oplus B_0)}$:
 $n$ XORs and one NOR ("no bit differs").
+
+The animation below builds this circuit for 4-bit numbers: a row of four XNORs, one per bit position,
+feeding one AND. A single unequal position is enough to make the AND output 0.
+:::
+
+:::viz{#equality-viz spec="equality-xnor" mode="animate" depth="standard"}
 :::
 
 :::theorem{#equality-theorem name="Equality is the AND of the bitwise XNORs" depth="standard"}
@@ -113,9 +119,10 @@ if and only if $x_{n-1} x_{n-2} \cdots x_0 = 1$.
 **Idea first:** a binary number has only one way of being written in $n$ bits, so equal values force
 equal bit patterns.
 
-If every bit agrees, then $A = \sum A_i 2^i = \sum B_i 2^i = B$. Conversely, suppose $A = B$ but some bit
-differs; let $k$ be the highest such bit. The magnitude theorem below shows that the number with the 1 at
-position $k$ is strictly larger, contradicting $A = B$. (Equivalently: binary representation is unique,
+If every bit agrees, then $A = \sum A_i 2^i = \sum B_i 2^i = B$. Conversely, suppose some bit differs, and
+let $k$ be the highest such bit. The bits above $k$ agree and cancel in $A - B$; bit $k$ contributes
+$\pm 2^k$, and the lower bits together are worth at most $2^k - 1$ (because $1 + 2 + \dots + 2^{k-1} = 2^k - 1$).
+So $|A - B| \ge 2^k - (2^k - 1) = 1$, and $A \ne B$. (Equivalently: binary representation is unique,
 which is the place-value fact of Chapter 1.) So $A = B$ exactly when every $x_i = 1$, which is exactly
 when their AND is 1.
 :::
@@ -140,7 +147,8 @@ E = (A = B) &= x_3x_2x_1x_0 .
 $$
 In general, the term for bit $k$ is $\left(\prod_{j > k} x_j\right) A_k B_k'$: the equalities of all higher
 bits, then "$A$ has the 1 here". $L$ is the same with the roles of $A$ and $B$ swapped. For $n$ bits each of
-$G$ and $L$ has $n$ terms. The 2-bit and 3-bit cases are
+$G$ and $L$ has $n$ terms. We call these expressions the **MSB-first form** of the comparator (the word
+"cascade" is kept for chains of comparator chips, later in this lesson). The 2-bit and 3-bit cases are
 $$
 G_2 = A_1B_1' + x_1A_0B_0', \qquad G_3 = A_2B_2' + x_2A_1B_1' + x_2x_1A_0B_0' .
 $$
@@ -171,6 +179,9 @@ agree and bit $k$ is the first difference with $A_k = 1$. When $A > B$, the firs
 make $k$ the first difference with $A_k = 1$, which forces $A > B$. Hence $G = 1 \iff A > B$. Since at most
 one position is "the first difference", **at most one term is 1** on any row: the terms are disjoint,
 which is why an OR of them never double-counts.
+:::
+
+:::viz{#magnitude-viz spec="comparator-cascade" mode="animate" depth="standard"}
 :::
 
 :::derivation{#comparator-count of="the number of rows on which G, E and L are 1" depth="standard"}
@@ -261,12 +272,12 @@ Quad: $A_1B_1'$.
 Pairs: $A_0B_1'B_0'$ and $A_1A_0B_0'$.
 :::
 
-:::step{why="Cross-check against the cascade form: x1 A0 B0′ splits into A1′B1′A0B0′ + A1B1A0B0′, which are rows 4 and 14, and the first is inside the pair 4–12, the second inside 12–14."}
+:::step{why="Cross-check against the MSB-first form: x1 A0 B0′ splits into A1′B1′A0B0′ + A1B1A0B0′, which are rows 4 and 14, and the first is inside the pair 4–12, the second inside 12–14."}
 $A_1B_1' + (A_1 \odot B_1)A_0B_0'$ has the same six minterms.
 :::
 
 :::answer
-$G = A_1B_1' + A_0B_1'B_0' + A_1A_0B_0'$ (8 literals, minimal), equal to the cascade form
+$G = A_1B_1' + A_0B_1'B_0' + A_1A_0B_0'$ (8 literals, minimal), equal to the MSB-first form
 $A_1B_1' + (A_1 \odot B_1)A_0B_0'$, which is cheaper in gates once the XNOR $x_1$ is shared with $E$.
 :::
 ::::
@@ -341,6 +352,9 @@ cascade inputs, and so on up; the most significant chip's outputs are the answer
 chip's cascade inputs are tied to $(G_{in}, E_{in}, L_{in}) = (0, 1, 0)$: "nothing below, so far equal".
 For $n$ bits the chain needs $\lceil n/4 \rceil$ chips (unused high inputs of the top chip are tied
 equal, for example all 0), and a verdict may ripple through $\lceil n/4 \rceil - 1$ links.
+
+The animation after the proof below chains two chips into an 8-bit comparator: when the high chip's own
+halves are equal ($E_4 = 1$), it passes the low chip's verdict straight through.
 :::
 
 :::theorem{#cascade-theorem name="A chain of comparators compares the whole numbers" depth="standard"}
@@ -362,10 +376,14 @@ $m - 1$ chips are correct for the low part, the $m$-th chip combines them with i
 by the two-part case.
 :::
 
-:::viz{#cascade-viz spec="comparator-cascade" mode="animate" depth="standard"}
+:::viz{#cascade-viz spec="comparator-chain" mode="animate" depth="standard"}
 :::
 
-:::derivation{#comparator-cost of="the gate count of an n-bit comparator" depth="standard"}
+:::derivation{#comparator-cost of="the gate count of the MSB-first comparator" depth="standard"}
+This counts the MSB-first construction of this lesson (the expressions for $G$, $E$, $L$ above); it is not
+claimed to be minimal.
+
+
 **Gate model:** complemented inputs are free, AND and OR gates of any fan-in, and we count gates.
 Build each bit as the 1-bit comparator: $P_k = A_kB_k'$ and $Q_k = A_k'B_k$ (two ANDs) and
 $x_k = (P_k + Q_k)'$ (one NOR, which is the XNOR of the two bits). That is $3n$ gates for $n$ bits.
@@ -409,7 +427,8 @@ lands them in $0 \dots 2^n - 1$ without changing their order.
 :::trap{#trap-signed-compare title="Signed numbers in an unsigned comparator" depth="standard"}
 With $A = 1110$ ($-2$) and $B = 0011$ ($+3$) in 4-bit 2's complement, an unsigned comparator sees $14$
 against $3$ and raises $G$. The expected wrong answer is "$A > B$". The signed truth is $-2 < 3$. Flip both
-sign bits (or, equivalently, swap the roles of $A_3$ and $B_3$ in the first term) before comparing. When
+sign bits (or, equivalently, swap the roles of $A_3$ and $B_3$ in the first term of $G$ and in the first
+term of $L$; $x_3$ is unchanged) before comparing. When
 the two sign bits are equal, the unsigned and signed answers agree, so the trap only bites when the
 signs differ.
 :::
@@ -452,7 +471,7 @@ $A > B$, $A = B$, $A < B$.
 
 :::answer
 11 gates ($= 5 \cdot 2 + 1$). Using the two-level minimal SOPs separately would cost more, because the
-cascade form shares $x_1$, $P_1$ and $Q_1$ among the three outputs.
+MSB-first form shares $x_1$, $P_1$ and $Q_1$ among the three outputs.
 :::
 ::::
 
@@ -520,7 +539,9 @@ Compute $R = A - B$ in $n$ bits with an $n$-bit subtractor (or as $A + B' + 1$).
 - **Unsigned:** $L = $ the borrow out of the top column ($= $ NOT the carry out of $A + B' + 1$);
   $E = 1$ exactly when $R = 0\cdots0$ (an $n$-input NOR of the result bits); $G = (L + E)'$.
 - **Signed (2's complement):** $A < B$ exactly when $N \oplus V = 1$, where $N$ is the sign bit of $R$ and $V$
-  the overflow flag. The sign bit alone is wrong when the subtraction overflows.
+  the overflow flag. The sign bit alone is wrong when the subtraction overflows. For a subtraction,
+  $V = 1$ exactly when $A$ and $B$ have different sign bits and the sign bit of $R$ differs from that of
+  $A$. $E$ is the same zero test as in the unsigned case.
 :::
 
 :::theorem{#borrow-theorem name="The borrow out is the unsigned less-than" depth="standard"}
@@ -538,15 +559,120 @@ $A \ge B$, then $b = 0$ already gives $R = A - B$ in range, and $b = 1$ would pu
 $b = 0$. If $A < B$, then $b = 0$ would give a negative $R$, so $b = 1$. Hence $b = 1 \iff A < B$.
 :::
 
+:::theorem{#signed-less-than name="The signed less-than is N ⊕ V" depth="standard"}
+For $n$-bit 2's complement $A$ and $B$, let $R$ be the $n$-bit result of $A - B$, $N$ its sign bit and $V$
+the overflow flag of the subtraction. Then $A < B$ (as signed values) if and only if $N \oplus V = 1$.
+:::
+
+:::proof{#proof-signed-less-than of="the signed less-than rule" depth="standard"}
+**Idea first:** without overflow the result is the true difference, so its sign bit tells the truth;
+overflow wraps the difference around by $2^n$, which always lands it on the other side of zero, so the
+sign bit then lies, and XOR with $V$ undoes the lie.
+
+Let $D = A - B$ be the true difference. Both numbers lie in $[-2^{n-1}, 2^{n-1} - 1]$, so
+$-(2^n - 1) \le D \le 2^n - 1$, and the subtractor writes the pattern of $D$ modulo $2^n$.
+
+*Case $V = 0$.* $D$ fits in $n$-bit 2's complement, so $R$ **is** $D$ and $N$ is its sign: $N = 1$ exactly
+when $D < 0$, that is, when $A < B$. Here $N \oplus V = N$.
+
+*Case $V = 1$.* $D$ does not fit. If $D \ge 2^{n-1}$ (so $A > B$), the result read as signed is
+$D - 2^n$, which lies in $[-2^{n-1}, -1]$: negative, $N = 1$. If $D < -2^{n-1}$ (so $A < B$), the result is
+$D + 2^n$, which lies in $[1, 2^{n-1} - 1]$: positive, $N = 0$. Either way $N$ is the **opposite** of the
+true sign, and $N \oplus V = N'$ is the true sign.
+
+In both cases $N \oplus V = 1 \iff D < 0 \iff A < B$.
+:::
+
 :::trap{#trap-sign-flag title="Using only the sign bit for a signed comparison" depth="standard"}
 For signed $A = 0110$ ($6$) and $B = 1011$ ($-5$), the 4-bit result of $A - B$ is $1011$, so $N = 1$, and the
 expected wrong answer is "$A < B$". The true difference $11$ does not fit in 4-bit 2's complement, so
 $V = 1$ and $N \oplus V = 0$: $A \ge B$, which is right. Overflow flips the sign bit, and $N \oplus V$ flips it back.
 :::
 
+### Worked examples: comparing by subtraction
+
+::::example{#ex-sub-easy level="easy" title="Unsigned 9 − 12: the borrow says less" depth="quick"}
+Compare the 4-bit unsigned numbers $A = 1001$ (9) and $B = 1100$ (12) with a subtractor.
+
+:::step{why="The subtractor works as A + B′ + 1; its carry out is the complement of the borrow."}
+$1001 + 0011 + 1 = 1101$ with carry out 0, so the borrow is 1 and $R = 1101$.
+:::
+
+:::step{why="By the borrow theorem the borrow is exactly A < B; the result is not 0000, so E = 0."}
+$L = 1$, $E = 0$, $G = (L + E)' = 0$.
+:::
+
+:::answer
+$A < B$ ($9 < 12$). The result $1101 = 13$ is $9 - 12 + 16$: the subtractor borrowed $2^4$, and that
+borrow is the answer.
+:::
+::::
+
+::::example{#ex-sub-medium level="medium" title="Equal numbers: the zero test" depth="standard"}
+Compare $A = B = 0111$ (unsigned) with a subtractor. Which flag decides, and what do the others show?
+
+:::step{why="Subtracting a number from itself gives 0 and needs no borrow."}
+$0111 + 1000 + 1 = 1\,0000$: carry out 1, so borrow 0, and $R = 0000$.
+:::
+
+:::step{why="E is the NOR of the result bits, which is 1 only for the all-zero result."}
+$E = 1$, $L = 0$, $G = (L + E)' = 0$.
+:::
+
+:::answer
+$(G, E, L) = (0, 1, 0)$. The borrow alone gives only "not less", which does not tell $A = B$ from $A > B$;
+that is why the zero test is needed.
+:::
+::::
+
+::::example{#ex-sub-gate level="gate" title="Signed, no overflow: −3 against 2" depth="standard"}
+$A = 1101$ and $B = 0010$ are 4-bit 2's complement numbers. Find $N$, $V$ and the signed result, and say
+what an **unsigned** reading of the same subtraction would conclude.
+
+:::step{why="Read the signed values first, so that the answer can be checked."}
+$A = -8 + 4 + 1 = -3$, $B = 2$; the true difference is $-5$.
+:::
+
+:::step{why="Subtract in 4 bits: A + B′ + 1."}
+$1101 + 1101 + 1 = 1\,1011$: $R = 1011$ ($-5$), carry out 1 (borrow 0), $N = 1$.
+:::
+
+:::step{why="V needs different sign bits in A and B and a result whose sign differs from A's; A and R are both negative, so no overflow (−5 fits in 4 bits)."}
+$V = 0$, so $N \oplus V = 1$: $A < B$.
+:::
+
+:::answer
+Signed: $A < B$ ($-3 < 2$), with $N = 1$, $V = 0$. The unsigned reading of the same patterns is
+$13 - 2$, borrow 0, so "$A > B$": the borrow is the unsigned flag, $N \oplus V$ the signed one, and the
+same subtraction serves both.
+:::
+::::
+
+::::example{#ex-sub-edge level="gate" title="Edge case: overflow makes a negative difference look positive" depth="standard"}
+Compare the 4-bit 2's complement numbers $A = 1000$ ($-8$) and $B = 0001$ ($1$) by subtraction.
+
+:::step{why="Subtract in 4 bits: A + B′ + 1."}
+$1000 + 1110 + 1 = 1\,0111$: $R = 0111$, so $N = 0$.
+:::
+
+:::step{why="The true difference −9 is below −8, the smallest 4-bit value; the rule agrees: A and B have different signs, and R's sign (0) differs from A's (1)."}
+$V = 1$.
+:::
+
+:::step{why="The sign bit alone would say 'not negative'; overflow has flipped it."}
+$N \oplus V = 0 \oplus 1 = 1$: $A < B$.
+:::
+
+:::answer
+$A < B$ ($-8 < 1$), although $R = 0111 = +7$ looks positive. This is the mirror image of the trap above
+(there a positive difference looked negative): in both directions $N \oplus V$ is right and $N$ alone is wrong.
+:::
+::::
+
 :::note{#recap-subtract title="Recap" depth="quick"}
-Unsigned: borrow out $= (A < B)$, zero result $= (A = B)$. Signed: less-than is $N \oplus V$, never $N$ alone.
-The arithmetic itself lives in Chapter 1, Lesson 9.
+Unsigned: borrow out $= (A < B)$, zero result $= (A = B)$. Signed: less-than is $N \oplus V$, never $N$ alone,
+because overflow always puts the wrapped result on the wrong side of zero. The arithmetic itself lives in
+[Chapter 1, Lesson 9](lesson:code-arithmetic).
 :::
 
 ## Parity generators and checkers
@@ -605,6 +731,9 @@ output (a lower bound for them is a lower bound for the whole circuit). View the
 $n$ inputs and the $g$ gates (constants, if used, only add vertices); every vertex is connected to the
 output, so the graph is connected. A connected graph on $n + g$ vertices has at least $n + g - 1$ edges,
 and here every edge enters a gate, each gate having exactly 2 inputs: $2g \ge n + g - 1$, so $g \ge n - 1$.
+The argument used only that the output depends on every input, so **any** function that depends on all
+$n$ inputs needs at least $n - 1$ two-input gates (equality of two $n$-bit numbers, which depends on all
+$2n$ input bits: at least $2n - 1$, exactly the XNOR row plus the AND tree).
 
 *Depth at least $\lceil \log_2 n \rceil$.* An input wire depends on 1 input; a gate at depth $t$ combines two
 signals of depth at most $t - 1$, so by induction it depends on at most $2^t$ inputs. The output depends on
@@ -614,7 +743,7 @@ all $n$ inputs, so $2^{depth} \ge n$, i.e. depth $\ge \lceil \log_2 n \rceil$.
 :::definition{#parity-checker term="Parity checker" depth="standard"}
 A **parity checker** XORs every received bit, the $n$ data bits **and** the parity bit: $n + 1$ inputs, so
 $n$ two-input XOR gates in depth $\lceil \log_2(n + 1) \rceil$. For an even-parity code its output is the
-**error flag**: 0 when the received word has an even number of 1s (accepted), 1 when odd (error). For an
+**error flag** $F$ (we keep the letter $E$ for "equal"): 0 when the received word has an even number of 1s (accepted), 1 when odd (error). For an
 odd-parity code the flag is the XNOR of all received bits. Generator and checker share the same tree:
 at the sender the parity input is absent (or 0); at the receiver it is the received parity bit.
 :::
@@ -693,8 +822,8 @@ $5 \bmod 2 = 1$: the error flag is raised.
 :::
 
 :::answer
-Error flag $= 1$. The checker cannot say which bit is wrong (it could be any one of the nine, or three
-of them); the receiver can only ask for the word again.
+Error flag $F = 1$. The checker cannot say which bit is wrong (one bit, three bits, or any odd number of
+the nine could have flipped); the receiver can only ask for the word again.
 :::
 ::::
 
@@ -820,9 +949,9 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Row counts | $E$: $2^n$; $G$, $L$: $(4^n - 2^n)/2$ each (2 bits: 4, 6, 6) |
 | Erratum | third term of the 3-bit $G$ is $(A_2 \odot B_2)(A_1 \odot B_1)A_0B_0'$ |
 | Cascade | $G = G_4 + E_4G_{in}$, $E = E_4E_{in}$, $L = L_4 + E_4L_{in}$; bottom chip $(0, 1, 0)$; $\lceil n/4 \rceil$ chips |
-| Cost | $5n + 1$ gates for $n \ge 2$ (complements free, any fan-in) |
+| Cost of the MSB-first comparator | $5n + 1$ gates for $n \ge 2$ (complements free, any fan-in; this construction, not a proven minimum) |
 | Signed | flip both sign bits, then compare unsigned |
-| By subtraction | unsigned: borrow out $= L$, zero $= E$; signed: $L = N \oplus V$ |
+| By subtraction | unsigned: borrow out $= L$, zero $= E$; signed: $L = N \oplus V$ (overflow puts the wrapped result on the wrong side of zero) |
 | Parity bit | even $= d_1 \oplus \dots \oplus d_n$; odd = its complement; even counts the parity bit too |
 | XOR tree | $n - 1$ gates, depth $\lceil \log_2 n \rceil$, both optimal |
 | Detection | every odd number of flipped bits; never an even number; no correction |

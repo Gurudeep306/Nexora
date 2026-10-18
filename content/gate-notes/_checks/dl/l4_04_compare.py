@@ -3,7 +3,7 @@ all-NOR forms), the equality and magnitude theorems (exhaustively for n ≤ 4, i
 lexicographic = numeric claim and the disjointness of the G terms), the row counts 2^n and
 (4^n − 2^n)/2, the comparator-subscript erratum, the cascade equations and the chain theorem, the
 5n + 1 gate count (built and simulated as comblib netlists), signed comparison by flipping the sign
-bits, comparison by subtraction (borrow out, N ⊕ V), parity bits, the XOR-tree theorem (gate count,
+bits, comparison by subtraction (borrow out, N ⊕ V with its proof's case analysis, and the four worked examples), parity bits, the XOR-tree theorem (gate count,
 depth, and the n − 1 / depth lower bounds checked by exhaustive search for small n), what parity
 detects, every worked example, the Live Lab's 8:1 MUX table, and every practice answer, MSQ option
 and MCQ distractor. This lesson has no PYQs."""
@@ -420,6 +420,85 @@ bl.assert_msq(Q(9), [k for k, v in zip("ABCD", (stA, stB, stC, stD)) if v])
 assert cl.compare(0b1010, 0b0110) == (1, 0, 0) and (sval(0b1010), sval(0b0110)) == (-6, 6)
 assert cl.compare(0b1010 ^ 8, 0b0110 ^ 8) == (0, 0, 1) and (0b0010, 0b1110) == (2, 14)
 bl.assert_mcq(Q(10), "D")
+
+# ── Review fixes: new claims and worked examples ───────────────────────────
+# Dictionary: 'cartel' < 'carton' ('e' < 'o').
+assert "cartel" < "carton" and "e" < "o"
+has("'cartel' comes before 'carton'".replace("'", '"'))
+# Equality proof: the highest differing bit k forces |A − B| ≥ 1 (n ≤ 5, exhaustive).
+for n in range(1, 6):
+    for a in range(2 ** n):
+        for b in range(2 ** n):
+            if a != b:
+                k = max(i for i in range(n) if (a >> i) & 1 != (b >> i) & 1)
+                low = sum(((a >> i) & 1) * 2 ** i - ((b >> i) & 1) * 2 ** i for i in range(k))
+                assert abs(low) <= 2 ** k - 1 and abs(a - b) >= 2 ** k - (2 ** k - 1) == 1
+has("So $|A - B| \\ge 2^k - (2^k - 1) = 1$, and $A \\ne B$.")
+# Signed trap: swapping A3 and B3 in the first term of G and of L (x3 unchanged) = flipping both sign bits.
+V4s = vars_ab(4)
+g_sw = gt_expr(4).replace("A3 B3'", "B3 A3'", 1)
+l_sw = lt_expr(4).replace("B3 A3'", "A3 B3'", 1)
+assert g_sw != gt_expr(4) and l_sw != lt_expr(4)
+tg, tl = bl.tt(g_sw, V4s), bl.tt(l_sw, V4s)
+for m in range(256):
+    a, b = split(m, 4)
+    assert (tg[m], tl[m]) == (int(sval(a) > sval(b)), int(sval(a) < sval(b)))
+has("in the first term of $G$ and in the first\nterm of $L$; $x_3$ is unchanged")
+# Equality lower bound: E of two n-bit numbers depends on all 2n inputs → ≥ 2n − 1 gates, met by n XNORs + n − 1 ANDs.
+for n in (1, 2, 3):
+    vs = vars_ab(n)
+    t = bl.tt(eq_expr(n), vs)
+    assert all(any(t[m] != t[m ^ (1 << i)] for m in range(4 ** n)) for i in range(2 * n))
+    assert n + (n - 1) == 2 * n - 1
+has("at least $2n - 1$, exactly the XNOR row plus the AND tree")
+# Signed less-than N ⊕ V: the proof's case analysis, exhaustively for n = 3 … 6.
+for n in (3, 4, 5, 6):
+    lo, hi = -(2 ** (n - 1)), 2 ** (n - 1) - 1
+    for a in range(2 ** n):
+        for b in range(2 ** n):
+            sa, sb = sval(a, n), sval(b, n)
+            D = sa - sb
+            r = (a - b) % 2 ** n
+            N, R = r >> (n - 1), sval(r, n)
+            V = int(not lo <= D <= hi)
+            # V by the sign rule: different signs of A and B, and R's sign differs from A's
+            assert V == int((a >> (n - 1)) != (b >> (n - 1)) and N != (a >> (n - 1)))
+            assert -(2 ** n - 1) <= D <= 2 ** n - 1
+            if V == 0:
+                assert R == D
+            elif D >= 2 ** (n - 1):
+                assert R == D - 2 ** n and -(2 ** (n - 1)) <= R <= -1 and N == 1
+            else:
+                assert D < -(2 ** (n - 1)) and R == D + 2 ** n and 1 <= R <= 2 ** (n - 1) - 1 and N == 0
+            assert (N ^ V) == int(sa < sb)
+# Worked examples: comparing by subtraction (4 bits).
+def sub4(a, b):
+    s = a + ((~b) & 15) + 1
+    r, carry = s & 15, s >> 4
+    N = r >> 3
+    V = int((a >> 3) != (b >> 3) and N != (a >> 3))
+    return r, carry, 1 - carry, N, V
+
+
+# easy: 9 − 12
+assert 0b1001 + 0b0011 + 1 == 0b1101 and sub4(0b1001, 0b1100) == (0b1101, 0, 1, 1, 0) and 9 - 12 + 16 == 13
+L_, E_ = 1, int(sub4(9, 12)[0] == 0)
+assert (int(not (L_ or E_)), E_, L_) == (0, 0, 1) == cl.compare(9, 12)
+# medium: equal numbers
+assert 0b0111 + 0b1000 + 1 == 0b10000 and sub4(7, 7)[:3] == (0, 1, 0) and cl.compare(7, 7) == (0, 1, 0)
+# gate: −3 against 2, no overflow
+assert sval(0b1101) == -3 and 0b1101 + 0b1101 + 1 == 0b11011 and sub4(0b1101, 0b0010) == (0b1011, 1, 0, 1, 0)
+assert sval(0b1011) == -5 and (1 ^ 0) == int(-3 < 2) and cl.compare(13, 2) == (1, 0, 0)
+# edge: −8 against 1, overflow
+assert 0b1000 + 0b1110 + 1 == 0b10111 and sub4(0b1000, 0b0001) == (0b0111, 1, 0, 0, 1) and -8 - 1 == -9 < -8
+assert (0 ^ 1) == int(-8 < 1)
+# the trap: 6 − (−5) = 11 overflows, N = 1, V = 1
+assert sub4(0b0110, 0b1011)[3:] == (1, 1)
+has("$1001 + 0011 + 1 = 1101$", "$0111 + 1000 + 1 = 1\\,0000$", "$1101 + 1101 + 1 = 1\\,1011$", "$1000 + 1110 + 1 = 1\\,0111$")
+# Parity flag F in the worked example.
+has("Error flag $F = 1$", "one bit, three bits, or any odd number of\nthe nine could have flipped")
+# Gate-count wording.
+has("it is not\nclaimed to be minimal")
 
 # MCQ keys spread (no letter more than twice)
 keys = [q["answer"] for q in PQ.values() if q["id"].startswith("nx-dl-04-04-") and q["type"] == "MCQ"]

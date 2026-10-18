@@ -48,7 +48,7 @@ SOLUTIONS["cse-2007-cs-8"] = {
     ],
     "answer": {"value": "(C) 9", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "7 is the count for a 3:8 decoder built from 1:2 decoders ($4 + 2 + 1$), a different tree."),
+        opt("A", False, "7 decoders have at most $7 \\times 8 = 56$ outputs, fewer than 64, so 7 cannot even supply the outputs; 7 is the block count of a different tree (3:8 from 1:2 decoders, $4 + 2 + 1$)."),
         opt("B", False, "8 counts only the leaves; nothing would then decode the high three bits to enable one leaf at a time."),
         opt("C", True, "8 leaves on the low bits plus 1 decoder on the high bits driving their enables."),
         opt("D", False, "10 adds a block that is not needed: the top decoder is enabled by the tree's own enable (or tied high)."),
@@ -96,13 +96,13 @@ SOLUTIONS["cse-2013-cs-5"] = {
     "answer": {"value": "(A) Priority encoder", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", True, "Highest active input wins (x's on the lower inputs), output is its index, and $V$ marks a valid input."),
-        opt("B", False, "A decoder maps an $n$-bit number to $2^n$ one-hot outputs; here 4 inputs give a 2-bit code, the opposite direction, and no decoder table has x's in its address columns."),
+        opt("B", False, "A decoder maps an $n$-bit number to $2^n$ one-hot outputs; here 4 inputs give a 2-bit code, the opposite direction, and a decoder's table has x's in its address columns only on the disabled row ($E = 0$, all outputs 0), never on rows with a 1 output."),
         opt("C", False, "A multiplexer has select inputs and data inputs and one output equal to the selected data input; there are no select lines here and the outputs are codes, not a copied data bit."),
         opt("D", False, "A demultiplexer has one data input and copies it to one of many outputs; this block has four inputs and a coded output."),
     ],
     "shortcut": "x's in the **input** columns plus a valid bit = priority encoder.",
     "pitfalls": ["Choosing \"decoder\" because the word \"valid\" sounds like an enable.", "Reading $X_1$ as the high bit because it is the usual name; the table puts $X_0$ first, and it is $X_0$ that is 1 for $D_2$ and $D_3$."],
-    "verification": "Expanding the x's, the five rows cover all 16 input patterns (1 + 1 + 2 + 4 + 8) and each agrees with a 4:2 priority encoder ($D_3$ highest) whose code is written $X_0X_1$ with $X_0$ the MSB.",
+    "verification": "Expanding the x's, the five rows cover all 16 input patterns (1 + 1 + 2 + 4 + 8) and each agrees with a 4:2 priority encoder ($D_3$ highest) whose code is written $X_0X_1$ with $X_0$ the MSB. Column order check: $D_2$'s row gives $X_0X_1 = 10$, so $X_0$ is the weight-2 bit (and $D_1$'s row, $X_0X_1 = 01$, confirms $X_1$ is the weight-1 bit).",
     "animation": {"kind": "table", "title": "The table (D₀ D₁ D₂ D₃ → X₀ X₁ V)", "cols": ["D0", "D1", "D2", "D3", "X0", "X1", "V"],
                   "rows": [[0, 0, 0, 0, "x", "x", 0], [1, 0, 0, 0, 0, 0, 1], ["x", 1, 0, 0, 0, 1, 1], ["x", "x", 1, 0, 1, 0, 1], ["x", "x", "x", 1, 1, 1, 1]], "mono": True},
 }
