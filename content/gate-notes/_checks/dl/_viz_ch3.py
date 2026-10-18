@@ -728,6 +728,140 @@ def vem_unfold():
                 els, steps)
 
 
+# ── Lesson 4: two-level implementation ──────────────────────────────────────
+
+from _viz_ch2 import wave_points, gate, pins, wire, wire_pts  # noqa: E402
+
+
+@scene
+def nand_nand_from_kmap():
+    """A minimal SOP read from a map becomes AND–OR, then NAND–NAND."""
+    W_, NW = 660, 360
+    ones = [1, 3, 6, 7]
+    assert ml.min_sop(ones, [], 3, V3) == ["A'C + AB"]
+    km = KMap("k", 3, V3, 60, 100, 48, 92, 92, 44, ones=ones)
+    els = [*heads("From a K-map to a NAND–NAND circuit", "From a map to NAND–NAND", W_)]
+    els += km.elements()
+    t1, t2 = ml.parse_term("A'C", V3), ml.parse_term("AB", V3)
+    els += km.loops("L0", t1, 0) + km.loops("L1", t2, 1)
+    gw, gh = 56, 40
+    # Wide: circuit on the right; narrow: below the map.
+    G = {"g1": (400, 90), "g2": (400, 180), "g3": (520, 135)}
+    NG = {"g1": (150, 260), "g2": (150, 340), "g3": (260, 300)}
+    for gid in ("g1", "g2"):
+        x, y = G[gid]
+        nx, ny = NG[gid]
+        els.append(gate(gid, x, y, gw, gh, "and", {"x": nx, "y": ny}, hidden=True, label="", size=11))
+    x, y = G["g3"]
+    nx, ny = NG["g3"]
+    els.append(gate("g3", x, y, gw, gh, "or", {"x": nx, "y": ny}, hidden=True))
+    ins = [("A′", "g1", 0), ("C", "g1", 1), ("A", "g2", 0), ("B", "g2", 1)]
+    for k, (lab, gid, pi) in enumerate(ins):
+        p, _ = pins("and", *G[gid], gw, gh, 2)
+        npn, _ = pins("and", *NG[gid], gw, gh, 2)
+        els.append(wire(f"iw{k}", [p[pi][0] - 40, p[pi][1]], p[pi], {"points": wire_pts([npn[pi][0] - 40, npn[pi][1]], npn[pi])}, hidden=True))
+        els.append(text(f"il{k}", p[pi][0] - 46, p[pi][1], lab, {"x": npn[pi][0] - 46, "y": npn[pi][1], "size": 12}, anchor="end", size=13, weight="bold", hidden=True))
+    p3, o3 = pins("or", *G["g3"], gw, gh, 2)
+    np3, no3 = pins("or", *NG["g3"], gw, gh, 2)
+    for k, gid in enumerate(("g1", "g2")):
+        _, o = pins("and", *G[gid], gw, gh, 2)
+        _, no = pins("and", *NG[gid], gw, gh, 2)
+        els.append(wire(f"mw{k}", o, p3[k], {"points": wire_pts(no, np3[k])}, hidden=True))
+    els.append(wire("ow", o3, [o3[0] + 30, o3[1]], {"points": [no3, [no3[0] + 30, no3[1]]]}, hidden=True))
+    els.append(text("of", o3[0] + 36, o3[1], "f", {"x": no3[0] + 36, "y": no3[1], "size": 13}, size=15, weight="bold", hidden=True))
+    els += [note("n0", 60, 300, 20, 420, size=14, nsize=12), note("ex", 60, 326, 20, 444, size=15, nsize=13, weight="bold", tone="success")]
+    circuit = ["g1", "g2", "g3", "ow", "of"] + [f"iw{k}" for k in range(4)] + [f"il{k}" for k in range(4)] + ["mw0", "mw1"]
+    steps = [
+        step("Loop the map: A′C (m1, m3) and AB (m6, m7). The minimal SOP is f = A′C + AB.",
+             *show(km.loop_ids("L0", t1)), *show(km.loop_ids("L1", t2)), ("ex", {"text": "f = A′C + AB"})),
+        step("Each loop becomes an AND gate fed by its literals (A′ is available as an input), and the OR gate collects the loops: a two-level AND–OR circuit.",
+             *show(circuit), ("n0", {"text": "loops → AND gates, sum → OR gate"})),
+        step("Put two bubbles on each wire between the levels (a double inversion changes nothing). An AND with an output bubble is a NAND; an OR with input bubbles is, by De Morgan, a NAND.",
+             ("g1", {"kind": "nand"}), ("g2", {"kind": "nand"}), ("g3", {"bubbles": [0, 1]}),
+             ("n0", {"text": "add bubble pairs on the middle wires"})),
+        step("So the same circuit is three NAND gates: f = NAND(NAND(A′, C), NAND(A, B)). Every SOP becomes NAND–NAND this way; a POS becomes NOR–NOR dually.",
+             ("g3", {"kind": "nand", "bubbles": []}), ("n0", {"text": "AND–OR = NAND–NAND", "tone": "accent"}),
+             ("ex", {"text": "f = ((A′C)′ (AB)′)′"})),
+    ]
+    return spec("From a minimal SOP to a NAND–NAND circuit", (W_, 345), (NW, 460),
+                "f(A, B, C) = Σm(1, 3, 6, 7) on a 3-variable map (rows A, columns B C); complemented inputs are available.", els, steps)
+
+
+@scene
+def hazard_glitch():
+    """f = AB + A′C with B = C = 1: the 1→0→1 glitch when A falls, and the consensus term BC that removes it."""
+    W_, NW = 660, 360
+    T, d = 10, 1
+    A = [(3, 0)]
+    An = [(3 + d, 1)]
+    AB = [(3, 0)]
+    AnC = [(4, 1)]
+    F = [(3, 0), (4, 1)]
+    # simulate OR of AB (start 1) and A'C (start 0) with ideal gates
+    def at(events, t, s0):
+        v = s0
+        for tt, nv in events:
+            if tt <= t:
+                v = nv
+        return v
+    sim = [at(AB, t + 0.5, 1) | at(AnC, t + 0.5, 0) for t in range(T)]
+    assert sim == [1, 1, 1, 0, 1, 1, 1, 1, 1, 1]
+    assert ml.static1_hazards([ml.parse_term("AB", V3), ml.parse_term("A'C", V3)], [1, 3, 6, 7]) == [(3, 7)]
+    assert ml.static1_hazards([ml.parse_term(t, V3) for t in ("AB", "A'C", "BC")], [1, 3, 6, 7]) == []
+    x0, sx, nx0, nsx = 150, 44, 92, 25
+    lanes = [("A", A, 1), ("A′", An, 0), ("AB", AB, 1), ("A′C", AnC, 0), ("f", F, 1), ("BC", [], 1), ("f + BC", [], 1)]
+    els = [*heads("A static-1 hazard and the consensus fix", "Static-1 hazard and its fix", W_)]
+    for k, (lab, ev, s0) in enumerate(lanes):
+        y = 62 + k * 38
+        els.append(text(f"l{k}", x0 - 14, y, lab, {"x": nx0 - 8, "y": y, "size": 11}, anchor="end", size=13, weight="bold", mono=True, hidden=k > 1))
+        els.append(line(f"w{k}", wave_points(ev, T, x0, sx, y + 11, y - 11, s0), {"points": wave_points(ev, T, nx0, nsx, y + 11, y - 11, s0)},
+                        hidden=k > 1, tone="danger" if k == 4 else "success" if k >= 5 else "info"))
+    for t in range(0, T + 1, 2):
+        els.append(text(f"t{t}", x0 + t * sx, 330, str(t), {"x": nx0 + t * nsx, "y": 330, "size": 10}, anchor="middle", size=11, tone="muted"))
+    els.append(box("pulse", x0 + 3 * sx, 62 + 4 * 38 - 16, sx, 32, None, {"x": nx0 + 3 * nsx, "y": 62 + 4 * 38 - 16, "w": nsx}, fill="danger", hidden=True, dashed=True))
+    els.append(text("note", W_ / 2, 352, "", {"x": NW / 2, "y": 360, "size": 11}, anchor="middle", size=14))
+    steps = [
+        step("f = AB + A′C with B = C = 1, so logically f = A + A′ = 1 whatever A does. A falls at t = 3; the inverter makes A′ rise one unit later, at t = 4.",
+             ("note", {"text": "B = C = 1: f should stay 1"})),
+        step("AB follows A and falls at t = 3; A′C follows A′ and rises only at t = 4. For one time unit both AND outputs are 0.",
+             *show(["l2", "w2", "l3", "w3"])),
+        step("So f = AB + A′C drops to 0 between t = 3 and t = 4: a static-1 hazard. On the map the two 1-cells m7 (A = 1) and m3 (A = 0) are adjacent but lie in different loops.",
+             *show(["l4", "w4", "pulse"]), ("note", {"text": "glitch: 1 → 0 → 1 while A changes", "tone": "danger"})),
+        step("Add the consensus term BC, the loop that contains both m3 and m7. With B = C = 1 it is 1 throughout, so f = AB + A′C + BC stays 1: the hazard is gone, at the cost of one more AND gate.",
+             *show(["l5", "w5", "l6", "w6"]), ("note", {"text": "add BC: every adjacent pair of 1s now shares a loop", "tone": "success"})),
+    ]
+    return spec("A static-1 hazard in AB + A′C and the consensus term that removes it", (W_, 365), (NW, 375),
+                "f = AB + A′C built as AND–OR with an inverter on A (delay 1); B and C are held at 1 while A falls at t = 3.", els, steps)
+
+
+@scene
+def multi_output_sharing():
+    W_, NW = 660, 360
+    f1, f2 = [1, 3, 7], [3, 6, 7]
+    (sh, ch), (sp, cp) = ml.multi_output_cost([(f1, []), (f2, [])], 3), ml.multi_output_cost([(f1, []), (f2, [])], 3, shared=False)
+    assert sh == (3, 10) and sp == (4, 12)
+    k1 = KMap("a", 3, V3, 60, 110, 52, 92, 92, 48, ones=f1)
+    k2 = KMap("b", 3, V3, 380, 110, 52, 92, 300, 48, ones=f2)
+    els = [*heads("Two outputs, one shared product term", "Two outputs sharing a term", W_)]
+    els.append(text("ta", 60 + 104, 54, "f₁ = Σm(1, 3, 7)", {"x": 180, "y": 54}, anchor="middle", size=15, weight="bold", tone="accent"))
+    els.append(text("tb", 380 + 104, 54, "f₂ = Σm(3, 6, 7)", {"x": 180, "y": 258}, anchor="middle", size=15, weight="bold", tone="accent"))
+    els += k1.elements() + k2.elements()
+    a1, bc, ab = (ml.parse_term(t, V3) for t in ("A'C", "BC", "AB"))
+    els += k1.loops("P", a1, 0) + k1.loops("S", bc, 1, tone="warning") + k2.loops("Q", ab, 0, tone="info") + k2.loops("T", bc, 1, tone="warning")
+    els += [note("n0", 60, 250, 20, 420, size=14, nsize=12), note("n1", 60, 276, 20, 444, size=14, nsize=12), note("ex", 60, 306, 20, 470, size=15, nsize=13, weight="bold", tone="success")]
+    steps = [
+        step("Minimise each output alone: f₁ = A′C + BC and f₂ = AB + BC. Built separately that is 4 AND gates (8 inputs) and 2 OR gates (4 inputs).",
+             *show(k1.loop_ids("P", a1) + k1.loop_ids("S", bc) + k2.loop_ids("Q", ab) + k2.loop_ids("T", bc)),
+             ("n0", {"text": "separately: 4 AND + 2 OR, 12 gate inputs"})),
+        step("BC (m3, m7) appears in both answers. Build that AND gate once and send its output to both OR gates.",
+             ("n1", {"text": "share BC: one gate, two fan-outs", "tone": "warning"})),
+        step("Shared: 3 AND gates and 2 OR gates, 10 gate inputs. In multi-output design, look for product terms that can serve several outputs, even when a different choice would look better for one output alone.",
+             ("ex", {"text": "f₁ = A′C + BC,  f₂ = AB + BC: 3 ANDs"})),
+    ]
+    return spec("Two outputs sharing a product term", (W_, 330), (NW, 490),
+                "Two functions of A, B, C to be built together; each map has rows A and columns B C.", els, steps)
+
+
 def build_all():
     return {name: fn() for name, fn in SPECS.items()}
 

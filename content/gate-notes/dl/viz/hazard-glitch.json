@@ -1,0 +1,674 @@
+{
+ "version": 1,
+ "title": "A static-1 hazard in AB + A′C and the consensus term that removes it",
+ "width": 660,
+ "height": 365,
+ "narrow": {
+  "width": 360,
+  "height": 375
+ },
+ "intro": "f = AB + A′C built as AND–OR with an inverter on A (delay 1); B and C are held at 1 while A falls at t = 3.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "A static-1 hazard and the consensus fix",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "Static-1 hazard and its fix",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "l0",
+   "type": "text",
+   "x": 136,
+   "y": 62,
+   "text": "A",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 84,
+    "y": 62,
+    "size": 11
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     51
+    ],
+    [
+     282,
+     51
+    ],
+    [
+     282,
+     73
+    ],
+    [
+     590,
+     73
+    ]
+   ],
+   "hidden": false,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      92,
+      51
+     ],
+     [
+      167,
+      51
+     ],
+     [
+      167,
+      73
+     ],
+     [
+      342,
+      73
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 136,
+   "y": 100,
+   "text": "A′",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": false,
+   "narrow": {
+    "x": 84,
+    "y": 100,
+    "size": 11
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     150,
+     111
+    ],
+    [
+     326,
+     111
+    ],
+    [
+     326,
+     89
+    ],
+    [
+     590,
+     89
+    ]
+   ],
+   "hidden": false,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      92,
+      111
+     ],
+     [
+      192,
+      111
+     ],
+     [
+      192,
+      89
+     ],
+     [
+      342,
+      89
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 136,
+   "y": 138,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 84,
+    "y": 138,
+    "size": 11
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     150,
+     127
+    ],
+    [
+     282,
+     127
+    ],
+    [
+     282,
+     149
+    ],
+    [
+     590,
+     149
+    ]
+   ],
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      92,
+      127
+     ],
+     [
+      167,
+      127
+     ],
+     [
+      167,
+      149
+     ],
+     [
+      342,
+      149
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 136,
+   "y": 176,
+   "text": "A′C",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 84,
+    "y": 176,
+    "size": 11
+   }
+  },
+  {
+   "id": "w3",
+   "type": "line",
+   "points": [
+    [
+     150,
+     187
+    ],
+    [
+     326,
+     187
+    ],
+    [
+     326,
+     165
+    ],
+    [
+     590,
+     165
+    ]
+   ],
+   "hidden": true,
+   "tone": "info",
+   "narrow": {
+    "points": [
+     [
+      92,
+      187
+     ],
+     [
+      192,
+      187
+     ],
+     [
+      192,
+      165
+     ],
+     [
+      342,
+      165
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l4",
+   "type": "text",
+   "x": 136,
+   "y": 214,
+   "text": "f",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 84,
+    "y": 214,
+    "size": 11
+   }
+  },
+  {
+   "id": "w4",
+   "type": "line",
+   "points": [
+    [
+     150,
+     203
+    ],
+    [
+     282,
+     203
+    ],
+    [
+     282,
+     225
+    ],
+    [
+     326,
+     225
+    ],
+    [
+     326,
+     203
+    ],
+    [
+     590,
+     203
+    ]
+   ],
+   "hidden": true,
+   "tone": "danger",
+   "narrow": {
+    "points": [
+     [
+      92,
+      203
+     ],
+     [
+      167,
+      203
+     ],
+     [
+      167,
+      225
+     ],
+     [
+      192,
+      225
+     ],
+     [
+      192,
+      203
+     ],
+     [
+      342,
+      203
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l5",
+   "type": "text",
+   "x": 136,
+   "y": 252,
+   "text": "BC",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 84,
+    "y": 252,
+    "size": 11
+   }
+  },
+  {
+   "id": "w5",
+   "type": "line",
+   "points": [
+    [
+     150,
+     241
+    ],
+    [
+     590,
+     241
+    ]
+   ],
+   "hidden": true,
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      92,
+      241
+     ],
+     [
+      342,
+      241
+     ]
+    ]
+   }
+  },
+  {
+   "id": "l6",
+   "type": "text",
+   "x": 136,
+   "y": 290,
+   "text": "f + BC",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 84,
+    "y": 290,
+    "size": 11
+   }
+  },
+  {
+   "id": "w6",
+   "type": "line",
+   "points": [
+    [
+     150,
+     279
+    ],
+    [
+     590,
+     279
+    ]
+   ],
+   "hidden": true,
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      92,
+      279
+     ],
+     [
+      342,
+      279
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t0",
+   "type": "text",
+   "x": 150,
+   "y": 330,
+   "text": "0",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 92,
+    "y": 330,
+    "size": 10
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 238,
+   "y": 330,
+   "text": "2",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 142,
+    "y": 330,
+    "size": 10
+   }
+  },
+  {
+   "id": "t4",
+   "type": "text",
+   "x": 326,
+   "y": 330,
+   "text": "4",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 192,
+    "y": 330,
+    "size": 10
+   }
+  },
+  {
+   "id": "t6",
+   "type": "text",
+   "x": 414,
+   "y": 330,
+   "text": "6",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 242,
+    "y": 330,
+    "size": 10
+   }
+  },
+  {
+   "id": "t8",
+   "type": "text",
+   "x": 502,
+   "y": 330,
+   "text": "8",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 292,
+    "y": 330,
+    "size": 10
+   }
+  },
+  {
+   "id": "t10",
+   "type": "text",
+   "x": 590,
+   "y": 330,
+   "text": "10",
+   "anchor": "middle",
+   "size": 11,
+   "tone": "muted",
+   "narrow": {
+    "x": 342,
+    "y": 330,
+    "size": 10
+   }
+  },
+  {
+   "id": "pulse",
+   "type": "box",
+   "x": 282,
+   "y": 198,
+   "w": 44,
+   "h": 32,
+   "fill": "danger",
+   "hidden": true,
+   "dashed": true,
+   "narrow": {
+    "x": 167,
+    "y": 198,
+    "w": 25
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 330.0,
+   "y": 352,
+   "text": "",
+   "anchor": "middle",
+   "size": 14,
+   "narrow": {
+    "x": 180.0,
+    "y": 360,
+    "size": 11
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "f = AB + A′C with B = C = 1, so logically f = A + A′ = 1 whatever A does. A falls at t = 3; the inverter makes A′ rise one unit later, at t = 4.",
+   "patches": [
+    {
+     "id": "note",
+     "set": {
+      "text": "B = C = 1: f should stay 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "AB follows A and falls at t = 3; A′C follows A′ and rises only at t = 4. For one time unit both AND outputs are 0.",
+   "patches": [
+    {
+     "id": "l2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "So f = AB + A′C drops to 0 between t = 3 and t = 4: a static-1 hazard. On the map the two 1-cells m7 (A = 1) and m3 (A = 0) are adjacent but lie in different loops.",
+   "patches": [
+    {
+     "id": "l4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "pulse",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "glitch: 1 → 0 → 1 while A changes",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Add the consensus term BC, the loop that contains both m3 and m7. With B = C = 1 it is 1 throughout, so f = AB + A′C + BC stays 1: the hazard is gone, at the cost of one more AND gate.",
+   "patches": [
+    {
+     "id": "l5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "l6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "w6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "add BC: every adjacent pair of 1s now shares a loop",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
