@@ -83,7 +83,8 @@
           "title": "Combinational circuits",
           "lessons": 6,
           "pyqs": 38,
-          "status": "planned"
+          "status": "in-progress",
+          "live_lab": "Combinational Workbench (:::lab comb-workbench: mux, implement, decoder)"
         },
         {
           "id": "05-arithmetic-circuits",
