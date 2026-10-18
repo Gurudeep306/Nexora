@@ -8,14 +8,14 @@ prerequisites: [gate-circuit-analysis]
 pyq_topics: [dl/combinational, dl/gates]
 est_minutes: 50
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every test, fault count, Boolean difference, test set and practice answer is recomputed by fault simulation over every input row in content/gate-notes/_checks/dl/l4_06_faults.py (comblib, plus an exhaustive minimum test-set search)."
   - "Coverage checklist only (internal digests, never copied): set B p. 129 (brief). The sets cover this topic only in passing, so the lesson is written from first principles."
   - "Facts checked against: M. Abramovici, M. A. Breuer and A. D. Friedman, Digital Systems Testing and Testable Design (stuck-at model, fault equivalence, test generation, Boolean difference, redundancy); M. Morris Mano, Digital Design."
   - "PYQs: src/gate/questions.json (cse-1994-b-35-b, it-2005-cs-46, it-2007-cs-45); each circuit is modelled as a comblib netlist from the figure description and every key is re-derived by fault simulation in l4_06_faults.py."
-updated: "2026-10-18"
+updated: "2026-10-19"
 ---
 
 A circuit that has been designed correctly can still be built wrongly. A wire can be broken, a

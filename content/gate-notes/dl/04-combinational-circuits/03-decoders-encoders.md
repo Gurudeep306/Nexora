@@ -8,14 +8,14 @@ prerequisites: [multiplexers]
 pyq_topics: [dl/combinational]
 est_minutes: 50
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every decoder output, function, tree count, encoder code, priority-encoder equation, memory size and row count is checked by enumeration in content/gate-notes/_checks/dl/l4_03_decoders.py (netlists with DEC, MUX and enable nodes in comblib.py)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 72–75, set B pp. 122–129, set C pp. 295 and 309–325, set E p. 408."
   - "Facts checked against: M. Morris Mano, Digital Design (decoders, demultiplexers, encoders, priority encoders, decoder expansion and address decoding)."
   - "PYQs: src/gate/questions.json (cse-1992-b-4-b, cse-2007-cs-8, it-2008-it-9, cse-2013-cs-5, cse-2020-cs-20, cse-2022-cs-30, cse-2026-2-cs-49); keys re-derived in l4_03_decoders.py. cse-1992-b-4-b does not give the output codes; the solution states the assignment it uses."
-updated: "2026-10-18"
+updated: "2026-10-19"
 ---
 
 A multiplexer picks **one of many inputs** and sends it to a single output. This lesson is about the
