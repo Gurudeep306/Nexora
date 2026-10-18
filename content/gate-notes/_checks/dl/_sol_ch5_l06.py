@@ -1,6 +1,6 @@
-"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 4, Lesson 6 (stuck-at faults and
+"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 5, Lesson 6 (stuck-at faults and
 test inputs): cse-1994-b-35-b, it-2005-cs-46, it-2007-cs-45. Every key is re-derived by fault
-simulation in l4_06_faults.py; _sol_ch4.py merges this module and writes src/gate/solutions."""
+simulation in l5_06_faults.py; _sol_ch5.py merges this module and writes src/gate/solutions."""
 import pathlib
 import sys
 

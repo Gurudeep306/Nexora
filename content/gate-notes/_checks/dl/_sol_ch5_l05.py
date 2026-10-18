@@ -1,6 +1,6 @@
-"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 4, Lesson 5 (ROM, PLA and PAL).
+"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 5, Lesson 5 (ROM, PLA and PAL).
 
-Merged by _sol_ch4.py; every number is recomputed from comblib.multiplier_rom in l4_05_rom_pla.py.
+Merged by _sol_ch5.py; every number is recomputed from comblib.multiplier_rom in l5_05_rom_pla.py.
 The animations are small tables built from comblib, so no size can drift from the check.
 """
 import pathlib

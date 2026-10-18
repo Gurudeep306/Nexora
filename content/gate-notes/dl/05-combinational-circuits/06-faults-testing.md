@@ -11,10 +11,10 @@ difficulty: core
 status: published
 needs_review: false
 sources:
-  - "Nexora's own text, examples and diagrams; every test, fault count, Boolean difference, test set and practice answer is recomputed by fault simulation over every input row in content/gate-notes/_checks/dl/l4_06_faults.py (comblib, plus an exhaustive minimum test-set search)."
+  - "Nexora's own text, examples and diagrams; every test, fault count, Boolean difference, test set and practice answer is recomputed by fault simulation over every input row in content/gate-notes/_checks/dl/l5_06_faults.py (comblib, plus an exhaustive minimum test-set search)."
   - "Coverage checklist only (internal digests, never copied): set B p. 129 (brief). The sets cover this topic only in passing, so the lesson is written from first principles."
   - "Facts checked against: M. Abramovici, M. A. Breuer and A. D. Friedman, Digital Systems Testing and Testable Design (stuck-at model, fault equivalence, test generation, Boolean difference, redundancy); M. Morris Mano, Digital Design."
-  - "PYQs: src/gate/questions.json (cse-1994-b-35-b, it-2005-cs-46, it-2007-cs-45); each circuit is modelled as a comblib netlist from the figure description and every key is re-derived by fault simulation in l4_06_faults.py."
+  - "PYQs: src/gate/questions.json (cse-1994-b-35-b, it-2005-cs-46, it-2007-cs-45); each circuit is modelled as a comblib netlist from the figure description and every key is re-derived by fault simulation in l5_06_faults.py."
 updated: "2026-10-19"
 ---
 
@@ -1075,34 +1075,34 @@ single fault (not with XOR gates).
 
 Our own questions in GATE formats: warm-ups first, then exam-level questions, then two that need care.
 
-:::practice{id="nx-dl-04-06-q01" depth="standard"}
+:::practice{id="nx-dl-05-06-q01" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q02" depth="standard"}
+:::practice{id="nx-dl-05-06-q02" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q03" depth="standard"}
+:::practice{id="nx-dl-05-06-q03" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q04" depth="standard"}
+:::practice{id="nx-dl-05-06-q04" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q05" depth="standard"}
+:::practice{id="nx-dl-05-06-q05" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q06" depth="standard"}
+:::practice{id="nx-dl-05-06-q06" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q07" depth="standard"}
+:::practice{id="nx-dl-05-06-q07" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q08" depth="standard"}
+:::practice{id="nx-dl-05-06-q08" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q09" depth="standard"}
+:::practice{id="nx-dl-05-06-q09" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-06-q10" depth="standard"}
+:::practice{id="nx-dl-05-06-q10" depth="standard"}
 :::
 
 ## Summary

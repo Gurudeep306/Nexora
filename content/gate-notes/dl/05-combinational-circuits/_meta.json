@@ -1,4 +1,4 @@
 {
-  "title": "Combinational circuits",
+  "title": "Combinational building blocks",
   "summary": "Designing combinational circuits from a specification, code converters, multiplexers and function realisation with implementation tables and MUX trees, decoders, demultiplexers, encoders and priority encoders, magnitude comparators and parity circuits, ROM, PLA and PAL sizing, and stuck-at faults with test inputs."
 }

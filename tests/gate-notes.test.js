@@ -560,7 +560,7 @@ test('kmap solver: Quine–McCluskey, prime implicants, minimal covers and loops
 test('comb workbench: MUX, implementation tables, decoders and encoders match the checks', async () => {
   const { pathToFileURL } = require('node:url');
   const cw = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'combLogic.ts')).href);
-  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch4.json'), 'utf8'));
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch5.json'), 'utf8'));
   // MUX outputs for every data / select pattern, enable and enable polarity; the equation's terms.
   for (const [ks, m] of Object.entries(vec.mux)) {
     const k = Number(ks);

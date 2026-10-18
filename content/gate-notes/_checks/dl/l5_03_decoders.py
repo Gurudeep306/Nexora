@@ -1,4 +1,4 @@
-"""Checks for dl/04-combinational-circuits/03-decoders-encoders: decoder outputs as minterms (and
+"""Checks for dl/05-combinational-circuits/03-decoders-encoders: decoder outputs as minterms (and
 maxterms when active-low), decoder + OR / NOR / NAND / AND over every 3-variable function, the
 worked examples (full adder, NOR of four outputs, active-low NAND/AND, address order reversed),
 decoder trees as netlists of DEC nodes with enables (3:8, 4:16, 5:32, 6:64) against comblib's
@@ -464,11 +464,11 @@ n26 = len(ones(net, IN26, "Y"))
 assert n26 == 1 + 0 + 4 + 1 == 6 and q["answer"] == "6 to 6"
 
 # ── Practice ────────────────────────────────────────────────────────────────
-q = P["nx-dl-04-03-q01"]
+q = P["nx-dl-05-03-q01"]
 bl.assert_nat(q, cl.decoder_tree(6, 2)[1])
 assert cl.decoder_tree(6, 2)[0] == [16, 4, 1]
 
-q = P["nx-dl-04-03-q02"]
+q = P["nx-dl-05-03-q02"]
 f = cl.truth(gate_on_decoder("OR", [0, 2, 4, 6]), V3, "f")
 vals = {k: bl.tt(t.strip("$"), V3) for k, t in bl.option_values(q).items()}
 bl.assert_mcq(q, [k for k, t in vals.items() if t == f][0])
@@ -476,7 +476,7 @@ assert [k for k, t in vals.items() if t == f] == ["B"]
 assert vals["A"] == cl.truth(gate_on_decoder("NOR", [0, 2, 4, 6]), V3, "f")
 assert vals["C"] == cl.truth(gate_on_decoder("OR", [0, 2, 4, 6], a=["C", "B", "A"]), V3, "f")
 
-q = P["nx-dl-04-03-q03"]
+q = P["nx-dl-05-03-q03"]
 f = cl.truth(gate_on_decoder("NOR", [0, 1, 2, 3, 4]), V3, "f")
 assert cl.ones_of(f) == [5, 6, 7]
 vals = {k: bl.tt(t.strip("$"), V3) for k, t in bl.option_values(q).items()}
@@ -485,7 +485,7 @@ bl.assert_mcq(q, "D")
 assert vals["A"] == cl.truth(gate_on_decoder("OR", [0, 1, 2, 3, 4]), V3, "f")
 assert cl.ones_of(vals["C"]) == [3, 4, 5, 6, 7]
 
-q = P["nx-dl-04-03-q04"]
+q = P["nx-dl-05-03-q04"]
 f = cl.truth(gate_on_decoder("AND", [1, 2], n=2, low=True), V2, "f")
 vals = {"A": bl.tt("A \\odot B", V2), "B": bl.tt("A \\oplus B", V2), "C": (0, 0, 0, 0), "D": (1, 1, 1, 1)}
 assert [k for k, t in vals.items() if t == f] == ["A"]
@@ -493,7 +493,7 @@ bl.assert_mcq(q, "A")
 assert cl.truth(gate_on_decoder("AND", [1, 2], n=2), V2, "f") == vals["C"]
 assert cl.truth(gate_on_decoder("NAND", [1, 2], n=2, low=True), V2, "f") == vals["B"]
 
-q = P["nx-dl-04-03-q05"]
+q = P["nx-dl-05-03-q05"]
 d = [int(i in (2, 3, 5)) for i in range(8)]
 code, v = cl.priority_encoder(d)
 vals = bl.option_values(q)
@@ -501,7 +501,7 @@ assert [k for k, t in vals.items() if t == "".join(map(str, code))] == ["C"] and
 bl.assert_mcq(q, "C")
 assert vals["B"] == "".join(map(str, cl.encoder(d))) and vals["A"] == "".join(map(str, cl.priority_encoder(d, order=list(range(8)))[0]))
 
-q = P["nx-dl-04-03-q06"]
+q = P["nx-dl-05-03-q06"]
 EQ = {"A": ("X1", "D2 + D3"), "B": ("X0", "D1 + D3"), "C": ("X0", "D3 + D1\\overline{D2}"), "D": ("V", "D0 + D1 + D2 + D3")}
 good = []
 for k, (o, e) in EQ.items():
@@ -518,10 +518,10 @@ for k, (o, e) in EQ.items():
 bl.assert_msq(q, good)
 assert good == ["A", "C", "D"]
 
-q = P["nx-dl-04-03-q07"]
+q = P["nx-dl-05-03-q07"]
 bl.assert_nat(q, mem_decoder(4 * K, 4)[1])
 
-q = P["nx-dl-04-03-q08"]
+q = P["nx-dl-05-03-q08"]
 truths = {
     "A": all(cl.demux(dd, list(s)) == cl.decoder(list(s), en=dd) for dd in (0, 1) for s in product((0, 1), repeat=3)),
     # B: a decoder without enable ignores the data, so it cannot equal the DEMUX for both data values.
@@ -531,14 +531,14 @@ truths = {
 }
 bl.assert_msq(q, sorted(k for k, t in truths.items() if t))
 
-q = P["nx-dl-04-03-q09"]
+q = P["nx-dl-05-03-q09"]
 chips = (16 * K) // (4 * K)
 m9 = cl.select_lines(chips)
 assert mem_decoder(16 * K)[0] - mem_decoder(4 * K)[0] == m9 == 2
 bl.assert_nat(q, m9 + chips)
 assert {w["answer"] for w in q["common_wrong"]} == {14 + 16384, 12 + 4096, 4}
 
-q = P["nx-dl-04-03-q10"]
+q = P["nx-dl-05-03-q10"]
 net = [("Q", "DEC", {"a": ["A", "B"]}), ("Y", "MUX", {"d": ["Q.0", "Q.1", "Q.3", "0"], "s": ["S", "B"]})]
 IN10 = ["A", "B", "S"]
 y10 = cl.truth(net, IN10, "Y")
@@ -548,16 +548,16 @@ bl.assert_nat(q, len(cl.ones_of(y10)))
 # Every practice question carries this lesson's block ids.
 ids = set(__import__("re").findall(r"\{#([a-z0-9-]+)", L))
 for qid, qq in P.items():
-    if qid.startswith("nx-dl-04-03-"):
+    if qid.startswith("nx-dl-05-03-"):
         assert set(qq["blocks"]) <= ids, (qid, set(qq["blocks"]) - ids)
         assert f':::practice{{id="{qid}"' in L
 # MCQ keys spread: no letter more than twice.
 from collections import Counter  # noqa: E402
-keys = Counter(qq["answer"] for qid, qq in P.items() if qid.startswith("nx-dl-04-03-") and qq["type"] == "MCQ")
+keys = Counter(qq["answer"] for qid, qq in P.items() if qid.startswith("nx-dl-05-03-") and qq["type"] == "MCQ")
 assert max(keys.values()) <= 2, keys
 
 
-# Option analyses in _sol_ch4_l03.py: IT 2008 options C and D, as printed.
+# Option analyses in _sol_ch5_l03.py: IT 2008 options C and D, as printed.
 assert cl.ones_of(bl.tt("\\overline{x y} + y z", ZYX)) == [0, 1, 2, 4, 5, 6, 7]
 assert cl.ones_of(bl.tt("x y + \\overline{y z}", ZYX)) == [0, 1, 2, 3, 4, 5, 7]
 # 1992 pitfall: B on S1, A on S0 permutes the data: X1 (0, 1, 1, 1), X0 (C, 1, 0, 1).
@@ -680,4 +680,4 @@ assert ones(net, V3, "Y") == [0b010, 0b101, 0b110, 0b111] and 1 + 1 + 1 + 4 == 7
 net = [("Q", "DEC", {"a": ["A", "B"]}), ("Y", "MUX", {"d": ["Q.2", "1", "Q.2", "1"], "s": ["S1", "S0"]})]
 assert len(ones(net, IN4, "Y")) == 10 == 1 + 4 + 1 + 4 and cl.truth(net, IN4, "Y") == bl.tt("S0 + A B'", IN4)
 has("$1 + 4 + 1 + 4 = 10$ rows", "$0 + 1 + 4 + 0 = 5$ rows", "4 rows. The per-line count")
-print("l4_03_decoders: decoder minterms/maxterms, decoder + gate over all 3-variable functions, trees as netlists, DEMUX, encoders, priority encoders (4:2, 8:3, both orders, MUX form, 1992 codes), memory decoders, decoder-into-MUX counts, 7 PYQ keys and 10 practice answers (with solution option analyses) OK")
+print("l5_03_decoders: decoder minterms/maxterms, decoder + gate over all 3-variable functions, trees as netlists, DEMUX, encoders, priority encoders (4:2, 8:3, both orders, MUX form, 1992 codes), memory decoders, decoder-into-MUX counts, 7 PYQ keys and 10 practice answers (with solution option analyses) OK")

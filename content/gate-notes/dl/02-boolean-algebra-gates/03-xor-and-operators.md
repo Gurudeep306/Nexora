@@ -30,8 +30,8 @@ expression simplifies to. Sixteen previous-year questions live here.
 [Lesson 1](lesson:logic-gates) introduced XOR as "the inputs differ" and XNOR as "the inputs are
 equal"; [Lesson 2](lesson:boolean-laws) gave the general laws, and showed that $(x + y) \oplus z$
 and $x \oplus (y + z)$ are different. Here XOR gets its own laws. They come back in parity and
-Hamming codes (Chapter 1), in adders, where the sum bit is an XOR (Chapter 5), and in the comparators
-of Chapter 4.
+Hamming codes (Chapter 1), in adders, where the sum bit is an XOR (Chapter 4), and in the comparators
+of Chapter 5.
 
 :::table{#radar title="GATE radar: XOR, XNOR and defined operators" depth="quick"}
 | What | Detail |

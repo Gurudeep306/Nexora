@@ -11,10 +11,10 @@ difficulty: core
 status: published
 needs_review: false
 sources:
-  - "Nexora's own text, examples and diagrams; every ROM size, product width, constant output bit, chip count, PLA and PAL term count and link count is checked by enumeration in content/gate-notes/_checks/dl/l4_05_rom_pla.py (comblib.py, with an exhaustive search for shared PLA terms)."
+  - "Nexora's own text, examples and diagrams; every ROM size, product width, constant output bit, chip count, PLA and PAL term count and link count is checked by enumeration in content/gate-notes/_checks/dl/l5_05_rom_pla.py (comblib.py, with an exhaustive search for shared PLA terms)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 125 and 127–128, set C pp. 373–391."
   - "Facts checked against: M. Morris Mano, Digital Design (read-only memory, programmable logic arrays, programmable array logic)."
-  - "PYQs: src/gate/questions.json (cse-1993-ii-a-6-6, cse-1996-a-21, it-2004-it-10, cse-2012-cs-19); keys re-derived in l4_05_rom_pla.py with comblib.multiplier_rom."
+  - "PYQs: src/gate/questions.json (cse-1993-ii-a-6-6, cse-1996-a-21, it-2004-it-10, cse-2012-cs-19); keys re-derived in l5_05_rom_pla.py with comblib.multiplier_rom."
 updated: "2026-10-19"
 ---
 
@@ -36,7 +36,7 @@ come from the other end: they are the two-level AND–OR circuits of
 [Chapter 3, Lesson 4](lesson:two-level-implementation) printed as a grid, with the shared product
 terms of multi-output minimisation becoming shared rows. The arithmetic that fills a multiplier or
 adder table (how wide a sum or a product is) is in [Chapter 1, Lesson 9](lesson:code-arithmetic);
-adder and multiplier **circuits** are built from gates in the arithmetic-circuits chapter, and here we
+adder and multiplier **circuits** were built from gates in Chapter 4 (arithmetic circuits), and here we
 only count their inputs and outputs.
 
 :::table{#radar title="GATE radar: ROM, PLA and PAL" depth="quick"}
@@ -118,7 +118,7 @@ for now.
 
 Any other table goes in the same way. Here is an $8 \times 2$ ROM programmed with two other columns:
 the majority of three bits and their odd parity. (They are the carry and the sum of adding three bits,
-which the arithmetic-circuits chapter builds from gates; a ROM does not care what the columns mean.)
+which Chapter 4 (arithmetic circuits) built from gates; a ROM does not care what the columns mean.)
 
 :::table{#rom-program-table title="Programming an 8 × 2 ROM: each 1 is a connection" depth="standard"}
 | Address $ABC$ | Word line | $F_1 = \Sigma m(3, 5, 6, 7)$ | $F_2 = \Sigma m(1, 2, 4, 7)$ |
@@ -438,8 +438,8 @@ $512 \times 5 = 2560$ bits.
 
 :::answer
 $512 \times 5$ (2560 bits). The tempting $256 \times 8$ forgets the carry-in (halving the words) and sizes
-the output like a product (8 bits instead of 5). The hardware adder itself belongs to the
-arithmetic-circuits chapter; a ROM needs only the counts.
+the output like a product (8 bits instead of 5). The hardware adder itself was built in
+Chapter 4 (arithmetic circuits); a ROM needs only the counts.
 :::
 ::::
 
@@ -1024,34 +1024,34 @@ leaves out.
 
 Our own questions in GATE formats: warm-ups first, then exam-level questions, then two that need care.
 
-:::practice{id="nx-dl-04-05-q01" depth="standard"}
+:::practice{id="nx-dl-05-05-q01" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q02" depth="standard"}
+:::practice{id="nx-dl-05-05-q02" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q03" depth="standard"}
+:::practice{id="nx-dl-05-05-q03" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q04" depth="standard"}
+:::practice{id="nx-dl-05-05-q04" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q05" depth="standard"}
+:::practice{id="nx-dl-05-05-q05" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q06" depth="standard"}
+:::practice{id="nx-dl-05-05-q06" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q07" depth="standard"}
+:::practice{id="nx-dl-05-05-q07" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q08" depth="standard"}
+:::practice{id="nx-dl-05-05-q08" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q09" depth="standard"}
+:::practice{id="nx-dl-05-05-q09" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-05-q10" depth="standard"}
+:::practice{id="nx-dl-05-05-q10" depth="standard"}
 :::
 
 ## Summary

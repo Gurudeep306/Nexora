@@ -643,7 +643,7 @@ variable gives a decision tree, which is how a multiplexer computes any function
 
 Any function can be split on one of its variables into "what it does when the variable is 0" and
 "what it does when it is 1". This is the most general simplification tool there is, and it is also
-the idea behind multiplexers (Chapter 4).
+the idea behind multiplexers (Chapter 5).
 
 :::definition{#cofactor-def term="Cofactors" depth="quick"}
 For $f(x_1, x_2, \dots, x_n)$, the **cofactors** with respect to $x_1$ are

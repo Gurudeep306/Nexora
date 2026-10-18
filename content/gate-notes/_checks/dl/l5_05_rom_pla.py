@@ -1,4 +1,4 @@
-"""Checks for dl/04-combinational-circuits/05-rom-pla-pal: the ROM realisation theorem (a decoder + OR
+"""Checks for dl/05-combinational-circuits/05-rom-pla-pal: the ROM realisation theorem (a decoder + OR
 ROM equals every 3-input, 2-output function), ROM sizes, the product-width theorem (bit-length of every
 product by enumeration and the two bounds), constant output columns of squarers and cubes, ROM
 expansion counts, PLA term counts (comblib.pla_min_terms, exhaustive over shared implicants), PAL
@@ -288,25 +288,25 @@ assert 16 * K * 32 == 2 ** 19 and 64 * K * 32 == 2 ** 21
 
 # ── Practice ───────────────────────────────────────────────────────────────
 P = cl.practice()
-mine = sorted(k for k in P if k.startswith("nx-dl-04-05-"))
-assert mine == [f"nx-dl-04-05-q{i:02d}" for i in range(1, 11)]
-q = P["nx-dl-04-05-q01"]
+mine = sorted(k for k in P if k.startswith("nx-dl-05-05-"))
+assert mine == [f"nx-dl-05-05-q{i:02d}" for i in range(1, 11)]
+q = P["nx-dl-05-05-q01"]
 opts = {l: size_of(t) for l, t in bl.option_values(q).items()}
 bl.assert_mcq(q, [l for l, v in opts.items() if v == cl.rom_size(5, 3)[:2]][0])
-q = P["nx-dl-04-05-q02"]
+q = P["nx-dl-05-05-q02"]
 bl.assert_nat(q, cl.rom_size(4, 7)[2])
 assert {w["answer"] for w in q["common_wrong"]} == {10 * 7, 16 * 8}
-q = P["nx-dl-04-05-q03"]
+q = P["nx-dl-05-05-q03"]
 opts = {l: size_of(t) for l, t in bl.option_values(q).items()}
 bl.assert_mcq(q, [l for l, v in opts.items() if v == cl.multiplier_rom(6, 4)[:2]][0])
 assert opts["A"] == (K, 24) and opts["C"][:1] == (cl.multiplier_rom(6)[0],) and opts["C"][1] == cl.multiplier_rom(6)[1]
-q = P["nx-dl-04-05-q04"]
+q = P["nx-dl-05-05-q04"]
 opts = {l: size_of(t) for l, t in bl.option_values(q).items()}
 bl.assert_mcq(q, [l for l, v in opts.items() if v == adder(8)[:2]][0])
-q = P["nx-dl-04-05-q05"]
+q = P["nx-dl-05-05-q05"]
 bl.assert_nat(q, chips(16 * K, 32, 2 * K, 8))
 assert {w["answer"] for w in q["common_wrong"]} == {16 * K // (2 * K), ceil(32 / 8)}
-q = P["nx-dl-04-05-q06"]
+q = P["nx-dl-05-05-q06"]
 h1, h2, h3 = [0, 1, 2], [0, 1, 3], [1, 2, 5]
 bl.assert_nat(q, pla([h1, h2, h3]))
 assert msops(h1) == {frozenset(["A'B'", "A'C'"])} and msops(h2) == {frozenset(["A'B'", "A'C"])} and msops(h3) == {frozenset(["B'C", "A'BC'"])}
@@ -314,7 +314,7 @@ assert len(set().union(*[next(iter(msops(h))) for h in (h1, h2, h3)])) == 5 and 
 k, terms = cl.pla_min_terms([(h, []) for h in (h1, h2, h3)], 3)
 assert sorted(ml.term(c, V3) for c in terms) == sorted(["A'B'", "A'C", "B'C", "A'BC'"])
 assert ml.parse_term("A'BC'", V3) not in ml.primes(h1, [], 3)
-q = P["nx-dl-04-05-q07"]
+q = P["nx-dl-05-05-q07"]
 truth = {"A": False, "B": True, "C": True, "D": True}
 # D: every pair of 3-input functions fits an 8 x 2 ROM (the theorem above, checked for all pairs here).
 for t1 in range(256):
@@ -323,7 +323,7 @@ for t1 in range(256):
         f2 = [i for i in range(8) if t2 >> i & 1]
         assert all(rom_eval([f1, f2], a) == [int(a in f1), int(a in f2)] for a in range(8))
 bl.assert_msq(q, [l for l, v in truth.items() if v])
-q = P["nx-dl-04-05-q08"]
+q = P["nx-dl-05-05-q08"]
 f8 = list(range(7))
 assert pla([f8]) == 3 and pla([comp(f8)]) == 1 and len(f8) == 7
 opts = bl.option_values(q)
@@ -333,12 +333,12 @@ assert q["answer"] == "C" and {w["answer"]: int(opts[w["answer"]]) for w in q["c
 assert not any(len(c) == 2 for c in ml.min_covers(f8, [], 3))  # no 2-term SOP of f
 mcq_keys = [P[k]["answer"] for k in mine if P[k]["type"] == "MCQ"]
 assert set(mcq_keys) == set("ABCD") and max(mcq_keys.count(x) for x in "ABCD") <= 2, mcq_keys
-q = P["nx-dl-04-05-q09"]
+q = P["nx-dl-05-05-q09"]
 w, wired = wired_columns(lambda x: x ** 3, 4)
 assert (w, wired) == (12, [0]) and 15 ** 3 == 3375 and (27 >> 1) & 1 == 1
 bl.assert_nat(q, 2 ** 4 * (w - len(wired)))
 assert {x["answer"] for x in q["common_wrong"]} == {16 * 12, 16 * 10}
-q = P["nx-dl-04-05-q10"]
+q = P["nx-dl-05-05-q10"]
 r1, r2 = [0, 1, 2, 7], [0, 1, 6, 7]
 assert msops(r1) == {frozenset(["A'B'", "A'C'", "ABC"])} and msops(r2) == {frozenset(["A'B'", "AB"])}
 fits = {"A": cl.rom_size(3, 2)[0] == 8, "B": pla([r1, r2]) <= 3, "C": pla([r1, r2]) <= 4,
@@ -347,7 +347,7 @@ assert pla([r1, r2]) == 4
 bl.assert_msq(q, [l for l, v in fits.items() if v])
 
 # ── PYQ-solution scenes: a highlighted table row must already be revealed ─
-import _sol_ch4_l05 as SOL  # noqa: E402
+import _sol_ch5_l05 as SOL  # noqa: E402
 for qid, sol in SOL.SOLUTIONS.items():
     ncols = len(sol["animation"]["cols"])
     for st in sol["steps"]:
@@ -363,4 +363,4 @@ assert 16 * K * 4 == 64 * K
 # ── Key sentences ──────────────────────────────────────────────────────────
 has("bit 1 of", "squares mod 4 are only 0 or 1", "$(2^n - 1)^2 < 2^{2n}$", "$2^{2n-1} \\ge 2^{n+1} - 1$",
     "$256 \\times 8 = 2048$ bits $= 2$ Kbit", "$64\\text{K} \\times 16$", "lesson:code-arithmetic")
-print("l4_05_rom_pla: ROM theorem (all 3-input pairs), sizes, product width (n, m ≤ 8 by enumeration), constant columns, expansion, PLA/PAL counts (exhaustive), complement trick, 4 PYQ keys and 10 practice answers OK")
+print("l5_05_rom_pla: ROM theorem (all 3-input pairs), sizes, product width (n, m ≤ 8 by enumeration), constant columns, expansion, PLA/PAL counts (exhaustive), complement trick, 4 PYQ keys and 10 practice answers OK")

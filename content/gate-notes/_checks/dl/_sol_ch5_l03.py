@@ -1,6 +1,6 @@
-"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 4, Lesson 3 (decoders,
-demultiplexers, encoders and priority encoders). Merged by _sol_ch4.py; every key is re-derived in
-l4_03_decoders.py (comblib netlists with DEC and MUX nodes)."""
+"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 5, Lesson 3 (decoders,
+demultiplexers, encoders and priority encoders). Merged by _sol_ch5.py; every key is re-derived in
+l5_03_decoders.py (comblib netlists with DEC and MUX nodes)."""
 import pathlib
 import sys
 
@@ -30,7 +30,7 @@ SOLUTIONS["cse-1992-b-4-b"] = {
         "Putting $C$ on a select line: then the residues are functions of $A$ and $B$ and extra gates are needed.",
         "Swapping $S_1$ and $S_0$, which permutes the data inputs (with $B$ on $S_1$, the $X_1$ data become 0, 1, 1, 1 in the order $BA = 00, 01, 10, 11$ and the $X_0$ data $C, 1, 0, 1$).",
     ],
-    "verification": "All 8 rows of $(A, B, C)$, simulated with both MUXes: $(X_1, X_0)$ = 00, 01, 10, 10, 11, 11, 11, 11 for rows 0–7, which is A → 11, B → 10, C → 01, none → 00 (checked by enumeration in l4_03_decoders.py).",
+    "verification": "All 8 rows of $(A, B, C)$, simulated with both MUXes: $(X_1, X_0)$ = 00, 01, 10, 10, 11, 11, 11, 11 for rows 0–7, which is A → 11, B → 10, C → 01, none → 00 (checked by enumeration in l5_03_decoders.py).",
     "animation": {"kind": "table", "title": "Implementation table, selects A (S₁), B (S₀)", "cols": ["AB", "X₁ (C = 0, 1)", "X₀ (C = 0, 1)"],
                   "rows": [["00", "0 0 → 0", "0 1 → C"], ["01", "1 1 → 1", "0 0 → 0"], ["10", "1 1 → 1", "1 1 → 1"], ["11", "1 1 → 1", "1 1 → 1"]],
                   "mono": True},
@@ -165,7 +165,7 @@ SOLUTIONS["cse-2026-2-cs-49"] = {
                   "rows": [["00", "D0 = A′B′", 1], ["01", "0", 0], ["10", "1", 4], ["11", "D3 = AB", 1]], "mono": True},
 }
 
-# Consistency with the enumeration (the full checks are in l4_03_decoders.py).
+# Consistency with the enumeration (the full checks are in l5_03_decoders.py).
 assert total == 9
 net = [("Q", "DEC", {"a": ["z", "y", "x"]}), ("f", "NOR", ["Q.7", "Q.5", "Q.2", "Q.0"])]
 assert cl.ones_of(cl.truth(net, ["z", "y", "x"], "f")) == [1, 3, 4, 6]

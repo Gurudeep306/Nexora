@@ -1,4 +1,4 @@
-"""Checks for dl/04-combinational-circuits/04-comparators-parity: the 1-bit comparator (AND/XNOR and
+"""Checks for dl/05-combinational-circuits/04-comparators-parity: the 1-bit comparator (AND/XNOR and
 all-NOR forms), the equality and magnitude theorems (exhaustively for n ≤ 4, including the
 lexicographic = numeric claim and the disjointness of the G terms), the row counts 2^n and
 (4^n − 2^n)/2, the comparator-subscript erratum, the cascade equations and the chain theorem, the
@@ -20,7 +20,7 @@ import minlib as ml  # noqa: E402
 L = cl.lesson_text("04-comparators-parity.md")
 has = lambda *s: bl.must_contain(L, *s)
 PQ = cl.practice()
-Q = lambda n: PQ[f"nx-dl-04-04-q{n:02d}"]
+Q = lambda n: PQ[f"nx-dl-05-04-q{n:02d}"]
 
 
 def vars_ab(n):
@@ -501,7 +501,7 @@ has("Error flag $F = 1$", "one bit, three bits, or any odd number of\nthe nine c
 has("it is not\nclaimed to be minimal")
 
 # MCQ keys spread (no letter more than twice)
-keys = [q["answer"] for q in PQ.values() if q["id"].startswith("nx-dl-04-04-") and q["type"] == "MCQ"]
+keys = [q["answer"] for q in PQ.values() if q["id"].startswith("nx-dl-05-04-") and q["type"] == "MCQ"]
 assert max(keys.count(k) for k in "ABCD") <= 2
-print("l4_04_compare: comparator theorems (n ≤ 4), counts, erratum, cascades, 5n + 1 netlists, signed and "
+print("l5_04_compare: comparator theorems (n ≤ 4), counts, erratum, cascades, 5n + 1 netlists, signed and "
       "subtraction flags, parity, XOR-tree bounds by exhaustive search, the lab MUX table and 10 practice answers OK")

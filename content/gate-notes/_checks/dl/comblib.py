@@ -30,7 +30,7 @@ import boollib as bl  # noqa: E402
 import minlib as ml  # noqa: E402
 
 ROOT = bl.ROOT
-CH4 = bl.CONTENT / "04-combinational-circuits"
+CH5 = bl.CONTENT / "05-combinational-circuits"
 
 GATES = {
     "AND": lambda xs: int(all(xs)),
@@ -407,11 +407,11 @@ def multiple_fault_count(n_lines):
 # ── Lesson and practice helpers ────────────────────────────────────────────
 
 def lesson_text(name):
-    return (CH4 / name).read_text()
+    return (CH5 / name).read_text()
 
 
 def practice():
-    p = CH4 / "practice.json"
+    p = CH5 / "practice.json"
     return {q["id"]: q for q in json.loads(p.read_text())} if p.exists() else {}
 
 

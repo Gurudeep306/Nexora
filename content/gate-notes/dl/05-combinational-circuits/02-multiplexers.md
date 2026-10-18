@@ -11,10 +11,10 @@ difficulty: core
 status: published
 needs_review: false
 sources:
-  - "Nexora's own text, examples and diagrams; every MUX output, residue, tree count, cascade and practice answer is checked by enumeration in content/gate-notes/_checks/dl/l4_02_mux.py (comblib netlists with MUX nodes and enables)."
+  - "Nexora's own text, examples and diagrams; every MUX output, residue, tree count, cascade and practice answer is checked by enumeration in content/gate-notes/_checks/dl/l5_02_mux.py (comblib netlists with MUX nodes and enables)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 64–72, set B pp. 119–122 and 166–167, set C pp. 296–308, set D p. 400, set E pp. 407–408. Their MUX slips are recorded in _errata/dl.md."
   - "Facts checked against standard textbooks: M. Morris Mano, Digital Design (multiplexers, function implementation, enables, expansion); C. E. Shannon (1949), for the expansion behind the implementation table."
-  - "PYQs: src/gate/questions.json (19 dl/combinational questions, 1996–2024); every circuit is modelled as a comblib netlist and every key re-derived in l4_02_mux.py."
+  - "PYQs: src/gate/questions.json (19 dl/combinational questions, 1996–2024); every circuit is modelled as a comblib netlist and every key re-derived in l5_02_mux.py."
 updated: "2026-10-19"
 ---
 
@@ -36,8 +36,9 @@ wired onto it without minimising anything. The algebra underneath is **Shannon's
 [Chapter 2, Lesson 2](lesson:boolean-laws): a MUX is that expansion made of wires. The MUX also
 appeared in [Chapter 2, Lesson 5](lesson:universal-gates) as a functionally complete block; here we
 prove it again in the form GATE asks about and add the cascades. [Lesson 3](lesson:decoders-encoders)
-meets the MUX's mirror image, the demultiplexer, and Chapter 5 uses MUXes to build register files and
-ALUs.
+meets the MUX's mirror image, the demultiplexer. The same MUXes later select registers and ALU results in a datapath (the
+register-select questions below), and the carry-select adder of Chapter 4 (arithmetic circuits) is a
+MUX choosing between two precomputed sums.
 
 :::table{#radar title="GATE radar: multiplexers" depth="quick"}
 | What | Detail |
@@ -1351,34 +1352,34 @@ MUX equals $f$.
 
 Our own questions in GATE formats: warm-ups first, then exam-level questions, then two that need care.
 
-:::practice{id="nx-dl-04-02-q01" depth="standard"}
+:::practice{id="nx-dl-05-02-q01" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q02" depth="standard"}
+:::practice{id="nx-dl-05-02-q02" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q03" depth="standard"}
+:::practice{id="nx-dl-05-02-q03" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q04" depth="standard"}
+:::practice{id="nx-dl-05-02-q04" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q05" depth="standard"}
+:::practice{id="nx-dl-05-02-q05" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q06" depth="standard"}
+:::practice{id="nx-dl-05-02-q06" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q07" depth="standard"}
+:::practice{id="nx-dl-05-02-q07" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q08" depth="standard"}
+:::practice{id="nx-dl-05-02-q08" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q09" depth="standard"}
+:::practice{id="nx-dl-05-02-q09" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-02-q10" depth="standard"}
+:::practice{id="nx-dl-05-02-q10" depth="standard"}
 :::
 
 ## Summary

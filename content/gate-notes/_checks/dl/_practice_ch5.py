@@ -1,8 +1,8 @@
 """Put one lesson's practice questions into Chapter 4's practice.json (the only source of truth).
 
-    python3 content/gate-notes/_checks/dl/_practice_ch4.py <questions.json>
+    python3 content/gate-notes/_checks/dl/_practice_ch5.py <questions.json>
 
-<questions.json> is a JSON list of questions whose ids all start with the same nx-dl-04-NN- prefix.
+<questions.json> is a JSON list of questions whose ids all start with the same nx-dl-05-NN- prefix.
 Every question of that lesson already in practice.json is replaced by the new list; other lessons'
 questions are kept. The file is rewritten sorted by id under an exclusive lock, so lessons can be
 written in parallel.
@@ -13,11 +13,11 @@ import pathlib
 import re
 import sys
 
-PRACTICE = pathlib.Path(__file__).resolve().parents[2] / "dl" / "04-combinational-circuits" / "practice.json"
+PRACTICE = pathlib.Path(__file__).resolve().parents[2] / "dl" / "05-combinational-circuits" / "practice.json"
 
 
 def put(new):
-    prefixes = {re.match(r"^(nx-dl-04-\d\d-)q\d\d$", q["id"]).group(1) for q in new}
+    prefixes = {re.match(r"^(nx-dl-05-\d\d-)q\d\d$", q["id"]).group(1) for q in new}
     assert len(prefixes) == 1, f"one lesson at a time (got {sorted(prefixes)})"
     prefix = prefixes.pop()
     with open(PRACTICE.with_suffix(".lock"), "w") as lock:

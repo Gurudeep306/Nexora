@@ -1,7 +1,7 @@
 """Combinational Workbench (Chapter 4 Live Lab) test vectors.
 
 The lab's logic lives in client/src/gate/notes/labs/combLogic.ts. This check computes, with comblib,
-everything that module claims, writes it to lab_vectors_ch4.json, and fails if the committed file is
+everything that module claims, writes it to lab_vectors_ch5.json, and fails if the committed file is
 stale; tests/gate-notes.test.js then checks the TypeScript against the same file:
 
 - MUX outputs (2:1, 4:1, 8:1) over every data and select pattern, enable 0/1, active high and low,
@@ -14,7 +14,7 @@ stale; tests/gate-notes.test.js then checks the TypeScript against the same file
 - the decoder + OR (or NOR of the 0-rows, whichever list is shorter, ties → OR) lists;
 - each preset's function.
 
-    python3 content/gate-notes/_checks/dl/l4_lab_vectors.py --write   # refresh the JSON
+    python3 content/gate-notes/_checks/dl/l5_lab_vectors.py --write   # refresh the JSON
 """
 from itertools import permutations, product
 import json
@@ -28,7 +28,7 @@ import boollib as bl  # noqa: E402
 import comblib as cl  # noqa: E402
 import minlib as ml  # noqa: E402
 
-OUT = pathlib.Path(__file__).parent / "lab_vectors_ch4.json"
+OUT = pathlib.Path(__file__).parent / "lab_vectors_ch5.json"
 
 PRESETS = {
     "majority": (["x", "y", "z"], "xy + yz + zx", [], "mux4", [0, 1]),
@@ -195,6 +195,6 @@ text = json.dumps(data, indent=0, ensure_ascii=False) + "\n"
 if "--write" in sys.argv:
     OUT.write_text(text)
     print(f"wrote {OUT.name}")
-assert OUT.exists() and OUT.read_text() == text, "lab_vectors_ch4.json is stale: run with --write"
-print(f"l4_lab_vectors: MUX 2:1/4:1/8:1, {len(data['impl'])} implementation tables, {len(data['decgate'])} decoder + gate "
+assert OUT.exists() and OUT.read_text() == text, "lab_vectors_ch5.json is stale: run with --write"
+print(f"l5_lab_vectors: MUX 2:1/4:1/8:1, {len(data['impl'])} implementation tables, {len(data['decgate'])} decoder + gate "
       f"realisations, decoders, DEMUX, encoders and {len(data['presets'])} presets")

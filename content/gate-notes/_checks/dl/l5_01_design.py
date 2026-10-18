@@ -1,4 +1,4 @@
-"""Checks for dl/04-combinational-circuits/01-combinational-design: the latch counterexample, every truth
+"""Checks for dl/05-combinational-circuits/01-combinational-design: the latch counterexample, every truth
 table and minimal form of the worked examples, the digit ≥ 5 detector (minimal SOP, the 3-gate circuit, the
 exhaustive AND/OR/NOT search and the two-gate case analysis), the voting functions, BCD mod 6 / mod 5 / mod 3,
 BCD ↔ excess-3, excess-3 → BCD (the three 7-literal POS forms of b4 and the three 5-literal forms of b8),
@@ -327,8 +327,8 @@ assert bl.which(bl.option_values(q), lambda t: bl.minterms(t.strip("$"), XY) == 
 
 # ── Practice ─────────────────────────────────────────────────────────────────
 P = cl.practice()
-p = lambda k: P[f"nx-dl-04-01-q{k:02d}"]
-assert len([k for k in P if k.startswith("nx-dl-04-01-")]) == 10
+p = lambda k: P[f"nx-dl-05-01-q{k:02d}"]
+assert len([k for k in P if k.startswith("nx-dl-05-01-")]) == 10
 odd5 = [5, 7, 9]
 assert agrees("D(A + B)", odd5, BCD_DC, V4) and msops(odd5, BCD_DC, 4, V4) == {frozenset(["AD", "BD"])}
 bl.assert_nat(p(1), cl.min_gates_aon(odd5, 4, BCD_DC))
@@ -381,5 +381,5 @@ has("$$f = A + BD + BC = A + B(C + D).$$", "**3 is the minimum**", "1100 (twelve
     "**two 2-input ANDs, one 2-input OR and two NOTs**", "$a = A + C + BD + B'D'.$",
     "Six gates in all", "$256 - 100 = 156$", "$R_2 = AD + BC'D'$, $R_1 = B'C + CD + AD'$, $R_0 = AD' + A'B'D + BCD'$")
 
-print("l4_01_design: detectors (exhaustive 2-gate case analysis and gate search), BCD mod 6/5/3, BCD ↔ excess-3, "
+print("l5_01_design: detectors (exhaustive 2-gate case analysis and gate search), BCD mod 6/5/3, BCD ↔ excess-3, "
       "the b4 and b8 POS ties, Gray theorem for n ≤ 8, 5 PYQ answers and 10 practice answers OK")

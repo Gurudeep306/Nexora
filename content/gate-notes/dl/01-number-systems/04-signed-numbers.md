@@ -31,7 +31,7 @@ questions.
 
 [Lesson 1](lesson:place-value) gave place value and [Lesson 2](lesson:power-of-two-bases) gave
 the hex shorthand used for long patterns. Here one place value turns negative. [Lesson 9](lesson:code-arithmetic) does arithmetic with
-these patterns (overflow, complement subtraction), and Chapter 5 builds the adder–subtractor circuit. The next three lessons
+these patterns (overflow, complement subtraction), and Chapter 4 builds the adder–subtractor circuit. The next three lessons
 ([5](lesson:floating-point-basics), [6](lesson:ieee-754) and [7](lesson:floating-point-arithmetic))
 use the biased (excess-K) code from the end of this lesson for floating-point exponents.
 
@@ -748,7 +748,7 @@ A 2's-complement sum overflows exactly when two operands of the **same sign** gi
 the other sign: on the wheel, the sum crosses the $+7/-8$ seam. Operands of opposite signs never
 overflow in addition. (For subtraction $A - B = A + (-B)$, so it is the opposite-sign pairs that
 can overflow.) A carry out of the top bit alone is **not** overflow for signed numbers.
-[Lesson 9](lesson:code-arithmetic#overflow-theorem) proves the carry rule; Chapter 5 builds the detector.
+[Lesson 9](lesson:code-arithmetic#overflow-theorem) proves the carry rule; Chapter 4 builds the detector.
 :::
 
 ## Biased (excess-K) codes

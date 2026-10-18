@@ -1934,7 +1934,7 @@
         "Answering $2^n$ by thinking only of \"wire the truth table\".",
         "Answering $2^{n-2}$ by assuming residues can be any function."
       ],
-      "verification": "For $n = 3$ an exhaustive search over every wiring of a 2:1 MUX and one inverter finds no circuit for $x \\oplus y \\oplus z$, while a 4:1 MUX realises all 256 functions (l4_02_mux.py)."
+      "verification": "For $n = 3$ an exhaustive search over every wiring of a 2:1 MUX and one inverter finds no circuit for $x \\oplus y \\oplus z$, while a 4:1 MUX realises all 256 functions (l5_02_mux.py)."
     },
     "cse-2007-cs-35": {
       "approach": "Write $C_1..C_4$ in two-level SOP form over $P_i,G_i,C_0$ and count the product terms (AND gates) and sums (OR gates). The sum bits use XOR, not AND/OR.",

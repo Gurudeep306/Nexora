@@ -1,6 +1,6 @@
-"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 4, Lesson 1 (designing combinational
-circuits; code converters). Merged by _sol_ch4.py; every key and answer text is re-derived in
-l4_01_design.py (minlib covers, comblib netlists and the exhaustive AND/OR/NOT gate search)."""
+"""Teacher-style v2 solutions for the PYQs of Digital Logic Chapter 5, Lesson 1 (designing combinational
+circuits; code converters). Merged by _sol_ch5.py; every key and answer text is re-derived in
+l5_01_design.py (minlib covers, comblib netlists and the exhaustive AND/OR/NOT gate search)."""
 import pathlib
 import sys
 
@@ -32,7 +32,7 @@ SOLUTIONS["cse-2000-b-9-a"] = {
         "Writing 0s instead of Xs on rows 10–15, which part (b)'s gate budget does not allow.",
         "Forgetting $R_4$: it exists in the labelling but is constant 0.",
     ],
-    "verification": "Each output row read as binary equals the row's digit mod 6 (checked for all ten digits in l4_01_design.py).",
+    "verification": "Each output row read as binary equals the row's digit mod 6 (checked for all ten digits in l5_01_design.py).",
     "animation": {"kind": "table", "title": "BCD digit → digit mod 6", "cols": ["digit", "I₄I₃I₂I₁", "mod 6", "R₃R₂R₁"], "rows": MOD6_ROWS, "mono": True},
 }
 
@@ -55,7 +55,7 @@ SOLUTIONS["cse-2000-b-9-b"] = {
         "Treating 10–15 as 0s, which makes $R_2$ and $R_3$ 3-literal terms and breaks the budget.",
         "Counting $R_1$ and $R_4$ as gates: a wire and a constant are free.",
     ],
-    "verification": "The five-gate netlist (NOT $I_2$, NOT $I_3$, AND($I_3$, $\\overline{I_2}$), AND($I_2$, $\\overline{I_3}$), OR($I_4$, ·)) simulated on digits 0–9 outputs $d \\bmod 6$ every time (l4_01_design.py).",
+    "verification": "The five-gate netlist (NOT $I_2$, NOT $I_3$, AND($I_3$, $\\overline{I_2}$), AND($I_2$, $\\overline{I_3}$), OR($I_4$, ·)) simulated on digits 0–9 outputs $d \\bmod 6$ every time (l5_01_design.py).",
     "animation": {"kind": "circuit", "title": "BCD mod 6: R₃ and R₂ (R₁ = I₁, R₄ = 0)",
                   "inputs": [{"id": "I4", "label": "I₄", "value": 1}, {"id": "I3", "label": "I₃", "value": 0}, {"id": "I2", "label": "I₂", "value": 0}],
                   "gates": [{"id": "n2", "type": "NOT", "in": ["I2"]}, {"id": "n3", "type": "NOT", "in": ["I3"]},
@@ -84,7 +84,7 @@ SOLUTIONS["cse-2001-b-58-b"] = {
         "Treating $b_4$ as the BCD MSB when the figure labels are weights.",
         "Fixing the Xs to the values a minimal SOP used before looping the 0s; the POS chooses its own Xs.",
     ],
-    "verification": "Over the ten legal codes 3–12 the product is 1 exactly on 7, 8, 9, 10; an exhaustive POS search finds no cover with fewer than 7 literals and exactly three with 7 (l4_01_design.py).",
+    "verification": "Over the ten legal codes 3–12 the product is 1 exactly on 7, 8, 9, 10; an exhaustive POS search finds no cover with fewer than 7 literals and exactly three with 7 (l5_01_design.py).",
     "animation": {"kind": "table", "title": "Excess-3 codes and b₄", "cols": ["code e₈e₄e₂e₁", "digit", "b₄"],
                   "rows": [[format(c, "04b"), str(c - 3) if 3 <= c <= 12 else "—", str(int(((c - 3) >> 2) & 1)) if 3 <= c <= 12 else "X"] for c in range(16)],
                   "mono": True},

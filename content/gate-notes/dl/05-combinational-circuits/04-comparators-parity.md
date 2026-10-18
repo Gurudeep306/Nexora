@@ -11,7 +11,7 @@ difficulty: core
 status: published
 needs_review: false
 sources:
-  - "Nexora's own text, examples and diagrams; every comparator output, row count, gate count, cascade result, parity bit, XOR-tree size and MUX residue is checked by enumeration in content/gate-notes/_checks/dl/l4_04_compare.py (comblib netlists, exhaustive theorem checks for small n)."
+  - "Nexora's own text, examples and diagrams; every comparator output, row count, gate count, cascade result, parity bit, XOR-tree size and MUX residue is checked by enumeration in content/gate-notes/_checks/dl/l5_04_compare.py (comblib netlists, exhaustive theorem checks for small n)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 61–63, set B pp. 132–133, set C pp. 221, 279–280 and 294–295. Slips A 61/63 and C 221 are in _errata/dl.md."
   - "Facts checked against standard textbooks: M. Morris Mano, Digital Design (magnitude comparators, parity generators and checkers); the cascade inputs follow the usual 4-bit comparator chip convention."
   - "PYQs: none. No question in src/gate/questions.json tests comparator or parity circuits directly (outline: 0); related parity PYQs are embedded in dl-02-03."
@@ -33,7 +33,8 @@ minimal expression → gates); here we run it on two classic specifications. The
 from [Chapter 2, Lesson 3](lesson:xor-and-operators), which already proved that an $n$-input XOR
 computes odd parity; parity bits as a *code* were introduced in [Chapter 1, Lesson 8](lesson:codes).
 Comparing numbers by subtracting them is arithmetic, taught in [Chapter 1, Lesson 9](lesson:code-arithmetic);
-this lesson only shows how the borrow and the zero test turn a subtractor into a comparator.
+the adder–subtractor circuit was built in Chapter 4 (arithmetic circuits). This lesson only shows how the
+borrow and the zero test turn that subtractor into a comparator.
 [Lesson 2](lesson:multiplexers) supplies the multiplexer on which the Live Lab realises a comparator.
 
 :::table{#radar title="GATE radar: comparators and parity" depth="quick"}
@@ -908,34 +909,34 @@ the select lines $B_1, B_0, A_1$ and see how the residues change.
 
 Our own questions in GATE formats: warm-ups first, then exam-level questions, then two that need care.
 
-:::practice{id="nx-dl-04-04-q01" depth="standard"}
+:::practice{id="nx-dl-05-04-q01" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q02" depth="standard"}
+:::practice{id="nx-dl-05-04-q02" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q03" depth="standard"}
+:::practice{id="nx-dl-05-04-q03" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q04" depth="standard"}
+:::practice{id="nx-dl-05-04-q04" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q05" depth="standard"}
+:::practice{id="nx-dl-05-04-q05" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q06" depth="standard"}
+:::practice{id="nx-dl-05-04-q06" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q07" depth="standard"}
+:::practice{id="nx-dl-05-04-q07" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q08" depth="standard"}
+:::practice{id="nx-dl-05-04-q08" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q09" depth="standard"}
+:::practice{id="nx-dl-05-04-q09" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-04-q10" depth="standard"}
+:::practice{id="nx-dl-05-04-q10" depth="standard"}
 :::
 
 ## Summary
