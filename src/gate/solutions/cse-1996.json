@@ -3173,7 +3173,7 @@
         {
           "option": "B",
           "correct": false,
-          "reason": "$(B + \\overline{C} + D)(\\overline{B} + C + \\overline{D})$ brings in $C$, on which the map does not depend; it is 1 on corner cells with $C = 1$, $D = 0$, which are 0s."
+          "reason": "$(B + \\overline{C} + D)(\\overline{B} + C + \\overline{D})$ brings in $C$, on which the map does not depend; it is 1 on the corner cells with $C = 0$ ($m_0, m_8$) and on the centre cells with $C = 1$ ($m_7, m_{15}$), all of which are 0s."
         },
         {
           "option": "C",
@@ -3183,13 +3183,13 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "$(B + \\overline{D})(\\overline{B} + D) = \\overline{B \\oplus D}$: the complement of the map (the 0-loops read with the SOP habit)."
+          "reason": "$(B + \\overline{D})(\\overline{B} + D) = \\overline{B \\oplus D}$: the complement of the map: it is what you get by looping the 1-cells and reading them as sum terms."
         }
       ],
       "shortcut": "1s in the middle columns of the outer rows and the outer columns of the middle rows is $B \\oplus D$; its POS is $(B + D)(\\overline{B} + \\overline{D})$.",
       "pitfalls": [
         "Choosing the SOP (A) because it is equal: the form matters.",
-        "Reading a 0-loop's fixed 1s as plain letters, which gives option D."
+        "Looping the 1-cells instead of the 0-cells and reading them as sum terms, which gives the complement, option D."
       ],
       "verification": "Cell $CD = 01$, $AB = 00$ ($B = 0$, $D = 1$): $(0 + 1)(1 + 0) = 1$, and the map has a 1 there. Corner cell ($B = D = 0$): $(0 + 0) = 0$. ✓",
       "animation": {

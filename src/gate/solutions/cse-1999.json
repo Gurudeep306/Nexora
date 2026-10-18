@@ -428,7 +428,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\overline{A}B + CD$ is 1 on $m_4$–$m_7$ (Xs, fine) but 0 on $m_9$ and $m_{13}$, which are 1s."
+          "reason": "$\\overline{A}B + CD$ is 1 on the Xs $m_4, m_5, m_6$ (fine) and on $m_7$, but 0 on $m_9$ and $m_{13}$, which are 1s."
         },
         {
           "option": "B",
@@ -443,7 +443,7 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "$(C + D)(\\overline{C} + D) = D$, so this is $D(A + B)$: it misses $m_3$ and is 1 on $m_1$, a 0."
+          "reason": "$(C + D)(\\overline{C} + D) = D$, so this is $D(A + B)$: it misses $m_3$ (it is 1 on $m_5$, but that is a don't-care)."
         }
       ],
       "shortcut": "Every 1 has $D = 1$, and the 1s with $C = 0$ all have $A = 1$: $f = D(A + C)$.",

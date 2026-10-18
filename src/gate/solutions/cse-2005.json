@@ -1001,7 +1001,7 @@
           "reason": "$\\overline{A}BD$ covers $m_5, m_7$: $m_7$ is a 0."
         }
       ],
-      "shortcut": "Check a single minterm that only one option can produce: $m_{11} = A\\overline{B}CD$ is covered only by $A\\overline{B}D$, which only (A) has.",
+      "shortcut": "Look for a 0 that each wrong option covers: (B)'s $AB\\overline{C}$ covers $m_{13}$, (C)'s $AC\\overline{D}$ covers $m_{10}, m_{14}$, (D)'s $\\overline{A}BD$ covers $m_7$. Only (A) avoids every 0.",
       "pitfalls": [
         "Grabbing the pair $m_1, m_9$ ($\\overline{B}\\,\\overline{C}D$) first: it is a prime implicant, but then $m_5$ needs a fourth term (12 literals instead of 9).",
         "Not checking the extra minterms an option's terms bring in."

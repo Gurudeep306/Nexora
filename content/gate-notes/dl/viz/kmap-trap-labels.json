@@ -328,7 +328,7 @@
    ]
   },
   {
-   "caption": "The tempting mistake: treat the end columns as a wrap-around group of four 1s and write C′ (or B′). On this map the ends differ in two bits, so that loop is illegal.",
+   "caption": "The tempting mistake: treat the end columns as a wrap-around group of four 1s and write C′. On this map the ends differ in two bits, so that loop is illegal.",
    "patches": [
     {
      "id": "w0",

@@ -61,6 +61,13 @@ cover or leave bare, whichever is convenient.
 
 ## Implicants
 
+:::intuition{#implicant-intuition title="A rug that fits on the floor" depth="standard"}
+A product term is a rectangle of cells. It is useful in an SOP of $f$ only if it lies entirely on the
+floor, the 1-cells: if any of its cells is a 0, the term would switch $f$ on where it must be off. Such a
+"rug that fits" is an implicant. Single cells (minterms) always fit; bigger rugs fit only where the floor is
+wide enough.
+:::
+
 :::definition{#implicant-def term="Implicant" depth="quick"}
 A product term $p$ is an **implicant** of $f$ when $p = 1$ forces $f = 1$, i.e. $p \le f$ (written
 $p \to f$). On a map, $p$ is an implicant exactly when its group of cells lies entirely inside the
@@ -90,18 +97,106 @@ For $f(x, y, z) = x' + y'x + xz$ (the GATE 1997 function, which is $x' + y' + z$
 | $y'$ | yes | yes | four cells, all 1s; dropping $y'$ gives 1, which is not an implicant |
 | $y$ | no | no | $m_6 = xyz'$ is in $y$ and $f(m_6) = 0$ |
 
-A minterm is the smallest implicant; a prime implicant is a largest one; most implicants are in between.
+A minterm is the smallest implicant; a prime implicant is a maximal one (it cannot be enlarged), not necessarily the largest; most implicants are in between.
 :::
 
 :::derivation{#count-implicants of="the number of implicants" depth="standard"}
 Each implicant is a legal group inside the 1-cells, so count groups by size. For
 $f = \Sigma(0, 1, 5, 8, 12, 13)$: six 1-cells (6 one-cell implicants), and the pairs $\{0, 1\}, \{0, 8\},
 \{1, 5\}, \{5, 13\}, \{8, 12\}, \{12, 13\}$ (6 two-cell implicants); no group of 4 fits. Total
-$6 + 6 = 12$ implicants. **Sanity check:** a function with a single 1-cell has exactly one implicant,
+$6 + 6 = 12$ implicants. In general a function with $k$ 1-cells has at least $k$ implicants (its minterms),
+with equality exactly when no two 1-cells are adjacent; every adjacent pair adds a 2-cell implicant, every
+quad a 4-cell one, and so on. **Sanity check:** a function with a single 1-cell has exactly one implicant,
 its minterm.
 :::
 
+### Worked examples: implicants
+
+::::example{#ex-imp-easy level="easy" title="Implicant, but not prime" depth="quick"}
+For $f(x, y, z) = \Sigma m(1, 3, 5, 7)$, is $xz$ an implicant? Is it prime?
+
+:::step{why="xz is the cells x = 1, z = 1: m5 and m7, both 1s."}
+$xz$ is an implicant.
+:::
+
+:::step{why="Drop x: z = {1, 3, 5, 7}, all 1s, so z is still an implicant and xz is not maximal."}
+Not prime: $f = z$.
+:::
+
+:::answer
+An implicant, not a prime implicant (it lies inside the PI $z$).
+:::
+::::
+
+::::example{#ex-imp-medium level="medium" title="Sorting terms on the ladder" depth="standard"}
+For $f(A, B, C) = AB + A'C$, classify $A'BC$, $BC$ and $B$.
+
+:::step{why="f = Σ(1, 3, 6, 7). A′BC is the single cell m3, a 1."}
+$A'BC$ is a minterm of $f$, hence an implicant (not prime: it lies inside $A'C$).
+:::
+
+:::step{why="BC = {3, 7}: both 1s. Dropping B gives C = {1, 3, 5, 7} (m5 is 0); dropping C gives B = {2, 3, 6, 7} (m2 is 0)."}
+$BC$ is a prime implicant (the consensus of $AB$ and $A'C$).
+:::
+
+:::step{why="B = {2, 3, 6, 7} contains the 0-cell m2."}
+$B$ is not an implicant.
+:::
+
+:::answer
+Minterm (implicant, not prime); prime implicant; not an implicant.
+:::
+::::
+
+::::example{#ex-imp-count level="gate" title="Counting all implicants" depth="standard"}
+How many implicants does $f(A, B, C) = \Sigma m(0, 1, 2, 3, 7)$ have?
+
+:::step{why="One-cell implicants: the five minterms."}
+5.
+:::
+
+:::step{why="Two-cell implicants: adjacent pairs of 1s: 0–1, 0–2, 1–3, 2–3, 3–7."}
+5.
+:::
+
+:::step{why="Four-cell implicants: only row A = 0 (m0–m3) is a quad of 1s; no group of 8 fits."}
+1.
+:::
+
+:::answer
+$5 + 5 + 1 = 11$ implicants, of which 2 are prime ($A'$ and $BC$).
+:::
+::::
+
+::::example{#ex-imp-dc level="gate" title="Edge case: implicants with a don't-care" depth="standard"}
+For $f(A, B, C) = \Sigma m(1) + d(3)$, is $A'C$ an implicant?
+
+:::step{why="A′C = {1, 3}: m1 is a 1 and m3 is a don't-care."}
+Its cells lie inside the 1s and Xs.
+:::
+
+:::step{why="It is an implicant of the completion with X3 = 1 (and of the specification), but not of the completion with X3 = 0."}
+With don't-cares, "implicant" is judged against $M \cup D$, the 1s together with the Xs.
+:::
+
+:::answer
+Yes, as an implicant of the incompletely specified function; using it sets $X_3 = 1$. It is the prime
+implicant that gives the minimal SOP $A'C$ (2 literals instead of 3).
+:::
+::::
+
+:::note{#recap-implicants title="Recap" depth="quick"}
+Implicant: all its cells are 1s (or Xs). Minterms are the smallest implicants, prime implicants the maximal
+ones. Count implicants group size by group size.
+:::
+
 ## Prime implicants
+
+:::intuition{#pi-intuition title="A rug that cannot be stretched" depth="standard"}
+Among the rugs that fit, the useful ones are those you cannot stretch: doubling a prime implicant in any
+direction would push it onto a 0. A rug that could still be doubled is never worth buying, because the
+doubled rug covers more and costs one literal less.
+:::
 
 :::definition{#pi-def term="Prime implicant (PI)" depth="quick"}
 A **prime implicant** is an implicant that is not contained in any larger implicant. Equivalently,
@@ -226,6 +321,11 @@ used or not.
 
 ## Essential prime implicants
 
+:::intuition{#epi-intuition title="A spot only one rug reaches" depth="standard"}
+Look at each 1-cell and ask how many maximal rugs lie over it. If the answer is one, that rug is forced:
+without it the spot stays bare. Forced rugs come first; only after them do you have any real choices.
+:::
+
 :::definition{#epi-def term="Essential prime implicant (EPI)" depth="quick"}
 A prime implicant is **essential** when it covers at least one 1-cell (a minterm, not a don't-care)
 that **no other** prime implicant covers.
@@ -275,7 +375,7 @@ After the EPIs are chosen, the remaining PIs fall into two kinds:
 - **selective**: it covers some 1 the EPIs miss, but so do other PIs. Some of the selective PIs are
   needed; which ones is a cost decision.
 
-A function with no EPI at all has no redundant PIs in this sense (every PI is selective).
+A function with no EPI at all has no redundant PIs in this sense (every PI that covers a 1 is selective).
 :::
 
 :::definition{#cover-method term="Method: a minimal SOP from the PI list" depth="standard"}
@@ -364,6 +464,12 @@ redundant PIs never are; selective PIs are a cost decision.
 
 ## Several minimal covers and cyclic functions
 
+:::intuition{#cyclic-intuition title="A ring of rugs" depth="standard"}
+Sometimes no spot is forced: every 1-cell lies under two maximal rugs, and the rugs form a ring, each
+overlapping its two neighbours. Then you must simply start somewhere. Taking every other rug around the
+ring covers everything; starting one rug later gives a different, equally cheap answer.
+:::
+
 :::definition{#multiple-covers term="The minimal SOP need not be unique" depth="standard"}
 After the EPIs are chosen, the remaining 1s may be coverable in several equally cheap ways. Each
 choice is a **different minimal SOP of the same function**. Only the canonical forms are unique
@@ -412,6 +518,10 @@ $f = B'D' + BD$, unique.
 
 ::::example{#ex-cover-one-more level="medium" title="EPIs plus one more prime implicant" depth="standard"}
 Find the minimal SOP of $f = \Sigma m(1, 3, 6, 7, 10, 12, 13, 14)$.
+
+:::step{why="List all prime implicants first (step 1 of the method): every 1 has only pairs available."}
+PIs: $A'B'D$, $A'CD$, $A'BC$, $BCD'$, $ACD'$, $ABC'$, $ABD'$.
+:::
 
 :::step{why="Distinguished cells: m1 lies only in A′B′D; m10 only in ACD′; m13 only in ABC′."}
 EPIs: $A'B'D$, $ACD'$, $ABC'$.
@@ -502,7 +612,8 @@ $2^k$ completely specified functions; minimisation picks the cheapest one.
 :::theorem{#dc-primes name="Prime implicants with don't-cares" depth="standard"}
 Let $f$ have 1-set $M$ and don't-care set $D$. Then the minimal SOPs of $f$ (over all completions) are
 exactly the minimal covers of $M$ by prime implicants of the function $M \cup D$ (all Xs set to 1),
-using only those PIs that contain at least one cell of $M$.
+using only those PIs that contain at least one cell of $M$. With literal cost, **every** minimal SOP
+consists of such PIs.
 :::
 
 :::proof{#proof-dc-primes of="the don't-care PI theorem" depth="deep"}
@@ -514,7 +625,9 @@ i.e. is an implicant of $h = M \cup D$. Conversely, a set of implicants of $h$ w
 an SOP of the completion $g$ = (their union), which satisfies $M \subseteq g \subseteq M \cup D$. So SOPs of
 completions are exactly covers of $M$ by implicants of $h$, and by the prime implicant theorem
 (applied to $h$) a cheapest such cover can use prime implicants of $h$ only; a PI with no cell of $M$
-covers nothing that is needed, so it is never in a minimal cover.
+covers nothing that is needed, so it is never in a minimal cover. Finally, a non-prime term can always be
+replaced by a prime implicant containing it with strictly fewer literals, so a cover with a non-prime term
+is never minimal: every minimal SOP uses prime implicants only.
 :::
 
 :::viz{#dc-viz spec="dont-care-toggle" mode="animate" depth="standard"}
@@ -527,13 +640,16 @@ neighbouring X let this loop double?" Include it only if the answer is yes.
 **Why it works:** an X helps only by enlarging a loop (fewer literals) or by merging two loops into one
 (fewer terms). **When it fails:** occasionally an X lets two separate loops become one big loop that
 you would not have drawn at all; if your result has many terms, look for such a merge before
-finishing.
+finishing. Example: for $f(A, B, C, D) = \Sigma m(0, 5) + d(1, 4)$ the two 1s are not even adjacent, so a
+loop-by-loop habit gives two separate minterms, yet with both Xs the cells 0, 1, 4, 5 form the single quad
+$A'C'$.
 :::
 
 :::trap{#trap-dc-cover title="Covering an X on purpose" depth="quick"}
-GATE 2014 (Σ 0, 2, 5, 7, 8, 10, 13, 15 with 2, 7, 8, 13 as don't-cares) offers options that cover the Xs
-as if they were 1s, with extra terms. Every extra term spent only on Xs is waste: the minimal answer
-$Q'S' + QS$ covers the four real 1s with two quads and happens to swallow the Xs for free.
+Never spend a term on don't-cares alone: in GATE 2018 the quad $P\overline{S}$ is made only of Xs and is
+useless. The opposite slip is to use the Xs too little: GATE 2014 (Σ 0, 2, 5, 7, 8, 10, 13, 15 with 2, 7, 8,
+13 as don't-cares) offers options that loop each real 1 with a single X into a pair (four 3-literal terms),
+while the Xs can double those pairs into two quads, $Q'S' + QS$ (4 literals).
 :::
 
 :::definition{#dc-sop-pos term="SOP and POS use the don't-cares independently" depth="standard"}
@@ -595,7 +711,7 @@ Find the minimal SOP and POS of $f = \Sigma m(0, 1, 2, 3, 6, 7, 8, 10) + d(4, 11
 Minimal SOP: $A'B' + B'D' + A'C$ (6 literals).
 :::
 
-:::step{why="POS: the 0s are 5, 9, 12, 13, 15. With X4 and X14: m5 joins m4, m12, m13 in the quad BC′ of 0-cells (B = 1, C = 0 → factor B′ + C)."}
+:::step{why="POS: the 0s are 5, 9, 12, 13, 15. With X4: m5 joins m4, m12, m13 in the quad BC′ of 0-cells (B = 1, C = 0 → factor B′ + C)."}
 Factor $(B' + C)$.
 :::
 

@@ -113,7 +113,7 @@ C 232–238, 259–260, 263–264.
   (medium); a checkerboard (GATE); edge case: a map whose labels use barred letters.
 - **Free variables and equivalence:** is Σ(1, 3, 4, 6, 9, 11, 12, 14) independent of a variable (easy);
   which SOPs are equal to a function (medium); count the minterms of a complemented SOP (GATE);
-  edge case: a function fixed by three conditions with two cells left free.
+  edge case: a function fixed by two conditions with two cells left free (the GATE 2021 pattern uses three).
 
 ### Tricks and traps
 - `:::trick` `#trick-cell-numbers`, `#trick-read-group`, `#trick-pos-labels`, `#trick-free-variable`.

@@ -2259,7 +2259,7 @@
       ],
       "shortcut": "The value does not depend on the row, so $A$ drops; the 1-columns are $BC = 00$ and $11$, i.e. $B = C$: XNOR.",
       "pitfalls": [
-        "Treating the printed end columns (00 and 11) as a wrap-around group and answering $\\overline{C}$ or $\\overline{B}$-type terms.",
+        "Treating the printed end columns (00 and 11) as a wrap-around group and answering $\\overline{C}$.",
         "Assuming every printed map is in Gray order."
       ],
       "verification": "Truth table of $\\overline{B \\oplus C}$: 1 for $BC = 00, 11$ and both values of $A$, i.e. $\\{0, 3, 4, 7\\}$. ✓",
