@@ -8,14 +8,14 @@ prerequisites: [decoders-encoders]
 pyq_topics: [dl/combinational]
 est_minutes: 55
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every ROM size, product width, constant output bit, chip count, PLA and PAL term count and link count is checked by enumeration in content/gate-notes/_checks/dl/l4_05_rom_pla.py (comblib.py, with an exhaustive search for shared PLA terms)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 125 and 127–128, set C pp. 373–391."
   - "Facts checked against: M. Morris Mano, Digital Design (read-only memory, programmable logic arrays, programmable array logic)."
   - "PYQs: src/gate/questions.json (cse-1993-ii-a-6-6, cse-1996-a-21, it-2004-it-10, cse-2012-cs-19); keys re-derived in l4_05_rom_pla.py with comblib.multiplier_rom."
-updated: "2026-10-18"
+updated: "2026-10-19"
 ---
 
 Every circuit so far was designed for one function: you minimised it, then wired gates (or a MUX, or a

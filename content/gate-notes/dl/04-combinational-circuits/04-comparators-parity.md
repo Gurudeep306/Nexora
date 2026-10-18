@@ -8,14 +8,14 @@ prerequisites: [combinational-design, xor-and-operators]
 pyq_topics: [dl/combinational]
 est_minutes: 30
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every comparator output, row count, gate count, cascade result, parity bit, XOR-tree size and MUX residue is checked by enumeration in content/gate-notes/_checks/dl/l4_04_compare.py (comblib netlists, exhaustive theorem checks for small n)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 61–63, set B pp. 132–133, set C pp. 221, 279–280 and 294–295. Slips A 61/63 and C 221 are in _errata/dl.md."
   - "Facts checked against standard textbooks: M. Morris Mano, Digital Design (magnitude comparators, parity generators and checkers); the cascade inputs follow the usual 4-bit comparator chip convention."
   - "PYQs: none. No question in src/gate/questions.json tests comparator or parity circuits directly (outline: 0); related parity PYQs are embedded in dl-02-03."
-updated: "2026-10-18"
+updated: "2026-10-19"
 ---
 
 Two circuits in this lesson answer two of the most common questions a computer asks about bits. A

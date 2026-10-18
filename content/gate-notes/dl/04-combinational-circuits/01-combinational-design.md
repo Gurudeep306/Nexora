@@ -8,14 +8,14 @@ prerequisites: [prime-implicants, codes]
 pyq_topics: [dl/combinational, dl/minimization]
 est_minutes: 45
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every truth table, minimal form, gate count, converter output and Gray-code claim is checked by enumeration in content/gate-notes/_checks/dl/l4_01_design.py (comblib netlists and the exhaustive AND/OR/NOT gate search, minlib minimal SOP/POS covers)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 38–39 and 44–47, set B pp. 117–118, set C pp. 201–202 and 277–283. The binary-to-Gray converter of set A p. 38 is BCD-only; see _errata/dl.md (A 38)."
   - "Facts checked against standard textbooks: M. Morris Mano, Digital Design (the design procedure, code conversion, BCD to excess-3, Gray code)."
   - "PYQs: src/gate/questions.json (cse-2000-b-9-a, cse-2000-b-9-b, cse-2001-b-58-b, cse-2004-cs-58, cse-2012-cs-6); every key and answer text is re-derived in l4_01_design.py. cse-2001-b-58-b is read from the scan as weight labels (8-4-2-1); cse-2000-b-9-b's 'one two-input gate' is an OR."
-updated: "2026-10-18"
+updated: "2026-10-19"
 ---
 
 Until now we have been given functions: a minterm list, a map, an expression, a circuit to analyse.

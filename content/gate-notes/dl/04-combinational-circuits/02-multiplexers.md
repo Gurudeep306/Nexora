@@ -8,14 +8,14 @@ prerequisites: [combinational-design, boolean-laws]
 pyq_topics: [dl/combinational]
 est_minutes: 60
 difficulty: core
-status: draft
+status: published
 needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every MUX output, residue, tree count, cascade and practice answer is checked by enumeration in content/gate-notes/_checks/dl/l4_02_mux.py (comblib netlists with MUX nodes and enables)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 64–72, set B pp. 119–122 and 166–167, set C pp. 296–308, set D p. 400, set E pp. 407–408. Their MUX slips are recorded in _errata/dl.md."
   - "Facts checked against standard textbooks: M. Morris Mano, Digital Design (multiplexers, function implementation, enables, expansion); C. E. Shannon (1949), for the expansion behind the implementation table."
   - "PYQs: src/gate/questions.json (19 dl/combinational questions, 1996–2024); every circuit is modelled as a comblib netlist and every key re-derived in l4_02_mux.py."
-updated: "2026-10-18"
+updated: "2026-10-19"
 ---
 
 A **multiplexer** (MUX) is a switch controlled by numbers: several data wires come in, one wire goes
