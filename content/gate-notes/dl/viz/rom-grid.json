@@ -2523,7 +2523,7 @@
    ]
   },
   {
-   "caption": "Size: 2³ = 8 words × 6 bits = 48 bits. Column Q1 is 0 in every word and Q0 always equals A0, so a careful design stores only 4 columns (32 bits).",
+   "caption": "Size: 2³ × 6 = 48 bits. Q1 is always 0 and Q0 = A0, so only 4 columns (32 bits) need storing (proved in Sizing below).",
    "patches": [
     {
      "id": "wl0",

@@ -912,7 +912,7 @@
    ]
   },
   {
-   "caption": "Over the four selects Y reads 0 1 1 0: the data inputs are the truth table, and with data 0 1 1 0 the MUX computes Y = S1′S0 + S1S0′ = S1 ⊕ S0.",
+   "caption": "Over the four selects Y reads 0 1 1 0: the data inputs are the truth table, so Y = S1 ⊕ S0.",
    "patches": [
     {
      "id": "path0",

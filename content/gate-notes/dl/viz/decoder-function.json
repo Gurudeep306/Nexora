@@ -1593,7 +1593,7 @@
    ]
   },
   {
-   "caption": "The OR collects minterms 1, 2, 4 and 7, so S = Σ(1, 2, 4, 7) = A ⊕ B ⊕ C, the full-adder sum. Any n-variable function is one n:2ⁿ decoder plus an OR of its minterms.",
+   "caption": "The OR collects minterms 1, 2, 4, 7: S = A ⊕ B ⊕ C, the full-adder sum. Any n-variable function is an n:2ⁿ decoder plus an OR.",
    "patches": [
     {
      "id": "wo0",

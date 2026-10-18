@@ -875,7 +875,7 @@
  ],
  "steps": [
   {
-   "caption": "Stage 1, the truth table: F = 1 for digits 5–9 (0101 to 1001), F = 0 for 0–4, and the codes 1010–1111 never occur in BCD, so their F is a don't-care X.",
+   "caption": "Stage 1, the truth table: F = 1 for digits 5–9, F = 0 for 0–4; the codes 1010–1111 never occur in BCD, so their F is a don't-care X.",
    "patches": [
     {
      "id": "tt0",
@@ -1013,7 +1013,7 @@
    ]
   },
   {
-   "caption": "Two quads finish the cover: BC (cells 6, 7, 14, 15) and BD (cells 5, 7, 13, 15). The minimal SOP is F = A + BC + BD, which factors to A + B(C + D).",
+   "caption": "Two quads finish the cover: BC (cells 6, 7, 14, 15) and BD (cells 5, 7, 13, 15). Minimal SOP: F = A + BC + BD = A + B(C + D).",
    "patches": [
     {
      "id": "lp10",
@@ -1042,7 +1042,7 @@
    ]
   },
   {
-   "caption": "Stage 4, the circuit: the factored form needs only three 2-input gates, an OR for C + D, an AND with B, and an OR with A. No AND/OR/NOT circuit with fewer gates exists.",
+   "caption": "Stage 4: three gates, OR(C, D), AND with B, OR with A. No AND/OR/NOT circuit with fewer gates exists.",
    "patches": [
     {
      "id": "inA",

@@ -7,7 +7,7 @@
   "width": 360,
   "height": 300
  },
- "intro": "A 4:2 priority encoder with inputs D3 (highest priority) to D0, code outputs A1 A0 and a valid flag V. Several input patterns follow.",
+ "intro": "A 4:2 priority encoder with inputs D3 (highest priority) to D0, code outputs X1 X0 and a valid flag V. Several input patterns follow.",
  "elements": [
   {
    "id": "head",
@@ -100,7 +100,7 @@
    "type": "text",
    "x": 375,
    "y": 90.0,
-   "text": "A1",
+   "text": "X1",
    "size": 13,
    "anchor": "end",
    "narrow": {
@@ -113,7 +113,7 @@
    "type": "text",
    "x": 375,
    "y": 150.0,
-   "text": "A0",
+   "text": "X0",
    "size": 13,
    "anchor": "end",
    "narrow": {
@@ -369,7 +369,7 @@
    }
   },
   {
-   "id": "wA1",
+   "id": "wX1",
    "type": "line",
    "points": [
     [
@@ -395,11 +395,11 @@
    }
   },
   {
-   "id": "vA1",
+   "id": "vX1",
    "type": "text",
    "x": 416,
    "y": 90.0,
-   "text": "A1 = ?",
+   "text": "X1 = ?",
    "size": 14,
    "anchor": "start",
    "mono": true,
@@ -409,7 +409,7 @@
    }
   },
   {
-   "id": "wA0",
+   "id": "wX0",
    "type": "line",
    "points": [
     [
@@ -435,11 +435,11 @@
    }
   },
   {
-   "id": "vA0",
+   "id": "vX0",
    "type": "text",
    "x": 416,
    "y": 150.0,
-   "text": "A0 = ?",
+   "text": "X0 = ?",
    "size": 14,
    "anchor": "start",
    "mono": true,
@@ -568,16 +568,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = ?",
+      "text": "X1 = ?",
       "tone": "ink"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = ?",
+      "text": "X0 = ?",
       "tone": "ink"
      }
     },
@@ -589,13 +589,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "ink"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "ink"
      }
@@ -640,7 +640,7 @@
    ]
   },
   {
-   "caption": "D2 = 1 is the highest active input, so it wins: the code is A1A0 = 10 (2 in binary) and V = 1; D1, D0 are ignored.",
+   "caption": "D2 = 1 is the highest active input, so it wins: X1X0 = 10 (2 in binary), V = 1; D1 ignored.",
    "patches": [
     {
      "id": "hl0",
@@ -697,16 +697,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = 1",
+      "text": "X1 = 1",
       "tone": "success"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = 0",
+      "text": "X0 = 0",
       "tone": "muted"
      }
     },
@@ -718,13 +718,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "success"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "muted"
      }
@@ -745,7 +745,7 @@
    ]
   },
   {
-   "caption": "D3 = 1 is the highest active input, so it wins: the code is A1A0 = 11 (3 in binary) and V = 1; D2, D1, D0 are ignored.",
+   "caption": "Input D3 D2 D1 D0 = 1011. D3 = 1 is the highest active input, so it wins: X1X0 = 11 (3 in binary), V = 1; D1, D0 ignored.",
    "patches": [
     {
      "id": "d0",
@@ -808,16 +808,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = 1",
+      "text": "X1 = 1",
       "tone": "success"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = 1",
+      "text": "X0 = 1",
       "tone": "success"
      }
     },
@@ -829,13 +829,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "success"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "success"
      }
@@ -943,16 +943,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = ?",
+      "text": "X1 = ?",
       "tone": "ink"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = ?",
+      "text": "X0 = ?",
       "tone": "ink"
      }
     },
@@ -964,13 +964,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "ink"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "ink"
      }
@@ -1044,7 +1044,7 @@
    ]
   },
   {
-   "caption": "D1 = 1 is the highest active input, so it wins: the code is A1A0 = 01 (1 in binary) and V = 1; D0 is ignored.",
+   "caption": "D1 = 1 is the highest active input, so it wins: X1X0 = 01 (1 in binary), V = 1; D0 ignored.",
    "patches": [
     {
      "id": "hl0",
@@ -1089,16 +1089,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = 0",
+      "text": "X1 = 0",
       "tone": "muted"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = 1",
+      "text": "X0 = 1",
       "tone": "success"
      }
     },
@@ -1110,13 +1110,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "muted"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "success"
      }
@@ -1200,16 +1200,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = ?",
+      "text": "X1 = ?",
       "tone": "ink"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = ?",
+      "text": "X0 = ?",
       "tone": "ink"
      }
     },
@@ -1221,13 +1221,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "ink"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "ink"
      }
@@ -1330,7 +1330,7 @@
    ]
   },
   {
-   "caption": "D0 = 1 is the highest active input, so it wins: the code is A1A0 = 00 (0 in binary) and V = 1.",
+   "caption": "D0 = 1 is the highest active input, so it wins: X1X0 = 00 (0 in binary), V = 1.",
    "patches": [
     {
      "id": "hl0",
@@ -1363,16 +1363,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = 0",
+      "text": "X1 = 0",
       "tone": "muted"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = 0",
+      "text": "X0 = 0",
       "tone": "muted"
      }
     },
@@ -1384,13 +1384,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "muted"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "muted"
      }
@@ -1474,16 +1474,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = ?",
+      "text": "X1 = ?",
       "tone": "ink"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = ?",
+      "text": "X0 = ?",
       "tone": "ink"
      }
     },
@@ -1495,13 +1495,13 @@
      }
     },
     {
-     "id": "wA1",
+     "id": "wX1",
      "set": {
       "tone": "ink"
      }
     },
     {
-     "id": "wA0",
+     "id": "wX0",
      "set": {
       "tone": "ink"
      }
@@ -1604,7 +1604,7 @@
    ]
   },
   {
-   "caption": "D0 = 0 too: no input is active, so V = 0. The code 00 is then meaningless; V is what tells it apart from D0 = 1.",
+   "caption": "D0 = 0 too: no input is active, so V = 0. The code 00 is then meaningless; V tells it apart from D0 = 1.",
    "patches": [
     {
      "id": "hl0",
@@ -1631,16 +1631,16 @@
      }
     },
     {
-     "id": "vA1",
+     "id": "vX1",
      "set": {
-      "text": "A1 = 0",
+      "text": "X1 = 0",
       "tone": "muted"
      }
     },
     {
-     "id": "vA0",
+     "id": "vX0",
      "set": {
-      "text": "A0 = 0",
+      "text": "X0 = 0",
       "tone": "muted"
      }
     },
@@ -1667,7 +1667,7 @@
    ]
   },
   {
-   "caption": "The rule: scan from D3 down and output the index of the first 1; V = 1 when any input is 1. Lower inputs never matter once a higher one is active.",
+   "caption": "The rule: scan from D3 down and output the index of the first 1; V = 1 when any input is 1. Lower inputs then never matter.",
    "patches": [
     {
      "id": "hl0",

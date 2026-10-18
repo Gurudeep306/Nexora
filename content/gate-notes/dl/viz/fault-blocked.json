@@ -1,0 +1,1040 @@
+{
+ "version": 1,
+ "title": "A stuck-at fault whose activation blocks its own propagation",
+ "width": 660,
+ "height": 346,
+ "narrow": {
+  "width": 360,
+  "height": 346
+ },
+ "intro": "X1 X2 X3 feed a 3-input NAND; its output and X4 feed an OR. T = AND(X3, X4). The OR output and T feed a NOR, the circuit output.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 22,
+   "text": "T stuck-at-0 (IT 2007): activation blocks propagation",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "T s-a-0 (IT 2007)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "nand",
+   "type": "gate",
+   "x": 190,
+   "y": 50,
+   "w": 54,
+   "h": 90,
+   "kind": "nand",
+   "inputs": 3,
+   "narrow": {
+    "x": 96,
+    "w": 46
+   }
+  },
+  {
+   "id": "and",
+   "type": "gate",
+   "x": 190,
+   "y": 205,
+   "w": 54,
+   "h": 50,
+   "kind": "and",
+   "narrow": {
+    "x": 96,
+    "w": 46
+   }
+  },
+  {
+   "id": "or",
+   "type": "gate",
+   "x": 320,
+   "y": 71.67,
+   "w": 54,
+   "h": 70,
+   "kind": "or",
+   "narrow": {
+    "x": 190,
+    "w": 44
+   }
+  },
+  {
+   "id": "nor",
+   "type": "gate",
+   "x": 450,
+   "y": 125,
+   "w": 60,
+   "h": 80,
+   "kind": "nor",
+   "narrow": {
+    "x": 270,
+    "w": 48
+   }
+  },
+  {
+   "id": "iX1",
+   "type": "text",
+   "x": 66,
+   "y": 72.5,
+   "text": "X1=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "iX2",
+   "type": "text",
+   "x": 66,
+   "y": 95.0,
+   "text": "X2=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "iX3",
+   "type": "text",
+   "x": 66,
+   "y": 117.5,
+   "text": "X3=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "iX4",
+   "type": "text",
+   "x": 66,
+   "y": 270,
+   "text": "X4=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     70,
+     72.5
+    ],
+    [
+     190.0,
+     72.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      72.5
+     ],
+     [
+      96.0,
+      72.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     70,
+     95.0
+    ],
+    [
+     190.0,
+     95.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      95.0
+     ],
+     [
+      96.0,
+      95.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w3",
+   "type": "line",
+   "points": [
+    [
+     70,
+     117.5
+    ],
+    [
+     190.0,
+     117.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      117.5
+     ],
+     [
+      96.0,
+      117.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "j3",
+   "type": "circle",
+   "cx": 120,
+   "cy": 117.5,
+   "r": 3.5,
+   "fill": "ink",
+   "narrow": {
+    "cx": 64
+   }
+  },
+  {
+   "id": "w3b",
+   "type": "line",
+   "points": [
+    [
+     120,
+     117.5
+    ],
+    [
+     120,
+     221.67
+    ],
+    [
+     190.0,
+     221.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      64,
+      117.5
+     ],
+     [
+      64,
+      221.67
+     ],
+     [
+      96.0,
+      221.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w4",
+   "type": "line",
+   "points": [
+    [
+     70,
+     270
+    ],
+    [
+     95,
+     270
+    ],
+    [
+     95,
+     238.33
+    ],
+    [
+     190.0,
+     238.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      270
+     ],
+     [
+      50,
+      270
+     ],
+     [
+      50,
+      238.33
+     ],
+     [
+      96.0,
+      238.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "j4",
+   "type": "circle",
+   "cx": 95,
+   "cy": 238.33,
+   "r": 3.5,
+   "fill": "ink",
+   "narrow": {
+    "cx": 50
+   }
+  },
+  {
+   "id": "w4b",
+   "type": "line",
+   "points": [
+    [
+     95,
+     238.33
+    ],
+    [
+     95,
+     172
+    ],
+    [
+     300,
+     172
+    ],
+    [
+     300,
+     118.34
+    ],
+    [
+     326.0,
+     118.34
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      238.33
+     ],
+     [
+      50,
+      172
+     ],
+     [
+      178,
+      172
+     ],
+     [
+      178,
+      118.34
+     ],
+     [
+      194.89,
+      118.34
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wn1",
+   "type": "line",
+   "points": [
+    [
+     244.0,
+     95.0
+    ],
+    [
+     326.0,
+     95.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      95.0
+     ],
+     [
+      194.89,
+      95.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo",
+   "type": "line",
+   "points": [
+    [
+     374.0,
+     106.67
+    ],
+    [
+     410,
+     106.67
+    ],
+    [
+     410,
+     151.67
+    ],
+    [
+     455.11,
+     151.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      234.0,
+      106.67
+     ],
+     [
+      246,
+      106.67
+     ],
+     [
+      246,
+      151.67
+     ],
+     [
+      273.78,
+      151.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wT",
+   "type": "line",
+   "points": [
+    [
+     244.0,
+     230.0
+    ],
+    [
+     425,
+     230.0
+    ],
+    [
+     425,
+     178.33
+    ],
+    [
+     455.11,
+     178.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      230.0
+     ],
+     [
+      256,
+      230.0
+     ],
+     [
+      256,
+      178.33
+     ],
+     [
+      273.78,
+      178.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wout",
+   "type": "line",
+   "points": [
+    [
+     510.0,
+     165.0
+    ],
+    [
+     534.0,
+     165.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      318.0,
+      165.0
+     ],
+     [
+      332.0,
+      165.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vn1",
+   "type": "text",
+   "x": 266.0,
+   "y": 82.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 158.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vo",
+   "type": "text",
+   "x": 378.0,
+   "y": 93.67,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 238.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vT",
+   "type": "text",
+   "x": 250.0,
+   "y": 244.0,
+   "text": "T",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 148.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vout",
+   "type": "text",
+   "x": 540.0,
+   "y": 165.0,
+   "text": "out",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 304.0,
+    "y": 222,
+    "size": 13,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "lg",
+   "type": "text",
+   "x": 330.0,
+   "y": 304,
+   "text": "line values: good/faulty",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 330.0,
+   "y": 330,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "T = X3·X4 feeds the NOR. The fault: T stuck-at-0 (tied to ground). To activate it, the good T must be 1, so X3 = X4 = 1.",
+   "patches": [
+    {
+     "id": "wT",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vT",
+     "set": {
+      "text": "T s-a-0",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "But X4 = 1 also enters the OR, and 1 is the OR's controlling value: o = 1 whatever the NAND gives, so the NOR output is 0.",
+   "patches": [
+    {
+     "id": "w4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w4b",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "o = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "X = 0 1 1 1: T = 1/0 is activated, but X4 = 1 makes o = 1, so out = 0/0 in both circuits.",
+   "patches": [
+    {
+     "id": "iX1",
+     "set": {
+      "text": "X1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iX2",
+     "set": {
+      "text": "X2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iX3",
+     "set": {
+      "text": "X3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iX4",
+     "set": {
+      "text": "X4=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w3b",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w4b",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wn1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vn1",
+     "set": {
+      "text": "1/1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "o = 1/1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wT",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vT",
+     "set": {
+      "text": "T = 1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wout",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vout",
+     "set": {
+      "text": "out = 0/0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0111: outputs agree",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "X = 1 1 1 1: T = 1/0 is activated, but X4 = 1 makes o = 1, so out = 0/0 in both circuits.",
+   "patches": [
+    {
+     "id": "iX1",
+     "set": {
+      "text": "X1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iX2",
+     "set": {
+      "text": "X2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iX3",
+     "set": {
+      "text": "X3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iX4",
+     "set": {
+      "text": "X4=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w3b",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w4b",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wn1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vn1",
+     "set": {
+      "text": "0/0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "o = 1/1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wT",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vT",
+     "set": {
+      "text": "T = 1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wout",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vout",
+     "set": {
+      "text": "out = 0/0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "1111: outputs agree",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "X = 0 0 0 0: X3 = X4 = 0, so the good T is 0, the stuck value: not activated; out = 0/0. No test.",
+   "patches": [
+    {
+     "id": "iX1",
+     "set": {
+      "text": "X1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iX2",
+     "set": {
+      "text": "X2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iX3",
+     "set": {
+      "text": "X3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iX4",
+     "set": {
+      "text": "X4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w3b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w4b",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wn1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vn1",
+     "set": {
+      "text": "1/1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "o = 1/1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wT",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vT",
+     "set": {
+      "text": "T = 0/0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wout",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vout",
+     "set": {
+      "text": "out = 0/0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0000: outputs agree",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "No input detects T s-a-0: activation (X4 = 1) blocks propagation. The answer is D, none of the above; T is redundant.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "undetectable: T can be tied to 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

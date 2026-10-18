@@ -7,7 +7,7 @@
   "width": 360,
   "height": 500
  },
- "intro": "Four K-maps over the BCD digit ABCD, one per excess-3 output bit w x y z (the digit plus 3). Cells 0–9 hold the outputs; cells 10–15 are don't-cares X.",
+ "intro": "Four K-maps over the BCD digit B3 B2 B1 B0, one per excess-3 output bit E3 E2 E1 E0 (the digit plus 3). Cells 0–9 hold the outputs; cells 10–15 are don't-cares X.",
  "elements": [
   {
    "id": "head",
@@ -36,7 +36,7 @@
    "type": "text",
    "x": 180,
    "y": 48,
-   "text": "output w (MSB)",
+   "text": "output E3 (MSB)",
    "size": 14,
    "anchor": "middle",
    "weight": "bold",
@@ -214,7 +214,7 @@
    "type": "text",
    "x": 180.0,
    "y": 72,
-   "text": "CD",
+   "text": "B1B0",
    "anchor": "middle",
    "size": 13,
    "weight": "bold",
@@ -228,7 +228,7 @@
    "type": "text",
    "x": 104,
    "y": 92,
-   "text": "AB",
+   "text": "B3B2",
    "anchor": "end",
    "size": 13,
    "weight": "bold",
@@ -296,7 +296,7 @@
    "type": "text",
    "x": 180,
    "y": 250,
-   "text": "w = A + BC + BD",
+   "text": "E3 = B3 + B2B1 + B2B0",
    "size": 14,
    "anchor": "middle",
    "hidden": true,
@@ -311,7 +311,7 @@
    "type": "text",
    "x": 520,
    "y": 48,
-   "text": "output x",
+   "text": "output E2",
    "size": 14,
    "anchor": "middle",
    "weight": "bold",
@@ -489,7 +489,7 @@
    "type": "text",
    "x": 520.0,
    "y": 72,
-   "text": "CD",
+   "text": "B1B0",
    "anchor": "middle",
    "size": 13,
    "weight": "bold",
@@ -503,7 +503,7 @@
    "type": "text",
    "x": 444,
    "y": 92,
-   "text": "AB",
+   "text": "B3B2",
    "anchor": "end",
    "size": 13,
    "weight": "bold",
@@ -607,22 +607,40 @@
    "type": "text",
    "x": 520,
    "y": 250,
-   "text": "x = B′C + B′D + BC′D′",
+   "text": "E2 = B2′B1 + B2′B0 + B2B1′B0′",
    "size": 14,
    "anchor": "middle",
    "hidden": true,
-   "narrow": {
-    "x": 272,
-    "y": 242,
-    "size": 12
-   }
+   "only": "wide"
+  },
+  {
+   "id": "ex-n",
+   "type": "text",
+   "x": 272,
+   "y": 242,
+   "text": "E2 = B2′B1 + B2′B0",
+   "size": 12,
+   "anchor": "middle",
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "exb",
+   "type": "text",
+   "x": 272,
+   "y": 258,
+   "text": "+ B2B1′B0′",
+   "size": 12,
+   "anchor": "middle",
+   "hidden": true,
+   "only": "narrow"
   },
   {
    "id": "nmy",
    "type": "text",
    "x": 180,
    "y": 280,
-   "text": "output y",
+   "text": "output E1",
    "size": 14,
    "anchor": "middle",
    "weight": "bold",
@@ -800,7 +818,7 @@
    "type": "text",
    "x": 180.0,
    "y": 304,
-   "text": "CD",
+   "text": "B1B0",
    "anchor": "middle",
    "size": 13,
    "weight": "bold",
@@ -814,7 +832,7 @@
    "type": "text",
    "x": 104,
    "y": 324,
-   "text": "AB",
+   "text": "B3B2",
    "anchor": "end",
    "size": 13,
    "weight": "bold",
@@ -862,7 +880,7 @@
    "type": "text",
    "x": 180,
    "y": 482,
-   "text": "y = C′D′ + CD",
+   "text": "E1 = B1′B0′ + B1B0",
    "size": 14,
    "anchor": "middle",
    "hidden": true,
@@ -877,7 +895,7 @@
    "type": "text",
    "x": 520,
    "y": 280,
-   "text": "output z (LSB)",
+   "text": "output E0 (LSB)",
    "size": 14,
    "anchor": "middle",
    "weight": "bold",
@@ -1055,7 +1073,7 @@
    "type": "text",
    "x": 520.0,
    "y": 304,
-   "text": "CD",
+   "text": "B1B0",
    "anchor": "middle",
    "size": 13,
    "weight": "bold",
@@ -1069,7 +1087,7 @@
    "type": "text",
    "x": 444,
    "y": 324,
-   "text": "AB",
+   "text": "B3B2",
    "anchor": "end",
    "size": 13,
    "weight": "bold",
@@ -1117,7 +1135,7 @@
    "type": "text",
    "x": 520,
    "y": 482,
-   "text": "z = D′",
+   "text": "E0 = B0′",
    "size": 14,
    "anchor": "middle",
    "hidden": true,
@@ -1259,7 +1277,7 @@
    ]
   },
   {
-   "caption": "The MSB w is 1 for digits 5–9. The octet A uses the Xs; quads BC and BD take the remaining 1s. w = A + BC + BD (3 terms).",
+   "caption": "The MSB E3 is 1 for digits 5–9. The octet B3 uses the Xs; quads B2B1 and B2B0 take the other 1s. E3 = B3 + B2B1 + B2B0 (3 terms).",
    "patches": [
     {
      "id": "kwg",
@@ -1313,7 +1331,7 @@
    ]
   },
   {
-   "caption": "x is 1 for digits 1–4 and 9. The quads B′C and B′D use Xs; the pair BC′D′ (cells 4, 12) takes digit 4. x = B′C + B′D + BC′D′ (3 terms).",
+   "caption": "E2 is 1 for digits 1–4 and 9: quads B2′B1 and B2′B0 use Xs, pair B2B1′B0′ (cells 4, 12) takes 4. E2 = B2′B1 + B2′B0 + B2B1′B0′ (3 terms).",
    "patches": [
     {
      "id": "kwg",
@@ -1381,11 +1399,25 @@
      "set": {
       "tone": "ink"
      }
+    },
+    {
+     "id": "ex-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "exb",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
     }
    ]
   },
   {
-   "caption": "y is 1 when C and D are equal: the quad CD and the quad C′D′, which wraps around the left and right edges. y = C′D′ + CD (2 terms).",
+   "caption": "E1 = 1 when B1 = B0: the left column quad B1′B0′ and the third column quad B1B0. E1 = B1′B0′ + B1B0 (2 terms).",
    "patches": [
     {
      "id": "kwg",
@@ -1441,11 +1473,23 @@
      "set": {
       "tone": "ink"
      }
+    },
+    {
+     "id": "ex-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "exb",
+     "set": {
+      "tone": "ink"
+     }
     }
    ]
   },
   {
-   "caption": "The LSB z is 1 for the even digits: the octet D′ (two outer columns) covers every one of them. z = D′ (1 term).",
+   "caption": "The LSB E0 is 1 for the even digits: the octet B0′ (two outer columns) covers them all. E0 = B0′ (1 term).",
    "patches": [
     {
      "id": "kwg",
@@ -1507,11 +1551,23 @@
      "set": {
       "tone": "ink"
      }
+    },
+    {
+     "id": "ex-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "exb",
+     "set": {
+      "tone": "ink"
+     }
     }
    ]
   },
   {
-   "caption": "All four outputs: w = A + BC + BD, x = B′C + B′D + BC′D′, y = CD + C′D′ (an XNOR), z = D′. Without the don't-cares every map would need more or larger terms (17 literals in all here).",
+   "caption": "All four maps are done: 17 literals in all. Without the don't-cares every map would need more or larger terms.",
    "patches": [
     {
      "id": "ew",
@@ -1533,6 +1589,18 @@
     },
     {
      "id": "ez",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ex-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "exb",
      "set": {
       "tone": "ink"
      }

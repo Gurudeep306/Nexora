@@ -1,0 +1,3796 @@
+{
+ "version": 1,
+ "title": "A 4K × 16 memory from a 4 × 4 array of 1K × 4 chips",
+ "width": 680,
+ "height": 432,
+ "narrow": {
+  "width": 360,
+  "height": 432
+ },
+ "intro": "Sixteen 1K × 4 chips in 4 rows and 4 columns. A 2:4 decoder on A11 A10 enables one row; the four columns supply output bits D15–12, D11–8, D7–4, D3–0.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "4K × 16 from sixteen 1K × 4 chips",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "4K × 16 from 1K × 4 chips",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "dec",
+   "type": "box",
+   "x": 60,
+   "y": 58.0,
+   "w": 84,
+   "h": 280,
+   "narrow": {
+    "x": 36,
+    "y": 59.0,
+    "w": 60,
+    "h": 256
+   }
+  },
+  {
+   "id": "dec-l0",
+   "type": "text",
+   "x": 65,
+   "y": 128.0,
+   "text": "A11",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 41,
+    "y": 123.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l1",
+   "type": "text",
+   "x": 65,
+   "y": 268.0,
+   "text": "A10",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 41,
+    "y": 251.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r0",
+   "type": "text",
+   "x": 139,
+   "y": 93.0,
+   "text": "Y0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 91,
+    "y": 91.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r1",
+   "type": "text",
+   "x": 139,
+   "y": 163.0,
+   "text": "Y1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 91,
+    "y": 155.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r2",
+   "type": "text",
+   "x": 139,
+   "y": 233.0,
+   "text": "Y2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 91,
+    "y": 219.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r3",
+   "type": "text",
+   "x": 139,
+   "y": 303.0,
+   "text": "Y3",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 91,
+    "y": 283.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-n",
+   "type": "text",
+   "x": 102.0,
+   "y": 228.0,
+   "text": "2:4",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 62.0,
+    "y": 217.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 54,
+   "y": 128.0,
+   "text": "",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 54,
+   "y": 268.0,
+   "text": "",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "rw00",
+   "type": "line",
+   "points": [
+    [
+     144,
+     93.0
+    ],
+    [
+     200,
+     93.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      96,
+      91.0
+     ],
+     [
+      116,
+      91.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k00",
+   "type": "box",
+   "x": 200,
+   "y": 70,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k00-n",
+   "type": "box",
+   "x": 116,
+   "y": 70,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "k01",
+   "type": "box",
+   "x": 312,
+   "y": 70,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k01-n",
+   "type": "box",
+   "x": 176,
+   "y": 70,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw01",
+   "type": "line",
+   "points": [
+    [
+     296,
+     93.0
+    ],
+    [
+     312,
+     93.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      168,
+      91.0
+     ],
+     [
+      176,
+      91.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k02",
+   "type": "box",
+   "x": 424,
+   "y": 70,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k02-n",
+   "type": "box",
+   "x": 236,
+   "y": 70,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw02",
+   "type": "line",
+   "points": [
+    [
+     408,
+     93.0
+    ],
+    [
+     424,
+     93.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      228,
+      91.0
+     ],
+     [
+      236,
+      91.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k03",
+   "type": "box",
+   "x": 536,
+   "y": 70,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k03-n",
+   "type": "box",
+   "x": 296,
+   "y": 70,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw03",
+   "type": "line",
+   "points": [
+    [
+     520,
+     93.0
+    ],
+    [
+     536,
+     93.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      288,
+      91.0
+     ],
+     [
+      296,
+      91.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rw10",
+   "type": "line",
+   "points": [
+    [
+     144,
+     163.0
+    ],
+    [
+     200,
+     163.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      96,
+      155.0
+     ],
+     [
+      116,
+      155.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k10",
+   "type": "box",
+   "x": 200,
+   "y": 140,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k10-n",
+   "type": "box",
+   "x": 116,
+   "y": 134,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "k11",
+   "type": "box",
+   "x": 312,
+   "y": 140,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k11-n",
+   "type": "box",
+   "x": 176,
+   "y": 134,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw11",
+   "type": "line",
+   "points": [
+    [
+     296,
+     163.0
+    ],
+    [
+     312,
+     163.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      168,
+      155.0
+     ],
+     [
+      176,
+      155.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k12",
+   "type": "box",
+   "x": 424,
+   "y": 140,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k12-n",
+   "type": "box",
+   "x": 236,
+   "y": 134,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw12",
+   "type": "line",
+   "points": [
+    [
+     408,
+     163.0
+    ],
+    [
+     424,
+     163.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      228,
+      155.0
+     ],
+     [
+      236,
+      155.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k13",
+   "type": "box",
+   "x": 536,
+   "y": 140,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k13-n",
+   "type": "box",
+   "x": 296,
+   "y": 134,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw13",
+   "type": "line",
+   "points": [
+    [
+     520,
+     163.0
+    ],
+    [
+     536,
+     163.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      288,
+      155.0
+     ],
+     [
+      296,
+      155.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rw20",
+   "type": "line",
+   "points": [
+    [
+     144,
+     233.0
+    ],
+    [
+     200,
+     233.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      96,
+      219.0
+     ],
+     [
+      116,
+      219.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k20",
+   "type": "box",
+   "x": 200,
+   "y": 210,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k20-n",
+   "type": "box",
+   "x": 116,
+   "y": 198,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "k21",
+   "type": "box",
+   "x": 312,
+   "y": 210,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k21-n",
+   "type": "box",
+   "x": 176,
+   "y": 198,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw21",
+   "type": "line",
+   "points": [
+    [
+     296,
+     233.0
+    ],
+    [
+     312,
+     233.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      168,
+      219.0
+     ],
+     [
+      176,
+      219.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k22",
+   "type": "box",
+   "x": 424,
+   "y": 210,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k22-n",
+   "type": "box",
+   "x": 236,
+   "y": 198,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw22",
+   "type": "line",
+   "points": [
+    [
+     408,
+     233.0
+    ],
+    [
+     424,
+     233.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      228,
+      219.0
+     ],
+     [
+      236,
+      219.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k23",
+   "type": "box",
+   "x": 536,
+   "y": 210,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k23-n",
+   "type": "box",
+   "x": 296,
+   "y": 198,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw23",
+   "type": "line",
+   "points": [
+    [
+     520,
+     233.0
+    ],
+    [
+     536,
+     233.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      288,
+      219.0
+     ],
+     [
+      296,
+      219.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rw30",
+   "type": "line",
+   "points": [
+    [
+     144,
+     303.0
+    ],
+    [
+     200,
+     303.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      96,
+      283.0
+     ],
+     [
+      116,
+      283.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k30",
+   "type": "box",
+   "x": 200,
+   "y": 280,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k30-n",
+   "type": "box",
+   "x": 116,
+   "y": 262,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "k31",
+   "type": "box",
+   "x": 312,
+   "y": 280,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k31-n",
+   "type": "box",
+   "x": 176,
+   "y": 262,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw31",
+   "type": "line",
+   "points": [
+    [
+     296,
+     303.0
+    ],
+    [
+     312,
+     303.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      168,
+      283.0
+     ],
+     [
+      176,
+      283.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k32",
+   "type": "box",
+   "x": 424,
+   "y": 280,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k32-n",
+   "type": "box",
+   "x": 236,
+   "y": 262,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw32",
+   "type": "line",
+   "points": [
+    [
+     408,
+     303.0
+    ],
+    [
+     424,
+     303.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      228,
+      283.0
+     ],
+     [
+      236,
+      283.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k33",
+   "type": "box",
+   "x": 536,
+   "y": 280,
+   "w": 96,
+   "h": 46,
+   "label": "1K × 4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "k33-n",
+   "type": "box",
+   "x": 296,
+   "y": 262,
+   "w": 52,
+   "h": 42,
+   "label": "1K×4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "rw33",
+   "type": "line",
+   "points": [
+    [
+     520,
+     303.0
+    ],
+    [
+     536,
+     303.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      288,
+      283.0
+     ],
+     [
+      296,
+      283.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl00",
+   "type": "line",
+   "points": [
+    [
+     248.0,
+     116
+    ],
+    [
+     248.0,
+     140
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      112
+     ],
+     [
+      142.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl10",
+   "type": "line",
+   "points": [
+    [
+     248.0,
+     186
+    ],
+    [
+     248.0,
+     210
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      176
+     ],
+     [
+      142.0,
+      198
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl20",
+   "type": "line",
+   "points": [
+    [
+     248.0,
+     256
+    ],
+    [
+     248.0,
+     280
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      240
+     ],
+     [
+      142.0,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "co0",
+   "type": "line",
+   "points": [
+    [
+     248.0,
+     326
+    ],
+    [
+     248.0,
+     342
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      304
+     ],
+     [
+      142.0,
+      320
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cn0",
+   "type": "text",
+   "x": 248.0,
+   "y": 354,
+   "text": "D15–12",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 142.0,
+    "y": 332,
+    "size": 12
+   }
+  },
+  {
+   "id": "cl01",
+   "type": "line",
+   "points": [
+    [
+     360.0,
+     116
+    ],
+    [
+     360.0,
+     140
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      202.0,
+      112
+     ],
+     [
+      202.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl11",
+   "type": "line",
+   "points": [
+    [
+     360.0,
+     186
+    ],
+    [
+     360.0,
+     210
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      202.0,
+      176
+     ],
+     [
+      202.0,
+      198
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl21",
+   "type": "line",
+   "points": [
+    [
+     360.0,
+     256
+    ],
+    [
+     360.0,
+     280
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      202.0,
+      240
+     ],
+     [
+      202.0,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "co1",
+   "type": "line",
+   "points": [
+    [
+     360.0,
+     326
+    ],
+    [
+     360.0,
+     342
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      202.0,
+      304
+     ],
+     [
+      202.0,
+      320
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cn1",
+   "type": "text",
+   "x": 360.0,
+   "y": 354,
+   "text": "D11–8",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 202.0,
+    "y": 332,
+    "size": 12
+   }
+  },
+  {
+   "id": "cl02",
+   "type": "line",
+   "points": [
+    [
+     472.0,
+     116
+    ],
+    [
+     472.0,
+     140
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      262.0,
+      112
+     ],
+     [
+      262.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl12",
+   "type": "line",
+   "points": [
+    [
+     472.0,
+     186
+    ],
+    [
+     472.0,
+     210
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      262.0,
+      176
+     ],
+     [
+      262.0,
+      198
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl22",
+   "type": "line",
+   "points": [
+    [
+     472.0,
+     256
+    ],
+    [
+     472.0,
+     280
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      262.0,
+      240
+     ],
+     [
+      262.0,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "co2",
+   "type": "line",
+   "points": [
+    [
+     472.0,
+     326
+    ],
+    [
+     472.0,
+     342
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      262.0,
+      304
+     ],
+     [
+      262.0,
+      320
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cn2",
+   "type": "text",
+   "x": 472.0,
+   "y": 354,
+   "text": "D7–4",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 262.0,
+    "y": 332,
+    "size": 12
+   }
+  },
+  {
+   "id": "cl03",
+   "type": "line",
+   "points": [
+    [
+     584.0,
+     116
+    ],
+    [
+     584.0,
+     140
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      322.0,
+      112
+     ],
+     [
+      322.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl13",
+   "type": "line",
+   "points": [
+    [
+     584.0,
+     186
+    ],
+    [
+     584.0,
+     210
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      322.0,
+      176
+     ],
+     [
+      322.0,
+      198
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl23",
+   "type": "line",
+   "points": [
+    [
+     584.0,
+     256
+    ],
+    [
+     584.0,
+     280
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      322.0,
+      240
+     ],
+     [
+      322.0,
+      262
+     ]
+    ]
+   }
+  },
+  {
+   "id": "co3",
+   "type": "line",
+   "points": [
+    [
+     584.0,
+     326
+    ],
+    [
+     584.0,
+     342
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      322.0,
+      304
+     ],
+     [
+      322.0,
+      320
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cn3",
+   "type": "text",
+   "x": 584.0,
+   "y": 354,
+   "text": "D3–0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 322.0,
+    "y": 332,
+    "size": 12
+   }
+  },
+  {
+   "id": "bus",
+   "type": "text",
+   "x": 416.0,
+   "y": 48,
+   "text": "A9…A0 go to all 16 chips",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "info",
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 392,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "st2",
+   "type": "text",
+   "x": 340.0,
+   "y": 416,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "4K words need 4K / 1K = 4 rows of chips; 16-bit words need 16 / 4 = 4 columns. 4 × 4 = 16 chips of 1K × 4.",
+   "patches": [
+    {
+     "id": "k00",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k01",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k02",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k03",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k10",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k11",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k12",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k13",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k20",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k21",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k22",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k23",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k30",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k31",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k32",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k33",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "4 rows × 4 columns = 16 chips"
+     }
+    },
+    {
+     "id": "k00-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k01-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k02-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k03-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k10-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k11-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k12-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k13-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k20-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k21-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k22-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k23-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k30-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k31-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k32-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k33-n",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Each row holds 1K words. A11 A10 drive a 2:4 decoder whose output Yr enables the four chips of row r; A9…A0 reach every chip.",
+   "patches": [
+    {
+     "id": "k00",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k01",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k02",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k03",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k10",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k11",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k12",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k13",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k20",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k21",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k22",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k23",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k30",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k31",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k32",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k33",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dec",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "rows: words, columns: bits"
+     }
+    },
+    {
+     "id": "k00-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k01-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k02-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k03-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k10-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k11-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k12-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k13-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k20-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k21-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k22-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k23-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k30-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k31-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k32-n",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k33-n",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x000: A11 A10 = 00 enables row 0 (0x000–0x3FF); its four chips give 4 bits each of the 16-bit word.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k00",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k01",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k02",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k03",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k10",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rw00",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw01",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw02",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw03",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw10",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw11",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw12",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw13",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw20",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw21",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw22",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw23",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw30",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw31",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw32",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw33",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "co0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0x000: A11 A10 = 00, A9…A0 = 0x000"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "row 0 drives D15…D0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k00-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k01-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k02-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k03-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k10-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x5A3: A11 A10 = 01 enables row 1 (0x400–0x7FF); its four chips give 4 bits each of the 16-bit word.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k00",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k11",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k12",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k13",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k20",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rw00",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw01",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw02",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw03",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw10",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw11",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw12",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw13",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw20",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw21",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw22",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw23",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw30",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw31",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw32",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw33",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "co0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0x5A3: A11 A10 = 01, A9…A0 = 0x1A3"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "row 1 drives D15…D0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k00-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k11-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k12-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k13-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k20-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0xBFF: A11 A10 = 10 enables row 2 (0x800–0xBFF); its four chips give 4 bits each of the 16-bit word.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k00",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k21",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k22",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k23",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k30",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rw00",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw01",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw02",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw03",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw10",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw11",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw12",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw13",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw20",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw21",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw22",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw23",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw30",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw31",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw32",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw33",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "co0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0xBFF: A11 A10 = 10, A9…A0 = 0x3FF"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "row 2 drives D15…D0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k00-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k21-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k22-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k23-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k30-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0xC00: A11 A10 = 11 enables row 3 (0xC00–0xFFF); its four chips give 4 bits each of the 16-bit word.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k00",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k31",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k32",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k33",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "rw00",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw01",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw02",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw03",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw10",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw11",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw12",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw13",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw20",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw21",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw22",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw23",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw30",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw31",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw32",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rw33",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "co3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0xC00: A11 A10 = 11, A9…A0 = 0x000"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "row 3 drives D15…D0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "k00-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23-n",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k31-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k32-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "k33-n",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Capacity: 4K × 16 = 64K bits = 16 chips × 4K bits. Rows multiply the words (decoder on the top bits), columns the width.",
+   "patches": [
+    {
+     "id": "k00",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "rw00",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw01",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw02",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw03",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw10",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw11",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw12",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw13",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw20",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw21",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw22",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw23",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw30",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw31",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw32",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rw33",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "co0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "co1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "co2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "co3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "4K × 16 = 65 536 bits"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "16 × (1K × 4)",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "k00-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k01-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k02-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k03-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k10-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k11-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k12-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k13-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k20-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k21-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k22-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k23-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k30-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k31-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k32-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "k33-n",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    }
+   ]
+  }
+ ]
+}

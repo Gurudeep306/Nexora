@@ -1,0 +1,1538 @@
+{
+ "version": 1,
+ "title": "Two 4-bit magnitude comparators cascaded into an 8-bit comparator",
+ "width": 700,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 340
+ },
+ "intro": "An 8-bit comparator from two 4-bit chips. Each chip has outputs G, E, L and cascade inputs; the low chip's outputs drive the high chip's cascade inputs.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Two 4-bit comparators cascaded into an 8-bit comparator",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "8-bit comparator from two chips",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "clo",
+   "type": "box",
+   "x": 110,
+   "y": 116,
+   "w": 180,
+   "h": 132,
+   "narrow": {
+    "x": 40,
+    "w": 110
+   }
+  },
+  {
+   "id": "clo-l0",
+   "type": "text",
+   "x": 115,
+   "y": 138.0,
+   "text": "G in",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 45,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-l1",
+   "type": "text",
+   "x": 115,
+   "y": 182.0,
+   "text": "E in",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 45,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-l2",
+   "type": "text",
+   "x": 115,
+   "y": 226.0,
+   "text": "L in",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 45,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-r0",
+   "type": "text",
+   "x": 285,
+   "y": 138.0,
+   "text": "G",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 145,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-r1",
+   "type": "text",
+   "x": 285,
+   "y": 182.0,
+   "text": "E",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 145,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-r2",
+   "type": "text",
+   "x": 285,
+   "y": 226.0,
+   "text": "L",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 145,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-t0",
+   "type": "text",
+   "x": 155.0,
+   "y": 126,
+   "text": "A",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 67.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-t1",
+   "type": "text",
+   "x": 245.0,
+   "y": 126,
+   "text": "B",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 122.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "clo-n",
+   "type": "text",
+   "x": 200.0,
+   "y": 204.0,
+   "text": "low chip",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "clo-n-n",
+   "type": "text",
+   "x": 99.0,
+   "y": 204.0,
+   "text": "low",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "wloA",
+   "type": "line",
+   "points": [
+    [
+     155.0,
+     94
+    ],
+    [
+     155.0,
+     116
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      67.5,
+      74
+     ],
+     [
+      67.5,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vloA",
+   "type": "text",
+   "x": 155.0,
+   "y": 86,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 67.5,
+    "y": 66,
+    "size": 12
+   }
+  },
+  {
+   "id": "wloB",
+   "type": "line",
+   "points": [
+    [
+     245.0,
+     94
+    ],
+    [
+     245.0,
+     116
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      122.5,
+      94
+     ],
+     [
+      122.5,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vloB",
+   "type": "text",
+   "x": 245.0,
+   "y": 86,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 122.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "nlo",
+   "type": "text",
+   "x": 200.0,
+   "y": 266,
+   "text": "bits 3–0",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 95.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi",
+   "type": "box",
+   "x": 420,
+   "y": 116,
+   "w": 180,
+   "h": 132,
+   "narrow": {
+    "x": 200,
+    "w": 110
+   }
+  },
+  {
+   "id": "chi-l0",
+   "type": "text",
+   "x": 425,
+   "y": 138.0,
+   "text": "G in",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 205,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-l1",
+   "type": "text",
+   "x": 425,
+   "y": 182.0,
+   "text": "E in",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 205,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-l2",
+   "type": "text",
+   "x": 425,
+   "y": 226.0,
+   "text": "L in",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 205,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-r0",
+   "type": "text",
+   "x": 595,
+   "y": 138.0,
+   "text": "G",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 305,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-r1",
+   "type": "text",
+   "x": 595,
+   "y": 182.0,
+   "text": "E",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 305,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-r2",
+   "type": "text",
+   "x": 595,
+   "y": 226.0,
+   "text": "L",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 305,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-t0",
+   "type": "text",
+   "x": 465.0,
+   "y": 126,
+   "text": "A",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 227.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-t1",
+   "type": "text",
+   "x": 555.0,
+   "y": 126,
+   "text": "B",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 282.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "chi-n",
+   "type": "text",
+   "x": 510.0,
+   "y": 204.0,
+   "text": "high chip",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "chi-n-n",
+   "type": "text",
+   "x": 259.0,
+   "y": 204.0,
+   "text": "high",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "whiA",
+   "type": "line",
+   "points": [
+    [
+     465.0,
+     94
+    ],
+    [
+     465.0,
+     116
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      227.5,
+      74
+     ],
+     [
+      227.5,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vhiA",
+   "type": "text",
+   "x": 465.0,
+   "y": 86,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 227.5,
+    "y": 66,
+    "size": 12
+   }
+  },
+  {
+   "id": "whiB",
+   "type": "line",
+   "points": [
+    [
+     555.0,
+     94
+    ],
+    [
+     555.0,
+     116
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      282.5,
+      94
+     ],
+     [
+      282.5,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vhiB",
+   "type": "text",
+   "x": 555.0,
+   "y": 86,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 282.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "nhi",
+   "type": "text",
+   "x": 510.0,
+   "y": 266,
+   "text": "bits 7–4",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 255.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "k0",
+   "type": "text",
+   "x": 96,
+   "y": 138.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 26,
+    "size": 12
+   }
+  },
+  {
+   "id": "wk0",
+   "type": "line",
+   "points": [
+    [
+     100,
+     138.0
+    ],
+    [
+     110,
+     138.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      30,
+      138.0
+     ],
+     [
+      40,
+      138.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k1",
+   "type": "text",
+   "x": 96,
+   "y": 182.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 26,
+    "size": 12
+   }
+  },
+  {
+   "id": "wk1",
+   "type": "line",
+   "points": [
+    [
+     100,
+     182.0
+    ],
+    [
+     110,
+     182.0
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      30,
+      182.0
+     ],
+     [
+      40,
+      182.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "k2",
+   "type": "text",
+   "x": 96,
+   "y": 226.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 26,
+    "size": 12
+   }
+  },
+  {
+   "id": "wk2",
+   "type": "line",
+   "points": [
+    [
+     100,
+     226.0
+    ],
+    [
+     110,
+     226.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      30,
+      226.0
+     ],
+     [
+      40,
+      226.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "m0",
+   "type": "line",
+   "points": [
+    [
+     290,
+     138.0
+    ],
+    [
+     420,
+     138.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      138.0
+     ],
+     [
+      200,
+      138.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vm0",
+   "type": "text",
+   "x": 355.0,
+   "y": 128.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 175.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "o0",
+   "type": "line",
+   "points": [
+    [
+     600,
+     138.0
+    ],
+    [
+     624,
+     138.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      310,
+      138.0
+     ],
+     [
+      324,
+      138.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vo0",
+   "type": "text",
+   "x": 630,
+   "y": 138.0,
+   "text": "G",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 328,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1",
+   "type": "line",
+   "points": [
+    [
+     290,
+     182.0
+    ],
+    [
+     420,
+     182.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      182.0
+     ],
+     [
+      200,
+      182.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vm1",
+   "type": "text",
+   "x": 355.0,
+   "y": 172.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 175.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "o1",
+   "type": "line",
+   "points": [
+    [
+     600,
+     182.0
+    ],
+    [
+     624,
+     182.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      310,
+      182.0
+     ],
+     [
+      324,
+      182.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vo1",
+   "type": "text",
+   "x": 630,
+   "y": 182.0,
+   "text": "E",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 328,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2",
+   "type": "line",
+   "points": [
+    [
+     290,
+     226.0
+    ],
+    [
+     420,
+     226.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      226.0
+     ],
+     [
+      200,
+      226.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vm2",
+   "type": "text",
+   "x": 355.0,
+   "y": 216.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 175.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "o2",
+   "type": "line",
+   "points": [
+    [
+     600,
+     226.0
+    ],
+    [
+     624,
+     226.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      310,
+      226.0
+     ],
+     [
+      324,
+      226.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vo2",
+   "type": "text",
+   "x": 630,
+   "y": 226.0,
+   "text": "L",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 328,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 350.0,
+   "y": 300,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "st2",
+   "type": "text",
+   "x": 350.0,
+   "y": 324,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The low chip compares bits 3–0 with cascade inputs G, E, L = 0, 1, 0; its G, E, L feed the high chip's cascade inputs.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wk0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wk1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wk2",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 0x5A, B = 0x3F. Low chip: 1010 < 1111, so it sends L = 1 to the high chip's cascade inputs.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "chi",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vloA",
+     "set": {
+      "text": "A=1010"
+     }
+    },
+    {
+     "id": "vloB",
+     "set": {
+      "text": "B=1111"
+     }
+    },
+    {
+     "id": "vhiA",
+     "set": {
+      "text": "A=0101"
+     }
+    },
+    {
+     "id": "vhiB",
+     "set": {
+      "text": "B=0011"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vm0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vm1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vm2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo0",
+     "set": {
+      "text": "G",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo1",
+     "set": {
+      "text": "E",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo2",
+     "set": {
+      "text": "L",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "A = 0101 1010, B = 0011 1111"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "High chip: 0101 > 0011, the nibbles differ, so it outputs G = 1 and ignores its cascade inputs: 90 > 63.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "chi",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vo0",
+     "set": {
+      "text": "G=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo1",
+     "set": {
+      "text": "E=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vo2",
+     "set": {
+      "text": "L=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "0x5A > 0x3F  (90 > 63)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 0x5A, B = 0x5C. Low chip: 1010 < 1100, so it sends L = 1 to the high chip's cascade inputs.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "chi",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vloA",
+     "set": {
+      "text": "A=1010"
+     }
+    },
+    {
+     "id": "vloB",
+     "set": {
+      "text": "B=1100"
+     }
+    },
+    {
+     "id": "vhiA",
+     "set": {
+      "text": "A=0101"
+     }
+    },
+    {
+     "id": "vhiB",
+     "set": {
+      "text": "B=0101"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vm0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vm1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vm2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo0",
+     "set": {
+      "text": "G",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo1",
+     "set": {
+      "text": "E",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo2",
+     "set": {
+      "text": "L",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "A = 0101 1010, B = 0101 1100"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "High chip: 0101 = 0101, a tie, so it passes its cascade inputs: L = 1, the low chip's verdict. 90 < 92.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "chi",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo0",
+     "set": {
+      "text": "G=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vo1",
+     "set": {
+      "text": "E=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vo2",
+     "set": {
+      "text": "L=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "0x5A < 0x5C  (90 < 92)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 0x5A, B = 0x5A. Low chip: 1010 = 1010, so it sends E = 1 to the high chip's cascade inputs.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "chi",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vloA",
+     "set": {
+      "text": "A=1010"
+     }
+    },
+    {
+     "id": "vloB",
+     "set": {
+      "text": "B=1010"
+     }
+    },
+    {
+     "id": "vhiA",
+     "set": {
+      "text": "A=0101"
+     }
+    },
+    {
+     "id": "vhiB",
+     "set": {
+      "text": "B=0101"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vm0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vm1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vm2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo0",
+     "set": {
+      "text": "G",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo1",
+     "set": {
+      "text": "E",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vo2",
+     "set": {
+      "text": "L",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "A = 0101 1010, B = 0101 1010"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "High chip: 0101 = 0101, a tie, so it passes its cascade inputs: E = 1, the low chip's verdict. 90 = 90.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "chi",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vo0",
+     "set": {
+      "text": "G=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vo1",
+     "set": {
+      "text": "E=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo2",
+     "set": {
+      "text": "L=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "0x5A = 0x5A  (90 = 90)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The high chip decides unless its nibbles tie; then it copies the low chip's G, E, L. The lowest chip's cascade inputs are tied to 0, 1, 0.",
+   "patches": [
+    {
+     "id": "clo",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "chi",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "more chips: chain them the same way",
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}
