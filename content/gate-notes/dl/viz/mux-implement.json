@@ -1,0 +1,1030 @@
+{
+ "version": 1,
+ "title": "Implementing a function on a 4:1 MUX with an implementation table",
+ "width": 640,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 490
+ },
+ "intro": "f(x, y, z) = Σ(0, 1, 3, 4, 5, 6) goes on a 4:1 MUX with y and z on the selects. The implementation table finds what each data input must be.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "Implementing Σ(0, 1, 3, 4, 5, 6) on a 4:1 MUX (selects y, z)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Σ(0,1,3,4,5,6) on a 4:1 MUX",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "it",
+   "type": "table",
+   "x": 24,
+   "y": 84,
+   "cellW": 56,
+   "cellH": 32,
+   "rows": [
+    [
+     "yz",
+     "00",
+     "01",
+     "10",
+     "11"
+    ],
+    [
+     "x′",
+     "0",
+     "1",
+     "2",
+     "3"
+    ],
+    [
+     "x",
+     "4",
+     "5",
+     "6",
+     "7"
+    ],
+    [
+     "data",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 50,
+    "y": 60,
+    "cellW": 52
+   }
+  },
+  {
+   "id": "ith",
+   "type": "text",
+   "x": 164.0,
+   "y": 66,
+   "text": "implementation table: column = data input",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 42,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux",
+   "type": "box",
+   "x": 410,
+   "y": 70,
+   "w": 110,
+   "h": 150,
+   "narrow": {
+    "x": 140,
+    "y": 250,
+    "w": 100
+   }
+  },
+  {
+   "id": "mux-l0",
+   "type": "text",
+   "x": 415,
+   "y": 86.75,
+   "text": "I0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 145,
+    "y": 266.75,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-l1",
+   "type": "text",
+   "x": 415,
+   "y": 120.25,
+   "text": "I1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 145,
+    "y": 300.25,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-l2",
+   "type": "text",
+   "x": 415,
+   "y": 153.75,
+   "text": "I2",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 145,
+    "y": 333.75,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-l3",
+   "type": "text",
+   "x": 415,
+   "y": 187.25,
+   "text": "I3",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 145,
+    "y": 367.25,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-r0",
+   "type": "text",
+   "x": 515,
+   "y": 137.0,
+   "text": "f",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 235,
+    "y": 317.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-b0",
+   "type": "text",
+   "x": 437.5,
+   "y": 210,
+   "text": "y",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 165.0,
+    "y": 390,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-b1",
+   "type": "text",
+   "x": 492.5,
+   "y": 210,
+   "text": "z",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 215.0,
+    "y": 390,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-n",
+   "type": "text",
+   "x": 471.0,
+   "y": 100,
+   "text": "4:1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 196.0,
+    "y": 280,
+    "size": 13
+   }
+  },
+  {
+   "id": "d0",
+   "type": "text",
+   "x": 378,
+   "y": 86.75,
+   "text": "?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 108,
+    "y": 266.75,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd0",
+   "type": "line",
+   "points": [
+    [
+     384,
+     86.75
+    ],
+    [
+     410,
+     86.75
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      114,
+      266.75
+     ],
+     [
+      140,
+      266.75
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d1",
+   "type": "text",
+   "x": 378,
+   "y": 120.25,
+   "text": "?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 108,
+    "y": 300.25,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd1",
+   "type": "line",
+   "points": [
+    [
+     384,
+     120.25
+    ],
+    [
+     410,
+     120.25
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      114,
+      300.25
+     ],
+     [
+      140,
+      300.25
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d2",
+   "type": "text",
+   "x": 378,
+   "y": 153.75,
+   "text": "?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 108,
+    "y": 333.75,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd2",
+   "type": "line",
+   "points": [
+    [
+     384,
+     153.75
+    ],
+    [
+     410,
+     153.75
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      114,
+      333.75
+     ],
+     [
+      140,
+      333.75
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d3",
+   "type": "text",
+   "x": 378,
+   "y": 187.25,
+   "text": "?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 108,
+    "y": 367.25,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd3",
+   "type": "line",
+   "points": [
+    [
+     384,
+     187.25
+    ],
+    [
+     410,
+     187.25
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      114,
+      367.25
+     ],
+     [
+      140,
+      367.25
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0",
+   "type": "line",
+   "points": [
+    [
+     437.5,
+     220
+    ],
+    [
+     437.5,
+     238
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      165.0,
+      400
+     ],
+     [
+      165.0,
+      418
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s0",
+   "type": "text",
+   "x": 437.5,
+   "y": 252,
+   "text": "y",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 165.0,
+    "y": 432,
+    "size": 13
+   }
+  },
+  {
+   "id": "ws1",
+   "type": "line",
+   "points": [
+    [
+     492.5,
+     220
+    ],
+    [
+     492.5,
+     238
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      215.0,
+      400
+     ],
+     [
+      215.0,
+      418
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 492.5,
+   "y": 252,
+   "text": "z",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 215.0,
+    "y": 432,
+    "size": 13
+   }
+  },
+  {
+   "id": "wf",
+   "type": "line",
+   "points": [
+    [
+     520,
+     137.0
+    ],
+    [
+     560,
+     137.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      240,
+      317.0
+     ],
+     [
+      270,
+      317.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vf",
+   "type": "text",
+   "x": 566,
+   "y": 137.0,
+   "text": "f",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 276,
+    "y": 317.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "chk",
+   "type": "text",
+   "x": 320.0,
+   "y": 290,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "y": 470,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Row x′ lists the minterms with x = 0 (0–3), row x those with x = 1 (4–7); each column is one value of the selects yz. Ring the 1s of row x′: 0, 1 and 3.",
+   "patches": [
+    {
+     "id": "it",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ring the 1s of row x: 4, 5 and 6. Now read each column: which rows are ringed decides that data input.",
+   "patches": [
+    {
+     "id": "it",
+     "set": {
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column yz = 00 (minterms 0 and 4): both minterms are 1, so the input is 1 whatever x is. I0 = 1.",
+   "patches": [
+    {
+     "id": "it",
+     "set": {
+      "rows": [
+       [
+        "yz",
+        "00",
+        "01",
+        "10",
+        "11"
+       ],
+       [
+        "x′",
+        "0",
+        "1",
+        "2",
+        "3"
+       ],
+       [
+        "x",
+        "4",
+        "5",
+        "6",
+        "7"
+       ],
+       [
+        "data",
+        "1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column yz = 01 (minterms 1 and 5): both minterms are 1, so the input is 1 whatever x is. I1 = 1.",
+   "patches": [
+    {
+     "id": "it",
+     "set": {
+      "rows": [
+       [
+        "yz",
+        "00",
+        "01",
+        "10",
+        "11"
+       ],
+       [
+        "x′",
+        "0",
+        "1",
+        "2",
+        "3"
+       ],
+       [
+        "x",
+        "4",
+        "5",
+        "6",
+        "7"
+       ],
+       [
+        "data",
+        "1",
+        "1",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column yz = 10 (minterms 2 and 6): only the x row is ringed, so the input equals x. I2 = x.",
+   "patches": [
+    {
+     "id": "it",
+     "set": {
+      "rows": [
+       [
+        "yz",
+        "00",
+        "01",
+        "10",
+        "11"
+       ],
+       [
+        "x′",
+        "0",
+        "1",
+        "2",
+        "3"
+       ],
+       [
+        "x",
+        "4",
+        "5",
+        "6",
+        "7"
+       ],
+       [
+        "data",
+        "1",
+        "1",
+        "x",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Column yz = 11 (minterms 3 and 7): only the x′ row is ringed, so the input equals x′. I3 = x′.",
+   "patches": [
+    {
+     "id": "it",
+     "set": {
+      "rows": [
+       [
+        "yz",
+        "00",
+        "01",
+        "10",
+        "11"
+       ],
+       [
+        "x′",
+        "0",
+        "1",
+        "2",
+        "3"
+       ],
+       [
+        "x",
+        "4",
+        "5",
+        "6",
+        "7"
+       ],
+       [
+        "data",
+        "1",
+        "1",
+        "x",
+        "x′"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Wire the residues to the MUX: I0 = 1, I1 = 1, I2 = x, I3 = x′, with y on S1 and z on S0. One 4:1 MUX (and an inverter for x′) realises the 3-variable function.",
+   "patches": [
+    {
+     "id": "it",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "text": "1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "text": "x",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "text": "x′",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check minterm 6 (x y z = 1 1 0): the selects pick I2 = x = 1, so f = 1; 6 is in the list.",
+   "patches": [
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wf",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vf",
+     "set": {
+      "text": "f = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "chk",
+     "set": {
+      "text": "x y z = 110 → I2 = x → f = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "it",
+     "set": {
+      "highlight": [
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check minterm 7 (x y z = 1 1 1): the selects pick I3 = x′ = 0, so f = 0; 7 is not in the list.",
+   "patches": [
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wf",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vf",
+     "set": {
+      "text": "f = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "chk",
+     "set": {
+      "text": "x y z = 111 → I3 = x′ → f = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "it",
+     "set": {
+      "highlight": [
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

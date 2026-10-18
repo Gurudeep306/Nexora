@@ -1,0 +1,2662 @@
+{
+ "version": 1,
+ "title": "A ROM as a decoder and a grid of stored bits",
+ "width": 640,
+ "height": 370,
+ "narrow": {
+  "width": 360,
+  "height": 420
+ },
+ "intro": "A read-only memory: a 3:8 decoder turns the address A2A1A0 into one of 8 word lines; each word holds 6 stored bits, here the square of the address.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A ROM storing x² for x = 0 … 7 (8 words × 6 bits)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "ROM: x² (8 × 6 bits)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "dec",
+   "type": "box",
+   "x": 110,
+   "y": 72,
+   "w": 90,
+   "h": 240,
+   "narrow": {
+    "x": 10,
+    "w": 76
+   }
+  },
+  {
+   "id": "dec-l0",
+   "type": "text",
+   "x": 115,
+   "y": 112.0,
+   "text": "A2",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l1",
+   "type": "text",
+   "x": 115,
+   "y": 192.0,
+   "text": "A1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l2",
+   "type": "text",
+   "x": 115,
+   "y": 272.0,
+   "text": "A0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 15,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r0",
+   "type": "text",
+   "x": 195,
+   "y": 87.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r1",
+   "type": "text",
+   "x": 195,
+   "y": 117.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r2",
+   "type": "text",
+   "x": 195,
+   "y": 147.0,
+   "text": "2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r3",
+   "type": "text",
+   "x": 195,
+   "y": 177.0,
+   "text": "3",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r4",
+   "type": "text",
+   "x": 195,
+   "y": 207.0,
+   "text": "4",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r5",
+   "type": "text",
+   "x": 195,
+   "y": 237.0,
+   "text": "5",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r6",
+   "type": "text",
+   "x": 195,
+   "y": 267.0,
+   "text": "6",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r7",
+   "type": "text",
+   "x": 195,
+   "y": 297.0,
+   "text": "7",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 81,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-n",
+   "type": "text",
+   "x": 157.0,
+   "y": 148.0,
+   "text": "3:8",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 50.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 70,
+   "y": 112.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     74,
+     112.0
+    ],
+    [
+     110,
+     112.0
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 70,
+   "y": 192.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     74,
+     192.0
+    ],
+    [
+     110,
+     192.0
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "a2",
+   "type": "text",
+   "x": 70,
+   "y": 272.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "wa2",
+   "type": "line",
+   "points": [
+    [
+     74,
+     272.0
+    ],
+    [
+     110,
+     272.0
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "grid",
+   "type": "grid",
+   "x": 260,
+   "y": 72,
+   "rows": 8,
+   "cols": 6,
+   "cell": 30,
+   "values": [
+    [
+     "0",
+     "0",
+     "0",
+     "0",
+     "0",
+     "0"
+    ],
+    [
+     "0",
+     "0",
+     "0",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "0",
+     "0",
+     "0",
+     "1",
+     "0",
+     "0"
+    ],
+    [
+     "0",
+     "0",
+     "1",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "0",
+     "1",
+     "0",
+     "0",
+     "0",
+     "0"
+    ],
+    [
+     "0",
+     "1",
+     "1",
+     "0",
+     "0",
+     "1"
+    ],
+    [
+     "1",
+     "0",
+     "0",
+     "1",
+     "0",
+     "0"
+    ],
+    [
+     "1",
+     "1",
+     "0",
+     "0",
+     "0",
+     "1"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 140
+   }
+  },
+  {
+   "id": "q0",
+   "type": "text",
+   "x": 275.0,
+   "y": 58,
+   "text": "Q5",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 155.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq0",
+   "type": "line",
+   "points": [
+    [
+     275.0,
+     312
+    ],
+    [
+     275.0,
+     330
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      155.0,
+      312
+     ],
+     [
+      155.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vq0",
+   "type": "text",
+   "x": 275.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 155.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "q1",
+   "type": "text",
+   "x": 305.0,
+   "y": 58,
+   "text": "Q4",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 185.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq1",
+   "type": "line",
+   "points": [
+    [
+     305.0,
+     312
+    ],
+    [
+     305.0,
+     330
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      185.0,
+      312
+     ],
+     [
+      185.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vq1",
+   "type": "text",
+   "x": 305.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 185.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "q2",
+   "type": "text",
+   "x": 335.0,
+   "y": 58,
+   "text": "Q3",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 215.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq2",
+   "type": "line",
+   "points": [
+    [
+     335.0,
+     312
+    ],
+    [
+     335.0,
+     330
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      215.0,
+      312
+     ],
+     [
+      215.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vq2",
+   "type": "text",
+   "x": 335.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 215.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "q3",
+   "type": "text",
+   "x": 365.0,
+   "y": 58,
+   "text": "Q2",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 245.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq3",
+   "type": "line",
+   "points": [
+    [
+     365.0,
+     312
+    ],
+    [
+     365.0,
+     330
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      245.0,
+      312
+     ],
+     [
+      245.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vq3",
+   "type": "text",
+   "x": 365.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 245.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "q4",
+   "type": "text",
+   "x": 395.0,
+   "y": 58,
+   "text": "Q1",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 275.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq4",
+   "type": "line",
+   "points": [
+    [
+     395.0,
+     312
+    ],
+    [
+     395.0,
+     330
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      275.0,
+      312
+     ],
+     [
+      275.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vq4",
+   "type": "text",
+   "x": 395.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 275.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "q5",
+   "type": "text",
+   "x": 425.0,
+   "y": 58,
+   "text": "Q0",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 305.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq5",
+   "type": "line",
+   "points": [
+    [
+     425.0,
+     312
+    ],
+    [
+     425.0,
+     330
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      305.0,
+      312
+     ],
+     [
+      305.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vq5",
+   "type": "text",
+   "x": 425.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 305.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wl0",
+   "type": "line",
+   "points": [
+    [
+     200,
+     87.0
+    ],
+    [
+     260,
+     87.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      87.0
+     ],
+     [
+      140,
+      87.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl1",
+   "type": "line",
+   "points": [
+    [
+     200,
+     117.0
+    ],
+    [
+     260,
+     117.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      117.0
+     ],
+     [
+      140,
+      117.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl2",
+   "type": "line",
+   "points": [
+    [
+     200,
+     147.0
+    ],
+    [
+     260,
+     147.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      147.0
+     ],
+     [
+      140,
+      147.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl3",
+   "type": "line",
+   "points": [
+    [
+     200,
+     177.0
+    ],
+    [
+     260,
+     177.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      177.0
+     ],
+     [
+      140,
+      177.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl4",
+   "type": "line",
+   "points": [
+    [
+     200,
+     207.0
+    ],
+    [
+     260,
+     207.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      207.0
+     ],
+     [
+      140,
+      207.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl5",
+   "type": "line",
+   "points": [
+    [
+     200,
+     237.0
+    ],
+    [
+     260,
+     237.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      237.0
+     ],
+     [
+      140,
+      237.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl6",
+   "type": "line",
+   "points": [
+    [
+     200,
+     267.0
+    ],
+    [
+     260,
+     267.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      267.0
+     ],
+     [
+      140,
+      267.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl7",
+   "type": "line",
+   "points": [
+    [
+     200,
+     297.0
+    ],
+    [
+     260,
+     297.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      86,
+      297.0
+     ],
+     [
+      140,
+      297.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 530,
+   "y": 170,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 380,
+    "size": 13
+   }
+  },
+  {
+   "id": "st2",
+   "type": "text",
+   "x": 530,
+   "y": 196,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 402,
+    "size": 13
+   }
+  },
+  {
+   "id": "adr",
+   "type": "text",
+   "x": 10,
+   "y": 48,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Address 000: the decoder raises word line 0 only, and that row of stored bits, 000000 = 0 = 0², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        0,
+        0
+       ],
+       [
+        0,
+        1
+       ],
+       [
+        0,
+        2
+       ],
+       [
+        0,
+        3
+       ],
+       [
+        0,
+        4
+       ],
+       [
+        0,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=0"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=0"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=0"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 0"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "000000 = 0"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 000"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 001: the decoder raises word line 1 only, and that row of stored bits, 000001 = 1 = 1², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        1,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=0"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=0"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=1"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 1"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "000001 = 1"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 001"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 010: the decoder raises word line 2 only, and that row of stored bits, 000100 = 4 = 2², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        2,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=0"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=1"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=0"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 2"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "000100 = 4"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 010"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 011: the decoder raises word line 3 only, and that row of stored bits, 001001 = 9 = 3², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        3,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=0"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=1"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=1"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 3"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "001001 = 9"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 011"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 100: the decoder raises word line 4 only, and that row of stored bits, 010000 = 16 = 4², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ],
+       [
+        4,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=1"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=0"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=0"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 4"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "010000 = 16"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 100"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 101: the decoder raises word line 5 only, and that row of stored bits, 011001 = 25 = 5², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        5,
+        0
+       ],
+       [
+        5,
+        1
+       ],
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        5,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=1"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=0"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=1"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 5"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "011001 = 25"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 101"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 110: the decoder raises word line 6 only, and that row of stored bits, 100100 = 36 = 6², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        6,
+        0
+       ],
+       [
+        6,
+        1
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        6,
+        3
+       ],
+       [
+        6,
+        4
+       ],
+       [
+        6,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=1"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=1"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=0"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 6"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "100100 = 36"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 110"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address 111: the decoder raises word line 7 only, and that row of stored bits, 110001 = 49 = 7², appears on Q5…Q0.",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        7,
+        0
+       ],
+       [
+        7,
+        1
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        7,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "vq0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vq2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq4",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vq5",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq5",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2=1"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1=1"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0=1"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "word 7"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "110001 = 49"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "A2A1A0 = 111"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Size: 2³ = 8 words × 6 bits = 48 bits. Column Q1 is 0 in every word and Q0 always equals A0, so a careful design stores only 4 columns (32 bits).",
+   "patches": [
+    {
+     "id": "wl0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wl1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wl2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wl3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wl4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wl5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wl6",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wl7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "grid",
+     "set": {
+      "highlight": [
+       [
+        0,
+        4
+       ],
+       [
+        1,
+        4
+       ],
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ],
+       [
+        4,
+        4
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        6,
+        4
+       ],
+       [
+        7,
+        4
+       ],
+       [
+        0,
+        5
+       ],
+       [
+        1,
+        5
+       ],
+       [
+        2,
+        5
+       ],
+       [
+        3,
+        5
+       ],
+       [
+        4,
+        5
+       ],
+       [
+        5,
+        5
+       ],
+       [
+        6,
+        5
+       ],
+       [
+        7,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "8 × 6 = 48 bits"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "Q1 = 0, Q0 = A0"
+     }
+    }
+   ]
+  }
+ ]
+}

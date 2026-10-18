@@ -1,0 +1,1564 @@
+{
+ "version": 1,
+ "title": "An XOR tree generating and checking an even parity bit",
+ "width": 660,
+ "height": 410,
+ "narrow": {
+  "width": 360,
+  "height": 410
+ },
+ "intro": "Eight data bits b7…b0 = 1011 0011 feed a balanced tree of 2-input XOR gates. Its output is the even parity bit P.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 22,
+   "text": "An 8-input XOR tree: even parity generator and checker",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "XOR tree: parity",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "in0",
+   "type": "text",
+   "x": 60,
+   "y": 64,
+   "text": "b7=1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "in1",
+   "type": "text",
+   "x": 60,
+   "y": 98,
+   "text": "b6=0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "in2",
+   "type": "text",
+   "x": 60,
+   "y": 132,
+   "text": "b5=1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "in3",
+   "type": "text",
+   "x": 60,
+   "y": 166,
+   "text": "b4=1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "in4",
+   "type": "text",
+   "x": 60,
+   "y": 200,
+   "text": "b3=0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "in5",
+   "type": "text",
+   "x": 60,
+   "y": 234,
+   "text": "b2=0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "in6",
+   "type": "text",
+   "x": 60,
+   "y": 268,
+   "text": "b1=1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "in7",
+   "type": "text",
+   "x": 60,
+   "y": 302,
+   "text": "b0=1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "l1g0",
+   "type": "gate",
+   "x": 140,
+   "y": 61.0,
+   "w": 50,
+   "h": 40,
+   "kind": "xor",
+   "narrow": {
+    "x": 76,
+    "w": 40
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     64,
+     64
+    ],
+    [
+     118,
+     64
+    ],
+    [
+     118,
+     74.33
+    ],
+    [
+     144.78,
+     74.33
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      50,
+      64
+     ],
+     [
+      60,
+      64
+     ],
+     [
+      60,
+      74.33
+     ],
+     [
+      79.82,
+      74.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     64,
+     98
+    ],
+    [
+     118,
+     98
+    ],
+    [
+     118,
+     87.67
+    ],
+    [
+     144.78,
+     87.67
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      50,
+      98
+     ],
+     [
+      60,
+      98
+     ],
+     [
+      60,
+      87.67
+     ],
+     [
+      79.82,
+      87.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v10",
+   "type": "text",
+   "x": 198.0,
+   "y": 69.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 124.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l1g1",
+   "type": "gate",
+   "x": 140,
+   "y": 129.0,
+   "w": 50,
+   "h": 40,
+   "kind": "xor",
+   "narrow": {
+    "x": 76,
+    "w": 40
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     64,
+     132
+    ],
+    [
+     118,
+     132
+    ],
+    [
+     118,
+     142.33
+    ],
+    [
+     144.78,
+     142.33
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      50,
+      132
+     ],
+     [
+      60,
+      132
+     ],
+     [
+      60,
+      142.33
+     ],
+     [
+      79.82,
+      142.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w3",
+   "type": "line",
+   "points": [
+    [
+     64,
+     166
+    ],
+    [
+     118,
+     166
+    ],
+    [
+     118,
+     155.67
+    ],
+    [
+     144.78,
+     155.67
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      50,
+      166
+     ],
+     [
+      60,
+      166
+     ],
+     [
+      60,
+      155.67
+     ],
+     [
+      79.82,
+      155.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v11",
+   "type": "text",
+   "x": 198.0,
+   "y": 137.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 124.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l1g2",
+   "type": "gate",
+   "x": 140,
+   "y": 197.0,
+   "w": 50,
+   "h": 40,
+   "kind": "xor",
+   "narrow": {
+    "x": 76,
+    "w": 40
+   }
+  },
+  {
+   "id": "w4",
+   "type": "line",
+   "points": [
+    [
+     64,
+     200
+    ],
+    [
+     118,
+     200
+    ],
+    [
+     118,
+     210.33
+    ],
+    [
+     144.78,
+     210.33
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      50,
+      200
+     ],
+     [
+      60,
+      200
+     ],
+     [
+      60,
+      210.33
+     ],
+     [
+      79.82,
+      210.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w5",
+   "type": "line",
+   "points": [
+    [
+     64,
+     234
+    ],
+    [
+     118,
+     234
+    ],
+    [
+     118,
+     223.67
+    ],
+    [
+     144.78,
+     223.67
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      50,
+      234
+     ],
+     [
+      60,
+      234
+     ],
+     [
+      60,
+      223.67
+     ],
+     [
+      79.82,
+      223.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v12",
+   "type": "text",
+   "x": 198.0,
+   "y": 205.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 124.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l1g3",
+   "type": "gate",
+   "x": 140,
+   "y": 265.0,
+   "w": 50,
+   "h": 40,
+   "kind": "xor",
+   "narrow": {
+    "x": 76,
+    "w": 40
+   }
+  },
+  {
+   "id": "w6",
+   "type": "line",
+   "points": [
+    [
+     64,
+     268
+    ],
+    [
+     118,
+     268
+    ],
+    [
+     118,
+     278.33
+    ],
+    [
+     144.78,
+     278.33
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      50,
+      268
+     ],
+     [
+      60,
+      268
+     ],
+     [
+      60,
+      278.33
+     ],
+     [
+      79.82,
+      278.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w7",
+   "type": "line",
+   "points": [
+    [
+     64,
+     302
+    ],
+    [
+     118,
+     302
+    ],
+    [
+     118,
+     291.67
+    ],
+    [
+     144.78,
+     291.67
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      50,
+      302
+     ],
+     [
+      60,
+      302
+     ],
+     [
+      60,
+      291.67
+     ],
+     [
+      79.82,
+      291.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v13",
+   "type": "text",
+   "x": 198.0,
+   "y": 273.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 124.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l2g0",
+   "type": "gate",
+   "x": 240,
+   "y": 93.0,
+   "w": 50,
+   "h": 44,
+   "kind": "xor",
+   "narrow": {
+    "x": 150,
+    "w": 40
+   }
+  },
+  {
+   "id": "u0",
+   "type": "line",
+   "points": [
+    [
+     190.0,
+     81.0
+    ],
+    [
+     218,
+     81.0
+    ],
+    [
+     218,
+     107.67
+    ],
+    [
+     244.78,
+     107.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      116.0,
+      81.0
+     ],
+     [
+      134,
+      81.0
+     ],
+     [
+      134,
+      107.67
+     ],
+     [
+      153.82,
+      107.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u1",
+   "type": "line",
+   "points": [
+    [
+     190.0,
+     149.0
+    ],
+    [
+     218,
+     149.0
+    ],
+    [
+     218,
+     122.33
+    ],
+    [
+     244.78,
+     122.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      116.0,
+      149.0
+     ],
+     [
+      134,
+      149.0
+     ],
+     [
+      134,
+      122.33
+     ],
+     [
+      153.82,
+      122.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v20",
+   "type": "text",
+   "x": 298.0,
+   "y": 103.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 198.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l2g1",
+   "type": "gate",
+   "x": 240,
+   "y": 229.0,
+   "w": 50,
+   "h": 44,
+   "kind": "xor",
+   "narrow": {
+    "x": 150,
+    "w": 40
+   }
+  },
+  {
+   "id": "u2",
+   "type": "line",
+   "points": [
+    [
+     190.0,
+     217.0
+    ],
+    [
+     218,
+     217.0
+    ],
+    [
+     218,
+     243.67
+    ],
+    [
+     244.78,
+     243.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      116.0,
+      217.0
+     ],
+     [
+      134,
+      217.0
+     ],
+     [
+      134,
+      243.67
+     ],
+     [
+      153.82,
+      243.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u3",
+   "type": "line",
+   "points": [
+    [
+     190.0,
+     285.0
+    ],
+    [
+     218,
+     285.0
+    ],
+    [
+     218,
+     258.33
+    ],
+    [
+     244.78,
+     258.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      116.0,
+      285.0
+     ],
+     [
+      134,
+      285.0
+     ],
+     [
+      134,
+      258.33
+     ],
+     [
+      153.82,
+      258.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v21",
+   "type": "text",
+   "x": 298.0,
+   "y": 239.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 198.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l3g",
+   "type": "gate",
+   "x": 340,
+   "y": 159.0,
+   "w": 50,
+   "h": 48,
+   "kind": "xor",
+   "narrow": {
+    "x": 224,
+    "w": 40
+   }
+  },
+  {
+   "id": "t0",
+   "type": "line",
+   "points": [
+    [
+     290.0,
+     115.0
+    ],
+    [
+     318,
+     115.0
+    ],
+    [
+     318,
+     175.0
+    ],
+    [
+     344.78,
+     175.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      190.0,
+      115.0
+     ],
+     [
+      206,
+      115.0
+     ],
+     [
+      206,
+      175.0
+     ],
+     [
+      227.82,
+      175.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t1",
+   "type": "line",
+   "points": [
+    [
+     290.0,
+     251.0
+    ],
+    [
+     318,
+     251.0
+    ],
+    [
+     318,
+     191.0
+    ],
+    [
+     344.78,
+     191.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      190.0,
+      251.0
+     ],
+     [
+      206,
+      251.0
+     ],
+     [
+      206,
+      191.0
+     ],
+     [
+      227.82,
+      191.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v3",
+   "type": "text",
+   "x": 420.0,
+   "y": 167.0,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 292.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fin",
+   "type": "gate",
+   "x": 480,
+   "y": 175.0,
+   "w": 50,
+   "h": 44,
+   "kind": "xor",
+   "hidden": true,
+   "narrow": {
+    "x": 284,
+    "y": 223.0,
+    "w": 40
+   }
+  },
+  {
+   "id": "wt",
+   "type": "line",
+   "points": [
+    [
+     390.0,
+     183.0
+    ],
+    [
+     455,
+     183.0
+    ],
+    [
+     455,
+     189.67
+    ],
+    [
+     484.78,
+     189.67
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      264.0,
+      183.0
+     ],
+     [
+      270,
+      183.0
+     ],
+     [
+      270,
+      237.67
+     ],
+     [
+      287.82,
+      237.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "inP",
+   "type": "text",
+   "x": 60,
+   "y": 336,
+   "text": "P=1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wP",
+   "type": "line",
+   "points": [
+    [
+     64,
+     336
+    ],
+    [
+     465,
+     336
+    ],
+    [
+     465,
+     204.33
+    ],
+    [
+     484.78,
+     204.33
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      336
+     ],
+     [
+      278,
+      336
+     ],
+     [
+      278,
+      252.33
+     ],
+     [
+      287.82,
+      252.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wE",
+   "type": "line",
+   "points": [
+    [
+     530.0,
+     197.0
+    ],
+    [
+     560.0,
+     197.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      324.0,
+      245.0
+     ],
+     [
+      344.0,
+      245.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vE",
+   "type": "text",
+   "x": 566.0,
+   "y": 197.0,
+   "text": "",
+   "size": 15,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 304.0,
+    "y": 287.0,
+    "size": 13,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 330.0,
+   "y": 390,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Level 1: four XORs pair up the bits: 1, 0, 0, 0. Each output is the parity of its two inputs.",
+   "patches": [
+    {
+     "id": "v10",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v11",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v12",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "u0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Level 2: two XORs combine the pairs: 1, 0 (parity of each nibble).",
+   "patches": [
+    {
+     "id": "v20",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v21",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Level 3: the root gives 1. The byte 10110011 has 5 ones, an odd count, so the even-parity bit is P = 1. Seven XORs in three levels.",
+   "patches": [
+    {
+     "id": "v3",
+     "set": {
+      "text": "P = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P = 1 is sent with the byte: 6 ones in 9 bits, an even count.",
+   "patches": [
+    {
+     "id": "inP",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wP",
+     "set": {
+      "hidden": false,
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Checker: bit b5 flips in transit, so the received byte is 10010011. The same tree recomputes the parity.",
+   "patches": [
+    {
+     "id": "in0",
+     "set": {
+      "text": "b7=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "in1",
+     "set": {
+      "text": "b6=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "in2",
+     "set": {
+      "text": "b5=0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "in3",
+     "set": {
+      "text": "b4=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "in4",
+     "set": {
+      "text": "b3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "in5",
+     "set": {
+      "text": "b2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "in6",
+     "set": {
+      "text": "b1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "in7",
+     "set": {
+      "text": "b0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w6",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w7",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v10",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "v11",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "v12",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "v20",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "v21",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "v3",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "u0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Levels 1 and 2 on the received byte: 1, 1, 0, 0, then 0, 0.",
+   "patches": [
+    {
+     "id": "v10",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v11",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "v12",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "u0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v20",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "v21",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The root now gives 0. One more XOR with the received P: E = 0 ⊕ 1 = 1. The 9 received bits hold 5 ones, an odd count, so the error flag rises.",
+   "patches": [
+    {
+     "id": "v3",
+     "set": {
+      "text": "p′ = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fin",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wt",
+     "set": {
+      "hidden": false,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wE",
+     "set": {
+      "hidden": false,
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vE",
+     "set": {
+      "text": "E = 1",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Any single flipped bit changes the count of 1s by one and is caught. Two flips cancel (the count stays even), so parity detects every odd number of errors and no even number.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "parity: detects 1, 3, 5 … errors",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
