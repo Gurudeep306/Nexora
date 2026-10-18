@@ -672,7 +672,7 @@
    ]
   },
   {
-   "caption": "Still uncovered: m2 and m6 (column C D = 10). They join m0 and m4 in the first column through the left/right wrap: a quad in rows A B = 00, 01. A = 0 and D = 0 stay fixed: A′D′.",
+   "caption": "Still uncovered: m2, m6 and m14 (column C D = 10). Start with m2 and m6: they join m0 and m4 in the first column through the left/right wrap: a quad in rows A B = 00, 01. A = 0 and D = 0 stay fixed: A′D′.",
    "patches": [
     {
      "id": "L10",
