@@ -1578,65 +1578,99 @@
       "verification": "$0101 + 0100 = 1001$: carries in/out of the MSB are 1/0, and $5 + 4 = 9$ does overflow. ✓"
     },
     "cse-1992-b-4-b": {
-      "approach": "Assign codes A → 11, B → 10, C → 01, none → 00, write $X_1, X_0$ as functions of A, B, C, then use A, B as the select lines of two 4:1 MUXes with data inputs from {0, 1, C}.",
+      "approach": "Concept tested: **a priority encoder built from multiplexers**. Write the priority encoder's table, then put the two highest-priority inputs $A$ and $B$ on the select lines of one 4:1 MUX per output bit and read each data input as a residue in $C$ (0, 1 or $C$). The paper does not give the output codes, so we state the assignment: A → 11, B → 10, C → 01, none → 00.",
       "concepts": [
         "Priority encoder",
-        "MUX-based function implementation"
+        "MUX implementation table",
+        "Residues",
+        "Code assignment"
       ],
-      "given": "| Active (highest) | $X_1X_0$ |\n|---|---|\n| A | 11 |\n| B (A = 0) | 10 |\n| C (A = B = 0) | 01 |\n| none | 00 |",
+      "given": "Inputs $A$ (highest priority), $B$, $C$ (lowest). Outputs $X_1X_0$; none active → 00. Codes assumed: A → 11, B → 10, C → 01 (the natural choice: the highest input gets the largest code, and 00 is left for \"none\").",
       "steps": [
         {
-          "title": "Output functions",
-          "body": "$X_1 = 1$ when A or B is active: $X_1 = A + B$.\n$X_0 = 1$ for A, or for C with A, B inactive: $X_0 = A + \\overline{A}\\,\\overline{B}\\,C = A + \\overline{B}C$."
+          "title": "The priority table",
+          "body": "Scan from $A$ down; the first active input decides the code.\n\n| $A$ | $B$ | $C$ | Winner | $X_1$ | $X_0$ |\n|---|---|---|---|---|---|\n| 1 | x | x | A | 1 | 1 |\n| 0 | 1 | x | B | 1 | 0 |\n| 0 | 0 | 1 | C | 0 | 1 |\n| 0 | 0 | 0 | none | 0 | 0 |"
         },
         {
-          "title": "MUX data inputs",
-          "body": "Select lines $S_1S_0 = AB$; each data input is the function with A, B fixed:\n\n| $AB$ | $X_1$ MUX input | $X_0$ MUX input |\n|---|---|---|\n| 00 | 0 | $C$ |\n| 01 | 1 | 0 |\n| 10 | 1 | 1 |\n| 11 | 1 | 1 |",
+          "title": "Equations",
+          "body": "$X_1 = 1$ when $A$ or $B$ wins: $A + \\overline{A}B = A + B$. $X_0 = 1$ when $A$ or $C$ wins: $A + \\overline{A}\\,\\overline{B}C = A + \\overline{B}C$ (the rule $x + \\overline{x}y = x + y$ removes $\\overline{A}$)."
+        },
+        {
+          "title": "Choose the select lines",
+          "body": "Put $A$ on $S_1$ and $B$ on $S_0$ of two 4:1 MUXes, one for $X_1$ and one for $X_0$. Then each data input sees only $C$, so every residue is 0, 1, $C$ or $\\overline{C}$, and no extra gate is needed."
+        },
+        {
+          "title": "Data inputs of the X₁ MUX",
+          "body": "$AB = 00$: $X_1 = 0$ whatever $C$ is → **0**. $AB = 01$: $B$ wins → **1**. $AB = 10$ and $11$: $A$ wins → **1**, **1**. Data $(I_0, I_1, I_2, I_3) = (0, 1, 1, 1)$.",
           "scene": {
-            "kind": "table",
-            "cols": [
-              "AB",
-              "I (X1)",
-              "I (X0)"
-            ],
-            "rows": [
-              [
-                "00",
-                "0",
-                "C"
-              ],
-              [
-                "01",
-                "1",
-                "0"
-              ],
-              [
-                "10",
-                "1",
-                "1"
-              ],
-              [
-                "11",
-                "1",
-                "1"
-              ]
-            ],
-            "mono": true
+            "hl": [
+              {
+                "c": 1,
+                "tone": "accent"
+              }
+            ]
           }
         },
         {
-          "title": "Circuit",
-          "body": "Two 4:1 MUXes share selects $S_1 = A$, $S_0 = B$. MUX 1 inputs $(I_0..I_3) = (0, 1, 1, 1)$ gives $X_1$; MUX 2 inputs $(C, 0, 1, 1)$ gives $X_0$. No other gates are needed."
+          "title": "Data inputs of the X₀ MUX",
+          "body": "$AB = 00$: $X_0 = 1$ exactly when $C = 1$ → **$C$**. $AB = 01$: $B$ wins, code 10 → **0**. $AB = 10, 11$: $A$ wins, code 11 → **1**, **1**. Data $(C, 0, 1, 1)$.",
+          "scene": {
+            "hl": [
+              {
+                "c": 2,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Another code assignment",
+          "body": "The data inputs depend on the codes, not on the method. With A → 01, B → 10, C → 11 (none → 00): $X_1 = \\overline{A}(B + C)$ with data $(C, 1, 0, 0)$, and $X_0 = A + \\overline{B}C$ with data $(C, 0, 1, 1)$. Recompute each column from the table for whatever codes the question intends."
         }
       ],
       "answer": {
-        "value": "$X_1 = A + B$, $X_0 = A + \\overline{B}C$; with $S_1S_0 = AB$: $X_1$ MUX inputs $0,1,1,1$ and $X_0$ MUX inputs $C,0,1,1$ (codes A = 11, B = 10, C = 01)",
+        "value": "With A→11, B→10, C→01: $X_1 = A + B$, $X_0 = A + \\overline{B}C$; with A, B as MUX selects, the $X_1$ MUX data ($AB = 00, 01, 10, 11$) are 0, 1, 1, 1 and the $X_0$ MUX data are C, 0, 1, 1",
         "matchesKey": true
       },
+      "shortcut": "Put the two highest-priority inputs on the selects: whenever either is 1 the code is fixed (a constant on the data line), and only the $AB = 00$ line depends on the lowest input $C$.",
       "pitfalls": [
-        "The paper does not fix the output codes; any one-to-one assignment with none → 00 works, but the MUX inputs change accordingly."
+        "Treating it as a plain encoder: with $A = B = 1$ the outputs must still give A's code, not the OR of two codes.",
+        "Putting $C$ on a select line: then the residues are functions of $A$ and $B$ and extra gates are needed.",
+        "Swapping $S_1$ and $S_0$, which permutes the data inputs (with $B$ on $S_1$, the $X_1$ data become 0, 1, 1, 1 in the order $BA = 00, 01, 10, 11$ and the $X_0$ data $C, 1, 0, 1$)."
       ],
-      "verification": "ABC = 011: B wins → $X_1 = 1$, $X_0 = 0 + 0 = 0$ → 10 ✓. ABC = 001 → $X_1X_0 = 01$ ✓. ABC = 000 → 00 ✓."
+      "verification": "All 8 rows of $(A, B, C)$, simulated with both MUXes: $(X_1, X_0)$ = 00, 01, 10, 10, 11, 11, 11, 11 for rows 0–7, which is A → 11, B → 10, C → 01, none → 00 (checked by enumeration in l4_03_decoders.py).",
+      "animation": {
+        "kind": "table",
+        "title": "Implementation table, selects A (S₁), B (S₀)",
+        "cols": [
+          "AB",
+          "X₁ (C = 0, 1)",
+          "X₀ (C = 0, 1)"
+        ],
+        "rows": [
+          [
+            "00",
+            "0 0 → 0",
+            "0 1 → C"
+          ],
+          [
+            "01",
+            "1 1 → 1",
+            "0 0 → 0"
+          ],
+          [
+            "10",
+            "1 1 → 1",
+            "1 1 → 1"
+          ],
+          [
+            "11",
+            "1 1 → 1",
+            "1 1 → 1"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-1992-b-4-c": {
       "approach": "A counter where only one flip-flop changes per clock is a Gray-code counter. For D flip-flops $D_i = Q_i^{+}$, so read each next-state bit off the state table and minimise with a K-map.",

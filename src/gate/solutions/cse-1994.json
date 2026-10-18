@@ -2627,34 +2627,97 @@
       "verification": "Checked with $a=1010_2, b=0110_2$: after the three steps $R_1=0110$, $R_2=1010$."
     },
     "cse-1994-b-35-b": {
-      "approach": "A stuck-at-1 test must (1) drive $p$ to 0 in the good circuit (activate the fault) and (2) make the other input of the second NAND non-controlling (1) so the change at $p$ reaches the output.",
+      "approach": "Concept tested: **finding a test vector for a stuck-at fault**. A test must **activate** the fault (drive line $p$ to the opposite of its stuck value in the good circuit) and **propagate** it (set the side input of every gate between $p$ and the output to its non-controlling value), so that the good and faulty outputs differ.",
       "concepts": [
         "Stuck-at fault",
-        "Fault activation and propagation",
-        "NAND gate"
+        "Test vector",
+        "Activation",
+        "Propagation",
+        "NAND controlling value"
       ],
+      "given": "$p = \\overline{AB}$ (NAND of $A$, $B$) feeds a second NAND with $C$: $f = \\overline{p\\,C}$. Line $p$ is stuck at 1.",
       "steps": [
         {
-          "title": "Activate",
-          "body": "$p=\\overline{AB}=0$ in the good circuit requires $A=1,\\ B=1$."
+          "title": "Activate the fault",
+          "body": "The faulty line always reads 1, so the fault can only show when the good circuit wants $p = 0$. A NAND outputs 0 only when **all** its inputs are 1, so we need $A = B = 1$. Now the good circuit has $p = 0$ and the faulty one $p = 1$: a difference exists on $p$."
         },
         {
-          "title": "Propagate",
-          "body": "The output is $\\overline{p\\,C}$. For $p$ to matter, $C$ must be 1 (a 0 on a NAND input forces the output to 1)."
+          "title": "Propagate it through the output NAND",
+          "body": "The difference must reach $f$. The other input of the output NAND is $C$. A 0 is the controlling value of a NAND (it forces the output to 1 whatever $p$ is), so $C$ must be at the non-controlling value **1**. Then $f = \\overline{p}$, and a change in $p$ shows at the output. In Boolean-difference form: $f|_{p=0} = 1$, $f|_{p=1} = \\overline{C}$, so $\\partial f/\\partial p = C$."
         },
         {
-          "title": "Compare",
-          "body": "With $A=B=C=1$: good output $=\\overline{0\\cdot1}=1$; faulty ($p=1$) output $=\\overline{1\\cdot1}=0$. They differ, so the fault is detected."
+          "title": "Simulate good and faulty circuits",
+          "body": "On $ABC = 111$: good $p = \\overline{1 \\cdot 1} = 0$, $f = \\overline{0 \\cdot 1} = 1$. Faulty $p = 1$, $f = \\overline{1 \\cdot 1} = 0$. The outputs differ (1 against 0), so the tester sees the fault.",
+          "scene": {
+            "caption": "Good circuit on A = B = C = 1: p = 0 and F = 1. With p stuck at 1, F would be 0."
+          }
+        },
+        {
+          "title": "No other input works",
+          "body": "Activation allows only $AB = 11$ and propagation only $C = 1$, so the test is unique. Simulating all eight rows confirms that row 111 is the only one on which the two circuits disagree."
         }
       ],
       "answer": {
-        "value": "Test vector $A=1,\\ B=1,\\ C=1$ (good output 1, faulty output 0).",
+        "value": "$A = B = C = 1$ (input 111) is the test for $p$ stuck-at-1; it is the only one.",
         "matchesKey": true
       },
+      "shortcut": "Set the faulty line opposite to its stuck value (here $p = 0$ needs $A = B = 1$), and put a 1 on every side input of a NAND/AND on the way to the output (here $C = 1$).",
       "pitfalls": [
-        "Setting $C=0$, which masks $p$."
+        "Setting $p = 1$ (for example $A = 0$): that is the stuck value, so good and faulty circuits are identical.",
+        "Taking $C = 0$: a 0 into the output NAND forces $f = 1$ in both circuits and blocks the difference.",
+        "Answering with the faulty line's value instead of primary inputs: a test is a vector of $A$, $B$, $C$."
       ],
-      "verification": "This is the only detecting vector: $p=0$ needs $A=B=1$ and propagation needs $C=1$."
+      "verification": "Fault simulation over all 8 rows: good outputs (1, 0, 1, 0, 1, 0, 1, 1), faulty outputs with $p \\equiv 1$ equal $\\overline{C}$ = (1, 0, 1, 0, 1, 0, 1, 0); they differ only on row 7 = 111.",
+      "animation": {
+        "kind": "circuit",
+        "title": "Good circuit on the test 111",
+        "inputs": [
+          {
+            "id": "A",
+            "label": "A",
+            "value": 1
+          },
+          {
+            "id": "B",
+            "label": "B",
+            "value": 1
+          },
+          {
+            "id": "C",
+            "label": "C",
+            "value": 1
+          }
+        ],
+        "gates": [
+          {
+            "id": "p",
+            "type": "NAND",
+            "in": [
+              "A",
+              "B"
+            ],
+            "label": "p"
+          },
+          {
+            "id": "f",
+            "type": "NAND",
+            "in": [
+              "p",
+              "C"
+            ],
+            "label": "f"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "f",
+            "label": "F"
+          }
+        ],
+        "showValues": true,
+        "caption": "A = B = 1 drives p to 0 (opposite of its stuck value); C = 1 lets p decide F."
+      }
     },
     "cse-1994-b-36-a": {
       "approach": "Set difference: all roll numbers minus those registered for course 322.",

@@ -820,23 +820,28 @@
       }
     },
     "cse-2014-3-cs-8": {
-      "approach": "\"$y = a$ if $x = 1$ else $y = b$\" is a selection of one of two data inputs by a select line — the definition of a 2-to-1 multiplexer.",
+      "approach": "Concept tested: **a MUX is an if–then–else**. \"If $x = 1$ then $y = a$ else $y = b$\" chooses between two inputs with a control bit and stores nothing: a 2:1 multiplexer with $x$ on the select.",
       "concepts": [
-        "Multiplexer",
-        "Combinational logic"
+        "If–then–else",
+        "2:1 MUX",
+        "Combinational vs sequential"
       ],
       "steps": [
         {
-          "title": "Write the function",
-          "body": "$y = x\\,a + \\overline{x}\\,b$."
+          "title": "Translate",
+          "body": "$y = xa + \\overline{x}b$: the equation of a 2:1 MUX with select $x$, $I_1 = a$, $I_0 = b$."
         },
         {
-          "title": "Match a block",
-          "body": "That is a 2:1 MUX with select $x$ and data inputs $a$ (for $x=1$) and $b$ (for $x=0$). It is combinational, so no memory element is needed."
+          "title": "Rule out the others",
+          "body": "No arithmetic is done (not a full adder), no inputs are prioritised into a code (not a priority encoder), and nothing is remembered, since both branches assign $y$ from current inputs (not a flip-flop)."
+        },
+        {
+          "title": "Wire it",
+          "body": "Select $= x$, $I_1 = a$, $I_0 = b$, output $= y$. The output changes as soon as $x$, $a$ or $b$ changes, with no clock: a combinational data selector."
         }
       ],
       "answer": {
-        "value": "Multiplexor",
+        "value": "(C) Multiplexor",
         "choice": [
           "C"
         ],
@@ -846,25 +851,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "A full adder computes sum/carry of three bits, not a selection."
+          "reason": "A full adder computes sum and carry of three bits; it does not choose between $a$ and $b$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A priority encoder outputs the index of the highest active input."
+          "reason": "A priority encoder outputs the index of the highest active input, not one of the inputs."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "A 2:1 MUX implements $y = xa + \\overline{x}b$ directly."
+          "reason": "$y = xa + \\overline{x}b$ is a 2:1 MUX."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A flip-flop is sequential (stores state); the block is purely combinational."
+          "reason": "A flip-flop stores a value; here $y$ follows the inputs at all times."
         }
       ],
-      "verification": "Truth table of $xa+\\overline{x}b$ equals the MUX table."
+      "shortcut": "`if` with an assignment in **both** branches = MUX; `if` with an assignment in only one branch (keep the old value otherwise) = storage.",
+      "pitfalls": [
+        "Choosing a flip-flop because of the word \"if\"."
+      ],
+      "verification": "For each of the 8 rows of $(x, a, b)$, $xa + \\overline{x}b$ equals the selected input."
     },
     "cse-2014-3-cs-9": {
       "approach": "In a pipeline the clock period equals the slowest stage latency (registers have zero latency). Highest frequency = smallest maximum stage delay.",

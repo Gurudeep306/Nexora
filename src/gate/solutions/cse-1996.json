@@ -1308,50 +1308,122 @@
       }
     },
     "cse-1996-a-21": {
-      "approach": "Address = the two 8-bit operands (16 address bits); data = the product, up to 16 bits.",
+      "approach": "Concept tested: **multiplier ROM size and the product-width theorem**. Both 8-bit operands form a 16-bit address, and the product of two 8-bit numbers needs exactly 16 bits.",
       "concepts": [
-        "ROM lookup table",
-        "Address/data width"
+        "ROM sizing",
+        "Multiplier ROM",
+        "Product width"
       ],
+      "given": "A ROM stores the multiplication table of two 8-bit unsigned integers.",
       "steps": [
         {
-          "title": "Address lines",
-          "body": "Two 8-bit inputs concatenated: 16 bits ⇒ $2^{16}=64K$ words."
+          "title": "Words",
+          "body": "The ROM must hold a word for every pair $(A, B)$: $8 + 8 = 16$ address bits, so $2^{16} = 65536 = 64\\text{K}$ words (with $1\\text{K} = 1024$).",
+          "scene": {
+            "reveal": 6
+          }
         },
         {
-          "title": "Word width",
-          "body": "Largest product $255\\times255=65025<2^{16}$, needs 16 bits.\n\nROM size = $64K\\times16$."
+          "title": "Width",
+          "body": "The largest product is $255 \\times 255 = 65025$. Since $2^{15} = 32768 \\le 65025 < 65536 = 2^{16}$, it needs exactly 16 bits. In general $(2^n - 1)^2 < 2^{2n}$ (so $2n$ bits suffice) and $(2^n - 1)^2 \\ge 2^{2n-1}$ for $n \\ge 2$ (so $2n - 1$ do not).",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Size",
+          "body": "$64\\text{K} \\times 16$, which is $2^{20}$ bits = 1 Mbit.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": false,
-          "reason": "256 words only cover one 8-bit input."
-        },
-        {
-          "option": "B",
-          "correct": false,
-          "reason": "8-bit words cannot hold products up to 65025."
-        },
-        {
-          "option": "C",
-          "correct": false,
-          "reason": "4K words = 12 address bits, not enough for two 8-bit operands."
-        },
-        {
-          "option": "D",
-          "correct": true,
-          "reason": "Correct."
-        }
-      ],
-      "verification": "$m$-bit × $n$-bit multiplier ROM: $2^{m+n}\\times(m+n)$ = $2^{16}\\times16$.",
       "answer": {
-        "value": "$64K\\times16$",
+        "value": "(D) $64\\text{K} \\times 16$",
         "choice": [
           "D"
         ],
         "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$256 \\times 16$ has only 8 address bits, enough for one 8-bit operand; the ROM must be addressed by both operands (16 bits)."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "$64\\text{K} \\times 8$ has the right number of words but 8-bit words keep only the low byte of each product; $16 \\times 16 = 256$ would read as 0."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "$4\\text{K} \\times 16$ has 12 address bits, four short of the 16 the two operands need, so many pairs would share a word."
+        },
+        {
+          "option": "D",
+          "correct": true,
+          "reason": "16 address bits ($2^{16} = 64\\text{K}$ words) and a 16-bit product."
+        }
+      ],
+      "shortcut": "Words $= 2^{\\text{total operand bits}}$, width = sum of the operand widths: $2^{8+8} \\times (8 + 8)$.",
+      "pitfalls": [
+        "Treating the word as operand-sized (8 bits): option B.",
+        "Addressing with one operand: option A.",
+        "Reading 64K as 64 000; it is $2^{16} = 65536$."
+      ],
+      "verification": "$255^2 = 65025 = 1111111000000001_2$: 16 digits. Capacity $2^{16} \\cdot 16 = 2^{20}$ bits.",
+      "animation": {
+        "kind": "table",
+        "title": "A ROM for an 8-bit × 8-bit multiplier",
+        "cols": [
+          "Quantity",
+          "Count",
+          "Why"
+        ],
+        "rows": [
+          [
+            "Address bits",
+            16,
+            "8 + 8 (both operands)"
+          ],
+          [
+            "Words",
+            65536,
+            "2^16"
+          ],
+          [
+            "Bits per word",
+            16,
+            "largest product 65025 has 16 bits"
+          ],
+          [
+            "Total bits",
+            1048576,
+            "65536 × 16"
+          ]
+        ],
+        "reveal": 0
       }
     },
     "cse-1996-a-22": {
@@ -2993,23 +3065,49 @@
       "verification": "N = 13 → 1 0001 = \"11\" in base 12 = 12 + 1. ✓"
     },
     "cse-1996-a-47": {
-      "approach": "Write the MUX output as a sum over select combinations $AB$ with their data inputs.",
+      "approach": "Concept tested: **reading a 4:1 MUX** whose data inputs are a variable and its complement. Case-split on the select lines $S_1 = A$, $S_0 = B$: each select value passes one data input, and the four cases together are the function.",
       "concepts": [
-        "Multiplexer",
-        "XOR"
+        "Multiplexer equation",
+        "Case split on selects",
+        "3-input XOR (parity)"
       ],
+      "given": "4:1 MUX, $S_1 = A$, $S_0 = B$; $I_0 = C$, $I_1 = \\overline{C}$, $I_2 = \\overline{C}$, $I_3 = C$.",
       "steps": [
         {
-          "title": "MUX expression",
-          "body": "$f=\\bar A\\bar B\\,C+\\bar A B\\,\\bar C+A\\bar B\\,\\bar C+AB\\,C$."
+          "title": "Write the MUX equation",
+          "body": "$f = \\overline{A}\\,\\overline{B}\\,I_0 + \\overline{A}B\\,I_1 + A\\overline{B}\\,I_2 + AB\\,I_3 = \\overline{A}\\,\\overline{B}C + \\overline{A}B\\overline{C} + A\\overline{B}\\,\\overline{C} + ABC$."
         },
         {
-          "title": "Recognise",
-          "body": "$f=1$ exactly when an odd number of $A,B,C$ are 1 (001, 010, 100, 111). That is $A\\oplus B\\oplus C$."
+          "title": "Read it as a rule",
+          "body": "When $A = B$ (select 00 or 11) the output is $C$; when $A \\ne B$ (01 or 10) it is $\\overline{C}$. Copying $C$ when $A \\oplus B = 0$ and inverting it when $A \\oplus B = 1$ is exactly $(A \\oplus B) \\oplus C$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Confirm with the 1s",
+          "body": "$f = 1$ on rows 001, 010, 100, 111, the rows with an odd number of 1s: the 3-input XOR."
         }
       ],
       "answer": {
-        "value": "$A\\oplus B\\oplus C$",
+        "value": "(C) $A \\oplus B \\oplus C$",
         "choice": [
           "C"
         ],
@@ -3019,25 +3117,91 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Misses the minterm $A\\bar B\\bar C$."
+          "reason": "$\\overline{A}\\,\\overline{B}C + \\overline{A}B\\overline{C} + ABC$ has only three of the four minterms; it misses $A\\overline{B}\\,\\overline{C}$ (row 100), where the MUX passes $I_2 = \\overline{C} = 1$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "OR is 1 also for 011, 101, 110."
+          "reason": "$A + B + C$ is 1 on seven rows; at $ABC = 011$ the selects $AB = 01$ pass $I_1 = \\overline{C} = 0$, but the OR is 1."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct."
+          "reason": "The case split gives $C$ when $A = B$ and $\\overline{C}$ when $A \\ne B$: $A \\oplus B \\oplus C$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Majority function — 1 for 011 but $f(0,1,1)=\\bar C=0$."
+          "reason": "$AB + BC + CA$ is the majority (carry) function, 1 on 011, 101, 110, 111; at 011 the MUX outputs $\\overline{C} = 0$."
         }
       ],
-      "verification": "Minterms {1, 2, 4, 7} = odd parity of 3 bits."
+      "shortcut": "Data pattern $C, \\overline{C}, \\overline{C}, C$ is the XOR column $0, 1, 1, 0$ of the selects with $C$ for 0 and $\\overline{C}$ for 1: the answer is always selects-XOR-$C$.",
+      "pitfalls": [
+        "Taking $S_0$ as the MSB, which does not matter here (the pattern is symmetric) but does in most MUX questions.",
+        "Picking (A) because it looks like a canonical SOP: count its minterms."
+      ],
+      "verification": "Enumerating the 8 rows of the netlist gives 1s exactly at 1, 2, 4, 7, the minterms of $A \\oplus B \\oplus C$.",
+      "animation": {
+        "kind": "table",
+        "title": "4:1 MUX with data C, C′, C′, C",
+        "cols": [
+          "A",
+          "B",
+          "C",
+          "f"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-1996-a-48": {
       "approach": "Partition refinement: split by outputs, then split again by which block each next state falls into.",
@@ -3329,34 +3493,41 @@
       "verification": "Each sequence was re-checked against both bounds at every probe."
     },
     "cse-1996-a-53": {
-      "approach": "Feed the two control lines to the select inputs of a 4-to-1 MUX; then each data input only has to produce one fixed function of A and B, and the four gates supplied make exactly those four functions.",
+      "approach": "Concept tested: **a MUX as a function selector**. The control inputs $C_1 C_0$ choose one of four functions of $A, B$, which is exactly what a 4:1 MUX with $C_1, C_0$ on its selects does; the data inputs carry the four functions, built from the allowed gates.",
       "concepts": [
-        "4-to-1 multiplexer",
-        "Function generation with select lines"
+        "Function selection",
+        "MUX with gates on the data lines",
+        "Sharing a gate output"
       ],
+      "given": "$C_1 C_0 = 00 \\to \\overline{A + B}$, $01 \\to A + B$, $10 \\to A \\oplus B$, $11 \\to AB$. Allowed: one 4:1 MUX, one 2-input XOR, one 2-input AND, one 2-input OR, one inverter.",
       "steps": [
         {
-          "title": "Use $C_1C_0$ as the select inputs",
-          "body": "With $S_1=C_1$, $S_0=C_0$ the MUX passes $I_{2C_1+C_0}$ to the output:\n\n| $C_1C_0$ | input routed | must equal |\n|---|---|---|\n| 00 | $I_0$ | $\\overline{A+B}$ |\n| 01 | $I_1$ | $A+B$ |\n| 10 | $I_2$ | $A\\oplus B$ |\n| 11 | $I_3$ | $AB$ |"
+          "title": "Selects",
+          "body": "Connect $S_1 = C_1$ and $S_0 = C_0$. Then the MUX passes $I_{(C_1 C_0)_2}$: $I_0$ for 00, $I_1$ for 01, $I_2$ for 10, $I_3$ for 11."
         },
         {
-          "title": "Build the data inputs",
-          "body": "- OR gate: $A+B \\to I_1$.\n- Inverter on the OR output: $\\overline{A+B} \\to I_0$ (this is why only one OR gate is needed).\n- XOR gate: $A\\oplus B \\to I_2$.\n- AND gate: $AB \\to I_3$.\n\nEvery listed component is used exactly once."
+          "title": "Data inputs from the gates",
+          "body": "$I_1 = A + B$ (the OR gate), $I_2 = A \\oplus B$ (the XOR gate), $I_3 = AB$ (the AND gate)."
         },
         {
-          "title": "Check the output",
-          "body": "$F=\\overline{C_1}\\,\\overline{C_0}\\,\\overline{A+B}+\\overline{C_1}C_0(A+B)+C_1\\overline{C_0}(A\\oplus B)+C_1C_0\\,AB$, which is the given table row by row."
+          "title": "NOR without a NOR gate",
+          "body": "Only one inverter and no NOR gate are allowed, so $I_0 = \\overline{A + B}$ must reuse the OR gate: feed the OR output both to $I_1$ and through the inverter to $I_0$. Every allowed gate is used exactly once."
+        },
+        {
+          "title": "Check the table",
+          "body": "With $C_1 C_0 = 00$ the output is NOT(OR) $= \\overline{A + B}$; 01 gives the OR, 10 the XOR, 11 the AND: the four rows of the specification, for every value of $A$ and $B$."
         }
       ],
       "answer": {
-        "value": "4-to-1 MUX with $S_1=C_1$, $S_0=C_0$; $I_0=\\overline{A+B}$ (OR gate followed by the inverter), $I_1=A+B$ (OR output), $I_2=A\\oplus B$ (XOR), $I_3=AB$ (AND); the MUX output is F.",
+        "value": "A 4:1 MUX with $S_1 = C_1$, $S_0 = C_0$; $I_0 = \\overline{A + B}$ (OR gate followed by the inverter), $I_1 = A + B$ (OR), $I_2 = A \\oplus B$ (XOR), $I_3 = AB$ (AND).",
         "matchesKey": true
       },
+      "shortcut": "Any \"control bits choose an operation\" table is a MUX: control bits on the selects, one operation per data input in the order of the control code.",
       "pitfalls": [
-        "Swapping $S_1$/$S_0$ routes $A+B$ and $A\\oplus B$ to the wrong rows.",
-        "Do not use a second OR gate for $\\overline{A+B}$: invert the one OR output."
+        "Swapping $C_1$ and $C_0$ on the selects, which exchanges $I_1$ and $I_2$ (the OR and XOR rows).",
+        "Spending the inverter on an input ($\\overline{A}$ or $\\overline{B}$) and then having no way to make the NOR."
       ],
-      "verification": "Substituted each control combination into the MUX equation and got the table entry."
+      "verification": "Simulating the circuit over all 16 combinations of $C_1, C_0, A, B$ reproduces the table (l4_02_mux.py)."
     },
     "cse-1996-a-54": {
       "approach": "Assemble the program to find addresses: PCHL jumps to the address in HL = 0105H, which is the OUT instruction, so OUT–INR–PCHL is an endless loop that writes an incrementing accumulator to the port.",

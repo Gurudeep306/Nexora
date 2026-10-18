@@ -1,1 +1,2618 @@
-[]
+[
+ {
+  "id": "nx-dl-04-01-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "The input $A B C D$ of a circuit is always a BCD digit (weights 8 4 2 1; codes 1010–1111 never occur). The output is 1 when the digit is **odd and at least 5**. Only AND, OR and NOT gates may be used (any fan-in), and complemented inputs are not available. What is the minimum number of gates?",
+  "answer": 2,
+  "solution": [
+   "The selected digits are 5, 7, 9: $f = \\Sigma m(5, 7, 9) + d(10\\text{–}15)$.",
+   "Every selected row has $D = 1$. With the Xs, $BD$ covers 5, 7 (with 13, 15) and $AD$ covers 9 (with 11, 13, 15): $f = AD + BD = D(A + B)$.",
+   "Factored: OR($A$, $B$) and AND($D$, ·): 2 gates, no NOT needed.",
+   "One gate is not enough: one AND or OR of inputs, or one NOT, cannot be 1 on 5 (0101) and 9 (1001) yet 0 on 1 (0001) and 4 (0100); an exhaustive search confirms 2."
+  ],
+  "concept": "Use the BCD don't-cares, then factor: gates, not literals, are counted.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "$AD + BD$ drawn without factoring uses two ANDs and an OR; factoring out $D$ saves a gate."
+   },
+   {
+    "answer": 1,
+    "why": "No single AND, OR or NOT gate computes $D(A + B)$ on the care rows (row 1 = 0001 must give 0 while row 9 = 1001 gives 1)."
+   }
+  ],
+  "blocks": [
+   "gate-count",
+   "gate-lower-bound",
+   "dc-illegal"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A truth table of $f(A, B, C)$, rows in counting order 000 to 111, has the output column $0, 0, 1, 1, 1, 0, 1, 0$. Which expression represents $f$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A \\oplus B$"
+   },
+   {
+    "l": "B",
+    "t": "$A'B + AC'$"
+   },
+   {
+    "l": "C",
+    "t": "$B \\oplus C$"
+   },
+   {
+    "l": "D",
+    "t": "$A'B + AC$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The 1s are at rows 2, 3, 4, 6: $f = \\Sigma m(2, 3, 4, 6)$.",
+   "$A'B$ = rows 2, 3; $AC'$ = rows 4, 6. Together exactly $\\{2, 3, 4, 6\\}$.",
+   "Each other option has a counterexample row: $A \\oplus B$ is 1 on row 5 (101) where $f = 0$; $B \\oplus C$ is 0 on row 3 (011) where $f = 1$; $A'B + AC$ is 1 on row 5 and 0 on row 4."
+  ],
+  "concept": "An expression represents a table only if it agrees on every row; one counterexample row rejects it.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$A \\oplus B$ agrees on rows 0–4 and 6–7 but is 1 on row 5 (101), where the table has 0."
+   },
+   {
+    "answer": "D",
+    "why": "It swaps $C'$ for $C$ in the second term: it is 1 on rows 5, 7 instead of 4, 6."
+   }
+  ],
+  "blocks": [
+   "match-table",
+   "truth-table-spec"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q03",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "$f(A, B, C)$ (with $A$ the MSB) is 1 exactly when $C = 0$ and exactly one of $A$, $B$ is 1, or when all three inputs are 1. Which minterms belong to $f$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$m_2$"
+   },
+   {
+    "l": "B",
+    "t": "$m_3$"
+   },
+   {
+    "l": "C",
+    "t": "$m_4$"
+   },
+   {
+    "l": "D",
+    "t": "$m_7$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "First clause: $C = 0$ and $A \\oplus B = 1$: rows 010 ($m_2$) and 100 ($m_4$).",
+   "Second clause: all three 1: row 111 ($m_7$).",
+   "$m_3$ = 011 has $C = 1$ and is not all ones, so it is not selected. $f = \\Sigma m(2, 4, 7)$."
+  ],
+  "concept": "Each clause of a specification selects a set of rows; the function is their union.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "This drops the 'or all three are 1' clause, which adds $m_7$."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "$m_3$ (011) has $C = 1$, so the first clause fails, and it is not 111."
+   }
+  ],
+  "blocks": [
+   "truth-table-spec"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q04",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A BCD → excess-3 converter has inputs $B_3 B_2 B_1 B_0$ (weights 8 4 2 1, codes 1010–1111 never occur) and outputs $E_3 E_2 E_1 E_0$. Which expression gives $E_2$ (the weight-4 output bit) on every legal input?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$B_2 \\oplus (B_1 + B_0)$"
+   },
+   {
+    "l": "B",
+    "t": "$B_2 \\oplus B_1 \\oplus B_0$"
+   },
+   {
+    "l": "C",
+    "t": "$B_2 + B_1 B_0$"
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{B_2}(B_1 + B_0)$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$E_2 = 1$ when $d + 3$ has its weight-4 bit set: $d + 3 \\in \\{4, 5, 6, 7, 12\\}$, i.e. digits 1, 2, 3, 4, 9.",
+   "Minimal SOP with the Xs: $\\overline{B_2}B_0 + \\overline{B_2}B_1 + B_2\\overline{B_1}\\,\\overline{B_0} = \\overline{B_2}(B_1 + B_0) + B_2\\overline{(B_1 + B_0)} = B_2 \\oplus (B_1 + B_0)$.",
+   "Counterexamples for the others: (B) digit 3 (0011) gives 0, but $3 + 3 = 0110$ has $E_2 = 1$; (C) digit 1 gives 0, but $0100$ has $E_2 = 1$; (D) digit 4 (0100) gives 0, but $0111$ has $E_2 = 1$."
+  ],
+  "concept": "One K-map per output bit, with the unused codes as don't-cares; then factor the shared $(B_1 + B_0)$.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "The three-input XOR is the parity of the digit, not bit 2 of $d + 3$; it fails on digit 3."
+   },
+   {
+    "answer": "D",
+    "why": "This is only the $B_2 = 0$ half; digit 4 (0100) needs $E_2 = 1$ from the term $B_2\\overline{B_1}\\,\\overline{B_0}$."
+   }
+  ],
+  "blocks": [
+   "bcd-to-xs3",
+   "xs3-derivation",
+   "code-converters"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A circuit converts a BCD digit $A B C D$ (weights 8 4 2 1; illegal inputs are not detected) to the digit modulo 3, as a 2-bit output $R_1 R_0$ (weights 2 1). Which is a minimal SOP of $R_1$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$C$"
+   },
+   {
+    "l": "B",
+    "t": "$AD' + B'C + BC'D$"
+   },
+   {
+    "l": "C",
+    "t": "$A + B'CD' + BC'D$"
+   },
+   {
+    "l": "D",
+    "t": "$AD' + B'CD' + BC'D$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Residue 2 occurs for digits 2, 5, 8, so $R_1 = \\Sigma m(2, 5, 8) + d(10\\text{–}15)$.",
+   "Digit 8 (1000) joins the Xs 10, 12, 14 in the quad $AD'$.",
+   "Digit 2 (0010) can only grow with X10 into $B'CD'$ (its other neighbours 0, 3, 6 are 0s); digit 5 (0101) only with X13 into $BC'D$ (4, 7, 1 are 0s).",
+   "$R_1 = AD' + B'CD' + BC'D$: 8 literals, and no cover is smaller."
+  ],
+  "concept": "For odd $n$ the residue bits do not pass through; each needs its own map with the BCD don't-cares.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Bits pass through only for mod $2^i$; digit 3 (0011) has $C = 1$ but residue 0."
+   },
+   {
+    "answer": "C",
+    "why": "$A$ is 1 on digit 9, whose residue is 0; only $AD'$ (digit 8) may be used."
+   },
+   {
+    "answer": "B",
+    "why": "$B'C$ includes digit 3 (0011), whose residue is 0."
+   }
+  ],
+  "blocks": [
+   "bcd-mod-n",
+   "trick-period",
+   "dc-illegal"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "An excess-3 → BCD converter has inputs $e_8 e_4 e_2 e_1$ (named by weight) and outputs $b_8 b_4 b_2 b_1$. The unused excess-3 codes never occur. How many literals are in a minimal SOP of $b_2$ (the BCD weight-2 bit)?",
+  "answer": 4,
+  "solution": [
+   "$b_2 = 1$ for digits 2, 3, 6, 7, which arrive as codes 5, 6, 9, 10 (0101, 0110, 1001, 1010).",
+   "The unused codes 0, 1, 2, 13, 14, 15 are don't-cares.",
+   "Codes 5, 9 with X1, X13 form the quad $\\overline{e_2}e_1$; codes 6, 10 with X2, X14 form $e_2\\overline{e_1}$.",
+   "$b_2 = \\overline{e_2}e_1 + e_2\\overline{e_1} = e_2 \\oplus e_1$: 4 literals."
+  ],
+  "concept": "Excess-3 has six unused codes (0–2 and 13–15); they are don't-cares in every output.",
+  "common_wrong": [
+   {
+    "answer": 16,
+    "why": "Without the don't-cares the four 1-codes are pairwise non-adjacent, so each needs a 4-literal minterm."
+   },
+   {
+    "answer": 2,
+    "why": "That is the literal count of the XOR form $e_2 \\oplus e_1$, not of an SOP."
+   }
+  ],
+  "blocks": [
+   "xs3-to-bcd",
+   "dc-illegal"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q07",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 6-bit binary → Gray converter and a 6-bit Gray → binary converter are built from 2-input XOR gates only (no other gates). How many XOR gates do the two converters use together?",
+  "answer": 10,
+  "solution": [
+   "Binary → Gray: $G_5 = B_5$ is a wire and $G_i = B_i \\oplus B_{i+1}$ for $i = 0, \\dots, 4$: 5 gates.",
+   "Gray → binary: $B_5 = G_5$ is a wire and $B_i = G_i \\oplus B_{i+1}$ for $i = 4, \\dots, 0$: 5 gates (in a ripple).",
+   "Total $5 + 5 = 10$."
+  ],
+  "concept": "An $n$-bit converter in either direction needs $n - 1$ two-input XORs; the MSB is a wire.",
+  "common_wrong": [
+   {
+    "answer": 12,
+    "why": "The MSB needs no gate in either direction ($G_5 = B_5$)."
+   },
+   {
+    "answer": 5,
+    "why": "That is one converter; the question asks for both."
+   }
+  ],
+  "blocks": [
+   "binary-gray",
+   "trick-xor-converter"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q08",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A combinational circuit has 8 inputs that carry two BCD digits (4 bits each). Illegal inputs never occur. How many rows of its 256-row truth table are don't-cares?",
+  "answer": 156,
+  "solution": [
+   "Each 4-bit group carries one of 10 legal codes, so the legal input words number $10 \\times 10 = 100$.",
+   "Every other row can never occur: $256 - 100 = 156$ don't-care rows."
+  ],
+  "concept": "An $n$-bit input with $W$ legal words has $2^n - W$ don't-care rows; legal words of independent fields multiply.",
+  "common_wrong": [
+   {
+    "answer": 12,
+    "why": "$6 + 6$ counts the illegal codes of each digit, but a row is illegal when either digit is illegal, and rows combine both digits."
+   },
+   {
+    "answer": 36,
+    "why": "$6 \\times 6$ counts only the rows where both digits are illegal; rows with one legal and one illegal digit are don't-cares too."
+   }
+  ],
+  "blocks": [
+   "dc-illegal",
+   "truth-table-spec"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q09",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about combinational design are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A gate network containing a feedback loop may have no truth table at all, because its output can depend on past inputs."
+   },
+   {
+    "l": "B",
+    "t": "When a question says 'do not detect illegal input', the unused input codes may be treated as don't-cares in every output."
+   },
+   {
+    "l": "C",
+    "t": "With AND and OR gates of unlimited fan-in, the circuit with the fewest gates is always the two-level circuit of the minimal SOP."
+   },
+   {
+    "l": "D",
+    "t": "When only AND, OR and NOT gates are allowed, a complemented input such as $A'$ costs nothing."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "(A) True: two cross-coupled NOR gates (an SR latch) hold either state for the same inputs.",
+   "(B) True: the illegal rows are never applied, so their outputs are free.",
+   "(C) False: 'at least two of four' has a minimal SOP of six 2-literal terms (7 gates), while $AB + CD + (A + B)(C + D)$ uses 6 gates.",
+   "(D) False: unless complemented inputs are stated to be available, each complement needs a NOT gate, which counts."
+  ],
+  "concept": "Combinational = acyclic; don't-cares come from unused codes; gate counts depend on factoring and on whether complements are free.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Factoring can beat the two-level form in gate count: the minimal SOP minimises literals, not gates."
+   },
+   {
+    "answer": [
+     "B",
+     "D"
+    ],
+    "why": "A NOT gate is a gate under 'only AND, OR and NOT'; and a loop of gates can store state."
+   }
+  ],
+  "blocks": [
+   "comb-def",
+   "trap-feedback",
+   "dc-illegal",
+   "gate-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A BCD → 9's-complement converter outputs the BCD code of $9 - d$ for an input digit $d$ given as $B_3 B_2 B_1 B_0$ (weights 8 4 2 1; illegal inputs never occur). Which expression gives the **weight-4** output bit?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{B_2}$"
+   },
+   {
+    "l": "B",
+    "t": "$B_2 + B_1$"
+   },
+   {
+    "l": "C",
+    "t": "$B_2 \\oplus B_1$"
+   },
+   {
+    "l": "D",
+    "t": "$B_2 \\odot B_1$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "$9 - d$ has its weight-4 bit set when $9 - d \\in \\{4, 5, 6, 7\\}$, i.e. $d \\in \\{2, 3, 4, 5\\}$.",
+   "Digits 2, 3 are 001x ($B_2 = 0$, $B_1 = 1$) and 4, 5 are 010x ($B_2 = 1$, $B_1 = 0$). With Xs 10–15, $\\overline{B_2}B_1$ (2, 3, 10, 11) and $B_2\\overline{B_1}$ (4, 5, 12, 13) cover them.",
+   "Output $= \\overline{B_2}B_1 + B_2\\overline{B_1} = B_2 \\oplus B_1$. Check digit 6 (0110): $9 - 6 = 3 = 0011$, bit 0 ✓ ($1 \\oplus 1 = 0$)."
+  ],
+  "concept": "A converter output bit is a function of the input word; list the digits that set it, then map with the don't-cares.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Digit 0 has $B_2 = 0$, but $9 - 0 = 1001$ has weight-4 bit 0."
+   },
+   {
+    "answer": "B",
+    "why": "Digit 6 (0110) gives $B_2 + B_1 = 1$, but $9 - 6 = 0011$ has weight-4 bit 0."
+   },
+   {
+    "answer": "D",
+    "why": "That is the complement: it is 1 on digit 0, where the output bit is 0."
+   }
+  ],
+  "blocks": [
+   "code-converters",
+   "dc-illegal"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4:1 multiplexer has $S_1 = A$ and $S_0 = B$, and its data inputs are $I_0 = 1$, $I_1 = C$, $I_2 = \\overline{C}$, $I_3 = 0$. Which expression is the output $Y$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{A}\\,\\overline{B} + BC'$"
+   },
+   {
+    "l": "B",
+    "t": "$\\overline{A}C' + \\overline{B}C$"
+   },
+   {
+    "l": "C",
+    "t": "$\\overline{A}C + \\overline{B}\\,\\overline{C}$"
+   },
+   {
+    "l": "D",
+    "t": "$AB + C$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "MUX equation: $Y = \\overline{A}\\,\\overline{B} \\cdot 1 + \\overline{A}B \\cdot C + A\\overline{B} \\cdot \\overline{C} + AB \\cdot 0$.",
+   "Minterms over $(A, B, C)$: $\\overline{A}\\,\\overline{B}$ gives 0, 1; $\\overline{A}BC$ gives 3; $A\\overline{B}\\,\\overline{C}$ gives 4. So $Y = \\Sigma m(0, 1, 3, 4)$.",
+   "Loop: $m_1, m_3$ form $\\overline{A}C$; $m_0, m_4$ form $\\overline{B}\\,\\overline{C}$. Both loops are needed and they cover all four 1s.",
+   "$Y = \\overline{A}C + \\overline{B}\\,\\overline{C}$."
+  ],
+  "concept": "Reading a 4:1 MUX with the MUX equation (case split on the selects)",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Swaps the residues: reads $I_1 = C$ as $C'$ and $I_2 = \\overline{C}$ as $C$."
+   },
+   {
+    "answer": "A",
+    "why": "Keeps $\\overline{A}\\,\\overline{B}$ and attaches $I_2$'s residue to the wrong select value; it is 1 on row 2, where $Y = I_1 = C = 0$."
+   }
+  ],
+  "blocks": [
+   "mux-equation",
+   "mux-analysis",
+   "trick-case-split"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "The function $f(w, x, y) = \\Sigma m(1, 2, 3, 6)$ is to be built on a 4:1 MUX with $S_1 = w$ and $S_0 = y$ ($x$ is the residue variable, and $\\overline{x}$ is available). What are $(I_0, I_1, I_2, I_3)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$(\\overline{x}, 1, \\overline{x}, 0)$"
+   },
+   {
+    "l": "B",
+    "t": "$(x, x, 1, 0)$"
+   },
+   {
+    "l": "C",
+    "t": "$(x, 1, 0, x)$"
+   },
+   {
+    "l": "D",
+    "t": "$(x, 1, x, 0)$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The select value $wy$ fixes $w$ and $y$; the two rows each data input serves differ in $x$, the middle bit of the minterm number.",
+   "$I_0$ ($w = 0, y = 0$): rows 0 ($x = 0$) and 2 ($x = 1$): $(0, 1) \\to x$.",
+   "$I_1$ ($w = 0, y = 1$): rows 1 and 3: $(1, 1) \\to 1$. $I_2$ ($w = 1, y = 0$): rows 4 and 6: $(0, 1) \\to x$. $I_3$ ($w = 1, y = 1$): rows 5 and 7: $(0, 0) \\to 0$.",
+   "So $(I_0, I_1, I_2, I_3) = (x, 1, x, 0)$."
+  ],
+  "concept": "Implementation table with a residue variable that is not the LSB",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Reads the pairs upside down (the $x = 1$ row first), which turns every $x$ into $\\overline{x}$."
+   },
+   {
+    "answer": "B",
+    "why": "This is the table for $S_1 = y$, $S_0 = w$: swapping the select order exchanges $I_1$ and $I_2$."
+   }
+  ],
+  "blocks": [
+   "impl-table",
+   "trick-residue-read",
+   "trap-select-order"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q03",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Let $f(A, B, C) = \\Sigma m(2, 3, 5, 6)$. A 4:1 MUX is wired as below (the MUX output is chosen by $(S_1 S_0)_2$, and complements are available). Which wirings realise $f$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$S_1 = A$, $S_0 = B$; $(I_0, I_1, I_2, I_3) = (0, 1, C, \\overline{C})$"
+   },
+   {
+    "l": "B",
+    "t": "$S_1 = B$, $S_0 = C$; $(I_0, I_1, I_2, I_3) = (0, A, 1, \\overline{A})$"
+   },
+   {
+    "l": "C",
+    "t": "$S_1 = C$, $S_0 = B$; $(I_0, I_1, I_2, I_3) = (0, A, 1, \\overline{A})$"
+   },
+   {
+    "l": "D",
+    "t": "$S_1 = A$, $S_0 = C$; $(I_0, I_1, I_2, I_3) = (B, B, B, B)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "(A) Residue $C$: pairs (0,1)→0,0 → 0; (2,3)→1,1 → 1; (4,5)→0,1 → $C$; (6,7)→1,0 → $\\overline{C}$. Correct.",
+   "(B) Residue $A$: column $BC = j$ holds rows $j$ and $j + 4$: (0,4)→0; (1,5)→0,1 → $A$; (2,6)→1,1 → 1; (3,7)→1,0 → $\\overline{A}$. Correct.",
+   "(C) With $S_1 = C$, $S_0 = B$ the select value 01 means $C = 0, B = 1$ (rows 2 and 6, both 1s), so $I_1$ must be 1 and $I_2$ must be $A$: the table is $(0, 1, A, \\overline{A})$. The given wiring outputs $A$ on row 2, where $f = 1$: wrong.",
+   "(D) Residue $B$: (0,2)→0,1 → $B$; (1,3)→ $B$; (4,6)→ $B$; (5,7)→1,0 → $\\overline{B}$. $I_3$ must be $\\overline{B}$; with $B$ there it outputs 0 on row 5: wrong."
+  ],
+  "concept": "Implementation tables for different select choices; the select order permutes the data inputs",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Assumes the order of the select lines does not matter; swapping $S_1$ and $S_0$ exchanges $I_1$ and $I_2$."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "Reads the last column (rows 5, 7 = 1, 0) as $B$ instead of $\\overline{B}$."
+   }
+  ],
+  "blocks": [
+   "impl-table",
+   "residue-choice",
+   "trap-select-order",
+   "trap-residue-complement"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Every Boolean function of 5 variables must be realisable with one multiplexer, one inverter and the constants 0 and 1, and nothing else. What is the smallest multiplexer that always suffices?",
+  "options": [
+   {
+    "l": "A",
+    "t": "32 : 1"
+   },
+   {
+    "l": "B",
+    "t": "16 : 1"
+   },
+   {
+    "l": "C",
+    "t": "8 : 1"
+   },
+   {
+    "l": "D",
+    "t": "4 : 1"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Put 4 of the variables on the selects of a 16:1 MUX. Each data input serves two rows that differ only in the fifth variable $x$, so its residue is 0, 1, $x$ or $\\overline{x}$; the inverter makes $\\overline{x}$.",
+   "An 8:1 MUX leaves two free variables per data input. For the 5-input parity function every such residue is an XOR or XNOR of two variables, which a wire, a constant or one inverter cannot supply.",
+   "So the smallest MUX is $2^{5-1} = 16$ : 1."
+  ],
+  "concept": "Minimum MUX size for every n-variable function ($2^{n-1}$:1)",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "32:1 works (wire the truth table) but is not the smallest: one variable can go on the data lines."
+   },
+   {
+    "answer": "C",
+    "why": "8:1 would need 2-variable residues such as $u \\oplus v$, which need gates."
+   }
+  ],
+  "blocks": [
+   "shannon-mux",
+   "min-mux-size"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 128:1 multiplexer is built as a tree of 4:1 multiplexers only (no other gates). How many 4:1 multiplexers are needed?",
+  "answer": 43,
+  "solution": [
+   "Level 1: $\\lceil 128/4 \\rceil = 32$ MUXes.",
+   "Level 2: $\\lceil 32/4 \\rceil = 8$. Level 3: $\\lceil 8/4 \\rceil = 2$. Level 4: the 2 remaining signals still need one 4:1 MUX (two inputs unused).",
+   "Total $32 + 8 + 2 + 1 = 43$ in $\\lceil \\log_4 128 \\rceil = 4$ levels."
+  ],
+  "concept": "MUX tree count, rounding up at every level",
+  "common_wrong": [
+   {
+    "answer": 42,
+    "why": "Drops the last half-used MUX ($32 + 8 + 2 + 0.5$ truncated)."
+   },
+   {
+    "answer": 127,
+    "why": "That is the count of 2:1 MUXes, $(N - 1)/(k - 1)$ with $k = 2$."
+   }
+  ],
+  "blocks": [
+   "mux-tree",
+   "mux-tree-count",
+   "trap-tree-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q06",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A data logger connects exactly one of 48 sensor channels to its converter at a time, through a single multiplexer. What is the minimum number of select lines?",
+  "answer": 6,
+  "solution": [
+   "$k$ select lines name $2^k$ inputs, so we need $2^k \\ge 48$.",
+   "$2^5 = 32 < 48 \\le 64 = 2^6$, so $k = \\lceil \\log_2 48 \\rceil = 6$ (a 64:1 MUX with 16 inputs unused)."
+  ],
+  "concept": "Select lines = $\\lceil \\log_2 N \\rceil$",
+  "common_wrong": [
+   {
+    "answer": 5,
+    "why": "Rounds $\\log_2 48 \\approx 5.58$ down; 5 lines name only 32 channels."
+   },
+   {
+    "answer": 48,
+    "why": "Confuses the number of data inputs with the number of select lines."
+   }
+  ],
+  "blocks": [
+   "select-lines",
+   "trap-select-count",
+   "mux-applications"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "MUX 1 is a 2:1 MUX with select $P$, $I_0 = Q$ and $I_1 = \\overline{R}$; its output is $g$. MUX 2 is a 2:1 MUX with select $Q$, $I_0 = R$ and $I_1 = g$; its output is $X$. Which expression equals $X$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{Q}R + PQ$"
+   },
+   {
+    "l": "B",
+    "t": "$\\overline{P}Q + P\\overline{R} + \\overline{Q}R$"
+   },
+   {
+    "l": "C",
+    "t": "$(Q \\oplus R) + \\overline{P}Q$"
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{Q}\\,\\overline{R} + \\overline{P}Q$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "$g = \\overline{P}Q + P\\overline{R}$.",
+   "$X = \\overline{Q}R + Qg$. Inside the term with $Q = 1$, $g = \\overline{P} + P\\overline{R} = \\overline{P} + \\overline{R}$, so $X = \\overline{Q}R + \\overline{P}Q + Q\\overline{R}$.",
+   "Minterms over $(P, Q, R)$: $\\overline{Q}R$ = 1, 5; $\\overline{P}Q$ = 2, 3; $Q\\overline{R}$ = 2, 6. $X = \\Sigma m(1, 2, 3, 5, 6)$.",
+   "$(Q \\oplus R) + \\overline{P}Q = \\overline{Q}R + Q\\overline{R} + \\overline{P}Q$: the same three terms. Option C."
+  ],
+  "concept": "Cascaded 2:1 MUXes through a data input",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Expands $X$ as $g$ plus the other term, forgetting that $g$ passes only when $Q = 1$; it wrongly includes row 4 ($P = 1$, $Q = R = 0$)."
+   },
+   {
+    "answer": "D",
+    "why": "Takes MUX 2's $I_0$ as $\\overline{R}$ instead of $R$."
+   }
+  ],
+  "blocks": [
+   "mux-cascade",
+   "mux-analysis"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A single 2:1 MUX ($Y = \\overline{S} I_0 + S I_1$) may have each of its three inputs $S$, $I_0$, $I_1$ connected to $A$, $B$, the constant 0 or the constant 1. No complemented inputs and no other gates are available. Which functions can it produce?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{A B}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\overline{A}$"
+   },
+   {
+    "l": "C",
+    "t": "$A \\oplus B$"
+   },
+   {
+    "l": "D",
+    "t": "$A + \\overline{B}$"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "solution": [
+   "Enumerating all $4^3 = 64$ wirings, a single MUX gives only 0, 1, $A$, $B$, $\\overline{A}$, $\\overline{B}$, $AB$, $A + B$, $A\\overline{B}$, $\\overline{A}B$, $A + \\overline{B}$ and $\\overline{A} + B$.",
+   "(B) $\\overline{A} = \\text{MUX}(S = A;\\ 1, 0)$. (D) $A + \\overline{B} = \\text{MUX}(S = B;\\ 1, A)$: $\\overline{B} + BA = A + \\overline{B}$.",
+   "(A) NAND and (C) XOR each need a complemented signal on a data line together with a variable on the select; one MUX cannot make the complement and use it at the same time, so each needs two MUXes."
+  ],
+  "concept": "The 2:1 MUX as a gate with constants",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "NAND needs two MUXes (AND, then NOT on the select of the second)."
+   },
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "XOR on one MUX is $\\text{MUX}(A;\\ B, \\overline{B})$, which needs $\\overline{B}$, not available here."
+   }
+  ],
+  "blocks": [
+   "mux-universal",
+   "mux-complete-proof"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Three 2:1 MUXes ($Y = \\overline{S} I_0 + S I_1$) are cascaded. M1: $S = A$, $I_0 = 1$, $I_1 = 0$, output $m_1$. M2: $S = C$, $I_0 = m_1$, $I_1 = B$, output $m_2$. M3: $S = D$, $I_0 = m_2$, $I_1 = A$, output $Y$. For how many of the 16 input combinations of $(A, B, C, D)$ is $Y = 1$?",
+  "answer": 8,
+  "solution": [
+   "$m_1 = \\overline{A}$ (NOT wiring).",
+   "$m_2 = \\overline{C}\\,\\overline{A} + CB$.",
+   "$Y = \\overline{D} m_2 + DA = \\overline{A}\\,\\overline{C}\\,\\overline{D} + BC\\overline{D} + AD$.",
+   "Count: $AD$ is 1 on 4 rows; with $D = 0$, $m_2$ is 1 when $A = C = 0$ (2 rows, $B$ free) or $B = C = 1$ (2 rows, $A$ free), and these do not overlap ($C$ differs). Total $4 + 2 + 2 = 8$."
+  ],
+  "concept": "Reading a three-MUX cascade and counting its 1s",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "Forgets one of the two $D = 0$ branches of $m_2$ (either $A = C = 0$ or $B = C = 1$)."
+   },
+   {
+    "answer": 12,
+    "why": "Counts the 1s of $m_2$ over all 16 rows (8) and adds the 4 rows of $AD$, ignoring that M3 passes $m_2$ only when $D = 0$."
+   }
+  ],
+  "blocks": [
+   "mux-cascade",
+   "mux-analysis",
+   "mux-universal"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4:1 MUX has $S_1 = x$, $S_0 = y$, data inputs $(I_0, I_1, I_2, I_3) = (1, z, \\overline{z}, 1)$ and an **active-low** enable $\\overline{E}$ driven by the AND of $x$ and $y$. What is its output $f(x, y, z)$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{x}z + \\overline{y}\\,\\overline{z}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\overline{x}z + \\overline{y}\\,\\overline{z} + xy$"
+   },
+   {
+    "l": "C",
+    "t": "$xy$"
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{x}\\,\\overline{y} + xy$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The enable pin is active-low and carries $xy$, so the MUX is disabled (output 0) exactly when $x = y = 1$.",
+   "Otherwise it works normally: $xy = 00 \\to 1$, $01 \\to z$, $10 \\to \\overline{z}$.",
+   "$f = \\overline{x}\\,\\overline{y} + \\overline{x}yz + x\\overline{y}\\,\\overline{z} = \\Sigma m(0, 1, 3, 4) = \\overline{x}z + \\overline{y}\\,\\overline{z}$."
+  ],
+  "concept": "Enable inputs: a disabled MUX outputs 0",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Ignores the enable and lets $I_3 = 1$ through on the rows with $x = y = 1$."
+   },
+   {
+    "answer": "C",
+    "why": "Reads the enable as active-high, so the MUX would work only for $xy = 11$ and pass $I_3 = 1$."
+   }
+  ],
+  "blocks": [
+   "mux-enable",
+   "trap-enable"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many 2:4 decoders, each with an active-high enable input, are needed to build a 6:64 decoder if no other logic gates may be used?",
+  "answer": 21,
+  "solution": [
+   "Leaves: each 2:4 decoder gives 4 outputs, so $64 / 4 = 16$ leaf decoders, all fed by the low bits $A_1A_0$.",
+   "The 16 leaf enables must be one-hot in the high bits $A_5A_4A_3A_2$: a 4:16 decoder, which itself needs $16 / 4 = 4$ decoders on $A_3A_2$ ...",
+   "... whose 4 enables come from one more 2:4 decoder on $A_5A_4$.",
+   "Total $16 + 4 + 1 = 21 = (64 - 1)/(4 - 1)$."
+  ],
+  "concept": "A decoder tree: leaves first, then one level of enable decoders after another, until a single block.",
+  "common_wrong": [
+   {
+    "answer": 16,
+    "why": "Counts only the leaves; with their enables tied high, all 16 would decode the low bits at once and light 16 outputs together."
+   },
+   {
+    "answer": 17,
+    "why": "Assumes one 2:4 decoder can drive 16 enables; it has only 4 outputs, so the enable decoder is itself a 4:16 tree of 5 blocks."
+   },
+   {
+    "answer": 20,
+    "why": "Stops one level early: the 4 middle decoders also need their enables driven, by one more 2:4 decoder."
+   }
+  ],
+  "blocks": [
+   "decoder-expansion",
+   "decoder-tree-count",
+   "trick-tree-count",
+   "trap-decoder-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 3:8 decoder with active-high outputs has address inputs $A$ (MSB), $B$, $C$ (LSB) and is always enabled. Its outputs $D_0, D_2, D_4, D_6$ feed a 4-input OR gate. The OR output is",
+  "options": [
+   {
+    "l": "A",
+    "t": "$C$"
+   },
+   {
+    "l": "B",
+    "t": "$\\overline{C}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\overline{A}$"
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{B}$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Decoder output $D_i$ is the minterm $m_i$, so the OR is $f = \\Sigma m(0, 2, 4, 6)$.",
+   "Rows 000, 010, 100, 110 are exactly the rows with $C = 0$ (the even numbers).",
+   "So $f = \\overline{C}$."
+  ],
+  "concept": "Decoder + OR is the canonical SOP of the connected minterms, read in the stated address order.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$C$ is the NOR of the same outputs (the odd rows); an OR gate gives the even rows."
+   },
+   {
+    "answer": "C",
+    "why": "Reads the address with $C$ as the MSB: then the indices 0, 2, 4, 6 are the rows with $A = 0$. The question makes $A$ the MSB."
+   }
+  ],
+  "blocks": [
+   "decoder-function",
+   "decoder-or",
+   "trap-decoder-order"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 3:8 decoder with active-high outputs (address $A$ = MSB, $B$, $C$ = LSB, always enabled) has outputs $D_0, D_1, D_2, D_3, D_4$ connected to a 5-input NOR gate. The NOR output, simplified, is",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{A} + \\overline{B}\\,\\overline{C}$"
+   },
+   {
+    "l": "B",
+    "t": "$AB + C$"
+   },
+   {
+    "l": "C",
+    "t": "$A + BC$"
+   },
+   {
+    "l": "D",
+    "t": "$A(B + C)$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "A NOR gate is 1 only when all its inputs are 0, so $f = 1$ on the rows whose outputs are **not** connected: $f = \\Sigma m(5, 6, 7)$.",
+   "Rows 101, 110, 111 all have $A = 1$, and $B + C = 1$.",
+   "So $f = AB + AC = A(B + C)$. (Using the shorter list: an OR of $D_5, D_6, D_7$ gives the same $f$ with 3 inputs instead of 5.)"
+  ],
+  "concept": "A NOR of decoder outputs is 1 on the rows that are not connected.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is $\\Sigma m(0, 1, 2, 3, 4)$, the OR of the connected outputs: the complement of the NOR."
+   },
+   {
+    "answer": "C",
+    "why": "$A + BC = \\Sigma m(3, 4, 5, 6, 7)$ includes rows 3 and 4, whose outputs are connected to the NOR and so give 0."
+   }
+  ],
+  "blocks": [
+   "decoder-function",
+   "decoder-or",
+   "trick-short-list"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q04",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 2:4 decoder has **active-low** outputs $\\overline{D}_0, \\dots, \\overline{D}_3$ and address inputs $A$ (MSB), $B$, and it is enabled. Outputs $\\overline{D}_1$ and $\\overline{D}_2$ feed a 2-input AND gate. The AND output is",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A \\odot B$"
+   },
+   {
+    "l": "B",
+    "t": "$A \\oplus B$"
+   },
+   {
+    "l": "C",
+    "t": "the constant 0"
+   },
+   {
+    "l": "D",
+    "t": "the constant 1"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "An enabled active-low output is a maxterm: $\\overline{D}_1 = M_1 = A + \\overline{B}$ and $\\overline{D}_2 = M_2 = \\overline{A} + B$.",
+   "The AND is the product of maxterms $M_1M_2$: it is 0 exactly on rows 01 and 10.",
+   "So it is 1 on rows 00 and 11: $\\overline{A}\\,\\overline{B} + AB = A \\odot B$."
+  ],
+  "concept": "Active-low decoder outputs are maxterms; an AND of them is the canonical POS.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Treats the AND like an OR of the minterms $m_1, m_2$; that is what a NAND of these two active-low outputs would give, the complement of the AND."
+   },
+   {
+    "answer": "C",
+    "why": "Reads the outputs as active-high minterms: an AND of two different minterms is always 0. The question says the outputs are active-low."
+   }
+  ],
+  "blocks": [
+   "active-low",
+   "trap-active-low",
+   "decoder-function"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "An 8:3 priority encoder gives the highest priority to $D_7$ and the lowest to $D_0$. Its inputs $D_2$, $D_3$ and $D_5$ are 1 and all others are 0. Its code output $Y_2Y_1Y_0$ is",
+  "options": [
+   {
+    "l": "A",
+    "t": "010"
+   },
+   {
+    "l": "B",
+    "t": "111"
+   },
+   {
+    "l": "C",
+    "t": "101"
+   },
+   {
+    "l": "D",
+    "t": "011"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Scan from the highest priority down: $D_7 = 0$, $D_6 = 0$, $D_5 = 1$. So $D_5$ wins and the lower active inputs are ignored.",
+   "The code is the index 5 in binary: 101 (and the valid bit is 1)."
+  ],
+  "concept": "A priority encoder outputs the index of the highest-priority active input.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Picks the lowest active input, $D_2$; here the highest index has priority."
+   },
+   {
+    "answer": "B",
+    "why": "That is what a plain (non-priority) encoder outputs: the OR of the codes 010, 011 and 101."
+   }
+  ],
+  "blocks": [
+   "priority-encoder",
+   "encoder-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q06",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "For a 4:2 priority encoder with inputs $D_0, \\dots, D_3$ ($D_3$ has the highest priority), code outputs $X_1X_0$ and a valid output $V$, which of the following equations are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$X_1 = D_2 + D_3$"
+   },
+   {
+    "l": "B",
+    "t": "$X_0 = D_1 + D_3$"
+   },
+   {
+    "l": "C",
+    "t": "$X_0 = D_3 + D_1\\overline{D_2}$"
+   },
+   {
+    "l": "D",
+    "t": "$V = D_0 + D_1 + D_2 + D_3$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "$X_1 = 1$ when the winner is $D_2$ or $D_3$: $D_3 + \\overline{D_3}D_2 = D_2 + D_3$. (A) is correct.",
+   "$X_0 = 1$ when the winner is $D_1$ or $D_3$: $D_3 + \\overline{D_3}\\,\\overline{D_2}D_1 = D_3 + D_1\\overline{D_2}$. (C) is correct.",
+   "(B) is the plain encoder's equation: with $D_2 = D_1 = 1$ it gives $X_0 = 1$ and the code 11, although $D_2$ wins (code 10).",
+   "$V = 1$ whenever any input is active, including $D_0$ alone. (D) is correct."
+  ],
+  "concept": "Priority-encoder equations: input i counts only when every higher input is 0.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "Takes the plain encoder's $X_0 = D_1 + D_3$, which lets a lower active $D_1$ change the code when $D_2$ wins."
+   },
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "Forgets that $D_0$ alone is a valid input (code 00 with $V = 1$)."
+   }
+  ],
+  "blocks": [
+   "priority-encoder",
+   "priority-equations"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q07",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 4 KB memory is organised as 32-bit words and is **word-addressable**. How many output lines does the decoder that selects one word have?",
+  "answer": 1024,
+  "solution": [
+   "4 KB = 4096 bytes; a 32-bit word is 4 bytes, so there are $4096 / 4 = 1024$ words.",
+   "Word-addressable: each word is one location and needs one decoder output.",
+   "$1024 = 2^{10}$: a 10:1024 decoder, with 1024 outputs."
+  ],
+  "concept": "A memory decoder has one output per addressable location: count words, not bytes, when the memory is word-addressable.",
+  "common_wrong": [
+   {
+    "answer": 4096,
+    "why": "Counts bytes; the memory is word-addressable, so each 4-byte word is one location."
+   },
+   {
+    "answer": 10,
+    "why": "That is the number of address (input) lines, not outputs."
+   },
+   {
+    "answer": 12,
+    "why": "$\\log_2 4096$: the address width of a byte-addressable 4 KB memory, and inputs rather than outputs."
+   }
+  ],
+  "blocks": [
+   "address-decoding",
+   "trap-address-bits"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q08",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "Which of the following statements about decoders and demultiplexers are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A 3:8 decoder with an enable input works as a 1:8 demultiplexer if the data goes to the enable and the select lines go to the address inputs."
+   },
+   {
+    "l": "B",
+    "t": "A 2:4 decoder **without** an enable input can be used as a 1:4 demultiplexer."
+   },
+   {
+    "l": "C",
+    "t": "In a 1:4 demultiplexer, every output that is not selected is 0."
+   },
+   {
+    "l": "D",
+    "t": "A 1:4 demultiplexer with its data input tied to 0 behaves as a 2:4 decoder."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "(A) A decoder's outputs are $D_i = E\\,m_i(S)$ and a DEMUX's are $Y_i = I\\,m_i(S)$: equal when $E = I$. True.",
+   "(B) Without an enable, the decoder's outputs depend only on the address; there is no pin on which the data could enter. False.",
+   "(C) $Y_i = I\\,m_i(S)$ and $m_i(S) = 0$ for every unselected $i$. True.",
+   "(D) With $I = 0$ every output is 0 for every select value. Tying the data to **1** gives a decoder. False."
+  ],
+  "concept": "A DEMUX is a decoder with the data on the enable; data 1 makes it a decoder.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "(B) fails: a decoder without an enable has no input through which the data can reach the outputs."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "(D) fails: data 0 forces every output to 0; it is data 1 that turns a DEMUX into a decoder."
+   }
+  ],
+  "blocks": [
+   "demux-def",
+   "demux-decoder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A byte-addressable 16 KB memory is built from 4 KB memory chips. One decoder, with $m$ inputs and $n$ outputs, drives the chip-select inputs so that exactly one chip is selected for every address. What is the minimum value of $m + n$?",
+  "answer": 6,
+  "solution": [
+   "16 KB / 4 KB = 4 chips, so the chip-select decoder must pick one of 4 chips.",
+   "Each chip holds $4096 = 2^{12}$ bytes, so the low 12 of the 14 address bits go to every chip; the high $14 - 12 = 2$ bits pick the chip.",
+   "The chip-select decoder is a 2:4 decoder: $m + n = 2 + 4 = 6$."
+  ],
+  "concept": "Chip select uses only the high address bits: log₂(number of chips) inputs, one output per chip.",
+  "common_wrong": [
+   {
+    "answer": 16398,
+    "why": "$14 + 16384$ is a decoder that selects every byte of the whole memory; the question asks for the decoder that selects a chip."
+   },
+   {
+    "answer": 4108,
+    "why": "$12 + 4096$ is the decoder inside one chip, not the chip-select decoder."
+   },
+   {
+    "answer": 4,
+    "why": "Counts only the outputs (or only the chips)."
+   }
+  ],
+  "blocks": [
+   "address-decoding",
+   "decoder-expansion"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 2:4 decoder (active-high, always enabled) has inputs $A$ (MSB) and $B$. A 4:1 multiplexer has select lines $S_1 = S$ (MSB) and $S_0 = B$, and data inputs $I_0 = D_0$, $I_1 = D_1$, $I_2 = D_3$, $I_3 = 0$. Of the 8 combinations of $(A, B, S)$, how many give a MUX output of 1?",
+  "answer": 2,
+  "solution": [
+   "$S = 0, B = 0$: the MUX passes $I_0 = D_0 = \\overline{A}\\,\\overline{B}$; with $B = 0$ this is 1 only for $A = 0$: 1 row.",
+   "$S = 0, B = 1$: it passes $I_1 = D_1 = \\overline{A}B$; with $B = 1$ this is 1 only for $A = 0$: 1 row.",
+   "$S = 1, B = 0$: it passes $I_2 = D_3 = AB$, which is 0 because $B = 0$: no row. $S = 1, B = 1$: $I_3 = 0$: no row.",
+   "Total 2 (the output is $\\overline{S}\\,\\overline{A}$)."
+  ],
+  "concept": "When a variable drives both the decoder and the MUX selects, the select value fixes that variable: count rows jointly, not per data line.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Counts one row for each decoder output on a data line ($D_0, D_1, D_3$); but $B$ is also a select bit, and $I_2 = D_3$ is chosen only when $B = 0$, where $D_3 = AB = 0$."
+   },
+   {
+    "answer": 4,
+    "why": "Counts two rows for each of the first two data lines (both values of $A$); but $D_0$ and $D_1$ are 1 only for $A = 0$."
+   }
+  ],
+  "blocks": [
+   "decoder-mux-combo",
+   "decoder-minterms"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "For 2-bit unsigned numbers $A = A_1A_0$ and $B = B_1B_0$, which expression is 1 **exactly** when $A > B$? ($\\odot$ is XNOR.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A_1B_1' + A_0B_0'$"
+   },
+   {
+    "l": "B",
+    "t": "$A_1B_1' + (A_1 \\odot B_1)A_0B_0'$"
+   },
+   {
+    "l": "C",
+    "t": "$A_1B_1' + (A_1 \\oplus B_1)A_0B_0'$"
+   },
+   {
+    "l": "D",
+    "t": "$A_1'B_1 + (A_1 \\odot B_1)A_0'B_0$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Bit 1 decides when it differs: if $A_1 = 1$, $B_1 = 0$ then $A > B$, giving the term $A_1B_1'$.",
+   "Bit 0 may decide only when bit 1 is equal, so its term carries the equality factor $A_1 \\odot B_1$: $(A_1 \\odot B_1)A_0B_0'$.",
+   "$G = A_1B_1' + (A_1 \\odot B_1)A_0B_0'$, with minterms 4, 8, 9, 12, 13, 14 (order $A_1A_0B_1B_0$), which are exactly the six pairs with $A > B$."
+  ],
+  "concept": "The first differing bit from the MSB decides; a lower bit's term needs the equality of every higher bit.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Without the equality factor, bit 0 votes even when bit 1 has already decided: $A = 01$, $B = 10$ gives $A_0B_0' = 1$ although $1 < 2$."
+   },
+   {
+    "answer": "C",
+    "why": "$A_1 \\oplus B_1$ lets bit 0 speak only when bit 1 **differs**, the opposite of the rule; it misses $A = 01$, $B = 00$ and wrongly accepts $A = 01$, $B = 10$."
+   },
+   {
+    "answer": "D",
+    "why": "This is the mirror expression: it is 1 exactly when $A < B$."
+   }
+  ],
+  "blocks": [
+   "magnitude",
+   "magnitude-theorem",
+   "trap-lsb-first"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A comparator for 2-bit unsigned numbers $A$ and $B$ has an output $F = 1$ when $A \\ge B$. On how many of its 16 input rows is $F = 1$?",
+  "answer": 10,
+  "solution": [
+   "$A = B$ on $2^2 = 4$ rows.",
+   "$A > B$ on $(4^2 - 2^2)/2 = 6$ rows (by symmetry with $A < B$); directly $1 + 2 + 3 = 6$.",
+   "$F = 1$ on $4 + 6 = 10$ rows."
+  ],
+  "concept": "E has $2^n$ rows and G, L have $(4^n - 2^n)/2$ each.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "That counts only A > B; ≥ also includes the 4 equal pairs."
+   },
+   {
+    "answer": 8,
+    "why": "Half of 16 ignores that the equal pairs belong to ≥ and not to <."
+   },
+   {
+    "answer": 12,
+    "why": "This adds the 6 rows of A < B instead of the 4 rows of A = B."
+   }
+  ],
+  "blocks": [
+   "comparator-count",
+   "equality"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q03",
+  "type": "NAT",
+  "marks": 2,
+  "text": "An equality comparator for two 6-bit numbers is built only from 2-input gates (any types allowed). What is the **minimum** number of gates?",
+  "answer": 11,
+  "solution": [
+   "Construction: 6 XNOR gates give $x_5, \\dots, x_0$, and a tree of 5 two-input ANDs combines them: $6 + 5 = 11$.",
+   "Lower bound: $E$ depends on all 12 inputs (changing any single bit of an equal pair makes them unequal), and a circuit of 2-input gates whose output depends on $m$ inputs needs at least $m - 1$ gates (the graph argument of the XOR-tree theorem).",
+   "$12 - 1 = 11$, so 11 is optimal."
+  ],
+  "concept": "Any 2-input-gate circuit depending on $m$ inputs has at least $m - 1$ gates; the XNOR + AND tree meets the bound.",
+  "common_wrong": [
+   {
+    "answer": 12,
+    "why": "Six XNORs plus six ANDs: a tree that combines 6 signals needs only 5 two-input ANDs."
+   },
+   {
+    "answer": 7,
+    "why": "That uses a single 6-input AND, which the question forbids (2-input gates only)."
+   },
+   {
+    "answer": 6,
+    "why": "The XNORs alone give six separate equality bits; they still have to be ANDed."
+   }
+  ],
+  "blocks": [
+   "equality",
+   "xor-tree",
+   "comparator-cost"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit comparator computes $G = A_3B_3' + x_3A_2B_2' + x_3x_2A_1B_1' + x_3x_2x_1A_0B_0'$ with $x_i = A_i \\odot B_i$. For $A = 0110$ and $B = 0101$, which statement is true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "No term fires and $E = 1$"
+   },
+   {
+    "l": "B",
+    "t": "Only the second term fires and $G = 1$"
+   },
+   {
+    "l": "C",
+    "t": "Only the third term fires and $G = 1$"
+   },
+   {
+    "l": "D",
+    "t": "No term of $G$ fires; the bit-0 term of $L$ fires and $L = 1$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Bits (3, 2, 1, 0): $A$ = 0, 1, 1, 0; $B$ = 0, 1, 0, 1. So $x_3 = 1$, $x_2 = 1$, $x_1 = 0$, $x_0 = 0$.",
+   "Term 1: $A_3B_3' = 0$. Term 2: $A_2B_2' = 0$. Term 3: $x_3x_2A_1B_1' = 1 \\cdot 1 \\cdot 1 \\cdot 1 = 1$. Term 4 is blocked by $x_1 = 0$.",
+   "So only the third term fires and $G = 1$ ($6 > 5$)."
+  ],
+  "concept": "Scan from the MSB; the term of the first differing bit fires and blocks all lower terms.",
+  "common_wrong": [
+   {
+    "answer": "D",
+    "why": "Reading from the LSB, bit 0 has $B_0 = 1$, suggesting $A < B$; but bit 1 (higher) already decided $A > B$, and $x_1 = 0$ blocks every bit-0 term."
+   },
+   {
+    "answer": "B",
+    "why": "The second term needs $A_2 = 1$, $B_2 = 0$; both bits are 1 here, so it is 0."
+   },
+   {
+    "answer": "A",
+    "why": "Equality needs every $x_i = 1$; $x_1 = x_0 = 0$."
+   }
+  ],
+  "blocks": [
+   "magnitude",
+   "trick-first-difference",
+   "trap-lsb-first"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Two 18-bit unsigned numbers are compared with 4-bit magnitude comparator chips connected in a ripple chain through their cascade inputs. How many chips are needed?",
+  "answer": 5,
+  "solution": [
+   "Each chip compares 4 bits; the chain needs $\\lceil 18/4 \\rceil = 5$ chips.",
+   "The top chip uses only 2 of its 4 bit positions; its unused inputs are tied equal (for example all 0), and the bottom chip's cascade inputs are tied to $(0, 1, 0)$."
+  ],
+  "concept": "$\\lceil n/4 \\rceil$ chips: round up, a partly used chip still counts.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "18/4 = 4.5 rounded down leaves 2 bits uncompared."
+   },
+   {
+    "answer": 4.5,
+    "why": "Chips come whole; round up."
+   },
+   {
+    "answer": 6,
+    "why": "No extra chip is needed to combine results: the cascade inputs do that."
+   }
+  ],
+  "blocks": [
+   "cascade",
+   "cascade-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "The 7-bit data $1011001$ is sent with an **odd**-parity bit $P$. The receiver's checker outputs $F = $ XNOR of all 8 received bits, and $F = 1$ signals an error. Which is correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$P = 1$; for the intact word $F = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$P = 0$; for the intact word $F = 0$"
+   },
+   {
+    "l": "C",
+    "t": "$P = 1$; for the intact word $F = 1$"
+   },
+   {
+    "l": "D",
+    "t": "$P = 0$; for the intact word $F = 1$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The data has four 1s. Odd parity makes the total odd, so $P = 1$ (total five).",
+   "An intact word has five 1s; the XOR of the 8 bits is 1, so the XNOR is $F = 0$: no error signalled."
+  ],
+  "concept": "Odd parity: the total including the parity bit is odd; the odd-parity checker is the XNOR of everything received.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "$P = 0$ is the **even**-parity bit; with it the total is four, which is not odd."
+   },
+   {
+    "answer": "C",
+    "why": "$P = 1$ is right, but five 1s give XOR 1 and XNOR 0, not 1."
+   },
+   {
+    "answer": "D",
+    "why": "Both the parity bit (even instead of odd) and the checker value are wrong."
+   }
+  ],
+  "blocks": [
+   "parity-def",
+   "parity-checker",
+   "trap-parity-even"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A parity generator for 13 data bits is built from 2-input XOR gates. Let $g$ be the fewest gates and $d$ the smallest possible depth (gate levels on the longest path). Find $g + d$.",
+  "answer": 16,
+  "solution": [
+   "Each gate merges two signals: $g = 13 - 1 = 12$.",
+   "Balanced tree: 13 → 7 → 4 → 2 → 1 signals, so $d = 4 = \\lceil \\log_2 13 \\rceil$; three levels reach only $2^3 = 8$ inputs.",
+   "$g + d = 12 + 4 = 16$."
+  ],
+  "concept": "XOR tree: $n - 1$ gates and depth $\\lceil \\log_2 n \\rceil$, both optimal.",
+  "common_wrong": [
+   {
+    "answer": 17,
+    "why": "13 gates is one too many: n inputs need n − 1 merges."
+   },
+   {
+    "answer": 15,
+    "why": "Depth 3 uses $\\lfloor \\log_2 13 \\rfloor$; 3 levels cover only 8 inputs."
+   },
+   {
+    "answer": 24,
+    "why": "That is the chain (depth 12); a balanced tree with the same 12 gates has depth 4."
+   }
+  ],
+  "blocks": [
+   "xor-tree",
+   "parity-generator"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 16-bit word is sent with one even-parity bit (17 bits in all). Which error patterns does the receiver's parity checker **always** detect?",
+  "options": [
+   {
+    "l": "A",
+    "t": "Exactly one data bit flipped"
+   },
+   {
+    "l": "B",
+    "t": "Exactly two bits flipped"
+   },
+   {
+    "l": "C",
+    "t": "Exactly three bits flipped (data or parity)"
+   },
+   {
+    "l": "D",
+    "t": "Only the parity bit flipped"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "The checker's flag is the XOR of the 17 received bits $= $ (number of flipped bits) mod 2, because the sent word has even parity.",
+   "One flipped data bit: odd, detected. Three flipped bits anywhere: odd, detected. Only the parity bit flipped: one flip, detected.",
+   "Two flipped bits: even, never detected."
+  ],
+  "concept": "Parity detects exactly the odd numbers of flipped bits, wherever they are, and no even number.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "Three flips are odd too; parity is not limited to single errors."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Two flips leave the count's parity unchanged, so the checker sees a valid word."
+   }
+  ],
+  "blocks": [
+   "parity-detects",
+   "parity-checker"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q09",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about $n$-bit unsigned magnitude comparators (outputs $G$, $E$, $L$) are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A > B$ can be decided by scanning from the LSB to the first bit where $A$ and $B$ differ."
+   },
+   {
+    "l": "B",
+    "t": "$E = 1$ on exactly $2^n$ of the $4^n$ input rows."
+   },
+   {
+    "l": "C",
+    "t": "$G = (E + L)'$."
+   },
+   {
+    "l": "D",
+    "t": "Two $n$-bit 2's complement numbers are compared correctly if both sign bits are complemented before entering the comparator."
+   }
+  ],
+  "answer": [
+   "B",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A is false: the first difference must be found from the MSB; from the LSB, $10$ vs $01$ would give $A < B$.",
+   "B is true: $E = 1$ when $B$ equals $A$, one $B$ per $A$, so $2^n$ of the $4^n$ rows.",
+   "C is true: exactly one output is 1 on each row, so $G = 1$ iff $E = L = 0$, i.e. $G = (E + L)'$.",
+   "D is true: flipping the MSB adds $2^{n-1}$ to each 2's complement value, which preserves order and makes all values non-negative."
+  ],
+  "concept": "First difference from the MSB; one-hot outputs; equality has 2^n rows; flip sign bits for signed numbers.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B",
+     "C"
+    ],
+    "why": "D also holds: flipping both sign bits is exactly the signed-comparison fix."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "A is the LSB-first trap: 10 > 01, but bit 0 alone says the opposite."
+   }
+  ],
+  "blocks": [
+   "magnitude-theorem",
+   "comparator-count",
+   "one-bit-comparator",
+   "signed-compare"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "The 4-bit 2's complement numbers $A = 1010$ and $B = 0110$ are fed **unchanged** into an unsigned 4-bit magnitude comparator. Which statement is correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "It raises $L$, which is correct because $-6 < 6$."
+   },
+   {
+    "l": "B",
+    "t": "It raises $E$, because $1010$ and $0110$ have the same magnitude."
+   },
+   {
+    "l": "C",
+    "t": "It raises $G$, which is correct because $A > B$."
+   },
+   {
+    "l": "D",
+    "t": "It raises $G$, although $A < B$; complementing both sign bits first makes it raise $L$."
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Unsigned the patterns are $10$ and $6$; the first difference is bit 3 with $A_3 = 1$, so the comparator raises $G$.",
+   "As signed values $A = -8 + 2 = -6$ and $B = 6$, so in fact $A < B$.",
+   "Flipping both sign bits gives $0010 = 2$ and $1110 = 14$, so the comparator would raise $L$, the correct signed answer."
+  ],
+  "concept": "An unsigned comparator ranks negative numbers above positive ones; flip both sign bits first.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "$G = 1$ is what the comparator shows, but $-6 > 6$ is false: the sign bit has negative weight."
+   },
+   {
+    "answer": "A",
+    "why": "$L = 1$ is the correct **signed** relation, but the unchanged unsigned comparator does not produce it."
+   },
+   {
+    "answer": "B",
+    "why": "The patterns differ, so $E = 0$; $-6$ and $10$ share a pattern, but $A$ and $B$ do not."
+   }
+  ],
+  "blocks": [
+   "signed-compare",
+   "trap-signed-compare"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A combinational circuit has 5 inputs and 3 outputs. What is the smallest ROM (words × bits per word) that can store its truth table?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$32 \\times 3$"
+   },
+   {
+    "l": "B",
+    "t": "$8 \\times 5$"
+   },
+   {
+    "l": "C",
+    "t": "$5 \\times 8$"
+   },
+   {
+    "l": "D",
+    "t": "$16 \\times 3$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The 5 inputs form the address: $2^5 = 32$ words, one per row of the truth table.",
+   "Each word holds the row's 3 output bits.",
+   "Size $32 \\times 3$ (96 bits)."
+  ],
+  "concept": "ROM words = 2^(input bits), width = output bits.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Swaps the roles: $2^3$ words from the outputs and 5 bits from the inputs."
+   },
+   {
+    "answer": "D",
+    "why": "$2^4$ words drops one address bit, so two input rows would share a word."
+   }
+  ],
+  "blocks": [
+   "rom-sizing",
+   "trick-rom-size"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A BCD-to-7-segment code converter (4 input bits, 7 segment outputs) is implemented with a ROM addressed directly by the 4 input bits. How many bits does the ROM hold?",
+  "answer": 112,
+  "solution": [
+   "Address: 4 bits, so $2^4 = 16$ words. A ROM cannot skip addresses: rows 10–15 are don't-cares but still have words.",
+   "Width: 7 bits, one per segment.",
+   "Total: $16 \\times 7 = 112$ bits."
+  ],
+  "concept": "A ROM stores every address, don't-cares included.",
+  "common_wrong": [
+   {
+    "answer": 70,
+    "why": "Counts only the 10 valid BCD rows; the 4-bit address still selects 16 words."
+   },
+   {
+    "answer": 128,
+    "why": "Rounds the width up to 8 bits; the ROM needs exactly 7."
+   }
+  ],
+  "blocks": [
+   "rom-sizing",
+   "rom-tables"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A ROM stores the complete table of a 6-bit × 4-bit unsigned multiplier (the 6-bit and the 4-bit operand together form the address; each word is the product). What is the minimum ROM size?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$1\\text{K} \\times 24$"
+   },
+   {
+    "l": "B",
+    "t": "$1\\text{K} \\times 10$"
+   },
+   {
+    "l": "C",
+    "t": "$4\\text{K} \\times 12$"
+   },
+   {
+    "l": "D",
+    "t": "$1\\text{K} \\times 6$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Address: $6 + 4 = 10$ bits, so $2^{10} = 1\\text{K}$ words.",
+   "Width: the largest product is $63 \\times 15 = 945$, and $2^9 = 512 \\le 945 < 1024 = 2^{10}$: 10 bits ($n + m$ for an $n$-bit × $m$-bit product).",
+   "Size $1\\text{K} \\times 10$."
+  ],
+  "concept": "Multiplier ROM: 2^(n+m) words of n + m bits.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Multiplies the widths ($6 \\times 4 = 24$) instead of adding them."
+   },
+   {
+    "answer": "C",
+    "why": "Treats both operands as 6 bits (a 6 × 6 multiplier)."
+   },
+   {
+    "answer": "D",
+    "why": "Gives the product the width of the larger operand, losing its top bits."
+   }
+  ],
+  "blocks": [
+   "multiplier-rom",
+   "product-width",
+   "trick-product-bits"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A ROM adds two 8-bit unsigned numbers and a carry-in bit, producing an 8-bit sum and a carry-out. What is the minimum ROM size?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$64\\text{K} \\times 9$"
+   },
+   {
+    "l": "B",
+    "t": "$128\\text{K} \\times 16$"
+   },
+   {
+    "l": "C",
+    "t": "$64\\text{K} \\times 16$"
+   },
+   {
+    "l": "D",
+    "t": "$128\\text{K} \\times 9$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Inputs: $8 + 8 + 1 = 17$ bits, so $2^{17} = 128\\text{K}$ words.",
+   "Outputs: 8 sum bits and 1 carry-out = 9 bits (the largest result is $255 + 255 + 1 = 511 < 512$).",
+   "Size $128\\text{K} \\times 9$."
+  ],
+  "concept": "Adder ROM: 2n + 1 address bits (carry-in included), n + 1 output bits.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Forgets that the carry-in is an address bit, halving the words."
+   },
+   {
+    "answer": "C",
+    "why": "Forgets the carry-in and sizes the output like a product (16 bits)."
+   },
+   {
+    "answer": "B",
+    "why": "Right number of words but a product-sized output; a sum gains only one bit."
+   }
+  ],
+  "blocks": [
+   "rom-tables",
+   "trap-rom-width"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many $2\\text{K} \\times 8$ ROM chips are needed to build a $16\\text{K} \\times 32$ ROM?",
+  "answer": 32,
+  "solution": [
+   "Width: each word needs 32 bits and a chip gives 8, so $32 / 8 = 4$ chips side by side.",
+   "Depth: $16\\text{K} / 2\\text{K} = 8$ rows, selected by a 3:8 decoder on the top 3 address bits.",
+   "Chips: $8 \\times 4 = 32$. Check: $16\\text{K} \\cdot 32 / (2\\text{K} \\cdot 8) = 32$."
+  ],
+  "concept": "Chips = (W / w) × ⌈B / b⌉.",
+  "common_wrong": [
+   {
+    "answer": 8,
+    "why": "Counts only the depth expansion (rows), not the chips per row."
+   },
+   {
+    "answer": 4,
+    "why": "Counts only the width expansion."
+   }
+  ],
+  "blocks": [
+   "rom-expansion",
+   "rom-expansion-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A PLA with inputs $A, B, C$ (no output polarity control) must produce $f_1 = \\Sigma m(0, 1, 2)$, $f_2 = \\Sigma m(0, 1, 3)$ and $f_3 = \\Sigma m(1, 2, 5)$. What is the minimum number of product terms (AND-plane rows)?",
+  "answer": 4,
+  "solution": [
+   "Minimal SOPs on their own: $f_1 = A'B' + A'C'$, $f_2 = A'B' + A'C$, $f_3 = B'C + A'BC'$ (each unique). Their union has 5 distinct terms.",
+   "The key observation: $f_3$ must contain the minterm $A'BC'$ ($m_2$ has no 1-neighbour in $f_3$), and $m_2$ is also the only cell of $f_1$ that $A'B'$ misses.",
+   "So build $f_1 = A'B' + A'BC'$ (a non-prime term for $f_1$, but already paid for): terms $A'B'$, $A'C$, $B'C$, $A'BC'$ cover all three outputs.",
+   "Three terms cannot work (exhaustive search over all shared implicants), so the minimum is 4."
+  ],
+  "concept": "PLA term count = fewest distinct shared terms; a shared term may be non-prime for one output.",
+  "common_wrong": [
+   {
+    "answer": 5,
+    "why": "Unions each output's own minimal SOP; reusing $A'BC'$ in $f_1$ saves $A'C'$."
+   },
+   {
+    "answer": 6,
+    "why": "Adds the outputs' term counts, which is the PAL count (no sharing)."
+   }
+  ],
+  "blocks": [
+   "pla-sizing",
+   "pla-term-count",
+   "pla-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about ROM, PLA and PAL are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A ROM builds only the product terms that its stored functions need."
+   },
+   {
+    "l": "B",
+    "t": "In a PAL the OR plane is fixed, so a product term feeds exactly one output."
+   },
+   {
+    "l": "C",
+    "t": "A PLA has both its AND plane and its OR plane programmable."
+   },
+   {
+    "l": "D",
+    "t": "Any pair of functions that a $3 \\times 4 \\times 2$ PLA realises can also be stored in an $8 \\times 2$ ROM."
+   }
+  ],
+  "answer": [
+   "B",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A is false: a ROM's AND plane is a fixed full decoder that builds all $2^n$ minterms, needed or not.",
+   "B is true: each PAL output ORs its own fixed group of AND gates, so terms cannot be shared.",
+   "C is true: that is the definition of a PLA.",
+   "D is true: an $8 \\times 2$ ROM realises every pair of 3-input functions (the ROM theorem), so in particular any pair a PLA can produce."
+  ],
+  "concept": "Which plane is programmable in each device.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B",
+     "C"
+    ],
+    "why": "Misses D: a ROM with $2^n$ words holds any function of $n$ inputs, whatever a PLA can do."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "A describes a PLA, not a ROM."
+   }
+  ],
+  "blocks": [
+   "pld-compare",
+   "pal-def",
+   "pla-def",
+   "rom-any-function"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q08",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A PLA with programmable output polarity (each output can be inverted) must produce $f(A, B, C) = \\Sigma m(0, 1, 2, 3, 4, 5, 6)$. What is the fewest number of product terms?",
+  "options": [
+   {
+    "l": "A",
+    "t": "3"
+   },
+   {
+    "l": "B",
+    "t": "7"
+   },
+   {
+    "l": "C",
+    "t": "2"
+   },
+   {
+    "l": "D",
+    "t": "1"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "$f$ is 0 only on row 7, so $f = A' + B' + C'$: three single-literal terms, and in a PLA each takes a product line.",
+   "The complement has one 1: $f' = ABC$, one product term.",
+   "Build $ABC$ and invert it at the output: 1 product term."
+  ],
+  "concept": "The complement trick: implement f′ when it has fewer terms.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "The minimal SOP of $f$ itself; it ignores the output polarity."
+   },
+   {
+    "answer": "B",
+    "why": "Counts minterms, as a ROM would."
+   },
+   {
+    "answer": "C",
+    "why": "No 2-term SOP covers seven minterms of three variables."
+   }
+  ],
+  "blocks": [
+   "pla-complement",
+   "trap-pla-literal"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A ROM is to output the cube $x^3$ of a 4-bit unsigned number $x$ (as a binary number of the minimum width). Output bits that are constant, or always equal to an input bit, are wired directly and not stored. How many bits must the ROM store?",
+  "answer": 176,
+  "solution": [
+   "Width of the full result: $15^3 = 3375$, and $2^{11} = 2048 \\le 3375 < 4096$: 12 bits.",
+   "Bit 0 of $x^3$ equals bit 0 of $x$ (a cube is odd exactly when $x$ is odd): wire it.",
+   "Bit 1 is not constant, unlike for squares: $3^3 = 27 = 11011_2$ has bit 1 = 1, while $1^3 = 1$ has bit 1 = 0. Checking every other column over the 16 rows finds no constant column and no copy of an input.",
+   "Stored: $2^4 \\times 11 = 176$ bits."
+  ],
+  "concept": "Remove only the columns that really are constant or copies of inputs; check, do not carry over the square rule.",
+  "common_wrong": [
+   {
+    "answer": 192,
+    "why": "Stores all 12 bits, including bit 0, which is a copy of $x_0$."
+   },
+   {
+    "answer": 160,
+    "why": "Applies the square rule and also drops bit 1, which is 1 for $x = 3$."
+   }
+  ],
+  "blocks": [
+   "rom-constant-bits",
+   "rom-sizing"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-05-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Two functions $f_1 = \\Sigma m(0, 1, 2, 7)$ and $f_2 = \\Sigma m(0, 1, 6, 7)$ of $A, B, C$ are to be implemented, with no output inversion available. Which devices can implement both?",
+  "options": [
+   {
+    "l": "A",
+    "t": "An $8 \\times 2$ ROM"
+   },
+   {
+    "l": "B",
+    "t": "A $3 \\times 3 \\times 2$ PLA (3 product terms)"
+   },
+   {
+    "l": "C",
+    "t": "A $3 \\times 4 \\times 2$ PLA (4 product terms)"
+   },
+   {
+    "l": "D",
+    "t": "A PAL with 2 AND gates per output"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A ROM with 3 address bits and 2 outputs stores any two 3-input functions: A fits.",
+   "$f_1 = A'B' + A'C' + ABC$ (3 terms; $m_7$ has no 1-neighbour in $f_1$, and $m_0, m_1, m_2$ need two pairs). $f_2 = A'B' + AB$ (2 terms). They share $A'B'$: 4 distinct terms, and an exhaustive search shows 3 are not enough. So C fits and B does not.",
+   "A PAL cannot share, and $f_1$ alone needs 3 AND gates, more than its group of 2: D does not fit."
+  ],
+  "concept": "Size each device by its own rule: rows for a ROM, shared terms for a PLA, per-output terms for a PAL.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Counts 3 terms by forgetting that $f_1$ needs $ABC$ as well as two pairs."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Assumes the PAL can borrow an unused gate from $f_2$'s group; its OR plane is fixed."
+   }
+  ],
+  "blocks": [
+   "pld-compare",
+   "pla-sizing",
+   "pal-def",
+   "trap-pal-sharing"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "In a circuit, $p = \\text{OR}(A, B)$ and the output is $f = \\text{NAND}(p, C)$. Line $p$ is stuck at 1. Which input $ABC$ detects the fault?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$111$"
+   },
+   {
+    "l": "B",
+    "t": "$000$"
+   },
+   {
+    "l": "C",
+    "t": "$001$"
+   },
+   {
+    "l": "D",
+    "t": "$011$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Activation: $p$ must be 0 in the good circuit (the opposite of its stuck value). An OR is 0 only when both inputs are 0: $A = B = 0$.",
+   "Propagation: the side input $C$ of the NAND must be at its non-controlling value 1.",
+   "So $ABC = 001$. Check: good $p = 0$, $f = \\overline{0 \\cdot 1} = 1$; faulty $p = 1$, $f = \\overline{1 \\cdot 1} = 0$. They differ."
+  ],
+  "concept": "A test activates the fault (line at the opposite of its stuck value) and propagates it (side inputs non-controlling).",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "$000$ activates the fault ($p = 0$), but $C = 0$ is the controlling value of the NAND: the output is 1 in both runs."
+   },
+   {
+    "answer": "A",
+    "why": "$111$ makes $p = 1$ in the good circuit, which is the stuck value: the fault is not activated."
+   },
+   {
+    "answer": "D",
+    "why": "$011$ also has $p = 1$ in the good circuit ($B = 1$), so the fault is not activated."
+   }
+  ],
+  "blocks": [
+   "activation",
+   "propagation",
+   "test-vector"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q02",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "In $f = \\text{OR}(\\text{AND}(A, B), C)$, input $C$ is stuck at 0. Which of the following inputs $ABC$ detect the fault?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$001$"
+   },
+   {
+    "l": "B",
+    "t": "$011$"
+   },
+   {
+    "l": "C",
+    "t": "$111$"
+   },
+   {
+    "l": "D",
+    "t": "$100$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "Activation: $C = 1$ (the opposite of the stuck value 0).",
+   "Propagation through the OR: its other input $AB$ must be at the non-controlling value 0, so $A$ and $B$ are not both 1.",
+   "$001$ and $011$ satisfy both: good $f = 1$, faulty $f = 0$. $111$ has $AB = 1$, so the OR is 1 in both runs. $100$ has $C = 0$: not activated."
+  ],
+  "concept": "Tests for an OR input stuck at 0: that input 1, every other OR input 0.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "$111$ activates the fault, but $AB = 1$ holds the OR at 1, so the outputs agree."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "$011$ is also a test: $AB = 0$ when $A = 0$, whatever $B$ is."
+   }
+  ],
+  "blocks": [
+   "activation",
+   "propagation",
+   "trick-noncontrolling"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q03",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A circuit has primary inputs $A$, $B$, $C$, $D$. Input $A$ fans out to two gates; no other signal fans out. The gates are $G_1 = \\text{AND}(A, B)$, $G_2 = \\text{OR}(A, C)$ and the output gate $G_3 = \\text{NAND}(G_1, G_2, D)$. Counting each fan-out branch as a separate line, how many **single** stuck-at faults does the circuit have?",
+  "answer": 18,
+  "solution": [
+   "Lines: the four primary inputs (with $A$ as the stem), the two branches of $A$ (into $G_1$ and into $G_2$), and the three gate outputs.",
+   "$N = 4 + 2 + 3 = 9$.",
+   "Single faults: $2N = 18$."
+  ],
+  "concept": "Single stuck-at faults: two per line; a fan-out stem and its branches are different lines.",
+  "common_wrong": [
+   {
+    "answer": 14,
+    "why": "Ignoring the two branches gives 7 lines and 14 faults."
+   },
+   {
+    "answer": 9,
+    "why": "That is the number of lines; each line has two faults."
+   },
+   {
+    "answer": 16,
+    "why": "Counting the branches but not the stem (or vice versa) gives 8 lines."
+   }
+  ],
+  "blocks": [
+   "stuck-at-model",
+   "fault-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A circuit has 6 lines. How many multiple stuck-at faults have **exactly two** faulty lines (every other line fault-free)?",
+  "answer": 60,
+  "solution": [
+   "Choose the two faulty lines: $\\binom{6}{2} = 15$ ways.",
+   "Each of the two lines is s-a-0 or s-a-1: $2^2 = 4$ ways.",
+   "$15 \\times 4 = 60$."
+  ],
+  "concept": "Faults with exactly $k$ faulty lines: $\\binom{N}{k} 2^k$.",
+  "common_wrong": [
+   {
+    "answer": 15,
+    "why": "That counts only the pairs of lines; each pair has 4 combinations of stuck values."
+   },
+   {
+    "answer": 30,
+    "why": "Multiplying by 2 instead of $2^2$: each of the two lines has its own stuck value."
+   },
+   {
+    "answer": 728,
+    "why": "$3^6 - 1$ counts every multiple fault, with any number of faulty lines."
+   }
+  ],
+  "blocks": [
+   "fault-count",
+   "fault-count-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A circuit computes $f = \\text{OR}(A, g)$ with $g = \\text{AND}(A, B)$; input $A$ fans out to both gates. Which single fault can **no** input vector detect?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The stem $A$ stuck-at-1"
+   },
+   {
+    "l": "B",
+    "t": "$g$ stuck-at-1"
+   },
+   {
+    "l": "C",
+    "t": "The branch of $A$ into the AND gate stuck-at-1"
+   },
+   {
+    "l": "D",
+    "t": "$g$ stuck-at-0"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The good function is $A + AB = A$ (absorption).",
+   "$g$ s-a-0: $f = A + 0 = A$, the same function, so no input detects it (activation needs $A = B = 1$, propagation through the OR needs $A = 0$: a conflict).",
+   "The others change $f$: stem $A$ s-a-1 gives $f = 1$; $g$ s-a-1 gives $f = 1$; the branch into the AND s-a-1 gives $f = A + B$ (detected by $AB = 01$)."
+  ],
+  "concept": "A fault is undetectable exactly when the faulty circuit computes the same function (the line is redundant).",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "With that branch stuck at 1, $g = B$ and $f = A + B$, which differs from $A$ on $AB = 01$."
+   },
+   {
+    "answer": "B",
+    "why": "$g$ s-a-1 makes $f \\equiv 1$, detected by any input with $A = 0$."
+   },
+   {
+    "answer": "A",
+    "why": "Stem $A$ s-a-1 makes $f \\equiv 1$, detected by $A = 0$."
+   }
+  ],
+  "blocks": [
+   "undetectable",
+   "redundant-undetectable"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q06",
+  "type": "NAT",
+  "marks": 1,
+  "text": "What is the minimum number of input vectors needed to detect every single stuck-at fault (on its 5 inputs and its output) of a 5-input NOR gate?",
+  "answer": 6,
+  "solution": [
+   "Each input s-a-0 needs that input 1 and the other four at the non-controlling value 0: five different 'walking one' vectors, each forced.",
+   "The input s-a-1 faults and the output s-a-0 are equivalent (the output is stuck at 0); they need a row where the good output is 1, which is only $00000$: forced.",
+   "The output s-a-1 is caught by any walking one. Total $5 + 1 = 6$."
+  ],
+  "concept": "An $n$-input AND/OR/NAND/NOR gate needs exactly $n + 1$ tests.",
+  "common_wrong": [
+   {
+    "answer": 12,
+    "why": "Two vectors per line counts faults, not tests; one vector covers several equivalent faults."
+   },
+   {
+    "answer": 32,
+    "why": "Exhaustive testing of all $2^5$ rows is not needed."
+   },
+   {
+    "answer": 5,
+    "why": "The walking ones never make the NOR output 1, so the input s-a-1 / output s-a-0 class needs $00000$ as well."
+   }
+  ],
+  "blocks": [
+   "test-sets",
+   "derive-and-tests",
+   "fault-equivalence"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "In $f = \\text{OR}(p, q)$ with $p = \\text{AND}(A, B)$ and $q = \\text{AND}(C, D)$, on how many of the 16 input rows is the Boolean difference $\\partial f / \\partial p$ equal to 1?",
+  "answer": 12,
+  "solution": [
+   "Force $p$: with $p = 0$, $f = CD$; with $p = 1$, $f = 1$.",
+   "$\\partial f / \\partial p = CD \\oplus 1 = \\overline{CD}$.",
+   "$\\overline{CD} = 1$ unless $C = D = 1$: $16 - 4 = 12$ rows."
+  ],
+  "concept": "$\\partial f/\\partial p = f_p(x, 0) \\oplus f_p(x, 1)$: the rows where line $p$ decides the output.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "That counts the rows with $CD = 1$, where the OR is blocked: the complement of the answer."
+   },
+   {
+    "answer": 3,
+    "why": "That is the number of tests for $p$ s-a-0 ($AB = 1$ and $CD \\ne 11$): the Boolean difference does not include activation."
+   },
+   {
+    "answer": 9,
+    "why": "That is the number of tests for $p$ s-a-1 ($AB \\ne 11$ and $CD \\ne 11$), again mixing in activation."
+   }
+  ],
+  "blocks": [
+   "boolean-difference",
+   "test-condition"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q08",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "For a 3-input NOR gate $f = \\text{NOR}(X, Y, Z)$, which single faults are **equivalent** to the output stuck-at-0?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$X$ stuck-at-0"
+   },
+   {
+    "l": "B",
+    "t": "$Y$ stuck-at-1"
+   },
+   {
+    "l": "C",
+    "t": "Output stuck-at-1"
+   },
+   {
+    "l": "D",
+    "t": "$Z$ stuck-at-1"
+   }
+  ],
+  "answer": [
+   "B",
+   "D"
+  ],
+  "solution": [
+   "1 is the controlling value of a NOR: any input stuck at 1 forces the output to 0 on every row, the same faulty function as the output stuck at 0.",
+   "$X$ s-a-0 gives $f = \\overline{Y + Z}$, a different function. The output s-a-1 gives $f \\equiv 1$."
+  ],
+  "concept": "Inputs stuck at the controlling value are equivalent to the output stuck at the value it forces.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "An input stuck at the non-controlling value 0 does not force the output; it is its own fault class."
+   },
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "Output s-a-1 is the opposite fault. For NOR, input s-a-1 forces the output to 0."
+   }
+  ],
+  "blocks": [
+   "fault-equivalence"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Line $p = \\text{AND}(A, B)$ feeds $q = \\text{OR}(p, C)$, which feeds the output $f = \\text{NOR}(q, D)$. Which conditions are exactly the ones an input must satisfy to detect $p$ stuck-at-1?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A = B = 1$, $C = 0$, $D = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$AB = 0$, $C = 0$, $D = 0$"
+   },
+   {
+    "l": "C",
+    "t": "$AB = 0$, $C = 1$, $D = 0$"
+   },
+   {
+    "l": "D",
+    "t": "$AB = 0$, $C = 0$, $D = 1$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Activation: $p = 0$ in the good circuit, i.e. $AB = 0$.",
+   "Propagation through the OR: side input $C = 0$. Through the NOR: side input $D = 0$.",
+   "So $AB = 0$, $C = 0$, $D = 0$ (rows $0000$, $0100$, $1000$)."
+  ],
+  "concept": "Activate (line opposite its stuck value), then every side input on the path at its non-controlling value.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$A = B = 1$ makes $p = 1$, the stuck value: these are the conditions for $p$ s-a-0."
+   },
+   {
+    "answer": "C",
+    "why": "$C = 1$ is the controlling value of the OR: the difference is blocked."
+   },
+   {
+    "answer": "D",
+    "why": "$D = 1$ is the controlling value of the NOR: $f = 0$ in both runs."
+   }
+  ],
+  "blocks": [
+   "activation",
+   "propagation",
+   "trick-activate-propagate"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-06-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Which statement about single stuck-at faults in a combinational circuit is true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "If no input detects line $L$ stuck-at-0, then tying $L$ to 0 leaves the circuit's function unchanged."
+   },
+   {
+    "l": "B",
+    "t": "Every undetectable fault is on a primary input."
+   },
+   {
+    "l": "C",
+    "t": "If $L$ stuck-at-0 is undetectable, then $L$ stuck-at-1 is undetectable too."
+   },
+   {
+    "l": "D",
+    "t": "An undetectable fault changes the output on exactly one input row."
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "The circuit with $L$ tied to 0 is the faulty circuit. 'No input detects it' means the two circuits agree on every row, so the functions are equal: (A) is the undetectable ⇒ redundant theorem.",
+   "(B) is false: in $f = \\text{NOR}(\\text{OR}(\\text{NAND}(X_1, X_2, X_3), X_4), \\text{AND}(X_3, X_4))$ the internal line $\\text{AND}(X_3, X_4)$ s-a-0 is undetectable.",
+   "(C) is false: in $AB + \\overline{A}C + BC$, the $BC$ gate s-a-0 is undetectable but s-a-1 is detected by $000$.",
+   "(D) is false by definition: an undetectable fault changes the output on no row."
+  ],
+  "concept": "Undetectable ⇔ the faulty function equals the good one ⇔ the line is redundant.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "The two stuck values are separate faults; a consensus term's output s-a-0 is undetectable while its s-a-1 makes $f \\equiv 1$ and is easy to see."
+   },
+   {
+    "answer": "B",
+    "why": "Internal lines can be redundant (IT 2007's line $T$)."
+   },
+   {
+    "answer": "D",
+    "why": "A fault that changes the output on even one row is detected by that row."
+   }
+  ],
+  "blocks": [
+   "redundant-undetectable",
+   "undetectable"
+  ],
+  "source": "nexora"
+ }
+]

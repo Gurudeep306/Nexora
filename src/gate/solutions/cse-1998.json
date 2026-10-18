@@ -671,22 +671,23 @@
       "verification": "$n = 2$: $B \\oplus (B \\oplus B) = B \\oplus 0 = B$ (unchanged, $n$ even). $n = 1$: $B \\oplus B = 0$."
     },
     "cse-1998-a-14": {
-      "approach": "$k$ select lines address $2^k$ data inputs.",
+      "approach": "Concept tested: **select lines vs data inputs**. $k$ select lines name $2^k$ data inputs, so a 4-bit select input means $2^4 = 16$ inputs.",
       "concepts": [
-        "Multiplexer"
+        "Select lines",
+        "2^k : 1 multiplexer"
       ],
       "steps": [
         {
-          "title": "Inputs from select lines",
-          "body": "A $2^k:1$ multiplexer needs $k$ select bits. With $k=4$: $2^4=16$ inputs, so it is a $16:1$ MUX."
+          "title": "Count the input patterns",
+          "body": "A 4-bit select value takes $2^4 = 16$ different values, $0000$ to $1111$."
         },
         {
-          "title": "Check",
-          "body": "$\\log_2 16=4$ select bits, matching the question."
+          "title": "One input per pattern",
+          "body": "Each select value connects a different data input to the output, so the MUX has 16 data inputs and one output: a 16:1 MUX."
         }
       ],
       "answer": {
-        "value": "16 : 1 multiplexor",
+        "value": "(C) 16 : 1 multiplexor",
         "choice": [
           "C"
         ],
@@ -696,28 +697,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "A 4:1 MUX needs only 2 select bits."
+          "reason": "A 4:1 MUX has only 2 select lines; the 4 in the question is the number of select bits, not of inputs."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A 2:1 MUX needs only 1 select bit."
+          "reason": "A 2:1 MUX has a single select line."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$2^4=16$ inputs."
+          "reason": "$2^4 = 16$ data inputs."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "An 8:1 MUX needs 3 select bits."
+          "reason": "An 8:1 MUX has 3 select lines."
         }
       ],
+      "shortcut": "Inputs $= 2^{\\text{select lines}}$; select lines $= \\lceil \\log_2 \\text{inputs} \\rceil$.",
       "pitfalls": [
-        "Confusing the number of select lines with the number of inputs."
+        "Reading \"4-bit select\" as \"4 inputs\" and answering 4:1."
       ],
-      "verification": "$\\log_2 16=4$."
+      "verification": "$\\lceil \\log_2 16 \\rceil = 4$ select lines, as stated."
     },
     "cse-1998-a-15": {
       "approach": "Standard TTL input levels: $V_{IL}\\le0.8$ V, $V_{IH}\\ge2.0$ V, supply $V_{CC}=5$ V. Pick the option that describes a voltage band always read as logic 1.",

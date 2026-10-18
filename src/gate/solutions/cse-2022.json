@@ -2032,28 +2032,34 @@
       "verification": "Matches the official key A."
     },
     "cse-2022-cs-30": {
-      "approach": "An address field selects one of $2^n$ words — that is an $n:2^n$ decoder. Choosing between two data sources by a select bit is a 2:1 multiplexer.",
+      "approach": "Concept tested: **naming blocks by their job**. An address field must switch on one word of a memory: number in, one-hot out, a decoder. A mode bit that chooses between two words is the select of a multiplexer.",
       "concepts": [
         "Decoder",
         "Multiplexer",
-        "Address decoding"
+        "Address decoding",
+        "DEMUX vs decoder"
       ],
+      "given": "16-bit code word = M (1 bit) + S-address + R-address. S: 1024 words; R: 32 registers. P serves S, Q serves R, T chooses between S's and R's words by M and loads X.",
       "steps": [
         {
           "title": "Field widths",
-          "body": "$S$ has $1024 = 2^{10}$ words → 10-bit S-address. $R$ has $32 = 2^5$ words → 5-bit R-address. With the 1-bit mode $M$: $1 + 10 + 5 = 16$ bits, matching the code word."
+          "body": "S has $1024 = 2^{10}$ words, so its address field is 10 bits; R has $32 = 2^5$ registers, so 5 bits; with M that is $1 + 10 + 5 = 16$ bits, the whole code word."
         },
         {
-          "title": "P and Q",
-          "body": "P turns 10 address bits into one active line among $2^{10}$ word lines: a $10:2^{10}$ **decoder**. Likewise Q is a $5:2^5$ decoder."
+          "title": "Blocks P and Q",
+          "body": "P takes the 10-bit field and must activate exactly one of S's 1024 words: a $10:2^{10}$ decoder. Likewise Q takes the 5-bit field and activates one of 32 registers: a $5:2^5$ decoder."
         },
         {
-          "title": "Selector T",
-          "body": "T receives the two words from S and R and passes one of them to X according to M: a **2:1 multiplexer**."
+          "title": "Block T",
+          "body": "T receives two whole words (one from S, one from R) and passes one of them to X according to M: a 2:1 multiplexer (one per bit of the word), with M on its select line."
+        },
+        {
+          "title": "Why not the others",
+          "body": "A DEMUX has one data input and routes it to one of many outputs; P and Q have no data to route, only an address to decode, and \"1:10\" has 10 outputs, not 1024. An encoder goes the other way (many one-hot lines → a short code) and passes no data, so it cannot be T."
         }
       ],
       "answer": {
-        "value": "P is 10:2^10 decoder; Q is 5:2^5 decoder; T is 2:1 multiplexer",
+        "value": "(C) P is a $10:2^{10}$ decoder; Q is a $5:2^5$ decoder; T is a 2:1 multiplexer",
         "choice": [
           "C"
         ],
@@ -2063,25 +2069,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: a multiplexer selects data; P and Q must generate word-select lines from an address."
+          "reason": "A 10:1 MUX would pick one of 10 inputs; P must turn a 10-bit address into one of 1024 word selects, and Q one of 32."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: T chooses between two data words, which an encoder cannot do."
+          "reason": "P and Q are right, but T cannot be an encoder: an encoder converts one-hot lines into a code and has no data path to pass a word from S or R into X."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: decoders for address selection, multiplexer for source selection."
+          "reason": "Address fields → one-hot word selects (decoders); mode bit chooses one of two words (2:1 MUX)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: a 1:10 demux would select among only 10 outputs, not 1024 words."
+          "reason": "A 1:10 DEMUX routes one data bit to one of 10 outputs. P has no data input to route and must drive 1024 word lines; even read as \"a decoder is a DEMUX with data on the enable\", the size would be 1:1024, not 1:10."
         }
       ],
-      "verification": "Bit count 1 + 10 + 5 = 16 confirms the field sizes."
+      "shortcut": "Field of $k$ address bits → $k:2^k$ decoder; \"choose one of two words by a bit\" → 2:1 MUX.",
+      "pitfalls": [
+        "Confusing the field width (10) with the number of outputs (1024).",
+        "Choosing the DEMUX option because a decoder and a DEMUX share their gates: the DEMUX option has the wrong size and a data input that does not exist here."
+      ],
+      "verification": "$\\log_2 1024 = 10$, $\\log_2 32 = 5$, $1 + 10 + 5 = 16$ = the code-word width."
     },
     "cse-2022-cs-31": {
       "approach": "Concept tested: **decoding several words**, then checking simple arithmetic claims. Decode $A$, $B$, $C$ to ordinary numbers first; each claim is then one line.",

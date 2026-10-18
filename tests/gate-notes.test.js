@@ -115,12 +115,15 @@ test(':::lab embeds a known Live Lab; unknown labs, tabs and content are reporte
   const body = JSON.parse(r.outputs.get('tst.json')).lessons.alpha.body;
   const lab = body.find((n) => n.t === 'block' && n.name === 'lab');
   assert.deepEqual([lab.id, lab.attrs], ['lab-bench', { lab: 'gate-bench', tab: 'sets' }]);
-  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver \| comb-workbench/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench" tab="draw"}\n:::\n`), /tab must be bench \| challenge \| sets/);
   // Each lab has its own tabs: the K-map Solver takes map | qm, and not Gate Bench's tabs.
   const km = await build({ content: scratch(`${LESSON}\n:::lab{#lab-km lab="kmap-solver" tab="qm" depth="standard"}\n:::\n`) });
   assert.deepEqual(km.errors, []);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="kmap-solver" tab="sets"}\n:::\n`), /tab must be map \| qm for kmap-solver/);
+  const cw = await build({ content: scratch(`${LESSON}\n:::lab{#lab-cw lab="comb-workbench" tab="implement" depth="standard"}\n:::\n`) });
+  assert.deepEqual(cw.errors, []);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="comb-workbench" tab="qm"}\n:::\n`), /tab must be mux \| implement \| decoder for comb-workbench/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{tab="bench"}\n:::\n`), /:::lab needs lab=/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench"}\nText.\n:::\n`), /:::lab takes no content/);
 });
@@ -550,6 +553,70 @@ test('kmap solver: Quine–McCluskey, prime implicants, minimal covers and loops
   assert.deepEqual(km.specOf(['1', '0', 'X', '1']), { n: 2, ones: [0, 3], dcs: [2] });
   assert.equal(km.sigmaText({ n: 2, ones: [0, 3], dcs: [2] }), 'Σm(0, 3) + d(2)');
   assert.deepEqual(km.minCovers([], [], 3).covers, [[]]);
+});
+
+/* ── Live Lab: Combinational Workbench logic against the Python-verified vectors ── */
+
+test('comb workbench: MUX, implementation tables, decoders and encoders match the checks', async () => {
+  const { pathToFileURL } = require('node:url');
+  const cw = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'combLogic.ts')).href);
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch4.json'), 'utf8'));
+  // MUX outputs for every data / select pattern, enable and enable polarity; the equation's terms.
+  for (const [ks, m] of Object.entries(vec.mux)) {
+    const k = Number(ks);
+    let got = '';
+    for (let d = 0; d < 2 ** 2 ** k; d++) {
+      const data = cw.bitsOf(d, 2 ** k);
+      for (let s = 0; s < 2 ** k; s++) for (const en of [0, 1]) for (const low of [false, true]) got += cw.muxOut(data, cw.bitsOf(s, k), en, low);
+    }
+    assert.equal(got, m.out, `${2 ** k}:1 MUX outputs`);
+    const eq = cw.muxEquation(k, cw.bitsOf(1, k));
+    assert.deepEqual(eq.terms.map((t) => t.minterm), m.terms, `${2 ** k}:1 MUX equation`);
+    assert.equal(eq.active, 1);
+  }
+  // Implementation tables: residue columns, names (comblib.residue_name) and the realised truth table.
+  assert.ok(vec.impl.length >= 500);
+  for (const c of vec.impl) {
+    const fn = { n: c.vars.length, ones: c.ones, dcs: c.dcs };
+    const at = `${c.vars.join('')} Σ(${c.ones}) d(${c.dcs}) sel ${c.sel}`;
+    assert.deepEqual(cw.residues(fn, c.sel).cols, c.cols, `${at}: residue columns`);
+    const t = cw.implTable(fn, c.sel, c.vars);
+    assert.deepEqual(t.res.map((r) => r.name), c.names, `${at}: residue names`);
+    assert.deepEqual(t.rvars, c.rvars, `${at}: residue variables`);
+    const real = cw.realiseMux(fn, c.sel, t);
+    assert.deepEqual(real, c.realised, `${at}: realised table`);
+    assert.ok(cw.verify(fn, real).ok, `${at}: verifies`);
+  }
+  // Decoder + OR (or NOR of the 0-rows when shorter).
+  for (const c of vec.decgate) {
+    const fn = { n: c.n, ones: c.ones, dcs: c.dcs };
+    assert.deepEqual(cw.decoderGate(fn), { gate: c.gate, outputs: c.outputs }, `decoder + gate for Σ(${c.ones})`);
+    assert.deepEqual(cw.realiseDecoder(fn), c.realised);
+    assert.ok(cw.verify(fn, c.realised).ok);
+  }
+  // A wrong realisation is reported row by row.
+  assert.deepEqual(cw.verify({ n: 2, ones: [1, 2], dcs: [3] }, [0, 1, 0, 0]), { ok: false, wrong: [2] });
+  // Decoders, DEMUX, encoders.
+  for (const rows of Object.values(vec.decoder)) for (const r of rows) assert.deepEqual(cw.decoder(r.addr, r.en, !!r.low, !!r.enLow), r.out, JSON.stringify(r));
+  for (const rows of Object.values(vec.demux)) for (const r of rows) assert.deepEqual(cw.demux(r.d, r.sel), r.out);
+  for (const rows of Object.values(vec.encoder)) {
+    for (const r of rows) {
+      assert.deepEqual(cw.encoder(r.d), r.enc, `encoder ${r.d}`);
+      const p = cw.priorityEncoder(r.d);
+      assert.deepEqual([p.code, p.valid], [r.pri, r.valid], `priority encoder ${r.d}`);
+      assert.equal(p.winner, r.d.lastIndexOf(1));
+    }
+  }
+  // Presets are the functions the lessons solve.
+  assert.deepEqual(cw.PRESETS.map((p) => p.id), Object.keys(vec.presets));
+  for (const p of cw.PRESETS) assert.deepEqual({ vars: p.vars, fn: p.fn, target: p.target, sel: p.sel }, vec.presets[p.id], p.id);
+  // Notation and editing helpers.
+  assert.equal(cw.muxEquation(2).text, 'Y = S1′S0′·I0 + S1′S0·I1 + S1S0′·I2 + S1S0·I3');
+  assert.equal(cw.residueName([1, 'X', 'X', 0], ['p', 'q']), 'q′');
+  assert.equal(cw.residueName([1, 0, 0, 1], ['p', 'q']), 'p′q′ + pq');
+  assert.deepEqual(cw.fnOf(['1', '0', 'X', '1', '0', '0', '0', '0']), { n: 3, ones: [0, 3], dcs: [2] });
+  assert.equal(cw.sigmaText({ n: 3, ones: [0, 3], dcs: [2] }), 'Σm(0, 3) + d(2)');
+  assert.equal(cw.NEXT['0'] + cw.NEXT['1'] + cw.NEXT.X, '1X0');
 });
 
 /* ── Viz: the narrow (phone) layout — schema and frames ── */
