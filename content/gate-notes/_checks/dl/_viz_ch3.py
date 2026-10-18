@@ -274,7 +274,7 @@ def kmap_grouping():
              ("n1", {"text": "11 ones, 5 zeros"})),
         step(f"The first two columns (C D = 00 and 01) are all 1s: an octet. C is 0 in both columns; A, B and D all change. 8 = 2³ cells keep 4 − 3 = 1 literal: {terms[0]}.",
              *show(km.loop_ids("L0", cover[0])), ("n1", {"text": f"octet: {terms[0]}  (m0 1 4 5 12 13 8 9)", "tone": "accent"}), ("ex", {"text": f"f = {terms[0]}"})),
-        step(f"Still uncovered: m2 and m6 (column C D = 10). They join m0 and m4 in the first column through the left/right wrap: a quad in rows A B = 00, 01. A = 0 and D = 0 stay fixed: {terms[1]}.",
+        step(f"Still uncovered: m2, m6 and m14 (column C D = 10). Start with m2 and m6: they join m0 and m4 in the first column through the left/right wrap: a quad in rows A B = 00, 01. A = 0 and D = 0 stay fixed: {terms[1]}.",
              *show(km.loop_ids("L1", cover[1])), ("n2", {"text": f"wrap quad: {terms[1]}  (m0 2 4 6)", "tone": "success"}), ("ex", {"text": f"f = {terms[0]} + {terms[1]}"})),
         step(f"Still uncovered: m14. Its biggest loop also wraps: m12, m14 with m4, m6 in rows A B = 01, 11. B = 1 and D = 0 stay fixed: {terms[2]}.",
              *show(km.loop_ids("L2", cover[2])), ("n3", {"text": f"wrap quad: {terms[2]}  (m4 6 12 14)", "tone": "info"}), ("ex", {"text": f"f = {' + '.join(terms)}"})),
