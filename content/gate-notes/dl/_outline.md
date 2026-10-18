@@ -29,22 +29,26 @@ questions.json `subject/topic` keys.
 | 1 | Number systems, codes and floating point | `01-number-systems` | 10 | 86 | 9 h 40 min |
 | 2 | Boolean algebra and logic gates | `02-boolean-algebra-gates` | 6 | 64 | 4 h 55 min |
 | 3 | Minimisation | `03-minimisation` | 4 | 39 | 3 h 55 min |
-| 4 | Combinational circuits | `04-combinational-circuits` | 6 | 38 | 4 h 10 min |
-| 5 | Arithmetic circuits (hardware) | `05-arithmetic-circuits` | 4 | 14 | 2 h 50 min |
-| 6 | Latches, flip-flops and sequential analysis | `06-latches-flip-flops` | 3 | 24 | 2 h 45 min |
-| 7 | Counters, registers and FSMs | `07-counters-registers-fsms` | 5 | 35 | 4 h 10 min |
-| 8 | Beyond the core syllabus | `08-beyond-syllabus` | 3 | 4 | 1 h 20 min |
+| 4 | Arithmetic circuits (hardware) | `04-arithmetic-circuits` | 4 | 14 | 2 h 50 min |
+| 5 | Combinational building blocks | `05-combinational-circuits` | 6 | 38 | 4 h 10 min |
+| 6 | Sequential circuits | `06-sequential-circuits` | 8 | 59 | 6 h 55 min |
+| 7 | Beyond the core syllabus | `07-beyond-syllabus` | 3 | 4 | 1 h 20 min |
 | | **Total** | | **41** | **304** | **33 h 45 min** |
 
 Foundation-first order: number representations (Ch 1: bases, fixed point, complements, then
 floating point and IEEE-754, which need only biased exponents and binary fractions, then codes,
 then all number-level arithmetic: complements, overflow, BCD/excess-3 sums, Booth recoding)
-→ gates and algebra (Ch 2) → minimisation (Ch 3) → combinational blocks (Ch 4) → arithmetic
-circuits (hardware only: adders, CLA, the adder–subtractor and BCD adder circuits, array multipliers; Ch 5) → storage elements (Ch 6) →
-counters, registers and FSMs, which use flip-flops and K-maps (Ch 7). Ch 8 is optional enrichment
-from Set C and older PYQs. (Floating point was Chapter 8 until 2026-10-17; the owner asked for
-IEEE-754 early, inside Chapter 1, so it now follows signed numbers and precedes codes. On the same day all
-number arithmetic moved into Chapter 1 as lessons 9–10; Chapter 5 keeps only the circuits.)
+→ gates and algebra (Ch 2) → minimisation (Ch 3) → arithmetic circuits (hardware only: adders, CLA,
+the adder–subtractor and BCD adder circuits, array multipliers; Ch 4), built straight from gates and
+K-maps → combinational building blocks (MUX, decoders, encoders, comparators, ROM/PLA/PAL, faults;
+Ch 5), which can now use adders → sequential circuits (Ch 6): storage elements, then counters and
+registers, then state machines, which use flip-flops, K-maps and the Ch 5 blocks. Ch 7 is optional
+enrichment from Set C and older PYQs. (Floating point was Chapter 8 until 2026-10-17; the owner asked
+for IEEE-754 early, inside Chapter 1, so it now follows signed numbers and precedes codes. On the same
+day all number arithmetic moved into Chapter 1 as lessons 9–10; the arithmetic chapter keeps only the
+circuits. On 2026-10-19 the owner approved the present order: arithmetic circuits before the
+combinational building blocks, and the two sequential chapters merged into one. Lesson ids and slugs
+did not change.)
 
 ---
 
@@ -137,7 +141,7 @@ Hamming), plus an IEEE-754 tab (float ↔ hex ↔ bits, special-value badges, ul
 - Practice themes: hex ↔ decimal; special values; extremes
 
 ### dl-01-07-floating-point-arithmetic · Floating-point arithmetic, rounding and its pitfalls
-- Prerequisites: dl-01-06 (the ripple-carry adder of dl-05-01 is mentioned only as hardware context)
+- Prerequisites: dl-01-06 (the ripple-carry adder of dl-04-01 is mentioned only as hardware context)
 - Sub-topics: add/subtract (align, add, normalise, round); multiply/divide (add/subtract
   exponents); multiplying by powers of two; rounding and absorption; non-associativity;
   relative error
@@ -182,7 +186,7 @@ Hamming), plus an IEEE-754 tab (float ↔ hex ↔ bits, special-value badges, ul
   (reused); BCD +6 correction; excess-3 ±3 correction
 - Practice themes: binary/base-b arithmetic; complement subtraction; overflow and flags; BCD and
   excess-3 sums; shifts
-- Moved here 2026-10-17 from dl-05-03 (13 number-level PYQs), dl-01-02 (it-2005-cs-47) and dl-01-04
+- Moved here 2026-10-17 from dl-04-03 (13 number-level PYQs), dl-01-02 (it-2005-cs-47) and dl-01-04
   (cse-2010-cs-8)
 
 ### dl-01-10-multiplication-booth · Signed multiplication and Booth's algorithm
@@ -197,7 +201,7 @@ Hamming), plus an IEEE-754 tab (float ↔ hex ↔ bits, special-value badges, ul
 - Time: 60 min
 - Diagrams/animations: **Booth scan** (sliding pair window, add/subtract marks); bit-pair recoding table
 - Practice themes: Booth recoding; operation counts; best/worst multipliers; bit-pair digits; signed products
-- Moved here 2026-10-17 from dl-05-04 (8 number-level PYQs)
+- Moved here 2026-10-17 from dl-04-04 (8 number-level PYQs)
 
 ---
 
@@ -350,12 +354,71 @@ the same function.
 
 ---
 
-## Chapter 4 · Combinational circuits (`04-combinational-circuits`)
+## Chapter 4 · Arithmetic circuits (hardware) (`04-arithmetic-circuits`)
+Hardware only: every number-level rule (complements, overflow, BCD/excess-3 corrections, Booth
+recoding) is in Chapter 1, lessons 9–10, and these lessons link back. This chapter comes before the
+combinational building blocks (Chapter 5) because those lessons use adders (comparing by subtraction,
+adder ROMs); the carry-select adder here needs only a forward note to the 2:1 MUX (dl-04-02).
+Live Lab: **Adder Race**: a ripple-carry vs carry-look-ahead side-by-side simulation with
+gate-delay counters. Enter A and B, see the carry wave, flip to subtract, and watch the overflow
+flag.
+
+### dl-04-01-adders-ripple-carry · Half/full adders, subtractors and ripple-carry adders
+- Prerequisites: dl-02-03, dl-01-04
+- Sub-topics: half and full adder (from 2 HAs + OR); half and full subtractor; n-bit ripple
+  adder; delay models (2n + 1 etc.); worst-case carry chain; pipelined adders with registers
+- Sets: A 48–59 (HA/FA/HS/FS, NAND/NOR counts, delay cases); B 129–131, 133; C 279–288; D 400–401; E 408–409
+- pyq_topics: dl/arithmetic, dl/combinational
+- PYQs (5; arithmetic, combinational): `cse-1999-a-41`, `cse-2002-b-56-a`, `cse-2002-b-56-b`, `cse-2015-2-cs-48`, `cse-2016-2-cs-7`
+- Time: 55 min
+- Diagrams/animations: **ripple-carry animation** (carry wave); full adder from 2 HAs; delay
+  timeline
+- Practice themes: delays; HA/FA counts; worst-case operands
+
+### dl-04-02-carry-look-ahead · Carry look-ahead adders
+- Prerequisites: dl-04-01
+- Sub-topics: generate/propagate; C_{i+1} = G_i + P_i C_i expanded; two-level CLA delay; group
+  (block) G/P and multi-level CLA; fan-in limits (O(log n)); 74181/74182-style hierarchies
+- Sets: A 59–60; B 131–133 (CLA, hybrid, serial adders); C 286–287; D 401; E 408
+- pyq_topics: dl/arithmetic, dl/combinational
+- PYQs (5; arithmetic, combinational): `cse-1997-a-15`, `cse-2004-cs-62`, `cse-2006-cs-36`, `cse-2007-cs-35`, `cse-2016-1-cs-33`
+- Time: 50 min
+- Diagrams/animations: **ripple-carry vs carry-look-ahead** comparison; CLA tree
+- Practice themes: CLA delay; G/P expressions; level counts
+
+### dl-04-03-adder-subtractor-overflow · The adder–subtractor, flag logic and the BCD adder circuit
+- Prerequisites: dl-04-01, dl-01-09 (all the number-level rules: complements, overflow, BCD/excess-3
+  corrections are taught there; this lesson builds the circuits and links back)
+- Sub-topics: XOR-controlled adder/subtractor (K and C₀ control lines); the overflow detector
+  (XOR of the last two carries) and flag logic (C, V, S, Z); the BCD adder circuit (correction
+  detector C₄ + S₃S₂ + S₃S₁ and the second adder); adder-based code conversion
+- Sets: A 20–21 (overflow); B 146, 148, 159–160 (adder/subtractor, BCD adder); C 211–216 (complement subtraction, overflow, BCD/XS-3 addition), 289 (adder-subtractor with overflow), 290–291 (BCD adder)
+- pyq_topics: dl/arithmetic, dl/combinational
+- PYQs (2; combinational): `cse-1996-a-46`, `cse-2003-cs-46` (the 13 number-level overflow/flag/complement PYQs moved to dl-01-09)
+- Time: 35 min
+- Diagrams/animations: adder–subtractor with the K line toggling; flag panel; BCD adder correction path
+- Practice themes: control-line settings; flag logic; BCD adder detector
+
+### dl-04-04-multipliers-booth · Array multipliers (hardware)
+- Prerequisites: dl-04-03, dl-01-10 (shift-and-add, signed products and Booth recoding are taught there)
+- Sub-topics: the array multiplier (AND array + adder rows); its critical path and Θ(n) delay;
+  hardware cost; sequential (shift-register) multipliers and Booth hardware in brief, linking back
+- Sets: B 153–154, 178 (Booth); C 291–293 (array multiplier); D 401–402 (radix-2 and radix-4 Booth tables)
+- pyq_topics: dl/arithmetic
+- PYQs (2; arithmetic): `cse-1999-a-21`, `cse-2003-cs-11` (the 8 Booth/recoding/product PYQs moved to dl-01-10)
+- Time: 30 min
+- Diagrams/animations: array multiplier grid with the critical path
+- Practice themes: array delay; gate and adder counts
+- Gaps: **GAP** the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
+
+---
+
+## Chapter 5 · Combinational building blocks (`05-combinational-circuits`)
 Live Lab: **Combinational Workbench**: MUX/DEMUX/decoder/encoder blocks with live routing. Set
 the select lines, watch the chosen path light up, and use the "implement f with a MUX" helper
 (Shannon split).
 
-### dl-04-01-combinational-design · Designing combinational circuits; code converters
+### dl-05-01-combinational-design · Designing combinational circuits; code converters
 - Prerequisites: dl-03-02
 - Sub-topics: the design procedure (spec → truth table → K-map → gates); BCD → mod-n, BCD ≥ 5
   detectors; excess-3 ↔ BCD; binary ↔ Gray converters; seven-segment (aside)
@@ -366,8 +429,8 @@ the select lines, watch the chosen path light up, and use the "implement f with 
 - Diagrams/animations: design-pipeline storyboard; converter K-maps with don't-cares
 - Practice themes: converter design; gate counts
 
-### dl-04-02-multiplexers · Multiplexers and function realisation
-- Prerequisites: dl-04-01, dl-02-02 (Shannon)
+### dl-05-02-multiplexers · Multiplexers and function realisation
+- Prerequisites: dl-05-01, dl-02-02 (Shannon)
 - Sub-topics: 2ⁿ:1 MUX equation; MUX trees; implementing functions (n or n−1 select variables,
   the residue on the data lines); cascaded/feedback MUX puzzles; MUX as a universal element;
   register-select sizing
@@ -379,8 +442,8 @@ the select lines, watch the chosen path light up, and use the "implement f with 
   (select-variable split)
 - Practice themes: MUX output expression; implement f; count MUXes in a tree
 
-### dl-04-03-decoders-encoders · Decoders, demultiplexers, encoders and priority encoders
-- Prerequisites: dl-04-02
+### dl-05-03-decoders-encoders · Decoders, demultiplexers, encoders and priority encoders
+- Prerequisites: dl-05-02
 - Sub-topics: n:2ⁿ decoder as a minterm generator; enable inputs and decoder expansion; DEMUX =
   decoder with data on enable; encoders; priority encoders with a valid bit; address decoding
   for memory
@@ -391,8 +454,8 @@ the select lines, watch the chosen path light up, and use the "implement f with 
 - Diagrams/animations: **decoder/encoder routing**; decoder tree expansion (6:64 from 3:8)
 - Practice themes: decoder count; function from decoder + OR/NOR; priority-encoder tables
 
-### dl-04-04-comparators-parity · Magnitude comparators and parity circuits
-- Prerequisites: dl-04-01, dl-02-03
+### dl-05-04-comparators-parity · Magnitude comparators and parity circuits
+- Prerequisites: dl-05-01, dl-02-03, dl-04-03 (comparing by subtraction uses the adder–subtractor)
 - Sub-topics: 1-bit and n-bit comparators (equality via XNOR, greater/less cascades); parity
   generator and checker
 - Sets: A 61–63; B 132–133; C 279–280 (1-bit), 294–295 (4-bit)
@@ -403,8 +466,8 @@ the select lines, watch the chosen path light up, and use the "implement f with 
 - Practice themes: comparator expressions; parity-tree gate counts
 - Note: no PYQ; kept because the sets cover it and it is a standard building block
 
-### dl-04-05-rom-pla-pal · ROM, PLA and PAL as combinational logic
-- Prerequisites: dl-04-03
+### dl-05-05-rom-pla-pal · ROM, PLA and PAL as combinational logic
+- Prerequisites: dl-05-03
 - Sub-topics: ROM = decoder + OR array; sizing a ROM for a truth table (2ⁿ × m); PLA vs PAL; the
   multiplier-ROM size questions
 - Sets: B 125, 127–128 (ROM via decoder, expansion); C 373–391 (PLD classes, PROM/ROM internals, PLA incl. complement trick, PAL, CPLD/FPGA)
@@ -414,7 +477,7 @@ the select lines, watch the chosen path light up, and use the "implement f with 
 - Diagrams/animations: ROM as a lookup grid; PLA AND/OR plane
 - Practice themes: ROM sizing; PLA term counts
 
-### dl-04-06-faults-testing · Stuck-at faults and test inputs
+### dl-05-06-faults-testing · Stuck-at faults and test inputs
 - Prerequisites: dl-02-06
 - Sub-topics: the stuck-at-0/1 model; activation and propagation; finding a test vector;
   counting faults
@@ -428,66 +491,19 @@ the select lines, watch the chosen path light up, and use the "implement f with 
 
 ---
 
-## Chapter 5 · Arithmetic circuits (hardware) (`05-arithmetic-circuits`)
-Hardware only: every number-level rule (complements, overflow, BCD/excess-3 corrections, Booth
-recoding) is in Chapter 1, lessons 9–10, and these lessons link back.
-Live Lab: **Adder Race**: a ripple-carry vs carry-look-ahead side-by-side simulation with
-gate-delay counters. Enter A and B, see the carry wave, flip to subtract, and watch the overflow
-flag.
-
-### dl-05-01-adders-ripple-carry · Half/full adders, subtractors and ripple-carry adders
-- Prerequisites: dl-02-03, dl-01-04
-- Sub-topics: half and full adder (from 2 HAs + OR); half and full subtractor; n-bit ripple
-  adder; delay models (2n + 1 etc.); worst-case carry chain; pipelined adders with registers
-- Sets: A 48–59 (HA/FA/HS/FS, NAND/NOR counts, delay cases); B 129–131, 133; C 279–288; D 400–401; E 408–409
-- pyq_topics: dl/arithmetic, dl/combinational
-- PYQs (5; arithmetic, combinational): `cse-1999-a-41`, `cse-2002-b-56-a`, `cse-2002-b-56-b`, `cse-2015-2-cs-48`, `cse-2016-2-cs-7`
-- Time: 55 min
-- Diagrams/animations: **ripple-carry animation** (carry wave); full adder from 2 HAs; delay
-  timeline
-- Practice themes: delays; HA/FA counts; worst-case operands
-
-### dl-05-02-carry-look-ahead · Carry look-ahead adders
-- Prerequisites: dl-05-01
-- Sub-topics: generate/propagate; C_{i+1} = G_i + P_i C_i expanded; two-level CLA delay; group
-  (block) G/P and multi-level CLA; fan-in limits (O(log n)); 74181/74182-style hierarchies
-- Sets: A 59–60; B 131–133 (CLA, hybrid, serial adders); C 286–287; D 401; E 408
-- pyq_topics: dl/arithmetic, dl/combinational
-- PYQs (5; arithmetic, combinational): `cse-1997-a-15`, `cse-2004-cs-62`, `cse-2006-cs-36`, `cse-2007-cs-35`, `cse-2016-1-cs-33`
-- Time: 50 min
-- Diagrams/animations: **ripple-carry vs carry-look-ahead** comparison; CLA tree
-- Practice themes: CLA delay; G/P expressions; level counts
-
-### dl-05-03-adder-subtractor-overflow · The adder–subtractor, flag logic and the BCD adder circuit
-- Prerequisites: dl-05-01, dl-01-09 (all the number-level rules: complements, overflow, BCD/excess-3
-  corrections are taught there; this lesson builds the circuits and links back)
-- Sub-topics: XOR-controlled adder/subtractor (K and C₀ control lines); the overflow detector
-  (XOR of the last two carries) and flag logic (C, V, S, Z); the BCD adder circuit (correction
-  detector C₄ + S₃S₂ + S₃S₁ and the second adder); adder-based code conversion
-- Sets: A 20–21 (overflow); B 146, 148, 159–160 (adder/subtractor, BCD adder); C 211–216 (complement subtraction, overflow, BCD/XS-3 addition), 289 (adder-subtractor with overflow), 290–291 (BCD adder)
-- pyq_topics: dl/arithmetic, dl/combinational
-- PYQs (2; combinational): `cse-1996-a-46`, `cse-2003-cs-46` (the 13 number-level overflow/flag/complement PYQs moved to dl-01-09)
-- Time: 35 min
-- Diagrams/animations: adder–subtractor with the K line toggling; flag panel; BCD adder correction path
-- Practice themes: control-line settings; flag logic; BCD adder detector
-
-### dl-05-04-multipliers-booth · Array multipliers (hardware)
-- Prerequisites: dl-05-03, dl-01-10 (shift-and-add, signed products and Booth recoding are taught there)
-- Sub-topics: the array multiplier (AND array + adder rows); its critical path and Θ(n) delay;
-  hardware cost; sequential (shift-register) multipliers and Booth hardware in brief, linking back
-- Sets: B 153–154, 178 (Booth); C 291–293 (array multiplier); D 401–402 (radix-2 and radix-4 Booth tables)
-- pyq_topics: dl/arithmetic
-- PYQs (2; arithmetic): `cse-1999-a-21`, `cse-2003-cs-11` (the 8 Booth/recoding/product PYQs moved to dl-01-10)
-- Time: 30 min
-- Diagrams/animations: array multiplier grid with the critical path
-- Practice themes: array delay; gate and adder counts
-- Gaps: **GAP** the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
-
----
-
-## Chapter 6 · Latches, flip-flops and sequential analysis (`06-latches-flip-flops`)
-Live Lab: **Flip-flop Scope**: choose SR/JK/D/T (latch or edge-triggered), drive the inputs and
+## Chapter 6 · Sequential circuits (`06-sequential-circuits`)
+Storage elements, then counters and registers, then state machines: 8 lessons, 59 PYQs. The two
+Live Labs stay. The FSM lessons are hardware-focused (state tables, sequence detectors, FSM →
+circuit, state minimisation for implementation) and link to the Theory of Computation subject for
+DFA/NFA theory, regular languages and DFA minimisation proofs.
+Live Labs:
+- **Flip-flop Scope**: choose SR/JK/D/T (latch or edge-triggered), drive the inputs and
 the clock, and see the live timing diagram with setup/hold violations flagged.
+- **Counter & FSM Simulator**: build a ring/Johnson/ripple/synchronous counter or enter
+an FSM table, clock it step by step, and see the waveform plus the state diagram; it includes a
+self-start checker.
+
+#### Storage elements (lessons 1–3)
 
 ### dl-06-01-latches · Feedback, latches and races
 - Prerequisites: dl-02-06
@@ -527,26 +543,9 @@ the clock, and see the live timing diagram with setup/hold violations flagged.
 - Practice themes: trace states; derive state equations
 - Gaps: circuit → state table → diagram analysis (thin in every set; 13 PYQs rely on it)
 
----
+#### Counters and registers (lessons 4–6)
 
-## Chapter 7 · Counters, registers and FSMs (`07-counters-registers-fsms`)
-Live Lab: **Counter & FSM Simulator**: build a ring/Johnson/ripple/synchronous counter or enter
-an FSM table, clock it step by step, and see the waveform plus the state diagram; it includes a
-self-start checker.
-
-### dl-07-01-shift-registers · Shift registers, ring and Johnson counters, LFSRs
-- Prerequisites: dl-06-03
-- Sub-topics: SISO/SIPO/PISO/PIPO; bidirectional/universal; ring (N states) and Johnson (2N
-  states) counters; counter + decoder = ring; LFSR sequences; a RAM as a long shift register
-- Sets: A 88–92; B 155–156, 158–159; C 357–372 (ring/Johnson, SISO/SIPO/PISO/PIPO, universal register, sequence generators); D 402; E 408
-- pyq_topics: dl/sequential
-- PYQs (10; sequential): `cse-1991-b-6-a`, `cse-1991-b-6-b`, `cse-1993-ii-a-6-3`, `cse-2001-a-37`, `cse-2006-cs-37`, `it-2007-cs-40`, `cse-2014-2-cs-7`, `cse-2015-1-cs-20`, `cse-2018-cs-22`, `cse-2025-1-cs-50`
-- Time: 50 min
-- Diagrams/animations: **registers step by step** (bits sliding); Johnson twisted ring; LFSR
-  XOR feedback animation
-- Practice themes: sequences; state counts; LFSR contents
-
-### dl-07-02-ripple-counters · Counter basics and asynchronous (ripple) counters
+### dl-06-04-ripple-counters · Counter basics and asynchronous (ripple) counters
 - Prerequisites: dl-06-02
 - Sub-topics: mod-N and the flip-flop count ⌈log₂ N⌉; ripple up/down counters; frequency division
   (f/2ⁿ); ripple delay and max frequency; mod-N by asynchronous clear; counting pulses between two
@@ -559,8 +558,8 @@ self-start checker.
   animation
 - Practice themes: frequency; mod-N; pulse counts
 
-### dl-07-03-synchronous-counter-design · Synchronous counter design
-- Prerequisites: dl-07-02, dl-06-02, dl-03-02
+### dl-06-05-synchronous-counter-design · Synchronous counter design
+- Prerequisites: dl-06-04, dl-06-02, dl-03-02
 - Sub-topics: the design procedure with excitation tables; arbitrary sequences; repeated-value
   sequences (needs extra state bits); Gray and saturating counters; self-starting and lock-out;
   max clock frequency of synchronous counters
@@ -572,8 +571,22 @@ self-start checker.
   with unused states
 - Practice themes: flip-flop counts; derive T/JK/D inputs; self-start check
 
-### dl-07-04-finite-state-machines · Finite state machines: Mealy and Moore
-- Prerequisites: dl-07-03
+### dl-06-06-shift-registers · Shift registers, ring and Johnson counters, LFSRs
+- Prerequisites: dl-06-03
+- Sub-topics: SISO/SIPO/PISO/PIPO; bidirectional/universal; ring (N states) and Johnson (2N
+  states) counters; counter + decoder = ring; LFSR sequences; a RAM as a long shift register
+- Sets: A 88–92; B 155–156, 158–159; C 357–372 (ring/Johnson, SISO/SIPO/PISO/PIPO, universal register, sequence generators); D 402; E 408
+- pyq_topics: dl/sequential
+- PYQs (10; sequential): `cse-1991-b-6-a`, `cse-1991-b-6-b`, `cse-1993-ii-a-6-3`, `cse-2001-a-37`, `cse-2006-cs-37`, `it-2007-cs-40`, `cse-2014-2-cs-7`, `cse-2015-1-cs-20`, `cse-2018-cs-22`, `cse-2025-1-cs-50`
+- Time: 50 min
+- Diagrams/animations: **registers step by step** (bits sliding); Johnson twisted ring; LFSR
+  XOR feedback animation
+- Practice themes: sequences; state counts; LFSR contents
+
+#### State machines (lessons 7–8)
+
+### dl-06-07-finite-state-machines · Finite state machines: Mealy and Moore
+- Prerequisites: dl-06-05
 - Sub-topics: Mealy vs Moore; state diagrams and tables; sequence detectors (overlapping or
   not); serial adders and serial 2's complementers; the shortest input to reach an output; FSM →
   circuit
@@ -585,8 +598,8 @@ self-start checker.
 - Practice themes: build detectors; interpret machines; output sequences
 - Gaps: **GAP** Mealy/Moore theory, detectors and FSM → circuit (only E 405/407 touch it; textbook: Mano)
 
-### dl-07-05-state-minimisation · State minimisation
-- Prerequisites: dl-07-04
+### dl-06-08-state-minimisation · State minimisation
+- Prerequisites: dl-06-07
 - Sub-topics: equivalent states; partition refinement; implication tables; incompletely
   specified machines (brief)
 - Sets: E 409 (implication table) only
@@ -599,13 +612,13 @@ self-start checker.
 
 ---
 
-## Chapter 8 · Beyond the core syllabus (optional, `08-beyond-syllabus`)
+## Chapter 7 · Beyond the core syllabus (optional, `07-beyond-syllabus`)
 Kept because Set C covers these and some old PYQs test them. They are marked "optional" in the
 reader. Live Lab: **Converter Bench**: a SAR ADC stepping through its binary search beside an
 R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 
-### dl-08-01-memory-devices · Semiconductor memory organisation
-- Prerequisites: dl-04-05
+### dl-07-01-memory-devices · Semiconductor memory organisation
+- Prerequisites: dl-05-05
 - Sub-topics: RAM/ROM types; chip organisation; expanding word size and count (cross-reference COA)
 - Sets: C 373–377, 392–393 (memory arrays, SRAM vs DRAM, 4×4 RAM)
 - pyq_topics: none
@@ -613,7 +626,7 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - Time: 25 min
 - Diagrams/animations: chip-array expansion
 
-### dl-08-02-data-converters · DAC and ADC basics
+### dl-07-02-data-converters · DAC and ADC basics
 - Prerequisites: dl-01-03
 - Sub-topics: weighted-resistor and R-2R DAC; resolution; flash/successive-approximation/counter
   ADCs
@@ -624,7 +637,7 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - Diagrams/animations: SAR binary-search animation
 - Gaps: **GAP** ADC types (C only names them)
 
-### dl-08-03-logic-families · Logic families and switch-level circuits
+### dl-07-03-logic-families · Logic families and switch-level circuits
 - Prerequisites: dl-02-01
 - Sub-topics: TTL/CMOS/ECL comparison; noise margins and levels; CMOS static power; pass
   transistors and transmission gates
@@ -641,7 +654,7 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - dl PYQs in `src/gate/questions.json`: **304** (sequential 59, combinational 42, number 40, minimization 40, boolean 36, gates 33, arithmetic 29, floating 25).
 - Assigned to a lesson: **304**; each id has exactly one *primary* lesson (secondary links are listed in chapter plans).
 - **Unassigned: 0** (none)
-- Lessons with no PYQ: `dl-04-04`, `dl-08-01`, `dl-08-02` (kept: set coverage, building blocks or optional).
+- Lessons with no PYQ: `dl-05-04`, `dl-07-01`, `dl-07-02` (kept: set coverage, building blocks or optional).
 - Enforced by `content/gate-notes/_checks/dl/outline_pyq_assignment.py` (runs in CI via `scripts/gate-notes/run_checks.py`). Once lessons exist, `npm run notes:build` coverage takes over.
 
 ## Gaps summary (write from textbooks)
@@ -649,11 +662,11 @@ R-2R DAC staircase (small, and it reuses the Number Lab's base functions).
 - `dl-02-05-universal-gates` (Universal gates and functional completeness): Post's criteria (no set covers them; we give an intuitive version)
 - `dl-03-03-tabular-method` (Quine–McCluskey and other map methods): Quine–McCluskey tabulation (no set runs it, and the 2027 syllabus names it); B and C cover VEM
 - `dl-03-04-two-level-implementation` (From minimal forms to gates: cost, NAND/NOR, hazards): hazards (only summaries in B 129 and D 402)
-- `dl-04-06-faults-testing` (Stuck-at faults and test inputs): (only one brief page in B; textbook: Mano / any testing primer)
-- `dl-05-04-multipliers-booth` (Array multipliers (hardware)): the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
+- `dl-05-06-faults-testing` (Stuck-at faults and test inputs): (only one brief page in B; textbook: Mano / any testing primer)
+- `dl-04-04-multipliers-booth` (Array multipliers (hardware)): the array-multiplier delay (C 291–293 shows only the structure; textbook: Hamacher / Mano CSA)
 - `dl-01-10-multiplication-booth` (Signed multiplication and Booth's algorithm): Booth's algorithm worked end to end (textbook: Hamacher / Mano CSA)
-- `dl-07-04-finite-state-machines` (Finite state machines: Mealy and Moore): Mealy/Moore theory, detectors and FSM → circuit (only E 405/407 touch it; textbook: Mano)
-- `dl-07-05-state-minimisation` (State minimisation): partition refinement (E 409 shows one implication table only)
+- `dl-06-07-finite-state-machines` (Finite state machines: Mealy and Moore): Mealy/Moore theory, detectors and FSM → circuit (only E 405/407 touch it; textbook: Mano)
+- `dl-06-08-state-minimisation` (State minimisation): partition refinement (E 409 shows one implication table only)
 - `dl-01-07-floating-point-arithmetic` (Floating-point arithmetic, rounding and its pitfalls): rounding modes and the guard/round/sticky bits (textbook)
-- `dl-08-02-data-converters` (DAC and ADC basics): ADC types (C only names them)
-- `dl-08-03-logic-families` (Logic families and switch-level circuits): (pre-2000 PYQs only)
+- `dl-07-02-data-converters` (DAC and ADC basics): ADC types (C only names them)
+- `dl-07-03-logic-families` (Logic families and switch-level circuits): (pre-2000 PYQs only)

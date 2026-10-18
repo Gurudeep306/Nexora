@@ -305,7 +305,7 @@
       "field": "needsReview",
       "before": true,
       "after": false,
-      "reason": "At 600 dpi the top input and output labels read e8 and b8 (the second pair e4 and b4), so the figure is labelled by weights 8-4-2-1 and b4 is the weight-4 BCD bit. Its minimal POS (7 literals; three equally minimal forms) includes the stored answer, re-derived by enumeration in content/gate-notes/_checks/dl/l4_01_design.py.",
+      "reason": "At 600 dpi the top input and output labels read e8 and b8 (the second pair e4 and b4), so the figure is labelled by weights 8-4-2-1 and b4 is the weight-4 BCD bit. Its minimal POS (7 literals; three equally minimal forms) includes the stored answer, re-derived by enumeration in content/gate-notes/_checks/dl/l5_01_design.py.",
       "source": "GATE2001.pdf p. 8, Q58(b), figure rendered at 600 dpi"
     }
   ]

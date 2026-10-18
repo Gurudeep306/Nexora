@@ -3496,7 +3496,7 @@
         "Writing 0s instead of Xs on rows 10–15, which part (b)'s gate budget does not allow.",
         "Forgetting $R_4$: it exists in the labelling but is constant 0."
       ],
-      "verification": "Each output row read as binary equals the row's digit mod 6 (checked for all ten digits in l4_01_design.py).",
+      "verification": "Each output row read as binary equals the row's digit mod 6 (checked for all ten digits in l5_01_design.py).",
       "animation": {
         "kind": "table",
         "title": "BCD digit → digit mod 6",
@@ -3618,7 +3618,7 @@
         "Treating 10–15 as 0s, which makes $R_2$ and $R_3$ 3-literal terms and breaks the budget.",
         "Counting $R_1$ and $R_4$ as gates: a wire and a constant are free."
       ],
-      "verification": "The five-gate netlist (NOT $I_2$, NOT $I_3$, AND($I_3$, $\\overline{I_2}$), AND($I_2$, $\\overline{I_3}$), OR($I_4$, ·)) simulated on digits 0–9 outputs $d \\bmod 6$ every time (l4_01_design.py).",
+      "verification": "The five-gate netlist (NOT $I_2$, NOT $I_3$, AND($I_3$, $\\overline{I_2}$), AND($I_2$, $\\overline{I_3}$), OR($I_4$, ·)) simulated on digits 0–9 outputs $d \\bmod 6$ every time (l5_01_design.py).",
       "animation": {
         "kind": "circuit",
         "title": "BCD mod 6: R₃ and R₂ (R₁ = I₁, R₄ = 0)",

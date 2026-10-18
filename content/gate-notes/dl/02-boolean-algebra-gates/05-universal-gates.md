@@ -29,7 +29,7 @@ five classes turn that question into a checklist.
 
 Lessons [1](lesson:logic-gates) to [4](lesson:canonical-forms) gave you the gates, their algebra and
 the canonical SOP, which writes every function with AND, OR and NOT. Here that fact becomes the
-foundation of universality. Chapter 3 minimises the two-level circuits built here, and Chapter 4
+foundation of universality. Chapter 3 minimises the two-level circuits built here, and Chapter 5
 shows that a multiplexer is also a universal building block.
 
 :::table{#radar title="GATE radar: universal gates and completeness" depth="quick"}

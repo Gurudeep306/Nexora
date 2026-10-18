@@ -34,15 +34,15 @@ It uses only place value and grouping from Lessons [1](lesson:place-value) and
 BCD and excess-3 using the codes defined here. The exclusive-OR $\oplus$ appears here only as "the bits differ"
 (its algebra is in Chapter 2). The codes come back often: Gray order labels the rows and columns
 of K-maps (Chapter 3), code converters (BCD → excess-3, binary → Gray) are classic combinational
-design problems (Chapter 4), BCD and excess-3 addition are in [Lesson 9](lesson:code-arithmetic#bcd-add)
-(the BCD adder circuit is in Chapter 5), and Gray-code counters are in Chapter 7.
+design problems (Chapter 5), BCD and excess-3 addition are in [Lesson 9](lesson:code-arithmetic#bcd-add)
+(the BCD adder circuit is in Chapter 4), and Gray-code counters are in Chapter 6.
 
 :::table{#radar title="GATE radar: binary codes" depth="quick"}
 | What | Detail |
 |:--|:--|
 | PYQs mapped to this lesson | 1 directly (2006, 2 marks, MCQ) |
 | Pattern | Gray-code "next value" functions as minterm lists |
-| Where else codes appear | K-map ordering (Ch 3), code-converter circuits (Ch 4), BCD adders (Ch 5), Gray counters (Ch 7): those PYQs are mapped in their own lessons and build on this one |
+| Where else codes appear | K-map ordering (Ch 3), BCD adders (Ch 4), code-converter circuits (Ch 5), Gray counters (Ch 6): those PYQs are mapped in their own lessons and build on this one |
 | What examiners test | Reading BCD as binary, Gray → binary done bit-pairwise, and "parity corrects errors" |
 :::
 

@@ -1638,7 +1638,7 @@
         "Putting $C$ on a select line: then the residues are functions of $A$ and $B$ and extra gates are needed.",
         "Swapping $S_1$ and $S_0$, which permutes the data inputs (with $B$ on $S_1$, the $X_1$ data become 0, 1, 1, 1 in the order $BA = 00, 01, 10, 11$ and the $X_0$ data $C, 1, 0, 1$)."
       ],
-      "verification": "All 8 rows of $(A, B, C)$, simulated with both MUXes: $(X_1, X_0)$ = 00, 01, 10, 10, 11, 11, 11, 11 for rows 0–7, which is A → 11, B → 10, C → 01, none → 00 (checked by enumeration in l4_03_decoders.py).",
+      "verification": "All 8 rows of $(A, B, C)$, simulated with both MUXes: $(X_1, X_0)$ = 00, 01, 10, 10, 11, 11, 11, 11 for rows 0–7, which is A → 11, B → 10, C → 01, none → 00 (checked by enumeration in l5_03_decoders.py).",
       "animation": {
         "kind": "table",
         "title": "Implementation table, selects A (S₁), B (S₀)",

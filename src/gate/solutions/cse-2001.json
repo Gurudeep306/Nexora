@@ -3486,7 +3486,7 @@
         "Treating $b_4$ as the BCD MSB when the figure labels are weights.",
         "Fixing the Xs to the values a minimal SOP used before looping the 0s; the POS chooses its own Xs."
       ],
-      "verification": "Over the ten legal codes 3–12 the product is 1 exactly on 7, 8, 9, 10; an exhaustive POS search finds no cover with fewer than 7 literals and exactly three with 7 (l4_01_design.py).",
+      "verification": "Over the ten legal codes 3–12 the product is 1 exactly on 7, 8, 9, 10; an exhaustive POS search finds no cover with fewer than 7 literals and exactly three with 7 (l5_01_design.py).",
       "animation": {
         "kind": "table",
         "title": "Excess-3 codes and b₄",

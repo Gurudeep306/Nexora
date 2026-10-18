@@ -3527,7 +3527,7 @@
         "Swapping $C_1$ and $C_0$ on the selects, which exchanges $I_1$ and $I_2$ (the OR and XOR rows).",
         "Spending the inverter on an input ($\\overline{A}$ or $\\overline{B}$) and then having no way to make the NOR."
       ],
-      "verification": "Simulating the circuit over all 16 combinations of $C_1, C_0, A, B$ reproduces the table (l4_02_mux.py)."
+      "verification": "Simulating the circuit over all 16 combinations of $C_1, C_0, A, B$ reproduces the table (l5_02_mux.py)."
     },
     "cse-1996-a-54": {
       "approach": "Assemble the program to find addresses: PCHL jumps to the address in HL = 0105H, which is the OUT instruction, so OUT–INR–PCHL is an endless loop that writes an incrementing accumulator to the port.",

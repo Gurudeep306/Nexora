@@ -11,10 +11,10 @@ difficulty: core
 status: published
 needs_review: false
 sources:
-  - "Nexora's own text, examples and diagrams; every truth table, minimal form, gate count, converter output and Gray-code claim is checked by enumeration in content/gate-notes/_checks/dl/l4_01_design.py (comblib netlists and the exhaustive AND/OR/NOT gate search, minlib minimal SOP/POS covers)."
+  - "Nexora's own text, examples and diagrams; every truth table, minimal form, gate count, converter output and Gray-code claim is checked by enumeration in content/gate-notes/_checks/dl/l5_01_design.py (comblib netlists and the exhaustive AND/OR/NOT gate search, minlib minimal SOP/POS covers)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 38–39 and 44–47, set B pp. 117–118, set C pp. 201–202 and 277–283. The binary-to-Gray converter of set A p. 38 is BCD-only; see _errata/dl.md (A 38)."
   - "Facts checked against standard textbooks: M. Morris Mano, Digital Design (the design procedure, code conversion, BCD to excess-3, Gray code)."
-  - "PYQs: src/gate/questions.json (cse-2000-b-9-a, cse-2000-b-9-b, cse-2001-b-58-b, cse-2004-cs-58, cse-2012-cs-6); every key and answer text is re-derived in l4_01_design.py. cse-2001-b-58-b is read from the scan as weight labels (8-4-2-1); cse-2000-b-9-b's 'one two-input gate' is an OR."
+  - "PYQs: src/gate/questions.json (cse-2000-b-9-a, cse-2000-b-9-b, cse-2001-b-58-b, cse-2004-cs-58, cse-2012-cs-6); every key and answer text is re-derived in l5_01_design.py. cse-2001-b-58-b is read from the scan as weight labels (8-4-2-1); cse-2000-b-9-b's 'one two-input gate' is an OR."
 updated: "2026-10-19"
 ---
 
@@ -33,7 +33,7 @@ one code and whose output is the same value in another code.
 [Chapter 1, Lesson 8](lesson:codes) defined BCD, excess-3 and the Gray code. This lesson joins the two:
 the codes supply the truth tables, the unused code words supply the don't-cares, and the maps supply
 the gates. Number-level code arithmetic (adding BCD digits, the +6 correction) stays in
-[Chapter 1, Lesson 9](lesson:code-arithmetic); adders and subtractors as hardware are Chapter 5. The
+[Chapter 1, Lesson 9](lesson:code-arithmetic); adders and subtractors as hardware were built in Chapter 4. The
 rest of this chapter replaces individual gates by bigger building blocks (multiplexers, decoders,
 ROMs), but every one of them is used through the same procedure you learn here.
 
@@ -76,7 +76,7 @@ signal path loops back** to an earlier gate (the network is an acyclic directed 
 
 Combinational blocks you will meet in this chapter: code converters and detectors (this lesson),
 multiplexers, decoders and encoders, comparators and parity circuits, ROMs and PLAs. Adders and
-subtractors are combinational too, but they are built in Chapter 5.
+subtractors are combinational too; they were built in Chapter 4, the arithmetic-circuits chapter.
 :::
 
 :::theorem{#acyclic-function name="An acyclic gate network computes a Boolean function" depth="standard"}
@@ -1040,34 +1040,34 @@ truth table against $f$ row by row, which is step 8 of the procedure done for yo
 
 Our own questions in GATE formats: warm-ups first, then exam-level questions, then two that need care.
 
-:::practice{id="nx-dl-04-01-q01" depth="standard"}
+:::practice{id="nx-dl-05-01-q01" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q02" depth="standard"}
+:::practice{id="nx-dl-05-01-q02" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q03" depth="standard"}
+:::practice{id="nx-dl-05-01-q03" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q04" depth="standard"}
+:::practice{id="nx-dl-05-01-q04" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q05" depth="standard"}
+:::practice{id="nx-dl-05-01-q05" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q06" depth="standard"}
+:::practice{id="nx-dl-05-01-q06" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q07" depth="standard"}
+:::practice{id="nx-dl-05-01-q07" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q08" depth="standard"}
+:::practice{id="nx-dl-05-01-q08" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q09" depth="standard"}
+:::practice{id="nx-dl-05-01-q09" depth="standard"}
 :::
 
-:::practice{id="nx-dl-04-01-q10" depth="standard"}
+:::practice{id="nx-dl-05-01-q10" depth="standard"}
 :::
 
 ## Summary

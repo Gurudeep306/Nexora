@@ -40,7 +40,7 @@ gate is enough to build everything; Lesson 6 reads whole circuits, including the
 | PYQs mapped to this lesson | 1 (1999), but every circuit question in this chapter assumes it |
 | Marks | 1 one-mark MCQ |
 | Pattern | A gate with tied or constant inputs: which of these is NOT equivalent to $x'$? |
-| Where it reappears | Universal gates (Lesson 5), circuit analysis (Lesson 6), multiplexers and adders (Chapters 4–5) |
+| Where it reappears | Universal gates (Lesson 5), circuit analysis (Lesson 6), adders and multiplexers (Chapters 4–5) |
 | What examiners test | Controlling values (a 1 into a NOR forces 0), the difference between a gate's symbol and its bubbles, and positive vs negative logic |
 :::
 

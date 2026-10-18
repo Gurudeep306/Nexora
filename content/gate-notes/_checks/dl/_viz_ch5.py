@@ -18,8 +18,8 @@ Logic levels: success = 1, muted = 0, accent = the selected or active path. MUX,
 ROM and PLA blocks are `box` elements with `text` pin labels; gates are `gate` elements whose wires
 end on the pins from boollib.gate_pins (the mirror of geometry.ts).
 
-    python3 content/gate-notes/_checks/dl/_viz_ch4.py      # write the JSON files
-    python3 content/gate-notes/_checks/dl/viz_ch4.py       # (check) files == generator output
+    python3 content/gate-notes/_checks/dl/_viz_ch5.py      # write the JSON files
+    python3 content/gate-notes/_checks/dl/viz_ch5.py       # (check) files == generator output
 """
 import copy
 import re

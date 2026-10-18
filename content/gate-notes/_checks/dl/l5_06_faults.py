@@ -1,4 +1,4 @@
-"""Checks for dl/04-combinational-circuits/06-faults-testing: every test vector, fault count, Boolean
+"""Checks for dl/05-combinational-circuits/06-faults-testing: every test vector, fault count, Boolean
 difference, undetectable fault, equivalence class and minimum test set of the lesson is recomputed by
 fault simulation (comblib.evaluate with stuck-at faults) over every input row; the fault-count theorem
 is checked by enumeration; the test-condition theorem and "undetectable ⇔ redundant" are checked on
@@ -342,7 +342,7 @@ has("detects every single stuck-at fault on the checkpoints detects every single
 
 # ── Practice ─────────────────────────────────────────────────────────────────
 P = cl.practice()
-q = P["nx-dl-04-06-q01"]
+q = P["nx-dl-05-06-q01"]
 Q1 = [("p", "OR", ["A", "B"]), ("f", "NAND", ["p", "C"])]
 t = cl.tests_for(Q1, V3, "f", "p", 1)
 assert t == [1]
@@ -352,22 +352,22 @@ assert ok == ["C"]
 for w in q["common_wrong"]:
     assert row(bl.option_values(q)[w["answer"]].strip("$")) not in t
 
-q = P["nx-dl-04-06-q02"]
+q = P["nx-dl-05-06-q02"]
 Q2 = [("g", "AND", ["A", "B"]), ("f", "OR", ["g", "C"])]
 t = cl.tests_for(Q2, V3, "f", "C", 0)
 bl.assert_msq(q, [l for l, x in bl.option_values(q).items() if row(x.strip("$")) in t])
 
-q = P["nx-dl-04-06-q03"]
+q = P["nx-dl-05-06-q03"]
 Q3 = [("A1", "BUF", ["A"]), ("A2", "BUF", ["A"]), ("G1", "AND", ["A1", "B"]), ("G2", "OR", ["A2", "C"]), ("G3", "NAND", ["G1", "G2", "D"])]
 bl.assert_nat(q, len(faults(Q3, V4)))
 assert len(cl.lines(Q3, V4)) == 9
 
-q = P["nx-dl-04-06-q04"]
+q = P["nx-dl-05-06-q04"]
 two = sum(1 for a in product((None, 0, 1), repeat=6) if sum(x is not None for x in a) == 2)
 bl.assert_nat(q, two)
 assert two == comb(6, 2) * 4 == 60 and cl.multiple_fault_count(6) == 728
 
-q = P["nx-dl-04-06-q05"]
+q = P["nx-dl-05-06-q05"]
 Q5 = [("A1", "BUF", ["A"]), ("A2", "BUF", ["A"]), ("g", "AND", ["A2", "B"]), ("f", "OR", ["A1", "g"])]
 assert cl.truth(Q5, V2, "f") == bl.tt("A", V2)
 names = {"A": ("A", 1), "B": ("g", 1), "C": ("A2", 1), "D": ("g", 0)}
@@ -375,25 +375,25 @@ undet = [l for l, f in names.items() if not cl.tests_for(Q5, V2, "f", *f)]
 bl.assert_mcq(q, undet[0])
 assert undet == ["D"] and faulty_fn(Q5, V2, {"A2": 1}) == bl.tt("A + B", V2)
 
-q = P["nx-dl-04-06-q06"]
+q = P["nx-dl-05-06-q06"]
 ins5 = [f"x{i}" for i in range(5)]
 bl.assert_nat(q, min_test_sets([("f", "NOR", ins5)], ins5)[0])
 
-q = P["nx-dl-04-06-q07"]
+q = P["nx-dl-05-06-q07"]
 Q7 = [("p", "AND", ["A", "B"]), ("q", "AND", ["C", "D"]), ("f", "OR", ["p", "q"])]
 bd = cl.boolean_difference(Q7, V4, "f", "p")
 bl.assert_nat(q, len(bd))
 assert len(cl.tests_for(Q7, V4, "f", "p", 0)) == 3 and len(cl.tests_for(Q7, V4, "f", "p", 1)) == 9
 assert 16 - len(bd) == 4
 
-q = P["nx-dl-04-06-q08"]
+q = P["nx-dl-05-06-q08"]
 XYZ = list("XYZ")
 NOR3 = [("f", "NOR", XYZ)]
 target = faulty_fn(NOR3, XYZ, {"f": 0})
 cand = {"A": ("X", 0), "B": ("Y", 1), "C": ("f", 1), "D": ("Z", 1)}
 bl.assert_msq(q, [l for l, f in cand.items() if faulty_fn(NOR3, XYZ, {f[0]: f[1]}) == target])
 
-q = P["nx-dl-04-06-q09"]
+q = P["nx-dl-05-06-q09"]
 Q9 = [("p", "AND", ["A", "B"]), ("q", "OR", ["p", "C"]), ("f", "NOR", ["q", "D"])]
 t = cl.tests_for(Q9, V4, "f", "p", 1)
 conds = {"A": "A B C' D'", "B": "(A B)' C' D'", "C": "(A B)' C D'", "D": "(A B)' C' D"}
@@ -401,14 +401,14 @@ ok = [l for l, e in conds.items() if bl.minterms(e, V4) == t]
 bl.assert_mcq(q, ok[0])
 assert ok == ["B"] and t == rows_of("0000", "0100", "1000")
 
-q = P["nx-dl-04-06-q10"]
+q = P["nx-dl-05-06-q10"]
 # (A) true on every line of every lesson circuit (check_theorems); (B) false: IT 2007's T is internal;
 # (C) false: the consensus gate; (D) false by definition.
 assert "T" in [n for n, _, _ in IT07] and "T" not in X and cl.tests_for(IT07, X, "f", "T", 0) == []
 assert not TC[("g3", 0)] and TC[("g3", 1)]
 bl.assert_mcq(q, "A")
 
-assert len([k for k in P if k.startswith("nx-dl-04-06-")]) == 10
-print("l4_06_faults: fault counts (3^N − 1 by enumeration), test condition and undetectable ⇔ redundant on every line of 8 circuits, "
+assert len([k for k in P if k.startswith("nx-dl-05-06-")]) == 10
+print("l5_06_faults: fault counts (3^N − 1 by enumeration), test condition and undetectable ⇔ redundant on every line of 8 circuits, "
       "worked tests, multi-output condition, dominance, coverage, checkpoint theorem (150 random circuits + 2 counterexamples), "
       "n + 1 test sets (n = 2…5), 3 PYQ keys and 10 practice answers OK")

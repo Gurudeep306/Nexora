@@ -1,7 +1,7 @@
-"""Teacher-style v2 solutions for the 19 PYQs of Digital Logic Chapter 4, Lesson 2 (Multiplexers).
+"""Teacher-style v2 solutions for the 19 PYQs of Digital Logic Chapter 5, Lesson 2 (Multiplexers).
 
-Merged by _sol_ch4.py, which writes them into src/gate/solutions/<paper>.json. Every key is re-derived by
-comblib enumeration in l4_02_mux.py; the truth tables in the animations are generated here from the same
+Merged by _sol_ch5.py, which writes them into src/gate/solutions/<paper>.json. Every key is re-derived by
+comblib enumeration in l5_02_mux.py; the truth tables in the animations are generated here from the same
 netlists (never typed by hand).
 """
 import pathlib
@@ -72,7 +72,7 @@ SOLUTIONS["cse-1996-a-53"] = {
     "answer": {"value": "A 4:1 MUX with $S_1 = C_1$, $S_0 = C_0$; $I_0 = \\overline{A + B}$ (OR gate followed by the inverter), $I_1 = A + B$ (OR), $I_2 = A \\oplus B$ (XOR), $I_3 = AB$ (AND).", "matchesKey": True},
     "shortcut": "Any \"control bits choose an operation\" table is a MUX: control bits on the selects, one operation per data input in the order of the control code.",
     "pitfalls": ["Swapping $C_1$ and $C_0$ on the selects, which exchanges $I_1$ and $I_2$ (the OR and XOR rows).", "Spending the inverter on an input ($\\overline{A}$ or $\\overline{B}$) and then having no way to make the NOR."],
-    "verification": "Simulating the circuit over all 16 combinations of $C_1, C_0, A, B$ reproduces the table (l4_02_mux.py).",
+    "verification": "Simulating the circuit over all 16 combinations of $C_1, C_0, A, B$ reproduces the table (l5_02_mux.py).",
 }
 
 # ── 1998-a-14 ───────────────────────────────────────────────────────────────
@@ -257,7 +257,7 @@ SOLUTIONS["cse-2007-cs-34"] = {
     ],
     "shortcut": "One inverter buys exactly one variable on the data lines: size $2^{n-1}$.",
     "pitfalls": ["Answering $2^n$ by thinking only of \"wire the truth table\".", "Answering $2^{n-2}$ by assuming residues can be any function."],
-    "verification": "For $n = 3$ an exhaustive search over every wiring of a 2:1 MUX and one inverter finds no circuit for $x \\oplus y \\oplus z$, while a 4:1 MUX realises all 256 functions (l4_02_mux.py).",
+    "verification": "For $n = 3$ an exhaustive search over every wiring of a 2:1 MUX and one inverter finds no circuit for $x \\oplus y \\oplus z$, while a 4:1 MUX realises all 256 functions (l5_02_mux.py).",
 }
 
 # ── IT 2007-cs-8 ────────────────────────────────────────────────────────────

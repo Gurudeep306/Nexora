@@ -681,7 +681,7 @@ Properties used in GATE:
 - **Symmetric and monotone:** permuting the inputs changes nothing, and turning an input from 0 to 1 never
   turns the output from 1 to 0.
 - It depends on all three inputs (it is not independent of any of them).
-- It is the carry-out of a full adder (Chapter 5).
+- It is the carry-out of a full adder (Chapter 4).
 :::
 
 :::theorem{#majority-cases name="The tie-breaker rule" depth="standard"}

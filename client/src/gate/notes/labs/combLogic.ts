@@ -21,7 +21,7 @@
 
   Dependency-free and erasable-syntax only: tests/gate-notes.test.js imports
   it in Node and checks it against vectors that
-  content/gate-notes/_checks/dl/l4_lab_vectors.py computes with comblib.
+  content/gate-notes/_checks/dl/l5_lab_vectors.py computes with comblib.
 */
 
 export type Cell = 0 | 1 | 'X'

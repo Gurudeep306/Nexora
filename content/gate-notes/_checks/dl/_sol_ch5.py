@@ -1,10 +1,10 @@
-"""Teacher-style v2 solutions for the 38 PYQs of Digital Logic Chapter 4 (Combinational circuits).
+"""Teacher-style v2 solutions for the 38 PYQs of Digital Logic Chapter 5 (Combinational building blocks).
 
-The solutions live in one module per lesson (`_sol_ch4_l01.py` … `_sol_ch4_l06.py`, each defining a
-SOLUTIONS dict); this file merges them, and `python3 content/gate-notes/_checks/dl/_sol_ch4.py`
+The solutions live in one module per lesson (`_sol_ch5_l01.py` … `_sol_ch5_l06.py`, each defining a
+SOLUTIONS dict); this file merges them, and `python3 content/gate-notes/_checks/dl/_sol_ch5.py`
 writes each solution into src/gate/solutions/<paper>.json (the v2 solutions pipeline).
-pyq_ch4.py and scripts/gate/validate-solutions.mjs check the result, and every key is re-derived
-from scratch in the lesson checks l4_01 … l4_06 (comblib enumeration).
+pyq_ch5.py and scripts/gate/validate-solutions.mjs check the result, and every key is re-derived
+from scratch in the lesson checks l5_01 … l5_06 (comblib enumeration).
 """
 import importlib
 import json
@@ -16,7 +16,7 @@ from _sol_ch1_fp import ROOT  # noqa: E402
 
 SOLUTIONS = {}
 for k in range(1, 7):
-    name = f"_sol_ch4_l{k:02d}"
+    name = f"_sol_ch5_l{k:02d}"
     if (pathlib.Path(__file__).parent / f"{name}.py").exists():
         part = importlib.import_module(name).SOLUTIONS
         dup = set(part) & set(SOLUTIONS)

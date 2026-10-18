@@ -1,6 +1,6 @@
 [
  {
-  "id": "nx-dl-04-01-q01",
+  "id": "nx-dl-05-01-q01",
   "type": "NAT",
   "marks": 1,
   "text": "The input $A B C D$ of a circuit is always a BCD digit (weights 8 4 2 1; codes 1010–1111 never occur). The output is 1 when the digit is **odd and at least 5**. Only AND, OR and NOT gates may be used (any fan-in), and complemented inputs are not available. What is the minimum number of gates?",
@@ -30,7 +30,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q02",
+  "id": "nx-dl-05-01-q02",
   "type": "MCQ",
   "marks": 1,
   "text": "A truth table of $f(A, B, C)$, rows in counting order 000 to 111, has the output column $0, 0, 1, 1, 1, 0, 1, 0$. Which expression represents $f$?",
@@ -76,7 +76,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q03",
+  "id": "nx-dl-05-01-q03",
   "type": "MSQ",
   "marks": 1,
   "text": "$f(A, B, C)$ (with $A$ the MSB) is 1 exactly when $C = 0$ and exactly one of $A$, $B$ is 1, or when all three inputs are 1. Which minterms belong to $f$?",
@@ -133,7 +133,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q04",
+  "id": "nx-dl-05-01-q04",
   "type": "MCQ",
   "marks": 2,
   "text": "A BCD → excess-3 converter has inputs $B_3 B_2 B_1 B_0$ (weights 8 4 2 1, codes 1010–1111 never occur) and outputs $E_3 E_2 E_1 E_0$. Which expression gives $E_2$ (the weight-4 output bit) on every legal input?",
@@ -180,7 +180,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q05",
+  "id": "nx-dl-05-01-q05",
   "type": "MCQ",
   "marks": 2,
   "text": "A circuit converts a BCD digit $A B C D$ (weights 8 4 2 1; illegal inputs are not detected) to the digit modulo 3, as a 2-bit output $R_1 R_0$ (weights 2 1). Which is a minimal SOP of $R_1$?",
@@ -232,7 +232,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q06",
+  "id": "nx-dl-05-01-q06",
   "type": "NAT",
   "marks": 2,
   "text": "An excess-3 → BCD converter has inputs $e_8 e_4 e_2 e_1$ (named by weight) and outputs $b_8 b_4 b_2 b_1$. The unused excess-3 codes never occur. How many literals are in a minimal SOP of $b_2$ (the BCD weight-2 bit)?",
@@ -261,7 +261,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q07",
+  "id": "nx-dl-05-01-q07",
   "type": "NAT",
   "marks": 1,
   "text": "A 6-bit binary → Gray converter and a 6-bit Gray → binary converter are built from 2-input XOR gates only (no other gates). How many XOR gates do the two converters use together?",
@@ -289,7 +289,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q08",
+  "id": "nx-dl-05-01-q08",
   "type": "NAT",
   "marks": 2,
   "text": "A combinational circuit has 8 inputs that carry two BCD digits (4 bits each). Illegal inputs never occur. How many rows of its 256-row truth table are don't-cares?",
@@ -316,7 +316,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q09",
+  "id": "nx-dl-05-01-q09",
   "type": "MSQ",
   "marks": 2,
   "text": "Which statements about combinational design are true?",
@@ -375,7 +375,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-01-q10",
+  "id": "nx-dl-05-01-q10",
   "type": "MCQ",
   "marks": 2,
   "text": "A BCD → 9's-complement converter outputs the BCD code of $9 - d$ for an input digit $d$ given as $B_3 B_2 B_1 B_0$ (weights 8 4 2 1; illegal inputs never occur). Which expression gives the **weight-4** output bit?",
@@ -425,7 +425,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q01",
+  "id": "nx-dl-05-02-q01",
   "type": "MCQ",
   "marks": 1,
   "text": "A 4:1 multiplexer has $S_1 = A$ and $S_0 = B$, and its data inputs are $I_0 = 1$, $I_1 = C$, $I_2 = \\overline{C}$, $I_3 = 0$. Which expression is the output $Y$?",
@@ -473,7 +473,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q02",
+  "id": "nx-dl-05-02-q02",
   "type": "MCQ",
   "marks": 1,
   "text": "The function $f(w, x, y) = \\Sigma m(1, 2, 3, 6)$ is to be built on a 4:1 MUX with $S_1 = w$ and $S_0 = y$ ($x$ is the residue variable, and $\\overline{x}$ is available). What are $(I_0, I_1, I_2, I_3)$?",
@@ -521,7 +521,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q03",
+  "id": "nx-dl-05-02-q03",
   "type": "MSQ",
   "marks": 2,
   "text": "Let $f(A, B, C) = \\Sigma m(2, 3, 5, 6)$. A 4:1 MUX is wired as below (the MUX output is chosen by $(S_1 S_0)_2$, and complements are available). Which wirings realise $f$?",
@@ -581,7 +581,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q04",
+  "id": "nx-dl-05-02-q04",
   "type": "MCQ",
   "marks": 1,
   "text": "Every Boolean function of 5 variables must be realisable with one multiplexer and the constants 0 and 1, and nothing else: no inverter, and only the uncomplemented variables are available. What is the smallest multiplexer that always suffices?",
@@ -628,7 +628,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q05",
+  "id": "nx-dl-05-02-q05",
   "type": "NAT",
   "marks": 2,
   "text": "A 128:1 multiplexer is built as a tree of 4:1 multiplexers only (no other gates). How many 4:1 multiplexers are needed?",
@@ -657,7 +657,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q06",
+  "id": "nx-dl-05-02-q06",
   "type": "NAT",
   "marks": 1,
   "text": "A data logger connects exactly one of 48 sensor channels to its converter at a time, through a single multiplexer. What is the minimum number of select lines?",
@@ -685,7 +685,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q07",
+  "id": "nx-dl-05-02-q07",
   "type": "MCQ",
   "marks": 2,
   "text": "MUX 1 is a 2:1 MUX with select $P$, $I_0 = Q$ and $I_1 = \\overline{R}$; its output is $g$. MUX 2 is a 2:1 MUX with select $Q$, $I_0 = R$ and $I_1 = g$; its output is $X$. Which expression equals $X$?",
@@ -732,7 +732,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q08",
+  "id": "nx-dl-05-02-q08",
   "type": "MSQ",
   "marks": 2,
   "text": "A single 2:1 MUX ($Y = \\overline{S} I_0 + S I_1$) may have each of its three inputs $S$, $I_0$, $I_1$ connected to $A$, $B$, the constant 0 or the constant 1. No complemented inputs and no other gates are available. Which functions can it produce?",
@@ -789,7 +789,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q09",
+  "id": "nx-dl-05-02-q09",
   "type": "NAT",
   "marks": 2,
   "text": "Three 2:1 MUXes ($Y = \\overline{S} I_0 + S I_1$) are cascaded. M1: $S = A$, $I_0 = 1$, $I_1 = 0$, output $m_1$. M2: $S = C$, $I_0 = m_1$, $I_1 = B$, output $m_2$. M3: $S = D$, $I_0 = m_2$, $I_1 = A$, output $Y$. For how many of the 16 input combinations of $(A, B, C, D)$ is $Y = 1$?",
@@ -819,7 +819,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-02-q10",
+  "id": "nx-dl-05-02-q10",
   "type": "MCQ",
   "marks": 2,
   "text": "A 4:1 MUX has $S_1 = x$, $S_0 = y$, data inputs $(I_0, I_1, I_2, I_3) = (1, z, \\overline{z}, 1)$ and an **active-low** enable $\\overline{E}$ driven by the AND of $x$ and $y$. What is its output $f(x, y, z)$?",
@@ -865,7 +865,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q01",
+  "id": "nx-dl-05-03-q01",
   "type": "NAT",
   "marks": 1,
   "text": "How many 2:4 decoders, each with an active-high enable input, are needed to build a 6:64 decoder if no other logic gates may be used?",
@@ -900,7 +900,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q02",
+  "id": "nx-dl-05-03-q02",
   "type": "MCQ",
   "marks": 1,
   "text": "A 3:8 decoder with active-high outputs has address inputs $A$ (MSB), $B$, $C$ (LSB) and is always enabled. Its outputs $D_0, D_2, D_4, D_6$ feed a 4-input OR gate. The OR output is",
@@ -947,7 +947,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q03",
+  "id": "nx-dl-05-03-q03",
   "type": "MCQ",
   "marks": 2,
   "text": "A 3:8 decoder with active-high outputs (address $A$ = MSB, $B$, $C$ = LSB, always enabled) has outputs $D_0, D_1, D_2, D_3, D_4$ connected to a 5-input NOR gate. The NOR output, simplified, is",
@@ -994,7 +994,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q04",
+  "id": "nx-dl-05-03-q04",
   "type": "MCQ",
   "marks": 2,
   "text": "A 2:4 decoder has **active-low** outputs $\\overline{D}_0, \\dots, \\overline{D}_3$ and address inputs $A$ (MSB), $B$, and it is enabled. Outputs $\\overline{D}_1$ and $\\overline{D}_2$ feed a 2-input AND gate. The AND output is",
@@ -1041,7 +1041,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q05",
+  "id": "nx-dl-05-03-q05",
   "type": "MCQ",
   "marks": 1,
   "text": "An 8:3 priority encoder gives the highest priority to $D_7$ and the lowest to $D_0$. Its inputs $D_2$, $D_3$ and $D_5$ are 1 and all others are 0. Its code output $Y_2Y_1Y_0$ is",
@@ -1086,7 +1086,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q06",
+  "id": "nx-dl-05-03-q06",
   "type": "MSQ",
   "marks": 2,
   "text": "For a 4:2 priority encoder with inputs $D_0, \\dots, D_3$ ($D_3$ has the highest priority), code outputs $X_1X_0$ and a valid output $V$, which of the following equations are correct?",
@@ -1144,7 +1144,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q07",
+  "id": "nx-dl-05-03-q07",
   "type": "NAT",
   "marks": 1,
   "text": "A 4 KB memory is organised as 32-bit words and is **word-addressable**. How many output lines does the decoder that selects one word have?",
@@ -1176,7 +1176,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q08",
+  "id": "nx-dl-05-03-q08",
   "type": "MSQ",
   "marks": 1,
   "text": "Which of the following statements about decoders and demultiplexers are true?",
@@ -1234,7 +1234,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q09",
+  "id": "nx-dl-05-03-q09",
   "type": "NAT",
   "marks": 2,
   "text": "A byte-addressable 16 KB memory is built from 4 KB memory chips. One decoder, with $m$ inputs and $n$ outputs, drives the chip-select inputs so that exactly one chip is selected for every address. What is the minimum value of $m + n$?",
@@ -1266,7 +1266,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-03-q10",
+  "id": "nx-dl-05-03-q10",
   "type": "NAT",
   "marks": 2,
   "text": "A 2:4 decoder (active-high, always enabled) has inputs $A$ (MSB) and $B$. A 4:1 multiplexer has select lines $S_1 = S$ (MSB) and $S_0 = B$, and data inputs $I_0 = D_0$, $I_1 = D_1$, $I_2 = D_3$, $I_3 = 0$. Of the 8 combinations of $(A, B, S)$, how many give a MUX output of 1?",
@@ -1296,7 +1296,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q01",
+  "id": "nx-dl-05-04-q01",
   "type": "MCQ",
   "marks": 1,
   "text": "For 2-bit unsigned numbers $A = A_1A_0$ and $B = B_1B_0$, which expression is 1 **exactly** when $A > B$? ($\\odot$ is XNOR.)",
@@ -1347,7 +1347,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q02",
+  "id": "nx-dl-05-04-q02",
   "type": "NAT",
   "marks": 1,
   "text": "A comparator for 2-bit unsigned numbers $A$ and $B$ has an output $F = 1$ when $A \\ge B$. On how many of its 16 input rows is $F = 1$?",
@@ -1379,7 +1379,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q03",
+  "id": "nx-dl-05-04-q03",
   "type": "NAT",
   "marks": 2,
   "text": "An equality comparator for two 6-bit numbers is built only from 2-input gates (any types allowed). What is the **minimum** number of gates?",
@@ -1412,7 +1412,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q04",
+  "id": "nx-dl-05-04-q04",
   "type": "MCQ",
   "marks": 1,
   "text": "A 4-bit comparator computes $G = A_3B_3' + x_3A_2B_2' + x_3x_2A_1B_1' + x_3x_2x_1A_0B_0'$ with $x_i = A_i \\odot B_i$. For $A = 0110$ and $B = 0101$, which statement is true?",
@@ -1463,7 +1463,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q05",
+  "id": "nx-dl-05-04-q05",
   "type": "NAT",
   "marks": 1,
   "text": "Two 18-bit unsigned numbers are compared with 4-bit magnitude comparator chips connected in a ripple chain through their cascade inputs. How many chips are needed?",
@@ -1494,7 +1494,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q06",
+  "id": "nx-dl-05-04-q06",
   "type": "MCQ",
   "marks": 1,
   "text": "The 7-bit data $1011001$ is sent with an **odd**-parity bit $P$. The receiver's checker outputs $F = $ XNOR of all 8 received bits, and $F = 1$ signals an error. Which is correct?",
@@ -1544,7 +1544,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q07",
+  "id": "nx-dl-05-04-q07",
   "type": "NAT",
   "marks": 2,
   "text": "A parity generator for 13 data bits is built from 2-input XOR gates. Let $g$ be the fewest gates and $d$ the smallest possible depth (gate levels on the longest path). Find $g + d$.",
@@ -1576,7 +1576,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q08",
+  "id": "nx-dl-05-04-q08",
   "type": "MSQ",
   "marks": 2,
   "text": "A 16-bit word is sent with one even-parity bit (17 bits in all). Which error patterns does the receiver's parity checker **always** detect?",
@@ -1634,7 +1634,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q09",
+  "id": "nx-dl-05-04-q09",
   "type": "MSQ",
   "marks": 2,
   "text": "Which statements about $n$-bit unsigned magnitude comparators (outputs $G$, $E$, $L$) are true?",
@@ -1695,7 +1695,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-04-q10",
+  "id": "nx-dl-05-04-q10",
   "type": "MCQ",
   "marks": 2,
   "text": "The 4-bit 2's complement numbers $A = 1010$ and $B = 0110$ are fed **unchanged** into an unsigned 4-bit magnitude comparator. Which statement is correct?",
@@ -1745,7 +1745,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q01",
+  "id": "nx-dl-05-05-q01",
   "type": "MCQ",
   "marks": 1,
   "text": "A combinational circuit has 5 inputs and 3 outputs. What is the smallest ROM (words × bits per word) that can store its truth table?",
@@ -1791,7 +1791,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q02",
+  "id": "nx-dl-05-05-q02",
   "type": "NAT",
   "marks": 1,
   "text": "A BCD-to-7-segment code converter (4 input bits, 7 segment outputs) is implemented with a ROM addressed directly by the 4 input bits. How many bits does the ROM hold?",
@@ -1819,7 +1819,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q03",
+  "id": "nx-dl-05-05-q03",
   "type": "MCQ",
   "marks": 1,
   "text": "A ROM stores the complete table of a 6-bit × 4-bit unsigned multiplier (the 6-bit and the 4-bit operand together form the address; each word is the product). What is the minimum ROM size?",
@@ -1870,7 +1870,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q04",
+  "id": "nx-dl-05-05-q04",
   "type": "MCQ",
   "marks": 1,
   "text": "A ROM adds two 8-bit unsigned numbers and a carry-in bit, producing an 8-bit sum and a carry-out. What is the minimum ROM size?",
@@ -1920,7 +1920,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q05",
+  "id": "nx-dl-05-05-q05",
   "type": "NAT",
   "marks": 1,
   "text": "How many $2\\text{K} \\times 8$ ROM chips are needed to build a $16\\text{K} \\times 32$ ROM?",
@@ -1948,7 +1948,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q06",
+  "id": "nx-dl-05-05-q06",
   "type": "NAT",
   "marks": 2,
   "text": "A PLA with inputs $A, B, C$ (no output polarity control) must produce $f_1 = \\Sigma m(0, 1, 2)$, $f_2 = \\Sigma m(0, 1, 3)$ and $f_3 = \\Sigma m(1, 2, 5)$. What is the minimum number of product terms (AND-plane rows)?",
@@ -1978,7 +1978,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q07",
+  "id": "nx-dl-05-05-q07",
   "type": "MSQ",
   "marks": 2,
   "text": "Which of the following statements about ROM, PLA and PAL are correct?",
@@ -2039,7 +2039,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q08",
+  "id": "nx-dl-05-05-q08",
   "type": "MCQ",
   "marks": 1,
   "text": "A PLA with programmable output polarity (each output can be inverted) must produce $f(A, B, C) = \\Sigma m(0, 1, 2, 3, 4, 5, 6)$. What is the fewest number of product terms?",
@@ -2089,7 +2089,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q09",
+  "id": "nx-dl-05-05-q09",
   "type": "NAT",
   "marks": 2,
   "text": "A ROM is to output the cube $x^3$ of a 4-bit unsigned number $x$ (as a binary number of the minimum width). Output bits that are constant, or always equal to an input bit, are wired directly and not stored. How many bits must the ROM store?",
@@ -2118,7 +2118,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-05-q10",
+  "id": "nx-dl-05-05-q10",
   "type": "MSQ",
   "marks": 2,
   "text": "Two functions $f_1 = \\Sigma m(0, 1, 2, 7)$ and $f_2 = \\Sigma m(0, 1, 6, 7)$ of $A, B, C$ are to be implemented, with no output inversion available. Which devices can implement both?",
@@ -2177,7 +2177,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q01",
+  "id": "nx-dl-05-06-q01",
   "type": "MCQ",
   "marks": 1,
   "text": "In a circuit, $p = \\text{OR}(A, B)$ and the output is $f = \\text{NAND}(p, C)$. Line $p$ is stuck at 1. Which input $ABC$ detects the fault?",
@@ -2228,7 +2228,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q02",
+  "id": "nx-dl-05-06-q02",
   "type": "MSQ",
   "marks": 1,
   "text": "In $f = \\text{OR}(\\text{AND}(A, B), C)$, input $C$ is stuck at 0. Which of the following inputs $ABC$ detect the fault?",
@@ -2284,7 +2284,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q03",
+  "id": "nx-dl-05-06-q03",
   "type": "NAT",
   "marks": 2,
   "text": "A circuit has primary inputs $A$, $B$, $C$, $D$. Input $A$ fans out to two gates; no other signal fans out. The gates are $G_1 = \\text{AND}(A, B)$, $G_2 = \\text{OR}(A, C)$ and the output gate $G_3 = \\text{NAND}(G_1, G_2, D)$. Counting each fan-out branch as a separate line, how many **single** stuck-at faults does the circuit have?",
@@ -2316,7 +2316,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q04",
+  "id": "nx-dl-05-06-q04",
   "type": "NAT",
   "marks": 1,
   "text": "A circuit has 6 lines. How many multiple stuck-at faults have **exactly two** faulty lines (every other line fault-free)?",
@@ -2348,7 +2348,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q05",
+  "id": "nx-dl-05-06-q05",
   "type": "MCQ",
   "marks": 2,
   "text": "A circuit computes $f = \\text{OR}(A, g)$ with $g = \\text{AND}(A, B)$; input $A$ fans out to both gates. Which single fault can **no** input vector detect?",
@@ -2398,7 +2398,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q06",
+  "id": "nx-dl-05-06-q06",
   "type": "NAT",
   "marks": 1,
   "text": "What is the minimum number of input vectors needed to detect every single stuck-at fault (on its 5 inputs and its output) of a 5-input NOR gate?",
@@ -2431,7 +2431,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q07",
+  "id": "nx-dl-05-06-q07",
   "type": "NAT",
   "marks": 2,
   "text": "In $f = \\text{OR}(p, q)$ with $p = \\text{AND}(A, B)$ and $q = \\text{AND}(C, D)$, on how many of the 16 input rows is the Boolean difference $\\partial f / \\partial p$ equal to 1?",
@@ -2463,7 +2463,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q08",
+  "id": "nx-dl-05-06-q08",
   "type": "MSQ",
   "marks": 1,
   "text": "For a 3-input NOR gate $f = \\text{NOR}(X, Y, Z)$, which single faults are **equivalent** to the output stuck-at-0?",
@@ -2516,7 +2516,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q09",
+  "id": "nx-dl-05-06-q09",
   "type": "MCQ",
   "marks": 2,
   "text": "Line $p = \\text{AND}(A, B)$ feeds $q = \\text{OR}(p, C)$, which feeds the output $f = \\text{NOR}(q, D)$. Which conditions are exactly the ones an input must satisfy to detect $p$ stuck-at-1?",
@@ -2567,7 +2567,7 @@
   "source": "nexora"
  },
  {
-  "id": "nx-dl-04-06-q10",
+  "id": "nx-dl-05-06-q10",
   "type": "MCQ",
   "marks": 2,
   "text": "Which statement about single stuck-at faults in a combinational circuit is true?",

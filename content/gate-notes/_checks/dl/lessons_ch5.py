@@ -24,12 +24,12 @@ import comblib as cl  # noqa: E402
 
 OUTLINE = (bl.CONTENT / "_outline.md").read_text()
 LESSONS = {
-    "01-combinational-design.md": "dl-04-01-combinational-design",
-    "02-multiplexers.md": "dl-04-02-multiplexers",
-    "03-decoders-encoders.md": "dl-04-03-decoders-encoders",
-    "04-comparators-parity.md": "dl-04-04-comparators-parity",
-    "05-rom-pla-pal.md": "dl-04-05-rom-pla-pal",
-    "06-faults-testing.md": "dl-04-06-faults-testing",
+    "01-combinational-design.md": "dl-05-01-combinational-design",
+    "02-multiplexers.md": "dl-05-02-multiplexers",
+    "03-decoders-encoders.md": "dl-05-03-decoders-encoders",
+    "04-comparators-parity.md": "dl-05-04-comparators-parity",
+    "05-rom-pla-pal.md": "dl-05-05-rom-pla-pal",
+    "06-faults-testing.md": "dl-05-06-faults-testing",
 }
 OPEN = re.compile(r"^(:{3,})([a-z]+)(\{.*\})?\s*$")
 CLOSE = re.compile(r"^(:{3,})\s*$")
@@ -41,10 +41,10 @@ def outline_pyqs(plan_id):
     return re.findall(r"`([a-z0-9-]+)`", line)
 
 
-practice = json.loads((cl.CH4 / "practice.json").read_text())
+practice = json.loads((cl.CH5 / "practice.json").read_text())
 report, problems = [], []
 for fname, plan_id in LESSONS.items():
-    f = cl.CH4 / fname
+    f = cl.CH5 / fname
     if not f.exists():
         continue
     src = f.read_text()
@@ -122,7 +122,7 @@ for fname, plan_id in LESSONS.items():
             problems.append(f"{fname}: PYQ {p} has no tests")
 
     num = fname[:2]
-    mine = [q["id"] for q in practice if q["id"].startswith(f"nx-dl-04-{num}-")]
+    mine = [q["id"] for q in practice if q["id"].startswith(f"nx-dl-05-{num}-")]
     if sorted(mine) != sorted(prac):
         problems.append(f"{fname}: practice embedded {sorted(set(mine) ^ set(prac))} mismatch")
     if len(mine) < 8:
@@ -158,4 +158,4 @@ if total >= 12:
 print("\n".join(report))
 print(f"MCQ keys: {dict(sorted(mcq.items()))}")
 assert not problems, "\n" + "\n".join(problems)
-print("lessons_ch4: structure OK")
+print("lessons_ch5: structure OK")

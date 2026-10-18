@@ -1,4 +1,4 @@
-"""Checks for dl/04-combinational-circuits/02-multiplexers: the MUX equation (8:1 against its definition,
+"""Checks for dl/05-combinational-circuits/02-multiplexers: the MUX equation (8:1 against its definition,
 every data/select row), the gate-level and NAND counts, select-line sizing, enables (the 8:1 from two enabled
 4:1 MUXes and an OR), every reading example (netlists evaluated row by row, minimal forms by minlib), the
 implementation tables and residues (including don't-cares and every choice of residue variable), the
@@ -392,7 +392,7 @@ assert o24 == bl.minterms("C'", ABC) and len(o24) == 4 and str(key("cse-2024-1-c
 marks = [B[i]["marks"] for i in re.findall(r':::pyq\{id="([^"]+)"', L)]
 assert len(marks) == 19 and marks.count(1) == 6 and marks.count(2) == 12 and marks.count(5) == 1
 
-# Claims made in the solutions' option analyses (_sol_ch4_l02.py).
+# Claims made in the solutions' option analyses (_sol_ch5_l02.py).
 for l in "BCD":
     assert 0 in bl.minterms(bl.option_values(B["cse-2006-cs-35"])[l].strip("$"), XYZ) and 0 not in o06
 for (x, y, z), e in {("1", "0", "B"): "AB", ("1", "0", "A"): "A + B", ("0", "1", "B"): "(AB)'"}.items():
@@ -416,11 +416,11 @@ def mcq_by_fn(qid, o, vars_):
 
 o = ones([("f", "MUX", {"d": ["1", "C", "~C", "0"], "s": ["A", "B"]})], ABC)
 assert o == [0, 1, 3, 4]
-mcq_by_fn("nx-dl-04-02-q01", o, ABC)
+mcq_by_fn("nx-dl-05-02-q01", o, ABC)
 assert ones([("f", "MUX", {"d": ["1", "~C", "C", "0"], "s": ["A", "B"]})], ABC) == bl.minterms("A'B' + A'C' + B'C", ABC)  # swapped residues
 assert bl.minterms("A'C' + B'C", ABC) != o and 2 in bl.minterms("A'B' + BC'", ABC) and 2 not in o
 W = list("wxy")
-q = P["nx-dl-04-02-q02"]
+q = P["nx-dl-05-02-q02"]
 names, rv = cl.impl_table([1, 2, 3, 6], 3, [0, 2], W)
 assert names == ["x", "1", "x", "0"] and rv == ["x"]
 fmt = lambda ns: "$(" + ", ".join("\\overline{x}" if n == "x′" else n for n in ns) + ")$"
@@ -431,7 +431,7 @@ for l, t in bl.option_values(q).items():
         ds = [x.strip().replace("\\overline{x}", "x'") for x in t.strip("$()").split(",")]
         assert not cl.mux_realises([1, 2, 3, 6], 3, [0, 2], ds, W)
 # q03: each wiring evaluated.
-q = P["nx-dl-04-02-q03"]
+q = P["nx-dl-05-02-q03"]
 f3 = [2, 3, 5, 6]
 pos = {"A": 0, "B": 1, "C": 2}
 good = []
@@ -444,7 +444,7 @@ bl.assert_msq(q, good)
 assert good == ["A", "B"] and cl.impl_table(f3, 3, [2, 1], ABC)[0] == ["0", "1", "A", "A′"] and cl.impl_table(f3, 3, [0, 2], ABC)[0] == ["B", "B", "B", "B′"]
 # q04 (no inverter): 2^5 = 32:1. With 4 selects, parity needs x′ on half the data lines for every choice of
 # selects, and a data line carrying 0, 1 or a variable never shows the pattern (1, 0) on two rows that differ only in x.
-q = P["nx-dl-04-02-q04"]
+q = P["nx-dl-05-02-q04"]
 bl.assert_mcq(q, [l for l, t in bl.option_values(q).items() if t == f"{2 ** 5} : 1"][0])
 assert "no inverter" in q["text"]
 V5 = list("ABCDE")
@@ -463,32 +463,32 @@ for x in V5:
             assert (1, 0) not in pats
 assert all(len(n) > 2 for n in cl.impl_table(par5, 5, [0, 1, 2], V5)[0])
 assert cl.mux_realises(par5, 5, [0, 1, 2, 3, 4], [str(int(m in par5)) for m in range(32)], V5)
-bl.assert_nat(P["nx-dl-04-02-q05"], cl.mux_tree(128, 4)[1])
+bl.assert_nat(P["nx-dl-05-02-q05"], cl.mux_tree(128, 4)[1])
 assert cl.mux_tree(128, 4)[0] == [32, 8, 2, 1] and cl.mux_tree(128, 2)[1] == 127
-bl.assert_nat(P["nx-dl-04-02-q06"], cl.select_lines(48))
-q = P["nx-dl-04-02-q07"]
+bl.assert_nat(P["nx-dl-05-02-q06"], cl.select_lines(48))
+q = P["nx-dl-05-02-q07"]
 o7 = ones([m2("P", "Q", "~R", "g"), m2("Q", "R", "g", "f")], PQR)
 assert o7 == [1, 2, 3, 5, 6] and 4 in bl.minterms("P'Q + PR' + Q'R", PQR)
-mcq_by_fn("nx-dl-04-02-q07", o7, PQR)
+mcq_by_fn("nx-dl-05-02-q07", o7, PQR)
 # q08: functions of one 2:1 MUX on A, B, 0, 1 (computed above as `single`).
-q = P["nx-dl-04-02-q08"]
+q = P["nx-dl-05-02-q08"]
 good = [l for l, t in bl.option_values(q).items() if bl.tt(t.strip("$"), AB) in single]
 bl.assert_msq(q, good)
 assert good == ["B", "D"]
 o9 = ones([m2("A", "1", "0", "m1"), m2("C", "m1", "B", "m2"), m2("D", "m2", "A", "f")], ABCD)
 assert o9 == bl.minterms("A'C'D' + BCD' + AD", ABCD)
-bl.assert_nat(P["nx-dl-04-02-q09"], len(o9))
+bl.assert_nat(P["nx-dl-05-02-q09"], len(o9))
 assert len(bl.minterms("A'C' + BC", ABCD)) + 4 == 12
-q = P["nx-dl-04-02-q10"]
+q = P["nx-dl-05-02-q10"]
 net = [("a", "AND", ["x", "y"]), ("f", "MUX", {"d": ["1", "z", "~z", "1"], "s": ["x", "y"], "en": "a", "en_low": True})]
 o10 = ones(net, XYZ)
 assert o10 == [0, 1, 3, 4]
-mcq_by_fn("nx-dl-04-02-q10", o10, XYZ)
+mcq_by_fn("nx-dl-05-02-q10", o10, XYZ)
 assert ones([("f", "MUX", {"d": ["1", "z", "~z", "1"], "s": ["x", "y"]})], XYZ) == bl.minterms("x'z + y'z' + xy", XYZ)
 assert ones([("a", "AND", ["x", "y"]), ("f", "MUX", {"d": ["1", "z", "~z", "1"], "s": ["x", "y"], "en": "a"})], XYZ) == bl.minterms("xy", XYZ)
-assert len([k for k in P if k.startswith("nx-dl-04-02-")]) == 10
-keys = [P[k]["answer"] for k in P if k.startswith("nx-dl-04-02-") and P[k]["type"] == "MCQ"]
+assert len([k for k in P if k.startswith("nx-dl-05-02-")]) == 10
+keys = [P[k]["answer"] for k in P if k.startswith("nx-dl-05-02-") and P[k]["type"] == "MCQ"]
 assert max(keys.count(c) for c in "ABCD") <= 2
 
-print("l4_02_mux: MUX equation, NAND count, enables, 6 reading circuits, implementation tables (all 3-variable functions, every select pair), "
+print("l5_02_mux: MUX equation, NAND count, enables, 6 reading circuits, implementation tables (all 3-variable functions, every select pair), "
       "minimum MUX size (every 2:1 + inverter wiring), trees and a 16:1 netlist, MUX gates (every single-MUX wiring), 19 PYQ keys and 10 practice answers OK")
