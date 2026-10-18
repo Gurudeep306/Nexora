@@ -4939,122 +4939,75 @@
       }
     },
     "cse-2025-1-cs-32": {
-      "approach": "Plot the seven minterms on a 4-variable K-map (rows $b_3b_2$, columns $b_1b_0$) and cover them with the fewest, largest groups: two quads and one pair. Then compare with the options.",
+      "approach": "Concept tested: **minimal SOP with corners and a wrap-around column**. Start from the loneliest 1 ($m_{11}$), then the full column, then the corners.",
       "concepts": [
         "Karnaugh map",
-        "Prime implicants",
-        "Essential prime implicants"
+        "Corner quad",
+        "Minimal SOP"
       ],
-      "given": "$F(b_3,b_2,b_1,b_0) = \\sum(0,2,4,8,10,11,12)$, $b_3$ = MSB, no don't-cares.\n\n| minterm | $b_3b_2b_1b_0$ |\n|---|---|\n| 0 | 0000 |\n| 2 | 0010 |\n| 4 | 0100 |\n| 8 | 1000 |\n| 10 | 1010 |\n| 11 | 1011 |\n| 12 | 1100 |",
       "steps": [
         {
-          "title": "Plot the minterms",
-          "body": "Rows are $b_3b_2 = 00, 01, 11, 10$ and columns $b_1b_0 = 00, 01, 11, 10$ (Gray order). The 1s are at $0, 2, 4, 8, 10, 11, 12$."
-        },
-        {
-          "title": "Quad 1: column b₁b₀ = 00",
-          "body": "Minterms $0, 4, 12, 8$ form the whole column $b_1b_0 = 00$: all four rows. Within the group $b_3, b_2$ vary and $b_1 = 0, b_0 = 0$, so the term is $\\bar b_1 \\bar b_0$. It is essential: minterm $4$ ($0100$) is covered by no other group.",
+          "title": "Plot",
+          "body": "$F = \\Sigma(0, 2, 4, 8, 10, 11, 12)$ over $(b_3, b_2, b_1, b_0)$.",
           "scene": {
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  4,
-                  12,
-                  8
-                ],
-                "label": "b̄1b̄0",
-                "tone": "cat1"
-              }
-            ],
-            "hl": [
-              {
-                "cell": 4,
-                "tone": "accent"
-              }
-            ]
+            "groups": []
           }
         },
         {
-          "title": "Quad 2: the four corners",
-          "body": "Minterms $0, 2, 8, 10$ are the four corners (rows $00,10$; columns $00,10$), which wrap around. Fixed bits: $b_2 = 0$, $b_0 = 0$, giving $\\bar b_2 \\bar b_0$. It is essential for minterm $2$ ($0010$).",
+          "title": "The loner",
+          "body": "$m_{11}$ (1011) has only one neighbouring 1, $m_{10}$: pair $b_3\\overline{b_2}b_1$.",
           "scene": {
             "groups": [
-              {
-                "cells": [
-                  0,
-                  4,
-                  12,
-                  8
-                ],
-                "label": "b̄1b̄0",
-                "tone": "cat1"
-              },
-              {
-                "cells": [
-                  0,
-                  2,
-                  8,
-                  10
-                ],
-                "label": "b̄2b̄0",
-                "tone": "cat2"
-              }
-            ],
-            "hl": [
-              {
-                "cell": 2,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Pair for minterm 11",
-          "body": "Minterm $11 = 1011$ is still uncovered. Its K-map neighbours are $10$ ($1010$, a 1), $9$ ($1001$, 0), $15$ ($1111$, 0) and $3$ ($0011$, 0). So the largest group is the pair $\\{10, 11\\}$: $b_3 = 1, b_2 = 0, b_1 = 1$, giving $b_3 \\bar b_2 b_1$.\n$$F = \\bar b_1 \\bar b_0 + \\bar b_2 \\bar b_0 + b_1 \\bar b_2 b_3$$\nThis is option (A).",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  4,
-                  12,
-                  8
-                ],
-                "label": "b̄1b̄0",
-                "tone": "cat1"
-              },
-              {
-                "cells": [
-                  0,
-                  2,
-                  8,
-                  10
-                ],
-                "label": "b̄2b̄0",
-                "tone": "cat2"
-              },
               {
                 "cells": [
                   10,
                   11
                 ],
-                "label": "b3b̄2b1",
+                "label": "b₃b₂′b₁",
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Column and corners",
+          "body": "Column $b_1b_0 = 00$ ($m_0, m_4, m_{12}, m_8$): $\\overline{b_1}\\,\\overline{b_0}$. Corners ($m_0, m_2, m_8, m_{10}$): $\\overline{b_2}\\,\\overline{b_0}$, needed for $m_2$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  10,
+                  11
+                ],
+                "label": "b₃b₂′b₁",
+                "tone": "warning"
+              },
+              {
+                "cells": [
+                  0,
+                  4,
+                  8,
+                  12
+                ],
+                "label": "b₁′b₀′",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "b₂′b₀′",
                 "tone": "success"
               }
-            ],
-            "hl": [
-              {
-                "cell": 11,
-                "tone": "accent"
-              }
-            ],
-            "caption": "Three essential prime implicants cover all seven 1s."
+            ]
           }
         }
       ],
       "answer": {
-        "value": "$F = \\bar b_1\\bar b_0 + \\bar b_2\\bar b_0 + b_1\\bar b_2 b_3$ — option **(A)**",
+        "value": "(A) $\\overline{b}_1\\overline{b}_0 + \\overline{b}_2\\overline{b}_0 + b_1\\overline{b}_2b_3$",
         "choice": [
           "A"
         ],
@@ -5064,34 +5017,32 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Exactly the three essential prime implicants: the column quad, the corner quad and the pair {10, 11}."
+          "reason": "The three loops; 7 literals."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Covers $0,2,4,8,10,12$ but misses minterm $11$ ($b_0 = 1$, while both terms need $b_0 = 0$)."
+          "reason": "Misses $m_{11}$ (1011 has $b_0 = 1$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$b_1b_2b_3$ covers $14, 15$ (not in $F$), and $4, 12$ are left uncovered."
+          "reason": "$b_1b_2b_3$ covers $m_{14}, m_{15}$ (0s) and the cover misses $m_4, m_{11}, m_{12}$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\bar b_3$ covers all of $0$–$7$, including $1, 3, 5, 6, 7$ which are 0s of $F$; and $11$ ($1011$) and $12$ ($1100$) are not covered at all."
+          "reason": "$\\overline{b}_3$ covers all of $m_0$–$m_7$, including 0s like $m_1$."
         }
       ],
-      "shortcut": "Only one minterm, $11$, has $b_0 = 1$, so the answer must contain a term covering $1011$ with $b_0$ free or $=1$: only (A) has one ($b_3\\bar b_2 b_1$). (B) misses it; (C)/(D) add wrong 1s.",
+      "shortcut": "$m_{11} = 1011$ has $b_0 = 1$, so it needs a term without $\\overline{b}_0$: only (A)'s $b_1\\overline{b}_2b_3$ qualifies ((C)'s $b_1b_2b_3$ needs $b_2 = 1$, (D)'s $\\overline{b}_3$ needs $b_3 = 0$).",
       "pitfalls": [
-        "Treating $b_0$ as the MSB and plotting the minterms mirrored.",
-        "Forgetting that the four corners of a 4-variable K-map are adjacent.",
-        "Stopping after the two quads and missing the lone $b_0 = 1$ minterm 11."
+        "Forgetting the corners are a quad (writing $\\overline{b}_2\\overline{b}_1\\overline{b}_0$ and $\\overline{b}_2 b_1\\overline{b}_0$ separately).",
+        "Missing the loner $m_{11}$ (option B)."
       ],
-      "verification": "Expand (A): $\\bar b_1\\bar b_0 = \\{0,4,8,12\\}$, $\\bar b_2\\bar b_0 = \\{0,2,8,10\\}$, $b_3\\bar b_2 b_1 = \\{10,11\\}$; the union is $\\{0,2,4,8,10,11,12\\}$ — exactly $F$, and no extra minterms.",
+      "verification": "Union of the loops: $\\{0, 4, 8, 12\\} \\cup \\{0, 2, 8, 10\\} \\cup \\{10, 11\\}$ = the given list.",
       "animation": {
         "kind": "kmap",
-        "title": "K-map of F",
         "variables": [
           "b3",
           "b2",
@@ -5106,7 +5057,8 @@
           10,
           11,
           12
-        ]
+        ],
+        "groups": []
       }
     },
     "cse-2025-1-cs-33": {

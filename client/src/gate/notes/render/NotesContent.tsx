@@ -560,7 +560,8 @@ function LabSlot({ node }: { node: DirectiveNode }) {
   const did = useDomId()
   const Lab = LABS[node.attrs.lab as LabName]
   if (!Lab) return <p className="nb-missing">This lab is not available.</p>
-  const tab = (node.attrs.tab as 'bench' | 'challenge' | 'sets' | undefined) ?? 'bench'
+  // Each lab validates its own tab names (the build checks them per lab); undefined = the lab's first tab.
+  const tab = node.attrs.tab as never
   return (
     <div id={did(node.id)} data-block="lab" data-block-id={node.id} data-depth={node.depth} className="nb nb-lab">
       <Suspense fallback={<div className="nb-loading" aria-busy="true" />}>

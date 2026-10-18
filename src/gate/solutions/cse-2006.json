@@ -2163,65 +2163,194 @@
       }
     },
     "cse-2006-cs-38": {
-      "approach": "A static-1 hazard is avoided iff every pair of adjacent true minterms is covered by a single cube of the cover. List the adjacent pairs of $\\Sigma(5,7,11,12,13,15)$ and test each option.",
+      "approach": "Concept tested: **static-1 hazards**. A two-level AND–OR cover keeps $f$ at 1 while one input changes between two adjacent 1-cells only if a single cube contains **both** cells. List every adjacent pair of 1s and check each cover.",
       "concepts": [
         "Static-1 hazard",
-        "Hazard-free cover",
-        "Karnaugh map adjacency"
+        "Adjacent minterms",
+        "Consensus cube"
       ],
-      "given": "| minterm | $wxyz$ |\n|---|---|\n| 5 | 0101 |\n| 7 | 0111 |\n| 11 | 1011 |\n| 12 | 1100 |\n| 13 | 1101 |\n| 15 | 1111 |",
+      "given": "$f = \\Sigma(5, 7, 11, 12, 13, 15)$ over $(w, x, y, z)$; only one input changes at a time.",
       "steps": [
         {
-          "title": "Adjacent true pairs",
-          "body": "Pairs differing in one bit: $5\\text{–}7$ ($y$), $5\\text{–}13$ ($w$), $7\\text{–}15$ ($w$), $13\\text{–}15$ ($y$), $12\\text{–}13$ ($z$), $11\\text{–}15$ ($x$). Each needs one cube containing both."
+          "title": "Adjacent pairs of 1s",
+          "body": "Pairs one bit apart: 5–7 ($y$), 5–13 ($w$), 7–15 ($w$), 11–15 ($x$), 12–13 ($z$), 13–15 ($y$). Each must lie inside one cube of the cover.",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Option (A) fails",
-          "body": "Cubes $\\overline{w}xz=\\{5,7\\}$, $wx\\overline{y}=\\{12,13\\}$, $x\\overline{y}z=\\{5,13\\}$, $xyz=\\{7,15\\}$, $wyz=\\{11,15\\}$. The pair $13\\text{–}15$ ($1101 \\to 1111$) is in no single cube, so $f$ can glitch to 0 when $y$ changes."
+          "title": "Cover (A)",
+          "body": "$\\overline{w}xz$ = {5, 7}, $wx\\overline{y}$ = {12, 13}, $x\\overline{y}z$ = {5, 13}, $xyz$ = {7, 15}, $wyz$ = {11, 15}. The pair 13–15 is in no cube: going from 1101 to 1111 ($y$ rises with $w = x = z = 1$), $wx\\overline{y}$ and $x\\overline{y}z$ turn off while $xyz$ and $wyz$ turn on, and if the turn-off is faster $f$ dips to 0.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  5,
+                  7
+                ],
+                "label": "w′xz",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  12,
+                  13
+                ],
+                "label": "wxy′",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  5,
+                  13
+                ],
+                "label": "xy′z",
+                "tone": "info"
+              },
+              {
+                "cells": [
+                  7,
+                  15
+                ],
+                "label": "xyz",
+                "tone": "warning"
+              },
+              {
+                "cells": [
+                  11,
+                  15
+                ],
+                "label": "wyz",
+                "tone": "cat1"
+              }
+            ],
+            "hl": [
+              {
+                "cell": 13,
+                "tone": "error"
+              },
+              {
+                "cell": 15,
+                "tone": "error"
+              }
+            ]
+          }
         },
         {
-          "title": "Options (B), (C) fail",
-          "body": "(B) $wxz=\\{13,15\\}$, $\\overline{w}xy=\\{6,7\\}$ includes $6 \\notin f$, so it is not even a valid cover (and $12$ is uncovered).\n\n(C) $wx\\overline{yz}$ contains $14 = 1110 \\notin f$ — not a valid cover."
+          "title": "Covers (B) and (C)",
+          "body": "(B) $wxz$ = {13, 15}, $\\overline{w}xy$ = {6, 7}, $wyz$ = {11, 15}: contains $m_6$ (a 0) and misses 5 and 12. (C) $wx\\overline{yz}$, $xz$, $w\\overline{x}yz$: read with one bar over $yz$, $wx\\overline{yz}$ = {12, 13, 14} contains the 0-cell $m_{14}$; read as $wx\\overline{y}\\,\\overline{z}$ = {12}, the cover equals $f$ but splits the pairs 12–13 and 11–15. Either way (C) fails."
         },
         {
-          "title": "Option (D) works",
-          "body": "Reading the first cube as $wx\\overline{y}$: $wx\\overline{y}=\\{12,13\\}$, $wyz=\\{11,15\\}$, $wxz=\\{13,15\\}$, $\\overline{w}xz=\\{5,7\\}$, $x\\overline{y}z=\\{5,13\\}$, $xyz=\\{7,15\\}$. All six adjacent pairs are covered and every cube lies inside $f$, so the cover is hazard-free."
+          "title": "Cover (D)",
+          "body": "$wx\\overline{y}$ {12, 13}, $wyz$ {11, 15}, $wxz$ {13, 15}, $\\overline{w}xz$ {5, 7}, $x\\overline{y}z$ {5, 13}, $xyz$ {7, 15}: every one of the six pairs has its own cube, and the union is exactly $f$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  12,
+                  13
+                ],
+                "label": "wxy′",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  11,
+                  15
+                ],
+                "label": "wyz",
+                "tone": "cat1"
+              },
+              {
+                "cells": [
+                  13,
+                  15
+                ],
+                "label": "wxz",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  5,
+                  7
+                ],
+                "label": "w′xz",
+                "tone": "info"
+              },
+              {
+                "cells": [
+                  5,
+                  13
+                ],
+                "label": "xy′z",
+                "tone": "warning"
+              },
+              {
+                "cells": [
+                  7,
+                  15
+                ],
+                "label": "xyz",
+                "tone": "cat2"
+              }
+            ],
+            "hl": []
+          }
         }
       ],
       "answer": {
-        "value": "$wx\\overline{y},\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$",
+        "value": "(D) $wx\\overline{y},\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$",
         "choice": [
           "D"
         ],
-        "matchesKey": false,
-        "keyNote": "Stored key is A, but cover (A) has no cube containing both 13 (1101) and 15 (1111), so the 13↔15 transition is hazardous. Only (D) covers every adjacent pair; flagged for review."
+        "matchesKey": true
       },
       "optionAnalysis": [
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: no cube covers the adjacent pair $13\\text{–}15$ — the needed cube $wxz$ (or $xz$) is missing."
+          "reason": "Equal to $f$ but no cube contains both 13 and 15: a static-1 hazard when $y$ changes with $w = x = z = 1$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: $\\overline{w}xy$ covers minterm 6, which is false, and minterm 12 is left uncovered."
+          "reason": "Not even a cover of $f$: it includes $m_6$ and misses $m_5$, $m_{12}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: $wx\\overline{yz}$ covers minterm 14, which is false; also $12\\text{–}13$ is not inside one cube."
+          "reason": "As printed ($wx\\overline{yz}$) it contains the 0-cell $m_{14}$; even read as $wx\\overline{y}\\,\\overline{z}$ it splits 12–13 and 11–15 between cubes (two hazards)."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: every pair of adjacent true minterms shares a cube."
+          "reason": "Contains a cube for each of the six adjacent pairs (it adds the consensus cube $wxz$ to cover 13–15)."
         }
       ],
+      "shortcut": "Find the pair the cheap covers miss: here 13–15. Only (D) contains $wxz$, the consensus of $wx\\overline{y}$ and $wyz$, which bridges it.",
       "pitfalls": [
-        "Checking only that the cover contains all prime implicants of some minimal cover — the test is pairwise adjacency."
+        "Choosing the cover with the most cubes without checking each adjacent pair.",
+        "Checking that a cover equals $f$ but not that it is hazard-free (option C)."
       ],
-      "verification": "Enumerated all 6 one-bit-adjacent pairs of true minterms and checked each option cube by cube."
+      "verification": "An exhaustive check of all six adjacent 1-pairs against each option (l3_04_two_level.py) finds 0 uncovered pairs only for (D); (A) misses 13–15. Some reprints show the first cube of (d) as $wzy$; read that way (d) would miss $m_{12}$, so the scan's blurred cube is $wx\\overline{y}$, the only reading under which (d) covers $f$.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          5,
+          7,
+          11,
+          12,
+          13,
+          15
+        ],
+        "groups": []
+      }
     },
     "cse-2006-cs-39": {
       "approach": "Concept tested: **detecting overflow from the operands' and the result's sign bits**. Here $c_{n-1}$ is the top **sum** bit, so overflow is $a_{n-1} b_{n-1} \\overline{c_{n-1}} + \\overline{a_{n-1}}\\,\\overline{b_{n-1}} c_{n-1}$.",

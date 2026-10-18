@@ -1,0 +1,681 @@
+{
+ "version": 1,
+ "title": "Minimal POS by grouping the 0s of a K-map",
+ "width": 660,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 460
+ },
+ "intro": "F(P, Q, R, S) = PQ + P′QR + P′QR′S on a map with rows P Q and columns R S; the 0s are shown.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "POS: loop the 0s, read sum terms",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "POS: loop the 0s",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "kg",
+   "type": "grid",
+   "x": 120,
+   "y": 92,
+   "rows": 4,
+   "cols": 4,
+   "cell": 56,
+   "values": [
+    [
+     "0",
+     "0",
+     "0",
+     "0"
+    ],
+    [
+     "0",
+     "1",
+     "1",
+     "1"
+    ],
+    [
+     "1",
+     "1",
+     "1",
+     "1"
+    ],
+    [
+     "0",
+     "0",
+     "0",
+     "0"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 92,
+    "y": 92,
+    "cell": 56
+   }
+  },
+  {
+   "id": "kc0",
+   "type": "text",
+   "x": 148.0,
+   "y": 80,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 120.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc1",
+   "type": "text",
+   "x": 204.0,
+   "y": 80,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 176.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc2",
+   "type": "text",
+   "x": 260.0,
+   "y": 80,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 232.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kc3",
+   "type": "text",
+   "x": 316.0,
+   "y": 80,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 288.0,
+    "y": 81
+   }
+  },
+  {
+   "id": "kr0",
+   "type": "text",
+   "x": 110,
+   "y": 120.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 120.0
+   }
+  },
+  {
+   "id": "kr1",
+   "type": "text",
+   "x": 110,
+   "y": 176.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 176.0
+   }
+  },
+  {
+   "id": "kr2",
+   "type": "text",
+   "x": 110,
+   "y": 232.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 232.0
+   }
+  },
+  {
+   "id": "kr3",
+   "type": "text",
+   "x": 110,
+   "y": 288.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 84,
+    "y": 288.0
+   }
+  },
+  {
+   "id": "kcv",
+   "type": "text",
+   "x": 232.0,
+   "y": 60,
+   "text": "RS",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 204.0,
+    "y": 63
+   }
+  },
+  {
+   "id": "krv",
+   "type": "text",
+   "x": 110,
+   "y": 80,
+   "text": "PQ",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 84,
+    "y": 81
+   }
+  },
+  {
+   "id": "ki0",
+   "type": "text",
+   "x": 172,
+   "y": 140,
+   "text": "0",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki1",
+   "type": "text",
+   "x": 228,
+   "y": 140,
+   "text": "1",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki2",
+   "type": "text",
+   "x": 340,
+   "y": 140,
+   "text": "2",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki3",
+   "type": "text",
+   "x": 284,
+   "y": 140,
+   "text": "3",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 141,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki4",
+   "type": "text",
+   "x": 172,
+   "y": 196,
+   "text": "4",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki5",
+   "type": "text",
+   "x": 228,
+   "y": 196,
+   "text": "5",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki6",
+   "type": "text",
+   "x": 340,
+   "y": 196,
+   "text": "6",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki7",
+   "type": "text",
+   "x": 284,
+   "y": 196,
+   "text": "7",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 197,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki8",
+   "type": "text",
+   "x": 172,
+   "y": 308,
+   "text": "8",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki9",
+   "type": "text",
+   "x": 228,
+   "y": 308,
+   "text": "9",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki10",
+   "type": "text",
+   "x": 340,
+   "y": 308,
+   "text": "10",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki11",
+   "type": "text",
+   "x": 284,
+   "y": 308,
+   "text": "11",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 309,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki12",
+   "type": "text",
+   "x": 172,
+   "y": 252,
+   "text": "12",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 145,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki13",
+   "type": "text",
+   "x": 228,
+   "y": 252,
+   "text": "13",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 201,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki14",
+   "type": "text",
+   "x": 340,
+   "y": 252,
+   "text": "14",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 313,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "ki15",
+   "type": "text",
+   "x": 284,
+   "y": 252,
+   "text": "15",
+   "anchor": "end",
+   "size": 10,
+   "tone": "muted",
+   "mono": true,
+   "narrow": {
+    "x": 257,
+    "y": 253,
+    "size": 9
+   }
+  },
+  {
+   "id": "L00",
+   "type": "box",
+   "x": 125,
+   "y": 74.08,
+   "w": 214,
+   "h": 68.92,
+   "tone": "danger",
+   "fill": "danger",
+   "hidden": true,
+   "dashed": true,
+   "narrow": {
+    "x": 97,
+    "y": 74.08,
+    "w": 214,
+    "h": 68.92
+   }
+  },
+  {
+   "id": "L01",
+   "type": "box",
+   "x": 125,
+   "y": 265,
+   "w": 214,
+   "h": 68.92,
+   "tone": "danger",
+   "fill": "danger",
+   "hidden": true,
+   "dashed": true,
+   "narrow": {
+    "x": 97,
+    "y": 265,
+    "w": 214,
+    "h": 68.92
+   }
+  },
+  {
+   "id": "L10",
+   "type": "box",
+   "x": 129,
+   "y": 101,
+   "w": 38,
+   "h": 94,
+   "tone": "warning",
+   "fill": "warning",
+   "hidden": true,
+   "dashed": true,
+   "narrow": {
+    "x": 101,
+    "y": 101,
+    "w": 38,
+    "h": 94
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 380,
+   "y": 110,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 340,
+    "size": 13
+   }
+  },
+  {
+   "id": "n2",
+   "type": "text",
+   "x": 380,
+   "y": 140,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 366,
+    "size": 13
+   }
+  },
+  {
+   "id": "n3",
+   "type": "text",
+   "x": 380,
+   "y": 170,
+   "text": "",
+   "anchor": "start",
+   "size": 15,
+   "narrow": {
+    "x": 30,
+    "y": 392,
+    "size": 13
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 380,
+   "y": 220,
+   "text": "",
+   "anchor": "start",
+   "size": 16,
+   "weight": "bold",
+   "tone": "success",
+   "narrow": {
+    "x": 30,
+    "y": 430,
+    "size": 14
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "F = PQ + P′QR + P′QR′S has 9 zeros: m0, m1, m2, m3, m4, m8, m9, m10, m11. For a product of sums, loop the 0s exactly as you would loop 1s.",
+   "patches": [
+    {
+     "id": "n1",
+     "set": {
+      "text": "9 zeros to cover"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rows P Q = 00 and 10 are all 0s: an octet of 0s. Q = 0 throughout. A group of 0s is read as a sum term with each fixed variable written so that it is 0 on the group: Q = 0 gives the factor (Q).",
+   "patches": [
+    {
+     "id": "L00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "L01",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "text": "octet of 0s: (Q)",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "F = (Q)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Left: m4 = 0100. Pair it with m0 (column R S = 00, rows 00 and 01): P = 0, R = 0, S = 0 are fixed, so the factor is (P + R + S) (a 0 bit gives the plain letter).",
+   "patches": [
+    {
+     "id": "L10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "text": "pair of 0s: (P + R + S)",
+      "tone": "warning"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "text": "F = (Q)(P + R + S)"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Minimal POS: F = (Q)(P + R + S), 4 literals. The minimal SOP, QS + QR + PQ, needs 6. Here the POS is cheaper.",
+   "patches": [
+    {
+     "id": "n3",
+     "set": {
+      "text": "SOP: QS + QR + PQ (6)",
+      "tone": "muted"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -3091,24 +3091,74 @@
       "verification": "Merging B and C: B: 0→A,0; 1→B,1 — consistent with C's row."
     },
     "cse-1996-a-49": {
-      "approach": "Read the map: the 1s are where $B$ and $D$ differ, so $f=B\\oplus D$; the POS form of XOR is $(B+D)(\\bar B+\\bar D)$.",
+      "approach": "Concept tested: **POS from the 0s** of a map with a partial checkerboard. The 0s are the corners and the centre; each 0-quad is read as a sum term (0 → plain letter, 1 → primed letter).",
       "concepts": [
-        "K-map",
-        "Product of sums",
-        "XOR"
+        "Minimal POS",
+        "Grouping 0s",
+        "XOR pattern"
       ],
+      "given": "Rows $CD$, columns $AB$ (Gray order). Rows 00 and 10: 0 1 1 0. Rows 01 and 11: 1 0 0 1.",
       "steps": [
         {
-          "title": "Group the 1s",
-          "body": "Columns AB = 01, 11 ($B=1$) with rows CD = 00, 10 ($D=0$): $B\\bar D$. Columns AB = 00, 10 ($B=0$) with rows CD = 01, 11 ($D=1$): $\\bar B D$. So $f=B\\bar D+\\bar B D=B\\oplus D$."
+          "title": "Find the 0s",
+          "body": "The 0s are the four corners (rows $CD = 00, 10$, columns $AB = 00, 10$) and the centre block (rows 01, 11, columns 01, 11). The figure plots these 0-cells (the 1s of $\\overline{f}$), so the loops below are loops of 0s.",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Convert to POS",
-          "body": "The 0s are $B=D$: $\\bar f=BD+\\bar B\\bar D$. By De Morgan, $f=(\\bar B+\\bar D)(B+D)$."
+          "title": "Corner 0s",
+          "body": "The corners have $B = 0$ and $D = 0$. A loop of 0s is a factor that must be 0 there, so each fixed 0 becomes a plain letter: $(B + D)$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "(B + D)",
+                "tone": "error"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Centre 0s",
+          "body": "The centre has $B = 1$, $D = 1$, so the factor is $(\\overline{B} + \\overline{D})$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  0,
+                  2,
+                  8,
+                  10
+                ],
+                "label": "(B + D)",
+                "tone": "error"
+              },
+              {
+                "cells": [
+                  5,
+                  7,
+                  13,
+                  15
+                ],
+                "label": "(B′ + D′)",
+                "tone": "warning"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Product of sums",
+          "body": "$f = (B + D)(\\overline{B} + \\overline{D})$. Multiplying out: $B\\overline{B} + B\\overline{D} + \\overline{B}D + D\\overline{D} = B\\overline{D} + \\overline{B}D = B \\oplus D$, which matches the 1-cells."
         }
       ],
       "answer": {
-        "value": "$(B+D)(\\overline{B}+\\overline{D})$",
+        "value": "(C) $(B + D)(\\overline{B} + \\overline{D})$",
         "choice": [
           "C"
         ],
@@ -3118,63 +3168,50 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Correct function, but in SOP form, not POS."
+          "reason": "$B\\overline{D} + \\overline{B}D$ is the same function, but it is a sum of products; the question asks for the product-of-sums form."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Includes $C$, which the function does not depend on; e.g. $B=1,C=1,D=0$ gives 0 here but the map has 1."
+          "reason": "$(B + \\overline{C} + D)(\\overline{B} + C + \\overline{D})$ brings in $C$, on which the map does not depend; it is 1 on the corner cells with $C = 0$ ($m_0, m_8$) and on the centre cells with $C = 1$ ($m_7, m_{15}$), all of which are 0s."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: expands to $B\\bar D+\\bar B D$."
+          "reason": "The two 0-quads read as sum terms."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "This is XNOR $(B\\odot D)$ — the complement of the map."
+          "reason": "$(B + \\overline{D})(\\overline{B} + D) = \\overline{B \\oplus D}$: the complement of the map: it is what you get by looping the 1-cells and reading them as sum terms."
         }
       ],
-      "verification": "Expand C: $(B+D)(\\bar B+\\bar D)=B\\bar D+\\bar B D$. ✓",
+      "shortcut": "1s in the middle columns of the outer rows and the outer columns of the middle rows is $B \\oplus D$; its POS is $(B + D)(\\overline{B} + \\overline{D})$.",
+      "pitfalls": [
+        "Choosing the SOP (A) because it is equal: the form matters.",
+        "Looping the 1-cells instead of the 0-cells and reading them as sum terms, which gives the complement, option D."
+      ],
+      "verification": "Cell $CD = 01$, $AB = 00$ ($B = 0$, $D = 1$): $(0 + 1)(1 + 0) = 1$, and the map has a 1 there. Corner cell ($B = D = 0$): $(0 + 0) = 0$. ✓",
       "animation": {
         "kind": "kmap",
         "variables": [
-          "A",
-          "B",
           "C",
-          "D"
+          "D",
+          "A",
+          "B"
         ],
         "ones": [
-          1,
-          3,
-          4,
-          6,
-          9,
-          11,
-          12,
-          14
+          0,
+          2,
+          5,
+          7,
+          8,
+          10,
+          13,
+          15
         ],
-        "groups": [
-          {
-            "cells": [
-              4,
-              6,
-              12,
-              14
-            ],
-            "label": "BD′"
-          },
-          {
-            "cells": [
-              1,
-              3,
-              9,
-              11
-            ],
-            "label": "B′D"
-          }
-        ]
+        "groups": [],
+        "title": "The 0-cells of f, drawn as the 1s of f′ (rows CD, columns AB)"
       }
     },
     "cse-1996-a-50": {

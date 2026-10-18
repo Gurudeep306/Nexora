@@ -502,6 +502,80 @@
       ],
       "reason": "Option (d) is misprinted as \"I, II, II and IV\"; it lists all four usages.",
       "source": "GATE2004IT.pdf"
+    },
+    {
+      "id": "it-2004-it-44",
+      "field": "text",
+      "before": "The function $A\\overline{B}C + \\overline{A}BC + AB\\overline{C} + \\overline{A}\\,\\overline{B}C + A\\overline{B}C$ is equivalent to",
+      "after": "The function $A\\overline{B}C + \\overline{A}BC + AB\\overline{C} + \\overline{A}\\,\\overline{B}C + A\\overline{B}\\,\\overline{C}$ is equivalent to",
+      "reason": "Reprint typos repaired: the reprint prints the fifth term as AB'C (a duplicate of the first term, which would make it pointless) and option (b) as 'AB'AC' + A'C' with a '+' missing. As printed (minterms 1, 3, 5, 6) no option is equivalent; with the fifth term AB'C' the function is Σ(1, 3, 4, 5, 6) = AB' + AC' + A'C, which is option (b) with its '+' restored, the stored key.",
+      "source": "GATE 2004 IT reprint scan (GATE_PYQ/GATE2004IT.pdf p. 6, Q44) + enumeration in content/gate-notes/_checks/dl/l3_01_kmaps.py; errata dl.md section 3"
+    },
+    {
+      "id": "it-2004-it-44",
+      "field": "options",
+      "before": [
+        {
+          "l": "A",
+          "t": "$A\\overline{C}+AB+\\overline{A}C$"
+        },
+        {
+          "l": "B",
+          "t": "$A\\overline{B}A\\overline{C}+\\overline{A}C$"
+        },
+        {
+          "l": "C",
+          "t": "$\\overline{A}B+A\\overline{C}+A\\overline{B}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\overline{A}B+AC+A\\overline{B}$"
+        }
+      ],
+      "after": [
+        {
+          "l": "A",
+          "t": "$A\\overline{C}+AB+\\overline{A}C$"
+        },
+        {
+          "l": "B",
+          "t": "$A\\overline{B}+A\\overline{C}+\\overline{A}C$"
+        },
+        {
+          "l": "C",
+          "t": "$\\overline{A}B+A\\overline{C}+A\\overline{B}$"
+        },
+        {
+          "l": "D",
+          "t": "$\\overline{A}B+AC+A\\overline{B}$"
+        }
+      ],
+      "reason": "Reprint typos repaired: the reprint prints the fifth term as AB'C (a duplicate of the first term, which would make it pointless) and option (b) as 'AB'AC' + A'C' with a '+' missing. As printed (minterms 1, 3, 5, 6) no option is equivalent; with the fifth term AB'C' the function is Σ(1, 3, 4, 5, 6) = AB' + AC' + A'C, which is option (b) with its '+' restored, the stored key.",
+      "source": "GATE 2004 IT reprint scan (GATE_PYQ/GATE2004IT.pdf p. 6, Q44) + enumeration in content/gate-notes/_checks/dl/l3_01_kmaps.py; errata dl.md section 3"
+    },
+    {
+      "id": "it-2004-it-44",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "The typos are repaired (text and options fixes); the key B is verified by enumeration against the repaired question.",
+      "source": "GATE 2004 IT reprint scan (GATE_PYQ/GATE2004IT.pdf p. 6, Q44) + enumeration in content/gate-notes/_checks/dl/l3_01_kmaps.py; errata dl.md section 3"
+    },
+    {
+      "id": "it-2004-it-44",
+      "field": "reviewNote",
+      "before": "Reprint typos: last term printed AB'C (duplicate of the first; original AB'C') and option B printed 'AB'AC'+A'C' (missing '+'). As printed (minterms 1,3,5,6) no option is equivalent.",
+      "after": null,
+      "reason": "The note described the reprint typos, which are now repaired.",
+      "source": "GATE 2004 IT reprint scan (GATE_PYQ/GATE2004IT.pdf p. 6, Q44) + enumeration in content/gate-notes/_checks/dl/l3_01_kmaps.py; errata dl.md section 3"
+    },
+    {
+      "id": "it-2004-it-44",
+      "field": "solution",
+      "before": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Minimization) from **IT 2004 Q44** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  In the original paper the last term is AB'C', giving minterms 1,3,4,5,6 = A'C + AC' + AB', i.e. option B read as AB' + AC' + A'C..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$A\\overline{C}+AB+\\overline{A}C$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `$A\\overline{B}A\\overline{C}+\\overline{A}C$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `$\\overline{A}B+A\\overline{C}+A\\overline{B}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$\\overline{A}B+AC+A\\overline{B}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "after": "**Concept:** expand to minterms, then minimise on a 3-variable K-map.\n\n- Terms: $A\\overline{B}C = m_5$, $\\overline{A}BC = m_3$, $AB\\overline{C} = m_6$, $\\overline{A}\\,\\overline{B}C = m_1$, $A\\overline{B}\\,\\overline{C} = m_4$, so $f = \\Sigma(1, 3, 4, 5, 6)$.\n- Loops: $\\overline{A}C$ ($m_1, m_3$), $A\\overline{C}$ ($m_4, m_6$), and $m_5$ by $A\\overline{B}$ ($m_4, m_5$) or $\\overline{B}C$ ($m_1, m_5$).\n- So $f = A\\overline{B} + A\\overline{C} + \\overline{A}C$ (one of its two minimal forms).\n- (A) lacks $m_5$ and adds $m_7$; (C) adds $m_2$; (D) adds $m_2, m_7$.\n\n**Answer: (B) $A\\overline{B} + A\\overline{C} + \\overline{A}C$.**",
+      "reason": "The legacy free-text solution was a template that never solved the question; it now matches the repaired question and the v2 solution.",
+      "source": "Independent derivation (content/gate-notes/_checks/dl/l3_01_kmaps.py); errata dl.md section 3"
     }
   ]
 }

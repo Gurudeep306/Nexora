@@ -1478,36 +1478,24 @@
       "verification": "A path on 10 vertices: two ends of degree 1 and eight inner vertices of degree 2: $2+16=18$."
     },
     "cse-2017-1-cs-21": {
-      "approach": "Use the don't-cares to form one quad, giving $f = c\\,\\bar a$; a single 2-input NOR with inputs $\\bar c$ and $a$ realises it.",
+      "approach": "Concept tested: **minimise fully with the don't-cares, then count gates**. The map collapses to a single 2-literal product, and with complements available that is one NOR gate.",
       "concepts": [
-        "K-map minimisation",
         "Don't-care conditions",
-        "NOR realisation",
-        "De Morgan"
+        "NOR implementation",
+        "Complements available"
       ],
-      "given": "| Cell | $d\\,c\\,b\\,a$ | Value |\n|---|---|---|\n| row 01, col 00 | 0100 | 1 |\n| row 11, col 00 | 1100 | 1 |\n| row 11, col 10 | 1110 | 1 |\n| row 01, col 10 | 0110 | x |\n| rows 00, 10, cols 01, 11 | 0001, 0011, 1001, 1011 | x |",
+      "given": "Rows $dc$, columns $ba$. Row 00: 0 X X 0; row 01: 1 0 0 X; row 11: 1 0 0 1; row 10: 0 X X 0.",
       "steps": [
         {
           "title": "Read the 1s",
-          "body": "The 1s are at $dcba = 0100, 1100, 1110$. All have $c=1,\\ a=0$.",
+          "body": "In $(a, b, c, d)$: row $dc = 01$, column $ba = 00$ is $m_2$; row $dc = 11$, columns $ba = 00$ and $10$ are $m_3$ and $m_7$; the X at row 01, column 10 is $m_6$. All four have $a = 0$ and $c = 1$.",
           "scene": {
-            "hl": [
-              {
-                "cell": 4
-              },
-              {
-                "cell": 12
-              },
-              {
-                "cell": 14
-              }
-            ],
-            "caption": "Three 1-cells, all with c = 1 and a = 0"
+            "groups": []
           }
         },
         {
-          "title": "Group with a don't-care",
-          "body": "The cell $0110$ (row 01, col 10) is a don't-care. Rows 01, 11 are adjacent and columns 00, 10 wrap around, so $\\{0100, 0110, 1100, 1110\\}$ is a quad: $c=1$, $a=0$, $b$ and $d$ free. $$f = c\\,\\bar a$$",
+          "title": "One loop",
+          "body": "Rows $dc = 01, 11$ ($c = 1$) and columns $ba = 00, 10$ ($a = 0$): $m_2, m_3, X_6, m_7$ is the quad $\\overline{a}c$.",
           "scene": {
             "groups": [
               {
@@ -1517,23 +1505,28 @@
                   12,
                   14
                 ],
-                "label": "c·a′"
+                "label": "a′c",
+                "tone": "accent"
               }
-            ],
-            "hl": [],
-            "caption": "Quad (wrap-around columns 00 and 10) → f = c·a′"
+            ]
           }
         },
         {
-          "title": "Map to NOR",
-          "body": "By De Morgan, $c\\,\\bar a = \\overline{\\bar c + a} = \\text{NOR}(\\bar c, a)$. Complements are available, so this needs **one** 2-input NOR gate."
+          "title": "Gates",
+          "body": "$\\overline{a}c = \\overline{a + \\overline{c}}$ = NOR($a$, $\\overline{c}$). With $\\overline{c}$ available this is **1** gate; 0 gates is impossible because $f$ is not a single literal."
         }
       ],
       "answer": {
-        "value": "1",
+        "value": "**1** NOR gate: $f = \\overline{a}c = \\text{NOR}(a, \\overline{c})$",
         "number": 1,
         "matchesKey": true
       },
+      "shortcut": "If the map loops into a single product of two literals, one 2-input NOR (or NAND for a sum of two literals) does it when complements are available.",
+      "pitfalls": [
+        "Ignoring the don't-cares: without them the SOP is $\\overline{a}\\,\\overline{b}c + \\overline{a}cd$, which needs 3 NOR gates.",
+        "Reading the axes as $ab$/$cd$: the map's labels are $ba$ on the columns and $dc$ on the rows."
+      ],
+      "verification": "An exhaustive search over 1-gate NOR circuits with all literals available finds NOR($a$, $\\overline{c}$), which agrees with the map on every care cell.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -1547,6 +1540,7 @@
           12,
           14
         ],
+        "groups": [],
         "dcs": [
           1,
           3,
@@ -1554,14 +1548,8 @@
           9,
           11
         ],
-        "groups": [],
-        "caption": "K-map (rows dc, columns ba)"
-      },
-      "pitfalls": [
-        "Reading the map with rows/columns as $ab/cd$ — here rows are $dc$ and columns are $ba$.",
-        "Ignoring the don't-care at 0110 leaves $c\\bar a\\bar b + d c\\bar a$, which needs several gates."
-      ],
-      "verification": "Check every cell: $c\\bar a$ is 1 exactly on 0100, 0110, 1100, 1110 — the three 1s plus a don't-care; all 0-cells have $c=0$ or $a=1$."
+        "title": "Rows dc, columns ba (as printed)"
+      }
     },
     "cse-2017-1-cs-22": {
       "approach": "$L$ = strings whose second-last symbol is $b$. A DFA must remember the last two symbols, and all four 2-symbol suffixes are pairwise distinguishable, so the minimum is $2^2=4$.",

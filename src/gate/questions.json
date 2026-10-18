@@ -53710,14 +53710,14 @@
         "static-1-hazard",
         "cube-cover"
       ],
-      "answer": "A",
+      "answer": "D",
       "answerSource": "solved",
       "confidence": "high",
-      "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Minimization) from **CSE 2006 Q38** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **A**.\n- **Identified Problem Quantities:** 5, 7, 11, 12, 13, 15\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  A hazard-free (static-1) cover must contain a cube covering every pair of adjacent minterms.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Cubes $\\overline{w}xz$ (5,7), $wx\\overline{y}$ (12,13), $x\\overline{y}z$ (5,13), $xyz$ (7,15), $wyz$ (11,15) cover all adjacent pairs among the minterms..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`A`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **A**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (CORRECT):** `$\\overline{w}xz,\\ wx\\overline{y},\\ x\\overline{y}z,\\ xyz,\\ wyz$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option B (INCORRECT):** `$wxy,\\ \\overline{w}xz,\\ wyz$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `$wx\\overline{yz},\\ xz,\\ w\\overline{x}yz$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$wzy,\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "solution": "**Concept:** static-1 hazards. A two-level AND–OR cover stays at 1 while a single input changes between two adjacent 1-cells only if one cube contains both cells.\n\n- $f = \\Sigma(5, 7, 11, 12, 13, 15)$; adjacent 1-pairs: 5–7, 5–13, 7–15, 11–15, 12–13, 13–15.\n- (A) $\\overline{w}xz$ (5, 7), $wx\\overline{y}$ (12, 13), $x\\overline{y}z$ (5, 13), $xyz$ (7, 15), $wyz$ (11, 15): no cube holds 13 and 15, so $f$ can glitch when $y$ changes with $w = x = z = 1$.\n- (B) and (C) are not equal to $f$.\n- (D) adds $wxz$ (13, 15): every adjacent pair is inside a cube.\n\n**Answer: (D).**",
       "textSource": "web",
       "sourceUrl": "https://www.geeksforgeeks.org/gate-gate-cs-2006-question-38/",
-      "needsReview": true,
-      "reviewNote": "Stored key A looks wrong: cover (A) = {5,7},{12,13},{5,13},{7,15},{11,15} has no cube containing the adjacent pair 13 (1101) / 15 (1111), so f can glitch when y changes. Option (D) (first cube read as wx y-bar; it is blurred in the scan) covers all six adjacent pairs 5-7, 5-13, 7-15, 13-15, 12-13, 11-15 and should be the answer. (B) and (C) contain false minterms 6 and 14."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "cse-2006-cs-39",
@@ -117407,7 +117407,7 @@
       "number": "44",
       "marks": 2,
       "type": "MCQ",
-      "text": "The function $A\\overline{B}C + \\overline{A}BC + AB\\overline{C} + \\overline{A}\\,\\overline{B}C + A\\overline{B}C$ is equivalent to",
+      "text": "The function $A\\overline{B}C + \\overline{A}BC + AB\\overline{C} + \\overline{A}\\,\\overline{B}C + A\\overline{B}\\,\\overline{C}$ is equivalent to",
       "options": [
         {
           "l": "A",
@@ -117415,7 +117415,7 @@
         },
         {
           "l": "B",
-          "t": "$A\\overline{B}A\\overline{C}+\\overline{A}C$"
+          "t": "$A\\overline{B}+A\\overline{C}+\\overline{A}C$"
         },
         {
           "l": "C",
@@ -117437,11 +117437,11 @@
       "answer": "B",
       "answerSource": "solved",
       "confidence": "high",
-      "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Minimization) from **IT 2004 Q44** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **B**.\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Analytical Derivation:**\n  In the original paper the last term is AB'C', giving minterms 1,3,4,5,6 = A'C + AC' + AB', i.e. option B read as AB' + AC' + A'C..\n- **Final Mathematical Evaluation:**\n  Solving the system under the stated boundary conditions yields the confirmed outcome: **`B`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **B**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `$A\\overline{C}+AB+\\overline{A}C$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (CORRECT):** `$A\\overline{B}A\\overline{C}+\\overline{A}C$`. Completely satisfies the derived mathematical proof and boundary conditions.\n- **Option C (INCORRECT):** `$\\overline{A}B+A\\overline{C}+A\\overline{B}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (INCORRECT):** `$\\overline{A}B+AC+A\\overline{B}$`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "solution": "**Concept:** expand to minterms, then minimise on a 3-variable K-map.\n\n- Terms: $A\\overline{B}C = m_5$, $\\overline{A}BC = m_3$, $AB\\overline{C} = m_6$, $\\overline{A}\\,\\overline{B}C = m_1$, $A\\overline{B}\\,\\overline{C} = m_4$, so $f = \\Sigma(1, 3, 4, 5, 6)$.\n- Loops: $\\overline{A}C$ ($m_1, m_3$), $A\\overline{C}$ ($m_4, m_6$), and $m_5$ by $A\\overline{B}$ ($m_4, m_5$) or $\\overline{B}C$ ($m_1, m_5$).\n- So $f = A\\overline{B} + A\\overline{C} + \\overline{A}C$ (one of its two minimal forms).\n- (A) lacks $m_5$ and adds $m_7$; (C) adds $m_2$; (D) adds $m_2, m_7$.\n\n**Answer: (B) $A\\overline{B} + A\\overline{C} + \\overline{A}C$.**",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Reprint typos: last term printed AB'C (duplicate of the first; original AB'C') and option B printed 'AB'AC'+A'C' (missing '+'). As printed (minterms 1,3,5,6) no option is equivalent."
+      "needsReview": false,
+      "reviewNote": null
     },
     {
       "id": "it-2004-it-45",

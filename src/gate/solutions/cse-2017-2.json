@@ -1964,33 +1964,73 @@
       "verification": "$w = 0, x = 0, y = 1$: left of (C) $= (0 + 1) \\cdot 1 = 1$, right $= 0$."
     },
     "cse-2017-2-cs-28": {
-      "approach": "For POS, group the zeros (maxterms) of $f$, using don't-cares to enlarge groups. The zeros are $4, 9, 12, 13, 14$.",
+      "approach": "Concept tested: **minimal POS with don't-cares**. Loop the 0s, using the Xs that enlarge 0-loops, and read each loop as a sum term (0 → plain letter, 1 → primed letter).",
       "concepts": [
-        "Karnaugh map",
-        "Product of sums",
+        "Minimal POS",
         "Don't-care conditions"
       ],
-      "given": "| Type | Cells |\n|---|---|\n| 1s | 0, 1, 2, 3, 7, 8, 10 |\n| don't-cares | 5, 6, 11, 15 |\n| 0s | 4, 9, 12, 13, 14 |",
+      "given": "$f = \\Sigma_m(0, 1, 2, 3, 7, 8, 10) + \\Sigma_d(5, 6, 11, 15)$; the 0s are 4, 9, 12, 13, 14.",
       "steps": [
         {
-          "title": "List the zeros",
-          "body": "Of 16 cells, the 7 minterms and 4 don't-cares leave zeros at $4\\,(0100), 9\\,(1001), 12\\,(1100), 13\\,(1101), 14\\,(1110)$."
+          "title": "The 0s",
+          "body": "0s: $m_4, m_9, m_{12}, m_{13}, m_{14}$ (the figure plots the 0s, so its loops are loops of 0s).",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Group zeros with x = 1, z = 0",
-          "body": "Cells $4, 6, 12, 14$ (with $6$ a don't-care) all have $x = 1, z = 0$ → sum term $(\\bar x + z)$."
+          "title": "First 0-loop",
+          "body": "$m_4, X_6, m_{12}, m_{14}$ ($x = 1$, $z = 0$): the factor $(\\overline{x} + z)$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  4,
+                  6,
+                  12,
+                  14
+                ],
+                "label": "(x′ + z)",
+                "tone": "error"
+              }
+            ]
+          }
         },
         {
-          "title": "Group zeros with w = 1, z = 1",
-          "body": "Cells $9, 11, 13, 15$ (with $11, 15$ don't-cares) all have $w = 1, z = 1$ → sum term $(\\bar w + \\bar z)$."
+          "title": "Second 0-loop",
+          "body": "$m_9, X_{11}, m_{13}, X_{15}$ ($w = 1$, $z = 1$): the factor $(\\overline{w} + \\overline{z})$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  4,
+                  6,
+                  12,
+                  14
+                ],
+                "label": "(x′ + z)",
+                "tone": "error"
+              },
+              {
+                "cells": [
+                  9,
+                  11,
+                  13,
+                  15
+                ],
+                "label": "(w′ + z′)",
+                "tone": "warning"
+              }
+            ]
+          }
         },
         {
           "title": "Result",
-          "body": "$f = (\\bar w + \\bar z)(\\bar x + z)$. It covers every zero and no 1 is forced to 0 (the 1s $8, 10$ have $z = 0$, $x = 0$; $7$ has $w = 0$)."
+          "body": "$f = (\\overline{w} + \\overline{z})(\\overline{x} + z)$, 4 literals."
         }
       ],
       "answer": {
-        "value": "$(\\bar w + \\bar z)(\\bar x + z)$",
+        "value": "(A) $(\\overline{w} + \\overline{z})(\\overline{x} + z)$",
         "choice": [
           "A"
         ],
@@ -2000,28 +2040,54 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Covers zeros $\\{4,12,14\\}$ and $\\{9,13\\}$ with 2-literal terms; no 1 is lost — correct."
+          "reason": "The two quads of 0s read as sum terms."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$(\\bar w + z)$ is 0 when $w = 1, z = 0$, which makes minterm $8$ zero."
+          "reason": "$(\\overline{w} + z)(x + z) = z + \\overline{w}x$ is 0 at $m_8$ ($w = 1$, $x = 0$, $z = 0$), which is a 1."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$(w + z)$ is 0 when $w = 0, z = 0$, which makes minterm $0$ zero."
+          "reason": "$(w + z)(\\overline{x} + z)$ is 0 at $m_0$ ($w = z = 0$), a 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$(w + \\bar z)$ is 0 when $w = 0, z = 1$, which makes minterm $1$ zero."
+          "reason": "$(w + \\overline{z})(\\overline{x} + z)$ is 0 at $m_1$ ($w = 0$, $z = 1$), a 1."
         }
       ],
+      "shortcut": "Each option has the factor pattern; test one 1-cell per option: $m_8$ kills (B), $m_0$ kills (C), $m_1$ kills (D).",
       "pitfalls": [
-        "Grouping the 1s (SOP) and complementing literals incorrectly."
+        "Reading a 0-loop with the SOP habit (1 → plain letter).",
+        "Assuming the minimal SOP and POS must agree on the don't-cares. Here they happen to make the same choice (the POS expands to $\\overline{x}\\,\\overline{z} + \\overline{w}z$ plus a consensus term), but in general they need not."
       ],
-      "verification": "Multiplying out: $(\\bar w + \\bar z)(\\bar x + z) = \\bar w\\bar x + \\bar w z + \\bar x\\bar z$, which is 1 on $0,1,2,3,7,8,10$ and 0 on $4,9,12,13,14$ ✓."
+      "verification": "Enumeration over the 12 care cells: only (A) agrees with all of them; 4 literals is the minimum POS cost (Petrick on the 0s).",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "w",
+          "x",
+          "y",
+          "z"
+        ],
+        "ones": [
+          4,
+          9,
+          12,
+          13,
+          14
+        ],
+        "groups": [],
+        "dcs": [
+          5,
+          6,
+          11,
+          15
+        ],
+        "title": "The 0-cells of f (drawn as the 1s of f′), with the don't-cares"
+      }
     },
     "cse-2017-2-cs-29": {
       "approach": "Write AMAT for a two-level hierarchy, substitute $m_1 = 2m_2$ and solve the resulting quadratic.",

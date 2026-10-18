@@ -2184,40 +2184,28 @@
       "verification": "Counterexample $0^n1^n\\subseteq\\Sigma^*$ confirms B is false; A, C, D follow from standard theorems."
     },
     "cse-1998-a-42": {
-      "approach": "Read the 1-cells carefully: the columns are printed in plain binary order 00, 01, 10, 11 (not Gray order). The 1s sit exactly where $B=C$, independent of $A$.",
+      "approach": "Concept tested: **a map printed with binary-order labels**. The columns read $BC = 00, 01, 10, 11$, so the end columns are not neighbours. Decode each 1 from its label, re-draw in Gray order, then loop.",
       "concepts": [
-        "Karnaugh map",
-        "XNOR",
-        "Minterms"
+        "Gray order",
+        "Reading a printed map",
+        "XNOR"
       ],
+      "given": "Rows $A = 0, 1$; columns printed $BC = 00, 01, 10, 11$; both rows read 1 0 0 1.",
       "steps": [
         {
-          "title": "List the 1-cells",
-          "body": "Both rows have 1 under $BC=00$ and $BC=11$, 0 under $01$ and $10$. Minterms ($ABC$): $000,011,100,111 \\Rightarrow m(0,3,4,7)$.",
+          "title": "Decode the 1s",
+          "body": "The 1s are in the columns labelled $BC = 00$ and $BC = 11$, in both rows: $m_0, m_4$ ($B = C = 0$) and $m_3, m_7$ ($B = C = 1$)."
+        },
+        {
+          "title": "Re-draw in Gray order",
+          "body": "With columns 00, 01, 11, 10 the 1s sit in the first and third columns, which are not adjacent. Each column is a vertical pair ($A$ changes).",
           "scene": {
-            "hl": [
-              {
-                "cell": 0,
-                "tone": "accent"
-              },
-              {
-                "cell": 3,
-                "tone": "accent"
-              },
-              {
-                "cell": 4,
-                "tone": "accent"
-              },
-              {
-                "cell": 7,
-                "tone": "accent"
-              }
-            ]
+            "groups": []
           }
         },
         {
-          "title": "Group them",
-          "body": "In Gray order, $m(0,4)$ form the pair $\\overline{B}\\,\\overline{C}$ and $m(3,7)$ form the pair $BC$; $A$ drops out of both.\n\n$$f=\\overline{B}\\,\\overline{C}+BC=\\overline{B\\oplus C}$$",
+          "title": "Loop",
+          "body": "$\\overline{B}\\,\\overline{C}$ ($m_0, m_4$) and $BC$ ($m_3, m_7$): $f = \\overline{B}\\,\\overline{C} + BC = \\overline{B \\oplus C}$.",
           "scene": {
             "groups": [
               {
@@ -2225,20 +2213,56 @@
                   0,
                   4
                 ],
-                "label": "B'C'"
+                "label": "B′C′",
+                "tone": "accent"
               },
               {
                 "cells": [
                   3,
                   7
                 ],
-                "label": "BC"
+                "label": "BC",
+                "tone": "success"
               }
-            ],
-            "hl": []
+            ]
           }
         }
       ],
+      "answer": {
+        "value": "(C) $\\overline{B \\oplus C}$",
+        "choice": [
+          "C"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$A \\cdot B$ is 1 only on $m_6, m_7$; the map has 1s in row $A = 0$ too."
+        },
+        {
+          "option": "B",
+          "correct": false,
+          "reason": "The majority function is 1 on $m_3, m_5, m_6, m_7$; the map has $m_0$ and $m_4$ instead of $m_5, m_6$."
+        },
+        {
+          "option": "C",
+          "correct": true,
+          "reason": "$\\overline{B \\oplus C}$ is 1 exactly when $B = C$: columns 00 and 11 in both rows."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "$A \\cdot B \\cdot C$ is the single cell $m_7$."
+        }
+      ],
+      "shortcut": "The value does not depend on the row, so $A$ drops; the 1-columns are $BC = 00$ and $11$, i.e. $B = C$: XNOR.",
+      "pitfalls": [
+        "Treating the printed end columns (00 and 11) as a wrap-around group and answering $\\overline{C}$.",
+        "Assuming every printed map is in Gray order."
+      ],
+      "verification": "Truth table of $\\overline{B \\oplus C}$: 1 for $BC = 00, 11$ and both values of $A$, i.e. $\\{0, 3, 4, 7\\}$. ✓",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -2251,41 +2275,10 @@
           3,
           4,
           7
-        ]
-      },
-      "answer": {
-        "value": "$\\overline{B\\oplus C}$",
-        "choice": [
-          "C"
         ],
-        "matchesKey": true
-      },
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": false,
-          "reason": "$A\\cdot B$ would be 1 only in row $A=1$ for $BC=10,11$; the map has 1s in row $A=0$ too."
-        },
-        {
-          "option": "B",
-          "correct": false,
-          "reason": "Majority function $AB+BC+CA$ is 0 at $ABC=000$, but the map has a 1 there."
-        },
-        {
-          "option": "C",
-          "correct": true,
-          "reason": "$\\overline{B\\oplus C}=1$ exactly when $B=C$: columns 00 and 11 in both rows — matches."
-        },
-        {
-          "option": "D",
-          "correct": false,
-          "reason": "$A\\cdot BC$ is a single minterm $m_7$; the map has four 1s."
-        }
-      ],
-      "pitfalls": [
-        "Assuming Gray-coded columns and reading the 1s as the corner columns $\\overline{C}$."
-      ],
-      "verification": "Check $ABC=101$: $B\\ne C$ so $f=0$, matching the map ($A=1$, $BC=01$ is 0)."
+        "groups": [],
+        "title": "Re-drawn in Gray order"
+      }
     },
     "cse-1998-a-43": {
       "approach": "Concept tested: **associativity test**. All four operators are commutative; compare $(a \\star b) \\star c$ with $a \\star (b \\star c)$. NAND fails, the others pass.",

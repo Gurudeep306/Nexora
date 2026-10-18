@@ -717,24 +717,24 @@
       "verification": "Each hump of $|x\\sin x|$ on $[n\\pi,(n+1)\\pi]$ has area $(2n+1)\\pi$: $\\pi + 3\\pi = 4\\pi$."
     },
     "cse-2014-3-cs-7": {
-      "approach": "Plot the four required minterms 0, 5, 10, 15 and the don't-cares 2, 7, 8, 13 on a K-map; two quads (the four corners and the centre square) cover everything.",
+      "approach": "Concept tested: **don't-cares need not be covered**. Plot the four real 1s, use the Xs only to enlarge their loops, and reject options that spend terms on the Xs.",
       "concepts": [
-        "K-map",
         "Don't-care conditions",
-        "Minimal SOP"
+        "Corner quad",
+        "XNOR pattern"
       ],
-      "given": "| Required 1s | Don't cares |\n|---|---|\n| 0, 5, 10, 15 | 2, 7, 8, 13 |",
+      "given": "1s: 0, 5, 10, 15. Don't-cares: 2, 7, 8, 13.",
       "steps": [
         {
-          "title": "Plot the map",
-          "body": "Rows $PQ$ and columns $RS$ in Gray order. 1s at 0, 5, 10, 15; X at 2, 7, 8, 13.",
+          "title": "Plot",
+          "body": "Over $(P, Q, R, S)$: 1s at $m_0$, $m_5$, $m_{10}$, $m_{15}$; Xs at $m_2$, $m_7$, $m_8$, $m_{13}$.",
           "scene": {
             "groups": []
           }
         },
         {
-          "title": "Corner quad",
-          "body": "Cells 0, 2, 8, 10 (the four corners) have $Q = 0$ and $S = 0$: term $\\overline{Q}\\,\\overline{S}$. Covers 0 and 10.",
+          "title": "Loop",
+          "body": "Corners $m_0, X_2, X_8, m_{10}$: $\\overline{Q}\\,\\overline{S}$. Centre $m_5, X_7, X_{13}, m_{15}$: $QS$.",
           "scene": {
             "groups": [
               {
@@ -744,24 +744,8 @@
                   8,
                   10
                 ],
-                "label": "Q'S'"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Centre quad",
-          "body": "Cells 5, 7, 13, 15 have $Q = 1$ and $S = 1$: term $QS$. Covers 5 and 15.\n\n$$F = \\overline{Q}\\,\\overline{S} + QS$$",
-          "scene": {
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  2,
-                  8,
-                  10
-                ],
-                "label": "Q'S'"
+                "label": "Q′S′",
+                "tone": "accent"
               },
               {
                 "cells": [
@@ -770,12 +754,48 @@
                   13,
                   15
                 ],
-                "label": "QS"
+                "label": "QS",
+                "tone": "success"
               }
             ]
           }
         }
       ],
+      "answer": {
+        "value": "(B) $\\overline{Q}\\,\\overline{S} + QS$",
+        "choice": [
+          "B"
+        ],
+        "matchesKey": true
+      },
+      "optionAnalysis": [
+        {
+          "option": "A",
+          "correct": false,
+          "reason": "$Q\\overline{S} + \\overline{Q}S$ is the complement pattern: 0 on all four 1s."
+        },
+        {
+          "option": "B",
+          "correct": true,
+          "reason": "Two quads that swallow the Xs for free."
+        },
+        {
+          "option": "C",
+          "correct": false,
+          "reason": "Correct on the 1s but uses four 3-literal pairs (12 literals)."
+        },
+        {
+          "option": "D",
+          "correct": false,
+          "reason": "Four 3-literal terms; equal on the care cells, not minimal."
+        }
+      ],
+      "shortcut": "The 1s are where $Q = S$: $\\overline{Q \\oplus S} = \\overline{Q}\\,\\overline{S} + QS$.",
+      "pitfalls": [
+        "Spending terms to cover the Xs.",
+        "Choosing (A), the XOR, by mixing up the corner pattern."
+      ],
+      "verification": "(B), (C), (D) all agree with the care cells; only (B) has the minimum 4 literals.",
       "animation": {
         "kind": "kmap",
         "variables": [
@@ -790,44 +810,14 @@
           10,
           15
         ],
+        "groups": [],
         "dcs": [
           2,
           7,
           8,
           13
-        ],
-        "groups": []
-      },
-      "answer": {
-        "value": "$\\overline{Q}\\,\\overline{S} + QS$",
-        "choice": [
-          "B"
-        ],
-        "matchesKey": true
-      },
-      "optionAnalysis": [
-        {
-          "option": "A",
-          "correct": false,
-          "reason": "$Q\\overline{S}+\\overline{Q}S$ covers 1, 3, 4, 6, … — none of the required minterms 0, 5, 10, 15."
-        },
-        {
-          "option": "B",
-          "correct": true,
-          "reason": "Two quads covering all four required 1s using the don't-cares; only 2 terms of 2 literals."
-        },
-        {
-          "option": "C",
-          "correct": false,
-          "reason": "Covers the right cells but with 4 three-literal terms — not minimal."
-        },
-        {
-          "option": "D",
-          "correct": false,
-          "reason": "Also correct functionally but uses 4 three-literal terms — not minimal."
-        }
-      ],
-      "verification": "$\\overline{Q}\\,\\overline{S}+QS = \\overline{Q \\oplus S}$; minterms with $Q = S$ are exactly 0,2,5,7,8,10,13,15."
+        ]
+      }
     },
     "cse-2014-3-cs-8": {
       "approach": "\"$y = a$ if $x = 1$ else $y = b$\" is a selection of one of two data inputs by a select line — the definition of a 2-to-1 multiplexer.",

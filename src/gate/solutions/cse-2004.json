@@ -3607,27 +3607,96 @@
       "verification": "Check 5 (0101): B·D = 1 ✓; 4 (0100): A=0, C+D=0 → 0 ✓; 8: A = 1 ✓."
     },
     "cse-2004-cs-59": {
-      "approach": "Expand to minterms, list all prime implicants, and mark those that alone cover some minterm.",
+      "approach": "Concept tested: **essential prime implicants**. List all PIs of $f$, then find the 1-cells that lie in exactly one PI.",
       "concepts": [
-        "Prime implicants",
-        "Essential prime implicants"
+        "Prime implicant",
+        "Essential prime implicant"
       ],
       "steps": [
         {
           "title": "Minterms",
-          "body": "$a'c$ → 1, 3; $ac'$ → 4, 6; $b'c$ → 1, 5. So $f = \\Sigma m(1,3,4,5,6)$."
+          "body": "$\\overline{a}c = \\{1, 3\\}$, $a\\overline{c} = \\{4, 6\\}$, $\\overline{b}c = \\{1, 5\\}$: $f = \\Sigma(1, 3, 4, 5, 6)$.",
+          "scene": {
+            "groups": []
+          }
         },
         {
-          "title": "Prime implicants",
-          "body": "$a'c$ (1,3), $ac'$ (4,6), $b'c$ (1,5), $ab'$ (4,5)."
+          "title": "All prime implicants",
+          "body": "Pairs: $\\overline{a}c$ (1, 3), $\\overline{b}c$ (1, 5), $a\\overline{b}$ (4, 5), $a\\overline{c}$ (4, 6). No quad fits (each would contain $m_0$, $m_2$ or $m_7$).",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  1,
+                  3
+                ],
+                "label": "a′c",
+                "tone": "accent"
+              },
+              {
+                "cells": [
+                  1,
+                  5
+                ],
+                "label": "b′c",
+                "tone": "info"
+              },
+              {
+                "cells": [
+                  4,
+                  5
+                ],
+                "label": "ab′",
+                "tone": "warning"
+              },
+              {
+                "cells": [
+                  4,
+                  6
+                ],
+                "label": "ac′",
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "Essential ones",
-          "body": "m3 is covered only by $a'c$; m6 only by $ac'$. m1, m4, m5 each have two covers. Essential PIs: **$a'c$ and $ac'$**."
+          "title": "Distinguished cells",
+          "body": "$m_3$ lies only in $\\overline{a}c$; $m_6$ only in $a\\overline{c}$. $m_1$, $m_4$, $m_5$ each lie in two PIs. So the EPIs are $\\overline{a}c$ and $a\\overline{c}$.",
+          "scene": {
+            "groups": [
+              {
+                "cells": [
+                  1,
+                  3
+                ],
+                "label": "a′c",
+                "tone": "success"
+              },
+              {
+                "cells": [
+                  4,
+                  6
+                ],
+                "label": "ac′",
+                "tone": "success"
+              }
+            ],
+            "hl": [
+              {
+                "cell": 3,
+                "tone": "warning"
+              },
+              {
+                "cell": 6,
+                "tone": "warning"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "a'c and ac'",
+        "value": "(A) $\\overline{a}c$ and $a\\overline{c}$",
         "choice": [
           "A"
         ],
@@ -3637,28 +3706,46 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Each uniquely covers m3 / m6."
+          "reason": "The only PIs through $m_3$ and $m_6$ respectively."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "b'c is a PI but not essential (m1 via a'c, m5 via ab')."
+          "reason": "$\\overline{b}c$ is a PI but $m_1$ and $m_5$ are also covered by other PIs: it is selective."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Misses ac', the only cover of m6."
+          "reason": "$a\\overline{c}$ is essential too (through $m_6$)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "bc' (2,6) is not even an implicant: m2 is 0."
+          "reason": "$b\\overline{c} = \\{2, 6\\}$ contains the 0-cell $m_2$: not even an implicant."
         }
       ],
+      "shortcut": "In the given SOP, a term is essential iff it has a cell no other term (and no consensus term) covers: $m_3$ and $m_6$.",
       "pitfalls": [
-        "Treating every term of the given expression as essential."
+        "Assuming every term of the given expression is essential ($\\overline{b}c$ is not).",
+        "Forgetting the PI $a\\overline{b}$, which is not in the expression but competes for $m_4, m_5$."
       ],
-      "verification": "Minimal cover a'c + ac' + (b'c or ab') confirms two choices for the third term — hence b'c is not essential."
+      "verification": "Quine–McCluskey on $\\Sigma(1, 3, 4, 5, 6)$ gives the same four PIs; the chart's single-mark columns are 3 and 6.",
+      "animation": {
+        "kind": "kmap",
+        "variables": [
+          "a",
+          "b",
+          "c"
+        ],
+        "ones": [
+          1,
+          3,
+          4,
+          5,
+          6
+        ],
+        "groups": []
+      }
     },
     "cse-2004-cs-60": {
       "approach": "The mux computes $f = Z'X + ZY$. Choose connections so that this equals $T + R$.",
