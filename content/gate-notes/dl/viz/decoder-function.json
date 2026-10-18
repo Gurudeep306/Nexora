@@ -1,0 +1,1669 @@
+{
+ "version": 1,
+ "title": "A decoder and an OR gate implementing the full-adder sum",
+ "width": 640,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 340
+ },
+ "intro": "A 3:8 decoder with inputs A, B, C. Its outputs D1, D2, D4 and D7 feed a 4-input OR gate whose output is S.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "Decoder + OR gate: the full-adder sum Σ(1, 2, 4, 7)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Decoder + OR: S = Σ(1,2,4,7)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "dec",
+   "type": "box",
+   "x": 200,
+   "y": 50,
+   "w": 110,
+   "h": 240,
+   "narrow": {
+    "x": 70,
+    "w": 96
+   }
+  },
+  {
+   "id": "dec-l0",
+   "type": "text",
+   "x": 205,
+   "y": 90.0,
+   "text": "A",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 75,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l1",
+   "type": "text",
+   "x": 205,
+   "y": 170.0,
+   "text": "B",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 75,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l2",
+   "type": "text",
+   "x": 205,
+   "y": 250.0,
+   "text": "C",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 75,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r0",
+   "type": "text",
+   "x": 305,
+   "y": 65.0,
+   "text": "D0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r1",
+   "type": "text",
+   "x": 305,
+   "y": 95.0,
+   "text": "D1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r2",
+   "type": "text",
+   "x": 305,
+   "y": 125.0,
+   "text": "D2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r3",
+   "type": "text",
+   "x": 305,
+   "y": 155.0,
+   "text": "D3",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r4",
+   "type": "text",
+   "x": 305,
+   "y": 185.0,
+   "text": "D4",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r5",
+   "type": "text",
+   "x": 305,
+   "y": 215.0,
+   "text": "D5",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r6",
+   "type": "text",
+   "x": 305,
+   "y": 245.0,
+   "text": "D6",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r7",
+   "type": "text",
+   "x": 305,
+   "y": 275.0,
+   "text": "D7",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 161,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-n",
+   "type": "text",
+   "x": 255.0,
+   "y": 170.0,
+   "text": "3:8",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 118.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 140,
+   "y": 90.0,
+   "text": "A=?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     144,
+     90.0
+    ],
+    [
+     200,
+     90.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      90.0
+     ],
+     [
+      70,
+      90.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 140,
+   "y": 170.0,
+   "text": "B=?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     144,
+     170.0
+    ],
+    [
+     200,
+     170.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      170.0
+     ],
+     [
+      70,
+      170.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "a2",
+   "type": "text",
+   "x": 140,
+   "y": 250.0,
+   "text": "C=?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa2",
+   "type": "line",
+   "points": [
+    [
+     144,
+     250.0
+    ],
+    [
+     200,
+     250.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      250.0
+     ],
+     [
+      70,
+      250.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "or",
+   "type": "gate",
+   "x": 430,
+   "y": 119.0,
+   "w": 60,
+   "h": 110,
+   "kind": "or",
+   "inputs": 4,
+   "narrow": {
+    "x": 256,
+    "w": 50
+   }
+  },
+  {
+   "id": "wo0",
+   "type": "line",
+   "points": [
+    [
+     310,
+     65.0
+    ],
+    [
+     324,
+     65.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      65.0
+     ],
+     [
+      180,
+      65.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo1",
+   "type": "line",
+   "points": [
+    [
+     310,
+     95.0
+    ],
+    [
+     400,
+     95.0
+    ],
+    [
+     400,
+     141.0
+    ],
+    [
+     434.8,
+     141.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      95.0
+     ],
+     [
+      236,
+      95.0
+     ],
+     [
+      236,
+      141.0
+     ],
+     [
+      260.0,
+      141.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo2",
+   "type": "line",
+   "points": [
+    [
+     310,
+     125.0
+    ],
+    [
+     380,
+     125.0
+    ],
+    [
+     380,
+     163.0
+    ],
+    [
+     437.2,
+     163.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      125.0
+     ],
+     [
+      222,
+      125.0
+     ],
+     [
+      222,
+      163.0
+     ],
+     [
+      262.0,
+      163.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo3",
+   "type": "line",
+   "points": [
+    [
+     310,
+     155.0
+    ],
+    [
+     324,
+     155.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      155.0
+     ],
+     [
+      180,
+      155.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo4",
+   "type": "line",
+   "points": [
+    [
+     310,
+     185.0
+    ],
+    [
+     437.2,
+     185.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      185.0
+     ],
+     [
+      262.0,
+      185.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo5",
+   "type": "line",
+   "points": [
+    [
+     310,
+     215.0
+    ],
+    [
+     324,
+     215.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      215.0
+     ],
+     [
+      180,
+      215.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo6",
+   "type": "line",
+   "points": [
+    [
+     310,
+     245.0
+    ],
+    [
+     324,
+     245.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      245.0
+     ],
+     [
+      180,
+      245.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo7",
+   "type": "line",
+   "points": [
+    [
+     310,
+     275.0
+    ],
+    [
+     380,
+     275.0
+    ],
+    [
+     380,
+     207.0
+    ],
+    [
+     434.8,
+     207.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166,
+      275.0
+     ],
+     [
+      222,
+      275.0
+     ],
+     [
+      222,
+      207.0
+     ],
+     [
+      260.0,
+      207.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws",
+   "type": "line",
+   "points": [
+    [
+     490.0,
+     174.0
+    ],
+    [
+     520.0,
+     174.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      306.0,
+      174.0
+     ],
+     [
+      328.0,
+      174.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vs",
+   "type": "text",
+   "x": 526.0,
+   "y": 174.0,
+   "text": "S",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 310.0,
+    "y": 210.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "col",
+   "type": "text",
+   "x": 320.0,
+   "y": 318,
+   "text": "S column: ",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A B C = 000: the decoder raises D0. D0 is not wired to the OR, so S = 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 001: the decoder raises D1. D1 is wired to the OR, so S = 1.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "success",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 010: the decoder raises D2. D2 is wired to the OR, so S = 1.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "success",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0 1 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 011: the decoder raises D3. D3 is not wired to the OR, so S = 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0 1 1 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 100: the decoder raises D4. D4 is wired to the OR, so S = 1.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "success",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0 1 1 0 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 101: the decoder raises D5. D5 is not wired to the OR, so S = 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0 1 1 0 1 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 110: the decoder raises D6. D6 is not wired to the OR, so S = 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0 1 1 0 1 0 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 111: the decoder raises D7. D7 is wired to the OR, so S = 1.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "success",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "col",
+     "set": {
+      "text": "S column: 0 1 1 0 1 0 0 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The OR collects minterms 1, 2, 4 and 7, so S = Σ(1, 2, 4, 7) = A ⊕ B ⊕ C, the full-adder sum. Any n-variable function is one n:2ⁿ decoder plus an OR of its minterms.",
+   "patches": [
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vs",
+     "set": {
+      "text": "S",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "or",
+     "set": {
+      "fill": "none",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

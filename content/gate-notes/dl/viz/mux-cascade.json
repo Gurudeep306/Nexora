@@ -1,0 +1,2175 @@
+{
+ "version": 1,
+ "title": "Two cascaded 2:1 multiplexers evaluated row by row",
+ "width": 700,
+ "height": 290,
+ "narrow": {
+  "width": 360,
+  "height": 490
+ },
+ "intro": "MUX1 has inputs 0 and R with select P; its output M1 feeds input 1 of MUX2, whose input 0 is R′ and whose select is Q. The output is X.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Two cascaded 2:1 MUXes (GATE 2016), row by row",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Cascaded 2:1 MUXes (2016)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "m1",
+   "type": "box",
+   "x": 120,
+   "y": 70,
+   "w": 70,
+   "h": 100,
+   "narrow": {
+    "x": 72,
+    "w": 64
+   }
+  },
+  {
+   "id": "m1-l0",
+   "type": "text",
+   "x": 125,
+   "y": 91.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 77,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1-l1",
+   "type": "text",
+   "x": 125,
+   "y": 133.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 77,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1-r0",
+   "type": "text",
+   "x": 185,
+   "y": 112.0,
+   "text": "Y",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 131,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1-b0",
+   "type": "text",
+   "x": 155.0,
+   "y": 160,
+   "text": "s",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 104.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1-n",
+   "type": "text",
+   "x": 155.0,
+   "y": 58,
+   "text": "MUX1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 104.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "m2",
+   "type": "box",
+   "x": 310,
+   "y": 70,
+   "w": 70,
+   "h": 100,
+   "narrow": {
+    "x": 220,
+    "w": 64
+   }
+  },
+  {
+   "id": "m2-l0",
+   "type": "text",
+   "x": 315,
+   "y": 91.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 225,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2-l1",
+   "type": "text",
+   "x": 315,
+   "y": 133.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 225,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2-r0",
+   "type": "text",
+   "x": 375,
+   "y": 112.0,
+   "text": "Y",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 279,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2-b0",
+   "type": "text",
+   "x": 345.0,
+   "y": 160,
+   "text": "s",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 252.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2-n",
+   "type": "text",
+   "x": 345.0,
+   "y": 58,
+   "text": "MUX2",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 252.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 90,
+   "y": 91.0,
+   "text": "0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     94,
+     91.0
+    ],
+    [
+     120,
+     91.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      91.0
+     ],
+     [
+      72,
+      91.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 90,
+   "y": 133.0,
+   "text": "R",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     94,
+     133.0
+    ],
+    [
+     120,
+     133.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      133.0
+     ],
+     [
+      72,
+      133.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "b0",
+   "type": "text",
+   "x": 284,
+   "y": 91.0,
+   "text": "R′",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 194,
+    "size": 13
+   }
+  },
+  {
+   "id": "wb0",
+   "type": "line",
+   "points": [
+    [
+     288,
+     91.0
+    ],
+    [
+     310,
+     91.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      198,
+      91.0
+     ],
+     [
+      220,
+      91.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wm",
+   "type": "line",
+   "points": [
+    [
+     190,
+     112.0
+    ],
+    [
+     230,
+     112.0
+    ],
+    [
+     230,
+     133.0
+    ],
+    [
+     310,
+     133.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      136,
+      112.0
+     ],
+     [
+      162,
+      112.0
+     ],
+     [
+      162,
+      133.0
+     ],
+     [
+      220,
+      133.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lm",
+   "type": "text",
+   "x": 230,
+   "y": 149.0,
+   "text": "M1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 162,
+    "size": 12
+   }
+  },
+  {
+   "id": "wsp",
+   "type": "line",
+   "points": [
+    [
+     155.0,
+     170
+    ],
+    [
+     155.0,
+     190
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      104.0,
+      170
+     ],
+     [
+      104.0,
+      190
+     ]
+    ]
+   }
+  },
+  {
+   "id": "sp",
+   "type": "text",
+   "x": 155.0,
+   "y": 204,
+   "text": "P",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 104.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wsq",
+   "type": "line",
+   "points": [
+    [
+     345.0,
+     170
+    ],
+    [
+     345.0,
+     190
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      252.0,
+      170
+     ],
+     [
+      252.0,
+      190
+     ]
+    ]
+   }
+  },
+  {
+   "id": "sq",
+   "type": "text",
+   "x": 345.0,
+   "y": 204,
+   "text": "Q",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 252.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "p10",
+   "type": "line",
+   "points": [
+    [
+     138,
+     91.0
+    ],
+    [
+     172,
+     112.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      90,
+      91.0
+     ],
+     [
+      118,
+      112.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "p11",
+   "type": "line",
+   "points": [
+    [
+     138,
+     133.0
+    ],
+    [
+     172,
+     112.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      90,
+      133.0
+     ],
+     [
+      118,
+      112.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "p20",
+   "type": "line",
+   "points": [
+    [
+     328,
+     91.0
+    ],
+    [
+     362,
+     112.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      238,
+      91.0
+     ],
+     [
+      266,
+      112.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "p21",
+   "type": "line",
+   "points": [
+    [
+     328,
+     133.0
+    ],
+    [
+     362,
+     112.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      238,
+      133.0
+     ],
+     [
+      266,
+      112.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx",
+   "type": "line",
+   "points": [
+    [
+     380,
+     112.0
+    ],
+    [
+     416,
+     112.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      284,
+      112.0
+     ],
+     [
+      310,
+      112.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx",
+   "type": "text",
+   "x": 422,
+   "y": 112.0,
+   "text": "X",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 314,
+    "size": 13
+   }
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 490,
+   "y": 50,
+   "cellW": 38,
+   "cellH": 22,
+   "rows": [
+    [
+     "P",
+     "Q",
+     "R",
+     "M1",
+     "X"
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " ",
+     " ",
+     " "
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 90,
+    "y": 250
+   }
+  },
+  {
+   "id": "sum",
+   "type": "text",
+   "x": 255,
+   "y": 270,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 470,
+    "size": 14
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "P Q R = 0 0 0: MUX1 selects input 0 and passes 0, so M1 = 0; MUX2 selects input 0 and passes R′ = 1, so X = 1.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=0"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=1"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=0"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=0"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P Q R = 0 0 1: MUX1 selects input 0 and passes 0, so M1 = 0; MUX2 selects input 0 and passes R′ = 0, so X = 0.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=1"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=0"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=0"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=0"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P Q R = 0 1 0: MUX1 selects input 0 and passes 0, so M1 = 0; MUX2 selects input 1 and passes M1 = 0, so X = 0.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=0"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=1"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=0"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=1"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P Q R = 0 1 1: MUX1 selects input 0 and passes 0, so M1 = 0; MUX2 selects input 1 and passes M1 = 0, so X = 0.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=1"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=0"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=0"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=1"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P Q R = 1 0 0: MUX1 selects input 1 and passes R = 0, so M1 = 0; MUX2 selects input 0 and passes R′ = 1, so X = 1.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=0"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=1"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=1"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=0"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P Q R = 1 0 1: MUX1 selects input 1 and passes R = 1, so M1 = 1; MUX2 selects input 0 and passes R′ = 0, so X = 0.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=1"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=0"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=1"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=0"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        "1",
+        "0"
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        6,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P Q R = 1 1 0: MUX1 selects input 1 and passes R = 0, so M1 = 0; MUX2 selects input 1 and passes M1 = 0, so X = 0.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=0"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=1"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=1"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=1"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        " ",
+        " ",
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        7,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "P Q R = 1 1 1: MUX1 selects input 1 and passes R = 1, so M1 = 1; MUX2 selects input 1 and passes M1 = 1, so X = 1.",
+   "patches": [
+    {
+     "id": "p10",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "R=1"
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "text": "R′=0"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wm",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sp",
+     "set": {
+      "text": "P=1"
+     }
+    },
+    {
+     "id": "sq",
+     "set": {
+      "text": "Q=1"
+     }
+    },
+    {
+     "id": "wsp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wsq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx",
+     "set": {
+      "text": "X=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "P",
+        "Q",
+        "R",
+        "M1",
+        "X"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "0",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "1",
+        "1",
+        "1"
+       ]
+      ],
+      "highlight": [
+       [
+        8,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "X = 1 only on rows 000, 100, 111 (minterms 0, 4, 7). MUX1 gives M1 = PR, so X = Q′R′ + Q·PR: the minimal SOP is Q′R′ + PQR.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        4
+       ],
+       [
+        5,
+        4
+       ],
+       [
+        8,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "sum",
+     "set": {
+      "text": "X = Q′R′ + PQR",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "p10",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p11",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p20",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "p21",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1543 @@
+{
+ "version": 1,
+ "title": "BCD to excess-3 converter: four K-maps with don't-cares",
+ "width": 680,
+ "height": 500,
+ "narrow": {
+  "width": 360,
+  "height": 500
+ },
+ "intro": "Four K-maps over the BCD digit ABCD, one per excess-3 output bit w x y z (the digit plus 3). Cells 0–9 hold the outputs; cells 10–15 are don't-cares X.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "BCD → excess-3: four K-maps with don't-cares",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "BCD → excess-3 K-maps",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "nmw",
+   "type": "text",
+   "x": 180,
+   "y": 48,
+   "text": "output w (MSB)",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 112,
+    "size": 13
+   }
+  },
+  {
+   "id": "kwg",
+   "type": "grid",
+   "x": 120,
+   "y": 110,
+   "rows": 4,
+   "cols": 4,
+   "cell": 30,
+   "values": [
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "1",
+     "1",
+     "1"
+    ],
+    [
+     "X",
+     "X",
+     "X",
+     "X"
+    ],
+    [
+     "1",
+     "1",
+     "X",
+     "X"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 56,
+    "cell": 28
+   }
+  },
+  {
+   "id": "kwc0",
+   "type": "text",
+   "x": 135.0,
+   "y": 92,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 70.0
+   }
+  },
+  {
+   "id": "kwc1",
+   "type": "text",
+   "x": 165.0,
+   "y": 92,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 98.0
+   }
+  },
+  {
+   "id": "kwc2",
+   "type": "text",
+   "x": 195.0,
+   "y": 92,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 126.0
+   }
+  },
+  {
+   "id": "kwc3",
+   "type": "text",
+   "x": 225.0,
+   "y": 92,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 154.0
+   }
+  },
+  {
+   "id": "kwr0",
+   "type": "text",
+   "x": 104,
+   "y": 125.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 124.0
+   }
+  },
+  {
+   "id": "kwr1",
+   "type": "text",
+   "x": 104,
+   "y": 155.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 152.0
+   }
+  },
+  {
+   "id": "kwr2",
+   "type": "text",
+   "x": 104,
+   "y": 185.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 180.0
+   }
+  },
+  {
+   "id": "kwr3",
+   "type": "text",
+   "x": 104,
+   "y": 215.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 208.0
+   }
+  },
+  {
+   "id": "kwcv",
+   "type": "text",
+   "x": 180.0,
+   "y": 72,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 112.0
+   }
+  },
+  {
+   "id": "kwrv",
+   "type": "text",
+   "x": 104,
+   "y": 92,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 40
+   }
+  },
+  {
+   "id": "lpw00",
+   "type": "box",
+   "x": 125,
+   "y": 175,
+   "w": 110,
+   "h": 50,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 61,
+    "y": 171,
+    "w": 102,
+    "h": 46
+   }
+  },
+  {
+   "id": "lpw10",
+   "type": "box",
+   "x": 189,
+   "y": 149,
+   "w": 42,
+   "h": 42,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 121,
+    "y": 147,
+    "w": 38,
+    "h": 38
+   }
+  },
+  {
+   "id": "lpw20",
+   "type": "box",
+   "x": 155,
+   "y": 145,
+   "w": 50,
+   "h": 50,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 89,
+    "y": 143,
+    "w": 46,
+    "h": 46
+   }
+  },
+  {
+   "id": "ew",
+   "type": "text",
+   "x": 180,
+   "y": 250,
+   "text": "w = A + BC + BD",
+   "size": 14,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 92,
+    "y": 242,
+    "size": 12
+   }
+  },
+  {
+   "id": "nmx",
+   "type": "text",
+   "x": 520,
+   "y": 48,
+   "text": "output x",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 292,
+    "size": 13
+   }
+  },
+  {
+   "id": "kxg",
+   "type": "grid",
+   "x": 460,
+   "y": 110,
+   "rows": 4,
+   "cols": 4,
+   "cell": 30,
+   "values": [
+    [
+     "",
+     "1",
+     "1",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     "",
+     ""
+    ],
+    [
+     "X",
+     "X",
+     "X",
+     "X"
+    ],
+    [
+     "",
+     "1",
+     "X",
+     "X"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 236,
+    "cell": 28
+   }
+  },
+  {
+   "id": "kxc0",
+   "type": "text",
+   "x": 475.0,
+   "y": 92,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 250.0
+   }
+  },
+  {
+   "id": "kxc1",
+   "type": "text",
+   "x": 505.0,
+   "y": 92,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 278.0
+   }
+  },
+  {
+   "id": "kxc2",
+   "type": "text",
+   "x": 535.0,
+   "y": 92,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 306.0
+   }
+  },
+  {
+   "id": "kxc3",
+   "type": "text",
+   "x": 565.0,
+   "y": 92,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 334.0
+   }
+  },
+  {
+   "id": "kxr0",
+   "type": "text",
+   "x": 444,
+   "y": 125.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 124.0
+   }
+  },
+  {
+   "id": "kxr1",
+   "type": "text",
+   "x": 444,
+   "y": 155.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 152.0
+   }
+  },
+  {
+   "id": "kxr2",
+   "type": "text",
+   "x": 444,
+   "y": 185.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 180.0
+   }
+  },
+  {
+   "id": "kxr3",
+   "type": "text",
+   "x": 444,
+   "y": 215.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 208.0
+   }
+  },
+  {
+   "id": "kxcv",
+   "type": "text",
+   "x": 520.0,
+   "y": 72,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 292.0
+   }
+  },
+  {
+   "id": "kxrv",
+   "type": "text",
+   "x": 444,
+   "y": 92,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 220
+   }
+  },
+  {
+   "id": "lpx00",
+   "type": "box",
+   "x": 525,
+   "y": 100.4,
+   "w": 50,
+   "h": 34.6,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 297,
+    "y": 101.04,
+    "w": 46,
+    "h": 31.96
+   }
+  },
+  {
+   "id": "lpx01",
+   "type": "box",
+   "x": 525,
+   "y": 205,
+   "w": 50,
+   "h": 34.6,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 297,
+    "y": 199,
+    "w": 46,
+    "h": 31.96
+   }
+  },
+  {
+   "id": "lpx10",
+   "type": "box",
+   "x": 499,
+   "y": 100.4,
+   "w": 42,
+   "h": 30.6,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 273,
+    "y": 101.04,
+    "w": 38,
+    "h": 27.96
+   }
+  },
+  {
+   "id": "lpx11",
+   "type": "box",
+   "x": 499,
+   "y": 209,
+   "w": 42,
+   "h": 30.6,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 273,
+    "y": 203,
+    "w": 38,
+    "h": 27.96
+   }
+  },
+  {
+   "id": "lpx20",
+   "type": "box",
+   "x": 465,
+   "y": 145,
+   "w": 20,
+   "h": 50,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 241,
+    "y": 143,
+    "w": 18,
+    "h": 46
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 520,
+   "y": 250,
+   "text": "x = B′C + B′D + BC′D′",
+   "size": 14,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 272,
+    "y": 242,
+    "size": 12
+   }
+  },
+  {
+   "id": "nmy",
+   "type": "text",
+   "x": 180,
+   "y": 280,
+   "text": "output y",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 112,
+    "size": 13
+   }
+  },
+  {
+   "id": "kyg",
+   "type": "grid",
+   "x": 120,
+   "y": 342,
+   "rows": 4,
+   "cols": 4,
+   "cell": 30,
+   "values": [
+    [
+     "1",
+     "",
+     "1",
+     ""
+    ],
+    [
+     "1",
+     "",
+     "1",
+     ""
+    ],
+    [
+     "X",
+     "X",
+     "X",
+     "X"
+    ],
+    [
+     "1",
+     "",
+     "X",
+     "X"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 56,
+    "cell": 28
+   }
+  },
+  {
+   "id": "kyc0",
+   "type": "text",
+   "x": 135.0,
+   "y": 324,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 70.0
+   }
+  },
+  {
+   "id": "kyc1",
+   "type": "text",
+   "x": 165.0,
+   "y": 324,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 98.0
+   }
+  },
+  {
+   "id": "kyc2",
+   "type": "text",
+   "x": 195.0,
+   "y": 324,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 126.0
+   }
+  },
+  {
+   "id": "kyc3",
+   "type": "text",
+   "x": 225.0,
+   "y": 324,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 154.0
+   }
+  },
+  {
+   "id": "kyr0",
+   "type": "text",
+   "x": 104,
+   "y": 357.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 356.0
+   }
+  },
+  {
+   "id": "kyr1",
+   "type": "text",
+   "x": 104,
+   "y": 387.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 384.0
+   }
+  },
+  {
+   "id": "kyr2",
+   "type": "text",
+   "x": 104,
+   "y": 417.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 412.0
+   }
+  },
+  {
+   "id": "kyr3",
+   "type": "text",
+   "x": 104,
+   "y": 447.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 40,
+    "y": 440.0
+   }
+  },
+  {
+   "id": "kycv",
+   "type": "text",
+   "x": 180.0,
+   "y": 304,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 112.0
+   }
+  },
+  {
+   "id": "kyrv",
+   "type": "text",
+   "x": 104,
+   "y": 324,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 40
+   }
+  },
+  {
+   "id": "lpy00",
+   "type": "box",
+   "x": 125,
+   "y": 347,
+   "w": 20,
+   "h": 110,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 61,
+    "w": 18,
+    "h": 102
+   }
+  },
+  {
+   "id": "lpy10",
+   "type": "box",
+   "x": 189,
+   "y": 351,
+   "w": 12,
+   "h": 102,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 121,
+    "w": 10,
+    "h": 94
+   }
+  },
+  {
+   "id": "ey",
+   "type": "text",
+   "x": 180,
+   "y": 482,
+   "text": "y = C′D′ + CD",
+   "size": 14,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 92,
+    "y": 474,
+    "size": 12
+   }
+  },
+  {
+   "id": "nmz",
+   "type": "text",
+   "x": 520,
+   "y": 280,
+   "text": "output z (LSB)",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 292,
+    "size": 13
+   }
+  },
+  {
+   "id": "kzg",
+   "type": "grid",
+   "x": 460,
+   "y": 342,
+   "rows": 4,
+   "cols": 4,
+   "cell": 30,
+   "values": [
+    [
+     "1",
+     "",
+     "",
+     "1"
+    ],
+    [
+     "1",
+     "",
+     "",
+     "1"
+    ],
+    [
+     "X",
+     "X",
+     "X",
+     "X"
+    ],
+    [
+     "1",
+     "",
+     "X",
+     "X"
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 236,
+    "cell": 28
+   }
+  },
+  {
+   "id": "kzc0",
+   "type": "text",
+   "x": 475.0,
+   "y": 324,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 250.0
+   }
+  },
+  {
+   "id": "kzc1",
+   "type": "text",
+   "x": 505.0,
+   "y": 324,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 278.0
+   }
+  },
+  {
+   "id": "kzc2",
+   "type": "text",
+   "x": 535.0,
+   "y": 324,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 306.0
+   }
+  },
+  {
+   "id": "kzc3",
+   "type": "text",
+   "x": 565.0,
+   "y": 324,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 334.0
+   }
+  },
+  {
+   "id": "kzr0",
+   "type": "text",
+   "x": 444,
+   "y": 357.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 356.0
+   }
+  },
+  {
+   "id": "kzr1",
+   "type": "text",
+   "x": 444,
+   "y": 387.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 384.0
+   }
+  },
+  {
+   "id": "kzr2",
+   "type": "text",
+   "x": 444,
+   "y": 417.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 412.0
+   }
+  },
+  {
+   "id": "kzr3",
+   "type": "text",
+   "x": 444,
+   "y": 447.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 220,
+    "y": 440.0
+   }
+  },
+  {
+   "id": "kzcv",
+   "type": "text",
+   "x": 520.0,
+   "y": 304,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 292.0
+   }
+  },
+  {
+   "id": "kzrv",
+   "type": "text",
+   "x": 444,
+   "y": 324,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 220
+   }
+  },
+  {
+   "id": "lpz00",
+   "type": "box",
+   "x": 450.4,
+   "y": 347,
+   "w": 34.6,
+   "h": 110,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 227.04,
+    "w": 31.96,
+    "h": 102
+   }
+  },
+  {
+   "id": "lpz01",
+   "type": "box",
+   "x": 555,
+   "y": 347,
+   "w": 34.6,
+   "h": 110,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 325,
+    "w": 31.96,
+    "h": 102
+   }
+  },
+  {
+   "id": "ez",
+   "type": "text",
+   "x": 520,
+   "y": 482,
+   "text": "z = D′",
+   "size": 14,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 272,
+    "y": 474,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Rows 10–15 are not BCD digits, so every output has an X there: six don't-cares per map that a loop may use or ignore.",
+   "patches": [
+    {
+     "id": "kwg",
+     "set": {
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "kxg",
+     "set": {
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "kyg",
+     "set": {
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "kzg",
+     "set": {
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The MSB w is 1 for digits 5–9. The octet A uses the Xs; quads BC and BD take the remaining 1s. w = A + BC + BD (3 terms).",
+   "patches": [
+    {
+     "id": "kwg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kxg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kyg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kzg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "lpw00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpw10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpw20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ew",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "x is 1 for digits 1–4 and 9. The quads B′C and B′D use Xs; the pair BC′D′ (cells 4, 12) takes digit 4. x = B′C + B′D + BC′D′ (3 terms).",
+   "patches": [
+    {
+     "id": "kwg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kxg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kyg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kzg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "lpx00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpx01",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpx10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpx11",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpx20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ew",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "y is 1 when C and D are equal: the quad CD and the quad C′D′, which wraps around the left and right edges. y = C′D′ + CD (2 terms).",
+   "patches": [
+    {
+     "id": "kwg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kxg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kyg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kzg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "lpy00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpy10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ey",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ew",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The LSB z is 1 for the even digits: the octet D′ (two outer columns) covers every one of them. z = D′ (1 term).",
+   "patches": [
+    {
+     "id": "kwg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kxg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kyg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "kzg",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "lpz00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lpz01",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ez",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ew",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ey",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "All four outputs: w = A + BC + BD, x = B′C + B′D + BC′D′, y = CD + C′D′ (an XNOR), z = D′. Without the don't-cares every map would need more or larger terms (17 literals in all here).",
+   "patches": [
+    {
+     "id": "ew",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ex",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ey",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "ez",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

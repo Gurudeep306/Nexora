@@ -1,0 +1,2482 @@
+{
+ "version": 1,
+ "title": "A 3-to-8 decoder lighting one output per address",
+ "width": 640,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "A 3:8 decoder with address inputs A2 A1 A0, an enable EN, and outputs D0–D7 (active high). The address will step from 000 to 111.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A 3:8 decoder: one output per address",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "3:8 decoder",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "dec",
+   "type": "box",
+   "x": 260,
+   "y": 50,
+   "w": 110,
+   "h": 240,
+   "narrow": {
+    "x": 120,
+    "w": 100
+   }
+  },
+  {
+   "id": "dec-l0",
+   "type": "text",
+   "x": 265,
+   "y": 87.33,
+   "text": "A2",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l1",
+   "type": "text",
+   "x": 265,
+   "y": 162.0,
+   "text": "A1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l2",
+   "type": "text",
+   "x": 265,
+   "y": 236.67,
+   "text": "A0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r0",
+   "type": "text",
+   "x": 365,
+   "y": 64.0,
+   "text": "D0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r1",
+   "type": "text",
+   "x": 365,
+   "y": 92.0,
+   "text": "D1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r2",
+   "type": "text",
+   "x": 365,
+   "y": 120.0,
+   "text": "D2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r3",
+   "type": "text",
+   "x": 365,
+   "y": 148.0,
+   "text": "D3",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r4",
+   "type": "text",
+   "x": 365,
+   "y": 176.0,
+   "text": "D4",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r5",
+   "type": "text",
+   "x": 365,
+   "y": 204.0,
+   "text": "D5",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r6",
+   "type": "text",
+   "x": 365,
+   "y": 232.0,
+   "text": "D6",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r7",
+   "type": "text",
+   "x": 365,
+   "y": 260.0,
+   "text": "D7",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-b0",
+   "type": "text",
+   "x": 315.0,
+   "y": 280,
+   "text": "EN",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 170.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-n",
+   "type": "text",
+   "x": 315.0,
+   "y": 170.0,
+   "text": "3:8",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 170.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 196,
+   "y": 87.33,
+   "text": "A2 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     200,
+     87.33
+    ],
+    [
+     260,
+     87.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      80,
+      87.33
+     ],
+     [
+      120,
+      87.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 196,
+   "y": 162.0,
+   "text": "A1 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     200,
+     162.0
+    ],
+    [
+     260,
+     162.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      80,
+      162.0
+     ],
+     [
+      120,
+      162.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "a2",
+   "type": "text",
+   "x": 196,
+   "y": 236.67,
+   "text": "A0 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa2",
+   "type": "line",
+   "points": [
+    [
+     200,
+     236.67
+    ],
+    [
+     260,
+     236.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      80,
+      236.67
+     ],
+     [
+      120,
+      236.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wen",
+   "type": "line",
+   "points": [
+    [
+     315.0,
+     290
+    ],
+    [
+     315.0,
+     312
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      170.0,
+      290
+     ],
+     [
+      170.0,
+      312
+     ]
+    ]
+   }
+  },
+  {
+   "id": "en",
+   "type": "text",
+   "x": 315.0,
+   "y": 326,
+   "text": "EN = 1",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 170.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wo0",
+   "type": "line",
+   "points": [
+    [
+     370,
+     64.0
+    ],
+    [
+     410,
+     64.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      64.0
+     ],
+     [
+      250,
+      64.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o0",
+   "type": "circle",
+   "cx": 422,
+   "cy": 64.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo1",
+   "type": "line",
+   "points": [
+    [
+     370,
+     92.0
+    ],
+    [
+     410,
+     92.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      92.0
+     ],
+     [
+      250,
+      92.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o1",
+   "type": "circle",
+   "cx": 422,
+   "cy": 92.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo2",
+   "type": "line",
+   "points": [
+    [
+     370,
+     120.0
+    ],
+    [
+     410,
+     120.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      120.0
+     ],
+     [
+      250,
+      120.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o2",
+   "type": "circle",
+   "cx": 422,
+   "cy": 120.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo3",
+   "type": "line",
+   "points": [
+    [
+     370,
+     148.0
+    ],
+    [
+     410,
+     148.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      148.0
+     ],
+     [
+      250,
+      148.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o3",
+   "type": "circle",
+   "cx": 422,
+   "cy": 148.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo4",
+   "type": "line",
+   "points": [
+    [
+     370,
+     176.0
+    ],
+    [
+     410,
+     176.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      176.0
+     ],
+     [
+      250,
+      176.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o4",
+   "type": "circle",
+   "cx": 422,
+   "cy": 176.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo5",
+   "type": "line",
+   "points": [
+    [
+     370,
+     204.0
+    ],
+    [
+     410,
+     204.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      204.0
+     ],
+     [
+      250,
+      204.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o5",
+   "type": "circle",
+   "cx": 422,
+   "cy": 204.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo6",
+   "type": "line",
+   "points": [
+    [
+     370,
+     232.0
+    ],
+    [
+     410,
+     232.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      232.0
+     ],
+     [
+      250,
+      232.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o6",
+   "type": "circle",
+   "cx": 422,
+   "cy": 232.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo7",
+   "type": "line",
+   "points": [
+    [
+     370,
+     260.0
+    ],
+    [
+     410,
+     260.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      260.0
+     ],
+     [
+      250,
+      260.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o7",
+   "type": "circle",
+   "cx": 422,
+   "cy": 260.0,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 530,
+   "y": 170,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 362,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Address A2A1A0 = 000 (= 0) with EN = 1: exactly one output, D0, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D0 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A2A1A0 = 001 (= 1) with EN = 1: exactly one output, D1, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D1 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A2A1A0 = 010 (= 2) with EN = 1: exactly one output, D2, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D2 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A2A1A0 = 011 (= 3) with EN = 1: exactly one output, D3, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D3 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A2A1A0 = 100 (= 4) with EN = 1: exactly one output, D4, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D4 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A2A1A0 = 101 (= 5) with EN = 1: exactly one output, D5, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D5 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A2A1A0 = 110 (= 6) with EN = 1: exactly one output, D6, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D6 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A2A1A0 = 111 (= 7) with EN = 1: exactly one output, D7, is 1; the other seven are 0.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D7 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Enable low: the address is 101 again, but EN = 0, so every output is 0. The enable gates all eight outputs.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "all outputs 0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "EN back to 1: D5 lights again. Each output Dk is the minterm m_k of A2A1A0 ANDed with EN, so a decoder is a minterm generator.",
+   "patches": [
+    {
+     "id": "a0",
+     "set": {
+      "text": "A2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o4",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o5",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o6",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o7",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "en",
+     "set": {
+      "text": "EN = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wen",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "only D5 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
