@@ -1,0 +1,518 @@
+{
+ "version": 1,
+ "title": "A prime-implicant chart reduced by essential rows and row dominance",
+ "width": 660,
+ "height": 350,
+ "narrow": {
+  "width": 360,
+  "height": 360
+ },
+ "intro": "f = Σm(0, 1, 2, 5, 6, 7, 8, 9, 10, 14): its six prime implicants (rows) against its ten 1-cells (columns).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 24,
+   "text": "The prime-implicant chart: essential rows, then dominance",
+   "anchor": "middle",
+   "size": 17,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "headn",
+   "type": "text",
+   "x": 180.0,
+   "y": 24,
+   "text": "PI chart and dominance",
+   "anchor": "middle",
+   "size": 15,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "hd",
+   "type": "table",
+   "x": 150,
+   "y": 70,
+   "cellW": 40,
+   "cellH": 26,
+   "rows": [
+    [
+     "0",
+     "1",
+     "2",
+     "5",
+     "6",
+     "7",
+     "8",
+     "9",
+     "10",
+     "14"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 82,
+    "y": 70,
+    "cellW": 25
+   }
+  },
+  {
+   "id": "mk",
+   "type": "table",
+   "x": 150,
+   "y": 96,
+   "cellW": 40,
+   "cellH": 26,
+   "rows": [
+    [
+     "×",
+     "×",
+     "",
+     "",
+     "",
+     "",
+     "×",
+     "×",
+     "",
+     ""
+    ],
+    [
+     "×",
+     "",
+     "×",
+     "",
+     "",
+     "",
+     "×",
+     "",
+     "×",
+     ""
+    ],
+    [
+     "",
+     "",
+     "×",
+     "",
+     "×",
+     "",
+     "",
+     "",
+     "×",
+     "×"
+    ],
+    [
+     "",
+     "×",
+     "",
+     "×",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "×",
+     "",
+     "×",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     "",
+     "×",
+     "×",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 82,
+    "y": 96,
+    "cellW": 25
+   }
+  },
+  {
+   "id": "l0",
+   "type": "text",
+   "x": 140,
+   "y": 109.0,
+   "text": "B′C′",
+   "anchor": "end",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "y": 109.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l1",
+   "type": "text",
+   "x": 140,
+   "y": 135.0,
+   "text": "B′D′",
+   "anchor": "end",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "y": 135.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 140,
+   "y": 161.0,
+   "text": "CD′",
+   "anchor": "end",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "y": 161.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 140,
+   "y": 187.0,
+   "text": "A′C′D",
+   "anchor": "end",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "y": 187.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l4",
+   "type": "text",
+   "x": 140,
+   "y": 213.0,
+   "text": "A′BD",
+   "anchor": "end",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "y": 213.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l5",
+   "type": "text",
+   "x": 140,
+   "y": 239.0,
+   "text": "A′BC",
+   "anchor": "end",
+   "size": 14,
+   "mono": true,
+   "narrow": {
+    "x": 76,
+    "y": 239.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "n0",
+   "type": "text",
+   "x": 40,
+   "y": 270,
+   "text": "",
+   "anchor": "start",
+   "size": 14,
+   "narrow": {
+    "x": 16,
+    "y": 290,
+    "size": 12
+   }
+  },
+  {
+   "id": "n1",
+   "type": "text",
+   "x": 40,
+   "y": 296,
+   "text": "",
+   "anchor": "start",
+   "size": 14,
+   "narrow": {
+    "x": 16,
+    "y": 314,
+    "size": 12
+   }
+  },
+  {
+   "id": "ex",
+   "type": "text",
+   "x": 40,
+   "y": 330,
+   "text": "",
+   "anchor": "start",
+   "size": 16,
+   "weight": "bold",
+   "tone": "success",
+   "narrow": {
+    "x": 16,
+    "y": 346,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Rows are the six prime implicants, columns the ten 1-cells; × means the PI covers that cell. A minimal SOP must pick rows so that every column has a × in a picked row.",
+   "patches": [
+    {
+     "id": "n0",
+     "set": {
+      "text": "rows = PIs, columns = 1-cells"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Columns 9 and 14 contain a single ×: only B′C′ covers m9 and only CD′ covers m14. Both rows are essential.",
+   "patches": [
+    {
+     "id": "hd",
+     "set": {
+      "highlight": [
+       [
+        0,
+        7
+       ],
+       [
+        0,
+        9
+       ]
+      ]
+     }
+    },
+    {
+     "id": "mk",
+     "set": {
+      "highlight": [
+       [
+        0,
+        7
+       ],
+       [
+        2,
+        9
+       ]
+      ]
+     }
+    },
+    {
+     "id": "l0",
+     "set": {
+      "tone": "success",
+      "weight": "bold"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "tone": "success",
+      "weight": "bold"
+     }
+    },
+    {
+     "id": "n0",
+     "set": {
+      "text": "single-× columns 9, 14 → EPIs B′C′, CD′",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Delete every column the essential rows cover (0, 1, 2, 6, 8, 9, 10, 14). Only columns 5 and 7 remain.",
+   "patches": [
+    {
+     "id": "hd",
+     "set": {
+      "highlight": [
+       [
+        0,
+        3
+       ],
+       [
+        0,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "mk",
+     "set": {
+      "highlight": [],
+      "rows": [
+       [
+        "·",
+        "·",
+        "·",
+        "",
+        "·",
+        "",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "",
+        "·",
+        "",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "",
+        "·",
+        "",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "×",
+        "·",
+        "",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "×",
+        "·",
+        "×",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "",
+        "·",
+        "×",
+        "·",
+        "·",
+        "·",
+        "·"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "text": "left to cover: m5, m7"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row dominance: on the remaining columns A′BD covers {5, 7}, A′C′D only {5}, A′BC only {7}. A′BD dominates both (and costs no more), so the dominated rows are crossed out.",
+   "patches": [
+    {
+     "id": "l3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "l5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "l4",
+     "set": {
+      "tone": "accent",
+      "weight": "bold"
+     }
+    },
+    {
+     "id": "mk",
+     "set": {
+      "highlight": [
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "text": "A′BD dominates A′C′D and A′BC",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Minimal SOP: the two essential rows plus A′BD. (Column dominance gives the same result from the other side: column 9's only row, B′C′, also covers 0, 1 and 8, so those columns could have been dropped at once.)",
+   "patches": [
+    {
+     "id": "ex",
+     "set": {
+      "text": "f = B′C′ + CD′ + A′BD"
+     }
+    }
+   ]
+  }
+ ]
+}

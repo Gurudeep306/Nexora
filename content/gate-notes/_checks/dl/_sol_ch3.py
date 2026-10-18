@@ -781,6 +781,26 @@ SOLUTIONS["cse-2026-1-cs-38"] = {
 }
 
 
+# ── Lesson 3: tabulation and variable-entered maps ──────────────────────────
+
+SOLUTIONS["cse-1992-a-1-i"] = {
+    "approach": "Concept tested: **reading a variable-entered map**. Each cell holds the residue of $f$ as a function of the entered variable $A$; read the plain 1s, then loop each entered literal with the 1s as helpers and AND it in (or unfold the map into a 3-variable K-map).",
+    "concepts": ["Variable-entered map", "Shannon expansion", "Minimal SOP"],
+    "given": "Map variables $B$ (rows) and $C$ (columns); entries: $(B, C) = (0, 0): 1$, $(0, 1): 0$, $(1, 0): \\overline{A}$, $(1, 1): A$.",
+    "steps": [
+        {"title": "Plain 1s", "body": "The 1 at $B = 0, C = 0$ gives $\\overline{B}\\,\\overline{C}$ (true for both values of $A$)."},
+        {"title": "The A pass", "body": "The entry $A$ at $(1, 1)$: its neighbours are $(0, 1) = 0$ and $(1, 0) = \\overline{A}$ (which cannot join an $A$-loop), so it stays alone: $BC$, giving $A \\cdot BC = ABC$."},
+        {"title": "The A′ pass", "body": "The entry $\\overline{A}$ at $(1, 0)$ may join the 1 at $(0, 0)$ (same column $C = 0$): the loop $\\overline{C}$, giving $\\overline{A}\\,\\overline{C}$.", "scene": {"groups": [grp("B'C'", ABC, "accent"), grp("A'C'", ABC, "success"), grp("ABC", ABC, "warning")]}},
+        {"title": "Check by unfolding", "body": "Unfolded over $(A, B, C)$: $m_0, m_4$ (from the 1), $m_2$ (from $\\overline{A}$ at $B = 1, C = 0$), $m_7$ (from $A$ at $B = C = 1$): $f = \\Sigma(0, 2, 4, 7)$. Its K-map loops are exactly $\\overline{B}\\,\\overline{C}$, $\\overline{A}\\,\\overline{C}$ and $ABC$, all essential."},
+    ],
+    "answer": {"value": "$\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C} + ABC$", "matchesKey": True},
+    "shortcut": "Shannon expansion on $A$: $f = \\overline{A}(\\overline{B}\\,\\overline{C} + B\\overline{C}) + A(\\overline{B}\\,\\overline{C} + BC) = \\overline{A}\\,\\overline{C} + A\\overline{B}\\,\\overline{C} + ABC$, and $A\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C}$ absorbs into $\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C}$ via the cell $m_0$.",
+    "pitfalls": ["Looping $A$ with $\\overline{A}$ because they are adjacent: they are 1 for opposite values of $A$.", "Forgetting that a 1-cell can serve as a don't-care in the $A$- and $\\overline{A}$-passes."],
+    "verification": "The unfolded function $\\Sigma(0, 2, 4, 7)$ has the three essential PIs $\\overline{B}\\,\\overline{C}$, $\\overline{A}\\,\\overline{C}$, $ABC$ (Quine–McCluskey), 7 literals in all.",
+    "animation": km(ABC, [0, 2, 4, 7], title="The VEM unfolded into a 3-variable map"),
+}
+
+
 # ── Lesson 4: two-level implementation ──────────────────────────────────────
 
 SOLUTIONS["cse-2006-cs-38"] = {

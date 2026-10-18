@@ -15,6 +15,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import minlib as ml  # noqa: E402
+import boollib as bl  # noqa: E402
 from _viz_ch1_fp import spec, step, el, text, box, line, heads, VIZ_DIR  # noqa: E402,F401
 
 SPECS = {}
@@ -539,6 +540,192 @@ def dont_care_toggle():
     ]
     return spec("Using don't-cares only where they enlarge a loop", (W_, 330), (NW, 480),
                 "Σm(1, 3, 7, 11, 15) + d(0, 5) on a 4-variable map (rows A B, columns C D); X marks a don't-care.", els, steps)
+
+
+# ── Lesson 3: Quine–McCluskey, PI charts, larger maps, VEMs ─────────────────
+
+def table(id, x, y, cw, ch, rows, n=None, **kw):
+    return el(id, "table", n, x=x, y=y, cellW=cw, cellH=ch, rows=rows, **kw)
+
+
+@scene
+def qm_tabulation():
+    """The Quine–McCluskey table for Σ(0, 2, 4, 5, 6, 10), filled round by round."""
+    W_, NW = 660, 360
+    ones = [0, 2, 4, 5, 6, 10]
+    rounds, ps = ml.qm(ones, [], 4)
+    assert [len(r) for r in rounds] == [6, 6, 1] and sorted(ml.term(p, V4) for p in ps) == sorted(["A'D'", "A'BC'", "B'CD'"])
+    hdr = ["cells", "cube", "✓"]
+
+    def rows_of(rnd, show_ticks, upto=None):
+        out = [hdr]
+        for i, (c, used) in enumerate(rnd):
+            if upto is not None and i >= upto:
+                out.append(["", "", ""])
+                continue
+            out.append([",".join(map(str, ml.cells(c))), c, ("✓" if used else "PI") if show_ticks else ""])
+        return out
+
+    cw, ch = 62, 24
+    xs = [16, 232, 448]
+    nys = [70, 280, 490]
+    els = [*heads("Quine–McCluskey: combine neighbours in the table", "Quine–McCluskey, round by round", W_)]
+    labels = ["Round 0: minterms", "Round 1: pairs", "Round 2: quads"]
+    for k, rnd in enumerate(rounds):
+        els.append(text(f"t{k}", xs[k] + 93, 62, labels[k], {"x": 180, "y": nys[k] - 10, "size": 13}, anchor="middle", size=14, weight="bold", tone="muted", hidden=k > 0))
+        els.append(table(f"r{k}", xs[k], 76, cw, ch, rows_of(rnd, False, 0 if k else None), {"x": 87, "y": nys[k]}, header=True, mono=True, hidden=k > 0))
+    els.append(note("n0", 16, 270, 16, 560, size=14, nsize=12))
+    els.append(note("n1", 16, 296, 16, 582, size=14, nsize=12, tone="success"))
+    w = [c.count("1") for c, _ in rounds[0]]
+    assert w == [0, 1, 1, 2, 2, 2]
+    r1 = rounds[1]
+    steps = [
+        step("List the minterms in binary, sorted by their number of 1s: group 0 = {0}, group 1 = {2, 4}, group 2 = {5, 6, 10}. Only neighbouring groups can combine, because a combinable pair differs in exactly one bit.",
+             ("n0", {"text": "groups by weight: {0} | {2, 4} | {5, 6, 10}"})),
+        step("Compare group 0 with group 1: 0000 with 0010 gives 00-0, with 0100 gives 0-00. Compare group 1 with group 2: 0010 with 0110 → 0-10, with 1010 → -010; 0100 with 0101 → 010-, with 0110 → 01-0. Every minterm was used, so all get a tick.",
+             ("r0", {"rows": rows_of(rounds[0], True)}), ("t1", {"hidden": False}), ("r1", {"hidden": False, "rows": rows_of(r1, False)}),
+             ("n0", {"text": "6 pairs; every minterm ticked"})),
+        step("Round 1 (pairs), grouped by their 1s: {00-0, 0-00} then {010-, 01-0, 0-10, -010}. Two pairs combine only if their dashes are in the same place and they differ in one other bit: 00-0 + 01-0 = 0--0, and 0-00 + 0-10 = 0--0 again (record it once).",
+             ("t2", {"hidden": False}), ("r2", {"hidden": False, "rows": rows_of(rounds[2], False)}),
+             ("n0", {"text": "0--0 appears twice: keep one copy"})),
+        step("Tick the pairs that combined (00-0, 0-00, 01-0, 0-10). 010- and -010 found no partner with matching dashes: they are prime implicants. Round 2 has a single cube, 0--0, which cannot combine further: also prime.",
+             ("r1", {"rows": rows_of(r1, True)}), ("r2", {"rows": rows_of(rounds[2], True)}),
+             ("n0", {"text": "unticked = prime implicants"})),
+        step(f"Prime implicants: 0--0 = A′D′, 010- = A′BC′, -010 = B′CD′. That is 3 PIs, the same answer the map gives (GATE 2015).",
+             ("n1", {"text": "PIs: A′D′, A′BC′, B′CD′"})),
+    ]
+    return spec("Quine–McCluskey tabulation of Σm(0, 2, 4, 5, 6, 10)", (W_, 320), (NW, 610),
+                "The tabular method needs no picture: list the minterms in binary and merge cubes that differ in one bit, round by round.",
+                els, steps)
+
+
+@scene
+def pi_chart_dominance():
+    W_, NW = 660, 360
+    ones = [0, 1, 2, 5, 6, 7, 8, 9, 10, 14]
+    ps = ml.primes(ones, [], 4)
+    ch = ml.chart(ones, ps)
+    es = ml.essential(ones, [], 4)
+    cov = ml.min_covers(ones, [], 4)
+    order = [ml.parse_term(t, V4) for t in ("B'C'", "B'D'", "CD'", "A'C'D", "A'BD", "A'BC")]
+    assert sorted(order) == sorted(ps) and sorted(es) == sorted([order[0], order[2]])
+    assert cov == [tuple(sorted([order[0], order[2], order[4]], key=ml.cube_key))]
+    cols = sorted(ones)
+    marks = [["×" if m in ml.cells(p) else "" for m in cols] for p in order]
+    cw, chh = 40, 26
+    x0, y0 = 150, 70
+    ncw, nx0, ny0 = 25, 82, 70
+    els = [*heads("The prime-implicant chart: essential rows, then dominance", "PI chart and dominance", W_)]
+    els.append(table("hd", x0, y0, cw, chh, [[str(m) for m in cols]], {"x": nx0, "y": ny0, "cellW": ncw}, header=True, mono=True))
+    els.append(table("mk", x0, y0 + chh, cw, chh, [r[:] for r in marks], {"x": nx0, "y": ny0 + chh, "cellW": ncw}, mono=True))
+    for i, p in enumerate(order):
+        els.append(text(f"l{i}", x0 - 10, y0 + chh * (i + 1.5), pretty(p, V4), {"x": nx0 - 6, "y": ny0 + chh * (i + 1.5), "size": 12}, anchor="end", size=14, mono=True))
+    els += [note("n0", 40, 270, 16, 290, size=14, nsize=12), note("n1", 40, 296, 16, 314, size=14, nsize=12),
+            note("ex", 40, 330, 16, 346, size=16, nsize=13, weight="bold", tone="success")]
+    single = [j for j, m in enumerate(cols) if len(ch[m]) == 1]
+    assert [cols[j] for j in single] == [9, 14]
+    covered = set().union(*(set(ml.cells(order[i])) for i in (0, 2)))
+    left = [j for j, m in enumerate(cols) if m not in covered]
+    assert [cols[j] for j in left] == [5, 7]
+    steps = [
+        step("Rows are the six prime implicants, columns the ten 1-cells; × means the PI covers that cell. A minimal SOP must pick rows so that every column has a × in a picked row.",
+             ("n0", {"text": "rows = PIs, columns = 1-cells"})),
+        step("Columns 9 and 14 contain a single ×: only B′C′ covers m9 and only CD′ covers m14. Both rows are essential.",
+             ("hd", {"highlight": [[0, j] for j in single]}), ("mk", {"highlight": [[0, single[0]], [2, single[1]]]}),
+             ("l0", {"tone": "success", "weight": "bold"}), ("l2", {"tone": "success", "weight": "bold"}),
+             ("n0", {"text": "single-× columns 9, 14 → EPIs B′C′, CD′", "tone": "success"})),
+        step(f"Delete every column the essential rows cover (0, 1, 2, 6, 8, 9, 10, 14). Only columns 5 and 7 remain.",
+             ("hd", {"highlight": [[0, j] for j in left]}), ("mk", {"highlight": [], "rows": [[mk if j in left else "·" for j, mk in enumerate(r)] for r in marks]}),
+             ("n1", {"text": "left to cover: m5, m7"})),
+        step("Row dominance: on the remaining columns A′BD covers {5, 7}, A′C′D only {5}, A′BC only {7}. A′BD dominates both (and costs no more), so the dominated rows are crossed out.",
+             ("l3", {"tone": "muted"}), ("l5", {"tone": "muted"}), ("l4", {"tone": "accent", "weight": "bold"}),
+             ("mk", {"highlight": [[4, left[0]], [4, left[1]]]}),
+             ("n1", {"text": "A′BD dominates A′C′D and A′BC", "tone": "accent"})),
+        step("Minimal SOP: the two essential rows plus A′BD. (Column dominance gives the same result from the other side: column 9's only row, B′C′, also covers 0, 1 and 8, so those columns could have been dropped at once.)",
+             ("ex", {"text": "f = B′C′ + CD′ + A′BD"})),
+    ]
+    return spec("A prime-implicant chart reduced by essential rows and row dominance", (W_, 350), (NW, 360),
+                "f = Σm(0, 1, 2, 5, 6, 7, 8, 9, 10, 14): its six prime implicants (rows) against its ten 1-cells (columns).", els, steps)
+
+
+@scene
+def five_var_map():
+    W_, NW = 660, 360
+    V5 = list("ABCDE")
+    f5 = bl.minterms("C'E' + BD + A'CDE", V5)
+    assert ml.min_sop(f5, [], 5, V5) == ["C'E' + BD + A'CDE"]
+    sub = [[m & 15 for m in f5 if (m >> 4) == a] for a in (0, 1)]
+    k0 = KMap("a", 4, list("BCDE"), 70, 100, 46, 92, 92, 44, ones=sub[0])
+    k1 = KMap("b", 4, list("BCDE"), 390, 100, 46, 92, 352, 44, ones=sub[1])
+    els = [*heads("Five variables: two 4-variable maps, A = 0 and A = 1", "Five variables: two maps", W_)]
+    els.append(text("ta", 70 + 92, 50, "A = 0", {"x": 92 + 88, "y": 50}, anchor="middle", size=15, weight="bold", tone="accent"))
+    els.append(text("tb", 390 + 92, 50, "A = 1", {"x": 92 + 88, "y": 310}, anchor="middle", size=15, weight="bold", tone="accent"))
+    els += k0.elements() + k1.elements()
+    cubes = [ml.parse_term(t, V5) for t in ("C'E'", "BD", "A'CDE")]
+    for k, c in enumerate(cubes):
+        for a, km in ((0, k0), (1, k1)):
+            if c[0] in ("-", str(a)):
+                els += km.loops(f"L{k}{a}", c[1:], k)
+    els += [note("n0", 70, 318, 20, 560, size=14, nsize=12), note("ex", 70, 344, 20, 584, size=15, nsize=13, weight="bold", tone="success")]
+    ids = lambda k: [i for a, km in ((0, k0), (1, k1)) if cubes[k][0] in ("-", str(a)) for i in km.loop_ids(f"L{k}{a}", cubes[k][1:])]
+    steps = [
+        step("A 5-variable map is two 4-variable maps (rows B C, columns D E), one for A = 0 and one for A = 1. Inside each map the usual neighbours apply; in addition every cell is adjacent to the cell in the same position of the other map (they differ only in A).",
+             ("n0", {"text": "same position in the other map = neighbour"})),
+        step("The four corner cells of each map (C = 0, E = 0) are 1s in both maps. In each map they form a corner quad, and the two quads face each other: one group of 8 = 2³ cells, so 5 − 3 = 2 literals: C′E′.",
+             *show(ids(0)), ("ex", {"text": "f = C′E′"})),
+        step("Rows B C = 11 and 10, columns D E = 11 and 10 (B = 1, D = 1) are 1s in both maps: another octet across the maps, BD.",
+             *show(ids(1)), ("ex", {"text": "f = C′E′ + BD"})),
+        step("Left: m7 (00111) in the A = 0 map only. Its mirror m23 is 0, so the loop cannot cross to A = 1; inside its own map it pairs with m15: A′CDE (4 literals).",
+             *show(ids(2)), ("n0", {"text": "mirror cell is 0: the pair stays in one map"}), ("ex", {"text": "f = C′E′ + BD + A′CDE"})),
+    ]
+    return spec("A five-variable K-map as two four-variable maps", (W_, 360), (NW, 600),
+                "f(A, B, C, D, E) = Σm(" + ", ".join(map(str, f5)) + "), drawn as an A = 0 map and an A = 1 map (rows B C, columns D E).", els, steps)
+
+
+@scene
+def vem_unfold():
+    W_, NW = 660, 360
+    entries = {(0, 0): "C", (0, 1): "1", (1, 0): "0", (1, 1): "C'"}
+    # f(A, B, C) with the VEM over map variables A (rows), B (columns) and C entered.
+    ones = [m for m in range(8) if {"0": 0, "1": 1, "C": m & 1, "C'": 1 - (m & 1)}[entries[(m >> 2, (m >> 1) & 1)]]]
+    assert ones == [1, 2, 3, 6] and ml.min_sop(ones, [], 3, V3) == ["A'C + BC'"]
+    x0, y0, s = 60, 110, 64
+    nx0, ny0, ns = 110, 90, 60
+    els = [*heads("A variable-entered map and its unfolded K-map", "Variable-entered map, unfolded", W_)]
+    els.append(el("vg", "grid", {"x": nx0, "y": ny0, "cell": ns}, x=x0, y=y0, rows=2, cols=2, cell=s,
+                  values=[[entries[(0, 0)].replace("'", "′"), entries[(0, 1)]], [entries[(1, 0)], entries[(1, 1)].replace("'", "′")]], mono=True))
+    for c in (0, 1):
+        els.append(text(f"vc{c}", x0 + c * s + s / 2, y0 - 12, str(c), {"x": nx0 + c * ns + ns / 2, "y": ny0 - 11}, anchor="middle", size=13, mono=True, tone="subject", weight="bold"))
+        els.append(text(f"vr{c}", x0 - 10, y0 + c * s + s / 2, str(c), {"x": nx0 - 8, "y": ny0 + c * ns + ns / 2}, anchor="end", size=13, mono=True, tone="subject", weight="bold"))
+    els.append(text("vcv", x0 + s, y0 - 32, "B", {"x": nx0 + ns, "y": ny0 - 29}, anchor="middle", size=13, weight="bold", tone="muted"))
+    els.append(text("vrv", x0 - 10, y0 - 12, "A", {"x": nx0 - 8, "y": ny0 - 11}, anchor="end", size=13, weight="bold", tone="muted"))
+    km = KMap("k", 3, V3, 330, 110, 60, 92, 300, 56, idx=True)
+    base = km.elements()
+    base[0]["values"] = [["" for _ in range(4)] for _ in range(2)]
+    base[0]["hidden"] = True
+    for e in base[1:]:
+        e["hidden"] = True
+    els += base
+    els += km.loops("L0", ml.parse_term("A'C", V3), 0, tone="accent")
+    els += km.loops("L1", ml.parse_term("BC'", V3), 1, tone="success")
+    els += [note("n0", 330, 270, 20, 470, size=14, nsize=12), note("n1", 330, 296, 20, 494, size=14, nsize=12),
+            note("ex", 330, 330, 20, 524, size=16, nsize=14, weight="bold", tone="success")]
+    full = km.values(ones=ones, dcs=[])
+    steps = [
+        step("A variable-entered map for f(A, B, C) uses only A and B as map variables. Each cell holds what f is as a function of the entered variable C for that A, B: 0, 1, C or C′.",
+             ("n0", {"text": "cell = f(A, B, C) as a function of C"})),
+        step("Unfold it: each VEM cell becomes two cells of the full map, C = 0 and C = 1. Cell A = 0, B = 0 holds C, so f(0, 0, 0) = 0 and f(0, 0, 1) = 1; cell A = 0, B = 1 holds 1, so both are 1; cell A = 1, B = 0 holds 0; cell A = 1, B = 1 holds C′, so only C = 0 gives 1.",
+             ("kg", {"hidden": False, "values": full}), *[(e["id"], {"hidden": False}) for e in base[1:]],
+             ("n0", {"text": "1s: m1, m2, m3, m6"})),
+        step("Group the full map: m1, m3 (A = 0, C = 1) give A′C; m2, m6 (B = 1, C = 0) give BC′.",
+             *show(km.loop_ids("L0", ml.parse_term("A'C", V3))), *show(km.loop_ids("L1", ml.parse_term("BC'", V3))),
+             ("ex", {"text": "f = A′C + BC′"})),
+        step("Read directly from the VEM: the 1 at A = 0, B = 1 is a don't-care for the C-group and for the C′-group. C at (0, 0) with that 1 gives A′·C; C′ at (1, 1) with that 1 gives B·C′. Same answer, without unfolding.",
+             ("n1", {"text": "C-loop: A′ → A′C;  C′-loop: B → BC′", "tone": "accent"})),
+    ]
+    return spec("Unfolding a variable-entered map into a K-map", (W_, 350), (NW, 545),
+                "A 2 × 2 variable-entered map for f(A, B, C): rows A, columns B, entered variable C. Entries: C, 1 (top row); 0, C′ (bottom row).",
+                els, steps)
 
 
 def build_all():
