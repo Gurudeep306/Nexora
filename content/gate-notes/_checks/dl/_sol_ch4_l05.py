@@ -46,7 +46,7 @@ SOLUTIONS["cse-1993-ii-a-6-6"] = {
     "given": "A ROM holds the truth table of a unit that multiplies two 4-bit numbers. Find $M$ (words) and $N$ (bits per word).",
     "steps": [
         {"title": "The address is both operands", "body": "A truth table needs one row for every input combination. The inputs are $A_3A_2A_1A_0$ and $B_3B_2B_1B_0$: 8 bits in all, so the ROM address has 8 bits and the ROM has $2^8 = 256$ words. A ROM addressed by only one operand (16 words) could not tell $3 \\times 5$ from $3 \\times 7$.", "scene": {"reveal": 6}},
-        {"title": "The width is the largest product", "body": "Each word stores the product. The largest is $15 \\times 15 = 225 = 11100001_2$, which needs 8 bits, and no product can need more because $(2^4 - 1)^2 < 2^8$. So every word is 8 bits wide: the product of two $n$-bit numbers needs exactly $2n$ bits.", "scene": {"reveal": 6, "hl": [{"r": 2, "c": 1, "tone": "accent"}]}},
+        {"title": "The width is the largest product", "body": "Each word stores the product. The largest is $15 \\times 15 = 225 = 11100001_2$, which needs 8 bits, and no product can need more because $(2^4 - 1)^2 < 2^8$. So every word is 8 bits wide: the product of two $n$-bit numbers needs exactly $2n$ bits.", "scene": {"reveal": 9, "hl": [{"r": 2, "c": 1, "tone": "accent"}]}},
         {"title": "Read off M and N", "body": "$M = 2^8 = 256$ words and $N = 8$ bits, a $256 \\times 8$ ROM holding $256 \\times 8 = 2048$ bits.", "scene": {"reveal": 12, "hl": [{"r": 1, "c": 1, "tone": "success"}, {"r": 2, "c": 1, "tone": "success"}]}},
     ],
     "answer": {"value": "$M = 256$, $N = 8$ (a $256 \\times 8$ ROM, 2048 bits)", "matchesKey": True},
@@ -94,14 +94,14 @@ SOLUTIONS["it-2004-it-10"] = {
     "given": "Store the complete truth table of an 8-bit × 8-bit multiplier in the smallest ROM.",
     "steps": [
         {"title": "Address bits", "body": "The truth table has a row for each pair of 8-bit operands: $2^{8} \\cdot 2^{8} = 2^{16}$ rows, so 16 address bits and $64\\text{K}$ words. Fewer words (say $32\\text{K} = 2^{15}$) would leave one input bit unconnected, so two different rows would share a word.", "scene": {"reveal": 6}},
-        {"title": "Product bits", "body": "The product of two 8-bit numbers is at most $255^2 = 65025 < 2^{16}$ and at least that large product needs bit 15, so exactly 16 output bits. 32 bits would store 16 bits that are always 0.", "scene": {"reveal": 9, "hl": [{"r": 2, "c": 1, "tone": "accent"}]}},
-        {"title": "Minimum size", "body": "$64\\text{K} \\times 16$ bits. It is the minimum because both counts are forced: every row needs its own word, and every one of the 16 product bits is 1 for some pair and 0 for another.", "scene": {"reveal": 12, "hl": [{"r": 1, "c": 1, "tone": "success"}, {"r": 2, "c": 1, "tone": "success"}]}},
+        {"title": "Product bits", "body": "The largest product is $255^2 = 65025$; since $2^{15} \\le 65025 < 2^{16}$ it needs exactly 16 bits, and no product needs more. 32-bit words would store 16 bits that are always 0.", "scene": {"reveal": 9, "hl": [{"r": 2, "c": 1, "tone": "accent"}]}},
+        {"title": "Minimum size", "body": "$64\\text{K} \\times 16$ bits. It is the minimum because both counts are forced: every row needs its own word, and every one of the 16 product bits is 1 for some pair and 0 for another (none is constant), and none is a copy of an input bit, so no column can be wired instead of stored.", "scene": {"reveal": 12, "hl": [{"r": 1, "c": 1, "tone": "success"}, {"r": 2, "c": 1, "tone": "success"}]}},
     ],
     "answer": {"value": "(B) $64\\text{K} \\times 16$ bits", "choice": ["B"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", False, "$32\\text{K} = 2^{15}$ words gives 15 address bits; the two operands have 16."),
         opt("B", True, "$2^{16}$ words (both operands) of 16 bits (the largest product, 65025, needs 16)."),
-        opt("C", False, "$16\\text{K} \\times 32$: only 14 address bits, and 32-bit words are twice the product width. It also holds less than half the rows needed."),
+        opt("C", False, "$16\\text{K} \\times 32$: only 14 address bits, and 32-bit words are twice the product width. It also has only a quarter of the 64K words needed."),
         opt("D", False, "$64\\text{K} \\times 32$ works but is not minimum: the upper 16 bits of every word would always be 0."),
     ],
     "shortcut": "$n \\times n$ multiplier: $2^{2n} \\times 2n$. Here $2^{16} \\times 16 = 64\\text{K} \\times 16$.",

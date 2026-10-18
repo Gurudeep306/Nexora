@@ -105,6 +105,23 @@ has("$\\dfrac{\\partial f}{\\partial p} = 1 \\oplus \\overline{C} = C$", "$A = B
 r111 = dict(zip(V3, (1, 1, 1)))
 assert cl.detects(N94, V3, "f", "p", 1, r111)
 assert cl.evaluate(N94, r111)["f"] == cl.evaluate(N94, r111, {"p": 1, "C": 0})["f"] == 1
+# ... and the double fault {p/1, C/0} is still caught by other rows (001, 011, 101).
+dbl = [m for m, r in enumerate(cl.rows(V3)) if cl.evaluate(N94, r)["f"] != cl.evaluate(N94, r, {"p": 1, "C": 0})["f"]]
+assert dbl == rows_of("001", "011", "101")
+# Multi-output example: p = AB feeds f1 = p + C and f2 = p D; p s-a-0 tests = union over outputs.
+MO = [("p", "AND", ["A", "B"]), ("f1", "OR", ["p", "C"]), ("f2", "AND", ["p", "D"])]
+t1, t2 = cl.tests_for(MO, V4, "f1", "p", 0), cl.tests_for(MO, V4, "f2", "p", 0)
+assert t1 == rows_of("1100", "1101") and sorted(set(t1) | set(t2)) == rows_of("1100", "1101", "1111")
+assert cl.boolean_difference(MO, V4, "f1", "p") == bl.minterms("C'", V4) and cl.boolean_difference(MO, V4, "f2", "p") == bl.minterms("D", V4)
+r1111 = dict(zip(V4, (1, 1, 1, 1)))
+assert cl.evaluate(MO, r1111)["f1"] == cl.evaluate(MO, r1111, {"p": 0})["f1"] == 1 and cl.evaluate(MO, r1111)["f2"] == 1 != cl.evaluate(MO, r1111, {"p": 0})["f2"]
+for line in cl.lines(MO, V4):  # the multi-output test condition, on every line
+    for v in (0, 1):
+        want = {m for m, r in enumerate(cl.rows(V4)) if cl.evaluate(MO, r)[line] == 1 - v
+                and (m in cl.boolean_difference(MO, V4, "f1", line) or m in cl.boolean_difference(MO, V4, "f2", line))}
+        got = {m for m, r in enumerate(cl.rows(V4)) if any(cl.evaluate(MO, r)[o] != cl.evaluate(MO, r, {line: v})[o] for o in ("f1", "f2"))}
+        assert got == want, (line, v)
+has("$\\partial f_1 / \\partial p = \\overline{C}$ and $\\partial f_2 / \\partial p = D$")
 # Behind an OR: p s-a-0 only 1101, p s-a-1 rows 1, 5, 9.
 OA = [("p", "AND", ["A", "B"]), ("q", "OR", ["p", "C"]), ("f", "AND", ["q", "D"])]
 assert cl.tests_for(OA, V4, "f", "p", 0) == [13] == rows_of("1101")
@@ -150,15 +167,23 @@ assert cl.boolean_difference(IT07, X, "f", "T") == bl.minterms("X1 X2 X3 X4'", X
 assert cl.truth(IT07, X, "f", {"T": 0}) == cl.truth(IT07, X, "f") == bl.tt("X1 X2 X3 X4'", X)
 check_theorems(IT07, X)
 det = []
+opt_rows = []
 for l, txt in bl.option_values(q).items():
     v = txt.strip("$")
     if v.isdigit():
         r = dict(zip(X, map(int, v)))
         if cl.detects(IT07, X, "f", "T", 0, r):
             det.append(l)
-        if v == "1111":
-            assert cl.evaluate(IT07, r)["T"] == 1 and cl.evaluate(IT07, r)["o"] == 1
+        ev = cl.evaluate(IT07, r)
+        if v in ("0111", "1111"):  # #ex-und-gate step 4: both activate (T = 1), both blocked (o = 1)
+            assert ev["T"] == 1 and ev["o"] == 1 and ev["f"] == 0 == cl.evaluate(IT07, r, {"T": 0})["f"], v
+        if v == "0000":
+            assert ev["T"] == 0, v
+        opt_rows.append(v)
 correct = ["D"] if not det else det
+assert {"0000", "0111", "1111"} <= set(opt_rows)
+has("0000 does not activate (T = 0); 0111 and 1111 both activate (X3 = X4 = 1)", "both $X_1X_2X_3X_4 = 0111$ and $1111$ set $T = 1$")
+assert "0000 and 0111 do not activate" not in L
 assert correct == bl.key_letters(q["answer"]) == ["D"]
 has("$\\partial f / \\partial T = \\overline{o} = X_1X_2X_3\\overline{X_4}$")
 
@@ -203,6 +228,117 @@ assert len(classes) == 6
 assert {frozenset([("A", 0), ("B", 0), ("p", 1)]), frozenset([("p", 0), ("C", 0), ("f", 1)])} <= {frozenset(c) for c in classes.values()}
 assert min_test_sets([("f", "XOR", abc)], abc) == (2, [{0, 7}, {1, 6}, {2, 5}, {3, 4}])
 has("$\\{000, 111\\}$: 2 vectors", "$\\{011, 101, 110, 111\\}$: 4 = $n + 1$ vectors")
+
+# Redundancy removal one line at a time: f = OR(x1, x2) on two branches of x.
+OR2 = [("x1", "BUF", ["x"]), ("x2", "BUF", ["x"]), ("f", "OR", ["x1", "x2"])]
+assert not cl.tests_for(OR2, ["x"], "f", "x1", 0) and not cl.tests_for(OR2, ["x"], "f", "x2", 0)  # each redundant
+assert cl.truth(OR2, ["x"], "f", {"x1": 0, "x2": 0}) != cl.truth(OR2, ["x"], "f")              # not both together
+assert [m for m, r in enumerate(cl.rows(["x"])) if cl.evaluate(OR2, r, {"x1": 0})["f"] != cl.evaluate(OR2, r, {"x1": 0, "x2": 0})["f"]] == [1]
+has("redundant lines one at a time, and re-checking after each removal")
+
+# ── Dominance, coverage, the checkpoint theorem ─────────────────────────────
+DOM = {"AND": (1, 1), "NAND": (1, 0), "OR": (0, 0), "NOR": (0, 1)}  # (input stuck value, output stuck value)
+for g, (vi, vo) in DOM.items():
+    for n in (2, 3, 4):
+        ins = [f"x{i}" for i in range(n)]
+        net = [("f", g, ins)]
+        out_t = set(cl.tests_for(net, ins, "f", "f", vo))
+        for x in ins:
+            it = set(cl.tests_for(net, ins, "f", x, vi))
+            assert it and it < out_t, (g, n, x)  # strict: the output fault has other tests too
+# Dominance needs the input to feed only this gate: a fanned-out input can show through another path.
+FD = [("a1", "BUF", ["a"]), ("a2", "BUF", ["a"]), ("b1", "BUF", ["b"]), ("b2", "BUF", ["b"]),
+      ("g", "AND", ["a1", "b1"]), ("h", "AND", ["g", "b2"]), ("f", "OR", ["h", "a2"])]
+assert 0 in cl.tests_for(FD, list("ab"), "f", "a", 1) and 0 not in cl.tests_for(FD, list("ab"), "f", "g", 1)
+assert set(cl.tests_for(FD, list("ab"), "f", "a1", 1)) <= set(cl.tests_for(FD, list("ab"), "f", "g", 1))  # the branch is fine
+# 1994: f/0 dominates C/1 and p/1.
+assert set(T94[("C", 1)]) <= set(T94[("f", 0)]) and set(T94[("p", 1)]) <= set(T94[("f", 0)])
+assert T94[("f", 0)] == rows_of("000", "010", "100", "110", "111")
+has("dominates $C$ s-a-1 (tests\n$000, 010, 100$)")
+# Coverage of {011, 101, 111}: 9/10 faults, 5/6 classes; C/1 is the one missed.
+S3 = set(rows_of("011", "101", "111"))
+missed = [fl for fl, t in T94.items() if not set(t) & S3]
+assert missed == [("C", 1)] and len(T94) - len(missed) == 9
+cls_hit = [c for c in classes.values() if any(set(T94[fl]) & S3 for fl in c)]
+assert len(cls_hit) == 5 and len(classes) == 6 and round(500 / 6, 1) == 83.3
+has("$9 / 10 = 90\\%$", "$5/6 \\approx 83.3\\%$")
+# Checkpoint example: targeting A, B, C only gives {000, 011, 101, 111}, which detects all 10 faults.
+cps94 = [fl for fl in T94 if fl[0] in V3]
+assert len(cps94) == 6
+S4 = set(rows_of("000", "011", "101", "111"))
+assert all(set(T94[fl]) & S4 for fl in cps94) and all(set(t) & S4 for t in T94.values())
+assert T94[("C", 0)] == rows_of("001", "011", "101") and T94[("A", 1)] == rows_of("011")
+
+
+def explicit_fanout(gates, ins):
+    """Insert a BUF branch for every use of a signal that is used more than once. Returns (net, branches)."""
+    uses = {}
+    for _, _, a in gates:
+        for x in a:
+            uses[x] = uses.get(x, 0) + 1
+    net, br, cnt = [], [], {}
+    for name, op, a in gates:
+        args = []
+        for x in a:
+            if uses[x] > 1:
+                cnt[x] = cnt.get(x, 0) + 1
+                b = f"{x}_b{cnt[x]}"
+                net.append((b, "BUF", [x]))
+                br.append(b)
+                args.append(b)
+            else:
+                args.append(x)
+        net.append((name, op, args))
+    return net, br
+
+
+def checkpoint_claim(net, ins, out, cps):
+    """True when every fault has a checkpoint fault whose (non-empty) tests are all its tests."""
+    T = {(l, v): set(cl.tests_for(net, ins, out, l, v)) for l in cl.lines(net, ins) for v in (0, 1)}
+    return all(any(T[(c, w)] and T[(c, w)] <= t for c in cps for w in (0, 1)) for (l, v), t in T.items()), T
+
+
+import random  # noqa: E402
+rng = random.Random(2026)
+checked = 0
+while checked < 150:
+    nin = rng.choice([2, 3, 4])
+    ins = [f"i{k}" for k in range(nin)]
+    sigs, gates = list(ins), []
+    for g in range(rng.choice([3, 4, 5, 6])):
+        op = rng.choice(["AND", "OR", "NAND", "NOR", "NOT"])
+        k = 1 if op == "NOT" else rng.choice([2, 3])
+        args = rng.sample(sigs, k) if len(sigs) >= k else None
+        if args:
+            gates.append((f"g{g}", op, args))
+            sigs.append(f"g{g}")
+    if not gates:
+        continue
+    need, keep = {gates[-1][0]}, []
+    for gt in reversed(gates):
+        if gt[0] in need:
+            keep.append(gt)
+            need |= set(gt[2])
+    net, br = explicit_fanout(keep[::-1], ins)
+    cps = set(ins) | set(br)
+    T = {(c, w): cl.tests_for(net, ins, keep[0][0], c, w) for c in cps for w in (0, 1)}
+    if not all(T.values()):
+        continue  # the theorem's hypothesis: every checkpoint fault detectable
+    ok, _ = checkpoint_claim(net, ins, keep[0][0], cps)
+    assert ok, net
+    checked += 1
+# Where it fails: XOR (the set {00, 11} catches every input fault but not f s-a-0) ...
+XR = [("f", "XOR", ["a", "b"])]
+TX = {(l, v): set(cl.tests_for(XR, list("ab"), "f", l, v)) for l in ("a", "b", "f") for v in (0, 1)}
+S = set(rows_of("00", "11"))
+assert all(TX[(x, v)] & S for x in "ab" for v in (0, 1)) and not TX[("f", 0)] & S and TX[("f", 0)] == set(rows_of("01", "10"))
+# ... and a redundant circuit with an undetectable checkpoint fault: f = NAND(A, A) + A on three branches.
+RD, brd = explicit_fanout([("g", "NAND", ["A", "A"]), ("f", "OR", ["g", "A"])], ["A"])
+TR = {(l, v): set(cl.tests_for(RD, ["A"], "f", l, v)) for l in cl.lines(RD, ["A"]) for v in (0, 1)}
+cp_det = [fl for fl in TR if fl[0] in {"A"} | set(brd) and TR[fl]]
+Tset = set().union(*(TR[fl] for fl in cp_det))
+assert all(TR[fl] & Tset for fl in cp_det) and TR[("g", 0)] and not TR[("g", 0)] & Tset
+has("detects every single stuck-at fault on the checkpoints detects every single stuck-at fault in the")
 
 # ── Practice ─────────────────────────────────────────────────────────────────
 P = cl.practice()
@@ -274,4 +410,5 @@ bl.assert_mcq(q, "A")
 
 assert len([k for k in P if k.startswith("nx-dl-04-06-")]) == 10
 print("l4_06_faults: fault counts (3^N − 1 by enumeration), test condition and undetectable ⇔ redundant on every line of 8 circuits, "
-      "worked tests, n + 1 test sets (n = 2…5), 3 PYQ keys and 10 practice answers OK")
+      "worked tests, multi-output condition, dominance, coverage, checkpoint theorem (150 random circuits + 2 counterexamples), "
+      "n + 1 test sets (n = 2…5), 3 PYQ keys and 10 practice answers OK")
