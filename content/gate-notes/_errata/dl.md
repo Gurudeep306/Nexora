@@ -205,6 +205,18 @@ PYQ pipeline, not a set error).
   - Set-level slips noticed while writing Chapter 3 (lessons teach the correct versions): B 113's "the
     minimal SOP is unique" (section 2), C 238's unmerged 5-variable pair (section 2), C 267 / 271 / 273
     (section 4b).
+- **Chapter 4 key audit (2026-10-18):** all 38 Chapter 4 keys (`dl/combinational` 35, `dl/minimization` 1,
+  `dl/gates` 2) are re-derived by enumeration over every input row in `_checks/dl/l4_01 … l4_06` (`comblib`
+  netlists with MUX, decoder, enable and stuck-at fault nodes; minimum AND/OR/NOT gate search; ROM and PLA
+  sizing). None is wrong.
+  - `cse-2001-b-58-b` (**flag cleared**): the scan (`GATE2001.pdf` p. 8, Q58(b)) rendered at 600 dpi shows the
+    top labels as e₈ / b₈, so the block is weight-labelled and $b_4$ is the weight-4 BCD bit. Its minimal POS
+    has 7 literals and three equally minimal forms; the bank's $(\bar e_4 + e_2)(\bar e_4 + e_1)(e_4 + \bar e_2 + \bar e_1)$
+    is one. `needsReview` cleared and the note updated through `src/gate/fixes/cse-2001.json`.
+  - `cse-2002-a-27`: the scan (`GATE2002.pdf` p. 3, Q27) matches the bank's wiring (x → I0, I1; y → I2;
+    y′ → I3 and A1; z → A0; z′ → EN); with an active-high enable $f = xy\bar z$, key (A).
+  - Interpretations kept: `cse-1992-b-4-b` (output codes not given; A → 11, B → 10, C → 01 assumed, flag
+    kept), `cse-2000-b-9-b` ("one two-input gate" read as an OR; the 2000 paper is not in `GATE_PYQ/`).
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,
