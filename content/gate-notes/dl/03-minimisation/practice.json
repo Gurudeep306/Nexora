@@ -1292,5 +1292,368 @@
    "vem-shannon"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "What is the literal count of the minimal product-of-sums form of $f(A, B, C) = \\Sigma m(1, 3, 5, 6, 7)$?",
+  "answer": 4,
+  "solution": [
+   "The 0s are $m_0, m_2, m_4$.",
+   "$m_0, m_2$ ($A = 0, C = 0$) give $(A + C)$; $m_0, m_4$ ($B = 0, C = 0$) give $(B + C)$.",
+   "$f = (A + C)(B + C)$: 4 literals. (The minimal SOP, $C + AB$, has only 3.)"
+  ],
+  "concept": "The POS cost of f is the SOP cost of f′; it can differ from the SOP cost of f.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "3 is the SOP literal count ($C + AB$)."
+   },
+   {
+    "answer": 6,
+    "why": "Three separate pair factors are not needed: $m_0$ may be shared by both 0-loops."
+   }
+  ],
+  "blocks": [
+   "sop-vs-pos",
+   "min-literal-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q02",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "For $f(A, B, C, D) = \\Sigma m(0, 1, 4, 5, 6, 7, 14, 15)$, what are the minimum literal counts (SOP, POS)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "(4, 6)"
+   },
+   {
+    "l": "B",
+    "t": "(4, 4)"
+   },
+   {
+    "l": "C",
+    "t": "(6, 4)"
+   },
+   {
+    "l": "D",
+    "t": "(3, 4)"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "SOP: $m_0, m_1, m_4, m_5$ form $A'C'$; $m_6, m_7, m_{14}, m_{15}$ form $BC$. $f = A'C' + BC$: 4 literals.",
+   "POS: the 0s are 2, 3, 8, 9, 10, 11, 12, 13. $m_2, m_3, m_{10}, m_{11}$ ($B = 0$, $C = 1$) give $(B + C')$; $m_8$–$m_{13}$ with $A = 1, C = 0$ give $(A' + C)$.",
+   "$f = (B + C')(A' + C)$: 4 literals."
+  ],
+  "concept": "Find the SOP and POS minima separately by looping 1s and 0s.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "The POS needs only two quads of 0s, not three factors."
+   },
+   {
+    "answer": "D",
+    "why": "No single literal covers four of the 1s here, so the SOP cannot have 3 literals."
+   }
+  ],
+  "blocks": [
+   "min-literal-count",
+   "sop-vs-pos",
+   "cost-measures"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Inputs and their complements are available. What is the minimum number of 2-input NAND gates needed to implement $f = AB + C'D$?",
+  "answer": 3,
+  "solution": [
+   "NAND–NAND from the SOP: NAND($A$, $B$), NAND($C'$, $D$) and an output NAND of the two.",
+   "$\\overline{\\overline{AB}\\cdot\\overline{C'D}} = AB + C'D$ by De Morgan.",
+   "Two gates cannot work (an exhaustive search over every 2-gate circuit finds none), so the minimum is 3."
+  ],
+  "concept": "A minimal SOP gives a NAND–NAND circuit: one NAND per term plus an output NAND.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "With complements available, $C'$ is free: no inverter is needed."
+   },
+   {
+    "answer": 2,
+    "why": "The OR of two products needs a third gate to combine them."
+   }
+  ],
+  "blocks": [
+   "nand-nand-min",
+   "complements-available",
+   "min-gate-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Inputs and their complements are available. What is the minimum number of 2-input NOR gates needed to implement $f = (A + B')(C + D)$?",
+  "answer": 3,
+  "solution": [
+   "NOR–NOR from the POS: NOR($A$, $B'$) $= \\overline{A + B'}$ and NOR($C$, $D$) $= \\overline{C + D}$.",
+   "An output NOR gives $\\overline{\\overline{A + B'} + \\overline{C + D}} = (A + B')(C + D)$.",
+   "No 2-gate circuit computes $f$ (exhaustive search): 3 is the minimum."
+  ],
+  "concept": "A minimal POS gives a NOR–NOR circuit.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "That is the count with NAND gates (or with an inverter for $B'$)."
+   },
+   {
+    "answer": 5,
+    "why": "Converting gate by gate with extra inverters overcounts."
+   }
+  ],
+  "blocks": [
+   "nor-nor-min",
+   "min-gate-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "The cover $A'B + BC' + AC$ implements a function of $A, B, C$ as a two-level AND–OR circuit. For how many pairs of adjacent 1-cells can a single-input change cause a static-1 hazard?",
+  "answer": 2,
+  "solution": [
+   "$A'B = \\{2, 3\\}$, $BC' = \\{2, 6\\}$, $AC = \\{5, 7\\}$, so $f = \\Sigma(2, 3, 5, 6, 7)$.",
+   "Adjacent 1-pairs: 2–3, 2–6, 3–7, 5–7, 6–7.",
+   "2–3, 2–6 and 5–7 each lie inside one term; 3–7 and 6–7 do not. So 2 hazardous pairs (fix: add $BC$ for 3–7 and $AB$ for 6–7)."
+  ],
+  "concept": "Each pair of adjacent 1-cells that no single term contains is a potential static-1 hazard.",
+  "common_wrong": [
+   {
+    "answer": 1,
+    "why": "Both 3–7 and 6–7 are split between terms."
+   },
+   {
+    "answer": 5,
+    "why": "Only pairs that lie in no common term are hazards; three pairs are protected."
+   }
+  ],
+  "blocks": [
+   "hazard-adjacent",
+   "static-hazard-def"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Which of the following covers of $f(A, B, C) = \\Sigma m(3, 4, 5, 7)$ is free of static-1 hazards for single-input changes?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$AB' + BC$"
+   },
+   {
+    "l": "B",
+    "t": "$AB' + A'BC + ABC$"
+   },
+   {
+    "l": "C",
+    "t": "$AB' + BC + AC$"
+   },
+   {
+    "l": "D",
+    "t": "$AB'C' + AC + BC$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Adjacent 1-pairs: 4–5, 3–7, 5–7.",
+   "(A): 5–7 is in no term. (B): 3–7 and 5–7 are split. (D): 4–5 is split ($AB'C'$ has only 4; $AC$ has 5).",
+   "(C): $AB'$ holds 4–5, $BC$ holds 3–7, $AC$ holds 5–7. Hazard-free."
+  ],
+  "concept": "Hazard-free SOP: every adjacent pair of 1-cells inside one term.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "It is the minimal SOP, but minimal does not mean hazard-free: 5–7 is split."
+   },
+   {
+    "answer": "D",
+    "why": "It covers 3–7 and 5–7, but the pair 4–5 is split between $AB'C'$ and $AC$."
+   }
+  ],
+  "blocks": [
+   "hazard-adjacent",
+   "hazard-fix"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q07",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "To remove the static-1 hazard of $f = xy' + yz$, which term should be added?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$y'z$"
+   },
+   {
+    "l": "B",
+    "t": "$xy$"
+   },
+   {
+    "l": "C",
+    "t": "$xz$"
+   },
+   {
+    "l": "D",
+    "t": "$x'z$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "The hazard occurs when $y$ changes with the other two terms' remaining literals at 1: $x = 1$, $z = 1$.",
+   "The consensus of $xy'$ and $yz$ (on $y$) is $xz$, which is 1 throughout that change.",
+   "$xy' + yz + xz = xy' + yz$ logically, so the function is unchanged."
+  ],
+  "concept": "The consensus term bridges the two loops that share an adjacent pair of 1s.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "$xy$ is not an implicant of $f$ ($xyz'$ is a 0): adding it changes the function."
+   },
+   {
+    "answer": "A",
+    "why": "$y'z$ includes $x'y'z$, a 0 of $f$."
+   }
+  ],
+  "blocks": [
+   "hazard-fix"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q08",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Three outputs of $A, B, C$ are built together as AND–OR circuits, sharing AND gates where possible: $f_1 = \\Sigma(2, 3, 7)$, $f_2 = \\Sigma(1, 3, 5)$, $f_3 = \\Sigma(3, 5, 7)$. What is the minimum number of AND gates?",
+  "answer": 4,
+  "solution": [
+   "Separately: $f_1 = A'B + BC$, $f_2 = A'C + B'C$, $f_3 = BC + AC$: 6 AND gates.",
+   "Shared: $f_1 = A'B + BC$, $f_2 = A'C + AB'C$, $f_3 = BC + AB'C$. The terms are $A'B$, $BC$, $A'C$, $AB'C$: 4 AND gates.",
+   "An exhaustive search over all sets of shared product terms finds no cover with 3 AND gates."
+  ],
+  "concept": "In multi-output design a non-prime term ($AB'C$) can be worth it if several outputs use it.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "That builds each output's own minimal SOP without sharing."
+   },
+   {
+    "answer": 5,
+    "why": "Sharing only $BC$ saves one gate; replacing $B'C$ and $AC$ by the shared minterm $AB'C$ saves another."
+   }
+  ],
+  "blocks": [
+   "multi-output"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "$f = AB' + A'C + BC'$ is implemented as a two-level NAND–NAND circuit (complements available, gates of any fan-in). How many gate inputs does the circuit have in total?",
+  "answer": 9,
+  "solution": [
+   "First level: one 2-input NAND per term: $3 \\times 2 = 6$ inputs.",
+   "Second level: one 3-input NAND combining them: 3 inputs.",
+   "Total $6 + 3 = 9$ gate inputs (4 gates)."
+  ],
+  "concept": "Gate inputs = literals in the first level + terms entering the output gate.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "The output gate's three inputs count too."
+   },
+   {
+    "answer": 4,
+    "why": "That is the number of gates, not of gate inputs."
+   }
+  ],
+  "blocks": [
+   "cost-measures",
+   "nand-nand-min"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-03-04-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about static hazards in two-level circuits are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "Adding a consensus term to an SOP never changes the function it computes."
+   },
+   {
+    "l": "B",
+    "t": "A minimal SOP is always free of static-1 hazards."
+   },
+   {
+    "l": "C",
+    "t": "A two-level OR–AND (POS) circuit can have a static-0 hazard."
+   },
+   {
+    "l": "D",
+    "t": "A function whose 1-cells are pairwise non-adjacent (such as parity) can still have a static-1 hazard in its minimal SOP."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "(A) True: $xy + x'z + yz = xy + x'z$ (the consensus theorem).",
+   "(B) False: $AB + A'C$ is minimal and glitches when $A$ changes with $B = C = 1$.",
+   "(C) True: dually, adjacent 0-cells in different sum terms give a momentary 1.",
+   "(D) False: a static-1 hazard needs two adjacent 1-cells (a single change from one 1 to another); with no adjacent 1s every single change leaves the 1-set."
+  ],
+  "concept": "Hazards come from adjacent 1-cells (or 0-cells) in different terms; the consensus term fixes them without changing the function.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Minimisation removes consensus terms, which is exactly what creates hazards."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "POS circuits have the dual problem: static-0 hazards."
+   }
+  ],
+  "blocks": [
+   "static-hazard-def",
+   "hazard-fix",
+   "static-0"
+  ],
+  "source": "nexora"
  }
 ]

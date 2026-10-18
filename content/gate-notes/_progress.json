@@ -73,7 +73,7 @@
             "kmaps": "draft",
             "prime-implicants": "draft",
             "tabular-method": "draft",
-            "two-level-implementation": "pending"
+            "two-level-implementation": "draft"
           },
           "live_lab": "K-map Solver (:::lab kmap-solver: map, Quine–McCluskey)"
         },

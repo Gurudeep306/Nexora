@@ -827,6 +827,66 @@ SOLUTIONS["cse-2006-cs-38"] = {
 }
 
 
+XYZW = list("xyzw")
+o03, d03 = ml.from_map(["X101", "01X0", "1XX0", "X00X"], "xy", "zw", XYZW)
+SOLUTIONS["cse-2003-cs-45"] = {
+    "approach": "Concept tested: **minimum literal counts of SOP and POS with don't-cares**. Minimise the 1s (SOP) and the 0s (POS) separately, each using the Xs its own way, and count literals. The true minima are (9, 8), which is not offered; the official key is (C) (9, 10).",
+    "concepts": ["Literal count", "Minimal SOP", "Minimal POS", "Don't-care conditions"],
+    "given": "Rows $xy$, columns $zw$. Row 00: X 1 0 1; row 01: 0 1 X 0; row 11: 1 X X 0; row 10: X 0 0 X.",
+    "steps": [
+        {"title": "Read the map", "body": "Over $(x, y, z, w)$: 1s at $m_1, m_2, m_5, m_{12}$; Xs at $m_0, m_7, m_8, m_{10}, m_{13}, m_{15}$; 0s at $m_3, m_4, m_6, m_9, m_{11}, m_{14}$.", "scene": {"groups": []}},
+        {"title": "Minimal SOP", "body": "$m_2$: the corners with $X_0, X_8, X_{10}$ give $\\overline{y}\\,\\overline{w}$ (2 literals). $m_1, m_5$: the pair $\\overline{x}\\,\\overline{z}w$ (3). $m_{12}$: a pair with $X_8$ ($x\\overline{z}\\,\\overline{w}$) or $X_{13}$ ($xy\\overline{z}$) (3). No 1 except $m_2$ can be in a quad, so the SOP needs $2 + 3 + 3 = 8$ literals.", "scene": {"groups": [grp("y'w'", XYZW, "accent"), grp("x'z'w", XYZW, "success"), grp("xz'w'", XYZW, "warning")]}},
+        {"title": "Minimal POS", "body": "0-quads using the Xs: $(\\overline{z} + \\overline{w})$ (column $zw = 11$: $m_3, X_7, X_{15}, m_{11}$), $(\\overline{y} + \\overline{z})$ ($m_6, X_7, m_{14}, X_{15}$), $(\\overline{x} + \\overline{w})$ ($m_9, m_{11}, X_{13}, X_{15}$), and $m_4$ needs a 3-literal factor such as $(x + z + w)$ (with $X_0$). Total $2 + 2 + 2 + 3 = 9$."},
+        {"title": "Compare with the options", "body": "True minima: (POS, SOP) = (9, 8). No option is (9, 8). Options (B) (9, 13) and (C) (9, 10) have the right POS count; (C) is the official key (its SOP figure of 10 is not the minimum, but it is the answer that was given credit)."},
+    ],
+    "answer": {"value": "True minima (9, 8); official key **(C) (9, 10)**", "choice": ["C"], "matchesKey": True},
+    "optionAnalysis": [
+        opt("A", False, "(11, 9): the POS minimum is 9, not 11 (the 0s need three 2-literal quads and one 3-literal term)."),
+        opt("B", False, "(9, 13): the POS count is right, but an SOP of 13 literals is far from minimal (8)."),
+        opt("C", True, "Official key. The POS count 9 is correct; the true SOP minimum is 8, so strictly no option is exact."),
+        opt("D", False, "(11, 11): both counts are too high."),
+    ],
+    "shortcut": "Count the cells that can only get small loops: in the SOP, $m_1$/$m_5$ and $m_{12}$ need 3-literal pairs and $m_2$ a 2-literal quad, so 8 is a lower bound and is reached.",
+    "pitfalls": ["Fixing the don't-cares to the SOP's choices before finding the POS (the POS here uses $X_7, X_{13}, X_{15}$ as 0s, which the SOP never touches).", "Taking the key's 10 as the true SOP minimum: $\\overline{y}\\,\\overline{w} + \\overline{x}\\,\\overline{z}w + x\\overline{z}\\,\\overline{w}$ has 8 literals and implements the map."],
+    "verification": "Petrick's method with the don't-cares gives minimal SOPs of 8 literals and minimal POSs of 9 (both by exhaustive cover search in l3_04_two_level.py); the paper scan shows the same map.",
+    "animation": km(XYZW, o03, d03, title="Rows xy, columns zw (as printed)"),
+}
+
+DCBA = list("dcba")
+o17, d17 = ml.from_map(["0XX0", "100X", "1001", "0XX0"], "dc", "ba", DCBA)
+SOLUTIONS["cse-2017-1-cs-21"] = {
+    "approach": "Concept tested: **minimise fully with the don't-cares, then count gates**. The map collapses to a single 2-literal product, and with complements available that is one NOR gate.",
+    "concepts": ["Don't-care conditions", "NOR implementation", "Complements available"],
+    "given": "Rows $dc$, columns $ba$. Row 00: 0 X X 0; row 01: 1 0 0 X; row 11: 1 0 0 1; row 10: 0 X X 0.",
+    "steps": [
+        {"title": "Read the 1s", "body": "In $(a, b, c, d)$: row $dc = 01$, column $ba = 00$ is $m_2$; row $dc = 11$, columns $ba = 00$ and $10$ are $m_3$ and $m_7$; the X at row 01, column 10 is $m_6$. All four have $a = 0$ and $c = 1$.", "scene": {"groups": []}},
+        {"title": "One loop", "body": "Rows $dc = 01, 11$ ($c = 1$) and columns $ba = 00, 10$ ($a = 0$): $m_2, m_3, X_6, m_7$ is the quad $\\overline{a}c$.", "scene": {"groups": [grp("a'c", DCBA, "accent")]}},
+        {"title": "Gates", "body": "$\\overline{a}c = \\overline{a + \\overline{c}}$ = NOR($a$, $\\overline{c}$). With $\\overline{c}$ available this is **1** gate; 0 gates is impossible because $f$ is not a single literal."},
+    ],
+    "answer": {"value": "**1** NOR gate: $f = \\overline{a}c = \\text{NOR}(a, \\overline{c})$", "number": 1, "matchesKey": True},
+    "shortcut": "If the map loops into a single product of two literals, one 2-input NOR (or NAND for a sum of two literals) does it when complements are available.",
+    "pitfalls": ["Ignoring the don't-cares and building $\\overline{a}c\\,\\overline{d} + \\overline{a}bc$-style terms with several gates.", "Reading the axes as $ab$/$cd$: the map's labels are $ba$ on the columns and $dc$ on the rows."],
+    "verification": "An exhaustive search over 1-gate NOR circuits with all literals available finds NOR($a$, $\\overline{c}$), which agrees with the map on every care cell.",
+    "animation": km(DCBA, o17, d17, title="Rows dc, columns ba (as printed)"),
+}
+
+SOLUTIONS["cse-2019-cs-50"] = {
+    "approach": "Concept tested: **minimum NOR count**. The function is $\\overline{B \\oplus D}$; its minimal POS $(B + \\overline{D})(\\overline{B} + D)$ becomes NOR–NOR with 3 gates, and 2 gates cannot do it.",
+    "concepts": ["Minimal POS", "NOR–NOR", "XNOR pattern"],
+    "given": "$f(A, B, C, D) = \\Sigma(0, 2, 5, 7, 8, 10, 13, 15)$, complements available, 2-input NOR gates.",
+    "steps": [
+        {"title": "Minimise", "body": "Corners $\\overline{B}\\,\\overline{D}$ and centre $BD$: $f = \\overline{B}\\,\\overline{D} + BD = \\overline{B \\oplus D}$; as a POS, $f = (B + \\overline{D})(\\overline{B} + D)$.", "scene": {"groups": [grp("B'D'", ABCD, "accent"), grp("BD", ABCD, "success")]}},
+        {"title": "NOR–NOR", "body": "$G_1 = \\text{NOR}(B, \\overline{D}) = \\overline{B + \\overline{D}}$, $G_2 = \\text{NOR}(\\overline{B}, D)$, $f = \\text{NOR}(G_1, G_2) = (B + \\overline{D})(\\overline{B} + D)$: 3 gates."},
+        {"title": "Why not fewer", "body": "One gate gives NOR of two literals, a single product of two literals (4 minterms), but $f$ has 8. With two gates the output is NOR($x$, $y$) where one input is a literal: that forces $f = 0$ whenever that literal is 1, so $f$ would lie inside one half of the map; it does not ($f$ has 1s on both sides of every variable). And NOR($G_1$, $G_1$) is an OR of two literals, with 12 minterms. So 3 is the minimum (an exhaustive search agrees)."},
+    ],
+    "answer": {"value": "**3** NOR gates", "number": 3, "matchesKey": True},
+    "shortcut": "XOR and XNOR of two variables need 3 two-input NANDs or NORs when complements are free (4 or 5 without).",
+    "pitfalls": ["Counting 5 or 4 from the textbook XNOR-from-NOR circuit, which assumes no complemented inputs.", "Building the SOP $\\overline{B}\\,\\overline{D} + BD$ with NORs gate by gate (extra inverters)."],
+    "verification": "Exhaustive search over all circuits of up to 3 two-input NOR gates with the eight literals as inputs: no 1- or 2-gate circuit computes $f$; 3 gates do.",
+    "animation": km(ABCD, [0, 2, 5, 7, 8, 10, 13, 15]),
+}
+
+
 def write():
     bank = {q["id"]: q for q in json.loads((ROOT / "src" / "gate" / "questions.json").read_text())["questions"]}
     by_paper = {}
