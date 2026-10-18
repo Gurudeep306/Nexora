@@ -1798,23 +1798,41 @@
       "verification": "$(DE5)_{16} = 13\\cdot256 + 14\\cdot16 + 5 = 3557$ and $3557 - 4096 = -539$."
     },
     "cse-2001-a-36": {
-      "approach": "Apply $ac' + bc$ to each mux in turn.",
+      "approach": "Concept tested: **a cascade of two 2:1 MUXes** through a data input. With output $ac' + bc$, a MUX passes $a$ when $c = 0$ and $b$ when $c = 1$. Work inside out: the first MUX with constants is an inverter.",
       "concepts": [
-        "Multiplexer",
-        "Boolean algebra"
+        "2:1 MUX",
+        "MUX cascade",
+        "XNOR"
       ],
+      "given": "MUX 1: $a = 1$, $b = 0$, $c = x_1$, output $g$. MUX 2: $a = g$, $b = x_1$, $c = x_2$, output $f$.",
       "steps": [
         {
-          "title": "First mux",
-          "body": "$a = 1$, $b = 0$, $c = x_1$: $g = 1\\cdot x_1' + 0\\cdot x_1 = x_1'$."
+          "title": "First MUX",
+          "body": "$g = 1 \\cdot x_1' + 0 \\cdot x_1 = x_1'$: a 2:1 MUX with constants 1, 0 on its data inputs is a NOT gate."
         },
         {
-          "title": "Second mux",
-          "body": "$a = g$, $b = x_1$, $c = x_2$: $f = g x_2' + x_1 x_2 = x_1'x_2' + x_1x_2$ (XNOR)."
+          "title": "Second MUX",
+          "body": "$f = g\\,x_2' + x_1 x_2 = x_1' x_2' + x_1 x_2$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Recognise it",
+          "body": "$f = 1$ exactly when $x_1 = x_2$: the XNOR $x_1 x_2 + x_1' x_2'$."
         }
       ],
       "answer": {
-        "value": "$f = x_1x_2 + x_1'x_2'$ — option (C)",
+        "value": "(C) $f = x_1 x_2 + x_1' x_2'$",
         "choice": [
           "C"
         ],
@@ -1824,28 +1842,67 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "At $x_1 = x_2 = 1$ it gives 1 (ok), but at $x_1 = 0, x_2 = 1$ it gives 1 while $f = 0$."
+          "reason": "$x_1' + x_2$ is 1 at $x_1 = 0, x_2 = 1$, where MUX 2 passes $b = x_1 = 0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "That is XOR, the complement of $f$."
+          "reason": "$x_1' x_2 + x_1 x_2'$ is the XOR, the complement of the true output."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "XNOR, as derived."
+          "reason": "Inside out: $g = x_1'$, $f = x_1' x_2' + x_1 x_2$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "At $x_1 = 1, x_2 = 0$ it gives 1 while $f = 0$."
+          "reason": "$x_1 + x_2'$ is 1 at $x_1 = 1, x_2 = 0$, where MUX 2 passes $g = x_1' = 0$."
         }
       ],
+      "shortcut": "$c = x_2$ selects between $x_1'$ (for $x_2 = 0$) and $x_1$ (for $x_2 = 1$): that is $x_1 \\odot x_2$ at a glance.",
       "pitfalls": [
-        "Assigning $a$ to $c = 1$ instead of $c = 0$."
+        "Using the usual $S'I_0 + SI_1$ labels with $a$ and $b$ swapped; the question defines the MUX by $ac' + bc$, so $a$ is the input for $c = 0$.",
+        "Taking $g = x_1$ (forgetting that the constants make an inverter)."
       ],
-      "verification": "Truth table $(x_1,x_2) = 00,01,10,11$ → $f = 1,0,0,1$."
+      "verification": "Rows $(x_1, x_2)$: 00 → $g = 1$ → 1; 01 → $x_1 = 0$; 10 → $g = 0$; 11 → $x_1 = 1$. Output 1, 0, 0, 1: XNOR.",
+      "animation": {
+        "kind": "table",
+        "title": "Two cascaded 2:1 MUXes",
+        "cols": [
+          "x1",
+          "x2",
+          "g",
+          "f"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2001-a-37": {
       "approach": "Read the next-state equations off the figure — $D_0 = Q_1 \\oplus Q_2$, $D_1 = Q_0$, $D_2 = Q_1$ — and step from state 1.",
@@ -3389,39 +3446,139 @@
       "verification": "Dual expression: $f = A'B' + A'C' + B'C'$ ('at most one 1'); its dual $(A' + B')(A' + C')(B' + C')$ expands back to $A'B' + A'C' + B'C'$."
     },
     "cse-2001-b-58-b": {
-      "approach": "Tabulate the 10 valid excess-3 codes (3–12) with the codes 0, 1, 2, 13, 14, 15 as don't-cares, then group the 0s of the $b_4$ column on a K-map.",
+      "approach": "Concept tested: **a code converter output as a minimal product of sums, using the unused excess-3 codes as don't-cares**. The figure labels the bits by weight ($e_8 e_4 e_2 e_1$, $b_8 b_4 b_2 b_1$), so $b_4$ is the BCD weight-4 bit; loop its 0s on the map.",
       "concepts": [
         "Excess-3 code",
-        "BCD",
-        "POS minimisation with don't-cares"
+        "Minimal POS",
+        "Don't-cares",
+        "Code converter"
       ],
+      "given": "Inputs $e_8 e_4 e_2 e_1$ carry digit $d$ as the code $d + 3$ (3–12). Unused codes 0, 1, 2, 13, 14, 15 are don't-cares. Output $b_4$ = weight-4 bit of $d$.",
       "steps": [
         {
-          "title": "Truth table",
-          "body": "Input $e_8e_4e_2e_1$ = digit + 3, output $b_8b_4b_2b_1$ = digit:\n\n| E (dec) | $e_8e_4e_2e_1$ | digit | $b_4$ |\n|---|---|---|---|\n| 3 | 0011 | 0 | 0 |\n| 4 | 0100 | 1 | 0 |\n| 5 | 0101 | 2 | 0 |\n| 6 | 0110 | 3 | 0 |\n| 7 | 0111 | 4 | 1 |\n| 8 | 1000 | 5 | 1 |\n| 9 | 1001 | 6 | 1 |\n| 10 | 1010 | 7 | 1 |\n| 11 | 1011 | 8 | 0 |\n| 12 | 1100 | 9 | 0 |\n\nDon't-cares: $0, 1, 2, 13, 14, 15$."
+          "title": "Where b₄ is 1",
+          "body": "$b_4 = 1$ for digits 4, 5, 6, 7, which arrive as codes 7, 8, 9, 10 (0111, 1000, 1001, 1010). The 0s are codes 3, 4, 5, 6, 11, 12; the Xs are 0, 1, 2, 13, 14, 15."
         },
         {
-          "title": "Group the zeros",
-          "body": "Zeros at $3,4,5,6,11,12$.\n- $\\{4,5,12,13\\}$: $e_4=1, e_2=0$ → $(\\bar e_4 + e_2)$\n- $\\{4,6,12,14\\}$: $e_4=1, e_1=0$ → $(\\bar e_4 + e_1)$\n- $\\{3,11\\}$: $e_4=0,e_2=1,e_1=1$ → $(e_4 + \\bar e_2 + \\bar e_1)$ (no quad: 7, 9, 10 are 1s)"
+          "title": "Loop the 0s: the e₄ = 0 pair",
+          "body": "Codes 3 (0011) and 11 (1011) form a pair with $e_4 = 0$, $e_2 = e_1 = 1$: the sum term $(e_4 + \\overline{e_2} + \\overline{e_1})$. It cannot grow: the quads around it contain code 7, or codes 9 and 10, which are 1s."
         },
         {
-          "title": "Minimal POS",
-          "body": "$$b_4 = (\\bar e_4 + e_2)(\\bar e_4 + e_1)(e_4 + \\bar e_2 + \\bar e_1)$$\nThree sum terms are necessary (3 cannot share a term with 4/5/6/12). Equivalently $b_4 = \\overline{e_4 \\oplus e_2e_1}$."
+          "title": "Loop the 0s: the e₄ = 1 quads",
+          "body": "Codes 4, 5, 12 with X13 form the quad $e_4 = 1, e_2 = 0$: $(\\overline{e_4} + e_2)$. Codes 4, 6, 12 with X14 form $e_4 = 1, e_1 = 0$: $(\\overline{e_4} + e_1)$. Every 0 is now covered."
         },
         {
-          "title": "If b4 means the MSB",
-          "body": "The scan's subscripts are blurred. If the outputs were labelled $b_4b_3b_2b_1$ with $b_4$ the MSB (digit 8, 9 ⇒ E = 11, 12), the same method gives $b_{4} = e_{4}(e_3 + e_2)(e_3 + e_1)$ with inputs $e_4e_3e_2e_1$ (zeros 3–10, don't-cares as above)."
+          "title": "Result and its ties",
+          "body": "$b_4 = (\\overline{e_4} + e_2)(\\overline{e_4} + e_1)(e_4 + \\overline{e_2} + \\overline{e_1})$: 7 literals. Two other covers also cost 7: the quad $(e_8 + e_1)$ (codes 0, 2, 4, 6) can replace $(\\overline{e_4} + e_1)$, or $(e_8 + e_2)$ (codes 0, 1, 4, 5) can replace $(\\overline{e_4} + e_2)$. All three are minimal."
+        },
+        {
+          "title": "If the labels were read as positions",
+          "body": "Some solutions read the labels as $e_4 e_3 e_2 e_1$ / $b_4 b_3 b_2 b_1$ with $b_4$ the MSB. Then $b_4$ is the BCD 8s bit, 1 only on codes 11 and 12, and its minimal POS is $e_4(e_3 + e_2)(e_3 + e_1)$ (5 literals). The scan shows weight labels (e8, b8 at the top), so the weight-4 answer above is the one asked."
         }
       ],
       "answer": {
-        "value": "$b_4 = (\\bar e_4 + e_2)(\\bar e_4 + e_1)(e_4 + \\bar e_2 + \\bar e_1)$ (weight-4 output; labels read as 8-4-2-1). If $b_4$ is instead the MSB (labels $e_4..e_1$): $b_4 = e_4(e_3+e_2)(e_3+e_1)$.",
+        "value": "$b_4 = (\\overline{e_4} + e_2)(\\overline{e_4} + e_1)(e_4 + \\overline{e_2} + \\overline{e_1})$ (7 literals; one of three equally minimal POS forms). Under the MSB reading of the labels: $b_4 = e_4(e_3 + e_2)(e_3 + e_1)$",
         "matchesKey": true
       },
+      "shortcut": "Subtracting 3 only moves codes 7–10 onto digits 4–7; on the map those four 1s straddle the $e_8$ boundary, so the 0s split into one 3-literal pair and two 2-literal quads.",
       "pitfalls": [
-        "Forgetting the six unused codes as don't-cares gives a much larger expression.",
-        "BCD bit $b_4$ is 1 for digits 4–7, i.e. excess-3 inputs 7–10."
+        "Forgetting codes 0, 1, 2 as don't-cares (only 13–15 are remembered by habit).",
+        "Treating $b_4$ as the BCD MSB when the figure labels are weights.",
+        "Fixing the Xs to the values a minimal SOP used before looping the 0s; the POS chooses its own Xs."
       ],
-      "verification": "Checked all 10 valid inputs against $\\overline{e_4 \\oplus e_2 e_1}$: E=7 → $e_4=1, e_2e_1=1$ → 1; E=8,9,10 → $e_4=0, e_2e_1=0$ → 1; E=3,11 → $e_4=0,e_2e_1=1$ → 0; E=4,5,6,12 → $e_4=1, e_2e_1=0$ → 0."
+      "verification": "Over the ten legal codes 3–12 the product is 1 exactly on 7, 8, 9, 10; an exhaustive POS search finds no cover with fewer than 7 literals and exactly three with 7 (l4_01_design.py).",
+      "animation": {
+        "kind": "table",
+        "title": "Excess-3 codes and b₄",
+        "cols": [
+          "code e₈e₄e₂e₁",
+          "digit",
+          "b₄"
+        ],
+        "rows": [
+          [
+            "0000",
+            "—",
+            "X"
+          ],
+          [
+            "0001",
+            "—",
+            "X"
+          ],
+          [
+            "0010",
+            "—",
+            "X"
+          ],
+          [
+            "0011",
+            "0",
+            "0"
+          ],
+          [
+            "0100",
+            "1",
+            "0"
+          ],
+          [
+            "0101",
+            "2",
+            "0"
+          ],
+          [
+            "0110",
+            "3",
+            "0"
+          ],
+          [
+            "0111",
+            "4",
+            "1"
+          ],
+          [
+            "1000",
+            "5",
+            "1"
+          ],
+          [
+            "1001",
+            "6",
+            "1"
+          ],
+          [
+            "1010",
+            "7",
+            "1"
+          ],
+          [
+            "1011",
+            "8",
+            "0"
+          ],
+          [
+            "1100",
+            "9",
+            "0"
+          ],
+          [
+            "1101",
+            "—",
+            "X"
+          ],
+          [
+            "1110",
+            "—",
+            "X"
+          ],
+          [
+            "1111",
+            "—",
+            "X"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2001-b-59-a": {
       "approach": "Mealy machine with two modes (copy / complement), each split by whether the last input already starts the switching pair. The bit that completes \"00\" is still copied; the bit that completes \"11\" is still complemented.",

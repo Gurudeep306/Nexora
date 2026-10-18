@@ -873,23 +873,48 @@
       "verification": "$-1925 \\times 8 = -15400$ lies in $-32768 \\dots 32767$."
     },
     "cse-2010-cs-9": {
-      "approach": "Write the MUX output as a sum over select combinations $(S_1S_0)=(PQ)$ and tabulate: output is $R$ when $P=Q$ and $\\overline R$ when $P\\ne Q$ — the 3-input parity function.",
+      "approach": "Concept tested: **reading a 4:1 MUX** with data $R, \\overline{R}, \\overline{R}, R$. Case-split on $PQ$: equal selects pass $R$, different selects pass $\\overline{R}$.",
       "concepts": [
-        "4:1 multiplexer",
-        "XOR / parity"
+        "Multiplexer equation",
+        "3-input XOR (parity)"
       ],
+      "given": "$S_1 = P$, $S_0 = Q$; $I_0 = R$, $I_1 = \\overline{R}$, $I_2 = \\overline{R}$, $I_3 = R$.",
       "steps": [
         {
           "title": "MUX equation",
-          "body": "$$f=\\overline P\\,\\overline Q\\,R+\\overline P Q\\,\\overline R+P\\overline Q\\,\\overline R+PQR$$"
+          "body": "$f = \\overline{P}\\,\\overline{Q}R + \\overline{P}Q\\overline{R} + P\\overline{Q}\\,\\overline{R} + PQR$."
         },
         {
-          "title": "Recognise XOR",
-          "body": "| P | Q | selected input | $f$ |\n|---|---|---|---|\n| 0 | 0 | $I_0=R$ | $R$ |\n| 0 | 1 | $I_1=\\overline R$ | $\\overline R$ |\n| 1 | 0 | $I_2=\\overline R$ | $\\overline R$ |\n| 1 | 1 | $I_3=R$ | $R$ |\n\n$f=R$ when $P\\oplus Q=0$ and $\\overline R$ when $P\\oplus Q=1$, i.e. $f=(P\\oplus Q)\\oplus R=P\\oplus Q\\oplus R$."
+          "title": "Read the rule",
+          "body": "$f = R$ when $P \\oplus Q = 0$ and $f = \\overline{R}$ when $P \\oplus Q = 1$: $f = (P \\oplus Q) \\oplus R$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Confirm with the 1s",
+          "body": "The MUX outputs 1 on rows 001, 010, 100 and 111, the rows of $(P, Q, R)$ with an odd number of 1s: odd parity."
         }
       ],
       "answer": {
-        "value": "$P\\oplus Q\\oplus R$",
+        "value": "(B) $P \\oplus Q \\oplus R$",
         "choice": [
           "B"
         ],
@@ -899,25 +924,90 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "XNOR would give $\\overline R$ at $PQ=00$, but input 0 is $R$."
+          "reason": "XNOR of three is the complement: 1 at $PQR = 000$, where the MUX passes $I_0 = R = 0$."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exactly the parity function (minterms 1, 2, 4, 7)."
+          "reason": "1 on the rows with an odd number of 1s: 001, 010, 100, 111."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "OR is 1 at $PQR=011$, but there $f=\\overline R=0$."
+          "reason": "$P + Q + R$ is 1 at 011, where the MUX passes $I_1 = \\overline{R} = 0$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "NOR is 1 only at 000, but $f(0,0,0)=R=0$."
+          "reason": "NOR of three is 1 only at 000, where the MUX outputs 0."
         }
       ],
-      "verification": "Minterms of $f$: 001, 010, 100, 111 — exactly the odd-weight inputs."
+      "shortcut": "Data $v, \\overline{v}, \\overline{v}, v$ on a 4:1 MUX is always $S_1 \\oplus S_0 \\oplus v$.",
+      "pitfalls": [
+        "Choosing XNOR (A) by mixing up which data input carries $R$ and which $\\overline{R}$."
+      ],
+      "verification": "Row 000 → $I_0 = R = 0$; row 001 → 1; row 011 → $I_1 = \\overline{R} = 0$; row 111 → $I_3 = R = 1$: odd parity.",
+      "animation": {
+        "kind": "table",
+        "title": "4:1 MUX with data R, R′, R′, R",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "f"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2010-cs-10": {
       "approach": "Count descendants of a node with exactly one child: itself plus its child's subtree. If every subtree size is odd, that sum is even — contradiction.",

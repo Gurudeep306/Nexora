@@ -343,28 +343,36 @@
       "verification": "Same reasoning as the NOR latch where 11 → 00 causes the race; for NAND the roles of 0 and 1 swap."
     },
     "it-2007-cs-8": {
-      "approach": "A 2:1 mux computes $Y=S\\cdot I_1+\\bar S\\cdot I_0$; evaluate each option on the two cascaded muxes.",
+      "approach": "Concept tested: **an AND gate from two cascaded 2:1 MUXes**. Try each option's wiring: evaluate MUX 1, then MUX 2, and compare with $ab$.",
       "concepts": [
-        "2:1 multiplexer",
-        "Boolean simplification"
+        "2:1 MUX as a gate",
+        "MUX cascade"
       ],
-      "given": "| Mux | $I_1$ | $I_0$ | Select |\n|---|---|---|---|\n| 1 | a | b | X1 |\n| 2 | mux-1 output | X2 | X3 |",
+      "given": "Mux 1: input 1 = $a$, input 0 = $b$, select $X_1$. Mux 2: input 1 = Mux 1, input 0 = $X_2$, select $X_3$.",
       "steps": [
         {
-          "title": "Output expression",
-          "body": "$M_1=X_1a+\\bar X_1 b$, and $F=X_3M_1+\\bar X_3X_2$."
+          "title": "Option (A): X1 = b",
+          "body": "Mux 1 = $b\\,a + \\overline{b}\\,b = ab$."
         },
         {
-          "title": "Option A",
-          "body": "$X_1=b$: $M_1=ba+\\bar b b=ab$. $X_3=a$, $X_2=0$: $F=a\\cdot ab+\\bar a\\cdot0=ab$. ✔"
+          "title": "Option (A): X2 = 0, X3 = a",
+          "body": "Mux 2 = $a \\cdot ab + \\overline{a} \\cdot 0 = ab$. ✓",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "Other options",
-          "body": "**B:** $M_1=ab$, $F=b\\cdot ab+\\bar b\\cdot1=ab+\\bar b\\ne ab$.\n\n**C:** $M_1=a\\cdot a+\\bar a b=a+b$, $F=1\\cdot(a+b)=a+b$.\n\n**D:** $M_1=a+b$, $F=b(a+b)+\\bar b\\cdot0=b$ (e.g. $a=0,b=1$ gives 1)."
+          "title": "The other options",
+          "body": "(B): Mux 1 $= ab$, Mux 2 $= b \\cdot ab + \\overline{b} \\cdot 1 = a + \\overline{b}$. (C): Mux 2 = Mux 1 $= a\\,a + \\overline{a}\\,b = a + b$. (D): Mux 1 $= a + b$, Mux 2 $= b(a + b) + 0 = b$."
         }
       ],
       "answer": {
-        "value": "X1 = b, X2 = 0, X3 = a",
+        "value": "(A) $X_1 = b$, $X_2 = 0$, $X_3 = a$",
         "choice": [
           "A"
         ],
@@ -374,28 +382,66 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Gives F = ab — correct."
+          "reason": "Mux 1 gives $ab$, and Mux 2 with select $a$ and 0 on input 0 passes it unchanged."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "F = ab + b̄: outputs 1 when b = 0."
+          "reason": "Gives $a + \\overline{b}$ (1 at $a = b = 0$)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "F = a + b (OR gate)."
+          "reason": "Gives $a + b$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "F = b(a + b) = b: outputs 1 for a = 0, b = 1."
+          "reason": "Gives $b$ (1 at $a = 0, b = 1$)."
         }
       ],
+      "shortcut": "AND = MUX(select = one variable; input 0 = 0, input 1 = the other). Mux 2 in (A) is exactly that with select $a$, and Mux 1 already gives $ab$ (any $m$ with $a\\cdot m = ab$ works).",
       "pitfalls": [
-        "Assuming option D works by symmetry: with X1 = a the first mux gives a + b, not ab."
+        "Forgetting that input 1 (not input 0) of each MUX is chosen when its select is 1."
       ],
-      "verification": "Truth table for A: (a,b) = 00→0, 01→0, 10→0, 11→1."
+      "verification": "All four $(a, b)$ rows: (A) outputs 0, 0, 0, 1.",
+      "animation": {
+        "kind": "table",
+        "title": "AND from two 2:1 MUXes",
+        "cols": [
+          "a",
+          "b",
+          "m",
+          "f"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "it-2007-cs-9": {
       "approach": "Disambiguating a grammar changes only how strings are parsed (one tree per string), not which strings are generated.",
@@ -3136,33 +3182,42 @@
       "verification": "Transfer: 250 bytes / (50000 bytes per 100 ms) = 0.5 ms."
     },
     "it-2007-cs-45": {
-      "approach": "A stuck-at-0 fault on T is detected only by an input that (1) drives T to 1 in the good circuit and (2) lets the value of T reach the output. Write the output in terms of T and check both conditions together.",
+      "approach": "Concept tested: **an undetectable stuck-at fault**. A test for $T$ s-a-0 must make $T = 1$ (activation) and make the NOR output depend on $T$ (propagation: the NOR's other input at 0). Here the inputs that activate the fault also block it, so no input detects it.",
       "concepts": [
-        "stuck-at fault",
-        "fault activation",
-        "fault propagation",
-        "NOR gate"
+        "Stuck-at fault",
+        "Activation",
+        "Propagation",
+        "Undetectable fault",
+        "Redundancy"
       ],
+      "given": "$n = \\overline{X_1X_2X_3}$ (3-input NAND), $o = n + X_4$ (OR), $T = X_3X_4$ (AND), output $f = \\overline{o + T}$ (NOR). Line $T$ is tied to ground: $T$ stuck-at-0.",
       "steps": [
         {
-          "title": "Output expression",
-          "body": "Let $N = \\overline{X_1X_2X_3}$ (the NAND) and $T = X_3X_4$ (the AND). The OR gate gives $N + X_4$, and the NOR gives\n$$F = \\overline{(N + X_4) + T}.$$"
-        },
-        {
           "title": "Activate the fault",
-          "body": "With $T$ grounded the faulty line is always 0. The good and faulty circuits can differ only if the good value of $T$ is 1, i.e. $X_3 = X_4 = 1$."
+          "body": "$T$ is stuck at 0, so we need $T = 1$ in the good circuit: $X_3 = X_4 = 1$.",
+          "scene": {
+            "caption": "Input 1111 activates the fault: T = 1 in the good circuit."
+          }
         },
         {
-          "title": "Propagate the fault",
-          "body": "For $F$ to depend on $T$, the other NOR input $N + X_4$ must be 0. That needs $X_4 = 0$, which contradicts activation ($X_4 = 1$). With $X_4 = 1$ the NOR has a 1 input, so $F = 0$ whatever $T$ is."
+          "title": "Try to propagate through the NOR",
+          "body": "The NOR's other input is $o$. A 1 is the controlling value of a NOR, so we need $o = 0$. But $o = n + X_4$, and activation already set $X_4 = 1$, so $o = 1$. The NOR outputs 0 whether $T$ is 1 or 0: the difference is blocked."
         },
         {
-          "title": "Conclusion",
-          "body": "No input vector both activates and propagates the fault, so the fault is undetectable and the answer is **None of the above**."
+          "title": "Confirm with the Boolean difference",
+          "body": "Force $T$: with $T = 0$, $f = \\overline{o}$; with $T = 1$, $f = 0$. So $\\partial f/\\partial T = \\overline{o} = X_1X_2X_3\\overline{X_4}$, which needs $X_4 = 0$, while activation needs $X_4 = 1$. No input satisfies both, so **no input detects the fault**."
+        },
+        {
+          "title": "Check the options",
+          "body": "On 0000, $T = X_3X_4 = 0$ already equals the stuck value, so the fault is not activated; $n = 1$, $o = 1$ and both circuits give $f = 0$. On 0111 and on 1111, $T = 1$ (activated) but $X_4 = 1$ makes $o = 1$, so good $f = \\overline{1 + 1} = 0$ and faulty $f = \\overline{1 + 0} = 0$. None of the three vectors gives different outputs."
+        },
+        {
+          "title": "Why the fault is invisible",
+          "body": "Tying $T$ to 0 gives $f = \\overline{o} = X_1X_2X_3\\overline{X_4}$, and the good circuit computes exactly the same function (whenever $T = 1$, $o$ is already 1). An undetectable fault always means a redundant line: the AND gate could be removed."
         }
       ],
       "answer": {
-        "value": "None of the above (the fault is undetectable)",
+        "value": "(D) None of the above: $T$ stuck-at-0 cannot be detected by any input.",
         "choice": [
           "D"
         ],
@@ -3172,30 +3227,105 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "0000: good $T = 0$, which equals the stuck value, so the fault is not activated. Both circuits give $F = 0$ because $N = 1$."
+          "reason": "0000 gives $T = 0$ in the good circuit, which equals the stuck value: the fault is not activated (both outputs 0)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "0111: $T = 1$ activates the fault, but $X_4 = 1$ forces the OR output to 1, so $F = 0$ in both circuits."
+          "reason": "0111 gives $T = 1$, but $X_4 = 1$ makes $o = 1$, which forces the NOR to 0 in both circuits."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "1111: $N = 0$, but $X_4 = 1$ still makes the OR output 1, so $F = 0$ with or without the fault."
+          "reason": "1111 activates the fault ($T = 1$), which is why it looks right, but $o = 1$ blocks the NOR: good and faulty outputs are both 0."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Activation needs $X_4 = 1$ and propagation needs $X_4 = 0$, so no test vector exists."
+          "reason": "Activation needs $X_4 = 1$ and propagation needs $X_4 = 0$; no input detects the fault."
         }
       ],
-      "shortcut": "$X_4$ feeds both $T$ (through the AND) and the other NOR input (through the OR). The fault needs $X_4 = 1$, and that same 1 masks it at the NOR.",
+      "shortcut": "Activation of $T = X_3X_4$ needs $X_4 = 1$; the same $X_4$ is an input of the OR that feeds the NOR, and $X_4 = 1$ forces the NOR to 0. Conflict, so 'none of the above'.",
       "pitfalls": [
-        "Choosing an input that makes T = 1 without checking that the change reaches the output.",
-        "The exact NAND inputs do not matter: the masking comes from X4 alone."
+        "Picking 1111 (or 0111) because it sets $T = 1$: activation alone is not a test; the difference must also reach the output.",
+        "Forgetting that $X_4$ drives both the AND and the OR, so the activating value also sets the side input.",
+        "Assuming that every fault has some test: undetectable faults exist exactly on redundant lines."
       ],
-      "verification": "Evaluated all three listed vectors in the good and faulty circuits: the outputs agree each time (F = 0)."
+      "verification": "Fault simulation over all 16 inputs: the good output and the output with $T \\equiv 0$ are both $X_1X_2X_3\\overline{X_4}$ (1 only on 1110), so they never differ.",
+      "animation": {
+        "kind": "circuit",
+        "title": "Input 1111: T is activated but blocked",
+        "inputs": [
+          {
+            "id": "X1",
+            "label": "X1",
+            "value": 1
+          },
+          {
+            "id": "X2",
+            "label": "X2",
+            "value": 1
+          },
+          {
+            "id": "X3",
+            "label": "X3",
+            "value": 1
+          },
+          {
+            "id": "X4",
+            "label": "X4",
+            "value": 1
+          }
+        ],
+        "gates": [
+          {
+            "id": "n",
+            "type": "NAND",
+            "in": [
+              "X1",
+              "X2",
+              "X3"
+            ],
+            "label": "n"
+          },
+          {
+            "id": "o",
+            "type": "OR",
+            "in": [
+              "n",
+              "X4"
+            ],
+            "label": "o"
+          },
+          {
+            "id": "T",
+            "type": "AND",
+            "in": [
+              "X3",
+              "X4"
+            ],
+            "label": "T"
+          },
+          {
+            "id": "f",
+            "type": "NOR",
+            "in": [
+              "o",
+              "T"
+            ],
+            "label": "f"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "f",
+            "label": "F"
+          }
+        ],
+        "showValues": true,
+        "caption": "T = 1 in the good circuit, but o = 1 holds the NOR at 0, with or without the fault."
+      }
     },
     "it-2007-cs-46": {
       "approach": "Read off what each grammar can generate: G1 switches from an x/z part to a y/z part with no way back, and G2 can only produce x through S → xB, after which B must emit y.",

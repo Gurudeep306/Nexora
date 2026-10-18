@@ -1088,29 +1088,98 @@
       "verification": "$4\\cdot256 + 5\\cdot16 + 14 = 1024 + 80 + 14 = 1118$ and $53/8 = 6.625$."
     },
     "cse-1993-ii-a-6-6": {
-      "approach": "A ROM truth table has one word per input combination and one output bit per product bit.",
+      "approach": "Concept tested: **sizing a ROM that stores a multiplication table**. The address is both 4-bit operands together, and each word holds the full product, whose width is the bit-length of the largest product.",
       "concepts": [
-        "ROM as combinational logic",
-        "Binary multiplication"
+        "ROM sizing",
+        "Multiplier ROM",
+        "Product width"
       ],
+      "given": "A ROM holds the truth table of a unit that multiplies two 4-bit numbers. Find $M$ (words) and $N$ (bits per word).",
       "steps": [
         {
-          "title": "Words (address lines)",
-          "body": "Inputs = two 4-bit numbers = $8$ address bits, so $M = 2^8 = 256$ words."
+          "title": "The address is both operands",
+          "body": "A truth table needs one row for every input combination. The inputs are $A_3A_2A_1A_0$ and $B_3B_2B_1B_0$: 8 bits in all, so the ROM address has 8 bits and the ROM has $2^8 = 256$ words. A ROM addressed by only one operand (16 words) could not tell $3 \\times 5$ from $3 \\times 7$.",
+          "scene": {
+            "reveal": 6
+          }
         },
         {
-          "title": "Bits per word",
-          "body": "Largest product: $15 \\times 15 = 225 < 2^8 = 256$, so the product needs $4+4 = 8$ bits. $N = 8$."
+          "title": "The width is the largest product",
+          "body": "Each word stores the product. The largest is $15 \\times 15 = 225 = 11100001_2$, which needs 8 bits, and no product can need more because $(2^4 - 1)^2 < 2^8$. So every word is 8 bits wide: the product of two $n$-bit numbers needs exactly $2n$ bits.",
+          "scene": {
+            "reveal": 6,
+            "hl": [
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Read off M and N",
+          "body": "$M = 2^8 = 256$ words and $N = 8$ bits, a $256 \\times 8$ ROM holding $256 \\times 8 = 2048$ bits.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "M = 256, N = 8",
+        "value": "$M = 256$, $N = 8$ (a $256 \\times 8$ ROM, 2048 bits)",
         "matchesKey": true
       },
+      "shortcut": "For an $n$-bit × $n$-bit multiplier: $2^{2n}$ words of $2n$ bits. With $n = 4$: $2^8 \\times 8$.",
       "pitfalls": [
-        "Using 16 words (only 4 address bits) or 16 output bits."
+        "Using one operand as the address: 16 words is far too few, since the ROM must hold a row for every pair of operands.",
+        "Giving the word the operand width (4 bits): products up to 225 need 8 bits.",
+        "Answering $2n + 1 = 9$ bits by analogy with addition: a product never reaches $2^{2n}$."
       ],
-      "verification": "$225 = (11100001)_2$ fits in 8 bits; $2^8$ combinations cover every operand pair."
+      "verification": "Rows of the stored table: address $0000\\,0000 \\to 00000000$, $0011\\,0101 \\to 00001111$ (3 × 5 = 15), $1111\\,1111 \\to 11100001$ (225). 256 addresses, 8-bit words.",
+      "animation": {
+        "kind": "table",
+        "title": "A ROM for a 4-bit × 4-bit multiplier",
+        "cols": [
+          "Quantity",
+          "Count",
+          "Why"
+        ],
+        "rows": [
+          [
+            "Address bits",
+            8,
+            "4 + 4 (both operands)"
+          ],
+          [
+            "Words",
+            256,
+            "2^8"
+          ],
+          [
+            "Bits per word",
+            8,
+            "largest product 225 has 8 bits"
+          ],
+          [
+            "Total bits",
+            2048,
+            "256 × 8"
+          ]
+        ],
+        "reveal": 0
+      }
     },
     "cse-1993-ii-a-6-7": {
       "approach": "Average rotational latency is half a revolution; one track passes under the head per revolution, so transfer rate = track capacity × revolutions per second.",
