@@ -6,7 +6,7 @@ title: "Stuck-at faults and test inputs"
 order: 6
 prerequisites: [gate-circuit-analysis]
 pyq_topics: [dl/combinational, dl/gates]
-est_minutes: 30
+est_minutes: 50
 difficulty: core
 status: draft
 needs_review: false
@@ -88,6 +88,14 @@ which is a different fault from a break before the split. Second, the faulty cir
 combinational circuit; it simply computes a different function, and testing is about finding an input on
 which the two functions differ.
 
+:::intuition{#fault-count-intuition title="Every line is a dial with three settings" depth="standard"}
+Picture each line of the circuit as a dial with three positions: **working**, **stuck at 0**, **stuck at
+1**. The good circuit is the one setting with every dial on "working". Any other setting of the dials
+is some fault. A single fault turns exactly one dial away from "working"; a multiple fault turns any
+number of them. Counting faults is then just counting dial settings, and the one trap is to forget
+that "working" is a position too.
+:::
+
 :::definition{#fault-count term="Counting faults" depth="standard"}
 For a circuit with $N$ lines:
 
@@ -129,9 +137,10 @@ $(1 + 2)^N = \sum_{k \ge 0} \binom{N}{k} 2^k$, minus the $k = 0$ term.
 :::trap{#trap-multiple-count title="2^N, 3^N or 2N?" depth="standard"}
 Three wrong answers are waiting in every fault-counting question.
 
-- $2^N$ (or $2^N - 1$): you gave each line only the two values 0 and 1 and forgot that a line in a
-  multiple fault may also be **healthy**. That counts the ways to stick *every* line, which are only the
-  faults with $k = N$.
+- $2^N$ or $2^N - 1$: you gave each line only the two values 0 and 1 and forgot that a line in a
+  multiple fault may also be **healthy**. $2^N$ counts only the faults in which every line is stuck
+  ($k = N$); $2^N - 1$ is the same two-state slip, minus a "healthy" case that two-state counting never
+  included.
 - $3^N$: you remembered the third state but forgot to remove the one assignment in which every line is
   healthy; that is the good circuit, not a fault.
 - $2N$: that is the count of **single** faults. If the question says "multiple stuck-at faults" (one
@@ -256,6 +265,9 @@ An input vector $t$ **detects** (is a **test** for) a fault $\alpha$ if the good
 $\alpha$ give different outputs on $t$: $f(t) \ne f_\alpha(t)$. A fault is **detectable** if some input
 detects it, and **undetectable** otherwise. A **test set** for a list of faults is a set of inputs that
 contains a test for every detectable fault in the list.
+
+With several outputs $f_1, \dots, f_r$, the tester watches all of them, so $t$ is a test if **any**
+output differs: $f_j(t) \ne f_{j,\alpha}(t)$ for at least one $j$.
 :::
 
 :::definition{#activation term="Activation (exciting the fault)" depth="standard"}
@@ -290,6 +302,14 @@ complement. In each case the gate's output is a one-to-one function of the path 
 going in is a difference coming out. Inverting gates turn $D$ into $\overline{D}$, which is still a
 difference: the tester sees a wrong output either way.
 
+:::intuition{#boolean-difference-intuition title="Wiggle the line and watch the output" depth="standard"}
+Grab line $p$ and wiggle it between 0 and 1 while the inputs stay put. If the output wiggles too, $p$
+is in charge on that row: whatever $p$ carries, the output reports it. If the output sits still, some
+other signal has already decided the answer and $p$ is invisible there. The Boolean difference marks
+exactly the rows where the output wiggles, so it is the precise version of "the path from $p$ is
+open".
+:::
+
 :::definition{#boolean-difference term="The Boolean difference" depth="standard"}
 Cut line $p$ and let $f_p(x, u)$ be the circuit output for input $x$ when $p$ is forced to the value $u$
 (if $p$ is a stem, all its branches see $u$). The **Boolean difference** of $f$ with respect to $p$ is
@@ -321,6 +341,10 @@ An input $t$ detects line $p$ stuck-at-$v$ **if and only if**
 2. $\dfrac{\partial f}{\partial p}(t) = 1$ (the line is observable at $t$).
 
 So the set of all tests for $p$ s-a-$v$ is $\{\, t : (p(t) \oplus v) \cdot \tfrac{\partial f}{\partial p}(t) = 1 \,\}$.
+
+**With several outputs** $f_1, \dots, f_r$: $t$ detects $p$ s-a-$v$ iff it activates the fault and
+$\dfrac{\partial f_j}{\partial p}(t) = 1$ for **at least one** output $f_j$. The tests are the union, over
+the outputs, of the single-output test sets.
 :::
 
 :::proof{#proof-test-condition of="the test condition" depth="standard"}
@@ -339,6 +363,10 @@ necessary and sufficient. Together: $t$ is a test iff both hold.
 
 Note that nothing in the argument assumes a single path from $p$ to the output: the Boolean difference
 accounts for every path at once, including paths that split and meet again.
+
+**Several outputs.** Run the same argument for each output $f_j$ separately: given activation, $f_j$
+differs iff $\partial f_j / \partial p\,(t) = 1$. The tester rejects the chip when any output differs,
+so $t$ is a test iff activation holds and at least one of these Boolean differences is 1.
 :::
 
 :::viz{#fault-viz spec="fault-injection" mode="animate" depth="standard"}
@@ -451,6 +479,32 @@ tests because activating it needs every AND input at 1.
 :::
 ::::
 
+::::example{#ex-test-multi level="gate" title="A fault seen at either of two outputs" depth="standard"}
+$p = \text{AND}(A, B)$ feeds two outputs: $f_1 = \text{OR}(p, C)$ and $f_2 = \text{AND}(p, D)$. Find every
+test for $p$ s-a-0, and compare with the tests you would get by watching $f_1$ alone.
+
+:::step{why="Activation does not depend on the outputs: p must be 1 in the good circuit."}
+$A = B = 1$.
+:::
+
+:::step{why="Each output has its own Boolean difference: the OR passes p when its side input is 0, the AND when its side input is 1."}
+$\partial f_1 / \partial p = \overline{C}$ and $\partial f_2 / \partial p = D$.
+:::
+
+:::step{why="The tester watches both outputs, so one open path is enough: OR the two conditions."}
+Tests: $A = B = 1$ and ($C = 0$ or $D = 1$): $ABCD = 1100, 1101, 1111$.
+:::
+
+:::step{why="Watching f₁ alone keeps only the rows with C = 0."}
+$f_1$ alone: $1100$ and $1101$. The row $1111$ is a test only because $f_2$ is watched too: there
+$f_1 = 1$ in both runs, but good $f_2 = 1$ and faulty $f_2 = 0$.
+:::
+
+:::answer
+$1100$, $1101$ and $1111$. With several outputs, the tests are the union of the tests seen at each output.
+:::
+::::
+
 ::::example{#ex-test-edge level="gate" title="Edge case: a fan-out stem that reaches the output by two paths" depth="standard"}
 $f = AB + \overline{A}C$, built as $g_1 = \text{AND}(A, B)$, $g_2 = \text{AND}(\overline{A}, C)$, $f = \text{OR}(g_1, g_2)$:
 the stem $A$ feeds $g_1$ directly and $g_2$ through an inverter. Find every test for the **stem** $A$ s-a-0.
@@ -480,6 +534,15 @@ reaches the OR along both paths and cancels. The branch fault is a different fau
 ($110$, $111$).
 :::
 ::::
+
+The animation replays the failed attempt on $111$. Follow the two copies of the fault effect: $D$ (good
+1, faulty 0) leaves the stem straight into $g_1$, while the inverter turns the other copy into
+$\overline{D}$ (good 0, faulty 1) on its way into $g_2$. At the OR gate one input falls as the other rises,
+so the output is 1 in both runs and the difference is gone. That is what "reconvergent fan-out" means in
+practice, and why the Boolean difference, not a single sensitised path, is the safe test.
+
+:::viz{#fault-reconvergent-viz spec="fault-reconvergent" mode="animate" depth="standard"}
+:::
 
 :::note{#recap-detect title="Recap" depth="quick"}
 A test makes the good and faulty outputs differ. It must set the line to the opposite of its stuck value
@@ -527,16 +590,18 @@ can detect the fault. Hence an irredundant circuit (one in which no line can be 
 changing $f$) has every single stuck-at fault detectable.
 :::
 
-Two consequences matter in practice. First, undetectable faults are a sign of wasted logic: removing them
-makes the circuit smaller **and** fully testable. Second, they are not harmless. A redundant line is
+Two consequences matter in practice. First, undetectable faults are a sign of wasted logic. Removing the
+redundant lines one at a time, and re-checking after each removal (one removal can change the status of
+another line: two lines can each be redundant without being removable together), ends with a smaller
+circuit in which every single fault is detectable. Second, they are not harmless. A redundant line is
 sometimes added on purpose, for example the consensus term that removes a static hazard, and an
 undetectable fault on it can sit there unnoticed and later mask another fault, or bring the hazard back.
 
 :::trap{#trap-none-of-above title="An option that activates the fault is not yet a test" depth="standard"}
 When a question asks "which input detects the fault?" and lists vectors plus "none of the above",
 examiners expect you to pick the vector that **activates** the fault, because that is the half of the work
-students remember. In IT 2007, $X_1X_2X_3X_4 = 1111$ does set $T = 1$ against its stuck value 0, so it
-looks right. But the same $X_4 = 1$ forces the OR gate to 1, and a 1 is the controlling value of the
+students remember. In IT 2007, both $X_1X_2X_3X_4 = 0111$ and $1111$ set $T = 1$ against its stuck value
+0, so they look right. But the same $X_4 = 1$ forces the OR gate to 1, and a 1 is the controlling value of the
 NOR that $T$ feeds: the NOR outputs 0 in both runs. Check propagation for every option, and if activation
 and propagation demand opposite values of one input, the answer really is "none of the above".
 :::
@@ -603,8 +668,8 @@ $\partial f / \partial T = \overline{o} = X_1X_2X_3\overline{X_4}$, which needs 
 $X_4 = 1$. The test set is empty.
 :::
 
-:::step{why="Check the options anyway: 0000 and 0111 do not activate (T = 0); 1111 activates but o = 1 blocks."}
-On $1111$: good $f = \overline{1 + 1} = 0$, faulty $f = \overline{1 + 0} = 0$. Same.
+:::step{why="Check the options anyway: 0000 does not activate (T = 0); 0111 and 1111 both activate (X3 = X4 = 1), but X4 = 1 makes o = 1, which blocks the NOR."}
+On $0111$ and $1111$: good $f = \overline{1 + 1} = 0$, faulty $f = \overline{1 + 0} = 0$. Same.
 :::
 
 :::answer
@@ -612,6 +677,14 @@ No input detects $T$ s-a-0: "none of the above". By the redundancy theorem, $T$ 
 $f = \overline{o} = X_1X_2X_3\overline{X_4}$ either way, and the AND gate is redundant.
 :::
 ::::
+
+The animation shows the conflict as it happens. To activate $T$ s-a-0 the input must put $X_3 = X_4 = 1$.
+Watch where $X_4$ goes: into the AND gate (that is what activates the fault) and also into the OR gate,
+where a 1 is the controlling value, so $o = 1$. The NOR now has a 1 on its other input and outputs 0
+whatever $T$ carries. One input bit both opens the fault and closes the only path out.
+
+:::viz{#fault-blocked-viz spec="fault-blocked" mode="animate" depth="standard"}
+:::
 
 ::::example{#ex-und-edge level="gate" title="Edge case: the consensus term added for a hazard" depth="standard"}
 $f = AB + \overline{A}C + BC$ is built as three AND gates into one OR gate (the term $BC$ was added to remove a
@@ -695,7 +768,8 @@ Take an $n$-input AND gate $f = x_1 x_2 \cdots x_n$ and its $2(n + 1)$ single fa
 2. **Any input s-a-0, or the output s-a-0.** They are equivalent ($f \equiv 0$) and are detected only where
    the good $f = 1$: the all-1s vector. It is not one of the walking zeros, so it is **forced too**.
 3. **Output s-a-1.** Detected by any vector with $f = 0$, for example any walking zero: nothing new is
-   needed.
+   needed. The real reason is **dominance** (defined just below): the output s-a-1 dominates every
+   input s-a-1, so the walking zeros already chosen in step 1 catch it.
 
 So every complete test set contains the $n$ walking zeros and the all-1s vector, and these $n + 1$ vectors
 are complete: the minimum is exactly $n + 1$. NAND has the same tests (an output inversion changes no
@@ -703,6 +777,134 @@ comparison). For OR and NOR, swap 0 and 1: the all-0s vector plus the $n$ "walki
 
 **Sanity check.** $n = 2$: $\{01, 10, 11\}$, 3 vectors; $n = 3$: $\{011, 101, 110, 111\}$, 4 vectors. An exhaustive
 search over all subsets of rows gives 3, 4 and 5 for $n = 2, 3, 4$, and finds no smaller set.
+:::
+
+:::intuition{#dominance-intuition title="A fault that rides along with another" depth="standard"}
+Equivalent faults are twins: exactly the same tests. Often the relation is one-sided. Take an AND
+gate. Every test for "input $x_1$ stuck at 1" ends with the gate's output flipping from 0 to 1 and that
+flip reaching the output. But "the gate's output stuck at 1" produces exactly that flip on that row. So
+whenever you catch the input fault you catch the output fault for free, while the output fault has
+other tests too. The output fault rides along: test for the input fault, and the output fault comes
+with it.
+:::
+
+:::definition{#fault-dominance term="Fault dominance" depth="standard"}
+Fault $\alpha$ **dominates** fault $\beta$ if every test for $\beta$ also detects $\alpha$:
+$\text{Tests}(\beta) \subseteq \text{Tests}(\alpha)$. Then a test set that detects $\beta$ detects $\alpha$
+too, so $\alpha$ can be dropped from the fault list (**dominance collapsing**), provided $\beta$ is
+detectable.
+
+| Gate | Dominance (for an input that feeds only this gate) |
+|:--|:--|
+| AND | output s-a-1 dominates every input s-a-1 |
+| NAND | output s-a-0 dominates every input s-a-1 |
+| OR | output s-a-0 dominates every input s-a-0 |
+| NOR | output s-a-1 dominates every input s-a-0 |
+
+**Why (AND):** a test for input $x_i$ s-a-1 has $x_i = 0$ and every other input 1, so the good output is
+0 and the faulty output is 1, and that change reaches the circuit output. The output stuck at 1 makes
+exactly the same change on the same row, and nothing else differs, so the row detects it too. The
+condition "feeds only this gate" matters: if $x_i$ also fanned out elsewhere, its fault could show
+through another path that the output fault does not touch. The other three rows follow by swapping 0
+and 1 (OR, NOR) or by the output inversion, which changes no comparison (NAND, NOR).
+
+**Example:** in the 1994 circuit, $f$ s-a-0 (tests $000, 010, 100, 110, 111$) dominates $C$ s-a-1 (tests
+$000, 010, 100$) and $p$ s-a-1 (test $111$).
+:::
+
+:::definition{#fault-coverage term="Fault coverage" depth="standard"}
+The **fault coverage** of a test set is the fraction of the faults in the list that it detects:
+
+$$\text{coverage} = \frac{\text{faults detected}}{\text{faults in the list}} \times 100\%.$$
+
+A complete test set for the single stuck-at faults of an irredundant circuit has 100% coverage. The
+number depends on the list: counted over all $2N$ single faults or over the collapsed classes, the same
+test set can give different percentages, so a coverage figure should say which list it uses.
+Undetectable faults can never be covered, which is one more reason to remove redundant lines.
+:::
+
+:::intuition{#checkpoint-intuition title="Guard the entrances, and the whole building is guarded" depth="standard"}
+Equivalence and dominance say that a gate's output faults are always "explained" by faults on its
+inputs. Now follow that backwards through the circuit: each gate's output fault is explained by an
+input fault, that input is the output of an earlier gate, and so on, until you reach lines that are
+not the outputs of anything you can collapse into: the primary inputs and the branches where a wire
+splits. Those are the **checkpoints**. If your tests catch every fault on the checkpoints, the chain of
+explanations says they catch everything.
+:::
+
+:::theorem{#checkpoint-theorem name="The checkpoint theorem" depth="standard"}
+In a combinational circuit of AND, OR, NAND, NOR and NOT gates, with every fan-out drawn as a stem and
+its branches, the **checkpoints** are the primary inputs and the fan-out branches. A test set that
+detects every single stuck-at fault on the checkpoints detects every single stuck-at fault in the
+circuit.
+:::
+
+:::proof{#proof-checkpoint of="the checkpoint theorem" depth="standard"}
+**Idea first:** every fault on a gate output is equivalent to, or dominates, a fault on one of that
+gate's inputs; following this backwards always ends at a checkpoint, and a test for that checkpoint
+fault is a test for the fault we started from.
+
+**A fact about the wiring.** Every input $y$ of a gate $G$ is either a checkpoint (a primary input, or a
+branch) or the output of an earlier gate that feeds $G$ and nothing else, because a line that feeds
+several gates does so through branches. Either way $y$ reaches the rest of the circuit **only through
+$G$'s output $z$**.
+
+**Claim.** For every line $\ell$ and value $v$ there is a checkpoint fault $c$ whose every test is a test
+for $\ell$ s-a-$v$: $\text{Tests}(c) \subseteq \text{Tests}(\ell \text{ s-a-} v)$. We prove it line by line
+in order from the inputs to the output. If $\ell$ is a checkpoint, take $c = \ell$ s-a-$v$. Otherwise
+$\ell$ is the output $z$ of a gate $G$ whose inputs $y_1, \dots, y_k$ come earlier, so the claim already
+holds for them. Take $G$ = AND:
+
+- **$z$ s-a-0.** The fault $y_1$ s-a-0 makes $z = 0$ on every row and changes nothing else (by the wiring
+  fact), so it is the same faulty circuit as $z$ s-a-0: the two faults have the same tests. The claim for
+  $y_1$ s-a-0 gives a checkpoint fault $c$, and its tests are tests for $z$ s-a-0.
+- **$z$ s-a-1.** Let $t$ be a test for $y_1$ s-a-1. The only way that fault can change the output is
+  through $z$, so at $t$ it flips $z$, from 0 to 1 (raising an AND input can only raise the output). The
+  fault $z$ s-a-1 puts the same 1 on $z$ at $t$ and leaves every line before $z$ alone, so everything
+  after $z$ behaves exactly as it did under $y_1$ s-a-1: the outputs differ, and $t$ is a test for $z$
+  s-a-1. This is dominance: $\text{Tests}(y_1\text{ s-a-}1) \subseteq \text{Tests}(z \text{ s-a-}1)$. The
+  claim for $y_1$ s-a-1 gives $c$ with $\text{Tests}(c) \subseteq \text{Tests}(y_1\text{ s-a-}1)$, and so
+  $\subseteq \text{Tests}(z \text{ s-a-}1)$.
+
+OR, NAND and NOR are the same argument with the equivalence and dominance tables above (0 and 1
+swapped, or the output inverted). For NOT, $z$ s-a-$v$ is the same faulty circuit as its input s-a-$\overline{v}$.
+This proves the claim for every line.
+
+**Finish.** Let $T$ detect every checkpoint fault, and take any fault $\ell$ s-a-$v$. The claim gives a
+checkpoint fault $c$; $T$ contains a test for $c$, and that vector is a test for $\ell$ s-a-$v$. So $T$
+detects every single fault. (The proof also shows every single fault is then detectable.)
+
+**Sanity check.** Fault-simulating hundreds of random AND/OR/NAND/NOR/NOT circuits whose checkpoint faults
+are all detectable, every non-checkpoint fault has such a checkpoint fault $c$, as the claim says.
+:::
+
+:::trap{#trap-checkpoint title="Using the checkpoint theorem where it does not apply" depth="standard"}
+Two cases break it, and examiners like both.
+
+- **XOR gates.** An XOR has no controlling value, so its output faults are neither equivalent to nor
+  dominate any input fault. For $f = a \oplus b$ the set $\{00, 11\}$ detects all four input faults
+  ($a$ s-a-0 and $b$ s-a-0 on $11$, $a$ s-a-1 and $b$ s-a-1 on $00$), but **not** $f$ s-a-0, which needs a
+  row with $f = 1$ ($01$ or $10$). The edge-case example below gives the XOR its own two-vector set for
+  this reason.
+- **An undetectable checkpoint fault.** The theorem assumes the test set detects **every** checkpoint
+  fault. In a redundant circuit some checkpoint fault may have no test at all; then the hypothesis fails,
+  and a set that catches all the *detectable* checkpoint faults can still miss a detectable fault inside
+  the circuit.
+
+The expected wrong answer is that $\{00, 11\}$, which catches every checkpoint fault of the XOR, is a
+complete test set for it.
+:::
+
+:::aside{#testing-beyond-aside title="Exhaustive testing and bridging faults" depth="deep"}
+**Exhaustive testing.** Applying all $2^n$ input rows detects every detectable fault, single or
+multiple, because a detectable fault has, by definition, some row on which the outputs differ. It
+is the trivial upper bound, and it is hopeless for large $n$: a 32-input block would need over four
+billion vectors. Compare one $n$-input AND gate: $2^n$ rows against the $n + 1$ that suffice.
+
+**Bridging faults.** Two lines shorted together behave like a wired AND or a wired OR of the two
+signals: each line then depends on the other. That is not one line stuck at a constant, so it lies
+outside the stuck-at model, and tests for stuck-at faults catch many bridges but not all of them.
+GATE has not asked about them.
 :::
 
 ### Worked examples: test sets
@@ -770,6 +972,64 @@ Add one of $000$, $010$, $100$.
 :::
 ::::
 
+::::example{#ex-set-coverage level="medium" title="The fault coverage of a short test set" depth="standard"}
+A tester applies only $\{011, 101, 111\}$ (as $ABC$) to the 1994 circuit $p = \text{NAND}(A, B)$,
+$f = \text{NAND}(p, C)$. What is its fault coverage over the 10 single faults, and over the 6
+equivalence classes?
+
+:::step{why="Use the test lists of the GATE example above and mark each fault the three vectors hit."}
+$111$ detects $A$/0, $B$/0, $p$/1 and $f$/0; $011$ detects $A$/1, $C$/0, $p$/0 and $f$/1; $101$ detects $B$/1
+(and again $C$/0, $p$/0, $f$/1).
+:::
+
+:::step{why="Find what is missed: a fault none of whose tests is in the set."}
+$C$ s-a-1 has tests $000, 010, 100$, all with $C = 0$, and the set has none of them. Every other fault is
+detected.
+:::
+
+:::step{why="Coverage over the full list."}
+$9 / 10 = 90\%$.
+:::
+
+:::step{why="Over the collapsed list, the three classes of size 3 count once each."}
+Classes detected: $\{A/0, B/0, p/1\}$, $\{p/0, C/0, f/1\}$, $A/1$, $B/1$, $f/0$: 5 of 6, so $5/6 \approx 83.3\%$.
+:::
+
+:::answer
+90% of the single faults, but 83.3% of the collapsed classes: the same set, two different figures,
+because the missed fault $C$ s-a-1 is a class on its own. Adding any of $000, 010, 100$ brings both
+to 100%.
+:::
+::::
+
+::::example{#ex-set-checkpoint level="gate" title="A test set from the checkpoints alone" depth="standard"}
+Use the checkpoint theorem to build a test set for the 1994 circuit, then confirm that it detects all 10
+single faults.
+
+:::step{why="Checkpoints are the primary inputs and the fan-out branches; this circuit has no fan-out."}
+Checkpoints: $A$, $B$, $C$. Only their 6 faults need targeting, not all 10.
+:::
+
+:::step{why="List the tests of the checkpoint faults (activation, then propagation through both NANDs)."}
+$A$/0 and $B$/0: only $111$. $A$/1: only $011$. $B$/1: only $101$. $C$/0: $001, 011, 101$. $C$/1: $000, 010, 100$.
+:::
+
+:::step{why="Single-test faults force their vectors; then cover what is left."}
+$111$, $011$, $101$ are forced, and $011$ already covers $C$/0. $C$/1 needs one more vector, say $000$:
+$\{000, 011, 101, 111\}$.
+:::
+
+:::step{why="The theorem promises the other faults for free; check them against their test lists."}
+$p$/0 and $f$/1 (tests $001, 011, 101$): hit by $011$. $p$/1 (test $111$): hit. $f$/0 (tests $000, 010, 100, 110, 111$):
+hit by $000$ and $111$.
+:::
+
+:::answer
+$\{000, 011, 101, 111\}$ detects all 10 faults, found by targeting only the 6 checkpoint faults. It is the
+same minimum set as before, reached with less work.
+:::
+::::
+
 ::::example{#ex-set-edge level="gate" title="Edge case: an XOR gate needs only two tests" depth="standard"}
 Find a minimum test set for all single faults of $f = a \oplus b \oplus c$.
 
@@ -794,7 +1054,10 @@ controlling values make every input's s-a-(non-controlling) fault need its own v
 :::note{#recap-test-sets title="Recap" depth="quick"}
 Pick the fewest vectors that hit every fault's test list; single-test faults force their vector. An
 $n$-input AND/NAND needs exactly $n + 1$ tests (walking zeros plus all-1s), OR/NOR the dual. Faults that
-force the same constant on a gate's output are equivalent and need only one test between them.
+force the same constant on a gate's output are equivalent and need only one test between them; an output
+fault that dominates an input fault comes free with it. Coverage = detected / listed faults. By the
+checkpoint theorem, catching every fault on the primary inputs and fan-out branches catches every
+single fault (not with XOR gates).
 :::
 
 ## GATE questions on this lesson
@@ -856,5 +1119,9 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Undetectable | activation and propagation conflict; then the line is redundant (tie it to $v$) |
 | Equivalent faults | AND: input s-a-0 ≡ output s-a-0; NAND: input s-a-0 ≡ output s-a-1; OR/NOR dual |
 | Test sets | $n$-input AND/NAND: $n + 1$ vectors (walking zeros + all 1s); XOR: 2 |
+| Dominance | $\alpha$ dominates $\beta$ if Tests($\beta$) ⊆ Tests($\alpha$); AND: output s-a-1 dominates input s-a-1 |
+| Coverage | detected faults / faults in the list × 100% |
+| Checkpoint theorem | AND/OR/NAND/NOR/NOT circuits: a set detecting every fault on the primary inputs and fan-out branches detects every single fault |
+| Several outputs | a test needs activation and $\partial f_j / \partial p = 1$ for at least one output |
 | Masking | a test for one fault can fail when another fault is present |
 :::

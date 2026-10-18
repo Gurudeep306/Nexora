@@ -6,7 +6,7 @@ title: "ROM, PLA and PAL as combinational logic"
 order: 5
 prerequisites: [decoders-encoders]
 pyq_topics: [dl/combinational]
-est_minutes: 35
+est_minutes: 55
 difficulty: core
 status: draft
 needs_review: false
@@ -36,8 +36,8 @@ come from the other end: they are the two-level AND–OR circuits of
 [Chapter 3, Lesson 4](lesson:two-level-implementation) printed as a grid, with the shared product
 terms of multi-output minimisation becoming shared rows. The arithmetic that fills a multiplier or
 adder table (how wide a sum or a product is) is in [Chapter 1, Lesson 9](lesson:code-arithmetic);
-adder and multiplier **circuits** are Chapter 5 hardware, and here we only count their inputs and
-outputs.
+adder and multiplier **circuits** are built from gates in the arithmetic-circuits chapter, and here we
+only count their inputs and outputs.
 
 :::table{#radar title="GATE radar: ROM, PLA and PAL" depth="quick"}
 | What | Detail |
@@ -110,9 +110,15 @@ is combinational.
 :::viz{#rom-viz spec="rom-grid" mode="animate" depth="standard"}
 :::
 
-Here is what the animation programs, as a table. The two outputs happen to be the majority of three
-bits and their odd parity (they are the carry and sum of adding three bits, which Chapter 5 builds from
-gates; a ROM does not care what the columns mean).
+The animation stores a **3-bit squarer**: the address is a 3-bit number $x$, word $x$ holds $x^2$, and
+there are six output columns $Q_5 \dots Q_0$ because the largest square, $7^2 = 49 = 110001_2$, has six
+bits. So it is an $8 \times 6$ ROM, 48 stored bits. Its last step points out that two of those six
+columns never need storing; why that is so is proved under "Sizing a ROM" below, so take it on trust
+for now.
+
+Any other table goes in the same way. Here is an $8 \times 2$ ROM programmed with two other columns:
+the majority of three bits and their odd parity. (They are the carry and the sum of adding three bits,
+which the arithmetic-circuits chapter builds from gates; a ROM does not care what the columns mean.)
 
 :::table{#rom-program-table title="Programming an 8 × 2 ROM: each 1 is a connection" depth="standard"}
 | Address $ABC$ | Word line | $F_1 = \Sigma m(3, 5, 6, 7)$ | $F_2 = \Sigma m(1, 2, 4, 7)$ |
@@ -147,8 +153,8 @@ combinational logic only the read behaviour matters, so the sizing rules below a
 A $1024 \times 1$ ROM drawn as above needs a 10:1024 decoder: 1024 word lines. Real chips fold the
 array into a square. Split the 10 address bits into 5 row bits and 5 column bits: a 5:32 decoder picks
 one of 32 rows, the row delivers 32 stored bits at once, and a 32:1 MUX driven by the other 5 bits picks
-one of them. The number of stored bits (1024) does not change, but the decoder and MUX together have
-$32 + 32 = 64$ outputs and inputs instead of 1024 word lines. An uneven split costs more (4 + 6 bits
+one of them. The number of stored bits (1024) does not change, but the 5:32 decoder has 32 outputs and
+the 32:1 MUX has 32 data inputs: $32 + 32 = 64$ lines instead of 1024 word lines. An uneven split costs more (4 + 6 bits
 gives $16 + 64 = 80$, 3 + 7 bits gives $8 + 128 = 136$), so the balanced split is the cheapest. Nothing
 about the size questions changes: the ROM still holds $2^n \times m$ bits.
 :::
@@ -173,6 +179,10 @@ output bits does each row need? That gives the word width.
 A table with $n$ input bits and $m$ output bits needs a ROM of
 
 $$2^n \text{ words} \times m \text{ bits per word}, \qquad \text{total } 2^n \cdot m \text{ bits.}$$
+
+Read the other way round: a $2^n \times m$ ROM has $n$ address pins and $m$ data pins. The number of
+words fixes the address lines ($2^{10} = 1\text{K}$ words need 10 of them), and the word width is the
+number of data lines; this "depth × width" view is how memory chips are labelled.
 
 Units: $1\text{K} = 2^{10} = 1024$, $1\text{M} = 2^{20}$, so $2^{16}$ words $= 64\text{K}$ words and
 $2^{20}$ bits $= 1$ Mbit. "Size" in a question means words × bits unless it asks for "the amount of ROM"
@@ -204,6 +214,15 @@ terms, not by rows.
 :::
 
 ### Multiplier ROMs
+
+:::intuition{#multiplier-rom-intuition title="A times table you look up instead of working out" depth="standard"}
+Think of the times table on the back of a school notebook: a 10 × 10 grid where you find row 7 and
+column 8 and read 56. Nobody multiplies; they look up. A multiplier ROM is that grid in silicon. The
+key observation is that you need **both** numbers to find the cell: the row alone (7) does not tell
+you the answer. So the ROM's address must be the two operands written side by side, and every cell
+must be wide enough for the biggest answer in the grid, which sits in the bottom-right corner. Those
+two facts are the whole of every GATE multiplier question.
+:::
 
 :::definition{#multiplier-rom term="A ROM that multiplies" depth="standard"}
 To multiply an $n$-bit unsigned number $A$ by an $n$-bit unsigned number $B$ with a ROM, use the
@@ -262,7 +281,7 @@ needs 7 bits, not 8). Contrast with addition: an $n$-bit + $n$-bit sum needs onl
 :::trap{#trap-rom-width title="A multiplier word of n bits or 2n + 1 bits" depth="standard"}
 Two wrong widths appear in the options of every multiplier question. **$n$ bits** comes from storing
 "a number the size of the operands": for 8 × 8 it gives 64K × 8 (option B in 1996), and the ROM would
-lose the top half of every product above 255. **$2n + 1$ bits** (or $n + 1$ bits doubled) comes from
+lose the top half of every product above 255. **$2n + 1$ bits** comes from
 mixing up the product with a sum: a sum gains one bit, a product doubles the width, and $(2^n - 1)^2 <
 2^{2n}$ never reaches bit $2n$. The width is the bit-length of the **largest output value**: compute
 $(2^n - 1)^2$ if in doubt.
@@ -277,6 +296,14 @@ not 65K, and $64\text{K} \times 16$ bits $= 1$ Mbit $= 128$ KB.
 :::
 
 ### Other tables in a ROM
+
+:::intuition{#rom-tables-intuition title="Every table is just inputs and outputs" depth="standard"}
+A ROM never asks what a table means. An adder, a code converter and a squarer look completely
+different as circuits, but to a ROM each is a list of rows (one per input combination) and columns
+(one per output bit). So once you can count the input bits and the output bits of a table, you can
+size its ROM. The only care needed is in the counting itself: a carry-in is an input too, a sum is
+one bit wider than its operands, and some outputs turn out to need no column at all.
+:::
 
 :::definition{#rom-tables term="Sizing common tables" depth="standard"}
 The recipe never changes: count the input bits and the output bits.
@@ -294,6 +321,14 @@ Two lessons hide in this table. First, a ROM cannot exploit don't-cares: BCD use
 the 4-bit address still selects 16 words, and rows 10–15 simply hold anything. Second, some output
 columns need no storage at all, which is the next idea. (Why a sum has $n + 1$ bits:
 $(2^n - 1) + (2^n - 1) + 1 = 2^{n+1} - 1$; see [Chapter 1, Lesson 9](lesson:code-arithmetic).)
+:::
+
+:::intuition{#rom-constant-bits-intuition title="A column that remembers nothing" depth="standard"}
+A ROM column is memory: it earns its place by holding a pattern of 0s and 1s that nothing else
+supplies. A column that never changes (always 0, or always 1) remembers nothing, and neither does a
+column that always repeats one of the address bits, because that bit is already on a wire. Such a
+column can be a wire to ground, to the supply or to the address bit instead. The surprise is that
+squares have two such columns, for every width.
 :::
 
 :::theorem{#rom-constant-bits name="Output columns that need no storage; bit 1 of a square is always 0" depth="standard"}
@@ -403,8 +438,8 @@ $512 \times 5 = 2560$ bits.
 
 :::answer
 $512 \times 5$ (2560 bits). The tempting $256 \times 8$ forgets the carry-in (halving the words) and sizes
-the output like a product (8 bits instead of 5). The hardware adder itself is Chapter 5; a ROM needs only
-the counts.
+the output like a product (8 bits instead of 5). The hardware adder itself belongs to the
+arithmetic-circuits chapter; a ROM needs only the counts.
 :::
 ::::
 
@@ -426,7 +461,8 @@ chips' enable (chip-select) inputs, and only that chip drives the outputs.
 :::
 
 :::definition{#rom-expansion term="ROM expansion" depth="standard"}
-To build a $W \times B$ memory from $w \times b$ chips ($W, w$ powers of two):
+To build a $W \times B$ memory from $w \times b$ chips ($W \ge w$ and $B \ge b$, with $W, w$ powers of
+two; a chip that is already deep or wide enough simply has unused words or bits):
 
 - **Width (word size):** $\lceil B / b \rceil$ chips side by side, all sharing the address and the enable;
   each supplies a slice of the word.
@@ -447,6 +483,15 @@ blocks (the value of the high address bits), so $W / w$ rows. Multiplying gives 
 **Sanity check:** the count can never be less than the capacity ratio $\frac{W B}{w b}$, because each chip
 holds $w b$ bits; for $4\text{K} \times 16$ from $1\text{K} \times 4$ the ratio is
 $\frac{4096 \cdot 16}{1024 \cdot 4} = 16$ and the formula gives $4 \times 4 = 16$.
+:::
+
+The animation builds exactly that $4\text{K} \times 16$ memory. Watch the two directions separately.
+Along a row, four chips stand side by side and each hands over 4 of the 16 bits; across the rows, the
+2:4 decoder on $A_{11}A_{10}$ lights one enable line, so only one row of four chips answers. The low
+address bits $A_9 \dots A_0$ run to all sixteen chips at once: every chip looks up the same word
+number inside itself, and the decoder decides whose answer counts.
+
+:::viz{#rom-expansion-viz spec="rom-expansion" mode="animate" depth="standard"}
 :::
 
 ### Worked examples: ROM expansion
@@ -559,6 +604,40 @@ Programmable crosspoints: $2n \cdot p$ in the AND plane plus $p \cdot m$ in the 
 polarity fuses if the outputs can be inverted). A ROM, in comparison, has $2^n \cdot m$.
 :::
 
+:::intuition{#pla-table-intuition title="Writing a PLA program down" depth="standard"}
+A ROM's program is its truth table. A PLA has no truth table inside it, only a list of product terms
+and a list of which outputs use which terms, so it needs its own way of being written down. The idea
+is to give every AND gate one line of text: for each input, say whether the gate takes the true
+literal, the complemented literal or neither; for each output, say whether that output's OR gate is
+connected to this AND gate. A fuse programmer reads exactly such a table, and GATE-style questions
+often hand you one and ask what it computes.
+:::
+
+:::definition{#pla-program-table term="The PLA programming table" depth="standard"}
+A PLA is programmed by a table with **one row per product term**:
+
+- **input columns**, one per input: **1** if the term contains the true literal ($A$), **0** if it
+  contains the complement ($A'$), **–** if the input is absent from the term;
+- **output columns**, one per output: **1** if the term is connected to that output's OR gate, **–**
+  (or blank) if it is not;
+- with output polarity control, a last **T/C row** under the output columns: **T** if the output is
+  taken true, **C** if the OR gate's result is complemented at the output.
+
+For $f_1 = AB + BC'$ and $f_2 = AB + A'C$ (the easy example below):
+
+| Product term | $A$ | $B$ | $C$ | $f_1$ | $f_2$ |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| $AB$ | 1 | 1 | – | 1 | 1 |
+| $BC'$ | – | 1 | 0 | 1 | – |
+| $A'C$ | 0 | – | 1 | – | 1 |
+| polarity | | | | T | T |
+
+**Reading it back:** each input pattern is a cube (the 1/0 entries are fixed, the dashes are free),
+and each output is the OR of the rows marked 1 in its column, complemented if its polarity is C. The
+number of rows is $p$. A dash costs nothing: it only means that both of that input's links into the
+AND gate are left open.
+:::
+
 :::viz{#pla-viz spec="pla-planes" mode="animate" depth="standard"}
 :::
 
@@ -644,6 +723,18 @@ $f_2 = A'C + AB$; $f_3 = B'C + AB$.
 Distinct terms: $A'B'$, $A'C$, $B'C$, $AB$: 4.
 :::
 
+:::step{why="Write the program as a PLA table: one row per term, 1/0/– for the literals, 1 where an output uses the term."}
+| Product term | $A$ | $B$ | $C$ | $f_1$ | $f_2$ | $f_3$ |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|
+| $A'B'$ | 0 | 0 | – | 1 | – | – |
+| $A'C$ | 0 | – | 1 | 1 | 1 | – |
+| $B'C$ | – | 0 | 1 | 1 | – | 1 |
+| $AB$ | 1 | 1 | – | – | 1 | 1 |
+
+Read the $f_1$ column back as a check: rows 1–3 give $A'B' + A'C + B'C$, cells $\{0, 1\} \cup \{1, 3\}
+\cup \{1, 5\} = \{0, 1, 3, 5\}$, which is $f_1$.
+:::
+
 :::answer
 4 product terms (an exhaustive search over all shared implicants confirms that 3 cannot do it). Built
 separately, the three outputs would need $3 + 2 + 2 = 7$ AND gates.
@@ -697,8 +788,18 @@ $f_1' = C + AB$; $f_2' = A'B' + A'C' + B'C'$.
 $\{C, AB, AC, BC\}$: 4. ($f_1'$, $f_2'$): 5.
 :::
 
-:::step{why="Building f₂′ and inverting it at the output gives f₂."}
-Program $f_1$ true and $f_2$ complemented.
+:::step{why="Building f₂′ and inverting it at the output gives f₂; the T/C row of the programming table records exactly that choice."}
+Program $f_1$ true and $f_2$ complemented:
+
+| Product term | $A$ | $B$ | $C$ | $f_1$ | $f_2$ |
+|:--|:-:|:-:|:-:|:-:|:-:|
+| $A'B'$ | 0 | 0 | – | – | 1 |
+| $A'C'$ | 0 | – | 0 | 1 | 1 |
+| $B'C'$ | – | 0 | 0 | 1 | 1 |
+| polarity | | | | T | C |
+
+The $f_2$ column ORs all three rows, giving cells $\{0, 1, 2, 4\}$, and the C inverts that to
+$\{3, 5, 6, 7\}$, which is $f_2$. The $f_1$ column gives $\{0, 2\} \cup \{0, 4\} = \{0, 2, 4\}$, taken true.
 :::
 
 :::answer
@@ -709,7 +810,8 @@ outputs need 5.
 
 :::note{#recap-pla title="Recap" depth="quick"}
 PLA: programmable AND and OR planes, size $n \times p \times m$, crosspoints $2np + pm$. $p$ = distinct
-shared terms; single literals still take a line; with polarity control try $f'$ for each output.
+shared terms; single literals still take a line; with polarity control try $f'$ for each output. The
+program is written as a table: one row per term, 1 / 0 / – per input, 1 / – per output, and a T/C row.
 :::
 
 ## PAL, and choosing between the three
@@ -725,7 +827,9 @@ if two outputs need $AB$, the PAL builds it twice, once in each group.
 :::definition{#pal-def term="Programmable array logic (PAL)" depth="standard"}
 A PAL has a **programmable AND plane** and a **fixed OR plane**: output $j$ is the OR of a fixed group of
 $k_j$ AND gates that feed no other output. An output $f$ fits only if its minimal SOP has at most $k_j$
-terms. The AND gates needed are the **sum** of the outputs' minimal term counts, and a PAL with the same
+terms (for an output with a fixed inverter, it is $f'$ whose SOP must fit, since the group's OR is
+complemented on its way out). Don't-cares may be used in that minimisation, because the PAL is free to
+output anything on rows that never occur. The AND gates needed are the **sum** of the outputs' minimal term counts, and a PAL with the same
 $k$ for every output needs $k \ge$ the largest count, so $k \times m$ AND gates in all. Many PALs add
 flip-flops and feedback at the outputs (registered PALs); that is sequential logic and outside this
 lesson.
@@ -748,7 +852,8 @@ Counting a PAL like a PLA is the classic slip. For $f_1 = AB + BC'$ and $f_2 = A
 terms, so students answer 3 for the PAL too. The PAL's OR plane is fixed: $AB$ must be built in
 $f_1$'s group **and** in $f_2$'s group, so the answer is 4. The reverse slip also costs marks: a PAL
 whose groups have 2 AND gates cannot hold a 3-term output at all, even if another output leaves
-gates unused.
+gates unused (the parity example below works the same slip through, with 3-gate groups and a 4-term
+output).
 :::
 
 :::aside{#lut-aside title="FPGA look-up tables are tiny ROMs" depth="deep"}
@@ -761,16 +866,142 @@ cells loaded at power-up, so in most FPGAs the configuration is lost at power-of
 separate non-volatile memory. Sizing a LUT is the ROM rule: $k$ inputs → $2^k$ bits per output.
 :::
 
+### Worked examples: PAL
+
+::::example{#ex-pal-easy level="easy" title="Programming a PAL with two AND gates per output" depth="quick"}
+A PAL has inputs $A, B, C$ and two outputs, each the OR of its own 2 AND gates. Program it for
+$f_1 = \Sigma m(0, 1, 6, 7)$ and $f_2 = \Sigma m(1, 3, 6, 7)$.
+
+:::step{why="Minimise each output on its own, because a PAL never shares a gate between outputs."}
+$f_1$: $m_0$'s only 1-neighbour is $m_1$, giving $A'B'$; $m_6$ pairs with $m_7$, giving $AB$. So
+$f_1 = A'B' + AB$. $f_2$: $m_1$ and $m_3$ give $A'C$, $m_6$ and $m_7$ give $AB$, so $f_2 = A'C + AB$.
+:::
+
+:::step{why="An output fits when its term count is at most its group size."}
+Both outputs need 2 terms, and each group has 2 AND gates: both fit.
+:::
+
+:::step{why="Programming a PAL is choosing literals for each AND gate; the OR connections are already fixed."}
+Group 1: gate 1 takes $A'$ and $B'$, gate 2 takes $A$ and $B$. Group 2: gate 1 takes $A'$ and $C$,
+gate 2 takes $A$ and $B$.
+:::
+
+:::step{why="Notice the repeat: AB appears in both groups."}
+$AB$ is built twice, once for each output, so 4 AND gates are used. A PLA would need only 3 product
+lines ($A'B'$, $A'C$, $AB$).
+:::
+
+:::answer
+It fits, using all 4 AND gates; the term $AB$ is built once in each group, because a PAL's fixed OR
+plane cannot share it.
+:::
+::::
+
+::::example{#ex-pal-medium level="medium" title="A don't-care makes an output fit" depth="standard"}
+One output of a PAL with 2 AND gates per output must be $f = \Sigma m(0, 1, 3, 5)$, and the input
+$ABC = 111$ never occurs. Does $f$ fit?
+
+:::step{why="First minimise without the don't-care: each of m0, m3, m5 lies in only one prime implicant."}
+$f = A'B' + A'C + B'C$: 3 terms (the same function as $f_1$ in the medium PLA example). That is one
+term too many for a group of 2.
+:::
+
+:::step{why="Row 7 never occurs, so the PAL may output anything there; mark it d and minimise again."}
+With $m_7$ as a don't-care, $m_1, m_3, m_5, m_7$ form the group $C$, and $m_0$ still needs $A'B'$:
+$f = C + A'B'$, 2 terms.
+:::
+
+:::step{why="Check that the new SOP is right on every row that can occur."}
+$C + A'B'$ is 1 on rows 0, 1, 3, 5, 7 and 0 on rows 2, 4, 6. It agrees with $f$ everywhere except row 7,
+which never occurs.
+:::
+
+:::step{why="Compare with a ROM, which cannot use the don't-care."}
+A ROM would still store a word for address 111. For the ROM the don't-care changes nothing; for the
+PAL it decides whether the output fits.
+:::
+
+:::answer
+Yes: with row 111 as a don't-care, $f = C + A'B'$ fits the 2 AND gates. Without the don't-care it needs 3
+and does not fit.
+:::
+::::
+
+::::example{#ex-pal-gate level="gate" title="Gates to spare, and still no fit" depth="standard"}
+A PAL has 2 outputs with 3 AND gates each (6 in all). Can it produce $f_1 = A \oplus B \oplus C$ and
+$f_2 = AB$?
+
+:::step{why="Every 1-cell of the parity function has no 1-neighbour (changing one bit changes the parity), so every prime implicant is a single minterm."}
+$f_1 = \Sigma m(1, 2, 4, 7) = A'B'C + A'BC' + AB'C' + ABC$: 4 terms, and this is the only minimal SOP.
+No other choice of SOP can help, because no two of its 1-cells can share a term.
+:::
+
+:::step{why="The second output is a single term."}
+$f_2 = AB$: 1 term.
+:::
+
+:::step{why="The tempting count adds the terms and compares with the total."}
+$4 + 1 = 5 \le 6$ AND gates, so it "should" fit. But $f_2$'s spare gates belong to $f_2$'s OR gate and
+cannot be lent to $f_1$.
+:::
+
+:::step{why="Try the complement too, in case the output could be inverted."}
+$f_1' = \Sigma m(0, 3, 5, 6)$ is the other parity, again 4 isolated cells and 4 terms. Neither polarity
+fits a group of 3.
+:::
+
+:::answer
+No. $f_1$ needs 4 AND gates in its own group, and the group has 3, even though only 5 of the 6 gates
+would be in use. A PAL with at least 4 AND gates per output, a PLA (5 product lines, since $AB$ is not an
+implicant of $f_1$ and nothing is shared) or an $8 \times 2$ ROM would all work.
+:::
+::::
+
+::::example{#ex-pal-edge level="gate" title="Edge case: a PAL with inverting outputs" depth="standard"}
+A PAL has 2 AND gates per output, and every output has a fixed inverter: output $j$ is the
+**complement** of its group's OR. Which of $f_1 = \Sigma m(0, 1, 2, 3, 4, 5, 6)$ and $f_2 = \Sigma m(7)$
+fit?
+
+:::step{why="With an inverter on the output, the group must produce f′, so it is f′ whose SOP must fit."}
+$f_1' = m_7 = ABC$: 1 term. $f_2' = \Sigma m(0, \dots, 6) = A' + B' + C'$: 3 terms.
+:::
+
+:::step{why="Compare each complement's term count with the group size of 2."}
+$f_1$ fits (one AND gate, $ABC$, then the inverter gives $f_1$). $f_2$ does not fit: its group would need
+3 AND gates.
+:::
+
+:::step{why="Compare with an active-high PAL, where f itself must fit."}
+With active-high outputs the verdicts swap: $f_1 = A' + B' + C'$ needs 3 terms and does not fit, while
+$f_2 = ABC$ needs 1.
+:::
+
+:::step{why="Sanity check with De Morgan."}
+$\overline{ABC} = A' + B' + C'$, which is 1 on every row but 7: exactly $f_1$. So programming $ABC$ into
+group 1 is right.
+:::
+
+:::answer
+Only $f_1$ fits (program $ABC$ and let the inverter complement it); $f_2$ would need 3 AND gates for
+$f_2' = A' + B' + C'$. The same two functions on an active-high PAL give the opposite answer, so always
+check which polarity the output has before counting terms.
+:::
+::::
+
 :::note{#recap-pal title="Recap" depth="quick"}
-PAL: programmable AND, fixed OR, no sharing; AND gates = sum of the outputs' term counts, each within its
-group size. ROM = fixed AND (all minterms) + programmable OR; PLA = both programmable.
+PAL: programmable AND, fixed OR, no sharing; AND gates = sum of the outputs' term counts, and **each**
+output must fit its own group (spare gates elsewhere do not help). Don't-cares may shrink an output; with
+a fixed inverting output it is $f'$ that must fit. ROM = fixed AND (all minterms) + programmable OR; PLA = both programmable.
 :::
 
 ## Try it
 
 Pick a 3-variable function in the **implement** tab and choose the decoder + OR target. The OR gate's
 inputs are exactly the word lines a ROM column would connect: one ROM output column is one decoder + OR
-realisation, and a ROM with $m$ outputs is $m$ such OR gates sharing one decoder.
+realisation, and a ROM with $m$ outputs is $m$ such OR gates sharing one decoder. If the lab shows a NOR
+of the 0-rows instead (it does when that list is shorter than the list of 1-rows), that is the
+complement form. A ROM column always stores the 1-rows, so connect the other word lines: the ones the NOR
+leaves out.
 
 :::lab{#lab-rom lab="comb-workbench" tab="implement" depth="standard"}
 :::
@@ -836,5 +1067,6 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Constant bits | wire, do not store: bit 0 of $x^2$ = $x_0$, bit 1 of $x^2$ = 0 |
 | Expansion | chips $= (W/w) \times \lceil B/b \rceil$; decoder on the high address bits drives the enables |
 | PLA | programmable AND and OR; $p$ = distinct shared terms; $2np + pm$ crosspoints; try $f'$ with polarity control |
-| PAL | programmable AND, fixed OR; no sharing; AND gates = sum of per-output term counts |
+| PLA table | one row per term: inputs 1 / 0 / –, outputs 1 / –, a T/C polarity row |
+| PAL | programmable AND, fixed OR; no sharing; AND gates = sum of per-output term counts; each output must fit its own group ($f'$ for an inverting output) |
 :::

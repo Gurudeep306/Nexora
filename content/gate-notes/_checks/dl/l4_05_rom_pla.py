@@ -2,7 +2,8 @@
 ROM equals every 3-input, 2-output function), ROM sizes, the product-width theorem (bit-length of every
 product by enumeration and the two bounds), constant output columns of squarers and cubes, ROM
 expansion counts, PLA term counts (comblib.pla_min_terms, exhaustive over shared implicants), PAL
-counts, the complement trick, link counts, the four PYQ keys and the ten practice answers."""
+counts, the complement trick, link counts, the PLA programming tables (read back into functions), the PAL
+examples, the PYQ-solution scene indices, the four PYQ keys and the ten practice answers."""
 import itertools
 import pathlib
 import sys
@@ -35,6 +36,17 @@ for t1 in range(256):
 F1, F2 = bl.minterms("AB + AC + BC", V3), bl.minterms("A \\oplus B \\oplus C", V3)
 assert F1 == [3, 5, 6, 7] and F2 == [1, 2, 4, 7]
 has("$F_1 = \\Sigma m(3, 5, 6, 7)$", "$F_2 = \\Sigma m(1, 2, 4, 7)$")
+# The rom-grid scene is a 3-bit squarer (8 x 6); the prose between the viz and the table must say so.
+import json  # noqa: E402
+between = L.split('spec="rom-grid"')[1].split("#rom-program-table")[0]
+assert "3-bit squarer" in between and "$8 \\times 6$ ROM, 48 stored bits" in between and "$7^2 = 49 = 110001_2$" in between
+assert cl.rom_size(3, (7 * 7).bit_length()) == (8, 6, 48) and format(49, "b") == "110001"
+assert "Sizing a ROM" in between and "## Sizing a ROM" in L  # the forward pointer names a real section
+ROMGRID = pathlib.Path(__file__).resolve().parents[2] / "dl" / "viz" / "rom-grid.json"
+if ROMGRID.exists():  # the scene the prose describes: x² for x = 0…7, 8 words × 6 bits
+    intro = json.loads(ROMGRID.read_text())["intro"]
+    assert "6 stored bits" in intro and "square" in intro, intro
+assert "(or $n + 1$ bits doubled)" not in L
 for a in range(8):
     assert rom_eval([F1, F2], a) == [int(a in F1), int(a in F2)]
 # Two-dimensional decoding aside: 1024 bits, split costs.
@@ -160,6 +172,77 @@ assert links(3, 4, 2) == 32 and links(3, 4, 2, True) == 34 and cl.rom_size(3, 2)
 assert links(16, 3, 2) == 102 and cl.rom_size(16, 2)[2] == 131072
 has("24 + 8 = 32$", "96 + 6 = 102$", "$2^{16} \\cdot 2 = 131\\,072$")
 
+
+# PLA programming tables (1 / 0 / – inputs, 1 / – outputs, optional T/C row): read every table in the
+# lesson back into functions and compare with the example it belongs to.
+def pla_tables(text):
+    out = []
+    for block in text.split("| Product term | $A$ | $B$ | $C$ |")[1:]:
+        lines = [x for x in block.split("\n")[2:]]
+        rows_ = []
+        for x in lines:
+            if not x.startswith("|"):
+                break
+            rows_.append([c.strip() for c in x.strip().strip("|").split("|")])
+        out.append(rows_)
+    return out
+
+
+def read_pla(rows_):
+    terms = [r for r in rows_ if r[0] != "polarity"]
+    pol = next((r[4:] for r in rows_ if r[0] == "polarity"), ["T"] * (len(rows_[0]) - 4))
+    m_out = len(rows_[0]) - 4
+    funcs = []
+    for j in range(m_out):
+        cells = set()
+        for r in terms:
+            lit = "".join(v if v in "01" else "-" for v in r[1:4])
+            cube_cells = {m for m in range(8) if all(c == "-" or int(c) == (m >> (2 - i)) & 1 for i, c in enumerate(lit))}
+            assert ml.term(ml.parse_term(r[0].strip("$"), V3), V3) == r[0].strip("$")
+            assert set(ml.cells(ml.parse_term(r[0].strip("$"), V3))) == cube_cells, r  # the 1/0/– row is the term
+            if r[4 + j] == "1":
+                cells |= cube_cells
+            else:
+                assert r[4 + j] == "–", r
+        funcs.append(sorted(cells) if pol[j] == "T" else sorted(set(range(8)) - cells))
+    return len(terms), pol, funcs
+
+
+tabs = pla_tables(L)
+assert len(tabs) == 3
+assert read_pla(tabs[0]) == (3, ["T", "T"], [e1, e2])           # #pla-program-table (the easy example)
+assert read_pla(tabs[1]) == (4, ["T"] * 3, [m1, m2, m3])        # #ex-pla-medium
+assert read_pla(tabs[2]) == (3, ["T", "C"], [c1, c2])           # #ex-pla-edge, f2 complemented
+assert sorted({0, 1} | {1, 3} | {1, 5}) == m1 and sorted({0, 2} | {0, 4}) == c1
+has("cells $\\{0, 1\\} \\cup \\{1, 3\\}", "giving cells $\\{0, 1, 2, 4\\}$", "| polarity | | | | T | C |")
+
+# PAL worked examples.
+pe1, pe2 = [0, 1, 6, 7], [1, 3, 6, 7]
+assert msops(pe1) == {frozenset(["A'B'", "AB"])} and msops(pe2) == {frozenset(["A'C", "AB"])}
+assert pal([pe1, pe2]) == 4 and pla([pe1, pe2]) == 3
+pm = [0, 1, 3, 5]
+assert pm == m1 and len(ml.min_covers(pm, [], 3)[0]) == 3
+assert {frozenset(ml.term(c, V3) for c in cv) for cv in ml.min_covers(pm, [7], 3)} == {frozenset(["C", "A'B'"])}
+assert bl.minterms("C + A'B'", V3) == [0, 1, 3, 5, 7]
+par, ab = bl.minterms("A \\oplus B \\oplus C", V3), bl.minterms("AB", V3)
+assert par == [1, 2, 4, 7] and ab == [6, 7]
+assert msops(par) == {frozenset(["A'B'C", "A'BC'", "AB'C'", "ABC"])} and msops(comp(par)) == {frozenset(["A'B'C'", "A'BC", "AB'C", "ABC'"])}
+assert pal([par, ab]) == 5 <= 6 and len(next(iter(msops(par)))) == 4 > 3
+assert pla([par, ab]) == 5 and not set(ab) <= set(par)
+pi1, pi2 = list(range(7)), [7]
+assert msops(comp(pi1)) == {frozenset(["ABC"])} and msops(comp(pi2)) == {frozenset(["A'", "B'", "C'"])}
+assert msops(pi1) == {frozenset(["A'", "B'", "C'"])} and msops(pi2) == {frozenset(["ABC"])}
+fits_inv = {name: len(next(iter(msops(comp(f))))) <= 2 for name, f in (("f1", pi1), ("f2", pi2))}
+fits_hi = {name: len(next(iter(msops(f)))) <= 2 for name, f in (("f1", pi1), ("f2", pi2))}
+assert fits_inv == {"f1": True, "f2": False} and fits_hi == {"f1": False, "f2": True}
+has("(for an output with a fixed inverter, it is $f'$ whose SOP must fit", "$4 + 1 = 5 \\le 6$")
+# Expansion: the definition states W ≥ w, and the new scene is embedded in the expansion section.
+has("$W \\ge w$ and $B \\ge b$", 'spec="rom-expansion"')
+exp_sec = L.split("## Building a bigger ROM from smaller chips")[1].split("\n## ")[0]
+assert 'spec="rom-expansion"' in exp_sec
+# Lab note: the NOR-of-0-rows form is mentioned.
+has("NOR\nof the 0-rows instead")
+
 # ── PYQ keys (from the bank's text and options) ────────────────────────────
 B = bl.bank()
 q = B["cse-1993-ii-a-6-6"]
@@ -246,6 +329,10 @@ assert pla([f8]) == 3 and pla([comp(f8)]) == 1 and len(f8) == 7
 opts = bl.option_values(q)
 bl.assert_mcq(q, [l for l, t in opts.items() if int(t) == min(pla([f8]), pla([comp(f8)]))][0])
 assert pla([f8]) > 2
+assert q["answer"] == "C" and {w["answer"]: int(opts[w["answer"]]) for w in q["common_wrong"]} == {"A": pla([f8]), "B": len(f8), "D": 2}
+assert not any(len(c) == 2 for c in ml.min_covers(f8, [], 3))  # no 2-term SOP of f
+mcq_keys = [P[k]["answer"] for k in mine if P[k]["type"] == "MCQ"]
+assert set(mcq_keys) == set("ABCD") and max(mcq_keys.count(x) for x in "ABCD") <= 2, mcq_keys
 q = P["nx-dl-04-05-q09"]
 w, wired = wired_columns(lambda x: x ** 3, 4)
 assert (w, wired) == (12, [0]) and 15 ** 3 == 3375 and (27 >> 1) & 1 == 1
@@ -258,6 +345,20 @@ fits = {"A": cl.rom_size(3, 2)[0] == 8, "B": pla([r1, r2]) <= 3, "C": pla([r1, r
         "D": max(len(next(iter(msops(r)))) for r in (r1, r2)) <= 2}
 assert pla([r1, r2]) == 4
 bl.assert_msq(q, [l for l, v in fits.items() if v])
+
+# ── PYQ-solution scenes: a highlighted table row must already be revealed ─
+import _sol_ch4_l05 as SOL  # noqa: E402
+for qid, sol in SOL.SOLUTIONS.items():
+    ncols = len(sol["animation"]["cols"])
+    for st in sol["steps"]:
+        sc = st.get("scene", {})
+        for h in sc.get("hl", []):
+            assert sc.get("reveal", 0) >= ncols * (h["r"] + 1), (qid, st["title"], sc)
+s04 = {st["title"]: st["body"] for st in SOL.SOLUTIONS["it-2004-it-10"]["steps"]}
+assert "$2^{15} \\le 65025 < 2^{16}$" in s04["Product bits"] and 2 ** 15 <= 65025 < 2 ** 16
+assert "none is a copy of an input bit" in s04["Minimum size"]
+assert "a quarter of the 64K words" in SOL.SOLUTIONS["it-2004-it-10"]["optionAnalysis"][2]["reason"]
+assert 16 * K * 4 == 64 * K
 
 # ── Key sentences ──────────────────────────────────────────────────────────
 has("bit 1 of", "squares mod 4 are only 0 or 1", "$(2^n - 1)^2 < 2^{2n}$", "$2^{2n-1} \\ge 2^{n+1} - 1$",
