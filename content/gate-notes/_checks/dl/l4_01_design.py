@@ -42,6 +42,44 @@ def bit(x, b):
     return (x >> b) & 1
 
 
+def gates_aon(ones_, n, dcs=(), max_k=5, fanin=None, complements=False):
+    """Fewest AND/OR/NOT gates computing f on its care rows (exhaustive, memoised iterative deepening).
+    Like comblib.min_gates_aon, plus a fan-in limit and optionally free complemented inputs."""
+    full = (1 << 2 ** n) - 1
+    care = full & ~sum(1 << m for m in dcs)
+    goal = sum(1 << m for m in ones_)
+    ins = list(bl.input_masks(n))
+    if complements:
+        ins += [full ^ s for s in ins]
+    hit = lambda s: (s & care) == (goal & care)
+    if any(hit(s) for s in ins) or hit(0) or hit(full):
+        return 0
+    fan = fanin or len(ins) + max_k
+    seen = set()
+
+    def dfs(sig, k):
+        if (frozenset(sig), k) in seen:
+            return False
+        seen.add((frozenset(sig), k))
+        c = {full ^ s for s in sig}
+        for r in range(2, min(fan, len(sig)) + 1):
+            for cb in itertools.combinations(sig, r):
+                a, o = full, 0
+                for x in cb:
+                    a &= x
+                    o |= x
+                c.update((a, o))
+        if any(hit(s) for s in c):
+            return True
+        return k > 1 and any(s not in sig and s not in (0, full) and dfs(sig + [s], k - 1) for s in c)
+
+    for k in range(1, max_k + 1):
+        seen.clear()
+        if dfs(list(ins), k):
+            return k
+    return None
+
+
 # ── Combinational vs a loop: the NOR latch has two stable states for S = R = 0 ─
 stable = [(q, qb) for q in (0, 1) for qb in (0, 1) if q == 1 - (0 | qb) and qb == 1 - (0 | q)]
 assert stable == [(0, 1), (1, 0)]
@@ -105,11 +143,30 @@ for X in subsets:
         if Y:
             assert not care_ok(lambda r, X=X, Y=Y: OR(X, r) | AND(Y, r))
             assert not care_ok(lambda r, X=X, Y=Y: AND(X, r) & OR(Y, r))
-# Edge case: no don't-cares. The 7-gate circuit works and no circuit of ≤ 4 gates exists.
+# Edge case: no don't-cares. The 7-gate SOP circuit works, the 6-gate factored circuit works, and no circuit of
+# ≤ 5 gates exists (exhaustive search, about 10 s), so the minimum is 6.
 netE = [("na", "NOT", ["A"]), ("nb", "NOT", ["B"]), ("nc", "NOT", ["C"]), ("s", "OR", ["C", "D"]),
         ("p", "AND", ["na", "B", "s"]), ("q", "AND", ["A", "nb", "nc"]), ("f", "OR", ["p", "q"])]
 assert cl.ones_of(cl.truth(netE, V4, "f")) == GE5 and len(netE) == 7
-assert cl.min_gates_aon(GE5, 4, [], max_k=4) is None
+net6g = [("u", "OR", ["A", "B"]), ("v", "OR", ["A", "C", "D"]), ("w", "OR", ["B", "C"]), ("x", "AND", ["A", "w"]),
+         ("nx", "NOT", ["x"]), ("f", "AND", ["u", "v", "nx"])]
+assert cl.ones_of(cl.truth(net6g, V4, "f")) == GE5 and len(net6g) == 6
+assert bl.minterms("(A + B)(A + C + D)", V4) == bl.minterms("A + B(C + D)", V4) == list(range(5, 16))
+assert [m for m in range(16) if m not in bl.minterms("(A(B + C))'", V4)] == list(range(10, 16))
+assert gates_aon(GE5, 4, [], max_k=5) is None
+has("The minimum rises from 3 gates to 6", "no circuit of 5 or fewer gates exists, so 6 is the minimum",
+    "circuit then needs 6 gates instead of the three")
+# One function, three sets of rules: A ⊕ B costs 4 (plain inputs), 3 (complements free), 4 (fan-in 2).
+XOR2 = [1, 2]
+assert gates_aon(XOR2, 2, max_k=5) == 4 and gates_aon(XOR2, 2, max_k=5, complements=True) == 3
+assert gates_aon(XOR2, 2, max_k=5, fanin=2) == 4
+net_x = [("o", "OR", ["A", "B"]), ("a", "AND", ["A", "B"]), ("na", "NOT", ["a"]), ("f", "AND", ["o", "na"])]
+assert cl.ones_of(cl.truth(net_x, ["A", "B"], "f")) == XOR2 and all(len(i) <= 2 for _, _, i in net_x)
+net_x5 = [("na", "NOT", ["A"]), ("nb", "NOT", ["B"]), ("p", "AND", ["na", "B"]), ("q", "AND", ["A", "nb"]), ("f", "OR", ["p", "q"])]
+assert cl.ones_of(cl.truth(net_x5, ["A", "B"], "f")) == XOR2 and len(net_x5) == 5
+# The 2-input-gate version of A + BD + BC costs one more gate (4) than the factored 3; with fan-in 2 the minimum is still 3.
+assert gates_aon(GE5, 4, BCD_DC, max_k=3, fanin=2) == 3
+has("(a) 4, (b) 3, (c) 4.")
 # At least two of four.
 at2 = [m for m in range(16) if bin(m).count("1") >= 2]
 assert len(at2) == 11 and [m for m in range(16) if m not in at2] == [0, 1, 2, 4, 8]
@@ -119,6 +176,14 @@ assert bl.minterms("AB + CD + (A + B)(C + D)", V4) == at2
 net_at2 = [("x", "OR", ["A", "B"]), ("y", "OR", ["C", "D"]), ("z", "AND", ["x", "y"]), ("u", "AND", ["A", "B"]),
            ("v", "AND", ["C", "D"]), ("f", "OR", ["u", "v", "z"])]
 assert cl.ones_of(cl.truth(net_at2, V4, "f")) == at2
+# The 5-gate form (A + B + CD)(C + D + AB), and no circuit of ≤ 4 gates.
+assert bl.minterms("(A + B + CD)(C + D + AB)", V4) == at2
+net_at5 = [("u", "AND", ["A", "B"]), ("v", "AND", ["C", "D"]), ("x", "OR", ["A", "B", "v"]), ("y", "OR", ["C", "D", "u"]),
+           ("f", "AND", ["x", "y"])]
+assert cl.ones_of(cl.truth(net_at5, V4, "f")) == at2 and len(net_at5) == 5
+assert gates_aon(at2, 4, [], max_k=5) == 5
+assert 0b1100 in at2 and 0b1000 not in at2 and 0b1010 in at2
+has("$(A + B + CD)(C + D + AB)$ uses 5, the minimum")
 # Don't-care counts.
 assert 2 ** 5 - 10 == 22 and 256 - 100 == 156
 
@@ -182,8 +247,12 @@ b4_forms = {frozenset(["(e4' + e2)", "(e4' + e1)", "(e4 + e2' + e1')"]), frozens
 assert mposs(bcd[4], XS3_DC, 4, E) == b4_forms and ml.min_literals_pos(bcd[4], XS3_DC, 4) == 7
 assert bl.minterms("e8 + e1", E) == [m for m in range(16) if m not in (0, 2, 4, 6)]
 assert bl.minterms("e8 + e2", E) == [m for m in range(16) if m not in (0, 1, 4, 5)]
-# The (e4 + e2' + e1') pair cannot grow: both quads around codes 3, 11 contain a 1.
-assert set(ml.cells("-0-1")) & set(bcd[4]) and set(ml.cells("-01-")) & set(bcd[4])
+# The (e4 + e2' + e1') pair {3, 11} cannot grow: each of its three quads contains a 1 (7, 9 or 10).
+quads311 = {c: sorted(ml.cells(c)) for c in ("--11", "-0-1", "-01-")}
+assert quads311 == {"--11": [3, 7, 11, 15], "-0-1": [1, 3, 9, 11], "-01-": [2, 3, 10, 11]}
+assert [sorted(set(v) & set(bcd[4])) for v in quads311.values()] == [[7], [9], [10]]
+assert sorted(m for m in range(16) if all(bit(m, b) == bit(3, b) for b in (0, 1, 2))) == [3, 11]
+has("code 7 ($\\{3, 7, 11, 15\\}$), code 9 ($\\{1, 3, 9, 11\\}$)", "$(e_8 + e_2)$ replaces $(\\overline{e_4} + e_2)$")
 b8_forms = {frozenset(["(e8)", "(e4 + e1)", "(e2 + e1')"]), frozenset(["(e8)", "(e4 + e2)", "(e2' + e1)"]),
             frozenset(["(e8)", "(e4 + e2)", "(e4 + e1)"])}
 assert mposs(bcd[8], XS3_DC, 4, E) == b8_forms and ml.min_literals_pos(bcd[8], XS3_DC, 4) == 5
@@ -219,6 +288,11 @@ assert all(bit(d, 3) & bit(d, 2) == 0 for d in range(10))  # A and B never both 
 # ── Seven-segment, segment a ────────────────────────────────────────────────
 seg_a = [0, 2, 3, 5, 6, 7, 8, 9]
 assert msops(seg_a, BCD_DC, 4, V4) == {frozenset(["A", "C", "BD", "B'D'"])}
+assert [m for m in range(10) if m not in seg_a] == [1, 4]
+assert {t: bl.minterms(t, V4) for t in ("C", "BD", "B'D'")} == {"C": [2, 3, 6, 7, 10, 11, 14, 15], "BD": [5, 7, 13, 15], "B'D'": [0, 2, 8, 10]}
+# The excess-3 Gray code starts at 0010 (Gray of 3), not 0000.
+assert format(3 ^ (3 >> 1), "04b") == "0010"
+
 
 # ── PYQs as they stand in the bank ───────────────────────────────────────────
 BK = bl.bank()

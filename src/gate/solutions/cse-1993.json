@@ -1107,7 +1107,7 @@
           "title": "The width is the largest product",
           "body": "Each word stores the product. The largest is $15 \\times 15 = 225 = 11100001_2$, which needs 8 bits, and no product can need more because $(2^4 - 1)^2 < 2^8$. So every word is 8 bits wide: the product of two $n$-bit numbers needs exactly $2n$ bits.",
           "scene": {
-            "reveal": 6,
+            "reveal": 9,
             "hl": [
               {
                 "r": 2,

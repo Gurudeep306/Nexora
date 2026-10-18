@@ -385,8 +385,8 @@ digits on 8 wires have $256 - 100 = 156$.
 :::trap{#trap-dc-illegal title="Detecting illegal inputs is extra work, not the default" depth="standard"}
 If the question says "do not detect illegal input", using rows 10–15 as 0s instead of Xs is not
 wrong logically, but it gives a more expensive circuit, and the examiner's gate count is the cheap
-one. For "digit ≥ 5", treating 10–15 as 0s gives $A'BD + A'BC + AB'C'$ (9 literals, and more gates than
-the three of $A + B(C + D)$; see the edge case below). The reverse slip is worse: if a question says
+one. For "digit ≥ 5", treating 10–15 as 0s gives $A'BD + A'BC + AB'C'$ (9 literals), and the cheapest
+AND/OR/NOT circuit then needs 6 gates instead of the three of $A + B(C + D)$ (see the edge case below). The reverse slip is worse: if a question says
 illegal codes **must** give 0 (or must be flagged), then using them as Xs produces a circuit that
 outputs 1 on code 1100, a real error. Read which of the two the question wants.
 :::
@@ -446,8 +446,8 @@ With no gate the output wire is an input or a constant. With one gate every inpu
 primary input (there is no other gate), so it is AND or OR of inputs, or NOT of one input.
 
 With two gates, call them $G_1$ (inner) and $G_2$ (output). If $G_2$ does not use $G_1$, it is a one-gate
-function. If $G_2$ is a NOT, it complements $G_1$, a one-gate function: NOT of an input is a literal
-(case 1), and NOT of an AND or OR of inputs is a NAND or NOR of inputs. If $G_1$ is a NOT of input $x$ and
+function. If $G_2$ is a NOT, it complements the one-gate function $G_1$: if $G_1$ is NOT $x$, then
+NOT(NOT $x$) $= x$, an input (case 1), and if $G_1$ is an AND or OR of inputs, its NOT is a NAND or NOR of inputs. If $G_1$ is a NOT of input $x$ and
 $G_2$ is an AND or OR, then $G_2$ combines plain inputs and $x'$. If both are AND or OR: equal types merge
 into one gate ($\text{AND}(X, \text{AND}(Y)) = \text{AND}(X \cup Y)$), and different types give
 $\text{OR}(X) + \text{AND}(Y)$ or $\text{AND}(X) \cdot \text{OR}(Y)$. That is every case.
@@ -466,8 +466,9 @@ $f(1000) = 1$.
 - **OR of inputs or literals:** an OR is 0 on a cube; a cube holding the 0-rows 0011 and 0100 has $B$, $C$,
   $D$ free ($A$ is 0 in both), so it also holds 0101, where $f = 1$.
 - **$\text{OR}(X) + \text{AND}(Y)$:** 0100 and 0011 force $B, C, D \notin X$, so $X \subseteq \{A\}$. Then 0101
-  needs $\text{AND}(Y) = 1$ there, so $Y \subseteq \{B, D\}$, and 0110 needs $Y \subseteq \{B, C\}$: hence $Y = \{B\}$,
-  which makes $f(0100) = 1$. Contradiction.
+  needs $\text{AND}(Y) = 1$ there, so $Y \subseteq \{B, D\}$, and 0110 needs $Y \subseteq \{B, C\}$: hence $Y \subseteq \{B\}$.
+  $Y = \varnothing$ is not a gate (an AND of nothing is the constant 1, which would make $f \equiv 1$), and
+  $Y = \{B\}$ makes $f(0100) = 1$. Contradiction.
 - **$\text{AND}(X) \cdot \text{OR}(Y)$:** 1000 forces $X \subseteq \{A\}$ and 0101 forces $X \subseteq \{B, D\}$, so
   $X = \varnothing$ and the circuit is one gate, already excluded.
 
@@ -529,13 +530,50 @@ Two gates are impossible.
 :::answer
 3 gates. This is the GATE 2004 question. The unfactored SOP $A + BD + BC$ also uses 3 gates when fan-in is free
 (two ANDs and a 3-input OR), but drawn with 2-input gates it takes 4, while $A + B(C + D)$ still needs 3. Without
-the don't-cares it needs far more (the edge case below).
+the don't-cares it needs 6 (the edge case below).
+:::
+::::
+
+::::example{#ex-count-rules level="medium" title="One function, three sets of gate-count rules" depth="standard"}
+Build $A \oplus B$ from AND, OR and NOT gates only. What is the fewest gates (a) with only $A$ and $B$
+available and any fan-in, (b) when the complements $A'$ and $B'$ are also available for free, and (c) with
+only $A$, $B$ and 2-input gates?
+
+:::step{why="Start from the obvious two-level form and count every box, inverters included."}
+The SOP $A'B + AB'$ needs NOT $A$, NOT $B$, two ANDs and one OR: 5 gates under rule (a).
+:::
+
+:::step{why="Factor so that only one complement is needed: XOR means 'at least one is 1, but not both'."}
+$A \oplus B = (A + B)\cdot\overline{AB}$: OR($A$, $B$), AND($A$, $B$), NOT, AND: **4 gates**. Check: 00 gives
+$0 \cdot 1 = 0$, 01 and 10 give $1 \cdot 1 = 1$, 11 gives $1 \cdot 0 = 0$ ✓.
+:::
+
+:::step{why="Lower bound with the small-circuit theorem: XOR is not monotone (raising B from 01 to 11 drops the output from 1 to 0), so it cannot be an AND/OR of plain inputs or OR(X) + AND(Y) or AND(X)·OR(Y); a NAND or NOR of inputs is 1 on 00; and A′B, AB′, A′ + B, A + B′ each miss a row."}
+No circuit of one or two gates computes $A \oplus B$, and an exhaustive search shows that three gates cannot
+either. So 4 is the minimum under rule (a).
+:::
+
+:::step{why="Rule (b) makes the inverters free, which is exactly what the SOP was paying for."}
+With $A'$ and $B'$ on wires, $A'B + AB'$ costs two ANDs and one OR: **3 gates**, and the search confirms that
+two are not enough.
+:::
+
+:::step{why="Rule (c) limits fan-in; check whether the best circuit already uses only 2-input gates."}
+Every gate of $(A + B)\cdot\overline{AB}$ has at most two inputs, so the fan-in limit costs nothing here:
+still **4 gates**. (Contrast the previous example, where $A + BD + BC$ needs a 3-input OR and the limit adds a
+gate, unless you factor.)
+:::
+
+:::answer
+(a) 4, (b) 3, (c) 4. The same function costs a different number of gates under different rules, which is
+why the first move in every gate-count question is to read the rules: which types, which fan-in, and
+whether complements are free.
 :::
 ::::
 
 ::::example{#ex-det-gate level="gate" title="At least two of four switches" depth="standard"}
 Four switches $A, B, C, D$; output 1 when at least two are on. Find the minimal SOP, its literal count,
-and a cheaper gate-level form (any fan-in, complements not needed).
+and the cheapest gate-level form (AND and OR gates of any fan-in; no complements are needed).
 
 :::step{why="Count the selected rows by the number of 1s: two, three or four of the four inputs."}
 $\binom{4}{2} + \binom{4}{3} + \binom{4}{4} = 6 + 4 + 1 = 11$ rows are 1; only the five rows with at most one 1
@@ -552,9 +590,21 @@ $f = AB + CD + (A + B)(C + D)$: gates OR($A$, $B$), OR($C$, $D$), AND of those t
 AND($C$, $D$), and one 3-input OR: 6 gates instead of the 7 of the two-level form (six ANDs and one OR).
 :::
 
+:::step{why="Read the same idea the other way round: if no pair sits inside one half, then at least one switch is on in each half. So 'two on' is 'the first half has one on, or the second half has a pair' AND 'the second half has one on, or the first half has a pair'."}
+Better still: $f = (A + B + CD)(C + D + AB)$. Gates: AND($A$, $B$), AND($C$, $D$), OR($A$, $B$, $CD$),
+OR($C$, $D$, $AB$) and the final AND: **5 gates**. Check row 1100 ($A = B = 1$): $(1)(0 + 0 + 1) = 1$ ✓; row 1000: the
+second factor is $0 + 0 + 0 = 0$ ✓; row 1010: $(1)(1) = 1$ ✓.
+:::
+
+:::step{why="Is 5 the end? Only a lower bound can say; an exhaustive search over AND/OR/NOT circuits settles it."}
+No circuit of 4 or fewer gates computes "at least two of four", so 5 is the minimum.
+:::
+
 :::answer
-11 minterms; minimal SOP with 6 terms and 12 literals; the factored form $AB + CD + (A + B)(C + D)$ uses
-6 gates. Voting functions are symmetric, so "count the 1s" is always the quickest way to the rows.
+11 minterms; minimal SOP with 6 terms and 12 literals (7 gates two-level); $AB + CD + (A + B)(C + D)$ uses
+6 gates and $(A + B + CD)(C + D + AB)$ uses 5, the minimum. Voting functions are symmetric, so "count the
+1s" is always the quickest way to the rows, and splitting the inputs into halves is the quickest way to a
+small circuit.
 :::
 ::::
 
@@ -570,21 +620,35 @@ $f = \Sigma m(5, 6, 7, 8, 9)$, with no don't-cares.
 Minimal SOP: $f = A'BD + A'BC + AB'C' = A'B(C + D) + AB'C'$: 9 literals.
 :::
 
-:::step{why="Now complements cost NOT gates, and the expression needs three of them."}
-One realisation: NOT $A$, NOT $B$, NOT $C$, OR($C$, $D$), AND($A'$, $B$, $C + D$), AND($A$, $B'$, $C'$), and
-the final OR: 7 gates. An exhaustive search confirms that no circuit with 4 or fewer gates exists.
+:::step{why="Now complements cost NOT gates, and the SOP needs three of them."}
+One realisation of the SOP: NOT $A$, NOT $B$, NOT $C$, OR($C$, $D$), AND($A'$, $B$, $C + D$), AND($A$, $B'$, $C'$), and
+the final OR: 7 gates.
+:::
+
+:::step{why="Gates, not literals, are counted, so try a factoring that keeps complements to a minimum: build 'digit ≥ 5' as if rows 10–15 were free, then remove those rows with a single NOT."}
+Factoring differently does better: $f = (A + B)(A + C + D)\cdot\overline{A(B + C)}$. Here
+$(A + B)(A + C + D) = A + B(C + D)$ is "digit ≥ 5" read on all 16 rows (it is 1 on 5–15), and
+$\overline{A(B + C)}$ is 0 exactly on the rows with $A = 1$ and $B$ or $C$ set, which are rows 10–15. The gates:
+OR($A$, $B$), OR($A$, $C$, $D$), OR($B$, $C$), AND($A$, ·), NOT, and a 3-input AND: **6 gates**.
+:::
+
+:::step{why="An upper bound is half the answer; the other half is the lower bound, here by an exhaustive search over every AND/OR/NOT circuit."}
+An exhaustive search shows that no circuit of 5 or fewer gates exists, so 6 is the minimum.
 :::
 
 :::answer
-The cost rises from 3 gates to more than 4 (7 in the circuit above). This is why "do not detect illegal
-input" matters: it is the difference between using rows 10–15 as Xs and paying for them as 0s.
+The minimum rises from 3 gates to 6. This is why "do not detect illegal input" matters: it is the
+difference between using rows 10–15 as Xs and paying for them as 0s. Notice also that the cheapest
+circuit is not the minimal SOP (7 gates): a single NOT on a shared sub-expression is cheaper than three
+NOTs on the inputs.
 :::
 ::::
 
 :::note{#recap-gates title="Recap" depth="quick"}
 Fix the rules (types, fan-in, complements) first. Upper bound: draw a circuit, factored. Lower bound:
 list what fewer gates can compute and find a care row that each one gets wrong. Every NOT counts under
-"only AND, OR and NOT".
+"only AND, OR and NOT". $A \oplus B$ costs 4 gates with plain inputs, 3 with free complements;
+"digit ≥ 5" costs 3 with don't-cares, 6 without; "at least two of four" costs 5.
 :::
 
 ## Converting between codes
@@ -697,9 +761,12 @@ $E_0 = 1$: 1001 = 9 = 6 + 3 ✓. Digit 0: $E_3 = 0$, $E_2 = 0 \oplus 0 = 0$, $E_
 :::viz{#converter-kmaps-viz spec="converter-kmaps" mode="animate" depth="standard"}
 :::
 
-The animation draws the four maps side by side with the Xs on rows 10–15 and loops one output per step:
-$E_0$'s two columns, $E_1$'s outer and inner columns, $E_2$'s three loops and $E_3$'s octet with two quads.
-Notice how every big loop reaches into the X rows; remove the Xs and each output costs more.
+The animation draws the four maps side by side over the inputs $B_3 B_2 B_1 B_0$ (the same names as the
+table), with the Xs on cells 10–15, and loops one output per step from the MSB down: $E_3$'s octet $B_3$ with
+the two quads $B_2B_1$ and $B_2B_0$; $E_2$'s two quads and one pair; $E_1$'s left-column quad $B_1'B_0'$ and
+third-column quad $B_1B_0$; and $E_0$'s octet $B_0'$ (the two outer columns). The maps give the two-level
+forms; $E_2$ and $E_1$ are then factored into the XOR and XNOR forms above. Notice how every big loop reaches
+into the X cells; remove the Xs and each output costs more.
 
 :::definition{#xs3-to-bcd term="Excess-3 to BCD (subtract 3)" depth="standard"}
 The reverse converter takes excess-3 inputs $e_8 e_4 e_2 e_1$ (named by their weights, as GATE 2001 does)
@@ -713,15 +780,16 @@ and 13, 14, 15** are don't-cares. Digit $d$ arrives as code $d + 3$:
 
 For a **minimal POS**, loop the 0s. For $b_4$ the 0-codes are 3, 4, 5, 6, 11, 12 and the Xs are 0, 1, 2, 13, 14,
 15. Codes 3 (0011) and 11 (1011) form a pair, the factor $(e_4 + \overline{e_2} + \overline{e_1})$, and the pair cannot
-grow: its two possible quads contain code 7 or codes 9 and 10, which are 1s. Codes 4, 5, 12 (with X13) form the
+grow: each of its three possible quads contains a 1, code 7 ($\{3, 7, 11, 15\}$), code 9 ($\{1, 3, 9, 11\}$) or
+code 10 ($\{2, 3, 10, 11\}$). Codes 4, 5, 12 (with X13) form the
 quad $(\overline{e_4} + e_2)$, and codes 4, 6, 12 (with X14) the quad $(\overline{e_4} + e_1)$. There are **three equally
 minimal POS forms, each with 7 literals**:
 
 $$b_4 = (\overline{e_4} + e_2)(\overline{e_4} + e_1)(e_4 + \overline{e_2} + \overline{e_1})$$
 
-and the two variants in which one of the first two factors is replaced by $(e_8 + e_1)$ or $(e_8 + e_2)$
-respectively (the quad $(e_8 + e_1)$ = codes 0, 2, 4, 6 can take over codes 4 and 6, and $(e_8 + e_2)$ = codes 0, 1,
-4, 5 can take over codes 4 and 5). Any one of them is a correct answer to GATE 2001.
+and the two variants in which $(e_8 + e_2)$ replaces $(\overline{e_4} + e_2)$, or $(e_8 + e_1)$ replaces
+$(\overline{e_4} + e_1)$ (the quad $(e_8 + e_2)$ = codes 0, 1, 4, 5 can take over codes 4 and 5, and $(e_8 + e_1)$ =
+codes 0, 2, 4, 6 can take over codes 4 and 6). Any one of them is a correct answer to GATE 2001.
 :::
 
 :::intuition{#gray-intuition title="Counting with one finger at a time" depth="standard"}
@@ -743,8 +811,9 @@ In particular $G_{n-1} = B_{n-1}$: the MSB passes straight through.
 
 :::proof{#proof-binary-gray of="the binary–Gray conversion" depth="standard"}
 **Idea first:** the reflected Gray code of $n$ bits is "a 0, then the $(n-1)$-bit code; then a 1, then the
-$(n-1)$-bit code in reverse". Reversing a list of binary numbers complements their bits, and that
-complement is exactly what XOR with the leading 1 does.
+$(n-1)$-bit code in reverse". Reversing the list of **all** $(n-1)$-bit numbers sends position $r$ to
+position $2^{n-1} - 1 - r$, which is $r$ with every bit complemented, and that complement is exactly what
+XOR with the leading 1 does.
 
 Induct on $n$. For $n = 1$, Gray = binary (0, 1), and $G_0 = B_0 \oplus 0$ ✓. Suppose the formula holds for
 $n - 1$ bits. Take an $n$-bit number $b$. If its MSB is 0, its Gray code is 0 followed by the $(n-1)$-bit
@@ -762,10 +831,12 @@ $B_{i+1}$), and unrolling from the top bit, $B_{n-1} = G_{n-1}$, gives the runni
 :::viz{#gray-converter-viz spec="gray-converter" mode="animate" depth="standard"}
 :::
 
-In the animation the top row is a 4-bit binary input; each Gray bit lights as the XOR of two neighbouring
-binary bits, all at once (the binary → Gray converter has depth one). The bottom row converts back: the
-binary bits are recovered **one after another** from the MSB down, each waiting for the bit above it, so
-the Gray → binary converter is a ripple of $n - 1$ XOR gates with depth $n - 1$.
+The animation shows two circuits. The first converts the binary input 1011 to Gray: each Gray bit is the
+XOR of two neighbouring binary bits and needs no other Gray bit, so the three XORs work in parallel (the
+binary → Gray converter has depth one), even though the scene lights them one at a time to show each
+calculation. The second circuit converts the Gray code 1110 back: the binary bits are recovered **one after
+another** from the MSB down, each XOR waiting for the binary bit above it, so the Gray → binary converter
+is a ripple of $n - 1$ XOR gates with depth $n - 1$. It returns 1011, the original input.
 
 :::trick{#trick-xor-converter title="Gray bit = 'do my neighbours differ?'" depth="standard"}
 To convert binary to Gray in your head, copy the MSB, then write a 1 wherever a bit differs from the bit
@@ -773,9 +844,9 @@ on its left and a 0 wherever it is the same: binary 1011 → Gray 1110. To go ba
 keep a running "parity so far": each binary bit is the XOR of all Gray bits up to and including its
 position, so Gray 1110 → 1, 1⊕1 = 0, 0⊕1 = 1, 1⊕0 = 1: binary 1011.
 
-**Why it works:** this is the theorem read aloud. **When it fails:** only for other Gray-like codes (a
-non-reflected unit-distance code, or a Gray code with a different starting word) where the formula does
-not hold. Costs follow too: an $n$-bit converter in either direction uses $n - 1$ two-input XORs.
+**Why it works:** this is the theorem read aloud. **When it fails:** the formula is for the reflected
+binary Gray code only. A different unit-distance code (for example one that starts at a word other than
+0…0, or the excess-3 Gray code, which begins at 0010) needs its own table and its own K-maps. Costs follow too: an $n$-bit converter in either direction uses $n - 1$ two-input XORs.
 :::
 
 :::trap{#trap-gray-dc title="A 'binary-to-Gray' converter simplified with rows 10–15 as don't-cares is BCD-only" depth="standard"}
@@ -894,6 +965,11 @@ digits 0, 2, 3, 5, 6, 7, 8, 9 (off only for 1 and 4). On the map, with the Xs:
 
 $$a = A + C + BD + B'D'.$$
 
+Why: the only 0s of segment a are cells 1 (0001) and 4 (0100). Every other cell is a 1 or an X, so the
+loops can be huge: the octet $A$ (cells 8–15) takes digits 8 and 9, the octet $C$ (the two right-hand
+columns, cells 2, 3, 6, 7, 10, 11, 14, 15) takes 2, 3, 6, 7, the quad $BD$ (cells 5, 7, 13, 15) takes 5, and the
+corner quad $B'D'$ (cells 0, 2, 8, 10) takes 0. None of the four loops touches cell 1 or cell 4.
+
 Each segment is designed the same way, and the seven outputs share terms such as $B'D'$; a ROM (Lesson 5)
 is the brute-force alternative that stores the whole 16 × 7 table. GATE has not asked for the full
 decoder, but "which segments are lit for digit $k$" and "which minterms make segment $x$" are natural short
@@ -1003,7 +1079,7 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Procedure | spec → names and bit order → truth table → Xs → K-map per output → expression → gates → verify |
 | Don't-cares | unused code words (BCD 10–15; XS-3 0–2, 13–15) are Xs unless illegal input must be detected |
 | Matching a table | evaluate every row; one counterexample rejects; decode rows by their labels |
-| Detectors | majority $AB + BC + CA$; digit ≥ 5 $= A + B(C + D)$, 3 AND/OR gates, 2 impossible |
+| Detectors | majority $AB + BC + CA$; digit ≥ 5 $= A + B(C + D)$, 3 AND/OR gates, 2 impossible (6 gates if rows 10–15 must give 0) |
 | Gate counts | fix types, fan-in, complements; NOTs count; factor; prove the lower bound by listing small circuits |
 | BCD mod 6 | $R_1 = I_1$, $R_2 = I_4 + I_2\overline{I_3}$, $R_3 = I_3\overline{I_2}$, $R_4 = 0$ |
 | BCD → XS-3 | $E_3 = B_3 + B_2(B_1 + B_0)$, $E_2 = B_2 \oplus (B_1 + B_0)$, $E_1 = \overline{B_1 \oplus B_0}$, $E_0 = \overline{B_0}$ |

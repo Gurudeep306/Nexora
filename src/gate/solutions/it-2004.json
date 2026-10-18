@@ -542,7 +542,7 @@
         },
         {
           "title": "Product bits",
-          "body": "The product of two 8-bit numbers is at most $255^2 = 65025 < 2^{16}$ and at least that large product needs bit 15, so exactly 16 output bits. 32 bits would store 16 bits that are always 0.",
+          "body": "The largest product is $255^2 = 65025$; since $2^{15} \\le 65025 < 2^{16}$ it needs exactly 16 bits, and no product needs more. 32-bit words would store 16 bits that are always 0.",
           "scene": {
             "reveal": 9,
             "hl": [
@@ -556,7 +556,7 @@
         },
         {
           "title": "Minimum size",
-          "body": "$64\\text{K} \\times 16$ bits. It is the minimum because both counts are forced: every row needs its own word, and every one of the 16 product bits is 1 for some pair and 0 for another.",
+          "body": "$64\\text{K} \\times 16$ bits. It is the minimum because both counts are forced: every row needs its own word, and every one of the 16 product bits is 1 for some pair and 0 for another (none is constant), and none is a copy of an input bit, so no column can be wired instead of stored.",
           "scene": {
             "reveal": 12,
             "hl": [
@@ -595,7 +595,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "$16\\text{K} \\times 32$: only 14 address bits, and 32-bit words are twice the product width. It also holds less than half the rows needed."
+          "reason": "$16\\text{K} \\times 32$: only 14 address bits, and 32-bit words are twice the product width. It also has only a quarter of the 64K words needed."
         },
         {
           "option": "D",

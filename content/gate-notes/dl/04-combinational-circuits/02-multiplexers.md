@@ -136,6 +136,15 @@ $(S, I_1, I_0) = (0, 0, 1)$ has $S = 0$, so $Y = I_0 = 1$, not 0; some printed t
 Before trusting a printed MUX table, check one row with $S = 0$ and $I_0 \ne I_1$.
 :::
 
+:::intuition{#gate-level-intuition title="One gatekeeper per track" depth="standard"}
+Back at the junction, give every track its own gatekeeper. Each gatekeeper looks at the lever and opens
+the gate only when the lever points at **that** track; a closed gate passes nothing (a 0). Behind the
+gates the tracks merge into one line, and since at most one gate is open, the line carries exactly that
+track's train. A gatekeeper is an AND gate (lever position AND data bit), and the merge is an OR gate. That
+is all the hardware inside a MUX: one AND per data input, one OR, and a few inverters so that each
+gatekeeper can recognise its own lever position.
+:::
+
 :::definition{#mux-gate-level term="Inside the box: the gate-level MUX" depth="standard"}
 The equation is already a two-level circuit. A $2^n$:1 MUX built from gates has:
 
@@ -169,6 +178,15 @@ digit 4 is in the question; a 4:1 MUX has only 2 select lines. The reverse slip 
 registers need $\lceil \log_2 32 \rceil = 5$ select lines, not 32 and not 16.
 :::
 
+:::intuition{#enable-intuition title="The junction's master gate" depth="standard"}
+Add one more control to the railway junction: a **master gate** between the merge point and the station.
+With the master gate open, the junction works as before. With it shut, no train reaches the station,
+whatever the lever says and whatever waits on the tracks. The station then sees "nothing arriving", and
+on a logic wire "nothing" is a 0. That master gate is the enable input. It matters in two ways: in a
+circuit where a variable drives the enable, every row that shuts the gate is a 0 of the function; and two
+junctions with master gates can share one station, because only the open one ever sends a train.
+:::
+
 :::definition{#mux-enable term="The enable input" depth="standard"}
 Many MUXes have an **enable** input $E$ (also called strobe or EN). When the MUX is enabled it works
 normally; when it is **disabled its output is forced to 0**, whatever the data and select lines say:
@@ -185,13 +203,24 @@ outputs 0. (A MUX with a **three-state** output instead disconnects, "high imped
 questions use the ordinary output, and a three-state output is always said explicitly.)
 :::
 
+:::viz{#mux-enable-expand-viz spec="mux-enable-expand" mode="animate" depth="standard"}
+:::
+
+The animation builds an 8:1 MUX from two 4:1 MUXes that share the select lines $S_1 S_0$. The upper MUX
+holds $I_0 \dots I_3$ and is enabled by $S_2'$; the lower one holds $I_4 \dots I_7$ and is enabled by $S_2$; an OR
+gate joins their outputs. For each value of $S_2$ exactly one MUX is enabled, and the disabled one outputs
+0, so the OR passes the enabled MUX's choice: $S_2$ picks the half, $S_1 S_0$ the input within it. Watch the
+disabled MUX's output sit at 0 whatever its data inputs hold; if a disabled MUX output 1 instead, the OR
+would be stuck at 1. The worked example below traces one select value through this circuit.
+
 :::trap{#trap-enable title="A disabled row is 0, not a don't-care" depth="standard"}
 When the enable is driven by one of the variables, half of the rows switch the MUX off. Those rows are
 **0s of the function**, not don't-cares and not "whatever the selected data input is". The wrong answers
 examiners plant come from forgetting the enable (reading only the data inputs) or from treating the
-disabled rows as free. In GATE 2002 the enable is $z'$, so every row with $z = 1$ gives 0, and the
-only data input that can ever reach the output is the one chosen with $z = 0$. Also check the polarity:
-a bubble on the enable pin flips which rows are switched off.
+disabled rows as free. In GATE 2002 the enable is $z'$, so every row with $z = 1$ gives 0. With $z = 0$ the
+select bit $A_0 = z$ is 0, so only $I_0$ and $I_2$ can be chosen, and $I_2 = y$ is chosen only when $y = 0$
+(the other select bit is $A_1 = y'$), which makes it 0. Only $I_0 = x$, chosen when $y = 1$, can give a 1:
+$f = xy\overline{z}$. Also check the polarity: a bubble on the enable pin flips which rows are switched off.
 :::
 
 ### Worked examples: the MUX, its selects and its enable
@@ -332,6 +361,14 @@ variables that is 8 rows, under a minute.
 :::viz{#mux-cascade-viz spec="mux-cascade" mode="animate" depth="standard"}
 :::
 
+:::intuition{#if-else-intuition title="A fork in the road, decided by a sign" depth="standard"}
+A traveller reaches a fork with a sign: "if the bridge is open, take the left road, otherwise the
+right". The traveller does not remember earlier signs and does not wait; the moment the sign changes, the
+choice changes. A 2:1 MUX is that fork: the condition is the select line, the two roads are the two data
+inputs. So whenever a specification or a piece of code reads "if … then this, else that", with both
+branches producing a value from the present inputs, the hardware is a MUX.
+:::
+
 :::definition{#mux-if-else term="A MUX is an if–then–else" depth="standard"}
 A 2:1 MUX with select $x$, $I_1 = a$ and $I_0 = b$ computes
 $$
@@ -401,7 +438,9 @@ Loops: $P'Q$ ($m_2, m_3$), $QR'$ ($m_2, m_6$), $PQ'R$ ($m_5$).
 
 :::answer
 $F = P'Q + QR' + PQ'R$ (7 literals). The MUX equation itself, $P'Q + PQ'R + PQR'$, is correct but not
-minimal: GATE 2014 offers both, and only the looped form is the minimal SOP.
+minimal (8 literals). In GATE 2014 two of the wrong options are also equal to $F$ but are not minimal
+(11 literals each), and only the looped form (7 literals) is the minimal SOP: check equality **and**
+minimality.
 :::
 ::::
 
@@ -423,8 +462,8 @@ $f = \Sigma m(2, 3, 4, 5, 6) = x'y + xy' + yz'$.
 
 :::answer
 $f = x'y + xy' + yz' = (x \oplus y) + yz'$ (an equally minimal choice is $x'y + xy' + xz'$). The substitution
-"inside the branch where MUX 2 chooses $g$, its select is 1" is what keeps the algebra short; GATE 2006
-is the same circuit shape with different data inputs.
+"inside the branch where MUX 2 chooses $g$, its select is 1" is what keeps the algebra short. GATE 2006 has
+the same shape, but there MUX 1 feeds MUX 2's **input 0**, so you substitute $y = 0$ inside $g$.
 :::
 ::::
 
@@ -735,6 +774,34 @@ don't-cares as 0s would give $(C, 0, C', C')$ and cost an inverter for nothing.
 :::
 ::::
 
+::::example{#ex-impl-fewer level="medium" title="A 3-variable function on a 2:1 MUX with gates on the data lines" depth="standard"}
+Implement $f(A, B, C) = \Sigma m(1, 2, 6, 7)$ on a single 2:1 MUX with select $A$, using as few gates on the data
+lines as possible.
+
+:::step{why="With one select line only A is fixed by the MUX; each data input must supply the whole cofactor, a function of the two leftover variables B and C."}
+$I_0 = f(0, B, C)$ serves rows 0–3, and $I_1 = f(1, B, C)$ serves rows 4–7.
+:::
+
+:::step{why="Read the cofactor for A = 0 as a 2-variable truth table over (B, C): rows 0, 1, 2, 3 are BC = 00, 01, 10, 11."}
+For $A = 0$ the 1s are rows 1 and 2, i.e. $BC = 01$ and $10$: $I_0 = B'C + BC' = B \oplus C$, one XOR gate.
+:::
+
+:::step{why="Same for A = 1: rows 4, 5, 6, 7 are BC = 00, 01, 10, 11."}
+For $A = 1$ the 1s are rows 6 and 7, i.e. $BC = 10$ and $11$: $I_1 = B$, a plain wire.
+:::
+
+:::step{why="Check a 0 of f through the wiring, where a wrong cofactor would show."}
+Row 5 ($A = 1$, $B = 0$, $C = 1$): the MUX passes $I_1 = B = 0$, and 5 is not a minterm ✓. Row 3 ($A = 0$, $BC = 11$):
+$I_0 = 1 \oplus 1 = 0$ ✓.
+:::
+
+:::answer
+$I_0 = B \oplus C$ (one XOR), $I_1 = B$ (a wire): one 2:1 MUX and one gate. The choice of select variable decides
+how simple the cofactors are; with $C$ on the select instead, the cofactors would be $f(A, B, 0) = A'B + AB$, which
+is $B$, and $f(A, B, 1) = A'B' + AB$, an XNOR, so the cost is the same here, but in general try each variable.
+:::
+::::
+
 ::::example{#ex-impl-gate level="gate" title="A 4-variable function on an 8:1 MUX" depth="standard"}
 Implement $f(A, B, C, D) = \Sigma m(1, 3, 4, 11, 12, 13, 14, 15)$ on an 8:1 MUX with $S_2 = A$, $S_1 = B$, $S_0 = C$.
 
@@ -964,7 +1031,10 @@ Write $\text{MUX}(s;\ I_0, I_1) = s'I_0 + sI_1$. With the constants 0 and 1 and 
 One 2:1 MUX, with only the uncomplemented variables and constants, can make NOT, AND, OR, implication
 and inhibition, but not NAND, NOR, XOR or XNOR: each of those needs a complement that a single MUX cannot
 both produce and use. A **half adder** therefore takes two MUXes when $B'$ is available (carry
-$\text{MUX}(A;\ 0, B)$, sum $\text{MUX}(A;\ B, B')$) and three when the inverter must itself be a MUX.
+$\text{MUX}(A;\ 0, B)$, sum $\text{MUX}(A;\ B, B')$) and three when the inverter must itself be a MUX. A
+**half subtractor** ($A - B$: difference $A \oplus B$, borrow $A'B$) needs only two, even without complements:
+borrow $= \text{MUX}(A;\ B, 0) = A'B$, and difference $= \text{MUX}(B;\ A, A'B)$, which reuses the borrow,
+because for $B = 1$ the borrow $A'B$ equals $A'$. The borrow line is the complement the XOR needed.
 :::
 
 :::theorem{#mux-complete-proof name="The 2:1 MUX with constants is functionally complete" depth="standard"}
@@ -978,7 +1048,7 @@ never break and NOT does not have.
 
 *With constants.* $\text{MUX}(x;\ 1, 0) = x'$ and $\text{MUX}(B;\ 0, A) = AB$. Every function has a canonical SOP,
 which is built from NOT, AND and OR, and OR is $\overline{\overline{A}\,\overline{B}}$ by De Morgan, so NOT and AND build
-every function ([Chapter 2, Lesson 5](lesson:universal-gates)). Replace each NOT and AND by its MUX. (A
+every function ([Chapter 2, Lesson 5](lesson:universal-gates#mux-complete)). Replace each NOT and AND by its MUX. (A
 direct route is the previous section: a tree of 2:1 MUXes on all the variables, with the truth table as
 constants on its leaves, is already any function.)
 
@@ -1029,7 +1099,7 @@ Control $Z = A$; for $A = 1$ the output must be 1, so $Y = 1$; for $A = 0$ the o
 $Z'X + ZY = A'B + A = A + B$ (absorption).
 :::
 
-:::step{why="Rule out the tempting alternatives: a constant on the control freezes the MUX, and using the same variable on control and a data line only reproduces it."}
+:::step{why="Rule out the tempting alternatives: a constant on the control freezes the MUX, and a variable on both the control and a data line is seen there only at one fixed value (A on X is read only when A = 0, i.e. as 0)."}
 $Z = 0$ outputs $X$ alone; $X = A, Y = B, Z = A$ gives $A'A + AB = AB$, an AND.
 :::
 
@@ -1169,22 +1239,32 @@ $C, C', C', C$ pattern of the reading examples with the roles of the variables r
 :::
 ::::
 
-::::example{#ex-app-edge level="gate" title="Edge case: a selector with a shared gate" depth="standard"}
-Control bits $C_1 C_0$ choose $F$: 00 → $AB$, 01 → $A \oplus B$, 10 → $A + B$, 11 → $\overline{A + B}$. Build it with one
-4:1 MUX, one AND, one XOR, one OR and one inverter.
+::::example{#ex-app-edge level="gate" title="Edge case: a selector where one operation costs no gate" depth="standard"}
+Control bits $C_1 C_0$ choose $F$: 00 → $A$, 01 → $\overline{A}$, 10 → $AB$, 11 → $A \oplus B$. Build it with one 4:1 MUX
+and as few extra gates as possible (AND, XOR and NOT gates are available).
 
 :::step{why="A 4:1 MUX with C1 on S1 and C0 on S0 passes I_{C1C0}, so each data input gets the function for its code."}
-$I_0 = AB$, $I_1 = A \oplus B$, $I_2 = A + B$, $I_3 = \overline{A + B}$.
+$I_0 = A$, $I_1 = \overline{A}$, $I_2 = AB$, $I_3 = A \oplus B$.
 :::
 
-:::step{why="Only one inverter is allowed and there is no NOR gate, so the NOR must reuse the OR gate's output."}
-$I_2$ = OR($A$, $B$) and $I_3$ = NOT(OR($A$, $B$)): one OR gate feeds two data inputs.
+:::step{why="Look for operations that need no gate at all: a data input may be a plain wire from a variable."}
+$I_0 = A$ is a wire from $A$: no gate. $I_1 = \overline{A}$ needs one inverter on that same wire.
+:::
+
+:::step{why="The remaining two operations are genuine 2-input functions and get one gate each."}
+$I_2$ = AND($A$, $B$), $I_3$ = XOR($A$, $B$).
+:::
+
+:::step{why="Check one code end to end, including the gate-free line."}
+$C_1 C_0 = 00$, $A = 1$, $B = 0$: the MUX passes $I_0 = A = 1$ ✓. $C_1 C_0 = 11$, $A = B = 1$: $I_3 = 1 \oplus 1 = 0$ ✓.
 :::
 
 :::answer
-One gate per operation, with the OR shared through the inverter: AND → $I_0$, XOR → $I_1$, OR → $I_2$, inverter on
-the OR → $I_3$. The order of the data inputs follows the control code, so a different code table permutes
-them (GATE 1996 uses 00 → NOR, 01 → OR, 10 → XOR, 11 → AND).
+One 4:1 MUX plus three gates (one inverter, one AND, one XOR) for four operations: $A$ costs only a wire, and
+$\overline{A}$ costs only the inverter on that wire. The insight in every function selector is to count gates per
+**distinct signal**, not per operation: an operation that is a variable costs nothing, and one that is the
+complement of another line costs a single inverter (GATE 1996 builds its selector the same way, sharing one
+OR gate between $A + B$ and its complement).
 :::
 ::::
 
