@@ -8,8 +8,8 @@ prerequisites: [canonical-forms, codes]
 pyq_topics: [dl/minimization]
 est_minutes: 70
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every map, loop, minimal form and answer is checked by enumeration in content/gate-notes/_checks/dl/l3_01_kmaps.py (prime implicants by Quine–McCluskey and by brute force, minimal covers by Petrick's method and by exhaustive search, both in minlib.py)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 37–39, set B pp. 113–116, set C pp. 232–238, 259–260 and 263–264."

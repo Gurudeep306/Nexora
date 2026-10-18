@@ -951,7 +951,7 @@
      "B",
      "C"
     ],
-    "why": "010− and −010 differ in only two characters, but their dashes are in different places; their cells {4, 5} and {2, 10} are not one cube."
+    "why": "010− and −010 have their dashes in different places (in fact they differ in every position); their cells {4, 5} and {2, 10} are not one cube."
    },
    {
     "answer": [
@@ -1165,7 +1165,7 @@
     "answer": [
      "C"
     ],
-    "why": "$m_{21}$ is the mirror cell in the $A = 1$ map: it differs only in $A$."
+    "why": "$m_{21}$ is the twin cell (same position) in the $A = 1$ map: it differs only in $A$."
    }
   ],
   "blocks": [
@@ -1199,15 +1199,15 @@
   ],
   "answer": "C",
   "solution": [
-   "$m_1 = 00001$, $m_5 = 00101$ (A = 0 map) and $m_{17}$, $m_{21}$ (their mirrors in the A = 1 map): $B = 0$, $D = 0$, $E = 1$ throughout, $A$ and $C$ free: the quad $B'D'E$.",
-   "$m_{10} = 01010$ and $m_{26} = 11010$ are a mirror pair: $B = 1, C = 0, D = 1, E = 0$: $BC'DE'$.",
+   "$m_1 = 00001$, $m_5 = 00101$ (A = 0 map) and $m_{17}$, $m_{21}$ (their twins in the A = 1 map): $B = 0$, $D = 0$, $E = 1$ throughout, $A$ and $C$ free: the quad $B'D'E$.",
+   "$m_{10} = 01010$ and $m_{26} = 11010$ are a twin pair: $B = 1, C = 0, D = 1, E = 0$: $BC'DE'$.",
    "$f = B'D'E + BC'DE'$ (7 literals)."
   ],
   "concept": "A group drawn in the same place of both maps drops A.",
   "common_wrong": [
    {
     "answer": "D",
-    "why": "Equal to $f$, but the two halves $A'B'D'E$ and $AB'D'E$ are mirror images and merge into $B'D'E$."
+    "why": "Equal to $f$, but the two halves $A'B'D'E$ and $AB'D'E$ are twins and merge into $B'D'E$."
    },
    {
     "answer": "A",
@@ -1244,7 +1244,7 @@
   ],
   "answer": "A",
   "solution": [
-   "Plain 1 at $(0, 1)$: it will be absorbed by the passes below (it is used as a don't-care by both).",
+   "Use the literal passes first, with the plain 1 at $(0, 1)$ as a helper; leave the plain 1 for last.",
    "$C'$-pass: the $C'$ at $(0, 0)$ joins the 1 at $(0, 1)$ in row $A = 0$: the loop $A'$, giving $A'C'$.",
    "$C$-pass: the $C$ at $(1, 1)$ joins the 1 at $(0, 1)$ in column $B = 1$: the loop $B$, giving $BC$.",
    "The plain 1 at $(0, 1)$ is already covered ($A'C'$ covers it for $C = 0$, $BC$ for $C = 1$). So $f = A'C' + BC = \\Sigma m(0, 2, 3, 7)$."
@@ -1262,7 +1262,7 @@
   ],
   "blocks": [
    "vem-read",
-   "trick-vem-zero-first",
+   "trick-vem-literals-first",
    "vem-def"
   ],
   "source": "nexora"
@@ -1378,7 +1378,7 @@
    },
    {
     "answer": "D",
-    "why": "No single literal covers four of the 1s here, so the SOP cannot have 3 literals."
+    "why": "A 3-literal SOP needs a single-literal term (8 cells) plus a pair, or one 3-literal product; no literal's 8 cells are all 1s here, so at least 4 literals are needed."
    }
   ],
   "blocks": [
@@ -1627,44 +1627,44 @@
   "options": [
    {
     "l": "A",
-    "t": "Adding a consensus term to an SOP never changes the function it computes."
+    "t": "A function whose 1-cells are pairwise non-adjacent (such as parity) can still have a static-1 hazard in its minimal SOP."
    },
    {
     "l": "B",
-    "t": "A minimal SOP is always free of static-1 hazards."
+    "t": "Adding the consensus of two of its terms to an SOP never changes the function it computes."
    },
    {
     "l": "C",
-    "t": "A two-level OR–AND (POS) circuit can have a static-0 hazard."
+    "t": "A minimal SOP is always free of static-1 hazards."
    },
    {
     "l": "D",
-    "t": "A function whose 1-cells are pairwise non-adjacent (such as parity) can still have a static-1 hazard in its minimal SOP."
+    "t": "A two-level OR–AND (POS) circuit can have a static-0 hazard."
    }
   ],
   "answer": [
-   "A",
-   "C"
+   "B",
+   "D"
   ],
   "solution": [
-   "(A) True: $xy + x'z + yz = xy + x'z$ (the consensus theorem).",
-   "(B) False: $AB + A'C$ is minimal and glitches when $A$ changes with $B = C = 1$.",
-   "(C) True: dually, adjacent 0-cells in different sum terms give a momentary 1.",
-   "(D) False: a static-1 hazard needs two adjacent 1-cells (a single change from one 1 to another); with no adjacent 1s every single change leaves the 1-set."
+   "(A) False: a static-1 hazard needs two adjacent 1-cells (a single change from one 1 to another); with no adjacent 1s every single change leaves the 1-set.",
+   "(B) True: $xy + x'z + yz = xy + x'z$ (the consensus theorem).",
+   "(C) False: $AB + A'C$ is minimal and glitches when $A$ changes with $B = C = 1$.",
+   "(D) True: dually, adjacent 0-cells in different sum terms give a momentary 1."
   ],
   "concept": "Hazards come from adjacent 1-cells (or 0-cells) in different terms; the consensus term fixes them without changing the function.",
   "common_wrong": [
    {
     "answer": [
-     "A",
      "B",
-     "C"
+     "C",
+     "D"
     ],
     "why": "Minimisation removes consensus terms, which is exactly what creates hazards."
    },
    {
     "answer": [
-     "A"
+     "B"
     ],
     "why": "POS circuits have the dual problem: static-0 hazards."
    }

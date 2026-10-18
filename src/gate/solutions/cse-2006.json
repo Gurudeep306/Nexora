@@ -2238,7 +2238,7 @@
         },
         {
           "title": "Covers (B) and (C)",
-          "body": "(B) $wxz$ = {13, 15}, $\\overline{w}xy$ = {6, 7}, $wyz$ = {11, 15}: contains $m_6$ (a 0) and misses 5 and 12. (C) $wx\\overline{y}\\,\\overline{z}$ = {12}, $xz$ = {5, 7, 13, 15}, $w\\overline{x}yz$ = {11}: equals $f$, but the pairs 12–13 and 11–15 are each split between two cubes. Neither is acceptable."
+          "body": "(B) $wxz$ = {13, 15}, $\\overline{w}xy$ = {6, 7}, $wyz$ = {11, 15}: contains $m_6$ (a 0) and misses 5 and 12. (C) $wx\\overline{yz}$, $xz$, $w\\overline{x}yz$: read with one bar over $yz$, $wx\\overline{yz}$ = {12, 13, 14} contains the 0-cell $m_{14}$; read as $wx\\overline{y}\\,\\overline{z}$ = {12}, the cover equals $f$ but splits the pairs 12–13 and 11–15. Either way (C) fails."
         },
         {
           "title": "Cover (D)",
@@ -2319,7 +2319,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "A cover of $f$, but 12–13 and 11–15 are split between cubes (two hazards)."
+          "reason": "As printed ($wx\\overline{yz}$) it contains the 0-cell $m_{14}$; even read as $wx\\overline{y}\\,\\overline{z}$ it splits 12–13 and 11–15 between cubes (two hazards)."
         },
         {
           "option": "D",
@@ -2332,7 +2332,7 @@
         "Choosing the cover with the most cubes without checking each adjacent pair.",
         "Checking that a cover equals $f$ but not that it is hazard-free (option C)."
       ],
-      "verification": "An exhaustive check of all six adjacent 1-pairs against each option (l3_04_two_level.py) finds 0 uncovered pairs only for (D); (A) misses 13–15.",
+      "verification": "An exhaustive check of all six adjacent 1-pairs against each option (l3_04_two_level.py) finds 0 uncovered pairs only for (D); (A) misses 13–15. Some reprints show the first cube of (d) as $wzy$; read that way (d) would miss $m_{12}$, so the scan's blurred cube is $wx\\overline{y}$, the only reading under which (d) covers $f$.",
       "animation": {
         "kind": "kmap",
         "variables": [

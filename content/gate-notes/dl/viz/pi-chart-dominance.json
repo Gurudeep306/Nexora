@@ -458,8 +458,14 @@
    ]
   },
   {
-   "caption": "Row dominance: on the remaining columns A′BD covers {5, 7}, A′C′D only {5}, A′BC only {7}. A′BD dominates both (and costs no more), so the dominated rows are crossed out.",
+   "caption": "Row dominance: on the remaining columns A′BD covers {5, 7}, A′C′D only {5}, A′BC only {7}. A′BD dominates both (and costs no more), so the dominated rows are greyed out and their marks removed; B′D′ now covers nothing and is dropped too.",
    "patches": [
+    {
+     "id": "l1",
+     "set": {
+      "tone": "muted"
+     }
+    },
     {
      "id": "l3",
      "set": {
@@ -490,6 +496,80 @@
        [
         4,
         5
+       ]
+      ],
+      "rows": [
+       [
+        "·",
+        "·",
+        "·",
+        "",
+        "·",
+        "",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "",
+        "·",
+        "",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "×",
+        "·",
+        "×",
+        "·",
+        "·",
+        "·",
+        "·"
+       ],
+       [
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·",
+        "·"
        ]
       ]
      }

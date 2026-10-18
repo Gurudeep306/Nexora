@@ -302,7 +302,7 @@ function SubMap({ n, vars, offset, values, loops, toggle, pos, allVars }: {
             const wrapR = new Set(rects.map((x) => x[0])).size > 1
             return rects.map(([r0, c0, rl, cl], j) => {
               const inset = 7 + (k % 3) * 5
-              const ext = 34
+              const ext = 20
               let x = c0 * 100 + inset
               let w = cl * 100 - 2 * inset
               let y = r0 * 100 + inset

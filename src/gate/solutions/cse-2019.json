@@ -2970,7 +2970,7 @@
         "number": 3,
         "matchesKey": true
       },
-      "shortcut": "XOR and XNOR of two variables need 3 two-input NANDs or NORs when complements are free (4 or 5 without).",
+      "shortcut": "XOR and XNOR of two variables need 3 two-input NANDs or NORs when complements are free; without complements XOR needs 4 NAND / 5 NOR and XNOR 5 NAND / 4 NOR.",
       "pitfalls": [
         "Counting 5 or 4 from the textbook XNOR-from-NOR circuit, which assumes no complemented inputs.",
         "Building the SOP $\\overline{B}\\,\\overline{D} + BD$ with NORs gate by gate (extra inverters)."

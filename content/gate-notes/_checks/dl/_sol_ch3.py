@@ -784,17 +784,17 @@ SOLUTIONS["cse-2026-1-cs-38"] = {
 # ── Lesson 3: tabulation and variable-entered maps ──────────────────────────
 
 SOLUTIONS["cse-1992-a-1-i"] = {
-    "approach": "Concept tested: **reading a variable-entered map**. Each cell holds the residue of $f$ as a function of the entered variable $A$; read the plain 1s, then loop each entered literal with the 1s as helpers and AND it in (or unfold the map into a 3-variable K-map).",
+    "approach": "Concept tested: **reading a variable-entered map**. Each cell holds the residue of $f$ as a function of the entered variable $A$; loop each entered literal with the 1-cells as helpers and AND it in, then cover any 1-cell not finished by both passes (or unfold the map into a 3-variable K-map).",
     "concepts": ["Variable-entered map", "Shannon expansion", "Minimal SOP"],
     "given": "Map variables $B$ (rows) and $C$ (columns); entries: $(B, C) = (0, 0): 1$, $(0, 1): 0$, $(1, 0): \\overline{A}$, $(1, 1): A$.",
     "steps": [
-        {"title": "Plain 1s", "body": "The 1 at $B = 0, C = 0$ gives $\\overline{B}\\,\\overline{C}$ (true for both values of $A$)."},
         {"title": "The A pass", "body": "The entry $A$ at $(1, 1)$: its neighbours are $(0, 1) = 0$ and $(1, 0) = \\overline{A}$ (which cannot join an $A$-loop), so it stays alone: $BC$, giving $A \\cdot BC = ABC$."},
-        {"title": "The A′ pass", "body": "The entry $\\overline{A}$ at $(1, 0)$ may join the 1 at $(0, 0)$ (same column $C = 0$): the loop $\\overline{C}$, giving $\\overline{A}\\,\\overline{C}$.", "scene": {"groups": [grp("B'C'", ABC, "accent"), grp("A'C'", ABC, "success"), grp("ABC", ABC, "warning")]}},
+        {"title": "The A′ pass", "body": "The entry $\\overline{A}$ at $(1, 0)$ may join the 1 at $(0, 0)$ (same column $C = 0$): the loop $\\overline{C}$, giving $\\overline{A}\\,\\overline{C}$."},
+        {"title": "The leftover 1", "body": "The 1 at $(0, 0)$ was used by the $\\overline{A}$-pass only, so it is still uncovered for $A = 1$: loop it alone, $\\overline{B}\\,\\overline{C}$.", "scene": {"groups": [grp("B'C'", ABC, "accent"), grp("A'C'", ABC, "success"), grp("ABC", ABC, "warning")]}},
         {"title": "Check by unfolding", "body": "Unfolded over $(A, B, C)$: $m_0, m_4$ (from the 1), $m_2$ (from $\\overline{A}$ at $B = 1, C = 0$), $m_7$ (from $A$ at $B = C = 1$): $f = \\Sigma(0, 2, 4, 7)$. Its K-map loops are exactly $\\overline{B}\\,\\overline{C}$, $\\overline{A}\\,\\overline{C}$ and $ABC$, all essential."},
     ],
     "answer": {"value": "$\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C} + ABC$", "matchesKey": True},
-    "shortcut": "Shannon expansion on $A$: $f = \\overline{A}(\\overline{B}\\,\\overline{C} + B\\overline{C}) + A(\\overline{B}\\,\\overline{C} + BC) = \\overline{A}\\,\\overline{C} + A\\overline{B}\\,\\overline{C} + ABC$, and $A\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C}$ absorbs into $\\overline{B}\\,\\overline{C} + \\overline{A}\\,\\overline{C}$ via the cell $m_0$.",
+    "shortcut": "Shannon expansion on $A$: $f = \\overline{A}(\\overline{B}\\,\\overline{C} + B\\overline{C}) + A(\\overline{B}\\,\\overline{C} + BC) = \\overline{A}\\,\\overline{C} + A\\overline{B}\\,\\overline{C} + ABC$, and $\\overline{C}(A\\overline{B} + \\overline{A}) = \\overline{C}(\\overline{A} + \\overline{B}) = \\overline{A}\\,\\overline{C} + \\overline{B}\\,\\overline{C}$.",
     "pitfalls": ["Looping $A$ with $\\overline{A}$ because they are adjacent: they are 1 for opposite values of $A$.", "Forgetting that a 1-cell can serve as a don't-care in the $A$- and $\\overline{A}$-passes."],
     "verification": "The unfolded function $\\Sigma(0, 2, 4, 7)$ has the three essential PIs $\\overline{B}\\,\\overline{C}$, $\\overline{A}\\,\\overline{C}$, $ABC$ (Quine–McCluskey), 7 literals in all.",
     "animation": km(ABC, [0, 2, 4, 7], title="The VEM unfolded into a 3-variable map"),
@@ -810,19 +810,19 @@ SOLUTIONS["cse-2006-cs-38"] = {
     "steps": [
         {"title": "Adjacent pairs of 1s", "body": "Pairs one bit apart: 5–7 ($y$), 5–13 ($w$), 7–15 ($w$), 11–15 ($x$), 12–13 ($z$), 13–15 ($y$). Each must lie inside one cube of the cover.", "scene": {"groups": []}},
         {"title": "Cover (A)", "body": "$\\overline{w}xz$ = {5, 7}, $wx\\overline{y}$ = {12, 13}, $x\\overline{y}z$ = {5, 13}, $xyz$ = {7, 15}, $wyz$ = {11, 15}. The pair 13–15 is in no cube: going from 1101 to 1111 ($y$ rises with $w = x = z = 1$), $wx\\overline{y}$ and $x\\overline{y}z$ turn off while $xyz$ and $wyz$ turn on, and if the turn-off is faster $f$ dips to 0.", "scene": {"groups": [grp("w'xz", W, "accent"), grp("wxy'", W, "success"), grp("xy'z", W, "info"), grp("xyz", W, "warning"), grp("wyz", W, "cat1")], "hl": [{"cell": 13, "tone": "error"}, {"cell": 15, "tone": "error"}]}},
-        {"title": "Covers (B) and (C)", "body": "(B) $wxz$ = {13, 15}, $\\overline{w}xy$ = {6, 7}, $wyz$ = {11, 15}: contains $m_6$ (a 0) and misses 5 and 12. (C) $wx\\overline{y}\\,\\overline{z}$ = {12}, $xz$ = {5, 7, 13, 15}, $w\\overline{x}yz$ = {11}: equals $f$, but the pairs 12–13 and 11–15 are each split between two cubes. Neither is acceptable."},
+        {"title": "Covers (B) and (C)", "body": "(B) $wxz$ = {13, 15}, $\\overline{w}xy$ = {6, 7}, $wyz$ = {11, 15}: contains $m_6$ (a 0) and misses 5 and 12. (C) $wx\\overline{yz}$, $xz$, $w\\overline{x}yz$: read with one bar over $yz$, $wx\\overline{yz}$ = {12, 13, 14} contains the 0-cell $m_{14}$; read as $wx\\overline{y}\\,\\overline{z}$ = {12}, the cover equals $f$ but splits the pairs 12–13 and 11–15. Either way (C) fails."},
         {"title": "Cover (D)", "body": "$wx\\overline{y}$ {12, 13}, $wyz$ {11, 15}, $wxz$ {13, 15}, $\\overline{w}xz$ {5, 7}, $x\\overline{y}z$ {5, 13}, $xyz$ {7, 15}: every one of the six pairs has its own cube, and the union is exactly $f$.", "scene": {"groups": [grp("wxy'", W, "success"), grp("wyz", W, "cat1"), grp("wxz", W, "accent"), grp("w'xz", W, "info"), grp("xy'z", W, "warning"), grp("xyz", W, "cat2")], "hl": []}},
     ],
     "answer": {"value": "(D) $wx\\overline{y},\\ wyz,\\ wxz,\\ \\overline{w}xz,\\ x\\overline{y}z,\\ xyz$", "choice": ["D"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", False, "Equal to $f$ but no cube contains both 13 and 15: a static-1 hazard when $y$ changes with $w = x = z = 1$."),
         opt("B", False, "Not even a cover of $f$: it includes $m_6$ and misses $m_5$, $m_{12}$."),
-        opt("C", False, "A cover of $f$, but 12–13 and 11–15 are split between cubes (two hazards)."),
+        opt("C", False, "As printed ($wx\\overline{yz}$) it contains the 0-cell $m_{14}$; even read as $wx\\overline{y}\\,\\overline{z}$ it splits 12–13 and 11–15 between cubes (two hazards)."),
         opt("D", True, "Contains a cube for each of the six adjacent pairs (it adds the consensus cube $wxz$ to cover 13–15)."),
     ],
     "shortcut": "Find the pair the cheap covers miss: here 13–15. Only (D) contains $wxz$, the consensus of $wx\\overline{y}$ and $wyz$, which bridges it.",
     "pitfalls": ["Choosing the cover with the most cubes without checking each adjacent pair.", "Checking that a cover equals $f$ but not that it is hazard-free (option C)."],
-    "verification": "An exhaustive check of all six adjacent 1-pairs against each option (l3_04_two_level.py) finds 0 uncovered pairs only for (D); (A) misses 13–15.",
+    "verification": "An exhaustive check of all six adjacent 1-pairs against each option (l3_04_two_level.py) finds 0 uncovered pairs only for (D); (A) misses 13–15. Some reprints show the first cube of (d) as $wzy$; read that way (d) would miss $m_{12}$, so the scan's blurred cube is $wx\\overline{y}$, the only reading under which (d) covers $f$.",
     "animation": km(W, [5, 7, 11, 12, 13, 15]),
 }
 
@@ -830,25 +830,25 @@ SOLUTIONS["cse-2006-cs-38"] = {
 XYZW = list("xyzw")
 o03, d03 = ml.from_map(["X101", "01X0", "1XX0", "X00X"], "xy", "zw", XYZW)
 SOLUTIONS["cse-2003-cs-45"] = {
-    "approach": "Concept tested: **minimum literal counts of SOP and POS with don't-cares**. Minimise the 1s (SOP) and the 0s (POS) separately, each using the Xs its own way, and count literals. The true minima are (9, 8), which is not offered; the official key is (C) (9, 10).",
+    "approach": "Concept tested: **minimum literal counts of SOP and POS with don't-cares**. Minimise the 1s (SOP) and the 0s (POS) separately, each using the Xs its own way, count literals, and prove each count cannot be beaten. The true minima are (POS, SOP) = (9, 8), which is not offered; the commonly published key is (C) (9, 10).",
     "concepts": ["Literal count", "Minimal SOP", "Minimal POS", "Don't-care conditions"],
     "given": "Rows $xy$, columns $zw$. Row 00: X 1 0 1; row 01: 0 1 X 0; row 11: 1 X X 0; row 10: X 0 0 X.",
     "steps": [
         {"title": "Read the map", "body": "Over $(x, y, z, w)$: 1s at $m_1, m_2, m_5, m_{12}$; Xs at $m_0, m_7, m_8, m_{10}, m_{13}, m_{15}$; 0s at $m_3, m_4, m_6, m_9, m_{11}, m_{14}$.", "scene": {"groups": []}},
-        {"title": "Minimal SOP", "body": "$m_2$: the corners with $X_0, X_8, X_{10}$ give $\\overline{y}\\,\\overline{w}$ (2 literals). $m_1, m_5$: the pair $\\overline{x}\\,\\overline{z}w$ (3). $m_{12}$: a pair with $X_8$ ($x\\overline{z}\\,\\overline{w}$) or $X_{13}$ ($xy\\overline{z}$) (3). No 1 except $m_2$ can be in a quad, so the SOP needs $2 + 3 + 3 = 8$ literals.", "scene": {"groups": [grp("y'w'", XYZW, "accent"), grp("x'z'w", XYZW, "success"), grp("xz'w'", XYZW, "warning")]}},
-        {"title": "Minimal POS", "body": "0-quads using the Xs: $(\\overline{z} + \\overline{w})$ (column $zw = 11$: $m_3, X_7, X_{15}, m_{11}$), $(\\overline{y} + \\overline{z})$ ($m_6, X_7, m_{14}, X_{15}$), $(\\overline{x} + \\overline{w})$ ($m_9, m_{11}, X_{13}, X_{15}$), and $m_4$ needs a 3-literal factor such as $(x + z + w)$ (with $X_0$). Total $2 + 2 + 2 + 3 = 9$."},
-        {"title": "Compare with the options", "body": "True minima: (POS, SOP) = (9, 8). No option is (9, 8). Options (B) (9, 13) and (C) (9, 10) have the right POS count; (C) is the official key (its SOP figure of 10 is not the minimum, but it is the answer that was given credit)."},
+        {"title": "Minimal SOP", "body": "Every quad through $m_1$ contains a 0 ($m_3$, $m_4$ or $m_9$), and so does every quad through $m_{12}$ ($m_4$, $m_9$ or $m_{14}$); so $m_1$ and $m_{12}$ each need a 3-literal pair, and no term holds both (they differ in 3 bits). $m_2$ needs at least a 2-literal term. So 8 is a lower bound, and it is reached: $\\overline{y}\\,\\overline{w}$ (corners with $X_0, X_8, X_{10}$) + $\\overline{x}\\,\\overline{z}w$ (takes $m_1$ and $m_5$) + $x\\overline{z}\\,\\overline{w}$ (or $xy\\overline{z}$).", "scene": {"groups": [grp("y'w'", XYZW, "accent"), grp("x'z'w", XYZW, "success"), grp("xz'w'", XYZW, "warning")]}},
+        {"title": "Minimal POS", "body": "Every 0-quad through $m_4$ contains a 1, so $m_4$ needs a 3-literal factor such as $(x + z + w)$. $m_3$, $m_9$, $m_{14}$ pairwise share no 0-cube (any cube holding two of them contains $m_1$, $m_2$ or $m_{12}$) and none shares one with $m_4$, so at least 4 factors, at least $3 + 2 + 2 + 2 = 9$ literals. Reached: $(\\overline{z} + \\overline{w})(\\overline{y} + \\overline{z})(\\overline{x} + \\overline{w})(x + z + w)$."},
+        {"title": "Compare with the options", "body": "True minima: (9, 8). No option is (9, 8). (C)'s SOP figure 10 is what you get if you miss the corner quad $\\overline{y}\\,\\overline{w}$: $\\overline{x}\\,\\overline{y}z\\overline{w} + \\overline{x}\\,\\overline{z}w + xy\\overline{z}$. The commonly published key is (C), with the correct POS count; (B)'s 13 matches no reasonable loop set."},
     ],
-    "answer": {"value": "True minima (9, 8); official key **(C) (9, 10)**", "choice": ["C"], "matchesKey": True},
+    "answer": {"value": "True minima (9, 8); keyed answer **(C) (9, 10)**", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "(11, 9): the POS minimum is 9, not 11 (the 0s need three 2-literal quads and one 3-literal term)."),
-        opt("B", False, "(9, 13): the POS count is right, but an SOP of 13 literals is far from minimal (8)."),
-        opt("C", True, "Official key. The POS count 9 is correct; the true SOP minimum is 8, so strictly no option is exact."),
+        opt("A", False, "(11, 9): the POS minimum is 9, not 11."),
+        opt("B", False, "(9, 13): the POS count is right, but 13 is far above the SOP minimum of 8 and matches no natural loop set."),
+        opt("C", True, "Keyed answer: POS 9 is correct; its SOP 10 comes from missing the corner quad. The strictly correct pair (9, 8) is not offered."),
         opt("D", False, "(11, 11): both counts are too high."),
     ],
-    "shortcut": "Count the cells that can only get small loops: in the SOP, $m_1$/$m_5$ and $m_{12}$ need 3-literal pairs and $m_2$ a 2-literal quad, so 8 is a lower bound and is reached.",
-    "pitfalls": ["Fixing the don't-cares to the SOP's choices before finding the POS (the POS here uses $X_7, X_{13}, X_{15}$ as 0s, which the SOP never touches).", "Taking the key's 10 as the true SOP minimum: $\\overline{y}\\,\\overline{w} + \\overline{x}\\,\\overline{z}w + x\\overline{z}\\,\\overline{w}$ has 8 literals and implements the map."],
-    "verification": "Petrick's method with the don't-cares gives minimal SOPs of 8 literals and minimal POSs of 9 (both by exhaustive cover search in l3_04_two_level.py); the paper scan shows the same map.",
+    "shortcut": "Count the cells that can only get small loops: $m_1$ and $m_{12}$ need 3-literal pairs and $m_2$ a 2-literal quad, so 8 is the SOP floor; $m_4$ needs a 3-literal sum and $m_3, m_9, m_{14}$ need three more factors, so 9 is the POS floor.",
+    "pitfalls": ["Missing the corner quad $\\overline{y}\\,\\overline{w}$ (it needs three Xs and a wrap in both directions): that gives SOP 10.", "Fixing the Xs as the other minimal SOP ($\\overline{y}\\,\\overline{w} + \\overline{x}\\,\\overline{z}w + xy\\overline{z}$, with $X_{13} = 1$) does and then deriving the POS: it rises to 10. Choose the Xs separately for each form."],
+    "verification": "Exhaustive cover search (Petrick, all completions of the six Xs) gives minimal SOPs of 8 literals and minimal POSs of 9 (l3_04_two_level.py); the paper scan shows the same map.",
     "animation": km(XYZW, o03, d03, title="Rows xy, columns zw (as printed)"),
 }
 
@@ -865,7 +865,7 @@ SOLUTIONS["cse-2017-1-cs-21"] = {
     ],
     "answer": {"value": "**1** NOR gate: $f = \\overline{a}c = \\text{NOR}(a, \\overline{c})$", "number": 1, "matchesKey": True},
     "shortcut": "If the map loops into a single product of two literals, one 2-input NOR (or NAND for a sum of two literals) does it when complements are available.",
-    "pitfalls": ["Ignoring the don't-cares and building $\\overline{a}c\\,\\overline{d} + \\overline{a}bc$-style terms with several gates.", "Reading the axes as $ab$/$cd$: the map's labels are $ba$ on the columns and $dc$ on the rows."],
+    "pitfalls": ["Ignoring the don't-cares: without them the SOP is $\\overline{a}\\,\\overline{b}c + \\overline{a}cd$, which needs 3 NOR gates.", "Reading the axes as $ab$/$cd$: the map's labels are $ba$ on the columns and $dc$ on the rows."],
     "verification": "An exhaustive search over 1-gate NOR circuits with all literals available finds NOR($a$, $\\overline{c}$), which agrees with the map on every care cell.",
     "animation": km(DCBA, o17, d17, title="Rows dc, columns ba (as printed)"),
 }
@@ -880,7 +880,7 @@ SOLUTIONS["cse-2019-cs-50"] = {
         {"title": "Why not fewer", "body": "One gate gives NOR of two literals, a single product of two literals (4 minterms), but $f$ has 8. With two gates the output is NOR($x$, $y$) where one input is a literal: that forces $f = 0$ whenever that literal is 1, so $f$ would lie inside one half of the map; it does not ($f$ has 1s on both sides of every variable). And NOR($G_1$, $G_1$) is an OR of two literals, with 12 minterms. So 3 is the minimum (an exhaustive search agrees)."},
     ],
     "answer": {"value": "**3** NOR gates", "number": 3, "matchesKey": True},
-    "shortcut": "XOR and XNOR of two variables need 3 two-input NANDs or NORs when complements are free (4 or 5 without).",
+    "shortcut": "XOR and XNOR of two variables need 3 two-input NANDs or NORs when complements are free; without complements XOR needs 4 NAND / 5 NOR and XNOR 5 NAND / 4 NOR.",
     "pitfalls": ["Counting 5 or 4 from the textbook XNOR-from-NOR circuit, which assumes no complemented inputs.", "Building the SOP $\\overline{B}\\,\\overline{D} + BD$ with NORs gate by gate (extra inverters)."],
     "verification": "Exhaustive search over all circuits of up to 3 two-input NOR gates with the eight literals as inputs: no 1- or 2-gate circuit computes $f$; 3 gates do.",
     "animation": km(ABCD, [0, 2, 5, 7, 8, 10, 13, 15]),
