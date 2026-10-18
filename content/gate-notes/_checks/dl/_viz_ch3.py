@@ -357,7 +357,7 @@ def kmap_trap_labels():
     steps = [
         step("The columns are labelled 00, 01, 10, 11: plain counting order, not Gray order. Between the 2nd and 3rd columns two bits change (01 → 10), and the two end columns (00 and 11) are not neighbours either.",
              ("n1", {"text": "labels: 00 01 10 11 (binary!)", "tone": "danger"})),
-        step("The tempting mistake: treat the end columns as a wrap-around group of four 1s and write C′ (or B′). On this map the ends differ in two bits, so that loop is illegal.",
+        step("The tempting mistake: treat the end columns as a wrap-around group of four 1s and write C′. On this map the ends differ in two bits, so that loop is illegal.",
              *show(["w0", "w1"]), ("n2", {"text": "wrap loop of the ends: illegal", "tone": "danger"}), ("ex", {"text": "not C′", "tone": "danger"})),
         step("Re-draw the columns in Gray order 00, 01, 11, 10: the column of 1s labelled 11 moves to the third place. Now the 1s are in columns 00 and 11, which are not adjacent.",
              *hide(["w0", "w1"]), ("pg", {"values": [list(r) for r in gray_vals]}),
@@ -425,15 +425,15 @@ def pi_enumeration():
     steps = [
         step("f = Σm(0, 1, 2, 3, 5, 7, 8, 10, 14). A prime implicant is a loop that cannot be made any bigger. Grow a loop from every 1 in every direction it can go.",
              ("n0", {"text": "9 ones; find every maximal loop", "tone": "muted"})),
-        step(f"Starting from m0: the whole top row is 1s, a quad {t[0]}. It cannot grow (row A B = 01 is not all 1s).",
+        step(f"Starting from m0: the whole top row is 1s, a quad {t[0]}. It cannot grow (neither row A B = 01 nor row 10, its wrap-around neighbour, is all 1s).",
              *show(km.loop_ids("P0", order[0])), ("n0", {"text": f"PI 1: {t[0]} (m0 1 2 3)", "tone": "accent"})),
         step(f"Starting from m5: m1, m3, m5, m7 form a quad {t[1]} (rows 00 and 01, columns 01 and 11).",
              *show(km.loop_ids("P1", order[1])), ("n1", {"text": f"PI 2: {t[1]} (m1 3 5 7)", "tone": "success"})),
         step(f"Starting from m8: m0, m2, m8, m10 are the four corners, a quad {t[2]}.",
              *show(km.loop_ids("P2", order[2])), ("n2", {"text": f"PI 3: {t[2]} (m0 2 8 10)", "tone": "info"})),
-        step(f"Starting from m14: its only neighbouring 1 is m10, so the largest loop is the pair {t[3]}. No 1 is left outside a loop: there are exactly 4 prime implicants.",
+        step(f"Starting from m14: its only neighbouring 1 is m10, so the largest loop is the pair {t[3]}. Every 1 has now been a starting point and no new maximal loop appeared: there are exactly 4 prime implicants.",
              *show(km.loop_ids("P3", order[3])), ("n3", {"text": f"PI 4: {t[3]} (m10 14)", "tone": "warning"})),
-        step(f"The biggest loop is not always needed: {t[0]}'s cells 0, 2 are inside {t[2]} and 1, 3 inside {t[1]}. It is a prime implicant but a redundant one. Minimal SOP: f = {t[1]} + {t[2]} + {t[3]}.",
+        step(f"A prime implicant is not always needed: {t[0]}'s cells 0, 2 are inside {t[2]} and 1, 3 inside {t[1]}. It is a prime implicant but a redundant one. Minimal SOP: f = {t[1]} + {t[2]} + {t[3]}.",
              *hide(km.loop_ids("P0", order[0])), ("n0", {"text": f"PI 1: {t[0]} is redundant", "tone": "danger"}),
              ("ex", {"text": f"f = {t[1]} + {t[2]} + {t[3]}", "tone": "success"})),
     ]

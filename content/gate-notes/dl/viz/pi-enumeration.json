@@ -697,7 +697,7 @@
    ]
   },
   {
-   "caption": "Starting from m0: the whole top row is 1s, a quad A′B′. It cannot grow (row A B = 01 is not all 1s).",
+   "caption": "Starting from m0: the whole top row is 1s, a quad A′B′. It cannot grow (neither row A B = 01 nor row 10, its wrap-around neighbour, is all 1s).",
    "patches": [
     {
      "id": "P00",
@@ -769,7 +769,7 @@
    ]
   },
   {
-   "caption": "Starting from m14: its only neighbouring 1 is m10, so the largest loop is the pair ACD′. No 1 is left outside a loop: there are exactly 4 prime implicants.",
+   "caption": "Starting from m14: its only neighbouring 1 is m10, so the largest loop is the pair ACD′. Every 1 has now been a starting point and no new maximal loop appeared: there are exactly 4 prime implicants.",
    "patches": [
     {
      "id": "P30",
@@ -787,7 +787,7 @@
    ]
   },
   {
-   "caption": "The biggest loop is not always needed: A′B′'s cells 0, 2 are inside B′D′ and 1, 3 inside A′D. It is a prime implicant but a redundant one. Minimal SOP: f = A′D + B′D′ + ACD′.",
+   "caption": "A prime implicant is not always needed: A′B′'s cells 0, 2 are inside B′D′ and 1, 3 inside A′D. It is a prime implicant but a redundant one. Minimal SOP: f = A′D + B′D′ + ACD′.",
    "patches": [
     {
      "id": "P00",

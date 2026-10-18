@@ -141,6 +141,13 @@ assert sorted(ml.sum_term(c, V3) for c in pcv[0]) == sorted(["(A + B + C)", "(B'
 assert 7 in ml.cover_fn(sc[0], 3) and 7 not in ml.pos_fn(pcv[0], 3)
 assert 2 ** 6 == 64
 
+# Review additions: implicant examples and the merging don't-care example.
+assert ml.parse_term("xz", XYZ) not in ml.primes([1, 3, 5, 7], [], 3) and set(ml.cells("1-1")) <= {1, 3, 5, 7}
+assert T(ml.primes([1, 3, 6, 7], [], 3), V3) == sorted(["A'C", "BC", "AB"]) and not set(ml.cells("-1-")) <= {1, 3, 6, 7}
+assert len(ml.implicants([0, 1, 2, 3, 7], [], 3)) == 11 and T(ml.primes([0, 1, 2, 3, 7], [], 3), V3) == sorted(["A'", "BC"])
+assert msops([1], [3], 3, V3) == {frozenset(["A'C"])}
+assert msops([0, 5], [1, 4], 4, V4) == {frozenset(["A'C'"])}
+
 # ── PYQ keys ────────────────────────────────────────────────────────────────
 B = bl.bank()
 opts = bl.option_values
@@ -253,40 +260,44 @@ o, d = [1, 4, 5, 6, 7, 9, 14], [3, 15]
 bl.assert_nat(P["nx-dl-03-02-q02"], len(ml.essential(o, d, 4)))
 assert T(ml.primes(o, d, 4), V4) == sorted(["A'B", "BC", "A'D", "B'C'D"]) and T(ml.classify(o, d, 4)[2], V4) == ["A'D"]
 q = P["nx-dl-03-02-q03"]
-es = {ml.term(p, V4) for p in ml.essential(two, [], 4)}
-bl.assert_mcq(q, [l for l, t in opts(q).items() if strip_tex(t) in es][0])
-assert [l for l, t in opts(q).items() if strip_tex(t) in es] == ["A"]
+o3 = [3, 4, 5, 8, 10, 11, 13, 15]
+ps3, es3, red3, sel3 = ml.classify(o3, [], 4)
+es = {ml.term(p, V4) for p in es3}
+assert es == {"B'CD", "A'BC'", "AB'D'"} and {ml.term(p, V4) for p in red3} == {"AB'C"} and {ml.term(p, V4) for p in sel3} == {"BC'D", "ACD", "ABD"}
+good = [l for l, t in opts(q).items() if strip_tex(t) in es]
+assert len(good) == 1
+bl.assert_mcq(q, good[0])
 q = P["nx-dl-03-02-q04"]
 fx = bl.minterms("x'y + xz", XYZ)
 pis = ml.primes(fx, [], 3)
-truth = {"A": set(ml.cells(ml.parse_term("x'yz", XYZ))) <= set(fx),
-         "B": ml.parse_term("yz", XYZ) in pis,
-         "C": ml.parse_term("yz", XYZ) in ml.essential(fx, [], 3),
-         "D": set(ml.cells(ml.parse_term("x'z", XYZ))) <= set(fx)}
-bl.assert_msq(q, sorted(k for k, v in truth.items() if v))
+claims = {"$x'yz$ is an implicant of $f$": set(ml.cells(ml.parse_term("x'yz", XYZ))) <= set(fx),
+          "$yz$ is a prime implicant of $f$": ml.parse_term("yz", XYZ) in pis,
+          "$yz$ is an essential prime implicant of $f$": ml.parse_term("yz", XYZ) in ml.essential(fx, [], 3),
+          "$x'z$ is an implicant of $f$": set(ml.cells(ml.parse_term("x'z", XYZ))) <= set(fx)}
+bl.assert_msq(q, sorted(l for l, t in opts(q).items() if claims[t]))
 q = P["nx-dl-03-02-q05"]
 o, d = [1, 2, 5, 6, 9], list(range(10, 16))
-assert eq_letters(q, o, d, V4) == ["A", "B", "C"] and minimal_letters(q, o, d, V4) == ["A"]
-assert msops(o, [], 4, V4) == {frozenset(["A'C'D", "A'CD'", "B'C'D"])} or ml.min_literals_sop(o, [], 4) == 9
-bl.assert_mcq(q, "A")
+assert len(eq_letters(q, o, d, V4)) == 3 and len(minimal_letters(q, o, d, V4)) == 1
+assert ml.min_literals_sop(o, [], 4) == 9
+bl.assert_mcq(q, minimal_letters(q, o, d, V4)[0])
 o = [0, 2, 3, 4, 5, 8, 11, 13]
 bl.assert_nat(P["nx-dl-03-02-q06"], len(ml.min_covers(o, [], 4)))
 assert ml.min_literals_sop(o, [], 4) == 15
 q = P["nx-dl-03-02-q07"]
 mlist = lambda t: sorted(map(int, re.findall(r"\d+", re.search(r"m\(([^)]*)\)", t).group(1))))
 cyc_letters = [l for l, t in opts(q).items() if ml.primes(mlist(t), [], 3) and not ml.essential(mlist(t), [], 3)]
+assert len(cyc_letters) == 1
 bl.assert_mcq(q, cyc_letters[0])
-assert cyc_letters == ["A"]
 q = P["nx-dl-03-02-q08"]
 o, d = [1, 3, 5, 7, 9], [6, 12, 13]
 pos_ok = [l for l, t in opts(q).items() if "(" in t and ml.agrees(bl.minterms(strip_tex(t), V4), o, d, 4)]
-assert pos_ok == ["A", "C"] or pos_ok == ["A"]
+assert len(pos_ok) == 1
 lits = {l: sum(1 for k, _ in bl.tokens(strip_tex(opts(q)[l])) if k == "var") for l in pos_ok}
-assert ml.min_literals_pos(o, d, 4) == 3 and min(lits, key=lits.get) == "A"
+assert ml.min_literals_pos(o, d, 4) == 3 == lits[pos_ok[0]]
 assert not ml.agrees(bl.minterms("D(A + C)", V4), o, d, 4)
 pf = ml.pos_fn(ml.min_pos_covers(o, d, 4)[0], 4)
 assert 6 not in pf and 12 not in pf and 13 in pf
-bl.assert_mcq(q, "A")
+bl.assert_mcq(q, pos_ok[0])
 bl.assert_nat(P["nx-dl-03-02-q09"], 2 ** 4)
 q = P["nx-dl-03-02-q10"]
 o, d = [0, 1, 3, 7, 8, 9], [2, 5, 13]

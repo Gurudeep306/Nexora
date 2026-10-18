@@ -1337,7 +1337,7 @@
       "steps": [
         {
           "title": "Read the map",
-          "body": "Over $(w, x, y, z)$ the 1s are $m_6, m_7, m_{10}, m_{11}, m_{14}, m_{15}$ (all with $y = 1$ and $w + x = 1$) and the don't-cares $m_1, m_3, m_5$.",
+          "body": "Over $(w, x, y, z)$ the 1s are $m_6, m_7, m_{10}, m_{11}, m_{14}, m_{15}$ (all with $y = 1$ and $w + x = 1$) and the don't-cares $m_1, m_3, m_5$. (The figure numbers its cells in the printed axis order $x, y, w, z$, so its cell numbers differ from these.)",
           "scene": {
             "groups": []
           }

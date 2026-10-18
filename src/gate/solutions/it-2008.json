@@ -397,7 +397,7 @@
         },
         {
           "title": "Test A, B, C",
-          "body": "$A$ (±8): $m_2$ in, $m_{10}$ in, but $m_3 \\to 11$ in, $m_6 \\to 14$ out: depends. $B$ (±4): $m_2$ in, $m_6$ in, $m_3 \\to 7$ in, $m_8 \\to 12$ in, $m_{10} \\to 14$ out: depends. $C$ (±2): $m_8 \\to 10$ in, $m_{12} \\to 14$ out: depends.",
+          "body": "$A$ (±8): $m_6$ is in but $m_{14}$ is not → depends. $B$ (±4): $m_{10}$ is in but $m_{14}$ is not → depends. $C$ (±2): $m_{12}$ is in but $m_{14}$ is not → depends.",
           "scene": {
             "groups": [
               {

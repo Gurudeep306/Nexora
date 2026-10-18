@@ -237,8 +237,9 @@ for name, term in rows.items():
     assert [m for m, x in zip(o, marks) if x] == ml.cells(ml.parse_term(term, V4)), name
 es = {ml.term(p, V4) for p in ml.essential(o, [], 4)}
 assert es == {"B'D", "BC'"}
-bl.assert_mcq(q, "A")
-bl.assert_mcq(P["nx-dl-03-03-q05"], "A")
+bl.assert_mcq(q, [l for l, t in opts(q).items() if t == "$P_1$ and $P_3$ only"][0])
+q = P["nx-dl-03-03-q05"]
+bl.assert_mcq(q, [l for l, t in opts(q).items() if t == "$Q$ and $R$"][0])
 cyc = [1, 2, 3, 4, 5, 6]
 bl.assert_nat(P["nx-dl-03-03-q06"], len(ml.petrick(cyc, ml.primes(cyc, [], 3))))
 names = {"a": "A'C", "b": "A'B", "c": "BC'", "d": "AC'", "e": "AB'", "g": "B'C"}
@@ -250,18 +251,20 @@ q = P["nx-dl-03-03-q08"]
 o = [1, 5, 10, 17, 21, 26]
 assert msops(o, [], 5, V5) == {frozenset(["B'D'E", "BC'DE'"])}
 eqs = [l for l, t in opts(q).items() if bl.minterms(strip_tex(t), V5) == o]
-assert eqs == ["A", "B"]
-bl.assert_mcq(q, "A")
+assert len(eqs) == 2
+lit = lambda l: sum(1 for k, _ in bl.tokens(strip_tex(opts(q)[l])) if k == "var")
+bl.assert_mcq(q, min(eqs, key=lit))
 q = P["nx-dl-03-03-q09"]
 f = [m for m in range(8) if {"0": 0, "1": 1, "C": m & 1, "C'": 1 - (m & 1)}[{0: "C'", 1: "1", 2: "0", 3: "C"}[m >> 1]]]
 assert f == [0, 2, 3, 7] and msops(f, [], 3, V3) == {frozenset(["A'C'", "BC"])}
-assert [l for l, t in opts(q).items() if bl.minterms(strip_tex(t), V3) == f] == ["A"]
-bl.assert_mcq(q, "A")
+good = [l for l, t in opts(q).items() if bl.minterms(strip_tex(t), V3) == f]
+assert len(good) == 1
+bl.assert_mcq(q, good[0])
 q = P["nx-dl-03-03-q10"]
 f = [2, 3, 5, 8, 9, 15]
 pair = (int(4 in f), int(5 in f))
 assert pair == (0, 1)
-bl.assert_mcq(q, "A")
+bl.assert_mcq(q, [l for l, t in opts(q).items() if t == "$D$"][0])
 assert len([k for k in P if k.startswith("nx-dl-03-03-")]) == 10
 
 print("l3_03_tabular: Q–M weight rule and correctness (exhaustive / sampled), dominance, Petrick = irredundant covers (all 3-variable functions), 5/6-variable maps, VEMs, the 1992 key and 10 practice answers OK")

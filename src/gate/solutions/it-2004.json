@@ -2452,7 +2452,7 @@
           "reason": "$\\overline{A}B + AC + A\\overline{B} = \\Sigma(2, 3, 4, 5, 7)$."
         }
       ],
-      "shortcut": "Only option (B) contains $\\overline{A}C$ and no $\\overline{A}B$; checking $m_1 = \\overline{A}\\,\\overline{B}C$ alone already rules out (C) and (D).",
+      "shortcut": "Checking $m_1 = \\overline{A}\\,\\overline{B}C$ rules out (C) and (D); between (A) and (B), (A)'s $AB$ contains the 0 at $m_7$.",
       "pitfalls": [
         "The reprint prints the fifth term as $A\\overline{B}C$ again and option (B) without its '+'; the original paper (and this bank, repaired) has $A\\overline{B}\\,\\overline{C}$.",
         "Thinking the minimal SOP is unique: $\\overline{B}C$ could replace $A\\overline{B}$."

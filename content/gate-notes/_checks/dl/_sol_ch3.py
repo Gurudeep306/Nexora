@@ -84,7 +84,7 @@ SOLUTIONS["cse-1995-b-63-b"] = {
     ],
     "answer": {"value": "$f = BD + \\overline{B}\\,\\overline{D}$ $\\;(= \\overline{B \\oplus D})$", "matchesKey": True},
     "shortcut": "Corners plus centre on a 4-variable map is always $\\overline{x \\oplus y}$ of the two variables that are the second bits of the row and column labels.",
-    "pitfalls": ["Writing $AC$-type terms by reading the map as if rows were $AB$: only $B$ and $D$ stay fixed here.", "Looping the corners as two separate pairs, which gives 6 literals instead of 2."],
+    "pitfalls": ["Looping the two outer columns as a quad without noticing that their middle rows are 0s (the outer columns hold 1s only in rows $CD = 00$ and $10$).","Looping the corners as two separate pairs, which gives 6 literals instead of 2."],
     "verification": "Expanding $BD + \\overline{B}\\,\\overline{D}$ gives minterms 0, 2, 5, 7, 8, 10, 13, 15 of $f(A, B, C, D)$: exactly the eight 1-cells of the map.",
     "animation": km(CDAB, o95, title="Rows CD, columns AB (as printed)"),
 }
@@ -103,12 +103,12 @@ SOLUTIONS["cse-1996-a-49"] = {
     "answer": {"value": "(C) $(B + D)(\\overline{B} + \\overline{D})$", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", False, "$B\\overline{D} + \\overline{B}D$ is the same function, but it is a sum of products; the question asks for the product-of-sums form."),
-        opt("B", False, "$(B + \\overline{C} + D)(\\overline{B} + C + \\overline{D})$ brings in $C$, on which the map does not depend; it is 1 on corner cells with $C = 1$, $D = 0$, which are 0s."),
+        opt("B", False, "$(B + \\overline{C} + D)(\\overline{B} + C + \\overline{D})$ brings in $C$, on which the map does not depend; it is 1 on the corner cells with $C = 0$ ($m_0, m_8$) and on the centre cells with $C = 1$ ($m_7, m_{15}$), all of which are 0s."),
         opt("C", True, "The two 0-quads read as sum terms."),
-        opt("D", False, "$(B + \\overline{D})(\\overline{B} + D) = \\overline{B \\oplus D}$: the complement of the map (the 0-loops read with the SOP habit)."),
+        opt("D", False, "$(B + \\overline{D})(\\overline{B} + D) = \\overline{B \\oplus D}$: the complement of the map: it is what you get by looping the 1-cells and reading them as sum terms."),
     ],
     "shortcut": "1s in the middle columns of the outer rows and the outer columns of the middle rows is $B \\oplus D$; its POS is $(B + D)(\\overline{B} + \\overline{D})$.",
-    "pitfalls": ["Choosing the SOP (A) because it is equal: the form matters.", "Reading a 0-loop's fixed 1s as plain letters, which gives option D."],
+    "pitfalls": ["Choosing the SOP (A) because it is equal: the form matters.", "Looping the 1-cells instead of the 0-cells and reading them as sum terms, which gives the complement, option D."],
     "verification": "Cell $CD = 01$, $AB = 00$ ($B = 0$, $D = 1$): $(0 + 1)(1 + 0) = 1$, and the map has a 1 there. Corner cell ($B = D = 0$): $(0 + 0) = 0$. ✓",
     "animation": km(CDAB, relabel([0, 2, 5, 7, 8, 10, 13, 15], ABCD, CDAB), title="The 0-cells of f, drawn as the 1s of f′ (rows CD, columns AB)"),
 }
@@ -162,7 +162,7 @@ SOLUTIONS["cse-1998-a-42"] = {
         opt("D", False, "$A \\cdot B \\cdot C$ is the single cell $m_7$."),
     ],
     "shortcut": "The value does not depend on the row, so $A$ drops; the 1-columns are $BC = 00$ and $11$, i.e. $B = C$: XNOR.",
-    "pitfalls": ["Treating the printed end columns (00 and 11) as a wrap-around group and answering $\\overline{C}$ or $\\overline{B}$-type terms.", "Assuming every printed map is in Gray order."],
+    "pitfalls": ["Treating the printed end columns (00 and 11) as a wrap-around group and answering $\\overline{C}$.", "Assuming every printed map is in Gray order."],
     "verification": "Truth table of $\\overline{B \\oplus C}$: 1 for $BC = 00, 11$ and both values of $A$, i.e. $\\{0, 3, 4, 7\\}$. ✓",
     "animation": km(ABC, o98, title="Re-drawn in Gray order"),
 }
@@ -175,7 +175,7 @@ SOLUTIONS["cse-2000-a-2-11"] = {
     "concepts": ["Don't-cares", "Equivalent forms", "Reading a printed map"],
     "given": "Rows $xy$, columns $wz$ (Gray order). 1s: $xy = 11$ (whole row), $xy = 01$ at $wz = 11, 10$. Don't-cares at $wz = 01$ in rows 00, 01, 10.",
     "steps": [
-        {"title": "Read the map", "body": "Over $(w, x, y, z)$ the 1s are $m_6, m_7, m_{10}, m_{11}, m_{14}, m_{15}$ (all with $y = 1$ and $w + x = 1$) and the don't-cares $m_1, m_3, m_5$.", "scene": {"groups": []}},
+        {"title": "Read the map", "body": "Over $(w, x, y, z)$ the 1s are $m_6, m_7, m_{10}, m_{11}, m_{14}, m_{15}$ (all with $y = 1$ and $w + x = 1$) and the don't-cares $m_1, m_3, m_5$. (The figure numbers its cells in the printed axis order $x, y, w, z$, so its cell numbers differ from these.)", "scene": {"groups": []}},
         {"title": "Loop", "body": "Row $xy = 11$ is the quad $xy$; the cells $xy = 01, 11$ in columns $wz = 11, 10$ form the quad $wy$. So $f = xy + wy = (w + x)y$; the don't-cares are not needed.", "scene": {"groups": [grp("xy", XYWZ, "accent"), grp("wy", XYWZ, "success")]}},
         {"title": "Check each option", "body": "(A) $(w + x)y$ is the loop result. (B) $xy + yw$ is the same thing expanded. (C) $(w + x)(\\overline{w} + y)(\\overline{x} + y)$: for $w = 1$ it reduces to $1 \\cdot y \\cdot (\\overline{x} + y) = y$, for $w = 0$ to $x \\cdot 1 \\cdot (\\overline{x} + y) = xy$; so it is $wy + xy = (w + x)y$ exactly. All three implement the map."},
     ],
@@ -207,7 +207,7 @@ SOLUTIONS["it-2004-it-44"] = {
         opt("C", False, "$\\overline{A}B + A\\overline{C} + A\\overline{B} = \\Sigma(2, 3, 4, 5, 6)$: has $m_2$, lacks $m_1$."),
         opt("D", False, "$\\overline{A}B + AC + A\\overline{B} = \\Sigma(2, 3, 4, 5, 7)$."),
     ],
-    "shortcut": "Only option (B) contains $\\overline{A}C$ and no $\\overline{A}B$; checking $m_1 = \\overline{A}\\,\\overline{B}C$ alone already rules out (C) and (D).",
+    "shortcut": "Checking $m_1 = \\overline{A}\\,\\overline{B}C$ rules out (C) and (D); between (A) and (B), (A)'s $AB$ contains the 0 at $m_7$.",
     "pitfalls": ["The reprint prints the fifth term as $A\\overline{B}C$ again and option (B) without its '+'; the original paper (and this bank, repaired) has $A\\overline{B}\\,\\overline{C}$.", "Thinking the minimal SOP is unique: $\\overline{B}C$ could replace $A\\overline{B}$."],
     "verification": "Enumerating all eight rows, only option (B) matches the function on every row.",
     "animation": km(ABC, [1, 3, 4, 5, 6]),
@@ -228,7 +228,7 @@ SOLUTIONS["cse-2005-cs-18"] = {
         opt("C", False, "$AC\\overline{D}$ covers $m_{10}, m_{14}$, both 0s."),
         opt("D", False, "$\\overline{A}BD$ covers $m_5, m_7$: $m_7$ is a 0."),
     ],
-    "shortcut": "Check a single minterm that only one option can produce: $m_{11} = A\\overline{B}CD$ is covered only by $A\\overline{B}D$, which only (A) has.",
+    "shortcut": "Look for a 0 that each wrong option covers: (B)'s $AB\\overline{C}$ covers $m_{13}$, (C)'s $AC\\overline{D}$ covers $m_{10}, m_{14}$, (D)'s $\\overline{A}BD$ covers $m_7$. Only (A) avoids every 0.",
     "pitfalls": ["Grabbing the pair $m_1, m_9$ ($\\overline{B}\\,\\overline{C}D$) first: it is a prime implicant, but then $m_5$ needs a fourth term (12 literals instead of 9).", "Not checking the extra minterms an option's terms bring in."],
     "verification": "Expanding (A): $\\{4, 12\\} \\cup \\{1, 5\\} \\cup \\{9, 11\\}$ = the given list; 9 literals, the minimum (by Quine–McCluskey and Petrick).",
     "animation": km(ABCD, [1, 4, 5, 9, 11, 12]),
@@ -325,7 +325,7 @@ SOLUTIONS["it-2008-it-8"] = {
     "concepts": ["Free variables", "Karnaugh map"],
     "steps": [
         {"title": "Test D (weight 1)", "body": "$\\{2, 3, 6, 7, 8, 9, 10, 11, 12, 13\\}$ pairs as 2↔3, 6↔7, 8↔9, 10↔11, 12↔13: closed, so $f$ **ignores D**."},
-        {"title": "Test A, B, C", "body": "$A$ (±8): $m_2$ in, $m_{10}$ in, but $m_3 \\to 11$ in, $m_6 \\to 14$ out: depends. $B$ (±4): $m_2$ in, $m_6$ in, $m_3 \\to 7$ in, $m_8 \\to 12$ in, $m_{10} \\to 14$ out: depends. $C$ (±2): $m_8 \\to 10$ in, $m_{12} \\to 14$ out: depends.", "scene": {"groups": [grp("A'C", ABCD, "accent"), grp("AC'", ABCD, "success"), grp("AB'", ABCD, "warning")]}},
+        {"title": "Test A, B, C", "body": "$A$ (±8): $m_6$ is in but $m_{14}$ is not → depends. $B$ (±4): $m_{10}$ is in but $m_{14}$ is not → depends. $C$ (±2): $m_{12}$ is in but $m_{14}$ is not → depends.", "scene": {"groups": [grp("A'C", ABCD, "accent"), grp("AC'", ABCD, "success"), grp("AB'", ABCD, "warning")]}},
         {"title": "Minimal form", "body": "$f = \\overline{A}C + A\\overline{C} + A\\overline{B}$ (or $\\overline{B}C$ in place of $A\\overline{B}$): no $D$ anywhere."},
     ],
     "answer": {"value": "(A) independent of one variable ($D$)", "choice": ["A"], "matchesKey": True},
@@ -411,7 +411,7 @@ SOLUTIONS["cse-2021-2-cs-52"] = {
     ],
     "answer": {"value": "**6** literals ($\\overline{x}\\,\\overline{y} + xy + wz$)", "number": 6, "matchesKey": True},
     "shortcut": "Each condition is a cofactor: $f = \\overline{x}\\,\\overline{y}$ on its region, $= wz + y$ when $x = 1$, $= x + z$ when $w = y = 1$; the three quads appear directly.",
-    "pitfalls": ["Setting the unreached cells 2 and 3 to 1 (cost 8) or to 0 and 1 (cost 9): choose them to minimise.", "Missing that the conditions overlap and must agree (cells 14, 15)."],
+    "pitfalls": ["Fixing the unreached cells 2 and 3 arbitrarily: both 1 costs 8 literals, $m_2 = 0, m_3 = 1$ costs 8 and $m_2 = 1, m_3 = 0$ costs 9; only both 0 gives 6. Common wrong answers are therefore 8 and 9.", "Missing that the conditions overlap and must agree (cells 14, 15)."],
     "verification": "Of the four functions that satisfy the three conditions, the minimal SOPs cost 6, 8, 8 and 9 literals (enumeration); the intended answer is the minimum, 6.",
     "animation": km(W, [0, 1, 6, 7, 8, 9, 11, 13, 14, 15], [2, 3]),
 }
@@ -534,8 +534,8 @@ SOLUTIONS["it-2006-cs-35"] = {
     "given": "Rows $RS$, columns $PQ$ (Gray order). Rows: 00: 1 0 0 1; 01: 0 0 1 1; 11: 1 1 1 0; 10: 1 0 0 1.",
     "steps": [
         {"title": "Read the 1s", "body": "In terms of $(P, Q, R, S)$: the four corners ($Q = 0$, $S = 0$: $m_0, m_2, m_8, m_{10}$), row $RS = 01$ at $PQ = 11, 10$ ($m_{13}, m_9$), row $RS = 11$ at $PQ = 00, 01, 11$ ($m_3, m_7, m_{15}$).", "scene": {"groups": []}},
-        {"title": "Prime implicants", "body": "Corner quad $\\overline{Q}\\,\\overline{S}$; pairs $\\overline{P}\\,\\overline{Q}R$ (2, 3), $\\overline{P}RS$ (3, 7), $QRS$ (7, 15), $PQS$ (13, 15), $P\\overline{R}S$ (9, 13), $P\\overline{Q}\\,\\overline{R}$ (8, 9). No other quad fits.", "scene": {"groups": [grp("Q'S'", RSPQ, "success"), grp("P'RS", RSPQ, "accent"), grp("PQS", RSPQ, "warning")]}},
-        {"title": "Distinguished cells", "body": "$m_0$ (row 00, column 00) lies only in $\\overline{Q}\\,\\overline{S}$. Every other 1 lies in two PIs (e.g. $m_9$ in $P\\overline{R}S$ and $P\\overline{Q}\\,\\overline{R}$). So $\\overline{Q}\\,\\overline{S}$ is the only EPI.", "scene": {"groups": [grp("Q'S'", RSPQ, "success")], "hl": [{"cell": 0, "tone": "warning"}]}},
+        {"title": "Prime implicants", "body": "Corner quad $\\overline{Q}\\,\\overline{S}$; pairs $\\overline{P}\\,\\overline{Q}R$ (2, 3), $\\overline{P}RS$ (3, 7), $QRS$ (7, 15), $PQS$ (13, 15), $P\\overline{R}S$ (9, 13), $P\\overline{Q}\\,\\overline{R}$ (8, 9). No other quad fits.", "scene": {"groups": [grp("Q'S'", RSPQ, "success"), grp("P'Q'R", RSPQ, "accent"), grp("P'RS", RSPQ, "info"), grp("QRS", RSPQ, "warning"), grp("PQS", RSPQ, "cat1"), grp("PR'S", RSPQ, "cat2"), grp("PQ'R'", RSPQ, "cat3")]}},
+        {"title": "Distinguished cells", "body": "$m_0$ and $m_{10}$ lie only in $\\overline{Q}\\,\\overline{S}$ (their other 1-neighbours give pairs that sit inside the quad). Every other 1 lies in two PIs (e.g. $m_9$ in $P\\overline{R}S$ and $P\\overline{Q}\\,\\overline{R}$). So $\\overline{Q}\\,\\overline{S}$ is the only EPI.", "scene": {"groups": [grp("Q'S'", RSPQ, "success")], "hl": [{"cell": 0, "tone": "warning"}, {"cell": 10, "tone": "warning"}]}},
     ],
     "answer": {"value": "(D) $\\overline{Q}\\,\\overline{S}$", "choice": ["D"], "matchesKey": True},
     "optionAnalysis": [
@@ -546,7 +546,7 @@ SOLUTIONS["it-2006-cs-35"] = {
     ],
     "shortcut": "Check the corner cells first: four 1s in the corners almost always form an essential quad, because the corner cells' other neighbours are 0s.",
     "pitfalls": ["Reading the rows as $PQ$ (the paper puts $RS$ on the rows).", "Picking $PQ'S'$, which is inside the corner quad and therefore not prime."],
-    "verification": "Quine–McCluskey on $\\Sigma(0, 2, 3, 7, 8, 9, 10, 13, 15)$: 7 PIs; the only single-mark column is $m_0$, under $\\overline{Q}\\,\\overline{S}$.",
+    "verification": "Quine–McCluskey on $\\Sigma(0, 2, 3, 7, 8, 9, 10, 13, 15)$: 7 PIs; the single-mark columns are $m_0$ and $m_{10}$, both under $\\overline{Q}\\,\\overline{S}$.",
     "animation": km(RSPQ, o06, title="Rows RS, columns PQ (as printed)"),
 }
 
@@ -609,10 +609,10 @@ SOLUTIONS["cse-1999-a-8"] = {
     ],
     "answer": {"value": "(B) $D(C + A)$", "choice": ["B"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "$\\overline{A}B + CD$ is 1 on $m_4$–$m_7$ (Xs, fine) but 0 on $m_9$ and $m_{13}$, which are 1s."),
+        opt("A", False, "$\\overline{A}B + CD$ is 1 on the Xs $m_4, m_5, m_6$ (fine) and on $m_7$, but 0 on $m_9$ and $m_{13}$, which are 1s."),
         opt("B", True, "$AD + CD$ factored; it agrees with every care cell."),
         opt("C", False, "$AD + \\overline{A}B$ misses $m_3$ (row 00, column 11)."),
-        opt("D", False, "$(C + D)(\\overline{C} + D) = D$, so this is $D(A + B)$: it misses $m_3$ and is 1 on $m_1$, a 0."),
+        opt("D", False, "$(C + D)(\\overline{C} + D) = D$, so this is $D(A + B)$: it misses $m_3$ (it is 1 on $m_5$, but that is a don't-care)."),
     ],
     "shortcut": "Every 1 has $D = 1$, and the 1s with $C = 0$ all have $A = 1$: $f = D(A + C)$.",
     "pitfalls": ["Using the Xs in row 01 to make $\\overline{A}B$ although no 1 needs it.", "Forgetting that $(C + D)(\\overline{C} + D)$ collapses to $D$."],
@@ -752,7 +752,7 @@ SOLUTIONS["cse-2017-2-cs-28"] = {
         opt("D", False, "$(w + \\overline{z})(\\overline{x} + z)$ is 0 at $m_1$ ($w = 0$, $z = 1$), a 1."),
     ],
     "shortcut": "Each option has the factor pattern; test one 1-cell per option: $m_8$ kills (B), $m_0$ kills (C), $m_1$ kills (D).",
-    "pitfalls": ["Reading a 0-loop with the SOP habit (1 → plain letter).", "Requiring the POS to agree with the minimal SOP on don't-care cells: the SOP $\\overline{x}\\,\\overline{z} + \\overline{w}z$ and this POS choose the Xs differently."],
+    "pitfalls": ["Reading a 0-loop with the SOP habit (1 → plain letter).", "Assuming the minimal SOP and POS must agree on the don't-cares. Here they happen to make the same choice (the POS expands to $\\overline{x}\\,\\overline{z} + \\overline{w}z$ plus a consensus term), but in general they need not."],
     "verification": "Enumeration over the 12 care cells: only (A) agrees with all of them; 4 literals is the minimum POS cost (Petrick on the 0s).",
     "animation": km(W, [4, 9, 12, 13, 14], [5, 6, 11, 15], title="The 0-cells of f (drawn as the 1s of f′), with the don't-cares"),
 }

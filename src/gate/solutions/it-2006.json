@@ -1843,11 +1843,27 @@
               },
               {
                 "cells": [
+                  8,
+                  12
+                ],
+                "label": "P′Q′R",
+                "tone": "accent"
+              },
+              {
+                "cells": [
                   12,
                   13
                 ],
                 "label": "P′RS",
-                "tone": "accent"
+                "tone": "info"
+              },
+              {
+                "cells": [
+                  13,
+                  15
+                ],
+                "label": "QRS",
+                "tone": "warning"
               },
               {
                 "cells": [
@@ -1855,14 +1871,30 @@
                   15
                 ],
                 "label": "PQS",
-                "tone": "warning"
+                "tone": "cat1"
+              },
+              {
+                "cells": [
+                  6,
+                  7
+                ],
+                "label": "PR′S",
+                "tone": "cat2"
+              },
+              {
+                "cells": [
+                  2,
+                  6
+                ],
+                "label": "PQ′R′",
+                "tone": "cat3"
               }
             ]
           }
         },
         {
           "title": "Distinguished cells",
-          "body": "$m_0$ (row 00, column 00) lies only in $\\overline{Q}\\,\\overline{S}$. Every other 1 lies in two PIs (e.g. $m_9$ in $P\\overline{R}S$ and $P\\overline{Q}\\,\\overline{R}$). So $\\overline{Q}\\,\\overline{S}$ is the only EPI.",
+          "body": "$m_0$ and $m_{10}$ lie only in $\\overline{Q}\\,\\overline{S}$ (their other 1-neighbours give pairs that sit inside the quad). Every other 1 lies in two PIs (e.g. $m_9$ in $P\\overline{R}S$ and $P\\overline{Q}\\,\\overline{R}$). So $\\overline{Q}\\,\\overline{S}$ is the only EPI.",
           "scene": {
             "groups": [
               {
@@ -1879,6 +1911,10 @@
             "hl": [
               {
                 "cell": 0,
+                "tone": "warning"
+              },
+              {
+                "cell": 10,
                 "tone": "warning"
               }
             ]
@@ -1919,7 +1955,7 @@
         "Reading the rows as $PQ$ (the paper puts $RS$ on the rows).",
         "Picking $PQ'S'$, which is inside the corner quad and therefore not prime."
       ],
-      "verification": "Quine–McCluskey on $\\Sigma(0, 2, 3, 7, 8, 9, 10, 13, 15)$: 7 PIs; the only single-mark column is $m_0$, under $\\overline{Q}\\,\\overline{S}$.",
+      "verification": "Quine–McCluskey on $\\Sigma(0, 2, 3, 7, 8, 9, 10, 13, 15)$: 7 PIs; the single-mark columns are $m_0$ and $m_{10}$, both under $\\overline{Q}\\,\\overline{S}$.",
       "animation": {
         "kind": "kmap",
         "variables": [

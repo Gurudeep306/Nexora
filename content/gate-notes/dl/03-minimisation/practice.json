@@ -7,22 +7,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$C + AB$"
+    "t": "$AB + B'C$"
    },
    {
     "l": "B",
-    "t": "$A'C + AB + AC$"
+    "t": "$C + AB$"
    },
    {
     "l": "C",
-    "t": "$C + AC'$"
+    "t": "$A'C + AB + AC$"
    },
    {
     "l": "D",
-    "t": "$AB + B'C$"
+    "t": "$C + AC'$"
    }
   ],
-  "answer": "A",
+  "answer": "B",
   "solution": [
    "Plot the map (rows $A$, columns $BC$ in Gray order): row 0 is 0 1 1 0, row 1 is 0 1 1 1.",
    "The two middle columns ($BC = 01$ and $11$) are all 1s: a quad with $C = 1$ fixed, the term $C$.",
@@ -32,12 +32,16 @@
   "concept": "Loop the largest legal groups; a quad on a 3-variable map is a single literal.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "C",
     "why": "$A'C + AB + AC$ is **equal** to $f$ (its minterms are 1, 3, 5, 6, 7), but $A'C + AC = C$ was never merged: 6 literals instead of 3. Equal is not minimal."
    },
    {
-    "answer": "C",
+    "answer": "D",
     "why": "$C + AC' = A + C$ also contains $m_4$, which is a 0 of $f$."
+   },
+   {
+    "answer": "A",
+    "why": "$AB + B'C$ misses $m_3$ ($A'BC$): the middle columns were not looped as a quad."
    }
   ],
   "blocks": [
@@ -84,25 +88,25 @@
   "options": [
    {
     "l": "A",
-    "t": "$m_2$"
+    "t": "$m_{14}$"
    },
    {
     "l": "B",
-    "t": "$m_8$"
+    "t": "$m_2$"
    },
    {
     "l": "C",
-    "t": "$m_0$"
+    "t": "$m_8$"
    },
    {
     "l": "D",
-    "t": "$m_{14}$"
+    "t": "$m_0$"
    }
   ],
   "answer": [
    "A",
    "B",
-   "D"
+   "C"
   ],
   "solution": [
    "$m_{10} = 1010$. Its neighbours differ from it in exactly one bit: flip $A$ → 0010 = 2, flip $B$ → 1110 = 14, flip $C$ → 1000 = 8, flip $D$ → 1011 = 11.",
@@ -122,7 +126,7 @@
    },
    {
     "answer": [
-     "D"
+     "A"
     ],
     "why": "This misses the wrap-around: the left and right borders, and the top and bottom borders, are adjacent."
    }
@@ -142,22 +146,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$(A' + B')(B' + D')$"
-   },
-   {
-    "l": "B",
-    "t": "$(A + B)(B + D)$"
-   },
-   {
-    "l": "C",
     "t": "$A'B' + B'D'$"
    },
    {
-    "l": "D",
+    "l": "B",
     "t": "$(A' + B')(B' + D)$"
+   },
+   {
+    "l": "C",
+    "t": "$(A' + B')(B' + D')$"
+   },
+   {
+    "l": "D",
+    "t": "$(A + B)(B + D)$"
    }
   ],
-  "answer": "A",
+  "answer": "C",
   "solution": [
    "The 0s are $m_5, m_7, m_{12}, m_{13}, m_{14}, m_{15}$.",
    "Row $AB = 11$ ($m_{12}$–$m_{15}$) is a quad of 0s with $A = 1, B = 1$: the factor is $(A' + B')$ (1s become primed letters).",
@@ -167,12 +171,16 @@
   "concept": "Loop the 0s; read each loop as a sum term with 0 → plain letter and 1 → primed letter.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "D",
     "why": "The 0-loops were read with the SOP habit (1 → plain letter). $(A + B)(B + D)$ is 0 on $m_0$, which is a 1 of $f$."
    },
    {
-    "answer": "C",
+    "answer": "A",
     "why": "That is a sum of products, not a POS, and it is not even equal to $f$: $A'B' + B'D' = \\Sigma(0, 1, 2, 3, 8, 10)$ misses $m_4, m_6, m_9, m_{11}$."
+   },
+   {
+    "answer": "B",
+    "why": "$(B' + D)$ is 0 where $B = 1$, $D = 0$ (e.g. $m_4$, $m_6$), which are 1s: the centre 0-quad was read with $D$ taken as 0."
    }
   ],
   "blocks": [
@@ -218,22 +226,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$A'C + AB'D'$"
-   },
-   {
-    "l": "B",
     "t": "$AC' + B'CD'$"
    },
    {
-    "l": "C",
+    "l": "B",
     "t": "$A'C + B'D'$"
    },
    {
-    "l": "D",
+    "l": "C",
     "t": "$A'C + B'CD'$"
+   },
+   {
+    "l": "D",
+    "t": "$A'C + AB'D'$"
    }
   ],
-  "answer": "A",
+  "answer": "D",
   "solution": [
    "Read each 1 from its labels: row $CD = 00$, column $AB = 10$ is $A = 1, B = 0, C = 0, D = 0$: $m_8$. Rows $CD = 11$ and $10$ with columns $AB = 00, 01$ are $m_3, m_7, m_2, m_6$. Row $CD = 10$, column $AB = 10$ is $m_{10}$.",
    "So $f = \\Sigma m(2, 3, 6, 7, 8, 10)$.",
@@ -244,11 +252,11 @@
   "concept": "The loops do not care how the axes are arranged, but each cell must be decoded from its own labels.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "A",
     "why": "This reads the rows as $AB$ and the columns as $CD$ (the usual layout) although the map is labelled the other way round: every cell is transposed."
    },
    {
-    "answer": "C",
+    "answer": "B",
     "why": "$B'D'$ would need the four corners, but row $CD = 00$, column $AB = 00$ is a 0."
    }
   ],
@@ -298,6 +306,10 @@
    {
     "answer": "C",
     "why": "Every minterm appears in the minterm list with all four variables, but that does not mean $f$ depends on all of them; test each variable."
+   },
+   {
+    "answer": "D",
+    "why": "$f$ does not depend on $C$: the list is closed under $\\pm 2$."
    }
   ],
   "blocks": [
@@ -503,40 +515,44 @@
   "id": "nx-dl-03-02-q03",
   "type": "MCQ",
   "marks": 1,
-  "text": "Which of the following is an **essential** prime implicant of $f(A, B, C, D) = \\Sigma m(0, 2, 3, 5, 7, 10, 14)$?",
+  "text": "Which of the following is an **essential** prime implicant of $f(A, B, C, D) = \\Sigma m(3, 4, 5, 8, 10, 11, 13, 15)$?",
   "options": [
    {
     "l": "A",
-    "t": "$A'B'D'$"
+    "t": "$BC'D$"
    },
    {
     "l": "B",
-    "t": "$A'CD$"
+    "t": "$AB'C$"
    },
    {
     "l": "C",
-    "t": "$B'CD'$"
+    "t": "$A'BC'$"
    },
    {
     "l": "D",
-    "t": "$A'B'C$"
+    "t": "$ACD$"
    }
   ],
-  "answer": "A",
+  "answer": "C",
   "solution": [
-   "The prime implicants are $A'B'D'$, $A'B'C$, $B'CD'$, $A'CD$, $A'BD$, $ACD'$.",
-   "$m_0$ lies only in $A'B'D'$, so $A'B'D'$ is essential (so are $A'BD$, through $m_5$, and $ACD'$, through $m_{14}$).",
-   "$A'CD$ and $A'B'C$ are selective (both cover $m_3$, the only 1 left after the EPIs); $B'CD'$ is redundant (its 1s $m_2$, $m_{10}$ are covered by EPIs)."
+   "The prime implicants are $B'CD$ (3, 11), $A'BC'$ (4, 5), $BC'D$ (5, 13), $AB'D'$ (8, 10), $AB'C$ (10, 11), $ACD$ (11, 15), $ABD$ (13, 15); no quads.",
+   "$m_4$ lies only in $A'BC'$, $m_3$ only in $B'CD$, $m_8$ only in $AB'D'$: these three are essential.",
+   "$AB'C$ is redundant (10 and 11 are covered by $AB'D'$ and $B'CD$); $BC'D$, $ACD$, $ABD$ are selective (they compete for $m_{13}$ and $m_{15}$)."
   ],
   "concept": "Find the 1-cells with a single prime implicant through them.",
   "common_wrong": [
    {
-    "answer": "B",
-    "why": "$A'CD$ appears in one minimal SOP, but $m_3$ and $m_7$ also lie in other PIs; it is selective, not essential."
+    "answer": "A",
+    "why": "$BC'D$ is a prime implicant, but $m_5$ is also in $A'BC'$ and $m_{13}$ in $ABD$: it is selective."
    },
    {
-    "answer": "C",
-    "why": "$B'CD'$ is a prime implicant, but both of its 1s are covered by essential PIs: it is redundant."
+    "answer": "B",
+    "why": "$AB'C$ is a prime implicant whose 1s are both covered by essential PIs: it is redundant."
+   },
+   {
+    "answer": "D",
+    "why": "$ACD$ competes with $ABD$ and $B'CD$ for its cells; nothing forces it."
    }
   ],
   "blocks": [
@@ -554,45 +570,45 @@
   "options": [
    {
     "l": "A",
-    "t": "$x'yz$ is an implicant of $f$"
-   },
-   {
-    "l": "B",
-    "t": "$yz$ is a prime implicant of $f$"
-   },
-   {
-    "l": "C",
     "t": "$yz$ is an essential prime implicant of $f$"
    },
    {
-    "l": "D",
+    "l": "B",
     "t": "$x'z$ is an implicant of $f$"
+   },
+   {
+    "l": "C",
+    "t": "$x'yz$ is an implicant of $f$"
+   },
+   {
+    "l": "D",
+    "t": "$yz$ is a prime implicant of $f$"
    }
   ],
   "answer": [
-   "A",
-   "B"
+   "C",
+   "D"
   ],
   "solution": [
    "$f = \\Sigma m(2, 3, 5, 7)$.",
-   "(A) $x'yz = m_3$, a 1 of $f$: every minterm of $f$ is an implicant. True.",
-   "(B) $yz = \\{3, 7\\}$, both 1s, so it is an implicant; dropping $y$ gives $z = \\{1, 3, 5, 7\\}$ ($m_1$ is 0) and dropping $z$ gives $y = \\{2, 3, 6, 7\\}$ ($m_6$ is 0). It is prime. True.",
-   "(C) $m_3$ also lies in $x'y$ and $m_7$ in $xz$, so $yz$ (the consensus term) has no distinguished cell. False.",
-   "(D) $x'z = \\{1, 3\\}$ and $m_1$ is 0. False."
+   "(C) $x'yz = m_3$, a 1 of $f$: every minterm of $f$ is an implicant. True.",
+   "(D) $yz = \\{3, 7\\}$, both 1s, so it is an implicant; dropping $y$ gives $z = \\{1, 3, 5, 7\\}$ ($m_1$ is 0) and dropping $z$ gives $y = \\{2, 3, 6, 7\\}$ ($m_6$ is 0). It is prime. True.",
+   "(A) $m_3$ also lies in $x'y$ and $m_7$ in $xz$, so $yz$ (the consensus term) has no distinguished cell. False.",
+   "(B) $x'z = \\{1, 3\\}$ and $m_1$ is 0. False."
   ],
   "concept": "Implicant: all its cells are 1s. Prime: no literal can be dropped. Essential: the only PI through some 1.",
   "common_wrong": [
    {
     "answer": [
      "A",
-     "B",
-     "C"
+     "C",
+     "D"
     ],
     "why": "A consensus term is prime but never essential here: both of its cells are covered by the other two PIs."
    },
    {
     "answer": [
-     "A"
+     "C"
     ],
     "why": "$yz$ is prime: removing either literal adds a 0-cell."
    }
@@ -613,22 +629,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$C'D + CD'$"
-   },
-   {
-    "l": "B",
     "t": "$A'C'D + A'CD' + B'C'D$"
    },
    {
-    "l": "C",
+    "l": "B",
     "t": "$C'D + CD' + AD$"
    },
    {
-    "l": "D",
+    "l": "C",
     "t": "$A'C'D + A'CD'$"
+   },
+   {
+    "l": "D",
+    "t": "$C'D + CD'$"
    }
   ],
-  "answer": "A",
+  "answer": "D",
   "solution": [
    "$f = \\Sigma m(1, 2, 5, 6, 9) + d(10, 11, 12, 13, 14, 15)$.",
    "Column $CD = 01$: $m_1, m_5, X_{13}, m_9$ is a quad, $C'D$.",
@@ -638,11 +654,11 @@
   "concept": "Unused input codes are don't-cares; including them where they enlarge loops shrinks the circuit.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "A",
     "why": "This is the minimal SOP **without** the don't-cares (9 literals); the unused codes may be set to 1."
    },
    {
-    "answer": "C",
+    "answer": "B",
     "why": "Equal on the digits, but $AD$ is a redundant prime implicant: it covers only $m_9$, already in $C'D$."
    }
   ],
@@ -691,36 +707,36 @@
   "options": [
    {
     "l": "A",
-    "t": "$\\Sigma m(1, 2, 3, 4, 5, 6)$"
+    "t": "$\\Sigma m(0, 1, 2, 3)$"
    },
    {
     "l": "B",
-    "t": "$\\Sigma m(0, 1, 3, 7)$"
+    "t": "$\\Sigma m(1, 2, 3, 4, 5, 6)$"
    },
    {
     "l": "C",
-    "t": "$\\Sigma m(0, 2, 5, 7)$"
+    "t": "$\\Sigma m(0, 1, 3, 7)$"
    },
    {
     "l": "D",
-    "t": "$\\Sigma m(0, 1, 2, 3)$"
+    "t": "$\\Sigma m(0, 2, 5, 7)$"
    }
   ],
-  "answer": "A",
+  "answer": "B",
   "solution": [
-   "(A) The six 1s form a ring of six pairs; every 1 is in two PIs, so no PI is essential: cyclic.",
-   "(B) $m_0$ lies only in $A'B'$ and $m_7$ only in $BC$: two EPIs.",
-   "(C) Pairs $A'C'$ ($m_0, m_2$) and $AC$ ($m_5, m_7$), both essential.",
-   "(D) The single quad $A'$ is essential."
+   "(B) The six 1s form a ring of six pairs; every 1 is in two PIs, so no PI is essential: cyclic.",
+   "(C) $m_0$ lies only in $A'B'$ and $m_7$ only in $BC$: two EPIs.",
+   "(D) Pairs $A'C'$ ($m_0, m_2$) and $AC$ ($m_5, m_7$), both essential.",
+   "(A) The single quad $A'$ is essential."
   ],
   "concept": "A cyclic function: every 1-cell lies in at least two prime implicants.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "C",
     "why": "$A'C$ there is redundant, but $A'B'$ and $BC$ are essential (through $m_0$ and $m_7$)."
    },
    {
-    "answer": "C",
+    "answer": "D",
     "why": "Two separate pairs: each 1 has a single PI, so both are essential."
    }
   ],
@@ -738,37 +754,41 @@
   "options": [
    {
     "l": "A",
-    "t": "$D\\,(A' + C')$"
-   },
-   {
-    "l": "B",
-    "t": "$D\\,(A + C)$"
-   },
-   {
-    "l": "C",
     "t": "$(A' + D)(C' + D)$"
    },
    {
-    "l": "D",
+    "l": "B",
     "t": "$A'D + C'D$"
+   },
+   {
+    "l": "C",
+    "t": "$D\\,(A' + C')$"
+   },
+   {
+    "l": "D",
+    "t": "$D\\,(A + C)$"
    }
   ],
-  "answer": "A",
+  "answer": "C",
   "solution": [
    "The 0s are $m_0, m_2, m_4, m_8, m_{10}, m_{11}, m_{14}, m_{15}$.",
-   "With $X_6$ and $X_{12}$, the column $D = 0$ ($m_0, m_2, m_4, X_6, m_8, m_{10}, X_{12}, m_{14}$) is an octet of 0s with $D = 0$: the factor $(D)$.",
+   "With $X_6$ and $X_{12}$, the column $D = 0$ ($m_0, m_2, m_4, X_6, m_8, m_{10}, X_{12}, m_{14}$) is an octet of 0s with $D = 0$: the factor $(B)$.",
    "$m_{11}, m_{15}$ with $m_{10}, m_{14}$ form the quad $A = 1, C = 1$: the factor $(A' + C')$.",
    "$f = D\\,(A' + C')$ (3 literals). It sets $X_6, X_{12}$ to 0 and $X_{13}$ to 1."
   ],
   "concept": "Loop the 0s (with useful Xs) and read sum terms: 0 → plain, 1 → primed.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "D",
     "why": "The quad of 0s at $A = 1, C = 1$ was read with the SOP habit; $(A + C)$ is 0 at $A = C = 0$, which includes the 1s $m_1$ and $m_5$."
    },
    {
-    "answer": "D",
+    "answer": "B",
     "why": "$A'D + C'D$ is the same function expanded, but it is a sum of products, not a POS."
+   },
+   {
+    "answer": "A",
+    "why": "$(A' + D)(C' + D) = D + A'C'$ is 1 at $m_0$, a 0 of $f$."
    }
   ],
   "blocks": [
@@ -987,22 +1007,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$P_1$ and $P_3$ only"
-   },
-   {
-    "l": "B",
     "t": "$P_1$, $P_2$ and $P_3$"
    },
    {
-    "l": "C",
+    "l": "B",
     "t": "$P_2$ only"
    },
    {
-    "l": "D",
+    "l": "C",
     "t": "$P_1$ and $P_2$ only"
+   },
+   {
+    "l": "D",
+    "t": "$P_1$ and $P_3$ only"
    }
   ],
-  "answer": "A",
+  "answer": "D",
   "solution": [
    "A row is essential when some column has its only ×.",
    "Columns 3 and 11 have a single × in $P_1$; columns 4 and 12 have a single × in $P_3$. Every other column has two ×.",
@@ -1011,11 +1031,11 @@
   "concept": "A single-× column marks an essential row.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "A",
     "why": "$P_2$ has no column of its own: each of 1, 5, 9, 13 is also covered by $P_1$ or $P_3$."
    },
    {
-    "answer": "D",
+    "answer": "C",
     "why": "Columns 4 and 12 can only be covered by $P_3$."
    }
   ],
@@ -1033,22 +1053,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$Q$ and $R$"
+    "t": "$Q$ only"
    },
    {
     "l": "B",
-    "t": "$P$ only"
+    "t": "$Q$ and $R$"
    },
    {
     "l": "C",
-    "t": "None of them"
+    "t": "$P$ only"
    },
    {
     "l": "D",
-    "t": "$Q$ only"
+    "t": "None of them"
    }
   ],
-  "answer": "A",
+  "answer": "B",
   "solution": [
    "Row $P$ has a mark in every column where $Q$ has one, and costs no more: $P$ dominates $Q$.",
    "Likewise $P$ dominates $R$.",
@@ -1057,11 +1077,11 @@
   "concept": "Delete a dominated row (one whose columns are a subset of a no-costlier row's).",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "C",
     "why": "That deletes the dominating row, the opposite of the rule; it would force two rows ($Q$ and $R$) instead of one."
    },
    {
-    "answer": "D",
+    "answer": "A",
     "why": "$R$ is dominated by $P$ too (columns {7} ⊆ {5, 7})."
    }
   ],
@@ -1108,24 +1128,24 @@
   "options": [
    {
     "l": "A",
-    "t": "$m_{21}$"
+    "t": "$m_{20}$"
    },
    {
     "l": "B",
-    "t": "$m_{13}$"
+    "t": "$m_{21}$"
    },
    {
     "l": "C",
-    "t": "$m_6$"
+    "t": "$m_{13}$"
    },
    {
     "l": "D",
-    "t": "$m_{20}$"
+    "t": "$m_6$"
    }
   ],
   "answer": [
-   "A",
-   "B"
+   "B",
+   "C"
   ],
   "solution": [
    "$m_5 = 00101$. Its neighbours differ in exactly one bit: 10101 = 21 (flip $A$: same position in the other map), 01101 = 13, 00001 = 1, 00111 = 7, 00100 = 4.",
@@ -1137,13 +1157,13 @@
     "answer": [
      "A",
      "B",
-     "D"
+     "C"
     ],
     "why": "$m_{20}$ differs from $m_5$ in two bits ($A$ and $E$), even though its map position is next door to $m_{21}$."
    },
    {
     "answer": [
-     "B"
+     "C"
     ],
     "why": "$m_{21}$ is the mirror cell in the $A = 1$ map: it differs only in $A$."
    }
@@ -1162,22 +1182,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$B'D'E + BC'DE'$"
-   },
-   {
-    "l": "B",
-    "t": "$A'B'D'E + AB'D'E + BC'DE'$"
-   },
-   {
-    "l": "C",
     "t": "$B'E + BC'DE'$"
    },
    {
-    "l": "D",
+    "l": "B",
     "t": "$D'E + BC'DE'$"
+   },
+   {
+    "l": "C",
+    "t": "$B'D'E + BC'DE'$"
+   },
+   {
+    "l": "D",
+    "t": "$A'B'D'E + AB'D'E + BC'DE'$"
    }
   ],
-  "answer": "A",
+  "answer": "C",
   "solution": [
    "$m_1 = 00001$, $m_5 = 00101$ (A = 0 map) and $m_{17}$, $m_{21}$ (their mirrors in the A = 1 map): $B = 0$, $D = 0$, $E = 1$ throughout, $A$ and $C$ free: the quad $B'D'E$.",
    "$m_{10} = 01010$ and $m_{26} = 11010$ are a mirror pair: $B = 1, C = 0, D = 1, E = 0$: $BC'DE'$.",
@@ -1186,11 +1206,11 @@
   "concept": "A group drawn in the same place of both maps drops A.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "D",
     "why": "Equal to $f$, but the two halves $A'B'D'E$ and $AB'D'E$ are mirror images and merge into $B'D'E$."
    },
    {
-    "answer": "C",
+    "answer": "A",
     "why": "$B'E$ would also need $m_3$, $m_7$, … (cells with $D = 1$), which are 0s."
    }
   ],
@@ -1255,22 +1275,22 @@
   "options": [
    {
     "l": "A",
-    "t": "$D$"
-   },
-   {
-    "l": "B",
     "t": "$D'$"
    },
    {
-    "l": "C",
+    "l": "B",
     "t": "1"
    },
    {
-    "l": "D",
+    "l": "C",
     "t": "0"
+   },
+   {
+    "l": "D",
+    "t": "$D$"
    }
   ],
-  "answer": "A",
+  "answer": "D",
   "solution": [
    "The cell $ABC = 010$ stands for the two rows $ABCD = 0100$ ($m_4$) and $0101$ ($m_5$).",
    "$m_4$ is not in the list ($f = 0$ for $D = 0$); $m_5$ is ($f = 1$ for $D = 1$).",
@@ -1279,11 +1299,11 @@
   "concept": "A VEM entry is the residue of f on the cell: (f at x = 0, f at x = 1) = (0, 1) gives x.",
   "common_wrong": [
    {
-    "answer": "B",
+    "answer": "A",
     "why": "$D'$ would mean 1 at $D = 0$ ($m_4$) and 0 at $D = 1$; it is the other way round."
    },
    {
-    "answer": "C",
+    "answer": "B",
     "why": "1 would need both $m_4$ and $m_5$ to be minterms."
    }
   ],

@@ -195,6 +195,19 @@ assert ones == [1, 2, 3, 6]
 assert minimal_sops(ones, [4, 5], 3, V3) == {frozenset(["A'C", "BC'"])} and ml.min_literals_sop(ones, [4, 5], 3) == 4
 for extra in ([4], [5], [4, 5]):
     assert ml.min_literals_sop(sorted(ones + extra), [], 3) == 6 and len(ml.min_covers(sorted(ones + extra), [], 3)[0]) == 3
+# Review additions: free-variable, counting, equality and condition examples.
+assert ml.depends([2, 6, 10, 14], 4) == [2, 3] and minimal_sops([2, 6, 10, 14], [], 4, V4) == {frozenset(["CD'"])}
+assert ml.depends([0, 1, 4, 5, 10, 11, 14, 15], 4) == [0, 2] and minimal_sops([0, 1, 4, 5, 10, 11, 14, 15], [], 4, V4) == {frozenset(["A'C'", "AC"])}
+assert ml.depends([2, 3, 6, 7, 10, 11, 14, 15], 4) == [2]
+assert ml.depends([1, 3, 5], 3) == [0, 1, 2] and minimal_sops([1, 3, 5], [7], 3, V3) == {frozenset(["C"])}
+assert len(bl.minterms("AB + C", V3)) == 5 == 2 + 4 - 1
+assert bl.minterms("A'B + B'C + AC'", V3) == bl.minterms("A'C + BC' + AB'", V3) == [1, 2, 3, 4, 5, 6]
+assert bl.minterms("A'B + AC'", V3) == [2, 3, 4, 6] and minimal_sops([2, 3, 4, 6], [], 3, V3) == {frozenset(["A'B", "AC'"])}
+o = bl.minterms("C'(A + D) + CB", V4)
+assert o == [1, 5, 8, 9, 12, 13, 6, 7, 14, 15] or o == [1, 5, 6, 7, 8, 9, 12, 13, 14, 15]
+assert minimal_sops(o, [], 4, V4) == {frozenset(["C'D", "AC'", "BC"])}
+# Contradicting conditions: f(0, B, C) = B and f(A, 1, C) = C disagree on m2.
+assert (1 if (2 >> 1) & 1 else 0) != (2 & 1)
 # Algebra: GATE 2014 by algebra.
 assert bl.equal("PQ + P'QR", "Q(P + R)", list("PQRS")) and bl.equal("Q(P + R) + P'QR'S", "Q(P + R + S)", list("PQRS"))
 
@@ -319,8 +332,10 @@ def letters_equal(q, ones, vars_, dcs=()):
 q = P["nx-dl-03-01-q01"]
 o = [1, 3, 5, 6, 7]
 assert minimal_sops(o, [], 3, V3) == {frozenset(["C", "AB"])}
-assert letters_equal(q, o, V3) == ["A", "B"]  # B is equal but not minimal
-bl.assert_mcq(q, "A")
+eqs = letters_equal(q, o, V3)
+lit = lambda l: sum(1 for k, _ in bl.tokens(strip_tex(opts(q)[l])) if k == "var")
+assert len(eqs) == 2 and [l for l in eqs if lit(l) == 3] == [q["answer"]]  # the other is equal but not minimal
+bl.assert_mcq(q, q["answer"])
 assert bl.minterms("C + AC'", V3) == [1, 3, 4, 5, 6, 7]
 bl.assert_nat(P["nx-dl-03-01-q02"], ml.rc_minterm(2, 3, 4))
 q = P["nx-dl-03-01-q03"]
@@ -329,9 +344,10 @@ q = P["nx-dl-03-01-q04"]
 o = [0, 1, 2, 3, 4, 6, 8, 9, 10, 11]
 assert pos_strs(o, [], 4, V4) == {frozenset(["(A' + B')", "(B' + D')"])}
 assert minimal_sops(o, [], 4, V4) == {frozenset(["B'", "A'D'"])}
-assert [l for l, t in opts(q).items() if bl.minterms(strip_tex(t), V4) == o] == ["A"]
+good = [l for l, t in opts(q).items() if bl.minterms(strip_tex(t), V4) == o]
+assert len(good) == 1 and "(" in opts(q)[good[0]]
 assert bl.minterms("A'B' + B'D'", V4) == [0, 1, 2, 3, 8, 10]
-bl.assert_mcq(q, "A")
+bl.assert_mcq(q, good[0])
 bl.assert_nat(P["nx-dl-03-01-q05"], len(ml.cells("-0-0-")))
 q = P["nx-dl-03-01-q06"]
 grid = table_rows(q["text"])
@@ -340,12 +356,13 @@ o, _ = from_map(grid, "CD", "AB", V4)
 assert o == [2, 3, 6, 7, 8, 10] and minimal_sops(o, [], 4, V4) == {frozenset(["A'C", "AB'D'"])}
 mis = sorted(int(G2[r] + G2[c], 2) for r in range(4) for c in range(4) if grid[r][c] == "1")
 assert minimal_sops(mis, [], 4, V4) == {frozenset(["AC'", "B'CD'"])}
-assert [l for l, t in opts(q).items() if bl.minterms(strip_tex(t), V4) == o] == ["A"]
+good = [l for l, t in opts(q).items() if bl.minterms(strip_tex(t), V4) == o]
+assert len(good) == 1
 assert 0 in bl.minterms("A'C + B'D'", V4)
-bl.assert_mcq(q, "A")
+bl.assert_mcq(q, good[0])
 q = P["nx-dl-03-01-q07"]
 assert ml.depends([0, 2, 5, 7, 8, 10, 13, 15], 4) == [1, 3]
-bl.assert_mcq(q, "A")
+bl.assert_mcq(q, [l for l, t in opts(q).items() if t == "only $B$ and $D$"][0])
 q = P["nx-dl-03-01-q08"]
 bl.assert_msq(q, letters_equal(q, [0, 1, 3, 7], V3))
 q = P["nx-dl-03-01-q09"]

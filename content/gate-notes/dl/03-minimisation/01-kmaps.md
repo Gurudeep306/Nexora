@@ -39,8 +39,8 @@ minimal forms into gates.
 |:--|:--|
 | PYQs mapped to this lesson | 20 (1995–2026) |
 | Marks | 5 one-mark, 13 two-mark, 1 three-mark, 1 descriptive |
-| Pattern 1 | Read a printed map and give the minimal SOP or POS: 1995, 1996, 1998, 2000, 2025 |
-| Pattern 2 | Minimise a Σ list or an expression: 2004, 2005, 2011, 2014, 2025, 2026 |
+| Pattern 1 | Read or plot a printed map and give the minimal SOP or POS: 1995, 1996, 1998, 2000, 2007 (IT), 2025 |
+| Pattern 2 | Minimise a Σ list or an expression (including POS → SOP): 1997, 2004, 2005, 2011, 2014, 2025, 2026 |
 | Pattern 3 | Which expressions are (not) equal to a function: 2007, 2007 (IT), 2025 |
 | Pattern 4 | Which variables a function ignores: 2007, 2008 (IT) |
 | Pattern 5 | Count minterms or literals: 1997, 2015, 2021 |
@@ -84,6 +84,14 @@ a term with two variables removed, and so on: $2^k$ minterms that agree on $n - 
 :::
 
 ## Building the map: Gray order
+
+:::intuition{#gray-intuition title="Walk the axis one switch at a time" depth="standard"}
+Label the columns by two switches, $C$ and $D$. If you walk along the columns in counting order, 00 → 01 →
+10 → 11, the middle step flips **both** switches, so two neighbouring columns would hold rows that do not
+combine. Reorder the walk so that each step flips exactly one switch: 00 → 01 → 11 → 10, and from 10 back to
+00 is again one flip. With that order, any two side-by-side columns differ in one variable, which is
+exactly what the combining rule needs.
+:::
 
 :::definition{#gray-order term="Gray order on the map axes" depth="quick"}
 The rows and the columns of a K-map are labelled in **Gray order**, the order in which exactly one bit
@@ -143,6 +151,13 @@ then draw across the middle is wrong. Examiners occasionally print a map in coun
 :::
 
 ## Adjacency and wrap-around
+
+:::intuition{#adjacency-intuition title="The edges are not really edges" depth="standard"}
+Because the Gray walk returns to its start (10 → 00 is one flip), the last column is a one-bit neighbour of
+the first, and the bottom row of the top. The rectangle on paper is only a way to flatten a surface that
+has no edges at all. Whenever a cell sits on a border, look across to the opposite border for its missing
+neighbour.
+:::
 
 :::theorem{#adjacency name="Map neighbours are exactly the one-bit neighbours" depth="standard"}
 On a map of 2, 3 or 4 variables, two cells share an edge, or face each other across opposite borders
@@ -263,6 +278,14 @@ cell has $n$ neighbours. Diagonal cells are never neighbours.
 
 ## Groups and what they mean
 
+:::intuition{#groups-intuition title="Pin some switches, let the rest run free" depth="standard"}
+Pick a product such as $BD'$: it pins $B$ to 1 and $D$ to 0 and says nothing about $A$ and $C$. The rows where
+it is 1 are all four combinations of the free switches $A$ and $C$. On the map those rows form a rectangle
+(two Gray-neighbouring rows by two Gray-neighbouring columns). So every product term is a rectangle of
+$2^{\text{free variables}}$ cells, and every such rectangle is a product term: loops and terms are the
+same thing.
+:::
+
 :::definition{#groups-def term="A group (loop) on the map" depth="quick"}
 A **group** is a set of $2^k$ cells ($k = 0, 1, 2, 3, 4$: 1, 2, 4, 8 or 16 cells) that forms a rectangle
 on the torus: a full block of consecutive rows and consecutive columns, where "consecutive" may wrap
@@ -283,7 +306,8 @@ bits and lets the others run through every combination.
 
 A block of $2^a$ consecutive rows (cyclically) in the Gray order of $r$ row bits is exactly the set of
 labels that agree on $r - a$ fixed bits: for $a = 1$, two consecutive labels differ in one bit (the
-free one); for $a = 2$ with $r = 2$ all four labels are used and both bits are free. The same holds for
+free one), and this includes the wrap-around block {10, 00}, which agrees on the second bit (0); for
+$a = 2$ with $r = 2$ all four labels are used and both bits are free. The same holds for
 the columns. So a rectangle fixes $n - (a + b)$ variables and runs through all $2^{a+b}$ values of the
 others. By the combining rule (applied $a + b$ times) the OR of its minterms is the product of the
 fixed literals, with $n - k$ literals where $k = a + b$.
@@ -332,7 +356,9 @@ To find a minimal sum of products:
 4. **Each loop as large as possible**: a bigger loop is a term with fewer literals.
 5. **As few loops as possible**: each loop is one more term (and one more AND gate).
 
-The sum of the loops' terms is the minimal SOP.
+The sum of the loops' terms is the minimal SOP. If rules 4 and 5 ever pull in different directions, the
+order of priority in this chapter is: fewest literals first, then fewest terms (Lesson 2 makes the choice
+exact).
 :::
 
 :::definition{#sop-method term="Method: minimal SOP from a map" depth="standard"}
@@ -389,7 +415,7 @@ Minimise $f(A, B, C, D) = \Sigma m(0, 1, 2, 4, 5, 6, 8, 9, 12, 13, 14)$.
 Octet: $C'$.
 :::
 
-:::step{why="Uncovered: m2 and m6 (column CD = 10). Their largest group wraps to column 00 in rows AB = 00 and 01; A = 0 and D = 0 stay fixed."}
+:::step{why="Uncovered: m2, m6 and m14 (column CD = 10). Start with m2 and m6: their largest group wraps to column 00 in rows AB = 00 and 01; A = 0 and D = 0 stay fixed."}
 Quad $m_0, m_2, m_4, m_6$: $A'D'$.
 :::
 
@@ -562,7 +588,7 @@ Compare the minimal SOP and POS of $F(P, Q, R, S) = PQ + P'QR + P'QR'S$ (the GAT
 $F = \Sigma m(5, 6, 7, 12, 13, 14, 15)$.
 :::
 
-:::step{why="SOP: m5 pairs only into QS-type groups, m6 into QR; the quads QS (5, 7, 13, 15), QR (6, 7, 14, 15) and PQ (12–15) are all needed."}
+:::step{why="m5's 1-neighbours are m7 and m13, so its largest group is the quad QS; m6's are m7 and m14, so QR; m12's are m13 and m14, so PQ. Each is the only quad through that cell, so all three are needed."}
 Minimal SOP: $PQ + QR + QS$ (6 literals).
 :::
 
@@ -582,6 +608,13 @@ This is De Morgan applied to the minimal SOP of $f'$. SOP and POS minima can dif
 :::
 
 ## Reading a map someone else drew
+
+:::intuition{#read-intuition title="Labels, not positions" depth="standard"}
+A printed map is a table whose row and column labels tell you which input each cell stands for. Papers
+put different variables on the axes, write the labels with bars instead of bits, or occasionally print them
+in counting order. A cell's meaning comes from its two labels, never from where it sits on the page; read
+the labels first and the rest is the usual looping.
+:::
 
 :::definition{#read-map term="Method: reading a printed map" depth="standard"}
 Before looping a map from a question paper, read four things:
@@ -607,7 +640,7 @@ numbers (to compare with a Σ list), translate each cell carefully.
 
 :::trap{#trap-non-gray title="A map printed with binary-order labels (GATE 1998)" depth="standard"}
 The 1998 map labels its columns $BC = 00, 01, 10, 11$. Its two end columns, 00 and 11, are **not**
-neighbours, so looping them as a wrap-around quad (giving $C'$ or $B'$) is wrong. Re-draw the columns
+neighbours, so looping them as a wrap-around quad (read as Gray positions, giving $C'$) is wrong. Re-draw the columns
 in Gray order first: the 1s then sit in columns 00 and 11, which give two separate pairs $B'C'$ and
 $BC$, so $f = B'C' + BC = \overline{B \oplus C}$.
 :::
@@ -616,6 +649,13 @@ $BC$, so $f = B'C' + BC = \overline{B \oplus C}$.
 :::
 
 ## Patterns worth recognising
+
+:::intuition{#patterns-intuition title="When every step changes the answer" depth="standard"}
+Parity flips whenever any input flips. On a map every step to a neighbour flips one input, so a parity
+function alternates 1, 0, 1, 0 in every direction: a checkerboard, with no two 1s side by side and nothing
+to loop. If only some inputs matter, the alternation happens only along those directions and the other
+directions repeat, which leaves loops: an XOR or XNOR of fewer variables.
+:::
 
 :::theorem{#checkerboard name="The checkerboard is parity" depth="standard"}
 The 1s of $x_1 \oplus x_2 \oplus \dots \oplus x_n$ (odd parity) form a checkerboard on the map: no two
@@ -719,7 +759,15 @@ Read the axis variables and their order, check for Gray order, and decode each c
 Checkerboards are parity (no grouping); partial checkerboards are XOR/XNOR of fewer variables.
 :::
 
-## Free variables, equal expressions and counting
+## Free variables
+
+:::intuition{#free-intuition title="A switch wired to nothing" depth="standard"}
+Imagine a panel of switches that controls a lamp, and one switch that is not connected to anything.
+Flipping it never changes the lamp. On a truth table that switch's column is irrelevant: every row and its
+"twin" with that switch flipped give the same output. On the map the twin of a cell is its neighbour along
+that variable, so the 1s come in pairs across that variable's boundary, and every loop can stretch across
+it. That is why a free variable never appears in the minimal form.
+:::
 
 :::definition{#free-variable term="A variable the function ignores" depth="standard"}
 $f$ is **independent** of $x$ when flipping $x$ never changes $f$: $f(\dots, x = 0, \dots) = f(\dots, x = 1,
@@ -731,10 +779,100 @@ no term of the minimal SOP (or POS).
 :::trick{#trick-free-variable title="Pair the minterms that differ in one bit" depth="standard"}
 For $x$ with weight $w$ in the minterm number ($w = 8, 4, 2, 1$ for $A, B, C, D$), check that for every
 minterm $m$ in the list, $m \oplus w$ (that is $m + w$ or $m - w$) is also in the list. Example:
-$\Sigma(1, 3, 4, 6, 9, 11, 12, 14)$ is closed under $\pm 8$ (1 ↔ 9, 3 ↔ 11, 4 ↔ 12, 6 ↔ 14), so it ignores $A$.
+$\Sigma(2, 6, 10, 14)$ is closed under $\pm 8$ (2 ↔ 10, 6 ↔ 14) and under $\pm 4$ (2 ↔ 6, 10 ↔ 14), so it
+ignores $A$ and $B$; it is not closed under $\pm 2$ or $\pm 1$, so it depends on $C$ and $D$: $f = CD'$.
+Always test **every** variable: finding one free variable does not mean there is only one.
 
-**Why it works:** $m \oplus w$ is $m$ with $x$ flipped. **When it fails:** never, but remember to check
-every minterm, and to use the weight of $x$ in the variable order the question gives.
+**Why it works:** $m \oplus w$ is $m$ with $x$ flipped. **When it fails:** never for a fully specified
+function, provided you use the weight of $x$ in the variable order the question gives. With don't-cares the
+answer can depend on how you fill the Xs: treat each X as a wildcard that may complete a pair.
+:::
+
+### Worked examples: free variables
+
+::::example{#ex-free-easy level="easy" title="Which variables does a function ignore?" depth="quick"}
+Is $f(A, B, C, D) = \Sigma m(1, 3, 9, 11)$ independent of any variable?
+
+:::step{why="Write the minterms in binary: 0001, 0011, 1001, 1011."}
+$B = 0$ and $D = 1$ in all four; $A$ and $C$ take all four combinations.
+:::
+
+:::step{why="A group of 4 cells with B and D fixed is the single term B′D."}
+$f = B'D$.
+:::
+
+:::answer
+$f$ ignores $A$ and $C$ (two variables). Check with the trick: the list is closed under $\pm 8$ (flip $A$)
+and $\pm 2$ (flip $C$).
+:::
+::::
+
+::::example{#ex-free-medium level="medium" title="Free variables of an XNOR pattern" depth="standard"}
+On which variables does $f(A, B, C, D) = \Sigma m(0, 1, 4, 5, 10, 11, 14, 15)$ depend?
+
+:::step{why="Test B (±4): 0 ↔ 4, 1 ↔ 5, 10 ↔ 14, 11 ↔ 15 are all in the list."}
+$f$ ignores $B$.
+:::
+
+:::step{why="Test D (±1): 0 ↔ 1, 4 ↔ 5, 10 ↔ 11, 14 ↔ 15, all present."}
+$f$ ignores $D$.
+:::
+
+:::step{why="Test A (±8): m0 is in, m8 is not. Test C (±2): m0 is in, m2 is not."}
+$f$ depends on $A$ and $C$.
+:::
+
+:::answer
+Only on $A$ and $C$: $f = A'C' + AC = \overline{A \oplus C}$.
+:::
+::::
+
+::::example{#ex-free-gate level="gate" title="How many variables are free?" depth="standard"}
+$f(A, B, C, D) = \Sigma m(2, 3, 6, 7, 10, 11, 14, 15)$ is independent of how many variables?
+
+:::step{why="All eight minterms have bit C (weight 2) equal to 1: 0010, 0011, 0110, 0111, …"}
+Every minterm with $C = 1$ is present, and none with $C = 0$.
+:::
+
+:::step{why="So flipping A, B or D keeps a minterm inside the list, while flipping C leaves it."}
+$f = C$.
+:::
+
+:::answer
+Independent of three variables ($A$, $B$, $D$). A function of $n$ variables that is a single literal has
+$2^{n-1}$ minterms and $n - 1$ free variables.
+:::
+::::
+
+::::example{#ex-free-dc level="gate" title="Edge case: a don't-care decides freedom" depth="standard"}
+$f(A, B, C) = \Sigma m(1, 3, 5) + d(7)$. Can the minimal SOP be made independent of $A$ and $B$?
+
+:::step{why="Without the X, f = Σ(1, 3, 5) = A′C + B′C depends on all three variables (e.g. m5 is in but m7 is not)."}
+As specified with $X_7 = 0$: depends on $A$, $B$, $C$.
+:::
+
+:::step{why="Setting X7 = 1 completes the pairs 5 ↔ 7 (flip B) and 3 ↔ 7 (flip A): the list {1, 3, 5, 7} is closed under ±4 and ±2."}
+With $X_7 = 1$: $f = C$.
+:::
+
+:::answer
+Yes: using the don't-care, $f = C$, free of $A$ and $B$. With don't-cares, "is $f$ independent of $x$" can
+depend on the choice of the Xs.
+:::
+::::
+
+:::note{#recap-free title="Recap" depth="quick"}
+$f$ ignores $x$ iff its minterm list is closed under flipping $x$ (± its weight). Test every variable.
+With don't-cares, the Xs may be chosen to make a variable free.
+:::
+
+## Equal expressions and counting minterms
+
+:::intuition{#equal-intuition title="Two recipes, one dish" depth="standard"}
+Two expressions are equal when they are 1 on exactly the same rows, however different they look, just as
+two recipes can produce the same dish. The reliable test is to list the rows (minterms) each one covers.
+Counting how many rows an expression covers is the same exercise: write each term as a block of cells and
+count the union.
 :::
 
 :::definition{#algebra-check term="Algebra alongside the map" depth="standard"}
@@ -757,36 +895,34 @@ each option into minterms (or plot it) and compare lists; do not compare shapes.
 the minimal form", also compare literal counts.
 :::
 
-:::definition{#count-minterms term="Counting the minterms of an expression" depth="standard"}
-Expand each term with dashes (a $k$-literal term covers $2^{n-k}$ minterms) and take the **union**; with
-inclusion–exclusion: $|T_1 \cup T_2| = |T_1| + |T_2| - |T_1 T_2|$. For a complemented expression,
-count the complement's minterms and subtract from $2^n$, or apply De Morgan first.
+:::derivation{#count-minterms of="the number of minterms of an SOP" depth="standard"}
+A $k$-literal term of $n$ variables fixes $k$ variables and leaves $n - k$ free, so it covers $2^{n-k}$
+minterms. The minterms of an SOP are the **union** of its terms' sets, so by inclusion–exclusion
+$$
+|T_1 \cup T_2| = |T_1| + |T_2| - |T_1 T_2|,
+$$
+where $T_1 T_2$ (the AND of the two terms) is again a term, or 0 if they contain opposite literals. For
+three terms add back the triple overlap. For a complemented expression, count the complement's minterms
+and subtract from $2^n$, or apply De Morgan first.
+
+**Sanity check.** $A + A'$ over one variable: $1 + 1 - |AA'| = 2 - 0 = 2$, all rows.
 :::
 
-:::definition{#partial-specs term="Functions defined by conditions" depth="standard"}
-A question may define $f$ by statements such as "$f(w, 0, 0, z) = 1$" or "$f(1, x, 1, z) = x + z$". Each
-statement fills a region of the map: the cells that match the fixed values, with the given formula
-evaluated on the free variables. Fill every region (they must agree where they overlap), then see which
-cells **no** statement reaches. Those cells are not determined by the question; if it asks for the
-minimal form, treat them as don't-cares (Lesson 2) and choose their values to make the loops largest.
+### Worked examples: equality and counting
+
+::::example{#ex-count-easy level="easy" title="Counting with one overlap" depth="quick"}
+How many minterms does $f(A, B, C) = AB + C$ have?
+
+:::step{why="AB has 2 literals of 3 variables: 2^(3−2) = 2 minterms; C has 1 literal: 4 minterms."}
+$|AB| = 2$, $|C| = 4$.
 :::
 
-### Worked examples: free variables, equivalence and counting
-
-::::example{#ex-free-easy level="easy" title="Which variables does a function ignore?" depth="quick"}
-Is $f(A, B, C, D) = \Sigma m(1, 3, 9, 11)$ independent of any variable?
-
-:::step{why="Write the minterms in binary: 0001, 0011, 1001, 1011."}
-$B = 0$ and $D = 1$ in all four; $A$ and $C$ take all four combinations.
-:::
-
-:::step{why="A group of 4 cells with B and D fixed is the single term B′D."}
-$f = B'D$.
+:::step{why="The overlap is ABC, one minterm, counted twice."}
+$2 + 4 - 1 = 5$.
 :::
 
 :::answer
-$f$ ignores $A$ and $C$ (two variables). Check with the trick: the list is closed under $\pm 8$ (flip $A$)
-and $\pm 2$ (flip $C$).
+5 minterms: $\{1, 3, 5, 6, 7\}$.
 :::
 ::::
 
@@ -823,7 +959,84 @@ Minterms $m_0, m_4, m_6$.
 :::
 ::::
 
-::::example{#ex-free-conditions level="gate" title="Edge case: a function given by conditions" depth="standard"}
+::::example{#ex-equal-edge level="gate" title="Edge case: equal expressions with no term in common" depth="standard"}
+Are $A'B + B'C + AC'$ and $A'C + BC' + AB'$ equal?
+
+:::step{why="Expand the first: A′B = {2, 3}, B′C = {1, 5}, AC′ = {4, 6}."}
+$\{1, 2, 3, 4, 5, 6\}$.
+:::
+
+:::step{why="Expand the second: A′C = {1, 3}, BC′ = {2, 6}, AB′ = {4, 5}."}
+$\{1, 2, 3, 4, 5, 6\}$.
+:::
+
+:::answer
+Equal: both are $\Sigma(1, 2, 3, 4, 5, 6)$, and both are minimal (Lesson 2 shows this function has exactly
+these two minimal SOPs). Sharing no term proves nothing; only the minterm lists decide.
+:::
+::::
+
+:::note{#recap-equal title="Recap" depth="quick"}
+Equal ⇔ same minterm list; minimal is a separate question. A $k$-literal term covers $2^{n-k}$ minterms;
+count unions by inclusion–exclusion or through the complement.
+:::
+
+## Functions given by conditions
+
+:::intuition{#conditions-intuition title="Each condition paints a stripe" depth="standard"}
+A condition such as "$f(1, x, 1, z) = x + z$" talks only about the cells where $w = 1$ and $y = 1$: a stripe of
+the map. It tells you what to write in those cells. Several conditions paint several stripes; where stripes
+overlap they must agree, and cells that no stripe touches are left blank. Blank cells are freedom, not
+zeros.
+:::
+
+:::definition{#partial-specs term="Functions defined by conditions" depth="standard"}
+A question may define $f$ by statements such as "$f(w, 0, 0, z) = 1$" or "$f(1, x, 1, z) = x + z$". Each
+statement fills a region of the map: the cells that match the fixed values, with the given formula
+evaluated on the free variables. Fill every region (they must agree where they overlap), then see which
+cells **no** statement reaches. Those cells are not determined by the question; if it asks for the
+minimal form, treat them as don't-cares (Lesson 2) and choose their values to make the loops largest.
+:::
+
+### Worked examples: functions given by conditions
+
+::::example{#ex-cond-easy level="easy" title="Two conditions that fill the whole map" depth="quick"}
+$f(A, B, C)$ satisfies $f(0, B, C) = B$ and $f(1, B, C) = C'$. Find its minimal SOP.
+
+:::step{why="A = 0 row: f = B, so m2 (010) and m3 (011) are 1."}
+Row $A = 0$: $m_2, m_3$.
+:::
+
+:::step{why="A = 1 row: f = C′, so m4 (100) and m6 (110) are 1."}
+Row $A = 1$: $m_4, m_6$.
+:::
+
+:::answer
+$f = \Sigma(2, 3, 4, 6) = A'B + AC'$: exactly Shannon's expansion $A' f(0, B, C) + A f(1, B, C)$.
+:::
+::::
+
+::::example{#ex-cond-medium level="medium" title="Conditions on a 4-variable function" depth="standard"}
+$f(A, B, C, D)$ satisfies $f(A, B, 0, D) = A + D$ and $f(A, B, 1, D) = B$. Find its minimal SOP.
+
+:::step{why="C = 0 half: f = A + D, so the cells with C = 0 and (A = 1 or D = 1) are 1: m1, m5, m8, m9, m12, m13."}
+$C = 0$: $\{1, 5, 8, 9, 12, 13\}$.
+:::
+
+:::step{why="C = 1 half: f = B: m6, m7, m14, m15."}
+$C = 1$: $\{6, 7, 14, 15\}$.
+:::
+
+:::step{why="Loop: C′D (1, 5, 9, 13), AC′ (8, 9, 12, 13), BC (6, 7, 14, 15)."}
+Three quads, all essential.
+:::
+
+:::answer
+$f = C'D + AC' + BC$ (6 literals).
+:::
+::::
+
+::::example{#ex-free-conditions level="gate" title="Cells that no condition reaches" depth="standard"}
 $f(A, B, C)$ satisfies $f(0, B, C) = B + C$ and $f(1, 1, C) = C'$. Find its minimal SOP.
 
 :::step{why="The first condition fills row A = 0: B + C is 0 only for B = C = 0."}
@@ -840,14 +1053,30 @@ not enlarge either loop, so leave them 0.
 :::
 
 :::answer
-$f = A'C + BC'$ (4 literals). Any completion that sets $m_4$ or $m_5$ to 1 needs an extra term.
+$f = A'C + BC'$ (4 literals). Any completion that sets $m_4$ or $m_5$ to 1 needs an extra term. (GATE 2021
+uses three conditions on four variables and leaves two cells free in the same way.)
 :::
 ::::
 
-:::note{#recap-free title="Recap" depth="quick"}
-$f$ ignores $x$ iff its minterm list is closed under flipping $x$. Two expressions are equal iff their
-minterm lists match; minimal is a separate question. Count minterms with dash patterns and unions;
-unreached cells of a condition-defined function are free.
+::::example{#ex-cond-edge level="gate" title="Edge case: conditions that contradict each other" depth="standard"}
+Is there a function $f(A, B, C)$ with $f(0, B, C) = B$ and $f(A, 1, C) = C$?
+
+:::step{why="The two stripes overlap where A = 0 and B = 1 (cells m2, m3)."}
+Overlap: $m_2$ ($C = 0$) and $m_3$ ($C = 1$).
+:::
+
+:::step{why="First condition there: f = B = 1 on both cells. Second: f = C, so f(m2) = 0."}
+They disagree on $m_2$.
+:::
+
+:::answer
+No such function exists. Always check the overlaps before minimising.
+:::
+::::
+
+:::note{#recap-conditions title="Recap" depth="quick"}
+Each condition fills a stripe of cells; overlaps must agree; unreached cells are don't-cares, to be chosen
+for the cheapest cover.
 :::
 
 ## Try it: the K-map Solver

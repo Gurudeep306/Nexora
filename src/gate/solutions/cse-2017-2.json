@@ -2061,7 +2061,7 @@
       "shortcut": "Each option has the factor pattern; test one 1-cell per option: $m_8$ kills (B), $m_0$ kills (C), $m_1$ kills (D).",
       "pitfalls": [
         "Reading a 0-loop with the SOP habit (1 → plain letter).",
-        "Requiring the POS to agree with the minimal SOP on don't-care cells: the SOP $\\overline{x}\\,\\overline{z} + \\overline{w}z$ and this POS choose the Xs differently."
+        "Assuming the minimal SOP and POS must agree on the don't-cares. Here they happen to make the same choice (the POS expands to $\\overline{x}\\,\\overline{z} + \\overline{w}z$ plus a consensus term), but in general they need not."
       ],
       "verification": "Enumeration over the 12 care cells: only (A) agrees with all of them; 4 literals is the minimum POS cost (Petrick on the 0s).",
       "animation": {
