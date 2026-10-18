@@ -121,7 +121,37 @@ names = {"a": "A'B'C'", "b": "A'C'D", "c": "BC'D", "d": "ABC'", "e": "AC'D'", "g
 inv = {ml.parse_term(v, V4): k for k, v in names.items()}
 irr = sorted("".join(sorted(inv[c] for c in cov)) for cov in ml.petrick(ring, ml.primes(ring, [], 4)))
 assert irr == sorted(["ace", "bdg", "bceg", "acdg", "abde"])
-has("$\\Pi = ace + bdg + bceg + acdg + abde$")
+has("$ace + bdg + bceg + acdg + abde$")
+# Expansion shown in the lesson: (a + g)(a + b) = a + bg etc., and the eight products absorb to five.
+binoms = [[{"a"}, {"b", "g"}], [{"c"}, {"b", "d"}], [{"e"}, {"d", "g"}]]
+prods = [x | y | z for x in binoms[0] for y in binoms[1] for z in binoms[2]]
+assert len(prods) == 8
+absorbed = {frozenset(q) for q in prods if not any(set(r) < q for r in prods)}
+assert sorted("".join(sorted(q)) for q in absorbed) == irr
+# Review additions: column dominance examples, small Petrick, counting covers, reflected and 6-variable maps.
+o = [0, 1, 2, 5, 6, 7, 8, 9, 10, 14]
+ch = ml.chart(o, ml.primes(o, [], 4))
+for m in (0, 1, 8):
+    assert set(ch[9]) <= set(ch[m])
+for m in (2, 6, 10):
+    assert set(ch[14]) <= set(ch[m])
+o = [1, 3, 4, 5, 9, 11, 12, 13]
+ch = ml.chart(o, ml.primes(o, [], 4))
+assert set(ch[3]) <= set(ch[1]) and set(ch[3]) <= set(ch[9]) and set(ch[4]) <= set(ch[5]) and set(ch[4]) <= set(ch[13])
+cdp = ml.parse_term("C'D", V4)
+assert not any(cdp in ch[m] for m in (3, 4, 11, 12))
+o = [1, 2, 4, 6, 9, 11, 12, 13]
+assert T(ml.essential(o, [], 4), V4) == sorted(["B'C'D", "A'CD'", "AB'D"]) and len(ml.min_covers(o, [], 4)) == 3
+rest = {"A'BD'": [4, 6], "BC'D'": [4, 12], "AC'D": [9, 13], "ABC'": [12, 13]}
+for t_, cs in rest.items():
+    assert ml.cells(ml.parse_term(t_, V4)) == cs
+o = [0, 1, 5, 10, 11, 12, 13, 15]
+assert T(ml.essential(o, [], 4), V4) == sorted(["A'B'C'", "AB'C", "ABC'"]) and len(ml.min_covers(o, [], 4)) == 4
+g3 = [format(x, "03b") for x in ml.gray(3)]
+assert g3 == ["000", "001", "011", "010", "110", "111", "101", "100"]
+assert all(ml.adjacent(int(g3[i], 2), int(g3[7 - i], 2)) and (int(g3[i], 2) ^ int(g3[7 - i], 2)) == 4 for i in range(4))
+assert msops([2, 18], [], 5, V5) == {frozenset(["B'C'DE'"])}
+assert msops([0, 1, 16, 17], [], 6, list("ABCDEF")) == {frozenset(["A'C'D'E'"])}
 assert msops(ring, [], 4, V4) == {frozenset(["A'B'C'", "BC'D", "AC'D'"]), frozenset(["A'C'D", "ABC'", "B'C'D'"])}
 # Petrick lists exactly the irredundant covers (exhaustive check on 3-variable functions).
 for t in bl.all_functions(3):

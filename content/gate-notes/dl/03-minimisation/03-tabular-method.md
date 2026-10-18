@@ -8,8 +8,8 @@ prerequisites: [prime-implicants]
 pyq_topics: [dl/minimization]
 est_minutes: 60
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every table, chart, cover count and map is checked in content/gate-notes/_checks/dl/l3_03_tabular.py (Quine–McCluskey vs brute force; Petrick vs exhaustive search)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 115–117 and 165, set C pp. 238, 262–263 and 266–273. No set runs the full tabulation; set C's 5-variable and VEM slips (pp. 238, 271) are recorded in _errata/dl.md."
@@ -100,7 +100,10 @@ as sets ($\{0, 2\} + 4 = \{4, 6\}$ gives $\{0, 2, 4, 6\}$).
 :::definition{#qm-rounds term="Step 3: repeat until nothing combines" depth="quick"}
 The new cubes (pairs) form round 1; group them by weight (counting 1s only) and combine again to get
 quads (round 2), then octets, and so on. Stop when a round produces no new cube. Every cube that was
-never ticked, in any round, is a **prime implicant**.
+never ticked, in any round, is a **prime implicant**. Notice why the ticked cubes can be forgotten: each
+lies inside a bigger implicant, and Lesson 2's prime implicant theorem says a minimal cover never needs
+such a cube. A common wrong turn is to tick a cube only when it combines "upwards" in the next group; it
+must be ticked whenever it combines with any cube.
 :::
 
 :::theorem{#qm-correct name="The unticked cubes are exactly the prime implicants" depth="standard"}
@@ -136,10 +139,10 @@ give a don't-care a column in the chart.
 :::
 
 :::trap{#trap-qm-dashes title="Combining cubes whose dashes do not line up" depth="standard"}
-010- and -010 differ in only two characters, but their dashes are in different places, so they are not
-two halves of one cube: their cells $\{4, 5\}$ and $\{2, 10\}$ together are not a group of four (no
-product term has exactly these four minterms), and any "merged" pattern you write would contain 0-cells.
-Only cubes with **identical dash positions** may combine.
+00−1 and 0−11 differ in only two characters, so they look like neighbours, but their dashes are in
+different places: their cells $\{1, 3\}$ and $\{3, 7\}$ together are $\{1, 3, 7\}$, three cells, which is not a
+cube. Students who "merge" them write 0−−1, a quad that also contains the cell 5. Only cubes with
+**identical dash positions** may combine (then the merged cube has exactly the union of their cells).
 :::
 
 ### Worked examples: the tabulation
@@ -147,16 +150,18 @@ Only cubes with **identical dash positions** may combine.
 ::::example{#ex-qm-easy level="easy" title="A 3-variable tabulation" depth="quick"}
 Find the prime implicants of $f(A, B, C) = \Sigma m(0, 1, 2, 5)$ by Quine–McCluskey.
 
-:::step{why="Group by weight: 000 (weight 0); 001, 010 (weight 1); 101 (weight 2)."}
-Groups: $\{0\}$, $\{1, 2\}$, $\{5\}$.
+:::step{why="Only cubes in neighbouring weight groups can differ in one bit, so sorting by weight limits the comparisons."}
+000 (weight 0); 001, 010 (weight 1); 101 (weight 2). Groups: $\{0\}$, $\{1, 2\}$, $\{5\}$.
 :::
 
-:::step{why="Combine group 0 with group 1: 000 + 001 = 00−, 000 + 010 = 0−0. Group 1 with group 2: 001 + 101 = −01; 010 and 101 differ in three bits."}
-Round 1: 00− (0, 1), 0−0 (0, 2), −01 (1, 5). All four minterms ticked.
+:::step{why="Two minterms that differ in exactly one bit merge, by the combining rule, into one cube with a dash there."}
+Group 0 with group 1: 000 + 001 = 00−, 000 + 010 = 0−0. Group 1 with group 2: 001 + 101 = −01; 010 and 101 differ in
+three bits. Round 1: 00− (0, 1), 0−0 (0, 2), −01 (1, 5). All four minterms ticked.
 :::
 
-:::step{why="Round 1 groups: weight 0: 00−, 0−0; weight 1: −01. Pairs from neighbouring groups have different dash positions, so nothing combines."}
-No round 2: all three pairs are unticked.
+:::step{why="Pairs combine only if their dashes line up; otherwise their union is not a cube."}
+Round 1 groups: weight 0: 00−, 0−0; weight 1: −01. Every candidate pair has different dash positions, so nothing
+combines: no round 2, and all three pairs stay unticked.
 :::
 
 :::answer
@@ -168,16 +173,17 @@ $A'C' + B'C$ and $A'B'$ is redundant.
 ::::example{#ex-qm-medium level="medium" title="Three rounds, one duplicate" depth="standard"}
 Tabulate $f = \Sigma m(0, 2, 4, 5, 6, 10)$ (the GATE 2015 function).
 
-:::step{why="Weights: 0000 → 0; 0010, 0100 → 1; 0101, 0110, 1010 → 2."}
-Groups: $\{0\}$, $\{2, 4\}$, $\{5, 6, 10\}$.
+:::step{why="Sorting by weight means only neighbouring groups need comparing (theorem qm-weights)."}
+0000 → weight 0; 0010, 0100 → 1; 0101, 0110, 1010 → 2. Groups: $\{0\}$, $\{2, 4\}$, $\{5, 6, 10\}$.
 :::
 
-:::step{why="Round 1: 0+2 = 00−0, 0+4 = 0−00; 2+6 = 0−10, 2+10 = −010, 4+5 = 010−, 4+6 = 01−0."}
-Six pairs; every minterm ticked.
+:::step{why="Every pair of minterms one bit apart merges; a minterm that merged is not prime, so it is ticked."}
+0+2 = 00−0, 0+4 = 0−00; 2+6 = 0−10, 2+10 = −010, 4+5 = 010−, 4+6 = 01−0. Six pairs; every minterm ticked.
 :::
 
-:::step{why="Round 2: 00−0 + 01−0 = 0−−0 and 0−00 + 0−10 = 0−−0 (the same cube twice). 010− and −010 have no partner with matching dashes."}
-One quad, 0−−0. Ticked: 00−0, 0−00, 01−0, 0−10. Unticked: 010−, −010.
+:::step{why="A quad has two ways of being split into halves, so it is usually produced twice; it is still one cube."}
+00−0 + 01−0 = 0−−0 and 0−00 + 0−10 = 0−−0. 010− and −010 have no partner with matching dashes. One quad, 0−−0.
+Ticked: 00−0, 0−00, 01−0, 0−10. Unticked: 010−, −010.
 :::
 
 :::answer
@@ -189,17 +195,18 @@ runs this table.
 ::::example{#ex-qm-gate level="gate" title="Eight minterms, two quads" depth="standard"}
 Find all prime implicants of $f = \Sigma m(0, 1, 2, 8, 10, 11, 14, 15)$.
 
-:::step{why="Group by weight: {0}, {1, 2, 8}, {10}, {11, 14}, {15}."}
+:::step{why="Weight groups organise the comparisons; an empty group would stop combinations across it."}
 Weight 0: 0000. Weight 1: 0001, 0010, 1000. Weight 2: 1010. Weight 3: 1011, 1110. Weight 4: 1111.
 :::
 
-:::step{why="Combine neighbouring groups; every pair differs in one bit."}
+:::step{why="Compare each cube with every cube of the next group; pairs differing in one bit merge."}
 Round 1: 000− (0, 1), 00−0 (0, 2), −000 (0, 8), −010 (2, 10), 10−0 (8, 10), 101− (10, 11), 1−10 (10, 14),
 1−11 (11, 15), 111− (14, 15). Every minterm is ticked.
 :::
 
-:::step{why="Combine pairs with the same dash positions: 00−0 + 10−0 = −0−0 (also from −000 + −010); 101− + 111− = 1−1− (also from 1−10 + 1−11)."}
-Round 2: −0−0 and 1−1−. Unticked in round 1: 000−.
+:::step{why="Pairs merge into quads only when their dashes line up; each quad appears twice and is listed once."}
+00−0 + 10−0 = −0−0 (also from −000 + −010); 101− + 111− = 1−1− (also from 1−10 + 1−11). Round 2: −0−0 and 1−1−.
+Unticked in round 1: 000−.
 :::
 
 :::answer
@@ -211,16 +218,18 @@ $f = B'D' + AC + A'B'C'$.
 ::::example{#ex-qm-edge level="gate" title="Edge case: don't-cares in the table" depth="standard"}
 Tabulate $f = \Sigma m(1, 3, 6, 7) + d(5, 15)$ and give the minimal SOP.
 
-:::step{why="Include the don't-cares in the list: 0001 (w1); 0011, 0101, 0110 (w2); 0111 (w3); 1111 (w4)."}
-Groups: $\{1\}$, $\{3, 5, 6\}$, $\{7\}$, $\{15\}$.
+:::step{why="Don't-cares may help build bigger cubes, so they enter the table exactly like minterms."}
+0001 (w1); 0011, 0101, 0110 (w2); 0111 (w3); 1111 (w4). Groups: $\{1\}$, $\{3, 5, 6\}$, $\{7\}$, $\{15\}$.
 :::
 
-:::step{why="Round 1: 1+3 = 00−1, 1+5 = 0−01, 3+7 = 0−11, 5+7 = 01−1, 6+7 = 011−, 7+15 = −111. Round 2: 00−1 + 01−1 = 0−−1 (also 0−01 + 0−11)."}
-Unticked: 011− ($A'BC$), −111 ($BCD$), and the quad 0−−1 ($A'D$).
+:::step{why="The rounds run as usual; the don't-cares are cells like any other here."}
+Round 1: 1+3 = 00−1, 1+5 = 0−01, 3+7 = 0−11, 5+7 = 01−1, 6+7 = 011−, 7+15 = −111. Round 2: 00−1 + 01−1 = 0−−1
+(also 0−01 + 0−11). Unticked: 011− ($A'BC$), −111 ($BCD$), and the quad 0−−1 ($A'D$).
 :::
 
-:::step{why="Chart over the real 1s only (1, 3, 6, 7): m1 and m3 are only in A′D, m6 only in A′BC; m7 is then covered. BCD covers only m7 among the 1s (its other cell is the X 15), so it is not needed."}
-EPIs: $A'D$, $A'BC$.
+:::step{why="The chart has columns for the real 1s only: don't-cares never need covering."}
+Columns 1, 3, 6, 7: $m_1$ and $m_3$ are only in $A'D$, $m_6$ only in $A'BC$; $m_7$ is then covered. $BCD$ covers only
+$m_7$ among the 1s (its other cell is the X 15), so it is not needed. EPIs: $A'D$, $A'BC$.
 :::
 
 :::answer
@@ -236,6 +245,15 @@ repeat. Unticked cubes are the prime implicants; don't-cares join the list but n
 
 ## The prime-implicant chart
 
+:::intuition{#chart-intuition title="A seating plan" depth="standard"}
+Think of every 1-cell as a guest who needs a seat, and every prime implicant as a bench that seats some
+of the guests; benches cost money (literals). The chart is the seating plan written as a table: one row
+per bench, one column per guest, a mark where a guest fits on a bench. A guest who fits on only one bench
+forces you to buy it; after that you look for the cheapest benches that seat everyone else. Notice that
+only prime implicants appear as rows: by Lesson 2's prime implicant theorem a minimal cover never needs
+anything smaller, so the ticked cubes of the table can be forgotten.
+:::
+
 :::definition{#pi-chart term="The prime-implicant chart" depth="quick"}
 A table with one **row per prime implicant** and one **column per 1-cell** (minterm; never a
 don't-care), with a mark where the PI covers the cell. A cover is a set of rows that has a mark in
@@ -245,12 +263,21 @@ every column. Each row has a cost (its literal count).
 :::definition{#chart-epi term="Essential rows and column removal" depth="standard"}
 A column with a **single** mark identifies an essential prime implicant (the only PI covering that
 cell). Take every essential row, then delete every column it covers, and delete rows left with no
-marks. What remains is the **reduced chart**.
+marks. What remains is the **reduced chart**. A common wrong turn is to delete only the single-mark
+columns: every column the essential row covers is done.
+:::
+
+:::intuition{#dominance-intuition title="A bench that does everything another does, for no more" depth="standard"}
+If bench $P$ seats every guest that bench $Q$ seats (and maybe more) and costs no more, you never need $Q$:
+swapping $Q$ for $P$ in any plan keeps everyone seated and costs no more. Dually, if every bench that seats
+guest $j$ also seats guest $i$, then guest $i$ is no problem: whoever seats $j$ seats $i$ too, so you can stop
+worrying about $i$.
 :::
 
 :::theorem{#row-dominance name="Row dominance" depth="standard"}
-In the reduced chart, if row $P$ has a mark in every column where row $Q$ has one, and
-$\text{cost}(P) \le \text{cost}(Q)$, then some minimal cover does not use $Q$; row $Q$ can be deleted.
+In the reduced chart, if row $P$ has a mark in every column where row $Q$ has one (the columns of $Q$ are a
+subset of those of $P$), and $\text{cost}(P) \le \text{cost}(Q)$, then some minimal cover does not use $Q$;
+row $Q$ can be deleted. If two rows dominate each other (same columns, same cost), delete only one of them.
 :::
 
 :::proof{#proof-row-dominance of="row dominance" depth="standard"}
@@ -258,7 +285,8 @@ $\text{cost}(P) \le \text{cost}(Q)$, then some minimal cover does not use $Q$; r
 
 Take any minimal cover containing $Q$. Replace $Q$ by $P$ (if $P$ is not already in it). Every column $Q$
 covered is still covered by $P$, so the result is still a cover, and its cost has not increased. So a
-minimal cover without $Q$ exists.
+minimal cover without $Q$ exists. (Deleting both of two identical rows would leave their columns
+uncovered, hence the tie rule.)
 :::
 
 :::theorem{#column-dominance name="Column dominance" depth="standard"}
@@ -274,11 +302,12 @@ column $i$, so column $i$ is covered whenever column $j$ is. Removing column $i$
 validity.
 :::
 
-:::trap{#trap-dominance-direction title="Which way does dominance go?" depth="quick"}
-For **rows**, delete the dominated row (the one with fewer marks). For **columns**, delete the
-**dominating** column (the one with more marks): a column covered by many rows is easy to satisfy and
-is taken care of by covering the column with fewer rows. Mixing these up deletes the wrong line and
-can lose the minimum.
+:::trap{#trap-dominance-direction title="Which way does dominance go?" depth="standard"}
+For **rows**, delete the dominated row: the one whose marks are a subset of another no-costlier row's
+(not simply "the row with fewer marks"). For **columns**, delete the **dominating** column, the one whose
+set of rows is the larger. A student who reverses the column rule in the chart below deletes column 9 (the
+easy one to miss) instead of columns 0, 1 and 8, loses the clue that $B'C'$ is essential and ends up
+branching for nothing.
 :::
 
 :::viz{#chart-viz spec="pi-chart-dominance" mode="animate" depth="standard"}
@@ -290,7 +319,99 @@ dominates another, the chart is **cyclic**. Branch (pick a row, simplify, repeat
 method below.
 :::
 
+### Worked examples: charts and dominance
+
+::::example{#ex-chart-easy level="easy" title="A chart settled by essential rows" depth="quick"}
+Use a PI chart to minimise $f = \Sigma m(1, 3, 4, 5, 9, 11, 12, 13)$, whose PIs are $B'D$, $C'D$, $BC'$.
+
+:::step{why="A single mark in a column means only one PI can cover that 1-cell."}
+$B'D$ covers 1, 3, 9, 11; $C'D$ covers 1, 5, 9, 13; $BC'$ covers 4, 5, 12, 13. Single-mark columns: 3 and 11
+(only $B'D$); 4 and 12 (only $BC'$).
+:::
+
+:::step{why="Essential rows must be taken, and every column they cover is then finished."}
+$B'D$ and $BC'$ cover 1, 3, 9, 11, 4, 5, 12, 13: every column. $C'D$ has nothing left to cover.
+:::
+
+:::answer
+$f = B'D + BC'$; $C'D$ is redundant.
+:::
+::::
+
+::::example{#ex-chart-dominance level="medium" title="Row dominance after the essential rows" depth="standard"}
+Minimise $f = \Sigma m(0, 1, 2, 5, 6, 7, 8, 9, 10, 14)$ with its chart (PIs: $B'C'$, $B'D'$, $CD'$, $A'C'D$,
+$A'BD$, $A'BC$).
+
+:::step{why="A single-mark column forces its row."}
+Column 9 has only $B'C'$; column 14 only $CD'$. Both rows are essential.
+:::
+
+:::step{why="Everything an essential row covers is finished, so only the uncovered columns remain."}
+They cover 0, 1, 8, 9 and 2, 6, 10, 14. Reduced chart, columns 5 and 7: $A'C'D$: {5}; $A'BD$: {5, 7};
+$A'BC$: {7}; $B'D'$: {}.
+:::
+
+:::step{why="A row whose columns are a subset of a no-costlier row's can be deleted (row dominance)."}
+$A'BD$ (3 literals) dominates $A'C'D$ and $A'BC$ (3 literals each); $B'D'$ covers nothing. Take $A'BD$.
+:::
+
+:::answer
+$f = B'C' + CD' + A'BD$ (7 literals). The animation above performs these steps.
+:::
+::::
+
+::::example{#ex-coldom-1 level="gate" title="Column dominance before anything else" depth="standard"}
+On the same chart, apply column dominance first. Which columns can go, and what does that reveal?
+
+:::step{why="Column dominance: if every row of column j also covers column i, column i is redundant."}
+Column 9 has rows $\{B'C'\}$; columns 0, 1, 8 have rows $\{B'C', B'D'\}$, $\{B'C', A'C'D\}$, $\{B'C', B'D'\}$, all
+supersets. Delete columns 0, 1, 8.
+:::
+
+:::step{why="The same test for column 14, whose only row is CD′."}
+Columns 2, 6, 10 contain $CD'$ among their rows: delete them too.
+:::
+
+:::step{why="Only columns 5, 7, 9, 14 are left; read the chart again."}
+Columns 9 and 14 force $B'C'$ and $CD'$; columns 5 and 7 are covered by $A'BD$ alone.
+:::
+
+:::answer
+The same cover $B'C' + CD' + A'BD$, reached on a chart of four columns instead of ten.
+:::
+::::
+
+::::example{#ex-coldom-2 level="gate" title="Edge case: column dominance empties a row" depth="standard"}
+Reduce the chart of $f = \Sigma m(1, 3, 4, 5, 9, 11, 12, 13)$ (PIs $B'D$, $C'D$, $BC'$) by column dominance alone.
+
+:::step{why="Find columns with fewer rows that sit inside columns with more."}
+Column 3: $\{B'D\}$, which is inside column 1 $\{B'D, C'D\}$ and column 9 $\{B'D, C'D\}$: delete 1 and 9. Column 4:
+$\{BC'\}$, inside columns 5 and 13 $\{C'D, BC'\}$: delete 5 and 13.
+:::
+
+:::step{why="A row with no marks left can never help."}
+Columns 3, 4, 11, 12 remain; $C'D$ has no mark in any of them and disappears.
+:::
+
+:::answer
+$f = B'D + BC'$. Column dominance alone removed the redundant prime implicant.
+:::
+::::
+
+:::note{#recap-chart title="Recap" depth="quick"}
+Chart: rows = PIs, columns = 1-cells. Single-mark columns → essential rows; delete what they cover. Delete
+a row whose columns are a subset of a no-costlier row's; delete a column whose rows include another
+column's rows.
+:::
+
 ## Petrick's method
+
+:::intuition{#petrick-intuition title="Write the seating rules as algebra" depth="standard"}
+"Guest 5 must sit on bench $b$ or bench $c$" is the Boolean sum $b + c$. Every guest gives one such sum, and
+all guests must be seated, so the whole requirement is the AND of the sums. Multiplying it out lists every
+way of meeting all requirements at once; absorption throws away plans that contain a smaller plan. What is
+left is every cover from which nothing can be removed.
+:::
 
 :::theorem{#petrick name="Petrick's method lists every irredundant cover" depth="standard"}
 Give each row of the chart a Boolean variable ($p_i = 1$ means "row $i$ is chosen"). For each column
@@ -315,69 +436,75 @@ them.
 :::
 
 :::definition{#count-covers term="Counting minimal covers" depth="standard"}
-After the essential rows are taken, independent tied choices multiply: if two leftover columns each
-need one of two equal-cost rows, and no row covers both, there are $2 \times 2 = 4$ minimal covers. When
-the choices interact (one row covers several leftover columns), multiply nothing: expand Petrick's
-product and count the cheapest terms.
+After the essential rows are taken, tied choices multiply only when they are **independent**: each leftover
+column (or group of columns) has its own set of equal-cost rows, and no row serves two different groups.
+Then the number of minimal covers is the product of the number of choices per group. When a row serves
+several groups the choices interact; expand Petrick's product and count the cheapest terms.
+
+**Sanity check:** $f = \Sigma(0, 1, 5, 10, 11, 12, 13, 15)$ has the EPIs $A'B'C'$, $AB'C$, $ABC'$; then $m_5$ needs
+$A'C'D$ or $BC'D$, and $m_{15}$ needs $ACD$ or $ABD$, with no row serving both: $2 \times 2 = 4$ minimal SOPs.
 :::
 
-### Worked examples: charts and Petrick's method
+### Worked examples: Petrick's method
 
-::::example{#ex-chart-easy level="easy" title="A chart settled by essential rows" depth="quick"}
-Use a PI chart to minimise $f = \Sigma m(1, 3, 4, 5, 9, 11, 12, 13)$, whose PIs are $B'D$, $C'D$, $BC'$.
+::::example{#ex-petrick-easy level="easy" title="Petrick on a tiny chart" depth="quick"}
+After the EPIs, a chart has columns 5 and 7, with rows $p = A'C'D$ {5}, $q = A'BD$ {5, 7}, $r = A'BC$ {7}. List
+the irredundant covers.
 
-:::step{why="Mark the columns: B′D covers 1, 3, 9, 11; C′D covers 1, 5, 9, 13; BC′ covers 4, 5, 12, 13."}
-Single-mark columns: 3 and 11 (only $B'D$); 4 and 12 (only $BC'$).
+:::step{why="Each column becomes a sum of the rows that cover it, and all must hold at once."}
+$\Pi = (p + q)(q + r)$.
 :::
 
-:::step{why="Take the essential rows; they cover 1, 3, 9, 11, 4, 5, 12, 13: every column."}
-$C'D$ has nothing left to cover: redundant.
+:::step{why="Multiply out, then absorb any product containing another (x + xy = x)."}
+$\Pi = pq + pr + q + qr = q + pr$.
 :::
 
 :::answer
-$f = B'D + BC'$.
+Two irredundant covers: $\{q\}$ (3 literals) and $\{p, r\}$ (6 literals). The minimal one is $q = A'BD$, as row
+dominance already said.
 :::
 ::::
 
-::::example{#ex-chart-dominance level="medium" title="Row dominance after the essential rows" depth="standard"}
-Minimise $f = \Sigma m(0, 1, 2, 5, 6, 7, 8, 9, 10, 14)$ with its chart (PIs: $B'C'$, $B'D'$, $CD'$, $A'C'D$,
-$A'BD$, $A'BC$).
+::::example{#ex-petrick-count level="medium" title="Counting minimal covers with Petrick" depth="standard"}
+$f = \Sigma m(1, 2, 4, 6, 9, 11, 12, 13)$ has EPIs $B'C'D$, $A'CD'$, $AB'D$; the other PIs are
+$p = A'BD'$ {4, 6}, $q = BC'D'$ {4, 12}, $r = AC'D$ {9, 13}, $s = ABC'$ {12, 13}. How many minimal SOPs are there?
 
-:::step{why="Single-mark columns: 9 (only B′C′) and 14 (only CD′). Both rows are essential."}
-Essential: $B'C'$, $CD'$.
+:::step{why="Only the columns the EPIs leave uncovered matter."}
+The EPIs cover 1, 2, 6, 9, 11; columns 4, 12, 13 remain.
 :::
 
-:::step{why="They cover 0, 1, 8, 9 and 2, 6, 10, 14. Columns 5 and 7 remain."}
-Reduced chart: $A'C'D$: {5}; $A'BD$: {5, 7}; $A'BC$: {7}; $B'D'$: {}.
+:::step{why="One sum per remaining column, all ANDed."}
+$\Pi = (p + q)(q + s)(r + s)$.
 :::
 
-:::step{why="A′BD covers both remaining columns at the same cost (3 literals) as the rows it dominates."}
-Delete $A'C'D$, $A'BC$ and the empty row $B'D'$; take $A'BD$.
+:::step{why="Expand step by step and absorb."}
+$(p + q)(q + s) = q + ps$; then $(q + ps)(r + s) = qr + qs + psr + ps = qr + qs + ps$.
 :::
 
 :::answer
-$f = B'C' + CD' + A'BD$ (7 literals). The animation above performs these steps.
+Three minimal SOPs (each pair costs 6 literals): EPIs + $\{q, r\}$, EPIs + $\{q, s\}$, EPIs + $\{p, s\}$.
 :::
 ::::
 
 ::::example{#ex-chart-petrick level="gate" title="Petrick's method on a cyclic chart" depth="standard"}
 $f = \Sigma m(0, 1, 5, 8, 12, 13)$ has six pair-PIs and no EPI. How many minimal SOPs does it have?
 
-:::step{why="Name the PIs: a = A′B′C′ (0, 1), b = A′C′D (1, 5), c = BC′D (5, 13), d = ABC′ (12, 13), e = AC′D′ (8, 12), g = B′C′D′ (0, 8)."}
+:::step{why="Name the rows so the algebra stays short: a = A′B′C′ (0, 1), b = A′C′D (1, 5), c = BC′D (5, 13), d = ABC′ (12, 13), e = AC′D′ (8, 12), g = B′C′D′ (0, 8)."}
 Columns: $0: a + g$; $1: a + b$; $5: b + c$; $13: c + d$; $12: d + e$; $8: e + g$.
 :::
 
-:::step{why="Multiply the six sums out and absorb every product that contains another. Each surviving product picks, for every column, one of the two pairs through it."}
-$\Pi = ace + bdg + bceg + acdg + abde$: two 3-row covers and three 4-row covers.
+:::step{why="Pair factors that share a variable first: (x + y)(x + z) = x + yz keeps the expansion small."}
+$(a + g)(a + b) = a + bg$, $(b + c)(c + d) = c + bd$, $(d + e)(e + g) = e + dg$.
 :::
 
-:::step{why="Compare costs: the 3-sets cost 9 literals; every 4-set costs 12."}
-Minimal: $\{a, c, e\}$ and $\{b, d, g\}$.
+:::step{why="Multiply the three binomials (eight products) and absorb every product that contains another."}
+$\Pi = (a + bg)(c + bd)(e + dg) = ace + acdg + abde + abdg + bceg + bcdg + bdeg + bdg$; the products $abdg$,
+$bcdg$ and $bdeg$ contain $bdg$ and are absorbed, leaving $ace + bdg + bceg + acdg + abde$.
 :::
 
 :::answer
-2 minimal SOPs: $A'B'C' + BC'D + AC'D'$ and $A'C'D + ABC' + B'C'D'$ (each 9 literals). Petrick's
-expansion also lists three irredundant 4-term covers, which are not minimal.
+Five irredundant covers; the two of three rows, $\{a, c, e\}$ and $\{b, d, g\}$ (9 literals each), are the minimal
+SOPs: $A'B'C' + BC'D + AC'D'$ and $A'C'D + ABC' + B'C'D'$.
 :::
 ::::
 
@@ -390,8 +517,8 @@ Removing $B'C'D'$ loses $m_0$; removing $A'C'D$ loses $m_1$; removing $BC'D$ los
 $AC'D'$ loses $m_{12}$. So no term can be dropped.
 :::
 
-:::step{why="Cost: four 3-literal terms, 12 literals, against 9 for the minimal covers."}
-It is irredundant (no term can go) but costs 3 literals more than the minimum.
+:::step{why="Cost decides minimality: compare literal counts with the cheapest cover."}
+Four 3-literal terms, 12 literals, against 9 for the minimal covers.
 :::
 
 :::answer
@@ -400,19 +527,34 @@ different choice. Petrick's method lists all irredundant covers; you then compar
 :::
 ::::
 
-:::note{#recap-chart title="Recap" depth="quick"}
-Chart: rows = PIs, columns = 1-cells. Single-mark columns → essential rows. Delete dominated rows and
-dominating columns. Cyclic leftovers: Petrick's product of sums, expanded and absorbed, lists every
-irredundant cover; the cheapest are minimal.
+:::note{#recap-petrick title="Recap" depth="quick"}
+Petrick: AND over columns of (OR of rows), expanded and absorbed = all irredundant covers; the cheapest
+are minimal. Independent tied choices multiply; interacting ones need the expansion.
 :::
 
 ## Five- and six-variable maps
 
+:::intuition{#bigmap-intuition title="A stack of transparent maps" depth="standard"}
+A fifth variable needs a fifth direction of adjacency, and paper has only two. So draw two ordinary
+4-variable maps, one for $A = 0$ and one for $A = 1$, and imagine them printed on transparent sheets laid
+on top of each other: a cell and the cell directly beneath it differ only in $A$, so they are neighbours. A
+loop that appears in the same place on both sheets drops $A$. Six variables need four sheets, arranged so
+that sheets differing in one of the two extra variables lie next to each other.
+:::
+
 :::definition{#five-var-map term="The five-variable map" depth="standard"}
 For $f(A, B, C, D, E)$, draw two 4-variable maps over $B, C, D, E$ (rows $BC$, columns $DE$): one for $A = 0$
 (minterms 0–15) and one for $A = 1$ (minterms 16–31). Two cells are adjacent if they are adjacent inside
-one map, **or** if they sit in the **same position** of the two maps (they differ only in $A$). A group
-may be a legal group in one map, or the same legal group in both maps (then $A$ drops out).
+one map, **or** if they sit in the **same position** of the two maps (twin cells: they differ only in $A$).
+A group may be a legal group in one map, or the same legal group in both maps (then $A$ drops out).
+:::
+
+:::definition{#reflected-map term="The reflected (one-sheet) five-variable map" depth="standard"}
+Some books draw five variables as a single $4 \times 8$ map whose eight columns carry the 3-bit Gray code
+000, 001, 011, 010, 110, 111, 101, 100 (for $A, D, E$). Then the left half is $A = 0$, the right half $A = 1$, and
+the twin of a cell is its **mirror image** about the centre line: column 1 ↔ 8, 2 ↔ 7, 3 ↔ 6, 4 ↔ 5. In this
+layout the two centre columns (010 and 110) **are** neighbours. Same function, different drawing: always ask
+which layout the paper uses.
 :::
 
 :::viz{#five-var-viz spec="five-var-map" mode="animate" depth="standard"}
@@ -425,24 +567,25 @@ exactly one of $A$, $B$ (side by side or one above the other) are adjacent; the 
 in both and are not. A group may span 1, 2 or all 4 maps.
 :::
 
-:::trap{#trap-five-var-adjacent title="Side by side is not adjacent" depth="standard"}
-When the $A = 0$ and $A = 1$ maps are drawn side by side, the last column of the first map touches the
-first column of the second on the page, but those cells differ in $A$ **and** in $D$ (for example $m_2 =
-00010$ and $m_{16} = 10000$). They are not neighbours. Only cells in the same position of the two maps
-are, which on the page are a whole map-width apart.
+:::trap{#trap-five-var-adjacent title="Side by side is not adjacent (in the two-map drawing)" depth="standard"}
+When the $A = 0$ and $A = 1$ maps are drawn as **separate** maps side by side, the last column of the first
+map touches the first column of the second on the page, but those cells differ in $A$ **and** in $D$ (for
+example $m_2 = 00010$ and $m_{16} = 10000$). They are not neighbours; students who loop $\Sigma(2, 6, 16, 20)$ as
+one quad answer $B'E'$, which also contains the 0-cells 0, 4, 18, 22. (In the reflected one-sheet layout the
+centre columns are adjacent, which is exactly why you must know the layout.)
 :::
 
 ### Worked examples: five- and six-variable maps
 
-::::example{#ex-5v-easy level="easy" title="A mirror pair" depth="quick"}
+::::example{#ex-5v-easy level="easy" title="A twin pair" depth="quick"}
 Minimise $f(A, B, C, D, E) = \Sigma m(3, 19)$.
 
-:::step{why="m3 = 00011 and m19 = 10011 differ only in A: they sit in the same position (row BC = 00, column DE = 11) of the two maps."}
-They are adjacent across the maps.
+:::step{why="Cells in the same position of the two maps differ only in A, so they are neighbours."}
+$m_3 = 00011$ and $m_{19} = 10011$ both sit at row $BC = 00$, column $DE = 11$.
 :::
 
-:::step{why="A pair keeps the four variables that stay fixed: B = 0, C = 0, D = 1, E = 1; only A changes."}
-The term has $5 - 1 = 4$ literals.
+:::step{why="A pair keeps the four variables that stay fixed; only A changes."}
+$B = 0$, $C = 0$, $D = 1$, $E = 1$: $5 - 1 = 4$ literals.
 :::
 
 :::answer
@@ -453,16 +596,16 @@ $f = B'C'DE$ (the pair drops $A$).
 ::::example{#ex-5v-medium level="medium" title="Two octets across the maps and a pair inside one" depth="standard"}
 Minimise $f = \Sigma m(0, 2, 3, 4, 6, 10, 11, 13, 15, 16, 18, 19, 20, 22, 26, 27)$.
 
-:::step{why="Cells with B = 0, E = 0 (0, 2, 4, 6 and 16, 18, 20, 22) are 1s in both maps: each map has the quad B′E′, and the two quads face each other."}
-Octet $B'E'$.
+:::step{why="A quad that appears in the same place in both maps is an octet with A free."}
+Cells with $B = 0$, $E = 0$ (0, 2, 4, 6 and 16, 18, 20, 22) form the quad $B'E'$ in each map: octet $B'E'$.
 :::
 
-:::step{why="Cells with C = 0, D = 1 (2, 3, 10, 11 and 18, 19, 26, 27) are 1s in both maps."}
-Octet $C'D$.
+:::step{why="The same test for the cells with C = 0, D = 1."}
+2, 3, 10, 11 and 18, 19, 26, 27: octet $C'D$.
 :::
 
-:::step{why="Left: m13 and m15 in the A = 0 map (B = 1, C = 1, E = 1); their mirrors 29, 31 are 0s, so the pair stays in one map."}
-Pair $A'BCE$.
+:::step{why="A cell whose twin is 0 can only be looped inside its own map."}
+Remaining: $m_{13}$, $m_{15}$ in the $A = 0$ map; their twins 29, 31 are 0s, so the pair stays in one map: $A'BCE$.
 :::
 
 :::answer
@@ -470,15 +613,15 @@ $f = B'E' + C'D + A'BCE$ (8 literals).
 :::
 ::::
 
-::::example{#ex-5v-gate level="gate" title="Octets, and a pair whose mirror is 0" depth="standard"}
+::::example{#ex-5v-gate level="gate" title="Octets, and a pair whose twin is 0" depth="standard"}
 Minimise $f = \Sigma m(0, 2, 7, 8, 10, 11, 14, 15, 16, 18, 24, 26, 27, 30, 31)$.
 
-:::step{why="In each map the four corners (C = 0, E = 0) are 1s, and so are the cells with B = 1, D = 1."}
-Octets $C'E'$ and $BD$ (each spans both maps).
+:::step{why="Look for the same group in both maps first: those give the biggest loops."}
+In each map the four corners ($C = 0$, $E = 0$) are 1s, and so are the cells with $B = 1$, $D = 1$: octets $C'E'$ and $BD$.
 :::
 
-:::step{why="m7 (00111) is left; its mirror m23 is 0 and its in-map neighbours are 3, 5, 6 (0s) and 15 (1)."}
-Pair $m_7, m_{15}$: $A'CDE$.
+:::step{why="The leftover cell's twin decides whether its loop can cross maps."}
+Remaining: $m_7$ (00111); its twin $m_{23}$ is 0 and its in-map neighbours are 3, 5, 6 (0s) and 15 (1): the pair $A'CDE$.
 :::
 
 :::answer
@@ -487,18 +630,18 @@ $f = C'E' + BD + A'CDE$ (8 literals). This is the scene in the animation above.
 ::::
 
 ::::example{#ex-5v-edge level="gate" title="Edge case: pairs that only look adjacent" depth="standard"}
-Minimise $f = \Sigma m(2, 6, 16, 20)$ (five variables), drawn with the two maps side by side.
+Minimise $f = \Sigma m(2, 6, 16, 20)$ (five variables), drawn as two separate maps side by side.
 
-:::step{why="m2 = 00010 and m6 = 00110 (A = 0, column DE = 10): a vertical pair in the right-hand column of the A = 0 map."}
-Pair $A'B'DE'$.
+:::step{why="Inside the A = 0 map, cells in the same column and adjacent rows are neighbours."}
+$m_2 = 00010$ and $m_6 = 00110$ (column $DE = 10$): the pair $A'B'DE'$.
 :::
 
-:::step{why="m16 = 10000 and m20 = 10100 (A = 1, column DE = 00): a pair in the left-hand column of the A = 1 map, right next to the first pair on the page."}
-Pair $AB'D'E'$.
+:::step{why="The same inside the A = 1 map, whose first column sits next to the first map's last column on the page."}
+$m_{16} = 10000$ and $m_{20} = 10100$ (column $DE = 00$): the pair $AB'D'E'$.
 :::
 
-:::step{why="The two pairs differ in A and in D, so they do not merge; B′E′ would also contain 0, 4, 18, 22, which are 0s."}
-No quad.
+:::step{why="Twins must be in the same position; these pairs differ in A and in D, so they do not merge."}
+No quad: $B'E'$ would also contain 0, 4, 18, 22, which are 0s.
 :::
 
 :::answer
@@ -506,25 +649,45 @@ $f = A'B'DE' + AB'D'E'$ (8 literals), not $B'E'$.
 :::
 ::::
 
-::::example{#ex-6v level="gate" title="A six-variable group across four maps" depth="standard"}
-Minimise $f(A, B, C, D, E, F) = \Sigma m(0, 16, 32, 48)$.
+::::example{#ex-5v-reflected level="gate" title="The same idea on a reflected map" depth="standard"}
+On a reflected one-sheet map (columns $ADE$ = 000, 001, 011, 010, 110, 111, 101, 100), where do $m_2$ and $m_{18}$ sit,
+and do they combine?
 
-:::step{why="The four minterms are 000000, 010000, 100000, 110000: the top-left cell (C = D = E = F = 0) of each of the four maps."}
-The same cell in all four maps, which are adjacent in a ring ($AB$ = 00, 01, 11, 10).
+:::step{why="The column label is A D E; the row label is B C."}
+$m_2 = 00010$: $A = 0$, $DE = 10$ → column 010 (4th); $m_{18} = 10010$: $A = 1$, $DE = 10$ → column 110 (5th); both in row $BC = 00$.
 :::
 
-:::step{why="Four cells that agree on C, D, E, F and take all four values of A, B form a group of 2² cells; A and B drop."}
-$6 - 2 = 4$ literals remain: $C'D'E'F'$.
+:::step{why="In the reflected layout the 4th and 5th columns are mirror images, i.e. twins."}
+They are side by side and adjacent (they differ only in $A$).
 :::
 
 :::answer
-One group of 4 = $2^2$ cells: $f = C'D'E'F'$ ($A$ and $B$ drop).
+They combine into $B'C'DE'$. On this layout the centre columns are neighbours; on the two-map layout the same
+cells are a map-width apart.
+:::
+::::
+
+::::example{#ex-6v level="gate" title="Six variables: a group across two maps" depth="standard"}
+Minimise $f(A, B, C, D, E, F) = \Sigma m(0, 1, 16, 17)$.
+
+:::step{why="Decode each minterm into (A, B) and the cell (C, D, E, F)."}
+0 = 000000 and 1 = 000001: map $AB = 00$, cells $CDEF = 0000, 0001$. 16 = 010000, 17 = 010001: map $AB = 01$, same two cells.
+:::
+
+:::step{why="Maps AB = 00 and 01 differ only in B, so matching cells are adjacent; inside each map the two cells are a pair."}
+A pair in each of two neighbouring maps: a group of 4, with $B$ and $F$ free.
+:::
+
+:::answer
+$f = A'C'D'E'$ (4 literals). With all four maps (for example $\Sigma m(0, 16, 32, 48)$) the group drops both
+$A$ and $B$: $C'D'E'F'$.
 :::
 ::::
 
 :::note{#recap-5v title="Recap" depth="quick"}
-Five variables: two maps, same position = neighbour; a group in both maps drops $A$. Six variables: four
-maps in Gray order. Cells that only touch on the page across the gap are not neighbours.
+Five variables: two maps, the same position = neighbour (twins); a group in both maps drops $A$; on a
+reflected one-sheet map twins are mirror images. Six variables: four maps in Gray order. Know the layout
+before deciding what touches what.
 :::
 
 ## Variable-entered maps
@@ -546,8 +709,13 @@ $v$ holds the residue $f(v, x)$ as a function of $x$:
 | 1 | 1 | 1 |
 | 0 | 1 | $x$ |
 | 1 | 0 | $x'$ |
+| X | X | X |
+| 0 | X | 0 or $x$ (free) |
+| X | 0 | 0 or $x'$ (free) |
+| 1 | X | 1 or $x$ (free) |
+| X | 1 | 1 or $x'$ (free) |
 
-A don't-care in either half makes the entry partly free (write X when both halves are don't-cares).
+A partly free cell may be used, in each pass below, as whichever entry it allows, or ignored.
 :::
 
 :::theorem{#vem-shannon name="A VEM is Shannon expansion" depth="standard"}
@@ -565,18 +733,22 @@ minterms $m_v$, each multiplied by its residue, gives $f = \sum_v m_v e_v(x)$.
 :::
 
 :::definition{#vem-read term="Method: reading a VEM" depth="standard"}
-1. Treat every entered-variable cell as 0 and loop the 1s: these terms appear as they are.
-2. For the entry $x$: loop every $x$-cell, using the 1-cells as don't-cares (they are 1 for $x = 1$ too);
-   AND each loop's term with $x$.
-3. Do the same for $x'$ (loop the $x'$-cells, 1-cells as don't-cares, AND with $x'$).
+1. **$x$-pass:** loop every $x$-cell, using the 1-cells (and Xs) as don't-cares; AND each loop's term with $x$.
+2. **$x'$-pass:** the same for the $x'$-cells; AND each term with $x'$.
+3. **Leftover 1s:** a 1-cell inside both an $x$-loop and an $x'$-loop is finished ($x + x' = 1$). Loop only the
+   1-cells that are not yet finished, using every 1-cell as a helper, and add those terms as they are.
 4. OR everything together.
+
+Doing the plain 1s first (the order some books use) can add a term that the later passes make redundant;
+doing them last avoids that.
 :::
 
-:::trick{#trick-vem-zero-first title="Zero first, then one entry at a time" depth="standard"}
-Set the entered variable aside and read the plain 1s first; then each entered literal gets its own pass in
-which the 1s are free helpers. **Why it works:** a 1-cell is 1 for both values of $x$, so it may join the
-$x$-loop or the $x'$-loop without changing anything. **When it fails:** never merge an $x$-cell with an
-$x'$-cell in one loop: those cells are 1 for opposite values of $x$.
+:::trick{#trick-vem-literals-first title="Entered literals first, plain 1s last" depth="standard"}
+Each entered literal gets its own pass in which the 1-cells are free helpers; a 1-cell that both passes
+used is already paid for. **Why it works:** a 1-cell is 1 for both values of $x$, so it may join the $x$-loop
+or the $x'$-loop without changing anything, and if it joins both it is covered for both values. **When it
+fails:** never merge an $x$-cell with an $x'$-cell in one loop (they are 1 for opposite values of $x$); and a
+VEM reading, like any loop-by-eye method, is not guaranteed minimal: when in doubt, unfold and check.
 :::
 
 :::viz{#vem-viz spec="vem-unfold" mode="animate" depth="standard"}
@@ -588,58 +760,60 @@ $x'$-cell in one loop: those cells are 1 for opposite values of $x$.
 A VEM for $f(A, B, C)$ has rows $B$, columns $C$ and entered variable $A$, with entries
 $(B, C) = (0, 0): 0$, $(0, 1): 1$, $(1, 0): A$, $(1, 1): A'$. Find a minimal SOP.
 
-:::step{why="Step 1: the only plain 1 is at B = 0, C = 1."}
-$B'C$.
+:::step{why="The A-pass loops each A-cell as large as the 1-cells allow; here no 1-cell touches it."}
+The $A$ at $(1, 0)$: its neighbours are $(0, 0) = 0$ and $(1, 1) = A'$, so it stays alone: $A \cdot BC'$.
 :::
 
-:::step{why="Step 2, entry A at (1, 0): its only neighbours are (0, 0) = 0 and (1, 1) = A′, so it stays alone: B = 1, C = 0."}
-$A \cdot BC'$.
+:::step{why="The A′-pass may use the 1-cell as a helper."}
+The $A'$ at $(1, 1)$ joins the 1 at $(0, 1)$ in column $C = 1$: $A' \cdot C$.
 :::
 
-:::step{why="Step 3, entry A′ at (1, 1): it may join the 1 at (0, 1) (same column C = 1), giving the loop C."}
-$A' \cdot C$.
+:::step{why="The 1-cell is finished only if both passes covered it; here only the A′-pass did."}
+The 1 at $(0, 1)$ still needs covering for $A = 1$: loop it alone, $B'C$.
 :::
 
 :::answer
-$f = B'C + ABC' + A'C$ $= \Sigma m(1, 3, 5, 6)$ (7 literals, minimal).
+$f = ABC' + A'C + B'C$ $= \Sigma m(1, 3, 5, 6)$ (7 literals, minimal).
 :::
 ::::
 
 ::::example{#ex-vem-build level="medium" title="Building a VEM from a truth table" depth="standard"}
 Make a VEM of $f(A, B, C) = \Sigma m(0, 3, 4, 5, 7)$ with $C$ entered (rows $A$, columns $B$), and read it.
 
-:::step{why="For each (A, B) look at the two rows C = 0, 1: (0, 0): m0 = 1, m1 = 0 → C′. (0, 1): m2 = 0, m3 = 1 → C. (1, 0): m4 = m5 = 1 → 1. (1, 1): m6 = 0, m7 = 1 → C."}
-Entries: row $A = 0$: $C'$, $C$; row $A = 1$: 1, $C$.
+:::step{why="Each cell's entry is the pair (f at C = 0, f at C = 1) read off the truth table."}
+(0, 0): $m_0 = 1, m_1 = 0$ → $C'$. (0, 1): $m_2 = 0, m_3 = 1$ → $C$. (1, 0): $m_4 = m_5 = 1$ → 1. (1, 1): $m_6 = 0, m_7 = 1$ → $C$.
 :::
 
-:::step{why="Plain 1s: (1, 0) alone gives AB′. C-cells (0, 1) and (1, 1) form the column B = 1. C′-cell (0, 0) joins the 1 at (1, 0) in the column B = 0."}
-$AB'$, $B \cdot C$, $B' \cdot C'$.
+:::step{why="Literal passes first: C-cells (0, 1), (1, 1) share the column B = 1; the C′-cell (0, 0) joins the 1 at (1, 0) in the column B = 0."}
+$B \cdot C$ and $B' \cdot C'$.
+:::
+
+:::step{why="The 1 at (1, 0) was used only by the C′-pass, so it still needs covering for C = 1."}
+Loop it alone: $AB'$.
 :::
 
 :::answer
-$f = AB' + BC + B'C'$ (6 literals). ($AC$ instead of $AB'$ is an equally minimal alternative; the VEM
-reading found one of the two.)
+$f = BC + B'C' + AB'$ (6 literals). ($AC$ instead of $AB'$ is an equally minimal alternative.)
 :::
 ::::
 
 ::::example{#ex-vem-dc level="gate" title="A VEM with don't-cares" depth="standard"}
-$f(A, B, C, D) = \Sigma m(1, 3, 4, 5, 13, 15) + d(6, 7)$. Build a VEM with $D$ entered (map variables
-$A$; $B, C$) and read it.
+$f(A, B, C, D) = \Sigma m(1, 3, 4, 5, 13, 15) + d(6, 7)$. Build a VEM with $D$ entered (rows $A$, columns $BC$) and read it.
 
-:::step{why="Residues of D for each ABC: 000: D (m0 = 0, m1 = 1); 001: D; 010: 1 (m4 = m5 = 1); 011: X; 100: 0; 101: 0; 110: D; 111: D."}
-Row $A = 0$: $D$, $D$, X, 1 (columns $BC$ = 00, 01, 11, 10). Row $A = 1$: 0, 0, $D$, $D$.
+:::step{why="Each cell is the pair (f at D = 0, f at D = 1) for that A, B, C."}
+000: $D$ (m0 = 0, m1 = 1); 001: $D$; 010: 1 (m4 = m5 = 1); 011: X; 100: 0; 101: 0; 110: $D$; 111: $D$.
 :::
 
-:::step{why="Plain 1 at 010 with the X at 011: the pair A′B."}
-$A'B$.
+:::step{why="D-pass: loops of D-cells, with the 1 and the X as helpers."}
+000, 001 with 010, 011 make row $A = 0$: $A' \cdot D$; 110, 111 with 010, 011 make the column pair $B$: $B \cdot D$.
 :::
 
-:::step{why="D-cells 000, 001 with the 1 and the X of row 0 make the whole row A = 0 (A′); D-cells 110, 111 with 010, 011 make the column pair B."}
-$A' \cdot D$ and $B \cdot D$.
+:::step{why="There is no D′-cell, so the 1 at 010 is covered for D = 1 only; loop it for D = 0 with the X."}
+$A'B$ (010 with 011).
 :::
 
 :::answer
-$f = A'B + A'D + BD$ (6 literals), the same as the 4-variable map gives.
+$f = A'D + BD + A'B$ (6 literals), the same as the 4-variable map gives.
 :::
 ::::
 
@@ -651,8 +825,8 @@ Find $f$.
 $A$-pass: $(0, 0)$ alone, $B'C'$; $A'$-pass: $(0, 1)$ alone, $B'C$.
 :::
 
-:::step{why="AND each with its literal."}
-$f = AB'C' + A'B'C = \Sigma m(4, 1)$.
+:::step{why="AND each loop with its own literal."}
+$f = AB'C' + A'B'C = \Sigma m(1, 4)$.
 :::
 
 :::answer
@@ -662,8 +836,9 @@ which is wrong on $m_0$ and $m_5$.
 ::::
 
 :::note{#recap-vem title="Recap" depth="quick"}
-A VEM cell holds the residue (0, 1, $x$, $x'$) of the entered variable. Read plain 1s first; then each
-entered literal in its own pass with the 1s as don't-cares; AND and OR. Never merge $x$ with $x'$.
+A VEM cell holds the residue (0, 1, $x$, $x'$, or a partly free entry). Read each entered literal in its own
+pass with the 1s as don't-cares, then cover the 1-cells not finished by both passes; AND and OR. Never
+merge $x$ with $x'$.
 :::
 
 ## Try it: Quine–McCluskey in the K-map Solver
@@ -722,10 +897,10 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Combining | same dash positions and exactly one other differing bit → dash it; tick both; list each cube once |
 | Prime implicants | the cubes never ticked (don't-cares included in the table, PIs of Xs only discarded) |
 | PI chart | rows = PIs, columns = 1-cells; single-mark column → essential row |
-| Dominance | delete a dominated row (no cheaper); delete a dominating column |
+| Dominance | delete a row whose columns are a subset of a no-costlier row's; delete a column whose rows include another column's |
 | Petrick | product over columns of (sum of rows), expanded and absorbed = all irredundant covers |
-| 5 / 6 variables | 2 / 4 maps; the same cell in neighbouring maps is adjacent; side-by-side edges are not |
-| VEM | cell = residue 0, 1, $x$, $x'$ (Shannon); read 1s, then each literal with 1s as don't-cares |
+| 5 / 6 variables | 2 / 4 maps; twin cells (same position) are adjacent; on a reflected one-sheet map twins are mirror images |
+| VEM | cell = residue 0, 1, $x$, $x'$ (Shannon); each literal's pass with 1s as helpers, then the unfinished 1s |
 :::
 
 :::note{#further-depth title="Further depth: why exact minimisation gets hard" depth="deep"}

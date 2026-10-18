@@ -8,8 +8,8 @@ prerequisites: [prime-implicants, universal-gates]
 pyq_topics: [dl/minimization, dl/gates]
 est_minutes: 45
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every literal count, gate count, hazard and shared cover is checked in content/gate-notes/_checks/dl/l3_04_two_level.py (exhaustive gate search, adjacent-pair hazard check, multi-output search)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 117–118 and 129, set C pp. 259 and 276–278, set D p. 402, set E p. 407. Hazards are only summarised in the sets and are written here from textbooks."
@@ -87,8 +87,10 @@ SOP $A'D + C'D$ (4).
 
 :::trap{#trap-dc-shared title="Reusing the SOP's don't-care choices for the POS" depth="standard"}
 After finding the SOP, students often fix the Xs to the values the SOP used and then derive the POS of
-that completed function. That POS can cost more: the POS is allowed to choose the Xs again. GATE 2003 is
-built on this: its true minima are POS 9 and SOP 8, and they use the Xs differently.
+that completed function. That POS can cost more: the POS is allowed to choose the Xs again. In the GATE-level
+example below the SOP sets $X_1 = 1$; with that choice frozen the best POS is $(B + D)(A + B' + C)$, 5 literals,
+instead of the true minimum 4, so the student answers "POS 5". In GATE 2003 it depends on which minimal SOP you
+froze: one leaves the POS at 9, the other ($\dots + xy\overline{z}$, with $X_{13} = 1$) pushes it to the wrong value 10.
 :::
 
 ### Worked examples: literal counts
@@ -96,12 +98,12 @@ built on this: its true minima are POS 9 and SOP 8, and they use the Xs differen
 ::::example{#ex-lit-easy level="easy" title="SOP versus POS for a 3-variable function" depth="quick"}
 Compare the minimal SOP and POS literal counts of $f(A, B, C) = \Sigma m(0, 1, 2, 3, 7)$.
 
-:::step{why="SOP: row A = 0 is a quad (A′); m7 pairs with m3 (BC)."}
-$f = A' + BC$: 3 literals.
+:::step{why="A quad keeps only one of three literals, so the full row is the cheapest possible loop; the leftover 1 takes its biggest pair."}
+SOP: row $A = 0$ is a quad ($A'$); $m_7$ pairs with $m_3$ ($BC$). $f = A' + BC$: 3 literals.
 :::
 
-:::step{why="POS: the 0s are m4, m5, m6. m4, m5 give (A′ + B); m4, m6 give (A′ + C)."}
-$f = (A' + B)(A' + C)$: 4 literals.
+:::step{why="The POS comes from looping the 0s; three 0s in an L-shape cannot form one quad, so two pairs are needed."}
+The 0s are $m_4, m_5, m_6$: $m_4, m_5$ give $(A' + B)$; $m_4, m_6$ give $(A' + C)$. $f = (A' + B)(A' + C)$: 4 literals.
 :::
 
 :::answer
@@ -112,11 +114,12 @@ SOP 3, POS 4. (Distributivity confirms it: $(A' + B)(A' + C) = A' + BC$.)
 ::::example{#ex-lit-medium level="medium" title="Don't-cares make the POS cheaper" depth="standard"}
 Find the minimal literal counts of $f = \Sigma m(1, 3, 5, 7, 9) + d(6, 12, 13)$.
 
-:::step{why="SOP: A′D covers 1, 3, 5, 7; m9 pairs with m1 or joins m13 (X) in C′D."}
-$f = A'D + C'D$: 4 literals.
+:::step{why="Xs are used only where they enlarge a loop; m9's best loop needs X13."}
+SOP: $A'D$ covers 1, 3, 5, 7; $m_9$ joins $m_1, m_5$ and $X_{13}$ in $C'D$. $f = A'D + C'D$: 4 literals.
 :::
 
-:::step{why="POS: with X6 and X12 the whole D = 0 half is an octet of 0s, (D); m10, m11, m14, m15 give (A′ + C′)."}
+:::step{why="The POS chooses the Xs for itself: here X6 and X12 complete an octet of 0s, which an SOP never uses."}
+With $X_6$ and $X_{12}$ the whole $D = 0$ half is an octet of 0s, $(D)$; $m_{10}, m_{11}, m_{14}, m_{15}$ give $(A' + C')$.
 $f = D(A' + C')$: 3 literals.
 :::
 
@@ -129,12 +132,14 @@ SOP 4, POS 3.
 For $f = \Sigma m(3, 6, 7, 9, 11, 12, 13, 14, 15) + d(0, 1)$, find the minimum literal counts of the POS
 and the SOP.
 
-:::step{why="SOP: m3 needs B′D (1, 3, 9, 11 with X1); m6 needs BC (6, 7, 14, 15); m12 needs AB. No cheaper cover exists (each is a quad, all three needed)."}
-SOP: $B'D + BC + AB$: 6 literals.
+:::step{why="Cover the 1s with the fewest 2-literal quads; each 1 that lies in only one useful quad forces it."}
+$B'D$ (1, 3, 9, 11 with $X_1$) takes $m_3$ and $m_9$ at once ($CD$ would also hold $m_3$, but $m_9$ would then need
+another term); $m_6$ needs $BC$ (6, 7, 14, 15); $m_{12}$ needs $AB$. SOP: $B'D + BC + AB$: 6 literals.
 :::
 
-:::step{why="POS: the 0s are 2, 4, 5, 8, 10. With X0, X1: m2, m10 with X0 and m8 give the quad (B + D) (B = 0, D = 0); m4, m5 with X0, X1 give (A + C)."}
-POS: $(A + C)(B + D)$: 4 literals.
+:::step{why="Loop the 0s, choosing the Xs again: here both Xs are better as 0s."}
+The 0s are 2, 4, 5, 8, 10: $m_2, m_8, m_{10}$ with $X_0$ give the quad $(B + D)$; $m_4, m_5$ with $X_0, X_1$ give
+$(A + C)$. POS: $(A + C)(B + D)$: 4 literals.
 :::
 
 :::answer
@@ -166,6 +171,13 @@ cost of $f$. With don't-cares, SOP and POS choose the Xs independently.
 
 ## Two-level NAND and NOR circuits
 
+:::intuition{#nand-intuition title="Two bubbles cancel" depth="standard"}
+Factories prefer one kind of gate, and NAND (or NOR) can do everything. Take an AND–OR circuit and draw
+two inversion bubbles on every wire between the levels: nothing changes, because two inversions cancel.
+But now each AND carries a bubble at its output (a NAND), and the OR has bubbles at its inputs, which by De
+Morgan is also a NAND. The minimal SOP you looped on the map is, gate for gate, a NAND–NAND circuit.
+:::
+
 :::theorem{#nand-nand-min name="AND–OR = NAND–NAND, OR–AND = NOR–NOR" depth="standard"}
 Every SOP $T_1 + \dots + T_k$ (each $T_i$ a product) is computed by NAND gates for the terms feeding one
 NAND gate: $f = \overline{\overline{T_1}\cdots\overline{T_k}}$. Dually, every POS is computed by NOR gates
@@ -183,7 +195,8 @@ POS: $\overline{\overline{S_1} + \dots + \overline{S_k}} = S_1 \cdots S_k$, with
 :::definition{#nor-nor-min term="Which form for which gate" depth="standard"}
 - **NAND–NAND** comes from a **minimal SOP**: one NAND per term (with at least two literals) plus one
   output NAND.
-- **NOR–NOR** comes from a **minimal POS**: one NOR per sum term plus one output NOR.
+- **NOR–NOR** comes from a **minimal POS**: one NOR per sum term (with at least two literals) plus one output
+  NOR; a single-literal factor enters the output NOR complemented.
 - A **single-literal term** needs no first-level gate, but it must enter the output gate **complemented**
   (the output NAND expects $\overline{T_i}$). With complements available that is free; without them it costs an
   inverter.
@@ -200,11 +213,16 @@ a gate and must be counted.
 
 :::definition{#min-gate-count term="Method: the fewest 2-input NAND or NOR gates" depth="standard"}
 1. Find the minimal SOP (for NAND) or POS (for NOR); a two-level form gives an upper bound: one gate per
-   two-or-more-literal term plus one output gate (with 2-input gates, wider terms cost more).
+   two-literal term plus one output gate. With 2-input gates, wider terms cost more, because NAND is not
+   associative: a 3-literal NAND term $\overline{xyz}$ needs NAND(AND($x$, $y$), $z$), and AND($x$, $y$) itself costs two
+   NANDs, so the term costs 3 gates (and a 3-input output NAND costs 3 more in the same way).
 2. Look for shortcuts: a single literal or a single gate ($\overline{A + B}$ is one NOR; $A'C = \text{NOR}(A, C')$
    with complements).
-3. For a lower bound, argue that fewer gates cannot work (or trust an exhaustive search on small
-   functions). The table below was found by trying every circuit of 1, 2, 3, … gates.
+3. For a lower bound, use the two-gate theorem below (or an exhaustive search on small functions). The
+   table was found by trying every circuit of 1, 2, 3, … gates and agrees with the theorem.
+
+Without complements (each inverter costs a gate): XOR needs 4 NANDs or 5 NORs, XNOR 5 NANDs or 4 NORs
+(Chapter 2).
 
 | Function (complements free) | 2-input NAND | 2-input NOR |
 |:--|:--|:--|
@@ -213,6 +231,24 @@ a gate and must be counted.
 | $(A + B)(C + D)$ | 4 | 3 |
 | $B \oplus D$ or $\overline{B \oplus D}$ | 3 | 3 |
 | $AB + A'C$ | 3 | 3 |
+:::
+
+:::theorem{#two-gate-lemma name="What one or two 2-input NAND gates can compute" depth="standard"}
+With every literal available, one 2-input NAND computes exactly the functions $\ell_1' + \ell_2'$, and two NANDs
+compute, in addition, exactly $\ell_1 \ell_2$ and $\ell_1 \ell_2 + \ell_3$ (each $\ell$ a literal). Dually, one NOR computes
+$\ell_1'\ell_2'$, and two NORs add exactly $\ell_1 + \ell_2$ and $(\ell_1 + \ell_2)\ell_3$.
+:::
+
+:::proof{#proof-two-gate-lemma of="the two-gate theorem" depth="standard"}
+**Idea first:** with two gates, the output gate can only see literals and the first gate.
+
+One gate: NAND($\ell_1$, $\ell_2$) $= \ell_1' + \ell_2'$. Two gates: let $G = $ NAND($\ell_1$, $\ell_2$) and let the second gate be the
+output. If it ignores $G$ it is a one-gate function. If both its inputs are $G$, it gives $G' = \ell_1\ell_2$. If its
+inputs are $G$ and a literal $\ell$, it gives $G' + \ell' = \ell_1\ell_2 + \ell_3$ with $\ell_3 = \ell'$. The NOR case is the dual.
+
+**Use.** $AB + CD$, $AB + C'D$ and $B \oplus D$ are none of these forms (count minterms: the forms have 4, 8, 10 or 12
+over four variables, or are a single literal or a constant; $AB + CD$ has 7, and the 8-minterm forms are single literals,
+which $B \oplus D$ is not), so they need at least 3 NANDs, and the NAND–NAND circuits show 3 suffice.
 :::
 
 :::trap{#trap-literal-term title="Counting gates for a term that is a single literal" depth="quick"}
@@ -313,8 +349,9 @@ have static-1 hazards; two-level POS (OR–AND) circuits static-0 hazards.
 :::
 
 :::theorem{#hazard-adjacent name="Hazard-free two-level SOP" depth="standard"}
-A two-level AND–OR circuit for $f$ is free of static-1 hazards for every single-input change if and only if
-**every pair of adjacent 1-cells** of $f$ lies together in at least one product term of the cover.
+For arbitrary gate and wire delays, a two-level AND–OR circuit for $f$ is free of static-1 hazards for every
+single-input change if and only if **every pair of adjacent 1-cells** of $f$ lies together in at least one
+product term of the cover.
 :::
 
 :::proof{#proof-hazard-adjacent of="the hazard criterion" depth="standard"}
@@ -325,8 +362,9 @@ If a term $T$ contains both $u$ and $v$, then $T$ does not depend on $x$ and kee
 $T = 1$ throughout the change and the OR output stays 1 whatever the delays. If no term contains both, then
 every term that is 1 at $u$ contains the literal of $x$ that $u$ satisfies (otherwise it would contain $v$
 too), so all of them turn off when $x$ changes, and the terms that are 1 at $v$ turn on. If the turn-on is
-slower (for example through an extra inverter), there is an interval where all terms are 0: a possible
-glitch.
+slower (for example through an extra inverter), there is an interval where all terms are 0: for some
+choice of delays the output glitches. (With fixed, known delays a split pair need not glitch, which is why
+the criterion is stated for arbitrary delays.)
 :::
 
 :::definition{#hazard-fix term="The consensus fix" depth="standard"}
@@ -339,17 +377,33 @@ between two loops where 1s touch.
 :::viz{#hazard-viz spec="hazard-glitch" mode="animate" depth="standard"}
 :::
 
-:::definition{#static-0 term="Static-0 hazards in POS circuits" depth="quick"}
+:::definition{#static-0 term="Static-0 hazards in POS circuits" depth="standard"}
 Dually, a two-level OR–AND circuit is free of static-0 hazards iff every pair of adjacent 0-cells lies in
 one sum term. The fix is the dual consensus: $(x + y)(x' + z)$ gets the extra factor $(y + z)$.
+
+**Why (proof by duality).** Complement every signal of the OR–AND circuit: by De Morgan it becomes an
+AND–OR circuit for $f'$ whose product terms cover exactly the 0-cells that the sum terms covered. A momentary
+1 on $f$ is a momentary 0 on $f'$, so the SOP theorem applied to $f'$ gives the rule.
+
+**Example.** $f = (A + B)(A' + C)$ with $B = C = 0$: $f = A \cdot A' = 0$, but if $A$ falls and the factor $(A' + C)$
+switches on before $(A + B)$ switches off, $f$ pulses to 1. On the map the 0-cells $m_0$ ($A = 0$) and $m_4$ ($A = 1$)
+are adjacent but in different factors; the consensus factor $(B + C)$ contains both, and
+$f = (A + B)(A' + C)(B + C)$ is hazard-free.
 :::
 
 :::aside{#dynamic-hazard title="Dynamic hazards" depth="deep"}
 A **dynamic hazard** is an output that should change once (0 → 1) but changes three or more times
 (0 → 1 → 0 → 1). It needs the changing signal to reach the output along three or more paths with
 different delays, which is typical of multi-level circuits. In a two-level AND–OR circuit where no AND gate
-receives a variable together with its complement, a single input change cannot cause a dynamic hazard, so
-removing the static-1 hazards (as above) makes it hazard-free for single-input changes.
+receives a variable together with its complement, a single input change cannot cause one. Suppose the
+output should rise when $x$ changes. Before the change every term is 0; a term whose $x$-literal becomes false
+was already 0 and stays 0, so the only AND outputs that move are terms turning on, and the OR output rises
+exactly once. A falling output is the mirror case. Such a circuit also has no static-0 hazard: a term that is 0 at both cells has a fixed 0 literal
+and stays 0. So removing the static-1 hazards (as above) makes it hazard-free for single-input changes.
+
+**Function hazards.** If two inputs change at once, the output can glitch for a reason no cover can fix:
+the intermediate cell visited first may be a 0. That is why hazard questions, like GATE 2006, say that only
+one input changes at a time.
 :::
 
 ### Worked examples: hazards

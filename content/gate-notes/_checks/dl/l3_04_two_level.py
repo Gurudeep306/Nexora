@@ -55,6 +55,25 @@ assert bl.equal("(A' (B C)')'", "A + BC", V3)
 assert bl.min_gates(bl.tt("B \\oplus D", ["B", "D"]), "NAND") == 4
 assert bl.equal("(a + c')'", "a'c", list("ac"))
 
+# Two-gate theorem: every function of <= 2 two-input NANDs (literals free) has 0, 4, 8, 10, 12 or 16 minterms,
+# and the 8-minterm ones are single literals.
+ins = bl.input_masks(4)
+lits = ins + [0xFFFF ^ x for x in ins]
+nand = lambda a, b: 0xFFFF ^ (a & b)
+fns = set()
+for a in lits:
+    for b in lits:
+        g = nand(a, b)
+        fns.add(g)
+        fns.add(nand(g, g))
+        for l in lits:
+            fns.add(nand(g, l))
+counts = {bin(f).count("1") for f in fns}
+assert counts <= {0, 4, 8, 10, 12, 16}
+assert all(f in lits for f in fns if bin(f).count("1") == 8)
+for e in ("AB + CD", "AB + C'D", "B \\oplus D"):
+    assert bl.tt_to_mask(bl.tt(e, V4)) not in fns
+
 # ── Hazards: criterion vs simulation ────────────────────────────────────────
 def simulate_glitch(cover, n, a, b, delays):
     """Can the AND–OR output dip while the input moves from cell a to adjacent cell b, f(a) = f(b) = 1?
@@ -143,6 +162,20 @@ assert (ml.min_literals_pos(o, d, 4), ml.min_literals_sop(o, d, 4)) == (9, 8)
 opts = bl.option_values(q)
 assert [l for l, t in opts.items() if t.replace(" ", "") == "(9,8)"] == [] and q["answer"] == "C" and opts["C"].replace(" ", "") == "(9,10)"
 assert [l for l, t in opts.items() if t.replace(" ", "").startswith("(9,")] == ["B", "C"]
+# 2003 solution claims: lower-bound facts, the POS cover, where 10 comes from, and the X-fixing trap.
+import itertools as _it
+quads = ["".join(c) for c in _it.product("01-", repeat=4) if ml.literals("".join(c)) == 2]
+for m in (1, 12):
+    assert all(set(ml.cells(q_)) - set(o) - set(d) for q_ in quads if m in ml.cells(q_))
+assert ml.agrees(bl.minterms("(z' + w')(y' + z')(x' + w')(x + z + w)", XYZW), o, d, 4)
+assert ml.agrees(bl.minterms("x'y'zw' + x'z'w + xyz'", XYZW), o, d, 4)
+pos_after = []
+for cov in ml.min_covers(o, d, 4):
+    pos_after.append(ml.min_literals_pos(ml.cover_fn(cov, 4), [], 4))
+assert sorted(pos_after) == [9, 10]
+# Lesson trap example (ex-lit-gate): fixing the SOP's Xs raises the POS from 4 to 5.
+o2, d2 = [3, 6, 7, 9, 11, 12, 13, 14, 15], [0, 1]
+assert ml.min_literals_pos(ml.cover_fn(ml.min_covers(o2, d2, 4)[0], 4), [], 4) == 5
 q = B["cse-2006-cs-38"]
 W = list("wxyz")
 f06 = [5, 7, 11, 12, 13, 15]
@@ -188,7 +221,14 @@ bl.assert_nat(P["nx-dl-03-04-q08"], mo([[2, 3, 7], [1, 3, 5], [3, 5, 7]])[0][0])
 assert mo([[2, 3, 7], [1, 3, 5], [3, 5, 7]], False)[0][0] == 6
 bl.assert_nat(P["nx-dl-03-04-q09"], 3 * 2 + 3)
 assert msops(bl.minterms("AB' + A'C + BC'", V3), [], 3, V3) == {frozenset(["AB'", "A'C", "BC'"]), frozenset(["A'B", "B'C", "AC'"])}
-bl.assert_msq(P["nx-dl-03-04-q10"], ["A", "C"])
+q = P["nx-dl-03-04-q10"]
+truth = {"Adding the consensus": True, "A minimal SOP is always": False, "A two-level OR–AND": True, "A function whose 1-cells": False}
+bl.assert_msq(q, sorted(l for l, t in bl.option_values(q).items() if next(v for k, v in truth.items() if t.startswith(k))))
+assert bl.equal("AB + A'C", "AB + A'C", V3) and hz(["AB", "A'C"], V3)
+# Static-0 example and the 3-literal NAND term.
+z = ml.zeros_of(bl.minterms("(A + B)(A' + C)", V3), [], 3)
+assert z == [0, 1, 4, 6] and ml.adjacent(0, 4) and ml.cells("-00") == [0, 4]
+assert ml.min_gates_lits(bl.minterms("(ABC)'", V3), 3, "NAND") == 3
 odd = [1, 2, 4, 7]
 assert not ml.static1_hazards(ml.min_covers(odd, [], 3)[0], odd)
 assert len([k for k in P if k.startswith("nx-dl-03-04-")]) == 10

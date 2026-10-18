@@ -196,8 +196,8 @@ PYQ pipeline, not a set error).
     with $AB'C'$ the function is $\Sigma(1, 3, 4, 5, 6) = AB' + AC' + A'C$, option (b).
   - `cse-2003-cs-45` (**key kept, flag kept**): the scan (`GATE2003.pdf` p. 6, Q45) matches the bank's map.
     The true minimum literal counts are POS 9 and SOP 8 (SOP $y'w' + x'z'w + xz'w'$ or $\dots + xyz'$); no option
-    is (9, 8). The official key (C) (9, 10) has the right POS count; the v2 solution proves both counts and
-    explains why (C) is the answer that was given credit. The existing `needsReview` note stays.
+    is (9, 8). The commonly published key (C) (9, 10) has the right POS count (its 10 is the SOP you get by missing the corner quad); the v2 solution proves both counts and
+    explains (C). The existing `needsReview` note stays.
   - Interpretations kept (keys unchanged): `cse-2021-2-cs-52` (the three conditions leave $m_2, m_3$
     unspecified; as don't-cares the minimum is 6 literals, any other completion costs 8 or 9),
     `cse-2000-a-2-11` (all three expressions implement the map, so "none of the above"), `cse-1998-a-42`

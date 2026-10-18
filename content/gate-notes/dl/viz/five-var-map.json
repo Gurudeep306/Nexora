@@ -1295,7 +1295,7 @@
    ]
   },
   {
-   "caption": "Left: m7 (00111) in the A = 0 map only. Its mirror m23 is 0, so the loop cannot cross to A = 1; inside its own map it pairs with m15: A′CDE (4 literals).",
+   "caption": "Remaining: m7 (00111) in the A = 0 map only. Its twin m23 is 0, so the loop cannot cross to A = 1; inside its own map it pairs with m15: A′CDE (4 literals).",
    "patches": [
     {
      "id": "L200",
@@ -1306,7 +1306,7 @@
     {
      "id": "n0",
      "set": {
-      "text": "mirror cell is 0: the pair stays in one map"
+      "text": "twin cell is 0: the pair stays in one map"
      }
     },
     {

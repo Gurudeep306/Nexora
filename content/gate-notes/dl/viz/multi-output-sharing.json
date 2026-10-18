@@ -784,6 +784,20 @@
    "caption": "BC (m3, m7) appears in both answers. Build that AND gate once and send its output to both OR gates.",
    "patches": [
     {
+     "id": "S0",
+     "set": {
+      "tone": "danger",
+      "emphasis": "strong"
+     }
+    },
+    {
+     "id": "T0",
+     "set": {
+      "tone": "danger",
+      "emphasis": "strong"
+     }
+    },
+    {
      "id": "n1",
      "set": {
       "text": "share BC: one gate, two fan-outs",
@@ -793,7 +807,7 @@
    ]
   },
   {
-   "caption": "Shared: 3 AND gates and 2 OR gates, 10 gate inputs. In multi-output design, look for product terms that can serve several outputs, even when a different choice would look better for one output alone.",
+   "caption": "Shared: 3 AND gates and 2 OR gates, 10 gate inputs. In multi-output design, look for product terms that can serve several outputs (Lesson 4 also shows a case where the shared term is not prime for either output).",
    "patches": [
     {
      "id": "ex",

@@ -8,8 +8,8 @@ prerequisites: [kmaps]
 pyq_topics: [dl/minimization]
 est_minutes: 60
 difficulty: core
-status: draft
-needs_review: true
+status: published
+needs_review: false
 sources:
   - "Nexora's own text, examples and diagrams; every PI list, PI/EPI count, minimal cover and answer is checked in content/gate-notes/_checks/dl/l3_02_prime_implicants.py (Quine–McCluskey vs brute force; Petrick vs exhaustive search)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 40–42, set B pp. 114–117, set C pp. 234–236, 260–269 and 273–276, set E p. 405. Set B's 'the minimal SOP is unique' and set C's slips on pp. 267, 271 and 273 are recorded in _errata/dl.md."

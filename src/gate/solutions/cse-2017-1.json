@@ -1523,7 +1523,7 @@
       },
       "shortcut": "If the map loops into a single product of two literals, one 2-input NOR (or NAND for a sum of two literals) does it when complements are available.",
       "pitfalls": [
-        "Ignoring the don't-cares and building $\\overline{a}c\\,\\overline{d} + \\overline{a}bc$-style terms with several gates.",
+        "Ignoring the don't-cares: without them the SOP is $\\overline{a}\\,\\overline{b}c + \\overline{a}cd$, which needs 3 NOR gates.",
         "Reading the axes as $ab$/$cd$: the map's labels are $ba$ on the columns and $dc$ on the rows."
       ],
       "verification": "An exhaustive search over 1-gate NOR circuits with all literals available finds NOR($a$, $\\overline{c}$), which agrees with the map on every care cell.",
