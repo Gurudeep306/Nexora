@@ -9,6 +9,7 @@ export const LABS = {
   'gate-bench': lazy(() => import('./GateBench')),
   'kmap-solver': lazy(() => import('./KmapSolver')),
   'comb-workbench': lazy(() => import('./CombWorkbench')),
+  'adder-race': lazy(() => import('./AdderRace')),
 } as const
 
 export type LabName = keyof typeof LABS

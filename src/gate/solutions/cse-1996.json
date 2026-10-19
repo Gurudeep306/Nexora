@@ -3013,28 +3013,33 @@
       }
     },
     "cse-1996-a-46": {
-      "approach": "The AND gate adds $0100_2=4$ exactly when $b_3b_2=11$, i.e. for inputs 12–15. Tabulate those outputs.",
+      "approach": "Concept tested: **an adder used as a code converter**. The second operand is a constant (0100) switched on by a detector ($b_3b_2$, i.e. $b \\ge 12$); adding $16 - r$ when $b \\ge r$ splits $b$ into a base-$r$ carry digit and a units digit. Here $16 - 12 = 4$.",
       "concepts": [
-        "Binary adder",
+        "Adder as converter",
         "Code conversion",
         "Radix"
       ],
+      "given": "4-bit adder: operand 1 = $b_3b_2b_1b_0$; operand 2 = $0,\\; b_3b_2,\\; 0,\\; 0$ (MSB → LSB); carry in 0; $d_4$ = carry out, $d_3 \\dots d_0$ = sum.",
       "steps": [
         {
-          "title": "What is added",
-          "body": "Second operand $=0\\,(b_3b_2)\\,0\\,0$, so the adder outputs $N$ for $N\\le 11$ and $N+4$ for $N\\ge 12$."
+          "title": "When is anything added?",
+          "body": "Only when $b_3 = b_2 = 1$, i.e. $b \\ge 12$ (1100 … 1111). Then operand 2 is 0100 = 4; otherwise it is 0000."
         },
         {
-          "title": "Tabulate 12–15",
-          "body": "| N | N+4 | $d_4$ | $d_3d_2d_1d_0$ |\n|---|---|---|---|\n| 12 | 16 | 1 | 0000 |\n| 13 | 17 | 1 | 0001 |\n| 14 | 18 | 1 | 0010 |\n| 15 | 19 | 1 | 0011 |"
+          "title": "b = 0 … 11",
+          "body": "Nothing is added: $d_4 = 0$ and $d_3 \\dots d_0 = b$, so the output is the single digit $b$ (0 … 11)."
         },
         {
-          "title": "Interpret",
-          "body": "$d_4$ is the \"twelves\" digit and $d_3..d_0$ the units digit (0–11): $12=10_{12}$, $15=13_{12}$. This is **binary to radix-12** conversion."
+          "title": "b = 12 … 15",
+          "body": "$b + 4 = 16 + (b - 12)$: $d_4 = 1$ and $d_3 \\dots d_0 = b - 12 = 0 \\dots 3$. E.g. $13 \\to 1\\,0001$: one twelve and one unit."
+        },
+        {
+          "title": "Name it",
+          "body": "$d_4$ is the twelves digit and $d_3 \\dots d_0$ the units digit in base 12, with every units value 0 … 11: **binary to radix-12** conversion."
         }
       ],
       "answer": {
-        "value": "Binary to radix-12 conversion",
+        "value": "D: binary to radix-12 conversion",
         "choice": [
           "D"
         ],
@@ -3044,25 +3049,85 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "A 4-bit number is already one hex digit; no addition would be needed."
+          "reason": "Binary to hex is the identity on 4 bits (one hex digit); this circuit changes 12 … 15."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "BCD would add 6 for inputs ≥ 10, not 4 for inputs ≥ 12."
+          "reason": "Binary to BCD would correct from 10 upward by adding 6 (operand 0110, detector $b_3(b_2 + b_1)$); here 10 and 11 pass unchanged."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Gray code uses XORs of adjacent bits, not an adder."
+          "reason": "Gray code is $b \\oplus (b \\gg 1)$, made of XORs, not an addition; it never needs a fifth bit."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: adding 4 (= 16 − 12) for N ≥ 12 produces the radix-12 digits."
+          "reason": "For $b \\ge 12$ it outputs carry 1 and $b - 12$; otherwise $b$: two base-12 digits."
         }
       ],
-      "verification": "N = 13 → 1 0001 = \"11\" in base 12 = 12 + 1. ✓"
+      "shortcut": "Constant added $= 16 - r$ when the detector says $b \\ge r$: 4 ⇒ $r = 12$.",
+      "pitfalls": [
+        "Choosing BCD because the circuit looks like the BCD adder's correction stage: BCD adds 6 from 10 up, not 4 from 12 up.",
+        "Reading the operand as 0100 always: it is gated by $b_3b_2$."
+      ],
+      "verification": "l4_03_addsub.py simulates the circuit for all 16 inputs: outputs 0 … 11 unchanged, 12 … 15 → 1 0000 … 1 0011, i.e. $12d_4 + d_3d_2d_1d_0 = b$ with units < 12.",
+      "animation": {
+        "kind": "table",
+        "title": "Inputs 9 … 15 and the outputs d4 d3d2d1d0",
+        "cols": [
+          "b",
+          "b3b2b1b0",
+          "d4 d3…d0",
+          "base 12"
+        ],
+        "rows": [
+          [
+            "9",
+            "1001",
+            "0 1001",
+            "0·12 + 9"
+          ],
+          [
+            "10",
+            "1010",
+            "0 1010",
+            "0·12 + 10"
+          ],
+          [
+            "11",
+            "1011",
+            "0 1011",
+            "0·12 + 11"
+          ],
+          [
+            "12",
+            "1100",
+            "1 0000",
+            "1·12 + 0"
+          ],
+          [
+            "13",
+            "1101",
+            "1 0001",
+            "1·12 + 1"
+          ],
+          [
+            "14",
+            "1110",
+            "1 0010",
+            "1·12 + 2"
+          ],
+          [
+            "15",
+            "1111",
+            "1 0011",
+            "1·12 + 3"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-1996-a-47": {
       "approach": "Concept tested: **reading a 4:1 MUX** whose data inputs are a variable and its complement. Case-split on the select lines $S_1 = A$, $S_0 = B$: each select value passes one data input, and the four cases together are the function.",

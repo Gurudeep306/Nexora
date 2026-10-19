@@ -1,0 +1,705 @@
+{
+ "version": 1,
+ "title": "Three register stages and three full adders form a pipelined adder",
+ "width": 700,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 530
+ },
+ "intro": "Registers R0, R1, R2 separate three full adders; each stage adds one bit position. A and B enter R0 at every clock.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "A 3-stage pipelined adder (GATE 2002)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Pipelined 3-bit adder",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "r0",
+   "type": "box",
+   "x": 30,
+   "y": 70,
+   "w": 190,
+   "h": 52,
+   "mono": true,
+   "label": "R0: 0…0",
+   "size": 14,
+   "narrow": {
+    "y": 56,
+    "w": 300,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 65.0,
+   "y": 150,
+   "w": 120,
+   "h": 40,
+   "label": "FA (bit 0)",
+   "size": 14,
+   "narrow": {
+    "x": 110.0,
+    "y": 132,
+    "w": 140,
+    "h": 34,
+    "size": 12
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     125.0,
+     122
+    ],
+    [
+     125.0,
+     150
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      108
+     ],
+     [
+      180.0,
+      132
+     ]
+    ]
+   }
+  },
+  {
+   "id": "r1",
+   "type": "box",
+   "x": 260,
+   "y": 70,
+   "w": 190,
+   "h": 52,
+   "mono": true,
+   "label": "R1: 0…0",
+   "size": 14,
+   "narrow": {
+    "x": 30,
+    "y": 196,
+    "w": 300,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 295.0,
+   "y": 150,
+   "w": 120,
+   "h": 40,
+   "label": "FA (bit 1)",
+   "size": 14,
+   "narrow": {
+    "x": 110.0,
+    "y": 272,
+    "w": 140,
+    "h": 34,
+    "size": 12
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     355.0,
+     122
+    ],
+    [
+     355.0,
+     150
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      248
+     ],
+     [
+      180.0,
+      272
+     ]
+    ]
+   }
+  },
+  {
+   "id": "r2",
+   "type": "box",
+   "x": 490,
+   "y": 70,
+   "w": 190,
+   "h": 52,
+   "mono": true,
+   "label": "R2: 0…0",
+   "size": 14,
+   "narrow": {
+    "x": 30,
+    "y": 336,
+    "w": 300,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 525.0,
+   "y": 150,
+   "w": 120,
+   "h": 40,
+   "label": "FA (bit 2)",
+   "size": 14,
+   "narrow": {
+    "x": 110.0,
+    "y": 412,
+    "w": 140,
+    "h": 34,
+    "size": 12
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     585.0,
+     122
+    ],
+    [
+     585.0,
+     150
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      388
+     ],
+     [
+      180.0,
+      412
+     ]
+    ]
+   }
+  },
+  {
+   "id": "n0",
+   "type": "line",
+   "points": [
+    [
+     185.0,
+     170
+    ],
+    [
+     230,
+     170
+    ],
+    [
+     230,
+     96
+    ],
+    [
+     260,
+     96
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250.0,
+      149
+     ],
+     [
+      344,
+      149
+     ],
+     [
+      344,
+      222
+     ],
+     [
+      330,
+      222
+     ]
+    ]
+   }
+  },
+  {
+   "id": "n1",
+   "type": "line",
+   "points": [
+    [
+     415.0,
+     170
+    ],
+    [
+     460,
+     170
+    ],
+    [
+     460,
+     96
+    ],
+    [
+     490,
+     96
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250.0,
+      289
+     ],
+     [
+      344,
+      289
+     ],
+     [
+      344,
+      362
+     ],
+     [
+      330,
+      362
+     ]
+    ]
+   }
+  },
+  {
+   "id": "clk",
+   "type": "text",
+   "x": 30,
+   "y": 240,
+   "text": "clock 0",
+   "size": 15,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "y": 470,
+    "size": 13
+   }
+  },
+  {
+   "id": "z",
+   "type": "text",
+   "x": 670,
+   "y": 240,
+   "text": "Z = 0000",
+   "size": 16,
+   "anchor": "end",
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 330,
+    "y": 470,
+    "size": 14
+   }
+  },
+  {
+   "id": "hist",
+   "type": "text",
+   "x": 350.0,
+   "y": 274,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 504,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Clock 1: R0 captures A = 110, B = 101. Only bit 0 is added in this stage; R1 and R2 still hold zeros, so Z = 0000.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 110+101",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 0…0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 0…0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 1"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 0000",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "0000"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 2: the first pair moves to R1 with its bit-0 sum s0 = 1 and carry c1 = 0; R0 takes 011 + 101. Z is still 0000.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 011+101",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 110+101",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 0…0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 2"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 0000",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "0000 0000"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 3: the first pair reaches R2; FA (bit 2) finishes it: Z = 1011 = 6 + 5 = 11. Latency: 3 clocks.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 111+011",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 011+101",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 110+101",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 3"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 1011",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "0000 0000 1011"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 4: a new result every clock: Z = 1000 (3 + 5 = 8). Throughput: one sum per clock.",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 101+110",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 111+011",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 011+101",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 4"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 1000",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "0000 0000 1011 1000"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 5: a new result every clock: Z = 1010 (7 + 3 = 10).",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 000+000",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 101+110",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 111+011",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 5"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 1010",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "0000 1011 1000 1010"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 6: a new result every clock: Z = 1011 (5 + 6 = 11).",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 000+000",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 000+000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 101+110",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 6"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 1011",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "1011 1000 1010 1011"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 7: a new result every clock: Z = 0000 (0 + 0 = 0).",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 000+000",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 000+000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 000+000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 7"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 0000",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "1000 1010 1011 0000"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 8: a new result every clock: Z = 0000 (0 + 0 = 0).",
+   "patches": [
+    {
+     "id": "r0",
+     "set": {
+      "label": "R0: 000+000",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "r1",
+     "set": {
+      "label": "R1: 000+000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "r2",
+     "set": {
+      "label": "R2: 000+000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 8"
+     }
+    },
+    {
+     "id": "z",
+     "set": {
+      "text": "Z = 0000",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "hist",
+     "set": {
+      "text": "1010 1011 0000 0000"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -138,17 +138,17 @@
     {
       "id": "cse-2015-2-cs-48",
       "field": "needsReview",
-      "before": false,
-      "after": true,
-      "reason": "Key 19.2 uses the 4 x full-adder-delay model; a gate-level critical path gives 12 µs.",
-      "source": "GATE2015-Set-2.pdf"
+      "before": true,
+      "after": false,
+      "reason": "Reviewed for the Digital Logic notes (Chapter 4, Lesson 1): the key 19.2 is the block model the question's wording sets up (four full adders of 4.8 µs each), and it matches the official answer as listed by an exam archive; the gate-level 12 µs is taught alongside.",
+      "source": "GATE2015-Set-2.pdf; derivation in content/gate-notes/_checks/dl/l4_01_ripple.py"
     },
     {
       "id": "cse-2015-2-cs-48",
       "field": "reviewNote",
-      "before": null,
-      "after": "Key 19.2 assumes each full adder contributes its full 4.8 µs delay; strict gate-level carry-path analysis gives 4.8 + 3×2.4 = 12 µs. Confirm against the official key.",
-      "reason": "Document the ambiguity.",
+      "before": "Key 19.2 assumes each full adder contributes its full 4.8 µs delay; strict gate-level carry-path analysis gives 4.8 + 3×2.4 = 12 µs. Confirm against the official key.",
+      "after": "Key 19.2 is the block model: each full adder (2 HA + OR) has a slowest output of 4.8 µs and four are chained, 4 × 4.8 = 19.2 µs (the official answer). The gate-level critical path is 4.8 + 3 × 2.4 = 12 µs; both are explained in the notes.",
+      "reason": "Record the delay convention behind the key.",
       "source": "GATE2015-Set-2.pdf"
     }
   ]

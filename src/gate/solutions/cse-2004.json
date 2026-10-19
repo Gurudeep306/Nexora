@@ -3930,27 +3930,29 @@
       "verification": "Simulate from 00 with T2 = XNOR, T1 = XOR: 00→10→11→01→00 ✓."
     },
     "cse-2004-cs-62": {
-      "approach": "Add the gate levels along the critical path: generate P, G → two-level carry network → sum XOR. XOR is not an allowed gate, so each XOR costs two levels (AND-OR with complemented inputs available).",
+      "approach": "Concept tested: **the exact delay of a 4-bit CLA when no XOR gate is allowed**. With only AND, OR, NOT, NAND, NOR (complements free), each XOR (the propagate and the sum) is a two-level circuit; the carry network is two-level AND-OR.",
       "concepts": [
-        "Carry look-ahead adder",
-        "Gate delay"
+        "Carry look-ahead",
+        "Propagation delay",
+        "Two-level logic"
       ],
+      "given": "4-bit CLA; gates AND, OR, NOT, NAND, NOR, each 1 unit; inputs available complemented; carry network two-level AND-OR.",
       "steps": [
         {
-          "title": "P and G",
-          "body": "$G_i = A_iB_i$: 1 level. $P_i = A_i \\oplus B_i = A_iB_i' + A_i'B_i$: **2 levels**. Ready at time 2."
+          "title": "Propagate and generate",
+          "body": "$G_i = A_iB_i$: 1 level. $P_i = A_i \\oplus B_i = A_i\\bar B_i + \\bar A_iB_i$: an AND level and an OR level, so **2 units** (the slower of the two)."
         },
         {
           "title": "Carries",
-          "body": "$C_{i+1} = G_i + P_iG_{i-1} + \\dots + P_i\\cdots P_0C_0$ as two-level AND-OR: $2 + 2 = 4$."
+          "body": "$C_{i+1} = G_i + P_iG_{i-1} + \\dots + P_i\\cdots P_0C_0$ is two-level AND-OR on the $P$'s and $G$'s: ready at $2 + 2 = $ **4 units**."
         },
         {
-          "title": "Sum",
-          "body": "$S_i = P_i \\oplus C_i$ needs the complement of $C_i$ too; realised as a two-level AND-OR ($P_iC_i' + P_i'C_i$, the complements being produced in parallel at the same levels): 2 more levels ⇒ $4 + 2 = 6$ time units."
+          "title": "Sums",
+          "body": "$S_i = P_i \\oplus C_i$ is again an XOR built as two-level logic: $4 + 2 = $ **6 units**. (This assumes the complements $\\bar P_i$, $\\bar C_i$ are produced alongside $P_i$, $C_i$ by the same two-level stages, i.e. dual-rail logic; otherwise one more inverter level is needed.)"
         }
       ],
       "answer": {
-        "value": "6 time units",
+        "value": "B: 6 time units",
         "choice": [
           "B"
         ],
@@ -3960,28 +3962,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "4 is when the carries are ready, before the sum stage."
+          "reason": "4 units is the CLA delay when XOR is a single 1-unit gate (1 + 2 + 1); here XOR must be built from the listed gates."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "2 (P) + 2 (carry) + 2 (sum XOR) = 6."
+          "reason": "2 (P as AND-OR) + 2 (carry network) + 2 (sum XOR as AND-OR) = 6."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Overcounts — would correspond to ripple-like carry propagation."
+          "reason": "10 is the 4-bit ripple-carry adder with XOR = 2 units: $(2 + 1 + 1) + 3 \\times 2 = 10$; the question asks for the look-ahead adder."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Overcounts further."
+          "reason": "12 would count each stage twice."
         }
       ],
+      "shortcut": "CLA = three stages (P/G, carries, sums); each stage is 2 levels when XOR must be built: $3 \\times 2 = 6$.",
       "pitfalls": [
-        "Counting XOR as a single gate when XOR is not in the allowed set."
+        "Counting $P_i$ as one level (only true if an XOR gate exists).",
+        "Forgetting the sum XOR stage after the carries."
       ],
-      "verification": "Standard CLA delay with 2-level XOR: 2 + 2 + 2 = 6."
+      "verification": "l4_02_cla.py times the 4-bit look-ahead netlist with XOR costing 2 units (its two-level AND-OR form) and every other gate 1: carries at 4, sums at 6."
     },
     "cse-2004-cs-63": {
       "approach": "Lay out the instructions from address 1000 with 4-byte words. After HALT is executed, PC points past it; that PC is the return address pushed on interrupt.",

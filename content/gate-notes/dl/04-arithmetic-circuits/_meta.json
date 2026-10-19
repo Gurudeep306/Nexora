@@ -1,0 +1,4 @@
+{
+  "title": "Arithmetic circuits",
+  "summary": "Half and full adders and subtractors designed from their truth tables, ripple-carry adders and their delay models, carry look-ahead with generate and propagate, multi-level and hybrid adders, the adder–subtractor with overflow and status flags, the BCD adder circuit, array multipliers and their delay, and sequential and Booth multiplier hardware."
+}

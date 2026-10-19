@@ -488,23 +488,33 @@
       "verification": "These are exactly the three textbook hazard classes (Hennessy–Patterson)."
     },
     "cse-2003-cs-11": {
-      "approach": "An $n\\times n$ array multiplier forms partial products in one gate level and adds them with a grid of adders whose critical path runs diagonally across the array.",
+      "approach": "Concept tested: **the order of an array multiplier's delay with unit gate delays**: the critical path crosses $\\Theta(n)$ cells, each a constant number of gates.",
       "concepts": [
         "Array multiplier",
-        "Critical path"
+        "Critical path",
+        "Asymptotic delay"
       ],
+      "given": "An array multiplier for two $n$-bit numbers; every gate has unit delay.",
       "steps": [
         {
-          "title": "Structure",
-          "body": "All $n^2$ AND gates work in parallel (delay 1). The $n-1$ rows of adders form a grid; the carry/sum critical path goes down the rows and across the final row, about $2n$ adder delays."
+          "title": "What the cells do",
+          "body": "The $n^2$ AND gates make all partial products in one gate delay. The $n(n-1)$ full-adder cells are arranged as $n - 1$ rows: each sum moves down a row at the same weight, each carry moves left one weight in its row."
         },
         {
-          "title": "Delay",
-          "body": "Each full adder is a constant number of gates, so total delay $= c_1 + c_2 \\cdot 2n = \\Theta(n)$ (while the gate count is $\\Theta(n^2)$)."
+          "title": "Longest path: upper bound",
+          "body": "Along any path the row index and the weight never decrease, and every cell increases one of them. With $n - 1$ rows and $2n - 1$ weights, a path crosses fewer than $3n$ cells, each a constant number of gate delays: $O(n)$."
+        },
+        {
+          "title": "Longest path: lower bound",
+          "body": "The final carry depends on partial products in the first row, and any route from there to the last row crosses every row: at least $n - 1$ cells. So $\\Omega(n)$."
+        },
+        {
+          "title": "Measured",
+          "body": "On our ripple-row netlist (unit gates) the worst case is $6(n - 1)$: 6, 12, 18, 24, 30, 36, 42 for $n = 2 \\dots 8$, while the cell count grows as $n(n - 1)$."
         }
       ],
       "answer": {
-        "value": "$\\Theta(n)$ — option (C)",
+        "value": "C: Θ(n)",
         "choice": [
           "C"
         ],
@@ -514,28 +524,85 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Constant delay is impossible: the top bit depends on all $2n$ input bits through bounded fan-in gates."
+          "reason": "Θ(1) would need two-level logic with unbounded fan-in and exponentially many gates, not an adder array."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$\\Theta(\\log n)$ needs a Wallace tree with fast final adder, not an array multiplier."
+          "reason": "Θ(log n) is a tree multiplier with a fast final adder."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Critical path crosses $O(n)$ adders."
+          "reason": "Upper bound O(n) (paths move left or down) and lower bound Ω(n) (some path crosses every row)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\Theta(n^2)$ is the area (number of gates), not the delay."
+          "reason": "Θ(n²) counts the cells, which work in parallel."
         }
       ],
+      "shortcut": "Same as GATE 1999: array ⇒ linear.",
       "pitfalls": [
-        "Confusing hardware size $\\Theta(n^2)$ with delay."
+        "Choosing Θ(n²) from the $n^2$ AND gates and cells.",
+        "Choosing Θ(log n) by analogy with carry look-ahead."
       ],
-      "verification": "Standard result: a carry-save array multiplier with ripple final stage has delay $\\approx (2n-2)$ full-adder delays."
+      "verification": "l4_04_multipliers.py: measured unit-gate delays 6, 12, …, 42 for $n = 2 \\dots 8$ (exactly $6(n - 1)$).",
+      "animation": {
+        "kind": "table",
+        "title": "Array multiplier: hardware grows as n², delay as n",
+        "cols": [
+          "n",
+          "AND gates",
+          "adder cells",
+          "delay (unit gates)"
+        ],
+        "rows": [
+          [
+            "2",
+            "4",
+            "2",
+            "6"
+          ],
+          [
+            "3",
+            "9",
+            "6",
+            "12"
+          ],
+          [
+            "4",
+            "16",
+            "12",
+            "18"
+          ],
+          [
+            "5",
+            "25",
+            "20",
+            "24"
+          ],
+          [
+            "6",
+            "36",
+            "30",
+            "30"
+          ],
+          [
+            "7",
+            "49",
+            "42",
+            "36"
+          ],
+          [
+            "8",
+            "64",
+            "56",
+            "42"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2003-cs-12": {
       "approach": "A reduction from a known NP-complete problem to Π shows NP-hardness; a reduction from Π to a problem in NP shows Π ∈ NP.",
@@ -2587,24 +2654,29 @@
       }
     },
     "cse-2003-cs-46": {
-      "approach": "Each B bit passes through XOR with K, so K = 0 feeds B and K = 1 feeds B̅; C₀ adds 0 or 1. Thus only A + B + C₀ or A + B̅ + C₀ can be formed.",
+      "approach": "Concept tested: **the operations an XOR-controlled adder can perform**. $K$ selects $B$ or $\\bar B$ through the XORs and $C_0$ adds 0 or 1; that gives exactly four formulas in $A$ and $B$. An operation is available only if one of them equals it for every $B$.",
       "concepts": [
-        "Adder/subtractor",
-        "2's complement",
-        "XOR as controlled inverter"
+        "Adder–subtractor",
+        "Two's complement",
+        "Control lines"
       ],
+      "given": "Each full adder receives $A_i$ and $B_i \\oplus K$; the least significant carry in is $C_0$; operands are 2's complement.",
       "steps": [
         {
-          "title": "Settings",
-          "body": "| K | C₀ | Result |\n|---|---|---|\n| 0 | 0 | $A+B$ |\n| 0 | 1 | $A+B+1$ |\n| 1 | 1 | $A+\\overline{B}+1=A-B$ |\n| 1 | 0 | $A+\\overline{B}=A-B-1$ |"
+          "title": "The four settings",
+          "body": "$(K, C_0) = (0, 0)$: $A + B$. $(0, 1)$: $A + B + 1$. $(1, 0)$: $A + \\bar B = A - B - 1$. $(1, 1)$: $A + \\bar B + 1 = A - B$."
         },
         {
-          "title": "A + 1?",
-          "body": "$A+1$ needs the second adder input to be 0, but it is always $B$ or $\\overline B$ — K and C₀ cannot zero it. So $A+B$ and $A-B$ are possible, $A+1$ is not."
+          "title": "A + B and A − B",
+          "body": "Both appear: settings (0, 0) and (1, 1)."
+        },
+        {
+          "title": "A + 1",
+          "body": "Every setting still adds $B$ or $\\bar B$. $A + 1$ would need the second operand to be 0 regardless of $B$, which $K$ and $C_0$ cannot do; $(0, 1)$ gives $A + B + 1$, equal to $A + 1$ only when $B$ happens to be 0."
         }
       ],
       "answer": {
-        "value": "A + B and A − B, but not A + 1",
+        "value": "A: A + B and A − B, but not A + 1",
         "choice": [
           "A"
         ],
@@ -2614,25 +2686,62 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct."
+          "reason": "$(0,0)$ adds, $(1,1)$ subtracts, and no setting removes $B$ from the sum."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A − B is possible with K = 1, C₀ = 1; A + 1 is not."
+          "reason": "A − B is available ($K = C_0 = 1$), and A + 1 is not."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A − B is possible."
+          "reason": "A − B is available with $K = 1$, $C_0 = 1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A + 1 would need B forced to 0."
+          "reason": "A + 1 needs $B = 0$; $B$ is an operand, not a control line."
         }
       ],
-      "verification": "2's complement: $-B=\\overline B+1$, exactly what K = 1, C₀ = 1 supplies."
+      "shortcut": "$K$, $C_0$ give $A \\pm B$ variants only; anything without $B$ (like $A + 1$) needs control of $B$ itself.",
+      "pitfalls": [
+        "Setting $C_0 = 1$ and calling it $A + 1$ (it is $A + B + 1$).",
+        "Thinking subtraction needs a separate circuit: the XORs and $C_0 = 1$ are exactly the two's-complement rule."
+      ],
+      "verification": "l4_03_addsub.py simulates the 4-bit ALU for every $A$, $B$ and every $(K, C_0)$: (0,0) equals $A + B$, (1,1) equals $A - B$ (mod 16), and no setting equals $A + 1$ for all $B$.",
+      "animation": {
+        "kind": "table",
+        "title": "What K and C0 select",
+        "cols": [
+          "K",
+          "C0",
+          "output"
+        ],
+        "rows": [
+          [
+            "0",
+            "0",
+            "A + B"
+          ],
+          [
+            "0",
+            "1",
+            "A + B + 1"
+          ],
+          [
+            "1",
+            "0",
+            "A − B − 1"
+          ],
+          [
+            "1",
+            "1",
+            "A − B"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2003-cs-47": {
       "approach": "Concept tested: **timing with XOR edge detectors**. Write the two XOR outputs as $P(t) = A(t) \\oplus A(t - 2)$ and $B(t) = P(t) \\oplus P(t - 4)$ and tabulate them over the intervals where something changes; count the level changes of $B$.",

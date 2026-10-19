@@ -1937,23 +1937,29 @@
       "verification": "For $n = 3$ an exhaustive search over every wiring of a 2:1 MUX and one inverter finds no circuit for $x \\oplus y \\oplus z$, while a 4:1 MUX realises all 256 functions (l5_02_mux.py)."
     },
     "cse-2007-cs-35": {
-      "approach": "Write $C_1..C_4$ in two-level SOP form over $P_i,G_i,C_0$ and count the product terms (AND gates) and sums (OR gates). The sum bits use XOR, not AND/OR.",
+      "approach": "Concept tested: **gate counts of a two-level look-ahead carry generator**. Carry $C_k$ has $k$ AND terms (one per source below the top $G$) plus one OR; the sums need all of $C_1 \\dots C_3$ and $C_4$ is an output.",
       "concepts": [
-        "Carry look-ahead adder",
-        "Two-level logic"
+        "Carry look-ahead",
+        "Two-level logic",
+        "Gate count"
       ],
+      "given": "$P_i = A_i \\oplus B_i$, $G_i = A_iB_i$ available; $C_{i+1} = G_i + P_iC_i$; two-level AND-OR, any fan-in; outputs $S_3 \\dots S_0$ and $C_4$.",
       "steps": [
         {
-          "title": "Expand the carries",
-          "body": "$$\\begin{aligned}C_1&=G_0+P_0C_0\\\\C_2&=G_1+P_1G_0+P_1P_0C_0\\\\C_3&=G_2+P_2G_1+P_2P_1G_0+P_2P_1P_0C_0\\\\C_4&=G_3+P_3G_2+P_3P_2G_1+P_3P_2P_1G_0+P_3P_2P_1P_0C_0\\end{aligned}$$"
+          "title": "Which carries are needed",
+          "body": "$S_i = P_i \\oplus C_i$ needs $C_0$ (an input), $C_1$, $C_2$, $C_3$; and $C_4$ is an output. So the generator must produce $C_1 \\dots C_4$."
         },
         {
-          "title": "Count gates",
-          "body": "AND gates (product terms with $\\ge2$ literals): $1+2+3+4=10$.\n\nOR gates: one per carry $C_1,C_2,C_3,C_4$ = $4$.\n\n$S_0..S_3=P_i\\oplus C_i$ use XOR gates, which are not counted. Answer: **10, 4**."
+          "title": "Expand each",
+          "body": "$C_1 = G_0 + P_0C_0$; $C_2 = G_1 + P_1G_0 + P_1P_0C_0$; $C_3 = G_2 + P_2G_1 + P_2P_1G_0 + P_2P_1P_0C_0$; $C_4$ = five terms ending with $P_3P_2P_1P_0C_0$."
+        },
+        {
+          "title": "Count",
+          "body": "AND gates: the products other than the bare $G$: $1 + 2 + 3 + 4 = 10$. OR gates: one per carry, 4."
         }
       ],
       "answer": {
-        "value": "10, 4",
+        "value": "B: 10 AND gates and 4 OR gates",
         "choice": [
           "B"
         ],
@@ -1963,25 +1969,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "6 AND gates is too few: $C_4$ alone needs 4 product terms and $C_3$ needs 3."
+          "reason": "6 ANDs and 3 ORs build only $C_1 \\dots C_3$ ($1 + 2 + 3$); $C_4$ is a required output."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "$1+2+3+4=10$ AND, 4 OR."
+          "reason": "$1 + 2 + 3 + 4 = 10$ AND terms and one OR per carry."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Undercounts the AND gates."
+          "reason": "6 ANDs would leave $C_4$'s four products unbuilt, yet 4 ORs assume $C_4$ exists."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "There is no fifth OR gate — $C_0$ is an input."
+          "reason": "5 ORs would count an OR for $C_0$, which is an input."
         }
       ],
-      "verification": "Each $C_{i+1}$ has $i+1$ products with two or more literals plus the lone $G_i$; $\\sum_{i=0}^{3}(i+1)=10$."
+      "shortcut": "$n$-bit look-ahead unit: $n(n+1)/2$ ANDs and $n$ ORs. $n = 4$: 10 and 4.",
+      "pitfalls": [
+        "Counting $G_i$ itself as an AND term: the $G_i$ are given.",
+        "Stopping at $C_3$ because the sums only need $C_0 \\dots C_3$: $C_4$ is listed as an output."
+      ],
+      "verification": "l4_02_cla.py counts the gates of the two-level look-ahead netlist for $C_1 \\dots C_4$: 10 AND and 4 OR, and checks every carry against integer addition."
     },
     "cse-2007-cs-36": {
       "approach": "The AND of A3 and A1 drives the asynchronous Clear. With A4 as MSB, A3A1 = 1 first happens at 0101 = 5, which is cleared instantly, so 5 is never a stable state.",

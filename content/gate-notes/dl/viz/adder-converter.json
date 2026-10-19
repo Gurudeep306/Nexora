@@ -1,0 +1,513 @@
+{
+ "version": 1,
+ "title": "The 1996 adder-based converter for three inputs",
+ "width": 700,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 290
+ },
+ "intro": "A 4-bit adder adds b and the operand 0, b3·b2, 0, 0 with carry in 0; d4 is the carry out. The AND gate is the detector for b ≥ 12.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "GATE 1996's converter: add 0100 when b3 b2 = 11",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "1996 converter: +4 when b ≥ 12",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "in",
+   "type": "text",
+   "x": 350,
+   "y": 60,
+   "text": "b = ????",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 56,
+    "size": 13
+   }
+  },
+  {
+   "id": "wi",
+   "type": "line",
+   "points": [
+    [
+     350,
+     72
+    ],
+    [
+     350,
+     120
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      68
+     ],
+     [
+      230,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "add",
+   "type": "box",
+   "x": 240,
+   "y": 120,
+   "w": 220,
+   "h": 60,
+   "label": "4-bit adder",
+   "size": 15,
+   "narrow": {
+    "x": 120,
+    "y": 150,
+    "w": 200,
+    "h": 56,
+    "size": 13
+   }
+  },
+  {
+   "id": "and",
+   "type": "gate",
+   "x": 80,
+   "y": 140,
+   "w": 52,
+   "h": 42,
+   "kind": "and",
+   "narrow": {
+    "x": 40,
+    "y": 80,
+    "w": 44,
+    "h": 36
+   }
+  },
+  {
+   "id": "l3",
+   "type": "text",
+   "x": 72.0,
+   "y": 154.0,
+   "text": "b3",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 34.0,
+    "y": 92.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "l2",
+   "type": "text",
+   "x": 72.0,
+   "y": 168.0,
+   "text": "b2",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 34.0,
+    "y": 104.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "w3",
+   "type": "line",
+   "points": [
+    [
+     76.0,
+     154.0
+    ],
+    [
+     80.0,
+     154.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      37.0,
+      92.0
+     ],
+     [
+      40.0,
+      92.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     76.0,
+     168.0
+    ],
+    [
+     80.0,
+     168.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      37.0,
+      104.0
+     ],
+     [
+      40.0,
+      104.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo",
+   "type": "line",
+   "points": [
+    [
+     132.0,
+     161.0
+    ],
+    [
+     240,
+     161.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      84.0,
+      98.0
+     ],
+     [
+      100,
+      98.0
+     ],
+     [
+      100,
+      178
+     ],
+     [
+      120,
+      178
+     ]
+    ]
+   }
+  },
+  {
+   "id": "op",
+   "type": "text",
+   "x": 186,
+   "y": 145.0,
+   "text": "0 ? 0 0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 150,
+    "y": 130,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd",
+   "type": "line",
+   "points": [
+    [
+     350,
+     180
+    ],
+    [
+     350,
+     210
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      206
+     ],
+     [
+      220,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "out",
+   "type": "text",
+   "x": 350,
+   "y": 226,
+   "text": "d4 d3d2d1d0 = ?",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 248,
+    "size": 12
+   }
+  },
+  {
+   "id": "read",
+   "type": "text",
+   "x": 350,
+   "y": 256,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180,
+    "y": 272,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The second operand is 0, b3·b2, 0, 0: it is 0100 (4) exactly when b3 = b2 = 1, i.e. b ≥ 12, and 0000 otherwise.",
+   "patches": [
+    {
+     "id": "and",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "b = 1011 (11): b3·b2 = 0, so the adder adds 0. Output 0 1011: 0 twelve and 11 units = 11.",
+   "patches": [
+    {
+     "id": "in",
+     "set": {
+      "text": "b = 1011"
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "text": "b3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "text": "b2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "op",
+     "set": {
+      "text": "0 0 0 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "text": "d4 d3d2d1d0 = 0 1011",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "read",
+     "set": {
+      "text": "base 12: digits 0, 11",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "b = 1100 (12): b3·b2 = 1, so the adder adds 4. Output 1 0000: 1 twelve and 0 units = 12.",
+   "patches": [
+    {
+     "id": "in",
+     "set": {
+      "text": "b = 1100"
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "text": "b3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "text": "b2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "op",
+     "set": {
+      "text": "0 1 0 0",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "text": "d4 d3d2d1d0 = 1 0000",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "read",
+     "set": {
+      "text": "base 12: digits 1, 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "b = 1111 (15): b3·b2 = 1, so the adder adds 4. Output 1 0011: 1 twelve and 3 units = 15.",
+   "patches": [
+    {
+     "id": "in",
+     "set": {
+      "text": "b = 1111"
+     }
+    },
+    {
+     "id": "l3",
+     "set": {
+      "text": "b3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "l2",
+     "set": {
+      "text": "b2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "op",
+     "set": {
+      "text": "0 1 0 0",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "text": "d4 d3d2d1d0 = 1 0011",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "read",
+     "set": {
+      "text": "base 12: digits 1, 3",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Units stay 0 … 11 and d4 counts twelves: binary to radix 12. A BCD converter would instead add 0110 from b = 10 up.",
+   "patches": [
+    {
+     "id": "read",
+     "set": {
+      "text": "binary → radix 12",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}
