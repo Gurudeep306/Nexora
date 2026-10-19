@@ -36,7 +36,7 @@ come from [Chapter 2](lesson:logic-gates), especially the XOR of
 [Chapter 2, Lesson 3](lesson:xor-and-operators), and the minimisation from
 [Chapter 3](lesson:kmaps). The next lesson speeds the adder up with **carry look-ahead**,
 [Lesson 3](lesson:adder-subtractor-overflow) turns it into an adder–subtractor with overflow flags and a
-BCD adder, and Lesson 4 builds multipliers out of rows of adders.
+BCD adder, and [Lesson 4](lesson:multipliers-booth) builds multipliers out of rows of adders.
 
 :::table{#radar title="GATE radar: adders, subtractors and ripple carry" depth="quick"}
 | What | Detail |
@@ -636,7 +636,7 @@ $5 + 12 + 1 = 18 = 1\,0010$; the 4-FA adder gives $c_4 = 1$, $S = 0010$ ✓.
 :::
 
 :::answer
-Any adder that will ever subtract (Lesson 3) or chain to a lower block needs a full adder in
+Any adder that will ever subtract ([Lesson 3](lesson:adder-subtractor-overflow)) or chain to a lower block needs a full adder in
 stage 0. That is why ALU adders are always $n$ full adders.
 :::
 ::::

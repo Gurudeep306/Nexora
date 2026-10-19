@@ -1,0 +1,1066 @@
+{
+ "version": 1,
+ "title": "The critical path through a 4 × 4 array multiplier",
+ "width": 700,
+ "height": 390,
+ "narrow": {
+  "width": 360,
+  "height": 380
+ },
+ "intro": "Three rows of four full-adder cells, shifted one bit per row. Partial products feed every cell; sums go down, carries go left. The product bits P0 … P7 leave at the right and the bottom.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "A 4 × 4 array multiplier and its critical path",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "4 × 4 array multiplier",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "clk",
+   "type": "text",
+   "x": 680,
+   "y": 46,
+   "text": "t = 0",
+   "size": 16,
+   "anchor": "end",
+   "weight": "bold",
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 348,
+    "size": 14
+   }
+  },
+  {
+   "id": "pp",
+   "type": "text",
+   "x": 350.0,
+   "y": 72,
+   "text": "16 AND gates make every partial product a_j b_i at t = 1",
+   "size": 14,
+   "anchor": "middle",
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "pp-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 66,
+   "text": "16 ANDs: a_j b_i at t = 1",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "c10",
+   "type": "box",
+   "x": 520,
+   "y": 110,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 290,
+    "y": 100,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h10",
+   "type": "line",
+   "points": [
+    [
+     520,
+     135.0
+    ],
+    [
+     510,
+     135.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      290,
+      123.0
+     ],
+     [
+      284,
+      123.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c11",
+   "type": "box",
+   "x": 444,
+   "y": 110,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 242,
+    "y": 100,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h11",
+   "type": "line",
+   "points": [
+    [
+     444,
+     135.0
+    ],
+    [
+     434,
+     135.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      242,
+      123.0
+     ],
+     [
+      236,
+      123.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v11",
+   "type": "line",
+   "points": [
+    [
+     477.0,
+     160
+    ],
+    [
+     477.0,
+     200
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      263.0,
+      146
+     ],
+     [
+      263.0,
+      190
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c12",
+   "type": "box",
+   "x": 368,
+   "y": 110,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 194,
+    "y": 100,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h12",
+   "type": "line",
+   "points": [
+    [
+     368,
+     135.0
+    ],
+    [
+     358,
+     135.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      194,
+      123.0
+     ],
+     [
+      188,
+      123.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v12",
+   "type": "line",
+   "points": [
+    [
+     401.0,
+     160
+    ],
+    [
+     401.0,
+     200
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      215.0,
+      146
+     ],
+     [
+      215.0,
+      190
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c13",
+   "type": "box",
+   "x": 292,
+   "y": 110,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 146,
+    "y": 100,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "v13",
+   "type": "line",
+   "points": [
+    [
+     325.0,
+     160
+    ],
+    [
+     325.0,
+     200
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      167.0,
+      146
+     ],
+     [
+      167.0,
+      190
+     ]
+    ]
+   }
+  },
+  {
+   "id": "P1",
+   "type": "text",
+   "x": 590,
+   "y": 135.0,
+   "text": "P1",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 336,
+    "y": 123.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "c20",
+   "type": "box",
+   "x": 444,
+   "y": 200,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 242,
+    "y": 190,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h20",
+   "type": "line",
+   "points": [
+    [
+     444,
+     225.0
+    ],
+    [
+     434,
+     225.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      242,
+      213.0
+     ],
+     [
+      236,
+      213.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c21",
+   "type": "box",
+   "x": 368,
+   "y": 200,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 194,
+    "y": 190,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h21",
+   "type": "line",
+   "points": [
+    [
+     368,
+     225.0
+    ],
+    [
+     358,
+     225.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      194,
+      213.0
+     ],
+     [
+      188,
+      213.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v21",
+   "type": "line",
+   "points": [
+    [
+     401.0,
+     250
+    ],
+    [
+     401.0,
+     290
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      215.0,
+      236
+     ],
+     [
+      215.0,
+      280
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c22",
+   "type": "box",
+   "x": 292,
+   "y": 200,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 146,
+    "y": 190,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h22",
+   "type": "line",
+   "points": [
+    [
+     292,
+     225.0
+    ],
+    [
+     282,
+     225.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      146,
+      213.0
+     ],
+     [
+      140,
+      213.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "v22",
+   "type": "line",
+   "points": [
+    [
+     325.0,
+     250
+    ],
+    [
+     325.0,
+     290
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      167.0,
+      236
+     ],
+     [
+      167.0,
+      280
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c23",
+   "type": "box",
+   "x": 216,
+   "y": 200,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 98,
+    "y": 190,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "v23",
+   "type": "line",
+   "points": [
+    [
+     249.0,
+     250
+    ],
+    [
+     249.0,
+     290
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      119.0,
+      236
+     ],
+     [
+      119.0,
+      280
+     ]
+    ]
+   }
+  },
+  {
+   "id": "P2",
+   "type": "text",
+   "x": 514,
+   "y": 225.0,
+   "text": "P2",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 288,
+    "y": 213.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "c30",
+   "type": "box",
+   "x": 368,
+   "y": 290,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 194,
+    "y": 280,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h30",
+   "type": "line",
+   "points": [
+    [
+     368,
+     315.0
+    ],
+    [
+     358,
+     315.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      194,
+      303.0
+     ],
+     [
+      188,
+      303.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c31",
+   "type": "box",
+   "x": 292,
+   "y": 290,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 146,
+    "y": 280,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h31",
+   "type": "line",
+   "points": [
+    [
+     292,
+     315.0
+    ],
+    [
+     282,
+     315.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      146,
+      303.0
+     ],
+     [
+      140,
+      303.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c32",
+   "type": "box",
+   "x": 216,
+   "y": 290,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 98,
+    "y": 280,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "h32",
+   "type": "line",
+   "points": [
+    [
+     216,
+     315.0
+    ],
+    [
+     206,
+     315.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      98,
+      303.0
+     ],
+     [
+      92,
+      303.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c33",
+   "type": "box",
+   "x": 140,
+   "y": 290,
+   "w": 66,
+   "h": 50,
+   "mono": true,
+   "label": "FA",
+   "size": 14,
+   "narrow": {
+    "x": 50,
+    "y": 280,
+    "w": 42,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "P3",
+   "type": "text",
+   "x": 438,
+   "y": 315.0,
+   "text": "P3",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 240,
+    "y": 303.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "P0",
+   "type": "text",
+   "x": 590,
+   "y": 92,
+   "text": "P0",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 336,
+    "y": 86,
+    "size": 12
+   }
+  },
+  {
+   "id": "Q4",
+   "type": "text",
+   "x": 325.0,
+   "y": 356,
+   "text": "P4",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 167.0,
+    "y": 342,
+    "size": 12
+   }
+  },
+  {
+   "id": "Q5",
+   "type": "text",
+   "x": 249.0,
+   "y": 356,
+   "text": "P5",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 119.0,
+    "y": 342,
+    "size": 12
+   }
+  },
+  {
+   "id": "Q6",
+   "type": "text",
+   "x": 173.0,
+   "y": 356,
+   "text": "P6",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 71.0,
+    "y": 342,
+    "size": 12
+   }
+  },
+  {
+   "id": "P7",
+   "type": "text",
+   "x": 136,
+   "y": 315.0,
+   "text": "P7",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 46,
+    "y": 303.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 350.0,
+   "y": 372,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 362,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "t = 1: all 16 partial products a_j·b_i are ready at once (one AND level). Row i of adders adds row i of them to the running sum.",
+   "patches": [
+    {
+     "id": "pp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 1"
+     }
+    },
+    {
+     "id": "pp-n",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 4: the carry ripples along row 1: cell (row 1, bit 0) is done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 4"
+     }
+    },
+    {
+     "id": "c10",
+     "set": {
+      "label": "4",
+      "fill": "success",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 6: the carry moves left inside row 1: cell (row 1, bit 1) is done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 6"
+     }
+    },
+    {
+     "id": "c11",
+     "set": {
+      "label": "6",
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "h10",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 8: the carry moves left inside row 1: cell (row 1, bit 2) is done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 8"
+     }
+    },
+    {
+     "id": "c12",
+     "set": {
+      "label": "8",
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "h11",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 9: cell (row 1, bit 3) passes its sum down to the next row (same weight, one row lower).",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 9"
+     }
+    },
+    {
+     "id": "c13",
+     "set": {
+      "label": "9",
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "h12",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 12: the carry moves left inside row 2: cell (row 2, bit 2) is done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 12"
+     }
+    },
+    {
+     "id": "c22",
+     "set": {
+      "label": "12",
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v13",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 13: cell (row 2, bit 3) passes its sum down to the next row (same weight, one row lower).",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 13"
+     }
+    },
+    {
+     "id": "c23",
+     "set": {
+      "label": "13",
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "h22",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 16: the carry moves left inside row 3: cell (row 3, bit 2) is done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 16"
+     }
+    },
+    {
+     "id": "c32",
+     "set": {
+      "label": "16",
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "v23",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 18: the last carry leaves cell (row 3, bit 3) as P7. Critical path: 8 cells, 18 gate delays = 6(n − 1).",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 18"
+     }
+    },
+    {
+     "id": "c33",
+     "set": {
+      "label": "18",
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "h32",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "P7",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "text": "1011 × 1101 = 143: P = 10001111",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The path crosses each row and moves one row down per step: O(n) cells, so the delay is Θ(n) although there are n² cells.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "n² cells, Θ(n) delay",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

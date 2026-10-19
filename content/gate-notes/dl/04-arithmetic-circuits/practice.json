@@ -1206,5 +1206,404 @@
    "bcd-adder"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many 2-input AND gates does an $8 \\times 8$ unsigned array multiplier use to form its partial products?",
+  "answer": 64,
+  "solution": [
+   "Each partial-product bit is $a_jb_i$ for $i, j \\in \\{0, \\dots, 7\\}$.",
+   "$8 \\times 8 = 64$ AND gates."
+  ],
+  "concept": "An $n \\times n$ array has $n^2$ partial-product ANDs.",
+  "common_wrong": [
+   {
+    "answer": 16,
+    "why": "$2n$ is the number of product bits, not of partial products."
+   },
+   {
+    "answer": 56,
+    "why": "$n(n-1)$ counts the adder cells."
+   }
+  ],
+  "blocks": [
+   "pp-and",
+   "array-cost"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "An unsigned $6 \\times 6$ array multiplier adds its partial products with $n - 1$ rows of $n$-bit adders. How many adder cells does it contain?",
+  "answer": 30,
+  "solution": [
+   "Rows 1 … 5 add partial products 1 … 5 to the running sum.",
+   "$5 \\times 6 = 30$ cells."
+  ],
+  "concept": "Array adder cells: $n(n-1)$.",
+  "common_wrong": [
+   {
+    "answer": 36,
+    "why": "$n^2$ counts the AND gates; row 0 needs no adders."
+   },
+   {
+    "answer": 5,
+    "why": "That is the number of rows, not cells."
+   }
+  ],
+  "blocks": [
+   "array-cost",
+   "array-multiplier"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A $16 \\times 16$ array multiplier is rebuilt as a $32 \\times 32$ array of the same design. As $n$ grows, its worst-case delay grows as:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Theta(n^2)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Theta(\\log n)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Theta(n)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Theta(1)$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Signals move left (carry) or down (sum) only, so a path visits $O(n)$ cells.",
+   "Some path crosses every row: $\\Omega(n)$. So $\\Theta(n)$ (the hardware is $\\Theta(n^2)$)."
+  ],
+  "concept": "Array multiplier: $n^2$ cells, $\\Theta(n)$ delay.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$n^2$ is the number of cells, which work in parallel."
+   },
+   {
+    "answer": "B",
+    "why": "Logarithmic delay needs a Wallace tree, not an array."
+   }
+  ],
+  "blocks": [
+   "array-delay-theorem",
+   "trap-n-squared"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "An array multiplier multiplies a 7-bit unsigned number by a 5-bit unsigned number. How many output bits are needed for every product?",
+  "answer": 12,
+  "solution": [
+   "Largest product $(2^7 - 1)(2^5 - 1) = 127 \\times 31 = 3937 < 2^{12} = 4096$.",
+   "And $3937 \\ge 2^{11}$, so 12 bits are needed: $7 + 5$."
+  ],
+  "concept": "An $n$-bit by $m$-bit product needs $n + m$ bits.",
+  "common_wrong": [
+   {
+    "answer": 35,
+    "why": "$7 \\times 5$ is the number of partial products."
+   },
+   {
+    "answer": 14,
+    "why": "$2 \\times 7$ assumes both operands have 7 bits."
+   }
+  ],
+  "blocks": [
+   "pp-and"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "In the lesson's ripple-row array multiplier (partial products one AND level; each row a ripple adder of full adders built from two half adders and an OR; every gate 1 unit), the $4 \\times 4$ array's worst-case delay is 18 units and each extra bit adds 6. What is the worst-case delay of the $5 \\times 5$ array?",
+  "answer": 24,
+  "solution": [
+   "The measured delays are $6(n - 1)$: 6, 12, 18, 24, … for $n = 2, 3, 4, 5$.",
+   "$n = 5$: $6 \\times 4 = 24$ units."
+  ],
+  "concept": "The array delay is linear: $6(n - 1)$ for this design.",
+  "common_wrong": [
+   {
+    "answer": 30,
+    "why": "$6n$ is off by one: a 4 × 4 array would then be 24."
+   },
+   {
+    "answer": 28,
+    "why": "Scales 18 by $(5/4)^2$-like reasoning; the delay is linear, not quadratic."
+   }
+  ],
+  "blocks": [
+   "array-delay"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A sequential shift-and-add multiplier (registers C, A, Q, M and one adder) multiplies two 16-bit unsigned numbers. How many add-and-shift cycles does it need?",
+  "options": [
+   {
+    "l": "A",
+    "t": "4"
+   },
+   {
+    "l": "B",
+    "t": "8"
+   },
+   {
+    "l": "C",
+    "t": "32"
+   },
+   {
+    "l": "D",
+    "t": "16"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Each cycle examines one multiplier bit ($Q_0$), adds M if it is 1, and shifts.",
+   "16 multiplier bits: 16 cycles."
+  ],
+  "concept": "Sequential multiplier: one cycle per multiplier bit.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "$2n$ is the product width, not the cycle count."
+   },
+   {
+    "answer": "B",
+    "why": "$n/2$ is the bit-pair (radix-4) multiplier."
+   }
+  ],
+  "blocks": [
+   "sequential-multiplier"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q07",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "In a radix-2 Booth multiplier datapath, for which values of $Q_0Q_{-1}$ does the adder–subtractor actually change A in that cycle?",
+  "options": [
+   {
+    "l": "A",
+    "t": "00"
+   },
+   {
+    "l": "B",
+    "t": "01"
+   },
+   {
+    "l": "C",
+    "t": "10"
+   },
+   {
+    "l": "D",
+    "t": "11"
+   }
+  ],
+  "answer": [
+   "B",
+   "C"
+  ],
+  "solution": [
+   "01: end of a run of 1s, $A \\leftarrow A + M$.",
+   "10: start of a run of 1s, $A \\leftarrow A - M$.",
+   "00 and 11: inside a run of 0s or 1s, only the shift happens."
+  ],
+  "concept": "Booth operates only at the boundaries of runs of 1s.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "11 is inside a run of 1s: no operation."
+   },
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "01 (end of a run) adds M back."
+   }
+  ],
+  "blocks": [
+   "booth-hardware"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about faster multipliers are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A Wallace-tree multiplier with a carry look-ahead final adder has $\\Theta(\\log n)$ delay."
+   },
+   {
+    "l": "B",
+    "t": "A carry-save array stops carries from rippling along each row."
+   },
+   {
+    "l": "C",
+    "t": "A carry-save array multiplier has $\\Theta(\\log n)$ delay."
+   },
+   {
+    "l": "D",
+    "t": "An $n \\times n$ array multiplier contains $n^2$ full adders."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "A: true; the tree reduces $n$ rows to 2 in $O(\\log n)$ layers and the look-ahead adder is $O(\\log n)$.",
+   "B: true; carries go down to the next row instead of along the row.",
+   "C: false; its $n - 1$ rows are still in series: $\\Theta(n)$.",
+   "D: false; it has $n^2$ AND gates but $n(n - 1)$ adder cells."
+  ],
+  "concept": "Carry-save changes the constant; only a tree changes the order.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "The carry-save array's rows are still sequential."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "$n^2$ is the AND count; the adder cells are $n(n - 1)$."
+   }
+  ],
+  "blocks": [
+   "csa-array",
+   "wallace-aside",
+   "array-cost"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Booth multiplier datapath for $n$-bit operands uses an $(n + 1)$-bit accumulator A. Why?",
+  "options": [
+   {
+    "l": "A",
+    "t": "To store the sign of the product separately"
+   },
+   {
+    "l": "B",
+    "t": "So that $A - M$ cannot overflow when $M = -2^{n-1}$"
+   },
+   {
+    "l": "C",
+    "t": "Because Booth's algorithm needs $n + 1$ cycles"
+   },
+   {
+    "l": "D",
+    "t": "To hold the adder's carry out for unsigned operands"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Subtracting $M = -2^{n-1}$ adds $+2^{n-1}$, which does not fit in $n$-bit two's complement.",
+   "With one more bit every intermediate value fits and the arithmetic shift copies the correct sign."
+  ],
+  "concept": "Booth's $-M$ needs one extra bit of range.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "The datapath runs $n$ cycles."
+   },
+   {
+    "answer": "D",
+    "why": "Booth works on signed operands; there is no unsigned carry to keep."
+   }
+  ],
+  "blocks": [
+   "trap-booth-extra-bit",
+   "booth-hardware"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Compare an $n \\times n$ array multiplier (delay $\\Theta(n)$ gate delays) with an $n$-bit sequential shift-and-add multiplier whose single adder is a ripple-carry adder (each cycle one ripple addition, $n$ cycles). As $n$ grows, the ratio (sequential time) / (array time) grows as:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Theta(1)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Theta(\\log n)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Theta(n^2)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Theta(n)$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Sequential: $n$ cycles × $\\Theta(n)$ ripple delay = $\\Theta(n^2)$ gate delays.",
+   "Array: $\\Theta(n)$.",
+   "Ratio $\\Theta(n^2)/\\Theta(n) = \\Theta(n)$, in exchange for about $n$ times less adder hardware."
+  ],
+  "concept": "Hardware–time trade-off: $n$ times the hardware buys $n$ times the speed.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "$\\Theta(n^2)$ is the sequential time itself, not the ratio."
+   },
+   {
+    "answer": "A",
+    "why": "Both do $n - 1$ additions, but the array overlaps them."
+   }
+  ],
+  "blocks": [
+   "multiplier-compare",
+   "sequential-multiplier"
+  ],
+  "source": "nexora"
  }
 ]

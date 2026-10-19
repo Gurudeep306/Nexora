@@ -36,7 +36,7 @@ The adders are the ripple and look-ahead adders of [Lesson 1](lesson:adders-ripp
 inverter" is [Chapter 2, Lesson 3](lesson:xor-and-operators). The number rules are
 [Chapter 1, Lesson 9](lesson:code-arithmetic): complements (`#radix-sub`), the overflow theorem
 (`#overflow-theorem`), carry vs overflow (`#carry-vs-overflow`) and the BCD +6 rule (`#bcd-add`,
-`#bcd-why-six`). Lesson 4 reuses the adder–subtractor inside Booth's multiplier, and
+`#bcd-why-six`). [Lesson 4](lesson:multipliers-booth#booth-hardware) reuses the adder–subtractor inside Booth's multiplier, and
 [Chapter 5, Lesson 4](lesson:comparators-parity) compares numbers by subtracting them with exactly this
 circuit.
 

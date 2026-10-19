@@ -736,8 +736,175 @@ def bcd_adder_hw(L):
                   "Two 4-bit binary adders. The first adds the digits; a detector K + Z3Z2 + Z3Z1 decides whether the sum exceeds 9; the second adds 0110 when it does. The detector's output is the decimal carry.")
 
 
+# ── Lesson 4: multipliers ──────────────────────────────────────────────────
+
+def array_critical_path(n):
+    """Cells (row i, bit j) on the critical path of arithlib.array_multiplier(n), in order, with the
+    time the path leaves each cell, and the overall delay."""
+    net = al.array_multiplier(n)
+    ins = [f"a{j}" for j in range(n)] + [f"b{j}" for j in range(n)]
+    t = al.arrival(net, ins)
+    src = {x[0]: x for x in net}
+    out = max((f"P{k}" for k in range(2 * n)), key=lambda x: t[x])
+    seq, x = [], out
+    while x in src:
+        seq.append(x)
+        x = max((a.lstrip("~") for a in src[x][2]), key=lambda a: t.get(a, 0))
+    seq.reverse()
+    cells = []
+    for name in seq:
+        import re as _re
+        m = _re.fullmatch(r"[pgt]m(\d+)_(\d+)", name) or _re.fullmatch(r"r(\d+)_(\d+)", name)
+        k = _re.fullmatch(r"k(\d+)_(\d+)", name)
+        if k:
+            cell = (int(k.group(1)), int(k.group(2)) - 1)
+        elif m:
+            cell = (int(m.group(1)), int(m.group(2)))
+        else:
+            continue
+        if cells and cells[-1][0] == cell:
+            cells[-1] = (cell, t[name])
+        else:
+            cells.append((cell, t[name]))
+    return cells, t[out], out
+
+
+@scene
+def array_multiplier_grid(L):
+    s = S(L)
+    W, NW = 700, 360
+    n = 4
+    cells, T, out = array_critical_path(n)
+    assert T == 18 == 6 * (n - 1) and out == "P7"
+    assert [c for c, _ in cells] == [(1, 0), (1, 1), (1, 2), (1, 3), (2, 2), (2, 3), (3, 2), (3, 3)]
+    assert [tt for _, tt in cells] == [4, 6, 8, 9, 12, 13, 16, 18]
+    A, B = 0b1011, 0b1101
+    v = cl.evaluate(al.array_multiplier(n), {**{f"a{j}": A >> j & 1 for j in range(n)}, **{f"b{j}": B >> j & 1 for j in range(n)}})
+    assert al.word(v, "P", 2 * n) == A * B == 143
+    s.head("A 4 × 4 array multiplier and its critical path", "4 × 4 array multiplier", W, NW)
+    s.text("clk", s.v(W - 20, NW - 12), s.v(46, 46), "t = 0", s.v(16, 14), anchor="end", weight="bold", mono=True, tone="accent")
+    cw, ch = s.v(66, 42), s.v(50, 46)
+    X = lambda w: s.v(520 - 76 * (w - 1), 290 - 48 * (w - 1))  # noqa: E731
+    Y = lambda i: s.v(110 + 90 * (i - 1), 100 + 90 * (i - 1))  # noqa: E731
+    s.text("pp", s.v(W / 2, NW / 2), s.v(72, 66), s.v("16 AND gates make every partial product a_j b_i at t = 1", "16 ANDs: a_j b_i at t = 1"),
+           s.v(14, 12), anchor="middle", tone="muted")
+    for i in range(1, n):
+        for j in range(n):
+            w = i + j
+            x, y = X(w), Y(i)
+            s.box(f"c{i}{j}", x, y, cw, ch, label="FA", size=s.v(14, 12), mono=True)
+            if j < n - 1:
+                s.line(f"h{i}{j}", [[x, y + ch / 2], [X(w + 1) + cw, y + ch / 2]])
+            if i < n - 1 and j >= 1:
+                s.line(f"v{i}{j}", [[x + cw / 2, y + ch], [x + cw / 2, Y(i + 1)]])
+        x0 = X(i) + cw
+        s.text(f"P{i}", x0 + 4, Y(i) + ch / 2, f"P{i}", s.v(13, 12), anchor="start", mono=True, tone="muted")
+    s.text("P0", X(1) + cw + 4, s.v(92, 86), "P0", s.v(13, 12), anchor="start", mono=True, tone="muted")
+    for j in range(1, n):
+        s.text(f"Q{3 + j}", X(3 + j) + cw / 2, Y(3) + ch + 16, f"P{3 + j}", s.v(13, 12), anchor="middle", mono=True, tone="muted")
+    s.text("P7", X(6) - 4, Y(3) + ch / 2, "P7", s.v(13, 12), anchor="end", mono=True, tone="muted")
+    s.text("res", s.v(W / 2, NW / 2), s.v(372, 362), "", s.v(14, 12), anchor="middle", weight="bold")
+    s.step("t = 1: all 16 partial products a_j·b_i are ready at once (one AND level). Row i of adders adds row i of them to the running sum.",
+           ("pp", {"tone": "success"}), ("clk", {"text": "t = 1"}))
+    names = {(1, 0): "row 1 starts: its first cell", (1, 3): "row 1's last cell", (2, 2): "row 2", (3, 2): "row 3"}
+    prev = None
+    for k, ((i, j), tt) in enumerate(cells):
+        pats = [("clk", {"text": f"t = {tt}"}), (f"c{i}{j}", {"label": str(tt), "fill": "success", "tone": "accent"})]
+        if prev and prev[0] == i:
+            pats.append((f"h{i}{prev[1]}", {"tone": "accent"}))
+        elif prev:
+            pats.append((f"v{prev[0]}{prev[1]}", {"tone": "accent"}))
+        kind = "carry" if (k + 1 < len(cells) and cells[k + 1][0][0] == i) or k == len(cells) - 1 else "sum"
+        where = f"row {i}, bit {j}"
+        if k == 0:
+            cap = f"t = {tt}: the carry ripples along row 1: cell ({where}) is done."
+        elif kind == "sum":
+            cap = f"t = {tt}: cell ({where}) passes its sum down to the next row (same weight, one row lower)."
+        elif k == len(cells) - 1:
+            cap = f"t = {tt}: the last carry leaves cell ({where}) as P7. Critical path: 8 cells, 18 gate delays = 6(n − 1)."
+        else:
+            cap = f"t = {tt}: the carry moves left inside row {i}: cell ({where}) is done."
+        if k == len(cells) - 1:
+            pats.append(("P7", {"tone": "accent"}))
+            pats.append(("res", {"text": f"1011 × 1101 = {A * B}: P = {A * B:08b}", "tone": "success"}))
+        s.step(cap, *pats)
+        prev = (i, j)
+    s.step("The path crosses each row and moves one row down per step: O(n) cells, so the delay is Θ(n) although there are n² cells.",
+           ("res", {"text": "n² cells, Θ(n) delay", "tone": "accent"}))
+    return s.done("The critical path through a 4 × 4 array multiplier", (W, 390), (NW, 380),
+                  "Three rows of four full-adder cells, shifted one bit per row. Partial products feed every cell; sums go down, carries go left. The product bits P0 … P7 leave at the right and the bottom.")
+
+
+@scene
+def booth_datapath(L):
+    s = S(L)
+    W, NW = 700, 360
+    import boothlib as bt
+    n, m, q = 4, 6, 0b1101
+    trace, prod = bt.booth_trace(m, q, n)
+    assert al.tc(prod, 2 * n) == m * al.tc(q, n) == -18
+    s.head("Booth multiplier hardware: 6 × (−3) in 4 bits", "Booth hardware: 6 × (−3)", W, NW)
+    if s.wd:
+        rM, rS, rA, rQ, rQ1 = (60, 64, 200, 44), (60, 146, 200, 44), (60, 230, 200, 44), (300, 230, 170, 44), (500, 230, 70, 44)
+        ctl = (500, 146, 170, 44)
+    else:
+        rM, rS, rA, rQ, rQ1 = (20, 60, 200, 40), (20, 136, 200, 40), (20, 214, 150, 40), (180, 214, 110, 40), (300, 214, 50, 40)
+        ctl = (236, 120, 114, 56)
+    s.box("M", *rM, label="M = 00110", size=s.v(15, 12), mono=True)
+    s.box("add", *rS, label="adder–subtractor", size=s.v(14, 12))
+    s.box("A", *rA, label="A = 00000", size=s.v(15, 12), mono=True)
+    s.box("Q", *rQ, label="Q = 1101", size=s.v(15, 12), mono=True)
+    s.box("Q1", *rQ1, label="0", size=s.v(15, 12), mono=True)
+    s.text("q1l", rQ1[0] + rQ1[2] / 2, rQ1[1] + rQ1[3] + 14, "Q−1", s.v(13, 12), anchor="middle", tone="muted")
+    s.box("ctl", *ctl, label=s.v("control: Q0 Q−1", "Q0 Q−1"), size=s.v(14, 12))
+    xm = rM[0] + rM[2] / 2
+    s.line("wm", [[xm - 40, rM[1] + rM[3]], [xm - 40, rS[1]]])
+    s.line("wa", [[xm + 40, rA[1]], [xm + 40, rS[1] + rS[3]]])
+    s.line("wr", [[xm - 40, rS[1] + rS[3]], [xm - 40, rA[1]]])
+    if s.wd:
+        s.line("wq", [[rQ[0] + rQ[2] - 20, rQ[1]], [rQ[0] + rQ[2] - 20, 210], [550, 210], [550, ctl[1] + ctl[3]]])
+        s.line("wq1", [[rQ1[0] + rQ1[2] / 2 + 20, rQ1[1]], [rQ1[0] + rQ1[2] / 2 + 20, ctl[1] + ctl[3]]])
+        s.line("wk", [[ctl[0], ctl[1] + 22], [rS[0] + rS[2], rS[1] + 22]])
+        s.text("op", 585, 110, "", 14, anchor="middle", weight="bold", mono=True)
+        s.text("cyc", 60, 312, "", 14, anchor="start", weight="bold")
+        s.text("note", 60, 340, "", 14, anchor="start")
+    else:
+        s.line("wq", [[rQ[0] + rQ[2] - 16, rQ[1]], [rQ[0] + rQ[2] - 16, 196], [270, 196], [270, ctl[1] + ctl[3]]])
+        s.line("wq1", [[rQ1[0] + rQ1[2] / 2, rQ1[1]], [rQ1[0] + rQ1[2] / 2, ctl[1] + ctl[3]]])
+        s.line("wk", [[ctl[0], ctl[1] + 28], [rS[0] + rS[2], ctl[1] + 28]])
+        s.text("op", 293, 104, "", 12, anchor="middle", weight="bold", mono=True)
+        s.text("cyc", 20, 290, "", 12, anchor="start", weight="bold")
+        s.text("note", 20, 312, "", 12, anchor="start")
+    w = n + 1
+    s.step("Start: A = 0 (5 bits: one extra bit so that −M always fits), Q = multiplier −3 = 1101, Q−1 = 0, M = 6.",
+           ("cyc", {"text": "cycle 0"}))
+    A, Q, Q1 = 0, q, 0
+    for k, (op, nA, nQ, nQ1) in enumerate(trace, 1):
+        pair = f"{Q & 1}{Q1}"
+        if op == "A − M":
+            mid = (A - m) % 2 ** w
+        elif op == "A + M":
+            mid = (A + m) % 2 ** w
+        else:
+            mid = A
+        what = {"A − M": "subtract M", "A + M": "add M", "none": "no add"}[op]
+        s.step(f"Cycle {k}: Q0 Q−1 = {pair}, so {what}: A = {mid:0{w}b}.",
+               ("op", {"text": op if op != "none" else "—", "tone": "accent" if op != "none" else "muted"}),
+               ("ctl", {"tone": "accent"}), ("add", {"fill": "success" if op != "none" else "none"}), ("wk", {"tone": "accent" if op != "none" else "muted"}),
+               ("A", {"label": f"A = {mid:0{w}b}"}), ("cyc", {"text": f"cycle {k}: {what}"}), ("note", {"text": ""}))
+        s.step(f"Cycle {k}: arithmetic right shift of A, Q, Q−1 (A's sign bit is copied): A = {nA:0{w}b}, Q = {nQ:04b}, Q−1 = {nQ1}.",
+               ("add", {"fill": "none"}), ("ctl", {"tone": "ink"}),
+               ("A", {"label": f"A = {nA:0{w}b}"}), ("Q", {"label": f"Q = {nQ:04b}"}), ("Q1", {"label": str(nQ1)}),
+               ("note", {"text": "shift right (arithmetic)"}))
+        A, Q, Q1 = nA, nQ, nQ1
+    s.step(f"After n = 4 cycles, A Q = {prod:08b} = −18 = 6 × (−3). One adder, n cycles, at most n additions or subtractions.",
+           ("cyc", {"text": f"product {prod >> 4:04b} {prod & 15:04b} = −18", "tone": "success"}), ("note", {"text": ""}), ("op", {"text": ""}))
+    return s.done("Booth multiplier datapath stepping through 6 × (−3)", (W, 360), (NW, 330),
+                  "Registers M (multiplicand), A (accumulator, one extra bit), Q (multiplier) and the bit Q−1. The control looks at Q0 Q−1 and tells the adder–subtractor to add M, subtract M or do nothing; then A, Q, Q−1 shift right together.")
+
+
 ORDER = ["half-adder-design", "full-adder-from-has", "ripple-carry-wave", "pipeline-adder",
-         "rca-vs-cla-timing", "cla-gp-tree", "carry-select", "addsub-overflow", "bcd-adder-hw"]
+         "rca-vs-cla-timing", "cla-gp-tree", "carry-select", "addsub-overflow", "bcd-adder-hw", "array-multiplier-grid", "booth-datapath"]
 
 
 def build_all():
