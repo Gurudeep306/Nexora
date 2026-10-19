@@ -1,0 +1,1977 @@
+{
+ "version": 1,
+ "title": "The NOR SR latch: set, hold, reset, and the race into oscillation",
+ "width": 680,
+ "height": 392,
+ "narrow": {
+  "width": 360,
+  "height": 366
+ },
+ "intro": "Two NOR gates, each output feeding the other gate. S and R are active high. Waveforms of S, R, Q and Q̄ grow below, one column per gate delay.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "The NOR latch, one gate delay per column",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "NOR latch, gate by gate",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g1",
+   "type": "gate",
+   "x": 210,
+   "y": 56,
+   "w": 70,
+   "h": 52,
+   "kind": "nor",
+   "narrow": {
+    "x": 120,
+    "y": 50,
+    "w": 56,
+    "h": 46
+   }
+  },
+  {
+   "id": "g2",
+   "type": "gate",
+   "x": 210,
+   "y": 150,
+   "w": 70,
+   "h": 52,
+   "kind": "nor",
+   "narrow": {
+    "x": 120,
+    "y": 132,
+    "w": 56,
+    "h": 46
+   }
+  },
+  {
+   "id": "wtop",
+   "type": "line",
+   "points": [
+    [
+     110,
+     73.33
+    ],
+    [
+     216.39,
+     73.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      65.33
+     ],
+     [
+      125.0,
+      65.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ltop",
+   "type": "text",
+   "x": 104,
+   "y": 73.33,
+   "text": "R",
+   "size": 15,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "y": 65.33,
+    "size": 13
+   }
+  },
+  {
+   "id": "wbot",
+   "type": "line",
+   "points": [
+    [
+     110,
+     184.67
+    ],
+    [
+     216.39,
+     184.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      162.67
+     ],
+     [
+      125.0,
+      162.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lbot",
+   "type": "text",
+   "x": 104,
+   "y": 184.67,
+   "text": "S",
+   "size": 15,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "y": 162.67,
+    "size": 13
+   }
+  },
+  {
+   "id": "wq",
+   "type": "line",
+   "points": [
+    [
+     280.0,
+     82.0
+    ],
+    [
+     350.0,
+     82.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      176.0,
+      73.0
+     ],
+     [
+      228.0,
+      73.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lq",
+   "type": "text",
+   "x": 356.0,
+   "y": 82.0,
+   "text": "Q",
+   "size": 15,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 234.0,
+    "y": 73.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wqb",
+   "type": "line",
+   "points": [
+    [
+     280.0,
+     176.0
+    ],
+    [
+     350.0,
+     176.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      176.0,
+      155.0
+     ],
+     [
+      228.0,
+      155.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lqb",
+   "type": "text",
+   "x": 356.0,
+   "y": 176.0,
+   "text": "Q̄",
+   "size": 15,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 234.0,
+    "y": 155.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "fq",
+   "type": "line",
+   "points": [
+    [
+     302.0,
+     82.0
+    ],
+    [
+     302.0,
+     122
+    ],
+    [
+     190,
+     136
+    ],
+    [
+     190,
+     167.33
+    ],
+    [
+     216.39,
+     167.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      192.0,
+      73.0
+     ],
+     [
+      192.0,
+      106
+     ],
+     [
+      106,
+      122
+     ],
+     [
+      106,
+      147.33
+     ],
+     [
+      125.0,
+      147.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "fqb",
+   "type": "line",
+   "points": [
+    [
+     310.0,
+     176.0
+    ],
+    [
+     310.0,
+     136
+    ],
+    [
+     182,
+     122
+    ],
+    [
+     182,
+     90.67
+    ],
+    [
+     216.39,
+     90.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      200.0,
+      155.0
+     ],
+     [
+      200.0,
+      122
+     ],
+     [
+      98,
+      106
+     ],
+     [
+      98,
+      80.67
+     ],
+     [
+      125.0,
+      80.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlS",
+   "type": "text",
+   "x": 62,
+   "y": 259,
+   "text": "S",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 237,
+    "size": 12
+   }
+  },
+  {
+   "id": "wSg0s0",
+   "type": "line",
+   "points": [
+    [
+     70,
+     250
+    ],
+    [
+     160,
+     250
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      40.0,
+      228
+     ],
+     [
+      92.5,
+      228
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg1s0",
+   "type": "line",
+   "points": [
+    [
+     160,
+     250
+    ],
+    [
+     160,
+     268
+    ],
+    [
+     250,
+     268
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      92.5,
+      228
+     ],
+     [
+      92.5,
+      246
+     ],
+     [
+      145.0,
+      246
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg2s0",
+   "type": "line",
+   "points": [
+    [
+     250,
+     268
+    ],
+    [
+     340,
+     268
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      145.0,
+      246
+     ],
+     [
+      197.5,
+      246
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg3s0",
+   "type": "line",
+   "points": [
+    [
+     340,
+     268
+    ],
+    [
+     430,
+     268
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      197.5,
+      246
+     ],
+     [
+      250.0,
+      246
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg4s0",
+   "type": "line",
+   "points": [
+    [
+     430,
+     268
+    ],
+    [
+     430,
+     250
+    ],
+    [
+     520,
+     250
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.0,
+      246
+     ],
+     [
+      250.0,
+      228
+     ],
+     [
+      302.5,
+      228
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg5s0",
+   "type": "line",
+   "points": [
+    [
+     520,
+     250
+    ],
+    [
+     520,
+     268
+    ],
+    [
+     610,
+     268
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      302.5,
+      228
+     ],
+     [
+      302.5,
+      246
+     ],
+     [
+      355.0,
+      246
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlR",
+   "type": "text",
+   "x": 62,
+   "y": 289,
+   "text": "R",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 265,
+    "size": 12
+   }
+  },
+  {
+   "id": "wRg0s0",
+   "type": "line",
+   "points": [
+    [
+     70,
+     298
+    ],
+    [
+     160,
+     298
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      40.0,
+      274
+     ],
+     [
+      92.5,
+      274
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wRg1s0",
+   "type": "line",
+   "points": [
+    [
+     160,
+     298
+    ],
+    [
+     250,
+     298
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      92.5,
+      274
+     ],
+     [
+      145.0,
+      274
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wRg2s0",
+   "type": "line",
+   "points": [
+    [
+     250,
+     298
+    ],
+    [
+     250,
+     280
+    ],
+    [
+     340,
+     280
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      145.0,
+      274
+     ],
+     [
+      145.0,
+      256
+     ],
+     [
+      197.5,
+      256
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wRg3s0",
+   "type": "line",
+   "points": [
+    [
+     340,
+     280
+    ],
+    [
+     340,
+     298
+    ],
+    [
+     430,
+     298
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      197.5,
+      256
+     ],
+     [
+      197.5,
+      274
+     ],
+     [
+      250.0,
+      274
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wRg4s0",
+   "type": "line",
+   "points": [
+    [
+     430,
+     298
+    ],
+    [
+     430,
+     280
+    ],
+    [
+     520,
+     280
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.0,
+      274
+     ],
+     [
+      250.0,
+      256
+     ],
+     [
+      302.5,
+      256
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wRg5s0",
+   "type": "line",
+   "points": [
+    [
+     520,
+     280
+    ],
+    [
+     520,
+     298
+    ],
+    [
+     610,
+     298
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      302.5,
+      256
+     ],
+     [
+      302.5,
+      274
+     ],
+     [
+      355.0,
+      274
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlQ",
+   "type": "text",
+   "x": 62,
+   "y": 319,
+   "text": "Q",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 293,
+    "size": 12
+   }
+  },
+  {
+   "id": "wQg0s0",
+   "type": "line",
+   "points": [
+    [
+     70,
+     328
+    ],
+    [
+     106,
+     328
+    ],
+    [
+     106,
+     310
+    ],
+    [
+     160,
+     310
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      40.0,
+      302
+     ],
+     [
+      61.0,
+      302
+     ],
+     [
+      61.0,
+      284
+     ],
+     [
+      92.5,
+      284
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg1s0",
+   "type": "line",
+   "points": [
+    [
+     160,
+     310
+    ],
+    [
+     250,
+     310
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      92.5,
+      284
+     ],
+     [
+      145.0,
+      284
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg2s0",
+   "type": "line",
+   "points": [
+    [
+     250,
+     310
+    ],
+    [
+     268,
+     310
+    ],
+    [
+     268,
+     328
+    ],
+    [
+     340,
+     328
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      145.0,
+      284
+     ],
+     [
+      155.5,
+      284
+     ],
+     [
+      155.5,
+      302
+     ],
+     [
+      197.5,
+      302
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg3s0",
+   "type": "line",
+   "points": [
+    [
+     340,
+     328
+    ],
+    [
+     430,
+     328
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      197.5,
+      302
+     ],
+     [
+      250.0,
+      302
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg4s0",
+   "type": "line",
+   "points": [
+    [
+     430,
+     328
+    ],
+    [
+     520,
+     328
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.0,
+      302
+     ],
+     [
+      302.5,
+      302
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg5s0",
+   "type": "line",
+   "points": [
+    [
+     520,
+     328
+    ],
+    [
+     538,
+     328
+    ],
+    [
+     538,
+     310
+    ],
+    [
+     556,
+     310
+    ],
+    [
+     556,
+     328
+    ],
+    [
+     574,
+     328
+    ],
+    [
+     574,
+     310
+    ],
+    [
+     592,
+     310
+    ],
+    [
+     592,
+     328
+    ],
+    [
+     610,
+     328
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      302.5,
+      302
+     ],
+     [
+      313.0,
+      302
+     ],
+     [
+      313.0,
+      284
+     ],
+     [
+      323.5,
+      284
+     ],
+     [
+      323.5,
+      302
+     ],
+     [
+      334.0,
+      302
+     ],
+     [
+      334.0,
+      284
+     ],
+     [
+      344.5,
+      284
+     ],
+     [
+      344.5,
+      302
+     ],
+     [
+      355.0,
+      302
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlQb",
+   "type": "text",
+   "x": 62,
+   "y": 349,
+   "text": "Q̄",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 321,
+    "size": 12
+   }
+  },
+  {
+   "id": "wQbg0s0",
+   "type": "line",
+   "points": [
+    [
+     70,
+     340
+    ],
+    [
+     88,
+     340
+    ],
+    [
+     88,
+     358
+    ],
+    [
+     160,
+     358
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      40.0,
+      312
+     ],
+     [
+      50.5,
+      312
+     ],
+     [
+      50.5,
+      330
+     ],
+     [
+      92.5,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQbg1s0",
+   "type": "line",
+   "points": [
+    [
+     160,
+     358
+    ],
+    [
+     250,
+     358
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      92.5,
+      330
+     ],
+     [
+      145.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQbg2s0",
+   "type": "line",
+   "points": [
+    [
+     250,
+     358
+    ],
+    [
+     286,
+     358
+    ],
+    [
+     286,
+     340
+    ],
+    [
+     340,
+     340
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      145.0,
+      330
+     ],
+     [
+      166.0,
+      330
+     ],
+     [
+      166.0,
+      312
+     ],
+     [
+      197.5,
+      312
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQbg3s0",
+   "type": "line",
+   "points": [
+    [
+     340,
+     340
+    ],
+    [
+     430,
+     340
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      197.5,
+      312
+     ],
+     [
+      250.0,
+      312
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQbg4s0",
+   "type": "line",
+   "points": [
+    [
+     430,
+     340
+    ],
+    [
+     448,
+     340
+    ],
+    [
+     448,
+     358
+    ],
+    [
+     520,
+     358
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      250.0,
+      312
+     ],
+     [
+      260.5,
+      312
+     ],
+     [
+      260.5,
+      330
+     ],
+     [
+      302.5,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQbg5s0",
+   "type": "line",
+   "points": [
+    [
+     520,
+     358
+    ],
+    [
+     538,
+     358
+    ],
+    [
+     538,
+     340
+    ],
+    [
+     556,
+     340
+    ],
+    [
+     556,
+     358
+    ],
+    [
+     574,
+     358
+    ],
+    [
+     574,
+     340
+    ],
+    [
+     592,
+     340
+    ],
+    [
+     592,
+     358
+    ],
+    [
+     610,
+     358
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      302.5,
+      330
+     ],
+     [
+      313.0,
+      330
+     ],
+     [
+      313.0,
+      312
+     ],
+     [
+      323.5,
+      312
+     ],
+     [
+      323.5,
+      330
+     ],
+     [
+      334.0,
+      330
+     ],
+     [
+      334.0,
+      312
+     ],
+     [
+      344.5,
+      312
+     ],
+     [
+      344.5,
+      330
+     ],
+     [
+      355.0,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tl",
+   "type": "text",
+   "x": 70,
+   "y": 236,
+   "text": "one column = one gate delay",
+   "size": 13,
+   "anchor": "start",
+   "tone": "muted",
+   "narrow": {
+    "x": 40,
+    "y": 214,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 382,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 352,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "S = 1, R = 0: Q̄ = NOR(1, Q) falls to 0 after one delay, then Q = NOR(0, 0) rises to 1. Set: Q = 1.",
+   "patches": [
+    {
+     "id": "wSg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wRg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQbg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wtop",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wbot",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ltop",
+     "set": {
+      "text": "R=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lbot",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wqb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fqb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqb",
+     "set": {
+      "text": "Q̄=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "SR = 10: Q Q̄ = 10",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S = R = 0: each gate now just inverts the other's output, and Q = 1, Q̄ = 0 feeds itself. Hold.",
+   "patches": [
+    {
+     "id": "wSg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wRg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQbg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wtop",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wbot",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ltop",
+     "set": {
+      "text": "R=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lbot",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wqb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fqb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqb",
+     "set": {
+      "text": "Q̄=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "SR = 00: Q Q̄ = 10",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "R = 1: Q = NOR(1, Q̄) falls to 0, then Q̄ = NOR(0, 0) rises to 1. Reset: Q = 0.",
+   "patches": [
+    {
+     "id": "wSg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wRg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQbg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wtop",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wbot",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ltop",
+     "set": {
+      "text": "R=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lbot",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wqb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fqb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqb",
+     "set": {
+      "text": "Q̄=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "SR = 01: Q Q̄ = 01",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S = R = 0 again: the loop keeps Q = 0. The latch remembers which input was 1 last.",
+   "patches": [
+    {
+     "id": "wSg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wRg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQbg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wtop",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wbot",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ltop",
+     "set": {
+      "text": "R=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lbot",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wqb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fqb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqb",
+     "set": {
+      "text": "Q̄=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "SR = 00: Q Q̄ = 01",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S = R = 1: both NORs see a 1, so Q = Q̄ = 0. The outputs are no longer complements: the forbidden input.",
+   "patches": [
+    {
+     "id": "wSg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wRg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQbg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wtop",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wbot",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ltop",
+     "set": {
+      "text": "R=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lbot",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wqb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fqb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqb",
+     "set": {
+      "text": "Q̄=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "SR = 11: Q Q̄ = 00",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Both inputs drop together: each gate sees 0, 0 and rises, then each sees a 1 and falls, again and again.",
+   "patches": [
+    {
+     "id": "wSg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wRg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQbg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wtop",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wbot",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ltop",
+     "set": {
+      "text": "R=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lbot",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wqb",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "fq",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "fqb",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q osc",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "lqb",
+     "set": {
+      "text": "Q̄ osc",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "oscillating: 00 → 11 → 00 → 11 …",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "With equal gate delays the race never ends. With unequal delays the faster gate wins, so the final Q cannot be predicted.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "release from 11 → 00: a race",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

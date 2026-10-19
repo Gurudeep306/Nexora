@@ -10,6 +10,8 @@ export const LABS = {
   'kmap-solver': lazy(() => import('./KmapSolver')),
   'comb-workbench': lazy(() => import('./CombWorkbench')),
   'adder-race': lazy(() => import('./AdderRace')),
+  'flipflop-scope': lazy(() => import('./FlipflopScope')),
+  'counter-fsm': lazy(() => import('./CounterFsm')),
 } as const
 
 export type LabName = keyof typeof LABS
