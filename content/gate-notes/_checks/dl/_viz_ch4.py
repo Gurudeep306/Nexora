@@ -317,7 +317,233 @@ def pipeline_adder(L):
                   "Registers R0, R1, R2 separate three full adders; each stage adds one bit position. A and B enter R0 at every clock.")
 
 
-ORDER = ["half-adder-design", "full-adder-from-has", "ripple-carry-wave", "pipeline-adder"]
+# ── Lesson 2: carry look-ahead ─────────────────────────────────────────────
+
+@scene
+def rca_vs_cla_timing(L):
+    s = S(L)
+    W, NW = 700, 360
+    n = 16
+    tr = al.arrival(al.rca(n), al.inputs_of(n))
+    tc_ = al.arrival(al.cla(n), al.inputs_of(n))
+    R = [tr[f"c{i}"] for i in range(1, n + 1)]
+    C = [tc_[f"c{i}"] for i in range(1, n + 1)]
+    assert R == [2 * i + 1 for i in range(1, n + 1)] and max(C) == 7
+    endR = max(R[-1], max(tr[f"s{i}"] for i in range(n)))
+    endC = max(max(C), max(tc_[f"s{i}"] for i in range(n)))
+    assert (endR, endC) == (33, 8)
+    s.head("16-bit adder: when each carry is ready (unit gate delays)", "16-bit: ripple vs look-ahead", W, NW)
+    s.text("clk", s.v(W - 20, NW - 12), s.v(52, 46), "t = 0", s.v(16, 14), anchor="end", weight="bold", mono=True, tone="accent")
+
+    def row(prefix, y0, label):
+        if s.wd:
+            s.text(f"{prefix}lab", 40, y0 - 22, label, 14, anchor="start", weight="bold")
+            s.text(f"{prefix}hl", 40, y0 + 56, "c16", 13, anchor="start", tone="muted", mono=True)
+            s.text(f"{prefix}hr", 676, y0 + 56, "c1", 13, anchor="end", tone="muted", mono=True)
+            for k in range(n):
+                i = n - k  # carry index, c16 on the left
+                s.box(f"{prefix}{i}", 40 + 40 * k, y0, 36, 36, label="", size=13, mono=True)
+        else:
+            s.text(f"{prefix}lab", 12, y0 - 20, label, 13, anchor="start", weight="bold")
+            for r in range(2):
+                for k in range(8):
+                    i = n - 8 * r - k
+                    s.box(f"{prefix}{i}", 12 + 42 * k, y0 + 44 * r, 38, 36, label="", size=12, mono=True)
+            s.text(f"{prefix}hl", 12, y0 + 98, "c16 … c9 / c8 … c1", 12, anchor="start", tone="muted", mono=True)
+
+    row("r", s.v(84, 80), "Ripple-carry: c_i ready at 2i + 1")
+    row("k", s.v(196, 240), "Carry look-ahead (fan-in 4, two levels)")
+    s.text("res", s.v(W / 2, NW / 2), s.v(286, 396), "", s.v(15, 13), anchor="middle", weight="bold")
+    times = sorted(set(R + C + [endR, endC]))
+    for t in times:
+        newR = [i for i in range(1, n + 1) if R[i - 1] == t]
+        newC = [i for i in range(1, n + 1) if C[i - 1] == t]
+        pats = [("clk", {"text": f"t = {t}"})]
+        for i in range(1, n + 1):
+            for p, arr in (("r", R), ("k", C)):
+                ready = arr[i - 1] <= t
+                pats.append((f"{p}{i}", {"label": str(arr[i - 1]) if ready else "", "fill": "success" if ready else "none",
+                                         "tone": "accent" if arr[i - 1] == t else "ink"}))
+        parts = []
+        if newR:
+            parts.append(f"ripple: c{newR[0]} ready")
+        if newC:
+            parts.append("look-ahead: " + ", ".join(f"c{i}" for i in newC) + " ready")
+        if t == endC:
+            parts.append("look-ahead's last sum done at 8")
+        if t == endR:
+            parts = ["ripple: c16 ready; ripple done at 33"]
+        cap = f"t = {t}: " + "; ".join(parts) + "."
+        if t == 3:
+            cap += " Both adders have c1, but look-ahead also has c2 and c3."
+        res = {"text": f"done: look-ahead {endC}, ripple {endR} gate delays", "tone": "accent"} if t == endR else {"text": ""}
+        s.step(cap, *pats, ("res", res))
+    return s.done("Ready times of the carries in a 16-bit ripple-carry and a carry look-ahead adder", (W, 310), (NW, 420),
+                  "Each box is one carry, c16 on the left, c1 on the right. It fills with its ready time when it settles. Every gate costs one unit.")
+
+
+@scene
+def cla_gp_tree(L):
+    s = S(L)
+    W, NW = 700, 360
+    n = 16
+    net = al.cla(n)
+    t = al.arrival(net, al.inputs_of(n))
+    tG = [t[f"G{4 * j}_{4 * j + 4}"] for j in range(4)]
+    tP = [t[f"P{4 * j}_{4 * j + 4}"] for j in range(4)]
+    top = [t[f"c{4 * j + 4}"] for j in range(4)]
+    inner = [max(t[f"c{4 * j + k}"] for k in (1, 2, 3)) for j in range(4)]
+    sums = [max(t[f"s{4 * j + k}"] for k in range(4)) for j in range(4)]
+    ts = [t[f"s{i}"] for i in range(n)]
+    assert ts[4] == 5 and ts[8] == ts[12] == 6 and max(ts[5:8]) == 7 and [i for i in range(n) if ts[i] == 8] == [9, 10, 11, 13, 14, 15]
+    assert max(ts[0:4]) == 4
+    assert tG == [3] * 4 and tP == [2] * 4 and top == [4, 5, 5, 5] and inner == [3, 6, 7, 7] and sums == [4, 7, 8, 8]
+    s.head("Two-level carry look-ahead for 16 bits: up the tree, then down", "16-bit CLA: up, then down", W, NW)
+    s.text("clk", s.v(W - 20, NW - 12), s.v(46, 46), "t = 0", s.v(16, 14), anchor="end", weight="bold", mono=True, tone="accent")
+    yA, yB, yC, yD, yE = s.v(70, 72), s.v(140, 140), s.v(214, 212), s.v(290, 286), s.v(364, 360)
+    if s.wd:
+        bx = [40 + 160 * (3 - j) for j in range(4)]  # block j's x (block 0 on the right)
+        bw = 156
+        for i in range(n):
+            x = 40 + 40 * (n - 1 - i)
+            s.box(f"pg{i}", x, yA, 36, 34, label=str(i), size=13, mono=True)
+            s.line(f"wa{i}", [[x + 18, yA + 34], [x + 18, yB]])
+            s.box(f"sm{i}", x, yE, 36, 34, label=f"s{i}", size=13, mono=True)
+            s.line(f"we{i}", [[x + 18, yD + 40], [x + 18, yE]])
+        s.text("rowA", 40, yA - 14, "level 1: p_i = a_i ⊕ b_i, g_i = a_i b_i (bit 15 … 0)", 13, anchor="start", tone="muted")
+        s.text("rowE", 40, yE + 50, "sums s_i = p_i ⊕ c_i", 13, anchor="start", tone="muted")
+    else:
+        bx = [10 + 87 * (3 - j) for j in range(4)]
+        bw = 81
+        for j in range(4):
+            s.box(f"npg{j}", bx[j], yA, bw, 34, label=f"p,g {4 * j + 3}–{4 * j}", size=12)
+            s.line(f"nwa{j}", [[bx[j] + bw / 2, yA + 34], [bx[j] + bw / 2, yB]])
+            s.box(f"nsm{j}", bx[j], yE, bw, 34, label=f"s {4 * j + 3}–{4 * j}", size=12)
+            s.line(f"nwe{j}", [[bx[j] + bw / 2, yD + 40], [bx[j] + bw / 2, yE]])
+        s.text("rowA", 10, yA - 14, "level 1: p_i, g_i", 12, anchor="start", tone="muted")
+        s.text("rowE", 10, yE + 50, "sums s_i = p_i ⊕ c_i", 12, anchor="start", tone="muted")
+    for j in range(4):
+        s.box(f"gp{j}", bx[j], yB, bw, 40, label=s.v(f"block {j}: G, P", f"G,P {j}"), size=s.v(14, 12))
+        s.line(f"wb{j}", [[bx[j] + bw / 2, yB + 40], [bx[j] + bw / 2, yC]])
+        s.box(f"in{j}", bx[j], yD, bw, 40, label=s.v(f"c{4 * j + 1}–c{4 * j + 3}", f"c{4 * j + 1}–{4 * j + 3}"), size=s.v(14, 12))
+        s.line(f"wc{j}", [[bx[j] + bw / 2, yC + 40], [bx[j] + bw / 2, yD]])
+    x0, x1 = bx[3], bx[0] + bw
+    s.box("unit", x0, yC, x1 - x0, 40, label=s.v("second-level lookahead: c4, c8, c12, c16", "lookahead: c4 c8 c12 c16"), size=s.v(14, 12))
+    steps = [
+        (1, "t = 1: every bit makes p_i = a_i ⊕ b_i and g_i = a_i b_i in one gate level, all 16 in parallel.", [("pg", "all")]),
+        (2, "t = 2: each block's P = p3 p2 p1 p0 is one AND of its four p's.", []),
+        (3, "t = 3: each block's G = g3 + p3g2 + p3p2g1 + p3p2p1g0 (AND then OR). Block 0's c1–c3 are ready too.", [("gp", "all"), ("in", [0])]),
+        (4, "t = 4: c4 = G0 + P0·c0 from the second-level unit; the sums s0–s3 are done.", [("sm", [0])]),
+        (5, "t = 5: c8, c12, c16 = G + PG + PPG + … over the blocks: the top of the tree is done; s4 is done.", [("unit", "all")]),
+        (6, "t = 6: going down: block 1 makes c5–c7 from c4 in two levels; s8 and s12 are done.", [("in", [1])]),
+        (7, "t = 7: blocks 2 and 3 make c9–c11 and c13–c15 from c8 and c12; s5–s7 are done.", [("in", [2, 3]), ("sm", [1])]),
+        (8, "t = 8: the last sums s9–s11 and s13–s15 are done. 8 gate delays, against 33 for a ripple adder.", [("sm", [2, 3])]),
+    ]
+    lit = set()
+    for tt, cap, what in steps:
+        pats = [("clk", {"text": f"t = {tt}"})]
+        for kind, which in what:
+            js = range(4) if which == "all" else which
+            if kind == "pg":
+                if s.wd:
+                    pats += [(f"pg{i}", {"fill": "success"}) for i in range(n)]
+                else:
+                    pats += [(f"npg{j}", {"fill": "success"}) for j in range(4)]
+            elif kind == "sm":
+                for j in js:
+                    if s.wd:
+                        pats += [(f"sm{4 * j + k}", {"fill": "success"}) for k in range(4)]
+                    else:
+                        pats.append((f"nsm{j}", {"fill": "success"}))
+            elif kind == "unit":
+                pats.append(("unit", {"fill": "success", "tone": "accent"}))
+                pats += [(f"wc{j}", {"tone": "accent"}) for j in range(4)]
+            else:
+                for j in js:
+                    pats.append((f"{kind}{j}", {"fill": "success", "tone": "accent"}))
+                    if kind == "gp":
+                        pats.append((f"wb{j}", {"tone": "accent"}))
+        if tt == 2:
+            pats += [(f"gp{j}", {"tone": "accent"}) for j in range(4)]
+        s.step(cap, *pats)
+        lit.add(tt)
+    assert max(sums) == 8
+    return s.done("A two-level carry look-ahead tree for a 16-bit adder", (W, 430), (NW, 430),
+                  "Sixteen bit pairs make p and g; four blocks make group G and P; a second-level unit makes the block carries; each block then makes its inner carries and sums.")
+
+
+@scene
+def carry_select(L):
+    s = S(L)
+    W, NW = 700, 360
+    A, B = 0b01101011, 0b00110110
+    net = al.carry_select(8, 4)
+    t = al.arrival(net, al.inputs_of(8), {"MUX": 2})
+    v = cl.evaluate(net, al.env_of(8, A, B))
+    assert al.word(v, "s", 8) == (A + B) % 256 and v["c8"] == (A + B) >> 8
+    lo = (A & 15) + (B & 15)
+    up0, up1 = (A >> 4) + (B >> 4), (A >> 4) + (B >> 4) + 1
+    c4 = lo >> 4
+    assert c4 == 1 and t["c4"] == 9 and max(t[f"s{i}"] for i in range(8)) == 11 and al.rca_delay_unit(8) == 17
+    s.head("Carry-select: compute the upper half both ways, then choose", "Carry-select adder (8 bits)", W, NW)
+    s.text("clk", s.v(W - 20, NW - 12), s.v(46, 46), "t = 0", s.v(16, 14), anchor="end", weight="bold", mono=True, tone="accent")
+    if s.wd:
+        u0 = (40, 92, 220, 50)
+        u1 = (40, 172, 220, 50)
+        mx = (330, 104, 120, 106)
+        lw = (470, 232, 200, 54)
+    else:
+        u0 = (20, 84, 150, 50)
+        u1 = (190, 84, 150, 50)
+        mx = (120, 176, 120, 60)
+        lw = (80, 320, 200, 54)
+    s.text("inU", s.v(150, 180), s.v(70, 66), f"a7–4 = {A >> 4:04b}, b7–4 = {B >> 4:04b}", s.v(14, 12), anchor="middle", mono=True)
+    s.box("u0", *u0, label="upper, carry in 0", size=s.v(14, 12))
+    s.box("u1", *u1, label="upper, carry in 1", size=s.v(14, 12))
+    s.box("mx", *mx, label="2:1 MUX", size=s.v(14, 12))
+    s.box("lw", *lw, label="lower 4 bits", size=s.v(14, 12))
+    s.text("inL", lw[0] + lw[2] / 2, lw[1] - 14, f"a3–0 = {A & 15:04b}, b3–0 = {B & 15:04b}", s.v(14, 12), anchor="middle", mono=True)
+    if s.wd:
+        s.line("w0", [[u0[0] + u0[2], u0[1] + 25], [300, u0[1] + 25], [300, 130], [mx[0], 130]], tone="muted")
+        s.line("w1", [[u1[0] + u1[2], u1[1] + 25], [300, u1[1] + 25], [300, 184], [mx[0], 184]], tone="muted")
+        s.line("wc", [[lw[0], lw[1] + 27], [390, lw[1] + 27], [390, mx[1] + mx[3]]], tone="muted")
+        s.line("wo", [[mx[0] + mx[2], 157], [500, 157]], tone="muted")
+        s.text("vo", 506, 157, "s7–4 = ?", 14, anchor="start", mono=True, weight="bold")
+        s.line("wl", [[lw[0] + lw[2] / 2, lw[1] + lw[3]], [lw[0] + lw[2] / 2, lw[1] + lw[3] + 16]], tone="muted")
+        s.text("vl", lw[0] + lw[2] / 2, lw[1] + lw[3] + 30, "s3–0 = ?", 14, anchor="middle", mono=True, weight="bold")
+        s.text("vc", 380, 270, "c4 = ?", 14, anchor="end", mono=True)
+        s.text("v0", u0[0] + u0[2] / 2, u0[1] + u0[3] + 12, "", 13, anchor="middle", mono=True)
+        s.text("v1", u1[0] + u1[2] / 2, u1[1] + u1[3] + 12, "", 13, anchor="middle", mono=True)
+    else:
+        s.line("w0", [[u0[0] + u0[2] / 2, u0[1] + u0[3]], [u0[0] + u0[2] / 2, 160], [150, 160], [150, mx[1]]], tone="muted")
+        s.line("w1", [[u1[0] + u1[2] / 2, u1[1] + u1[3]], [u1[0] + u1[2] / 2, 160], [210, 160], [210, mx[1]]], tone="muted")
+        s.line("wc", [[lw[0] + lw[2] / 2, lw[1] - 28], [lw[0] + lw[2] / 2, 270], [180, 270], [180, mx[1] + mx[3]]], tone="muted")
+        s.line("wo", [[mx[0] + mx[2], mx[1] + 30], [262, mx[1] + 30]], tone="muted")
+        s.text("vo", 266, mx[1] + 30, "s7–4=?", 12, anchor="start", mono=True, weight="bold")
+        s.line("wl", [[lw[0] + lw[2] / 2, lw[1] + lw[3]], [lw[0] + lw[2] / 2, lw[1] + lw[3] + 14]], tone="muted")
+        s.text("vl", lw[0] + lw[2] / 2, lw[1] + lw[3] + 28, "s3–0 = ?", 12, anchor="middle", mono=True, weight="bold")
+        s.text("vc", 194, 256, "c4 = ?", 12, anchor="start", mono=True)
+        s.text("v0", u0[0] + u0[2] / 2, u0[1] - 0 - 6 + 0, "", 12, anchor="middle", mono=True, hidden=True)
+        s.text("v1", u1[0] + u1[2] / 2, u1[1] - 6, "", 12, anchor="middle", mono=True, hidden=True)
+    s.step("t = 0: all three 4-bit ripple adders start at once. The upper half does not wait: it adds both ways, with carry in 0 and 1.")
+    s.step(f"t = 9: the upper adders finish: {up0 % 16:04b} (carry {up0 >> 4}) and {up1 % 16:04b} (carry {up1 >> 4}).",
+           ("clk", {"text": "t = 9"}), ("u0", {"label": f"c=0: {up0 % 16:04b}, out {up0 >> 4}", "fill": "success"}),
+           ("u1", {"label": f"c=1: {up1 % 16:04b}, out {up1 >> 4}", "fill": "success"}),
+           ("w0", {"tone": "ink"}), ("w1", {"tone": "ink"}))
+    s.step(f"t = 9 too: the lower adder gives {lo % 16:04b} with carry c4 = {c4}. Every adder took 2 × 4 + 1 = 9 gate delays.",
+           ("lw", {"label": f"lower: {lo % 16:04b}", "fill": "success"}), ("wl", {"tone": "success"}),
+           ("vl", {"text": f"s3–0 = {lo % 16:04b}", "tone": "success"}), ("wc", {"tone": "accent"}), ("vc", {"text": f"c4 = {c4}", "tone": "accent"}))
+    s.step(f"t = 11: c4 = 1 selects the 'carry in 1' result through the MUX (2 gate levels): s7–4 = {up1 % 16:04b}, carry out {up1 >> 4}.",
+           ("clk", {"text": "t = 11"}), ("mx", {"tone": "accent", "fill": "success"}), ("w1", {"tone": "accent"}), ("w0", {"tone": "muted"}),
+           ("u0", {"fill": "none"}), ("wo", {"tone": "success"}), ("vo", {"text": s.v(f"s7–4 = {up1 % 16:04b}", f"{up1 % 16:04b}"), "tone": "success"}))
+    s.step(f"Sum {(A + B) % 256:08b} = {A} + {B} = {A + B} after 11 gate delays; an 8-bit ripple adder needs 17. The price: a third adder and the MUXes.",
+           ("u0", {"fill": "none"}))
+    return s.done("A carry-select adder choosing between two precomputed upper halves", (W, 330), (NW, 420),
+                  "An 8-bit carry-select adder: a lower 4-bit ripple adder, two upper 4-bit ripple adders (carry in 0 and carry in 1) and a row of 2:1 MUXes driven by the lower carry c4.")
+
+
+ORDER = ["half-adder-design", "full-adder-from-has", "ripple-carry-wave", "pipeline-adder",
+         "rca-vs-cla-timing", "cla-gp-tree", "carry-select"]
 
 
 def build_all():

@@ -186,7 +186,7 @@ adders.
 3. An **OR** gate merges the two carries: $C_{out} = g + t = AB + C_{in}(A \oplus B)$.
 
 Five gates: 2 XOR, 2 AND, 1 OR. The names $p$ and $g$ are deliberate: they are the **propagate** and
-**generate** signals of Lesson 2, where the whole carry look-ahead adder is
+**generate** signals of [Lesson 2](lesson:carry-look-ahead), where the whole carry look-ahead adder is
 built from them.
 :::
 

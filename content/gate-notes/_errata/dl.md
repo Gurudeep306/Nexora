@@ -224,6 +224,19 @@ PYQ pipeline, not a set error).
     y′ → I3 and A1; z → A0; z′ → EN); with an active-high enable $f = xy\bar z$, key (A).
   - Interpretations kept: `cse-1992-b-4-b` (output codes not given; A → 11, B → 10, C → 01 assumed, flag
     kept), `cse-2000-b-9-b` ("one two-input gate" read as an OR; the 2000 paper is not in `GATE_PYQ/`).
+- **Arithmetic-circuits key audit (Chapter 4 since the 2026-10-19 reorder, written 2026-10-19):** all 14 keys
+  are re-derived in `_checks/dl/l4_01 … l4_04` from `arithlib` gate netlists (exhaustive or 3000-sample
+  simulation against integer arithmetic, static arrival times with the delay per gate type each question
+  states, and a transport-delay simulation for data-dependent settling). None is wrong.
+  - `cse-2015-2-cs-48` (**flag cleared**, `src/gate/fixes/cse-2015-2.json`): the key 19.2 is the **block
+    model**, four full adders of 4.8 µs each (sum XOR + XOR, carry XOR + AND + OR, with XOR = 2.4 µs and
+    AND/OR = 1.2 µs); an exam archive lists 19.2 as the official answer. The gate-level critical path is
+    4.8 + 3 × 2.4 = 12 µs. The lesson teaches both (`delay-models`, `trap-block-vs-gate`).
+  - `cse-2006-cs-36` (flag kept): the 2006 scan (`GATE2006.pdf` p. 5, Q36) prints the options as an illegible
+    bitmap (only the 7-term shape of A and B is readable), so B–D as transcribed cannot be confirmed. Key A is
+    proved independently: it equals $G_2 + P_2G_1 + P_2P_1G_0$ with $P_i = a_i + b_i$ (carry in 0), and B–D as
+    transcribed are not equal to it.
+  - `cse-2016-2-cs-7`: B = −1 is the unique slowest operand with A = 1 (transport simulation over all 256 B).
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,

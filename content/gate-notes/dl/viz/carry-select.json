@@ -1,0 +1,573 @@
+{
+ "version": 1,
+ "title": "A carry-select adder choosing between two precomputed upper halves",
+ "width": 700,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 420
+ },
+ "intro": "An 8-bit carry-select adder: a lower 4-bit ripple adder, two upper 4-bit ripple adders (carry in 0 and carry in 1) and a row of 2:1 MUXes driven by the lower carry c4.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Carry-select: compute the upper half both ways, then choose",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Carry-select adder (8 bits)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "clk",
+   "type": "text",
+   "x": 680,
+   "y": 46,
+   "text": "t = 0",
+   "size": 16,
+   "anchor": "end",
+   "weight": "bold",
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 348,
+    "size": 14
+   }
+  },
+  {
+   "id": "inU",
+   "type": "text",
+   "x": 150,
+   "y": 70,
+   "text": "a7–4 = 0110, b7–4 = 0011",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 66,
+    "size": 12
+   }
+  },
+  {
+   "id": "u0",
+   "type": "box",
+   "x": 40,
+   "y": 92,
+   "w": 220,
+   "h": 50,
+   "label": "upper, carry in 0",
+   "size": 14,
+   "narrow": {
+    "x": 20,
+    "y": 84,
+    "w": 150,
+    "size": 12
+   }
+  },
+  {
+   "id": "u1",
+   "type": "box",
+   "x": 40,
+   "y": 172,
+   "w": 220,
+   "h": 50,
+   "label": "upper, carry in 1",
+   "size": 14,
+   "narrow": {
+    "x": 190,
+    "y": 84,
+    "w": 150,
+    "size": 12
+   }
+  },
+  {
+   "id": "mx",
+   "type": "box",
+   "x": 330,
+   "y": 104,
+   "w": 120,
+   "h": 106,
+   "label": "2:1 MUX",
+   "size": 14,
+   "narrow": {
+    "x": 120,
+    "y": 176,
+    "h": 60,
+    "size": 12
+   }
+  },
+  {
+   "id": "lw",
+   "type": "box",
+   "x": 470,
+   "y": 232,
+   "w": 200,
+   "h": 54,
+   "label": "lower 4 bits",
+   "size": 14,
+   "narrow": {
+    "x": 80,
+    "y": 320,
+    "size": 12
+   }
+  },
+  {
+   "id": "inL",
+   "type": "text",
+   "x": 570.0,
+   "y": 218,
+   "text": "a3–0 = 1011, b3–0 = 0110",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 306,
+    "size": 12
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     260,
+     117
+    ],
+    [
+     300,
+     117
+    ],
+    [
+     300,
+     130
+    ],
+    [
+     330,
+     130
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      95.0,
+      134
+     ],
+     [
+      95.0,
+      160
+     ],
+     [
+      150,
+      160
+     ],
+     [
+      150,
+      176
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     260,
+     197
+    ],
+    [
+     300,
+     197
+    ],
+    [
+     300,
+     184
+    ],
+    [
+     330,
+     184
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      265.0,
+      134
+     ],
+     [
+      265.0,
+      160
+     ],
+     [
+      210,
+      160
+     ],
+     [
+      210,
+      176
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wc",
+   "type": "line",
+   "points": [
+    [
+     470,
+     259
+    ],
+    [
+     390,
+     259
+    ],
+    [
+     390,
+     210
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      292
+     ],
+     [
+      180.0,
+      270
+     ],
+     [
+      180,
+      270
+     ],
+     [
+      180,
+      236
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo",
+   "type": "line",
+   "points": [
+    [
+     450,
+     157
+    ],
+    [
+     500,
+     157
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      240,
+      206
+     ],
+     [
+      262,
+      206
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vo",
+   "type": "text",
+   "x": 506,
+   "y": 157,
+   "text": "s7–4 = ?",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "vo-n",
+   "type": "text",
+   "x": 266,
+   "y": 206,
+   "text": "s7–4=?",
+   "size": 12,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "wl",
+   "type": "line",
+   "points": [
+    [
+     570.0,
+     286
+    ],
+    [
+     570.0,
+     302
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      374
+     ],
+     [
+      180.0,
+      388
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vl",
+   "type": "text",
+   "x": 570.0,
+   "y": 316,
+   "text": "s3–0 = ?",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 402,
+    "size": 12
+   }
+  },
+  {
+   "id": "vc",
+   "type": "text",
+   "x": 380,
+   "y": 270,
+   "text": "c4 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 194,
+    "y": 256,
+    "size": 12,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "v0",
+   "type": "text",
+   "x": 150.0,
+   "y": 154,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "v0-n",
+   "type": "text",
+   "x": 95.0,
+   "y": 78,
+   "text": "",
+   "size": 12,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "v1",
+   "type": "text",
+   "x": 150.0,
+   "y": 234,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "v1-n",
+   "type": "text",
+   "x": 265.0,
+   "y": 78,
+   "text": "",
+   "size": 12,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "t = 0: all three 4-bit ripple adders start at once. The upper half does not wait: it adds both ways, with carry in 0 and 1.",
+   "patches": []
+  },
+  {
+   "caption": "t = 9: the upper adders finish: 1001 (carry 0) and 1010 (carry 0).",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 9"
+     }
+    },
+    {
+     "id": "u0",
+     "set": {
+      "label": "c=0: 1001, out 0",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "label": "c=1: 1010, out 0",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 9 too: the lower adder gives 0001 with carry c4 = 1. Every adder took 2 × 4 + 1 = 9 gate delays.",
+   "patches": [
+    {
+     "id": "lw",
+     "set": {
+      "label": "lower: 0001",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wl",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vl",
+     "set": {
+      "text": "s3–0 = 0001",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wc",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vc",
+     "set": {
+      "text": "c4 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 11: c4 = 1 selects the 'carry in 1' result through the MUX (2 gate levels): s7–4 = 1010, carry out 0.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 11"
+     }
+    },
+    {
+     "id": "mx",
+     "set": {
+      "tone": "accent",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "u0",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo",
+     "set": {
+      "text": "s7–4 = 1010",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vo-n",
+     "set": {
+      "text": "1010",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Sum 10100001 = 107 + 54 = 161 after 11 gate delays; an 8-bit ripple adder needs 17. The price: a third adder and the MUXes.",
+   "patches": [
+    {
+     "id": "u0",
+     "set": {
+      "fill": "none"
+     }
+    }
+   ]
+  }
+ ]
+}
