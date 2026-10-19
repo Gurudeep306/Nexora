@@ -1956,24 +1956,29 @@
       "verification": "Ratio of throughputs 800/600 = 1.333, i.e. +33.33%."
     },
     "cse-2016-1-cs-33": {
-      "approach": "Carry lookahead computes all carries from generate/propagate signals; with fan-in-2 gates, the wide AND/OR terms become balanced trees of depth O(log n).",
+      "approach": "Concept tested: **CLA delay with bounded fan-in**. The two-level carry formula needs gates of fan-in up to $n + 1$; with fan-in at most two those become trees (or the adder becomes a multi-level CLA), giving $\\Theta(\\log n)$, which is also a lower bound for any adder.",
       "concepts": [
-        "Carry lookahead adder",
+        "Carry look-ahead",
         "Fan-in",
-        "Parallel prefix"
+        "Asymptotic delay"
       ],
+      "given": "An $n$-bit carry look-ahead adder built from gates of fan-in at most 2.",
       "steps": [
         {
-          "title": "Carry expression",
-          "body": "$c_{i+1}=g_i+p_ig_{i-1}+p_ip_{i-1}g_{i-2}+\\cdots+p_i\\cdots p_0c_0$, with $g_i=a_ib_i$, $p_i=a_i\\oplus b_i$. With unbounded fan-in this is 2 levels → $\\Theta(1)$."
+          "title": "Why not constant",
+          "body": "$c_n$ contains the product $p_{n-1}\\cdots p_0c_0$ ($n + 1$ inputs) and is an OR of $n + 1$ terms. With 2-input gates, each wide AND or OR is a balanced tree of depth $\\lceil\\log_2(n+1)\\rceil$."
         },
         {
-          "title": "Fan-in limited to 2",
-          "body": "An AND or OR of up to $n+1$ inputs built from 2-input gates is a balanced tree of depth $\\lceil\\log_2(n+1)\\rceil$. Equivalently, a parallel-prefix (Brent–Kung / Kogge–Stone) carry network has $\\Theta(\\log n)$ levels. Total time $=\\Theta(\\log n)$."
+          "title": "Upper bound",
+          "body": "Equivalently build a multi-level CLA with 2-way blocks: $\\log_2 n$ levels, each a constant number of gate delays up and down. Delay $O(\\log n)$."
+        },
+        {
+          "title": "Lower bound",
+          "body": "$c_n$ depends on all $2n + 1$ inputs; a circuit of depth $D$ with fan-in 2 lets an output see at most $2^D$ inputs, so $D \\ge \\log_2(2n+1)$. Hence $\\Theta(\\log n)$."
         }
       ],
       "answer": {
-        "value": "$\\Theta(\\log n)$",
+        "value": "B: Θ(log n)",
         "choice": [
           "B"
         ],
@@ -1983,28 +1988,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Constant time needs gates with fan-in growing with $n$; not allowed here."
+          "reason": "Θ(1) holds only if gates of unbounded fan-in cost one unit; fan-in 2 forbids that."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct: fan-in-2 trees give logarithmic depth."
+          "reason": "Fan-in 2 forces logarithmic-depth trees, and $\\log_2(2n+1)$ is also a lower bound."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\Theta(\\sqrt n)$ is a carry-select / block structure bound, not a full lookahead."
+          "reason": "Θ(√n) is the carry-select or carry-skip adder with √n-bit blocks, not a look-ahead adder."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\Theta(n)$ is the ripple-carry adder."
+          "reason": "Θ(n) is the ripple-carry adder."
         }
       ],
+      "shortcut": "Bounded fan-in + look-ahead ⇒ tree ⇒ $\\log n$.",
       "pitfalls": [
-        "Answering Θ(1) from the textbook \"two-level\" CLA, which assumes unlimited fan-in."
+        "Answering Θ(1) from the 'two-level' formula, ignoring the fan-in limit.",
+        "Confusing look-ahead with carry-select (√n) or ripple (n)."
       ],
-      "verification": "Official GATE 2016 key: Θ(log n)."
+      "verification": "l4_02_cla.py measures 2-way multi-level look-ahead netlists: 4, 7, 11, 15 gate delays for 2, 4, 8, 16 bits (a constant per doubling), every gate with fan-in at most 3 (each splits into two 2-input gates)."
     },
     "cse-2016-1-cs-34": {
       "approach": "The loop keeps the maximum inside [a, b] by discarding the smaller end each time; it must stop exactly when the window shrinks to one element, i.e. when a == b.",

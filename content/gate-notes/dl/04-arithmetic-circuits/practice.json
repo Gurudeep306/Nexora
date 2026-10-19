@@ -423,5 +423,391 @@
    "or-not-xor"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q01",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "For $a = 1100$ and $b = 1010$ (bits 3 … 0), with $g_i = a_ib_i$ and $p_i = a_i \\oplus b_i$, which are 1?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$g_3$"
+   },
+   {
+    "l": "B",
+    "t": "$p_2$"
+   },
+   {
+    "l": "C",
+    "t": "$p_1$"
+   },
+   {
+    "l": "D",
+    "t": "$g_0$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "$g = a \\,\\&\\, b = 1000$: only $g_3 = 1$.",
+   "$p = a \\oplus b = 0110$: $p_2 = p_1 = 1$.",
+   "$g_0 = 0 \\cdot 0 = 0$."
+  ],
+  "concept": "Generate is the column AND, propagate the column XOR.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Column 0 has $a_0 = b_0 = 0$: it kills, it does not generate."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "Columns 2 and 1 each have exactly one 1, so they propagate."
+   }
+  ],
+  "blocks": [
+   "generate-propagate"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "In a carry look-ahead adder with $g_i = a_ib_i$, $p_i = a_i \\oplus b_i$ and carry in $c_0$, the carry $c_2$ is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$g_1 + p_1g_0 + p_1p_0c_0$"
+   },
+   {
+    "l": "B",
+    "t": "$g_1 + p_1g_0 + p_0c_0$"
+   },
+   {
+    "l": "C",
+    "t": "$g_1g_0 + p_1p_0c_0$"
+   },
+   {
+    "l": "D",
+    "t": "$p_1 + g_1g_0 + c_0$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$c_1 = g_0 + p_0c_0$.",
+   "$c_2 = g_1 + p_1c_1 = g_1 + p_1g_0 + p_1p_0c_0$.",
+   "Each term is a source (column 1, column 0, the carry in) times the $p$'s above it."
+  ],
+  "concept": "Unroll $c_{i+1} = g_i + p_ic_i$.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "A carry in reaches column 2 only if columns 0 **and** 1 propagate: the term needs $p_1$ too."
+   },
+   {
+    "answer": "C",
+    "why": "$g_1g_0$ is not a source; a single generating column suffices."
+   }
+  ],
+  "blocks": [
+   "cla-expansion",
+   "carry-recurrence"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A two-level AND-OR look-ahead carry generator receives $p_i$, $g_i$ ($i = 0 \\dots 5$) and $c_0$ and produces $c_1, \\dots, c_6$. Gates of any fan-in are available. How many AND gates does it need?",
+  "answer": 21,
+  "solution": [
+   "$c_k$ has $k + 1$ terms: $g_{k-1}$ (a literal, no AND) and $k$ products.",
+   "Total ANDs $= 1 + 2 + \\dots + 6 = 21$ (and 6 ORs)."
+  ],
+  "concept": "$n(n+1)/2$ AND gates for an $n$-bit two-level carry unit.",
+  "common_wrong": [
+   {
+    "answer": 27,
+    "why": "Counts the bare $g_{k-1}$ of every carry as an AND gate too."
+   },
+   {
+    "answer": 15,
+    "why": "$1 + \\dots + 5$ stops at $c_5$."
+   }
+  ],
+  "blocks": [
+   "cla-gate-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "An 8-bit adder computes all its carries with a single two-level look-ahead unit (gates of any fan-in). Every gate, XOR included, takes 1 unit. What is the adder's delay in units?",
+  "answer": 4,
+  "solution": [
+   "$p_i, g_i$: 1 level.",
+   "Every carry: AND then OR, ready at 3, whatever its index.",
+   "Sums $p_i \\oplus c_i$: at 4."
+  ],
+  "concept": "A single-level CLA has a fixed depth (with unbounded fan-in): P/G, AND, OR, XOR.",
+  "common_wrong": [
+   {
+    "answer": 17,
+    "why": "$2n + 1$ is the ripple-carry adder."
+   },
+   {
+    "answer": 3,
+    "why": "That is when the carries are ready; the sums need one more XOR."
+   }
+  ],
+  "blocks": [
+   "cla-delay",
+   "cla-4bit"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "In a single-level two-level look-ahead unit for a 6-bit adder (carries $c_1 \\dots c_6$ from $p_i$, $g_i$, $c_0$), what is the largest fan-in of any gate?",
+  "answer": 7,
+  "solution": [
+   "$c_6 = g_5 + p_5g_4 + \\dots + p_5p_4p_3p_2p_1p_0c_0$.",
+   "Its last product has 7 literals ($p_5 \\dots p_0$, $c_0$), and the OR has 7 terms.",
+   "Largest fan-in: 7."
+  ],
+  "concept": "Fan-in of a single-level look-ahead unit grows as $n + 1$.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "Forgets the carry in $c_0$ in the last product (or the term $g_5$ in the OR)."
+   },
+   {
+    "answer": 21,
+    "why": "21 is the number of AND gates, not a fan-in."
+   }
+  ],
+  "blocks": [
+   "fan-in"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "An $n$-bit adder is to be built from gates of fan-in at most 3, each with unit delay. What is the best possible order of its worst-case delay?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Theta(1)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Theta(\\sqrt n)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Theta(n)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Theta(\\log n)$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Upper bound: a multi-level carry look-ahead adder with 2-way blocks uses gates of fan-in at most 3 and has $O(\\log n)$ delay.",
+   "Lower bound: the carry out depends on all $2n + 1$ inputs; depth $D$ with fan-in 3 reaches at most $3^D$ inputs, so $D \\ge \\log_3(2n+1)$.",
+   "So $\\Theta(\\log n)$."
+  ],
+  "concept": "Bounded fan-in makes $\\log n$ both achievable and necessary.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Constant depth needs unbounded fan-in."
+   },
+   {
+    "answer": "B",
+    "why": "√n is carry-select/carry-skip, not the best possible."
+   }
+  ],
+  "blocks": [
+   "cla-log-delay",
+   "trap-constant-time"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 16-bit two-level carry look-ahead adder (4-bit blocks, a second-level look-ahead unit) is built without XOR gates: every XOR (the $p_i$ and the sums) is two-level AND-OR logic with free complements. Every gate takes 1 unit. What is the worst-case delay?",
+  "answer": 10,
+  "solution": [
+   "$p_i$ at 2 (two-level XOR), $g_i$ at 1; block $P$ at 3, block $G$ at 4 (AND + OR over $p$'s and $g$'s).",
+   "Second-level carries $c_4 \\dots c_{16}$ by 6; inner block carries two levels later, by 8.",
+   "Sums $p_i \\oplus c_i$, two-level: by 10."
+  ],
+  "concept": "Each XOR stage costs 2 levels instead of 1; the look-ahead stages are unchanged.",
+  "common_wrong": [
+   {
+    "answer": 8,
+    "why": "8 is the delay with single-gate XORs."
+   },
+   {
+    "answer": 12,
+    "why": "Adds 2 for every stage, but the carry levels were already two-level."
+   }
+  ],
+  "blocks": [
+   "multi-level-cla",
+   "cla-delay"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 16-bit carry-select adder uses 4-bit ripple-carry blocks (full adders of two half adders and an OR); every gate takes 1 unit and a 2:1 MUX takes 2 units. Its worst-case delay is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "15"
+   },
+   {
+    "l": "B",
+    "t": "17"
+   },
+   {
+    "l": "C",
+    "t": "33"
+   },
+   {
+    "l": "D",
+    "t": "11"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Every 4-bit block (both copies) finishes by $2 \\cdot 4 + 1 = 9$; the lowest block's carry $c_4$ at 9.",
+   "Each of the three upper blocks adds one MUX on the carry chain: $c_8$ at 11, $c_{12}$ at 13, $c_{16}$ (and the top sums) at 15.",
+   "$9 + 2 \\times 3 = 15$."
+  ],
+  "concept": "Carry-select delay: first block + one MUX per later block.",
+  "common_wrong": [
+   {
+    "answer": "D",
+    "why": "11 is the 8-bit carry-select (one upper block)."
+   },
+   {
+    "answer": "C",
+    "why": "33 is the 16-bit ripple adder."
+   }
+  ],
+  "blocks": [
+   "carry-select"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A bit-serial adder (one full adder and a carry flip-flop) adds two 32-bit numbers. Its clock period is 5 ns. How many ns does one addition take?",
+  "answer": 160,
+  "solution": [
+   "One bit per clock: 32 clocks.",
+   "$32 \\times 5 = 160$ ns."
+  ],
+  "concept": "A serial adder trades hardware for time: $n$ clocks.",
+  "common_wrong": [
+   {
+    "answer": 5,
+    "why": "One clock adds only one bit position."
+   },
+   {
+    "answer": 325,
+    "why": "Uses the ripple formula $2n+1$ instead of clocks."
+   }
+  ],
+  "blocks": [
+   "serial-adder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Let $g_i = a_ib_i$, $p_i = a_i \\oplus b_i$ and $t_i = a_i + b_i$. Which statements are true for every input?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$c_{i+1} = g_i + t_ic_i$"
+   },
+   {
+    "l": "B",
+    "t": "$s_i = t_i \\oplus c_i$"
+   },
+   {
+    "l": "C",
+    "t": "$g_i$ and $p_i$ are never both 1"
+   },
+   {
+    "l": "D",
+    "t": "$g_i$ and $t_i$ can both be 1"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: true; $t_i$ and $p_i$ differ only at $a_i = b_i = 1$, where $g_i = 1$ makes the carry 1 anyway.",
+   "B: false; at $a_i = b_i = 1$, $c_i = 0$ the sum is 0 but $t_i \\oplus c_i = 1$.",
+   "C: true; $g_i = 1$ forces $a_i = b_i$, so $p_i = 0$.",
+   "D: true; at $a_i = b_i = 1$ both are 1."
+  ],
+  "concept": "The OR propagate is fine for carries, never for sums.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "B fails on $1 + 1$ with no carry in."
+   },
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "The carry recurrence also holds with the OR form, and $g_i = t_i = 1$ at $a_i = b_i = 1$."
+   }
+  ],
+  "blocks": [
+   "p-xor-or",
+   "trap-p-or"
+  ],
+  "source": "nexora"
  }
 ]

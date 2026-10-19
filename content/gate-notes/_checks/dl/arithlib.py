@@ -217,6 +217,21 @@ def order(net):
     return out
 
 
+def cla_blocks_rippled(n, k=4, cin="c0"):
+    """k-bit carry look-ahead blocks whose carries ripple from block to block (each block's carry
+    out c_{4j+4} comes from its own two-level lookahead on the block's carry in)."""
+    net = []
+    for i in range(n):
+        net += [(f"p{i}", "XOR", [f"a{i}", f"b{i}"]), (f"g{i}", "AND", [f"a{i}", f"b{i}"])]
+    for lo in range(0, n, k):
+        cb = cin if lo == 0 else f"c{lo}"
+        idx = range(lo, lo + k)
+        net += lookahead([f"g{i}" for i in idx], [f"p{i}" for i in idx], cb, [f"c{i + 1}" for i in idx], f"R{lo}")
+    for i in range(n):
+        net.append((f"s{i}", "XOR", [f"p{i}", cin if i == 0 else f"c{i}"]))
+    return order(net)
+
+
 def carry_select(n, blk, cin="c0"):
     """Carry-select adder: the first block is a plain ripple adder; every later block has two ripple
     adders (carry in 0 and 1) and 2:1 MUXes that pick the sums and the carry by the previous block's

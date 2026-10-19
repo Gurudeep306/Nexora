@@ -85,7 +85,8 @@
           "pyqs": 14,
           "status": "in-progress",
           "lessons_status": {
-            "adders-ripple-carry": "written"
+            "adders-ripple-carry": "written",
+            "carry-look-ahead": "written"
           },
           "live_lab": "Adder Race (:::lab adder-race: race, scaling)"
         },

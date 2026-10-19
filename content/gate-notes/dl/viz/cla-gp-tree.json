@@ -1,0 +1,2118 @@
+{
+ "version": 1,
+ "title": "A two-level carry look-ahead tree for a 16-bit adder",
+ "width": 700,
+ "height": 430,
+ "narrow": {
+  "width": 360,
+  "height": 430
+ },
+ "intro": "Sixteen bit pairs make p and g; four blocks make group G and P; a second-level unit makes the block carries; each block then makes its inner carries and sums.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Two-level carry look-ahead for 16 bits: up the tree, then down",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "16-bit CLA: up, then down",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "clk",
+   "type": "text",
+   "x": 680,
+   "y": 46,
+   "text": "t = 0",
+   "size": 16,
+   "anchor": "end",
+   "weight": "bold",
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 348,
+    "size": 14
+   }
+  },
+  {
+   "id": "npg0",
+   "type": "box",
+   "x": 271,
+   "y": 72,
+   "w": 81,
+   "h": 34,
+   "label": "p,g 3–0",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwa0",
+   "type": "line",
+   "points": [
+    [
+     311.5,
+     106
+    ],
+    [
+     311.5,
+     140
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "nsm0",
+   "type": "box",
+   "x": 271,
+   "y": 360,
+   "w": 81,
+   "h": 34,
+   "label": "s 3–0",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwe0",
+   "type": "line",
+   "points": [
+    [
+     311.5,
+     326
+    ],
+    [
+     311.5,
+     360
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "npg1",
+   "type": "box",
+   "x": 184,
+   "y": 72,
+   "w": 81,
+   "h": 34,
+   "label": "p,g 7–4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwa1",
+   "type": "line",
+   "points": [
+    [
+     224.5,
+     106
+    ],
+    [
+     224.5,
+     140
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "nsm1",
+   "type": "box",
+   "x": 184,
+   "y": 360,
+   "w": 81,
+   "h": 34,
+   "label": "s 7–4",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwe1",
+   "type": "line",
+   "points": [
+    [
+     224.5,
+     326
+    ],
+    [
+     224.5,
+     360
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "npg2",
+   "type": "box",
+   "x": 97,
+   "y": 72,
+   "w": 81,
+   "h": 34,
+   "label": "p,g 11–8",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwa2",
+   "type": "line",
+   "points": [
+    [
+     137.5,
+     106
+    ],
+    [
+     137.5,
+     140
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "nsm2",
+   "type": "box",
+   "x": 97,
+   "y": 360,
+   "w": 81,
+   "h": 34,
+   "label": "s 11–8",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwe2",
+   "type": "line",
+   "points": [
+    [
+     137.5,
+     326
+    ],
+    [
+     137.5,
+     360
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "npg3",
+   "type": "box",
+   "x": 10,
+   "y": 72,
+   "w": 81,
+   "h": 34,
+   "label": "p,g 15–12",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwa3",
+   "type": "line",
+   "points": [
+    [
+     50.5,
+     106
+    ],
+    [
+     50.5,
+     140
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "nsm3",
+   "type": "box",
+   "x": 10,
+   "y": 360,
+   "w": 81,
+   "h": 34,
+   "label": "s 15–12",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "nwe3",
+   "type": "line",
+   "points": [
+    [
+     50.5,
+     326
+    ],
+    [
+     50.5,
+     360
+    ]
+   ],
+   "only": "narrow"
+  },
+  {
+   "id": "pg0",
+   "type": "box",
+   "x": 640,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "0",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     658,
+     104
+    ],
+    [
+     658,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm0",
+   "type": "box",
+   "x": 640,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s0",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we0",
+   "type": "line",
+   "points": [
+    [
+     658,
+     330
+    ],
+    [
+     658,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg1",
+   "type": "box",
+   "x": 600,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "1",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     618,
+     104
+    ],
+    [
+     618,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm1",
+   "type": "box",
+   "x": 600,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s1",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we1",
+   "type": "line",
+   "points": [
+    [
+     618,
+     330
+    ],
+    [
+     618,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg2",
+   "type": "box",
+   "x": 560,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "2",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa2",
+   "type": "line",
+   "points": [
+    [
+     578,
+     104
+    ],
+    [
+     578,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm2",
+   "type": "box",
+   "x": 560,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s2",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we2",
+   "type": "line",
+   "points": [
+    [
+     578,
+     330
+    ],
+    [
+     578,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg3",
+   "type": "box",
+   "x": 520,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "3",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa3",
+   "type": "line",
+   "points": [
+    [
+     538,
+     104
+    ],
+    [
+     538,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm3",
+   "type": "box",
+   "x": 520,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s3",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we3",
+   "type": "line",
+   "points": [
+    [
+     538,
+     330
+    ],
+    [
+     538,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg4",
+   "type": "box",
+   "x": 480,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa4",
+   "type": "line",
+   "points": [
+    [
+     498,
+     104
+    ],
+    [
+     498,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm4",
+   "type": "box",
+   "x": 480,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s4",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we4",
+   "type": "line",
+   "points": [
+    [
+     498,
+     330
+    ],
+    [
+     498,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg5",
+   "type": "box",
+   "x": 440,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "5",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa5",
+   "type": "line",
+   "points": [
+    [
+     458,
+     104
+    ],
+    [
+     458,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm5",
+   "type": "box",
+   "x": 440,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s5",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we5",
+   "type": "line",
+   "points": [
+    [
+     458,
+     330
+    ],
+    [
+     458,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg6",
+   "type": "box",
+   "x": 400,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "6",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa6",
+   "type": "line",
+   "points": [
+    [
+     418,
+     104
+    ],
+    [
+     418,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm6",
+   "type": "box",
+   "x": 400,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s6",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we6",
+   "type": "line",
+   "points": [
+    [
+     418,
+     330
+    ],
+    [
+     418,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg7",
+   "type": "box",
+   "x": 360,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "7",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa7",
+   "type": "line",
+   "points": [
+    [
+     378,
+     104
+    ],
+    [
+     378,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm7",
+   "type": "box",
+   "x": 360,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s7",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we7",
+   "type": "line",
+   "points": [
+    [
+     378,
+     330
+    ],
+    [
+     378,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg8",
+   "type": "box",
+   "x": 320,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "8",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa8",
+   "type": "line",
+   "points": [
+    [
+     338,
+     104
+    ],
+    [
+     338,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm8",
+   "type": "box",
+   "x": 320,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s8",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we8",
+   "type": "line",
+   "points": [
+    [
+     338,
+     330
+    ],
+    [
+     338,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg9",
+   "type": "box",
+   "x": 280,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "9",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa9",
+   "type": "line",
+   "points": [
+    [
+     298,
+     104
+    ],
+    [
+     298,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm9",
+   "type": "box",
+   "x": 280,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s9",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we9",
+   "type": "line",
+   "points": [
+    [
+     298,
+     330
+    ],
+    [
+     298,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg10",
+   "type": "box",
+   "x": 240,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "10",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa10",
+   "type": "line",
+   "points": [
+    [
+     258,
+     104
+    ],
+    [
+     258,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm10",
+   "type": "box",
+   "x": 240,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s10",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we10",
+   "type": "line",
+   "points": [
+    [
+     258,
+     330
+    ],
+    [
+     258,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg11",
+   "type": "box",
+   "x": 200,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "11",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa11",
+   "type": "line",
+   "points": [
+    [
+     218,
+     104
+    ],
+    [
+     218,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm11",
+   "type": "box",
+   "x": 200,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s11",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we11",
+   "type": "line",
+   "points": [
+    [
+     218,
+     330
+    ],
+    [
+     218,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg12",
+   "type": "box",
+   "x": 160,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "12",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa12",
+   "type": "line",
+   "points": [
+    [
+     178,
+     104
+    ],
+    [
+     178,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm12",
+   "type": "box",
+   "x": 160,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s12",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we12",
+   "type": "line",
+   "points": [
+    [
+     178,
+     330
+    ],
+    [
+     178,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg13",
+   "type": "box",
+   "x": 120,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "13",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa13",
+   "type": "line",
+   "points": [
+    [
+     138,
+     104
+    ],
+    [
+     138,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm13",
+   "type": "box",
+   "x": 120,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s13",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we13",
+   "type": "line",
+   "points": [
+    [
+     138,
+     330
+    ],
+    [
+     138,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg14",
+   "type": "box",
+   "x": 80,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "14",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa14",
+   "type": "line",
+   "points": [
+    [
+     98,
+     104
+    ],
+    [
+     98,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm14",
+   "type": "box",
+   "x": 80,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s14",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we14",
+   "type": "line",
+   "points": [
+    [
+     98,
+     330
+    ],
+    [
+     98,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "pg15",
+   "type": "box",
+   "x": 40,
+   "y": 70,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "15",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "wa15",
+   "type": "line",
+   "points": [
+    [
+     58,
+     104
+    ],
+    [
+     58,
+     140
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "sm15",
+   "type": "box",
+   "x": 40,
+   "y": 364,
+   "w": 36,
+   "h": 34,
+   "mono": true,
+   "label": "s15",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "we15",
+   "type": "line",
+   "points": [
+    [
+     58,
+     330
+    ],
+    [
+     58,
+     364
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "rowA",
+   "type": "text",
+   "x": 40,
+   "y": 56,
+   "text": "level 1: p_i = a_i ⊕ b_i, g_i = a_i b_i (bit 15 … 0)",
+   "size": 13,
+   "anchor": "start",
+   "tone": "muted",
+   "only": "wide"
+  },
+  {
+   "id": "rowA-n",
+   "type": "text",
+   "x": 10,
+   "y": 58,
+   "text": "level 1: p_i, g_i",
+   "size": 12,
+   "anchor": "start",
+   "tone": "muted",
+   "only": "narrow"
+  },
+  {
+   "id": "rowE",
+   "type": "text",
+   "x": 40,
+   "y": 414,
+   "text": "sums s_i = p_i ⊕ c_i",
+   "size": 13,
+   "anchor": "start",
+   "tone": "muted",
+   "narrow": {
+    "x": 10,
+    "y": 410,
+    "size": 12
+   }
+  },
+  {
+   "id": "gp0",
+   "type": "box",
+   "x": 520,
+   "y": 140,
+   "w": 156,
+   "h": 40,
+   "label": "block 0: G, P",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "gp0-n",
+   "type": "box",
+   "x": 271,
+   "y": 140,
+   "w": 81,
+   "h": 40,
+   "label": "G,P 0",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wb0",
+   "type": "line",
+   "points": [
+    [
+     598.0,
+     180
+    ],
+    [
+     598.0,
+     214
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      311.5,
+      180
+     ],
+     [
+      311.5,
+      212
+     ]
+    ]
+   }
+  },
+  {
+   "id": "in0",
+   "type": "box",
+   "x": 520,
+   "y": 290,
+   "w": 156,
+   "h": 40,
+   "label": "c1–c3",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "in0-n",
+   "type": "box",
+   "x": 271,
+   "y": 286,
+   "w": 81,
+   "h": 40,
+   "label": "c1–3",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wc0",
+   "type": "line",
+   "points": [
+    [
+     598.0,
+     254
+    ],
+    [
+     598.0,
+     290
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      311.5,
+      252
+     ],
+     [
+      311.5,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gp1",
+   "type": "box",
+   "x": 360,
+   "y": 140,
+   "w": 156,
+   "h": 40,
+   "label": "block 1: G, P",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "gp1-n",
+   "type": "box",
+   "x": 184,
+   "y": 140,
+   "w": 81,
+   "h": 40,
+   "label": "G,P 1",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wb1",
+   "type": "line",
+   "points": [
+    [
+     438.0,
+     180
+    ],
+    [
+     438.0,
+     214
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      224.5,
+      180
+     ],
+     [
+      224.5,
+      212
+     ]
+    ]
+   }
+  },
+  {
+   "id": "in1",
+   "type": "box",
+   "x": 360,
+   "y": 290,
+   "w": 156,
+   "h": 40,
+   "label": "c5–c7",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "in1-n",
+   "type": "box",
+   "x": 184,
+   "y": 286,
+   "w": 81,
+   "h": 40,
+   "label": "c5–7",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wc1",
+   "type": "line",
+   "points": [
+    [
+     438.0,
+     254
+    ],
+    [
+     438.0,
+     290
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      224.5,
+      252
+     ],
+     [
+      224.5,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gp2",
+   "type": "box",
+   "x": 200,
+   "y": 140,
+   "w": 156,
+   "h": 40,
+   "label": "block 2: G, P",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "gp2-n",
+   "type": "box",
+   "x": 97,
+   "y": 140,
+   "w": 81,
+   "h": 40,
+   "label": "G,P 2",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wb2",
+   "type": "line",
+   "points": [
+    [
+     278.0,
+     180
+    ],
+    [
+     278.0,
+     214
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      137.5,
+      180
+     ],
+     [
+      137.5,
+      212
+     ]
+    ]
+   }
+  },
+  {
+   "id": "in2",
+   "type": "box",
+   "x": 200,
+   "y": 290,
+   "w": 156,
+   "h": 40,
+   "label": "c9–c11",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "in2-n",
+   "type": "box",
+   "x": 97,
+   "y": 286,
+   "w": 81,
+   "h": 40,
+   "label": "c9–11",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wc2",
+   "type": "line",
+   "points": [
+    [
+     278.0,
+     254
+    ],
+    [
+     278.0,
+     290
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      137.5,
+      252
+     ],
+     [
+      137.5,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gp3",
+   "type": "box",
+   "x": 40,
+   "y": 140,
+   "w": 156,
+   "h": 40,
+   "label": "block 3: G, P",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "gp3-n",
+   "type": "box",
+   "x": 10,
+   "y": 140,
+   "w": 81,
+   "h": 40,
+   "label": "G,P 3",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wb3",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     180
+    ],
+    [
+     118.0,
+     214
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50.5,
+      180
+     ],
+     [
+      50.5,
+      212
+     ]
+    ]
+   }
+  },
+  {
+   "id": "in3",
+   "type": "box",
+   "x": 40,
+   "y": 290,
+   "w": 156,
+   "h": 40,
+   "label": "c13–c15",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "in3-n",
+   "type": "box",
+   "x": 10,
+   "y": 286,
+   "w": 81,
+   "h": 40,
+   "label": "c13–15",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wc3",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     254
+    ],
+    [
+     118.0,
+     290
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50.5,
+      252
+     ],
+     [
+      50.5,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "unit",
+   "type": "box",
+   "x": 40,
+   "y": 214,
+   "w": 636,
+   "h": 40,
+   "label": "second-level lookahead: c4, c8, c12, c16",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "unit-n",
+   "type": "box",
+   "x": 10,
+   "y": 212,
+   "w": 342,
+   "h": 40,
+   "label": "lookahead: c4 c8 c12 c16",
+   "size": 12,
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "t = 1: every bit makes p_i = a_i ⊕ b_i and g_i = a_i b_i in one gate level, all 16 in parallel.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 1"
+     }
+    },
+    {
+     "id": "pg0",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg1",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg2",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg3",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg4",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg5",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg6",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg7",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg8",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg9",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg10",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg11",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg12",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg13",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg14",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "pg15",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "npg0",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "npg1",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "npg2",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "npg3",
+     "set": {
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 2: each block's P = p3 p2 p1 p0 is one AND of its four p's.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 2"
+     }
+    },
+    {
+     "id": "gp0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp0-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp1-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp2-n",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp3-n",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 3: each block's G = g3 + p3g2 + p3p2g1 + p3p2p1g0 (AND then OR). Block 0's c1–c3 are ready too.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 3"
+     }
+    },
+    {
+     "id": "gp0",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp1",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp2",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp3",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wb3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in0",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp0-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp1-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp2-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gp3-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in0-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 4: c4 = G0 + P0·c0 from the second-level unit; the sums s0–s3 are done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 4"
+     }
+    },
+    {
+     "id": "sm0",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm1",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm2",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm3",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "nsm0",
+     "set": {
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 5: c8, c12, c16 = G + PG + PPG + … over the blocks: the top of the tree is done; s4 is done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 5"
+     }
+    },
+    {
+     "id": "unit",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wc0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wc1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wc2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wc3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "unit-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 6: going down: block 1 makes c5–c7 from c4 in two levels; s8 and s12 are done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 6"
+     }
+    },
+    {
+     "id": "in1",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in1-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 7: blocks 2 and 3 make c9–c11 and c13–c15 from c8 and c12; s5–s7 are done.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 7"
+     }
+    },
+    {
+     "id": "in2",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in3",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sm4",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm5",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm6",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm7",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "in2-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in3-n",
+     "set": {
+      "fill": "success",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "nsm1",
+     "set": {
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 8: the last sums s9–s11 and s13–s15 are done. 8 gate delays, against 33 for a ripple adder.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 8"
+     }
+    },
+    {
+     "id": "sm8",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm9",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm10",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm11",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm12",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm13",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm14",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "sm15",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "nsm2",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "nsm3",
+     "set": {
+      "fill": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
