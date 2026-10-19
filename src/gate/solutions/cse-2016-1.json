@@ -1756,28 +1756,45 @@
       "verification": "P(Y) + P(N) = 1/3 + (1/2)/(3/4) = 1/3 + 2/3 = 1. ✓"
     },
     "cse-2016-1-cs-30": {
-      "approach": "Write each 2-to-1 MUX as out = s̄·I₀ + s·I₁, substitute MUX 1's output into MUX 2, and simplify.",
+      "approach": "Concept tested: **two cascaded 2:1 MUXes** to a minimal SOP. MUX 1 with a 0 on one input is an AND; MUX 2 then chooses between $\\overline{R}$ and that AND.",
       "concepts": [
-        "Multiplexer",
-        "Boolean algebra",
-        "Sum of products"
+        "MUX cascade",
+        "2:1 MUX as AND",
+        "Minimal SOP"
       ],
+      "given": "MUX 1: $I_0 = 0$, $I_1 = R$, select $P$. MUX 2: $I_0 = \\overline{R}$, $I_1$ = MUX 1, select $Q$.",
       "steps": [
         {
-          "title": "MUX 1 (select P)",
-          "body": "$I_0=0,\\ I_1=R$: $\\;Y=\\bar P\\cdot0+P\\cdot R=PR$."
+          "title": "MUX 1",
+          "body": "$g = \\overline{P} \\cdot 0 + P R = PR$."
         },
         {
-          "title": "MUX 2 (select Q)",
-          "body": "$I_0=\\bar R,\\ I_1=Y=PR$: $\\;X=\\bar Q\\,\\bar R+Q\\cdot PR=\\bar Q\\bar R+PQR$."
+          "title": "MUX 2",
+          "body": "$X = \\overline{Q}\\,\\overline{R} + Q \\cdot PR = \\overline{Q}\\,\\overline{R} + PQR$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "Minimal?",
-          "body": "Minterms: $\\bar Q\\bar R$ gives $PQR\\in\\{000,100\\}$ and $PQR$ gives $111$. $111$ is not adjacent to $000$ or $100$, so the two terms cannot merge or shrink. Minimal SOP: $\\bar Q\\bar R+PQR$."
+          "title": "Is it minimal?",
+          "body": "Minterms: $\\overline{Q}\\,\\overline{R}$ = {0, 4}, $PQR$ = {7}. $m_7$'s neighbours $m_3, m_5, m_6$ are all 0s, so $PQR$ cannot grow, and {0, 4} is already a pair. Minimal."
         }
       ],
       "answer": {
-        "value": "$\\bar Q\\bar R+PQR$",
+        "value": "(D) $\\overline{Q}\\,\\overline{R} + PQR$",
         "choice": [
           "D"
         ],
@@ -1787,25 +1804,99 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$\\bar P\\bar Q$ is wrong: for $P=0,Q=0,R=1$ it gives 1, but the circuit gives $\\bar R=0$."
+          "reason": "$\\overline{P}\\,\\overline{Q} + PQR$ is 1 at $PQR = 001$, where MUX 2 passes $\\overline{R} = 0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "At $P=Q=R=0$ it gives 0, but the circuit outputs $\\bar R=1$."
+          "reason": "$\\overline{P}Q + QR$ is 1 at 010, where MUX 2 passes $g = PR = 0$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "At $P=Q=1,R=0$ it gives 1, but MUX 1 outputs $PR=0$ so $X=0$."
+          "reason": "$PQ + \\overline{P}\\,\\overline{Q}R$ is 1 at 110, where $g = PR = 0$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: $X=\\bar Q\\bar R+PQR$."
+          "reason": "Inside out: $g = PR$, $X = \\overline{Q}\\,\\overline{R} + PQR$."
         }
       ],
-      "verification": "Truth table: X = 1 exactly for PQR = 000, 100, 111, matching option D."
+      "shortcut": "Split on $Q$: $Q = 0 \\Rightarrow X = \\overline{R}$; $Q = 1 \\Rightarrow X = PR$. Write $\\overline{Q}\\,\\overline{R} + Q\\,PR$ directly.",
+      "pitfalls": [
+        "Taking MUX 1 as $P + R$ (an OR needs a 1 on a data input, not a 0)."
+      ],
+      "verification": "The netlist is 1 on rows 0, 4, 7, exactly the minterms of option (D).",
+      "animation": {
+        "kind": "table",
+        "title": "Cascaded MUXes of GATE 2016",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "g",
+          "X"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2016-1-cs-31": {
       "approach": "A 16-bit count register lets one DMA grant (burst) move at most 2^16 bytes; divide the file size by that and round up.",

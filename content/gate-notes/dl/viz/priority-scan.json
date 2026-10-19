@@ -1,0 +1,1706 @@
+{
+ "version": 1,
+ "title": "A 4-to-2 priority encoder scanning its inputs",
+ "width": 640,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 300
+ },
+ "intro": "A 4:2 priority encoder with inputs D3 (highest priority) to D0, code outputs X1 X0 and a valid flag V. Several input patterns follow.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A 4:2 priority encoder scans from D3 down",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "4:2 priority encoder",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "pe",
+   "type": "box",
+   "x": 260,
+   "y": 60,
+   "w": 120,
+   "h": 180,
+   "narrow": {
+    "x": 120,
+    "w": 110
+   }
+  },
+  {
+   "id": "pe-l0",
+   "type": "text",
+   "x": 265,
+   "y": 82.5,
+   "text": "D3",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "pe-l1",
+   "type": "text",
+   "x": 265,
+   "y": 127.5,
+   "text": "D2",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "pe-l2",
+   "type": "text",
+   "x": 265,
+   "y": 172.5,
+   "text": "D1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "pe-l3",
+   "type": "text",
+   "x": 265,
+   "y": 217.5,
+   "text": "D0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "pe-r0",
+   "type": "text",
+   "x": 375,
+   "y": 90.0,
+   "text": "X1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 225,
+    "size": 12
+   }
+  },
+  {
+   "id": "pe-r1",
+   "type": "text",
+   "x": 375,
+   "y": 150.0,
+   "text": "X0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 225,
+    "size": 12
+   }
+  },
+  {
+   "id": "pe-r2",
+   "type": "text",
+   "x": 375,
+   "y": 210.0,
+   "text": "V",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 225,
+    "size": 12
+   }
+  },
+  {
+   "id": "pe-n",
+   "type": "text",
+   "x": 324.0,
+   "y": 150.0,
+   "text": "4:2",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 179.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "hl3",
+   "type": "box",
+   "x": 144,
+   "y": 67.5,
+   "w": 78,
+   "h": 30,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 28,
+    "w": 64
+   }
+  },
+  {
+   "id": "d3",
+   "type": "text",
+   "x": 214,
+   "y": 82.5,
+   "text": "D3 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 86,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd3",
+   "type": "line",
+   "points": [
+    [
+     222,
+     82.5
+    ],
+    [
+     260,
+     82.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      92,
+      82.5
+     ],
+     [
+      120,
+      82.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "hl2",
+   "type": "box",
+   "x": 144,
+   "y": 112.5,
+   "w": 78,
+   "h": 30,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 28,
+    "w": 64
+   }
+  },
+  {
+   "id": "d2",
+   "type": "text",
+   "x": 214,
+   "y": 127.5,
+   "text": "D2 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 86,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd2",
+   "type": "line",
+   "points": [
+    [
+     222,
+     127.5
+    ],
+    [
+     260,
+     127.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      92,
+      127.5
+     ],
+     [
+      120,
+      127.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "hl1",
+   "type": "box",
+   "x": 144,
+   "y": 157.5,
+   "w": 78,
+   "h": 30,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 28,
+    "w": 64
+   }
+  },
+  {
+   "id": "d1",
+   "type": "text",
+   "x": 214,
+   "y": 172.5,
+   "text": "D1 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 86,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd1",
+   "type": "line",
+   "points": [
+    [
+     222,
+     172.5
+    ],
+    [
+     260,
+     172.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      92,
+      172.5
+     ],
+     [
+      120,
+      172.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "hl0",
+   "type": "box",
+   "x": 144,
+   "y": 202.5,
+   "w": 78,
+   "h": 30,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 28,
+    "w": 64
+   }
+  },
+  {
+   "id": "d0",
+   "type": "text",
+   "x": 214,
+   "y": 217.5,
+   "text": "D0 = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 86,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd0",
+   "type": "line",
+   "points": [
+    [
+     222,
+     217.5
+    ],
+    [
+     260,
+     217.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      92,
+      217.5
+     ],
+     [
+      120,
+      217.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wX1",
+   "type": "line",
+   "points": [
+    [
+     380,
+     90.0
+    ],
+    [
+     410,
+     90.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      90.0
+     ],
+     [
+      252,
+      90.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vX1",
+   "type": "text",
+   "x": 416,
+   "y": 90.0,
+   "text": "X1 = ?",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 258,
+    "size": 13
+   }
+  },
+  {
+   "id": "wX0",
+   "type": "line",
+   "points": [
+    [
+     380,
+     150.0
+    ],
+    [
+     410,
+     150.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      150.0
+     ],
+     [
+      252,
+      150.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vX0",
+   "type": "text",
+   "x": 416,
+   "y": 150.0,
+   "text": "X0 = ?",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 258,
+    "size": 13
+   }
+  },
+  {
+   "id": "wV",
+   "type": "line",
+   "points": [
+    [
+     380,
+     210.0
+    ],
+    [
+     410,
+     210.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      210.0
+     ],
+     [
+      252,
+      210.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vV",
+   "type": "text",
+   "x": 416,
+   "y": 210.0,
+   "text": "V = ?",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 258,
+    "size": 13
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 320.0,
+   "y": 274,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Input D3 D2 D1 D0 = 0110. D3 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "text": "D0 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "D1 = 1",
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "text": "D2 = 1",
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "text": "D3 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "input D3 D2 D1 D0 = 0110",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D2 = 1 is the highest active input, so it wins: X1X0 = 10 (2 in binary), V = 1; D1 ignored.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0110: D2 wins → code 10, V = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Input D3 D2 D1 D0 = 1011. D3 = 1 is the highest active input, so it wins: X1X0 = 11 (3 in binary), V = 1; D1, D0 ignored.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "text": "D0 = 1",
+      "tone": "success",
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "D1 = 1",
+      "tone": "success",
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "text": "D2 = 0",
+      "tone": "muted",
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "text": "D3 = 1",
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "success",
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "accent",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "1011: D3 wins → code 11, V = 1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Input D3 D2 D1 D0 = 0011. D3 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "text": "D0 = 1",
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "D1 = 1",
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "text": "D2 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "text": "D3 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "input D3 D2 D1 D0 = 0011",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D2 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D1 = 1 is the highest active input, so it wins: X1X0 = 01 (1 in binary), V = 1; D0 ignored.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "opacity": 0.4
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0011: D1 wins → code 01, V = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Input D3 D2 D1 D0 = 0001. D3 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "text": "D0 = 1",
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "D1 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "text": "D2 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "text": "D3 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "input D3 D2 D1 D0 = 0001",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D2 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D1 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D0 = 1 is the highest active input, so it wins: X1X0 = 00 (0 in binary), V = 1.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0001: D0 wins → code 00, V = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Input D3 D2 D1 D0 = 0000. D3 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "text": "D0 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "D1 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "text": "D2 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "text": "D3 = 0",
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = ?",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wX0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "input D3 D2 D1 D0 = 0000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D2 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D1 = 0, so look at the next lower input.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "D0 = 0 too: no input is active, so V = 0. The code 00 is then meaningless; V tells it apart from D0 = 1.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "vX1",
+     "set": {
+      "text": "X1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vX0",
+     "set": {
+      "text": "X0 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vV",
+     "set": {
+      "text": "V = 0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wV",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "no input active → V = 0",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The rule: scan from D3 down and output the index of the first 1; V = 1 when any input is 1. Lower inputs then never matter.",
+   "patches": [
+    {
+     "id": "hl0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "hl3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "first 1 from the top wins",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

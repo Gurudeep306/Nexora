@@ -1,0 +1,1199 @@
+{
+ "version": 1,
+ "title": "A 1-to-4 demultiplexer routing the data bit",
+ "width": 640,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 300
+ },
+ "intro": "A 1:4 DEMUX: one data input D, select lines S1 S0, and outputs Y0–Y3. The selects choose which output receives D.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A 1:4 DEMUX sends D to the selected output",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "1:4 DEMUX routing",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "dm",
+   "type": "box",
+   "x": 260,
+   "y": 60,
+   "w": 110,
+   "h": 170,
+   "narrow": {
+    "x": 120,
+    "w": 100
+   }
+  },
+  {
+   "id": "dm-l0",
+   "type": "text",
+   "x": 265,
+   "y": 137.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "dm-r0",
+   "type": "text",
+   "x": 365,
+   "y": 79.25,
+   "text": "Y0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dm-r1",
+   "type": "text",
+   "x": 365,
+   "y": 117.75,
+   "text": "Y1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dm-r2",
+   "type": "text",
+   "x": 365,
+   "y": 156.25,
+   "text": "Y2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dm-r3",
+   "type": "text",
+   "x": 365,
+   "y": 194.75,
+   "text": "Y3",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "dm-b0",
+   "type": "text",
+   "x": 287.5,
+   "y": 220,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 145.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dm-b1",
+   "type": "text",
+   "x": 342.5,
+   "y": 220,
+   "text": "S0",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 195.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dm-n",
+   "type": "text",
+   "x": 315.0,
+   "y": 46,
+   "text": "1:4 DEMUX",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 170.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "d",
+   "type": "text",
+   "x": 212,
+   "y": 137.0,
+   "text": "D = ?",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 86,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd",
+   "type": "line",
+   "points": [
+    [
+     216,
+     137.0
+    ],
+    [
+     260,
+     137.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      90,
+      137.0
+     ],
+     [
+      120,
+      137.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path0",
+   "type": "line",
+   "points": [
+    [
+     282,
+     137.0
+    ],
+    [
+     340,
+     79.25
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      142,
+      137.0
+     ],
+     [
+      190,
+      79.25
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo0",
+   "type": "line",
+   "points": [
+    [
+     370,
+     79.25
+    ],
+    [
+     400,
+     79.25
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      79.25
+     ],
+     [
+      250,
+      79.25
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o0",
+   "type": "circle",
+   "cx": 412,
+   "cy": 79.25,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "path1",
+   "type": "line",
+   "points": [
+    [
+     282,
+     137.0
+    ],
+    [
+     340,
+     117.75
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      142,
+      137.0
+     ],
+     [
+      190,
+      117.75
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo1",
+   "type": "line",
+   "points": [
+    [
+     370,
+     117.75
+    ],
+    [
+     400,
+     117.75
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      117.75
+     ],
+     [
+      250,
+      117.75
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o1",
+   "type": "circle",
+   "cx": 412,
+   "cy": 117.75,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "path2",
+   "type": "line",
+   "points": [
+    [
+     282,
+     137.0
+    ],
+    [
+     340,
+     156.25
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      142,
+      137.0
+     ],
+     [
+      190,
+      156.25
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo2",
+   "type": "line",
+   "points": [
+    [
+     370,
+     156.25
+    ],
+    [
+     400,
+     156.25
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      156.25
+     ],
+     [
+      250,
+      156.25
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o2",
+   "type": "circle",
+   "cx": 412,
+   "cy": 156.25,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "path3",
+   "type": "line",
+   "points": [
+    [
+     282,
+     137.0
+    ],
+    [
+     340,
+     194.75
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      142,
+      137.0
+     ],
+     [
+      190,
+      194.75
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wo3",
+   "type": "line",
+   "points": [
+    [
+     370,
+     194.75
+    ],
+    [
+     400,
+     194.75
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      220,
+      194.75
+     ],
+     [
+      250,
+      194.75
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o3",
+   "type": "circle",
+   "cx": 412,
+   "cy": 194.75,
+   "r": 11,
+   "mono": true,
+   "tone": "muted",
+   "label": "0",
+   "size": 13,
+   "narrow": {
+    "cx": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws0",
+   "type": "line",
+   "points": [
+    [
+     287.5,
+     230
+    ],
+    [
+     287.5,
+     250
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      145.0,
+      230
+     ],
+     [
+      145.0,
+      250
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s0",
+   "type": "text",
+   "x": 287.5,
+   "y": 264,
+   "text": "S1=?",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 145.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "ws1",
+   "type": "line",
+   "points": [
+    [
+     342.5,
+     230
+    ],
+    [
+     342.5,
+     250
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      195.0,
+      230
+     ],
+     [
+      195.0,
+      250
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 342.5,
+   "y": 264,
+   "text": "S0=?",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 195.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "S1S0 = 00, D = 1: the data bit travels to Y0, so Y0 = 1 and the other outputs are 0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d",
+     "set": {
+      "text": "D = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S1S0 = 01, D = 1: the data bit travels to Y1, so Y1 = 1 and the other outputs are 0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d",
+     "set": {
+      "text": "D = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S1S0 = 10, D = 1: the data bit travels to Y2, so Y2 = 1 and the other outputs are 0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d",
+     "set": {
+      "text": "D = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S1S0 = 11, D = 1: the data bit travels to Y3, so Y3 = 1 and the other outputs are 0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d",
+     "set": {
+      "text": "D = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S1S0 = 10, D = 0: the path still leads to Y2, but it carries 0, so every output is 0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d",
+     "set": {
+      "text": "D = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "o3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Each output is Yk = D · m_k(S1, S0). That is a 2:4 decoder whose enable is the data line: the same chip serves as decoder or DEMUX.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  }
+ ]
+}

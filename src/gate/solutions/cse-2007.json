@@ -476,23 +476,28 @@
       "verification": "Each false option was refuted by an explicit counterexample."
     },
     "cse-2007-cs-8": {
-      "approach": "Build a two-level decoder tree: the 3 high-order bits pick one of 8 output decoders through their enable inputs.",
+      "approach": "Concept tested: **decoder expansion with enables**. Leaves decode the low bits; the enables of the leaves must themselves be decoded from the high bits, by another decoder, because no other gates are allowed.",
       "concepts": [
-        "Decoder expansion",
-        "Enable input"
+        "Decoder",
+        "Enable input",
+        "Decoder tree"
       ],
       "steps": [
         {
-          "title": "Output level",
-          "body": "64 outputs ÷ 8 outputs per decoder $=8$ decoders, all driven by the low 3 address bits."
+          "title": "Leaves",
+          "body": "Each 3:8 decoder gives 8 outputs, so $64 / 8 = 8$ leaf decoders, all fed by the low address bits $A_2A_1A_0$. Leaf $j$ supplies outputs $8j$ to $8j + 7$."
         },
         {
-          "title": "Selection level",
-          "body": "The high 3 bits go into one more 3-to-8 decoder whose 8 outputs drive the 8 enable inputs.\n\nTotal $=8+1=9$."
+          "title": "Who enables the leaves?",
+          "body": "Exactly one leaf may be on: leaf $j$ when the high bits $A_5A_4A_3$ equal $j$. Eight enable lines, one-hot in three bits, is precisely a 3:8 decoder on $A_5A_4A_3$. Without it (no other gates allowed), all eight leaves would be on at once and light eight outputs."
+        },
+        {
+          "title": "Count",
+          "body": "$8 + 1 = 9$. Check with the closed form for $k \\mid n$: $(2^6 - 1)/(2^3 - 1) = 63/7 = 9$."
         }
       ],
       "answer": {
-        "value": "9",
+        "value": "(C) 9",
         "choice": [
           "C"
         ],
@@ -502,28 +507,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "7 decoders give at most 56 outputs at the output level."
+          "reason": "7 decoders have at most $7 \\times 8 = 56$ outputs, fewer than 64, so 7 cannot even supply the outputs; 7 is the block count of a different tree (3:8 from 1:2 decoders, $4 + 2 + 1$)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "8 decoders provide 64 outputs but nothing to decode the top 3 bits without extra gates."
+          "reason": "8 counts only the leaves; nothing would then decode the high three bits to enable one leaf at a time."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "8 output decoders + 1 enable-selecting decoder."
+          "reason": "8 leaves on the low bits plus 1 decoder on the high bits driving their enables."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "One more than needed."
+          "reason": "10 adds a block that is not needed: the top decoder is enabled by the tree's own enable (or tied high)."
         }
       ],
+      "shortcut": "Leaves first, then divide by 8 until one block: $8 + 1 = 9$; or $(2^n - 1)/(2^k - 1)$ when $k$ divides $n$.",
       "pitfalls": [
-        "Forgetting the selector decoder gives 8."
+        "Answering 8 (the leaves only).",
+        "Using an inverter or mixed enable polarities, which the question rules out."
       ],
-      "verification": "General formula for a tree of $k$-to-$2^k$ decoders: $2^{6-3}+1=9$."
+      "verification": "The 9-block netlist (one 3:8 on $A_5A_4A_3$ driving the enables of eight 3:8s on $A_2A_1A_0$) was simulated on all 128 rows of $(E, A_5 \\dots A_0)$ and equals a 6:64 decoder."
     },
     "cse-2007-cs-9": {
       "approach": "Concept tested: **variables a function ignores**. $f$ ignores a variable iff its minterm list is closed under flipping that variable (adding or subtracting its weight).",
@@ -1873,23 +1880,28 @@
       "verification": "All four $(X, Y)$ rows: $Z = 1, 0, 0, 1$; $Y * Z = 0, 0, 1, 1 = X$; $X * Z = 0, 1, 0, 1 = Y$; $Z * Z = 1$."
     },
     "cse-2007-cs-34": {
-      "approach": "Use $n-1$ variables as select lines; each data input is then one of $0,1,x_n,x_n'$, which a single inverter supplies.",
+      "approach": "Concept tested: **the smallest MUX for every $n$-variable function**. With $n - 1$ variables on the selects, each data input needs only $0$, $1$, $x$ or $\\overline{x}$ of the last variable, and the one inverter makes $\\overline{x}$. One select fewer leaves 2-variable residues, which need gates.",
       "concepts": [
-        "Multiplexer",
-        "Shannon expansion"
+        "Shannon expansion",
+        "Implementation table",
+        "Minimum MUX size"
       ],
       "steps": [
         {
-          "title": "Expansion on $n-1$ variables",
-          "body": "Fix $x_1,\\dots,x_{n-1}$ (the select lines). The residual function of $x_n$ is one of $0,1,x_n,x_n'$. With one inverter producing $x_n'$, every data input is available."
+          "title": "2^(n−1):1 is enough",
+          "body": "Put $x_1 \\dots x_{n-1}$ on the selects. For each select value $s$, the data input must equal $f(s, x_n)$, a function of one variable: $0$, $1$, $x_n$ or $\\overline{x_n}$. The constants and $x_n$ are wires; $\\overline{x_n}$ comes from the inverter."
         },
         {
-          "title": "Size",
-          "body": "$n-1$ select lines $\\Rightarrow$ a $2^{n-1}$-to-1 multiplexer. With only $n-2$ select lines the residues would be arbitrary functions of 2 variables, which a single inverter cannot provide in general."
+          "title": "2^(n−2):1 is not",
+          "body": "With only $n - 2$ selects, two variables $u, v$ remain free on every data line. For the parity function $x_1 \\oplus \\dots \\oplus x_n$ every such residue is $u \\oplus v$ or its complement, which no wire, constant or single inverter can supply."
+        },
+        {
+          "title": "Conclusion",
+          "body": "The minimum is a $2^{n-1}$ line to 1 line MUX."
         }
       ],
       "answer": {
-        "value": "$2^{n-1}$ line to 1 line",
+        "value": "(C) $2^{n-1}$ line to 1 line",
         "choice": [
           "C"
         ],
@@ -1899,25 +1911,30 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$2^n$:1 works without the inverter but is not minimal."
+          "reason": "A $2^n$:1 MUX works (wire the truth table) but is not the minimum."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Larger than needed."
+          "reason": "$2^{n+1}$:1 has more select lines than variables; it is never needed."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "$n-1$ selects; data inputs from $\\{0,1,x_n,x_n'\\}$."
+          "reason": "$n - 1$ selects plus one inverter realise every function (Shannon), and fewer selects fail on parity."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Residues of two variables (e.g. $x\\oplus y$) need extra gates."
+          "reason": "$2^{n-2}$:1 leaves 2-variable residues such as $u \\oplus v$, impossible without gates."
         }
       ],
-      "verification": "For $n=2$: XOR = 2:1 MUX with select $a$, inputs $b, b'$ ✓."
+      "shortcut": "One inverter buys exactly one variable on the data lines: size $2^{n-1}$.",
+      "pitfalls": [
+        "Answering $2^n$ by thinking only of \"wire the truth table\".",
+        "Answering $2^{n-2}$ by assuming residues can be any function."
+      ],
+      "verification": "For $n = 3$ an exhaustive search over every wiring of a 2:1 MUX and one inverter finds no circuit for $x \\oplus y \\oplus z$, while a 4:1 MUX realises all 256 functions (l5_02_mux.py)."
     },
     "cse-2007-cs-35": {
       "approach": "Write $C_1..C_4$ in two-level SOP form over $P_i,G_i,C_0$ and count the product terms (AND gates) and sums (OR gates). The sum bits use XOR, not AND/OR.",

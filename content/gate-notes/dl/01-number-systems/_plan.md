@@ -9,14 +9,14 @@ starts with "Edge case:".
 
 - Folder: `content/gate-notes/dl/01-number-systems/`
 - `pyq_topics` for the chapter: `dl/number` (all 40) and `dl/floating` (all 25, lessons 5–7). Lesson 4
-  also previews `dl/arithmetic` (overflow is taught fully in Chapter 5).
+  also previews `dl/arithmetic` (overflow is taught fully in Chapter 1, Lesson 9; the circuit is in Chapter 4).
 - **Restructure (2026-10-17):** the owner asked for IEEE-754 early, inside Chapter 1, so the old
   Chapter 8 (floating point, 3 lessons, 25 PYQs) became lessons 5–7, after signed numbers and before
   codes (now lesson 8). Lesson ids and slugs did not change; only `order`, file prefixes and the codes
   practice ids (`nx-dl-01-05-*` → `nx-dl-01-08-*`) moved.
 - **Arithmetic move (2026-10-17):** all number-level arithmetic joined Chapter 1 as lessons 9–10 (13 PYQs
   from `dl-05-03`, 8 from `dl-05-04`, `it-2005-cs-47` from lesson 2, `cse-2010-cs-8` from lesson 4).
-  Chapter 5 keeps only the circuit questions and links back. `pyq_topics` gain `dl/arithmetic`.
+  The arithmetic-circuits chapter (Chapter 4 since 2026-10-19) keeps only the circuit questions and links back. `pyq_topics` gain `dl/arithmetic`.
 - Check scripts: `content/gate-notes/_checks/dl/` (one Python module per lesson plus a shared
   `numlib.py`). Every worked value, viz caption, Live Lab test vector and practice answer is
   asserted there before the lesson leaves draft. They use exact arithmetic (`fractions.Fraction`
@@ -334,7 +334,7 @@ Arithmetic-shift rules and minimum-width reasoning are thin, so we add them from
 5. **2's complement** `#twos-complement`: MSB weight −2^{n−1}. Negate = invert + 1. Range
    [−2^{n−1}, 2^{n−1} − 1]; one zero; 2ⁿ distinct values; −2^{n−1} is its own negation.
 6. **Shortcut** `#copy-first-one`: from the right, copy up to and including the first 1, then
-   invert the rest (with a serial Mealy-machine preview for Chapter 7).
+   invert the rest (with a serial Mealy-machine preview for Chapter 6).
 7. **Reading a pattern** `#decode-twos`: −2^{n−1}·b_{n−1} + the rest, or "invert + 1, then add a
    minus sign".
 8. **Radix complements in any base** `#radix-complement`: (r−1)'s complement = (rⁿ − 1) − N and
@@ -347,7 +347,7 @@ Arithmetic-shift rules and minimum-width reasoning are thin, so we add them from
 12. **Excess-K / biased** `#biased`: value = pattern − K. Leads into the floating-point exponent (Lessons 5–6).
 13. **Comparison table** `#compare-representations`: range, zeros, negation cost, and how
     addition works in each.
-14. **Pointer** to overflow (Chapter 5, `dl-05-03`).
+14. **Pointer** to overflow (the arithmetic-circuits chapter, `dl-04-03`).
 15. **Recap.**
 
 ### Derivations and proofs
@@ -638,13 +638,13 @@ Hamming wording, and its Gray(16) row, have slips (see errata).
 2. **Weighted vs unweighted codes** `#weighted`: 8421, 2421, 84−2−1, and excess-3 (unweighted).
 3. **BCD** `#bcd`: 10 of the 16 patterns are valid. BCD ≠ binary (for example 25 = 0010 0101 vs
    11001). The number of bits for k decimal digits is 4k vs ⌈k·log₂10⌉ (BCD addition is in
-   Chapter 5).
+   Chapter 4).
 4. **Self-complementing codes** `#self-complementing`: the code of 9 − d is the bitwise
    complement. A weighted code is self-complementing iff its weights sum to 9; excess-3 is
    self-complementing too.
 5. **Gray code** `#gray`: consecutive values differ in exactly one bit. Reflected construction;
    binary → Gray gᵢ = bᵢ ⊕ b_{i+1}; Gray → binary bᵢ = g_{n−1} ⊕ … ⊕ gᵢ (prefix XOR).
-   Uses: K-map ordering (Chapter 3), position encoders and counters (Chapter 7).
+   Uses: K-map ordering (Chapter 3), position encoders and counters (Chapter 6).
 6. **Gray "next value" functions** `#gray-successor`: tabulate n → n + 1 in Gray, as a lead-in to
    minterm lists (2006 PYQ).
 7. **Parity** `#parity`: even/odd parity bits detect any odd number of bit errors.
@@ -691,7 +691,7 @@ Hamming wording, and its Gray(16) row, have slips (see errata).
 | cse-2006-cs-40 | `gray`, `gray-successor` |
 
 This lesson has few PYQs, but Gray order underpins K-maps (Chapter 3), the 1992 Gray-counter
-design question (`dl-07-03`) and the codes in the code-converter questions of `dl-04-01`
+design question (`dl-06-05`) and the codes in the code-converter questions of `dl-05-01`
 (excess-3 → BCD, BCD → mod 6). Those PYQs are mapped in their own lessons and link back here.
 
 ### Diagrams and animations

@@ -1,0 +1,1296 @@
+{
+ "version": 1,
+ "title": "Design procedure: a word specification becomes a 3-gate circuit",
+ "width": 720,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 700
+ },
+ "intro": "The specification: a 4-bit BCD digit ABCD enters, and F must be 1 when the digit is 5 or more. Four stages follow: truth table, K-map, expression, circuit.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 360.0,
+   "y": 22,
+   "text": "Design procedure: “BCD digit ≥ 5” from words to gates",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "BCD digit ≥ 5: words to gates",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "st1",
+   "type": "text",
+   "x": 108,
+   "y": 62,
+   "text": "1. truth table",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 48,
+    "size": 12
+   }
+  },
+  {
+   "id": "tt0",
+   "type": "table",
+   "x": 16,
+   "y": 78,
+   "cellW": 44,
+   "cellH": 20,
+   "rows": [
+    [
+     "ABCD",
+     "F"
+    ],
+    [
+     "0000",
+     ""
+    ],
+    [
+     "0001",
+     ""
+    ],
+    [
+     "0010",
+     ""
+    ],
+    [
+     "0011",
+     ""
+    ],
+    [
+     "0100",
+     ""
+    ],
+    [
+     "0101",
+     ""
+    ],
+    [
+     "0110",
+     ""
+    ],
+    [
+     "0111",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 88,
+    "y": 64
+   }
+  },
+  {
+   "id": "tt1",
+   "type": "table",
+   "x": 112,
+   "y": 78,
+   "cellW": 44,
+   "cellH": 20,
+   "rows": [
+    [
+     "ABCD",
+     "F"
+    ],
+    [
+     "1000",
+     ""
+    ],
+    [
+     "1001",
+     ""
+    ],
+    [
+     "1010",
+     ""
+    ],
+    [
+     "1011",
+     ""
+    ],
+    [
+     "1100",
+     ""
+    ],
+    [
+     "1101",
+     ""
+    ],
+    [
+     "1110",
+     ""
+    ],
+    [
+     "1111",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 184,
+    "y": 64
+   }
+  },
+  {
+   "id": "st2",
+   "type": "text",
+   "x": 314,
+   "y": 46,
+   "text": "2. K-map",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 200,
+    "y": 262,
+    "size": 12
+   }
+  },
+  {
+   "id": "kmg",
+   "type": "grid",
+   "x": 250,
+   "y": 104,
+   "rows": 4,
+   "cols": 4,
+   "cell": 32,
+   "values": [
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "mono": true,
+   "narrow": {
+    "x": 140,
+    "y": 320,
+    "cell": 30
+   }
+  },
+  {
+   "id": "kmc0",
+   "type": "text",
+   "x": 266.0,
+   "y": 86,
+   "text": "00",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 155.0,
+    "y": 302
+   }
+  },
+  {
+   "id": "kmc1",
+   "type": "text",
+   "x": 298.0,
+   "y": 86,
+   "text": "01",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 185.0,
+    "y": 302
+   }
+  },
+  {
+   "id": "kmc2",
+   "type": "text",
+   "x": 330.0,
+   "y": 86,
+   "text": "11",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 215.0,
+    "y": 302
+   }
+  },
+  {
+   "id": "kmc3",
+   "type": "text",
+   "x": 362.0,
+   "y": 86,
+   "text": "10",
+   "anchor": "middle",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 245.0,
+    "y": 302
+   }
+  },
+  {
+   "id": "kmr0",
+   "type": "text",
+   "x": 234,
+   "y": 120.0,
+   "text": "00",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 124,
+    "y": 335.0
+   }
+  },
+  {
+   "id": "kmr1",
+   "type": "text",
+   "x": 234,
+   "y": 152.0,
+   "text": "01",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 124,
+    "y": 365.0
+   }
+  },
+  {
+   "id": "kmr2",
+   "type": "text",
+   "x": 234,
+   "y": 184.0,
+   "text": "11",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 124,
+    "y": 395.0
+   }
+  },
+  {
+   "id": "kmr3",
+   "type": "text",
+   "x": 234,
+   "y": 216.0,
+   "text": "10",
+   "anchor": "end",
+   "size": 13,
+   "mono": true,
+   "tone": "subject",
+   "weight": "bold",
+   "narrow": {
+    "x": 124,
+    "y": 425.0
+   }
+  },
+  {
+   "id": "kmcv",
+   "type": "text",
+   "x": 314.0,
+   "y": 66,
+   "text": "CD",
+   "anchor": "middle",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 200.0,
+    "y": 282
+   }
+  },
+  {
+   "id": "kmrv",
+   "type": "text",
+   "x": 234,
+   "y": 86,
+   "text": "AB",
+   "anchor": "end",
+   "size": 13,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 124,
+    "y": 302
+   }
+  },
+  {
+   "id": "lp00",
+   "type": "box",
+   "x": 255,
+   "y": 173,
+   "w": 118,
+   "h": 54,
+   "tone": "accent",
+   "fill": "accent",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 145,
+    "y": 385,
+    "w": 110,
+    "h": 50
+   }
+  },
+  {
+   "id": "lp10",
+   "type": "box",
+   "x": 323,
+   "y": 145,
+   "w": 46,
+   "h": 46,
+   "tone": "success",
+   "fill": "success",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 209,
+    "y": 359,
+    "w": 42,
+    "h": 42
+   }
+  },
+  {
+   "id": "lp20",
+   "type": "box",
+   "x": 287,
+   "y": 141,
+   "w": 54,
+   "h": 54,
+   "tone": "info",
+   "fill": "info",
+   "hidden": true,
+   "dashed": false,
+   "narrow": {
+    "x": 175,
+    "y": 355,
+    "w": 50,
+    "h": 50
+   }
+  },
+  {
+   "id": "ex1",
+   "type": "text",
+   "x": 314,
+   "y": 254,
+   "text": "3. F = A + BC + BD",
+   "size": 14,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 200,
+    "y": 462,
+    "size": 13
+   }
+  },
+  {
+   "id": "ex2",
+   "type": "text",
+   "x": 314,
+   "y": 276,
+   "text": "= A + B(C + D)",
+   "size": 14,
+   "anchor": "middle",
+   "hidden": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 200,
+    "y": 484,
+    "size": 13
+   }
+  },
+  {
+   "id": "st4",
+   "type": "text",
+   "x": 554,
+   "y": 56,
+   "text": "4. circuit (3 gates)",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 170,
+    "y": 518,
+    "size": 12
+   }
+  },
+  {
+   "id": "inA",
+   "type": "text",
+   "x": 404,
+   "y": 98,
+   "text": "A",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 548,
+    "size": 13
+   }
+  },
+  {
+   "id": "inB",
+   "type": "text",
+   "x": 404,
+   "y": 138,
+   "text": "B",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 588,
+    "size": 13
+   }
+  },
+  {
+   "id": "inC",
+   "type": "text",
+   "x": 404,
+   "y": 178,
+   "text": "C",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 628,
+    "size": 13
+   }
+  },
+  {
+   "id": "inD",
+   "type": "text",
+   "x": 404,
+   "y": 218,
+   "text": "D",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "y": 668,
+    "size": 13
+   }
+  },
+  {
+   "id": "g1",
+   "type": "gate",
+   "x": 474,
+   "y": 179,
+   "w": 40,
+   "h": 42,
+   "kind": "or",
+   "hidden": true,
+   "narrow": {
+    "x": 90,
+    "y": 629
+   }
+  },
+  {
+   "id": "g2",
+   "type": "gate",
+   "x": 539,
+   "y": 152,
+   "w": 40,
+   "h": 42,
+   "kind": "and",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "y": 602
+   }
+  },
+  {
+   "id": "g3",
+   "type": "gate",
+   "x": 604,
+   "y": 104,
+   "w": 40,
+   "h": 42,
+   "kind": "or",
+   "hidden": true,
+   "narrow": {
+    "x": 220,
+    "y": 554
+   }
+  },
+  {
+   "id": "wC",
+   "type": "line",
+   "points": [
+    [
+     434,
+     178
+    ],
+    [
+     448,
+     178
+    ],
+    [
+     448,
+     193.0
+    ],
+    [
+     478.44,
+     193.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      628
+     ],
+     [
+      64,
+      628
+     ],
+     [
+      64,
+      643.0
+     ],
+     [
+      94.44,
+      643.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wD",
+   "type": "line",
+   "points": [
+    [
+     434,
+     218
+    ],
+    [
+     460,
+     218
+    ],
+    [
+     460,
+     207.0
+    ],
+    [
+     478.44,
+     207.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      668
+     ],
+     [
+      76,
+      668
+     ],
+     [
+      76,
+      657.0
+     ],
+     [
+      94.44,
+      657.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wB",
+   "type": "line",
+   "points": [
+    [
+     434,
+     138
+    ],
+    [
+     522,
+     138
+    ],
+    [
+     522,
+     166.0
+    ],
+    [
+     539.0,
+     166.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      588
+     ],
+     [
+      138,
+      588
+     ],
+     [
+      138,
+      616.0
+     ],
+     [
+      155.0,
+      616.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "n1",
+   "type": "line",
+   "points": [
+    [
+     514.0,
+     200.0
+    ],
+    [
+     530,
+     200.0
+    ],
+    [
+     530,
+     180.0
+    ],
+    [
+     539.0,
+     180.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      130.0,
+      650.0
+     ],
+     [
+      146,
+      650.0
+     ],
+     [
+      146,
+      630.0
+     ],
+     [
+      155.0,
+      630.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wA",
+   "type": "line",
+   "points": [
+    [
+     434,
+     98
+    ],
+    [
+     588,
+     98
+    ],
+    [
+     588,
+     118.0
+    ],
+    [
+     608.44,
+     118.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50,
+      548
+     ],
+     [
+      204,
+      548
+     ],
+     [
+      204,
+      568.0
+     ],
+     [
+      224.44,
+      568.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "n2",
+   "type": "line",
+   "points": [
+    [
+     579.0,
+     173.0
+    ],
+    [
+     594,
+     173.0
+    ],
+    [
+     594,
+     132.0
+    ],
+    [
+     608.44,
+     132.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      195.0,
+      623.0
+     ],
+     [
+      210,
+      623.0
+     ],
+     [
+      210,
+      582.0
+     ],
+     [
+      224.44,
+      582.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wF",
+   "type": "line",
+   "points": [
+    [
+     644.0,
+     125.0
+    ],
+    [
+     660.0,
+     125.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      260.0,
+      575.0
+     ],
+     [
+      276.0,
+      575.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vF",
+   "type": "text",
+   "x": 666.0,
+   "y": 125.0,
+   "text": "F",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 282.0,
+    "y": 575.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Stage 1, the truth table: F = 1 for digits 5–9, F = 0 for 0–4; the codes 1010–1111 never occur in BCD, so their F is a don't-care X.",
+   "patches": [
+    {
+     "id": "tt0",
+     "set": {
+      "rows": [
+       [
+        "ABCD",
+        "F"
+       ],
+       [
+        "0000",
+        "0"
+       ],
+       [
+        "0001",
+        "0"
+       ],
+       [
+        "0010",
+        "0"
+       ],
+       [
+        "0011",
+        "0"
+       ],
+       [
+        "0100",
+        "0"
+       ],
+       [
+        "0101",
+        "1"
+       ],
+       [
+        "0110",
+        "1"
+       ],
+       [
+        "0111",
+        "1"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt1",
+     "set": {
+      "rows": [
+       [
+        "ABCD",
+        "F"
+       ],
+       [
+        "1000",
+        "1"
+       ],
+       [
+        "1001",
+        "1"
+       ],
+       [
+        "1010",
+        "X"
+       ],
+       [
+        "1011",
+        "X"
+       ],
+       [
+        "1100",
+        "X"
+       ],
+       [
+        "1101",
+        "X"
+       ],
+       [
+        "1110",
+        "X"
+       ],
+       [
+        "1111",
+        "X"
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Stage 2, the K-map: the five 1s (cells 5–9) and the six Xs (cells 10–15) are copied into a 4-variable map in Gray order.",
+   "patches": [
+    {
+     "id": "kmg",
+     "set": {
+      "values": [
+       [
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "",
+        "1",
+        "1",
+        "1"
+       ],
+       [
+        "X",
+        "X",
+        "X",
+        "X"
+       ],
+       [
+        "1",
+        "1",
+        "X",
+        "X"
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Stage 3, grouping: the Xs let the 1s at 8 and 9 join cells 10–15 in an octet, the whole A = 1 half of the map, which reads A.",
+   "patches": [
+    {
+     "id": "lp00",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Two quads finish the cover: BC (cells 6, 7, 14, 15) and BD (cells 5, 7, 13, 15). Minimal SOP: F = A + BC + BD = A + B(C + D).",
+   "patches": [
+    {
+     "id": "lp10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lp20",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ex1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ex2",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Stage 4: three gates, OR(C, D), AND with B, OR with A. No AND/OR/NOT circuit with fewer gates exists.",
+   "patches": [
+    {
+     "id": "inA",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "inC",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "inD",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wD",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wB",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wA",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wF",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "vF",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Test digit 6 = 0110: C + D = 1, B(C + D) = 1, so F = 1, as the table says (6 ≥ 5).",
+   "patches": [
+    {
+     "id": "wA",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wD",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "inA",
+     "set": {
+      "text": "A=0"
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "text": "B=1"
+     }
+    },
+    {
+     "id": "inC",
+     "set": {
+      "text": "C=1"
+     }
+    },
+    {
+     "id": "inD",
+     "set": {
+      "text": "D=0"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wF",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vF",
+     "set": {
+      "text": "F = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Test digit 3 = 0011: C + D = 1 but B = 0, so B(C + D) = 0 and A = 0, so F = 0 (3 < 5).",
+   "patches": [
+    {
+     "id": "wA",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wD",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "inA",
+     "set": {
+      "text": "A=0"
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "text": "B=0"
+     }
+    },
+    {
+     "id": "inC",
+     "set": {
+      "text": "C=1"
+     }
+    },
+    {
+     "id": "inD",
+     "set": {
+      "text": "D=1"
+     }
+    },
+    {
+     "id": "n1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "n2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wF",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vF",
+     "set": {
+      "text": "F = 0",
+      "tone": "muted"
+     }
+    }
+   ]
+  }
+ ]
+}

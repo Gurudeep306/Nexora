@@ -3137,23 +3137,49 @@
       "verification": "Example: sequence a b c a b c in one 3-way LRU set ($N=6$, $n=3$, $k=2 \\le A$): misses on the first a, b, c only, so miss ratio $3/6 = n/N$."
     },
     "cse-2014-1-cs-45": {
-      "approach": "Write F as the sum of minterms selected by S1S0 = PQ, then simplify the two terms that share Q.",
+      "approach": "Concept tested: **MUX output to a minimal SOP**. Write the MUX equation, list the minterms, and loop them on a K-map. Three options are the same function; only one is minimal.",
       "concepts": [
-        "Multiplexer as function generator",
-        "Boolean simplification"
+        "Multiplexer equation",
+        "K-map minimisation",
+        "Minimal vs equivalent"
       ],
+      "given": "$S_1 = P$, $S_0 = Q$; $I_0 = 0$, $I_1 = 1$, $I_2 = R$, $I_3 = \\overline{R}$.",
       "steps": [
         {
-          "title": "MUX expression",
-          "body": "With $S_1 = P$, $S_0 = Q$: $F = \\overline{P}\\,\\overline{Q}\\cdot 0 + \\overline{P}Q\\cdot 1 + P\\overline{Q}\\cdot R + PQ\\cdot\\overline{R} = \\overline{P}Q + P\\overline{Q}R + PQ\\overline{R}$."
+          "title": "MUX equation",
+          "body": "$F = \\overline{P}\\,\\overline{Q} \\cdot 0 + \\overline{P}Q \\cdot 1 + P\\overline{Q}R + PQ\\overline{R} = \\overline{P}Q + P\\overline{Q}R + PQ\\overline{R}$."
         },
         {
-          "title": "Simplify",
-          "body": "$\\overline{P}Q + PQ\\overline{R} = Q(\\overline{P} + P\\overline{R}) = Q(\\overline{P} + \\overline{R}) = \\overline{P}Q + Q\\overline{R}$.\n\nSo $F = \\overline{P}Q + Q\\overline{R} + P\\overline{Q}R$; the term $P\\overline{Q}R$ (minterm 5) shares no adjacent 1 and stays."
+          "title": "Minterms",
+          "body": "$F = \\Sigma m(2, 3, 5, 6)$ over $(P, Q, R)$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Loop",
+          "body": "$m_2, m_3$: $\\overline{P}Q$. $m_6$ is adjacent to $m_2$: $Q\\overline{R}$ (smaller than keeping $PQ\\overline{R}$). $m_5$ is isolated: $P\\overline{Q}R$. $F = \\overline{P}Q + Q\\overline{R} + P\\overline{Q}R$, 7 literals."
         }
       ],
       "answer": {
-        "value": "$\\overline{P}Q + Q\\overline{R} + P\\overline{Q}R$",
+        "value": "(A) $\\overline{P}Q + Q\\overline{R} + P\\overline{Q}R$",
         "choice": [
           "A"
         ],
@@ -3163,25 +3189,91 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Minimal SOP of minterms {2, 3, 5, 6} (PQR order)."
+          "reason": "The minimal cover: 7 literals."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Equivalent but not minimal: P̄QR̄ is redundant (covered by P̄Q) and PQR̄ can be merged into QR̄."
+          "reason": "Equal to $F$ but not minimal: the term $\\overline{P}Q\\overline{R}$ is redundant and $PQ\\overline{R}$ can grow to $Q\\overline{R}$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Equivalent but not minimal: P̄QR and P̄QR̄ should merge into P̄Q."
+          "reason": "Equal to $F$ but not minimal: $\\overline{P}QR + \\overline{P}Q\\overline{R}$ is just $\\overline{P}Q$, written as two terms."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "PQR̄ alone misses minterms 2, 3, 5 (e.g. P = 0, Q = 1 gives F = 1)."
+          "reason": "$PQ\\overline{R}$ alone covers only $m_6$."
         }
       ],
-      "verification": "Truth table (P,Q,R): F = 1 for 010, 011, 101, 110 = $m(2,3,5,6)$; option A covers 2,3 (P̄Q), 2,6 (QR̄), 5 (PQ̄R) and nothing else."
+      "shortcut": "A 1 on a data input contributes the whole select minterm ($\\overline{P}Q$); then look for the neighbour of the lone minterms ($m_6$ next to $m_2$).",
+      "pitfalls": [
+        "Stopping at the MUX equation, which is correct but has 8 literals.",
+        "Choosing (B) or (C) because they are equal to $F$: the question asks for the minimal form."
+      ],
+      "verification": "Options A, B and C all have minterms {2, 3, 5, 6}; minlib's exhaustive cover search gives 7 literals as the minimum, which only (A) attains.",
+      "animation": {
+        "kind": "table",
+        "title": "4:1 MUX with data 0, 1, R, R′",
+        "cols": [
+          "P",
+          "Q",
+          "R",
+          "F"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            0
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2014-1-cs-46": {
       "approach": "Differentiate f(x) = x sin x twice and substitute into the equation.",

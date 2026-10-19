@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated": "2026-10-18",
+  "updated": "2026-10-19",
   "steps": {
     "N0": "review",
     "N1": "review",
@@ -21,7 +21,7 @@
         "lessons": "written",
         "viz": "done",
         "questions": "done",
-        "review": "ch1-ch3-reviewed",
+        "review": "ch1-ch3-reviewed, combinational (ch5) reviewed",
         "wrapup": "pending"
       },
       "chapters": [
@@ -79,35 +79,49 @@
           "review": "2026-10-18: examiner review by two independent reviewers (lessons 1-2, 3-4): 13 errors, 4 misleading, ~45 minor/style findings, all fixed and re-checked; all 39 PYQ keys re-derived, cse-2006-cs-38 fixed A->D, it-2004-it-44 text repaired, cse-2003-cs-45 key kept (true minima 9, 8); Chapter 3 coverage 39/39."
         },
         {
-          "id": "04-combinational-circuits",
-          "title": "Combinational circuits",
-          "lessons": 6,
-          "pyqs": 38,
-          "status": "planned"
-        },
-        {
-          "id": "05-arithmetic-circuits",
+          "id": "04-arithmetic-circuits",
           "title": "Arithmetic circuits (hardware)",
           "lessons": 4,
           "pyqs": 14,
           "status": "planned"
         },
         {
-          "id": "06-latches-flip-flops",
-          "title": "Latches, flip-flops and sequential analysis",
-          "lessons": 3,
-          "pyqs": 24,
-          "status": "planned"
+          "id": "05-combinational-circuits",
+          "title": "Combinational building blocks",
+          "lessons": 6,
+          "pyqs": 38,
+          "status": "reviewed",
+          "live_lab": "Combinational Workbench (:::lab comb-workbench: mux, implement, decoder)",
+          "lessons_status": {
+            "combinational-design": "published+reviewed",
+            "multiplexers": "published+reviewed",
+            "decoders-encoders": "published+reviewed",
+            "comparators-parity": "published+reviewed",
+            "rom-pla-pal": "published+reviewed",
+            "faults-testing": "published+reviewed"
+          },
+          "review": "2026-10-19: examiner review by three independent reviewers (lessons 1-2, 3-4, 5-6): 4 errors, 5 misleading, ~70 minor/style/coverage findings, all fixed and re-checked (new worked examples, proofs of the signed less-than rule and the checkpoint theorem, PLA programming tables, fault dominance/coverage, 8 new animated scenes, every caption <= 140 characters); all 38 PYQ keys re-derived by enumeration, none wrong; cse-2001-b-58-b review flag cleared from the scan; Chapter coverage 38/38.",
+          "restructure": "2026-10-19: owner-approved reorder. Was Chapter 4 'Combinational circuits' (folder 04-combinational-circuits); now Chapter 5 'Combinational building blocks' (folder 05-combinational-circuits), after the arithmetic-circuits chapter. Lesson ids and slugs unchanged; practice ids nx-dl-04-* renamed nx-dl-05-*; checks l4_*/ *_ch4 renamed l5_*/ *_ch5."
         },
         {
-          "id": "07-counters-registers-fsms",
-          "title": "Counters, registers and FSMs",
-          "lessons": 5,
-          "pyqs": 35,
-          "status": "planned"
+          "id": "06-sequential-circuits",
+          "title": "Sequential circuits",
+          "lessons": 8,
+          "pyqs": 59,
+          "status": "planned",
+          "parts": [
+            "storage elements (latches, flip-flops, sequential analysis)",
+            "counters and registers (ripple counters, synchronous counter design, shift registers and ring/Johnson)",
+            "state machines (Mealy/Moore FSMs, state minimisation)"
+          ],
+          "live_labs": [
+            "Flip-flop Scope",
+            "Counter & FSM Simulator"
+          ],
+          "note": "2026-10-19: merged from the old Chapters 6 (latches, flip-flops and sequential analysis) and 7 (counters, registers and FSMs). FSM lessons are hardware-focused and link to TOC for DFA theory."
         },
         {
-          "id": "08-beyond-syllabus",
+          "id": "07-beyond-syllabus",
           "title": "Beyond the core syllabus",
           "lessons": 3,
           "pyqs": 4,

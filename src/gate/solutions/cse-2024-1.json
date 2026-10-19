@@ -7850,53 +7850,21 @@
       }
     },
     "cse-2024-1-cs-54": {
-      "approach": "A 2-to-1 MUX outputs input 0 when its select is 0 and input 1 when it is 1. Because both inputs of M1 are equal (1, 1) and both inputs of M2 are equal (0, 0), A and B do not matter at all; only C decides Y.",
+      "approach": "Concept tested: **a two-level tree of 2:1 MUXes with constant data**. When both data inputs of a MUX are equal, its select does not matter. So $Q_1 \\equiv 1$ and $Q_2 \\equiv 0$, and M3 outputs $\\overline{C}$.",
       "concepts": [
-        "2-to-1 multiplexer",
-        "MUX output $= \\overline{S}I_0 + SI_1$",
-        "Counting input combinations"
+        "MUX tree",
+        "Constant data inputs",
+        "Counting minterms"
       ],
-      "given": "M1: $I_0 = X1 = 1$, $I_1 = X2 = 1$, select $A$, output $Q1$. M2: $I_0 = X3 = 0$, $I_1 = X4 = 0$, select $B$, output $Q2$. M3: $I_0 = Q1$, $I_1 = Q2$, select $C$, output $Y$.",
+      "given": "M1: inputs $X_1 = 1$, $X_2 = 1$, select $A$. M2: inputs $X_3 = 0$, $X_4 = 0$, select $B$. M3: input 0 = $Q_1$, input 1 = $Q_2$, select $C$.",
       "steps": [
         {
-          "title": "Output of M1",
-          "body": "$$Q1 = \\overline{A}\\,X1 + A\\,X2 = \\overline{A}\\cdot1 + A\\cdot1 = 1$$\nfor both values of $A$.",
-          "scene": {
-            "hl": [
-              {
-                "c": 3,
-                "tone": "accent"
-              }
-            ]
-          }
+          "title": "First level",
+          "body": "M1 chooses between 1 and 1: $Q_1 = 1$ for every $A$. M2 chooses between 0 and 0: $Q_2 = 0$ for every $B$."
         },
         {
-          "title": "Output of M2",
-          "body": "$$Q2 = \\overline{B}\\,X3 + B\\,X4 = 0 + 0 = 0$$\nfor both values of $B$.",
-          "scene": {
-            "hl": [
-              {
-                "c": 4,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Output of M3",
-          "body": "$$Y = \\overline{C}\\,Q1 + C\\,Q2 = \\overline{C}\\cdot1 + C\\cdot0 = \\overline{C}.$$\nSo $Y = 1$ exactly when $C = 0$.",
-          "scene": {
-            "hl": [
-              {
-                "c": 5,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Count the combinations",
-          "body": "$C = 0$ is forced; $A$ and $B$ are free ($2 \\times 2$ choices):\n$$2 \\times 2 \\times 1 = 4$$\nThey are $(A, B, C) = (0,0,0), (0,1,0), (1,0,0), (1,1,0)$.",
+          "title": "Second level",
+          "body": "$Y = \\overline{C}Q_1 + CQ_2 = \\overline{C}$.",
           "scene": {
             "hl": [
               {
@@ -7904,54 +7872,39 @@
                 "tone": "success"
               },
               {
-                "r": 1,
-                "tone": "muted"
-              },
-              {
                 "r": 2,
                 "tone": "success"
-              },
-              {
-                "r": 3,
-                "tone": "muted"
               },
               {
                 "r": 4,
                 "tone": "success"
               },
               {
-                "r": 5,
-                "tone": "muted"
-              },
-              {
                 "r": 6,
                 "tone": "success"
-              },
-              {
-                "r": 7,
-                "tone": "muted"
               }
-            ],
-            "vars": {
-              "Y=1 rows": 4
-            }
+            ]
           }
+        },
+        {
+          "title": "Count",
+          "body": "$Y = 1$ whenever $C = 0$; $A$ and $B$ are free: $2 \\times 2 = 4$ combinations."
         }
       ],
       "answer": {
-        "value": "$Y = \\overline{C}$, so **4** combinations",
+        "value": "**4** combinations ($Y = \\overline{C}$)",
         "number": 4,
         "matchesKey": true
       },
-      "shortcut": "M1 always outputs 1, M2 always 0, so $Y = \\overline{C}$: $C = 0$ with $A, B$ free → $2^2 = 4$.",
+      "shortcut": "Equal data inputs make a MUX's select irrelevant; the tree collapses to $Y = \\overline{C}$, half of the 8 rows.",
       "pitfalls": [
-        "Mixing up which MUX input is selected by 0 — M3 picks Q1 (input 0) when $C = 0$.",
-        "Counting only $(A, B)$ patterns that \"look\" relevant (1 or 2) — A and B are don't-cares here."
+        "Counting only the rows where $A$ or $B$ \"chooses\" a 1, as if the selects mattered.",
+        "Mixing up which M3 input is chosen by $C = 0$ (input 0, $Q_1$)."
       ],
-      "verification": "Full truth table (8 rows of $A, B, C$): $Y = 1$ in exactly the 4 rows with $C = 0$.",
+      "verification": "Enumerating all 8 rows of $(A, B, C)$: $Y = 1$ on 000, 010, 100, 110.",
       "animation": {
         "kind": "table",
-        "title": "All 8 select combinations (X1=X2=1, X3=X4=0)",
+        "title": "Three 2:1 MUXes, X1 = X2 = 1, X3 = X4 = 0",
         "cols": [
           "A",
           "B",

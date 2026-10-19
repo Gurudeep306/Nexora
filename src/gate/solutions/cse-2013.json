@@ -693,23 +693,53 @@
       "verification": "$1000\\,0000$ negated is itself; as unsigned it is $128 = 256 - 128$."
     },
     "cse-2013-cs-5": {
-      "approach": "Four inputs map to a 2-bit code of the highest-indexed active input, with lower inputs as don't-cares and a valid flag — that is a 4-to-2 priority encoder.",
+      "approach": "Concept tested: **recognising a priority encoder from its truth table**. Four inputs go in, a 2-bit code and a valid bit come out, and the input columns contain x's: lower inputs do not matter once a higher one is active.",
       "concepts": [
         "Priority encoder",
-        "Combinational circuits"
+        "Valid bit",
+        "Encoder vs decoder"
       ],
+      "given": "Inputs $D_0 \\dots D_3$; outputs $X_0, X_1$ and $V$; five rows, with x's in the input columns of the last three.",
       "steps": [
         {
-          "title": "Read the table",
-          "body": "Output $X_0X_1$ is the binary index of the highest active input: $D_3=1 \\Rightarrow 11$ regardless of $D_0..D_2$; $D_2=1$ (with $D_3=0$) $\\Rightarrow 10$; $D_1 \\Rightarrow 01$; only $D_0 \\Rightarrow 00$. When no input is active, $V=0$."
+          "title": "Direction of the block",
+          "body": "Four inputs → a 2-bit code: many lines in, few out. That is the encoder direction (a decoder goes from a few address bits to many one-hot outputs)."
         },
         {
-          "title": "Identify",
-          "body": "Many inputs to an encoded index with don't-cares on lower-priority lines and a valid bit is a 4-to-2 priority encoder."
+          "title": "Read the rows",
+          "body": "Row 3 ($D_1 = 1$, $D_2 = D_3 = 0$, $D_0$ = x) gives code 01; row 4 ($D_2 = 1$, $D_3 = 0$, $D_0, D_1$ = x) gives 10; row 5 ($D_3 = 1$, the rest x) gives 11. The code is the index of the **highest** active input, and every lower input is a don't-care.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 3,
+                "tone": "accent"
+              },
+              {
+                "r": 4,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "The valid bit",
+          "body": "The all-zero row has $V = 0$ and don't-care outputs; every other row has $V = 1$. A valid output that flags \"some input is active\" is the second signature of a priority encoder. (Note that the table lists $X_0$ before $X_1$; from the rows, $X_0$ is the high bit of the code.)",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "warning"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "Priority encoder",
+        "value": "(A) Priority encoder",
         "choice": [
           "A"
         ],
@@ -719,28 +749,91 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: highest active input wins, lower ones are x, V flags any active input."
+          "reason": "Highest active input wins (x's on the lower inputs), output is its index, and $V$ marks a valid input."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A decoder maps a 2-bit code to one of 4 lines — the reverse direction."
+          "reason": "A decoder maps an $n$-bit number to $2^n$ one-hot outputs; here 4 inputs give a 2-bit code, the opposite direction, and a decoder's table has x's in its address columns only on the disabled row ($E = 0$, all outputs 0), never on rows with a 1 output."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A multiplexer has select lines choosing one data input to a single output; no select inputs here."
+          "reason": "A multiplexer has select inputs and data inputs and one output equal to the selected data input; there are no select lines here and the outputs are codes, not a copied data bit."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A demultiplexer routes one input to one of many outputs."
+          "reason": "A demultiplexer has one data input and copies it to one of many outputs; this block has four inputs and a coded output."
         }
       ],
+      "shortcut": "x's in the **input** columns plus a valid bit = priority encoder.",
       "pitfalls": [
-        "Calling it a plain encoder — the x entries for lower inputs are what makes it a priority encoder."
+        "Choosing \"decoder\" because the word \"valid\" sounds like an enable.",
+        "Reading $X_1$ as the high bit because it is the usual name; the table puts $X_0$ first, and it is $X_0$ that is 1 for $D_2$ and $D_3$."
       ],
-      "verification": "Input 1,1,0,0 matches row 3 (x,1,0,0), giving 01 = index of $D_1$, the higher of the two active inputs."
+      "verification": "Expanding the x's, the five rows cover all 16 input patterns (1 + 1 + 2 + 4 + 8) and each agrees with a 4:2 priority encoder ($D_3$ highest) whose code is written $X_0X_1$ with $X_0$ the MSB. Column order check: $D_2$'s row gives $X_0X_1 = 10$, so $X_0$ is the weight-2 bit (and $D_1$'s row, $X_0X_1 = 01$, confirms $X_1$ is the weight-1 bit).",
+      "animation": {
+        "kind": "table",
+        "title": "The table (D₀ D₁ D₂ D₃ → X₀ X₁ V)",
+        "cols": [
+          "D0",
+          "D1",
+          "D2",
+          "D3",
+          "X0",
+          "X1",
+          "V"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0,
+            "x",
+            "x",
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            "x",
+            1,
+            0,
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            "x",
+            "x",
+            1,
+            0,
+            1,
+            0,
+            1
+          ],
+          [
+            "x",
+            "x",
+            "x",
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2013-cs-6": {
       "approach": "Selection sort performs at most one swap per pass of the outer loop, and there are n−1 passes.",

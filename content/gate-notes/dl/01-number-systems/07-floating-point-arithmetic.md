@@ -30,7 +30,7 @@ pattern, and what happens at the edges: overflow, underflow and absorption.
 
 This lesson needs the IEEE layouts and the decode/encode methods of [Lesson 6](lesson:ieee-754),
 and the custom formats of [Lesson 5](lesson:floating-point-basics) for the older GATE questions.
-Chapter 5 later builds the integer adders that do the significand arithmetic described here.
+Chapter 4 later builds the integer adders that do the significand arithmetic described here.
 
 :::table{#radar title="GATE radar: floating-point arithmetic" depth="quick"}
 | What | Detail |

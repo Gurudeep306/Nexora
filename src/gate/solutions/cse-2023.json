@@ -6328,106 +6328,78 @@
       }
     },
     "cse-2023-cs-34": {
-      "approach": "Simplify $f$, then read the MUX tree as a truth table: M3 picks M1 when $B = 0$ and M2 when $B = 1$, and inside M1/M2 the input with index $2A + C$ is routed out. So each $X_i$ is just $f$ at the matching $(A, B, C)$.",
+      "approach": "Concept tested: **wiring a truth table onto a MUX tree** with a given select order. $B$ chooses M1 ($B = 0$) or M2 ($B = 1$); inside each, $S_1 = A$ and $S_0 = C$, so $X_{4B + 2A + C} = f(A, B, C)$.",
       "concepts": [
-        "Multiplexer as a function generator",
-        "Absorption law",
-        "Shannon expansion on B"
+        "MUX tree",
+        "Truth table on data inputs",
+        "Select order"
       ],
-      "given": "M1: inputs X0–X3, $S_1 = A$, $S_0 = C$. M2: inputs X4–X7, $S_1 = A$, $S_0 = C$. M3: input 0 = M1, input 1 = M2, $S = B$. Target: $f = \\overline{A} + \\overline{A}\\,\\overline{C} + A\\overline{B}C$.",
+      "given": "$f = \\overline{A} + \\overline{A}\\,\\overline{C} + A\\overline{B}C$. M1: $X_0 \\dots X_3$, M2: $X_4 \\dots X_7$, both with $S_1 = A$, $S_0 = C$; M3 (2:1) selects M1 for $B = 0$, M2 for $B = 1$.",
       "steps": [
         {
-          "title": "Simplify the function",
-          "body": "Absorption: $\\overline{A} + \\overline{A}\\,\\overline{C} = \\overline{A}$. Then $\\overline{A} + A\\,Y = \\overline{A} + Y$ with $Y = \\overline{B}C$:\n\n$$f = \\overline{A} + A\\overline{B}C = \\overline{A} + \\overline{B}C$$",
+          "title": "Simplify f",
+          "body": "$\\overline{A}\\,\\overline{C}$ is absorbed by $\\overline{A}$, and $\\overline{A} + A\\overline{B}C = \\overline{A} + \\overline{B}C$. So $f = 1$ whenever $A = 0$, and for $A = 1$ only when $B = 0, C = 1$."
+        },
+        {
+          "title": "Index of each X",
+          "body": "$X_i$ is reached when $B$ picks its MUX and $(A C)_2$ picks its position: $X_{4B + 2A + C}$. So $X_i = f$ at $B = i_2$, $A = i_1$, $C = i_0$.",
           "scene": {
-            "panels": [
+            "reveal": 16
+          }
+        },
+        {
+          "title": "M1 (B = 0)",
+          "body": "$AC = 00, 01$: $A = 0$ → 1, 1. $AC = 10$: $\\overline{B}C = 0$ → 0. $AC = 11$: $\\overline{B}C = 1$ → 1. $(X_0, X_1, X_2, X_3) = (1, 1, 0, 1)$.",
+          "scene": {
+            "reveal": 32,
+            "hl": [
               {
-                "groups": [
-                  {
-                    "cells": [
-                      0,
-                      1,
-                      2,
-                      3
-                    ],
-                    "label": "A′"
-                  },
-                  {
-                    "cells": [
-                      1,
-                      5
-                    ],
-                    "label": "B′C",
-                    "tone": "cat2"
-                  }
-                ]
+                "r": 0,
+                "tone": "accent"
               },
-              null
-            ]
-          }
-        },
-        {
-          "title": "How the inputs are routed",
-          "body": "M3 has $S = B$: output $=$ M1 when $B = 0$, M2 when $B = 1$. In M1 and M2, $S_1 S_0 = A\\,C$ selects input number $2A + C$. Hence\n\n$$X_{2A+C} = f(A, 0, C), \\qquad X_{4 + 2A + C} = f(A, 1, C).$$"
-        },
-        {
-          "title": "B = 0: inputs of M1",
-          "body": "With $B = 0$: $f = \\overline{A} + C$.\n\n- $X_0$ ($A=0, C=0$): $1 + 0 = 1$\n- $X_1$ ($A=0, C=1$): $1$\n- $X_2$ ($A=1, C=0$): $0 + 0 = 0$\n- $X_3$ ($A=1, C=1$): $0 + 1 = 1$",
-          "scene": {
-            "panels": [
-              null,
               {
-                "hl": [
-                  {
-                    "c": 3,
-                    "tone": "accent"
-                  }
-                ]
+                "r": 1,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 3,
+                "tone": "accent"
               }
             ]
           }
         },
         {
-          "title": "B = 1: inputs of M2",
-          "body": "With $B = 1$: $\\overline{B}C = 0$, so $f = \\overline{A}$.\n\n- $X_4 = 1$, $X_5 = 1$ ($A = 0$)\n- $X_6 = 0$, $X_7 = 0$ ($A = 1$)",
+          "title": "M2 (B = 1)",
+          "body": "$A = 0$ → 1, 1. $A = 1$: $\\overline{B} = 0$ → 0, 0. $(X_4, \\dots, X_7) = (1, 1, 0, 0)$.",
           "scene": {
-            "panels": [
-              null,
+            "hl": [
               {
-                "hl": [
-                  {
-                    "c": 4,
-                    "tone": "accent"
-                  }
-                ]
-              }
-            ]
-          }
-        },
-        {
-          "title": "Assemble the input vector",
-          "body": "$$(X_0, \\dots, X_7) = (1, 1, 0, 1, 1, 1, 0, 0)$$\n\nwhich is option (C).",
-          "scene": {
-            "panels": [
-              null,
+                "r": 4,
+                "tone": "success"
+              },
               {
-                "hl": [
-                  {
-                    "c": 3,
-                    "tone": "success"
-                  },
-                  {
-                    "c": 4,
-                    "tone": "success"
-                  }
-                ]
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
               }
-            ]
+            ],
+            "reveal": 40
           }
         }
       ],
       "answer": {
-        "value": "$(1, 1, 0, 1, 1, 1, 0, 0)$ — option (C)",
+        "value": "(C) $(1, 1, 0, 1, 1, 1, 0, 0)$",
         "choice": [
           "C"
         ],
@@ -6437,91 +6409,100 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$X_3 = 0$ drops the term $A\\overline{B}C$ ($A=1, B=0, C=1$ gives $f = 1$), and $X_6 = 1$ is wrong ($A=1, B=1, C=0$ gives $f = 0$)."
+          "reason": "$X_3 = 0$ makes $f = 0$ at $A = 1, B = 0, C = 1$ (a 1 of $f$), and $X_6 = 1$ makes $f = 1$ at $A = 1, B = 1, C = 0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$X_3 = 0$ drops $A\\overline{B}C$, and $X_7 = 1$ is wrong: $A=B=C=1$ gives $f = 0$."
+          "reason": "$X_3 = 0$ misses $A\\overline{B}C$, and $X_7 = 1$ adds $ABC$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Matches $f(A,0,C) = \\overline{A} + C$ on M1 and $f(A,1,C) = \\overline{A}$ on M2."
+          "reason": "$X_{4B + 2A + C} = f(A, B, C)$ for all eight rows."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$X_0 = 0$ already fails: with $A = B = C = 0$ the term $\\overline{A}$ makes $f = 1$. (D) also sets $X_6 = X_7 = 1$, although $f = 0$ whenever $A = B = 1$."
+          "reason": "Inverts the role of $A$: $X_0 = 0$ gives $f = 0$ at $A = B = C = 0$, where $f = \\overline{A} = 1$."
         }
       ],
-      "shortcut": "$f = 1$ whenever $A = 0$, so $X_0 = X_1 = X_4 = X_5 = 1$ (removes D). With $A = 1$, $f = \\overline{B}C$ is 1 only for $B = 0, C = 1$, so among $X_2, X_3, X_6, X_7$ only $X_3 = 1$. Only C has that.",
+      "shortcut": "$f = \\overline{A} + \\overline{B}C$: every $X$ with $A = 0$ (positions 0, 1 in each MUX) is 1; with $A = 1$ only the M1 entry for $C = 1$ ($X_3$) is 1.",
       "pitfalls": [
-        "Swapping the select lines: $A$ drives $S_1$ (the MSB), so the index is $2A + C$, not $2C + A$.",
-        "Swapping M3's inputs: M1 feeds input 0 (taken when $B = 0$)."
+        "Assuming the data inputs follow $AB$ order: the selects of M1 and M2 are $A$ and $C$, and $B$ is on M3.",
+        "Putting $B = 1$ on M1."
       ],
-      "verification": "Spot checks through the circuit: $A=1, B=0, C=1$: M3 takes M1, index 3, $X_3 = 1$, and $f = 0 + 0 + 1 = 1$. $A=1, B=1, C=1$: M3 takes M2, index 3, $X_7 = 0$, and $f = 0 + 0 + 0 = 0$.",
+      "verification": "Simulating the three-MUX netlist with option (C)'s constants gives 1s on rows 0, 1, 2, 3, 5 of $(A, B, C)$, the minterms of $\\overline{A} + \\overline{B}C$; the other options differ on at least one row.",
       "animation": {
-        "kind": "panels",
-        "title": "f on the K-map and the MUX inputs",
-        "panels": [
-          {
-            "kind": "kmap",
-            "variables": [
-              "A",
-              "B",
-              "C"
-            ],
-            "ones": [
-              0,
-              1,
-              2,
-              3,
-              5
-            ]
-          },
-          {
-            "kind": "table",
-            "cols": [
-              "A (S1)",
-              "C (S0)",
-              "input",
-              "M1: B = 0",
-              "M2: B = 1"
-            ],
-            "rows": [
-              [
-                0,
-                0,
-                0,
-                "X0 = 1",
-                "X4 = 1"
-              ],
-              [
-                0,
-                1,
-                1,
-                "X1 = 1",
-                "X5 = 1"
-              ],
-              [
-                1,
-                0,
-                2,
-                "X2 = 0",
-                "X6 = 0"
-              ],
-              [
-                1,
-                1,
-                3,
-                "X3 = 1",
-                "X7 = 0"
-              ]
-            ],
-            "mono": true
-          }
-        ]
+        "kind": "table",
+        "title": "X index = 4B + 2A + C",
+        "cols": [
+          "B",
+          "A",
+          "C",
+          "X",
+          "value"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            "X0",
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            "X1",
+            1
+          ],
+          [
+            0,
+            1,
+            0,
+            "X2",
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            "X3",
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            "X4",
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            "X5",
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            "X6",
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            "X7",
+            0
+          ]
+        ],
+        "mono": true,
+        "reveal": 0
       }
     },
     "cse-2023-cs-35": {

@@ -1,0 +1,1370 @@
+{
+ "version": 1,
+ "title": "A 4-bit equality comparator from XNOR gates and an AND gate",
+ "width": 640,
+ "height": 410,
+ "narrow": {
+  "width": 360,
+  "height": 430
+ },
+ "intro": "Two 4-bit numbers A and B. Each bit pair goes to an XNOR gate; the four XNOR outputs go to a 4-input AND, whose output E is 1 when A = B.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "4-bit equality: four XNORs and an AND",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Equality: XNORs + AND",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "and",
+   "type": "gate",
+   "x": 420,
+   "y": 110.0,
+   "w": 60,
+   "h": 170,
+   "kind": "and",
+   "inputs": 4,
+   "narrow": {
+    "x": 230,
+    "w": 50
+   }
+  },
+  {
+   "id": "g3",
+   "type": "gate",
+   "x": 200,
+   "y": 59.0,
+   "w": 54,
+   "h": 50,
+   "kind": "xnor",
+   "narrow": {
+    "x": 96,
+    "w": 46
+   }
+  },
+  {
+   "id": "tA3",
+   "type": "text",
+   "x": 166,
+   "y": 75.67,
+   "text": "A3=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wA3",
+   "type": "line",
+   "points": [
+    [
+     170,
+     75.67
+    ],
+    [
+     204.01,
+     75.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      75.67
+     ],
+     [
+      99.25,
+      75.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tB3",
+   "type": "text",
+   "x": 166,
+   "y": 92.33,
+   "text": "B3=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wB3",
+   "type": "line",
+   "points": [
+    [
+     170,
+     92.33
+    ],
+    [
+     204.01,
+     92.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      92.33
+     ],
+     [
+      99.25,
+      92.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx3",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     84.0
+    ],
+    [
+     300,
+     84.0
+    ],
+    [
+     300,
+     144.0
+    ],
+    [
+     420.0,
+     144.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      84.0
+     ],
+     [
+      180,
+      84.0
+     ],
+     [
+      180,
+      144.0
+     ],
+     [
+      230.0,
+      144.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx3",
+   "type": "text",
+   "x": 276.0,
+   "y": 72,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 156.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "g2",
+   "type": "gate",
+   "x": 200,
+   "y": 133.0,
+   "w": 54,
+   "h": 50,
+   "kind": "xnor",
+   "narrow": {
+    "x": 96,
+    "w": 46
+   }
+  },
+  {
+   "id": "tA2",
+   "type": "text",
+   "x": 166,
+   "y": 149.67,
+   "text": "A2=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wA2",
+   "type": "line",
+   "points": [
+    [
+     170,
+     149.67
+    ],
+    [
+     204.01,
+     149.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      149.67
+     ],
+     [
+      99.25,
+      149.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tB2",
+   "type": "text",
+   "x": 166,
+   "y": 166.33,
+   "text": "B2=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wB2",
+   "type": "line",
+   "points": [
+    [
+     170,
+     166.33
+    ],
+    [
+     204.01,
+     166.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      166.33
+     ],
+     [
+      99.25,
+      166.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx2",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     158.0
+    ],
+    [
+     330,
+     158.0
+    ],
+    [
+     330,
+     178.0
+    ],
+    [
+     420.0,
+     178.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      158.0
+     ],
+     [
+      200,
+      158.0
+     ],
+     [
+      200,
+      178.0
+     ],
+     [
+      230.0,
+      178.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx2",
+   "type": "text",
+   "x": 276.0,
+   "y": 146,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 156.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "g1",
+   "type": "gate",
+   "x": 200,
+   "y": 207.0,
+   "w": 54,
+   "h": 50,
+   "kind": "xnor",
+   "narrow": {
+    "x": 96,
+    "w": 46
+   }
+  },
+  {
+   "id": "tA1",
+   "type": "text",
+   "x": 166,
+   "y": 223.67,
+   "text": "A1=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wA1",
+   "type": "line",
+   "points": [
+    [
+     170,
+     223.67
+    ],
+    [
+     204.01,
+     223.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      223.67
+     ],
+     [
+      99.25,
+      223.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tB1",
+   "type": "text",
+   "x": 166,
+   "y": 240.33,
+   "text": "B1=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wB1",
+   "type": "line",
+   "points": [
+    [
+     170,
+     240.33
+    ],
+    [
+     204.01,
+     240.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      240.33
+     ],
+     [
+      99.25,
+      240.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx1",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     232.0
+    ],
+    [
+     330,
+     232.0
+    ],
+    [
+     330,
+     212.0
+    ],
+    [
+     420.0,
+     212.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      232.0
+     ],
+     [
+      200,
+      232.0
+     ],
+     [
+      200,
+      212.0
+     ],
+     [
+      230.0,
+      212.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx1",
+   "type": "text",
+   "x": 276.0,
+   "y": 220,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 156.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "g0",
+   "type": "gate",
+   "x": 200,
+   "y": 281.0,
+   "w": 54,
+   "h": 50,
+   "kind": "xnor",
+   "narrow": {
+    "x": 96,
+    "w": 46
+   }
+  },
+  {
+   "id": "tA0",
+   "type": "text",
+   "x": 166,
+   "y": 297.67,
+   "text": "A0=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wA0",
+   "type": "line",
+   "points": [
+    [
+     170,
+     297.67
+    ],
+    [
+     204.01,
+     297.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      297.67
+     ],
+     [
+      99.25,
+      297.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tB0",
+   "type": "text",
+   "x": 166,
+   "y": 314.33,
+   "text": "B0=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 70,
+    "size": 12
+   }
+  },
+  {
+   "id": "wB0",
+   "type": "line",
+   "points": [
+    [
+     170,
+     314.33
+    ],
+    [
+     204.01,
+     314.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74,
+      314.33
+     ],
+     [
+      99.25,
+      314.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx0",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     306.0
+    ],
+    [
+     300,
+     306.0
+    ],
+    [
+     300,
+     246.0
+    ],
+    [
+     420.0,
+     246.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      142.0,
+      306.0
+     ],
+     [
+      180,
+      306.0
+     ],
+     [
+      180,
+      246.0
+     ],
+     [
+      230.0,
+      246.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx0",
+   "type": "text",
+   "x": 276.0,
+   "y": 294,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 156.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wE",
+   "type": "line",
+   "points": [
+    [
+     480.0,
+     195.0
+    ],
+    [
+     504.0,
+     195.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      195.0
+     ],
+     [
+      296.0,
+      195.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vE",
+   "type": "text",
+   "x": 510.0,
+   "y": 195.0,
+   "text": "E",
+   "size": 15,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 270.0,
+    "y": 300.0,
+    "size": 13,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 320.0,
+   "y": 390,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 410,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each XNOR gives xᵢ = Aᵢ ⊙ Bᵢ, which is 1 exactly when the two bits are equal. The AND gives E = x3x2x1x0.",
+   "patches": [
+    {
+     "id": "g0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 1011, B = 1011: every pair is equal, so x3x2x1x0 = 1111 and the AND gives E = 1.",
+   "patches": [
+    {
+     "id": "g0",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "tA0",
+     "set": {
+      "text": "A0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB0",
+     "set": {
+      "text": "B0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "text": "x0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tA1",
+     "set": {
+      "text": "A1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB1",
+     "set": {
+      "text": "B1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "x1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tA2",
+     "set": {
+      "text": "A2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tB2",
+     "set": {
+      "text": "B2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "x2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tA3",
+     "set": {
+      "text": "A3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB3",
+     "set": {
+      "text": "B3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx3",
+     "set": {
+      "text": "x3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wE",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vE",
+     "set": {
+      "text": "E=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "A = 1011, B = 1011 → E = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 1011, B = 1001: only bit 1 differs, so x1 = 0 and E = 0. One unequal pair is enough.",
+   "patches": [
+    {
+     "id": "g0",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "tA0",
+     "set": {
+      "text": "A0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB0",
+     "set": {
+      "text": "B0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "text": "x0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tA1",
+     "set": {
+      "text": "A1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB1",
+     "set": {
+      "text": "B1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "x1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tA2",
+     "set": {
+      "text": "A2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tB2",
+     "set": {
+      "text": "B2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "x2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tA3",
+     "set": {
+      "text": "A3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB3",
+     "set": {
+      "text": "B3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx3",
+     "set": {
+      "text": "x3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wE",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vE",
+     "set": {
+      "text": "E=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "A = 1011, B = 1001 → E = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 0110, B = 1001: every pair differs, x3x2x1x0 = 0000, so E = 0.",
+   "patches": [
+    {
+     "id": "g0",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "g1",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "tA0",
+     "set": {
+      "text": "A0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tB0",
+     "set": {
+      "text": "B0=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "text": "x0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tA1",
+     "set": {
+      "text": "A1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB1",
+     "set": {
+      "text": "B1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "x1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tA2",
+     "set": {
+      "text": "A2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tB2",
+     "set": {
+      "text": "B2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "x2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tA3",
+     "set": {
+      "text": "A3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tB3",
+     "set": {
+      "text": "B3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx3",
+     "set": {
+      "text": "x3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wE",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vE",
+     "set": {
+      "text": "E=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "A = 0110, B = 1001 → E = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "E = (A3 ⊙ B3)(A2 ⊙ B2)(A1 ⊙ B1)(A0 ⊙ B0): n XNORs and one n-input AND test n-bit equality.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "E = x3 x2 x1 x0"
+     }
+    }
+   ]
+  }
+ ]
+}

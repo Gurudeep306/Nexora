@@ -1,0 +1,948 @@
+{
+ "version": 1,
+ "title": "A stem fault whose effects reconverge and cancel",
+ "width": 640,
+ "height": 334,
+ "narrow": {
+  "width": 360,
+  "height": 334
+ },
+ "intro": "f = AB + A′C as g1 = AND(A, B), g2 = AND(A′, C), f = OR(g1, g2). Line A is stuck at 0. Each line shows good/faulty values.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A stem fault on two reconvergent paths (A s-a-0)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Reconvergent fan-out: A s-a-0",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "g1",
+   "type": "gate",
+   "x": 300,
+   "y": 50,
+   "w": 54,
+   "h": 90,
+   "kind": "and",
+   "narrow": {
+    "x": 160,
+    "w": 46
+   }
+  },
+  {
+   "id": "g2",
+   "type": "gate",
+   "x": 300,
+   "y": 170,
+   "w": 54,
+   "h": 90,
+   "kind": "and",
+   "narrow": {
+    "x": 160,
+    "w": 46
+   }
+  },
+  {
+   "id": "inv",
+   "type": "gate",
+   "x": 190,
+   "y": 185.0,
+   "w": 40,
+   "h": 30,
+   "kind": "not",
+   "narrow": {
+    "x": 100,
+    "w": 34
+   }
+  },
+  {
+   "id": "or",
+   "type": "gate",
+   "x": 440,
+   "y": 125,
+   "w": 56,
+   "h": 80,
+   "kind": "or",
+   "narrow": {
+    "x": 260,
+    "w": 46
+   }
+  },
+  {
+   "id": "iB",
+   "type": "text",
+   "x": 66,
+   "y": 80,
+   "text": "B",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 36,
+    "size": 13
+   }
+  },
+  {
+   "id": "iA",
+   "type": "text",
+   "x": 66,
+   "y": 110,
+   "text": "A",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 36,
+    "size": 13
+   }
+  },
+  {
+   "id": "iC",
+   "type": "text",
+   "x": 66,
+   "y": 230,
+   "text": "C",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 36,
+    "size": 13
+   }
+  },
+  {
+   "id": "wB",
+   "type": "line",
+   "points": [
+    [
+     70,
+     80
+    ],
+    [
+     300.0,
+     80.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      80
+     ],
+     [
+      160.0,
+      80.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wA",
+   "type": "line",
+   "points": [
+    [
+     70,
+     110
+    ],
+    [
+     300.0,
+     110.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      110
+     ],
+     [
+      160.0,
+      110.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wAb",
+   "type": "line",
+   "points": [
+    [
+     130,
+     110
+    ],
+    [
+     130,
+     200.0
+    ],
+    [
+     190.0,
+     200.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      110
+     ],
+     [
+      70,
+      200.0
+     ],
+     [
+      100.0,
+      200.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jA",
+   "type": "circle",
+   "cx": 130,
+   "cy": 110,
+   "r": 3.5,
+   "fill": "ink",
+   "narrow": {
+    "cx": 70
+   }
+  },
+  {
+   "id": "wn",
+   "type": "line",
+   "points": [
+    [
+     230.0,
+     200.0
+    ],
+    [
+     300.0,
+     200.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      134.0,
+      200.0
+     ],
+     [
+      160.0,
+      200.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wC",
+   "type": "line",
+   "points": [
+    [
+     70,
+     230
+    ],
+    [
+     300.0,
+     230.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      40,
+      230
+     ],
+     [
+      160.0,
+      230.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wg1",
+   "type": "line",
+   "points": [
+    [
+     354.0,
+     95.0
+    ],
+    [
+     395,
+     95.0
+    ],
+    [
+     395,
+     151.67
+    ],
+    [
+     446.22,
+     151.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      206.0,
+      95.0
+     ],
+     [
+      220,
+      95.0
+     ],
+     [
+      220,
+      151.67
+     ],
+     [
+      265.11,
+      151.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wg2",
+   "type": "line",
+   "points": [
+    [
+     354.0,
+     215.0
+    ],
+    [
+     410,
+     215.0
+    ],
+    [
+     410,
+     178.33
+    ],
+    [
+     446.22,
+     178.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      206.0,
+      215.0
+     ],
+     [
+      234,
+      215.0
+     ],
+     [
+      234,
+      178.33
+     ],
+     [
+      265.11,
+      178.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wf",
+   "type": "line",
+   "points": [
+    [
+     496.0,
+     165.0
+    ],
+    [
+     520.0,
+     165.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      306.0,
+      165.0
+     ],
+     [
+      322.0,
+      165.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vA",
+   "type": "text",
+   "x": 235.0,
+   "y": 97,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 125.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vn",
+   "type": "text",
+   "x": 265.0,
+   "y": 187.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 147.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vg1",
+   "type": "text",
+   "x": 376.0,
+   "y": 82.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 222.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vg2",
+   "type": "text",
+   "x": 376.0,
+   "y": 228.0,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 222.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vf",
+   "type": "text",
+   "x": 526.0,
+   "y": 165.0,
+   "text": "f",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 296.0,
+    "y": 222,
+    "size": 13,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "lg",
+   "type": "text",
+   "x": 320.0,
+   "y": 292,
+   "text": "line values: good/faulty",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 320.0,
+   "y": 318,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "f = AB + A′C. The stem A feeds g1 directly and g2 through an inverter. The fault: the stem A stuck-at-0, so both branches see 0.",
+   "patches": [
+    {
+     "id": "jA",
+     "set": {
+      "fill": "danger",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wA",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wAb",
+     "set": {
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The obvious test, A B C = 1 1 1: activate A (good 1) and open g1 (B = 1). But C = 1 also opens g2 to the faulty A′ = 1.",
+   "patches": [
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wAb",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vA",
+     "set": {
+      "text": "1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wn",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vn",
+     "set": {
+      "text": "0/1",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "g1 = 1/0 and g2 = 0/1: the error and its complement reach the OR together, so f = 1/1. The two paths cancel; 111 is not a test.",
+   "patches": [
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wAb",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vA",
+     "set": {
+      "text": "1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wn",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vn",
+     "set": {
+      "text": "0/1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wg1",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vg1",
+     "set": {
+      "text": "1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wg2",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vg2",
+     "set": {
+      "text": "0/1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wf",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vf",
+     "set": {
+      "text": "f = 1/1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "111: outputs agree, paths cancel",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 1 1 0: only one path is open, through g1 (C = 0 closes g2). f = 1/0: the outputs differ, a test.",
+   "patches": [
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wAb",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vA",
+     "set": {
+      "text": "1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wn",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vn",
+     "set": {
+      "text": "0/1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wg1",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vg1",
+     "set": {
+      "text": "1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wg2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vg2",
+     "set": {
+      "text": "0/0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wf",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vf",
+     "set": {
+      "text": "f = 1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "110: outputs differ, detected",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 1 0 1: only one path is open, through g2 (B = 0 closes g1). f = 0/1: the outputs differ, a test.",
+   "patches": [
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wAb",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vA",
+     "set": {
+      "text": "1/0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wn",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vn",
+     "set": {
+      "text": "0/1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wg1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vg1",
+     "set": {
+      "text": "0/0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wg2",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vg2",
+     "set": {
+      "text": "0/1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "wf",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "vf",
+     "set": {
+      "text": "f = 0/1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "101: outputs differ, detected",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "∂f/∂A = B ⊕ C, so the stem tests are A = 1, B ≠ C: 101 and 110 only. The branch into g1 alone has tests 110 and 111.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "stem A s-a-0: tests 101, 110",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

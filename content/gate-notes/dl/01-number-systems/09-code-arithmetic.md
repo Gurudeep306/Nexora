@@ -14,7 +14,7 @@ sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l09_code_arithmetic.py (exact integer arithmetic, brute force over every operand pair where a rule is claimed)."
   - "Coverage checklist only (internal digests, never copied): set A pp. 20–21 (overflow; its opposite-sign remark is errata X3), set B pp. 141–148 and 159–160 (complements, BCD adder), set C pp. 203–216 (binary arithmetic, complement subtraction, overflow, BCD and excess-3 addition)."
   - "Facts checked against standard textbooks: M. Morris Mano, Digital Design (complements, signed addition and subtraction, BCD addition); M. Morris Mano, Computer System Architecture (overflow, arithmetic shifts)."
-  - "PYQs: src/gate/questions.json (dl/arithmetic overflow and number-level questions moved from Chapter 5, plus it-2005-cs-47 and cse-2010-cs-8), keys re-derived in l09_code_arithmetic.py."
+  - "PYQs: src/gate/questions.json (dl/arithmetic overflow and number-level questions moved from the arithmetic-circuits chapter, plus it-2005-cs-47 and cse-2010-cs-8), keys re-derived in l09_code_arithmetic.py."
 updated: "2026-10-17"
 ---
 
@@ -22,7 +22,7 @@ You can now write numbers in any base, as signed patterns, in floating point and
 BCD and excess-3. This lesson does **arithmetic** on all of them, by hand, at the level of the
 numbers themselves: adding with carries, subtracting with borrows or with complements, multiplying
 and dividing, deciding when a signed result has **overflowed**, and fixing up BCD and excess-3 sums.
-These are the rules the adder circuits of Chapter 5 implement; here you learn why they are right, so
+These are the rules the adder circuits of Chapter 4 implement; here you learn why they are right, so
 that GATE's "which of these overflows?" and "what are the flags?" questions become one-line checks.
 
 ## Where this fits
@@ -30,7 +30,7 @@ that GATE's "which of these overflows?" and "what are the flags?" questions beco
 This lesson and the next close Chapter 1, and they use most of it: place value and base-$b$ digits (Lessons
 [1](lesson:place-value) and [2](lesson:power-of-two-bases)), complements and signed patterns
 ([Lesson 4](lesson:signed-numbers)) and the codes of [Lesson 8](lesson:codes). Multiplication of
-signed numbers and Booth's algorithm follow in [Lesson 10](lesson:multiplication-booth). Chapter 5
+signed numbers and Booth's algorithm follow in [Lesson 10](lesson:multiplication-booth). Chapter 4
 then builds the circuits: the XOR adder–subtractor, the flag logic and the BCD adder.
 
 :::table{#radar title="GATE radar: arithmetic with number codes" depth="quick"}
@@ -994,7 +994,7 @@ is for unsigned values only.
 ## GATE questions on this lesson
 
 Fifteen previous-year questions on number-level arithmetic: overflow, flags, complements, base-$b$
-arithmetic and shifts. (The adder-circuit questions stay with the circuits in Chapter 5.)
+arithmetic and shifts. (The adder-circuit questions stay with the circuits in Chapter 4.)
 
 :::pyq{id="it-2006-cs-7" tests="signed-add-rules,overflow-rule" depth="standard"}
 :::

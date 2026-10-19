@@ -146,10 +146,10 @@
     {
       "id": "cse-2001-b-58-b",
       "field": "reviewNote",
-      "before": "Output subscript in the question (and figure labels) is illegible in the scan; answered assuming the MSB output b4.",
-      "after": "Figure subscripts are blurred in the scan. Read as e8,e4,e2,e1 / b8,b4,b2,b1 (weights), b4 is the weight-4 BCD bit: (e4'+e2)(e4'+e1)(e4+e2'+e1'). If the labels are b4..b1 with b4 the MSB, the answer is e4(e3+e2)(e3+e1). Confirm the labels from a clearer copy.",
-      "reason": "Precise description of the label ambiguity.",
-      "source": "GATE2001.pdf p.8"
+      "before": "Figure subscripts are blurred in the scan. Read as e8,e4,e2,e1 / b8,b4,b2,b1 (weights), b4 is the weight-4 BCD bit: (e4'+e2)(e4'+e1)(e4+e2'+e1'). If the labels are b4..b1 with b4 the MSB, the answer is e4(e3+e2)(e3+e1). Confirm the labels from a clearer copy.",
+      "after": "Labels read from the scan at 600 dpi as e8, e4, e2, e1 / b8, b4, b2, b1 (weights). b4 is the weight-4 bit: (e4'+e2)(e4'+e1)(e4+e2'+e1') is one of three 7-literal minimal POS forms. Under the other reading (labels b4..b1 with b4 the MSB) the answer would be e4(e3+e2)(e3+e1).",
+      "reason": "Precise description of the label ambiguity. Updated 2026-10-18 with the 600 dpi scan reading of the labels.",
+      "source": "GATE2001.pdf p.8; GATE2001.pdf p. 8, Q58(b), figure rendered at 600 dpi"
     },
     {
       "id": "cse-2001-b-61-b",
@@ -299,6 +299,14 @@
       "after": "sql",
       "reason": "Writing an SQL join query.",
       "source": "GATE 2001 paper Q69(c)"
+    },
+    {
+      "id": "cse-2001-b-58-b",
+      "field": "needsReview",
+      "before": true,
+      "after": false,
+      "reason": "At 600 dpi the top input and output labels read e8 and b8 (the second pair e4 and b4), so the figure is labelled by weights 8-4-2-1 and b4 is the weight-4 BCD bit. Its minimal POS (7 literals; three equally minimal forms) includes the stored answer, re-derived by enumeration in content/gate-notes/_checks/dl/l5_01_design.py.",
+      "source": "GATE2001.pdf p. 8, Q58(b), figure rendered at 600 dpi"
     }
   ]
 }

@@ -14,7 +14,7 @@ sources:
   - "Nexora's own text, examples and diagrams; every value is checked by content/gate-notes/_checks/dl/l10_multiplication_booth.py, using boothlib.py (Booth recoding and the register algorithm verified by brute force over every multiplier up to 10 bits)."
   - "Coverage checklist only (internal digests, never copied): set B pp. 153–154, 178, 183, 185 (Booth rules and recodings; its Karatsuba remark and a dropped leading digit are recorded in _errata/dl.md), set D pp. 401–402 (radix-2 and radix-4 tables)."
   - "Facts checked against textbooks: V. C. Hamacher, Z. Vranesic, S. Zaky, Computer Organization (Booth algorithm, bit-pair recoding); M. Morris Mano, Computer System Architecture (Booth multiplication algorithm, division)."
-  - "PYQs: src/gate/questions.json (dl/arithmetic, moved from Chapter 5's multiplier lesson), keys re-derived in l10_multiplication_booth.py."
+  - "PYQs: src/gate/questions.json (dl/arithmetic, moved from the arithmetic-circuits chapter's multiplier lesson), keys re-derived in l10_multiplication_booth.py."
 updated: "2026-10-17"
 ---
 
@@ -31,7 +31,7 @@ radix-4 **bit-pair** recoding that halves the number of partial products.
 
 You need 2's complement and sign extension from [Lesson 4](lesson:signed-numbers) and binary
 shift-and-add from [Lesson 9](lesson:code-arithmetic). This is the last lesson of Chapter 1. The
-hardware that runs these algorithms (array multipliers and their delay) is in Chapter 5.
+hardware that runs these algorithms (array multipliers and their delay) is in Chapter 4.
 
 :::table{#radar title="GATE radar: signed multiplication and Booth" depth="quick"}
 | What | Detail |
@@ -574,7 +574,7 @@ divider circuits of computer organisation.
 ## GATE questions on this lesson
 
 All eight previous-year questions on signed multiplication and Booth recoding. (The array-multiplier
-delay questions stay with the hardware in Chapter 5.)
+delay questions stay with the hardware in Chapter 4.)
 
 :::pyq{id="cse-1991-a-1-v" tests="product-bits" depth="standard"}
 :::
