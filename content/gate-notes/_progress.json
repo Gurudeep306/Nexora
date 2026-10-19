@@ -83,7 +83,11 @@
           "title": "Arithmetic circuits (hardware)",
           "lessons": 4,
           "pyqs": 14,
-          "status": "planned"
+          "status": "in-progress",
+          "lessons_status": {
+            "adders-ripple-carry": "written"
+          },
+          "live_lab": "Adder Race (:::lab adder-race: race, scaling)"
         },
         {
           "id": "05-combinational-circuits",

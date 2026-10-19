@@ -217,10 +217,10 @@ def ripple_carry_wave(L):
         else:
             y = 155
             x0 = (G[i][0] + G[i][2]) if i < n else G[n - 1][0]
-            x0 = 690 if i == 0 else G[i - 1][0]
+            x0 = 699 if i == 0 else G[i - 1][0]
             x1 = G[i][0] + G[i][2] if i < n else 20
             s.line(f"c{i}", [[x0, y], [x1, y]])
-            s.text(f"cl{i}", (x0 + x1) / 2, y - 14, f"c{i}=0", 13, anchor="middle", mono=True)
+            s.text(f"cl{i}", (x0 + x1) / 2 + (3 if i == 0 else 0), y - 14, f"c{i}=0", 13, anchor="middle", mono=True)
 
     def at(x, t):
         return wave[x][t]
