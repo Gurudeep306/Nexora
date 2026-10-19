@@ -1,0 +1,713 @@
+{
+ "version": 1,
+ "title": "A sequential shift-and-add multiplier stepping through 15 × 13",
+ "width": 700,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 310
+ },
+ "intro": "Registers M (multiplicand), C (carry), A (accumulator) and Q (multiplier). When Q0 = 1 the adder adds M to A; then C, A and Q shift right together.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Sequential shift-and-add multiplier: 1111 × 1101",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Shift-and-add: 15 × 13",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "M",
+   "type": "box",
+   "x": 60,
+   "y": 60,
+   "w": 200,
+   "h": 42,
+   "mono": true,
+   "label": "M = 1111",
+   "size": 15,
+   "narrow": {
+    "x": 40,
+    "y": 56,
+    "h": 38,
+    "size": 13
+   }
+  },
+  {
+   "id": "add",
+   "type": "box",
+   "x": 60,
+   "y": 136,
+   "w": 200,
+   "h": 42,
+   "label": "4-bit adder",
+   "size": 14,
+   "narrow": {
+    "x": 40,
+    "y": 124,
+    "h": 38,
+    "size": 12
+   }
+  },
+  {
+   "id": "C",
+   "type": "box",
+   "x": 20,
+   "y": 214,
+   "w": 34,
+   "h": 42,
+   "mono": true,
+   "label": "0",
+   "size": 15,
+   "narrow": {
+    "x": 6,
+    "y": 196,
+    "w": 30,
+    "h": 38,
+    "size": 13
+   }
+  },
+  {
+   "id": "A",
+   "type": "box",
+   "x": 60,
+   "y": 214,
+   "w": 200,
+   "h": 42,
+   "mono": true,
+   "label": "A = 0000",
+   "size": 15,
+   "narrow": {
+    "x": 40,
+    "y": 196,
+    "w": 150,
+    "h": 38,
+    "size": 13
+   }
+  },
+  {
+   "id": "Q",
+   "type": "box",
+   "x": 280,
+   "y": 214,
+   "w": 200,
+   "h": 42,
+   "mono": true,
+   "label": "Q = 1101",
+   "size": 15,
+   "narrow": {
+    "x": 200,
+    "y": 196,
+    "w": 150,
+    "h": 38,
+    "size": 13
+   }
+  },
+  {
+   "id": "cl",
+   "type": "text",
+   "x": 37,
+   "y": 272,
+   "text": "C",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 21,
+    "y": 248,
+    "size": 12
+   }
+  },
+  {
+   "id": "wm",
+   "type": "line",
+   "points": [
+    [
+     120,
+     102
+    ],
+    [
+     120,
+     136
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      90,
+      94
+     ],
+     [
+      90,
+      124
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wa",
+   "type": "line",
+   "points": [
+    [
+     200,
+     214
+    ],
+    [
+     200,
+     178
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      170,
+      196
+     ],
+     [
+      170,
+      162
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr",
+   "type": "line",
+   "points": [
+    [
+     120,
+     178
+    ],
+    [
+     120,
+     214
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      90,
+      162
+     ],
+     [
+      90,
+      196
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ctl",
+   "type": "box",
+   "x": 520,
+   "y": 136,
+   "w": 150,
+   "h": 42,
+   "label": "Q0 → add?",
+   "size": 14,
+   "narrow": {
+    "x": 260,
+    "y": 120,
+    "w": 90,
+    "h": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq",
+   "type": "line",
+   "points": [
+    [
+     460,
+     214
+    ],
+    [
+     460,
+     196
+    ],
+    [
+     595,
+     196
+    ],
+    [
+     595,
+     178
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      330,
+      196
+     ],
+     [
+      330,
+      180
+     ],
+     [
+      305,
+      180
+     ],
+     [
+      305,
+      166
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wk",
+   "type": "line",
+   "points": [
+    [
+     520,
+     157
+    ],
+    [
+     260,
+     157
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      260,
+      143
+     ],
+     [
+      240,
+      143
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cyc",
+   "type": "text",
+   "x": 60,
+   "y": 300,
+   "text": "cycle 0",
+   "size": 15,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 10,
+    "y": 276,
+    "size": 13
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 60,
+   "y": 326,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "narrow": {
+    "x": 10,
+    "y": 298,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: A = 0, C = 0, Q = multiplier 1101 (13), M = multiplicand 1111 (15). Each cycle looks at Q0.",
+   "patches": []
+  },
+  {
+   "caption": "Cycle 1: Q0 = 1, so C A ← A + M = 0 1111.",
+   "patches": [
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 1111"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 1: add"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 1: shift C A Q right one bit: A = 0111, Q = 1110 (C shifts into A's top, C becomes 0).",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 0111"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 1110"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 2: Q0 = 0, so no addition.",
+   "patches": [
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 0111"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 2: skip"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 2: shift C A Q right one bit: A = 0011, Q = 1111 (C shifts into A's top, C becomes 0).",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 0011"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 1111"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 3: Q0 = 1, so C A ← A + M = 1 0010. The carry flip-flop catches the 5th bit.",
+   "patches": [
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 0010"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 3: add"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 3: shift C A Q right one bit: A = 1001, Q = 0111 (C shifts into A's top, C becomes 0).",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 1001"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 0111"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 4: Q0 = 1, so C A ← A + M = 1 1000. The carry flip-flop catches the 5th bit.",
+   "patches": [
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 1000"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 4: add"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 4: shift C A Q right one bit: A = 1100, Q = 0011 (C shifts into A's top, C becomes 0).",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "C",
+     "set": {
+      "label": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 1100"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 0011"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "After 4 cycles A Q = 1100 0011 = 195 = 15 × 13. One adder, n cycles; the carry bit C was needed in cycles 3 and 4.",
+   "patches": [
+    {
+     "id": "cyc",
+     "set": {
+      "text": "product 1100 0011 = 195",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  }
+ ]
+}

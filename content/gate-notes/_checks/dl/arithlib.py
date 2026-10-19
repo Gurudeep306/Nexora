@@ -333,6 +333,51 @@ def array_multiplier(n):
     return net
 
 
+def array_multiplier_csa(n):
+    """n × n carry-save array: each row adds a partial-product row to the running (sum, carry) pair
+    without propagating carries inside the row (a cell's carry goes to the next row, one weight up);
+    a final ripple adder merges the remaining sum and carry vectors. Product bits P0 … P{2n-1}."""
+    net = []
+    for i in range(n):
+        for j in range(n):
+            net.append((f"pp{i}_{j}", "AND", [f"a{j}", f"b{i}"]))
+    S = {j: f"pp0_{j}" for j in range(n)}  # weight → sum bit
+    C = {}                                  # weight → carry bit
+    for i in range(1, n):
+        nS, nC = {}, {}
+        for w in range(0, 2 * n):
+            bits = [x for x in (S.get(w), C.get(w), f"pp{i}_{w - i}" if 0 <= w - i < n else None) if x]
+            if len(bits) == 3:
+                tag = f"q{i}_{w}"
+                net += full_adder(bits[0], bits[1], bits[2], f"S{tag}", f"C{tag}", tag)
+                nS[w], nC[w + 1] = f"S{tag}", f"C{tag}"
+            elif len(bits) == 2:
+                tag = f"h{i}_{w}"
+                net += half_adder(bits[0], bits[1], f"S{tag}", f"C{tag}")
+                nS[w], nC[w + 1] = f"S{tag}", f"C{tag}"
+            elif len(bits) == 1:
+                nS[w] = bits[0]
+        S, C = nS, nC
+    # Final ripple merge of S and C.
+    carry = None
+    for w in range(2 * n):
+        bits = [x for x in (S.get(w), C.get(w), carry) if x]
+        tag = f"f{w}"
+        if len(bits) == 3:
+            net += full_adder(bits[0], bits[1], bits[2], f"P{w}", f"k{tag}", tag)
+            carry = f"k{tag}"
+        elif len(bits) == 2:
+            net += half_adder(bits[0], bits[1], f"P{w}", f"k{tag}")
+            carry = f"k{tag}"
+        elif len(bits) == 1:
+            net.append((f"P{w}", "BUF", [bits[0]]))
+            carry = None
+        else:
+            net.append((f"P{w}", "BUF", ["0"]))
+            carry = None
+    return order(net)
+
+
 def multiplier_cost(n):
     """(AND gates, adder cells) of the n × n array: n², n(n − 1)."""
     return n * n, n * (n - 1)

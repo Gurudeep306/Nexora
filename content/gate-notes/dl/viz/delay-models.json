@@ -1,0 +1,643 @@
+{
+ "version": 1,
+ "title": "The 2015 ripple adder timed under the block model and at gate level",
+ "width": 700,
+ "height": 330,
+ "narrow": {
+  "width": 360,
+  "height": 350
+ },
+ "intro": "Two timelines in microseconds for a 4-bit ripple adder with XOR = 2.4 µs and AND = OR = 1.2 µs: the top one counts each full adder as a 4.8 µs block, the bottom one follows the carries gate by gate.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "GATE 2015: block model vs gate level (µs)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "2015: block vs gate level",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "lb",
+   "type": "text",
+   "x": 20,
+   "y": 60,
+   "text": "block model: each FA waits for the previous one",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 10,
+    "size": 12
+   }
+  },
+  {
+   "id": "lg",
+   "type": "text",
+   "x": 20,
+   "y": 180,
+   "text": "gate level: after FA0 a carry needs only AND + OR",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 10,
+    "y": 198,
+    "size": 12
+   }
+  },
+  {
+   "id": "b0",
+   "type": "box",
+   "x": 120.0,
+   "y": 76,
+   "w": 134.4,
+   "h": 36,
+   "hidden": true,
+   "label": "FA0 4.8",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "b0-n",
+   "type": "box",
+   "x": 56.0,
+   "y": 76,
+   "w": 72.0,
+   "h": 36,
+   "hidden": true,
+   "label": "FA0",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "bl0",
+   "type": "text",
+   "x": 110,
+   "y": 94,
+   "text": "",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 50
+   }
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 254.4,
+   "y": 76,
+   "w": 134.4,
+   "h": 36,
+   "hidden": true,
+   "label": "FA1 4.8",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "b1-n",
+   "type": "box",
+   "x": 128.0,
+   "y": 76,
+   "w": 72.0,
+   "h": 36,
+   "hidden": true,
+   "label": "FA1",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 388.8,
+   "y": 76,
+   "w": 134.4,
+   "h": 36,
+   "hidden": true,
+   "label": "FA2 4.8",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "b2-n",
+   "type": "box",
+   "x": 200.0,
+   "y": 76,
+   "w": 72.0,
+   "h": 36,
+   "hidden": true,
+   "label": "FA2",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "b3",
+   "type": "box",
+   "x": 523.2,
+   "y": 76,
+   "w": 134.4,
+   "h": 36,
+   "hidden": true,
+   "label": "FA3 4.8",
+   "size": 13,
+   "only": "wide"
+  },
+  {
+   "id": "b3-n",
+   "type": "box",
+   "x": 272.0,
+   "y": 76,
+   "w": 72.0,
+   "h": 36,
+   "hidden": true,
+   "label": "FA3",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "g0",
+   "type": "box",
+   "x": 120.0,
+   "y": 196,
+   "w": 134.4,
+   "h": 36,
+   "hidden": true,
+   "label": "c1",
+   "size": 13,
+   "narrow": {
+    "x": 56.0,
+    "y": 214,
+    "w": 72.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "g1",
+   "type": "box",
+   "x": 254.4,
+   "y": 196,
+   "w": 67.20000000000002,
+   "h": 36,
+   "hidden": true,
+   "label": "c2",
+   "size": 13,
+   "narrow": {
+    "x": 128.0,
+    "y": 214,
+    "w": 36.00000000000001,
+    "size": 12
+   }
+  },
+  {
+   "id": "g2",
+   "type": "box",
+   "x": 321.6,
+   "y": 196,
+   "w": 67.19999999999999,
+   "h": 36,
+   "hidden": true,
+   "label": "c3",
+   "size": 13,
+   "narrow": {
+    "x": 164.0,
+    "y": 214,
+    "w": 35.99999999999999,
+    "size": 12
+   }
+  },
+  {
+   "id": "g3",
+   "type": "box",
+   "x": 388.8,
+   "y": 196,
+   "w": 67.20000000000002,
+   "h": 36,
+   "hidden": true,
+   "label": "c4",
+   "size": 13,
+   "narrow": {
+    "x": 200.0,
+    "y": 214,
+    "w": 36.00000000000001,
+    "size": 12
+   }
+  },
+  {
+   "id": "tk0",
+   "type": "line",
+   "points": [
+    [
+     120,
+     260
+    ],
+    [
+     120,
+     268
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      56,
+      280
+     ],
+     [
+      56,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tt0",
+   "type": "text",
+   "x": 120,
+   "y": 282,
+   "text": "0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 56,
+    "y": 302,
+    "size": 12
+   }
+  },
+  {
+   "id": "tk1",
+   "type": "line",
+   "points": [
+    [
+     254.4,
+     260
+    ],
+    [
+     254.4,
+     268
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      128.0,
+      280
+     ],
+     [
+      128.0,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tt1",
+   "type": "text",
+   "x": 254.4,
+   "y": 282,
+   "text": "4.8",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 128.0,
+    "y": 302,
+    "size": 12
+   }
+  },
+  {
+   "id": "tk2",
+   "type": "line",
+   "points": [
+    [
+     388.8,
+     260
+    ],
+    [
+     388.8,
+     268
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      200.0,
+      280
+     ],
+     [
+      200.0,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tt2",
+   "type": "text",
+   "x": 388.8,
+   "y": 282,
+   "text": "9.6",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 200.0,
+    "y": 302,
+    "size": 12
+   }
+  },
+  {
+   "id": "tk3",
+   "type": "line",
+   "points": [
+    [
+     523.2,
+     260
+    ],
+    [
+     523.2,
+     268
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      272.0,
+      280
+     ],
+     [
+      272.0,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tt3",
+   "type": "text",
+   "x": 523.2,
+   "y": 282,
+   "text": "14.4",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 272.0,
+    "y": 302,
+    "size": 12
+   }
+  },
+  {
+   "id": "tk4",
+   "type": "line",
+   "points": [
+    [
+     657.6,
+     260
+    ],
+    [
+     657.6,
+     268
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      344.0,
+      280
+     ],
+     [
+      344.0,
+      288
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tt4",
+   "type": "text",
+   "x": 657.6,
+   "y": 282,
+   "text": "19.2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 344.0,
+    "y": 302,
+    "size": 12
+   }
+  },
+  {
+   "id": "axis",
+   "type": "line",
+   "points": [
+    [
+     120,
+     260
+    ],
+    [
+     657.6,
+     260
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      56,
+      280
+     ],
+     [
+      344.0,
+      280
+     ]
+    ]
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 350.0,
+   "y": 312,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 336,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "One full adder: sum = XOR + XOR = 4.8 µs, carry = XOR + AND + OR = 4.8 µs. In the block model FA0 occupies 0 … 4.8.",
+   "patches": [
+    {
+     "id": "b0",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    },
+    {
+     "id": "b0-n",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Block model: FA1 starts only when FA0 has finished, at 4.8 µs, and ends at 9.6.",
+   "patches": [
+    {
+     "id": "b1",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    },
+    {
+     "id": "b1-n",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Block model: FA2 starts only when FA1 has finished, at 9.6 µs, and ends at 14.4.",
+   "patches": [
+    {
+     "id": "b2",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    },
+    {
+     "id": "b2-n",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Block model: FA3 starts only when FA2 has finished, at 14.4 µs, and ends at 19.2.",
+   "patches": [
+    {
+     "id": "b3",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    },
+    {
+     "id": "b3-n",
+     "set": {
+      "hidden": false,
+      "fill": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Block model total: 4 × 4.8 = 19.2 µs, the official key of GATE 2015.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "block model: 19.2 µs (the key)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Gate level: c1 still needs XOR + AND + OR = 4.8 µs, because p0 = a0 ⊕ b0 must be ready first.",
+   "patches": [
+    {
+     "id": "g0",
+     "set": {
+      "hidden": false,
+      "fill": "success"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "But p1, p2, p3 were made in parallel long ago, so each later carry costs only AND + OR = 2.4 µs: c2 at 7.2, c3 at 9.6, c4 at 12.",
+   "patches": [
+    {
+     "id": "g1",
+     "set": {
+      "hidden": false,
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g2",
+     "set": {
+      "hidden": false,
+      "fill": "success"
+     }
+    },
+    {
+     "id": "g3",
+     "set": {
+      "hidden": false,
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The last sum s3 = p3 ⊕ c3 is ready at 9.6 + 2.4 = 12 µs too. Gate level: 12 µs; block model: 19.2 µs.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "gate level 12 µs vs block model 19.2 µs",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

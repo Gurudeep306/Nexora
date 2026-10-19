@@ -1376,7 +1376,7 @@
    "patches": []
   },
   {
-   "caption": "5 + 6: K = 0, sum 1011. c4 = 0 and c3 = 1 differ, so V = 1: 5 + 6 = 11 does not fit in 4 bits.",
+   "caption": "5 + 6: K = 0, sum 1011. c4 = 0 and c3 = 1 differ, so V = 1: 5 + 6 = 11 is outside −8 … 7.",
    "patches": [
     {
      "id": "kl",
@@ -2525,7 +2525,7 @@
    ]
   },
   {
-   "caption": "−8 − 1: K = 1, sum 0111. c4 = 1 and c3 = 0 differ, so V = 1: −8 − 1 = -9 does not fit in 4 bits.",
+   "caption": "−8 − 1: K = 1, sum 0111. c4 = 1 and c3 = 0 differ, so V = 1: −8 − 1 = -9 is outside −8 … 7.",
    "patches": [
     {
      "id": "kl",

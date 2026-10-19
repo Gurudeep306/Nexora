@@ -38,7 +38,7 @@ SOLUTIONS["cse-1999-a-21"] = {
         opt("A", False, "$O(n^2)$ is the number of cells (hardware), not the delay: the cells operate in parallel."),
         opt("B", True, "Every path moves left or down through $O(n)$ cells."),
         opt("C", False, "$O(\\log n)$ needs a tree (Wallace/Dadda) reduction with a fast adder, which is not an array."),
-        opt("D", False, "Constant delay would need a lookup table (a ROM of $2^{2n}$ words)."),
+        opt("D", False, "Constant delay would need a two-level SOP of every product bit with unbounded fan-in (exponentially many gates); no array does that."),
     ],
     "shortcut": "Array: hardware $n^2$, delay $n$. Tree: delay $\\log n$.",
     "pitfalls": [
@@ -56,7 +56,7 @@ SOLUTIONS["cse-2003-cs-11"] = {
     "steps": STEPS,
     "answer": {"value": "C: Θ(n)", "choice": ["C"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "Θ(1) would need a lookup table, not an adder array."),
+        opt("A", False, "Θ(1) would need two-level logic with unbounded fan-in and exponentially many gates, not an adder array."),
         opt("B", False, "Θ(log n) is a tree multiplier with a fast final adder."),
         opt("C", True, "Upper bound O(n) (paths move left or down) and lower bound Ω(n) (some path crosses every row)."),
         opt("D", False, "Θ(n²) counts the cells, which work in parallel."),

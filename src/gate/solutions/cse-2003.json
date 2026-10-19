@@ -524,7 +524,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Θ(1) would need a lookup table, not an adder array."
+          "reason": "Θ(1) would need two-level logic with unbounded fan-in and exponentially many gates, not an adder array."
         },
         {
           "option": "B",

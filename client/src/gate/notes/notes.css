@@ -2338,6 +2338,19 @@ h4.notes-h {
 .lab .ar-num {
   width: 8em;
 }
+.ar-meta {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.ar-inputs {
+  margin-top: 0;
+}
+@media (max-width: 480px) {
+  .ar-name .ar-meta {
+    display: block;
+  }
+}
 .lab-cell.is-pending {
   border-style: dashed;
   border-color: var(--color-state-warning);

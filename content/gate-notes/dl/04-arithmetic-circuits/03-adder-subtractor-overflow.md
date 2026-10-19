@@ -48,7 +48,7 @@ circuit.
 | Pattern 1 | Which operations an XOR-controlled adder can perform with its control lines (2003) |
 | Pattern 2 | Identifying what an adder with a detector-driven constant computes (1996: binary to radix 12) |
 | Related PYQs elsewhere | The 13 number-level overflow, flag and complement questions are in [Chapter 1, Lesson 9](lesson:code-arithmetic) |
-| What examiners test | $K$ inverts $B$ only through XORs, $C_0$ adds 1 only once; $A + 1$ needs $B = 0$; $V = c_n \oplus c_{n-1}$; the unsigned carry after a subtraction means "no borrow"; the BCD detector $K + Z_3Z_2 + Z_3Z_1$ and why $K$ is in it |
+| What examiners test | $K$ inverts $B$ only through XORs, $C_0$ adds 1 only once; $A + 1$ needs $B = 0$; $V = c_n \oplus c_{n-1}$; the unsigned carry after a subtraction means "no borrow"; the BCD detector $C_4 + Z_3Z_2 + Z_3Z_1$ and why $C_4$ is in it |
 :::
 
 ## One adder that also subtracts
@@ -102,6 +102,73 @@ overflows again.
 $y_i = b_i \oplus K$, $c_0 = K$: $K = 0$ adds, $K = 1$ subtracts ($A + \bar B + 1$). Cost: $n$ XORs on top of the
 adder.
 :::
+
+### Worked examples: the adder–subtractor
+
+::::example{#ex-as-easy level="easy" title="An 8-bit subtraction, showing the y row" depth="quick"}
+$K = 1$, $A = 0100\,1010$ (74), $B = 0001\,0110$ (22). Give $Y$, the sum and the carry out.
+
+:::step{why="Each XOR with K = 1 inverts its bit."}
+$Y = \bar B = 1110\,1001$ (233).
+:::
+
+:::step{why="The adder adds A, Y and the carry in K = 1."}
+$74 + 233 + 1 = 308 = 256 + 52$: sum $0011\,0100$, carry out 1.
+:::
+
+:::answer
+$S = 0011\,0100 = 52 = 74 - 22$ ✓; the carry out 1 says "no borrow" ($74 \ge 22$).
+:::
+::::
+
+::::example{#ex-as-medium level="medium" title="Negation as 0 − B" depth="standard"}
+With $A = 0000$ and $K = 1$, the 4-bit adder–subtractor computes $-B$. Find the output for $B = 0101$ and for $B = 0000$.
+
+:::step{why="0 + B′ + 1 is the two's-complement negation rule."}
+$B = 0101$: $0000 + 1010 + 1 = 1011 = -5$ ✓, carry out 0.
+:::
+
+:::step{why="B = 0: B′ = 1111, and adding 1 overflows the 4 bits into the carry."}
+$0000 + 1111 + 1 = 1\,0000$: result 0000, carry out 1.
+:::
+
+:::answer
+$-5 = 1011$, and $-0 = 0000$ with $C = 1$ (no borrow: $0 \ge 0$). Negation needs no extra hardware, only $A$ forced to 0.
+:::
+::::
+
+::::example{#ex-as-gate level="gate" title="0 − (−8) in 4 bits" depth="standard"}
+$A = 0000$, $B = 1000$ ($-8$), $K = 1$. Give the result, $c_3$, $c_4$ and $V$.
+
+:::step{why="Invert B and add 1."}
+$0000 + 0111 + 1 = 1000$.
+:::
+
+:::step{why="The carry ripples into bit 3 but not out of it."}
+$c_3 = 1$, $c_4 = 0$, so $V = c_4 \oplus c_3 = 1$.
+:::
+
+:::answer
+The pattern 1000 reads $-8$, but $0 - (-8) = 8$ does not fit in $-8 \dots 7$: overflow, correctly flagged by $V = 1$.
+Negating the most negative number is the one negation that always overflows.
+:::
+::::
+
+::::example{#ex-as-edge level="gate" title="Edge case: A − A for every A" depth="standard"}
+Show that $A - A$ on the adder–subtractor always gives $C = 1$, $Z = 1$ and $V = 0$.
+
+:::step{why="Y = A′, so every column adds a_i + a_i′ = 1."}
+$A + \bar A = 1111\dots1$; with the carry in 1 the whole word rolls over: $1\,0000\dots0$.
+:::
+
+:::step{why="Every column has the sum bit 0 and a carry 1, so c_n = c_(n−1) = 1."}
+$S = 0$ ($Z = 1$), $C = c_n = 1$, $V = 1 \oplus 1 = 0$.
+:::
+
+:::answer
+$C = 1$ (no borrow), $Z = 1$, $V = 0$ for every $A$: this is how a "compare equal" instruction sets its flags.
+:::
+::::
 
 ## The control lines
 
@@ -173,21 +240,21 @@ $C_0 = 0$: $5 + 12 = 17 \to 0001$ $(= 5 - 3 - 1)$. $C_0 = 1$: $18 \to 0010$ $(= 
 :::
 ::::
 
-::::example{#ex-ctl-gate level="gate" title="Which claims hold for the 2003 ALU?" depth="standard"}
-The ALU has $y_i = B_i \oplus K$ into full adders and a separate carry in $C_0$. Decide whether each of $A + B$,
-$A - B$, $A + 1$ can be produced by $K$ and $C_0$ alone.
+::::example{#ex-ctl-gate level="gate" title="Adding an enable on B: which operations now?" depth="standard"}
+An ALU feeds each full adder $A_i$ and $y_i = (B_i \cdot E) \oplus K$, with three control lines $E$, $K$, $C_0$. Which of
+$A + B$, $A - B$, $A + 1$, $A - 1$ can it produce for every $A$ and $B$?
 
-:::step{why="Look for a setting whose formula is the operation for every A and B."}
-$A + B$: $(K, C_0) = (0, 0)$ ✓. $A - B$: $(1, 1)$ ✓.
+:::step{why="With E = 1 the AND passes B, so the four (K, C0) settings of the plain adder–subtractor are available."}
+$A + B$: $E = 1$, $K = 0$, $C_0 = 0$. $A - B$: $E = 1$, $K = 1$, $C_0 = 1$.
 :::
 
-:::step{why="A + 1 must not depend on B. The four formulas are A + B, A + B + 1, A − B − 1, A − B; each depends on B."}
-For $B = 0011$, $A = 0000$: the outputs are 0011, 0100, 1100, 1101; none is $A + 1 = 0001$.
+:::step{why="With E = 0 the AND outputs 0, so y_i = K: the second operand is 0000 or 1111 whatever B is."}
+$E = 0$, $K = 0$, $C_0 = 1$: $A + 0 + 1 = A + 1$. $E = 0$, $K = 1$, $C_0 = 0$: $A + 1111 = A - 1$.
 :::
 
 :::answer
-$A + B$ and $A - B$, but not $A + 1$ (option A). An exhaustive check over all 4-bit $A$, $B$ confirms that no
-setting equals $A + 1$ for every $B$.
+All four. The extra AND row removes $B$ from the sum, which is exactly what $K$ and $C_0$ alone cannot do. Real ALUs have
+such gating; the plain adder–subtractor does not.
 :::
 ::::
 
@@ -232,7 +299,7 @@ result does not,
 
 $$V = \bar a_{n-1}\bar y_{n-1}\, s_{n-1} + a_{n-1} y_{n-1}\, \bar s_{n-1}.$$
 
-The carry form is cheaper and is the one GATE draws.
+The carry form is cheaper (one XOR) and is the one textbooks draw.
 :::
 
 :::definition{#flags term="Status flags C, V, N, Z" depth="standard"}
@@ -265,6 +332,8 @@ sign of the true signed difference is the sign bit, flipped when overflow has wr
 $d < 0 \iff N \oplus V = 1$.
 
 (c) The result is $A - B \bmod 2^n$, which is 0 iff $A = B$ (both are $n$-bit patterns). ∎
+
+This is how a comparator can be built from the adder–subtractor ([Chapter 5, Lesson 4](lesson:comparators-parity#compare-by-subtract)).
 :::
 
 :::trap{#trap-carry-flag title="Carry = 1 after a subtraction does not mean 'overflow' or 'negative'" depth="standard"}
@@ -288,22 +357,9 @@ Both columns agree on every row, so the carry form and the sign form are the sam
 intuitive:** with different signs ($x \ne y$) the top stage merely passes its carry ($c_n = c$), so the carries
 agree and nothing overflows; with equal signs, the top stage's carry out is fixed by the signs, and a carry
 in that disagrees with it is exactly what flips the result's sign.
-:::
 
-:::intuition{#alu-intuition title="An adder with neighbours: the ALU slice" depth="standard"}
-A real arithmetic logic unit (ALU) is the adder–subtractor plus a few cheap neighbours: AND, OR and XOR gates
-working on the same $A$ and $B$, and a multiplexer that chooses which result reaches the output. The flags
-are computed on the chosen result. Seeing the ALU this way explains why GATE's ALU question (2003) is
-really an adder–subtractor question: the arithmetic part is the only one whose control lines interact.
-:::
-
-:::definition{#alu-slice term="A simple ALU" depth="standard"}
-For each bit $i$, compute in parallel: $A_i \wedge B_i$, $A_i \vee B_i$, $A_i \oplus B_i$, and the adder–subtractor's
-$s_i$. A 4:1 MUX per bit (selected by two function bits $F_1F_0$, [Chapter 5, Lesson 2](lesson:multiplexers))
-picks one of the four. With the subtract line $K$ this gives AND, OR, XOR, ADD and SUB from one block. Flags:
-$Z$ and $N$ come from the selected output; $C$ and $V$ are meaningful only for ADD and SUB. Two useful
-by-products of the same hardware: **compare** (SUB, keep only the flags, discard the result) and **negate**
-($0 - B$, with $A$ forced to 0).
+**Sanity check** on two cases. $5 + 6$: $x = y = 0$, $c_3 = 1$, $s_3 = 1$: carry form $c_4 \oplus c_3 = 0 \oplus 1 = 1$; sign form
+$\bar x\bar y s_3 = 1$ ✓. $3 - 5$: $x = a_3 = 0$, $y = y_3 = \bar b_3 = 1$ (different signs): both forms give 0 ✓.
 :::
 
 :::note{#recap-flags title="Recap" depth="quick"}
@@ -385,6 +441,74 @@ $-8 - 1 = -9$ overflows ($V = 1$) and the pattern 0111 reads $+7$.
 :::
 ::::
 
+## The ALU around the adder
+
+:::intuition{#alu-intuition title="An adder with neighbours: the ALU slice" depth="standard"}
+A real arithmetic logic unit (ALU) is the adder–subtractor plus a few cheap neighbours: AND, OR and XOR gates
+working on the same $A$ and $B$, and a multiplexer that chooses which result reaches the output. The flags
+are computed on the chosen result. Seeing the ALU this way explains why GATE's ALU question (2003) is
+really an adder–subtractor question: the arithmetic part is the only one whose control lines interact.
+:::
+
+:::definition{#alu-slice term="A simple ALU" depth="standard"}
+For each bit $i$, compute in parallel: $A_i \wedge B_i$, $A_i \vee B_i$, $A_i \oplus B_i$, and the adder–subtractor's
+$s_i$. A 4:1 MUX per bit (selected by two function bits $F_1F_0$, [Chapter 5, Lesson 2](lesson:multiplexers))
+picks one of the four. With the subtract line $K$ this gives AND, OR, XOR, ADD and SUB from one block. Flags:
+$Z$ and $N$ come from the selected output; $C$ and $V$ are meaningful only for ADD and SUB. Two useful
+by-products of the same hardware: **compare** (SUB, keep only the flags, discard the result) and **negate**
+($0 - B$, with $A$ forced to 0).
+:::
+
+:::table{#alu-functions title="Function table of the simple ALU" depth="standard"}
+| $F_1F_0$ | $K$ | $C_0$ | $Y$ | Flags that mean something |
+|:-:|:-:|:-:|:--|:--|
+| 00 | – | – | $A \wedge B$ | N, Z |
+| 01 | – | – | $A \vee B$ | N, Z |
+| 10 | – | – | $A \oplus B$ | N, Z |
+| 11 | 0 | 0 | $A + B$ | C, V, N, Z |
+| 11 | 1 | 1 | $A - B$ | C (no borrow), V, N, Z |
+:::
+
+:::viz{#alu-viz spec="alu-slice" mode="animate" depth="standard"}
+:::
+
+::::example{#ex-alu-1 level="medium" title="One ALU operation and its flags" depth="standard"}
+$A = 0110$, $B = 0011$, $F_1F_0 = 11$, $K = 1$, $C_0 = 1$. Give $Y$ and the flags.
+
+:::step{why="F1F0 = 11 selects the adder–subtractor; K = C0 = 1 subtracts."}
+$Y = 0110 + 1100 + 1 = 1\,0011$: $Y = 0011$ (3).
+:::
+
+:::step{why="Read the flags from the arithmetic unit."}
+$C = 1$ (no borrow), $c_3 = c_4 = 1$ so $V = 0$, $N = 0$, $Z = 0$.
+:::
+
+:::answer
+$Y = 0011 = 6 - 3$, flags C = 1, V = 0, N = 0, Z = 0.
+:::
+::::
+
+::::example{#ex-alu-2 level="gate" title="A logic operation: which flags are meaningful?" depth="standard"}
+Same $A$, $B$ with $F_1F_0 = 10$. Give $Y$ and say which flags carry information.
+
+:::step{why="F1F0 = 10 selects the XOR unit."}
+$Y = 0110 \oplus 0011 = 0101$.
+:::
+
+:::step{why="N and Z are read from Y; C and V come from the adder, whose result was not selected."}
+$N = 0$, $Z = 0$; C and V are meaningless for a logic operation (many ALUs clear them).
+:::
+
+:::answer
+$Y = 0101$; only N and Z describe it. Reading V after an XOR is a classic misuse of the flags.
+:::
+::::
+
+:::note{#recap-alu title="Recap" depth="quick"}
+An ALU = logic units + the adder–subtractor + a MUX chosen by function bits. N and Z describe the selected result; C and V
+only arithmetic.
+:::
+
 ## The BCD adder circuit
 
 :::intuition{#bcd-intuition title="Add in binary, then repair" depth="standard"}
@@ -399,8 +523,9 @@ detector fires. The detector's output is also the decimal carry to the next digi
 :::definition{#bcd-adder term="One-digit BCD adder" depth="standard"}
 Inputs: BCD digits $A$, $B$ and a carry in. 
 
-1. **Adder 1** (4-bit binary): $K\,Z_3Z_2Z_1Z_0 = A + B + c_{in}$, a value 0 … 19.
-2. **Detector:** $C_{out} = K + Z_3Z_2 + Z_3Z_1$ (two 2-input ANDs and a 3-input OR).
+1. **Adder 1** (4-bit binary): $C_4\,Z_3Z_2Z_1Z_0 = A + B + c_{in}$, a value 0 … 19. ($C_4$ is adder 1's carry out; Mano
+   calls it $K$, but here $K$ stays the subtract control line.)
+2. **Detector:** $C_{out} = C_4 + Z_3Z_2 + Z_3Z_1$ (two 2-input ANDs and a 3-input OR).
 3. **Adder 2** (4-bit binary): adds $0\,C_{out}\,C_{out}\,0$ (that is, 0110 or 0000) to $Z_3Z_2Z_1Z_0$; its carry out
    is ignored.
 
@@ -408,18 +533,18 @@ Output: the BCD digit from adder 2 and the decimal carry $C_{out}$. Hardware: 2 
 2 AND, 1 OR. (Adder 2's bit 0 always adds 0, so it is often trimmed to a 3-bit adder.)
 :::
 
-:::derivation{#bcd-detector of="the correction detector K + Z3Z2 + Z3Z1" depth="standard"}
-The correction is needed iff $16K + Z \ge 10$.
+:::derivation{#bcd-detector of="the correction detector C4 + Z3Z2 + Z3Z1" depth="standard"}
+The correction is needed iff $16C_4 + Z \ge 10$.
 
-- If $K = 1$ the sum is 16 … 19: always correct. That gives the term $K$.
-- If $K = 0$ the sum is $Z = 0 \dots 15$, and we need $Z \ge 10$, i.e. $Z \in \{1010, 1011, 1100, 1101, 1110, 1111\}$. On a
+- If $C_4 = 1$ the sum is 16 … 19: always correct. That gives the term $C_4$.
+- If $C_4 = 0$ the sum is $Z = 0 \dots 15$, and we need $Z \ge 10$, i.e. $Z \in \{1010, 1011, 1100, 1101, 1110, 1111\}$. On a
   4-variable K-map over $Z_3Z_2Z_1Z_0$ these six cells are the quad $Z_3Z_2$ (12–15) and the quad $Z_3Z_1$
   (10, 11, 14, 15). No smaller cover exists (each quad has a cell the other lacks).
-- When $K = 1$, $Z$ is only 0000 … 0011 (the maximum sum is 9 + 9 + 1 = 19), so the $Z$ terms are 0 there and do
+- When $C_4 = 1$, $Z$ is only 0000 … 0011 (the maximum sum is 9 + 9 + 1 = 19), so the $Z$ terms are 0 there and do
   not interfere.
 
-Hence $C_{out} = K + Z_3Z_2 + Z_3Z_1$. **Sanity check:** $Z = 1001$ (9): $Z_3Z_2 = Z_3Z_1 = 0$, no correction ✓;
-$Z = 1010$ (10): $Z_3Z_1 = 1$ ✓; $K\,Z = 1\,0010$ (18): $K = 1$ ✓.
+Hence $C_{out} = C_4 + Z_3Z_2 + Z_3Z_1$. **Sanity check:** $Z = 1001$ (9): $Z_3Z_2 = Z_3Z_1 = 0$, no correction ✓;
+$Z = 1010$ (10): $Z_3Z_1 = 1$ ✓; $C_4\,Z = 1\,0010$ (18): $C_4 = 1$ ✓.
 :::
 
 :::viz{#bcd-viz spec="bcd-adder-hw" mode="animate" depth="standard"}
@@ -432,15 +557,15 @@ is ready only after its adder 1 and its detector, so a long BCD adder is a rippl
 (look-ahead versions exist with decimal generate/propagate).
 :::
 
-:::trap{#trap-detector-carry title="A detector without K" depth="standard"}
+:::trap{#trap-detector-carry title="A detector without C4" depth="standard"}
 "Correct when the 4-bit result is not a valid digit" ($Z_3Z_2 + Z_3Z_1$) misses the sums 16 … 19: $8 + 8 = 16$ gives
-$K\,Z = 1\,0000$, and $Z = 0000$ looks like a perfectly valid digit. Without the $K$ term the circuit outputs 0 with no
+$C_4\,Z = 1\,0000$, and $Z = 0000$ looks like a perfectly valid digit. Without the $C_4$ term the circuit outputs 0 with no
 carry. [Chapter 1, Lesson 9](lesson:code-arithmetic#trap-bcd) is the same trap at the number level; in hardware it is
 a missing OR input.
 :::
 
 :::note{#recap-bcd title="Recap" depth="quick"}
-BCD adder = binary adder → detector $K + Z_3Z_2 + Z_3Z_1$ (= decimal carry) → second adder adding $0CC0$. Chain digits by
+BCD adder = binary adder → detector $C_4 + Z_3Z_2 + Z_3Z_1$ (= decimal carry) → second adder adding $0CC0$. Chain digits by
 their decimal carries.
 :::
 
@@ -450,10 +575,10 @@ their decimal carries.
 Trace the BCD adder for $A = 0100$, $B = 0101$, $c_{in} = 0$.
 
 :::step{why="Adder 1 adds in binary."}
-$K\,Z = 0\,1001$ (9).
+$C_4\,Z = 0\,1001$ (9).
 :::
 
-:::step{why="Detector: K = 0, Z3 = 1 but Z2 = Z1 = 0."}
+:::step{why="Detector: C4 = 0, Z3 = 1 but Z2 = Z1 = 0."}
 $C_{out} = 0 + 0 + 0 = 0$: adder 2 adds 0000.
 :::
 
@@ -466,7 +591,7 @@ Digit 1001 (9), carry 0. Nothing is corrected because 9 is a valid digit.
 Trace $A = 1000$, $B = 0111$, $c_{in} = 0$.
 
 :::step{why="Adder 1."}
-$K\,Z = 0\,1111$ (15).
+$C_4\,Z = 0\,1111$ (15).
 :::
 
 :::step{why="Detector: Z3Z2 = 1."}
@@ -486,38 +611,45 @@ Carry 1, digit 5: $8 + 7 = 15$ ✓. The animation above plays this case first.
 Trace $A = B = 1001$, $c_{in} = 1$.
 
 :::step{why="Adder 1: 9 + 9 + 1 = 19 = 1 0011."}
-$K = 1$, $Z = 0011$.
+$C_4 = 1$, $Z = 0011$.
 :::
 
-:::step{why="Detector: K = 1 alone fires it; Z3 = 0, so the Z terms are 0."}
+:::step{why="Detector: C4 = 1 alone fires it; Z3 = 0, so the Z terms are 0."}
 $C_{out} = 1$; adder 2 computes $0011 + 0110 = 1001$.
 :::
 
 :::answer
 Carry 1, digit 9: 19 ✓. This is the largest sum a digit adder ever sees, which is why $Z$ never exceeds 0011 when
-$K = 1$.
+$C_4 = 1$.
 :::
 ::::
 
 ::::example{#ex-bcd-edge level="gate" title="Edge case: 8 + 9, a sum that looks valid" depth="standard"}
-Trace $A = 1000$, $B = 1001$, $c_{in} = 0$, and say what a detector without $K$ would output.
+Trace $A = 1000$, $B = 1001$, $c_{in} = 0$, and say what a detector without $C_4$ would output.
 
 :::step{why="Adder 1: 17 = 1 0001."}
-$K = 1$, $Z = 0001$.
+$C_4 = 1$, $Z = 0001$.
 :::
 
-:::step{why="The full detector: K = 1."}
+:::step{why="The full detector: C4 = 1."}
 $C_{out} = 1$; adder 2: $0001 + 0110 = 0111$: carry 1, digit 7 ✓ (17).
 :::
 
-:::step{why="Without K: Z3Z2 + Z3Z1 = 0, so nothing is added and the carry is lost."}
+:::step{why="Without C4: Z3Z2 + Z3Z1 = 0, so nothing is added and the carry is lost."}
 Output digit 0001, carry 0: "1" instead of 17.
 :::
 
 :::answer
-Correct circuit: 17 (carry 1, digit 7). Detector without $K$: 1. Sums 16 … 19 are caught only by $K$.
+Correct circuit: 17 (carry 1, digit 7). Detector without $C_4$: 1. Sums 16 … 19 are caught only by $C_4$.
 :::
 ::::
+
+:::note{#bcd-trick-note title="Why the decimal carry is the detector" depth="quick"}
+The detector fires exactly when the decimal column total is 10 or more, which is the definition of a decimal carry. That is
+why one OR gate serves both as "add 6 here" and as "carry 1 to the next digit".
+:::
+
+## BCD subtraction hardware
 
 :::intuition{#bcd-sub-intuition title="Subtract decimals with the same adder" depth="standard"}
 To subtract BCD numbers the hardware does what the binary adder–subtractor does, one level up: it adds the
@@ -529,13 +661,104 @@ itself is unchanged.
 :::definition{#bcd-subtractor term="BCD subtraction hardware" depth="standard"}
 A one-digit **nine's complementer** maps $d \mapsto 9 - d$ (0 ↔ 9, 1 ↔ 8, …), with the codes 10–15 as don't-cares;
 its outputs are $N_0 = \bar d_0$, $N_1 = d_1$, $N_2 = d_2 \oplus d_1$, $N_3 = \overline{d_3 + d_2 + d_1}$. A decimal
-adder–subtractor puts a complementer (enabled by $K$) on every digit of $B$ and feeds $K$ into the lowest digit's
-carry in: $A + (10^k - 1 - B) + 1 = A - B + 10^k$. A final decimal carry of 1 means the result is non-negative and
-is read directly; a carry of 0 means it is negative and in ten's-complement form (the number-level rule is
-[Chapter 1, Lesson 9](lesson:code-arithmetic#bcd-sub)).
-
-Example, 2 digits: $52 - 17$: $52 + 82 + 1 = 135$: carry 1, result 35 ✓.
+adder–subtractor puts a complementer (enabled by the subtract line) on every digit of $B$ and feeds the same line into
+the lowest digit's carry in: $A + (10^k - 1 - B) + 1 = A - B + 10^k$. A final decimal carry of 1 means the result is
+non-negative and is read directly; a carry of 0 means it is negative and in ten's-complement form (the number-level
+rule is [Chapter 1, Lesson 9](lesson:code-arithmetic#bcd-sub)).
 :::
+
+:::derivation{#nines-complementer of="the nine's-complementer equations" depth="standard"}
+Write $N = 9 - d$ for $d = 0 \dots 9$:
+
+| $d$ | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 |
+|:--|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| $d_3d_2d_1d_0$ | 0000 | 0001 | 0010 | 0011 | 0100 | 0101 | 0110 | 0111 | 1000 | 1001 |
+| $N_3N_2N_1N_0$ | 1001 | 1000 | 0111 | 0110 | 0101 | 0100 | 0011 | 0010 | 0001 | 0000 |
+
+- $N_0$: 9 is odd, so $9 - d$ has the opposite parity of $d$: $N_0 = \bar d_0$.
+- $N_1$: the column $N_1$ equals $d_1$ on all ten rows (0, 0, 1, 1, 0, 0, 1, 1, 0, 0).
+- $N_2$: 1 for $d = 2 \dots 5$, i.e. exactly one of $d_2$, $d_1$ is 1: $N_2 = d_2 \oplus d_1$ (rows 10–15 are don't-cares).
+- $N_3$: 1 only for $d = 0, 1$, i.e. $d_3 = d_2 = d_1 = 0$: $N_3 = \overline{d_3 + d_2 + d_1}$.
+
+**Sanity check:** $d = 3 = 0011$: $N = 0\,1\,1\,0 = 6$ ✓.
+:::
+
+:::trap{#trap-bcd-sub title="Reading a carry-0 result as the answer" depth="standard"}
+$17 - 52$ on a 2-digit decimal subtractor gives the digits 65 with a final carry of 0. The answer is **not** 65: carry 0 means
+the result is negative and 65 is its ten's complement, so the answer is $-(100 - 65) = -35$. The other slip is to add only the
+nine's complement and forget the carry in of 1, which gives a result one too small (64).
+:::
+
+:::note{#recap-bcd-sub title="Recap" depth="quick"}
+Decimal subtraction = nine's complementer on $B$ + carry in 1 + BCD adders. Final carry 1: read the digits; carry 0: the
+answer is minus the ten's complement of the digits.
+:::
+
+### Worked examples: BCD subtraction
+
+::::example{#ex-bsub-easy level="easy" title="52 − 17" depth="quick"}
+Compute $52 - 17$ on a 2-digit decimal adder–subtractor.
+
+:::step{why="Nine's complement of each digit of 17."}
+$17 \to 82$.
+:::
+
+:::step{why="Add with carry in 1."}
+$52 + 82 + 1 = 135$: final carry 1, digits 35.
+:::
+
+:::answer
+Carry 1, so the result is $+35$ ✓.
+:::
+::::
+
+::::example{#ex-bsub-medium level="medium" title="17 − 52, a negative result" depth="standard"}
+Compute $17 - 52$ the same way.
+
+:::step{why="Nine's complement of 52 is 47; add with carry in 1."}
+$17 + 47 + 1 = 65$: final carry 0.
+:::
+
+:::step{why="Carry 0: the digits are the ten's complement of the magnitude."}
+$100 - 65 = 35$, so the result is $-35$.
+:::
+
+:::answer
+$-35$ ✓. The hardware stores 65 with carry 0; the sign is in the carry.
+:::
+::::
+
+::::example{#ex-bsub-gate level="gate" title="305 − 128 with a decimal carry chain" depth="standard"}
+Compute $305 - 128$ on a 3-digit decimal adder–subtractor and follow the decimal carries.
+
+:::step{why="Nine's complement of 128 is 871."}
+Units: $5 + 1 + 1 = 7$, carry 0. Tens: $0 + 7 + 0 = 7$, carry 0. Hundreds: $3 + 8 = 11$: digit 1, carry 1.
+:::
+
+:::step{why="The final decimal carry is 1."}
+Result digits 177, carry 1.
+:::
+
+:::answer
+$+177$ ✓ ($305 - 128 = 177$). Only the hundreds digit needed the +6 correction ($3 + 8 = 11 \ge 10$).
+:::
+::::
+
+::::example{#ex-bsub-edge level="gate" title="Edge case: 00 − 00" depth="standard"}
+What does a 2-digit decimal subtractor output for $00 - 00$?
+
+:::step{why="Nine's complement of 00 is 99."}
+Each digit 0 becomes 9: the adder sees $00 + 99$ with carry in 1.
+:::
+
+:::step{why="Add: the units overflow (0 + 9 + 1 = 10), the carry ripples through the tens (0 + 9 + 1 = 10)."}
+$0 + 99 + 1 = 100$: digits 00, final carry 1.
+:::
+
+:::answer
+Carry 1, result $+00$: zero counts as non-negative, exactly like $A - A$ in binary ($C = 1$, $Z = 1$).
+:::
+::::
 
 ## Adders as code converters
 
@@ -548,57 +771,34 @@ you the conversion.
 
 :::definition{#adder-converter term="Adder-based converters" depth="standard"}
 - **BCD → excess-3:** one 4-bit adder adding the constant 0011: $E = B + 3$.
-- **Binary → two-digit base $r$** (for a 4-bit input $b$ and $r > 8$): add $16 - r$ when $b \ge r$, with a detector for
-  $b \ge r$. The carry out is the "tens" digit (always 0 or 1) and the 4 sum bits are the units digit.
+- **Binary → two-digit base $r$** (for a 4-bit input $b$ and $8 < r < 16$): add $16 - r$ when $b \ge r$, with a detector
+  for $b \ge r$. The carry out is the "tens" digit (always 0 or 1) and the 4 sum bits are the units digit.
   - $r = 12$: add $0100$ when $b_3b_2 = 1$ (i.e. $b \ge 12$). This is GATE 1996's circuit.
   - $r = 10$ (binary → BCD): add $0110$ when $b \ge 10$, detector $b_3(b_2 + b_1)$.
+  - $r = 9$: add $0111$ when $b \ge 9$, detector $b_3(b_2 + b_1 + b_0)$.
 
 **Why it works:** for $b \ge r$, $b + (16 - r) = 16 + (b - r)$, so the carry out is 1 and the sum bits are $b - r$, the
 units digit; for $b < r$ nothing is added and the number is its own units digit.
 :::
 
+:::viz{#conv-viz spec="adder-converter" mode="animate" depth="standard"}
+:::
+
+:::trap{#trap-converter-bcd title="Every 'add a constant' circuit looks like the BCD correction" depth="standard"}
+An adder whose second operand is switched on by an AND of high bits resembles the BCD adder's +6 stage, so students
+answer "binary to BCD". Read the constant and the detector: BCD adds **0110** from **10** up (detector $b_3(b_2 + b_1)$);
+a circuit adding **0100** from **12** up ($b_3b_2$) is radix 12. GATE 1996's examiners offered "binary to BCD" as the
+attractive wrong option.
+:::
+
 :::note{#recap-conv title="Recap" depth="quick"}
 Converter = adder + constant chosen by a detector. Add 3: excess-3. Add $16 - r$ when $b \ge r$: two-digit base $r$ (12 →
-add 4 on $b_3b_2$; 10 → add 6 on $b_3(b_2 + b_1)$).
+add 4 on $b_3b_2$; 10 → add 6 on $b_3(b_2 + b_1)$; 9 → add 7 on $b_3(b_2 + b_1 + b_0)$).
 :::
 
 ### Worked examples: adder converters
 
-::::example{#ex-conv-easy level="easy" title="The 1996 circuit for b = 1101" depth="quick"}
-A 4-bit adder adds $b_3b_2b_1b_0$ and the operand $0\,(b_3b_2)\,0\,0$ with carry in 0; $d_4$ is the carry out. Find
-$d_4d_3d_2d_1d_0$ for $b = 1101$ (13).
-
-:::step{why="The detector is the AND of the two top bits; 1101 has b3 = b2 = 1."}
-$b_3b_2 = 1$, so the second operand is $0100$ (4).
-:::
-
-:::step{why="Add in binary; the carry out becomes d4."}
-$1101 + 0100 = 1\,0001$.
-:::
-
-:::answer
-$d_4 = 1$, $d_3 \dots d_0 = 0001$: "11" in base 12 (one twelve and one unit) = 13 ✓.
-:::
-::::
-
-::::example{#ex-conv-medium level="medium" title="The whole 1996 output table" depth="standard"}
-List the outputs of the same circuit for $b = 0 \dots 15$.
-
-:::step{why="For b < 12, b3b2 = 0 (unless b3 = b2 = 1), so nothing is added."}
-$b = 0 \dots 11$: $d_4 = 0$ and $d_3 \dots d_0 = b$.
-:::
-
-:::step{why="For b = 12 … 15 the circuit adds 4: 12 + 4 = 16 = 1 0000, …, 15 + 4 = 19 = 1 0011."}
-$b = 12, 13, 14, 15 \to 1\,0000, 1\,0001, 1\,0010, 1\,0011$.
-:::
-
-:::answer
-$d_4$ is the twelves digit and $d_3 \dots d_0$ the units digit (0 … 11): binary to radix-12. Not hex (that would be the
-identity), not BCD (that would correct from 10, not 12), not Gray.
-:::
-::::
-
-::::example{#ex-conv-gate level="gate" title="BCD to excess-3 with one adder" depth="standard"}
+::::example{#ex-conv-easy level="easy" title="BCD to excess-3 with one adder" depth="quick"}
 Design a BCD → excess-3 converter with a 4-bit adder, and check digit 7.
 
 :::step{why="Excess-3 is the digit plus 3."}
@@ -610,36 +810,70 @@ $0111 + 0011 = 1010$, the excess-3 code of 7 ✓.
 :::
 
 :::answer
-One 4-bit adder with $B = 0011$. (Chapter 5, Lesson 1 derives the same converter as four minimised gate functions,
-6 gates instead of an adder's 20.)
+One 4-bit adder with $B = 0011$. ([Chapter 5, Lesson 1](lesson:combinational-design#shared-terms) derives the same
+converter as four minimised gate functions, 6 gates instead of an adder's 20.)
 :::
 ::::
 
-::::example{#ex-conv-edge level="gate" title="Edge case: making the 1996 circuit convert binary to BCD" depth="standard"}
-What must change in the 1996 circuit to output two BCD digits (tens bit and units digit) for $b = 0 \dots 15$?
+::::example{#ex-conv-medium level="medium" title="A radix-9 converter for b = 1010" depth="standard"}
+A 4-bit adder adds $b$ and $0\,D\,D\,D$ with $D = b_3(b_2 + b_1 + b_0)$. What does it output for $b = 1010$ (10), and what does
+it convert to?
 
-:::step{why="BCD needs units 0 … 9, so the correction starts at 10 and adds 16 − 10 = 6."}
-The second operand must be $0\,D\,D\,0$ with $D = 1$ iff $b \ge 10$.
+:::step{why="D detects b ≥ 9 (1001 … 1111); 1010 has b3 = 1 and b1 = 1."}
+$D = 1$: the second operand is $0111$ (7).
 :::
 
-:::step{why="b ≥ 10 means 1010 … 1111: the quads b3b2 and b3b1."}
-$D = b_3b_2 + b_3b_1 = b_3(b_2 + b_1)$.
-:::
-
-:::step{why="Check b = 10 and b = 15."}
-$1010 + 0110 = 1\,0000$ ("10") ✓; $1111 + 0110 = 1\,0101$ ("15") ✓.
+:::step{why="Add: 1010 + 0111."}
+$1\,0001$: carry 1, units 0001.
 :::
 
 :::answer
-Replace the AND $b_3b_2$ by $b_3(b_2 + b_1)$ and feed it to bits 2 **and** 1 of the second operand (0110 instead of
-0100). That is option B's circuit, which the 1996 figure is not.
+Digits 1, 1 in base 9: $9 + 1 = 10$ ✓. The circuit converts 4-bit binary to two base-9 digits ($16 - 9 = 7$ is the constant).
+:::
+::::
+
+::::example{#ex-conv-gate level="gate" title="Identify the converter with operand 0DD0, D = b3(b2 + b1)" depth="standard"}
+A 4-bit adder adds $b$ and $0\,D\,D\,0$ with $D = b_3(b_2 + b_1)$, carry in 0; the output is the carry and the 4 sum bits.
+Identify the conversion and give the outputs for $b = 9$, $10$ and $15$.
+
+:::step{why="D detects b ≥ 10 (1010 … 1111: the quads b3b2 and b3b1)."}
+$b = 9$: $D = 0$, output $0\,1001$.
+:::
+
+:::step{why="For b ≥ 10 it adds 6 = 16 − 10."}
+$b = 10$: $1010 + 0110 = 1\,0000$; $b = 15$: $1111 + 0110 = 1\,0101$.
+:::
+
+:::answer
+Binary to BCD (two decimal digits: carry = tens, sum = units): 9 → 0 9, 10 → 1 0, 15 → 1 5.
+:::
+::::
+
+::::example{#ex-conv-edge level="gate" title="Edge case: which radices need an adder at all?" depth="standard"}
+For a 4-bit input $b$, which of the two-digit conversions to base 8, 12 and 16 can be done with wires alone?
+
+:::step{why="Base 16: one hex digit already; nothing changes."}
+Wires only (the identity, tens digit 0).
+:::
+
+:::step{why="Base 8: the units digit is b2b1b0 and the eights digit is b3."}
+Wires only: adding $16 - 8 = 8$ when $b_3 = 1$ just moves $b_3$ into the carry.
+:::
+
+:::step{why="Base 12: the units digit for b = 12 … 15 is b − 12, which changes the low bits."}
+Needs the adder (or equivalent logic).
+:::
+
+:::answer
+Bases 16 and 8 are wiring; bases 9, 10 and 12 need the add-a-constant trick. The 1996 circuit's adder is the clue that it is
+not hex.
 :::
 ::::
 
 ## Try it
 
 In the Adder Race, switch to **A − B** and press Race with $A = 5$, $B = 6$ (4 or 8 bits): the XOR row inverts $B$, the
-carry in is 1, and the flag panel shows $C = 0$ (a borrow). Then try the preset "min − 1": the overflow flag lights
+carry in is 1 (the y row shows $B$ inverted, the c0 cell shows $K = 1$), and the flag panel shows $C = 0$ (a borrow). Then try the preset "min − 1": the overflow flag lights
 because $c_n \ne c_{n-1}$.
 
 :::lab{#lab-addsub lab="adder-race" tab="race" depth="standard"}
@@ -698,6 +932,6 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Overflow | $V = c_n \oplus c_{n-1}$ (or same-sign inputs, different-sign output) |
 | Flags | $C = c_n$ (after $A - B$: no borrow, $A \ge B$ unsigned), $N = s_{n-1}$, $Z$ = NOR of sums |
 | Compare | unsigned $A < B$: $C = 0$; signed $A < B$: $N \oplus V = 1$; equal: $Z = 1$ |
-| BCD adder | adder → detector $K + Z_3Z_2 + Z_3Z_1$ (= decimal carry) → add $0CC0$; 8 FA + 2 AND + 1 OR |
+| BCD adder | adder → detector $C_4 + Z_3Z_2 + Z_3Z_1$ (= decimal carry) → add $0CC0$; 8 FA + 2 AND + 1 OR |
 | Converters | add 0011: BCD → XS-3; add 0100 when $b_3b_2$: binary → radix 12 (GATE 1996); add 0110 when $b_3(b_2 + b_1)$: binary → BCD |
 :::

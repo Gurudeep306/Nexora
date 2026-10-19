@@ -1297,7 +1297,7 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "Constant delay would need a lookup table (a ROM of $2^{2n}$ words)."
+          "reason": "Constant delay would need a two-level SOP of every product bit with unbounded fan-in (exponentially many gates); no array does that."
         }
       ],
       "shortcut": "Array: hardware $n^2$, delay $n$. Tree: delay $\\log n$.",

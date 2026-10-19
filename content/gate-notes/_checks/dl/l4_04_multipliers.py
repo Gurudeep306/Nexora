@@ -101,6 +101,78 @@ tr, _ = bt.booth_trace(-8, 0b0001, 4)
 assert tr[0][1:] == (0b00100, 0b0000, 1) and tr[1][1] == 0b11110
 has("$1111\\,1000 = -8$")
 
+# ── Review additions ─────────────────────────────────────────────────────
+tr, prod = al.sequential_multiply(15, 13, 4)
+assert prod == 195 == 0b11000011 and [(A, Q) for _, A, Q in tr] == [(0b0111, 0b1110), (0b0011, 0b1111), (0b1001, 0b0111), (0b1100, 0b0011)]
+assert 0b0011 + 0b1111 == 0b10010 and 0b1001 + 0b1111 == 0b11000
+for m in range(16):
+    for q in range(16):
+        A, Q = 0, q
+        for k in range(4):
+            t_ = A + (m if Q & 1 else 0)
+            comb = (t_ << 4 | Q) >> 1
+            A, Q = comb >> 4, comb & 15
+            assert A * 2 ** (k + 1) + (Q >> (3 - k)) == m * (q % 2 ** (k + 1))
+assert len(al.sequential_multiply(3, 0x00FF, 16)[0]) == 16 and bin(0x00FF).count("1") == 8 and bt.booth_ops(format(0x00FF, "016b")) == 2
+assert al.sequential_multiply(9, 0, 4)[1] == 0
+ops = [{(1, 0): "-M", (0, 1): "+M"}.get(((0b0110 >> i) & 1, (0b0110 >> (i - 1)) & 1 if i else 0), "none") for i in range(4)]
+assert ops == ["none", "-M", "none", "+M"]
+assert bt.bitpair_digits("1101") == [-1, 1]
+
+
+def r4(m, q, n, w, trace=None):
+    A, Q, Q1 = 0, q, 0
+    for _ in range(n // 2):
+        d = bt.bitpair_digit((Q >> 1) & 1, Q & 1, Q1)
+        A = (A + d * m) % 2 ** w
+        mid = A
+        for _ in range(2):
+            Q1 = Q & 1
+            Q = (Q >> 1) | ((A & 1) << (n - 1))
+            A = (A >> 1) | ((A >> (w - 1)) << (w - 1))
+        if trace is not None:
+            trace.append((d, mid, A, Q))
+    return al.tc(((A << n) | Q) % 2 ** (2 * n), 2 * n)
+
+
+trc = []
+assert r4(6, 0b1101, 4, 6, trc) == -18 and trc == [(1, 0b000110, 0b000001, 0b1011), (-1, 0b111011, 0b111110, 0b1110)]
+for n_ in (4, 6):
+    bad5 = [(m, v) for m in range(-2 ** (n_ - 1), 2 ** (n_ - 1)) for v in range(-2 ** (n_ - 1), 2 ** (n_ - 1)) if r4(m, v % 2 ** n_, n_, n_ + 1) != m * v]
+    assert all(m == -2 ** (n_ - 1) for m, _ in bad5) and bad5
+    assert all(r4(m, v % 2 ** n_, n_, n_ + 2) == m * v for m in range(-2 ** (n_ - 1), 2 ** (n_ - 1)) for v in range(-2 ** (n_ - 1), 2 ** (n_ - 1)))
+    if n_ == 4:
+        assert len(bad5) == 5
+# Radix-2 Booth: an n-bit A fails only for M = −2^(n−1).
+for n_ in (4, 5):
+    bad = [(m, v) for m in range(-2 ** (n_ - 1), 2 ** (n_ - 1)) for v in range(-2 ** (n_ - 1), 2 ** (n_ - 1)) if al.tc(booth_narrow(m, v % 2 ** n_, n_), 2 * n_) != m * v]
+    assert bad and all(m == -2 ** (n_ - 1) for m, _ in bad)
+# Constant-0 cells: exactly n per array (row-1 top cell and every row's lowest cell).
+for n_ in range(2, 7):
+    net = al.array_multiplier(n_)
+    cells = {}
+    for name, op, args in net:
+        import re as _r
+        m = _r.fullmatch(r"([pg])m(\d+)_(\d+)", name)
+        if m:
+            cells.setdefault((m.group(2), m.group(3)), set()).update(args)
+        m = _r.fullmatch(r"([st])m(\d+)_(\d+)", name)
+        if m:
+            cells.setdefault((m.group(2), m.group(3)), set()).update(args)
+    zero = [k for k, a in cells.items() if "0" in a]
+    assert len(zero) == n_, (n_, zero)
+# Carry-save array: 13 for 4 × 4, 5n − 7.
+for n_ in range(3, 9):
+    netc = al.array_multiplier_csa(n_)
+    tc_ = al.arrival(netc, ins(n_))
+    assert max(tc_[f"P{k}"] for k in range(2 * n_)) == 5 * n_ - 7
+    if n_ <= 4:
+        for x in range(2 ** n_):
+            for y in range(2 ** n_):
+                assert al.word(cl.evaluate(netc, env(n_, x, y)), "P", 2 * n_) == x * y
+assert (64 ** 2 / 16 ** 2, round(64 * 63 / (16 * 15), 1), round(6 * 63 / (6 * 15), 1)) == (16, 16.8, 4.2)
+has("$C\\,A = 1\\,0010$, shift: $A\\,Q = 1001\\,0111$", "With 5 bits, 5 of the 256 products come out wrong", "13 unit delays against 18")
+
 # ── PYQs ─────────────────────────────────────────────────────────────────
 assert bank["cse-1999-a-21"]["answer"] == "B" and bank["cse-2003-cs-11"]["answer"] == "C"
 
@@ -110,7 +182,8 @@ bl.assert_nat(P["nx-dl-04-04-q01"], al.multiplier_cost(8)[0])
 bl.assert_nat(P["nx-dl-04-04-q02"], al.multiplier_cost(6)[1])
 bl.assert_mcq(P["nx-dl-04-04-q03"], "C")
 bl.assert_nat(P["nx-dl-04-04-q04"], ((2 ** 7 - 1) * (2 ** 5 - 1)).bit_length())
-bl.assert_nat(P["nx-dl-04-04-q05"], delay[5])
+bl.assert_nat(P["nx-dl-04-04-q05"], delay[8])
+assert delay[4] == 18
 q = P["nx-dl-04-04-q06"]
 cyc = len(al.sequential_multiply(1, 1, 16)[0])
 bl.assert_mcq(q, [l for l, t in bl.option_values(q).items() if int(t) == cyc][0])

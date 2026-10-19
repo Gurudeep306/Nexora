@@ -1,0 +1,701 @@
+{
+ "version": 1,
+ "title": "A 4-bit ALU choosing among AND, OR, XOR and the adder–subtractor",
+ "width": 700,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 350
+ },
+ "intro": "Four units compute AND, OR, XOR and ADD/SUB of A = 0110 and B = 0011 in parallel; a 4:1 MUX driven by F1F0 picks one result, and the flags are read from it.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "A 4-bit ALU: four results, one 4:1 MUX, the flags",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "4-bit ALU: A = 0110, B = 0011",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "u0",
+   "type": "box",
+   "x": 60,
+   "y": 60,
+   "w": 150,
+   "h": 40,
+   "label": "AND",
+   "size": 14,
+   "narrow": {
+    "x": 10,
+    "w": 82,
+    "size": 12
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     210,
+     80
+    ],
+    [
+     300,
+     80
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      51,
+      100
+     ],
+     [
+      51,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u1",
+   "type": "box",
+   "x": 60,
+   "y": 110,
+   "w": 150,
+   "h": 40,
+   "label": "OR",
+   "size": 14,
+   "narrow": {
+    "x": 96,
+    "y": 60,
+    "w": 82,
+    "size": 12
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     210,
+     130
+    ],
+    [
+     300,
+     130
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      137,
+      100
+     ],
+     [
+      137,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u2",
+   "type": "box",
+   "x": 60,
+   "y": 160,
+   "w": 150,
+   "h": 40,
+   "label": "XOR",
+   "size": 14,
+   "narrow": {
+    "x": 182,
+    "y": 60,
+    "w": 82,
+    "size": 12
+   }
+  },
+  {
+   "id": "w2",
+   "type": "line",
+   "points": [
+    [
+     210,
+     180
+    ],
+    [
+     300,
+     180
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      223,
+      100
+     ],
+     [
+      223,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "u3",
+   "type": "box",
+   "x": 60,
+   "y": 210,
+   "w": 150,
+   "h": 40,
+   "label": "ADD/SUB",
+   "size": 14,
+   "narrow": {
+    "x": 268,
+    "y": 60,
+    "w": 82,
+    "size": 12
+   }
+  },
+  {
+   "id": "w3",
+   "type": "line",
+   "points": [
+    [
+     210,
+     230
+    ],
+    [
+     300,
+     230
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      309,
+      100
+     ],
+     [
+      309,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mux",
+   "type": "box",
+   "x": 300,
+   "y": 60,
+   "w": 120,
+   "h": 190,
+   "label": "4:1 MUX",
+   "size": 14,
+   "narrow": {
+    "x": 10,
+    "y": 150,
+    "w": 340,
+    "h": 50,
+    "size": 13
+   }
+  },
+  {
+   "id": "sel",
+   "type": "text",
+   "x": 360,
+   "y": 268,
+   "text": "F1F0 = ??",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180,
+    "y": 216,
+    "size": 12
+   }
+  },
+  {
+   "id": "wy",
+   "type": "line",
+   "points": [
+    [
+     420,
+     155
+    ],
+    [
+     470,
+     155
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      228
+     ],
+     [
+      180,
+      250
+     ]
+    ]
+   }
+  },
+  {
+   "id": "res",
+   "type": "box",
+   "x": 470,
+   "y": 132,
+   "w": 200,
+   "h": 46,
+   "mono": true,
+   "label": "Y = ????",
+   "size": 15,
+   "narrow": {
+    "x": 80,
+    "y": 250,
+    "h": 40,
+    "size": 13
+   }
+  },
+  {
+   "id": "fl",
+   "type": "text",
+   "x": 570,
+   "y": 210,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 310,
+    "size": 12
+   }
+  },
+  {
+   "id": "ab",
+   "type": "text",
+   "x": 135,
+   "y": 290,
+   "text": "A = 0110 (6), B = 0011 (3)",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "ab-n",
+   "type": "text",
+   "x": 180,
+   "y": 334,
+   "text": "A = 0110, B = 0011",
+   "size": 12,
+   "anchor": "middle",
+   "mono": true,
+   "only": "narrow"
+  }
+ ],
+ "steps": [
+  {
+   "caption": "All four units work on A and B at once; the function bits F1F0 only choose which result the MUX passes to Y.",
+   "patches": []
+  },
+  {
+   "caption": "F1F0 = 00: Y = AND(A, B) = 0010.",
+   "patches": [
+    {
+     "id": "u0",
+     "set": {
+      "tone": "accent",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "F1F0 = 00"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "label": "Y = 0010"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "N=0 Z=0 (C, V unused)",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "F1F0 = 01: Y = OR(A, B) = 0111.",
+   "patches": [
+    {
+     "id": "u0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "accent",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "F1F0 = 01"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "label": "Y = 0111"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "N=0 Z=0 (C, V unused)",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "F1F0 = 10: Y = XOR(A, B) = 0101.",
+   "patches": [
+    {
+     "id": "u0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "accent",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "F1F0 = 10"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "label": "Y = 0101"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "N=0 Z=0 (C, V unused)",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "F1F0 = 11, K = 0: Y = ADD(A, B) = 1001. V = 1: 6 + 3 = 9 overflows 4-bit two's complement.",
+   "patches": [
+    {
+     "id": "u0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "accent",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "F1F0 = 11, K = 0"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "label": "Y = 1001"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "N=1 Z=0 C=0 V=1",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "F1F0 = 11, K = 1: Y = SUB(A, B) = 0011. K = 1 turns the adder into A − B: 3, C = 1 (no borrow).",
+   "patches": [
+    {
+     "id": "u0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "u3",
+     "set": {
+      "tone": "accent",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "w0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "w3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "F1F0 = 11, K = 1"
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "label": "Y = 0011"
+     }
+    },
+    {
+     "id": "fl",
+     "set": {
+      "text": "N=0 Z=0 C=1 V=0",
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

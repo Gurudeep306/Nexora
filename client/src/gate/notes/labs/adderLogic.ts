@@ -276,7 +276,7 @@ export interface RaceSide {
   gates: number
   /** Worst-case (static) delay of the sums and the carry out. */
   worst: number
-  /** When this input change has settled (last change of any sum, carry out or V). */
+  /** When this input change has settled (last change of any sum, the carry out, V or Z). */
   settled: number
   sim: SimResult
 }
@@ -311,7 +311,7 @@ export function race(n: number, prev: { a: number; b: number; K: number }, next:
       kind,
       gates: net.filter((x) => x.op !== 'BUF').length,
       worst: Math.max(...outs.slice(0, n + 1).map((x) => t[x])),
-      settled: Math.max(...outs.map((x) => sim.settle[x])),
+      settled: Math.max(...[...outs, 'Z'].map((x) => sim.settle[x])),
       sim,
     }
     fin = evaluate(net, nw)

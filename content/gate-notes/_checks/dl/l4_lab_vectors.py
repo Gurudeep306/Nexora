@@ -8,7 +8,7 @@ committed file is stale; tests/gate-notes.test.js then checks the TypeScript aga
   V = c_n ⊕ c_{n-1} and Z) at widths 4, 8 and 16 and XOR delays 1 and 2: the gate count, the static
   worst-case delay of the sums and carry out, and, for fixed and seeded random input changes (add
   and subtract), the result, the C, V, N, Z flags and the transport-delay settling time of every sum,
-  the carry out and V;
+  the carry out and V (the race is settled when Z has settled too);
 - the scaling table (unit gates, MUX = 2): ripple, CLA with fan-in 4, carry-select with 4-bit blocks
   for n = 4 … 64.
 
@@ -44,7 +44,7 @@ def case(kind, n, xd, prev, nxt):
     assert s == want and v["V"] == int(not -(2 ** (n - 1)) <= true <= 2 ** (n - 1) - 1) and v["Z"] == int(s == 0)
     assert v[f"c{n}"] == (int(a + b >= 2 ** n) if K == 0 else int(a >= b))
     return {"kind": kind, "n": n, "xor": xd, "prev": list(prev), "next": list(nxt), "sum": s, "C": v[f"c{n}"], "V": v["V"],
-            "N": s >> (n - 1), "Z": v["Z"], "settle": [st[x] for x in outs(n)], "settled": max(st[x] for x in outs(n))}
+            "N": s >> (n - 1), "Z": v["Z"], "settle": [st[x] for x in outs(n)], "settled": max(st[x] for x in outs(n) + ["Z"])}
 
 
 def build():

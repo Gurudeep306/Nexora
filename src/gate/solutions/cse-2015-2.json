@@ -3750,7 +3750,7 @@
         },
         {
           "title": "Which to answer",
-          "body": "The official answer is 19.2, the block model. The question invites it by describing the adder as \"implemented by using four full adders\" after giving the full adder's delay. Answer 19.2; know that 12 is the true critical path."
+          "body": "The official answer is 19.2, the block model. The question invites it by describing the adder as \"implemented by using four full adders\" after giving the gate delays from which the full adder's delay (4.8 µs) follows. Answer 19.2; know that 12 is the true critical path."
         }
       ],
       "answer": {

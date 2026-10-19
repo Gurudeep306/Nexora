@@ -97,7 +97,7 @@ SOLUTIONS["cse-2015-2-cs-48"] = {
         {"title": "Delay of one full adder", "body": "Sum path: XOR (HA1) then XOR (HA2) $= 2.4 + 2.4 = 4.8$ µs. Carry path: XOR (HA1) → AND (HA2) → OR $= 2.4 + 1.2 + 1.2 = 4.8$ µs. So $t_{FA} = 4.8$ µs."},
         {"title": "Block model (the official key)", "body": "Each full adder is treated as one box that completes in 4.8 µs, and stage $i$ starts when stage $i - 1$ is complete: $4 \\times 4.8 = 19.2$ µs."},
         {"title": "What a gate-level count gives", "body": "Inside the chain the carry in of a stage reaches its carry out through only AND + OR $= 2.4$ µs (the stage's XOR of $a_i, b_i$ was done in parallel). So $c_4 = 4.8 + 3 \\times 2.4 = 12$ µs, and $s_3 = c_3 + 2.4 = 9.6 + 2.4 = 12$ µs."},
-        {"title": "Which to answer", "body": "The official answer is 19.2, the block model. The question invites it by describing the adder as \"implemented by using four full adders\" after giving the full adder's delay. Answer 19.2; know that 12 is the true critical path."},
+        {"title": "Which to answer", "body": "The official answer is 19.2, the block model. The question invites it by describing the adder as \"implemented by using four full adders\" after giving the gate delays from which the full adder's delay (4.8 µs) follows. Answer 19.2; know that 12 is the true critical path."},
     ],
     "answer": {"value": "19.2 µs (four full adders of 4.8 µs each)", "number": 19.2, "matchesKey": True,
                "keyNote": "The key uses the block model (each full adder contributes its full 4.8 µs). A gate-level critical path gives 4.8 + 3 × 2.4 = 12 µs; the lesson teaches both."},
