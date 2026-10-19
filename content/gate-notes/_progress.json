@@ -87,7 +87,8 @@
           "lessons_status": {
             "adders-ripple-carry": "written",
             "carry-look-ahead": "written",
-            "adder-subtractor-overflow": "written"
+            "adder-subtractor-overflow": "written",
+            "multipliers-booth": "written"
           },
           "live_lab": "Adder Race (:::lab adder-race: race, scaling)"
         },
