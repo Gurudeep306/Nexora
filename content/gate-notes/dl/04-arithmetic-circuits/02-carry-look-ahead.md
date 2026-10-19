@@ -35,7 +35,7 @@ Everything rests on the full adder's two carry sources from
 [Lesson 1](lesson:adders-ripple-carry#fa-equations): a column generates a carry ($AB$) or passes one
 along ($C_{in}(A \oplus B)$). The carry-select adder below needs a 2:1 multiplexer, a switch that passes
 one of two inputs; it is built and analysed in [Chapter 5, Lesson 2](lesson:multiplexers), and here
-we only need its behaviour and its delay (two gate levels). Lesson 3 puts the faster adder behind an
+we only need its behaviour and its delay (two gate levels). [Lesson 3](lesson:adder-subtractor-overflow) puts the faster adder behind an
 XOR row to subtract, and Lesson 4 uses fast adders in the last row of a multiplier.
 
 :::table{#radar title="GATE radar: carry look-ahead" depth="quick"}

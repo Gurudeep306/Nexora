@@ -2587,24 +2587,29 @@
       }
     },
     "cse-2003-cs-46": {
-      "approach": "Each B bit passes through XOR with K, so K = 0 feeds B and K = 1 feeds B̅; C₀ adds 0 or 1. Thus only A + B + C₀ or A + B̅ + C₀ can be formed.",
+      "approach": "Concept tested: **the operations an XOR-controlled adder can perform**. $K$ selects $B$ or $\\bar B$ through the XORs and $C_0$ adds 0 or 1; that gives exactly four formulas in $A$ and $B$. An operation is available only if one of them equals it for every $B$.",
       "concepts": [
-        "Adder/subtractor",
-        "2's complement",
-        "XOR as controlled inverter"
+        "Adder–subtractor",
+        "Two's complement",
+        "Control lines"
       ],
+      "given": "Each full adder receives $A_i$ and $B_i \\oplus K$; the least significant carry in is $C_0$; operands are 2's complement.",
       "steps": [
         {
-          "title": "Settings",
-          "body": "| K | C₀ | Result |\n|---|---|---|\n| 0 | 0 | $A+B$ |\n| 0 | 1 | $A+B+1$ |\n| 1 | 1 | $A+\\overline{B}+1=A-B$ |\n| 1 | 0 | $A+\\overline{B}=A-B-1$ |"
+          "title": "The four settings",
+          "body": "$(K, C_0) = (0, 0)$: $A + B$. $(0, 1)$: $A + B + 1$. $(1, 0)$: $A + \\bar B = A - B - 1$. $(1, 1)$: $A + \\bar B + 1 = A - B$."
         },
         {
-          "title": "A + 1?",
-          "body": "$A+1$ needs the second adder input to be 0, but it is always $B$ or $\\overline B$ — K and C₀ cannot zero it. So $A+B$ and $A-B$ are possible, $A+1$ is not."
+          "title": "A + B and A − B",
+          "body": "Both appear: settings (0, 0) and (1, 1)."
+        },
+        {
+          "title": "A + 1",
+          "body": "Every setting still adds $B$ or $\\bar B$. $A + 1$ would need the second operand to be 0 regardless of $B$, which $K$ and $C_0$ cannot do; $(0, 1)$ gives $A + B + 1$, equal to $A + 1$ only when $B$ happens to be 0."
         }
       ],
       "answer": {
-        "value": "A + B and A − B, but not A + 1",
+        "value": "A: A + B and A − B, but not A + 1",
         "choice": [
           "A"
         ],
@@ -2614,25 +2619,62 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct."
+          "reason": "$(0,0)$ adds, $(1,1)$ subtracts, and no setting removes $B$ from the sum."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A − B is possible with K = 1, C₀ = 1; A + 1 is not."
+          "reason": "A − B is available ($K = C_0 = 1$), and A + 1 is not."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A − B is possible."
+          "reason": "A − B is available with $K = 1$, $C_0 = 1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A + 1 would need B forced to 0."
+          "reason": "A + 1 needs $B = 0$; $B$ is an operand, not a control line."
         }
       ],
-      "verification": "2's complement: $-B=\\overline B+1$, exactly what K = 1, C₀ = 1 supplies."
+      "shortcut": "$K$, $C_0$ give $A \\pm B$ variants only; anything without $B$ (like $A + 1$) needs control of $B$ itself.",
+      "pitfalls": [
+        "Setting $C_0 = 1$ and calling it $A + 1$ (it is $A + B + 1$).",
+        "Thinking subtraction needs a separate circuit: the XORs and $C_0 = 1$ are exactly the two's-complement rule."
+      ],
+      "verification": "l4_03_addsub.py simulates the 4-bit ALU for every $A$, $B$ and every $(K, C_0)$: (0,0) equals $A + B$, (1,1) equals $A - B$ (mod 16), and no setting equals $A + 1$ for all $B$.",
+      "animation": {
+        "kind": "table",
+        "title": "What K and C0 select",
+        "cols": [
+          "K",
+          "C0",
+          "output"
+        ],
+        "rows": [
+          [
+            "0",
+            "0",
+            "A + B"
+          ],
+          [
+            "0",
+            "1",
+            "A + B + 1"
+          ],
+          [
+            "1",
+            "0",
+            "A − B − 1"
+          ],
+          [
+            "1",
+            "1",
+            "A − B"
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2003-cs-47": {
       "approach": "Concept tested: **timing with XOR edge detectors**. Write the two XOR outputs as $P(t) = A(t) \\oplus A(t - 2)$ and $B(t) = P(t) \\oplus P(t - 4)$ and tabulate them over the intervals where something changes; count the level changes of $B$.",
