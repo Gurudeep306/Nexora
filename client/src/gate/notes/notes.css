@@ -2334,6 +2334,137 @@ h4.notes-h {
   }
 }
 
+/* ── Live Lab (Adder Race) ───────────────────────────────────────────── */
+.lab .ar-num {
+  width: 8em;
+}
+.lab-cell.is-pending {
+  border-style: dashed;
+  border-color: var(--color-state-warning);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-state-warning) 40%, transparent);
+}
+.ar-clock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  margin: 4px 0 10px;
+}
+.ar-clock-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+.ar-clock-t {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 17px;
+  min-width: 4.2em;
+}
+.ar-clock-bar {
+  flex: 1 1 140px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-border);
+  overflow: hidden;
+}
+.ar-clock-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--color-accent-brand);
+  transition: width 0.3s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ar-clock-bar > span {
+    transition: none;
+  }
+}
+.ar-sides {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+@media (max-width: 900px) {
+  .ar-sides {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ar-side {
+  min-width: 0;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.ar-side.is-done {
+  border-color: var(--color-state-success);
+}
+.ar-name {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+}
+.ar-status {
+  margin: 4px 0 0;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.ar-status.is-good {
+  color: var(--color-state-success);
+}
+.ar-status.is-wait {
+  color: var(--color-state-warning);
+}
+.ar-flags {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px;
+  margin: 12px 0 4px;
+}
+.ar-flag {
+  display: grid;
+  gap: 2px;
+  padding: 6px 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+}
+.ar-flag small {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.ar-flag.is-one {
+  border-color: var(--color-state-success);
+  background: color-mix(in oklab, var(--color-state-success) 14%, var(--color-bg-surface));
+}
+.ar-flag.is-alarm {
+  border-color: var(--color-state-error);
+  background: color-mix(in oklab, var(--color-state-error) 14%, var(--color-bg-surface));
+}
+.ar-scale td.ar-bar-cell {
+  position: relative;
+  min-width: 7em;
+  text-align: left;
+}
+.ar-bar {
+  position: absolute;
+  left: 0;
+  top: 3px;
+  bottom: 3px;
+  border-radius: 3px;
+  opacity: 0.35;
+}
+.ar-bar--rca {
+  background: var(--color-state-error);
+}
+.ar-bar--cla {
+  background: var(--color-state-success);
+}
+.ar-bar--csel {
+  background: var(--color-accent-brand);
+}
+.ar-bar-num {
+  position: relative;
+  font-weight: 700;
+}
+
 /* ── Live Lab (K-map Solver) ─────────────────────────────────────────── */
 .km-grid {
   grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);

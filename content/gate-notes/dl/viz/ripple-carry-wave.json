@@ -1,0 +1,1415 @@
+{
+ "version": 1,
+ "title": "The carry rippling through a 4-bit ripple-carry adder",
+ "width": 700,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 520
+ },
+ "intro": "Four full adders FA0 (least significant) to FA3 in a chain; each stage's carry out is the next stage's carry in. The clock counts gate delays.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "A 4-bit ripple-carry adder: the carry travels one stage at a time",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Ripple carry: 0111 + 0001",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "fa0",
+   "type": "box",
+   "x": 560,
+   "y": 120,
+   "w": 96,
+   "h": 70,
+   "label": "FA0",
+   "size": 15,
+   "narrow": {
+    "x": 130,
+    "y": 70,
+    "w": 100,
+    "h": 56,
+    "size": 13
+   }
+  },
+  {
+   "id": "fa1",
+   "type": "box",
+   "x": 400,
+   "y": 120,
+   "w": 96,
+   "h": 70,
+   "label": "FA1",
+   "size": 15,
+   "narrow": {
+    "x": 130,
+    "y": 174,
+    "w": 100,
+    "h": 56,
+    "size": 13
+   }
+  },
+  {
+   "id": "fa2",
+   "type": "box",
+   "x": 240,
+   "y": 120,
+   "w": 96,
+   "h": 70,
+   "label": "FA2",
+   "size": 15,
+   "narrow": {
+    "x": 130,
+    "y": 278,
+    "w": 100,
+    "h": 56,
+    "size": 13
+   }
+  },
+  {
+   "id": "fa3",
+   "type": "box",
+   "x": 80,
+   "y": 120,
+   "w": 96,
+   "h": 70,
+   "label": "FA3",
+   "size": 15,
+   "narrow": {
+    "x": 130,
+    "y": 382,
+    "w": 100,
+    "h": 56,
+    "size": 13
+   }
+  },
+  {
+   "id": "clk",
+   "type": "text",
+   "x": 680,
+   "y": 60,
+   "text": "t = 0",
+   "size": 16,
+   "anchor": "end",
+   "weight": "bold",
+   "mono": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 346,
+    "y": 44,
+    "size": 14
+   }
+  },
+  {
+   "id": "in0",
+   "type": "text",
+   "x": 608.0,
+   "y": 84,
+   "text": "a0=1 b0=1",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 118,
+    "y": 98.0,
+    "size": 13,
+    "anchor": "end"
+   }
+  },
+  {
+   "id": "ia0",
+   "type": "line",
+   "points": [
+    [
+     608.0,
+     96
+    ],
+    [
+     608.0,
+     120
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "so0",
+   "type": "line",
+   "points": [
+    [
+     608.0,
+     190
+    ],
+    [
+     608.0,
+     216
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      98.0
+     ],
+     [
+      252,
+      98.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s0",
+   "type": "text",
+   "x": 608.0,
+   "y": 230,
+   "text": "s0=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 258,
+    "y": 98.0,
+    "size": 13,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "in1",
+   "type": "text",
+   "x": 448.0,
+   "y": 84,
+   "text": "a1=1 b1=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 118,
+    "y": 202.0,
+    "size": 13,
+    "anchor": "end"
+   }
+  },
+  {
+   "id": "ia1",
+   "type": "line",
+   "points": [
+    [
+     448.0,
+     96
+    ],
+    [
+     448.0,
+     120
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "so1",
+   "type": "line",
+   "points": [
+    [
+     448.0,
+     190
+    ],
+    [
+     448.0,
+     216
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      202.0
+     ],
+     [
+      252,
+      202.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 448.0,
+   "y": 230,
+   "text": "s1=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 258,
+    "y": 202.0,
+    "size": 13,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "in2",
+   "type": "text",
+   "x": 288.0,
+   "y": 84,
+   "text": "a2=1 b2=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 118,
+    "y": 306.0,
+    "size": 13,
+    "anchor": "end"
+   }
+  },
+  {
+   "id": "ia2",
+   "type": "line",
+   "points": [
+    [
+     288.0,
+     96
+    ],
+    [
+     288.0,
+     120
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "so2",
+   "type": "line",
+   "points": [
+    [
+     288.0,
+     190
+    ],
+    [
+     288.0,
+     216
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      306.0
+     ],
+     [
+      252,
+      306.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s2",
+   "type": "text",
+   "x": 288.0,
+   "y": 230,
+   "text": "s2=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 258,
+    "y": 306.0,
+    "size": 13,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "in3",
+   "type": "text",
+   "x": 128.0,
+   "y": 84,
+   "text": "a3=0 b3=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 118,
+    "y": 410.0,
+    "size": 13,
+    "anchor": "end"
+   }
+  },
+  {
+   "id": "ia3",
+   "type": "line",
+   "points": [
+    [
+     128.0,
+     96
+    ],
+    [
+     128.0,
+     120
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "so3",
+   "type": "line",
+   "points": [
+    [
+     128.0,
+     190
+    ],
+    [
+     128.0,
+     216
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      410.0
+     ],
+     [
+      252,
+      410.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s3",
+   "type": "text",
+   "x": 128.0,
+   "y": 230,
+   "text": "s3=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 258,
+    "y": 410.0,
+    "size": 13,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "c0",
+   "type": "line",
+   "points": [
+    [
+     690,
+     155
+    ],
+    [
+     656,
+     155
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      40
+     ],
+     [
+      180,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl0",
+   "type": "text",
+   "x": 673.0,
+   "y": 141,
+   "text": "c0=0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 190,
+    "y": 55.0,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "c1",
+   "type": "line",
+   "points": [
+    [
+     560,
+     155
+    ],
+    [
+     496,
+     155
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      126
+     ],
+     [
+      180,
+      174
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl1",
+   "type": "text",
+   "x": 528.0,
+   "y": 141,
+   "text": "c1=0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 190,
+    "y": 150.0,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "c2",
+   "type": "line",
+   "points": [
+    [
+     400,
+     155
+    ],
+    [
+     336,
+     155
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      230
+     ],
+     [
+      180,
+      278
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl2",
+   "type": "text",
+   "x": 368.0,
+   "y": 141,
+   "text": "c2=0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 190,
+    "y": 254.0,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "c3",
+   "type": "line",
+   "points": [
+    [
+     240,
+     155
+    ],
+    [
+     176,
+     155
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      334
+     ],
+     [
+      180,
+      382
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl3",
+   "type": "text",
+   "x": 208.0,
+   "y": 141,
+   "text": "c3=0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 190,
+    "y": 358.0,
+    "anchor": "start"
+   }
+  },
+  {
+   "id": "c4",
+   "type": "line",
+   "points": [
+    [
+     80,
+     155
+    ],
+    [
+     20,
+     155
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      438
+     ],
+     [
+      180,
+      478
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cl4",
+   "type": "text",
+   "x": 50.0,
+   "y": 141,
+   "text": "c4=0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 190,
+    "y": 458.0,
+    "anchor": "start"
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Inputs change at t = 0 from 0000 + 0000 to 0111 + 0001. Every gate takes one unit; only stage 0 can generate a carry.",
+   "patches": [
+    {
+     "id": "in0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "in3",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 2: c1 becomes 1; s1 becomes 1, s2 becomes 1.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 2"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cl1",
+     "set": {
+      "text": "c1=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl2",
+     "set": {
+      "text": "c2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl3",
+     "set": {
+      "text": "c3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl4",
+     "set": {
+      "text": "c4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "s0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "s1=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "so1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "text": "s2=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "so2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "text": "s3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so3",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 3: s1 becomes 0.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 3"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl1",
+     "set": {
+      "text": "c1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl2",
+     "set": {
+      "text": "c2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl3",
+     "set": {
+      "text": "c3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl4",
+     "set": {
+      "text": "c4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "s0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "s1=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "so1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "text": "s2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "so2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "text": "s3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so3",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 4: c2 becomes 1.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 4"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl1",
+     "set": {
+      "text": "c1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cl2",
+     "set": {
+      "text": "c2=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl3",
+     "set": {
+      "text": "c3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl4",
+     "set": {
+      "text": "c4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "s0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "s1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "text": "s2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "so2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "text": "s3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so3",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 5: s2 becomes 0.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 5"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl1",
+     "set": {
+      "text": "c1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl2",
+     "set": {
+      "text": "c2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl3",
+     "set": {
+      "text": "c3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl4",
+     "set": {
+      "text": "c4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "s0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "s1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "text": "s2=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "so2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "text": "s3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so3",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 6: c3 becomes 1. The carry has crossed three stages.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 6"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl1",
+     "set": {
+      "text": "c1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl2",
+     "set": {
+      "text": "c2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cl3",
+     "set": {
+      "text": "c3=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl4",
+     "set": {
+      "text": "c4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "s0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "s1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "text": "s2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "text": "s3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so3",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "t = 7: s3 becomes 1.",
+   "patches": [
+    {
+     "id": "clk",
+     "set": {
+      "text": "t = 7"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl1",
+     "set": {
+      "text": "c1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl2",
+     "set": {
+      "text": "c2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl3",
+     "set": {
+      "text": "c3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl4",
+     "set": {
+      "text": "c4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "s0=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "s1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "text": "s2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "so2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "text": "s3=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "so3",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Settled at t = 7: sum 1000 = 8, carry out 0. The worst case for 4 bits is 9 units (2n + 1).",
+   "patches": [
+    {
+     "id": "c1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "c4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cl1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cl4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s3",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
