@@ -542,8 +542,202 @@ def carry_select(L):
                   "An 8-bit carry-select adder: a lower 4-bit ripple adder, two upper 4-bit ripple adders (carry in 0 and carry in 1) and a row of 2:1 MUXes driven by the lower carry c4.")
 
 
+# ── Lesson 3: adder–subtractor, flags, BCD adder ───────────────────────────
+
+def flags_of(n, a, b, K):
+    v = cl.evaluate(al.adder_subtractor(n), {**al.env_of(n, a, b), "K": K})
+    return v, al.word(v, "s", n)
+
+
+@scene
+def addsub_overflow(L):
+    s = S(L)
+    W, NW = 700, 360
+    n = 4
+    cases = [(0b0101, 0b0110, 0, "5 + 6"), (0b0101, 0b0110, 1, "5 − 6"), (0b0011, 0b0101, 1, "3 − 5"), (0b1000, 0b0001, 1, "−8 − 1")]
+    s.head("A 4-bit adder–subtractor: K inverts B and adds 1", "Adder–subtractor with overflow", W, NW)
+    G = []
+    for i in range(n):
+        if s.wd:
+            x, y = 480 - 140 * i, 170
+            G.append((x, y, 96, 60))
+            s.box(f"fa{i}", x, y, 96, 60, label=f"FA{i}", size=14)
+            s.box(f"x{i}", x + 46, 82, 44, 30, label="⊕", size=14)
+            s.text(f"b{i}", x + 80, 47, f"b{i}=0", 13, anchor="middle", mono=True)
+            s.line(f"wb{i}", [[x + 80, 56], [x + 80, 82]])
+            s.line(f"wk{i}", [[x + 56, 66], [x + 56, 82]])
+            s.line(f"wy{i}", [[x + 68, 112], [x + 68, 170]])
+            s.text(f"y{i}", x + 74, 140, "", 13, anchor="start", mono=True)
+            s.text(f"a{i}", x + 22, 140, f"a{i}=0", 13, anchor="middle", mono=True)
+            s.line(f"wa{i}", [[x + 22, 150], [x + 22, 170]])
+            s.line(f"ws{i}", [[x + 48, 230], [x + 48, 248]])
+            s.text(f"s{i}", x + 48, 262, f"s{i}", 13, anchor="middle", mono=True)
+        else:
+            x, y = 150, 80 + 92 * i
+            G.append((x, y, 90, 52))
+            s.box(f"fa{i}", x, y, 90, 52, label=f"FA{i}", size=13)
+            s.box(f"x{i}", 74, y + 8, 46, 34, label="⊕", size=13)
+            s.text(f"b{i}", 36, y + 16, f"b{i}=0", 12, anchor="middle", mono=True)
+            s.line(f"wb{i}", [[52, y + 16], [74, y + 16]])
+            s.line(f"wk{i}", [[62, y + 34], [74, y + 34]])
+            s.line(f"wy{i}", [[120, y + 25], [150, y + 25]])
+            s.text(f"y{i}", 135, y + 50, "", 12, anchor="middle", mono=True)
+            s.text(f"a{i}", 274, y + 14, f"a{i}=0", 12, anchor="start", mono=True)
+            s.line(f"wa{i}", [[240, y + 14], [270, y + 14]])
+            s.line(f"ws{i}", [[240, y + 38], [270, y + 38]])
+            s.text(f"s{i}", 274, y + 38, f"s{i}", 12, anchor="start", mono=True)
+    if s.wd:
+        s.line("kbus", [[40, 66], [s.v(616, 0), 66]])
+        s.text("kl", 36, 66, "K=0", 14, anchor="end", mono=True, weight="bold")
+        for i in range(n + 1):
+            y = 200
+            x0 = 690 if i == 0 else G[i - 1][0]
+            x1 = G[i][0] + G[i][2] if i < n else 40
+            s.line(f"c{i}", [[x0, y], [x1, y]])
+            if i == n:
+                s.text(f"cl{i}", 44, y - 14, f"c{i}", 13, anchor="end", mono=True)
+            else:
+                s.text(f"cl{i}", (x0 + x1) / 2 + (2 if i == 0 else 0), y - 14, f"c{i}", 13, anchor="middle", mono=True)
+        # V = c4 ⊕ c3: taps from the c4 and c3 wires.
+        vp, vo = s.gate("vg", 70, 286, 44, 40, "xor")
+        s.line("tap4", [[50, 200], [50, vp[0][1]], vp[0]])
+        s.line("tap3", [[178, 200], [178, 250], [60, 250], [60, vp[1][1]], vp[1]])
+        s.line("wv", [vo, [vo[0] + 20, vo[1]]])
+        s.text("vv", vo[0] + 26, vo[1], "V", 14, anchor="start", mono=True, weight="bold")
+        s.text("flags", 680, 300, "", 14, anchor="end", mono=True, weight="bold")
+        s.text("res", 680, 330, "", 14, anchor="end")
+    else:
+        s.line("kbus", [[62, 46], [62, G[n - 1][1] + 34]])
+        s.text("kl", 62, 36, "K=0", 12, anchor="middle", mono=True, weight="bold")
+        for i in range(n + 1):
+            y0 = 52 if i == 0 else G[i - 1][1] + 52
+            y1 = G[i][1] if i < n else G[n - 1][1] + 52 + 40
+            s.line(f"c{i}", [[195, y0], [195, y1]])
+            s.text(f"cl{i}", 205, (y0 + y1) / 2, f"c{i}", 12, anchor="start", mono=True)
+        vp, vo = s.gate("vg", 160, 470, 40, 36, "xor")
+        s.line("tap4", [[195, G[n - 1][1] + 92], [140, G[n - 1][1] + 92], [140, vp[0][1]], vp[0]])
+        s.line("tap3", [[195, G[n - 2][1] + 72], [130, G[n - 2][1] + 72], [130, vp[1][1]], vp[1]])
+        s.line("wv", [vo, [vo[0] + 16, vo[1]]])
+        s.text("vv", vo[0] + 20, vo[1], "V", 12, anchor="start", mono=True, weight="bold")
+        s.text("flags", NW / 2, 530, "", 12, anchor="middle", mono=True, weight="bold")
+        s.text("res", NW / 2, 552, "", 12, anchor="middle")
+    s.step("K = 0: each XOR passes b_i unchanged (b ⊕ 0 = b) and the carry in c0 = K = 0, so the circuit is an ordinary adder.")
+    s.step("K = 1: each XOR inverts its bit (b ⊕ 1 = b′) and c0 = 1 adds one: A + B′ + 1 = A − B in two's complement.")
+    for a, b, K, name in cases:
+        v, r = flags_of(n, a, b, K)
+        sa, sb = al.tc(a, n), al.tc(b, n)
+        true = sa - sb if K else sa + sb
+        assert v["V"] == int(not -8 <= true <= 7)
+        pats = [("kl", {"text": f"K={K}", "tone": tv(K)}), ("kbus", {"tone": tv(K)})]
+        for i in range(n):
+            bi, ai, yi = b >> i & 1, a >> i & 1, v[f"y{i}"]
+            pats += [(f"b{i}", {"text": f"b{i}={bi}", "tone": tv(bi)}), (f"wb{i}", {"tone": tv(bi)}), (f"wk{i}", {"tone": tv(K)}),
+                     (f"x{i}", {"tone": "accent" if K else "ink"}), (f"y{i}", {"text": f"{yi}", "tone": tv(yi)}), (f"wy{i}", {"tone": tv(yi)}),
+                     (f"a{i}", {"text": f"a{i}={ai}", "tone": tv(ai)}), (f"wa{i}", {"tone": tv(ai)}),
+                     (f"s{i}", {"text": f"s{i}={v[f's{i}']}", "tone": tv(v[f"s{i}"])}), (f"ws{i}", {"tone": tv(v[f"s{i}"])})]
+        cs = [K] + [v[f"c{i}"] for i in range(1, n + 1)]
+        for i in range(n + 1):
+            tone = "accent" if i >= n - 1 else tv(cs[i])
+            pats += [(f"c{i}", {"tone": tone}), (f"cl{i}", {"text": f"c{i}={cs[i]}", "tone": tone})]
+        pats += [("tap4", {"tone": tv(cs[n])}), ("tap3", {"tone": tv(cs[n - 1])}), ("vg", {"tone": "danger" if v["V"] else "ink"}),
+                 ("wv", {"tone": "danger" if v["V"] else "muted"}), ("vv", {"text": f"V={v['V']}", "tone": "danger" if v["V"] else "muted"}),
+                 ("flags", {"text": f"C={v['C']} V={v['V']} N={v['N']} Z={v['Z']}"}),
+                 ("res", {"text": f"{name}: {r:04b} reads {al.tc(r, n)}" + (" (overflow)" if v["V"] else ""), "tone": "danger" if v["V"] else "success"})]
+        why = (f"c4 = {cs[n]} and c3 = {cs[n - 1]} differ, so V = 1: {name} = {true} does not fit in 4 bits." if v["V"]
+               else f"c4 = c3 = {cs[n]}, so V = 0: {name} = {true} fits.")
+        s.step(f"{name}: K = {K}, sum {r:04b}. " + why, *pats)
+    return s.done("A 4-bit adder–subtractor with its overflow detector", (W, 350), (NW, 566),
+                  "Each b_i passes through an XOR with the control line K before entering the full adders; K is also the carry in c0. An XOR of c4 and c3 gives the overflow flag V.")
+
+
+@scene
+def bcd_adder_hw(L):
+    s = S(L)
+    W, NW = 700, 360
+    net = al.bcd_adder()
+    cases = [(8, 7, 0), (4, 5, 0), (9, 9, 1), (8, 9, 0)]
+    s.head("The BCD adder: add in binary, detect > 9, add 0110", "BCD adder circuit", W, NW)
+    if s.wd:
+        a1 = (60, 70, 260, 56)
+        a2 = (60, 250, 260, 56)
+        s.text("in", 190, 52, "A = 0000, B = 0000, cin = 0", 14, anchor="middle", mono=True)
+        s.box("add1", *a1, label="4-bit binary adder", size=14)
+        s.line("wz", [[190, 126], [190, 250]])
+        s.text("zt", 200, 160, "K Z = ?", 14, anchor="start", mono=True, weight="bold")
+        gp1, go1 = s.gate("d1", 430, 120, 50, 40, "and")
+        gp2, go2 = s.gate("d2", 430, 180, 50, 40, "and")
+        gp3, go3 = s.gate("d3", 540, 140, 54, 60, "or", inputs=3)
+        for k, (p, lab) in enumerate([(gp1[0], "Z3"), (gp1[1], "Z2"), (gp2[0], "Z3"), (gp2[1], "Z1")]):
+            s.line(f"dw{k}", [[p[0] - 30, p[1]], p])
+            s.text(f"dl{k}", p[0] - 34, p[1], lab, 13, anchor="end", mono=True)
+        s.line("dk", [[400, 105], [520, 105], [520, gp3[0][1]], gp3[0]])
+        s.text("dkl", 396, 105, "K", 13, anchor="end", mono=True)
+        s.line("o1", [go1, [510, go1[1]], [510, gp3[1][1]], gp3[1]])
+        s.line("o2", [go2, [510, go2[1]], [510, gp3[2][1]], gp3[2]])
+        s.line("wc", [go3, [626, go3[1]]])
+        s.text("cout", 630, go3[1], "Cout", 14, anchor="start", mono=True, weight="bold")
+        s.line("wcor", [[612, go3[1]], [612, 278], [320, 278]])
+        s.text("corr", 470, 266, "adds 0 Cout Cout 0", 13, anchor="middle", mono=True)
+        s.box("add2", *a2, label="4-bit binary adder", size=14)
+        s.line("wo", [[190, 306], [190, 322]])
+        s.text("out", 190, 336, "BCD digit = ?", 14, anchor="middle", mono=True, weight="bold")
+    else:
+        a1 = (40, 64, 280, 50)
+        a2 = (40, 340, 280, 50)
+        s.text("in", 180, 48, "A=0000 B=0000 cin=0", 12, anchor="middle", mono=True)
+        s.box("add1", *a1, label="4-bit binary adder", size=13)
+        s.line("wz", [[70, 114], [70, 340]])
+        s.text("zt", 80, 134, "K Z = ?", 12, anchor="start", mono=True, weight="bold")
+        gp1, go1 = s.gate("d1", 160, 160, 44, 36, "and")
+        gp2, go2 = s.gate("d2", 160, 214, 44, 36, "and")
+        gp3, go3 = s.gate("d3", 250, 176, 46, 54, "or", inputs=3)
+        for k, (p, lab) in enumerate([(gp1[0], "Z3"), (gp1[1], "Z2"), (gp2[0], "Z3"), (gp2[1], "Z1")]):
+            s.line(f"dw{k}", [[p[0] - 24, p[1]], p])
+            s.text(f"dl{k}", p[0] - 28, p[1], lab, 12, anchor="end", mono=True)
+        s.line("dk", [[150, 150], [236, 150], [236, gp3[0][1]], gp3[0]])
+        s.text("dkl", 146, 150, "K", 12, anchor="end", mono=True)
+        s.line("o1", [go1, [228, go1[1]], [228, gp3[1][1]], gp3[1]])
+        s.line("o2", [go2, [228, go2[1]], [228, gp3[2][1]], gp3[2]])
+        s.line("wc", [go3, [318, go3[1]]])
+        s.text("cout", 340, 164, "Cout", 12, anchor="end", mono=True, weight="bold")
+        s.line("wcor", [[306, go3[1]], [306, 340]])
+        s.text("corr", 230, 300, "adds 0 C C 0", 12, anchor="middle", mono=True)
+        s.box("add2", *a2, label="4-bit binary adder", size=13)
+        s.line("wo", [[180, 390], [180, 404]])
+        s.text("out", 180, 418, "BCD digit = ?", 12, anchor="middle", mono=True, weight="bold")
+    s.step("Stage 1: an ordinary 4-bit adder adds the two BCD digits and the carry in. Its result K Z3 Z2 Z1 Z0 can be 0 … 19.")
+    s.step("The detector fires when that binary sum is 10 or more: K = 1 (16–19) or Z = 1010 … 1111 (Z3Z2 or Z3Z1).",
+           ("d1", {"tone": "accent"}), ("d2", {"tone": "accent"}), ("d3", {"tone": "accent"}))
+    for a, b, c in cases:
+        v = cl.evaluate(net, al.env_of(4, a, b, c))
+        z, k = al.word(v, "z", 4), v["k4"]
+        C = v["Cout"]
+        digit = al.word(v, "s", 4)
+        assert 10 * C + digit == a + b + c and C == int(16 * k + z >= 10)
+        d32, d31 = v["d32"], v["d31"]
+        pats = [("in", {"text": s.v(f"A = {a:04b}, B = {b:04b}, cin = {c}", f"A={a:04b} B={b:04b} cin={c}")}),
+                ("zt", {"text": f"K Z = {k} {z:04b}", "tone": "accent"}),
+                ("dkl", {"text": f"K={k}", "tone": tv(k)}), ("dk", {"tone": tv(k)}),
+                ("dl0", {"text": f"Z3={z >> 3 & 1}", "tone": tv(z >> 3 & 1)}), ("dl1", {"text": f"Z2={z >> 2 & 1}", "tone": tv(z >> 2 & 1)}),
+                ("dl2", {"text": f"Z3={z >> 3 & 1}", "tone": tv(z >> 3 & 1)}), ("dl3", {"text": f"Z1={z >> 1 & 1}", "tone": tv(z >> 1 & 1)}),
+                ("o1", {"tone": tv(d32)}), ("o2", {"tone": tv(d31)}), ("d1", {"tone": "ink"}), ("d2", {"tone": "ink"}),
+                ("d3", {"tone": "accent" if C else "ink"}), ("wc", {"tone": tv(C)}), ("wcor", {"tone": tv(C)}),
+                ("cout", {"text": f"Cout={C}", "tone": tv(C)}),
+                ("corr", {"text": s.v(f"adds 0{C}{C}0", f"adds 0{C}{C}0"), "tone": "accent" if C else "muted"}),
+                ("out", {"text": f"digit {digit:04b} = {digit}, carry {C}", "tone": "success"})]
+        if C and k:
+            why = f"K = 1 (sum {16 * k + z} > 15) though Z = {z:04b} looks valid: only K catches it."
+        elif C:
+            why = f"Z = {z:04b} = {z} is not a BCD digit (Z3 = 1 with Z2 or Z1)."
+        else:
+            why = f"{z:04b} = {z} is a valid digit, so nothing is added."
+        s.step(f"{a} + {b}" + (f" + {c}" if c else "") + f" = {a + b + c}: adder 1 gives {k} {z:04b}. " + why + f" Out: carry {C}, digit {digit}.", *pats)
+    return s.done("A one-digit BCD adder with its correction detector", (W, 350), (NW, 430),
+                  "Two 4-bit binary adders. The first adds the digits; a detector K + Z3Z2 + Z3Z1 decides whether the sum exceeds 9; the second adds 0110 when it does. The detector's output is the decimal carry.")
+
+
 ORDER = ["half-adder-design", "full-adder-from-has", "ripple-carry-wave", "pipeline-adder",
-         "rca-vs-cla-timing", "cla-gp-tree", "carry-select"]
+         "rca-vs-cla-timing", "cla-gp-tree", "carry-select", "addsub-overflow", "bcd-adder-hw"]
 
 
 def build_all():

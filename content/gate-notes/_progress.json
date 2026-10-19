@@ -86,7 +86,8 @@
           "status": "in-progress",
           "lessons_status": {
             "adders-ripple-carry": "written",
-            "carry-look-ahead": "written"
+            "carry-look-ahead": "written",
+            "adder-subtractor-overflow": "written"
           },
           "live_lab": "Adder Race (:::lab adder-race: race, scaling)"
         },

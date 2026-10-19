@@ -35,7 +35,7 @@ The number-level rules (binary addition, two's complement, overflow) are all in
 come from [Chapter 2](lesson:logic-gates), especially the XOR of
 [Chapter 2, Lesson 3](lesson:xor-and-operators), and the minimisation from
 [Chapter 3](lesson:kmaps). The next lesson speeds the adder up with **carry look-ahead**,
-Lesson 3 turns it into an adder–subtractor with overflow flags and a
+[Lesson 3](lesson:adder-subtractor-overflow) turns it into an adder–subtractor with overflow flags and a
 BCD adder, and Lesson 4 builds multipliers out of rows of adders.
 
 :::table{#radar title="GATE radar: adders, subtractors and ripple carry" depth="quick"}
@@ -392,7 +392,7 @@ Students read $B_o = 1$ as "the answer is negative". For one column that is true
 ripple subtractor the final borrow out says only that $x < y$ **as unsigned numbers**; the $n$ difference
 bits are then the two's complement of $y - x$, and whether that pattern is a valid signed result is a
 separate question (signed overflow, [Chapter 1, Lesson 9](lesson:code-arithmetic#overflow-theorem)). In
-practice nobody builds ripple-borrow subtractors: Lesson 3 subtracts
+practice nobody builds ripple-borrow subtractors: [Lesson 3](lesson:adder-subtractor-overflow) subtracts
 with an adder and a row of XORs, and there the carry out is the **complement** of the borrow.
 :::
 
@@ -476,7 +476,7 @@ The signed difference overflows; the pattern 1111 reads $-1$, which is wrong.
 :::answer
 No. $B_{out} = 1$ only says $x < y$ unsigned. The signed result overflowed (7 − (−8) = 15 > 7). Neither
 the borrow nor $D_3$ alone is "the sign of the answer" when overflow is possible; the overflow flag of
-Lesson 3 decides.
+[Lesson 3](lesson:adder-subtractor-overflow#overflow-detector) decides.
 :::
 ::::
 
@@ -525,7 +525,7 @@ It adds bit patterns. That is not an accident: two's complement was designed so 
 pattern addition is correct for both readings, as long as the result fits. The only difference is how
 you read the leftovers: for unsigned numbers the carry out $c_n$ means "the result needed $n + 1$ bits";
 for signed numbers the carry out is simply discarded, and a different signal, the overflow flag, tells
-you whether the result fits. Lesson 3 builds that flag from the last two carries.
+you whether the result fits. [Lesson 3](lesson:adder-subtractor-overflow#overflow-detector) builds that flag from the last two carries.
 :::
 
 :::definition{#ripple-signed term="Reading a ripple adder's output" depth="standard"}

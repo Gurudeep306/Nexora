@@ -809,5 +809,402 @@
    "trap-p-or"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "An adder receives $A_i$ and $B_i \\oplus K$ at every bit, and a separate carry in $C_0$. Which setting computes $A - B$ (two's complement)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$K = 0$, $C_0 = 1$"
+   },
+   {
+    "l": "B",
+    "t": "$K = 1$, $C_0 = 0$"
+   },
+   {
+    "l": "C",
+    "t": "$K = 0$, $C_0 = 0$"
+   },
+   {
+    "l": "D",
+    "t": "$K = 1$, $C_0 = 1$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "$A - B = A + \\bar B + 1$.",
+   "$K = 1$ makes the XORs output $\\bar B$; $C_0 = 1$ adds the 1."
+  ],
+  "concept": "Subtract = invert B with the XOR row and add 1 through the carry in.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "$A + \\bar B$ without the carry in is $A - B - 1$."
+   },
+   {
+    "answer": "A",
+    "why": "That is $A + B + 1$."
+   }
+  ],
+  "blocks": [
+   "control-lines",
+   "adder-subtractor"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q02",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "Same circuit ($A_i$ and $B_i \\oplus K$ into the adder, separate carry in $C_0$). Which operations can be produced for **every** $A$ and $B$ by choosing $K$ and $C_0$ only?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A + B + 1$"
+   },
+   {
+    "l": "B",
+    "t": "$A - B - 1$"
+   },
+   {
+    "l": "C",
+    "t": "$A + 1$"
+   },
+   {
+    "l": "D",
+    "t": "$B - A$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "$(K, C_0) = (0, 1)$: $A + B + 1$. $(1, 0)$: $A + \\bar B = A - B - 1$.",
+   "$A + 1$ needs $B = 0$; $B - A$ needs $A$ inverted, but only $B$ passes through the XORs."
+  ],
+  "concept": "Four settings: $A + B$, $A + B + 1$, $A - B - 1$, $A - B$, and nothing else.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "$A + 1$ is $A + B + 1$ only when $B = 0$."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "The XOR row sits on $B$, so the circuit can negate $B$ but never $A$."
+   }
+  ],
+  "blocks": [
+   "control-lines",
+   "trap-a-plus-1"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit adder–subtractor computes $0111 + 0001$ ($K = 0$). What are the overflow flag $V = c_4 \\oplus c_3$ and the carry flag $C = c_4$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$V = 1$, $C = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$V = 0$, $C = 0$"
+   },
+   {
+    "l": "C",
+    "t": "$V = 1$, $C = 1$"
+   },
+   {
+    "l": "D",
+    "t": "$V = 0$, $C = 1$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$0111 + 0001 = 1000$: the carry ripples into bit 3 ($c_3 = 1$) but not out ($c_4 = 0$).",
+   "$V = 0 \\oplus 1 = 1$: $7 + 1 = 8$ does not fit in 4-bit two's complement. $C = 0$: as unsigned, $8$ fits."
+  ],
+  "concept": "Overflow = carry into the sign stage ≠ carry out of it; it is independent of the unsigned carry.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "There is no carry out, but the signed result 1000 reads $-8$: overflow."
+   },
+   {
+    "answer": "C",
+    "why": "$c_4 = 0$; only the carry into bit 3 is 1."
+   }
+  ],
+  "blocks": [
+   "overflow-detector",
+   "flags"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 4-bit adder–subtractor computes $0010 - 0111$ ($K = 1$). Which flags are 1 afterwards? ($C = c_4$, $V = c_4 \\oplus c_3$, $N = s_3$, $Z$ = result is zero.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "$C$"
+   },
+   {
+    "l": "B",
+    "t": "$V$"
+   },
+   {
+    "l": "C",
+    "t": "$N$"
+   },
+   {
+    "l": "D",
+    "t": "$Z$"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "solution": [
+   "$0010 + 1000 + 1 = 1011$, with $c_3 = 0$ and $c_4 = 0$.",
+   "$C = 0$ (a borrow: $2 < 7$ unsigned), $V = 0$ ($2 - 7 = -5$ fits), $N = 1$, $Z = 0$.",
+   "Only $N$ is 1."
+  ],
+  "concept": "After $A - B$: $C$ = no borrow, $N$ = sign of the (non-overflowed) result.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "$C = 1$ would mean no borrow; but $2 < 7$, so there is a borrow and $C = 0$."
+   },
+   {
+    "answer": [
+     "B",
+     "C"
+    ],
+    "why": "$-5$ is in range $[-8, 7]$: no overflow."
+   }
+  ],
+  "blocks": [
+   "flags",
+   "compare-flags"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "After an 8-bit adder–subtractor computes $A - B$ on two's-complement operands, the flags are $N = 0$ and $V = 1$. What follows?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A < B$ as signed numbers"
+   },
+   {
+    "l": "B",
+    "t": "$A \\ge B$ as signed numbers"
+   },
+   {
+    "l": "C",
+    "t": "$A = B$"
+   },
+   {
+    "l": "D",
+    "t": "Nothing can be concluded about the signed order"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Signed $A < B$ iff $N \\oplus V = 1$.",
+   "$0 \\oplus 1 = 1$: the true difference is negative; it overflowed and wrapped to a pattern with sign bit 0."
+  ],
+  "concept": "With overflow, the sign bit is flipped; $N \\oplus V$ is the true sign.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Reads $N = 0$ as 'non-negative', ignoring the overflow."
+   },
+   {
+    "answer": "D",
+    "why": "The flags do determine the order: $N \\oplus V$."
+   }
+  ],
+  "blocks": [
+   "compare-flags",
+   "trap-carry-flag"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "In a one-digit BCD adder, the first 4-bit binary adder outputs $K\\,Z_3Z_2Z_1Z_0$. The correction (add 0110) must be applied when:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Z_3Z_2 + Z_3Z_1$"
+   },
+   {
+    "l": "B",
+    "t": "$K + Z_3Z_2 + Z_3Z_1$"
+   },
+   {
+    "l": "C",
+    "t": "$K + Z_3 + Z_2Z_1$"
+   },
+   {
+    "l": "D",
+    "t": "$K\\,(Z_3 + Z_2)$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Correct iff the binary sum is ≥ 10: either $K = 1$ (16–19) or $Z \\in 1010 \\dots 1111$.",
+   "The six codes 10–15 are the quads $Z_3Z_2$ and $Z_3Z_1$."
+  ],
+  "concept": "Detector = $K$ + (4-bit result > 9).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Misses the sums 16–19 (e.g. 8 + 8 = 1 0000)."
+   },
+   {
+    "answer": "C",
+    "why": "$Z_3$ alone would correct 8 and 9, which are valid digits."
+   }
+  ],
+  "blocks": [
+   "bcd-detector",
+   "trap-detector-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q07",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A one-digit BCD adder adds the digits 6 and 7 with a carry in of 1. What is the decimal value of its 4-bit digit output?",
+  "answer": 4,
+  "solution": [
+   "Adder 1: $6 + 7 + 1 = 14 = 0\\,1110$.",
+   "Detector: $Z_3Z_2 = 1$, so add 0110: $1110 + 0110 = 1\\,0100$, carry of adder 2 dropped.",
+   "Digit 0100 = 4, decimal carry 1: 14 ✓."
+  ],
+  "concept": "Binary sum ≥ 10 ⇒ add 6, keep 4 bits, carry 1.",
+  "common_wrong": [
+   {
+    "answer": 14,
+    "why": "That is the uncorrected binary sum."
+   },
+   {
+    "answer": 3,
+    "why": "Forgets the carry in."
+   }
+  ],
+  "blocks": [
+   "bcd-adder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q08",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A one-digit BCD adder is used with carry in 0. Over all 100 ordered pairs of digits $(A, B)$, $A, B \\in \\{0, \\dots, 9\\}$, for how many pairs does the second adder actually add 0110?",
+  "answer": 45,
+  "solution": [
+   "The correction is applied iff $A + B \\ge 10$.",
+   "For $A = 1 \\dots 9$ the number of $B$ with $A + B \\ge 10$ is $A$: $1 + 2 + \\dots + 9 = 45$ ($A = 0$ gives none)."
+  ],
+  "concept": "The detector fires exactly when the decimal sum needs a carry.",
+  "common_wrong": [
+   {
+    "answer": 55,
+    "why": "Counts $A + B \\ge 9$ (that is the count with carry in 1)."
+   },
+   {
+    "answer": 39,
+    "why": "Counts only sums of 10–15 and forgets that 16–18 are corrected too (through $K$)."
+   }
+  ],
+  "blocks": [
+   "bcd-adder",
+   "bcd-detector"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 4-bit adder adds $b_3b_2b_1b_0$ and the operand $0,\\; b_3b_2,\\; 0,\\; 0$ (MSB → LSB) with carry in 0; the 5-bit output is $d_4d_3d_2d_1d_0$ ($d_4$ = carry out). For $b = 1110$, what is the output read as an unsigned binary number?",
+  "answer": 18,
+  "solution": [
+   "$b_3b_2 = 1$, so the second operand is 0100.",
+   "$1110 + 0100 = 1\\,0010 = 18$ (base 12: digits 1 and 2, i.e. 14 ✓)."
+  ],
+  "concept": "The converter adds $16 - 12 = 4$ for $b \\ge 12$.",
+  "common_wrong": [
+   {
+    "answer": 14,
+    "why": "Ignores the added constant."
+   },
+   {
+    "answer": 20,
+    "why": "Adds 6 (the BCD correction) instead of 4."
+   }
+  ],
+  "blocks": [
+   "adder-converter"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A one-digit BCD adder is built from two 4-bit ripple-carry adders, each full adder being two half adders (XOR + AND) and an OR, plus the correction detector made of 2-input ANDs and one 3-input OR. How many gates does it contain in total?",
+  "answer": 43,
+  "solution": [
+   "Each full adder: 2 XOR + 2 AND + 1 OR = 5 gates; 8 full adders: 40.",
+   "Detector $K + Z_3Z_2 + Z_3Z_1$: 2 AND + 1 OR = 3.",
+   "Total 43 (a trimmed second adder would save some)."
+  ],
+  "concept": "BCD adder = 2 four-bit adders + a 3-gate detector.",
+  "common_wrong": [
+   {
+    "answer": 23,
+    "why": "Counts only one 4-bit adder."
+   },
+   {
+    "answer": 42,
+    "why": "Builds the detector with only two gates, dropping $K$."
+   }
+  ],
+  "blocks": [
+   "bcd-adder"
+  ],
+  "source": "nexora"
  }
 ]
