@@ -1,0 +1,2079 @@
+{
+ "version": 1,
+ "title": "A 16:1 multiplexer built as a tree of 4:1 multiplexers",
+ "width": 640,
+ "height": 470,
+ "narrow": {
+  "width": 360,
+  "height": 470
+ },
+ "intro": "Sixteen data inputs I0–I15 must reach one output Y using only 4:1 multiplexers. The tree is built level by level.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A 16:1 MUX from 4:1 MUXes, level by level",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "16:1 from 4:1 MUXes",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "b0",
+   "type": "box",
+   "x": 150,
+   "y": 50,
+   "w": 80,
+   "h": 84,
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "w": 76
+   }
+  },
+  {
+   "id": "bt0",
+   "type": "text",
+   "x": 190.0,
+   "y": 80,
+   "text": "4:1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "bs0",
+   "type": "text",
+   "x": 190.0,
+   "y": 112,
+   "text": "S1 S0",
+   "size": 13,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "i0",
+   "type": "text",
+   "x": 110,
+   "y": 60.5,
+   "text": "I0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi0",
+   "type": "line",
+   "points": [
+    [
+     114,
+     60.5
+    ],
+    [
+     150,
+     60.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      60.5
+     ],
+     [
+      70,
+      60.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i1",
+   "type": "text",
+   "x": 110,
+   "y": 81.5,
+   "text": "I1",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi1",
+   "type": "line",
+   "points": [
+    [
+     114,
+     81.5
+    ],
+    [
+     150,
+     81.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      81.5
+     ],
+     [
+      70,
+      81.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i2",
+   "type": "text",
+   "x": 110,
+   "y": 102.5,
+   "text": "I2",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi2",
+   "type": "line",
+   "points": [
+    [
+     114,
+     102.5
+    ],
+    [
+     150,
+     102.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      102.5
+     ],
+     [
+      70,
+      102.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i3",
+   "type": "text",
+   "x": 110,
+   "y": 123.5,
+   "text": "I3",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi3",
+   "type": "line",
+   "points": [
+    [
+     114,
+     123.5
+    ],
+    [
+     150,
+     123.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      123.5
+     ],
+     [
+      70,
+      123.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 150,
+   "y": 154,
+   "w": 80,
+   "h": 84,
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "w": 76
+   }
+  },
+  {
+   "id": "bt1",
+   "type": "text",
+   "x": 190.0,
+   "y": 184,
+   "text": "4:1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "bs1",
+   "type": "text",
+   "x": 190.0,
+   "y": 216,
+   "text": "S1 S0",
+   "size": 13,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "i4",
+   "type": "text",
+   "x": 110,
+   "y": 164.5,
+   "text": "I4",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi4",
+   "type": "line",
+   "points": [
+    [
+     114,
+     164.5
+    ],
+    [
+     150,
+     164.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      164.5
+     ],
+     [
+      70,
+      164.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i5",
+   "type": "text",
+   "x": 110,
+   "y": 185.5,
+   "text": "I5",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi5",
+   "type": "line",
+   "points": [
+    [
+     114,
+     185.5
+    ],
+    [
+     150,
+     185.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      185.5
+     ],
+     [
+      70,
+      185.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i6",
+   "type": "text",
+   "x": 110,
+   "y": 206.5,
+   "text": "I6",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi6",
+   "type": "line",
+   "points": [
+    [
+     114,
+     206.5
+    ],
+    [
+     150,
+     206.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      206.5
+     ],
+     [
+      70,
+      206.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i7",
+   "type": "text",
+   "x": 110,
+   "y": 227.5,
+   "text": "I7",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi7",
+   "type": "line",
+   "points": [
+    [
+     114,
+     227.5
+    ],
+    [
+     150,
+     227.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      227.5
+     ],
+     [
+      70,
+      227.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 150,
+   "y": 258,
+   "w": 80,
+   "h": 84,
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "w": 76
+   }
+  },
+  {
+   "id": "bt2",
+   "type": "text",
+   "x": 190.0,
+   "y": 288,
+   "text": "4:1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "bs2",
+   "type": "text",
+   "x": 190.0,
+   "y": 320,
+   "text": "S1 S0",
+   "size": 13,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "i8",
+   "type": "text",
+   "x": 110,
+   "y": 268.5,
+   "text": "I8",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi8",
+   "type": "line",
+   "points": [
+    [
+     114,
+     268.5
+    ],
+    [
+     150,
+     268.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      268.5
+     ],
+     [
+      70,
+      268.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i9",
+   "type": "text",
+   "x": 110,
+   "y": 289.5,
+   "text": "I9",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi9",
+   "type": "line",
+   "points": [
+    [
+     114,
+     289.5
+    ],
+    [
+     150,
+     289.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      289.5
+     ],
+     [
+      70,
+      289.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i10",
+   "type": "text",
+   "x": 110,
+   "y": 310.5,
+   "text": "I10",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi10",
+   "type": "line",
+   "points": [
+    [
+     114,
+     310.5
+    ],
+    [
+     150,
+     310.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      310.5
+     ],
+     [
+      70,
+      310.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i11",
+   "type": "text",
+   "x": 110,
+   "y": 331.5,
+   "text": "I11",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi11",
+   "type": "line",
+   "points": [
+    [
+     114,
+     331.5
+    ],
+    [
+     150,
+     331.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      331.5
+     ],
+     [
+      70,
+      331.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "b3",
+   "type": "box",
+   "x": 150,
+   "y": 362,
+   "w": 80,
+   "h": 84,
+   "hidden": true,
+   "narrow": {
+    "x": 70,
+    "w": 76
+   }
+  },
+  {
+   "id": "bt3",
+   "type": "text",
+   "x": 190.0,
+   "y": 392,
+   "text": "4:1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "bs3",
+   "type": "text",
+   "x": 190.0,
+   "y": 424,
+   "text": "S1 S0",
+   "size": 13,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 108.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "i12",
+   "type": "text",
+   "x": 110,
+   "y": 372.5,
+   "text": "I12",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi12",
+   "type": "line",
+   "points": [
+    [
+     114,
+     372.5
+    ],
+    [
+     150,
+     372.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      372.5
+     ],
+     [
+      70,
+      372.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i13",
+   "type": "text",
+   "x": 110,
+   "y": 393.5,
+   "text": "I13",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi13",
+   "type": "line",
+   "points": [
+    [
+     114,
+     393.5
+    ],
+    [
+     150,
+     393.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      393.5
+     ],
+     [
+      70,
+      393.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i14",
+   "type": "text",
+   "x": 110,
+   "y": 414.5,
+   "text": "I14",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi14",
+   "type": "line",
+   "points": [
+    [
+     114,
+     414.5
+    ],
+    [
+     150,
+     414.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      414.5
+     ],
+     [
+      70,
+      414.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "i15",
+   "type": "text",
+   "x": 110,
+   "y": 435.5,
+   "text": "I15",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 46,
+    "size": 12
+   }
+  },
+  {
+   "id": "wi15",
+   "type": "line",
+   "points": [
+    [
+     114,
+     435.5
+    ],
+    [
+     150,
+     435.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      50,
+      435.5
+     ],
+     [
+      70,
+      435.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "top",
+   "type": "box",
+   "x": 380,
+   "y": 148,
+   "w": 90,
+   "h": 200,
+   "hidden": true,
+   "narrow": {
+    "x": 210,
+    "w": 80
+   }
+  },
+  {
+   "id": "tt",
+   "type": "text",
+   "x": 425.0,
+   "y": 228,
+   "text": "4:1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 250.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "ts",
+   "type": "text",
+   "x": 425.0,
+   "y": 332,
+   "text": "S3 S2",
+   "size": 13,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 250.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "tl0",
+   "type": "text",
+   "x": 385,
+   "y": 173.0,
+   "text": "I0",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo0",
+   "type": "line",
+   "points": [
+    [
+     230,
+     92.0
+    ],
+    [
+     305,
+     92.0
+    ],
+    [
+     305,
+     173.0
+    ],
+    [
+     380,
+     173.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      146,
+      92.0
+     ],
+     [
+      178,
+      92.0
+     ],
+     [
+      178,
+      173.0
+     ],
+     [
+      210,
+      173.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tl1",
+   "type": "text",
+   "x": 385,
+   "y": 223.0,
+   "text": "I1",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo1",
+   "type": "line",
+   "points": [
+    [
+     230,
+     196.0
+    ],
+    [
+     305,
+     196.0
+    ],
+    [
+     305,
+     223.0
+    ],
+    [
+     380,
+     223.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      146,
+      196.0
+     ],
+     [
+      178,
+      196.0
+     ],
+     [
+      178,
+      223.0
+     ],
+     [
+      210,
+      223.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tl2",
+   "type": "text",
+   "x": 385,
+   "y": 273.0,
+   "text": "I2",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo2",
+   "type": "line",
+   "points": [
+    [
+     230,
+     300.0
+    ],
+    [
+     305,
+     300.0
+    ],
+    [
+     305,
+     273.0
+    ],
+    [
+     380,
+     273.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      146,
+      300.0
+     ],
+     [
+      178,
+      300.0
+     ],
+     [
+      178,
+      273.0
+     ],
+     [
+      210,
+      273.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tl3",
+   "type": "text",
+   "x": 385,
+   "y": 323.0,
+   "text": "I3",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "wo3",
+   "type": "line",
+   "points": [
+    [
+     230,
+     404.0
+    ],
+    [
+     305,
+     404.0
+    ],
+    [
+     305,
+     323.0
+    ],
+    [
+     380,
+     323.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      146,
+      404.0
+     ],
+     [
+      178,
+      404.0
+     ],
+     [
+      178,
+      323.0
+     ],
+     [
+      210,
+      323.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wy",
+   "type": "line",
+   "points": [
+    [
+     470,
+     248.0
+    ],
+    [
+     510,
+     248.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      290,
+      248.0
+     ],
+     [
+      330,
+      248.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vy",
+   "type": "text",
+   "x": 516,
+   "y": 248.0,
+   "text": "Y",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 320,
+    "y": 228.0,
+    "size": 13,
+    "anchor": "middle"
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Level 1: ⌈16 / 4⌉ = 4 blocks of 4:1, each taking four of the sixteen data inputs (I0–I3, I4–I7, I8–I11, I12–I15).",
+   "patches": [
+    {
+     "id": "b0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bt0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bs0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bt1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bs1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bt2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bs2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "b3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bt3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bs3",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The low select bits S1 S0 go to every first-level block, so all four pick the input in the same position.",
+   "patches": [
+    {
+     "id": "bs0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "bs1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "bs2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "bs3",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Level 2: ⌈4 / 4⌉ = 1 block takes the four first-level outputs; the high select bits S3 S2 choose which block's output reaches Y.",
+   "patches": [
+    {
+     "id": "top",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ts",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tl0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tl1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tl2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tl3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bs0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "bs1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "bs2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "bs3",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Select S3S2S1S0 = 1001: S1S0 = 01 makes each first-level block pass its input 1 (I1, I5, I9, I13); S3S2 = 10 passes block 2, so Y = I9.",
+   "patches": [
+    {
+     "id": "wi0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wi2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi5",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wi6",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi8",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi9",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wi10",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi11",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi12",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi13",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wi14",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi15",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i6",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i8",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i9",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i10",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i11",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i12",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i13",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i14",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i15",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y = I9"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Select S3S2S1S0 = 0110: S1S0 = 10 makes each first-level block pass its input 2 (I2, I6, I10, I14); S3S2 = 01 passes block 1, so Y = I6.",
+   "patches": [
+    {
+     "id": "wi0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wi3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wi7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi8",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi9",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi10",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wi11",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi12",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi13",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi14",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wi15",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "i7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i8",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i9",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i10",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i11",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i12",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i13",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i14",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i15",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y = I6"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Total: 4 + 1 = 5 MUXes in 2 levels. Each level divides the count by 4 and rounds up; for a full tree the total is (16 − 1)/(4 − 1) = 5.",
+   "patches": [
+    {
+     "id": "wi0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi6",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi8",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi9",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi10",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi11",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi12",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi13",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi14",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wi15",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i6",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i8",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i9",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i10",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i11",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i12",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i13",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i14",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "i15",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wo3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y"
+     }
+    },
+    {
+     "id": "ts",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

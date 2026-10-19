@@ -1,0 +1,2007 @@
+{
+ "version": 1,
+ "title": "A 4-bit magnitude comparator deciding from the most significant bit",
+ "width": 680,
+ "height": 280,
+ "narrow": {
+  "width": 360,
+  "height": 410
+ },
+ "intro": "Two 4-bit numbers A and B are compared bit by bit. Each XNOR gives xᵢ = 1 when Aᵢ = Bᵢ. Outputs: G (A > B), E (A = B), L (A < B).",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Comparing two 4-bit numbers from the MSB down",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "4-bit comparison, MSB first",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "bl3",
+   "type": "text",
+   "x": 100,
+   "y": 76,
+   "text": "bit 3",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 90,
+    "size": 12
+   }
+  },
+  {
+   "id": "na3",
+   "type": "text",
+   "x": 44,
+   "y": 109,
+   "text": "A3",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 34,
+    "size": 12
+   }
+  },
+  {
+   "id": "nb3",
+   "type": "text",
+   "x": 44,
+   "y": 153,
+   "text": "B3",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 34,
+    "size": 12
+   }
+  },
+  {
+   "id": "a3",
+   "type": "box",
+   "x": 50,
+   "y": 96,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 40,
+    "size": 13
+   }
+  },
+  {
+   "id": "b3",
+   "type": "box",
+   "x": 50,
+   "y": 140,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 40,
+    "size": 13
+   }
+  },
+  {
+   "id": "x3",
+   "type": "gate",
+   "x": 110,
+   "y": 111,
+   "w": 44,
+   "h": 40,
+   "kind": "xnor",
+   "narrow": {
+    "x": 100
+   }
+  },
+  {
+   "id": "wa3",
+   "type": "line",
+   "points": [
+    [
+     80,
+     109
+    ],
+    [
+     95,
+     109
+    ],
+    [
+     95,
+     124.33
+    ],
+    [
+     113.29,
+     124.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      109
+     ],
+     [
+      85,
+      109
+     ],
+     [
+      85,
+      124.33
+     ],
+     [
+      103.29,
+      124.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wb3",
+   "type": "line",
+   "points": [
+    [
+     80,
+     153
+    ],
+    [
+     95,
+     153
+    ],
+    [
+     95,
+     137.67
+    ],
+    [
+     113.29,
+     137.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      153
+     ],
+     [
+      85,
+      153
+     ],
+     [
+      85,
+      137.67
+     ],
+     [
+      103.29,
+      137.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx3",
+   "type": "line",
+   "points": [
+    [
+     154.0,
+     131.0
+    ],
+    [
+     166.0,
+     131.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      144.0,
+      131.0
+     ],
+     [
+      156.0,
+      131.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx3",
+   "type": "text",
+   "x": 132,
+   "y": 166,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 122,
+    "size": 12
+   }
+  },
+  {
+   "id": "bl2",
+   "type": "text",
+   "x": 260,
+   "y": 76,
+   "text": "bit 2",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 270,
+    "size": 12
+   }
+  },
+  {
+   "id": "na2",
+   "type": "text",
+   "x": 204,
+   "y": 109,
+   "text": "A2",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 214,
+    "size": 12
+   }
+  },
+  {
+   "id": "nb2",
+   "type": "text",
+   "x": 204,
+   "y": 153,
+   "text": "B2",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 214,
+    "size": 12
+   }
+  },
+  {
+   "id": "a2",
+   "type": "box",
+   "x": 210,
+   "y": 96,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 220,
+    "size": 13
+   }
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 210,
+   "y": 140,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 220,
+    "size": 13
+   }
+  },
+  {
+   "id": "x2",
+   "type": "gate",
+   "x": 270,
+   "y": 111,
+   "w": 44,
+   "h": 40,
+   "kind": "xnor",
+   "narrow": {
+    "x": 280
+   }
+  },
+  {
+   "id": "wa2",
+   "type": "line",
+   "points": [
+    [
+     240,
+     109
+    ],
+    [
+     255,
+     109
+    ],
+    [
+     255,
+     124.33
+    ],
+    [
+     273.29,
+     124.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250,
+      109
+     ],
+     [
+      265,
+      109
+     ],
+     [
+      265,
+      124.33
+     ],
+     [
+      283.29,
+      124.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wb2",
+   "type": "line",
+   "points": [
+    [
+     240,
+     153
+    ],
+    [
+     255,
+     153
+    ],
+    [
+     255,
+     137.67
+    ],
+    [
+     273.29,
+     137.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250,
+      153
+     ],
+     [
+      265,
+      153
+     ],
+     [
+      265,
+      137.67
+     ],
+     [
+      283.29,
+      137.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx2",
+   "type": "line",
+   "points": [
+    [
+     314.0,
+     131.0
+    ],
+    [
+     326.0,
+     131.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      324.0,
+      131.0
+     ],
+     [
+      336.0,
+      131.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx2",
+   "type": "text",
+   "x": 292,
+   "y": 166,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 302,
+    "size": 12
+   }
+  },
+  {
+   "id": "bl1",
+   "type": "text",
+   "x": 420,
+   "y": 76,
+   "text": "bit 1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 90,
+    "y": 192,
+    "size": 12
+   }
+  },
+  {
+   "id": "na1",
+   "type": "text",
+   "x": 364,
+   "y": 109,
+   "text": "A1",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 34,
+    "y": 225,
+    "size": 12
+   }
+  },
+  {
+   "id": "nb1",
+   "type": "text",
+   "x": 364,
+   "y": 153,
+   "text": "B1",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 34,
+    "y": 269,
+    "size": 12
+   }
+  },
+  {
+   "id": "a1",
+   "type": "box",
+   "x": 370,
+   "y": 96,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 40,
+    "y": 212,
+    "size": 13
+   }
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 370,
+   "y": 140,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 40,
+    "y": 256,
+    "size": 13
+   }
+  },
+  {
+   "id": "x1",
+   "type": "gate",
+   "x": 430,
+   "y": 111,
+   "w": 44,
+   "h": 40,
+   "kind": "xnor",
+   "narrow": {
+    "x": 100,
+    "y": 227
+   }
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     400,
+     109
+    ],
+    [
+     415,
+     109
+    ],
+    [
+     415,
+     124.33
+    ],
+    [
+     433.29,
+     124.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      225
+     ],
+     [
+      85,
+      225
+     ],
+     [
+      85,
+      240.33
+     ],
+     [
+      103.29,
+      240.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wb1",
+   "type": "line",
+   "points": [
+    [
+     400,
+     153
+    ],
+    [
+     415,
+     153
+    ],
+    [
+     415,
+     137.67
+    ],
+    [
+     433.29,
+     137.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      269
+     ],
+     [
+      85,
+      269
+     ],
+     [
+      85,
+      253.67
+     ],
+     [
+      103.29,
+      253.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx1",
+   "type": "line",
+   "points": [
+    [
+     474.0,
+     131.0
+    ],
+    [
+     486.0,
+     131.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      144.0,
+      247.0
+     ],
+     [
+      156.0,
+      247.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx1",
+   "type": "text",
+   "x": 452,
+   "y": 166,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 122,
+    "y": 282,
+    "size": 12
+   }
+  },
+  {
+   "id": "bl0",
+   "type": "text",
+   "x": 580,
+   "y": 76,
+   "text": "bit 0",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 270,
+    "y": 192,
+    "size": 12
+   }
+  },
+  {
+   "id": "na0",
+   "type": "text",
+   "x": 524,
+   "y": 109,
+   "text": "A0",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 214,
+    "y": 225,
+    "size": 12
+   }
+  },
+  {
+   "id": "nb0",
+   "type": "text",
+   "x": 524,
+   "y": 153,
+   "text": "B0",
+   "size": 13,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 214,
+    "y": 269,
+    "size": 12
+   }
+  },
+  {
+   "id": "a0",
+   "type": "box",
+   "x": 530,
+   "y": 96,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 220,
+    "y": 212,
+    "size": 13
+   }
+  },
+  {
+   "id": "b0",
+   "type": "box",
+   "x": 530,
+   "y": 140,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 220,
+    "y": 256,
+    "size": 13
+   }
+  },
+  {
+   "id": "x0",
+   "type": "gate",
+   "x": 590,
+   "y": 111,
+   "w": 44,
+   "h": 40,
+   "kind": "xnor",
+   "narrow": {
+    "x": 280,
+    "y": 227
+   }
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     560,
+     109
+    ],
+    [
+     575,
+     109
+    ],
+    [
+     575,
+     124.33
+    ],
+    [
+     593.29,
+     124.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250,
+      225
+     ],
+     [
+      265,
+      225
+     ],
+     [
+      265,
+      240.33
+     ],
+     [
+      283.29,
+      240.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wb0",
+   "type": "line",
+   "points": [
+    [
+     560,
+     153
+    ],
+    [
+     575,
+     153
+    ],
+    [
+     575,
+     137.67
+    ],
+    [
+     593.29,
+     137.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      250,
+      269
+     ],
+     [
+      265,
+      269
+     ],
+     [
+      265,
+      253.67
+     ],
+     [
+      283.29,
+      253.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wx0",
+   "type": "line",
+   "points": [
+    [
+     634.0,
+     131.0
+    ],
+    [
+     646.0,
+     131.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      324.0,
+      247.0
+     ],
+     [
+      336.0,
+      247.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vx0",
+   "type": "text",
+   "x": 612,
+   "y": 166,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 302,
+    "y": 282,
+    "size": 12
+   }
+  },
+  {
+   "id": "oG",
+   "type": "box",
+   "x": 110,
+   "y": 196,
+   "w": 130,
+   "h": 36,
+   "mono": true,
+   "label": "G: A > B",
+   "size": 14,
+   "narrow": {
+    "x": 12,
+    "y": 330,
+    "w": 104,
+    "size": 13
+   }
+  },
+  {
+   "id": "oE",
+   "type": "box",
+   "x": 280,
+   "y": 196,
+   "w": 130,
+   "h": 36,
+   "mono": true,
+   "label": "E: A = B",
+   "size": 14,
+   "narrow": {
+    "x": 128,
+    "y": 330,
+    "w": 104,
+    "size": 13
+   }
+  },
+  {
+   "id": "oL",
+   "type": "box",
+   "x": 450,
+   "y": 196,
+   "w": 130,
+   "h": 36,
+   "mono": true,
+   "label": "L: A < B",
+   "size": 14,
+   "narrow": {
+    "x": 244,
+    "y": 330,
+    "w": 104,
+    "size": 13
+   }
+  },
+  {
+   "id": "dec",
+   "type": "text",
+   "x": 340.0,
+   "y": 262,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 394,
+    "size": 13
+   }
+  },
+  {
+   "id": "pair",
+   "type": "text",
+   "x": 340.0,
+   "y": 52,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "A = 1011 (11), B = 1001 (9). Bit 3: A3 = B3 = 1, so x3 = 1 and the decision passes to the next lower bit.",
+   "patches": [
+    {
+     "id": "pair",
+     "set": {
+      "text": "A = 1011 (11), B = 1001 (9)"
+     }
+    },
+    {
+     "id": "a3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x3",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx3",
+     "set": {
+      "text": "x3 = 1",
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx3",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa3",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb3",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x2",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "ink",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x1",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "ink",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x0",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "text": "",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "tone": "ink",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "oG",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "G: A > B"
+     }
+    },
+    {
+     "id": "oE",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "E: A = B"
+     }
+    },
+    {
+     "id": "oL",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "L: A < B"
+     }
+    },
+    {
+     "id": "dec",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 2: A2 = B2 = 0, so x2 = 1 and the decision passes to the next lower bit.",
+   "patches": [
+    {
+     "id": "x2",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "x2 = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 1: A1 = 1, B1 = 0, the first unequal bit. The term x3 x2 A1B1′ = 1 fires, so G = 1: A > B (11 > 9). Bits below 1 are ignored.",
+   "patches": [
+    {
+     "id": "x1",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "x1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "oG",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "label": "G = 1"
+     }
+    },
+    {
+     "id": "oE",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "label": "E = 0"
+     }
+    },
+    {
+     "id": "oL",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "label": "L = 0"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "x0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "dec",
+     "set": {
+      "text": "first difference at bit 1 → G = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 0110 and B = 0110: every bit pair is equal, so all four XNORs output 1.",
+   "patches": [
+    {
+     "id": "pair",
+     "set": {
+      "text": "A = 0110 (6), B = 0110 (6)"
+     }
+    },
+    {
+     "id": "a3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x3",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx3",
+     "set": {
+      "text": "x3 = 1",
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx3",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa3",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb3",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x2",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "x2 = 1",
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x1",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "x1 = 1",
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x0",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "text": "x0 = 1",
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "oG",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "G: A > B"
+     }
+    },
+    {
+     "id": "oE",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "E: A = B"
+     }
+    },
+    {
+     "id": "oL",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "L: A < B"
+     }
+    },
+    {
+     "id": "dec",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "x3·x2·x1·x0 = 1, so E = 1 and neither G nor L fires: A = B.",
+   "patches": [
+    {
+     "id": "oG",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "label": "G = 0"
+     }
+    },
+    {
+     "id": "oE",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "label": "E = 1"
+     }
+    },
+    {
+     "id": "oL",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "label": "L = 0"
+     }
+    },
+    {
+     "id": "dec",
+     "set": {
+      "text": "all bits equal → E = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A = 0101 (5), B = 0111 (7). Bit 3: A3 = B3 = 0, so x3 = 1 and the decision passes to the next lower bit.",
+   "patches": [
+    {
+     "id": "pair",
+     "set": {
+      "text": "A = 0101 (5), B = 0111 (7)"
+     }
+    },
+    {
+     "id": "a3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b3",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x3",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx3",
+     "set": {
+      "text": "x3 = 1",
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wx3",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa3",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb3",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x2",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "ink",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x1",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "ink",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "x0",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "text": "",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "tone": "ink",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "opacity": 1
+     }
+    },
+    {
+     "id": "oG",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "G: A > B"
+     }
+    },
+    {
+     "id": "oE",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "E: A = B"
+     }
+    },
+    {
+     "id": "oL",
+     "set": {
+      "tone": "ink",
+      "fill": "none",
+      "label": "L: A < B"
+     }
+    },
+    {
+     "id": "dec",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 2: A2 = B2 = 1, so x2 = 1 and the decision passes to the next lower bit.",
+   "patches": [
+    {
+     "id": "x2",
+     "set": {
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wx2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vx2",
+     "set": {
+      "text": "x2 = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Bit 1: A1 = 0, B1 = 1, the first unequal bit. The term x3 x2 A1′B1 = 1 fires, so L = 1: A < B (5 < 7). Bits below 1 are ignored.",
+   "patches": [
+    {
+     "id": "x1",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wx1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vx1",
+     "set": {
+      "text": "x1 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "oG",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "label": "G = 0"
+     }
+    },
+    {
+     "id": "oE",
+     "set": {
+      "tone": "muted",
+      "fill": "none",
+      "label": "E = 0"
+     }
+    },
+    {
+     "id": "oL",
+     "set": {
+      "tone": "success",
+      "fill": "success",
+      "label": "L = 1"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "b0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "x0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wb0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wx0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "vx0",
+     "set": {
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "dec",
+     "set": {
+      "text": "first difference at bit 1 → L = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "G = A3B3′ + x3A2B2′ + x3x2A1B1′ + x3x2x1A0B0′ (xᵢ = Aᵢ ⊙ Bᵢ); L swaps A and B; E = x3x2x1x0. The MSB decides unless it ties.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "text": "G, L: first unequal bit from the top"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1980,28 +1980,49 @@
       }
     },
     "it-2006-cs-36": {
-      "approach": "Shannon-expand the majority function on the select input $z$: $f = z\\cdot f|_{z=1} + z'\\cdot f|_{z=0}$. Box P feeds mux input 1 and box Q feeds input 0.",
+      "approach": "Concept tested: **implementing a function on a smaller MUX with gate residues**. With $z$ on the select, each data input carries the cofactor of the majority function for that value of $z$.",
       "concepts": [
-        "Majority function",
-        "2:1 multiplexer",
-        "Shannon expansion"
+        "Shannon cofactors",
+        "Residue functions",
+        "Majority function"
       ],
+      "given": "2:1 MUX, select $z$; P → input 1, Q → input 0; both boxes see $x$ and $y$.",
       "steps": [
         {
-          "title": "Majority function",
-          "body": "$f = xy + yz + zx$."
+          "title": "Cofactor for z = 1",
+          "body": "With $z = 1$, majority needs only one more 1: $f = x + y$. So P (input 1) is an OR."
         },
         {
-          "title": "Cofactors",
-          "body": "$z = 1$: $f = xy + y + x = x + y$ (OR).\n\n$z = 0$: $f = xy$ (AND)."
+          "title": "Cofactor for z = 0",
+          "body": "With $z = 0$, both $x$ and $y$ must be 1: $f = xy$. So Q (input 0) is an AND."
         },
         {
-          "title": "Match to the boxes",
-          "body": "The mux passes input 1 (box P) when $z=1$ and input 0 (box Q) when $z=0$. So P = OR, Q = AND."
+          "title": "Check",
+          "body": "$f = \\overline{z}\\,xy + z(x + y) = xy + xz + yz$, the majority.",
+          "scene": {
+            "hl": [
+              {
+                "r": 3,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "OR, AND",
+        "value": "(D) P = OR, Q = AND",
         "choice": [
           "D"
         ],
@@ -2011,25 +2032,108 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "With $z=1$, XOR gives 0 for $x=y=1$, but majority is 1."
+          "reason": "P = XOR gives $f = 0$ at $x = y = z = 1$ (XOR of 1, 1 is 0), but the majority is 1."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "With $z=0$, XOR gives 1 for $x=1,y=0$, but majority is 0."
+          "reason": "Q = XOR makes $f = 1$ at $x = 1, y = 0, z = 0$, which has only one 1."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "With $z=0$, OR gives 1 for $x=1,y=0$, but only one input is 1."
+          "reason": "Q = OR makes $f = 1$ at $x = 1, y = 0, z = 0$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: $f|_{z=1} = x+y$, $f|_{z=0} = xy$."
+          "reason": "Cofactors: $f_{z=1} = x + y$, $f_{z=0} = xy$."
         }
       ],
-      "verification": "$x=1,y=0,z=1$: OR gives 1 (two 1s). $x=1,y=0,z=0$: AND gives 0 (one 1)."
+      "shortcut": "Majority with one input fixed: fixed 1 → OR of the others; fixed 0 → AND of the others.",
+      "pitfalls": [
+        "Mixing up which box feeds input 1 (selected when $z = 1$)."
+      ],
+      "verification": "Simulating the circuit with (P, Q) = (OR, AND) over all 8 rows gives 1s on 3, 5, 6, 7; every other option fails at least one row.",
+      "animation": {
+        "kind": "table",
+        "title": "Majority on a 2:1 MUX",
+        "cols": [
+          "x",
+          "y",
+          "z",
+          "P",
+          "Q",
+          "f"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "it-2006-cs-37": {
       "approach": "Read the next state from each state separately and combine: $S^+ = S\\cdot(\\text{next from }1) + S'\\cdot(\\text{next from }0)$.",

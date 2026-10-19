@@ -1,0 +1,1097 @@
+{
+ "version": 1,
+ "title": "A PLA programmed term by term in its AND and OR planes",
+ "width": 640,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 420
+ },
+ "intro": "A 3-input, 2-output PLA. Vertical lines carry A, A′, B, B′, C, C′; each horizontal row is one product term; the OR plane joins rows into f1 = AB + AC and f2 = AB + BC.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A PLA: programmable AND plane and OR plane",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "PLA: AND and OR planes",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "pland",
+   "type": "box",
+   "x": 128,
+   "y": 94,
+   "w": 234,
+   "h": 166,
+   "dashed": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 48,
+    "w": 214
+   }
+  },
+  {
+   "id": "plor",
+   "type": "box",
+   "x": 388,
+   "y": 94,
+   "w": 90,
+   "h": 166,
+   "dashed": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 264,
+    "w": 88
+   }
+  },
+  {
+   "id": "nand",
+   "type": "text",
+   "x": 245.0,
+   "y": 280,
+   "text": "AND plane",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 155.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "nor",
+   "type": "text",
+   "x": 433.0,
+   "y": 280,
+   "text": "OR plane",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 308.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lh0",
+   "type": "text",
+   "x": 150,
+   "y": 72,
+   "text": "A",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 70,
+    "size": 13
+   }
+  },
+  {
+   "id": "lc0",
+   "type": "line",
+   "points": [
+    [
+     150,
+     84
+    ],
+    [
+     150,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      84
+     ],
+     [
+      70,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lh1",
+   "type": "text",
+   "x": 180,
+   "y": 72,
+   "text": "A′",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 100,
+    "size": 13
+   }
+  },
+  {
+   "id": "lc1",
+   "type": "line",
+   "points": [
+    [
+     180,
+     84
+    ],
+    [
+     180,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      100,
+      84
+     ],
+     [
+      100,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lh2",
+   "type": "text",
+   "x": 230,
+   "y": 72,
+   "text": "B",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 140,
+    "size": 13
+   }
+  },
+  {
+   "id": "lc2",
+   "type": "line",
+   "points": [
+    [
+     230,
+     84
+    ],
+    [
+     230,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      140,
+      84
+     ],
+     [
+      140,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lh3",
+   "type": "text",
+   "x": 260,
+   "y": 72,
+   "text": "B′",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 170,
+    "size": 13
+   }
+  },
+  {
+   "id": "lc3",
+   "type": "line",
+   "points": [
+    [
+     260,
+     84
+    ],
+    [
+     260,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      170,
+      84
+     ],
+     [
+      170,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lh4",
+   "type": "text",
+   "x": 310,
+   "y": 72,
+   "text": "C",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 210,
+    "size": 13
+   }
+  },
+  {
+   "id": "lc4",
+   "type": "line",
+   "points": [
+    [
+     310,
+     84
+    ],
+    [
+     310,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      210,
+      84
+     ],
+     [
+      210,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lh5",
+   "type": "text",
+   "x": 340,
+   "y": 72,
+   "text": "C′",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 240,
+    "size": 13
+   }
+  },
+  {
+   "id": "lc5",
+   "type": "line",
+   "points": [
+    [
+     340,
+     84
+    ],
+    [
+     340,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      240,
+      84
+     ],
+     [
+      240,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "oh0",
+   "type": "text",
+   "x": 410,
+   "y": 72,
+   "text": "f1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 286,
+    "size": 13
+   }
+  },
+  {
+   "id": "oc0",
+   "type": "line",
+   "points": [
+    [
+     410,
+     84
+    ],
+    [
+     410,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      286,
+      84
+     ],
+     [
+      286,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "oh1",
+   "type": "text",
+   "x": 456,
+   "y": 72,
+   "text": "f2",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 330,
+    "size": 13
+   }
+  },
+  {
+   "id": "oc1",
+   "type": "line",
+   "points": [
+    [
+     456,
+     84
+    ],
+    [
+     456,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      330,
+      84
+     ],
+     [
+      330,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tl0",
+   "type": "line",
+   "points": [
+    [
+     136,
+     126
+    ],
+    [
+     470,
+     126
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      56,
+      126
+     ],
+     [
+      344,
+      126
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tn0",
+   "type": "text",
+   "x": 124,
+   "y": 126,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "size": 13
+   }
+  },
+  {
+   "id": "x00",
+   "type": "circle",
+   "cx": 150,
+   "cy": 126,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 70
+   }
+  },
+  {
+   "id": "x02",
+   "type": "circle",
+   "cx": 230,
+   "cy": 126,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 140
+   }
+  },
+  {
+   "id": "y00",
+   "type": "circle",
+   "cx": 410,
+   "cy": 126,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 286
+   }
+  },
+  {
+   "id": "y01",
+   "type": "circle",
+   "cx": 456,
+   "cy": 126,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 330
+   }
+  },
+  {
+   "id": "tl1",
+   "type": "line",
+   "points": [
+    [
+     136,
+     176
+    ],
+    [
+     470,
+     176
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      56,
+      176
+     ],
+     [
+      344,
+      176
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tn1",
+   "type": "text",
+   "x": 124,
+   "y": 176,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "size": 13
+   }
+  },
+  {
+   "id": "x10",
+   "type": "circle",
+   "cx": 150,
+   "cy": 176,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 70
+   }
+  },
+  {
+   "id": "x14",
+   "type": "circle",
+   "cx": 310,
+   "cy": 176,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 210
+   }
+  },
+  {
+   "id": "y10",
+   "type": "circle",
+   "cx": 410,
+   "cy": 176,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 286
+   }
+  },
+  {
+   "id": "tl2",
+   "type": "line",
+   "points": [
+    [
+     136,
+     226
+    ],
+    [
+     470,
+     226
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      56,
+      226
+     ],
+     [
+      344,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "tn2",
+   "type": "text",
+   "x": 124,
+   "y": 226,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 44,
+    "size": 13
+   }
+  },
+  {
+   "id": "x22",
+   "type": "circle",
+   "cx": 230,
+   "cy": 226,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 140
+   }
+  },
+  {
+   "id": "x24",
+   "type": "circle",
+   "cx": 310,
+   "cy": 226,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 210
+   }
+  },
+  {
+   "id": "y21",
+   "type": "circle",
+   "cx": 456,
+   "cy": 226,
+   "r": 5,
+   "fill": "ink",
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "cx": 330
+   }
+  },
+  {
+   "id": "e1",
+   "type": "text",
+   "x": 490,
+   "y": 126,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 316,
+    "size": 13
+   }
+  },
+  {
+   "id": "e2",
+   "type": "text",
+   "x": 490,
+   "y": 152,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 342,
+    "size": 13
+   }
+  },
+  {
+   "id": "ev",
+   "type": "text",
+   "x": 490,
+   "y": 186,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 20,
+    "y": 376,
+    "size": 13
+   }
+  },
+  {
+   "id": "cnt",
+   "type": "text",
+   "x": 490,
+   "y": 212,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "narrow": {
+    "x": 20,
+    "y": 402,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "AND plane, term 1: connect A and B to row 1, which now computes the product AB.",
+   "patches": [
+    {
+     "id": "x00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "x02",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tn0",
+     "set": {
+      "text": "AB"
+     }
+    },
+    {
+     "id": "tl0",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "AND plane, term 2: connect A and C to row 2, which now computes the product AC.",
+   "patches": [
+    {
+     "id": "x10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "x14",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tn1",
+     "set": {
+      "text": "AC"
+     }
+    },
+    {
+     "id": "tl1",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "AND plane, term 3: connect B and C to row 3, which now computes the product BC.",
+   "patches": [
+    {
+     "id": "x22",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "x24",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tn2",
+     "set": {
+      "text": "BC"
+     }
+    },
+    {
+     "id": "tl2",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "OR plane, output f1: connect the rows AB, AC, so f1 = AB + AC.",
+   "patches": [
+    {
+     "id": "y00",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "y10",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "text": "f1 = AB + AC"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "OR plane, output f2: connect the rows AB, BC, so f2 = AB + BC. Row AB is used again: a PLA shares a product term between outputs.",
+   "patches": [
+    {
+     "id": "y01",
+     "set": {
+      "hidden": false,
+      "fill": "accent",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "y21",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "text": "f2 = AB + BC"
+     }
+    },
+    {
+     "id": "tl0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "y00",
+     "set": {
+      "fill": "accent",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Input A B C = 110: only the term AB is 1, so f1 = 1 and f2 = 1.",
+   "patches": [
+    {
+     "id": "lc0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lc1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lc2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lc3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lc4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lc5",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tl0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "oc0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "oc1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ev",
+     "set": {
+      "text": "f1 = 1, f2 = 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Input A B C = 101: only the term AC is 1, so f1 = 1 and f2 = 0.",
+   "patches": [
+    {
+     "id": "lc0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lc1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lc2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lc3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lc4",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lc5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tl0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tl1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tl2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "oc0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "oc1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ev",
+     "set": {
+      "text": "f1 = 1, f2 = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "This PLA needs 3 product terms for both outputs. A PAL, whose OR plane is fixed and cannot share, needs 4 (AB twice).",
+   "patches": [
+    {
+     "id": "lc0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lc1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lc2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lc3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lc4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lc5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "oc0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "oc1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "cnt",
+     "set": {
+      "text": "PLA 3 terms, PAL 4",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ev",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  }
+ ]
+}

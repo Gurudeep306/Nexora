@@ -1,0 +1,1178 @@
+{
+ "version": 1,
+ "title": "A 2-to-4 decoder selecting one of four 1 KB memory chips",
+ "width": 700,
+ "height": 424,
+ "narrow": {
+  "width": 360,
+  "height": 424
+ },
+ "intro": "A 4 KB memory from four 1 KB chips. The 12-bit address A11…A0 splits: A11 A10 go to a 2:4 decoder that enables one chip; A9…A0 go to all chips.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Address decoding: a 2:4 decoder picks one of four 1 KB chips",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Address decoding, 4 × 1 KB",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "dec",
+   "type": "box",
+   "x": 150,
+   "y": 66.0,
+   "w": 90,
+   "h": 304,
+   "narrow": {
+    "x": 74,
+    "w": 62
+   }
+  },
+  {
+   "id": "dec-l0",
+   "type": "text",
+   "x": 155,
+   "y": 142.0,
+   "text": "A11",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 79,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-l1",
+   "type": "text",
+   "x": 155,
+   "y": 294.0,
+   "text": "A10",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 79,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r0",
+   "type": "text",
+   "x": 235,
+   "y": 104.0,
+   "text": "Y0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 131,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r1",
+   "type": "text",
+   "x": 235,
+   "y": 180.0,
+   "text": "Y1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 131,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r2",
+   "type": "text",
+   "x": 235,
+   "y": 256.0,
+   "text": "Y2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 131,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-r3",
+   "type": "text",
+   "x": 235,
+   "y": 332.0,
+   "text": "Y3",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 131,
+    "size": 12
+   }
+  },
+  {
+   "id": "dec-n",
+   "type": "text",
+   "x": 195.0,
+   "y": 248.0,
+   "text": "2:4",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 105.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 120,
+   "y": 142.0,
+   "text": "A11 = ?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 66,
+    "size": 12
+   }
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     124,
+     142.0
+    ],
+    [
+     150,
+     142.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      68,
+      142.0
+     ],
+     [
+      74,
+      142.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 120,
+   "y": 294.0,
+   "text": "A10 = ?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 66,
+    "size": 12
+   }
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     124,
+     294.0
+    ],
+    [
+     150,
+     294.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      68,
+      294.0
+     ],
+     [
+      74,
+      294.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "c0",
+   "type": "box",
+   "x": 380,
+   "y": 76,
+   "w": 170,
+   "h": 56,
+   "narrow": {
+    "x": 170,
+    "w": 156
+   }
+  },
+  {
+   "id": "cn0",
+   "type": "text",
+   "x": 388,
+   "y": 93,
+   "text": "chip 0 (1 KB)",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 178,
+    "size": 13
+   }
+  },
+  {
+   "id": "cr0",
+   "type": "text",
+   "x": 388,
+   "y": 115,
+   "text": "0x000–0x3FF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 178,
+    "size": 12
+   }
+  },
+  {
+   "id": "cs0",
+   "type": "line",
+   "points": [
+    [
+     240,
+     104.0
+    ],
+    [
+     380,
+     104.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      136,
+      104.0
+     ],
+     [
+      170,
+      104.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ab0",
+   "type": "line",
+   "points": [
+    [
+     580,
+     104.0
+    ],
+    [
+     550,
+     104.0
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "c1",
+   "type": "box",
+   "x": 380,
+   "y": 152,
+   "w": 170,
+   "h": 56,
+   "narrow": {
+    "x": 170,
+    "w": 156
+   }
+  },
+  {
+   "id": "cn1",
+   "type": "text",
+   "x": 388,
+   "y": 169,
+   "text": "chip 1 (1 KB)",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 178,
+    "size": 13
+   }
+  },
+  {
+   "id": "cr1",
+   "type": "text",
+   "x": 388,
+   "y": 191,
+   "text": "0x400–0x7FF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 178,
+    "size": 12
+   }
+  },
+  {
+   "id": "cs1",
+   "type": "line",
+   "points": [
+    [
+     240,
+     180.0
+    ],
+    [
+     380,
+     180.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      136,
+      180.0
+     ],
+     [
+      170,
+      180.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ab1",
+   "type": "line",
+   "points": [
+    [
+     580,
+     180.0
+    ],
+    [
+     550,
+     180.0
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "c2",
+   "type": "box",
+   "x": 380,
+   "y": 228,
+   "w": 170,
+   "h": 56,
+   "narrow": {
+    "x": 170,
+    "w": 156
+   }
+  },
+  {
+   "id": "cn2",
+   "type": "text",
+   "x": 388,
+   "y": 245,
+   "text": "chip 2 (1 KB)",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 178,
+    "size": 13
+   }
+  },
+  {
+   "id": "cr2",
+   "type": "text",
+   "x": 388,
+   "y": 267,
+   "text": "0x800–0xBFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 178,
+    "size": 12
+   }
+  },
+  {
+   "id": "cs2",
+   "type": "line",
+   "points": [
+    [
+     240,
+     256.0
+    ],
+    [
+     380,
+     256.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      136,
+      256.0
+     ],
+     [
+      170,
+      256.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ab2",
+   "type": "line",
+   "points": [
+    [
+     580,
+     256.0
+    ],
+    [
+     550,
+     256.0
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "c3",
+   "type": "box",
+   "x": 380,
+   "y": 304,
+   "w": 170,
+   "h": 56,
+   "narrow": {
+    "x": 170,
+    "w": 156
+   }
+  },
+  {
+   "id": "cn3",
+   "type": "text",
+   "x": 388,
+   "y": 321,
+   "text": "chip 3 (1 KB)",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 178,
+    "size": 13
+   }
+  },
+  {
+   "id": "cr3",
+   "type": "text",
+   "x": 388,
+   "y": 343,
+   "text": "0xC00–0xFFF",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 178,
+    "size": 12
+   }
+  },
+  {
+   "id": "cs3",
+   "type": "line",
+   "points": [
+    [
+     240,
+     332.0
+    ],
+    [
+     380,
+     332.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      136,
+      332.0
+     ],
+     [
+      170,
+      332.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ab3",
+   "type": "line",
+   "points": [
+    [
+     580,
+     332.0
+    ],
+    [
+     550,
+     332.0
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "csl",
+   "type": "text",
+   "x": 310.0,
+   "y": 60,
+   "text": "chip selects",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 153.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "bus",
+   "type": "line",
+   "points": [
+    [
+     580,
+     56
+    ],
+    [
+     580,
+     332.0
+    ]
+   ],
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "busl",
+   "type": "text",
+   "x": 580,
+   "y": 46,
+   "text": "A9…A0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "info",
+   "only": "wide"
+  },
+  {
+   "id": "busl-n",
+   "type": "text",
+   "x": 248.0,
+   "y": 44,
+   "text": "A9…A0 to every chip",
+   "size": 12,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "info",
+   "only": "narrow"
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 350.0,
+   "y": 384,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "st2",
+   "type": "text",
+   "x": 350.0,
+   "y": 408,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each 1 KB chip needs 10 address lines (2¹⁰ = 1024): A9…A0 go to every chip. A11 A10 drive a 2:4 decoder whose outputs are chip selects.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "busl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "busl-n",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x000: A11 A10 = 00 raises Y0, selecting chip 0 (0x000–0x3FF); A9…A0 = 0x000 picks the byte in it.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "busl",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0x000 = 00 0000000000"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "chip 0, byte 0x000",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "busl-n",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x5A3: A11 A10 = 01 raises Y1, selecting chip 1 (0x400–0x7FF); A9…A0 = 0x1A3 picks the byte in it.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "busl",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0x5A3 = 01 0110100011"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "chip 1, byte 0x1A3",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "busl-n",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0x800: A11 A10 = 10 raises Y2, selecting chip 2 (0x800–0xBFF); A9…A0 = 0x000 picks the byte in it.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "busl",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0x800 = 10 0000000000"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "chip 2, byte 0x000",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "busl-n",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "0xFFF: A11 A10 = 11 raises Y3, selecting chip 3 (0xC00–0xFFF); A9…A0 = 0x3FF picks the byte in it.",
+   "patches": [
+    {
+     "id": "dec",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "busl",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A11 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A10 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "c0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0xFFF = 11 1111111111"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "chip 3, byte 0x3FF",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "busl-n",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Chip k holds addresses k·0x400 to k·0x400 + 0x3FF: the top two bits pick the chip, the low ten the byte. 4 × 1 KB = 4 KB.",
+   "patches": [
+    {
+     "id": "c0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "c3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "cs0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cs3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st2",
+     "set": {
+      "text": "4 chips × 1 KB = 4 KB (12 address bits)",
+      "tone": "ink"
+     }
+    }
+   ]
+  }
+ ]
+}

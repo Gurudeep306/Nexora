@@ -766,24 +766,47 @@
       "verification": "`0x00800000` decodes to $1.1755 \\times 10^{-38} = 2^{-126}$; `0x007FFFFF` (one less) is already a denormal. ✓"
     },
     "cse-2021-2-cs-5": {
-      "approach": "With $y, z$ on the select lines, each data input is the residue of $f$ in $x$ for that $yz$ value: input $i$ $= f(x=0, yz=i)$ and $f(x=1, yz=i)$ combined.",
+      "approach": "Concept tested: **the implementation table** for a 4:1 MUX with $y, z$ on the selects. The residue variable is $x$; each data input serves rows $j$ ($x = 0$) and $j + 4$ ($x = 1$), and the pair reads as $0$, $1$, $x$ or $x'$.",
       "concepts": [
-        "multiplexer implementation",
-        "minterms",
-        "Shannon expansion"
+        "Implementation table",
+        "Residues 0, 1, x, x′",
+        "Select order"
       ],
+      "given": "$f(x, y, z) = \\Sigma m(0, 1, 3, 4, 5, 6)$. In every option $s_1 = y$, $s_0 = z$ and the data inputs (top to bottom) are $I_0 \\dots I_3$. (A): 1, 1, $x$, $x'$. (B): $x$, 1, $x'$, 1. (C): 1, 1, $x'$, $x$. (D): $x'$, 1, $x$, 1.",
       "steps": [
         {
-          "title": "Truth table split by yz",
-          "body": "Minterm index $= 4x + 2y + z$; $f = 1$ for $0,1,3,4,5,6$.\n\n| $yz$ | $x=0$ | $x=1$ | MUX input |\n|---|---|---|---|\n| 00 | $m_0 = 1$ | $m_4 = 1$ | $1$ |\n| 01 | $m_1 = 1$ | $m_5 = 1$ | $1$ |\n| 10 | $m_2 = 0$ | $m_6 = 1$ | $x$ |\n| 11 | $m_3 = 1$ | $m_7 = 0$ | $x'$ |"
+          "title": "Pair the rows",
+          "body": "$I_0$: rows 0, 4. $I_1$: rows 1, 5. $I_2$: rows 2, 6. $I_3$: rows 3, 7 (the column number $yz$, then add 4 for $x = 1$).",
+          "scene": {
+            "reveal": 8
+          }
         },
         {
-          "title": "Match",
-          "body": "Inputs $I_0..I_3 = 1, 1, x, x'$ with $s_1 = y$, $s_0 = z$ — option (A)."
+          "title": "Read each pair",
+          "body": "$I_0$: 0 ✓, 4 ✓ → 1. $I_1$: 1 ✓, 5 ✓ → 1. $I_2$: 2 ✗, 6 ✓ → $x$. $I_3$: 3 ✓, 7 ✗ → $x'$.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 2,
+                "c": 2,
+                "tone": "accent"
+              },
+              {
+                "r": 2,
+                "c": 3,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Match the options",
+          "body": "Only (A) has $(1, 1, x, x')$. (C) swaps $x$ and $x'$; (B) and (D) put the constants on $I_1$ and $I_3$ and a literal on $I_0$, so they fail row 0 or row 4, where $f = 1$."
         }
       ],
       "answer": {
-        "value": "Inputs 1, 1, x, x′ with select y (s₁), z (s₀)",
+        "value": "(A): $I_0 = 1$, $I_1 = 1$, $I_2 = x$, $I_3 = x'$ with $s_1 = y$, $s_0 = z$",
         "choice": [
           "A"
         ],
@@ -793,25 +816,92 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: $1, 1, x, x'$."
+          "reason": "Matches the implementation table (1, 1, $x$, $x'$)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$x, 1, x', 1$: $I_0 = x$ would make $f(0,0,0) = 0$, but $m_0$ is in $f$."
+          "reason": "$I_0 = x$ gives 0 on row 0, but $m_0$ is a minterm."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$1, 1, x', x$: inputs 2 and 3 are swapped — gives $m_2, m_7$ instead of $m_6, m_3$."
+          "reason": "$I_2 = x'$ gives 1 on row 2, which is not a minterm (and $I_3 = x$ misses row 3)."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$x', 1, x, 1$: $I_0 = x'$ drops $m_4$, and $I_3 = 1$ adds $m_7$."
+          "reason": "$I_0 = x'$ gives 0 on row 4, but $m_4$ is a minterm."
         }
       ],
-      "verification": "Option (A) gives $f = y'z' + y'z + yz'x + yzx' $ → minterms $0,4,1,5,6,3$ ✓."
+      "shortcut": "Check the single rows that separate the options: row 0 ($yz = 00$, $x = 0$) needs $I_0 = 1$ at $x = 0$, killing (B); row 4 kills (D); row 2 kills (C).",
+      "pitfalls": [
+        "Reading a (0, 1) pair as $x'$: the pair is listed $x = 0$ first, so (0, 1) is $x$.",
+        "Using the table for selects $x, y$ (which is 1, $z$, 1, $z'$) on a figure whose selects are $y, z$."
+      ],
+      "verification": "Simulating each option's wiring over the 8 rows: only (A) is 1 exactly on 0, 1, 3, 4, 5, 6.",
+      "animation": {
+        "kind": "table",
+        "title": "Implementation table, selects y (S1), z (S0), residue x",
+        "cols": [
+          "I0 (yz=00)",
+          "I1 (01)",
+          "I2 (10)",
+          "I3 (11)"
+        ],
+        "rowLabels": [
+          "x′",
+          "x",
+          "residue"
+        ],
+        "corner": "",
+        "rows": [
+          [
+            {
+              "v": 0,
+              "tone": "success"
+            },
+            {
+              "v": 1,
+              "tone": "success"
+            },
+            {
+              "v": 2,
+              "tone": "muted"
+            },
+            {
+              "v": 3,
+              "tone": "success"
+            }
+          ],
+          [
+            {
+              "v": 4,
+              "tone": "success"
+            },
+            {
+              "v": 5,
+              "tone": "success"
+            },
+            {
+              "v": 6,
+              "tone": "success"
+            },
+            {
+              "v": 7,
+              "tone": "muted"
+            }
+          ],
+          [
+            "1",
+            "1",
+            "x",
+            "x′"
+          ]
+        ],
+        "mono": true,
+        "reveal": 4
+      }
     },
     "cse-2021-2-cs-6": {
       "approach": "Both statements contradict basic relational facts: a relation can have many foreign keys, and a foreign key may reference its own relation (self-referencing key).",

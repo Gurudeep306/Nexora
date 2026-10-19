@@ -3552,28 +3552,34 @@
       "verification": "$180/260 = 0.6923$; $0.6923 \\times 512 = 354.46$."
     },
     "cse-2004-cs-58": {
-      "approach": "Write the function on a K-map with codes 10–15 as don't cares; the minimal SOP is $A + BD + BC = A + B(C + D)$, realised with 3 two-input gates.",
+      "approach": "Concept tested: **designing a detector with don't-cares and proving a gate count is minimal**. Rows 10–15 never occur, so they are don't-cares; the map gives $A + BD + BC = A + B(C + D)$, three AND/OR gates and no NOT. Then show two gates cannot work.",
       "concepts": [
-        "K-map",
-        "Don't-care conditions",
-        "Gate count"
+        "BCD don't-cares",
+        "Factoring",
+        "Minimum gate count",
+        "Lower bound"
       ],
+      "given": "Inputs $A B C D$ = a BCD digit (8 4 2 1). Output 1 for digits 5–9. Gates: AND, OR, NOT only; complements cost a NOT.",
       "steps": [
         {
-          "title": "Function",
-          "body": "Inputs $ABCD$ (A = MSB). $f = \\Sigma m(5,6,7,8,9) + d(10,\\dots,15)$."
+          "title": "Truth table",
+          "body": "$f = \\Sigma m(5, 6, 7, 8, 9) + d(10, 11, 12, 13, 14, 15)$."
         },
         {
-          "title": "Minimise",
-          "body": "Using don't cares: $A$ covers 8–15; $BD$ covers 5,7,13,15; $BC$ covers 6,7,14,15. $$f = A + BD + BC = A + B(C + D)$$"
+          "title": "Map",
+          "body": "Rows 8–15 are 1s and Xs: the octet $A$. Digits 5, 7 with Xs 13, 15 form $BD$; digits 6, 7 with Xs 14, 15 form $BC$. Minimal SOP: $f = A + BD + BC$."
         },
         {
-          "title": "Count gates",
-          "body": "OR($C,D$) → AND with $B$ → OR with $A$: **3 gates**, no NOT needed."
+          "title": "Factor to count gates",
+          "body": "$f = A + B(C + D)$: OR($C$, $D$), AND($B$, ·), OR($A$, ·). Three gates; no inverter is needed because every literal is uncomplemented."
+        },
+        {
+          "title": "Two gates are impossible",
+          "body": "Use $f(0000) = 0$, $f(0011) = 0$, $f(0100) = 0$, $f(0101) = 1$, $f(0110) = 1$, $f(1000) = 1$. A NAND/NOR of inputs is 1 on 0000. An AND of literals is 1 on a cube; one holding 0101 and 1000 also holds 0000. An OR of literals is 0 on a cube; one holding 0011 and 0100 also holds 0101. $\\text{OR}(X) + \\text{AND}(Y)$: 0100 and 0011 force $X \\subseteq \\{A\\}$, then 0101 and 0110 force $Y \\subseteq \\{B\\}$; $Y = \\varnothing$ is not a gate, and $Y = \\{B\\}$ makes 0100 a 1. $\\text{AND}(X) \\cdot \\text{OR}(Y)$: 1000 and 0101 force $X = \\varnothing$. Every two-gate circuit is one of these."
         }
       ],
       "answer": {
-        "value": "3",
+        "value": "(B) 3",
         "choice": [
           "B"
         ],
@@ -3583,28 +3589,92 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Three distinct product/sum operations are needed; 2 two-input gates cannot combine A, B, C, D this way."
+          "reason": "No circuit of two AND/OR/NOT gates agrees with the detector on digits 0–9 (case analysis above; an exhaustive search agrees)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "A + B(C + D) uses one OR, one AND, one OR."
+          "reason": "$A + B(C + D)$ uses OR, AND, OR, and two gates cannot do it."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Direct SOP A + BD + BC uses 2 ANDs + 1 three-input OR = 3 too, so 4 is not minimal."
+          "reason": "Four is what you get from $A + BD + BC$ drawn with 2-input gates only, or by adding an unneeded inverter; the question allows any fan-in and the factored form needs three."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Not minimal."
+          "reason": "Five or more comes from ignoring the don't-cares: $A'BD + A'BC + AB'C'$ needs inverters and three AND terms."
         }
       ],
+      "shortcut": "\"BCD digit ≥ 5\" is the excess-3 MSB $E_3 = B_3 + B_2(B_1 + B_0)$: memorise it, three gates.",
       "pitfalls": [
-        "Ignoring the don't cares 10–15, which yields a larger expression."
+        "Not using rows 10–15 as don't-cares (the digit can never exceed 9).",
+        "Counting product terms instead of gates, or forgetting that each complement costs a NOT.",
+        "Answering 2 by imagining an \"AND-OR\" box as one gate."
       ],
-      "verification": "Check 5 (0101): B·D = 1 ✓; 4 (0100): A=0, C+D=0 → 0 ✓; 8: A = 1 ✓."
+      "verification": "The netlist OR(C, D) → AND(B, ·) → OR(A, ·) outputs 1 exactly on digits 5–9; comblib.min_gates_aon finds no 1- or 2-gate circuit and returns 3.",
+      "animation": {
+        "kind": "circuit",
+        "title": "Digit ≥ 5 in three gates",
+        "inputs": [
+          {
+            "id": "A",
+            "label": "A",
+            "value": 0
+          },
+          {
+            "id": "B",
+            "label": "B",
+            "value": 1
+          },
+          {
+            "id": "C",
+            "label": "C",
+            "value": 0
+          },
+          {
+            "id": "D",
+            "label": "D",
+            "value": 1
+          }
+        ],
+        "gates": [
+          {
+            "id": "s",
+            "type": "OR",
+            "in": [
+              "C",
+              "D"
+            ]
+          },
+          {
+            "id": "p",
+            "type": "AND",
+            "in": [
+              "B",
+              "s"
+            ]
+          },
+          {
+            "id": "f",
+            "type": "OR",
+            "in": [
+              "A",
+              "p"
+            ]
+          }
+        ],
+        "outputs": [
+          {
+            "id": "F",
+            "from": "f",
+            "label": "f"
+          }
+        ],
+        "showValues": true,
+        "caption": "Digit 5 (0101): C + D = 1, B(C + D) = 1, so f = 1."
+      }
     },
     "cse-2004-cs-59": {
       "approach": "Concept tested: **essential prime implicants**. List all PIs of $f$, then find the 1-cells that lie in exactly one PI.",
@@ -3748,23 +3818,29 @@
       }
     },
     "cse-2004-cs-60": {
-      "approach": "The mux computes $f = Z'X + ZY$. Choose connections so that this equals $T + R$.",
+      "approach": "Concept tested: **OR from one 2:1 MUX** with no extra hardware. Think if–then–else: if $T = 1$ the OR is 1; otherwise it equals $R$. So $T$ goes on the control, 1 on the input chosen for $T = 1$, and $R$ on the input chosen for $T = 0$.",
       "concepts": [
-        "2:1 multiplexer",
-        "Shannon expansion"
+        "2:1 MUX as a gate",
+        "MUX with constants",
+        "If–then–else"
       ],
+      "given": "$Z = 0$ selects $X$, $Z = 1$ selects $Y$: output $= \\overline{Z}X + ZY$.",
       "steps": [
         {
-          "title": "Expand on T",
-          "body": "$T + R = T'\\cdot R + T\\cdot 1$."
+          "title": "Plan the wiring",
+          "body": "Put $T$ on $Z$. For $T = 1$ the output must be 1 whatever $R$ is, so $Y = 1$. For $T = 0$ the output must be $R$, so $X = R$."
         },
         {
-          "title": "Match",
-          "body": "Compare with $Z'X + ZY$: $Z = T$, $X = R$, $Y = 1$."
+          "title": "Verify",
+          "body": "$\\overline{T}R + T \\cdot 1 = \\overline{T}R + T = T + R$ (absorption)."
+        },
+        {
+          "title": "Check the other options",
+          "body": "(B) $\\overline{T}T + TR = TR$, an AND. (C) $Z = 0$ always passes $X = T$. (D) $\\overline{T}R + T \\cdot 0 = \\overline{T}R$."
         }
       ],
       "answer": {
-        "value": "R to X, 1 to Y, T to Z",
+        "value": "(A) R to X, 1 to Y, T to Z",
         "choice": [
           "A"
         ],
@@ -3774,28 +3850,29 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$T'R + T = T + R$."
+          "reason": "$\\overline{T}R + T = T + R$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$T'T + TR = TR$ (AND)."
+          "reason": "$X = T$, $Y = R$, $Z = T$ gives $\\overline{T}T + TR = TR$: AND, not OR."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Z = 0 always selects X = T, so f = T."
+          "reason": "With $Z = 0$ the MUX always passes $X = T$, so the output is just $T$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$T'R + T\\cdot0 = T'R$."
+          "reason": "$\\overline{T}R + T \\cdot 0 = \\overline{T}R$ (inhibition), 0 at $T = 1$."
         }
       ],
+      "shortcut": "OR = MUX(select = one variable; $I_0$ = the other variable, $I_1$ = 1). AND = MUX(select = one; $I_0$ = 0, $I_1$ = the other).",
       "pitfalls": [
-        "Mixing up which data input Z = 0 selects."
+        "Putting the constant on the input for $T = 0$: that makes $\\overline{T}$-type functions, not OR."
       ],
-      "verification": "Truth table: T=0 → output R; T=1 → output 1, which is T + R."
+      "verification": "Rows $(T, R)$: 00 → $X = R = 0$; 01 → $X = 1$; 10 → $Y = 1$; 11 → $Y = 1$. Output 0, 1, 1, 1 = OR."
     },
     "cse-2004-cs-61": {
       "approach": "For each transition of the sequence 0→2→3→1→0, a T flip-flop needs T = 1 exactly when its bit changes. Derive $T_1$ (= X) from the table.",

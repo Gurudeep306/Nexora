@@ -759,23 +759,52 @@
       "verification": "For $n = 10$: $N = 10240$, $\\log_2 N \\approx 13.3 = 10 + 3.3$ — linear in $n$."
     },
     "cse-2012-cs-6": {
-      "approach": "Read the table: $f$ is 1 exactly in the rows where $X = 1$, regardless of $Y$.",
+      "approach": "Concept tested: **matching a truth table to an expression**. Read the output column row by row; an expression represents the table only if it agrees on all four rows, and one disagreeing row rules it out.",
       "concepts": [
-        "Truth tables",
-        "Boolean simplification"
+        "Truth table",
+        "Matching expressions",
+        "Counterexample row"
       ],
       "steps": [
         {
-          "title": "Sum of minterms",
-          "body": "$f = X\\overline{Y} + XY = X(\\overline{Y} + Y) = X$."
+          "title": "Read the column",
+          "body": "Rows $XY$ = 00, 01, 10, 11 give $f$ = 0, 0, 1, 1. The output is 1 exactly when $X = 1$, whatever $Y$ is.",
+          "scene": {
+            "hl": [
+              {
+                "r": 2,
+                "tone": "success"
+              },
+              {
+                "r": 3,
+                "tone": "success"
+              }
+            ]
+          }
         },
         {
-          "title": "Check other options",
-          "body": "$X+Y$ gives 1 at row $(0,1)$; $X \\oplus Y$ gives 0 at $(1,1)$; $Y$ gives 1 at $(0,1)$ and 0 at $(1,0)$ — all disagree with the table."
+          "title": "Name it",
+          "body": "$f = X\\overline{Y} + XY = X(\\overline{Y} + Y) = X$. $f$ does not depend on $Y$ at all."
+        },
+        {
+          "title": "Test the other options",
+          "body": "$X + Y$ gives 1 on row 01 (table: 0). $X \\oplus Y$ gives 0 on row 11 (table: 1). $Y$ gives 1 on row 01 and 0 on row 10. Each has a counterexample row.",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "error"
+              },
+              {
+                "r": 3,
+                "tone": "error"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "X",
+        "value": "(A) $X$",
         "choice": [
           "A"
         ],
@@ -785,25 +814,67 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Column $f$ equals column $X$ in all four rows."
+          "reason": "The column 0011 is the column of $X$ itself."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$X+Y = 1$ at $X=0, Y=1$, but $f = 0$ there."
+          "reason": "$X + Y$ is 0111: it is 1 on row 01, where the table has 0."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$X \\oplus Y = 0$ at $X=Y=1$, but $f = 1$ there."
+          "reason": "$X \\oplus Y$ is 0110: it is 0 on row 11, where the table has 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$Y$ differs from $f$ in rows $(0,1)$ and $(1,0)$."
+          "reason": "$Y$ is 0101: it is wrong on rows 01 and 10."
         }
       ],
-      "verification": "Column-by-column comparison: $f$ = (0,0,1,1) = $X$."
+      "shortcut": "In counting order the first variable's own column is 0011 and the second's is 0101; this table is 0011, so $f = X$.",
+      "pitfalls": [
+        "Picking $X + Y$ or $X \\oplus Y$ because they agree on three rows; one row decides.",
+        "Reading the column against the wrong variable order."
+      ],
+      "verification": "Evaluating each option on all four rows: only $X$ reproduces 0, 0, 1, 1.",
+      "animation": {
+        "kind": "table",
+        "title": "The table and the column of X",
+        "cols": [
+          "X",
+          "Y",
+          "f",
+          "X"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2012-cs-7": {
       "approach": "Concept tested: **encoding** with the hidden bit and the biased exponent. $0.5 = 1.0 \\times 2^{-1}$, so the fraction field is all zeros and the (true) exponent is $-1$.",
@@ -1578,23 +1649,52 @@
       "verification": "C is the only option implied by the inequality $A(n) \\le W(n)$ alone."
     },
     "cse-2012-cs-19": {
-      "approach": "A ROM implements a function by storing its full truth table: address = all inputs, word = all outputs. A 4×4-bit multiplier has 8 input bits and an 8-bit product.",
+      "approach": "Concept tested: **ROM capacity in bits**. A 4-bit multiplier ROM is $256 \\times 8$; the question asks for the amount of ROM, so multiply and convert with $1\\text{K} = 1024$.",
       "concepts": [
-        "ROM-based logic",
-        "Binary multiplication"
+        "ROM sizing",
+        "Multiplier ROM",
+        "Bits vs words"
       ],
+      "given": "A ROM implements a 4-bit (× 4-bit) multiplier. Find the number of bits.",
       "steps": [
         {
-          "title": "Inputs and outputs",
-          "body": "Inputs: $4 + 4 = 8$ bits ⇒ $2^8 = 256$ addresses. Output: max product $15 \\times 15 = 225 < 2^8$, so 8 bits per word."
+          "title": "Words",
+          "body": "The two 4-bit operands form an 8-bit address: $2^8 = 256$ words.",
+          "scene": {
+            "reveal": 6
+          }
         },
         {
-          "title": "Size",
-          "body": "$256 \\times 8 = 2048$ bits $= 2$ Kbits."
+          "title": "Width",
+          "body": "The largest product, $15 \\times 15 = 225$, needs 8 bits, so each word is 8 bits.",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Amount in bits",
+          "body": "$256 \\times 8 = 2048$ bits $= 2 \\times 1024$ bits $= 2$ Kbits.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 3,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "2 Kbits",
+        "value": "(D) 2 Kbits",
         "choice": [
           "D"
         ],
@@ -1604,25 +1704,62 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$64 = 2^4 \\times 4$ would be a 4-input, 4-output table."
+          "reason": "64 bits $= 8 \\times 8$: it takes 8 (the address width) as the number of words."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$128$ bits is far too small for 256 addresses."
+          "reason": "128 bits $= 16 \\times 8$: one 4-bit operand used as the address."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "1 Kbit $= 256 \\times 4$ — only a 4-bit output word."
+          "reason": "1 Kbit $= 256 \\times 4$: the product stored in 4 bits, losing its upper half."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$2^8 \\times 8 = 2048$ bits."
+          "reason": "$256 \\times 8 = 2048$ bits $= 2$ Kbits."
         }
       ],
-      "verification": "$n$-bit × $n$-bit multiplier ROM $= 2^{2n} \\times 2n$; for $n = 4$: $256 \\times 8$."
+      "shortcut": "$2^{2n} \\cdot 2n$ bits with $n = 4$: $2^8 \\cdot 8 = 2^{11}$ bits = 2 Kbits.",
+      "pitfalls": [
+        "Answering in words (256) when the question asks for the amount of ROM.",
+        "Using $1\\text{K} = 1000$: 2048 bits is exactly 2 Kbits only because $1\\text{K} = 1024$."
+      ],
+      "verification": "$2^{11} = 2048$; the options are $2^6, 2^7, 2^{10}, 2^{11}$ bits, and only $2^{11}$ equals $2^{8}$ words × $2^{3}$ bits.",
+      "animation": {
+        "kind": "table",
+        "title": "Amount of ROM for a 4-bit multiplier",
+        "cols": [
+          "Quantity",
+          "Count",
+          "Why"
+        ],
+        "rows": [
+          [
+            "Address bits",
+            8,
+            "4 + 4 (both operands)"
+          ],
+          [
+            "Words",
+            256,
+            "2^8"
+          ],
+          [
+            "Bits per word",
+            8,
+            "largest product 225 has 8 bits"
+          ],
+          [
+            "Total bits",
+            2048,
+            "256 × 8"
+          ]
+        ],
+        "reveal": 0
+      }
     },
     "cse-2012-cs-20": {
       "approach": "Register renaming maps architectural registers to distinct physical registers so that false (name) dependences — WAR and WAW hazards — disappear.",

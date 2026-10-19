@@ -89,6 +89,13 @@ PYQ pipeline, not a set error).
 - **B 120 / 166:** "XOR = AB + A′B′ on a 4:1 MUX (I₀ = I₃ = 1)" is XNOR. XOR needs I₁ = I₂ = 1,
   I₀ = I₃ = 0. The enable equation also lost its bars:
   E(I₀S₁′S₀′ + I₁S₁′S₀ + I₂S₁S₀′ + I₃S₁S₀).
+- **A 72 / B 167:** the MUX-tree count ⌈M/N^k⌉ summed over k = 1, 2, … overcounts by one when the sum
+  runs one level too far (a level that already leaves a single signal needs no further MUX). Stop when one
+  block remains: 16:1 from 4:1 is 4 + 1 = 5 (dl-05-02 `mux-tree-count`, checked by `comblib.mux_tree`).
+- **B 129:** "a short is stuck-at-1 and an open is stuck-at-0" is a technology-dependent simplification
+  (an open TTL input floats high; a CMOS open can hold either value), and stuck-at faults are filed under
+  hazards. They are a separate topic: the logical fault model of dl-05-06, which states the model without
+  tying it to a physical defect.
 - **B 178:** "Booth reduces multiplication to O(n^{log₂3})" is wrong. That is Karatsuba's bound.
   Booth only reduces the number of add/subtract operations for runs of 1s.
 - **D 401:** "CLA = 6 delays when XOR gates are available" assumes complemented literals and
@@ -138,8 +145,8 @@ PYQ pipeline, not a set error).
   the only bank change is the `cse-2005-cs-85b` review-note fix above. The 1997 parts (a)–(c) assume
   truncation, which the lesson states. The 25 v2 solutions were rewritten to the teacher-style standard
   (enforced by `pyq_ch1.py`).
-- **Arithmetic PYQ move and key audit (2026-10-17):** the 13 number-level PYQs of `dl-05-03`, the 8
-  Booth/product PYQs of `dl-05-04`, `it-2005-cs-47` (lesson 2) and `cse-2010-cs-8` (lesson 4) now live in
+- **Arithmetic PYQ move and key audit (2026-10-17):** the 13 number-level PYQs of `dl-05-03` (old numbering; now `dl-04-03`), the 8
+  Booth/product PYQs of `dl-05-04` (now `dl-04-04`), `it-2005-cs-47` (lesson 2) and `cse-2010-cs-8` (lesson 4) now live in
   Chapter 1 lessons 9–10. All 23 keys were re-derived in `_checks/dl/l09_code_arithmetic.py` and
   `l10_multiplication_booth.py` (brute force where possible, e.g. the overflow formulas over every
   4- and 8-bit operand pair, Booth counts with `boothlib.py`). All stored keys are correct. Three keep
@@ -205,6 +212,18 @@ PYQ pipeline, not a set error).
   - Set-level slips noticed while writing Chapter 3 (lessons teach the correct versions): B 113's "the
     minimal SOP is unique" (section 2), C 238's unmerged 5-variable pair (section 2), C 267 / 271 / 273
     (section 4b).
+- **Chapter 4 key audit (2026-10-18):** all 38 Chapter 4 keys (`dl/combinational` 35, `dl/minimization` 1,
+  `dl/gates` 2) are re-derived by enumeration over every input row in `_checks/dl/l5_01 … l5_06` (`comblib`
+  netlists with MUX, decoder, enable and stuck-at fault nodes; minimum AND/OR/NOT gate search; ROM and PLA
+  sizing). None is wrong.
+  - `cse-2001-b-58-b` (**flag cleared**): the scan (`GATE2001.pdf` p. 8, Q58(b)) rendered at 600 dpi shows the
+    top labels as e₈ / b₈, so the block is weight-labelled and $b_4$ is the weight-4 BCD bit. Its minimal POS
+    has 7 literals and three equally minimal forms; the bank's $(\bar e_4 + e_2)(\bar e_4 + e_1)(e_4 + \bar e_2 + \bar e_1)$
+    is one. `needsReview` cleared and the note updated through `src/gate/fixes/cse-2001.json`.
+  - `cse-2002-a-27`: the scan (`GATE2002.pdf` p. 3, Q27) matches the bank's wiring (x → I0, I1; y → I2;
+    y′ → I3 and A1; z → A0; z′ → EN); with an active-high enable $f = xy\bar z$, key (A).
+  - Interpretations kept: `cse-1992-b-4-b` (output codes not given; A → 11, B → 10, C → 01 assumed, flag
+    kept), `cse-2000-b-9-b` ("one two-input gate" read as an OR; the 2000 paper is not in `GATE_PYQ/`).
 
 ## 4. Set C, sequential, memory and converters (pp. 326–398)
 - **C 371 (important, a lesson-worthy trap):** the 0 → 3 → 5 → 6 JK counter (J_A = K_A = Q_B,
@@ -212,7 +231,7 @@ PYQ pipeline, not a set error).
   cycle 001 → 010 → 100 → 111 → 001 and never reach the main loop. (Check from 001: A holds
   because Q_B = 0, B toggles to 1, and C toggles to 0, giving 010; and so on.) Fix: give unused
   states an explicit next state (for example 000) instead of don't-cares, which is the set's own
-  advice on p. 372. Use this as the self-start example in dl-07-03.
+  advice on p. 372. Use this as the self-start example in dl-06-05 (synchronous counter design).
 - **C 345:** "preset = 1 gives output 0" is wrong. Preset forces Q = 1 and clear forces Q = 0
   (active-low on the drawn symbol, pp. 341–342).
 - **C 332:** a clock-gated SR circuit is drawn with an edge symbol. It is a level-sensitive gated

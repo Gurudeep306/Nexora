@@ -1906,27 +1906,53 @@
       }
     },
     "cse-2006-cs-35": {
-      "approach": "Write each 2:1 MUX as $\\overline{s}\\,I_0 + s\\,I_1$, substitute the first MUX into the second, then simplify.",
+      "approach": "Concept tested: **a cascade of two 2:1 MUXes** through a data input. Write the first MUX's output, substitute it into the second MUX's equation, and compare the options by their minterms.",
       "concepts": [
-        "Multiplexer",
-        "Boolean simplification"
+        "MUX cascade",
+        "Reading a MUX circuit",
+        "Equivalent expressions"
       ],
+      "given": "MUX1: $I_0 = x$, $I_1 = \\overline{y}$, select $z$. MUX2: $I_0$ = MUX1, $I_1 = x$, select $y$.",
       "steps": [
         {
-          "title": "First MUX",
-          "body": "Select $z$, $I_0 = x$, $I_1 = \\overline{y}$: $M = \\overline{z}x + z\\overline{y}$."
+          "title": "MUX1",
+          "body": "$g = x\\overline{z} + \\overline{y}z$."
         },
         {
-          "title": "Second MUX",
-          "body": "Select $y$, $I_0 = M$, $I_1 = x$:\n$$f = \\overline{y}M + yx = \\overline{y}(x\\overline{z} + \\overline{y}z) + xy = x\\overline{y}\\,\\overline{z} + \\overline{y}z + xy.$$"
+          "title": "MUX2",
+          "body": "$f = \\overline{y}\\,g + yx = \\overline{y}(x\\overline{z} + \\overline{y}z) + xy = x\\overline{y}\\,\\overline{z} + \\overline{y}z + xy$."
         },
         {
-          "title": "Simplify",
-          "body": "$x\\overline{y}\\,\\overline{z} + xy$ covers $x\\overline{z}$ completely ($x y\\overline{z} \\subseteq xy$), so adding $x y \\overline{z}$ changes nothing:\n$$f = x\\overline{z} + xy + \\overline{y}z.$$"
+          "title": "Tidy up",
+          "body": "$x\\overline{y}\\,\\overline{z} + xy = x(\\overline{y}\\,\\overline{z} + y) = x\\overline{z} + xy$. So $f = x\\overline{z} + xy + \\overline{y}z$: option (A) term for term. (Its minimal SOP is even shorter, $x + \\overline{y}z$, but the question asks which option is correct.)",
+          "scene": {
+            "hl": [
+              {
+                "r": 1,
+                "tone": "success"
+              },
+              {
+                "r": 4,
+                "tone": "success"
+              },
+              {
+                "r": 5,
+                "tone": "success"
+              },
+              {
+                "r": 6,
+                "tone": "success"
+              },
+              {
+                "r": 7,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "$x\\overline{z} + xy + \\overline{y}z$",
+        "value": "(A) $x\\overline{z} + xy + \\overline{y}z$",
         "choice": [
           "A"
         ],
@@ -1936,25 +1962,100 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: matches the derived expression."
+          "reason": "Equal to $f = \\Sigma m(1, 4, 5, 6, 7)$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: $\\overline{yz}$ includes $\\overline{y}\\,\\overline{z}$, e.g. $x=0,y=0,z=0$ gives $1$ but the circuit gives $M = x = 0$."
+          "reason": "$\\overline{yz}$ is 1 at $xyz = 000$, where MUX2 passes $g = x = 0$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Wrong: $x=1,y=0,z=1$: circuit gives $M = \\overline{y} = 1$ ✓, but $x=0,y=0,z=0$ gives $\\overline{yz} = 1$ while the circuit outputs $M = x = 0$."
+          "reason": "$\\overline{yz}$ is 1 at row 000, where MUX2 passes $g = x = 0$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: $x=0,y=0,z=0$ gives $\\overline{yz} = 1$, circuit gives $0$."
+          "reason": "$\\overline{yz}$ again makes row 000 a 1, where $f = 0$."
         }
       ],
-      "verification": "Truth-table check: $f = 1$ exactly for $xyz \\in \\{001, 100, 101, 110, 111\\}$ (e.g. $101$: $y=0$, $z=1$, $M = \\overline{y} = 1$), which is the on-set of (A)."
+      "shortcut": "Split on $y$: $y = 1$ gives $x$; $y = 0$ gives MUX1 with $\\overline{y} = 1$, i.e. $x\\overline{z} + z = x + z$. So $f = xy + \\overline{y}(x + z) = x + \\overline{y}z$; only (A) equals it.",
+      "pitfalls": [
+        "Reading $\\overline{yz}$ (complement of the product) as $\\overline{y}z$.",
+        "Expecting the options to be minimal: (A) is correct but not minimal."
+      ],
+      "verification": "The netlist is 1 on rows 1, 4, 5, 6, 7; so is option (A), and every other option differs on row 000.",
+      "animation": {
+        "kind": "table",
+        "title": "Cascaded MUXes of GATE 2006",
+        "cols": [
+          "x",
+          "y",
+          "z",
+          "g",
+          "f"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            0,
+            1
+          ]
+        ],
+        "mono": true
+      }
     },
     "cse-2006-cs-36": {
       "approach": "The carry-out of a 3-bit adder with carry-in 0 is $G = g_2 + p_2 g_1 + p_2 p_1 g_0$ with $g_i = a_ib_i$, $p_i = a_i + b_i$. Expand into a sum of products and match.",

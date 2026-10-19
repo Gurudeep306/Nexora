@@ -7549,45 +7549,42 @@
       }
     },
     "cse-2026-2-cs-49": {
-      "approach": "Write the MUX output as a sum over the four select values: $Y = \\bar S_1 \\bar S_0 D_0 + \\bar S_1 S_0 \\cdot 0 + S_1 \\bar S_0 \\cdot 1 + S_1 S_0 D_3$, then count, for each select value, how many $(A, B)$ pairs make the chosen input 1.",
+      "approach": "Concept tested: **decoder outputs are minterms**. Each data input of the MUX is either a constant or a decoder output $D_j = m_j(A, B)$, which is 1 on exactly one $(A, B)$ row. Count the rows with $Y = 1$ for each select value and add.",
       "concepts": [
-        "2:4 decoder (minterm generator)",
-        "4-to-1 multiplexer",
-        "Counting input combinations"
+        "Decoder outputs are minterms",
+        "MUX equation",
+        "Counting rows"
       ],
-      "given": "Decoder Q: $D_0 = \\bar A \\bar B$, $D_1 = \\bar A B$, $D_2 = A \\bar B$, $D_3 = AB$ (active high). MUX M inputs: $I_0 = D_0$, $I_1 = 0$, $I_2 = 1$, $I_3 = D_3$; selects $S_1 S_0$.",
+      "given": "2:4 decoder (active high) on $A$ (MSB), $B$; 4:1 MUX with $I_0 = D_0$, $I_1 = 0$, $I_2 = 1$, $I_3 = D_3$, selects $S_1S_0$. Rows are $[A\\,B\\,S_1\\,S_0]$, 16 in all.",
       "steps": [
         {
-          "title": "S1S0 = 00 → Y = D0",
-          "body": "$Y = D_0 = \\bar A \\bar B$, which is 1 only for $AB = 00$ → **1** combination.",
+          "title": "S₁S₀ = 00",
+          "body": "$Y = D_0 = \\overline{A}\\,\\overline{B}$: 1 on one of the four $(A, B)$ rows → **1**.",
           "scene": {
-            "reveal": 4,
             "hl": [
               {
                 "r": 0,
-                "tone": "accent"
+                "tone": "success"
               }
             ]
           }
         },
         {
-          "title": "S1S0 = 01 → Y = 0",
-          "body": "Input 1 is tied to 0, so no $(A,B)$ gives $Y = 1$ → **0** combinations.",
+          "title": "S₁S₀ = 01",
+          "body": "$Y = I_1 = 0$ → **0** rows.",
           "scene": {
-            "reveal": 8,
             "hl": [
               {
                 "r": 1,
-                "tone": "error"
+                "tone": "muted"
               }
             ]
           }
         },
         {
-          "title": "S1S0 = 10 → Y = 1",
-          "body": "Input 2 is tied to 1, so all four $(A,B)$ pairs give $Y = 1$ → **4** combinations.",
+          "title": "S₁S₀ = 10",
+          "body": "$Y = I_2 = 1$ for every $(A, B)$ → **4** rows.",
           "scene": {
-            "reveal": 12,
             "hl": [
               {
                 "r": 2,
@@ -7597,70 +7594,64 @@
           }
         },
         {
-          "title": "S1S0 = 11 → Y = D3",
-          "body": "$Y = D_3 = AB$, which is 1 only for $AB = 11$ → **1** combination.\n\nTotal: $1 + 0 + 4 + 1 = 6$.",
+          "title": "S₁S₀ = 11",
+          "body": "$Y = D_3 = AB$ → **1** row.",
           "scene": {
-            "reveal": 16,
             "hl": [
               {
                 "r": 3,
-                "tone": "accent"
+                "tone": "success"
               }
-            ],
-            "vars": {
-              "Y = 1 count": 6
-            }
+            ]
           }
+        },
+        {
+          "title": "Add",
+          "body": "The select values do not overlap, so $1 + 0 + 4 + 1 = 6$. As an expression: $Y = \\overline{S_1}\\,\\overline{S_0}\\,\\overline{A}\\,\\overline{B} + S_1\\overline{S_0} + S_1S_0AB$."
         }
       ],
       "answer": {
-        "value": "$1 + 0 + 4 + 1 =$ **6** combinations",
+        "value": "6",
         "number": 6,
         "matchesKey": true
       },
-      "shortcut": "Each MUX input contributes (number of 1s in its function of $A, B$): a minterm gives 1, constant 0 gives 0, constant 1 gives 4 → $1 + 0 + 4 + 1 = 6$.",
+      "shortcut": "A decoder output on a data line contributes 1 row, a constant 1 contributes $2^2 = 4$, a constant 0 nothing: $1 + 0 + 4 + 1$.",
       "pitfalls": [
-        "Thinking the answer depends on whether A or B is the decoder MSB — $D_0$ (00) and $D_3$ (11) are the same either way.",
-        "Counting only select values (gives 3 of 4 select codes) instead of full $[A\\,B\\,S_1\\,S_0]$ combinations.",
-        "Treating the decoder as active low (would swap the roles: $D_0$ true for 3 pairs)."
+        "Counting the constant-1 input as a single row instead of all four $(A, B)$ rows.",
+        "Counting the unconnected outputs $D_1, D_2$: they reach nothing."
       ],
-      "verification": "$Y = S_1\\bar S_0 + \\bar S_1 \\bar S_0 \\bar A \\bar B + S_1 S_0 AB$: the three terms are disjoint with $4 + 1 + 1 = 6$ minterms out of 16.",
+      "verification": "The netlist (DEC on $A, B$; MUX with data $D_0$, 0, 1, $D_3$) simulated over all 16 rows gives $Y = 1$ on exactly 6.",
       "animation": {
         "kind": "table",
-        "title": "Y = 1 combinations by select value",
+        "title": "Rows with Y = 1 per select value",
         "cols": [
-          "S1 S0",
-          "M passes",
-          "Y as f(A,B)",
-          "# (A,B) with Y=1"
+          "S₁S₀",
+          "data passed",
+          "rows of (A, B) with Y = 1"
         ],
         "rows": [
           [
             "00",
-            "D0",
-            "A′B′",
+            "D0 = A′B′",
             1
           ],
           [
             "01",
-            "0",
             "0",
             0
           ],
           [
             "10",
             "1",
-            "1",
             4
           ],
           [
             "11",
-            "D3",
-            "AB",
+            "D3 = AB",
             1
           ]
         ],
-        "reveal": 0
+        "mono": true
       }
     },
     "cse-2026-2-cs-50": {

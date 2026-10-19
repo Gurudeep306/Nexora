@@ -1,0 +1,975 @@
+{
+ "version": 1,
+ "title": "A 4:1 multiplexer routing the selected input to its output",
+ "width": 640,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 310
+ },
+ "intro": "A 4:1 MUX with data inputs I0 I1 I2 I3 = 0 1 1 0. The select lines S1 S0 choose which input reaches Y.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 320.0,
+   "y": 22,
+   "text": "A 4:1 MUX routes one data input to Y",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "4:1 MUX routing",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "mux",
+   "type": "box",
+   "x": 260,
+   "y": 64,
+   "w": 120,
+   "h": 180,
+   "narrow": {
+    "x": 110,
+    "w": 100
+   }
+  },
+  {
+   "id": "mux-l0",
+   "type": "text",
+   "x": 265,
+   "y": 84.5,
+   "text": "I0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 115,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-l1",
+   "type": "text",
+   "x": 265,
+   "y": 125.5,
+   "text": "I1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 115,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-l2",
+   "type": "text",
+   "x": 265,
+   "y": 166.5,
+   "text": "I2",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 115,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-l3",
+   "type": "text",
+   "x": 265,
+   "y": 207.5,
+   "text": "I3",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 115,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-r0",
+   "type": "text",
+   "x": 375,
+   "y": 146.0,
+   "text": "Y",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 205,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-b0",
+   "type": "text",
+   "x": 290.0,
+   "y": 234,
+   "text": "S1",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 135.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-b1",
+   "type": "text",
+   "x": 350.0,
+   "y": 234,
+   "text": "S0",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 185.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-n",
+   "type": "text",
+   "x": 320.0,
+   "y": 50,
+   "text": "4:1 MUX",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 160.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "d0",
+   "type": "text",
+   "x": 216,
+   "y": 84.5,
+   "text": "I0 = 0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd0",
+   "type": "line",
+   "points": [
+    [
+     220,
+     84.5
+    ],
+    [
+     260,
+     84.5
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      80,
+      84.5
+     ],
+     [
+      110,
+      84.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path0",
+   "type": "line",
+   "points": [
+    [
+     288,
+     84.5
+    ],
+    [
+     354,
+     146.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      138,
+      84.5
+     ],
+     [
+      184,
+      146.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d1",
+   "type": "text",
+   "x": 216,
+   "y": 125.5,
+   "text": "I1 = 1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd1",
+   "type": "line",
+   "points": [
+    [
+     220,
+     125.5
+    ],
+    [
+     260,
+     125.5
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      80,
+      125.5
+     ],
+     [
+      110,
+      125.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path1",
+   "type": "line",
+   "points": [
+    [
+     288,
+     125.5
+    ],
+    [
+     354,
+     146.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      138,
+      125.5
+     ],
+     [
+      184,
+      146.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d2",
+   "type": "text",
+   "x": 216,
+   "y": 166.5,
+   "text": "I2 = 1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd2",
+   "type": "line",
+   "points": [
+    [
+     220,
+     166.5
+    ],
+    [
+     260,
+     166.5
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      80,
+      166.5
+     ],
+     [
+      110,
+      166.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path2",
+   "type": "line",
+   "points": [
+    [
+     288,
+     166.5
+    ],
+    [
+     354,
+     146.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      138,
+      166.5
+     ],
+     [
+      184,
+      146.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d3",
+   "type": "text",
+   "x": 216,
+   "y": 207.5,
+   "text": "I3 = 0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 76,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd3",
+   "type": "line",
+   "points": [
+    [
+     220,
+     207.5
+    ],
+    [
+     260,
+     207.5
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      80,
+      207.5
+     ],
+     [
+      110,
+      207.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "path3",
+   "type": "line",
+   "points": [
+    [
+     288,
+     207.5
+    ],
+    [
+     354,
+     146.0
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      138,
+      207.5
+     ],
+     [
+      184,
+      146.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0",
+   "type": "line",
+   "points": [
+    [
+     290.0,
+     244
+    ],
+    [
+     290.0,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      135.0,
+      244
+     ],
+     [
+      135.0,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s0",
+   "type": "text",
+   "x": 290.0,
+   "y": 280,
+   "text": "S1 = ?",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 135.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "ws1",
+   "type": "line",
+   "points": [
+    [
+     350.0,
+     244
+    ],
+    [
+     350.0,
+     266
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      185.0,
+      244
+     ],
+     [
+      185.0,
+      266
+     ]
+    ]
+   }
+  },
+  {
+   "id": "s1",
+   "type": "text",
+   "x": 350.0,
+   "y": 280,
+   "text": "S0 = ?",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 185.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wy",
+   "type": "line",
+   "points": [
+    [
+     380,
+     146.0
+    ],
+    [
+     430,
+     146.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      210,
+      146.0
+     ],
+     [
+      244,
+      146.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vy",
+   "type": "text",
+   "x": 436,
+   "y": 146.0,
+   "text": "Y",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 250,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Select S1S0 = 00: input I0 (value 0) is routed to Y, so Y = 0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1 = 0"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0 = 0"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y = 0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Select S1S0 = 01: input I1 (value 1) is routed to Y, so Y = 1.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1 = 0"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0 = 1"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Select S1S0 = 10: input I2 (value 1) is routed to Y, so Y = 1.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1 = 1"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0 = 0"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y = 1",
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Select S1S0 = 11: input I3 (value 0) is routed to Y, so Y = 0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "s0",
+     "set": {
+      "text": "S1 = 1"
+     }
+    },
+    {
+     "id": "s1",
+     "set": {
+      "text": "S0 = 1"
+     }
+    },
+    {
+     "id": "ws0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y = 0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Over the four selects Y reads 0 1 1 0: the data inputs are the truth table, so Y = S1 ⊕ S0.",
+   "patches": [
+    {
+     "id": "path0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "path3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y = S1 ⊕ S0",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

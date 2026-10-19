@@ -525,23 +525,57 @@
       "verification": "{ww^R} needs a guess for the middle of the string, so no DPDA accepts it, while an NPDA does."
     },
     "it-2004-it-10": {
-      "approach": "The ROM address is the two 8-bit operands together (16 bits), and the word is the product (at most 16 bits).",
+      "approach": "Concept tested: **the minimum ROM for a multiplier table**. Count the address bits (both operands) and the product bits; the minimum is exactly $2^{16}$ words of 16 bits, no more and no less.",
       "concepts": [
         "ROM sizing",
-        "Truth-table lookup"
+        "Multiplier ROM",
+        "Product width"
       ],
+      "given": "Store the complete truth table of an 8-bit × 8-bit multiplier in the smallest ROM.",
       "steps": [
         {
-          "title": "Address lines",
-          "body": "$8 + 8 = 16$ input bits, so $2^{16} = 64\\text{K}$ words."
+          "title": "Address bits",
+          "body": "The truth table has a row for each pair of 8-bit operands: $2^{8} \\cdot 2^{8} = 2^{16}$ rows, so 16 address bits and $64\\text{K}$ words. Fewer words (say $32\\text{K} = 2^{15}$) would leave one input bit unconnected, so two different rows would share a word.",
+          "scene": {
+            "reveal": 6
+          }
         },
         {
-          "title": "Word width",
-          "body": "Maximum product $255\\times255 = 65025 < 2^{16}$, so 16 output bits.\n\nSize: $64\\text{K}\\times16$ bits."
+          "title": "Product bits",
+          "body": "The largest product is $255^2 = 65025$; since $2^{15} \\le 65025 < 2^{16}$ it needs exactly 16 bits, and no product needs more. 32-bit words would store 16 bits that are always 0.",
+          "scene": {
+            "reveal": 9,
+            "hl": [
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "accent"
+              }
+            ]
+          }
+        },
+        {
+          "title": "Minimum size",
+          "body": "$64\\text{K} \\times 16$ bits. It is the minimum because both counts are forced: every row needs its own word, and every one of the 16 product bits is 1 for some pair and 0 for another (none is constant), and none is a copy of an input bit, so no column can be wired instead of stored.",
+          "scene": {
+            "reveal": 12,
+            "hl": [
+              {
+                "r": 1,
+                "c": 1,
+                "tone": "success"
+              },
+              {
+                "r": 2,
+                "c": 1,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "64 K × 16 bits",
+        "value": "(B) $64\\text{K} \\times 16$ bits",
         "choice": [
           "B"
         ],
@@ -551,25 +585,62 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "32K words gives only 15 address bits, but 16 are needed."
+          "reason": "$32\\text{K} = 2^{15}$ words gives 15 address bits; the two operands have 16."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "2^16 words × 16-bit product."
+          "reason": "$2^{16}$ words (both operands) of 16 bits (the largest product, 65025, needs 16)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Too few words, and the word is wider than needed."
+          "reason": "$16\\text{K} \\times 32$: only 14 address bits, and 32-bit words are twice the product width. It also has only a quarter of the 64K words needed."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "32-bit words are twice the width needed for a 16-bit product."
+          "reason": "$64\\text{K} \\times 32$ works but is not minimum: the upper 16 bits of every word would always be 0."
         }
       ],
-      "verification": "n × n bit multiplier → 2^(2n) × 2n ROM; n = 8 gives 2^16 × 16."
+      "shortcut": "$n \\times n$ multiplier: $2^{2n} \\times 2n$. Here $2^{16} \\times 16 = 64\\text{K} \\times 16$.",
+      "pitfalls": [
+        "Doubling the width twice (32 bits): the product of two 8-bit numbers is 16 bits, not 32.",
+        "Taking $2^{15}$ words because the largest product is below $2^{16}$: that confuses the address (inputs) with the data (outputs)."
+      ],
+      "verification": "Total $2^{16} \\cdot 16 = 2^{20}$ bits = 1 Mbit; option D would be 2 Mbit with half of it constant 0.",
+      "animation": {
+        "kind": "table",
+        "title": "Minimum ROM for an 8-bit × 8-bit multiplier",
+        "cols": [
+          "Quantity",
+          "Count",
+          "Why"
+        ],
+        "rows": [
+          [
+            "Address bits",
+            16,
+            "8 + 8 (both operands)"
+          ],
+          [
+            "Words",
+            65536,
+            "2^16"
+          ],
+          [
+            "Bits per word",
+            16,
+            "largest product 65025 has 16 bits"
+          ],
+          [
+            "Total bits",
+            1048576,
+            "65536 × 16"
+          ]
+        ],
+        "reveal": 0
+      }
     },
     "it-2004-it-11": {
       "approach": "Characters are drawn only during the active part of the sweep (sweep time − retrace). Bit rate = bits per line ÷ active time.",

@@ -1,0 +1,1839 @@
+{
+ "version": 1,
+ "title": "An 8-to-1 multiplexer from two enabled 4-to-1 multiplexers",
+ "width": 680,
+ "height": 500,
+ "narrow": {
+  "width": 360,
+  "height": 510
+ },
+ "intro": "Two 4:1 MUXes with enable inputs: MUX A holds I0–I3, MUX B holds I4–I7. S2 picks the MUX through the enables; an OR joins the outputs.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "An 8:1 MUX from two 4:1 MUXes with enables",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "8:1 from two 4:1 MUXes",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "ma",
+   "type": "box",
+   "x": 250,
+   "y": 86,
+   "w": 110,
+   "h": 140,
+   "narrow": {
+    "x": 120,
+    "w": 92
+   }
+  },
+  {
+   "id": "ma-l0",
+   "type": "text",
+   "x": 255,
+   "y": 101.5,
+   "text": "I0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-l1",
+   "type": "text",
+   "x": 255,
+   "y": 132.5,
+   "text": "I1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-l2",
+   "type": "text",
+   "x": 255,
+   "y": 163.5,
+   "text": "I2",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-l3",
+   "type": "text",
+   "x": 255,
+   "y": 194.5,
+   "text": "I3",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-r0",
+   "type": "text",
+   "x": 355,
+   "y": 148.0,
+   "text": "Y",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 207,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-b0",
+   "type": "text",
+   "x": 305.0,
+   "y": 216,
+   "text": "S1 S0",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 166.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-t0",
+   "type": "text",
+   "x": 305.0,
+   "y": 96,
+   "text": "EN",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 166.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-n",
+   "type": "text",
+   "x": 309.0,
+   "y": 152.0,
+   "text": "MUX A",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 170.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "d0",
+   "type": "text",
+   "x": 214,
+   "y": 101.5,
+   "text": "I0 = 0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 94,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd0",
+   "type": "line",
+   "points": [
+    [
+     218,
+     101.5
+    ],
+    [
+     250,
+     101.5
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      98,
+      101.5
+     ],
+     [
+      120,
+      101.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d1",
+   "type": "text",
+   "x": 214,
+   "y": 132.5,
+   "text": "I1 = 1",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 94,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd1",
+   "type": "line",
+   "points": [
+    [
+     218,
+     132.5
+    ],
+    [
+     250,
+     132.5
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      98,
+      132.5
+     ],
+     [
+      120,
+      132.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d2",
+   "type": "text",
+   "x": 214,
+   "y": 163.5,
+   "text": "I2 = 1",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 94,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd2",
+   "type": "line",
+   "points": [
+    [
+     218,
+     163.5
+    ],
+    [
+     250,
+     163.5
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      98,
+      163.5
+     ],
+     [
+      120,
+      163.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d3",
+   "type": "text",
+   "x": 214,
+   "y": 194.5,
+   "text": "I3 = 0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 94,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd3",
+   "type": "line",
+   "points": [
+    [
+     218,
+     194.5
+    ],
+    [
+     250,
+     194.5
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      98,
+      194.5
+     ],
+     [
+      120,
+      194.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wena",
+   "type": "line",
+   "points": [
+    [
+     305.0,
+     70
+    ],
+    [
+     305.0,
+     86
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166.0,
+      70
+     ],
+     [
+      166.0,
+      86
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ena",
+   "type": "text",
+   "x": 305.0,
+   "y": 60,
+   "text": "EN = S2′",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 166.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb",
+   "type": "box",
+   "x": 250,
+   "y": 276,
+   "w": 110,
+   "h": 140,
+   "narrow": {
+    "x": 120,
+    "y": 286,
+    "w": 92
+   }
+  },
+  {
+   "id": "mb-l0",
+   "type": "text",
+   "x": 255,
+   "y": 291.5,
+   "text": "I0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "y": 301.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb-l1",
+   "type": "text",
+   "x": 255,
+   "y": 322.5,
+   "text": "I1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "y": 332.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb-l2",
+   "type": "text",
+   "x": 255,
+   "y": 353.5,
+   "text": "I2",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "y": 363.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb-l3",
+   "type": "text",
+   "x": 255,
+   "y": 384.5,
+   "text": "I3",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 125,
+    "y": 394.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb-r0",
+   "type": "text",
+   "x": 355,
+   "y": 338.0,
+   "text": "Y",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 207,
+    "y": 348.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb-b0",
+   "type": "text",
+   "x": 305.0,
+   "y": 406,
+   "text": "S1 S0",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 166.0,
+    "y": 416,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb-t0",
+   "type": "text",
+   "x": 305.0,
+   "y": 286,
+   "text": "EN",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 166.0,
+    "y": 296,
+    "size": 12
+   }
+  },
+  {
+   "id": "mb-n",
+   "type": "text",
+   "x": 309.0,
+   "y": 342.0,
+   "text": "MUX B",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 170.0,
+    "y": 352.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "d4",
+   "type": "text",
+   "x": 214,
+   "y": 291.5,
+   "text": "I4 = 1",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 94,
+    "y": 301.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd4",
+   "type": "line",
+   "points": [
+    [
+     218,
+     291.5
+    ],
+    [
+     250,
+     291.5
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      98,
+      301.5
+     ],
+     [
+      120,
+      301.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d5",
+   "type": "text",
+   "x": 214,
+   "y": 322.5,
+   "text": "I5 = 0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 94,
+    "y": 332.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd5",
+   "type": "line",
+   "points": [
+    [
+     218,
+     322.5
+    ],
+    [
+     250,
+     322.5
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      98,
+      332.5
+     ],
+     [
+      120,
+      332.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d6",
+   "type": "text",
+   "x": 214,
+   "y": 353.5,
+   "text": "I6 = 0",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 94,
+    "y": 363.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd6",
+   "type": "line",
+   "points": [
+    [
+     218,
+     353.5
+    ],
+    [
+     250,
+     353.5
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      98,
+      363.5
+     ],
+     [
+      120,
+      363.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d7",
+   "type": "text",
+   "x": 214,
+   "y": 384.5,
+   "text": "I7 = 1",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "tone": "success",
+   "narrow": {
+    "x": 94,
+    "y": 394.5,
+    "size": 12
+   }
+  },
+  {
+   "id": "wd7",
+   "type": "line",
+   "points": [
+    [
+     218,
+     384.5
+    ],
+    [
+     250,
+     384.5
+    ]
+   ],
+   "tone": "success",
+   "narrow": {
+    "points": [
+     [
+      98,
+      394.5
+     ],
+     [
+      120,
+      394.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wenb",
+   "type": "line",
+   "points": [
+    [
+     305.0,
+     260
+    ],
+    [
+     305.0,
+     276
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      166.0,
+      270
+     ],
+     [
+      166.0,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "enb",
+   "type": "text",
+   "x": 305.0,
+   "y": 250,
+   "text": "EN = S2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 166.0,
+    "y": 260,
+    "size": 12
+   }
+  },
+  {
+   "id": "or",
+   "type": "gate",
+   "x": 470,
+   "y": 208.0,
+   "w": 56,
+   "h": 70,
+   "kind": "or",
+   "narrow": {
+    "x": 250,
+    "y": 213.0,
+    "w": 46
+   }
+  },
+  {
+   "id": "wya",
+   "type": "line",
+   "points": [
+    [
+     360,
+     148.0
+    ],
+    [
+     420,
+     148.0
+    ],
+    [
+     420,
+     231.33
+    ],
+    [
+     476.22,
+     231.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      212,
+      148.0
+     ],
+     [
+      230,
+      148.0
+     ],
+     [
+      230,
+      236.33
+     ],
+     [
+      255.11,
+      236.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wyb",
+   "type": "line",
+   "points": [
+    [
+     360,
+     338.0
+    ],
+    [
+     430,
+     338.0
+    ],
+    [
+     430,
+     254.67
+    ],
+    [
+     476.22,
+     254.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      212,
+      348.0
+     ],
+     [
+      238,
+      348.0
+     ],
+     [
+      238,
+      259.67
+     ],
+     [
+      255.11,
+      259.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vya",
+   "type": "text",
+   "x": 390,
+   "y": 136.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 226,
+    "size": 12
+   }
+  },
+  {
+   "id": "vyb",
+   "type": "text",
+   "x": 390,
+   "y": 350.0,
+   "text": "",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 226,
+    "y": 360.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wy",
+   "type": "line",
+   "points": [
+    [
+     526.0,
+     243.0
+    ],
+    [
+     550.0,
+     243.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      296.0,
+      248.0
+     ],
+     [
+      314.0,
+      248.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vy",
+   "type": "text",
+   "x": 556.0,
+   "y": 243.0,
+   "text": "Y",
+   "size": 15,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 276.0,
+    "y": 300.0,
+    "size": 13,
+    "anchor": "middle"
+   }
+  },
+  {
+   "id": "sel",
+   "type": "text",
+   "x": 340.0,
+   "y": 472,
+   "text": "S1 S0 go to both MUXes",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 482,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Two 4:1 MUXes share S1 S0. MUX A takes I0–I3 and is enabled by S2′; MUX B takes I4–I7 and is enabled by S2.",
+   "patches": [
+    {
+     "id": "ena",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "enb",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S2 S1 S0 = 010: S2 = 0 enables MUX A, which passes its input 2 (I2 = 1); MUX B outputs 0. Y = 1.",
+   "patches": [
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "accent",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd4",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd5",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd6",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd7",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "opacity": 1,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d4",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d5",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d6",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d7",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ena",
+     "set": {
+      "text": "EN = S2′ = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "enb",
+     "set": {
+      "text": "EN = S2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wena",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wenb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wya",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wyb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vya",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vyb",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "S2 S1 S0 = 010 → I2"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S2 S1 S0 = 110: S2 = 1 enables MUX B, which passes its input 2 (I6 = 0); MUX A outputs 0. Y = 0.",
+   "patches": [
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd4",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd5",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd6",
+     "set": {
+      "tone": "accent",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd7",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d4",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d5",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d6",
+     "set": {
+      "opacity": 1,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d7",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "mb",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ena",
+     "set": {
+      "text": "EN = S2′ = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "enb",
+     "set": {
+      "text": "EN = S2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wena",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wenb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wya",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wyb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vya",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vyb",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "S2 S1 S0 = 110 → I6"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S2 S1 S0 = 101: S2 = 1 enables MUX B, which passes its input 1 (I5 = 0); MUX A outputs 0. Y = 0.",
+   "patches": [
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd4",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd5",
+     "set": {
+      "tone": "accent",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd6",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd7",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d4",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d5",
+     "set": {
+      "opacity": 1,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d6",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d7",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "mb",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ena",
+     "set": {
+      "text": "EN = S2′ = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "enb",
+     "set": {
+      "text": "EN = S2 = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wena",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wenb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wya",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wyb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vya",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vyb",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "S2 S1 S0 = 101 → I5"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "S2 S1 S0 = 011: S2 = 0 enables MUX A, which passes its input 3 (I3 = 0); MUX B outputs 0. Y = 0.",
+   "patches": [
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "accent",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd4",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd5",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd6",
+     "set": {
+      "tone": "muted",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "wd7",
+     "set": {
+      "tone": "success",
+      "opacity": 0.35
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "opacity": 1,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d4",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d5",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d6",
+     "set": {
+      "opacity": 0.35,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d7",
+     "set": {
+      "opacity": 0.35,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ena",
+     "set": {
+      "text": "EN = S2′ = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "enb",
+     "set": {
+      "text": "EN = S2 = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wena",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wenb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wya",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wyb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vya",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vyb",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wy",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vy",
+     "set": {
+      "text": "Y=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "S2 S1 S0 = 011 → I3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Y = S2′·MUX A + S2·MUX B: a disabled MUX outputs 0, so the OR passes the enabled one. Two 4:1 MUXes and an OR make an 8:1.",
+   "patches": [
+    {
+     "id": "wd0",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd1",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd2",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd3",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd4",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd5",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd6",
+     "set": {
+      "tone": "muted",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "wd7",
+     "set": {
+      "tone": "success",
+      "opacity": 1
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d4",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d5",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d6",
+     "set": {
+      "opacity": 1,
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d7",
+     "set": {
+      "opacity": 1,
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mb",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "sel",
+     "set": {
+      "text": "8:1 = two 4:1 + OR"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1276 @@
+{
+ "version": 1,
+ "title": "Injecting a stuck-at-1 fault and finding the test vector",
+ "width": 660,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 580
+ },
+ "intro": "Two copies of the circuit p = (AB)′, f = (p·C)′. The lower copy has line p stuck at 1. Every input row is applied to both copies.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 22,
+   "text": "Stuck-at-1 on line p (GATE 1994): which input detects it?",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "p stuck-at-1 (1994)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "Gt",
+   "type": "text",
+   "x": 160,
+   "y": 54,
+   "text": "good circuit",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "tone": "ink",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "GiA",
+   "type": "text",
+   "x": 56,
+   "y": 84,
+   "text": "A=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "size": 12
+   }
+  },
+  {
+   "id": "GiB",
+   "type": "text",
+   "x": 56,
+   "y": 112,
+   "text": "B=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "size": 12
+   }
+  },
+  {
+   "id": "GiC",
+   "type": "text",
+   "x": 56,
+   "y": 154,
+   "text": "C=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "size": 12
+   }
+  },
+  {
+   "id": "Gg1",
+   "type": "gate",
+   "x": 110,
+   "y": 78,
+   "w": 50,
+   "h": 40,
+   "kind": "nand"
+  },
+  {
+   "id": "GwA",
+   "type": "line",
+   "points": [
+    [
+     60,
+     84
+    ],
+    [
+     86,
+     84
+    ],
+    [
+     86,
+     91.33
+    ],
+    [
+     110.0,
+     91.33
+    ]
+   ]
+  },
+  {
+   "id": "GwB",
+   "type": "line",
+   "points": [
+    [
+     60,
+     112
+    ],
+    [
+     94,
+     112
+    ],
+    [
+     94,
+     104.67
+    ],
+    [
+     110.0,
+     104.67
+    ]
+   ]
+  },
+  {
+   "id": "Gg2",
+   "type": "gate",
+   "x": 210,
+   "y": 102,
+   "w": 50,
+   "h": 44,
+   "kind": "nand"
+  },
+  {
+   "id": "Gwp",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     98.0
+    ],
+    [
+     182,
+     98.0
+    ],
+    [
+     182,
+     116.67
+    ],
+    [
+     210.0,
+     116.67
+    ]
+   ]
+  },
+  {
+   "id": "GwC",
+   "type": "line",
+   "points": [
+    [
+     60,
+     154
+    ],
+    [
+     194,
+     154
+    ],
+    [
+     194,
+     131.33
+    ],
+    [
+     210.0,
+     131.33
+    ]
+   ]
+  },
+  {
+   "id": "Gvp",
+   "type": "text",
+   "x": 180,
+   "y": 82,
+   "text": "p",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "size": 12
+   }
+  },
+  {
+   "id": "Gwf",
+   "type": "line",
+   "points": [
+    [
+     260.0,
+     124.0
+    ],
+    [
+     276.0,
+     124.0
+    ]
+   ]
+  },
+  {
+   "id": "Gvf",
+   "type": "text",
+   "x": 282.0,
+   "y": 124.0,
+   "text": "f",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "Ft",
+   "type": "text",
+   "x": 160,
+   "y": 200,
+   "text": "faulty: p stuck-at-1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "tone": "danger",
+   "narrow": {
+    "y": 194,
+    "size": 13
+   }
+  },
+  {
+   "id": "FiA",
+   "type": "text",
+   "x": 56,
+   "y": 230,
+   "text": "A=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "y": 224,
+    "size": 12
+   }
+  },
+  {
+   "id": "FiB",
+   "type": "text",
+   "x": 56,
+   "y": 258,
+   "text": "B=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "y": 252,
+    "size": 12
+   }
+  },
+  {
+   "id": "FiC",
+   "type": "text",
+   "x": 56,
+   "y": 300,
+   "text": "C=?",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "y": 294,
+    "size": 12
+   }
+  },
+  {
+   "id": "Fg1",
+   "type": "gate",
+   "x": 110,
+   "y": 224,
+   "w": 50,
+   "h": 40,
+   "kind": "nand",
+   "narrow": {
+    "y": 218
+   }
+  },
+  {
+   "id": "FwA",
+   "type": "line",
+   "points": [
+    [
+     60,
+     230
+    ],
+    [
+     86,
+     230
+    ],
+    [
+     86,
+     237.33
+    ],
+    [
+     110.0,
+     237.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      60,
+      224
+     ],
+     [
+      86,
+      224
+     ],
+     [
+      86,
+      231.33
+     ],
+     [
+      110.0,
+      231.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "FwB",
+   "type": "line",
+   "points": [
+    [
+     60,
+     258
+    ],
+    [
+     94,
+     258
+    ],
+    [
+     94,
+     250.67
+    ],
+    [
+     110.0,
+     250.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      60,
+      252
+     ],
+     [
+      94,
+      252
+     ],
+     [
+      94,
+      244.67
+     ],
+     [
+      110.0,
+      244.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "Fg2",
+   "type": "gate",
+   "x": 210,
+   "y": 248,
+   "w": 50,
+   "h": 44,
+   "kind": "nand",
+   "narrow": {
+    "y": 242
+   }
+  },
+  {
+   "id": "Fwp",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     244.0
+    ],
+    [
+     182,
+     244.0
+    ],
+    [
+     182,
+     262.67
+    ],
+    [
+     210.0,
+     262.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      160.0,
+      238.0
+     ],
+     [
+      182,
+      238.0
+     ],
+     [
+      182,
+      256.67
+     ],
+     [
+      210.0,
+      256.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "FwC",
+   "type": "line",
+   "points": [
+    [
+     60,
+     300
+    ],
+    [
+     194,
+     300
+    ],
+    [
+     194,
+     277.33
+    ],
+    [
+     210.0,
+     277.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      60,
+      294
+     ],
+     [
+      194,
+      294
+     ],
+     [
+      194,
+      271.33
+     ],
+     [
+      210.0,
+      271.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "Fvp",
+   "type": "text",
+   "x": 180,
+   "y": 228,
+   "text": "p",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "y": 222,
+    "size": 12
+   }
+  },
+  {
+   "id": "Fwf",
+   "type": "line",
+   "points": [
+    [
+     260.0,
+     270.0
+    ],
+    [
+     276.0,
+     270.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      260.0,
+      264.0
+     ],
+     [
+      276.0,
+      264.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "Fvf",
+   "type": "text",
+   "x": 282.0,
+   "y": 270.0,
+   "text": "f",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "y": 264.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 420,
+   "y": 60,
+   "cellW": 70,
+   "cellH": 22,
+   "rows": [
+    [
+     "ABC",
+     "good",
+     "faulty"
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ],
+    [
+     " ",
+     " ",
+     " "
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 75,
+    "y": 340
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 330.0,
+   "y": 344,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 560,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Rows 000–101 (A or B is 0): good p = (AB)′ = 1, the stuck value, so the fault is not activated; all 6 rows agree.",
+   "patches": [
+    {
+     "id": "GiA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GiB",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "GiC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GwA",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GwB",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "GwC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gwp",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gvp",
+     "set": {
+      "text": "p=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gwf",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Gvf",
+     "set": {
+      "text": "f=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "FiA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FiB",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "FiC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FwA",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FwB",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "FwC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Fwp",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "Fvp",
+     "set": {
+      "text": "p=1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "Fwf",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Fvf",
+     "set": {
+      "text": "f=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "ABC",
+        "good",
+        "faulty"
+       ],
+       [
+        "000",
+        "1",
+        "1"
+       ],
+       [
+        "001",
+        "0",
+        "0"
+       ],
+       [
+        "010",
+        "1",
+        "1"
+       ],
+       [
+        "011",
+        "0",
+        "0"
+       ],
+       [
+        "100",
+        "1",
+        "1"
+       ],
+       [
+        "101",
+        "0",
+        "0"
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        5,
+        0
+       ],
+       [
+        6,
+        0
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "outputs agree",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 1 1 0: good p = 0 differs from the stuck 1, but C = 0 forces f = 1 in both circuits, so nothing propagates.",
+   "patches": [
+    {
+     "id": "GiA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GiB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GiC",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "GwA",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GwB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GwC",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Gwp",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Gvp",
+     "set": {
+      "text": "p=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Gwf",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gvf",
+     "set": {
+      "text": "f=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FiA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FiB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FiC",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "FwA",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FwB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FwC",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Fwp",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "Fvp",
+     "set": {
+      "text": "p=1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "Fwf",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Fvf",
+     "set": {
+      "text": "f=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "ABC",
+        "good",
+        "faulty"
+       ],
+       [
+        "000",
+        "1",
+        "1"
+       ],
+       [
+        "001",
+        "0",
+        "0"
+       ],
+       [
+        "010",
+        "1",
+        "1"
+       ],
+       [
+        "011",
+        "0",
+        "0"
+       ],
+       [
+        "100",
+        "1",
+        "1"
+       ],
+       [
+        "101",
+        "0",
+        "0"
+       ],
+       [
+        "110",
+        "1",
+        "1"
+       ],
+       [
+        " ",
+        " ",
+        " "
+       ]
+      ],
+      "highlight": [
+       [
+        7,
+        0
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "outputs agree",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A B C = 1 1 1: good p = 0, f = (0·1)′ = 1; faulty p = 1, f = (1·1)′ = 0. The outputs differ: a test.",
+   "patches": [
+    {
+     "id": "GiA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GiB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GiC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GwA",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GwB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "GwC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gwp",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Gvp",
+     "set": {
+      "text": "p=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Gwf",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gvf",
+     "set": {
+      "text": "f=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FiA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FiB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FiC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FwA",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FwB",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "FwC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Fwp",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "Fvp",
+     "set": {
+      "text": "p=1",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "Fwf",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Fvf",
+     "set": {
+      "text": "f=0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "ABC",
+        "good",
+        "faulty"
+       ],
+       [
+        "000",
+        "1",
+        "1"
+       ],
+       [
+        "001",
+        "0",
+        "0"
+       ],
+       [
+        "010",
+        "1",
+        "1"
+       ],
+       [
+        "011",
+        "0",
+        "0"
+       ],
+       [
+        "100",
+        "1",
+        "1"
+       ],
+       [
+        "101",
+        "0",
+        "0"
+       ],
+       [
+        "110",
+        "1",
+        "1"
+       ],
+       [
+        "111",
+        "1",
+        "0"
+       ]
+      ],
+      "highlight": [
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "outputs differ: fault detected",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Only 111 differs: A = B = 1 activates (good p = 0), C = 1 propagates. That one vector is the test.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        8,
+        0
+       ],
+       [
+        8,
+        1
+       ],
+       [
+        8,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "test vector: A = B = C = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

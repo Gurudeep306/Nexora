@@ -1,0 +1,1524 @@
+{
+ "version": 1,
+ "title": "Binary to Gray and Gray to binary converters",
+ "width": 700,
+ "height": 300,
+ "narrow": {
+  "width": 360,
+  "height": 548
+ },
+ "intro": "First: a binary → Gray converter (three independent XORs). Second: a Gray → binary converter (a ripple of XORs). The input is 1011.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Binary → Gray and back, bit by bit (input 1011)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Binary ↔ Gray (1011)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 170,
+   "y": 46,
+   "text": "binary → Gray: gᵢ = bᵢ₊₁ ⊕ bᵢ",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "nb3",
+   "type": "text",
+   "x": 32,
+   "y": 80,
+   "text": "b3",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "b3",
+   "type": "box",
+   "x": 38,
+   "y": 67,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "?",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "g3",
+   "type": "box",
+   "x": 290,
+   "y": 67,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "ng3",
+   "type": "text",
+   "x": 326,
+   "y": 80,
+   "text": "g3",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "nb2",
+   "type": "text",
+   "x": 32,
+   "y": 132,
+   "text": "b2",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "b2",
+   "type": "box",
+   "x": 38,
+   "y": 119,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "?",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "g2",
+   "type": "box",
+   "x": 290,
+   "y": 119,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "ng2",
+   "type": "text",
+   "x": 326,
+   "y": 132,
+   "text": "g2",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "nb1",
+   "type": "text",
+   "x": 32,
+   "y": 184,
+   "text": "b1",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "b1",
+   "type": "box",
+   "x": 38,
+   "y": 171,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "?",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "g1",
+   "type": "box",
+   "x": 290,
+   "y": 171,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "ng1",
+   "type": "text",
+   "x": 326,
+   "y": 184,
+   "text": "g1",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "nb0",
+   "type": "text",
+   "x": 32,
+   "y": 236,
+   "text": "b0",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "b0",
+   "type": "box",
+   "x": 38,
+   "y": 223,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "?",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "g0",
+   "type": "box",
+   "x": 290,
+   "y": 223,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "ng0",
+   "type": "text",
+   "x": 326,
+   "y": 236,
+   "text": "g0",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "size": 13
+   }
+  },
+  {
+   "id": "xg2",
+   "type": "gate",
+   "x": 160,
+   "y": 104,
+   "w": 40,
+   "h": 42,
+   "kind": "xor"
+  },
+  {
+   "id": "bus2",
+   "type": "line",
+   "points": [
+    [
+     68,
+     132
+    ],
+    [
+     163.82,
+     132.0
+    ]
+   ]
+  },
+  {
+   "id": "tap2",
+   "type": "line",
+   "points": [
+    [
+     110,
+     80
+    ],
+    [
+     110,
+     118.0
+    ],
+    [
+     163.82,
+     118.0
+    ]
+   ]
+  },
+  {
+   "id": "jt2",
+   "type": "circle",
+   "cx": 110,
+   "cy": 80,
+   "r": 3,
+   "fill": "ink"
+  },
+  {
+   "id": "og2",
+   "type": "line",
+   "points": [
+    [
+     200.0,
+     125.0
+    ],
+    [
+     276,
+     125.0
+    ],
+    [
+     276,
+     132
+    ],
+    [
+     290,
+     132
+    ]
+   ]
+  },
+  {
+   "id": "xg1",
+   "type": "gate",
+   "x": 160,
+   "y": 156,
+   "w": 40,
+   "h": 42,
+   "kind": "xor"
+  },
+  {
+   "id": "bus1",
+   "type": "line",
+   "points": [
+    [
+     68,
+     184
+    ],
+    [
+     163.82,
+     184.0
+    ]
+   ]
+  },
+  {
+   "id": "tap1",
+   "type": "line",
+   "points": [
+    [
+     110,
+     132
+    ],
+    [
+     110,
+     170.0
+    ],
+    [
+     163.82,
+     170.0
+    ]
+   ]
+  },
+  {
+   "id": "jt1",
+   "type": "circle",
+   "cx": 110,
+   "cy": 132,
+   "r": 3,
+   "fill": "ink"
+  },
+  {
+   "id": "og1",
+   "type": "line",
+   "points": [
+    [
+     200.0,
+     177.0
+    ],
+    [
+     276,
+     177.0
+    ],
+    [
+     276,
+     184
+    ],
+    [
+     290,
+     184
+    ]
+   ]
+  },
+  {
+   "id": "xg0",
+   "type": "gate",
+   "x": 160,
+   "y": 208,
+   "w": 40,
+   "h": 42,
+   "kind": "xor"
+  },
+  {
+   "id": "bus0",
+   "type": "line",
+   "points": [
+    [
+     68,
+     236
+    ],
+    [
+     163.82,
+     236.0
+    ]
+   ]
+  },
+  {
+   "id": "tap0",
+   "type": "line",
+   "points": [
+    [
+     110,
+     184
+    ],
+    [
+     110,
+     222.0
+    ],
+    [
+     163.82,
+     222.0
+    ]
+   ]
+  },
+  {
+   "id": "jt0",
+   "type": "circle",
+   "cx": 110,
+   "cy": 184,
+   "r": 3,
+   "fill": "ink"
+  },
+  {
+   "id": "og0",
+   "type": "line",
+   "points": [
+    [
+     200.0,
+     229.0
+    ],
+    [
+     276,
+     229.0
+    ],
+    [
+     276,
+     236
+    ],
+    [
+     290,
+     236
+    ]
+   ]
+  },
+  {
+   "id": "bus3",
+   "type": "line",
+   "points": [
+    [
+     68,
+     80
+    ],
+    [
+     290,
+     80
+    ]
+   ]
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 520,
+   "y": 46,
+   "text": "Gray → binary: bᵢ = bᵢ₊₁ ⊕ gᵢ",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 170,
+    "y": 296,
+    "size": 13
+   }
+  },
+  {
+   "id": "nG3",
+   "type": "text",
+   "x": 382,
+   "y": 80,
+   "text": "g3",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 330,
+    "size": 13
+   }
+  },
+  {
+   "id": "G3",
+   "type": "box",
+   "x": 388,
+   "y": 67,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 38,
+    "y": 317,
+    "size": 13
+   }
+  },
+  {
+   "id": "R3",
+   "type": "box",
+   "x": 640,
+   "y": 67,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 290,
+    "y": 317,
+    "size": 13
+   }
+  },
+  {
+   "id": "nR3",
+   "type": "text",
+   "x": 676,
+   "y": 80,
+   "text": "b3",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 326,
+    "y": 330,
+    "size": 13
+   }
+  },
+  {
+   "id": "nG2",
+   "type": "text",
+   "x": 382,
+   "y": 132,
+   "text": "g2",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 382,
+    "size": 13
+   }
+  },
+  {
+   "id": "G2",
+   "type": "box",
+   "x": 388,
+   "y": 119,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 38,
+    "y": 369,
+    "size": 13
+   }
+  },
+  {
+   "id": "R2",
+   "type": "box",
+   "x": 640,
+   "y": 119,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 290,
+    "y": 369,
+    "size": 13
+   }
+  },
+  {
+   "id": "nR2",
+   "type": "text",
+   "x": 676,
+   "y": 132,
+   "text": "b2",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 326,
+    "y": 382,
+    "size": 13
+   }
+  },
+  {
+   "id": "nG1",
+   "type": "text",
+   "x": 382,
+   "y": 184,
+   "text": "g1",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 434,
+    "size": 13
+   }
+  },
+  {
+   "id": "G1",
+   "type": "box",
+   "x": 388,
+   "y": 171,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 38,
+    "y": 421,
+    "size": 13
+   }
+  },
+  {
+   "id": "R1",
+   "type": "box",
+   "x": 640,
+   "y": 171,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 290,
+    "y": 421,
+    "size": 13
+   }
+  },
+  {
+   "id": "nR1",
+   "type": "text",
+   "x": 676,
+   "y": 184,
+   "text": "b1",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 326,
+    "y": 434,
+    "size": 13
+   }
+  },
+  {
+   "id": "nG0",
+   "type": "text",
+   "x": 382,
+   "y": 236,
+   "text": "g0",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "narrow": {
+    "x": 32,
+    "y": 486,
+    "size": 13
+   }
+  },
+  {
+   "id": "G0",
+   "type": "box",
+   "x": 388,
+   "y": 223,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 38,
+    "y": 473,
+    "size": 13
+   }
+  },
+  {
+   "id": "R0",
+   "type": "box",
+   "x": 640,
+   "y": 223,
+   "w": 30,
+   "h": 26,
+   "mono": true,
+   "label": "",
+   "size": 14,
+   "narrow": {
+    "x": 290,
+    "y": 473,
+    "size": 13
+   }
+  },
+  {
+   "id": "nR0",
+   "type": "text",
+   "x": 676,
+   "y": 236,
+   "text": "b0",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 326,
+    "y": 486,
+    "size": 13
+   }
+  },
+  {
+   "id": "xr2",
+   "type": "gate",
+   "x": 456,
+   "y": 104,
+   "w": 40,
+   "h": 42,
+   "kind": "xor",
+   "narrow": {
+    "x": 106,
+    "y": 354
+   }
+  },
+  {
+   "id": "Gbus2",
+   "type": "line",
+   "points": [
+    [
+     418,
+     132
+    ],
+    [
+     459.82,
+     132.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      68,
+      382
+     ],
+     [
+      109.82,
+      382.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rtap2",
+   "type": "line",
+   "points": [
+    [
+     440,
+     80
+    ],
+    [
+     440,
+     118.0
+    ],
+    [
+     459.82,
+     118.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      90,
+      330
+     ],
+     [
+      90,
+      368.0
+     ],
+     [
+      109.82,
+      368.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jr2",
+   "type": "circle",
+   "cx": 440,
+   "cy": 80,
+   "r": 3,
+   "fill": "ink",
+   "narrow": {
+    "cx": 90,
+    "cy": 330
+   }
+  },
+  {
+   "id": "or2",
+   "type": "line",
+   "points": [
+    [
+     496.0,
+     125.0
+    ],
+    [
+     626,
+     125.0
+    ],
+    [
+     626,
+     132
+    ],
+    [
+     640,
+     132
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      146.0,
+      375.0
+     ],
+     [
+      276,
+      375.0
+     ],
+     [
+      276,
+      382
+     ],
+     [
+      290,
+      382
+     ]
+    ]
+   }
+  },
+  {
+   "id": "xr1",
+   "type": "gate",
+   "x": 516,
+   "y": 156,
+   "w": 40,
+   "h": 42,
+   "kind": "xor",
+   "narrow": {
+    "x": 166,
+    "y": 406
+   }
+  },
+  {
+   "id": "Gbus1",
+   "type": "line",
+   "points": [
+    [
+     418,
+     184
+    ],
+    [
+     519.82,
+     184.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      68,
+      434
+     ],
+     [
+      169.82,
+      434.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rtap1",
+   "type": "line",
+   "points": [
+    [
+     506.0,
+     125.0
+    ],
+    [
+     506.0,
+     170.0
+    ],
+    [
+     519.82,
+     170.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      156.0,
+      375.0
+     ],
+     [
+      156.0,
+      420.0
+     ],
+     [
+      169.82,
+      420.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jr1",
+   "type": "circle",
+   "cx": 506.0,
+   "cy": 125.0,
+   "r": 3,
+   "fill": "ink",
+   "narrow": {
+    "cx": 156.0,
+    "cy": 375.0
+   }
+  },
+  {
+   "id": "or1",
+   "type": "line",
+   "points": [
+    [
+     556.0,
+     177.0
+    ],
+    [
+     626,
+     177.0
+    ],
+    [
+     626,
+     184
+    ],
+    [
+     640,
+     184
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      206.0,
+      427.0
+     ],
+     [
+      276,
+      427.0
+     ],
+     [
+      276,
+      434
+     ],
+     [
+      290,
+      434
+     ]
+    ]
+   }
+  },
+  {
+   "id": "xr0",
+   "type": "gate",
+   "x": 576,
+   "y": 208,
+   "w": 40,
+   "h": 42,
+   "kind": "xor",
+   "narrow": {
+    "x": 226,
+    "y": 458
+   }
+  },
+  {
+   "id": "Gbus0",
+   "type": "line",
+   "points": [
+    [
+     418,
+     236
+    ],
+    [
+     579.82,
+     236.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      68,
+      486
+     ],
+     [
+      229.82,
+      486.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rtap0",
+   "type": "line",
+   "points": [
+    [
+     566.0,
+     177.0
+    ],
+    [
+     566.0,
+     222.0
+    ],
+    [
+     579.82,
+     222.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      216.0,
+      427.0
+     ],
+     [
+      216.0,
+      472.0
+     ],
+     [
+      229.82,
+      472.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jr0",
+   "type": "circle",
+   "cx": 566.0,
+   "cy": 177.0,
+   "r": 3,
+   "fill": "ink",
+   "narrow": {
+    "cx": 216.0,
+    "cy": 427.0
+   }
+  },
+  {
+   "id": "or0",
+   "type": "line",
+   "points": [
+    [
+     616.0,
+     229.0
+    ],
+    [
+     626,
+     229.0
+    ],
+    [
+     626,
+     236
+    ],
+    [
+     640,
+     236
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      266.0,
+      479.0
+     ],
+     [
+      276,
+      479.0
+     ],
+     [
+      276,
+      486
+     ],
+     [
+      290,
+      486
+     ]
+    ]
+   }
+  },
+  {
+   "id": "Gbus3",
+   "type": "line",
+   "points": [
+    [
+     418,
+     80
+    ],
+    [
+     640,
+     80
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      68,
+      330
+     ],
+     [
+      290,
+      330
+     ]
+    ]
+   }
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 350.0,
+   "y": 280,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 528,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The binary input b3 b2 b1 b0 = 1011 enters. Each Gray bit XORs two neighbouring binary bits; the three XORs work at once.",
+   "patches": [
+    {
+     "id": "b0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "b1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "b2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "b3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "bus0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "bus1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "bus2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "bus3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tap0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tap1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tap2",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "g3 = b3 = 1: the MSB is copied unchanged.",
+   "patches": [
+    {
+     "id": "g3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "g2 = b3 ⊕ b2 = 1 ⊕ 0 = 1: the bits differ, so the Gray bit is 1.",
+   "patches": [
+    {
+     "id": "g2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "og2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "xg2",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "g1 = b2 ⊕ b1 = 0 ⊕ 1 = 1: the bits differ, so the Gray bit is 1.",
+   "patches": [
+    {
+     "id": "g1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "og1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "xg1",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "g0 = b1 ⊕ b0 = 1 ⊕ 1 = 0: the bits are equal, so the Gray bit is 0.",
+   "patches": [
+    {
+     "id": "g0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "og0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "xg0",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The Gray code of 1011 is 1110. To convert back, the Gray bits g3 g2 g1 g0 = 1110 enter the second circuit.",
+   "patches": [
+    {
+     "id": "G0",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "G1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "G2",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "G3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "Gbus0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "Gbus1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gbus2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "Gbus3",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rtap2",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "b3 = g3 = 1: the MSB is copied again.",
+   "patches": [
+    {
+     "id": "R3",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "b2 = b3 ⊕ g2 = 1 ⊕ 1 = 0: each binary bit needs the binary bit just found, so the decode ripples from the MSB down.",
+   "patches": [
+    {
+     "id": "R2",
+     "set": {
+      "label": "0",
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "or2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "xr2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rtap1",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "b1 = b2 ⊕ g1 = 0 ⊕ 1 = 1: each binary bit needs the binary bit just found, so the decode ripples from the MSB down.",
+   "patches": [
+    {
+     "id": "R1",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "or1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "xr1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "rtap0",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "b0 = b1 ⊕ g0 = 1 ⊕ 0 = 1: each binary bit needs the binary bit just found, so the decode ripples from the MSB down.",
+   "patches": [
+    {
+     "id": "R0",
+     "set": {
+      "label": "1",
+      "tone": "success",
+      "fill": "success"
+     }
+    },
+    {
+     "id": "or0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "xr0",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The ripple returns 1011, the original input. Binary → Gray needs no chain (each XOR is independent); Gray → binary is a chain of 3 XORs.",
+   "patches": [
+    {
+     "id": "res",
+     "set": {
+      "text": "1011 → Gray 1110 → binary 1011",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

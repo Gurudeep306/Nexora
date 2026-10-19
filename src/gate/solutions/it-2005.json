@@ -2594,23 +2594,47 @@
       "verification": "Counted S10 occurrences in the table: 7 (I1T4, I2T2, I2T5, I3T2, I3T4, I4T3, I4T5) — all covered by D’s terms."
     },
     "it-2005-cs-46": {
-      "approach": "Each line independently is fault-free, stuck-at-0 or stuck-at-1; count all $3^N$ combinations and remove the single all-fault-free one.",
+      "approach": "Concept tested: **counting multiple stuck-at faults**. In a multiple fault every line is in one of **three** states (fault-free, s-a-0, s-a-1), and at least one line must be faulty. Count all assignments of states and remove the all-fault-free one.",
       "concepts": [
-        "Stuck-at fault model",
+        "Stuck-at fault",
+        "Multiple faults",
+        "Product rule",
         "Counting"
       ],
+      "given": "A circuit with $N$ lines; a multiple stuck-at fault is one or more lines stuck at 0 or 1.",
       "steps": [
         {
-          "title": "Count",
-          "body": "3 choices per line ⇒ $3^N$ assignments. A multiple stuck-at fault needs at least one faulty line, so exclude the assignment with every line fault-free: $3^N - 1$."
+          "title": "Describe a fault line by line",
+          "body": "A (single or multiple) fault is fixed completely by saying, for each of the $N$ lines, whether it is fault-free, stuck-at-0 or stuck-at-1. Different descriptions are different faults."
         },
         {
-          "title": "Check",
-          "body": "$N=1$: faults {s-a-0, s-a-1} = 2 = $3^1-1$. ✓"
+          "title": "Count the descriptions",
+          "body": "Three choices per line, independently: $3 \\times 3 \\times \\cdots \\times 3 = 3^N$ descriptions (product rule)."
+        },
+        {
+          "title": "Remove the good circuit",
+          "body": "Exactly one description has every line fault-free; it is the good circuit, not a fault. So there are $3^N - 1$ multiple stuck-at faults.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0
+              },
+              {
+                "r": 1
+              },
+              {
+                "r": 2
+              }
+            ]
+          }
+        },
+        {
+          "title": "Cross-check by the number of faulty lines",
+          "body": "With exactly $k$ faulty lines: choose them in $\\binom{N}{k}$ ways and give each a stuck value in $2^k$ ways. $\\sum_{k=1}^{N} \\binom{N}{k}2^k = (1 + 2)^N - 1 = 3^N - 1$. For $N = 3$ (table): $6 + 12 + 8 = 26 = 3^3 - 1$."
         }
       ],
       "answer": {
-        "value": "$3^N-1$",
+        "value": "(B) $3^N - 1$",
         "choice": [
           "B"
         ],
@@ -2620,25 +2644,67 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Includes the fault-free circuit."
+          "reason": "$3^N$ includes the assignment in which every line is fault-free, which is the good circuit, not a fault."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "Three states per line, minus the all-fault-free assignment."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Counts only which lines are faulty, ignoring 0 vs 1."
+          "reason": "$2^N - 1$ gives each line only two states and so forgets that a line may be fault-free while others are stuck; for $N = 2$ it gives 3 instead of 8."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Same mistake as C, plus the empty case."
+          "reason": "$2^N$ counts only the faults in which **every** line is stuck (the $k = N$ term)."
         }
       ],
-      "verification": "$N=2$: 8 multiple faults ($3^2-1$) — 4 single + 4 double."
+      "shortcut": "Each line: healthy, 0 or 1 → $3^N$; subtract the healthy circuit → $3^N - 1$. (Single faults alone would be $2N$.)",
+      "pitfalls": [
+        "Treating a line as having only two values (0 or 1) and answering $2^N$ or $2^N - 1$.",
+        "Forgetting to subtract the all-fault-free case and answering $3^N$.",
+        "Answering $2N$, which counts single faults only."
+      ],
+      "verification": "Enumeration of all $\\{\\text{none}, 0, 1\\}^N$ assignments with at least one faulty line gives 2, 8, 26, 80 for $N = 1, 2, 3, 4$, which is $3^N - 1$ each time; $2^N$ and $2^N - 1$ already fail at $N = 2$.",
+      "animation": {
+        "kind": "table",
+        "title": "Multiple faults on N = 3 lines, by number of faulty lines",
+        "cols": [
+          "k faulty lines",
+          "choose lines",
+          "stuck values",
+          "faults"
+        ],
+        "rows": [
+          [
+            1,
+            3,
+            2,
+            6
+          ],
+          [
+            2,
+            3,
+            4,
+            12
+          ],
+          [
+            3,
+            1,
+            8,
+            8
+          ],
+          [
+            "total",
+            "",
+            "",
+            "26 = 3³ − 1"
+          ]
+        ]
+      }
     },
     "it-2005-cs-47": {
       "approach": "Concept tested: arithmetic with octal fractions. The safest route is to convert both factors to decimal (or to fractions), multiply, and convert the product back to octal; then compare with every option.",
@@ -2706,28 +2772,37 @@
       "verification": "$(1030.2)_8 = 512 + 24 + 0.25 = 536.25 = 27.5 \\times 19.5$."
     },
     "it-2005-cs-48": {
-      "approach": "The second MUX outputs x when its select is 1 and y when it is 0. Make the first MUX produce A + B on that select line, then choose x and y so the output is the complement.",
+      "approach": "Concept tested: **a MUX output driving the select of another MUX**, used to build NOR. Here control 1 selects the **upper** input. Make the first MUX compute $A + B$, then let the second MUX invert it with constants.",
       "concepts": [
-        "2:1 multiplexer",
-        "NOR gate",
-        "MUX-based logic"
+        "MUX cascade through a select",
+        "2:1 MUX as a gate",
+        "NOR"
       ],
+      "given": "MUX 1: upper $A$, lower $B$, control $z$; output $s$ drives MUX 2's control. MUX 2: upper $x$, lower $y$; output $C = \\overline{A + B}$.",
       "steps": [
         {
-          "title": "What the output MUX needs",
-          "body": "$C = s\\,x + \\bar s\\,y$ with $s$ = output of MUX 1. If $s = A + B$, then $x = 0$ and $y = 1$ give $C = \\overline{A+B}$."
+          "title": "What MUX 2 must do",
+          "body": "$C = s\\,x + \\overline{s}\\,y$. To get $C = \\overline{s}$ we need $x = 0$, $y = 1$; then $s$ must equal $A + B$."
         },
         {
-          "title": "Make MUX 1 output A + B",
-          "body": "MUX 1 gives $z\\,A + \\bar z\\,B$. Take $z = A$:\n\n$A\\cdot A + \\bar A\\,B = A + \\bar A B = A + B$."
+          "title": "Make s = A + B",
+          "body": "With $z = A$: $s = A \\cdot A + \\overline{A} B = A + \\overline{A}B = A + B$."
         },
         {
-          "title": "Check all inputs",
-          "body": "| A | B | $s$ | C |\n|---|---|---|---|\n| 0 | 0 | B = 0 | y = 1 |\n| 0 | 1 | B = 1 | x = 0 |\n| 1 | 0 | A = 1 | x = 0 |\n| 1 | 1 | A = 1 | x = 0 |\n\nThis is NOR, so $x, y, z = 0, 1, A$."
+          "title": "Combine",
+          "body": "$C = \\overline{s} = \\overline{A + B}$: $x = 0$, $y = 1$, $z = A$.",
+          "scene": {
+            "hl": [
+              {
+                "r": 0,
+                "tone": "success"
+              }
+            ]
+          }
         }
       ],
       "answer": {
-        "value": "x = 0, y = 1, z = A",
+        "value": "(D) $x = 0$, $y = 1$, $z = A$",
         "choice": [
           "D"
         ],
@@ -2737,28 +2812,67 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$x = 1, y = 0$ makes $C = s$ — an OR or AND gate, not NOR."
+          "reason": "$x = 1$, $y = 0$ makes $C = s$; with $z = B$, $s = AB + \\overline{B}B = AB$, so $C = AB$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$x = 1, y = 0$ with $z = A$ gives $C = A + B$ (OR), not NOR."
+          "reason": "$x = 1$, $y = 0$ makes $C = s = A + B$: OR, not NOR."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$z = B$ makes $s = B\\,A + \\bar B\\,B = AB$, so $C = \\overline{AB}$ (NAND)."
+          "reason": "$z = B$ gives $s = BA + \\overline{B}B = AB$, so $C = \\overline{AB}$: NAND."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: $s = A + B$ and the output MUX inverts it."
+          "reason": "$s = A + B$ and $C = \\overline{s}$."
         }
       ],
+      "shortcut": "A 2:1 MUX with constants 0 (for select 1) and 1 (for select 0) is an inverter of its select; so the first MUX must give $A + B$, which MUX$(z = A)$ with inputs $A, B$ does.",
       "pitfalls": [
-        "Choosing z = B, which gives AB on the select line and builds NAND."
+        "Using the usual \"select 0 picks the top input\" convention; this figure states that control 1 selects the upper input.",
+        "Choosing $z = B$, which makes the first MUX an AND."
       ],
-      "verification": "All four input rows were checked against the NOR truth table."
+      "verification": "Rows $AB$: 00 → $s = B = 0$ → $C = y = 1$; 01 → $s = 1$ → 0; 10 → $s = A = 1$ → 0; 11 → 0. NOR.",
+      "animation": {
+        "kind": "table",
+        "title": "NOR from two 2:1 MUXes",
+        "cols": [
+          "A",
+          "B",
+          "s",
+          "C"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0
+          ]
+        ],
+        "mono": true
+      }
     },
     "it-2005-cs-49": {
       "approach": "Horizontal microcode uses one bit per signal. Vertical microcode encodes each mutually exclusive group in ⌈log₂ n⌉ bits. The saving is the difference.",

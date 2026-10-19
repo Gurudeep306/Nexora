@@ -1,0 +1,1853 @@
+{
+ "version": 1,
+ "title": "A 6-to-64 decoder built from 3-to-8 decoders",
+ "width": 680,
+ "height": 470,
+ "narrow": {
+  "width": 360,
+  "height": 494
+ },
+ "intro": "A 6:64 decoder must be built from 3:8 decoders that have an enable input. The address is A5…A0.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "A 6:64 decoder from 3:8 decoders (9 blocks)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "6:64 from 3:8 decoders",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "lv1",
+   "type": "text",
+   "x": 165.0,
+   "y": 52,
+   "text": "level 1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 57.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "top",
+   "type": "box",
+   "x": 120,
+   "y": 70,
+   "w": 90,
+   "h": 352,
+   "narrow": {
+    "x": 20,
+    "w": 74
+   }
+  },
+  {
+   "id": "top-l0",
+   "type": "text",
+   "x": 125,
+   "y": 128.67,
+   "text": "A5",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 25,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-l1",
+   "type": "text",
+   "x": 125,
+   "y": 246.0,
+   "text": "A4",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 25,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-l2",
+   "type": "text",
+   "x": 125,
+   "y": 363.33,
+   "text": "A3",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 25,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r0",
+   "type": "text",
+   "x": 205,
+   "y": 92.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r1",
+   "type": "text",
+   "x": 205,
+   "y": 136.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r2",
+   "type": "text",
+   "x": 205,
+   "y": 180.0,
+   "text": "2",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r3",
+   "type": "text",
+   "x": 205,
+   "y": 224.0,
+   "text": "3",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r4",
+   "type": "text",
+   "x": 205,
+   "y": 268.0,
+   "text": "4",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r5",
+   "type": "text",
+   "x": 205,
+   "y": 312.0,
+   "text": "5",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r6",
+   "type": "text",
+   "x": 205,
+   "y": 356.0,
+   "text": "6",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-r7",
+   "type": "text",
+   "x": 205,
+   "y": 400.0,
+   "text": "7",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 89,
+    "size": 12
+   }
+  },
+  {
+   "id": "top-n",
+   "type": "text",
+   "x": 165.0,
+   "y": 202.0,
+   "text": "3:8",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 57.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "a0",
+   "type": "text",
+   "x": 70,
+   "y": 128.67,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     74,
+     128.67
+    ],
+    [
+     120,
+     128.67
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "a1",
+   "type": "text",
+   "x": 70,
+   "y": 246.0,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     74,
+     246.0
+    ],
+    [
+     120,
+     246.0
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "a2",
+   "type": "text",
+   "x": 70,
+   "y": 363.33,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "wa2",
+   "type": "line",
+   "points": [
+    [
+     74,
+     363.33
+    ],
+    [
+     120,
+     363.33
+    ]
+   ],
+   "only": "wide"
+  },
+  {
+   "id": "lv2",
+   "type": "text",
+   "x": 415.0,
+   "y": 52,
+   "text": "level 2: 8 leaves",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "hidden": true,
+   "narrow": {
+    "x": 220.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "we0",
+   "type": "line",
+   "points": [
+    [
+     210,
+     92.0
+    ],
+    [
+     330,
+     92.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      92.0
+     ],
+     [
+      150,
+      92.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf0",
+   "type": "box",
+   "x": 330,
+   "y": 77.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le0",
+   "type": "text",
+   "x": 335,
+   "y": 92.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll0",
+   "type": "text",
+   "x": 427.0,
+   "y": 92.0,
+   "text": "D0–D7",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo0",
+   "type": "text",
+   "x": 508,
+   "y": 92.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "we1",
+   "type": "line",
+   "points": [
+    [
+     210,
+     136.0
+    ],
+    [
+     330,
+     136.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      136.0
+     ],
+     [
+      150,
+      136.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf1",
+   "type": "box",
+   "x": 330,
+   "y": 121.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le1",
+   "type": "text",
+   "x": 335,
+   "y": 136.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll1",
+   "type": "text",
+   "x": 427.0,
+   "y": 136.0,
+   "text": "D8–D15",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo1",
+   "type": "text",
+   "x": 508,
+   "y": 136.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "we2",
+   "type": "line",
+   "points": [
+    [
+     210,
+     180.0
+    ],
+    [
+     330,
+     180.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      180.0
+     ],
+     [
+      150,
+      180.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf2",
+   "type": "box",
+   "x": 330,
+   "y": 165.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le2",
+   "type": "text",
+   "x": 335,
+   "y": 180.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll2",
+   "type": "text",
+   "x": 427.0,
+   "y": 180.0,
+   "text": "D16–D23",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo2",
+   "type": "text",
+   "x": 508,
+   "y": 180.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "we3",
+   "type": "line",
+   "points": [
+    [
+     210,
+     224.0
+    ],
+    [
+     330,
+     224.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      224.0
+     ],
+     [
+      150,
+      224.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf3",
+   "type": "box",
+   "x": 330,
+   "y": 209.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le3",
+   "type": "text",
+   "x": 335,
+   "y": 224.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll3",
+   "type": "text",
+   "x": 427.0,
+   "y": 224.0,
+   "text": "D24–D31",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo3",
+   "type": "text",
+   "x": 508,
+   "y": 224.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "we4",
+   "type": "line",
+   "points": [
+    [
+     210,
+     268.0
+    ],
+    [
+     330,
+     268.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      268.0
+     ],
+     [
+      150,
+      268.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf4",
+   "type": "box",
+   "x": 330,
+   "y": 253.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le4",
+   "type": "text",
+   "x": 335,
+   "y": 268.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll4",
+   "type": "text",
+   "x": 427.0,
+   "y": 268.0,
+   "text": "D32–D39",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo4",
+   "type": "text",
+   "x": 508,
+   "y": 268.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "we5",
+   "type": "line",
+   "points": [
+    [
+     210,
+     312.0
+    ],
+    [
+     330,
+     312.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      312.0
+     ],
+     [
+      150,
+      312.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf5",
+   "type": "box",
+   "x": 330,
+   "y": 297.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le5",
+   "type": "text",
+   "x": 335,
+   "y": 312.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll5",
+   "type": "text",
+   "x": 427.0,
+   "y": 312.0,
+   "text": "D40–D47",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo5",
+   "type": "text",
+   "x": 508,
+   "y": 312.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "we6",
+   "type": "line",
+   "points": [
+    [
+     210,
+     356.0
+    ],
+    [
+     330,
+     356.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      356.0
+     ],
+     [
+      150,
+      356.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf6",
+   "type": "box",
+   "x": 330,
+   "y": 341.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le6",
+   "type": "text",
+   "x": 335,
+   "y": 356.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll6",
+   "type": "text",
+   "x": 427.0,
+   "y": 356.0,
+   "text": "D48–D55",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo6",
+   "type": "text",
+   "x": 508,
+   "y": 356.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "we7",
+   "type": "line",
+   "points": [
+    [
+     210,
+     400.0
+    ],
+    [
+     330,
+     400.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      94,
+      400.0
+     ],
+     [
+      150,
+      400.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lf7",
+   "type": "box",
+   "x": 330,
+   "y": 385.0,
+   "w": 170,
+   "h": 30,
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "w": 140
+   }
+  },
+  {
+   "id": "le7",
+   "type": "text",
+   "x": 335,
+   "y": 400.0,
+   "text": "EN",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 155,
+    "size": 12
+   }
+  },
+  {
+   "id": "ll7",
+   "type": "text",
+   "x": 427.0,
+   "y": 400.0,
+   "text": "D56–D63",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 232.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lo7",
+   "type": "text",
+   "x": 508,
+   "y": 400.0,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 298,
+    "size": 13
+   }
+  },
+  {
+   "id": "low",
+   "type": "text",
+   "x": 415.0,
+   "y": 450,
+   "text": "A2 A1 A0 go to every leaf",
+   "size": 14,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "adr",
+   "type": "text",
+   "x": 165.0,
+   "y": 450,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 478,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Level 1: one 3:8 decoder takes the high address bits A5 A4 A3. Its eight outputs will not drive loads directly; they choose a leaf.",
+   "patches": [
+    {
+     "id": "top",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Level 2: 64 outputs need 64 / 8 = 8 leaf decoders. Each top output drives one leaf's enable, and the low bits A2 A1 A0 go to every leaf.",
+   "patches": [
+    {
+     "id": "top",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lv2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll4",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll5",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll6",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "we7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "lf7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "le7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ll7",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "low",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Count: 8 leaves + 1 top decoder = 9 decoders, and no other gates, because a 3:8 decoder has an enable input.",
+   "patches": [
+    {
+     "id": "lf0",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "lf1",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "lf2",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "lf3",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "lf4",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "lf5",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "lf6",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "lf7",
+     "set": {
+      "tone": "info"
+     }
+    },
+    {
+     "id": "top",
+     "set": {
+      "tone": "info"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A5…A0 = 101 110: the top decoder enables leaf 5 only; that leaf decodes 110 = 6 and raises its output 6, D46.",
+   "patches": [
+    {
+     "id": "top",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lf0",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf1",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf2",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf3",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf4",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf5",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "lf6",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf7",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "we0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "we6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lo0",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo1",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo2",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo3",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo4",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo5",
+     "set": {
+      "text": "D46",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo6",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo7",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A5 = 1"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A4 = 0"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A3 = 1"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "101110 = 46 → D46"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Address A5…A0 = 000 011: the top decoder enables leaf 0 only; that leaf decodes 011 = 3 and raises its output 3, D3.",
+   "patches": [
+    {
+     "id": "top",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lf0",
+     "set": {
+      "tone": "accent",
+      "fill": "accent"
+     }
+    },
+    {
+     "id": "lf1",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf2",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf3",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf4",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf5",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf6",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf7",
+     "set": {
+      "tone": "muted",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "we0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "we1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "we7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lo0",
+     "set": {
+      "text": "D3",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo1",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo2",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo3",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo4",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo5",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo6",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lo7",
+     "set": {
+      "text": "",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "a0",
+     "set": {
+      "text": "A5 = 0"
+     }
+    },
+    {
+     "id": "a1",
+     "set": {
+      "text": "A4 = 0"
+     }
+    },
+    {
+     "id": "a2",
+     "set": {
+      "text": "A3 = 0"
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "000011 = 3 → D3"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "In general an n:2ⁿ decoder from k:2ᵏ decoders needs 2ⁿ / 2ᵏ leaves plus the tree above them; for 6:64 from 3:8 that is 8 + 1 = 9.",
+   "patches": [
+    {
+     "id": "lf0",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf1",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf2",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf3",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf4",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf5",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf6",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "lf7",
+     "set": {
+      "tone": "ink",
+      "fill": "none"
+     }
+    },
+    {
+     "id": "we0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "we1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "we2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "we3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "we4",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "we5",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "we6",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "we7",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "lo0",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "lo1",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "lo2",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "lo3",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "lo4",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "lo5",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "lo6",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "lo7",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "adr",
+     "set": {
+      "text": "8 leaves + 1 = 9 decoders"
+     }
+    }
+   ]
+  }
+ ]
+}

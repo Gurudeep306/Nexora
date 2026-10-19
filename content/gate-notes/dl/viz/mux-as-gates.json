@@ -1,0 +1,1096 @@
+{
+ "version": 1,
+ "title": "A 2:1 multiplexer wired as NOT, AND, OR and NOR",
+ "width": 680,
+ "height": 260,
+ "narrow": {
+  "width": 360,
+  "height": 400
+ },
+ "intro": "A 2:1 MUX outputs I0 when its select S is 0 and I1 when S is 1. Tying its inputs to constants and variables turns it into gates.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "A 2:1 MUX wired as NOT, AND, OR and NOR",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "2:1 MUX as gates",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "name",
+   "type": "text",
+   "x": 340.0,
+   "y": 52,
+   "text": "Y = S′·I0 + S·I1",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 180.0,
+    "size": 14
+   }
+  },
+  {
+   "id": "ma",
+   "type": "box",
+   "x": 150,
+   "y": 90,
+   "w": 70,
+   "h": 90,
+   "hidden": true,
+   "narrow": {
+    "x": 46,
+    "w": 64
+   }
+  },
+  {
+   "id": "ma-l0",
+   "type": "text",
+   "x": 155,
+   "y": 108.5,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 51,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-l1",
+   "type": "text",
+   "x": 155,
+   "y": 145.5,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "hidden": true,
+   "narrow": {
+    "x": 51,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-r0",
+   "type": "text",
+   "x": 215,
+   "y": 127.0,
+   "text": "Y",
+   "size": 13,
+   "anchor": "end",
+   "hidden": true,
+   "narrow": {
+    "x": 105,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-b0",
+   "type": "text",
+   "x": 185.0,
+   "y": 170,
+   "text": "S",
+   "size": 13,
+   "anchor": "middle",
+   "hidden": true,
+   "narrow": {
+    "x": 78.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ma-n",
+   "type": "text",
+   "x": 185.0,
+   "y": 78,
+   "text": "MUX a",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 78.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "mm",
+   "type": "box",
+   "x": 330,
+   "y": 90,
+   "w": 70,
+   "h": 90,
+   "narrow": {
+    "x": 196,
+    "w": 64
+   }
+  },
+  {
+   "id": "mm-l0",
+   "type": "text",
+   "x": 335,
+   "y": 108.5,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 201,
+    "size": 12
+   }
+  },
+  {
+   "id": "mm-l1",
+   "type": "text",
+   "x": 335,
+   "y": 145.5,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 201,
+    "size": 12
+   }
+  },
+  {
+   "id": "mm-r0",
+   "type": "text",
+   "x": 395,
+   "y": 127.0,
+   "text": "Y",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 255,
+    "size": 12
+   }
+  },
+  {
+   "id": "mm-b0",
+   "type": "text",
+   "x": 365.0,
+   "y": 170,
+   "text": "S",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 228.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mm-n",
+   "type": "text",
+   "x": 365.0,
+   "y": 78,
+   "text": "2:1",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 228.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "ad0",
+   "type": "text",
+   "x": 124,
+   "y": 108.5,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa0",
+   "type": "line",
+   "points": [
+    [
+     128,
+     108.5
+    ],
+    [
+     150,
+     108.5
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      24,
+      108.5
+     ],
+     [
+      46,
+      108.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d0",
+   "type": "text",
+   "x": 304,
+   "y": 108.5,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 170,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd0",
+   "type": "line",
+   "points": [
+    [
+     308,
+     108.5
+    ],
+    [
+     330,
+     108.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      174,
+      108.5
+     ],
+     [
+      196,
+      108.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ad1",
+   "type": "text",
+   "x": 124,
+   "y": 145.5,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     128,
+     145.5
+    ],
+    [
+     150,
+     145.5
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      24,
+      145.5
+     ],
+     [
+      46,
+      145.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d1",
+   "type": "text",
+   "x": 304,
+   "y": 145.5,
+   "text": "",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 170,
+    "size": 13
+   }
+  },
+  {
+   "id": "wd1",
+   "type": "line",
+   "points": [
+    [
+     308,
+     145.5
+    ],
+    [
+     330,
+     145.5
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      174,
+      145.5
+     ],
+     [
+      196,
+      145.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wsa",
+   "type": "line",
+   "points": [
+    [
+     185.0,
+     180
+    ],
+    [
+     185.0,
+     198
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      78.0,
+      180
+     ],
+     [
+      78.0,
+      198
+     ]
+    ]
+   }
+  },
+  {
+   "id": "sa",
+   "type": "text",
+   "x": 185.0,
+   "y": 212,
+   "text": "y",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 78.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wam",
+   "type": "line",
+   "points": [
+    [
+     220,
+     127.0
+    ],
+    [
+     264.0,
+     127.0
+    ],
+    [
+     264.0,
+     108.5
+    ],
+    [
+     308,
+     108.5
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      110,
+      127.0
+     ],
+     [
+      142.0,
+      127.0
+     ],
+     [
+      142.0,
+      108.5
+     ],
+     [
+      174,
+      108.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wsm",
+   "type": "line",
+   "points": [
+    [
+     365.0,
+     180
+    ],
+    [
+     365.0,
+     198
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      228.0,
+      180
+     ],
+     [
+      228.0,
+      198
+     ]
+    ]
+   }
+  },
+  {
+   "id": "sm",
+   "type": "text",
+   "x": 365.0,
+   "y": 212,
+   "text": "x",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 228.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "wy",
+   "type": "line",
+   "points": [
+    [
+     400,
+     127.0
+    ],
+    [
+     424,
+     127.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      260,
+      127.0
+     ],
+     [
+      284,
+      127.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vy",
+   "type": "text",
+   "x": 430,
+   "y": 127.0,
+   "text": "Y",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 290,
+    "size": 13
+   }
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 530,
+   "y": 70,
+   "cellW": 44,
+   "cellH": 26,
+   "rows": [
+    [
+     "x",
+     "Y"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 120,
+    "y": 250
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "NOT: put x on the select, 1 on I0 and 0 on I1. When x = 0 the MUX passes 1, when x = 1 it passes 0, so Y = x′.",
+   "patches": [
+    {
+     "id": "name",
+     "set": {
+      "text": "NOT: Y = x′"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "Y"
+       ],
+       [
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "0"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-l0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-l1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-r0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-b0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ad0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ad1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wsa",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "sa",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wam",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "text": "1"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "AND: x on the select, 0 on I0, y on I1. When x = 0 the output is 0; when x = 1 it is y. So Y = x′·0 + x·y = xy.",
+   "patches": [
+    {
+     "id": "name",
+     "set": {
+      "text": "AND: Y = xy"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "Y"
+       ],
+       [
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "1"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-l0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-l1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-r0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-b0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ad0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ad1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wsa",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "sa",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wam",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "text": "0"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "y"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "OR: x on the select, y on I0, 1 on I1. When x = 0 the output is y; when x = 1 it is 1. So Y = x′y + x = x + y.",
+   "patches": [
+    {
+     "id": "name",
+     "set": {
+      "text": "OR: Y = x + y"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "Y"
+       ],
+       [
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1"
+       ],
+       [
+        "1",
+        "0",
+        "1"
+       ],
+       [
+        "1",
+        "1",
+        "1"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-l0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-l1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-r0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-b0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ma-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ad0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "ad1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wsa",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "sa",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "wam",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "text": "y"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "NOR needs two MUXes: MUX a (select y, inputs 1 and 0) makes y′; the second MUX (select x, inputs y′ and 0) gives Y = x′y′ = (x + y)′.",
+   "patches": [
+    {
+     "id": "name",
+     "set": {
+      "text": "NOR: Y = x′y′"
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "x",
+        "y",
+        "Y"
+       ],
+       [
+        "0",
+        "0",
+        "1"
+       ],
+       [
+        "0",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "0"
+       ]
+      ]
+     }
+    },
+    {
+     "id": "ma",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ma-l0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ma-l1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ma-r0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ma-b0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ma-n",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ad0",
+     "set": {
+      "hidden": false,
+      "text": "1"
+     }
+    },
+    {
+     "id": "ad1",
+     "set": {
+      "hidden": false,
+      "text": "0"
+     }
+    },
+    {
+     "id": "wa0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wsa",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "sa",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wam",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "d0",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "text": "0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "2:1 MUXes with 0 and 1 make NOT and AND, so they are complete. Read any constant cascade from its truth table: it may be NAND, not OR.",
+   "patches": [
+    {
+     "id": "name",
+     "set": {
+      "text": "2:1 MUX: functionally complete"
+     }
+    }
+   ]
+  }
+ ]
+}
