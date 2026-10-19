@@ -115,7 +115,7 @@ test(':::lab embeds a known Live Lab; unknown labs, tabs and content are reporte
   const body = JSON.parse(r.outputs.get('tst.json')).lessons.alpha.body;
   const lab = body.find((n) => n.t === 'block' && n.name === 'lab');
   assert.deepEqual([lab.id, lab.attrs], ['lab-bench', { lab: 'gate-bench', tab: 'sets' }]);
-  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver \| comb-workbench/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver \| comb-workbench \| adder-race/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench" tab="draw"}\n:::\n`), /tab must be bench \| challenge \| sets/);
   // Each lab has its own tabs: the K-map Solver takes map | qm, and not Gate Bench's tabs.
   const km = await build({ content: scratch(`${LESSON}\n:::lab{#lab-km lab="kmap-solver" tab="qm" depth="standard"}\n:::\n`) });
@@ -692,4 +692,38 @@ test('viz narrow layout: a second canvas, per-element geometry and wide/narrow-o
   assert.match(withEl({ ...t, only: 'tablet' }), /only: must be one of wide \| narrow/);
   assert.match(withEl({ id: 'x', type: 'arrow', from: 'cap', to: 'row' }), /elements\[4\]\.to: "row" is not drawn in the narrow layout/);
   assert.match(errs({ steps: [{ caption: 'Move', patches: [{ id: 'cap', set: { only: 'wide' } }] }] }), /cannot change the layout \(only, narrow\)/);
+});
+
+/* ── Live Lab: Adder Race logic against the Python-verified vectors ── */
+
+test('adder race: ripple and look-ahead netlists, flags, settling times and scaling match the checks', async () => {
+  const { pathToFileURL } = require('node:url');
+  const ar = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'adderLogic.ts')).href);
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch4.json'), 'utf8'));
+  // Gate counts and static worst-case delays of every lab circuit.
+  for (const c of vec.circuits) {
+    const net = ar.labNet(c.kind, c.n);
+    assert.equal(net.filter((x) => x.op !== 'BUF').length, c.gates, `${c.kind} ${c.n}: gates`);
+    const t = ar.arrival(net, ar.labInputs(c.n), { XOR: c.xor });
+    const worst = Math.max(...ar.outputsOf(c.n).slice(0, c.n + 1).map((x) => t[x]));
+    assert.equal(worst, c.worst, `${c.kind} ${c.n} xor ${c.xor}: worst-case delay`);
+  }
+  // Every timed input change: result, flags and the settling time of each sum, the carry out and V.
+  assert.ok(vec.cases.length >= 150);
+  for (const c of vec.cases) {
+    const at = `${c.kind} ${c.n}-bit xor ${c.xor}: ${c.prev} -> ${c.next}`;
+    const r = ar.race(c.n, { a: c.prev[0], b: c.prev[1], K: c.prev[2] }, { a: c.next[0], b: c.next[1], K: c.next[2] }, c.xor);
+    assert.deepEqual([r.sum, r.C, r.V, r.N, r.Z], [c.sum, c.C, c.V, c.N, c.Z], `${at}: result and flags`);
+    const side = r.sides[c.kind];
+    assert.deepEqual(ar.outputsOf(c.n).map((x) => side.sim.settle[x]), c.settle, `${at}: settling times`);
+    assert.equal(side.settled, c.settled, `${at}: settled`);
+    // The waveform ends on the settled value.
+    for (const x of ar.outputsOf(c.n)) assert.equal(side.sim.wave[x][side.sim.horizon], x === 'V' ? c.V : x === `c${c.n}` ? c.C : (c.sum >> Number(x.slice(1))) & 1);
+  }
+  // Scaling table.
+  assert.deepEqual(ar.scaling(), vec.scaling);
+  // Helpers.
+  assert.equal(ar.signed(255, 8), -1);
+  assert.equal(ar.pattern(-1, 8), 255);
+  assert.equal(ar.bitsText(5, 4), '0101');
 });

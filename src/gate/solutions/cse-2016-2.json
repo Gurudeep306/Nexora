@@ -678,35 +678,38 @@
       "verification": "Eigenvalues of $(A^{-1})^T$ are $1, \\frac12, \\frac14$; their product is $\\frac18$."
     },
     "cse-2016-2-cs-7": {
-      "approach": "The worst ripple-carry delay happens when a carry generated at bit 0 must propagate through every higher stage, i.e. every bit of B is 1 (each stage has $A_i \\oplus B_i = 1$ above bit 0).",
+      "approach": "Concept tested: **the longest carry chain of a ripple-carry adder**. The sum takes longest to settle when a carry generated in the lowest column propagates through every column above it.",
       "concepts": [
         "Ripple-carry adder",
         "Carry propagation",
-        "2's complement"
+        "Two's complement"
       ],
+      "given": "8-bit ripple-carry adder, two's-complement operands, $A = 1 = 0000\\,0001$.",
       "steps": [
         {
-          "title": "A in binary",
-          "body": "$A = 1 = 0000\\,0001_2$. Bit 0 is the only bit where a carry can be **generated** ($A_0 B_0 = 1$ needs $B_0 = 1$)."
+          "title": "Where can a carry start?",
+          "body": "A column generates a carry only if both its bits are 1. $A$ has a 1 only in bit 0, so only column 0 can generate: that needs $b_0 = 1$."
         },
         {
-          "title": "Make the carry ripple all the way",
-          "body": "For bits 1–7, $A_i = 0$, so the carry propagates through stage $i$ only if $B_i = 1$. Choosing $B_i = 1$ for every bit makes the carry from bit 0 pass through all 8 stages:\n$$0000\\,0001 + 1111\\,1111 = (1)\\,0000\\,0000$$"
+          "title": "How far can it travel?",
+          "body": "Column $k \\ge 1$ has $a_k = 0$; it propagates the carry iff $b_k = 1$ (0 + 1 + carry = 10) and kills it iff $b_k = 0$. To reach the top every $b_k$ must be 1."
         },
         {
-          "title": "Decimal value of B",
-          "body": "$B = 1111\\,1111_2$ in 2's complement is $-1$. So the answer is **−1**."
+          "title": "Read B",
+          "body": "$B = 1111\\,1111$, which is $-1$ in 8-bit two's complement. Then $A + B = 0$: every sum bit first shows $a_k \\oplus b_k = 1$ and flips to 0 only when the carry arrives."
         }
       ],
       "answer": {
-        "value": "-1",
+        "value": "−1",
         "number": -1,
         "matchesKey": true
       },
+      "shortcut": "Slowest partner of $A$: generate at the lowest 1 of $A$, then propagate everywhere above, i.e. $b_k = \\bar a_k$ above it. For $A = 1$: all ones $= -1$.",
       "pitfalls": [
-        "Answering 255: as an 8-bit 2's-complement integer, 11111111 is −1."
+        "Answering 255: the operands are two's complement, so the pattern 1111 1111 is $-1$.",
+        "Answering $-128$ or 127: 127 = 0111 1111 stops the chain at bit 7; $-128$ = 1000 0000 has $b_0 = 0$, so no carry is generated at all."
       ],
-      "verification": "Any B with a 0 in some bit $i \\ge 1$ stops the carry at stage $i$; B with $B_0 = 0$ generates no carry at all. Only $B = 11111111 = -1$ gives the full 8-stage ripple."
+      "verification": "l4_01_ripple.py runs the transport-delay simulation of the 8-bit netlist for all 256 values of B (from all-zero inputs): B = −1 alone settles last (carry out at 16 gate delays)."
     },
     "cse-2016-2-cs-8": {
       "approach": "Concept tested: **even parity and complemented inputs**. $x_1 \\oplus x_2 \\oplus x_3 \\oplus x_4 = 0$ means an even number of 1s; rearrange it, and refute the other options with one assignment each.",

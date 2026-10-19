@@ -1,0 +1,611 @@
+{
+ "version": 1,
+ "title": "A serial adder adding 0110 and 0111 one bit per clock",
+ "width": 700,
+ "height": 310,
+ "narrow": {
+  "width": 360,
+  "height": 410
+ },
+ "intro": "Shift registers A and B feed one full adder, least significant bit first. The carry flip-flop feeds the carry back for the next bit; the sum bits shift into S.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "A bit-serial adder: one full adder, one carry flip-flop",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Serial adder: 0110 + 0111",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "A",
+   "type": "box",
+   "x": 40,
+   "y": 60,
+   "w": 200,
+   "h": 40,
+   "mono": true,
+   "label": "A = 0110",
+   "size": 15,
+   "narrow": {
+    "x": 20,
+    "y": 56,
+    "w": 320,
+    "h": 36,
+    "size": 13
+   }
+  },
+  {
+   "id": "B",
+   "type": "box",
+   "x": 40,
+   "y": 130,
+   "w": 200,
+   "h": 40,
+   "mono": true,
+   "label": "B = 0111",
+   "size": 15,
+   "narrow": {
+    "x": 20,
+    "y": 100,
+    "w": 320,
+    "h": 36,
+    "size": 13
+   }
+  },
+  {
+   "id": "fa",
+   "type": "box",
+   "x": 330,
+   "y": 82,
+   "w": 100,
+   "h": 70,
+   "label": "FA",
+   "size": 15,
+   "narrow": {
+    "x": 130,
+    "y": 160,
+    "h": 60,
+    "size": 13
+   }
+  },
+  {
+   "id": "ff",
+   "type": "box",
+   "x": 310,
+   "y": 210,
+   "w": 140,
+   "h": 40,
+   "mono": true,
+   "label": "carry FF = 0",
+   "size": 14,
+   "narrow": {
+    "x": 130,
+    "y": 250,
+    "w": 100,
+    "h": 36,
+    "size": 12
+   }
+  },
+  {
+   "id": "S",
+   "type": "box",
+   "x": 490,
+   "y": 98,
+   "w": 190,
+   "h": 40,
+   "mono": true,
+   "label": "S = ????",
+   "size": 15,
+   "narrow": {
+    "x": 20,
+    "y": 320,
+    "w": 320,
+    "h": 36,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa",
+   "type": "line",
+   "points": [
+    [
+     240,
+     80
+    ],
+    [
+     290,
+     80
+    ],
+    [
+     290,
+     100
+    ],
+    [
+     330,
+     100
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      340,
+      74
+     ],
+     [
+      350,
+      74
+     ],
+     [
+      350,
+      180
+     ],
+     [
+      230,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wb",
+   "type": "line",
+   "points": [
+    [
+     240,
+     150
+    ],
+    [
+     290,
+     150
+    ],
+    [
+     290,
+     134
+    ],
+    [
+     330,
+     134
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      20,
+      118
+     ],
+     [
+      10,
+      118
+     ],
+     [
+      10,
+      190
+     ],
+     [
+      130,
+      190
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wc",
+   "type": "line",
+   "points": [
+    [
+     380,
+     152
+    ],
+    [
+     380,
+     210
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      220
+     ],
+     [
+      180,
+      250
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wl",
+   "type": "line",
+   "points": [
+    [
+     310,
+     230
+    ],
+    [
+     298,
+     230
+    ],
+    [
+     298,
+     117
+    ],
+    [
+     330,
+     117
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      268
+     ],
+     [
+      260,
+      268
+     ],
+     [
+      260,
+      205
+     ],
+     [
+      230,
+      205
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws",
+   "type": "line",
+   "points": [
+    [
+     430,
+     117
+    ],
+    [
+     490,
+     117
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      130,
+      210
+     ],
+     [
+      60,
+      210
+     ],
+     [
+      60,
+      320
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bits",
+   "type": "text",
+   "x": 40,
+   "y": 196,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "narrow": {
+    "x": 20,
+    "y": 376,
+    "size": 12
+   }
+  },
+  {
+   "id": "clk",
+   "type": "text",
+   "x": 40,
+   "y": 290,
+   "text": "clock 0",
+   "size": 15,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 20,
+    "y": 396,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Before the first clock the carry flip-flop is cleared to 0. A and B will be shifted out LSB first, one bit per clock.",
+   "patches": [
+    {
+     "id": "ff",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 1: the FA adds bit 0: 0 + 1 + carry 0 = 01. The edge stores s0 = 1 and carry 0.",
+   "patches": [
+    {
+     "id": "A",
+     "set": {
+      "label": "A: 011 | 0"
+     }
+    },
+    {
+     "id": "B",
+     "set": {
+      "label": "B: 011 | 1"
+     }
+    },
+    {
+     "id": "fa",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff",
+     "set": {
+      "label": "carry FF = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "S",
+     "set": {
+      "label": "S = ???1"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 1 of 4"
+     }
+    },
+    {
+     "id": "bits",
+     "set": {
+      "text": "bit 0: 0 + 1 + 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 2: the FA adds bit 1: 1 + 1 + carry 0 = 10. The edge stores s1 = 0 and carry 1.",
+   "patches": [
+    {
+     "id": "A",
+     "set": {
+      "label": "A: 01 | 1"
+     }
+    },
+    {
+     "id": "B",
+     "set": {
+      "label": "B: 01 | 1"
+     }
+    },
+    {
+     "id": "fa",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff",
+     "set": {
+      "label": "carry FF = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wl",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "S",
+     "set": {
+      "label": "S = ??01"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 2 of 4"
+     }
+    },
+    {
+     "id": "bits",
+     "set": {
+      "text": "bit 1: 1 + 1 + 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 3: the FA adds bit 2: 1 + 1 + carry 1 = 11. The edge stores s2 = 1 and carry 1.",
+   "patches": [
+    {
+     "id": "A",
+     "set": {
+      "label": "A: 0 | 1"
+     }
+    },
+    {
+     "id": "B",
+     "set": {
+      "label": "B: 0 | 1"
+     }
+    },
+    {
+     "id": "fa",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff",
+     "set": {
+      "label": "carry FF = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wl",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "S",
+     "set": {
+      "label": "S = ?101"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 3 of 4"
+     }
+    },
+    {
+     "id": "bits",
+     "set": {
+      "text": "bit 2: 1 + 1 + 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 4: the FA adds bit 3: 0 + 0 + carry 1 = 01. The edge stores s3 = 1 and carry 0.",
+   "patches": [
+    {
+     "id": "A",
+     "set": {
+      "label": "A: — | 0"
+     }
+    },
+    {
+     "id": "B",
+     "set": {
+      "label": "B: — | 0"
+     }
+    },
+    {
+     "id": "fa",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ff",
+     "set": {
+      "label": "carry FF = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wl",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "S",
+     "set": {
+      "label": "S = 1101"
+     }
+    },
+    {
+     "id": "clk",
+     "set": {
+      "text": "clock 4 of 4"
+     }
+    },
+    {
+     "id": "bits",
+     "set": {
+      "text": "bit 3: 0 + 0 + 1"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "After 4 clocks S = 1101 = 13 = 6 + 7, and the flip-flop holds the carry out 0. Time: n clocks; hardware: one FA.",
+   "patches": [
+    {
+     "id": "fa",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "S",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "bits",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  }
+ ]
+}

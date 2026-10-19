@@ -1,0 +1,986 @@
+{
+ "version": 1,
+ "title": "The half adder from its truth table",
+ "width": 660,
+ "height": 260,
+ "narrow": {
+  "width": 360,
+  "height": 420
+ },
+ "intro": "A half adder adds two bits A and B. Its truth table has four rows and two output columns, S and C.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 330.0,
+   "y": 22,
+   "text": "Designing the half adder: table, equations, gates",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Half adder: table to gates",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 30,
+   "y": 60,
+   "cellW": 44,
+   "cellH": 28,
+   "rows": [
+    [
+     "A",
+     "B",
+     "S",
+     "C"
+    ],
+    [
+     "0",
+     "0",
+     "",
+     ""
+    ],
+    [
+     "0",
+     "1",
+     "",
+     ""
+    ],
+    [
+     "1",
+     "0",
+     "",
+     ""
+    ],
+    [
+     "1",
+     "1",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 40,
+    "cellW": 40
+   }
+  },
+  {
+   "id": "eqS",
+   "type": "text",
+   "x": 240,
+   "y": 84,
+   "text": "S = A ⊕ B",
+   "size": 15,
+   "anchor": "start",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 230,
+    "size": 13
+   }
+  },
+  {
+   "id": "eqC",
+   "type": "text",
+   "x": 240,
+   "y": 120,
+   "text": "C = A·B",
+   "size": 15,
+   "anchor": "start",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 230,
+    "size": 13
+   }
+  },
+  {
+   "id": "gx",
+   "type": "gate",
+   "x": 490,
+   "y": 70,
+   "w": 54,
+   "h": 46,
+   "kind": "xor",
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "y": 240
+   }
+  },
+  {
+   "id": "ga",
+   "type": "gate",
+   "x": 490,
+   "y": 160,
+   "w": 54,
+   "h": 46,
+   "kind": "and",
+   "hidden": true,
+   "narrow": {
+    "x": 150,
+    "y": 330
+   }
+  },
+  {
+   "id": "inA",
+   "type": "text",
+   "x": 384,
+   "y": 85.33,
+   "text": "A",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 34,
+    "y": 255.33,
+    "size": 13
+   }
+  },
+  {
+   "id": "inB",
+   "type": "text",
+   "x": 384,
+   "y": 146.67000000000002,
+   "text": "B",
+   "size": 14,
+   "anchor": "end",
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 34,
+    "y": 316.67,
+    "size": 13
+   }
+  },
+  {
+   "id": "wa1",
+   "type": "line",
+   "points": [
+    [
+     390,
+     85.33
+    ],
+    [
+     495.16,
+     85.33
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      40,
+      255.33
+     ],
+     [
+      155.16,
+      255.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wa2",
+   "type": "line",
+   "points": [
+    [
+     410,
+     85.33
+    ],
+    [
+     410,
+     85.33
+    ],
+    [
+     410,
+     175.33
+    ],
+    [
+     490.0,
+     175.33
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60,
+      255.33
+     ],
+     [
+      60,
+      255.33
+     ],
+     [
+      60,
+      345.33
+     ],
+     [
+      150.0,
+      345.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wb1",
+   "type": "line",
+   "points": [
+    [
+     390,
+     146.67
+    ],
+    [
+     430,
+     146.67
+    ],
+    [
+     430,
+     100.67
+    ],
+    [
+     495.16,
+     100.67
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      40,
+      316.67
+     ],
+     [
+      80,
+      316.67
+     ],
+     [
+      80,
+      270.67
+     ],
+     [
+      155.16,
+      270.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wb2",
+   "type": "line",
+   "points": [
+    [
+     430,
+     146.67
+    ],
+    [
+     430,
+     146.67
+    ],
+    [
+     430,
+     190.67
+    ],
+    [
+     490.0,
+     190.67
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      80,
+      316.67
+     ],
+     [
+      80,
+      316.67
+     ],
+     [
+      80,
+      360.67
+     ],
+     [
+      150.0,
+      360.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wS",
+   "type": "line",
+   "points": [
+    [
+     544.0,
+     93.0
+    ],
+    [
+     574.0,
+     93.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      204.0,
+      263.0
+     ],
+     [
+      234.0,
+      263.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wC",
+   "type": "line",
+   "points": [
+    [
+     544.0,
+     183.0
+    ],
+    [
+     574.0,
+     183.0
+    ]
+   ],
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      204.0,
+      353.0
+     ],
+     [
+      234.0,
+      353.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vS",
+   "type": "text",
+   "x": 580.0,
+   "y": 93.0,
+   "text": "S",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 240.0,
+    "y": 263.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "vC",
+   "type": "text",
+   "x": 580.0,
+   "y": 183.0,
+   "text": "C",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 240.0,
+    "y": 353.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Adding two bits A + B gives 0, 1 or 2, so we need two outputs: the sum bit S (weight 1) and the carry C (weight 2).",
+   "patches": []
+  },
+  {
+   "caption": "S column: S = 1 exactly when one input is 1 (rows 01 and 10). That is the odd function: S = A ⊕ B.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "A",
+        "B",
+        "S",
+        "C"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        ""
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        ""
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        ""
+       ],
+       [
+        "1",
+        "1",
+        "0",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eqS",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "C column: a carry appears only for 1 + 1 = 10 (binary), row 11. So C = A·B.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "A",
+        "B",
+        "S",
+        "C"
+       ],
+       [
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0",
+        "1",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "0",
+        "1",
+        "0"
+       ],
+       [
+        "1",
+        "1",
+        "0",
+        "1"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eqC",
+     "set": {
+      "hidden": false
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Two gates realise the two equations: an XOR for S and an AND for C, both fed by A and B.",
+   "patches": [
+    {
+     "id": "gx",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ga",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "inA",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "vC",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row A = 0, B = 0: 0 + 0 = 0, so S = 0 and C = 0 (binary 00).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "inA",
+     "set": {
+      "text": "A=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vC",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row A = 0, B = 1: 0 + 1 = 1, so S = 1 and C = 0 (binary 01).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "inA",
+     "set": {
+      "text": "A=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vC",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row A = 1, B = 0: 1 + 0 = 1, so S = 1 and C = 0 (binary 01).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "inA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vC",
+     "set": {
+      "text": "C=0",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row A = 1, B = 1: 1 + 1 = 2, so S = 0 and C = 1 (binary 10).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "inA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "inB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wa2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wC",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vC",
+     "set": {
+      "text": "C=1",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

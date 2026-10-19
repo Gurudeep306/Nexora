@@ -1,0 +1,1358 @@
+{
+ "version": 1,
+ "title": "A full adder built from two half adders and an OR gate",
+ "width": 680,
+ "height": 320,
+ "narrow": {
+  "width": 360,
+  "height": 320
+ },
+ "intro": "Inputs A, B and Cin. HA1 adds A and B; HA2 adds HA1's sum and Cin; an OR gate combines the two half-adder carries into Cout.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "A full adder from two half adders and an OR gate",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Full adder = 2 HAs + OR",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "hl1",
+   "type": "box",
+   "x": 130,
+   "y": 54,
+   "w": 90,
+   "h": 150,
+   "dashed": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 81.0,
+    "w": 60
+   }
+  },
+  {
+   "id": "hl1t",
+   "type": "text",
+   "x": 175,
+   "y": 66,
+   "text": "HA1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "weight": "bold",
+   "narrow": {
+    "x": 111.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "hl2",
+   "type": "box",
+   "x": 310,
+   "y": 54,
+   "w": 90,
+   "h": 200,
+   "dashed": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 171.0,
+    "w": 60
+   }
+  },
+  {
+   "id": "hl2t",
+   "type": "text",
+   "x": 355,
+   "y": 66,
+   "text": "HA2",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "weight": "bold",
+   "narrow": {
+    "x": 201.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "x1",
+   "type": "gate",
+   "x": 150,
+   "y": 78,
+   "w": 50,
+   "h": 44,
+   "kind": "xor",
+   "narrow": {
+    "x": 91.0,
+    "w": 34
+   }
+  },
+  {
+   "id": "a1",
+   "type": "gate",
+   "x": 150,
+   "y": 146,
+   "w": 50,
+   "h": 44,
+   "kind": "and",
+   "narrow": {
+    "x": 91.0,
+    "w": 34
+   }
+  },
+  {
+   "id": "x2",
+   "type": "gate",
+   "x": 330,
+   "y": 84,
+   "w": 50,
+   "h": 44,
+   "kind": "xor",
+   "narrow": {
+    "x": 181.0,
+    "w": 34
+   }
+  },
+  {
+   "id": "a2",
+   "type": "gate",
+   "x": 330,
+   "y": 196,
+   "w": 50,
+   "h": 44,
+   "kind": "and",
+   "narrow": {
+    "x": 181.0,
+    "w": 34
+   }
+  },
+  {
+   "id": "o1",
+   "type": "gate",
+   "x": 470,
+   "y": 150,
+   "w": 50,
+   "h": 44,
+   "kind": "or",
+   "narrow": {
+    "x": 251.0,
+    "w": 34
+   }
+  },
+  {
+   "id": "iA",
+   "type": "text",
+   "x": 26,
+   "y": 92,
+   "text": "A",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 6,
+    "size": 12
+   }
+  },
+  {
+   "id": "iB",
+   "type": "text",
+   "x": 26,
+   "y": 132,
+   "text": "B",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 6,
+    "size": 12
+   }
+  },
+  {
+   "id": "iC",
+   "type": "text",
+   "x": 26,
+   "y": 232,
+   "text": "Cin",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 6,
+    "size": 12
+   }
+  },
+  {
+   "id": "wA1",
+   "type": "line",
+   "points": [
+    [
+     76,
+     92
+    ],
+    [
+     100,
+     92
+    ],
+    [
+     100,
+     92.67
+    ],
+    [
+     154.78,
+     92.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      54.0,
+      92
+     ],
+     [
+      66.0,
+      92
+     ],
+     [
+      66.0,
+      92.67
+     ],
+     [
+      94.25,
+      92.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wA2",
+   "type": "line",
+   "points": [
+    [
+     100,
+     92
+    ],
+    [
+     100,
+     160.67
+    ],
+    [
+     150.0,
+     160.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      66.0,
+      92
+     ],
+     [
+      66.0,
+      160.67
+     ],
+     [
+      91.0,
+      160.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wB1",
+   "type": "line",
+   "points": [
+    [
+     76,
+     132
+    ],
+    [
+     116,
+     132
+    ],
+    [
+     116,
+     107.33
+    ],
+    [
+     154.78,
+     107.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      54.0,
+      132
+     ],
+     [
+      74.0,
+      132
+     ],
+     [
+      74.0,
+      107.33
+     ],
+     [
+      94.25,
+      107.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wB2",
+   "type": "line",
+   "points": [
+    [
+     116,
+     132
+    ],
+    [
+     116,
+     175.33
+    ],
+    [
+     150.0,
+     175.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      74.0,
+      132
+     ],
+     [
+      74.0,
+      175.33
+     ],
+     [
+      91.0,
+      175.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wp1",
+   "type": "line",
+   "points": [
+    [
+     200.0,
+     100.0
+    ],
+    [
+     270,
+     100.0
+    ],
+    [
+     270,
+     98.67
+    ],
+    [
+     334.78,
+     98.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      125.0,
+      100.0
+     ],
+     [
+      151.0,
+      100.0
+     ],
+     [
+      151.0,
+      98.67
+     ],
+     [
+      184.25,
+      98.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wp2",
+   "type": "line",
+   "points": [
+    [
+     270,
+     98.67
+    ],
+    [
+     270,
+     210.67
+    ],
+    [
+     330.0,
+     210.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      151.0,
+      98.67
+     ],
+     [
+      151.0,
+      210.67
+     ],
+     [
+      181.0,
+      210.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wC1",
+   "type": "line",
+   "points": [
+    [
+     76,
+     232
+    ],
+    [
+     290,
+     232
+    ],
+    [
+     290,
+     113.33
+    ],
+    [
+     334.78,
+     113.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      54.0,
+      232
+     ],
+     [
+      161.0,
+      232
+     ],
+     [
+      161.0,
+      113.33
+     ],
+     [
+      184.25,
+      113.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wC2",
+   "type": "line",
+   "points": [
+    [
+     290,
+     232
+    ],
+    [
+     290,
+     225.33
+    ],
+    [
+     330.0,
+     225.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      161.0,
+      232
+     ],
+     [
+      161.0,
+      225.33
+     ],
+     [
+      181.0,
+      225.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wg",
+   "type": "line",
+   "points": [
+    [
+     200.0,
+     168.0
+    ],
+    [
+     240,
+     168.0
+    ],
+    [
+     240,
+     262
+    ],
+    [
+     440,
+     262
+    ],
+    [
+     440,
+     164.67
+    ],
+    [
+     475.56,
+     164.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      125.0,
+      168.0
+     ],
+     [
+      136.0,
+      168.0
+     ],
+     [
+      136.0,
+      262
+     ],
+     [
+      236.0,
+      262
+     ],
+     [
+      236.0,
+      164.67
+     ],
+     [
+      254.78,
+      164.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wt",
+   "type": "line",
+   "points": [
+    [
+     380.0,
+     218.0
+    ],
+    [
+     452,
+     218.0
+    ],
+    [
+     452,
+     179.33
+    ],
+    [
+     475.56,
+     179.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      215.0,
+      218.0
+     ],
+     [
+      242.0,
+      218.0
+     ],
+     [
+      242.0,
+      179.33
+     ],
+     [
+      254.78,
+      179.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wS",
+   "type": "line",
+   "points": [
+    [
+     380.0,
+     106.0
+    ],
+    [
+     560,
+     106.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      215.0,
+      106.0
+     ],
+     [
+      296.0,
+      106.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wCo",
+   "type": "line",
+   "points": [
+    [
+     520.0,
+     172.0
+    ],
+    [
+     560,
+     172.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      285.0,
+      172.0
+     ],
+     [
+      296.0,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "vS",
+   "type": "text",
+   "x": 564,
+   "y": 106.0,
+   "text": "S",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 300.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vCo",
+   "type": "text",
+   "x": 564,
+   "y": 172.0,
+   "text": "Cout",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 300.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vp",
+   "type": "text",
+   "x": 248,
+   "y": 88.0,
+   "text": "p",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 158,
+    "size": 12
+   }
+  },
+  {
+   "id": "vg",
+   "type": "text",
+   "x": 190,
+   "y": 250,
+   "text": "g",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 111.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "vt",
+   "type": "text",
+   "x": 426,
+   "y": 206.0,
+   "text": "t",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 250,
+    "y": 234.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 340.0,
+   "y": 300,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "HA1 adds A and B: its XOR gives the partial sum p = A ⊕ B, its AND gives g = A·B (a carry made here).",
+   "patches": []
+  },
+  {
+   "caption": "HA2 adds p and Cin: S = p ⊕ Cin is the full sum, t = p·Cin is a carry made by passing Cin along.",
+   "patches": []
+  },
+  {
+   "caption": "The OR merges the two possible carries: Cout = g + t = A·B + Cin·(A ⊕ B).",
+   "patches": [
+    {
+     "id": "o1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "Cout = AB + Cin(A ⊕ B)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A, B, Cin = 1, 1, 1: p = 0, g = 1, t = 0; S = 1, Cout = 1 (1 + 1 + 1 = 3); both carries can never be 1 together.",
+   "patches": [
+    {
+     "id": "o1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "Cin=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wp1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wp2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wg",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wt",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wCo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vp",
+     "set": {
+      "text": "p=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vg",
+     "set": {
+      "text": "g=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vt",
+     "set": {
+      "text": "t=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vCo",
+     "set": {
+      "text": "Co=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "1 + 1 + 1 = 11 (binary)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A, B, Cin = 1, 0, 1: p = 1, g = 0, t = 1; S = 0, Cout = 1 (1 + 0 + 1 = 2); both carries can never be 1 together.",
+   "patches": [
+    {
+     "id": "o1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "Cin=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wC1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wp1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wp2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wg",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wt",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wCo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vp",
+     "set": {
+      "text": "p=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vg",
+     "set": {
+      "text": "g=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vt",
+     "set": {
+      "text": "t=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vCo",
+     "set": {
+      "text": "Co=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "1 + 0 + 1 = 10 (binary)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A, B, Cin = 0, 1, 0: p = 1, g = 0, t = 0; S = 1, Cout = 0 (0 + 1 + 0 = 1); no carry is made.",
+   "patches": [
+    {
+     "id": "o1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "Cin=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wB1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wC2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wp1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wp2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wg",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wt",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wCo",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vp",
+     "set": {
+      "text": "p=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vg",
+     "set": {
+      "text": "g=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vt",
+     "set": {
+      "text": "t=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vCo",
+     "set": {
+      "text": "Co=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "0 + 1 + 0 = 01 (binary)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "A, B, Cin = 1, 1, 0: p = 0, g = 1, t = 0; S = 0, Cout = 1 (1 + 1 + 0 = 2); both carries can never be 1 together.",
+   "patches": [
+    {
+     "id": "o1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "iA",
+     "set": {
+      "text": "A=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iB",
+     "set": {
+      "text": "B=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "iC",
+     "set": {
+      "text": "Cin=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wA1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wA2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wB2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wC1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wC2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wp1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wp2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wg",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wt",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wS",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wCo",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vp",
+     "set": {
+      "text": "p=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vg",
+     "set": {
+      "text": "g=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "vt",
+     "set": {
+      "text": "t=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vS",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "vCo",
+     "set": {
+      "text": "Co=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "1 + 1 + 0 = 10 (binary)",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

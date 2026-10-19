@@ -3177,215 +3177,149 @@
       "verification": "$a = b = 1$, others 0: $N_1 = 0$, $N_2 = 1$, $N_3 = 1$, $N_4 = 0$, $N_5 = 1$, $f = \\overline{0 \\cdot 1} = 1$. ✓"
     },
     "cse-2002-b-56-a": {
-      "approach": "Each falling edge shifts the data one stage down: R0 takes the new inputs, R1 the first-stage result of R0, R2 the second-stage result of R1. So after clock $k$, R2 holds pair $k-2$ and $Z$ (from the last full adder) is $A_{k-2}+B_{k-2}$.",
+      "approach": "Concept tested: **a pipelined ripple adder traced clock by clock**. Each register stage holds one operand pair; full adder $i$ adds bit $i$ using the carry saved by the stage before. A pair entering R0 at clock $k$ reaches R2 at clock $k + 2$, and $Z$ (read from R2 and the last full adder) is its sum.",
       "concepts": [
-        "Pipelining",
-        "Ripple-carry adder",
-        "Edge-triggered registers"
+        "Pipelined adder",
+        "Full adder",
+        "Latency",
+        "Throughput"
       ],
-      "given": "| Pair | 1 | 2 | 3 | 4 | 5–8 |\n|---|---|---|---|---|---|\n| A | 110 (6) | 011 (3) | 111 (7) | 101 (5) | 000 |\n| B | 101 (5) | 101 (5) | 011 (3) | 110 (6) | 000 |",
+      "given": "R0 ← $(A, B)$; FA0 adds $a_0 + b_0$; R1 ← $a_2 a_1 b_2 b_1$, $s_0$, $c_1$; FA1 adds $a_1 + b_1 + c_1$; R2 ← $a_2 b_2$, $s_0$, $s_1$, $c_2$; FA2 adds $a_2 + b_2 + c_2$ giving $z_3 z_2$; $z_1 z_0 = s_1 s_0$ from R2. All registers load on the same falling edge; initially all 0.",
       "steps": [
         {
-          "title": "Stage timing",
-          "body": "Stage 1 (FA under R0) adds $a_0+b_0$ into R1; stage 2 adds $a_1+b_1+c_1$ into R2; stage 3 (FA under R2) is combinational and drives $z_3z_2$, with $z_1=s_1$, $z_0=s_0$ taken from R2. Hence $Z$ after clock $k$ is the sum of the pair loaded at clock $k-2$.",
-          "scene": {
-            "reveal": 0
-          }
+          "title": "Clock 1",
+          "body": "R0 ← 110, 101. R1 and R2 still hold zeros (they load the old contents of R0 and R1, which were 0), so $Z = 0000$."
         },
         {
-          "title": "Clocks 1–2: pipeline filling",
-          "body": "After clocks 1 and 2, R2 still holds its initial zeros, so $Z = 0+0 = 0000$ both times.",
-          "scene": {
-            "reveal": 10,
-            "hl": [
-              {
-                "r": 0,
-                "c": 4,
-                "tone": "muted"
-              },
-              {
-                "r": 1,
-                "c": 4,
-                "tone": "muted"
-              }
-            ]
-          }
+          "title": "Clock 2",
+          "body": "R1 ← the first pair with $s_0 = 0 \\oplus 1 = 1$ and $c_1 = 0$; R0 ← 011, 101; R2 still holds zeros: $Z = 0000$."
         },
         {
-          "title": "Clock 3: pair 1",
-          "body": "$110+101$: $s_0 = 0\\oplus1 = 1$, $c_1=0$; $s_1 = 1\\oplus0\\oplus0 = 1$, $c_2=0$; $1+1+0$ gives $z_2=0$, $z_3=1$. $Z = 1011$ ($6+5=11$).",
-          "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 2,
-                "c": 4,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Clock 3",
+          "body": "R2 ← the first pair with $s_0 = 1$, $s_1 = 1 \\oplus 0 \\oplus 0 = 1$, $c_2 = 0$; FA2: $1 + 1 + 0 = 10$, so $z_3 z_2 = 10$. $Z = 1011 = 11 = 6 + 5$."
         },
         {
-          "title": "Clock 4: pair 2",
-          "body": "$011+101$: $1+1 \\Rightarrow s_0=0,c_1=1$; $1+0+1 \\Rightarrow s_1=0,c_2=1$; $0+1+1 \\Rightarrow z_2=0,z_3=1$. $Z = 1000$ ($3+5=8$).",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "c": 4,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Clock 5: pair 3",
-          "body": "$111+011$: $1+1 \\Rightarrow s_0=0,c_1=1$; $1+1+1 \\Rightarrow s_1=1,c_2=1$; $1+0+1 \\Rightarrow z_2=0,z_3=1$. $Z = 1010$ ($7+3=10$).",
-          "scene": {
-            "reveal": 25,
-            "hl": [
-              {
-                "r": 4,
-                "c": 4,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Clock 6: pair 4",
-          "body": "$101+110$: $1+0 \\Rightarrow s_0=1,c_1=0$; $0+1+0 \\Rightarrow s_1=1,c_2=0$; $1+1+0 \\Rightarrow z_2=0,z_3=1$. $Z = 1011$ ($5+6=11$).",
-          "scene": {
-            "reveal": 30,
-            "hl": [
-              {
-                "r": 5,
-                "c": 4,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Clocks 4–6",
+          "body": "Each clock one more pair reaches R2: $3 + 5 = 8 = 1000$, $7 + 3 = 10 = 1010$, $5 + 6 = 11 = 1011$."
         },
         {
           "title": "Clocks 7–8",
-          "body": "R2 now holds pairs 5 and 6, both $000+000$, so $Z = 0000$ after clocks 7 and 8.",
-          "scene": {
-            "reveal": 40,
-            "hl": [
-              {
-                "c": 4,
-                "tone": "accent"
-              }
-            ]
-          }
+          "body": "The pairs entered at clocks 5 and 6 are 000 + 000, so $Z = 0000$, $0000$."
         }
       ],
+      "answer": {
+        "value": "Z after clocks 1 … 8: 0000, 0000, 1011, 1000, 1010, 1011, 0000, 0000",
+        "matchesKey": true
+      },
+      "shortcut": "Latency 3: the output after clock $k$ is the sum of the inputs applied at clock $k - 2$ (zeros before that). So write the four sums 11, 8, 10, 11 shifted right by two clocks.",
+      "pitfalls": [
+        "Showing 1011 already after clock 1: the pair needs three register loads before $Z$ shows its full sum.",
+        "Mixing bits of different pairs: $z_0$ and $z_1$ of a result travel with it through R1 and R2.",
+        "Forgetting that 7 + 3 = 10 needs the carries $c_1 = 1$, $c_2 = 1$ saved in the registers."
+      ],
+      "verification": "l4_01_ripple.py simulates the three registers and full adders clock by clock (arithlib.pipeline_2002) and checks every Z against the sum of the pair applied two clocks earlier.",
       "animation": {
         "kind": "table",
+        "title": "Register contents after each clock",
         "cols": [
-          "Clock",
-          "R0 holds",
-          "R1 holds",
-          "R2 holds",
+          "clock",
+          "R0",
+          "R1",
+          "R2",
           "Z"
         ],
         "rows": [
           [
             "1",
-            "#1 (110, 101)",
-            "zeros",
-            "zeros",
+            "110+101",
+            "0",
+            "0",
             "0000"
           ],
           [
             "2",
-            "#2 (011, 101)",
-            "#1 (110, 101)",
-            "zeros",
+            "011+101",
+            "110+101",
+            "0",
             "0000"
           ],
           [
             "3",
-            "#3 (111, 011)",
-            "#2 (011, 101)",
-            "#1 (110, 101)",
+            "111+011",
+            "011+101",
+            "110+101",
             "1011"
           ],
           [
             "4",
-            "#4 (101, 110)",
-            "#3 (111, 011)",
-            "#2 (011, 101)",
+            "101+110",
+            "111+011",
+            "011+101",
             "1000"
           ],
           [
             "5",
-            "#5 (000, 000)",
-            "#4 (101, 110)",
-            "#3 (111, 011)",
+            "000+000",
+            "101+110",
+            "111+011",
             "1010"
           ],
           [
             "6",
-            "#6 (000, 000)",
-            "#5 (000, 000)",
-            "#4 (101, 110)",
+            "000+000",
+            "000+000",
+            "101+110",
             "1011"
           ],
           [
             "7",
-            "#7 (000, 000)",
-            "#6 (000, 000)",
-            "#5 (000, 000)",
+            "000+000",
+            "000+000",
+            "000+000",
             "0000"
           ],
           [
             "8",
-            "#8 (000, 000)",
-            "#7 (000, 000)",
-            "#6 (000, 000)",
+            "000+000",
+            "000+000",
+            "000+000",
             "0000"
           ]
         ],
-        "reveal": 0,
-        "mono": true,
-        "caption": "Contents after each falling edge (pair # loaded at that clock)"
-      },
-      "answer": {
-        "value": "After clocks 1–8: $Z = 0000,\\ 0000,\\ 1011,\\ 1000,\\ 1010,\\ 1011,\\ 0000,\\ 0000$",
-        "matchesKey": true
-      },
-      "pitfalls": [
-        "Producing $1011$ already after clock 1 — the result needs two more edges to reach R2.",
-        "Treating stage 3 as registered — $Z$ comes from a combinational full adder after R2."
-      ],
-      "verification": "Decimal check: $6+5=11=1011_2$, $3+5=8=1000_2$, $7+3=10=1010_2$, $5+6=11=1011_2$."
+        "mono": true
+      }
     },
     "cse-2002-b-56-b": {
-      "approach": "Read the data path: one full adder per bit position, carries passed down through registers, unused bits delayed alongside — a ripple-carry adder cut into stages by registers.",
+      "approach": "Concept tested: **recognising a pipelined adder**: full adders separated by registers, each stage adding one bit position and passing its carry and the unused operand bits to the next stage.",
       "concepts": [
-        "Pipelining",
-        "Ripple-carry adder"
+        "Pipelined adder",
+        "Ripple-carry adder",
+        "Registers"
       ],
+      "given": "The circuit of part (a): three registers R0, R1, R2 and three full adders, one per bit position, with the carry of each stage stored in the next register.",
       "steps": [
         {
-          "title": "Per-stage work",
-          "body": "Stage 1 adds bit 0 ($a_0+b_0+0$), stage 2 adds bit 1 with the carry from stage 1, stage 3 adds bit 2 with the carry from stage 2 and outputs the final carry $z_3$. Each carry travels to the next stage through a register."
+          "title": "Remove the registers",
+          "body": "Without R1 and R2, the three full adders are chained carry-out to carry-in: a 3-bit **ripple-carry adder** producing a 4-bit sum $z_3 z_2 z_1 z_0$."
         },
         {
-          "title": "Why the extra register bits",
-          "body": "The higher bits ($a_2,b_2,a_1,b_1$) and the already computed sum bits ($s_0$, later $s_1$) are copied down unchanged so they stay aligned with their own operation. A new addition can start every clock; each result appears 2 clocks after its inputs are loaded (Z = 1011 after clock 3 for the pair loaded at clock 1)."
+          "title": "Put the registers back",
+          "body": "The registers cut the carry chain into three stages, one full adder each, and carry the high operand bits and the low sum bits along so that all bits of one result stay together."
+        },
+        {
+          "title": "Behaviour",
+          "body": "Part (a) showed latency 3 clocks and then one new sum per clock. That is a **3-stage pipelined 3-bit adder**: the same additions as a ripple adder, overlapped."
         }
       ],
       "answer": {
-        "value": "A 3-stage pipelined 3-bit (ripple-carry) binary adder: $Z = A + B$ (4-bit result), one addition per clock with a latency of 2 clocks",
+        "value": "A 3-bit binary adder, pipelined in three stages (one full adder per stage): $Z = A + B$ with a latency of 3 clocks and one result per clock",
         "matchesKey": true
       },
       "pitfalls": [
-        "Calling it a serial adder — all three bit-additions of different operand pairs are in progress simultaneously."
+        "Calling it a serial adder: a serial adder reuses one full adder on bits of one number over time; here three full adders work on three different pairs at once.",
+        "Calling it a carry-save or look-ahead adder: the carry still ripples, just one stage per clock."
       ],
-      "verification": "Part (a) gives $Z = A+B$ for every input pair, two clocks after loading."
+      "verification": "Part (a)'s trace: every Z equals the sum of the pair applied two clocks earlier (l4_01_ripple.py)."
     },
     "cse-2002-b-57-a": {
       "approach": "Concept tested: a **base-16** format with an **excess-64** exponent and an unusual field order (sign | fraction | exponent). Normalise so the first *hex digit* of the fraction is non-zero, then assemble the 32 bits and regroup into hex.",

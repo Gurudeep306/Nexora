@@ -1,0 +1,1623 @@
+[
+ {
+  "id": "nx-dl-04-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Two 8-bit numbers **and a carry in** $c_0$ are to be added with a ripple-carry adder built from half adders (HA) and full adders (FA) only, with no other gates. Which set is needed?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1 HA and 7 FA"
+   },
+   {
+    "l": "B",
+    "t": "8 FA"
+   },
+   {
+    "l": "C",
+    "t": "8 HA and 8 FA"
+   },
+   {
+    "l": "D",
+    "t": "16 HA"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "With a carry in, column 0 adds three bits $a_0 + b_0 + c_0$, so it needs a full adder too.",
+   "Every column adds two operand bits and a carry: 8 full adders.",
+   "Half adders cannot accept a third input, so no HA appears."
+  ],
+  "concept": "Count the bits each column adds: two → HA, three → FA.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "1 HA + 7 FA is right only when there is no carry in."
+   },
+   {
+    "answer": "D",
+    "why": "Half adders alone cannot pass carries; two HAs make an FA only with an extra OR gate, which is not allowed here."
+   }
+  ],
+  "blocks": [
+   "ha-fa-count",
+   "ripple-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q02",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "A full adder is built from two half adders and an OR gate: HA1 gives $p = A \\oplus B$ and $g = AB$; HA2 gives $S = p \\oplus C_{in}$ and $t = p\\,C_{in}$; $C_{out} = g + t$. For $A = 1$, $B = 0$, $C_{in} = 1$, which lines are 1?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$p$"
+   },
+   {
+    "l": "B",
+    "t": "$g$"
+   },
+   {
+    "l": "C",
+    "t": "$t$"
+   },
+   {
+    "l": "D",
+    "t": "$C_{out}$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "$p = 1 \\oplus 0 = 1$, $g = 1 \\cdot 0 = 0$.",
+   "$S = 1 \\oplus 1 = 0$, $t = 1 \\cdot 1 = 1$.",
+   "$C_{out} = 0 + 1 = 1$: $1 + 0 + 1 = 2 = 10$ in binary, and the carry was **propagated** (t), not generated (g)."
+  ],
+  "concept": "Generate (g) and propagate-and-carry (t) are the two ways a full adder makes a carry; they never coincide.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "$g = AB = 0$ here; the carry comes through $t$."
+   },
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "Forgets $t = p\\,C_{in} = 1$, the line that actually carries."
+   }
+  ],
+  "blocks": [
+   "fa-from-ha",
+   "or-not-xor"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "What is the minimum number of 2-input NOR gates needed to build a half adder (outputs $S = A \\oplus B$ and $C = AB$; only $A$ and $B$ are available, uncomplemented, and no constants)?",
+  "answer": 5,
+  "solution": [
+   "A 5-NOR circuit: $n_1 = \\overline{A + A} = \\bar A$, $n_2 = \\overline{B + B} = \\bar B$, $n_3 = \\overline{A + B} = \\bar A \\bar B$.",
+   "The carry: $C = \\overline{n_1 + n_2} = \\overline{\\bar A + \\bar B} = AB$ (De Morgan).",
+   "The sum: $S = \\overline{n_3 + C} = \\overline{\\bar A\\bar B + AB} = A \\oplus B$. Five gates; note the carry is reused inside the sum.",
+   "An exhaustive search over all networks of at most four 2-input NORs finds none that produces both $A \\oplus B$ and $AB$, so 5 is the minimum."
+  ],
+  "concept": "Share gates between the two outputs; prove minimality by ruling out smaller networks.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Four NORs make XNOR, not XOR, and leave no gate for the carry."
+   },
+   {
+    "answer": 8,
+    "why": "Converting XOR (5 NORs) and AND (3 NORs: two inverters and a NOR) separately gives 8; it ignores that the carry can be reused inside the sum."
+   }
+  ],
+  "blocks": [
+   "adder-gate-counts",
+   "trap-ha-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A full subtractor computes $x - y - b$ ($b$ = borrow in). Its borrow out is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$xy + xb + yb$"
+   },
+   {
+    "l": "B",
+    "t": "$x \\oplus y \\oplus b$"
+   },
+   {
+    "l": "C",
+    "t": "$\\bar x y + \\bar x b + y b$"
+   },
+   {
+    "l": "D",
+    "t": "$x \\bar y + x b + \\bar y b$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "We borrow when $y + b > x$, i.e. when at least two of $\\bar x$, $y$, $b$ are 1.",
+   "That majority is $\\bar x y + \\bar x b + y b$.",
+   "Check $x = 0, y = 1, b = 0$: $0 - 1 = -1$ must borrow; option C gives $1 \\cdot 1 = 1$ ✓."
+  ],
+  "concept": "The borrow is the majority of $\\bar x$, $y$ and $b$: the adder's carry with $x$ inverted.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the full adder's carry (the majority of x, y, b): it is 0 for 0 − 1 − 0, which must borrow."
+   },
+   {
+    "answer": "B",
+    "why": "That is the difference bit, not the borrow."
+   },
+   {
+    "answer": "D",
+    "why": "It complements $y$ instead of $x$: it would borrow for $1 - 0 - 0$."
+   }
+  ],
+  "blocks": [
+   "full-subtractor",
+   "fs-from-fa"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 12-bit ripple-carry adder (with carry in) uses full adders made of two half adders and an OR gate. Every gate (XOR, AND, OR) has a delay of 1 unit. After how many units is the carry out $c_{12}$ guaranteed stable?",
+  "answer": 25,
+  "solution": [
+   "$c_1$ needs $p_0$ (XOR, 1), then AND (2), then OR (3).",
+   "Every later carry adds AND + OR = 2 units: $c_i$ is stable at $2i + 1$.",
+   "$c_{12}$ at $2 \\cdot 12 + 1 = 25$."
+  ],
+  "concept": "Unit-delay ripple adder: 3 units for the first carry, 2 per stage after it.",
+  "common_wrong": [
+   {
+    "answer": 24,
+    "why": "$2n$ is the last sum bit's time (or the two-level full adder's model), not the carry out of the HA + OR adder."
+   },
+   {
+    "answer": 36,
+    "why": "Counts 3 units per stage; only stage 0 pays for the XOR on the carry path."
+   }
+  ],
+  "blocks": [
+   "ripple-delay",
+   "delay-models"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A full adder is two half adders (XOR + AND each) and an OR gate. XOR delay is 3 ns, AND and OR are 2 ns each. An 8-bit ripple-carry adder is built from 8 such full adders, and each full adder is counted as a block that contributes its **full** delay (block model). What is the adder's total delay in ns?",
+  "answer": 56,
+  "solution": [
+   "One full adder: sum path XOR + XOR = 6 ns; carry path XOR + AND + OR = 3 + 2 + 2 = 7 ns. So $t_{FA} = 7$ ns.",
+   "Block model: $8 \\times 7 = 56$ ns.",
+   "(Gate level would give $7 + 7 \\times (2 + 2) = 35$ ns for $c_8$; the question fixes the block model.)"
+  ],
+  "concept": "Block model: total = n × the slowest output of one full adder.",
+  "common_wrong": [
+   {
+    "answer": 48,
+    "why": "Uses the sum path (6 ns) as the full adder's delay; the carry path (7 ns) is slower."
+   },
+   {
+    "answer": 35,
+    "why": "That is the gate-level critical path, not the block model the question asks for."
+   }
+  ],
+  "blocks": [
+   "delay-models",
+   "trap-block-vs-gate"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "An 8-bit ripple-carry adder adds two's-complement numbers $A$ and $B$ with carry in 0. $A = 4$. Among the options, which $B$ makes the sum take the longest to stabilise?",
+  "options": [
+   {
+    "l": "A",
+    "t": "124"
+   },
+   {
+    "l": "B",
+    "t": "$-128$"
+   },
+   {
+    "l": "C",
+    "t": "$-4$"
+   },
+   {
+    "l": "D",
+    "t": "4"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "$A = 0000\\,0100$: only bit 2 can generate a carry, which needs $b_2 = 1$.",
+   "Bits 3–7 of $A$ are 0, so they propagate only where $b_k = 1$. The chain reaches the top iff $b_7 \\dots b_2 = 111111$.",
+   "$-4 = 1111\\,1100$ has exactly that; the chain crosses 6 stages. $124 = 0111\\,1100$ stops at bit 7 (5 stages); $-128 = 1000\\,0000$ has $b_2 = 0$, so no carry is generated at all; $4 = 0000\\,0100$ generates at bit 2 and the carry is killed at bit 3 ($a_3 = b_3 = 0$)."
+  ],
+  "concept": "The longest carry chain starts at a generating column and continues through propagating columns.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "124 = 0111 1100: the carry stops at bit 7 because $a_7 = b_7 = 0$."
+   },
+   {
+    "answer": "B",
+    "why": "$-128$ has $b_2 = 0$: nothing is generated at all; its sum settles almost at once."
+   }
+  ],
+  "blocks": [
+   "worst-case-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 4-bit ripple-carry adder adds unsigned $A$ and $B$ (carry in 0). For which pairs is a carry **generated in stage 0 and propagated through stages 1, 2 and 3** to the carry out?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A = 0001$, $B = 1111$"
+   },
+   {
+    "l": "B",
+    "t": "$A = 0011$, $B = 1101$"
+   },
+   {
+    "l": "C",
+    "t": "$A = 1111$, $B = 1111$"
+   },
+   {
+    "l": "D",
+    "t": "$A = 0101$, $B = 1011$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "Need $a_0 = b_0 = 1$ (generate) and $a_k \\ne b_k$ for $k = 1, 2, 3$ (propagate).",
+   "A: bit 0 = 1,1; bits 1–3: 0/1 each ✓. B: 1,1; then (1,0), (0,1), (0,1) ✓. D: 1,1; then (0,1), (1,0), (0,1) ✓.",
+   "C: every stage has $a_k = b_k = 1$, so each stage **generates** its own carry; the carry from stage 0 is not what reaches the top, and the sum settles fast."
+  ],
+  "concept": "Propagate means $a_k \\oplus b_k = 1$; a generating column restarts the chain.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "1111 + 1111 does produce a carry out, but every column generates it locally; nothing travels the whole chain."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "Any pattern with $a_k \\ne b_k$ above a generating bit 0 works, not only $B = 1111$."
+   }
+  ],
+  "blocks": [
+   "worst-case-carry",
+   "ripple-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 32-bit adder is pipelined into 8 stages of 4 bits each. Each stage's logic takes 9 ns and each pipeline register adds 1 ns. Starting from an empty pipeline, how many ns pass until 100 additions have all completed?",
+  "answer": 1070,
+  "solution": [
+   "Clock period = 9 + 1 = 10 ns.",
+   "The first result needs 8 clocks; then one result leaves every clock, so 100 results need $8 + 99 = 107$ clocks.",
+   "$107 \\times 10 = 1070$ ns."
+  ],
+  "concept": "Pipeline time for $N$ items: $(k + N - 1)$ clock periods.",
+  "common_wrong": [
+   {
+    "answer": 8000,
+    "why": "$100 \\times 8 \\times 10$ treats the additions as if they did not overlap."
+   },
+   {
+    "answer": 1000,
+    "why": "Forgets the 7 extra clocks needed to fill the pipeline."
+   }
+  ],
+  "blocks": [
+   "pipelined-adder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Full adders are built from two half adders and an OR gate. Which statements about $n$-bit ripple-carry adders are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The worst-case delay grows linearly with $n$."
+   },
+   {
+    "l": "B",
+    "t": "For $n \\ge 2$ and any positive gate delays, the block model ($n \\cdot t_{FA}$) gives a larger total than the gate-level critical path."
+   },
+   {
+    "l": "C",
+    "t": "Pipelining the adder reduces the time one addition takes from input to output."
+   },
+   {
+    "l": "D",
+    "t": "Replacing the OR gate in every full adder by an XOR changes some sums."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "A: true; the carry crosses all $n$ stages in the worst case: $t_{ab\\to c} + (n-1)t_{c\\to c}$.",
+   "B: true; $t_{FA} \\ge t_{XOR} + t_{AND} + t_{OR} > t_{AND} + t_{OR} = t_{c\\to c}$ and $t_{FA} \\ge t_{c\\to s}$, so $n\\,t_{FA}$ exceeds both gate-level totals once $n \\ge 2$.",
+   "C: false; pipelining adds register delay to the latency; it raises throughput.",
+   "D: false; the two half-adder carries are never both 1, so OR and XOR agree."
+  ],
+  "concept": "Linear ripple delay; the block model over-counts; pipelining trades latency for throughput.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Pipelining does not shorten one addition; it overlaps many."
+   },
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "The OR → XOR swap is harmless (the carries are mutually exclusive), and the block model really is larger."
+   }
+  ],
+  "blocks": [
+   "delay-models",
+   "pipelined-adder",
+   "or-not-xor"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q01",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "For $a = 1100$ and $b = 1010$ (bits 3 … 0), with $g_i = a_ib_i$ and $p_i = a_i \\oplus b_i$, which are 1?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$g_3$"
+   },
+   {
+    "l": "B",
+    "t": "$p_2$"
+   },
+   {
+    "l": "C",
+    "t": "$p_1$"
+   },
+   {
+    "l": "D",
+    "t": "$g_0$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "$g = a \\,\\&\\, b = 1000$: only $g_3 = 1$.",
+   "$p = a \\oplus b = 0110$: $p_2 = p_1 = 1$.",
+   "$g_0 = 0 \\cdot 0 = 0$."
+  ],
+  "concept": "Generate is the column AND, propagate the column XOR.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Column 0 has $a_0 = b_0 = 0$: it kills, it does not generate."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "Columns 2 and 1 each have exactly one 1, so they propagate."
+   }
+  ],
+  "blocks": [
+   "generate-propagate"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "In a carry look-ahead adder with $g_i = a_ib_i$, $p_i = a_i \\oplus b_i$ and carry in $c_0$, the carry $c_2$ is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$g_1 + p_1g_0 + p_1p_0c_0$"
+   },
+   {
+    "l": "B",
+    "t": "$g_1 + p_1g_0 + p_0c_0$"
+   },
+   {
+    "l": "C",
+    "t": "$g_1g_0 + p_1p_0c_0$"
+   },
+   {
+    "l": "D",
+    "t": "$p_1 + g_1g_0 + c_0$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$c_1 = g_0 + p_0c_0$.",
+   "$c_2 = g_1 + p_1c_1 = g_1 + p_1g_0 + p_1p_0c_0$.",
+   "Each term is a source (column 1, column 0, the carry in) times the $p$'s above it."
+  ],
+  "concept": "Unroll $c_{i+1} = g_i + p_ic_i$.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "A carry in reaches column 2 only if columns 0 **and** 1 propagate: the term needs $p_1$ too."
+   },
+   {
+    "answer": "C",
+    "why": "$g_1g_0$ is not a source; a single generating column suffices."
+   }
+  ],
+  "blocks": [
+   "cla-expansion",
+   "carry-recurrence"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A two-level AND-OR look-ahead carry generator receives $p_i$, $g_i$ ($i = 0 \\dots 5$) and $c_0$ and produces $c_1, \\dots, c_6$. Gates of any fan-in are available. How many AND gates does it need?",
+  "answer": 21,
+  "solution": [
+   "$c_k$ has $k + 1$ terms: $g_{k-1}$ (a literal, no AND) and $k$ products.",
+   "Total ANDs $= 1 + 2 + \\dots + 6 = 21$ (and 6 ORs)."
+  ],
+  "concept": "$n(n+1)/2$ AND gates for an $n$-bit two-level carry unit.",
+  "common_wrong": [
+   {
+    "answer": 27,
+    "why": "Counts the bare $g_{k-1}$ of every carry as an AND gate too."
+   },
+   {
+    "answer": 15,
+    "why": "$1 + \\dots + 5$ stops at $c_5$."
+   }
+  ],
+  "blocks": [
+   "cla-gate-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "An 8-bit adder computes all its carries with a single two-level look-ahead unit (gates of any fan-in). Every gate, XOR included, takes 1 unit. What is the adder's delay in units?",
+  "answer": 4,
+  "solution": [
+   "$p_i, g_i$: 1 level.",
+   "Every carry: AND then OR, ready at 3, whatever its index.",
+   "Sums $p_i \\oplus c_i$: at 4."
+  ],
+  "concept": "A single-level CLA has a fixed depth (with unbounded fan-in): P/G, AND, OR, XOR.",
+  "common_wrong": [
+   {
+    "answer": 17,
+    "why": "$2n + 1$ is the ripple-carry adder."
+   },
+   {
+    "answer": 3,
+    "why": "That is when the carries are ready; the sums need one more XOR."
+   }
+  ],
+  "blocks": [
+   "cla-delay",
+   "cla-4bit"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "In a single (non-hierarchical) two-level AND-OR look-ahead unit for a 6-bit adder (carries $c_1 \\dots c_6$ from $p_i$, $g_i$, $c_0$), what is the largest fan-in of any gate?",
+  "answer": 7,
+  "solution": [
+   "$c_6 = g_5 + p_5g_4 + \\dots + p_5p_4p_3p_2p_1p_0c_0$.",
+   "Its last product has 7 literals ($p_5 \\dots p_0$, $c_0$), and the OR has 7 terms.",
+   "Largest fan-in: 7."
+  ],
+  "concept": "Fan-in of a single-level look-ahead unit grows as $n + 1$.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "Forgets the carry in $c_0$ in the last product (or the term $g_5$ in the OR)."
+   },
+   {
+    "answer": 21,
+    "why": "21 is the number of AND gates, not a fan-in."
+   }
+  ],
+  "blocks": [
+   "fan-in"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "An $n$-bit adder is to be built from gates of fan-in at most 3, each with unit delay. What is the best possible order of its worst-case delay?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Theta(1)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Theta(\\sqrt n)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Theta(n)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Theta(\\log n)$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Upper bound: a multi-level carry look-ahead adder with 2-way blocks uses gates of fan-in at most 3 and has $O(\\log n)$ delay.",
+   "Lower bound: the carry out depends on all $2n + 1$ inputs; depth $D$ with fan-in 3 reaches at most $3^D$ inputs, so $D \\ge \\log_3(2n+1)$.",
+   "So $\\Theta(\\log n)$."
+  ],
+  "concept": "Bounded fan-in makes $\\log n$ both achievable and necessary.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Constant depth needs unbounded fan-in."
+   },
+   {
+    "answer": "B",
+    "why": "√n is carry-select/carry-skip, not the best possible."
+   }
+  ],
+  "blocks": [
+   "cla-log-delay",
+   "trap-constant-time"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 16-bit two-level carry look-ahead adder (4-bit blocks, a second-level look-ahead unit) is built without XOR gates: every XOR (the $p_i$ and the sums) is two-level AND-OR logic, with the complements of all signals available as early as the signals themselves (dual-rail). Every gate takes 1 unit. What is the worst-case delay?",
+  "answer": 10,
+  "solution": [
+   "$p_i$ at 2 (two-level XOR), $g_i$ at 1; block $P$ at 3, block $G$ at 4 (AND + OR over $p$'s and $g$'s).",
+   "Second-level carries $c_4 \\dots c_{16}$ by 6; inner block carries two levels later, by 8.",
+   "Sums $p_i \\oplus c_i$, two-level: by 10."
+  ],
+  "concept": "Each XOR stage costs 2 levels instead of 1; the look-ahead stages are unchanged.",
+  "common_wrong": [
+   {
+    "answer": 8,
+    "why": "8 is the delay with single-gate XORs."
+   },
+   {
+    "answer": 12,
+    "why": "Adds 2 for every stage, but the carry levels were already two-level."
+   }
+  ],
+  "blocks": [
+   "multi-level-cla",
+   "cla-delay"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 16-bit carry-select adder uses 4-bit ripple-carry blocks (full adders of two half adders and an OR); every gate takes 1 unit and a 2:1 MUX takes 2 units. Its worst-case delay is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "15"
+   },
+   {
+    "l": "B",
+    "t": "17"
+   },
+   {
+    "l": "C",
+    "t": "33"
+   },
+   {
+    "l": "D",
+    "t": "11"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Every 4-bit block (both copies) finishes by $2 \\cdot 4 + 1 = 9$; the lowest block's carry $c_4$ at 9.",
+   "Each of the three upper blocks adds one MUX on the carry chain: $c_8$ at 11, $c_{12}$ at 13, $c_{16}$ (and the top sums) at 15.",
+   "$9 + 2 \\times 3 = 15$."
+  ],
+  "concept": "Carry-select delay: first block + one MUX per later block.",
+  "common_wrong": [
+   {
+    "answer": "D",
+    "why": "11 is the 8-bit carry-select (one upper block)."
+   },
+   {
+    "answer": "C",
+    "why": "33 is the 16-bit ripple adder."
+   }
+  ],
+  "blocks": [
+   "carry-select"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A bit-serial adder (one full adder and a carry flip-flop) adds two 32-bit numbers. Its clock period is 5 ns. How many ns does one addition take?",
+  "answer": 160,
+  "solution": [
+   "One bit per clock: 32 clocks.",
+   "$32 \\times 5 = 160$ ns."
+  ],
+  "concept": "A serial adder trades hardware for time: $n$ clocks.",
+  "common_wrong": [
+   {
+    "answer": 5,
+    "why": "One clock adds only one bit position."
+   },
+   {
+    "answer": 325,
+    "why": "Uses the ripple formula $2n+1$ instead of clocks."
+   }
+  ],
+  "blocks": [
+   "serial-adder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-02-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Let $g_i = a_ib_i$, $p_i = a_i \\oplus b_i$ and $t_i = a_i + b_i$. Which statements are true for every input?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$c_{i+1} = g_i + t_ic_i$"
+   },
+   {
+    "l": "B",
+    "t": "$s_i = t_i \\oplus c_i$"
+   },
+   {
+    "l": "C",
+    "t": "$g_i$ and $p_i$ are never both 1"
+   },
+   {
+    "l": "D",
+    "t": "$g_i$ and $t_i$ can both be 1"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: true; $t_i$ and $p_i$ differ only at $a_i = b_i = 1$, where $g_i = 1$ makes the carry 1 anyway.",
+   "B: false; at $a_i = b_i = 1$, $c_i = 0$ the sum is 0 but $t_i \\oplus c_i = 1$.",
+   "C: true; $g_i = 1$ forces $a_i = b_i$, so $p_i = 0$.",
+   "D: true; at $a_i = b_i = 1$ both are 1."
+  ],
+  "concept": "The OR propagate is fine for carries, never for sums.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "B fails on $1 + 1$ with no carry in."
+   },
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "The carry recurrence also holds with the OR form, and $g_i = t_i = 1$ at $a_i = b_i = 1$."
+   }
+  ],
+  "blocks": [
+   "p-xor-or",
+   "trap-p-or"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A one-digit nine's complementer has outputs $N_0 = \\bar d_0$, $N_1 = d_1$, $N_2 = d_2 \\oplus d_1$, $N_3 = \\overline{d_3 + d_2 + d_1}$. For the input digit $d_3d_2d_1d_0 = 0011$, what is $N_3N_2N_1N_0$ read as a decimal number?",
+  "answer": 6,
+  "solution": [
+   "$d = 0011$: $N_0 = \\bar 1 = 0$, $N_1 = 1$, $N_2 = 0 \\oplus 1 = 1$, $N_3 = \\overline{0 + 0 + 1} = 0$.",
+   "$N = 0110 = 6 = 9 - 3$ ✓."
+  ],
+  "concept": "A nine's complementer maps $d$ to $9 - d$; decimal subtraction adds it with a carry in of 1.",
+  "common_wrong": [
+   {
+    "answer": 7,
+    "why": "$10 - 3$ is the ten's complement; the circuit makes the nine's complement (the +1 comes from the carry in)."
+   },
+   {
+    "answer": 12,
+    "why": "$1100 = \\bar d$ is the bitwise complement, not $9 - d$."
+   }
+  ],
+  "blocks": [
+   "bcd-subtractor",
+   "nines-complementer"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q02",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "Same circuit ($A_i$ and $B_i \\oplus K$ into the adder, separate carry in $C_0$). Which operations can be produced for **every** $A$ and $B$ by choosing $K$ and $C_0$ only?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A + B + 1$"
+   },
+   {
+    "l": "B",
+    "t": "$A - B - 1$"
+   },
+   {
+    "l": "C",
+    "t": "$A + 1$"
+   },
+   {
+    "l": "D",
+    "t": "$B - A$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "$(K, C_0) = (0, 1)$: $A + B + 1$. $(1, 0)$: $A + \\bar B = A - B - 1$.",
+   "$A + 1$ needs $B = 0$; $B - A$ needs $A$ inverted, but only $B$ passes through the XORs."
+  ],
+  "concept": "Four settings: $A + B$, $A + B + 1$, $A - B - 1$, $A - B$, and nothing else.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "$A + 1$ is $A + B + 1$ only when $B = 0$."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "The XOR row sits on $B$, so the circuit can negate $B$ but never $A$."
+   }
+  ],
+  "blocks": [
+   "control-lines",
+   "trap-a-plus-1"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit adder–subtractor computes $0111 + 0001$ ($K = 0$). What are the overflow flag $V = c_4 \\oplus c_3$ and the carry flag $C = c_4$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$V = 1$, $C = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$V = 0$, $C = 0$"
+   },
+   {
+    "l": "C",
+    "t": "$V = 1$, $C = 1$"
+   },
+   {
+    "l": "D",
+    "t": "$V = 0$, $C = 1$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "$0111 + 0001 = 1000$: the carry ripples into bit 3 ($c_3 = 1$) but not out ($c_4 = 0$).",
+   "$V = 0 \\oplus 1 = 1$: $7 + 1 = 8$ does not fit in 4-bit two's complement. $C = 0$: as unsigned, $8$ fits."
+  ],
+  "concept": "Overflow = carry into the sign stage ≠ carry out of it; it is independent of the unsigned carry.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "There is no carry out, but the signed result 1000 reads $-8$: overflow."
+   },
+   {
+    "answer": "C",
+    "why": "$c_4 = 0$; only the carry into bit 3 is 1."
+   }
+  ],
+  "blocks": [
+   "overflow-detector",
+   "flags"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 4-bit adder–subtractor computes $0010 - 0111$ ($K = 1$). Which flags are 1 afterwards? ($C = c_4$, $V = c_4 \\oplus c_3$, $N = s_3$, $Z$ = result is zero.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "$C$"
+   },
+   {
+    "l": "B",
+    "t": "$V$"
+   },
+   {
+    "l": "C",
+    "t": "$N$"
+   },
+   {
+    "l": "D",
+    "t": "$Z$"
+   }
+  ],
+  "answer": [
+   "C"
+  ],
+  "solution": [
+   "$0010 + 1000 + 1 = 1011$, with $c_3 = 0$ and $c_4 = 0$.",
+   "$C = 0$ (a borrow: $2 < 7$ unsigned), $V = 0$ ($2 - 7 = -5$ fits), $N = 1$, $Z = 0$.",
+   "Only $N$ is 1."
+  ],
+  "concept": "After $A - B$: $C$ = no borrow, $N$ = sign of the (non-overflowed) result.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "$C = 1$ would mean no borrow; but $2 < 7$, so there is a borrow and $C = 0$."
+   },
+   {
+    "answer": [
+     "B",
+     "C"
+    ],
+    "why": "$-5$ is in range $[-8, 7]$: no overflow."
+   }
+  ],
+  "blocks": [
+   "flags",
+   "compare-flags"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "After an 8-bit adder–subtractor computes $A - B$ on two's-complement operands, the flags are $N = 0$ and $V = 1$. What follows?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A < B$ as signed numbers"
+   },
+   {
+    "l": "B",
+    "t": "$A \\ge B$ as signed numbers"
+   },
+   {
+    "l": "C",
+    "t": "$A = B$"
+   },
+   {
+    "l": "D",
+    "t": "Nothing can be concluded about the signed order"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Signed $A < B$ iff $N \\oplus V = 1$.",
+   "$0 \\oplus 1 = 1$: the true difference is negative; it overflowed and wrapped to a pattern with sign bit 0."
+  ],
+  "concept": "With overflow, the sign bit is flipped; $N \\oplus V$ is the true sign.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Reads $N = 0$ as 'non-negative', ignoring the overflow."
+   },
+   {
+    "answer": "D",
+    "why": "The flags do determine the order: $N \\oplus V$."
+   }
+  ],
+  "blocks": [
+   "compare-flags",
+   "trap-carry-flag"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "In a one-digit BCD adder, the first 4-bit binary adder outputs its carry $C_4$ and sum $Z_3Z_2Z_1Z_0$. The correction (add 0110) must be applied when:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Z_3Z_2 + Z_3Z_1$"
+   },
+   {
+    "l": "B",
+    "t": "$C_4 + Z_3Z_2 + Z_3Z_1$"
+   },
+   {
+    "l": "C",
+    "t": "$C_4 + Z_3 + Z_2Z_1$"
+   },
+   {
+    "l": "D",
+    "t": "$C_4\\,(Z_3 + Z_2)$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Correct iff the binary sum is ≥ 10: either $C_4 = 1$ (16–19) or $Z \\in 1010 \\dots 1111$.",
+   "The six codes 10–15 are the quads $Z_3Z_2$ and $Z_3Z_1$."
+  ],
+  "concept": "Detector = $C_4$ + (4-bit result > 9).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Misses the sums 16–19 (e.g. 8 + 8 = 1 0000)."
+   },
+   {
+    "answer": "C",
+    "why": "$Z_3$ alone would correct 8 and 9, which are valid digits."
+   }
+  ],
+  "blocks": [
+   "bcd-detector",
+   "trap-detector-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "In a 4-bit two's-complement adder, let $x = a_3$ and $y$ be the sign bits entering the top full adder, $s = s_3$ its sum bit, and $c_3$, $c_4$ its carry in and carry out. Which expressions equal the overflow flag for every input?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$c_4 \\oplus c_3$"
+   },
+   {
+    "l": "B",
+    "t": "$\\bar x\\bar y s + x y \\bar s$"
+   },
+   {
+    "l": "C",
+    "t": "$c_4 \\oplus s$"
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{(x \\oplus y)}\\,(x \\oplus s)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A: the carry form of the detector.",
+   "B: same-sign inputs with a different-sign result.",
+   "D: $\\overline{x \\oplus y}$ says the signs agree and $x \\oplus s$ that the result's sign differs: the same condition as B.",
+   "C: false; e.g. $x = y = 0$, $c_3 = 0$ gives $s = 0$, $c_4 = 0$, no overflow and $c_4 \\oplus s = 0$, but $x = 1, y = 0, c_3 = 1$ gives $s = 0$, $c_4 = 1$: no overflow, yet $c_4 \\oplus s = 1$."
+  ],
+  "concept": "Overflow = carry into the sign stage ≠ carry out = same-sign inputs, different-sign result.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "D is B written with XORs: signs equal and result sign different."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "$c_4 \\oplus s$ is 1 for $-8 + 1$-type rows with different-sign inputs, which never overflow."
+   }
+  ],
+  "blocks": [
+   "overflow-detector",
+   "overflow-forms"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q08",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A one-digit BCD adder is used with carry in 0. Over all 100 ordered pairs of digits $(A, B)$, $A, B \\in \\{0, \\dots, 9\\}$, for how many pairs does the second adder actually add 0110?",
+  "answer": 45,
+  "solution": [
+   "The correction is applied iff $A + B \\ge 10$.",
+   "For $A = 1 \\dots 9$ the number of $B$ with $A + B \\ge 10$ is $A$: $1 + 2 + \\dots + 9 = 45$ ($A = 0$ gives none)."
+  ],
+  "concept": "The detector fires exactly when the decimal sum needs a carry.",
+  "common_wrong": [
+   {
+    "answer": 55,
+    "why": "Counts $A + B \\ge 9$ (that is the count with carry in 1)."
+   },
+   {
+    "answer": 39,
+    "why": "Counts only sums of 10–15 and forgets that 16–18 are corrected too (through $K$)."
+   }
+  ],
+  "blocks": [
+   "bcd-adder",
+   "bcd-detector"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 4-bit adder adds $b_3b_2b_1b_0$ and the operand $0,\\; b_3b_2,\\; 0,\\; 0$ (MSB → LSB) with carry in 0; the 5-bit output is $d_4d_3d_2d_1d_0$ ($d_4$ = carry out). For $b = 1110$, what is the output read as an unsigned binary number?",
+  "answer": 18,
+  "solution": [
+   "$b_3b_2 = 1$, so the second operand is 0100.",
+   "$1110 + 0100 = 1\\,0010 = 18$ (base 12: digits 1 and 2, i.e. 14 ✓)."
+  ],
+  "concept": "The converter adds $16 - 12 = 4$ for $b \\ge 12$.",
+  "common_wrong": [
+   {
+    "answer": 14,
+    "why": "Ignores the added constant."
+   },
+   {
+    "answer": 20,
+    "why": "Adds 6 (the BCD correction) instead of 4."
+   }
+  ],
+  "blocks": [
+   "adder-converter"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-03-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A one-digit BCD adder is built from two 4-bit ripple-carry adders, each full adder being two half adders (XOR + AND) and an OR, plus the correction detector made of 2-input ANDs and one 3-input OR. How many gates does it contain in total?",
+  "answer": 43,
+  "solution": [
+   "Each full adder: 2 XOR + 2 AND + 1 OR = 5 gates; 8 full adders: 40.",
+   "Detector $K + Z_3Z_2 + Z_3Z_1$: 2 AND + 1 OR = 3.",
+   "Total 43 (a trimmed second adder would save some)."
+  ],
+  "concept": "BCD adder = 2 four-bit adders + a 3-gate detector.",
+  "common_wrong": [
+   {
+    "answer": 23,
+    "why": "Counts only one 4-bit adder."
+   },
+   {
+    "answer": 42,
+    "why": "Uses the factored detector without the carry term, $Z_3(Z_2 + Z_1)$ (2 gates), which is also wrong for sums 16–19."
+   }
+  ],
+  "blocks": [
+   "bcd-adder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "How many 2-input AND gates does an $8 \\times 8$ unsigned array multiplier use to form its partial products?",
+  "answer": 64,
+  "solution": [
+   "Each partial-product bit is $a_jb_i$ for $i, j \\in \\{0, \\dots, 7\\}$.",
+   "$8 \\times 8 = 64$ AND gates."
+  ],
+  "concept": "An $n \\times n$ array has $n^2$ partial-product ANDs.",
+  "common_wrong": [
+   {
+    "answer": 16,
+    "why": "$2n$ is the number of product bits, not of partial products."
+   },
+   {
+    "answer": 56,
+    "why": "$n(n-1)$ counts the adder cells."
+   }
+  ],
+  "blocks": [
+   "pp-and",
+   "array-cost"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "An unsigned $6 \\times 6$ array multiplier adds its partial products with $n - 1$ rows of $n$-bit adders. How many adder cells does it contain?",
+  "answer": 30,
+  "solution": [
+   "Rows 1 … 5 add partial products 1 … 5 to the running sum.",
+   "$5 \\times 6 = 30$ cells."
+  ],
+  "concept": "Array adder cells: $n(n-1)$.",
+  "common_wrong": [
+   {
+    "answer": 36,
+    "why": "$n^2$ counts the AND gates; row 0 needs no adders."
+   },
+   {
+    "answer": 5,
+    "why": "That is the number of rows, not cells."
+   }
+  ],
+  "blocks": [
+   "array-cost",
+   "array-multiplier"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "As $n$ grows, the worst-case delay of an $n \\times n$ array multiplier (of a fixed cell design) grows as:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Theta(n^2)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Theta(\\log n)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Theta(n)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Theta(1)$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Signals move left (carry) or down (sum) only, so a path visits $O(n)$ cells.",
+   "Some path crosses every row: $\\Omega(n)$. So $\\Theta(n)$ (the hardware is $\\Theta(n^2)$)."
+  ],
+  "concept": "Array multiplier: $n^2$ cells, $\\Theta(n)$ delay.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$n^2$ is the number of cells, which work in parallel."
+   },
+   {
+    "answer": "B",
+    "why": "Logarithmic delay needs a Wallace tree, not an array."
+   }
+  ],
+  "blocks": [
+   "array-delay-theorem",
+   "trap-n-squared"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "An array multiplier multiplies a 7-bit unsigned number by a 5-bit unsigned number. How many output bits are needed for every product?",
+  "answer": 12,
+  "solution": [
+   "Largest product $(2^7 - 1)(2^5 - 1) = 127 \\times 31 = 3937 < 2^{12} = 4096$.",
+   "And $3937 \\ge 2^{11}$, so 12 bits are needed: $7 + 5$."
+  ],
+  "concept": "An $n$-bit by $m$-bit product needs $n + m$ bits.",
+  "common_wrong": [
+   {
+    "answer": 35,
+    "why": "$7 \\times 5$ is the number of partial products."
+   },
+   {
+    "answer": 14,
+    "why": "$2 \\times 7$ assumes both operands have 7 bits."
+   }
+  ],
+  "blocks": [
+   "pp-and"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A ripple-row array multiplier makes its partial products with one AND level and adds them with rows of ripple-carry adders whose full adders are two half adders and an OR; every gate takes 1 unit. Its $4 \\times 4$ version has a worst-case delay of 18 units. What is the worst-case delay of its $8 \\times 8$ version?",
+  "answer": 42,
+  "solution": [
+   "The critical path runs along row 1's carries, then alternately down a row (a sum) and one cell along (a carry), and the last carry chain; each extra bit adds one more row and one more cell to it, 6 gate delays.",
+   "So the delay is $6(n - 1)$: 18 for $n = 4$ and $6 \\times 7 = 42$ for $n = 8$ (measured on the netlists for every $n$ from 2 to 8)."
+  ],
+  "concept": "The array delay is linear: $6(n - 1)$ for this design.",
+  "common_wrong": [
+   {
+    "answer": 72,
+    "why": "Scales 18 by $(8/4)^2$: the delay is linear, not quadratic."
+   },
+   {
+    "answer": 36,
+    "why": "Doubles 18; the formula is $6(n - 1)$, so the ratio is $7/3$, not 2."
+   }
+  ],
+  "blocks": [
+   "array-delay"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A sequential shift-and-add multiplier (registers C, A, Q, M and one adder) multiplies two 16-bit unsigned numbers. How many add-and-shift cycles does it need?",
+  "options": [
+   {
+    "l": "A",
+    "t": "4"
+   },
+   {
+    "l": "B",
+    "t": "8"
+   },
+   {
+    "l": "C",
+    "t": "32"
+   },
+   {
+    "l": "D",
+    "t": "16"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Each cycle examines one multiplier bit ($Q_0$), adds M if it is 1, and shifts.",
+   "16 multiplier bits: 16 cycles."
+  ],
+  "concept": "Sequential multiplier: one cycle per multiplier bit.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "$2n$ is the product width, not the cycle count."
+   },
+   {
+    "answer": "B",
+    "why": "$n/2$ is the bit-pair (radix-4) multiplier."
+   }
+  ],
+  "blocks": [
+   "sequential-multiplier"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q07",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "In a radix-2 Booth multiplier datapath, for which values of $Q_0Q_{-1}$ does the adder–subtractor actually change A in that cycle?",
+  "options": [
+   {
+    "l": "A",
+    "t": "00"
+   },
+   {
+    "l": "B",
+    "t": "01"
+   },
+   {
+    "l": "C",
+    "t": "10"
+   },
+   {
+    "l": "D",
+    "t": "11"
+   }
+  ],
+  "answer": [
+   "B",
+   "C"
+  ],
+  "solution": [
+   "01: end of a run of 1s, $A \\leftarrow A + M$.",
+   "10: start of a run of 1s, $A \\leftarrow A - M$.",
+   "00 and 11: inside a run of 0s or 1s, only the shift happens."
+  ],
+  "concept": "Booth operates only at the boundaries of runs of 1s.",
+  "common_wrong": [
+   {
+    "answer": [
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "11 is inside a run of 1s: no operation."
+   },
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "01 (end of a run) adds M back."
+   }
+  ],
+  "blocks": [
+   "booth-hardware"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about faster multipliers are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A Wallace-tree multiplier with a carry look-ahead final adder has $\\Theta(\\log n)$ delay."
+   },
+   {
+    "l": "B",
+    "t": "A carry-save array stops carries from rippling along each row."
+   },
+   {
+    "l": "C",
+    "t": "A carry-save array multiplier has $\\Theta(\\log n)$ delay."
+   },
+   {
+    "l": "D",
+    "t": "An $n \\times n$ array multiplier contains $n^2$ full adders."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "A: true; the tree reduces $n$ rows to 2 in $O(\\log n)$ layers and the look-ahead adder is $O(\\log n)$.",
+   "B: true; carries go down to the next row instead of along the row.",
+   "C: false; its $n - 1$ rows are still in series: $\\Theta(n)$.",
+   "D: false; it has $n^2$ AND gates but $n(n - 1)$ adder cells."
+  ],
+  "concept": "Carry-save changes the constant; only a tree changes the order.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "The carry-save array's rows are still sequential."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "$n^2$ is the AND count; the adder cells are $n(n - 1)$."
+   }
+  ],
+  "blocks": [
+   "csa-array",
+   "wallace-aside",
+   "array-cost"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Booth multiplier datapath for $n$-bit operands uses an $(n + 1)$-bit accumulator A. Why?",
+  "options": [
+   {
+    "l": "A",
+    "t": "To store the sign of the product separately"
+   },
+   {
+    "l": "B",
+    "t": "So that $A - M$ cannot overflow when $M = -2^{n-1}$"
+   },
+   {
+    "l": "C",
+    "t": "Because Booth's algorithm needs $n + 1$ cycles"
+   },
+   {
+    "l": "D",
+    "t": "To hold the adder's carry out for unsigned operands"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Subtracting $M = -2^{n-1}$ adds $+2^{n-1}$, which does not fit in $n$-bit two's complement.",
+   "With one more bit every intermediate value fits and the arithmetic shift copies the correct sign."
+  ],
+  "concept": "Booth's $-M$ needs one extra bit of range.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "The datapath runs $n$ cycles."
+   },
+   {
+    "answer": "D",
+    "why": "Booth works on signed operands; there is no unsigned carry to keep."
+   }
+  ],
+  "blocks": [
+   "trap-booth-extra-bit",
+   "booth-hardware"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-04-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Compare an $n \\times n$ array multiplier (delay $\\Theta(n)$ gate delays) with an $n$-bit sequential shift-and-add multiplier whose single adder is a ripple-carry adder (each cycle one ripple addition, $n$ cycles). As $n$ grows, the ratio (sequential time) / (array time) grows as:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\Theta(1)$"
+   },
+   {
+    "l": "B",
+    "t": "$\\Theta(\\log n)$"
+   },
+   {
+    "l": "C",
+    "t": "$\\Theta(n^2)$"
+   },
+   {
+    "l": "D",
+    "t": "$\\Theta(n)$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Sequential: $n$ cycles × $\\Theta(n)$ ripple delay = $\\Theta(n^2)$ gate delays.",
+   "Array: $\\Theta(n)$.",
+   "Ratio $\\Theta(n^2)/\\Theta(n) = \\Theta(n)$, in exchange for about $n$ times less adder hardware."
+  ],
+  "concept": "Hardware–time trade-off: $n$ times the hardware buys $n$ times the speed.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "$\\Theta(n^2)$ is the sequential time itself, not the ratio."
+   },
+   {
+    "answer": "A",
+    "why": "Assumes equal numbers of additions mean equal time; the array overlaps its $n - 1$ additions, the sequential multiplier does one per cycle."
+   }
+  ],
+  "blocks": [
+   "multiplier-compare",
+   "sequential-multiplier"
+  ],
+  "source": "nexora"
+ }
+]

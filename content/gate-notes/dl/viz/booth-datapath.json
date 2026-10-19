@@ -1,0 +1,817 @@
+{
+ "version": 1,
+ "title": "Booth multiplier datapath stepping through 6 × (−3)",
+ "width": 700,
+ "height": 360,
+ "narrow": {
+  "width": 360,
+  "height": 330
+ },
+ "intro": "Registers M (multiplicand), A (accumulator, one extra bit), Q (multiplier) and the bit Q−1. The control looks at Q0 Q−1 and tells the adder–subtractor to add M, subtract M or do nothing; then A, Q, Q−1 shift right together.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "Booth multiplier hardware: 6 × (−3) in 4 bits",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Booth hardware: 6 × (−3)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "M",
+   "type": "box",
+   "x": 60,
+   "y": 64,
+   "w": 200,
+   "h": 44,
+   "mono": true,
+   "label": "M = 00110",
+   "size": 15,
+   "narrow": {
+    "x": 20,
+    "y": 60,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "add",
+   "type": "box",
+   "x": 60,
+   "y": 146,
+   "w": 200,
+   "h": 44,
+   "label": "adder–subtractor",
+   "size": 14,
+   "narrow": {
+    "x": 20,
+    "y": 136,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "A",
+   "type": "box",
+   "x": 60,
+   "y": 230,
+   "w": 200,
+   "h": 44,
+   "mono": true,
+   "label": "A = 00000",
+   "size": 15,
+   "narrow": {
+    "x": 20,
+    "y": 214,
+    "w": 150,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "Q",
+   "type": "box",
+   "x": 300,
+   "y": 230,
+   "w": 170,
+   "h": 44,
+   "mono": true,
+   "label": "Q = 1101",
+   "size": 15,
+   "narrow": {
+    "x": 180,
+    "y": 214,
+    "w": 110,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "Q1",
+   "type": "box",
+   "x": 500,
+   "y": 230,
+   "w": 70,
+   "h": 44,
+   "mono": true,
+   "label": "0",
+   "size": 15,
+   "narrow": {
+    "x": 300,
+    "y": 214,
+    "w": 50,
+    "h": 40,
+    "size": 12
+   }
+  },
+  {
+   "id": "q1l",
+   "type": "text",
+   "x": 535.0,
+   "y": 288,
+   "text": "Q−1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 325.0,
+    "y": 268,
+    "size": 12
+   }
+  },
+  {
+   "id": "ctl",
+   "type": "box",
+   "x": 500,
+   "y": 146,
+   "w": 170,
+   "h": 44,
+   "label": "control: Q0 Q−1",
+   "size": 14,
+   "only": "wide"
+  },
+  {
+   "id": "ctl-n",
+   "type": "box",
+   "x": 236,
+   "y": 120,
+   "w": 114,
+   "h": 56,
+   "label": "Q0 Q−1",
+   "size": 12,
+   "only": "narrow"
+  },
+  {
+   "id": "wm",
+   "type": "line",
+   "points": [
+    [
+     120.0,
+     108
+    ],
+    [
+     120.0,
+     146
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      80.0,
+      100
+     ],
+     [
+      80.0,
+      136
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wa",
+   "type": "line",
+   "points": [
+    [
+     200.0,
+     230
+    ],
+    [
+     200.0,
+     190
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      160.0,
+      214
+     ],
+     [
+      160.0,
+      176
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr",
+   "type": "line",
+   "points": [
+    [
+     120.0,
+     190
+    ],
+    [
+     120.0,
+     230
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      80.0,
+      176
+     ],
+     [
+      80.0,
+      214
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq",
+   "type": "line",
+   "points": [
+    [
+     450,
+     230
+    ],
+    [
+     450,
+     210
+    ],
+    [
+     550,
+     210
+    ],
+    [
+     550,
+     190
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      274,
+      214
+     ],
+     [
+      274,
+      196
+     ],
+     [
+      270,
+      196
+     ],
+     [
+      270,
+      176
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1",
+   "type": "line",
+   "points": [
+    [
+     555.0,
+     230
+    ],
+    [
+     555.0,
+     190
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      325.0,
+      214
+     ],
+     [
+      325.0,
+      176
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wk",
+   "type": "line",
+   "points": [
+    [
+     500,
+     168
+    ],
+    [
+     260,
+     168
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      236,
+      148
+     ],
+     [
+      220,
+      148
+     ]
+    ]
+   }
+  },
+  {
+   "id": "op",
+   "type": "text",
+   "x": 585,
+   "y": 110,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "mono": true,
+   "narrow": {
+    "x": 293,
+    "y": 104,
+    "size": 12
+   }
+  },
+  {
+   "id": "cyc",
+   "type": "text",
+   "x": 60,
+   "y": 312,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "weight": "bold",
+   "narrow": {
+    "x": 20,
+    "y": 290,
+    "size": 12
+   }
+  },
+  {
+   "id": "note",
+   "type": "text",
+   "x": 60,
+   "y": 340,
+   "text": "",
+   "size": 14,
+   "anchor": "start",
+   "narrow": {
+    "x": 20,
+    "y": 312,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start: A = 0 (5 bits: one extra bit so that −M always fits), Q = multiplier −3 = 1101, Q−1 = 0, M = 6.",
+   "patches": [
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 1: Q0 Q−1 = 10, so subtract M: A = 11010.",
+   "patches": [
+    {
+     "id": "op",
+     "set": {
+      "text": "A − M",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 11010"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 1: subtract M"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 1: arithmetic right shift of A, Q, Q−1 (A's sign bit is copied): A = 11101, Q = 0110, Q−1 = 1.",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 11101"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 0110"
+     }
+    },
+    {
+     "id": "Q1",
+     "set": {
+      "label": "1"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right (arithmetic)"
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 2: Q0 Q−1 = 01, so add M: A = 00011.",
+   "patches": [
+    {
+     "id": "op",
+     "set": {
+      "text": "A + M",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 00011"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 2: add M"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 2: arithmetic right shift of A, Q, Q−1 (A's sign bit is copied): A = 00001, Q = 1011, Q−1 = 0.",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 00001"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 1011"
+     }
+    },
+    {
+     "id": "Q1",
+     "set": {
+      "label": "0"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right (arithmetic)"
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 3: Q0 Q−1 = 10, so subtract M: A = 11011.",
+   "patches": [
+    {
+     "id": "op",
+     "set": {
+      "text": "A − M",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "success"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 11011"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 3: subtract M"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 3: arithmetic right shift of A, Q, Q−1 (A's sign bit is copied): A = 11101, Q = 1101, Q−1 = 1.",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 11101"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 1101"
+     }
+    },
+    {
+     "id": "Q1",
+     "set": {
+      "label": "1"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right (arithmetic)"
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 4: Q0 Q−1 = 11, so no add: A = 11101.",
+   "patches": [
+    {
+     "id": "op",
+     "set": {
+      "text": "—",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "wk",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 11101"
+     }
+    },
+    {
+     "id": "cyc",
+     "set": {
+      "text": "cycle 4: no add"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Cycle 4: arithmetic right shift of A, Q, Q−1 (A's sign bit is copied): A = 11110, Q = 1110, Q−1 = 1.",
+   "patches": [
+    {
+     "id": "add",
+     "set": {
+      "fill": "none"
+     }
+    },
+    {
+     "id": "ctl",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "A",
+     "set": {
+      "label": "A = 11110"
+     }
+    },
+    {
+     "id": "Q",
+     "set": {
+      "label": "Q = 1110"
+     }
+    },
+    {
+     "id": "Q1",
+     "set": {
+      "label": "1"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": "shift right (arithmetic)"
+     }
+    },
+    {
+     "id": "ctl-n",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "After n = 4 cycles, A Q = 11101110 = −18 = 6 × (−3). One adder, n cycles, at most n additions or subtractions.",
+   "patches": [
+    {
+     "id": "cyc",
+     "set": {
+      "text": "product 1110 1110 = −18",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "note",
+     "set": {
+      "text": ""
+     }
+    },
+    {
+     "id": "op",
+     "set": {
+      "text": ""
+     }
+    }
+   ]
+  }
+ ]
+}

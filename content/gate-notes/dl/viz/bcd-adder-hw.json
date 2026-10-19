@@ -1,0 +1,1190 @@
+{
+ "version": 1,
+ "title": "A one-digit BCD adder with its correction detector",
+ "width": 700,
+ "height": 350,
+ "narrow": {
+  "width": 360,
+  "height": 430
+ },
+ "intro": "Two 4-bit binary adders. The first adds the digits; a detector C4 + Z3Z2 + Z3Z1 decides whether the sum exceeds 9; the second adds 0110 when it does. The detector's output is the decimal carry.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 350.0,
+   "y": 22,
+   "text": "The BCD adder: add in binary, detect > 9, add 0110",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "BCD adder circuit",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "in",
+   "type": "text",
+   "x": 190,
+   "y": 52,
+   "text": "A = 0000, B = 0000, cin = 0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "in-n",
+   "type": "text",
+   "x": 180,
+   "y": 48,
+   "text": "A=0000 B=0000 cin=0",
+   "size": 12,
+   "anchor": "middle",
+   "mono": true,
+   "only": "narrow"
+  },
+  {
+   "id": "add1",
+   "type": "box",
+   "x": 60,
+   "y": 70,
+   "w": 260,
+   "h": 56,
+   "label": "4-bit binary adder",
+   "size": 14,
+   "narrow": {
+    "x": 40,
+    "y": 64,
+    "w": 280,
+    "h": 50,
+    "size": 13
+   }
+  },
+  {
+   "id": "wz",
+   "type": "line",
+   "points": [
+    [
+     190,
+     126
+    ],
+    [
+     190,
+     250
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      114
+     ],
+     [
+      70,
+      340
+     ]
+    ]
+   }
+  },
+  {
+   "id": "zt",
+   "type": "text",
+   "x": 200,
+   "y": 160,
+   "text": "C4 Z = ?",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 80,
+    "y": 134,
+    "size": 12
+   }
+  },
+  {
+   "id": "d1",
+   "type": "gate",
+   "x": 430,
+   "y": 120,
+   "w": 50,
+   "h": 40,
+   "kind": "and",
+   "narrow": {
+    "x": 160,
+    "y": 160,
+    "w": 44,
+    "h": 36
+   }
+  },
+  {
+   "id": "d2",
+   "type": "gate",
+   "x": 430,
+   "y": 180,
+   "w": 50,
+   "h": 40,
+   "kind": "and",
+   "narrow": {
+    "x": 160,
+    "y": 214,
+    "w": 44,
+    "h": 36
+   }
+  },
+  {
+   "id": "d3",
+   "type": "gate",
+   "x": 540,
+   "y": 140,
+   "w": 54,
+   "h": 60,
+   "kind": "or",
+   "inputs": 3,
+   "narrow": {
+    "x": 250,
+    "y": 176,
+    "w": 46,
+    "h": 54
+   }
+  },
+  {
+   "id": "dw0",
+   "type": "line",
+   "points": [
+    [
+     400.0,
+     133.33
+    ],
+    [
+     430.0,
+     133.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      136.0,
+      172.0
+     ],
+     [
+      160.0,
+      172.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dl0",
+   "type": "text",
+   "x": 396.0,
+   "y": 133.33,
+   "text": "Z3",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 132.0,
+    "y": 172.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dw1",
+   "type": "line",
+   "points": [
+    [
+     400.0,
+     146.67
+    ],
+    [
+     430.0,
+     146.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      136.0,
+      184.0
+     ],
+     [
+      160.0,
+      184.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dl1",
+   "type": "text",
+   "x": 396.0,
+   "y": 146.67,
+   "text": "Z2",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 132.0,
+    "y": 184.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dw2",
+   "type": "line",
+   "points": [
+    [
+     400.0,
+     193.33
+    ],
+    [
+     430.0,
+     193.33
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      136.0,
+      226.0
+     ],
+     [
+      160.0,
+      226.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dl2",
+   "type": "text",
+   "x": 396.0,
+   "y": 193.33,
+   "text": "Z3",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 132.0,
+    "y": 226.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dw3",
+   "type": "line",
+   "points": [
+    [
+     400.0,
+     206.67
+    ],
+    [
+     430.0,
+     206.67
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      136.0,
+      238.0
+     ],
+     [
+      160.0,
+      238.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dl3",
+   "type": "text",
+   "x": 396.0,
+   "y": 206.67,
+   "text": "Z1",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 132.0,
+    "y": 238.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "dk",
+   "type": "line",
+   "points": [
+    [
+     400,
+     105
+    ],
+    [
+     520,
+     105
+    ],
+    [
+     520,
+     155.0
+    ],
+    [
+     545.06,
+     155.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      150,
+      150
+     ],
+     [
+      236,
+      150
+     ],
+     [
+      236,
+      189.5
+     ],
+     [
+      254.31,
+      189.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dkl",
+   "type": "text",
+   "x": 396,
+   "y": 105,
+   "text": "C4",
+   "size": 13,
+   "anchor": "end",
+   "mono": true,
+   "narrow": {
+    "x": 146,
+    "y": 150,
+    "size": 12
+   }
+  },
+  {
+   "id": "o1",
+   "type": "line",
+   "points": [
+    [
+     480.0,
+     140.0
+    ],
+    [
+     510,
+     140.0
+    ],
+    [
+     510,
+     170.0
+    ],
+    [
+     546.75,
+     170.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      204.0,
+      178.0
+     ],
+     [
+      228,
+      178.0
+     ],
+     [
+      228,
+      203.0
+     ],
+     [
+      255.75,
+      203.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "o2",
+   "type": "line",
+   "points": [
+    [
+     480.0,
+     200.0
+    ],
+    [
+     510,
+     200.0
+    ],
+    [
+     510,
+     185.0
+    ],
+    [
+     545.06,
+     185.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      204.0,
+      232.0
+     ],
+     [
+      228,
+      232.0
+     ],
+     [
+      228,
+      216.5
+     ],
+     [
+      254.31,
+      216.5
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wc",
+   "type": "line",
+   "points": [
+    [
+     594.0,
+     170.0
+    ],
+    [
+     626,
+     170.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      296.0,
+      203.0
+     ],
+     [
+      318,
+      203.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cout",
+   "type": "text",
+   "x": 630,
+   "y": 170.0,
+   "text": "Cout",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 340,
+    "y": 164,
+    "size": 12,
+    "anchor": "end"
+   }
+  },
+  {
+   "id": "wcor",
+   "type": "line",
+   "points": [
+    [
+     612,
+     170.0
+    ],
+    [
+     612,
+     278
+    ],
+    [
+     320,
+     278
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      306,
+      203.0
+     ],
+     [
+      306,
+      340
+     ]
+    ]
+   }
+  },
+  {
+   "id": "corr",
+   "type": "text",
+   "x": 470,
+   "y": 266,
+   "text": "adds 0 Cout Cout 0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "corr-n",
+   "type": "text",
+   "x": 230,
+   "y": 300,
+   "text": "adds 0 C C 0",
+   "size": 12,
+   "anchor": "middle",
+   "mono": true,
+   "only": "narrow"
+  },
+  {
+   "id": "add2",
+   "type": "box",
+   "x": 60,
+   "y": 250,
+   "w": 260,
+   "h": 56,
+   "label": "4-bit binary adder",
+   "size": 14,
+   "narrow": {
+    "x": 40,
+    "y": 340,
+    "w": 280,
+    "h": 50,
+    "size": 13
+   }
+  },
+  {
+   "id": "wo",
+   "type": "line",
+   "points": [
+    [
+     190,
+     306
+    ],
+    [
+     190,
+     322
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      180,
+      390
+     ],
+     [
+      180,
+      404
+     ]
+    ]
+   }
+  },
+  {
+   "id": "out",
+   "type": "text",
+   "x": 190,
+   "y": 336,
+   "text": "BCD digit = ?",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 418,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Stage 1: an ordinary 4-bit adder adds the two BCD digits and the carry in. Its result C4 Z3 Z2 Z1 Z0 can be 0 … 19.",
+   "patches": []
+  },
+  {
+   "caption": "The detector fires when that binary sum is 10 or more: C4 = 1 (16–19) or Z = 1010 … 1111 (Z3Z2 or Z3Z1).",
+   "patches": [
+    {
+     "id": "d1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "8 + 7 = 15: adder 1 gives 0 1111. Z = 1111 = 15 is not a BCD digit (Z3 = 1 with Z2 or Z1). Out: carry 1, digit 5.",
+   "patches": [
+    {
+     "id": "in",
+     "set": {
+      "text": "A = 1000, B = 0111, cin = 0"
+     }
+    },
+    {
+     "id": "zt",
+     "set": {
+      "text": "C4 Z = 0 1111",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dkl",
+     "set": {
+      "text": "C4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dk",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl0",
+     "set": {
+      "text": "Z3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl1",
+     "set": {
+      "text": "Z2=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl2",
+     "set": {
+      "text": "Z3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl3",
+     "set": {
+      "text": "Z1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wc",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wcor",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cout",
+     "set": {
+      "text": "Cout=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "corr",
+     "set": {
+      "text": "adds 0110",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "text": "digit 0101 = 5, carry 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "in-n",
+     "set": {
+      "text": "A=1000 B=0111 cin=0"
+     }
+    },
+    {
+     "id": "corr-n",
+     "set": {
+      "text": "adds 0110",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "4 + 5 = 9: adder 1 gives 0 1001. 1001 = 9 is a valid digit, so nothing is added. Out: carry 0, digit 9.",
+   "patches": [
+    {
+     "id": "in",
+     "set": {
+      "text": "A = 0100, B = 0101, cin = 0"
+     }
+    },
+    {
+     "id": "zt",
+     "set": {
+      "text": "C4 Z = 0 1001",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dkl",
+     "set": {
+      "text": "C4=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dk",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl0",
+     "set": {
+      "text": "Z3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl1",
+     "set": {
+      "text": "Z2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl2",
+     "set": {
+      "text": "Z3=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl3",
+     "set": {
+      "text": "Z1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "wc",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wcor",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "cout",
+     "set": {
+      "text": "Cout=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "corr",
+     "set": {
+      "text": "adds 0000",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "text": "digit 1001 = 9, carry 0",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "in-n",
+     "set": {
+      "text": "A=0100 B=0101 cin=0"
+     }
+    },
+    {
+     "id": "corr-n",
+     "set": {
+      "text": "adds 0000",
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "9 + 9 + 1 = 19: adder 1 gives 1 0011. C4 = 1 (sum 19 > 15) though Z = 0011 looks valid: only C4 catches it. Out: carry 1, digit 9.",
+   "patches": [
+    {
+     "id": "in",
+     "set": {
+      "text": "A = 1001, B = 1001, cin = 1"
+     }
+    },
+    {
+     "id": "zt",
+     "set": {
+      "text": "C4 Z = 1 0011",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dkl",
+     "set": {
+      "text": "C4=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dk",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl0",
+     "set": {
+      "text": "Z3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl1",
+     "set": {
+      "text": "Z2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl2",
+     "set": {
+      "text": "Z3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl3",
+     "set": {
+      "text": "Z1=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wc",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wcor",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cout",
+     "set": {
+      "text": "Cout=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "corr",
+     "set": {
+      "text": "adds 0110",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "text": "digit 1001 = 9, carry 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "in-n",
+     "set": {
+      "text": "A=1001 B=1001 cin=1"
+     }
+    },
+    {
+     "id": "corr-n",
+     "set": {
+      "text": "adds 0110",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "8 + 9 = 17: adder 1 gives 1 0001. C4 = 1 (sum 17 > 15) though Z = 0001 looks valid: only C4 catches it. Out: carry 1, digit 7.",
+   "patches": [
+    {
+     "id": "in",
+     "set": {
+      "text": "A = 1000, B = 1001, cin = 0"
+     }
+    },
+    {
+     "id": "zt",
+     "set": {
+      "text": "C4 Z = 1 0001",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dkl",
+     "set": {
+      "text": "C4=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dk",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl0",
+     "set": {
+      "text": "Z3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl1",
+     "set": {
+      "text": "Z2=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl2",
+     "set": {
+      "text": "Z3=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl3",
+     "set": {
+      "text": "Z1=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "o2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "d3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "wc",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wcor",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "cout",
+     "set": {
+      "text": "Cout=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "corr",
+     "set": {
+      "text": "adds 0110",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "out",
+     "set": {
+      "text": "digit 0111 = 7, carry 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "in-n",
+     "set": {
+      "text": "A=1000 B=1001 cin=0"
+     }
+    },
+    {
+     "id": "corr-n",
+     "set": {
+      "text": "adds 0110",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

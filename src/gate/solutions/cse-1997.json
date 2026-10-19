@@ -692,27 +692,30 @@
       "verification": "Each List II item is used once; all pairings are textbook associations."
     },
     "cse-1997-a-15": {
-      "approach": "74181s produce group generate/propagate signals; 74182s combine 4 groups at a time and can be cascaded in a tree, so the number of lookahead levels — and the delay — grows as $\\log_4 N$.",
+      "approach": "Concept tested: **the delay of a hierarchical carry look-ahead adder**. 74181 slices output group generate/propagate; 74182 units combine four groups and can themselves be grouped, so the best architecture is a tree whose depth grows like $\\log N$.",
       "concepts": [
-        "Carry lookahead adder",
-        "Hierarchical carry lookahead"
+        "Carry look-ahead",
+        "Group G and P",
+        "74181/74182",
+        "Logarithmic delay"
       ],
+      "given": "An $N$-bit adder ($N$ a multiple of 4) from 74181 4-bit ALUs and 74182 4-group look-ahead generators; the best architecture is wanted.",
       "steps": [
         {
-          "title": "One level",
-          "body": "Each 74181 adds 4 bits and outputs group $G,P$. One 74182 combines 4 groups (16 bits) and produces their carries in constant gate delay."
+          "title": "What each chip does",
+          "body": "Each 74181 adds 4 bits and produces its block $G$ and $P$. A 74182 takes four $(G, P)$ pairs and $c_0$, returns the three block carries, and produces the $G, P$ of the 16-bit group."
         },
         {
-          "title": "Tree of 74182s",
-          "body": "For larger $N$, 74182s are arranged in levels, each covering 4× more bits: 16, 64, 256, … The number of levels is $\\lceil\\log_4(N/4)\\rceil$, each adding a constant delay."
+          "title": "Build a tree",
+          "body": "$N/4$ slices feed $N/16$ 74182s, which feed $N/64$ 74182s, and so on, until one 74182 remains: about $\\log_4 (N/4)$ levels. Carries then come back down the same tree."
         },
         {
-          "title": "Delay",
-          "body": "Total time $=c_1+c_2\\log_4 N$ → proportional to $\\log N$."
+          "title": "Time",
+          "body": "Each level adds a constant delay (going up and coming down), so the addition time is proportional to the number of levels: $\\Theta(\\log N)$."
         }
       ],
       "answer": {
-        "value": "proportional to log N",
+        "value": "B: proportional to log N",
         "choice": [
           "B"
         ],
@@ -722,17 +725,17 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Linear time is ripple-carry between 74181 blocks, not the best architecture."
+          "reason": "Linear time is a ripple-carry design (or 74181s chained by their ripple carries); the tree of 74182s is faster."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "A tree of 74182 lookahead units gives logarithmic depth. Correct."
+          "reason": "A tree of 74182s has about $\\log_4 (N/4)$ levels, each a constant delay."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Constant time would need unbounded fan-in; the 74182 combines only 4 groups."
+          "reason": "Constant time would need one look-ahead unit with unbounded fan-in over all $N$ bits; a 74182 accepts only four groups."
         },
         {
           "option": "D",
@@ -740,7 +743,12 @@
           "reason": "B is correct."
         }
       ],
-      "verification": "16 bits: 1 level of 74182; 64 bits: 2 levels; 256 bits: 3 levels — depth grows by 1 each time $N$ is multiplied by 4."
+      "shortcut": "Hierarchical look-ahead = tree = $\\log$; ripple = $n$; single-level unbounded fan-in = constant on paper.",
+      "pitfalls": [
+        "Choosing 'constant' because a single look-ahead unit has a fixed depth: it handles only 4 groups.",
+        "Choosing 'proportional to N' by imagining the 74182s in a chain rather than a tree."
+      ],
+      "verification": "l4_02_cla.py builds multi-level look-ahead netlists with 4-way blocks and measures their delay: 4, 8, 12 unit gates for 4, 16, 64 bits (one more level per factor of 4)."
     },
     "cse-1997-a-16": {
       "approach": "Check closure, associativity, identity and inverses for $\\max$ on $\\mathbb Z$.",
