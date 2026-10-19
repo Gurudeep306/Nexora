@@ -727,3 +727,99 @@ test('adder race: ripple and look-ahead netlists, flags, settling times and scal
   assert.equal(ar.pattern(-1, 8), 255);
   assert.equal(ar.bitsText(5, 4), '0101');
 });
+
+/* ── Live Labs: Flip-flop Scope and Counter & FSM Simulator logic against the Python-verified vectors ── */
+
+test('sequential labs: flip-flop tables, scope waveforms, registers, ripple, counter design and FSMs match seqlib', async () => {
+  const { pathToFileURL } = require('node:url');
+  const sq = await import(pathToFileURL(path.join(ROOT, 'client', 'src', 'gate', 'notes', 'labs', 'seqLogic.ts')).href);
+  const vec = JSON.parse(fs.readFileSync(path.join(ROOT, 'content', 'gate-notes', '_checks', 'dl', 'lab_vectors_ch6.json'), 'utf8'));
+  const wave = (xs) => xs.join('');
+  // Characteristic tables and equations, excitation tables, the 12 conversions.
+  for (const kind of sq.KINDS) {
+    const t = vec.tables[kind];
+    assert.deepEqual(sq.charTable(kind), t.char, `${kind} characteristic table`);
+    assert.deepEqual(sq.charEquation(kind), t.eq, `${kind} characteristic equation`);
+    assert.deepEqual(sq.excitationTable(kind), t.exc, `${kind} excitation table`);
+  }
+  assert.equal(vec.convert.length, 12);
+  for (const c of vec.convert) assert.deepEqual(sq.convert(c.target, c.have), c.eq, `${c.target} from ${c.have}`);
+  // The scope model: every seeded case and the presets, tick by tick.
+  assert.ok(vec.scope.length >= 300);
+  for (const c of vec.scope) {
+    const inp = Object.fromEntries(Object.entries(c.inp).map(([k, v]) => [k, sq.waveOf(v)]));
+    const r = sq.scope(c.kind, c.mode, sq.waveOf(c.clk), inp, { q0: c.q0, tsu: c.tsu, th: c.th, tpd: c.tpd });
+    const at = `${c.kind} ${c.mode} clk ${c.clk} ${JSON.stringify(c.inp)} q0 ${c.q0} tsu ${c.tsu} th ${c.th} tpd ${c.tpd}`;
+    assert.deepEqual([wave(r.S), wave(r.Q), wave(r.M)], [c.S, c.Q, c.M], `${at}: S, Q, M`);
+    assert.deepEqual(r.viol, c.viol, `${at}: violations`);
+    assert.deepEqual(r.edges, c.edges, `${at}: edges`);
+  }
+  for (const [p, w] of Object.entries(vec.clocks)) assert.equal(wave(sq.clockWave(32, Number(p))), w, `clock period ${p}`);
+  assert.deepEqual(
+    sq.SCOPE_PRESETS.map((p) => ({ ...p, clk: wave(sq.clockWave(32, p.period)) })),
+    vec.scopePresets,
+    'scope presets',
+  );
+  // Registers: the cycle from the initial state, every cycle and the self-start verdict.
+  for (const c of vec.registers) {
+    const f = c.kind === 'ring' ? sq.ringStep : c.kind === 'johnson' ? sq.johnsonStep : (r) => sq.lfsrStep(r, c.taps, c.din);
+    const at = `${c.kind} n ${c.n} taps ${c.taps} din ${c.din} init ${c.init}`;
+    const st = sq.intStep(c.n, f);
+    assert.deepEqual(Array.from({ length: 2 ** c.n }, (_, s) => st(s)), c.step, `${at}: step`);
+    assert.deepEqual(sq.registerCycle(f, sq.bits(c.init, c.n)).map(sq.val), c.cycle, `${at}: cycle`);
+    const all = Array.from({ length: 2 ** c.n }, (_, s) => s);
+    assert.deepEqual(sq.autonomousCycles(st, all), c.cycles, `${at}: cycles`);
+    assert.equal(sq.selfStarting(st, all, c.cycle), c.selfStart, `${at}: self-start`);
+  }
+  // Ripple counters: every event and the settled states.
+  for (const c of vec.ripple) {
+    const clear = c.clear === null ? null : (q) => q === c.clear;
+    const ev = sq.rippleEvents(c.n, c.tpd, c.clocks, { start: c.start, down: c.down, edge: c.edge, clear, tclr: c.tclr });
+    const at = `ripple n ${c.n} tpd ${c.tpd} ${c.down ? 'down' : 'up'} ${c.edge} start ${c.start} clear ${c.clear} tclr ${c.tclr} clocks ${c.clocks}`;
+    assert.deepEqual(ev, c.events, `${at}: events`);
+    assert.deepEqual(sq.settledStates(ev, c.clocks, c.end), c.settled, `${at}: settled`);
+  }
+  // Counter design: excitation columns, minimal SOPs, chosen covers, next map, the built circuit.
+  for (const c of vec.design) {
+    const d = sq.designCounter(c.seq, c.kind, null, c.unused);
+    const at = `design ${c.seq} ${c.kind} unused ${c.unused}`;
+    assert.deepEqual([d.n, d.vars, d.names], [c.n, c.vars, c.names], `${at}: shape`);
+    assert.deepEqual(d.inputs, c.inputs, `${at}: excitation columns`);
+    assert.deepEqual(d.sop, c.sop, `${at}: minimal SOPs`);
+    assert.deepEqual(d.covers, c.covers, `${at}: chosen covers`);
+    assert.deepEqual(d.next, c.next, `${at}: next map`);
+    const st = sq.designedStep(d, c.kind);
+    const all = Array.from({ length: 2 ** c.n }, (_, s) => s);
+    assert.deepEqual(all.map(st), c.step, `${at}: designed step`);
+    assert.deepEqual(sq.autonomousCycles(st, all), c.cycles, `${at}: cycles`);
+    assert.equal(sq.selfStarting(st, all, c.seq), c.selfStart, `${at}: self-start`);
+  }
+  // State machines: runs, shortest inputs, reachability, partitions, implication table, minimisation.
+  for (const c of vec.fsm) {
+    const f = sq.fromTable(c.rows, [0, 1], c.moore, c.start);
+    if (c.detector) {
+      const d = sq.detector(c.detector.pattern, c.detector.overlap, c.detector.moore);
+      assert.deepEqual(sq.tableOf(d), c.rows, `${c.name}: detector table`);
+    }
+    for (const r of c.runs) assert.deepEqual(sq.run(f, r.xs), { states: r.states, outs: r.outs, first: r.first }, `${c.name}: run ${r.xs}`);
+    for (const [t, w] of Object.entries(c.shortestTo)) assert.deepEqual(sq.shortest(f, (s) => s === t), w, `${c.name}: shortest to ${t}`);
+    assert.deepEqual(sq.shortest(f, (_, y) => y === 1), c.shortestOne, `${c.name}: shortest to output 1`);
+    assert.deepEqual(f.states.filter((s) => sq.reachable(f).has(s)), c.reachable, `${c.name}: reachable`);
+    assert.deepEqual(sq.partitions(f), c.partitions, `${c.name}: partitions`);
+    assert.deepEqual(sq.implication(f), c.implication, `${c.name}: implication table`);
+    const sub = sq.reachableMachine(f);
+    assert.deepEqual(sq.partitions(sub), c.subPartitions, `${c.name}: partitions of the reachable part`);
+    assert.equal(sq.minimalStates(f), c.minimal, `${c.name}: minimal states`);
+    assert.deepEqual(sq.merged(sub), c.merged, `${c.name}: merged table`);
+  }
+  assert.deepEqual(
+    Object.fromEntries(sq.FSM_PRESETS.map((p) => [p.id, { label: p.label, moore: p.moore, start: p.start, rows: p.rows }])),
+    vec.fsmPresets,
+    'FSM presets',
+  );
+  // Helpers.
+  assert.equal(sq.binText(5, 4), '0101');
+  assert.deepEqual(sq.bits(6, 3), [1, 1, 0]);
+  assert.equal(sq.ffCount(5), 3);
+  assert.equal(sq.ffNext('SR', 0, { S: 1, R: 1 }), null);
+});
