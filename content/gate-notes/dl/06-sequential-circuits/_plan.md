@@ -250,7 +250,7 @@ MUX-latch wiring (MCQ).
 ### Worked examples (4 per concept)
 - **Characteristic equations and tables:** next state of each type for a given row (easy); JK
   sequence for J, K waveforms (medium); the 2000 master–slave pair (GATE); edge case: a T flip-flop
-  driven by T = Q̄ (it toggles every clock, no matter what).
+  driven by T = Q̄ (Q⁺ = Q̄ ⊕ Q = 1: it sets once and stays at 1, a trap).
 - **Excitation and conversion:** JK excitation table (easy); D from JK (medium); IT 2008 J and K
   for a two-state diagram (GATE); edge case: SR from JK (the forbidden row becomes a don't-care).
 - **Timing:** a D flip-flop waveform with t_cq (easy); f_max from t_cq, t_logic, t_su (medium);
@@ -499,7 +499,7 @@ sequence (MCQ).
 - **Repeated values and self-start:** flip-flops for 0, 0, 1, 1, 2, 2, 3, 3 (easy, 2015); for 0, 1, 0,
   2, 0, 3 (medium, 2016); the lock-out of 0 → 3 → 5 → 6 (GATE); edge case: making it self-starting.
 - **Analysing given counters:** the 2014-3 JK counter (medium); the 2021-1 T counter (GATE); a T
-  counter with T = Q̄ (easy); edge case: a JK counter whose unused state is a self-loop.
+  counter with T = Q̄ (easy: it does not toggle, Q⁺ = 1); edge case: a JK counter whose unused state is a self-loop.
 
 ### Tricks and traps
 - `:::trick` `#trick-t-column` (T = Q ⊕ Q⁺: mark the bits that change); `#trick-jk-half` (JK columns
