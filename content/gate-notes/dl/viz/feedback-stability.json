@@ -1,0 +1,2094 @@
+{
+ "version": 1,
+ "title": "Stable states of a feedback loop, found by cutting it",
+ "width": 680,
+ "height": 394,
+ "narrow": {
+  "width": 360,
+  "height": 394
+ },
+ "intro": "A combinational block f(a, b, Q) = aQ + ab + bQ with its output Q fed back to its own input. The loop is cut, Q in is assumed 0 or 1, and Q out is compared with it.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Cut the loop: which values of Q reproduce themselves?",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Cut the loop and test Q",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "blk",
+   "type": "box",
+   "x": 250,
+   "y": 52,
+   "w": 200,
+   "h": 92,
+   "narrow": {
+    "x": 116,
+    "w": 150
+   }
+  },
+  {
+   "id": "blkf",
+   "type": "text",
+   "x": 350.0,
+   "y": 82,
+   "text": "f = aQ + ab + bQ",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 191.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "blkn",
+   "type": "text",
+   "x": 350.0,
+   "y": 110,
+   "text": "majority of a, b, Q",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 191.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wa",
+   "type": "line",
+   "points": [
+    [
+     180,
+     70
+    ],
+    [
+     250,
+     70
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      70
+     ],
+     [
+      116,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "la",
+   "type": "text",
+   "x": 174,
+   "y": 70,
+   "text": "a",
+   "size": 15,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 64,
+    "size": 13
+   }
+  },
+  {
+   "id": "wb",
+   "type": "line",
+   "points": [
+    [
+     180,
+     96
+    ],
+    [
+     250,
+     96
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      70,
+      96
+     ],
+     [
+      116,
+      96
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lb",
+   "type": "text",
+   "x": 174,
+   "y": 96,
+   "text": "b",
+   "size": 15,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 64,
+    "size": 13
+   }
+  },
+  {
+   "id": "wq",
+   "type": "line",
+   "points": [
+    [
+     450,
+     98.0
+    ],
+    [
+     490,
+     98.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      266,
+      98.0
+     ],
+     [
+      282,
+      98.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lqo",
+   "type": "text",
+   "x": 496,
+   "y": 98.0,
+   "text": "Q out",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 288,
+    "size": 12
+   }
+  },
+  {
+   "id": "wfb",
+   "type": "line",
+   "points": [
+    [
+     470,
+     98.0
+    ],
+    [
+     470,
+     166
+    ],
+    [
+     180,
+     166
+    ],
+    [
+     180,
+     126
+    ],
+    [
+     250,
+     126
+    ]
+   ],
+   "dashed": true,
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      274,
+      98.0
+     ],
+     [
+      274,
+      166
+     ],
+     [
+      70,
+      166
+     ],
+     [
+      70,
+      126
+     ],
+     [
+      116,
+      126
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lqi",
+   "type": "text",
+   "x": 174,
+   "y": 126,
+   "text": "Q in",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 64,
+    "size": 12
+   }
+  },
+  {
+   "id": "cut",
+   "type": "text",
+   "x": 340.0,
+   "y": 186,
+   "text": "the loop is cut: assume Q in, compute Q out",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 45,
+   "y": 210,
+   "cellW": 118,
+   "cellH": 28,
+   "rows": [
+    [
+     "a b",
+     "f if Q=0",
+     "f if Q=1",
+     "stable Q",
+     "the loop is"
+    ],
+    [
+     "0 0",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "0 1",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 0",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 1",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "wide"
+  },
+  {
+   "id": "tt-n",
+   "type": "table",
+   "x": 12,
+   "y": 210,
+   "cellW": 67,
+   "cellH": 28,
+   "rows": [
+    [
+     "a b",
+     "Q=0",
+     "Q=1",
+     "stable",
+     "acts as"
+    ],
+    [
+     "0 0",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "0 1",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 0",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "1 1",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "only": "narrow"
+  },
+  {
+   "id": "res",
+   "type": "text",
+   "x": 340.0,
+   "y": 374,
+   "text": "",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "a = 0, b = 0: assume Q in = 0; the block gives Q out = 0, the same, so Q = 0 is stable.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a = 0, b = 0: assume Q in = 1; the block gives Q out = 0, different, so Q = 1 cannot last.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "",
+        ""
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "",
+        ""
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a b = 00: stable Q = 0, so the loop acts as constant 0.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        1,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a = 0, b = 1: assume Q in = 0; the block gives Q out = 0, the same, so Q = 0 is stable.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a = 0, b = 1: assume Q in = 1; the block gives Q out = 1, the same, so Q = 1 is stable.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "",
+        ""
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a b = 01: stable Q = 0 and 1, so the loop acts as memory (it keeps the old Q).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        3
+       ],
+       [
+        2,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a = 1, b = 0: assume Q in = 0; the block gives Q out = 0, the same, so Q = 0 is stable.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 0",
+        "0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 0",
+        "0",
+        "",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a = 1, b = 0: assume Q in = 1; the block gives Q out = 1, the same, so Q = 1 is stable.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "",
+        ""
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a b = 10: stable Q = 0 and 1, so the loop acts as memory (it keeps the old Q).",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 1",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        3
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a = 1, b = 1: assume Q in = 0; the block gives Q out = 1, different, so Q = 0 cannot last.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 1",
+        "1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 1",
+        "1",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        1
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a = 1, b = 1: assume Q in = 1; the block gives Q out = 1, the same, so Q = 1 is stable.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 1",
+        "1",
+        "1",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "wa",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wfb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqi",
+     "set": {
+      "text": "Q in = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lqo",
+     "set": {
+      "text": "Q out = 1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "la",
+     "set": {
+      "text": "a=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lb",
+     "set": {
+      "text": "b=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 1",
+        "1",
+        "1",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "a b = 11: stable Q = 1, so the loop acts as constant 1.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "f if Q=0",
+        "f if Q=1",
+        "stable Q",
+        "the loop is"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "constant 0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0 or 1",
+        "memory"
+       ],
+       [
+        "1 1",
+        "1",
+        "1",
+        "1",
+        "constant 1"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "rows": [
+       [
+        "a b",
+        "Q=0",
+        "Q=1",
+        "stable",
+        "acts as"
+       ],
+       [
+        "0 0",
+        "0",
+        "0",
+        "0",
+        "0"
+       ],
+       [
+        "0 1",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 0",
+        "0",
+        "1",
+        "0,1",
+        "hold"
+       ],
+       [
+        "1 1",
+        "1",
+        "1",
+        "1",
+        "1"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        3
+       ],
+       [
+        4,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The loop holds a bit when a ≠ b, and is forced to a = b otherwise: the 1991 table 0, Q, Q, 1.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    },
+    {
+     "id": "res",
+     "set": {
+      "text": "ab = 00 → 0, 01 → Q, 10 → Q, 11 → 1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "tt-n",
+     "set": {
+      "highlight": [
+       [
+        2,
+        4
+       ],
+       [
+        3,
+        4
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

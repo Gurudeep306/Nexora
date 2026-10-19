@@ -1,0 +1,465 @@
+[
+ {
+  "id": "nx-dl-06-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A two-input NAND gate has its output $Y$ wired back to one of its own inputs; the other input is $A$, so $Y = \\overline{A\\,Y}$. For which values of $A$ does the circuit have a stable state?",
+  "options": [
+   {
+    "l": "A",
+    "t": "For both $A = 0$ and $A = 1$"
+   },
+   {
+    "l": "B",
+    "t": "Only for $A = 0$, where $Y = 1$"
+   },
+   {
+    "l": "C",
+    "t": "Only for $A = 1$, where $Y = 0$"
+   },
+   {
+    "l": "D",
+    "t": "For neither value: it always oscillates"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Cut the loop: the gate computes $f(A, Y) = \\overline{A\\,Y}$ from the fed-back $Y$. A value of $Y$ is stable when $f(A, Y) = Y$.",
+   "$A = 0$: $f = \\overline{0} = 1$ whatever $Y$ is, so only $Y = 1$ reproduces itself. One stable state, $Y = 1$.",
+   "$A = 1$: $f = \\overline{Y}$. Neither $Y = 0$ (gives 1) nor $Y = 1$ (gives 0) reproduces itself: the output flips every gate delay. No stable state."
+  ],
+  "concept": "A single loop is stable at the values Q with f(x, Q) = Q; f = Q̄ (an odd number of inversions) has none.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "For A = 1 the loop is a NOT gate feeding itself, which has no stable value."
+   },
+   {
+    "answer": "C",
+    "why": "Y = 0 with A = 1 gives NAND(1, 0) = 1, not 0, so it does not last."
+   }
+  ],
+  "blocks": [
+   "stable-state",
+   "stable-theorem",
+   "trap-odd-ring"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q02",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A NOR-gate SR latch (S and R active high) is driven by the input pairs $SR$ = 01, 10, 00, 01, 00, in that order, each held long enough to settle. What are $Q$ and $\\overline{Q}$ at the end?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q = 1$, $\\overline{Q} = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$Q = \\overline{Q} = 0$"
+   },
+   {
+    "l": "C",
+    "t": "$Q = 0$, $\\overline{Q} = 1$"
+   },
+   {
+    "l": "D",
+    "t": "The latch oscillates"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "01 resets ($Q = 0$), 10 sets ($Q = 1$), 00 holds ($Q = 1$).",
+   "01 resets again ($Q = 0$) and the final 00 holds that: $Q = 0$, $\\overline{Q} = 1$.",
+   "The forbidden pair 11 never occurs, so the outputs stay complementary and nothing oscillates."
+  ],
+  "concept": "SR latch: 10 sets, 01 resets, 00 holds the last value written.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the state after the 10 and the first 00; the later 01 resets it."
+   },
+   {
+    "answer": "D",
+    "why": "Oscillation needs S = R = 1 released together; that pair never appears here."
+   }
+  ],
+  "blocks": [
+   "sr-nor",
+   "sr-table"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "In an SR latch built from two cross-coupled **NOR** gates, both $S$ and $R$ are held at 1. The outputs are",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q = 1$, $\\overline{Q} = 0$"
+   },
+   {
+    "l": "B",
+    "t": "$Q = 0$, $\\overline{Q} = 1$"
+   },
+   {
+    "l": "C",
+    "t": "$Q = \\overline{Q} = 1$"
+   },
+   {
+    "l": "D",
+    "t": "$Q = \\overline{Q} = 0$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Each NOR gate has one input tied to 1 (R for the $Q$ gate, S for the $\\overline{Q}$ gate).",
+   "A 1 is the controlling value of NOR: the output is 0 whatever the other input is. So both outputs are 0.",
+   "The state is stable while S = R = 1, but the outputs are not complements; that is why 11 is called forbidden."
+  ],
+  "concept": "S = R = 1 forces both NOR outputs to 0; the NAND latch's forbidden 00 forces both to 1.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Q = Q̄ = 1 is the NAND latch with S̄ = R̄ = 0."
+   },
+   {
+    "answer": "A",
+    "why": "Neither input wins in a NOR latch: both gates are forced to 0."
+   }
+  ],
+  "blocks": [
+   "forbidden",
+   "sr-nor",
+   "nor-vs-nand"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q04",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Each circuit below is a single gate with its output $Q$ fed back to one input; the other input is $x$. Which of them can **store a bit**, that is, have two stable values of $Q$ for some value of $x$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q = x + Q$ (OR)"
+   },
+   {
+    "l": "B",
+    "t": "$Q = \\overline{x}\\,Q$ (AND with $\\overline{x}$)"
+   },
+   {
+    "l": "C",
+    "t": "$Q = x \\oplus Q$ (XOR)"
+   },
+   {
+    "l": "D",
+    "t": "$Q = \\overline{x\\,Q}$ (NAND)"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "A loop stores a bit for input $x$ exactly when $f(x, Q) = Q$ for both $Q = 0$ and $Q = 1$, i.e. when $f(x, \\cdot)$ is the identity.",
+   "OR: $x = 0$ gives $f = Q$, so both values hold (once it becomes 1 it stays 1). AND with $\\overline{x}$: $x = 0$ gives $f = Q$. XOR: $x = 0$ gives $f = Q$ as well (and $x = 1$ makes it oscillate).",
+   "NAND: $x = 0$ forces $Q = 1$ (one stable value) and $x = 1$ gives $f = \\overline{Q}$ (none). It never stores a bit."
+  ],
+  "concept": "For each input value, f(x, ·) is 0, 1, Q or Q̄: constant, constant, memory, oscillator.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "XOR with x = 0 passes Q unchanged, so it too has two stable states (it oscillates only for x = 1)."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "NAND has at most one stable value for each x."
+   }
+  ],
+  "blocks": [
+   "stable-theorem",
+   "feedback-analysis"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q05",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Two cross-coupled gates with **equal** delays form a latch. Which of these input changes can leave the latch oscillating?",
+  "options": [
+   {
+    "l": "A",
+    "t": "NOR latch: $SR$ changes from 11 to 00 (both at once)"
+   },
+   {
+    "l": "B",
+    "t": "NOR latch: $SR$ changes from 10 to 01"
+   },
+   {
+    "l": "C",
+    "t": "NAND latch: $\\overline{S}\\,\\overline{R}$ changes from 00 to 11 (both at once)"
+   },
+   {
+    "l": "D",
+    "t": "NAND latch: $\\overline{S}\\,\\overline{R}$ changes from 11 to 00"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "Oscillation needs both outputs equal (the forbidden state) and then both inputs releasing together, so that the two gates switch in step.",
+   "A: from 11 both NOR outputs are 0; after 00 each gate sees 0, 0 and rises, then each sees a 1 and falls, and so on. C is the same for NAND: 00 gives Q = Q̄ = 1, then 11 makes both fall, then rise.",
+   "B is an ordinary reset: Q̄ rises, Q falls, the latch settles at Q = 0. D goes into the forbidden state (Q = Q̄ = 1), which is stable while the inputs stay 00; the trouble comes only on the release."
+  ],
+  "concept": "The race happens on leaving the forbidden input, with both inputs changing together.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Entering 00 on a NAND latch gives a stable (if forbidden) Q = Q̄ = 1; it is leaving it that races."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "The NAND latch has the same race with every level inverted: 00 → 11."
+   }
+  ],
+  "blocks": [
+   "race-theorem",
+   "forbidden",
+   "nand-latch"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A gated D latch starts with $Q = 0$. Over six equal intervals its enable is $C$ = 1, 1, 0, 0, 1, 0 and its data input is $D$ = 1, 0, 1, 1, 1, 0. What is $Q$ in the six intervals (ignore gate delays)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1, 0, 1, 1, 1, 0"
+   },
+   {
+    "l": "B",
+    "t": "1, 0, 0, 0, 1, 1"
+   },
+   {
+    "l": "C",
+    "t": "1, 1, 1, 1, 1, 1"
+   },
+   {
+    "l": "D",
+    "t": "0, 1, 0, 0, 0, 1"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "While $C = 1$ the latch is transparent: $Q = D$. While $C = 0$ it holds the last value.",
+   "Intervals 1–2 ($C = 1$): $Q$ = 1, then 0. Intervals 3–4 ($C = 0$): hold 0, 0. Interval 5 ($C = 1$): $Q = 1$. Interval 6 ($C = 0$): hold 1.",
+   "So $Q$ = 1, 0, 0, 0, 1, 1."
+  ],
+  "concept": "D latch: Q⁺ = C·D + C̄·Q (transparent while enabled).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That copies D in every interval, as if C were always 1."
+   },
+   {
+    "answer": "C",
+    "why": "That is a rising-edge flip-flop (D sampled only when C rises: 1 and 1); a latch also follows D while C stays 1."
+   }
+  ],
+  "blocks": [
+   "d-latch",
+   "d-latch-theorem",
+   "latch-vs-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q07",
+  "type": "NAT",
+  "marks": 1,
+  "text": "The loop $Q = aQ + ab + bQ$ (the output fed back into a majority gate) is examined for all four input pairs $(a, b)$. How many pairs (input pair, value of $Q$) are stable in total?",
+  "answer": 6,
+  "solution": [
+   "For each input pair, test $Q = 0$ and $Q = 1$: $Q$ is stable when $f(a, b, Q) = Q$.",
+   "00: only $Q = 0$ (1 stable). 01 and 10: $f = Q$, so both values (2 + 2). 11: only $Q = 1$ (1).",
+   "Total $1 + 2 + 2 + 1 = 6$."
+  ],
+  "concept": "Count the fixed points of the loop function for every input row.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Counting one stable state per input pair misses that 01 and 10 each have two."
+   },
+   {
+    "answer": 8,
+    "why": "Not every (input, Q) pair is stable: 00 with Q = 1 and 11 with Q = 0 change."
+   }
+  ],
+  "blocks": [
+   "feedback-analysis",
+   "stable-state"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about gated (clocked) latches are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A gated D latch has no forbidden input combination."
+   },
+   {
+    "l": "B",
+    "t": "While its enable is 0, a gated SR latch ignores S and R and holds its state."
+   },
+   {
+    "l": "C",
+    "t": "A gated D latch's output can change only at the rising edge of the enable."
+   },
+   {
+    "l": "D",
+    "t": "In a gated SR latch, S = R = 1 while the enable is 1 makes Q and Q̄ equal."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A: the D latch drives the inner SR latch with $S = D$, $R = \\overline{D}$, which are never both 1. True.",
+   "B: the enable gates S and R, so with enable 0 the inner latch sees 'hold'. True.",
+   "C: false. A latch is transparent: while the enable is 1, every change of D passes to Q. Only a flip-flop restricts changes to an edge.",
+   "D: true. With the enable at 1, S = R = 1 reaches the inner latch as its forbidden input, which drives both outputs to the same value (both 0 in a NOR latch, both 1 in a NAND one)."
+  ],
+  "concept": "Latch = level-sensitive (transparent while enabled); the D latch removes the forbidden input.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "C describes an edge-triggered flip-flop, not a latch."
+   },
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "Gating does not remove the forbidden input of an SR latch: with the enable high, S = R = 1 still reaches it."
+   }
+  ],
+  "blocks": [
+   "gated-latch",
+   "d-latch",
+   "latch-vs-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Five inverters, each with a propagation delay of 2 ns, are connected in a ring (the output of the last drives the first). The ring oscillates. What is its frequency in MHz?",
+  "answer": 50,
+  "solution": [
+   "A change starts at one node and travels round the ring, one inverter delay per gate: it comes back after $5 \\times 2 = 10$ ns, now inverted (an odd number of inversions).",
+   "So a node changes every 10 ns, and two changes make one period: $T = 2 \\times 5 \\times 2 = 20$ ns.",
+   "$f = 1 / 20\\ \\text{ns} = 50$ MHz."
+  ],
+  "concept": "A ring of k (odd) inverters has period 2·k·t_pd.",
+  "common_wrong": [
+   {
+    "answer": 100,
+    "why": "Taking one trip round the ring (10 ns) as the period; a full period needs two trips."
+   },
+   {
+    "answer": 500,
+    "why": "Using one inverter delay (2 ns) as the period."
+   }
+  ],
+  "blocks": [
+   "trap-odd-ring",
+   "stable-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-01-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 2:1 multiplexer computes $Y = \\overline{S}\\,I_0 + S\\,I_1$. It is to act as a D latch that is **transparent while $S = 0$** and holds while $S = 1$. How should it be wired?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$D \\to I_0$ and $Y \\to I_1$ (fed back)"
+   },
+   {
+    "l": "B",
+    "t": "$Y \\to I_0$ (fed back) and $D \\to I_1$"
+   },
+   {
+    "l": "C",
+    "t": "$D \\to I_0$ and $D \\to I_1$"
+   },
+   {
+    "l": "D",
+    "t": "$Y \\to S$ (fed back) and $D \\to I_0$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "With $D$ on $I_0$ and $Y$ on $I_1$: $Y^+ = \\overline{S}\\,D + S\\,Y$.",
+   "$S = 0$ passes $D$ (transparent); $S = 1$ passes the output back to itself (hold). That is a D latch enabled by $\\overline{S}$.",
+   "Option B is the GATE 2023 circuit: transparent while $S = 1$. Option C is just a wire for $D$; option D feeds the output into the select line, which is not a latch on D."
+  ],
+  "concept": "MUX latch: the selected input is D during the transparent phase and Y itself during the hold phase.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "That latch is transparent while S = 1, the opposite of what is asked."
+   },
+   {
+    "answer": "C",
+    "why": "With D on both inputs the output is always D: no feedback, no memory."
+   }
+  ],
+  "blocks": [
+   "mux-latch",
+   "d-latch"
+  ],
+  "source": "nexora"
+ }
+]

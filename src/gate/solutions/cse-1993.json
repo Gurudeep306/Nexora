@@ -784,28 +784,34 @@
       }
     },
     "cse-1993-ii-a-6-2": {
-      "approach": "The figure is missing from this paper copy. In the commonly reproduced version the \"state machine\" is a NOR gate whose output is fed back to one of its own inputs, the other inputs being $a$ and $b$: $Q^+=\\overline{a+b+Q}$. A stable state exists only when the feedback is masked, i.e. $a+b=1$.",
+      "approach": "Concept tested: **a loop with an odd number of inversions has no stable state**. The figure is missing from the paper scan; in the commonly reproduced version the \"state machine\" is a NOR gate with inputs $a$, $b$ and its own output $Q$ fed back. Cut the loop and ask when $Q^+ = \\overline{a + b + Q}$ has a fixed point.",
       "concepts": [
-        "Feedback / asynchronous circuits",
+        "Feedback loop",
         "Stable state",
-        "Oscillation in a NOR loop"
+        "NOR gate",
+        "Oscillation"
       ],
+      "given": "A NOR gate whose inputs are $a$, $b$ and its own output $Q$ (figure as commonly reproduced; the scan of the 1993 paper shows only the text).",
       "steps": [
         {
-          "title": "Loop equation",
-          "body": "With feedback, the next output is $Q^+=\\overline{a+b+Q}$. A state is stable when $Q^+=Q$."
+          "title": "Loop function",
+          "body": "Cutting the feedback wire: $Q^+ = \\overline{a + b + Q}$."
         },
         {
-          "title": "Case $a+b=1$",
-          "body": "$Q^+=\\overline{1}=0$ regardless of $Q$; $Q=0$ then reproduces itself — stable."
+          "title": "Case a + b = 1",
+          "body": "A 1 is the controlling value of NOR, so $Q^+ = 0$ whatever $Q$ is. $Q = 0$ reproduces itself: a stable state exists."
         },
         {
-          "title": "Case $a+b=0$",
-          "body": "$Q^+=\\bar Q$: the output keeps toggling (oscillates) — no stable state. Hence the restriction is $a+b=1$."
+          "title": "Case a + b = 0",
+          "body": "Now $Q^+ = \\overline{Q}$: the gate is an inverter driving itself, an odd ring of length one. $Q = 0$ gives 1 and $Q = 1$ gives 0, so neither is stable and the output flips every gate delay."
+        },
+        {
+          "title": "Restriction on the inputs",
+          "body": "A stable state exists exactly when $a + b = 1$ (option B). Options A and C ($ab = 1$; $\\bar a + \\bar b = 0$, which is again $ab = 1$) are sufficient but exclude 01 and 10, which also work; D and E are wrong."
         }
       ],
       "answer": {
-        "value": "(b) $a+b=1$",
+        "value": "(b) $a + b = 1$",
         "choice": [
           "B"
         ],
@@ -815,33 +821,73 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$a\\cdot b=1$ is sufficient but too strong — $a=1,b=0$ is also stable, so it is not the required restriction."
+          "reason": "$ab = 1$ does give a stable state, but it is not the restriction: $ab = 01$ and $10$ are stable too."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Exactly the condition that masks the feedback."
+          "reason": "Stable exactly when a 1 on $a$ or $b$ masks the feedback, i.e. $a + b = 1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$\\bar a+\\bar b=0\\iff a\\cdot b=1$ — same as (a), too strong."
+          "reason": "$\\bar a + \\bar b = 0$ means $a = b = 1$, the same as A: too narrow."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$\\overline{a\\cdot b}=1$ allows $a=b=0$, where the loop oscillates."
+          "reason": "$\\overline{ab} = 1$ includes $a = b = 0$, the oscillating case."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "$\\overline{a+b}=1$ means $a=b=0$ — precisely the oscillating case."
+          "reason": "$\\overline{a + b} = 1$ is exactly the oscillating case $a = b = 0$."
         }
       ],
+      "shortcut": "Ask when the NOR stops being an inverter of its own output: as soon as another input is 1.",
       "pitfalls": [
-        "Choosing (a)/(c): they guarantee stability but are not the general restriction."
+        "Answering \"a + b = 0\" because a NOR with 0 inputs outputs 1: the third input is the output itself, so the gate inverts its own output.",
+        "Choosing $a \\cdot b = 1$: it is sufficient but not necessary."
       ],
-      "verification": "Checked all four input combinations of the assumed NOR-feedback loop; the figure is missing, so the item stays flagged for review."
+      "verification": "Fixed points of $Q = \\overline{a + b + Q}$: none for $ab = 00$, $\\{0\\}$ for 01, 10 and 11. A delay simulation with $ab = 00$ toggles $Q$ every gate delay.",
+      "animation": {
+        "kind": "table",
+        "title": "Q⁺ = NOR(a, b, Q)",
+        "cols": [
+          "f if Q = 0",
+          "f if Q = 1",
+          "stable?"
+        ],
+        "rows": [
+          [
+            1,
+            0,
+            "no"
+          ],
+          [
+            0,
+            0,
+            "Q = 0"
+          ],
+          [
+            0,
+            0,
+            "Q = 0"
+          ],
+          [
+            0,
+            0,
+            "Q = 0"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "ab = 00",
+          "ab = 01",
+          "ab = 10",
+          "ab = 11"
+        ]
+      }
     },
     "cse-1993-ii-a-6-3": {
       "approach": "Each J-K stage with $J=Q_{prev}$, $K=\\bar Q_{prev}$ acts as a D flip-flop, so the chain is a shift register; the last stage feeds $\\bar Q_3$ back to $J_1$ (twisted ring), giving a Johnson counter with $2n=6$ states.",

@@ -1953,24 +1953,29 @@
       "verification": "Example $R_1=(S,T,U)$, $R_2=(U,V)$: each attribute of $R_1$ determines the others through the cycle."
     },
     "cse-1999-a-33": {
-      "approach": "The output is the AND of everything feeding the chain, so Y = 1 forces every AND gate output to 1, which forces every external input to 1.",
+      "approach": "Concept tested: **steady states of a feedback loop**. The three AND gates in a chain collapse to one loop function $Y^+ = A\\,B\\,C\\,Y$; a steady state with $Y = 1$ needs $f(A, B, C, 1) = 1$.",
       "concepts": [
-        "AND gate",
-        "Feedback / latch",
-        "Steady state"
+        "Feedback loop",
+        "Stable state",
+        "AND chain"
       ],
+      "given": "$g_1 = A\\,Y$, $g_2 = g_1 B$, $Y = g_2 C$, with $Y$ fed back to $g_1$.",
       "steps": [
         {
-          "title": "Write the loop equation",
-          "body": "Gate 1: $g_1=A\\cdot Y$. Gate 2: $g_2=g_1\\cdot B$. Gate 3: $Y=g_2\\cdot C = A\\,B\\,C\\,Y$."
+          "title": "One loop function",
+          "body": "Cutting at $Y$ and composing the three ANDs: $Y^+ = ((A\\,Y)\\,B)\\,C = A\\,B\\,C\\,Y$."
         },
         {
-          "title": "Impose Y = 1",
-          "body": "$1 = A\\cdot B\\cdot C\\cdot 1$ needs $A=B=C=1$. Conversely with $A=B=C=1$, $Y=1$ is self-consistent (the loop holds the 1). Any input 0 forces $Y=0$."
+          "title": "Condition for Y = 1 to last",
+          "body": "$Y = 1$ is steady iff $f(A, B, C, 1) = ABC = 1$, i.e. $A = B = C = 1$."
+        },
+        {
+          "title": "Check the options",
+          "body": "A (001), B (011), C (101) each contain a 0, which forces every AND below it to 0: $Y^+ = 0$, so $Y = 1$ cannot be a steady state. Only D (111) keeps $Y = 1$."
         }
       ],
       "answer": {
-        "value": "A = 1, B = 1, C = 1",
+        "value": "(D) $A = 1, B = 1, C = 1$",
         "choice": [
           "D"
         ],
@@ -1980,28 +1985,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$A=0$ (and $B=0$) forces $Y=0$."
+          "reason": "$A = 0$ forces $g_1 = 0$, hence $Y = 0$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$A=0$ makes gate 1 output 0, so $Y=0$."
+          "reason": "$A = 0$ forces $g_1 = 0$, hence $Y = 0$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$B=0$ makes gate 2 output 0, so $Y=0$."
+          "reason": "$B = 0$ forces $g_2 = 0$, hence $Y = 0$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Only $A=B=C=1$ keeps $Y=1$ stable."
+          "reason": "With $A = B = C = 1$ the chain passes $Y$ unchanged, so $Y = 1$ holds itself."
         }
       ],
+      "shortcut": "A chain of ANDs round a loop holds a 1 only if every side input is 1.",
       "pitfalls": [
-        "With $A=B=C=1$ the circuit can also rest at $Y=0$ — it is a latch; the question only asks which inputs allow $Y=1$."
+        "Forgetting that with $A = B = C = 1$ the loop is a memory: $Y = 0$ is also steady, so $A = B = C = 1$ does not force $Y = 1$; it only allows it."
       ],
-      "verification": "Checked all four options in $Y=ABCY$ with $Y=1$."
+      "verification": "Fixed points of the netlist: $Y = 1$ appears only for $ABC = 111$ (where both $Y = 0$ and $Y = 1$ are fixed points)."
     },
     "cse-1999-a-34": {
       "approach": "Concept tested: **Post's classes with constants available**. A set is complete iff it contains a non-monotone member and a non-affine member (the constants handle the other three classes).",

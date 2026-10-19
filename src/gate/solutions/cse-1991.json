@@ -1930,32 +1930,87 @@
       "verification": "Extreme case: the empty axiom set is consistent but cannot decide any non-logical sentence."
     },
     "cse-1991-b-5-a": {
-      "approach": "Read the logic: $Q = aQ + ab + bQ$, the majority of $a$, $b$ and the fed-back $Q$. With $a=b$ the output is forced; with $a\\ne b$ it holds its old value — a Muller C-element.",
+      "approach": "Concept tested: **stable states of a feedback loop**. Cut the feedback wire, write the loop function $Q^+ = f(a, b, Q)$, and for each input pair keep the values of $Q$ that reproduce themselves ($f = Q$).",
       "concepts": [
-        "feedback (latch) circuits",
-        "majority function",
-        "C-element"
+        "Feedback loop",
+        "Stable state",
+        "Majority function",
+        "Latch"
       ],
+      "given": "Three 2-input AND gates compute $aQ$, $ab$, $bQ$; a 3-input OR combines them; its output $Q$ is fed back into the first and third AND gates.",
       "steps": [
         {
-          "title": "Next-state equation",
-          "body": "Three AND gates feed the OR: $Q_n = a\\,Q + a\\,b + b\\,Q$ where $Q$ is the present output fed back."
+          "title": "Cut the loop and write the loop function",
+          "body": "With the feedback wire cut, the circuit is an ordinary AND–OR network: $Q^+ = aQ + ab + bQ$. This is the **majority** of $a$, $b$ and $Q$ (1 when at least two of them are 1)."
         },
         {
-          "title": "Evaluate each row",
-          "body": "- $a=0,b=0$: $Q_n = 0+0+0 = 0$\n- $a=0,b=1$: $Q_n = 0 + 0 + Q = Q$\n- $a=1,b=0$: $Q_n = Q + 0 + 0 = Q$\n- $a=1,b=1$: $Q_n = Q + 1 + Q = 1$"
+          "title": "Inputs that force a value",
+          "body": "$ab = 00$: every product is 0, so $Q^+ = 0$ whether $Q$ is 0 or 1. Only $Q = 0$ is stable: $Q_n = 0$. $ab = 11$: the term $ab = 1$ forces $Q^+ = 1$: $Q_n = 1$.",
+          "scene": {
+            "reveal": 2
+          }
         },
         {
-          "title": "Completed table",
-          "body": "| a | b | $Q_n$ |\n|---|---|---|\n| 0 | 0 | 0 |\n| 0 | 1 | $Q$ (no change) |\n| 1 | 0 | $Q$ (no change) |\n| 1 | 1 | 1 |"
+          "title": "Inputs that leave the decision to Q",
+          "body": "$ab = 01$: $Q^+ = bQ = Q$. Both $Q = 0$ and $Q = 1$ reproduce themselves, so the loop **holds** its previous value: $Q_n = Q$. The same for $ab = 10$, where $Q^+ = aQ = Q$.",
+          "scene": {
+            "reveal": 4
+          }
+        },
+        {
+          "title": "Name the circuit",
+          "body": "Set by 11, reset by 00, hold on 01 and 10: the circuit is a one-bit memory (a latch) whose hold condition is $a \\ne b$."
         }
       ],
       "answer": {
-        "value": "00 → 0; 01 → Q (unchanged); 10 → Q (unchanged); 11 → 1",
+        "value": "ab = 00 → 0; 01 → Q (unchanged); 10 → Q (unchanged); 11 → 1",
         "matchesKey": true
       },
-      "shortcut": "Majority of $(a,b,Q)$: when the inputs agree they win; when they disagree $Q$ breaks the tie, so it holds.",
-      "verification": "Stable: in rows 01/10, substituting $Q=0$ gives 0 and $Q=1$ gives 1, so both are self-consistent."
+      "shortcut": "Majority of $(a, b, Q)$: when $a = b$ they outvote $Q$; when $a \\ne b$, $Q$ casts the deciding vote and so keeps itself.",
+      "pitfalls": [
+        "Writing $Q_n = 1$ for 01 or 10 because \"one AND gate has a 1\": the AND gates there are $bQ$ or $aQ$, which need $Q = 1$ as well.",
+        "Treating the circuit as combinational and leaving the 01 and 10 rows undefined: the feedback makes them memory rows."
+      ],
+      "verification": "The fixed points of the netlist for each input row are {0}, {0, 1}, {0, 1}, {1}, and a gate-delay simulation started from either value settles to these.",
+      "animation": {
+        "kind": "table",
+        "title": "Stable values of Q = aQ + ab + bQ",
+        "cols": [
+          "f if Q = 0",
+          "f if Q = 1",
+          "Qₙ"
+        ],
+        "rows": [
+          [
+            0,
+            0,
+            "0"
+          ],
+          [
+            0,
+            1,
+            "Q"
+          ],
+          [
+            0,
+            1,
+            "Q"
+          ],
+          [
+            1,
+            1,
+            "1"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "ab = 00",
+          "ab = 01",
+          "ab = 10",
+          "ab = 11"
+        ],
+        "reveal": 0
+      }
     },
     "cse-1991-b-5-b": {
       "approach": "Concept tested: **minimal SOP with don't-cares**. Use an X only when it enlarges a loop: the four corners give one quad, and $m_{15}$ joins three Xs in a second quad.",

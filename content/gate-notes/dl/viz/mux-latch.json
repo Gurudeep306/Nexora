@@ -1,0 +1,2328 @@
+{
+ "version": 1,
+ "title": "A multiplexer with feedback is a D latch",
+ "width": 680,
+ "height": 340,
+ "narrow": {
+  "width": 360,
+  "height": 340
+ },
+ "intro": "A 2:1 multiplexer: data input 1 is D, data input 0 is the output Q fed back, select is S. Waveforms of S, D and Q grow below.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "A 2:1 MUX with its output fed back to input 0",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "MUX with feedback = D latch",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "mux",
+   "type": "box",
+   "x": 250,
+   "y": 56,
+   "w": 90,
+   "h": 96,
+   "narrow": {
+    "x": 140,
+    "y": 50
+   }
+  },
+  {
+   "id": "mux-l0",
+   "type": "text",
+   "x": 255,
+   "y": 76.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 145,
+    "y": 70.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-l1",
+   "type": "text",
+   "x": 255,
+   "y": 116.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 145,
+    "y": 110.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-r0",
+   "type": "text",
+   "x": 335,
+   "y": 96.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 225,
+    "y": 90.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-b0",
+   "type": "text",
+   "x": 295.0,
+   "y": 142,
+   "text": "S",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 185.0,
+    "y": 136,
+    "size": 12
+   }
+  },
+  {
+   "id": "mux-n",
+   "type": "text",
+   "x": 295.0,
+   "y": 92,
+   "text": "MUX",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 185.0,
+    "y": 86,
+    "size": 13
+   }
+  },
+  {
+   "id": "wq",
+   "type": "line",
+   "points": [
+    [
+     340,
+     96.0
+    ],
+    [
+     410,
+     96.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      230,
+      90.0
+     ],
+     [
+      280,
+      90.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lq",
+   "type": "text",
+   "x": 416,
+   "y": 96.0,
+   "text": "Q",
+   "size": 15,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 286,
+    "y": 90.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "fb",
+   "type": "line",
+   "points": [
+    [
+     370,
+     96.0
+    ],
+    [
+     370,
+     42
+    ],
+    [
+     220,
+     42
+    ],
+    [
+     220,
+     76.0
+    ],
+    [
+     250,
+     76.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      260,
+      90.0
+     ],
+     [
+      260,
+      36
+     ],
+     [
+      110,
+      36
+     ],
+     [
+      110,
+      70.0
+     ],
+     [
+      140,
+      70.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wd",
+   "type": "line",
+   "points": [
+    [
+     160,
+     116.0
+    ],
+    [
+     250,
+     116.0
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      60,
+      110.0
+     ],
+     [
+      140,
+      110.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ld",
+   "type": "text",
+   "x": 154,
+   "y": 116.0,
+   "text": "D",
+   "size": 15,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 54,
+    "y": 110.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "ws",
+   "type": "line",
+   "points": [
+    [
+     160,
+     174
+    ],
+    [
+     295.0,
+     174
+    ],
+    [
+     295.0,
+     152
+    ]
+   ],
+   "narrow": {
+    "points": [
+     [
+      60,
+      168
+     ],
+     [
+      185.0,
+      168
+     ],
+     [
+      185.0,
+      146
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ls",
+   "type": "text",
+   "x": 154,
+   "y": 174,
+   "text": "S",
+   "size": 15,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 54,
+    "y": 168,
+    "size": 13
+   }
+  },
+  {
+   "id": "wlS",
+   "type": "text",
+   "x": 72,
+   "y": 219,
+   "text": "S",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 42,
+    "y": 209,
+    "size": 12
+   }
+  },
+  {
+   "id": "wSg0s0",
+   "type": "line",
+   "points": [
+    [
+     80,
+     228
+    ],
+    [
+     128,
+     228
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50.0,
+      218
+     ],
+     [
+      77.0,
+      218
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg1s0",
+   "type": "line",
+   "points": [
+    [
+     128,
+     228
+    ],
+    [
+     128,
+     210
+    ],
+    [
+     176,
+     210
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      77.0,
+      218
+     ],
+     [
+      77.0,
+      200
+     ],
+     [
+      104.0,
+      200
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg2s0",
+   "type": "line",
+   "points": [
+    [
+     176,
+     210
+    ],
+    [
+     224,
+     210
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      104.0,
+      200
+     ],
+     [
+      131.0,
+      200
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg3s0",
+   "type": "line",
+   "points": [
+    [
+     224,
+     210
+    ],
+    [
+     272,
+     210
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      131.0,
+      200
+     ],
+     [
+      158.0,
+      200
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg4s0",
+   "type": "line",
+   "points": [
+    [
+     272,
+     210
+    ],
+    [
+     272,
+     228
+    ],
+    [
+     320,
+     228
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      158.0,
+      200
+     ],
+     [
+      158.0,
+      218
+     ],
+     [
+      185.0,
+      218
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg5s0",
+   "type": "line",
+   "points": [
+    [
+     320,
+     228
+    ],
+    [
+     368,
+     228
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      185.0,
+      218
+     ],
+     [
+      212.0,
+      218
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg6s0",
+   "type": "line",
+   "points": [
+    [
+     368,
+     228
+    ],
+    [
+     416,
+     228
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      212.0,
+      218
+     ],
+     [
+      239.0,
+      218
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg7s0",
+   "type": "line",
+   "points": [
+    [
+     416,
+     228
+    ],
+    [
+     416,
+     210
+    ],
+    [
+     464,
+     210
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      239.0,
+      218
+     ],
+     [
+      239.0,
+      200
+     ],
+     [
+      266.0,
+      200
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg8s0",
+   "type": "line",
+   "points": [
+    [
+     464,
+     210
+    ],
+    [
+     512,
+     210
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      266.0,
+      200
+     ],
+     [
+      293.0,
+      200
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg9s0",
+   "type": "line",
+   "points": [
+    [
+     512,
+     210
+    ],
+    [
+     512,
+     228
+    ],
+    [
+     560,
+     228
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      293.0,
+      200
+     ],
+     [
+      293.0,
+      218
+     ],
+     [
+      320.0,
+      218
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wSg10s0",
+   "type": "line",
+   "points": [
+    [
+     560,
+     228
+    ],
+    [
+     608,
+     228
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      320.0,
+      218
+     ],
+     [
+      347.0,
+      218
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlD",
+   "type": "text",
+   "x": 72,
+   "y": 253,
+   "text": "D",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 42,
+    "y": 243,
+    "size": 12
+   }
+  },
+  {
+   "id": "wDg0s0",
+   "type": "line",
+   "points": [
+    [
+     80,
+     244
+    ],
+    [
+     128,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50.0,
+      234
+     ],
+     [
+      77.0,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg1s0",
+   "type": "line",
+   "points": [
+    [
+     128,
+     244
+    ],
+    [
+     176,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      77.0,
+      234
+     ],
+     [
+      104.0,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg2s0",
+   "type": "line",
+   "points": [
+    [
+     176,
+     244
+    ],
+    [
+     176,
+     262
+    ],
+    [
+     224,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      104.0,
+      234
+     ],
+     [
+      104.0,
+      252
+     ],
+     [
+      131.0,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg3s0",
+   "type": "line",
+   "points": [
+    [
+     224,
+     262
+    ],
+    [
+     224,
+     244
+    ],
+    [
+     272,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      131.0,
+      252
+     ],
+     [
+      131.0,
+      234
+     ],
+     [
+      158.0,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg4s0",
+   "type": "line",
+   "points": [
+    [
+     272,
+     244
+    ],
+    [
+     296,
+     244
+    ],
+    [
+     296,
+     262
+    ],
+    [
+     320,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      158.0,
+      234
+     ],
+     [
+      171.5,
+      234
+     ],
+     [
+      171.5,
+      252
+     ],
+     [
+      185.0,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg5s0",
+   "type": "line",
+   "points": [
+    [
+     320,
+     262
+    ],
+    [
+     344,
+     262
+    ],
+    [
+     344,
+     244
+    ],
+    [
+     368,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      185.0,
+      252
+     ],
+     [
+      198.5,
+      252
+     ],
+     [
+      198.5,
+      234
+     ],
+     [
+      212.0,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg6s0",
+   "type": "line",
+   "points": [
+    [
+     368,
+     244
+    ],
+    [
+     392,
+     244
+    ],
+    [
+     392,
+     262
+    ],
+    [
+     416,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      212.0,
+      234
+     ],
+     [
+      225.5,
+      234
+     ],
+     [
+      225.5,
+      252
+     ],
+     [
+      239.0,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg7s0",
+   "type": "line",
+   "points": [
+    [
+     416,
+     262
+    ],
+    [
+     464,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      239.0,
+      252
+     ],
+     [
+      266.0,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg8s0",
+   "type": "line",
+   "points": [
+    [
+     464,
+     262
+    ],
+    [
+     464,
+     244
+    ],
+    [
+     512,
+     244
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      266.0,
+      252
+     ],
+     [
+      266.0,
+      234
+     ],
+     [
+      293.0,
+      234
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg9s0",
+   "type": "line",
+   "points": [
+    [
+     512,
+     244
+    ],
+    [
+     536,
+     244
+    ],
+    [
+     536,
+     262
+    ],
+    [
+     560,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      293.0,
+      234
+     ],
+     [
+      306.5,
+      234
+     ],
+     [
+      306.5,
+      252
+     ],
+     [
+      320.0,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wDg10s0",
+   "type": "line",
+   "points": [
+    [
+     560,
+     262
+    ],
+    [
+     608,
+     262
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      320.0,
+      252
+     ],
+     [
+      347.0,
+      252
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlQ",
+   "type": "text",
+   "x": 72,
+   "y": 287,
+   "text": "Q",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 42,
+    "y": 277,
+    "size": 12
+   }
+  },
+  {
+   "id": "wQg0s0",
+   "type": "line",
+   "points": [
+    [
+     80,
+     296
+    ],
+    [
+     128,
+     296
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      50.0,
+      286
+     ],
+     [
+      77.0,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg1s0",
+   "type": "line",
+   "points": [
+    [
+     128,
+     296
+    ],
+    [
+     152,
+     296
+    ],
+    [
+     152,
+     278
+    ],
+    [
+     176,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      77.0,
+      286
+     ],
+     [
+      90.5,
+      286
+     ],
+     [
+      90.5,
+      268
+     ],
+     [
+      104.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg2s0",
+   "type": "line",
+   "points": [
+    [
+     176,
+     278
+    ],
+    [
+     200,
+     278
+    ],
+    [
+     200,
+     296
+    ],
+    [
+     224,
+     296
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      104.0,
+      268
+     ],
+     [
+      117.5,
+      268
+     ],
+     [
+      117.5,
+      286
+     ],
+     [
+      131.0,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg3s0",
+   "type": "line",
+   "points": [
+    [
+     224,
+     296
+    ],
+    [
+     248,
+     296
+    ],
+    [
+     248,
+     278
+    ],
+    [
+     272,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      131.0,
+      286
+     ],
+     [
+      144.5,
+      286
+     ],
+     [
+      144.5,
+      268
+     ],
+     [
+      158.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg4s0",
+   "type": "line",
+   "points": [
+    [
+     272,
+     278
+    ],
+    [
+     320,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      158.0,
+      268
+     ],
+     [
+      185.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg5s0",
+   "type": "line",
+   "points": [
+    [
+     320,
+     278
+    ],
+    [
+     368,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      185.0,
+      268
+     ],
+     [
+      212.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg6s0",
+   "type": "line",
+   "points": [
+    [
+     368,
+     278
+    ],
+    [
+     416,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      212.0,
+      268
+     ],
+     [
+      239.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg7s0",
+   "type": "line",
+   "points": [
+    [
+     416,
+     278
+    ],
+    [
+     440,
+     278
+    ],
+    [
+     440,
+     296
+    ],
+    [
+     464,
+     296
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      239.0,
+      268
+     ],
+     [
+      252.5,
+      268
+     ],
+     [
+      252.5,
+      286
+     ],
+     [
+      266.0,
+      286
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg8s0",
+   "type": "line",
+   "points": [
+    [
+     464,
+     296
+    ],
+    [
+     488,
+     296
+    ],
+    [
+     488,
+     278
+    ],
+    [
+     512,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      266.0,
+      286
+     ],
+     [
+      279.5,
+      286
+     ],
+     [
+      279.5,
+      268
+     ],
+     [
+      293.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg9s0",
+   "type": "line",
+   "points": [
+    [
+     512,
+     278
+    ],
+    [
+     560,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      293.0,
+      268
+     ],
+     [
+      320.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wQg10s0",
+   "type": "line",
+   "points": [
+    [
+     560,
+     278
+    ],
+    [
+     608,
+     278
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      320.0,
+      268
+     ],
+     [
+      347.0,
+      268
+     ]
+    ]
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 326,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 316,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Ticks 0–1: S = 0, so the MUX passes its own output back: Q keeps its value whatever D does.",
+   "patches": [
+    {
+     "id": "wSg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 0: input 0 is Q itself, so Q holds",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 2–3: S = 1, so the MUX passes D and Q copies it one MUX delay later.",
+   "patches": [
+    {
+     "id": "wSg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 1: Q follows D (transparent)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 4–5: S = 1, so the MUX passes D and Q copies it one MUX delay later.",
+   "patches": [
+    {
+     "id": "wSg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 1: Q follows D (transparent)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 6–7: S = 1, so the MUX passes D and Q copies it one MUX delay later.",
+   "patches": [
+    {
+     "id": "wSg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 1: Q follows D (transparent)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 8–9: S = 0, so the MUX passes its own output back: Q keeps its value whatever D does.",
+   "patches": [
+    {
+     "id": "wSg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 0: input 0 is Q itself, so Q holds",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 10–11: S = 0, so the MUX passes its own output back: Q keeps its value whatever D does.",
+   "patches": [
+    {
+     "id": "wSg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 0: input 0 is Q itself, so Q holds",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 12–13: S = 0, so the MUX passes its own output back: Q keeps its value whatever D does.",
+   "patches": [
+    {
+     "id": "wSg6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 0: input 0 is Q itself, so Q holds",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 14–15: S = 1, so the MUX passes D and Q copies it one MUX delay later.",
+   "patches": [
+    {
+     "id": "wSg7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 1: Q follows D (transparent)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 16–17: S = 1, so the MUX passes D and Q copies it one MUX delay later.",
+   "patches": [
+    {
+     "id": "wSg8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 1: Q follows D (transparent)",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 18–19: S = 0, so the MUX passes its own output back: Q keeps its value whatever D does.",
+   "patches": [
+    {
+     "id": "wSg9s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg9s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg9s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 0: input 0 is Q itself, so Q holds",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Ticks 20–21: S = 0, so the MUX passes its own output back: Q keeps its value whatever D does.",
+   "patches": [
+    {
+     "id": "wSg10s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wDg10s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wQg10s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wd",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ws",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "wq",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "ld",
+     "set": {
+      "text": "D=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ls",
+     "set": {
+      "text": "S=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "lq",
+     "set": {
+      "text": "Q=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "S = 0: input 0 is Q itself, so Q holds",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Transparent while S = 1, holding while S = 0, and level- not edge-sensitive: a D latch (GATE 2023, option B).",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "Q⁺ = S·D + S̄·Q: a D latch",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -115,7 +115,7 @@ test(':::lab embeds a known Live Lab; unknown labs, tabs and content are reporte
   const body = JSON.parse(r.outputs.get('tst.json')).lessons.alpha.body;
   const lab = body.find((n) => n.t === 'block' && n.name === 'lab');
   assert.deepEqual([lab.id, lab.attrs], ['lab-bench', { lab: 'gate-bench', tab: 'sets' }]);
-  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver \| comb-workbench \| adder-race/);
+  assert.match(await errorsFor(`${LESSON}\n:::lab{lab="truth-table"}\n:::\n`), /lab must be gate-bench \| kmap-solver \| comb-workbench \| adder-race \| flipflop-scope \| counter-fsm/);
   assert.match(await errorsFor(`${LESSON}\n:::lab{lab="gate-bench" tab="draw"}\n:::\n`), /tab must be bench \| challenge \| sets/);
   // Each lab has its own tabs: the K-map Solver takes map | qm, and not Gate Bench's tabs.
   const km = await build({ content: scratch(`${LESSON}\n:::lab{#lab-km lab="kmap-solver" tab="qm" depth="standard"}\n:::\n`) });

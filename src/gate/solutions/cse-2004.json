@@ -995,28 +995,29 @@
       "verification": "Row 10: original $0 + 0 + 0 = 0$, $x' + y = 0$; the other three rows give 1 in both."
     },
     "cse-2004-cs-18": {
-      "approach": "A NAND gate outputs 1 whenever any input is 0. In a NAND (active-low) SR latch, S and R both 0 feed a 0 into both gates, so both outputs are forced to 1.",
+      "approach": "Concept tested: **the NAND latch's forbidden input**. A NAND latch has active-low inputs; 0 is the controlling value of NAND, so $S = R = 0$ forces **both** outputs to 1.",
       "concepts": [
-        "SR latch",
-        "NAND gate",
-        "Active-low inputs"
+        "NAND latch",
+        "Active-low inputs",
+        "Forbidden input"
       ],
+      "given": "Two cross-coupled NAND gates; both inputs $S$ and $R$ are 0.",
       "steps": [
         {
-          "title": "Latch equations",
-          "body": "Cross-coupled NAND: $Q = (S\\cdot Q')'$ and $Q' = (R\\cdot Q)'$ (inputs are active-low)."
+          "title": "Evaluate each gate",
+          "body": "$Q = \\overline{S \\cdot \\overline{Q}} = \\overline{0 \\cdot \\overline{Q}} = 1$ and $\\overline{Q}' = \\overline{R \\cdot Q} = \\overline{0 \\cdot Q} = 1$, whatever the fed-back values are."
         },
         {
-          "title": "Apply S = R = 0",
-          "body": "$Q = (0\\cdot Q')' = 1$ and $Q' = (0\\cdot Q)' = 1$. Both outputs are 1 — the \"forbidden\" state, since $Q$ and $Q'$ are no longer complements."
+          "title": "Is it stable?",
+          "body": "Feeding $Q = Q' = 1$ back changes nothing: each gate still has a 0 input. The state is stable while 00 is held, so it is **not** indeterminate; it is forbidden because $Q$ and $Q'$ are no longer complements."
         },
         {
-          "title": "Not indeterminate while held",
-          "body": "The outputs are definite (1, 1) as long as S = R = 0. The state becomes unpredictable only if both inputs then return to 1 simultaneously (a race)."
+          "title": "Where the unpredictability really is",
+          "body": "If both inputs later return to 1 together, each NAND sees 1, 1 and both outputs fall at once, then rise at once: the latch races, and its final state depends on which gate is faster. That is a statement about the **release** 00 → 11, which this question does not ask about."
         }
       ],
       "answer": {
-        "value": "Q = 1, Q' = 1",
+        "value": "(C) $Q = 1$, $Q' = 1$",
         "choice": [
           "C"
         ],
@@ -1026,25 +1027,72 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Q = 0, Q' = 1 is the reset state, produced by S = 1, R = 0 (active-low R)."
+          "reason": "That is the reset state, reached with $S = 1$, $R = 0$ (active low)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Q = 1, Q' = 0 is the set state, produced by S = 0, R = 1."
+          "reason": "That is the set state, reached with $S = 0$, $R = 1$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: a 0 on any NAND input forces its output to 1, so both outputs are 1."
+          "reason": "Both NANDs see a 0 and output 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "The outputs are well defined (both 1); indeterminacy arises only on releasing both inputs together."
+          "reason": "The outputs are fully determined while the inputs are 00; unpredictability arises only when 00 is released to 11."
         }
       ],
-      "verification": "For a NOR latch the forbidden input S = R = 1 gives Q = Q' = 0; the NAND version is the dual, giving 1, 1."
+      "pitfalls": [
+        "Using the NOR table: for a NOR latch the forbidden input is 11 and gives $Q = Q' = 0$.",
+        "Answering \"indeterminate\": that describes the release, not the held input."
+      ],
+      "verification": "The only fixed point of the NAND latch netlist for inputs 00 is $Q = Q' = 1$.",
+      "animation": {
+        "kind": "table",
+        "title": "NAND latch, active-low inputs",
+        "cols": [
+          "S",
+          "R",
+          "Q",
+          "Q′"
+        ],
+        "rows": [
+          [
+            1,
+            1,
+            "hold",
+            "hold"
+          ],
+          [
+            0,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "hold",
+          "set",
+          "reset",
+          "forbidden"
+        ]
+      }
     },
     "cse-2004-cs-19": {
       "approach": "Concept tested: an equation between numerals in two unknown bases, with the digit limit as a filter. Expand each numeral as a polynomial in its own base, then test the option pairs; each base must also exceed the digits written in it.",
