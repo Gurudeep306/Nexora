@@ -1970,7 +1970,7 @@
         },
         {
           "title": "Upper bound",
-          "body": "Equivalently build a multi-level CLA with 2-way blocks: $\\log_2 n$ levels, each a constant number of gate delays up and down. Delay $O(\\log n)$."
+          "body": "Equivalently build a multi-level CLA with 2-way blocks: $\\log_2 n$ levels, each a constant number of gate delays up and down. Its 3-input gates each become two 2-input gates, at most doubling the depth. Delay $O(\\log n)$."
         },
         {
           "title": "Lower bound",
@@ -2011,7 +2011,7 @@
         "Answering Θ(1) from the 'two-level' formula, ignoring the fan-in limit.",
         "Confusing look-ahead with carry-select (√n) or ripple (n)."
       ],
-      "verification": "l4_02_cla.py measures 2-way multi-level look-ahead netlists: 4, 7, 11, 15 gate delays for 2, 4, 8, 16 bits (a constant per doubling), every gate with fan-in at most 3 (each splits into two 2-input gates)."
+      "verification": "l4_02_cla.py measures 2-way multi-level look-ahead netlists: 4, 7, 11, 15 gate delays for 2, 4, 8, 16 bits (a constant per doubling), every gate with fan-in at most 3, each of which splits into two 2-input gates (at most doubling the depth)."
     },
     "cse-2016-1-cs-34": {
       "approach": "The loop keeps the maximum inside [a, b] by discarding the smaller end each time; it must stop exactly when the window shrinks to one element, i.e. when a == b.",

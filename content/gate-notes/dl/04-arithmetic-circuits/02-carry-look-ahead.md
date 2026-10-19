@@ -103,10 +103,12 @@ agree on every row.
 
 For the sum: at $a_i = b_i = 1$, $c_i = 0$ the true sum bit is $1 \oplus 1 \oplus 0 = 0$, but
 $t_i \oplus c_i = 1 \oplus 0 = 1$. ∎
+:::
 
-So a CLA may compute its carries with $t_i = a_i + b_i$ (an OR is cheaper and faster than an XOR) but
-must still form the sums with $p_i = a_i \oplus b_i$. Some textbooks call $t_i$ the "transmit" signal; GATE
-2006's option A is written with this OR form.
+:::note{#p-or-consequence title="What the theorem allows" depth="standard"}
+A CLA may compute its carries with $t_i = a_i + b_i$ (an OR is cheaper and faster than an XOR) but must still form
+the sums with $p_i = a_i \oplus b_i$. Some textbooks call $t_i$ the "transmit" signal; GATE 2006's option A is
+written with this OR form.
 :::
 
 :::trap{#trap-p-or title="Using the OR propagate in the sum" depth="standard"}
@@ -186,7 +188,17 @@ Count levels on the longest path $a_i, b_i \to p_i \to$ (AND, OR) $\to c_k \to$ 
 | XOR built as two-level AND-OR, every gate 1 unit (GATE 2004) | 2 | 2 | 2 | **6** |
 
 The total does **not** depend on $n$ for a single-level CLA: 4 (or 6) for 4 bits, 8 bits or 32 bits,
-provided gates of any fan-in exist. The carry $c_4$ alone is ready after $1 + 2 = 3$ units (or $2 + 2 = 4$).
+provided gates of any fan-in exist. The carry $c_4$ alone is ready after $1 + 2 = 3$ units (or $2 + 2 = 4$). The
+6-unit row assumes the complements of internal signals ($\bar p_i$, $\bar c_i$) are available as early as the
+signals themselves, i.e. each two-level stage also produces its complement (dual-rail logic); otherwise every XOR
+stage needs one more inverter level.
+:::
+
+:::trick{#trick-three-stages title="A CLA is three stages" depth="standard"}
+Single-level CLA delay = P/G stage + carry stage + sum stage, each 1 level (XOR gate available) or 2 levels (XOR
+built from AND/OR): 1 + 2 + 1 = 4, or 2 + 2 + 2 = 6. **Why it works:** every carry is the same two-level formula,
+so the stages do not depend on the width. **When it fails:** with bounded fan-in (wide gates become trees) and in
+multi-level CLAs, where each extra level adds 4.
 :::
 
 :::definition{#cla-gate-count term="Gates of a two-level look-ahead unit" depth="standard"}
@@ -198,6 +210,13 @@ $$\text{AND gates} = 1 + 2 + \dots + n = \frac{n(n+1)}{2}, \qquad \text{OR gates
 For $n = 4$: **10 ANDs and 4 ORs** (GATE 2007). The sums $S_0 \dots S_3$ need the carries $c_1, c_2, c_3$
 (and $c_0$), and $C_4$ is an output too, so all four carries are built. (Counting the sum XORs is a
 different question; the look-ahead generator itself contains only ANDs and ORs.)
+:::
+
+:::trick{#trick-triangle title="Look-ahead ANDs are a triangular number" depth="standard"}
+$c_k$ has $k$ product terms besides the bare $g_{k-1}$, so the unit has $1 + 2 + \dots + n = n(n+1)/2$ ANDs and $n$ ORs.
+**Why it works:** each carry has one term per possible source below it. **When it fails:** if the $g_i$ must be built
+inside the unit (add $n$ ANDs), or if $c_n$ is not an output (stop at $n - 1$: $n(n-1)/2$), or if the question counts
+the sum XORs as part of the generator.
 :::
 
 :::definition{#fan-in term="Fan-in grows with the width" depth="standard"}
@@ -411,8 +430,8 @@ be fed to a look-ahead unit exactly as bits are, with $(G_j, P_j)$ in place of $
 
 From the expansion, $c_4 = g_3 + p_3g_2 + p_3p_2g_1 + p_3p_2p_1g_0 + p_3p_2p_1p_0\,c_0 = G + P\,c_0$. The same
 algebra applies to any block of $k$ consecutive bits, and to a block of blocks (replace the bits' $g, p$ by
-the sub-blocks' $G, P$), because the only property used is the recurrence $c_{out} = g + p\,c_{in}$, which the
-theorem has just shown each block satisfies. So by induction on the level, every block at every level obeys
+the sub-blocks' $G, P$), because the only property used is the recurrence $c_{out} = g + p\,c_{in}$, which each sub-block
+satisfies by the induction hypothesis (single bits satisfy it by the carry recurrence). So by induction on the level, every block at every level obeys
 $c_{out} = G + P\,c_{in}$. ∎
 :::
 
@@ -486,9 +505,16 @@ a line (or rippling the 74181s' carries) would be linear instead; "the best arch
 The two-level formula has the same depth for every carry, so it is tempting to answer $\Theta(1)$. That is
 true only if gates of **any** fan-in cost one unit. GATE 2016 says "fan-in at most two": then the wide ANDs
 and ORs must be trees of 2-input gates ($\log n$ deep), or equivalently the adder is a multi-level CLA with
-$k = 2$. Either way the delay is $\Theta(\log n)$, and the lower bound in the theorem shows nothing better is
+$k = 2$, whose 3-input gates each become two 2-input gates (at most doubling the depth). Either way the delay is $\Theta(\log n)$, and the lower bound in the theorem shows nothing better is
 possible. $\Theta(n)$ is the ripple adder; $\Theta(\sqrt n)$ is a carry-select or carry-skip adder with
 $\sqrt n$-bit blocks.
+:::
+
+:::trick{#trick-four-per-level title="Four gate delays per factor of four" depth="standard"}
+With 4-bit blocks, a CLA of $n = 4^d$ bits takes $4d$ unit gate delays: 4, 8, 12 for 4, 16, 64 bits. **Why it works:**
+each level costs 2 going up and 2 coming down, plus 1 for p/g and 1 for the sums. **When it fails:** for widths
+that are not powers of 4 (32 bits: 11 in our construction), with XORs built as two levels (add 2), or with a
+different block size (2-way blocks: 4, 7, 11, 15 for 2, 4, 8, 16 bits).
 :::
 
 :::note{#recap-tree title="Recap" depth="quick"}
@@ -526,8 +552,7 @@ $4 \cdot 2 = 8$: $p, g$ at 1, $G$ at 3, top carries by 5, inner carries by 7, su
 :::
 
 :::answer
-33 vs 8 gate delays, about 4× faster. Cost: 118 gates against 80 for the ripple adder (the lab's gate counter
-adds 18 to each: the subtract XOR row and two flag gates).
+33 vs 8 gate delays, about 4× faster. Cost: 118 gates against 80 for the ripple adder.
 :::
 ::::
 
@@ -584,7 +609,8 @@ guest is vegetarian: wasteful, but the guest never waits.
 Split $n$ bits into blocks. The lowest block is an ordinary adder. Every higher block has **two** adders,
 one with carry in 0 and one with carry in 1, and a row of 2:1 multiplexers (one per sum bit plus one for
 the block's carry out) that picks the correct result using the carry out of the block below
-([Chapter 5, Lesson 2](lesson:multiplexers) builds the 2:1 MUX; here it is a 2-level AND-OR switch).
+([Chapter 5, Lesson 2](lesson:multiplexers) builds the 2:1 MUX; here it is a 2-level AND-OR switch
+$Y = \bar s\,d_0 + s\,d_1$, assuming the complement of the select is available at the same time).
 
 Delay with $k$-bit ripple blocks (unit gates, MUX = 2): the lowest block $2k + 1$, then 2 per higher
 block for the MUX chain: $2k + 1 + 2(n/k - 1)$. 8 bits in two 4-bit blocks: $9 + 2 = 11$ (ripple: 17). With
@@ -592,6 +618,19 @@ blocks of about $\sqrt n$ bits the delay is $\Theta(\sqrt n)$.
 :::
 
 :::viz{#csel-viz spec="carry-select" mode="animate" depth="standard"}
+:::
+
+:::derivation{#csel-delay of="the carry-select delay" depth="standard"}
+Take $n = mk$ bits in $m$ blocks of $k$, unit gates, ripple blocks, MUX = 2 levels.
+
+1. Every block's adders start at $t = 0$ and finish by $2k + 1$ (the ripple formula). In particular the lowest
+   block's carry out $c_k$ is ready at $2k + 1$.
+2. Block $j$'s carry out is a MUX of its two precomputed carries, selected by $c_{jk}$: $c_{(j+1)k}$ is ready 2 after
+   $c_{jk}$ (both data inputs were ready long before).
+3. So $c_n$ is ready at $2k + 1 + 2(m - 1) = 2k + 1 + 2(n/k - 1)$, and the top block's sums at the same time.
+
+Minimise over $k$: $f(k) = 2k + 2n/k - 1$ is smallest at $k = \sqrt n$, giving $4\sqrt n - 1 = \Theta(\sqrt n)$.
+**Sanity check:** 8 bits, $k = 4$: $9 + 2 = 11$; 16 bits, $k = 4$: $9 + 6 = 15$ (both measured on the netlists).
 :::
 
 :::aside{#carry-skip title="Further depth: the carry-skip adder" depth="deep"}
@@ -609,6 +648,13 @@ written out in $p, g$). Unit delays: $p, g$ at 1, $c_4$ at 3, then $+2$ per bloc
 at 10 for 16 bits. In general about $n/2 + 2$: linear, but with a quarter of the ripple adder's slope.
 :::
 
+:::derivation{#rippled-blocks-delay of="the rippled-CLA-block delay n/2 + 2" depth="standard"}
+For $n$ a multiple of 4, unit gates: $p_i, g_i$ at 1; block 0's carry out $c_4 = g_3 + \dots + p_3p_2p_1p_0c_0$ at
+$1 + 2 = 3$; each later block's carry out is an AND with its carry in and an OR, so $c_{4j}$ is ready at $2j + 1$ and
+$c_n$ at $n/2 + 1$. The top block's inner carry $c_{n-1}$ is two levels after $c_{n-4}$ (ready at $n/2 - 1$), i.e. at
+$n/2 + 1$, and its sum one XOR later: $n/2 + 2$. **Sanity check:** 16 bits: 10; 64 bits: 34 (netlists agree).
+:::
+
 :::table{#adder-compare title="Adders compared (unit gate delays, worst case)" depth="standard"}
 | Adder | Delay | 16 bits | 64 bits | Hardware |
 |:--|:--|:--|:--|:--|
@@ -619,26 +665,12 @@ at 10 for 16 bits. In general about $n/2 + 2$: linear, but with a quarter of the
 | Multi-level CLA (fan-in 4) | $4\log_4 n$ | 8 | 12 | most wiring |
 :::
 
-## The bit-serial adder
-
-:::intuition{#serial-intuition title="One full adder, used n times" depth="standard"}
-The opposite of carry look-ahead: spend almost no hardware and a lot of time. Shift the two numbers out of
-shift registers one bit per clock, least significant bit first, through a **single** full adder; store its carry
-in a flip-flop so it is the carry in for the next bit, and shift the sum bit into a result register. After $n$
-clocks the sum is complete. This is exactly the paper method done one column per tick.
+:::note{#recap-hybrid title="Recap" depth="quick"}
+Carry-select: compute each upper block both ways and pick with MUXes: $2k + 1 + 2(n/k - 1)$, best $k \approx \sqrt n$:
+$\Theta(\sqrt n)$. Carry-skip: bypass blocks with $P = 1$, also $\Theta(\sqrt n)$, cheaper. Rippled 4-bit CLA blocks: $n/2 + 2$.
 :::
 
-:::definition{#serial-adder term="Serial adder" depth="standard"}
-Hardware: two $n$-bit shift registers (A and B), one full adder, one D flip-flop for the carry (cleared to 0,
-or set to the carry in, before the first clock), and a shift register for the sum (often A itself). In clock
-$i$ the full adder adds $a_i + b_i + c_i$; the clock edge stores $s_i$ and loads $c_{i+1}$ into the flip-flop.
-
-Time: $n$ clock periods (each period only one full adder delay plus the flip-flop's). Hardware: one full
-adder, independent of $n$. It is a **sequential** circuit (it has a state, the carry), unlike every other adder
-in this lesson; the flip-flops themselves are in Chapter 6.
-:::
-
-### Worked examples: hybrid and serial adders
+### Worked examples: hybrid adders
 
 ::::example{#ex-hy-easy level="easy" title="An 8-bit carry-select addition" depth="quick"}
 An 8-bit carry-select adder adds $A = 0110\,1011$ and $B = 0011\,0110$ with 4-bit blocks. Which upper result is
@@ -695,6 +727,105 @@ cheaper in wiring than the full tree.
 :::
 ::::
 
+::::example{#ex-hy-edge2 level="gate" title="Edge case: choosing the block size of a 16-bit carry-select adder" depth="standard"}
+A 16-bit carry-select adder may use blocks of 2, 4 or 8 bits (unit gates, ripple blocks, MUX = 2). Which is fastest?
+
+:::step{why="Use the derivation: 2k + 1 + 2(n/k − 1)."}
+$k = 2$: $5 + 2 \cdot 7 = 19$. $k = 4$: $9 + 2 \cdot 3 = 15$. $k = 8$: $17 + 2 \cdot 1 = 19$.
+:::
+
+:::step{why="The optimum of 2k + 2n/k is at k = √n."}
+$\sqrt{16} = 4$.
+:::
+
+:::answer
+4-bit blocks (15 units). Small blocks make a long MUX chain; big blocks make a long first ripple; $\sqrt n$ balances the
+two. (Every value matches the netlists.)
+:::
+::::
+
+## The bit-serial adder
+
+:::intuition{#serial-intuition title="One full adder, used n times" depth="standard"}
+The opposite of carry look-ahead: spend almost no hardware and a lot of time. Shift the two numbers out of
+shift registers one bit per clock, least significant bit first, through a **single** full adder; store its carry
+in a flip-flop so it is the carry in for the next bit, and shift the sum bit into a result register. After $n$
+clocks the sum is complete. This is exactly the paper method done one column per tick.
+:::
+
+:::definition{#serial-adder term="Serial adder" depth="standard"}
+Hardware: two $n$-bit shift registers (A and B), one full adder, one D flip-flop for the carry (cleared to 0,
+or set to the carry in, before the first clock), and a shift register for the sum (often A itself). In clock
+$i$ the full adder adds $a_i + b_i + c_i$; the clock edge stores $s_i$ and loads $c_{i+1}$ into the flip-flop.
+
+Time: $n$ clock periods (each period only one full adder delay plus the flip-flop's). Hardware: one full
+adder, independent of $n$. It is a **sequential** circuit (it has a state, the carry), unlike every other adder
+in this lesson; the flip-flops themselves are in Chapter 6.
+:::
+
+:::viz{#serial-viz spec="serial-adder" mode="animate" depth="standard"}
+:::
+
+:::note{#recap-serial title="Recap" depth="quick"}
+Serial adder: one full adder and a carry flip-flop, $n$ clocks, LSB first; clear the flip-flop before starting. Least
+hardware, most time.
+:::
+
+### Worked examples: the serial adder
+
+::::example{#ex-ser-easy level="easy" title="Clocks and hardware of a 16-bit serial adder" depth="quick"}
+How many clock cycles and how many full adders does a serial adder need for 16-bit operands?
+
+:::step{why="One bit position per clock."}
+16 clocks.
+:::
+
+:::step{why="The same full adder is reused every clock; the carry waits in the flip-flop."}
+1 full adder and 1 flip-flop (plus the shift registers).
+:::
+
+:::answer
+16 clocks, 1 full adder: the hardware does not grow with $n$, the time does.
+:::
+::::
+
+::::example{#ex-ser-medium level="medium" title="Tracing 0110 + 0111 bit by bit" depth="standard"}
+Trace a 4-bit serial adder for $A = 0110$, $B = 0111$ with the carry flip-flop cleared.
+
+:::step{why="Clock 1: bit 0: 0 + 1 + 0."}
+$s_0 = 1$, carry 0.
+:::
+
+:::step{why="Clock 2: bit 1: 1 + 1 + 0; clock 3: bit 2: 1 + 1 + 1."}
+$s_1 = 0$, carry 1; then $s_2 = 1$, carry 1.
+:::
+
+:::step{why="Clock 4: bit 3: 0 + 0 + 1."}
+$s_3 = 1$, carry 0.
+:::
+
+:::answer
+$S = 1101 = 13 = 6 + 7$, final carry 0. The animation above shows the same four clocks.
+:::
+::::
+
+::::example{#ex-ser-gate level="gate" title="Serial vs ripple for 32 bits" depth="standard"}
+Unit gates. A 32-bit ripple-carry adder (HA + OR full adders) is compared with a serial adder whose clock period is
+4 units (a full-adder carry path of 3 plus 1 for the flip-flop). Compare time and full adders.
+
+:::step{why="Ripple: 2n + 1."}
+$2 \cdot 32 + 1 = 65$ units, 32 full adders.
+:::
+
+:::step{why="Serial: n clocks of 4 units."}
+$32 \times 4 = 128$ units, 1 full adder.
+:::
+
+:::answer
+The serial adder is about 2× slower here but uses 1/32 of the adder hardware: the classic time–hardware trade.
+:::
+::::
+
 ::::example{#ex-hy-edge level="gate" title="Edge case: the serial adder's clocks and its carry flip-flop" depth="standard"}
 A serial adder adds two 8-bit numbers $A = 1011\,0110$ and $B = 0110\,1101$. How many clocks does it take, what
 must happen before the first clock, and what is in the carry flip-flop at the end?
@@ -720,9 +851,11 @@ $0010\,0011$.
 ## Try it
 
 On the lab's **Delay vs width** tab, the table shows the worst-case delays of the three designs for 4 to 64
-bits, measured on the same netlists: the ripple column doubles with $n$, the carry-select column grows by 4 per
-doubling of the number of blocks, and the look-ahead column grows by 4 only when $n$ is multiplied by 4. On the
-**Race** tab, try 16 bits with $A = 1$, $B = -1$.
+bits, measured on the same netlists: the ripple column doubles with $n$ ($2n + 1$); the carry-select column (fixed
+4-bit blocks) still grows linearly, 2 units per extra block, so its steps double (9, 11, 15, 23, 39); the look-ahead
+column grows only by a few units per doubling (4, 7, 8, 11, 12), about 4 each time $n$ is multiplied by 4, which is
+$\Theta(\log n)$. On the **Race** tab, try 16 bits with $A = 1$, $B = -1$; its gate counters include the subtract XOR
+row and the two flag gates (18 more gates than the bare adders).
 
 :::lab{#lab-scaling lab="adder-race" tab="scaling" depth="standard"}
 :::

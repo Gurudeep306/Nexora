@@ -121,6 +121,19 @@ assert 0b1001 ^ 0b0110 == 0b1111 and 0b1001 & 0b0110 == 0
 A, B = 0b01101011, 0b00110110
 assert (A & 15) + (B & 15) == 17 and (A >> 4) + (B >> 4) + 1 == 0b1010 and A + B == 161 == 0b10100001
 
+# ── Review additions ─────────────────────────────────────────────────────
+assert [worst(al.carry_select(16, k), 16, {"MUX": 2}) for k in (2, 4, 8)] == [19, 15, 19]
+assert all(worst(al.carry_select(n, k), n, {"MUX": 2}) == 2 * k + 1 + 2 * (n // k - 1) for n, k in ((8, 2), (8, 4), (16, 2), (16, 8), (32, 4)))
+out, c = al.serial_add(0b0110, 0b0111, 4)
+assert out == [1, 0, 1, 1] and c == 0
+assert al.rca_delay_unit(32) == 65 and 32 * 4 == 128
+fa = al.arrival(al.full_adder("a", "b", "c", "s", "o", ""), ["a", "b", "c"])
+assert fa["o"] == 3
+for n in (8, 16, 32, 64):
+    t_ = al.arrival(al.cla_blocks_rippled(n), al.inputs_of(n))
+    assert t_[f"c{n}"] == n // 2 + 1 and worst(al.cla_blocks_rippled(n), n) == n // 2 + 2
+has("$k = 2$: $5 + 2 \\cdot 7 = 19$", "$S = 1101 = 13 = 6 + 7$", "(9, 11, 15, 23, 39)", "(4, 7, 8, 11, 12)")
+
 # ── PYQs ─────────────────────────────────────────────────────────────────
 assert bank["cse-1997-a-15"]["answer"] == "B"
 assert bank["cse-2004-cs-62"]["answer"] == "B" and worst(c4, 4, {"XOR": 2}) == 6

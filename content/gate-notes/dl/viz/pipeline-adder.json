@@ -387,7 +387,7 @@
    ]
   },
   {
-   "caption": "Clock 2: the first pair moves to R1 (with its sum bit 0 and carry c1); R0 takes 011 + 101. Z is still 0000.",
+   "caption": "Clock 2: the first pair moves to R1 with its bit-0 sum s0 = 1 and carry c1 = 0; R0 takes 011 + 101. Z is still 0000.",
    "patches": [
     {
      "id": "r0",

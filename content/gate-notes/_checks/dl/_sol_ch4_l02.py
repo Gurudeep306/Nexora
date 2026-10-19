@@ -40,13 +40,13 @@ SOLUTIONS["cse-2004-cs-62"] = {
     "steps": [
         {"title": "Propagate and generate", "body": "$G_i = A_iB_i$: 1 level. $P_i = A_i \\oplus B_i = A_i\\bar B_i + \\bar A_iB_i$: an AND level and an OR level, so **2 units** (the slower of the two)."},
         {"title": "Carries", "body": "$C_{i+1} = G_i + P_iG_{i-1} + \\dots + P_i\\cdots P_0C_0$ is two-level AND-OR on the $P$'s and $G$'s: ready at $2 + 2 = $ **4 units**."},
-        {"title": "Sums", "body": "$S_i = P_i \\oplus C_i$ is again an XOR built as two-level logic: $4 + 2 = $ **6 units**."},
+        {"title": "Sums", "body": "$S_i = P_i \\oplus C_i$ is again an XOR built as two-level logic: $4 + 2 = $ **6 units**. (This assumes the complements $\\bar P_i$, $\\bar C_i$ are produced alongside $P_i$, $C_i$ by the same two-level stages, i.e. dual-rail logic; otherwise one more inverter level is needed.)"},
     ],
     "answer": {"value": "B: 6 time units", "choice": ["B"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", False, "4 units is the CLA delay when XOR is a single 1-unit gate (1 + 2 + 1); here XOR must be built from the listed gates."),
         opt("B", True, "2 (P as AND-OR) + 2 (carry network) + 2 (sum XOR as AND-OR) = 6."),
-        opt("C", False, "10 units is not reachable with two-level stages; it resembles a ripple-carry count."),
+        opt("C", False, "10 is the 4-bit ripple-carry adder with XOR = 2 units: $(2 + 1 + 1) + 3 \\times 2 = 10$; the question asks for the look-ahead adder."),
         opt("D", False, "12 would count each stage twice."),
     ],
     "shortcut": "CLA = three stages (P/G, carries, sums); each stage is 2 levels when XOR must be built: $3 \\times 2 = 6$.",
@@ -113,7 +113,7 @@ SOLUTIONS["cse-2016-1-cs-33"] = {
     "given": "An $n$-bit carry look-ahead adder built from gates of fan-in at most 2.",
     "steps": [
         {"title": "Why not constant", "body": "$c_n$ contains the product $p_{n-1}\\cdots p_0c_0$ ($n + 1$ inputs) and is an OR of $n + 1$ terms. With 2-input gates, each wide AND or OR is a balanced tree of depth $\\lceil\\log_2(n+1)\\rceil$."},
-        {"title": "Upper bound", "body": "Equivalently build a multi-level CLA with 2-way blocks: $\\log_2 n$ levels, each a constant number of gate delays up and down. Delay $O(\\log n)$."},
+        {"title": "Upper bound", "body": "Equivalently build a multi-level CLA with 2-way blocks: $\\log_2 n$ levels, each a constant number of gate delays up and down. Its 3-input gates each become two 2-input gates, at most doubling the depth. Delay $O(\\log n)$."},
         {"title": "Lower bound", "body": "$c_n$ depends on all $2n + 1$ inputs; a circuit of depth $D$ with fan-in 2 lets an output see at most $2^D$ inputs, so $D \\ge \\log_2(2n+1)$. Hence $\\Theta(\\log n)$."},
     ],
     "answer": {"value": "B: Θ(log n)", "choice": ["B"], "matchesKey": True},
@@ -128,5 +128,5 @@ SOLUTIONS["cse-2016-1-cs-33"] = {
         "Answering Θ(1) from the 'two-level' formula, ignoring the fan-in limit.",
         "Confusing look-ahead with carry-select (√n) or ripple (n).",
     ],
-    "verification": "l4_02_cla.py measures 2-way multi-level look-ahead netlists: 4, 7, 11, 15 gate delays for 2, 4, 8, 16 bits (a constant per doubling), every gate with fan-in at most 3 (each splits into two 2-input gates).",
+    "verification": "l4_02_cla.py measures 2-way multi-level look-ahead netlists: 4, 7, 11, 15 gate delays for 2, 4, 8, 16 bits (a constant per doubling), every gate with fan-in at most 3, each of which splits into two 2-input gates (at most doubling the depth).",
 }

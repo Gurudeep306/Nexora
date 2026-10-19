@@ -121,8 +121,8 @@
     "why": "Four NORs make XNOR, not XOR, and leave no gate for the carry."
    },
    {
-    "answer": 7,
-    "why": "Converting XOR (5) and AND (3 NORs with two inverters) separately ignores sharing."
+    "answer": 8,
+    "why": "Converting XOR (5 NORs) and AND (3 NORs: two inverters and a NOR) separately gives 8; it ignores that the carry can be reused inside the sum."
    }
   ],
   "blocks": [
@@ -264,7 +264,7 @@
   "solution": [
    "$A = 0000\\,0100$: only bit 2 can generate a carry, which needs $b_2 = 1$.",
    "Bits 3–7 of $A$ are 0, so they propagate only where $b_k = 1$. The chain reaches the top iff $b_7 \\dots b_2 = 111111$.",
-   "$-4 = 1111\\,1100$ has exactly that; the chain crosses 6 stages. $124 = 0111\\,1100$ stops at bit 7 (5 stages); $-128 = 1000\\,0000$ and $4 = 0000\\,0100$ generate only at bit 2 and stop at bit 3."
+   "$-4 = 1111\\,1100$ has exactly that; the chain crosses 6 stages. $124 = 0111\\,1100$ stops at bit 7 (5 stages); $-128 = 1000\\,0000$ has $b_2 = 0$, so no carry is generated at all; $4 = 0000\\,0100$ generates at bit 2 and the carry is killed at bit 3 ($a_3 = b_3 = 0$)."
   ],
   "concept": "The longest carry chain starts at a generating column and continues through propagating columns.",
   "common_wrong": [
@@ -584,7 +584,7 @@
   "id": "nx-dl-04-02-q05",
   "type": "NAT",
   "marks": 1,
-  "text": "In a single-level two-level look-ahead unit for a 6-bit adder (carries $c_1 \\dots c_6$ from $p_i$, $g_i$, $c_0$), what is the largest fan-in of any gate?",
+  "text": "In a single (non-hierarchical) two-level AND-OR look-ahead unit for a 6-bit adder (carries $c_1 \\dots c_6$ from $p_i$, $g_i$, $c_0$), what is the largest fan-in of any gate?",
   "answer": 7,
   "solution": [
    "$c_6 = g_5 + p_5g_4 + \\dots + p_5p_4p_3p_2p_1p_0c_0$.",
@@ -657,7 +657,7 @@
   "id": "nx-dl-04-02-q07",
   "type": "NAT",
   "marks": 2,
-  "text": "A 16-bit two-level carry look-ahead adder (4-bit blocks, a second-level look-ahead unit) is built without XOR gates: every XOR (the $p_i$ and the sums) is two-level AND-OR logic with free complements. Every gate takes 1 unit. What is the worst-case delay?",
+  "text": "A 16-bit two-level carry look-ahead adder (4-bit blocks, a second-level look-ahead unit) is built without XOR gates: every XOR (the $p_i$ and the sums) is two-level AND-OR logic, with the complements of all signals available as early as the signals themselves (dual-rail). Every gate takes 1 unit. What is the worst-case delay?",
   "answer": 10,
   "solution": [
    "$p_i$ at 2 (two-level XOR), $g_i$ at 1; block $P$ at 3, block $G$ at 4 (AND + OR over $p$'s and $g$'s).",
@@ -812,46 +812,28 @@
  },
  {
   "id": "nx-dl-04-03-q01",
-  "type": "MCQ",
+  "type": "NAT",
   "marks": 1,
-  "text": "An adder receives $A_i$ and $B_i \\oplus K$ at every bit, and a separate carry in $C_0$. Which setting computes $A - B$ (two's complement)?",
-  "options": [
-   {
-    "l": "A",
-    "t": "$K = 0$, $C_0 = 1$"
-   },
-   {
-    "l": "B",
-    "t": "$K = 1$, $C_0 = 0$"
-   },
-   {
-    "l": "C",
-    "t": "$K = 0$, $C_0 = 0$"
-   },
-   {
-    "l": "D",
-    "t": "$K = 1$, $C_0 = 1$"
-   }
-  ],
-  "answer": "D",
+  "text": "A one-digit nine's complementer has outputs $N_0 = \\bar d_0$, $N_1 = d_1$, $N_2 = d_2 \\oplus d_1$, $N_3 = \\overline{d_3 + d_2 + d_1}$. For the input digit $d_3d_2d_1d_0 = 0011$, what is $N_3N_2N_1N_0$ read as a decimal number?",
+  "answer": 6,
   "solution": [
-   "$A - B = A + \\bar B + 1$.",
-   "$K = 1$ makes the XORs output $\\bar B$; $C_0 = 1$ adds the 1."
+   "$d = 0011$: $N_0 = \\bar 1 = 0$, $N_1 = 1$, $N_2 = 0 \\oplus 1 = 1$, $N_3 = \\overline{0 + 0 + 1} = 0$.",
+   "$N = 0110 = 6 = 9 - 3$ ✓."
   ],
-  "concept": "Subtract = invert B with the XOR row and add 1 through the carry in.",
+  "concept": "A nine's complementer maps $d$ to $9 - d$; decimal subtraction adds it with a carry in of 1.",
   "common_wrong": [
    {
-    "answer": "B",
-    "why": "$A + \\bar B$ without the carry in is $A - B - 1$."
+    "answer": 7,
+    "why": "$10 - 3$ is the ten's complement; the circuit makes the nine's complement (the +1 comes from the carry in)."
    },
    {
-    "answer": "A",
-    "why": "That is $A + B + 1$."
+    "answer": 12,
+    "why": "$1100 = \\bar d$ is the bitwise complement, not $9 - d$."
    }
   ],
   "blocks": [
-   "control-lines",
-   "adder-subtractor"
+   "bcd-subtractor",
+   "nines-complementer"
   ],
   "source": "nexora"
  },
@@ -1059,7 +1041,7 @@
   "id": "nx-dl-04-03-q06",
   "type": "MCQ",
   "marks": 1,
-  "text": "In a one-digit BCD adder, the first 4-bit binary adder outputs $K\\,Z_3Z_2Z_1Z_0$. The correction (add 0110) must be applied when:",
+  "text": "In a one-digit BCD adder, the first 4-bit binary adder outputs its carry $C_4$ and sum $Z_3Z_2Z_1Z_0$. The correction (add 0110) must be applied when:",
   "options": [
    {
     "l": "A",
@@ -1067,23 +1049,23 @@
    },
    {
     "l": "B",
-    "t": "$K + Z_3Z_2 + Z_3Z_1$"
+    "t": "$C_4 + Z_3Z_2 + Z_3Z_1$"
    },
    {
     "l": "C",
-    "t": "$K + Z_3 + Z_2Z_1$"
+    "t": "$C_4 + Z_3 + Z_2Z_1$"
    },
    {
     "l": "D",
-    "t": "$K\\,(Z_3 + Z_2)$"
+    "t": "$C_4\\,(Z_3 + Z_2)$"
    }
   ],
   "answer": "B",
   "solution": [
-   "Correct iff the binary sum is ≥ 10: either $K = 1$ (16–19) or $Z \\in 1010 \\dots 1111$.",
+   "Correct iff the binary sum is ≥ 10: either $C_4 = 1$ (16–19) or $Z \\in 1010 \\dots 1111$.",
    "The six codes 10–15 are the quads $Z_3Z_2$ and $Z_3Z_1$."
   ],
-  "concept": "Detector = $K$ + (4-bit result > 9).",
+  "concept": "Detector = $C_4$ + (4-bit result > 9).",
   "common_wrong": [
    {
     "answer": "A",
@@ -1102,28 +1084,60 @@
  },
  {
   "id": "nx-dl-04-03-q07",
-  "type": "NAT",
-  "marks": 1,
-  "text": "A one-digit BCD adder adds the digits 6 and 7 with a carry in of 1. What is the decimal value of its 4-bit digit output?",
-  "answer": 4,
-  "solution": [
-   "Adder 1: $6 + 7 + 1 = 14 = 0\\,1110$.",
-   "Detector: $Z_3Z_2 = 1$, so add 0110: $1110 + 0110 = 1\\,0100$, carry of adder 2 dropped.",
-   "Digit 0100 = 4, decimal carry 1: 14 ✓."
-  ],
-  "concept": "Binary sum ≥ 10 ⇒ add 6, keep 4 bits, carry 1.",
-  "common_wrong": [
+  "type": "MSQ",
+  "marks": 2,
+  "text": "In a 4-bit two's-complement adder, let $x = a_3$ and $y$ be the sign bits entering the top full adder, $s = s_3$ its sum bit, and $c_3$, $c_4$ its carry in and carry out. Which expressions equal the overflow flag for every input?",
+  "options": [
    {
-    "answer": 14,
-    "why": "That is the uncorrected binary sum."
+    "l": "A",
+    "t": "$c_4 \\oplus c_3$"
    },
    {
-    "answer": 3,
-    "why": "Forgets the carry in."
+    "l": "B",
+    "t": "$\\bar x\\bar y s + x y \\bar s$"
+   },
+   {
+    "l": "C",
+    "t": "$c_4 \\oplus s$"
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{(x \\oplus y)}\\,(x \\oplus s)$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A: the carry form of the detector.",
+   "B: same-sign inputs with a different-sign result.",
+   "D: $\\overline{x \\oplus y}$ says the signs agree and $x \\oplus s$ that the result's sign differs: the same condition as B.",
+   "C: false; e.g. $x = y = 0$, $c_3 = 0$ gives $s = 0$, $c_4 = 0$, no overflow and $c_4 \\oplus s = 0$, but $x = 1, y = 0, c_3 = 1$ gives $s = 0$, $c_4 = 1$: no overflow, yet $c_4 \\oplus s = 1$."
+  ],
+  "concept": "Overflow = carry into the sign stage ≠ carry out = same-sign inputs, different-sign result.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "D is B written with XORs: signs equal and result sign different."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "$c_4 \\oplus s$ is 1 for $-8 + 1$-type rows with different-sign inputs, which never overflow."
    }
   ],
   "blocks": [
-   "bcd-adder"
+   "overflow-detector",
+   "overflow-forms"
   ],
   "source": "nexora"
  },
@@ -1199,7 +1213,7 @@
    },
    {
     "answer": 42,
-    "why": "Builds the detector with only two gates, dropping $K$."
+    "why": "Uses the factored detector without the carry term, $Z_3(Z_2 + Z_1)$ (2 gates), which is also wrong for sums 16–19."
    }
   ],
   "blocks": [
@@ -1265,7 +1279,7 @@
   "id": "nx-dl-04-04-q03",
   "type": "MCQ",
   "marks": 1,
-  "text": "A $16 \\times 16$ array multiplier is rebuilt as a $32 \\times 32$ array of the same design. As $n$ grows, its worst-case delay grows as:",
+  "text": "As $n$ grows, the worst-case delay of an $n \\times n$ array multiplier (of a fixed cell design) grows as:",
   "options": [
    {
     "l": "A",
@@ -1336,21 +1350,21 @@
   "id": "nx-dl-04-04-q05",
   "type": "NAT",
   "marks": 2,
-  "text": "In the lesson's ripple-row array multiplier (partial products one AND level; each row a ripple adder of full adders built from two half adders and an OR; every gate 1 unit), the $4 \\times 4$ array's worst-case delay is 18 units and each extra bit adds 6. What is the worst-case delay of the $5 \\times 5$ array?",
-  "answer": 24,
+  "text": "A ripple-row array multiplier makes its partial products with one AND level and adds them with rows of ripple-carry adders whose full adders are two half adders and an OR; every gate takes 1 unit. Its $4 \\times 4$ version has a worst-case delay of 18 units. What is the worst-case delay of its $8 \\times 8$ version?",
+  "answer": 42,
   "solution": [
-   "The measured delays are $6(n - 1)$: 6, 12, 18, 24, … for $n = 2, 3, 4, 5$.",
-   "$n = 5$: $6 \\times 4 = 24$ units."
+   "The critical path runs along row 1's carries, then alternately down a row (a sum) and one cell along (a carry), and the last carry chain; each extra bit adds one more row and one more cell to it, 6 gate delays.",
+   "So the delay is $6(n - 1)$: 18 for $n = 4$ and $6 \\times 7 = 42$ for $n = 8$ (measured on the netlists for every $n$ from 2 to 8)."
   ],
   "concept": "The array delay is linear: $6(n - 1)$ for this design.",
   "common_wrong": [
    {
-    "answer": 30,
-    "why": "$6n$ is off by one: a 4 × 4 array would then be 24."
+    "answer": 72,
+    "why": "Scales 18 by $(8/4)^2$: the delay is linear, not quadratic."
    },
    {
-    "answer": 28,
-    "why": "Scales 18 by $(5/4)^2$-like reasoning; the delay is linear, not quadratic."
+    "answer": 36,
+    "why": "Doubles 18; the formula is $6(n - 1)$, so the ratio is $7/3$, not 2."
    }
   ],
   "blocks": [
@@ -1597,7 +1611,7 @@
    },
    {
     "answer": "A",
-    "why": "Both do $n - 1$ additions, but the array overlaps them."
+    "why": "Assumes equal numbers of additions mean equal time; the array overlaps its $n - 1$ additions, the sequential multiplier does one per cycle."
    }
   ],
   "blocks": [

@@ -21,7 +21,7 @@
         "lessons": "written",
         "viz": "done",
         "questions": "done",
-        "review": "ch1-ch3-reviewed, combinational (ch5) reviewed",
+        "review": "ch1-ch3-reviewed, arithmetic circuits (ch4) reviewed, combinational (ch5) reviewed",
         "wrapup": "pending"
       },
       "chapters": [
@@ -83,14 +83,15 @@
           "title": "Arithmetic circuits (hardware)",
           "lessons": 4,
           "pyqs": 14,
-          "status": "in-progress",
+          "status": "reviewed",
           "lessons_status": {
-            "adders-ripple-carry": "written",
-            "carry-look-ahead": "written",
-            "adder-subtractor-overflow": "written",
-            "multipliers-booth": "written"
+            "adders-ripple-carry": "published+reviewed",
+            "carry-look-ahead": "published+reviewed",
+            "adder-subtractor-overflow": "published+reviewed",
+            "multipliers-booth": "published+reviewed"
           },
-          "live_lab": "Adder Race (:::lab adder-race: race, scaling)"
+          "live_lab": "Adder Race (:::lab adder-race: race, scaling)",
+          "review": "2026-10-19: examiner review by two independent reviewers (lessons 1-2; lessons 3-4 + Adder Race lab): 3 errors, 5 misleading, 35 minor, 17 style findings, all fixed and re-checked (new worked examples, tricks, recaps, derivations, sequential-multiplier invariant proof, BCD subtraction and ALU sections, 6 new animated scenes, lab a11y/phone/flag-timing fixes); all 14 PYQ keys re-derived, none wrong; cse-2015-2-cs-48 review flag cleared (block model 19.2); Chapter 4 coverage 14/14."
         },
         {
           "id": "05-combinational-circuits",

@@ -220,6 +220,24 @@ for x, a_, o in product(range(1, 5), repeat=3):
 bl.assert_msq(q, ["A", "B"])
 assert len([k for k in P if k.startswith("nx-dl-04-01-")]) == 10
 
+# ── Review additions: NAND/NOR examples, slowest operands, pipelines ─────
+v = cl.evaluate(HA5, {"A": 1, "B": 1})
+assert (v["n1"], v["n2"], v["n3"], v["S"], v["C"]) == (0, 1, 1, 0, 1)
+v = cl.evaluate(FA9, {"A": 1, "B": 0, "Ci": 1})
+assert (v["n1"], v["n2"], v["n3"], v["p"], v["m1"], v["m2"], v["m3"], v["S"], v["Co"]) == (1, 0, 1, 1, 0, 1, 1, 0, 1)
+X4N = [("n1", "NOR", ["A", "B"]), ("n2", "NOR", ["A", "n1"]), ("n3", "NOR", ["B", "n1"]), ("o", "NOR", ["n2", "n3"])]
+assert cl.truth(X4N, ["A", "B"], "o") == (1, 0, 0, 1)
+X4A = [("n1", "NAND", ["A", "B"]), ("n2", "NAND", ["A", "n1"]), ("n3", "NAND", ["B", "n1"]), ("o", "NAND", ["n2", "n3"])]
+assert cl.truth(X4A, ["A", "B"], "o") == (0, 1, 1, 0)
+T64 = {b: settle8(64, b) for b in range(256)}
+m64 = max(T64.values())
+assert all((b >> 6) & 3 == 3 for b, t_ in T64.items() if t_ == m64) and T64[0b11000000] == m64
+st, _ = al.simulate(net8, I8, al.env_of(8, 0, 0, 1), al.env_of(8, 255, 0, 1))
+assert st["c8"] == 17 == al.rca_delay_unit(8)
+assert (5 + 1) * 3 == 18 and (3 + 10 - 1) * 6 == 72
+assert al.pipeline_2002([7, 0, 0, 0], [1, 0, 0, 0]) == ["0000", "0000", "1000", "0000"]
+has("$c_8$ at $3 + 7 \\times 2 = 17$", "0000, 0000, 1000, 0000", "about 4.3, close to")
+
 # ── Building ripple adders (worked examples) ──────────────────────────────
 v = cl.evaluate(al.rca(4), al.env_of(4, 0b1101, 0b0101))
 assert al.word(v, "s", 4) == 0b0010 and v["c4"] == 1 and v["c3"] == 1 and al.tc(0b1101, 4) + 5 == 2

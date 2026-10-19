@@ -3948,7 +3948,7 @@
         },
         {
           "title": "Sums",
-          "body": "$S_i = P_i \\oplus C_i$ is again an XOR built as two-level logic: $4 + 2 = $ **6 units**."
+          "body": "$S_i = P_i \\oplus C_i$ is again an XOR built as two-level logic: $4 + 2 = $ **6 units**. (This assumes the complements $\\bar P_i$, $\\bar C_i$ are produced alongside $P_i$, $C_i$ by the same two-level stages, i.e. dual-rail logic; otherwise one more inverter level is needed.)"
         }
       ],
       "answer": {
@@ -3972,7 +3972,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "10 units is not reachable with two-level stages; it resembles a ripple-carry count."
+          "reason": "10 is the 4-bit ripple-carry adder with XOR = 2 units: $(2 + 1 + 1) + 3 \\times 2 = 10$; the question asks for the look-ahead adder."
         },
         {
           "option": "D",

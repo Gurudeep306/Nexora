@@ -7,7 +7,7 @@
   "width": 360,
   "height": 430
  },
- "intro": "Two 4-bit binary adders. The first adds the digits; a detector K + Z3Z2 + Z3Z1 decides whether the sum exceeds 9; the second adds 0110 when it does. The detector's output is the decimal carry.",
+ "intro": "Two 4-bit binary adders. The first adds the digits; a detector C4 + Z3Z2 + Z3Z1 decides whether the sum exceeds 9; the second adds 0110 when it does. The detector's output is the decimal carry.",
  "elements": [
   {
    "id": "head",
@@ -101,7 +101,7 @@
    "type": "text",
    "x": 200,
    "y": 160,
-   "text": "K Z = ?",
+   "text": "C4 Z = ?",
    "size": 14,
    "anchor": "start",
    "mono": true,
@@ -369,7 +369,7 @@
    "type": "text",
    "x": 396,
    "y": 105,
-   "text": "K",
+   "text": "C4",
    "size": 13,
    "anchor": "end",
    "mono": true,
@@ -620,11 +620,11 @@
  ],
  "steps": [
   {
-   "caption": "Stage 1: an ordinary 4-bit adder adds the two BCD digits and the carry in. Its result K Z3 Z2 Z1 Z0 can be 0 … 19.",
+   "caption": "Stage 1: an ordinary 4-bit adder adds the two BCD digits and the carry in. Its result C4 Z3 Z2 Z1 Z0 can be 0 … 19.",
    "patches": []
   },
   {
-   "caption": "The detector fires when that binary sum is 10 or more: K = 1 (16–19) or Z = 1010 … 1111 (Z3Z2 or Z3Z1).",
+   "caption": "The detector fires when that binary sum is 10 or more: C4 = 1 (16–19) or Z = 1010 … 1111 (Z3Z2 or Z3Z1).",
    "patches": [
     {
      "id": "d1",
@@ -658,14 +658,14 @@
     {
      "id": "zt",
      "set": {
-      "text": "K Z = 0 1111",
+      "text": "C4 Z = 0 1111",
       "tone": "accent"
      }
     },
     {
      "id": "dkl",
      "set": {
-      "text": "K=0",
+      "text": "C4=0",
       "tone": "muted"
      }
     },
@@ -793,14 +793,14 @@
     {
      "id": "zt",
      "set": {
-      "text": "K Z = 0 1001",
+      "text": "C4 Z = 0 1001",
       "tone": "accent"
      }
     },
     {
      "id": "dkl",
      "set": {
-      "text": "K=0",
+      "text": "C4=0",
       "tone": "muted"
      }
     },
@@ -917,7 +917,7 @@
    ]
   },
   {
-   "caption": "9 + 9 + 1 = 19: adder 1 gives 1 0011. K = 1 (sum 19 > 15) though Z = 0011 looks valid: only K catches it. Out: carry 1, digit 9.",
+   "caption": "9 + 9 + 1 = 19: adder 1 gives 1 0011. C4 = 1 (sum 19 > 15) though Z = 0011 looks valid: only C4 catches it. Out: carry 1, digit 9.",
    "patches": [
     {
      "id": "in",
@@ -928,14 +928,14 @@
     {
      "id": "zt",
      "set": {
-      "text": "K Z = 1 0011",
+      "text": "C4 Z = 1 0011",
       "tone": "accent"
      }
     },
     {
      "id": "dkl",
      "set": {
-      "text": "K=1",
+      "text": "C4=1",
       "tone": "success"
      }
     },
@@ -1052,7 +1052,7 @@
    ]
   },
   {
-   "caption": "8 + 9 = 17: adder 1 gives 1 0001. K = 1 (sum 17 > 15) though Z = 0001 looks valid: only K catches it. Out: carry 1, digit 7.",
+   "caption": "8 + 9 = 17: adder 1 gives 1 0001. C4 = 1 (sum 17 > 15) though Z = 0001 looks valid: only C4 catches it. Out: carry 1, digit 7.",
    "patches": [
     {
      "id": "in",
@@ -1063,14 +1063,14 @@
     {
      "id": "zt",
      "set": {
-      "text": "K Z = 1 0001",
+      "text": "C4 Z = 1 0001",
       "tone": "accent"
      }
     },
     {
      "id": "dkl",
      "set": {
-      "text": "K=1",
+      "text": "C4=1",
       "tone": "success"
      }
     },

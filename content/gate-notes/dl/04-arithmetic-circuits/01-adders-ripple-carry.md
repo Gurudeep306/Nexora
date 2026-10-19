@@ -25,7 +25,7 @@ pieces, the **half adder** (one column, two bits) and the **full adder** (one co
 incoming carry), and we design both the way every combinational circuit is designed: from a truth
 table. Then we chain full adders into a **ripple-carry adder**, the circuit that literally does the
 paper method, and we ask the question GATE asks most often about it: **how long does it take?** The
-answer depends on how you count delays, and GATE has used four different counting conventions, so
+answer depends on how you count delays (textbooks and GATE use several conventions; we name four), so
 the second half of the lesson is about delay models, the slowest possible inputs, and pipelining.
 
 ## Where this fits
@@ -214,44 +214,6 @@ HA1 ($p$, $g$), HA2 ($S$, $t$) and an OR ($g + t$). The two inner carries never 
 an XOR.
 :::
 
-## Gate counts in NAND and NOR
-
-:::intuition{#count-intuition title="Why examiners ask for NAND counts" depth="standard"}
-Chips are built from one kind of gate as far as possible, and NAND is the cheapest universal gate in
-CMOS. So a classic question is "how many 2-input NAND gates does a half (or full) adder need?". The
-trick is that the XOR you need anyway already contains the NAND of $A$ and $B$ as its first gate, so the
-carry comes almost for free.
-:::
-
-:::definition{#adder-gate-counts term="Adder gate counts (2-input gates)" depth="standard"}
-| Circuit | AND/OR/XOR | NAND only | NOR only |
-|:--|:--|:--|:--|
-| XOR alone | 1 | 4 | 5 |
-| Half adder | 2 (XOR + AND) | **5** | **5** |
-| Full adder | 5 (2 HA + OR) | 9 | 9 |
-| n-bit ripple adder (with carry in) | 5n | 9n | 9n |
-
-**Half adder in 5 NANDs.** $n_1 = \overline{AB}$, $n_2 = \overline{A n_1}$, $n_3 = \overline{B n_1}$,
-$S = \overline{n_2 n_3} = A \oplus B$ (the 4-NAND XOR), and $C = \overline{n_1 n_1} = AB$ (the fifth NAND
-used as an inverter on $n_1$). **Why 5 is the minimum:** an exhaustive search over every network of at
-most four 2-input NANDs (uncomplemented inputs) finds none that produces both $A \oplus B$ and $AB$;
-the same search gives 5 for NOR. **Full adder in 9 NANDs:** two 4-NAND XORs whose first NANDs are
-$\overline{AB}$ and $\overline{p\,C_{in}}$, and one more NAND of those two first NANDs, which is
-$\overline{\overline{AB}\cdot\overline{pC_{in}}} = AB + pC_{in} = C_{out}$ (De Morgan).
-:::
-
-:::trap{#trap-ha-count title="A half adder is not 'one XOR + one AND = 4 + 2 NANDs'" depth="standard"}
-Converting gate by gate gives 4 NANDs for the XOR and 2 for the AND (a NAND followed by a NAND
-inverter): 6. The answer GATE expects is **5**, because the AND's first NAND, $\overline{AB}$, is the
-very first gate of the 4-NAND XOR; only the inverter is extra. Likewise the full adder is 9, not
-2 × 5 + 1 = 11 or the 13 you get by converting 2 XOR + 2 AND + 1 OR separately.
-:::
-
-:::note{#recap-counts title="Recap" depth="quick"}
-HA: 2 gates, or 5 NAND, or 5 NOR. FA: 5 gates (2 HA + OR), or 9 NAND, or 9 NOR. Share the
-$\overline{AB}$ gate between the XOR and the carry.
-:::
-
 ### Worked examples: half and full adders
 
 ::::example{#ex-fa-easy level="easy" title="A half adder adding 1 + 1" depth="quick"}
@@ -333,6 +295,124 @@ With an AND, $C_{out}$ would be 0 for every row: wrong on 011, 101, 110, 111.
 :::answer
 XOR works (the carries are mutually exclusive), AND does not. This is a favourite "which gate can
 replace the OR" question: any gate equal to OR on $(0,0)$, $(0,1)$, $(1,0)$ works.
+:::
+::::
+
+## Gate counts in NAND and NOR
+
+:::intuition{#count-intuition title="Why examiners ask for NAND counts" depth="standard"}
+Chips are built from one kind of gate as far as possible, and NAND is the cheapest universal gate in
+CMOS. So a classic question is "how many 2-input NAND gates does a half (or full) adder need?". The
+trick is that the XOR you need anyway already contains the NAND of $A$ and $B$ as its first gate, so the
+carry comes almost for free.
+:::
+
+:::definition{#adder-gate-counts term="Adder gate counts (2-input gates)" depth="standard"}
+| Circuit | AND/OR/XOR | NAND only | NOR only |
+|:--|:--|:--|:--|
+| XOR alone | 1 | 4 | 5 |
+| Half adder | 2 (XOR + AND) | **5** | **5** |
+| Full adder | 5 (2 HA + OR) | 9 | 9 |
+| n-bit ripple adder (with carry in) | 5n | 9n | 9n |
+
+**Half adder in 5 NANDs.** $n_1 = \overline{AB}$, $n_2 = \overline{A n_1}$, $n_3 = \overline{B n_1}$,
+$S = \overline{n_2 n_3} = A \oplus B$ (the 4-NAND XOR), and $C = \overline{n_1 n_1} = AB$ (the fifth NAND
+used as an inverter on $n_1$). **Why 5 is the minimum:** an exhaustive search over every network of at
+most four 2-input NANDs (uncomplemented inputs) finds none that produces both $A \oplus B$ and $AB$;
+the same search gives 5 for NOR. **Full adder in 9 NANDs:** two 4-NAND XORs whose first NANDs are
+$\overline{AB}$ and $\overline{p\,C_{in}}$, and one more NAND of those two first NANDs, which is
+$\overline{\overline{AB}\cdot\overline{pC_{in}}} = AB + pC_{in} = C_{out}$ (De Morgan).
+:::
+
+:::trap{#trap-ha-count title="A half adder is not 'one XOR + one AND = 4 + 2 NANDs'" depth="standard"}
+Converting gate by gate gives 4 NANDs for the XOR and 2 for the AND (a NAND followed by a NAND
+inverter): 6. The answer GATE expects is **5**, because the AND's first NAND, $\overline{AB}$, is the
+very first gate of the 4-NAND XOR; only the inverter is extra. Likewise the full adder is 9, not
+2 × 5 + 1 = 11, or the 15 you get by converting 2 XOR (4 NANDs each) + 2 AND (2 each) + 1 OR (3) gate by gate.
+:::
+
+:::note{#recap-counts title="Recap" depth="quick"}
+HA: 2 gates, or 5 NAND, or 5 NOR. FA: 5 gates (2 HA + OR), or 9 NAND, or 9 NOR. Share the
+$\overline{AB}$ gate between the XOR and the carry.
+:::
+
+### Worked examples: NAND and NOR adders
+
+::::example{#ex-nand-easy level="easy" title="The 5-NAND half adder on A = B = 1" depth="quick"}
+Evaluate every gate of the 5-NAND half adder ($n_1 = \overline{AB}$, $n_2 = \overline{An_1}$, $n_3 = \overline{Bn_1}$,
+$S = \overline{n_2n_3}$, $C = \overline{n_1n_1}$) for $A = B = 1$.
+
+:::step{why="A NAND is 0 only when all its inputs are 1."}
+$n_1 = \overline{1 \cdot 1} = 0$, so $n_2 = \overline{1 \cdot 0} = 1$ and $n_3 = \overline{1 \cdot 0} = 1$.
+:::
+
+:::step{why="The last two gates: the XOR output and the inverter on n1."}
+$S = \overline{1 \cdot 1} = 0$, $C = \overline{0 \cdot 0} = 1$.
+:::
+
+:::answer
+$CS = 10 = 1 + 1$ ✓. The gate $n_1$ does double duty: it is the first gate of the XOR and, inverted, the carry.
+:::
+::::
+
+::::example{#ex-nand-medium level="medium" title="The 9-NAND full adder on 1 + 0 + 1" depth="standard"}
+The 9-NAND full adder is two 4-NAND XORs ($n_1 \dots p$ on $A, B$; $m_1 \dots S$ on $p, C_{in}$) plus
+$C_{out} = \overline{n_1 m_1}$. Evaluate it for $A = 1$, $B = 0$, $C_{in} = 1$.
+
+:::step{why="First XOR: n1 = (AB)′, n2 = (A n1)′, n3 = (B n1)′, p = (n2 n3)′."}
+$n_1 = 1$, $n_2 = \overline{1 \cdot 1} = 0$, $n_3 = \overline{0 \cdot 1} = 1$, $p = \overline{0 \cdot 1} = 1$ ($= 1 \oplus 0$ ✓).
+:::
+
+:::step{why="Second XOR on p and Cin: m1 = (p Cin)′, m2 = (p m1)′, m3 = (Cin m1)′, S = (m2 m3)′."}
+$m_1 = 0$, $m_2 = 1$, $m_3 = 1$, $S = 0$.
+:::
+
+:::step{why="The ninth gate: NAND of the two first-level NANDs is AB + p·Cin by De Morgan."}
+$C_{out} = \overline{n_1 m_1} = \overline{1 \cdot 0} = 1$.
+:::
+
+:::answer
+$C_{out}S = 10 = 1 + 0 + 1$ ✓. The carry costs one gate because $n_1 = \overline{AB}$ and $m_1 = \overline{pC_{in}}$
+already exist inside the XORs.
+:::
+::::
+
+::::example{#ex-nor-gate level="gate" title="A half adder in five NOR gates" depth="standard"}
+Build a half adder from 2-input NOR gates only and show that it uses 5 gates.
+
+:::step{why="NOR with both inputs tied is an inverter: we get the complements first."}
+$n_1 = \overline{A + A} = \bar A$, $n_2 = \overline{B + B} = \bar B$, $n_3 = \overline{A + B} = \bar A \bar B$.
+:::
+
+:::step{why="De Morgan: a NOR of complements is an AND."}
+$C = \overline{n_1 + n_2} = \overline{\bar A + \bar B} = AB$.
+:::
+
+:::step{why="The sum is 1 unless both are 0 or both are 1: NOR the two 'equal' cases."}
+$S = \overline{n_3 + C} = \overline{\bar A\bar B + AB} = A \oplus B$.
+:::
+
+:::answer
+5 NOR gates, reusing the carry inside the sum. An exhaustive search over all 4-gate NOR networks finds none that
+makes both outputs, so 5 is the minimum.
+:::
+::::
+
+::::example{#ex-nor-edge level="gate" title="Edge case: four NANDs make XOR, four NORs make XNOR" depth="standard"}
+Apply the 4-NAND XOR pattern ($n_1 = $ gate($A, B$), $n_2 = $ gate($A, n_1$), $n_3 = $ gate($B, n_1$), out =
+gate($n_2, n_3$)) with NOR gates instead. What does it compute?
+
+:::step{why="NOR version of each line."}
+$n_1 = \overline{A + B}$, $n_2 = \overline{A + n_1} = \bar A B$, $n_3 = \overline{B + n_1} = A\bar B$.
+:::
+
+:::step{why="The last NOR complements the OR of the two 'unequal' cases."}
+out $= \overline{\bar AB + A\bar B} = A \odot B$ (XNOR).
+:::
+
+:::answer
+The NOR copy gives XNOR: swapping NAND for NOR dualises the function, and the dual of XOR is XNOR. So with NORs,
+XOR costs a fifth gate, which is why the NOR half adder above takes a different route.
 :::
 ::::
 
@@ -511,6 +591,13 @@ $5n$ gates.
   cannot work (a half adder has no third input).
 :::
 
+:::trick{#trick-ha-fa title="Count the inputs of each column" depth="standard"}
+"1 HA + $(n - 1)$ FA" comes from asking, column by column, how many bits arrive: two in column 0, three
+everywhere else. **Why it works:** a half adder handles exactly two input bits, a full adder three.
+**When it fails:** when there is a carry in (then column 0 also has three bits: $n$ FA), or when the
+question allows extra OR gates (then $2n - 1$ HA + $(n - 1)$ OR also works).
+:::
+
 :::viz{#ripple-viz spec="ripple-carry-wave" mode="animate" depth="standard"}
 :::
 
@@ -520,25 +607,15 @@ The animation adds $0111 + 0001$ with every gate taking one unit of time. Stage 
 why a ripple adder's outputs are not usable until the carry has finished travelling.
 
 :::intuition{#signed-intuition title="One adder for unsigned and signed numbers" depth="standard"}
-Nothing in the ripple adder knows whether its inputs are unsigned numbers or two's-complement numbers.
-It adds bit patterns. That is not an accident: two's complement was designed so that the **same**
-pattern addition is correct for both readings, as long as the result fits. The only difference is how
-you read the leftovers: for unsigned numbers the carry out $c_n$ means "the result needed $n + 1$ bits";
-for signed numbers the carry out is simply discarded, and a different signal, the overflow flag, tells
-you whether the result fits. [Lesson 3](lesson:adder-subtractor-overflow#overflow-detector) builds that flag from the last two carries.
+The ripple adder adds bit patterns and does not know whether they are unsigned or two's complement; the same
+circuit serves both, as [Chapter 1, Lesson 9](lesson:code-arithmetic#carry-vs-overflow) explains at the number
+level. Only the reading of the leftovers differs, and [Lesson 3](lesson:adder-subtractor-overflow#overflow-detector)
+builds the overflow flag from the last two carries.
 :::
 
 :::definition{#ripple-signed term="Reading a ripple adder's output" depth="standard"}
-For the same output bits $c_n\,s_{n-1} \dots s_0$:
-
-- **Unsigned:** $A + B + c_0 = 2^n c_n + S$ exactly; $c_n = 1$ means the sum does not fit in $n$ bits.
-- **Two's complement:** $S$ is the correct signed sum whenever the true sum lies in
-  $[-2^{n-1}, 2^{n-1} - 1]$; $c_n$ is ignored, and **overflow** happens exactly when the carry into the
-  sign stage differs from the carry out of it,
-  $c_{n-1} \ne c_n$ ([Chapter 1, Lesson 9](lesson:code-arithmetic#overflow-theorem)).
-
-Example, 4 bits: $1101 + 0101$: unsigned $13 + 5 = 18 = 16 + 2$ ($c_4 = 1$, $S = 0010$); signed
-$-3 + 5 = 2$ ($S = 0010$ is right, $c_4$ is ignored, and $c_3 = c_4 = 1$ so there is no overflow).
+Unsigned: $c_n = 1$ means the sum needs $n + 1$ bits. Two's complement: $c_n$ is ignored, and the result is
+wrong exactly when $c_{n-1} \ne c_n$ ([Chapter 1, Lesson 9](lesson:code-arithmetic#overflow-theorem)).
 :::
 
 :::note{#recap-ripple title="Recap" depth="quick"}
@@ -656,14 +733,24 @@ under different conventions. Read the convention first, then count.
 | Model | What one stage costs | Carry out $c_n$ | Last sum $s_{n-1}$ |
 |:--|:--|:--|:--|
 | (a) Unit gates, FA = 2 HA + OR | XOR, AND, OR each 1 | $2n + 1$ | $2n$ |
-| (b) Unit gates, two-level SOP FA (complements free) | 2 levels from any input | $2n$ | $2n$ |
+| (b) Unit gates, two-level SOP FA (complements free, incl. $\bar c_i$) | 2 levels from any input | $2n$ | $2n$ |
 | (c) Block model | each FA one box of delay $t_{FA}$ | $n\,t_{FA}$ | $n\,t_{FA}$ |
 | (d) Gate level with given gate delays | $t_{ab \to c}$ in stage 0, then $t_{c \to c}$ per stage | $t_{ab \to c} + (n-1)\,t_{c \to c}$ | $t_{ab \to c} + (n-2)\,t_{c\to c} + t_{c \to s}$ |
 
 In (d), $t_{ab \to c}$ is the slowest path from $a_0, b_0$ to $c_1$, $t_{c\to c}$ the path from a carry in to
 the carry out of one stage, and $t_{c \to s}$ from a carry in to the sum. For the HA + OR full adder:
 $t_{ab \to c} = t_{XOR} + t_{AND} + t_{OR}$, $t_{c \to c} = t_{AND} + t_{OR}$, $t_{c \to s} = t_{XOR}$.
-Model (a) is (d) with every gate 1.
+Model (a) is (d) with every gate 1. The last-sum formula holds for $n \ge 2$; for tiny $n$ compare it with the
+direct path $2t_{XOR}$ and take the larger. Model (b) also assumes that each stage makes $\bar c_{i+1}$ alongside
+$c_{i+1}$ (dual-rail two-level logic), since the next stage's two-level sum needs the complemented carry;
+otherwise add one inverter level per stage.
+:::
+
+:::trick{#trick-first-rest title="First stage, then the carry-to-carry cost" depth="standard"}
+Total ripple delay = (time for the first carry) + $(n - 1)$ × (carry-in to carry-out of one stage), then compare
+with the last sum. **Why it works:** every $p_i$, $g_i$ is computed in parallel at the start, so after stage 0
+only the carry is waiting. **When it fails:** under the block model (a question that counts each full adder as a
+whole box), and when the sum path is slower than the carry path (a slow XOR), where the last sum decides.
 :::
 
 :::theorem{#ripple-delay name="Carry timing of the HA + OR ripple adder (unit gates)" depth="standard"}
@@ -706,9 +793,18 @@ slowest output takes **4.8 µs** (sum: XOR + XOR; carry: XOR + AND + OR).
   12$ µs too.
 
 The key is 19.2, so the examiner intended the block model, and the answer to give is 19.2. The trap
-is to mix models: e.g. $4 \times 2.4 = 9.6$ (only the carry path, even in stage 0) or $4.8 + 3 \times
-4.8$ written as "gate level". Know both numbers and why they differ: the block model assumes each stage
-starts only when the previous one has completely finished, which real gates do not do.
+is to mix models: e.g. $4 \times 2.4 = 9.6$ (the carry-in-to-carry-out cost used even for stage 0), or
+$4 \times 3.6 = 14.4$ (the XOR wrongly taken as 1.2 µs). Know both 19.2 and 12 and why they differ: the block
+model assumes each stage starts only when the previous one has completely finished, which real gates do not do.
+:::
+
+:::viz{#delay-models-viz spec="delay-models" mode="animate" depth="standard"}
+:::
+
+:::note{#recap-delay title="Recap" depth="quick"}
+Read the convention first. Unit gates, HA + OR full adders: $2n + 1$. Two-level full adders: $2n$. Block model:
+$n \cdot t_{FA}$. Given gate delays: $t_{ab\to c} + (n-1)t_{c\to c}$ for the carry, compared with the last sum;
+take the larger.
 :::
 
 ### Worked examples: delays
@@ -731,7 +827,7 @@ $\max(9, 8) = 9$.
 ::::
 
 ::::example{#ex-delay-medium level="medium" title="A 16-bit adder with two-level full adders" depth="standard"}
-Each full adder is two-level AND-OR logic (complemented inputs free), every gate one unit. Find the delay
+Each full adder is two-level AND-OR logic (complements free, including each stage's $\bar c_i$), every gate one unit. Find the delay
 of a 16-bit ripple adder.
 
 :::step{why="Two-level logic: every output of a stage is two gate delays after its latest input."}
@@ -805,17 +901,29 @@ all the way out.
 In a ripple-carry adder (carry in 0), a carry generated at bit $i$ travels through bits $i+1, \dots, j$
 as long as each has $a_k \oplus b_k = 1$. The chain is longest, $n$ stages, when bit 0 generates
 ($a_0 = b_0 = 1$) and bits $1 \dots n-1$ all propagate. In two's complement this is the pair
-$A = 1$, $B = -1$ (all ones): $1 + (-1) = 0$, and **every** sum bit first shows its own $a_i \oplus b_i$
-and then flips when the carry arrives.
+$A = 1$, $B = -1$ (all ones): $1 + (-1) = 0$, and every sum bit above bit 0 first shows its own
+$a_i \oplus b_i = 1$ and then flips to 0 when the carry arrives.
 
 For a fixed $A$, the slowest $B$ is found by making stage 0 generate (or, if $a_0 = 0$, the lowest
 possible stage) and making every higher stage propagate, i.e. $b_k = \bar a_k$ above it.
+
+With carry in 0 this chain settles at $2n$, not $2n + 1$: the carry leaves stage 0 through $g_0$, one gate after
+the inputs, so stage 0 costs 2 instead of 3. The absolute worst case of the theorem, $2n + 1$, needs $c_0 = 1$ and
+$a_0 \ne b_0$ (with every other stage propagating too): the carry in must wait for $p_0$ before it can pass.
+:::
+
+:::trick{#trick-slowest-partner title="The slowest partner: complement everything above the lowest 1" depth="standard"}
+For a given $A$ (carry in 0), the slowest $B$ has a 1 at the lowest 1 of $A$ (so that column generates) and
+$b_k = \bar a_k$ above it (so every higher column propagates). **Why it works:** a generated carry travels only
+through propagating columns, and this choice makes all of them propagate. **When it fails:** with a carry in of 1
+(then $B = \bar A$, all columns propagating, is slower still), or for $A = 0$ (nothing can generate; only a carry in
+can start a chain).
 :::
 
 :::aside{#data-dependent title="Further depth: the average carry chain is short" depth="deep"}
 The worst case grows like $n$, but for random operands the longest propagate run is only about
 $\log_2 n$ bits long (each extra bit of a run halves its probability). Our check script measures it:
-for random 32-bit operands the mean longest chain is close to 5 = $\log_2 32$. Some early machines
+for random 32-bit operands the mean longest chain is about 4.3, close to $\log_2 32 = 5$. Some early machines
 exploited this with **asynchronous** adders that signal "done" as soon as the carries have settled, instead
 of always waiting for the worst case. Clocked designs cannot do that: the clock period must cover the
 worst case, which is why the next lesson attacks the worst case directly.
@@ -823,44 +931,11 @@ worst case, which is why the next lesson attacks the worst case directly.
 
 :::note{#recap-worst title="Recap" depth="quick"}
 A carry moves only through propagating columns ($a_k \ne b_k$). The slowest operands generate at bit 0
-and propagate through every higher bit; for $A = 1$ that is $B = -1$.
+and propagate through every higher bit; for $A = 1$ that is $B = -1$ ($2n$ units with carry in 0; $2n + 1$ needs a
+propagated carry in).
 :::
 
-## Pipelined adders
-
-:::intuition{#pipe-intuition title="An assembly line for additions" depth="standard"}
-A ripple adder is slow because the carry crosses every stage. Suppose you have many additions to do, one
-after another. Put a **register** (a row of flip-flops) after every full adder. Each clock, every pair of
-numbers in flight moves forward one stage, and a new pair enters. Like an assembly line, one car still
-takes all the stations, but a finished car rolls out every clock.
-:::
-
-:::definition{#pipelined-adder term="Pipelined adder" depth="standard"}
-A **$k$-stage pipelined adder** places registers between groups of full adders. Stage $j$ adds its group
-of bits using the carry saved by stage $j - 1$; the registers also carry the not-yet-added operand bits
-forward and the finished sum bits along, so all bits of one result leave together.
-
-- **Clock period** = delay of the slowest stage + register overhead.
-- **Latency** = $k$ clock periods (one result takes $k$ clocks).
-- **Throughput** = one result per clock once the pipeline is full.
-
-GATE 2002 is a 3-stage pipelined 3-bit ripple adder: one full adder per stage, registers R0, R1, R2.
-:::
-
-:::viz{#pipeline-viz spec="pipeline-adder" mode="animate" depth="standard"}
-:::
-
-The animation clocks the 2002 circuit with its inputs (110 + 101, 011 + 101, 111 + 011, 101 + 110, then
-zeros). The first result appears after clock 3 (latency 3), and then one result per clock: 1011, 1000,
-1010, 1011.
-
-:::note{#recap-pipe title="Recap" depth="quick"}
-Worst case: generate at bit 0, propagate everywhere above ($A = 1$, $B = -1$). Pipelining keeps the
-latency (or makes it slightly worse) and multiplies the throughput: one result per clock after $k$
-clocks.
-:::
-
-### Worked examples: worst cases and pipelines
+### Worked examples: the slowest operands
 
 ::::example{#ex-worst-easy level="easy" title="Operands that ripple all the way in 8 bits" depth="quick"}
 Give an 8-bit unsigned pair $A$, $B$ (carry in 0) for which the carry ripples through all 8 stages.
@@ -897,9 +972,125 @@ $1111\,1111 = -1$.
 
 :::answer
 $B = -1$. The transport-delay simulation of the 8-bit adder (starting from all-zero inputs) confirms it
-is the **only** slowest $B$: carry out at 16 units, every other $B$ settles sooner.
+is the **only** slowest $B$: carry out at 16 units, every other $B$ settles sooner. (16 = $2n$, not $2n + 1$,
+because the carry in is 0: the carry leaves stage 0 through $g_0$.)
 :::
 ::::
+
+::::example{#ex-worst-gate level="gate" title="A = 0100 0000: which bits of B make the longest chain?" depth="standard"}
+An 8-bit ripple adder (carry in 0) adds $A = 0100\,0000$ and $B$. Which bits of $B$ decide the longest carry
+chain, and how many stages can it cross?
+
+:::step{why="Only a column with both bits 1 can generate; A has a 1 only at bit 6."}
+The chain can start only at bit 6, and only if $b_6 = 1$.
+:::
+
+:::step{why="Bit 7 has a7 = 0, so it propagates iff b7 = 1."}
+With $b_7 = 1$ the carry crosses bit 7 and leaves as $c_8$: two stages.
+:::
+
+:::step{why="Bits 0–5 of A are 0: those columns can never generate, so b0 … b5 only change sum bits that settle early."}
+$b_5 \dots b_0$ do not affect the chain.
+:::
+
+:::answer
+$b_7 = b_6 = 1$ (for example $B = 1100\,0000 = -64$), a chain of 2 stages. The simulation confirms that every
+slowest $B$ has $b_7 = b_6 = 1$.
+:::
+::::
+
+::::example{#ex-worst-edge level="gate" title="Edge case: the carry in makes the absolute worst case" depth="standard"}
+8-bit ripple adder, unit gates. The previous inputs were $A = B = 0$ with $c_0 = 1$. Now $A = 1111\,1111$, $B = 0$,
+$c_0 = 1$. When does $c_8$ settle, and why is this slower than $1 + (-1)$?
+
+:::step{why="Every column has a_i ≠ b_i: all propagate, none generates."}
+The only carry is $c_0$, and it must pass all 8 stages.
+:::
+
+:::step{why="Stage 0 cannot pass c0 until p0 = a0 ⊕ b0 is ready (1), then AND (2), OR (3); each later stage +2."}
+$c_1$ at 3, $c_8$ at $3 + 7 \times 2 = 17$.
+:::
+
+:::answer
+17 = $2n + 1$, the theorem's worst case. With carry in 0 and bit 0 generating ($1 + (-1)$) the carry leaves stage 0
+one gate earlier, at 16.
+:::
+::::
+
+## Pipelined adders
+
+:::intuition{#pipe-intuition title="An assembly line for additions" depth="standard"}
+A ripple adder is slow because the carry crosses every stage. Suppose you have many additions to do, one
+after another. Put a **register** (a row of flip-flops) after every full adder. Each clock, every pair of
+numbers in flight moves forward one stage, and a new pair enters. Like an assembly line, one car still
+takes all the stations, but a finished car rolls out every clock.
+:::
+
+:::definition{#pipelined-adder term="Pipelined adder" depth="standard"}
+A **$k$-stage pipelined adder** places registers between groups of full adders. Stage $j$ adds its group
+of bits using the carry saved by stage $j - 1$; the registers also carry the not-yet-added operand bits
+forward and the finished sum bits along, so all bits of one result leave together.
+
+- **Clock period** = delay of the slowest stage + register overhead.
+- **Latency** = $k$ clock periods (one result takes $k$ clocks).
+- **Throughput** = one result per clock once the pipeline is full.
+
+GATE 2002 is a 3-stage pipelined 3-bit ripple adder: one full adder per stage, registers R0, R1, R2.
+:::
+
+:::viz{#pipeline-viz spec="pipeline-adder" mode="animate" depth="standard"}
+:::
+
+The animation clocks the 2002 circuit with its inputs (110 + 101, 011 + 101, 111 + 011, 101 + 110, then
+zeros). The first result appears after clock 3 (latency 3), and then one result per clock: 1011, 1000,
+1010, 1011.
+
+:::note{#recap-pipe title="Recap" depth="quick"}
+Pipelining keeps the latency (or makes it slightly worse) and multiplies the throughput: one result per
+clock after $k$ clocks.
+:::
+
+### Worked examples: pipelines
+
+::::example{#ex-pipe-easy level="easy" title="Latency and total time of a 3-stage pipeline" depth="quick"}
+A 3-stage pipelined adder has 5 ns of logic per stage and 1 ns per register. How long does one addition take,
+and how long do 10 back-to-back additions take?
+
+:::step{why="The clock covers one stage and its register."}
+Clock period $= 5 + 1 = 6$ ns; latency $= 3 \times 6 = 18$ ns.
+:::
+
+:::step{why="After the first result, one more leaves every clock: (k + N − 1) clocks for N additions."}
+$(3 + 10 - 1) \times 6 = 72$ ns.
+:::
+
+:::answer
+18 ns for one addition, 72 ns for ten (instead of $10 \times 18 = 180$ ns without overlap).
+:::
+::::
+
+::::example{#ex-pipe-medium level="medium" title="Tracing the 2002 pipeline for one operand pair" depth="standard"}
+In the 3-stage pipelined adder of GATE 2002, $A = 111$, $B = 001$ are applied at clock 1 and zeros afterwards. Give
+$Z$ after clocks 1 to 4.
+
+:::step{why="Clock 1 loads the pair into R0; R1 and R2 still hold zeros."}
+$Z = 0000$ after clock 1.
+:::
+
+:::step{why="Clock 2: R1 gets the pair with s0 = 1 ⊕ 1 = 0 and c1 = 1; R2 still zeros."}
+$Z = 0000$ after clock 2.
+:::
+
+:::step{why="Clock 3: R2 gets the pair with s1 = 1 ⊕ 0 ⊕ 1 = 0, c2 = 1; the last FA adds 1 + 0 + 1 = 10."}
+$Z = z_3z_2z_1z_0 = 1000$ after clock 3: $7 + 1 = 8$ ✓.
+:::
+
+:::answer
+0000, 0000, 1000, 0000: the result appears three clocks after its inputs and leaves again when the zeros arrive.
+:::
+::::
+
+
 
 ::::example{#ex-pipe-gate level="gate" title="Latency and throughput of a pipelined adder" depth="standard"}
 A 16-bit adder is split into 4 pipeline stages of 4 bits each; a stage's logic takes 9 units and a

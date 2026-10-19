@@ -49,7 +49,7 @@ assert all(form[(1, 0)][(a, 0)] == (a - 1) % 16 for a in range(16))
 assert [form[k][(0, 3)] for k in ((0, 0), (0, 1), (1, 0), (1, 1))] == [0b0011, 0b0100, 0b1100, 0b1101]
 assert [form[k][(5, 3)] for k in ((0, 0), (0, 1), (1, 0), (1, 1))] == [0b1000, 0b1001, 0b0001, 0b0010]
 assert bank["cse-2003-cs-46"]["answer"] == "A"
-has("00 → 1000, 01 → 1001, 10 → 0001, 11 → 0010", "the outputs are 0011, 0100, 1100, 1101")
+has("00 → 1000, 01 → 1001, 10 → 0001, 11 → 0010")
 
 
 def run(a, b, K, n=4):
@@ -134,12 +134,70 @@ for x, y, c in product((0, 1), repeat=3):
     if x != y:
         assert cn == c
 
+# ── Review additions ─────────────────────────────────────────────────────
+r, v = run(0b01001010, 0b00010110, 1, 8)
+assert r == 0b00110100 == 74 - 22 and v["C"] == 1 and al.word(v, "y", 8) == 0b11101001 and 74 + 233 + 1 == 308
+r, v = run(0, 0b0101, 1)
+assert r == 0b1011 and v["C"] == 0
+r, v = run(0, 0, 1)
+assert r == 0 and v["C"] == 1
+r, v = run(0, 0b1000, 1)
+assert r == 0b1000 and (v["c3"], v["c4"], v["V"]) == (1, 0, 1)
+for n_ in (4, 8):
+    for a in range(2 ** n_):
+        r, v = run(a, a, 1, n_)
+        assert (r, v["C"], v["Z"], v["V"]) == (0, 1, 1, 0)
+# Enable on B: y = (B·E) ⊕ K gives A + B, A − B, A + 1, A − 1.
+EN = [(f"e{i}", "AND", [f"b{i}", "E"]) for i in range(4)] + [(f"y{i}", "XOR", [f"e{i}", "K"]) for i in range(4)] + al.rca(4, "a", "y", "c0")
+def en(a, b, E, K, C0):
+    return al.word(cl.evaluate(EN, {**al.env_of(4, a, b, C0), "E": E, "K": K}), "s", 4)
+for a in range(16):
+    for b in range(16):
+        assert en(a, b, 1, 0, 0) == (a + b) % 16 and en(a, b, 1, 1, 1) == (a - b) % 16
+        assert en(a, b, 0, 0, 1) == (a + 1) % 16 and en(a, b, 0, 1, 0) == (a - 1) % 16
+# ALU examples.
+r, v = run(0b0110, 0b0011, 1)
+assert r == 0b0011 and (v["C"], v["V"], v["N"], v["Z"], v["c3"], v["c4"]) == (1, 0, 0, 0, 1, 1)
+assert 0b0110 ^ 0b0011 == 0b0101
+# Decimal subtraction with the BCD adder netlist and the nine's complementer.
+def nines(d):
+    b = [d >> i & 1 for i in range(4)]
+    return sum(x << i for i, x in enumerate([1 - b[0], b[1], b[2] ^ b[1], 1 - (b[3] | b[2] | b[1])]))
+
+
+def dec_sub(x, y, k):
+    c, out, digits = 1, 0, []
+    for i in range(k):
+        v = cl.evaluate(net, al.env_of(4, x // 10 ** i % 10, nines(y // 10 ** i % 10), c))
+        d = al.word(v, "s", 4)
+        out += d * 10 ** i
+        digits.append((d, v["Cout"]))
+        c = v["Cout"]
+    return out, c, digits
+
+
+assert dec_sub(52, 17, 2)[:2] == (35, 1)
+assert dec_sub(17, 52, 2)[:2] == (65, 0) and 100 - 65 == 35
+o, cc, dg = dec_sub(305, 128, 3)
+assert (o, cc) == (177, 1) and [x[1] for x in dg] == [0, 0, 1]
+assert dec_sub(0, 0, 2)[:2] == (0, 1)
+for x in range(0, 100, 3):
+    for y in range(0, 100, 7):
+        o, cc, _ = dec_sub(x, y, 2)
+        assert (o if cc else -(100 - o) if o else 0) == x - y or (x == y and o == 0)
+assert nines(3) == 6
+# Converters: radix 9, binary → BCD, base 8 by wires.
+for b in range(16):
+    D9 = (b >> 3 & 1) & ((b >> 2 | b >> 1 | b) & 1)
+    assert D9 == int(b >= 9)
+    t9 = b + (7 if D9 else 0)
+    assert 9 * (t9 >> 4) + (t9 & 15) == b and (t9 & 15) < 9
+    assert 8 * (b >> 3) + (b & 7) == b
+assert 0b1010 + 0b0111 == 0b10001 and 0b1111 + 0b0110 == 0b10101
+
 # ── Practice ─────────────────────────────────────────────────────────────
 P = al.practice()
-q = P["nx-dl-04-03-q01"]
-sett = {"A": (0, 1), "B": (1, 0), "C": (0, 0), "D": (1, 1)}
-ok = [l for l, kc in sett.items() if all(o == (a - b) % 16 for (a, b), o in form[kc].items())]
-bl.assert_mcq(q, ok[0])
+bl.assert_nat(P["nx-dl-04-03-q01"], nines(0b0011))
 q = P["nx-dl-04-03-q02"]
 ops = {"A": lambda a, b: a + b + 1, "B": lambda a, b: a - b - 1, "C": lambda a, b: a + 1, "D": lambda a, b: b - a}
 reach = [l for l, f in ops.items() if any(all(o == f(a, b) % 16 for (a, b), o in form[kc].items()) for kc in form)]
@@ -164,14 +222,21 @@ for a in range(0, 256, 3):
 assert seen
 bl.assert_mcq(P["nx-dl-04-03-q05"], "A")
 q = P["nx-dl-04-03-q06"]
-V5 = ["K", "Z3", "Z2", "Z1", "Z0"]
+V5 = ["C4", "Z3", "Z2", "Z1", "Z0"]
 want = tuple(int(16 * r_[0] + cl.num(r_[1:]) >= 10) for r_ in (cl.bits_of(m, 5) for m in range(32)))
 reachable = [m for m in range(32) if 16 * (m >> 4) + (m & 15) <= 19]
 okd = [l for l, t in bl.option_values(q).items() if all(bl.tt(t.strip("$"), V5)[m] == want[m] for m in reachable)]
 bl.assert_mcq(q, okd[0])
 assert okd == ["B"]
-v = cl.evaluate(net, al.env_of(4, 6, 7, 1))
-bl.assert_nat(P["nx-dl-04-03-q07"], al.word(v, "s", 4))
+q = P["nx-dl-04-03-q07"]
+forms = {"A": lambda x, y, c, s, c4: c4 ^ c, "B": lambda x, y, c, s, c4: ((1 - x) & (1 - y) & s) | (x & y & (1 - s)),
+         "C": lambda x, y, c, s, c4: c4 ^ s, "D": lambda x, y, c, s, c4: (1 - (x ^ y)) & (x ^ s)}
+good = []
+for l, f in forms.items():
+    if all(f(x, y, c, x ^ y ^ c, (x & y) | (x & c) | (y & c)) == (((x & y) | (x & c) | (y & c)) ^ c) for x, y, c in product((0, 1), repeat=3)):
+        good.append(l)
+bl.assert_msq(q, good)
+assert good == ["A", "B", "D"]
 bl.assert_nat(P["nx-dl-04-03-q08"], sum(1 for a in range(10) for b in range(10) if cl.evaluate(net, al.env_of(4, a, b, 0))["Cout"]))
 assert sum(1 for a in range(10) for b in range(10) if a + b >= 9) == 55 and sum(1 for a in range(10) for b in range(10) if 10 <= a + b <= 15) == 39
 v = cl.evaluate(conv, {f"b{i}": 0b1110 >> i & 1 for i in range(4)})

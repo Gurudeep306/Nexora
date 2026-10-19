@@ -304,7 +304,7 @@ def pipeline_adder(L):
         if k == 1:
             cap = "Clock 1: R0 captures A = 110, B = 101. Only bit 0 is added in this stage; R1 and R2 still hold zeros, so Z = 0000."
         elif k == 2:
-            cap = "Clock 2: the first pair moves to R1 (with its sum bit 0 and carry c1); R0 takes 011 + 101. Z is still 0000."
+            cap = "Clock 2: the first pair moves to R1 with its bit-0 sum s0 = 1 and carry c1 = 0; R0 takes 011 + 101. Z is still 0000."
         elif k == 3:
             cap = f"Clock 3: the first pair reaches R2; FA (bit 2) finishes it: Z = {Z[2]} = 6 + 5 = 11. Latency: 3 clocks."
         else:
@@ -643,7 +643,7 @@ def addsub_overflow(L):
                  ("wv", {"tone": "danger" if v["V"] else "muted"}), ("vv", {"text": f"V={v['V']}", "tone": "danger" if v["V"] else "muted"}),
                  ("flags", {"text": f"C={v['C']} V={v['V']} N={v['N']} Z={v['Z']}"}),
                  ("res", {"text": f"{name}: {r:04b} reads {al.tc(r, n)}" + (" (overflow)" if v["V"] else ""), "tone": "danger" if v["V"] else "success"})]
-        why = (f"c4 = {cs[n]} and c3 = {cs[n - 1]} differ, so V = 1: {name} = {true} does not fit in 4 bits." if v["V"]
+        why = (f"c4 = {cs[n]} and c3 = {cs[n - 1]} differ, so V = 1: {name} = {true} is outside −8 … 7." if v["V"]
                else f"c4 = c3 = {cs[n]}, so V = 0: {name} = {true} fits.")
         s.step(f"{name}: K = {K}, sum {r:04b}. " + why, *pats)
     return s.done("A 4-bit adder–subtractor with its overflow detector", (W, 350), (NW, 566),
@@ -663,7 +663,7 @@ def bcd_adder_hw(L):
         s.text("in", 190, 52, "A = 0000, B = 0000, cin = 0", 14, anchor="middle", mono=True)
         s.box("add1", *a1, label="4-bit binary adder", size=14)
         s.line("wz", [[190, 126], [190, 250]])
-        s.text("zt", 200, 160, "K Z = ?", 14, anchor="start", mono=True, weight="bold")
+        s.text("zt", 200, 160, "C4 Z = ?", 14, anchor="start", mono=True, weight="bold")
         gp1, go1 = s.gate("d1", 430, 120, 50, 40, "and")
         gp2, go2 = s.gate("d2", 430, 180, 50, 40, "and")
         gp3, go3 = s.gate("d3", 540, 140, 54, 60, "or", inputs=3)
@@ -671,7 +671,7 @@ def bcd_adder_hw(L):
             s.line(f"dw{k}", [[p[0] - 30, p[1]], p])
             s.text(f"dl{k}", p[0] - 34, p[1], lab, 13, anchor="end", mono=True)
         s.line("dk", [[400, 105], [520, 105], [520, gp3[0][1]], gp3[0]])
-        s.text("dkl", 396, 105, "K", 13, anchor="end", mono=True)
+        s.text("dkl", 396, 105, "C4", 13, anchor="end", mono=True)
         s.line("o1", [go1, [510, go1[1]], [510, gp3[1][1]], gp3[1]])
         s.line("o2", [go2, [510, go2[1]], [510, gp3[2][1]], gp3[2]])
         s.line("wc", [go3, [626, go3[1]]])
@@ -687,7 +687,7 @@ def bcd_adder_hw(L):
         s.text("in", 180, 48, "A=0000 B=0000 cin=0", 12, anchor="middle", mono=True)
         s.box("add1", *a1, label="4-bit binary adder", size=13)
         s.line("wz", [[70, 114], [70, 340]])
-        s.text("zt", 80, 134, "K Z = ?", 12, anchor="start", mono=True, weight="bold")
+        s.text("zt", 80, 134, "C4 Z = ?", 12, anchor="start", mono=True, weight="bold")
         gp1, go1 = s.gate("d1", 160, 160, 44, 36, "and")
         gp2, go2 = s.gate("d2", 160, 214, 44, 36, "and")
         gp3, go3 = s.gate("d3", 250, 176, 46, 54, "or", inputs=3)
@@ -695,7 +695,7 @@ def bcd_adder_hw(L):
             s.line(f"dw{k}", [[p[0] - 24, p[1]], p])
             s.text(f"dl{k}", p[0] - 28, p[1], lab, 12, anchor="end", mono=True)
         s.line("dk", [[150, 150], [236, 150], [236, gp3[0][1]], gp3[0]])
-        s.text("dkl", 146, 150, "K", 12, anchor="end", mono=True)
+        s.text("dkl", 146, 150, "C4", 12, anchor="end", mono=True)
         s.line("o1", [go1, [228, go1[1]], [228, gp3[1][1]], gp3[1]])
         s.line("o2", [go2, [228, go2[1]], [228, gp3[2][1]], gp3[2]])
         s.line("wc", [go3, [318, go3[1]]])
@@ -705,8 +705,8 @@ def bcd_adder_hw(L):
         s.box("add2", *a2, label="4-bit binary adder", size=13)
         s.line("wo", [[180, 390], [180, 404]])
         s.text("out", 180, 418, "BCD digit = ?", 12, anchor="middle", mono=True, weight="bold")
-    s.step("Stage 1: an ordinary 4-bit adder adds the two BCD digits and the carry in. Its result K Z3 Z2 Z1 Z0 can be 0 … 19.")
-    s.step("The detector fires when that binary sum is 10 or more: K = 1 (16–19) or Z = 1010 … 1111 (Z3Z2 or Z3Z1).",
+    s.step("Stage 1: an ordinary 4-bit adder adds the two BCD digits and the carry in. Its result C4 Z3 Z2 Z1 Z0 can be 0 … 19.")
+    s.step("The detector fires when that binary sum is 10 or more: C4 = 1 (16–19) or Z = 1010 … 1111 (Z3Z2 or Z3Z1).",
            ("d1", {"tone": "accent"}), ("d2", {"tone": "accent"}), ("d3", {"tone": "accent"}))
     for a, b, c in cases:
         v = cl.evaluate(net, al.env_of(4, a, b, c))
@@ -716,8 +716,8 @@ def bcd_adder_hw(L):
         assert 10 * C + digit == a + b + c and C == int(16 * k + z >= 10)
         d32, d31 = v["d32"], v["d31"]
         pats = [("in", {"text": s.v(f"A = {a:04b}, B = {b:04b}, cin = {c}", f"A={a:04b} B={b:04b} cin={c}")}),
-                ("zt", {"text": f"K Z = {k} {z:04b}", "tone": "accent"}),
-                ("dkl", {"text": f"K={k}", "tone": tv(k)}), ("dk", {"tone": tv(k)}),
+                ("zt", {"text": f"C4 Z = {k} {z:04b}", "tone": "accent"}),
+                ("dkl", {"text": f"C4={k}", "tone": tv(k)}), ("dk", {"tone": tv(k)}),
                 ("dl0", {"text": f"Z3={z >> 3 & 1}", "tone": tv(z >> 3 & 1)}), ("dl1", {"text": f"Z2={z >> 2 & 1}", "tone": tv(z >> 2 & 1)}),
                 ("dl2", {"text": f"Z3={z >> 3 & 1}", "tone": tv(z >> 3 & 1)}), ("dl3", {"text": f"Z1={z >> 1 & 1}", "tone": tv(z >> 1 & 1)}),
                 ("o1", {"tone": tv(d32)}), ("o2", {"tone": tv(d31)}), ("d1", {"tone": "ink"}), ("d2", {"tone": "ink"}),
@@ -726,14 +726,14 @@ def bcd_adder_hw(L):
                 ("corr", {"text": s.v(f"adds 0{C}{C}0", f"adds 0{C}{C}0"), "tone": "accent" if C else "muted"}),
                 ("out", {"text": f"digit {digit:04b} = {digit}, carry {C}", "tone": "success"})]
         if C and k:
-            why = f"K = 1 (sum {16 * k + z} > 15) though Z = {z:04b} looks valid: only K catches it."
+            why = f"C4 = 1 (sum {16 * k + z} > 15) though Z = {z:04b} looks valid: only C4 catches it."
         elif C:
             why = f"Z = {z:04b} = {z} is not a BCD digit (Z3 = 1 with Z2 or Z1)."
         else:
             why = f"{z:04b} = {z} is a valid digit, so nothing is added."
         s.step(f"{a} + {b}" + (f" + {c}" if c else "") + f" = {a + b + c}: adder 1 gives {k} {z:04b}. " + why + f" Out: carry {C}, digit {digit}.", *pats)
     return s.done("A one-digit BCD adder with its correction detector", (W, 350), (NW, 430),
-                  "Two 4-bit binary adders. The first adds the digits; a detector K + Z3Z2 + Z3Z1 decides whether the sum exceeds 9; the second adds 0110 when it does. The detector's output is the decimal carry.")
+                  "Two 4-bit binary adders. The first adds the digits; a detector C4 + Z3Z2 + Z3Z1 decides whether the sum exceeds 9; the second adds 0110 when it does. The detector's output is the decimal carry.")
 
 
 # ── Lesson 4: multipliers ──────────────────────────────────────────────────
@@ -829,7 +829,7 @@ def array_multiplier_grid(L):
             pats.append(("res", {"text": f"1011 × 1101 = {A * B}: P = {A * B:08b}", "tone": "success"}))
         s.step(cap, *pats)
         prev = (i, j)
-    s.step("The path crosses each row and moves one row down per step: O(n) cells, so the delay is Θ(n) although there are n² cells.",
+    s.step("The path only moves left (a carry) or down (a sum), never back: 8 cells here, O(n) in general, so Θ(n) delay with n² cells.",
            ("res", {"text": "n² cells, Θ(n) delay", "tone": "accent"}))
     return s.done("The critical path through a 4 × 4 array multiplier", (W, 390), (NW, 380),
                   "Three rows of four full-adder cells, shifted one bit per row. Partial products feed every cell; sums go down, carries go left. The product bits P0 … P7 leave at the right and the bottom.")
@@ -903,8 +903,319 @@ def booth_datapath(L):
                   "Registers M (multiplicand), A (accumulator, one extra bit), Q (multiplier) and the bit Q−1. The control looks at Q0 Q−1 and tells the adder–subtractor to add M, subtract M or do nothing; then A, Q, Q−1 shift right together.")
 
 
+# ── Added after the examiner review: delay models, serial adder, converter, ALU, sequential, CSA ──
+
+@scene
+def delay_models(L):
+    s = S(L)
+    W, NW = 700, 360
+    d = {"XOR": 2, "AND": 1, "OR": 1}
+    fa = al.arrival(al.full_adder("a", "b", "c", "s", "o", ""), ["a", "b", "c"], d)
+    tfa = max(fa["s"], fa["o"]) * 1.2
+    t = al.arrival(al.rca(4), al.inputs_of(4), d)
+    gl = [round(t[f"c{i}"] * 1.2, 1) for i in range(1, 5)]
+    s3 = round(t["s3"] * 1.2, 1)
+    assert round(tfa, 1) == 4.8 and gl == [4.8, 7.2, 9.6, 12.0] and s3 == 12.0
+    s.head("GATE 2015: block model vs gate level (µs)", "2015: block vs gate level", W, NW)
+    x0, sc = s.v(120, 56), s.v(28, 15)
+    X = lambda us: round(x0 + sc * us, 2)  # noqa: E731
+    yB, yG = s.v(76, 76), s.v(196, 214)
+    s.text("lb", s.v(20, 10), yB - 16, "block model: each FA waits for the previous one", s.v(14, 12), anchor="start", weight="bold")
+    s.text("lg", s.v(20, 10), yG - 16, "gate level: after FA0 a carry needs only AND + OR", s.v(14, 12), anchor="start", weight="bold")
+    for k in range(4):
+        s.box(f"b{k}", X(4.8 * k), yB + s.v(0, 0), sc * 4.8, 36, label=f"FA{k}" + s.v(" 4.8", ""), size=s.v(13, 12), hidden=True)
+        s.text(f"bl{k}", s.v(110, 50), yB + 18, "", 13, anchor="end") if k == 0 else None
+    starts = [0.0] + gl[:3]
+    for k in range(4):
+        s.box(f"g{k}", X(starts[k]), yG, sc * (gl[k] - starts[k]), 36, label=f"c{k + 1}", size=s.v(13, 12), hidden=True)
+    for k, us in enumerate([0, 4.8, 9.6, 14.4, 19.2]):
+        s.line(f"tk{k}", [[X(us), s.v(260, 280)], [X(us), s.v(268, 288)]], tone="muted")
+        s.text(f"tt{k}", X(us), s.v(282, 302), f"{us:g}", s.v(13, 12), anchor="middle", mono=True, tone="muted")
+    s.line("axis", [[X(0), s.v(260, 280)], [X(19.2), s.v(260, 280)]], tone="muted")
+    s.text("res", s.v(W / 2, NW / 2), s.v(312, 336), "", s.v(15, 13), anchor="middle", weight="bold")
+    s.step(f"One full adder: sum = XOR + XOR = 4.8 µs, carry = XOR + AND + OR = 4.8 µs. In the block model FA0 occupies 0 … 4.8.",
+           ("b0", {"hidden": False, "fill": "info"}))
+    for k in range(1, 4):
+        s.step(f"Block model: FA{k} starts only when FA{k - 1} has finished, at {4.8 * k:.1f} µs, and ends at {4.8 * (k + 1):.1f}.",
+               (f"b{k}", {"hidden": False, "fill": "info"}))
+    s.step("Block model total: 4 × 4.8 = 19.2 µs, the official key of GATE 2015.", ("res", {"text": "block model: 19.2 µs (the key)", "tone": "accent"}))
+    s.step("Gate level: c1 still needs XOR + AND + OR = 4.8 µs, because p0 = a0 ⊕ b0 must be ready first.",
+           ("g0", {"hidden": False, "fill": "success"}), ("res", {"text": ""}))
+    s.step("But p1, p2, p3 were made in parallel long ago, so each later carry costs only AND + OR = 2.4 µs: c2 at 7.2, c3 at 9.6, c4 at 12.",
+           *[(f"g{k}", {"hidden": False, "fill": "success"}) for k in (1, 2, 3)])
+    s.step(f"The last sum s3 = p3 ⊕ c3 is ready at 9.6 + 2.4 = {s3:g} µs too. Gate level: 12 µs; block model: 19.2 µs.",
+           ("res", {"text": "gate level 12 µs vs block model 19.2 µs", "tone": "accent"}))
+    return s.done("The 2015 ripple adder timed under the block model and at gate level", (W, 330), (NW, 350),
+                  "Two timelines in microseconds for a 4-bit ripple adder with XOR = 2.4 µs and AND = OR = 1.2 µs: the top one counts each full adder as a 4.8 µs block, the bottom one follows the carries gate by gate.")
+
+
+@scene
+def serial_adder(L):
+    s = S(L)
+    W, NW = 700, 360
+    A, B, n = 0b0110, 0b0111, 4
+    out, cfin = al.serial_add(A, B, n)
+    assert sum(b << i for i, b in enumerate(out)) == (A + B) % 16 and cfin == (A + B) >> 4 == 0
+    s.head("A bit-serial adder: one full adder, one carry flip-flop", "Serial adder: 0110 + 0111", W, NW)
+    if s.wd:
+        rA, rB, fa, ff, rS = (40, 60, 200, 40), (40, 130, 200, 40), (330, 82, 100, 70), (310, 210, 140, 40), (490, 98, 190, 40)
+        s.box("A", *rA, label="A = 0110", size=15, mono=True)
+        s.box("B", *rB, label="B = 0111", size=15, mono=True)
+        s.box("fa", *fa, label="FA", size=15)
+        s.box("ff", *ff, label="carry FF = 0", size=14, mono=True)
+        s.box("S", *rS, label="S = ????", size=15, mono=True)
+        s.line("wa", [[240, 80], [290, 80], [290, 100], [330, 100]])
+        s.line("wb", [[240, 150], [290, 150], [290, 134], [330, 134]])
+        s.line("wc", [[380, 152], [380, 210]])
+        s.line("wl", [[310, 230], [298, 230], [298, 117], [330, 117]])
+        s.line("ws", [[430, 117], [490, 117]])
+        s.text("bits", 40, 196, "", 14, anchor="start", mono=True)
+        s.text("clk", 40, 290, "clock 0", 15, anchor="start", weight="bold")
+    else:
+        s.box("A", 20, 56, 320, 36, label="A = 0110", size=13, mono=True)
+        s.box("B", 20, 100, 320, 36, label="B = 0111", size=13, mono=True)
+        s.box("fa", 130, 160, 100, 60, label="FA", size=13)
+        s.box("ff", 130, 250, 100, 36, label="carry FF = 0", size=12, mono=True)
+        s.box("S", 20, 320, 320, 36, label="S = ????", size=13, mono=True)
+        s.line("wa", [[340, 74], [350, 74], [350, 180], [230, 180]])
+        s.line("wb", [[20, 118], [10, 118], [10, 190], [130, 190]])
+        s.line("wc", [[180, 220], [180, 250]])
+        s.line("wl", [[230, 268], [260, 268], [260, 205], [230, 205]])
+        s.line("ws", [[130, 210], [60, 210], [60, 320]])
+        s.text("bits", 20, 376, "", 12, anchor="start", mono=True)
+        s.text("clk", 20, 396, "clock 0", 13, anchor="start", weight="bold")
+    s.step("Before the first clock the carry flip-flop is cleared to 0. A and B will be shifted out LSB first, one bit per clock.",
+           ("ff", {"tone": "accent"}))
+    c = 0
+    sum_bits = ["?"] * n
+    for i in range(n):
+        a, b = A >> i & 1, B >> i & 1
+        sbit, cn = a ^ b ^ c, (a & b) | (a & c) | (b & c)
+        assert sbit == out[i]
+        sum_bits[n - 1 - i] = str(sbit)
+        rest_a = format(A >> (i + 1), "b").rjust(n - i - 1, "0") if i < n - 1 else ""
+        rest_b = format(B >> (i + 1), "b").rjust(n - i - 1, "0") if i < n - 1 else ""
+        s.step(f"Clock {i + 1}: the FA adds bit {i}: {a} + {b} + carry {c} = {cn}{sbit}. The edge stores s{i} = {sbit} and carry {cn}.",
+               ("A", {"label": f"A: {rest_a or '—'} | {a}"}), ("B", {"label": f"B: {rest_b or '—'} | {b}"}),
+               ("fa", {"tone": "accent"}), ("ff", {"label": f"carry FF = {cn}", "tone": tv(cn)}), ("wl", {"tone": tv(c)}),
+               ("ws", {"tone": tv(sbit)}), ("S", {"label": "S = " + "".join(sum_bits)}),
+               ("clk", {"text": f"clock {i + 1} of {n}"}), ("bits", {"text": f"bit {i}: {a} + {b} + {c}"}))
+        c = cn
+    s.step(f"After {n} clocks S = {''.join(sum_bits)} = {A + B} = {A} + {B}, and the flip-flop holds the carry out {c}. Time: n clocks; hardware: one FA.",
+           ("fa", {"tone": "ink"}), ("S", {"tone": "success"}), ("bits", {"text": ""}))
+    return s.done("A serial adder adding 0110 and 0111 one bit per clock", (W, 310), (NW, 410),
+                  "Shift registers A and B feed one full adder, least significant bit first. The carry flip-flop feeds the carry back for the next bit; the sum bits shift into S.")
+
+
+@scene
+def adder_converter(L):
+    s = S(L)
+    W, NW = 700, 360
+    net = al.adder_converter_1996()
+    s.head("GATE 1996's converter: add 0100 when b3 b2 = 11", "1996 converter: +4 when b ≥ 12", W, NW)
+    if s.wd:
+        s.text("in", 350, 60, "b = ????", 15, anchor="middle", mono=True, weight="bold")
+        s.line("wi", [[350, 72], [350, 120]])
+        s.box("add", 240, 120, 220, 60, label="4-bit adder", size=15)
+        gp, go = s.gate("and", 80, 140, 52, 42, "and")
+        s.text("l3", gp[0][0] - 8, gp[0][1], "b3", 14, anchor="end", mono=True)
+        s.text("l2", gp[1][0] - 8, gp[1][1], "b2", 14, anchor="end", mono=True)
+        s.line("w3", [[gp[0][0] - 4, gp[0][1]], gp[0]])
+        s.line("w2", [[gp[1][0] - 4, gp[1][1]], gp[1]])
+        s.line("wo", [go, [240, go[1]]])
+        s.text("op", 186, go[1] - 16, "0 ? 0 0", 14, anchor="middle", mono=True)
+        s.line("wd", [[350, 180], [350, 210]])
+        s.text("out", 350, 226, "d4 d3d2d1d0 = ?", 15, anchor="middle", mono=True, weight="bold")
+        s.text("read", 350, 256, "", 14, anchor="middle")
+    else:
+        s.text("in", 180, 56, "b = ????", 13, anchor="middle", mono=True, weight="bold")
+        s.line("wi", [[230, 68], [230, 150]])
+        s.box("add", 120, 150, 200, 56, label="4-bit adder", size=13)
+        gp, go = s.gate("and", 40, 80, 44, 36, "and")
+        s.text("l3", gp[0][0] - 6, gp[0][1], "b3", 12, anchor="end", mono=True)
+        s.text("l2", gp[1][0] - 6, gp[1][1], "b2", 12, anchor="end", mono=True)
+        s.line("w3", [[gp[0][0] - 3, gp[0][1]], gp[0]])
+        s.line("w2", [[gp[1][0] - 3, gp[1][1]], gp[1]])
+        s.line("wo", [go, [100, go[1]], [100, 178], [120, 178]])
+        s.text("op", 150, 130, "0 ? 0 0", 12, anchor="middle", mono=True)
+        s.line("wd", [[220, 206], [220, 232]])
+        s.text("out", 180, 248, "d4 d3d2d1d0 = ?", 12, anchor="middle", mono=True, weight="bold")
+        s.text("read", 180, 272, "", 12, anchor="middle")
+    s.step("The second operand is 0, b3·b2, 0, 0: it is 0100 (4) exactly when b3 = b2 = 1, i.e. b ≥ 12, and 0000 otherwise.",
+           ("and", {"tone": "accent"}))
+    for b in (11, 12, 15):
+        v = cl.evaluate(net, {f"b{i}": b >> i & 1 for i in range(4)})
+        d4, u = v["d4"], al.word(v, "d", 4)
+        g = (b >> 3) & (b >> 2) & 1
+        assert 12 * d4 + u == b
+        s.step(f"b = {b:04b} ({b}): b3·b2 = {g}, so the adder adds {4 * g}. Output {d4} {u:04b}: {d4} twelve and {u} units = {b}.",
+               ("in", {"text": f"b = {b:04b}"}), ("l3", {"text": f"b3={b >> 3 & 1}", "tone": tv(b >> 3 & 1)}), ("l2", {"text": f"b2={b >> 2 & 1}", "tone": tv(b >> 2 & 1)}),
+               ("w3", {"tone": tv(b >> 3 & 1)}), ("w2", {"tone": tv(b >> 2 & 1)}), ("wo", {"tone": tv(g)}),
+               ("op", {"text": f"0 {g} 0 0", "tone": tv(g)}), ("out", {"text": f"d4 d3d2d1d0 = {d4} {u:04b}", "tone": "success"}),
+               ("read", {"text": f"base 12: digits {d4}, {u}", "tone": "accent"}))
+    s.step("Units stay 0 … 11 and d4 counts twelves: binary to radix 12. A BCD converter would instead add 0110 from b = 10 up.",
+           ("read", {"text": "binary → radix 12", "tone": "accent"}))
+    return s.done("The 1996 adder-based converter for three inputs", (W, 280), (NW, 290),
+                  "A 4-bit adder adds b and the operand 0, b3·b2, 0, 0 with carry in 0; d4 is the carry out. The AND gate is the detector for b ≥ 12.")
+
+
+@scene
+def alu_slice(L):
+    s = S(L)
+    W, NW = 700, 360
+    A, B, n = 0b0110, 0b0011, 4
+    s.head("A 4-bit ALU: four results, one 4:1 MUX, the flags", "4-bit ALU: A = 0110, B = 0011", W, NW)
+    names = ["AND", "OR", "XOR", "ADD/SUB"]
+    if s.wd:
+        ys = [60, 110, 160, 210]
+        for k, nm in enumerate(names):
+            s.box(f"u{k}", 60, ys[k], 150, 40, label=nm, size=14)
+            s.line(f"w{k}", [[210, ys[k] + 20], [300, ys[k] + 20]])
+        s.box("mux", 300, 60, 120, 190, label="4:1 MUX", size=14)
+        s.text("sel", 360, 268, "F1F0 = ??", 14, anchor="middle", mono=True)
+        s.line("wy", [[420, 155], [470, 155]])
+        s.box("res", 470, 132, 200, 46, label="Y = ????", size=15, mono=True)
+        s.text("fl", 570, 210, "", 14, anchor="middle", mono=True, weight="bold")
+        s.text("ab", 135, 290, "A = 0110 (6), B = 0011 (3)", 14, anchor="middle", mono=True)
+    else:
+        xs = [10, 96, 182, 268]
+        for k, nm in enumerate(names):
+            s.box(f"u{k}", xs[k], 60, 82, 40, label=nm if k < 3 else "ADD/SUB", size=12)
+            s.line(f"w{k}", [[xs[k] + 41, 100], [xs[k] + 41, 150]])
+        s.box("mux", 10, 150, 340, 50, label="4:1 MUX", size=13)
+        s.text("sel", 180, 216, "F1F0 = ??", 12, anchor="middle", mono=True)
+        s.line("wy", [[180, 228], [180, 250]])
+        s.box("res", 80, 250, 200, 40, label="Y = ????", size=13, mono=True)
+        s.text("fl", 180, 310, "", 12, anchor="middle", mono=True, weight="bold")
+        s.text("ab", 180, 334, "A = 0110, B = 0011", 12, anchor="middle", mono=True)
+    s.step("All four units work on A and B at once; the function bits F1F0 only choose which result the MUX passes to Y.")
+    rows = [("00", "AND", A & B, None), ("01", "OR", A | B, None), ("10", "XOR", A ^ B, None)]
+    for K in (0, 1):
+        v = cl.evaluate(al.adder_subtractor(n), {**al.env_of(n, A, B), "K": K})
+        rows.append(("11", "ADD" if K == 0 else "SUB", al.word(v, "s", n), v))
+    assert [r[2] for r in rows] == [0b0010, 0b0111, 0b0101, 0b1001, 0b0011]
+    for k, (f, nm, y, v) in enumerate(rows):
+        unit = min(k, 3)
+        N, Z = y >> 3 & 1, int(y == 0)
+        fl = f"N={N} Z={Z}" + (f" C={v['C']} V={v['V']}" if v else " (C, V unused)")
+        extra = ""
+        if v and nm == "ADD":
+            extra = " V = 1: 6 + 3 = 9 overflows 4-bit two's complement."
+        elif v:
+            extra = " K = 1 turns the adder into A − B: 3, C = 1 (no borrow)."
+        s.step(f"F1F0 = {f}" + (f", K = {1 if nm == 'SUB' else 0}" if v else "") + f": Y = {nm}(A, B) = {y:04b}." + extra,
+               *[(f"u{j}", {"tone": "accent" if j == unit else "ink", "fill": "success" if j == unit else "none"}) for j in range(4)],
+               *[(f"w{j}", {"tone": "accent" if j == unit else "muted"}) for j in range(4)],
+               ("sel", {"text": f"F1F0 = {f}" + (f", K = {1 if nm == 'SUB' else 0}" if v else "")}), ("res", {"label": f"Y = {y:04b}"}),
+               ("fl", {"text": fl, "tone": "danger" if v and v["V"] else "ink"}))
+    return s.done("A 4-bit ALU choosing among AND, OR, XOR and the adder–subtractor", (W, 310), (NW, 350),
+                  "Four units compute AND, OR, XOR and ADD/SUB of A = 0110 and B = 0011 in parallel; a 4:1 MUX driven by F1F0 picks one result, and the flags are read from it.")
+
+
+@scene
+def seq_multiplier(L):
+    s = S(L)
+    W, NW = 700, 360
+    M, Qv, n = 0b1111, 0b1101, 4
+    s.head("Sequential shift-and-add multiplier: 1111 × 1101", "Shift-and-add: 15 × 13", W, NW)
+    if s.wd:
+        s.box("M", 60, 60, 200, 42, label="M = 1111", size=15, mono=True)
+        s.box("add", 60, 136, 200, 42, label="4-bit adder", size=14)
+        s.box("C", 20, 214, 34, 42, label="0", size=15, mono=True)
+        s.box("A", 60, 214, 200, 42, label="A = 0000", size=15, mono=True)
+        s.box("Q", 280, 214, 200, 42, label="Q = 1101", size=15, mono=True)
+        s.text("cl", 37, 272, "C", 13, anchor="middle", tone="muted")
+        s.line("wm", [[120, 102], [120, 136]])
+        s.line("wa", [[200, 214], [200, 178]])
+        s.line("wr", [[120, 178], [120, 214]])
+        s.box("ctl", 520, 136, 150, 42, label="Q0 → add?", size=14)
+        s.line("wq", [[460, 214], [460, 196], [595, 196], [595, 178]])
+        s.line("wk", [[520, 157], [260, 157]])
+        s.text("cyc", 60, 300, "cycle 0", 15, anchor="start", weight="bold")
+        s.text("note", 60, 326, "", 14, anchor="start")
+    else:
+        s.box("M", 40, 56, 200, 38, label="M = 1111", size=13, mono=True)
+        s.box("add", 40, 124, 200, 38, label="4-bit adder", size=12)
+        s.box("C", 6, 196, 30, 38, label="0", size=13, mono=True)
+        s.box("A", 40, 196, 150, 38, label="A = 0000", size=13, mono=True)
+        s.box("Q", 200, 196, 150, 38, label="Q = 1101", size=13, mono=True)
+        s.text("cl", 21, 248, "C", 12, anchor="middle", tone="muted")
+        s.line("wm", [[90, 94], [90, 124]])
+        s.line("wa", [[170, 196], [170, 162]])
+        s.line("wr", [[90, 162], [90, 196]])
+        s.box("ctl", 260, 120, 90, 46, label="Q0 → add?", size=12)
+        s.line("wq", [[330, 196], [330, 180], [305, 180], [305, 166]])
+        s.line("wk", [[260, 143], [240, 143]])
+        s.text("cyc", 10, 276, "cycle 0", 13, anchor="start", weight="bold")
+        s.text("note", 10, 298, "", 12, anchor="start")
+    s.step("Start: A = 0, C = 0, Q = multiplier 1101 (13), M = multiplicand 1111 (15). Each cycle looks at Q0.")
+    C, A, Q = 0, 0, Qv
+    for k in range(1, n + 1):
+        q0 = Q & 1
+        if q0:
+            tsum = A + M
+            C, A = tsum >> 4, tsum & 15
+        s.step(f"Cycle {k}: Q0 = {q0}, so " + (f"C A ← A + M = {C} {A:04b}." if q0 else "no addition.") + (" The carry flip-flop catches the 5th bit." if q0 and C else ""),
+               ("ctl", {"tone": "accent"}), ("add", {"fill": "success" if q0 else "none"}), ("wk", {"tone": "accent" if q0 else "muted"}),
+               ("C", {"label": str(C), "tone": tv(C)}), ("A", {"label": f"A = {A:04b}"}), ("cyc", {"text": f"cycle {k}: " + ("add" if q0 else "skip")}), ("note", {"text": ""}))
+        comb = ((C << 2 * n) | (A << n) | Q) >> 1
+        C, A, Q = 0, (comb >> n) & 15, comb & 15
+        s.step(f"Cycle {k}: shift C A Q right one bit: A = {A:04b}, Q = {Q:04b} (C shifts into A's top, C becomes 0).",
+               ("add", {"fill": "none"}), ("ctl", {"tone": "ink"}), ("C", {"label": "0", "tone": "muted"}),
+               ("A", {"label": f"A = {A:04b}"}), ("Q", {"label": f"Q = {Q:04b}"}), ("note", {"text": "shift right"}))
+    assert (A << n | Q) == M * Qv == 195 == al.sequential_multiply(M, Qv, n)[1]
+    s.step(f"After 4 cycles A Q = {A:04b} {Q:04b} = {M * Qv} = 15 × 13. One adder, n cycles; the carry bit C was needed in cycles 3 and 4.",
+           ("cyc", {"text": f"product {A:04b} {Q:04b} = 195", "tone": "success"}), ("note", {"text": ""}))
+    return s.done("A sequential shift-and-add multiplier stepping through 15 × 13", (W, 340), (NW, 310),
+                  "Registers M (multiplicand), C (carry), A (accumulator) and Q (multiplier). When Q0 = 1 the adder adds M to A; then C, A and Q shift right together.")
+
+
+@scene
+def ripple_vs_csa(L):
+    s = S(L)
+    W, NW = 700, 360
+    n = 4
+    d_rr = max(al.arrival(al.array_multiplier(n), [f"a{j}" for j in range(n)] + [f"b{j}" for j in range(n)])[f"P{k}"] for k in range(2 * n))
+    d_cs = max(al.arrival(al.array_multiplier_csa(n), [f"a{j}" for j in range(n)] + [f"b{j}" for j in range(n)])[f"P{k}"] for k in range(2 * n))
+    assert (d_rr, d_cs) == (18, 13)
+    s.head("Ripple-row vs carry-save array: where the carries go", "Ripple rows vs carry-save", W, NW)
+    cw, ch, g = s.v(46, 40), s.v(34, 30), s.v(12, 8)
+    panels = [("r", s.v(10, 40), s.v(80, 72)), ("c", s.v(352, 40), s.v(80, 280))]
+    s.text("tr", panels[0][1], panels[0][2] - 18, "ripple rows: carry ← along the row", s.v(14, 12), anchor="start", weight="bold")
+    s.text("tc", panels[1][1], panels[1][2] - 18, "carry-save: carry ↙ to the next row", s.v(14, 12), anchor="start", weight="bold")
+    for p, x0, y0 in panels:
+        for i in range(3):
+            for j in range(4):
+                x = x0 + (3 - j) * (cw + g) + (2 - i) * 0 + (2 - i) * 0
+                x = x0 + (cw + g) * (5 - (i + j))
+                y = y0 + i * (ch + 22)
+                s.box(f"{p}{i}{j}", x, y, cw, ch, label="FA", size=s.v(13, 12), mono=True)
+        for i in range(3):
+            for j in range(3):
+                x = x0 + (cw + g) * (5 - (i + j))
+                y = y0 + i * (ch + 22)
+                if p == "r":
+                    s.line(f"{p}h{i}{j}", [[x, y + ch / 2], [x - g, y + ch / 2]], hidden=True, tone="accent")
+                elif i < 2:
+                    s.line(f"{p}d{i}{j}", [[x + cw / 2, y + ch], [x + cw / 2, y + ch + 11], [x - g / 2, y + ch + 11], [x - g / 2, y + ch + 22]], hidden=True, tone="accent")
+    fx, fy = panels[1][1], panels[1][2] + 3 * (s.v(30, 30) + 22) + s.v(14, 6)
+    s.box("final", fx, fy, s.v(6 * 58 - 12, 6 * 54 - 8), s.v(30, 28), label="final ripple adder", size=s.v(13, 12), hidden=True)
+    s.text("dr", panels[0][1], s.v(304, 250), "", s.v(14, 12), anchor="start", mono=True)
+    s.text("dc", panels[1][1], s.v(304, 492), "", s.v(14, 12), anchor="start", mono=True)
+    s.step("Ripple-row array: inside each row the carries run left, cell after cell, before the row's top bits are final.",
+           *[(f"rh{i}{j}", {"hidden": False}) for i in range(3) for j in range(3)])
+    s.step("Carry-save array: each cell's carry goes down to the next row instead (one weight up), so a row costs one cell delay.",
+           *[(f"cd{i}{j}", {"hidden": False}) for i in range(2) for j in range(3)])
+    s.step("The carries left over at the bottom are merged once by an ordinary fast or ripple adder.", ("final", {"hidden": False, "tone": "accent"}))
+    s.step(f"Measured for 4 × 4 (unit gates): ripple rows {d_rr}, carry-save {d_cs}. Both grow linearly with n: the rows are still in series.",
+           ("dr", {"text": f"4 × 4: {d_rr} gate delays", "tone": "accent"}), ("dc", {"text": f"4 × 4: {d_cs} gate delays", "tone": "success"}))
+    return s.done("Carry directions in a ripple-row and a carry-save array multiplier", (W, 322), (NW, 510),
+                  "Two 4 × 4 arrays of full-adder cells (3 rows of 4). On the left the carries move along each row; on the right they move down to the next row, and a final adder merges them.")
+
+
 ORDER = ["half-adder-design", "full-adder-from-has", "ripple-carry-wave", "pipeline-adder",
-         "rca-vs-cla-timing", "cla-gp-tree", "carry-select", "addsub-overflow", "bcd-adder-hw", "array-multiplier-grid", "booth-datapath"]
+         "rca-vs-cla-timing", "cla-gp-tree", "carry-select", "addsub-overflow", "bcd-adder-hw", "array-multiplier-grid", "booth-datapath",
+         "delay-models", "serial-adder", "adder-converter", "alu-slice", "seq-multiplier", "ripple-vs-csa"]
 
 
 def build_all():

@@ -1051,7 +1051,7 @@
    ]
   },
   {
-   "caption": "The path crosses each row and moves one row down per step: O(n) cells, so the delay is Θ(n) although there are n² cells.",
+   "caption": "The path only moves left (a carry) or down (a sum), never back: 8 cells here, O(n) in general, so Θ(n) delay with n² cells.",
    "patches": [
     {
      "id": "res",
