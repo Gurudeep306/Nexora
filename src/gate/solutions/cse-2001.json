@@ -1632,33 +1632,40 @@
       "verification": "Same structure as the state-entry problem in standard texts."
     },
     "cse-2001-a-33": {
-      "approach": "Y = Q1 latches $X\\cdot\\overline{Q_0}$, so Y is a one-clock pulse after X is first sampled high. Since X rises exactly at an edge, the 20 ns setup time means that edge sees X = 0.",
+      "approach": "Concept tested: **what an edge samples**. With hold time 0, an input that changes exactly at an edge is read as its **old** value (it was stable through the setup window before the edge). Read every flip-flop input just before each rising edge and update both flip-flops together.",
       "concepts": [
         "D flip-flop",
-        "Setup time",
+        "Setup and hold",
+        "Timing diagram",
         "Edge detector"
       ],
-      "given": "| Signal | Meaning |\n|---|---|\n| $D_0 = X$ | $Q_0$ is X delayed by one clock |\n| $D_1 = X\\cdot\\overline{Q_0}$ | $Y = Q_1$ |\n| Setup | 20 ns, hold 0 |",
+      "given": "Positive-edge D flip-flops, $t_{su} = 20$ ns, $t_h = 0$, $Q_0 = Q_1 = 0$ initially. $D_0 = X$, $D_1 = X\\,\\overline{Q_0}$, $Y = Q_1$. X rises exactly at rising edge 1 and falls just before edge 6; the clock period is at least 40 ns.",
       "steps": [
         {
-          "title": "Edge 1 (X rises here)",
-          "body": "X changes at the edge itself, so it was not stable 20 ns before → both flip-flops sample $X = 0$. $Q_0 = 0$, $Y = 0$."
+          "title": "Edge 1: X changes at the edge",
+          "body": "The setup window is the 20 ns before the edge, during which X was 0; with $t_h = 0$ nothing after the edge counts. Both flip-flops read X = 0: $Q_0 = 0$, $D_1 = 0$, so $Y = 0$."
         },
         {
-          "title": "Edge 2",
-          "body": "Before this edge $X = 1$, $\\overline{Q_0} = 1$ → $D_1 = 1$. So $Y \\to 1$ and $Q_0 \\to 1$."
+          "title": "Edge 2: Y rises",
+          "body": "Now X = 1 and $\\overline{Q_0} = 1$ (the old $Q_0$), so $D_1 = 1$ and Y becomes 1. At the same edge $Q_0$ becomes 1.",
+          "scene": {
+            "reveal": 2
+          }
         },
         {
-          "title": "Edge 3 onwards",
-          "body": "Now $\\overline{Q_0} = 0$ → $D_1 = 0$ → $Y \\to 0$, and stays 0 while X stays high (and after X falls, $D_1 = X\\overline{Q_0} = 0$ anyway)."
+          "title": "Edge 3 onwards: Y falls and stays low",
+          "body": "$\\overline{Q_0} = 0$ makes $D_1 = 0$: Y falls at edge 3 and stays 0 at edges 4, 5 and 6 (at edge 6 X has dropped, which affects only $Q_0$; $D_1$ is 0 either way).",
+          "scene": {
+            "reveal": 3
+          }
         },
         {
-          "title": "Plot",
-          "body": "Y is high only between the 2nd and 3rd marked edges — the waveform in option (a)."
+          "title": "Match the plots",
+          "body": "Y is high for exactly one clock period, from edge 2 to edge 3: option A. The circuit is a rising-edge detector for X."
         }
       ],
       "answer": {
-        "value": "Y is high for one clock period, from the 2nd to the 3rd marked edge — option (A)",
+        "value": "(A) Y high from the 2nd to the 3rd marked edge",
         "choice": [
           "A"
         ],
@@ -1668,29 +1675,74 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Pulse from edge 2 to edge 3, as derived."
+          "reason": "Y = 1 only between edges 2 and 3."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Starts at edge 1 — ignores the setup-time violation, and also lasts two periods instead of one."
+          "reason": "Starting Y at edge 1 reads X as 1 at the edge where it changes; with $t_h = 0$ the old 0 is sampled."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Starts at edge 1 — ignores the 20 ns setup time."
+          "reason": "High from edge 1 to 2: the same mistake at edge 1, and it also drops Y at edge 2 where $D_1 = 1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Y cannot stay high while $Q_0 = 1$."
+          "reason": "High from edge 3 to 6 ignores $\\overline{Q_0}$: once $Q_0 = 1$, $D_1 = 0$."
         }
       ],
+      "shortcut": "$D_1 = X\\,\\overline{Q_0}$ with $Q_0$ = X delayed one clock is \"X now and not X a clock ago\": a one-period pulse at the first edge that sees X = 1.",
       "pitfalls": [
-        "Treating X as sampled high at the edge where it rises.",
-        "Forgetting that $\\overline{Q_0}$ kills the AND one clock later."
+        "Treating an input that changes exactly at the edge as already new at that edge.",
+        "Letting flip-flop 1 see flip-flop 0's new output at the same edge."
       ],
-      "verification": "Circuit is a rising-edge detector: output pulse width is exactly one clock."
+      "verification": "A tick-by-tick simulation (10 ns ticks, 40 ns clock, setup 2 ticks, hold 0) gives Y = 1 only between edges 2 and 3 and flags no violation at edges 1 to 5.",
+      "animation": {
+        "kind": "table",
+        "title": "Sampled just before each rising edge",
+        "cols": [
+          "X",
+          "Q̄₀",
+          "D₁",
+          "Y after"
+        ],
+        "rows": [
+          [
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "edge 1",
+          "edge 2",
+          "edge 3",
+          "edge 4"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2001-a-34": {
       "approach": "Match each addressing mode to its classic use.",

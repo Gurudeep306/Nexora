@@ -461,5 +461,453 @@
    "d-latch"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A positive-edge JK flip-flop has $Q = 1$. Just before the first rising edge $J = K = 1$; just before the second rising edge $J = 1$, $K = 0$. What is $Q$ after the first edge and after the second edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, then 1"
+   },
+   {
+    "l": "B",
+    "t": "0, then 0"
+   },
+   {
+    "l": "C",
+    "t": "1, then 1"
+   },
+   {
+    "l": "D",
+    "t": "1, then 0"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Use $Q^+ = J\\overline{Q} + \\overline{K}Q$ edge by edge, always with the present state.",
+   "Edge 1: $J = K = 1$ toggles: $Q^+ = 1 \\cdot 0 + 0 \\cdot 1 = 0$.",
+   "Edge 2: $J = 1, K = 0$ sets: $Q^+ = 1 \\cdot 1 + 1 \\cdot 0 = 1$. So $Q$ = 0, then 1."
+  ],
+  "concept": "JK: 00 hold, 01 reset, 10 set, 11 toggle; Q⁺ = JQ̄ + K̄Q.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Treating J = K = 1 as 'no change' (or as forbidden, as for SR): for a JK it toggles."
+   },
+   {
+    "answer": "B",
+    "why": "J = 1, K = 0 is a set, not a hold or a reset, so Q returns to 1 at the second edge."
+   }
+  ],
+  "blocks": [
+   "char-equations",
+   "ff-types"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q02",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following excitation-table entries are correct? (x means don't care.)",
+  "options": [
+   {
+    "l": "A",
+    "t": "JK flip-flop, transition $0 \\to 1$: $J = 1$, $K = x$"
+   },
+   {
+    "l": "B",
+    "t": "SR flip-flop, transition $1 \\to 1$: $S = x$, $R = 0$"
+   },
+   {
+    "l": "C",
+    "t": "T flip-flop, transition $1 \\to 0$: $T = 0$"
+   },
+   {
+    "l": "D",
+    "t": "JK flip-flop, transition $1 \\to 1$: $J = 1$, $K = 0$ (and no other input pair works)"
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "JK $0 \\to 1$: set (10) and toggle (11) both work, so $J = 1$, $K = x$. A is correct.",
+   "SR $1 \\to 1$: hold (00) and set (10) both work, so $S = x$, $R = 0$. B is correct.",
+   "T $1 \\to 0$: the bit must change, so $T = 1$, not 0. C is wrong.",
+   "JK $1 \\to 1$: hold (00) works as well as set (10), so the entry is $J = x$, $K = 0$; the claim that only 10 works is wrong. D is wrong."
+  ],
+  "concept": "Excitation = the characteristic table read backwards; an input is x when both of its values give the transition.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "J = 1, K = 0 does give 1 → 1, but so does J = K = 0, so J is a don't-care."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "A T flip-flop must toggle (T = 1) to go from 1 to 0."
+   }
+  ],
+  "blocks": [
+   "excitation",
+   "excitation-table",
+   "trick-excitation"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A JK flip-flop is to be built from a T flip-flop and combinational logic whose inputs are $J$, $K$ and the flip-flop's output $Q$. Which expression must drive $T$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$J\\overline{Q} + \\overline{K}Q$"
+   },
+   {
+    "l": "B",
+    "t": "$J \\oplus K$"
+   },
+   {
+    "l": "C",
+    "t": "$J + K$"
+   },
+   {
+    "l": "D",
+    "t": "$J\\overline{Q} + KQ$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "The T flip-flop must toggle exactly when the JK's next state differs from $Q$: $T = Q \\oplus Q^+$.",
+   "With $Q = 0$ a JK goes to 1 iff $J = 1$; with $Q = 1$ it goes to 0 iff $K = 1$.",
+   "So $T = J\\overline{Q} + KQ$. Check: $J = K = 1$ gives $T = 1$ (toggle); $J = K = 0$ gives $T = 0$ (hold)."
+  ],
+  "concept": "Conversion: target's characteristic table → Q⁺; available flip-flop's excitation (T = Q ⊕ Q⁺) → its input.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the JK characteristic equation, the right input for a D flip-flop; in front of a T it toggles on J = K = 0 with Q = 1."
+   },
+   {
+    "answer": "B",
+    "why": "With J = K = 1 it gives T = 0, so the flip-flop holds instead of toggling."
+   },
+   {
+    "answer": "C",
+    "why": "With J = 1, K = 0 and Q = 1 it toggles to 0, but a set must keep Q = 1."
+   }
+  ],
+  "blocks": [
+   "jk-from-t",
+   "conversion"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "In a synchronous circuit the slowest register-to-register path has a clock-to-Q delay of 6 ns, combinational logic of 15 ns, and a setup time of 4 ns at the capturing flip-flop. There is no clock skew. What is the maximum clock frequency in MHz?",
+  "answer": 40,
+  "solution": [
+   "The data launched at one edge must reach the next flip-flop $t_{su}$ before the next edge: $T \\ge t_{cq} + t_{logic,max} + t_{su}$.",
+   "$T_{min} = 6 + 15 + 4 = 25$ ns.",
+   "$f_{max} = 1 / 25\\ \\text{ns} = 40$ MHz."
+  ],
+  "concept": "T ≥ t_cq + t_logic,max + t_su.",
+  "common_wrong": [
+   {
+    "answer": 47.6,
+    "why": "Leaving out the setup time (21 ns)."
+   },
+   {
+    "answer": 52.6,
+    "why": "Leaving out the clock-to-Q delay (19 ns)."
+   }
+  ],
+  "blocks": [
+   "max-frequency",
+   "timing-params"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A level-triggered JK latch has $J = K = 1$ and a propagation delay of 10 ns. It receives one clock pulse 35 ns wide. Counting every toggle that starts while the clock is high, how many times does $Q$ toggle in response to this pulse?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1"
+   },
+   {
+    "l": "B",
+    "t": "3"
+   },
+   {
+    "l": "C",
+    "t": "2"
+   },
+   {
+    "l": "D",
+    "t": "4"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "While the clock is high the latch keeps toggling: a toggle starts at 0 ns and then every $t_{pd} = 10$ ns while the clock is still high.",
+   "Start times 0, 10, 20 and 30 ns are all before the clock falls at 35 ns; 40 ns is not.",
+   "So $\\lceil 35 / 10 \\rceil = 4$ toggles: race-around, because $t_w = 35 > t_{pd} = 10$."
+  ],
+  "concept": "A level JK with J = K = 1 toggles ⌈t_w / t_pd⌉ times per pulse; race-around iff t_w > t_pd.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Once per pulse is what a master–slave or edge-triggered JK does; a level latch keeps toggling while the clock is high."
+   },
+   {
+    "answer": "B",
+    "why": "Taking ⌊35 / 10⌋ = 3 misses the toggle that starts at 30 ns, before the clock falls."
+   }
+  ],
+  "blocks": [
+   "race-around-theorem",
+   "race-around"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Two positive-edge D flip-flops share a clock: $D_1 = x$ and $D_2 = Q_1$. Initially $Q_1 = Q_2 = 0$. Just before the first four rising edges, $x$ = 1, 1, 0, 1. What is $Q_2$ after edges 1, 2, 3 and 4?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, 1, 1, 0"
+   },
+   {
+    "l": "B",
+    "t": "1, 1, 0, 1"
+   },
+   {
+    "l": "C",
+    "t": "0, 0, 1, 1"
+   },
+   {
+    "l": "D",
+    "t": "1, 1, 1, 0"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Both flip-flops sample at the same edge, so flip-flop 2 always takes the **old** $Q_1$.",
+   "Edge 1: $Q_2 = 0$ (old $Q_1$), $Q_1 = 1$. Edge 2: $Q_2 = 1$, $Q_1 = 1$. Edge 3: $Q_2 = 1$, $Q_1 = 0$. Edge 4: $Q_2 = 0$, $Q_1 = 1$.",
+   "$Q_2$ = 0, 1, 1, 0: the input sequence delayed by one more clock (a 2-bit shift register)."
+  ],
+  "concept": "Flip-flops on the same edge all see each other's old values.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Letting flip-flop 2 see flip-flop 1's new output at the same edge, so Q2 would equal x."
+   },
+   {
+    "answer": "C",
+    "why": "Delaying x by two edges after the first, as if flip-flop 1 only loaded at edge 2."
+   }
+  ],
+  "blocks": [
+   "trap-same-edge",
+   "timing-diagram-method"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A T flip-flop starts at $Q = 0$. Just before each of 12 rising clock edges its input $T$ is 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1 (in that order). After how many of the 12 edges is $Q = 1$?",
+  "answer": 9,
+  "solution": [
+   "Use $Q^+ = T \\oplus Q$: $T = 1$ flips the bit, $T = 0$ keeps it.",
+   "Q after each edge: 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0.",
+   "$Q = 1$ after 9 of the 12 edges."
+  ],
+  "concept": "T flip-flop: Q⁺ = T ⊕ Q (not Q⁺ = T).",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Using Q⁺ = T, which counts the edges with T = 1 instead of following the toggles."
+   },
+   {
+    "answer": 2,
+    "why": "Counting only the edges at which Q changes from 0 to 1, not every edge after which it is 1."
+   }
+  ],
+  "blocks": [
+   "char-equations",
+   "trap-t-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A D flip-flop has active-low asynchronous inputs $\\overline{PRE}$ and $\\overline{CLR}$. Which statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "With $\\overline{PRE} = 0$ and $\\overline{CLR} = 1$, $Q$ becomes 1 immediately, without waiting for a clock edge."
+   },
+   {
+    "l": "B",
+    "t": "Preset forces $Q = 0$; clear forces $Q = 1$."
+   },
+   {
+    "l": "C",
+    "t": "While $\\overline{CLR} = 0$ and $\\overline{PRE} = 1$, clock edges have no effect on $Q$."
+   },
+   {
+    "l": "D",
+    "t": "$\\overline{PRE} = \\overline{CLR} = 1$ is the combination that must not be applied."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "Preset and clear are asynchronous overrides: a 0 on an active-low pin forces the output at once, regardless of the clock. A is true.",
+   "Preset forces 1 and clear forces 0, not the reverse. B is false.",
+   "While clear is held active, the output is forced to 0 and clock edges cannot change it. C is true.",
+   "$\\overline{PRE} = \\overline{CLR} = 1$ means neither is active: normal operation. The forbidden combination is both active, 00. D is false."
+  ],
+  "concept": "Asynchronous preset → 1, clear → 0, overriding the clock; active low; both active is not allowed.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Preset puts a 1 in the flip-flop; clear puts a 0."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "For active-low pins, 11 is the idle (normal) combination; 00 is the forbidden one."
+   }
+  ],
+  "blocks": [
+   "preset-clear",
+   "preset-table",
+   "erratum-c345"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A positive-edge D flip-flop has $t_{su} = 3$ ns and $t_h = 1$ ns. Its clock rises at 10, 20, 30, 40, 50, 60, 70 and 80 ns. Its D input changes at 8, 14, 21, 27.5, 39, 50.5, 62 and 78.5 ns. At how many of the eight edges is the setup or the hold requirement violated?",
+  "answer": 5,
+  "solution": [
+   "Edge $t_e$ is violated if D changes in $(t_e - 3, t_e)$ (setup) or in $[t_e, t_e + 1)$ (hold).",
+   "Setup violations: 8 ns before the 10 ns edge, 27.5 before 30, 39 before 40, 78.5 before 80. Hold violation: 50.5 after the 50 ns edge.",
+   "The changes at 14, 21 and 62 ns are clear of every window (21 ns is exactly the end of the 20 ns edge's hold window). Total: 5 edges."
+  ],
+  "concept": "The sampling window of an edge at t_e is (t_e − t_su, t_e + t_h).",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Checking only setup and missing the hold violation at 50.5 ns."
+   },
+   {
+    "answer": 6,
+    "why": "Counting the change at 21 ns: the hold window of the 20 ns edge ends at 21 ns."
+   }
+  ],
+  "blocks": [
+   "setup-hold-window",
+   "timing-params"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-02-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A master–slave JK flip-flop has its master enabled while $CLK = 1$ and its slave while $CLK = 0$. Which statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The master responds to the inputs while $CLK = 1$, and the slave copies the master when $CLK$ falls."
+   },
+   {
+    "l": "B",
+    "t": "$Q$ can change at any time while $CLK = 1$."
+   },
+   {
+    "l": "C",
+    "t": "With $J = K = 1$ it toggles exactly once per clock pulse, whatever the pulse width."
+   },
+   {
+    "l": "D",
+    "t": "If $Q = 0$, $K = 0$ and $J$ is 1 only briefly in the middle of the high phase, $Q$ is still 0 after the clock falls."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "While $CLK = 1$ the master is enabled and the slave holds $Q$; at the falling edge the slave copies the master. A is true, and B is false: $Q$ cannot change while the slave is closed.",
+   "The master's inputs are gated by the slave's unchanging $Q$, so with $J = K = 1$ it moves once (to $\\overline{Q}$) and stays; $Q$ toggles once, at the falling edge. C is true.",
+   "1s-catching: the brief $J = 1$ sets the master, nothing can reset it while $Q = 0$ holds $K$'s path closed, and the slave copies the 1 at the falling edge. D is false."
+  ],
+  "concept": "Master–slave: master open while CLK = 1, slave copies at the falling edge; a pulse-triggered JK catches 1s.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "A pulse-triggered master–slave JK catches a brief 1 on J during the high phase (1s-catching)."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "While CLK = 1 the slave is closed, so Q cannot change until the falling edge."
+   }
+  ],
+  "blocks": [
+   "master-slave",
+   "ms-theorem",
+   "ones-catching"
+  ],
+  "source": "nexora"
  }
 ]

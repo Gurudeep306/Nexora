@@ -3804,103 +3804,39 @@
       "verification": "Compiling the program with gcc -c -std=c89 produces an object file (warning only); linking fails with 'undefined reference to fro'."
     },
     "cse-2005-cs-62": {
-      "approach": "Write $D = A\\cdot X + \\overline{X}\\cdot\\overline{Q}$: when $X=1$ the flip-flop loads $A$, when $X=0$ it toggles. The output in period $i$ is $D$ sampled at the rising edge that starts period $i$, i.e. computed from period $i-1$ values.",
+      "approach": "Concept tested: **a D flip-flop delays its input by one clock**. Write the output of period $i + 1$ as the D input of period $i$: $Y_{i+1} = A_i X_i + \\overline{X_i}\\,\\overline{Y_i}$, then evaluate period by period with the given X.",
       "concepts": [
         "D flip-flop",
         "Timing diagram",
-        "Mux-like next-state logic"
+        "Next-state equation"
       ],
+      "given": "Positive-edge D flip-flop with $D = A\\,X + \\overline{X}\\,\\overline{Q}$ and $Y = Q$. X is 1 in periods 0, 1, 3, 4 and 0 in periods 2 and 5; $A_i$ is A in period $i$.",
       "steps": [
         {
-          "title": "Next-state equation",
-          "body": "$D = AX + \\overline X\\,\\overline Q$. So $X=1 \\Rightarrow Q^+ = A$ (load) and $X=0 \\Rightarrow Q^+ = \\overline Q$ (toggle)."
+          "title": "One period of delay",
+          "body": "The edge that starts period $i + 1$ loads the D input of period $i$: $Y_{i+1} = D_i = A_i X_i + \\overline{X_i}\\,\\overline{Y_i}$."
         },
         {
-          "title": "Read X per period",
-          "body": "From the timing diagram: $X=1$ in periods 0, 1, 3, 4 and $X=0$ in periods 2 and 5."
-        },
-        {
-          "title": "Periods 1 and 2",
-          "body": "$Y_1 = D$ in period 0 $= A_0$ (since $X_0=1$). $Y_2$: $X_1=1 \\Rightarrow A_1$.",
+          "title": "Periods where X = 1",
+          "body": "$D = A$: $Y_1 = A_0$, $Y_2 = A_1$, $Y_4 = A_3$, $Y_5 = A_4$.",
           "scene": {
-            "reveal": 8,
-            "caption": "X = 1 → load A of the previous period"
+            "reveal": 2
           }
         },
         {
-          "title": "Period 3",
-          "body": "$X_2=0 \\Rightarrow Y_3 = \\overline{Y_2} = A_1'$ (toggle).",
+          "title": "Period 2, where X = 0",
+          "body": "$D = \\overline{Q}$, the complement of the flip-flop's **own** output in period 2, which is $Y_2 = A_1$. So $Y_3 = \\overline{A_1}$.",
           "scene": {
-            "reveal": 12,
-            "hl": [
-              {
-                "r": 2,
-                "tone": "warning"
-              }
-            ],
-            "caption": "X = 0 → toggle"
+            "reveal": 3
           }
         },
         {
-          "title": "Periods 4 and 5",
-          "body": "$X_3=1\\Rightarrow Y_4=A_3$; $X_4=1\\Rightarrow Y_5=A_4$. Sequence: $A_0\\,A_1\\,A_1'\\,A_3\\,A_4$.",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "c": 3,
-                "tone": "success"
-              }
-            ],
-            "caption": "Y = A0 A1 A1' A3 A4"
-          }
+          "title": "Assemble",
+          "body": "$Y_1 \\dots Y_5 = A_0,\\ A_1,\\ \\overline{A_1},\\ A_3,\\ A_4$: option A."
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "Period i−1",
-          "X(i−1)",
-          "D = AX + X'Q'",
-          "Y in period i"
-        ],
-        "rows": [
-          [
-            "0",
-            "1",
-            "A0",
-            "Y1 = A0"
-          ],
-          [
-            "1",
-            "1",
-            "A1",
-            "Y2 = A1"
-          ],
-          [
-            "2",
-            "0",
-            "Q' = A1'",
-            "Y3 = A1'"
-          ],
-          [
-            "3",
-            "1",
-            "A3",
-            "Y4 = A3"
-          ],
-          [
-            "4",
-            "1",
-            "A4",
-            "Y5 = A4"
-          ]
-        ],
-        "reveal": 0,
-        "caption": "Value latched at each rising edge"
-      },
       "answer": {
-        "value": "A0 A1 A1' A3 A4",
+        "value": "(A) $A_0\\,A_1\\,A_1'\\,A_3\\,A_4$",
         "choice": [
           "A"
         ],
@@ -3910,29 +3846,75 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Load, load, toggle, load, load gives $A_0A_1A_1'A_3A_4$."
+          "reason": "Matches $Y_{i+1} = D_i$ period by period."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "In period 3 the flip-flop toggles its own state $A_1$; it never sees $A_2$ because $X_2=0$ blocks $A$."
+          "reason": "$A_2'$ complements the input A of period 2; with X = 0 the flip-flop complements its own output $Y_2 = A_1$."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Off by one period: the edge starting period $i$ samples period $i-1$ values."
+          "reason": "Shifts everything one period early ($A_1$ in period 1): it ignores the flip-flop's delay."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Off by one period and wrong toggle positions."
+          "reason": "No delay and the wrong complements; period 1 must be $A_0$."
         }
       ],
+      "shortcut": "With X = 1 the circuit is a delay line for A; with X = 0 it toggles. So copy $A$ one period late, and in the period after an X = 0 period write the complement of the previous output.",
       "pitfalls": [
-        "Using the value of A in the same period instead of the previous one — the FF samples at the edge that starts the period.",
-        "When X = 0 the output is the complement of the current Q, not of A in that period."
+        "Reading $\\overline{Q}$ as $\\overline{A}$ in the X = 0 period.",
+        "Forgetting the one-period delay of the D flip-flop."
       ],
-      "verification": "Check period 3 explicitly: $Q=A_1$, $X=0$ so $D=\\overline Q = A_1'$, latched at the edge starting period 3."
+      "verification": "Simulating the flip-flop for all 64 values of $A_0 \\dots A_5$ (and either initial Q) reproduces option A every time; each other option fails for some A.",
+      "animation": {
+        "kind": "table",
+        "title": "Y in period i + 1 = D in period i",
+        "cols": [
+          "X",
+          "D",
+          "Y next"
+        ],
+        "rows": [
+          [
+            1,
+            "A₀",
+            "A₀"
+          ],
+          [
+            1,
+            "A₁",
+            "A₁"
+          ],
+          [
+            0,
+            "Q̄ = A₁′",
+            "A₁′"
+          ],
+          [
+            1,
+            "A₃",
+            "A₃"
+          ],
+          [
+            1,
+            "A₄",
+            "A₄"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "period 0",
+          "period 1",
+          "period 2",
+          "period 3",
+          "period 4"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2005-cs-63": {
       "approach": "Trace the Mealy machine from the LSB: it copies bits up to and including the first 1, then complements every later bit — exactly the 'copy until first 1, then flip' rule for 2's complement.",
