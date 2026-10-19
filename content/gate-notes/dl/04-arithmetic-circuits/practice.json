@@ -1,0 +1,427 @@
+[
+ {
+  "id": "nx-dl-04-01-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Two 8-bit numbers **and a carry in** $c_0$ are to be added with a ripple-carry adder built from half adders (HA) and full adders (FA) only, with no other gates. Which set is needed?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1 HA and 7 FA"
+   },
+   {
+    "l": "B",
+    "t": "8 FA"
+   },
+   {
+    "l": "C",
+    "t": "8 HA and 8 FA"
+   },
+   {
+    "l": "D",
+    "t": "16 HA"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "With a carry in, column 0 adds three bits $a_0 + b_0 + c_0$, so it needs a full adder too.",
+   "Every column adds two operand bits and a carry: 8 full adders.",
+   "Half adders cannot accept a third input, so no HA appears."
+  ],
+  "concept": "Count the bits each column adds: two → HA, three → FA.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "1 HA + 7 FA is right only when there is no carry in."
+   },
+   {
+    "answer": "D",
+    "why": "Half adders alone cannot pass carries; two HAs make an FA only with an extra OR gate, which is not allowed here."
+   }
+  ],
+  "blocks": [
+   "ha-fa-count",
+   "ripple-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q02",
+  "type": "MSQ",
+  "marks": 1,
+  "text": "A full adder is built from two half adders and an OR gate: HA1 gives $p = A \\oplus B$ and $g = AB$; HA2 gives $S = p \\oplus C_{in}$ and $t = p\\,C_{in}$; $C_{out} = g + t$. For $A = 1$, $B = 0$, $C_{in} = 1$, which lines are 1?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$p$"
+   },
+   {
+    "l": "B",
+    "t": "$g$"
+   },
+   {
+    "l": "C",
+    "t": "$t$"
+   },
+   {
+    "l": "D",
+    "t": "$C_{out}$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "$p = 1 \\oplus 0 = 1$, $g = 1 \\cdot 0 = 0$.",
+   "$S = 1 \\oplus 1 = 0$, $t = 1 \\cdot 1 = 1$.",
+   "$C_{out} = 0 + 1 = 1$: $1 + 0 + 1 = 2 = 10$ in binary, and the carry was **propagated** (t), not generated (g)."
+  ],
+  "concept": "Generate (g) and propagate-and-carry (t) are the two ways a full adder makes a carry; they never coincide.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "$g = AB = 0$ here; the carry comes through $t$."
+   },
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "Forgets $t = p\\,C_{in} = 1$, the line that actually carries."
+   }
+  ],
+  "blocks": [
+   "fa-from-ha",
+   "or-not-xor"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "What is the minimum number of 2-input NOR gates needed to build a half adder (outputs $S = A \\oplus B$ and $C = AB$; only $A$ and $B$ are available, uncomplemented, and no constants)?",
+  "answer": 5,
+  "solution": [
+   "A 5-NOR circuit: $n_1 = \\overline{A + A} = \\bar A$, $n_2 = \\overline{B + B} = \\bar B$, $n_3 = \\overline{A + B} = \\bar A \\bar B$.",
+   "The carry: $C = \\overline{n_1 + n_2} = \\overline{\\bar A + \\bar B} = AB$ (De Morgan).",
+   "The sum: $S = \\overline{n_3 + C} = \\overline{\\bar A\\bar B + AB} = A \\oplus B$. Five gates; note the carry is reused inside the sum.",
+   "An exhaustive search over all networks of at most four 2-input NORs finds none that produces both $A \\oplus B$ and $AB$, so 5 is the minimum."
+  ],
+  "concept": "Share gates between the two outputs; prove minimality by ruling out smaller networks.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Four NORs make XNOR, not XOR, and leave no gate for the carry."
+   },
+   {
+    "answer": 7,
+    "why": "Converting XOR (5) and AND (3 NORs with two inverters) separately ignores sharing."
+   }
+  ],
+  "blocks": [
+   "adder-gate-counts",
+   "trap-ha-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q04",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A full subtractor computes $x - y - b$ ($b$ = borrow in). Its borrow out is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "$xy + xb + yb$"
+   },
+   {
+    "l": "B",
+    "t": "$x \\oplus y \\oplus b$"
+   },
+   {
+    "l": "C",
+    "t": "$\\bar x y + \\bar x b + y b$"
+   },
+   {
+    "l": "D",
+    "t": "$x \\bar y + x b + \\bar y b$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "We borrow when $y + b > x$, i.e. when at least two of $\\bar x$, $y$, $b$ are 1.",
+   "That majority is $\\bar x y + \\bar x b + y b$.",
+   "Check $x = 0, y = 1, b = 0$: $0 - 1 = -1$ must borrow; option C gives $1 \\cdot 1 = 1$ ✓."
+  ],
+  "concept": "The borrow is the majority of $\\bar x$, $y$ and $b$: the adder's carry with $x$ inverted.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the full adder's carry (the majority of x, y, b): it is 0 for 0 − 1 − 0, which must borrow."
+   },
+   {
+    "answer": "B",
+    "why": "That is the difference bit, not the borrow."
+   },
+   {
+    "answer": "D",
+    "why": "It complements $y$ instead of $x$: it would borrow for $1 - 0 - 0$."
+   }
+  ],
+  "blocks": [
+   "full-subtractor",
+   "fs-from-fa"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 12-bit ripple-carry adder (with carry in) uses full adders made of two half adders and an OR gate. Every gate (XOR, AND, OR) has a delay of 1 unit. After how many units is the carry out $c_{12}$ guaranteed stable?",
+  "answer": 25,
+  "solution": [
+   "$c_1$ needs $p_0$ (XOR, 1), then AND (2), then OR (3).",
+   "Every later carry adds AND + OR = 2 units: $c_i$ is stable at $2i + 1$.",
+   "$c_{12}$ at $2 \\cdot 12 + 1 = 25$."
+  ],
+  "concept": "Unit-delay ripple adder: 3 units for the first carry, 2 per stage after it.",
+  "common_wrong": [
+   {
+    "answer": 24,
+    "why": "$2n$ is the last sum bit's time (or the two-level full adder's model), not the carry out of the HA + OR adder."
+   },
+   {
+    "answer": 36,
+    "why": "Counts 3 units per stage; only stage 0 pays for the XOR on the carry path."
+   }
+  ],
+  "blocks": [
+   "ripple-delay",
+   "delay-models"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A full adder is two half adders (XOR + AND each) and an OR gate. XOR delay is 3 ns, AND and OR are 2 ns each. An 8-bit ripple-carry adder is built from 8 such full adders, and each full adder is counted as a block that contributes its **full** delay (block model). What is the adder's total delay in ns?",
+  "answer": 56,
+  "solution": [
+   "One full adder: sum path XOR + XOR = 6 ns; carry path XOR + AND + OR = 3 + 2 + 2 = 7 ns. So $t_{FA} = 7$ ns.",
+   "Block model: $8 \\times 7 = 56$ ns.",
+   "(Gate level would give $7 + 7 \\times (2 + 2) = 35$ ns for $c_8$; the question fixes the block model.)"
+  ],
+  "concept": "Block model: total = n × the slowest output of one full adder.",
+  "common_wrong": [
+   {
+    "answer": 48,
+    "why": "Uses the sum path (6 ns) as the full adder's delay; the carry path (7 ns) is slower."
+   },
+   {
+    "answer": 35,
+    "why": "That is the gate-level critical path, not the block model the question asks for."
+   }
+  ],
+  "blocks": [
+   "delay-models",
+   "trap-block-vs-gate"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "An 8-bit ripple-carry adder adds two's-complement numbers $A$ and $B$ with carry in 0. $A = 4$. Among the options, which $B$ makes the sum take the longest to stabilise?",
+  "options": [
+   {
+    "l": "A",
+    "t": "124"
+   },
+   {
+    "l": "B",
+    "t": "$-128$"
+   },
+   {
+    "l": "C",
+    "t": "$-4$"
+   },
+   {
+    "l": "D",
+    "t": "4"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "$A = 0000\\,0100$: only bit 2 can generate a carry, which needs $b_2 = 1$.",
+   "Bits 3–7 of $A$ are 0, so they propagate only where $b_k = 1$. The chain reaches the top iff $b_7 \\dots b_2 = 111111$.",
+   "$-4 = 1111\\,1100$ has exactly that; the chain crosses 6 stages. $124 = 0111\\,1100$ stops at bit 7 (5 stages); $-128 = 1000\\,0000$ and $4 = 0000\\,0100$ generate only at bit 2 and stop at bit 3."
+  ],
+  "concept": "The longest carry chain starts at a generating column and continues through propagating columns.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "124 = 0111 1100: the carry stops at bit 7 because $a_7 = b_7 = 0$."
+   },
+   {
+    "answer": "B",
+    "why": "$-128$ has $b_2 = 0$: nothing is generated at all; its sum settles almost at once."
+   }
+  ],
+  "blocks": [
+   "worst-case-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 4-bit ripple-carry adder adds unsigned $A$ and $B$ (carry in 0). For which pairs is a carry **generated in stage 0 and propagated through stages 1, 2 and 3** to the carry out?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A = 0001$, $B = 1111$"
+   },
+   {
+    "l": "B",
+    "t": "$A = 0011$, $B = 1101$"
+   },
+   {
+    "l": "C",
+    "t": "$A = 1111$, $B = 1111$"
+   },
+   {
+    "l": "D",
+    "t": "$A = 0101$, $B = 1011$"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "Need $a_0 = b_0 = 1$ (generate) and $a_k \\ne b_k$ for $k = 1, 2, 3$ (propagate).",
+   "A: bit 0 = 1,1; bits 1–3: 0/1 each ✓. B: 1,1; then (1,0), (0,1), (0,1) ✓. D: 1,1; then (0,1), (1,0), (0,1) ✓.",
+   "C: every stage has $a_k = b_k = 1$, so each stage **generates** its own carry; the carry from stage 0 is not what reaches the top, and the sum settles fast."
+  ],
+  "concept": "Propagate means $a_k \\oplus b_k = 1$; a generating column restarts the chain.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "1111 + 1111 does produce a carry out, but every column generates it locally; nothing travels the whole chain."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "Any pattern with $a_k \\ne b_k$ above a generating bit 0 works, not only $B = 1111$."
+   }
+  ],
+  "blocks": [
+   "worst-case-carry",
+   "ripple-carry"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 32-bit adder is pipelined into 8 stages of 4 bits each. Each stage's logic takes 9 ns and each pipeline register adds 1 ns. Starting from an empty pipeline, how many ns pass until 100 additions have all completed?",
+  "answer": 1070,
+  "solution": [
+   "Clock period = 9 + 1 = 10 ns.",
+   "The first result needs 8 clocks; then one result leaves every clock, so 100 results need $8 + 99 = 107$ clocks.",
+   "$107 \\times 10 = 1070$ ns."
+  ],
+  "concept": "Pipeline time for $N$ items: $(k + N - 1)$ clock periods.",
+  "common_wrong": [
+   {
+    "answer": 8000,
+    "why": "$100 \\times 8 \\times 10$ treats the additions as if they did not overlap."
+   },
+   {
+    "answer": 1000,
+    "why": "Forgets the 7 extra clocks needed to fill the pipeline."
+   }
+  ],
+  "blocks": [
+   "pipelined-adder"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-04-01-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Full adders are built from two half adders and an OR gate. Which statements about $n$-bit ripple-carry adders are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The worst-case delay grows linearly with $n$."
+   },
+   {
+    "l": "B",
+    "t": "For $n \\ge 2$ and any positive gate delays, the block model ($n \\cdot t_{FA}$) gives a larger total than the gate-level critical path."
+   },
+   {
+    "l": "C",
+    "t": "Pipelining the adder reduces the time one addition takes from input to output."
+   },
+   {
+    "l": "D",
+    "t": "Replacing the OR gate in every full adder by an XOR changes some sums."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "A: true; the carry crosses all $n$ stages in the worst case: $t_{ab\\to c} + (n-1)t_{c\\to c}$.",
+   "B: true; $t_{FA} \\ge t_{XOR} + t_{AND} + t_{OR} > t_{AND} + t_{OR} = t_{c\\to c}$ and $t_{FA} \\ge t_{c\\to s}$, so $n\\,t_{FA}$ exceeds both gate-level totals once $n \\ge 2$.",
+   "C: false; pipelining adds register delay to the latency; it raises throughput.",
+   "D: false; the two half-adder carries are never both 1, so OR and XOR agree."
+  ],
+  "concept": "Linear ripple delay; the block model over-counts; pipelining trades latency for throughput.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Pipelining does not shorten one addition; it overlaps many."
+   },
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "The OR → XOR swap is harmless (the carries are mutually exclusive), and the block model really is larger."
+   }
+  ],
+  "blocks": [
+   "delay-models",
+   "pipelined-adder",
+   "or-not-xor"
+  ],
+  "source": "nexora"
+ }
+]

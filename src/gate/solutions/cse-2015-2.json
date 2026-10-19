@@ -3727,35 +3727,107 @@
       "verification": "$2^{23}$ entries × 3 B = 24 MB, matching the given maximum page-table size."
     },
     "cse-2015-2-cs-48": {
-      "approach": "The intended model treats each full adder as a black box whose worst-case delay is 4.8 µs (two XORs for the sum, XOR+AND+OR for the carry), and the ripple-carry adder as four of them in series: $4 \\times 4.8 = 19.2$ µs.",
+      "approach": "Concept tested: **the delay of a ripple-carry adder under the block model**. The full adder's internals are given only to work out its delay (4.8 µs); the 4-bit adder is then \"four full adders\" in a chain, each counted at its full delay.",
       "concepts": [
-        "Half adder / full adder",
+        "Full adder from half adders",
         "Ripple-carry adder",
-        "Propagation delay"
+        "Propagation delay",
+        "Delay models"
       ],
+      "given": "XOR delay $= 2 \\times$ AND/OR delay $= 2.4$ µs; AND/OR $= 1.2$ µs. Half adder = XOR + AND; full adder = 2 half adders + OR. 4-bit ripple adder of four full adders.",
       "steps": [
         {
-          "title": "Gate delays",
-          "body": "AND/OR = 1.2 µs, XOR = $2 \\times 1.2 = 2.4$ µs."
-        },
-        {
           "title": "Delay of one full adder",
-          "body": "Sum $= (A \\oplus B) \\oplus C_{in}$: two XORs in series → $2.4 + 2.4 = 4.8$ µs.\nCarry $= AB + C_{in}(A\\oplus B)$: XOR → AND → OR $= 2.4 + 1.2 + 1.2 = 4.8$ µs.\nSo one full adder takes 4.8 µs."
+          "body": "Sum path: XOR (HA1) then XOR (HA2) $= 2.4 + 2.4 = 4.8$ µs. Carry path: XOR (HA1) → AND (HA2) → OR $= 2.4 + 1.2 + 1.2 = 4.8$ µs. So $t_{FA} = 4.8$ µs."
         },
         {
-          "title": "Four in series",
-          "body": "$$4 \\times 4.8 = 19.2\\ \\mu s$$ Answer: **19.2**."
+          "title": "Block model (the official key)",
+          "body": "Each full adder is treated as one box that completes in 4.8 µs, and stage $i$ starts when stage $i - 1$ is complete: $4 \\times 4.8 = 19.2$ µs."
+        },
+        {
+          "title": "What a gate-level count gives",
+          "body": "Inside the chain the carry in of a stage reaches its carry out through only AND + OR $= 2.4$ µs (the stage's XOR of $a_i, b_i$ was done in parallel). So $c_4 = 4.8 + 3 \\times 2.4 = 12$ µs, and $s_3 = c_3 + 2.4 = 9.6 + 2.4 = 12$ µs."
+        },
+        {
+          "title": "Which to answer",
+          "body": "The official answer is 19.2, the block model. The question invites it by describing the adder as \"implemented by using four full adders\" after giving the full adder's delay. Answer 19.2; know that 12 is the true critical path."
         }
       ],
       "answer": {
-        "value": "19.2",
+        "value": "19.2 µs (four full adders of 4.8 µs each)",
         "number": 19.2,
-        "matchesKey": true
+        "matchesKey": true,
+        "keyNote": "The key uses the block model (each full adder contributes its full 4.8 µs). A gate-level critical path gives 4.8 + 3 × 2.4 = 12 µs; the lesson teaches both."
       },
+      "shortcut": "$t_{FA} = \\max(2t_{XOR},\\; t_{XOR} + t_{AND} + t_{OR}) = 4.8$; block model: $n \\cdot t_{FA} = 19.2$.",
       "pitfalls": [
-        "A strict gate-level analysis lets later stages compute $A \\oplus B$ in parallel, so each later carry adds only AND+OR = 2.4 µs: $4.8 + 2.4 + 2.4 + 2.4 = 12$ µs. The widely cited key uses the simpler 4 × 4.8 model."
+        "Using the 1.2 µs gate delay for the XORs too (forgetting XOR = 2 × AND): 3.6 µs per full adder.",
+        "Mixing the models: e.g. $4 \\times 2.4 = 9.6$ (carry path only, even for stage 0).",
+        "Answering 12 here: correct gate-level timing, but not the key for this question."
       ],
-      "verification": "Black-box model: 4 stages × 4.8 µs = 19.2 µs. The gate-level critical path gives 12 µs, so the record is flagged for review."
+      "verification": "l4_01_ripple.py computes the static arrival times of the 4-bit netlist with XOR = 2, AND = OR = 1 (units of 1.2 µs): $c_4$ and $s_3$ at 10 units = 12 µs, and the full adder's slowest output at 4 units = 4.8 µs, so the block model gives 19.2.",
+      "animation": {
+        "kind": "gantt",
+        "title": "Block model: four full adders of 4.8 µs",
+        "lanes": [
+          {
+            "label": "FA0",
+            "bars": [
+              {
+                "start": 0.0,
+                "end": 4.8,
+                "label": "4.8",
+                "tone": "default"
+              }
+            ]
+          },
+          {
+            "label": "FA1",
+            "bars": [
+              {
+                "start": 4.8,
+                "end": 9.6,
+                "label": "4.8",
+                "tone": "default"
+              }
+            ]
+          },
+          {
+            "label": "FA2",
+            "bars": [
+              {
+                "start": 9.6,
+                "end": 14.4,
+                "label": "4.8",
+                "tone": "default"
+              }
+            ]
+          },
+          {
+            "label": "FA3",
+            "bars": [
+              {
+                "start": 14.4,
+                "end": 19.2,
+                "label": "4.8",
+                "tone": "accent"
+              }
+            ]
+          }
+        ],
+        "marks": [
+          {
+            "t": 12.0,
+            "label": "gate level 12",
+            "tone": "info"
+          },
+          {
+            "t": 19.2,
+            "label": "block 19.2",
+            "tone": "success"
+          }
+        ]
+      }
     },
     "cse-2015-2-cs-49": {
       "approach": "Average access time = seek + average rotational delay (half a rotation) + disk transfer time + controller time.",
