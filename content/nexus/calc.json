@@ -1,0 +1,439 @@
+{
+  "id": "calc",
+  "name": "Calculus",
+  "short": "CALC",
+  "group": "gate",
+  "order": 13,
+  "icon": "function",
+  "color": "#a855f7",
+  "description": "Limits, continuity, differentiation, maxima and minima, mean value theorems and integration for GATE.",
+  "gate": {
+    "pyqSubject": "calc",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Functions & limits"
+    },
+    {
+      "level": 2,
+      "name": "Differentiation"
+    },
+    {
+      "level": 3,
+      "name": "Applications"
+    },
+    {
+      "level": 4,
+      "name": "Integration"
+    },
+    {
+      "level": 5,
+      "name": "Beyond one variable"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "functions-graphs",
+      "zone": 1,
+      "name": "Functions & graphs",
+      "icon": "function",
+      "desc": "Real functions, composition, piecewise definitions, polynomials and roots.",
+      "kind": "lesson",
+      "requires": [
+        "dm:functions"
+      ],
+      "pyqTopics": [
+        "calc/functions",
+        "calc/limits"
+      ],
+      "pyqTags": [
+        "functions",
+        "function composition",
+        "polynomial",
+        "piecewise",
+        "roots",
+        "sigmoid",
+        "relu",
+        "interpolation",
+        "complex",
+        "coordinate"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "limits-continuity",
+      "zone": 1,
+      "name": "Limits & continuity",
+      "icon": "trending-up",
+      "desc": "Limits, one-sided limits, continuity, kinds of discontinuity and the intermediate value theorem.",
+      "kind": "lesson",
+      "requires": [
+        "functions-graphs"
+      ],
+      "pyqTopics": [
+        "calc/limits",
+        "calc/functions"
+      ],
+      "pyqTags": [
+        "continuity",
+        "limit",
+        "discontinuity",
+        "intermediate",
+        "piecewise"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "limit-techniques",
+      "zone": 1,
+      "name": "Evaluating limits",
+      "icon": "wrench",
+      "desc": "Standard limits, rationalisation, squeeze theorem and L'Hôpital's rule for indeterminate forms.",
+      "kind": "lesson",
+      "requires": [
+        "limits-continuity"
+      ],
+      "pyqTopics": [
+        "calc/limits",
+        "calc/functions"
+      ],
+      "pyqTags": [
+        "standard-limit",
+        "hopital",
+        "Hopital",
+        "indeterminate",
+        "squeeze",
+        "rationaliz"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "sequences-series",
+      "zone": 1,
+      "name": "Sequences & series",
+      "icon": "list",
+      "desc": "Convergence of sequences and recursively defined sequences, fixed points, power series and radius of convergence.",
+      "kind": "concept",
+      "requires": [
+        "limits-continuity"
+      ],
+      "pyqTopics": [
+        "calc/limits",
+        "calc/integration"
+      ],
+      "pyqTags": [
+        "series",
+        "convergence",
+        "recurrence",
+        "fixed point",
+        "stability"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "derivatives",
+      "zone": 2,
+      "name": "Derivatives",
+      "icon": "activity",
+      "desc": "Differentiability, derivative rules, the chain rule and implicit differentiation.",
+      "kind": "lesson",
+      "requires": [
+        "limits-continuity"
+      ],
+      "pyqTopics": [
+        "calc/limits",
+        "calc/functions",
+        "calc/maxmin"
+      ],
+      "pyqTags": [
+        "differentiab",
+        "derivative",
+        "differentiation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "mean-value-theorems",
+      "zone": 2,
+      "name": "Mean value theorems",
+      "icon": "compass",
+      "desc": "Rolle's theorem, Lagrange's mean value theorem and Cauchy's mean value theorem.",
+      "kind": "lesson",
+      "requires": [
+        "derivatives"
+      ],
+      "pyqTopics": [
+        "calc/mvt"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "taylor-series",
+      "zone": 2,
+      "name": "Taylor series",
+      "icon": "layers",
+      "desc": "Taylor and Maclaurin expansions, higher derivatives and using series to approximate and take limits.",
+      "kind": "lesson",
+      "requires": [
+        "derivatives",
+        "sequences-series"
+      ],
+      "pyqTopics": [
+        "calc/taylor",
+        "calc/limits",
+        "calc/functions"
+      ],
+      "pyqTags": [
+        "taylor",
+        "power-series"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "maxima-minima",
+      "zone": 3,
+      "name": "Maxima & minima",
+      "icon": "target",
+      "desc": "Critical points, first and second derivative tests, local versus global extrema on closed intervals.",
+      "kind": "lesson",
+      "requires": [
+        "derivatives"
+      ],
+      "pyqTopics": [
+        "calc/maxmin",
+        "calc/optimization"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "monotonicity-convexity",
+      "zone": 3,
+      "name": "Monotonic & convex",
+      "icon": "trending-up",
+      "desc": "Increasing and decreasing functions, concavity, inflection points and convex functions.",
+      "kind": "concept",
+      "requires": [
+        "maxima-minima"
+      ],
+      "pyqTopics": [
+        "calc/maxmin",
+        "calc/optimization"
+      ],
+      "pyqTags": [
+        "monotonic",
+        "convex",
+        "second",
+        "sine",
+        "quadratic"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "optimization",
+      "zone": 3,
+      "name": "Optimisation problems",
+      "icon": "crosshair",
+      "desc": "Turning word problems into functions and optimising them.",
+      "kind": "lesson",
+      "requires": [
+        "maxima-minima"
+      ],
+      "pyqTopics": [
+        "calc/optimization"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "integration",
+      "zone": 4,
+      "name": "Integration",
+      "icon": "function",
+      "desc": "Antiderivatives, definite integrals, substitution, integration by parts and the fundamental theorem.",
+      "kind": "lesson",
+      "requires": [
+        "derivatives"
+      ],
+      "pyqTopics": [
+        "calc/integration"
+      ],
+      "pyqTags": [
+        "definite",
+        "substitution",
+        "by-parts",
+        "linearity",
+        "trigonometric",
+        "derivative",
+        "calc"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "integral-properties",
+      "zone": 4,
+      "name": "Integral properties",
+      "icon": "shapes",
+      "desc": "Odd and even symmetry, periodic and absolute-value integrands, and comparing sums with integrals.",
+      "kind": "lesson",
+      "requires": [
+        "integration"
+      ],
+      "pyqTopics": [
+        "calc/integration"
+      ],
+      "pyqTags": [
+        "odd",
+        "symmetry",
+        "periodic",
+        "absolute",
+        "sum-vs-integral",
+        "series-sum",
+        "functional"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "improper-integrals",
+      "zone": 4,
+      "name": "Improper integrals",
+      "icon": "sparkles",
+      "desc": "Infinite limits and unbounded integrands, convergence tests and the Gaussian integral.",
+      "kind": "concept",
+      "requires": [
+        "integration"
+      ],
+      "pyqTopics": [
+        "calc/integration"
+      ],
+      "pyqTags": [
+        "improper",
+        "gaussian",
+        "convergence",
+        "continuity"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "area-volume",
+      "zone": 4,
+      "name": "Area & volume",
+      "icon": "shapes",
+      "desc": "Area between curves, volumes of revolution and arc length.",
+      "kind": "concept",
+      "requires": [
+        "integration"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "numerical-methods",
+      "zone": 4,
+      "name": "Numerical methods",
+      "icon": "calculator",
+      "desc": "Newton–Raphson root finding, and the trapezoidal and Simpson's rules for integration.",
+      "kind": "concept",
+      "requires": [
+        "integration",
+        "taylor-series"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "partial-derivatives",
+      "zone": 5,
+      "name": "Partial derivatives",
+      "icon": "activity",
+      "desc": "Functions of several variables, partial derivatives, the multivariable chain rule and the gradient.",
+      "kind": "concept",
+      "requires": [
+        "derivatives"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "multivariable-calculus",
+      "zone": 5,
+      "name": "Multivariable calculus",
+      "icon": "grid",
+      "desc": "Gradients, the Hessian, saddle points and extrema of functions of two variables.",
+      "kind": "lesson",
+      "requires": [
+        "partial-derivatives",
+        "maxima-minima",
+        "la:matrices"
+      ],
+      "pyqTopics": [
+        "calc/maxmin",
+        "calc/integration"
+      ],
+      "pyqTags": [
+        "two-variable",
+        "saddle",
+        "double",
+        "multiple",
+        "vector"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "multiple-integrals",
+      "zone": 5,
+      "name": "Multiple integrals",
+      "icon": "layers",
+      "desc": "Double integrals, surface integrals, curl, divergence and the divergence theorem.",
+      "kind": "concept",
+      "requires": [
+        "multivariable-calculus",
+        "integration"
+      ],
+      "pyqTopics": [
+        "calc/integration"
+      ],
+      "pyqTags": [
+        "double",
+        "multiple",
+        "surface",
+        "curl",
+        "divergence",
+        "vector",
+        "complex"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "lagrange-multipliers",
+      "zone": 5,
+      "name": "Lagrange multipliers",
+      "icon": "crosshair",
+      "desc": "Constrained optimisation with Lagrange multipliers.",
+      "kind": "concept",
+      "requires": [
+        "multivariable-calculus",
+        "optimization"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "differential-equations",
+      "zone": 5,
+      "name": "Differential equations",
+      "icon": "activity",
+      "desc": "First-order and linear ODEs, boundary value problems and a glimpse of Laplace and Fourier methods.",
+      "kind": "concept",
+      "requires": [
+        "integration"
+      ],
+      "pyqTopics": [
+        "calc/integration"
+      ],
+      "pyqTags": [
+        "differential",
+        "laplace",
+        "fourier",
+        "boundary"
+      ],
+      "xpReward": 140
+    }
+  ]
+}

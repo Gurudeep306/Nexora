@@ -1,0 +1,408 @@
+{
+  "id": "prob",
+  "name": "Probability & Statistics",
+  "short": "P&S",
+  "group": "gate",
+  "order": 12,
+  "icon": "chart",
+  "color": "#d946ef",
+  "description": "Probability axioms, conditional probability, random variables, standard distributions and basic statistics for GATE.",
+  "gate": {
+    "pyqSubject": "prob",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Probability basics"
+    },
+    {
+      "level": 2,
+      "name": "Conditioning"
+    },
+    {
+      "level": 3,
+      "name": "Random variables"
+    },
+    {
+      "level": 4,
+      "name": "Distributions"
+    },
+    {
+      "level": 5,
+      "name": "Statistics"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "probability-basics",
+      "zone": 1,
+      "name": "Probability basics",
+      "icon": "random",
+      "desc": "Sample spaces, events, the axioms, complements and the addition rule, with dice, coins and cards.",
+      "kind": "lesson",
+      "requires": [
+        "dm:sets-relations"
+      ],
+      "pyqTopics": [
+        "prob/basic"
+      ],
+      "pyqTags": [
+        "basic",
+        "classical",
+        "dice",
+        "coin",
+        "cards",
+        "complement",
+        "addition",
+        "mutually",
+        "probability",
+        "union-bound",
+        "inclusion-exclusion",
+        "divisors",
+        "replacement",
+        "multiplication"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "counting-probability",
+      "zone": 1,
+      "name": "Counting & probability",
+      "icon": "calculator",
+      "desc": "Equally likely outcomes counted with permutations and combinations: birthday, urn and sampling-without-replacement problems.",
+      "kind": "lesson",
+      "requires": [
+        "probability-basics",
+        "dm:combinatorics"
+      ],
+      "pyqTopics": [
+        "prob/basic"
+      ],
+      "pyqTags": [
+        "counting",
+        "permutation",
+        "birthday",
+        "hypergeometric",
+        "drawing",
+        "polya",
+        "bit-strings",
+        "hashing"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "conditional-probability",
+      "zone": 2,
+      "name": "Conditional prob.",
+      "icon": "filter",
+      "desc": "P(A|B), the multiplication rule and sequential experiments.",
+      "kind": "lesson",
+      "requires": [
+        "probability-basics"
+      ],
+      "pyqTopics": [
+        "prob/basic"
+      ],
+      "pyqTags": [
+        "conditional"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "independence",
+      "zone": 2,
+      "name": "Independence",
+      "icon": "git-branch",
+      "desc": "Independent events, pairwise versus mutual independence, and repeated trials.",
+      "kind": "lesson",
+      "requires": [
+        "conditional-probability"
+      ],
+      "pyqTopics": [
+        "prob/basic",
+        "prob/rv"
+      ],
+      "pyqTags": [
+        "independ"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "total-probability",
+      "zone": 2,
+      "name": "Total probability",
+      "icon": "layers",
+      "desc": "Partitioning the sample space and the law of total probability.",
+      "kind": "lesson",
+      "requires": [
+        "conditional-probability"
+      ],
+      "pyqTopics": [
+        "prob/basic",
+        "prob/bayes"
+      ],
+      "pyqTags": [
+        "total-probability"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "bayes-theorem",
+      "zone": 2,
+      "name": "Bayes' theorem",
+      "icon": "brain",
+      "desc": "Inverting conditional probabilities with Bayes' theorem; priors, likelihoods and posteriors.",
+      "kind": "lesson",
+      "requires": [
+        "total-probability",
+        "dm:sets-relations"
+      ],
+      "pyqTopics": [
+        "prob/basic",
+        "prob/bayes"
+      ],
+      "pyqTags": [
+        "bayes",
+        "Bayes"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "random-variables",
+      "zone": 3,
+      "name": "Random variables",
+      "icon": "activity",
+      "desc": "Discrete and continuous random variables, PMF, PDF and CDF.",
+      "kind": "lesson",
+      "requires": [
+        "conditional-probability",
+        "calc:integration"
+      ],
+      "pyqTopics": [
+        "prob/rv"
+      ],
+      "pyqTags": [
+        "rv",
+        "pdf",
+        "cdf",
+        "CDF",
+        "continuous"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "expectation-variance",
+      "zone": 3,
+      "name": "Expectation & variance",
+      "icon": "target",
+      "desc": "Expectation, linearity, indicator variables, variance and standard deviation.",
+      "kind": "lesson",
+      "requires": [
+        "random-variables"
+      ],
+      "pyqTopics": [
+        "prob/rv",
+        "prob/stats"
+      ],
+      "pyqTags": [
+        "expectation",
+        "expected",
+        "variance",
+        "standard-deviation",
+        "indicator"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "joint-distributions",
+      "zone": 3,
+      "name": "Joint distributions",
+      "icon": "grid",
+      "desc": "Joint and marginal distributions, sums, minimum and maximum of random variables, conditional expectation.",
+      "kind": "lesson",
+      "requires": [
+        "expectation-variance",
+        "independence"
+      ],
+      "pyqTopics": [
+        "prob/rv",
+        "prob/stats"
+      ],
+      "pyqTags": [
+        "joint",
+        "sum-of",
+        "convolution",
+        "minimum",
+        "conditional-expectation",
+        "meeting"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "distributions",
+      "zone": 4,
+      "name": "Discrete distributions",
+      "icon": "chart",
+      "desc": "Bernoulli, binomial, geometric and Poisson distributions: their means, variances and when to use each.",
+      "kind": "lesson",
+      "requires": [
+        "expectation-variance"
+      ],
+      "pyqTopics": [
+        "prob/rv",
+        "prob/basic"
+      ],
+      "pyqTags": [
+        "binomial",
+        "bernoulli",
+        "geometric",
+        "poisson",
+        "Poisson"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "continuous-distributions",
+      "zone": 4,
+      "name": "Normal & exponential",
+      "icon": "trending-up",
+      "desc": "Uniform, exponential and normal distributions, memorylessness and standardising.",
+      "kind": "lesson",
+      "requires": [
+        "distributions"
+      ],
+      "pyqTopics": [
+        "prob/rv"
+      ],
+      "pyqTags": [
+        "uniform",
+        "exponential",
+        "normal",
+        "gaussian"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "limit-theorems",
+      "zone": 4,
+      "name": "Limit theorems",
+      "icon": "sparkles",
+      "desc": "The law of large numbers and the central limit theorem, and the normal approximation to the binomial.",
+      "kind": "concept",
+      "requires": [
+        "continuous-distributions"
+      ],
+      "pyqTopics": [
+        "prob/inference"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "markov-chains",
+      "zone": 4,
+      "name": "Markov chains",
+      "icon": "route",
+      "desc": "States, transition matrices, stationary distributions and simple random walks.",
+      "kind": "concept",
+      "requires": [
+        "distributions",
+        "la:matrices"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "statistics",
+      "zone": 5,
+      "name": "Descriptive statistics",
+      "icon": "analytics",
+      "desc": "Mean, median, mode, variance and standard deviation of data.",
+      "kind": "lesson",
+      "requires": [
+        "expectation-variance"
+      ],
+      "pyqTopics": [
+        "prob/stats",
+        "prob/rv"
+      ],
+      "pyqTags": [
+        "median",
+        "sample-mean",
+        "descriptive",
+        "standard deviation",
+        "stats"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "covariance-correlation",
+      "zone": 5,
+      "name": "Correlation",
+      "icon": "activity",
+      "desc": "Covariance, the correlation coefficient and the Cauchy–Schwarz bound.",
+      "kind": "lesson",
+      "requires": [
+        "joint-distributions",
+        "statistics"
+      ],
+      "pyqTopics": [
+        "prob/stats"
+      ],
+      "pyqTags": [
+        "covariance",
+        "correlation",
+        "cauchy",
+        "Cauchy",
+        "pairwise",
+        "variance"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "statistical-inference",
+      "zone": 5,
+      "name": "Statistical inference",
+      "icon": "search",
+      "desc": "Sampling distributions, estimators, confidence intervals and the idea of hypothesis testing (t, chi-square).",
+      "kind": "concept",
+      "requires": [
+        "limit-theorems",
+        "statistics"
+      ],
+      "pyqTopics": [
+        "prob/inference",
+        "prob/rv"
+      ],
+      "pyqTags": [
+        "chi-square",
+        "central-limit",
+        "inference"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "hypothesis-testing",
+      "zone": 5,
+      "name": "Hypothesis testing",
+      "icon": "check-circle",
+      "desc": "Null and alternative hypotheses, p-values, z and t tests, and type I and II errors.",
+      "kind": "concept",
+      "requires": [
+        "statistical-inference"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "regression-line",
+      "zone": 5,
+      "name": "Least-squares line",
+      "icon": "trending-up",
+      "desc": "Fitting a line to data by least squares and reading the correlation coefficient.",
+      "kind": "concept",
+      "requires": [
+        "covariance-correlation"
+      ],
+      "xpReward": 140
+    }
+  ]
+}

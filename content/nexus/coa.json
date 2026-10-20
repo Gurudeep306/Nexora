@@ -1,0 +1,469 @@
+{
+  "id": "coa",
+  "name": "Computer Organisation",
+  "short": "COA",
+  "group": "gate",
+  "order": 3,
+  "icon": "cpu",
+  "color": "#0ea5e9",
+  "description": "Instruction sets, datapath and control, pipelining, the memory hierarchy and I/O as they appear in GATE.",
+  "gate": {
+    "pyqSubject": "coa",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Instructions & performance"
+    },
+    {
+      "level": 2,
+      "name": "Datapath & control"
+    },
+    {
+      "level": 3,
+      "name": "Pipelining"
+    },
+    {
+      "level": 4,
+      "name": "Memory hierarchy"
+    },
+    {
+      "level": 5,
+      "name": "Input / output"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "isa",
+      "zone": 1,
+      "name": "Instruction sets",
+      "icon": "cpu",
+      "desc": "Machine instructions, registers, RISC versus CISC, and how an ISA describes a computer.",
+      "kind": "concept",
+      "requires": [
+        "dl:signed-numbers"
+      ],
+      "pyqTopics": [
+        "coa/isa"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "instruction-formats",
+      "zone": 1,
+      "name": "Instruction formats",
+      "icon": "binary",
+      "desc": "Fixed and expanding opcodes, operand fields and counting how many instructions fit an encoding.",
+      "kind": "concept",
+      "requires": [
+        "isa"
+      ],
+      "pyqTopics": [
+        "coa/isa"
+      ],
+      "pyqTags": [
+        "instruction-format",
+        "opcode",
+        "expanding"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "addressing-modes",
+      "zone": 1,
+      "name": "Addressing modes",
+      "icon": "crosshair",
+      "desc": "Immediate, direct, indirect, register, indexed, relative and auto-increment addressing.",
+      "kind": "concept",
+      "requires": [
+        "isa"
+      ],
+      "pyqTopics": [
+        "coa/isa"
+      ],
+      "pyqTags": [
+        "addressing",
+        "immediate",
+        "relative",
+        "autoincrement"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "assembly-programs",
+      "zone": 1,
+      "name": "Assembly programs",
+      "icon": "code",
+      "desc": "Tracing short assembly programs: loops, the program counter, stack operations and flags.",
+      "kind": "concept",
+      "requires": [
+        "addressing-modes"
+      ],
+      "pyqTopics": [
+        "coa/isa"
+      ],
+      "pyqTags": [
+        "assembly",
+        "loop",
+        "program-counter",
+        "stack",
+        "bit-counting"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "performance",
+      "zone": 1,
+      "name": "CPU performance",
+      "icon": "activity",
+      "desc": "CPI, clock rate, execution time, speedup and Amdahl's law.",
+      "kind": "concept",
+      "requires": [
+        "isa"
+      ],
+      "pyqTopics": [
+        "coa/perf"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "datapath",
+      "zone": 2,
+      "name": "Datapath",
+      "icon": "cpu",
+      "desc": "The ALU, register file and buses that execute instructions, and the steps of instruction execution.",
+      "kind": "concept",
+      "requires": [
+        "isa",
+        "dl:adders-ripple-carry",
+        "dl:multiplexers"
+      ],
+      "pyqTopics": [
+        "coa/datapath"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "register-transfer",
+      "zone": 2,
+      "name": "Register transfers",
+      "icon": "array",
+      "desc": "Micro-operations on a single-bus datapath and counting the cycles an instruction takes.",
+      "kind": "concept",
+      "requires": [
+        "datapath"
+      ],
+      "pyqTopics": [
+        "coa/datapath"
+      ],
+      "pyqTags": [
+        "register",
+        "single-bus",
+        "micro-operations",
+        "instruction-fetch",
+        "data-path",
+        "clock-cycles"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "hardwired-control",
+      "zone": 2,
+      "name": "Hardwired control",
+      "icon": "settings",
+      "desc": "Generating control signals with combinational and sequential logic.",
+      "kind": "concept",
+      "requires": [
+        "register-transfer",
+        "dl:finite-state-machines"
+      ],
+      "pyqTopics": [
+        "coa/datapath"
+      ],
+      "pyqTags": [
+        "hardwired",
+        "control-signal",
+        "control-word",
+        "control word"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "microprogramming",
+      "zone": 2,
+      "name": "Microprogramming",
+      "icon": "list",
+      "desc": "Microprogrammed control: control memory, horizontal and vertical microinstructions, and control word sizes.",
+      "kind": "concept",
+      "requires": [
+        "hardwired-control"
+      ],
+      "pyqTopics": [
+        "coa/datapath"
+      ],
+      "pyqTags": [
+        "micro",
+        "control memory"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "pipelining",
+      "zone": 3,
+      "name": "Pipelining",
+      "icon": "layers",
+      "desc": "Overlapping instruction execution in stages; pipeline registers and the ideal one-instruction-per-cycle.",
+      "kind": "concept",
+      "requires": [
+        "datapath",
+        "performance"
+      ],
+      "pyqTopics": [
+        "coa/pipeline"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "pipeline-speedup",
+      "zone": 3,
+      "name": "Pipeline speedup",
+      "icon": "trending-up",
+      "desc": "Speedup, throughput and latency with unequal stage delays and pipeline register overhead.",
+      "kind": "concept",
+      "requires": [
+        "pipelining"
+      ],
+      "pyqTopics": [
+        "coa/pipeline"
+      ],
+      "pyqTags": [
+        "speedup",
+        "latency",
+        "variable",
+        "clock-frequency",
+        "space-time"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "data-hazards",
+      "zone": 3,
+      "name": "Data hazards",
+      "icon": "warning",
+      "desc": "RAW, WAR and WAW dependences, stalls and operand forwarding.",
+      "kind": "concept",
+      "requires": [
+        "pipelining"
+      ],
+      "pyqTopics": [
+        "coa/pipeline"
+      ],
+      "pyqTags": [
+        "hazard",
+        "forwarding",
+        "stall",
+        "raw",
+        "war"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "control-hazards",
+      "zone": 3,
+      "name": "Control hazards",
+      "icon": "git-branch",
+      "desc": "Branch penalties, delayed branches and their effect on the effective CPI.",
+      "kind": "concept",
+      "requires": [
+        "data-hazards"
+      ],
+      "pyqTopics": [
+        "coa/pipeline"
+      ],
+      "pyqTags": [
+        "branch"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "memory-hierarchy",
+      "zone": 4,
+      "name": "Memory hierarchy",
+      "icon": "layers",
+      "desc": "Locality and the levels of the hierarchy; average access time across levels.",
+      "kind": "concept",
+      "requires": [
+        "performance"
+      ],
+      "pyqTopics": [
+        "coa/memory"
+      ],
+      "pyqTags": [
+        "hierarchy",
+        "average",
+        "hit"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "cache",
+      "zone": 4,
+      "name": "Cache memory",
+      "icon": "bolt",
+      "desc": "How a cache sits between CPU and memory, blocks, hits and misses.",
+      "kind": "concept",
+      "requires": [
+        "memory-hierarchy"
+      ],
+      "pyqTopics": [
+        "coa/cache"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "cache-mapping",
+      "zone": 4,
+      "name": "Cache mapping",
+      "icon": "grid",
+      "desc": "Direct-mapped, set-associative and fully associative caches; splitting an address into tag, index and offset.",
+      "kind": "concept",
+      "requires": [
+        "cache",
+        "dl:decoders-encoders"
+      ],
+      "pyqTopics": [
+        "coa/cache"
+      ],
+      "pyqTags": [
+        "direct",
+        "set",
+        "tag",
+        "address"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "cache-performance",
+      "zone": 4,
+      "name": "Cache performance",
+      "icon": "activity",
+      "desc": "Hit ratio, miss penalty, AMAT, multilevel caches and the kinds of misses.",
+      "kind": "concept",
+      "requires": [
+        "cache-mapping"
+      ],
+      "pyqTopics": [
+        "coa/cache"
+      ],
+      "pyqTags": [
+        "amat",
+        "hit",
+        "multilevel",
+        "miss",
+        "average",
+        "conflict"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "cache-policies",
+      "zone": 4,
+      "name": "Cache policies",
+      "icon": "sliders",
+      "desc": "Replacement (LRU, FIFO) and write policies: write-through, write-back and write-allocate.",
+      "kind": "concept",
+      "requires": [
+        "cache-mapping"
+      ],
+      "pyqTopics": [
+        "coa/cache"
+      ],
+      "pyqTags": [
+        "lru",
+        "write"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "main-memory",
+      "zone": 4,
+      "name": "Main memory",
+      "icon": "database",
+      "desc": "Memory chips, address decoding, interleaving and banks; DRAM refresh and memory capacity.",
+      "kind": "concept",
+      "requires": [
+        "memory-hierarchy",
+        "dl:decoders-encoders"
+      ],
+      "pyqTopics": [
+        "coa/memory"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "io-interrupts",
+      "zone": 5,
+      "name": "Interrupts",
+      "icon": "bell",
+      "desc": "Interrupt-driven I/O, vectored interrupts, priorities and daisy chaining.",
+      "kind": "concept",
+      "requires": [
+        "assembly-programs"
+      ],
+      "pyqTopics": [
+        "coa/io"
+      ],
+      "pyqTags": [
+        "interrupt",
+        "daisy"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "programmed-io",
+      "zone": 5,
+      "name": "Programmed I/O",
+      "icon": "terminal",
+      "desc": "Polling, handshaking, memory-mapped versus isolated I/O and serial transfer rates.",
+      "kind": "concept",
+      "requires": [
+        "isa"
+      ],
+      "pyqTopics": [
+        "coa/io"
+      ],
+      "pyqTags": [
+        "programmed",
+        "polling",
+        "handshake",
+        "serial",
+        "memory-mapped",
+        "baud"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "dma",
+      "zone": 5,
+      "name": "DMA",
+      "icon": "server",
+      "desc": "Direct memory access, burst and cycle-stealing modes, and the CPU time DMA saves.",
+      "kind": "concept",
+      "requires": [
+        "io-interrupts",
+        "main-memory"
+      ],
+      "pyqTopics": [
+        "coa/io"
+      ],
+      "pyqTags": [
+        "dma",
+        "DMA",
+        "cycle-stealing",
+        "disk"
+      ],
+      "xpReward": 170
+    }
+  ]
+}
