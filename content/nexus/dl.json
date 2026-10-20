@@ -1,0 +1,688 @@
+{
+  "id": "dl",
+  "name": "Digital Logic",
+  "short": "DL",
+  "group": "gate",
+  "order": 2,
+  "icon": "binary",
+  "color": "#3b82f6",
+  "description": "Number systems, Boolean algebra, minimisation, combinational and sequential circuits, lesson by lesson from the GATE notes.",
+  "gate": {
+    "pyqSubject": "dl",
+    "notesSubject": "dl"
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Number systems, codes and floating point"
+    },
+    {
+      "level": 2,
+      "name": "Boolean algebra and logic gates"
+    },
+    {
+      "level": 3,
+      "name": "Minimisation"
+    },
+    {
+      "level": 4,
+      "name": "Arithmetic circuits"
+    },
+    {
+      "level": 5,
+      "name": "Combinational building blocks"
+    },
+    {
+      "level": 6,
+      "name": "Sequential circuits"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "place-value",
+      "zone": 1,
+      "name": "Place value & bases",
+      "icon": "binary",
+      "desc": "Place value and changing bases. Positional value and the digit limit; base → decimal (expansion, Horner); decimal → base (repeated division, uniqueness proof); base → base",
+      "kind": "lesson",
+      "requires": [],
+      "lessons": [
+        "place-value"
+      ]
+    },
+    {
+      "id": "power-of-two-bases",
+      "zone": 1,
+      "name": "Binary, octal & hex",
+      "icon": "binary",
+      "desc": "Binary, octal and hex: grouping and arithmetic. The grouping theorem (k-bit groups from the point); octal ↔ hex via binary; base 4; powers-of-16 sums read as hex; popcount per hex digit",
+      "kind": "lesson",
+      "requires": [
+        "place-value"
+      ],
+      "lessons": [
+        "power-of-two-bases"
+      ]
+    },
+    {
+      "id": "fractions-fixed-point",
+      "zone": 1,
+      "name": "Fractions & fixed point",
+      "icon": "binary",
+      "desc": "Fractions and fixed-point numbers. Fraction → base b by repeated multiplication; mixed numbers; the terminating vs recurring theorem; truncation error",
+      "kind": "lesson",
+      "requires": [
+        "place-value",
+        "power-of-two-bases"
+      ],
+      "lessons": [
+        "fractions-fixed-point"
+      ]
+    },
+    {
+      "id": "signed-numbers",
+      "zone": 1,
+      "name": "Signed numbers",
+      "icon": "binary",
+      "desc": "Signed numbers and complements. Unsigned; sign-magnitude; 1's complement; 2's complement (−2^{n−1} weight, invert + 1, copy-to-first-1); ranges and counts; two zeros; decoding",
+      "kind": "lesson",
+      "requires": [
+        "place-value",
+        "power-of-two-bases",
+        "fractions-fixed-point"
+      ],
+      "lessons": [
+        "signed-numbers"
+      ]
+    },
+    {
+      "id": "floating-point-basics",
+      "zone": 1,
+      "name": "Floating point basics",
+      "icon": "binary",
+      "desc": "Floating point: normalisation, biased exponents and range. Scientific notation in base 2 and 16; mantissa/significand, exponent and bias (excess-K); normalisation and the hidden bit",
+      "kind": "lesson",
+      "requires": [
+        "fractions-fixed-point",
+        "signed-numbers"
+      ],
+      "lessons": [
+        "floating-point-basics"
+      ]
+    },
+    {
+      "id": "ieee-754",
+      "zone": 1,
+      "name": "IEEE-754",
+      "icon": "binary",
+      "desc": "IEEE-754 single and double precision. The single and double layouts; bias 127/1023; encode and decode; special values (±0, ±∞, NaN); denormals; largest and smallest values; reading hex words quickly",
+      "kind": "lesson",
+      "requires": [
+        "floating-point-basics"
+      ],
+      "lessons": [
+        "ieee-754"
+      ]
+    },
+    {
+      "id": "floating-point-arithmetic",
+      "zone": 1,
+      "name": "Float arithmetic",
+      "icon": "binary",
+      "desc": "Floating-point arithmetic, rounding and overflow. Add/subtract (align, add, normalise, round); multiply/divide (add/subtract exponents); multiplying by powers of two; rounding and absorption; non-associativity",
+      "kind": "lesson",
+      "requires": [
+        "ieee-754"
+      ],
+      "lessons": [
+        "floating-point-arithmetic"
+      ]
+    },
+    {
+      "id": "codes",
+      "zone": 1,
+      "name": "Binary codes",
+      "icon": "binary",
+      "desc": "Binary codes: BCD, excess-3, Gray, parity and Hamming. Weighted vs unweighted codes (8421, 2421, 84−2−1); BCD validity; self-complementing codes; excess-3; reflected Gray (construction, conversions, unit distance)",
+      "kind": "lesson",
+      "requires": [
+        "place-value",
+        "power-of-two-bases"
+      ],
+      "lessons": [
+        "codes"
+      ]
+    },
+    {
+      "id": "code-arithmetic",
+      "zone": 1,
+      "name": "Code arithmetic",
+      "icon": "binary",
+      "desc": "Arithmetic with number codes. Binary add/subtract (borrows), shift-and-add multiplication, long division; add/subtract/ multiply in base 8, 16 and any base b",
+      "kind": "lesson",
+      "requires": [
+        "signed-numbers",
+        "codes"
+      ],
+      "lessons": [
+        "code-arithmetic"
+      ]
+    },
+    {
+      "id": "multiplication-booth",
+      "zone": 1,
+      "name": "Booth's algorithm",
+      "icon": "binary",
+      "desc": "Signed multiplication and Booth's algorithm. Shift-and-add for unsigned and signed operands (sign-extended partial products; the multiplier's sign bit weighs −2ⁿ⁻¹); product bits as Boolean functions",
+      "kind": "lesson",
+      "requires": [
+        "code-arithmetic"
+      ],
+      "lessons": [
+        "multiplication-booth"
+      ]
+    },
+    {
+      "id": "logic-gates",
+      "zone": 2,
+      "name": "Logic gates",
+      "icon": "cpu",
+      "desc": "Logic gates and truth tables. NOT, AND, OR, NAND, NOR, XOR, XNOR (symbols, truth tables, multi-input forms); bubbles and active-low; positive vs negative logic; buffers",
+      "kind": "lesson",
+      "requires": [
+        "codes"
+      ],
+      "lessons": [
+        "logic-gates"
+      ]
+    },
+    {
+      "id": "boolean-laws",
+      "zone": 2,
+      "name": "Boolean laws",
+      "icon": "cpu",
+      "desc": "Boolean algebra: postulates, laws and theorems. Huntington postulates; identity, complement, idempotence, involution, absorption, distributivity (both forms), De Morgan, consensus, duality",
+      "kind": "lesson",
+      "requires": [
+        "logic-gates"
+      ],
+      "lessons": [
+        "boolean-laws"
+      ]
+    },
+    {
+      "id": "xor-and-operators",
+      "zone": 2,
+      "name": "XOR algebra",
+      "icon": "cpu",
+      "desc": "XOR/XNOR algebra and custom operators. XOR/XNOR laws (a ⊕ a = 0, a ⊕ 1 = ā, associativity, complementing inputs); parity functions; XNOR as equivalence",
+      "kind": "lesson",
+      "requires": [
+        "boolean-laws"
+      ],
+      "lessons": [
+        "xor-and-operators"
+      ]
+    },
+    {
+      "id": "canonical-forms",
+      "zone": 2,
+      "name": "Canonical forms",
+      "icon": "cpu",
+      "desc": "Minterms, maxterms and canonical forms. Minterm/maxterm indices; SOP/POS and canonical SOP/POS; Σ ↔ Π conversion; expanding terms over missing variables; counting functions (2^{2ⁿ})",
+      "kind": "lesson",
+      "requires": [
+        "boolean-laws"
+      ],
+      "lessons": [
+        "canonical-forms"
+      ]
+    },
+    {
+      "id": "universal-gates",
+      "zone": 2,
+      "name": "Universal gates",
+      "icon": "cpu",
+      "desc": "Universal gates and functional completeness. NAND-only and NOR-only realisations; minimum gate counts (XOR = 4 NAND, 5 NOR; two-level NAND–NAND / NOR–NOR)",
+      "kind": "lesson",
+      "requires": [
+        "canonical-forms"
+      ],
+      "lessons": [
+        "universal-gates"
+      ]
+    },
+    {
+      "id": "gate-circuit-analysis",
+      "zone": 2,
+      "name": "Circuit analysis",
+      "icon": "cpu",
+      "desc": "Analysing gate circuits and timing. Reading multi-level circuits; f = f₁f₂ + f₃ style minterm reasoning; propagation delay; glitches and pulse generation (X·X̄ with delay)",
+      "kind": "lesson",
+      "requires": [
+        "canonical-forms",
+        "universal-gates"
+      ],
+      "lessons": [
+        "gate-circuit-analysis"
+      ]
+    },
+    {
+      "id": "kmaps",
+      "zone": 3,
+      "name": "K-maps",
+      "icon": "grid",
+      "desc": "Karnaugh maps (2–4 variables). Map layout and Gray order; adjacency and wrap-around (corners); grouping rules (powers of 2, largest first); SOP from 1s and POS from 0s; reading a given map",
+      "kind": "lesson",
+      "requires": [
+        "canonical-forms",
+        "codes"
+      ],
+      "lessons": [
+        "kmaps"
+      ]
+    },
+    {
+      "id": "prime-implicants",
+      "zone": 3,
+      "name": "Prime implicants",
+      "icon": "grid",
+      "desc": "Implicants, prime implicants and don't-cares. Implicant / PI / EPI definitions; listing all PIs; counting PIs; selecting a minimal cover (EPIs first, then the cheapest cover)",
+      "kind": "lesson",
+      "requires": [
+        "kmaps"
+      ],
+      "lessons": [
+        "prime-implicants"
+      ]
+    },
+    {
+      "id": "tabular-method",
+      "zone": 3,
+      "name": "Quine–McCluskey",
+      "icon": "grid",
+      "desc": "Quine–McCluskey, PI charts and larger maps. The Quine–McCluskey tabular method (grouping by weight, combining, PI chart, row and column dominance, Petrick's method in brief); 5-variable maps",
+      "kind": "lesson",
+      "requires": [
+        "prime-implicants"
+      ],
+      "lessons": [
+        "tabular-method"
+      ]
+    },
+    {
+      "id": "two-level-implementation",
+      "zone": 3,
+      "name": "Two-level design",
+      "icon": "grid",
+      "desc": "From minimal forms to gates: cost, NAND/NOR, hazards. Literal and gate cost; SOP vs POS cost; NAND–NAND and NOR–NOR from minimal forms; minimum NOR count for a given function",
+      "kind": "lesson",
+      "requires": [
+        "prime-implicants",
+        "universal-gates"
+      ],
+      "lessons": [
+        "two-level-implementation"
+      ]
+    },
+    {
+      "id": "adders-ripple-carry",
+      "zone": 4,
+      "name": "Ripple-carry adders",
+      "icon": "calculator",
+      "desc": "Half/full adders, subtractors and ripple-carry adders. Half and full adder (from 2 HAs + OR); half and full subtractor; n-bit ripple adder; delay models (2n + 1 etc.); worst-case carry chain",
+      "kind": "lesson",
+      "requires": [
+        "xor-and-operators",
+        "code-arithmetic"
+      ],
+      "lessons": [
+        "adders-ripple-carry"
+      ]
+    },
+    {
+      "id": "carry-look-ahead",
+      "zone": 4,
+      "name": "Carry look-ahead",
+      "icon": "calculator",
+      "desc": "Carry look-ahead adders. Generate/propagate; C_{i+1} = G_i + P_i C_i expanded; two-level CLA delay; group (block) G/P and multi-level CLA; fan-in limits (O(log n))",
+      "kind": "lesson",
+      "requires": [
+        "adders-ripple-carry"
+      ],
+      "lessons": [
+        "carry-look-ahead"
+      ]
+    },
+    {
+      "id": "adder-subtractor-overflow",
+      "zone": 4,
+      "name": "Adder–subtractor",
+      "icon": "calculator",
+      "desc": "The adder–subtractor, flag logic and the BCD adder circuit. XOR-controlled adder/subtractor (K and C₀ control lines); the overflow detector (XOR of the last two carries) and flag logic (C, V, S, Z)",
+      "kind": "lesson",
+      "requires": [
+        "adders-ripple-carry",
+        "code-arithmetic"
+      ],
+      "lessons": [
+        "adder-subtractor-overflow"
+      ]
+    },
+    {
+      "id": "multipliers-booth",
+      "zone": 4,
+      "name": "Multiplier hardware",
+      "icon": "calculator",
+      "desc": "Array, sequential and Booth multiplier hardware. The array multiplier (AND array + adder rows); its critical path and Θ(n) delay; hardware cost",
+      "kind": "lesson",
+      "requires": [
+        "adder-subtractor-overflow",
+        "multiplication-booth"
+      ],
+      "lessons": [
+        "multipliers-booth"
+      ]
+    },
+    {
+      "id": "combinational-design",
+      "zone": 5,
+      "name": "Combinational design",
+      "icon": "layers",
+      "desc": "Designing combinational circuits; code converters. The design procedure (spec → truth table → K-map → gates); BCD → mod-n, BCD ≥ 5 detectors; excess-3 ↔ BCD; binary ↔ Gray converters; seven-segment (aside)",
+      "kind": "lesson",
+      "requires": [
+        "prime-implicants",
+        "codes"
+      ],
+      "lessons": [
+        "combinational-design"
+      ]
+    },
+    {
+      "id": "multiplexers",
+      "zone": 5,
+      "name": "Multiplexers",
+      "icon": "layers",
+      "desc": "Multiplexers and function realisation. 2ⁿ:1 MUX equation; MUX trees; implementing functions (n or n−1 select variables, the residue on the data lines); cascaded/feedback MUX puzzles",
+      "kind": "lesson",
+      "requires": [
+        "combinational-design",
+        "boolean-laws"
+      ],
+      "lessons": [
+        "multiplexers"
+      ]
+    },
+    {
+      "id": "decoders-encoders",
+      "zone": 5,
+      "name": "Decoders & encoders",
+      "icon": "layers",
+      "desc": "Decoders, demultiplexers, encoders and priority encoders. N:2ⁿ decoder as a minterm generator; enable inputs and decoder expansion; DEMUX = decoder with data on enable; encoders; priority encoders with a valid bit",
+      "kind": "lesson",
+      "requires": [
+        "multiplexers"
+      ],
+      "lessons": [
+        "decoders-encoders"
+      ]
+    },
+    {
+      "id": "comparators-parity",
+      "zone": 5,
+      "name": "Comparators & parity",
+      "icon": "layers",
+      "desc": "Magnitude comparators and parity circuits. 1-bit and n-bit comparators (equality via XNOR, greater/less cascades); parity generator and checker",
+      "kind": "lesson",
+      "requires": [
+        "combinational-design",
+        "xor-and-operators"
+      ],
+      "lessons": [
+        "comparators-parity"
+      ]
+    },
+    {
+      "id": "rom-pla-pal",
+      "zone": 5,
+      "name": "ROM, PLA & PAL",
+      "icon": "layers",
+      "desc": "ROM, PLA and PAL as combinational logic. ROM = decoder + OR array; sizing a ROM for a truth table (2ⁿ × m); PLA vs PAL; the multiplier-ROM size questions",
+      "kind": "lesson",
+      "requires": [
+        "decoders-encoders"
+      ],
+      "lessons": [
+        "rom-pla-pal"
+      ]
+    },
+    {
+      "id": "faults-testing",
+      "zone": 5,
+      "name": "Faults & testing",
+      "icon": "layers",
+      "desc": "Stuck-at faults and test inputs. The stuck-at-0/1 model; activation and propagation; finding a test vector; counting faults",
+      "kind": "lesson",
+      "requires": [
+        "gate-circuit-analysis"
+      ],
+      "lessons": [
+        "faults-testing"
+      ]
+    },
+    {
+      "id": "latches",
+      "zone": 6,
+      "name": "Latches",
+      "icon": "clock",
+      "desc": "Feedback, latches and races. Feedback and stable states; SR latch (NOR and NAND, active-low); the forbidden input and oscillation; gated latches; D latch (MUX with feedback)",
+      "kind": "lesson",
+      "requires": [
+        "gate-circuit-analysis"
+      ],
+      "lessons": [
+        "latches"
+      ],
+      "pyqs": [
+        "cse-1991-b-5-a",
+        "cse-1993-ii-a-6-2",
+        "cse-1999-a-33",
+        "cse-2004-cs-18",
+        "it-2007-cs-7",
+        "cse-2023-cs-11"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    },
+    {
+      "id": "flip-flops",
+      "zone": 6,
+      "name": "Flip-flops",
+      "icon": "clock",
+      "desc": "Flip-flops: SR, JK, D, T, edge triggering and timing. Level vs edge triggering; master–slave; characteristic tables and equations; excitation tables; conversions between types; asynchronous preset/clear",
+      "kind": "lesson",
+      "requires": [
+        "latches"
+      ],
+      "lessons": [
+        "flip-flops"
+      ],
+      "pyqs": [
+        "cse-2000-a-2-12",
+        "cse-2001-a-33",
+        "cse-2005-cs-62",
+        "cse-2006-cs-8",
+        "it-2008-it-37"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    },
+    {
+      "id": "sequential-analysis",
+      "zone": 6,
+      "name": "Sequential analysis",
+      "icon": "clock",
+      "desc": "Analysing synchronous sequential circuits. Synchronous vs asynchronous (and why synchronous); excitation and state equations from a circuit; state tables and diagrams",
+      "kind": "lesson",
+      "requires": [
+        "flip-flops"
+      ],
+      "lessons": [
+        "sequential-analysis"
+      ],
+      "pyqs": [
+        "cse-1991-a-3-ii",
+        "cse-1993-ii-c-19",
+        "cse-1994-b-34",
+        "cse-1996-b-72",
+        "cse-1996-b-73",
+        "cse-2005-cs-64",
+        "it-2005-cs-43",
+        "it-2006-cs-37",
+        "cse-2011-cs-50",
+        "cse-2011-cs-51",
+        "cse-2015-1-cs-37",
+        "cse-2017-1-cs-33",
+        "cse-2023-cs-33"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    },
+    {
+      "id": "ripple-counters",
+      "zone": 6,
+      "name": "Ripple counters",
+      "icon": "clock",
+      "desc": "Counter basics and asynchronous (ripple) counters. Mod-N and the flip-flop count ⌈log₂ N⌉; ripple up/down counters; frequency division (f/2ⁿ); ripple delay and max frequency; mod-N by asynchronous clear",
+      "kind": "lesson",
+      "requires": [
+        "flip-flops"
+      ],
+      "lessons": [
+        "ripple-counters"
+      ],
+      "pyqs": [
+        "cse-1994-a-2-1",
+        "it-2005-cs-11",
+        "cse-2007-cs-36",
+        "cse-2010-cs-32",
+        "cse-2011-cs-15",
+        "cse-2025-2-cs-24"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    },
+    {
+      "id": "synchronous-counter-design",
+      "zone": 6,
+      "name": "Synchronous counters",
+      "icon": "clock",
+      "desc": "Synchronous counter design. The design procedure with excitation tables; arbitrary sequences; repeated-value sequences (needs extra state bits); Gray and saturating counters",
+      "kind": "lesson",
+      "requires": [
+        "ripple-counters",
+        "flip-flops",
+        "prime-implicants"
+      ],
+      "lessons": [
+        "synchronous-counter-design"
+      ],
+      "pyqs": [
+        "cse-1991-b-5-c",
+        "cse-1992-b-4-c",
+        "cse-1998-b-68",
+        "cse-2004-cs-61",
+        "cse-2014-3-cs-45",
+        "cse-2015-2-cs-7",
+        "cse-2016-1-cs-8",
+        "cse-2017-2-cs-42",
+        "cse-2021-1-cs-28",
+        "cse-2026-1-cs-27"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    },
+    {
+      "id": "shift-registers",
+      "zone": 6,
+      "name": "Shift registers",
+      "icon": "clock",
+      "desc": "Shift registers, ring and Johnson counters, LFSRs. SISO/SIPO/PISO/PIPO; bidirectional/universal; ring (N states) and Johnson (2N states) counters; counter + decoder = ring; LFSR sequences",
+      "kind": "lesson",
+      "requires": [
+        "sequential-analysis"
+      ],
+      "lessons": [
+        "shift-registers"
+      ],
+      "pyqs": [
+        "cse-1991-b-6-a",
+        "cse-1991-b-6-b",
+        "cse-1993-ii-a-6-3",
+        "cse-2001-a-37",
+        "cse-2006-cs-37",
+        "it-2007-cs-40",
+        "cse-2014-2-cs-7",
+        "cse-2015-1-cs-20",
+        "cse-2018-cs-22",
+        "cse-2025-1-cs-50"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    },
+    {
+      "id": "finite-state-machines",
+      "zone": 6,
+      "name": "Mealy & Moore FSMs",
+      "icon": "clock",
+      "desc": "Finite state machines: Mealy and Moore. Mealy vs Moore; state diagrams and tables; sequence detectors (overlapping or not); serial adders and serial 2's complementers",
+      "kind": "lesson",
+      "requires": [
+        "synchronous-counter-design"
+      ],
+      "lessons": [
+        "finite-state-machines"
+      ],
+      "pyqs": [
+        "cse-2001-b-59-a",
+        "cse-2001-b-59-b",
+        "cse-2002-a-30",
+        "cse-2005-cs-63",
+        "cse-2009-cs-27",
+        "cse-2021-2-cs-28"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    },
+    {
+      "id": "state-minimisation",
+      "zone": 6,
+      "name": "State minimisation",
+      "icon": "clock",
+      "desc": "State minimisation. Equivalent states; partition refinement; implication tables; incompletely specified machines (brief)",
+      "kind": "lesson",
+      "requires": [
+        "finite-state-machines"
+      ],
+      "lessons": [
+        "state-minimisation"
+      ],
+      "pyqs": [
+        "cse-1996-a-48",
+        "cse-2003-cs-44",
+        "cse-2025-1-cs-49"
+      ],
+      "pyqTopics": [
+        "dl/sequential"
+      ]
+    }
+  ]
+}
