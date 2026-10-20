@@ -1,0 +1,3737 @@
+{
+ "version": 1,
+ "title": "A synchronous and a ripple counter on the same clock",
+ "width": 680,
+ "height": 350,
+ "narrow": {
+  "width": 360,
+  "height": 324
+ },
+ "intro": "Two 3-bit up counters driven by the same falling clock edges, each flip-flop with one tick of delay: S rows are a synchronous T counter, R rows a ripple counter. The waveforms grow one clock period per step.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Synchronous versus ripple: the same count, different timing",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Synchronous vs ripple timing",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "wlc",
+   "type": "text",
+   "x": 110,
+   "y": 68.0,
+   "text": "CLK",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 52,
+    "y": 67.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wcg0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     76
+    ],
+    [
+     128.5,
+     76
+    ],
+    [
+     128.5,
+     60
+    ],
+    [
+     160.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      74
+     ],
+     [
+      65.5,
+      74
+     ],
+     [
+      65.5,
+      60
+     ],
+     [
+      82.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg1s0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     60
+    ],
+    [
+     160.0,
+     76
+    ],
+    [
+     191.5,
+     76
+    ],
+    [
+     191.5,
+     60
+    ],
+    [
+     223.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      60
+     ],
+     [
+      82.0,
+      74
+     ],
+     [
+      98.5,
+      74
+     ],
+     [
+      98.5,
+      60
+     ],
+     [
+      115.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg2s0",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     60
+    ],
+    [
+     223.0,
+     76
+    ],
+    [
+     254.5,
+     76
+    ],
+    [
+     254.5,
+     60
+    ],
+    [
+     286.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      60
+     ],
+     [
+      115.0,
+      74
+     ],
+     [
+      131.5,
+      74
+     ],
+     [
+      131.5,
+      60
+     ],
+     [
+      148.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg3s0",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     60
+    ],
+    [
+     286.0,
+     76
+    ],
+    [
+     317.5,
+     76
+    ],
+    [
+     317.5,
+     60
+    ],
+    [
+     349.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      60
+     ],
+     [
+      148.0,
+      74
+     ],
+     [
+      164.5,
+      74
+     ],
+     [
+      164.5,
+      60
+     ],
+     [
+      181.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg4s0",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     60
+    ],
+    [
+     349.0,
+     76
+    ],
+    [
+     380.5,
+     76
+    ],
+    [
+     380.5,
+     60
+    ],
+    [
+     412.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      60
+     ],
+     [
+      181.0,
+      74
+     ],
+     [
+      197.5,
+      74
+     ],
+     [
+      197.5,
+      60
+     ],
+     [
+      214.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg5s0",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     60
+    ],
+    [
+     412.0,
+     76
+    ],
+    [
+     443.5,
+     76
+    ],
+    [
+     443.5,
+     60
+    ],
+    [
+     475.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      60
+     ],
+     [
+      214.0,
+      74
+     ],
+     [
+      230.5,
+      74
+     ],
+     [
+      230.5,
+      60
+     ],
+     [
+      247.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg6s0",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     60
+    ],
+    [
+     475.0,
+     76
+    ],
+    [
+     506.5,
+     76
+    ],
+    [
+     506.5,
+     60
+    ],
+    [
+     538.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      60
+     ],
+     [
+      247.0,
+      74
+     ],
+     [
+      263.5,
+      74
+     ],
+     [
+      263.5,
+      60
+     ],
+     [
+      280.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg7s0",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     60
+    ],
+    [
+     538.0,
+     76
+    ],
+    [
+     569.5,
+     76
+    ],
+    [
+     569.5,
+     60
+    ],
+    [
+     601.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      60
+     ],
+     [
+      280.0,
+      74
+     ],
+     [
+      296.5,
+      74
+     ],
+     [
+      296.5,
+      60
+     ],
+     [
+      313.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg8s0",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     60
+    ],
+    [
+     601.0,
+     76
+    ],
+    [
+     632.5,
+     76
+    ],
+    [
+     632.5,
+     60
+    ],
+    [
+     664.0,
+     60
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      60
+     ],
+     [
+      313.0,
+      74
+     ],
+     [
+      329.5,
+      74
+     ],
+     [
+      329.5,
+      60
+     ],
+     [
+      346.0,
+      60
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wls0",
+   "type": "text",
+   "x": 110,
+   "y": 102.0,
+   "text": "S·Q0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 52,
+    "y": 97.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws0g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     110
+    ],
+    [
+     160.0,
+     110
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      104
+     ],
+     [
+      82.0,
+      104
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g1s0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     110
+    ],
+    [
+     170.5,
+     110
+    ],
+    [
+     170.5,
+     94
+    ],
+    [
+     223.0,
+     94
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      104
+     ],
+     [
+      87.5,
+      104
+     ],
+     [
+      87.5,
+      90
+     ],
+     [
+      115.0,
+      90
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g2s0",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     94
+    ],
+    [
+     233.5,
+     94
+    ],
+    [
+     233.5,
+     110
+    ],
+    [
+     286.0,
+     110
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      90
+     ],
+     [
+      120.5,
+      90
+     ],
+     [
+      120.5,
+      104
+     ],
+     [
+      148.0,
+      104
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g3s0",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     110
+    ],
+    [
+     296.5,
+     110
+    ],
+    [
+     296.5,
+     94
+    ],
+    [
+     349.0,
+     94
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      104
+     ],
+     [
+      153.5,
+      104
+     ],
+     [
+      153.5,
+      90
+     ],
+     [
+      181.0,
+      90
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g4s0",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     94
+    ],
+    [
+     359.5,
+     94
+    ],
+    [
+     359.5,
+     110
+    ],
+    [
+     412.0,
+     110
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      90
+     ],
+     [
+      186.5,
+      90
+     ],
+     [
+      186.5,
+      104
+     ],
+     [
+      214.0,
+      104
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g5s0",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     110
+    ],
+    [
+     422.5,
+     110
+    ],
+    [
+     422.5,
+     94
+    ],
+    [
+     475.0,
+     94
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      104
+     ],
+     [
+      219.5,
+      104
+     ],
+     [
+      219.5,
+      90
+     ],
+     [
+      247.0,
+      90
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g6s0",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     94
+    ],
+    [
+     485.5,
+     94
+    ],
+    [
+     485.5,
+     110
+    ],
+    [
+     538.0,
+     110
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      90
+     ],
+     [
+      252.5,
+      90
+     ],
+     [
+      252.5,
+      104
+     ],
+     [
+      280.0,
+      104
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g7s0",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     110
+    ],
+    [
+     548.5,
+     110
+    ],
+    [
+     548.5,
+     94
+    ],
+    [
+     601.0,
+     94
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      104
+     ],
+     [
+      285.5,
+      104
+     ],
+     [
+      285.5,
+      90
+     ],
+     [
+      313.0,
+      90
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws0g8s0",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     94
+    ],
+    [
+     611.5,
+     94
+    ],
+    [
+     611.5,
+     110
+    ],
+    [
+     664.0,
+     110
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      90
+     ],
+     [
+      318.5,
+      90
+     ],
+     [
+      318.5,
+      104
+     ],
+     [
+      346.0,
+      104
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wls1",
+   "type": "text",
+   "x": 110,
+   "y": 136.0,
+   "text": "S·Q1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 52,
+    "y": 127.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws1g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     144
+    ],
+    [
+     160.0,
+     144
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      134
+     ],
+     [
+      82.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g1s0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     144
+    ],
+    [
+     223.0,
+     144
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      134
+     ],
+     [
+      115.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g2s0",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     144
+    ],
+    [
+     233.5,
+     144
+    ],
+    [
+     233.5,
+     128
+    ],
+    [
+     286.0,
+     128
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      134
+     ],
+     [
+      120.5,
+      134
+     ],
+     [
+      120.5,
+      120
+     ],
+     [
+      148.0,
+      120
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g3s0",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     128
+    ],
+    [
+     349.0,
+     128
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      120
+     ],
+     [
+      181.0,
+      120
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g4s0",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     128
+    ],
+    [
+     359.5,
+     128
+    ],
+    [
+     359.5,
+     144
+    ],
+    [
+     412.0,
+     144
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      120
+     ],
+     [
+      186.5,
+      120
+     ],
+     [
+      186.5,
+      134
+     ],
+     [
+      214.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g5s0",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     144
+    ],
+    [
+     475.0,
+     144
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      134
+     ],
+     [
+      247.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g6s0",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     144
+    ],
+    [
+     485.5,
+     144
+    ],
+    [
+     485.5,
+     128
+    ],
+    [
+     538.0,
+     128
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      134
+     ],
+     [
+      252.5,
+      134
+     ],
+     [
+      252.5,
+      120
+     ],
+     [
+      280.0,
+      120
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g7s0",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     128
+    ],
+    [
+     601.0,
+     128
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      120
+     ],
+     [
+      313.0,
+      120
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws1g8s0",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     128
+    ],
+    [
+     611.5,
+     128
+    ],
+    [
+     611.5,
+     144
+    ],
+    [
+     664.0,
+     144
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      120
+     ],
+     [
+      318.5,
+      120
+     ],
+     [
+      318.5,
+      134
+     ],
+     [
+      346.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wls2",
+   "type": "text",
+   "x": 110,
+   "y": 170.0,
+   "text": "S·Q2",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 52,
+    "y": 157.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ws2g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     178
+    ],
+    [
+     160.0,
+     178
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      164
+     ],
+     [
+      82.0,
+      164
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g1s0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     178
+    ],
+    [
+     223.0,
+     178
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      164
+     ],
+     [
+      115.0,
+      164
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g2s0",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     178
+    ],
+    [
+     286.0,
+     178
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      164
+     ],
+     [
+      148.0,
+      164
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g3s0",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     178
+    ],
+    [
+     349.0,
+     178
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      164
+     ],
+     [
+      181.0,
+      164
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g4s0",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     178
+    ],
+    [
+     359.5,
+     178
+    ],
+    [
+     359.5,
+     162
+    ],
+    [
+     412.0,
+     162
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      164
+     ],
+     [
+      186.5,
+      164
+     ],
+     [
+      186.5,
+      150
+     ],
+     [
+      214.0,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g5s0",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     162
+    ],
+    [
+     475.0,
+     162
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      150
+     ],
+     [
+      247.0,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g6s0",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     162
+    ],
+    [
+     538.0,
+     162
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      150
+     ],
+     [
+      280.0,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g7s0",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     162
+    ],
+    [
+     601.0,
+     162
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      150
+     ],
+     [
+      313.0,
+      150
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ws2g8s0",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     162
+    ],
+    [
+     611.5,
+     162
+    ],
+    [
+     611.5,
+     178
+    ],
+    [
+     664.0,
+     178
+    ]
+   ],
+   "tone": "success",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      150
+     ],
+     [
+      318.5,
+      150
+     ],
+     [
+      318.5,
+      164
+     ],
+     [
+      346.0,
+      164
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlr0",
+   "type": "text",
+   "x": 110,
+   "y": 204.0,
+   "text": "R·Q0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 52,
+    "y": 187.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wr0g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     212
+    ],
+    [
+     160.0,
+     212
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      194
+     ],
+     [
+      82.0,
+      194
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g1s0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     212
+    ],
+    [
+     170.5,
+     212
+    ],
+    [
+     170.5,
+     196
+    ],
+    [
+     223.0,
+     196
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      194
+     ],
+     [
+      87.5,
+      194
+     ],
+     [
+      87.5,
+      180
+     ],
+     [
+      115.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g2s0",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     196
+    ],
+    [
+     233.5,
+     196
+    ],
+    [
+     233.5,
+     212
+    ],
+    [
+     286.0,
+     212
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      180
+     ],
+     [
+      120.5,
+      180
+     ],
+     [
+      120.5,
+      194
+     ],
+     [
+      148.0,
+      194
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g3s0",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     212
+    ],
+    [
+     296.5,
+     212
+    ],
+    [
+     296.5,
+     196
+    ],
+    [
+     349.0,
+     196
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      194
+     ],
+     [
+      153.5,
+      194
+     ],
+     [
+      153.5,
+      180
+     ],
+     [
+      181.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g4s0",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     196
+    ],
+    [
+     359.5,
+     196
+    ],
+    [
+     359.5,
+     212
+    ],
+    [
+     412.0,
+     212
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      180
+     ],
+     [
+      186.5,
+      180
+     ],
+     [
+      186.5,
+      194
+     ],
+     [
+      214.0,
+      194
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g5s0",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     212
+    ],
+    [
+     422.5,
+     212
+    ],
+    [
+     422.5,
+     196
+    ],
+    [
+     475.0,
+     196
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      194
+     ],
+     [
+      219.5,
+      194
+     ],
+     [
+      219.5,
+      180
+     ],
+     [
+      247.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g6s0",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     196
+    ],
+    [
+     485.5,
+     196
+    ],
+    [
+     485.5,
+     212
+    ],
+    [
+     538.0,
+     212
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      180
+     ],
+     [
+      252.5,
+      180
+     ],
+     [
+      252.5,
+      194
+     ],
+     [
+      280.0,
+      194
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g7s0",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     212
+    ],
+    [
+     548.5,
+     212
+    ],
+    [
+     548.5,
+     196
+    ],
+    [
+     601.0,
+     196
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      194
+     ],
+     [
+      285.5,
+      194
+     ],
+     [
+      285.5,
+      180
+     ],
+     [
+      313.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr0g8s0",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     196
+    ],
+    [
+     611.5,
+     196
+    ],
+    [
+     611.5,
+     212
+    ],
+    [
+     664.0,
+     212
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      180
+     ],
+     [
+      318.5,
+      180
+     ],
+     [
+      318.5,
+      194
+     ],
+     [
+      346.0,
+      194
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlr1",
+   "type": "text",
+   "x": 110,
+   "y": 238.0,
+   "text": "R·Q1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 52,
+    "y": 217.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wr1g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     246
+    ],
+    [
+     160.0,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      224
+     ],
+     [
+      82.0,
+      224
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g1s0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     246
+    ],
+    [
+     223.0,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      224
+     ],
+     [
+      115.0,
+      224
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g2s0",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     246
+    ],
+    [
+     244.0,
+     246
+    ],
+    [
+     244.0,
+     230
+    ],
+    [
+     286.0,
+     230
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      224
+     ],
+     [
+      126.0,
+      224
+     ],
+     [
+      126.0,
+      210
+     ],
+     [
+      148.0,
+      210
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g3s0",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     230
+    ],
+    [
+     349.0,
+     230
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      210
+     ],
+     [
+      181.0,
+      210
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g4s0",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     230
+    ],
+    [
+     370.0,
+     230
+    ],
+    [
+     370.0,
+     246
+    ],
+    [
+     412.0,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      210
+     ],
+     [
+      192.0,
+      210
+     ],
+     [
+      192.0,
+      224
+     ],
+     [
+      214.0,
+      224
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g5s0",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     246
+    ],
+    [
+     475.0,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      224
+     ],
+     [
+      247.0,
+      224
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g6s0",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     246
+    ],
+    [
+     496.0,
+     246
+    ],
+    [
+     496.0,
+     230
+    ],
+    [
+     538.0,
+     230
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      224
+     ],
+     [
+      258.0,
+      224
+     ],
+     [
+      258.0,
+      210
+     ],
+     [
+      280.0,
+      210
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g7s0",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     230
+    ],
+    [
+     601.0,
+     230
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      210
+     ],
+     [
+      313.0,
+      210
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr1g8s0",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     230
+    ],
+    [
+     622.0,
+     230
+    ],
+    [
+     622.0,
+     246
+    ],
+    [
+     664.0,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      210
+     ],
+     [
+      324.0,
+      210
+     ],
+     [
+      324.0,
+      224
+     ],
+     [
+      346.0,
+      224
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlr2",
+   "type": "text",
+   "x": 110,
+   "y": 272.0,
+   "text": "R·Q2",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 52,
+    "y": 247.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wr2g0s0",
+   "type": "line",
+   "points": [
+    [
+     118.0,
+     280
+    ],
+    [
+     160.0,
+     280
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      60.0,
+      254
+     ],
+     [
+      82.0,
+      254
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g1s0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     280
+    ],
+    [
+     223.0,
+     280
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      254
+     ],
+     [
+      115.0,
+      254
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g2s0",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     280
+    ],
+    [
+     286.0,
+     280
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      254
+     ],
+     [
+      148.0,
+      254
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g3s0",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     280
+    ],
+    [
+     349.0,
+     280
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      254
+     ],
+     [
+      181.0,
+      254
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g4s0",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     280
+    ],
+    [
+     380.5,
+     280
+    ],
+    [
+     380.5,
+     264
+    ],
+    [
+     412.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      254
+     ],
+     [
+      197.5,
+      254
+     ],
+     [
+      197.5,
+      240
+     ],
+     [
+      214.0,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g5s0",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     264
+    ],
+    [
+     475.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      240
+     ],
+     [
+      247.0,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g6s0",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     264
+    ],
+    [
+     538.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      240
+     ],
+     [
+      280.0,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g7s0",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     264
+    ],
+    [
+     601.0,
+     264
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      240
+     ],
+     [
+      313.0,
+      240
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wr2g8s0",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     264
+    ],
+    [
+     632.5,
+     264
+    ],
+    [
+     632.5,
+     280
+    ],
+    [
+     664.0,
+     280
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      240
+     ],
+     [
+      329.5,
+      240
+     ],
+     [
+      329.5,
+      254
+     ],
+     [
+      346.0,
+      254
+     ]
+    ]
+   }
+  },
+  {
+   "id": "m0",
+   "type": "line",
+   "points": [
+    [
+     160.0,
+     54
+    ],
+    [
+     160.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      82.0,
+      54
+     ],
+     [
+      82.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt0",
+   "type": "text",
+   "x": 160.0,
+   "y": 44,
+   "text": "↓1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 82.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1",
+   "type": "line",
+   "points": [
+    [
+     223.0,
+     54
+    ],
+    [
+     223.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      115.0,
+      54
+     ],
+     [
+      115.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt1",
+   "type": "text",
+   "x": 223.0,
+   "y": 44,
+   "text": "↓2",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 115.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2",
+   "type": "line",
+   "points": [
+    [
+     286.0,
+     54
+    ],
+    [
+     286.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      148.0,
+      54
+     ],
+     [
+      148.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt2",
+   "type": "text",
+   "x": 286.0,
+   "y": 44,
+   "text": "↓3",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 148.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m3",
+   "type": "line",
+   "points": [
+    [
+     349.0,
+     54
+    ],
+    [
+     349.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      181.0,
+      54
+     ],
+     [
+      181.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt3",
+   "type": "text",
+   "x": 349.0,
+   "y": 44,
+   "text": "↓4",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 181.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m4",
+   "type": "line",
+   "points": [
+    [
+     412.0,
+     54
+    ],
+    [
+     412.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      214.0,
+      54
+     ],
+     [
+      214.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt4",
+   "type": "text",
+   "x": 412.0,
+   "y": 44,
+   "text": "↓5",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 214.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m5",
+   "type": "line",
+   "points": [
+    [
+     475.0,
+     54
+    ],
+    [
+     475.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      247.0,
+      54
+     ],
+     [
+      247.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt5",
+   "type": "text",
+   "x": 475.0,
+   "y": 44,
+   "text": "↓6",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 247.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m6",
+   "type": "line",
+   "points": [
+    [
+     538.0,
+     54
+    ],
+    [
+     538.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      280.0,
+      54
+     ],
+     [
+      280.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt6",
+   "type": "text",
+   "x": 538.0,
+   "y": 44,
+   "text": "↓7",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 280.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m7",
+   "type": "line",
+   "points": [
+    [
+     601.0,
+     54
+    ],
+    [
+     601.0,
+     286
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      313.0,
+      54
+     ],
+     [
+      313.0,
+      260
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt7",
+   "type": "text",
+   "x": 601.0,
+   "y": 44,
+   "text": "↓8",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 313.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "ss",
+   "type": "text",
+   "x": 340.0,
+   "y": 310,
+   "text": "synchronous: 000",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 284,
+    "size": 13
+   }
+  },
+  {
+   "id": "rs",
+   "type": "text",
+   "x": 340.0,
+   "y": 334,
+   "text": "ripple: 000",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 308,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "S rows: a synchronous counter (T0 = 1, T1 = Q0, T2 = Q1Q0, one clock). R rows: a ripple counter. Both use falling edges, t_pd = 1 tick.",
+   "patches": [
+    {
+     "id": "wcg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 000",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 000",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 1: only Q0 changes, so both counters show 001 one t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 000 → 001 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 000 → 001 (1 t_pd)",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 2: 2 bits change. Synchronous: all together after 1 t_pd. Ripple: 001 → 000 → 010, settled after 2 t_pd.",
+   "patches": [
+    {
+     "id": "wcg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 001 → 010 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 001 → 000 → 010",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 3: only Q0 changes, so both counters show 011 one t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 010 → 011 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 010 → 011 (1 t_pd)",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 4: 3 bits change. Synchronous: all together after 1 t_pd. Ripple: 011 → 010 → 000 → 100, settled after 3 t_pd.",
+   "patches": [
+    {
+     "id": "wcg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 011 → 100 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 011 → 010 → 000 → 100",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 5: only Q0 changes, so both counters show 101 one t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 100 → 101 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 100 → 101 (1 t_pd)",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 6: 2 bits change. Synchronous: all together after 1 t_pd. Ripple: 101 → 100 → 110, settled after 2 t_pd.",
+   "patches": [
+    {
+     "id": "wcg6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 101 → 110 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 101 → 100 → 110",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 7: only Q0 changes, so both counters show 111 one t_pd after the edge.",
+   "patches": [
+    {
+     "id": "wcg7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 110 → 111 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 110 → 111 (1 t_pd)",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Edge 8: 3 bits change. Synchronous: all together after 1 t_pd. Ripple: 111 → 110 → 100 → 000, settled after 3 t_pd.",
+   "patches": [
+    {
+     "id": "wcg8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws0g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws1g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "ws2g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr0g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr1g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wr2g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: 111 → 000 (1 t_pd)",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: 111 → 110 → 100 → 000",
+      "tone": "danger"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Same count 0 … 7, 0. The synchronous counter settles 1 t_pd after every edge; the ripple counter needs up to 3 t_pd and shows false states.",
+   "patches": [
+    {
+     "id": "m7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "ss",
+     "set": {
+      "text": "synchronous: settles in 1 t_pd",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rs",
+     "set": {
+      "text": "ripple: up to n · t_pd = 3 t_pd",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}
