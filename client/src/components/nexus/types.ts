@@ -97,6 +97,75 @@ export interface NexusSubjectSummary extends NexusSubjectMeta {
   needs: Record<string, number>
 }
 
+/* ── The single web (GET /api/nexus/web) ── */
+
+/** One node as the canvas draws it. s: 0 locked, 1 open, 2 mastered. */
+export interface WebNode {
+  id: string
+  /** name */
+  n: string
+  /** zone level */
+  z: number
+  x: number
+  y: number
+  /** progress 0–100 */
+  p: number
+  s: 0 | 1 | 2
+  /** same-subject prerequisites */
+  req: string[]
+  /** cross-subject prerequisites, "subject:id" */
+  cx?: string[]
+  /** kind when not a concept (lesson / project) */
+  k?: string
+  xp: number
+  /** count label ("3/10 PYQs", "4/8") */
+  c: string
+}
+
+export interface WebZone {
+  level: number
+  name: string
+  rings: number[]
+  color: string
+  locked: boolean
+  current: boolean
+  completed: boolean
+  nodeCount: number
+  nodesCompleted: number
+  zoneProgress: number
+  xpRequired: number
+  probsRequired: number
+  minR: number
+  maxR: number
+}
+
+export interface WebCluster {
+  id: string
+  name: string
+  short: string
+  domain: string
+  engine: string | null
+  x: number
+  y: number
+  r: number
+  zones: WebZone[]
+  nodes: WebNode[]
+}
+
+export interface NexusWebResponse {
+  ok: boolean
+  player: RiftPlayer
+  riftLevels: RiftLevel[]
+  width: number
+  height: number
+  clusters: WebCluster[]
+}
+
+export interface NexusNodeResponse {
+  ok: boolean
+  node: NexusNode
+}
+
 export interface NexusPyq {
   id: string
   paper: string

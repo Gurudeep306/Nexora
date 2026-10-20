@@ -1,0 +1,12 @@
+{
+  "id": "dsa",
+  "name": "Data Structures & Algorithms",
+  "short": "DSA",
+  "group": "core",
+  "domain": "core-cs",
+  "order": 1,
+  "icon": "nexus",
+  "color": "#5b8cff",
+  "description": "The competitive-programming rift: master skills by solving rated problems, zone by zone.",
+  "engine": "dsa"
+}

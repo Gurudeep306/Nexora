@@ -3579,47 +3579,102 @@ async function nexusGateState(fresh) {
   return state;
 }
 
+/** Which GATE-notes subjects this reader may open (staff also see previews). */
+function nexusNotesVisible(req, notes) {
+  const staff = hasAnyAdminPerm(req);
+  return new Set([...notes.subjects].filter(([, s]) => staff || !s.card.hidden).map(([id]) => id));
+}
+
+/**
+ * Everything the Nexus needs for the signed-in reader: the DSA tree with
+ * solve progress, every outline subject with study progress, cross links.
+ */
+async function nexusState(req, fresh) {
+  const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+  // Totals, overrides, solved tags and GATE state are independent: one parallel round trip.
+  const [totals, solvedProblems, gateState] = await Promise.all([
+    myTotals(),
+    all(solvedTagsSql()),
+    nexusGateState(fresh),
+  ]);
+  const dsa = buildDsaNexus(totals, solvedProblems);
+  const notes = loadGateNotes();
+  const computed = nexusSubjects.computeSubjects(reg, dsa.nodes, { ...gateState, notesVisible: nexusNotesVisible(req, notes) }, loadGateBank(), notes);
+  for (const n of dsa.nodes) {
+    n.crossRequires = [];
+    n.crossUnlocks = nexusSubjects.dsaCrossUnlocks(reg, n.id, computed);
+  }
+  return { reg, dsa, computed };
+}
+
 /**
  * GET /api/nexus[?subject=<id>][&fresh=1]
  *
- * Without `subject` (or with subject=dsa) the response is exactly the old
- * DSA rift tree, plus `subject` and `subjects` (one summary card per
- * subject for the switcher and overview). Any other subject id returns that
- * subject's tree in the same shape: zones are its chapters, nodes carry
- * `metric`, `crossRequires` and `crossUnlocks`. The player (XP, Rift level)
- * is the same everywhere.
+ * Without `subject` the response is exactly the old DSA rift tree, plus
+ * `subject` and `subjects` (a summary per subject). Any other subject id
+ * returns that subject's tree in the same shape. (The page itself reads
+ * /api/nexus/web; this stays for the assistant and older clients.)
  */
 app.get("/api/nexus", async (req, res) => {
   try {
-    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
     const want = typeof req.query.subject === "string" && req.query.subject ? req.query.subject : "dsa";
-    if (!reg.subjects.has(want)) return res.status(404).json({ ok: false, error: "Unknown subject" });
-    const fresh = req.query.fresh === "1";
-    // Totals, overrides, solved tags and GATE state are independent: one parallel round trip.
-    const [totals, solvedProblems, gateState] = await Promise.all([
-      myTotals(),
-      all(solvedTagsSql()),
-      nexusGateState(fresh),
-    ]);
-    const dsa = buildDsaNexus(totals, solvedProblems);
-    const notes = loadGateNotes();
-    const staff = hasAnyAdminPerm(req);
-    const notesVisible = new Set([...notes.subjects].filter(([, s]) => staff || !s.card.hidden).map(([id]) => id));
-    const computed = nexusSubjects.computeSubjects(reg, dsa.nodes, { ...gateState, notesVisible }, loadGateBank(), notes);
-    for (const n of dsa.nodes) {
-      n.crossRequires = [];
-      n.crossUnlocks = nexusSubjects.dsaCrossUnlocks(reg, n.id, computed);
-    }
+    const { reg, dsa, computed } = await nexusState(req, req.query.fresh === "1");
     const view = want === "dsa" ? dsa : computed.get(want);
+    if (!view) return res.status(404).json({ ok: false, error: "Unknown subject" });
     res.json({
       ok: true,
       nodes: view.nodes,
       zones: view.zones,
       player: dsa.player,
       riftLevels: RIFT_LEVELS,
-      subject: reg.subjects.get(want).meta,
+      subject: nexusSubjects.subjectMeta(reg, want),
       subjects: nexusSubjects.subjectSummaries(reg, dsa, computed),
     });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/**
+ * GET /api/nexus/web[?fresh=1] — the whole Nexus as one web: every subject
+ * a cluster at its computed place, every node with position, name, state
+ * and progress. Node details load lazily (below).
+ */
+app.get("/api/nexus/web", async (req, res) => {
+  try {
+    const { reg, dsa, computed } = await nexusState(req, req.query.fresh === "1");
+    res.json({ ok: true, player: dsa.player, riftLevels: RIFT_LEVELS, ...nexusSubjects.webPayload(reg, dsa, computed) });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/**
+ * GET /api/nexus/node/:subject/:node — one node's full detail for the panel:
+ * description, resources, tags, how mastery is measured (lessons, PYQs,
+ * accuracy) and its cross-subject chips. Reads only the cached GATE state,
+ * never the problem tables; DSA progress comes from the web response.
+ */
+app.get("/api/nexus/node/:subject/:node", async (req, res) => {
+  try {
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const s = reg.subjects.get(req.params.subject);
+    if (!s) return res.status(404).json({ ok: false, error: "Unknown node" });
+    if (s.engine === "dsa") {
+      const n = NEXUS_NODES.find((x) => x.id === req.params.node);
+      if (!n) return res.status(404).json({ ok: false, error: "Unknown node" });
+      return res.json({
+        ok: true,
+        node: { ...n, subject: "dsa", crossRequires: [], crossUnlocks: nexusSubjects.dsaCrossUnlocks(reg, n.id, new Map()) },
+      });
+    }
+    if (!s.doc.nodes.some((n) => n.id === req.params.node)) return res.status(404).json({ ok: false, error: "Unknown node" });
+    const gateState = await nexusGateState(false);
+    const notes = loadGateNotes();
+    const dsaStub = NEXUS_NODES.map((n) => ({ ...n, progress: 0, completed: false }));
+    const computed = nexusSubjects.computeSubjects(reg, dsaStub, { ...gateState, notesVisible: nexusNotesVisible(req, notes) }, loadGateBank(), notes);
+    const node = computed.get(req.params.subject).nodes.find((n) => n.id === req.params.node);
+    res.json({ ok: true, node });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }
