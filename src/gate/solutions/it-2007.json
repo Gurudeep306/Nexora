@@ -2763,110 +2763,36 @@
       "verification": "Checked final values of R2 and Loc for all four rewrites."
     },
     "it-2007-cs-40": {
-      "approach": "Each clock: new left bit = input XOR rightmost bit, and the register shifts right. Simulate six clocks from 0110; the input 101101 is a palindrome, so the feed order does not matter.",
+      "approach": "Concept tested: **an LFSR with a serial input**. At each clock the leftmost cell takes input ⊕ rightmost cell and the register shifts right; compute the XOR from the old contents, then slide.",
       "concepts": [
-        "Linear feedback shift register",
-        "XOR",
+        "LFSR",
+        "Serial input",
+        "XOR feedback",
         "Shift register"
       ],
+      "given": "A 4-cell register holding 0110; the XOR of the serial input and the rightmost cell feeds the leftmost cell; input 101101.",
       "steps": [
         {
-          "title": "Rule per clock",
-          "body": "Let the register be $r_1r_2r_3r_4$ (left to right). On each clock: $r_1 \\leftarrow x \\oplus r_4$, and $r_2r_3r_4 \\leftarrow r_1r_2r_3$."
-        },
-        {
-          "title": "Clocks 1–3",
-          "body": "$1\\oplus0=1$: 0110 → **1011**. $0\\oplus1=1$: → **1101**. $1\\oplus1=0$: → **0110**. After 3 bits the register is back to its start.",
+          "title": "First three inputs",
+          "body": "0110, in 1: $1 \\oplus 0 = 1$ → 1011. In 0: $0 \\oplus 1 = 1$ → 1101. In 1: $1 \\oplus 1 = 0$ → 0110.",
           "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "warning"
-              }
-            ]
+            "reveal": 4
           }
         },
         {
-          "title": "Clocks 4–6",
-          "body": "The remaining input bits 1, 0, 1 are the same as the first three, so the same cycle repeats: 1011 → 1101 → **0110**. Final value: 0110 (option A).",
+          "title": "Last three inputs",
+          "body": "They are again 1, 0, 1 and the register is again 0110, so the same three steps repeat: 1011, 1101, 0110.",
           "scene": {
-            "reveal": 35,
-            "hl": [
-              {
-                "r": 6,
-                "tone": "success"
-              }
-            ]
+            "reveal": 7
           }
+        },
+        {
+          "title": "Input order",
+          "body": "101101 reads the same in both directions, so whichever end of the string enters first, the result is the same."
         }
       ],
-      "animation": {
-        "kind": "table",
-        "title": "LFSR state per clock",
-        "cols": [
-          "clock",
-          "input x",
-          "r4 (fed back)",
-          "x ⊕ r4 → r1",
-          "register r1 r2 r3 r4"
-        ],
-        "rows": [
-          [
-            "0",
-            "—",
-            "—",
-            "—",
-            "0 1 1 0"
-          ],
-          [
-            "1",
-            "1",
-            "0",
-            "1",
-            "1 0 1 1"
-          ],
-          [
-            "2",
-            "0",
-            "1",
-            "1",
-            "1 1 0 1"
-          ],
-          [
-            "3",
-            "1",
-            "1",
-            "0",
-            "0 1 1 0"
-          ],
-          [
-            "4",
-            "1",
-            "0",
-            "1",
-            "1 0 1 1"
-          ],
-          [
-            "5",
-            "0",
-            "1",
-            "1",
-            "1 1 0 1"
-          ],
-          [
-            "6",
-            "1",
-            "1",
-            "0",
-            "0 1 1 0"
-          ]
-        ],
-        "reveal": 5,
-        "mono": true
-      },
       "answer": {
-        "value": "0110",
+        "value": "(A) 0110",
         "choice": [
           "A"
         ],
@@ -2876,28 +2802,87 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: the state returns to 0110 after every 3 input bits 1, 0, 1."
+          "reason": "The simulated final contents."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "1011 is the state after clock 1 (and 4), not the final one."
+          "reason": "1011 is the contents after the 1st (and the 4th) input, one clock too early in the cycle."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "1101 is the state after clock 2 (and 5)."
+          "reason": "1101 is the contents after the 2nd (and the 5th) input."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "1111 never occurs in this sequence."
+          "reason": "1111 never appears: the register only visits 1011, 1101 and 0110 for this input."
         }
       ],
+      "shortcut": "Notice the period: after 1, 0, 1 the register is back at 0110, and the input is that pattern twice.",
       "pitfalls": [
-        "Shifting in the wrong direction — the XOR output enters the left cell and the right cell is fed back."
+        "Shifting the register left, or XORing with the leftmost cell.",
+        "Shifting first and computing the XOR from the new rightmost cell."
       ],
-      "verification": "Clocks 1–3 and 4–6 use identical input bits (1, 0, 1) and both start from 0110, so the final state equals the state after clock 3: 0110."
+      "verification": "seqlib.lfsr_step with the single tap on the last cell and the input XORed in gives 1011, 1101, 0110, 1011, 1101, 0110.",
+      "animation": {
+        "kind": "table",
+        "title": "Six clocks",
+        "cols": [
+          "in",
+          "in ⊕ right",
+          "register"
+        ],
+        "rows": [
+          [
+            "–",
+            "–",
+            "0110"
+          ],
+          [
+            "1",
+            "1",
+            "1011"
+          ],
+          [
+            "0",
+            "1",
+            "1101"
+          ],
+          [
+            "1",
+            "0",
+            "0110"
+          ],
+          [
+            "1",
+            "1",
+            "1011"
+          ],
+          [
+            "0",
+            "1",
+            "1101"
+          ],
+          [
+            "1",
+            "0",
+            "0110"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "reveal": 1
+      }
     },
     "it-2007-cs-41": {
       "approach": "Issue one instruction per cycle in order; latency L between a producer and its consumer means L idle cycles must separate them. Insert stalls only as needed and count cycles.",

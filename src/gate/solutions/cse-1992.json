@@ -1673,176 +1673,95 @@
       }
     },
     "cse-1992-b-4-c": {
-      "approach": "A counter where only one flip-flop changes per clock is a Gray-code counter. For D flip-flops $D_i = Q_i^{+}$, so read each next-state bit off the state table and minimise with a K-map.",
+      "approach": "Concept tested: **designing a counter for a given sequence with D flip-flops**. 'At most one flip-flop changes per step' is the 3-bit Gray code. With D flip-flops each input is the next-state bit, so each D equation is read straight off the state table and minimised.",
       "concepts": [
         "Gray code",
-        "D flip-flop excitation",
-        "K-map minimisation"
+        "Counter design",
+        "D flip-flop",
+        "K-map"
       ],
+      "given": "A 3-bit counter with D flip-flops in which no more than one flip-flop changes state between consecutive states.",
       "steps": [
         {
-          "title": "State table",
-          "body": "3-bit Gray sequence $000 \\to 001 \\to 011 \\to 010 \\to 110 \\to 111 \\to 101 \\to 100 \\to 000$. Since $D = Q^{+}$, the D columns equal the next state.",
+          "title": "Choose the sequence",
+          "body": "The reflected Gray code: 000 → 001 → 011 → 010 → 110 → 111 → 101 → 100 → 000. All 8 states are used, so there are no don't-cares and nothing can lock out."
+        },
+        {
+          "title": "D2 = next MSB",
+          "body": "$Q_2^+ = 1$ for the present states 010, 110, 111, 101. Pairs 010/110 ($Q_1\\overline{Q_0}$) and 111/101 ($Q_2Q_0$): $D_2 = Q_1\\overline{Q_0} + Q_2Q_0$.",
           "scene": {
-            "kind": "table",
-            "cols": [
-              "Q2Q1Q0",
-              "next = D2D1D0"
-            ],
-            "rows": [
-              [
-                "000",
-                "001"
-              ],
-              [
-                "001",
-                "011"
-              ],
-              [
-                "011",
-                "010"
-              ],
-              [
-                "010",
-                "110"
-              ],
-              [
-                "110",
-                "111"
-              ],
-              [
-                "111",
-                "101"
-              ],
-              [
-                "101",
-                "100"
-              ],
-              [
-                "100",
-                "000"
-              ]
-            ],
-            "mono": true
+            "reveal": 2
           }
         },
         {
-          "title": "Minimise D2",
-          "body": "$D_2 = 1$ for present states $010, 110, 111, 101$ = $m(2, 5, 6, 7)$:\n$$D_2 = Q_1\\overline{Q_0} + Q_2Q_0$$",
+          "title": "D1 = next middle bit",
+          "body": "$Q_1^+ = 1$ for 001, 011, 010, 110. Pairs 001/011 ($\\overline{Q_2}Q_0$) and 010/110 ($Q_1\\overline{Q_0}$): $D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}$.",
           "scene": {
-            "kind": "kmap",
-            "variables": [
-              "Q2",
-              "Q1",
-              "Q0"
-            ],
-            "ones": [
-              2,
-              5,
-              6,
-              7
-            ],
-            "groups": [
-              {
-                "cells": [
-                  2,
-                  6
-                ],
-                "label": "Q1Q0'"
-              },
-              {
-                "cells": [
-                  5,
-                  7
-                ],
-                "label": "Q2Q0"
-              }
-            ],
-            "caption": "D2 = Σm(2,5,6,7)"
+            "reveal": 3
           }
         },
         {
-          "title": "Minimise D1",
-          "body": "$D_1 = 1$ for $001, 011, 010, 110$ = $m(1, 2, 3, 6)$:\n$$D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}$$",
+          "title": "D0 = next LSB",
+          "body": "$Q_0^+ = 1$ for 000, 001, 110, 111: $Q_0$ is irrelevant and $Q_2 = Q_1$ is needed: $D_0 = \\overline{Q_2}\\,\\overline{Q_1} + Q_2Q_1 = \\overline{Q_2 \\oplus Q_1}$.",
           "scene": {
-            "ones": [
-              1,
-              2,
-              3,
-              6
-            ],
-            "groups": [
-              {
-                "cells": [
-                  1,
-                  3
-                ],
-                "label": "Q2'Q0"
-              },
-              {
-                "cells": [
-                  2,
-                  6
-                ],
-                "label": "Q1Q0'"
-              }
-            ],
-            "caption": "D1 = Σm(1,2,3,6)"
+            "reveal": 4
           }
-        },
-        {
-          "title": "Minimise D0",
-          "body": "$D_0 = 1$ for $000, 001, 110, 111$ = $m(0, 1, 6, 7)$:\n$$D_0 = \\overline{Q_2}\\,\\overline{Q_1} + Q_2Q_1 = \\overline{Q_2 \\oplus Q_1}$$",
-          "scene": {
-            "ones": [
-              0,
-              1,
-              6,
-              7
-            ],
-            "groups": [
-              {
-                "cells": [
-                  0,
-                  1
-                ],
-                "label": "Q2'Q1'"
-              },
-              {
-                "cells": [
-                  6,
-                  7
-                ],
-                "label": "Q2Q1"
-              }
-            ],
-            "caption": "D0 = Σm(0,1,6,7)"
-          }
-        },
-        {
-          "title": "Circuit",
-          "body": "Three D flip-flops on a common clock with the inputs above (two AND-OR networks and one XNOR). Each transition flips exactly one bit, including the wrap-around $100 \\to 000$."
         }
       ],
       "answer": {
-        "value": "Gray-code counter $000\\to001\\to011\\to010\\to110\\to111\\to101\\to100\\to000$ with $D_2 = Q_1\\overline{Q_0} + Q_2Q_0$, $D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}$, $D_0 = \\overline{Q_2 \\oplus Q_1}$",
+        "value": "Gray sequence 000→001→011→010→110→111→101→100→000 with $D_2 = Q_1\\overline{Q_0} + Q_2Q_0$, $D_1 = \\overline{Q_2}Q_0 + Q_1\\overline{Q_0}$, $D_0 = \\overline{Q_2 \\oplus Q_1}$",
         "matchesKey": true
       },
-      "animation": {
-        "kind": "kmap",
-        "variables": [
-          "Q2",
-          "Q1",
-          "Q0"
-        ],
-        "ones": [],
-        "groups": [],
-        "caption": ""
-      },
+      "shortcut": "In a Gray sequence the parity of the state alternates every step; that is why $D_0$ comes out as the XNOR of the other two bits.",
       "pitfalls": [
-        "A binary counter fails: 011 → 100 changes all three bits."
+        "Writing T-style 'change' columns for D flip-flops: a D input is the new value, not the change.",
+        "Using a non-cyclic Gray order: the last state 100 must return to 000 with one bit change too."
       ],
-      "verification": "State $011$: $D_2 = 1\\cdot0 + 0 = 0$, $D_1 = 1\\cdot1 + 0 = 1$, $D_0 = \\overline{0 \\oplus 1} = 0$ → $010$ ✓. State $100$: $D_2 = 0$, $D_1 = 0$, $D_0 = \\overline{1 \\oplus 0} = 0$ → $000$ ✓."
+      "verification": "seqlib.design_counter for the Gray sequence with D flip-flops returns exactly these three minimal SOPs, and the built circuit's only cycle is the 8-state Gray cycle.",
+      "animation": {
+        "kind": "table",
+        "title": "Gray counter: next state = D inputs",
+        "cols": [
+          "Q2Q1Q0",
+          "Q2⁺Q1⁺Q0⁺"
+        ],
+        "rows": [
+          [
+            "000",
+            "001"
+          ],
+          [
+            "001",
+            "011"
+          ],
+          [
+            "011",
+            "010"
+          ],
+          [
+            "010",
+            "110"
+          ],
+          [
+            "110",
+            "111"
+          ],
+          [
+            "111",
+            "101"
+          ],
+          [
+            "101",
+            "100"
+          ],
+          [
+            "100",
+            "000"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-1992-b-5-a": {
       "approach": "Weight reads and writes separately: a read hits the cache (50 ns) with probability 0.9 and otherwise goes to main memory (500 ns); with write-through every write costs a main-memory access (500 ns).",

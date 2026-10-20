@@ -3591,67 +3591,42 @@
       "verification": "Read fraction $0.8$, write fraction $0.2$: $0.8\\times1.4+0.2\\times2.8=1.12+0.56=1.68$."
     },
     "cse-2014-3-cs-45": {
-      "approach": "Read the excitation from the figure, then apply the JK rules (00 hold, 01 reset, 10 set, 11 toggle) to all three flip-flops simultaneously, three times from 000.",
+      "approach": "Concept tested: **tracing a given synchronous JK counter**. Write $J$ and $K$ of every stage, reduce stages to D or T form where possible, and update all three flip-flops together from the old state.",
       "concepts": [
         "JK flip-flop",
         "Synchronous counter",
-        "State table"
+        "State trace"
       ],
-      "given": "| Flip-flop | J | K |\n|---|---|---|\n| FF2 | $\\overline{Q_1}$ | $Q_0$ |\n| FF1 | $Q_2$ | $\\overline{Q_2}$ |\n| FF0 | $Q_1$ | $\\overline{Q_0}$ |",
+      "given": "JK flip-flops on one clock with $J_2 = \\overline{Q_1}$, $K_2 = Q_0$, $J_1 = Q_2$, $K_1 = \\overline{Q_2}$, $J_0 = Q_1$, $K_0 = \\overline{Q_0}$; initial $Q_2Q_1Q_0 = 000$.",
       "steps": [
         {
-          "title": "Wiring from the figure",
-          "body": "$J_2=\\overline{Q_1}$ (long bottom wire), $K_2=Q_0$ (top wire); $J_1=Q_2,\\ K_1=\\overline{Q_2}$; $J_0=Q_1,\\ K_0=\\overline{Q_0}$ (local loop).\n\nFF1 is a D flip-flop in disguise: $Q_1^+=Q_2$.",
+          "title": "Simplify",
+          "body": "$K_1 = \\overline{J_1}$: stage 1 is a D stage, $Q_1^+ = Q_2$. Stage 0: $Q_0^+ = Q_1\\overline{Q_0} + Q_0 = Q_1 + Q_0$. Stage 2: $Q_2^+ = \\overline{Q_1}\\,\\overline{Q_2} + \\overline{Q_0}Q_2$."
+        },
+        {
+          "title": "Clock 1 (from 000)",
+          "body": "$Q_2^+ = 1$, $Q_1^+ = 0$, $Q_0^+ = 0$: **100**.",
           "scene": {
-            "reveal": 0,
-            "caption": "JK: 00 hold · 01 reset · 10 set · 11 toggle"
+            "reveal": 2
           }
         },
         {
-          "title": "Clock 1: 000 → 100",
-          "body": "$J_2K_2=10\\Rightarrow Q_2=1$; $J_1K_1=01\\Rightarrow Q_1=0$; $J_0K_0=01\\Rightarrow Q_0=0$.",
+          "title": "Clock 2 (from 100)",
+          "body": "$Q_2^+ = \\overline{Q_1}\\,\\overline{Q_2} + \\overline{Q_0}Q_2 = 0 + 1 = 1$, $Q_1^+ = Q_2 = 1$, $Q_0^+ = Q_1 + Q_0 = 0$: **110**.",
           "scene": {
-            "reveal": 9,
-            "hl": [
-              {
-                "r": 0,
-                "c": 8,
-                "tone": "success"
-              }
-            ]
+            "reveal": 3
           }
         },
         {
-          "title": "Clock 2: 100 → 110",
-          "body": "$J_2K_2=10\\Rightarrow1$; $J_1K_1=10\\Rightarrow1$; $J_0K_0=01\\Rightarrow0$.",
+          "title": "Clock 3 (from 110)",
+          "body": "$Q_2^+ = \\overline{Q_0}Q_2 = 1$, $Q_1^+ = 1$, $Q_0^+ = Q_1 + Q_0 = 1$: **111**.",
           "scene": {
-            "reveal": 18,
-            "hl": [
-              {
-                "r": 1,
-                "c": 8,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Clock 3: 110 → 111",
-          "body": "$J_2K_2=00\\Rightarrow$ hold $1$; $J_1K_1=10\\Rightarrow1$; $J_0K_0=11\\Rightarrow$ toggle $0\\to1$.\n\nSequence: **100, 110, 111**.",
-          "scene": {
-            "reveal": 27,
-            "hl": [
-              {
-                "r": 2,
-                "c": 8,
-                "tone": "success"
-              }
-            ]
+            "reveal": 4
           }
         }
       ],
       "answer": {
-        "value": "100, 110, 111",
+        "value": "(C) 100, 110, 111",
         "choice": [
           "C"
         ],
@@ -3661,79 +3636,65 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong — from 000, $J_2=\\overline{Q_1}=1,K_2=0$ sets $Q_2$, so the first state has $Q_2=1$."
+          "reason": "001, 010, 011 assumes the circuit is a binary counter; from 000, $J_2 = 1$ sets $Q_2$ at once."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong — first state would need $Q_1=Q_0=1$, but $J_1=Q_2=0$ resets $Q_1$ and $J_0=Q_1=0$ resets $Q_0$."
+          "reason": "111 after one clock would need $Q_1$ and $Q_0$ to be set from 000, but $J_1 = Q_2 = 0$ and $J_0 = Q_1 = 0$."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct — 000 → 100 → 110 → 111."
+          "reason": "Trace: 000 → 100 → 110 → 111."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong — first state 100 is right, but next $Q_1^+=Q_2=1$ and $Q_0$ stays 0, giving 110, not 011."
+          "reason": "100 is right, but from 100 stage 1 loads $Q_2 = 1$, so the second state has $Q_1 = 1$ and $Q_2$ stays 1 ($K_2 = Q_0 = 0$): 110, not 011."
         }
       ],
+      "shortcut": "Stage 1 copies $Q_2$ (J = Q2, K = Q̄2). From 000 the first state has $Q_2 = 1$ and $Q_1 = 0$: only options C and D start with 100; the second state must then have $Q_1 = 1$ and $Q_2$ held: 110.",
       "pitfalls": [
-        "Mis-reading the crossed wires: $J_2$ comes from $\\overline{Q_1}$ (bottom) and $K_2$ from $Q_0$ (top).",
-        "Updating flip-flops one after another instead of simultaneously."
+        "Updating the flip-flops one at a time and using new values for the next one.",
+        "Assuming a 'counter' counts in binary."
       ],
-      "verification": "Shortcut check: $Q_1^+=Q_2$ (JK with $K=\\bar J$ acts as D), so $Q_1$ goes 0, 0, 1, 1 — consistent with 000, 100, 110, 111.",
+      "verification": "A Sync simulation gives 000, 100, 110, 111, 011, 001, 101, 011, …: the circuit then circulates 011 → 001 → 101.",
       "animation": {
         "kind": "table",
+        "title": "Trace from 000",
         "cols": [
-          "Clock",
           "Q2Q1Q0",
-          "J2=Q1′",
-          "K2=Q0",
-          "J1=Q2",
-          "K1=Q2′",
-          "J0=Q1",
-          "K0=Q0′",
-          "Next"
+          "J2K2",
+          "J1K1",
+          "J0K0",
+          "next"
         ],
         "rows": [
           [
-            "1",
             "000",
-            "1",
-            "0",
-            "0",
-            "1",
-            "0",
-            "1",
+            "10",
+            "01",
+            "01",
             "100"
           ],
           [
-            "2",
             "100",
-            "1",
-            "0",
-            "1",
-            "0",
-            "0",
-            "1",
+            "10",
+            "10",
+            "01",
             "110"
           ],
           [
-            "3",
             "110",
-            "0",
-            "0",
-            "1",
-            "0",
-            "1",
-            "1",
+            "00",
+            "10",
+            "11",
             "111"
           ]
         ],
-        "reveal": 0,
-        "mono": true
+        "mono": true,
+        "reveal": 1
       }
     },
     "cse-2014-3-cs-46": {

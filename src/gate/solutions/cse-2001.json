@@ -1957,128 +1957,36 @@
       }
     },
     "cse-2001-a-37": {
-      "approach": "Read the next-state equations off the figure — $D_0 = Q_1 \\oplus Q_2$, $D_1 = Q_0$, $D_2 = Q_1$ — and step from state 1.",
+      "approach": "Concept tested: **a shift register with XOR feedback (an LFSR)**. Write the next-state equations, then trace from the given state; as a number the register doubles and adds the feedback bit.",
       "concepts": [
+        "LFSR",
         "Shift register",
-        "LFSR"
+        "XOR feedback",
+        "State sequence"
       ],
+      "given": "Three D flip-flops: $D_1 = Q_0$, $D_2 = Q_1$, $D_0 = Q_1 \\oplus Q_2$; initially $Q_0 = 1$, $Q_1 = Q_2 = 0$; state $= 4Q_2 + 2Q_1 + Q_0$.",
       "steps": [
         {
-          "title": "Next-state rules",
-          "body": "$Q_0^+ = Q_1 \\oplus Q_2$, $Q_1^+ = Q_0$, $Q_2^+ = Q_1$. Start: $Q_2Q_1Q_0 = 001$ (state 1).",
+          "title": "Next-state equations",
+          "body": "$Q_0^+ = Q_1 \\oplus Q_2$, $Q_1^+ = Q_0$, $Q_2^+ = Q_1$. As a number $v$: $v^+ = (2v \\bmod 8) + (Q_1 \\oplus Q_2)$."
+        },
+        {
+          "title": "Trace",
+          "body": "1 (001): $0 \\oplus 0 = 0$ → 2. 2 (010): $1 \\oplus 0 = 1$ → 5. 5 (101): $0 \\oplus 1 = 1$ → 3. 3 (011): $1 \\oplus 0 = 1$ → 7.",
           "scene": {
-            "reveal": 3,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "accent"
-              }
-            ],
-            "caption": "Start in state 1"
+            "reveal": 5
           }
         },
         {
-          "title": "Clocks 1–3",
-          "body": "$001 \\to (Q_2,Q_1,Q_0) = (0,1,0\\oplus0) = 010 = 2$\n\n$010 \\to (1,0,1\\oplus0) = 101 = 5$\n\n$101 \\to (0,1,0\\oplus1) = 011 = 3$",
+          "title": "Finish the cycle",
+          "body": "7 (111): $1 \\oplus 1 = 0$ → 6. 6 (110): $1 \\oplus 1 = 0$ → 4. 4 (100): $0 \\oplus 1 = 1$ → 1. All seven non-zero states: a maximal-length LFSR.",
           "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ],
-            "caption": "1 → 2 → 5 → 3"
-          }
-        },
-        {
-          "title": "Clocks 4–7",
-          "body": "$011 \\to (1,1,1\\oplus0) = 111 = 7$\n\n$111 \\to (1,1,1\\oplus1) = 110 = 6$\n\n$110 \\to (1,0,1\\oplus1) = 100 = 4$\n\n$100 \\to (0,0,0\\oplus1) = 001 = 1$ (back to start).",
-          "scene": {
-            "reveal": 32,
-            "hl": [
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ],
-            "caption": "3 → 7 → 6 → 4 → 1"
+            "reveal": 8
           }
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "Q2",
-          "Q1",
-          "Q0",
-          "state"
-        ],
-        "rowLabels": [
-          "t0",
-          "t1",
-          "t2",
-          "t3",
-          "t4",
-          "t5",
-          "t6",
-          "t7"
-        ],
-        "rows": [
-          [
-            0,
-            0,
-            1,
-            1
-          ],
-          [
-            0,
-            1,
-            0,
-            2
-          ],
-          [
-            1,
-            0,
-            1,
-            5
-          ],
-          [
-            0,
-            1,
-            1,
-            3
-          ],
-          [
-            1,
-            1,
-            1,
-            7
-          ],
-          [
-            1,
-            1,
-            0,
-            6
-          ],
-          [
-            1,
-            0,
-            0,
-            4
-          ],
-          [
-            0,
-            0,
-            1,
-            1
-          ]
-        ],
-        "reveal": 4,
-        "mono": true
-      },
       "answer": {
-        "value": "Sequence 1, 2, 5, 3, 7, 6, 4 — option (B)",
+        "value": "(B) 1, 2, 5, 3, 7, 6, 4",
         "choice": [
           "B"
         ],
@@ -2088,29 +1996,83 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "From 1 the next state is 2, not 3."
+          "reason": "1 → 3 is possible, but 3 → 4 is not: from 3 the register can only reach $2 \\cdot 3 = 6$ or 7."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Matches the trace."
+          "reason": "The simulated sequence 1, 2, 5, 3, 7, 6, 4 (then 1 again)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "After 2 comes 5, not 7."
+          "reason": "2 → 7 is impossible: from 2 only 4 or 5 can follow."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "From 1 the next state is 2, not 6."
+          "reason": "1 → 6 is impossible: from 1 only 2 or 3 can follow."
         }
       ],
+      "shortcut": "Each next state is $2v \\bmod 8$ or one more; only option B obeys that at every step, so no XOR needs to be computed at all.",
       "pitfalls": [
-        "Feeding the XOR from $Q_0$ instead of $Q_1$ and $Q_2$.",
-        "Reading the state with $Q_0$ as the MSB."
+        "Shifting in the wrong direction (reading $Q_0$ as the most significant bit).",
+        "Updating $Q_1$ first and then using the new $Q_1$ in the XOR (every flip-flop uses the old state)."
       ],
-      "verification": "Maximal-length 3-bit LFSR: all 7 non-zero states appear once before returning to 1."
+      "verification": "Simulation from 001 gives 1, 2, 5, 3, 7, 6, 4, 1; 000 maps to itself, the only state off the cycle.",
+      "animation": {
+        "kind": "table",
+        "title": "State sequence",
+        "cols": [
+          "Q2Q1Q0",
+          "Q1 ⊕ Q2",
+          "value"
+        ],
+        "rows": [
+          [
+            "001",
+            "0",
+            "1"
+          ],
+          [
+            "010",
+            "1",
+            "2"
+          ],
+          [
+            "101",
+            "1",
+            "5"
+          ],
+          [
+            "011",
+            "1",
+            "3"
+          ],
+          [
+            "111",
+            "0",
+            "7"
+          ],
+          [
+            "110",
+            "0",
+            "6"
+          ],
+          [
+            "100",
+            "1",
+            "4"
+          ],
+          [
+            "001",
+            "",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2001-a-38": {
       "approach": "Count bus transfers (one per cycle on the single 8-bit bus) plus the 2-cycle memory write; the SP decrement is local and overlaps.",

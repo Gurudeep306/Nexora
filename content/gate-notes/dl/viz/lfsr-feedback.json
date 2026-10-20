@@ -1,0 +1,1067 @@
+{
+ "version": 1,
+ "title": "A 3-bit LFSR stepping through 1, 2, 5, 3, 7, 6, 4",
+ "width": 680,
+ "height": 318,
+ "narrow": {
+  "width": 360,
+  "height": 314
+ },
+ "intro": "Three D flip-flops in a chain Q0 → Q1 → Q2 on one clock; an XOR of Q1 and Q2 feeds D0. The state is 4Q2 + 2Q1 + Q0. Each step is one clock edge.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "XOR feedback: a 3-bit LFSR (GATE 2001)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "3-bit LFSR (GATE 2001)",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 110,
+   "y": 150,
+   "w": 70,
+   "h": 56,
+   "narrow": {
+    "x": 34,
+    "w": 54
+   }
+  },
+  {
+   "id": "f0-l0",
+   "type": "text",
+   "x": 115,
+   "y": 170.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 39,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0-r0",
+   "type": "text",
+   "x": 175,
+   "y": 170.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 83,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0-b0",
+   "type": "text",
+   "x": 145.0,
+   "y": 196,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 61.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fn0",
+   "type": "text",
+   "x": 145.0,
+   "y": 138,
+   "text": "Q0",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 61.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv0",
+   "type": "text",
+   "x": 145.0,
+   "y": 170.0,
+   "text": "0",
+   "size": 18,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 61.0,
+    "size": 16
+   }
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 240,
+   "y": 150,
+   "w": 70,
+   "h": 56,
+   "narrow": {
+    "x": 122,
+    "w": 54
+   }
+  },
+  {
+   "id": "f1-l0",
+   "type": "text",
+   "x": 245,
+   "y": 170.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 127,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1-r0",
+   "type": "text",
+   "x": 305,
+   "y": 170.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 171,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1-b0",
+   "type": "text",
+   "x": 275.0,
+   "y": 196,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 149.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fn1",
+   "type": "text",
+   "x": 275.0,
+   "y": 138,
+   "text": "Q1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 149.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv1",
+   "type": "text",
+   "x": 275.0,
+   "y": 170.0,
+   "text": "0",
+   "size": 18,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 149.0,
+    "size": 16
+   }
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 370,
+   "y": 150,
+   "w": 70,
+   "h": 56,
+   "narrow": {
+    "x": 210,
+    "w": 54
+   }
+  },
+  {
+   "id": "f2-l0",
+   "type": "text",
+   "x": 375,
+   "y": 170.0,
+   "text": "D",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 215,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2-r0",
+   "type": "text",
+   "x": 435,
+   "y": 170.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 259,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2-b0",
+   "type": "text",
+   "x": 405.0,
+   "y": 196,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 237.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fn2",
+   "type": "text",
+   "x": 405.0,
+   "y": 138,
+   "text": "Q2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 237.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv2",
+   "type": "text",
+   "x": 405.0,
+   "y": 170.0,
+   "text": "0",
+   "size": 18,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 237.0,
+    "size": 16
+   }
+  },
+  {
+   "id": "w0",
+   "type": "line",
+   "points": [
+    [
+     180,
+     170.0
+    ],
+    [
+     240,
+     170.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      88,
+      170.0
+     ],
+     [
+      122,
+      170.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "w1",
+   "type": "line",
+   "points": [
+    [
+     310,
+     170.0
+    ],
+    [
+     370,
+     170.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      176,
+      170.0
+     ],
+     [
+      210,
+      170.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "x",
+   "type": "gate",
+   "x": 486,
+   "y": 136.0,
+   "w": 60,
+   "h": 40,
+   "kind": "xor",
+   "narrow": {
+    "x": 286,
+    "w": 44
+   }
+  },
+  {
+   "id": "t2",
+   "type": "line",
+   "points": [
+    [
+     440,
+     170.0
+    ],
+    [
+     465.89,
+     170.0
+    ],
+    [
+     465.89,
+     162.67
+    ],
+    [
+     491.78,
+     162.67
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      264,
+      170.0
+     ],
+     [
+      277.1,
+      170.0
+     ],
+     [
+      277.1,
+      162.67
+     ],
+     [
+      290.2,
+      162.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "t1",
+   "type": "line",
+   "points": [
+    [
+     340.0,
+     170.0
+    ],
+    [
+     340.0,
+     104
+    ],
+    [
+     483.78,
+     104
+    ],
+    [
+     483.78,
+     149.33
+    ],
+    [
+     491.78,
+     149.33
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      193.0,
+      170.0
+     ],
+     [
+      193.0,
+      108
+     ],
+     [
+      282.2,
+      108
+     ],
+     [
+      282.2,
+      149.33
+     ],
+     [
+      290.2,
+      149.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "fb",
+   "type": "line",
+   "points": [
+    [
+     546.0,
+     156.0
+    ],
+    [
+     556.0,
+     156.0
+    ],
+    [
+     556.0,
+     74
+    ],
+    [
+     88,
+     74
+    ],
+    [
+     88,
+     170.0
+    ],
+    [
+     110,
+     170.0
+    ]
+   ],
+   "tone": "accent",
+   "narrow": {
+    "points": [
+     [
+      330.0,
+      156.0
+     ],
+     [
+      340.0,
+      156.0
+     ],
+     [
+      340.0,
+      80
+     ],
+     [
+      16,
+      80
+     ],
+     [
+      16,
+      170.0
+     ],
+     [
+      34,
+      170.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "fbl",
+   "type": "text",
+   "x": 340.0,
+   "y": 60,
+   "text": "D0 = Q1 ⊕ Q2 = 0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 180.0,
+    "y": 66,
+    "size": 12
+   }
+  },
+  {
+   "id": "cbus",
+   "type": "line",
+   "points": [
+    [
+     88,
+     222
+    ],
+    [
+     405.0,
+     222
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      16,
+      222
+     ],
+     [
+      237.0,
+      222
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop0",
+   "type": "line",
+   "points": [
+    [
+     145.0,
+     222
+    ],
+    [
+     145.0,
+     206
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      61.0,
+      222
+     ],
+     [
+      61.0,
+      206
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop1",
+   "type": "line",
+   "points": [
+    [
+     275.0,
+     222
+    ],
+    [
+     275.0,
+     206
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      149.0,
+      222
+     ],
+     [
+      149.0,
+      206
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop2",
+   "type": "line",
+   "points": [
+    [
+     405.0,
+     222
+    ],
+    [
+     405.0,
+     206
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      237.0,
+      222
+     ],
+     [
+      237.0,
+      206
+     ]
+    ]
+   }
+  },
+  {
+   "id": "clbl",
+   "type": "text",
+   "x": 88,
+   "y": 236,
+   "text": "CLK (common)",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 16,
+    "size": 12
+   }
+  },
+  {
+   "id": "t1x",
+   "type": "text",
+   "x": 340.0,
+   "y": 268,
+   "text": "state Q2Q1Q0 = 001 = 1",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 266,
+    "size": 12
+   }
+  },
+  {
+   "id": "t2x",
+   "type": "text",
+   "x": 340.0,
+   "y": 294,
+   "text": "sequence: 1",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 290,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Start at Q0 = 1, Q1 = Q2 = 0 (state 4Q2 + 2Q1 + Q0 = 1). The XOR of Q1 and Q2 is 0: that is what D0 will take at the next clock.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 1: D0 took 0 (from the old Q1 ⊕ Q2), Q1 took Q0 and Q2 took Q1. State 010 = 2.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 1"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state Q2Q1Q0 = 010 = 2"
+     }
+    },
+    {
+     "id": "t2x",
+     "set": {
+      "text": "sequence: 1, 2",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 2: D0 took 1 (from the old Q1 ⊕ Q2), Q1 took Q0 and Q2 took Q1. State 101 = 5.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 1"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state Q2Q1Q0 = 101 = 5"
+     }
+    },
+    {
+     "id": "t2x",
+     "set": {
+      "text": "sequence: 1, 2, 5",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 3: D0 took 1 (from the old Q1 ⊕ Q2), Q1 took Q0 and Q2 took Q1. State 011 = 3.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 1"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state Q2Q1Q0 = 011 = 3"
+     }
+    },
+    {
+     "id": "t2x",
+     "set": {
+      "text": "sequence: 1, 2, 5, 3",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 4: D0 took 1 (from the old Q1 ⊕ Q2), Q1 took Q0 and Q2 took Q1. State 111 = 7.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 0"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state Q2Q1Q0 = 111 = 7"
+     }
+    },
+    {
+     "id": "t2x",
+     "set": {
+      "text": "sequence: 1, 2, 5, 3, 7",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 5: D0 took 0 (from the old Q1 ⊕ Q2), Q1 took Q0 and Q2 took Q1. State 110 = 6.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 0"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state Q2Q1Q0 = 110 = 6"
+     }
+    },
+    {
+     "id": "t2x",
+     "set": {
+      "text": "sequence: 1, 2, 5, 3, 7, 6",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 6: D0 took 0 (from the old Q1 ⊕ Q2), Q1 took Q0 and Q2 took Q1. State 100 = 4.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 1"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state Q2Q1Q0 = 100 = 4"
+     }
+    },
+    {
+     "id": "t2x",
+     "set": {
+      "text": "sequence: 1, 2, 5, 3, 7, 6, 4",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 7: the state is 001 = 1 again. The cycle 1, 2, 5, 3, 7, 6, 4 visits all seven non-zero states.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 0"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state Q2Q1Q0 = 001 = 1"
+     }
+    },
+    {
+     "id": "t2x",
+     "set": {
+      "text": "sequence: 1, 2, 5, 3, 7, 6, 4, 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The missing state is 000: there Q1 ⊕ Q2 = 0, so a 0 is fed in and the register stays at 000 forever. Seed an LFSR non-zero.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fbl",
+     "set": {
+      "text": "D0 = Q1 ⊕ Q2 = 0",
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "fb",
+     "set": {
+      "tone": "danger"
+     }
+    },
+    {
+     "id": "t1x",
+     "set": {
+      "text": "state 000 → 000 (stuck)",
+      "tone": "danger"
+     }
+    }
+   ]
+  }
+ ]
+}

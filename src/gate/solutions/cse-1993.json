@@ -890,56 +890,37 @@
       }
     },
     "cse-1993-ii-a-6-3": {
-      "approach": "Each J-K stage with $J=Q_{prev}$, $K=\\bar Q_{prev}$ acts as a D flip-flop, so the chain is a shift register; the last stage feeds $\\bar Q_3$ back to $J_1$ (twisted ring), giving a Johnson counter with $2n=6$ states.",
+      "approach": "Concept tested: **a JK shift register with twisted feedback (Johnson counter)**. Each JK stage has $K = \\overline{J}$, so it copies $J$ like a D stage; the first stage takes $\\overline{Q_3}$. Trace from 000.",
       "concepts": [
-        "J-K flip-flop as D flip-flop",
-        "Johnson (twisted-ring) counter",
-        "Shift register"
+        "Johnson counter",
+        "JK flip-flop",
+        "Shift register",
+        "Mod-6 counter"
       ],
+      "given": "Three JK flip-flops on a common clock: $J_2 = Q_1$, $K_2 = \\overline{Q_1}$; $J_3 = Q_2$, $K_3 = \\overline{Q_2}$; $J_1 = \\overline{Q_3}$, $K_1 = Q_3$. Initial state 000. Options: shift register, mod-3, mod-6, mod-2 counter, none.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "With $J=D$, $K=\\bar D$ a J-K flip-flop gives $Q^+=D$. Here $Q_1^+=\\bar Q_3$, $Q_2^+=Q_1$, $Q_3^+=Q_2$ — a shift register with inverted feedback.",
+          "title": "Each stage is a D stage",
+          "body": "$Q^+ = J\\overline{Q} + \\overline{K}Q$ with $K = \\overline{J}$ gives $Q^+ = J\\overline{Q} + JQ = J$. So $Q_2^+ = Q_1$, $Q_3^+ = Q_2$, $Q_1^+ = \\overline{Q_3}$: a shift register with the complement of the last stage fed back."
+        },
+        {
+          "title": "Trace from 000",
+          "body": "000 → 100 → 110 → 111 → 011 → 001 → 000: six states.",
           "scene": {
-            "reveal": 5,
-            "caption": "Start in 000"
+            "reveal": 7
           }
         },
         {
-          "title": "Fill phase",
-          "body": "$000\\to100\\to110\\to111$: ones shift in while $\\bar Q_3=1$.",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ],
-            "caption": "Ones enter from the left"
-          }
+          "title": "Name the function",
+          "body": "Six states in the cycle: a mod-6 (Johnson) counter. The structure is a shift register (every stage copies the previous one) whose twisted feedback makes it count."
         },
         {
-          "title": "Empty phase",
-          "body": "Now $\\bar Q_3=0$: $111\\to011\\to001\\to000$.",
-          "scene": {
-            "reveal": 35,
-            "hl": [
-              {
-                "r": 6,
-                "tone": "success"
-              }
-            ],
-            "caption": "Back to 000 after 6 clocks"
-          }
-        },
-        {
-          "title": "Conclusion",
-          "body": "Six distinct states repeat — a mod-6 (Johnson) counter, built as a shift register with twisted feedback."
+          "title": "Why (a) is accepted too",
+          "body": "The arrangement is literally a shift register: data moves one stage per clock. The key (a) and (c) reads 'function performed' as both what the circuit is (a twisted-ring shift register) and what it does from 000 (count mod 6)."
         }
       ],
       "answer": {
-        "value": "(c) Mod-6 counter (a twisted-ring shift register, so (a) is also marked)",
+        "value": "(a) shift register and (c) mod-6 counter",
         "choice": [
           "A",
           "C"
@@ -950,95 +931,84 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Structurally the circuit is a shift register (data moves one stage per clock); accepted alongside (c)."
+          "reason": "Every stage copies the previous one at the clock: it is a shift register (with twisted feedback)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "There are 6 states, not 3."
+          "reason": "Mod-3 would be a 3-stage ring counter ($J_1 = Q_3$); the inverted feedback doubles the cycle to 6."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Sequence 000→100→110→111→011→001→000 has 6 states."
+          "reason": "From 000 the circuit cycles through 6 states: 000, 100, 110, 111, 011, 001."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Each flip-flop output has period 6, not 2."
+          "reason": "The 2-cycle 010 ↔ 101 exists, but only from those start states, not from 000."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "(c) (and (a)) apply."
+          "reason": "A and C apply."
         }
       ],
+      "shortcut": "Q̄ of the last stage into the first = Johnson counter: $2n = 6$ states for 3 flip-flops.",
       "pitfalls": [
-        "Treating it as a plain ring counter: with the inverted feedback, 000 does not get stuck — it counts 6 states."
+        "Treating the JK stages as toggling (J = K = 1) stages; here $K = \\overline{J}$ always.",
+        "Counting the ring-counter modulus (3) instead of the Johnson modulus (6).",
+        "Choosing mod-2 because the 010 ↔ 101 cycle exists; the start is 000."
       ],
-      "verification": "A Johnson counter with $n$ flip-flops has $2n$ states; $n=3\\Rightarrow6$.",
+      "verification": "Simulating the three JK stages gives the same next state as a 3-bit Johnson step in all 8 states; from 000 the cycle has 6 states and the leftovers form 010 ↔ 101.",
       "animation": {
         "kind": "table",
+        "title": "Trace from 000",
         "cols": [
-          "Clock",
-          "Q1",
-          "Q2",
-          "Q3",
-          "J1 = Q̄3, K1 = Q3"
+          "Q1 Q2 Q3",
+          "J1 = Q̄3"
         ],
         "rows": [
           [
-            0,
-            0,
-            0,
-            0,
-            "J1=1, K1=0"
+            "000",
+            "1"
           ],
           [
-            1,
-            1,
-            0,
-            0,
-            "J1=1, K1=0"
+            "100",
+            "1"
           ],
           [
-            2,
-            1,
-            1,
-            0,
-            "J1=1, K1=0"
+            "110",
+            "1"
           ],
           [
-            3,
-            1,
-            1,
-            1,
-            "J1=0, K1=1"
+            "111",
+            "0"
           ],
           [
-            4,
-            0,
-            1,
-            1,
-            "J1=0, K1=1"
+            "011",
+            "0"
           ],
           [
-            5,
-            0,
-            0,
-            1,
-            "J1=0, K1=1"
+            "001",
+            "0"
           ],
           [
-            6,
-            0,
-            0,
-            0,
-            "back to start"
+            "000",
+            "1"
           ]
         ],
-        "reveal": 5,
-        "mono": true
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "reveal": 1
       }
     },
     "cse-1993-ii-a-6-4": {
