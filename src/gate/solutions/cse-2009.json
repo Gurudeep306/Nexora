@@ -1512,131 +1512,36 @@
       "verification": "Domain $\\{1, 2\\}$ with $P(1)$ true, $P(2)$ false: I, IV true; II, III false, so I and III, II and IV etc. are separated."
     },
     "cse-2009-cs-27": {
-      "approach": "Output is produced on a transition, so we need the shortest input string whose last transition ends in state AB = 01 with output 1. Draw the state graph and search backwards from the only qualifying transition.",
+      "approach": "Concept tested: **shortest input to a (state, output) target, by breadth-first search**. First find the arcs that meet the target (next state 01 **and** output 1), then search from 00 for the source of such an arc and append its input.",
       "concepts": [
-        "Mealy machine",
         "State table",
-        "Shortest path (BFS)"
+        "Breadth-first search",
+        "Mealy machine",
+        "Shortest input"
       ],
-      "given": "| State AB | x = 0 (next/out) | x = 1 (next/out) |\n|---|---|---|\n| 00 | 00 / 1 | 01 / 0 |\n| 01 | 10 / 0 | 00 / 1 |\n| 10 | 01 / 0 | 01 / 1 |\n| 11 | 10 / 0 | 00 / 1 |",
+      "given": "Present AB, input → next AB, output: 00,0 → 00,1; 01,0 → 10,0; 10,0 → 01,0; 11,0 → 10,0; 00,1 → 01,0; 01,1 → 00,1; 10,1 → 01,1; 11,1 → 00,1. Start 00; target: AB = 01 with output 1.",
       "steps": [
         {
-          "title": "Qualifying transition",
-          "body": "Transitions into 01: $00 \\xrightarrow{1/0} 01$, $10 \\xrightarrow{0/0} 01$, $10 \\xrightarrow{1/1} 01$. Only $10 \\xrightarrow{1/1} 01$ has output 1, so the string must end with input 1 taken from state 10.",
+          "title": "Arcs that meet the target",
+          "body": "Arcs into 01: 00 –1/0, 10 –0/0 and 10 –1/1. Only **10 –1/1 → 01** has output 1, so the machine must first reach 10."
+        },
+        {
+          "title": "Breadth-first from 00",
+          "body": "Level 1: input 1 gives 01 (input 0 stays in 00). Level 2: from 01, input 0 gives 10. So 10 is reached with 10 (two inputs), and no shorter.",
           "scene": {
-            "current": [
-              "10"
-            ],
-            "edgeTones": {
-              "10>01": "success"
-            },
-            "caption": "Only 10 --1/1--> 01 gives output 1"
+            "reveal": 3
           }
         },
         {
-          "title": "Reach state 10 from 00",
-          "body": "From 00: input 0 stays at 00, input 1 goes to 01. From 01 input 0 goes to 10. So $00 \\xrightarrow{1} 01 \\xrightarrow{0} 10$ takes 2 inputs, and 10 is not reachable in 1 input.",
+          "title": "Append the target arc",
+          "body": "00 –1→ 01 –0→ 10 –1→ 01 with output 1: the input 101 of length 3.",
           "scene": {
-            "current": [
-              "00"
-            ],
-            "tape": {
-              "cells": [
-                "1",
-                "0",
-                "1"
-              ],
-              "head": 0
-            },
-            "edgeTones": {},
-            "caption": "Start at 00"
-          }
-        },
-        {
-          "title": "Trace \"101\"",
-          "body": "$00 \\xrightarrow{1/0} 01 \\xrightarrow{0/0} 10 \\xrightarrow{1/1} 01$. Minimum length $= 2 + 1 = 3$.",
-          "scene": {
-            "current": [
-              "01"
-            ],
-            "tape": {
-              "cells": [
-                "1",
-                "0",
-                "1"
-              ],
-              "head": 3
-            },
-            "edgeTones": {
-              "00>01": "accent",
-              "01>10": "accent",
-              "10>01": "success"
-            },
-            "caption": "After 101: state 01, last output 1"
+            "reveal": 4
           }
         }
       ],
-      "animation": {
-        "kind": "automaton",
-        "layout": "circle",
-        "states": [
-          {
-            "id": "00",
-            "start": true
-          },
-          {
-            "id": "01"
-          },
-          {
-            "id": "10"
-          },
-          {
-            "id": "11"
-          }
-        ],
-        "edges": [
-          {
-            "from": "00",
-            "to": "00",
-            "label": "0/1"
-          },
-          {
-            "from": "00",
-            "to": "01",
-            "label": "1/0"
-          },
-          {
-            "from": "01",
-            "to": "10",
-            "label": "0/0"
-          },
-          {
-            "from": "01",
-            "to": "00",
-            "label": "1/1"
-          },
-          {
-            "from": "10",
-            "to": "01",
-            "label": "0/0, 1/1"
-          },
-          {
-            "from": "11",
-            "to": "10",
-            "label": "0/0"
-          },
-          {
-            "from": "11",
-            "to": "00",
-            "label": "1/1"
-          }
-        ],
-        "current": [
-          "00"
-        ]
-      },
       "answer": {
-        "value": "3",
+        "value": "(A) 3 (input 101)",
         "choice": [
           "A"
         ],
@@ -1646,28 +1551,64 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "The string 101 reaches 01 with output 1 in three inputs, and no shorter string works."
+          "reason": "101 reaches 01 with output 1, and breadth-first search shows that 10 (the only source of a suitable arc) needs two inputs."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A length-4 string works too (e.g. 0101) but is not minimum."
+          "reason": "4 is longer than the shortest string 101."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Not minimum."
+          "reason": "5 comes from reading the table's columns in the wrong order or from a search that is not breadth-first."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Not minimum."
+          "reason": "6 is twice the shortest length; a string of length 6 that meets the target exists, but 101 already does at length 3."
         }
       ],
+      "shortcut": "Look at the target arc first: only 10 –1/1 → 01 works. Reaching 10 from 00 takes 2 inputs (1, 0), so the answer is 2 + 1 = 3.",
       "pitfalls": [
-        "$00 \\xrightarrow{1} 01$ reaches the state in one step but with output 0, which does not count."
+        "Answering 1: input 1 from 00 does reach 01, but with output 0.",
+        "Mixing up the present-state and next-state columns of the long table.",
+        "Checking the output of the state reached instead of the output of the arc (this is a Mealy table)."
       ],
-      "verification": "Length 1: only 00 or 01 reachable, output on reaching 01 is 0. Length 2: strings 00, 01, 10, 11 end in 00, 01(out 0), 10, 00 respectively. So 3 is minimal."
+      "verification": "seqlib's breadth-first search with the target 'next state 01 and output 1' returns 101; the run visits 00, 01, 10, 01 with outputs 0, 0, 1. (State 11 is not reachable from 00 at all.)",
+      "animation": {
+        "kind": "table",
+        "title": "Breadth-first search from 00",
+        "cols": [
+          "input so far",
+          "state",
+          "last output"
+        ],
+        "rows": [
+          [
+            "–",
+            "00",
+            "–"
+          ],
+          [
+            "1",
+            "01",
+            "0"
+          ],
+          [
+            "10",
+            "10",
+            "0"
+          ],
+          [
+            "101",
+            "01",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2009-cs-28": {
       "approach": "Schedule the 8 instruction instances (I1 to I4 twice) through the 4 stages: an instance enters a stage when it has finished the previous stage and the stage has been vacated by the previous instance. The finish time of the last instance in S4 is the answer.",

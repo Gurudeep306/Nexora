@@ -1,0 +1,931 @@
+{
+ "version": 1,
+ "title": "The GATE 2001 machine as a JK circuit",
+ "width": 680,
+ "height": 402,
+ "narrow": {
+  "width": 360,
+  "height": 536
+ },
+ "intro": "Left (top on phones): the 4-state Mealy state table, entries next state/output. Right (below): the same table in bits after the assignment A = 00, B = 01, C = 10, D = 11, with the JK excitation columns; the equations appear underneath.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "From state table to JK equations (GATE 2001 machine)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "2001 machine → JK equations",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "sym",
+   "type": "table",
+   "x": 14,
+   "y": 50,
+   "cellW": 62,
+   "cellH": 25,
+   "rows": [
+    [
+     "state",
+     "x = 0",
+     "x = 1"
+    ],
+    [
+     "A",
+     "B/0",
+     "A/1"
+    ],
+    [
+     "B",
+     "C/0",
+     "A/1"
+    ],
+    [
+     "C",
+     "C/1",
+     "D/0"
+    ],
+    [
+     "D",
+     "C/1",
+     "A/0"
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 87.0,
+    "cellH": 24
+   }
+  },
+  {
+   "id": "symt",
+   "type": "text",
+   "x": 107.0,
+   "y": 191,
+   "text": "",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 180.0,
+    "y": 186,
+    "size": 12
+   }
+  },
+  {
+   "id": "bt",
+   "type": "table",
+   "x": 220,
+   "y": 50,
+   "cellW": 50,
+   "cellH": 24,
+   "rows": [
+    [
+     "PS",
+     "x",
+     "NS",
+     "z",
+     "J1",
+     "K1",
+     "J0",
+     "K0"
+    ],
+    [
+     "00",
+     "0",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "00",
+     "1",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "01",
+     "0",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "01",
+     "1",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "10",
+     "0",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "10",
+     "1",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "11",
+     "0",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ],
+    [
+     "11",
+     "1",
+     "",
+     "",
+     "",
+     "",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 20.0,
+    "y": 210,
+    "cellW": 40,
+    "cellH": 22
+   }
+  },
+  {
+   "id": "eq0",
+   "type": "text",
+   "x": 420,
+   "y": 296,
+   "text": "J1 = Q0x′,  K1 = Q0x",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 436,
+    "size": 13
+   }
+  },
+  {
+   "id": "eq1",
+   "type": "text",
+   "x": 420,
+   "y": 320,
+   "text": "J0 = Q1x + Q1′x′,  K0 = 1",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 458,
+    "size": 13
+   }
+  },
+  {
+   "id": "eq2",
+   "type": "text",
+   "x": 420,
+   "y": 344,
+   "text": "z = x ⊕ Q1",
+   "size": 15,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 480,
+    "size": 13
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 382,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 516,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "The 2001 machine: A, B copy the input, C, D complement it. B remembers 'last bit 0', D 'last bit 1'. Arcs are next/output.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "4 states → 2 flip-flops Q1Q0"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Assign A = 00, B = 01, C = 10, D = 11: Q1 is the mode (0 copy, 1 complement), Q0 the 'one more of the same bit ends the mode' flag.",
+   "patches": [
+    {
+     "id": "symt",
+     "set": {
+      "text": "A=00 B=01 C=10 D=11"
+     }
+    },
+    {
+     "id": "bt",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "Q1 = mode, Q0 = flag",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rewrite the rows of A (00) and B (01) in bits: next state NS and output z read straight from the state table.",
+   "patches": [
+    {
+     "id": "bt",
+     "set": {
+      "rows": [
+       [
+        "PS",
+        "x",
+        "NS",
+        "z",
+        "J1",
+        "K1",
+        "J0",
+        "K0"
+       ],
+       [
+        "00",
+        "0",
+        "01",
+        "0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "00",
+        "1",
+        "00",
+        "1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "0",
+        "10",
+        "0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "1",
+        "00",
+        "1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "10",
+        "0",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "10",
+        "1",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "11",
+        "0",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "11",
+        "1",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "NS and z filled",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Rewrite the rows of C (10) and D (11) in bits: next state NS and output z read straight from the state table.",
+   "patches": [
+    {
+     "id": "bt",
+     "set": {
+      "rows": [
+       [
+        "PS",
+        "x",
+        "NS",
+        "z",
+        "J1",
+        "K1",
+        "J0",
+        "K0"
+       ],
+       [
+        "00",
+        "0",
+        "01",
+        "0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "00",
+        "1",
+        "00",
+        "1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "0",
+        "10",
+        "0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "1",
+        "00",
+        "1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "10",
+        "0",
+        "10",
+        "1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "10",
+        "1",
+        "11",
+        "0",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "11",
+        "0",
+        "10",
+        "1",
+        "",
+        "",
+        "",
+        ""
+       ],
+       [
+        "11",
+        "1",
+        "00",
+        "0",
+        "",
+        "",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        5,
+        2
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        6,
+        2
+       ],
+       [
+        6,
+        3
+       ],
+       [
+        7,
+        2
+       ],
+       [
+        7,
+        3
+       ],
+       [
+        8,
+        2
+       ],
+       [
+        8,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "NS and z filled",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "J1, K1 from the JK excitation table: J1 matters only where Q1 = 0, K1 only where Q1 = 1. The single 1s give J1 = Q0x′, K1 = Q0x.",
+   "patches": [
+    {
+     "id": "bt",
+     "set": {
+      "rows": [
+       [
+        "PS",
+        "x",
+        "NS",
+        "z",
+        "J1",
+        "K1",
+        "J0",
+        "K0"
+       ],
+       [
+        "00",
+        "0",
+        "01",
+        "0",
+        "0",
+        "×",
+        "",
+        ""
+       ],
+       [
+        "00",
+        "1",
+        "00",
+        "1",
+        "0",
+        "×",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "0",
+        "10",
+        "0",
+        "1",
+        "×",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "1",
+        "00",
+        "1",
+        "0",
+        "×",
+        "",
+        ""
+       ],
+       [
+        "10",
+        "0",
+        "10",
+        "1",
+        "×",
+        "0",
+        "",
+        ""
+       ],
+       [
+        "10",
+        "1",
+        "11",
+        "0",
+        "×",
+        "0",
+        "",
+        ""
+       ],
+       [
+        "11",
+        "0",
+        "10",
+        "1",
+        "×",
+        "0",
+        "",
+        ""
+       ],
+       [
+        "11",
+        "1",
+        "00",
+        "0",
+        "×",
+        "1",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        4
+       ],
+       [
+        8,
+        5
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "J1 = Q0x′, K1 = Q0x",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "J0 is 1 in rows 00 with x = 0 and 10 with x = 1: J0 = Q1x + Q1′x′ (Q1 XNOR x). Every K0 entry is 1 or ×, so K0 = 1.",
+   "patches": [
+    {
+     "id": "bt",
+     "set": {
+      "rows": [
+       [
+        "PS",
+        "x",
+        "NS",
+        "z",
+        "J1",
+        "K1",
+        "J0",
+        "K0"
+       ],
+       [
+        "00",
+        "0",
+        "01",
+        "0",
+        "0",
+        "×",
+        "1",
+        "×"
+       ],
+       [
+        "00",
+        "1",
+        "00",
+        "1",
+        "0",
+        "×",
+        "0",
+        "×"
+       ],
+       [
+        "01",
+        "0",
+        "10",
+        "0",
+        "1",
+        "×",
+        "×",
+        "1"
+       ],
+       [
+        "01",
+        "1",
+        "00",
+        "1",
+        "0",
+        "×",
+        "×",
+        "1"
+       ],
+       [
+        "10",
+        "0",
+        "10",
+        "1",
+        "×",
+        "0",
+        "0",
+        "×"
+       ],
+       [
+        "10",
+        "1",
+        "11",
+        "0",
+        "×",
+        "0",
+        "1",
+        "×"
+       ],
+       [
+        "11",
+        "0",
+        "10",
+        "1",
+        "×",
+        "0",
+        "×",
+        "1"
+       ],
+       [
+        "11",
+        "1",
+        "00",
+        "0",
+        "×",
+        "1",
+        "×",
+        "1"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        6
+       ],
+       [
+        6,
+        6
+       ],
+       [
+        1,
+        7
+       ],
+       [
+        2,
+        7
+       ],
+       [
+        3,
+        7
+       ],
+       [
+        4,
+        7
+       ],
+       [
+        5,
+        7
+       ],
+       [
+        6,
+        7
+       ],
+       [
+        7,
+        7
+       ],
+       [
+        8,
+        7
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "J0 = Q1x + Q1′x′, K0 = 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Output: z = x in the copy mode (Q1 = 0) and x′ in the complement mode (Q1 = 1), so z = x ⊕ Q1. It depends on x: a Mealy output.",
+   "patches": [
+    {
+     "id": "bt",
+     "set": {
+      "highlight": [
+       [
+        2,
+        3
+       ],
+       [
+        4,
+        3
+       ],
+       [
+        5,
+        3
+       ],
+       [
+        7,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "eq2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "z = x ⊕ Q1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check: the circuit, simulated on the 2001 example 101100 01001011 011, outputs 101100 10110100 011, exactly as asked.",
+   "patches": [
+    {
+     "id": "bt",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "2 JK flip-flops, 2 AND, 1 XNOR, 1 XOR ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}

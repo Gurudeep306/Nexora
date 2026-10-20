@@ -3917,24 +3917,37 @@
       }
     },
     "cse-2005-cs-63": {
-      "approach": "Trace the Mealy machine from the LSB: it copies bits up to and including the first 1, then complements every later bit — exactly the 'copy until first 1, then flip' rule for 2's complement.",
+      "approach": "Concept tested: **the serial 2's complementer**. The machine copies bits (Q0) until and including the first 1, then complements every later bit (Q1). With the bits arriving LSB first, 'copy up to the first 1, then complement' is exactly the 2's complement.",
       "concepts": [
         "Mealy machine",
         "2's complement",
-        "Serial complementer"
+        "Serial arithmetic",
+        "Interpreting an FSM"
       ],
+      "given": "Two-state Mealy machine, input LSB first: Q0 (start): 0/0 self-loop, 1/1 → Q1; Q1: 0/1 and 1/0 self-loops.",
       "steps": [
         {
-          "title": "Behaviour",
-          "body": "In $Q_0$: input 0 → output 0 (stay), input 1 → output 1 and move to $Q_1$. In $Q_1$: 0 → 1 and 1 → 0 (complement). So: copy trailing zeros and the first 1, then invert the rest."
+          "title": "What the states do",
+          "body": "Q0 outputs each bit unchanged and leaves on the first 1 (copying it). Q1 inverts every bit and never leaves."
         },
         {
-          "title": "Example",
-          "body": "Take $01100_2$ (12 in 5 bits). Fed LSB first: $0,0,1,1,0$ → outputs $0,0,1,0,1$; read MSB-first that is $10100_2 = 20 = 32-12$, the 5-bit 2's complement of 12. ✓"
+          "title": "Why that is −x",
+          "body": "2's complement = invert and add 1. Inverting turns the trailing zeros into 1s and the lowest 1 into a 0; adding 1 ripples through those 1s and restores the low part exactly. So bits up to the first 1 are unchanged and the bits above are inverted: the machine's rule."
+        },
+        {
+          "title": "Check on a number",
+          "body": "0110100 (52) fed LSB first as 0, 0, 1, 0, 1, 1, 0 gives 0, 0, 1, 1, 0, 0, 1, i.e. 1001100 = 76 = 128 − 52.",
+          "scene": {
+            "reveal": 7
+          }
+        },
+        {
+          "title": "Kill the other options with input 0",
+          "body": "Input 00…0 stays in Q0 and outputs 0. The 1's complement of 0 is 11…1, increment gives 1, decrement gives 11…1. Only the 2's complement of 0 is 0."
         }
       ],
       "answer": {
-        "value": "It computes 2's complement",
+        "value": "(B) It computes the 2's complement of the input number",
         "choice": [
           "B"
         ],
@@ -3944,26 +3957,87 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "1's complement flips every bit, but this machine copies the trailing 0s and the first 1."
+          "reason": "The machine complements only the bits after the first 1; on all 256 eight-bit inputs it never once equals 255 − v (for 0 it outputs 0, not 11111111)."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Copy up to the first 1, then complement — the 2's complement rule."
+          "reason": "Copy up to and including the first 1, then complement: the output is (2ⁿ − v) mod 2ⁿ for every n-bit input (checked on all 256 bytes)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Increment would turn trailing 1s into 0s and the first 0 into 1."
+          "reason": "Increment of 0 is 1, but the machine outputs 0; increment flips the trailing 1s, not the bits above the first 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Decrement turns trailing 0s into 1s and the first 1 into 0."
+          "reason": "Decrement of 0 is all 1s, but the machine outputs 0."
         }
       ],
-      "shortcut": "'Copy till first 1 from the right, flip the rest' = 2's complement.",
-      "verification": "Input $0001_2$ (1) → output $1111_2$ = $-1$ in 4-bit 2's complement. ✓"
+      "shortcut": "The input 0 separates all four options at once: 1's complement → all 1s, increment → 1, decrement → all 1s, 2's complement → 0, and the machine outputs 0.",
+      "pitfalls": [
+        "Seeing 'complement' in Q1 and choosing 1's complement: the bits up to the first 1 are copied, not complemented.",
+        "Reading the number MSB first: the question states LSB first, and the rule depends on it."
+      ],
+      "verification": "Simulated on all 256 eight-bit numbers, LSB first, the output is (256 − v) mod 256 every time and never equals 255 − v, v + 1 or v − 1.",
+      "animation": {
+        "kind": "table",
+        "title": "0110100 (52) LSB first",
+        "cols": [
+          "bit",
+          "x",
+          "state",
+          "z"
+        ],
+        "rows": [
+          [
+            "0",
+            "0",
+            "Q0",
+            "0"
+          ],
+          [
+            "1",
+            "0",
+            "Q0",
+            "0"
+          ],
+          [
+            "2",
+            "1",
+            "Q0 → Q1",
+            "1"
+          ],
+          [
+            "3",
+            "0",
+            "Q1",
+            "1"
+          ],
+          [
+            "4",
+            "1",
+            "Q1",
+            "0"
+          ],
+          [
+            "5",
+            "1",
+            "Q1",
+            "0"
+          ],
+          [
+            "6",
+            "0",
+            "Q1",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1,
+        "caption": "Read z from bit 6 down to bit 0: 1001100 = 76 = 128 − 52."
+      }
     },
     "cse-2005-cs-64": {
       "approach": "Concept tested: **next-state equations of D flip-flops**. Read $D_0 = \\overline{Q_0}$ and $D_1 = Q_0 \\oplus \\overline{Q_1}$ from the figure, tabulate the four states and follow the table from 00, writing states as $Q_0Q_1$.",
