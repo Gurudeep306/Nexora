@@ -2403,36 +2403,33 @@
       }
     },
     "cse-2010-cs-32": {
-      "approach": "Both T inputs are 1, so each flip-flop toggles on every rising edge of its own clock. FF0 toggles on every clock; FF1 toggles when Q0 rises from 0 to 1.",
+      "approach": "Concept tested: **the direction of a ripple counter from its wiring**. Positive-edge T flip-flops clocked by the previous $Q$ toggle when that $Q$ **rises**, which is the borrow of a down count. Step $Q_1Q_0$ pulse by pulse.",
       "concepts": [
-        "T flip-flop",
         "Ripple counter",
-        "Edge triggering"
+        "T flip-flop",
+        "Positive edge",
+        "Down counter"
       ],
+      "given": "Two positive-edge-triggered T flip-flops with $T = 1$; FF0 is clocked by Clock (output $Q_0$), FF1 by $Q_0$ (output $Q_1$); initial $Q_1Q_0 = 00$.",
       "steps": [
         {
-          "title": "Rule",
-          "body": "$Q_0$ toggles every clock pulse. $Q_1$ toggles only on a $0 \\to 1$ transition of $Q_0$ (positive-edge clock)."
+          "title": "Stage 0",
+          "body": "$T = 1$: $Q_0$ toggles at every clock: 1, 0, 1, 0."
         },
         {
-          "title": "Trace from 00",
-          "body": "| Pulse | $Q_0$ | $Q_0$ edge | $Q_1$ | $Q_1Q_0$ |\n|---|---|---|---|---|\n| 1 | 0→1 | rising | 0→1 | 11 |\n| 2 | 1→0 | falling | 1 | 10 |\n| 3 | 0→1 | rising | 1→0 | 01 |\n| 4 | 1→0 | falling | 0 | 00 |",
+          "title": "Stage 1 toggles when Q0 rises",
+          "body": "Pulse 1: $Q_0$ 0 → 1 is a rising edge for FF1, $Q_1$ → 1: **11**. Pulse 2: $Q_0$ falls, no edge: **10**. Pulse 3: $Q_0$ rises, $Q_1$ → 0: **01**. Pulse 4: **00**.",
           "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3
-              }
-            ]
+            "reveal": 4
           }
         },
         {
-          "title": "Read the sequence",
-          "body": "$11, 10, 01, 00$ — a down counter ($3,2,1,0$), because the second stage is clocked by $Q_0$ rather than $\\overline{Q_0}$."
+          "title": "Name it",
+          "body": "3, 2, 1, 0: a down counter, as the rule table predicts for a positive edge with $Q$ (negative edge with $Q$ would count up)."
         }
       ],
       "answer": {
-        "value": "11, 10, 01, 00",
+        "value": "(A) 11, 10, 01, 00",
         "choice": [
           "A"
         ],
@@ -2442,67 +2439,74 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Matches the trace (down counting)."
+          "reason": "Simulation: 11, 10, 01, 00."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "First value 10 has Q0 = 0, but T0 = 1 forces Q0 to toggle to 1 on the first pulse."
+          "reason": "10 after the first pulse has $Q_0 = 0$, but $Q_0$ must toggle to 1 at the first clock."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Same flaw: first value 10 means Q0 did not toggle."
+          "reason": "Starts with $Q_0 = 0$ after pulse 1, impossible for a T flip-flop with $T = 1$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Third value 00 would need Q0 to stay 0 across a pulse."
+          "reason": "11, 10 is right, but 00 after pulse 3 has $Q_0 = 0$; $Q_0$ must be 1 after an odd number of pulses."
         }
       ],
-      "shortcut": "Positive-edge T flip-flops with the next stage clocked by Q form a ripple down counter: 00 → 11 → 10 → 01 → 00.",
-      "verification": "After 4 pulses the 2-bit counter returns to 00, as it must.",
+      "shortcut": "$Q_0$ alone decides: it must read 1, 0, 1, 0, and only option A has that column.",
+      "pitfalls": [
+        "Applying the negative-edge rule 'Q into the next clock = up counter' to positive-edge flip-flops.",
+        "Letting FF1 toggle on the falling edge of $Q_0$."
+      ],
+      "verification": "seqlib.ripple_events with two positive-edge stages clocked by Q settles at 3, 2, 1, 0.",
       "animation": {
         "kind": "table",
-        "title": "T flip-flop trace",
+        "title": "Q1Q0 pulse by pulse",
         "cols": [
-          "Pulse",
           "Q0",
-          "Q0 edge",
-          "Q1",
+          "edge for FF1",
           "Q1Q0"
         ],
         "rows": [
           [
+            0,
+            "",
+            "00"
+          ],
+          [
             1,
-            "0→1",
-            "rising",
-            "0→1",
+            "rise: toggle",
             "11"
           ],
           [
-            2,
-            "1→0",
-            "falling",
-            "1",
+            0,
+            "fall: none",
             "10"
           ],
           [
-            3,
-            "0→1",
-            "rising",
-            "1→0",
+            1,
+            "rise: toggle",
             "01"
           ],
           [
-            4,
-            "1→0",
-            "falling",
-            "0",
+            0,
+            "fall: none",
             "00"
           ]
         ],
-        "reveal": 0
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "pulse 1",
+          "pulse 2",
+          "pulse 3",
+          "pulse 4"
+        ],
+        "reveal": 1
       }
     },
     "cse-2010-cs-33": {

@@ -3966,70 +3966,32 @@
       "verification": "Input $0001_2$ (1) → output $1111_2$ = $-1$ in 4-bit 2's complement. ✓"
     },
     "cse-2005-cs-64": {
-      "approach": "Read the excitation equations off the circuit — $D_0=\\overline{Q_0}$ and $D_1=Q_0\\oplus\\overline{Q_1}$ — and iterate from 00 until the state repeats.",
+      "approach": "Concept tested: **next-state equations of D flip-flops**. Read $D_0 = \\overline{Q_0}$ and $D_1 = Q_0 \\oplus \\overline{Q_1}$ from the figure, tabulate the four states and follow the table from 00, writing states as $Q_0Q_1$.",
       "concepts": [
         "D flip-flop",
-        "Excitation equations",
-        "State sequence",
-        "XOR"
+        "State table",
+        "State sequence"
       ],
+      "given": "Two positive-edge D flip-flops; $D_0 = \\overline{Q_0}$, $D_1 = Q_0 \\oplus \\overline{Q_1}$; state written $Q_0Q_1$; initial state 00.",
       "steps": [
         {
-          "title": "Equations",
-          "body": "$D_0 = \\overline{Q_0}$ (FF0 toggles every clock); $D_1 = Q_0 \\oplus \\overline{Q_1}$."
+          "title": "State equations",
+          "body": "$Q_0^+ = \\overline{Q_0}$ and $Q_1^+ = Q_0 \\oplus \\overline{Q_1}$."
         },
         {
-          "title": "Iterate",
-          "body": "$00$: $D_0=1$, $D_1=0\\oplus1=1$ → $11$. $11$: $D_0=0$, $D_1=1\\oplus0=1$ → $01$. $01$: $D_0=1$, $D_1=0\\oplus0=0$ → $10$. $10$: $D_0=0$, $D_1=1\\oplus1=0$ → $00$.",
+          "title": "Tabulate",
+          "body": "00 → (1, $0 \\oplus 1$) = 11; 11 → (0, $1 \\oplus 0$) = 01; 01 → (1, $0 \\oplus 0$) = 10; 10 → (0, $1 \\oplus 1$) = 00.",
           "scene": {
-            "reveal": 16,
-            "caption": "00 → 11 → 01 → 10 → 00"
+            "reveal": 4
           }
         },
         {
-          "title": "Sequence",
-          "body": "$00\\to11\\to01\\to10\\to00$ — option (D)."
+          "title": "Follow from 00",
+          "body": "00 → 11 → 01 → 10 → 00: option D."
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "Q0Q1",
-          "D0 = Q0'",
-          "D1 = Q0 ⊕ Q1'",
-          "next Q0Q1"
-        ],
-        "rows": [
-          [
-            "00",
-            "1",
-            "0 ⊕ 1 = 1",
-            "11"
-          ],
-          [
-            "11",
-            "0",
-            "1 ⊕ 0 = 1",
-            "01"
-          ],
-          [
-            "01",
-            "1",
-            "0 ⊕ 0 = 0",
-            "10"
-          ],
-          [
-            "10",
-            "0",
-            "1 ⊕ 1 = 0",
-            "00"
-          ]
-        ],
-        "reveal": 0,
-        "caption": "State table from 00"
-      },
       "answer": {
-        "value": "00 → 11 → 01 → 10 → 00",
+        "value": "(D) 00 → 11 → 01 → 10 (→ 00)",
         "choice": [
           "D"
         ],
@@ -4039,28 +4001,63 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "From 01 the next state is 10, not 00."
+          "reason": "01 goes to 10, not back to 00."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "From 11 the next state is 01, not 00."
+          "reason": "11 goes to 01, not to 00."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "From 00 the next state is 11 ($D_1=1$), not 10."
+          "reason": "00 goes to 11 ($Q_0$ toggles and $Q_1^+ = 0 \\oplus 1 = 1$), not to 10."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Matches the computed table."
+          "reason": "Matches the table from 00."
         }
       ],
+      "shortcut": "$Q_0$ toggles every clock, so the first bit must alternate 0, 1, 0, 1: only C and D qualify, and $Q_1^+ = 1$ from 00 picks D.",
       "pitfalls": [
-        "Feeding Q1 instead of Q1' into the XOR, which gives a different cycle."
+        "Writing states as $Q_1Q_0$ by habit; the question uses $Q_0Q_1$.",
+        "Using $Q_1$ instead of $\\overline{Q_1}$ at the XOR."
       ],
-      "verification": "$Q_0$ must alternate $0,1,0,1$ because $D_0=\\overline{Q_0}$; only (D) shows $Q_0$ alternating through a 4-state cycle, and the $Q_1$ column $0,1,1,0$ matches the XOR computation."
+      "verification": "Simulation from 00 gives 00, 11, 01, 10, 00.",
+      "animation": {
+        "kind": "table",
+        "title": "Q0Q1 clock by clock",
+        "cols": [
+          "Q0Q1"
+        ],
+        "rows": [
+          [
+            "00"
+          ],
+          [
+            "11"
+          ],
+          [
+            "01"
+          ],
+          [
+            "10"
+          ],
+          [
+            "00"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "clock 1",
+          "clock 2",
+          "clock 3",
+          "clock 4"
+        ],
+        "reveal": 0
+      }
     },
     "cse-2005-cs-65": {
       "approach": "Count only data-memory accesses after the instruction (all three words) has been fetched: the indirect source needs two reads, the indexed destination needs one read and one write.",

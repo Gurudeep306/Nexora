@@ -4497,59 +4497,135 @@
       "verification": "4096 / 4 = 1024 and 2^8 = 256."
     },
     "cse-1996-b-72": {
-      "approach": "Read the next-state equations off the circuit — a shift register $Q_1\\to Q_2\\to Q_3$ with $D_1=Q_2\\oplus Q_3$ — and tabulate all 8 states.",
+      "approach": "Concept tested: **state table to state diagram**. Three D flip-flops form a shift register with XOR feedback; compute the next state of all eight states and join the arcs.",
       "concepts": [
+        "State diagram",
         "D flip-flop",
-        "State table",
-        "Linear feedback shift register"
+        "Shift register",
+        "LFSR"
       ],
+      "given": "Three D flip-flops on one clock with $D_2 = Q_1$, $D_3 = Q_2$ and $D_1 = Q_2 \\oplus Q_3$. State $S_k$ means $Q_1Q_2Q_3 = k$ in binary.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "$Q_1^+=Q_2\\oplus Q_3$, $Q_2^+=Q_1$, $Q_3^+=Q_2$."
+          "title": "State equations",
+          "body": "$Q_1^+ = Q_2 \\oplus Q_3$, $Q_2^+ = Q_1$, $Q_3^+ = Q_2$."
         },
         {
-          "title": "State table",
-          "body": "| State | $Q_1Q_2Q_3$ | $D_1=Q_2\\oplus Q_3$ | next $Q_1Q_2Q_3$ | Next |\n|---|---|---|---|---|\n| $S_0$ | 000 | 0 | 000 | $S_0$ |\n| $S_1$ | 001 | 1 | 100 | $S_4$ |\n| $S_2$ | 010 | 1 | 101 | $S_5$ |\n| $S_3$ | 011 | 0 | 001 | $S_1$ |\n| $S_4$ | 100 | 0 | 010 | $S_2$ |\n| $S_5$ | 101 | 1 | 110 | $S_6$ |\n| $S_6$ | 110 | 1 | 111 | $S_7$ |\n| $S_7$ | 111 | 0 | 011 | $S_3$ |"
+          "title": "First four states",
+          "body": "$S_0$ (000) → 000 = $S_0$; $S_1$ (001) → 100 = $S_4$; $S_2$ (010) → 101 = $S_5$; $S_3$ (011) → 001 = $S_1$.",
+          "scene": {
+            "reveal": 4
+          }
         },
         {
-          "title": "State diagram",
-          "body": "$S_0$ has a self-loop. All other states form one cycle of length 7:\n$$S_1\\to S_4\\to S_2\\to S_5\\to S_6\\to S_7\\to S_3\\to S_1$$"
+          "title": "Last four states",
+          "body": "$S_4$ (100) → 010 = $S_2$; $S_5$ (101) → 110 = $S_6$; $S_6$ (110) → 111 = $S_7$; $S_7$ (111) → 011 = $S_3$.",
+          "scene": {
+            "reveal": 8
+          }
+        },
+        {
+          "title": "Join the arcs",
+          "body": "$S_0$ is a self-loop. From $S_1$: $S_1 \\to S_4 \\to S_2 \\to S_5 \\to S_6 \\to S_7 \\to S_3 \\to S_1$, one cycle through all seven non-zero states."
         }
       ],
       "answer": {
-        "value": "$S_0\\to S_0$ (self-loop) and the 7-state cycle $S_1\\to S_4\\to S_2\\to S_5\\to S_6\\to S_7\\to S_3\\to S_1$.",
+        "value": "S0 → S0 (self-loop); S1 → S4 → S2 → S5 → S6 → S7 → S3 → S1 (one 7-state cycle)",
         "matchesKey": true
       },
+      "shortcut": "A shift register with XOR feedback keeps 000 at 000 (XOR of zeros is 0); for a maximal-length tap choice all other states form one cycle of $2^n - 1$.",
       "pitfalls": [
-        "The state index uses $Q_1$ as the most significant bit: 100 is $S_4$."
+        "Numbering the states with $Q_3$ as the most significant bit; the question fixes $Q_1Q_2Q_3$.",
+        "Shifting in the wrong direction ($Q_2^+ = Q_3$ instead of $Q_1$)."
       ],
-      "verification": "Each of the 8 states has exactly one successor and the 7-cycle plus the fixed point cover all 8."
+      "verification": "Simulating every state gives the map 0→0, 1→4, 2→5, 3→1, 4→2, 5→6, 6→7, 7→3, i.e. the self-loop and the 7-cycle.",
+      "animation": {
+        "kind": "table",
+        "title": "Next state of each Sk",
+        "cols": [
+          "Q1Q2Q3",
+          "next"
+        ],
+        "rows": [
+          [
+            "000",
+            "S0"
+          ],
+          [
+            "001",
+            "S4"
+          ],
+          [
+            "010",
+            "S5"
+          ],
+          [
+            "011",
+            "S1"
+          ],
+          [
+            "100",
+            "S2"
+          ],
+          [
+            "101",
+            "S6"
+          ],
+          [
+            "110",
+            "S7"
+          ],
+          [
+            "111",
+            "S3"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "S0",
+          "S1",
+          "S2",
+          "S3",
+          "S4",
+          "S5",
+          "S6",
+          "S7"
+        ],
+        "reveal": 0
+      }
     },
     "cse-1996-b-73": {
-      "approach": "From the state table of Fig. 24 ($Q_1^+=Q_2\\oplus Q_3$, $Q_2^+=Q_1$, $Q_3^+=Q_2$), follow the successors of $S_4$ until a state repeats.",
+      "approach": "Concept tested: **reachability**. For an autonomous circuit the reachable set from a start is its trace until the first repeated state; everything else is unreachable.",
       "concepts": [
         "Reachability",
+        "Cycle theorem",
         "State diagram"
       ],
+      "given": "The circuit of Q72 ($Q_1^+ = Q_2 \\oplus Q_3$, $Q_2^+ = Q_1$, $Q_3^+ = Q_2$), started in $S_4$ (100).",
       "steps": [
         {
-          "title": "Walk from $S_4$",
-          "body": "$S_4(100)\\to S_2(010)\\to S_5(101)\\to S_6(110)\\to S_7(111)\\to S_3(011)\\to S_1(001)\\to S_4$."
+          "title": "Trace from S4",
+          "body": "$S_4 \\to S_2 \\to S_5 \\to S_6 \\to S_7 \\to S_3 \\to S_1 \\to S_4$: the trace repeats after seven clocks."
         },
         {
-          "title": "Unreachable set",
-          "body": "The walk visits 7 states. Only $S_0=000$ is missing; it maps to itself ($0\\oplus0=0$), and no other state maps to it, so it can never be reached."
+          "title": "Nothing new can appear",
+          "body": "The next state depends only on the present state, so after the first repeat the circuit goes round the same cycle for ever (the cycle theorem)."
+        },
+        {
+          "title": "Compare with all eight states",
+          "body": "Reached: $S_1 \\dots S_7$. Missing: $S_0$, whose only arc is its own self-loop, so no other state leads into it."
         }
       ],
       "answer": {
-        "value": "$\\{S_0\\}$",
+        "value": "{S0}",
         "matchesKey": true
       },
+      "shortcut": "With the diagram of Q72 in hand: $S_4$ lies on the 7-state cycle, so the only state off it, $S_0$, is unreachable.",
       "pitfalls": [
-        "Starting from a non-zero state an XOR shift register never reaches all-zeros."
+        "Answering 'none', thinking a 3-bit circuit must visit all 8 states.",
+        "Listing states unreachable from 000 instead of from the given start $S_4$."
       ],
-      "verification": "The only predecessor of 000 is 000 itself (Q2 = Q1 = 0 and Q2 ⊕ Q3 = 0 force all zeros)."
+      "verification": "A search of the simulated state graph from 100 reaches exactly {1, 2, 3, 4, 5, 6, 7}."
     },
     "cse-1996-b-74": {
       "approach": "Per block the CPU spends 1000 + 500 cycles; count blocks per second from the disk rate and compare with the 50 M cycles available per second.",
