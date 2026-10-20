@@ -65,7 +65,7 @@ function SubjectMap({ subjects, onOpen }: { subjects: NexusSubjectSummary[]; onO
   const W = Math.max(width, layout.cols.length * COL_MIN)
   const rows = Math.max(...layout.cols.map((c) => c.length))
   const H = rows * ROW + 40
-  const colX = (i: number) => 24 + PILL_W / 2 + (i * (W - 48 - PILL_W)) / Math.max(1, layout.cols.length - 1)
+  const colX = (i: number) => 28 + PILL_W / 2 + (i * (W - 60 - PILL_W)) / Math.max(1, layout.cols.length - 1)
   const pos = new Map<string, { x: number; y: number; col: number }>()
   layout.cols.forEach((c, i) =>
     c.forEach((s, j) => pos.set(s.id, { x: colX(i), y: 20 + (rows - c.length) * (ROW / 2) + j * ROW + ROW / 2, col: i })),

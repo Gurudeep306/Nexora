@@ -76,7 +76,8 @@ function linkPath(a: Placed, b: Placed, key: string): string {
   // Downward: leave from under the label (a node reads as one block: dot,
   // name, count), bend once like a branch, land on the top of the ring.
   const down = b.y > a.y
-  const y1 = down ? a.y + LABEL_BOTTOM : a.y - R - 3
+  // A "Needs" chip sits under the label; strands leave from below it.
+  const y1 = down ? a.y + LABEL_BOTTOM + (a.node.crossRequires?.length ? 20 : 0) : a.y - R - 3
   const y2 = down ? b.y - R - 4 : b.y + LABEL_BOTTOM
   const kx = a.x + (b.x - a.x) * (0.45 + jitter(key, 1) * 0.2)
   const ky = y1 + (y2 - y1) * (0.5 + jitter(key, 2) * 0.25)
@@ -249,7 +250,15 @@ export function SkillGraph({
   const rail = compact ? 58 : 184
   // Wide enough that the labels of a five-skill row never touch; narrower
   // screens scroll the web sideways.
-  const W = Math.max(width, 700)
+  const W = Math.max(width, compact ? 620 : 700)
+  // Phones scroll the web sideways: start centred on it, not on the rail.
+  const centred = useRef(false)
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el || centred.current || width === 0) return
+    centred.current = true
+    if (W > width) el.scrollLeft = (W - width + rail) / 2
+  }, [W, width, rail, ref])
 
   // Tier geometry: each zone is as tall as its rows.
   const tiers = useMemo(() => {
@@ -379,8 +388,8 @@ export function SkillGraph({
   }
 
   return (
-    <div className="card nx-web-card overflow-x-auto p-0">
-      <div ref={ref} className="nx-web-stage relative min-w-[700px]" onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}>
+    <div ref={ref} className="card nx-web-card overflow-x-auto p-0">
+      <div className="nx-web-stage relative" style={{ width: W }} onPointerMove={onPointerMove} onPointerLeave={onPointerLeave}>
         {width > 0 && (
           <div ref={planeRef} className="nx-web-plane relative" style={{ height }} data-animate={reduce ? undefined : ''}>
             {/* lattice + tiers */}
