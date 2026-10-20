@@ -1,0 +1,757 @@
+{
+ "version": 1,
+ "title": "Synchronous counter design: 0 → 2 → 3 → 1 with T flip-flops",
+ "width": 680,
+ "height": 258,
+ "narrow": {
+  "width": 360,
+  "height": 414
+ },
+ "intro": "Two T flip-flops Q2 (MSB) and Q1 share a clock and must step 0 → 2 → 3 → 1 → 0. The state table gets a T column per bit (T = Q ⊕ Q⁺), each column goes into a K-map, and the maps give the two input equations.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Designing the 0 → 2 → 3 → 1 counter with T flip-flops",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "0 → 2 → 3 → 1 with T flip-flops",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "tt",
+   "type": "table",
+   "x": 28,
+   "y": 62,
+   "cellW": 64,
+   "cellH": 26,
+   "rows": [
+    [
+     "Q2Q1",
+     "Q2⁺Q1⁺",
+     "T2",
+     "T1"
+    ],
+    [
+     "00",
+     "10",
+     "",
+     ""
+    ],
+    [
+     "10",
+     "11",
+     "",
+     ""
+    ],
+    [
+     "11",
+     "01",
+     "",
+     ""
+    ],
+    [
+     "01",
+     "00",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "narrow": {
+    "x": 64,
+    "cellW": 58,
+    "cellH": 24
+   }
+  },
+  {
+   "id": "tnote",
+   "type": "text",
+   "x": 156,
+   "y": 208,
+   "text": "T = Q ⊕ Q⁺: 1 where the bit changes",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 198,
+    "size": 12
+   }
+  },
+  {
+   "id": "k2",
+   "type": "table",
+   "x": 310,
+   "y": 84,
+   "cellW": 54,
+   "cellH": 28,
+   "rows": [
+    [
+     "",
+     "Q1=0",
+     "Q1=1"
+    ],
+    [
+     "Q2=0",
+     "",
+     ""
+    ],
+    [
+     "Q2=1",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 28,
+    "y": 246,
+    "cellW": 48,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "k1",
+   "type": "table",
+   "x": 502,
+   "y": 84,
+   "cellW": 54,
+   "cellH": 28,
+   "rows": [
+    [
+     "",
+     "Q1=0",
+     "Q1=1"
+    ],
+    [
+     "Q2=0",
+     "",
+     ""
+    ],
+    [
+     "Q2=1",
+     "",
+     ""
+    ]
+   ],
+   "header": true,
+   "mono": true,
+   "hidden": true,
+   "narrow": {
+    "x": 196,
+    "y": 246,
+    "cellW": 48,
+    "cellH": 26
+   }
+  },
+  {
+   "id": "k2t",
+   "type": "text",
+   "x": 391.0,
+   "y": 70,
+   "text": "T2 map",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 100.0,
+    "y": 232,
+    "size": 12
+   }
+  },
+  {
+   "id": "k1t",
+   "type": "text",
+   "x": 583.0,
+   "y": 70,
+   "text": "T1 map",
+   "size": 13,
+   "anchor": "middle",
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 268.0,
+    "y": 232,
+    "size": 12
+   }
+  },
+  {
+   "id": "e2",
+   "type": "text",
+   "x": 391.0,
+   "y": 194,
+   "text": "T2 = (Q2 ⊕ Q1)′",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 100.0,
+    "y": 350,
+    "size": 13
+   }
+  },
+  {
+   "id": "e1",
+   "type": "text",
+   "x": 583.0,
+   "y": 194,
+   "text": "T1 = Q2 ⊕ Q1",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "narrow": {
+    "x": 268.0,
+    "y": 350,
+    "size": 13
+   }
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 234,
+   "text": "",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 390,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Step 1, the state table: 0 → 2 → 3 → 1 → 0 in two bits Q2Q1 is 00 → 10 → 11 → 01 → 00. Every state has exactly one next state.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "4 states, all used: no don't-cares",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row 00 → 10: Q2 changes (T2 = 1), Q1 stays (T1 = 0). T marks exactly the bits that flip.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "Q2Q1",
+        "Q2⁺Q1⁺",
+        "T2",
+        "T1"
+       ],
+       [
+        "00",
+        "10",
+        "1",
+        "0"
+       ],
+       [
+        "10",
+        "11",
+        "",
+        ""
+       ],
+       [
+        "11",
+        "01",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "00",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        0
+       ],
+       [
+        1,
+        1
+       ],
+       [
+        1,
+        2
+       ],
+       [
+        1,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "00 → 10: T2T1 = 10",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row 10 → 11: Q2 stays (T2 = 0), Q1 changes (T1 = 1). T marks exactly the bits that flip.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "Q2Q1",
+        "Q2⁺Q1⁺",
+        "T2",
+        "T1"
+       ],
+       [
+        "00",
+        "10",
+        "1",
+        "0"
+       ],
+       [
+        "10",
+        "11",
+        "0",
+        "1"
+       ],
+       [
+        "11",
+        "01",
+        "",
+        ""
+       ],
+       [
+        "01",
+        "00",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        0
+       ],
+       [
+        2,
+        1
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        2,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "10 → 11: T2T1 = 01",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row 11 → 01: Q2 changes (T2 = 1), Q1 stays (T1 = 0). T marks exactly the bits that flip.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "Q2Q1",
+        "Q2⁺Q1⁺",
+        "T2",
+        "T1"
+       ],
+       [
+        "00",
+        "10",
+        "1",
+        "0"
+       ],
+       [
+        "10",
+        "11",
+        "0",
+        "1"
+       ],
+       [
+        "11",
+        "01",
+        "1",
+        "0"
+       ],
+       [
+        "01",
+        "00",
+        "",
+        ""
+       ]
+      ],
+      "highlight": [
+       [
+        3,
+        0
+       ],
+       [
+        3,
+        1
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        3,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "11 → 01: T2T1 = 10",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Row 01 → 00: Q2 stays (T2 = 0), Q1 changes (T1 = 1). T marks exactly the bits that flip.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "rows": [
+       [
+        "Q2Q1",
+        "Q2⁺Q1⁺",
+        "T2",
+        "T1"
+       ],
+       [
+        "00",
+        "10",
+        "1",
+        "0"
+       ],
+       [
+        "10",
+        "11",
+        "0",
+        "1"
+       ],
+       [
+        "11",
+        "01",
+        "1",
+        "0"
+       ],
+       [
+        "01",
+        "00",
+        "0",
+        "1"
+       ]
+      ],
+      "highlight": [
+       [
+        4,
+        0
+       ],
+       [
+        4,
+        1
+       ],
+       [
+        4,
+        2
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "01 → 00: T2T1 = 01",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Copy the T2 column into a K-map: 1s at 00 and 11, on a diagonal. No two 1s are adjacent, so the map is the XNOR: T2 = (Q2 ⊕ Q1)′.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        2
+       ],
+       [
+        2,
+        2
+       ],
+       [
+        3,
+        2
+       ],
+       [
+        4,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "k2",
+     "set": {
+      "hidden": false,
+      "rows": [
+       [
+        "",
+        "Q1=0",
+        "Q1=1"
+       ],
+       [
+        "Q2=0",
+        "1",
+        "0"
+       ],
+       [
+        "Q2=1",
+        "0",
+        "1"
+       ]
+      ],
+      "highlight": [
+       [
+        1,
+        1
+       ],
+       [
+        2,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "k2t",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "diagonal 1s = XNOR",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The T1 column has 1s at 10 and 01, the other diagonal: T1 = Q2 ⊕ Q1. That is the missing input X of GATE 2004, option D.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": [
+       [
+        1,
+        3
+       ],
+       [
+        2,
+        3
+       ],
+       [
+        3,
+        3
+       ],
+       [
+        4,
+        3
+       ]
+      ]
+     }
+    },
+    {
+     "id": "k1",
+     "set": {
+      "hidden": false,
+      "rows": [
+       [
+        "",
+        "Q1=0",
+        "Q1=1"
+       ],
+       [
+        "Q2=0",
+        "0",
+        "1"
+       ],
+       [
+        "Q2=1",
+        "1",
+        "0"
+       ]
+      ],
+      "highlight": [
+       [
+        2,
+        1
+       ],
+       [
+        1,
+        2
+       ]
+      ]
+     }
+    },
+    {
+     "id": "k1t",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "e1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "X = T1 = Q2 ⊕ Q1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Check by simulation: with these two gates the circuit steps 00 → 10 → 11 → 01 → 00. All 4 states are used, so nothing can lock out.",
+   "patches": [
+    {
+     "id": "tt",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "k2",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "k1",
+     "set": {
+      "highlight": []
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "0 → 2 → 3 → 1 → 0 ✓",
+      "tone": "success"
+     }
+    }
+   ]
+  }
+ ]
+}
