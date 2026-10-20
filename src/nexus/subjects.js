@@ -475,7 +475,11 @@ function subjectSummaries(reg, dsa, computed) {
     if (!data) continue;
     const nodes = data.nodes;
     const done = nodes.filter((n) => n.completed).length;
+    // Which subjects this one builds on, and how many skills link them.
+    const needs = {};
+    if (sid !== "dsa") for (const n of nodes) for (const c of n.crossRequires) needs[c.subject] = (needs[c.subject] || 0) + 1;
     rows.push({
+      needs,
       ...s.meta,
       nodeCount: nodes.length,
       zoneCount: data.zones.length,
