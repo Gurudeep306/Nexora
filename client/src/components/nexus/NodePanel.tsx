@@ -142,6 +142,8 @@ export function NodePanel({
   onClose,
   onJump,
   onSelect,
+  detailLoading = false,
+  engine = null,
 }: {
   node: NexusNode
   nodes: NexusNode[]
@@ -152,8 +154,13 @@ export function NodePanel({
   onJump?: (link: CrossLink) => void
   /** Select another skill in this tree. */
   onSelect?: (id: string) => void
+  /** The node's details (description, resources, PYQs) are still loading. */
+  detailLoading?: boolean
+  /** The subject's progress engine ("dsa" counts solved problems), or null. */
+  engine?: string | null
 }) {
-  const isDsa = !node.subject || node.subject === 'dsa'
+  // The solve-count engine (the competitive-programming tree) shows rated problems.
+  const isDsa = engine === 'dsa'
   const prereqs = node.requires.map((id) => nodes.find((n) => n.id === id)).filter((n): n is NexusNode => Boolean(n))
   const unlocks = nodes.filter((n) => n.requires.includes(node.id))
   const m = node.metric
@@ -161,7 +168,7 @@ export function NodePanel({
 
   return (
     <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.2, ease: 'easeOut' }}>
-      <Card glow className="sticky top-4">
+      <Card glow className="nx-panel sticky top-4">
         <CardContent className="space-y-4">
           <div className="flex items-start justify-between gap-2">
             <div className="flex min-w-0 gap-2.5">
@@ -189,7 +196,7 @@ export function NodePanel({
             </button>
           </div>
 
-          <p className="text-sm text-foreground-dim">{node.desc}</p>
+          {detailLoading ? <LoadingBlock rows={2} /> : <p className="text-sm text-foreground-dim">{node.desc}</p>}
 
           <div className="flex flex-wrap gap-1.5">
             {node.tags.map((t) => (

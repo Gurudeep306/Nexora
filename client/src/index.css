@@ -1121,82 +1121,57 @@ input[type='search']::-webkit-search-results-decoration {
   box-shadow: var(--card-hover-shadow);
 }
 
-/* ── The Rift Web (components/nexus/SkillGraph.tsx) ──────────────────────── */
-/* The brand ramp (blue → violet → teal), deeper in light mode for contrast. */
-.nx-web-card,
-.nx-subjects {
+/* ── The Nexus web (components/nexus/NexusWeb.tsx) ───────────────────────── */
+/* The brand ramp (blue → violet → teal), deeper in light mode for contrast.
+   The canvas reads these, so the web follows the theme. */
+.nx-web,
+.nx-panel {
   --nx-b1: #2f5bea;
   --nx-b2: #7c3aed;
   --nx-b3: #0d9488;
 }
-[data-mode='dark'] .nx-web-card,
-[data-mode='dark'] .nx-subjects {
+[data-mode='dark'] .nx-web,
+[data-mode='dark'] .nx-panel {
   --nx-b1: #5b8cff;
   --nx-b2: #9b6bff;
   --nx-b3: #2dd4bf;
 }
-.nx-web-card {
+.nx-web {
+  position: relative;
+  overflow: hidden;
+  height: min(76vh, 860px);
+  min-height: 460px;
   background:
-    radial-gradient(120% 60% at 50% 0%, color-mix(in oklab, var(--nx-b2) 6%, transparent), transparent 70%),
+    radial-gradient(90% 70% at 50% 40%, color-mix(in oklab, var(--nx-b2) 7%, transparent), transparent 75%),
     var(--color-bg-surface);
+  perspective: 1100px;
 }
-/* Gentle perspective: the plane tilts back a few degrees (lower tiers recede)
-   and leans toward the pointer (--ry / --rx-lean set from SkillGraph). */
-.nx-web-stage { perspective: 2400px; perspective-origin: 50% 0; }
-.nx-web-plane {
-  --ry: 0deg;
-  --rx-lean: 0deg;
-  transform-origin: 50% 0;
-  transform: rotateX(calc(3.5deg + var(--rx-lean))) rotateY(var(--ry));
-  transform-style: preserve-3d;
-  transition: transform 600ms var(--ease-smooth);
+.nx-web canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.nx-web-main { touch-action: none; cursor: grab; outline: none; }
+.nx-web-main:active { cursor: grabbing; }
+.nx-web-main[data-hover] { cursor: pointer; }
+.nx-web-main:focus-visible { box-shadow: inset 0 0 0 2px var(--color-focus); }
+/* Subtle depth: the lattice is a floor tilted back under the web, drifting
+   slower than the web as you pan (parallax). */
+.nx-web-floor {
+  transform-origin: 50% 100%;
+  transform: rotateX(18deg) scale(1.18);
+  pointer-events: none;
 }
-.nx-web-floor { color: var(--color-text-primary); transform: translateZ(-24px); }
-.nx-lattice { opacity: 0.09; }
-[data-mode='dark'] .nx-lattice { opacity: 0.14; }
-.nx-tier-line { stroke: var(--color-border); }
-.nx-tier-current { fill: color-mix(in oklab, var(--nx-b2) 4.5%, transparent); }
+.nx-web-hint {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  font-size: 10.5px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  transition: opacity 400ms;
+}
 
-/* Strands. */
-.nx-strand { transition: opacity 260ms var(--ease-smooth); }
-.nx-strand[data-state='done'] { opacity: 0.95; }
-.nx-strand[data-state='open'] { opacity: 0.72; }
-.nx-strand[data-state='locked'] { opacity: 0.3; }
-.nx-strand[data-lit] { opacity: 1; }
-.nx-strand[data-dim] { opacity: 0.07; }
-.nx-strand-knot { opacity: 0.8; }
-
-/* Skills: crisp dots and stars with a clean progress ring. */
-.nx-node { transition: opacity 260ms var(--ease-smooth); }
-.nx-node-dim { opacity: 0.28; }
-.nx-dot { transition: transform 220ms var(--ease-smooth); }
-.nx-dot:hover, .nx-dot:focus-visible { transform: translateY(-2px) scale(1.06); }
-.nx-dot-disc { fill: var(--color-bg-surface); }
-.nx-dot-track { stroke: color-mix(in oklab, var(--zc) 28%, var(--color-border)); }
-.nx-dot[data-state='locked'] .nx-dot-track { stroke: var(--color-border-strong); stroke-dasharray: 2 3; }
-.nx-dot-core { fill: var(--zc); }
-.nx-dot[data-state='locked'] .nx-dot-core { fill: var(--color-text-muted); }
-.nx-dot-star { fill: var(--zc); }
-.nx-dot[data-state='done'] .nx-dot-disc { fill: color-mix(in oklab, var(--zc) 14%, var(--color-bg-surface)); }
-/* At most a faint halo, never a blur. */
-.nx-dot[data-state='done'] svg { filter: drop-shadow(0 0 3px color-mix(in oklab, var(--zc) 35%, transparent)); }
-.nx-dot-select { stroke: var(--color-accent-brand); }
-.nx-node[data-focus='up'] .nx-dot-track { stroke: var(--nx-b3); }
-.nx-node[data-focus='down'] .nx-dot-track { stroke: var(--nx-b2); }
-.nx-label { text-shadow: 0 0 6px var(--color-bg-surface), 0 0 2px var(--color-bg-surface); }
-/* What you can work on right now breathes, softly. */
-.nx-dot-pulse {
-  stroke: var(--zc);
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: nx-pulse 2.6s var(--ease-smooth) infinite;
-}
-@keyframes nx-pulse {
-  0% { transform: scale(0.95); opacity: 0.6; }
-  80%, 100% { transform: scale(1.5); opacity: 0; }
-}
-/* "Needs · X (SUBJ)" chips: prerequisites in another subject. */
+/* "Needs · X (SUBJ)" / "Unlocks · X (SUBJ)" chips in the node panel. */
 .nx-need {
+  border-radius: 9999px;
+  border-width: 1px;
   border-color: color-mix(in oklab, var(--nx-b3) 45%, var(--color-border));
   color: color-mix(in oklab, var(--nx-b3) 70%, var(--color-text-primary));
   background: color-mix(in oklab, var(--nx-b3) 8%, var(--color-bg-surface));
@@ -1204,74 +1179,14 @@ input[type='search']::-webkit-search-results-decoration {
 }
 .nx-need:hover { background: color-mix(in oklab, var(--nx-b3) 18%, var(--color-bg-surface)); border-color: var(--nx-b3); }
 .nx-need[data-done] { opacity: 0.75; }
-.nx-chapter {
-  color: var(--zc);
-  border: 1px solid color-mix(in oklab, var(--zc) 50%, var(--color-border));
-  background: color-mix(in oklab, var(--zc) 8%, var(--color-bg-surface));
-}
-.nx-chapter[data-current] { background: color-mix(in oklab, var(--zc) 18%, var(--color-bg-surface)); }
-
-/* Chips that point the other way ("Unlocks · X"): violet. */
 .nx-need.nx-unlock {
   border-color: color-mix(in oklab, var(--nx-b2) 45%, var(--color-border));
   color: color-mix(in oklab, var(--nx-b2) 70%, var(--color-text-primary));
   background: color-mix(in oklab, var(--nx-b2) 8%, var(--color-bg-surface));
 }
 .nx-need.nx-unlock:hover { background: color-mix(in oklab, var(--nx-b2) 18%, var(--color-bg-surface)); border-color: var(--nx-b2); }
-.nx-need { border-radius: 9999px; border-width: 1px; }
-
-/* Subject switcher pills. */
-.nx-pill {
-  border-color: var(--color-border);
-  background: var(--color-bg-surface);
-  color: var(--color-text-secondary);
-  transition: border-color 160ms, background-color 160ms, color 160ms, transform 160ms var(--ease-smooth);
-}
-.nx-pill:hover { border-color: var(--color-border-hover); color: var(--color-text-primary); transform: translateY(-1px); }
-.nx-pill[data-active] {
-  color: var(--color-text-primary);
-  border-color: color-mix(in oklab, var(--nx-b2) 55%, var(--color-border));
-  background:
-    linear-gradient(var(--color-bg-surface), var(--color-bg-surface)) padding-box,
-    linear-gradient(95deg, var(--nx-b1), var(--nx-b2) 55%, var(--nx-b3)) border-box;
-  border-color: transparent;
-  box-shadow: 0 1px 0 color-mix(in oklab, var(--nx-b2) 18%, transparent);
-}
-
-/* The all-subjects map. */
-.nx-map-pill {
-  border-color: color-mix(in oklab, var(--zc) 40%, var(--color-border));
-  background: var(--color-bg-surface);
-  color: var(--color-text-primary);
-  transition: opacity 220ms, border-color 160ms, transform 160ms var(--ease-smooth);
-}
-.nx-map-pill:hover, .nx-map-pill:focus-visible { transform: translateY(-1px); border-color: var(--zc); }
-.nx-map-pill[data-tone='dim'] { opacity: 0.3; }
-.nx-map-pill[data-tone='up'] { border-color: var(--nx-b3); }
-.nx-map-pill[data-tone='down'] { border-color: var(--nx-b2); }
-.nx-map-pill[data-tone='self'] { border-color: var(--color-accent-brand); }
-.nx-map-strand { transition: opacity 220ms; }
-.nx-map-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: nx-draw 520ms var(--delay, 0s) cubic-bezier(0.3, 0.7, 0.4, 1) forwards; }
-
-/* Draw-in: the web spreads from its roots, breadth-first (delays from SkillGraph). */
-.nx-web-plane[data-animate] .nx-strand-line {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  animation: nx-draw 380ms var(--delay, 0s) cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
-}
-.nx-web-plane[data-animate] .nx-node { animation: nx-pop 360ms var(--delay, 0s) var(--ease-smooth) both; }
-.nx-web-plane[data-animate] .nx-strand-knot { animation: nx-pop 300ms var(--delay, 0s) both; }
-@keyframes nx-draw { to { stroke-dashoffset: 0; } }
 @keyframes nx-flow { to { stroke-dashoffset: -24; } }
-@keyframes nx-pop { from { opacity: 0; transform: translateY(4px); } }
-
-/* Subject switch: the new web settles in from a little depth. */
-.nx-subject-enter { animation: nx-depth-in 420ms var(--ease-smooth) both; }
-@keyframes nx-depth-in { from { opacity: 0; transform: translateY(10px) scale(0.985); } }
-
 @media (prefers-reduced-motion: reduce) {
-  .nx-dot-pulse, .nx-subject-enter { animation: none; }
-  .nx-web-plane { transform: none; transition: none; }
   .nx-web-floor { transform: none; }
 }
 
