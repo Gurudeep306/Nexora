@@ -2750,13 +2750,44 @@ h4.notes-h {
   align-items: center;
   height: 34px;
 }
+/* The row names stay in view while the 32-tick board scrolls sideways (phones). */
 .ffs-row-label {
+  position: sticky;
+  left: 0;
+  z-index: 2;
   display: inline-flex;
   flex: none;
   align-items: center;
   gap: 3px;
   width: 92px;
+  height: 100%;
   padding-left: 6px;
+  background: color-mix(in oklab, var(--color-text-primary) 2.5%, var(--color-bg-surface));
+}
+.ffs-diagram {
+  display: flex;
+  align-items: flex-start;
+}
+.ffs-trace-labels {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  flex: none;
+  background: color-mix(in oklab, var(--color-text-primary) 2.5%, var(--color-bg-surface));
+}
+.ffs-diagram .ffs-svg {
+  margin-left: -92px;
+}
+.ffs-trace-label {
+  position: absolute;
+  left: 6px;
+  display: flex;
+  align-items: center;
+  color: var(--color-text-primary);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 .ffs-name {
   min-width: 1.6em;

@@ -657,7 +657,7 @@
    },
    {
     "l": "B",
-    "t": "3"
+    "t": "4"
    },
    {
     "l": "C",
@@ -665,10 +665,10 @@
    },
    {
     "l": "D",
-    "t": "4"
+    "t": "3"
    }
   ],
-  "answer": "D",
+  "answer": "B",
   "solution": [
    "While the clock is high the latch keeps toggling: a toggle starts at 0 ns and then every $t_{pd} = 10$ ns while the clock is still high.",
    "Start times 0, 10, 20 and 30 ns are all before the clock falls at 35 ns; 40 ns is not.",
@@ -681,7 +681,7 @@
     "why": "Once per pulse is what a master–slave or edge-triggered JK does; a level latch keeps toggling while the clock is high."
    },
    {
-    "answer": "B",
+    "answer": "D",
     "why": "Taking ⌊35 / 10⌋ = 3 misses the toggle that starts at 30 ns, before the clock falls."
    }
   ],
@@ -699,7 +699,7 @@
   "options": [
    {
     "l": "A",
-    "t": "0, 1, 1, 0"
+    "t": "0, 0, 1, 1"
    },
    {
     "l": "B",
@@ -707,14 +707,14 @@
    },
    {
     "l": "C",
-    "t": "0, 0, 1, 1"
+    "t": "0, 1, 1, 0"
    },
    {
     "l": "D",
     "t": "1, 1, 1, 0"
    }
   ],
-  "answer": "A",
+  "answer": "C",
   "solution": [
    "Both flip-flops sample at the same edge, so flip-flop 2 always takes the **old** $Q_1$.",
    "Edge 1: $Q_2 = 0$ (old $Q_1$), $Q_1 = 1$. Edge 2: $Q_2 = 1$, $Q_1 = 1$. Edge 3: $Q_2 = 1$, $Q_1 = 0$. Edge 4: $Q_2 = 0$, $Q_1 = 1$.",
@@ -727,7 +727,7 @@
     "why": "Letting flip-flop 2 see flip-flop 1's new output at the same edge, so Q2 would equal x."
    },
    {
-    "answer": "C",
+    "answer": "A",
     "why": "Delaying x by two edges after the first, as if flip-flop 1 only loaded at edge 2."
    }
   ],
@@ -828,12 +828,12 @@
   "id": "nx-dl-06-02-q09",
   "type": "NAT",
   "marks": 2,
-  "text": "A positive-edge D flip-flop has $t_{su} = 3$ ns and $t_h = 1$ ns. Its clock rises at 10, 20, 30, 40, 50, 60, 70 and 80 ns. Its D input changes at 8, 14, 21, 27.5, 39, 50.5, 62 and 78.5 ns. At how many of the eight edges is the setup or the hold requirement violated?",
+  "text": "A positive-edge D flip-flop has $t_{su} = 3$ ns and $t_h = 1$ ns. Its clock rises at 10, 20, 30, 40, 50, 60, 70 and 80 ns. Its D input changes at 8, 14, 21.5, 27.5, 39, 50.5, 62 and 78.5 ns. At how many of the eight edges is the setup or the hold requirement violated?",
   "answer": 5,
   "solution": [
    "Edge $t_e$ is violated if D changes in $(t_e - 3, t_e)$ (setup) or in $[t_e, t_e + 1)$ (hold).",
    "Setup violations: 8 ns before the 10 ns edge, 27.5 before 30, 39 before 40, 78.5 before 80. Hold violation: 50.5 after the 50 ns edge.",
-   "The changes at 14, 21 and 62 ns are clear of every window (21 ns is exactly the end of the 20 ns edge's hold window). Total: 5 edges."
+   "The changes at 14, 21.5 and 62 ns are clear of every window (21.5 ns comes half a nanosecond after the 20 ns edge's hold window has closed at 21 ns). Total: 5 edges."
   ],
   "concept": "The sampling window of an edge at t_e is (t_e − t_su, t_e + t_h).",
   "common_wrong": [
@@ -842,8 +842,8 @@
     "why": "Checking only setup and missing the hold violation at 50.5 ns."
    },
    {
-    "answer": 6,
-    "why": "Counting the change at 21 ns: the hold window of the 20 ns edge ends at 21 ns."
+    "answer": 7,
+    "why": "Using a window of t_su + t_h = 4 ns on both sides of every edge, which wrongly flags the changes at 21.5 and 62 ns."
    }
   ],
   "blocks": [
@@ -1246,11 +1246,11 @@
   "options": [
    {
     "l": "A",
-    "t": "0, 0, 0, 0"
+    "t": "0, 1, 0, 1"
    },
    {
     "l": "B",
-    "t": "0, 1, 0, 1"
+    "t": "0, 0, 0, 0"
    },
    {
     "l": "C",
@@ -1261,7 +1261,7 @@
     "t": "1, 1, 0, 0"
    }
   ],
-  "answer": "B",
+  "answer": "A",
   "solution": [
    "During cycle $k$ the state is the one after $k - 1$ edges: 00, 10, 11, 01 for cycles 1 to 4.",
    "$z = Q_1 \\oplus Q_2$ gives 0, 1, 0, 1.",
@@ -1270,7 +1270,7 @@
   "concept": "A state-only output during cycle k is z(s_{k−1}), computed after k − 1 edges.",
   "common_wrong": [
    {
-    "answer": "A",
+    "answer": "B",
     "why": "Letting $Q_2$ copy the new $Q_1$ at the same edge makes $Q_1 = Q_2$ always, so $z = 0$."
    },
    {
@@ -1433,11 +1433,11 @@
   "options": [
    {
     "l": "A",
-    "t": "111, 110, 101"
+    "t": "001, 010, 011"
    },
    {
     "l": "B",
-    "t": "001, 010, 011"
+    "t": "111, 110, 101"
    },
    {
     "l": "C",
@@ -1448,7 +1448,7 @@
     "t": "100, 010, 110"
    }
   ],
-  "answer": "B",
+  "answer": "A",
   "solution": [
    "A positive-edge stage clocked by $\\overline{Q_{i-1}}$ toggles when $\\overline{Q_{i-1}}$ rises, i.e. when $Q_{i-1}$ falls: that is the carry of binary counting.",
    "Pulse 1: $Q_0$ 0 → 1 ($\\overline{Q_0}$ falls, no edge for stage 1): 001. Pulse 2: $Q_0$ 1 → 0, $\\overline{Q_0}$ rises, $Q_1$ toggles: 010. Pulse 3: 011.",
@@ -1457,12 +1457,16 @@
   "concept": "Negative edge + Q or positive edge + Q̄: up; negative edge + Q̄ or positive edge + Q: down.",
   "common_wrong": [
    {
-    "answer": "A",
+    "answer": "B",
     "why": "Positive edge is the down rule only with Q; with Q̄ the second inversion turns it back into an up counter."
    },
    {
     "answer": "C",
     "why": "Forgetting that stage 1 is clocked at all: only Q0 toggles."
+   },
+   {
+    "answer": "D",
+    "why": "That is the up count 1, 2, 3 written with the bits reversed ($Q_0Q_1Q_2$); the question orders them $Q_2Q_1Q_0$."
    }
   ],
   "blocks": [
@@ -1497,7 +1501,7 @@
   "blocks": [
    "frequency-division",
    "divide-by-two",
-   "erratum-a101"
+   "note-third-stage"
   ],
   "source": "nexora"
  },
@@ -1758,14 +1762,14 @@
    },
    {
     "l": "C",
-    "t": "001, 000, 111, 110"
+    "t": "001, 000, 001, 010"
    },
    {
     "l": "D",
-    "t": "001, 000, 001, 010"
+    "t": "001, 000, 111, 110"
    }
   ],
-  "answer": "C",
+  "answer": "D",
   "solution": [
    "Negative edge with $\\overline{Q}$: stage $i$ toggles when $Q_{i-1}$ rises, a down counter.",
    "From 2 the count goes 1, 0, then wraps to the largest state, 7, then 6.",
@@ -1778,13 +1782,13 @@
     "why": "That is the up count; negative edge with Q̄ counts down."
    },
    {
-    "answer": "D",
+    "answer": "C",
     "why": "A down counter does not bounce back up at 0; it wraps to 111."
    }
   ],
   "blocks": [
    "ripple-down",
-   "erratum-b180",
+   "note-down-order",
    "ripple-rule"
   ],
   "source": "nexora"

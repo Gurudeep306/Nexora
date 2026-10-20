@@ -139,6 +139,18 @@ def race(width_ns, tpd_ns, tick):
     return len(ch), [(t - 2) * tick for t in ch], r["Q"][-1]
 
 
+assert race(6, 10, 2)[0] == 1 and math.ceil(6 / 10) == 1  # pulse shorter than the delay
+assert race(10, 10, 2)[0] == 1 and race(11, 10, 1)[0] == 2  # the boundary t_w = t_pd
+has("$\\lceil 6 / 10 \\rceil = \\lceil 0.6 \\rceil = 1$ toggle", "$\\lceil 10 / 10 \\rceil = 1$ toggle", "$\\lceil 11 / 10 \\rceil = 2$ toggles",
+    "one toggle per pulse needs $t_w \\le t_{pd} < T$", "asks for $t_w \\le t_{pd} < T$")
+# edge case: D latch with D = Q̄ (= T latch, T = 1), t_pd = 6 ns, two pulses of 13 ns (3 changes each) or 12 ns (2 each)
+for w, per, ends in ((13, 3, [1, 0]), (12, 2, [0, 0])):
+    clk = [0] + [1] * w + [0] * 20 + [1] * w + [0] * 20
+    rr = sq.scope("T", "latch", clk, {"T": [1] * len(clk)}, q0=0, tpd=6)
+    p1, p2 = 1 + w + 20, len(clk)
+    assert len(changes(rr["Q"][:p1])) == per and len(changes(rr["Q"][p1 - 1:p2])) == per
+    assert [rr["Q"][p1 - 1], rr["Q"][-1]] == ends and per == math.ceil(w / 6)
+has("$\\lceil 13 / 6 \\rceil = 3$ changes", "$\\lceil 12 / 6 \\rceil = 2$ changes per pulse")
 n, at, fin = race(30, 8, 2)
 assert (n, at, fin) == (4, [8, 16, 24, 32], 0) and math.ceil(30 / 8) == 4
 assert race(20, 8, 2)[0::2] == (3, 1)
@@ -163,11 +175,16 @@ m2000 = sq.Sync([("P", "JK", {"J": lambda e: 1, "K": lambda e: 1}), ("Q", "D", {
 tr = m2000.trace((0, 1), 4)
 assert tr == [(0, 1), (1, 0), (0, 1), (1, 0), (0, 1)]
 opts2000 = {"A": (1, 0), "B": (1, 1), "C": (0, 0), "D": (0, 1)}
-assert [k for k, v in opts2000.items() if v == tr[2]] == ["D"] == bl.key_letters(bank["cse-2000-a-2-12"]["answer"])
-assert [k for k, v in opts2000.items() if v == tr[1]] == ["A"]  # the one-cycle reading
-# the same-edge trap: letting Q see the new P gives (1, 1) after one cycle
-assert (sq.ff_next("JK", 0, J=1, K=1), sq.ff_next("JK", 0, J=1, K=1)) == (1, 1)
-has("After one cycle $(1, 0)$; after two cycles $(0, 1)$", "option D, which is the stored key", "$(P, Q) = (1, 1)$ after one cycle")
+# the stem says "After three clock cycles" (wording restored, key fixed D → A in src/gate/fixes/cse-2000.json)
+assert "After three clock cycles" in bank["cse-2000-a-2-12"]["text"] and not bank["cse-2000-a-2-12"].get("needsReview")
+assert [k for k, v in opts2000.items() if v == tr[3]] == ["A"] == bl.key_letters(bank["cse-2000-a-2-12"]["answer"])
+assert [k for k, v in opts2000.items() if v == tr[2]] == ["D"]  # the two-cycle (even) state, the old key: the trap
+assert all(tr[n] == tr[n % 2] for n in range(5))  # period 2
+# the same-edge trap: letting Q see the new P gives (1, 1), option B
+assert (sq.ff_next("JK", 0, J=1, K=1), sq.ff_next("JK", 0, J=1, K=1)) == (1, 1) and opts2000["B"] == (1, 1)
+has("Find $(P, Q)$ after three clock cycles", "Three is odd, so the answer is $(1, 0)$, option A",
+    "Two cycles (or any even number) give $(0, 1)$", "which is option D", "**period 2**", "$(P, Q) = (1, 1)$ after one cycle",
+    "here $3 \\bmod 2 = 1$")
 
 # ── Edge-triggered vs latch on the same waveform (pulse between edges) ────
 N = 61
@@ -267,12 +284,15 @@ r1 = sq.scope("D", "pos", clk, {"D": D1}, tsu=2, th=0, tpd=1)
 Y = r1["Q"]
 assert [Y[e + 1] for e in ed] == [0, 1, 0, 0, 0, 0, 0]  # high from edge 2 to edge 3 only
 assert [v for v in r0["viol"] if v[0] < ed[5]] == [] and r1["viol"] == []
+assert r0["viol"] == [(ed[5], "setup", "D")]  # X falls inside the setup window of edge 6: flip-flop 0 only
+assert all(D1[t] == 0 for t in range(ed[5] - 3, ed[5] + 3))  # D1 = X·Q̄0 is 0 on both sides of edge 6
 assert r0["S"][ed[0]] == 0  # X sampled as the old 0 at edge 1
 # option drawings: A high between markers 2 and 3; B 1–3; C 1–2; D 3–6
 opt2001 = {"A": (2, 3), "B": (1, 3), "C": (1, 2), "D": (3, 6)}
 hi = [k + 1 for k, e in enumerate(ed) if Y[e + 1] == 1]
 assert [k for k, (a, b) in opt2001.items() if list(range(a, b)) == hi] == ["A"] == [bank["cse-2001-a-33"]["answer"]]
-has("(GATE 2001, option A)", "flags no violation at edges 1 to 5")
+has("(GATE 2001, option A)", "flags a setup violation on $D_0$ at edge 6 only, which does not reach Y",
+    "At edge 6, X falls inside the 20 ns setup window")
 
 # ── PYQ 2005: D = A·X + X̄·Q̄; Y over periods 1 … 5 ─────────────────────────
 Xp = [1, 1, 0, 1, 1, 0]
@@ -383,11 +403,12 @@ assert sum(Tseq) == 4 and sum(1 for k in range(12) if tq[k] == 1 and (k == 0 or 
 assert qp[5] == 1 and all(qc[t] == 0 for t in range(28, 61))
 bl.assert_msq(P["nx-dl-06-02-q08"], ["A", "C"])
 ed9 = [10, 20, 30, 40, 50, 60, 70, 80]
-ch9 = [8, 14, 21, 27.5, 39, 50.5, 62, 78.5]
+ch9 = [8, 14, 21.5, 27.5, 39, 50.5, 62, 78.5]
 wv9 = [(None, 0)] + [(t, k % 2 ^ 1) for k, t in enumerate(ch9)]
 bad = [b for _, b in sq.sample(ed9, wv9, tsu=3, th=1)]
 bl.assert_nat(P["nx-dl-06-02-q09"], sum(bad))
-assert sum(b for _, b in sq.sample(ed9, wv9, tsu=3)) == 4 and sum(any(e - 3 < t < e or e <= t <= e + 1 for t in ch9) for e in ed9) == 6
+assert sum(b for _, b in sq.sample(ed9, wv9, tsu=3)) == 4 and sum(any(e - 4 < t < e + 4 for t in ch9) for e in ed9) == 7
+assert all(not (e <= 21.5 < e + 1) and not (e - 3 < 21.5 < e) for e in ed9)  # no boundary tie
 # q10 statements from the master–slave scope model
 clk = [0, 0] + [1] * 5 + [0] * 4 + [1] * 3 + [0] * 3
 one = [1] * len(clk)
@@ -400,7 +421,7 @@ st_d = sq.scope("JK", "ms", [0, 0] + [1] * 6 + [0] * 4, {"J": [0] * 4 + [1] + [0
 bl.assert_msq(P["nx-dl-06-02-q10"], [k for k, v in zip("ABCD", (st_a, st_b, st_c, st_d)) if v])
 assert len([k for k in P if k.startswith("nx-dl-06-02-")]) == 10
 mcq = [P[f"nx-dl-06-02-q{i:02d}"]["answer"] for i in range(1, 11) if P[f"nx-dl-06-02-q{i:02d}"]["type"] == "MCQ"]
-assert mcq.count("A") >= 2 and mcq.count("D") >= 2 and max(mcq.count(x) for x in "ABCD") <= 2
+assert sorted(mcq) == ["A", "B", "C", "D"]  # keys spread over all four letters
 for q in (P[f"nx-dl-06-02-q{i:02d}"] for i in range(1, 11)):
     for b in q["blocks"]:
         assert f"#{b} " in L or f"#{b}}}" in L, (q["id"], b)

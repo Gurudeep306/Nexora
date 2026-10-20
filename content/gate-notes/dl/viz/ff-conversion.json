@@ -216,34 +216,90 @@
   },
   {
    "id": "lp2a",
-   "type": "box",
-   "x": 377,
-   "y": 177,
-   "w": 38,
-   "h": 26,
+   "type": "line",
+   "points": [
+    [
+     360,
+     177
+    ],
+    [
+     415,
+     177
+    ],
+    [
+     415,
+     203
+    ],
+    [
+     360,
+     203
+    ]
+   ],
    "tone": "success",
    "hidden": true,
    "narrow": {
-    "x": 114,
-    "y": 369,
-    "w": 40,
-    "h": 24
+    "points": [
+     [
+      97,
+      369
+     ],
+     [
+      154,
+      369
+     ],
+     [
+      154,
+      393
+     ],
+     [
+      97,
+      393
+     ]
+    ]
    }
   },
   {
    "id": "lp2b",
-   "type": "box",
-   "x": 509,
-   "y": 177,
-   "w": 38,
-   "h": 26,
+   "type": "line",
+   "points": [
+    [
+     564,
+     177
+    ],
+    [
+     509,
+     177
+    ],
+    [
+     509,
+     203
+    ],
+    [
+     564,
+     203
+    ]
+   ],
    "tone": "success",
    "hidden": true,
    "narrow": {
-    "x": 252,
-    "y": 369,
-    "w": 40,
-    "h": 24
+    "points": [
+     [
+      309,
+      369
+     ],
+     [
+      252,
+      369
+     ],
+     [
+      252,
+      393
+     ],
+     [
+      309,
+      393
+     ]
+    ]
    }
   }
  ],
@@ -837,7 +893,7 @@
    ]
   },
   {
-   "caption": "Row Q = 1 has 1s under JK = 00 and 10 (the map wraps round): K = 0 there, so the group is K̄·Q (hold or set from 1).",
+   "caption": "Row Q = 1: cells 00 and 10 are adjacent (wrap-around), drawn as one group open at both map edges; K = 0 there: K̄Q.",
    "patches": [
     {
      "id": "km",

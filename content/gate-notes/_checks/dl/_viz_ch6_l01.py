@@ -173,7 +173,7 @@ def sr_latch_feedback(L):
         "Both inputs drop together: each gate sees 0, 0 and rises, then each sees a 1 and falls, again and again.",
     ]
     latch_steps(s, "NOR", seq, hold, hist, summ, wid, groups, names, words)
-    s.step("With equal gate delays the race never ends. With unequal delays the faster gate wins, so the final Q cannot be predicted.",
+    s.step("With equal gate delays the race never ends. With unequal delays (inertial gates) the faster gate wins, so the final Q cannot be predicted.",
            ("st", {"text": "release from 11 → 00: a race", "tone": "danger"}))
     return s.done("The NOR SR latch: set, hold, reset, and the race into oscillation", (W, 392), (NW, 366),
                   "Two NOR gates, each output feeding the other gate. S and R are active high. "
@@ -258,7 +258,7 @@ def mux_latch(L):
         cap = f"Ticks {a}–{b - 1}: " + ("S = 1, so the MUX passes D and Q copies it one MUX delay later." if Sv[a]
                                        else "S = 0, so the MUX passes its own output back: Q keeps its value whatever D does.")
         s.step(cap, *pats)
-    s.step("Transparent while S = 1, holding while S = 0, and level- not edge-sensitive: a D latch (GATE 2023, option B).",
+    s.step("Transparent while S = 1, holding while S = 0, level-sensitive, not edge-sensitive: a D latch (GATE 2023, option B).",
            ("st", {"text": "Q⁺ = S·D + S̄·Q: a D latch", "tone": "accent"}))
     return s.done("A multiplexer with feedback is a D latch", (W, 340), (NW, 340),
                   "A 2:1 multiplexer: data input 1 is D, data input 0 is the output Q fed back, select is S. "

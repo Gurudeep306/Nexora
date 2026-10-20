@@ -15,8 +15,8 @@ sources:
   - "Coverage checklist only (internal digests, never copied): set A pp. 76–78, set B pp. 134–135, set C pp. 326–333, set E p. 406."
   - "Facts checked against: M. Morris Mano and M. D. Ciletti, Digital Design (SR and D latches, NAND latch, gated latches); J. F. Wakerly, Digital Design: Principles and Practices (bistable loops, the S = R = 1 release, metastability)."
   - "PYQs: src/gate/questions.json (cse-1991-b-5-a, cse-1993-ii-a-6-2, cse-1999-a-33, cse-2004-cs-18, it-2007-cs-7, cse-2023-cs-11); every key is re-derived from the loop's fixed points or by gate-delay simulation."
-  - "cse-1993-ii-a-6-2: the figure is missing from the 1993 scan; the commonly reproduced NOR-with-feedback figure is used and stated."
-updated: "2026-10-19"
+  - "cse-1993-ii-a-6-2: figure missing from the 1993 scan; as usually reproduced (GATE Overflow, cited by the bank's review note) it is a two-state machine with inputs a, b that oscillates for a = b = 0. The lesson's NOR gate fed back on itself is our own model of it, not the paper's figure."
+updated: "2026-10-20"
 ---
 
 *Storage elements, lesson 1 of 3.* Every circuit in Chapters 2 to 5 had a simple promise: tell me the
@@ -35,7 +35,7 @@ ending with the **D latch** and the multiplexer-with-feedback that GATE 2023 ask
 [Chapter 2, Lesson 6](lesson:gate-circuit-analysis) taught you to evaluate a gate circuit line by line
 and to count its propagation delay. Every circuit there was **acyclic**: you could order the gates so
 that each one's inputs were already known. In [Chapter 5, Lesson 1](lesson:combinational-design) we
-warned that a loop of gates breaks that rule and "can hold state". This lesson is that warning taken
+warned that a loop of gates breaks that rule and turns a circuit into a memory. This lesson is that warning taken
 seriously. The latches built here are the raw material of [Lesson 2](lesson:flip-flops), where two of
 them are combined into an edge-triggered flip-flop, and of everything after it in this chapter:
 registers, counters and state machines are all flip-flops plus combinational logic.
@@ -45,7 +45,7 @@ registers, counters and state machines are all flip-flops plus combinational log
 |:--|:--|
 | PYQs mapped to this lesson | 6 (1991, 1993, 1999, 2004, IT 2007, 2023) |
 | Marks | 2 one-mark MCQs (2004, 2023), 1 one-mark MCQ (IT 2007), 2 two-mark MSQs (1993, 1999), 1 descriptive part (1991) |
-| Pattern 1 | Find the stable states of a gate loop: 1991 (majority loop), 1993 (NOR with feedback), 1999 (AND chain) |
+| Pattern 1 | Find the stable states of a loop: 1991 (majority loop), 1993 (a two-state machine that oscillates when a = b = 0), 1999 (AND chain) |
 | Pattern 2 | NAND latch behaviour: 2004 (S = R = 0 gives Q = Q̄ = 1), IT 2007 (which input sequence oscillates) |
 | Pattern 3 | Recognise a latch built from another block: 2023 (a multiplexer with feedback is a D latch) |
 | What examiners test | That a stable state is a solution of Q = f(x, Q); that the forbidden input of a NOR latch is 11 but of a NAND latch is 00; that the trouble is releasing the forbidden input, not holding it; that a level-sensitive circuit is a latch, not a flip-flop |
@@ -176,12 +176,36 @@ If every input is held and the signal passes through an **odd** number of invers
 the loop, then $f = \overline{Q}$ and no state is stable: the circuit oscillates. The simplest case is a
 ring of an odd number $k$ of inverters, the **ring oscillator**. A change travels round the ring in
 $k\,t_{pd}$, comes back inverted, and must travel round again before the node returns to its first value,
-so the period is $2k\,t_{pd}$.
+so the period is $2k\,t_{pd}$ (derived below).
 
-Examiners use the same idea in disguise. GATE 1993 drew a NOR gate with its output fed back: for
-$a + b = 0$ the NOR is an inverter of $Q$, an odd ring of length one, and the circuit has no stable state.
-The tempting wrong reading is "the NOR settles to 1 when both inputs are 0"; it would, if the third input
-were not its own output.
+Examiners use the same idea in disguise. GATE 1993 asked when a two-state machine "should have a stable
+state". The figure is missing from the paper; as usually reproduced, the machine leaves state 1 when
+$a = 0$ and leaves state 2 when $b = 0$. With $a = b = 0$ it hops between the two states for ever, an
+oscillation with no stable state; any 1 on $a$ or $b$ stops it in one state: $a + b = 1$. The tempting wrong
+answer is the oscillating condition itself, $\overline{a + b} = 1$, picked by a student who reads "both
+inputs 0" as "nothing is happening, so it must be resting".
+:::
+
+:::derivation{#ring-period of="the period of a ring oscillator" depth="standard"}
+Take a ring of an odd number $k$ of inverters, each with propagation delay $t_{pd}$, and follow **one** change
+round the loop.
+
+1. Suppose node $n_0$ rises at time 0. The inverter it drives sees the change and, one $t_{pd}$ later, its output
+   $n_1$ falls. One more $t_{pd}$ and $n_2$ rises, and so on: the change moves one node per gate delay.
+2. After $k$ gate delays the change has passed through all $k$ inverters and arrives back at $n_0$. It has been
+   inverted $k$ times, an odd number, so it arrives as a **fall**: $n_0$ falls at time $k\,t_{pd}$.
+3. That fall now travels round in exactly the same way and comes back, inverted again, as a rise at time
+   $2k\,t_{pd}$. The node is back where it started, in the same direction of change, so the pattern repeats.
+
+One period is one rise plus one fall of the same node, which took two trips round the ring:
+
+$$T = 2k\,t_{pd}, \qquad f = \frac{1}{2k\,t_{pd}}.$$
+
+**Why "two trips" and not one.** After one trip the node has changed, but in the opposite direction; a period is
+not complete until the waveform repeats, which needs the second, re-inverting trip. **Sanity check.** $k = 1$
+is a single inverter (or the NOR gate of the 1993 model below with $a = b = 0$) driving itself: $T = 2t_{pd}$, so
+the output changes every gate delay, which is exactly what the gate-delay simulation shows ($Q$ = 0, 1, 0, 1, …
+one value per delay). And $k = 3$, $t_{pd} = 1$ ns gives $T = 6$ ns, the worked example further down.
 :::
 
 :::note{#recap-feedback title="Recap" depth="quick"}
@@ -270,9 +294,11 @@ $Y = 0$ by any 0 on $A$, $B$ or $C$.
 :::
 ::::
 
-::::example{#ex-fb-1993 level="gate" title="Edge case: a NOR gate fed back on itself (GATE 1993 pattern)" depth="standard"}
-A 3-input NOR gate has inputs $a$, $b$ and its own output $Q$. What restriction on the inputs makes the
-circuit have a stable state?
+::::example{#ex-fb-1993 level="gate" title="Edge case: a NOR gate fed back on itself (the 1993 idea as a gate loop)" depth="standard"}
+GATE 1993 gave a two-state machine with inputs $a$ and $b$ (figure missing from the paper) and asked for the
+restriction on the inputs under which it has a stable state. Here is our own gate-level version of the same
+idea: a 3-input NOR gate has inputs $a$, $b$ and its own output $Q$. What restriction on the inputs makes the
+circuit have a stable state? Then check the answer against the two-state machine.
 
 :::step{why="Cut the loop to get an ordinary function of the inputs and Q."}
 $Q^+ = \overline{a + b + Q}$.
@@ -287,9 +313,17 @@ If $a + b = 0$, $Q^+ = \overline{Q}$: an odd ring of length one. Neither value i
 every gate delay.
 :::
 
+:::step{why="The paper's machine is a state diagram, not a gate, so we read its stable states straight off the arcs: a state is stable when no arc leaves it for the present input."}
+As usually reproduced, the 1993 machine leaves state 1 when $a = 0$ and leaves state 2 when $b = 0$. For
+$ab = 00$ both states have an arc out, so it hops 1, 2, 1, 2, … for ever: no stable state. For $ab = 10$ state 1
+has no arc out (stable) and state 2 leaves for state 1; for $ab = 01$ state 2 is stable; for $ab = 11$ both are.
+So a stable state exists exactly when $a + b = 1$, the same condition as the NOR loop.
+:::
+
 :::answer
-A stable state exists exactly when $a + b = 1$ (and then $Q = 0$). Writing the condition as
-$\overline{a}\,\overline{b} = 0$ says the same thing.
+A stable state exists exactly when $a + b = 1$ (and then $Q = 0$ for the NOR loop). Writing the condition as
+$\overline{a}\,\overline{b} = 0$ says the same thing. Both readings, the gate loop and the two-state machine,
+oscillate only for $a = b = 0$, so the 1993 key (B, $a + b = 1$) does not depend on which one is drawn.
 :::
 ::::
 
@@ -323,6 +357,31 @@ Why does it work? A 1 is the **controlling** value of a NOR gate: one 1 on any i
 $\overline{Q} = 0$, so $Q = 1$. With $S = R = 0$ each NOR simply inverts the other's output, and the two
 inverters in a ring form an **even** loop: two stable states, $Q\overline{Q} = 10$ and $01$, exactly the
 memory case of the theorem.
+
+The latch has **two** loop wires, so the "cut, try 0, try 1" trick becomes "cut both, try all four". It is worth
+doing once by hand, because every row of the latch's table, including the forbidden one, falls out of it.
+
+:::derivation{#sr-fixed-points of="the stable states of the NOR latch" depth="standard"}
+Cut both feedback wires. Call the values arriving at the gates $Q$ and $\overline{Q}$ (the present state, written
+as a pair $Q\overline{Q}$) and compute what the gates produce: $Q^+ = \overline{R + \overline{Q}}$ and
+$\overline{Q}{}^+ = \overline{S + Q}$. A pair is stable when the gates reproduce it exactly.
+
+| $SR$ | from 00 | from 01 | from 10 | from 11 | stable pairs |
+|:--:|:--:|:--:|:--:|:--:|:--|
+| 00 | 11 | 01 | 10 | 00 | 01 and 10 (memory) |
+| 01 | 01 | 01 | 00 | 00 | 01 only (reset) |
+| 10 | 10 | 00 | 10 | 00 | 10 only (set) |
+| 11 | 00 | 00 | 00 | 00 | 00 only (forbidden) |
+
+Each entry is two NOR evaluations. For example, $SR = 00$ from $Q\overline{Q} = 00$: $Q^+ = \overline{0 + 0} = 1$ and
+$\overline{Q}{}^+ = \overline{0 + 0} = 1$, so the gates produce 11, which differs from 00: not stable.
+
+**Reading the table.** For $SR = 00$ two pairs reproduce themselves, which is the memory; the pairs 00 and 11 are
+not stable and turn into each other (00 → 11 → 00), and that two-cycle is exactly the race we meet below. For
+$SR = 01$ and $10$ there is one stable pair, the reset and set states. For $SR = 11$ the only stable pair is 00, so
+the forbidden input is perfectly stable, it just is not a pair of complements. **Sanity check.** The fixed points
+found by `seqlib.fixed_points` on the two-NOR netlist are exactly the last column.
+:::
 
 :::table{#sr-table title="Characteristic table of the NOR SR latch" depth="standard"}
 | $S$ | $R$ | $Q^+$ | $\overline{Q}{}^+$ | Action |
@@ -369,13 +428,32 @@ problem is what happens **next**: if both inputs return to 0 at the same moment,
 predicted.
 :::
 
+To say exactly what "cannot be predicted" means we need to be precise about how a gate delays a signal, because
+the race is decided by pulses only one gate delay long. [Chapter 2, Lesson 6](lesson:gate-circuit-analysis) used
+two models of delay, and they disagree about such short pulses.
+
+:::note{#delay-models title="Two ways a gate can delay a signal" depth="standard"}
+- **Transport delay** $d$: the output is the input waveform shifted later by $d$, exactly. Every pulse gets through,
+  however short. It is the simplest model and the one a hand trace "one gate delay per column" uses.
+- **Inertial delay** $d$: the output also follows the input $d$ later, but a pulse **shorter than $d$ is swallowed**. A
+  real gate behaves like this because its output node has capacitance: a brief input change starts to charge or
+  discharge it, and if the input changes back before the output has crossed the switching threshold, the output
+  never makes the swing.
+
+For a combinational circuit the choice changes only how many glitches you see. For a latch it can change the final
+**state**, because a glitch that gets through goes round the loop and is stored. The release race below is exactly
+such a case: one gate produces a pulse one delay long, and whether that pulse survives decides between "settles"
+and "keeps oscillating".
+:::
+
 :::theorem{#race-theorem name="The release race of an SR latch" depth="standard"}
 A NOR latch sits at $S = R = 1$ (so $Q = \overline{Q} = 0$) and both inputs drop to 0 together.
 
 1. If the two gates have **equal** delays, the latch **oscillates**: $Q\overline{Q}$ goes 00 → 11 → 00 → 11 …
    and never settles (in an ideal model).
-2. If the delays differ, the latch settles, and the **faster** gate decides the state: the output of the
-   faster gate goes to 1 and stays there.
+2. If the delays differ and the gates have **inertial** delay (as real gates do: a pulse shorter than the gate
+   delay is swallowed), the latch settles, and the **faster** gate decides the state: the output of the faster
+   gate goes to 1 and stays there.
 
 Because real delays are not known, the final state after the release is **unpredictable**. The same holds
 for the NAND latch released from $\overline{S}\,\overline{R} = 00$ to $11$, with every level inverted.
@@ -399,10 +477,48 @@ gate does not pass a pulse shorter than its delay (inertial delay), so its outpu
 latch rests in $Q\overline{Q} = 10$, a stable state. If $d_2 < d_1$, the same argument gives $01$. So the result
 is decided by which gate is faster, which a designer cannot control. ∎
 
+With ideal **transport** delays (every pulse is passed on, however short) the unequal case also keeps oscillating:
+the $\overline{Q}$ gate's 1, computed before it saw the new $Q$, does get out, and the pair then cycles 00, 10, 11, 00, …
+for ever (`seqlib.latch_run` with `inertial=False` and delays 1 and 2). In neither model can the designer predict
+the final state, which is the only conclusion GATE needs.
+
 **Check by simulation.** `seqlib.latch_run` drives the NOR latch with $SR$ = 11 then 00: with equal delays the
 outputs read 00, 11, 00, 11 for as long as the simulation runs; with delays 1 and 2 (inertial) they settle at
 10, and with 2 and 1 at 01.
 :::
+
+::::example{#ex-race-unequal level="medium" title="The release race with unequal delays, step by step" depth="standard"}
+A NOR latch has a $Q$ gate with delay 1 ns and a $\overline{Q}$ gate with delay 2 ns. It holds $SR = 11$ (so
+$Q\overline{Q} = 00$), and at $t = 0$ both inputs drop to 0. Trace $Q\overline{Q}$ with inertial gates, then with transport
+gates.
+
+:::step{why="Right after the release each gate sees 0 on both inputs, so each starts to switch its output to 1."}
+At $t = 0$ both gates compute $\overline{0 + 0} = 1$. The $Q$ gate will deliver its 1 at 1 ns, the $\overline{Q}$ gate at 2 ns.
+:::
+
+:::step{why="The faster gate's output arrives first and changes what the slower gate is computing."}
+At 1 ns, $Q = 1$. From that moment the $\overline{Q}$ gate sees $Q = 1$ and computes $\overline{0 + 1} = 0$. Its output
+"wanted" to be 1 from 2 ns, but the reason for that 1 (inputs 0, 0) lasted only 1 ns, shorter than its 2 ns delay.
+:::
+
+:::step{why="With inertial delay a cause shorter than the gate delay is swallowed, so the slow gate never rises."}
+Inertial: $\overline{Q}$ stays 0. The state is $Q\overline{Q} = 10$ from 1 ns on, and re-evaluating both gates gives 10 again:
+stable, set.
+:::
+
+:::step{why="With transport delay the 1 computed between 0 and 1 ns is delivered anyway, and it travels round the loop."}
+Transport: $\overline{Q}$ rises at 2 ns (from the 0–1 ns computation) and falls at 3 ns (from the computation that saw
+$Q = 1$). That 1 ns pulse on $\overline{Q}$ reaches the $Q$ gate, which drops $Q$ at 3 ns, and the pattern 00, 10, 11, 00, …
+keeps going with a period of 3 ns.
+:::
+
+:::answer
+Inertial gates: the faster $Q$ gate wins and the latch settles at $Q = 1$. Transport gates: the latch keeps
+oscillating. Swap the delays and the inertial latch settles at $Q = 0$ instead. Either way a designer who does not
+control the delays cannot know the outcome, which is why the release of the forbidden input is banned rather than
+analysed.
+:::
+::::
 
 :::trap{#trap-forbidden title="The danger is the release, not the 11 itself" depth="standard"}
 Students often say "S = R = 1 makes the latch oscillate". It does not: while $S = R = 1$ is held, a NOR latch
@@ -420,7 +536,7 @@ together can oscillate.
 :::note{#recap-sr title="Recap" depth="quick"}
 Two cross-coupled NORs store a bit: 10 sets, 01 resets, 00 holds, $Q^+ = S + \overline{R}Q$ with $SR = 0$.
 $S = R = 1$ makes both outputs 0; releasing it with both inputs at once starts a race that equal delays
-turn into oscillation and unequal delays turn into an unpredictable state.
+turn into oscillation and unequal delays (inertial gates) turn into an unpredictable state.
 :::
 
 ## The NAND latch
@@ -595,7 +711,32 @@ follows the SR table. A common realisation uses four NAND gates: two input NANDs
 $\overline{R\,C}$ and drive a NAND latch, which wants active-low inputs, so the external $S$ and $R$ are active high
 again.
 
-Characteristic equation: $Q^+ = C(S + \overline{R}Q) + \overline{C}\,Q$, with $SR = 0$ whenever $C = 1$.
+Characteristic equation: $Q^+ = C(S + \overline{R}Q) + \overline{C}\,Q$, with $SR = 0$ whenever $C = 1$ (derived
+next).
+:::
+
+:::derivation{#gated-sr-equation of="the gated SR latch equation" depth="standard"}
+The inner latch is an ordinary SR latch, so it obeys $Q^+ = S' + \overline{R'}\,Q$ for whatever inputs $S'$, $R'$ actually
+reach it. The gating makes those inputs $S' = S\,C$ and $R' = R\,C$. Substitute:
+
+$$Q^+ = C\,S + \overline{C\,R}\;Q.$$
+
+Now open the complement with De Morgan, $\overline{C\,R} = \overline{C} + \overline{R}$, and distribute:
+
+$$Q^+ = C\,S + \overline{C}\,Q + \overline{R}\,Q.$$
+
+The last term needs one more step to show the role of $C$ clearly. Split it on $C$: $\overline{R}\,Q = C\,\overline{R}\,Q +
+\overline{C}\,\overline{R}\,Q$, and the second piece is absorbed by $\overline{C}\,Q$ (absorption, $\overline{C}Q + \overline{C}\,\overline{R}Q =
+\overline{C}Q$). What is left groups by $C$:
+
+$$Q^+ = C\,(S + \overline{R}\,Q) + \overline{C}\,Q.$$
+
+The inner latch's constraint $S'R' = 0$ becomes $S\,R\,C = 0$: $S = R = 1$ is harmless while $C = 0$ (both inner inputs are
+0) and forbidden only while $C = 1$.
+
+**Sanity check.** $C = 0$: $Q^+ = Q$, hold whatever $S$ and $R$ do. $C = 1$: $Q^+ = S + \overline{R}Q$, the plain SR latch.
+That is the whole meaning of an enable: a switch between "hold" and "behave like the latch", which is why the equation
+has the form $C \cdot (\text{latch}) + \overline{C} \cdot Q$.
 :::
 
 :::definition{#d-latch term="The D latch" depth="standard"}
@@ -603,6 +744,14 @@ A **D latch** is a gated SR latch with $S = D$ and $R = \overline{D}$ (one inver
 **transparent**: $Q$ follows $D$, with a propagation delay. While $C = 0$ it holds the value $D$ had when $C$ fell.
 Because $S$ and $R$ are complements, $S = R = 1$ can never occur: **the D latch has no forbidden input**.
 :::
+
+Two practical points follow from the definition, and both come back in Lesson 2. First, **which value is held**:
+the latch keeps the value $D$ had as $C$ fell, so whatever logic drives $D$ must have finished settling a little
+before that moment. Second, **what can go wrong**: if $D$ changes at the very instant $C$ falls, the inner SR latch
+is being told "set" and "reset" in quick succession just as its inputs are disconnected, the same symmetric push as
+the release race, and the held value is not guaranteed. Lesson 2 turns "a little before" and "a little after" into
+the setup and hold times. The D latch removed the forbidden **input**; it did not remove the race at the closing
+**instant**.
 
 :::theorem{#d-latch-theorem name="Characteristic equation of the D latch" depth="standard"}
 $$Q^+ = C\,D + \overline{C}\,Q.$$
@@ -766,8 +915,10 @@ which Lesson 2 analyses for the JK latch and solves with edge triggering: if the
 instant, its own changing output cannot be heard until the next instant.
 :::
 
-You can drive an SR or D latch by hand in the Live Lab below: choose the latch trigger, toggle the inputs and the
-enable, and watch the forbidden input and the transparency on the timing diagram.
+You can drive an SR or D latch by hand in the Live Lab below: choose the SR or D latch (trigger "level latch"), set
+the enable's period, toggle the inputs tick by tick, and watch the transparency and the forbidden $S = R = 1$ (flagged in
+the violation list, with $Q$ and $\overline{Q}$ both drawn at 0 for the SR latch) on the timing diagram. The "SR forbidden,
+then released" preset shows the release.
 
 :::lab{#lab-latch lab="flipflop-scope" tab="scope" depth="standard"}
 :::
@@ -860,7 +1011,8 @@ At 0 ns the latch sees $D = \overline{0} = 1$ and starts to change; $Q$ becomes 
 
 :::step{why="Each change is started while C is still high, and the last one starts before C falls at 25 ns."}
 Changes start at 0, 10 and 20 ns (all before 25 ns) and complete at 10, 20 and 30 ns: **3** changes, $Q$ = 1, 0, 1. The change
-started at 20 ns completes after $C$ has fallen; it was already under way.
+started at 20 ns completes after $C$ has fallen; it was already under way (in the ideal gate-delay model; a real latch
+closing in the middle of a change is the risky case described in the metastability aside above).
 :::
 
 :::answer
@@ -935,7 +1087,7 @@ Our own questions in GATE formats: warm-ups first, then exam-level questions, th
 | Ring oscillator | odd number $k$ of inversions, period $2k\,t_{pd}$ |
 | NOR SR latch | 10 set, 01 reset, 00 hold, 11 forbidden ($Q = \overline{Q} = 0$); $Q^+ = S + \overline{R}Q$, $SR = 0$ |
 | NAND SR latch | active low: 01 set, 10 reset, 11 hold, 00 forbidden ($Q = \overline{Q} = 1$) |
-| Release race | leaving the forbidden input with both inputs at once: equal delays oscillate, unequal delays let the faster gate win |
+| Release race | leaving the forbidden input with both inputs at once: equal delays oscillate, unequal delays let the faster gate win (inertial gates) |
 | Oscillating sequences | NOR $11 \to 00$; NAND $00 \to 11$ |
 | Gated latch | enable $C$: $C = 0$ holds, $C = 1$ follows S, R |
 | D latch | $S = D$, $R = \overline{D}$: $Q^+ = CD + \overline{C}Q$, no forbidden input, transparent while $C = 1$ |

@@ -95,14 +95,19 @@ a key or a figure looked doubtful):**
   `cse-2009-cs-27` (BFS: 101, length 3), `cse-2003-cs-44` (the difference z − n needs −1, 0, +1 and
   two absorbing states: 5), `cse-1996-a-48` (P = {A}, {B, C}, {D}: 3), `cse-2025-1-cs-49`
   ({A, C}, {B, E}, {D, H}, {F}, {G}: 5).
-- `cse-2000-a-2-12` (`needsReview` stays): the 2000 paper is not in `GATE_PYQ/`, so the printed
-  wording "After the clock cycles" cannot be checked. The pair (P, Q) alternates (0, 1) ↔ (1, 0) with
-  period 2; the plural "cycles" with the stored key D is the two-cycle reading. The solution states
-  the reading, shows both parities and keeps key D.
+- `cse-2000-a-2-12` (**key fixed D → A**, `needsReview` cleared, `src/gate/fixes/cse-2000.json`): the
+  bank text "After the clock cycles" dropped a word; the question as reproduced by GATE Overflow
+  (gateoverflow.in/659) reads "After **three** clock cycles" (the 2000 paper is not in `GATE_PYQ/`).
+  The pair (P, Q) alternates (0, 1) → (1, 0) → (0, 1) → (1, 0) with period 2, so three cycles (odd)
+  give (1, 0), option A. The old key D is the state after two (any even number of) cycles; the lesson
+  keeps that as a trap. `l6_02_flip_flops.py` asserts 3 cycles → (1, 0) = bank key A.
 - `cse-1993-ii-a-6-2` (`needsReview` stays): the figure is missing from the 1993 scan
-  (`GATE1993.pdf`, Q6.2 prints only the text). The commonly reproduced figure, a NOR gate whose
-  output feeds back into its own input with inputs a and b, gives $Q = \overline{a + b + Q}$; its
-  fixed points exist exactly when $a + b = 1$ (key B). The solution states the figure it assumes.
+  (`GATE1993.pdf`, Q6.2 prints only the text). As usually reproduced (GATE Overflow, cited by the
+  bank's review note) it is a two-state machine with inputs a and b that leaves state 1 when a = 0
+  and state 2 when b = 0, so it oscillates exactly for a = b = 0 and has a stable state iff
+  $a + b = 1$ (key B). The lesson's NOR gate fed back on itself ($Q^+ = \overline{a + b + Q}$, no
+  fixed point iff a = b = 0) is our own illustrative gate model with the same behaviour, not the
+  paper's figure; `l6_01_latches.py` checks the key on both.
 - `it-2005-cs-43` (`needsReview` stays): the IT 2005 scan (`GATE2005IT.pdf` p. 6, Q43) matches the
   bank's figure. "At the end of the third cycle" is read as z during cycle 3 (after the edges that
   end cycles 1 and 2), where only option A gives z = 1 from every initial state; after a third edge

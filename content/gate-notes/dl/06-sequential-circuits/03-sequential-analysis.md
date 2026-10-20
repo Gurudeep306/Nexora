@@ -147,10 +147,17 @@ GATE 1991 asked for the advantage of synchronous over asynchronous circuits and 
 operation", "ease of avoiding problems due to hazards", "lower hardware requirement" and "better noise
 immunity". The expected wrong picks are "faster" and "lower hardware". Both are the **opposite** of the
 truth: a synchronous circuit runs at the pace of its worst-case path and needs flip-flops plus a clock
-network, so asynchronous designs are, if anything, faster and smaller. "Noise immunity" is a property of
-the logic family's voltage margins, not of the timing style; a noise spike that arrives in a setup window
-is captured by a flip-flop as surely as by a latch. The one real advantage is the theorem above: hazards
-and races are harmless because they are over before the edge. Key: **only B**.
+network, so asynchronous designs are, if anything, faster and smaller.
+
+"Better noise immunity" (option D) needs more care, because the theorem above does say that glitches
+between edges are ignored, and that sounds like immunity to noise. It is not. **Noise immunity** means
+voltage noise margins: how large a disturbance on a wire can be before a 0 is read as a 1. That is a
+property of the logic family (its voltage levels), not of the timing style. What the clock filters is
+**timing** glitches, the brief wrong values that the logic itself produces while it settles, and only
+those that are over before the setup window opens. Noise on the clock line is actually **worse** in a
+synchronous circuit, because a spike there creates a false edge in every flip-flop at once. So D is not
+the advantage; B is. The one real advantage is the theorem above: hazards and races are harmless
+because they are over before the edge. Key: **only B**.
 :::
 
 :::note{#recap-sync title="Recap" depth="quick"}
@@ -255,8 +262,8 @@ and finally lights the cycle that the counter of 2011 runs through.
 :::viz{#circuit-to-state-table-viz spec="circuit-to-state-table" mode="animate" depth="standard"}
 :::
 
-Notice the shape that appears in the last frames: four states form a loop, and the other four each have
-one arc leading **into** that loop and none leading back out. Every autonomous circuit has this shape
+Notice the shape that appears in the last frames: four states form a loop, and the other four lead into
+it: 001, 101 and 111 in one step, 110 in two (via 001). None leads back out. Every autonomous circuit has this shape
 (loops with trees hanging off them), and we will prove it in the section on reachability.
 
 :::note{#recap-procedure title="Recap" depth="quick"}
@@ -395,6 +402,42 @@ converting the two-level NAND network into AND-OR form.
 :::
 ::::
 
+::::example{#ex-eq-jk level="medium" title="State equations, state table and output of a JK circuit with an input" depth="standard"}
+Two JK flip-flops $A$ and $B$ and an input $x$: $J_A = x$, $K_A = B$, $J_B = \overline{A}$, $K_B = x$. An output
+$z = A\overline{B}$ is taken from the flip-flops. Find the state equations and the state table, with its output column.
+
+:::step{why="Substitute each pair of input equations into Q+ = JQ̄ + K̄Q."}
+$A^+ = x\overline{A} + \overline{B}A$ and $B^+ = \overline{A}\,\overline{B} + \overline{x}B$.
+:::
+
+:::step{why="Evaluate both for every state and both values of x."}
+$AB = 00$: $x = 0$ → 01, $x = 1$ → 11. $AB = 01$: $x = 0$ → 01, $x = 1$ → 10.
+:::
+
+:::step{why="The remaining two states complete the next-state part of the table."}
+$AB = 10$: $x = 0$ → 10, $x = 1$ → 10. $AB = 11$: $x = 0$ → 01, $x = 1$ → 00.
+:::
+
+:::step{why="Step 4 of the procedure evaluates the output equation too; z uses only A and B, so it is one value per row, whatever x is."}
+$z = A\overline{B}$: 0 in 00, 0 in 01, **1** in 10, 0 in 11. Because $z$ depends on the state alone (a Moore-type output), the
+table needs one output column, not one per input value. An output such as $z = xA$, which also reads the input, would need a
+value in every cell instead; [Lesson 7](lesson:finite-state-machines) builds such Mealy outputs.
+:::
+
+:::answer
+| $AB$ | $x = 0$ | $x = 1$ | $z$ |
+|:--:|:--:|:--:|:--:|
+| 00 | 01 | 11 | 0 |
+| 01 | 01 | 10 | 0 |
+| 10 | 10 | 10 | 1 |
+| 11 | 01 | 00 | 0 |
+
+State 10 is a trap state: once there, both inputs keep it there, and the output $z = A\overline{B}$ is 1 exactly in that state, so
+it works as a "stuck" alarm. Check one cell from the flip-flop tables: in 11 with $x = 1$, $A$ sees $J = 1, K = 1$ (toggle 1 → 0)
+and $B$ sees $J = 0, K = 1$ (reset): 00, as the table says.
+:::
+::::
+
 ::::example{#ex-eq-2011 level="gate" title="The next state of the 2011 counter (GATE 2011 pattern)" depth="standard"}
 Three D flip-flops $P$, $Q$, $R$ share a clock, with $D_P = R$, $D_Q = \overline{P + R}$ (a NOR of $P$ and $R$) and
 $D_R = Q\,\overline{R}$. Just before an edge $PQR = 010$. What is $PQR$ after the edge?
@@ -413,36 +456,7 @@ The full table: 000 → 010, 001 → 100, 010 → 011, 011 → 100, 100 → 000,
 
 :::answer
 $PQR = 011$ (GATE 2011, option D). The tempting 010 (no change) comes from forgetting that $D_R = Q\overline{R}$ is 1
-here; 001 comes from computing $Q^+$ with the new $R$.
-:::
-::::
-
-::::example{#ex-eq-jk level="medium" title="State equations of a JK circuit with an input" depth="standard"}
-Two JK flip-flops $A$ and $B$ and an input $x$: $J_A = x$, $K_A = B$, $J_B = \overline{A}$, $K_B = x$. Find the state
-equations and the state table.
-
-:::step{why="Substitute each pair of input equations into Q+ = JQ̄ + K̄Q."}
-$A^+ = x\overline{A} + \overline{B}A$ and $B^+ = \overline{A}\,\overline{B} + \overline{x}B$.
-:::
-
-:::step{why="Evaluate both for every state and both values of x."}
-$AB = 00$: $x = 0$ → 01, $x = 1$ → 11. $AB = 01$: $x = 0$ → 01, $x = 1$ → 10.
-:::
-
-:::step{why="The remaining two states complete the table."}
-$AB = 10$: $x = 0$ → 10, $x = 1$ → 10. $AB = 11$: $x = 0$ → 01, $x = 1$ → 00.
-:::
-
-:::answer
-| $AB$ | $x = 0$ | $x = 1$ |
-|:--:|:--:|:--:|
-| 00 | 01 | 11 |
-| 01 | 01 | 10 |
-| 10 | 10 | 10 |
-| 11 | 01 | 00 |
-
-State 10 is a trap state: once there, both inputs keep it there. Check one cell from the flip-flop tables:
-in 11 with $x = 1$, $A$ sees $J = 1, K = 1$ (toggle 1 → 0) and $B$ sees $J = 0, K = 1$ (reset): 00, as the table says.
+here; 001 comes from computing $Q^+$ with the new $R = 1$ (NOR = 0) while $P^+$ still takes the old $R = 0$.
 :::
 ::::
 
@@ -498,8 +512,9 @@ first one's **new** value. Real flip-flops on one clock all sample before any of
 moves only $t_{cq}$ after the edge, after every input has already been sampled), so every flip-flop must
 use the **old** state. Take $D_A = \overline{B}$, $D_B = A$ from 00: correctly, both read 00 and the next
 state is 10; updating $A$ first and letting $B$ copy the new $A$ gives 11, and the whole wrong trace
-00 → 11 → 00 has period 2 instead of 4. Examiners place the result of the sequential mistake among the
-options (2015 and 2017 both do). This is the same-edge rule of [Lesson 2](lesson:flip-flops), applied to a
+00 → 11 → 00 has period 2 instead of 4. In GATE 2015 and 2017 the mistaken trace collapses into the
+all-zero self-loop (00, 00, … in 2017; 000… in 2015), which matches no option. If your trace fits no
+option, suspect exactly this slip. This is the same-edge rule of [Lesson 2](lesson:flip-flops), applied to a
 whole circuit.
 :::
 
@@ -516,14 +531,6 @@ characteristic equation, and nothing else changes in the procedure:
   trick above ($J = K$ is T, $K = \overline{J}$ is D, $K = 1$ gives $J\overline{Q}$).
 
 The usual mistake is to treat the input of a T or JK stage as the next state, as if every flip-flop were a D.
-:::
-
-:::note{#note-t-qbar title="A T stage with T = Q̄ does not toggle" depth="standard"}
-Because a T flip-flop already contains a "flip" instruction, feeding it its own complement cancels the effect:
-$Q^+ = \overline{Q} \oplus Q = 1$ from either state. Starting at 0 it flips to 1 (its input was 1); from then on its
-input is 0 and it holds. So **$T = \overline{Q}$ sets the stage once**; it is **$T = 1$** (or a D stage with
-$D = \overline{Q}$, or a JK with $J = K = 1$) that toggles every clock. In a circuit, the same thing happens whenever
-a T stage's input happens to equal the stage's own complement in some state: substitute, never guess.
 :::
 
 The animation traces GATE 1994's chain of three different flip-flops: a JK with $J = \overline{Q_0}$ and $K = 1$
@@ -556,8 +563,8 @@ From 00: $A = 1$, then $B = $ new $A = 1$: 11. From 11: $A = 0$, then $B = 0$: 0
 
 :::answer
 Correct: 00, 10, 11, 01, 00 (a 4-state cycle; this is a 2-bit twisted-ring counter of
-[Lesson 6](lesson:shift-registers)). The sequential mistake halves the cycle to 00, 11, 00, a pattern that
-appears among GATE distractors.
+[Lesson 6](lesson:shift-registers)). The sequential mistake halves the cycle to 00, 11, 00: a wrong trace is
+often shorter than the real one, because letting one bit copy another's new value makes the two bits equal.
 :::
 ::::
 
@@ -585,9 +592,10 @@ pulses instead.
 :::
 ::::
 
-::::example{#ex-tr-input level="medium" title="Tracing a circuit with an input sequence" depth="standard"}
-The JK circuit of the earlier example ($J_A = x$, $K_A = B$, $J_B = \overline{A}$, $K_B = x$) starts at $AB = 00$ and
-receives $x = 1, 0, 1, 1$ in clock periods 1 to 4. Find the state after each clock.
+::::example{#ex-tr-input level="medium" title="Tracing a circuit with an input sequence, and reading its output" depth="standard"}
+The JK circuit of the earlier example ($J_A = x$, $K_A = B$, $J_B = \overline{A}$, $K_B = x$, output $z = A\overline{B}$) starts at
+$AB = 00$ and receives $x = 1, 0, 1, 1$ in clock periods 1 to 4 (period $k$ ends with edge $k$, which samples that period's $x$).
+Find the state after each clock, and the output $z$ during periods 1 to 4.
 
 :::step{why="With an input, each step uses the column of the table for that period's input."}
 00 with $x = 1$ → **11**; 11 with $x = 0$ → **01**.
@@ -597,9 +605,20 @@ receives $x = 1, 0, 1, 1$ in clock periods 1 to 4. Find the state after each clo
 01 with $x = 1$ → **10**; 10 with $x = 1$ → **10**.
 :::
 
+:::step{why="During period k the flip-flops still hold the state reached after k − 1 edges, and z is read from that state."}
+States during periods 1, 2, 3, 4: 00 (the initial state), 11, 01, 10. The output column gives $z$ = 0, 0, 0, **1**.
+:::
+
+:::step{why="The input of the last period acts only at the edge that ends it, so it cannot show in z during that period."}
+The fourth input ($x = 1$ in period 4) is sampled at edge 4 and decides the state of period 5 (10 again, so $z$ stays 1). A reader
+who takes $z$ from the state **after** each edge gets 0, 0, 1, 1, one period early.
+:::
+
 :::answer
-11, 01, 10, 10. Once in 10 the circuit stays there for every input, so any longer input sequence ends in 10. The table
-built once answered the whole trace by four lookups, which is the point of the table-first trick.
+States after the clocks: 11, 01, 10, 10. Output during periods 1 to 4: **0, 0, 0, 1**; the alarm $z$ comes on in period 4, the
+first period the circuit spends in the trap state 10. Once in 10 it stays there for every input, so $z = 1$ from then on. The table
+built once answered the trace and the output by lookups, which is the point of the table-first trick, and the output-timing rule
+of the section on outputs below ($z$ during period $k$ is $z(s_{k-1})$) is exactly the third step.
 :::
 ::::
 
@@ -617,7 +636,8 @@ $Q_1^+ = Q_0 \oplus Q_1$ and $Q_0^+ = Q_1$.
 
 :::answer
 After the 3rd cycle 11, after the 4th 01 (GATE 2017, option B). The circuit cycles 11 → 01 → 10 → 11 with period 3. Treating
-the T stage as a D ($Q_1^+ = Q_0$) gives 11 every cycle; letting $Q_0$ copy the new $Q_1$ gives 00 after the first cycle.
+the T stage as a D ($Q_1^+ = Q_0$) gives 11 every cycle; letting $Q_0$ copy the new $Q_1$ gives 00 after the first cycle and
+00 for ever after, because (0, 0) is a self-loop. Neither mistake matches any option.
 :::
 ::::
 
@@ -1008,9 +1028,10 @@ the trace close its cycle.
 :::lab{#lab-analysis lab="counter-fsm" tab="fsm" depth="standard"}
 :::
 
-The counter tab contains the GATE 1996 circuit ready-made: choose **LFSR** with **3 flip-flops** (its maximal-length taps are exactly
-$D_1 = Q_2 \oplus Q_3$) and initial state 100 ($S_4$), then step. The full graph of all eight states shows the 7-state cycle and the
-000 self-loop as a separate cycle.
+The counter tab contains the GATE 1996 circuit ready-made: choose **LFSR** with **3 flip-flops**. The lab numbers the cells Q2 Q1 Q0
+from the left, so its maximal-length taps (shown as Q1 and Q0) are the right two cells, exactly 1996's $D_1 = Q_2 \oplus Q_3$ in the
+question's numbering. Start at 100 ($S_4$) and step. The full graph of all eight states shows the 7-state cycle and the 000 self-loop
+as a separate cycle.
 
 :::lab{#lab-analysis-lfsr lab="counter-fsm" tab="counter" depth="standard"}
 :::
@@ -1035,7 +1056,7 @@ $D_1 = Q_2 \oplus Q_3$) and initial state 100 ($S_4$), then step. The full graph
 :::pyq{id="cse-2005-cs-64" tests="clock-trace,excitation-equations" depth="standard"}
 :::
 
-:::pyq{id="it-2005-cs-43" tests="output-timing,clock-trace" depth="standard"}
+:::pyq{id="it-2005-cs-43" tests="output-timing,clock-trace,trap-output-edge" depth="standard"}
 :::
 
 :::pyq{id="it-2006-cs-37" tests="diagram-to-equation,state-diagram" depth="standard"}

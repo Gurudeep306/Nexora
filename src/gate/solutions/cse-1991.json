@@ -1081,7 +1081,7 @@
         },
         {
           "title": "Noise",
-          "body": "Noise immunity is set by the logic family's voltage margins. A spike that lands in a setup window is captured by a flip-flop just as by a latch, so the timing style does not improve it: D is wrong, and since B holds, E is wrong."
+          "body": "Noise immunity (option D) means voltage noise margins, a property of the logic family. The timing style only filters **timing** glitches that are over before the setup window. Noise on the clock line is worse in a synchronous circuit, because a spike there creates a false edge in every flip-flop at once. So D is not the advantage; B is, and since B holds, E is wrong."
         }
       ],
       "answer": {
@@ -1110,7 +1110,7 @@
         {
           "option": "D",
           "correct": false,
-          "reason": "Noise margins belong to the logic family, not to the timing discipline."
+          "reason": "Noise immunity means voltage noise margins, set by the logic family; the clock filters only timing glitches that end before the setup window, and a spike on the clock line is worse in a synchronous circuit (a false edge in every flip-flop at once)."
         },
         {
           "option": "E",

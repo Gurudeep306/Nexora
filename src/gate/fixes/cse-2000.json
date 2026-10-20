@@ -61,17 +61,17 @@
       "id": "cse-2000-a-2-12",
       "field": "needsReview",
       "before": true,
-      "after": true,
-      "reason": "Keeps the existing review flag (committed value already true): the independent solution (one clock cycle -> (1,0), option A) disagrees with the stored key D. Recorded so the key disagreement is explicitly flagged.",
-      "source": "GATE 2000 CS paper Q2.12"
+      "after": false,
+      "reason": "Keeps the existing review flag (committed value already true): the independent solution (one clock cycle -> (1,0), option A) disagrees with the stored key D. Recorded so the key disagreement is explicitly flagged. Later: Wording restored and key re-derived by simulation.",
+      "source": "GATE 2000 Q2.12 as reproduced by GATE Overflow (gateoverflow.in/659): 'After three clock cycles'; the 2000 paper is not in GATE_PYQ/. Re-derived by seqlib simulation in l6_02_flip_flops.py."
     },
     {
       "id": "cse-2000-a-2-12",
       "field": "reviewNote",
-      "before": "Printed 'After the clock cycles' — the original likely reads 'After two clock cycles'; answer assumes two.",
-      "after": "Printed 'After the clock cycles' is ambiguous. One clock cycle (the usual reading, 'After the clock cycle') gives (P,Q) = (1,0) = option A; two cycles give (0,1) = stored key D. The solution argues A; key left unchanged pending verification.",
-      "reason": "Precise note on the key disagreement.",
-      "source": "GATE 2000 CS paper Q2.12"
+      "before": "Printed 'After the clock cycles' is ambiguous. One clock cycle (the usual reading, 'After the clock cycle') gives (P,Q) = (1,0) = option A; two cycles give (0,1) = stored key D. The solution argues A; key left unchanged pending verification.",
+      "after": "Text corrected to 'After three clock cycles' (as reproduced by GATE Overflow; the paper scan is not available) and key corrected D -> A: the pair alternates with period 2, so three cycles give (P, Q) = (1, 0). See content/gate-notes/_errata/dl.md.",
+      "reason": "Precise note on the key disagreement. Later: Record the correction.",
+      "source": "GATE 2000 Q2.12 as reproduced by GATE Overflow (gateoverflow.in/659): 'After three clock cycles'; the 2000 paper is not in GATE_PYQ/. Re-derived by seqlib simulation in l6_02_flip_flops.py."
     },
     {
       "id": "cse-2000-a-2-12",
@@ -438,6 +438,30 @@
       "after": "Only \"(d) In the …\" survives at the clipped page bottom (Q21 on B+-trees). The stored key (\"BFS traversal queue order …\") is unrelated and cannot be verified. Likely asks part (c) for the scheme of (b), whose answer would be ≈ m keys per leaf; needs the full paper text.",
       "reason": "Question text is lost in the scan; the stored key is unrelated to B+-trees.",
       "source": "GATE 2000 CSE paper (scanned PDF)"
+    },
+    {
+      "id": "cse-2000-a-2-12",
+      "field": "text",
+      "before": "The following arrangement of master-slave flip flops\n\nhas the initial state of P, Q as 0, 1 (respectively). After the clock cycles the output state P, Q is (respectively),",
+      "after": "The following arrangement of master-slave flip flops\n\nhas the initial state of P, Q as 0, 1 (respectively). After three clock cycles the output state P, Q is (respectively),",
+      "reason": "The bank text 'After the clock cycles' drops the word 'three'. (P, Q) alternates (0,1) -> (1,0) with period 2, so after three cycles it is (1, 0): option A, not D.",
+      "source": "GATE 2000 Q2.12 as reproduced by GATE Overflow (gateoverflow.in/659): 'After three clock cycles'; the 2000 paper is not in GATE_PYQ/. Re-derived by seqlib simulation in l6_02_flip_flops.py."
+    },
+    {
+      "id": "cse-2000-a-2-12",
+      "field": "answer",
+      "before": "D",
+      "after": "A",
+      "reason": "The bank text 'After the clock cycles' drops the word 'three'. (P, Q) alternates (0,1) -> (1,0) with period 2, so after three cycles it is (1, 0): option A, not D.",
+      "source": "GATE 2000 Q2.12 as reproduced by GATE Overflow (gateoverflow.in/659): 'After three clock cycles'; the 2000 paper is not in GATE_PYQ/. Re-derived by seqlib simulation in l6_02_flip_flops.py."
+    },
+    {
+      "id": "cse-2000-a-2-12",
+      "field": "solution",
+      "before": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Sequential) from **CSE 2000 Q2.12** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 0, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  J=K=1 so P toggles each clock.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Q takes the old P. (P,Q): (0,1) → (1,0) → (0,1) after two clocks..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `1, 0`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `1, 1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `0, 0`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `0, 1`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "after": "J = K = 1 makes the JK flip-flop toggle P on every clock; the D flip-flop copies the old P into Q (both are clocked together). From (P, Q) = (0, 1): after 1 clock (1, 0), after 2 clocks (0, 1), after 3 clocks (1, 0). Answer: (A) 1, 0.",
+      "reason": "The legacy free-text solution argued for the old key; replaced to match the corrected key (the v2 solution in src/gate/solutions is the full one).",
+      "source": "Re-derived by seqlib simulation in content/gate-notes/_checks/dl/l6_02_flip_flops.py"
     }
   ]
 }

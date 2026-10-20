@@ -214,14 +214,16 @@ function ScopeTool({ kind, setKind }: { kind: Kind; setKind: (k: Kind) => void }
           ? ` An edge-triggered flip-flop reads the inputs of the tick just before its edge; a change inside the shaded window (${tsu} tick${tsu === 1 ? '' : 's'} before, ${th} after) makes Q unknown.`
           : mode === 'latch'
             ? ' A latch is transparent while the clock (enable) is high: Q follows the inputs t_pd later, so a JK or T latch fed J = K = 1 or T = 1 races.'
-            : ' The master listens while the clock is high (gated by Q); the slave copies it at the falling edge, so any 1 caught during the pulse is kept.'}
+            : kind === 'JK' || kind === 'T'
+              ? ' The master listens while the clock is high (gated by Q: it can only move towards the complement of Q); the slave copies it at the falling edge, so any 1 caught during the pulse is kept.'
+              : ` The master follows ${kind === 'D' ? 'D' : 'S and R'} while the clock is high (no gating by Q); the slave copies it at the falling edge, so Q takes the master's last value.`}
       </p>
       <div className="ffs-scroll">
         <div className="ffs-board" style={{ width: LABEL + N * CELL }}>
           {names.map((nm) => (
             <TickRow key={nm} name={nm} wave={waves[nm]!} onToggle={(t) => toggle(nm, t)} onFill={(v) => fill(nm, v)} />
           ))}
-          <Diagram kind={kind} mode={mode} clk={clk} inp={inp} res={res} cmp={cmp ? { mode: cmpMode as Mode, res: cmp } : null} tsu={tsu} th={th} summary={summary} />
+          <Diagram kind={kind} mode={mode} clk={clk} inp={inp} res={res} cmp={cmp ? { mode: cmpMode as Mode, res: cmp } : null} tsu={tsu} th={th} tpd={tpd} q0={q0} summary={summary} />
         </div>
       </div>
       <div className="lab-lists ffs-lists">
@@ -301,6 +303,20 @@ function TickRow({ name, wave, onToggle, onFill }: { name: string; wave: number[
   )
 }
 
+/* Q̄ of the SR latch, drawn from the same model: the complement of Q, except that while S = R = 1 is
+   held with the enable high the NOR latch drives both outputs to 0 (the model's state is then 0 and
+   Q̄ is 0 as well), shown t_pd later like Q. Display only; seqLogic.scope is unchanged. */
+function qBar(clk: number[], inp: Record<string, number[]>, Q: Level[], tpd: number, q0: Level): Level[] {
+  const held = clk.map((c, t) => c === 1 && inp.S![t] === 1 && inp.R![t] === 1)
+  return Q.map((v, t) => {
+    const k = t - tpd
+    if (k >= 0 && held[k]) return 0
+    if (v === 'X') return 'X'
+    if (k < 0) return q0 === 'X' ? 'X' : ((1 - q0) as Level)
+    return (1 - v) as Level
+  })
+}
+
 interface Trace {
   label: string
   wave: Level[]
@@ -316,6 +332,8 @@ function Diagram({
   cmp,
   tsu,
   th,
+  tpd,
+  q0,
   summary,
 }: {
   kind: Kind
@@ -326,6 +344,8 @@ function Diagram({
   cmp: { mode: Mode; res: ScopeResult } | null
   tsu: number
   th: number
+  tpd: number
+  q0: Level
   summary: string
 }) {
   const traces: Trace[] = [
@@ -333,6 +353,7 @@ function Diagram({
     ...INPUTS[kind].map((nm) => ({ label: nm, wave: inp[nm]! as Level[] })),
     ...(mode === 'ms' ? [{ label: 'master', wave: res.M, tone: 'master' as const }] : []),
     { label: 'Q', wave: res.Q, tone: 'out' as const },
+    ...(kind === 'SR' && mode === 'latch' ? [{ label: 'Q̄', wave: qBar(clk, inp, res.Q, tpd, q0), tone: 'out' as const }] : []),
     ...(cmp ? [{ label: `Q ${MODE_SHORT[cmp.mode]}`, wave: cmp.res.Q, tone: 'cmp' as const }] : []),
   ]
   const W = LABEL + N * CELL
@@ -349,6 +370,14 @@ function Diagram({
   const violAt = new Map<number, string[]>()
   for (const [t, k, nm] of res.viol) violAt.set(t, [...(violAt.get(t) ?? []), k === 'forbidden' ? 'S=R=1' : `${k} ${nm}`])
   return (
+    <div className="ffs-diagram">
+      <div className="ffs-trace-labels" style={{ width: LABEL, height: H }} aria-hidden="true">
+        {traces.map((tr, i) => (
+          <span key={tr.label} className="ffs-trace-label" style={{ top: HEAD + i * ROW, height: ROW }}>
+            {tr.label}
+          </span>
+        ))}
+      </div>
     <svg className="ffs-svg" width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Timing diagram over ${N} ticks. ${summary}`}>
       {/* transparent / listening phases */}
       {(mode === 'latch' || mode === 'ms') &&
@@ -390,6 +419,7 @@ function Diagram({
         </g>
       ))}
     </svg>
+    </div>
   )
 }
 
@@ -416,9 +446,6 @@ function WaveRow({ y, trace, x }: { y: number; trace: Trace; x: (t: number) => n
   }
   return (
     <g>
-      <text className="lab-svg-label ffs-label" x={6} y={y + ROW / 2 + 4}>
-        {trace.label}
-      </text>
       {xs.map(([a, b]) => (
         <g key={a} className="ffs-x">
           <rect x={x(a)} y={hi} width={x(b) - x(a)} height={lo - hi} />

@@ -29766,7 +29766,7 @@
       "number": "2.12",
       "marks": 2,
       "type": "MCQ",
-      "text": "The following arrangement of master-slave flip flops\n\nhas the initial state of P, Q as 0, 1 (respectively). After the clock cycles the output state P, Q is (respectively),",
+      "text": "The following arrangement of master-slave flip flops\n\nhas the initial state of P, Q as 0, 1 (respectively). After three clock cycles the output state P, Q is (respectively),",
       "options": [
         {
           "l": "A",
@@ -29800,14 +29800,14 @@
         "d-flip-flop",
         "master-slave"
       ],
-      "answer": "D",
+      "answer": "A",
       "answerSource": "solved",
       "confidence": "high",
-      "solution": "**Step 1: Given Parameters & Problem Formulation**\nTargeting **DL** (Sequential) from **CSE 2000 Q2.12** (2 Marks).\n- **Evaluation Objective:** Multiple-choice evaluation targeting official examination key: **D**.\n- **Identified Problem Quantities:** 0, 1\n\n**Step 2: Core Governing Law & Standard Formulas**\n**Core Combinational & Sequential Switching Laws:**\n- De Morgan's Dual Laws: $\\overline{x \\cdot y} = \\overline{x} + \\overline{y}$ and $\\overline{x + y} = \\overline{x} \\cdot \\overline{y}$.\n- Flip-Flop Invariants: D-FF: $Q_{next} = D$; JK-FF: $Q_{next} = J\\overline{Q} + \\overline{K}Q$; T-FF: $Q_{next} = T \\oplus Q$.\n- In pass-transistor and transmission gate logic, PMOS passes a strong $1$ (conducts when gate is $0$), while NMOS passes a strong $0$ (conducts when gate is $1$).\n\n**Step 3: Detailed Step-by-Step Derivation & Calculations**\n- **Step 3.1 (Formulation & Boundary Identification):**\n  J=K=1 so P toggles each clock.\n- **Step 3.2 (Algebraic & Logical Deductions):**\n  Q takes the old P. (P,Q): (0,1) → (1,0) → (0,1) after two clocks..\n- **Step 3.4 (Exact Result):**\n  Combining the governing deductions establishes the unique solution: **`D`**.\n\n**Step 4: Conclusion & Final Verification**\n- **Official Verified Answer:** **D**\n**Option-by-Option Mathematical Breakdown:**\n- **Option A (INCORRECT):** `1, 0`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option B (INCORRECT):** `1, 1`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option C (INCORRECT):** `0, 0`. Fails because it introduces an arithmetic discrepancy, omits mandatory boundary states, or violates the governing invariant.\n- **Option D (CORRECT):** `0, 1`. Completely satisfies the derived mathematical proof and boundary conditions.\n\n⚡ **Topper's Shortcut:** Set select/input variables to $0$ and $1$ to observe which signal reaches the output node in under 20 seconds.",
+      "solution": "J = K = 1 makes the JK flip-flop toggle P on every clock; the D flip-flop copies the old P into Q (both are clocked together). From (P, Q) = (0, 1): after 1 clock (1, 0), after 2 clocks (0, 1), after 3 clocks (1, 0). Answer: (A) 1, 0.",
       "textSource": "pdf",
       "sourceUrl": null,
-      "needsReview": true,
-      "reviewNote": "Printed 'After the clock cycles' is ambiguous. One clock cycle (the usual reading, 'After the clock cycle') gives (P,Q) = (1,0) = option A; two cycles give (0,1) = stored key D. The solution argues A; key left unchanged pending verification."
+      "needsReview": false,
+      "reviewNote": "Text corrected to 'After three clock cycles' (as reproduced by GATE Overflow; the paper scan is not available) and key corrected D -> A: the pair alternates with period 2, so three cycles give (P, Q) = (1, 0). See content/gate-notes/_errata/dl.md."
     },
     {
       "id": "cse-2000-a-2-13",

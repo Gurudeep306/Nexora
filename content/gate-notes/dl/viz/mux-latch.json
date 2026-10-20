@@ -2313,7 +2313,7 @@
    ]
   },
   {
-   "caption": "Transparent while S = 1, holding while S = 0, and level- not edge-sensitive: a D latch (GATE 2023, option B).",
+   "caption": "Transparent while S = 1, holding while S = 0, level-sensitive, not edge-sensitive: a D latch (GATE 2023, option B).",
    "patches": [
     {
      "id": "st",

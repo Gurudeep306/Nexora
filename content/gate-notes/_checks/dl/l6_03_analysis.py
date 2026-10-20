@@ -31,11 +31,13 @@ def tr(m, s0, k=None, xs=None):
     return [B(s) for s in m.trace(s0, k, xs)]
 
 
-def seq_update(m, s0, k):
-    """The update-order mistake: flip-flops updated one by one, later ones seeing earlier new values."""
+def seq_update(m, s0, k, order=None):
+    """The update-order mistake: flip-flops updated one by one (in `order`, default top to bottom), later
+    ones seeing earlier new values."""
     s, out = list(s0), [B(s0)]
     for _ in range(k):
-        for i, (nm, kind, fns) in enumerate(m.ffs):
+        for i in (order or range(len(m.ffs))):
+            nm, kind, fns = m.ffs[i]
             e = m.env(tuple(s))
             s[i] = sq.ff_next(kind, s[i], **{p: f(e) & 1 for p, f in fns.items()})
         out.append(B(s))
@@ -54,7 +56,7 @@ has("$t_{su} = 3$ ns and an input that glitches at 6 ns", "move the last\nchange
 
 # ── 1991: key B only ───────────────────────────────────────────────────────
 assert bl.key_letters(bank["cse-1991-a-3-ii"]["answer"]) == ["B"]
-has("Key: **only B**")
+has("Key: **only B**", "a spike there creates a false edge in every flip-flop at once")
 
 # ── State equations: JK with J = x, K = B; special JK wirings ─────────────
 mjk = sq.Sync([("A", "JK", {"J": lambda e: e["x"], "K": lambda e: e["B"]}),
@@ -77,8 +79,13 @@ has("000 → 010, 001 → 100, 010 → 011, 011 → 100, 100 → 000, 101 → 10
 opts = {"A": "000", "B": "001", "C": "010", "D": "011"}
 assert [k for k, v in opts.items() if v == t11["010"]] == ["D"] == bl.key_letters(bank["cse-2011-cs-50"]["answer"])
 has("$PQR = 011$ (GATE 2011, option D)")
-# distractor 001: Q⁺ computed with the new R (R⁺ = 1) gives Q⁺ = 0
-assert n(0 | 1) == 0
+# distractor 001: Q⁺ computed with the new R (R⁺ = 1, NOR = 0) while P⁺ still takes the old R = 0
+assert (0, n(0 | 1), 1) == (0, 0, 1)
+has("001 comes from computing $Q^+$ with the new $R = 1$ (NOR = 0) while $P^+$ still takes the old $R = 0$")
+# the loop shape: 001, 101, 111 enter the cycle in one step, 110 in two (via 001); nothing leaves it
+pre2011 = {B(x): [B(y) for y in sq.cycle_from(m11.step, x)[0]] for x in m11.states()}
+assert {k: len(v) for k, v in pre2011.items() if v} == {"001": 1, "101": 1, "111": 1, "110": 2} and pre2011["110"] == ["110", "001"]
+has("001, 101 and 111 in one step, 110 in two (via 001). None leads back out.")
 pre, cyc = sq.cycle_from(m11.step, (0, 0, 0))
 assert pre == [] and [B(x) for x in cyc] == ["000", "010", "011", "100"]
 assert {"A": 3, "B": 4, "C": 5, "D": 6}["B"] == len(cyc) and bl.key_letters(bank["cse-2011-cs-51"]["answer"]) == ["B"]
@@ -116,10 +123,17 @@ for a, b, p in product((0, 1), repeat=3):
 # ── JK example table and input trace ──────────────────────────────────────
 tjk = table(mjk)
 assert tjk == {"00": {0: "01", 1: "11"}, "01": {0: "01", 1: "10"}, "10": {0: "10", 1: "10"}, "11": {0: "01", 1: "00"}}
+mjkz = sq.Sync(mjk.ffs, outs={"z": lambda e: e["A"] & n(e["B"])}, inputs=("x",))
+zjk = {B(s): mjkz.output(s)["z"] for s in mjkz.states()}
+assert zjk == {"00": 0, "01": 0, "10": 1, "11": 0} and table(mjkz) == tjk
 for s in tjk:
-    has(f"| {s} | {tjk[s][0]} | {tjk[s][1]} |")
-assert tr(mjk, (0, 0), xs=[(1,), (0,), (1,), (1,)]) == ["00", "11", "01", "10", "10"]
-has("11, 01, 10, 10. Once in 10")
+    has(f"| {s} | {tjk[s][0]} | {tjk[s][1]} | {zjk[s]} |")
+assert all(mjkz.step((1, 0), (x,)) == (1, 0) for x in (0, 1))  # the trap state, where z = 1
+stjk = mjkz.trace((0, 0), xs=[(1,), (0,), (1,), (1,)])
+assert [B(x) for x in stjk] == ["00", "11", "01", "10", "10"]
+assert [mjkz.output(x)["z"] for x in stjk[:4]] == [0, 0, 0, 1] and [mjkz.output(x)["z"] for x in stjk[1:5]] == [0, 0, 1, 1]
+has("States after the clocks: 11, 01, 10, 10.", "Output during periods 1 to 4: **0, 0, 0, 1**", "gets 0, 0, 1, 1, one period early",
+    "States during periods 1, 2, 3, 4: 00 (the initial state), 11, 01, 10.")
 
 # ── Edge case: J = K = Ā on A, J = K = A on B ─────────────────────────────
 me = sq.Sync([("A", "JK", {"J": lambda e: n(e["A"]), "K": lambda e: n(e["A"])}), ("B", "JK", {"J": lambda e: e["A"], "K": lambda e: e["A"]})])
@@ -149,6 +163,12 @@ o17 = {"A": ("11", "00"), "B": ("11", "01"), "C": ("00", "11"), "D": ("01", "01"
 assert [k for k, v in o17.items() if v == (t17[3], t17[4])] == ["B"] == [bank["cse-2017-1-cs-33"]["answer"]]
 m17d = sq.Sync([("Q1", "D", {"D": lambda e: e["Q0"]}), ("Q0", "D", {"D": lambda e: e["Q1"]})])
 assert set(tr(m17d, (1, 1), 4)) == {"11"} and seq_update(m17, (1, 1), 1)[1] == "00"
+# the update-order mistake in either order collapses into the 00 self-loop; neither matches an option
+w17 = {o: seq_update(m17, (1, 1), 4, order=o) for o in ((0, 1), (1, 0))}
+assert w17[(0, 1)][1:] == ["00"] * 4 and w17[(1, 0)][1:] == ["01", "00", "00", "00"]
+assert all((w[3], w[4]) not in o17.values() for w in w17.values()) and table(m17)["00"] == "00"
+assert (t17[3], t17[4]) != o17["C"] and "00" not in t17
+has("00 for ever after, because (0, 0) is a self-loop. Neither mistake matches any option.")
 has("After the 3rd cycle 11, after the 4th 01 (GATE 2017, option B)")
 
 # ── PYQ 2015 ──────────────────────────────────────────────────────────────
@@ -161,6 +181,9 @@ assert [k for k, v in o15.items() if out15.startswith(v)] == ["A"] == [bank["cse
 assert table(m15)["00"] == "00"
 # wrong: JK sees the D flip-flop's new output (D updated first)
 assert set(s[1] for s in seq_update(m15, (1, 0), 4)) == {"0"}
+w15 = {o: "".join(x[1] for x in seq_update(m15, (1, 0), 8, order=o)) for o in ((0, 1), (1, 0))}
+assert w15 == {(0, 1): "000000000", (1, 0): "010000000"} and not any(w.startswith(v) for w in w15.values() for v in o15.values())
+has("In GATE 2015 and 2017 the mistaken trace collapses into the\nall-zero self-loop (00, 00, … in 2017; 000… in 2015), which matches no option.")
 has("0110110… (GATE 2015, option A)", "(1, 0) → ($0$, $1 \\oplus 0 = 1$) **(0, 1)**")
 
 # ── PYQ 1996 ──────────────────────────────────────────────────────────────
@@ -248,7 +271,7 @@ assert [k for k, f in cands.items() if all(f(*r) == v for r, v in spec.items())]
 has("(i) and (ii) are both correct; (i) is minimal")
 
 # ── Viz captions' numbers come from the same machines (the generator asserts them too) ─
-has("1993 controller", "GATE 1996 circuit ready-made", "initial state 100 ($S_4$)")
+has("1993 controller", "GATE 1996 circuit ready-made", "Start at 100 ($S_4$)", "(shown as Q1 and Q0) are the right two cells")
 
 # ── Practice ─────────────────────────────────────────────────────────────
 p1 = sq.Sync([("A", "D", {"D": lambda e: e["B"] ^ e["C"]}), ("B", "D", {"D": lambda e: n(e["A"]) & e["C"]}),
@@ -300,14 +323,14 @@ during8 = ", ".join(str(p8.output(s)["z"]) for s in st8[:4])
 after8 = ", ".join(str(p8.output(s)["z"]) for s in st8[1:5])
 o8 = bl.option_values(P["nx-dl-06-03-q08"])
 bl.assert_mcq(P["nx-dl-06-03-q08"], [k for k, v in o8.items() if v == during8][0])
-assert o8["C"] == after8 and o8["D"] == "1, 1, 0, 0"
+assert o8["A"] == during8 and o8["C"] == after8 and o8["D"] == "1, 1, 0, 0"
 q1 = q2 = 0
 wrong8 = []
 for x in (1, 1, 0, 0):  # update-order mistake: Q2 copies the Q1 just written
     wrong8.append(q1 ^ q2)
     q1 = x
     q2 = q1
-assert ", ".join(map(str, wrong8)) == o8["A"]
+assert ", ".join(map(str, wrong8)) == o8["B"]
 
 d9 = lambda s, x, y: x if s == 0 else n(y)  # noqa: E731
 o9 = {"A": lambda s, x, y: (n(s) & x) | (s & y), "B": lambda s, x, y: x | n(y), "C": lambda s, x, y: (n(s) & x) | (s & n(y)),
@@ -322,7 +345,7 @@ assert [B(x) for x in pre10] == ["001", "011", "111"] and [B(x) for x in cyc10] 
 bl.assert_nat(P["nx-dl-06-03-q10"], len(pre10) + len(cyc10))
 
 keys = [P[f"nx-dl-06-03-q{k:02d}"]["answer"] for k in range(1, 11) if P[f"nx-dl-06-03-q{k:02d}"]["type"] == "MCQ"]
-assert keys.count("B") >= 2 and keys.count("C") >= 2 and max(keys.count(c) for c in "ABCD") <= 2
+assert set(keys) == set("ABCD") and max(keys.count(c) for c in "ABCD") <= 2
 for q in (P[f"nx-dl-06-03-q{k:02d}"] for k in range(1, 11)):
     for b in q["blocks"]:
         assert f"#{b} " in L or f"#{b}}}" in L, (q["id"], b)

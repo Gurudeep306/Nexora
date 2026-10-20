@@ -44,31 +44,32 @@ SOLUTIONS["cse-1991-b-5-a"] = {
 }
 
 SOLUTIONS["cse-1993-ii-a-6-2"] = {
-    "approach": "Concept tested: **a loop with an odd number of inversions has no stable state**. The figure is missing from the paper scan; in the commonly reproduced version the \"state machine\" is a NOR gate with inputs $a$, $b$ and its own output $Q$ fed back. Cut the loop and ask when $Q^+ = \\overline{a + b + Q}$ has a fixed point.",
-    "concepts": ["Feedback loop", "Stable state", "NOR gate", "Oscillation"],
-    "given": "A NOR gate whose inputs are $a$, $b$ and its own output $Q$ (figure as commonly reproduced; the scan of the 1993 paper shows only the text).",
+    "approach": "Concept tested: **a loop that inverts itself has no stable state**. The figure is missing from the paper scan; as usually reproduced (GATE Overflow, the source the question bank's review note cites), the \"state machine\" has two states and inputs $a$, $b$: it leaves state 1 when $a = 0$ and leaves state 2 when $b = 0$. A state is stable when no arc leaves it for the present input, so ask for which inputs at least one state keeps itself.",
+    "concepts": ["Feedback loop", "Stable state", "State machine", "Oscillation"],
+    "given": "A two-state machine with inputs $a$ and $b$: state 1 → state 2 when $a = 0$, state 2 → state 1 when $b = 0$ (figure as usually reproduced, per the bank's review note; the scan of the 1993 paper shows only the text). An equivalent gate-level model, used in the lesson as our own illustration, is a NOR gate with inputs $a$, $b$ and its own output $Q$ fed back: $Q^+ = \\overline{a + b + Q}$, which also oscillates exactly when $a = b = 0$.",
     "steps": [
-        {"title": "Loop function", "body": "Cutting the feedback wire: $Q^+ = \\overline{a + b + Q}$."},
-        {"title": "Case a + b = 1", "body": "A 1 is the controlling value of NOR, so $Q^+ = 0$ whatever $Q$ is. $Q = 0$ reproduces itself: a stable state exists."},
-        {"title": "Case a + b = 0", "body": "Now $Q^+ = \\overline{Q}$: the gate is an inverter driving itself, an odd ring of length one. $Q = 0$ gives 1 and $Q = 1$ gives 0, so neither is stable and the output flips every gate delay."},
-        {"title": "Restriction on the inputs", "body": "A stable state exists exactly when $a + b = 1$ (option B). Options A and C ($ab = 1$; $\\bar a + \\bar b = 0$, which is again $ab = 1$) are sufficient but exclude 01 and 10, which also work; D and E are wrong."},
+        {"title": "When is a state stable?", "body": "A state is stable for an input when the machine has no arc out of it for that input: it then stays there as long as the input is held. State 1 is stable iff $a = 1$; state 2 is stable iff $b = 1$."},
+        {"title": "Case a = b = 0", "body": "Both states have an arc out: the machine goes 1, 2, 1, 2, … for ever. This is an oscillation, and there is no stable state."},
+        {"title": "Case a + b = 1", "body": "If $a = 1$, state 1 is stable (from state 2 the machine reaches it when $b = 0$, or state 2 is stable too when $b = 1$). If $b = 1$, state 2 is stable. So a stable state exists whenever at least one input is 1."},
+        {"title": "Same answer for the gate model", "body": "The NOR loop $Q^+ = \\overline{a + b + Q}$ is the constant 0 when $a + b = 1$ (stable $Q = 0$) and an inverter of its own output, an odd ring of length one, when $a = b = 0$. Both readings oscillate only for $a = b = 0$."},
+        {"title": "Restriction on the inputs", "body": "A stable state exists exactly when $a + b = 1$ (option B). Options A and C ($ab = 1$; $\\bar a + \\bar b = 0$, which is again $ab = 1$) are sufficient but exclude 01 and 10, which also work; D and E include the oscillating case."},
     ],
     "answer": {"value": "(b) $a + b = 1$", "choice": ["B"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "$ab = 1$ does give a stable state, but it is not the restriction: $ab = 01$ and $10$ are stable too."),
-        opt("B", True, "Stable exactly when a 1 on $a$ or $b$ masks the feedback, i.e. $a + b = 1$."),
+        opt("A", False, "$ab = 1$ does give a stable state, but it is not the restriction: $ab = 01$ and $10$ have a stable state too."),
+        opt("B", True, "Stable exactly when at least one input is 1, i.e. $a + b = 1$; only $a = b = 0$ oscillates."),
         opt("C", False, "$\\bar a + \\bar b = 0$ means $a = b = 1$, the same as A: too narrow."),
         opt("D", False, "$\\overline{ab} = 1$ includes $a = b = 0$, the oscillating case."),
         opt("E", False, "$\\overline{a + b} = 1$ is exactly the oscillating case $a = b = 0$."),
     ],
-    "shortcut": "Ask when the NOR stops being an inverter of its own output: as soon as another input is 1.",
+    "shortcut": "Find the input for which the machine can never rest (every state has an arc out); the restriction is \"not that input\". Here that input is $a = b = 0$, so the answer is $a + b = 1$.",
     "pitfalls": [
-        "Answering \"a + b = 0\" because a NOR with 0 inputs outputs 1: the third input is the output itself, so the gate inverts its own output.",
+        "Answering $\\overline{a + b} = 1$ because \"both inputs 0 means nothing is happening\": with both inputs 0 the machine has an arc out of every state and never rests.",
         "Choosing $a \\cdot b = 1$: it is sufficient but not necessary.",
     ],
-    "verification": "Fixed points of $Q = \\overline{a + b + Q}$: none for $ab = 00$, $\\{0\\}$ for 01, 10 and 11. A delay simulation with $ab = 00$ toggles $Q$ every gate delay.",
-    "animation": table("Q⁺ = NOR(a, b, Q)", ["f if Q = 0", "f if Q = 1", "stable?"],
-                       [[1, 0, "no"], [0, 0, "Q = 0"], [0, 0, "Q = 0"], [0, 0, "Q = 0"]], ["ab = 00", "ab = 01", "ab = 10", "ab = 11"]),
+    "verification": "Stable states of the two-state machine: none for $ab = 00$, {2} for 01, {1} for 10, {1, 2} for 11; a walk from state 1 with $ab = 00$ visits 2, 1, 2, 1, … The NOR model has fixed points exactly for $ab \\ne 00$ and toggles every gate delay for $ab = 00$.",
+    "animation": table("Two-state machine: stable states per input", ["state 1", "state 2", "stable?"],
+                       [["→ 2", "→ 1", "no (oscillates)"], ["→ 2", "stays", "state 2"], ["stays", "→ 1", "state 1"], ["stays", "stays", "both"]], ["ab = 00", "ab = 01", "ab = 10", "ab = 11"]),
 }
 
 SOLUTIONS["cse-1999-a-33"] = {

@@ -85,6 +85,24 @@ assert [(r["Q"], r["Qb"]) for r in hist[40:44]] == [(0, 0), (1, 1), (0, 0), (1, 
 assert sq.latch_run("NOR", [(1, 1), (0, 0)], hold=12, inertial=True)[1][1][2] == "osc"
 assert sq.latch_run("NOR", [(1, 1), (0, 0)], hold=12, delay={"Q": 1, "Qb": 2}, inertial=True)[1][1][2:] == (1, 0)
 assert sq.latch_run("NOR", [(1, 1), (0, 0)], hold=12, delay={"Q": 2, "Qb": 1}, inertial=True)[1][1][2:] == (0, 1)
+# … but only for inertial gates: with transport delays the unequal latch keeps oscillating (00, 10, 11, …)
+for dl in ({"Q": 1, "Qb": 2}, {"Q": 2, "Qb": 1}):
+    assert sq.latch_run("NOR", [(1, 1), (0, 0)], hold=12, delay=dl, inertial=False)[1][1][2] == "osc"
+ht, _ = sq.latch_run("NOR", [(1, 1), (0, 0)], hold=12, delay={"Q": 1, "Qb": 2}, inertial=False)
+assert [(r["Q"], r["Qb"]) for r in ht[12:19]] == [(0, 0), (1, 0), (1, 1), (0, 0), (1, 0), (1, 1), (0, 0)]
+hi_, _ = sq.latch_run("NOR", [(1, 1), (0, 0)], hold=12, delay={"Q": 1, "Qb": 2}, inertial=True)
+assert [(r["Q"], r["Qb"]) for r in hi_[12:16]] == [(0, 0), (1, 0), (1, 0), (1, 0)]
+has("If the delays differ and the gates have **inertial** delay", "the pair then cycles 00, 10, 11, 00",
+    "unequal delays (inertial gates) turn into an unpredictable state", "let the faster gate win (inertial gates)",
+    "keeps going with a period of 3 ns")
+# the NOR latch's stable pairs by trying all four (Q, Q̄) for each SR (derivation table)
+for s_, r_ in product((0, 1), repeat=2):
+    cells = []
+    for q, qb in ((0, 0), (0, 1), (1, 0), (1, 1)):
+        cells.append(f"{1 - (r_ | qb)}{1 - (s_ | q)}")
+    stab = [p for p, c in zip(("00", "01", "10", "11"), cells) if p == c]
+    assert stab == sorted(f"{f['Q']}{f['Qb']}" for f in sq.fixed_points(NOR, {"S": s_, "R": r_}))
+    has(f"| {s_}{r_} | " + " | ".join(cells) + " | ")
 # releasing only one input is harmless
 assert sq.latch_run("NOR", [(1, 1), (1, 0)], hold=8)[1][1] == (1, 0, 1, 0)
 assert sq.latch_run("NOR", [(1, 1), (0, 1)], hold=8)[1][1] == (0, 1, 0, 1)
@@ -103,6 +121,24 @@ assert bl.key_letters(bank["cse-1993-ii-a-6-2"]["answer"]) == ["B"]          # a
 conds = {"A": lambda a, b: a & b, "B": lambda a, b: a | b, "C": lambda a, b: a & b, "D": lambda a, b: 1 - (a & b), "E": lambda a, b: 1 - (a | b)}
 ok = [k for k, c in conds.items() if all(bool(c(a, b)) == bool(stable(NORF, {"a": a, "b": b})) for a, b in product((0, 1), repeat=2))]
 assert ok == ["B"]
+# the two-state machine as the bank's review note describes the figure: 1 → 2 when a = 0, 2 → 1 when b = 0
+
+
+def sm93(s_, a, b):
+    return 2 if s_ == 1 and a == 0 else 1 if s_ == 2 and b == 0 else s_
+
+
+st93 = {(a, b): [s_ for s_ in (1, 2) if sm93(s_, a, b) == s_] for a, b in product((0, 1), repeat=2)}
+assert st93 == {(0, 0): [], (0, 1): [2], (1, 0): [1], (1, 1): [1, 2]}
+walk, s_ = [], 1
+for _ in range(6):
+    s_ = sm93(s_, 0, 0)
+    walk.append(s_)
+assert walk == [2, 1, 2, 1, 2, 1]
+ok_sm = [k for k, c in conds.items() if all(bool(c(a, b)) == bool(st93[(a, b)]) for a, b in product((0, 1), repeat=2))]
+assert ok_sm == ok == ["B"]
+has("GATE 1993 asked when a two-state machine", "leaves state 1 when\n$a = 0$ and leaves state 2 when $b = 0$",
+    "the 1993 key (B, $a + b = 1$) does not depend on which one is drawn")
 opts99 = {"A": (0, 0, 1), "B": (0, 1, 1), "C": (1, 0, 1), "D": (1, 1, 1)}
 assert [k for k, v in opts99.items() if 1 in stable(CHAIN, dict(zip("ABC", v)), "Y")] == bl.key_letters(bank["cse-1999-a-33"]["answer"]) == ["D"]
 assert sq.fixed_points(NAND, {"S": 0, "R": 0}) == [{"Q": 1, "Qb": 1}] and bank["cse-2004-cs-18"]["answer"] == "C"
@@ -119,6 +155,16 @@ has("(GATE 2004, option C)", "(IT 2007, option D)", "(GATE 2023, option B)")
 for c, d, q in product((0, 1), repeat=3):
     s_, r_ = c & d, c & (1 - d)
     assert sq.ff_next("SR", q, S=s_, R=r_) == (c & d) | ((1 - c) & q)
+# gated SR derivation: substituting SC, RC into S + R̄Q, every intermediate form agrees (SR = 0 when C = 1)
+for c, s_, r_, q in product((0, 1), repeat=4):
+    if c and s_ and r_:
+        continue
+    want = sq.ff_next("SR", q, S=s_ & c, R=r_ & c)
+    f1 = (c & s_) | ((1 - (c & r_)) & q)
+    f2 = (c & s_) | ((1 - c) & q) | ((1 - r_) & q)
+    f3 = (c & (s_ | ((1 - r_) & q))) | ((1 - c) & q)
+    assert want == f1 == f2 == f3
+has("$$Q^+ = C\\,S + \\overline{C\\,R}\\;Q.$$", "$$Q^+ = C\\,(S + \\overline{R}\\,Q) + \\overline{C}\\,Q.$$", "$$T = 2k\\,t_{pd}, \\qquad f = \\frac{1}{2k\\,t_{pd}}.$$")
 # gated SR from four NANDs with S = R = 1, C = 1 → inner forbidden 00 → Q = Q̄ = 1; C falls → race
 G4 = [("a", "NAND", ["S", "C"]), ("b", "NAND", ["R", "C"]), ("Q", "NAND", ["a", "Qb"]), ("Qb", "NAND", ["b", "Q"])]
 assert [(f["Q"], f["Qb"]) for f in sq.fixed_points(G4, {"S": 1, "R": 1, "C": 1})] == [(1, 1)]
@@ -179,5 +225,5 @@ for s_, d in product((0, 1), repeat=2):
 bl.assert_mcq(P["nx-dl-06-01-q10"], "A")
 assert len([k for k in P if k.startswith("nx-dl-06-01-")]) == 10
 print("l6_01_latches: loop theorem (all four f, static and simulated), worked loops, ring oscillators, NOR/NAND latch "
-      "fixed points and gate-delay traces, release race (equal, unequal, inertial), D/gated/MUX latches, "
+      "fixed points and gate-delay traces, release race (equal, unequal; inertial and transport), the 1993 two-state machine, D/gated/MUX latches, "
       "6 PYQ keys and 10 practice answers OK")

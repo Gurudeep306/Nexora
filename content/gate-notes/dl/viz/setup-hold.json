@@ -350,6 +350,24 @@
    }
   },
   {
+   "id": "hlwq1g0x8t",
+   "type": "text",
+   "x": 514.0,
+   "y": 231.0,
+   "text": "X",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "danger",
+   "hidden": true,
+   "narrow": {
+    "x": 271.0,
+    "y": 210.0,
+    "size": 12
+   }
+  },
+  {
    "id": "wld2",
    "type": "text",
    "x": 142,
@@ -501,37 +519,127 @@
    }
   },
   {
+   "id": "bsu",
+   "type": "line",
+   "points": [
+    [
+     292,
+     59
+    ],
+    [
+     292,
+     54
+    ],
+    [
+     344,
+     54
+    ],
+    [
+     344,
+     59
+    ]
+   ],
+   "tone": "warning",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      153,
+      55
+     ],
+     [
+      153,
+      50
+     ],
+     [
+      179,
+      50
+     ],
+     [
+      179,
+      55
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bh",
+   "type": "line",
+   "points": [
+    [
+     348,
+     59
+    ],
+    [
+     348,
+     54
+    ],
+    [
+     400,
+     54
+    ],
+    [
+     400,
+     59
+    ]
+   ],
+   "tone": "warning",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      183,
+      55
+     ],
+     [
+      183,
+      50
+     ],
+     [
+      209,
+      50
+     ],
+     [
+      209,
+      55
+     ]
+    ]
+   }
+  },
+  {
    "id": "lsu",
    "type": "text",
-   "x": 342,
-   "y": 50,
+   "x": 318.0,
+   "y": 45,
    "text": "t_su",
    "size": 13,
-   "anchor": "end",
+   "anchor": "middle",
    "mono": true,
    "tone": "warning",
    "hidden": true,
    "narrow": {
-    "x": 177,
-    "y": 46,
-    "size": 12
+    "x": 148,
+    "y": 52,
+    "size": 12,
+    "anchor": "end"
    }
   },
   {
    "id": "lh",
    "type": "text",
-   "x": 350,
-   "y": 50,
+   "x": 374.0,
+   "y": 45,
    "text": "t_h",
    "size": 13,
-   "anchor": "start",
+   "anchor": "middle",
    "mono": true,
    "tone": "warning",
    "hidden": true,
    "narrow": {
-    "x": 185,
-    "y": 46,
-    "size": 12
+    "x": 214,
+    "y": 52,
+    "size": 12,
+    "anchor": "start"
    }
   },
   {
@@ -580,6 +688,18 @@
     },
     {
      "id": "lh",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bsu",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bh",
      "set": {
       "hidden": false
      }
@@ -658,6 +778,12 @@
     },
     {
      "id": "hlwq1g0x8",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "hlwq1g0x8t",
      "set": {
       "hidden": false
      }

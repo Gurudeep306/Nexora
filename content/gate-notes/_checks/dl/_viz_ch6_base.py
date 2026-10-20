@@ -14,7 +14,8 @@ This module adds what sequential scenes need:
   which may overlap other shapes);
 - `graph`: a state graph of `circle` nodes and `arrow` arcs with separate `text` labels (so the
   layout check sees them), including self-loops drawn as an open `line` loop plus a short arrow;
-- `ff_block`: a flip-flop or latch as a `box` with pin labels (D, J, K, S, R, T, Q, Q̄, clock wedge).
+- `ff_block`: a flip-flop or latch as a `box` with pin labels (D, J, K, S, R, T, Q, Q̄, clock wedge), and
+  `clock_bubble`: the small circle that marks a falling-edge clock input.
 
 Logic levels: success = 1, muted = 0, danger = unknown / forbidden / violation, accent = the active
 edge, state, arc or path. Per-lesson scene modules (`_viz_ch6_l01.py` …) register scenes with
@@ -177,14 +178,28 @@ def light_edge(ids, k, tone="accent"):
 
 # ── Flip-flop blocks ───────────────────────────────────────────────────────
 
-def ff_block(s, pid, x, y, w, h, left, right=("Q", "Q̄"), clock=True, title=None, size=None, edge="pos"):
+def clock_bubble(s, pid, pin, r=None):
+    """The inversion bubble of a falling-edge clock input: a small circle just outside the block edge,
+    in front of the '>' wedge. Returns the point where the clock wire must now end (the bubble's left)."""
+    r = r or s.v(5, 4)
+    x, y = pin
+    s.node(f"{pid}-bub", round(x - r, 2), y, r, tone="ink")
+    return (round(x - 2 * r, 2), y)
+
+
+def ff_block(s, pid, x, y, w, h, left, right=("Q", "Q̄"), clock=True, title=None, size=None, edge="pos", bubble=False):
     """A flip-flop / latch box with input pins on the left (the clock pin last, drawn with a wedge
-    label '>' for edge-triggered or 'C' for a level latch) and outputs on the right. Returns the pins."""
+    label '>' for edge-triggered or 'C' for a level latch) and outputs on the right. Returns the pins.
+    With edge="neg" and bubble=True the clock pin gets the falling-edge bubble (`clock_bubble`), and
+    the returned '>' pin is the bubble's outer end, where the clock wire attaches. (Opt-in, so the
+    scenes drawn before the bubble existed keep their geometry.)"""
     sz = size or s.v(13, 12)
     labels = list(left)
     if clock:
         labels.append(">" if edge in ("pos", "neg") else "C")
     P = s.block(pid, x, y, w, h, left=labels, right=list(right), size=sz)
+    if clock and edge == "neg" and bubble:
+        P[">"] = clock_bubble(s, pid, P[">"])
     if title:
         s.text(f"{pid}-ttl", x + w / 2, y - 10, title, sz, anchor="middle", weight="bold")
     return P

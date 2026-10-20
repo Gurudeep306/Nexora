@@ -7,7 +7,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import seqlib as sq  # noqa: E402
-from _viz_ch6_base import S, reveal, scene, tv, waveform  # noqa: E402
+from _viz_ch6_base import S, clock_bubble, reveal, scene, tv, waveform  # noqa: E402
 
 
 def falling_clock(periods, high, low, lead=1):
@@ -39,11 +39,14 @@ def b3(q, n=3):
 
 
 def tff_chain(s, pid, n, x0, y, bw, bh, gap, clear=False):
-    """n T flip-flops (T = 1) in a row, Q_i wired to the clock of stage i + 1. Returns the pin dicts."""
+    """n falling-edge T flip-flops (T = 1) in a row, Q_i wired to the clock of stage i + 1. Each clock pin
+    carries the inversion bubble of a negative-edge input; the returned '>' pin is the bubble's outer
+    end. Returns the pin dicts."""
     pins = []
     for i in range(n):
         x = x0 + i * (bw + gap)
         P = s.block(f"{pid}{i}", x, y, bw, bh, left=["T=1", ">"], right=[f"Q{i}"], bottom=["CLR"] if clear else (), size=s.v(13, 12))
+        P[">"] = clock_bubble(s, f"{pid}{i}", P[">"])
         pins.append(P)
     for i in range(n - 1):
         a, b = pins[i][f"Q{i}"], pins[i + 1][">"]
@@ -52,11 +55,15 @@ def tff_chain(s, pid, n, x0, y, bw, bh, gap, clear=False):
 
 
 def edge_marks(s, pid, falls, x0, dx, ytop, ybot, size):
-    tight = dx * min(b - a for a, b in zip(falls, falls[1:])) < 3 * size * 0.62 + 4
+    """Dashed markers at the falling edges, numbered ↓1, ↓2, …; when neighbouring numbers would collide
+    (the phone layout), they alternate between two rows so every edge keeps its number."""
+    label_w = len(f"↓{len(falls)}") * size * 0.62 + 4
+    tight = dx * min(b - a for a, b in zip(falls, falls[1:])) < label_w
     for k, e in enumerate(falls):
         xe = x0 + e * dx
         s.line(f"{pid}{k}", [[xe, ytop], [xe, ybot]], dashed=True, tone="accent", hidden=True)
-        s.text(f"{pid}t{k}", xe, ytop - 10, "↓" if tight else f"↓{k + 1}", size, anchor="middle", tone="accent", mono=True, hidden=True)
+        yl = ytop - 10 - (size + 4 if tight and k % 2 else 0)
+        s.text(f"{pid}t{k}", xe, yl, f"↓{k + 1}", size, anchor="middle", tone="accent", mono=True, hidden=True)
 
 
 def rows_panel(s, pid, rows, x, y, dx, h, gap, groups, lsize):
@@ -83,27 +90,29 @@ def ripple_counter_wave(L):
     """A 3-bit negative-edge ripple up counter with one tick of delay per stage (seqlib.ripple_events)."""
     s = S(L)
     W, NW = 680, 360
-    n, tpd = 3, 1
-    clk, falls = falling_clock(8, 3, 3)
+    n, tpd = 3, 2  # two ticks per stage delay, so each step of the ripple staircase stays visible on a phone
+    clk, falls = falling_clock(8, 3, 4)
+    assert n * tpd < 7  # the ripple settles before the next falling edge
     T = len(clk) + 3
     clk = clk + [1, 1, 1]
     ev = sq.ripple_events(n, tpd, falls)
     st = states_per_tick(ev, T)
     settled = sq.settled_states(ev, falls, T)
     assert settled == [1, 2, 3, 4, 5, 6, 7, 0]
-    chains = [chain_between(ev, f, f + 6) for f in falls]
+    chains = [chain_between(ev, f, f + 7) for f in falls]
     assert chains[3] == [3, 2, 0, 4] and chains[7] == [7, 6, 4, 0]
     assert max(len(c) for c in chains) - 1 == n
     s.head("A 3-bit ripple up counter: each stage clocks the next", "3-bit ripple up counter", W, NW)
     bw, bh, gap = s.v(84, 60), 52, s.v(70, 38)
-    bx0, by = s.v(170, 74), 64
+    bx0, by = s.v(170, 74), 76
     pins = tff_chain(s, "ff", n, bx0, by, bw, bh, gap)
     xin = bx0 - s.v(60, 30)
     s.wire("wclk", (xin, pins[0][">"][1]), pins[0][">"])
     s.text("lclk", xin - 6, pins[0][">"][1], "CLK", s.v(14, 12), anchor="end", mono=True, weight="bold")
     for i in range(n):
         s.text(f"v{i}", bx0 + i * (bw + gap) + bw / 2, by - 12, f"Q{i} = 0", s.v(13, 12), anchor="middle", mono=True, tone="muted")
-    x0, dx = s.v(110, 52), s.v(10.5, 5.6)
+    s.text("leg", s.v(W / 2, NW / 2), 44, "○ = falling-edge clock", s.v(13, 12), anchor="middle", tone="muted")
+    x0, dx = s.v(110, 52), s.v(9.0, 4.9)
     h, rgap = s.v(18, 16), s.v(40, 36)
     y0 = by + bh + s.v(56, 52)
     groups = [(0, falls[0])] + [(falls[k], falls[k + 1] if k + 1 < len(falls) else T) for k in range(len(falls))]
@@ -123,7 +132,7 @@ def ripple_counter_wave(L):
             p.append((f"ffw{i}", {"tone": "accent" if i + 1 in toggled else "muted"}))
         return p
 
-    s.step("All three flip-flops start at 0. Each is a T flip-flop with T = 1 that toggles on a falling edge at its clock pin; one t_pd = 1 tick.",
+    s.step("All three start at 0. Each is a T flip-flop with T = 1 that toggles on a falling edge at its clock pin (the bubble); t_pd = 2 ticks.",
            *show_all(ids, 0), *stage_pats(0, []), ("sub", {"text": "only Q0 sees the real clock", "tone": "muted"}))
     for k, f in enumerate(falls):
         ch = chains[k]
@@ -149,7 +158,7 @@ def ripple_counter_wave(L):
            ("st", {"text": "settle time = n · t_pd (worst case)", "tone": "accent"}), ("sub", {"text": "the carry ripples like a wave", "tone": "muted"}))
     return s.done("A 3-bit ripple up counter and its transient states", (W, ybot + 64), (NW, ybot + 64),
                   "Three T flip-flops with T = 1 toggle on the falling edge of their clock pin; CLK drives Q0, Q0 clocks Q1 and Q1 "
-                  "clocks Q2. Each stage has a delay of one tick. The waveforms grow one clock period per step.")
+                  "clocks Q2 (the bubble on each clock pin marks a falling-edge input). Each stage has a delay of two ticks. The waveforms grow one clock period per step.")
 
 
 # ── mod-n-clear ────────────────────────────────────────────────────────────
@@ -176,13 +185,14 @@ def mod_n_clear(L):
     assert all(not cond(q) for c in chains[:5] for q in c)
     s.head("Mod-6 from a 3-bit ripple counter: clear the moment 110 appears", "Mod-6 by asynchronous clear", W, NW)
     bw, bh, gap = s.v(84, 60), 64, s.v(70, 38)
-    bx0, by = s.v(170, 74), 64
+    bx0, by = s.v(170, 74), 76
     pins = tff_chain(s, "ff", n, bx0, by, bw, bh, gap, clear=True)
     xin = bx0 - s.v(60, 30)
     s.wire("wclk", (xin, pins[0][">"][1]), pins[0][">"])
     s.text("lclk", xin - 6, pins[0][">"][1], "CLK", s.v(14, 12), anchor="end", mono=True, weight="bold")
     for i in range(n):
         s.text(f"v{i}", bx0 + i * (bw + gap) + bw / 2, by - 12, f"Q{i} = 0", s.v(13, 12), anchor="middle", mono=True, tone="muted")
+    s.text("leg", s.v(W / 2, NW / 2), 44, "○ = falling-edge clock", s.v(13, 12), anchor="middle", tone="muted")
     # the clear bus under the blocks and the AND gate below it
     ybus = by + bh + 18
     cx = [pins[i]["CLR"][0] for i in range(n)]
@@ -283,7 +293,7 @@ def frequency_divider(L):
     s.head("A ripple counter is a chain of divide-by-two stages", "Ripple counter = frequency divider", W, NW)
     x0, dx = s.v(110, 54), s.v(9.6, 5.0)
     h, rgap = s.v(20, 18), s.v(52, 46)
-    y0 = 70
+    y0 = s.v(70, 80)  # the phone layout stacks the edge numbers in two rows above the clock
     groups = [(0, falls[0])] + [(falls[k], falls[k + 1] if k + 1 < len(falls) else T) for k in range(len(falls))]
     rows = [("c", "CLK", clk, "ink")] + [(f"q{i}", f"Q{i}", qs[i], "accent") for i in range(n)]
     ids, ys = rows_panel(s, "w", rows, x0, y0, dx, h, rgap, groups, s.v(14, 12))
