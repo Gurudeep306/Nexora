@@ -1,0 +1,4201 @@
+{
+ "version": 1,
+ "title": "Frequency division in a 3-bit ripple counter",
+ "width": 680,
+ "height": 316,
+ "narrow": {
+  "width": 360,
+  "height": 296
+ },
+ "intro": "The clock and the outputs Q0, Q1 and Q2 of a 3-bit negative-edge ripple counter (delays ignored), one clock period per step; then each output's period is marked.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "A ripple counter is a chain of divide-by-two stages",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Ripple counter = frequency divider",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "wlc",
+   "type": "text",
+   "x": 102,
+   "y": 80.0,
+   "text": "CLK",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 46,
+    "y": 79.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wcg0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     90
+    ],
+    [
+     119.6,
+     90
+    ],
+    [
+     119.6,
+     70
+    ],
+    [
+     138.8,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      54.0,
+      88
+     ],
+     [
+      59.0,
+      88
+     ],
+     [
+      59.0,
+      70
+     ],
+     [
+      69.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg1s0",
+   "type": "line",
+   "points": [
+    [
+     138.8,
+     70
+    ],
+    [
+     138.8,
+     90
+    ],
+    [
+     158.0,
+     90
+    ],
+    [
+     158.0,
+     70
+    ],
+    [
+     177.2,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      69.0,
+      70
+     ],
+     [
+      69.0,
+      88
+     ],
+     [
+      79.0,
+      88
+     ],
+     [
+      79.0,
+      70
+     ],
+     [
+      89.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg2s0",
+   "type": "line",
+   "points": [
+    [
+     177.2,
+     70
+    ],
+    [
+     177.2,
+     90
+    ],
+    [
+     196.4,
+     90
+    ],
+    [
+     196.4,
+     70
+    ],
+    [
+     215.6,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      89.0,
+      70
+     ],
+     [
+      89.0,
+      88
+     ],
+     [
+      99.0,
+      88
+     ],
+     [
+      99.0,
+      70
+     ],
+     [
+      109.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg3s0",
+   "type": "line",
+   "points": [
+    [
+     215.6,
+     70
+    ],
+    [
+     215.6,
+     90
+    ],
+    [
+     234.8,
+     90
+    ],
+    [
+     234.8,
+     70
+    ],
+    [
+     254.0,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      109.0,
+      70
+     ],
+     [
+      109.0,
+      88
+     ],
+     [
+      119.0,
+      88
+     ],
+     [
+      119.0,
+      70
+     ],
+     [
+      129.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg4s0",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     70
+    ],
+    [
+     254.0,
+     90
+    ],
+    [
+     273.2,
+     90
+    ],
+    [
+     273.2,
+     70
+    ],
+    [
+     292.4,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      129.0,
+      70
+     ],
+     [
+      129.0,
+      88
+     ],
+     [
+      139.0,
+      88
+     ],
+     [
+      139.0,
+      70
+     ],
+     [
+      149.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg5s0",
+   "type": "line",
+   "points": [
+    [
+     292.4,
+     70
+    ],
+    [
+     292.4,
+     90
+    ],
+    [
+     311.6,
+     90
+    ],
+    [
+     311.6,
+     70
+    ],
+    [
+     330.8,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      149.0,
+      70
+     ],
+     [
+      149.0,
+      88
+     ],
+     [
+      159.0,
+      88
+     ],
+     [
+      159.0,
+      70
+     ],
+     [
+      169.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg6s0",
+   "type": "line",
+   "points": [
+    [
+     330.8,
+     70
+    ],
+    [
+     330.8,
+     90
+    ],
+    [
+     350.0,
+     90
+    ],
+    [
+     350.0,
+     70
+    ],
+    [
+     369.2,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      169.0,
+      70
+     ],
+     [
+      169.0,
+      88
+     ],
+     [
+      179.0,
+      88
+     ],
+     [
+      179.0,
+      70
+     ],
+     [
+      189.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg7s0",
+   "type": "line",
+   "points": [
+    [
+     369.2,
+     70
+    ],
+    [
+     369.2,
+     90
+    ],
+    [
+     388.4,
+     90
+    ],
+    [
+     388.4,
+     70
+    ],
+    [
+     407.6,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.0,
+      70
+     ],
+     [
+      189.0,
+      88
+     ],
+     [
+      199.0,
+      88
+     ],
+     [
+      199.0,
+      70
+     ],
+     [
+      209.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg8s0",
+   "type": "line",
+   "points": [
+    [
+     407.6,
+     70
+    ],
+    [
+     407.6,
+     90
+    ],
+    [
+     426.8,
+     90
+    ],
+    [
+     426.8,
+     70
+    ],
+    [
+     446.0,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      209.0,
+      70
+     ],
+     [
+      209.0,
+      88
+     ],
+     [
+      219.0,
+      88
+     ],
+     [
+      219.0,
+      70
+     ],
+     [
+      229.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg9s0",
+   "type": "line",
+   "points": [
+    [
+     446.0,
+     70
+    ],
+    [
+     446.0,
+     90
+    ],
+    [
+     465.2,
+     90
+    ],
+    [
+     465.2,
+     70
+    ],
+    [
+     484.4,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      229.0,
+      70
+     ],
+     [
+      229.0,
+      88
+     ],
+     [
+      239.0,
+      88
+     ],
+     [
+      239.0,
+      70
+     ],
+     [
+      249.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg10s0",
+   "type": "line",
+   "points": [
+    [
+     484.4,
+     70
+    ],
+    [
+     484.4,
+     90
+    ],
+    [
+     503.6,
+     90
+    ],
+    [
+     503.6,
+     70
+    ],
+    [
+     522.8,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      249.0,
+      70
+     ],
+     [
+      249.0,
+      88
+     ],
+     [
+      259.0,
+      88
+     ],
+     [
+      259.0,
+      70
+     ],
+     [
+      269.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg11s0",
+   "type": "line",
+   "points": [
+    [
+     522.8,
+     70
+    ],
+    [
+     522.8,
+     90
+    ],
+    [
+     542.0,
+     90
+    ],
+    [
+     542.0,
+     70
+    ],
+    [
+     561.2,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      269.0,
+      70
+     ],
+     [
+      269.0,
+      88
+     ],
+     [
+      279.0,
+      88
+     ],
+     [
+      279.0,
+      70
+     ],
+     [
+      289.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wcg12s0",
+   "type": "line",
+   "points": [
+    [
+     561.2,
+     70
+    ],
+    [
+     561.2,
+     90
+    ],
+    [
+     580.4,
+     90
+    ],
+    [
+     580.4,
+     70
+    ],
+    [
+     599.6,
+     70
+    ]
+   ],
+   "tone": "ink",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      289.0,
+      70
+     ],
+     [
+      289.0,
+      88
+     ],
+     [
+      299.0,
+      88
+     ],
+     [
+      299.0,
+      70
+     ],
+     [
+      309.0,
+      70
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq0",
+   "type": "text",
+   "x": 102,
+   "y": 132.0,
+   "text": "Q0",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 46,
+    "y": 125.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq0g0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     142
+    ],
+    [
+     138.8,
+     142
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      54.0,
+      134
+     ],
+     [
+      69.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g1s0",
+   "type": "line",
+   "points": [
+    [
+     138.8,
+     142
+    ],
+    [
+     138.8,
+     122
+    ],
+    [
+     177.2,
+     122
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      69.0,
+      134
+     ],
+     [
+      69.0,
+      116
+     ],
+     [
+      89.0,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g2s0",
+   "type": "line",
+   "points": [
+    [
+     177.2,
+     122
+    ],
+    [
+     177.2,
+     142
+    ],
+    [
+     215.6,
+     142
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      89.0,
+      116
+     ],
+     [
+      89.0,
+      134
+     ],
+     [
+      109.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g3s0",
+   "type": "line",
+   "points": [
+    [
+     215.6,
+     142
+    ],
+    [
+     215.6,
+     122
+    ],
+    [
+     254.0,
+     122
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      109.0,
+      134
+     ],
+     [
+      109.0,
+      116
+     ],
+     [
+      129.0,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g4s0",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     122
+    ],
+    [
+     254.0,
+     142
+    ],
+    [
+     292.4,
+     142
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      129.0,
+      116
+     ],
+     [
+      129.0,
+      134
+     ],
+     [
+      149.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g5s0",
+   "type": "line",
+   "points": [
+    [
+     292.4,
+     142
+    ],
+    [
+     292.4,
+     122
+    ],
+    [
+     330.8,
+     122
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      149.0,
+      134
+     ],
+     [
+      149.0,
+      116
+     ],
+     [
+      169.0,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g6s0",
+   "type": "line",
+   "points": [
+    [
+     330.8,
+     122
+    ],
+    [
+     330.8,
+     142
+    ],
+    [
+     369.2,
+     142
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      169.0,
+      116
+     ],
+     [
+      169.0,
+      134
+     ],
+     [
+      189.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g7s0",
+   "type": "line",
+   "points": [
+    [
+     369.2,
+     142
+    ],
+    [
+     369.2,
+     122
+    ],
+    [
+     407.6,
+     122
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.0,
+      134
+     ],
+     [
+      189.0,
+      116
+     ],
+     [
+      209.0,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g8s0",
+   "type": "line",
+   "points": [
+    [
+     407.6,
+     122
+    ],
+    [
+     407.6,
+     142
+    ],
+    [
+     446.0,
+     142
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      209.0,
+      116
+     ],
+     [
+      209.0,
+      134
+     ],
+     [
+      229.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g9s0",
+   "type": "line",
+   "points": [
+    [
+     446.0,
+     142
+    ],
+    [
+     446.0,
+     122
+    ],
+    [
+     484.4,
+     122
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      229.0,
+      134
+     ],
+     [
+      229.0,
+      116
+     ],
+     [
+      249.0,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g10s0",
+   "type": "line",
+   "points": [
+    [
+     484.4,
+     122
+    ],
+    [
+     484.4,
+     142
+    ],
+    [
+     522.8,
+     142
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      249.0,
+      116
+     ],
+     [
+      249.0,
+      134
+     ],
+     [
+      269.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g11s0",
+   "type": "line",
+   "points": [
+    [
+     522.8,
+     142
+    ],
+    [
+     522.8,
+     122
+    ],
+    [
+     561.2,
+     122
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      269.0,
+      134
+     ],
+     [
+      269.0,
+      116
+     ],
+     [
+      289.0,
+      116
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq0g12s0",
+   "type": "line",
+   "points": [
+    [
+     561.2,
+     122
+    ],
+    [
+     561.2,
+     142
+    ],
+    [
+     599.6,
+     142
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      289.0,
+      116
+     ],
+     [
+      289.0,
+      134
+     ],
+     [
+      309.0,
+      134
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq1",
+   "type": "text",
+   "x": 102,
+   "y": 184.0,
+   "text": "Q1",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 46,
+    "y": 171.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq1g0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     194
+    ],
+    [
+     138.8,
+     194
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      54.0,
+      180
+     ],
+     [
+      69.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g1s0",
+   "type": "line",
+   "points": [
+    [
+     138.8,
+     194
+    ],
+    [
+     177.2,
+     194
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      69.0,
+      180
+     ],
+     [
+      89.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g2s0",
+   "type": "line",
+   "points": [
+    [
+     177.2,
+     194
+    ],
+    [
+     177.2,
+     174
+    ],
+    [
+     215.6,
+     174
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      89.0,
+      180
+     ],
+     [
+      89.0,
+      162
+     ],
+     [
+      109.0,
+      162
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g3s0",
+   "type": "line",
+   "points": [
+    [
+     215.6,
+     174
+    ],
+    [
+     254.0,
+     174
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      109.0,
+      162
+     ],
+     [
+      129.0,
+      162
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g4s0",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     174
+    ],
+    [
+     254.0,
+     194
+    ],
+    [
+     292.4,
+     194
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      129.0,
+      162
+     ],
+     [
+      129.0,
+      180
+     ],
+     [
+      149.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g5s0",
+   "type": "line",
+   "points": [
+    [
+     292.4,
+     194
+    ],
+    [
+     330.8,
+     194
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      149.0,
+      180
+     ],
+     [
+      169.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g6s0",
+   "type": "line",
+   "points": [
+    [
+     330.8,
+     194
+    ],
+    [
+     330.8,
+     174
+    ],
+    [
+     369.2,
+     174
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      169.0,
+      180
+     ],
+     [
+      169.0,
+      162
+     ],
+     [
+      189.0,
+      162
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g7s0",
+   "type": "line",
+   "points": [
+    [
+     369.2,
+     174
+    ],
+    [
+     407.6,
+     174
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.0,
+      162
+     ],
+     [
+      209.0,
+      162
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g8s0",
+   "type": "line",
+   "points": [
+    [
+     407.6,
+     174
+    ],
+    [
+     407.6,
+     194
+    ],
+    [
+     446.0,
+     194
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      209.0,
+      162
+     ],
+     [
+      209.0,
+      180
+     ],
+     [
+      229.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g9s0",
+   "type": "line",
+   "points": [
+    [
+     446.0,
+     194
+    ],
+    [
+     484.4,
+     194
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      229.0,
+      180
+     ],
+     [
+      249.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g10s0",
+   "type": "line",
+   "points": [
+    [
+     484.4,
+     194
+    ],
+    [
+     484.4,
+     174
+    ],
+    [
+     522.8,
+     174
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      249.0,
+      180
+     ],
+     [
+      249.0,
+      162
+     ],
+     [
+      269.0,
+      162
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g11s0",
+   "type": "line",
+   "points": [
+    [
+     522.8,
+     174
+    ],
+    [
+     561.2,
+     174
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      269.0,
+      162
+     ],
+     [
+      289.0,
+      162
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq1g12s0",
+   "type": "line",
+   "points": [
+    [
+     561.2,
+     174
+    ],
+    [
+     561.2,
+     194
+    ],
+    [
+     599.6,
+     194
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      289.0,
+      162
+     ],
+     [
+      289.0,
+      180
+     ],
+     [
+      309.0,
+      180
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wlq2",
+   "type": "text",
+   "x": 102,
+   "y": 236.0,
+   "text": "Q2",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 46,
+    "y": 217.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "wq2g0s0",
+   "type": "line",
+   "points": [
+    [
+     110.0,
+     246
+    ],
+    [
+     138.8,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      54.0,
+      226
+     ],
+     [
+      69.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g1s0",
+   "type": "line",
+   "points": [
+    [
+     138.8,
+     246
+    ],
+    [
+     177.2,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      69.0,
+      226
+     ],
+     [
+      89.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g2s0",
+   "type": "line",
+   "points": [
+    [
+     177.2,
+     246
+    ],
+    [
+     215.6,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      89.0,
+      226
+     ],
+     [
+      109.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g3s0",
+   "type": "line",
+   "points": [
+    [
+     215.6,
+     246
+    ],
+    [
+     254.0,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      109.0,
+      226
+     ],
+     [
+      129.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g4s0",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     246
+    ],
+    [
+     254.0,
+     226
+    ],
+    [
+     292.4,
+     226
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      129.0,
+      226
+     ],
+     [
+      129.0,
+      208
+     ],
+     [
+      149.0,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g5s0",
+   "type": "line",
+   "points": [
+    [
+     292.4,
+     226
+    ],
+    [
+     330.8,
+     226
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      149.0,
+      208
+     ],
+     [
+      169.0,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g6s0",
+   "type": "line",
+   "points": [
+    [
+     330.8,
+     226
+    ],
+    [
+     369.2,
+     226
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      169.0,
+      208
+     ],
+     [
+      189.0,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g7s0",
+   "type": "line",
+   "points": [
+    [
+     369.2,
+     226
+    ],
+    [
+     407.6,
+     226
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.0,
+      208
+     ],
+     [
+      209.0,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g8s0",
+   "type": "line",
+   "points": [
+    [
+     407.6,
+     226
+    ],
+    [
+     407.6,
+     246
+    ],
+    [
+     446.0,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      209.0,
+      208
+     ],
+     [
+      209.0,
+      226
+     ],
+     [
+      229.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g9s0",
+   "type": "line",
+   "points": [
+    [
+     446.0,
+     246
+    ],
+    [
+     484.4,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      229.0,
+      226
+     ],
+     [
+      249.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g10s0",
+   "type": "line",
+   "points": [
+    [
+     484.4,
+     246
+    ],
+    [
+     522.8,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      249.0,
+      226
+     ],
+     [
+      269.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g11s0",
+   "type": "line",
+   "points": [
+    [
+     522.8,
+     246
+    ],
+    [
+     561.2,
+     246
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      269.0,
+      226
+     ],
+     [
+      289.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "wq2g12s0",
+   "type": "line",
+   "points": [
+    [
+     561.2,
+     246
+    ],
+    [
+     561.2,
+     226
+    ],
+    [
+     599.6,
+     226
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      289.0,
+      226
+     ],
+     [
+      289.0,
+      208
+     ],
+     [
+      309.0,
+      208
+     ]
+    ]
+   }
+  },
+  {
+   "id": "fr0",
+   "type": "text",
+   "x": 613.5999999999999,
+   "y": 80.0,
+   "text": "f",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 315.0,
+    "y": 79.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fr1",
+   "type": "text",
+   "x": 613.5999999999999,
+   "y": 132.0,
+   "text": "f/2",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 315.0,
+    "y": 125.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fr2",
+   "type": "text",
+   "x": 613.5999999999999,
+   "y": 184.0,
+   "text": "f/4",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 315.0,
+    "y": 171.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fr3",
+   "type": "text",
+   "x": 613.5999999999999,
+   "y": 236.0,
+   "text": "f/8",
+   "size": 14,
+   "anchor": "start",
+   "mono": true,
+   "weight": "bold",
+   "hidden": true,
+   "tone": "accent",
+   "narrow": {
+    "x": 315.0,
+    "y": 217.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "br0",
+   "type": "line",
+   "points": [
+    [
+     138.8,
+     146
+    ],
+    [
+     138.8,
+     150
+    ],
+    [
+     215.6,
+     150
+    ],
+    [
+     215.6,
+     146
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      69.0,
+      138
+     ],
+     [
+      69.0,
+      142
+     ],
+     [
+      109.0,
+      142
+     ],
+     [
+      109.0,
+      138
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bt0",
+   "type": "text",
+   "x": 177.2,
+   "y": 162,
+   "text": "2T",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 89.0,
+    "y": 154,
+    "size": 12
+   }
+  },
+  {
+   "id": "br1",
+   "type": "line",
+   "points": [
+    [
+     177.2,
+     198
+    ],
+    [
+     177.2,
+     202
+    ],
+    [
+     330.8,
+     202
+    ],
+    [
+     330.8,
+     198
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      89.0,
+      184
+     ],
+     [
+      89.0,
+      188
+     ],
+     [
+      169.0,
+      188
+     ],
+     [
+      169.0,
+      184
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bt1",
+   "type": "text",
+   "x": 254.0,
+   "y": 214,
+   "text": "4T",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 129.0,
+    "y": 200,
+    "size": 12
+   }
+  },
+  {
+   "id": "br2",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     250
+    ],
+    [
+     254.0,
+     254
+    ],
+    [
+     561.2,
+     254
+    ],
+    [
+     561.2,
+     250
+    ]
+   ],
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      129.0,
+      230
+     ],
+     [
+      129.0,
+      234
+     ],
+     [
+      289.0,
+      234
+     ],
+     [
+      289.0,
+      230
+     ]
+    ]
+   }
+  },
+  {
+   "id": "bt2",
+   "type": "text",
+   "x": 407.59999999999997,
+   "y": 266,
+   "text": "8T",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "x": 209.0,
+    "y": 246,
+    "size": 12
+   }
+  },
+  {
+   "id": "m0",
+   "type": "line",
+   "points": [
+    [
+     138.8,
+     64
+    ],
+    [
+     138.8,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      69.0,
+      64
+     ],
+     [
+      69.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt0",
+   "type": "text",
+   "x": 138.8,
+   "y": 54,
+   "text": "↓1",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt0-n",
+   "type": "text",
+   "x": 69.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m1",
+   "type": "line",
+   "points": [
+    [
+     177.2,
+     64
+    ],
+    [
+     177.2,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      89.0,
+      64
+     ],
+     [
+      89.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt1",
+   "type": "text",
+   "x": 177.2,
+   "y": 54,
+   "text": "↓2",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt1-n",
+   "type": "text",
+   "x": 89.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m2",
+   "type": "line",
+   "points": [
+    [
+     215.6,
+     64
+    ],
+    [
+     215.6,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      109.0,
+      64
+     ],
+     [
+      109.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt2",
+   "type": "text",
+   "x": 215.6,
+   "y": 54,
+   "text": "↓3",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt2-n",
+   "type": "text",
+   "x": 109.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m3",
+   "type": "line",
+   "points": [
+    [
+     254.0,
+     64
+    ],
+    [
+     254.0,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      129.0,
+      64
+     ],
+     [
+      129.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt3",
+   "type": "text",
+   "x": 254.0,
+   "y": 54,
+   "text": "↓4",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt3-n",
+   "type": "text",
+   "x": 129.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m4",
+   "type": "line",
+   "points": [
+    [
+     292.4,
+     64
+    ],
+    [
+     292.4,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      149.0,
+      64
+     ],
+     [
+      149.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt4",
+   "type": "text",
+   "x": 292.4,
+   "y": 54,
+   "text": "↓5",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt4-n",
+   "type": "text",
+   "x": 149.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m5",
+   "type": "line",
+   "points": [
+    [
+     330.8,
+     64
+    ],
+    [
+     330.8,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      169.0,
+      64
+     ],
+     [
+      169.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt5",
+   "type": "text",
+   "x": 330.79999999999995,
+   "y": 54,
+   "text": "↓6",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt5-n",
+   "type": "text",
+   "x": 169.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m6",
+   "type": "line",
+   "points": [
+    [
+     369.2,
+     64
+    ],
+    [
+     369.2,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      189.0,
+      64
+     ],
+     [
+      189.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt6",
+   "type": "text",
+   "x": 369.2,
+   "y": 54,
+   "text": "↓7",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt6-n",
+   "type": "text",
+   "x": 189.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m7",
+   "type": "line",
+   "points": [
+    [
+     407.6,
+     64
+    ],
+    [
+     407.6,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      209.0,
+      64
+     ],
+     [
+      209.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt7",
+   "type": "text",
+   "x": 407.59999999999997,
+   "y": 54,
+   "text": "↓8",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt7-n",
+   "type": "text",
+   "x": 209.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m8",
+   "type": "line",
+   "points": [
+    [
+     446.0,
+     64
+    ],
+    [
+     446.0,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      229.0,
+      64
+     ],
+     [
+      229.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt8",
+   "type": "text",
+   "x": 446.0,
+   "y": 54,
+   "text": "↓9",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt8-n",
+   "type": "text",
+   "x": 229.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m9",
+   "type": "line",
+   "points": [
+    [
+     484.4,
+     64
+    ],
+    [
+     484.4,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      249.0,
+      64
+     ],
+     [
+      249.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt9",
+   "type": "text",
+   "x": 484.4,
+   "y": 54,
+   "text": "↓10",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt9-n",
+   "type": "text",
+   "x": 249.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m10",
+   "type": "line",
+   "points": [
+    [
+     522.8,
+     64
+    ],
+    [
+     522.8,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      269.0,
+      64
+     ],
+     [
+      269.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt10",
+   "type": "text",
+   "x": 522.8,
+   "y": 54,
+   "text": "↓11",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt10-n",
+   "type": "text",
+   "x": 269.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "m11",
+   "type": "line",
+   "points": [
+    [
+     561.2,
+     64
+    ],
+    [
+     561.2,
+     252
+    ]
+   ],
+   "dashed": true,
+   "tone": "accent",
+   "hidden": true,
+   "narrow": {
+    "points": [
+     [
+      289.0,
+      64
+     ],
+     [
+      289.0,
+      232
+     ]
+    ]
+   }
+  },
+  {
+   "id": "mt11",
+   "type": "text",
+   "x": 561.2,
+   "y": 54,
+   "text": "↓12",
+   "size": 13,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "wide"
+  },
+  {
+   "id": "mt11-n",
+   "type": "text",
+   "x": 289.0,
+   "y": 54,
+   "text": "↓",
+   "size": 12,
+   "anchor": "middle",
+   "tone": "accent",
+   "mono": true,
+   "hidden": true,
+   "only": "narrow"
+  },
+  {
+   "id": "st",
+   "type": "text",
+   "x": 340.0,
+   "y": 294,
+   "text": "clock period T",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 274,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Clock period T. Q0 toggles at every falling edge of CLK; Q1 at every falling edge of Q0; Q2 at every falling edge of Q1.",
+   "patches": [
+    {
+     "id": "wcg0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g0s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "clock period T, frequency f",
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 1: the count becomes 001 = 1.",
+   "patches": [
+    {
+     "id": "wcg1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g1s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt0",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 1",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt0-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 2: the count becomes 010 = 2. Q0 has fallen, so Q1 toggles too.",
+   "patches": [
+    {
+     "id": "wcg2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g2s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt1",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 2",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt1-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt0-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 3: the count becomes 011 = 3.",
+   "patches": [
+    {
+     "id": "wcg3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g3s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt2",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 3",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt2-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt1-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 4: the count becomes 100 = 4. Q0 has fallen, so Q1 toggles too. Q1 has fallen as well: Q2 toggles.",
+   "patches": [
+    {
+     "id": "wcg4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g4s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt3",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 4",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt3-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt2-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 5: the count becomes 101 = 5.",
+   "patches": [
+    {
+     "id": "wcg5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g5s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt4",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 5",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt4-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt3-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 6: the count becomes 110 = 6. Q0 has fallen, so Q1 toggles too.",
+   "patches": [
+    {
+     "id": "wcg6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g6s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt5",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 6",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt5-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt4-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 7: the count becomes 111 = 7.",
+   "patches": [
+    {
+     "id": "wcg7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g7s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt6",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 7",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt6-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt5-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 8: the count becomes 000 = 0. Q0 has fallen, so Q1 toggles too. Q1 has fallen as well: Q2 toggles.",
+   "patches": [
+    {
+     "id": "wcg8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g8s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt7",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 0",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt7-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt6-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 9: the count becomes 001 = 1.",
+   "patches": [
+    {
+     "id": "wcg9s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g9s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g9s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g9s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m8",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt8",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt7",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 1",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt8-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt7-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 10: the count becomes 010 = 2. Q0 has fallen, so Q1 toggles too.",
+   "patches": [
+    {
+     "id": "wcg10s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g10s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g10s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g10s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m9",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt9",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m8",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt8",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 2",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt9-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt8-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 11: the count becomes 011 = 3.",
+   "patches": [
+    {
+     "id": "wcg11s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g11s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g11s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g11s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m10",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt10",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m9",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt9",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 3",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt10-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt9-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Falling edge 12: the count becomes 100 = 4. Q0 has fallen, so Q1 toggles too. Q1 has fallen as well: Q2 toggles.",
+   "patches": [
+    {
+     "id": "wcg12s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq0g12s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq1g12s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "wq2g12s0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m11",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt11",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "m10",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "mt10",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "count 4",
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "mt11-n",
+     "set": {
+      "hidden": false,
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "mt10-n",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Q0 repeats every 2 clock periods: period 2T, frequency f/2.",
+   "patches": [
+    {
+     "id": "br0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bt0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "fr1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "Q0: f/2",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "fr0",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "m0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt0",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt1",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt2",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt3",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m4",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt4",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m5",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt5",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m6",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt6",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m7",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt7",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m8",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt8",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m9",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt9",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m10",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt10",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "m11",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt11",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt0-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt1-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt2-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt3-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt4-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt5-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt6-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt7-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt8-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt9-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt10-n",
+     "set": {
+      "hidden": true
+     }
+    },
+    {
+     "id": "mt11-n",
+     "set": {
+      "hidden": true
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Q1 repeats every 4 clock periods: period 4T, frequency f/4. Each stage halves the frequency of the one before.",
+   "patches": [
+    {
+     "id": "br1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bt1",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "fr2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "Q1: f/4",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Q2 repeats every 8 clock periods: period 8T, frequency f/8. The third stage is Q2, at f/8.",
+   "patches": [
+    {
+     "id": "br2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "bt2",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "fr3",
+     "set": {
+      "hidden": false
+     }
+    },
+    {
+     "id": "st",
+     "set": {
+      "text": "Q2: f/8",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Stage i of a ripple counter runs at f/2^(i+1); an n-bit counter's last stage gives f/2^n, here f/8 with a 50% duty cycle.",
+   "patches": [
+    {
+     "id": "st",
+     "set": {
+      "text": "n stages: f / 2ⁿ",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

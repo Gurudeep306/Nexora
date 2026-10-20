@@ -526,7 +526,9 @@ def ripple_events(n, tpd, clocks, start=0, down=False, edge="neg", clear=None, t
     rising Q̄ … all reduced to: stage i toggles when stage i − 1 makes the transition that carries).
     `clear(state)` (optional) is an asynchronous clear condition: tclr after the state satisfying it
     appears, every flip-flop resets. Returns the list of (time, state) after every change, with state
-    an int (bit 0 = Q0), so the transient states show up."""
+    an int (bit 0 = Q0), so the transient states show up. `down` may also be a sequence of n flags,
+    one per stage (entry i says whether stage i is clocked the "down" way from stage i − 1, e.g. by
+    Q̄ instead of Q; entry 0 is ignored), for mixed counters."""
     tclr = tpd if tclr is None else tclr
     q = start
     ev = []  # (time, kind, stage)
@@ -548,7 +550,8 @@ def ripple_events(n, tpd, clocks, start=0, down=False, edge="neg", clear=None, t
         old = (q >> i) & 1
         q ^= 1 << i
         out.append((t, q))
-        carry = (old == 1) if not down else (old == 0)  # up: 1 → 0 carries; down: 0 → 1 borrows
+        dn = (down[i + 1] if i + 1 < n else False) if isinstance(down, (list, tuple)) else down
+        carry = (old == 1) if not dn else (old == 0)  # up: 1 → 0 carries; down: 0 → 1 borrows
         if edge == "pos":
             carry = not carry
         if i + 1 < n and carry:
@@ -979,6 +982,10 @@ def _selftest():
     assert settled_states(ev, [0, 100, 200, 300, 400], 500) == [1, 2, 3, 4, 5]
     dn = ripple_events(3, 10, [0, 100, 200], down=True)
     assert settled_states(dn, [0, 100, 200], 300) == [7, 6, 5]
+    # Per-stage directions: all-False / all-True lists equal the plain up / down counters.
+    for st in range(8):
+        assert ripple_events(3, 10, [0], start=st, down=[0, 0, 0]) == ripple_events(3, 10, [0], start=st)
+        assert ripple_events(3, 10, [0], start=st, down=[1, 1, 1]) == ripple_events(3, 10, [0], start=st, down=True)
     # Mod-6 by asynchronous clear on 110: the state 6 appears only briefly.
     ev = ripple_events(3, 10, [100 * k for k in range(8)], clear=lambda q: q == 6, tclr=5)
     assert settled_states(ev, [100 * k for k in range(8)], 800) == [1, 2, 3, 4, 5, 0, 1, 2]

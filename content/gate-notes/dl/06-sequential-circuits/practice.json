@@ -909,5 +909,884 @@
    "ones-catching"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Three D flip-flops $A$, $B$, $C$ share a clock, with $D_A = B \\oplus C$, $D_B = \\overline{A}\\,C$ and $D_C = A + \\overline{B}$. The present state is $ABC = 100$. What is $ABC$ after the next clock edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "100"
+   },
+   {
+    "l": "B",
+    "t": "011"
+   },
+   {
+    "l": "C",
+    "t": "001"
+   },
+   {
+    "l": "D",
+    "t": "101"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "For D flip-flops the next state is the input: $A^+ = B \\oplus C$, $B^+ = \\overline{A}C$, $C^+ = A + \\overline{B}$.",
+   "Substitute the present values $A = 1$, $B = 0$, $C = 0$: $A^+ = 0 \\oplus 0 = 0$, $B^+ = 0 \\cdot 0 = 0$, $C^+ = 1 + 1 = 1$.",
+   "So $ABC = 001$."
+  ],
+  "concept": "D flip-flops: next state = input equation, evaluated on the old state.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is 001 written in the order CBA (and also the unchanged present state); keep the order ABC the question uses."
+   },
+   {
+    "answer": "B",
+    "why": "Reading $D_B$ as $A\\overline{C}$ instead of $\\overline{A}C$ gives $B^+ = 1$."
+   },
+   {
+    "answer": "D",
+    "why": "Using XNOR instead of XOR for $D_A$ gives $A^+ = 1$."
+   }
+  ],
+  "blocks": [
+   "state-equations",
+   "excitation-equations",
+   "analysis-procedure"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q02",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A T flip-flop $A$ has $T_A = B$, and a D flip-flop $B$ has $D_B = \\overline{A}$. Both share a clock and start at $AB = 00$. What is $AB$ after the fifth clock edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "00"
+   },
+   {
+    "l": "B",
+    "t": "11"
+   },
+   {
+    "l": "C",
+    "t": "01"
+   },
+   {
+    "l": "D",
+    "t": "10"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "State equations: $A^+ = B \\oplus A$ (T stage) and $B^+ = \\overline{A}$ (D stage).",
+   "Trace with both bits from the old state: 00 → 01 → 11 → 00 → 01 → 11.",
+   "The cycle has length 3; after 5 edges the state is 11."
+  ],
+  "concept": "Mixed circuits: each flip-flop uses its own characteristic equation, all from the old state.",
+  "common_wrong": [
+   {
+    "answer": "C",
+    "why": "Treating the T stage as a D ($A^+ = B$) gives 00 → 01 → 11 → 10 → 00 → 01."
+   },
+   {
+    "answer": "D",
+    "why": "Updating $A$ first and letting $B$ use the new $A$ gives 00 → 01 → 10 → 10 → 10 → 10."
+   },
+   {
+    "answer": "A",
+    "why": "00 is the state after 3 (or 6) edges, not 5."
+   }
+  ],
+  "blocks": [
+   "mixed-ff",
+   "clock-trace",
+   "trap-update-order"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q03",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Three D flip-flops have $D_A = B$, $D_B = C$ and $D_C = \\overline{A}\\,\\overline{B}$, and the circuit starts at $ABC = 100$. Which of the following states can never appear?",
+  "options": [
+   {
+    "l": "A",
+    "t": "010"
+   },
+   {
+    "l": "B",
+    "t": "011"
+   },
+   {
+    "l": "C",
+    "t": "101"
+   },
+   {
+    "l": "D",
+    "t": "111"
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "State equations: $A^+ = B$, $B^+ = C$, $C^+ = \\overline{A}\\,\\overline{B}$.",
+   "Trace from 100: 100 → 000 → 001 → 011 → 110 → 100. The trace has repeated, so these five states are the whole reachable set.",
+   "010, 101 and 111 never appear (they lead into the cycle but are never entered from 100); 011 appears at clock 3."
+  ],
+  "concept": "Reachable set = the trace from the given start until a state repeats.",
+  "common_wrong": [
+   {
+    "answer": [
+     "C",
+     "D"
+    ],
+    "why": "010 is the successor of 101, but 101 is itself never reached, so 010 is never reached either."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "011 is reached at the third clock: 100 → 000 → 001 → 011."
+   }
+  ],
+  "blocks": [
+   "reachability",
+   "cycle-theorem",
+   "trap-never"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "Three D flip-flops have $D_A = B + C$, $D_B = A\\,C$ and $D_C = \\overline{B}$, and start at $ABC = 000$. After many clock edges the circuit repeats a fixed cycle of states. How many states are in that cycle?",
+  "answer": 5,
+  "solution": [
+   "Trace: 000 → 001 → 101 → 111 → 110 → 100 → 001.",
+   "The first repeated state is 001, so 000 is a one-state tail and the cycle is 001 → 101 → 111 → 110 → 100.",
+   "The cycle has 5 states."
+  ],
+  "concept": "Cycle theorem: a tail of μ states, then a cycle of λ states repeated for ever.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "6 counts the tail state 000 as well; 000 is never seen again."
+   },
+   {
+    "answer": 8,
+    "why": "Not every state is visited: 010 and 011 are never reached from 000."
+   }
+  ],
+  "blocks": [
+   "cycle-theorem",
+   "reachability",
+   "clock-trace"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q05",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A JK flip-flop $A$ has $J_A = B$ and $K_A = \\overline{x}$, where $B$ is another flip-flop's output and $x$ is an input. Which is the state equation of $A$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$A^+ = B\\overline{A} + \\overline{x}A$"
+   },
+   {
+    "l": "B",
+    "t": "$A^+ = B + xA$"
+   },
+   {
+    "l": "C",
+    "t": "$A^+ = BA + x\\overline{A}$"
+   },
+   {
+    "l": "D",
+    "t": "$A^+ = B\\overline{A} + xA$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "Substitute into $A^+ = J\\overline{A} + \\overline{K}A$.",
+   "$J = B$ and $\\overline{K} = \\overline{\\overline{x}} = x$, so $A^+ = B\\overline{A} + xA$."
+  ],
+  "concept": "JK state equation: Q⁺ = JQ̄ + K̄Q; complement K, not J.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Forgets to complement $K$: it uses $K$ itself in the hold term."
+   },
+   {
+    "answer": "B",
+    "why": "With $A = 1$, $B = 1$, $x = 0$ the stage sees $J = K = 1$ and toggles to 0, but $B + xA = 1$."
+   },
+   {
+    "answer": "C",
+    "why": "Swaps the roles of $J$ and $K$: it puts $J$ on the $A$ term."
+   }
+  ],
+  "blocks": [
+   "state-equations",
+   "excitation-equations",
+   "trick-jk-as-t"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A circuit has a JK flip-flop $A$ with $J_A = B$, $K_A = C$, a D flip-flop $B$ with $D_B = A$, and a T flip-flop $C$ with $T_C = A \\oplus B$, all on one clock. How many of the 8 states are self-loops (the next state equals the present state)?",
+  "answer": 3,
+  "solution": [
+   "State equations: $A^+ = B\\overline{A} + \\overline{C}A$, $B^+ = A$, $C^+ = C \\oplus A \\oplus B$.",
+   "A self-loop needs $B^+ = B$, so $A = B$; then $T_C = A \\oplus B = 0$ keeps $C$. With $A = B = 0$: $A^+ = 0$, so 000 and 001 are self-loops.",
+   "With $A = B = 1$: $A^+ = \\overline{C}$, which equals 1 only for $C = 0$: 110 is a self-loop, 111 is not (it goes to 011). Total: 3."
+  ],
+  "concept": "Build the whole next-state table, then count the rows whose next state equals the present state.",
+  "common_wrong": [
+   {
+    "answer": 1,
+    "why": "000 is not the only one: 001 and 110 also map to themselves."
+   },
+   {
+    "answer": 2,
+    "why": "110 is easy to miss: there J = B = 1 and K = C = 0 set A, which is already 1; B⁺ = A = 1 and T_C = 0, so 110 stays."
+   }
+  ],
+  "blocks": [
+   "state-table",
+   "state-diagram",
+   "mixed-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about synchronous sequential circuits are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "If the clock period is at least the clock-to-Q delay plus the longest logic delay plus the setup time, a glitch in the next-state logic between edges cannot change the stored state."
+   },
+   {
+    "l": "B",
+    "t": "They are faster than asynchronous circuits because every flip-flop changes as soon as its input changes."
+   },
+   {
+    "l": "C",
+    "t": "At an active edge, every flip-flop computes its next state from the values present just before that edge."
+   },
+   {
+    "l": "D",
+    "t": "They need fewer gates than an equivalent asynchronous circuit, because the clock replaces the feedback logic."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: the synchronous discipline theorem; the glitch is over before the setup window opens.",
+   "B: false; flip-flops change only at edges, and the clock must allow for the slowest path every cycle.",
+   "C: true; all flip-flops sample before any output moves (the same-edge rule).",
+   "D: false; every state bit needs a flip-flop and the clock must be distributed, so synchronous circuits are usually larger."
+  ],
+  "concept": "Synchronous design trades speed and hardware for immunity to hazards and races.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Speed is not the advantage: the clock waits for the worst-case path."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Flip-flops and the clock network cost hardware; asynchronous circuits are usually smaller."
+   }
+  ],
+  "blocks": [
+   "sync-discipline",
+   "sync-vs-async",
+   "trap-sync-faster"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Two D flip-flops have $D_1 = x$ and $D_2 = Q_1$, output $z = Q_1 \\oplus Q_2$, and start at $Q_1Q_2 = 00$. The input is $x = 1, 1, 0, 0$ in clock cycles 1, 2, 3, 4 (each cycle ends with an active edge, which samples that cycle's $x$). What is $z$ during cycles 1, 2, 3 and 4?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, 0, 0, 0"
+   },
+   {
+    "l": "B",
+    "t": "0, 1, 0, 1"
+   },
+   {
+    "l": "C",
+    "t": "1, 0, 1, 0"
+   },
+   {
+    "l": "D",
+    "t": "1, 1, 0, 0"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "During cycle $k$ the state is the one after $k - 1$ edges: 00, 10, 11, 01 for cycles 1 to 4.",
+   "$z = Q_1 \\oplus Q_2$ gives 0, 1, 0, 1.",
+   "The circuit flags each change of x one cycle after it is sampled."
+  ],
+  "concept": "A state-only output during cycle k is z(s_{k−1}), computed after k − 1 edges.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Letting $Q_2$ copy the new $Q_1$ at the same edge makes $Q_1 = Q_2$ always, so $z = 0$."
+   },
+   {
+    "answer": "C",
+    "why": "Reads z one edge too late (after edges 1 to 4 instead of during cycles 1 to 4)."
+   },
+   {
+    "answer": "D",
+    "why": "Copies the input x instead of computing the output from the state."
+   }
+  ],
+  "blocks": [
+   "output-timing",
+   "clock-trace",
+   "trap-output-edge"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A one-bit state machine $S$ with inputs $x$ and $y$: in state 0 it moves to 1 when $x = 1$ and stays when $x = 0$; in state 1 it moves to 0 when $y = 1$ and stays when $y = 0$. Which is $S^+$?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\overline{S}x + Sy$"
+   },
+   {
+    "l": "B",
+    "t": "$x + \\overline{y}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\overline{S}x + S\\overline{y}$"
+   },
+   {
+    "l": "D",
+    "t": "$S\\overline{x} + \\overline{S}y$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "In state 0 the next state is 1 exactly when $x = 1$: $S^+ = x$ there.",
+   "In state 1 the next state is 1 exactly when $y = 0$: $S^+ = \\overline{y}$ there.",
+   "Combine with $S$ as the selector: $S^+ = \\overline{S}x + S\\overline{y}$."
+  ],
+  "concept": "Diagram → equation: next-state truth table from the arcs, then a Shannon expansion on S.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "In state 1 it gives S⁺ = y, so it would leave state 1 when y = 0 instead of y = 1."
+   },
+   {
+    "answer": "B",
+    "why": "Ignores the state: in state 0 with x = 0, y = 0 it gives 1, but the machine stays at 0."
+   },
+   {
+    "answer": "D",
+    "why": "Swaps the arcs of every state."
+   }
+  ],
+  "blocks": [
+   "diagram-to-equation",
+   "state-diagram"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-03-q10",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A JK flip-flop $A$ has $J_A = B$, $K_A = C$; a D flip-flop $B$ has $D_B = C$; a T flip-flop $C$ has $T_C = A$. The circuit starts at $ABC = 001$. How many distinct states (including the initial one) does it ever show?",
+  "answer": 6,
+  "solution": [
+   "State equations: $A^+ = B\\overline{A} + \\overline{C}A$, $B^+ = C$, $C^+ = C \\oplus A$.",
+   "Trace: 001 → 011 → 111 → 010 → 100 → 101 → 010.",
+   "The first repeat is 010: a tail of 3 states (001, 011, 111) and a cycle of 3 (010, 100, 101), so 6 distinct states."
+  ],
+  "concept": "Distinct states from a start = tail + cycle (the cycle theorem).",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "3 counts only the final cycle; the tail states 001, 011, 111 are shown once each."
+   },
+   {
+    "answer": 8,
+    "why": "000 and 110 are never reached from 001 (000 is a self-loop)."
+   }
+  ],
+  "blocks": [
+   "cycle-theorem",
+   "reachability",
+   "mixed-ff"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q01",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A binary counter must count from 0 up to 1000 (both included) and then return to 0. What is the minimum number of flip-flops it needs?",
+  "answer": 10,
+  "solution": [
+   "The states are 0, 1, …, 1000: that is 1001 states, not 1000.",
+   "We need the smallest $k$ with $2^k \\ge 1001$: $2^9 = 512 < 1001 \\le 1024 = 2^{10}$.",
+   "So $k = \\lceil \\log_2 1001 \\rceil = 10$ flip-flops."
+  ],
+  "concept": "A mod-N counter needs ⌈log₂ N⌉ flip-flops; count the states first (0 to 1000 is 1001 states).",
+  "common_wrong": [
+   {
+    "answer": 9,
+    "why": "Rounding log₂ 1000 ≈ 9.97 down: nine flip-flops hold only 512 states."
+   },
+   {
+    "answer": 1001,
+    "why": "One flip-flop per state is a one-hot design, not the minimum."
+   }
+  ],
+  "blocks": [
+   "ff-count",
+   "counter-def",
+   "trap-ff-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 6-bit up counter holds 110010 (rightmost bit = LSB). How many clock pulses are needed until it first reads 001011?",
+  "answer": 25,
+  "solution": [
+   "In decimal the counter goes from $110010_2 = 50$ to $001011_2 = 11$.",
+   "The target is smaller, so the counter wraps through 63 → 0: pulses $= (11 - 50) \\bmod 64 = 64 - 50 + 11 = 25$.",
+   "Check: $50 + 25 = 75 = 64 + 11$."
+  ],
+  "concept": "An n-bit up counter needs (b − a) mod 2ⁿ pulses to go from a to b.",
+  "common_wrong": [
+   {
+    "answer": 39,
+    "why": "50 − 11 = 39 is the count for a down counter (or subtracting the wrong way round)."
+   },
+   {
+    "answer": 26,
+    "why": "Off by one: counting the starting state as a pulse."
+   }
+  ],
+  "blocks": [
+   "pulse-count",
+   "trap-wrap"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q03",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 3-bit ripple counter is built from positive-edge-triggered T flip-flops with $T = 1$. The clock drives the first flip-flop (output $Q_0$); each later flip-flop is clocked by the $\\overline{Q}$ output of the one before it. Starting from $Q_2Q_1Q_0 = 000$, what are the next three states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "111, 110, 101"
+   },
+   {
+    "l": "B",
+    "t": "001, 010, 011"
+   },
+   {
+    "l": "C",
+    "t": "001, 000, 001"
+   },
+   {
+    "l": "D",
+    "t": "100, 010, 110"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "A positive-edge stage clocked by $\\overline{Q_{i-1}}$ toggles when $\\overline{Q_{i-1}}$ rises, i.e. when $Q_{i-1}$ falls: that is the carry of binary counting.",
+   "Pulse 1: $Q_0$ 0 → 1 ($\\overline{Q_0}$ falls, no edge for stage 1): 001. Pulse 2: $Q_0$ 1 → 0, $\\overline{Q_0}$ rises, $Q_1$ toggles: 010. Pulse 3: 011.",
+   "One inversion (the $\\overline{Q}$) with a positive edge: an up counter."
+  ],
+  "concept": "Negative edge + Q or positive edge + Q̄: up; negative edge + Q̄ or positive edge + Q: down.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Positive edge is the down rule only with Q; with Q̄ the second inversion turns it back into an up counter."
+   },
+   {
+    "answer": "C",
+    "why": "Forgetting that stage 1 is clocked at all: only Q0 toggles."
+   }
+  ],
+  "blocks": [
+   "ripple-rule",
+   "trick-trigger-table",
+   "ripple-up"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q04",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 1.6 MHz clock drives a 5-bit ripple up counter. What is the frequency, in kHz, of the output of the third flip-flop counted from the clock input?",
+  "answer": 200,
+  "solution": [
+   "Each toggling stage halves the frequency of the signal that clocks it.",
+   "First flip-flop: 800 kHz; second: 400 kHz; third: 200 kHz, i.e. $f / 2^3$.",
+   "The third flip-flop is $Q_2$, at $f/8 = 1600/8 = 200$ kHz; the other two flip-flops do not affect it."
+  ],
+  "concept": "Stage i (from 0) of a ripple counter runs at f/2^(i+1); the third stage divides by 8.",
+  "common_wrong": [
+   {
+    "answer": 400,
+    "why": "Dividing by 4: stopping one stage early (labelling the third output Q1)."
+   },
+   {
+    "answer": 50,
+    "why": "Using the last stage (f/32) instead of the third."
+   }
+  ],
+  "blocks": [
+   "frequency-division",
+   "divide-by-two",
+   "erratum-a101"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 5-bit ripple counter uses flip-flops with a propagation delay of 12 ns. Its outputs drive a decoder whose delay is 20 ns, and every count must be decoded before the next clock edge. What is the maximum clock frequency in MHz?",
+  "answer": 12.5,
+  "solution": [
+   "The worst clock edge toggles all 5 stages one after another: $5 \\times 12 = 60$ ns.",
+   "The decoder starts after the count settles: $T_{\\min} = 60 + 20 = 80$ ns.",
+   "$f_{\\max} = 1 / 80\\ \\text{ns} = 12.5$ MHz."
+  ],
+  "concept": "f_max of a ripple counter = 1 / (n·t_pd + t_decode).",
+  "common_wrong": [
+   {
+    "answer": 31.25,
+    "why": "Using one flip-flop delay (12 + 20 = 32 ns), the synchronous answer."
+   },
+   {
+    "answer": 16.67,
+    "why": "Forgetting the decoder: 1 / 60 ns."
+   }
+  ],
+  "blocks": [
+   "ripple-fmax",
+   "ripple-delay",
+   "trap-ripple-fmax"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q06",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit ripple up counter (outputs $Q_3Q_2Q_1Q_0$, $Q_0$ the LSB) starts at 0. Its flip-flops have active-high asynchronous clear inputs driven by one AND gate. Which inputs must the AND gate have to make a mod-12 counter?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$Q_3$, $Q_1$, $Q_0$"
+   },
+   {
+    "l": "B",
+    "t": "$Q_3$, $Q_2$, $Q_0$"
+   },
+   {
+    "l": "C",
+    "t": "$Q_3$, $Q_2$"
+   },
+   {
+    "l": "D",
+    "t": "$Q_2$, $Q_1$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "With an asynchronous clear the state to detect is $N = 12 = 1100_2$: it is wiped the moment it appears, so 0 … 11 survive.",
+   "AND only the bits that are 1 in 12: $Q_3$ and $Q_2$. No earlier state (settled or transient) has both.",
+   "A detects 11 (mod-11), B detects 13 (mod-13), D detects 6 (mod-6)."
+  ],
+  "concept": "Asynchronous clear: detect N with the AND of the outputs that are 1 in N.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Detecting N − 1 = 1011: with an asynchronous clear, 11 is wiped at once and the counter is mod-11."
+   },
+   {
+    "answer": "D",
+    "why": "Q2·Q1 is 6 = 0110, which clears the counter at 6."
+   }
+  ],
+  "blocks": [
+   "mod-n-clear",
+   "clear-detect",
+   "trick-clear-ones",
+   "trap-clear-n-minus-1"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4-bit ripple up counter starts at 0000. An AND gate on $Q_3$ and $Q_0$ drives the asynchronous clear of all four flip-flops. Which states does the counter cycle through (ignoring states that last only for the clear delay)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0, 1, 2, …, 9"
+   },
+   {
+    "l": "B",
+    "t": "0, 1, 2, …, 8"
+   },
+   {
+    "l": "C",
+    "t": "0, 1, 2, …, 7"
+   },
+   {
+    "l": "D",
+    "t": "0, 1, 2, …, 15 (the clear never fires)"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "The gate fires first in a state with $Q_3 = Q_0 = 1$; counting up from 0, that is $1001_2 = 9$.",
+   "The clear is asynchronous, so 9 is wiped at once: the stable states are 0 to 8.",
+   "No transient state on the way has $Q_3 = Q_0 = 1$ (e.g. 0111 → 0110 → 0100 → 0000 → 1000), so the counter is mod-9."
+  ],
+  "concept": "Read a clear gate backwards: the AND of the bits that are 1 in N clears at N, leaving 0 … N − 1.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Treating the clear as synchronous: then 9 would last a full period."
+   },
+   {
+    "answer": "C",
+    "why": "Assuming the gate fires at 8 = 1000; it needs Q0 = 1 as well."
+   }
+  ],
+  "blocks": [
+   "mod-n-clear",
+   "clear-detect",
+   "trick-clear-ones"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 4-bit negative-edge ripple up counter (stage $i$ clocked by $Q_{i-1}$, equal delays $t_{pd}$) holds $Q_3Q_2Q_1Q_0 = 1011$. Which of these states appear at its outputs, even if only for a moment, between the next clock edge and the moment it has settled (include the settled state)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1010"
+   },
+   {
+    "l": "B",
+    "t": "1000"
+   },
+   {
+    "l": "C",
+    "t": "1001"
+   },
+   {
+    "l": "D",
+    "t": "1100"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "$t_{pd}$ after the edge $Q_0$ falls: 1010. Its fall clocks stage 1.",
+   "$2t_{pd}$: $Q_1$ falls: 1000. Its fall clocks stage 2. $3t_{pd}$: $Q_2$ rises: 1100, settled (a rise of $Q_2$ does not clock stage 3).",
+   "1001 never appears: $Q_0$ only goes from 1 to 0 at this edge."
+  ],
+  "concept": "Toggling m stages takes m·t_pd and shows m − 1 false states: the trailing 1s clear one by one, then one bit sets.",
+  "common_wrong": [
+   {
+    "answer": [
+     "D"
+    ],
+    "why": "Only the settled state; a ripple counter passes through 1010 and 1000 first."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "1001 would need Q0 to rise, but at this edge it falls."
+   }
+  ],
+  "blocks": [
+   "ripple-delay",
+   "glitch-states"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q09",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about ripple counters are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "An $n$-bit ripple counter whose flip-flops have delay $t_{pd}$ can take $n\\,t_{pd}$ to settle after a clock edge."
+   },
+   {
+    "l": "B",
+    "t": "Negative-edge-triggered T flip-flops ($T = 1$), each clocked by the $Q$ output of the previous one, form a down counter."
+   },
+   {
+    "l": "C",
+    "t": "A decoder driven by a ripple counter's outputs can produce short false pulses (glitches)."
+   },
+   {
+    "l": "D",
+    "t": "To make a mod-$N$ counter with an asynchronous clear, the clear gate must detect the state $N - 1$."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: true. At the edge where every stage toggles (011…1 → 100…0), stage $i$ changes $(i + 1)t_{pd}$ after the edge, the last at $n\\,t_{pd}$.",
+   "B: false. Negative edge with $Q$ toggles stage $i$ when $Q_{i-1}$ falls: an up counter.",
+   "C: true. Transient states are real for a moment, so the decoder output for such a state pulses.",
+   "D: false. An asynchronous clear wipes the detected state at once; detecting $N - 1$ gives mod-$(N - 1)$. Detect $N$."
+  ],
+  "concept": "Ripple delay n·t_pd, the up/down wiring table, decoding glitches and the asynchronous clear at N.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Detecting N − 1 is right for a synchronous clear, not an asynchronous one."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Q into the next clock counts up with negative-edge stages, not down."
+   }
+  ],
+  "blocks": [
+   "ripple-fmax",
+   "ripple-rule",
+   "glitch-states",
+   "trap-clear-n-minus-1"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-04-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 3-bit ripple counter uses negative-edge T flip-flops with $T = 1$; each flip-flop after the first is clocked by the $\\overline{Q}$ output of the one before. It holds $Q_2Q_1Q_0 = 010$. What are the next four states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "011, 100, 101, 110"
+   },
+   {
+    "l": "B",
+    "t": "110, 101, 100, 011"
+   },
+   {
+    "l": "C",
+    "t": "001, 000, 111, 110"
+   },
+   {
+    "l": "D",
+    "t": "001, 000, 001, 010"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Negative edge with $\\overline{Q}$: stage $i$ toggles when $Q_{i-1}$ rises, a down counter.",
+   "From 2 the count goes 1, 0, then wraps to the largest state, 7, then 6.",
+   "In binary: 001, 000, 111, 110."
+  ],
+  "concept": "Down counting: from 0 the next state is all 1s (0 → 7 for 3 bits).",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is the up count; negative edge with Q̄ counts down."
+   },
+   {
+    "answer": "D",
+    "why": "A down counter does not bounce back up at 0; it wraps to 111."
+   }
+  ],
+  "blocks": [
+   "ripple-down",
+   "erratum-b180",
+   "ripple-rule"
+  ],
+  "source": "nexora"
  }
 ]
