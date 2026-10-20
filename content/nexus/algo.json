@@ -3,6 +3,7 @@
   "name": "Algorithms",
   "short": "ALGO",
   "group": "gate",
+  "domain": "core-cs",
   "order": 9,
   "icon": "route",
   "color": "#f97316",

@@ -1,0 +1,273 @@
+{
+  "id": "embedded-iot",
+  "name": "Embedded Systems & IoT",
+  "short": "EMB",
+  "group": "beyond",
+  "domain": "systems",
+  "order": 55,
+  "icon": "bolt",
+  "color": "#65a30d",
+  "description": "Programming microcontrollers close to the hardware, real-time software, and connecting devices to the cloud as IoT systems.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Embedded foundations"
+    },
+    {
+      "level": 2,
+      "name": "Peripherals & I/O"
+    },
+    {
+      "level": 3,
+      "name": "Real-time software"
+    },
+    {
+      "level": 4,
+      "name": "Connected devices"
+    },
+    {
+      "level": 5,
+      "name": "Builds"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "embedded-intro",
+      "zone": 1,
+      "name": "What is embedded",
+      "icon": "cpu",
+      "desc": "Microcontrollers vs microprocessors, constraints and the embedded toolchain.",
+      "kind": "concept",
+      "requires": [
+        "coa:isa"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "microcontrollers",
+      "zone": 1,
+      "name": "Microcontrollers",
+      "icon": "cpu",
+      "desc": "MCU architecture, memory map, registers and dev boards.",
+      "kind": "concept",
+      "requires": [
+        "embedded-intro"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "embedded-c",
+      "zone": 1,
+      "name": "Embedded C",
+      "icon": "code",
+      "desc": "Bit manipulation, volatile, memory-mapped registers and cross-compiling.",
+      "kind": "concept",
+      "requires": [
+        "microcontrollers",
+        "c:pointers"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "gpio",
+      "zone": 1,
+      "name": "GPIO & blinky",
+      "icon": "lightbulb",
+      "desc": "Digital input and output, pull-ups and debouncing buttons.",
+      "kind": "lesson",
+      "requires": [
+        "embedded-c"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "timers-pwm",
+      "zone": 2,
+      "name": "Timers & PWM",
+      "icon": "timer",
+      "desc": "Hardware timers, PWM for motors and LEDs, and delays without blocking.",
+      "kind": "concept",
+      "requires": [
+        "gpio"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "mcu-interrupts",
+      "zone": 2,
+      "name": "Interrupts",
+      "icon": "bolt",
+      "desc": "Interrupt service routines, priorities and sharing data safely with an ISR.",
+      "kind": "concept",
+      "requires": [
+        "gpio",
+        "coa:io-interrupts"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "adc-sensors",
+      "zone": 2,
+      "name": "ADC & sensors",
+      "icon": "activity",
+      "desc": "Analog-to-digital conversion, sampling and reading sensors.",
+      "kind": "concept",
+      "requires": [
+        "timers-pwm"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "serial-protocols",
+      "zone": 2,
+      "name": "UART, I2C & SPI",
+      "icon": "link",
+      "desc": "Serial communication buses and talking to peripheral chips.",
+      "kind": "concept",
+      "requires": [
+        "mcu-interrupts"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "rtos",
+      "zone": 3,
+      "name": "RTOS",
+      "icon": "clock",
+      "desc": "Tasks, priorities, preemptive scheduling, queues and semaphores in an RTOS.",
+      "kind": "concept",
+      "requires": [
+        "mcu-interrupts",
+        "os:cpu-scheduling"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "power-management",
+      "zone": 3,
+      "name": "Power management",
+      "icon": "leaf",
+      "desc": "Sleep modes, wake-up sources and battery budgets.",
+      "kind": "concept",
+      "requires": [
+        "timers-pwm"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "bootloaders-memory",
+      "zone": 3,
+      "name": "Memory & bootloaders",
+      "icon": "layers",
+      "desc": "Flash and RAM limits, linker scripts, bootloaders and firmware updates.",
+      "kind": "concept",
+      "requires": [
+        "embedded-c"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "embedded-debugging",
+      "zone": 3,
+      "name": "Embedded debugging",
+      "icon": "crosshair",
+      "desc": "JTAG/SWD debuggers, logic analysers and printf debugging.",
+      "kind": "lesson",
+      "requires": [
+        "serial-protocols"
+      ],
+      "xpReward": 90
+    },
+    {
+      "id": "iot-architecture",
+      "zone": 4,
+      "name": "IoT architecture",
+      "icon": "nexus",
+      "desc": "Devices, gateways, cloud back ends and the edge.",
+      "kind": "concept",
+      "requires": [
+        "serial-protocols"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "iot-protocols",
+      "zone": 4,
+      "name": "MQTT & CoAP",
+      "icon": "messages",
+      "desc": "Lightweight publish/subscribe and request/response protocols for devices.",
+      "kind": "concept",
+      "requires": [
+        "iot-architecture",
+        "cn:application-layer"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "wireless",
+      "zone": 4,
+      "name": "BLE, Wi-Fi & LoRa",
+      "icon": "globe",
+      "desc": "Short and long range wireless options and their power and bandwidth trade-offs.",
+      "kind": "concept",
+      "requires": [
+        "iot-architecture",
+        "power-management"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "iot-security",
+      "zone": 4,
+      "name": "IoT security",
+      "icon": "shield",
+      "desc": "Secure boot, device identity, encrypted transport and over-the-air updates.",
+      "kind": "concept",
+      "requires": [
+        "iot-protocols",
+        "cryptography:symmetric-crypto"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "edge-cloud",
+      "zone": 4,
+      "name": "Edge & cloud",
+      "icon": "server",
+      "desc": "Device shadows, telemetry pipelines and processing at the edge.",
+      "kind": "concept",
+      "requires": [
+        "iot-protocols"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "weather-station",
+      "zone": 5,
+      "name": "Weather station",
+      "icon": "sun",
+      "desc": "Build a sensor node that samples the weather, sleeps between readings and publishes over MQTT.",
+      "kind": "project",
+      "requires": [
+        "adc-sensors",
+        "rtos",
+        "iot-protocols"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "smart-home",
+      "zone": 5,
+      "name": "Smart home project",
+      "icon": "home",
+      "desc": "Build a secure smart-home controller with devices, a gateway and a dashboard.",
+      "kind": "project",
+      "requires": [
+        "wireless",
+        "iot-security",
+        "edge-cloud"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

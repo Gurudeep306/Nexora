@@ -1,0 +1,293 @@
+{
+  "id": "linux-shell",
+  "name": "Linux & Shell",
+  "short": "SH",
+  "group": "beyond",
+  "domain": "tools",
+  "order": 31,
+  "icon": "terminal",
+  "color": "#4b5563",
+  "description": "Working at the Linux command line: files and permissions, text processing, processes, networking tools and shell scripting.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Shell basics"
+    },
+    {
+      "level": 2,
+      "name": "Files & permissions"
+    },
+    {
+      "level": 3,
+      "name": "Text processing"
+    },
+    {
+      "level": 4,
+      "name": "Processes & system"
+    },
+    {
+      "level": 5,
+      "name": "Scripting & automation"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "linux-intro",
+      "zone": 1,
+      "name": "Linux & distros",
+      "icon": "monitor",
+      "desc": "Kernel vs distribution, the terminal and the shell.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "shell-basics",
+      "zone": 1,
+      "name": "Shell basics",
+      "icon": "terminal",
+      "desc": "Commands, arguments, ls, cd, pwd, tab completion and history.",
+      "kind": "concept",
+      "requires": [
+        "linux-intro"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "filesystem-layout",
+      "zone": 1,
+      "name": "Filesystem layout",
+      "icon": "tree",
+      "desc": "The directory tree, /etc, /home, /var, /usr and absolute vs relative paths.",
+      "kind": "concept",
+      "requires": [
+        "shell-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "getting-help",
+      "zone": 1,
+      "name": "Getting help",
+      "icon": "info",
+      "desc": "man pages, --help and reading command documentation.",
+      "kind": "lesson",
+      "requires": [
+        "shell-basics"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "file-ops",
+      "zone": 2,
+      "name": "Working with files",
+      "icon": "copy",
+      "desc": "cp, mv, rm, mkdir, touch, globbing and viewing files.",
+      "kind": "concept",
+      "requires": [
+        "filesystem-layout"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "permissions",
+      "zone": 2,
+      "name": "Permissions",
+      "icon": "lock",
+      "desc": "rwx bits, chmod, chown, umask and sudo.",
+      "kind": "concept",
+      "requires": [
+        "file-ops"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "users-groups",
+      "zone": 2,
+      "name": "Users & groups",
+      "icon": "users",
+      "desc": "Accounts, groups and /etc/passwd.",
+      "kind": "concept",
+      "requires": [
+        "permissions"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "links-inodes",
+      "zone": 2,
+      "name": "Links & inodes",
+      "icon": "link",
+      "desc": "Inodes, hard links, symbolic links and disk usage.",
+      "kind": "concept",
+      "requires": [
+        "file-ops",
+        "os:file-systems"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "pipes-redirection",
+      "zone": 3,
+      "name": "Pipes & redirection",
+      "icon": "route",
+      "desc": "stdin, stdout, stderr, redirection and composing commands with pipes.",
+      "kind": "concept",
+      "requires": [
+        "shell-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "grep-find",
+      "zone": 3,
+      "name": "grep & find",
+      "icon": "search",
+      "desc": "Searching file contents and the filesystem.",
+      "kind": "concept",
+      "requires": [
+        "pipes-redirection"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "regex-shell",
+      "zone": 3,
+      "name": "Regular expressions",
+      "icon": "code",
+      "desc": "Basic and extended regex for grep and sed.",
+      "kind": "concept",
+      "requires": [
+        "grep-find",
+        "toc:regular-expressions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sed-awk",
+      "zone": 3,
+      "name": "sed & awk",
+      "icon": "edit",
+      "desc": "Stream editing and column-oriented text processing.",
+      "kind": "concept",
+      "requires": [
+        "regex-shell"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "processes-signals",
+      "zone": 4,
+      "name": "Processes & signals",
+      "icon": "cpu",
+      "desc": "ps, top, kill, signals, job control and nohup.",
+      "kind": "concept",
+      "requires": [
+        "pipes-redirection",
+        "os:processes"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "packages",
+      "zone": 4,
+      "name": "Package management",
+      "icon": "download",
+      "desc": "Installing software with apt, dnf or pacman.",
+      "kind": "lesson",
+      "requires": [
+        "permissions"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "net-tools",
+      "zone": 4,
+      "name": "Networking tools",
+      "icon": "globe",
+      "desc": "ping, curl, ss, dig and inspecting network connections.",
+      "kind": "concept",
+      "requires": [
+        "processes-signals",
+        "cn:application-layer"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "ssh",
+      "zone": 4,
+      "name": "SSH & remote work",
+      "icon": "key",
+      "desc": "SSH keys, scp, rsync and working on remote machines.",
+      "kind": "concept",
+      "requires": [
+        "net-tools"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "bash-scripting",
+      "zone": 5,
+      "name": "Bash scripting",
+      "icon": "code",
+      "desc": "Variables, conditionals, loops, functions and exit codes in bash scripts.",
+      "kind": "concept",
+      "requires": [
+        "pipes-redirection",
+        "permissions"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "cron-systemd",
+      "zone": 5,
+      "name": "cron & services",
+      "icon": "calendar",
+      "desc": "Scheduling jobs with cron and managing services with systemd.",
+      "kind": "lesson",
+      "requires": [
+        "bash-scripting",
+        "processes-signals"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "dotfiles",
+      "zone": 5,
+      "name": "Environment & dotfiles",
+      "icon": "settings",
+      "desc": "Environment variables, PATH, shell configuration and dotfiles.",
+      "kind": "lesson",
+      "requires": [
+        "bash-scripting"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "log-analyzer",
+      "zone": 5,
+      "name": "Log analyzer project",
+      "icon": "analytics",
+      "desc": "Write a script that parses server logs and reports top errors and visitors.",
+      "kind": "project",
+      "requires": [
+        "sed-awk",
+        "bash-scripting"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "backup-script",
+      "zone": 5,
+      "name": "Backup script project",
+      "icon": "save",
+      "desc": "Automate scheduled, rotating backups to a remote machine.",
+      "kind": "project",
+      "requires": [
+        "cron-systemd",
+        "ssh"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

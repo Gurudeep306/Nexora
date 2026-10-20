@@ -3,6 +3,7 @@
   "name": "App Development",
   "short": "APP",
   "group": "beyond",
+  "domain": "web-mobile",
   "order": 18,
   "icon": "monitor",
   "color": "#10b981",

@@ -3,6 +3,7 @@
   "name": "Digital Logic",
   "short": "DL",
   "group": "gate",
+  "domain": "core-cs",
   "order": 2,
   "icon": "binary",
   "color": "#3b82f6",

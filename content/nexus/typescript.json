@@ -1,0 +1,254 @@
+{
+  "id": "typescript",
+  "name": "TypeScript",
+  "short": "TS",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 24,
+  "icon": "code",
+  "color": "#3178c6",
+  "description": "Static types for JavaScript: the type system, generics, advanced type-level tools and TypeScript in real projects.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Type basics"
+    },
+    {
+      "level": 2,
+      "name": "Typing your code"
+    },
+    {
+      "level": 3,
+      "name": "Advanced types"
+    },
+    {
+      "level": 4,
+      "name": "TypeScript in practice"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ts-setup",
+      "zone": 1,
+      "name": "Setup & tsc",
+      "icon": "terminal",
+      "desc": "Installing TypeScript, tsconfig.json and compiling with tsc.",
+      "kind": "lesson",
+      "requires": [
+        "javascript:js-basics"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "ts-types",
+      "zone": 1,
+      "name": "Basic types",
+      "icon": "tag",
+      "desc": "Primitive types, arrays, tuples, object types, any and unknown.",
+      "kind": "concept",
+      "requires": [
+        "ts-setup"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "type-inference",
+      "zone": 1,
+      "name": "Type inference",
+      "icon": "lightbulb",
+      "desc": "How TypeScript infers types and when to write annotations yourself.",
+      "kind": "concept",
+      "requires": [
+        "ts-types"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "unions-narrowing",
+      "zone": 1,
+      "name": "Unions & narrowing",
+      "icon": "git-branch",
+      "desc": "Union and literal types, narrowing with typeof, in and discriminated unions.",
+      "kind": "concept",
+      "requires": [
+        "ts-types"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "interfaces-aliases",
+      "zone": 2,
+      "name": "Interfaces & aliases",
+      "icon": "shapes",
+      "desc": "Interfaces, type aliases, optional and readonly properties, and extension.",
+      "kind": "concept",
+      "requires": [
+        "ts-types"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "typed-functions",
+      "zone": 2,
+      "name": "Typing functions",
+      "icon": "function",
+      "desc": "Parameter and return types, overloads, and typing callbacks.",
+      "kind": "concept",
+      "requires": [
+        "ts-types"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "ts-classes",
+      "zone": 2,
+      "name": "Classes in TS",
+      "icon": "layers",
+      "desc": "Access modifiers, abstract classes and implementing interfaces.",
+      "kind": "concept",
+      "requires": [
+        "interfaces-aliases",
+        "javascript:classes-modules"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "declarations",
+      "zone": 2,
+      "name": "Modules & .d.ts",
+      "icon": "book",
+      "desc": "ES modules in TypeScript, declaration files and typing third-party libraries.",
+      "kind": "lesson",
+      "requires": [
+        "interfaces-aliases"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "generics-ts",
+      "zone": 3,
+      "name": "Generics",
+      "icon": "shapes",
+      "desc": "Generic functions and types, constraints and default type parameters.",
+      "kind": "concept",
+      "requires": [
+        "typed-functions",
+        "interfaces-aliases"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "utility-types",
+      "zone": 3,
+      "name": "Utility types",
+      "icon": "wrench",
+      "desc": "Partial, Pick, Omit, Record, ReturnType and other built-in helpers.",
+      "kind": "concept",
+      "requires": [
+        "generics-ts"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "keyof-mapped",
+      "zone": 3,
+      "name": "keyof & mapped types",
+      "icon": "grid",
+      "desc": "Index types, keyof, indexed access and mapped types.",
+      "kind": "concept",
+      "requires": [
+        "utility-types"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "conditional-types",
+      "zone": 3,
+      "name": "Conditional types",
+      "icon": "git-branch",
+      "desc": "Conditional types, infer and distributive behaviour over unions.",
+      "kind": "concept",
+      "requires": [
+        "keyof-mapped",
+        "unions-narrowing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "type-guards",
+      "zone": 3,
+      "name": "Type guards",
+      "icon": "shield",
+      "desc": "User-defined type guards, assertion functions and exhaustiveness checks with never.",
+      "kind": "concept",
+      "requires": [
+        "unions-narrowing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "strict-config",
+      "zone": 4,
+      "name": "Strict mode & config",
+      "icon": "settings",
+      "desc": "Strict compiler flags, project references and migrating JavaScript to TypeScript.",
+      "kind": "lesson",
+      "requires": [
+        "declarations"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "runtime-validation",
+      "zone": 4,
+      "name": "Runtime validation",
+      "icon": "check-circle",
+      "desc": "Validating untrusted data at runtime and deriving static types from schemas.",
+      "kind": "concept",
+      "requires": [
+        "type-guards"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "ts-react",
+      "zone": 4,
+      "name": "TS with React",
+      "icon": "monitor",
+      "desc": "Typing props, state, hooks and events in React components.",
+      "kind": "lesson",
+      "requires": [
+        "generics-ts",
+        "frontend-frameworks:react-components"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "ts-node",
+      "zone": 4,
+      "name": "TS on the server",
+      "icon": "server",
+      "desc": "Typed Express handlers, request validation and shared types between client and server.",
+      "kind": "lesson",
+      "requires": [
+        "generics-ts",
+        "backend-frameworks:express-node"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "typed-api-client",
+      "zone": 4,
+      "name": "Typed API client",
+      "icon": "rocket",
+      "desc": "Build a fully typed HTTP client library with validated responses and generated types.",
+      "kind": "project",
+      "requires": [
+        "runtime-validation",
+        "conditional-types",
+        "javascript:async-js"
+      ],
+      "xpReward": 270
+    }
+  ]
+}

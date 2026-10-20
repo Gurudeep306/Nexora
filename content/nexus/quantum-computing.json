@@ -1,0 +1,297 @@
+{
+  "id": "quantum-computing",
+  "name": "Quantum Computing",
+  "short": "QC",
+  "group": "beyond",
+  "domain": "theory",
+  "order": 54,
+  "icon": "binary",
+  "color": "#6d28d9",
+  "description": "Qubits, gates and circuits, the main quantum algorithms, noise and error correction, and programming real devices.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Mathematical foundations"
+    },
+    {
+      "level": 2,
+      "name": "Qubits & circuits"
+    },
+    {
+      "level": 3,
+      "name": "Quantum algorithms"
+    },
+    {
+      "level": 4,
+      "name": "Noise & correction"
+    },
+    {
+      "level": 5,
+      "name": "Practice"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "complex-linear-algebra",
+      "zone": 1,
+      "name": "Complex linear algebra",
+      "icon": "grid",
+      "desc": "Complex vectors, inner products and unitary and Hermitian matrices.",
+      "kind": "concept",
+      "requires": [
+        "la:vector-spaces"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "dirac-notation",
+      "zone": 1,
+      "name": "Dirac notation",
+      "icon": "type",
+      "desc": "Kets, bras, inner and outer products.",
+      "kind": "concept",
+      "requires": [
+        "complex-linear-algebra"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "tensor-products",
+      "zone": 1,
+      "name": "Tensor products",
+      "icon": "layers",
+      "desc": "Combining systems with tensor products of vectors and matrices.",
+      "kind": "concept",
+      "requires": [
+        "complex-linear-algebra"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "measurement",
+      "zone": 1,
+      "name": "Measurement",
+      "icon": "eye",
+      "desc": "Amplitudes, the Born rule and measurement in different bases.",
+      "kind": "concept",
+      "requires": [
+        "dirac-notation",
+        "prob:probability-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "qubits",
+      "zone": 2,
+      "name": "Qubits & Bloch sphere",
+      "icon": "globe",
+      "desc": "Single-qubit states, superposition and the Bloch sphere picture.",
+      "kind": "concept",
+      "requires": [
+        "dirac-notation",
+        "measurement"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "single-qubit-gates",
+      "zone": 2,
+      "name": "Single-qubit gates",
+      "icon": "cpu",
+      "desc": "Pauli, Hadamard and phase gates as rotations.",
+      "kind": "lesson",
+      "requires": [
+        "qubits"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "multi-qubit-gates",
+      "zone": 2,
+      "name": "Multi-qubit gates",
+      "icon": "link",
+      "desc": "CNOT, controlled gates and multi-qubit states.",
+      "kind": "lesson",
+      "requires": [
+        "single-qubit-gates",
+        "tensor-products"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "entanglement",
+      "zone": 2,
+      "name": "Entanglement",
+      "icon": "share",
+      "desc": "Bell states, teleportation and superdense coding.",
+      "kind": "concept",
+      "requires": [
+        "multi-qubit-gates"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "quantum-circuits",
+      "zone": 2,
+      "name": "Quantum circuits",
+      "icon": "git-branch",
+      "desc": "Circuit model, reversibility and universal gate sets.",
+      "kind": "lesson",
+      "requires": [
+        "multi-qubit-gates"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "deutsch-jozsa",
+      "zone": 3,
+      "name": "Deutsch-Jozsa",
+      "icon": "puzzle",
+      "desc": "Oracles, phase kickback and the first quantum speed-ups.",
+      "kind": "lesson",
+      "requires": [
+        "quantum-circuits"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "quantum-fourier",
+      "zone": 3,
+      "name": "Quantum Fourier",
+      "icon": "function",
+      "desc": "The quantum Fourier transform and its circuit.",
+      "kind": "lesson",
+      "requires": [
+        "quantum-circuits"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "phase-estimation",
+      "zone": 3,
+      "name": "Phase estimation",
+      "icon": "target",
+      "desc": "Estimating eigenphases of unitaries.",
+      "kind": "lesson",
+      "requires": [
+        "quantum-fourier"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "shor",
+      "zone": 3,
+      "name": "Shor's algorithm",
+      "icon": "key",
+      "desc": "Factoring via period finding and its impact on RSA.",
+      "kind": "lesson",
+      "requires": [
+        "phase-estimation",
+        "number-theory:modular-arithmetic"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "grover",
+      "zone": 3,
+      "name": "Grover's search",
+      "icon": "search",
+      "desc": "Amplitude amplification and the quadratic speed-up for search.",
+      "kind": "lesson",
+      "requires": [
+        "quantum-circuits"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "noise-decoherence",
+      "zone": 4,
+      "name": "Noise & decoherence",
+      "icon": "warning",
+      "desc": "Density matrices, quantum channels and decoherence.",
+      "kind": "concept",
+      "requires": [
+        "entanglement"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "error-correction",
+      "zone": 4,
+      "name": "Error correction",
+      "icon": "shield",
+      "desc": "Bit-flip and phase-flip codes, the Shor code and stabilisers.",
+      "kind": "concept",
+      "requires": [
+        "noise-decoherence",
+        "cn:error-detection"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "quantum-hardware",
+      "zone": 4,
+      "name": "Quantum hardware",
+      "icon": "server",
+      "desc": "Superconducting, trapped-ion and photonic qubits and their trade-offs.",
+      "kind": "concept",
+      "requires": [
+        "noise-decoherence"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "variational-algorithms",
+      "zone": 5,
+      "name": "Variational algorithms",
+      "icon": "sliders",
+      "desc": "VQE and QAOA as hybrid quantum-classical methods.",
+      "kind": "lesson",
+      "requires": [
+        "quantum-circuits",
+        "noise-decoherence"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "quantum-cryptography",
+      "zone": 5,
+      "name": "Quantum cryptography",
+      "icon": "lock",
+      "desc": "BB84 key distribution and post-quantum cryptography.",
+      "kind": "concept",
+      "requires": [
+        "entanglement",
+        "cryptography:public-key"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "quantum-programming",
+      "zone": 5,
+      "name": "Quantum programming",
+      "icon": "code",
+      "desc": "Writing and simulating circuits with a quantum SDK and running on hardware.",
+      "kind": "lesson",
+      "requires": [
+        "quantum-circuits",
+        "python:python-basics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "algorithm-simulator",
+      "zone": 5,
+      "name": "Algorithm simulator",
+      "icon": "trophy",
+      "desc": "Implement Grover and a small Shor instance and compare simulator and device results.",
+      "kind": "project",
+      "requires": [
+        "quantum-programming",
+        "grover",
+        "shor"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

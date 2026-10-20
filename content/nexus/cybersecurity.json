@@ -1,0 +1,275 @@
+{
+  "id": "cybersecurity",
+  "name": "Cybersecurity",
+  "short": "SEC",
+  "group": "beyond",
+  "domain": "security",
+  "order": 60,
+  "icon": "shield",
+  "color": "#dc2626",
+  "description": "Thinking like an attacker and a defender: threat modelling, network, web and system security, and security operations.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Security foundations"
+    },
+    {
+      "level": 2,
+      "name": "Network security"
+    },
+    {
+      "level": 3,
+      "name": "Web security"
+    },
+    {
+      "level": 4,
+      "name": "Systems security"
+    },
+    {
+      "level": 5,
+      "name": "Defense & operations"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "security-principles",
+      "zone": 1,
+      "name": "CIA & principles",
+      "icon": "shield",
+      "desc": "Confidentiality, integrity and availability, least privilege and defence in depth.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "threat-modeling",
+      "zone": 1,
+      "name": "Threat modelling",
+      "icon": "target",
+      "desc": "Assets, attackers and attack surfaces, and STRIDE.",
+      "kind": "concept",
+      "requires": [
+        "security-principles"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "authn-authz",
+      "zone": 1,
+      "name": "Authentication",
+      "icon": "key",
+      "desc": "Passwords, MFA, sessions and authorisation models.",
+      "kind": "concept",
+      "requires": [
+        "security-principles",
+        "cryptography:crypto-hashing"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "network-attacks",
+      "zone": 2,
+      "name": "Network attacks",
+      "icon": "warning",
+      "desc": "Sniffing, spoofing, MITM, DoS and scanning.",
+      "kind": "concept",
+      "requires": [
+        "security-principles",
+        "cn:tcp"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "firewalls-ids",
+      "zone": 2,
+      "name": "Firewalls & IDS",
+      "icon": "shield",
+      "desc": "Packet filtering, segmentation and intrusion detection.",
+      "kind": "concept",
+      "requires": [
+        "network-attacks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "tls-vpn",
+      "zone": 2,
+      "name": "TLS & VPNs",
+      "icon": "lock",
+      "desc": "Secure channels with TLS and VPNs and certificate validation.",
+      "kind": "concept",
+      "requires": [
+        "network-attacks",
+        "cryptography:public-key"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "wifi-security",
+      "zone": 2,
+      "name": "Wireless security",
+      "icon": "globe",
+      "desc": "Wi-Fi protocols, their attacks and securing wireless networks.",
+      "kind": "concept",
+      "requires": [
+        "network-attacks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "owasp-top10",
+      "zone": 3,
+      "name": "OWASP Top 10",
+      "icon": "list",
+      "desc": "The most common web application vulnerabilities.",
+      "kind": "concept",
+      "requires": [
+        "threat-modeling",
+        "web:http-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "injection",
+      "zone": 3,
+      "name": "Injection",
+      "icon": "code",
+      "desc": "SQL, command and template injection and parameterised queries.",
+      "kind": "concept",
+      "requires": [
+        "owasp-top10"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "xss-csrf",
+      "zone": 3,
+      "name": "XSS & CSRF",
+      "icon": "warning",
+      "desc": "Cross-site scripting, request forgery and browser defences.",
+      "kind": "concept",
+      "requires": [
+        "owasp-top10"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "session-security",
+      "zone": 3,
+      "name": "Session security",
+      "icon": "lock",
+      "desc": "Cookies, tokens, session fixation and secure session handling.",
+      "kind": "concept",
+      "requires": [
+        "owasp-top10",
+        "authn-authz"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "memory-safety",
+      "zone": 4,
+      "name": "Buffer overflows",
+      "icon": "cpu",
+      "desc": "Stack and heap overflows, exploitation basics and mitigations like ASLR.",
+      "kind": "concept",
+      "requires": [
+        "threat-modeling",
+        "c:pointers"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "privilege-escalation",
+      "zone": 4,
+      "name": "Privilege escalation",
+      "icon": "crown",
+      "desc": "Misconfigurations and vulnerabilities that turn a user into root.",
+      "kind": "concept",
+      "requires": [
+        "memory-safety",
+        "linux-shell:permissions"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "malware",
+      "zone": 4,
+      "name": "Malware",
+      "icon": "flame",
+      "desc": "Viruses, worms, ransomware and how they spread and persist.",
+      "kind": "concept",
+      "requires": [
+        "threat-modeling"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "pentesting",
+      "zone": 5,
+      "name": "Penetration testing",
+      "icon": "crosshair",
+      "desc": "Reconnaissance, exploitation and reporting in an authorised test.",
+      "kind": "concept",
+      "requires": [
+        "injection",
+        "privilege-escalation",
+        "firewalls-ids"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "incident-response-sec",
+      "zone": 5,
+      "name": "Incident response",
+      "icon": "bell",
+      "desc": "Detection, containment, forensics and recovery.",
+      "kind": "concept",
+      "requires": [
+        "malware",
+        "firewalls-ids"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "secure-sdlc",
+      "zone": 5,
+      "name": "Secure development",
+      "icon": "check-circle",
+      "desc": "Security reviews, dependency scanning and secure coding practices.",
+      "kind": "concept",
+      "requires": [
+        "injection",
+        "session-security"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ctf",
+      "zone": 5,
+      "name": "CTF challenges project",
+      "icon": "flag",
+      "desc": "Solve a set of capture-the-flag challenges across web, crypto and binary categories.",
+      "kind": "project",
+      "requires": [
+        "pentesting",
+        "xss-csrf",
+        "tls-vpn"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "vuln-lab",
+      "zone": 5,
+      "name": "Hack & fix lab project",
+      "icon": "wrench",
+      "desc": "Attack a deliberately vulnerable app in a lab, then patch every finding.",
+      "kind": "project",
+      "requires": [
+        "pentesting",
+        "secure-sdlc"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

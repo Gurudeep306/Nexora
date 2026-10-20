@@ -3,6 +3,7 @@
   "name": "Computer Networks",
   "short": "CN",
   "group": "gate",
+  "domain": "core-cs",
   "order": 6,
   "icon": "globe",
   "color": "#84cc16",

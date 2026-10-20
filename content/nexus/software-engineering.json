@@ -1,0 +1,294 @@
+{
+  "id": "software-engineering",
+  "name": "Software Engineering & Testing",
+  "short": "SE",
+  "group": "beyond",
+  "domain": "software-engineering",
+  "order": 41,
+  "icon": "wrench",
+  "color": "#0ea5e9",
+  "description": "How software is built in teams: process, requirements, architecture, testing at every level, code quality and delivery.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Process & requirements"
+    },
+    {
+      "level": 2,
+      "name": "Design & architecture"
+    },
+    {
+      "level": 3,
+      "name": "Testing"
+    },
+    {
+      "level": 4,
+      "name": "Quality & maintenance"
+    },
+    {
+      "level": 5,
+      "name": "Team delivery"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "sdlc",
+      "zone": 1,
+      "name": "Software lifecycle",
+      "icon": "route",
+      "desc": "Lifecycle models: waterfall, iterative, spiral and where each fits.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "agile",
+      "zone": 1,
+      "name": "Agile & Scrum",
+      "icon": "activity",
+      "desc": "Agile values, Scrum roles and ceremonies, and Kanban.",
+      "kind": "concept",
+      "requires": [
+        "sdlc"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "requirements",
+      "zone": 1,
+      "name": "Requirements",
+      "icon": "list",
+      "desc": "Functional and non-functional requirements, user stories and acceptance criteria.",
+      "kind": "concept",
+      "requires": [
+        "sdlc"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "estimation",
+      "zone": 1,
+      "name": "Estimation & planning",
+      "icon": "calendar",
+      "desc": "Story points, estimation techniques and planning under uncertainty.",
+      "kind": "concept",
+      "requires": [
+        "agile",
+        "requirements"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "architecture-styles",
+      "zone": 2,
+      "name": "Architecture styles",
+      "icon": "building",
+      "desc": "Layered, hexagonal, event-driven and microservice architectures.",
+      "kind": "concept",
+      "requires": [
+        "requirements",
+        "oop-patterns:solid"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "modular-design",
+      "zone": 2,
+      "name": "Modular design",
+      "icon": "grid",
+      "desc": "Module boundaries, interfaces and information hiding.",
+      "kind": "concept",
+      "requires": [
+        "architecture-styles"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "design-docs",
+      "zone": 2,
+      "name": "Docs & ADRs",
+      "icon": "book",
+      "desc": "Design documents, architecture decision records and diagrams.",
+      "kind": "lesson",
+      "requires": [
+        "architecture-styles"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "unit-testing",
+      "zone": 3,
+      "name": "Unit testing",
+      "icon": "check-circle",
+      "desc": "Writing small, fast, isolated tests and the test pyramid.",
+      "kind": "concept",
+      "requires": [
+        "modular-design"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "test-design",
+      "zone": 3,
+      "name": "Test case design",
+      "icon": "target",
+      "desc": "Equivalence partitioning, boundary values and decision tables.",
+      "kind": "concept",
+      "requires": [
+        "unit-testing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "mocking",
+      "zone": 3,
+      "name": "Test doubles",
+      "icon": "copy",
+      "desc": "Mocks, stubs, fakes and spies and when to use them.",
+      "kind": "concept",
+      "requires": [
+        "unit-testing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "tdd",
+      "zone": 3,
+      "name": "TDD",
+      "icon": "play",
+      "desc": "Red-green-refactor and letting tests drive the design.",
+      "kind": "concept",
+      "requires": [
+        "unit-testing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "integration-testing",
+      "zone": 3,
+      "name": "Integration & E2E",
+      "icon": "layers",
+      "desc": "Integration, end-to-end and contract tests and their trade-offs.",
+      "kind": "concept",
+      "requires": [
+        "mocking"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "coverage-mutation",
+      "zone": 3,
+      "name": "Coverage & mutation",
+      "icon": "chart",
+      "desc": "Statement and branch coverage, and mutation testing to judge test quality.",
+      "kind": "concept",
+      "requires": [
+        "test-design"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "code-review",
+      "zone": 4,
+      "name": "Code review",
+      "icon": "eye",
+      "desc": "Giving and receiving review, checklists and keeping changes small.",
+      "kind": "concept",
+      "requires": [
+        "git:pull-requests"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "static-analysis",
+      "zone": 4,
+      "name": "Linters & analysis",
+      "icon": "search",
+      "desc": "Linters, formatters, type checkers and static analysis tools.",
+      "kind": "lesson",
+      "requires": [
+        "modular-design"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "debugging",
+      "zone": 4,
+      "name": "Debugging",
+      "icon": "crosshair",
+      "desc": "Reproducing bugs, debuggers, logging and bisecting.",
+      "kind": "concept",
+      "requires": [
+        "unit-testing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "tech-debt",
+      "zone": 4,
+      "name": "Refactoring & debt",
+      "icon": "wrench",
+      "desc": "Managing technical debt and refactoring safely under tests.",
+      "kind": "concept",
+      "requires": [
+        "tdd",
+        "code-review"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "versioning-releases",
+      "zone": 5,
+      "name": "Versioning & releases",
+      "icon": "tag",
+      "desc": "Semantic versioning, changelogs and release processes.",
+      "kind": "concept",
+      "requires": [
+        "git:git-basics",
+        "code-review"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ci-testing",
+      "zone": 5,
+      "name": "Testing in CI",
+      "icon": "run",
+      "desc": "Running test suites automatically, flaky tests and quality gates.",
+      "kind": "lesson",
+      "requires": [
+        "integration-testing",
+        "devops:ci-cd"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "tested-library",
+      "zone": 5,
+      "name": "Tested library project",
+      "icon": "check",
+      "desc": "Build a small library test-first with high branch coverage and CI.",
+      "kind": "project",
+      "requires": [
+        "tdd",
+        "coverage-mutation",
+        "ci-testing"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "team-project",
+      "zone": 5,
+      "name": "Team project",
+      "icon": "users",
+      "desc": "Run a short team project with sprints, reviews and a tagged release.",
+      "kind": "project",
+      "requires": [
+        "agile",
+        "code-review",
+        "versioning-releases"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

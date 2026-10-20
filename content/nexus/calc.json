@@ -3,6 +3,7 @@
   "name": "Calculus",
   "short": "CALC",
   "group": "gate",
+  "domain": "math",
   "order": 13,
   "icon": "function",
   "color": "#a855f7",

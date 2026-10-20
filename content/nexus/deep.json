@@ -3,6 +3,7 @@
   "name": "Deep Learning",
   "short": "DEEP",
   "group": "beyond",
+  "domain": "ai",
   "order": 16,
   "icon": "layers",
   "color": "#7c3aed",

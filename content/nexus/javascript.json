@@ -1,0 +1,282 @@
+{
+  "id": "javascript",
+  "name": "JavaScript",
+  "short": "JS",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 23,
+  "icon": "code",
+  "color": "#d4b106",
+  "description": "The JavaScript language in depth: closures, prototypes, async code, the DOM and tooling with npm and Node.js.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Language basics"
+    },
+    {
+      "level": 2,
+      "name": "Functions & objects"
+    },
+    {
+      "level": 3,
+      "name": "Async JavaScript"
+    },
+    {
+      "level": 4,
+      "name": "Browser & DOM"
+    },
+    {
+      "level": 5,
+      "name": "Tooling & Node"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "js-basics",
+      "zone": 1,
+      "name": "JS basics",
+      "icon": "code",
+      "desc": "Variables with let and const, types, operators, control flow and functions.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40,
+      "resources": [
+        {
+          "title": "MDN JavaScript Guide",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"
+        }
+      ]
+    },
+    {
+      "id": "types-coercion",
+      "zone": 1,
+      "name": "Types & coercion",
+      "icon": "shapes",
+      "desc": "Primitive types, equality, truthiness and implicit type coercion.",
+      "kind": "concept",
+      "requires": [
+        "js-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "arrays-objects",
+      "zone": 1,
+      "name": "Arrays & objects",
+      "icon": "array",
+      "desc": "Arrays, objects, destructuring, spread and the array methods map, filter and reduce.",
+      "kind": "concept",
+      "requires": [
+        "js-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "closures",
+      "zone": 2,
+      "name": "Functions & closures",
+      "icon": "function",
+      "desc": "First-class functions, scope, closures and higher-order functions.",
+      "kind": "concept",
+      "requires": [
+        "arrays-objects"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "prototypes",
+      "zone": 2,
+      "name": "this & prototypes",
+      "icon": "layers",
+      "desc": "How this is bound, prototype chains and inheritance under the hood.",
+      "kind": "concept",
+      "requires": [
+        "closures"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "classes-modules",
+      "zone": 2,
+      "name": "Classes & modules",
+      "icon": "grid",
+      "desc": "ES classes, getters and setters, and ES modules with import and export.",
+      "kind": "concept",
+      "requires": [
+        "prototypes"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "iterators-js",
+      "zone": 2,
+      "name": "Iterators & generators",
+      "icon": "route",
+      "desc": "The iteration protocol, generators, Map and Set.",
+      "kind": "concept",
+      "requires": [
+        "closures"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "event-loop",
+      "zone": 3,
+      "name": "The event loop",
+      "icon": "activity",
+      "desc": "Call stack, task and microtask queues and why JavaScript is single-threaded.",
+      "kind": "concept",
+      "requires": [
+        "closures"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "async-js",
+      "zone": 3,
+      "name": "Promises & async",
+      "icon": "clock",
+      "desc": "Callbacks, promises, async/await and running work in parallel with Promise.all.",
+      "kind": "concept",
+      "requires": [
+        "event-loop"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "fetch-json",
+      "zone": 3,
+      "name": "Fetch & JSON",
+      "icon": "download",
+      "desc": "Calling HTTP APIs with fetch, JSON parsing and handling network errors.",
+      "kind": "lesson",
+      "requires": [
+        "async-js",
+        "web:http-basics"
+      ],
+      "xpReward": 90
+    },
+    {
+      "id": "js-errors",
+      "zone": 3,
+      "name": "Error handling",
+      "icon": "warning",
+      "desc": "try/catch, error types and handling errors in async code.",
+      "kind": "concept",
+      "requires": [
+        "async-js"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "dom",
+      "zone": 4,
+      "name": "The DOM",
+      "icon": "tree",
+      "desc": "Selecting, creating and updating elements through the DOM API.",
+      "kind": "concept",
+      "requires": [
+        "arrays-objects",
+        "web:html-css"
+      ],
+      "xpReward": 100,
+      "resources": [
+        {
+          "title": "MDN DOM introduction",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Introduction"
+        }
+      ]
+    },
+    {
+      "id": "events",
+      "zone": 4,
+      "name": "Events",
+      "icon": "bolt",
+      "desc": "Event listeners, bubbling, delegation and form handling.",
+      "kind": "concept",
+      "requires": [
+        "dom",
+        "closures"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "browser-storage",
+      "zone": 4,
+      "name": "Browser storage",
+      "icon": "save",
+      "desc": "localStorage, sessionStorage and IndexedDB basics.",
+      "kind": "lesson",
+      "requires": [
+        "dom"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "todo-spa",
+      "zone": 4,
+      "name": "To-do app project",
+      "icon": "check-circle",
+      "desc": "Build a framework-free to-do app with persistent storage.",
+      "kind": "project",
+      "requires": [
+        "events",
+        "browser-storage",
+        "classes-modules"
+      ],
+      "xpReward": 270
+    },
+    {
+      "id": "npm-bundlers",
+      "zone": 5,
+      "name": "npm & bundlers",
+      "icon": "layers",
+      "desc": "Packages with npm, package.json and bundling with a modern build tool.",
+      "kind": "lesson",
+      "requires": [
+        "classes-modules"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "node-runtime",
+      "zone": 5,
+      "name": "Node.js runtime",
+      "icon": "server",
+      "desc": "Node's module system, the fs and http modules, and streams.",
+      "kind": "concept",
+      "requires": [
+        "async-js",
+        "npm-bundlers"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "js-testing",
+      "zone": 5,
+      "name": "Testing JavaScript",
+      "icon": "check-circle",
+      "desc": "Unit tests with a test runner, mocks and testing async code.",
+      "kind": "lesson",
+      "requires": [
+        "npm-bundlers",
+        "js-errors"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "node-cli",
+      "zone": 5,
+      "name": "Node CLI project",
+      "icon": "terminal",
+      "desc": "Build a tested command-line tool in Node that calls a public API.",
+      "kind": "project",
+      "requires": [
+        "node-runtime",
+        "fetch-json",
+        "js-testing"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+{
+  "id": "rust",
+  "name": "Rust",
+  "short": "RUST",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 26,
+  "icon": "code",
+  "color": "#ce422b",
+  "description": "Rust's ownership model, traits, error handling, fearless concurrency and building real tools and services.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Rust basics"
+    },
+    {
+      "level": 2,
+      "name": "Ownership"
+    },
+    {
+      "level": 3,
+      "name": "Types & traits"
+    },
+    {
+      "level": 4,
+      "name": "Fearless concurrency"
+    },
+    {
+      "level": 5,
+      "name": "Ecosystem & projects"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "rust-basics",
+      "zone": 1,
+      "name": "Rust basics",
+      "icon": "code",
+      "desc": "Variables and mutability, scalar types, functions and control flow.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40,
+      "resources": [
+        {
+          "title": "The Rust Book",
+          "url": "https://doc.rust-lang.org/book/"
+        }
+      ]
+    },
+    {
+      "id": "cargo",
+      "zone": 1,
+      "name": "Cargo",
+      "icon": "wrench",
+      "desc": "Creating projects, building, running and adding crates with Cargo.",
+      "kind": "lesson",
+      "requires": [
+        "rust-basics"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "enums-match",
+      "zone": 1,
+      "name": "Enums & match",
+      "icon": "git-branch",
+      "desc": "Enums with data, Option, pattern matching and if let.",
+      "kind": "concept",
+      "requires": [
+        "rust-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "ownership",
+      "zone": 2,
+      "name": "Ownership",
+      "icon": "key",
+      "desc": "Stack and heap, moves, copies, and how ownership replaces a garbage collector.",
+      "kind": "concept",
+      "requires": [
+        "rust-basics",
+        "c:dynamic-memory"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "borrowing",
+      "zone": 2,
+      "name": "Borrowing",
+      "icon": "link",
+      "desc": "Shared and mutable references and the borrow checker's rules.",
+      "kind": "concept",
+      "requires": [
+        "ownership"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "lifetimes",
+      "zone": 2,
+      "name": "Lifetimes",
+      "icon": "clock",
+      "desc": "Lifetime annotations, elision rules and why references cannot dangle.",
+      "kind": "concept",
+      "requires": [
+        "borrowing"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "strings-slices",
+      "zone": 2,
+      "name": "Strings & slices",
+      "icon": "type",
+      "desc": "String vs &str, slices and UTF-8 text.",
+      "kind": "concept",
+      "requires": [
+        "borrowing"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "structs-traits",
+      "zone": 3,
+      "name": "Structs & traits",
+      "icon": "shapes",
+      "desc": "Structs, impl blocks, traits and trait objects.",
+      "kind": "concept",
+      "requires": [
+        "enums-match",
+        "borrowing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "generics-rust",
+      "zone": 3,
+      "name": "Generics",
+      "icon": "layers",
+      "desc": "Generic types, trait bounds and monomorphisation.",
+      "kind": "concept",
+      "requires": [
+        "structs-traits"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "result-errors",
+      "zone": 3,
+      "name": "Result & errors",
+      "icon": "warning",
+      "desc": "Result, the ? operator, custom error types and when to panic.",
+      "kind": "concept",
+      "requires": [
+        "enums-match"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "iterators-closures",
+      "zone": 3,
+      "name": "Iterators & closures",
+      "icon": "route",
+      "desc": "Closures, the Iterator trait and zero-cost iterator chains.",
+      "kind": "concept",
+      "requires": [
+        "generics-rust"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "rust-collections",
+      "zone": 3,
+      "name": "Collections",
+      "icon": "list",
+      "desc": "Vec, HashMap, HashSet and VecDeque.",
+      "kind": "concept",
+      "requires": [
+        "ownership"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "smart-pointers-rust",
+      "zone": 4,
+      "name": "Box, Rc & RefCell",
+      "icon": "gem",
+      "desc": "Heap allocation with Box, shared ownership with Rc and interior mutability.",
+      "kind": "concept",
+      "requires": [
+        "lifetimes",
+        "generics-rust"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "threads-rust",
+      "zone": 4,
+      "name": "Threads & Send/Sync",
+      "icon": "cpu",
+      "desc": "Spawning threads, Arc and Mutex, channels and the Send and Sync traits.",
+      "kind": "concept",
+      "requires": [
+        "smart-pointers-rust",
+        "parallel-programming:threads-locks"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "async-rust",
+      "zone": 4,
+      "name": "Async Rust",
+      "icon": "bolt",
+      "desc": "Futures, async/await and running tasks on an async runtime.",
+      "kind": "concept",
+      "requires": [
+        "threads-rust"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "unsafe-ffi",
+      "zone": 4,
+      "name": "Unsafe & FFI",
+      "icon": "warning",
+      "desc": "Raw pointers, unsafe blocks and calling C code.",
+      "kind": "concept",
+      "requires": [
+        "smart-pointers-rust",
+        "c:pointers"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "modules-crates",
+      "zone": 5,
+      "name": "Modules & crates",
+      "icon": "grid",
+      "desc": "Modules, visibility, workspaces and publishing a crate.",
+      "kind": "lesson",
+      "requires": [
+        "cargo",
+        "structs-traits"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "rust-testing",
+      "zone": 5,
+      "name": "Testing",
+      "icon": "check-circle",
+      "desc": "Unit, integration and doc tests.",
+      "kind": "lesson",
+      "requires": [
+        "modules-crates",
+        "result-errors"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "grep-clone",
+      "zone": 5,
+      "name": "CLI grep project",
+      "icon": "terminal",
+      "desc": "Build a fast grep-like command-line tool with tests.",
+      "kind": "project",
+      "requires": [
+        "iterators-closures",
+        "result-errors",
+        "rust-testing"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "rust-web-service",
+      "zone": 5,
+      "name": "Async web service",
+      "icon": "rocket",
+      "desc": "Build an async JSON web service with a database pool and graceful error handling.",
+      "kind": "project",
+      "requires": [
+        "async-rust",
+        "rust-testing",
+        "web:rest-apis"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

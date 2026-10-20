@@ -1,0 +1,298 @@
+{
+  "id": "data-engineering",
+  "name": "Data Engineering & Big Data",
+  "short": "DE",
+  "group": "beyond",
+  "domain": "data",
+  "order": 42,
+  "icon": "database",
+  "color": "#0d9488",
+  "description": "Modelling, moving and processing data at scale: pipelines, warehouses and lakes, Spark and streaming.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Data foundations"
+    },
+    {
+      "level": 2,
+      "name": "Pipelines & ETL"
+    },
+    {
+      "level": 3,
+      "name": "Storage at scale"
+    },
+    {
+      "level": 4,
+      "name": "Big data processing"
+    },
+    {
+      "level": 5,
+      "name": "Streaming & governance"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "de-overview",
+      "zone": 1,
+      "name": "Data engineering",
+      "icon": "compass",
+      "desc": "What data engineers build: sources, sinks, batch versus streaming and the modern data stack.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "analytical-sql",
+      "zone": 1,
+      "name": "Analytical SQL",
+      "icon": "database",
+      "desc": "Window functions, CTEs, grouping sets and writing efficient analytical queries.",
+      "kind": "lesson",
+      "requires": [
+        "sql:joins"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "data-modeling",
+      "zone": 1,
+      "name": "Data modelling",
+      "icon": "grid",
+      "desc": "Star and snowflake schemas, facts and dimensions, and when to denormalise.",
+      "kind": "lesson",
+      "requires": [
+        "analytical-sql",
+        "dbms:normalization"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "file-formats",
+      "zone": 1,
+      "name": "File formats",
+      "icon": "hash",
+      "desc": "CSV, JSON, Avro and Parquet; row versus columnar storage and compression.",
+      "kind": "concept",
+      "requires": [
+        "de-overview"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "etl-elt",
+      "zone": 2,
+      "name": "ETL & ELT",
+      "icon": "route",
+      "desc": "Extracting, transforming and loading data, and pushing transforms into the warehouse.",
+      "kind": "lesson",
+      "requires": [
+        "data-modeling",
+        "python:python-functions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "orchestration",
+      "zone": 2,
+      "name": "Orchestration",
+      "icon": "calendar",
+      "desc": "Pipelines as DAGs: scheduling, retries, backfills and idempotent tasks.",
+      "kind": "lesson",
+      "requires": [
+        "etl-elt"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "data-quality",
+      "zone": 2,
+      "name": "Data quality",
+      "icon": "check-circle",
+      "desc": "Validation checks, data contracts and testing pipelines before bad data spreads.",
+      "kind": "lesson",
+      "requires": [
+        "etl-elt"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "batch-pipeline",
+      "zone": 2,
+      "name": "Batch pipeline",
+      "icon": "workshop",
+      "desc": "Build a scheduled pipeline that ingests a public dataset daily, validates it and loads a warehouse.",
+      "kind": "project",
+      "requires": [
+        "orchestration",
+        "data-quality"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "data-warehouses",
+      "zone": 3,
+      "name": "Data warehouses",
+      "icon": "building",
+      "desc": "Columnar MPP warehouses, clustering, materialised views and cost-aware queries.",
+      "kind": "lesson",
+      "requires": [
+        "data-modeling",
+        "file-formats"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "data-lakes",
+      "zone": 3,
+      "name": "Data lakes",
+      "icon": "droplet",
+      "desc": "Object storage, lake layouts and lakehouse table formats with ACID transactions.",
+      "kind": "lesson",
+      "requires": [
+        "file-formats"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "distributed-storage",
+      "zone": 3,
+      "name": "Distributed storage",
+      "icon": "server",
+      "desc": "How HDFS-style and object stores split, replicate and place data across machines.",
+      "kind": "concept",
+      "requires": [
+        "data-lakes",
+        "distributed-systems:replication"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "partitioning",
+      "zone": 3,
+      "name": "Partitioning",
+      "icon": "grid",
+      "desc": "Choosing partition keys, bucketing and dealing with data skew.",
+      "kind": "concept",
+      "requires": [
+        "distributed-storage"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "mapreduce",
+      "zone": 4,
+      "name": "MapReduce",
+      "icon": "layers",
+      "desc": "The map, shuffle and reduce model and why it scales.",
+      "kind": "concept",
+      "requires": [
+        "distributed-storage"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "spark",
+      "zone": 4,
+      "name": "Apache Spark",
+      "icon": "bolt",
+      "desc": "DataFrames, lazy evaluation, transformations versus actions, and the shuffle.",
+      "kind": "lesson",
+      "requires": [
+        "mapreduce",
+        "python:python-functions"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "spark-tuning",
+      "zone": 4,
+      "name": "Spark tuning",
+      "icon": "sliders",
+      "desc": "Reading query plans, joins strategies, caching, partition sizing and avoiding spills.",
+      "kind": "lesson",
+      "requires": [
+        "spark",
+        "partitioning"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "spark-job",
+      "zone": 4,
+      "name": "Spark job",
+      "icon": "rocket",
+      "desc": "Process a multi-gigabyte dataset with Spark and publish aggregated tables.",
+      "kind": "project",
+      "requires": [
+        "spark-tuning",
+        "data-warehouses"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "event-logs",
+      "zone": 5,
+      "name": "Event logs & Kafka",
+      "icon": "inbox",
+      "desc": "Partitioned logs, producers, consumer groups, offsets and retention.",
+      "kind": "lesson",
+      "requires": [
+        "distributed-storage",
+        "sysd:message-queues"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "stream-processing",
+      "zone": 5,
+      "name": "Stream processing",
+      "icon": "activity",
+      "desc": "Windows, watermarks, late data, state and exactly-once processing.",
+      "kind": "lesson",
+      "requires": [
+        "event-logs",
+        "spark"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "change-data-capture",
+      "zone": 5,
+      "name": "Change data capture",
+      "icon": "share",
+      "desc": "Streaming database changes from transaction logs into downstream systems.",
+      "kind": "concept",
+      "requires": [
+        "event-logs",
+        "etl-elt"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "data-governance",
+      "zone": 5,
+      "name": "Governance & lineage",
+      "icon": "shield",
+      "desc": "Catalogues, lineage, access control and handling personal data.",
+      "kind": "concept",
+      "requires": [
+        "data-quality"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "streaming-pipeline",
+      "zone": 5,
+      "name": "Streaming pipeline",
+      "icon": "trophy",
+      "desc": "Build a real-time pipeline from a source database through a log to live aggregates.",
+      "kind": "project",
+      "requires": [
+        "stream-processing",
+        "change-data-capture",
+        "orchestration"
+      ],
+      "xpReward": 300
+    }
+  ]
+}
