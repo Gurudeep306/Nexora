@@ -14,6 +14,7 @@
     "notes:build": "node scripts/build-gate-notes.js",
     "notes:check": "node scripts/build-gate-notes.js --check",
     "notes:checks": "python3 scripts/gate-notes/run_checks.py",
+    "nexus:check": "node scripts/validate-nexus.js",
     "scrape": "node src/scraper.js",
     "scrape:100": "node src/scraper.js --limit 100",
     "scrape:500": "node src/scraper.js --limit 500",

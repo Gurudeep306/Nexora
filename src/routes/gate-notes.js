@@ -4,6 +4,7 @@ const path = require("path");
 const { all, run } = require("../db");
 const { requireAuthenticatedUser } = require("../middleware/auth");
 const { hasAnyAdminPerm } = require("../authz/permissions");
+const { invalidateNexusUser } = require("../nexus/user-cache");
 
 /*
  * GATE Notes — the course reader's API.
@@ -327,6 +328,7 @@ function createGateNotesRouter() {
          updated_at=excluded.updated_at`,
       [req.sessionUser.username, s.card.id, req.params.lesson, row.completed, row.scroll_pct, row.bookmarked, row.completed_at || null, now],
     );
+    if (set.completed !== undefined) invalidateNexusUser(req.sessionUser.username);
     res.json({ ok: true });
   }));
 

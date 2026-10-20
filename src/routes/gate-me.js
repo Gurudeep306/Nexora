@@ -7,6 +7,7 @@ const { loadGateBank } = require("./gate");
 const { gradeQuestion, isAnswered, questionMarks } = require("../gate/grade");
 const { recordAttempts, reviewState, isoDay, addDays, DAY_MS } = require("../gate/attempts");
 const { sharedCache } = require("../shared-cache");
+const { invalidateNexusUser } = require("../nexus/user-cache");
 
 // Leaderboard rows per period (all ranked users), shared by every visitor.
 const gateBoardCache = sharedCache({ name: "gate-leaderboard", ttlMs: 10 * 60 * 1000, minAgeMs: 5 * 60 * 1000, tables: ["gate_attempts", "users"] });
@@ -703,6 +704,7 @@ function createGateMeRouter() {
       ]);
     }
     await runBatch(stmts);
+    invalidateNexusUser(req.sessionUser.username);
     res.json({ ok: true, imported: rows.length });
   }));
 
