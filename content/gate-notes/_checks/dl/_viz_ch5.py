@@ -289,6 +289,13 @@ def bbox(e):
         return (e["x"], e["y"], e["x"] + cols * e["cellW"], e["y"] + len(e["rows"]) * e["cellH"])
     if t == "grid":
         return (e["x"], e["y"], e["x"] + e["cols"] * e["cell"], e["y"] + e["rows"] * e["cell"])
+    if t == "arrow":
+        # Arrows snap to elements by id; only point ends can be measured (used by Chapter 6 state graphs).
+        pts = [p for p in (e["from"], e["to"]) if not isinstance(p, str)]
+        if not pts:
+            return (0, 0, 0, 0)
+        xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+        return (min(xs), min(ys), max(xs), max(ys))
     raise ValueError(f"no bbox for {t}")
 
 

@@ -2832,112 +2832,85 @@
       "verification": "Resolution check: from A and B→¬A get ¬B; from A and A→(B∨C) get B∨C; with ¬B, C."
     },
     "cse-1993-ii-c-19": {
-      "approach": "A two-level NAND–NAND network is a sum of products. Read the product terms off the first-level gates to get $D_A$ and $D_B$; for D flip-flops $A^+=D_A$, $B^+=D_B$, then tabulate all 8 combinations of $A,B,P$.",
+      "approach": "Concept tested: **the analysis procedure**. Turn the NAND network into input equations (a NAND of NANDs is an AND–OR), use $Q^+ = D$ for both flip-flops, and evaluate every state for both values of $P$.",
       "concepts": [
-        "NAND–NAND = SOP",
+        "State table",
         "D flip-flop",
-        "State transition table"
+        "NAND-NAND logic",
+        "Analysis procedure"
       ],
+      "given": "Two D flip-flops with state bits $A$, $B$ and a control input $P$. From the figure, $D_A = \\overline{\\overline{B\\overline{A}}\\cdot\\overline{\\overline{A}\\,\\overline{P}}}$ and $D_B = \\overline{\\overline{P\\overline{B}}\\cdot\\overline{\\overline{P}A}}$.",
       "steps": [
         {
-          "title": "Read the circuit",
-          "body": "First-level gate inputs: $(\\overline{A},B)$ and $(\\overline{A},\\overline{P})$ feed the $D_A$ gate; $(P,\\overline{B})$ and $(\\overline{P},A)$ feed the $D_B$ gate."
+          "title": "Input equations",
+          "body": "By De Morgan a two-level NAND–NAND network is AND–OR: $D_A = \\overline{A}B + \\overline{A}\\,\\overline{P}$ and $D_B = P\\overline{B} + \\overline{P}A$."
         },
         {
-          "title": "Next-state equations",
-          "body": "$$D_A=\\overline{\\overline{\\overline{A}B}\\cdot\\overline{\\overline{A}\\,\\overline{P}}}=\\overline{A}B+\\overline{A}\\,\\overline{P}=\\overline{A}(B+\\overline{P})$$ $$D_B=\\overline{\\overline{P\\overline{B}}\\cdot\\overline{\\overline{P}A}}=P\\overline{B}+\\overline{P}A$$ With D flip-flops, $A^+=D_A$ and $B^+=D_B$."
-        },
-        {
-          "title": "Evaluate each row",
-          "body": "$A^+=1$ only when $A=0$ and ($B=1$ or $P=0$). $B^+=1$ when ($P=1,B=0$) or ($P=0,A=1$).",
+          "title": "State equations",
+          "body": "D flip-flops load their inputs: $A^+ = \\overline{A}(B + \\overline{P})$, $B^+ = P\\overline{B} + \\overline{P}A$.",
           "scene": {
-            "kind": "table",
-            "cols": [
-              "AB",
-              "P",
-              "D_A = A⁺",
-              "D_B = B⁺",
-              "A⁺B⁺"
-            ],
-            "rows": [
-              [
-                "00",
-                "0",
-                "1",
-                "0",
-                "10"
-              ],
-              [
-                "00",
-                "1",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "01",
-                "0",
-                "1",
-                "0",
-                "10"
-              ],
-              [
-                "01",
-                "1",
-                "1",
-                "0",
-                "10"
-              ],
-              [
-                "10",
-                "0",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "10",
-                "1",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "11",
-                "0",
-                "0",
-                "1",
-                "01"
-              ],
-              [
-                "11",
-                "1",
-                "0",
-                "0",
-                "00"
-              ]
-            ],
-            "reveal": 0,
-            "mono": true
+            "reveal": 1
           }
         },
         {
-          "title": "State transition table",
-          "body": "Present state $AB$, input $P$ → next state:\\n\\n| AB | P = 0 | P = 1 |\\n|---|---|---|\\n| 00 | 10 | 01 |\\n| 01 | 10 | 10 |\\n| 10 | 01 | 01 |\\n| 11 | 01 | 00 |",
+          "title": "Rows with A = 0",
+          "body": "$AB = 00$: $P = 0$ → 10, $P = 1$ → 01. $AB = 01$: $P = 0$ → 10, $P = 1$ → 10.",
           "scene": {
-            "reveal": 40
+            "reveal": 2
+          }
+        },
+        {
+          "title": "Rows with A = 1",
+          "body": "$A^+ = 0$ always. $AB = 10$: $B^+ = \\overline{P} + P = 1$, so 01 for both $P$. $AB = 11$: $P = 0$ → 01, $P = 1$ → 00.",
+          "scene": {
+            "reveal": 4
           }
         }
       ],
       "answer": {
-        "value": "$D_A=\\overline{A}B+\\overline{A}\\,\\overline{P}$, $D_B=P\\overline{B}+\\overline{P}A$. AB → A⁺B⁺ for P = 0 / P = 1: 00 → 10 / 01; 01 → 10 / 10; 10 → 01 / 01; 11 → 01 / 00.",
+        "value": "AB, P → A⁺B⁺: 00,0→10; 00,1→01; 01,0→10; 01,1→10; 10,0→01; 10,1→01; 11,0→01; 11,1→00 (D_A = A'B + A'P', D_B = PB' + P'A)",
         "matchesKey": true
       },
+      "shortcut": "Read $A^+ = \\overline{A}(B + \\overline{P})$ first: every state with $A = 1$ goes to $A^+ = 0$, which fills half the table at once.",
       "pitfalls": [
-        "Treating the gates as AND–OR without the double inversion — NAND–NAND equals AND–OR, not NOR.",
-        "Mixing up which feedback line is $A$ and which is $\\overline{A}$."
+        "Converting NAND–NAND to OR–AND instead of AND–OR.",
+        "Mixing up which inverter output ($\\overline{A}$ or $A$) feeds which first-level gate."
       ],
-      "verification": "Row 11, P = 1: $D_A=0\\cdot(1+0)=0$, $D_B=1\\cdot0+0\\cdot1=0$ → 00. Row 00, P = 0: $D_A=1\\cdot(0+1)=1$, $D_B=0+1\\cdot0=0$ → 10."
+      "verification": "Simulating the two flip-flops for all 4 states and both values of P reproduces the eight rows; the NAND-of-NANDs and the AND–OR forms agree on all 8 input rows.",
+      "animation": {
+        "kind": "table",
+        "title": "Next state A⁺B⁺",
+        "cols": [
+          "P = 0",
+          "P = 1"
+        ],
+        "rows": [
+          [
+            "10",
+            "01"
+          ],
+          [
+            "10",
+            "10"
+          ],
+          [
+            "01",
+            "01"
+          ],
+          [
+            "01",
+            "00"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "AB = 00",
+          "AB = 01",
+          "AB = 10",
+          "AB = 11"
+        ],
+        "reveal": 0
+      }
     },
     "cse-1993-ii-c-20": {
       "approach": "Trace the loop: HL is a pointer loaded indirectly from 5000H, B is a down-counter of 5, and each iteration reads input port 20H into A and stores it at the pointer.",

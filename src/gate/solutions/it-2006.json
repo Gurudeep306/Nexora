@@ -2136,27 +2136,29 @@
       }
     },
     "it-2006-cs-37": {
-      "approach": "Read the next state from each state separately and combine: $S^+ = S\\cdot(\\text{next from }1) + S'\\cdot(\\text{next from }0)$.",
+      "approach": "Concept tested: **from a state diagram to a next-state equation**. In each state write $S^+$ as a function of the inputs from its arcs, then combine with $S$ as the selector (Shannon expansion).",
       "concepts": [
         "State diagram",
-        "Next-state equation"
+        "Next-state equation",
+        "Shannon expansion"
       ],
+      "given": "Two states. $S = 1$: self-loop on $x = 1$, arc to 0 on $x = 0$. $S = 0$: self-loop on $y = 1$, arc to 1 on $y = 0$.",
       "steps": [
         {
-          "title": "From S = 1",
-          "body": "Self-loop on $x=1$, move to 0 on $x=0$. So next state $= x$."
+          "title": "State 1",
+          "body": "The next state is 1 exactly when $x = 1$: $S^+ = x$."
         },
         {
-          "title": "From S = 0",
-          "body": "Self-loop on $y=1$ (stays 0), move to 1 on $y=0$. So next state $= y'$."
+          "title": "State 0",
+          "body": "The next state is 1 exactly when $y = 0$: $S^+ = \\overline{y}$."
         },
         {
           "title": "Combine",
-          "body": "$S^+ = S\\cdot x + S'\\cdot y'$, i.e. $S^+ = S'y' + Sx$."
+          "body": "$S^+ = \\overline{S}\\,\\overline{y} + S\\,x$, i.e. $S'y' + Sx$: option A."
         }
       ],
       "answer": {
-        "value": "$S^+ = S'y' + Sx$",
+        "value": "(A) $S^+ = S'y' + Sx$",
         "choice": [
           "A"
         ],
@@ -2166,25 +2168,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct."
+          "reason": "Agrees with every arc of the diagram."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "From $S=1$ with $x=1$ it gives $y'$, so $x=1,y=1$ would wrongly leave state 1."
+          "reason": "In state 1 with $x = 1$, $y = 1$ it gives 0, but the self-loop keeps 1."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Ignores $S$: from $S=0$ with $y=0$, $x=0$ it gives 0 but the machine goes to 1."
+          "reason": "Ignores the state: in state 0 with $x = y = 0$ it gives 0, but the arc on $y = 0$ goes to 1."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Inverted: from $S=0$ it moves to 1 on $y=1$, but $y=1$ is the self-loop."
+          "reason": "Swaps every arc: it leaves state 1 when $x = 1$ and leaves state 0 when $y = 1$."
         }
       ],
-      "verification": "$S=0,y=0$: $S^+ = 1\\cdot1 + 0 = 1$ ✓. $S=1,x=0$: $S^+ = 0 + 0 = 0$ ✓."
+      "shortcut": "Check one arc per state: $S = 1, x = 1$ must give 1 and $S = 0, y = 0$ must give 1. Only A passes both.",
+      "pitfalls": [
+        "Mixing which input matters in which state.",
+        "Reading the self-loop labels as the conditions for leaving."
+      ],
+      "verification": "Testing all 8 combinations of $S$, $x$, $y$: only option A matches the diagram everywhere."
     },
     "it-2006-cs-38": {
       "approach": "Concept tested: **bit-pair (radix-4) recoding**. Each triple $(x_{i+1}, x_i, x_{i-1})$ selects $D = -2x_{i+1} + x_i + x_{i-1}$ times $Y$.",

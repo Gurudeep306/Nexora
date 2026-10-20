@@ -1995,29 +1995,39 @@
       "verification": "l4_02_cla.py counts the gates of the two-level look-ahead netlist for $C_1 \\dots C_4$: 10 AND and 4 OR, and checks every carry against integer addition."
     },
     "cse-2007-cs-36": {
-      "approach": "The AND of A3 and A1 drives the asynchronous Clear. With A4 as MSB, A3A1 = 1 first happens at 0101 = 5, which is cleared instantly, so 5 is never a stable state.",
+      "approach": "Concept tested: **a mod-N counter made with an asynchronous clear**. Find the first count at which the AND gate fires; because Clear acts regardless of the clock, that state is wiped at once and is not part of the cycle.",
       "concepts": [
-        "Counters",
         "Asynchronous clear",
-        "Modulo-N counter"
+        "Mod-N counter",
+        "Clear detect gate"
       ],
-      "given": "| Signal | Value |\n|---|---|\n| Count | 1 |\n| Load | 0 |\n| Clear | $A_3\\cdot A_1$ |",
+      "given": "A 4-bit binary counter with outputs $A_4A_3A_2A_1$ ($A_1$ = LSB); Clear = 1 clears regardless of the clock; Load = 0 and Count = 1; Clear = $A_3 \\cdot A_1$; parallel inputs 0011; delays negligible; start at 0.",
       "steps": [
         {
-          "title": "Counting mode",
-          "body": "Load = 0, Count = 1, so each clock edge advances the counter by 1 while Clear = 0. The inputs 0011 are never loaded."
+          "title": "What the control inputs select",
+          "body": "Load = 0, Count = 1: 'count next' at every rising edge. The inputs 0011 are never loaded."
         },
         {
-          "title": "When Clear fires",
-          "body": "Bits $A_4A_3A_2A_1$ (MSB first):\n\n| Count | $A_4A_3A_2A_1$ | $A_3A_1$ |\n|---|---|---|\n| 0 | 0000 | 0 |\n| 1 | 0001 | 0 |\n| 2 | 0010 | 0 |\n| 3 | 0011 | 0 |\n| 4 | 0100 | 0 |\n| 5 | 0101 | **1** |\n\nAt 5 the AND output becomes 1 and (zero delay) clears the counter to 0 at once, so 5 is transient."
+          "title": "When the gate fires",
+          "body": "$A_3$ has weight 4 and $A_1$ weight 1, so $A_3A_1 = 1$ first at $0101_2 = 5$ (the earlier counts 0 … 4 never have both bits).",
+          "scene": {
+            "reveal": 5
+          }
         },
         {
-          "title": "Sequence",
-          "body": "Stable states: $0,1,2,3,4$, then back to 0 — a mod-5 counter."
+          "title": "Asynchronous: 5 vanishes",
+          "body": "The Clear row of the table has the clock as don't-care, so Clear acts immediately: the moment 5 appears the counter is reset to 0. State 5 lasts only for the clear delay (zero here).",
+          "scene": {
+            "reveal": 6
+          }
+        },
+        {
+          "title": "The cycle",
+          "body": "0, 1, 2, 3, 4, 0, …: a mod-5 counter, exactly the 'AND the 1 bits of N' rule with $N = 5 = 0101$."
         }
       ],
       "answer": {
-        "value": "0, 1, 2, 3, 4",
+        "value": "(C) 0, 1, 2, 3, 4",
         "choice": [
           "C"
         ],
@@ -2027,29 +2037,88 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Would need loading 0011, but Load = 0."
+          "reason": "0, 3, 4 assumes the inputs 0011 are loaded; that needs Load = 1, but Load is 0."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Would need loading, and 5 is cleared immediately."
+          "reason": "0, 3, 4, 5 loads 0011 as well and also keeps 5, which the clear removes."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Counts 0 to 4; reaching 5 clears asynchronously."
+          "reason": "Counting 0 … 4; at 5 the asynchronous clear resets the counter to 0 at once."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "5 is not a stable state since Clear is asynchronous with zero delay."
+          "reason": "Keeping 5 in the cycle treats the clear as synchronous (acting at the next edge). With an asynchronous clear, 5 never lasts."
         }
       ],
+      "shortcut": "Write the gate's inputs as a number: $A_3A_1$ → 0101 = 5. An asynchronous clear at N gives 0 … N − 1.",
       "pitfalls": [
-        "Treating Clear as synchronous (which would give 0–5).",
-        "Thinking the inputs 0011 matter — Load is tied to 0."
+        "Treating the clear as synchronous and keeping state 5 (option D).",
+        "Taking $A_4$ as the LSB, which would make the gate detect a different number.",
+        "Thinking the parallel inputs matter when Load = 0."
       ],
-      "verification": "First count with $A_3=A_1=1$ is $0101_2=5$."
+      "verification": "An event simulation of the counter with Clear = $A_3A_1$ settles at 1, 2, 3, 4, 0, 1, … after successive edges; with a synchronous clear it would cycle 0 … 5.",
+      "animation": {
+        "kind": "table",
+        "title": "Counting with Clear = A3·A1",
+        "cols": [
+          "A4A3A2A1",
+          "A3·A1",
+          "result"
+        ],
+        "rows": [
+          [
+            "0000",
+            0,
+            "count"
+          ],
+          [
+            "0001",
+            0,
+            "count"
+          ],
+          [
+            "0010",
+            0,
+            "count"
+          ],
+          [
+            "0011",
+            0,
+            "count"
+          ],
+          [
+            "0100",
+            0,
+            "count"
+          ],
+          [
+            "0101",
+            1,
+            "cleared at once"
+          ],
+          [
+            "0000",
+            0,
+            "count"
+          ]
+        ],
+        "mono": true,
+        "rowLabels": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "0"
+        ],
+        "reveal": 1
+      }
     },
     "cse-2007-cs-37": {
       "approach": "Draw the pipeline diagram cycle by cycle; with forwarding, a dependent instruction's EX can start in the cycle right after the producer's last EX cycle.",

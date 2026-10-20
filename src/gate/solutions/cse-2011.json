@@ -1260,23 +1260,28 @@
       }
     },
     "cse-2011-cs-15": {
-      "approach": "A mod-$N$ counter needs $N$ distinct states, so the number of flip-flops is the smallest $n$ with $2^n \\ge N$.",
+      "approach": "Concept tested: **flip-flops for a mod-N counter**: the smallest k with $2^k \\ge N$, i.e. $\\lceil \\log_2 258 \\rceil$.",
       "concepts": [
-        "Counters",
-        "State encoding"
+        "Counter modulus",
+        "Flip-flop count"
       ],
+      "given": "A mod-258 counter built with D flip-flops; minimum number of flip-flops.",
       "steps": [
         {
-          "title": "Bound",
-          "body": "$2^8 = 256 < 258$ and $2^9 = 512 \\ge 258$."
+          "title": "Place 258 between powers of two",
+          "body": "$2^8 = 256 < 258 \\le 512 = 2^9$."
         },
         {
-          "title": "Result",
-          "body": "Minimum flip-flops $= \\lceil \\log_2 258 \\rceil = 9$."
+          "title": "Round up",
+          "body": "Eight flip-flops hold only 256 states, two short; nine hold 512. So $k = \\lceil \\log_2 258 \\rceil = 9$."
+        },
+        {
+          "title": "The flip-flop type does not matter",
+          "body": "D, T or JK changes the gates in front of the flip-flops, not how many states they can store."
         }
       ],
       "answer": {
-        "value": "**9** D flip-flops — option (A)",
+        "value": "(A) 9",
         "choice": [
           "A"
         ],
@@ -1286,28 +1291,30 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: 9 bits give 512 ≥ 258 states."
+          "reason": "$\\lceil \\log_2 258 \\rceil = 9$."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "8 bits give only 256 states, two short of 258."
+          "reason": "8 flip-flops give only $2^8 = 256 < 258$ states (rounding $\\log_2 258 \\approx 8.01$ down)."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "512 is the number of states 9 flip-flops provide, not the number of flip-flops."
+          "reason": "512 is the number of states nine flip-flops provide, not the number of flip-flops."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "258 flip-flops would be a one-hot (ring) design — valid but far from minimal."
+          "reason": "258 is a one-hot design (one flip-flop per state), not the minimum."
         }
       ],
+      "shortcut": "256 is $2^8$; anything above it needs a ninth bit.",
       "pitfalls": [
-        "Answering 8 because 258 is \"close to\" 256."
+        "Rounding the logarithm to the nearest integer.",
+        "Confusing the number of states with the number of flip-flops."
       ],
-      "verification": "$\\log_2 258 \\approx 8.01$, ceiling 9."
+      "verification": "seqlib.ff_count(258) = 9; ff_count(256) = 8 and ff_count(257) = 9."
     },
     "cse-2011-cs-16": {
       "approach": "Threads of a process share its address space, so the OS keeps virtual-memory state per process; per thread it keeps registers (incl. PC, SP), a stack, and scheduling state.",
@@ -3609,24 +3616,29 @@
       "verification": "Successive halving: 513→256→128→64→32→16→8→4→2→1→0 gives remainders 1,0,0,0,0,0,0,0,0,1, which sum to 2."
     },
     "cse-2011-cs-50": {
-      "approach": "Write the next-state equation of each D flip-flop from the gates feeding its D input. Then substitute the present state PQR = 010.",
+      "approach": "Concept tested: **input equations of D flip-flops**. Read $D_P$, $D_Q$, $D_R$ from the gates; with D flip-flops they are the next state. Substitute the present values (all old values).",
       "concepts": [
         "D flip-flop",
-        "Next-state equations",
-        "Counters"
+        "Next-state equation",
+        "Counter analysis"
       ],
+      "given": "$D_P = R$, $D_Q = \\overline{P + R}$ (NOR), $D_R = Q\\,\\overline{R}$ (AND with $\\overline{R}$). Before the edge $PQR = 010$.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "Reading the circuit:\n\n- $D_P = R$ (the R output wire feeds D of the P flip-flop)\n- $D_Q = \\overline{P+R}$ (NOR of P and R)\n- $D_R = Q\\cdot\\overline{R}$ (AND of Q and $\\overline{R}$)\n\nOn the clock edge each flip-flop copies its D input: $P^+=R$, $Q^+=\\overline{P+R}$, $R^+=Q\\overline{R}$."
+          "title": "State equations",
+          "body": "$P^+ = R$, $Q^+ = \\overline{P}\\,\\overline{R}$, $R^+ = Q\\overline{R}$."
         },
         {
-          "title": "Substitute P=0, Q=1, R=0",
-          "body": "$P^+=R=0$\n\n$Q^+=\\overline{0+0}=1$\n\n$R^+=1\\cdot\\overline{0}=1$\n\nSo $PQR$ becomes **011**."
+          "title": "Substitute 010",
+          "body": "$P^+ = 0$; $Q^+ = 1 \\cdot 1 = 1$; $R^+ = 1 \\cdot 1 = 1$. So $PQR = 011$."
+        },
+        {
+          "title": "Whole table (for Q51)",
+          "body": "000 → 010, 001 → 100, 010 → 011, 011 → 100, 100 → 000, 101 → 100, 110 → 001, 111 → 100."
         }
       ],
       "answer": {
-        "value": "011",
+        "value": "(D) 011",
         "choice": [
           "D"
         ],
@@ -3636,94 +3648,54 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "000 would need $Q^+=0$, but NOR(0,0) = 1."
+          "reason": "Would need $Q^+ = 0$, but $P = R = 0$ makes the NOR 1."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "001 drops Q, but $Q^+=\\overline{P+R}=1$."
+          "reason": "Computing $Q^+$ with the new $R = 1$ gives 0: the same-edge mistake."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "010 means nothing changed. $R^+=Q\\overline{R}=1$, so R does change."
+          "reason": "No change: forgets that $D_R = Q\\overline{R} = 1$."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "$P^+=0$, $Q^+=1$, $R^+=1$."
+          "reason": "Every flip-flop loads its input computed from 010."
         }
       ],
-      "verification": "This agrees with the state cycle 000→010→011→100→000 derived in Q51."
+      "shortcut": "Only $R$ can change from 010: $D_P = R = 0$ and $D_Q = 1$ keep P and Q, while $D_R = Q\\overline{R} = 1$.",
+      "pitfalls": [
+        "Using a newly computed bit to compute another bit of the same edge."
+      ],
+      "verification": "Simulating the three flip-flops from 010 gives 011."
     },
     "cse-2011-cs-51": {
-      "approach": "Use the next-state equations $P^+=R$, $Q^+=\\overline{P+R}$, $R^+=Q\\overline{R}$. Iterate from 000 until a state repeats, then count the distinct states in the cycle.",
+      "approach": "Concept tested: **reachability and the cycle theorem**. From the power-on state 000, follow the next-state table until a state repeats; the distinct states seen are all the counter will ever produce.",
       "concepts": [
-        "Counter state sequence",
-        "D flip-flop"
+        "Reachability",
+        "Cycle theorem",
+        "Counter analysis"
       ],
+      "given": "The circuit of Q50 ($P^+ = R$, $Q^+ = \\overline{P}\\,\\overline{R}$, $R^+ = Q\\overline{R}$), reset to 000 at power on.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "Reading the circuit:\n\n- $D_P = R$ (the R output wire feeds D of the P flip-flop)\n- $D_Q = \\overline{P+R}$ (NOR of P and R)\n- $D_R = Q\\cdot\\overline{R}$ (AND of Q and $\\overline{R}$)\n\nOn the clock edge each flip-flop copies its D input: $P^+=R$, $Q^+=\\overline{P+R}$, $R^+=Q\\overline{R}$.",
-          "scene": {
-            "reveal": 0,
-            "caption": "Start at reset state 000"
-          }
+          "title": "Trace from 000",
+          "body": "000 → 010 → 011 → 100 → 000."
         },
         {
-          "title": "From 000",
-          "body": "$P^+=0$, $Q^+=\\overline{0+0}=1$, $R^+=0\\cdot1=0$, so 000 → **010**.",
-          "scene": {
-            "reveal": 5,
-            "hl": [
-              {
-                "r": 0
-              }
-            ]
-          }
+          "title": "The trace has repeated",
+          "body": "The next state depends only on the present one, so the circuit cycles through these four states for ever."
         },
         {
-          "title": "From 010",
-          "body": "$P^+=0$, $Q^+=\\overline{0+0}=1$, $R^+=1\\cdot1=1$, so 010 → **011**.",
-          "scene": {
-            "reveal": 10,
-            "hl": [
-              {
-                "r": 1
-              }
-            ]
-          }
-        },
-        {
-          "title": "From 011",
-          "body": "$P^+=1$, $Q^+=\\overline{0+1}=0$, $R^+=1\\cdot0=0$, so 011 → **100**.",
-          "scene": {
-            "reveal": 15,
-            "hl": [
-              {
-                "r": 2
-              }
-            ]
-          }
-        },
-        {
-          "title": "From 100 — cycle closes",
-          "body": "$P^+=0$, $Q^+=\\overline{1+0}=0$, $R^+=0\\cdot1=0$, so 100 → **000**, the start state.\n\nThe cycle is 000 → 010 → 011 → 100 → 000, which has **4** distinct states.",
-          "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "success"
-              }
-            ],
-            "caption": "4 distinct states"
-          }
+          "title": "The other states",
+          "body": "001, 101, 111 go to 100 and 110 goes to 001: they lead into the cycle but are never produced from 000."
         }
       ],
       "answer": {
-        "value": "4",
+        "value": "(B) 4",
         "choice": [
           "B"
         ],
@@ -3733,70 +3705,29 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "3 misses one state of the cycle. The cycle from 000 visits 000, 010, 011 and 100."
+          "reason": "Stops the trace one step early and misses 100."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "The cycle 000→010→011→100→000 has 4 states."
+          "reason": "000, 010, 011, 100."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "5 would need one more distinct state before 000 repeats, but 100 goes straight back to 000."
+          "reason": "Counts a state that only leads into the cycle."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "6 counts states not reachable from reset. Only 4 occur."
+          "reason": "Counts states never produced from 000."
         }
       ],
+      "shortcut": "With the full table from Q50, the answer is four lookups.",
       "pitfalls": [
-        "Counting all $2^3=8$ combinations, or the states reachable from other initial values, instead of only those reachable from 000."
+        "Counting every state whose arc touches the cycle instead of the states actually visited from 000."
       ],
-      "verification": "Q50's transition 010→011 appears in this cycle, which confirms the equations.",
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "PQR",
-          "P⁺=R",
-          "Q⁺=(P+R)'",
-          "R⁺=QR'",
-          "next"
-        ],
-        "rows": [
-          [
-            "000",
-            "0",
-            "1",
-            "0",
-            "010"
-          ],
-          [
-            "010",
-            "0",
-            "1",
-            "1",
-            "011"
-          ],
-          [
-            "011",
-            "1",
-            "0",
-            "0",
-            "100"
-          ],
-          [
-            "100",
-            "0",
-            "0",
-            "0",
-            "000"
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      }
+      "verification": "The simulated trace from 000 has tail 0 and cycle length 4."
     },
     "cse-2011-cs-52": {
       "approach": "N3's neighbours are N2 (link now 2) and N4 (link 2). In the round, N3 sets each entry to $\\min(c(N3,v)+D_v(\\cdot))$ over neighbours $v$. N2's vector differs from before only in its N3 entry, which is now 2.",

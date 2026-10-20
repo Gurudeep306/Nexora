@@ -1058,23 +1058,34 @@
       "verification": "Standard VLSI texts (Weste–Eshraghian) list near-zero static power as the key CMOS advantage ✓."
     },
     "cse-1991-a-3-ii": {
-      "approach": "A clock makes state change only at defined instants after signals settle, so transient glitches (hazards) and races do not matter — the main design advantage. Speed and hardware economy favour asynchronous circuits.",
+      "approach": "Concept tested: **the synchronous design discipline**. With one clock and a period longer than the slowest path, every flip-flop samples settled values, so hazards and races inside the logic are over before any edge looks. Judge each option against that one fact.",
       "concepts": [
-        "synchronous sequential circuits",
-        "hazards and races"
+        "Synchronous circuits",
+        "Asynchronous circuits",
+        "Hazards",
+        "Clock period"
       ],
+      "given": "An MSQ: which is an advantage of synchronous sequential circuits over asynchronous ones: faster operation, ease of avoiding problems due to hazards, lower hardware requirement, better noise immunity, none of these.",
       "steps": [
         {
-          "title": "Why hazards are easy to avoid",
-          "body": "Flip-flops sample inputs only at the clock edge. As long as the clock period exceeds the worst combinational delay, glitches in the next-state logic die out before sampling — no hazard-free covers or race analysis needed."
+          "title": "What the clock buys",
+          "body": "If $T \\ge t_{cq} + t_{logic,max} + t_{su}$, every flip-flop input has settled before its setup window opens. A glitch (hazard) or a race between two state bits happens between edges, while no flip-flop is sampling, so it cannot be stored. That is option B."
         },
         {
-          "title": "Check the rest",
-          "body": "Asynchronous circuits are not slowed by a worst-case clock (faster) and need no clock distribution or flip-flops (less hardware). Noise immunity is a property of the logic family, not of clocking."
+          "title": "Speed",
+          "body": "The clock period must cover the **worst-case** path in every cycle, while an asynchronous circuit reacts as soon as its gates switch. Synchronous design is not faster: A is wrong."
+        },
+        {
+          "title": "Hardware",
+          "body": "Every state bit needs a clocked flip-flop and the clock must be distributed to all of them. Synchronous circuits are not smaller: C is wrong."
+        },
+        {
+          "title": "Noise",
+          "body": "Noise immunity is set by the logic family's voltage margins. A spike that lands in a setup window is captured by a flip-flop just as by a latch, so the timing style does not improve it: D is wrong, and since B holds, E is wrong."
         }
       ],
       "answer": {
-        "value": "B — ease of avoiding problems due to hazards",
+        "value": "(B) ease of avoiding problems due to hazards",
         "choice": [
           "B"
         ],
@@ -1084,33 +1095,35 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Clocking forces worst-case timing; asynchronous circuits are potentially faster."
+          "reason": "The clock waits for the slowest path every cycle; asynchronous circuits are, if anything, faster."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Edge-triggered sampling ignores glitches and races, avoiding hazard problems."
+          "reason": "Glitches and races settle between edges, when no flip-flop samples, so they cause no errors."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Synchronous designs add flip-flops and clock circuitry — more hardware."
+          "reason": "Flip-flops and the clock network cost hardware; asynchronous designs are usually smaller."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Noise margins depend on the logic family (TTL, CMOS), not on synchronous vs asynchronous design."
+          "reason": "Noise margins belong to the logic family, not to the timing discipline."
         },
         {
           "option": "E",
           "correct": false,
-          "reason": "B is a real advantage."
+          "reason": "B is a genuine advantage."
         }
       ],
+      "shortcut": "Synchronous design trades speed and hardware for correctness: the only advantage on the list is the hazard/race immunity.",
       "pitfalls": [
-        "Choosing \"faster\" — that is the classic advantage of asynchronous circuits."
+        "Picking 'faster': the period is set by the worst-case path.",
+        "Picking 'lower hardware': flip-flops plus clock distribution are extra hardware."
       ],
-      "verification": "Textbooks (Mano, Kohavi) cite hazard/race-free operation and easier design as the reason synchronous circuits dominate ✓."
+      "verification": "Edge sampling with a 20 ns clock and 3 ns setup: an input that glitches at 6 and 9 ns and settles at 12 ns is sampled cleanly; only a change inside the setup window (18 ns) is flagged."
     },
     "cse-1991-a-3-iii": {
       "approach": "The size of the virtual address space is $2^{k}$ where $k$ is the width of the address the CPU generates (held in the MAR in the textbook model). Main memory only limits how much is resident at once.",

@@ -6031,77 +6031,33 @@
       }
     },
     "cse-2023-cs-33": {
-      "approach": "Read each flip-flop's input from the figure, write next-state equations, and step from $(0,1,1)$ until a state repeats. The states on that cycle are the only ones that can ever appear.",
+      "approach": "Concept tested: **reachability from a given start**. 'Can never be obtained' means 'not in the reachable set of 011'. Trace from 011 until it repeats and see which option is missing.",
       "concepts": [
-        "T flip-flop: $Q^+ = Q \\oplus T$",
-        "D flip-flop: $Q^+ = D$",
-        "Synchronous state sequence"
+        "Reachability",
+        "T flip-flop",
+        "D flip-flop",
+        "Self-loop"
       ],
-      "given": "All three flip-flops share CLKIN. Inputs: $T_1 = \\overline{Q_3}$, $D_2 = Q_1$, $T_3 = Q_2$. Start $(Q_1, Q_2, Q_3) = (0, 1, 1)$.",
+      "given": "T flip-flop $Q_1$ with $T = \\overline{Q_3}$; D flip-flop $Q_2$ with $D = Q_1$; T flip-flop $Q_3$ with $T = Q_2$; initially $(Q_1, Q_2, Q_3) = (0, 1, 1)$.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "$$Q_1^+ = Q_1 \\oplus \\overline{Q_3}, \\qquad Q_2^+ = Q_1, \\qquad Q_3^+ = Q_3 \\oplus Q_2$$\n\nAll flip-flops are clocked together, so every right-hand side uses the values **before** the clock edge.",
+          "title": "State equations",
+          "body": "$Q_1^+ = Q_1 \\oplus \\overline{Q_3}$, $Q_2^+ = Q_1$, $Q_3^+ = Q_3 \\oplus Q_2$."
+        },
+        {
+          "title": "Trace from 011",
+          "body": "011 → 000 → 100 → 010 → 101 → 111 → 110 → 011.",
           "scene": {
-            "reveal": 6,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "accent"
-              }
-            ]
+            "reveal": 7
           }
         },
         {
-          "title": "Clocks 1 to 3",
-          "body": "- $(0,1,1)$: $Q_1^+ = 0 \\oplus \\overline{1} = 0 \\oplus 0 = 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 1 = 0$ → $(0,0,0)$\n- $(0,0,0)$: $Q_1^+ = 0 \\oplus 1 = 1$, $Q_2^+ = 0$, $Q_3^+ = 0 \\oplus 0 = 0$ → $(1,0,0)$\n- $(1,0,0)$: $Q_1^+ = 1 \\oplus 1 = 0$, $Q_2^+ = 1$, $Q_3^+ = 0 \\oplus 0 = 0$ → $(0,1,0)$",
-          "scene": {
-            "reveal": 24,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Clocks 4 to 7: back to the start",
-          "body": "- $(0,1,0)$: $Q_1^+ = 0 \\oplus 1 = 1$, $Q_2^+ = 0$, $Q_3^+ = 0 \\oplus 1 = 1$ → $(1,0,1)$\n- $(1,0,1)$: $Q_1^+ = 1 \\oplus 0 = 1$, $Q_2^+ = 1$, $Q_3^+ = 1 \\oplus 0 = 1$ → $(1,1,1)$\n- $(1,1,1)$: $Q_1^+ = 1 \\oplus 0 = 1$, $Q_2^+ = 1$, $Q_3^+ = 1 \\oplus 1 = 0$ → $(1,1,0)$\n- $(1,1,0)$: $Q_1^+ = 1 \\oplus 1 = 0$, $Q_2^+ = 1$, $Q_3^+ = 0 \\oplus 1 = 1$ → $(0,1,1)$, the start.\n\nThe circuit cycles through 7 states.",
-          "scene": {
-            "reveal": 48,
-            "hl": [
-              {
-                "r": 7,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Find the state that never appears",
-          "body": "Visited: $011, 000, 100, 010, 101, 111, 110$: seven of the eight 3-bit values. The missing one is $(0, 0, 1)$.\n\nOptions B $(1,0,0)$, C $(1,0,1)$ and D $(1,1,1)$ occur after clocks 2, 4 and 5. **Option (A)** can never be obtained.",
-          "scene": {
-            "hl": [
-              {
-                "r": 2,
-                "tone": "info"
-              },
-              {
-                "r": 4,
-                "tone": "info"
-              },
-              {
-                "r": 5,
-                "tone": "info"
-              }
-            ],
-            "caption": "$(0,0,1)$ is the only value missing from the cycle."
-          }
+          "title": "Reachable set",
+          "body": "Seven states appear; 001 does not. Its own row is $001 \\to 001$ ($Q_1^+ = 0 \\oplus 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 0$): a self-loop that no other state enters."
         }
       ],
       "answer": {
-        "value": "$(Q_1, Q_2, Q_3) = (0, 0, 1)$ never occurs — option (A)",
+        "value": "(A) (0, 0, 1)",
         "choice": [
           "A"
         ],
@@ -6111,119 +6067,74 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "$001$ is not on the 7-state cycle starting at $011$; it is a separate fixed point ($001 \\to 001$)."
+          "reason": "001 is a self-loop off the 7-state cycle through 011."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "$(1,0,0)$ is reached after the 2nd clock."
+          "reason": "(1, 0, 0) appears at clock 2."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$(1,0,1)$ is reached after the 4th clock."
+          "reason": "(1, 0, 1) appears at clock 4."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$(1,1,1)$ is reached after the 5th clock."
+          "reason": "(1, 1, 1) appears at clock 5."
         }
       ],
-      "shortcut": "Apply the equations to $001$: $Q_1^+ = 0 \\oplus 0 = 0$, $Q_2^+ = 0$, $Q_3^+ = 1 \\oplus 0 = 1$, so $001 \\to 001$. Its only predecessor is itself, so starting from $011$ the circuit can never enter it.",
+      "shortcut": "Look for a self-loop first: a state that maps to itself can only be seen if the circuit starts there.",
       "pitfalls": [
-        "Missing the inverter: $T_1 = \\overline{Q_3}$, not $Q_3$.",
-        "Updating the flip-flops one after another (using the new $Q_1$ to compute $Q_2^+$); they are clocked together.",
-        "Treating the D flip-flop like a T flip-flop: $Q_2^+ = Q_1$, not $Q_2 \\oplus Q_1$."
+        "Starting the trace from 000 instead of the given 011.",
+        "Treating the T stages as D stages."
       ],
-      "verification": "The 8 states split into the 7-cycle $011 \\to 000 \\to 100 \\to 010 \\to 101 \\to 111 \\to 110 \\to 011$ plus the self-loop $001$. Each of the 8 states has exactly one successor, which accounts for all of them.",
+      "verification": "A search of the simulated state graph from 011 reaches every state except 001.",
       "animation": {
         "kind": "table",
-        "title": "State after each clock",
+        "title": "Trace from 011",
         "cols": [
-          "Q1",
-          "Q2",
-          "Q3",
-          "T1 = ¬Q3",
-          "D2 = Q1",
-          "T3 = Q2"
-        ],
-        "rowLabels": [
-          "start",
-          "clk 1",
-          "clk 2",
-          "clk 3",
-          "clk 4",
-          "clk 5",
-          "clk 6",
-          "clk 7"
+          "Q1Q2Q3"
         ],
         "rows": [
           [
-            0,
-            1,
-            1,
-            0,
-            0,
-            1
+            "011"
           ],
           [
-            0,
-            0,
-            0,
-            1,
-            0,
-            0
+            "000"
           ],
           [
-            1,
-            0,
-            0,
-            1,
-            1,
-            0
+            "100"
           ],
           [
-            0,
-            1,
-            0,
-            1,
-            0,
-            1
+            "010"
           ],
           [
-            1,
-            0,
-            1,
-            0,
-            1,
-            0
+            "101"
           ],
           [
-            1,
-            1,
-            1,
-            0,
-            1,
-            1
+            "111"
           ],
           [
-            1,
-            1,
-            0,
-            1,
-            1,
-            1
+            "110"
           ],
           [
-            0,
-            1,
-            1,
-            0,
-            0,
-            1
+            "011"
           ]
         ],
-        "mono": true
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "reveal": 0
       }
     },
     "cse-2023-cs-34": {
