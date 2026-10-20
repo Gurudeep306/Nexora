@@ -5,10 +5,9 @@
  * place.
  *
  * Inside a cluster: the subject's zones become rings around its roots
- * (chapter 1 innermost), each in-zone row a ring of its own. A node's angle
- * comes from its 0–100 layout x (its parents' barycentre), so prerequisite
- * links run mostly outward. The angles leave a small wedge free at the top,
- * where the ring labels sit.
+ * (chapter 1 innermost), each in-zone row a ring of its own, and the nodes
+ * sit as a radial tree, so prerequisite links run outward. A small wedge at
+ * the top stays free for the ring labels.
  *
  * Between clusters: a deterministic force layout. Clusters of one domain
  * start around a shared anchor and are pulled together; clusters linked by
@@ -25,48 +24,99 @@ const CLUSTER_GAP = 260; // empty space between clusters
 
 const round = (v) => Math.round(v);
 
-/** Radial layout of one subject. Returns { r, rings: Map(level → number[]), nodes: Map(id → {x, y}) }. */
+/**
+ * Radial layout of one subject — a radial tree. Each node's ring is its
+ * (zone, row); its angle is the middle of a sector: roots share the circle
+ * in proportion to how much of the tree hangs under them, and every node
+ * splits its sector among its children the same way (a node's "parent" for
+ * this purpose is its nearest prerequisite on an inner ring). The top of
+ * the circle stays free for the ring labels.
+ * Returns { r, rings: Map(level → number[]), nodes: Map(id → {x, y}) }.
+ */
 function clusterLayout(shape, layout) {
-  const rings = new Map();
-  const nodes = new Map();
+  const WEDGE = 0.5; // radians kept free at the top
   const zones = shape.zones.map((z) => z.level);
-  let r = null;
-  for (let zi = 0; zi < zones.length; zi++) {
-    const level = zones[zi];
-    const zn = shape.nodes.filter((n) => n.zone === level);
-    const rowsCount = Math.max(1, ...zn.map((n) => (layout.get(n.id)?.row ?? 0) + 1));
-    const radii = [];
-    for (let row = 0; row < rowsCount; row++) {
-      const ring = zn.filter((n) => (layout.get(n.id)?.row ?? 0) === row);
-      if (!ring.length) continue;
-      const fit = (ring.length * LABEL_W) / (2 * Math.PI * 0.84);
-      if (r === null) r = ring.length === 1 ? 0 : Math.max(MIN_INNER, fit);
-      else r = Math.max(r + (row === 0 ? ROW_GAP + ZONE_GAP : ROW_GAP), fit);
-      radii.push(round(r));
-      // Angles from layout x; keep neighbours at least a label apart.
-      const items = ring
-        .map((n) => ({ id: n.id, a: -Math.PI / 2 + ((layout.get(n.id)?.x ?? 50) / 100) * 2 * Math.PI }))
-        .sort((p, q) => p.a - q.a);
-      if (r > 0 && items.length > 1) {
-        const min = Math.min(LABEL_W / r, (2 * Math.PI * 0.9) / items.length);
-        for (let pass = 0; pass < 40; pass++) {
-          let moved = false;
-          for (let i = 1; i < items.length; i++) {
-            const gap = items[i].a - items[i - 1].a;
-            if (gap < min) {
-              const push = (min - gap) / 2;
-              items[i - 1].a -= push;
-              items[i].a += push;
-              moved = true;
-            }
-          }
-          if (!moved) break;
-        }
-      }
-      for (const it of items) nodes.set(it.id, { x: round(Math.cos(it.a) * r), y: round(Math.sin(it.a) * r) });
-    }
-    rings.set(level, radii);
+  const byId = new Map(shape.nodes.map((n) => [n.id, n]));
+  // Ring index per node, in (zone, row) order.
+  const ringKeys = [];
+  for (const level of zones) {
+    const rows = [...new Set(shape.nodes.filter((n) => n.zone === level).map((n) => layout.get(n.id)?.row ?? 0))].sort((a, b) => a - b);
+    for (const row of rows) ringKeys.push(`${level}:${row}`);
   }
+  const ringOf = new Map(shape.nodes.map((n) => [n.id, ringKeys.indexOf(`${n.zone}:${layout.get(n.id)?.row ?? 0}`)]));
+  const lx = (id) => layout.get(id)?.x ?? 50;
+  // Primary parent: the prerequisite on the nearest inner ring.
+  const parent = new Map();
+  for (const n of shape.nodes) {
+    let best = null;
+    for (const r of n.requires || []) {
+      if (r.includes(":") || !byId.has(r)) continue;
+      if (ringOf.get(r) >= ringOf.get(n.id)) continue;
+      if (!best || ringOf.get(r) > ringOf.get(best) || (ringOf.get(r) === ringOf.get(best) && Math.abs(lx(r) - lx(n.id)) < Math.abs(lx(best) - lx(n.id)))) best = r;
+    }
+    parent.set(n.id, best);
+  }
+  const kids = new Map(shape.nodes.map((n) => [n.id, []]));
+  for (const n of shape.nodes) if (parent.get(n.id)) kids.get(parent.get(n.id)).push(n.id);
+  for (const list of kids.values()) list.sort((a, b) => lx(a) - lx(b));
+  const weight = new Map();
+  const w = (id) => {
+    if (weight.has(id)) return weight.get(id);
+    const v = Math.max(1, kids.get(id).reduce((s, c) => s + w(c), 0));
+    weight.set(id, v);
+    return v;
+  };
+  const angle = new Map();
+  const assign = (ids, a0, a1) => {
+    const total = ids.reduce((s, id) => s + w(id), 0) || 1;
+    let a = a0;
+    for (const id of ids) {
+      const span = ((a1 - a0) * w(id)) / total;
+      angle.set(id, a + span / 2);
+      assign(kids.get(id), a, a + span);
+      a += span;
+    }
+  };
+  const roots = shape.nodes.filter((n) => !parent.get(n.id)).map((n) => n.id).sort((a, b) => ringOf.get(a) - ringOf.get(b) || lx(a) - lx(b));
+  const start = -Math.PI / 2 + WEDGE / 2;
+  assign(roots, start, start + 2 * Math.PI - WEDGE);
+
+  // Radii: rings grow outward; each ring is wide enough for its labels.
+  const rings = new Map(zones.map((l) => [l, []]));
+  const nodes = new Map();
+  let r = null;
+  let prevZone = null;
+  ringKeys.forEach((key, i) => {
+    const [level] = key.split(":").map(Number);
+    const ids = shape.nodes.filter((n) => ringOf.get(n.id) === i).map((n) => n.id).sort((a, b) => angle.get(a) - angle.get(b));
+    const items = ids.map((id) => ({ id, a: angle.get(id) }));
+    let need = 0;
+    for (let j = 1; j < items.length; j++) need = Math.max(need, LABEL_W / Math.max(0.05, items[j].a - items[j - 1].a));
+    const gap = prevZone === null ? 0 : level === prevZone ? ROW_GAP : ROW_GAP + ZONE_GAP;
+    if (r === null) r = items.length === 1 ? 0 : Math.max(MIN_INNER, Math.min(need, MIN_INNER * 3));
+    else r = Math.max(r + gap, Math.min(need, r + gap * 2.5));
+    prevZone = level;
+    rings.get(level).push(round(r));
+    // Whatever still crowds is spread apart along the ring.
+    if (r > 0 && items.length > 1) {
+      const min = Math.min(LABEL_W / r, (2 * Math.PI - WEDGE) / items.length);
+      for (let pass = 0; pass < 60; pass++) {
+        let moved = false;
+        for (let j = 1; j < items.length; j++) {
+          const d = items[j].a - items[j - 1].a;
+          if (d < min - 1e-6) {
+            const push = (min - d) / 2;
+            items[j - 1].a -= push;
+            items[j].a += push;
+            moved = true;
+          }
+        }
+        if (!moved) break;
+      }
+    }
+    for (const it of items) nodes.set(it.id, { x: round(Math.cos(it.a) * r), y: round(Math.sin(it.a) * r) });
+  });
+  for (const [l, list] of rings) if (!list.length) rings.delete(l);
   return { r: round((r || 0) + EDGE_PAD), rings, nodes };
 }
 

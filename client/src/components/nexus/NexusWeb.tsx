@@ -55,6 +55,7 @@ interface SEdge {
 const R = 13 // skill radius in world units
 const FAR = 0.11
 const NEAR = 0.42
+const LABELS = 0.15 // names (collision-culled) from here
 const MAX_K = 2.4
 const DPR_CAP = 2
 
@@ -236,6 +237,7 @@ export const NexusWeb = forwardRef<
   const cam = useRef({ x: data.width / 2, y: data.height / 2, k: 0.05 })
   const view = useRef({ w: 1, h: 1, dpr: 1 })
   const hovered = useRef<string | null>(null)
+  const hoverCluster = useRef<string | null>(null)
   const selectedRef = useRef(selected)
   selectedRef.current = selected
   const pal = useRef<Palette | null>(null)
@@ -488,13 +490,14 @@ export const NexusWeb = forwardRef<
           const by = b.b.y - (dy / len) * (b.b.r - 50)
           const mx = (ax + bx) / 2 - (dy / len) * len * 0.08
           const my = (ay + by) / 2 + (dx / len) * len * 0.08
-          let a = 0.3 + 0.12 * Math.min(4, b.count)
+          let a = 0.1 + 0.035 * Math.min(4, b.count)
+          if (hoverCluster.current && !lin) a = hoverCluster.current === b.a.id || hoverCluster.current === b.b.id ? 0.75 : 0.05
           if (lin) {
             const fc = scene.nodes.get(lin.focus)!.cluster.id
             a = fc === b.a.id || fc === b.b.id ? 0.9 : 0.08
           }
           ctx.strokeStyle = rgba(mix(p.b1, p.b3, 0.5), a * (growing ? clamp(elapsed / 1.5) : 1))
-          ctx.lineWidth = 0.7 + Math.log2(1 + b.count) * 0.7
+          ctx.lineWidth = 0.6 + Math.log2(1 + b.count) * 0.4
           ctx.beginPath()
           ctx.moveTo(sx(ax), sy(ay))
           ctx.quadraticCurveTo(sx(mx), sy(my), sx(bx), sy(by))
@@ -527,7 +530,7 @@ export const NexusWeb = forwardRef<
           } else alpha = 0.06
         }
         if (far) {
-          alpha *= 0.55
+          alpha = Math.min(1, alpha * 1.15)
           width = Math.min(width, 0.8)
         }
         const ax = sx(e.a.node.x)
@@ -599,7 +602,7 @@ export const NexusWeb = forwardRef<
       }
 
       // Skills.
-      const rr = Math.max(far ? 1.2 : 2.6, R * k)
+      const rr = Math.max(far ? 1.5 : 2.6, R * k)
       for (const s of scene.nodes.values()) {
         if (!visible.has(s.cluster.id)) continue
         const X = sx(s.node.x)
@@ -664,16 +667,17 @@ export const NexusWeb = forwardRef<
         }
       }
 
-      // Labels, counts, chips and zone rings (near only).
+      // Labels: names from mid zoom (only where they fit, most useful
+      // first), counts, chips and zone rings when near.
       chips.current = []
-      if (near) {
+      if (k >= LABELS) {
         const fs = clamp(11.5 * Math.sqrt(k), 9.5, 13)
         ctx.textAlign = 'center'
         ctx.textBaseline = 'top'
         ctx.lineWidth = 3
         ctx.strokeStyle = rgba(p.bg, 0.9)
         for (const c of data.clusters) {
-          if (!visible.has(c.id)) continue
+          if (!near || !visible.has(c.id)) continue
           ctx.font = `600 ${(fs - 1.5).toFixed(1)}px ${p.font}`
           for (const z of c.zones) {
             const rr2 = z.rings[0]
@@ -688,15 +692,37 @@ export const NexusWeb = forwardRef<
             ctx.fillText(label, X, Y)
           }
         }
-        for (const s of scene.nodes.values()) {
-          if (!visible.has(s.cluster.id)) continue
+        const taken: [number, number, number, number][] = []
+        const rank = (s: SNode) => {
+          const t = tone(s.key)
+          return (t === 'self' ? 0 : t === 'up' || t === 'down' ? 1 : 3) + (s.node.s === 1 ? 0 : s.node.s === 2 ? 0.5 : 1) + s.depth * 0.001
+        }
+        const cand = [...scene.nodes.values()].filter((s) => {
+          if (!visible.has(s.cluster.id)) return false
           const X = sx(s.node.x)
           const Y = sy(s.node.y)
-          if (X < -80 || X > w + 80 || Y < -60 || Y > h + 60) continue
+          return X > -80 && X < w + 80 && Y > -60 && Y < h + 60
+        })
+        if (!near) cand.sort((x, y) => rank(x) - rank(y))
+        ctx.font = `600 ${fs.toFixed(1)}px ${p.font}`
+        for (const s of cand) {
+          const X = sx(s.node.x)
+          const Y = sy(s.node.y)
           const a = nodeAlpha(s) * (tone(s.key) === 'dim' ? 0.3 : 1)
           if (a <= 0) continue
           const top = Y + R * k + 4
           ctx.font = `600 ${fs.toFixed(1)}px ${p.font}`
+          if (!near) {
+            // Mid zoom: a name only where it doesn't collide.
+            const tw = Math.min(ctx.measureText(s.node.n).width, 140)
+            const box: [number, number, number, number] = [X - tw / 2 - 3, top - 1, X + tw / 2 + 3, top + fs + 1]
+            if (taken.some((b) => b[0] < box[2] && b[2] > box[0] && b[1] < box[3] && b[3] > box[1])) continue
+            taken.push(box)
+            ctx.fillStyle = rgba(s.node.s === 0 ? p.muted : p.text, a * 0.9)
+            ctx.strokeText(s.node.n, X, top)
+            ctx.fillText(s.node.n, X, top)
+            continue
+          }
           ctx.fillStyle = rgba(s.node.s === 0 ? p.muted : p.text, a)
           ctx.strokeText(s.node.n, X, top)
           ctx.fillText(s.node.n, X, top)
@@ -740,7 +766,7 @@ export const NexusWeb = forwardRef<
         const fs = 12
         ctx.font = `600 ${fs}px ${p.font}`
         const fc = lin ? scene.nodes.get(lin.focus)?.cluster.id : null
-        const a = fc && fc !== c.id ? 0.35 : 0.85
+        const a = fc && fc !== c.id ? 0.35 : hoverCluster.current === c.id ? 1 : 0.85
         const X = sx(c.x)
         const Y = sy(c.y) - screenR - 8
         ctx.lineWidth = 3
@@ -843,6 +869,11 @@ export const NexusWeb = forwardRef<
       if (e.pointerType === 'mouse') {
         const h2 = hit(p.x, p.y)
         const key = h2.type === 'node' ? h2.key! : null
+        const hc = h2.type === 'cluster' ? h2.key! : null
+        if (hc !== hoverCluster.current) {
+          hoverCluster.current = hc
+          invalidate()
+        }
         if (key !== hovered.current) {
           hovered.current = key
           invalidate()
@@ -882,6 +913,7 @@ export const NexusWeb = forwardRef<
       }
     }
     const leave = () => {
+      hoverCluster.current = null
       if (hovered.current) {
         hovered.current = null
         invalidate()
