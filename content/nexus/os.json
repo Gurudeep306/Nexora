@@ -1,0 +1,616 @@
+{
+  "id": "os",
+  "name": "Operating Systems",
+  "short": "OS",
+  "group": "gate",
+  "order": 4,
+  "icon": "server",
+  "color": "#14b8a6",
+  "description": "Processes and threads, CPU scheduling, synchronisation, deadlock, memory management, virtual memory and file systems.",
+  "gate": {
+    "pyqSubject": "os",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Processes & threads"
+    },
+    {
+      "level": 2,
+      "name": "CPU scheduling"
+    },
+    {
+      "level": 3,
+      "name": "Synchronisation"
+    },
+    {
+      "level": 4,
+      "name": "Deadlock"
+    },
+    {
+      "level": 5,
+      "name": "Memory management"
+    },
+    {
+      "level": 6,
+      "name": "Virtual memory"
+    },
+    {
+      "level": 7,
+      "name": "Files & disks"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "os-structure",
+      "zone": 1,
+      "name": "Kernel & system calls",
+      "icon": "shield",
+      "desc": "User and kernel mode, system calls, traps and interrupts as the way into the OS.",
+      "kind": "concept",
+      "requires": [
+        "coa:io-interrupts"
+      ],
+      "pyqTopics": [
+        "os/processes"
+      ],
+      "pyqTags": [
+        "system-call",
+        "mode",
+        "trap",
+        "privileged",
+        "interrupt",
+        "protection"
+      ],
+      "xpReward": 50,
+      "resources": [
+        {
+          "title": "Operating Systems: Three Easy Pieces",
+          "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/"
+        }
+      ]
+    },
+    {
+      "id": "processes",
+      "zone": 1,
+      "name": "Processes",
+      "icon": "cpu",
+      "desc": "The process abstraction, the PCB, multiprogramming and the parts of a process in memory.",
+      "kind": "concept",
+      "requires": [
+        "os-structure"
+      ],
+      "pyqTopics": [
+        "os/processes"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "process-states",
+      "zone": 1,
+      "name": "Process states",
+      "icon": "activity",
+      "desc": "The process state diagram, context switches and what triggers each transition.",
+      "kind": "concept",
+      "requires": [
+        "processes"
+      ],
+      "pyqTopics": [
+        "os/processes"
+      ],
+      "pyqTags": [
+        "process-states",
+        "context-switch",
+        "preemption",
+        "scheduler"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "fork",
+      "zone": 1,
+      "name": "fork and exec",
+      "icon": "git-branch",
+      "desc": "Process creation with fork, counting processes created by fork loops, exec and wait.",
+      "kind": "concept",
+      "requires": [
+        "processes"
+      ],
+      "pyqTopics": [
+        "os/processes"
+      ],
+      "pyqTags": [
+        "fork",
+        "process-creation"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "threads",
+      "zone": 1,
+      "name": "Threads",
+      "icon": "layers",
+      "desc": "Threads versus processes, what threads share, and user-level versus kernel-level threads.",
+      "kind": "concept",
+      "requires": [
+        "processes"
+      ],
+      "pyqTopics": [
+        "os/processes"
+      ],
+      "pyqTags": [
+        "thread"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "cpu-scheduling",
+      "zone": 2,
+      "name": "CPU scheduling",
+      "icon": "clock",
+      "desc": "Scheduling criteria: turnaround, waiting and response time, throughput and CPU utilisation.",
+      "kind": "concept",
+      "requires": [
+        "process-states"
+      ],
+      "pyqTopics": [
+        "os/scheduling"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sjf-srtf",
+      "zone": 2,
+      "name": "FCFS, SJF & SRTF",
+      "icon": "sort",
+      "desc": "Gantt charts for FCFS, SJF and SRTF and computing average waiting and turnaround times.",
+      "kind": "concept",
+      "requires": [
+        "cpu-scheduling"
+      ],
+      "pyqTopics": [
+        "os/scheduling"
+      ],
+      "pyqTags": [
+        "srtf",
+        "SRTF",
+        "sjf",
+        "fcfs",
+        "lrtf"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "round-robin",
+      "zone": 2,
+      "name": "Round robin",
+      "icon": "random",
+      "desc": "Round-robin scheduling, the time quantum and context-switch overhead.",
+      "kind": "concept",
+      "requires": [
+        "cpu-scheduling"
+      ],
+      "pyqTopics": [
+        "os/scheduling"
+      ],
+      "pyqTags": [
+        "round",
+        "quantum",
+        "time-sharing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "priority-scheduling",
+      "zone": 2,
+      "name": "Priority scheduling",
+      "icon": "flag",
+      "desc": "Preemptive and non-preemptive priority scheduling, starvation and ageing.",
+      "kind": "concept",
+      "requires": [
+        "sjf-srtf"
+      ],
+      "pyqTopics": [
+        "os/scheduling"
+      ],
+      "pyqTags": [
+        "priority",
+        "preempt",
+        "starvation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "critical-section",
+      "zone": 3,
+      "name": "Critical sections",
+      "icon": "lock",
+      "desc": "Race conditions and the critical-section problem: mutual exclusion, progress and bounded waiting.",
+      "kind": "concept",
+      "requires": [
+        "threads"
+      ],
+      "pyqTopics": [
+        "os/sync"
+      ],
+      "pyqTags": [
+        "critical",
+        "mutual",
+        "race",
+        "progress",
+        "strict",
+        "busy"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "synchronization",
+      "zone": 3,
+      "name": "Synchronisation",
+      "icon": "lock",
+      "desc": "Locks, hardware support (test-and-set, swap) and the synchronisation tools built on it.",
+      "kind": "concept",
+      "requires": [
+        "critical-section"
+      ],
+      "pyqTopics": [
+        "os/sync"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "semaphores",
+      "zone": 3,
+      "name": "Semaphores",
+      "icon": "key",
+      "desc": "Binary and counting semaphores, wait and signal, and tracing semaphore code.",
+      "kind": "concept",
+      "requires": [
+        "synchronization"
+      ],
+      "pyqTopics": [
+        "os/sync"
+      ],
+      "pyqTags": [
+        "semaphore",
+        "mutex"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "classic-sync-problems",
+      "zone": 3,
+      "name": "Classic problems",
+      "icon": "puzzle",
+      "desc": "Producer–consumer, readers–writers, dining philosophers and barriers.",
+      "kind": "concept",
+      "requires": [
+        "semaphores"
+      ],
+      "pyqTopics": [
+        "os/sync"
+      ],
+      "pyqTags": [
+        "producer",
+        "readers",
+        "barrier",
+        "dining"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "precedence-graphs",
+      "zone": 3,
+      "name": "Precedence graphs",
+      "icon": "graph",
+      "desc": "Ordering concurrent statements with semaphores and parbegin/parend.",
+      "kind": "concept",
+      "requires": [
+        "semaphores"
+      ],
+      "pyqTopics": [
+        "os/sync"
+      ],
+      "pyqTags": [
+        "precedence",
+        "parbegin",
+        "ordering"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "deadlock",
+      "zone": 4,
+      "name": "Deadlock",
+      "icon": "warning",
+      "desc": "The four Coffman conditions, resource allocation graphs and deadlock detection.",
+      "kind": "concept",
+      "requires": [
+        "semaphores"
+      ],
+      "pyqTopics": [
+        "os/deadlock"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "bankers-algorithm",
+      "zone": 4,
+      "name": "Banker's algorithm",
+      "icon": "coins",
+      "desc": "Safe states and safe sequences, and deadlock avoidance with the Banker's algorithm.",
+      "kind": "concept",
+      "requires": [
+        "deadlock"
+      ],
+      "pyqTopics": [
+        "os/deadlock"
+      ],
+      "pyqTags": [
+        "banker",
+        "safe",
+        "avoidance"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "deadlock-prevention",
+      "zone": 4,
+      "name": "Deadlock prevention",
+      "icon": "shield",
+      "desc": "Breaking a Coffman condition: resource ordering, preemption and wait-die / wound-wait.",
+      "kind": "concept",
+      "requires": [
+        "deadlock"
+      ],
+      "pyqTopics": [
+        "os/deadlock"
+      ],
+      "pyqTags": [
+        "prevention",
+        "circular",
+        "ordering",
+        "wound",
+        "preemption"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "contiguous-allocation",
+      "zone": 5,
+      "name": "Contiguous allocation",
+      "icon": "array",
+      "desc": "Fixed and variable partitions, first-fit, best-fit and worst-fit, internal and external fragmentation.",
+      "kind": "concept",
+      "requires": [
+        "processes",
+        "coa:main-memory"
+      ],
+      "pyqTopics": [
+        "os/memory-mgmt"
+      ],
+      "pyqTags": [
+        "fit",
+        "partition",
+        "fragmentation",
+        "contiguous"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "segmentation",
+      "zone": 5,
+      "name": "Segmentation & linking",
+      "icon": "layers",
+      "desc": "Segment tables, relocation, overlays and dynamic linking of shared libraries.",
+      "kind": "concept",
+      "requires": [
+        "contiguous-allocation"
+      ],
+      "pyqTopics": [
+        "os/memory-mgmt"
+      ],
+      "pyqTags": [
+        "segment",
+        "link",
+        "relocation",
+        "overlay"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "paging",
+      "zone": 5,
+      "name": "Paging",
+      "icon": "grid",
+      "desc": "Pages and frames, page tables and translating a logical address to a physical one.",
+      "kind": "concept",
+      "requires": [
+        "contiguous-allocation"
+      ],
+      "pyqTopics": [
+        "os/memory-mgmt",
+        "os/virtual-memory"
+      ],
+      "pyqTags": [
+        "paging",
+        "page-table",
+        "address-translation"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "tlb",
+      "zone": 5,
+      "name": "TLB & access time",
+      "icon": "bolt",
+      "desc": "The translation lookaside buffer and the effective memory access time with TLB hits and misses.",
+      "kind": "concept",
+      "requires": [
+        "paging",
+        "coa:cache"
+      ],
+      "pyqTopics": [
+        "os/virtual-memory",
+        "os/memory-mgmt"
+      ],
+      "pyqTags": [
+        "tlb",
+        "TLB",
+        "effective",
+        "emat"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "multilevel-paging",
+      "zone": 5,
+      "name": "Multilevel paging",
+      "icon": "layers",
+      "desc": "Page table size, page table entries and splitting the page table across levels.",
+      "kind": "concept",
+      "requires": [
+        "paging"
+      ],
+      "pyqTopics": [
+        "os/virtual-memory"
+      ],
+      "pyqTags": [
+        "multilevel",
+        "page-table-size",
+        "page-table-entry",
+        "inverted"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "virtual-memory",
+      "zone": 6,
+      "name": "Virtual memory",
+      "icon": "eye",
+      "desc": "Demand paging, page faults and how a process can be larger than physical memory.",
+      "kind": "concept",
+      "requires": [
+        "paging"
+      ],
+      "pyqTopics": [
+        "os/virtual-memory"
+      ],
+      "xpReward": 200,
+      "resources": [
+        {
+          "title": "Operating Systems: Three Easy Pieces",
+          "url": "https://pages.cs.wisc.edu/~remzi/OSTEP/"
+        }
+      ]
+    },
+    {
+      "id": "page-replacement",
+      "zone": 6,
+      "name": "Page replacement",
+      "icon": "random",
+      "desc": "FIFO, optimal and LRU replacement, counting page faults and Belady's anomaly.",
+      "kind": "concept",
+      "requires": [
+        "virtual-memory"
+      ],
+      "pyqTopics": [
+        "os/virtual-memory"
+      ],
+      "pyqTags": [
+        "replacement",
+        "lru",
+        "fifo",
+        "optimal",
+        "belady",
+        "LRU",
+        "FIFO"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "thrashing",
+      "zone": 6,
+      "name": "Working set",
+      "icon": "activity",
+      "desc": "Working sets, thrashing and the effective access time with page faults.",
+      "kind": "concept",
+      "requires": [
+        "page-replacement"
+      ],
+      "pyqTopics": [
+        "os/virtual-memory"
+      ],
+      "pyqTags": [
+        "working-set",
+        "thrashing",
+        "demand",
+        "swap"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "file-systems",
+      "zone": 7,
+      "name": "File systems",
+      "icon": "book",
+      "desc": "Files, directories and the file-system interface, including Unix conventions.",
+      "kind": "concept",
+      "requires": [
+        "processes"
+      ],
+      "pyqTopics": [
+        "os/files"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "file-allocation",
+      "zone": 7,
+      "name": "File allocation",
+      "icon": "list",
+      "desc": "Contiguous, linked and indexed allocation, inodes and maximum file size, free-space management.",
+      "kind": "concept",
+      "requires": [
+        "file-systems",
+        "c:linked-lists"
+      ],
+      "pyqTopics": [
+        "os/files"
+      ],
+      "pyqTags": [
+        "inode",
+        "allocation",
+        "free-space",
+        "file size",
+        "directory",
+        "disk-blocks"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "disk-scheduling",
+      "zone": 7,
+      "name": "Disk scheduling",
+      "icon": "sort",
+      "desc": "Disk geometry and access time; FCFS, SSTF, SCAN and LOOK disk scheduling.",
+      "kind": "concept",
+      "requires": [
+        "file-systems"
+      ],
+      "pyqTopics": [
+        "os/files",
+        "os/scheduling"
+      ],
+      "pyqTags": [
+        "disk",
+        "sstf",
+        "SSTF",
+        "scan",
+        "look"
+      ],
+      "xpReward": 230
+    }
+  ]
+}

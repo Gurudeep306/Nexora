@@ -1,0 +1,337 @@
+{
+  "id": "sysd",
+  "name": "System Design",
+  "short": "SYS",
+  "group": "beyond",
+  "order": 19,
+  "icon": "system-design",
+  "color": "#64748b",
+  "description": "Designing large-scale systems: scaling, caching, data stores, asynchronous processing and classic case studies.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Fundamentals"
+    },
+    {
+      "level": 2,
+      "name": "Traffic & networking"
+    },
+    {
+      "level": 3,
+      "name": "Data at scale"
+    },
+    {
+      "level": 4,
+      "name": "Async & distributed"
+    },
+    {
+      "level": 5,
+      "name": "Case studies"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "scalability-basics",
+      "zone": 1,
+      "name": "Scalability basics",
+      "icon": "trending-up",
+      "desc": "Vertical versus horizontal scaling, stateless services, and where bottlenecks come from.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "latency-throughput",
+      "zone": 1,
+      "name": "Latency & throughput",
+      "icon": "timer",
+      "desc": "Latency numbers every engineer should know, throughput, percentiles and queueing intuition.",
+      "kind": "concept",
+      "requires": [
+        "scalability-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "availability",
+      "zone": 1,
+      "name": "Availability",
+      "icon": "shield",
+      "desc": "Availability nines, redundancy, failover, and SLIs, SLOs and SLAs.",
+      "kind": "concept",
+      "requires": [
+        "scalability-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "estimation",
+      "zone": 1,
+      "name": "Back-of-envelope",
+      "icon": "calculator",
+      "desc": "Estimating QPS, storage and bandwidth for a design before drawing boxes.",
+      "kind": "lesson",
+      "requires": [
+        "latency-throughput"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "dns-cdn",
+      "zone": 2,
+      "name": "DNS & CDNs",
+      "icon": "globe",
+      "desc": "How DNS routes users, and serving static content from edge caches.",
+      "kind": "lesson",
+      "requires": [
+        "scalability-basics",
+        "cn:application-layer"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "load-balancing",
+      "zone": 2,
+      "name": "Load balancing",
+      "icon": "sliders",
+      "desc": "L4 versus L7 balancers, balancing algorithms, health checks and sticky sessions.",
+      "kind": "lesson",
+      "requires": [
+        "scalability-basics",
+        "cn:tcp"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "api-gateway",
+      "zone": 2,
+      "name": "Proxies & gateways",
+      "icon": "server",
+      "desc": "Reverse proxies, API gateways, service discovery and API design for services.",
+      "kind": "lesson",
+      "requires": [
+        "load-balancing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "rate-limiting",
+      "zone": 2,
+      "name": "Rate limiting",
+      "icon": "timer",
+      "desc": "Token bucket, leaky bucket and sliding-window limiters, local and distributed.",
+      "kind": "lesson",
+      "requires": [
+        "api-gateway"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "caching",
+      "zone": 3,
+      "name": "Caching",
+      "icon": "bolt",
+      "desc": "Cache-aside, write-through and write-back, eviction policies, invalidation and hot keys.",
+      "kind": "lesson",
+      "requires": [
+        "latency-throughput"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "databases-at-scale",
+      "zone": 3,
+      "name": "Databases at scale",
+      "icon": "database",
+      "desc": "Choosing SQL or NoSQL, indexing, read replicas and the limits of a single database.",
+      "kind": "lesson",
+      "requires": [
+        "scalability-basics",
+        "dbms:transactions",
+        "dbms:bplus-trees"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "replication",
+      "zone": 3,
+      "name": "Replication",
+      "icon": "copy",
+      "desc": "Leader–follower and multi-leader replication, replication lag and read-your-writes.",
+      "kind": "lesson",
+      "requires": [
+        "databases-at-scale",
+        "availability"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "sharding",
+      "zone": 3,
+      "name": "Sharding",
+      "icon": "grid",
+      "desc": "Partitioning by key or range, consistent hashing and rebalancing.",
+      "kind": "lesson",
+      "requires": [
+        "databases-at-scale",
+        "c:hashing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "cap-consistency",
+      "zone": 3,
+      "name": "CAP & consistency",
+      "icon": "puzzle",
+      "desc": "The CAP theorem, PACELC, and strong versus eventual consistency models.",
+      "kind": "concept",
+      "requires": [
+        "replication"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "blob-storage",
+      "zone": 3,
+      "name": "Object storage",
+      "icon": "inbox",
+      "desc": "Storing files and media in object stores and serving them efficiently.",
+      "kind": "concept",
+      "requires": [
+        "databases-at-scale",
+        "dns-cdn"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "message-queues",
+      "zone": 4,
+      "name": "Message queues",
+      "icon": "messages",
+      "desc": "Queues and logs (e.g. Kafka), producers and consumers, delivery guarantees and backpressure.",
+      "kind": "lesson",
+      "requires": [
+        "scalability-basics",
+        "os:synchronization"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "event-driven",
+      "zone": 4,
+      "name": "Event-driven design",
+      "icon": "bolt",
+      "desc": "Pub/sub, event sourcing, CQRS and idempotent consumers.",
+      "kind": "lesson",
+      "requires": [
+        "message-queues"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "microservices",
+      "zone": 4,
+      "name": "Microservices",
+      "icon": "layers",
+      "desc": "Service boundaries, synchronous versus asynchronous communication, and their trade-offs against a monolith.",
+      "kind": "concept",
+      "requires": [
+        "api-gateway",
+        "message-queues"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "consensus",
+      "zone": 4,
+      "name": "Consensus",
+      "icon": "users",
+      "desc": "Leader election, quorums, Raft at a high level, and distributed locks.",
+      "kind": "concept",
+      "requires": [
+        "cap-consistency"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "distributed-transactions",
+      "zone": 4,
+      "name": "Distributed txns",
+      "icon": "git-branch",
+      "desc": "Two-phase commit, sagas and the outbox pattern.",
+      "kind": "lesson",
+      "requires": [
+        "consensus",
+        "event-driven"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "observability",
+      "zone": 4,
+      "name": "Observability",
+      "icon": "analytics",
+      "desc": "Logs, metrics and traces, alerting, and debugging production systems.",
+      "kind": "concept",
+      "requires": [
+        "microservices"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "url-shortener",
+      "zone": 5,
+      "name": "URL shortener",
+      "icon": "link",
+      "desc": "Design a URL shortener end to end: estimates, API, ID generation, storage, caching and analytics.",
+      "kind": "project",
+      "requires": [
+        "estimation",
+        "caching",
+        "sharding"
+      ],
+      "xpReward": 275
+    },
+    {
+      "id": "rate-limiter-design",
+      "zone": 5,
+      "name": "Distributed limiter",
+      "icon": "timer",
+      "desc": "Design and prototype a distributed rate limiter backed by a shared cache, and load-test it.",
+      "kind": "project",
+      "requires": [
+        "rate-limiting",
+        "caching"
+      ],
+      "xpReward": 275
+    },
+    {
+      "id": "chat-system",
+      "zone": 5,
+      "name": "Chat system",
+      "icon": "chat",
+      "desc": "Design a chat service: persistent connections, message fan-out, ordering, storage and presence.",
+      "kind": "project",
+      "requires": [
+        "message-queues",
+        "load-balancing",
+        "replication"
+      ],
+      "xpReward": 275
+    },
+    {
+      "id": "news-feed",
+      "zone": 5,
+      "name": "News feed",
+      "icon": "list",
+      "desc": "Design a social news feed: fan-out on write versus read, ranking, caching and hot users.",
+      "kind": "project",
+      "requires": [
+        "event-driven",
+        "caching",
+        "sharding"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

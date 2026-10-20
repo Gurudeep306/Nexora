@@ -1,0 +1,467 @@
+{
+  "id": "la",
+  "name": "Linear Algebra",
+  "short": "LA",
+  "group": "gate",
+  "order": 11,
+  "icon": "grid",
+  "color": "#ec4899",
+  "description": "Matrices, determinants, linear systems, vector spaces, eigenvalues and decompositions for GATE.",
+  "gate": {
+    "pyqSubject": "la",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Matrices"
+    },
+    {
+      "level": 2,
+      "name": "Determinants & rank"
+    },
+    {
+      "level": 3,
+      "name": "Linear systems"
+    },
+    {
+      "level": 4,
+      "name": "Vector spaces"
+    },
+    {
+      "level": 5,
+      "name": "Eigenvalues"
+    },
+    {
+      "level": 6,
+      "name": "Decompositions"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "vectors",
+      "zone": 1,
+      "name": "Vectors",
+      "icon": "trending-up",
+      "desc": "Vectors, dot product, length and angle, and the geometry of linear combinations.",
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "la/spaces"
+      ],
+      "pyqTags": [
+        "vectors",
+        "dot-product",
+        "orthogonality",
+        "geometry",
+        "angle"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "matrices",
+      "zone": 1,
+      "name": "Matrices",
+      "icon": "grid",
+      "desc": "Matrix algebra: addition, multiplication, transpose, trace, powers and commuting matrices.",
+      "kind": "lesson",
+      "requires": [
+        "vectors"
+      ],
+      "pyqTopics": [
+        "la/matrices"
+      ],
+      "pyqTags": [
+        "matrices",
+        "matrix-",
+        "transpose",
+        "trace",
+        "product",
+        "commuting",
+        "la"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "special-matrices",
+      "zone": 1,
+      "name": "Special matrices",
+      "icon": "shapes",
+      "desc": "Symmetric, skew-symmetric, triangular, idempotent, nilpotent, orthogonal, projection and rotation matrices.",
+      "kind": "lesson",
+      "requires": [
+        "matrices"
+      ],
+      "pyqTopics": [
+        "la/matrices",
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "symmetric",
+        "triangular",
+        "idempotent",
+        "nilpotent",
+        "projection",
+        "rotation",
+        "circulant",
+        "tridiagonal"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "determinants",
+      "zone": 2,
+      "name": "Determinants",
+      "icon": "calculator",
+      "desc": "Cofactor expansion, properties under row operations, and determinants of structured matrices.",
+      "kind": "lesson",
+      "requires": [
+        "matrices",
+        "dm:combinatorics"
+      ],
+      "pyqTopics": [
+        "la/matrices"
+      ],
+      "pyqTags": [
+        "determinant",
+        "cofactor",
+        "row",
+        "elementary"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "matrix-inverse",
+      "zone": 2,
+      "name": "Inverse & adjoint",
+      "icon": "random",
+      "desc": "Invertibility, the adjoint formula, singular matrices and inverse identities.",
+      "kind": "lesson",
+      "requires": [
+        "determinants"
+      ],
+      "pyqTopics": [
+        "la/matrices"
+      ],
+      "pyqTags": [
+        "inverse",
+        "invertib",
+        "singular",
+        "adjoint"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "rank",
+      "zone": 2,
+      "name": "Rank",
+      "icon": "layers",
+      "desc": "Row echelon form, rank, and how rank behaves under products and sums.",
+      "kind": "lesson",
+      "requires": [
+        "determinants"
+      ],
+      "pyqTopics": [
+        "la/matrices",
+        "la/systems"
+      ],
+      "pyqTags": [
+        "rank"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "linear-systems",
+      "zone": 3,
+      "name": "Linear systems",
+      "icon": "sliders",
+      "desc": "Ax = b: consistency, unique versus infinitely many solutions, and the rank test.",
+      "kind": "lesson",
+      "requires": [
+        "rank"
+      ],
+      "pyqTopics": [
+        "la/systems"
+      ],
+      "pyqTags": [
+        "consistency",
+        "linear",
+        "unique",
+        "systems",
+        "rank-solutions"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "gaussian-elimination",
+      "zone": 3,
+      "name": "Gaussian elimination",
+      "icon": "list",
+      "desc": "Row reduction, back substitution and solving systems by hand.",
+      "kind": "lesson",
+      "requires": [
+        "linear-systems"
+      ],
+      "pyqTopics": [
+        "la/systems"
+      ],
+      "pyqTags": [
+        "gaussian",
+        "back-substitution",
+        "linear-equations",
+        "determinant"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "lu-decomposition",
+      "zone": 3,
+      "name": "LU decomposition",
+      "icon": "layers",
+      "desc": "Factorising A = LU and using it to solve systems.",
+      "kind": "lesson",
+      "requires": [
+        "gaussian-elimination"
+      ],
+      "pyqTopics": [
+        "la/decomp"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "homogeneous-systems",
+      "zone": 3,
+      "name": "Homogeneous systems",
+      "icon": "target",
+      "desc": "Ax = 0, trivial versus non-trivial solutions, and null spaces.",
+      "kind": "lesson",
+      "requires": [
+        "linear-systems"
+      ],
+      "pyqTopics": [
+        "la/systems",
+        "la/matrices"
+      ],
+      "pyqTags": [
+        "null-space",
+        "homogeneous",
+        "rank-nullity"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "vector-spaces",
+      "zone": 4,
+      "name": "Vector spaces",
+      "icon": "compass",
+      "desc": "Vector spaces and subspaces over a field, span and linear independence.",
+      "kind": "lesson",
+      "requires": [
+        "homogeneous-systems",
+        "dm:groups"
+      ],
+      "pyqTopics": [
+        "la/spaces"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "basis-dimension",
+      "zone": 4,
+      "name": "Basis & dimension",
+      "icon": "grid",
+      "desc": "Bases, dimension, the four fundamental subspaces and the rank–nullity theorem.",
+      "kind": "lesson",
+      "requires": [
+        "vector-spaces"
+      ],
+      "pyqTopics": [
+        "la/systems",
+        "la/spaces",
+        "la/matrices"
+      ],
+      "pyqTags": [
+        "basis",
+        "dimension",
+        "rank-nullity",
+        "subspace",
+        "linear-dependence",
+        "linear dependence",
+        "null-space"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "orthogonality",
+      "zone": 4,
+      "name": "Orthogonality",
+      "icon": "crosshair",
+      "desc": "Orthogonal and orthonormal bases, projections and Gram–Schmidt.",
+      "kind": "concept",
+      "requires": [
+        "basis-dimension"
+      ],
+      "pyqTopics": [
+        "la/spaces",
+        "la/matrices",
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "orthogon",
+        "orthonormal",
+        "projection"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "eigenvalues",
+      "zone": 5,
+      "name": "Eigenvalues",
+      "icon": "target",
+      "desc": "The characteristic polynomial, eigenvalues, and their links to trace and determinant.",
+      "kind": "lesson",
+      "requires": [
+        "determinants",
+        "homogeneous-systems"
+      ],
+      "pyqTopics": [
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "eigenvalue",
+        "characteristic",
+        "trace",
+        "determinant",
+        "eigen"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "eigenvectors",
+      "zone": 5,
+      "name": "Eigenvectors",
+      "icon": "trending-up",
+      "desc": "Eigenvectors and eigenspaces, algebraic and geometric multiplicity.",
+      "kind": "lesson",
+      "requires": [
+        "eigenvalues"
+      ],
+      "pyqTopics": [
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "eigenvector",
+        "multiplicity",
+        "orthogonal-eigen"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "cayley-hamilton",
+      "zone": 5,
+      "name": "Cayley–Hamilton",
+      "icon": "function",
+      "desc": "Every matrix satisfies its characteristic equation; computing powers and inverses with it.",
+      "kind": "concept",
+      "requires": [
+        "eigenvalues"
+      ],
+      "pyqTopics": [
+        "la/matrices",
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "cayley",
+        "matrix-power"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "special-eigen",
+      "zone": 5,
+      "name": "Eigen of special forms",
+      "icon": "shapes",
+      "desc": "Eigenvalues of symmetric, triangular, rank-one, block and projection matrices.",
+      "kind": "lesson",
+      "requires": [
+        "eigenvalues",
+        "special-matrices"
+      ],
+      "pyqTopics": [
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "symmetric",
+        "triangular",
+        "rank-one",
+        "block",
+        "projection",
+        "nilpotent",
+        "tridiagonal"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "diagonalization",
+      "zone": 6,
+      "name": "Diagonalisation",
+      "icon": "grid",
+      "desc": "When A = PDP⁻¹ exists, orthogonal diagonalisation of symmetric matrices, and matrix powers.",
+      "kind": "lesson",
+      "requires": [
+        "eigenvectors"
+      ],
+      "pyqTopics": [
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "diagonaliz",
+        "symmetric",
+        "matrix-power",
+        "orthogonal"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "quadratic-forms",
+      "zone": 6,
+      "name": "Quadratic forms",
+      "icon": "activity",
+      "desc": "Quadratic forms, definiteness and the Rayleigh quotient.",
+      "kind": "concept",
+      "requires": [
+        "diagonalization"
+      ],
+      "pyqTopics": [
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "quadratic",
+        "rayleigh",
+        "symmetric"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "svd",
+      "zone": 6,
+      "name": "SVD",
+      "icon": "layers",
+      "desc": "Singular values, the singular value decomposition, and low-rank approximation.",
+      "kind": "lesson",
+      "requires": [
+        "diagonalization",
+        "orthogonality"
+      ],
+      "pyqTopics": [
+        "la/eigen"
+      ],
+      "pyqTags": [
+        "singular",
+        "svd",
+        "frobenius"
+      ],
+      "xpReward": 160
+    }
+  ]
+}

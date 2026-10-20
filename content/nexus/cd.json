@@ -1,0 +1,536 @@
+{
+  "id": "cd",
+  "name": "Compiler Design",
+  "short": "CD",
+  "group": "gate",
+  "order": 8,
+  "icon": "code",
+  "color": "#f59e0b",
+  "description": "Lexical analysis, parsing, syntax-directed translation, intermediate code, runtime environments and code optimisation.",
+  "gate": {
+    "pyqSubject": "cd",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Compiler front end"
+    },
+    {
+      "level": 2,
+      "name": "Top-down parsing"
+    },
+    {
+      "level": 3,
+      "name": "Bottom-up parsing"
+    },
+    {
+      "level": 4,
+      "name": "Semantic analysis"
+    },
+    {
+      "level": 5,
+      "name": "Intermediate code"
+    },
+    {
+      "level": 6,
+      "name": "Runtime & optimisation"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "compiler-phases",
+      "zone": 1,
+      "name": "Compiler phases",
+      "icon": "list",
+      "desc": "The phases of a compiler, what each produces and which errors each catches.",
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "cd/lexical",
+        "cd/icg"
+      ],
+      "pyqTags": [
+        "compiler-phases",
+        "phases",
+        "portability"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "lexical-analysis",
+      "zone": 1,
+      "name": "Lexical analysis",
+      "icon": "search",
+      "desc": "Tokens, lexemes and patterns; a lexer as a finite automaton built from regular expressions.",
+      "kind": "concept",
+      "requires": [
+        "compiler-phases",
+        "toc:finite-automata",
+        "toc:regular-expressions"
+      ],
+      "pyqTopics": [
+        "cd/lexical"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "tokenizing",
+      "zone": 1,
+      "name": "Counting tokens",
+      "icon": "hash",
+      "desc": "Longest match, lookahead, counting tokens in a program and lexical errors.",
+      "kind": "concept",
+      "requires": [
+        "lexical-analysis"
+      ],
+      "pyqTopics": [
+        "cd/lexical"
+      ],
+      "pyqTags": [
+        "token",
+        "longest",
+        "lookahead",
+        "match",
+        "lexical-error"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "symbol-table",
+      "zone": 1,
+      "name": "Symbol table",
+      "icon": "database",
+      "desc": "What the symbol table stores, how it is organised and which phases use it.",
+      "kind": "concept",
+      "requires": [
+        "compiler-phases"
+      ],
+      "pyqTopics": [
+        "cd/sdt",
+        "cd/lexical"
+      ],
+      "pyqTags": [
+        "symbol-table"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "parsing",
+      "zone": 2,
+      "name": "Parsing",
+      "icon": "tree",
+      "desc": "The parser's job, parse trees and derivations, and top-down versus bottom-up parsing.",
+      "kind": "concept",
+      "requires": [
+        "lexical-analysis",
+        "toc:cfg"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "grammar-transformations",
+      "zone": 2,
+      "name": "Grammar rewriting",
+      "icon": "edit",
+      "desc": "Ambiguity and the dangling else, eliminating left recursion and left factoring.",
+      "kind": "concept",
+      "requires": [
+        "parsing"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "pyqTags": [
+        "left-recursion",
+        "left-factoring",
+        "grammar-transformation",
+        "ambig",
+        "dangling"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "first-follow",
+      "zone": 2,
+      "name": "FIRST & FOLLOW",
+      "icon": "list",
+      "desc": "Computing FIRST and FOLLOW sets.",
+      "kind": "concept",
+      "requires": [
+        "grammar-transformations"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "pyqTags": [
+        "first",
+        "FIRST",
+        "follow",
+        "FOLLOW"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "ll-parsing",
+      "zone": 2,
+      "name": "LL(1) parsing",
+      "icon": "terminal",
+      "desc": "Recursive descent, LL(1) tables and testing whether a grammar is LL(1).",
+      "kind": "concept",
+      "requires": [
+        "first-follow"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "pyqTags": [
+        "ll1",
+        "LL(1)",
+        "recursive-descent",
+        "parsing-table"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "lr-parsing",
+      "zone": 3,
+      "name": "LR parsing",
+      "icon": "layers",
+      "desc": "Shift-reduce parsing with handles, and shift-reduce and reduce-reduce conflicts.",
+      "kind": "concept",
+      "requires": [
+        "first-follow",
+        "toc:pushdown-automata"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "pyqTags": [
+        "lr",
+        "LR",
+        "shift-reduce",
+        "conflict"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "slr",
+      "zone": 3,
+      "name": "LR(0) & SLR",
+      "icon": "grid",
+      "desc": "LR(0) items, the canonical collection and SLR(1) tables.",
+      "kind": "concept",
+      "requires": [
+        "lr-parsing"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "pyqTags": [
+        "lr0",
+        "slr",
+        "SLR"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "clr-lalr",
+      "zone": 3,
+      "name": "CLR & LALR",
+      "icon": "grid",
+      "desc": "LR(1) items, canonical LR and LALR tables, and how the parser classes compare.",
+      "kind": "concept",
+      "requires": [
+        "slr"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "pyqTags": [
+        "lalr",
+        "LALR",
+        "clr",
+        "CLR"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "operator-precedence",
+      "zone": 3,
+      "name": "Precedence parsing",
+      "icon": "sort",
+      "desc": "Operator precedence and associativity in grammars, operator-precedence parsing and yacc.",
+      "kind": "concept",
+      "requires": [
+        "lr-parsing"
+      ],
+      "pyqTopics": [
+        "cd/parsing"
+      ],
+      "pyqTags": [
+        "precedence",
+        "associativity",
+        "yacc"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "sdt",
+      "zone": 4,
+      "name": "Syntax-directed",
+      "icon": "wand",
+      "desc": "Syntax-directed definitions and translation schemes, and evaluating them on a parse tree.",
+      "kind": "concept",
+      "requires": [
+        "parsing"
+      ],
+      "pyqTopics": [
+        "cd/sdt"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "attributes",
+      "zone": 4,
+      "name": "Attribute grammars",
+      "icon": "tag",
+      "desc": "Synthesised and inherited attributes, S-attributed and L-attributed definitions.",
+      "kind": "concept",
+      "requires": [
+        "sdt"
+      ],
+      "pyqTopics": [
+        "cd/sdt"
+      ],
+      "pyqTags": [
+        "synthesized",
+        "inherited",
+        "l-attributed",
+        "s-attributed",
+        "attribute"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "translation-schemes",
+      "zone": 4,
+      "name": "Translation schemes",
+      "icon": "code",
+      "desc": "Embedding actions in grammars, infix to postfix translation and evaluation order.",
+      "kind": "concept",
+      "requires": [
+        "attributes"
+      ],
+      "pyqTopics": [
+        "cd/sdt"
+      ],
+      "pyqTags": [
+        "translation",
+        "postfix",
+        "precedence"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "type-checking",
+      "zone": 4,
+      "name": "Semantic checks",
+      "icon": "check-circle",
+      "desc": "Type checking and the semantic errors a compiler detects.",
+      "kind": "concept",
+      "requires": [
+        "sdt",
+        "symbol-table"
+      ],
+      "pyqTopics": [
+        "cd/sdt"
+      ],
+      "pyqTags": [
+        "type",
+        "semantic"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "intermediate-code",
+      "zone": 5,
+      "name": "Intermediate code",
+      "icon": "list",
+      "desc": "Syntax trees, DAGs and three-address code as intermediate representations.",
+      "kind": "concept",
+      "requires": [
+        "sdt"
+      ],
+      "pyqTopics": [
+        "cd/icg"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "three-address-code",
+      "zone": 5,
+      "name": "Three-address code",
+      "icon": "code",
+      "desc": "Quadruples and triples, SSA form, and translating expressions and array references.",
+      "kind": "concept",
+      "requires": [
+        "intermediate-code"
+      ],
+      "pyqTopics": [
+        "cd/icg"
+      ],
+      "pyqTags": [
+        "three-address",
+        "quadruple",
+        "ssa",
+        "SSA",
+        "array"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "register-allocation",
+      "zone": 5,
+      "name": "Code generation",
+      "icon": "cpu",
+      "desc": "Instruction selection, register allocation and the minimum registers an expression needs.",
+      "kind": "concept",
+      "requires": [
+        "three-address-code",
+        "coa:isa"
+      ],
+      "pyqTopics": [
+        "cd/icg",
+        "cd/optimization"
+      ],
+      "pyqTags": [
+        "register",
+        "code-generation",
+        "code generation",
+        "sethi"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "runtime-environments",
+      "zone": 6,
+      "name": "Runtime environments",
+      "icon": "server",
+      "desc": "Static, stack and heap allocation, and how storage is organised at run time.",
+      "kind": "concept",
+      "requires": [
+        "intermediate-code",
+        "c:recursion"
+      ],
+      "pyqTopics": [
+        "cd/runtime"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "activation-records",
+      "zone": 6,
+      "name": "Activation records",
+      "icon": "layers",
+      "desc": "Activation records and trees, access links and displays for nested procedures.",
+      "kind": "concept",
+      "requires": [
+        "runtime-environments"
+      ],
+      "pyqTopics": [
+        "cd/runtime"
+      ],
+      "pyqTags": [
+        "activation",
+        "display",
+        "static-link",
+        "nested",
+        "recursion"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "scoping-parameters",
+      "zone": 6,
+      "name": "Scoping & parameters",
+      "icon": "link",
+      "desc": "Static versus dynamic scoping, and call by value, reference, value-result and name.",
+      "kind": "concept",
+      "requires": [
+        "activation-records"
+      ],
+      "pyqTopics": [
+        "cd/runtime"
+      ],
+      "pyqTags": [
+        "scop",
+        "parameter",
+        "call-by"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "code-optimization",
+      "zone": 6,
+      "name": "Code optimisation",
+      "icon": "rocket",
+      "desc": "Machine-independent optimisation on basic blocks and control-flow graphs.",
+      "kind": "concept",
+      "requires": [
+        "three-address-code"
+      ],
+      "pyqTopics": [
+        "cd/optimization"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "local-optimizations",
+      "zone": 6,
+      "name": "Local optimisations",
+      "icon": "wand",
+      "desc": "Common subexpressions with DAGs, constant folding, strength reduction, dead code and loop-invariant motion.",
+      "kind": "concept",
+      "requires": [
+        "code-optimization"
+      ],
+      "pyqTopics": [
+        "cd/optimization"
+      ],
+      "pyqTags": [
+        "common",
+        "constant",
+        "strength",
+        "dead",
+        "loop-invariant",
+        "dag",
+        "DAG"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "data-flow-analysis",
+      "zone": 6,
+      "name": "Data-flow analysis",
+      "icon": "activity",
+      "desc": "Basic blocks, control-flow graphs, liveness and other data-flow analyses.",
+      "kind": "concept",
+      "requires": [
+        "code-optimization"
+      ],
+      "pyqTopics": [
+        "cd/optimization"
+      ],
+      "pyqTags": [
+        "live",
+        "data-flow",
+        "basic"
+      ],
+      "xpReward": 200
+    }
+  ]
+}
