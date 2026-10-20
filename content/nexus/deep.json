@@ -1,0 +1,344 @@
+{
+  "id": "deep",
+  "name": "Deep Learning",
+  "short": "DEEP",
+  "group": "beyond",
+  "order": 16,
+  "icon": "layers",
+  "color": "#7c3aed",
+  "description": "Neural networks from a single neuron to transformers, trained hands-on in PyTorch.",
+  "gate": {
+    "pyqSubject": "ml",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Neural network basics"
+    },
+    {
+      "level": 2,
+      "name": "Training deep nets"
+    },
+    {
+      "level": 3,
+      "name": "Convolutional nets"
+    },
+    {
+      "level": 4,
+      "name": "Sequence models"
+    },
+    {
+      "level": 5,
+      "name": "Attention & transformers"
+    },
+    {
+      "level": 6,
+      "name": "Generative models"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "neural-networks",
+      "zone": 1,
+      "name": "Neural networks",
+      "icon": "brain",
+      "desc": "Neurons, layers and multilayer perceptrons; the forward pass and counting parameters.",
+      "kind": "lesson",
+      "requires": [
+        "ml:gradient-descent",
+        "la:matrices"
+      ],
+      "pyqTopics": [
+        "ml/neural"
+      ],
+      "xpReward": 60,
+      "resources": [
+        {
+          "title": "PyTorch tutorials",
+          "url": "https://pytorch.org/tutorials/"
+        }
+      ]
+    },
+    {
+      "id": "activation-functions",
+      "zone": 1,
+      "name": "Activation functions",
+      "icon": "activity",
+      "desc": "Sigmoid, tanh, ReLU and friends, and why non-linearity matters.",
+      "kind": "concept",
+      "requires": [
+        "neural-networks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "loss-functions",
+      "zone": 1,
+      "name": "Loss functions",
+      "icon": "target",
+      "desc": "Mean squared error, cross-entropy and softmax outputs.",
+      "kind": "concept",
+      "requires": [
+        "neural-networks",
+        "ml:logistic-regression"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "backpropagation",
+      "zone": 1,
+      "name": "Backpropagation",
+      "icon": "route",
+      "desc": "Computing gradients with the chain rule over a computation graph, and automatic differentiation.",
+      "kind": "lesson",
+      "requires": [
+        "loss-functions",
+        "activation-functions",
+        "calc:multivariable-calculus"
+      ],
+      "pyqTopics": [
+        "ml/neural"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "optimizers",
+      "zone": 2,
+      "name": "Optimisers",
+      "icon": "rocket",
+      "desc": "SGD with momentum, RMSProp, Adam and learning-rate schedules.",
+      "kind": "lesson",
+      "requires": [
+        "backpropagation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "initialization-normalization",
+      "zone": 2,
+      "name": "Init & normalisation",
+      "icon": "sliders",
+      "desc": "Weight initialisation, vanishing and exploding gradients, batch and layer normalisation.",
+      "kind": "lesson",
+      "requires": [
+        "backpropagation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "regularization-dropout",
+      "zone": 2,
+      "name": "Regularising nets",
+      "icon": "shield",
+      "desc": "Dropout, weight decay, data augmentation and early stopping.",
+      "kind": "lesson",
+      "requires": [
+        "optimizers",
+        "ml:model-evaluation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "mnist-mlp",
+      "zone": 2,
+      "name": "Digit recogniser",
+      "icon": "play",
+      "desc": "Train an MLP on MNIST in PyTorch, plot training curves, and tune the optimiser and regularisation.",
+      "kind": "project",
+      "requires": [
+        "optimizers",
+        "regularization-dropout"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "cnn",
+      "zone": 3,
+      "name": "Convolutional nets",
+      "icon": "grid",
+      "desc": "Convolutions, padding and stride, pooling, and feature maps.",
+      "kind": "lesson",
+      "requires": [
+        "backpropagation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "cnn-architectures",
+      "zone": 3,
+      "name": "CNN architectures",
+      "icon": "layers",
+      "desc": "LeNet, VGG and ResNet, residual connections and why depth helps.",
+      "kind": "concept",
+      "requires": [
+        "cnn",
+        "initialization-normalization"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "transfer-learning",
+      "zone": 3,
+      "name": "Transfer learning",
+      "icon": "share",
+      "desc": "Fine-tuning pretrained networks and using them as feature extractors.",
+      "kind": "lesson",
+      "requires": [
+        "cnn-architectures"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "image-classifier",
+      "zone": 3,
+      "name": "Image classifier",
+      "icon": "image",
+      "desc": "Fine-tune a pretrained CNN on your own small image dataset and analyse its mistakes.",
+      "kind": "project",
+      "requires": [
+        "transfer-learning",
+        "regularization-dropout"
+      ],
+      "xpReward": 225
+    },
+    {
+      "id": "rnn",
+      "zone": 4,
+      "name": "Recurrent nets",
+      "icon": "random",
+      "desc": "Recurrent networks over sequences, backpropagation through time and its gradient problems.",
+      "kind": "lesson",
+      "requires": [
+        "backpropagation"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "lstm-gru",
+      "zone": 4,
+      "name": "LSTM & GRU",
+      "icon": "lock",
+      "desc": "Gated recurrent units and long short-term memory cells.",
+      "kind": "lesson",
+      "requires": [
+        "rnn"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "embeddings",
+      "zone": 4,
+      "name": "Word embeddings",
+      "icon": "type",
+      "desc": "Tokenisation, embedding layers and word2vec-style representations.",
+      "kind": "concept",
+      "requires": [
+        "neural-networks"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "text-generator",
+      "zone": 4,
+      "name": "Text generator",
+      "icon": "keyboard",
+      "desc": "Train a character-level LSTM language model and sample text from it.",
+      "kind": "project",
+      "requires": [
+        "lstm-gru",
+        "embeddings"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "attention",
+      "zone": 5,
+      "name": "Attention",
+      "icon": "eye",
+      "desc": "Query, key and value; scaled dot-product attention and multi-head attention.",
+      "kind": "lesson",
+      "requires": [
+        "embeddings",
+        "rnn"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "transformers",
+      "zone": 5,
+      "name": "Transformers",
+      "icon": "bolt",
+      "desc": "The transformer block, positional encodings, encoder versus decoder models.",
+      "kind": "lesson",
+      "requires": [
+        "attention",
+        "initialization-normalization"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "pretrained-models",
+      "zone": 5,
+      "name": "Pretrained LMs",
+      "icon": "sparkles",
+      "desc": "Pretraining and fine-tuning, BERT and GPT-style models, and prompting.",
+      "kind": "concept",
+      "requires": [
+        "transformers",
+        "transfer-learning"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "fine-tune-transformer",
+      "zone": 5,
+      "name": "Transformer fine-tune",
+      "icon": "wand",
+      "desc": "Fine-tune a small pretrained transformer for text classification and compare it with your LSTM.",
+      "kind": "project",
+      "requires": [
+        "pretrained-models"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "autoencoders",
+      "zone": 6,
+      "name": "Autoencoders",
+      "icon": "copy",
+      "desc": "Autoencoders and variational autoencoders, latent spaces and reconstruction.",
+      "kind": "lesson",
+      "requires": [
+        "optimizers",
+        "prob:distributions"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "gans",
+      "zone": 6,
+      "name": "GANs",
+      "icon": "gamepad",
+      "desc": "Generator versus discriminator, adversarial training and its instabilities.",
+      "kind": "concept",
+      "requires": [
+        "autoencoders",
+        "cnn"
+      ],
+      "xpReward": 160
+    },
+    {
+      "id": "diffusion-models",
+      "zone": 6,
+      "name": "Diffusion models",
+      "icon": "droplet",
+      "desc": "Denoising diffusion: the forward noising process and learning to reverse it.",
+      "kind": "concept",
+      "requires": [
+        "autoencoders"
+      ],
+      "xpReward": 160
+    }
+  ]
+}

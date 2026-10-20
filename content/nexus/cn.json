@@ -1,0 +1,531 @@
+{
+  "id": "cn",
+  "name": "Computer Networks",
+  "short": "CN",
+  "group": "gate",
+  "order": 6,
+  "icon": "globe",
+  "color": "#84cc16",
+  "description": "Layering, the data link layer, IP addressing and routing, TCP and UDP, application protocols and network security.",
+  "gate": {
+    "pyqSubject": "cn",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Foundations"
+    },
+    {
+      "level": 2,
+      "name": "Data link layer"
+    },
+    {
+      "level": 3,
+      "name": "Network layer"
+    },
+    {
+      "level": 4,
+      "name": "Transport layer"
+    },
+    {
+      "level": 5,
+      "name": "Applications & security"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "layering",
+      "zone": 1,
+      "name": "Layering",
+      "icon": "layers",
+      "desc": "The OSI and TCP/IP models, what each layer does and the units each layer exchanges.",
+      "kind": "concept",
+      "requires": [],
+      "pyqTopics": [
+        "cn/layering"
+      ],
+      "pyqTags": [
+        "layer",
+        "osi",
+        "PDU",
+        "header"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "switching-delays",
+      "zone": 1,
+      "name": "Switching & delays",
+      "icon": "timer",
+      "desc": "Circuit and packet switching; transmission, propagation and queuing delay in store-and-forward networks.",
+      "kind": "concept",
+      "requires": [
+        "layering"
+      ],
+      "pyqTopics": [
+        "cn/layering"
+      ],
+      "pyqTags": [
+        "switching",
+        "store",
+        "delay",
+        "latency",
+        "throughput",
+        "packet-size"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "framing-transmission",
+      "zone": 1,
+      "name": "Framing & bit rates",
+      "icon": "binary",
+      "desc": "Asynchronous transmission with start and stop bits, framing and bit stuffing.",
+      "kind": "concept",
+      "requires": [
+        "switching-delays"
+      ],
+      "pyqTopics": [
+        "cn/datalink"
+      ],
+      "pyqTags": [
+        "asynchronous",
+        "start-stop",
+        "framing",
+        "bit-stuffing",
+        "baud"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "error-detection",
+      "zone": 2,
+      "name": "Error detection",
+      "icon": "check-circle",
+      "desc": "Parity, checksums, CRC by polynomial division and Hamming codes for correction.",
+      "kind": "concept",
+      "requires": [
+        "framing-transmission",
+        "dl:codes"
+      ],
+      "pyqTopics": [
+        "cn/datalink"
+      ],
+      "pyqTags": [
+        "error",
+        "crc",
+        "hamming",
+        "polynomial",
+        "checksum",
+        "parity"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "stop-and-wait",
+      "zone": 2,
+      "name": "Stop-and-wait",
+      "icon": "pause",
+      "desc": "Stop-and-wait ARQ and link utilisation in terms of transmission and propagation delay.",
+      "kind": "concept",
+      "requires": [
+        "switching-delays"
+      ],
+      "pyqTopics": [
+        "cn/datalink"
+      ],
+      "pyqTags": [
+        "stop-and-wait",
+        "utilization",
+        "efficiency",
+        "propagation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sliding-window",
+      "zone": 2,
+      "name": "Sliding window",
+      "icon": "sliders",
+      "desc": "Go-Back-N and Selective Repeat, window sizes and the sequence-number bits they need.",
+      "kind": "concept",
+      "requires": [
+        "stop-and-wait"
+      ],
+      "pyqTopics": [
+        "cn/datalink"
+      ],
+      "pyqTags": [
+        "sliding",
+        "go-back",
+        "selective",
+        "sequence",
+        "bandwidth-delay"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "mac-protocols",
+      "zone": 2,
+      "name": "MAC protocols",
+      "icon": "users",
+      "desc": "ALOHA, CSMA/CD and Ethernet minimum frame size, and token passing.",
+      "kind": "concept",
+      "requires": [
+        "framing-transmission",
+        "prob:probability-basics"
+      ],
+      "pyqTopics": [
+        "cn/datalink"
+      ],
+      "pyqTags": [
+        "csma",
+        "CSMA",
+        "ethernet",
+        "token",
+        "aloha",
+        "minimum-frame",
+        "collision"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "lan-switching",
+      "zone": 2,
+      "name": "Bridges & switches",
+      "icon": "share",
+      "desc": "Learning bridges, switches and the spanning tree protocol.",
+      "kind": "concept",
+      "requires": [
+        "mac-protocols"
+      ],
+      "pyqTopics": [
+        "cn/datalink",
+        "cn/layering"
+      ],
+      "pyqTags": [
+        "bridge",
+        "spanning",
+        "switch"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "ip-addressing",
+      "zone": 3,
+      "name": "IP addressing",
+      "icon": "map",
+      "desc": "IPv4 addresses, classes, subnetting, CIDR and longest-prefix-match forwarding.",
+      "kind": "concept",
+      "requires": [
+        "layering"
+      ],
+      "pyqTopics": [
+        "cn/ip"
+      ],
+      "pyqTags": [
+        "subnet",
+        "cidr",
+        "class",
+        "netmask",
+        "longest",
+        "prefix"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "ip-fragmentation",
+      "zone": 3,
+      "name": "IP fragmentation",
+      "icon": "grid",
+      "desc": "Fragmenting datagrams to fit the MTU: offsets, flags and fragment sizes.",
+      "kind": "concept",
+      "requires": [
+        "ip-addressing"
+      ],
+      "pyqTopics": [
+        "cn/ip"
+      ],
+      "pyqTags": [
+        "fragment",
+        "mtu",
+        "MTU"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "ip-header",
+      "zone": 3,
+      "name": "IPv4 header",
+      "icon": "list",
+      "desc": "IPv4 header fields, TTL and the header checksum.",
+      "kind": "concept",
+      "requires": [
+        "ip-addressing"
+      ],
+      "pyqTopics": [
+        "cn/ip"
+      ],
+      "pyqTags": [
+        "header",
+        "ttl",
+        "TTL"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "network-support",
+      "zone": 3,
+      "name": "ARP, ICMP, DHCP, NAT",
+      "icon": "wrench",
+      "desc": "The supporting protocols: ARP, ICMP and traceroute, DHCP and NAT.",
+      "kind": "concept",
+      "requires": [
+        "ip-addressing"
+      ],
+      "pyqTopics": [
+        "cn/support"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "routing",
+      "zone": 3,
+      "name": "Routing",
+      "icon": "route",
+      "desc": "Routing tables and how routers compute them; intra- and inter-domain routing.",
+      "kind": "concept",
+      "requires": [
+        "ip-addressing",
+        "algo:shortest-paths"
+      ],
+      "pyqTopics": [
+        "cn/routing"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "distance-vector",
+      "zone": 3,
+      "name": "Distance vector",
+      "icon": "compass",
+      "desc": "Distance-vector routing, Bellman-Ford updates and the count-to-infinity problem.",
+      "kind": "concept",
+      "requires": [
+        "routing"
+      ],
+      "pyqTopics": [
+        "cn/routing"
+      ],
+      "pyqTags": [
+        "distance",
+        "count",
+        "RIP",
+        "rip",
+        "bellman",
+        "Bellman"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "link-state",
+      "zone": 3,
+      "name": "Link state",
+      "icon": "graph",
+      "desc": "Link-state routing with flooding and Dijkstra, as in OSPF.",
+      "kind": "concept",
+      "requires": [
+        "routing"
+      ],
+      "pyqTopics": [
+        "cn/routing"
+      ],
+      "pyqTags": [
+        "link",
+        "ospf",
+        "OSPF",
+        "dijkstra"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "udp",
+      "zone": 4,
+      "name": "UDP & sockets",
+      "icon": "upload",
+      "desc": "Ports, UDP's connectionless service, and the socket API.",
+      "kind": "concept",
+      "requires": [
+        "layering"
+      ],
+      "pyqTopics": [
+        "cn/transport",
+        "cn/application"
+      ],
+      "pyqTags": [
+        "UDP",
+        "udp",
+        "socket"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "tcp",
+      "zone": 4,
+      "name": "TCP",
+      "icon": "link",
+      "desc": "TCP's reliable byte stream, segments, acknowledgements and flow control.",
+      "kind": "concept",
+      "requires": [
+        "udp",
+        "sliding-window"
+      ],
+      "pyqTopics": [
+        "cn/transport"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "tcp-connection",
+      "zone": 4,
+      "name": "TCP connections",
+      "icon": "chat",
+      "desc": "The three-way handshake, sequence numbers, wraparound and connection teardown.",
+      "kind": "concept",
+      "requires": [
+        "tcp"
+      ],
+      "pyqTopics": [
+        "cn/transport"
+      ],
+      "pyqTags": [
+        "handshake",
+        "sequence",
+        "isn",
+        "wrap",
+        "state"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "congestion-control",
+      "zone": 4,
+      "name": "Congestion control",
+      "icon": "activity",
+      "desc": "Slow start, congestion avoidance, timeouts and the congestion window; token-bucket shaping.",
+      "kind": "concept",
+      "requires": [
+        "tcp"
+      ],
+      "pyqTopics": [
+        "cn/transport"
+      ],
+      "pyqTags": [
+        "congestion",
+        "slow-start",
+        "token",
+        "timeout"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "application-layer",
+      "zone": 5,
+      "name": "Application layer",
+      "icon": "globe",
+      "desc": "Client–server and peer-to-peer applications and which transport they use.",
+      "kind": "concept",
+      "requires": [
+        "tcp"
+      ],
+      "pyqTopics": [
+        "cn/application"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "dns",
+      "zone": 5,
+      "name": "DNS",
+      "icon": "search",
+      "desc": "Name resolution, iterative and recursive queries, and DNS caching.",
+      "kind": "concept",
+      "requires": [
+        "application-layer",
+        "udp"
+      ],
+      "pyqTopics": [
+        "cn/application"
+      ],
+      "pyqTags": [
+        "dns",
+        "DNS"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "http-email",
+      "zone": 5,
+      "name": "HTTP, FTP & email",
+      "icon": "mail",
+      "desc": "HTTP persistent and non-persistent connections, FTP, SMTP and POP3.",
+      "kind": "concept",
+      "requires": [
+        "application-layer"
+      ],
+      "pyqTopics": [
+        "cn/application"
+      ],
+      "pyqTags": [
+        "http",
+        "HTTP",
+        "smtp",
+        "SMTP",
+        "ftp",
+        "FTP",
+        "pop",
+        "POP"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "network-security",
+      "zone": 5,
+      "name": "Network security",
+      "icon": "shield",
+      "desc": "Threats, firewalls, symmetric encryption and hash functions.",
+      "kind": "concept",
+      "requires": [
+        "layering"
+      ],
+      "pyqTopics": [
+        "cn/security"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "public-key-crypto",
+      "zone": 5,
+      "name": "Public-key crypto",
+      "icon": "key",
+      "desc": "RSA, Diffie–Hellman key exchange and digital signatures.",
+      "kind": "concept",
+      "requires": [
+        "network-security",
+        "dsa:mb_ntheory"
+      ],
+      "pyqTopics": [
+        "cn/security"
+      ],
+      "pyqTags": [
+        "rsa",
+        "RSA",
+        "public",
+        "diffie",
+        "signature"
+      ],
+      "xpReward": 170
+    }
+  ]
+}

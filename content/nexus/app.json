@@ -1,0 +1,317 @@
+{
+  "id": "app",
+  "name": "App Development",
+  "short": "APP",
+  "group": "beyond",
+  "order": 18,
+  "icon": "monitor",
+  "color": "#10b981",
+  "description": "Building mobile apps: UI, state, persistence, networking and shipping to the stores.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Platforms & tooling"
+    },
+    {
+      "level": 2,
+      "name": "Mobile UI"
+    },
+    {
+      "level": 3,
+      "name": "State & data"
+    },
+    {
+      "level": 4,
+      "name": "Networking"
+    },
+    {
+      "level": 5,
+      "name": "Device & release"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "mobile-platforms",
+      "zone": 1,
+      "name": "Mobile platforms",
+      "icon": "monitor",
+      "desc": "iOS and Android, native versus cross-platform (Flutter, React Native), and how apps are packaged and run.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "app-language",
+      "zone": 1,
+      "name": "App language",
+      "icon": "code",
+      "desc": "Getting fluent in the language of your stack: Kotlin, Swift, Dart or TypeScript.",
+      "kind": "lesson",
+      "requires": [
+        "mobile-platforms"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "dev-tooling",
+      "zone": 1,
+      "name": "Tooling & emulators",
+      "icon": "wrench",
+      "desc": "IDEs, simulators and emulators, debugging, and running on a real device.",
+      "kind": "lesson",
+      "requires": [
+        "mobile-platforms"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "mobile-ui",
+      "zone": 2,
+      "name": "Mobile UI",
+      "icon": "palette",
+      "desc": "Declarative UI, widgets and components, layout and styling.",
+      "kind": "lesson",
+      "requires": [
+        "app-language",
+        "dev-tooling"
+      ],
+      "xpReward": 80,
+      "resources": [
+        {
+          "title": "Jetpack Compose",
+          "url": "https://developer.android.com/jetpack/compose"
+        },
+        {
+          "title": "SwiftUI",
+          "url": "https://developer.apple.com/documentation/swiftui"
+        }
+      ]
+    },
+    {
+      "id": "lists-layouts",
+      "zone": 2,
+      "name": "Lists & layouts",
+      "icon": "list",
+      "desc": "Scrolling lists, grids, adaptive layouts for phones and tablets.",
+      "kind": "lesson",
+      "requires": [
+        "mobile-ui"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "navigation",
+      "zone": 2,
+      "name": "Navigation",
+      "icon": "compass",
+      "desc": "Screens, stacks, tabs, passing arguments and deep links.",
+      "kind": "lesson",
+      "requires": [
+        "mobile-ui"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "theming-accessibility",
+      "zone": 2,
+      "name": "Theming & a11y",
+      "icon": "sun",
+      "desc": "Design systems, dark mode, dynamic type and screen readers.",
+      "kind": "concept",
+      "requires": [
+        "mobile-ui"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "todo-app",
+      "zone": 2,
+      "name": "Todo app",
+      "icon": "check",
+      "desc": "Build a multi-screen todo app with lists, navigation and a polished theme.",
+      "kind": "project",
+      "requires": [
+        "lists-layouts",
+        "navigation"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "app-state",
+      "zone": 3,
+      "name": "App state",
+      "icon": "sliders",
+      "desc": "Local versus shared state, state hoisting, view models and unidirectional data flow.",
+      "kind": "lesson",
+      "requires": [
+        "navigation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "app-lifecycle",
+      "zone": 3,
+      "name": "App lifecycle",
+      "icon": "activity",
+      "desc": "Foreground, background and process death; saving and restoring state.",
+      "kind": "concept",
+      "requires": [
+        "app-state",
+        "os:processes"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "local-persistence",
+      "zone": 3,
+      "name": "Local storage",
+      "icon": "save",
+      "desc": "Key-value preferences, files and on-device SQL databases (SQLite, Room, Core Data).",
+      "kind": "lesson",
+      "requires": [
+        "app-state",
+        "dbms:sql"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "concurrency-mobile",
+      "zone": 3,
+      "name": "Async & threads",
+      "icon": "clock",
+      "desc": "Keeping the main thread free: coroutines, async/await and background work.",
+      "kind": "lesson",
+      "requires": [
+        "app-state",
+        "os:threads"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "notes-app",
+      "zone": 3,
+      "name": "Notes app",
+      "icon": "edit",
+      "desc": "Build a notes app with search and on-device persistence that survives restarts.",
+      "kind": "project",
+      "requires": [
+        "local-persistence",
+        "app-lifecycle"
+      ],
+      "xpReward": 225
+    },
+    {
+      "id": "app-networking",
+      "zone": 4,
+      "name": "Networking",
+      "icon": "globe",
+      "desc": "Calling REST APIs, JSON parsing, error handling and loading states.",
+      "kind": "lesson",
+      "requires": [
+        "concurrency-mobile",
+        "web:rest-apis"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "auth-mobile",
+      "zone": 4,
+      "name": "Sign-in & security",
+      "icon": "lock",
+      "desc": "Login flows, secure token storage and OAuth on mobile.",
+      "kind": "lesson",
+      "requires": [
+        "app-networking"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "offline-sync",
+      "zone": 4,
+      "name": "Offline & sync",
+      "icon": "download",
+      "desc": "Caching responses, offline-first design, and syncing local data with a server.",
+      "kind": "lesson",
+      "requires": [
+        "app-networking",
+        "local-persistence"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "weather-app",
+      "zone": 4,
+      "name": "Weather app",
+      "icon": "sun",
+      "desc": "Build a weather app that fetches forecasts from a public API, caches them for offline use, and handles errors gracefully.",
+      "kind": "project",
+      "requires": [
+        "offline-sync"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "device-features",
+      "zone": 5,
+      "name": "Device features",
+      "icon": "image",
+      "desc": "Permissions, camera, location and sensors.",
+      "kind": "lesson",
+      "requires": [
+        "app-state"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "push-notifications",
+      "zone": 5,
+      "name": "Notifications",
+      "icon": "bell",
+      "desc": "Local and push notifications and background tasks.",
+      "kind": "lesson",
+      "requires": [
+        "app-networking"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "app-testing",
+      "zone": 5,
+      "name": "Testing & perf",
+      "icon": "check-circle",
+      "desc": "Unit and UI tests, profiling, startup time and smooth scrolling.",
+      "kind": "lesson",
+      "requires": [
+        "app-state"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "publishing",
+      "zone": 5,
+      "name": "Publishing",
+      "icon": "upload",
+      "desc": "Signing, store listings, review guidelines, releases and crash reporting.",
+      "kind": "lesson",
+      "requires": [
+        "app-testing"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "capstone-app",
+      "zone": 5,
+      "name": "Capstone app",
+      "icon": "trophy",
+      "desc": "Design, build and publish (to a test track) an app with sign-in, a backend API, offline support and notifications.",
+      "kind": "project",
+      "requires": [
+        "weather-app",
+        "auth-mobile",
+        "push-notifications",
+        "publishing"
+      ],
+      "xpReward": 300
+    }
+  ]
+}
