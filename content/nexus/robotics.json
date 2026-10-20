@@ -1,0 +1,296 @@
+{
+  "id": "robotics",
+  "name": "Robotics",
+  "short": "ROBO",
+  "group": "beyond",
+  "domain": "ai",
+  "order": 48,
+  "icon": "bot",
+  "color": "#ea580c",
+  "description": "Robot kinematics and dynamics, state estimation and SLAM, planning and control, and robot learning.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Robot foundations"
+    },
+    {
+      "level": 2,
+      "name": "Kinematics & dynamics"
+    },
+    {
+      "level": 3,
+      "name": "Perception & estimation"
+    },
+    {
+      "level": 4,
+      "name": "Planning & control"
+    },
+    {
+      "level": 5,
+      "name": "Robot learning"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "robot-systems",
+      "zone": 1,
+      "name": "Robot systems",
+      "icon": "bot",
+      "desc": "Sensors, actuators, onboard compute and the sense-plan-act loop.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "rotations-frames",
+      "zone": 1,
+      "name": "Rotations & frames",
+      "icon": "compass",
+      "desc": "Coordinate frames, rotation matrices, quaternions and homogeneous transforms.",
+      "kind": "concept",
+      "requires": [
+        "la:matrices"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "ros-basics",
+      "zone": 1,
+      "name": "ROS basics",
+      "icon": "share",
+      "desc": "Nodes, topics, services, launch files and tooling in ROS 2.",
+      "kind": "lesson",
+      "requires": [
+        "robot-systems",
+        "linux-shell:shell-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "sensors-actuators",
+      "zone": 1,
+      "name": "Sensors & actuators",
+      "icon": "cpu",
+      "desc": "Encoders, IMUs, cameras, lidar, motors and their noise characteristics.",
+      "kind": "concept",
+      "requires": [
+        "robot-systems"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "forward-kinematics",
+      "zone": 2,
+      "name": "Forward kinematics",
+      "icon": "link",
+      "desc": "Chaining joint transforms and Denavit-Hartenberg parameters.",
+      "kind": "lesson",
+      "requires": [
+        "rotations-frames"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "inverse-kinematics",
+      "zone": 2,
+      "name": "Inverse kinematics",
+      "icon": "crosshair",
+      "desc": "Analytical and numerical IK and the Jacobian.",
+      "kind": "lesson",
+      "requires": [
+        "forward-kinematics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "robot-dynamics",
+      "zone": 2,
+      "name": "Robot dynamics",
+      "icon": "bolt",
+      "desc": "Forces, torques and equations of motion for manipulators.",
+      "kind": "concept",
+      "requires": [
+        "forward-kinematics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "mobile-robots",
+      "zone": 2,
+      "name": "Mobile robots",
+      "icon": "route",
+      "desc": "Wheeled robot models, differential drive and odometry.",
+      "kind": "concept",
+      "requires": [
+        "rotations-frames"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "state-estimation",
+      "zone": 3,
+      "name": "State estimation",
+      "icon": "activity",
+      "desc": "The Bayes filter and fusing noisy sensor readings.",
+      "kind": "concept",
+      "requires": [
+        "sensors-actuators",
+        "prob:bayes-theorem"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "kalman-filters",
+      "zone": 3,
+      "name": "Kalman filters",
+      "icon": "function",
+      "desc": "Kalman and extended Kalman filters for tracking and fusion.",
+      "kind": "lesson",
+      "requires": [
+        "state-estimation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "localization",
+      "zone": 3,
+      "name": "Localisation",
+      "icon": "map",
+      "desc": "Particle filters and map-based localisation.",
+      "kind": "lesson",
+      "requires": [
+        "kalman-filters",
+        "mobile-robots"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "slam",
+      "zone": 3,
+      "name": "SLAM",
+      "icon": "globe",
+      "desc": "Simultaneous localisation and mapping with filters and pose graphs.",
+      "kind": "lesson",
+      "requires": [
+        "localization"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "robot-perception",
+      "zone": 3,
+      "name": "Robot perception",
+      "icon": "eye",
+      "desc": "Camera and lidar perception for obstacles and objects.",
+      "kind": "lesson",
+      "requires": [
+        "sensors-actuators",
+        "computer-vision:camera-model"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "pid-control",
+      "zone": 4,
+      "name": "PID control",
+      "icon": "sliders",
+      "desc": "Feedback control, PID tuning and stability intuition.",
+      "kind": "lesson",
+      "requires": [
+        "robot-dynamics"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "motion-planning",
+      "zone": 4,
+      "name": "Motion planning",
+      "icon": "route",
+      "desc": "Configuration space, grid search, A*, RRT and PRM.",
+      "kind": "lesson",
+      "requires": [
+        "mobile-robots",
+        "algo:shortest-paths"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "trajectories",
+      "zone": 4,
+      "name": "Trajectories",
+      "icon": "trending-up",
+      "desc": "Smooth trajectory generation and tracking.",
+      "kind": "lesson",
+      "requires": [
+        "motion-planning",
+        "pid-control"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "mpc",
+      "zone": 4,
+      "name": "MPC",
+      "icon": "target",
+      "desc": "Model predictive control as repeated constrained optimisation.",
+      "kind": "concept",
+      "requires": [
+        "trajectories"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "navigation-stack",
+      "zone": 4,
+      "name": "Navigation stack",
+      "icon": "rocket",
+      "desc": "Build a simulated robot that maps a space and navigates to goals.",
+      "kind": "project",
+      "requires": [
+        "slam",
+        "motion-planning",
+        "ros-basics"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "robot-learning",
+      "zone": 5,
+      "name": "Robot learning",
+      "icon": "brain",
+      "desc": "Reinforcement learning for robots and the sim-to-real gap.",
+      "kind": "concept",
+      "requires": [
+        "mpc",
+        "reinforcement-learning:policy-gradient"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "imitation-learning",
+      "zone": 5,
+      "name": "Imitation learning",
+      "icon": "copy",
+      "desc": "Learning policies from demonstrations with behaviour cloning.",
+      "kind": "lesson",
+      "requires": [
+        "robot-learning"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "pick-and-place",
+      "zone": 5,
+      "name": "Pick-and-place arm",
+      "icon": "wrench",
+      "desc": "Program a simulated arm to detect, grasp and place objects.",
+      "kind": "project",
+      "requires": [
+        "inverse-kinematics",
+        "robot-perception",
+        "pid-control"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

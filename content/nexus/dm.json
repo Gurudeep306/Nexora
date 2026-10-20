@@ -3,6 +3,7 @@
   "name": "Discrete Mathematics",
   "short": "DM",
   "group": "gate",
+  "domain": "math",
   "order": 10,
   "icon": "puzzle",
   "color": "#ef4444",

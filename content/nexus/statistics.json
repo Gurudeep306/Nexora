@@ -1,0 +1,320 @@
+{
+  "id": "statistics",
+  "name": "Statistics",
+  "short": "STAT",
+  "group": "beyond",
+  "domain": "data",
+  "order": 41,
+  "icon": "trending-up",
+  "color": "#c026d3",
+  "description": "Describing data, sampling and estimation, hypothesis tests, regression and Bayesian and causal reasoning.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Describing data"
+    },
+    {
+      "level": 2,
+      "name": "Sampling & estimation"
+    },
+    {
+      "level": 3,
+      "name": "Hypothesis testing"
+    },
+    {
+      "level": 4,
+      "name": "Regression"
+    },
+    {
+      "level": 5,
+      "name": "Advanced methods"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "data-and-sampling",
+      "zone": 1,
+      "name": "Data & sampling",
+      "icon": "list",
+      "desc": "Types of variables, populations versus samples, sampling designs and sources of bias.",
+      "kind": "concept",
+      "requires": [
+        "prob:probability-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "descriptive-stats",
+      "zone": 1,
+      "name": "Descriptive statistics",
+      "icon": "chart",
+      "desc": "Mean, median, mode, variance, standard deviation, quantiles and skew.",
+      "kind": "lesson",
+      "requires": [
+        "data-and-sampling"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "plotting-distributions",
+      "zone": 1,
+      "name": "Plotting distributions",
+      "icon": "analytics",
+      "desc": "Histograms, box plots, density plots and QQ plots for seeing the shape of data.",
+      "kind": "lesson",
+      "requires": [
+        "descriptive-stats"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "correlation",
+      "zone": 1,
+      "name": "Correlation",
+      "icon": "trending-up",
+      "desc": "Covariance, Pearson and Spearman correlation, and why correlation is not causation.",
+      "kind": "concept",
+      "requires": [
+        "descriptive-stats"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "sampling-distributions",
+      "zone": 2,
+      "name": "Sampling distributions",
+      "icon": "layers",
+      "desc": "How a statistic varies from sample to sample and the idea of a standard error.",
+      "kind": "concept",
+      "requires": [
+        "descriptive-stats",
+        "prob:distributions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "clt",
+      "zone": 2,
+      "name": "Central limit theorem",
+      "icon": "bolt",
+      "desc": "Why sample means are approximately normal and when the approximation breaks down.",
+      "kind": "concept",
+      "requires": [
+        "sampling-distributions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "point-estimation",
+      "zone": 2,
+      "name": "Point estimation",
+      "icon": "target",
+      "desc": "Estimators, bias and variance, method of moments and maximum likelihood.",
+      "kind": "concept",
+      "requires": [
+        "sampling-distributions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "confidence-intervals",
+      "zone": 2,
+      "name": "Confidence intervals",
+      "icon": "sliders",
+      "desc": "Constructing and correctly interpreting intervals for means and proportions.",
+      "kind": "lesson",
+      "requires": [
+        "clt",
+        "point-estimation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "bootstrap",
+      "zone": 2,
+      "name": "Bootstrap",
+      "icon": "random",
+      "desc": "Resampling to estimate standard errors and intervals without closed-form formulas.",
+      "kind": "lesson",
+      "requires": [
+        "confidence-intervals"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "hypothesis-testing",
+      "zone": 3,
+      "name": "Hypothesis testing",
+      "icon": "check-circle",
+      "desc": "Null and alternative hypotheses, test statistics, p-values, type I and II errors and power.",
+      "kind": "lesson",
+      "requires": [
+        "confidence-intervals",
+        "prob:distributions"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "t-tests",
+      "zone": 3,
+      "name": "t-tests",
+      "icon": "calculator",
+      "desc": "One-sample, two-sample and paired t-tests and their assumptions.",
+      "kind": "lesson",
+      "requires": [
+        "hypothesis-testing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "chi-square-tests",
+      "zone": 3,
+      "name": "Chi-square tests",
+      "icon": "grid",
+      "desc": "Goodness of fit and independence tests for categorical data.",
+      "kind": "lesson",
+      "requires": [
+        "hypothesis-testing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "anova",
+      "zone": 3,
+      "name": "ANOVA",
+      "icon": "layers",
+      "desc": "Comparing several group means with one-way and two-way analysis of variance.",
+      "kind": "lesson",
+      "requires": [
+        "t-tests"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "multiple-testing",
+      "zone": 3,
+      "name": "Multiple testing",
+      "icon": "warning",
+      "desc": "Why many tests inflate false positives, with Bonferroni and false discovery rate control.",
+      "kind": "concept",
+      "requires": [
+        "hypothesis-testing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "nonparametric",
+      "zone": 3,
+      "name": "Non-parametric tests",
+      "icon": "shapes",
+      "desc": "Rank-based tests such as Mann-Whitney and Wilcoxon, and permutation tests.",
+      "kind": "lesson",
+      "requires": [
+        "hypothesis-testing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "linear-regression-stats",
+      "zone": 4,
+      "name": "Linear regression",
+      "icon": "trending-up",
+      "desc": "Ordinary least squares, inference on coefficients, R-squared and interpreting effects.",
+      "kind": "lesson",
+      "requires": [
+        "correlation",
+        "hypothesis-testing",
+        "la:matrices"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "regression-diagnostics",
+      "zone": 4,
+      "name": "Regression diagnostics",
+      "icon": "search",
+      "desc": "Residual plots, heteroscedasticity, leverage, multicollinearity and transformations.",
+      "kind": "lesson",
+      "requires": [
+        "linear-regression-stats"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "glm",
+      "zone": 4,
+      "name": "GLMs",
+      "icon": "function",
+      "desc": "Generalised linear models: logistic and Poisson regression and link functions.",
+      "kind": "lesson",
+      "requires": [
+        "linear-regression-stats"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ab-test-analysis",
+      "zone": 4,
+      "name": "A/B test analysis",
+      "icon": "sliders",
+      "desc": "Analyse a simulated A/B test end to end, from power analysis to a decision memo.",
+      "kind": "project",
+      "requires": [
+        "t-tests",
+        "multiple-testing"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "bayesian-inference",
+      "zone": 5,
+      "name": "Bayesian inference",
+      "icon": "brain",
+      "desc": "Priors, likelihoods and posteriors, conjugate models and credible intervals.",
+      "kind": "lesson",
+      "requires": [
+        "point-estimation",
+        "prob:bayes-theorem"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "time-series-stats",
+      "zone": 5,
+      "name": "Time series",
+      "icon": "clock",
+      "desc": "Trend, seasonality, autocorrelation and ARIMA-style forecasting.",
+      "kind": "lesson",
+      "requires": [
+        "regression-diagnostics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "causal-inference",
+      "zone": 5,
+      "name": "Causal inference",
+      "icon": "git-branch",
+      "desc": "Confounding, randomised experiments, causal graphs and observational study designs.",
+      "kind": "concept",
+      "requires": [
+        "regression-diagnostics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "statistical-study",
+      "zone": 5,
+      "name": "Statistical study",
+      "icon": "trophy",
+      "desc": "Plan, run and report a complete statistical analysis on a real dataset.",
+      "kind": "project",
+      "requires": [
+        "bayesian-inference",
+        "glm",
+        "nonparametric"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

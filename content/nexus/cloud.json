@@ -1,0 +1,287 @@
+{
+  "id": "cloud",
+  "name": "Cloud Computing",
+  "short": "CLD",
+  "group": "beyond",
+  "domain": "systems",
+  "order": 52,
+  "icon": "globe",
+  "color": "#0284c7",
+  "description": "Cloud fundamentals: compute, storage, networking and identity, serverless and cloud-native services, and running them well.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Cloud basics"
+    },
+    {
+      "level": 2,
+      "name": "Compute & storage"
+    },
+    {
+      "level": 3,
+      "name": "Networking & identity"
+    },
+    {
+      "level": 4,
+      "name": "Cloud-native"
+    },
+    {
+      "level": 5,
+      "name": "Operations & cost"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cloud-basics",
+      "zone": 1,
+      "name": "Cloud basics",
+      "icon": "globe",
+      "desc": "What the cloud is, on-demand resources, elasticity and the shared responsibility model.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "service-models",
+      "zone": 1,
+      "name": "IaaS, PaaS & SaaS",
+      "icon": "layers",
+      "desc": "Service and deployment models: public, private and hybrid clouds.",
+      "kind": "concept",
+      "requires": [
+        "cloud-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "regions-zones",
+      "zone": 1,
+      "name": "Regions & zones",
+      "icon": "map",
+      "desc": "Regions, availability zones, edge locations and designing for failure.",
+      "kind": "concept",
+      "requires": [
+        "cloud-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "virtualization",
+      "zone": 2,
+      "name": "Virtualization",
+      "icon": "monitor",
+      "desc": "Hypervisors, virtual machines and how a cloud slices physical hardware.",
+      "kind": "concept",
+      "requires": [
+        "cloud-basics",
+        "os:virtual-memory"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "vms",
+      "zone": 2,
+      "name": "Virtual machines",
+      "icon": "server",
+      "desc": "Instance types, images, launching and sizing VMs.",
+      "kind": "lesson",
+      "requires": [
+        "virtualization"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "object-storage",
+      "zone": 2,
+      "name": "Object storage",
+      "icon": "inbox",
+      "desc": "Buckets, objects, storage classes and durability.",
+      "kind": "concept",
+      "requires": [
+        "cloud-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "block-file-storage",
+      "zone": 2,
+      "name": "Block & file storage",
+      "icon": "save",
+      "desc": "Volumes, snapshots and shared file systems.",
+      "kind": "concept",
+      "requires": [
+        "vms"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "managed-databases",
+      "zone": 2,
+      "name": "Managed databases",
+      "icon": "database",
+      "desc": "Managed relational and NoSQL databases, backups and read replicas.",
+      "kind": "concept",
+      "requires": [
+        "vms",
+        "sql:select-queries"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "vpc",
+      "zone": 3,
+      "name": "Virtual networks",
+      "icon": "grid",
+      "desc": "VPCs, subnets, route tables, gateways and security groups.",
+      "kind": "concept",
+      "requires": [
+        "regions-zones",
+        "cn:ip-addressing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "iam",
+      "zone": 3,
+      "name": "Identity & access",
+      "icon": "key",
+      "desc": "Users, roles, policies and least privilege.",
+      "kind": "concept",
+      "requires": [
+        "cloud-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "cloud-load-balancing",
+      "zone": 3,
+      "name": "Load balancing & CDN",
+      "icon": "share",
+      "desc": "Managed load balancers, DNS and content delivery networks.",
+      "kind": "concept",
+      "requires": [
+        "vpc",
+        "sysd:load-balancing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "serverless",
+      "zone": 4,
+      "name": "Serverless",
+      "icon": "bolt",
+      "desc": "Functions as a service, event triggers and their limits.",
+      "kind": "concept",
+      "requires": [
+        "iam",
+        "service-models"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "managed-containers",
+      "zone": 4,
+      "name": "Managed containers",
+      "icon": "layers",
+      "desc": "Container services and managed Kubernetes.",
+      "kind": "concept",
+      "requires": [
+        "vms",
+        "containers:docker-basics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "infra-as-code",
+      "zone": 4,
+      "name": "Infrastructure as code",
+      "icon": "code",
+      "desc": "Describing infrastructure in code with tools like Terraform.",
+      "kind": "concept",
+      "requires": [
+        "vpc",
+        "iam"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "autoscaling",
+      "zone": 4,
+      "name": "Autoscaling",
+      "icon": "trending-up",
+      "desc": "Scaling groups, scaling policies and stateless design.",
+      "kind": "concept",
+      "requires": [
+        "cloud-load-balancing",
+        "vms"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "cloud-monitoring",
+      "zone": 5,
+      "name": "Monitoring",
+      "icon": "activity",
+      "desc": "Metrics, logs, alarms and dashboards for cloud resources.",
+      "kind": "concept",
+      "requires": [
+        "autoscaling"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "cost-management",
+      "zone": 5,
+      "name": "Cost management",
+      "icon": "coins",
+      "desc": "Pricing models, reserved and spot capacity, budgets and cost optimisation.",
+      "kind": "concept",
+      "requires": [
+        "autoscaling",
+        "object-storage"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "cloud-security",
+      "zone": 5,
+      "name": "Cloud security",
+      "icon": "shield",
+      "desc": "Encryption, secrets, network isolation and common misconfigurations.",
+      "kind": "concept",
+      "requires": [
+        "iam",
+        "vpc"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "static-site",
+      "zone": 5,
+      "name": "Static site project",
+      "icon": "upload",
+      "desc": "Host a static website on object storage behind a CDN with a custom domain.",
+      "kind": "project",
+      "requires": [
+        "object-storage",
+        "cloud-load-balancing"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "three-tier-app",
+      "zone": 5,
+      "name": "Three-tier app project",
+      "icon": "building",
+      "desc": "Deploy a web app, API and database with infrastructure as code, autoscaling and alarms.",
+      "kind": "project",
+      "requires": [
+        "infra-as-code",
+        "managed-databases",
+        "autoscaling",
+        "cloud-monitoring"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

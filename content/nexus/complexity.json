@@ -1,0 +1,297 @@
+{
+  "id": "complexity",
+  "name": "Complexity Theory",
+  "short": "CMPLX",
+  "group": "beyond",
+  "domain": "theory",
+  "order": 52,
+  "icon": "puzzle",
+  "color": "#ca8a04",
+  "description": "What can be computed efficiently: P versus NP, reductions, space classes, randomness, approximation and beyond.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Models of computation"
+    },
+    {
+      "level": 2,
+      "name": "P and NP"
+    },
+    {
+      "level": 3,
+      "name": "Space & hierarchies"
+    },
+    {
+      "level": 4,
+      "name": "Randomness & approximation"
+    },
+    {
+      "level": 5,
+      "name": "Advanced topics"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "computation-models",
+      "zone": 1,
+      "name": "Models of computation",
+      "icon": "cpu",
+      "desc": "Turing machine variants, the RAM model and why they agree up to polynomial factors.",
+      "kind": "concept",
+      "requires": [
+        "toc:turing-machines"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "time-complexity",
+      "zone": 1,
+      "name": "Time complexity",
+      "icon": "clock",
+      "desc": "Measuring running time as a function of input size and the class P.",
+      "kind": "concept",
+      "requires": [
+        "computation-models",
+        "algo:asymptotics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "reductions",
+      "zone": 1,
+      "name": "Reductions",
+      "icon": "share",
+      "desc": "Many-one and polynomial-time reductions as a way to compare problems.",
+      "kind": "concept",
+      "requires": [
+        "computation-models",
+        "toc:decidability"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "p-np",
+      "zone": 2,
+      "name": "P versus NP",
+      "icon": "puzzle",
+      "desc": "NP as efficiently verifiable problems and what P = NP would mean.",
+      "kind": "concept",
+      "requires": [
+        "time-complexity",
+        "toc:turing-machines",
+        "algo:np-completeness"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "np-complete-problems",
+      "zone": 2,
+      "name": "NP-complete problems",
+      "icon": "list",
+      "desc": "SAT, 3-SAT, clique, vertex cover, subset sum and how to prove NP-completeness.",
+      "kind": "lesson",
+      "requires": [
+        "p-np",
+        "reductions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "cook-levin",
+      "zone": 2,
+      "name": "Cook-Levin theorem",
+      "icon": "key",
+      "desc": "Why SAT is NP-complete, by encoding a computation as a formula.",
+      "kind": "concept",
+      "requires": [
+        "p-np"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "conp",
+      "zone": 2,
+      "name": "coNP",
+      "icon": "layers",
+      "desc": "Complements of NP problems, tautology and the NP versus coNP question.",
+      "kind": "concept",
+      "requires": [
+        "p-np"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "reduction-workbook",
+      "zone": 2,
+      "name": "Reduction workbook",
+      "icon": "edit",
+      "desc": "Write and check a set of polynomial-time reductions between classic NP-complete problems.",
+      "kind": "project",
+      "requires": [
+        "np-complete-problems",
+        "cook-levin"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "space-complexity",
+      "zone": 3,
+      "name": "Space complexity",
+      "icon": "database",
+      "desc": "PSPACE, L and NL, and Savitch's theorem.",
+      "kind": "concept",
+      "requires": [
+        "time-complexity"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "pspace-completeness",
+      "zone": 3,
+      "name": "PSPACE-completeness",
+      "icon": "layers",
+      "desc": "TQBF and why many two-player games are PSPACE-complete.",
+      "kind": "concept",
+      "requires": [
+        "space-complexity",
+        "reductions"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "hierarchy-theorems",
+      "zone": 3,
+      "name": "Hierarchy theorems",
+      "icon": "trending-up",
+      "desc": "Diagonalisation showing that more time or space solves more problems.",
+      "kind": "concept",
+      "requires": [
+        "space-complexity"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "polynomial-hierarchy",
+      "zone": 3,
+      "name": "Polynomial hierarchy",
+      "icon": "layers",
+      "desc": "Alternating quantifiers and the classes above NP.",
+      "kind": "concept",
+      "requires": [
+        "conp"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "randomised-classes",
+      "zone": 4,
+      "name": "Randomised classes",
+      "icon": "random",
+      "desc": "BPP, RP and ZPP, and error reduction by repetition.",
+      "kind": "concept",
+      "requires": [
+        "p-np",
+        "prob:probability-basics"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "approximation",
+      "zone": 4,
+      "name": "Approximation",
+      "icon": "target",
+      "desc": "Approximation ratios, greedy and LP-based algorithms and PTAS.",
+      "kind": "lesson",
+      "requires": [
+        "np-complete-problems"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "inapproximability",
+      "zone": 4,
+      "name": "Inapproximability",
+      "icon": "warning",
+      "desc": "Gap reductions and the PCP theorem.",
+      "kind": "concept",
+      "requires": [
+        "approximation"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "fixed-parameter",
+      "zone": 4,
+      "name": "Fixed-parameter",
+      "icon": "sliders",
+      "desc": "Parameterised complexity, FPT algorithms and kernelisation.",
+      "kind": "concept",
+      "requires": [
+        "np-complete-problems"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "sat-solver",
+      "zone": 4,
+      "name": "SAT solver",
+      "icon": "rocket",
+      "desc": "Implement a DPLL solver with unit propagation and use it on encoded puzzles.",
+      "kind": "project",
+      "requires": [
+        "np-complete-problems"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "circuit-complexity",
+      "zone": 5,
+      "name": "Circuit complexity",
+      "icon": "cpu",
+      "desc": "Boolean circuits, P/poly and lower bound barriers.",
+      "kind": "concept",
+      "requires": [
+        "p-np"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "interactive-proofs",
+      "zone": 5,
+      "name": "Interactive proofs",
+      "icon": "chat",
+      "desc": "Interactive proof systems, IP = PSPACE and zero knowledge.",
+      "kind": "concept",
+      "requires": [
+        "randomised-classes"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "hardness-crypto",
+      "zone": 5,
+      "name": "Hardness & crypto",
+      "icon": "lock",
+      "desc": "One-way functions and average-case hardness behind cryptography.",
+      "kind": "concept",
+      "requires": [
+        "randomised-classes",
+        "conp"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "quantum-complexity",
+      "zone": 5,
+      "name": "Quantum complexity",
+      "icon": "sparkles",
+      "desc": "BQP and how it relates to P, NP and BPP.",
+      "kind": "concept",
+      "requires": [
+        "randomised-classes",
+        "quantum-computing:shor"
+      ],
+      "xpReward": 140
+    }
+  ]
+}

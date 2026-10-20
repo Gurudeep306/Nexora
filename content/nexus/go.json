@@ -1,0 +1,278 @@
+{
+  "id": "go",
+  "name": "Go",
+  "short": "GO",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 25,
+  "icon": "code",
+  "color": "#00add8",
+  "description": "Go's simple syntax, interfaces, goroutines and channels, and building production network services.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Go basics"
+    },
+    {
+      "level": 2,
+      "name": "Types & interfaces"
+    },
+    {
+      "level": 3,
+      "name": "Concurrency"
+    },
+    {
+      "level": 4,
+      "name": "Building services"
+    },
+    {
+      "level": 5,
+      "name": "Production Go"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "go-basics",
+      "zone": 1,
+      "name": "Go basics",
+      "icon": "code",
+      "desc": "Packages, variables, functions, control flow and the zero value.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40,
+      "resources": [
+        {
+          "title": "A Tour of Go",
+          "url": "https://go.dev/tour/"
+        }
+      ]
+    },
+    {
+      "id": "go-tooling",
+      "zone": 1,
+      "name": "Go tooling & modules",
+      "icon": "wrench",
+      "desc": "go build, go run, go fmt, go vet and dependency management with modules.",
+      "kind": "lesson",
+      "requires": [
+        "go-basics"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "slices-maps",
+      "zone": 1,
+      "name": "Slices & maps",
+      "icon": "array",
+      "desc": "Arrays, slices and their backing arrays, maps and range loops.",
+      "kind": "concept",
+      "requires": [
+        "go-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "structs-methods",
+      "zone": 2,
+      "name": "Structs & methods",
+      "icon": "shapes",
+      "desc": "Structs, methods, pointer vs value receivers and embedding.",
+      "kind": "concept",
+      "requires": [
+        "slices-maps"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "interfaces-go",
+      "zone": 2,
+      "name": "Interfaces",
+      "icon": "layers",
+      "desc": "Implicit interfaces, the empty interface, type switches and small interfaces.",
+      "kind": "concept",
+      "requires": [
+        "structs-methods"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "go-errors",
+      "zone": 2,
+      "name": "Errors",
+      "icon": "warning",
+      "desc": "Errors as values, wrapping, errors.Is/As, and panic and recover.",
+      "kind": "concept",
+      "requires": [
+        "interfaces-go"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "generics-go",
+      "zone": 2,
+      "name": "Generics",
+      "icon": "shapes",
+      "desc": "Type parameters and constraints in Go.",
+      "kind": "concept",
+      "requires": [
+        "interfaces-go"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "goroutines",
+      "zone": 3,
+      "name": "Goroutines",
+      "icon": "bolt",
+      "desc": "Starting goroutines, the Go scheduler and WaitGroups.",
+      "kind": "concept",
+      "requires": [
+        "go-basics",
+        "os:threads"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "channels",
+      "zone": 3,
+      "name": "Channels",
+      "icon": "route",
+      "desc": "Buffered and unbuffered channels, closing and ranging over channels.",
+      "kind": "concept",
+      "requires": [
+        "goroutines"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "select-context",
+      "zone": 3,
+      "name": "select & context",
+      "icon": "clock",
+      "desc": "Multiplexing with select, timeouts and cancellation with context.",
+      "kind": "concept",
+      "requires": [
+        "channels"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sync-package",
+      "zone": 3,
+      "name": "sync & races",
+      "icon": "lock",
+      "desc": "Mutexes, Once, atomic and finding data races with -race.",
+      "kind": "concept",
+      "requires": [
+        "goroutines",
+        "parallel-programming:threads-locks"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "worker-pool",
+      "zone": 3,
+      "name": "Worker pool project",
+      "icon": "users",
+      "desc": "Build a concurrent worker pool that processes jobs with cancellation and error reporting.",
+      "kind": "project",
+      "requires": [
+        "select-context",
+        "sync-package",
+        "go-errors"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "net-http",
+      "zone": 4,
+      "name": "net/http",
+      "icon": "globe",
+      "desc": "HTTP servers and clients, handlers, middleware and routing in the standard library.",
+      "kind": "concept",
+      "requires": [
+        "interfaces-go",
+        "web:http-basics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "json-encoding",
+      "zone": 4,
+      "name": "JSON encoding",
+      "icon": "code",
+      "desc": "Marshalling and unmarshalling JSON with struct tags.",
+      "kind": "concept",
+      "requires": [
+        "structs-methods"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "database-sql",
+      "zone": 4,
+      "name": "database/sql",
+      "icon": "database",
+      "desc": "Querying relational databases with database/sql and connection pooling.",
+      "kind": "lesson",
+      "requires": [
+        "go-errors",
+        "sql:select-queries"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "go-testing",
+      "zone": 4,
+      "name": "Testing",
+      "icon": "check-circle",
+      "desc": "Table-driven tests, benchmarks, fuzzing and httptest.",
+      "kind": "lesson",
+      "requires": [
+        "go-errors"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "pprof",
+      "zone": 5,
+      "name": "Profiling with pprof",
+      "icon": "timer",
+      "desc": "CPU and memory profiling and reading flame graphs.",
+      "kind": "lesson",
+      "requires": [
+        "go-testing",
+        "goroutines"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "go-deploy",
+      "zone": 5,
+      "name": "Deploying Go",
+      "icon": "upload",
+      "desc": "Static binaries, small container images and configuration.",
+      "kind": "lesson",
+      "requires": [
+        "go-tooling",
+        "containers:docker-basics"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "go-service",
+      "zone": 5,
+      "name": "REST service project",
+      "icon": "rocket",
+      "desc": "Build a tested REST service in Go with a database, graceful shutdown and a container image.",
+      "kind": "project",
+      "requires": [
+        "net-http",
+        "json-encoding",
+        "database-sql",
+        "go-testing"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

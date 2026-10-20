@@ -3,6 +3,7 @@
   "name": "Web Development",
   "short": "WEB",
   "group": "beyond",
+  "domain": "web-mobile",
   "order": 17,
   "icon": "globe",
   "color": "#06b6d4",

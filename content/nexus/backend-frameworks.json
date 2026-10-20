@@ -1,0 +1,302 @@
+{
+  "id": "backend-frameworks",
+  "name": "Backend Frameworks: Node/Django/Spring",
+  "short": "BE",
+  "group": "beyond",
+  "domain": "web-mobile",
+  "order": 59,
+  "icon": "server",
+  "color": "#059669",
+  "description": "Building server applications with Express on Node, Django and Spring Boot, then securing, testing and deploying them.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Backend fundamentals"
+    },
+    {
+      "level": 2,
+      "name": "Node & Express"
+    },
+    {
+      "level": 3,
+      "name": "Django"
+    },
+    {
+      "level": 4,
+      "name": "Spring Boot"
+    },
+    {
+      "level": 5,
+      "name": "Production backends"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "how-backends-work",
+      "zone": 1,
+      "name": "How backends work",
+      "icon": "server",
+      "desc": "The request lifecycle, routing, middleware and the MVC pattern.",
+      "kind": "concept",
+      "requires": [
+        "web:http-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "api-design",
+      "zone": 1,
+      "name": "API design",
+      "icon": "share",
+      "desc": "Resource modelling, status codes, errors, versioning and OpenAPI specs.",
+      "kind": "concept",
+      "requires": [
+        "how-backends-work"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "data-access",
+      "zone": 1,
+      "name": "Data access & ORMs",
+      "icon": "database",
+      "desc": "Connections, ORMs versus raw SQL, migrations and transactions.",
+      "kind": "concept",
+      "requires": [
+        "how-backends-work",
+        "sql:select-queries"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "express-node",
+      "zone": 2,
+      "name": "Express on Node",
+      "icon": "terminal",
+      "desc": "Routes, request and response objects and async handlers in Express.",
+      "kind": "lesson",
+      "requires": [
+        "how-backends-work",
+        "javascript:async-js"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "express-middleware",
+      "zone": 2,
+      "name": "Middleware & errors",
+      "icon": "layers",
+      "desc": "Middleware chains, validation, error handling and logging.",
+      "kind": "lesson",
+      "requires": [
+        "express-node"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "node-databases",
+      "zone": 2,
+      "name": "Databases in Node",
+      "icon": "database",
+      "desc": "Using an ORM or query builder from Node with migrations.",
+      "kind": "lesson",
+      "requires": [
+        "express-node",
+        "data-access"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "express-api",
+      "zone": 2,
+      "name": "Express API",
+      "icon": "rocket",
+      "desc": "Build a validated, documented REST API with Express and a database.",
+      "kind": "project",
+      "requires": [
+        "express-middleware",
+        "node-databases"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "django-basics",
+      "zone": 3,
+      "name": "Django basics",
+      "icon": "code",
+      "desc": "Projects and apps, URLs, views, templates and settings.",
+      "kind": "lesson",
+      "requires": [
+        "how-backends-work",
+        "python:python-oop"
+      ],
+      "xpReward": 100,
+      "resources": [
+        {
+          "title": "Django documentation",
+          "url": "https://docs.djangoproject.com/en/stable/"
+        }
+      ]
+    },
+    {
+      "id": "django-orm",
+      "zone": 3,
+      "name": "Django ORM",
+      "icon": "database",
+      "desc": "Models, migrations, querysets and avoiding N+1 queries.",
+      "kind": "lesson",
+      "requires": [
+        "django-basics",
+        "data-access"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "django-rest",
+      "zone": 3,
+      "name": "Django REST APIs",
+      "icon": "share",
+      "desc": "Serializers, viewsets and permissions with Django REST framework.",
+      "kind": "lesson",
+      "requires": [
+        "django-orm",
+        "api-design"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "django-auth-admin",
+      "zone": 3,
+      "name": "Auth & admin",
+      "icon": "key",
+      "desc": "Django's user model, authentication and the admin site.",
+      "kind": "lesson",
+      "requires": [
+        "django-orm"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "spring-boot-basics",
+      "zone": 4,
+      "name": "Spring Boot basics",
+      "icon": "building",
+      "desc": "Dependency injection, beans, auto-configuration and profiles.",
+      "kind": "lesson",
+      "requires": [
+        "how-backends-work",
+        "java:java-oop"
+      ],
+      "xpReward": 120,
+      "resources": [
+        {
+          "title": "Spring Boot",
+          "url": "https://spring.io/projects/spring-boot"
+        }
+      ]
+    },
+    {
+      "id": "spring-web",
+      "zone": 4,
+      "name": "Spring MVC & REST",
+      "icon": "share",
+      "desc": "Controllers, request mapping, validation and exception handling.",
+      "kind": "lesson",
+      "requires": [
+        "spring-boot-basics",
+        "api-design"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "spring-data",
+      "zone": 4,
+      "name": "Spring Data JPA",
+      "icon": "database",
+      "desc": "Entities, repositories, queries and transactions with JPA.",
+      "kind": "lesson",
+      "requires": [
+        "spring-boot-basics",
+        "data-access"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "spring-service",
+      "zone": 4,
+      "name": "Spring service",
+      "icon": "rocket",
+      "desc": "Build a REST service with Spring Boot, JPA and integration tests.",
+      "kind": "project",
+      "requires": [
+        "spring-web",
+        "spring-data"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "authentication-backend",
+      "zone": 5,
+      "name": "Authentication",
+      "icon": "key",
+      "desc": "Password hashing, sessions, JWTs, OAuth and role-based access control.",
+      "kind": "lesson",
+      "requires": [
+        "api-design"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "background-jobs",
+      "zone": 5,
+      "name": "Background jobs",
+      "icon": "clock",
+      "desc": "Queues, workers, scheduled jobs and retries.",
+      "kind": "lesson",
+      "requires": [
+        "express-node"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "backend-testing",
+      "zone": 5,
+      "name": "Testing backends",
+      "icon": "check-circle",
+      "desc": "Unit, integration and contract tests for APIs.",
+      "kind": "lesson",
+      "requires": [
+        "express-middleware",
+        "django-rest"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "deploying-backends",
+      "zone": 5,
+      "name": "Deploying backends",
+      "icon": "upload",
+      "desc": "Configuration, containers, health checks and zero-downtime releases.",
+      "kind": "lesson",
+      "requires": [
+        "backend-testing",
+        "containers:docker-basics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "production-api",
+      "zone": 5,
+      "name": "Production API",
+      "icon": "trophy",
+      "desc": "Ship an authenticated API with background work, tests and a live deployment.",
+      "kind": "project",
+      "requires": [
+        "authentication-backend",
+        "background-jobs",
+        "deploying-backends"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

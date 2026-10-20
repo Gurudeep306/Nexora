@@ -1,0 +1,295 @@
+{
+  "id": "nlp",
+  "name": "Natural Language Processing",
+  "short": "NLP",
+  "group": "beyond",
+  "domain": "ai",
+  "order": 43,
+  "icon": "chat",
+  "color": "#7c3aed",
+  "description": "Processing and understanding text, from tokenisation and classical models to embeddings and transformers.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Text basics"
+    },
+    {
+      "level": 2,
+      "name": "Classical NLP"
+    },
+    {
+      "level": 3,
+      "name": "Neural NLP"
+    },
+    {
+      "level": 4,
+      "name": "Transformers"
+    },
+    {
+      "level": 5,
+      "name": "Applications"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "nlp-tasks",
+      "zone": 1,
+      "name": "NLP tasks",
+      "icon": "compass",
+      "desc": "The main NLP tasks and why language is hard: ambiguity, context and variation.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "text-preprocessing",
+      "zone": 1,
+      "name": "Text preprocessing",
+      "icon": "filter",
+      "desc": "Tokenisation, normalisation, stemming, lemmatisation and stop words.",
+      "kind": "lesson",
+      "requires": [
+        "python:python-basics",
+        "nlp-tasks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "regex-text",
+      "zone": 1,
+      "name": "Regex for text",
+      "icon": "search",
+      "desc": "Using regular expressions to clean, match and extract patterns from text.",
+      "kind": "lesson",
+      "requires": [
+        "text-preprocessing"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "corpora",
+      "zone": 1,
+      "name": "Corpora & annotation",
+      "icon": "book",
+      "desc": "Text datasets, annotation schemes, inter-annotator agreement and data splits.",
+      "kind": "concept",
+      "requires": [
+        "nlp-tasks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "bag-of-words",
+      "zone": 2,
+      "name": "Bag of words & TF-IDF",
+      "icon": "list",
+      "desc": "Representing documents as sparse count and TF-IDF vectors.",
+      "kind": "lesson",
+      "requires": [
+        "text-preprocessing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "ngram-models",
+      "zone": 2,
+      "name": "n-gram models",
+      "icon": "chart",
+      "desc": "Language models from counts, smoothing and perplexity.",
+      "kind": "lesson",
+      "requires": [
+        "text-preprocessing",
+        "prob:conditional-probability"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "text-classification",
+      "zone": 2,
+      "name": "Text classification",
+      "icon": "tag",
+      "desc": "Naive Bayes and logistic regression classifiers for topics, spam and sentiment.",
+      "kind": "lesson",
+      "requires": [
+        "bag-of-words",
+        "ml:logistic-regression"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sequence-labeling",
+      "zone": 2,
+      "name": "POS tags & NER",
+      "icon": "type",
+      "desc": "Part-of-speech tagging and named entity recognition with HMMs and CRFs.",
+      "kind": "lesson",
+      "requires": [
+        "ngram-models"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sentiment-classifier",
+      "zone": 2,
+      "name": "Sentiment classifier",
+      "icon": "heart",
+      "desc": "Build and evaluate a sentiment classifier for product or movie reviews.",
+      "kind": "project",
+      "requires": [
+        "text-classification"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "word-embeddings",
+      "zone": 3,
+      "name": "Word embeddings",
+      "icon": "grid",
+      "desc": "Dense word vectors with word2vec and GloVe and what their geometry captures.",
+      "kind": "lesson",
+      "requires": [
+        "bag-of-words",
+        "deep:embeddings"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "rnn-text",
+      "zone": 3,
+      "name": "RNNs for text",
+      "icon": "activity",
+      "desc": "Recurrent networks and LSTMs for language modelling and sequence labelling.",
+      "kind": "lesson",
+      "requires": [
+        "word-embeddings",
+        "deep:rnn"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "seq2seq",
+      "zone": 3,
+      "name": "Seq2seq & attention",
+      "icon": "route",
+      "desc": "Encoder-decoder models and attention for translation and summarisation.",
+      "kind": "lesson",
+      "requires": [
+        "rnn-text"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "syntactic-parsing",
+      "zone": 3,
+      "name": "Syntactic parsing",
+      "icon": "tree",
+      "desc": "Constituency and dependency parsing and what parse trees are used for.",
+      "kind": "concept",
+      "requires": [
+        "sequence-labeling"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "bert-encoders",
+      "zone": 4,
+      "name": "BERT-style encoders",
+      "icon": "layers",
+      "desc": "Transformer encoders, masked language modelling and contextual embeddings.",
+      "kind": "lesson",
+      "requires": [
+        "seq2seq",
+        "deep:transformers"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "subword-tokenization",
+      "zone": 4,
+      "name": "Subword tokenisation",
+      "icon": "hash",
+      "desc": "BPE, WordPiece and SentencePiece and how they handle rare words.",
+      "kind": "lesson",
+      "requires": [
+        "text-preprocessing",
+        "bert-encoders"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "fine-tuning-nlp",
+      "zone": 4,
+      "name": "Fine-tuning for NLP",
+      "icon": "wrench",
+      "desc": "Adapting pretrained models to classification, tagging and span tasks.",
+      "kind": "lesson",
+      "requires": [
+        "bert-encoders",
+        "subword-tokenization"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ner-project",
+      "zone": 4,
+      "name": "NER with BERT",
+      "icon": "target",
+      "desc": "Fine-tune a transformer to extract entities from domain text and measure F1.",
+      "kind": "project",
+      "requires": [
+        "fine-tuning-nlp",
+        "sequence-labeling"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "question-answering",
+      "zone": 5,
+      "name": "Question answering",
+      "icon": "chat",
+      "desc": "Extractive and generative question answering over passages.",
+      "kind": "lesson",
+      "requires": [
+        "fine-tuning-nlp"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "summarize-translate",
+      "zone": 5,
+      "name": "Summarise & translate",
+      "icon": "globe",
+      "desc": "Sequence-to-sequence transformers for summarisation and machine translation.",
+      "kind": "lesson",
+      "requires": [
+        "seq2seq",
+        "fine-tuning-nlp"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "nlp-evaluation",
+      "zone": 5,
+      "name": "Evaluating NLP",
+      "icon": "check-circle",
+      "desc": "Accuracy, F1, BLEU, ROUGE and human evaluation, and their limits.",
+      "kind": "concept",
+      "requires": [
+        "text-classification"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "semantic-search-nlp",
+      "zone": 5,
+      "name": "Semantic search",
+      "icon": "search",
+      "desc": "Sentence embeddings for similarity search, clustering and deduplication.",
+      "kind": "lesson",
+      "requires": [
+        "bert-encoders"
+      ],
+      "xpReward": 140
+    }
+  ]
+}

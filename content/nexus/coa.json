@@ -3,6 +3,7 @@
   "name": "Computer Organisation",
   "short": "COA",
   "group": "gate",
+  "domain": "core-cs",
   "order": 3,
   "icon": "cpu",
   "color": "#0ea5e9",

@@ -1,0 +1,308 @@
+{
+  "id": "oop-patterns",
+  "name": "OOP & Design Patterns",
+  "short": "OOP",
+  "group": "beyond",
+  "domain": "software-engineering",
+  "order": 40,
+  "icon": "shapes",
+  "color": "#8b5cf6",
+  "description": "Object-oriented design, SOLID principles, the classic design patterns and low-level design practice.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "OOP foundations"
+    },
+    {
+      "level": 2,
+      "name": "Design principles"
+    },
+    {
+      "level": 3,
+      "name": "Creational & structural"
+    },
+    {
+      "level": 4,
+      "name": "Behavioral patterns"
+    },
+    {
+      "level": 5,
+      "name": "Design in practice"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "oop-basics",
+      "zone": 1,
+      "name": "OOP basics",
+      "icon": "shapes",
+      "desc": "Objects, classes, state and behaviour and why we model with objects.",
+      "kind": "concept",
+      "requires": [
+        "java:java-oop"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "encapsulation",
+      "zone": 1,
+      "name": "Encapsulation",
+      "icon": "lock",
+      "desc": "Hiding state behind an interface and enforcing invariants.",
+      "kind": "concept",
+      "requires": [
+        "oop-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "polymorphism",
+      "zone": 1,
+      "name": "Polymorphism",
+      "icon": "layers",
+      "desc": "Subtyping, overriding and dynamic dispatch.",
+      "kind": "concept",
+      "requires": [
+        "oop-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "composition",
+      "zone": 1,
+      "name": "Composition",
+      "icon": "puzzle",
+      "desc": "Favouring composition over inheritance and delegation.",
+      "kind": "concept",
+      "requires": [
+        "polymorphism"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "solid",
+      "zone": 2,
+      "name": "SOLID principles",
+      "icon": "building",
+      "desc": "Single responsibility, open/closed, Liskov, interface segregation and dependency inversion.",
+      "kind": "concept",
+      "requires": [
+        "composition",
+        "encapsulation"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "uml",
+      "zone": 2,
+      "name": "UML class diagrams",
+      "icon": "map",
+      "desc": "Class and sequence diagrams for communicating a design.",
+      "kind": "lesson",
+      "requires": [
+        "oop-basics"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "coupling-cohesion",
+      "zone": 2,
+      "name": "Coupling & cohesion",
+      "icon": "link",
+      "desc": "Measuring how well modules are separated and focused.",
+      "kind": "concept",
+      "requires": [
+        "solid"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "dependency-injection",
+      "zone": 2,
+      "name": "Dependency injection",
+      "icon": "wrench",
+      "desc": "Injecting collaborators, inversion of control and testable code.",
+      "kind": "concept",
+      "requires": [
+        "solid"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "creational",
+      "zone": 3,
+      "name": "Factory & builder",
+      "icon": "builder",
+      "desc": "Factory method, abstract factory and builder.",
+      "kind": "concept",
+      "requires": [
+        "solid"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "singleton",
+      "zone": 3,
+      "name": "Singleton",
+      "icon": "user",
+      "desc": "Singleton, its problems, and alternatives through dependency injection.",
+      "kind": "concept",
+      "requires": [
+        "creational"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "adapter-facade",
+      "zone": 3,
+      "name": "Adapter & facade",
+      "icon": "link",
+      "desc": "Adapting interfaces and simplifying subsystems.",
+      "kind": "concept",
+      "requires": [
+        "composition"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "decorator-proxy",
+      "zone": 3,
+      "name": "Decorator & proxy",
+      "icon": "layers",
+      "desc": "Wrapping objects to add behaviour or control access.",
+      "kind": "concept",
+      "requires": [
+        "composition"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "composite",
+      "zone": 3,
+      "name": "Composite",
+      "icon": "tree",
+      "desc": "Treating trees of objects uniformly.",
+      "kind": "concept",
+      "requires": [
+        "polymorphism"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "strategy",
+      "zone": 4,
+      "name": "Strategy",
+      "icon": "route",
+      "desc": "Swapping algorithms behind a common interface.",
+      "kind": "concept",
+      "requires": [
+        "polymorphism",
+        "dependency-injection"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "observer",
+      "zone": 4,
+      "name": "Observer",
+      "icon": "bell",
+      "desc": "Publish/subscribe between objects and event systems.",
+      "kind": "concept",
+      "requires": [
+        "coupling-cohesion"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "command",
+      "zone": 4,
+      "name": "Command",
+      "icon": "play",
+      "desc": "Requests as objects for undo, queues and macros.",
+      "kind": "concept",
+      "requires": [
+        "polymorphism"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "state-template",
+      "zone": 4,
+      "name": "State & template",
+      "icon": "sliders",
+      "desc": "State machines as objects and algorithms with overridable steps.",
+      "kind": "concept",
+      "requires": [
+        "strategy"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "iterator-visitor",
+      "zone": 4,
+      "name": "Iterator & visitor",
+      "icon": "compass",
+      "desc": "Traversing structures and adding operations without changing classes.",
+      "kind": "concept",
+      "requires": [
+        "composite"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "refactoring-patterns",
+      "zone": 5,
+      "name": "Refactor to patterns",
+      "icon": "edit",
+      "desc": "Recognising code smells and refactoring safely toward patterns.",
+      "kind": "concept",
+      "requires": [
+        "strategy",
+        "observer",
+        "software-engineering:unit-testing"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "anti-patterns",
+      "zone": 5,
+      "name": "Anti-patterns",
+      "icon": "warning",
+      "desc": "God objects, overengineering and pattern misuse.",
+      "kind": "concept",
+      "requires": [
+        "singleton",
+        "coupling-cohesion"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "parking-lot",
+      "zone": 5,
+      "name": "Parking lot LLD",
+      "icon": "building",
+      "desc": "Design and implement a parking lot system with clean classes and tests.",
+      "kind": "project",
+      "requires": [
+        "creational",
+        "strategy",
+        "uml"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "text-editor-design",
+      "zone": 5,
+      "name": "Text editor project",
+      "icon": "edit",
+      "desc": "Build a small text editor with undo/redo, plugins and change notifications.",
+      "kind": "project",
+      "requires": [
+        "command",
+        "observer",
+        "iterator-visitor"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

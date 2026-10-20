@@ -1,0 +1,312 @@
+{
+  "id": "ui-ux",
+  "name": "UI/UX & HCI",
+  "short": "UX",
+  "group": "beyond",
+  "domain": "visual-product",
+  "order": 57,
+  "icon": "palette",
+  "color": "#ec4899",
+  "description": "Designing usable products: human factors, user research, interaction and visual design, and usability testing.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Human-centred design"
+    },
+    {
+      "level": 2,
+      "name": "User research"
+    },
+    {
+      "level": 3,
+      "name": "Interaction design"
+    },
+    {
+      "level": 4,
+      "name": "Visual design"
+    },
+    {
+      "level": 5,
+      "name": "Evaluation & delivery"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "hci-foundations",
+      "zone": 1,
+      "name": "HCI foundations",
+      "icon": "users",
+      "desc": "Human-computer interaction as a field and user-centred design.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "perception-cognition",
+      "zone": 1,
+      "name": "Perception & cognition",
+      "icon": "brain",
+      "desc": "Gestalt principles, attention, memory limits, Fitts's law and Hick's law.",
+      "kind": "concept",
+      "requires": [
+        "hci-foundations"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "design-process",
+      "zone": 1,
+      "name": "Design process",
+      "icon": "route",
+      "desc": "Discover, define, develop and deliver as an iterative process.",
+      "kind": "concept",
+      "requires": [
+        "hci-foundations"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "usability-heuristics",
+      "zone": 1,
+      "name": "Usability heuristics",
+      "icon": "check-circle",
+      "desc": "Nielsen's heuristics and common usability problems.",
+      "kind": "concept",
+      "requires": [
+        "perception-cognition"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "user-research",
+      "zone": 2,
+      "name": "User research",
+      "icon": "search",
+      "desc": "Interviews, contextual inquiry and observing real users.",
+      "kind": "lesson",
+      "requires": [
+        "design-process"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "personas-journeys",
+      "zone": 2,
+      "name": "Personas & journeys",
+      "icon": "user",
+      "desc": "Synthesising research into personas, journey maps and problem statements.",
+      "kind": "lesson",
+      "requires": [
+        "user-research"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "surveys-analytics",
+      "zone": 2,
+      "name": "Surveys & analytics",
+      "icon": "analytics",
+      "desc": "Writing unbiased surveys and reading product analytics.",
+      "kind": "lesson",
+      "requires": [
+        "user-research",
+        "statistics:descriptive-stats"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "info-architecture",
+      "zone": 2,
+      "name": "Info architecture",
+      "icon": "list",
+      "desc": "Card sorting, navigation structures and content hierarchy.",
+      "kind": "lesson",
+      "requires": [
+        "personas-journeys"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "wireframes",
+      "zone": 3,
+      "name": "Wireframes",
+      "icon": "edit",
+      "desc": "Sketching and wireframing layouts and flows.",
+      "kind": "lesson",
+      "requires": [
+        "info-architecture"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "interaction-patterns",
+      "zone": 3,
+      "name": "Interaction patterns",
+      "icon": "bolt",
+      "desc": "Common patterns for navigation, input, search and feedback.",
+      "kind": "lesson",
+      "requires": [
+        "usability-heuristics",
+        "wireframes"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "prototyping",
+      "zone": 3,
+      "name": "Prototyping",
+      "icon": "wand",
+      "desc": "Clickable prototypes at the right fidelity for the question.",
+      "kind": "lesson",
+      "requires": [
+        "wireframes"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "forms-feedback",
+      "zone": 3,
+      "name": "Forms & feedback",
+      "icon": "check",
+      "desc": "Form design, validation, empty, loading and error states and microcopy.",
+      "kind": "lesson",
+      "requires": [
+        "interaction-patterns"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "app-redesign",
+      "zone": 3,
+      "name": "App redesign",
+      "icon": "rocket",
+      "desc": "Research and redesign a flow in an existing app as a tested prototype.",
+      "kind": "project",
+      "requires": [
+        "prototyping",
+        "personas-journeys"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "typography",
+      "zone": 4,
+      "name": "Typography",
+      "icon": "type",
+      "desc": "Typefaces, type scales, line length and readability.",
+      "kind": "lesson",
+      "requires": [
+        "perception-cognition"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "colour-contrast",
+      "zone": 4,
+      "name": "Colour & contrast",
+      "icon": "palette",
+      "desc": "Colour palettes, meaning, contrast ratios and dark mode.",
+      "kind": "lesson",
+      "requires": [
+        "perception-cognition"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "layout-grids",
+      "zone": 4,
+      "name": "Layout & grids",
+      "icon": "grid",
+      "desc": "Grids, spacing systems, alignment and visual hierarchy.",
+      "kind": "lesson",
+      "requires": [
+        "typography"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "design-systems",
+      "zone": 4,
+      "name": "Design systems",
+      "icon": "layers",
+      "desc": "Design tokens, component libraries and documentation.",
+      "kind": "lesson",
+      "requires": [
+        "layout-grids",
+        "colour-contrast"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "accessible-design",
+      "zone": 4,
+      "name": "Accessible design",
+      "icon": "eye",
+      "desc": "Designing for screen readers, keyboard use and low vision.",
+      "kind": "lesson",
+      "requires": [
+        "colour-contrast",
+        "web:accessibility"
+      ],
+      "xpReward": 120,
+      "resources": [
+        {
+          "title": "MDN: Accessibility",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+        }
+      ]
+    },
+    {
+      "id": "usability-testing",
+      "zone": 5,
+      "name": "Usability testing",
+      "icon": "users",
+      "desc": "Planning, moderating and analysing usability tests.",
+      "kind": "lesson",
+      "requires": [
+        "prototyping"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "ab-testing-ux",
+      "zone": 5,
+      "name": "A/B testing",
+      "icon": "sliders",
+      "desc": "Running controlled experiments on design changes.",
+      "kind": "lesson",
+      "requires": [
+        "usability-testing",
+        "statistics:hypothesis-testing"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "design-to-code",
+      "zone": 5,
+      "name": "Design to code",
+      "icon": "code",
+      "desc": "Handing off designs and working with engineers on implementation.",
+      "kind": "lesson",
+      "requires": [
+        "design-systems",
+        "web:html-css"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "ux-case-study",
+      "zone": 5,
+      "name": "UX case study",
+      "icon": "trophy",
+      "desc": "Take a product problem from research to a tested, accessible design and document it.",
+      "kind": "project",
+      "requires": [
+        "usability-testing",
+        "design-to-code",
+        "accessible-design"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

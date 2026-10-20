@@ -3,6 +3,7 @@
   "name": "Probability & Statistics",
   "short": "P&S",
   "group": "gate",
+  "domain": "math",
   "order": 12,
   "icon": "chart",
   "color": "#d946ef",

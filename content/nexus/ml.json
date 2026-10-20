@@ -3,6 +3,7 @@
   "name": "Machine Learning",
   "short": "ML",
   "group": "beyond",
+  "domain": "ai",
   "order": 15,
   "icon": "brain",
   "color": "#6366f1",

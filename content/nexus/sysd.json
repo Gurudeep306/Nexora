@@ -3,6 +3,7 @@
   "name": "System Design",
   "short": "SYS",
   "group": "beyond",
+  "domain": "systems",
   "order": 19,
   "icon": "system-design",
   "color": "#64748b",

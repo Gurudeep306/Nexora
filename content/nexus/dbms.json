@@ -3,6 +3,7 @@
   "name": "Databases",
   "short": "DBMS",
   "group": "gate",
+  "domain": "core-cs",
   "order": 5,
   "icon": "database",
   "color": "#22c55e",

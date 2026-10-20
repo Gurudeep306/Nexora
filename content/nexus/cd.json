@@ -3,6 +3,7 @@
   "name": "Compiler Design",
   "short": "CD",
   "group": "gate",
+  "domain": "core-cs",
   "order": 8,
   "icon": "code",
   "color": "#f59e0b",

@@ -3,6 +3,7 @@
   "name": "Theory of Computation",
   "short": "TOC",
   "group": "gate",
+  "domain": "core-cs",
   "order": 7,
   "icon": "shapes",
   "color": "#eab308",
