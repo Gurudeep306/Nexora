@@ -6956,190 +6956,80 @@
       }
     },
     "cse-2025-1-cs-49": {
-      "approach": "Partition refinement (Moore's algorithm) for a Mealy machine: first group states by their output pair $(f_{X=0}, f_{X=1})$, then repeatedly split a group whenever its members go, on some input, to different groups. Stop when nothing splits; the number of groups is the minimum number of states.",
+      "approach": "Concept tested: **partition refinement of a Mealy state table**. $P_0$ groups the states by their whole output row; each round splits a block whose members send some input into different blocks; stop when a round splits nothing. The blocks are the states of the minimal machine.",
       "concepts": [
-        "State minimisation",
-        "Equivalent states",
         "Partition refinement",
+        "Equivalent states",
+        "Implication table",
         "Mealy machine"
       ],
+      "given": "Eight states $A$–$H$ (next state for $X = 0, 1$; output $f$ for $X = 0, 1$): $A$: $F, B$ / 0, 0; $B$: $D, C$ / 0, 0; $C$: $F, E$ / 0, 0; $D$: $G, A$ / 1, 0; $E$: $D, C$ / 0, 0; $F$: $F, B$ / 1, 1; $G$: $G, H$ / 0, 1; $H$: $G, A$ / 1, 0.",
       "steps": [
         {
-          "title": "P0: group by outputs",
-          "body": "Output pairs $(f_0, f_1)$: A, B, C, E $\\to (0,0)$; D, H $\\to (1,0)$; F $\\to (1,1)$; G $\\to (0,1)$.\n\n$$P_0 = \\{A,B,C,E\\},\\ \\{D,H\\},\\ \\{F\\},\\ \\{G\\}$$",
+          "title": "Reachability",
+          "body": "From $A$ every state is reachable ($A \\to F, B$; $B \\to D, C$; $C \\to E$; $D \\to G$; $G \\to H$), so no row is dropped."
+        },
+        {
+          "title": "P0 by output rows",
+          "body": "00: $A, B, C, E$; 10: $D, H$; 11: $F$; 01: $G$. $P_0 = \\{A, B, C, E\\}, \\{D, H\\}, \\{F\\}, \\{G\\}$ (blocks 1–4).",
           "scene": {
-            "hl": [
-              {
-                "c": 4,
-                "tone": "accent"
-              }
-            ]
+            "reveal": 1
           }
         },
         {
-          "title": "Split {A, B, C, E}",
-          "body": "Look at the $X = 0$ successors: A $\\to$ F, C $\\to$ F (group $\\{F\\}$) but B $\\to$ D, E $\\to$ D (group $\\{D,H\\}$). So the block splits into $\\{A, C\\}$ and $\\{B, E\\}$.\n\nThe $X = 1$ successors (B, C, E, C) all lie in $\\{A,B,C,E\\}$, so they cause no further split here.",
+          "title": "Round 1",
+          "body": "Labels (block of the next state for $X = 0$, for $X = 1$): $A \\to (F, B)$ = (3, 1), $C \\to (F, E)$ = (3, 1), $B \\to (D, C)$ = (2, 1), $E \\to (D, C)$ = (2, 1); $D$ and $H \\to (G, A)$ = (4, 1). So $P_1 = \\{A, C\\}, \\{B, E\\}, \\{D, H\\}, \\{F\\}, \\{G\\}$.",
           "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "warning"
-              },
-              {
-                "r": 2,
-                "tone": "warning"
-              },
-              {
-                "r": 1,
-                "tone": "info"
-              },
-              {
-                "r": 4,
-                "tone": "info"
-              }
-            ]
+            "reveal": 2
           }
         },
         {
-          "title": "{D, H} stays together",
-          "body": "D and H have identical rows: next states (G, A), outputs (1, 0). They are equivalent.\n\n$$P_1 = \\{A,C\\},\\ \\{B,E\\},\\ \\{D,H\\},\\ \\{F\\},\\ \\{G\\}$$",
+          "title": "Round 2",
+          "body": "$A$ and $C$ go to $F$ and to $B$ or $E$ (one block); $B$ and $E$ both go to $(D, C)$; $D$ and $H$ both go to $(G, A)$. Nothing splits: $P_2 = P_1$, 5 classes.",
           "scene": {
-            "hl": [
-              {
-                "r": 3,
-                "tone": "success"
-              },
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ]
+            "reveal": 3
           }
         },
         {
-          "title": "Check P1 is stable",
-          "body": "- $\\{A,C\\}$: $X=0$: F, F (same); $X=1$: B, E — both in $\\{B,E\\}$. Stable.\n- $\\{B,E\\}$: identical rows (D, C). Stable.\n- $\\{D,H\\}$: identical rows. Stable.\n\nNo block splits, so $P_2 = P_1$ and the minimum number of states is **5**: $\\{A,C\\}, \\{B,E\\}, \\{D,H\\}, F, G$.",
-          "scene": {
-            "hl": [
-              {
-                "r": 0,
-                "tone": "info"
-              },
-              {
-                "r": 2,
-                "tone": "info"
-              },
-              {
-                "r": 1,
-                "tone": "warning"
-              },
-              {
-                "r": 4,
-                "tone": "warning"
-              },
-              {
-                "r": 3,
-                "tone": "success"
-              },
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Cross-check with the implication table",
+          "body": "Of the 28 pairs, 21 are crossed in pass 0 (different output rows). Pass 1 crosses $A$–$B$, $A$–$E$, $B$–$C$, $C$–$E$ (each implies $D$–$F$, whose output rows 10 and 11 differ). $A$–$C$ (implies $B$–$E$), $B$–$E$ and $D$–$H$ (identical rows) survive: the same 5 classes."
         }
       ],
       "answer": {
-        "value": "Minimum number of states $=$ **5**",
+        "value": "5",
         "number": 5,
         "matchesKey": true
       },
-      "shortcut": "Spot identical rows first: B ≡ E (same next states and outputs) and D ≡ H. Replacing E by B and H by D makes rows A and C identical (F, B / 0, 0), so A ≡ C. $8 - 3 = 5$ states.",
+      "shortcut": "Merge the identical rows first ($B = E$, $D = H$); then $A \\to (F, B)$ and $C \\to (F, E = B)$ are identical too. Five rows remain, and their output rows plus one round of refinement show no further merge: 5. (Identical-row merging happens to finish this table; it is not a complete method in general.)",
       "pitfalls": [
-        "Merging A, B, C, E because they have the same outputs — equal outputs are only the starting partition; B and E go to D on $X = 0$ while A and C go to F.",
-        "Treating the outputs as Moore outputs (one per state) — here the output depends on the input too, so compare the whole pair $(f_0, f_1)$.",
-        "Missing A ≡ C because their $X = 1$ successors (B and E) are different letters — they are in the same block, which is all that matters."
+        "Counting the blocks of $P_0$ (4): two of those states are not equivalent ($A$ and $B$ differ on the input string 0 1: outputs 0, 1 from $A$ and 0, 0 from $B$).",
+        "Merging $B = E$ and $D = H$ and stopping (6): after those merges $A$ and $C$ have identical rows as well.",
+        "Grouping by the $X = 0$ output column only: $P_0$ of a Mealy machine uses both output columns."
       ],
-      "verification": "The reduced machine is consistent: with classes $a = \\{A,C\\}$, $b = \\{B,E\\}$, $d = \\{D,H\\}$: $a: (F, b)$, $b: (d, a)$, $d: (G, a)$, $F: (F, b)$, $G: (G, d)$ — every original row maps to exactly one reduced row, and F, G, $d$, $a$/$b$ have pairwise different output pairs or successors.",
+      "verification": "Partition refinement, the implication table and a product-machine equivalence check of the merged 5-state machine ($A$: $F, B$ / 00; $B$: $D, A$ / 00; $D$: $G, A$ / 10; $F$: $F, B$ / 11; $G$: $G, D$ / 01) against the original all agree. The machine still needs 3 flip-flops, as 8 states did.",
       "animation": {
         "kind": "table",
-        "title": "State table (next state / output)",
+        "title": "Refinement rounds",
         "cols": [
-          "X=0",
-          "X=1",
-          "f (X=0)",
-          "f (X=1)",
-          "P0 block"
+          "partition",
+          "blocks"
         ],
-        "rowLabels": [
-          "A",
-          "B",
-          "C",
-          "D",
-          "E",
-          "F",
-          "G",
-          "H"
-        ],
-        "corner": "state",
         "rows": [
           [
-            "F",
-            "B",
-            0,
-            0,
-            "00"
+            "P0 (output rows)",
+            "{A,B,C,E} {D,H} {F} {G}"
           ],
           [
-            "D",
-            "C",
-            0,
-            0,
-            "00"
+            "P1",
+            "{A,C} {B,E} {D,H} {F} {G}"
           ],
           [
-            "F",
-            "E",
-            0,
-            0,
-            "00"
-          ],
-          [
-            "G",
-            "A",
-            1,
-            0,
-            "10"
-          ],
-          [
-            "D",
-            "C",
-            0,
-            0,
-            "00"
-          ],
-          [
-            "F",
-            "B",
-            1,
-            1,
-            "11"
-          ],
-          [
-            "G",
-            "H",
-            0,
-            1,
-            "01"
-          ],
-          [
-            "G",
-            "A",
-            1,
-            0,
-            "10"
+            "P2 = P1",
+            "5 states"
           ]
-        ]
+        ],
+        "mono": true,
+        "reveal": 1
       }
     },
     "cse-2025-1-cs-50": {

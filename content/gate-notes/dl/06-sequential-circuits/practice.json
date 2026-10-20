@@ -2679,5 +2679,868 @@
    "ring-counter"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A Mealy machine has states A (start), B and C. Its table (next state/output) is: A: $x = 0$ → A/0, $x = 1$ → B/0; B: $x = 0$ → C/0, $x = 1$ → B/1; C: $x = 0$ → A/1, $x = 1$ → B/0. What output string does it produce for the input 0110110?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0001001"
+   },
+   {
+    "l": "B",
+    "t": "0010010"
+   },
+   {
+    "l": "C",
+    "t": "0111111"
+   },
+   {
+    "l": "D",
+    "t": "0110110"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Read each output from the present state's row and the present input's column, then move to the next state.",
+   "A, 0: 0 (stay A). A, 1: 0 (to B). B, 1: 1 (stay B). B, 0: 0 (to C). C, 1: 0 (to B). B, 1: 1 (stay B). B, 0: 0 (to C).",
+   "Output 0010010; the states visited are A, A, B, B, C, B, B, C."
+  ],
+  "concept": "A Mealy output belongs to the arc taken: present state and present input.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Shifting every output one clock later, as a Moore machine would show it."
+   },
+   {
+    "answer": "C",
+    "why": "Reading each output from the row of the state just entered instead of the present state."
+   },
+   {
+    "answer": "D",
+    "why": "Copying the input: the outputs are not the input bits."
+   }
+  ],
+  "blocks": [
+   "mealy-moore",
+   "state-table-fsm"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "What is the minimum number of states of a Moore machine that outputs 1 exactly when the input received so far ends with 1101 (overlapping occurrences allowed)?",
+  "answer": 5,
+  "solution": [
+   "One state per prefix matched so far: none, 1, 11, 110 (all with output 0).",
+   "A Moore machine needs one more state, 'just received 1101', whose output is 1.",
+   "The prefix states are pairwise distinguishable (they need 4, 3, 2, 1 more bits to produce a 1), so 4 + 1 = 5 is minimal."
+  ],
+  "concept": "A k-bit pattern needs k Mealy states and k + 1 Moore states.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "That is the Mealy count; a Moore machine needs an extra state to hold the output 1."
+   },
+   {
+    "answer": 3,
+    "why": "Counting flip-flops (⌈log₂ 5⌉) instead of states."
+   }
+  ],
+  "blocks": [
+   "sequence-detector",
+   "detector-states",
+   "trap-moore-lag"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A Mealy machine must output 1 at the end of every non-overlapping occurrence of 10110 in its input. What is the minimum number of states?",
+  "answer": 5,
+  "solution": [
+   "States are the prefixes matched so far: none, 1, 10, 101, 1011.",
+   "The arc that completes the pattern carries output 1 and, for non-overlapping detection, returns to the 'none' state: no extra state is needed.",
+   "The five prefix states need 5, 4, 3, 2, 1 more bits to produce a 1, so they are pairwise distinguishable: 5 is minimal."
+  ],
+  "concept": "Overlapping or not, a k-bit pattern needs exactly k Mealy states; only the completing arc changes.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "Adding a 'detected' state: that is the Moore count."
+   },
+   {
+    "answer": 3,
+    "why": "Counting flip-flops (⌈log₂ 5⌉) instead of states."
+   }
+  ],
+  "blocks": [
+   "sequence-detector",
+   "detector-states",
+   "trap-overlap"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q04",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Mealy machine has states E (start) and O. E: $x = 0$ → E/0, $x = 1$ → O/1. O: $x = 0$ → O/1, $x = 1$ → E/0. Which statement describes its output?",
+  "options": [
+   {
+    "l": "A",
+    "t": "The input delayed by one clock period"
+   },
+   {
+    "l": "B",
+    "t": "The complement of the present input"
+   },
+   {
+    "l": "C",
+    "t": "1 exactly when the number of 1s received so far, including the present bit, is odd"
+   },
+   {
+    "l": "D",
+    "t": "1 exactly when the last two input bits are 11"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "E is entered after an even number of 1s and O after an odd number: input 1 swaps the states, input 0 keeps them.",
+   "Each arc's output is 1 exactly when the arc ends in O, i.e. when the count of 1s including the present bit is odd: running parity.",
+   "Input 1 alone gives output 1, which kills A (a delay would output 0) and D; input 0 alone gives 0, which kills B."
+  ],
+  "concept": "Give each state a meaning, check it on every arc, and kill the other options with one short string each.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "On input 1 the machine outputs 1 at once; a one-clock delay would output 0 first."
+   },
+   {
+    "answer": "D",
+    "why": "A single 1 already gives output 1, and 11 gives 10, not 01."
+   },
+   {
+    "answer": "B",
+    "why": "Input 0 from E gives 0, not 1."
+   }
+  ],
+  "blocks": [
+   "interpret-machine",
+   "trick-run-small"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q05",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A Mealy machine has states S0 (start) to S3: S0: $x = 0$ → S1/0, $x = 1$ → S0/0; S1: $x = 0$ → S1/0, $x = 1$ → S2/0; S2: $x = 0$ → S3/0, $x = 1$ → S0/0; S3: $x = 0$ → S1/0, $x = 1$ → S2/1. What is the length of the shortest input string that produces an output 1?",
+  "answer": 4,
+  "solution": [
+   "The only arc with output 1 is S3 on input 1, so the machine must first reach S3.",
+   "Breadth-first from S0: level 1 adds S1 (input 0); level 2 adds S2 (01); level 3 adds S3 (010).",
+   "Then the input 1 takes the output-1 arc: 0101, length 4."
+  ],
+  "concept": "Breadth-first search to the source of the target arc, then add the arc itself.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Stopping when S3 is reached: the output 1 needs one more input."
+   },
+   {
+    "answer": 5,
+    "why": "A valid but not shortest input, such as 10101, which first loops in S0."
+   }
+  ],
+  "blocks": [
+   "shortest-input",
+   "bfs-bound"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q06",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about synchronous Mealy and Moore machines are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A Moore machine's output can change only just after an active clock edge."
+   },
+   {
+    "l": "B",
+    "t": "For any bit pattern, a Mealy sequence detector needs at least as many states as a Moore detector for the same pattern."
+   },
+   {
+    "l": "C",
+    "t": "A Mealy machine's output can change in the middle of a clock period if its input changes."
+   },
+   {
+    "l": "D",
+    "t": "Every Moore machine with n states has a Mealy machine with the same n states that produces the same output sequence one clock earlier."
+   }
+  ],
+  "answer": [
+   "A",
+   "C",
+   "D"
+  ],
+  "solution": [
+   "A: a Moore output is a function of the flip-flops only, which change only at edges. True.",
+   "B: a k-bit pattern needs k Mealy states but k + 1 Moore states (101: 3 against 4). False.",
+   "C: a Mealy output is computed from the live input wires, so it follows input changes (and glitches) within the period. True.",
+   "D: give each arc the output of the state it enters, λ′(s, x) = λ(δ(s, x)). True."
+  ],
+  "concept": "Moore: output in the state, steady between edges. Mealy: output on the arc, one clock earlier, fewer or equal states.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "B is backwards: Moore never needs fewer states than Mealy."
+   },
+   {
+    "answer": [
+     "A",
+     "D"
+    ],
+    "why": "Missing C: Mealy outputs pass input glitches through."
+   }
+  ],
+  "blocks": [
+   "mealy-moore",
+   "mealy-moore-equivalence",
+   "output-timing-fsm",
+   "trap-mealy-glitch"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q07",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "The serial 2's complementer (Q0: 0/0 stay, 1/1 to Q1; Q1: 0/1 and 1/0, stay) is built with one D flip-flop, coding Q0 as $Q = 0$ and Q1 as $Q = 1$; $x$ is the input bit and $z$ the output. Which equations are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$D = x$, $z = Q \\oplus x$"
+   },
+   {
+    "l": "B",
+    "t": "$D = Q + x$, $z = Q \\oplus x$"
+   },
+   {
+    "l": "C",
+    "t": "$D = Qx$, $z = Q \\oplus x$"
+   },
+   {
+    "l": "D",
+    "t": "$D = Q + x$, $z = \\overline{Q}\\,x$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Once a 1 has been seen the machine stays in Q1; from Q0 it moves to Q1 exactly on x = 1. So $Q^+ = Q + x$ and $D = Q + x$.",
+   "In Q0 the output copies x; in Q1 it complements x: $z = \\overline{Q}x + Q\\overline{x} = Q \\oplus x$.",
+   "Simulated LSB first on all 256 eight-bit numbers, only B gives the 2's complement every time."
+  ],
+  "concept": "Encode the states, then read each D input from the next-state column and the output from the arcs.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "D = x forgets the first 1 as soon as a 0 arrives (that is 'state = previous bit')."
+   },
+   {
+    "answer": "C",
+    "why": "D = Qx can never leave Q0."
+   },
+   {
+    "answer": "D",
+    "why": "The output must be 1 for x = 0 in Q1; $\\overline{Q}x$ is 0 there."
+   }
+  ],
+  "blocks": [
+   "fsm-to-circuit",
+   "serial-twos-complement"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q08",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "In the minimal overlapping Mealy detector for 1011, state $S_i$ means 'the longest suffix of the input that is a prefix of 1011 has length $i$' ($i = 0, 1, 2, 3$). Which arcs are correct?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$S_3$ on input 1 goes to $S_1$ with output 1"
+   },
+   {
+    "l": "B",
+    "t": "$S_2$ on input 0 goes to $S_0$ with output 0"
+   },
+   {
+    "l": "C",
+    "t": "$S_1$ on input 1 goes to $S_0$ with output 0"
+   },
+   {
+    "l": "D",
+    "t": "$S_3$ on input 0 goes to $S_2$ with output 0"
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "A: 101 + 1 = 1011 completes the pattern (output 1); its longest proper suffix that is a prefix is 1, so $S_1$. Correct.",
+   "B: 10 + 0 = 100; no non-empty suffix of 100 is a prefix of 1011, so $S_0$. Correct.",
+   "C: 1 + 1 = 11, whose suffix 1 is a prefix: the arc goes to $S_1$, not $S_0$. Wrong.",
+   "D: 101 + 0 = 1010, whose suffix 10 is a prefix: $S_2$. Correct."
+  ],
+  "concept": "Failure arc = longest suffix of (matched prefix + new bit) that is a prefix of the pattern.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "C resets on a repeated 1, which loses the 1 that may start the pattern."
+   },
+   {
+    "answer": [
+     "B",
+     "D"
+    ],
+    "why": "A is the overlapping completion arc: the final 1 can start the next 1011."
+   }
+  ],
+  "blocks": [
+   "sequence-detector",
+   "trick-suffix"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q09",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A controller has 12 states. A binary state assignment uses $b$ flip-flops (the minimum possible) and a one-hot assignment uses $h$ flip-flops. What is $h - b$?",
+  "answer": 8,
+  "solution": [
+   "Binary: $b = \\lceil \\log_2 12 \\rceil = 4$, since $2^3 = 8 < 12 \\le 16 = 2^4$.",
+   "One-hot: one flip-flop per state, $h = 12$.",
+   "$h - b = 8$."
+  ],
+  "concept": "Binary assignment needs ⌈log₂ n⌉ flip-flops, one-hot needs n.",
+  "common_wrong": [
+   {
+    "answer": 9,
+    "why": "Taking ⌊log₂ 12⌋ = 3 flip-flops, which hold only 8 states."
+   },
+   {
+    "answer": 12,
+    "why": "That is h alone; the question asks for the difference h − b."
+   }
+  ],
+  "blocks": [
+   "state-assignment",
+   "one-hot-equations"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-07-q10",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Moore machine has states A (start, output 0), B (0), C (0) and D (1), with next states A: $x = 0$ → A, $x = 1$ → B; B: 0 → C, 1 → B; C: 0 → A, 1 → D; D: 0 → C, 1 → B. Its full output string for the input 10101, starting with the output shown before the first input, is:",
+  "options": [
+   {
+    "l": "A",
+    "t": "00101"
+   },
+   {
+    "l": "B",
+    "t": "000100"
+   },
+   {
+    "l": "C",
+    "t": "000101"
+   },
+   {
+    "l": "D",
+    "t": "001010"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Before any input the machine is in A and shows 0.",
+   "1 → B (0), 0 → C (0), 1 → D (1), 0 → C (0), 1 → D (1).",
+   "Full string 0 00101 = 000101: the machine is the overlapping 101 detector, so it reports both occurrences, one clock after each."
+  ],
+  "concept": "A Moore machine shows its start state's output first: n inputs give n + 1 outputs.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Dropping the initial output: that is the Mealy-length string."
+   },
+   {
+    "answer": "B",
+    "why": "Sending D on input 0 back to A (non-overlapping detection), which misses the second 101."
+   },
+   {
+    "answer": "D",
+    "why": "Shifting the outputs one place early, as if the output belonged to the arc."
+   }
+  ],
+  "blocks": [
+   "mealy-moore",
+   "trap-moore-lag"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q01",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A Mealy machine has the state table below (next state, output for $x = 0$; next state, output for $x = 1$). Every state is reachable from $A$. What is the number of states of the minimal equivalent machine?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | F, 1 | B, 1 |\n| B | D, 1 | B, 1 |\n| C | A, 1 | E, 1 |\n| D | B, 1 | E, 1 |\n| E | A, 1 | G, 0 |\n| F | A, 1 | E, 1 |\n| G | G, 1 | C, 1 |",
+  "answer": 4,
+  "solution": [
+   "$P_0$ by whole output rows: $E$ has 10, every other state 11. $P_0 = \\{A, B, C, D, F, G\\}, \\{E\\}$.",
+   "Round 1: $C \\to (A, E)$, $D \\to (B, E)$ and $F \\to (A, E)$ reach $\\{E\\}$ on input 1; $A \\to (F, B)$, $B \\to (D, B)$ and $G \\to (G, C)$ do not. $P_1 = \\{A, B, G\\}, \\{C, D, F\\}, \\{E\\}$.",
+   "Round 2: $A \\to (F, B)$ and $B \\to (D, B)$ go to ($\\{C, D, F\\}$, $\\{A, B, G\\}$), but $G \\to (G, C)$ goes to ($\\{A, B, G\\}$, $\\{C, D, F\\}$): $G$ splits. $C, D, F$ all go to ($\\{A, B, G\\}$, $\\{E\\}$). $P_2 = \\{A, B\\}, \\{C, D, F\\}, \\{E\\}, \\{G\\}$.",
+   "Round 3 splits nothing, so the classes are $\\{A, B\\}$, $\\{C, D, F\\}$, $\\{E\\}$, $\\{G\\}$: 4 states."
+  ],
+  "concept": "Partition refinement: P0 by output rows, then split by the blocks of the next states until a round splits nothing.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Stopping at $P_1$ (3 blocks) without checking that a further round splits $G$ off."
+   },
+   {
+    "answer": 2,
+    "why": "Stopping at $P_0$: two output-row groups are not yet the equivalence classes."
+   },
+   {
+    "answer": 6,
+    "why": "Merging only the identical rows $C$ and $F$; $D$ also belongs to their class although its row differs, and $A \\equiv B$ as well."
+   }
+  ],
+  "blocks": [
+   "partition-refinement",
+   "refinement-correct",
+   "trap-same-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q02",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A Mealy machine has the state table below (next state, output for $x = 0$; next state, output for $x = 1$). Which of the following pairs of states are equivalent?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | B, 0 | A, 1 |\n| B | D, 0 | C, 0 |\n| C | D, 0 | B, 0 |\n| D | E, 0 | E, 1 |\n| E | F, 0 | B, 1 |\n| F | E, 0 | E, 1 |",
+  "options": [
+   {
+    "l": "A",
+    "t": "A and E"
+   },
+   {
+    "l": "B",
+    "t": "B and C"
+   },
+   {
+    "l": "C",
+    "t": "D and F"
+   },
+   {
+    "l": "D",
+    "t": "A and D"
+   }
+  ],
+  "answer": [
+   "B",
+   "C"
+  ],
+  "solution": [
+   "$P_0$ by output rows: $A, D, E, F$ have 01; $B, C$ have 00.",
+   "Round 1: $A \\to (B, A)$ and $E \\to (F, B)$ each reach $\\{B, C\\}$, but on different inputs, while $D \\to (E, E)$ and $F \\to (E, E)$ stay in the first block. $P_1 = \\{A\\}, \\{B, C\\}, \\{D, F\\}, \\{E\\}$; $B \\to (D, C)$ and $C \\to (D, B)$ have the same labels.",
+   "Round 2 splits nothing: $B$ and $C$ differ only by the pair $(C, B)$ itself, and $D, F$ have identical rows. So $B \\equiv C$ and $D \\equiv F$.",
+   "$A$ and $E$: the string 0 1 gives outputs 0, 0 from $A$ (through $B$) and 0, 1 from $E$ (through $F$). $A$ and $D$: the same string gives 0, 0 from $A$ and 0, 1 from $D$ (through $E$)."
+  ],
+  "concept": "Equivalent states need next states in the same class, not equal next states; a pair that implies only itself is equivalent.",
+  "common_wrong": [
+   {
+    "answer": [
+     "C"
+    ],
+    "why": "Accepting only identical rows ($D$, $F$) and rejecting $B$, $C$ because their next states differ."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Merging $A$ with $E$ because both have the output row 01; the second round separates them (the string 0 1)."
+   }
+  ],
+  "blocks": [
+   "equivalent-states",
+   "trap-same-next",
+   "trick-distinguish"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Partition refinement is applied to the Mealy machine below (next state, output for $x = 0$; next state, output for $x = 1$). Which of the following is $P_1$, the partition after the first round of splitting?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | D, 1 | B, 1 |\n| B | D, 1 | A, 1 |\n| C | B, 1 | C, 0 |\n| D | A, 1 | E, 0 |\n| E | C, 1 | E, 0 |",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\{A, B\\}, \\{C, D, E\\}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\{A, B\\}, \\{C, D\\}, \\{E\\}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\{A, B\\}, \\{C\\}, \\{D\\}, \\{E\\}$"
+   },
+   {
+    "l": "D",
+    "t": "$\\{A\\}, \\{B\\}, \\{C, D\\}, \\{E\\}$"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "$P_0$ by output rows: $A, B$ have 11; $C, D, E$ have 10. $P_0 = \\{A, B\\}, \\{C, D, E\\}$.",
+   "Round 1: $A \\to (D, B)$ and $B \\to (D, A)$ both go to ($\\{C, D, E\\}$, $\\{A, B\\}$). $C \\to (B, C)$ and $D \\to (A, E)$ go to ($\\{A, B\\}$, $\\{C, D, E\\}$), but $E \\to (C, E)$ goes to ($\\{C, D, E\\}$, $\\{C, D, E\\}$).",
+   "So $E$ splits off: $P_1 = \\{A, B\\}, \\{C, D\\}, \\{E\\}$. (Round 2 then separates $C$ from $D$, giving 4 states in the end.)"
+  ],
+  "concept": "Each round of refinement uses the blocks of the previous partition, so P1 is not yet the final answer.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "That is $P_0$, the grouping by output rows before any round."
+   },
+   {
+    "answer": "C",
+    "why": "That is $P_2$, the final partition: it needs a second round."
+   },
+   {
+    "answer": "D",
+    "why": "Splitting $A$ from $B$ because their next states differ; they go to the same blocks."
+   }
+  ],
+  "blocks": [
+   "partition-refinement",
+   "trick-output-rows"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 1-input, 2-output synchronous sequential circuit outputs 00 until, after some number of input bits, the number of 0s read exceeds the number of 1s read by 3 (from that tick on the output is 10 for ever) or the number of 1s read exceeds the number of 0s read by 3 (from that tick on the output is 01 for ever). What is the minimum number of states in its state transition graph?",
+  "answer": 7,
+  "solution": [
+   "Before a verdict only the difference $d$ = (number of 0s) − (number of 1s) matters, and it stays in $\\{-2, -1, 0, 1, 2\\}$: reaching $\\pm 3$ ends the counting. That is 5 counting states.",
+   "After a verdict only the verdict matters: two absorbing states (10 for ever, 01 for ever). Total 7, an upper bound.",
+   "Lower bound: the histories ε, 0, 00, 1, 11, 000, 111 are pairwise distinguishable. The two verdict states differ at once; a counting state differs from the 10 state on input 1 and from the 01 state on input 0; and two counting states $d < d'$ are separated by the suffix of $3 - d'$ zeros, which gives the verdict 10 after $d'$ but not yet after $d$."
+  ],
+  "concept": "Count what the machine must remember, and prove the lower bound with pairwise distinguishable histories.",
+  "common_wrong": [
+   {
+    "answer": 5,
+    "why": "Copying the GATE 2003 answer: with a threshold of 3 the difference ranges over five values, not three."
+   },
+   {
+    "answer": 9,
+    "why": "Keeping $d = \\pm 3$ as counting states besides the two verdict states."
+   }
+  ],
+  "blocks": [
+   "min-states-from-words",
+   "distinguishing-strings"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q05",
+  "type": "NAT",
+  "marks": 1,
+  "text": "The Moore machine below has output 1 only in state $S_4$ (next states for $x = 0$ and $x = 1$): $S_0$: $S_1$, $S_0$; $S_1$: $S_1$, $S_2$; $S_2$: $S_1$, $S_3$; $S_3$: $S_4$, $S_0$; $S_4$: $S_1$, $S_2$. Partition refinement computes $P_0, P_1, P_2, \\dots$ What is the smallest $k$ for which $P_{k+1} = P_k$?",
+  "answer": 3,
+  "solution": [
+   "$P_0 = \\{S_0, S_1, S_2, S_3\\}, \\{S_4\\}$ (Moore: by the state output).",
+   "Only $S_3$ reaches $S_4$ (on 0): $P_1 = \\{S_0, S_1, S_2\\}, \\{S_3\\}, \\{S_4\\}$. Only $S_2$ reaches $S_3$ (on 1): $P_2 = \\{S_0, S_1\\}, \\{S_2\\}, \\{S_3\\}, \\{S_4\\}$.",
+   "$S_1$ reaches $S_2$ on 1 and $S_0$ does not: $P_3$ is all singletons, and $P_4 = P_3$. So $k = 3$, the maximum $n - b = 5 - 2$ allowed by the theorem: the machine (the overlapping 0110 Moore detector) is already minimal."
+  ],
+  "concept": "Each splitting round adds at least one block, so with n states and b blocks in P0 refinement stabilises by P_(n−b).",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Quoting the general bound $n - 1 = 4$ instead of running the rounds."
+   },
+   {
+    "answer": 2,
+    "why": "Stopping one round early, before $S_0$ and $S_1$ are separated."
+   }
+  ],
+  "blocks": [
+   "refinement-correct",
+   "partition-refinement"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q06",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements about the implication table of a completely specified Mealy machine with $n$ states are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "In the first pass, a cell is crossed exactly when the two states' outputs differ for at least one input value."
+   },
+   {
+    "l": "B",
+    "t": "A cell whose only implied pair is the cell itself (for instance $B$–$C$ with $B \\to A, C$ and $C \\to A, B$ and equal output rows) is never crossed, so the two states are equivalent."
+   },
+   {
+    "l": "C",
+    "t": "A cell must be crossed whenever the two states have different next states for some input."
+   },
+   {
+    "l": "D",
+    "t": "The number of states of the minimal machine always equals $n$ minus the number of uncrossed cells."
+   }
+  ],
+  "answer": [
+   "A",
+   "B"
+  ],
+  "solution": [
+   "A: true. Pass 0 compares output signatures, which for a Mealy machine is the whole output row.",
+   "B: true. A cell is crossed only through an implied pair that is already crossed; a cell that implies only itself can never be crossed, and the theorem says uncrossed cells are equivalent pairs (this is $B$–$C$ of GATE 1996).",
+   "C: false. Different next states are written into the cell as implied pairs; they cross it only if one of those pairs is crossed (GATE 1996: $B \\equiv C$ with different rows).",
+   "D: false. A class of three equivalent states has three uncrossed cells but saves only two states. In a 6-state machine where $C \\equiv E \\equiv F$ and nothing else merges there are 3 uncrossed cells, and the minimal machine has 4 states, not 3."
+  ],
+  "concept": "The implication table crosses output mismatches, then pairs implying crossed pairs; survivors are the equivalent pairs, which must then be grouped into classes.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "Counting merged states as one per uncrossed cell; that only works when every class has at most two states."
+   },
+   {
+    "answer": [
+     "A",
+     "C"
+    ],
+    "why": "Treating different next states as proof of difference; equivalence only needs next states in the same class."
+   }
+  ],
+  "blocks": [
+   "implication-table",
+   "implication-agrees",
+   "trap-same-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q07",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A Mealy machine has seven states (next state, output for $x = 0$; next state, output for $x = 1$): $A$: $F$/1, $A$/0; $B$: $D$/1, $G$/1; $C$: $B$/1, $E$/1; $D$: $C$/1, $E$/1; $E$: $D$/1, $E$/0; $F$: $G$/1, $B$/1; $G$: $C$/1, $G$/0. Every state is reachable from $A$. How many flip-flops does a binary-coded realisation of the minimal equivalent machine need?",
+  "answer": 2,
+  "solution": [
+   "$P_0$ by output rows: $\\{A, E, G\\}$ (10) and $\\{B, C, D, F\\}$ (11).",
+   "Round 1: $F \\to (G, B)$ goes to (first block, second block) while $B, C, D$ go to (second, first): $F$ splits. Round 2: $A \\to (F, A)$ now reaches $\\{F\\}$ while $E \\to (D, E)$ and $G \\to (C, G)$ reach $\\{B, C, D\\}$: $A$ splits. Round 3 splits nothing.",
+   "Classes $\\{A\\}, \\{B, C, D\\}, \\{E, G\\}, \\{F\\}$: 4 states, so $\\lceil \\log_2 4 \\rceil = 2$ flip-flops (7 states would need 3)."
+  ],
+  "concept": "Minimise first, then a k-state machine needs ceil(log2 k) flip-flops; a saving needs the count to cross a power of 2.",
+  "common_wrong": [
+   {
+    "answer": 3,
+    "why": "Coding the seven states without minimising."
+   },
+   {
+    "answer": 4,
+    "why": "Giving the number of states instead of the number of flip-flops."
+   }
+  ],
+  "blocks": [
+   "why-minimise",
+   "partition-refinement"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q08",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "Two states $p$ and $q$ of a completely specified sequential machine are equivalent exactly when:",
+  "options": [
+   {
+    "l": "A",
+    "t": "for every input, $p$ and $q$ have the same next state"
+   },
+   {
+    "l": "B",
+    "t": "for every single input, $p$ and $q$ produce the same output"
+   },
+   {
+    "l": "C",
+    "t": "for every input sequence, the machine produces the same output sequence starting in $p$ as starting in $q$"
+   },
+   {
+    "l": "D",
+    "t": "$p$ can be reached from $q$ and $q$ can be reached from $p$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "Equivalence is defined by behaviour: the same output sequence for every input sequence (option C).",
+   "Equal next states with equal outputs is sufficient but not necessary (GATE 1996: $B \\equiv C$ with different next states), so A is wrong.",
+   "Equal outputs for single inputs is only 0-equivalence, the first partition $P_0$; B is too weak. Mutual reachability says nothing about outputs (D)."
+  ],
+  "concept": "State equivalence means indistinguishable by every input sequence; equal rows and equal one-step outputs are not the definition.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Identical rows are one way to be equivalent, not the only way."
+   },
+   {
+    "answer": "B",
+    "why": "Agreement on one input step is 0-equivalence; later inputs can still separate the states."
+   }
+  ],
+  "blocks": [
+   "equivalent-states",
+   "k-equivalence"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q09",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A Mealy machine starts in state $A$ (next state, output for $x = 0$; next state, output for $x = 1$): $A$: $F$/0, $E$/1; $B$: $B$/0, $A$/1; $C$: $A$/0, $A$/0; $D$: $A$/0, $D$/1; $E$: $F$/0, $A$/1; $F$: $C$/0, $E$/1. How many states does the minimal machine with the same behaviour from $A$ have?",
+  "options": [
+   {
+    "l": "A",
+    "t": "4"
+   },
+   {
+    "l": "B",
+    "t": "3"
+   },
+   {
+    "l": "C",
+    "t": "5"
+   },
+   {
+    "l": "D",
+    "t": "6"
+   }
+  ],
+  "answer": "B",
+  "solution": [
+   "Search from $A$: $A \\to F, E$; $F \\to C, E$; $C \\to A$; $E \\to F, A$. The reachable states are $A, C, E, F$; $B$ and $D$ can never be entered, so their rows are dropped.",
+   "Refine the four reachable states: $P_0 = \\{A, E, F\\}$ (01), $\\{C\\}$ (00). $F \\to (C, E)$ reaches $\\{C\\}$, $A \\to (F, E)$ and $E \\to (F, A)$ do not: $P_1 = \\{A, E\\}, \\{C\\}, \\{F\\}$. The next round splits nothing.",
+   "So $A \\equiv E$ and the minimal machine has 3 states."
+  ],
+  "concept": "Drop the states unreachable from the start, then merge equivalent states.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Dropping $B$ and $D$ but not merging $A$ with $E$."
+   },
+   {
+    "answer": "C",
+    "why": "Minimising the whole table: the unreachable $B$ and $D$ stay as blocks of their own."
+   },
+   {
+    "answer": "D",
+    "why": "Counting the rows of the table without dropping or merging anything."
+   }
+  ],
+  "blocks": [
+   "unreachable",
+   "trap-unreachable"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-08-q10",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A Mealy machine has the table below (next state, output for $x = 0$; next state, output for $x = 1$). What is the initial partition $P_0$ of partition refinement?\n\n| PS | $x = 0$ | $x = 1$ |\n|:--:|:--:|:--:|\n| A | B, 0 | C, 0 |\n| B | A, 0 | D, 1 |\n| C | D, 1 | A, 1 |\n| D | C, 1 | B, 0 |",
+  "options": [
+   {
+    "l": "A",
+    "t": "$\\{A, B\\}, \\{C, D\\}$"
+   },
+   {
+    "l": "B",
+    "t": "$\\{A, D\\}, \\{B, C\\}$"
+   },
+   {
+    "l": "C",
+    "t": "$\\{A\\}, \\{B\\}, \\{C\\}, \\{D\\}$"
+   },
+   {
+    "l": "D",
+    "t": "$\\{A\\}, \\{B, D\\}, \\{C\\}$"
+   }
+  ],
+  "answer": "C",
+  "solution": [
+   "For a Mealy machine $P_0$ groups states by the whole output row: $A$ 00, $B$ 01, $C$ 11, $D$ 10.",
+   "All four rows differ, so $P_0$ consists of four singletons and the machine is already minimal.",
+   "Grouping by one column is the Moore habit applied to a Mealy table: the $x = 0$ column gives option A, the $x = 1$ column option B."
+  ],
+  "concept": "P0 of a Mealy machine uses the whole output row; of a Moore machine, the state output.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Grouping by the output for $x = 0$ only."
+   },
+   {
+    "answer": "B",
+    "why": "Grouping by the output for $x = 1$ only."
+   },
+   {
+    "answer": "D",
+    "why": "Grouping by the number of 1s in the row: 01 and 10 are different rows."
+   }
+  ],
+  "blocks": [
+   "trap-moore-p0",
+   "partition-refinement"
+  ],
+  "source": "nexora"
  }
 ]
