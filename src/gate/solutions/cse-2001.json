@@ -3595,150 +3595,216 @@
       }
     },
     "cse-2001-b-59-a": {
-      "approach": "Mealy machine with two modes (copy / complement), each split by whether the last input already starts the switching pair. The bit that completes \"00\" is still copied; the bit that completes \"11\" is still complemented.",
+      "approach": "Concept tested: **building a state machine from a word description**. Decide what must be remembered (the mode, and whether the last bit was the one that would end the mode), make each combination a state, put the output on the arcs (Mealy, since the output is the input or its complement), and test on the given example.",
       "concepts": [
         "Mealy machine",
         "State diagram",
+        "Word to FSM",
         "Sequence detection"
       ],
+      "given": "A stream of bits; the circuit copies its input until two consecutive 0s appear, then outputs the complement until two consecutive 1s appear, and repeats. Example: input 101100 01001011 011, output 101100 10110100 011. S-K (JK) master–slave flip-flops are to be used.",
       "steps": [
         {
-          "title": "States",
-          "body": "| state | mode | remembers |\n|---|---|---|\n| A | copy | last input not 0 (or start) |\n| B | copy | last input 0 |\n| C | complement | last input not 1 |\n| D | complement | last input 1 |"
+          "title": "What must be remembered",
+          "body": "The **mode** (copy or complement) and, inside each mode, whether the last bit was the one that would end the mode if it came again: a 0 in copy mode, a 1 in complement mode. Two facts of one bit each: four states."
         },
         {
-          "title": "Transitions (input/output)",
-          "body": "- A: 1/1 → A, 0/0 → B\n- B: 1/1 → A, 0/0 → C (second 0: copied, then switch)\n- C: 0/1 → C, 1/0 → D\n- D: 0/1 → C, 1/0 → A (second 1: complemented, then switch back)",
+          "title": "Name the states",
+          "body": "A: copy, last bit not 0 (also the start). B: copy, last bit 0. C: complement, last bit not 1. D: complement, last bit 1. The output is $x$ in A, B and $\\bar x$ in C, D, so it depends on the input: a Mealy machine with outputs on the arcs."
+        },
+        {
+          "title": "Draw every arc",
+          "body": "The bit that completes 00 or 11 is still processed in the old mode (the example copies the second 0 of the first 00). A: 0/0 → B, 1/1 → A. B: 0/0 → C, 1/1 → A. C: 0/1 → C, 1/0 → D. D: 0/1 → C, 1/0 → A. Eight arcs for four states, one per (state, input).",
           "scene": {
-            "edgeTones": {
-              "B>C": "warning",
-              "D>A": "warning"
-            },
-            "caption": "Mode switches on 00 and 11"
+            "reveal": 4
           }
         },
         {
-          "title": "Check against the example",
-          "body": "Input 101100: A→A→B→A→A→B→C, output 101100. Input 01001011 from C: C→C→D→C→C→D→C→D→A, output 10110100. Input 011 from A: output 011. All match the given streams.",
-          "scene": {
-            "current": [
-              "A"
-            ],
-            "caption": "Example reproduced"
-          }
+          "title": "Test on the example",
+          "body": "Running the machine on the 17 bits 10110001001011011 from A gives 10110010110100011, the example output (101100 10110100 011), with states A A B A A B C C D C C D C D A B A A."
         }
       ],
       "answer": {
-        "value": "4-state Mealy machine: A (copy), B (copy, last 0), C (complement), D (complement, last 1). A: 0/0→B, 1/1→A; B: 0/0→C, 1/1→A; C: 0/1→C, 1/0→D; D: 0/1→C, 1/0→A.",
+        "value": "4-state Mealy machine: A (copy, last≠0), B (copy, last=0), C (complement, last≠1), D (complement, last=1); A: 0/0→B, 1/1→A; B: 0/0→C, 1/1→A; C: 0/1→C, 1/0→D; D: 0/1→C, 1/0→A",
         "matchesKey": true
       },
+      "shortcut": "State = (mode, 'one more of the same bit ends the mode'). Output = input XOR mode. Only the 'ending' bit moves you between modes.",
       "pitfalls": [
-        "The second 0 is output as 0 (copied); complementing starts with the next bit — check this against the example stream."
+        "Switching mode before processing the completing bit (complementing the second 0 of 00): the example shows it is still copied.",
+        "Using only two states (copy, complement): the machine must also remember the previous bit to recognise 00 and 11.",
+        "Letting the 11 that ends complement mode start with a 0 → 1 pair from copy mode: after a mode change the 'last bit' memory starts afresh (states C and A)."
       ],
-      "verification": "Replayed the full 17-bit example stream through the diagram; every output bit matches.",
+      "verification": "Simulated on every input up to 10 bits, the machine equals a direct reading of the words (copy until 00, complement until 11, repeat), and it is minimal (4 states, partition refinement merges nothing). An equivalent Moore machine needs 6 states.",
       "animation": {
-        "kind": "automaton",
-        "layout": "manual",
-        "states": [
-          {
-            "id": "A",
-            "start": true,
-            "x": 0,
-            "y": 0
-          },
-          {
-            "id": "B",
-            "x": 1,
-            "y": 0
-          },
-          {
-            "id": "C",
-            "x": 1,
-            "y": 1
-          },
-          {
-            "id": "D",
-            "x": 0,
-            "y": 1
-          }
+        "kind": "table",
+        "title": "State table (next state / output)",
+        "cols": [
+          "x = 0",
+          "x = 1"
         ],
-        "edges": [
-          {
-            "from": "A",
-            "to": "A",
-            "label": "1/1"
-          },
-          {
-            "from": "A",
-            "to": "B",
-            "label": "0/0"
-          },
-          {
-            "from": "B",
-            "to": "A",
-            "label": "1/1"
-          },
-          {
-            "from": "B",
-            "to": "C",
-            "label": "0/0"
-          },
-          {
-            "from": "C",
-            "to": "C",
-            "label": "0/1"
-          },
-          {
-            "from": "C",
-            "to": "D",
-            "label": "1/0"
-          },
-          {
-            "from": "D",
-            "to": "C",
-            "label": "0/1"
-          },
-          {
-            "from": "D",
-            "to": "A",
-            "label": "1/0"
-          }
+        "rows": [
+          [
+            "B/0",
+            "A/1"
+          ],
+          [
+            "C/0",
+            "A/1"
+          ],
+          [
+            "C/1",
+            "D/0"
+          ],
+          [
+            "C/1",
+            "A/0"
+          ]
         ],
-        "current": [
-          "A"
-        ]
+        "mono": true,
+        "rowLabels": [
+          "A copy, last≠0",
+          "B copy, last=0",
+          "C comp, last≠1",
+          "D comp, last=1"
+        ],
+        "reveal": 1
       }
     },
     "cse-2001-b-59-b": {
-      "approach": "Encode A=00, B=01, C=10, D=11 ($Q_1$ = mode, $Q_0$ = \"last bit could start the switch\"), build the next-state table, then read J/K from the JK excitation table.",
+      "approach": "Concept tested: **implementing a Mealy machine with JK flip-flops**. Assign codes to the four states, write the encoded state table, read the J and K columns from the JK excitation table (J only where Q = 0, K only where Q = 1) and minimise. 'S-K master–slave' is a JK flip-flop (set/reset, toggle on 11).",
       "concepts": [
-        "JK flip-flop excitation",
         "State assignment",
+        "JK flip-flop",
+        "Excitation table",
         "K-map minimisation"
       ],
+      "given": "The 4-state machine of part (a): A: 0/0 → B, 1/1 → A; B: 0/0 → C, 1/1 → A; C: 0/1 → C, 1/0 → D; D: 0/1 → C, 1/0 → A. Two master–slave JK flip-flops $Q_1Q_0$; input $x$, output $z$.",
       "steps": [
         {
-          "title": "State table",
-          "body": "| $Q_1Q_0$ | $x$ | $Q_1^+Q_0^+$ | $z$ |\n|---|---|---|---|\n| 00 | 0 | 01 | 0 |\n| 00 | 1 | 00 | 1 |\n| 01 | 0 | 10 | 0 |\n| 01 | 1 | 00 | 1 |\n| 10 | 0 | 10 | 1 |\n| 10 | 1 | 11 | 0 |\n| 11 | 0 | 10 | 1 |\n| 11 | 1 | 00 | 0 |"
+          "title": "State assignment",
+          "body": "A = 00, B = 01, C = 10, D = 11. Then $Q_1$ is the mode (0 copy, 1 complement) and $Q_0$ the flag 'one more of the same bit ends the mode'. All four codes are used: no don't-cares from unused states."
         },
         {
-          "title": "Flip-flop Q1",
-          "body": "JK excitation: $0\\to0$: J=0,K=x; $0\\to1$: J=1,K=x; $1\\to0$: J=x,K=1; $1\\to1$: J=x,K=0.\n\n$Q_1=0$ rows: $Q_1^+=1$ only at $Q_0=1,x=0$ ⇒ $J_1 = Q_0\\bar x$.\n\n$Q_1=1$ rows: $Q_1^+=0$ only at $Q_0=1,x=1$ ⇒ $K_1 = Q_0 x$."
+          "title": "Encoded table",
+          "body": "00: $x = 0$ → 01, $z = 0$; $x = 1$ → 00, 1. 01: 0 → 10, 0; 1 → 00, 1. 10: 0 → 10, 1; 1 → 11, 0. 11: 0 → 10, 1; 1 → 00, 0.",
+          "scene": {
+            "reveal": 8
+          }
         },
         {
-          "title": "Flip-flop Q0 and output",
-          "body": "$Q_0=0$ rows (00, 10): $Q_0^+=1$ at $(Q_1,x)=(0,0)$ and $(1,1)$ ⇒ $J_0 = \\bar Q_1 \\bar x + Q_1 x$.\n\n$Q_0=1$ rows (01, 11): $Q_0^+ = 0$ always ⇒ $K_0 = 1$.\n\nOutput: $z = x$ in copy mode, $\\bar x$ in complement mode ⇒ $z = x \\oplus Q_1$."
+          "title": "J1 and K1",
+          "body": "$J_1$ matters in rows with $Q_1 = 0$: it is 1 only in row (01, $x = 0$), so $J_1 = Q_0\\bar x$. $K_1$ matters in rows with $Q_1 = 1$: it is 1 only in row (11, $x = 1$), so $K_1 = Q_0 x$."
+        },
+        {
+          "title": "J0 and K0",
+          "body": "$J_0$ (rows with $Q_0 = 0$) is 1 in rows (00, 0) and (10, 1) and 0 in (00, 1), (10, 0): $J_0 = Q_1x + \\bar Q_1\\bar x$. Every row with $Q_0 = 1$ goes to $Q_0^+ = 0$: $K_0 = 1$."
+        },
+        {
+          "title": "Output",
+          "body": "$z = x$ in copy mode and $\\bar x$ in complement mode: $z = x \\oplus Q_1$."
         }
       ],
       "answer": {
-        "value": "With A=00, B=01, C=10, D=11 ($Q_1$ = mode): $J_1 = Q_0\\bar x$, $K_1 = Q_0 x$; $J_0 = Q_1 x + \\bar Q_1 \\bar x$, $K_0 = 1$; output $z = x \\oplus Q_1$.",
-        "matchesKey": true
+        "value": "With A=00, B=01, C=10, D=11: $J_1 = Q_0\\bar x$, $K_1 = Q_0 x$, $J_0 = Q_1x + \\bar Q_1\\bar x$, $K_0 = 1$, $z = x \\oplus Q_1$",
+        "matchesKey": true,
+        "keyNote": "Any state assignment followed consistently is a correct answer; it changes the equations, not the behaviour. With A=00, B=01, C=11, D=10 the same procedure gives $J_1 = Q_0\\bar x$, $K_1 = \\bar Q_0x$, $J_0 = \\bar x$, $K_0 = x$."
       },
+      "shortcut": "Choose codes whose bits mean something (mode, flag): $J_1$ = 'flag set and another 0 arrives', $K_1$ = 'flag set and another 1 arrives', and the flag is always cleared at the next clock ($K_0 = 1$).",
       "pitfalls": [
-        "The expressions depend on the state assignment; any consistent assignment is acceptable, but the J/K must match its own table.",
-        "\"S-K\" in the question is the J-K master-slave flip-flop."
+        "Reading 'S-K' as an SR flip-flop and forbidding S = R = 1: the question's flip-flop is the JK type.",
+        "Writing J or K values in rows where they do not matter instead of don't-cares, which gives larger equations.",
+        "Using D-flip-flop equations ($D = Q^+$) for J: J is $Q^+$ only in rows with $Q = 0$."
       ],
-      "verification": "Checked $Q^+ = J\\bar Q + \\bar K Q$ on all 8 rows, e.g. state 11, $x=1$: $Q_1^+ = 0\\cdot 0 + \\overline{1}\\cdot 1 = 0$, $Q_0^+ = J_0\\cdot 0 + \\bar 1 \\cdot 1 = 0$ → 00 ✓."
+      "verification": "The circuit with these equations, simulated on every input up to 9 bits, produces the same outputs as the state machine, and on the example 101100 01001011 011 it outputs 101100 10110100 011. The D design ($D_1 = Q_0\\bar x + Q_1\\bar Q_0$, $D_0 = \\bar Q_1\\bar Q_0\\bar x + Q_1\\bar Q_0 x$) and a one-hot design agree too.",
+      "animation": {
+        "kind": "table",
+        "title": "Encoded table and JK columns (× = don't care)",
+        "cols": [
+          "Q1Q0 x",
+          "Q1⁺Q0⁺",
+          "z",
+          "J1",
+          "K1",
+          "J0",
+          "K0"
+        ],
+        "rows": [
+          [
+            "00 0",
+            "01",
+            "0",
+            "0",
+            "×",
+            "1",
+            "×"
+          ],
+          [
+            "00 1",
+            "00",
+            "1",
+            "0",
+            "×",
+            "0",
+            "×"
+          ],
+          [
+            "01 0",
+            "10",
+            "0",
+            "1",
+            "×",
+            "×",
+            "1"
+          ],
+          [
+            "01 1",
+            "00",
+            "1",
+            "0",
+            "×",
+            "×",
+            "1"
+          ],
+          [
+            "10 0",
+            "10",
+            "1",
+            "×",
+            "0",
+            "0",
+            "×"
+          ],
+          [
+            "10 1",
+            "11",
+            "0",
+            "×",
+            "0",
+            "1",
+            "×"
+          ],
+          [
+            "11 0",
+            "10",
+            "1",
+            "×",
+            "0",
+            "×",
+            "1"
+          ],
+          [
+            "11 1",
+            "00",
+            "0",
+            "×",
+            "1",
+            "×",
+            "1"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2001-b-60-a": {
       "approach": "List each instruction's destination and sources, then check every earlier→later pair for RAW (write then read), WAR (read then write) and WAW (write then write) on the same register.",
