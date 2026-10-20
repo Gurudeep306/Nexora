@@ -1,0 +1,1515 @@
+{
+ "version": 1,
+ "title": "A 3-bit parallel-in/serial-out register",
+ "width": 680,
+ "height": 364,
+ "narrow": {
+  "width": 360,
+  "height": 358
+ },
+ "intro": "Three D flip-flops QA, QB, QC on one clock, each fed by a 2-to-1 MUX: input 1 is the data bit (A, B, C), input 0 is the left neighbour (S for QA). L selects. Each step is one control change or one clock edge.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Parallel in, serial out: load 101, then shift (GATE 1991 design)",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "PISO: load, then shift",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "m0",
+   "type": "box",
+   "x": 130.0,
+   "y": 84,
+   "w": 80,
+   "h": 56,
+   "narrow": {
+    "x": 35.0,
+    "w": 70
+   }
+  },
+  {
+   "id": "m0-l0",
+   "type": "text",
+   "x": 135.0,
+   "y": 94.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 40.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m0-l1",
+   "type": "text",
+   "x": 135.0,
+   "y": 114.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 40.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m0-b0",
+   "type": "text",
+   "x": 170.0,
+   "y": 130,
+   "text": "Y",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 70.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m0-t0",
+   "type": "text",
+   "x": 170.0,
+   "y": 94,
+   "text": "L",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 70.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0",
+   "type": "box",
+   "x": 130.0,
+   "y": 170,
+   "w": 80,
+   "h": 56,
+   "narrow": {
+    "x": 35.0,
+    "w": 70
+   }
+  },
+  {
+   "id": "f0-r0",
+   "type": "text",
+   "x": 205.0,
+   "y": 190.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 100.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0-b0",
+   "type": "text",
+   "x": 170.0,
+   "y": 216,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 70.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f0-t0",
+   "type": "text",
+   "x": 170.0,
+   "y": 180,
+   "text": "D",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 70.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv0",
+   "type": "text",
+   "x": 166.0,
+   "y": 200,
+   "text": "QA=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 66.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "y0",
+   "type": "line",
+   "points": [
+    [
+     170.0,
+     140
+    ],
+    [
+     170.0,
+     170
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      70.0,
+      140
+     ],
+     [
+      70.0,
+      170
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d0",
+   "type": "line",
+   "points": [
+    [
+     108.0,
+     94.0
+    ],
+    [
+     130.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      13.0,
+      94.0
+     ],
+     [
+      35.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dl0",
+   "type": "text",
+   "x": 104.0,
+   "y": 94.0,
+   "text": "A",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 9.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "m1",
+   "type": "box",
+   "x": 300.0,
+   "y": 84,
+   "w": 80,
+   "h": 56,
+   "narrow": {
+    "x": 145.0,
+    "w": 70
+   }
+  },
+  {
+   "id": "m1-l0",
+   "type": "text",
+   "x": 305.0,
+   "y": 94.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 150.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1-l1",
+   "type": "text",
+   "x": 305.0,
+   "y": 114.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 150.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1-b0",
+   "type": "text",
+   "x": 340.0,
+   "y": 130,
+   "text": "Y",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m1-t0",
+   "type": "text",
+   "x": 340.0,
+   "y": 94,
+   "text": "L",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1",
+   "type": "box",
+   "x": 300.0,
+   "y": 170,
+   "w": 80,
+   "h": 56,
+   "narrow": {
+    "x": 145.0,
+    "w": 70
+   }
+  },
+  {
+   "id": "f1-r0",
+   "type": "text",
+   "x": 375.0,
+   "y": 190.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 210.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1-b0",
+   "type": "text",
+   "x": 340.0,
+   "y": 216,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f1-t0",
+   "type": "text",
+   "x": 340.0,
+   "y": 180,
+   "text": "D",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 180.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv1",
+   "type": "text",
+   "x": 336.0,
+   "y": 200,
+   "text": "QB=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 176.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "y1",
+   "type": "line",
+   "points": [
+    [
+     340.0,
+     140
+    ],
+    [
+     340.0,
+     170
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      140
+     ],
+     [
+      180.0,
+      170
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d1",
+   "type": "line",
+   "points": [
+    [
+     278.0,
+     94.0
+    ],
+    [
+     300.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      123.0,
+      94.0
+     ],
+     [
+      145.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dl1",
+   "type": "text",
+   "x": 274.0,
+   "y": 94.0,
+   "text": "B",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 119.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "m2",
+   "type": "box",
+   "x": 470.0,
+   "y": 84,
+   "w": 80,
+   "h": 56,
+   "narrow": {
+    "x": 255.0,
+    "w": 70
+   }
+  },
+  {
+   "id": "m2-l0",
+   "type": "text",
+   "x": 475.0,
+   "y": 94.0,
+   "text": "1",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 260.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2-l1",
+   "type": "text",
+   "x": 475.0,
+   "y": 114.0,
+   "text": "0",
+   "size": 13,
+   "anchor": "start",
+   "narrow": {
+    "x": 260.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2-b0",
+   "type": "text",
+   "x": 510.0,
+   "y": 130,
+   "text": "Y",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 290.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "m2-t0",
+   "type": "text",
+   "x": 510.0,
+   "y": 94,
+   "text": "L",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 290.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2",
+   "type": "box",
+   "x": 470.0,
+   "y": 170,
+   "w": 80,
+   "h": 56,
+   "narrow": {
+    "x": 255.0,
+    "w": 70
+   }
+  },
+  {
+   "id": "f2-r0",
+   "type": "text",
+   "x": 545.0,
+   "y": 190.0,
+   "text": "Q",
+   "size": 13,
+   "anchor": "end",
+   "narrow": {
+    "x": 320.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2-b0",
+   "type": "text",
+   "x": 510.0,
+   "y": 216,
+   "text": ">",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 290.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "f2-t0",
+   "type": "text",
+   "x": 510.0,
+   "y": 180,
+   "text": "D",
+   "size": 13,
+   "anchor": "middle",
+   "narrow": {
+    "x": 290.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "fv2",
+   "type": "text",
+   "x": 506.0,
+   "y": 200,
+   "text": "QC=0",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 286.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "y2",
+   "type": "line",
+   "points": [
+    [
+     510.0,
+     140
+    ],
+    [
+     510.0,
+     170
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      290.0,
+      140
+     ],
+     [
+      290.0,
+      170
+     ]
+    ]
+   }
+  },
+  {
+   "id": "d2",
+   "type": "line",
+   "points": [
+    [
+     448.0,
+     94.0
+    ],
+    [
+     470.0,
+     94.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      233.0,
+      94.0
+     ],
+     [
+      255.0,
+      94.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "dl2",
+   "type": "text",
+   "x": 444.0,
+   "y": 94.0,
+   "text": "C",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 229.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "q0",
+   "type": "line",
+   "points": [
+    [
+     108.0,
+     114.0
+    ],
+    [
+     130.0,
+     114.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      13.0,
+      114.0
+     ],
+     [
+      35.0,
+      114.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ql0",
+   "type": "text",
+   "x": 104.0,
+   "y": 114.0,
+   "text": "S",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 9.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "q1",
+   "type": "line",
+   "points": [
+    [
+     210.0,
+     190.0
+    ],
+    [
+     290.0,
+     190.0
+    ],
+    [
+     290.0,
+     114.0
+    ],
+    [
+     300.0,
+     114.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      105.0,
+      190.0
+     ],
+     [
+      135.0,
+      190.0
+     ],
+     [
+      135.0,
+      114.0
+     ],
+     [
+      145.0,
+      114.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "q2",
+   "type": "line",
+   "points": [
+    [
+     380.0,
+     190.0
+    ],
+    [
+     460.0,
+     190.0
+    ],
+    [
+     460.0,
+     114.0
+    ],
+    [
+     470.0,
+     114.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      215.0,
+      190.0
+     ],
+     [
+      245.0,
+      190.0
+     ],
+     [
+      245.0,
+      114.0
+     ],
+     [
+      255.0,
+      114.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "so",
+   "type": "line",
+   "points": [
+    [
+     550.0,
+     190.0
+    ],
+    [
+     580.0,
+     190.0
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      325.0,
+      190.0
+     ],
+     [
+      355.0,
+      190.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "sol",
+   "type": "text",
+   "x": 567.0,
+   "y": 176.0,
+   "text": "out",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 342.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "lbus",
+   "type": "line",
+   "points": [
+    [
+     108.0,
+     68
+    ],
+    [
+     510.0,
+     68
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      13.0,
+      68
+     ],
+     [
+      290.0,
+      68
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ld0",
+   "type": "line",
+   "points": [
+    [
+     170.0,
+     68
+    ],
+    [
+     170.0,
+     84
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      70.0,
+      68
+     ],
+     [
+      70.0,
+      84
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ld1",
+   "type": "line",
+   "points": [
+    [
+     340.0,
+     68
+    ],
+    [
+     340.0,
+     84
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      68
+     ],
+     [
+      180.0,
+      84
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ld2",
+   "type": "line",
+   "points": [
+    [
+     510.0,
+     68
+    ],
+    [
+     510.0,
+     84
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      290.0,
+      68
+     ],
+     [
+      290.0,
+      84
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lbl",
+   "type": "text",
+   "x": 104.0,
+   "y": 68,
+   "text": "L",
+   "size": 14,
+   "anchor": "end",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 9.0,
+    "size": 13
+   }
+  },
+  {
+   "id": "cbus",
+   "type": "line",
+   "points": [
+    [
+     108.0,
+     242
+    ],
+    [
+     510.0,
+     242
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      13.0,
+      242
+     ],
+     [
+      290.0,
+      242
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop0",
+   "type": "line",
+   "points": [
+    [
+     170.0,
+     242
+    ],
+    [
+     170.0,
+     226
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      70.0,
+      242
+     ],
+     [
+      70.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop1",
+   "type": "line",
+   "points": [
+    [
+     340.0,
+     242
+    ],
+    [
+     340.0,
+     226
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      180.0,
+      242
+     ],
+     [
+      180.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "cdrop2",
+   "type": "line",
+   "points": [
+    [
+     510.0,
+     242
+    ],
+    [
+     510.0,
+     226
+    ]
+   ],
+   "tone": "muted",
+   "narrow": {
+    "points": [
+     [
+      290.0,
+      242
+     ],
+     [
+      290.0,
+      226
+     ]
+    ]
+   }
+  },
+  {
+   "id": "clbl",
+   "type": "text",
+   "x": 108.0,
+   "y": 256,
+   "text": "CLK (common)",
+   "size": 13,
+   "anchor": "start",
+   "mono": true,
+   "tone": "muted",
+   "narrow": {
+    "x": 13.0,
+    "size": 12
+   }
+  },
+  {
+   "id": "t1",
+   "type": "text",
+   "x": 340.0,
+   "y": 288,
+   "text": "L = LOAD/SHIFT′",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "narrow": {
+    "x": 180.0,
+    "y": 286,
+    "size": 12
+   }
+  },
+  {
+   "id": "t2",
+   "type": "text",
+   "x": 340.0,
+   "y": 314,
+   "text": "QA QB QC = 000",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 310,
+    "size": 12
+   }
+  },
+  {
+   "id": "t3",
+   "type": "text",
+   "x": 340.0,
+   "y": 340,
+   "text": "serial out so far: –",
+   "size": 14,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 180.0,
+    "y": 334,
+    "size": 12
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Each D flip-flop has a 2-to-1 steering MUX in front of it. L = 1 selects input 1 (the data A, B, C); L = 0 selects input 0 (the neighbour).",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "QA=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "QB=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "QC=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "L = LOAD/SHIFT′"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "L = 1, data ABC = 101: every MUX passes its data input, so D_A = A, D_B = B, D_C = C before the clock.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "q0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "y0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ld0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "q1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "y1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ld1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "q2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "y2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ld2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "lbus",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "L = 1: load (D = A, B, C)",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dl0",
+     "set": {
+      "tone": "success"
+     }
+    },
+    {
+     "id": "dl1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "dl2",
+     "set": {
+      "tone": "success"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock: one edge copies A, B, C in at once. QA QB QC = 101, and C = 1 is already on the serial output.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "QA=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "QB=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "QC=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "QA QB QC = 101"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "serial out so far: 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "L = 0: now each MUX passes its left neighbour: D_A = S, D_B = QA, D_C = QB. The register shifts towards QC.",
+   "patches": [
+    {
+     "id": "d0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "q0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "y0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ld0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "q1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "y1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ld1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "d2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "q2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "y2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "ld2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "lbus",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t1",
+     "set": {
+      "text": "L = 0: shift (D = S, QA, QB)",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "dl0",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dl1",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "dl2",
+     "set": {
+      "tone": "ink"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 1 with S = 0: QA QB QC = 010. The serial output QC now shows B = 0.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "QA=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "QB=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "QC=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "QA QB QC = 010"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "serial out so far: 1, 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 2 with S = 1: QA QB QC = 101. The serial output QC now shows A = 1.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "QA=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "QB=0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "QC=1",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "QA QB QC = 101"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "serial out so far: 1, 0, 1",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Shift 3 with S = 1: QA QB QC = 110. The serial output QC now shows the first S bit = 0.",
+   "patches": [
+    {
+     "id": "fv0",
+     "set": {
+      "text": "QA=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv1",
+     "set": {
+      "text": "QB=1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "fv2",
+     "set": {
+      "text": "QC=0",
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "t2",
+     "set": {
+      "text": "QA QB QC = 110"
+     }
+    },
+    {
+     "id": "t3",
+     "set": {
+      "text": "serial out so far: 1, 0, 1, 0",
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "The word left in the order C, B, A = 1, 0, 1, and S flowed in behind it. One load clock, then n − 1 = 2 shifts to see the whole word.",
+   "patches": [
+    {
+     "id": "t1",
+     "set": {
+      "text": "C, B, A out; S follows",
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

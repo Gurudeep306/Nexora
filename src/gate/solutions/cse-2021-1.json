@@ -1922,102 +1922,38 @@
       "verification": "Ages {20, 20, 30, 40}: output = employees aged 30 and 40 — all but the minimum-age ones."
     },
     "cse-2021-1-cs-28": {
-      "approach": "Read the T inputs from the circuit ($T_P = R$, $T_Q = P'$, $T_R = Q'$) and apply $Q^+ = Q \\oplus T$ on each clock pulse.",
+      "approach": "Concept tested: **tracing a synchronous T counter**. Each T input says which bit flips; compute all three from the present state, then flip them together.",
       "concepts": [
         "T flip-flop",
         "Synchronous counter",
-        "State table"
+        "State trace"
       ],
-      "given": "| Flip-flop | T input |\n|---|---|\n| P | $R$ |\n| Q | $P'$ |\n| R | $Q'$ |",
+      "given": "T flip-flops $P$, $Q$, $R$ on one clock with $T_P = R$, $T_Q = \\overline{P}$, $T_R = \\overline{Q}$; initial $PQR = 000$.",
       "steps": [
         {
-          "title": "From 000",
-          "body": "$T_P = R = 0$, $T_Q = P' = 1$, $T_R = Q' = 1$ → P stays 0, Q and R toggle: **011**.",
+          "title": "Clock 1 (from 000)",
+          "body": "$T_P = 0$, $T_Q = 1$, $T_R = 1$: Q and R flip: **011**.",
           "scene": {
-            "reveal": 7,
-            "hl": [
-              {
-                "r": 0,
-                "tone": "accent"
-              }
-            ],
-            "caption": "000 → 011"
+            "reveal": 2
           }
         },
         {
-          "title": "From 011",
-          "body": "$T_P = R = 1$, $T_Q = P' = 1$, $T_R = Q' = 0$ → P toggles to 1, Q toggles to 0, R stays 1: **101**.",
+          "title": "Clock 2 (from 011)",
+          "body": "$T_P = 1$, $T_Q = 1$, $T_R = 0$: P and Q flip: **101**.",
           "scene": {
-            "reveal": 14,
-            "hl": [
-              {
-                "r": 1,
-                "tone": "accent"
-              }
-            ],
-            "caption": "011 → 101"
+            "reveal": 3
           }
         },
         {
-          "title": "From 101",
-          "body": "$T_P = R = 1$, $T_Q = P' = 0$, $T_R = Q' = 1$ → P toggles to 0, Q stays 0, R toggles to 0: **000**.",
+          "title": "Clock 3 (from 101)",
+          "body": "$T_P = 1$, $T_Q = 0$, $T_R = 1$: P and R flip: **000**.",
           "scene": {
-            "reveal": 21,
-            "hl": [
-              {
-                "r": 2,
-                "tone": "success"
-              }
-            ],
-            "caption": "101 → 000"
+            "reveal": 4
           }
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "P",
-          "Q",
-          "R",
-          "T_P=R",
-          "T_Q=P'",
-          "T_R=Q'",
-          "Next PQR"
-        ],
-        "rows": [
-          [
-            "0",
-            "0",
-            "0",
-            "0",
-            "1",
-            "1",
-            "011"
-          ],
-          [
-            "0",
-            "1",
-            "1",
-            "1",
-            "1",
-            "0",
-            "101"
-          ],
-          [
-            "1",
-            "0",
-            "1",
-            "1",
-            "0",
-            "1",
-            "000"
-          ]
-        ],
-        "reveal": 0,
-        "mono": true
-      },
       "answer": {
-        "value": "A",
+        "value": "(A) 011, 101, 000",
         "choice": [
           "A"
         ],
@@ -2027,25 +1963,58 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Matches the state sequence 000 → 011 → 101 → 000."
+          "reason": "Trace: 000 → 011 → 101 → 000 (a mod-3 counter)."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "From 000 both Q and R toggle (T = 1), so the next state is 011, not 001."
+          "reason": "From 000 both $T_Q = \\overline{P} = 1$ and $T_R = \\overline{Q} = 1$, so two bits flip: the first state is 011, not 001."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "From 101, $T_Q = P' = 0$ keeps Q at 0, so it cannot reach 111."
+          "reason": "011 and 101 are right, but from 101 the inputs are $T_P = 1$, $T_Q = 0$, $T_R = 1$, giving 000, not 111."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong first step, as in (B)."
+          "reason": "Starts with 001, which ignores $T_Q = 1$ in state 000."
         }
       ],
-      "verification": "The counter has the 3-cycle 000 → 011 → 101 → 000; each transition re-checked with $Q^+ = Q \\oplus T$."
+      "shortcut": "From 000 two T inputs are 1, so the first state has two 1s: only A and C start with 011; in 101, $T_Q = \\overline{P} = 0$, so Q stays 0 and the third state cannot be 111.",
+      "pitfalls": [
+        "Treating the T inputs as the next values (D-style).",
+        "Guessing the third state from a pattern instead of computing it."
+      ],
+      "verification": "The full table is 000 → 011 → 101 → 000, 001 → 110, 010 → 000, 100 → 101, 110 → 110, 111 → 011: besides the main cycle, 110 is a self-loop, so the counter is not self-starting (001 and 110 never reach the cycle).",
+      "animation": {
+        "kind": "table",
+        "title": "Trace from 000",
+        "cols": [
+          "PQR",
+          "T_P T_Q T_R",
+          "next"
+        ],
+        "rows": [
+          [
+            "000",
+            "0 1 1",
+            "011"
+          ],
+          [
+            "011",
+            "1 1 0",
+            "101"
+          ],
+          [
+            "101",
+            "1 0 1",
+            "000"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2021-1-cs-29": {
       "approach": "Number the codeword positions 12…1 from left to right as written; each check bit c_k sits at position k and gives even parity over the positions whose binary index contains k.",

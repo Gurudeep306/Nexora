@@ -4122,134 +4122,92 @@
       }
     },
     "cse-1998-b-68": {
-      "approach": "Encode the states in binary (Q2Q1Q0), write the present-state/next-state table, treat the four unused states as don't-cares and read each D input directly from the table (D flip-flops: D = next state).",
+      "approach": "Concept tested: **a counter for an arbitrary sequence**. Three flip-flops (the largest value is 4 = 100); write the state table, use the unused states 0, 5, 6, 7 as don't-cares, read each D input as the next-state bit and minimise; then check the unused states.",
       "concepts": [
-        "synchronous counter",
-        "D flip-flop excitation",
-        "don't-care minimisation",
-        "self-starting check"
+        "Arbitrary-sequence counter",
+        "D flip-flop",
+        "Don't-cares",
+        "Self-starting"
       ],
+      "given": "Design a synchronous counter that goes through 1, 4, 2, 3, 1, 4, 2, 3, …",
       "steps": [
         {
           "title": "State table",
-          "body": "| Present $Q_2Q_1Q_0$ | Next $Q_2Q_1Q_0$ = $D_2D_1D_0$ |\n|---|---|\n| 001 (1) | 100 (4) |\n| 100 (4) | 010 (2) |\n| 010 (2) | 011 (3) |\n| 011 (3) | 001 (1) |\n| 000, 101, 110, 111 | don't care |",
+          "body": "$Q_2Q_1Q_0$: 001 → 100, 100 → 010, 010 → 011, 011 → 001. Unused: 000, 101, 110, 111 (don't-cares)."
+        },
+        {
+          "title": "D1 and D0",
+          "body": "$D_1$ is 1 in rows 100 and 010; with the don't-cares 000 and 110 they fill the $Q_0 = 0$ half: $D_1 = \\overline{Q_0}$. $D_0$ is 1 in rows 010 and 011; with 110 and 111 they fill the $Q_1 = 1$ half: $D_0 = Q_1$.",
           "scene": {
-            "reveal": 8
+            "reveal": 3
           }
         },
         {
-          "title": "Minimise each D",
-          "body": "- $D_2 = 1$ only for 001; with don't-care 101: $D_2 = \\overline{Q_1}\\,Q_0$ (100 gives 0, 010/011 give 0).\n- $D_1 = 1$ for 100 and 010, $0$ for 001 and 011: $D_1 = \\overline{Q_0}$.\n- $D_0 = 1$ for 010 and 011, $0$ for 001 and 100: $D_0 = Q_1$.",
+          "title": "The D2 column",
+          "body": "$D_2$ is 1 only in row 001. It pairs with the don't-care 101 ($\\overline{Q_1}Q_0$) or with 000 ($\\overline{Q_2}\\,\\overline{Q_1}$); both are minimal. Take $D_2 = \\overline{Q_1}Q_0$.",
           "scene": {
-            "reveal": 16,
-            "hl": [
-              {
-                "c": 1,
-                "tone": "accent"
-              }
-            ]
+            "reveal": 4
           }
         },
         {
-          "title": "Circuit",
-          "body": "Three D flip-flops on a common clock: $D_2 = \\overline{Q_1}Q_0$ (one AND gate with $\\overline{Q_1}$), $D_1 = \\overline{Q_0}$, $D_0 = Q_1$. Initialise to 001 (preset $Q_0$)."
-        },
-        {
-          "title": "Self-starting check",
-          "body": "Unused states: $000 \\to 010$, $101 \\to 100$, $110 \\to 011$, $111 \\to 001$ — every one enters the main cycle $1\\to4\\to2\\to3$ in one clock, so the counter is self-starting.",
-          "scene": {
-            "reveal": 32,
-            "hl": [
-              {
-                "r": 4,
-                "tone": "success"
-              },
-              {
-                "r": 5,
-                "tone": "success"
-              },
-              {
-                "r": 6,
-                "tone": "success"
-              },
-              {
-                "r": 7,
-                "tone": "success"
-              }
-            ]
-          }
+          "title": "Self-start check",
+          "body": "With these equations 000 → 010, 101 → 100, 110 → 011, 111 → 001: every unused state enters the cycle in one clock."
         }
       ],
       "answer": {
-        "value": "D flip-flops (Q2Q1Q0): D2 = Q̄1·Q0, D1 = Q̄0, D0 = Q1 (001→100→010→011→001; self-starting)",
+        "value": "With D flip-flops ($Q_2Q_1Q_0$): $D_2 = \\overline{Q_1}Q_0$ (or $\\overline{Q_2}\\,\\overline{Q_1}$), $D_1 = \\overline{Q_0}$, $D_0 = Q_1$; self-starting",
         "matchesKey": true
       },
+      "shortcut": "Read the D columns as next-state bits: $Q_1^+$ is the complement of $Q_0$ in every used row, and $Q_0^+$ copies $Q_1$; only $D_2$ needs a gate.",
       "pitfalls": [
-        "Mixing the bit order of the state code between the table and the equations.",
-        "Not checking unused states — a counter can lock up in an unused loop."
+        "Using 2 flip-flops because there are 4 states: the values 1 … 4 need 3 bits unless you re-encode the states (and then the outputs need decoding).",
+        "Not checking the unused states: don't-cares can create a lock-out (here they do not)."
       ],
-      "verification": "Applied the equations to each used state: 001 gives D2 = 1, D1 = 0, D0 = 0 → 100 ✓; 100 → 010 ✓; 010 → 011 ✓; 011 → 001 ✓.",
+      "verification": "seqlib.design_counter([1, 4, 2, 3], 'D') returns D2 ∈ {Q1′Q0, Q2′Q1′}, D1 = Q0′, D0 = Q1, and self_starting is true for both choices of D2.",
       "animation": {
         "kind": "table",
+        "title": "1 → 4 → 2 → 3 with D flip-flops",
         "cols": [
           "Q2Q1Q0",
-          "D2D1D0 (next)",
-          "D2",
-          "D1 D0"
+          "next",
+          "D2 D1 D0"
         ],
         "rows": [
           [
             "001",
             "100",
-            "1",
-            "00"
+            "1 0 0"
           ],
           [
             "100",
             "010",
-            "0",
-            "10"
+            "0 1 0"
           ],
           [
             "010",
             "011",
-            "0",
-            "11"
+            "0 1 1"
           ],
           [
             "011",
             "001",
-            "0",
-            "01"
+            "0 0 1"
           ],
           [
-            "000",
-            "010*",
-            "0",
-            "10"
-          ],
-          [
-            "101",
-            "100*",
-            "1",
-            "00"
-          ],
-          [
-            "110",
-            "011*",
-            "0",
-            "11"
-          ],
-          [
-            "111",
-            "001*",
-            "0",
-            "01"
+            "000/101/110/111",
+            "x",
+            "x x x"
           ]
         ],
-        "reveal": 0,
         "mono": true,
-        "caption": "* = forced by the chosen equations (don't-care rows)"
+        "rowLabels": [
+          "1",
+          "4",
+          "2",
+          "3",
+          "unused"
+        ],
+        "reveal": 1
       }
     },
     "cse-1998-b-69": {

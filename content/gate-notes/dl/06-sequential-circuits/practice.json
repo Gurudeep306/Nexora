@@ -1788,5 +1788,896 @@
    "ripple-rule"
   ],
   "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q01",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 2-bit synchronous counter with T flip-flops ($Q_1$ the MSB, $Q_0$ the LSB) must step through 0 → 1 → 3 → 2 → 0. Which input equations realise it?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$T_1 = Q_1 \\oplus Q_0$, $T_0 = \\overline{Q_1 \\oplus Q_0}$"
+   },
+   {
+    "l": "B",
+    "t": "$T_1 = Q_0$, $T_0 = \\overline{Q_1}$"
+   },
+   {
+    "l": "C",
+    "t": "$T_1 = \\overline{Q_1 \\oplus Q_0}$, $T_0 = Q_1 \\oplus Q_0$"
+   },
+   {
+    "l": "D",
+    "t": "$T_1 = Q_0$, $T_0 = 1$"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "In bits the sequence is 00 → 01 → 11 → 10 → 00. With T flip-flops, $T = Q \\oplus Q^+$: mark the bits that change in each row.",
+   "00 → 01: $T_1T_0 = 01$. 01 → 11: 10. 11 → 10: 01. 10 → 00: 10.",
+   "$T_1$ is 1 in rows 01 and 10: $T_1 = Q_1 \\oplus Q_0$. $T_0$ is 1 in rows 00 and 11: $T_0 = \\overline{Q_1 \\oplus Q_0}$."
+  ],
+  "concept": "T = Q ⊕ Q⁺: the T column marks the bits that change.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "These are the D inputs ($D_1 = Q_0$, $D_0 = \\overline{Q_1}$): the next values, not the changes. As T inputs they give 00 → 01 → 10 → …"
+   },
+   {
+    "answer": "C",
+    "why": "The two equations swapped between the flip-flops."
+   },
+   {
+    "answer": "D",
+    "why": "That is the binary counter 0, 1, 2, 3, not the Gray order 0, 1, 3, 2."
+   }
+  ],
+  "blocks": [
+   "t-design",
+   "trick-t-column",
+   "d-from-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q02",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 3-bit synchronous counter $Q_2Q_1Q_0$ with D flip-flops must step through 0 → 1 → 3 → 7 → 6 → 4 → 0. The unused states 2 and 5 are taken as don't-cares. Which minimal input equations realise it?",
+  "options": [
+   {
+    "l": "A",
+    "t": "$D_2 = Q_1Q_0$, $D_1 = Q_0$, $D_0 = \\overline{Q_2}$"
+   },
+   {
+    "l": "B",
+    "t": "$D_2 = \\overline{Q_1}$, $D_1 = \\overline{Q_0}$, $D_0 = Q_2$"
+   },
+   {
+    "l": "C",
+    "t": "$D_2 = Q_0$, $D_1 = Q_1$, $D_0 = \\overline{Q_2}$"
+   },
+   {
+    "l": "D",
+    "t": "$D_2 = Q_1$, $D_1 = Q_0$, $D_0 = \\overline{Q_2}$"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "With D flip-flops each D input is the next-state bit. The rows are 000 → 001, 001 → 011, 011 → 111, 111 → 110, 110 → 100, 100 → 000.",
+   "$Q_2^+$ is 1 exactly in the rows 011, 111, 110, where $Q_1 = 1$ (and the don't-care 010 also has $Q_1 = 1$): $D_2 = Q_1$. $Q_1^+$ is 1 in 001, 011, 111, where $Q_0 = 1$: $D_1 = Q_0$. $Q_0^+$ is 1 in 000, 001, 011, where $Q_2 = 0$: $D_0 = \\overline{Q_2}$.",
+   "The circuit is a 3-bit Johnson (twisted-ring) counter. Its unused states 010 and 101 swap with each other, so it is not self-starting, but the question only asks for the design."
+  ],
+  "concept": "D design: the D column is the next-state column; minimise with the unused states as don't-cares.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "$D_2 = Q_1Q_0$ misses row 110 → 100, where $Q_2^+ = 1$ but $Q_0 = 0$."
+   },
+   {
+    "answer": "C",
+    "why": "$D_2 = Q_0$ sends 001 to 101 instead of 011."
+   }
+  ],
+  "blocks": [
+   "d-design",
+   "arbitrary-sequence",
+   "design-procedure"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q03",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A synchronous counter must produce the output sequence 0, 3, 0, 3, 1, 0, 3, 0, 3, 1, … (the ten values shown then repeat). What is the minimum number of flip-flops it needs?",
+  "answer": 3,
+  "solution": [
+   "The ten values shown are two copies of the block 0, 3, 0, 3, 1, so the minimal period is 5.",
+   "Each position of the period needs its own state (the value 0 is followed by 3 and the value 3 by 0 or 1 at different positions), so the counter needs 5 states.",
+   "$\\lceil \\log_2 5 \\rceil = 3$ flip-flops, plus output logic."
+  ],
+  "concept": "States = positions of the minimal period; ⌈log₂ L⌉ flip-flops.",
+  "common_wrong": [
+   {
+    "answer": 4,
+    "why": "Using the ten printed positions ($\\lceil \\log_2 10 \\rceil = 4$) instead of the minimal period 5."
+   },
+   {
+    "answer": 2,
+    "why": "Counting the three distinct values 0, 1, 3."
+   }
+  ],
+  "blocks": [
+   "repeated-values",
+   "states-vs-outputs",
+   "trap-distinct-values"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q04",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A counter for 0 → 3 → 5 → 6 → 0 is built from D flip-flops $Q_2Q_1Q_0$ with the minimal equations $D_2 = Q_0$, $D_1 = \\overline{Q_1}$, $D_0 = \\overline{Q_2}$ (unused states taken as don't-cares). It powers up in 001. What happens?",
+  "options": [
+   {
+    "l": "A",
+    "t": "It goes to 000 at the next clock and then follows the main cycle."
+   },
+   {
+    "l": "B",
+    "t": "It enters the main cycle after exactly two clocks."
+   },
+   {
+    "l": "C",
+    "t": "It stays in 001 for ever."
+   },
+   {
+    "l": "D",
+    "t": "It cycles 001 → 111 → 100 → 010 → 001 and never reaches the main cycle."
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "From 001: $D_2 = Q_0 = 1$, $D_1 = \\overline{Q_1} = 1$, $D_0 = \\overline{Q_2} = 1$: 111.",
+   "From 111: $D = 1, 0, 0$: 100. From 100: $D = 0, 1, 0$: 010. From 010: $D = 0, 0, 1$: 001, the start again.",
+   "None of 001, 111, 100, 010 is on the main cycle 000, 011, 101, 110: a lock-out cycle of length 4. The don't-care choices decided it."
+  ],
+  "concept": "Self-starting is a property of the built circuit: simulate every unused state until it repeats or reaches the main cycle.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Assumes unused states reset themselves; the D inputs in 001 are all 1, so the next state is 111."
+   },
+   {
+    "answer": "C",
+    "why": "001 is not a self-loop: in 001 the D inputs are 1, 1, 1, so $Q_2$ and $Q_1$ change."
+   }
+  ],
+  "blocks": [
+   "self-start",
+   "lockout",
+   "trap-lockout"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q05",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "The counter for 1 → 4 → 2 → 3 → 1 is built with D flip-flops $Q_2Q_1Q_0$ as $D_2 = \\overline{Q_1}Q_0$, $D_1 = \\overline{Q_0}$, $D_0 = Q_1$. Which statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "From 000 the next state is 010."
+   },
+   {
+    "l": "B",
+    "t": "From 101 the next state is 100."
+   },
+   {
+    "l": "C",
+    "t": "111 is a self-loop."
+   },
+   {
+    "l": "D",
+    "t": "The counter is self-starting."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "D"
+  ],
+  "solution": [
+   "000: $D_2 = 0$, $D_1 = 1$, $D_0 = 0$: 010 (A true). 101: $D_2 = 1$, $D_1 = 0$, $D_0 = 0$: 100 (B true).",
+   "111: $D_2 = 0$, $D_1 = 0$, $D_0 = 1$: 001, not 111 (C false). 110 goes to 011.",
+   "Every unused state (000, 101, 110, 111) lands on the cycle 1, 4, 2, 3 after one clock, so the counter is self-starting (D true)."
+  ],
+  "concept": "Evaluate the built equations in every unused state; self-starting means each reaches the main cycle.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "Forgetting that all unused states reach the cycle makes the circuit self-starting."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "111 goes to 001; a self-loop would need all three D inputs to equal the present bits."
+   }
+  ],
+  "blocks": [
+   "arbitrary-sequence",
+   "self-start",
+   "d-design"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q06",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 5-bit synchronous binary counter uses JK flip-flops with $J_0 = K_0 = 1$ and a serial AND chain: AND$_1 = 1 \\cdot Q_0$ drives $J_1 = K_1$, and AND$_k$ = AND$_{k-1} \\cdot Q_{k-1}$ drives $J_k = K_k$ for $k = 2, 3, 4$; a fifth gate AND$_5$ = AND$_4 \\cdot Q_4$ is only the carry out. The flip-flops have a clock-to-output delay of 6 ns and a setup time of 2 ns; each AND gate has a delay of 3 ns. What is the maximum clock frequency in MHz?",
+  "answer": 50,
+  "solution": [
+   "The longest path that ends at a flip-flop input runs from $Q_0$ through AND$_1$ … AND$_4$ to $J_4K_4$: four gates.",
+   "$T_{\\text{clk}} \\ge 6 + 4 \\times 3 + 2 = 20$ ns.",
+   "$f_{\\max} = 1 / 20\\ \\text{ns} = 50$ MHz. AND$_5$ feeds no flip-flop of this counter, so it is not on the path."
+  ],
+  "concept": "f_max = 1/(t_cq + t_logic + t_su), counting only gates on paths that end at a flip-flop input.",
+  "common_wrong": [
+   {
+    "answer": 43.48,
+    "why": "Counting the carry-out gate too: 23 ns."
+   },
+   {
+    "answer": 55.56,
+    "why": "Forgetting the setup time: 18 ns."
+   },
+   {
+    "answer": 90.91,
+    "why": "Treating the gating as parallel (one gate): 11 ns."
+   }
+  ],
+  "blocks": [
+   "sync-max-freq",
+   "trap-sync-fmax",
+   "sync-binary"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "A 2-bit counter $Q_1Q_0$ for 0 → 2 → 3 → 1 → 0 (that is 00 → 10 → 11 → 01 → 00) is designed with JK flip-flops. Which statements about the inputs of the $Q_0$ flip-flop are correct ($\\times$ = don't-care)?",
+  "options": [
+   {
+    "l": "A",
+    "t": "In state 10, $J_0 = 1$ and $K_0 = \\times$."
+   },
+   {
+    "l": "B",
+    "t": "In state 11, $J_0 = \\times$ and $K_0 = 0$."
+   },
+   {
+    "l": "C",
+    "t": "In state 01, $J_0 = \\times$ and $K_0 = 1$."
+   },
+   {
+    "l": "D",
+    "t": "$K_0 = Q_1$ is a valid realisation of the $K_0$ column."
+   }
+  ],
+  "answer": [
+   "A",
+   "B",
+   "C"
+  ],
+  "solution": [
+   "JK excitation: when $Q = 0$, $J = Q^+$ and $K = \\times$; when $Q = 1$, $K = \\overline{Q^+}$ and $J = \\times$.",
+   "10 → 11: $Q_0$ goes 0 → 1: $J_0 = 1$, $K_0 = \\times$ (A). 11 → 01: $Q_0$ stays 1: $J_0 = \\times$, $K_0 = 0$ (B). 01 → 00: $Q_0$ goes 1 → 0: $J_0 = \\times$, $K_0 = 1$ (C).",
+   "$K_0$ must be 1 in state 01 (where $Q_1 = 0$) and 0 in state 11 (where $Q_1 = 1$): $K_0 = \\overline{Q_1}$, so $K_0 = Q_1$ is wrong (D). The minimal design is $J_0 = Q_1$, $K_0 = \\overline{Q_1}$."
+  ],
+  "concept": "JK columns: J only on Q = 0 rows (J = Q⁺), K only on Q = 1 rows (K = Q̄⁺); the rest are don't-cares.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B"
+    ],
+    "why": "In state 01 the J entry is a don't-care because $Q_0 = 1$; it is not 0."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "$K_0 = Q_1$ gives $K_0 = 0$ in state 01, so $Q_0$ would stay 1."
+   }
+  ],
+  "blocks": [
+   "jk-design",
+   "trick-jk-half",
+   "d-from-next"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q08",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "Three JK flip-flops $Q_2Q_1Q_0$ share a clock, with $J_2 = Q_1$, $K_2 = Q_0$, $J_1 = \\overline{Q_0}$, $K_1 = Q_2$, $J_0 = Q_2$, $K_0 = Q_1$. Starting from 000, what are the next three states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "010, 110, 101"
+   },
+   {
+    "l": "B",
+    "t": "010, 110, 111"
+   },
+   {
+    "l": "C",
+    "t": "010, 101, 001"
+   },
+   {
+    "l": "D",
+    "t": "001, 010, 011"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "000: $J_2K_2 = 00$ (hold 0), $J_1K_1 = 10$ (set), $J_0K_0 = 00$ (hold 0): 010.",
+   "010: $J_2K_2 = 10$ (set), $J_1K_1 = 10$ (stays 1), $J_0K_0 = 01$ (reset, stays 0): 110.",
+   "110: $J_2K_2 = 10$ (stays 1), $J_1K_1 = 11$ (toggle to 0), $J_0K_0 = 11$ (toggle to 1): 101. (It then goes to 001 and stays there: 001 is a self-loop.)"
+  ],
+  "concept": "Trace a counter: compute every J and K from the old state, then update all flip-flops together.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Treating each J as a D input and ignoring K: the third state would be 111."
+   },
+   {
+    "answer": "C",
+    "why": "Updating the flip-flops one after another (Q2, then Q1, then Q0) with the new values."
+   },
+   {
+    "answer": "D",
+    "why": "Assuming three JK flip-flops on one clock form a binary counter."
+   }
+  ],
+  "blocks": [
+   "counter-trace",
+   "jk-design"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A counter for 0 → 2 → 5 → 7 → 0 is designed with T flip-flops $Q_2Q_1Q_0$, taking the unused states 1, 3, 4, 6 as don't-cares. The minimal equations are $T_2 = Q_1$, $T_1 = 1$, $T_0 = Q_1$. How many of the 8 states lie on a lock-out cycle (a cycle other than the main one)?",
+  "answer": 4,
+  "solution": [
+   "Check the main cycle: 000 → 010 → 101 → 111 → 000 (in 010 and 111 all three bits flip; in 000 and 101 only $Q_1$ flips).",
+   "Unused states: 001 ($Q_1 = 0$: only $Q_1$ flips) → 011 (all flip) → 100 (only $Q_1$) → 110 (all flip) → 001.",
+   "All four unused states form one lock-out cycle: 4 states."
+  ],
+  "concept": "Don't-care choices fix where unused states go; self-starting iff the main cycle is the only cycle.",
+  "common_wrong": [
+   {
+    "answer": 0,
+    "why": "Assuming unused states taken as don't-cares fall back into the cycle by themselves."
+   },
+   {
+    "answer": 2,
+    "why": "Stopping after one clock from each unused state instead of following it until it repeats."
+   }
+  ],
+  "blocks": [
+   "lockout",
+   "lockout-example",
+   "self-start"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-05-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which statements about synchronous counter design are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "With D flip-flops, each D input equals the corresponding bit of the next state."
+   },
+   {
+    "l": "B",
+    "t": "Taking every unused state as a don't-care always gives a self-starting counter."
+   },
+   {
+    "l": "C",
+    "t": "An autonomous counter whose output repeats 0, 1, 0, 2 needs at least 4 states."
+   },
+   {
+    "l": "D",
+    "t": "With parallel AND gating, the maximum clock frequency of a synchronous binary counter falls as $1/n$ with the number of bits $n$, like a ripple counter's."
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A: $Q^+ = D$, so $D = Q^+$. True.",
+   "B: the K-map groups give every unused state a definite next state, which may lie on a lock-out cycle (0 → 3 → 5 → 6 with JK or D). False.",
+   "C: the minimal period is 4 (the value 0 has two different successors), so at least 4 states. True. D: parallel gating keeps one gate between flip-flops whatever $n$ is, so $f_{\\max}$ does not fall as $1/n$. False."
+  ],
+  "concept": "D = Q⁺; don't-cares can lock out; states = positions; parallel gating keeps f_max independent of n.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "C"
+    ],
+    "why": "Don't-cares minimise logic; they do not guarantee self-starting."
+   },
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "0, 1, 0, 2 has period 4 even though only three values occur."
+   }
+  ],
+  "blocks": [
+   "d-from-next",
+   "lockout",
+   "states-vs-outputs",
+   "sync-max-freq"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q01",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 4-bit shift register shifts right: the serial input enters $Q_1$ and the bits move towards $Q_4$. It holds $Q_1Q_2Q_3Q_4 = 1101$. The serial input receives 1, then 0, then 0 at the next three clock edges. What does the register hold after the third edge?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0011"
+   },
+   {
+    "l": "B",
+    "t": "1100"
+   },
+   {
+    "l": "C",
+    "t": "1001"
+   },
+   {
+    "l": "D",
+    "t": "0111"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "Each edge slides the row one place right: the new bit enters $Q_1$ and the old $Q_4$ drops out.",
+   "1101 → (input 1) 1110 → (input 0) 0111 → (input 0) 0011.",
+   "The bits shifted out are 1, 0, 1, the old $Q_4$, $Q_3$, $Q_2$."
+  ],
+  "concept": "A shift register slides its contents one place per clock; fix the direction and the time order of the inputs first.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Shifting left (input entering at $Q_4$) instead of right."
+   },
+   {
+    "answer": "C",
+    "why": "Feeding the inputs in the reverse order (0, 0, 1)."
+   },
+   {
+    "answer": "D",
+    "why": "Stopping one clock early: 0111 is the contents after the second edge."
+   }
+  ],
+  "blocks": [
+   "shift-def",
+   "trick-shift-table",
+   "trap-shift-direction"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q02",
+  "type": "NAT",
+  "marks": 1,
+  "text": "A 6-bit serial-in/serial-out shift register is cleared. A 6-bit word is entered serially, one bit per clock, at clocks 1 to 6, followed by zeros. After how many clocks has the last bit of the word appeared at the serial output $Q_6$?",
+  "answer": 11,
+  "solution": [
+   "After clock $k$ the output $Q_6$ holds the bit that entered at clock $k - 6 + 1 = k - 5$.",
+   "The last bit of the word entered at clock 6, so it is at $Q_6$ when $k - 5 = 6$, i.e. after clock 11.",
+   "In general an $n$-bit word needs $n$ clocks to load and $n - 1$ more for its last bit to reach the output: $2n - 1 = 11$."
+  ],
+  "concept": "An n-stage SISO delays by n clocks: first bit out after n clocks, last after 2n − 1, all gone after 2n.",
+  "common_wrong": [
+   {
+    "answer": 6,
+    "why": "6 clocks load the word; only its first bit is at the output then."
+   },
+   {
+    "answer": 12,
+    "why": "After 12 clocks the last bit has already been shifted out of the register."
+   }
+  ],
+  "blocks": [
+   "shift-delay",
+   "trap-shift-count",
+   "shift-modes"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q03",
+  "type": "MCQ",
+  "marks": 1,
+  "text": "A 5-bit Johnson counter ($D_1 = \\overline{Q_5}$, $D_i = Q_{i-1}$) starts at $Q_1Q_2Q_3Q_4Q_5 = 00000$. What does it hold after 7 clock pulses?",
+  "options": [
+   {
+    "l": "A",
+    "t": "01111"
+   },
+   {
+    "l": "B",
+    "t": "11100"
+   },
+   {
+    "l": "C",
+    "t": "00011"
+   },
+   {
+    "l": "D",
+    "t": "00111"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "From 00000 the counter fills with 1s from the left: 10000, 11000, 11100, 11110, 11111 after clocks 1 to 5.",
+   "Now $\\overline{Q_5} = 0$, so 0s enter: 01111 after clock 6 and 00111 after clock 7.",
+   "The full cycle has $2 \\times 5 = 10$ states; clock 7 is the second state of the emptying half."
+  ],
+  "concept": "A Johnson counter fills with 1s for n clocks, then with 0s for n clocks: 2n states.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Off by one: 01111 is the state after 6 clocks."
+   },
+   {
+    "answer": "C",
+    "why": "Off by one the other way: 00011 is the state after 8 clocks."
+   },
+   {
+    "answer": "B",
+    "why": "Treating it as a 3-clock question (11100 is the state after 3 clocks)."
+   }
+  ],
+  "blocks": [
+   "johnson",
+   "johnson-theorem"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q04",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 5-bit Johnson counter is cleared to 00000 and clocked. How many of its 32 possible states can it never reach from 00000?",
+  "answer": 22,
+  "solution": [
+   "From 00000 a Johnson counter of $n = 5$ flip-flops visits exactly $2n = 10$ states (fill with 1s, then with 0s).",
+   "The Johnson step is a permutation, so the other states lie on separate cycles and can never be entered from the main one.",
+   "Unreachable: $2^5 - 10 = 22$ (they form three more cycles, of lengths 10, 10 and 2)."
+  ],
+  "concept": "A Johnson counter of n flip-flops uses 2n of its 2ⁿ states; the rest form other cycles.",
+  "common_wrong": [
+   {
+    "answer": 27,
+    "why": "Using the ring counter's n states instead of 2n: 32 − 5."
+   },
+   {
+    "answer": 0,
+    "why": "Assuming every state is visited, as in a binary counter."
+   }
+  ],
+  "blocks": [
+   "johnson-theorem",
+   "trap-johnson-count"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q05",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4-bit LFSR shifts right ($Q_1 \\to Q_2 \\to Q_3 \\to Q_4$) with feedback $D_1 = Q_3 \\oplus Q_4$. It holds $Q_1Q_2Q_3Q_4 = 1001$. What are its next three states?",
+  "options": [
+   {
+    "l": "A",
+    "t": "1100, 0110, 1011"
+   },
+   {
+    "l": "B",
+    "t": "0100, 0010, 0001"
+   },
+   {
+    "l": "C",
+    "t": "1100, 1110, 1111"
+   },
+   {
+    "l": "D",
+    "t": "0011, 0110, 1101"
+   }
+  ],
+  "answer": "A",
+  "solution": [
+   "1001: $Q_3 \\oplus Q_4 = 0 \\oplus 1 = 1$, so 1 enters and the row shifts: 1100.",
+   "1100: $0 \\oplus 0 = 0$ → 0110.",
+   "0110: $1 \\oplus 0 = 1$ → 1011."
+  ],
+  "concept": "Compute the XOR feedback from the old state, then shift.",
+  "common_wrong": [
+   {
+    "answer": "B",
+    "why": "Shifting in 0s and ignoring the feedback."
+   },
+   {
+    "answer": "C",
+    "why": "Feeding in 1 at every clock instead of recomputing the XOR."
+   },
+   {
+    "answer": "D",
+    "why": "Shifting left instead of right."
+   }
+  ],
+  "blocks": [
+   "lfsr",
+   "feedback-shift"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q06",
+  "type": "MCQ",
+  "marks": 2,
+  "text": "A 4-bit universal shift register has the modes $S_1S_0$ = 00 hold, 01 shift right (serial input $SI_R$ enters $Q_1$), 10 shift left ($SI_L$ enters $Q_4$), 11 parallel load. It holds $Q_1Q_2Q_3Q_4 = 1010$. Four clocks apply, in order: 01 with $SI_R = 1$; 10 with $SI_L = 0$; 11 with the data inputs 0110; 01 with $SI_R = 0$. What does it hold at the end?",
+  "options": [
+   {
+    "l": "A",
+    "t": "0110"
+   },
+   {
+    "l": "B",
+    "t": "1100"
+   },
+   {
+    "l": "C",
+    "t": "1011"
+   },
+   {
+    "l": "D",
+    "t": "0011"
+   }
+  ],
+  "answer": "D",
+  "solution": [
+   "01, $SI_R = 1$: 1010 → 1101. 10, $SI_L = 0$: 1101 → 1010.",
+   "11: load 0110.",
+   "01, $SI_R = 0$: 0110 → 0011."
+  ],
+  "concept": "Universal register: 00 hold, 01 right, 10 left, 11 load; apply one mode per clock.",
+  "common_wrong": [
+   {
+    "answer": "A",
+    "why": "Stopping at the load and ignoring the last shift."
+   },
+   {
+    "answer": "B",
+    "why": "Doing the last operation as a shift left."
+   },
+   {
+    "answer": "C",
+    "why": "Shifting right with 1 entering instead of $SI_R = 0$."
+   }
+  ],
+  "blocks": [
+   "universal-register"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q07",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Which of the following statements are true?",
+  "options": [
+   {
+    "l": "A",
+    "t": "A 4-bit ring counter preset to 1000 returns to 1000 after 4 clock pulses."
+   },
+   {
+    "l": "B",
+    "t": "A mod-10 Johnson counter needs 10 flip-flops."
+   },
+   {
+    "l": "C",
+    "t": "A ring counter is an asynchronous counter, because each flip-flop's output drives the next flip-flop."
+   },
+   {
+    "l": "D",
+    "t": "Each state on the main cycle of a 4-bit Johnson counter can be recognised by a single 2-input AND gate on its outputs (some inputs complemented)."
+   }
+  ],
+  "answer": [
+   "A",
+   "D"
+  ],
+  "solution": [
+   "A: true. The single 1 circulates 1000 → 0100 → 0010 → 0001 → 1000: 4 states.",
+   "B: false. $n$ Johnson flip-flops give $2n$ states, so mod-10 needs 5.",
+   "C: false. All flip-flops of a ring counter share one clock; the outputs drive the next $D$ input, not its clock. It is synchronous.",
+   "D: true. Each state is identified by the two bits on either side of its 1/0 boundary, e.g. 1100 by $Q_2\\overline{Q_3}$."
+  ],
+  "concept": "Ring: n states; Johnson: 2n states and 2-input decoding; both are synchronous.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A",
+     "B",
+     "D"
+    ],
+    "why": "Confusing the Johnson count (2n states from n flip-flops) with the ring count."
+   },
+   {
+    "answer": [
+     "A",
+     "C",
+     "D"
+    ],
+    "why": "Passing data from stage to stage is not the same as passing the clock: ring counters are synchronous."
+   }
+  ],
+  "blocks": [
+   "ring-counter",
+   "erratum-x2",
+   "trap-johnson-count",
+   "trick-johnson-decode"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q08",
+  "type": "NAT",
+  "marks": 1,
+  "text": "Four positive-edge D flip-flops form a serial-in shift register: $D_1 = in$, $D_2 = Q_1$, $D_3 = Q_2$, $D_4 = Q_3$. In its state transition diagram (16 states), how many states have **no** transition back to themselves for either value of $in$?",
+  "answer": 14,
+  "solution": [
+   "From $Q_1Q_2Q_3Q_4$ the input leads to $(in)Q_1Q_2Q_3$.",
+   "A self-loop needs $(in)Q_1Q_2Q_3 = Q_1Q_2Q_3Q_4$, i.e. $in = Q_1 = Q_2 = Q_3 = Q_4$: only 0000 (with in = 0) and 1111 (with in = 1).",
+   "So $16 - 2 = 14$ states have no self-loop."
+  ],
+  "concept": "A shift register can stay put only if every bit equals its neighbour: self-loops only at 0…0 and 1…1.",
+  "common_wrong": [
+   {
+    "answer": 2,
+    "why": "That is the number of states that do have a self-loop."
+   },
+   {
+    "answer": 16,
+    "why": "Forgetting that 0000 and 1111 map to themselves for the matching input."
+   }
+  ],
+  "blocks": [
+   "shift-state-graph"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q09",
+  "type": "NAT",
+  "marks": 2,
+  "text": "A 4-bit register shifts right ($Q_1 \\to Q_2 \\to Q_3 \\to Q_4$) with feedback $D_1 = Q_2 \\oplus Q_4$. Starting from $Q_1Q_2Q_3Q_4 = 1000$, after how many clock pulses does it first return to 1000?",
+  "answer": 6,
+  "solution": [
+   "Compute the feedback from the old $Q_2$ and $Q_4$, then shift: 1000 → 0100 → 1010 → 0101 → 0010 → 0001 → 1000.",
+   "1000 recurs after 6 pulses.",
+   "These taps are not maximal: the 15 non-zero states split into cycles of 6, 6 and 3 (plus the fixed point 0000)."
+  ],
+  "concept": "An LFSR's cycle is at most 2ⁿ − 1 long; only maximal taps reach it.",
+  "common_wrong": [
+   {
+    "answer": 15,
+    "why": "Assuming every XOR feedback gives the maximal length 2⁴ − 1."
+   },
+   {
+    "answer": 16,
+    "why": "Counting 0000, which is a separate fixed point of every LFSR."
+   }
+  ],
+  "blocks": [
+   "lfsr-max",
+   "feedback-shift"
+  ],
+  "source": "nexora"
+ },
+ {
+  "id": "nx-dl-06-06-q10",
+  "type": "MSQ",
+  "marks": 2,
+  "text": "Four flip-flops share one clock. Stages 2 to 4 copy the previous stage (for D flip-flops $D_i = Q_{i-1}$; for JK flip-flops $J_i = Q_{i-1}$, $K_i = \\overline{Q_{i-1}}$). Which choices for the first stage make the circuit a 4-bit Johnson counter?",
+  "options": [
+   {
+    "l": "A",
+    "t": "D flip-flops with $D_1 = \\overline{Q_4}$"
+   },
+   {
+    "l": "B",
+    "t": "D flip-flops with $D_1 = Q_4$"
+   },
+   {
+    "l": "C",
+    "t": "JK flip-flops with $J_1 = \\overline{Q_4}$, $K_1 = Q_4$"
+   },
+   {
+    "l": "D",
+    "t": "JK flip-flops with $J_1 = Q_4$, $K_1 = \\overline{Q_4}$"
+   }
+  ],
+  "answer": [
+   "A",
+   "C"
+  ],
+  "solution": [
+   "A JK stage with $K = \\overline{J}$ copies $J$, so every option is a shift register with $Q_1^+$ equal to the signal on $D_1$ (or $J_1$).",
+   "A and C feed back $\\overline{Q_4}$: Johnson counters (8 states from 0000).",
+   "B and D feed back $Q_4$: ring counters."
+  ],
+  "concept": "Johnson = complement of the last stage into the first; a JK stage with K = J′ is a D stage.",
+  "common_wrong": [
+   {
+    "answer": [
+     "A"
+    ],
+    "why": "Missing that a JK stage with $J = x$, $K = \\overline{x}$ behaves exactly like a D stage."
+   },
+   {
+    "answer": [
+     "A",
+     "B",
+     "C",
+     "D"
+    ],
+    "why": "Every option is a shift-register counter, but only the twisted (complemented) feedback is Johnson."
+   }
+  ],
+  "blocks": [
+   "johnson",
+   "johnson-jk",
+   "jk-as-d",
+   "ring-counter"
+  ],
+  "source": "nexora"
  }
 ]

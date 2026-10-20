@@ -1,0 +1,2721 @@
+{
+ "version": 1,
+ "title": "A ring counter and a Johnson counter side by side",
+ "width": 680,
+ "height": 442,
+ "narrow": {
+  "width": 360,
+  "height": 729
+ },
+ "intro": "Two 4-bit shift registers on one clock: the ring counter feeds Q4 back into D1, the Johnson counter feeds back Q̄4. Below each register its state cycle; the current state is highlighted.",
+ "elements": [
+  {
+   "id": "head",
+   "type": "text",
+   "x": 340.0,
+   "y": 22,
+   "text": "Ring versus Johnson: one inverter doubles the cycle",
+   "size": 17,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "wide"
+  },
+  {
+   "id": "head-n",
+   "type": "text",
+   "x": 180.0,
+   "y": 22,
+   "text": "Ring and Johnson counters",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "only": "narrow"
+  },
+  {
+   "id": "rc0",
+   "type": "box",
+   "x": 88,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 112,
+    "y": 94,
+    "w": 34
+   }
+  },
+  {
+   "id": "rv0",
+   "type": "text",
+   "x": 106.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 129.0,
+    "y": 109.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "rq0",
+   "type": "text",
+   "x": 106.0,
+   "y": 142,
+   "text": "Q1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 129.0,
+    "y": 136,
+    "size": 12
+   }
+  },
+  {
+   "id": "rc1",
+   "type": "box",
+   "x": 124,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 146,
+    "y": 94,
+    "w": 34
+   }
+  },
+  {
+   "id": "rv1",
+   "type": "text",
+   "x": 142.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 163.0,
+    "y": 109.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "rq1",
+   "type": "text",
+   "x": 142.0,
+   "y": 142,
+   "text": "Q2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 163.0,
+    "y": 136,
+    "size": 12
+   }
+  },
+  {
+   "id": "rc2",
+   "type": "box",
+   "x": 160,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 180,
+    "y": 94,
+    "w": 34
+   }
+  },
+  {
+   "id": "rv2",
+   "type": "text",
+   "x": 178.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 197.0,
+    "y": 109.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "rq2",
+   "type": "text",
+   "x": 178.0,
+   "y": 142,
+   "text": "Q3",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 197.0,
+    "y": 136,
+    "size": 12
+   }
+  },
+  {
+   "id": "rc3",
+   "type": "box",
+   "x": 196,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 214,
+    "y": 94,
+    "w": 34
+   }
+  },
+  {
+   "id": "rv3",
+   "type": "text",
+   "x": 214.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 231.0,
+    "y": 109.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "rq3",
+   "type": "text",
+   "x": 214.0,
+   "y": 142,
+   "text": "Q4",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 231.0,
+    "y": 136,
+    "size": 12
+   }
+  },
+  {
+   "id": "rfb",
+   "type": "line",
+   "points": [
+    [
+     232,
+     115.0
+    ],
+    [
+     242,
+     115.0
+    ],
+    [
+     242,
+     86
+    ],
+    [
+     78,
+     86
+    ],
+    [
+     78,
+     115.0
+    ],
+    [
+     88,
+     115.0
+    ]
+   ],
+   "tone": "accent",
+   "narrow": {
+    "points": [
+     [
+      248,
+      109.0
+     ],
+     [
+      258,
+      109.0
+     ],
+     [
+      258,
+      80
+     ],
+     [
+      102,
+      80
+     ],
+     [
+      102,
+      109.0
+     ],
+     [
+      112,
+      109.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rfl",
+   "type": "text",
+   "x": 160,
+   "y": 74,
+   "text": "Q4 → D1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 180,
+    "y": 68,
+    "size": 12
+   }
+  },
+  {
+   "id": "rtt",
+   "type": "text",
+   "x": 160,
+   "y": 52,
+   "text": "Ring: D1 = Q4",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 46,
+    "size": 13
+   }
+  },
+  {
+   "id": "jc0",
+   "type": "box",
+   "x": 438,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 112,
+    "y": 400,
+    "w": 34
+   }
+  },
+  {
+   "id": "jv0",
+   "type": "text",
+   "x": 456.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 129.0,
+    "y": 415.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "jq0",
+   "type": "text",
+   "x": 456.0,
+   "y": 142,
+   "text": "Q1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 129.0,
+    "y": 442,
+    "size": 12
+   }
+  },
+  {
+   "id": "jc1",
+   "type": "box",
+   "x": 474,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 146,
+    "y": 400,
+    "w": 34
+   }
+  },
+  {
+   "id": "jv1",
+   "type": "text",
+   "x": 492.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 163.0,
+    "y": 415.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "jq1",
+   "type": "text",
+   "x": 492.0,
+   "y": 142,
+   "text": "Q2",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 163.0,
+    "y": 442,
+    "size": 12
+   }
+  },
+  {
+   "id": "jc2",
+   "type": "box",
+   "x": 510,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 180,
+    "y": 400,
+    "w": 34
+   }
+  },
+  {
+   "id": "jv2",
+   "type": "text",
+   "x": 528.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 197.0,
+    "y": 415.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "jq2",
+   "type": "text",
+   "x": 528.0,
+   "y": 142,
+   "text": "Q3",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 197.0,
+    "y": 442,
+    "size": 12
+   }
+  },
+  {
+   "id": "jc3",
+   "type": "box",
+   "x": 546,
+   "y": 100,
+   "w": 36,
+   "h": 30,
+   "tone": "ink",
+   "narrow": {
+    "x": 214,
+    "y": 400,
+    "w": 34
+   }
+  },
+  {
+   "id": "jv3",
+   "type": "text",
+   "x": 564.0,
+   "y": 115.0,
+   "text": "0",
+   "size": 16,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 231.0,
+    "y": 415.0,
+    "size": 15
+   }
+  },
+  {
+   "id": "jq3",
+   "type": "text",
+   "x": 564.0,
+   "y": 142,
+   "text": "Q4",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "narrow": {
+    "x": 231.0,
+    "y": 442,
+    "size": 12
+   }
+  },
+  {
+   "id": "jfb",
+   "type": "line",
+   "points": [
+    [
+     582,
+     115.0
+    ],
+    [
+     592,
+     115.0
+    ],
+    [
+     592,
+     86
+    ],
+    [
+     428,
+     86
+    ],
+    [
+     428,
+     115.0
+    ],
+    [
+     438,
+     115.0
+    ]
+   ],
+   "tone": "accent",
+   "narrow": {
+    "points": [
+     [
+      248,
+      415.0
+     ],
+     [
+      258,
+      415.0
+     ],
+     [
+      258,
+      386
+     ],
+     [
+      102,
+      386
+     ],
+     [
+      102,
+      415.0
+     ],
+     [
+      112,
+      415.0
+     ]
+    ]
+   }
+  },
+  {
+   "id": "jfl",
+   "type": "text",
+   "x": 510,
+   "y": 74,
+   "text": "Q̄4 → D1",
+   "size": 13,
+   "anchor": "middle",
+   "mono": true,
+   "weight": "bold",
+   "tone": "accent",
+   "narrow": {
+    "x": 180,
+    "y": 374,
+    "size": 12
+   }
+  },
+  {
+   "id": "jtt",
+   "type": "text",
+   "x": 510,
+   "y": 52,
+   "text": "Johnson: D1 = Q̄4",
+   "size": 15,
+   "anchor": "middle",
+   "weight": "bold",
+   "narrow": {
+    "x": 180,
+    "y": 352,
+    "size": 13
+   }
+  },
+  {
+   "id": "grn1000",
+   "type": "circle",
+   "cx": 160.0,
+   "cy": 232.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "1000",
+   "size": 13,
+   "narrow": {
+    "cx": 180.0,
+    "cy": 188.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "grn0100",
+   "type": "circle",
+   "cx": 228.0,
+   "cy": 300.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "0100",
+   "size": 13,
+   "narrow": {
+    "cx": 242.0,
+    "cy": 250.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "grn0010",
+   "type": "circle",
+   "cx": 160.0,
+   "cy": 368.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "0010",
+   "size": 13,
+   "narrow": {
+    "cx": 180.0,
+    "cy": 312.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "grn0001",
+   "type": "circle",
+   "cx": 92.0,
+   "cy": 300.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "0001",
+   "size": 13,
+   "narrow": {
+    "cx": 118.0,
+    "cy": 250.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gre0",
+   "type": "line",
+   "points": [
+    [
+     175.56,
+     247.56
+    ],
+    [
+     211.74,
+     283.74
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      194.85,
+      202.85
+     ],
+     [
+      226.44,
+      234.44
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gre0h",
+   "type": "line",
+   "points": [
+    [
+     201.87,
+     280.87
+    ],
+    [
+     211.74,
+     283.74
+    ],
+    [
+     208.87,
+     273.87
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      216.58,
+      231.58
+     ],
+     [
+      226.44,
+      234.44
+     ],
+     [
+      223.58,
+      224.58
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gre1",
+   "type": "line",
+   "points": [
+    [
+     212.44,
+     315.56
+    ],
+    [
+     176.26,
+     351.74
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      227.15,
+      264.85
+     ],
+     [
+      195.56,
+      296.44
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gre1h",
+   "type": "line",
+   "points": [
+    [
+     179.13,
+     341.87
+    ],
+    [
+     176.26,
+     351.74
+    ],
+    [
+     186.13,
+     348.87
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      198.42,
+      286.58
+     ],
+     [
+      195.56,
+      296.44
+     ],
+     [
+      205.42,
+      293.58
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gre2",
+   "type": "line",
+   "points": [
+    [
+     144.44,
+     352.44
+    ],
+    [
+     108.26,
+     316.26
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      165.15,
+      297.15
+     ],
+     [
+      133.56,
+      265.56
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gre2h",
+   "type": "line",
+   "points": [
+    [
+     118.13,
+     319.13
+    ],
+    [
+     108.26,
+     316.26
+    ],
+    [
+     111.13,
+     326.13
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      143.42,
+      268.42
+     ],
+     [
+      133.56,
+      265.56
+     ],
+     [
+      136.42,
+      275.42
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gre3",
+   "type": "line",
+   "points": [
+    [
+     107.56,
+     284.44
+    ],
+    [
+     143.74,
+     248.26
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      132.85,
+      235.15
+     ],
+     [
+      164.44,
+      203.56
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gre3h",
+   "type": "line",
+   "points": [
+    [
+     140.87,
+     258.13
+    ],
+    [
+     143.74,
+     248.26
+    ],
+    [
+     133.87,
+     251.13
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      161.58,
+      213.42
+     ],
+     [
+      164.44,
+      203.56
+     ],
+     [
+      154.58,
+      206.42
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gjn0000",
+   "type": "circle",
+   "cx": 510.0,
+   "cy": 200.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "0000",
+   "size": 13,
+   "narrow": {
+    "cx": 180.0,
+    "cy": 472.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gjn1000",
+   "type": "circle",
+   "cx": 580.71,
+   "cy": 229.29,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "1000",
+   "size": 13,
+   "narrow": {
+    "cx": 256.37,
+    "cy": 503.63,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gjn1100",
+   "type": "circle",
+   "cx": 610.0,
+   "cy": 300.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "1100",
+   "size": 13,
+   "narrow": {
+    "cx": 288.0,
+    "cy": 580.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gjn1110",
+   "type": "circle",
+   "cx": 580.71,
+   "cy": 370.71,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "1110",
+   "size": 13,
+   "narrow": {
+    "cx": 256.37,
+    "cy": 656.37,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gjn1111",
+   "type": "circle",
+   "cx": 510.0,
+   "cy": 400.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "1111",
+   "size": 13,
+   "narrow": {
+    "cx": 180.0,
+    "cy": 688.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gjn0111",
+   "type": "circle",
+   "cx": 439.29,
+   "cy": 370.71,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "0111",
+   "size": 13,
+   "narrow": {
+    "cx": 103.63,
+    "cy": 656.37,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gjn0011",
+   "type": "circle",
+   "cx": 410.0,
+   "cy": 300.0,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "0011",
+   "size": 13,
+   "narrow": {
+    "cx": 72.0,
+    "cy": 580.0,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gjn0001",
+   "type": "circle",
+   "cx": 439.29,
+   "cy": 229.29,
+   "r": 22,
+   "mono": true,
+   "tone": "ink",
+   "label": "0001",
+   "size": 13,
+   "narrow": {
+    "cx": 103.63,
+    "cy": 503.63,
+    "r": 21,
+    "size": 12
+   }
+  },
+  {
+   "id": "gje0",
+   "type": "line",
+   "points": [
+    [
+     530.33,
+     208.42
+    ],
+    [
+     559.46,
+     220.49
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      199.4,
+      480.04
+     ],
+     [
+      236.04,
+      495.21
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje0h",
+   "type": "line",
+   "points": [
+    [
+     549.25,
+     221.62
+    ],
+    [
+     559.46,
+     220.49
+    ],
+    [
+     553.04,
+     212.47
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      225.84,
+      496.34
+     ],
+     [
+      236.04,
+      495.21
+     ],
+     [
+      229.62,
+      487.19
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje1",
+   "type": "line",
+   "points": [
+    [
+     589.13,
+     249.62
+    ],
+    [
+     601.2,
+     278.75
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      264.41,
+      523.03
+     ],
+     [
+      279.58,
+      559.67
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje1h",
+   "type": "line",
+   "points": [
+    [
+     593.18,
+     272.33
+    ],
+    [
+     601.2,
+     278.75
+    ],
+    [
+     602.33,
+     268.54
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      271.56,
+      553.25
+     ],
+     [
+      279.58,
+      559.67
+     ],
+     [
+      280.71,
+      549.47
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje2",
+   "type": "line",
+   "points": [
+    [
+     601.58,
+     320.33
+    ],
+    [
+     589.51,
+     349.46
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      279.96,
+      599.4
+     ],
+     [
+      264.79,
+      636.04
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje2h",
+   "type": "line",
+   "points": [
+    [
+     588.38,
+     339.25
+    ],
+    [
+     589.51,
+     349.46
+    ],
+    [
+     597.53,
+     343.04
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      263.66,
+      625.84
+     ],
+     [
+      264.79,
+      636.04
+     ],
+     [
+      272.81,
+      629.62
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje3",
+   "type": "line",
+   "points": [
+    [
+     560.38,
+     379.13
+    ],
+    [
+     531.25,
+     391.2
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      236.97,
+      664.41
+     ],
+     [
+      200.33,
+      679.58
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje3h",
+   "type": "line",
+   "points": [
+    [
+     537.67,
+     383.18
+    ],
+    [
+     531.25,
+     391.2
+    ],
+    [
+     541.46,
+     392.33
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      206.75,
+      671.56
+     ],
+     [
+      200.33,
+      679.58
+     ],
+     [
+      210.53,
+      680.71
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje4",
+   "type": "line",
+   "points": [
+    [
+     489.67,
+     391.58
+    ],
+    [
+     460.54,
+     379.51
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      160.6,
+      679.96
+     ],
+     [
+      123.96,
+      664.79
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje4h",
+   "type": "line",
+   "points": [
+    [
+     470.75,
+     378.38
+    ],
+    [
+     460.54,
+     379.51
+    ],
+    [
+     466.96,
+     387.53
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      134.16,
+      663.66
+     ],
+     [
+      123.96,
+      664.79
+     ],
+     [
+      130.38,
+      672.81
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje5",
+   "type": "line",
+   "points": [
+    [
+     430.87,
+     350.38
+    ],
+    [
+     418.8,
+     321.25
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      95.59,
+      636.97
+     ],
+     [
+      80.42,
+      600.33
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje5h",
+   "type": "line",
+   "points": [
+    [
+     426.82,
+     327.67
+    ],
+    [
+     418.8,
+     321.25
+    ],
+    [
+     417.67,
+     331.46
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      88.44,
+      606.75
+     ],
+     [
+      80.42,
+      600.33
+     ],
+     [
+      79.29,
+      610.53
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje6",
+   "type": "line",
+   "points": [
+    [
+     418.42,
+     279.67
+    ],
+    [
+     430.49,
+     250.54
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      80.04,
+      560.6
+     ],
+     [
+      95.21,
+      523.96
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje6h",
+   "type": "line",
+   "points": [
+    [
+     431.62,
+     260.75
+    ],
+    [
+     430.49,
+     250.54
+    ],
+    [
+     422.47,
+     256.96
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      96.34,
+      534.16
+     ],
+     [
+      95.21,
+      523.96
+     ],
+     [
+      87.19,
+      530.38
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje7",
+   "type": "line",
+   "points": [
+    [
+     459.62,
+     220.87
+    ],
+    [
+     488.75,
+     208.8
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      123.03,
+      495.59
+     ],
+     [
+      159.67,
+      480.42
+     ]
+    ]
+   }
+  },
+  {
+   "id": "gje7h",
+   "type": "line",
+   "points": [
+    [
+     482.33,
+     216.82
+    ],
+    [
+     488.75,
+     208.8
+    ],
+    [
+     478.54,
+     207.67
+    ]
+   ],
+   "tone": "muted",
+   "hidden": false,
+   "narrow": {
+    "points": [
+     [
+      153.25,
+      488.44
+     ],
+     [
+      159.67,
+      480.42
+     ],
+     [
+      149.47,
+      479.29
+     ]
+    ]
+   }
+  },
+  {
+   "id": "rcnt",
+   "type": "text",
+   "x": 160,
+   "y": 300,
+   "text": "mod-4",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 250,
+    "size": 13
+   }
+  },
+  {
+   "id": "jcnt",
+   "type": "text",
+   "x": 510,
+   "y": 300,
+   "text": "mod-8",
+   "size": 14,
+   "anchor": "middle",
+   "weight": "bold",
+   "tone": "muted",
+   "narrow": {
+    "x": 180,
+    "y": 580,
+    "size": 13
+   }
+  }
+ ],
+ "steps": [
+  {
+   "caption": "Both registers shift right on one shared clock. The ring feeds Q4 back into D1; the Johnson counter feeds back Q̄4, its complement.",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grn1000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn0000",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 1: the ring's single 1 moves on (0100); the Johnson counter takes in another 1 (1000).",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grn0100",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn1000",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre0h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn1000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn0000",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje0h",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 2: the ring's single 1 moves on (0010); the Johnson counter takes in another 1 (1100).",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grn0010",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn0100",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre1h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gre0h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gjn1100",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn1000",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje1h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gje0h",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 3: the ring's single 1 moves on (0001); the Johnson counter takes in another 1 (1110).",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grn0001",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn0010",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gre1h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gjn1110",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn1100",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gje1h",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 4: the ring is back at 1000 after 4 states; the Johnson counter has only just filled with 1s (1111).",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "grn1000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn0001",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre3h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gre2h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gjn1111",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn1110",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje3h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gje2h",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 5: ring 0100; the Johnson counter now feeds back Q̄4 = 0 and fills with 0s (0111).",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "grn0100",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn1000",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre0",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre0h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gre3h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gjn0111",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn1111",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje4",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje4h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje3",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gje3h",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 6: ring 0010; the Johnson counter now feeds back Q̄4 = 0 and fills with 0s (0011).",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "grn0010",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn0100",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre1",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre1h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre0",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gre0h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gjn0011",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn0111",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje5",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje5h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje4",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gje4h",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 7: ring 0001; the Johnson counter now feeds back Q̄4 = 0 and fills with 0s (0001).",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "grn0001",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn0010",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre2",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre2h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre1",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gre1h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gjn0001",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn0011",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje6",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje6h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje5",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gje5h",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "Clock 8: the Johnson counter is back at 0000 after 2n = 8 states, while the ring has gone round twice.",
+   "patches": [
+    {
+     "id": "rv0",
+     "set": {
+      "text": "1",
+      "tone": "success"
+     }
+    },
+    {
+     "id": "rv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "rv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv0",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv1",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv2",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "jv3",
+     "set": {
+      "text": "0",
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "grn1000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "grn0001",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gre3",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre3h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gre2",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gre2h",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gjn0000",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gjn0001",
+     "set": {
+      "tone": "ink"
+     }
+    },
+    {
+     "id": "gje7",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje7h",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "gje6",
+     "set": {
+      "tone": "muted"
+     }
+    },
+    {
+     "id": "gje6h",
+     "set": {
+      "tone": "muted"
+     }
+    }
+   ]
+  },
+  {
+   "caption": "4 flip-flops: ring mod-4 (one-hot), Johnson mod-8. The 8 unused Johnson states form a second cycle that never meets this one.",
+   "patches": [
+    {
+     "id": "rcnt",
+     "set": {
+      "tone": "accent"
+     }
+    },
+    {
+     "id": "jcnt",
+     "set": {
+      "tone": "accent"
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1389,116 +1389,32 @@
       "verification": "Matches the official GATE key B."
     },
     "cse-2015-1-cs-20": {
-      "approach": "A Johnson (twisted-ring) counter shifts the register and feeds the **complement** of the last bit back into the first, so it cycles through $2n = 8$ states. Shift right, reading the bits as $Q_3Q_2Q_1Q_0$, and convert each state to decimal.",
+      "approach": "Concept tested: **the counting sequence of a Johnson counter**. The complement of the last stage enters the first, so from 0000 the register fills with 1s from the left and then with 0s; read each state with the first stage as the MSB.",
       "concepts": [
         "Johnson counter",
+        "Twisted-ring counter",
         "Shift register"
       ],
+      "given": "A 4-bit Johnson counter with initial value 0000.",
       "steps": [
         {
-          "title": "Fill with 1s",
-          "body": "Feedback is $\\overline{Q_0} = 1$, so 1s enter from the left: $0000 \\to 1000 \\to 1100 \\to 1110 \\to 1111$.",
+          "title": "The rule",
+          "body": "$Q_1^+ = \\overline{Q_4}$, $Q_i^+ = Q_{i-1}$ (shift right, the standard drawing)."
+        },
+        {
+          "title": "Trace",
+          "body": "0000 → 1000 → 1100 → 1110 → 1111 → 0111 → 0011 → 0001 → 0000: $2n = 8$ states.",
           "scene": {
-            "reveal": 10,
-            "hl": [
-              {
-                "r": 4,
-                "tone": "accent"
-              }
-            ],
-            "caption": "Ones shift in until the register is full"
+            "reveal": 9
           }
         },
         {
-          "title": "Empty with 0s",
-          "body": "Now $\\overline{Q_0} = 0$, so 0s enter: $1111 \\to 0111 \\to 0011 \\to 0001 \\to 0000$.",
-          "scene": {
-            "reveal": 18,
-            "hl": [
-              {
-                "r": 8,
-                "tone": "success"
-              }
-            ],
-            "caption": "Zeros shift in; back to 0000 after 8 clocks"
-          }
-        },
-        {
-          "title": "Read in decimal",
-          "body": "$0, 8, 12, 14, 15, 7, 3, 1, 0$, which is option (D). There are $2 \\times 4 = 8$ distinct states and only one bit changes per clock.",
-          "scene": {
-            "hl": [
-              {
-                "c": 1,
-                "tone": "accent"
-              }
-            ],
-            "caption": "Decimal sequence 0, 8, 12, 14, 15, 7, 3, 1, 0"
-          }
+          "title": "In decimal",
+          "body": "0, 8, 12, 14, 15, 7, 3, 1, 0."
         }
       ],
-      "animation": {
-        "kind": "table",
-        "cols": [
-          "$Q_3Q_2Q_1Q_0$",
-          "Decimal"
-        ],
-        "rowLabels": [
-          "0",
-          "1",
-          "2",
-          "3",
-          "4",
-          "5",
-          "6",
-          "7",
-          "8"
-        ],
-        "corner": "Clock",
-        "rows": [
-          [
-            "0000",
-            0
-          ],
-          [
-            "1000",
-            8
-          ],
-          [
-            "1100",
-            12
-          ],
-          [
-            "1110",
-            14
-          ],
-          [
-            "1111",
-            15
-          ],
-          [
-            "0111",
-            7
-          ],
-          [
-            "0011",
-            3
-          ],
-          [
-            "0001",
-            1
-          ],
-          [
-            "0000",
-            0
-          ]
-        ],
-        "reveal": 2,
-        "mono": true,
-        "caption": "Initial value 0000"
-      },
       "answer": {
-        "value": "0, 8, 12, 14, 15, 7, 3, 1, 0",
+        "value": "(D) 0, 8, 12, 14, 15, 7, 3, 1, 0",
         "choice": [
           "D"
         ],
@@ -1508,29 +1424,78 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "This is the same Johnson cycle shifted the other way (1s entering from the LSB end). The official key uses the right-shift reading, which gives (D)."
+          "reason": "This is the same Johnson counter shifting the other way (1s entering at the least significant end). The key follows the standard drawing, which shifts right from the most significant stage."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Visits 9 distinct states, and moves such as 1 → 3 → 5 change two bits at once. That is not a Johnson counter."
+          "reason": "Not a shift sequence: 3 → 5 (0011 → 0101) changes two bits, and it has 9 states."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Even numbers with steps like 2 → 4 change two bits. A 4-bit Johnson counter has 8 states with one-bit changes."
+          "reason": "Not a shift sequence: 2 → 4 (0010 → 0100) changes two bits; a Johnson counter changes exactly one bit per clock and must pass through 1111."
         },
         {
           "option": "D",
           "correct": true,
-          "reason": "Correct: the right-shifting Johnson sequence."
+          "reason": "The simulated sequence with the first stage as MSB."
         }
       ],
+      "shortcut": "A Johnson sequence changes one bit per clock and goes 0 → all 1s → 0; only A and D look like that, and D is the standard (shift-right, MSB first) orientation.",
       "pitfalls": [
-        "Feeding back $Q_0$ itself instead of its complement. That gives a ring counter, which stays at 0000 forever.",
-        "Option (A) is the mirror-image sequence; the official key is (D)."
+        "Using the ring counter (8 → 4 → 2 → 1) instead of the twisted ring.",
+        "Reading the stages in the opposite order, which turns D into A."
       ],
-      "verification": "8 states = $2n$ for $n = 4$, every transition changes one bit, and the sequence returns to 0000. The official GATE key is D."
+      "verification": "seqlib.register_cycle(johnson_step, 0000) gives 0, 8, 12, 14, 15, 7, 3, 1; the shift-left variant gives option A's 0, 1, 3, 7, 15, 14, 12, 8.",
+      "animation": {
+        "kind": "table",
+        "title": "4-bit Johnson from 0000",
+        "cols": [
+          "Q1Q2Q3Q4",
+          "value"
+        ],
+        "rows": [
+          [
+            "0000",
+            "0"
+          ],
+          [
+            "1000",
+            "8"
+          ],
+          [
+            "1100",
+            "12"
+          ],
+          [
+            "1110",
+            "14"
+          ],
+          [
+            "1111",
+            "15"
+          ],
+          [
+            "0111",
+            "7"
+          ],
+          [
+            "0011",
+            "3"
+          ],
+          [
+            "0001",
+            "1"
+          ],
+          [
+            "0000",
+            "0"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2015-1-cs-21": {
       "approach": "With symmetric keys, each pair of people needs its own secret key, so count the unordered pairs.",

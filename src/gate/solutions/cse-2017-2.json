@@ -3066,23 +3066,32 @@
       "verification": "Standard results: $E_{CFG}$ decidable, $ALL_{CFG}$ and $A_{TM}$ undecidable."
     },
     "cse-2017-2-cs-42": {
-      "approach": "For a T flip-flop, $T = Q \\oplus Q^+$. Compute $T_1, T_0$ for each row and minimise.",
+      "approach": "Concept tested: **T flip-flop design of a saturating counter**. $T = Q \\oplus Q^+$: write the change of each bit in each row, then read $T_1$ and $T_0$ as functions of $Q_1Q_0$.",
       "concepts": [
-        "T flip-flop excitation",
-        "Synchronous counter design"
+        "Saturating counter",
+        "T flip-flop",
+        "Excitation"
       ],
+      "given": "Next-state table: 00 → 01, 01 → 10, 10 → 11, 11 → 11; T flip-flops.",
       "steps": [
         {
-          "title": "Excitation table",
-          "body": "| $Q_1Q_0$ | $Q_1^+Q_0^+$ | $T_1$ | $T_0$ |\n|---|---|---|---|\n| 00 | 01 | 0 | 1 |\n| 01 | 10 | 1 | 1 |\n| 10 | 11 | 0 | 1 |\n| 11 | 11 | 0 | 0 |"
+          "title": "T columns",
+          "body": "00 → 01: $T_1T_0 = 01$. 01 → 10: 11. 10 → 11: 01. 11 → 11: 00.",
+          "scene": {
+            "reveal": 4
+          }
         },
         {
-          "title": "Minimise",
-          "body": "$T_1 = 1$ only for $01$: $T_1 = \\bar Q_1 Q_0$. $T_0 = 0$ only for $11$: $T_0 = \\overline{Q_1 Q_0} = \\bar Q_1 + \\bar Q_0$."
+          "title": "Read T1",
+          "body": "1 only in row 01: $T_1 = \\overline{Q_1}Q_0$."
+        },
+        {
+          "title": "Read T0",
+          "body": "1 in every row except 11: $T_0 = \\overline{Q_1Q_0} = \\overline{Q_1} + \\overline{Q_0}$."
         }
       ],
       "answer": {
-        "value": "$T_1 = \\bar Q_1 Q_0$, $T_0 = \\bar Q_1 + \\bar Q_0$",
+        "value": "(B) $T_1 = \\bar{Q}_1Q_0$, $T_0 = \\bar{Q}_1 + \\bar{Q}_0$",
         "choice": [
           "B"
         ],
@@ -3092,28 +3101,68 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "$T_1 = Q_1Q_0$ toggles $Q_1$ in state 11 (11 → 01), breaking saturation."
+          "reason": "$T_1 = Q_1Q_0$ is 1 in state 11, which would leave the saturating state (11 → 01); also $T_0 = \\bar Q_1 \\bar Q_0$ is 0 in 01."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Matches both excitation columns — correct."
+          "reason": "Matches the T column in all four rows."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "$T_1 = Q_1 + Q_0$ toggles $Q_1$ in state 10, sending it to 01."
+          "reason": "$T_1 = Q_1 + Q_0$ is 1 in states 10 and 11, so 10 → 01 and 11 → 01."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "$T_0 = Q_1 + Q_0$ is 0 in state 00, so 00 would stay at 00."
+          "reason": "$T_0 = Q_1 + Q_0$ is 0 in state 00 (00 would stay) and 1 in state 11 (11 → 10)."
         }
       ],
+      "shortcut": "The saturating row 11 → 11 needs $T_1 = T_0 = 0$ in state 11: option A gives $T_1 = 1$, C gives $T_1 = 1$, D gives $T_0 = 1$. Only B survives.",
       "pitfalls": [
-        "Writing $T = Q^+$ (that is the D flip-flop rule)."
+        "Using the next-state bits as T inputs (that is the D design: $D_1 = Q_1 + Q_0$, $D_0 = Q_1 + \\overline{Q_0}$).",
+        "Forgetting that saturating means a self-loop: no bit may change in 11."
       ],
-      "verification": "From 00: $T = 01$ → 01; 01: $T = 11$ → 10; 10: $T = 01$ → 11; 11: $T = 00$ → 11 ✓."
+      "verification": "Each option was simulated as a pair of T flip-flops over all four states; only B reproduces the table.",
+      "animation": {
+        "kind": "table",
+        "title": "T = Q ⊕ Q⁺",
+        "cols": [
+          "Q1Q0",
+          "Q1⁺Q0⁺",
+          "T1",
+          "T0"
+        ],
+        "rows": [
+          [
+            "00",
+            "01",
+            0,
+            1
+          ],
+          [
+            "01",
+            "10",
+            1,
+            1
+          ],
+          [
+            "10",
+            "11",
+            0,
+            1
+          ],
+          [
+            "11",
+            "11",
+            0,
+            0
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2017-2-cs-43": {
       "approach": "Both inner loops swap when the left element is smaller, so this is a cocktail-shaker sort into **descending** order. Trace until a pass makes no swap and read index 3.",

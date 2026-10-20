@@ -2128,49 +2128,36 @@
       "verification": "l4_02_cla.py evaluates each option on all 64 rows of $(a, b)$ and compares with the carry out of $a + b$: A matches, B, C and D (as transcribed) do not."
     },
     "cse-2006-cs-37": {
-      "approach": "Read the next-state equations off the circuit and clock the 9 data bits through, one row per clock edge.",
+      "approach": "Concept tested: **tracing a shift register with an XOR inside the chain and a serial data input**. Fix the time order of the data first (first character first), then apply $q_0^+ = data$, $q_1^+ = q_0 \\oplus q_2$, $q_2^+ = q_1$ from the old state at every clock.",
       "concepts": [
-        "D flip-flop",
-        "Shift register with XOR feedback"
+        "Shift register",
+        "XOR feedback",
+        "Serial input",
+        "Clock-by-clock trace"
       ],
+      "given": "Three cleared D flip-flops: $q_0$ takes $data$, $q_1$ takes $q_0 \\oplus q_2$, $q_2$ takes $q_1$. The data 100110000 is supplied in nine clock cycles. Find $q_2q_1q_0$.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "From the diagram: $q_0^+ = \\text{data}$, $q_1^+ = q_0 \\oplus q_2$, $q_2^+ = q_1$. Start: $q_2q_1q_0 = 000$. Bits enter left to right: $1,0,0,1,1,0,0,0,0$.",
+          "title": "Time order",
+          "body": "The string is supplied in nine cycles in the order written: 1, 0, 0, 1, 1, 0, 0, 0, 0."
+        },
+        {
+          "title": "First five clocks",
+          "body": "000 → 001 → 010 → 100 → 011 → 111.",
           "scene": {
-            "reveal": 0
+            "reveal": 6
           }
         },
         {
-          "title": "Clocks 1–4",
-          "body": "1: data 1 → $q_2 = 0$, $q_1 = 0\\oplus0 = 0$, $q_0 = 1$ → $001$\n\n2: data 0 → $q_2 = 0$, $q_1 = 1\\oplus0 = 1$, $q_0 = 0$ → $010$\n\n3: data 0 → $q_2 = 1$, $q_1 = 0\\oplus0 = 0$, $q_0 = 0$ → $100$\n\n4: data 1 → $q_2 = 0$, $q_1 = 0\\oplus1 = 1$, $q_0 = 1$ → $011$",
+          "title": "The four zeros",
+          "body": "111 → 100 → 010 → 100 → 010. With $data = 0$ the states 100 and 010 swap at every clock.",
           "scene": {
-            "reveal": 20,
-            "hl": [
-              {
-                "r": 3,
-                "tone": "accent"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Clocks 5–9",
-          "body": "5: data 1 → $q_2 = 1$, $q_1 = 1\\oplus0 = 1$, $q_0 = 1$ → $111$\n\n6: data 0 → $q_2 = 1$, $q_1 = 1\\oplus1 = 0$, $q_0 = 0$ → $100$\n\n7: data 0 → $q_2 = 0$, $q_1 = 0\\oplus1 = 1$, $q_0 = 0$ → $010$\n\n8: data 0 → $q_2 = 1$, $q_1 = 0\\oplus0 = 0$, $q_0 = 0$ → $100$\n\n9: data 0 → $q_2 = 0$, $q_1 = 0\\oplus1 = 1$, $q_0 = 0$ → $010$",
-          "scene": {
-            "reveal": 45,
-            "hl": [
-              {
-                "r": 8,
-                "tone": "success"
-              }
-            ],
-            "caption": "After 9 clocks: q2q1q0 = 010"
+            "reveal": 10
           }
         }
       ],
       "answer": {
-        "value": "010",
+        "value": "(C) 010",
         "choice": [
           "C"
         ],
@@ -2180,106 +2167,94 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "Wrong: the register is not cleared — after clock 9 it holds $010$."
+          "reason": "000 would need the register to flush to zero, but with $data = 0$ the bit circulates 100 ↔ 010 through the XOR instead of leaving."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "Wrong: $001$ is the state after clock 1 only."
+          "reason": "001 needs $q_0 = 1$, i.e. a 1 at the last clock; the last data bit is 0."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: simulation ends in $010$."
+          "reason": "The simulated final state."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Wrong: $101$ never appears in this run; it would need $q_0 = 1$ after a trailing data 0."
+          "reason": "101 needs $q_0 = 1$ at the end too; the last data bit is 0."
         }
       ],
+      "shortcut": "The last data bit is 0, so $q_0 = 0$: only 000 and 010 survive. 000 is impossible because once a 1 is inside, $q_1^+ = q_2$ (with $q_0 = 0$) keeps it circulating.",
       "pitfalls": [
-        "Feeding the data bits right to left (that gives 111, not an option).",
-        "Updating flip-flops one after another instead of simultaneously on the clock edge."
+        "Feeding the string last character first (that ends at 111, not an option).",
+        "Treating $q_1$ as a plain copy of $q_0$ and forgetting the XOR with $q_2$.",
+        "Updating the flip-flops one after another instead of from the old state."
       ],
-      "verification": "Re-simulated programmatically with simultaneous updates: final $q_2q_1q_0 = 010$.",
+      "verification": "Simulation with the data in written order: 000, 001, 010, 100, 011, 111, 100, 010, 100, 010.",
       "animation": {
         "kind": "table",
-        "title": "Clock-by-clock state",
+        "title": "Nine clocks",
         "cols": [
-          "clock",
           "data",
-          "q2",
-          "q1",
-          "q0"
+          "q2q1q0"
         ],
         "rows": [
           [
-            1,
-            1,
-            0,
-            0,
-            1
+            "–",
+            "000"
           ],
           [
-            2,
-            0,
-            0,
-            1,
-            0
+            "1",
+            "001"
           ],
           [
-            3,
-            0,
-            1,
-            0,
-            0
+            "0",
+            "010"
           ],
           [
-            4,
-            1,
-            0,
-            1,
-            1
+            "0",
+            "100"
           ],
           [
-            5,
-            1,
-            1,
-            1,
-            1
+            "1",
+            "011"
           ],
           [
-            6,
-            0,
-            1,
-            0,
-            0
+            "1",
+            "111"
           ],
           [
-            7,
-            0,
-            0,
-            1,
-            0
+            "0",
+            "100"
           ],
           [
-            8,
-            0,
-            1,
-            0,
-            0
+            "0",
+            "010"
           ],
           [
-            9,
-            0,
-            0,
-            1,
-            0
+            "0",
+            "100"
+          ],
+          [
+            "0",
+            "010"
           ]
         ],
-        "reveal": 0,
-        "mono": true
+        "mono": true,
+        "rowLabels": [
+          "start",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ],
+        "reveal": 1
       }
     },
     "cse-2006-cs-38": {

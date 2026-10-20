@@ -695,24 +695,33 @@
       "verification": "Brute force: $n = 1, 2, 3, 4$ give 2, 4, 16, 256 self-dual functions, matching $2^{2^{n-1}}$."
     },
     "cse-2014-2-cs-7": {
-      "approach": "The counter steps through $0,1,\\ldots,k-1$; the decoder turns each count into a single 1 on line $0,1,\\ldots,k-1$. Exactly one of the $k$ outputs is 1 and it moves one place each clock: a ring-counter pattern.",
+      "approach": "Concept tested: **a counter plus a decoder as a ring counter**. The decoder raises exactly one output, the one numbered by the count; as the count advances by one per clock, that single 1 moves one line per clock and wraps round.",
       "concepts": [
-        "Binary counter",
+        "Ring counter",
         "Decoder",
-        "Ring counter"
+        "Binary counter",
+        "One-hot code"
       ],
+      "given": "$k = 2^n$; an $n$-bit binary counter drives an $n$-to-$2^n$ decoder.",
       "steps": [
         {
-          "title": "Decoder output",
-          "body": "An $n$-to-$2^n$ decoder sets exactly one output high: output $i$ when the input equals $i$."
+          "title": "What the decoder shows",
+          "body": "In counter state $c$, decoder line $c$ is 1 and the other $k - 1$ lines are 0: a one-hot pattern of $k$ bits."
         },
         {
-          "title": "Sequence over time",
-          "body": "Example $n=2$, $k=4$: counts 00, 01, 10, 11 give outputs 0001, 0010, 0100, 1000, then repeat. A single 1 circulates through $k$ positions, which is what a $k$-bit ring counter produces."
+          "title": "What a clock does",
+          "body": "The count goes $c \\to c + 1 \\pmod{2^n}$, so the 1 moves from line $c$ to line $c + 1$, and from line $k - 1$ back to line 0. For $n = 2$: 1000 → 0100 → 0010 → 0001 → 1000.",
+          "scene": {
+            "reveal": 5
+          }
+        },
+        {
+          "title": "Compare",
+          "body": "A single 1 circulating through $k$ positions with period $k$ is exactly a $k$-bit ring counter."
         }
       ],
       "answer": {
-        "value": "$k$-bit ring counter.",
+        "value": "(C) $k$-bit ring counter",
         "choice": [
           "C"
         ],
@@ -722,25 +731,62 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "A k-bit up counter goes through $2^k$ binary states, not k one-hot states."
+          "reason": "A $k$-bit binary up counter has $2^k$ states; the decoder outputs have only $k$ patterns, each with a single 1."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A down counter also needs $2^k$ binary states."
+          "reason": "Same count problem as A, and the 1 moves upwards, not downwards."
         },
         {
           "option": "C",
           "correct": true,
-          "reason": "Correct: one-hot output with the 1 shifting each clock."
+          "reason": "One 1 circulating through $k$ lines, one step per clock: the $k$-bit ring counter's sequence."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "A k-bit Johnson counter has 2k states with patterns like 0000, 1000, 1100, …, not one-hot codes."
+          "reason": "A $k$-bit Johnson counter has $2k$ states with runs of 1s (1000, 1100, …), not a single 1."
         }
       ],
-      "verification": "For n = 2 the output words 0001 → 0010 → 0100 → 1000 match a 4-bit ring counter's sequence."
+      "shortcut": "Decoder output = one-hot = ring-counter code.",
+      "pitfalls": [
+        "Answering 'binary up counter' because the inner counter counts up: the question is about the decoder outputs.",
+        "Confusing ring (one 1 moving) with Johnson (1s filling, then 0s filling)."
+      ],
+      "verification": "For n = 1 … 4 the simulated decoder outputs over $2^n$ clocks equal the ring counter's cycle started at 10…0.",
+      "animation": {
+        "kind": "table",
+        "title": "n = 2: count and decoder lines",
+        "cols": [
+          "count",
+          "lines 0 1 2 3"
+        ],
+        "rows": [
+          [
+            "00",
+            "1000"
+          ],
+          [
+            "01",
+            "0100"
+          ],
+          [
+            "10",
+            "0010"
+          ],
+          [
+            "11",
+            "0001"
+          ],
+          [
+            "00",
+            "1000"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2014-2-cs-8": {
       "approach": "Concept tested: counting solutions of a base equation with two unknowns. The equation alone gives many candidate pairs; the digit limits decide which ones are real. Here $y$ is a base and $x$ is a digit of base $y$.",

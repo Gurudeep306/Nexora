@@ -7143,135 +7143,88 @@
       }
     },
     "cse-2025-1-cs-50": {
-      "approach": "Read the wiring: $D_1 = Q_0$, $D_2 = Q_1$, $D_3 = Q_2$ and $D_0 = \\overline{Q_3}$. That is a 4-bit twisted-ring (Johnson) counter, which cycles through $2n = 8$ states. Tracing from any start state confirms the cycle length.",
+      "approach": "Concept tested: **the cycles of a Johnson counter, counted once**. The wiring ($\\overline{Q_3} \\to D_0$, each $Q$ into the next $D$) is a 4-bit Johnson counter; from any start it returns after 8 clocks, so it passes through 8 distinct states counting the start (7 not counting it).",
       "concepts": [
-        "D flip-flop",
-        "Johnson (twisted-ring) counter",
-        "State sequence"
+        "Johnson counter",
+        "State cycles",
+        "Counting states"
       ],
+      "given": "Four D flip-flops on one clock: $Q_0 \\to D_1$, $Q_1 \\to D_2$, $Q_2 \\to D_3$, $\\overline{Q_3} \\to D_0$; initialised with some value. Number of distinct states before returning to the initial state.",
       "steps": [
         {
-          "title": "Next-state equations",
-          "body": "On each clock edge every D flip-flop copies its D input:\n\n$$Q_0^+ = \\overline{Q_3},\\quad Q_1^+ = Q_0,\\quad Q_2^+ = Q_1,\\quad Q_3^+ = Q_2$$\n\nThe register shifts right and feeds the complement of the last bit back in.",
+          "title": "Recognise the circuit",
+          "body": "A shift register with the complement of the last stage fed back: a 4-bit Johnson counter."
+        },
+        {
+          "title": "The main cycle",
+          "body": "From 0000: 0000 → 1000 → 1100 → 1110 → 1111 → 0111 → 0011 → 0001 → 0000, 8 states ($2n$).",
           "scene": {
-            "reveal": 4
+            "reveal": 8
           }
         },
         {
-          "title": "Trace from 0000",
-          "body": "Writing states as $Q_0Q_1Q_2Q_3$: $0000 \\to 1000 \\to 1100 \\to 1110 \\to 1111 \\to 0111 \\to 0011 \\to 0001 \\to 0000$.\n\nThe ones fill in from the left, then the zeros do.",
-          "scene": {
-            "reveal": 36
-          }
+          "title": "The other start states",
+          "body": "The Johnson step is a permutation, so the other 8 states form their own cycles; here exactly one: 0010 → 1001 → 0100 → 1010 → 1101 → 0110 → 1011 → 0101 → 0010, also 8. Every start returns after 8 clocks."
         },
         {
-          "title": "Count the states",
-          "body": "The cycle contains **8** distinct states ($2n$ for $n = 4$). Starting from the initial state, the circuit goes through 8 distinct states (the initial one included) before it is back where it started — 7 others besides the initial state, which is why the official key accepts 7 to 8.",
-          "scene": {
-            "hl": [
-              {
-                "r": 8,
-                "tone": "success"
-              }
-            ]
-          }
-        },
-        {
-          "title": "Any initial value gives 8",
-          "body": "The 8 states not in the main cycle form a second cycle of the same length: $0100 \\to 1010 \\to 1101 \\to 0110 \\to 1011 \\to 0101 \\to 0010 \\to 1001 \\to 0100$. So the answer does not depend on the (unspecified) initial value."
+          "title": "Count once",
+          "body": "Distinct states gone through including the initial one: 8; excluding it: 7. The official key accepts 7 to 8."
         }
       ],
       "answer": {
-        "value": "The counter cycles through **8** distinct states (key accepts 7 to 8)",
+        "value": "8 (7 if the initial state is not counted); key 7 to 8",
         "number": 8,
         "matchesKey": true
       },
-      "shortcut": "Shift register with inverted feedback from the last stage to the first = Johnson counter: $2n = 2 \\times 4 = 8$ states.",
+      "shortcut": "$n$-bit Johnson counter: $2n$ states; for $n = 4$ both cycles have 8, so 'some value' does not matter.",
       "pitfalls": [
-        "Taking the feedback from $Q_3$ instead of $\\overline{Q_3}$: that is a ring counter, whose cycle length depends on the initial value (e.g. 4 for 1000, 1 for 0000).",
-        "Answering $2^4 = 16$ — a Johnson counter uses only $2n$ of the $2^n$ states.",
-        "Assuming an unused (lock-out) start state gives a different count: here the other 8 states also form an 8-cycle."
+        "Answering 4 (the ring-counter count) or 16 (all states).",
+        "Assuming the unused states drain into the main cycle; they form a separate cycle (which, for n = 4, happens to have the same length)."
       ],
-      "verification": "Both cycles together cover $8 + 8 = 16 = 2^4$ states, each exactly once, so every start value returns after exactly 8 clocks.",
+      "verification": "Simulating all 16 start states, each returns to itself after exactly 8 clocks (two disjoint 8-cycles).",
       "animation": {
         "kind": "table",
-        "title": "States Q0 Q1 Q2 Q3 (D0 = Q3′)",
+        "title": "Both cycles of the 4-bit Johnson counter",
         "cols": [
-          "Q0",
-          "Q1",
-          "Q2",
-          "Q3"
+          "main",
+          "other"
         ],
-        "rowLabels": [
-          "init",
-          "1",
-          "2",
-          "3",
-          "4",
-          "5",
-          "6",
-          "7",
-          "8"
-        ],
-        "corner": "clock",
         "rows": [
           [
-            0,
-            0,
-            0,
-            0
+            "0000",
+            "0010"
           ],
           [
-            1,
-            0,
-            0,
-            0
+            "1000",
+            "1001"
           ],
           [
-            1,
-            1,
-            0,
-            0
+            "1100",
+            "0100"
           ],
           [
-            1,
-            1,
-            1,
-            0
+            "1110",
+            "1010"
           ],
           [
-            1,
-            1,
-            1,
-            1
+            "1111",
+            "1101"
           ],
           [
-            0,
-            1,
-            1,
-            1
+            "0111",
+            "0110"
           ],
           [
-            0,
-            0,
-            1,
-            1
+            "0011",
+            "1011"
           ],
           [
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0
+            "0001",
+            "0101"
           ]
         ],
-        "reveal": 0,
-        "mono": true
+        "mono": true,
+        "reveal": 1
       }
     },
     "cse-2025-1-cs-51": {
