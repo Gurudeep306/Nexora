@@ -1,4 +1,4 @@
-import type { IconName } from '@/components/icon/names'
+import { ICON_NAMES, type IconName } from '@/components/icon/names'
 
 /* Server sends legacy HTML icon strings like `<i class="icon-book"></i>` — map them to semantic icons. */
 const NODE_ICONS: Record<string, IconName> = {
@@ -27,9 +27,15 @@ const NODE_ICONS: Record<string, IconName> = {
   'icon-wave-line': 'activity',
 }
 
-/** Semantic icon for a skill node's legacy icon string — render with <Icon name={…} />. */
+const SEMANTIC = new Set<string>(ICON_NAMES)
+
+/**
+ * Semantic icon for a skill node — render with <Icon name={…} />. DSA nodes
+ * send legacy HTML strings; subject outlines send semantic names directly.
+ */
 export function nodeIcon(iconHtml: string | undefined): IconName {
   if (!iconHtml) return 'target'
+  if (SEMANTIC.has(iconHtml)) return iconHtml as IconName
   const match = /icon-[\w-]+/.exec(iconHtml)
   return (match && NODE_ICONS[match[0]]) || 'target'
 }

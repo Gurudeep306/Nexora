@@ -1,0 +1,522 @@
+{
+  "id": "algo",
+  "name": "Algorithms",
+  "short": "ALGO",
+  "group": "gate",
+  "order": 9,
+  "icon": "route",
+  "color": "#f97316",
+  "description": "Asymptotic analysis, searching and sorting, divide and conquer, greedy, dynamic programming, graph algorithms and NP-completeness.",
+  "gate": {
+    "pyqSubject": "algo",
+    "notesSubject": null
+  },
+  "zones": [
+    {
+      "level": 1,
+      "name": "Analysis of algorithms"
+    },
+    {
+      "level": 2,
+      "name": "Searching & sorting"
+    },
+    {
+      "level": 3,
+      "name": "Design paradigms"
+    },
+    {
+      "level": 4,
+      "name": "Graph algorithms"
+    },
+    {
+      "level": 5,
+      "name": "Complexity classes"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "asymptotics",
+      "zone": 1,
+      "name": "Asymptotic notation",
+      "icon": "trending-up",
+      "desc": "Big-O, Omega and Theta; comparing growth rates of functions.",
+      "kind": "concept",
+      "requires": [
+        "calc:limits-continuity"
+      ],
+      "pyqTopics": [
+        "algo/asymptotics",
+        "algo/complexity"
+      ],
+      "pyqTags": [
+        "asymptotic",
+        "big-o",
+        "growth"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "loop-analysis",
+      "zone": 1,
+      "name": "Analysing loops",
+      "icon": "clock",
+      "desc": "Counting the work of nested loops with summations, including harmonic and logarithmic loops.",
+      "kind": "concept",
+      "requires": [
+        "asymptotics"
+      ],
+      "pyqTopics": [
+        "algo/complexity"
+      ],
+      "pyqTags": [
+        "loop",
+        "summation",
+        "harmonic",
+        "time-complexity"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "recurrences-master",
+      "zone": 1,
+      "name": "Recurrences & master",
+      "icon": "function",
+      "desc": "Writing recurrences for recursive algorithms and solving them with the master theorem.",
+      "kind": "concept",
+      "requires": [
+        "asymptotics",
+        "dm:recurrence-relations"
+      ],
+      "pyqTopics": [
+        "algo/complexity"
+      ],
+      "pyqTags": [
+        "recurrence",
+        "master"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "recurrence-methods",
+      "zone": 1,
+      "name": "Substitution & trees",
+      "icon": "git-branch",
+      "desc": "Recurrences the master theorem does not cover: substitution and recursion-tree methods.",
+      "kind": "concept",
+      "requires": [
+        "recurrences-master"
+      ],
+      "pyqTopics": [
+        "algo/complexity"
+      ],
+      "pyqTags": [
+        "substitution",
+        "recursion"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "searching",
+      "zone": 2,
+      "name": "Searching",
+      "icon": "search",
+      "desc": "Linear and binary search, two-pointer scans and lower bounds for searching.",
+      "kind": "concept",
+      "requires": [
+        "loop-analysis"
+      ],
+      "pyqTopics": [
+        "algo/searching"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sorting",
+      "zone": 2,
+      "name": "Sorting",
+      "icon": "sort",
+      "desc": "The comparison sorts, their best, average and worst cases, stability and in-place behaviour.",
+      "kind": "concept",
+      "requires": [
+        "loop-analysis"
+      ],
+      "pyqTopics": [
+        "algo/sorting"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "elementary-sorts",
+      "zone": 2,
+      "name": "Elementary sorts",
+      "icon": "sort",
+      "desc": "Insertion, bubble and selection sort; inversions and counting swaps.",
+      "kind": "concept",
+      "requires": [
+        "sorting"
+      ],
+      "pyqTopics": [
+        "algo/sorting"
+      ],
+      "pyqTags": [
+        "insertion",
+        "bubble",
+        "selection",
+        "inversion",
+        "swap"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "quicksort",
+      "zone": 2,
+      "name": "Quicksort",
+      "icon": "sort",
+      "desc": "Partitioning, pivot choice, worst-case inputs and the expected O(n log n) of randomised quicksort.",
+      "kind": "concept",
+      "requires": [
+        "sorting",
+        "recurrences-master"
+      ],
+      "pyqTopics": [
+        "algo/sorting"
+      ],
+      "pyqTags": [
+        "quicksort",
+        "partition",
+        "randomized"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "linear-time-sorting",
+      "zone": 2,
+      "name": "Sorting lower bounds",
+      "icon": "sort",
+      "desc": "The Ω(n log n) decision-tree bound for comparison sorts, and counting and radix sort that beat it.",
+      "kind": "concept",
+      "requires": [
+        "sorting"
+      ],
+      "pyqTopics": [
+        "algo/sorting"
+      ],
+      "pyqTags": [
+        "lower-bound",
+        "linear-time",
+        "radix",
+        "counting",
+        "comparison"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "hashing",
+      "zone": 2,
+      "name": "Hashing",
+      "icon": "hash",
+      "desc": "Hash tables under uniform hashing: expected probes, load factor and collision probabilities.",
+      "kind": "concept",
+      "requires": [
+        "searching",
+        "c:hashing"
+      ],
+      "pyqTopics": [
+        "algo/hashing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "divide-conquer",
+      "zone": 3,
+      "name": "Divide & conquer",
+      "icon": "git-branch",
+      "desc": "Merge sort, fast exponentiation, min-max with fewer comparisons and other divide-and-conquer designs.",
+      "kind": "concept",
+      "requires": [
+        "recurrences-master"
+      ],
+      "pyqTopics": [
+        "algo/dnc"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "order-statistics",
+      "zone": 3,
+      "name": "Selection problems",
+      "icon": "target",
+      "desc": "Finding the minimum, maximum, k-th smallest and majority element with as few comparisons as possible.",
+      "kind": "concept",
+      "requires": [
+        "divide-conquer",
+        "quicksort"
+      ],
+      "pyqTopics": [
+        "algo/dnc",
+        "algo/searching"
+      ],
+      "pyqTags": [
+        "select",
+        "min-max",
+        "majority",
+        "maximum"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "greedy",
+      "zone": 3,
+      "name": "Greedy algorithms",
+      "icon": "coins",
+      "desc": "The greedy choice and exchange arguments: activity selection, job sequencing and fractional knapsack.",
+      "kind": "concept",
+      "requires": [
+        "sorting"
+      ],
+      "pyqTopics": [
+        "algo/greedy"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "huffman-coding",
+      "zone": 3,
+      "name": "Huffman coding",
+      "icon": "binary",
+      "desc": "Huffman codes and optimal merge patterns, built greedily with a priority queue.",
+      "kind": "concept",
+      "requires": [
+        "greedy",
+        "c:heaps"
+      ],
+      "pyqTopics": [
+        "algo/greedy"
+      ],
+      "pyqTags": [
+        "huffman",
+        "Huffman",
+        "prefix",
+        "merge"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "dynamic-programming",
+      "zone": 3,
+      "name": "Dynamic programming",
+      "icon": "grid",
+      "desc": "Optimal substructure, overlapping subproblems, memoisation and bottom-up tables.",
+      "kind": "concept",
+      "requires": [
+        "divide-conquer"
+      ],
+      "pyqTopics": [
+        "algo/dp"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "dp-classics",
+      "zone": 3,
+      "name": "Classic DP problems",
+      "icon": "grid",
+      "desc": "LCS, matrix chain multiplication, 0/1 knapsack, subset sum and optimal BSTs.",
+      "kind": "concept",
+      "requires": [
+        "dynamic-programming"
+      ],
+      "pyqTopics": [
+        "algo/dp"
+      ],
+      "pyqTags": [
+        "lcs",
+        "LCS",
+        "matrix",
+        "knapsack",
+        "subset",
+        "optimal-bst",
+        "rod"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "graph-traversal",
+      "zone": 4,
+      "name": "BFS & DFS",
+      "icon": "graph",
+      "desc": "Breadth-first and depth-first search, their trees and running times, connected components.",
+      "kind": "concept",
+      "requires": [
+        "asymptotics",
+        "dsa:mb_graphs"
+      ],
+      "pyqTopics": [
+        "algo/graph-traversal"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "dfs-applications",
+      "zone": 4,
+      "name": "DFS applications",
+      "icon": "graph",
+      "desc": "Edge classification, topological sort, strongly connected components and articulation points.",
+      "kind": "concept",
+      "requires": [
+        "graph-traversal"
+      ],
+      "pyqTopics": [
+        "algo/graph-traversal"
+      ],
+      "pyqTags": [
+        "topological",
+        "scc",
+        "strongly",
+        "back-edge",
+        "edge-classification",
+        "articulation",
+        "dag"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "shortest-paths",
+      "zone": 4,
+      "name": "Shortest paths",
+      "icon": "route",
+      "desc": "Dijkstra and Bellman-Ford, negative edges and cycles, and shortest paths in DAGs.",
+      "kind": "concept",
+      "requires": [
+        "graph-traversal",
+        "greedy"
+      ],
+      "pyqTopics": [
+        "algo/shortest-paths"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "all-pairs-shortest-paths",
+      "zone": 4,
+      "name": "All-pairs paths",
+      "icon": "route",
+      "desc": "Floyd–Warshall and Johnson's reweighting for all-pairs shortest paths.",
+      "kind": "concept",
+      "requires": [
+        "shortest-paths",
+        "dynamic-programming"
+      ],
+      "pyqTopics": [
+        "algo/shortest-paths",
+        "algo/dp"
+      ],
+      "pyqTags": [
+        "floyd",
+        "all-pairs",
+        "johnson"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "mst",
+      "zone": 4,
+      "name": "Minimum spanning trees",
+      "icon": "tree",
+      "desc": "Prim's and Kruskal's algorithms and their running times.",
+      "kind": "concept",
+      "requires": [
+        "graph-traversal",
+        "greedy",
+        "dsa:mb_dsu"
+      ],
+      "pyqTopics": [
+        "algo/mst"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "mst-properties",
+      "zone": 4,
+      "name": "MST properties",
+      "icon": "tree",
+      "desc": "The cut and cycle properties, uniqueness of MSTs, and counting or bounding MST weights.",
+      "kind": "concept",
+      "requires": [
+        "mst"
+      ],
+      "pyqTopics": [
+        "algo/mst"
+      ],
+      "pyqTags": [
+        "cut",
+        "cycle-property",
+        "uniqueness",
+        "properties",
+        "count",
+        "weight"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "p-np",
+      "zone": 5,
+      "name": "P and NP",
+      "icon": "lock",
+      "desc": "Decision problems, polynomial-time verification, the classes P and NP, and pseudo-polynomial algorithms.",
+      "kind": "concept",
+      "requires": [
+        "asymptotics"
+      ],
+      "pyqTopics": [
+        "algo/np"
+      ],
+      "pyqTags": [
+        "np",
+        "NP",
+        "certificate",
+        "pseudo"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "np-completeness",
+      "zone": 5,
+      "name": "NP-completeness",
+      "icon": "lock",
+      "desc": "NP-hard and NP-complete problems and what a polynomial algorithm for one would imply.",
+      "kind": "concept",
+      "requires": [
+        "p-np"
+      ],
+      "pyqTopics": [
+        "algo/np"
+      ],
+      "xpReward": 170
+    },
+    {
+      "id": "reductions",
+      "zone": 5,
+      "name": "Reductions",
+      "icon": "random",
+      "desc": "Polynomial-time reductions among SAT, 3-SAT, vertex cover, clique and independent set.",
+      "kind": "concept",
+      "requires": [
+        "np-completeness",
+        "graph-traversal"
+      ],
+      "pyqTopics": [
+        "algo/np"
+      ],
+      "pyqTags": [
+        "reduction",
+        "sat",
+        "SAT",
+        "vertex",
+        "clique",
+        "independent"
+      ],
+      "xpReward": 170
+    }
+  ]
+}

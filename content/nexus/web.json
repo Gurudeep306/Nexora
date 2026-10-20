@@ -1,0 +1,389 @@
+{
+  "id": "web",
+  "name": "Web Development",
+  "short": "WEB",
+  "group": "beyond",
+  "order": 17,
+  "icon": "globe",
+  "color": "#06b6d4",
+  "description": "HTML, CSS and JavaScript through React, backend APIs and deploying a full-stack app.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Web foundations"
+    },
+    {
+      "level": 2,
+      "name": "JavaScript"
+    },
+    {
+      "level": 3,
+      "name": "Frontend with React"
+    },
+    {
+      "level": 4,
+      "name": "Backend & APIs"
+    },
+    {
+      "level": 5,
+      "name": "Production"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "how-the-web-works",
+      "zone": 1,
+      "name": "How the web works",
+      "icon": "globe",
+      "desc": "Browsers, servers, URLs, DNS and what happens when you load a page.",
+      "kind": "concept",
+      "requires": [
+        "cn:ip-addressing"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "http-basics",
+      "zone": 1,
+      "name": "HTTP basics",
+      "icon": "link",
+      "desc": "Requests and responses, methods, status codes, headers, cookies and caching.",
+      "kind": "lesson",
+      "requires": [
+        "how-the-web-works",
+        "cn:application-layer"
+      ],
+      "xpReward": 60,
+      "resources": [
+        {
+          "title": "MDN: HTTP",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP"
+        }
+      ]
+    },
+    {
+      "id": "html-css",
+      "zone": 1,
+      "name": "HTML & CSS",
+      "icon": "palette",
+      "desc": "Semantic HTML, the CSS box model, selectors and the cascade.",
+      "kind": "lesson",
+      "requires": [
+        "how-the-web-works"
+      ],
+      "xpReward": 60,
+      "resources": [
+        {
+          "title": "MDN: HTML",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/HTML"
+        },
+        {
+          "title": "MDN: CSS",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/CSS"
+        }
+      ]
+    },
+    {
+      "id": "layout-responsive",
+      "zone": 1,
+      "name": "Layout & responsive",
+      "icon": "grid",
+      "desc": "Flexbox, CSS grid, media queries and mobile-first design.",
+      "kind": "lesson",
+      "requires": [
+        "html-css"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "accessibility",
+      "zone": 1,
+      "name": "Accessibility",
+      "icon": "eye",
+      "desc": "Semantic structure, keyboard navigation, ARIA basics and colour contrast.",
+      "kind": "concept",
+      "requires": [
+        "html-css"
+      ],
+      "xpReward": 60,
+      "resources": [
+        {
+          "title": "MDN: Accessibility",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+        }
+      ]
+    },
+    {
+      "id": "javascript",
+      "zone": 2,
+      "name": "JavaScript",
+      "icon": "code",
+      "desc": "Values, functions, closures, objects, arrays and modules.",
+      "kind": "lesson",
+      "requires": [
+        "html-css"
+      ],
+      "xpReward": 80,
+      "resources": [
+        {
+          "title": "MDN: JavaScript",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+        }
+      ]
+    },
+    {
+      "id": "dom-events",
+      "zone": 2,
+      "name": "DOM & events",
+      "icon": "monitor",
+      "desc": "Selecting and updating elements, event listeners and form handling.",
+      "kind": "lesson",
+      "requires": [
+        "javascript"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "async-js",
+      "zone": 2,
+      "name": "Async JavaScript",
+      "icon": "clock",
+      "desc": "The event loop, promises, async/await and fetching data.",
+      "kind": "lesson",
+      "requires": [
+        "javascript",
+        "http-basics"
+      ],
+      "xpReward": 80,
+      "resources": [
+        {
+          "title": "MDN: Fetch API",
+          "url": "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
+        }
+      ]
+    },
+    {
+      "id": "interactive-page",
+      "zone": 2,
+      "name": "Interactive page",
+      "icon": "play",
+      "desc": "Build a responsive single-page tool in plain JavaScript that fetches data from a public API.",
+      "kind": "project",
+      "requires": [
+        "dom-events",
+        "async-js",
+        "layout-responsive"
+      ],
+      "xpReward": 200
+    },
+    {
+      "id": "typescript",
+      "zone": 3,
+      "name": "TypeScript",
+      "icon": "type",
+      "desc": "Static types for JavaScript: annotations, interfaces, generics and narrowing.",
+      "kind": "lesson",
+      "requires": [
+        "javascript"
+      ],
+      "xpReward": 100,
+      "resources": [
+        {
+          "title": "TypeScript handbook",
+          "url": "https://www.typescriptlang.org/docs/"
+        }
+      ]
+    },
+    {
+      "id": "react",
+      "zone": 3,
+      "name": "React",
+      "icon": "layers",
+      "desc": "Components, JSX, props and rendering lists.",
+      "kind": "lesson",
+      "requires": [
+        "dom-events"
+      ],
+      "xpReward": 100,
+      "resources": [
+        {
+          "title": "React: Learn",
+          "url": "https://react.dev/learn"
+        }
+      ]
+    },
+    {
+      "id": "react-state",
+      "zone": 3,
+      "name": "State & hooks",
+      "icon": "sliders",
+      "desc": "useState, useEffect, lifting state up, and data fetching in components.",
+      "kind": "lesson",
+      "requires": [
+        "react",
+        "async-js"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "client-routing",
+      "zone": 3,
+      "name": "Routing & forms",
+      "icon": "route",
+      "desc": "Client-side routing, controlled forms and validation.",
+      "kind": "lesson",
+      "requires": [
+        "react-state"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "react-app",
+      "zone": 3,
+      "name": "React app",
+      "icon": "rocket",
+      "desc": "Build a multi-page React app with routing, forms and data from an external API.",
+      "kind": "project",
+      "requires": [
+        "client-routing",
+        "typescript"
+      ],
+      "xpReward": 225
+    },
+    {
+      "id": "node-server",
+      "zone": 4,
+      "name": "Node.js servers",
+      "icon": "server",
+      "desc": "Running JavaScript on the server, npm, and handling requests with a framework like Express.",
+      "kind": "lesson",
+      "requires": [
+        "async-js",
+        "http-basics"
+      ],
+      "xpReward": 120,
+      "resources": [
+        {
+          "title": "Node.js docs",
+          "url": "https://nodejs.org/en/docs"
+        }
+      ]
+    },
+    {
+      "id": "rest-apis",
+      "zone": 4,
+      "name": "REST APIs",
+      "icon": "share",
+      "desc": "Resource design, routes, status codes, JSON, validation and pagination.",
+      "kind": "lesson",
+      "requires": [
+        "node-server"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "databases-orm",
+      "zone": 4,
+      "name": "Databases for web",
+      "icon": "database",
+      "desc": "Connecting a backend to SQL, migrations, ORMs and avoiding N+1 queries.",
+      "kind": "lesson",
+      "requires": [
+        "rest-apis",
+        "dbms:sql"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "authentication",
+      "zone": 4,
+      "name": "Authentication",
+      "icon": "key",
+      "desc": "Password hashing, sessions versus tokens, cookies and OAuth sign-in.",
+      "kind": "lesson",
+      "requires": [
+        "rest-apis"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "rest-backend",
+      "zone": 4,
+      "name": "REST backend",
+      "icon": "terminal",
+      "desc": "Build a REST API with a database, authentication and tests for a small domain like a notes or bookmarks app.",
+      "kind": "project",
+      "requires": [
+        "databases-orm",
+        "authentication"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "web-security",
+      "zone": 5,
+      "name": "Web security",
+      "icon": "shield",
+      "desc": "XSS, CSRF, SQL injection, CORS and HTTPS.",
+      "kind": "lesson",
+      "requires": [
+        "authentication",
+        "http-basics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "web-performance",
+      "zone": 5,
+      "name": "Performance",
+      "icon": "bolt",
+      "desc": "Measuring load and render time, bundling, code splitting, image optimisation and HTTP caching.",
+      "kind": "lesson",
+      "requires": [
+        "react",
+        "http-basics"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "web-testing",
+      "zone": 5,
+      "name": "Testing",
+      "icon": "check-circle",
+      "desc": "Unit, component and end-to-end tests for frontend and backend.",
+      "kind": "lesson",
+      "requires": [
+        "react-state",
+        "rest-apis"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "deployment",
+      "zone": 5,
+      "name": "Deployment",
+      "icon": "upload",
+      "desc": "Environments and config, building for production, hosting, CI/CD and monitoring.",
+      "kind": "lesson",
+      "requires": [
+        "node-server"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "full-stack-app",
+      "zone": 5,
+      "name": "Full-stack app",
+      "icon": "trophy",
+      "desc": "Ship a full-stack app: React frontend, REST backend with auth and a database, tests, and a live deployment.",
+      "kind": "project",
+      "requires": [
+        "react-app",
+        "rest-backend",
+        "deployment",
+        "web-security"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

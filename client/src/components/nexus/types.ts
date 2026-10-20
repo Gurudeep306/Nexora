@@ -3,8 +3,36 @@ export interface NexusResource {
   url: string
 }
 
+/** A prerequisite / unlock in another subject, shown as a chip. */
+export interface CrossLink {
+  subject: string
+  subjectShort: string
+  subjectName: string
+  id: string
+  name: string
+  completed: boolean
+  progress: number
+}
+
+/** How a subject node's mastery is measured (absent on DSA nodes). */
+export interface NodeMetric {
+  pyq: { pool: number; target: number; correct: number; attempted: number; accuracy: number | null } | null
+  lessons: { done: number; total: number; subject: string; ids: string[] } | null
+}
+
 export interface NexusNode {
   id: string
+  /** Subject id ("dsa" for the competitive-programming tree). */
+  subject?: string
+  /** concept | lesson | project (subjects only). */
+  kind?: string
+  /** Row inside the zone tier (subjects lay out in several rows). */
+  row?: number
+  metric?: NodeMetric
+  crossRequires?: CrossLink[]
+  crossUnlocks?: CrossLink[]
+  /** All cross-subject prerequisites mastered. */
+  crossReady?: boolean
   zone: number
   name: string
   icon: string
@@ -39,6 +67,50 @@ export interface NexusZone {
   nodeCount: number
   nodesCompleted: number
   zoneProgress: number
+  /** Rows of nodes in this zone tier. */
+  rows?: number
+}
+
+export interface NexusSubjectMeta {
+  id: string
+  name: string
+  short: string
+  group: string
+  order: number
+  icon: string
+  color: string
+  description: string
+  pyqSubject?: string | null
+  notesSubject?: string | null
+}
+
+export interface NexusSubjectSummary extends NexusSubjectMeta {
+  nodeCount: number
+  zoneCount: number
+  completed: number
+  unlocked: number
+  progress: number
+  xpEarned: number
+  xpTotal: number
+  crossLinks: number
+  /** subject id → number of skills here that need a skill there. */
+  needs: Record<string, number>
+}
+
+export interface NexusPyq {
+  id: string
+  paper: string
+  year: number | null
+  marks: number | null
+  type: string
+  topic: string
+  status: 'new' | 'attempted' | 'solved'
+}
+
+export interface NexusPyqsResponse {
+  ok: boolean
+  total: number
+  questions: NexusPyq[]
 }
 
 export interface RiftPlayer {
@@ -74,6 +146,8 @@ export interface NexusResponse {
   zones: NexusZone[]
   player: RiftPlayer
   riftLevels: RiftLevel[]
+  subject?: NexusSubjectMeta
+  subjects?: NexusSubjectSummary[]
 }
 
 export interface RoadmapProblem {

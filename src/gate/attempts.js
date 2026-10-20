@@ -9,6 +9,7 @@
  * counts toward the streak but never awards problem XP).
  */
 const { all, runBatch } = require("../db");
+const { invalidateNexusUser } = require("../nexus/user-cache");
 
 const DAY_MS = 86400000;
 const MAX_RESPONSE_CHARS = 2000;
@@ -140,6 +141,7 @@ async function recordAttempts(username, entries, opts = {}) {
     [username, today, entries.length],
   ]);
   await runBatch(stmts);
+  invalidateNexusUser(username);
   return results;
 }
 
