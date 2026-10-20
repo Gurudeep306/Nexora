@@ -809,6 +809,69 @@ class FSM:
         assert sorted(sorted(b) for b in {frozenset(v) for v in eq.values()}) == sorted(sorted(b) for b in P)
         return len(P)
 
+    def clash(self, a, b):
+        """Outputs of a and b conflict for some input (None = unspecified never conflicts)."""
+        if self.moore:
+            pairs = [(self.out[a], self.out[b])]
+        else:
+            pairs = [(self.out[(a, x)], self.out[(b, x)]) for x in self.alphabet]
+        return any(p is not None and q is not None and p != q for p, q in pairs)
+
+    def incompatible(self):
+        """Incompletely specified machines (outputs may be None; next states are specified): the
+        implication table for compatibility. Returns {pair: pass} for every incompatible pair (pass 0 =
+        conflicting specified outputs). For a fully specified machine it equals `implication`."""
+        st = self.states
+        mark = {frozenset((a, b)): 0 for i, a in enumerate(st) for b in st[i + 1:] if self.clash(a, b)}
+        k = 0
+        while True:
+            k += 1
+            new = {}
+            for i, a in enumerate(st):
+                for b in st[i + 1:]:
+                    p = frozenset((a, b))
+                    if p in mark:
+                        continue
+                    for x in self.alphabet:
+                        q = frozenset((self.delta[(a, x)], self.delta[(b, x)]))
+                        if len(q) == 2 and q in mark:
+                            new[p] = k
+                            break
+            if not new:
+                return mark
+            mark.update(new)
+
+    def compatible_by_runs(self, a, b):
+        """Reference: no input string makes a and b produce two different specified outputs at the
+        same position (product-machine search)."""
+        seen, todo = {(a, b)}, [(a, b)]
+        while todo:
+            s, t = todo.pop()
+            if self.clash(s, t):
+                return False
+            for x in self.alphabet:
+                p = (self.delta[(s, x)], self.delta[(t, x)])
+                if p not in seen:
+                    seen.add(p)
+                    todo.append(p)
+        return True
+
+    def min_closed_cover(self):
+        """Smallest collection of compatibility classes (sets of pairwise compatible states) that
+        covers every state and is closed (for every class and input, the next states lie inside one
+        class of the collection). Brute force, for small machines. Returns (size, one cover)."""
+        from itertools import combinations
+        bad = self.incompatible()
+        comp = [frozenset(c) for r in range(1, len(self.states) + 1) for c in combinations(self.states, r)
+                if all(frozenset(p) not in bad for p in combinations(c, 2))]
+        for k in range(1, len(self.states) + 1):
+            for cover in combinations(comp, k):
+                if set().union(*cover) != set(self.states):
+                    continue
+                if all(any({self.delta[(s, x)] for s in c} <= d for d in cover) for c in cover for x in self.alphabet):
+                    return k, [sorted(c, key=self.states.index) for c in cover]
+        return None
+
     def equivalent(self, other, s0=None, t0=None):
         """Same output for every input string (product-machine BFS)."""
         a, b = (self.start if s0 is None else s0), (other.start if t0 is None else t0)
@@ -1012,6 +1075,15 @@ def _selftest():
     # Partition refinement on a machine with two equivalent states.
     m = FSM.from_table({"A": ("B", "C", 0, 0), "B": ("A", "C", 0, 1), "C": ("A", "B", 0, 1)})
     assert m.partitions()[-1] == [["A"], ["B", "C"]] and m.minimal_states() == 2
+    # Compatibility (incompletely specified): equals the implication table when fully specified, agrees
+    # with the run-based definition, and is not transitive (A ~ B, B ~ C, A ≁ C; 2 overlapping classes).
+    for f in (m, detector("1011", True, True)):
+        assert f.incompatible() == f.implication()
+    ic = FSM.from_table({"A": ("A", "B", 0, 0), "B": ("A", "C", None, 0), "C": ("A", "C", 1, 0)})
+    bad = ic.incompatible()
+    for a, b in (("A", "B"), ("A", "C"), ("B", "C")):
+        assert (frozenset((a, b)) not in bad) == ic.compatible_by_runs(a, b)
+    assert set(bad) == {frozenset(("A", "C"))} and ic.min_closed_cover()[0] == 2
     # Mealy → Moore preserves behaviour.
     f = detector("101", True)
     mo = f.to_moore()

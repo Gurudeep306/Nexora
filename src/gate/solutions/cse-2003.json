@@ -2399,110 +2399,37 @@
       "verification": "Two successive values at the top: $(1 + 511 \\cdot 2^{-9})\\,2^{31}$ and $(1 + 510 \\cdot 2^{-9})\\,2^{31}$ differ by $2^{-9} \\cdot 2^{31} = 2^{22}$. ✓"
     },
     "cse-2003-cs-44": {
-      "approach": "The circuit only needs to remember the running difference d = zₖ − nₖ while |d| < 2, plus two absorbing states for the two outcomes: d ∈ {−1, 0, +1} and \"saw +2\", \"saw −2\" — 5 states.",
+      "approach": "Concept tested: **the minimum number of states for a word specification**. Decide what the machine must remember (the difference $z - n$ while it is between $-1$ and $+1$, then only the verdict), build a machine with that many states, and prove nothing smaller works with pairwise distinguishable input histories.",
       "concepts": [
         "State minimisation",
-        "Mealy/Moore machines",
-        "Counting difference"
+        "Distinguishable states",
+        "Mealy machine",
+        "Absorbing state"
       ],
+      "given": "1 input, 2 outputs. Output 00 until, after $k$ bits with $z_k$ zeros and $n_k$ ones, $z_k - n_k = 2$ (output 10 at tick $k$ and for ever) or $n_k - z_k = 2$ (output 01 at tick $k$ and for ever). Minimum number of states?",
       "steps": [
         {
-          "title": "What must be remembered",
-          "body": "Before termination $|z_k-n_k|\\le1$, so the difference $d\\in\\{-1,0,+1\\}$ — three distinguishable states (from d = +1 one more 0 ends with 10; from d = −1 one more 1 ends with 01; from 0 neither)."
+          "title": "What to remember",
+          "body": "Before a verdict the output is 00 and $d = z - n$ can only be $-1$, 0 or $+1$ (it starts at 0, each bit moves it by 1, and reaching $\\pm 2$ ends the counting). After a verdict only the verdict matters. So: three counting states and two absorbing verdict states."
         },
         {
-          "title": "Absorbing states",
-          "body": "Once $d=+2$ the output is 10 forever; once $d=-2$ it is 01 forever. These are two further states, distinct from each other and from the counting states."
-        },
-        {
-          "title": "Total",
-          "body": "$3+2=5$ states, and no two are equivalent.",
+          "title": "A five-state machine",
+          "body": "Mealy (the output at tick $k$ comes with input $k$): $d = 0$: 0 → $+1$/00, 1 → $-1$/00. $d = +1$: 0 → L10/10, 1 → $0$/00. $d = -1$: 0 → $0$/00, 1 → L01/01. L10: any input → L10/10. L01: any input → L01/01.",
           "scene": {
-            "current": [
-              "D0",
-              "P1",
-              "M1",
-              "Z",
-              "O"
-            ],
-            "caption": "5 states: d = 0, +1, −1 and two absorbing outcomes"
+            "reveal": 5
           }
+        },
+        {
+          "title": "No four-state machine exists",
+          "body": "The histories ε, 0, 1, 00, 11 lead to $d = 0, +1, -1$, L10, L01, whose output rows (00 00, 10 00, 00 01, 10 10, 01 01) are all different. So every pair of histories is separated by a one-bit suffix, and by the pigeonhole principle a machine with fewer than 5 states would send two of them to the same state, which would then answer that suffix in the same way."
+        },
+        {
+          "title": "Read as Moore",
+          "body": "Taking the state reached after $k$ bits to carry the output of tick $k$ gives the same five states ($d = -1, 0, +1$ with output 00, and the two verdict states with 10 and 01). Either way: 5."
         }
       ],
-      "animation": {
-        "kind": "automaton",
-        "layout": "row",
-        "states": [
-          {
-            "id": "Z",
-            "label": "10"
-          },
-          {
-            "id": "P1",
-            "label": "d=+1"
-          },
-          {
-            "id": "D0",
-            "label": "d=0",
-            "start": true
-          },
-          {
-            "id": "M1",
-            "label": "d=−1"
-          },
-          {
-            "id": "O",
-            "label": "01"
-          }
-        ],
-        "edges": [
-          {
-            "from": "D0",
-            "to": "P1",
-            "label": "0"
-          },
-          {
-            "from": "D0",
-            "to": "M1",
-            "label": "1"
-          },
-          {
-            "from": "P1",
-            "to": "Z",
-            "label": "0"
-          },
-          {
-            "from": "P1",
-            "to": "D0",
-            "label": "1"
-          },
-          {
-            "from": "M1",
-            "to": "D0",
-            "label": "0"
-          },
-          {
-            "from": "M1",
-            "to": "O",
-            "label": "1"
-          },
-          {
-            "from": "Z",
-            "to": "Z",
-            "label": "0,1"
-          },
-          {
-            "from": "O",
-            "to": "O",
-            "label": "0,1"
-          }
-        ],
-        "current": [
-          "D0"
-        ]
-      },
       "answer": {
-        "value": "5",
+        "value": "(A) 5",
         "choice": [
           "A"
         ],
@@ -2512,25 +2439,69 @@
         {
           "option": "A",
           "correct": true,
-          "reason": "Correct: d ∈ {−1, 0, +1} plus two absorbing states."
+          "reason": "Three counting states ($d = -1, 0, +1$) and two absorbing verdict states, and the five histories ε, 0, 1, 00, 11 are pairwise distinguishable."
         },
         {
           "option": "B",
           "correct": false,
-          "reason": "A sixth state would be equivalent to one of these five."
+          "reason": "6 adds a separate start state, but the start is just $d = 0$ (equivalent to it), or keeps an extra copy of a verdict state."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "Over-counts (e.g. separate states for different k with the same d)."
+          "reason": "7 keeps $d = +2$ and $d = -2$ as counting states besides the two verdict states; they are the verdict states."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "Over-counts."
+          "reason": "8 tracks more of the count than any future output depends on; minimisation merges those states."
         }
       ],
-      "verification": "Input 00 → d: +1, +2 → output 10 at k = 2 ✓; input 0101… stays within {0, +1} and outputs 00 ✓."
+      "shortcut": "Write the output row of each situation: counting at 0 (00 00), at +1 (10 00), at −1 (00 01), verdict 10 (10 10), verdict 01 (01 01). Five different rows means five pairwise distinguishable states already in $P_0$, and a five-state machine exists: 5.",
+      "pitfalls": [
+        "Counting the differences −2 … +2 and then adding the two verdict states (7): the states $d = \\pm 2$ are the verdicts.",
+        "Treating the start as a state of its own (6): it is the $d = 0$ state.",
+        "Forgetting that after a verdict the machine must keep its output for ever: the verdict states must be absorbing, and there are two of them because the two verdicts output differently."
+      ],
+      "verification": "A machine that tracks $d$ up to $\\pm 6$ together with the verdict has 29 reachable states; partition refinement reduces it to exactly 5, and the five-state machine above is equivalent to it (same output string for every input string). The Moore reading also minimises to 5.",
+      "animation": {
+        "kind": "table",
+        "title": "The five-state Mealy machine",
+        "cols": [
+          "state",
+          "input 0",
+          "input 1"
+        ],
+        "rows": [
+          [
+            "d = 0",
+            "+1 / 00",
+            "−1 / 00"
+          ],
+          [
+            "d = +1",
+            "L10 / 10",
+            "0 / 00"
+          ],
+          [
+            "d = −1",
+            "0 / 00",
+            "L01 / 01"
+          ],
+          [
+            "L10",
+            "L10 / 10",
+            "L10 / 10"
+          ],
+          [
+            "L01",
+            "L01 / 01",
+            "L01 / 01"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-2003-cs-45": {
       "approach": "Concept tested: **minimum literal counts of SOP and POS with don't-cares**. Minimise the 1s (SOP) and the 0s (POS) separately, each using the Xs its own way, count literals, and prove each count cannot be beaten. The true minima are (POS, SOP) = (9, 8), which is not offered; the commonly published key is (C) (9, 10).",

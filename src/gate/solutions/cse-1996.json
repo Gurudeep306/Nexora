@@ -3269,27 +3269,43 @@
       }
     },
     "cse-1996-a-48": {
-      "approach": "Partition refinement: split by outputs, then split again by which block each next state falls into.",
+      "approach": "Concept tested: **state minimisation by partition refinement**. Group the states by their whole output row ($P_0$), then split each group by the groups their next states fall in, and repeat until nothing splits; the number of groups is the number of states of the minimal machine.",
       "concepts": [
-        "State minimisation",
-        "Equivalence partitioning"
+        "Equivalent states",
+        "Partition refinement",
+        "Implication table",
+        "Mealy machine"
       ],
+      "given": "A Mealy machine (next state, output): $A$: $D$/0, $B$/1; $B$: $A$/0, $C$/1; $C$: $A$/0, $B$/1; $D$: $A$/1, $C$/1 (for inputs 0, 1).",
       "steps": [
         {
-          "title": "0-equivalence (outputs)",
-          "body": "Outputs (x=0, x=1): A (0,1), B (0,1), C (0,1), D (1,1). $P_0=\\{A,B,C\\},\\{D\\}$."
+          "title": "P0 by output rows",
+          "body": "The output rows are $A$ 01, $B$ 01, $C$ 01, $D$ 11, so $P_0 = \\{A, B, C\\}, \\{D\\}$.",
+          "scene": {
+            "reveal": 1
+          }
         },
         {
-          "title": "1-equivalence",
-          "body": "Next states on x=0: A→D, B→A, C→A. A goes to block $\\{D\\}$, B and C go to $\\{A,B,C\\}$. On x=1: B→C, C→B (same block). $P_1=\\{A\\},\\{B,C\\},\\{D\\}$."
+          "title": "Round 1",
+          "body": "Label each state of $\\{A, B, C\\}$ by the blocks of its next states: $A \\to (D, B)$ = ($\\{D\\}$, big block); $B \\to (A, C)$ and $C \\to (A, B)$ = (big, big). $A$ splits off: $P_1 = \\{A\\}, \\{B, C\\}, \\{D\\}$.",
+          "scene": {
+            "reveal": 2
+          }
         },
         {
-          "title": "2-equivalence",
-          "body": "B: 0→A, 1→C; C: 0→A, 1→B — both lead to the same blocks $\\{A\\}$, $\\{B,C\\}$. No further split: **3 states**."
+          "title": "Round 2",
+          "body": "$B \\to (A, C)$ and $C \\to (A, B)$ both go to ($\\{A\\}$, $\\{B, C\\}$): no split, so $P_2 = P_1$ and $B \\equiv C$."
+        },
+        {
+          "title": "Cross-check with the implication table",
+          "body": "Pass 0 crosses $A$–$D$, $B$–$D$, $C$–$D$ (outputs). $A$–$B$ implies $A$–$D$ and $A$–$C$ implies $A$–$D$, so both are crossed in pass 1; $B$–$C$ implies only itself and survives. Same result: $B \\equiv C$.",
+          "scene": {
+            "reveal": 3
+          }
         }
       ],
       "answer": {
-        "value": "3",
+        "value": "(B) 3",
         "choice": [
           "B"
         ],
@@ -3299,25 +3315,55 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "B and C are equivalent, so 4 is not minimal."
+          "reason": "4 is the answer of someone who merges only identical rows: no two rows are identical, but $B \\equiv C$ because their next states lie in the same class."
         },
         {
           "option": "B",
           "correct": true,
-          "reason": "Correct."
+          "reason": "Classes $\\{A\\}, \\{B, C\\}, \\{D\\}$: 3 states. Merged table: $A$: $D$/0, $B$/1; $B$: $A$/0, $B$/1; $D$: $A$/1, $B$/1."
         },
         {
           "option": "C",
           "correct": false,
-          "reason": "A differs from B, C (next state D on input 0), and D differs by output."
+          "reason": "2 is the number of blocks of $P_0$; stopping there merges $A$ with $B$ and $C$, but the input string 0 0 gives 0, 1 from $A$ and 0, 0 from $B$."
         },
         {
           "option": "D",
           "correct": false,
-          "reason": "D has a different output from the others."
+          "reason": "1 would need every output row to be equal; $D$'s row (11) differs from the others (01)."
         }
       ],
-      "verification": "Merging B and C: B: 0→A,0; 1→B,1 — consistent with C's row."
+      "shortcut": "Only $D$ has a different output row, so the question is which states lead to $D$: on input 0, $A$ goes to $D$ while $B$ and $C$ go to $A$. That splits $A$ off, and $B$, $C$ have nothing left to separate them: 3.",
+      "pitfalls": [
+        "Looking for identical rows and answering 4: $B$ goes to $A, C$ and $C$ to $A, B$, different rows but equivalent states.",
+        "Stopping at $P_0$ (answer 2): the first grouping by outputs is not yet the equivalence.",
+        "Grouping by the $x = 0$ output alone: $P_0$ of a Mealy machine uses the whole output row."
+      ],
+      "verification": "Partition refinement and the implication table both give $\\{A\\}, \\{B, C\\}, \\{D\\}$; the merged 3-state machine produces the same output string as the original for every input string (product-machine check).",
+      "animation": {
+        "kind": "table",
+        "title": "Partition refinement",
+        "cols": [
+          "partition",
+          "blocks"
+        ],
+        "rows": [
+          [
+            "P0 (output rows)",
+            "{A,B,C} {D}"
+          ],
+          [
+            "P1",
+            "{A} {B,C} {D}"
+          ],
+          [
+            "P2 = P1",
+            "3 states"
+          ]
+        ],
+        "mono": true,
+        "reveal": 1
+      }
     },
     "cse-1996-a-49": {
       "approach": "Concept tested: **POS from the 0s** of a map with a partial checkerboard. The 0s are the corners and the centre; each 0-quad is read as a sum term (0 → plain letter, 1 → primed letter).",
