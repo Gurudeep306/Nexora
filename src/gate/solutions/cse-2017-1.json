@@ -2298,7 +2298,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "00 after the 3rd cycle comes from letting $Q_0$ copy the new $Q_1$."
+          "reason": "00 never occurs from 11: (0, 0) is a self-loop of this circuit that the trace 11 → 01 → 10 → 11 never enters. (The update-order mistake gives 00, 00, which is not option C either.)"
         },
         {
           "option": "D",

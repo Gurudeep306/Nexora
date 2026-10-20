@@ -52,9 +52,9 @@ SOLUTIONS["it-2005-cs-11"] = {
     ],
     "answer": {"value": "(D) 123", "choice": ["D"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "134 is an off-by-one on 133 (counting the start state as well)."),
+        opt("A", False, "134 = 133 + 1: the down-counter distance with one extra pulse (counting the start state as well)."),
         opt("B", False, "133 = 172 − 39 is the number of pulses a **down** counter would need; an up counter must go round through 255."),
-        opt("C", False, "124 counts one pulse too many (both ends of the wrap)."),
+        opt("C", False, "124 = 123 + 1: the right distance with one extra pulse, from counting the start state as well (or counting the 255 → 0 wrap twice)."),
         opt("D", True, "$(39 - 172) \\bmod 256 = 123$."),
     ],
     "shortcut": "Up and down distances between two states add up to $2^n$: if you computed 133 by subtraction, the up count is $256 - 133 = 123$.",
@@ -70,7 +70,7 @@ SOLUTIONS["it-2005-cs-11"] = {
 SOLUTIONS["cse-2007-cs-36"] = {
     "approach": "Concept tested: **a mod-N counter made with an asynchronous clear**. Find the first count at which the AND gate fires; because Clear acts regardless of the clock, that state is wiped at once and is not part of the cycle.",
     "concepts": ["Asynchronous clear", "Mod-N counter", "Clear detect gate"],
-    "given": "A 4-bit binary counter with outputs $A_4A_3A_2A_1$ ($A_1$ = LSB); Clear = 1 clears regardless of the clock; Load = 0 and Count = 1; Clear = $A_3 \\cdot A_1$; parallel inputs 0011; delays negligible; start at 0.",
+    "given": "A 4-bit binary counter with outputs $A_4A_3A_2A_1$ (drawn left to right, MSB first, so $A_1$ is the LSB; the question does not say so in words: reading $A_4$ as the LSB would make the gate detect 1010 = 10, sequence 0 … 9, which is not among the options); Clear = 1 clears regardless of the clock; Load = 0 and Count = 1; Clear = $A_3 \\cdot A_1$; parallel inputs 0011; delays negligible; start at 0.",
     "steps": [
         {"title": "What the control inputs select", "body": "Load = 0, Count = 1: 'count next' at every rising edge. The inputs 0011 are never loaded."},
         {"title": "When the gate fires", "body": "$A_3$ has weight 4 and $A_1$ weight 1, so $A_3A_1 = 1$ first at $0101_2 = 5$ (the earlier counts 0 … 4 never have both bits).", "scene": {"reveal": 5}},
@@ -87,7 +87,7 @@ SOLUTIONS["cse-2007-cs-36"] = {
     "shortcut": "Write the gate's inputs as a number: $A_3A_1$ → 0101 = 5. An asynchronous clear at N gives 0 … N − 1.",
     "pitfalls": [
         "Treating the clear as synchronous and keeping state 5 (option D).",
-        "Taking $A_4$ as the LSB, which would make the gate detect a different number.",
+        "Taking $A_4$ as the LSB: the gate would then detect 1010 = 10 and the counter would run 0 … 9, which matches no option.",
         "Thinking the parallel inputs matter when Load = 0.",
     ],
     "verification": "An event simulation of the counter with Clear = $A_3A_1$ settles at 1, 2, 3, 4, 0, 1, … after successive edges; with a synchronous clear it would cycle 0 … 5.",

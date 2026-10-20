@@ -7,7 +7,7 @@
   "width": 360,
   "height": 298
  },
- "intro": "Two JK storage elements with J = K = 1 share one clock: a level-sensitive JK latch with a delay of 2 ticks and a master–slave JK flip-flop. Two clock pulses, 7 and 5 ticks wide.",
+ "intro": "Two JK storage elements with J = K = 1 share one clock: a level-sensitive JK latch with a delay of 2 ticks and a master–slave JK flip-flop with the same 2-tick delay (clock-to-Q). Two clock pulses, 7 and 5 ticks wide.",
  "elements": [
   {
    "id": "head",
@@ -1116,7 +1116,11 @@
      266
     ],
     [
-     330,
+     352,
+     266
+    ],
+    [
+     352,
      248
     ],
     [
@@ -1133,7 +1137,11 @@
       252
      ],
      [
-      179.0,
+      190.3,
+      252
+     ],
+     [
+      190.3,
       236
      ],
      [
@@ -1236,7 +1244,11 @@
      248
     ],
     [
-     550,
+     572,
+     248
+    ],
+    [
+     572,
      266
     ],
     [
@@ -1253,7 +1265,11 @@
       236
      ],
      [
-      292.0,
+      303.3,
+      236
+     ],
+     [
+      303.3,
       252
      ],
      [

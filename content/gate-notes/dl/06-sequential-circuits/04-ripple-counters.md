@@ -183,7 +183,8 @@ The expected wrong answers are:
 
 - **133** $= 172 - 39$: subtracting the wrong way round. That is the number of pulses a **down** counter
   would need.
-- **134** or **124**: an off-by-one, counting both the start and the end, or adding the wrap pulse twice.
+- **134** $= 133 + 1$ and **124** $= 123 + 1$: the two distances with one extra pulse, from counting the
+  start state as well (or counting the 255 → 0 wrap twice).
 
 The correct count is $(39 - 172) \bmod 256 = 256 - 172 + 39 = 123$. Always check it forward:
 $172 + 123 = 295 = 256 + 39$.
@@ -210,8 +211,8 @@ Mod-258: $2^8 = 256 < 258 \le 512 = 2^9$, so $k = 9$.
 :::answer
 4 flip-flops for mod-10 (6 of the 16 patterns are unused) and 9 for mod-258 (GATE 2011, option A; 254 of
 the 512 patterns are unused). In both cases most students' first guess, $\log_2 N$ rounded to the nearest
-integer, is wrong for one of them: $\log_2 10 \approx 3.32$ rounds to 3, $\log_2 258 \approx 8.01$ rounds to
-8. Round **up**, always.
+integer, is wrong for **both**: $\log_2 10 \approx 3.32$ rounds to 3 and $\log_2 258 \approx 8.01$ rounds to 8.
+Round **up**, always.
 :::
 ::::
 
@@ -255,8 +256,8 @@ recognise each state?
 
 :::answer
 Binary 4, one-hot 12, Johnson 6. One-hot needs no decoder at all (each state **is** a wire), and a
-Johnson state is recognised by a 2-input gate on two neighbouring bits ([Lesson 6](lesson:shift-registers));
-binary needs a full 4-input decode for each state. GATE's "minimum number of flip-flops" means the binary
+Johnson state is recognised by a 2-input gate on two adjacent bits (for the all-0 and all-1 states, the two end bits;
+[Lesson 6](lesson:shift-registers)); binary needs up to a 4-input decode for each state. GATE's "minimum number of flip-flops" means the binary
 count, 4. The trade-off (fewer flip-flops versus simpler decoding) is the reason all three codes exist.
 :::
 ::::
@@ -313,7 +314,9 @@ is, whenever $Q_{i-1}$ goes from 1 to 0. Starting from 000, a 3-bit ripple up co
 Why does this give binary counting? Adding 1 to a binary number flips the lowest bit, and keeps flipping
 bits to the left for as long as the bit just flipped went from 1 to 0 (that is the carry). The ripple
 counter does the same thing physically: each falling output is the carry into the next stage. The
-animation runs a 3-bit counter with one delay per stage, so you can watch the carry travel.
+animation runs a 3-bit counter with one delay per stage, so you can watch the carry travel. Each clock pin
+is drawn with a small circle in front of the wedge: the **bubble** that marks a falling-edge input, the one
+inversion that the up-counter wiring needs (the trick below counts it).
 
 :::viz{#ripple-counter-wave-viz spec="ripple-counter-wave" mode="animate" depth="standard"}
 :::
@@ -420,7 +423,7 @@ up counter holds $u$, its $\overline{Q}$ outputs hold $(2^n - 1) - u$; as $u$ go
 $2^n - 1$, $2^n - 2$, …: a down count starting from the top.
 :::
 
-:::note{#erratum-b180 title="The order of a down count" depth="standard"}
+:::note{#note-down-order title="The order of a down count" depth="standard"}
 At least one set of revision notes draws a "mod-4 down counter" whose states go 0 → 1 → 2 → 3. That is an
 **up** count. A down counter goes the other way round the circle: **0 → 3 → 2 → 1 → 0**. The first step,
 from 0 to 3, is the one that looks strange and the one examiners test: from the all-0 state a down counter
@@ -535,7 +538,7 @@ At 20 ns: $Q_1$ goes 0 → 1, state 011, and stage 2 is clocked. At 30 ns: $Q_2$
 :::answer
 000 → 001 → 011 → **111**, settled 30 ns after the edge: from 0, a down counter wraps to the **largest** state,
 borrowing through every bit (the down-counting twin of 011 → 100 in the up counter). The first step of a down
-count from 0 is to 7, never to 1, which is the erratum B 180 point.
+count from 0 is to 7, never to 1.
 :::
 ::::
 
@@ -570,6 +573,14 @@ A mod-$N$ counter clocked at frequency $f$ completes one cycle every $N$ pulses,
 cycle runs at $f/N$. For an $n$-bit ripple counter, $Q_i$ runs at $f/2^{i+1}$: the **first** stage gives $f/2$, the
 **second** $f/4$, the **third** $f/8$, and the last $f/2^n$. Counters in series multiply: a mod-$M$ counter whose output
 clocks a mod-$N$ counter gives a mod-$MN$ chain and an output at $f/(MN)$.
+
+**Duty cycle.** The duty cycle of an output is the fraction of its period during which it is 1. A binary stage is 1 for exactly
+half of its period (step 1 of the derivation above), so every output of a $2^n$ counter is a square wave at 50%. A mod-$N$ output
+still has frequency $f/N$, but it is a square wave only for $N = 2^k$: during one cycle the counter spends one clock period in each
+of its $N$ states, so an output bit is 1 for (number of states in which that bit is 1) out of $N$ periods. In the mod-6 counter of
+this lesson (a 3-bit counter cleared at 110, last section) $Q_2$ is 1 in 2 of the 6 states (4 and 5), a 33% duty cycle; in the
+decade counter (cleared at 1010) $Q_3$ is 1 only in 8 and 9, a 20% duty cycle. Both outputs still fall exactly once per cycle,
+which is all the next counter in a chain needs.
 :::
 
 The animation runs a 3-bit counter for twelve clock periods (delays ignored) and then marks one full period of each output.
@@ -577,7 +588,7 @@ The animation runs a 3-bit counter for twelve clock periods (delays ignored) and
 :::viz{#frequency-divider-viz spec="frequency-divider" mode="animate" depth="standard"}
 :::
 
-:::note{#erratum-a101 title="The third stage is Q2 at f/8" depth="standard"}
+:::note{#note-third-stage title="The third stage is Q2 at f/8" depth="standard"}
 A frequent labelling slip (one set of notes prints it) names the outputs of a 3-stage divider $Q_0$, $Q_1$ and then
 $Q_1$ again. With stages numbered from 0, the outputs are $Q_0 = f/2$, $Q_1 = f/4$ and $Q_2 = f/8$: stage $i$ runs at
 $f/2^{i+1}$, so the third stage, $i = 2$, divides by 8. When a question says "the third flip-flop", count the
@@ -587,8 +598,8 @@ flip-flops from the clock input: first, second, third, and divide by $2^3$.
 GATE 2025 turned the divider round: given the **output** period of the last stage, find the **input** frequency.
 
 :::note{#recap-freq title="Recap" depth="quick"}
-Each toggling stage halves the frequency: $Q_i$ at $f/2^{i+1}$, the last stage of an $n$-bit counter at $f/2^n$, all at 50%
-duty. Cascaded counters multiply their moduli. Go backwards by multiplying the output frequency by $2^n$.
+Each toggling stage halves the frequency: $Q_i$ at $f/2^{i+1}$, the last stage of an $n$-bit counter at $f/2^n$, binary
+stages at 50% duty. A mod-$N$ output runs at $f/N$ but is square only for $N = 2^k$. Cascaded counters multiply their moduli. Go backwards by multiplying the output frequency by $2^n$.
 :::
 
 ## Ripple delay: why ripple counters are slow and glitchy
@@ -673,7 +684,7 @@ $1/(80\ \text{ns}) = 12.5$ MHz is too fast; $1/(95\ \text{ns}) \approx 10.53$ MH
 | Typical use | simple frequency division and slow event counting | anything decoded or used at speed |
 :::
 
-:::note{#note-c343 title="Are ripple counters 'used in ICs because they are simple'?" depth="standard"}
+:::note{#note-ripple-ic title="Are ripple counters 'used in ICs because they are simple'?" depth="standard"}
 Some notes justify ripple counters by saying they are used in integrated circuits because of their simplicity. The fair
 statement is narrower. A ripple counter is cheap: no gates, and each stage drives only one clock input. That makes it a
 good **frequency divider** or a counter that is read only after it has stopped. But inside high-speed digital systems,
@@ -710,7 +721,9 @@ A 3.6 MHz clock drives a mod-6 counter whose last output clocks a mod-10 counter
 mod-10 counter, and how many flip-flops does the chain use? Could a single counter of the same modulus use fewer?
 
 :::step{why="A mod-6 counter completes one cycle, and so one output period, per 6 input pulses."}
-After the mod-6 counter: 3.6 MHz / 6 = 600 kHz.
+After the mod-6 counter: 3.6 MHz / 6 = 600 kHz. Notice that this "last output" is not a square wave: in a mod-6 counter
+cleared at 110, $Q_2$ is 1 only in states 4 and 5, so it is high for 2 of every 6 input periods (a 33% duty cycle). Its frequency
+is still 600 kHz, because it rises once and falls once per cycle.
 :::
 
 :::step{why="The mod-10 counter divides its own input by 10, so the moduli multiply."}
@@ -723,8 +736,9 @@ $\lceil \log_2 60 \rceil = 6$.
 :::
 
 :::answer
-60 kHz from 7 flip-flops. One mod-60 counter would need only 6, because the cascade wastes patterns in both parts (2 of 8 and
-6 of 16). Cascading is still common because decimal digits (mod-10 stages) are what a display needs.
+60 kHz from 7 flip-flops (if the mod-10 stage is a decade counter cleared at 1010, its output $Q_3$ is high in 2 of its 10
+states: 20% duty, at 60 kHz all the same). One mod-60
+counter would need only 6, because the cascade wastes patterns in both parts (2 of 8 and 6 of 16). Cascading is still common because decimal digits (mod-10 stages) are what a display needs.
 :::
 ::::
 
@@ -917,9 +931,14 @@ $CLR = Q_2 Q_1$; stable states 0, 1, 2, 3, 4, 5 (mod-6), and 110 exists only for
 ::::
 
 ::::example{#ex-clear-2007 level="gate" title="A counter cleared by A3 · A1 (GATE 2007)" depth="standard"}
-A 4-bit binary counter has outputs $A_4 A_3 A_2 A_1$ ($A_1$ the LSB), a Clear input that acts regardless of the clock, Load = 0 and
-Count = 1. A 2-input AND gate with inputs $A_3$ and $A_1$ drives Clear; the parallel inputs carry 0011 (unused, since Load = 0). Delays
-are negligible. Starting at 0, which sequence does it cycle through?
+A 4-bit binary counter has outputs $A_4 A_3 A_2 A_1$, a Clear input that acts regardless of the clock, Load = 0 and Count = 1. A
+2-input AND gate with inputs $A_3$ and $A_1$ drives Clear; the parallel inputs carry 0011 (unused, since Load = 0). Delays are
+negligible. Starting at 0, which sequence does it cycle through?
+
+:::step{why="The question never names the LSB, so fix the bit order from the figure and check the other reading."}
+The figure draws $A_4A_3A_2A_1$ left to right, MSB first, so $A_1$ is the LSB (weight 1) and $A_3$ has weight 4. Reading $A_4$ as the
+LSB instead would make the gate detect 1010 = 10 (sequence 0 … 9), which is not among the options.
+:::
 
 :::step{why="Load = 0 and Count = 1 select 'count next' at every clock edge, so the inputs 0011 never enter."}
 Without the gate the counter would count 0, 1, 2, … up to 15.
@@ -983,7 +1002,7 @@ the readout lists every state the counter rippled through and when it settled. F
 :::pyq{id="cse-2007-cs-36" tests="mod-n-clear,clear-detect,trap-clear-n-minus-1" depth="standard"}
 :::
 
-:::pyq{id="cse-2010-cs-32" tests="ripple-rule,trap-trigger-rule,ripple-down" depth="standard"}
+:::pyq{id="cse-2010-cs-32" tests="ripple-rule,trick-trigger-table,trap-trigger-rule,ripple-down" depth="standard"}
 :::
 
 :::pyq{id="cse-2011-cs-15" tests="ff-count,trap-ff-count" depth="standard"}

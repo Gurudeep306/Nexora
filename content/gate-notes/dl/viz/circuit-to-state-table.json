@@ -2179,7 +2179,7 @@
    ]
   },
   {
-   "caption": "The other 4 states (001, 101, 110, 111) only lead into the cycle: never produced from 000, but not lock-outs.",
+   "caption": "The other 4 states (001, 101, 110, 111) are never produced from 000, but each one reaches the cycle (the counter is self-starting).",
    "patches": [
     {
      "id": "st",

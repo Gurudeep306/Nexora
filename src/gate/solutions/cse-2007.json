@@ -2001,7 +2001,7 @@
         "Mod-N counter",
         "Clear detect gate"
       ],
-      "given": "A 4-bit binary counter with outputs $A_4A_3A_2A_1$ ($A_1$ = LSB); Clear = 1 clears regardless of the clock; Load = 0 and Count = 1; Clear = $A_3 \\cdot A_1$; parallel inputs 0011; delays negligible; start at 0.",
+      "given": "A 4-bit binary counter with outputs $A_4A_3A_2A_1$ (drawn left to right, MSB first, so $A_1$ is the LSB; the question does not say so in words: reading $A_4$ as the LSB would make the gate detect 1010 = 10, sequence 0 … 9, which is not among the options); Clear = 1 clears regardless of the clock; Load = 0 and Count = 1; Clear = $A_3 \\cdot A_1$; parallel inputs 0011; delays negligible; start at 0.",
       "steps": [
         {
           "title": "What the control inputs select",
@@ -2058,7 +2058,7 @@
       "shortcut": "Write the gate's inputs as a number: $A_3A_1$ → 0101 = 5. An asynchronous clear at N gives 0 … N − 1.",
       "pitfalls": [
         "Treating the clear as synchronous and keeping state 5 (option D).",
-        "Taking $A_4$ as the LSB, which would make the gate detect a different number.",
+        "Taking $A_4$ as the LSB: the gate would then detect 1010 = 10 and the counter would run 0 … 9, which matches no option.",
         "Thinking the parallel inputs matter when Load = 0."
       ],
       "verification": "An event simulation of the counter with Clear = $A_3A_1$ settles at 1, 2, 3, 4, 0, 1, … after successive edges; with a synchronous clear it would cycle 0 … 5.",

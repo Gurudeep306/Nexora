@@ -28,6 +28,9 @@ def wave(s, pid, x, y, h, dx, vals, groups, tone):
                 bid = f"hl{pid}g{gi}x{t}"
                 s.box(bid, x + t * dx, y, (u - t) * dx, h, fill="danger", tone="danger", hidden=True, opacity=0.9)
                 ids.append(bid)
+                s.text(bid + "t", x + (t + u) * dx / 2, y + h / 2, "X", s.v(13, 12), anchor="middle", mono=True, weight="bold",
+                       tone="danger", hidden=True)
+                ids.append(bid + "t")
             else:
                 while u < b and vals[u] != "X":
                     u += 1
@@ -67,8 +70,10 @@ def edge_ff_timing(L):
     s = S(L)
     W, NW = 680, 360
     clk = [0] + [1, 1, 1, 0, 0, 0] * 4
-    D = [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0]
+    D = [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0]
     N = len(clk)
+    falls = [t for t in range(1, N) if clk[t - 1] == 1 and clk[t] == 0]
+    assert falls == [4, 10, 16, 22] and not set(changes(D)) & set(falls)  # D never changes as the latch closes
     lat = sq.scope("D", "latch", clk, {"D": D}, tpd=1)
     ff = sq.scope("D", "pos", clk, {"D": D}, tpd=1)
     rises = ff["edges"]
@@ -79,7 +84,8 @@ def edge_ff_timing(L):
     assert changes(D, 1, 4) == [3] and changes(lat["S"], 1, 4) == [3]          # latch follows a mid-pulse rise
     assert changes(D, 7, 10) == [9] and changes(lat["S"], 7, 10) == [9]        # … and a mid-pulse fall
     assert changes(D, 10, 13) == [11] and changes(lat["S"], 10, 13) == []      # closed: ignores D
-    assert changes(D, 19, 25) == [20, 22] and lat["S"][24] == 1 and ff["S"][24] == 0  # pulse caught by the latch only
+    assert changes(D, 19, 25) == [20, 23] and lat["S"][24] == 1 and ff["S"][24] == 0  # pulse caught by the latch only
+    assert all(lat["S"][t] == 1 for t in range(22, N)) and D[21] == 1  # the latch closed on a steady 1 and holds it
     s.head("Same clock, same D: a D latch and a rising-edge D flip-flop", "D latch vs edge-triggered D", W, NW)
     # the two devices
     bw, bh = s.v(118, 96), 48
@@ -140,11 +146,11 @@ def master_slave(L):
     s = S(L)
     W, NW = 680, 360
     clk = [0] + [1, 1, 1, 0, 0, 0] * 4
-    D = [0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0]
+    D = [0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0]
     r = sq.scope("D", "ms", clk, {"D": D}, tpd=1)
     M, Q = r["M"], r["Q"]
     falls = r["edges"]
-    assert falls == [4, 10, 16, 22]
+    assert falls == [4, 10, 16, 22] and not set(changes(D)) & set(falls)  # no frame depends on a tie
     assert [r["S"][t] for t in falls] == [D[t - 1] for t in falls] == [1, 0, 1, 1]
     assert all(M[t] == D[t] for t in range(len(clk)) if clk[t])
     assert all(t in falls for t in changes(r["S"]))
@@ -207,7 +213,7 @@ def master_slave(L):
             pats += [("st", {"text": f"falling edge {n + 1}: Q ← {m}", "tone": "accent"})]
         assert len(cap) <= 140, cap
         s.step(cap, *pats)
-    s.step(f"Q moved only at the falling edges, each time to the value D had as CLK fell: {seq([D[t - 1] for t in falls])}.",
+    s.step(f"Q moved only at the falling edges, each time to the value D had just before CLK fell: {seq([D[t - 1] for t in falls])}.",
            ("st", {"text": "never both open: an edge from two latches", "tone": "accent"}), ("m3", {"tone": "muted"}))
     return s.done("A master–slave D flip-flop: the master follows, the slave copies at the falling edge", (W, ybot + 40), (NW, ybot + 40),
                   "Two D latches in series. The master is enabled by CLK, the slave by CLK through an inverter. "
@@ -226,12 +232,13 @@ def race_around(L):
     N = len(clk)
     one = [1] * N
     lat = sq.scope("JK", "latch", clk, {"J": one, "K": one}, tpd=tpd)
-    ms = sq.scope("JK", "ms", clk, {"J": one, "K": one}, tpd=1)
+    ms = sq.scope("JK", "ms", clk, {"J": one, "K": one}, tpd=tpd)
     lq, mq = lat["Q"], ms["Q"]
     pulses = [(2, 9), (14, 19)]
     tog = [len(changes(lq, a, b + tpd)) for a, b in pulses]
     assert tog == [-(-(b - a) // tpd) for a, b in pulses] == [4, 3]
-    assert [len(changes(mq, a, b + 2)) for a, b in pulses] == [1, 1]
+    assert [len(changes(mq, a, b + tpd + 1)) for a, b in pulses] == [1, 1]
+    assert [changes(mq, a, b + tpd + 1) for a, b in pulses] == [[9 + tpd], [19 + tpd]]  # t_pd after each falling edge
     assert lq[13] == 0 and lq[-1] == 1 and mq[13] == 1 and mq[-1] == 0
     s.head("J = K = 1: a level JK latch races, a master–slave JK toggles once", "Race-around: latch vs master–slave", W, NW)
     bw, bh = s.v(118, 120), 54
@@ -287,7 +294,7 @@ def race_around(L):
            ("st", {"text": "race-around iff t_w > t_pd", "tone": "accent"}), ("bl", {"tone": "danger"}), ("bm", {"tone": "success"}))
     return s.done("Race-around in a level JK latch, and the master–slave cure", (W, ybot + 46), (NW, ybot + 46),
                   "Two JK storage elements with J = K = 1 share one clock: a level-sensitive JK latch with a delay of 2 ticks and a "
-                  "master–slave JK flip-flop. Two clock pulses, 7 and 5 ticks wide.")
+                  "master–slave JK flip-flop with the same 2-tick delay (clock-to-Q). Two clock pulses, 7 and 5 ticks wide.")
 
 
 # ── setup-hold ─────────────────────────────────────────────────────────────
@@ -322,11 +329,18 @@ def setup_hold(L):
     xe = x0 + e * dx
     s.box("hlwin", x0 + (e - tsu) * dx, y0 - 8, (tsu + th) * dx, ybot - y0 + 8, fill="warning", tone="warning", opacity=0.6, hidden=True)
     s.line("edge", [[xe, y0 - 8], [xe, ybot]], dashed=True, tone="accent", hidden=True)
-    s.text("lsu", xe - 4, y0 - 20, "t_su", s.v(13, 12), anchor="end", mono=True, tone="warning", hidden=True)
-    s.text("lh", xe + 4, y0 - 20, "t_h", s.v(13, 12), anchor="start", mono=True, tone="warning", hidden=True)
+    xs0, xh1, yb = x0 + (e - tsu) * dx, x0 + (e + th) * dx, y0 - 16
+    s.line("bsu", [[xs0 + 2, yb + 5], [xs0 + 2, yb], [xe - 2, yb], [xe - 2, yb + 5]], tone="warning", hidden=True)
+    s.line("bh", [[xe + 2, yb + 5], [xe + 2, yb], [xh1 - 2, yb], [xh1 - 2, yb + 5]], tone="warning", hidden=True)
+    if s.wd:  # wide: each label centred over its own bracket
+        s.text("lsu", (xs0 + xe) / 2, yb - 9, "t_su", 13, anchor="middle", mono=True, tone="warning", hidden=True)
+        s.text("lh", (xe + xh1) / 2, yb - 9, "t_h", 13, anchor="middle", mono=True, tone="warning", hidden=True)
+    else:  # narrow: the brackets are 30 px wide, so each label sits just outside its bracket
+        s.text("lsu", xs0 - 3, yb + 2, "t_su", 12, anchor="end", mono=True, tone="warning", hidden=True)
+        s.text("lh", xh1 + 3, yb + 2, "t_h", 12, anchor="start", mono=True, tone="warning", hidden=True)
     s.text("st", s.v(W / 2, NW / 2), ybot + 22, "", s.v(14, 12), anchor="middle", weight="bold")
     s.step(f"A rising edge at tick {e}. D must be stable from t_su = {tsu} ticks before it to t_h = {th} ticks after it: the shaded window.",
-           *reveal(ids["c"], 0), ("hlwin", {"hidden": False}), ("edge", {"hidden": False}), ("lsu", {"hidden": False}), ("lh", {"hidden": False}),
+           *reveal(ids["c"], 0), ("hlwin", {"hidden": False}), ("edge", {"hidden": False}), ("lsu", {"hidden": False}), ("lh", {"hidden": False}), ("bsu", {"hidden": False}), ("bh", {"hidden": False}),
            ("st", {"text": f"window: ticks {e - tsu} to {e + th}", "tone": "warning"}))
     words = {
         "early": "D rises at tick {c}, before the window opens: a clean sample.",
@@ -407,9 +421,12 @@ def ff_conversion(L):
            ("km", {"highlight": g1}), ("lp1", {"hidden": False}), ("sub", {"text": "group 1: J·Q̄", "tone": "accent"}))
     g2 = [list(cell(1, (0, 0))), list(cell(1, (1, 0)))]
     assert all(dcol[(jk[0], jk[1], 1)] == 1 for jk in [(0, 0), (1, 0)])
-    s.box("lp2a", kx + kcw + 3, ky + 2 * kch + 3, kcw - 6, kch - 6, tone="success", hidden=True)
-    s.box("lp2b", kx + 4 * kcw + 3, ky + 2 * kch + 3, kcw - 6, kch - 6, tone="success", hidden=True)
-    s.step("Row Q = 1 has 1s under JK = 00 and 10 (the map wraps round): K = 0 there, so the group is K̄·Q (hold or set from 1).",
+    ya, yz = ky + 2 * kch + 3, ky + 3 * kch - 3
+    xa0, xa1 = kx + kcw, kx + 2 * kcw - 3          # column 00, the map's left edge: open to the left
+    xb0, xb1 = kx + 4 * kcw + 3, kx + 5 * kcw      # column 10, the map's right edge: open to the right
+    s.line("lp2a", [[xa0 - 14, ya], [xa1, ya], [xa1, yz], [xa0 - 14, yz]], tone="success", hidden=True)
+    s.line("lp2b", [[xb1 + 14, ya], [xb0, ya], [xb0, yz], [xb1 + 14, yz]], tone="success", hidden=True)
+    s.step("Row Q = 1: cells 00 and 10 are adjacent (wrap-around), drawn as one group open at both map edges; K = 0 there: K̄Q.",
            ("km", {"highlight": g2}), ("lp2a", {"hidden": False}), ("lp2b", {"hidden": False}), ("sub", {"text": "group 2: K̄·Q (wraps)", "tone": "success"}))
     s.step("So D = JQ̄ + K̄Q, the JK characteristic equation itself: with a D flip-flop, D is always the wanted Q⁺.",
            ("km", {"highlight": ones}), ("res", {"text": "D = JQ̄ + K̄Q", "tone": "accent"}), ("sub", {"text": "check: J = K = 1 gives D = Q̄", "tone": "muted"}))

@@ -57,6 +57,18 @@ assert sq.ff_count(6) + sq.ff_count(10) == 7 and 8 - 6 == 2 and 16 - 10 == 6
 # Johnson: m flip-flops give 2m states (Lesson 6's register model); 12 states → 6 flip-flops
 assert len(sq.register_cycle(sq.johnson_step, (0,) * 6)) == 12 and len(sq.register_cycle(sq.ring_step, (1,) + (0,) * 11)) == 12
 assert round(log2(10), 2) == 3.32 and round(log2(258), 2) == 8.01
+assert round(log2(10)) != sq.ff_count(10) and round(log2(258)) != sq.ff_count(258)  # nearest-integer guess wrong for both
+has("is wrong for **both**: $\\log_2 10 \\approx 3.32$ rounds to 3 and $\\log_2 258 \\approx 8.01$ rounds to 8.")
+# Johnson decode: every state of a 6-bit Johnson counter is singled out by two adjacent bits, except all-0 and all-1,
+# which are singled out by the two end bits
+jst = sq.register_cycle(sq.johnson_step, (0,) * 6)
+for st in jst:
+    unique = lambda i, j: [x for x in jst if (x[i], x[j]) == (st[i], st[j])] == [st]  # noqa: E731
+    if st in ((0,) * 6, (1,) * 6):
+        assert unique(0, 5) and not any(unique(i, i + 1) for i in range(5))
+    else:
+        assert any(unique(i, i + 1) for i in range(5))
+has("on two adjacent bits (for the all-0 and all-1 states, the two end bits;", "binary needs up to a 4-input decode for each state")
 has("`seqlib.ff_count`\nreturns 4 for mod-10, 8 for mod-256 and 9 for mod-257 and mod-258",
     "Binary 4, one-hot 12, Johnson 6", "0, 8 and 9", "(6 of the 16 patterns are unused)", "254 of\nthe 512 patterns are unused",
     "of whose 512 patterns only 257 are used", "wastes 255\npatterns")
@@ -71,6 +83,8 @@ assert sq.pulses_between(z, a, 8) == 133 and (172 - 39) % 256 == 133 and 123 + 1
 st = run(8, edges=130, start=172, tpd=1)
 assert st.index(39) + 1 == 123
 assert sq.pulses_between(2 ** 5 - 1, 0, 5) == 1 and sq.pulses_between(9, 9, 5) == 0
+assert (134, 124) == (133 + 1, 123 + 1)
+has("**134** $= 133 + 1$ and **124** $= 123 + 1$")
 has("$(39 - 172) \\bmod 256 = 256 - 172 + 39 = 123$", "$172 + 123 = 295 = 256 + 39$", "$(172 - 39) \\bmod 256 = 133$")
 
 # ── Ripple up / down and the wiring rule ──────────────────────────────────
@@ -125,7 +139,7 @@ has("000 → 001 → 011 → **111**, settled 30 ns after the edge")
 assert [b(s, 3) for s in run(3, edges=4, start=2, down=True)] == ["001", "000", "111", "110"]
 # q03: positive-edge stages clocked by Q̄ count up
 assert [b(s, 3) for s in run(3, edges=3, edge="pos", down=True)] == ["001", "010", "011"]
-assert [b(s, 3) for s in run(3, edges=3, edge="pos")] == ["111", "110", "101"]  # option A is the Q-clocked circuit
+assert [b(s, 3) for s in run(3, edges=3, edge="pos")] == ["111", "110", "101"]  # option B is the Q-clocked circuit
 
 # ── Frequency division ─────────────────────────────────────────────────────
 for n in (3, 4, 5):
@@ -137,6 +151,13 @@ for n in (3, 4, 5):
         assert falls[0] - rises[0] == 100 * 2 ** i  # 50 % duty
 assert [1000 / 2 ** (i + 1) for i in range(4)] == [500, 250, 125, 62.5] and 16 * 1 == 16
 has("500, 250, 125 and 62.5 kHz", "$Q_3$: 1 MHz / $2^4$ = 1000 kHz / 16 = 62.5 kHz")
+# duty cycle of non-power-of-two outputs: mod-6 by clear (Q2 high in 4, 5), decade (Q3 high in 8, 9), binary stages 50 %
+cyc6, cyc10 = [0] + run(3, edges=5, clear=gate(ones(6)), tclr=5), [0] + run(4, edges=9, clear=gate(ones(10)), tclr=5)
+assert cyc6 == list(range(6)) and cyc10 == list(range(10))
+assert [q for q in cyc6 if (q >> 2) & 1] == [4, 5] and [q for q in cyc10 if (q >> 3) & 1] == [8, 9]
+assert round(100 * 2 / 6) == 33 and 100 * 2 / 10 == 20 and sum((q >> 1) & 1 for q in cyc6) == 2 and sum(q & 1 for q in cyc6) == 3
+has("$Q_2$ is 1 in 2 of the 6 states (4 and 5), a 33% duty cycle", "$Q_3$ is 1 only in 8 and 9, a 20% duty cycle",
+    "binary\nstages at 50% duty. A mod-$N$ output runs at $f/N$ but is square only for $N = 2^k$.")
 assert 3600 / 6 == 600 and 600 / 10 == 60 and modulus(3, clear=gate(ones(6)), tclr=5) * modulus(4, clear=gate(ones(10)), tclr=5) == 60
 has("60 kHz from 7 flip-flops", "$\\lceil \\log_2 60 \\rceil = 6$")
 # 2025: last-stage period 64 µs of a 4-bit counter → input period 4 µs → 250 kHz
@@ -215,6 +236,9 @@ assert c07[:6] == [1, 2, 3, 4, 0, 1]
 cyc07 = [0] + c07[:c07.index(0)]
 opts07 = {"A": [0, 3, 4], "B": [0, 3, 4, 5], "C": [0, 1, 2, 3, 4], "D": [0, 1, 2, 3, 4, 5]}
 assert [k for k, v in opts07.items() if v == cyc07] == bl.key_letters(bank["cse-2007-cs-36"]["answer"]) == ["C"]
+# the other bit order (A4 the LSB): A3·A1 would detect 1010 = 10, a 0 … 9 counter, which is no option
+assert 0b1010 == 10 and modulus(4, clear=gate([1, 3]), tclr=5) == 10 and list(range(10)) not in opts07.values()
+has("Reading $A_4$ as the\nLSB instead would make the gate detect 1010 = 10 (sequence 0 … 9), which is not among the options.")
 # the same counter with a synchronous clear (option D), and the synchronous mod-5 gate (detect 4 = A3 alone)
 sync = lambda g: (lambda q: 0 if g(q) else (q + 1) % 16)  # noqa: E731
 assert sq.cycle_from(sync(gate([2, 0])), 0) == ([], [0, 1, 2, 3, 4, 5]) and opts07["D"] == [0, 1, 2, 3, 4, 5]
@@ -258,7 +282,16 @@ q10 = ", ".join(b(s, 3) for s in run(3, edges=4, start=2, down=True))
 bl.assert_mcq(P["nx-dl-06-04-q10"], [k for k, v in bl.option_values(P["nx-dl-06-04-q10"]).items() if v == q10][0])
 assert len([k for k in P if k.startswith("nx-dl-06-04-")]) == 10
 keys = [P[f"nx-dl-06-04-q{k:02d}"]["answer"] for k in range(1, 11) if P[f"nx-dl-06-04-q{k:02d}"]["type"] == "MCQ"]
-assert keys.count("C") >= 2 and keys.count("B") >= 2 and max(keys.count(x) for x in "ABCD") <= 2
+assert sorted(keys) == list("ABCD")
+o3 = bl.option_values(P["nx-dl-06-04-q03"])
+assert o3["B"] == "111, 110, 101" and o3["D"] == ", ".join(x[::-1] for x in q3)  # Q-clocked (down) circuit; bits reversed
+assert {c["answer"] for c in P["nx-dl-06-04-q03"]["common_wrong"]} == {"B", "C", "D"}
+o10 = bl.option_values(P["nx-dl-06-04-q10"])
+assert o10["A"] == ", ".join(b(s, 3) for s in run(3, edges=4, start=2)) and {c["answer"] for c in P["nx-dl-06-04-q10"]["common_wrong"]} == {"A", "C"}
+for q in (P[f"nx-dl-06-04-q{k:02d}"] for k in range(1, 11)):
+    for blk in q["blocks"]:
+        assert f"#{blk} " in L or f"#{blk}}}" in L, (q["id"], blk)
+assert "erratum" not in L.split("\n---\n", 1)[1] and "c343" not in L
 print("l6_04_ripple: flip-flop counts, pulse counting, up/down wiring rule (all four combinations, per-stage mixed), "
       "down counts and wrap, frequency division with delays, ripple settling n·t_pd and transient states, f_max, "
       "mod-N by asynchronous and synchronous clear for every N, 6 PYQ keys and 10 practice answers OK")

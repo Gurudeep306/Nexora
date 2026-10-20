@@ -1009,7 +1009,11 @@
      244
     ],
     [
-     462,
+     484,
+     244
+    ],
+    [
+     484,
      262
     ],
     [
@@ -1026,7 +1030,11 @@
       228
      ],
      [
-      242,
+      254,
+      228
+     ],
+     [
+      254,
       244
      ],
      [
@@ -1089,7 +1097,11 @@
      244
     ],
     [
-     594,
+     616,
+     244
+    ],
+    [
+     616,
      262
     ],
     [
@@ -1106,7 +1118,11 @@
       228
      ],
      [
-      314,
+      326,
+      228
+     ],
+     [
+      326,
       244
      ],
      [
@@ -2672,7 +2688,7 @@
    ]
   },
   {
-   "caption": "Q moved only at the falling edges, each time to the value D had as CLK fell: 1, 0, 1, 1.",
+   "caption": "Q moved only at the falling edges, each time to the value D had just before CLK fell: 1, 0, 1, 1.",
    "patches": [
     {
      "id": "st",

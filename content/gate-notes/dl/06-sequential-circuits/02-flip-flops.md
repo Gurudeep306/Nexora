@@ -15,7 +15,7 @@ sources:
   - "Coverage checklist only (internal digests, never copied): set A pp. 79–86 and 99, set B pp. 135–138, set C pp. 333–342, set D p. 400, set E pp. 406–407."
   - "Facts checked against: M. Morris Mano and M. D. Ciletti, Digital Design (master–slave and edge-triggered flip-flops, characteristic and excitation tables, conversions); J. F. Wakerly, Digital Design: Principles and Practices (setup, hold, clock-to-Q, metastability)."
   - "PYQs: src/gate/questions.json (cse-2000-a-2-12, cse-2001-a-33, cse-2005-cs-62, cse-2006-cs-8, it-2008-it-37); every key is re-derived by cycle-by-cycle or tick-by-tick simulation."
-  - "cse-2000-a-2-12: the 2000 paper is not available to check the wording 'After the clock cycles'; the two-cycle reading behind the stored key is stated and both parities are shown."
+  - "cse-2000-a-2-12: the bank text 'After the clock cycles' dropped a word; GATE Overflow (gateoverflow.in/659) reads 'After three clock cycles' (no 2000 scan available). Key fixed D → A in src/gate/fixes/cse-2000.json; the two-cycle state (0, 1) is kept as a trap."
 updated: "2026-10-20"
 ---
 
@@ -143,15 +143,16 @@ master's output drives the slave, whose output is $Q$.
 - While $CLK = 0$: the master holds; the slave is transparent but its input (the master) is constant.
 
 With D latches this gives a D flip-flop whose active edge is the **falling** edge. Swapping which latch gets
-the inverted clock gives a rising-edge flip-flop. In a **master–slave JK** (or SR) flip-flop the master is a
-gated JK (or SR) latch whose J and K inputs are additionally gated by the slave's outputs, so that it can only
-move toward the complement of the present $Q$.
+the inverted clock gives a rising-edge flip-flop. In a **master–slave JK** flip-flop the master is a gated JK
+latch whose J and K inputs are additionally gated by the slave's outputs ($J$ with $\overline{Q}$, $K$ with $Q$), so
+that it can only move toward the complement of the present $Q$. A master–slave **SR** or **D** flip-flop has no such
+gating: its master simply follows $S$, $R$ or $D$ while the clock is high.
 :::
 
 :::theorem{#ms-theorem name="A master–slave D flip-flop samples at the falling edge" depth="standard"}
 In a master–slave D flip-flop built from ideal D latches (master enabled by $CLK$, slave by $\overline{CLK}$),
 the output $Q$ changes only at falling edges of $CLK$, and after each falling edge $Q$ equals the value $D$ had
-at the instant of that edge.
+just before that edge (D must be stable around the edge; this lesson's setup and hold times make "around" precise).
 :::
 
 :::proof{#proof-ms of="master–slave sampling" depth="standard"}
@@ -162,14 +163,20 @@ Let $M$ be the master's output. Split time into the three situations of the defi
 
 1. While $CLK = 1$ the slave is closed, so $Q$ holds. Whatever $D$ does, $Q$ does not change. (The master
    follows $D$, so at every instant $M = D$.)
-2. At a falling edge at time $t_e$ the master closes. A D latch that closes keeps the value its input had at
-   the closing instant (the D latch equation $Q^+ = CD + \overline{C}Q$ of Lesson 1 with $C$ dropping to 0), so
-   from $t_e$ on, $M = D(t_e)$. The slave opens and copies $M$, so $Q = D(t_e)$.
-3. While $CLK = 0$ the master is closed, so $M$ stays $D(t_e)$; the slave is transparent, but its input is
-   constant, so $Q$ stays $D(t_e)$.
+2. At a falling edge at time $t_e$ the master closes. Write $D(t_e^-)$ for the value $D$ had just before the edge,
+   and assume $D$ is not changing around the edge. A D latch that closes keeps the value its input had as it
+   closed (the D latch equation $Q^+ = CD + \overline{C}Q$ of Lesson 1 with $C$ dropping to 0), so from $t_e$ on,
+   $M = D(t_e^-)$. The slave opens and copies $M$, so $Q = D(t_e^-)$.
+3. While $CLK = 0$ the master is closed, so $M$ stays $D(t_e^-)$; the slave is transparent, but its input is
+   constant, so $Q$ stays $D(t_e^-)$.
 
-At the next rising edge the slave closes while $Q = D(t_e)$, and case 1 starts again. So $Q$ can change only at
-step 2, a falling edge, and it then takes the value $D$ had at that edge. ∎
+At the next rising edge the slave closes while $Q = D(t_e^-)$, and case 1 starts again. So $Q$ can change only at
+step 2, a falling edge, and it then takes the value $D$ had just before that edge. ∎
+
+**What the assumption hides.** If $D$ changes at the very instant the clock falls, "the value $D$ had as the master
+closed" is not defined: the master latch closes on a changing input, which is the release race of Lesson 1 in a new
+place. Real flip-flops therefore require $D$ to be stable for a setup time before the edge and a hold time after
+it; we make that precise in the timing section.
 
 **Sanity check.** The animation below and `seqlib.scope` in mode `ms` show it on a waveform: the master trace
 copies $D$ throughout each high phase, and $Q$ steps only at the falling edges, to the master's last value.
@@ -199,7 +206,7 @@ or a master–slave D flip-flop (a D master has no gating by $Q$ and simply foll
 
 :::note{#recap-ms title="Recap" depth="quick"}
 Two latches on opposite clock phases are never transparent together, so a master–slave D flip-flop passes $D$ to
-$Q$ only at the falling edge, with the value $D$ had at that edge. A pulse-triggered master–slave JK can catch a
+$Q$ only at the falling edge, with the value $D$ had just before that edge. A pulse-triggered master–slave JK can catch a
 brief 1 on J or K during the high phase (1s-catching).
 :::
 
@@ -302,6 +309,104 @@ SR: $Q^+ = S + \overline{R}Q$ with $SR = 0$. JK: $Q^+ = J\overline{Q} + \overlin
 $Q^+ = T \oplus Q$. Derive each by splitting its table on $Q$.
 :::
 
+### Worked examples: characteristic equations and tables
+
+::::example{#ex-char-easy level="easy" title="One edge, four flip-flops" depth="quick"}
+Four flip-flops all have $Q = 1$ before an active edge. Their inputs just before the edge are: SR with
+$S = 0, R = 1$; JK with $J = 1, K = 0$; D with $D = 1$; T with $T = 1$. Give each one's $Q^+$.
+
+:::step{why="SR with only R active is a reset, whatever the present state."}
+SR: $Q^+ = S + \overline{R}Q = 0 + 0 \cdot 1 = 0$.
+:::
+
+:::step{why="JK with only J active is a set; the equation confirms it."}
+JK: $Q^+ = J\overline{Q} + \overline{K}Q = 1 \cdot 0 + 1 \cdot 1 = 1$.
+:::
+
+:::step{why="D copies the input and T = 1 flips the present state."}
+D: $Q^+ = D = 1$. T: $Q^+ = T \oplus Q = 1 \oplus 1 = 0$.
+:::
+
+:::answer
+SR → 0, JK → 1, D → 1, T → 0. Notice that the T flip-flop ends at 0 although its input is 1: its input says
+**flip**, not **be 1**.
+:::
+::::
+
+::::example{#ex-char-jkseq level="medium" title="A JK flip-flop through six edges" depth="standard"}
+A positive-edge JK flip-flop starts at $Q = 0$. Just before its six rising edges the inputs $JK$ are 10, 00, 11,
+11, 01, 11. Find $Q$ after each edge.
+
+:::step{why="Each edge applies one row of the characteristic table to the present state."}
+Edge 1: $JK = 10$ sets, $Q = 1$. Edge 2: $JK = 00$ holds, $Q = 1$.
+:::
+
+:::step{why="JK = 11 toggles, so the answer depends on the present state, which we just computed."}
+Edge 3: $JK = 11$ toggles 1 to 0. Edge 4: $JK = 11$ toggles 0 to 1.
+:::
+
+:::step{why="The last two rows are a reset and one more toggle."}
+Edge 5: $JK = 01$ resets, $Q = 0$. Edge 6: $JK = 11$ toggles, $Q = 1$.
+:::
+
+:::answer
+$Q$ = 1, 1, 0, 1, 0, 1 after edges 1 to 6. Toggle rows can only be read in order: you need the present state, so
+always keep a running column of $Q$.
+:::
+::::
+
+::::example{#ex-char-2000 level="gate" title="A toggling JK feeding a D flip-flop (GATE 2000 pattern)" depth="standard"}
+Two master–slave flip-flops share a clock. The first is a JK with $J = K = 1$ and output $P$; the second is a D
+flip-flop with $D = P$ and output $Q$. Initially $(P, Q) = (0, 1)$. Find $(P, Q)$ after three clock cycles.
+
+:::step{why="Both flip-flops are clocked by the same edge, so both compute their next state from the values before the edge."}
+Edge 1: the JK has $J = K = 1$, so $P^+ = \overline{P} = 1$. The D flip-flop sees $D = P = 0$ (the **old** $P$), so
+$Q^+ = 0$. After one cycle: $(P, Q) = (1, 0)$.
+:::
+
+:::step{why="The same rule applied again, now from the state (1, 0)."}
+Edge 2: $P^+ = \overline{1} = 0$, and $Q^+ = $ old $P = 1$. After two cycles: $(P, Q) = (0, 1)$, the initial state.
+:::
+
+:::step{why="The state has come back to where it started, so the sequence repeats with period 2 and only the parity of the count matters."}
+Edge 3 repeats edge 1: $(P, Q) = (1, 0)$. In general $(1, 0)$ after an odd number of cycles and $(0, 1)$ after an even
+number.
+:::
+
+:::answer
+GATE 2000 asks for the state after three clock cycles. Three is odd, so the answer is $(1, 0)$, option A. Whatever the
+count, the trap is the D flip-flop: it takes the **old** $P$, not the newly toggled one.
+:::
+::::
+
+:::trap{#trap-2000-parity title="Two cycles give (0, 1): count the edges, then use the period" depth="standard"}
+The pair $(P, Q)$ has **period 2**: $(0, 1) \to (1, 0) \to (0, 1) \to \dots$ So the answer flips with the parity of the
+number of cycles, and every wrong count lands on another option. Two cycles (or any even number) give $(0, 1)$, the
+initial state, which is option D; a copy of this question that lost the word "three" ("after the clock cycles")
+invites exactly that two-cycle reading. One cycle gives $(1, 0)$ like three. And letting the D flip-flop see the **new** $P$ at the
+same edge gives $(1, 1)$, option B. For any "after $n$ clock cycles" question, find the period of the state sequence
+first and reduce $n$ modulo it: here $3 \bmod 2 = 1$, so the answer is the state after one cycle.
+:::
+
+::::example{#ex-char-tqbar level="gate" title="Edge case: a T flip-flop with T = Q̄" depth="standard"}
+A T flip-flop has its input wired to its own complement output: $T = \overline{Q}$. It starts at $Q = 0$. What does it do
+over the next few clock edges?
+
+:::step{why="Substituting the wiring into the characteristic equation gives the next state as a function of Q alone."}
+$Q^+ = T \oplus Q = \overline{Q} \oplus Q = 1$.
+:::
+
+:::step{why="A next state that does not depend on Q means the flip-flop goes there and stays."}
+Edge 1: $T = \overline{0} = 1$, toggle to 1. Edge 2: $T = \overline{1} = 0$, hold at 1. Every later edge: hold at 1.
+:::
+
+:::answer
+$Q$ = 1, 1, 1, … : it sets once and stays set. Students expect "it toggles every clock", which is what a **D** flip-flop
+with $D = \overline{Q}$ does ($Q^+ = \overline{Q}$), and what a T flip-flop with $T = 1$ does. The T input already contains the
+"flip" instruction; feeding it $\overline{Q}$ as well cancels the second flip. Always substitute into $Q^+ = T \oplus Q$.
+:::
+::::
+
 ## Race-around: why a JK must be edge-triggered
 
 :::intuition{#race-intuition title="A light switch that flips itself" depth="standard"}
@@ -367,7 +472,7 @@ at the falling edge.
 Some notes state the race-around condition backwards, as if it occurred when the propagation delay is longer
 than the pulse. The direction follows from the theorem: race-around happens when the clock pulse is **longer**
 than the propagation delay, $t_w > t_{pd}$, because only then can a second toggle start before the clock falls.
-The classic "cure by narrow pulses" asks for $t_w < t_{pd} < T$ (pulse shorter than the delay, period longer),
+The classic "cure by narrow pulses" asks for $t_w \le t_{pd} < T$ (pulse no longer than the delay, period longer),
 which is hard to guarantee across temperature and supply voltage. The two reliable cures are structural:
 
 - **master–slave**: the slave holds $Q$ for the whole high phase, so the master sees a constant $Q$ and can make at
@@ -380,73 +485,24 @@ A level JK latch with $J = K = 1$ toggles $\lceil t_w / t_{pd} \rceil$ times per
 $t_w > t_{pd}$. Master–slave or edge-triggered JK flip-flops toggle once per clock.
 :::
 
-### Worked examples: characteristic equations and tables
+### Worked examples: race-around
 
-::::example{#ex-char-easy level="easy" title="One edge, four flip-flops" depth="quick"}
-Four flip-flops all have $Q = 1$ before an active edge. Their inputs just before the edge are: SR with
-$S = 0, R = 1$; JK with $J = 1, K = 0$; D with $D = 1$; T with $T = 1$. Give each one's $Q^+$.
+::::example{#ex-race-easy level="easy" title="A pulse shorter than the delay" depth="quick"}
+A level-triggered JK latch with $J = K = 1$ has $t_{pd} = 10$ ns and starts at $Q = 0$. The clock is high for 6 ns. How
+many times does $Q$ toggle?
 
-:::step{why="SR with only R active is a reset, whatever the present state."}
-SR: $Q^+ = S + \overline{R}Q = 0 + 0 \cdot 1 = 0$.
+:::step{why="A toggle starts at the start of the pulse; the next could start only t_pd later."}
+The first toggle starts at 0 ns. The next could start at 10 ns, but the clock fell at 6 ns, so the latch is closed by
+then.
 :::
 
-:::step{why="JK with only J active is a set; the equation confirms it."}
-JK: $Q^+ = J\overline{Q} + \overline{K}Q = 1 \cdot 0 + 1 \cdot 1 = 1$.
-:::
-
-:::step{why="D copies the input and T = 1 flips the present state."}
-D: $Q^+ = D = 1$. T: $Q^+ = T \oplus Q = 1 \oplus 1 = 0$.
+:::step{why="The theorem counts start times inside the pulse: the ceiling of t_w over t_pd."}
+$\lceil 6 / 10 \rceil = \lceil 0.6 \rceil = 1$ toggle, completing at 10 ns, after the clock has fallen.
 :::
 
 :::answer
-SR → 0, JK → 1, D → 1, T → 0. Notice that the T flip-flop ends at 0 although its input is 1: its input says
-**flip**, not **be 1**.
-:::
-::::
-
-::::example{#ex-char-jkseq level="medium" title="A JK flip-flop through six edges" depth="standard"}
-A positive-edge JK flip-flop starts at $Q = 0$. Just before its six rising edges the inputs $JK$ are 10, 00, 11,
-11, 01, 11. Find $Q$ after each edge.
-
-:::step{why="Each edge applies one row of the characteristic table to the present state."}
-Edge 1: $JK = 10$ sets, $Q = 1$. Edge 2: $JK = 00$ holds, $Q = 1$.
-:::
-
-:::step{why="JK = 11 toggles, so the answer depends on the present state, which we just computed."}
-Edge 3: $JK = 11$ toggles 1 to 0. Edge 4: $JK = 11$ toggles 0 to 1.
-:::
-
-:::step{why="The last two rows are a reset and one more toggle."}
-Edge 5: $JK = 01$ resets, $Q = 0$. Edge 6: $JK = 11$ toggles, $Q = 1$.
-:::
-
-:::answer
-$Q$ = 1, 1, 0, 1, 0, 1 after edges 1 to 6. Toggle rows can only be read in order: you need the present state, so
-always keep a running column of $Q$.
-:::
-::::
-
-::::example{#ex-char-2000 level="gate" title="A toggling JK feeding a D flip-flop (GATE 2000 pattern)" depth="standard"}
-Two master–slave flip-flops share a clock. The first is a JK with $J = K = 1$ and output $P$; the second is a D
-flip-flop with $D = P$ and output $Q$. Initially $(P, Q) = (0, 1)$. Find $(P, Q)$ after one and after two clock cycles.
-
-:::step{why="Both flip-flops are clocked by the same edge, so both compute their next state from the values before the edge."}
-Edge 1: the JK has $J = K = 1$, so $P^+ = \overline{P} = 1$. The D flip-flop sees $D = P = 0$ (the **old** $P$), so
-$Q^+ = 0$. After one cycle: $(P, Q) = (1, 0)$.
-:::
-
-:::step{why="The same rule applied again, now from the state (1, 0)."}
-Edge 2: $P^+ = \overline{1} = 0$, and $Q^+ = $ old $P = 1$. After two cycles: $(P, Q) = (0, 1)$.
-:::
-
-:::step{why="The pattern repeats with period 2, so the answer depends only on whether the number of cycles is odd or even."}
-After an odd number of cycles $(P, Q) = (1, 0)$; after an even number, $(0, 1)$, the initial state.
-:::
-
-:::answer
-After one cycle $(1, 0)$; after two cycles $(0, 1)$. GATE 2000 asks for the state "after the clock cycles"; the plural is
-read as two cycles, giving $(0, 1)$, option D, which is the stored key. Read as "after the clock cycle" (one cycle) it would
-be $(1, 0)$. The trap is the D flip-flop: it takes the **old** $P$, not the newly toggled one.
+1 toggle: $Q$ becomes 1 at 10 ns and stays there. A pulse shorter than the delay makes the latch behave like a correct T
+flip-flop, because the new $Q$ arrives only after the latch has closed.
 :::
 ::::
 
@@ -468,22 +524,54 @@ pulse it would toggle 3 times and end at 1. The output depends on the pulse widt
 :::
 ::::
 
-::::example{#ex-char-tqbar level="gate" title="Edge case: a T flip-flop with T = Q̄" depth="standard"}
-A T flip-flop has its input wired to its own complement output: $T = \overline{Q}$. It starts at $Q = 0$. What does it do
-over the next few clock edges?
+::::example{#ex-race-boundary level="gate" title="The boundary t_w = t_pd" depth="standard"}
+A JK latch with $J = K = 1$ has $t_{pd} = 10$ ns. A designer wants exactly one toggle per clock pulse. Does a 10 ns pulse
+work? An 11 ns pulse? And what must the clock period satisfy?
 
-:::step{why="Substituting the wiring into the characteristic equation gives the next state as a function of Q alone."}
-$Q^+ = T \oplus Q = \overline{Q} \oplus Q = 1$.
+:::step{why="At t_w = t_pd the second start time falls exactly when the clock falls, and a start at or after t_w finds the latch closed."}
+$t_w = 10$ ns: start times $k \cdot 10$ ns with $k \cdot 10 < 10$, only $k = 0$. $\lceil 10 / 10 \rceil = 1$ toggle.
 :::
 
-:::step{why="A next state that does not depend on Q means the flip-flop goes there and stays."}
-Edge 1: $T = \overline{0} = 1$, toggle to 1. Edge 2: $T = \overline{1} = 0$, hold at 1. Every later edge: hold at 1.
+:::step{why="Any pulse even slightly longer than t_pd lets a second toggle start while the clock is still high."}
+$t_w = 11$ ns: starts at 0 and 10 ns, both before 11 ns. $\lceil 11 / 10 \rceil = 2$ toggles, and the latch ends where it
+began.
+:::
+
+:::step{why="The one toggle must also finish before the next pulse opens the latch again, or the next pulse sees a Q still changing."}
+The toggle started at the rising edge completes $t_{pd}$ later, so the next rising edge must come after that: $T > t_{pd}$.
 :::
 
 :::answer
-$Q$ = 1, 1, 1, … : it sets once and stays set. Students expect "it toggles every clock", which is what a **D** flip-flop
-with $D = \overline{Q}$ does ($Q^+ = \overline{Q}$), and what a T flip-flop with $T = 1$ does. The T input already contains the
-"flip" instruction; feeding it $\overline{Q}$ as well cancels the second flip. Always substitute into $Q^+ = T \oplus Q$.
+10 ns works (1 toggle), 11 ns does not (2 toggles): one toggle per pulse needs $t_w \le t_{pd} < T$. The margin is a
+single nanosecond, and $t_{pd}$ drifts with temperature and supply voltage, which is why nobody relies on pulse width and
+everyone uses master–slave or edge-triggered flip-flops.
+:::
+::::
+
+::::example{#ex-race-dlatch level="gate" title="Edge case: a D latch with D = Q̄ that looks like a working toggle" depth="standard"}
+A D latch has $D = \overline{Q}$ and $t_{pd} = 6$ ns, and starts at $Q = 0$. Its enable is a clock whose high phase lasts
+13 ns. Over two clock pulses, $Q$ seems to alternate 1, 0 like a divide-by-two. Is the circuit a correct toggle? What
+happens if the high phase is 12 ns instead?
+
+:::step{why="D = Q̄ makes the D latch a T latch with T = 1, so the race-around count applies."}
+Per pulse: $\lceil 13 / 6 \rceil = 3$ changes (starts at 0, 6 and 12 ns). Pulse 1: $Q$ goes 1, 0, 1 and ends at 1. Pulse 2:
+0, 1, 0 and ends at 0.
+:::
+
+:::step{why="An odd number of changes per pulse ends inverted, which mimics a toggle; the extra changes are still there."}
+Between pulses $Q$ does alternate, but inside each pulse it makes two extra transitions, glitches that any circuit
+reading $Q$ during the pulse would see.
+:::
+
+:::step{why="Changing the pulse width by 1 ns changes the parity of the count."}
+High phase 12 ns: starts at 0 and 6 ns only, $\lceil 12 / 6 \rceil = 2$ changes per pulse, and $Q$ ends every pulse where it
+began: 0 for ever (sampled between pulses).
+:::
+
+:::answer
+No: with 13 ns it toggles 3 times per pulse and only **looks** like a toggle between pulses; with 12 ns it toggles twice and
+the "counter" never counts. The behaviour hangs on the parity of $\lceil t_w / t_{pd} \rceil$. An edge-triggered D flip-flop
+with $D = \overline{Q}$ changes exactly once per clock whatever the pulse width.
 :::
 ::::
 
@@ -680,6 +768,28 @@ $J = D$, $K = \overline{D}$: one inverter. The JK then only ever sees "set" (10)
 :::
 ::::
 
+::::example{#ex-exc-jkfromt level="medium" title="A JK flip-flop from a T flip-flop" depth="standard"}
+Design the logic that makes a T flip-flop behave as a JK flip-flop.
+
+:::step{why="The target is JK, so its characteristic table gives Q+ for each of the eight rows (J, K, Q)."}
+$Q^+ = J\overline{Q} + \overline{K}Q$: rows with $Q = 0$ go to $J$; rows with $Q = 1$ go to $\overline{K}$.
+:::
+
+:::step{why="The T excitation is T = Q ⊕ Q+, which is 1 exactly when the state must change."}
+With $Q = 0$: change iff $J = 1$. With $Q = 1$: change iff $\overline{K} = 0$, i.e. $K = 1$.
+:::
+
+:::step{why="Writing the two cases as one sum of products gives the translator."}
+$T = J\overline{Q} + KQ$.
+:::
+
+:::answer
+$T = J\overline{Q} + KQ$. Check: $J = K = 1$ gives $T = 1$ (toggle), $J = K = 0$ gives $T = 0$ (hold), $J = 1, K = 0$ gives
+$T = \overline{Q}$ (from 0 it toggles to 1, from 1 it stays at 1: set). The distractor $J\overline{Q} + \overline{K}Q$ is the JK
+characteristic equation, which belongs in front of a **D**, not a T.
+:::
+::::
+
 ::::example{#ex-exc-it2008 level="gate" title="J and K from a state diagram (GATE IT 2008 pattern)" depth="standard"}
 A one-flip-flop machine has states 0 and 1 and inputs $x$, $y$. In each state, $xy = 00$ or $11$ keeps the state, and
 $xy = 01$ or $10$ moves to the other state. It is realised with a JK flip-flop. Find $J$ and $K$.
@@ -700,28 +810,6 @@ $J = K = x \oplus y$: with $x \oplus y = 1$ the JK toggles, with $x \oplus y = 0
 :::answer
 $J = x \oplus y$ and $K = x \oplus y$ (IT 2008, option D). Trying all four options against the diagram for both states confirms
 only D works: options with $\overline{x \oplus y}$ toggle on 00 and 11 instead.
-:::
-::::
-
-::::example{#ex-exc-jkfromt level="medium" title="A JK flip-flop from a T flip-flop" depth="standard"}
-Design the logic that makes a T flip-flop behave as a JK flip-flop.
-
-:::step{why="The target is JK, so its characteristic table gives Q+ for each of the eight rows (J, K, Q)."}
-$Q^+ = J\overline{Q} + \overline{K}Q$: rows with $Q = 0$ go to $J$; rows with $Q = 1$ go to $\overline{K}$.
-:::
-
-:::step{why="The T excitation is T = Q ⊕ Q+, which is 1 exactly when the state must change."}
-With $Q = 0$: change iff $J = 1$. With $Q = 1$: change iff $\overline{K} = 0$, i.e. $K = 1$.
-:::
-
-:::step{why="Writing the two cases as one sum of products gives the translator."}
-$T = J\overline{Q} + KQ$.
-:::
-
-:::answer
-$T = J\overline{Q} + KQ$. Check: $J = K = 1$ gives $T = 1$ (toggle), $J = K = 0$ gives $T = 0$ (hold), $J = 1, K = 0$ gives
-$T = \overline{Q}$ (from 0 it toggles to 1, from 1 it stays at 1: set). The distractor $J\overline{Q} + \overline{K}Q$ is the JK
-characteristic equation, which belongs in front of a **D**, not a T.
 :::
 ::::
 
@@ -959,13 +1047,17 @@ Edge 2: $X = 1$, $\overline{Q_0} = 1$, so $D_1 = 1$: Y rises. At the same edge $
 :::
 
 :::step{why="From now on Q0 = 1 makes D1 = 0, whatever X does."}
-Edge 3: $D_1 = 1 \cdot 0 = 0$: Y falls. Edges 4, 5, 6: $\overline{Q_0} = 0$ keeps Y at 0 (at edge 6 X has dropped, which only
-affects $Q_0$).
+Edge 3: $D_1 = 1 \cdot 0 = 0$: Y falls. Edges 4 and 5: $\overline{Q_0} = 0$ keeps $D_1 = 0$ and Y at 0.
+:::
+
+:::step{why="X falls just before edge 6, closer to the edge than the 20 ns setup time, so the rule 'read just left of the edge' no longer gives a guaranteed value."}
+At edge 6, X falls inside the 20 ns setup window, so flip-flop 0 may capture either value (a setup violation). Y does
+not care: $D_1 = X\,\overline{Q_0}$ is 0 before edge 6 ($\overline{Q_0} = 0$) and after it ($X = 0$), so Y stays 0.
 :::
 
 :::answer
 Y is a single pulse, high from edge 2 to edge 3 (GATE 2001, option A). The tick-by-tick simulation with a 10 ns tick, a 40 ns clock
-and $t_{su}$ = 2 ticks gives the same Y and flags no violation at edges 1 to 5. The circuit is a **rising-edge detector**: Y marks
+and $t_{su}$ = 2 ticks gives the same Y and flags a setup violation on $D_0$ at edge 6 only, which does not reach Y. The circuit is a **rising-edge detector**: Y marks
 the first clock period after X has become 1. Options that start Y at edge 1 read X as 1 at the edge where it changes.
 :::
 ::::
@@ -1161,7 +1253,10 @@ must be stretched to cover an edge).
 ## Try it: the Flip-flop Scope
 
 The scope tab runs the same tick-by-tick model as this lesson's checks: pick a flip-flop, a trigger and the setup/hold windows,
-draw the inputs, and watch the output and any violations. Try a JK latch with $J = K = 1$ and a wide pulse, then master–slave.
+draw the inputs, and watch the output and any violations. Try a JK latch with $J = K = 1$ (the two race-around presets)
+and compare periods 6 and 8: 3 toggles versus 4 per pulse with $t_{pd} = 1$ tick, so the latch ends each pulse inverted
+in one case and where it started in the other, and the result depends on the pulse width. Then switch the trigger to
+master–slave and watch it toggle once per clock.
 
 :::lab{#lab-scope lab="flipflop-scope" tab="scope" depth="standard"}
 :::

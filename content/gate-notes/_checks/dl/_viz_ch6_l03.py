@@ -133,7 +133,7 @@ def circuit_to_state_table(L):
     others = [B(x) for x in states if x not in cyc]
     assert others == ["001", "101", "110", "111"]
     assert all(set(sq.cycle_from(m.step, x)[1]) == set(cyc) for x in states)
-    s.step(f"The other {len(others)} states ({', '.join(others)}) only lead into the cycle: never produced from 000, but not lock-outs.",
+    s.step(f"The other {len(others)} states ({', '.join(others)}) are never produced from 000, but each one reaches the cycle (the counter is self-starting).",
            ("st", {"text": "tails lead into the cycle", "tone": "ink"}))
     h = gy + 2 * gdy + r + s.v(20, 16)
     return s.done("The 2011 circuit: state equations, state table and state diagram", (W, h), (NW, h),
@@ -158,16 +158,25 @@ def clock_trace(L):
     assert [B(x) for x in tr] == ["000", "100", "010", "101", "011"]
     assert B(m.step(tr[-1])) == "000"
     s.head("Clocking a JK, a D and a T together (GATE 1994 circuit)", "Tracing GATE 1994's chain", W, NW)
-    bw, bh = s.v(130, 104), s.v(72, 66)
-    xs = s.v([40, 275, 510], [8, 128, 248])
-    by = s.v(66, 62)
+    bw, bh = s.v(130, 96), s.v(72, 66)
+    xs = s.v([40, 275, 510], [14, 132, 250])
+    by = s.v(84, 80)
     specs = [("ff2", ["J", "K"], "JK → Q2", "J = Q̄0, K = 1"), ("ff1", ["D"], "D → Q1", "D = Q2"), ("ff0", ["T"], "T → Q0", "T = Q1")]
+    pins = []
     for (pid, left, ttl, eq), x in zip(specs, xs):
-        ff_block(s, pid, x, by, bw, bh, left, ["Q"], edge="pos")
+        pins.append(ff_block(s, pid, x, by, bw, bh, left, ["Q", "Q̄"] if pid == "ff0" else ["Q"], edge="pos"))
         s.text(pid + "t", x + bw / 2, by - 12, ttl, s.v(14, 12), anchor="middle", weight="bold")
         s.text(pid + "e", x + bw / 2, by + bh + s.v(18, 16), eq, s.v(14, 12), anchor="middle", tone="muted")
         s.text(pid + "i", x + bw / 2, by + bh + s.v(38, 34), "", s.v(14, 12), anchor="middle", weight="bold")
         s.text(pid + "q", x + bw / 2, by + bh + s.v(58, 52), "", s.v(14, 12), anchor="middle", mono=True, weight="bold")
+    # the wiring that makes the chain a counter: Q2 → D, Q1 → T, and the feedback Q̄0 → J routed above the blocks
+    for k, (src, dst) in enumerate([(pins[0]["Q"], pins[1]["D"]), (pins[1]["Q"], pins[2]["T"])]):
+        s.wire(f"w{k}", src, dst, mid=round((src[0] + dst[0]) / 2, 2), tone="muted")
+    qb, jp = pins[2]["Q̄"], pins[0]["J"]
+    xr, xl, ybus = qb[0] + s.v(16, 6), jp[0] - s.v(16, 8), by - s.v(30, 28)
+    s.line("wfb", [list(qb), [xr, qb[1]], [xr, ybus], [xl, ybus], [xl, jp[1]], list(jp)], tone="muted")
+    s.text("wfbt", s.v(W / 2, NW / 2), ybus - 11, "feedback Q̄0 → J", s.v(13, 12), anchor="middle", tone="muted")
+    wires = ["w0", "w1", "wfb"]
     cw, ch = s.v(90, 68), s.v(26, 22)
     tx = s.v((W - 5 * 90) / 2, (NW - 5 * 68) / 2)
     ty = by + bh + s.v(80, 72)
@@ -191,13 +200,14 @@ def clock_trace(L):
         assert len(cap) <= 140, cap
         s.step(cap, ("ff2i", {"text": f"J={j} K={kk}", "tone": "accent"}), ("ff1i", {"text": f"D={d}", "tone": "accent"}),
                ("ff0i", {"text": f"T={t}", "tone": "accent"}), ("ff2", {"tone": "accent"}), ("ff1", {"tone": "accent"}), ("ff0", {"tone": "accent"}),
-               ("tt", {"highlight": []}))
+               ("tt", {"highlight": []}), *[(w, {"tone": "accent"}) for w in wires], ("wfbt", {"tone": "accent"}))
         filled[k + 2] = [str(k + 1), f"{j} {kk}", str(d), str(t), B(new)]
         cap = (f"Edge {k + 1}: the JK {act2} (Q2 = {new[0]}), the D loads {d}, the T {'toggles' if t else 'holds'} "
                f"(Q0 = {new[2]}): {B(old)} → {B(new)}.")
         assert len(cap) <= 140, cap
         s.step(cap, *show_q(new), ("ff2", {"tone": "ink"}), ("ff1", {"tone": "ink"}), ("ff0", {"tone": "ink"}),
                ("ff2i", {"tone": "muted"}), ("ff1i", {"tone": "muted"}), ("ff0i", {"tone": "muted"}),
+               *[(w, {"tone": "muted"}) for w in wires], ("wfbt", {"tone": "muted"}),
                ("tt", {"rows": [list(x) for x in filled], "highlight": [[k + 2, c] for c in range(5)]}))
     s.step(f"After four clocks Q2Q1Q0 = {B(tr[4])} (GATE 1994). A fifth clock gives {B(m.step(tr[4]))}: a 5-state cycle.",
            ("tt", {"highlight": [[5, c] for c in range(5)]}))

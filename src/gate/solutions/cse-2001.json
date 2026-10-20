@@ -1653,11 +1653,15 @@
           }
         },
         {
-          "title": "Edge 3 onwards: Y falls and stays low",
-          "body": "$\\overline{Q_0} = 0$ makes $D_1 = 0$: Y falls at edge 3 and stays 0 at edges 4, 5 and 6 (at edge 6 X has dropped, which affects only $Q_0$; $D_1$ is 0 either way).",
+          "title": "Edges 3 to 5: Y falls and stays low",
+          "body": "$\\overline{Q_0} = 0$ makes $D_1 = 0$: Y falls at edge 3 and stays 0 at edges 4 and 5.",
           "scene": {
             "reveal": 3
           }
+        },
+        {
+          "title": "Edge 6: a setup violation that does not matter",
+          "body": "X falls just before edge 6, inside the 20 ns setup window, so flip-flop 0 may capture either value (a setup violation). Y does not care: $D_1 = X\\,\\overline{Q_0}$ is 0 before edge 6 ($\\overline{Q_0} = 0$) and after it ($X = 0$), so Y stays 0."
         },
         {
           "title": "Match the plots",
@@ -1685,7 +1689,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "High from edge 1 to 2: the same mistake at edge 1, and it also drops Y at edge 2 where $D_1 = 1$."
+          "reason": "C rises at edge 1 (the same misreading as B) and falls between two edges, which no flip-flop output can do."
         },
         {
           "option": "D",
@@ -1698,7 +1702,7 @@
         "Treating an input that changes exactly at the edge as already new at that edge.",
         "Letting flip-flop 1 see flip-flop 0's new output at the same edge."
       ],
-      "verification": "A tick-by-tick simulation (10 ns ticks, 40 ns clock, setup 2 ticks, hold 0) gives Y = 1 only between edges 2 and 3 and flags no violation at edges 1 to 5.",
+      "verification": "A tick-by-tick simulation (10 ns ticks, 40 ns clock, setup 2 ticks, hold 0) gives Y = 1 only between edges 2 and 3 and flags a setup violation on $D_0$ at edge 6 only, which does not reach Y.",
       "animation": {
         "kind": "table",
         "title": "Sampled just before each rising edge",

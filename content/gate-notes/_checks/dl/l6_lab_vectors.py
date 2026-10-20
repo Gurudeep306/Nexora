@@ -69,7 +69,9 @@ def _w(*runs):
 SCOPE_PRESETS = [
     {"id": "latch-vs-edge", "label": "D latch vs edge", "kind": "D", "mode": "latch", "compare": "pos", "period": 8,
      "inputs": {"D": "00111100" + "00000110" + "01111111" + "00000010"}, "tsu": 0, "th": 0, "tpd": 1, "q0": 0},
-    {"id": "race-around", "label": "Race-around (JK latch, J = K = 1)", "kind": "JK", "mode": "latch", "compare": "ms", "period": 8,
+    {"id": "race-around", "label": "Race-around, 3-tick pulse (JK latch, J = K = 1)", "kind": "JK", "mode": "latch", "compare": "ms",
+     "period": 6, "inputs": {"J": "1" * 32, "K": "1" * 32}, "tsu": 0, "th": 0, "tpd": 1, "q0": 0},
+    {"id": "race-around-8", "label": "Race-around, 4-tick pulse (period 8)", "kind": "JK", "mode": "latch", "compare": "ms", "period": 8,
      "inputs": {"J": "1" * 32, "K": "1" * 32}, "tsu": 0, "th": 0, "tpd": 1, "q0": 0},
     {"id": "ms-jk", "label": "Master–slave JK", "kind": "JK", "mode": "ms", "compare": "neg", "period": 8,
      "inputs": {"J": _w((0, 5), (1, 1), (0, 12), (1, 14)), "K": _w((0, 13), (1, 1), (0, 4), (1, 14))},
@@ -81,6 +83,30 @@ SCOPE_PRESETS = [
                 "R": _w((0, 12), (1, 2), (0, 6), (1, 1), (0, 1), (1, 4), (0, 6))},
      "tsu": 0, "th": 0, "tpd": 1, "q0": 0},
 ]
+
+
+def race_preset_toggles():
+    """The two race-around presets: toggles of the JK latch per clock pulse (Lesson 2 quotes 3 versus 4), and the
+    parity: a 3-tick pulse ends inverted, a 4-tick pulse ends where it began; the master–slave toggles once per clock."""
+    out = {}
+    for p in SCOPE_PRESETS:
+        if not p["id"].startswith("race-around"):
+            continue
+        clk = clock(32, p["period"])
+        r = sq.scope("JK", "latch", clk, ins_of(p["inputs"]), p["q0"], 0, 0, p["tpd"])
+        rises = [t for t in range(1, 32) if clk[t] and not clk[t - 1]]
+        per = []
+        for a in rises[:-1]:
+            b = a + p["period"]
+            per.append(sum(1 for t in range(a + 1, b + 1) if r["Q"][t] != r["Q"][t - 1]))
+        ms = sq.scope("JK", "ms", clk, ins_of(p["inputs"]), p["q0"], 0, 0, p["tpd"])
+        assert sum(1 for t in range(1, 32) if ms["Q"][t] != ms["Q"][t - 1]) == len(ms["edges"])
+        out[p["period"]] = set(per)
+    assert out == {6: {3}, 8: {4}}, out
+    return out
+
+
+race_preset_toggles()
 
 
 def scope_vectors():

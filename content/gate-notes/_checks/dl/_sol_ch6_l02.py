@@ -23,29 +23,28 @@ def table(title, cols, rows, labels=None, reveal=None, caption=None):
 
 
 SOLUTIONS["cse-2000-a-2-12"] = {
-    "approach": "Concept tested: **two flip-flops on one clock edge**. Both sample the values from just before the edge: the JK with $J = K = 1$ toggles $P$, and the D flip-flop loads the **old** $P$. Step the pair $(P, Q)$ edge by edge from $(0, 1)$.",
+    "approach": "Concept tested: **two flip-flops on one clock edge**. Both sample the values from just before the edge: the JK with $J = K = 1$ toggles $P$, and the D flip-flop loads the **old** $P$. Step the pair $(P, Q)$ edge by edge from $(0, 1)$, notice that it repeats with period 2, and reduce the three cycles modulo 2.",
     "concepts": ["JK flip-flop", "D flip-flop", "Master–slave", "Same-edge sampling"],
-    "given": "A master–slave JK flip-flop with $J = K = 1$ and output $P$; a master–slave D flip-flop with $D = P$ and output $Q$; a common clock; initial $(P, Q) = (0, 1)$. The paper asks for $(P, Q)$ \"after the clock cycles\".",
+    "given": "A master–slave JK flip-flop with $J = K = 1$ and output $P$; a master–slave D flip-flop with $D = P$ and output $Q$; a common clock; initial $(P, Q) = (0, 1)$. Find $(P, Q)$ after three clock cycles.",
     "steps": [
         {"title": "Next-state equations", "body": "JK with $J = K = 1$: $P^+ = \\overline{P}$ (toggle). D: $Q^+ = D = P$, where $P$ is the value **before** the edge (both flip-flops sample at the same instant, and $P$'s new value appears only after it)."},
         {"title": "First clock cycle", "body": "From $(0, 1)$: $P^+ = 1$ and $Q^+ = $ old $P = 0$. After one cycle $(P, Q) = (1, 0)$.", "scene": {"reveal": 1}},
-        {"title": "Second clock cycle", "body": "From $(1, 0)$: $P^+ = 0$ and $Q^+ = $ old $P = 1$. After two cycles $(P, Q) = (0, 1)$, the initial state.", "scene": {"reveal": 2}},
-        {"title": "Which reading the key uses", "body": "The pair alternates $(0, 1) \\leftrightarrow (1, 0)$ with period 2: $(1, 0)$ after an odd number of cycles, $(0, 1)$ after an even number. The printed wording \"after the clock cycles\" (plural) is read as two cycles, giving $(0, 1)$, option D, the stored key. If the intended wording was \"after the clock cycle\" (one cycle), the answer would be $(1, 0)$, option A; the paper could not be checked."},
+        {"title": "Second clock cycle", "body": "From $(1, 0)$: $P^+ = 0$ and $Q^+ = $ old $P = 1$. After two cycles $(P, Q) = (0, 1)$, the initial state: the sequence has period 2.", "scene": {"reveal": 2}},
+        {"title": "Third clock cycle", "body": "The third edge repeats the first: from $(0, 1)$ to $(1, 0)$. After three clock cycles (an odd number) the pair is $(1, 0)$: option A.", "scene": {"reveal": 3}},
     ],
-    "answer": {"value": "(D) 0, 1 (after two clock cycles)", "choice": ["D"], "matchesKey": True,
-               "keyNote": "Two-cycle reading of \"after the clock cycles\"; after one cycle the state is (1, 0), option A. The 2000 paper was not available to confirm the wording."},
+    "answer": {"value": "(A) 1, 0", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
-        opt("A", False, "$(1, 0)$ is the state after **one** cycle (or any odd number), not after the two cycles of the stored reading."),
+        opt("A", True, "After three cycles (odd) the pair is $(1, 0)$; it alternates $(0, 1) \\to (1, 0)$ with period 2."),
         opt("B", False, "$(1, 1)$ would need the D flip-flop to see the JK's **new** output at the same edge, which it cannot."),
         opt("C", False, "$(0, 0)$ never occurs: $Q$ is always the complement of the current $P$ after the first edge."),
-        opt("D", True, "After two cycles the pair is back at $(0, 1)$."),
+        opt("D", False, "$(0, 1)$ is the state after an even number of cycles (two, four, …), not after three."),
     ],
-    "shortcut": "J = K = 1 makes $P$ a divide-by-two; $Q$ is $P$ delayed by one clock. So $Q = \\overline{P}$ after every edge, and the pair has period 2.",
+    "shortcut": "J = K = 1 makes $P$ a divide-by-two; $Q$ is $P$ delayed by one clock, so the pair has period 2. Three is odd, so the answer is the state after one cycle: $(1, 0)$.",
     "pitfalls": [
         "Letting the D flip-flop take the JK's new value at the same edge, giving $(1, 1)$.",
-        "Not stating the number of cycles: the answer alternates between A and D with the parity.",
+        "Miscounting the cycles: two (or any even number) give $(0, 1)$, option D. Find the period first, then reduce the count modulo it.",
     ],
-    "verification": "A cycle-by-cycle simulation of the two flip-flops gives $(0, 1), (1, 0), (0, 1), (1, 0), \\dots$",
+    "verification": "A cycle-by-cycle simulation of the two flip-flops gives $(0, 1), (1, 0), (0, 1), (1, 0), \\dots$; entry 3 is $(1, 0)$ = option A, the bank key.",
     "animation": table("(P, Q) edge by edge", ["P", "Q"], [[0, 1], [1, 0], [0, 1], [1, 0]],
                        ["start", "after 1 cycle", "after 2 cycles", "after 3 cycles"], reveal=0),
 }
@@ -57,14 +56,15 @@ SOLUTIONS["cse-2001-a-33"] = {
     "steps": [
         {"title": "Edge 1: X changes at the edge", "body": "The setup window is the 20 ns before the edge, during which X was 0; with $t_h = 0$ nothing after the edge counts. Both flip-flops read X = 0: $Q_0 = 0$, $D_1 = 0$, so $Y = 0$."},
         {"title": "Edge 2: Y rises", "body": "Now X = 1 and $\\overline{Q_0} = 1$ (the old $Q_0$), so $D_1 = 1$ and Y becomes 1. At the same edge $Q_0$ becomes 1.", "scene": {"reveal": 2}},
-        {"title": "Edge 3 onwards: Y falls and stays low", "body": "$\\overline{Q_0} = 0$ makes $D_1 = 0$: Y falls at edge 3 and stays 0 at edges 4, 5 and 6 (at edge 6 X has dropped, which affects only $Q_0$; $D_1$ is 0 either way).", "scene": {"reveal": 3}},
+        {"title": "Edges 3 to 5: Y falls and stays low", "body": "$\\overline{Q_0} = 0$ makes $D_1 = 0$: Y falls at edge 3 and stays 0 at edges 4 and 5.", "scene": {"reveal": 3}},
+        {"title": "Edge 6: a setup violation that does not matter", "body": "X falls just before edge 6, inside the 20 ns setup window, so flip-flop 0 may capture either value (a setup violation). Y does not care: $D_1 = X\\,\\overline{Q_0}$ is 0 before edge 6 ($\\overline{Q_0} = 0$) and after it ($X = 0$), so Y stays 0."},
         {"title": "Match the plots", "body": "Y is high for exactly one clock period, from edge 2 to edge 3: option A. The circuit is a rising-edge detector for X."},
     ],
     "answer": {"value": "(A) Y high from the 2nd to the 3rd marked edge", "choice": ["A"], "matchesKey": True},
     "optionAnalysis": [
         opt("A", True, "Y = 1 only between edges 2 and 3."),
         opt("B", False, "Starting Y at edge 1 reads X as 1 at the edge where it changes; with $t_h = 0$ the old 0 is sampled."),
-        opt("C", False, "High from edge 1 to 2: the same mistake at edge 1, and it also drops Y at edge 2 where $D_1 = 1$."),
+        opt("C", False, "C rises at edge 1 (the same misreading as B) and falls between two edges, which no flip-flop output can do."),
         opt("D", False, "High from edge 3 to 6 ignores $\\overline{Q_0}$: once $Q_0 = 1$, $D_1 = 0$."),
     ],
     "shortcut": "$D_1 = X\\,\\overline{Q_0}$ with $Q_0$ = X delayed one clock is \"X now and not X a clock ago\": a one-period pulse at the first edge that sees X = 1.",
@@ -72,7 +72,7 @@ SOLUTIONS["cse-2001-a-33"] = {
         "Treating an input that changes exactly at the edge as already new at that edge.",
         "Letting flip-flop 1 see flip-flop 0's new output at the same edge.",
     ],
-    "verification": "A tick-by-tick simulation (10 ns ticks, 40 ns clock, setup 2 ticks, hold 0) gives Y = 1 only between edges 2 and 3 and flags no violation at edges 1 to 5.",
+    "verification": "A tick-by-tick simulation (10 ns ticks, 40 ns clock, setup 2 ticks, hold 0) gives Y = 1 only between edges 2 and 3 and flags a setup violation on $D_0$ at edge 6 only, which does not reach Y.",
     "animation": table("Sampled just before each rising edge", ["X", "Q̄₀", "D₁", "Y after"], [[0, 1, 0, 0], [1, 1, 1, 1], [1, 0, 0, 0], [1, 0, 0, 0]],
                        ["edge 1", "edge 2", "edge 3", "edge 4"], reveal=0),
 }

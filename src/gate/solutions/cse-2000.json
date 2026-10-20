@@ -1436,14 +1436,14 @@
       }
     },
     "cse-2000-a-2-12": {
-      "approach": "Concept tested: **two flip-flops on one clock edge**. Both sample the values from just before the edge: the JK with $J = K = 1$ toggles $P$, and the D flip-flop loads the **old** $P$. Step the pair $(P, Q)$ edge by edge from $(0, 1)$.",
+      "approach": "Concept tested: **two flip-flops on one clock edge**. Both sample the values from just before the edge: the JK with $J = K = 1$ toggles $P$, and the D flip-flop loads the **old** $P$. Step the pair $(P, Q)$ edge by edge from $(0, 1)$, notice that it repeats with period 2, and reduce the three cycles modulo 2.",
       "concepts": [
         "JK flip-flop",
         "D flip-flop",
         "Master–slave",
         "Same-edge sampling"
       ],
-      "given": "A master–slave JK flip-flop with $J = K = 1$ and output $P$; a master–slave D flip-flop with $D = P$ and output $Q$; a common clock; initial $(P, Q) = (0, 1)$. The paper asks for $(P, Q)$ \"after the clock cycles\".",
+      "given": "A master–slave JK flip-flop with $J = K = 1$ and output $P$; a master–slave D flip-flop with $D = P$ and output $Q$; a common clock; initial $(P, Q) = (0, 1)$. Find $(P, Q)$ after three clock cycles.",
       "steps": [
         {
           "title": "Next-state equations",
@@ -1458,29 +1458,31 @@
         },
         {
           "title": "Second clock cycle",
-          "body": "From $(1, 0)$: $P^+ = 0$ and $Q^+ = $ old $P = 1$. After two cycles $(P, Q) = (0, 1)$, the initial state.",
+          "body": "From $(1, 0)$: $P^+ = 0$ and $Q^+ = $ old $P = 1$. After two cycles $(P, Q) = (0, 1)$, the initial state: the sequence has period 2.",
           "scene": {
             "reveal": 2
           }
         },
         {
-          "title": "Which reading the key uses",
-          "body": "The pair alternates $(0, 1) \\leftrightarrow (1, 0)$ with period 2: $(1, 0)$ after an odd number of cycles, $(0, 1)$ after an even number. The printed wording \"after the clock cycles\" (plural) is read as two cycles, giving $(0, 1)$, option D, the stored key. If the intended wording was \"after the clock cycle\" (one cycle), the answer would be $(1, 0)$, option A; the paper could not be checked."
+          "title": "Third clock cycle",
+          "body": "The third edge repeats the first: from $(0, 1)$ to $(1, 0)$. After three clock cycles (an odd number) the pair is $(1, 0)$: option A.",
+          "scene": {
+            "reveal": 3
+          }
         }
       ],
       "answer": {
-        "value": "(D) 0, 1 (after two clock cycles)",
+        "value": "(A) 1, 0",
         "choice": [
-          "D"
+          "A"
         ],
-        "matchesKey": true,
-        "keyNote": "Two-cycle reading of \"after the clock cycles\"; after one cycle the state is (1, 0), option A. The 2000 paper was not available to confirm the wording."
+        "matchesKey": true
       },
       "optionAnalysis": [
         {
           "option": "A",
-          "correct": false,
-          "reason": "$(1, 0)$ is the state after **one** cycle (or any odd number), not after the two cycles of the stored reading."
+          "correct": true,
+          "reason": "After three cycles (odd) the pair is $(1, 0)$; it alternates $(0, 1) \\to (1, 0)$ with period 2."
         },
         {
           "option": "B",
@@ -1494,16 +1496,16 @@
         },
         {
           "option": "D",
-          "correct": true,
-          "reason": "After two cycles the pair is back at $(0, 1)$."
+          "correct": false,
+          "reason": "$(0, 1)$ is the state after an even number of cycles (two, four, …), not after three."
         }
       ],
-      "shortcut": "J = K = 1 makes $P$ a divide-by-two; $Q$ is $P$ delayed by one clock. So $Q = \\overline{P}$ after every edge, and the pair has period 2.",
+      "shortcut": "J = K = 1 makes $P$ a divide-by-two; $Q$ is $P$ delayed by one clock, so the pair has period 2. Three is odd, so the answer is the state after one cycle: $(1, 0)$.",
       "pitfalls": [
         "Letting the D flip-flop take the JK's new value at the same edge, giving $(1, 1)$.",
-        "Not stating the number of cycles: the answer alternates between A and D with the parity."
+        "Miscounting the cycles: two (or any even number) give $(0, 1)$, option D. Find the period first, then reduce the count modulo it."
       ],
-      "verification": "A cycle-by-cycle simulation of the two flip-flops gives $(0, 1), (1, 0), (0, 1), (1, 0), \\dots$",
+      "verification": "A cycle-by-cycle simulation of the two flip-flops gives $(0, 1), (1, 0), (0, 1), (1, 0), \\dots$; entry 3 is $(1, 0)$ = option A, the bank key.",
       "animation": {
         "kind": "table",
         "title": "(P, Q) edge by edge",

@@ -1962,7 +1962,7 @@
    ]
   },
   {
-   "caption": "With equal gate delays the race never ends. With unequal delays the faster gate wins, so the final Q cannot be predicted.",
+   "caption": "With equal gate delays the race never ends. With unequal delays (inertial gates) the faster gate wins, so the final Q cannot be predicted.",
    "patches": [
     {
      "id": "st",

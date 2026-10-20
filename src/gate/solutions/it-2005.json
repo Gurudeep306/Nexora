@@ -570,7 +570,7 @@
         {
           "option": "A",
           "correct": false,
-          "reason": "134 is an off-by-one on 133 (counting the start state as well)."
+          "reason": "134 = 133 + 1: the down-counter distance with one extra pulse (counting the start state as well)."
         },
         {
           "option": "B",
@@ -580,7 +580,7 @@
         {
           "option": "C",
           "correct": false,
-          "reason": "124 counts one pulse too many (both ends of the wrap)."
+          "reason": "124 = 123 + 1: the right distance with one extra pulse, from counting the start state as well (or counting the 255 → 0 wrap twice)."
         },
         {
           "option": "D",
