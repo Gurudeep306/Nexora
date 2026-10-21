@@ -8,6 +8,7 @@
   "icon": "shield",
   "color": "#dc2626",
   "description": "Thinking like an attacker and a defender: threat modelling, network, web and system security, and security operations.",
+  "rankTitle": "Threat Hunter",
   "zones": [
     {
       "level": 1,

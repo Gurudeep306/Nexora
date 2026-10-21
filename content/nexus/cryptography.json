@@ -8,6 +8,7 @@
   "icon": "key",
   "color": "#7c3aed",
   "description": "How modern cryptography works: ciphers, hashes and MACs, public-key systems, signatures and the protocols built from them.",
+  "rankTitle": "Cipher Smith",
   "zones": [
     {
       "level": 1,

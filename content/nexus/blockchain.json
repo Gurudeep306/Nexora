@@ -8,6 +8,7 @@
   "icon": "coins",
   "color": "#ca8a04",
   "description": "Blockchains from hash chains and signatures up: consensus, Bitcoin and Ethereum, smart contracts and scaling.",
+  "rankTitle": "Chain Builder",
   "zones": [
     {
       "level": 1,

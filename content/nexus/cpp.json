@@ -8,6 +8,7 @@
   "icon": "code",
   "color": "#00599c",
   "description": "Modern C++ from classes and RAII through the STL, templates, move semantics and performance work.",
+  "rankTitle": "Template Tamer",
   "zones": [
     {
       "level": 1,

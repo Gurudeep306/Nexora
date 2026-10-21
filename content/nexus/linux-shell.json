@@ -8,6 +8,7 @@
   "icon": "terminal",
   "color": "#4b5563",
   "description": "Working at the Linux command line: files and permissions, text processing, processes, networking tools and shell scripting.",
+  "rankTitle": "Shell Sage",
   "zones": [
     {
       "level": 1,

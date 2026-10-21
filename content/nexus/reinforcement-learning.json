@@ -8,6 +8,7 @@
   "icon": "target",
   "color": "#9333ea",
   "description": "Learning by trial and error: MDPs, tabular methods, deep Q-learning, policy gradients and modern RL.",
+  "rankTitle": "Reward Seeker",
   "zones": [
     {
       "level": 1,

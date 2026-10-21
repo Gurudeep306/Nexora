@@ -8,6 +8,7 @@
   "icon": "chat",
   "color": "#7c3aed",
   "description": "Processing and understanding text, from tokenisation and classical models to embeddings and transformers.",
+  "rankTitle": "Language Shaper",
   "zones": [
     {
       "level": 1,

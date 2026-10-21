@@ -8,5 +8,6 @@
   "icon": "nexus",
   "color": "#5b8cff",
   "description": "The competitive-programming rift: master skills by solving rated problems, zone by zone.",
+  "rankTitle": "Graph Walker",
   "engine": "dsa"
 }

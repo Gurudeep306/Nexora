@@ -3467,6 +3467,7 @@ app.delete("/api/custom-problems/:id", async (req, res) => {
 const { NEXUS_NODES } = require("./nexus/dsa-nodes");
 const nexusSubjects = require("./nexus/subjects");
 const nexusCache = require("./nexus/user-cache");
+const nexusRanks = require("./nexus/ranks");
 
 const ZONE_NAMES = [
   "",
@@ -3604,7 +3605,20 @@ async function nexusState(req, fresh) {
     n.crossRequires = [];
     n.crossUnlocks = nexusSubjects.dsaCrossUnlocks(reg, n.id, computed);
   }
-  return { reg, dsa, computed };
+  // The unified web rank: DSA XP is the floor, every subject adds on top.
+  const score = nexusRanks.webScore(totals, computed);
+  if (reg.subjects.has("dsa")) score.subjects.dsa = nexusRanks.subjectProgress(dsa.nodes);
+  const webPlayer = calcLevel(score.xp, score.solved);
+  // Kept for the leaderboards; written only when the numbers change.
+  await nexusRanks.saveScore({ get, run }, nexusScoreSeen, me(), score, webPlayer.level).catch((e) => console.error("[nexus] score:", errMessage(e)));
+  return { reg, dsa, computed, score, webPlayer };
+}
+const nexusScoreSeen = new Map();
+const nexusBoardCache = new Map(); // key → { at, rows }
+
+/** The rank inside one subject (tier + its title). */
+function nexusSubjectRank(reg, sid, nodes) {
+  return nexusRanks.subjectRank(nexusSubjects.subjectMeta(reg, sid), nexusRanks.subjectProgress(nodes));
 }
 
 /**
@@ -3618,17 +3632,20 @@ async function nexusState(req, fresh) {
 app.get("/api/nexus", async (req, res) => {
   try {
     const want = typeof req.query.subject === "string" && req.query.subject ? req.query.subject : "dsa";
-    const { reg, dsa, computed } = await nexusState(req, req.query.fresh === "1");
+    const { reg, dsa, computed, webPlayer } = await nexusState(req, req.query.fresh === "1");
     const view = want === "dsa" ? dsa : computed.get(want);
     if (!view) return res.status(404).json({ ok: false, error: "Unknown subject" });
     res.json({
       ok: true,
       nodes: view.nodes,
       zones: view.zones,
+      // The DSA path keeps its own Rift level (zone unlocks); webPlayer is the unified rank.
       player: dsa.player,
+      webPlayer,
       riftLevels: RIFT_LEVELS,
       subject: nexusSubjects.subjectMeta(reg, want),
       subjects: nexusSubjects.subjectSummaries(reg, dsa, computed),
+      subjectRank: nexusSubjectRank(reg, want, view.nodes),
     });
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
@@ -3642,8 +3659,41 @@ app.get("/api/nexus", async (req, res) => {
  */
 app.get("/api/nexus/web", async (req, res) => {
   try {
-    const { reg, dsa, computed } = await nexusState(req, req.query.fresh === "1");
-    res.json({ ok: true, player: dsa.player, riftLevels: RIFT_LEVELS, ...nexusSubjects.webPayload(reg, dsa, computed) });
+    const { reg, dsa, computed, webPlayer } = await nexusState(req, req.query.fresh === "1");
+    const web = nexusSubjects.webPayload(reg, dsa, computed);
+    for (const c of web.clusters) c.rank = nexusSubjectRank(reg, c.id, c.engine === "dsa" ? dsa.nodes : computed.get(c.id)?.nodes || []);
+    res.json({ ok: true, player: webPlayer, dsaPlayer: dsa.player, riftLevels: RIFT_LEVELS, ...web });
+  } catch (e) {
+    res.status(500).json({ ok: false, error: errMessage(e) });
+  }
+});
+
+/**
+ * GET /api/nexus/leaderboard?scope=all|week|friends|subject[&subject=<id>]
+ * Web rank (overall, this week, friends) and one subject's mastery board.
+ * Reads nexus_scores only; cached for a minute per scope.
+ */
+app.get("/api/nexus/leaderboard", async (req, res) => {
+  try {
+    const scope = ["all", "week", "friends", "subject"].includes(req.query.scope) ? req.query.scope : "all";
+    const reg = nexusSubjects.loadRegistry(NEXUS_NODES);
+    const subject = scope === "subject" ? String(req.query.subject || "") : null;
+    if (scope === "subject" && !reg.subjects.has(subject)) return res.status(404).json({ ok: false, error: "Unknown subject" });
+    const viewer = me();
+    const key = `${scope}|${subject || ""}|${scope === "friends" ? viewer : ""}`;
+    const hit = nexusBoardCache.get(key);
+    let rows;
+    if (hit && Date.now() - hit.at < 60 * 1000) rows = hit.rows;
+    else {
+      rows = await nexusRanks.leaderboard({ all }, { scope, subject, viewer });
+      if (nexusBoardCache.size > 300) nexusBoardCache.clear();
+      nexusBoardCache.set(key, { at: Date.now(), rows });
+    }
+    const out = { ok: true, scope, rows: rows.map((r) => ({ ...r })) };
+    if (subject) out.subject = nexusSubjects.subjectMeta(reg, subject);
+    const mine = viewer ? rows.find((r) => r.username === viewer) : null;
+    if (mine) out.me = mine;
+    res.json(out);
   } catch (e) {
     res.status(500).json({ ok: false, error: errMessage(e) });
   }

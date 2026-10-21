@@ -8,6 +8,7 @@
   "icon": "graph",
   "color": "#16a34a",
   "description": "Graphs as mathematical objects: paths, connectivity, trees, matchings, flows, colouring, planarity and networks.",
+  "rankTitle": "Vertex Voyager",
   "zones": [
     {
       "level": 1,

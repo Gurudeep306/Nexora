@@ -8,6 +8,7 @@
   "icon": "binary",
   "color": "#6d28d9",
   "description": "Qubits, gates and circuits, the main quantum algorithms, noise and error correction, and programming real devices.",
+  "rankTitle": "Qubit Wrangler",
   "zones": [
     {
       "level": 1,

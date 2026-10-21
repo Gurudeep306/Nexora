@@ -8,6 +8,7 @@
   "icon": "puzzle",
   "color": "#ef4444",
   "description": "Logic, sets and relations, algebraic structures, counting, recurrences and graph theory for GATE.",
+  "rankTitle": "Proof Weaver",
   "gate": {
     "pyqSubject": "dm",
     "notesSubject": null

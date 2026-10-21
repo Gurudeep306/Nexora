@@ -8,6 +8,7 @@
   "icon": "route",
   "color": "#f97316",
   "description": "Asymptotic analysis, searching and sorting, divide and conquer, greedy, dynamic programming, graph algorithms and NP-completeness.",
+  "rankTitle": "Algorithm Artisan",
   "gate": {
     "pyqSubject": "algo",
     "notesSubject": null

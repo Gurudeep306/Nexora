@@ -471,7 +471,8 @@ export const NexusWeb = forwardRef<
         ctx.font = `500 ${size - 0.5}px ${font}`
         ctx.textAlign = 'center'
         ctx.fillStyle = rgba(C3, a * 0.9)
-        ctx.fillText(rank ? `${rank.tier} · ${rg.progress}%` : `${rg.progress}%`, X, Y + size + 5)
+        // The subject rank, only once there is something to show.
+        if (rg.progress > 0) ctx.fillText(rank ? `${rank.tier} · ${rg.progress}%` : `${rg.progress}%`, X, Y + size + 5)
         labelHits.current.push({ x: box[0], y: box[1], w: box[2] - box[0], h: box[3] - box[1], id: rg.cluster.id })
       }
 

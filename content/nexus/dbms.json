@@ -8,6 +8,7 @@
   "icon": "database",
   "color": "#22c55e",
   "description": "ER modelling, the relational model, relational algebra and SQL, normalisation, transactions and indexing.",
+  "rankTitle": "Query Sage",
   "gate": {
     "pyqSubject": "db",
     "notesSubject": null

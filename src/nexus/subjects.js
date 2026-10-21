@@ -263,6 +263,8 @@ function loadRegistry(dsaNodes) {
       description: d.description || "",
       pyqSubject: d.gate?.pyqSubject || null,
       notesSubject: d.gate?.notesSubject || null,
+      engine: d.engine || null,
+      rankTitle: d.rankTitle || null,
     };
     if (d.engine === "dsa") {
       // Nodes from code; their x is already 0–100, one row per Rift zone.
@@ -475,7 +477,7 @@ function computeSubjects(reg, dsaNodes, state, bank, notes) {
 
 /** A subject's metadata (DSA works even without its file). */
 function subjectMeta(reg, id) {
-  return reg.subjects.get(id)?.meta || { id, name: id.toUpperCase(), short: id.toUpperCase() };
+  return reg.subjects.get(id)?.meta || { id, name: id.toUpperCase(), short: id.toUpperCase(), engine: id === "dsa" ? "dsa" : null };
 }
 
 /** Cross-subject chips for DSA nodes (DSA itself has no cross requires). */

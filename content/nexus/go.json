@@ -8,6 +8,7 @@
   "icon": "code",
   "color": "#00add8",
   "description": "Go's simple syntax, interfaces, goroutines and channels, and building production network services.",
+  "rankTitle": "Gopher",
   "zones": [
     {
       "level": 1,

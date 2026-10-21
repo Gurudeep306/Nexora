@@ -8,6 +8,7 @@
   "icon": "eye",
   "color": "#2563eb",
   "description": "Images as data, classical features and geometry, CNN-based recognition, detection, segmentation and 3D vision.",
+  "rankTitle": "Pixel Seer",
   "zones": [
     {
       "level": 1,

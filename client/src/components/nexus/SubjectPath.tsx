@@ -49,7 +49,7 @@ export function SubjectPath({
   // While a switch is in flight the hook still holds the previous subject.
   const nexus = raw && raw.subject?.id === subject ? raw : null
   useEffect(() => onData?.(nexus), [nexus, onData])
-  const isDsa = nexus?.subject?.id === subject && !nexus.nodes.some((n) => n.metric)
+  const isDsa = nexus?.subject?.engine === 'dsa'
   const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !isDsa })
   const selectedNode = useMemo(() => nexus?.nodes.find((n) => n.id === selectedId) ?? null, [nexus, selectedId])
 
