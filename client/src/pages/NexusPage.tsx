@@ -24,12 +24,33 @@ import { NodePanel } from '@/components/nexus/NodePanel'
 import { SubjectPath } from '@/components/nexus/SubjectPath'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
 import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
-import type { CrossLink, NexusNode, NexusNodeResponse, NexusResponse, NexusStatsResponse, WebCluster, WebNode } from '@/components/nexus/types'
+import type { CrossLink, NexusNode, NexusNodeResponse, NexusResponse, NexusStatsResponse, RiftLevel, RiftPlayer, WebCluster, WebNode } from '@/components/nexus/types'
 import { fetchNexusWeb, NEXUS_WEB_KEY } from '@/components/nexus/data'
 import { Icon } from '@/components/icon/Icon'
 
 /** Where the web's camera was when you dived into a subject (restored on the way back). */
 let lastWebCamera: Camera | null = null
+
+/**
+ * The rank ladder shown under /ranks, placed by the web rank: same ladder
+ * (names, badges, XP and solve gates), where you stand across every subject.
+ */
+function webTitles(stats: NexusStatsResponse | null, player: RiftPlayer, levels: RiftLevel[]): NexusStatsResponse | null {
+  if (!stats || stats.allTitles.length !== levels.length) return stats
+  const cur = stats.allTitles[player.level - 1]
+  const next = stats.allTitles[player.level] ?? null
+  if (!cur) return stats
+  const solved = player.probsInLevel + (levels[player.level - 1]?.minProblems ?? 0)
+  return {
+    ...stats,
+    title: {
+      current: cur,
+      next,
+      xpToNext: next ? Math.max(0, next.min_xp - player.xp) : 0,
+      probsToNext: next ? Math.max(0, (next.min_problems ?? 0) - solved) : 0,
+    },
+  }
+}
 
 /** A web node in the shape the node panel reads (details merged in when loaded). */
 function asNexusNode(c: WebCluster, n: WebNode): NexusNode {
@@ -297,7 +318,7 @@ export default function NexusPage() {
             <div className="hidden text-center sm:block">
               <p className="flex items-center justify-center gap-1 font-display text-sm text-gold">
                 <Icon name="trophy" className="size-4" aria-hidden="true" />
-                {statsApi.data?.title.current.title ?? '—'}
+                {webTitles(statsApi.data, player, web.riftLevels)?.title.current.title ?? '—'}
               </p>
               <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Title</p>
             </div>
@@ -335,7 +356,7 @@ export default function NexusPage() {
           ) : statsApi.error && !statsApi.data ? (
             <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
           ) : (
-            <TitleTrack stats={statsApi.data} />
+            <TitleTrack stats={webTitles(statsApi.data, web.player, web.riftLevels)} />
           )}
         </div>
       ) : subject ? (
