@@ -250,6 +250,7 @@
       "icon": "book",
       "desc": "Design and build a library database with constraints, sample data and reporting queries.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "schema-design",
         "sql-transactions",
@@ -264,6 +265,7 @@
       "icon": "analytics",
       "desc": "Answer business questions over a sales dataset with window functions and CTEs.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "window-functions",
         "ctes",

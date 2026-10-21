@@ -123,6 +123,7 @@
       "icon": "workshop",
       "desc": "Build a scheduled pipeline that ingests a public dataset daily, validates it and loads a warehouse.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "orchestration",
         "data-quality"
@@ -224,6 +225,7 @@
       "icon": "rocket",
       "desc": "Process a multi-gigabyte dataset with Spark and publish aggregated tables.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "spark-tuning",
         "data-warehouses"
@@ -288,6 +290,7 @@
       "icon": "trophy",
       "desc": "Build a real-time pipeline from a source database through a log to live aggregates.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "stream-processing",
         "change-data-capture",

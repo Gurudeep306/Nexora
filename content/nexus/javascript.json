@@ -221,6 +221,7 @@
       "icon": "check-circle",
       "desc": "Build a framework-free to-do app with persistent storage.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "events",
         "browser-storage",
@@ -273,6 +274,7 @@
       "icon": "terminal",
       "desc": "Build a tested command-line tool in Node that calls a public API.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "node-runtime",
         "fetch-json",

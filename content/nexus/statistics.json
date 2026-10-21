@@ -260,6 +260,7 @@
       "icon": "sliders",
       "desc": "Analyse a simulated A/B test end to end, from power analysis to a decision memo.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "t-tests",
         "multiple-testing"
@@ -310,6 +311,7 @@
       "icon": "trophy",
       "desc": "Plan, run and report a complete statistical analysis on a real dataset.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "bayesian-inference",
         "glm",

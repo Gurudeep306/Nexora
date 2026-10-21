@@ -114,6 +114,7 @@
       "icon": "rocket",
       "desc": "Build a validated, documented REST API with Express and a database.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "express-middleware",
         "node-databases"
@@ -229,6 +230,7 @@
       "icon": "rocket",
       "desc": "Build a REST service with Spring Boot, JPA and integration tests.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "spring-web",
         "spring-data"
@@ -292,6 +294,7 @@
       "icon": "trophy",
       "desc": "Ship an authenticated API with background work, tests and a live deployment.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "authentication-backend",
         "background-jobs",

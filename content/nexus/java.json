@@ -153,6 +153,7 @@
       "icon": "coins",
       "desc": "Model accounts, transactions and reports in a console banking app with clean OOP.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "java-collections",
         "java-exceptions",
@@ -250,6 +251,7 @@
       "icon": "rocket",
       "desc": "Build a tested Spring Boot REST service backed by a database.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "spring-boot",
         "jdbc",

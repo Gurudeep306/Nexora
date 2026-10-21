@@ -225,6 +225,7 @@
       "icon": "wrench",
       "desc": "Implement a graph library with traversal, flow and colouring algorithms and tests.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "bfs-dfs",
         "network-flows",
@@ -291,6 +292,7 @@
       "icon": "trophy",
       "desc": "Analyse a real social or transport network and compare it with random models.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "network-analysis",
         "random-graphs"

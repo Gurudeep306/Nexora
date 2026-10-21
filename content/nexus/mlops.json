@@ -161,6 +161,7 @@
       "icon": "rocket",
       "desc": "Containerise a trained model and serve it behind a documented API with load tests.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "model-serving"
       ],
@@ -274,6 +275,7 @@
       "icon": "trophy",
       "desc": "Build a pipeline that trains, deploys, monitors and retrains a model automatically.",
       "kind": "project",
+      "optional": true,
       "requires": [
         "ml-ci-cd",
         "retraining-loops",

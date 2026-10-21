@@ -3607,9 +3607,11 @@ async function nexusState(req, fresh) {
     n.crossUnlocks = nexusSubjects.dsaCrossUnlocks(reg, n.id, computed);
   }
   // The unified web rank: DSA XP is the floor, every subject adds on top.
-  const score = nexusRanks.webScore(totals, computed);
+  const score = nexusRanks.webScore(totals, computed, dsa.nodes);
   if (reg.subjects.has("dsa")) score.subjects.dsa = nexusRanks.subjectProgress(dsa.nodes);
-  const webPlayer = calcLevel(score.xp, score.solved);
+  // Never below the best level this user ever had (no rank drops).
+  const best = me() ? await get("SELECT web_level FROM nexus_scores WHERE username=?", [me()]).catch(() => null) : null;
+  const webPlayer = nexusRanks.webLevel(score.xp, RIFT_LEVELS, best?.web_level || 1);
   // Kept for the leaderboards; written only when the numbers change.
   await nexusRanks.saveScore({ get, run }, nexusScoreSeen, me(), score, webPlayer.level).catch((e) => console.error("[nexus] score:", errMessage(e)));
   return { reg, dsa, computed, score, webPlayer };
@@ -3619,7 +3621,7 @@ const nexusBoardCache = new Map(); // key → { at, rows }
 
 /** The rank inside one subject (tier + its title). */
 function nexusSubjectRank(reg, sid, nodes) {
-  return nexusRanks.subjectRank(nexusSubjects.subjectMeta(reg, sid), nexusRanks.subjectProgress(nodes));
+  return nexusRanks.subjectRank(nexusSubjects.subjectMeta(reg, sid), nexusRanks.subjectProgress(nodes), nodes);
 }
 
 /**
@@ -3697,7 +3699,7 @@ app.get("/api/nexus/web", async (req, res) => {
       const { reg, dsa, computed, webPlayer } = await nexusState(req, fresh);
       const ranks = {};
       for (const [sid, s] of reg.subjects) ranks[sid] = nexusSubjectRank(reg, sid, s.engine === "dsa" ? dsa.nodes : computed.get(sid)?.nodes || []);
-      return { user: me(), player: webPlayer, dsaPlayer: dsa.player, riftLevels: RIFT_LEVELS, state: nexusSubjects.webState(reg, dsa, computed), ranks };
+      return { user: me(), player: webPlayer, dsaPlayer: dsa.player, riftLevels: nexusRanks.webLevels(RIFT_LEVELS), state: nexusSubjects.webState(reg, dsa, computed), ranks };
     };
     const key = `${me() || "-"}|${hasAnyAdminPerm(req) ? 1 : 0}`;
     const body = fresh || !me() ? await build() : await nexusWebCache.get(key, build);
