@@ -1,0 +1,322 @@
+{
+  "id": "number-theory",
+  "name": "Number Theory",
+  "short": "NT",
+  "group": "beyond",
+  "domain": "theory",
+  "order": 50,
+  "icon": "hash",
+  "color": "#e11d48",
+  "description": "Divisibility, congruences, primes and the group structure of the integers mod n, through to the maths of public-key cryptography.",
+  "rankTitle": "Prime Hunter",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Divisibility"
+    },
+    {
+      "level": 2,
+      "name": "Congruences"
+    },
+    {
+      "level": 3,
+      "name": "Primes & factoring"
+    },
+    {
+      "level": 4,
+      "name": "Algebraic structure"
+    },
+    {
+      "level": 5,
+      "name": "Cryptographic uses"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "divisibility",
+      "zone": 1,
+      "name": "Divisibility",
+      "icon": "calculator",
+      "desc": "Divisors, the division algorithm and proofs about divisibility.",
+      "kind": "concept",
+      "requires": [
+        "dm:proof-techniques"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "gcd-euclid",
+      "zone": 1,
+      "name": "GCD & Euclid",
+      "icon": "function",
+      "desc": "Greatest common divisors and Euclid's algorithm with its running time.",
+      "kind": "lesson",
+      "requires": [
+        "divisibility"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "extended-euclid",
+      "zone": 1,
+      "name": "Extended Euclid",
+      "icon": "route",
+      "desc": "Bezout's identity and computing its coefficients.",
+      "kind": "lesson",
+      "requires": [
+        "gcd-euclid"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "primes",
+      "zone": 1,
+      "name": "Primes",
+      "icon": "star",
+      "desc": "Prime numbers, the infinitude of primes and unique factorisation.",
+      "kind": "concept",
+      "requires": [
+        "divisibility"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "modular-arithmetic",
+      "zone": 2,
+      "name": "Modular arithmetic",
+      "icon": "hash",
+      "desc": "Congruence classes and adding, multiplying and reducing mod n.",
+      "kind": "concept",
+      "requires": [
+        "gcd-euclid",
+        "dm:equivalence-relations"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "modular-inverse",
+      "zone": 2,
+      "name": "Modular inverses",
+      "icon": "key",
+      "desc": "When inverses exist and computing them with extended Euclid.",
+      "kind": "lesson",
+      "requires": [
+        "modular-arithmetic",
+        "extended-euclid"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "linear-congruences",
+      "zone": 2,
+      "name": "Linear congruences",
+      "icon": "list",
+      "desc": "Solving ax = b (mod n) and counting solutions.",
+      "kind": "lesson",
+      "requires": [
+        "modular-inverse"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "crt",
+      "zone": 2,
+      "name": "Chinese remainder",
+      "icon": "layers",
+      "desc": "The Chinese remainder theorem and solving systems of congruences.",
+      "kind": "lesson",
+      "requires": [
+        "linear-congruences"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "fast-exponentiation",
+      "zone": 2,
+      "name": "Fast exponentiation",
+      "icon": "bolt",
+      "desc": "Square-and-multiply for computing large powers mod n.",
+      "kind": "lesson",
+      "requires": [
+        "modular-arithmetic"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "sieves",
+      "zone": 3,
+      "name": "Sieves",
+      "icon": "filter",
+      "desc": "Sieve of Eratosthenes, linear sieve and segmented sieves.",
+      "kind": "lesson",
+      "requires": [
+        "primes",
+        "algo:asymptotics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "fermat-euler",
+      "zone": 3,
+      "name": "Fermat & Euler",
+      "icon": "award",
+      "desc": "Euler's totient, Fermat's little theorem and Euler's theorem.",
+      "kind": "concept",
+      "requires": [
+        "modular-arithmetic",
+        "primes"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "primality-testing",
+      "zone": 3,
+      "name": "Primality testing",
+      "icon": "check-circle",
+      "desc": "Fermat and Miller-Rabin tests and why randomness helps.",
+      "kind": "lesson",
+      "requires": [
+        "fermat-euler",
+        "fast-exponentiation"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "factorisation",
+      "zone": 3,
+      "name": "Factorisation",
+      "icon": "shapes",
+      "desc": "Trial division, Pollard's rho and why factoring is believed hard.",
+      "kind": "lesson",
+      "requires": [
+        "primality-testing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "prime-distribution",
+      "zone": 3,
+      "name": "Prime distribution",
+      "icon": "chart",
+      "desc": "The prime number theorem and gaps between primes.",
+      "kind": "concept",
+      "requires": [
+        "sieves"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "nt-library",
+      "zone": 3,
+      "name": "NT library",
+      "icon": "wrench",
+      "desc": "Write a tested number theory library: gcd, inverses, CRT, sieves and primality.",
+      "kind": "project",
+      "requires": [
+        "sieves",
+        "crt",
+        "primality-testing"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "groups-mod-n",
+      "zone": 4,
+      "name": "Groups mod n",
+      "icon": "grid",
+      "desc": "The multiplicative group of integers mod n and element orders.",
+      "kind": "concept",
+      "requires": [
+        "fermat-euler",
+        "dm:groups"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "primitive-roots",
+      "zone": 4,
+      "name": "Primitive roots",
+      "icon": "crown",
+      "desc": "Generators of cyclic groups and when primitive roots exist.",
+      "kind": "concept",
+      "requires": [
+        "groups-mod-n"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "quadratic-residues",
+      "zone": 4,
+      "name": "Quadratic residues",
+      "icon": "shapes",
+      "desc": "Squares mod p, the Legendre symbol and quadratic reciprocity.",
+      "kind": "concept",
+      "requires": [
+        "primitive-roots"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "discrete-log",
+      "zone": 4,
+      "name": "Discrete logarithm",
+      "icon": "lock",
+      "desc": "The discrete log problem and baby-step giant-step.",
+      "kind": "concept",
+      "requires": [
+        "primitive-roots"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "rsa-maths",
+      "zone": 5,
+      "name": "RSA mathematics",
+      "icon": "key",
+      "desc": "Why RSA works, key generation and the role of factoring.",
+      "kind": "lesson",
+      "requires": [
+        "fermat-euler",
+        "factorisation"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "diffie-hellman",
+      "zone": 5,
+      "name": "Diffie-Hellman",
+      "icon": "share",
+      "desc": "Key exchange from the hardness of discrete logarithms.",
+      "kind": "lesson",
+      "requires": [
+        "discrete-log"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "elliptic-curves",
+      "zone": 5,
+      "name": "Elliptic curves",
+      "icon": "shapes",
+      "desc": "The group law on elliptic curves over finite fields.",
+      "kind": "concept",
+      "requires": [
+        "groups-mod-n"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "toy-crypto",
+      "zone": 5,
+      "name": "Toy RSA & DH",
+      "icon": "trophy",
+      "desc": "Implement textbook RSA and Diffie-Hellman and attack weak parameter choices.",
+      "kind": "project",
+      "requires": [
+        "rsa-maths",
+        "diffie-hellman"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

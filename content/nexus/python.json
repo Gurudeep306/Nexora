@@ -1,0 +1,291 @@
+{
+  "id": "python",
+  "name": "Python",
+  "short": "PY",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 20,
+  "icon": "code",
+  "color": "#3776ab",
+  "description": "Python from syntax and data structures through OOP, idiomatic tools, testing and the NumPy/pandas data stack.",
+  "rankTitle": "Pythonista",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Python basics"
+    },
+    {
+      "level": 2,
+      "name": "Functions & data"
+    },
+    {
+      "level": 3,
+      "name": "Objects & modules"
+    },
+    {
+      "level": 4,
+      "name": "Pythonic tools"
+    },
+    {
+      "level": 5,
+      "name": "Data & ecosystem"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "python-basics",
+      "zone": 1,
+      "name": "Python basics",
+      "icon": "code",
+      "desc": "Variables, numbers, booleans, control flow and the interactive interpreter.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40,
+      "resources": [
+        {
+          "title": "The Python Tutorial",
+          "url": "https://docs.python.org/3/tutorial/"
+        }
+      ]
+    },
+    {
+      "id": "python-strings",
+      "zone": 1,
+      "name": "Strings & I/O",
+      "icon": "type",
+      "desc": "String methods, f-strings, slicing, and reading input and printing output.",
+      "kind": "concept",
+      "requires": [
+        "python-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "python-collections",
+      "zone": 1,
+      "name": "Lists, dicts & sets",
+      "icon": "list",
+      "desc": "The built-in containers, when to use each, and their common operations and costs.",
+      "kind": "concept",
+      "requires": [
+        "python-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "python-functions",
+      "zone": 2,
+      "name": "Functions",
+      "icon": "function",
+      "desc": "Defining functions, default and keyword arguments, *args/**kwargs, scope and closures.",
+      "kind": "concept",
+      "requires": [
+        "python-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "comprehensions",
+      "zone": 2,
+      "name": "Comprehensions",
+      "icon": "wand",
+      "desc": "List, dict and set comprehensions and generator expressions as readable loops.",
+      "kind": "concept",
+      "requires": [
+        "python-collections",
+        "python-functions"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "exceptions",
+      "zone": 2,
+      "name": "Exceptions",
+      "icon": "warning",
+      "desc": "Raising and catching exceptions, custom exception types and when to use them.",
+      "kind": "concept",
+      "requires": [
+        "python-functions"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "files-modules",
+      "zone": 2,
+      "name": "Files & modules",
+      "icon": "book",
+      "desc": "Reading and writing files, pathlib, importing modules and organising code into packages.",
+      "kind": "lesson",
+      "requires": [
+        "python-functions",
+        "python-strings"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "python-oop",
+      "zone": 3,
+      "name": "Classes & objects",
+      "icon": "shapes",
+      "desc": "Classes, instances, methods, inheritance and properties in Python.",
+      "kind": "concept",
+      "requires": [
+        "python-functions"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "dunder-methods",
+      "zone": 3,
+      "name": "Dunder methods",
+      "icon": "sparkles",
+      "desc": "Special methods like __repr__, __eq__, __len__ and __iter__ that make objects feel built-in.",
+      "kind": "concept",
+      "requires": [
+        "python-oop"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "type-hints",
+      "zone": 3,
+      "name": "Type hints",
+      "icon": "tag",
+      "desc": "Annotating code with type hints, checking with mypy, and writing dataclasses.",
+      "kind": "concept",
+      "requires": [
+        "python-oop"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "cli-tool",
+      "zone": 3,
+      "name": "CLI tool project",
+      "icon": "terminal",
+      "desc": "Build a command-line tool with argparse that reads files, handles errors and is split into modules.",
+      "kind": "project",
+      "requires": [
+        "files-modules",
+        "exceptions",
+        "python-oop"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "iterators-generators",
+      "zone": 4,
+      "name": "Iterators & generators",
+      "icon": "route",
+      "desc": "The iterator protocol, generators with yield, and lazy pipelines with itertools.",
+      "kind": "concept",
+      "requires": [
+        "comprehensions",
+        "dunder-methods"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "decorators",
+      "zone": 4,
+      "name": "Decorators",
+      "icon": "wand",
+      "desc": "Functions as values, writing decorators, functools.wraps and common built-in decorators.",
+      "kind": "concept",
+      "requires": [
+        "python-functions"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "context-managers",
+      "zone": 4,
+      "name": "Context managers",
+      "icon": "lock",
+      "desc": "The with statement, writing context managers and contextlib.",
+      "kind": "concept",
+      "requires": [
+        "exceptions",
+        "dunder-methods"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "python-concurrency",
+      "zone": 4,
+      "name": "Concurrency & asyncio",
+      "icon": "bolt",
+      "desc": "Threads, processes, the GIL and async/await with asyncio.",
+      "kind": "concept",
+      "requires": [
+        "python-functions",
+        "os:threads"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "pytest",
+      "zone": 4,
+      "name": "Testing with pytest",
+      "icon": "check-circle",
+      "desc": "Writing tests, fixtures and parametrised tests with pytest.",
+      "kind": "lesson",
+      "requires": [
+        "python-functions",
+        "exceptions"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "packaging",
+      "zone": 5,
+      "name": "Packaging & venvs",
+      "icon": "layers",
+      "desc": "Virtual environments, pip, pyproject.toml and publishing a package.",
+      "kind": "lesson",
+      "requires": [
+        "files-modules"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "numpy-pandas",
+      "zone": 5,
+      "name": "NumPy & pandas",
+      "icon": "grid",
+      "desc": "Vectorised arrays with NumPy and tabular data wrangling with pandas DataFrames.",
+      "kind": "concept",
+      "requires": [
+        "python-collections",
+        "la:matrices"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "plotting",
+      "zone": 5,
+      "name": "Plotting",
+      "icon": "chart",
+      "desc": "Charts with matplotlib: line, bar, scatter and histograms from DataFrames.",
+      "kind": "lesson",
+      "requires": [
+        "numpy-pandas"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "data-analysis",
+      "zone": 5,
+      "name": "Data analysis project",
+      "icon": "analytics",
+      "desc": "Clean a real dataset, summarise it and present findings with charts in a notebook.",
+      "kind": "project",
+      "requires": [
+        "numpy-pandas",
+        "plotting",
+        "statistics:descriptive-stats"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

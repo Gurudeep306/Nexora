@@ -1,0 +1,321 @@
+{
+  "id": "computer-graphics",
+  "name": "Computer Graphics",
+  "short": "CG",
+  "group": "beyond",
+  "domain": "visual-product",
+  "order": 55,
+  "icon": "shapes",
+  "color": "#f43f5e",
+  "description": "Rendering images from 3D scenes: transforms, the GPU pipeline, shading and textures, ray tracing and animation.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Maths & images"
+    },
+    {
+      "level": 2,
+      "name": "Rasterisation pipeline"
+    },
+    {
+      "level": 3,
+      "name": "Shading & textures"
+    },
+    {
+      "level": 4,
+      "name": "Ray tracing"
+    },
+    {
+      "level": 5,
+      "name": "Geometry & animation"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "vectors-geometry",
+      "zone": 1,
+      "name": "Vectors & geometry",
+      "icon": "crosshair",
+      "desc": "Points, vectors, dot and cross products, lines and planes in 3D.",
+      "kind": "concept",
+      "requires": [
+        "la:vectors"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "transformations",
+      "zone": 1,
+      "name": "Transformations",
+      "icon": "layers",
+      "desc": "Translation, rotation and scaling with homogeneous coordinates and composition.",
+      "kind": "lesson",
+      "requires": [
+        "vectors-geometry",
+        "la:matrices"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "raster-images",
+      "zone": 1,
+      "name": "Raster images",
+      "icon": "image",
+      "desc": "Pixels, framebuffers, resolution and anti-aliasing.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "colour-light",
+      "zone": 1,
+      "name": "Colour & light",
+      "icon": "palette",
+      "desc": "RGB and colour spaces, gamma, HDR and how we perceive colour.",
+      "kind": "concept",
+      "requires": [
+        "raster-images"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "rasterisation",
+      "zone": 2,
+      "name": "Rasterisation",
+      "icon": "grid",
+      "desc": "Turning lines and triangles into pixels with barycentric interpolation.",
+      "kind": "lesson",
+      "requires": [
+        "raster-images",
+        "transformations"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "cameras-projection",
+      "zone": 2,
+      "name": "Cameras & projection",
+      "icon": "eye",
+      "desc": "View transforms, perspective and orthographic projection.",
+      "kind": "lesson",
+      "requires": [
+        "transformations"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "gpu-pipeline",
+      "zone": 2,
+      "name": "The GPU pipeline",
+      "icon": "cpu",
+      "desc": "Vertex processing, rasterisation, fragment processing and output merging on the GPU.",
+      "kind": "lesson",
+      "requires": [
+        "rasterisation",
+        "cameras-projection",
+        "parallel-programming:gpu-programming"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "visibility",
+      "zone": 2,
+      "name": "Visibility",
+      "icon": "filter",
+      "desc": "Clipping, culling and the z-buffer.",
+      "kind": "concept",
+      "requires": [
+        "rasterisation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "webgl-opengl",
+      "zone": 2,
+      "name": "WebGL & OpenGL",
+      "icon": "code",
+      "desc": "Buffers, shaders programs and draw calls in a graphics API.",
+      "kind": "lesson",
+      "requires": [
+        "gpu-pipeline"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "lighting-models",
+      "zone": 3,
+      "name": "Lighting models",
+      "icon": "sun",
+      "desc": "Ambient, diffuse and specular light with Phong and Blinn-Phong.",
+      "kind": "lesson",
+      "requires": [
+        "gpu-pipeline"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "shaders",
+      "zone": 3,
+      "name": "Shaders",
+      "icon": "wand",
+      "desc": "Writing vertex and fragment shaders for lighting and effects.",
+      "kind": "lesson",
+      "requires": [
+        "webgl-opengl",
+        "lighting-models"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "texture-mapping",
+      "zone": 3,
+      "name": "Texture mapping",
+      "icon": "image",
+      "desc": "UV coordinates, mipmapping, filtering and normal maps.",
+      "kind": "lesson",
+      "requires": [
+        "shaders"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "shadows",
+      "zone": 3,
+      "name": "Shadows",
+      "icon": "moon",
+      "desc": "Shadow mapping and its artefacts.",
+      "kind": "lesson",
+      "requires": [
+        "shaders",
+        "visibility"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "realtime-renderer",
+      "zone": 3,
+      "name": "Real-time renderer",
+      "icon": "rocket",
+      "desc": "Build a renderer that loads meshes and draws lit, textured, shadowed scenes.",
+      "kind": "project",
+      "requires": [
+        "texture-mapping",
+        "shadows"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "ray-casting",
+      "zone": 4,
+      "name": "Ray casting",
+      "icon": "crosshair",
+      "desc": "Generating rays and intersecting them with spheres, planes and triangles.",
+      "kind": "lesson",
+      "requires": [
+        "cameras-projection"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "bvh",
+      "zone": 4,
+      "name": "BVHs & grids",
+      "icon": "tree",
+      "desc": "Acceleration structures that make ray tracing fast.",
+      "kind": "lesson",
+      "requires": [
+        "ray-casting"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "path-tracing",
+      "zone": 4,
+      "name": "Path tracing",
+      "icon": "route",
+      "desc": "The rendering equation and Monte Carlo light transport.",
+      "kind": "lesson",
+      "requires": [
+        "ray-casting",
+        "prob:expectation-variance"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "pbr",
+      "zone": 4,
+      "name": "PBR materials",
+      "icon": "gem",
+      "desc": "Physically based materials, microfacets and energy conservation.",
+      "kind": "concept",
+      "requires": [
+        "path-tracing",
+        "lighting-models"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ray-tracer",
+      "zone": 4,
+      "name": "Ray tracer",
+      "icon": "trophy",
+      "desc": "Write a path tracer that renders global illumination scenes.",
+      "kind": "project",
+      "requires": [
+        "path-tracing",
+        "bvh"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "curves-surfaces",
+      "zone": 5,
+      "name": "Curves & surfaces",
+      "icon": "shapes",
+      "desc": "Bezier curves, B-splines and subdivision surfaces.",
+      "kind": "concept",
+      "requires": [
+        "transformations"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "mesh-processing",
+      "zone": 5,
+      "name": "Mesh processing",
+      "icon": "grid",
+      "desc": "Mesh data structures, normals, simplification and smoothing.",
+      "kind": "lesson",
+      "requires": [
+        "curves-surfaces"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "animation",
+      "zone": 5,
+      "name": "Animation",
+      "icon": "play",
+      "desc": "Keyframes, interpolation, quaternions and skeletal skinning.",
+      "kind": "lesson",
+      "requires": [
+        "transformations",
+        "curves-surfaces"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "simulation",
+      "zone": 5,
+      "name": "Simulation",
+      "icon": "activity",
+      "desc": "Particles, cloth and rigid bodies with numerical integration.",
+      "kind": "concept",
+      "requires": [
+        "animation",
+        "numerical-methods:runge-kutta"
+      ],
+      "xpReward": 140
+    }
+  ]
+}

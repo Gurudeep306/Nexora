@@ -1,0 +1,260 @@
+{
+  "id": "java",
+  "name": "Java",
+  "short": "JAVA",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 21,
+  "icon": "code",
+  "color": "#e76f00",
+  "description": "Java syntax, object-oriented design, collections, concurrency, the JVM and building services with Spring Boot.",
+  "rankTitle": "JVM Journeyer",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Java basics"
+    },
+    {
+      "level": 2,
+      "name": "Objects in Java"
+    },
+    {
+      "level": 3,
+      "name": "Collections & generics"
+    },
+    {
+      "level": 4,
+      "name": "Concurrency & the JVM"
+    },
+    {
+      "level": 5,
+      "name": "Building applications"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "java-basics",
+      "zone": 1,
+      "name": "Java basics",
+      "icon": "code",
+      "desc": "Types, variables, operators, control flow and compiling and running a Java program.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40,
+      "resources": [
+        {
+          "title": "The Java Tutorials",
+          "url": "https://docs.oracle.com/javase/tutorial/"
+        }
+      ]
+    },
+    {
+      "id": "java-methods-arrays",
+      "zone": 1,
+      "name": "Methods & arrays",
+      "icon": "array",
+      "desc": "Static methods, arrays, the String class and StringBuilder.",
+      "kind": "concept",
+      "requires": [
+        "java-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "java-oop",
+      "zone": 2,
+      "name": "Classes & objects",
+      "icon": "shapes",
+      "desc": "Classes, constructors, encapsulation, inheritance and polymorphism in Java.",
+      "kind": "concept",
+      "requires": [
+        "java-methods-arrays"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "interfaces",
+      "zone": 2,
+      "name": "Interfaces",
+      "icon": "layers",
+      "desc": "Interfaces, abstract classes, default methods and programming to an interface.",
+      "kind": "concept",
+      "requires": [
+        "java-oop"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "java-exceptions",
+      "zone": 2,
+      "name": "Exceptions",
+      "icon": "warning",
+      "desc": "Checked and unchecked exceptions, try-with-resources and custom exceptions.",
+      "kind": "concept",
+      "requires": [
+        "java-oop"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "enums-records",
+      "zone": 2,
+      "name": "Enums & records",
+      "icon": "tag",
+      "desc": "Enums with behaviour, records as immutable data carriers, and sealed types.",
+      "kind": "concept",
+      "requires": [
+        "java-oop"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "generics",
+      "zone": 3,
+      "name": "Generics",
+      "icon": "shapes",
+      "desc": "Generic classes and methods, bounded types and wildcards.",
+      "kind": "concept",
+      "requires": [
+        "interfaces"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "java-collections",
+      "zone": 3,
+      "name": "Collections",
+      "icon": "list",
+      "desc": "List, Set, Map and Queue implementations, equals/hashCode and choosing the right one.",
+      "kind": "concept",
+      "requires": [
+        "generics",
+        "c:hashing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "lambdas-streams",
+      "zone": 3,
+      "name": "Lambdas & streams",
+      "icon": "route",
+      "desc": "Functional interfaces, lambdas, method references and the Streams API.",
+      "kind": "concept",
+      "requires": [
+        "java-collections"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "bank-system",
+      "zone": 3,
+      "name": "Bank system project",
+      "icon": "coins",
+      "desc": "Model accounts, transactions and reports in a console banking app with clean OOP.",
+      "kind": "project",
+      "requires": [
+        "java-collections",
+        "java-exceptions",
+        "enums-records"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "java-threads",
+      "zone": 4,
+      "name": "Threads & executors",
+      "icon": "bolt",
+      "desc": "Threads, executors, futures, synchronized and the java.util.concurrent toolkit.",
+      "kind": "concept",
+      "requires": [
+        "java-oop",
+        "os:threads"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "jvm-gc",
+      "zone": 4,
+      "name": "JVM & GC",
+      "icon": "cpu",
+      "desc": "Bytecode, class loading, the heap and stack, and how garbage collectors work.",
+      "kind": "concept",
+      "requires": [
+        "java-oop"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "build-tools",
+      "zone": 5,
+      "name": "Maven & Gradle",
+      "icon": "wrench",
+      "desc": "Project layout, dependencies and builds with Maven or Gradle.",
+      "kind": "lesson",
+      "requires": [
+        "java-basics"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "junit",
+      "zone": 5,
+      "name": "JUnit testing",
+      "icon": "check-circle",
+      "desc": "Unit tests, assertions, parameterised tests and mocking with JUnit and Mockito.",
+      "kind": "lesson",
+      "requires": [
+        "java-oop",
+        "build-tools"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "jdbc",
+      "zone": 5,
+      "name": "JDBC",
+      "icon": "database",
+      "desc": "Connecting to a relational database, prepared statements and transactions from Java.",
+      "kind": "lesson",
+      "requires": [
+        "java-exceptions",
+        "sql:select-queries"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "spring-boot",
+      "zone": 5,
+      "name": "Spring Boot",
+      "icon": "server",
+      "desc": "Dependency injection, controllers and data access with Spring Boot.",
+      "kind": "lesson",
+      "requires": [
+        "interfaces",
+        "build-tools",
+        "web:rest-apis"
+      ],
+      "xpReward": 130,
+      "resources": [
+        {
+          "title": "Spring Guides",
+          "url": "https://spring.io/guides"
+        }
+      ]
+    },
+    {
+      "id": "rest-service",
+      "zone": 5,
+      "name": "REST service project",
+      "icon": "rocket",
+      "desc": "Build a tested Spring Boot REST service backed by a database.",
+      "kind": "project",
+      "requires": [
+        "spring-boot",
+        "jdbc",
+        "junit"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

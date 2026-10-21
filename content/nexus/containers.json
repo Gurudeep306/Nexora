@@ -1,0 +1,269 @@
+{
+  "id": "containers",
+  "name": "Docker & Kubernetes",
+  "short": "K8S",
+  "group": "beyond",
+  "domain": "systems",
+  "order": 54,
+  "icon": "layers",
+  "color": "#2496ed",
+  "description": "Containers from the Linux primitives up: Docker images and Compose, then Kubernetes workloads, networking and operations.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Container basics"
+    },
+    {
+      "level": 2,
+      "name": "Images & Compose"
+    },
+    {
+      "level": 3,
+      "name": "Kubernetes core"
+    },
+    {
+      "level": 4,
+      "name": "Kubernetes in production"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "containers-intro",
+      "zone": 1,
+      "name": "Containers vs VMs",
+      "icon": "layers",
+      "desc": "What containers are, how they differ from virtual machines and why they took over.",
+      "kind": "concept",
+      "requires": [
+        "os:processes"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "linux-primitives",
+      "zone": 1,
+      "name": "Namespaces & cgroups",
+      "icon": "cpu",
+      "desc": "The kernel features behind containers: namespaces, cgroups and union file systems.",
+      "kind": "concept",
+      "requires": [
+        "containers-intro",
+        "linux-shell:shell-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "docker-basics",
+      "zone": 1,
+      "name": "Docker basics",
+      "icon": "terminal",
+      "desc": "Running, inspecting, stopping and removing containers with the Docker CLI.",
+      "kind": "concept",
+      "requires": [
+        "containers-intro",
+        "linux-shell:shell-basics",
+        "os:processes"
+      ],
+      "xpReward": 40,
+      "resources": [
+        {
+          "title": "Docker docs: Get started",
+          "url": "https://docs.docker.com/get-started/"
+        }
+      ]
+    },
+    {
+      "id": "dockerfiles",
+      "zone": 2,
+      "name": "Dockerfiles",
+      "icon": "edit",
+      "desc": "Writing Dockerfiles, build context and instructions.",
+      "kind": "concept",
+      "requires": [
+        "docker-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "images-registries",
+      "zone": 2,
+      "name": "Images & registries",
+      "icon": "inbox",
+      "desc": "Image layers, caching, tags, multi-stage builds and pushing to registries.",
+      "kind": "concept",
+      "requires": [
+        "dockerfiles"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "volumes-networks",
+      "zone": 2,
+      "name": "Volumes & networks",
+      "icon": "database",
+      "desc": "Persistent data with volumes and container networking.",
+      "kind": "concept",
+      "requires": [
+        "docker-basics",
+        "cn:ip-addressing"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "docker-compose",
+      "zone": 2,
+      "name": "Docker Compose",
+      "icon": "grid",
+      "desc": "Defining multi-container apps with Compose.",
+      "kind": "concept",
+      "requires": [
+        "volumes-networks",
+        "dockerfiles"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "compose-app",
+      "zone": 2,
+      "name": "Compose app project",
+      "icon": "rocket",
+      "desc": "Containerise a web app with a database and cache and run it with Compose.",
+      "kind": "project",
+      "requires": [
+        "docker-compose",
+        "images-registries"
+      ],
+      "xpReward": 190
+    },
+    {
+      "id": "kubernetes",
+      "zone": 3,
+      "name": "Kubernetes",
+      "icon": "nexus",
+      "desc": "The control plane, nodes, the declarative model and kubectl.",
+      "kind": "concept",
+      "requires": [
+        "images-registries"
+      ],
+      "xpReward": 80,
+      "resources": [
+        {
+          "title": "Kubernetes docs: Concepts",
+          "url": "https://kubernetes.io/docs/concepts/"
+        }
+      ]
+    },
+    {
+      "id": "pods-deployments",
+      "zone": 3,
+      "name": "Pods & Deployments",
+      "icon": "layers",
+      "desc": "Pods, ReplicaSets, Deployments, rolling updates and probes.",
+      "kind": "concept",
+      "requires": [
+        "kubernetes"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "services-ingress",
+      "zone": 3,
+      "name": "Services & Ingress",
+      "icon": "route",
+      "desc": "Service discovery, Service types and routing traffic in with Ingress.",
+      "kind": "concept",
+      "requires": [
+        "pods-deployments"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "config-secrets",
+      "zone": 3,
+      "name": "ConfigMaps & Secrets",
+      "icon": "key",
+      "desc": "Separating configuration and secrets from images.",
+      "kind": "concept",
+      "requires": [
+        "pods-deployments"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "k8s-storage",
+      "zone": 3,
+      "name": "Persistent storage",
+      "icon": "save",
+      "desc": "Volumes, PersistentVolumeClaims, StorageClasses and StatefulSets.",
+      "kind": "concept",
+      "requires": [
+        "pods-deployments"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "helm",
+      "zone": 4,
+      "name": "Helm",
+      "icon": "book",
+      "desc": "Packaging Kubernetes apps as Helm charts.",
+      "kind": "lesson",
+      "requires": [
+        "services-ingress",
+        "config-secrets"
+      ],
+      "xpReward": 110
+    },
+    {
+      "id": "k8s-autoscaling",
+      "zone": 4,
+      "name": "Autoscaling",
+      "icon": "trending-up",
+      "desc": "Resource requests and limits, horizontal pod and cluster autoscaling.",
+      "kind": "concept",
+      "requires": [
+        "pods-deployments"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "k8s-observability",
+      "zone": 4,
+      "name": "Observability",
+      "icon": "activity",
+      "desc": "Logs, metrics and debugging failing pods.",
+      "kind": "concept",
+      "requires": [
+        "services-ingress"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "k8s-security",
+      "zone": 4,
+      "name": "Kubernetes security",
+      "icon": "shield",
+      "desc": "RBAC, network policies, pod security and image scanning.",
+      "kind": "concept",
+      "requires": [
+        "config-secrets"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "k8s-deploy",
+      "zone": 4,
+      "name": "Kubernetes app project",
+      "icon": "rocket",
+      "desc": "Deploy a multi-service app to a cluster with a Helm chart, autoscaling and monitoring.",
+      "kind": "project",
+      "requires": [
+        "helm",
+        "k8s-autoscaling",
+        "k8s-storage",
+        "k8s-observability"
+      ],
+      "xpReward": 270
+    }
+  ]
+}

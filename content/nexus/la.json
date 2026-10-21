@@ -3,10 +3,12 @@
   "name": "Linear Algebra",
   "short": "LA",
   "group": "gate",
+  "domain": "math",
   "order": 11,
   "icon": "grid",
   "color": "#ec4899",
   "description": "Matrices, determinants, linear systems, vector spaces, eigenvalues and decompositions for GATE.",
+  "rankTitle": "Matrix Mage",
   "gate": {
     "pyqSubject": "la",
     "notesSubject": null

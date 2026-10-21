@@ -1428,6 +1428,19 @@ async function initGateTables() {
       plan TEXT NOT NULL,
       updated_at INTEGER NOT NULL
     )`],
+    // The Nexus web rank (src/nexus/ranks.js): one row per user, written only
+    // when their score changes, so the leaderboards read one small table.
+    [`CREATE TABLE IF NOT EXISTS nexus_scores (
+      username TEXT PRIMARY KEY,
+      web_xp INTEGER NOT NULL DEFAULT 0,
+      web_solved INTEGER NOT NULL DEFAULT 0,
+      web_level INTEGER NOT NULL DEFAULT 1,
+      subjects TEXT NOT NULL DEFAULT '{}',
+      week TEXT,
+      week_base_xp INTEGER NOT NULL DEFAULT 0,
+      updated_at INTEGER NOT NULL
+    )`],
+    ["CREATE INDEX IF NOT EXISTS idx_nexus_scores_xp ON nexus_scores(web_xp)"],
     // GATE Notes reader: per-lesson study state (src/routes/gate-notes.js).
     [`CREATE TABLE IF NOT EXISTS gate_notes_progress (
       username TEXT NOT NULL,

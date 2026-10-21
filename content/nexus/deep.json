@@ -3,10 +3,12 @@
   "name": "Deep Learning",
   "short": "DEEP",
   "group": "beyond",
+  "domain": "ai",
   "order": 16,
   "icon": "layers",
   "color": "#7c3aed",
   "description": "Neural networks from a single neuron to transformers, trained hands-on in PyTorch.",
+  "rankTitle": "Neural Architect",
   "gate": {
     "pyqSubject": "ml",
     "notesSubject": null

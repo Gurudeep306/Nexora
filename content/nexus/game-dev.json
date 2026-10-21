@@ -1,0 +1,335 @@
+{
+  "id": "game-dev",
+  "name": "Game Development",
+  "short": "GAME",
+  "group": "beyond",
+  "domain": "visual-product",
+  "order": 56,
+  "icon": "gamepad",
+  "color": "#f97316",
+  "description": "Designing and building games: engines, gameplay systems, physics, AI, rendering, audio and shipping.",
+  "rankTitle": "World Builder",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Game foundations"
+    },
+    {
+      "level": 2,
+      "name": "Engine architecture"
+    },
+    {
+      "level": 3,
+      "name": "Gameplay systems"
+    },
+    {
+      "level": 4,
+      "name": "Graphics & audio"
+    },
+    {
+      "level": 5,
+      "name": "Shipping a game"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "game-design",
+      "zone": 1,
+      "name": "Game design",
+      "icon": "lightbulb",
+      "desc": "Core loops, mechanics, goals, feedback and what makes play engaging.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 60
+    },
+    {
+      "id": "game-loop",
+      "zone": 1,
+      "name": "The game loop",
+      "icon": "clock",
+      "desc": "Update and render loops, fixed versus variable time steps and frame timing.",
+      "kind": "concept",
+      "requires": [
+        "game-design"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "game-maths",
+      "zone": 1,
+      "name": "Game maths",
+      "icon": "calculator",
+      "desc": "Vectors, interpolation, angles and transforms used in gameplay code.",
+      "kind": "concept",
+      "requires": [
+        "computer-graphics:vectors-geometry"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "using-an-engine",
+      "zone": 1,
+      "name": "Using an engine",
+      "icon": "wrench",
+      "desc": "Scenes, game objects, components and scripting in an engine such as Godot or Unity.",
+      "kind": "lesson",
+      "requires": [
+        "game-loop"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "entities-components",
+      "zone": 2,
+      "name": "Entities & components",
+      "icon": "grid",
+      "desc": "Composition over inheritance and the entity-component-system pattern.",
+      "kind": "concept",
+      "requires": [
+        "using-an-engine"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "scene-graphs",
+      "zone": 2,
+      "name": "Scene graphs",
+      "icon": "tree",
+      "desc": "Parent-child transforms and organising a game world.",
+      "kind": "concept",
+      "requires": [
+        "entities-components",
+        "computer-graphics:transformations"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "input-handling",
+      "zone": 2,
+      "name": "Input handling",
+      "icon": "keyboard",
+      "desc": "Keyboard, mouse, controller and touch input with action mapping.",
+      "kind": "lesson",
+      "requires": [
+        "game-loop"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "performance-budgets",
+      "zone": 2,
+      "name": "Performance budgets",
+      "icon": "timer",
+      "desc": "Frame budgets, memory allocation and cache-friendly data layouts.",
+      "kind": "concept",
+      "requires": [
+        "entities-components",
+        "cpp:stl"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "arcade-clone",
+      "zone": 2,
+      "name": "Arcade clone",
+      "icon": "gamepad",
+      "desc": "Build a complete small arcade game like Breakout with scoring and levels.",
+      "kind": "project",
+      "requires": [
+        "input-handling",
+        "game-maths"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "collision-detection",
+      "zone": 3,
+      "name": "Collision detection",
+      "icon": "crosshair",
+      "desc": "Bounding volumes, separating axis tests and broad-phase culling.",
+      "kind": "lesson",
+      "requires": [
+        "game-maths",
+        "scene-graphs"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "rigid-body-physics",
+      "zone": 3,
+      "name": "Rigid-body physics",
+      "icon": "bolt",
+      "desc": "Integration, forces, impulses and resolving collisions.",
+      "kind": "lesson",
+      "requires": [
+        "collision-detection"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "game-ai",
+      "zone": 3,
+      "name": "Game AI",
+      "icon": "bot",
+      "desc": "Finite state machines, behaviour trees and steering behaviours.",
+      "kind": "lesson",
+      "requires": [
+        "entities-components"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "pathfinding",
+      "zone": 3,
+      "name": "Pathfinding",
+      "icon": "route",
+      "desc": "A* on grids and navigation meshes.",
+      "kind": "lesson",
+      "requires": [
+        "game-ai",
+        "algo:shortest-paths"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "menus-hud-saves",
+      "zone": 3,
+      "name": "Menus, HUD & saves",
+      "icon": "list",
+      "desc": "Game UI, state management between screens and save files.",
+      "kind": "lesson",
+      "requires": [
+        "input-handling"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "game-rendering",
+      "zone": 4,
+      "name": "Rendering for games",
+      "icon": "image",
+      "desc": "Sprites, batching, cameras, level of detail and lighting in engines.",
+      "kind": "lesson",
+      "requires": [
+        "scene-graphs",
+        "computer-graphics:gpu-pipeline"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "shaders-vfx",
+      "zone": 4,
+      "name": "Shaders & VFX",
+      "icon": "wand",
+      "desc": "Particle systems and shader effects.",
+      "kind": "lesson",
+      "requires": [
+        "game-rendering"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "character-animation",
+      "zone": 4,
+      "name": "Character animation",
+      "icon": "play",
+      "desc": "Sprite and skeletal animation, blending and animation state machines.",
+      "kind": "lesson",
+      "requires": [
+        "game-rendering"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "game-audio",
+      "zone": 4,
+      "name": "Game audio",
+      "icon": "bell",
+      "desc": "Sound effects, music, mixing and spatial audio.",
+      "kind": "lesson",
+      "requires": [
+        "game-loop"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "platformer",
+      "zone": 4,
+      "name": "Platformer",
+      "icon": "rocket",
+      "desc": "Build a platformer with physics, enemies, animation, menus and saves.",
+      "kind": "project",
+      "requires": [
+        "rigid-body-physics",
+        "character-animation",
+        "menus-hud-saves",
+        "pathfinding"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "multiplayer",
+      "zone": 5,
+      "name": "Multiplayer netcode",
+      "icon": "users",
+      "desc": "Client-server models, prediction, interpolation and lag compensation.",
+      "kind": "lesson",
+      "requires": [
+        "game-loop",
+        "cn:udp"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "profiling-games",
+      "zone": 5,
+      "name": "Profiling games",
+      "icon": "activity",
+      "desc": "Finding CPU and GPU bottlenecks with profilers.",
+      "kind": "lesson",
+      "requires": [
+        "performance-budgets",
+        "game-rendering"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "playtesting",
+      "zone": 5,
+      "name": "Playtesting & tuning",
+      "icon": "heart",
+      "desc": "Running playtests and balancing difficulty from feedback and data.",
+      "kind": "lesson",
+      "requires": [
+        "game-design",
+        "platformer"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "shipping-game",
+      "zone": 5,
+      "name": "Shipping a game",
+      "icon": "upload",
+      "desc": "Builds for multiple platforms, store pages and post-launch updates.",
+      "kind": "lesson",
+      "requires": [
+        "playtesting"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "game-capstone",
+      "zone": 5,
+      "name": "Game capstone",
+      "icon": "trophy",
+      "desc": "Design, build, test and publish an original game.",
+      "kind": "project",
+      "requires": [
+        "shipping-game",
+        "profiling-games"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

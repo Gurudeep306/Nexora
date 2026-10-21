@@ -3,10 +3,12 @@
   "name": "System Design",
   "short": "SYS",
   "group": "beyond",
+  "domain": "systems",
   "order": 19,
   "icon": "system-design",
   "color": "#64748b",
   "description": "Designing large-scale systems: scaling, caching, data stores, asynchronous processing and classic case studies.",
+  "rankTitle": "Systems Architect",
   "zones": [
     {
       "level": 1,

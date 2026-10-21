@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { RefreshCw } from 'lucide-react'
 import {
   Badge,
@@ -19,148 +19,213 @@ import { api } from '@/lib/api'
 import { useAuth } from '@/context/AuthContext'
 import { useAgentPageContext } from '@/context/AgentContext'
 import { cn, formatNumber } from '@/lib/utils'
-import { SkillGraph } from '@/components/nexus/SkillGraph'
+import { NexusWeb, type Camera, type NexusWebHandle, type RegionRank } from '@/components/nexus/NexusWeb'
 import { NodePanel } from '@/components/nexus/NodePanel'
-import { WeeklyPool } from '@/components/nexus/WeeklyPool'
+import { SubjectPath } from '@/components/nexus/SubjectPath'
 import { TitleTrack } from '@/components/nexus/TitleTrack'
-import { SubjectSwitcher } from '@/components/nexus/SubjectSwitcher'
-import { SubjectsOverview } from '@/components/nexus/SubjectsOverview'
-import { nodeCountLabel } from '@/components/nexus/format'
-import type { CrossLink, NexusStatsResponse } from '@/components/nexus/types'
-import {
-  ALL_SUBJECTS,
-  DEFAULT_SUBJECT,
-  fetchNexus,
-  fetchRoadmap,
-  nexusKey,
-  rememberedSubject,
-  rememberSubject,
-  ROADMAP_KEY,
-} from '@/components/nexus/data'
+import { WebLeaderboard } from '@/components/nexus/WebLeaderboard'
+import type { CrossLink, NexusNode, NexusNodeResponse, NexusResponse, NexusStatsResponse, RiftLevel, RiftPlayer, WebCluster, WebNode } from '@/components/nexus/types'
+import { fetchNexusWeb, NEXUS_WEB_KEY } from '@/components/nexus/data'
 import { Icon } from '@/components/icon/Icon'
+
+/** Where the web's camera was when you dived into a subject (restored on the way back). */
+let lastWebCamera: Camera | null = null
+
+/**
+ * The rank ladder shown under /ranks, placed by the web rank: same ladder
+ * (names, badges, XP and solve gates), where you stand across every subject.
+ */
+function webTitles(stats: NexusStatsResponse | null, player: RiftPlayer, levels: RiftLevel[]): NexusStatsResponse | null {
+  if (!stats || stats.allTitles.length !== levels.length) return stats
+  const cur = stats.allTitles[player.level - 1]
+  const next = stats.allTitles[player.level] ?? null
+  if (!cur) return stats
+  const solved = player.probsInLevel + (levels[player.level - 1]?.minProblems ?? 0)
+  return {
+    ...stats,
+    title: {
+      current: cur,
+      next,
+      xpToNext: next ? Math.max(0, next.min_xp - player.xp) : 0,
+      probsToNext: next ? Math.max(0, (next.min_problems ?? 0) - solved) : 0,
+    },
+  }
+}
+
+/** A web node in the shape the node panel reads (details merged in when loaded). */
+function asNexusNode(c: WebCluster, n: WebNode): NexusNode {
+  const dsa = c.engine === 'dsa'
+  const [solved, target] = dsa ? n.c.split('/').map(Number) : [0, 0]
+  return {
+    id: n.id,
+    subject: c.id,
+    kind: n.k,
+    zone: n.z,
+    name: n.n,
+    icon: '',
+    desc: '',
+    tags: [],
+    requires: n.req,
+    target: target || 0,
+    x: 0,
+    y: 0,
+    difficulty: [0, 0],
+    xpReward: n.xp,
+    resources: [],
+    solved: solved || 0,
+    progress: n.p,
+    unlocked: n.s >= 1,
+    completed: n.s === 2,
+  }
+}
 
 export default function NexusPage() {
   const [params, setParams] = useSearchParams()
-  // Subject: the URL wins (shareable /nexus?subject=dl), then the last one used.
-  const subject = params.get('subject') || rememberedSubject() || DEFAULT_SUBJECT
-  const overview = subject === ALL_SUBJECTS
-  const apiSubject = overview ? DEFAULT_SUBJECT : subject
-  const selectedId = overview ? null : params.get('node')
+  const navigate = useNavigate()
+  const location = useLocation()
+  const subject = params.get('subject')
+  const node = params.get('node')
   const [tab, setTab] = useState<'map' | 'ranks'>('map')
   const { user } = useAuth()
   const username = user?.username ?? ''
   const fresh = useRef(false)
+  const webRef = useRef<NexusWebHandle>(null)
+  const [pathData, setPathData] = useState<NexusResponse | null>(null)
 
-  useEffect(() => rememberSubject(subject), [subject])
-
-  const setSubject = useCallback(
-    (id: string, node?: string) => {
-      setParams(
-        (p) => {
-          const next = new URLSearchParams(p)
-          next.set('subject', id)
-          if (node) next.set('node', node)
-          else next.delete('node')
-          return next
-        },
-        { replace: false },
-      )
-    },
-    [setParams],
-  )
-  const setSelectedId = useCallback(
-    (id: string | null) => {
-      setParams(
-        (p) => {
-          const next = new URLSearchParams(p)
-          next.set('subject', apiSubject)
-          if (id) next.set('node', id)
-          else next.delete('node')
-          return next
-        },
-        { replace: true },
-      )
-    },
-    [setParams, apiSubject],
-  )
-
-  // The tree and the weekly pool load in parallel and independently: the
-  // skill map renders as soon as /api/nexus answers, the (heavier) weekly
-  // pool fills in when it arrives. Both are cached, so revisits are instant.
-  const { data: raw, loading, error, refetch } = useApi(
+  // The web: every subject and the unified web rank (the player card).
+  const { data: web, loading, error, refetch } = useApi(
     () => {
       const f = fresh.current
       fresh.current = false
-      return fetchNexus(apiSubject, f)
+      return fetchNexusWeb(f)
     },
-    [apiSubject],
-    { cacheKey: nexusKey(apiSubject) },
+    [],
+    { cacheKey: NEXUS_WEB_KEY },
   )
-  // While a switch is in flight the hook still holds the previous subject.
-  const nexus = raw && (raw.subject?.id ?? DEFAULT_SUBJECT) === apiSubject ? raw : null
-  const subjects = useMemo(() => raw?.subjects ?? [], [raw])
-  const isDsa = apiSubject === DEFAULT_SUBJECT
-  const roadmapApi = useApi(fetchRoadmap, [], { cacheKey: ROADMAP_KEY, skip: !isDsa })
   const statsApi = useApi<NexusStatsResponse>(
     () => api.get<NexusStatsResponse>('/api/stats', { query: { username: username || undefined } }),
     [username],
     { cacheKey: `stats:${username}` },
   )
 
-  const selectedNode = useMemo(() => nexus?.nodes.find((n) => n.id === selectedId) ?? null, [nexus, selectedId])
-
-  // A cross-subject jump lands on its node: bring it into view.
-  const jumped = useRef<string | null>(null)
-  useEffect(() => {
-    if (!selectedNode || jumped.current !== `${apiSubject}:${selectedNode.id}`) return
-    jumped.current = null
-    const t = window.setTimeout(() => {
-      document.getElementById(`nx-node-${selectedNode.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }, 350)
-    return () => window.clearTimeout(t)
-  }, [selectedNode, apiSubject])
-  const onJump = useCallback(
-    (link: CrossLink) => {
-      jumped.current = `${link.subject}:${link.id}`
-      setSubject(link.subject, link.id)
+  /* ── navigation: web ⇄ subject path, all in the URL ── */
+  const openSubject = useCallback(
+    (id: string, cam?: Camera, nodeId?: string) => {
+      if (cam) lastWebCamera = cam
+      const next = new URLSearchParams()
+      next.set('subject', id)
+      if (nodeId) next.set('node', nodeId)
+      navigate({ search: `?${next}` }, { state: { fromWeb: !subject } })
     },
-    [setSubject],
+    [navigate, subject],
   )
-
-  // The floating assistant sees the subject, the player's zone and the node in focus.
-  const nexusBrief = useMemo(() => {
-    if (!raw) return undefined
-    if (overview || !nexus) {
-      return `Nexus overview: ${subjects.map((s) => `${s.name} ${s.progress}% (${s.completed}/${s.nodeCount})`).join('; ')}`
+  const backToWeb = useCallback(() => {
+    if ((location.state as { fromWeb?: boolean } | null)?.fromWeb) navigate(-1)
+    else navigate({ search: '' })
+  }, [location.state, navigate])
+  const setNode = useCallback(
+    (id: string | null) => {
+      setParams(
+        (p) => {
+          const next = new URLSearchParams(p)
+          if (id) next.set('node', id)
+          else next.delete('node')
+          return next
+        },
+        { replace: true, state: location.state },
+      )
+    },
+    [setParams, location.state],
+  )
+  // Esc in a path returns to the web.
+  useEffect(() => {
+    if (!subject) return
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) backToWeb()
     }
-    const { player, zones, nodes } = nexus
-    const zoneNow = zones.find((z) => z.level === (selectedNode?.zone ?? (isDsa ? player.level : zones.find((x) => x.current)?.level)))
-    const next = nodes.filter((n) => n.unlocked && !n.completed).slice(0, 8)
-    return [
-      `Subject: ${nexus.subject?.name ?? 'Data Structures & Algorithms'}.`,
-      `Player: level ${player.level} (${player.name}), ${player.xp} XP; ${player.xpInLevel}/${player.xpForNext} XP and ${player.probsInLevel}/${player.probsForNext} problems toward the next level.`,
-      `Zones: ${zones.map((z) => `${z.level}. ${z.name} ${z.zoneProgress}%${z.locked ? ' (locked)' : ''}${z.current ? ' (current)' : ''}`).join('; ')}`,
-      zoneNow
-        ? `Zone in view: ${zoneNow.name}${isDsa ? ` — ratings ${zoneNow.minR}-${zoneNow.maxR}` : ''}, ${zoneNow.nodesCompleted}/${zoneNow.nodeCount} nodes done.`
-        : '',
-      selectedNode
-        ? `Selected node: ${selectedNode.name} — ${selectedNode.desc} Tags: ${selectedNode.tags.join(', ')}. Progress ${nodeCountLabel(selectedNode)} (${selectedNode.progress}%)${isDsa ? `; difficulty ${selectedNode.difficulty.join('-')}` : ''}; ${selectedNode.completed ? 'completed' : selectedNode.unlocked ? 'unlocked' : `locked (requires ${selectedNode.requires.join(', ')})`}.${
-            selectedNode.crossRequires?.length ? ` Needs from other subjects: ${selectedNode.crossRequires.map((c) => `${c.name} (${c.subjectShort})`).join(', ')}.` : ''
-          }`
-        : '',
-      next.length ? `Open nodes to work on: ${next.map((n) => `${n.name} (${nodeCountLabel(n)})`).join(', ')}` : '',
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [subject, backToWeb])
+
+  /* ── the web view's selected concept ("subject:id") ── */
+  const byKey = useMemo(() => {
+    const m = new Map<string, { c: WebCluster; n: WebNode }>()
+    for (const c of web?.clusters ?? []) for (const n of c.nodes) m.set(`${c.id}:${n.id}`, { c, n })
+    return m
+  }, [web])
+  const webSel = !subject && node ? byKey.get(node) : undefined
+  const [selSubject, selId] = webSel ? [webSel.c.id, webSel.n.id] : [null, null]
+  const detailApi = useApi<NexusNodeResponse>(
+    () => api.get<NexusNodeResponse>(`/api/nexus/node/${selSubject}/${selId}`),
+    [selSubject, selId],
+    { skip: !webSel, cacheKey: webSel ? `nexus:node:${selSubject}:${selId}` : undefined },
+  )
+  const selectedNode = useMemo<NexusNode | null>(() => {
+    if (!webSel) return null
+    const base = asNexusNode(webSel.c, webSel.n)
+    const d = detailApi.data?.node
+    if (!d || d.id !== webSel.n.id) return base
+    const fix = (l: CrossLink) => {
+      const live = byKey.get(`${l.subject}:${l.id}`)
+      return live ? { ...l, completed: live.n.s === 2, progress: live.n.p } : l
+    }
+    return {
+      ...d,
+      progress: base.progress,
+      unlocked: base.unlocked,
+      completed: base.completed,
+      solved: webSel.c.engine === 'dsa' ? base.solved : d.solved,
+      crossRequires: (d.crossRequires ?? []).map(fix),
+      crossUnlocks: (d.crossUnlocks ?? []).map(fix),
+    }
+  }, [webSel, detailApi.data, byKey])
+  const clusterNodes = useMemo(() => (webSel ? webSel.c.nodes.map((n) => asNexusNode(webSel.c, n)) : []), [webSel])
+  const ranks = useMemo(() => {
+    const m: Record<string, RegionRank> = {}
+    for (const c of web?.clusters ?? []) if (c.rank) m[c.id] = { tier: c.rank.tier, title: c.rank.title }
+    return m
+  }, [web])
+
+  // A deep link to a concept lands the camera on it.
+  const landed = useRef(false)
+  useEffect(() => {
+    if (!web || subject || landed.current) return
+    landed.current = true
+    if (node && byKey.has(node) && !lastWebCamera) {
+      const id = node
+      requestAnimationFrame(() => webRef.current?.flyToNode(id, true))
+    }
+  }, [web, subject, node, byKey])
+
+  /* ── the assistant sees what is on screen ── */
+  const brief = useMemo(() => {
+    if (!web) return undefined
+    const p = web.player
+    const all = web.clusters.reduce((a, c) => a + c.nodes.length, 0)
+    const done = web.clusters.reduce((a, c) => a + c.nodes.filter((n) => n.s === 2).length, 0)
+    const lines = [
+      `Web rank: level ${p.level} (${p.name}), ${p.xp} web XP across every subject; ${p.xpInLevel}/${p.xpForNext} XP toward the next level.`,
+      `The Nexus web: ${web.clusters.length} subjects, ${done}/${all} concepts mastered.`,
     ]
-      .filter(Boolean)
-      .join('\n')
-  }, [raw, nexus, overview, subjects, selectedNode, isDsa])
+    if (subject && pathData) {
+      lines.push(
+        `Subject path open: ${pathData.subject?.name}${pathData.subjectRank ? ` — subject rank ${pathData.subjectRank.tier} (${pathData.subjectRank.title}), ${pathData.subjectRank.progress}%` : ''}.`,
+        `Zones: ${pathData.zones.map((z) => `${z.level}. ${z.name} ${z.zoneProgress}%${z.locked ? ' (locked)' : ''}${z.current ? ' (current)' : ''}`).join('; ')}`,
+      )
+      const sel = node ? pathData.nodes.find((n) => n.id === node) : null
+      if (sel) lines.push(`Selected node: ${sel.name} — ${sel.desc} Progress ${sel.progress}%; ${sel.completed ? 'mastered' : sel.unlocked ? 'unlocked' : 'locked'}.`)
+    } else if (selectedNode) {
+      lines.push(`Selected concept: ${selectedNode.name} (${webSel?.c.name}) — progress ${selectedNode.progress}%; ${selectedNode.completed ? 'mastered' : selectedNode.unlocked ? 'unlocked' : 'locked'}.`)
+    }
+    return lines.join('\n')
+  }, [web, subject, pathData, node, selectedNode, webSel])
   useAgentPageContext({
-    label: selectedNode ? `Nexus · ${selectedNode.name}` : overview ? 'Nexus · All subjects' : `Nexus · ${nexus?.subject?.short ?? 'DSA'}`,
-    visibleText: nexusBrief,
+    label: subject ? `Nexus · ${pathData?.subject?.short ?? subject}` : selectedNode ? `Nexus · ${selectedNode.name}` : 'Nexus',
+    visibleText: brief,
   })
 
-  const subtitle = 'Climb the rift — master skill nodes across every subject, unlock zones, and grind the weekly problem pool.'
-
-  if (loading && !raw) {
+  const subtitle = 'One web of everything you learn — follow the paths out from you, master concepts, and climb the web rank.'
+  if (loading && !web) {
     return (
       <div>
         <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
@@ -168,8 +233,7 @@ export default function NexusPage() {
       </div>
     )
   }
-
-  if ((error && !raw) || !raw) {
+  if (error || !web) {
     return (
       <div>
         <PageHeader icon="nexus" title="The Nexus" subtitle={subtitle} />
@@ -178,24 +242,10 @@ export default function NexusPage() {
     )
   }
 
-  const roadmap = roadmapApi.data
-  // Same formula as the server; shown before the roadmap response arrives.
-  const weekSeed = roadmap?.weekSeed ?? Math.floor(Date.now() / (7 * 24 * 60 * 60 * 1000))
-  const player = raw.player
-  const zones = nexus?.zones ?? []
-  const nodes = nexus?.nodes ?? []
-  const currentZone = isDsa ? player.level : (zones.find((z) => z.current)?.level ?? 1)
-  const activeZone = selectedNode?.zone ?? currentZone
-  const zone = zones.find((z) => z.level === activeZone)
-  const zoneColor = zone?.color ?? 'var(--color-primary)'
-  const roadmapLevel = roadmap?.levels.find((l) => l.level === activeZone)
-  const allNodes = subjects.reduce((a, s) => a + s.nodeCount, 0)
-  const allDone = subjects.reduce((a, s) => a + s.completed, 0)
-  const subjectName = nexus?.subject?.name ?? 'Data Structures & Algorithms'
-
-  const scrollToZone = (level: number) => {
-    document.getElementById(`zone-${level}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
+  const player = web.player
+  const allNodes = web.clusters.reduce((a, c) => a + c.nodes.length, 0)
+  const allDone = web.clusters.reduce((a, c) => a + c.nodes.filter((n) => n.s === 2).length, 0)
+  const selZone = webSel?.c.zones.find((z) => z.level === webSel.n.z)
 
   return (
     <div>
@@ -210,18 +260,18 @@ export default function NexusPage() {
             onClick={() => {
               fresh.current = true
               refetch()
-              if (isDsa) roadmapApi.refetch()
               statsApi.refetch()
+              detailApi.refetch()
             }}
             aria-label="Refresh nexus data"
           >
-            <RefreshCw className={cn('size-3.5', (loading || roadmapApi.loading || statsApi.loading) && 'animate-spin')} />
+            <RefreshCw className={cn('size-3.5', (loading || statsApi.loading) && 'animate-spin')} />
             Refresh
           </Button>
         }
       />
 
-      {/* Player status: one Rift level and XP across every subject */}
+      {/* Player card: the unified web rank */}
       <Card glow className="mb-4">
         <CardContent className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
           <div className="space-y-2">
@@ -229,35 +279,32 @@ export default function NexusPage() {
               <RankGlyph level={player.level} size={40} />
               <div>
                 <p className="font-display text-base tracking-wider text-foreground">
-                  LVL {player.level} · {player.name}
+                  Web rank · LVL {player.level} · {player.name}
                 </p>
                 <p className="text-[11px] tracking-wider text-foreground-faint uppercase">
-                  {allDone}/{allNodes} skill nodes mastered across {subjects.length} subjects · {formatNumber(player.xp)} total XP
+                  {allDone}/{allNodes} concepts mastered across {web.clusters.length} subjects · {formatNumber(player.xp)} web XP
                 </p>
               </div>
             </div>
-            <XpBar xp={player.xpInLevel} nextLevelXp={player.xpForNext} levelName={`Rift ${player.name}`} />
+            <XpBar xp={player.xpInLevel} nextLevelXp={player.xpForNext} levelName={`Web rank ${player.name}`} />
             {(player.xpGated || player.probGated) && (
               <p className="text-xs text-foreground-dim">
-                Next rift needs{' '}
+                Next rank needs{' '}
                 {player.xpGated && (
-                  <span className="font-mono text-primary-bright tabular-nums">
-                    {formatNumber(Math.max(0, player.xpForNext - player.xpInLevel))} more XP
-                  </span>
+                  <span className="font-mono text-primary-bright tabular-nums">{formatNumber(Math.max(0, player.xpForNext - player.xpInLevel))} more XP</span>
                 )}
                 {player.xpGated && player.probGated && ' and '}
                 {player.probGated && (
-                  <span className="font-mono text-cyan tabular-nums">
-                    {Math.max(0, player.probsForNext - player.probsInLevel)} more solves
-                  </span>
+                  <span className="font-mono text-cyan tabular-nums">{Math.max(0, player.probsForNext - player.probsInLevel)} more solves</span>
                 )}
+                <span className="text-foreground-faint"> · problems, PYQs and lessons all count</span>
               </p>
             )}
           </div>
           <div className="flex items-center gap-4">
             <div className="text-center">
               <p className="font-display text-2xl text-primary-bright tabular-nums">{player.level}</p>
-              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Rift Level</p>
+              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Web Rank</p>
             </div>
             <div className="text-center">
               <p className="flex items-center justify-center gap-1 font-display text-2xl text-warning tabular-nums">
@@ -271,14 +318,16 @@ export default function NexusPage() {
             <div className="hidden text-center sm:block">
               <p className="flex items-center justify-center gap-1 font-display text-sm text-gold">
                 <Icon name="trophy" className="size-4" aria-hidden="true" />
-                {statsApi.data?.title.current.title ?? '—'}
+                {webTitles(statsApi.data, player, web.riftLevels)?.title.current.title ?? '—'}
               </p>
-              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Rank</p>
+              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Title</p>
             </div>
-            <div className="text-center">
-              <p className="font-display text-2xl text-cyan tabular-nums">{weekSeed % 1000}</p>
-              <p className="text-[10px] tracking-wider text-foreground-faint uppercase">Week Seed</p>
-            </div>
+            {web.dsaPlayer && (
+              <div className="text-center">
+                <p className="font-display text-2xl text-cyan tabular-nums">{web.dsaPlayer.level}</p>
+                <p className="text-[10px] tracking-wider text-foreground-faint uppercase">DSA Rift</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
@@ -287,7 +336,7 @@ export default function NexusPage() {
         variant="pills"
         className="mb-4"
         items={[
-          { id: 'map', label: '/zones', icon: <Icon name="map" className="size-3.5" aria-hidden="true" /> },
+          { id: 'map', label: '/web', icon: <Icon name="nexus" className="size-3.5" aria-hidden="true" /> },
           {
             id: 'ranks',
             label: '/ranks',
@@ -300,137 +349,89 @@ export default function NexusPage() {
       />
 
       {tab === 'ranks' ? (
-        statsApi.loading && !statsApi.data ? (
-          <LoadingBlock rows={5} />
-        ) : statsApi.error && !statsApi.data ? (
-          <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
-        ) : (
-          <TitleTrack stats={statsApi.data} />
-        )
+        <div className="space-y-4">
+          <WebLeaderboard />
+          {statsApi.loading && !statsApi.data ? (
+            <LoadingBlock rows={5} />
+          ) : statsApi.error && !statsApi.data ? (
+            <ErrorState message={statsApi.error} onRetry={statsApi.refetch} />
+          ) : (
+            <TitleTrack stats={webTitles(statsApi.data, web.player, web.riftLevels)} />
+          )}
+        </div>
+      ) : subject ? (
+        <SubjectPath
+          subject={subject}
+          selectedId={node}
+          onSelect={setNode}
+          onJump={(l) => openSubject(l.subject, undefined, l.id)}
+          onBack={backToWeb}
+          onData={setPathData}
+        />
       ) : (
-        <>
-          <SubjectSwitcher subjects={subjects} active={overview ? ALL_SUBJECTS : apiSubject} onChange={(id) => setSubject(id)} />
-
-          {overview ? (
-            <div className="nx-subject-enter" key="all">
-              <SubjectsOverview subjects={subjects} onOpen={(id) => setSubject(id)} />
-            </div>
-          ) : !nexus ? (
-            error ? (
-              <ErrorState message={error} onRetry={refetch} />
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+          <NexusWeb
+            ref={webRef}
+            clusters={web.clusters}
+            selected={webSel ? node : null}
+            onSelect={setNode}
+            onOpenSubject={(id, cam) => openSubject(id, cam)}
+            initialCamera={lastWebCamera}
+            ranks={ranks}
+          />
+          <div>
+            {selectedNode && webSel ? (
+              <NodePanel
+                key={node!}
+                node={selectedNode}
+                nodes={clusterNodes}
+                zoneColor={selZone?.color ?? 'var(--color-primary)'}
+                zoneName={`${webSel.c.short} · ${selZone?.name ?? `Zone ${selectedNode.zone}`}`}
+                detailLoading={detailApi.loading && !detailApi.data}
+                engine={webSel.c.engine}
+                onClose={() => setNode(null)}
+                onJump={(l) => {
+                  const key = `${l.subject}:${l.id}`
+                  setNode(key)
+                  webRef.current?.flyToNode(key)
+                }}
+                onSelect={(id) => {
+                  const key = `${webSel.c.id}:${id}`
+                  setNode(key)
+                  webRef.current?.flyToNode(key)
+                }}
+                onOpenPath={() => openSubject(webSel.c.id, webRef.current?.camera(), webSel.n.id)}
+              />
             ) : (
-              <Card>
+              <Card className="sticky top-4">
                 <CardContent>
-                  <LoadingBlock rows={6} />
+                  <EmptyState
+                    icon="nexus"
+                    title="The web around you"
+                    description="Every subject lives in this web. Hover a concept to light its path from you; click it to inspect it, or click a subject's name to open its path."
+                    className="py-8"
+                  />
+                  <div className="mt-2 space-y-2 border-t border-border pt-3">
+                    <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
+                      <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <Badge variant="success">mastered</Badge>
+                      <Badge variant="primary">unlocked</Badge>
+                      <Badge variant="default">
+                        <Icon name="lock" className="size-3" aria-hidden="true" /> locked
+                      </Badge>
+                    </div>
+                    <p className="text-[11px] text-foreground-faint">
+                      Drag to pan, scroll or pinch to zoom, Esc to return to you. Bright branches lead to what you have mastered. On hover, the path from you
+                      lights teal and what a concept unlocks lights violet. Concepts sit further out the more they build on.
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
-            )
-          ) : (
-            <div className="nx-subject-enter" key={apiSubject}>
-              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                <h2 className="mb-0 font-display text-lg font-semibold text-text-primary">{subjectName}</h2>
-                <p className="mb-0 text-xs text-foreground-dim">
-                  {nexus.subject?.description}
-                </p>
-              </div>
-
-              {/* Zone rail */}
-              <div className="mb-4 flex gap-1.5 overflow-x-auto pb-1" role="navigation" aria-label="Zones">
-                {zones.map((z) => (
-                  <button
-                    key={z.level}
-                    type="button"
-                    onClick={() => scrollToZone(z.level)}
-                    aria-label={`${isDsa ? 'Zone' : 'Chapter'} ${z.level}: ${z.name}${z.locked ? ' (locked)' : ''}`}
-                    className={cn(
-                      'flex cursor-pointer items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-[11px] font-semibold tracking-wide whitespace-nowrap transition-all duration-200',
-                      z.level === activeZone
-                        ? 'border-primary bg-primary/15 text-foreground'
-                        : 'border-border bg-surface text-foreground-dim hover:border-primary/60 hover:text-foreground',
-                    )}
-                  >
-                    {z.locked && <Icon name="lock" className="size-3 text-foreground-faint" aria-hidden="true" />}
-                    <span className="size-1.5 rounded-full" style={{ backgroundColor: z.color }} aria-hidden="true" />
-                    {z.name}
-                    <span className="font-mono text-[10px] text-foreground-faint tabular-nums">{z.zoneProgress}%</span>
-                  </button>
-                ))}
-              </div>
-
-              <div className="grid grid-cols-[minmax(0,1fr)] gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-                <div className="space-y-4">
-                  <SkillGraph
-                    nodes={nodes}
-                    zones={zones}
-                    selectedId={selectedId}
-                    onSelect={(id) => setSelectedId(selectedId === id ? null : id)}
-                    onJump={onJump}
-                    rankEmblems={isDsa}
-                  />
-                  {isDsa &&
-                    (roadmap ? (
-                      <WeeklyPool level={roadmapLevel} weekSeed={roadmap.weekSeed} accentColor={zoneColor} />
-                    ) : roadmapApi.error ? (
-                      <ErrorState message={roadmapApi.error} onRetry={roadmapApi.refetch} />
-                    ) : (
-                      <Card>
-                        <CardContent>
-                          <LoadingBlock rows={4} />
-                        </CardContent>
-                      </Card>
-                    ))}
-                </div>
-
-                <div>
-                  {selectedNode ? (
-                    <NodePanel
-                      key={`${apiSubject}:${selectedNode.id}`}
-                      node={selectedNode}
-                      nodes={nodes}
-                      zoneColor={zoneColor}
-                      zoneName={zone?.name ?? `Zone ${selectedNode.zone}`}
-                      onClose={() => setSelectedId(null)}
-                      onJump={onJump}
-                      onSelect={(id) => setSelectedId(id)}
-                    />
-                  ) : (
-                    <Card className="sticky top-4">
-                      <CardContent>
-                        <EmptyState
-                          icon="map"
-                          title="Select a skill node"
-                          description={
-                            isDsa
-                              ? 'Click any node in the rift web to inspect prerequisites, resources, and recommended problems.'
-                              : 'Click any node in the web to see its prerequisites, links to other subjects, lessons and PYQs.'
-                          }
-                          className="py-8"
-                        />
-                        <div className="mt-2 space-y-2 border-t border-border pt-3">
-                          <p className="flex items-center gap-1.5 text-[11px] font-semibold tracking-wider text-foreground-faint uppercase">
-                            <Icon name="sparkles" className="size-3" aria-hidden="true" /> Legend
-                          </p>
-                          <div className="flex flex-wrap gap-1.5">
-                            <Badge variant="success">mastered</Badge>
-                            <Badge variant="primary">unlocked</Badge>
-                            <Badge variant="default">
-                              <Icon name="lock" className="size-3" aria-hidden="true" /> locked
-                            </Badge>
-                          </div>
-                          <p className="text-[11px] text-foreground-faint">
-                            Hover a skill to trace its chain: what it needs lights teal, what it unlocks lights violet. Stars are mastered, rings fill as you
-                            progress, and a dot travels along each open path. &ldquo;Needs&rdquo; chips are prerequisites in another subject; click one to jump there.
-                            {isDsa ? ' The weekly pool reshuffles every 7 days.' : ''}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-        </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )

@@ -1,0 +1,312 @@
+{
+  "id": "cryptography",
+  "name": "Cryptography",
+  "short": "CRYP",
+  "group": "beyond",
+  "domain": "security",
+  "order": 61,
+  "icon": "key",
+  "color": "#7c3aed",
+  "description": "How modern cryptography works: ciphers, hashes and MACs, public-key systems, signatures and the protocols built from them.",
+  "rankTitle": "Cipher Smith",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Foundations"
+    },
+    {
+      "level": 2,
+      "name": "Symmetric crypto"
+    },
+    {
+      "level": 3,
+      "name": "Hashing & integrity"
+    },
+    {
+      "level": 4,
+      "name": "Public-key crypto"
+    },
+    {
+      "level": 5,
+      "name": "Protocols & practice"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "crypto-intro",
+      "zone": 1,
+      "name": "Goals & adversaries",
+      "icon": "target",
+      "desc": "Confidentiality, integrity, authenticity and Kerckhoffs's principle.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "classical-ciphers",
+      "zone": 1,
+      "name": "Classical ciphers",
+      "icon": "book",
+      "desc": "Caesar, Vigenère and substitution ciphers and how to break them.",
+      "kind": "concept",
+      "requires": [
+        "crypto-intro"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "perfect-secrecy",
+      "zone": 1,
+      "name": "Perfect secrecy",
+      "icon": "eye",
+      "desc": "One-time pad, Shannon's perfect secrecy and why it is impractical.",
+      "kind": "concept",
+      "requires": [
+        "classical-ciphers",
+        "prob:probability-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "computational-security",
+      "zone": 1,
+      "name": "Computational security",
+      "icon": "cpu",
+      "desc": "Security against efficient adversaries, negligible advantage and pseudorandomness.",
+      "kind": "concept",
+      "requires": [
+        "perfect-secrecy",
+        "complexity:p-np"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "symmetric-crypto",
+      "zone": 2,
+      "name": "Block ciphers & AES",
+      "icon": "lock",
+      "desc": "Block ciphers, substitution-permutation networks and AES.",
+      "kind": "concept",
+      "requires": [
+        "computational-security"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "stream-ciphers",
+      "zone": 2,
+      "name": "Stream ciphers",
+      "icon": "route",
+      "desc": "Pseudorandom generators, ChaCha20 and the danger of nonce reuse.",
+      "kind": "concept",
+      "requires": [
+        "computational-security"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "modes-of-operation",
+      "zone": 2,
+      "name": "Modes of operation",
+      "icon": "layers",
+      "desc": "ECB, CBC, CTR and why the mode matters.",
+      "kind": "concept",
+      "requires": [
+        "symmetric-crypto"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "crypto-hashing",
+      "zone": 3,
+      "name": "Hash functions",
+      "icon": "hash",
+      "desc": "Collision, preimage and second-preimage resistance, SHA-2 and SHA-3.",
+      "kind": "concept",
+      "requires": [
+        "computational-security"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "macs",
+      "zone": 3,
+      "name": "MACs",
+      "icon": "check-circle",
+      "desc": "Message authentication codes and HMAC.",
+      "kind": "concept",
+      "requires": [
+        "crypto-hashing",
+        "symmetric-crypto"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "authenticated-encryption",
+      "zone": 3,
+      "name": "AEAD",
+      "icon": "shield",
+      "desc": "Encrypt-then-MAC and AEAD modes like AES-GCM.",
+      "kind": "concept",
+      "requires": [
+        "macs",
+        "modes-of-operation"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "password-hashing",
+      "zone": 3,
+      "name": "Password hashing",
+      "icon": "key",
+      "desc": "Salts, key stretching, bcrypt, scrypt and Argon2.",
+      "kind": "concept",
+      "requires": [
+        "crypto-hashing"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "public-key",
+      "zone": 4,
+      "name": "Public-key basics",
+      "icon": "key",
+      "desc": "Key pairs, trapdoor functions and hard problems behind public-key crypto.",
+      "kind": "concept",
+      "requires": [
+        "computational-security",
+        "number-theory:modular-arithmetic"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "rsa",
+      "zone": 4,
+      "name": "RSA",
+      "icon": "calculator",
+      "desc": "Key generation, encryption, padding and why textbook RSA is insecure.",
+      "kind": "concept",
+      "requires": [
+        "public-key",
+        "number-theory:primes"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "diffie-hellman",
+      "zone": 4,
+      "name": "Diffie-Hellman",
+      "icon": "share",
+      "desc": "Key exchange over groups and the discrete logarithm problem.",
+      "kind": "concept",
+      "requires": [
+        "public-key",
+        "dm:groups"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "elliptic-curves",
+      "zone": 4,
+      "name": "Elliptic curves",
+      "icon": "shapes",
+      "desc": "Elliptic-curve groups, ECDH and why keys are shorter.",
+      "kind": "concept",
+      "requires": [
+        "diffie-hellman"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "digital-signatures",
+      "zone": 4,
+      "name": "Digital signatures",
+      "icon": "edit",
+      "desc": "RSA and ECDSA/EdDSA signatures and hash-then-sign.",
+      "kind": "concept",
+      "requires": [
+        "rsa",
+        "elliptic-curves",
+        "crypto-hashing"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "pki",
+      "zone": 5,
+      "name": "PKI & certificates",
+      "icon": "award",
+      "desc": "Certificates, certificate authorities, chains of trust and revocation.",
+      "kind": "concept",
+      "requires": [
+        "digital-signatures"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "tls",
+      "zone": 5,
+      "name": "TLS",
+      "icon": "lock",
+      "desc": "The TLS 1.3 handshake, forward secrecy and record protection.",
+      "kind": "concept",
+      "requires": [
+        "pki",
+        "authenticated-encryption",
+        "diffie-hellman"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "crypto-attacks",
+      "zone": 5,
+      "name": "Attacks & misuse",
+      "icon": "warning",
+      "desc": "Padding oracles, timing side channels and common implementation mistakes.",
+      "kind": "concept",
+      "requires": [
+        "authenticated-encryption",
+        "rsa"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "zero-knowledge",
+      "zone": 5,
+      "name": "Zero-knowledge proofs",
+      "icon": "eye",
+      "desc": "Proving a statement without revealing why, and where ZK proofs are used.",
+      "kind": "concept",
+      "requires": [
+        "digital-signatures"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "toy-rsa",
+      "zone": 5,
+      "name": "Toy RSA project",
+      "icon": "code",
+      "desc": "Implement RSA key generation, encryption and signing from scratch, then attack weak parameters.",
+      "kind": "project",
+      "requires": [
+        "rsa",
+        "digital-signatures"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "secure-chat",
+      "zone": 5,
+      "name": "Secure chat project",
+      "icon": "messages",
+      "desc": "Build an end-to-end encrypted chat with key exchange, AEAD and authenticated peers.",
+      "kind": "project",
+      "requires": [
+        "tls",
+        "authenticated-encryption"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "id": "distributed-systems",
+  "name": "Distributed Systems",
+  "short": "DS",
+  "group": "beyond",
+  "domain": "systems",
+  "order": 50,
+  "icon": "nexus",
+  "color": "#6366f1",
+  "description": "How machines cooperate over unreliable networks: time and ordering, replication, consensus and distributed data.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Foundations"
+    },
+    {
+      "level": 2,
+      "name": "Time & ordering"
+    },
+    {
+      "level": 3,
+      "name": "Replication"
+    },
+    {
+      "level": 4,
+      "name": "Consensus"
+    },
+    {
+      "level": 5,
+      "name": "Distributed data"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ds-intro",
+      "zone": 1,
+      "name": "Why distributed",
+      "icon": "globe",
+      "desc": "Scale, fault tolerance and latency, and the fallacies of distributed computing.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "failure-models",
+      "zone": 1,
+      "name": "Failure models",
+      "icon": "warning",
+      "desc": "Crash, omission and Byzantine failures, partial failure and partitions.",
+      "kind": "concept",
+      "requires": [
+        "ds-intro"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "rpc",
+      "zone": 1,
+      "name": "RPC & messaging",
+      "icon": "messages",
+      "desc": "Remote procedure calls, at-most-once vs at-least-once delivery and idempotency.",
+      "kind": "concept",
+      "requires": [
+        "ds-intro",
+        "cn:tcp"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "physical-clocks",
+      "zone": 2,
+      "name": "Physical clocks",
+      "icon": "clock",
+      "desc": "Clock drift, NTP and why wall-clock time cannot order events.",
+      "kind": "concept",
+      "requires": [
+        "failure-models"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "logical-clocks",
+      "zone": 2,
+      "name": "Logical clocks",
+      "icon": "timer",
+      "desc": "Happens-before, Lamport clocks and vector clocks.",
+      "kind": "concept",
+      "requires": [
+        "physical-clocks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "broadcast",
+      "zone": 2,
+      "name": "Broadcast & ordering",
+      "icon": "share",
+      "desc": "Reliable, FIFO, causal and total-order broadcast.",
+      "kind": "concept",
+      "requires": [
+        "logical-clocks",
+        "rpc"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "replication",
+      "zone": 3,
+      "name": "Replication",
+      "icon": "copy",
+      "desc": "Leader-follower, multi-leader and leaderless replication.",
+      "kind": "concept",
+      "requires": [
+        "failure-models",
+        "rpc"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "consistency-models",
+      "zone": 3,
+      "name": "Consistency models",
+      "icon": "layers",
+      "desc": "Linearizability, sequential, causal and eventual consistency.",
+      "kind": "concept",
+      "requires": [
+        "replication",
+        "sysd:cap-consistency"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "quorums",
+      "zone": 3,
+      "name": "Quorums",
+      "icon": "users",
+      "desc": "Read and write quorums, sloppy quorums and anti-entropy.",
+      "kind": "concept",
+      "requires": [
+        "replication"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "crdts",
+      "zone": 3,
+      "name": "CRDTs",
+      "icon": "git-branch",
+      "desc": "Conflict-free replicated data types for coordination-free replication.",
+      "kind": "concept",
+      "requires": [
+        "consistency-models",
+        "logical-clocks"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "consensus",
+      "zone": 4,
+      "name": "Consensus",
+      "icon": "check-circle",
+      "desc": "The consensus problem, FLP impossibility and why it underlies coordination.",
+      "kind": "concept",
+      "requires": [
+        "broadcast",
+        "replication",
+        "cn:tcp"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "leader-election",
+      "zone": 4,
+      "name": "Leader election",
+      "icon": "crown",
+      "desc": "Elections, terms, leases and avoiding split brain.",
+      "kind": "concept",
+      "requires": [
+        "consensus"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "raft",
+      "zone": 4,
+      "name": "Raft",
+      "icon": "route",
+      "desc": "Raft's leader election, log replication and safety.",
+      "kind": "concept",
+      "requires": [
+        "leader-election"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "paxos",
+      "zone": 4,
+      "name": "Paxos",
+      "icon": "book",
+      "desc": "Single-decree and Multi-Paxos.",
+      "kind": "concept",
+      "requires": [
+        "consensus"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "byzantine",
+      "zone": 4,
+      "name": "Byzantine faults",
+      "icon": "shield",
+      "desc": "Byzantine fault tolerance, PBFT and the 3f+1 bound.",
+      "kind": "concept",
+      "requires": [
+        "consensus"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "partitioning",
+      "zone": 5,
+      "name": "Partitioning",
+      "icon": "grid",
+      "desc": "Range and hash partitioning, consistent hashing and rebalancing.",
+      "kind": "concept",
+      "requires": [
+        "replication",
+        "algo:hashing"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "distributed-txns",
+      "zone": 5,
+      "name": "2PC & sagas",
+      "icon": "lock",
+      "desc": "Atomic commit with two-phase commit and long-running sagas.",
+      "kind": "concept",
+      "requires": [
+        "consensus",
+        "dbms:transactions"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "distributed-storage",
+      "zone": 5,
+      "name": "Distributed storage",
+      "icon": "database",
+      "desc": "How systems like Dynamo, Bigtable and Spanner combine these ideas.",
+      "kind": "concept",
+      "requires": [
+        "partitioning",
+        "quorums"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "mapreduce",
+      "zone": 5,
+      "name": "MapReduce & dataflow",
+      "icon": "workshop",
+      "desc": "MapReduce, Spark-style dataflow and fault-tolerant batch processing.",
+      "kind": "concept",
+      "requires": [
+        "partitioning"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "raft-kv",
+      "zone": 5,
+      "name": "Raft KV store project",
+      "icon": "server",
+      "desc": "Implement Raft and build a replicated, fault-tolerant key-value store on it.",
+      "kind": "project",
+      "requires": [
+        "raft",
+        "partitioning"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

@@ -1,0 +1,284 @@
+{
+  "id": "mlops",
+  "name": "MLOps",
+  "short": "MLOPS",
+  "group": "beyond",
+  "domain": "ai",
+  "order": 47,
+  "icon": "workshop",
+  "color": "#4f46e5",
+  "description": "Taking models to production: reproducibility, experiment tracking, serving, ML pipelines with CI/CD and monitoring.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "ML in production"
+    },
+    {
+      "level": 2,
+      "name": "Data & experiments"
+    },
+    {
+      "level": 3,
+      "name": "Packaging & serving"
+    },
+    {
+      "level": 4,
+      "name": "Pipelines & CI/CD"
+    },
+    {
+      "level": 5,
+      "name": "Monitoring"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "ml-lifecycle",
+      "zone": 1,
+      "name": "ML lifecycle",
+      "icon": "route",
+      "desc": "The path from experiment to production model and where ML systems fail.",
+      "kind": "concept",
+      "requires": [
+        "ml:end-to-end-pipeline"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "mlops-principles",
+      "zone": 1,
+      "name": "MLOps principles",
+      "icon": "compass",
+      "desc": "Automation, versioning, testing and monitoring as practices, and maturity levels.",
+      "kind": "concept",
+      "requires": [
+        "ml-lifecycle"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "reproducible-envs",
+      "zone": 1,
+      "name": "Reproducible envs",
+      "icon": "layers",
+      "desc": "Pinned dependencies, lock files, random seeds and deterministic training.",
+      "kind": "lesson",
+      "requires": [
+        "ml-lifecycle"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "data-versioning",
+      "zone": 2,
+      "name": "Data versioning",
+      "icon": "git-branch",
+      "desc": "Versioning datasets and features alongside code.",
+      "kind": "lesson",
+      "requires": [
+        "reproducible-envs",
+        "git:git-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "experiment-tracking",
+      "zone": 2,
+      "name": "Experiment tracking",
+      "icon": "analytics",
+      "desc": "Logging parameters, metrics and artefacts to compare runs.",
+      "kind": "lesson",
+      "requires": [
+        "reproducible-envs"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "feature-stores",
+      "zone": 2,
+      "name": "Feature stores",
+      "icon": "database",
+      "desc": "Sharing consistent features between training and serving.",
+      "kind": "concept",
+      "requires": [
+        "data-versioning"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "model-registry",
+      "zone": 2,
+      "name": "Model registry",
+      "icon": "bookmarks",
+      "desc": "Versioned models, stages, approvals and lineage.",
+      "kind": "lesson",
+      "requires": [
+        "experiment-tracking"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "model-packaging",
+      "zone": 3,
+      "name": "Packaging models",
+      "icon": "copy",
+      "desc": "Serialising models and packaging them with their runtime into containers.",
+      "kind": "lesson",
+      "requires": [
+        "model-registry",
+        "containers:docker-basics"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "model-serving",
+      "zone": 3,
+      "name": "Model serving",
+      "icon": "server",
+      "desc": "Online and batch inference, REST and gRPC endpoints, and latency budgets.",
+      "kind": "lesson",
+      "requires": [
+        "model-packaging"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "faster-inference",
+      "zone": 3,
+      "name": "Faster inference",
+      "icon": "bolt",
+      "desc": "Quantisation, compilation, batching and hardware choices.",
+      "kind": "lesson",
+      "requires": [
+        "model-serving"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "serve-a-model",
+      "zone": 3,
+      "name": "Serve a model",
+      "icon": "rocket",
+      "desc": "Containerise a trained model and serve it behind a documented API with load tests.",
+      "kind": "project",
+      "requires": [
+        "model-serving"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "training-pipelines",
+      "zone": 4,
+      "name": "Training pipelines",
+      "icon": "workshop",
+      "desc": "Orchestrated, repeatable pipelines from data to registered model.",
+      "kind": "lesson",
+      "requires": [
+        "feature-stores",
+        "model-registry"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ml-ci-cd",
+      "zone": 4,
+      "name": "CI/CD for ML",
+      "icon": "check-circle",
+      "desc": "Automated tests, training and gated promotion of models.",
+      "kind": "lesson",
+      "requires": [
+        "training-pipelines",
+        "devops:ci-cd"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ml-testing",
+      "zone": 4,
+      "name": "Testing ML systems",
+      "icon": "check",
+      "desc": "Data tests, model behaviour tests and infrastructure tests.",
+      "kind": "lesson",
+      "requires": [
+        "training-pipelines"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "ml-on-kubernetes",
+      "zone": 4,
+      "name": "ML on Kubernetes",
+      "icon": "grid",
+      "desc": "Scaling training jobs and inference services on a cluster.",
+      "kind": "lesson",
+      "requires": [
+        "model-serving",
+        "containers:kubernetes"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "model-monitoring",
+      "zone": 5,
+      "name": "Model monitoring",
+      "icon": "activity",
+      "desc": "Tracking latency, errors, prediction distributions and business metrics.",
+      "kind": "lesson",
+      "requires": [
+        "model-serving"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "drift-detection",
+      "zone": 5,
+      "name": "Drift detection",
+      "icon": "trending-up",
+      "desc": "Detecting data and concept drift with statistical tests.",
+      "kind": "concept",
+      "requires": [
+        "model-monitoring",
+        "statistics:hypothesis-testing"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "retraining-loops",
+      "zone": 5,
+      "name": "Retraining loops",
+      "icon": "route",
+      "desc": "Triggered and scheduled retraining, shadow deployments and rollbacks.",
+      "kind": "lesson",
+      "requires": [
+        "drift-detection",
+        "training-pipelines"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "responsible-ml",
+      "zone": 5,
+      "name": "Responsible ML",
+      "icon": "shield",
+      "desc": "Fairness audits, explainability, model cards and governance.",
+      "kind": "concept",
+      "requires": [
+        "model-monitoring"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "mlops-capstone",
+      "zone": 5,
+      "name": "End-to-end MLOps",
+      "icon": "trophy",
+      "desc": "Build a pipeline that trains, deploys, monitors and retrains a model automatically.",
+      "kind": "project",
+      "requires": [
+        "ml-ci-cd",
+        "retraining-loops",
+        "ml-on-kubernetes"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

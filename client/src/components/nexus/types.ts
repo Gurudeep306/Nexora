@@ -82,6 +82,9 @@ export interface NexusSubjectMeta {
   description: string
   pyqSubject?: string | null
   notesSubject?: string | null
+  /** "dsa" for the solve-count engine, null for outline subjects. */
+  engine?: string | null
+  rankTitle?: string | null
 }
 
 export interface NexusSubjectSummary extends NexusSubjectMeta {
@@ -95,6 +98,96 @@ export interface NexusSubjectSummary extends NexusSubjectMeta {
   crossLinks: number
   /** subject id → number of skills here that need a skill there. */
   needs: Record<string, number>
+}
+
+/* ── The single web (GET /api/nexus/web) ── */
+
+/** One node as the canvas draws it. s: 0 locked, 1 open, 2 mastered. */
+export interface WebNode {
+  id: string
+  /** name */
+  n: string
+  /** zone level */
+  z: number
+  x: number
+  y: number
+  /** progress 0–100 */
+  p: number
+  s: 0 | 1 | 2
+  /** same-subject prerequisites */
+  req: string[]
+  /** cross-subject prerequisites, "subject:id" */
+  cx?: string[]
+  /** kind when not a concept (lesson / project) */
+  k?: string
+  xp: number
+  /** count label ("3/10 PYQs", "4/8") */
+  c: string
+}
+
+export interface WebZone {
+  level: number
+  name: string
+  color: string
+  locked: boolean
+  current: boolean
+  completed: boolean
+  nodeCount: number
+  nodesCompleted: number
+  zoneProgress: number
+}
+
+/** A subject's rank: a tier from its mastery and its own title. */
+export interface SubjectRank {
+  tier: string
+  tierIndex: number
+  title: string
+  progress: number
+  next: string | null
+}
+
+export interface WebCluster {
+  id: string
+  name: string
+  short: string
+  domain: string
+  order: number
+  engine: string | null
+  zones: WebZone[]
+  nodes: WebNode[]
+  rank?: SubjectRank
+}
+
+export interface WebBoardRow {
+  rank: number
+  username: string
+  displayName: string
+  avatar: string | null
+  level: number
+  score: number
+}
+
+export interface WebBoardResponse {
+  ok: boolean
+  scope: 'all' | 'week' | 'friends' | 'subject'
+  rows: WebBoardRow[]
+  me?: WebBoardRow
+  subject?: NexusSubjectMeta
+}
+
+export interface NexusWebResponse {
+  ok: boolean
+  /** The unified web rank. */
+  player: RiftPlayer
+  /** The DSA-only Rift level (the DSA path's zone unlocks). */
+  dsaPlayer?: RiftPlayer
+  riftLevels: RiftLevel[]
+  clusters: WebCluster[]
+}
+
+export interface NexusNodeResponse {
+  ok: boolean
+  node: NexusNode
 }
 
 export interface NexusPyq {
@@ -148,6 +241,9 @@ export interface NexusResponse {
   riftLevels: RiftLevel[]
   subject?: NexusSubjectMeta
   subjects?: NexusSubjectSummary[]
+  subjectRank?: SubjectRank
+  /** The unified web rank (the DSA path keeps `player` for its zone unlocks). */
+  webPlayer?: RiftPlayer
 }
 
 export interface RoadmapProblem {

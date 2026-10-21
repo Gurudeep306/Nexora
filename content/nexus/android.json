@@ -1,0 +1,324 @@
+{
+  "id": "android",
+  "name": "Android Development",
+  "short": "ANDR",
+  "group": "beyond",
+  "domain": "web-mobile",
+  "order": 60,
+  "icon": "monitor",
+  "color": "#22c55e",
+  "description": "Native Android apps with Kotlin and Jetpack Compose, MVVM architecture, local data, networking and Play Store release.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Kotlin & tooling"
+    },
+    {
+      "level": 2,
+      "name": "Jetpack Compose UI"
+    },
+    {
+      "level": 3,
+      "name": "Architecture & data"
+    },
+    {
+      "level": 4,
+      "name": "Platform features"
+    },
+    {
+      "level": 5,
+      "name": "Testing & release"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "kotlin-basics",
+      "zone": 1,
+      "name": "Kotlin basics",
+      "icon": "code",
+      "desc": "Null safety, data classes, extension functions, lambdas and collections.",
+      "kind": "lesson",
+      "requires": [
+        "java:java-oop"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "coroutines-flow",
+      "zone": 1,
+      "name": "Coroutines & Flow",
+      "icon": "clock",
+      "desc": "Structured concurrency, suspend functions, dispatchers and Flow.",
+      "kind": "lesson",
+      "requires": [
+        "kotlin-basics",
+        "os:threads"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "studio-gradle",
+      "zone": 1,
+      "name": "Studio & Gradle",
+      "icon": "wrench",
+      "desc": "Android Studio, emulators, Gradle builds and project structure.",
+      "kind": "lesson",
+      "requires": [
+        "kotlin-basics"
+      ],
+      "xpReward": 60,
+      "resources": [
+        {
+          "title": "Android developer courses",
+          "url": "https://developer.android.com/courses"
+        }
+      ]
+    },
+    {
+      "id": "app-components",
+      "zone": 1,
+      "name": "App components",
+      "icon": "layers",
+      "desc": "Activities, intents, the manifest and the Android lifecycle.",
+      "kind": "concept",
+      "requires": [
+        "studio-gradle"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "compose-basics",
+      "zone": 2,
+      "name": "Compose basics",
+      "icon": "grid",
+      "desc": "Composable functions, modifiers and layouts.",
+      "kind": "lesson",
+      "requires": [
+        "app-components",
+        "app:mobile-ui"
+      ],
+      "xpReward": 80,
+      "resources": [
+        {
+          "title": "Jetpack Compose",
+          "url": "https://developer.android.com/develop/ui/compose"
+        }
+      ]
+    },
+    {
+      "id": "compose-state",
+      "zone": 2,
+      "name": "State in Compose",
+      "icon": "sliders",
+      "desc": "remember, recomposition and state hoisting.",
+      "kind": "lesson",
+      "requires": [
+        "compose-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "lists-navigation",
+      "zone": 2,
+      "name": "Lists & navigation",
+      "icon": "list",
+      "desc": "Lazy lists and Navigation Compose with arguments.",
+      "kind": "lesson",
+      "requires": [
+        "compose-state"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "material-theming",
+      "zone": 2,
+      "name": "Material theming",
+      "icon": "palette",
+      "desc": "Material 3 components, colour schemes, typography and dark theme.",
+      "kind": "lesson",
+      "requires": [
+        "compose-basics"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "first-compose-app",
+      "zone": 2,
+      "name": "First Compose app",
+      "icon": "rocket",
+      "desc": "Build a multi-screen Compose app with lists and navigation.",
+      "kind": "project",
+      "requires": [
+        "lists-navigation",
+        "material-theming"
+      ],
+      "xpReward": 220
+    },
+    {
+      "id": "viewmodel-mvvm",
+      "zone": 3,
+      "name": "ViewModel & MVVM",
+      "icon": "layers",
+      "desc": "ViewModels, UI state, unidirectional data flow and the repository pattern.",
+      "kind": "lesson",
+      "requires": [
+        "compose-state",
+        "coroutines-flow",
+        "app:app-state"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "room-database",
+      "zone": 3,
+      "name": "Room database",
+      "icon": "database",
+      "desc": "Entities, DAOs, migrations and observing queries with Flow.",
+      "kind": "lesson",
+      "requires": [
+        "viewmodel-mvvm",
+        "sql:select-queries"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "networking-android",
+      "zone": 3,
+      "name": "Networking",
+      "icon": "globe",
+      "desc": "Retrofit, JSON serialisation and handling network errors.",
+      "kind": "lesson",
+      "requires": [
+        "viewmodel-mvvm",
+        "coroutines-flow"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "dependency-injection",
+      "zone": 3,
+      "name": "Hilt & DI",
+      "icon": "link",
+      "desc": "Dependency injection with Hilt and scoping.",
+      "kind": "lesson",
+      "requires": [
+        "viewmodel-mvvm"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "offline-notes-app",
+      "zone": 3,
+      "name": "Offline notes app",
+      "icon": "rocket",
+      "desc": "Build a notes app that works offline and syncs with a backend.",
+      "kind": "project",
+      "requires": [
+        "room-database",
+        "networking-android",
+        "dependency-injection"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "permissions-sensors",
+      "zone": 4,
+      "name": "Permissions & sensors",
+      "icon": "lock",
+      "desc": "Runtime permissions, camera, location and sensors.",
+      "kind": "lesson",
+      "requires": [
+        "app-components"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "background-work",
+      "zone": 4,
+      "name": "Background work",
+      "icon": "clock",
+      "desc": "WorkManager, foreground services and battery limits.",
+      "kind": "lesson",
+      "requires": [
+        "coroutines-flow",
+        "app-components"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "notifications-android",
+      "zone": 4,
+      "name": "Notifications",
+      "icon": "bell",
+      "desc": "Notification channels, actions and push messaging.",
+      "kind": "lesson",
+      "requires": [
+        "background-work"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "datastore-files",
+      "zone": 4,
+      "name": "DataStore & files",
+      "icon": "save",
+      "desc": "Preferences DataStore and app-specific file storage.",
+      "kind": "lesson",
+      "requires": [
+        "room-database"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "testing-android",
+      "zone": 5,
+      "name": "Testing Android",
+      "icon": "check-circle",
+      "desc": "Unit tests, Compose UI tests and instrumented tests.",
+      "kind": "lesson",
+      "requires": [
+        "viewmodel-mvvm"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "app-performance",
+      "zone": 5,
+      "name": "App performance",
+      "icon": "bolt",
+      "desc": "Startup time, jank, baseline profiles and memory leaks.",
+      "kind": "lesson",
+      "requires": [
+        "lists-navigation"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "play-release",
+      "zone": 5,
+      "name": "Play Store release",
+      "icon": "upload",
+      "desc": "App signing, app bundles, testing tracks and the Play Console.",
+      "kind": "lesson",
+      "requires": [
+        "testing-android"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "android-capstone",
+      "zone": 5,
+      "name": "Android capstone",
+      "icon": "trophy",
+      "desc": "Ship a polished app with offline data, notifications and a Play Store release.",
+      "kind": "project",
+      "requires": [
+        "offline-notes-app",
+        "notifications-android",
+        "play-release",
+        "permissions-sensors"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

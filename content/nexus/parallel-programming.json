@@ -1,0 +1,282 @@
+{
+  "id": "parallel-programming",
+  "name": "Parallel & Concurrent Programming",
+  "short": "PAR",
+  "group": "beyond",
+  "domain": "systems",
+  "order": 51,
+  "icon": "cpu",
+  "color": "#f97316",
+  "description": "Writing correct and fast parallel code: threads and locks, memory models, parallel algorithms, GPUs and MPI.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Foundations"
+    },
+    {
+      "level": 2,
+      "name": "Shared memory"
+    },
+    {
+      "level": 3,
+      "name": "Concurrency patterns"
+    },
+    {
+      "level": 4,
+      "name": "Parallel algorithms"
+    },
+    {
+      "level": 5,
+      "name": "GPUs & clusters"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "parallel-intro",
+      "zone": 1,
+      "name": "Why parallel",
+      "icon": "cpu",
+      "desc": "The end of frequency scaling, multicore, and concurrency vs parallelism.",
+      "kind": "concept",
+      "requires": [
+        "coa:pipelining"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "speedup-laws",
+      "zone": 1,
+      "name": "Amdahl & Gustafson",
+      "icon": "chart",
+      "desc": "Speedup, efficiency, Amdahl's and Gustafson's laws.",
+      "kind": "concept",
+      "requires": [
+        "parallel-intro"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "parallel-models",
+      "zone": 1,
+      "name": "Parallel models",
+      "icon": "layers",
+      "desc": "Shared memory vs message passing, SIMD vs MIMD and Flynn's taxonomy.",
+      "kind": "concept",
+      "requires": [
+        "parallel-intro"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "threads-locks",
+      "zone": 2,
+      "name": "Threads & locks",
+      "icon": "lock",
+      "desc": "Creating threads, mutexes, condition variables and protecting shared state.",
+      "kind": "concept",
+      "requires": [
+        "parallel-models",
+        "os:synchronization"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "races-deadlocks",
+      "zone": 2,
+      "name": "Races & deadlocks",
+      "icon": "warning",
+      "desc": "Data races, deadlocks, livelock and tools for finding them.",
+      "kind": "concept",
+      "requires": [
+        "threads-locks"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "memory-models",
+      "zone": 2,
+      "name": "Memory models",
+      "icon": "layers",
+      "desc": "Cache coherence, false sharing, memory ordering and happens-before.",
+      "kind": "concept",
+      "requires": [
+        "threads-locks",
+        "coa:cache"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "atomics-lockfree",
+      "zone": 2,
+      "name": "Atomics & lock-free",
+      "icon": "bolt",
+      "desc": "Atomic operations, compare-and-swap and lock-free data structures.",
+      "kind": "concept",
+      "requires": [
+        "memory-models"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "concurrent-ds",
+      "zone": 3,
+      "name": "Concurrent structures",
+      "icon": "grid",
+      "desc": "Concurrent queues, hash maps and fine-grained locking.",
+      "kind": "concept",
+      "requires": [
+        "threads-locks"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "task-parallelism",
+      "zone": 3,
+      "name": "Tasks & work stealing",
+      "icon": "users",
+      "desc": "Thread pools, futures, fork-join and work stealing schedulers.",
+      "kind": "concept",
+      "requires": [
+        "threads-locks"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "actors-async",
+      "zone": 3,
+      "name": "Actors & async",
+      "icon": "messages",
+      "desc": "Message passing within a process, actors, channels and async I/O.",
+      "kind": "concept",
+      "requires": [
+        "task-parallelism"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "openmp",
+      "zone": 3,
+      "name": "OpenMP",
+      "icon": "code",
+      "desc": "Parallel loops, reductions and scheduling with OpenMP.",
+      "kind": "lesson",
+      "requires": [
+        "task-parallelism"
+      ],
+      "xpReward": 90
+    },
+    {
+      "id": "work-span",
+      "zone": 4,
+      "name": "Work & span",
+      "icon": "graph",
+      "desc": "The work-span model, parallelism and analysing parallel algorithms.",
+      "kind": "concept",
+      "requires": [
+        "speedup-laws",
+        "algo:divide-conquer"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "parallel-patterns",
+      "zone": 4,
+      "name": "Map, reduce & scan",
+      "icon": "route",
+      "desc": "Parallel map, reduce, prefix sum and stencil patterns.",
+      "kind": "concept",
+      "requires": [
+        "work-span"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "parallel-sorting",
+      "zone": 4,
+      "name": "Parallel sorting",
+      "icon": "sort",
+      "desc": "Parallel merge sort, sample sort and bitonic sort.",
+      "kind": "concept",
+      "requires": [
+        "parallel-patterns"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "mpi",
+      "zone": 4,
+      "name": "MPI",
+      "icon": "globe",
+      "desc": "Message passing on clusters: point-to-point and collective operations.",
+      "kind": "concept",
+      "requires": [
+        "parallel-models"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "image-filter",
+      "zone": 4,
+      "name": "Parallel image filter",
+      "icon": "image",
+      "desc": "Parallelise an image-processing pipeline and measure speedup across core counts.",
+      "kind": "project",
+      "requires": [
+        "openmp",
+        "parallel-patterns",
+        "races-deadlocks"
+      ],
+      "xpReward": 270
+    },
+    {
+      "id": "simd",
+      "zone": 5,
+      "name": "SIMD",
+      "icon": "array",
+      "desc": "Vector instructions, auto-vectorisation and intrinsics.",
+      "kind": "concept",
+      "requires": [
+        "memory-models"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "gpu-programming",
+      "zone": 5,
+      "name": "GPU programming",
+      "icon": "cpu",
+      "desc": "The GPU execution model, kernels, threads, blocks and warps.",
+      "kind": "concept",
+      "requires": [
+        "parallel-patterns",
+        "simd"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "gpu-memory",
+      "zone": 5,
+      "name": "GPU memory",
+      "icon": "layers",
+      "desc": "Global, shared and register memory, coalescing and occupancy.",
+      "kind": "concept",
+      "requires": [
+        "gpu-programming"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "nbody-gpu",
+      "zone": 5,
+      "name": "N-body on the GPU",
+      "icon": "rocket",
+      "desc": "Implement an N-body simulation on the GPU and compare it against a multicore CPU version.",
+      "kind": "project",
+      "requires": [
+        "gpu-memory",
+        "work-span"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

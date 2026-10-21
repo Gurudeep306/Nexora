@@ -1,0 +1,270 @@
+{
+  "id": "blockchain",
+  "name": "Blockchain",
+  "short": "BC",
+  "group": "beyond",
+  "domain": "security",
+  "order": 62,
+  "icon": "coins",
+  "color": "#ca8a04",
+  "description": "Blockchains from hash chains and signatures up: consensus, Bitcoin and Ethereum, smart contracts and scaling.",
+  "rankTitle": "Chain Builder",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Foundations"
+    },
+    {
+      "level": 2,
+      "name": "Bitcoin & consensus"
+    },
+    {
+      "level": 3,
+      "name": "Smart contracts"
+    },
+    {
+      "level": 4,
+      "name": "Ecosystem & scaling"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "blockchain-basics",
+      "zone": 1,
+      "name": "Blockchain basics",
+      "icon": "link",
+      "desc": "Blocks, hash pointers, ledgers and what problem blockchains solve.",
+      "kind": "concept",
+      "requires": [
+        "cryptography:crypto-hashing"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "merkle-trees",
+      "zone": 1,
+      "name": "Merkle trees",
+      "icon": "tree",
+      "desc": "Merkle trees, inclusion proofs and light clients.",
+      "kind": "concept",
+      "requires": [
+        "blockchain-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "keys-wallets",
+      "zone": 1,
+      "name": "Keys & wallets",
+      "icon": "key",
+      "desc": "Key pairs, addresses, signatures and wallet types.",
+      "kind": "concept",
+      "requires": [
+        "blockchain-basics",
+        "cryptography:public-key"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "p2p-network",
+      "zone": 1,
+      "name": "Peer-to-peer network",
+      "icon": "nexus",
+      "desc": "Gossip, node discovery and propagating blocks and transactions.",
+      "kind": "concept",
+      "requires": [
+        "blockchain-basics",
+        "cn:tcp"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "utxo",
+      "zone": 2,
+      "name": "UTXO transactions",
+      "icon": "coins",
+      "desc": "Bitcoin's UTXO model, transaction structure and scripts.",
+      "kind": "concept",
+      "requires": [
+        "keys-wallets",
+        "merkle-trees"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "proof-of-work",
+      "zone": 2,
+      "name": "Proof of work",
+      "icon": "bolt",
+      "desc": "Mining, difficulty, the longest-chain rule and 51% attacks.",
+      "kind": "concept",
+      "requires": [
+        "utxo",
+        "p2p-network"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "proof-of-stake",
+      "zone": 2,
+      "name": "Proof of stake",
+      "icon": "coins",
+      "desc": "Staking, validators, slashing and finality gadgets.",
+      "kind": "concept",
+      "requires": [
+        "proof-of-work"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "bft-consensus",
+      "zone": 2,
+      "name": "BFT consensus",
+      "icon": "check-circle",
+      "desc": "Byzantine fault tolerant protocols used by permissioned and PoS chains.",
+      "kind": "concept",
+      "requires": [
+        "proof-of-stake",
+        "distributed-systems:consensus"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "forks-finality",
+      "zone": 2,
+      "name": "Forks & finality",
+      "icon": "git-branch",
+      "desc": "Soft and hard forks, reorgs and probabilistic vs absolute finality.",
+      "kind": "concept",
+      "requires": [
+        "proof-of-work"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "ethereum",
+      "zone": 3,
+      "name": "Ethereum & the EVM",
+      "icon": "cpu",
+      "desc": "Accounts, gas and the Ethereum Virtual Machine.",
+      "kind": "concept",
+      "requires": [
+        "forks-finality",
+        "utxo"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "smart-contracts",
+      "zone": 3,
+      "name": "Solidity basics",
+      "icon": "code",
+      "desc": "Writing, testing and deploying smart contracts in Solidity.",
+      "kind": "concept",
+      "requires": [
+        "ethereum"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "contract-security",
+      "zone": 3,
+      "name": "Contract security",
+      "icon": "shield",
+      "desc": "Reentrancy, overflow, front-running and auditing practices.",
+      "kind": "concept",
+      "requires": [
+        "smart-contracts"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "tokens",
+      "zone": 3,
+      "name": "Tokens & NFTs",
+      "icon": "gem",
+      "desc": "Fungible and non-fungible token standards.",
+      "kind": "concept",
+      "requires": [
+        "smart-contracts"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "token-project",
+      "zone": 3,
+      "name": "Token project",
+      "icon": "coins",
+      "desc": "Write, test and deploy your own token contract to a test network.",
+      "kind": "project",
+      "requires": [
+        "tokens",
+        "contract-security"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "layer2",
+      "zone": 4,
+      "name": "Layer 2 scaling",
+      "icon": "layers",
+      "desc": "Payment channels, optimistic and zk rollups.",
+      "kind": "concept",
+      "requires": [
+        "ethereum",
+        "bft-consensus"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "defi",
+      "zone": 4,
+      "name": "DeFi",
+      "icon": "chart",
+      "desc": "Exchanges, lending and stablecoins built from contracts.",
+      "kind": "concept",
+      "requires": [
+        "tokens"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "dapps",
+      "zone": 4,
+      "name": "dApp frontends",
+      "icon": "monitor",
+      "desc": "Connecting a web frontend to contracts and wallets.",
+      "kind": "concept",
+      "requires": [
+        "smart-contracts",
+        "javascript:async-js"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "zk-privacy",
+      "zone": 4,
+      "name": "Privacy & ZK",
+      "icon": "eye",
+      "desc": "Privacy coins and zero-knowledge proofs on chain.",
+      "kind": "concept",
+      "requires": [
+        "layer2"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "dapp-project",
+      "zone": 4,
+      "name": "dApp project",
+      "icon": "rocket",
+      "desc": "Build a full dApp: contract, tests and a web frontend on a test network.",
+      "kind": "project",
+      "requires": [
+        "dapps",
+        "contract-security"
+      ],
+      "xpReward": 270
+    }
+  ]
+}

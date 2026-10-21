@@ -3,10 +3,12 @@
   "name": "Compiler Design",
   "short": "CD",
   "group": "gate",
+  "domain": "core-cs",
   "order": 8,
   "icon": "code",
   "color": "#f59e0b",
   "description": "Lexical analysis, parsing, syntax-directed translation, intermediate code, runtime environments and code optimisation.",
+  "rankTitle": "Parser Smith",
   "gate": {
     "pyqSubject": "cd",
     "notesSubject": null

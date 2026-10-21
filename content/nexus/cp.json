@@ -1,0 +1,303 @@
+{
+  "id": "cp",
+  "name": "Competitive Programming",
+  "short": "CP",
+  "group": "beyond",
+  "domain": "tools",
+  "order": 32,
+  "icon": "trophy",
+  "color": "#f59e0b",
+  "description": "Contest craft on top of DSA: fast I/O, templates, stress testing, constructive and interactive problems, and contest strategy.",
+  "rankTitle": "Contest Climber",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Contest setup"
+    },
+    {
+      "level": 2,
+      "name": "Fast & correct code"
+    },
+    {
+      "level": 3,
+      "name": "Problem-solving craft"
+    },
+    {
+      "level": 4,
+      "name": "Special formats"
+    },
+    {
+      "level": 5,
+      "name": "Contest strategy"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "judges-ratings",
+      "zone": 1,
+      "name": "Judges & ratings",
+      "icon": "trophy",
+      "desc": "Online judges, verdicts, rating systems and contest formats like ICPC and Codeforces rounds.",
+      "kind": "concept",
+      "requires": [],
+      "xpReward": 40
+    },
+    {
+      "id": "cp-template",
+      "zone": 1,
+      "name": "Your template",
+      "icon": "code",
+      "desc": "A personal C++ template: macros, typedefs, fast I/O and multi-test loops.",
+      "kind": "lesson",
+      "requires": [
+        "judges-ratings",
+        "cpp:stl"
+      ],
+      "xpReward": 50
+    },
+    {
+      "id": "fast-io",
+      "zone": 1,
+      "name": "Fast I/O",
+      "icon": "bolt",
+      "desc": "Fast input and output, buffering and avoiding slow I/O patterns.",
+      "kind": "concept",
+      "requires": [
+        "cp-template",
+        "dsa:bit_basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "complexity-budget",
+      "zone": 1,
+      "name": "Complexity budget",
+      "icon": "timer",
+      "desc": "Reading constraints and turning them into a target time complexity.",
+      "kind": "concept",
+      "requires": [
+        "judges-ratings",
+        "algo:asymptotics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "edge-cases",
+      "zone": 2,
+      "name": "Edge cases & overflow",
+      "icon": "warning",
+      "desc": "Overflow, off-by-one, empty input, precision and other ways solutions fail.",
+      "kind": "concept",
+      "requires": [
+        "complexity-budget"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "debugging-cp",
+      "zone": 2,
+      "name": "Debugging fast",
+      "icon": "search",
+      "desc": "Debug macros, asserts and finding the bug under time pressure.",
+      "kind": "lesson",
+      "requires": [
+        "cp-template"
+      ],
+      "xpReward": 70
+    },
+    {
+      "id": "stress-testing",
+      "zone": 2,
+      "name": "Stress testing",
+      "icon": "random",
+      "desc": "Random generators, a brute force and a checker script to find failing cases.",
+      "kind": "concept",
+      "requires": [
+        "debugging-cp",
+        "dsa:byte_brute"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "reading-problems",
+      "zone": 3,
+      "name": "Reading problems",
+      "icon": "book",
+      "desc": "Extracting the real question, small cases by hand and spotting known patterns.",
+      "kind": "concept",
+      "requires": [
+        "complexity-budget"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "brute-to-optimal",
+      "zone": 3,
+      "name": "Brute to optimal",
+      "icon": "trending-up",
+      "desc": "Start from brute force and remove redundant work step by step.",
+      "kind": "concept",
+      "requires": [
+        "reading-problems",
+        "dsa:byte_brute",
+        "dsa:kb_prefix"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "constructive",
+      "zone": 3,
+      "name": "Constructive problems",
+      "icon": "builder",
+      "desc": "Build an answer that satisfies the conditions, from small patterns to proofs.",
+      "kind": "concept",
+      "requires": [
+        "reading-problems",
+        "dsa:kb_greedy"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "ad-hoc",
+      "zone": 3,
+      "name": "Ad-hoc & observations",
+      "icon": "lightbulb",
+      "desc": "Invariants, parity and the key observation that unlocks a problem.",
+      "kind": "concept",
+      "requires": [
+        "reading-problems"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "implementation",
+      "zone": 3,
+      "name": "Implementation-heavy",
+      "icon": "wrench",
+      "desc": "Simulation and long-code problems written cleanly the first time.",
+      "kind": "concept",
+      "requires": [
+        "edge-cases"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "interactive",
+      "zone": 4,
+      "name": "Interactive problems",
+      "icon": "chat",
+      "desc": "Flushing output, query limits and binary-search style strategies against a judge.",
+      "kind": "concept",
+      "requires": [
+        "fast-io",
+        "dsa:kb_bsearch"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "special-judges",
+      "zone": 4,
+      "name": "Special checkers",
+      "icon": "check-circle",
+      "desc": "Problems with many valid answers, special checkers and output-only tasks.",
+      "kind": "concept",
+      "requires": [
+        "constructive"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "offline-tricks",
+      "zone": 4,
+      "name": "Offline & query tricks",
+      "icon": "sort",
+      "desc": "Sorting queries, sqrt decomposition and answering queries offline.",
+      "kind": "concept",
+      "requires": [
+        "brute-to-optimal",
+        "dsa:tb_segtree"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "math-tricks",
+      "zone": 4,
+      "name": "Contest math tricks",
+      "icon": "calculator",
+      "desc": "Modular arithmetic, precomputed factorials and common formulas.",
+      "kind": "concept",
+      "requires": [
+        "edge-cases",
+        "dsa:mb_ntheory",
+        "dsa:tb_combo"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "contest-strategy",
+      "zone": 5,
+      "name": "Contest strategy",
+      "icon": "target",
+      "desc": "Problem order, time management, penalties and when to switch problems.",
+      "kind": "concept",
+      "requires": [
+        "brute-to-optimal",
+        "stress-testing"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "virtual-contests",
+      "zone": 5,
+      "name": "Virtual contests",
+      "icon": "calendar",
+      "desc": "Simulating real contests and tracking performance over time.",
+      "kind": "lesson",
+      "requires": [
+        "contest-strategy"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "upsolving",
+      "zone": 5,
+      "name": "Upsolving",
+      "icon": "trending-up",
+      "desc": "Reading editorials and solving the problems you missed after each contest.",
+      "kind": "lesson",
+      "requires": [
+        "virtual-contests"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "code-library",
+      "zone": 5,
+      "name": "Code library project",
+      "icon": "book",
+      "desc": "Build and test your own library of snippets: segment tree, DSU, Dijkstra and modular math.",
+      "kind": "project",
+      "requires": [
+        "cp-template",
+        "dsa:tb_segtree",
+        "dsa:mb_dsu",
+        "dsa:gb_spaths"
+      ],
+      "xpReward": 300
+    },
+    {
+      "id": "rating-climb",
+      "zone": 5,
+      "name": "Rating climb project",
+      "icon": "medal",
+      "desc": "Do a series of rated contests with upsolving and reach your next rating tier.",
+      "kind": "project",
+      "requires": [
+        "upsolving",
+        "interactive",
+        "constructive"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

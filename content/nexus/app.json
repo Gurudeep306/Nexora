@@ -3,10 +3,12 @@
   "name": "App Development",
   "short": "APP",
   "group": "beyond",
+  "domain": "web-mobile",
   "order": 18,
   "icon": "monitor",
   "color": "#10b981",
   "description": "Building mobile apps: UI, state, persistence, networking and shipping to the stores.",
+  "rankTitle": "App Crafter",
   "zones": [
     {
       "level": 1,

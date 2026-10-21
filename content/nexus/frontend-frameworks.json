@@ -1,0 +1,298 @@
+{
+  "id": "frontend-frameworks",
+  "name": "Frontend Frameworks: React/Vue",
+  "short": "FE",
+  "group": "beyond",
+  "domain": "web-mobile",
+  "order": 58,
+  "icon": "layers",
+  "color": "#06b6d4",
+  "description": "Building component-based user interfaces with React and Vue, from state and data fetching to SSR and production.",
+  "zones": [
+    {
+      "level": 1,
+      "name": "Modern frontend tooling"
+    },
+    {
+      "level": 2,
+      "name": "React fundamentals"
+    },
+    {
+      "level": 3,
+      "name": "State, data & routing"
+    },
+    {
+      "level": 4,
+      "name": "Vue"
+    },
+    {
+      "level": 5,
+      "name": "Production frontends"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "modules-bundlers",
+      "zone": 1,
+      "name": "Modules & bundlers",
+      "icon": "wrench",
+      "desc": "ES modules, npm, and dev servers and bundlers such as Vite.",
+      "kind": "lesson",
+      "requires": [
+        "javascript:js-basics"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "component-thinking",
+      "zone": 1,
+      "name": "Component thinking",
+      "icon": "grid",
+      "desc": "Declarative UI, components, one-way data flow and why frameworks exist.",
+      "kind": "concept",
+      "requires": [
+        "javascript:dom"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "typescript-ui",
+      "zone": 1,
+      "name": "TypeScript for UIs",
+      "icon": "type",
+      "desc": "Typing props, events and state in frontend code.",
+      "kind": "lesson",
+      "requires": [
+        "modules-bundlers",
+        "typescript:ts-types"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "react-components",
+      "zone": 2,
+      "name": "React components",
+      "icon": "layers",
+      "desc": "JSX, props, composition, conditional rendering and lists with keys.",
+      "kind": "lesson",
+      "requires": [
+        "component-thinking",
+        "modules-bundlers",
+        "javascript:dom"
+      ],
+      "xpReward": 80,
+      "resources": [
+        {
+          "title": "React: Learn",
+          "url": "https://react.dev/learn"
+        }
+      ]
+    },
+    {
+      "id": "react-hooks",
+      "zone": 2,
+      "name": "Hooks & state",
+      "icon": "sliders",
+      "desc": "useState, useEffect, useRef and writing custom hooks.",
+      "kind": "lesson",
+      "requires": [
+        "react-components"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "events-forms",
+      "zone": 2,
+      "name": "Events & forms",
+      "icon": "edit",
+      "desc": "Handling events, controlled inputs and form validation.",
+      "kind": "lesson",
+      "requires": [
+        "react-hooks"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "rendering-model",
+      "zone": 2,
+      "name": "Rendering model",
+      "icon": "activity",
+      "desc": "Re-renders, reconciliation, memoisation and avoiding wasted work.",
+      "kind": "concept",
+      "requires": [
+        "react-hooks"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "global-state",
+      "zone": 3,
+      "name": "Context & global state",
+      "icon": "share",
+      "desc": "Context, reducers and external stores for shared state.",
+      "kind": "lesson",
+      "requires": [
+        "react-hooks"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "data-fetching",
+      "zone": 3,
+      "name": "Data fetching",
+      "icon": "download",
+      "desc": "Loading states, caching, revalidation and query libraries.",
+      "kind": "lesson",
+      "requires": [
+        "react-hooks",
+        "javascript:async-js"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "spa-routing",
+      "zone": 3,
+      "name": "Routing",
+      "icon": "route",
+      "desc": "Client-side routing, nested routes and route data.",
+      "kind": "lesson",
+      "requires": [
+        "react-components"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "styling-components",
+      "zone": 3,
+      "name": "Styling components",
+      "icon": "palette",
+      "desc": "CSS modules, utility CSS and component libraries.",
+      "kind": "lesson",
+      "requires": [
+        "react-components",
+        "web:layout-responsive"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "react-spa",
+      "zone": 3,
+      "name": "React SPA",
+      "icon": "rocket",
+      "desc": "Build a multi-page React app with shared state and a live API.",
+      "kind": "project",
+      "requires": [
+        "global-state",
+        "data-fetching",
+        "spa-routing"
+      ],
+      "xpReward": 250
+    },
+    {
+      "id": "vue-fundamentals",
+      "zone": 4,
+      "name": "Vue fundamentals",
+      "icon": "layers",
+      "desc": "Templates, directives and single-file components.",
+      "kind": "lesson",
+      "requires": [
+        "component-thinking"
+      ],
+      "xpReward": 120,
+      "resources": [
+        {
+          "title": "Vue guide",
+          "url": "https://vuejs.org/guide/introduction.html"
+        }
+      ]
+    },
+    {
+      "id": "vue-reactivity",
+      "zone": 4,
+      "name": "Vue reactivity",
+      "icon": "bolt",
+      "desc": "ref, reactive, computed, watchers and the Composition API.",
+      "kind": "lesson",
+      "requires": [
+        "vue-fundamentals"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "vue-router-pinia",
+      "zone": 4,
+      "name": "Vue Router & Pinia",
+      "icon": "route",
+      "desc": "Routing and state management in the Vue ecosystem.",
+      "kind": "lesson",
+      "requires": [
+        "vue-reactivity"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "vue-app",
+      "zone": 4,
+      "name": "Vue app",
+      "icon": "rocket",
+      "desc": "Rebuild a small app in Vue and compare the approaches with React.",
+      "kind": "project",
+      "requires": [
+        "vue-router-pinia"
+      ],
+      "xpReward": 280
+    },
+    {
+      "id": "ssr-frameworks",
+      "zone": 5,
+      "name": "SSR frameworks",
+      "icon": "server",
+      "desc": "Server rendering, static generation and hydration with Next.js and Nuxt.",
+      "kind": "lesson",
+      "requires": [
+        "spa-routing",
+        "data-fetching"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "testing-uis",
+      "zone": 5,
+      "name": "Testing UIs",
+      "icon": "check-circle",
+      "desc": "Component tests, mocking network calls and end-to-end tests.",
+      "kind": "lesson",
+      "requires": [
+        "events-forms"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "frontend-performance",
+      "zone": 5,
+      "name": "Frontend performance",
+      "icon": "bolt",
+      "desc": "Code splitting, bundle size, Core Web Vitals and profiling renders.",
+      "kind": "lesson",
+      "requires": [
+        "rendering-model",
+        "ssr-frameworks"
+      ],
+      "xpReward": 140
+    },
+    {
+      "id": "production-frontend",
+      "zone": 5,
+      "name": "Production frontend",
+      "icon": "trophy",
+      "desc": "Ship a tested, accessible, fast app built on a meta-framework.",
+      "kind": "project",
+      "requires": [
+        "ssr-frameworks",
+        "testing-uis",
+        "frontend-performance"
+      ],
+      "xpReward": 300
+    }
+  ]
+}

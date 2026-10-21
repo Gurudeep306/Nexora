@@ -11,18 +11,24 @@ const subjects = require('../src/nexus/subjects');
 const { NEXUS_NODES } = require('../src/nexus/dsa-nodes');
 const { loadGateBank } = require('../src/routes/gate');
 
-const GATE_SUBJECTS = ['dl', 'coa', 'os', 'dbms', 'cn', 'toc', 'cd', 'algo', 'dm', 'la', 'prob', 'calc', 'c'];
-const BEYOND = ['ml', 'deep', 'web', 'app', 'sysd'];
+const ranks = require('../src/nexus/ranks');
+
+// Every subject file there is: nothing here lists subjects by hand.
+const DOCS = subjects.readOutlines();
+const OUTLINE_IDS = DOCS.filter((d) => !d.engine).map((d) => d.id);
+const ALL_IDS = DOCS.map((d) => d.id);
 
 /* ── outlines ─────────────────────────────────────────────────────────── */
 
-test('every subject outline is valid: no dangling requires, no cycles, known PYQ topics', () => {
-  const docs = subjects.readOutlines();
-  assert.deepEqual(docs.map((d) => d.id).sort(), [...GATE_SUBJECTS, ...BEYOND].sort());
-  const errors = subjects.validateOutlines(docs, NEXUS_NODES, { bank: loadGateBank() });
+test('every subject file is valid: no dangling requires, no cycles, known PYQ topics, a domain', () => {
+  assert.ok(DOCS.length >= 60, `${DOCS.length} subjects`);
+  assert.equal(new Set(ALL_IDS).size, ALL_IDS.length);
+  const errors = subjects.validateOutlines(DOCS, NEXUS_NODES, { bank: loadGateBank(), strict: true });
   assert.deepEqual(errors, []);
-  for (const d of docs) {
-    assert.ok(d.nodes.length >= 15 && d.nodes.length <= 40, `${d.id}: ${d.nodes.length} nodes`);
+  for (const d of DOCS) {
+    assert.ok(d.domain, `${d.id}: domain`);
+    if (d.engine) continue;
+    assert.ok(d.nodes.length >= 12 && d.nodes.length <= 40, `${d.id}: ${d.nodes.length} nodes`);
     assert.ok(d.zones.length >= 4 && d.zones.length <= 7, `${d.id}: ${d.zones.length} zones`);
   }
 });
@@ -48,7 +54,7 @@ test('the validator catches dangling requires and cycles (also across subjects)'
 });
 
 test('layout keeps every prerequisite above (or beside) what it unlocks', () => {
-  for (const d of subjects.readOutlines()) {
+  for (const d of DOCS.filter((x) => !x.engine)) {
     const pos = subjects.layoutSubject(d);
     for (const n of d.nodes) {
       const p = pos.get(n.id);
@@ -102,7 +108,7 @@ test('progress: lessons and PYQs average, prerequisites gate unlocks across subj
   assert.ok(web.some((n) => n.unlocked));
   const sums = subjects.subjectSummaries(reg, { nodes: dsa, zones: [] }, computed);
   assert.equal(sums[0].id, 'dsa');
-  assert.equal(sums.length, 19);
+  assert.equal(sums.length, ALL_IDS.length);
 });
 
 /* ── API ──────────────────────────────────────────────────────────────── */
@@ -173,17 +179,18 @@ test('GET /api/nexus keeps the DSA tree and adds the subject list', async () => 
   assert.equal(body.zones.length, 11);
   assert.ok(body.player && body.riftLevels.length === 11);
   assert.deepEqual(body.subjects.map((s) => s.id).slice(0, 2), ['dsa', 'dl']);
-  assert.equal(body.subjects.length, 19);
+  assert.equal(body.subjects.length, ALL_IDS.length);
   const trees = body.nodes.find((n) => n.id === 'gb_trees');
   assert.ok(trees.crossUnlocks.some((c) => c.subject === 'dbms'));
 });
 
 test('GET /api/nexus?subject=… serves every subject; unknown → 404', async () => {
-  for (const id of [...GATE_SUBJECTS, ...BEYOND]) {
+  for (const id of OUTLINE_IDS) {
     const { status, body } = await call('GET', `/api/nexus?subject=${id}`);
     assert.equal(status, 200, id);
     assert.equal(body.subject.id, id);
-    assert.ok(body.nodes.length >= 15, id);
+    assert.ok(body.nodes.length >= 12, id);
+    assert.ok(ranks.TIERS.includes(body.subjectRank.tier) && body.subjectRank.title, id);
     assert.ok(body.nodes.every((n) => n.zone >= 1 && n.zone <= body.zones.length && typeof n.row === 'number'));
   }
   assert.equal((await call('GET', '/api/nexus?subject=nope')).status, 404);
@@ -208,4 +215,82 @@ test('study writes show up at once (the per-user cache is dropped)', async () =>
   const list = (await call('GET', '/api/nexus/pyqs/dl/place-value')).body.questions;
   assert.equal(list.find((q) => q.id === pyqs.questions[0].id).status, 'solved');
   assert.equal((await call('GET', '/api/nexus/pyqs/dl/nope')).status, 404);
+});
+
+/* ── ranks ────────────────────────────────────────────────────────────── */
+
+test('subject rank: five tiers by mastery, the title from the data file (or a default)', () => {
+  assert.deepEqual([0, 19, 20, 39, 40, 60, 79, 80, 100].map(ranks.tierFor), [0, 0, 1, 1, 2, 3, 3, 4, 4]);
+  const dl = subjects.loadRegistry(NEXUS_NODES).subjects.get('dl').meta;
+  assert.equal(ranks.subjectRank(dl, 45).tier, 'Adept');
+  assert.equal(ranks.subjectRank(dl, 45).title, 'Logic Architect');
+  assert.equal(ranks.subjectRank(dl, 45).next, 'Expert at 60%');
+  assert.equal(ranks.subjectRank({ short: 'XYZ' }, 100).title, 'XYZ Pathfinder');
+  assert.equal(ranks.subjectRank({ short: 'XYZ' }, 100).next, null);
+});
+
+test('web rank: DSA XP is the floor and every subject adds on top (no rank can drop)', () => {
+  const reg = subjects.loadRegistry(NEXUS_NODES);
+  const bank = loadGateBank();
+  const notes = require('../src/routes/gate-notes').loadGateNotes();
+  const dsa = NEXUS_NODES.map((n) => ({ ...n, progress: 0, completed: false }));
+  const empty = subjects.computeSubjects(reg, dsa, { qstate: new Map(), lessons: new Set() }, bank, notes);
+  for (const totals of [{ xp: 0, solved: 0 }, { xp: 2500, solved: 230 }, { xp: 90000, solved: 2000 }]) {
+    const s = ranks.webScore(totals, empty);
+    assert.equal(s.xp, totals.xp, 'nothing studied: web XP equals DSA XP');
+    assert.equal(s.solved, totals.solved);
+  }
+  const pool = subjects.nodePools(reg, bank, notes).get('dl:place-value');
+  const studied = subjects.computeSubjects(reg, dsa, { qstate: new Map(pool.map((id) => [id, { attempts: 1, correct: 1 }])), lessons: new Set() }, bank, notes);
+  const s = ranks.webScore({ xp: 2500, solved: 230 }, studied);
+  assert.ok(s.xp > 2500, 'studying adds web XP');
+  assert.ok(s.solved > 230, 'correct PYQs count as solves');
+  assert.ok(s.subjects.dl > 0);
+});
+
+test('week keys follow ISO weeks', () => {
+  assert.equal(ranks.weekKey(Date.UTC(2026, 9, 21)), '2026-W43');
+  assert.equal(ranks.weekKey(Date.UTC(2027, 0, 1)), '2026-W53');
+  assert.equal(ranks.weekKey(Date.UTC(2025, 11, 29)), '2026-W01');
+});
+
+test('GET /api/nexus/web: every subject, the web rank, subject ranks; node details load lazily', async () => {
+  const { status, body } = await call('GET', '/api/nexus/web');
+  assert.equal(status, 200);
+  assert.deepEqual(body.clusters.map((c) => c.id).sort(), [...ALL_IDS].sort());
+  assert.ok(body.player.level >= body.dsaPlayer.level, 'web rank never below the DSA rank');
+  assert.ok(body.player.xp >= body.dsaPlayer.xp);
+  for (const c of body.clusters) {
+    assert.ok(c.domain && c.rank && ranks.TIERS.includes(c.rank.tier), c.id);
+    for (const n of c.nodes) assert.ok(n.n && [0, 1, 2].includes(n.s) && !('x' in n) && !('desc' in n));
+  }
+  const node = await call('GET', '/api/nexus/node/dbms/bplus-trees');
+  assert.equal(node.status, 200);
+  assert.ok(node.body.node.desc && node.body.node.crossRequires.some((c) => c.id === 'gb_trees'));
+  const dsaNode = await call('GET', '/api/nexus/node/dsa/gb_trees');
+  assert.ok(dsaNode.body.node.crossUnlocks.some((c) => c.subject === 'dbms'));
+  assert.equal((await call('GET', '/api/nexus/node/dbms/nope')).status, 404);
+});
+
+test('leaderboards: web rank (overall, week, friends) and per subject, from nexus_scores', async () => {
+  await call('GET', '/api/nexus/web?fresh=1');
+  const row = withDb((db) => db.prepare('SELECT * FROM nexus_scores WHERE username=?').get(ME));
+  assert.ok(row, 'visiting the web stores the score');
+  const subjectsJson = JSON.parse(row.subjects);
+  assert.ok(subjectsJson.dl > 0);
+  const overall = await call('GET', '/api/nexus/leaderboard?scope=all');
+  assert.equal(overall.status, 200);
+  assert.equal(overall.body.rows[0].username, ME);
+  assert.equal(overall.body.rows[0].score, row.web_xp);
+  const sub = await call('GET', '/api/nexus/leaderboard?scope=subject&subject=dl');
+  assert.equal(sub.body.rows[0].username, ME);
+  assert.equal(sub.body.rows[0].score, subjectsJson.dl);
+  assert.equal((await call('GET', '/api/nexus/leaderboard?scope=subject&subject=nope')).status, 404);
+  const friends = await call('GET', '/api/nexus/leaderboard?scope=friends');
+  assert.deepEqual(friends.body.rows.map((r) => r.username), [ME]);
+  assert.equal((await call('GET', '/api/nexus/leaderboard?scope=week')).status, 200);
+  // An unchanged revisit writes nothing.
+  const before = withDb((db) => db.prepare('SELECT updated_at FROM nexus_scores WHERE username=?').get(ME).updated_at);
+  await call('GET', '/api/nexus/web');
+  assert.equal(withDb((db) => db.prepare('SELECT updated_at FROM nexus_scores WHERE username=?').get(ME).updated_at), before);
 });

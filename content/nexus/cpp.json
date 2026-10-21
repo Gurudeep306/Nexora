@@ -1,0 +1,274 @@
+{
+  "id": "cpp",
+  "name": "C++",
+  "short": "C++",
+  "group": "beyond",
+  "domain": "languages",
+  "order": 22,
+  "icon": "code",
+  "color": "#00599c",
+  "description": "Modern C++ from classes and RAII through the STL, templates, move semantics and performance work.",
+  "rankTitle": "Template Tamer",
+  "zones": [
+    {
+      "level": 1,
+      "name": "C++ basics"
+    },
+    {
+      "level": 2,
+      "name": "Classes & RAII"
+    },
+    {
+      "level": 3,
+      "name": "The STL"
+    },
+    {
+      "level": 4,
+      "name": "Modern C++"
+    },
+    {
+      "level": 5,
+      "name": "Performance & tooling"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cpp-basics",
+      "zone": 1,
+      "name": "C++ basics",
+      "icon": "code",
+      "desc": "Types, I/O streams, namespaces, std::string and how C++ extends C.",
+      "kind": "concept",
+      "requires": [
+        "c:c-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "references",
+      "zone": 1,
+      "name": "References & pointers",
+      "icon": "link",
+      "desc": "References, const correctness, pointers and passing by value or reference.",
+      "kind": "concept",
+      "requires": [
+        "cpp-basics",
+        "c:pointers"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "overloading",
+      "zone": 1,
+      "name": "Overloading",
+      "icon": "copy",
+      "desc": "Function overloading, default arguments and inline functions.",
+      "kind": "concept",
+      "requires": [
+        "cpp-basics"
+      ],
+      "xpReward": 40
+    },
+    {
+      "id": "classes",
+      "zone": 2,
+      "name": "Classes",
+      "icon": "shapes",
+      "desc": "Classes, access control, constructors, member functions and static members.",
+      "kind": "concept",
+      "requires": [
+        "references"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "raii",
+      "zone": 2,
+      "name": "RAII & destructors",
+      "icon": "lock",
+      "desc": "Destructors, the rule of three/five and tying resource lifetime to object lifetime.",
+      "kind": "concept",
+      "requires": [
+        "classes"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "operator-overloading",
+      "zone": 2,
+      "name": "Operator overloading",
+      "icon": "calculator",
+      "desc": "Overloading arithmetic, comparison, stream and subscript operators sensibly.",
+      "kind": "concept",
+      "requires": [
+        "classes",
+        "overloading"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "virtual-functions",
+      "zone": 2,
+      "name": "Inheritance & virtual",
+      "icon": "layers",
+      "desc": "Inheritance, virtual functions, vtables and abstract base classes.",
+      "kind": "concept",
+      "requires": [
+        "classes"
+      ],
+      "xpReward": 60
+    },
+    {
+      "id": "templates",
+      "zone": 3,
+      "name": "Templates",
+      "icon": "shapes",
+      "desc": "Function and class templates, template argument deduction and specialisation.",
+      "kind": "concept",
+      "requires": [
+        "classes"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "stl",
+      "zone": 3,
+      "name": "STL containers",
+      "icon": "grid",
+      "desc": "vector, deque, list, map, unordered_map, set and their complexity guarantees.",
+      "kind": "concept",
+      "requires": [
+        "templates"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "stl-algorithms",
+      "zone": 3,
+      "name": "Iterators & algorithms",
+      "icon": "route",
+      "desc": "Iterator categories and the <algorithm> library: sort, find, transform and friends.",
+      "kind": "concept",
+      "requires": [
+        "stl"
+      ],
+      "xpReward": 80
+    },
+    {
+      "id": "text-indexer",
+      "zone": 3,
+      "name": "Text indexer project",
+      "icon": "search",
+      "desc": "Build a word index over a set of files with STL containers and fast lookups.",
+      "kind": "project",
+      "requires": [
+        "stl-algorithms",
+        "raii"
+      ],
+      "xpReward": 230
+    },
+    {
+      "id": "move-semantics",
+      "zone": 4,
+      "name": "Move semantics",
+      "icon": "bolt",
+      "desc": "Rvalue references, move constructors, std::move and perfect forwarding.",
+      "kind": "concept",
+      "requires": [
+        "raii",
+        "templates"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "smart-pointers",
+      "zone": 4,
+      "name": "Smart pointers",
+      "icon": "key",
+      "desc": "unique_ptr, shared_ptr and weak_ptr and when to use each.",
+      "kind": "concept",
+      "requires": [
+        "raii"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "lambdas",
+      "zone": 4,
+      "name": "Lambdas",
+      "icon": "function",
+      "desc": "Lambda expressions, captures, std::function and functional style with algorithms.",
+      "kind": "concept",
+      "requires": [
+        "stl-algorithms"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "cpp-threads",
+      "zone": 4,
+      "name": "std::thread",
+      "icon": "cpu",
+      "desc": "std::thread, mutexes, condition variables, atomics and futures.",
+      "kind": "concept",
+      "requires": [
+        "lambdas",
+        "parallel-programming:threads-locks"
+      ],
+      "xpReward": 100
+    },
+    {
+      "id": "cmake",
+      "zone": 5,
+      "name": "Build & CMake",
+      "icon": "wrench",
+      "desc": "Compilation units, linking, headers and building projects with CMake.",
+      "kind": "lesson",
+      "requires": [
+        "cpp-basics"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "undefined-behavior",
+      "zone": 5,
+      "name": "UB & sanitizers",
+      "icon": "warning",
+      "desc": "Common undefined behaviour and catching it with AddressSanitizer and UBSan.",
+      "kind": "concept",
+      "requires": [
+        "references",
+        "cmake"
+      ],
+      "xpReward": 120
+    },
+    {
+      "id": "profiling",
+      "zone": 5,
+      "name": "Profiling",
+      "icon": "timer",
+      "desc": "Measuring performance, cache-friendly data layout and profilers.",
+      "kind": "lesson",
+      "requires": [
+        "stl",
+        "cmake"
+      ],
+      "xpReward": 130
+    },
+    {
+      "id": "matrix-library",
+      "zone": 5,
+      "name": "Matrix library project",
+      "icon": "calculator",
+      "desc": "Write a generic matrix class with operators, move semantics and benchmarks.",
+      "kind": "project",
+      "requires": [
+        "templates",
+        "operator-overloading",
+        "move-semantics",
+        "la:matrices"
+      ],
+      "xpReward": 300
+    }
+  ]
+}
