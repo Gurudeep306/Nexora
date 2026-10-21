@@ -4,6 +4,7 @@
   "short": "DS",
   "group": "beyond",
   "domain": "systems",
+  "stream": "systems-cloud",
   "order": 50,
   "icon": "nexus",
   "color": "#6366f1",

@@ -4,6 +4,7 @@
   "short": "MLOPS",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 47,
   "icon": "workshop",
   "color": "#4f46e5",

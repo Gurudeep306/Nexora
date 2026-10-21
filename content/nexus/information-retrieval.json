@@ -4,6 +4,7 @@
   "short": "IR",
   "group": "beyond",
   "domain": "theory",
+  "stream": "ai-data",
   "order": 53,
   "icon": "search",
   "color": "#0f766e",

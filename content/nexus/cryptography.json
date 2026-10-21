@@ -4,6 +4,7 @@
   "short": "CRYP",
   "group": "beyond",
   "domain": "security",
+  "stream": "security",
   "order": 61,
   "icon": "key",
   "color": "#7c3aed",

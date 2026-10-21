@@ -4,6 +4,7 @@
   "short": "DEEP",
   "group": "beyond",
   "domain": "ai",
+  "stream": "ai-data",
   "order": 16,
   "icon": "layers",
   "color": "#7c3aed",

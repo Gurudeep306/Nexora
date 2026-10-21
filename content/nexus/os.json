@@ -4,6 +4,7 @@
   "short": "OS",
   "group": "gate",
   "domain": "core-cs",
+  "stream": "core-cs",
   "order": 4,
   "icon": "server",
   "color": "#14b8a6",

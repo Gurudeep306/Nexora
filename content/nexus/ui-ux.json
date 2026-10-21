@@ -4,6 +4,7 @@
   "short": "UX",
   "group": "beyond",
   "domain": "visual-product",
+  "stream": "web-app",
   "order": 57,
   "icon": "palette",
   "color": "#ec4899",

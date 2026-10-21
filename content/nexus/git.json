@@ -4,6 +4,7 @@
   "short": "GIT",
   "group": "beyond",
   "domain": "tools",
+  "stream": "systems-cloud",
   "order": 30,
   "icon": "git-branch",
   "color": "#f05032",

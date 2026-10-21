@@ -68,6 +68,7 @@ function refKey(subject, ref) {
  * test suite, and at server start). Returns a list of error strings.
  */
 function validateOutlines(docs, dsaNodes, opts = {}) {
+  if (opts.strict && !opts.streams) opts = { ...opts, streams: new Set(readStreams().map((x) => x.id)) };
   const errors = [];
   const ids = new Set();
   const keys = new Map(); // global key → requires (global keys)
@@ -82,6 +83,8 @@ function validateOutlines(docs, dsaNodes, opts = {}) {
     ids.add(d.id);
     for (const k of ["name", "short", "group", "icon", "color"]) if (!d[k]) errors.push(`${where}: missing ${k}`);
     if (opts.strict && !d.domain) errors.push(`${where}: missing domain`);
+    if (opts.strict && !d.stream) errors.push(`${where}: missing stream`);
+    if (d.stream && opts.streams && !opts.streams.has(d.stream)) errors.push(`${where}: unknown stream ${d.stream} (see _streams.json)`);
     if (d.engine) {
       if (!ENGINES.has(d.engine) || d.engine !== d.id) errors.push(`${where}: unknown engine ${d.engine}`);
       continue;
@@ -315,6 +318,7 @@ function loadRegistry(dsaNodes) {
       short: d.short,
       group: d.group,
       domain: d.domain || d.group || "other",
+      stream: d.stream || d.domain || d.group || "other",
       order: d.order,
       icon: d.icon,
       color: d.color,
@@ -607,21 +611,36 @@ function webStructure(reg, dsa) {
   for (const [sid, s] of reg.subjects) {
     const zones = s.engine === "dsa" ? dsa.zones.map((z) => ({ level: z.level, name: z.name, color: z.color })) : s.doc.zones.map((z) => ({ level: z.level, name: z.name, color: s.zoneColor.get(z.level) }));
     const nodes = s.engine === "dsa"
-      ? reg.dsaNodes.map((n) => ({ id: n.id, n: n.name, z: n.zone, req: n.requires, xp: n.xpReward }))
+      ? reg.dsaNodes.map((n) => ({ id: n.id, n: n.name, z: n.zone, req: n.requires, xp: n.xpReward, ...(n.icon ? { i: n.icon } : {}) }))
       : s.doc.nodes.map((n) => {
           const out = { id: n.id, n: n.name, z: n.zone, req: (n.requires || []).filter((r) => !r.includes(":")), xp: n.xpReward || 50 };
           const cross = (n.requires || []).filter((r) => r.includes(":") && reg.names.has(r));
           if (cross.length) out.cx = cross;
           if (n.kind && n.kind !== "concept") out.k = n.kind;
+          if (n.icon) out.i = n.icon;
           return out;
         });
-    clusters.push({ id: sid, name: s.meta.name, short: s.meta.short, domain: s.meta.domain, order: s.meta.order ?? 99, engine: s.engine || null, zones, nodes });
+    clusters.push({ id: sid, name: s.meta.name, short: s.meta.short, domain: s.meta.domain, stream: s.meta.stream, order: s.meta.order ?? 99, engine: s.engine || null, zones, nodes });
   }
   const routes = readRoutes(reg);
-  const body = { clusters, routes };
+  const streams = readStreams();
+  const body = { clusters, routes, streams };
   const version = crypto.createHash("sha1").update(JSON.stringify(body)).digest("hex").slice(0, 12);
   reg.structure = { version, ...body };
   return reg.structure;
+}
+
+/**
+ * Streams (content/nexus/_streams.json): how subjects group on the radial
+ * overview, in their order around the circle, each with its accent hue.
+ */
+function readStreams(dir = DIR) {
+  try {
+    const raw = JSON.parse(fs.readFileSync(path.join(dir, "_streams.json"), "utf8")).streams || [];
+    return raw.map((x, i) => ({ id: x.id, name: x.name, hue: x.hue || "#6366f1", order: x.order ?? i + 1 })).sort((a, b) => a.order - b.order);
+  } catch {
+    return [];
+  }
 }
 
 /** Goal routes (content/nexus/_routes.json): named sets of subjects. */
@@ -670,6 +689,7 @@ function countLabel(n) {
 }
 
 module.exports = {
+  readStreams,
   webStructure,
   webState,
   readRoutes,

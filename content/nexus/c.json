@@ -4,6 +4,7 @@
   "short": "C",
   "group": "gate",
   "domain": "core-cs",
+  "stream": "core-cs",
   "order": 14,
   "icon": "terminal",
   "color": "#8b5cf6",

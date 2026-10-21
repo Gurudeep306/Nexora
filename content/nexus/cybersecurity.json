@@ -4,6 +4,7 @@
   "short": "SEC",
   "group": "beyond",
   "domain": "security",
+  "stream": "security",
   "order": 60,
   "icon": "shield",
   "color": "#dc2626",

@@ -4,6 +4,7 @@
   "short": "GO",
   "group": "beyond",
   "domain": "languages",
+  "stream": "languages",
   "order": 25,
   "icon": "code",
   "color": "#00add8",
