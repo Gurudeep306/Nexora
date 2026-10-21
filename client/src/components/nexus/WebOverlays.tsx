@@ -4,7 +4,7 @@ import { Avatar } from '@/components/ui/Avatar'
 import { formatNumber } from '@/lib/utils'
 import type { Web } from './lattice'
 import type { WebFilter } from './NexusWeb'
-import type { RiftPlayer, WebRoute } from './types'
+import type { RiftPlayer, WebCluster, WebRoute } from './types'
 
 /*
  * The floating, card-free type that lives on the web: the web-rank line,
@@ -59,9 +59,15 @@ export function WebRankLine({
   )
 }
 
-/** ⌘K / "/": type a concept or subject, Enter flies there. */
+/** What search looks through: every subject and every concept. */
+export interface SearchGraph {
+  subjects: Pick<WebCluster, 'id' | 'name' | 'short'>[]
+  concepts: Web['concepts']
+}
+
+/** ⌘K / "/": type a concept or subject, Enter goes there. */
 export function WebSearch(props: {
-  web: Web
+  graph: SearchGraph
   open: boolean
   onOpenChange: (open: boolean) => void
   onPick: (pick: { kind: 'concept' | 'subject'; id: string }) => void
@@ -72,12 +78,12 @@ export function WebSearch(props: {
 }
 
 function SearchBox({
-  web,
+  graph,
   onOpenChange,
   onPick,
   subjectsOnly = false,
 }: {
-  web: Web
+  graph: SearchGraph
   onOpenChange: (open: boolean) => void
   onPick: (pick: { kind: 'concept' | 'subject'; id: string }) => void
   subjectsOnly?: boolean
@@ -86,12 +92,12 @@ function SearchBox({
   const [i, setI] = useState(0)
   const input = useRef<HTMLInputElement>(null)
   const index = useMemo(() => {
-    const subjects = web.regions.map((r) => ({ kind: 'subject' as const, id: r.cluster.id, label: r.cluster.name, meta: `${r.cluster.short} · subject`, hay: `${r.cluster.name} ${r.cluster.short}`.toLowerCase() }))
+    const subjects = graph.subjects.map((c) => ({ kind: 'subject' as const, id: c.id, label: c.name, meta: `${c.short} · subject`, hay: `${c.name} ${c.short}`.toLowerCase() }))
     const concepts = subjectsOnly
       ? []
-      : [...web.concepts.values()].map((c) => ({ kind: 'concept' as const, id: c.key, label: c.node.n, meta: `${c.cluster.short} · ${c.node.s === 2 ? 'mastered' : c.node.s === 1 ? 'open' : 'locked'}`, hay: `${c.node.n} ${c.cluster.short} ${c.cluster.name}`.toLowerCase() }))
+      : [...graph.concepts.values()].map((c) => ({ kind: 'concept' as const, id: c.key, label: c.node.n, meta: `${c.cluster.short} · ${c.node.s === 2 ? 'mastered' : c.node.s === 1 ? 'open' : 'locked'}`, hay: `${c.node.n} ${c.cluster.short} ${c.cluster.name}`.toLowerCase() }))
     return [...subjects, ...concepts]
-  }, [web, subjectsOnly])
+  }, [graph, subjectsOnly])
   const results = useMemo(() => {
     const terms = q.toLowerCase().split(/\s+/).filter(Boolean)
     if (!terms.length) return index.filter((x) => x.kind === 'subject').slice(0, 8)
@@ -161,13 +167,14 @@ function Choices<T extends string>({ label, value, options, onChange }: { label:
   )
 }
 
-/** Route, what to show, and the memory preview — three lines of type. */
+/** Route, what to show, and the memory preview — three lines of type (inside a subject's tree). */
 export function WebControls({
   routes,
   route,
   onRoute,
   onCustomRoute,
   customName,
+  own,
   filter,
   onFilter,
   domains,
@@ -178,8 +185,11 @@ export function WebControls({
   routes: WebRoute[]
   route: string | null
   onRoute: (id: string | null) => void
-  onCustomRoute: () => void
-  customName: string | null
+  /** A custom route (pick subjects); none in a subject's tree. */
+  onCustomRoute?: () => void
+  customName?: string | null
+  /** The route through this subject only (a tree's own path). */
+  own?: { id: string; label: string }
   filter: WebFilter
   onFilter: (f: WebFilter) => void
   domains: string[]
@@ -195,14 +205,21 @@ export function WebControls({
         <button type="button" className="nx-link nx-link-sm" data-on={!route || undefined} onClick={() => onRoute(null)}>
           none
         </button>
+        {own && (
+          <button type="button" className="nx-link nx-link-sm" data-on={route === own.id || undefined} onClick={() => onRoute(own.id)}>
+            {own.label}
+          </button>
+        )}
         {routes.map((r) => (
           <button key={r.id} type="button" className="nx-link nx-link-sm" data-on={route === r.id || undefined} title={r.description} onClick={() => onRoute(r.id)}>
             {r.name}
           </button>
         ))}
-        <button type="button" className="nx-link nx-link-sm" data-on={route?.startsWith('subject:') || undefined} onClick={onCustomRoute}>
-          {customName ?? 'custom…'}
-        </button>
+        {onCustomRoute && (
+          <button type="button" className="nx-link nx-link-sm" data-on={route?.startsWith('subject:') || undefined} onClick={onCustomRoute}>
+            {customName ?? 'custom…'}
+          </button>
+        )}
       </div>
       {route && routeNext.length > 0 && <p className="nx-route-next mb-0">Next: {routeNext.join('  →  ')}</p>}
       <div className="nx-row">
@@ -217,9 +234,11 @@ export function WebControls({
           ]}
           onChange={(mode) => onFilter({ ...filter, mode })}
         />
-        <button type="button" className="nx-link nx-link-sm" data-on={!!filter.domain || undefined} onClick={() => setDomainsOpen((v) => !v)} aria-expanded={domainsOpen}>
-          {filter.domain ? filter.domain.replace(/-/g, ' ') : 'every domain'} ▾
-        </button>
+        {domains.length > 0 && (
+          <button type="button" className="nx-link nx-link-sm" data-on={!!filter.domain || undefined} onClick={() => setDomainsOpen((v) => !v)} aria-expanded={domainsOpen}>
+            {filter.domain ? filter.domain.replace(/-/g, ' ') : 'every domain'} ▾
+          </button>
+        )}
       </div>
       <AnimatePresence>
         {domainsOpen && (

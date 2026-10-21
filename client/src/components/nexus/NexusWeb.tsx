@@ -3,8 +3,12 @@ import { useReducedMotion } from 'motion/react'
 import { BRAND, BUCKETS, HitGrid, mix3, pathFromOrigin, retention, SP, treePath, type RGB, type Web } from './lattice'
 
 /*
- * The Nexus web: the teaser's lattice web with every subject living inside
- * it, floating in space (see ./lattice.ts for how it is built).
+ * The Nexus web: the teaser's lattice web, floating in space (see
+ * ./lattice.ts for how it is built). Two modes, one renderer:
+ *   overview  the main web — one node per subject, streams as regions,
+ *             names always shown; a click dives into the subject;
+ *   tree      a subject's own tree — its concepts, zones as regions, and
+ *             every tool (lineage, beacon, routes, memory, keystones).
  *
  * Depth, in three layers:
  *   far   a softer, dimmer lattice drifting slower than the web,
@@ -54,14 +58,11 @@ const DT = 0.075
 const EDGE = 0.22
 const T0 = 0.05
 const MAX_K = 3
-const LABEL_K = 1.15
-const HOME_K = 0.62
-const HOME_K_PHONE = 0.5
+const LABEL_K = 0.2
 const TILT = 26
 const PERSPECTIVE = 1000
 const PLANE_W = 1.42
 const PLANE_H = 1.62
-const MINI = 132 // minimap size
 const { C1, C2, C3 } = BRAND
 const AMBER: RGB = [245, 196, 81]
 
@@ -92,17 +93,18 @@ export const NexusWeb = forwardRef<
     route?: { next: string[]; order: string[] } | null
     beacon?: string | null
     keystones?: Set<string>
-    /** A tiny web while loading: no interaction, no minimap. */
+    /** A tiny web while loading: no interaction. */
     loading?: boolean
+    mode?: 'overview' | 'tree'
   }
 >(function NexusWeb(props, ref) {
   const { web, initialCamera, loading = false } = props
+  const overview = props.mode === 'overview'
   const wrapRef = useRef<HTMLDivElement>(null)
   const planeRef = useRef<HTMLDivElement>(null)
   const midRef = useRef<HTMLCanvasElement>(null)
   const farRef = useRef<HTMLCanvasElement>(null)
   const nearRef = useRef<HTMLCanvasElement>(null)
-  const miniRef = useRef<HTMLCanvasElement>(null)
   const reduce = !!useReducedMotion()
 
   // The tree by colour bucket: depends on the layout only.
@@ -138,7 +140,7 @@ export const NexusWeb = forwardRef<
 
   const ox = web.xy[2 * web.origin]
   const oy = web.xy[2 * web.origin + 1]
-  const cam = useRef<Camera>(initialCamera ?? { x: ox, y: oy, k: HOME_K })
+  const cam = useRef<Camera>(initialCamera ?? { x: ox, y: oy, k: 0.5 })
   const view = useRef({ w: 1, h: 1, dpr: 1, pw: 1, ph: 1, pdpr: 1 })
   const pose = useRef({ tx: TILT, ty: 0 })
   const hovered = useRef<string | null>(null)
@@ -152,7 +154,6 @@ export const NexusWeb = forwardRef<
   const born = useRef<number | null>(null)
   const settled = useRef(0)
   const dirtyStatic = useRef(true)
-  const dirtyMini = useRef(true)
   const grid = useRef(new HitGrid(28))
   const labelHits = useRef<{ x: number; y: number; w: number; h: number; id: string }[]>([])
   const actionHits = useRef<{ x: number; y: number; w: number; h: number; action: WebAction; key: string }[]>([])
@@ -162,7 +163,6 @@ export const NexusWeb = forwardRef<
   P.current = props
   useEffect(() => {
     dirtyStatic.current = true
-    dirtyMini.current = true
   }, [tree, bright])
 
   /* ── projection: plane point (world x, y, height above the plane) → screen ── */
@@ -198,7 +198,29 @@ export const NexusWeb = forwardRef<
     return { x: c.x + u / c.k, y: c.y + v / c.k }
   }
 
-  const minK = () => (Math.min(view.current.w, view.current.h) / (web.extent * 2)) * 1.1
+  /** The camera that frames every node, clear of the type around the edges. */
+  const fitCam = (): Camera => {
+    const { w, h } = view.current
+    const phone = w < 640
+    let x0 = ox
+    let x1 = ox
+    let y0 = oy
+    let y1 = oy
+    for (const cn of web.concepts.values()) {
+      const x = web.xy[2 * cn.pt]
+      const y = web.xy[2 * cn.pt + 1]
+      x0 = Math.min(x0, x)
+      x1 = Math.max(x1, x)
+      y0 = Math.min(y0, y)
+      y1 = Math.max(y1, y)
+    }
+    const pad = phone ? 40 : 120
+    const top = overview ? (phone ? 120 : 110) : phone ? 190 : 150
+    const bottom = overview ? (phone ? 120 : 130) : phone ? 210 : 170
+    const k = clamp(Math.min((w - 2 * pad) / Math.max(1, x1 - x0 + 120), (h - top - bottom) / Math.max(1, (y1 - y0 + 120) * 0.92)), 0.12, overview ? 1.1 : 1.35)
+    return { x: (x0 + x1) / 2, y: (y0 + y1) / 2 - (top - bottom) / 2 / k, k }
+  }
+  const minK = () => Math.min(fitCam().k * 0.6, (Math.min(view.current.w, view.current.h) / (web.extent * 2)) * 1.1)
   const startFly = (to: Camera, done?: () => void, dur = 900) => {
     const target = { ...to, k: clamp(to.k, minK(), MAX_K) }
     if (reduce) {
@@ -254,20 +276,17 @@ export const NexusWeb = forwardRef<
     const mid = midRef.current!
     const far = farRef.current!
     const near = nearRef.current!
-    const mini = miniRef.current
     const mctx = mid.getContext('2d')!
     const fctx = far.getContext('2d')!
     const ctx = near.getContext('2d')!
-    const nctx = mini?.getContext('2d') ?? null
     const off = document.createElement('canvas')
     const octx = off.getContext('2d')!
-    const miniBase = document.createElement('canvas')
     let offCam: Camera | null = null
     let labelsFrom = 0
     let raf = 0
     let markedWeb = false
     let markedConcepts = false
-    let frameNo = 0
+    let framed = false
     const font = getComputedStyle(wrap).fontFamily || 'system-ui, sans-serif'
     if (born.current === null) born.current = reduce || initialCamera ? -1 : performance.now()
     const lowPower = (navigator.hardwareConcurrency || 8) <= 4
@@ -291,14 +310,12 @@ export const NexusWeb = forwardRef<
       }
       near.width = Math.round(w * dpr)
       near.height = Math.round(h * dpr)
-      if (mini) {
-        mini.width = mini.height = Math.round(MINI * dpr)
-        miniBase.width = miniBase.height = Math.round(MINI * dpr)
+      if (!initialCamera && !framed) {
+        framed = true
+        cam.current = fitCam()
       }
-      if (!initialCamera && cam.current.k === HOME_K && w < 640) cam.current = { ...cam.current, k: HOME_K_PHONE }
       offCam = null
       dirtyStatic.current = true
-      dirtyMini.current = true
     }
     const ro = new ResizeObserver(resize)
     ro.observe(wrap)
@@ -329,7 +346,7 @@ export const NexusWeb = forwardRef<
         g.setTransform(pdpr * c.k, 0, 0, pdpr * c.k, pdpr * (pw / 2 - c.x * c.k), pdpr * (ph / 2 - c.y * c.k))
         g.lineWidth = 1.3 / c.k
         for (let b = 0; b < BUCKETS; b++) {
-          g.strokeStyle = rgba(tree.colors[b], c.k < 0.3 ? 0.32 : 0.46)
+          g.strokeStyle = rgba(tree.colors[b], overview ? 0.2 : c.k < 0.3 ? 0.32 : 0.46)
           g.stroke(tree.paths[b])
         }
         g.lineWidth = 1.8 / c.k
@@ -391,46 +408,6 @@ export const NexusWeb = forwardRef<
       }
     }
 
-    /** The minimap: every concept as a dot, the view as a quadrilateral. */
-    const miniScale = () => MINI / (web.extent * 2)
-    const drawMiniBase = () => {
-      if (!mini) return
-      const g = miniBase.getContext('2d')!
-      const { dpr } = view.current
-      g.setTransform(dpr, 0, 0, dpr, 0, 0)
-      g.clearRect(0, 0, MINI, MINI)
-      const s = miniScale()
-      for (const cn of web.concepts.values()) {
-        const x = MINI / 2 + (web.xy[2 * cn.pt] - ox) * s
-        const y = MINI / 2 + (web.xy[2 * cn.pt + 1] - oy) * s
-        g.fillStyle = cn.node.s === 2 ? 'rgba(255,255,255,0.95)' : cn.node.s === 1 ? rgba(tree.colors[web.bucket[cn.pt]], 0.85) : 'rgba(168,176,255,0.28)'
-        g.fillRect(x - 0.8, y - 0.8, cn.node.s === 0 ? 1.2 : 1.8, cn.node.s === 0 ? 1.2 : 1.8)
-      }
-      g.fillStyle = 'rgba(255,255,255,0.95)'
-      g.fillRect(MINI / 2 - 1.5, MINI / 2 - 1.5, 3, 3)
-    }
-    const drawMini = () => {
-      if (!mini || !nctx) return
-      const { dpr, w, h } = view.current
-      nctx.setTransform(1, 0, 0, 1, 0, 0)
-      nctx.clearRect(0, 0, mini.width, mini.height)
-      nctx.drawImage(miniBase, 0, 0)
-      nctx.setTransform(dpr, 0, 0, dpr, 0, 0)
-      const s = miniScale()
-      const corners = [unproject(0, 0), unproject(w, 0), unproject(w, h), unproject(0, h)]
-      nctx.strokeStyle = 'rgba(45,212,191,0.9)'
-      nctx.lineWidth = 1
-      nctx.beginPath()
-      corners.forEach((p, i) => {
-        const x = clamp(MINI / 2 + (p.x - ox) * s, 0, MINI)
-        const y = clamp(MINI / 2 + (p.y - oy) * s, 0, MINI)
-        if (i) nctx.lineTo(x, y)
-        else nctx.moveTo(x, y)
-      })
-      nctx.closePath()
-      nctx.stroke()
-    }
-
     const spaced = (text: string, x: number, y: number, size: number, spacing: number, fill: string, align: 'center' | 'left' = 'center') => {
       ctx.font = `600 ${size}px ${font}`
       const chars = [...text]
@@ -454,7 +431,6 @@ export const NexusWeb = forwardRef<
     let last = performance.now()
     const frame = (now: number) => {
       raf = requestAnimationFrame(frame)
-      frameNo++
       const props2 = P.current
       const { w, h, dpr } = view.current
       const dtMs = Math.min(64, now - last)
@@ -604,7 +580,11 @@ export const NexusWeb = forwardRef<
       // Concepts float above the plane, with contact shadows.
       const g2 = grid.current
       g2.clear()
-      const farZ = c.k < 0.32
+      const farZ = !overview && c.k < 0.12
+      // Nodes are big enough to see and tap at every zoom: subjects on the
+      // main web larger still.
+      const nodeR = (sc: number, hov: number) =>
+        (overview ? clamp(13 * sc * (0.8 + 0.5 * Math.min(1, c.k / 0.4)), 11, 19) : clamp(10 * Math.sqrt(c.k / 0.3) * sc, 9, 14)) * (1 + 0.08 * hov)
       const drawn: { key: string; x: number; y: number; r: number }[] = []
       let hovEntry: (() => void) | null = null
       for (const cn of web.concepts.values()) {
@@ -645,7 +625,7 @@ export const NexusWeb = forwardRef<
             }
             return
           }
-          const rr = clamp(5.4 * Math.sqrt(c.k) * top.s, 4, 8.5) * (1 + 0.08 * hov)
+          const rr = nodeR(top.s, hov)
           if (lift > 0) {
             const sw = rr * (1.5 + 0.5 * hov) * base.s
             const sh = ctx.createRadialGradient(base.x, base.y, 0, base.x, base.y, sw)
@@ -666,6 +646,32 @@ export const NexusWeb = forwardRef<
           ctx.beginPath()
           ctx.arc(top.x, top.y, rr + 1, 0, Math.PI * 2)
           ctx.fill()
+          if (overview) {
+            // A subject: a crisp ring, its progress as a thin arc, a core.
+            ctx.strokeStyle = rgba(col, (cn.node.p > 0 ? 0.75 : 0.5) * a)
+            ctx.lineWidth = 1.4
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr, 0, Math.PI * 2)
+            ctx.stroke()
+            if (cn.node.p > 0) {
+              ctx.strokeStyle = rgba(C3, a)
+              ctx.lineWidth = 2.4
+              ctx.beginPath()
+              ctx.arc(top.x, top.y, rr, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * cn.node.p) / 100)
+              ctx.stroke()
+            }
+            if (cn.node.s === 2) {
+              ctx.fillStyle = rgba(col, 0.9 * a)
+              ctx.beginPath()
+              ctx.arc(top.x, top.y, rr - 3, 0, Math.PI * 2)
+              ctx.fill()
+            }
+            ctx.fillStyle = cn.node.p > 0 ? rgba(WHITE, a) : rgba(col, 0.85 * a)
+            ctx.beginPath()
+            ctx.arc(top.x, top.y, rr * (cn.node.p > 0 ? 0.3 : 0.24), 0, Math.PI * 2)
+            ctx.fill()
+            return
+          }
           if (cn.node.s === 2) {
             const m = 0.45 + 0.55 * ret
             ctx.fillStyle = rgba(col, 0.9 * a * m)
@@ -743,7 +749,7 @@ export const NexusWeb = forwardRef<
         }
         if (isHov) hovEntry = paint
         else paint()
-        drawn.push({ key: cn.key, x: top.x, y: top.y, r: farZ ? 3 : clamp(5.4 * Math.sqrt(c.k) * top.s, 4, 8.5) })
+        drawn.push({ key: cn.key, x: top.x, y: top.y, r: farZ ? 3 : nodeR(top.s, 0) })
       }
       // The hovered concept is drawn last: always on top, never flickering.
       ;(hovEntry as (() => void) | null)?.()
@@ -797,12 +803,11 @@ export const NexusWeb = forwardRef<
       actionHits.current = []
       const phone = w < 640
       const taken: number[][] = [
-        [0, 0, phone ? w : Math.min(w, 440), phone ? 100 : 96],
+        [0, 0, phone ? w : Math.min(w, 460), overview ? (phone ? 100 : 96) : phone ? 150 : 128],
         [w - (phone ? 200 : 300), 0, w, phone ? 100 : 70],
         [w - 110, h - 190, w, h],
-        [w - MINI - 40, h - MINI - 130, w, h],
-        [0, h - 210, Math.min(w, 640), h],
       ]
+      if (!overview) taken.push([0, h - (phone ? 170 : 200), Math.min(w, 660), h])
       // Numbered route waypoints.
       if (route) {
         route.next.forEach((k, idx) => {
@@ -831,30 +836,52 @@ export const NexusWeb = forwardRef<
         selBox = { bx, by }
         taken.push([bx - 12, by - 10, bx + blockW + 12, by + 112])
       }
+      // Names never sit on a node.
+      for (const d of drawn) taken.push([d.x - d.r - 2, d.y - d.r - 2, d.x + d.r + 2, d.y + d.r + 2])
       const fc = focus?.cluster.id
       const fade = clamp((now - labelsFrom) / 700)
       if (fade > 0) {
         const regions = [...web.regions].sort((a, b) => b.cluster.nodes.length - a.cluster.nodes.length)
         for (const rg of regions) {
           if (filter.domain && rg.cluster.domain !== filter.domain) continue
-          const small = c.k < 0.22
-          const full = rg.cluster.name.toUpperCase()
-          const name = small || (phone && full.length > 22) ? rg.cluster.short.toUpperCase() : full
-          const pr = project(rg.x, rg.y, 0, c)
+          const small = !overview && !rg.label && c.k < 0.22
+          const full = (rg.label ?? rg.cluster.name).toUpperCase()
+          const cut = phone ? 22 : 34
+          const name = rg.label ? (full.length > cut ? `${full.slice(0, cut - 1).trimEnd()}…` : full) : small || (phone && full.length > 22) ? rg.cluster.short.toUpperCase() : full
+          // Region names sit just outside their nodes, like a star chart;
+          // when that spot is taken, further out, then inside.
+          const mid = (rg.a0 + rg.a1) / 2
+          const radii = overview ? [rg.rMax + 150, rg.rMax + 280, (rg.rMin + rg.rMax) / 2, rg.rMin - 90] : [rg.rMax + 110, rg.rMax + 200, (rg.rMin + rg.rMax) / 2]
+          let pr = project(ox + Math.cos(mid) * radii[0], oy + Math.sin(mid) * radii[0], 0, c)
           const size = clamp((small ? 9.5 : 10.5) * Math.sqrt(pr.s), 10, 12)
           const spacing = (small ? 2 : 3.2) * Math.min(1, pr.s)
           ctx.font = `600 ${size}px ${font}`
           const tw = ctx.measureText(name).width + spacing * (name.length - 1)
-          if (pr.x < -tw / 3 || pr.x > w + tw / 3 || pr.y < -20 || pr.y > h + 20) continue
-          const X = clamp(pr.x, tw / 2 + 24, w - tw / 2 - 12)
-          const Y = clamp(pr.y, 14, h - size - 112)
-          const box = [X - tw / 2 - 20, Y - 5, X + tw / 2 + 6, Y + size + 18]
-          if (overlaps(taken, box)) continue
+          let X = 0
+          let Y = 0
+          let box: number[] | null = null
+          for (const rad of radii) {
+            const q = project(ox + Math.cos(mid) * rad, oy + Math.sin(mid) * rad, 0, c)
+            if (q.x < -tw / 3 || q.x > w + tw / 3 || q.y < -20 || q.y > h + 20) continue
+            const qx = clamp(q.x, tw / 2 + 24, w - tw / 2 - 12)
+            const qy = clamp(q.y, 14, h - size - 112)
+            const b = [qx - tw / 2 - (overview ? 6 : 20), qy - 5, qx + tw / 2 + 6, qy + size + (overview ? 5 : 18)]
+            if (overlaps(taken, b)) continue
+            pr = q
+            X = qx
+            Y = qy
+            box = b
+            break
+          }
+          if (!box) continue
           taken.push(box)
           const depthFade = clamp(0.62 + (pr.s - 0.75) * 1.4, 0.62, 1)
-          const a = (fc ? (fc === rg.cluster.id ? 1 : 0.4) : 0.92) * fade * depthFade
+          const mine = focus && (rg.zone === undefined ? fc === rg.cluster.id : focus.node.z === rg.zone)
+          const a = (focus ? (mine ? 1 : 0.4) : overview ? 0.7 : 0.92) * fade * depthFade
           ctx.textBaseline = 'top'
           spaced(name, X, Y, size, spacing, `rgba(236,239,255,${a.toFixed(3)})`)
+          // Streams on the main web are quiet type, nothing more.
+          if (overview) continue
           // Subject progress: a thin arc before the name.
           const cx0 = X - tw / 2 - 11
           const cy0 = Y + size / 2
@@ -870,7 +897,7 @@ export const NexusWeb = forwardRef<
             ctx.arc(cx0, cy0, 5, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * rg.progress) / 100)
             ctx.stroke()
           }
-          const rank = props2.ranks?.[rg.cluster.id]
+          const rank = rg.label ? undefined : props2.ranks?.[rg.cluster.id]
           if (rg.progress > 0) spaced(`${rank ? `${rank.tier} · ` : ''}${rg.progress}%`.toUpperCase(), X, Y + size + 6, 9.5, 2.2, rgba(C3, a * 0.95))
           labelHits.current.push({ x: box[0], y: box[1], w: box[2] - box[0], h: box[3] - box[1], id: rg.cluster.id })
         }
@@ -934,49 +961,66 @@ export const NexusWeb = forwardRef<
         const cn = web.concepts.get(key)
         if (!d || !cn) return
         if (!strong && !matches(key)) return
-        const X = d.x
-        const Y = d.y + d.r + 5
-        ctx.font = `${strong ? 600 : 500} ${strong ? 12.5 : 11}px ${font}`
+        ctx.font = `${strong ? 600 : overview ? 600 : 500} ${strong ? 13 : overview ? 11.5 : 11.5}px ${font}`
         const tw = ctx.measureText(cn.node.n).width
-        const box = [X - tw / 2 - 4, Y - 2, X + tw / 2 + 4, Y + (strong ? 32 : 15)]
-        if (!strong && (box[0] < 6 || box[2] > w - 6 || box[3] > h - 96 || overlaps(taken, box))) return
-        taken.push(box)
-        const tx2 = clamp(X, tw / 2 + 8, w - tw / 2 - 8)
-        ctx.textAlign = 'center'
+        const H = strong ? 32 : 15
+        // Below first; when that is taken, above, right, then left.
+        const spots: [number, number, CanvasTextAlign][] = [[d.x, d.y + d.r + 5, 'center']]
+        if (!strong) spots.push([d.x, d.y - d.r - 19, 'center'], [d.x + d.r + 6, d.y - 7, 'left'], [d.x - d.r - 6, d.y - 7, 'right'])
+        const boxOf = ([x, y, al]: [number, number, CanvasTextAlign]) => {
+          const x0 = al === 'center' ? x - tw / 2 : al === 'left' ? x : x - tw
+          return [x0 - 4, y - 2, x0 + tw + 4, y + H]
+        }
+        const spot = strong ? spots[0] : spots.find((sp) => {
+          const b = boxOf(sp)
+          return b[0] >= 6 && b[2] <= w - 6 && b[1] >= 4 && b[3] <= h - 96 && !overlaps(taken, b)
+        })
+        if (!spot) return
+        taken.push(boxOf(spot))
+        const [X0, Y, align] = spot
+        const tx2 = align === 'center' ? clamp(X0, tw / 2 + 8, w - tw / 2 - 8) : X0
+        ctx.textAlign = align
         ctx.lineWidth = 3
         ctx.strokeStyle = 'rgba(9,11,24,0.9)'
-        ctx.fillStyle = strong ? 'rgba(255,255,255,1)' : `rgba(226,230,255,${cn.node.s === 0 ? 0.7 : 0.92})`
+        const dimmed = !strong && lineage && !lineage.has(key) ? 0.4 : 1
+        ctx.fillStyle = strong ? 'rgba(255,255,255,1)' : `rgba(226,230,255,${((cn.node.s === 0 && !overview ? 0.7 : 0.92) * dimmed).toFixed(3)})`
         ctx.strokeText(cn.node.n, tx2, Y)
         ctx.fillText(cn.node.n, tx2, Y)
         if (strong) {
           ctx.font = `500 10.5px ${font}`
           const keystone = props2.keystones?.has(key) ? ' · keystone' : ''
-          const sub = `${cn.cluster.short} · ${cn.node.s === 2 ? 'mastered' : cn.node.s === 0 ? 'locked' : cn.node.c}${keystone}`
+          const rk = props2.ranks?.[cn.node.id]
+          const sub = overview
+            ? `${cn.node.p}% · ${cn.node.c} concepts${rk ? ` · ${rk.tier}` : ''}`
+            : `${cn.cluster.short} · ${cn.node.s === 2 ? 'mastered' : cn.node.s === 0 ? 'locked' : cn.node.c}${keystone}`
           ctx.fillStyle = rgba(C3, 1)
+          ctx.textAlign = 'center'
           ctx.strokeText(sub, tx2, Y + 16)
           ctx.fillText(sub, tx2, Y + 16)
         }
       }
-      if (focus && focus.key !== sel?.key) nameAt(focus.key, true)
+      const named = new Set<string>()
+      const nameOnce = (k: string, strong: boolean) => {
+        if (named.has(k)) return
+        named.add(k)
+        nameAt(k, strong)
+      }
+      if (focus && focus.key !== sel?.key) nameOnce(focus.key, true)
       if (props2.beacon && props2.beacon !== focus?.key && props2.beacon !== sel?.key) {
         const d = drawn.find((x) => x.key === props2.beacon)
         if (d) {
           ctx.textBaseline = 'bottom'
           spaced('NEXT', d.x, d.y - d.r - 22, 9.5, 2.6, 'rgba(255,255,255,0.95)')
           ctx.textBaseline = 'top'
-          nameAt(props2.beacon, false)
+          nameOnce(props2.beacon, false)
         }
       }
-      if (c.k >= LABEL_K) for (const d of drawn) if (d.key !== focus?.key && d.key !== sel?.key) nameAt(d.key, false)
+      if (overview || c.k >= LABEL_K) {
+        // Inner names first (they matter most when space runs out).
+        const order = overview ? [...drawn].sort((p, q) => (web.concepts.get(p.key)?.level ?? 0) - (web.concepts.get(q.key)?.level ?? 0)) : drawn
+        for (const d of order) if (d.key !== focus?.key && d.key !== sel?.key) nameOnce(d.key, false)
+      }
 
-      // Minimap (cheap: a cached dot layer + the view outline).
-      if (mini) {
-        if (dirtyMini.current) {
-          drawMiniBase()
-          dirtyMini.current = false
-        }
-        if (frameNo % 3 === 0) drawMini()
-      }
     }
     raf = requestAnimationFrame(frame)
     return () => {
@@ -1019,11 +1063,10 @@ export const NexusWeb = forwardRef<
     }
   }, [web])
 
-  /* ── pointer, wheel, keyboard and the minimap ── */
+  /* ── pointer, wheel and keyboard ── */
   useEffect(() => {
     if (loading) return
     const canvas = nearRef.current!
-    const mini = miniRef.current
     const pts = new Map<number, { x: number; y: number }>()
     let drag: { x: number; y: number; moved: boolean; anchor: { x: number; y: number }; vx: number; vy: number; lt: number } | null = null
     let pinch: { d: number; k: number; anchor: { x: number; y: number } } | null = null
@@ -1058,7 +1101,7 @@ export const NexusWeb = forwardRef<
       pin(anchor, p)
       moved()
     }
-    const radius = () => Math.max(14, 9 * Math.sqrt(cam.current.k))
+    const radius = () => (overview ? 26 : 18)
     const hitConcept = (x: number, y: number) => {
       // Hysteresis: the hovered concept keeps the pointer a little longer.
       const cur = hovered.current ? grid.current.position(hovered.current) : null
@@ -1068,32 +1111,24 @@ export const NexusWeb = forwardRef<
     const inBox = (b: { x: number; y: number; w: number; h: number }, p: { x: number; y: number }) => p.x >= b.x && p.x <= b.x + b.w && p.y >= b.y && p.y <= b.y + b.h
     const onLabel = (x: number, y: number) => labelHits.current.find((l) => inBox(l, { x, y }))?.id ?? null
     const onAction = (x: number, y: number) => actionHits.current.find((a) => inBox(a, { x, y })) ?? null
-    const hitRegion = (x: number, y: number) => {
-      const lab = onLabel(x, y)
-      if (lab) return lab
-      const p = unproject(x, y)
-      const dx = p.x - ox
-      const dy = p.y - oy
-      const r = Math.hypot(dx, dy)
-      const a = Math.atan2(dy, dx)
-      for (const rg of web.regions) {
-        let aa = a
-        while (aa < rg.a0) aa += Math.PI * 2
-        while (aa > rg.a0 + Math.PI * 2) aa -= Math.PI * 2
-        if (aa <= rg.a1 && r >= rg.rMin - SP && r <= rg.rMax + SP) return rg.cluster.id
-      }
-      return null
-    }
-    const openSubject = (id: string) => {
-      const rg = web.regions.find((r) => r.cluster.id === id)
-      if (!rg) return
+    // The main web: a subject dives into its own tree (camera flies in,
+    // the plane rises, then the tree takes over).
+    const dive = (key: string) => {
+      const cn = web.concepts.get(key)
+      if (!cn) return
       const back = { ...cam.current }
-      startFly({ x: rg.x, y: rg.y, k: Math.min(MAX_K, Math.max(cam.current.k * 2.2, 1.6)) }, () => {
+      const id = cn.node.id
+      startFly({ x: web.xy[2 * cn.pt], y: web.xy[2 * cn.pt + 1], k: Math.min(MAX_K, Math.max(cam.current.k * 2.4, 0.9)) }, () => {
         if (reduce) return cb().onOpenSubject(id, back)
         rise.current = performance.now()
         wrapRef.current?.classList.add('nx-rise')
-        window.setTimeout(() => cb().onOpenSubject(id, back), 420)
-      })
+        window.setTimeout(() => cb().onOpenSubject(id, back), 380)
+      }, 620)
+    }
+    // A zone name in a tree: fly to that zone.
+    const toRegion = (id: string) => {
+      const rg = web.regions.find((r) => r.id === id)
+      if (rg) startFly({ x: rg.x, y: rg.y, k: Math.max(cam.current.k, 0.55) })
     }
     const down = (e: PointerEvent) => {
       first()
@@ -1141,7 +1176,7 @@ export const NexusWeb = forwardRef<
         hovered.current = key
         // The plane leans toward the pointer only while it is not on a concept.
         if (!key) lean.current = { ...lean.current, tx: p.x / w - 0.5, ty: p.y / h - 0.5 }
-        if (key || act || hitRegion(p.x, p.y)) canvas.dataset.hover = ''
+        if (key || act || onLabel(p.x, p.y)) canvas.dataset.hover = ''
         else delete canvas.dataset.hover
       }
     }
@@ -1160,13 +1195,10 @@ export const NexusWeb = forwardRef<
           else {
             const label = onLabel(p.x, p.y)
             const key = label ? null : grid.current.nearest(p.x, p.y, radius())
-            if (label) openSubject(label)
+            if (label) toRegion(label)
+            else if (key && overview) dive(key)
             else if (key) cb().onSelect(cb().selected === key ? null : key)
-            else {
-              const id = hitRegion(p.x, p.y)
-              if (id && cam.current.k < 0.9) openSubject(id)
-              else cb().onSelect(null)
-            }
+            else cb().onSelect(null)
           }
         }
         drag = null
@@ -1218,7 +1250,10 @@ export const NexusWeb = forwardRef<
           const list = siblings(sel)
           const i = list.indexOf(sel)
           if (list.length > 1) go(list[(i + (e.key === 'ArrowRight' ? 1 : list.length - 1)) % list.length])
-        } else if (e.key === 'Enter') cb().onAction?.('open', sel)
+        } else if (e.key === 'Enter') {
+          if (overview) dive(sel)
+          else cb().onAction?.('open', sel)
+        }
         else if (e.key === 'Escape') cb().onSelect(null)
         else if (e.key === '+' || e.key === '=') zoomAt({ x: w / 2, y: h / 2 }, c.k * 1.25)
         else if (e.key === '-') zoomAt({ x: w / 2, y: h / 2 }, c.k / 1.25)
@@ -1234,18 +1269,9 @@ export const NexusWeb = forwardRef<
       else if (e.key === '+' || e.key === '=') zoomAt({ x: w / 2, y: h / 2 }, c.k * 1.25)
       else if (e.key === '-') zoomAt({ x: w / 2, y: h / 2 }, c.k / 1.25)
       else if (e.key === 'Enter' && cb().beacon) go(cb().beacon!)
-      else if (e.key === 'Escape' || e.key === '0') startFly({ x: ox, y: oy, k: w < 640 ? HOME_K_PHONE : HOME_K })
+      else if (e.key === 'Escape' || e.key === '0') startFly(fitCam())
       else return
       e.preventDefault()
-    }
-    const miniClick = (e: MouseEvent) => {
-      if (!mini) return
-      const r = mini.getBoundingClientRect()
-      const s = MINI / (web.extent * 2)
-      const x = ox + (e.clientX - r.left - MINI / 2) / s
-      const y = oy + (e.clientY - r.top - MINI / 2) / s
-      first()
-      startFly({ x, y, k: Math.max(cam.current.k, 0.62) })
     }
     canvas.addEventListener('pointerdown', down)
     canvas.addEventListener('pointermove', move)
@@ -1254,7 +1280,6 @@ export const NexusWeb = forwardRef<
     canvas.addEventListener('pointerleave', leave)
     canvas.addEventListener('wheel', wheel, { passive: false })
     canvas.addEventListener('keydown', key)
-    mini?.addEventListener('click', miniClick)
     return () => {
       canvas.removeEventListener('pointerdown', down)
       canvas.removeEventListener('pointermove', move)
@@ -1263,7 +1288,6 @@ export const NexusWeb = forwardRef<
       canvas.removeEventListener('pointerleave', leave)
       canvas.removeEventListener('wheel', wheel)
       canvas.removeEventListener('keydown', key)
-      mini?.removeEventListener('click', miniClick)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [web, loading])
@@ -1283,10 +1307,11 @@ export const NexusWeb = forwardRef<
         aria-label={
           loading
             ? 'The Nexus web is loading'
-            : `The Nexus web: ${web.regions.length} subjects, ${web.concepts.size} concepts around you. Drag to pan, scroll or pinch to zoom, click a concept to see it or a subject name to open its path. Arrow keys pan, or move along links when a concept is selected; Enter opens, Escape steps back.`
+            : overview
+              ? `The Nexus web: ${web.concepts.size} subjects around you, grouped in ${web.regions.length} streams. Drag to pan, scroll or pinch to zoom, click a subject to open its own tree. Arrow keys pan; with a subject focused, Enter opens it.`
+              : `This subject's tree: ${web.concepts.size} concepts in ${web.regions.length} zones around you. Drag to pan, scroll or pinch to zoom, click a concept to see it. Arrow keys pan, or move along links when a concept is selected; Enter opens its details, Escape steps back.`
         }
       />
-      {!loading && <canvas ref={miniRef} className="nx-mini" style={{ width: MINI, height: MINI }} aria-label="Minimap: click to fly there" role="img" />}
     </div>
   )
 })
